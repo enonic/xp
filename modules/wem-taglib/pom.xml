@@ -11,24 +11,14 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>wem-webapp</artifactId>
-  <packaging>war</packaging>
-  <name>Enonic WEM WebApp</name>
+  <artifactId>wem-taglib</artifactId>
+  <packaging>jar</packaging>
+  <name>Enonic WEM TagLib</name>
 
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>wem-web</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>wem-taglib</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>wem-migrate</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
