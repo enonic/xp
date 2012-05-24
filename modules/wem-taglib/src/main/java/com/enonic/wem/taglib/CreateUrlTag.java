@@ -4,6 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 public final class CreateUrlTag
     extends TagSupport
 {
@@ -44,20 +46,7 @@ public final class CreateUrlTag
 
     private static String getBaseUrl( final HttpServletRequest req )
     {
-        final StringBuilder str = new StringBuilder();
-        str.append( req.getScheme() ).append( "://" ).append( req.getServerName() );
-
-        if ( req.getServerPort() != 80 )
-        {
-            str.append( ":" ).append( req.getServerPort() );
-        }
-
-        str.append( req.getContextPath() );
-        if ( str.charAt( str.length() - 1 ) == '/' )
-        {
-            str.deleteCharAt( str.length() - 1 );
-        }
-
-        return str.toString();
+        final String url = ServletUriComponentsBuilder.fromRequest( req ).build().toString();
+        return url.substring( 0, url.length() - 1 );
     }
 }
