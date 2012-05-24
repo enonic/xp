@@ -8,13 +8,13 @@
 
   <tag>
     <name>productInfo</name>
-    <tag-class>com.enonic.wem.taglib.ProductInfoTag</tag-class>
+    <tag-class>com.enonic.wem.web.taglib.ProductInfoTag</tag-class>
     <body-content>empty</body-content>
   </tag>
 
   <tag>
     <name>ellipsis</name>
-    <tag-class>com.enonic.wem.taglib.EllipsisTag</tag-class>
+    <tag-class>com.enonic.wem.web.taglib.EllipsisTag</tag-class>
     <body-content>empty</body-content>
     <attribute>
       <name>text</name>
@@ -31,7 +31,7 @@
 
   <tag>
     <name>createUrl</name>
-    <tag-class>com.enonic.wem.taglib.CreateUrlTag</tag-class>
+    <tag-class>com.enonic.wem.web.taglib.CreateUrlTag</tag-class>
     <body-content>empty</body-content>
     <attribute>
       <name>var</name>
@@ -48,7 +48,7 @@
 
   <tag>
     <name>siteInfo</name>
-    <tag-class>com.enonic.wem.taglib.SiteInfoTag</tag-class>
+    <tag-class>com.enonic.wem.web.taglib.SiteInfoTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>var</name>

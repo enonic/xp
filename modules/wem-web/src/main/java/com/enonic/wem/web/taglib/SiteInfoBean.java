@@ -1,4 +1,4 @@
-package com.enonic.wem.taglib;
+package com.enonic.wem.web.taglib;
 
 public final class SiteInfoBean
     implements Comparable<SiteInfoBean>

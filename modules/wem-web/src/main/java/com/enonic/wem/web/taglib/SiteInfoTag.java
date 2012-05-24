@@ -1,4 +1,4 @@
-package com.enonic.wem.taglib;
+package com.enonic.wem.web.taglib;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.IterationTag;
+import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.springframework.web.context.WebApplicationContext;
@@ -38,10 +39,10 @@ public final class SiteInfoTag
         if ( this.current.hasNext() )
         {
             assignElement();
-            return EVAL_BODY_INCLUDE;
+            return Tag.EVAL_BODY_INCLUDE;
         }
 
-        return SKIP_BODY;
+        return Tag.SKIP_BODY;
     }
 
     @Override
@@ -51,10 +52,10 @@ public final class SiteInfoTag
         if ( this.current.hasNext() )
         {
             assignElement();
-            return EVAL_BODY_AGAIN;
+            return IterationTag.EVAL_BODY_AGAIN;
         }
 
-        return SKIP_BODY;
+        return Tag.SKIP_BODY;
     }
 
     private void assignElement()

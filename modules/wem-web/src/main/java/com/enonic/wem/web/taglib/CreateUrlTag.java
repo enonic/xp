@@ -1,7 +1,8 @@
-package com.enonic.wem.taglib;
+package com.enonic.wem.web.taglib;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -29,7 +30,7 @@ public final class CreateUrlTag
     {
         final String url = createUrl();
         this.pageContext.setAttribute( this.var, url );
-        return SKIP_BODY;
+        return Tag.SKIP_BODY;
     }
 
     private String createUrl()

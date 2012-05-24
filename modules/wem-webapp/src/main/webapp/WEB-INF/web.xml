@@ -20,16 +20,19 @@
   <servlet>
     <servlet-name>portal</servlet-name>
     <servlet-class>com.enonic.cms.web.portal.PortalServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
   </servlet>
 
   <servlet>
     <servlet-name>rest</servlet-name>
-    <servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
+    <servlet-class>com.enonic.wem.web.rest.RestServlet</servlet-class>
+    <load-on-startup>2</load-on-startup>
   </servlet>
 
   <servlet>
     <servlet-name>dav</servlet-name>
     <servlet-class>com.enonic.cms.web.webdav.SimpleDavServlet</servlet-class>
+    <load-on-startup>3</load-on-startup>
   </servlet>
 
   <servlet-mapping>
