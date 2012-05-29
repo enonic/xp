@@ -1,5 +1,5 @@
+<%@ page import="com.enonic.wem.web.jsp.*" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<%@taglib prefix="w" uri="uri:enonic.wem.taglib" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -24,32 +24,34 @@
   </ul>
 </div>
 
-<w:createUrl var="adminUrl" path="admin"/>
-<w:createUrl var="davUrl" path="dav"/>
+<%
+  String adminUrl = JspHelper.createUrl( "admin" );
+  String davUrl = JspHelper.createUrl( "dav" );
+%>
 
 <div id="content-outer" class="clearfix">
   <div id="content" class="clearfix">
     <div id="management-components" class="clearfix">
-      <a class="component box admin left" title="${adminUrl}" href="${adminUrl}">
+      <a class="component box admin left" title="<%= adminUrl %>" href="<%= adminUrl %>">
         <span class="icon-admin left">
           <img src="resources/images/icon-admin.png" alt="Admin"/>
         </span>
         <span class="info left">
           <span class="name">Admin Console</span>
           <span>
-            <w:ellipsis text="${adminUrl}" length="30"/>
+            <%= JspHelper.ellipsis( adminUrl, 30 ) %>
           </span>
         </span>
       </a>
 
-      <a class="component box left" title="${davUrl}" href="${davUrl}">
+      <a class="component box left" title="<%= davUrl %>" href="<%= davUrl %>">
         <span class="icon-webdav left">
           <img src="resources/images/folder-remote.png" alt="WebDAV"/>
         </span>
         <span class="info left">
           <span class="name">WebDAV</span>
           <span>
-            <w:ellipsis text="${davUrl}" length="30"/>
+            <%= JspHelper.ellipsis( davUrl, 30 ) %>
           </span>
         </span>
       </a>
@@ -128,18 +130,19 @@
     <div id="sites" class="box">
       <h2>Sites</h2>
       <ul>
-        <w:siteInfo var="site">
-          <li>
-            <w:createUrl var="siteUrl" path="site/${site.key}"/>
-            <a href="${siteUrl}" title="${siteUrl}">
-              <span class="name">${site.name}</span>
-              <br/>
-              <span>
-                <w:ellipsis text="${siteUrl}" length="30"/>
-              </span>
-            </a>
-          </li>
-        </w:siteInfo>
+        <%
+          for ( SiteInfoBean info : JspHelper.getSites() )
+          {
+        %>
+        <li>
+          <a href="<%= info.getUrl() %>" title="<%= info.getUrl() %>">
+            <span class="name"><%= info.getName() %></span><br/>
+            <span><%= JspHelper.ellipsis( info.getUrl(), 30 ) %></span>
+          </a>
+        </li>
+        <%
+          }
+        %>
       </ul>
     </div>
   </div>
@@ -147,7 +150,7 @@
 
 <div class="clearfix" id="footer">
   <div id="license" class="left">
-    <w:productInfo/> - Licensed under <a href="http://www.gnu.org/licenses/agpl.html" rel="external">AGPL 3.0</a>
+    <%= JspHelper.getTitleAndVersion() %> - Licensed under <a href="http://www.gnu.org/licenses/agpl.html" rel="external">AGPL 3.0</a>
   </div>
   <div id="social" class="right">
     <a href="http://www.enonic.com/en/rss" rel="external">

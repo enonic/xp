@@ -1,4 +1,4 @@
-package com.enonic.wem.web.jaxrs.json;
+package com.enonic.wem.web.rest.provider;
 
 import java.text.SimpleDateFormat;
 

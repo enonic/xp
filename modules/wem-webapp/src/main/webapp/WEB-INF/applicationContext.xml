@@ -10,7 +10,7 @@
 
   <context:component-scan base-package="com.enonic.cms.web.portal"/>
   <context:component-scan base-package="com.enonic.cms.web.webdav"/>
-  <context:component-scan base-package="com.enonic.cms.web.filter"/>
+  <!--context:component-scan base-package="com.enonic.cms.web.filter"/-->
   <context:component-scan base-package="com.enonic.wem.web"/>
 
 </beans>
