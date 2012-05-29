@@ -1,13 +1,11 @@
-package com.enonic.wem.web.jsp;
+package com.enonic.wem.taglib.site;
 
-public final class SiteInfoBean
-    implements Comparable<SiteInfoBean>
+final class SiteBeanImpl
+    implements Comparable<SiteBeanImpl>
 {
     private int key;
 
     private String name;
-
-    private String url;
 
     public int getKey()
     {
@@ -29,18 +27,8 @@ public final class SiteInfoBean
         this.name = name;
     }
 
-    public String getUrl()
-    {
-        return url;
-    }
-
-    public void setUrl( final String url )
-    {
-        this.url = url;
-    }
-
     @Override
-    public int compareTo( final SiteInfoBean other )
+    public int compareTo( final SiteBeanImpl other )
     {
         return this.name.compareTo( other.name );
     }
