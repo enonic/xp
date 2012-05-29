@@ -40,7 +40,7 @@ public final class CommandInvokerImpl
         throw new IllegalArgumentException( "Handle for command [" + type.getName() + "] not found" );
     }
 
-    @Autowired
+    // @Autowired
     public void setHandlers( final CommandHandler... handlers )
     {
         for ( final CommandHandler handler : handlers )
