@@ -11,7 +11,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.Period;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,22 +46,16 @@ import com.enonic.wem.web.rest.exception.EntityRedirectException;
 
 @Controller
 @RequestMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
-public final class UsersController
+public final class UserController
 {
 
-    private static final Logger LOG = LoggerFactory.getLogger( UsersController.class );
-
-    private static final int PHOTO_CACHE_TIMEOUT = Period.minutes( 1 ).getSeconds();
+    private static final Logger LOG = LoggerFactory.getLogger( UserController.class );
 
     private static final int DEFAULT_IMAGE_SIZE = 100;
-
-    private static final int DEFAULT_IMAGE_QUALITY = 100;
 
     private static final int DEFAULT_IMAGE_BACKGROUND_COLOR = 0x00FFFFFF;
 
     private static final String UPLOAD_PATH = "/admin/resources/uploads/";
-
-    private static final String DEFAULT_IMAGE_PATH = "/admin/resources/images/icons/256x256/dummy-user.png";
 
     @Autowired
     private UserDao userDao;
@@ -78,17 +71,6 @@ public final class UsersController
 
     @Autowired
     private AccountSearchService searchService;
-
-    @RequestMapping(value = "list", method = RequestMethod.GET)
-    @ResponseBody
-    public AccountsModel getAll( final UserLoadRequest req )
-    {
-        // TODO: Is this in use? If not, we will remove it. For now it only return dummy results.
-        /*final EntityPageList<UserEntity> list =
-                this.userDao.findAll( req.getStart(), req.getLimit(), req.buildHqlQuery(), req.buildHqlOrder() );
-        return accountModelTranslator.toModel( list );*/
-        return new AccountsModel();
-    }
 
     @RequestMapping(value = "userinfo", method = RequestMethod.GET)
     @ResponseBody
