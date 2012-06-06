@@ -1,4 +1,4 @@
-package com.enonic.wem.taglib;
+package com.enonic.wem.web.jsp;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;

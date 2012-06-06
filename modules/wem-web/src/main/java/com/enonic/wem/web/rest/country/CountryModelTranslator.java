@@ -2,12 +2,14 @@ package com.enonic.wem.web.rest.country;
 
 import java.util.Collection;
 
+import com.google.common.collect.Lists;
+
 import com.enonic.cms.core.country.Country;
 import com.enonic.cms.core.country.Region;
 
-public final class CountryModelTranslator
+final class CountryModelTranslator
 {
-    public static CountryModel toModel( final Country entity )
+    private static CountryModel toModel( final Country entity )
     {
         final CountryModel model = new CountryModel();
         if (entity != null) {
@@ -17,6 +19,7 @@ public final class CountryModelTranslator
             model.setRegionsEnglishName( entity.getRegionsEnglishName() );
             model.setRegionsLocalName( entity.getRegionsLocalName() );
             model.setCallingCode( entity.getCallingCode() );
+            model.setRegions( toModel( entity.getRegions() ) );
         }
         return model;
     }
@@ -24,8 +27,6 @@ public final class CountryModelTranslator
     public static CountriesModel toModel( final Collection<Country> list )
     {
         final CountriesModel model = new CountriesModel();
-        model.setTotal( list.size() );
-
         for ( final Country entity : list )
         {
             model.addCountry( toModel( entity ) );
@@ -33,7 +34,7 @@ public final class CountryModelTranslator
         return model;
     }
 
-    public static RegionModel toModel( final Region entity )
+    private static RegionModel toModel( final Region entity )
     {
         final RegionModel model = new RegionModel();
         if (entity != null) {
@@ -44,14 +45,16 @@ public final class CountryModelTranslator
         return model;
     }
 
-    public static RegionsModel toModel( final Collection<Region> list )
+    private static Collection<RegionModel> toModel( final Collection<Region> list )
     {
-        final RegionsModel model = new RegionsModel();
-        model.setTotal( list.size() );
+        if (list.isEmpty()) {
+            return null;
+        }
 
+        final Collection<RegionModel> model = Lists.newArrayList();
         for ( final Region entity : list )
         {
-            model.addRegion( toModel( entity ) );
+            model.add( toModel( entity ) );
         }
         return model;
     }

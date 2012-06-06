@@ -1,4 +1,4 @@
-package com.enonic.wem.taglib.site;
+package com.enonic.wem.web.jsp.site;
 
 import java.util.Collections;
 import java.util.Iterator;

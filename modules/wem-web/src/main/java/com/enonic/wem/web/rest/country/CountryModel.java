@@ -1,5 +1,7 @@
 package com.enonic.wem.web.rest.country;
 
+import java.util.Collection;
+
 public final class CountryModel
 {
     private String code;
@@ -14,6 +16,7 @@ public final class CountryModel
 
     private String callingCode;
 
+    private Collection<RegionModel> regions;
 
     public String getCode()
     {
@@ -73,5 +76,15 @@ public final class CountryModel
     public void setCallingCode( String callingCode )
     {
         this.callingCode = callingCode;
+    }
+
+    public Collection<RegionModel> getRegions()
+    {
+        return regions;
+    }
+
+    public void setRegions( final Collection<RegionModel> regions )
+    {
+        this.regions = regions;
     }
 }
