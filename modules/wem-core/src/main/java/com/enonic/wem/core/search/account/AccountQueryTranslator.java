@@ -31,9 +31,9 @@ import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 
 @Component
-public final class QueryTranslator
+public final class AccountQueryTranslator
 {
-    private static final Logger LOG = LoggerFactory.getLogger( QueryTranslator.class );
+    private static final Logger LOG = LoggerFactory.getLogger( AccountQueryTranslator.class );
 
     private static final int DEFAULT_SEARCH_COUNT = 10;
 

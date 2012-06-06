@@ -45,7 +45,7 @@ public class AccountSearchService
 
     private Client client;
 
-    private QueryTranslator translator;
+    private AccountQueryTranslator translator;
 
     public void createIndex()
     {
@@ -328,7 +328,7 @@ public class AccountSearchService
     }
 
     @Autowired
-    public void setTranslator( QueryTranslator translator )
+    public void setTranslator( AccountQueryTranslator translator )
     {
         this.translator = translator;
     }
