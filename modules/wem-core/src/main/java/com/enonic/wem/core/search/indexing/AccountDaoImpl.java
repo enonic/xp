@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.enonic.wem.core.search.UserInfoHelper;
 import com.enonic.wem.core.search.account.AccountKey;
 import com.enonic.wem.core.search.account.Group;
 import com.enonic.wem.core.search.account.User;
@@ -116,7 +117,7 @@ class AccountDaoImpl
             user.setUserStoreName( userEntity.getUserStore().getName() );
         }
         user.setLastModified( userEntity.getTimestamp() );
-        user.setUserInfo( userEntity.getUserInfo() );
+        user.setUserInfo( UserInfoHelper.toUserInfo( userEntity ) );
 
         return user;
     }
