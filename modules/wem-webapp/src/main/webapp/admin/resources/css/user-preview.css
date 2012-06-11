@@ -1,0 +1,127 @@
+#cms-user-preview {}
+/*--- Generic ---*/
+.cms-user-preview,
+.cms-user-preview td,
+.cms-user-preview th {
+    font-size: 11px;
+}
+
+.cms-user-preview h1 {
+    font-size: 26px;
+    font-weight: normal;
+}
+
+.cms-user-preview td,
+.cms-user-preview th {
+    padding: 1px;
+    text-align: left;
+}
+
+.cms-user-preview ul {
+    margin: 0;
+}
+
+.cms-user-preview table {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.cms-user-preview th {
+    font-weight: bold;
+    color: #555;
+}
+
+.cms-user-preview td.label {
+    width: 100px;
+    color: #777;
+}
+
+/*--- West Layout ---*/
+.cms-user-preview .west {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    width: 100px;
+
+}
+
+.cms-user-preview .west .photo-placeholder {
+    margin-bottom: 10px;
+}
+
+.cms-user-preview .photo-placeholder img {
+    width: 100px;
+    height: 100px;
+}
+
+
+/*--- Center Layout ---*/
+html>body .cms-user-preview .center {
+    margin-left: 121px;
+    margin-right:241px;
+}
+
+.cms-user-preview .center {
+    margin-left: 101px;
+    margin-right:101px;
+
+    border-left: 1px solid #f0f0f0;
+    border-right: 1px solid #f0f0f0;
+
+}
+
+.cms-user-preview .center,
+.cms-user-preview .center th,
+.cms-user-preview .center td {
+    font-size: 12px;
+}
+
+.cms-user-preview .center th,
+.cms-user-preview .center td {
+    padding: 2px;
+}
+
+.cms-user-preview .center th,
+.cms-user-preview .center td,
+.cms-user-preview .center .container,
+.cms-user-preview .center .navigation {
+    padding-left: 10px !important;
+}
+
+.cms-user-preview .center th {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.cms-user-preview .center .container {
+    padding:  5px;
+}
+
+.cms-user-preview .center .navigation {
+    background-color: #f0f0f0;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.cms-user-preview .center .navigation li {
+    display: inline;
+    list-style-type: none;
+    padding-right: 20px;
+    color: #777;
+}
+
+.cms-user-preview .center .navigation li.active {
+    color: #000;
+}
+
+.cms-user-preview .center .email {
+    color: #777;
+}
+
+/*--- East Layout ---*/
+.cms-user-preview .east {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 221px;
+}

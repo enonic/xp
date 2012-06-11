@@ -1,0 +1,120 @@
+{
+    "userStoreConfigs": [
+        {
+            "userFields": [
+                {
+                    "fieldname": "username",
+                    "fieldlabel": "Username",
+                    "fieldtype": "string",
+                    "remote": true,
+                    "readonly": true,
+                    "required": true
+                },
+                {
+                    "fieldname": "password",
+                    "fieldlabel": "Password",
+                    "fieldtype": "password",
+                    "readonly": false,
+                    "required": true
+                },
+                {
+                    "fieldname": "repeat_password",
+                    "fieldlabel": "Repeat password",
+                    "fieldtype": "password",
+                    "readonly": false,
+                    "required": true
+                },
+                {
+                    "fieldname": "email",
+                    "fieldlabel": "E-mail",
+                    "fieldtype": "string",
+                    "remote": true,
+                    "readonly": false,
+                    "required": true
+                },
+                {
+                    "fieldname": "display_name",
+                    "fieldlabel": "Display Name",
+                    "fieldtype": "string",
+                    "remote": false,
+                    "readonly": false,
+                    "required": false
+                },
+                {
+                    "fieldname": "prefix",
+                    "fieldlabel": "Prefix",
+                    "fieldtype": "string",
+                    "remote": false,
+                    "readonly": false,
+                    "required": false
+                },
+                {
+                    "fieldname": "first_name",
+                    "fieldlabel": "First name",
+                    "fieldtype": "string",
+                    "remote": false,
+                    "readonly": false,
+                    "required": false
+                },
+                {
+                    "fieldname": "middle_name",
+                    "fieldlabel": "Middle name",
+                    "fieldtype": "string",
+                    "remote": false,
+                    "readonly": false,
+                    "required": false
+                },
+                {
+                    "fieldname": "last_name",
+                    "fieldlabel": "Last name",
+                    "fieldtype": "string",
+                    "remote": true,
+                    "readonly": false,
+                    "required": false
+                },
+                {
+                    "fieldname": "birthday",
+                    "fieldlabel": "Birthday",
+                    "fieldtype": "date",
+                    "remote": true,
+                    "readonly": true,
+                    "required": true
+                },
+                {
+                    "fieldname": "photo",
+                    "fieldlabel": "Photo",
+                    "fieldtype": "file",
+                    "remote": false,
+                    "readonly": false,
+                    "required": true
+                },
+                {
+                    "fieldname": "country",
+                    "fieldlabel": "Country",
+                    "fieldtype": "string",
+                    "remote": false,
+                    "readonly": false,
+                    "required": true
+                },
+                {
+                    "fieldname": "phone",
+                    "fieldlabel": "Phone",
+                    "fieldtype": "string",
+                    "remote": true,
+                    "readonly": false,
+                    "required": true
+                },
+                {
+                    "fieldname": "address",
+                    "fieldlabel": "Address",
+                    "fieldtype": "string",
+                    "remote": false,
+                    "readonly": false,
+                    "required": false,
+                    "iso": true
+                }
+            ]
+        }
+
+    ]
+}

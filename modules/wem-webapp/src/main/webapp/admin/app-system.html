@@ -1,0 +1,75 @@
+<html>
+<head>
+    <title>Enonic CMS Admin</title>
+    <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/ext-all.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/main.css">
+    <script type="text/javascript" src="resources/lib/ext/ext-all-debug.js"></script>
+    <script type="text/javascript" src="setup.js"></script>
+
+    <script type="text/javascript">
+
+    Ext.Loader.setConfig({
+        enabled: true,
+        paths: {
+                'App' : '_app/system/js',
+                'Common' : 'common/js',
+                'Admin': 'resources/app'
+            }
+    });
+
+        Ext.application({
+            name: 'App',
+            appFolder: '_app/system/js',
+
+            controllers: [
+                'SystemController'
+            ],
+
+            requires: [
+                'Admin.view.TabPanel',
+                'App.view.NavigationPanel'
+            ],
+
+            launch: function() {
+                Ext.create('Ext.container.Viewport', {
+                    layout: 'border',
+                    padding: 5,
+
+                    items: [
+                        {
+                            region: 'center',
+                            xtype: 'cmsTabPanel',
+                            id: 'systemTabPanelID',
+                            items: [ {
+                                    id: 'tab-browse',
+                                    title: 'Browse',
+                                    closable: false,
+                                    xtype: 'panel',
+                                    layout: 'border',
+                                    items: [
+                                        {
+                                            region: 'west',
+                                            width: 225,
+                                            xtype: 'systemNavigation'
+                                        },
+                                        {
+                                            id: 'system-center',
+                                            region: 'center',
+                                            bodyCls: 'system-center-inner',
+                                            html: '<iframe id="system-iframe" src="blank.html"><!-- --></iframe>'
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                });
+            }
+        });
+
+    </script>
+
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,40 @@
+{
+    "menu": {
+        "minWidth": 160,
+        "items": [
+            {
+                "text": "Media",
+                "menu": {
+                    "items": [
+                        {
+                            "id": "app-0",
+                            "text": "TODO",
+                            "action": "media",
+                            "iconCls": "icon-dashboard-24"
+                        }
+                    ]
+                }
+            },
+            {
+                "text": "Structured",
+                "menu": {
+                    "items": [
+                        {
+                            "text": "Content",
+                            "id": "app-820",
+                            "action": "newContent",
+                            "iconCls": "icon-content-24"
+                        },
+                        {
+                            "text": "Site",
+                            "id": "app-810",
+                            "action": "newSite",
+                            "iconCls": "icon-site-24"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+
+}

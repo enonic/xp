@@ -1,0 +1,55 @@
+{
+    "total": 5,
+    "contentHandlers": [
+        {
+            "key": 1,
+            "name": "name1",
+            "class": "class1",
+            "configuration": "configuration1",
+            "description": "desc1",
+            "defaultIndexing": "defaultIndexing1",
+            "defaultContentTypeConfig": "defaultContentTypeConfig1",
+            "lastModified": "2010-05-01 10:11:11"
+        },
+        {
+            "key": 2,
+            "name": "name2",
+            "class": "class2",
+            "configuration": "configuration2",
+            "description": "desc2",
+            "defaultIndexing": "defaultIndexing2",
+            "defaultContentTypeConfig": "defaultContentTypeConfig2",
+            "lastModified": "2010-02-02 11:11:11"
+        },
+        {
+            "key": 3,
+            "name": "name3",
+            "class": "class3",
+            "configuration": "configuration3",
+            "description": "desc3",
+            "defaultIndexing": "defaultIndexing3",
+            "defaultContentTypeConfig": "defaultContentTypeConfig3",
+            "lastModified": "2011-02-03 12:13:12"
+        },
+        {
+            "key": 4,
+            "name": "name4",
+            "class": "class4",
+            "configuration": "configuration4",
+            "description": "desc4",
+            "defaultIndexing": "defaultIndexing4",
+            "defaultContentTypeConfig": "defaultContentTypeConfig4",
+            "lastModified": "2010-07-05 10:11:12"
+        },
+        {
+            "key": 5,
+            "name": "name5",
+            "class": "class5",
+            "configuration": "configuration5",
+            "description": "desc5",
+            "defaultIndexing": "defaultIndexing5",
+            "defaultContentTypeConfig": "defaultContentTypeConfig5",
+            "lastModified": "2010-08-12 12:15:10"
+        }
+    ]
+}

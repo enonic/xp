@@ -1,0 +1,29 @@
+{
+    "total": 4,
+    "languages": [
+        {
+            "key": "AB27A03B4F58F2311819E7DEF338CA9F83E3992A",
+            "languageCode": "no",
+            "description": "Norwegian",
+            "lastModified": "2009-10-06 06:14:23"
+        },
+        {
+            "key": "E6C593DE14515428B06F1A16E0D28E2341FC5AB4",
+            "languageCode": "en",
+            "description": "English",
+            "lastModified": "2009-12-08 10:58:43"
+        },
+        {
+            "key": "27D7BB29289A71D2480707F9CAA64D09E045D76C",
+            "languageCode": "ru",
+            "description": "Russian",
+            "lastModified": "2009-10-21 12:45:41"
+        },
+        {
+            "key": "2BF83E35709BC83C6A80874D660788C65A32C93F",
+            "languageCode": "jp",
+            "description": "Japaneese",
+            "lastModified": "2009-10-06 06:14:23"
+        }
+    ]
+}

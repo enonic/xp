@@ -1,0 +1,1067 @@
+/****************************
+COMMON
+****************************/
+
+.hidden {
+    display: none;
+}
+
+#lightbox-fader {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: #333;
+    filter:alpha(opacity=50);
+	-moz-opacity:0.5;
+	-khtml-opacity: 0.5;
+	opacity: 0.5;
+	z-index: 1999;
+}
+
+#tlo-lightbox {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    width: 100%;
+    height: 100%;
+}
+
+#tlo-lightbox .overlay {
+    position: absolute;
+    z-index: 1999;
+    width: 100%;
+	height: 100%;
+	background-color: #333;
+    filter:alpha(opacity=50);
+	-moz-opacity:0.5;
+	-khtml-opacity: 0.5;
+	opacity: 0.5;
+}
+
+#tlo-lightbox .content {
+    position: absolute;
+    z-index: 2000;
+    top: 50%;
+    left: 50%;
+    width: 960px;
+    height: 560px;
+    margin: -300px 0 0 -500px;
+    padding: 20px;
+    background: #fff;
+}
+
+.bbcode-description {
+    clear: both;
+    padding-top: 20px;
+}
+
+.loading {
+    background: transparent url('../../modules/support/images/loading-spinner.gif') left top no-repeat;
+    min-height: 16px;
+    padding-left: 20px;
+}
+
+.saved {
+    background: transparent url('../../modules/support/images/checked.png') left top no-repeat;
+    min-height: 16px;
+    padding-left: 20px;
+}
+
+label.loading {
+    background-position: right top;
+    padding-left: 0;
+}
+
+label.saved {
+    background-position: right top;
+    padding-left: 0;
+}
+
+/****************************
+SUPPORT ISSUE FORM
+****************************/
+
+/*#support-issue-form {
+    margin-bottom: 20px;
+    overflow: hidden;
+    z-index: 2000;
+    position: relative;
+}
+
+#support-issue-form h2 {
+    font-size: 2em;
+    margin: 10px;
+}
+
+#support-issue-form .add-new,
+#support-issue-form #step-2,
+#support-issue-form #step-3 {
+    background-color: #f0f0f0;
+    background-image: -moz-linear-gradient(100% 100% 90deg, #d1d1d1, #fefefe);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fefefe), to(#d1d1d1));
+    padding: 5px;
+    border: 1px solid #ccc;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#support-issue-form .add-new {
+    display: block;
+    font-size: 25px;
+    color: #666;
+    text-decoration: none;
+}*/
+
+#support-issue-form {
+    background-color: #f0f0f0;
+    background-image: -moz-linear-gradient(100% 100% 90deg, #d1d1d1, #fefefe);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fefefe), to(#d1d1d1));
+    padding: 5px;
+    border: 1px solid #ccc;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+#support-issue-form #add-new-support-issue {
+    display: block;
+    font-size: 25px;
+    color: #666;
+    text-decoration: none;
+    margin: -5px;
+    padding: 5px;
+}
+
+#support-issue-form #add-new-support-issue:hover {
+    background-color: #ddd;
+    background-image: -moz-linear-gradient(100% 100% 90deg, #c1c1c1, #eee);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#eee), to(#c1c1c1));
+}
+
+#support-issue-form #add-new-support-issue span {
+    background: transparent right top no-repeat;
+    height: 40px;
+    line-height: 40px;
+    display: block;
+}
+
+#support-issue-form #add-new-support-issue.expand span {
+    background-image: url('../../modules/support/images/add-new.png');
+}
+
+#support-issue-form #add-new-support-issue.contract span {
+    background-image: url('../../modules/support/images/add-new-abort.png');
+}
+
+
+#support-issue-form #support-form {
+    display: none;
+}
+
+#support-issue-form #support-form fieldset {
+    border: 0;
+}
+
+#support-issue-form #support-form fieldset fieldset {
+    padding-left: 0;    
+    float: left;
+    clear: left;
+}
+
+#support-issue-form #support-form legend {
+    border-bottom: 1px solid #bbb;
+    margin-left: -10px;
+    margin-bottom: 10px;
+    width: 600px;
+    float: left;
+    clear: left !important;
+}
+
+#support-issue-form #support-form label {
+    width: 120px;
+    float: left;
+    clear: left !important;
+}
+
+#support-issue-form #support-form input,
+#support-issue-form #support-form textarea,
+#support-issue-form #support-form select {
+    width: 450px;
+    padding: 2px;
+    margin: 0;
+    float: left;
+    clear: none !important;
+}
+
+#support-issue-form #support-form input.error,
+#support-issue-form #support-form textarea.error,
+#support-issue-form #support-form select.error {
+    border: 1px solid #f00;
+}
+
+#support-issue-form #support-form label.error {
+    width: 450px;
+    margin-left: 150px;
+}
+
+#support-issue-form #support-form input#issue-critical {
+    width: auto;
+}
+
+#support-issue-form #support-form input.file {
+    width: auto;
+    display: block;
+    clear: left !important;
+}
+
+#support-issue-form #support-form .add-another {
+    display: block;
+    float: left;
+    clear: left;
+}
+/*
+#support-issue-form #issue-title {
+    width: 60%;
+}*/
+
+#support-issue-form #bug-related {
+    display: none;
+}
+
+
+.support-level-description {
+    margin-bottom: 20px;
+}
+
+
+/*.attachments input,
+.attachments a {
+    display: block;
+    float: right; 
+    width: 70%;
+}*/
+/*
+#support-issue-form .tooltip {
+    position: relative;
+    display: block;
+    float: right;
+    background: transparent url('../../modules/support/images/tooltip.png') left top no-repeat;
+    width: 20px;
+    height: 20px;
+    border: 0 !important;
+}
+
+#support-issue-form .tooltip span {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 20px;
+    z-index: 1001;
+    width: 400px;
+    padding: 10px;
+    border: 1px solid #666;
+    border-radius: 5px;
+    moz-border-radius: 5px;
+    background-color: #f5f5f5;
+    background-image: -moz-linear-gradient(100% 100% 90deg, #fff, #fff0aa);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff0aa), to(#fff));
+}*/
+
+#support-issue-form .tooltip {
+    width: 200px;
+    float: right;
+    padding: 10px;
+    border: 1px solid #666;
+    border-radius: 5px;
+    moz-border-radius: 5px;
+    background-color: #f5f5f5;
+    background-image: -moz-linear-gradient(100% 100% 90deg, #fff, #fff0aa);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff0aa), to(#fff));
+    margin-bottom: 10px;
+}
+
+#support-issue-form .tooltip h3 {
+    margin-top: 0;
+}
+
+/****************************
+SUPPORT ISSUE LIST
+****************************/
+
+/*#support-issue-list .control {
+    background-color: #fafafa;
+    overflow: hidden;
+    clear: both;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+*/
+
+#support-issue-list {
+    overflow: hidden;
+}
+
+#support-issue-list #issue-list {
+    float: right;
+    clear: right;
+    overflow: hidden;
+    width: 700px;
+}
+
+
+#support-issue-list .heading {
+    width: 690px;
+    padding: 5px;
+    float: right;
+}
+
+#support-issue-list .loading {
+    float: right;
+}
+
+#support-issue-list #navigation-header {
+    float: right;
+    clear: none;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+}
+
+#support-issue-list .menu.navigation {
+    background-color: #fafafa;
+    float: right;
+}
+/*
+#support-issue-list .control ul {
+    list-style: none;
+    float: right;
+    margin: 0;
+}
+
+#support-issue-list .control li {
+    float: right;
+    margin: 0 0 0 10px;
+}
+
+#support-issue-list .control .toggle-filter span {
+    margin-left: 10px;
+    color: #0f0;
+    font-weight: bold;
+}*/
+
+#support-issue-list table {
+    width: 700px;
+    float: right;
+}
+
+/*#support-issue-list tr.odd td {
+    background-color: #f7f7f7;
+}*/
+
+#support-issue-list td.hover:hover {
+    background-color: #dfdfdf !important;
+}
+
+#support-issue-list td.hover {
+    background-color: #f0f0f0 !important;
+}
+
+/*
+#support-issue-list tr.odd td {
+    background-color: #fff;
+    background-image: -moz-linear-gradient(100% 100% 90deg, #fff, #d8e1e7);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#d8e1e7), to(#fff));
+    padding-bottom: 10px;
+}
+
+#support-issue-list tr.even td {
+    background-color: #f5f5f5;
+    background-image: -moz-linear-gradient(100% 100% 90deg, #fff, #d8e1e7);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#d8e1e7), to(#fff));
+    padding-bottom: 10px;
+}
+
+#support-issue-list tr:hover td {
+    background-color: #ddd;
+    background-image: -moz-linear-gradient(100% 100% 90deg, #fff, #ccc);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ccc), to(#fff));
+}*/
+
+#support-issue-list tr.closed td {
+    opacity: 0.3;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+    filter: alpha(opacity=30);
+}
+/*
+#support-issue-list th {
+    background: #596a72;
+    background-image: -moz-linear-gradient(100% 100% 90deg, #d1d1d1, #fefefe);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fefefe), to(#d1d1d1));
+    padding: 4px;
+}*/
+
+#support-issue-list td {
+    vertical-align: top;
+}
+
+#support-issue-list .customer {
+    padding-left: 20px;
+    min-height: 15px;
+    display: block;
+}
+
+#support-issue-list .customer.silver {
+    background: url('../../modules/support/images/customer-silver-small.png') center left no-repeat;
+}
+
+#support-issue-list .customer.gold {
+    background: url('../../modules/support/images/customer-gold-small.png') center left no-repeat;
+}
+
+#support-issue-list .customer.platinum {
+    background: url('../../modules/support/images/customer-platinum-small.png') center left no-repeat;
+}
+
+#support-issue-list td.status.critical {
+    font-weight: bold;
+    color: #c00;
+}
+
+#support-issue-list td.assignee-1stline {
+    color: #00c;
+}
+
+#support-issue-list td.assignee-2ndline {
+    color: #c0c;
+}
+
+#support-issue-list .assignee-person {
+    margin-left: 5px;
+}
+
+#support-issue-list .description {
+    display: none;
+}
+
+#support-issue-list .num-of-comments {
+    color: #333;
+}
+
+#support-issue-list .num-of-comments .num {
+    font-weight: bold;
+}
+
+#support-issue-list .num-of-comments .meta {
+    font-size: 10px;
+    font-weight: normal;
+}
+
+.shortcuts {
+    float: right;
+}
+
+.shortcuts li {
+    list-style-type: none;
+    display: inline;
+    margin-left: 10px;
+}
+
+
+#filter {
+  width: 180px;
+  border:1px solid #d7d7d7;
+  background:#fff url('../../skins/advanced/standard/images/boxgradient.gif') repeat-x top left;
+  float: left;
+  clear: left;
+  padding: 5px;
+}
+
+#filter form select {
+    width: 80%;
+}
+
+#filter form fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: block;
+}
+
+#filter form label {
+    width: auto;
+    font-weight: normal;
+    padding: 0 !important;
+}
+
+#filter form select {
+    clear: both;
+}
+
+#filter .button {
+    margin: 0;
+}
+
+#filter .assigned-to-me {
+    float: left;
+    margin-left: 5px;
+    font-size: 0.9em;
+}
+
+#filter .filter-active {
+    color: #0c0;
+    margin-left: 10px;
+    font-size: 0.7em;
+}
+
+#special-message {
+  width: 180px;
+  border:1px solid #d7d7d7;
+  background:#fff url('../../skins/advanced/standard/images/boxgradient.gif') repeat-x top left;
+  float: left;
+  clear: left;
+  padding: 5px;
+  margin-bottom: 20px;
+}
+
+
+/****************************
+SUPPORT ISSUE SHOW
+****************************/
+
+#support-issue-show #issue-status {
+    overflow: hidden;
+    padding: 5px;
+    margin-bottom: 10px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#support-issue-show #issue-status.normal {
+    background-color: #f0f0f0;
+    background-image: -moz-linear-gradient(100% 100% 90deg, #fff, #eee);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#eee), to(#fff));
+    border: 1px solid #ddd;
+}
+
+#support-issue-show #issue-status.critical {
+    background-color: #b00;
+    color: #fff;
+}
+
+#support-issue-show #issue-status.closed {
+    background-color: #E6EFC2;
+    border: 1px solid #C6D880;
+    opacity: 0.3;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+    filter: alpha(opacity=30);
+}
+
+#support-issue-show #issue-status .status {
+    float: left;
+}
+
+#support-issue-show #issue-status .assignee {
+    float: right;
+}
+
+#support-issue-show #issue-status .status span,
+#support-issue-show #issue-status .assignee span {
+    font-size: 24px;
+}
+
+#support-issue-show #issue-status span.label {
+    margin-right: 5px;
+    filter:alpha(opacity=60);
+    -moz-opacity:0.6;
+    -khtml-opacity: 0.6;
+    opacity: 0.6;
+}
+
+#support-issue-show #issue-status .status *,
+#support-issue-show #issue-status .assignee * {
+    vertical-align: middle;
+}
+
+#support-issue-show #issue-status .assignee img {
+    margin-left: 10px;
+}
+
+#support-issue-show #issue-status .expand,
+#support-issue-show #issue-status .contract {
+    float: right;
+    width: 40px;
+    height: 40px;
+    margin-left: 10px;
+}
+
+#support-issue-show #issue-status .expand {
+    background: transparent url('../../modules/support/images/expand.png') right top no-repeat;
+}
+
+#support-issue-show #issue-status .contract {
+    background: transparent url('../../modules/support/images/contract.png') right top no-repeat;
+}
+
+#support-issue-show #issue-status .expand span,
+#support-issue-show #issue-status .contract span {
+    display: none;
+}
+
+#support-issue-show #issue-status .control-panel {
+    display: none;
+    background: #fff;
+    clear: both;
+    color: #000;
+    padding: 10px;
+    overflow: hidden;
+}
+
+#support-issue-show #issue-status .control-panel.expanded {
+    display: block;
+}
+
+#support-issue-show #issue-status .control-panel #change-status,
+#support-issue-show #issue-status .control-panel #change-assignee,
+#support-issue-show #issue-status .control-panel #change-result {
+    float: right;
+    clear: right;
+}
+
+#support-issue-show #issue-status .control-panel #change-status *,
+#support-issue-show #issue-status .control-panel #change-assignee *,
+#support-issue-show #issue-status .control-panel #change-result * {
+    float: right;
+    clear: right;
+    width: auto;
+}
+
+#support-issue-show h1 a {
+    margin-right: 10px;
+}
+
+#support-issue-show h1 .issue-type {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #666;
+    text-transform: uppercase;
+}
+
+#support-issue-show .byline {
+    color: #aaa;
+}
+
+#support-issue-show .customer {
+    margin-left: 5px;
+}
+
+#support-issue-show #enonic-tasks {
+    width: 600px;
+    border: 1px dotted #a00;
+}
+
+#support-issue-show #enonic-tasks {
+    background: #eef url('../../modules/support/images/bugs-background.png') right bottom no-repeat;
+}
+
+#support-issue-show #enonic-tasks fieldset {
+    border: 0;
+}
+
+#support-issue-show #enonic-tasks label,
+#support-issue-show #enonic-tasks ul {
+    display: block;
+    float: none;
+}
+
+#support-issue-show #enonic-tasks label {
+    font-size: 14px;
+}
+
+#support-issue-show #enonic-tasks .remove {
+    margin-left: 20px;
+}
+
+#support-issue-show #enonic-tasks .submit {
+    display: none;
+}
+
+#support-issue-show .description {
+    margin: 20px 0 30px 0;
+}
+
+#support-issue-show .description {  
+    overflow: hidden;
+    clear: both;
+}
+
+#support-issue-show .description > img {
+    float: left;
+}
+
+#support-issue-show .description > div{    
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    moz-border-radius: 5px;
+    overflow: hidden;
+    padding: 10px;
+    float: right;
+    width: 830px;
+    background-color: #eee !important;
+    background-image: -moz-linear-gradient(100% 100% 90deg, #fafafa, #eee) !important;
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#eee), to(#fafafa)) !important;
+}
+
+
+#support-issue-show #comments {
+    overflow: hidden;
+    clear: both;
+}
+
+
+#support-issue-show #comment-form {
+    
+}
+
+#support-issue-show #comment-form fieldset {
+    margin: 0 0 10px 0;
+    padding: 0;
+    border: 0;
+    clear: left;
+}
+
+#support-issue-show #comment-form label {
+    width: 120px;
+    float: left;
+    clear: left;
+}
+
+#support-issue-show #comment-form input,
+#support-issue-show #comment-form textarea,
+#support-issue-show #comment-form select {
+    margin: 0 0 10px 0;
+    float: left;
+    clear: left;
+}
+
+#support-issue-show #comment-form input,
+#support-issue-show #comment-form textarea {
+    width: 640px;
+    padding: 5px;
+}
+
+#support-issue-show #comment-form select {
+    width: 650px;
+}
+
+#support-issue-show #comment-form input.file {
+    width: auto;
+    display: block;
+}
+
+#support-issue-show #comment-form input.error,
+#support-issue-show #comment-form textarea.error,
+#support-issue-show #comment-form select.error {
+    border: 1px solid #f00;
+}
+
+#support-issue-show #comment-form label.error {
+    margin: 0;
+}
+
+#support-issue-show #comment-form .add-another {
+    display: block;
+    float: left;
+    clear: left;
+}
+
+#support-issue-show #comment-form fieldset.comment-text {
+    position: relative;
+    width: 652px;
+    float: left;
+}
+
+#support-issue-show #comment-form #predefined-answers {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 140px;
+}
+
+#support-issue-show #modify-issue-form fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+
+#support-issue-show h2 {
+    border-bottom: 1px solid #bbb;
+    margin-bottom: 10px;
+}
+
+#support-issue-show #comments h3 span {
+    background: none !important;
+}
+
+#support-issue-show #comments ul {
+    margin: 0;
+    overflow: hidden;
+    list-style: none;
+}
+
+#support-issue-show #comments .comment {
+    overflow: hidden;
+    /*clear: both;*/
+    display:block;
+    width: 840px;
+    margin-bottom: 5px;
+}
+
+#support-issue-show #comments .comment.customer,
+#support-issue-show #comments .comment.issue-owner {
+    float: left !important;
+}
+
+#support-issue-show #comments .comment.enonic {
+    float: right;
+
+}
+
+/*#support-issue-show #comments .comment .message {    
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    moz-border-radius: 5px;
+    overflow: hidden;
+    padding: 10px;
+    clear: both;
+}
+
+#support-issue-show #comments .comment.customer .message,
+#support-issue-show #comments .comment.issue-owner .message{  
+    background-color: #eee !important;
+    background-image: -moz-linear-gradient(100% 100% 90deg, #fafafa, #eee) !important;
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#eee), to(#fafafa)) !important;
+}
+
+#support-issue-show #comments .comment.enonic .message {    
+    background-color: #f0f5fb;
+    background-image: -moz-linear-gradient(100% 100% 90deg, #f5f9fc, #f0f5fb);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#f0f5fb), to(#f5f9fc));
+}
+
+
+#support-issue-show #comments .comment.internal .message {
+    opacity: 0.7;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
+    filter: alpha(opacity=70);
+    border: 1px dashed #bbb;
+    background: #fafafa none;
+}*/
+
+#support-issue-show #comments .comment .message {  
+    overflow: hidden;
+    clear: both;
+}
+
+#support-issue-show #comments .comment .message > div{    
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    moz-border-radius: 5px;
+    overflow: hidden;
+    padding: 10px;
+}
+
+#support-issue-show #comments .comment.customer .message > div,
+#support-issue-show #comments .comment.issue-owner .message > div {  
+    background-color: #eee !important;
+    background-image: -moz-linear-gradient(100% 100% 90deg, #fafafa, #eee) !important;
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#eee), to(#fafafa)) !important;
+}
+
+#support-issue-show #comments .comment.enonic .message > div{    
+    background-color: #f0f5fb;
+    background-image: -moz-linear-gradient(100% 100% 90deg, #f5f9fc, #f0f5fb);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#f0f5fb), to(#f5f9fc));
+}
+
+
+#support-issue-show #comments .comment.internal .message > div {
+    opacity: 0.7;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
+    filter: alpha(opacity=70);
+    border: 1px dashed #bbb;
+    background: #fafafa none;
+}
+
+
+#support-issue-show #comments .comment-type label,
+#support-issue-show #comments .comment-type input {
+    clear: none !important;
+    margin-right: 10px;
+    width: auto;
+}
+
+#support-issue-show #comments .comment.customer .avatar,
+#support-issue-show #comments .comment.issue-owner .avatar{
+    float: left !important;
+    margin: 0 10px 0 0 !important;
+}
+
+#support-issue-show #comments .comment.enonic .avatar {
+    float: right;
+    margin-left: 10px;
+}
+
+#support-issue-show #comments .comment .meta {
+    font-style: italic;
+    font-size: 0.9em;
+    color: #666;
+    padding-right: 5px;
+    margin-bottom: 3px;
+}
+
+#support-issue-show #comments .comment .meta span {
+    margin-left: 5px;
+}
+
+#support-issue-show #comments .comment.customer .meta,
+#support-issue-show #comments .comment.issue-owner .meta{
+    float: left !important;
+}
+
+#support-issue-show #comments .comment.enonic .meta {
+    float: right;
+}
+
+
+#support-issue-show #comments .comment .message > div{
+    width: 750px;
+}
+
+#support-issue-show #comments .comment.customer .message > div,
+#support-issue-show #comments .comment.issue-owner .message > div{
+    float: right !important;
+}
+
+#support-issue-show #comments .comment.enonic .message > div {
+    float: left;
+}
+
+
+#support-issue-show #comments .comment ul {
+    list-style: disc inside;
+}
+
+#support-issue-show #comments .comment .issue-status {
+    float: right;
+    font-size: 10px;
+}
+
+
+
+#support-issue-show .tooltip {
+    width: 200px;
+    float: right;
+    clear: right;
+    padding: 10px;
+    border: 1px solid #666;
+    border-radius: 5px;
+    moz-border-radius: 5px;
+    background-color: #f5f5f5;
+    background-image: -moz-linear-gradient(100% 100% 90deg, #fff, #fff0aa);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff0aa), to(#fff));
+    margin-bottom: 10px;
+}
+
+#support-issue-show .tooltip h3 {
+    margin-top: 0;
+}
+
+
+
+#support-stats #select-person select,
+#support-stats #select-person span {
+    float: right;
+}
+
+#support-stats .chart {
+    float: left;
+}
+
+#enonic-tasks form {
+  overflow: hidden;
+}
+
+a.button {
+    background: transparent url('../../skins/advanced/standard/images/button-background.gif') top right no-repeat;
+    display: block;
+    float: left;
+    font-size: 13px;
+    font-weight: bold;
+    height: 30px;
+    text-align: center;
+    text-decoration: none !important;
+    margin-right: 10px;
+}
+
+a.button span {
+    background: transparent url('../../skins/advanced/standard/images/button-background.gif') top left no-repeat;
+    display: block;
+    line-height: 22px;
+    padding: 3px 10px 5px 10px;
+    color: #fff;
+}
+
+
+/****************************
+SUPPORT TEAM LIST
+****************************/
+
+#support-team-list ol {
+    list-style: none inside;
+    margin: 20px 0 0 0;
+}
+
+#support-team-list li {
+    overflow: hidden;
+    clear: both;
+}
+
+#support-team-list img.portrait {
+    float: left;
+    margin: 0 20px 20px 0;
+}
+
+
+
+/****************************
+SUPPORT ADMIN
+****************************/
+
+#support-admin td {
+    vertical-align: top;
+}
+
+#support-admin .info {
+    color: #000;
+}
+
+#support-admin .info h4 {
+    font-weight: bold;
+}
+
+#support-admin .info span {
+    display: block;
+}
+
+
+/****************************
+IE8 COMPATABILITY MODE HACK
+****************************/
+
+#support-issue-show #comments ul {
+    *width: 910px !important; /* IE 7 CSS */
+    _width: 910px !important; /* IE 6 CSS */
+}
+
+/* Localized */

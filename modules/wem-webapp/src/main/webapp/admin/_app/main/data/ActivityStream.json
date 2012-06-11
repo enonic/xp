@@ -1,0 +1,42 @@
+{
+    "total": 999,
+    "activitystreams": [
+        {
+            "displayName":"Morten Eriksen",
+            "photo": "resources/images/x-user.png",
+            "location": "Admin",
+            "action": "Created article",
+            "description": "99 Luftballons",
+            "prettyDate": "2 minutes ago",
+            "birthday": false
+        },
+        {
+            "displayName":"Viktor Fedorov",
+            "location": "Admin",
+            "photo": "_app/main/images/activity-stream/viktor.jpeg",
+            "action": "Started user store sync",
+            "description": "System",
+            "prettyDate": "5 minutes ago",
+            "birthday": true
+        },
+        {
+            "displayName":"Pavel Milkevich",
+            "photo": "_app/main/images/activity-stream/pavel.jpeg",
+            "location": "Admin",
+            "action": "Said",
+            "description": "Going to be nice today!",
+            "prettyDate": "2 hours ago",
+            "birthday": false
+        },
+
+        {
+            "displayName":"Hein Haraldsen",
+            "photo": "_app/main/images/activity-stream/hein.jpg",
+            "location": "Admin",
+            "action": "Accidently deleted site",
+            "description": "Intranett",
+            "prettyDate": "2 hours ago",
+            "birthday": false
+        }
+    ]
+}

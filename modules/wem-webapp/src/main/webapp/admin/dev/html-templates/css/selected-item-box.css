@@ -1,0 +1,109 @@
+/* Generic */
+.cms-selected-item-box {
+    float: left;
+    display: inline-block;
+}
+
+.cms-selected-item-box .left {
+    float: left;
+}
+
+.cms-selected-item-box .center {
+    float: left;
+}
+
+.cms-selected-item-box .right {
+    float: left;
+}
+
+.cms-selected-item-box.small .right a:hover,
+.cms-selected-item-box.large .right a:hover {
+    border-color: #c0c0c0;
+}
+
+
+/* Large */
+.cms-selected-item-box.large {
+    border-radius: 8px;
+    margin: 0 5px 5px 0;
+    padding: 8px;
+}
+
+.cms-selected-item-box.large .left {
+    margin-right: 16px;
+}
+
+.cms-selected-item-box.large .left img {
+    width: 40px;
+    height: 40px;
+}
+
+.cms-selected-item-box.large .center {
+    margin-right: 16px;
+}
+
+.cms-selected-item-box.large .center h2 {
+    margin: 2px 0 0 0;
+    font-size: 16px;
+}
+
+.cms-selected-item-box.large .center p {
+    margin: 0;
+}
+
+.cms-selected-item-box.large .right {
+    margin: 8px 6px 0 0;
+}
+
+.cms-selected-item-box.large .right a {
+    width: 24px;
+    height: 24px;
+    display: block;
+    border: 1px solid TRANSPARENT;
+    padding: 3px;
+    background: transparent url(../../../resources/images/cross.png) 3px 3px no-repeat;
+}
+
+
+/* Small */
+.cms-selected-item-box.small {
+    margin: 0 3px 3px 0;
+    border-radius: 5px;
+    padding: 6px;
+}
+
+.cms-selected-item-box.small .left {
+    margin-right: 8px;
+}
+
+.cms-selected-item-box.small .left img {
+    width: 16px;
+    height: 16px;
+}
+
+.cms-selected-item-box.small .center {
+    margin-right: 8px;
+}
+
+.cms-selected-item-box.small .center h2 {
+    font-size: 11px;
+    font-weight: normal;
+    margin: 0;
+}
+
+.cms-selected-item-box.small .center p {
+    margin: 0;
+}
+
+.cms-selected-item-box.small .right {
+    margin: 2px 3px 0 0;
+}
+
+.cms-selected-item-box.small .right a {
+    width: 14px;
+    height: 14px;
+    display: block;
+    border: 1px solid TRANSPARENT;
+    padding: 2px;
+    background: transparent url(../../../resources/images/cross-sm.png) 2px 2px no-repeat;
+}

@@ -1,0 +1,85 @@
+<html>
+<head>
+    <title>Enonic CMS Admin</title>
+    <link rel="stylesheet" type="text/css" href="../../resources/lib/ext/resources/css/ext-all.css">
+    <link rel="stylesheet" type="text/css" href="../../resources/css/main.css">
+    <style type="text/css">
+        h1 {
+            font-size: 21px;
+            margin-bottom: .5em;
+            font-weight: normal;
+        }
+
+        h2 {
+            font-size: 18px;
+            margin-bottom: .5em;
+            font-weight: normal;
+        }
+
+        .icon-browse {
+            background-image: url("../../resources/images/folder_explore.png");
+        }
+
+        .icon-upload {
+            background-image: url("../../resources/images/up-icon.png");
+        }
+
+        .icon-remove {
+            background-image: url("../../resources/images/delete.png");
+        }
+    </style>
+    <script type="text/javascript" src="../../resources/lib/plupload/js/plupload.full.js"></script>
+    <script type="text/javascript" src="../../resources/lib/ext/ext-all-debug.js"></script>
+    <script type="text/javascript">
+        Ext.Loader.setConfig({
+            enabled: true,
+            paths: {
+                'Admin': '../../resources/app'
+            }
+        });
+
+        Ext.application({
+            name: 'App',
+
+            controllers: [
+            ],
+
+            requires: [
+                'Admin.plugin.fileupload.PhotoUploadButton',
+                'Admin.plugin.fileupload.FileUploadGrid',
+                'Admin.plugin.fileupload.PhotoUploadWindow'
+            ],
+
+            launch: function() {
+                Ext.create('Ext.container.Viewport', {
+                    layout: 'border',
+                    padding: 5,
+                    items: [
+                        {
+                            region: 'center',
+                            xtype: 'panel',
+                            defaults: {
+                                margin: '15 15 30 15'
+                            },
+                            autoScroll: true,
+                            items: [
+                                {
+                                    xtype: 'container',
+                                    margin: '15 15 15 15',
+                                    html: '<h1>File Upload</h1><div>File upload components using <a href="http://www.plupload.com/">Plupload</a></div><p>Uploaded photo is not shown in this example at the moment.</p>'
+                                }
+
+                            ]
+                        }
+                    ]
+                });
+            }
+        });
+
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>

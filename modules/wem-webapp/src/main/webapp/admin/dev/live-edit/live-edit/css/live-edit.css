@@ -1,0 +1,161 @@
+.live-edit-empty-region-placeholder,
+.live-edit-dd-drop-target-placeholder,
+#live-edit-tooltip {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 11px;
+    font: 11px Arial;
+    vertical-align: baseline;
+}
+
+
+/* Overlay */
+
+#live-edit-canvas {
+    position: absolute;
+    display: none;
+    top: 0; left: 0;
+}
+
+/* Selector */
+
+#live-edit-highlighter {
+    position: absolute;
+    top: -5000px; left: -5000px;
+    cursor: move;
+}
+
+.live-edit-window-highlighter {
+    border: 2px dashed #000;
+}
+
+.live-edit-window-selected {
+    border: 2px solid #666;
+}
+
+.live-edit-region-highlighter {
+    border: 2px dashed blue;
+}
+
+.live-edit-region-selected {
+    border: 2px solid blue;
+}
+
+.live-edit-position-relative {
+    position: relative;
+}
+
+/* Placeholders */
+
+.live-edit-empty-region-placeholder {
+    border: 2px dashed #add8e6;
+    padding: 28px;
+    cursor: default;
+    color: #add8e6;
+    font-size: 20px;
+    text-align: center;
+    background-color: #fff;
+}
+
+.live-edit-empty-region-placeholder-hover {
+    border: 2px dashed #0000ee;
+}
+
+.live-edit-empty-window-placeholder {
+    border: 1px dashed #aaa;
+    padding: 11px;
+    color: #d3d3d3;
+    font-size: 11px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.live-edit-dd-drop-target-placeholder {
+    border: 2px dashed #000;
+    padding: 28px;
+    color: #000;
+    font-size: 20px;
+    text-align: center;
+    background-color: #eee;
+    margin-bottom: 10px;
+}
+
+/* Tooltip */
+
+#live-edit-tooltip {
+    position:absolute;
+    cursor: default;
+    top: -5000px;
+    left: -5000px;
+    border: 1px solid #515e69;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    padding: 9px 20px;
+    text-align: center;
+    font-size: 11px;
+    line-height: 1.3em;
+    background: #202933;
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(#3c4a58), to(#202933));
+    background: -moz-linear-gradient(#3c4a58, #202933);
+    background: -o-linear-gradient(#3c4a58, #202933);
+    background: linear-gradient(#3c4a58, #202933);
+}
+
+#live-edit-tooltip-arrow-border {
+    border-color: #515e69 transparent transparent transparent;
+    border-style: solid;
+    border-width: 10px;
+    height: 0;
+    width: 0;
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    margin-left: -10px;
+}
+
+#live-edit-tooltip-arrow {
+    border-color: #202933 transparent transparent transparent;
+    border-style: solid;
+    border-width: 10px;
+    height: 0;
+    width: 0;
+    position: absolute;
+    bottom: -19px;
+    left: 50%;
+    margin-left: -10px;
+}
+
+#live-edit-tooltip-type-text {
+    color: #fff;
+}
+
+#live-edit-tooltip-name-text {
+    color: #87cefa;
+}
+
+/* Toolbar */
+
+#live-edit-toolbar {
+    width: 60px;
+    position: absolute;
+    top: -5000px; left: -5000px;
+    border: 1px solid #00008b;
+    padding: 5px;
+    background-color: #add8e6;
+}
+
+/* DD */
+
+#live-edit-drag-helper-status-icon {
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+#live-edit-dd-drag-helper {
+    border: 1px solid #c6c6c6;
+    background-color: #fff;
+    font-size: 11px;
+    box-shadow: 2px 2px 2px 0 #888888;
+}

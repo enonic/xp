@@ -1,0 +1,10 @@
+.cms-user-info .cms-user-photo {
+    margin-right: 10px;
+}
+
+.cms-user-info img {
+    width: 48px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}

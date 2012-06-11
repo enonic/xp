@@ -1,0 +1,122 @@
+<html>
+<head>
+    <title>HTML Templates - Delete Item Form</title>
+    <link rel="stylesheet" type="text/css" href="../../resources/lib/ext/resources/css/ext-all.css">
+    <link rel="stylesheet" type="text/css" href="../../resources/css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/generic.css">
+    <link rel="stylesheet" type="text/css" href="css/generic-user-info.css">
+    <link rel="stylesheet" type="text/css" href="css/delete-item-form.css">
+
+    <script type="text/javascript" src="../../resources/lib/ext/ext-all.js"></script>
+
+    <script type="text/javascript">
+
+        // One
+
+        function showDeleteOne()
+        {
+            var tpl1 = document.getElementById('tpl1').innerHTML;
+            var win1 = Ext.create('Ext.window.Window', {
+                title: 'Delete User',
+                width: 350,
+                layout: 'fit',
+                plain: true,
+                modal: true,
+                border: false,
+                html: new Ext.XTemplate(tpl1).apply({displayName: 'Morten Eriksen', qualifiedName: 'enonic\\mer', email: 'mer@enonic.com'}),
+                buttons: [
+                    {
+                        text: 'Cancel',
+                        handler: function() {
+                            this.up('window').close();
+                        }
+                    },
+                    {
+                        text: 'Delete User'
+                    }
+                ]
+            }).show();
+
+        }
+
+
+
+        // Many
+
+        function showDeleteMany()
+        {
+            var tpl2 = document.getElementById('tpl2').innerHTML;
+            var win2 = Ext.create('Ext.window.Window', {
+                title: 'Delete Items?',
+                width: 340,
+                layout: 'fit',
+                plain: true,
+                border: false,
+                modal: true,
+                html: new Ext.XTemplate(tpl2).apply({displayName: 'Morten Eriksen', qualifiedName: 'enonic\\mer', email: 'mer@enonic.com'}),
+                buttons: [
+                    {
+                        text: 'Cancel',
+                        handler: function() {
+                            this.up('window').close();
+                        }
+                    },
+                    {
+                        text: 'Delete'
+                    }
+                ]
+            }).show();
+        }
+
+    </script>
+</head>
+<body>
+
+<h2 class="header">Delete Confirmation Message (1)</h2>
+
+<div id="tpl1">
+
+    <!-- Template START -->
+    <div class="cms-delete-user-confirmation-message">
+        <div class="cms-user-info clearfix">
+            <div class="cms-user-photo cms-left">
+                <img alt="User" src="../../resources/images/x-user.png"/>
+            </div>
+            <div class="cms-left">
+                {displayName}<br/>
+                ({qualifiedName})<br/>
+                <a href="{email}:">{email}</a>
+            </div>
+        </div>
+    </div>
+    <!-- Template END -->
+
+</div>
+
+<p class="clearfix" style="margin-top: 10px">
+    <input type="button" onclick="showDeleteOne();" value="Show in Window"/>
+</p>
+
+<h2 class="header">Delete Confirmation Message (&gt; 1)</h2>
+
+<div id="tpl2" class="clearfix">
+
+    <!-- Template START -->
+    <div class="cms-delete-user-confirmation-message">
+        <div class="cms-question cms-left" style="margin-right: 10px">
+        </div>
+        <div class="cms-left" style="margin-top:5px">
+            Are you sure you want to delete the selected 500 items?
+        </div>
+    </div>
+    <!-- Template END -->
+
+</div>
+
+
+<p class="clearfix" style="margin-top: 10px">
+    <input type="button" onclick="showDeleteMany();" value="Show in Window"/>
+</p>
+
+</body>
+</html>

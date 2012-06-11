@@ -1,7 +1,7 @@
 package com.enonic.wem.web.jsp.site;
 
 final class SiteBeanImpl
-    implements Comparable<SiteBeanImpl>
+    implements SiteBean, Comparable<SiteBeanImpl>
 {
     private int key;
 

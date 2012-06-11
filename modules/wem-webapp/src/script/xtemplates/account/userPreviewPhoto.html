@@ -1,0 +1,9 @@
+<div class="cms-user-photo west cms-left">
+    <div class="photo-placeholder">
+        <tpl if="name==='admin' && builtIn===true"><img src="resources/images/icons/128x128/superhero.png" alt="{name}"/></tpl>
+        <tpl if="name==='anonymous' && builtIn===true"><img src="resources/images/icons/128x128/ghost.png" alt="{displayName}"/></tpl>
+        <tpl if="type==='role' && builtIn===true && name!=='anonymous'"><img src="resources/images/icons/128x128/masks.png" alt="{displayName}"/></tpl>
+        <tpl if="type==='user' && (!builtIn)"><img src="data/user/photo?key={key}&def=admin/resources%2Fimages%2Ficons%2F256x256%2Fdummy-user.png" alt="{displayName}"/></tpl>
+        <tpl if="type==='group'"><img src="resources/images/icons/128x128/group.png" alt="{displayName}"/></tpl>
+    </div>
+</div>

@@ -1,0 +1,53 @@
+<html>
+<head>
+    <title>Enonic CMS Admin</title>
+    <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/ext-all.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/main.css">
+    <script type="text/javascript" src="resources/lib/ext/ext-all.js"></script>
+    <script type="text/javascript" src="setup.js"></script>
+
+    <script type="text/javascript">
+
+        Ext.Loader.setConfig({
+            enabled: true,
+            paths: {
+                'App' : '_app/property/js',
+                'Common' : 'common/js'
+            }
+        });
+
+        Ext.application({
+            name: 'App',
+            appFolder: '_app/property/js',
+
+            controllers: [
+                'PropertyController'
+            ],
+
+            requires: [
+                'App.view.GridPanel'
+            ],
+
+
+            launch: function() {
+                Ext.create('Ext.container.Viewport', {
+                    layout: 'border',
+                    padding: 5,
+
+                    items: [
+                        {
+                            region: 'center',
+                            xtype: 'propertyGrid'
+                        }
+                    ]
+                });
+            }
+
+        });
+
+    </script>
+
+</head>
+<body>
+</body>
+</html>
