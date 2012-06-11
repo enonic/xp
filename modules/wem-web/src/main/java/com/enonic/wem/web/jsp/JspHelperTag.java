@@ -20,7 +20,6 @@ public final class JspHelperTag
         throws JspException
     {
         final JspHelperImpl helper = new JspHelperImpl();
-        helper.setServletContext( this.pageContext.getServletContext() );
         helper.setServletRequest( (HttpServletRequest) this.pageContext.getRequest() );
 
         this.pageContext.setAttribute( this.var, helper );

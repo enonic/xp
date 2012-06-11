@@ -9,6 +9,4 @@ public interface JspHelper
     public String createUrl( String path );
 
     public String ellipsis( String text, int length );
-
-    public <T> T getBean( Class<T> type );
 }
