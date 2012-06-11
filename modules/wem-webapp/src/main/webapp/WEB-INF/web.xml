@@ -30,6 +30,12 @@
   </servlet>
 
   <servlet>
+    <servlet-name>rest2</servlet-name>
+    <servlet-class>com.enonic.wem.web.rest2.JaxRsServlet</servlet-class>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+
+  <servlet>
     <servlet-name>dav</servlet-name>
     <servlet-class>com.enonic.cms.web.webdav.SimpleDavServlet</servlet-class>
     <load-on-startup>3</load-on-startup>
@@ -43,6 +49,11 @@
   <servlet-mapping>
     <servlet-name>rest</servlet-name>
     <url-pattern>/admin/data/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>rest2</servlet-name>
+    <url-pattern>/admin/data2/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>

@@ -1,0 +1,19 @@
+{
+    "total":2,
+    "timezones":[
+        {
+            "id":"UTC",
+            "humanizedId":"UTC",
+            "shortName":"UTC",
+            "name":"Coordinated Universal Time",
+            "offset":"+00:00"
+        },
+        {
+            "id":"EST",
+            "humanizedId":"EST",
+            "shortName":"EST",
+            "name":"Eastern Standard Time",
+            "offset":"+05:00"
+        }
+    ]
+}
