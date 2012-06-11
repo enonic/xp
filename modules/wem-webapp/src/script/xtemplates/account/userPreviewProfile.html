@@ -1,0 +1,19 @@
+<div>
+    <tpl for=".">
+        <fieldset class="x-fieldset x-fieldset-default">
+            <legend class="x-fieldset-header x-fieldset-header-default">
+                <div class="x-component x-fieldset-header-text x-component-default">{title}</div>
+            </legend>
+            <table>
+                <tbody>
+                <tpl for="fields">
+                    <tr>
+                        <td class="label">{title}</td>
+                        <td>{value}</td>
+                    </tr>
+                </tpl>
+                </tbody>
+            </table>
+        </fieldset>
+    </tpl>
+</div>

@@ -1,0 +1,147 @@
+[
+    {
+        "text": "Shortcut",
+        "expanded": true,
+        "children": [
+            {
+                "text": "docs",
+                "leaf": true
+            },
+            {
+                "text": "Site",
+                "expanded": true,
+                "children": [
+                    {
+                        "text": "Enonic.com (en)",
+                        "leaf": true
+                    },
+                    {
+                        "text": "Intranet",
+                        "leaf": true
+                    },
+                    {
+                        "text": "Publisering",
+                        "leaf": true
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "text": "Folder",
+        "expanded": true,
+        "children": [
+            {
+                "text": "News",
+                "leaf": true
+            },
+            {
+                "text": "Persons",
+                "leaf": true
+            }
+        ]
+    },
+    {
+        "text": "Structured",
+        "expanded": true,
+        "children": [
+            {
+                "text": "Discussion",
+                "leaf": true
+            },
+            {
+                "text": "Result",
+                "leaf": true
+            }
+        ]
+    },
+    {
+        "text": "Media",
+        "expanded": true,
+        "children": [
+            {
+                "text": "unknown",
+                "expanded": true,
+                "children": [
+
+                ]
+            },
+            {
+                "text": "Audio",
+                "expanded": true,
+                "children": [
+
+                ]
+            },
+            {
+                "text": "Image",
+                "expanded": true,
+                "children": [
+
+                ]
+            },
+            {
+                "text": "Video",
+                "expanded": true,
+                "children": [
+
+                ]
+            },
+            {
+                "text": "Document",
+                "expanded": true,
+                "children": [
+
+                ]
+            },
+            {
+                "text": "Presentation",
+                "expanded": true,
+                "children": [
+
+                ]
+            },
+            {
+                "text": "Spreadsheet",
+                "expanded": true,
+                "children": [
+
+                ]
+            },
+            {
+                "text": "XML",
+                "expanded": true,
+                "children": [
+
+                ]
+            },
+            {
+                "text": "HTML",
+                "expanded": true,
+                "children": [
+
+                ]
+            },
+            {
+                "text": "Archive",
+                "expanded": true,
+                "children": [
+
+                ]
+            }
+        ]
+    },
+    {
+        "text": "Form",
+        "expanded": true,
+        "children": [
+            {
+                "text": "Response",
+                "expanded": true,
+                "children": [
+
+                ]
+            }
+        ]
+    }
+]

@@ -1,0 +1,39 @@
+{"username": "donald", "email": "donald@andeby.com", "key": "5EAE63FC449D17F8FF3102E128B0D90F2EE2F3CE", "displayName": "Donald Duck", "userStore": "enonic", "userInfo": {
+    "firstName": "Donald",
+    "lastName": "Duck",
+    "middleName": null,
+    "birthday": null,
+    "country": null,
+    "description": null,
+    "initials": null,
+    "globalPosition": null,
+    "htmlEmail": null,
+    "locale": null,
+    "nickName": "Selvstendig n¾ringsdrivende",
+    "personalId": null,
+    "memberId": null,
+    "organization": "Selvstendig n¾ringsdrivende",
+    "prefix": null,
+    "suffix": null,
+    "title": null,
+    "homePage": null,
+    "mobile": "1346879",
+    "phone": null,
+    "fax": null,
+    "gender": null,
+    "addresses": [],
+    "timezone": null
+}, "photo": null, "name": "donald", "qualifiedName": "enonic\\donald", "lastModified": "2010-10-27 15:39:48", "hasPhoto": true, "builtIn": false, "lastLogged": "01-01-2001", "groups":
+        [], "graph": [
+    {
+        "id": "1338381852323_5EAE63FC449D17F8FF3102E128B0D90F2EE2F3CE",
+        "name": "Donald Duck",
+        "data": {
+            "builtIn": "false",
+            "type": "user",
+            "key": "5EAE63FC449D17F8FF3102E128B0D90F2EE2F3CE",
+            "name": "donald"
+        },
+        "adjacencies": []
+    }
+], "created": "13-09-1998", "isEditable": true, "type": "user"}

@@ -1,0 +1,52 @@
+/* Only used for the templates example pages */
+body {
+    padding: 10px;
+}
+
+h1.header {
+    font: 22px Arial;
+}
+
+h2.header {
+    font: 16px Arial;
+    margin: 1em 0;
+}
+
+.divider {
+    margin: 40px 0;
+    border: 1px solid gray
+}
+
+.clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+#templates-index ul {
+    margin-left: 34px
+}
+
+templates-index ul li {
+   list-style: disc;
+}
+
+/* END: Only used for the templates example pages */
+
+
+.cms-left {
+    float: left;
+}
+
+.cms-right {
+    float: right;
+}
+
+.cms-question {
+    width: 32px;
+    height: 32px;
+    background: TRANSPARENT url("../../../resources/lib/ext/resources/themes/images/default/shared/icon-question.gif") no-repeat;
+}

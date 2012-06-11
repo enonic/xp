@@ -1,0 +1,190 @@
+#cms-user-preview-panel {
+}
+
+/*--- Generic ---*/
+
+.cms-user-preview-panel .x-fieldset-header {
+    border-bottom: 1px solid #F0F0F0;
+    display: block;
+    width: 100%;
+    padding: 0 15px;
+}
+
+.cms-user-preview-panel .x-fieldset-header-text {
+    color: #555;
+    font-weight: bold;
+    font-size: 12px;
+    float: none;
+}
+
+.cms-user-preview-panel .x-fieldset {
+    border: 0 none;
+    padding: 0;
+    margin: 0 0 20px;
+}
+
+.cms-user-preview-panel .x-fieldset table {
+    margin: 0 15px;
+}
+
+.cms-user-preview-panel,
+.cms-user-preview-panel td,
+.cms-user-preview-panel th {
+    font-size: 11px;
+}
+
+.cms-user-preview-panel h1 {
+    margin-bottom: 4px;
+    font-size: 26px;
+    font-weight: normal;
+
+}
+
+.cms-user-preview-panel td,
+.cms-user-preview-panel th {
+    padding: 1px;
+    text-align: left;
+}
+
+.cms-user-preview-panel ul {
+    margin: 0;
+}
+
+.cms-user-preview-panel th {
+    font-weight: bold;
+    color: #555;
+}
+
+.cms-user-preview-panel td.label {
+    width: 100px;
+    color: #777;
+}
+
+.cms-user-preview-panel .photo-placeholder img {
+    width: 100px;
+    height: 100px;
+}
+
+.cms-user-preview-panel .center {
+    border-left: 1px solid #f0f0f0;
+    border-right: 1px solid #f0f0f0;
+}
+
+.cms-user-preview-panel .center,
+.cms-user-preview-panel .center th,
+.cms-user-preview-panel .center td {
+    font-size: 12px;
+}
+
+.cms-user-preview-panel .center th,
+.cms-user-preview-panel .center td {
+    padding: 2px;
+}
+
+.cms-user-preview-panel .center .email {
+    color: #777;
+}
+
+.cms-user-preview-panel .center .container {
+    margin: 5px 10px 5px 10px;
+}
+
+.cms-user-preview-panel .east .container {
+    margin-bottom: 20px;
+}
+
+.cms-user-preview-panel li.user-el {
+    height: 32px;
+    margin: 10px 0 0;
+    padding: 10px 35px;
+    font-weight: bold;
+    font-size: 15px;
+    background: url(/main/webapp/admin/resources/images/icons/32x32/user.png) no-repeat;
+}
+
+.cms-user-preview-panel li.group-el {
+    height: 32px;
+    margin: 10px 0 0;
+    padding: 10px 35px;
+    font-weight: bold;
+    font-size: 15px;
+    background: url(/main/webapp/admin/resources/images/icons/32x32/group.png) no-repeat;
+}
+
+/*****  Tabs strip  *****/
+
+.cms-user-preview-panel .x-tab-bar-strip {
+    top: 40px !important; /* Default value is 20, we add 20 = 40 */
+    display: none;
+}
+
+.cms-user-preview-panel .x-tab-bar {
+    background: none #f0f0f0;
+    margin: 0 0 20px;
+    border: 0 none;
+}
+
+.cms-user-preview-panel .x-tab-bar * {
+    background: none transparent !important;
+    border: 0 none !important;
+}
+
+.cms-user-preview-panel .x-tab-bar .x-tab-bar-body {
+    height: 43px !important; /* Default value is 23, we add 20 = 43 */
+    border: 0 none !important; /* Overides the border that appears on resizing the grid */
+}
+
+.cms-user-preview-panel .x-tab-bar .x-tab-bar-body .x-box-inner {
+    height: 41px !important; /* Default value is 21, we add 20 = 41 */
+}
+
+.cms-user-preview-panel .x-tab-bar .x-tab-bar-body .x-box-inner .x-tab {
+    height: 41px !important; /* Default value is 21, we add 20 = 41 */
+    -webkit-box-shadow: none;
+    -o-box-shadow: none;
+    box-shadow: none;
+}
+
+.cms-user-preview-panel .x-tab-bar .x-tab button {
+    height: 33px !important; /* Default value 13, we add 20 = 33 */
+    line-height: 33px !important; /* Default value 13, we add 20 = 33 */
+    font-size: 12px;
+    color: #777;
+    font-weight: normal;
+}
+
+.cms-user-preview-panel .x-tab-bar .x-tab-active button {
+    color: #000;
+}
+
+.cms-user-preview-panel .x-panel-body-default {
+    border: 0 none;
+}
+
+fieldset.cms-memberships-container {
+    margin-bottom: 0 !important;
+}
+
+/*****  Places Tab  *****/
+
+.cms-user-preview-panel .nodata {
+    text-align: center;
+    font-size: 21px;
+    font-weight: normal;
+    color: #ccc;
+    margin: 20px;
+}
+.cms-user-preview-panel .address {
+    margin: 15px;
+}
+.cms-user-preview-panel .address  h3 {
+    margin: 0 15px;
+}
+.cms-user-preview-panel .address .body {
+    padding: 15px;
+    border: 1px solid #ccc;
+    background: #f5f5f5;
+}
+.cms-user-preview-panel .address .body table {
+    margin: 0;
+}

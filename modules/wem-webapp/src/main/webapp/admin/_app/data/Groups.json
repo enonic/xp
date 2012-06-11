@@ -1,0 +1,47 @@
+{
+    "total": 6,
+    "groups": [
+        {
+            "key": 1,
+            "name": "Authenticated Users",
+            "userStore": "default",
+            "memberCount": "10",
+            "restrictedEnrollment": true
+        },
+        {
+            "key": 2,
+            "name": "Userstore Administrators",
+            "userStore": "default",
+            "memberCount": "5",
+            "restrictedEnrollment": true
+        },
+        {
+            "key": 3,
+            "name": "Contributors",
+            "userStore": "default",
+            "memberCount": "7",
+            "restrictedEnrollment": true
+        },
+        {
+            "key": 4,
+            "name": "Web editors",
+            "userStore": "default",
+            "memberCount": "2",
+            "restrictedEnrollment": true
+        },
+        {
+            "key": 5,
+            "name": "Intranet Users",
+            "userStore": "default",
+            "memberCount": "4",
+            "restrictedEnrollment": true
+        },
+        {
+            "key": 6,
+            "name": "Developers (build-in)",
+            "userStore": "default",
+            "memberCount": "5",
+            "restrictedEnrollment": true
+        }
+    ]
+}

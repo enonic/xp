@@ -1,0 +1,38 @@
+<tpl for=".">
+    <div class="cms-activity-stream-message">
+        <table border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td valign="top" class="photo-container">
+                    <img class="photo" src="{photo}"/>
+                </td>
+                <td valign="top">
+                    <div class="display-name-location"><a href="javascript:;">
+                        <tpl if="birthday"><img src="_app/main/images/activity-stream/cake.png" style="width:11px; height:8px" title="{displayName} has Birthday today"/></tpl>
+                        {displayName}</a> via {location}</div>
+                    <div>{action}:
+                        <tpl if="action == 'Said'">{description}</tpl>
+                        <tpl if="action != 'Said'"><a href="javascript:;">{description}</a></tpl>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <div class="actions clearfix" style="clear:both">
+            <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        <span class="pretty-date">{prettyDate}</span>
+                    </td>
+                    <td>
+                        <span class="link favorite" style="visibility:hidden">Favorite</span>
+                    </td>
+                    <td>
+                        <span class="link comment" style="visibility:hidden">Comment</span>
+                    </td>
+                    <td style="text-align:right">
+                        <span class="link more" style="visibility:hidden"><!-- --></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</tpl>

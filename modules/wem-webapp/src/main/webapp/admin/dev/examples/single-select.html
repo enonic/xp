@@ -1,0 +1,56 @@
+<html>
+<head>
+    <title>Single select</title>
+
+    <style type="text/css">
+        #container {
+            padding: 1em;
+            background-color: #ccc;
+        }
+
+        label {
+            font-weight: bold;
+        }
+    </style>
+
+</head>
+<body>
+
+<h1>Click a user to populate the html placeholders in the document</h1>
+<ul>
+    <li>
+        <a href="javascript:" onclick="selectUser({name: 'Adriaan Bloem', email: 'adriaan@bloem.com'})">Adriaan Bloem</a>
+    </li>
+    <li>
+        <a href="javascript:" onclick="selectUser({name: 'Aksel Nilsen Huser', email: 'aksel.nilsen@huser.com'})">Aksel Nilsen Huser</a>
+    </li>
+</ul>
+
+<div id="container">
+    <!-- -->
+</div>
+
+<script type="text/javascript">
+    var $ = function(id) {
+        return document.getElementById(id);
+    };
+
+    function selectUser(user) {
+        $('user-name').innerHTML = user.name;
+        $('user-email').innerHTML = user.email;
+    }
+
+    function createHtmlPlaceholders() {
+        var container = $('container');
+        container.innerHTML = '<div><label>Name: </label><span id="user-name"><!-- --></span>' +
+                ', <label>e-mail: </label><span id="user-email"><!-- --></span></div>';
+    }
+
+    window.addEventListener('load', function(event) {
+        createHtmlPlaceholders();
+    }, false);
+
+</script>
+
+</body>
+</html>

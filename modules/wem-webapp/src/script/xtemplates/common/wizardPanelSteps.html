@@ -1,0 +1,9 @@
+<div class="cms-wizard-navigation-container">
+    <ul class="cms-wizard-navigation clearfix">
+        <tpl for=".">
+            <li class="{[ this.resolveClsName( xindex, xcount ) ]}" wizardStep="{[xindex]}">
+                <a href="javascript:;" class="step {[ this.resolveClsName( xindex, xcount ) ]}">{[xindex]}. {[
+                    (values.stepTitle || values.title) ]}</a></li>
+        </tpl>
+    </ul>
+</div>

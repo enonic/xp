@@ -1,0 +1,141 @@
+<html>
+<head>
+    <title>Enonic CMS Admin</title>
+    <link rel="stylesheet" type="text/css" href="../../resources/lib/ext/resources/css/ext-all.css">
+    <style type="text/css">
+        .admin-facet {
+            margin-left: 10px;
+        }
+    </style>
+    <script type="text/javascript" src="../../resources/lib/ext/ext-all-debug.js"></script>
+
+
+
+    <script type="text/javascript">
+
+        var store = Ext.create('Ext.data.Store', {
+            fields:['name', 'terms'],
+            autoLoad: true,
+            proxy: {
+                type: 'ajax',
+                url: 'facets1.json',
+                reader: {
+                    type: 'json',
+                    root: 'facets'
+                }
+            }
+        });
+
+        var template = new Ext.XTemplate(
+                '<tpl for=".">' ,
+                    '<div class="admin-facets-group">' ,
+                        '<h2>{name}</h2>' ,
+                        '<tpl for="terms">' ,
+                            '<tpl if="count &gt; 0">' ,
+                                '<div class="admin-facet">' ,
+                                    '<tpl if="selected===true"><input type="checkbox" id="facet-{key}" name="facet-{key}" value="{key}" checked="true" class="admin-facet-cb"/><label for="facet-{key}" class="admin-facet-lbl"> {name} ({count})</label></tpl>' +
+                                    '<tpl if="selected===false"><input type="checkbox" id="facet-{key}" name="facet-{key}" value="{key}" class="admin-facet-cb"/><label for="facet-{key}" class="admin-facet-lbl"> {name} ({count})</label></tpl>' +
+                                '</div>' ,
+                            '</tpl>' ,
+                        '</tpl>' ,
+                    '</div>' ,
+                '</tpl>'
+
+        );
+
+        var view = Ext.create('Ext.view.View', {
+            store: store,
+            tpl: template,
+            loadMask: false,
+            itemSelector: 'div.admin-facets-group',
+            emptyText: 'None',
+            autoScroll: true,
+            listeners: {
+                'itemclick':  {
+                    fn: function(view, record, item, index, e, opts) {
+                        console.log(e);
+                    }
+                }
+            }
+        });
+
+        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        // App
+
+        Ext.Loader.setConfig({
+            enabled: true,
+            paths: {
+                'Common' : 'common/js',
+                'Main' : 'app/main/js',
+                'Admin': 'resources/app'
+            },
+            disableCaching: false
+        });
+
+        Ext.application({
+            name: 'App',
+
+            controllers: [
+            ],
+
+            requires: [
+            ],
+
+            launch: function() {
+                Ext.create('Ext.container.Viewport', {
+                    layout: 'border',
+                    defaults: {
+                        bodyPadding: '10px'
+                    },
+                    items: [
+                        {
+                            region: 'center',
+                            title: 'Filter',
+                            flex: 1,
+                            split: true,
+                            padding: '5',
+                            autoScroll: true,
+                            tbar: [
+                                {
+                                    text: 'Update',
+                                    handler: function() {
+                                        if ( !this.facetsTwoLoaded ) {
+                                            store.load({url:'facets2.json'});
+                                            this.facetsTwoLoaded = true;
+
+                                        } else {
+                                            store.load({url:'facets1.json'});
+                                            this.facetsTwoLoaded = false;
+                                        }
+                                    }
+                                },
+                                {
+                                    text: 'Get Selected',
+                                    handler: function() {
+                                        var selectedCheckboxes = Ext.DomQuery.select('.admin-facets-group input');
+                                        var selectedPretty = 'selectedFacets(\n';
+                                        Ext.Array.each(selectedCheckboxes, function(cb) {
+                                            if ( cb.checked ) {
+                                                selectedPretty += '\t"' + cb.name + '" => ' + cb.value + ',\n';
+                                            }
+                                        });
+                                        selectedPretty += ')';
+                                        alert(selectedPretty);
+
+                                    }
+                                }
+                            ],
+                            items: [view]
+                        }
+                    ]
+                });
+            }
+
+        });
+
+    </script>
+
+</head>
+<body>
+</body>
+</html>

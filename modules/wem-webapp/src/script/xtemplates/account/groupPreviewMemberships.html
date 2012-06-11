@@ -1,0 +1,14 @@
+<tpl for="members">
+    <div class="clearfix cms-member-preview-el x-boxselect-item">
+        <div class="cms-left">
+            <span class="{[values.type==="user" && !values.builtIn ? "icon-user" : values.type==="role" || values.builtIn ? "icon-role" : "icon-group"]} cms-list-item"></span>
+        </div>
+        <div class="cms-left">
+            <span>
+                <tpl if="type=='user'"> {displayName} ({qualifiedName})</tpl>
+                <tpl if="type!='user'">{name} ({userStore})</tpl>
+            </span>
+            </div>
+        </div>
+    <br>
+</tpl>

@@ -1,0 +1,21 @@
+<div class="cms-notification-window clearfix">
+    <table border="0">
+        <tr>
+            <td style="width: 42px" valign="top">
+                <img src="app/main/images/feedback-ok.png" style="width:32px; height:32px"/>
+            </td>
+            <td valign="top">
+                <h1>{messageTitle}</h1>
+
+                <div class="message-text">{messageText}</div>
+            </td>
+        </tr>
+        <tpl if="notifyUser">
+            <tr>
+                <td colspan="2" style="text-align: right">
+                    <p><span class="link notify-user" href="javascript:;">Notify User</span></p>
+                </td>
+            </tr>
+        </tpl>
+    </table>
+</div>
