@@ -10,6 +10,10 @@
   <name>Enonic WEM</name>
   <version>5.0.0-SNAPSHOT</version>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <modules>
     <module>modules/wem-api</module>
     <module>modules/wem-core</module>
