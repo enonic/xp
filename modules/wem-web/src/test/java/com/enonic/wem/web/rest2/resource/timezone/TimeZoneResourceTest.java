@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.timezone;
+package com.enonic.wem.web.rest2.resource.timezone;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.web.rest2.AbstractResourceTest;
+import com.enonic.wem.web.rest2.resource.AbstractResourceTest;
 
 import com.enonic.cms.core.timezone.TimeZoneService;
 

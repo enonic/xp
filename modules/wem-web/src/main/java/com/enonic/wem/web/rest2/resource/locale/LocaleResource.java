@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.locale;
+package com.enonic.wem.web.rest2.resource.locale;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

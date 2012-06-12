@@ -47,7 +47,7 @@ public class GroupModelTranslator
 
         // TODO: GroupEntity does not have DisplayName. Using description instead.
         // model.setDisplayName( entity.getDisplayName() );
-        model.setDisplayName( entity.getDescription() );
+        model.setDisplayName( entity.getName() );
 
         // TODO: GroupEntity does not have LastModified. Using mock instead.
         // model.setLastModified( entity.getLastModified() );
