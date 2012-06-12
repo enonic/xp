@@ -3,8 +3,6 @@ AdminLiveEdit.PageCanvas = function()
     var util = AdminLiveEdit.Util;
 
     var defaultCanvasRGBColor = [0, 0, 0, 0.4];
-    var currentCanvasRGBColor = defaultCanvasRGBColor;
-    var currentRectangleSize = [];
 
     function init()
     {
@@ -20,28 +18,17 @@ AdminLiveEdit.PageCanvas = function()
         $liveedit( 'body' ).append( canvas );
 
         updateCanvas();
-        fillCanvas( defaultCanvasRGBColor );
+        fillCanvas();
     }
 
 
-    function clearRectangle( x, y, w, h )
+    function fillCanvas()
     {
-        currentRectangleSize = [x, y, w, h];
-
-        var context = getCanvasElement().getContext( '2d' );
-        context.clearRect( x, y, w, h );
-    }
-
-
-    function fillCanvas( rgbaArray )
-    {
-        currentCanvasRGBColor = rgbaArray;
-
         var context = getCanvasElement().getContext( '2d' );
         var documentSize = util.getDocumentSize();
 
         context.clearRect(0, 0, documentSize.width, documentSize.height);
-        context.fillStyle = 'rgba(' + rgbaArray + ')';
+        context.fillStyle = 'rgba(' + defaultCanvasRGBColor + ')';
         context.fillRect( 0, 0, documentSize.width, documentSize.height );
     }
 
@@ -49,7 +36,7 @@ AdminLiveEdit.PageCanvas = function()
     function updateCanvas()
     {
         resizeCanvas();
-        fillCanvas(currentCanvasRGBColor);
+        fillCanvas();
     }
 
 
@@ -59,6 +46,13 @@ AdminLiveEdit.PageCanvas = function()
         var documentSize = util.getDocumentSize();
         canvas.width = documentSize.width;
         canvas.height = documentSize.height;
+    }
+
+
+    function clearRectangle( x, y, w, h )
+    {
+        var context = getCanvasElement().getContext( '2d' );
+        context.clearRect( x, y, w, h );
     }
 
 
@@ -109,8 +103,8 @@ AdminLiveEdit.PageCanvas = function()
             init();
         },
 
-        fillCanvas: function(rgba) {
-            fillCanvas(rgba);
+        fillCanvas: function() {
+            fillCanvas();
         },
 
         updateCanvas: function() {

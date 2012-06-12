@@ -15,23 +15,20 @@ AdminLiveEdit.PageElementSelector = function()
         var highlighter = AdminLiveEdit.Highlighter;
         var tooltip = AdminLiveEdit.Tooltip;
         var pageElementTypeToSelect = util.getPageElementType( element );
-        var canvasColor, elementBoxModel;
+        var elementBoxModel;
 
         if ( pageElementTypeToSelect === 'window' ) {
-            canvasColor = [0, 0, 0, 0.4];
             elementBoxModel = util.getBoxModelSize( element );
             highlighter.highlightWindow( element, true );
         } else if ( pageElementTypeToSelect === 'region' ) {
-            canvasColor = [0, 0, 255, 0.4];
             elementBoxModel = util.getBoxModelSize( element, true );
             highlighter.highlightRegion( element, true );
         }
 
         canvas.show();
         canvas.resizeCanvas();
-        canvas.fillCanvas( canvasColor );
+        canvas.fillCanvas();
         canvas.clearRectangle( elementBoxModel.left, elementBoxModel.top, elementBoxModel.width, elementBoxModel.height );
-
 
         setSelected( element );
         tooltip.moveToPageElement( element );
@@ -75,7 +72,7 @@ AdminLiveEdit.PageElementSelector = function()
         },
 
         getSelected: function() {
-            getSelected();
+            return selected;
         }
     };
 

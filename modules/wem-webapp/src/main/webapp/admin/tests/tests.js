@@ -44,19 +44,23 @@ Harness.start(
             group: 'Live Edit',
             items: [
                 {
+                    url: 'tests/liveedit/test_jQueryNoConflict.js',
+                    hostPageUrl : 'tests/liveedit/test_jQueryNotConflict_host.html'
+                },
+                {
                     group: 'Util',
                     items: [
                         {
-                            url: 'tests/liveedit/test_getBoxModelSize.js',
-                            hostPageUrl : 'tests/liveedit/test_util.html'
+                            url: 'tests/liveedit/util/test_getBoxModelSize.js',
+                            hostPageUrl : 'tests/liveedit/util/host.html'
                         },
                         {
-                            url: 'tests/liveedit/test_getElementPagePosition.js',
-                            hostPageUrl : 'tests/liveedit/test_util.html'
+                            url: 'tests/liveedit/util/test_getElementPagePosition.js',
+                            hostPageUrl : 'tests/liveedit/util/host.html'
                         },
                         {
-                            url: 'tests/liveedit/test_getClosestPageElementFromPoint.js',
-                            hostPageUrl : 'tests/liveedit/test_util.html'
+                            url: 'tests/liveedit/util/test_getClosestPageElementFromPoint.js',
+                            hostPageUrl : 'tests/liveedit/util/host.html'
                         }
                     ]
                 }

@@ -16,7 +16,7 @@ StartTest(function(t) {
                 backgroundColor: 'lightsteelblue',
                 width: '130px',
                 height: '100px',
-                marginTop: '10px',
+                marginTop: '10px'
             });
 
             window.attr('id', 'window-' + regionIndex + '-' + i).attr( 'data-live-edit-window', 'window-' + regionIndex + '-' + i ).html('Window ' + (i+1));
@@ -45,14 +45,14 @@ StartTest(function(t) {
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // Tests
 
-    var point = AdminLiveEdit.Util.getClosestPageElementFromPoint(260, 173);
-    t.is( point.attr('id'), 'window-1-1', 'Clicked window should be window 2 in region 2' );
+    var element = AdminLiveEdit.Util.getClosestPageElementFromPoint(260, 173);
+    t.is( element.attr('id'), 'window-1-1', 'Clicked element should be window 2 in region 2' );
 
-    point = AdminLiveEdit.Util.getClosestPageElementFromPoint(510, 269);
-    t.is( point.attr('id'), 'window-2-2', 'Clicked window should be window 3 in region 3' );
+    element = AdminLiveEdit.Util.getClosestPageElementFromPoint(510, 269);
+    t.is( element.attr('id'), 'window-2-2', 'Clicked element should be window 3 in region 3' );
 
-    point = AdminLiveEdit.Util.getClosestPageElementFromPoint(353, 267);
-    //console.log(point)
-    t.is( point.attr('id'), 'region-1', 'Clicked region should be region 2' );
+    element = AdminLiveEdit.Util.getClosestPageElementFromPoint(353, 267);
+
+    t.is( element.attr('id'), 'region-1', 'Clicked region should be region 2' );
 
 });
