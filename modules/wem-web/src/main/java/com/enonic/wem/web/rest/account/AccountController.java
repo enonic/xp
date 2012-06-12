@@ -173,11 +173,13 @@ public final class AccountController
         String currentGroupKey =  req.getCurrentGroupKey();
 
         // override to return accounts from the same userstore only if editing group form remote userstore
-        if ( StringUtils.isNotEmpty( currentGroupKey ) ) {
+        if ( StringUtils.isNotEmpty( currentGroupKey ) )
+        {
             GroupEntity currentGroup = groupDao.find( currentGroupKey );
             UserStoreEntity currentUserstore = currentGroup != null ? currentGroup.getUserStore() : null;
-            if ( currentUserstore != null && currentUserstore.isRemote() ) {
-                userstoreList = new String[] { currentUserstore.getName() };
+            if ( currentUserstore != null && currentUserstore.isRemote() )
+            {
+                userstoreList = new String[]{currentUserstore.getName()};
             }
         }
 
@@ -203,10 +205,8 @@ public final class AccountController
         }
     }
 
-    /**
-     * TODO: This could be set to GET method instead.
-     */
-    @RequestMapping(value = "export", method = RequestMethod.POST)
+
+    @RequestMapping(value = "export", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<byte[]> exportAsCsv( final AccountExportRequest req,
                                   @RequestParam(value = "encoding", defaultValue = "ISO-8859-1") String characterEncoding,
@@ -247,10 +247,10 @@ public final class AccountController
 
         final byte[] data = content.getBytes( characterEncoding );
         HttpHeaders headers = new HttpHeaders();
-        headers.add( "Content-Type",  "text/csv; charset=" + characterEncoding);
-        headers.add( "Content-Encoding",  characterEncoding);
-        headers.add( "Content-Disposition",  attachmentHeader);
-        ResponseEntity<byte[]> responseEntity =  new ResponseEntity<byte[]>( data, headers, HttpStatus.OK );
+        headers.add( "Content-Type", "text/csv; charset=" + characterEncoding);
+        headers.add( "Content-Encoding", characterEncoding );
+        headers.add( "Content-Disposition", attachmentHeader );
+        ResponseEntity<byte[]> responseEntity = new ResponseEntity<byte[]>( data, headers, HttpStatus.OK );
         return responseEntity;
     }
 
@@ -279,7 +279,7 @@ public final class AccountController
 
         if ( store == null )
         {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity( HttpStatus.NOT_FOUND );
         }
 
         final String suggestedUserName = userIdGenerator.generateUserId( firstName.trim(), lastName.trim(), store.getKey() );
@@ -295,7 +295,7 @@ public final class AccountController
         GroupEntity group = groupDao.find( groupKey );
         if ( group == null )
         {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity( HttpStatus.NOT_FOUND );
         }
         AccountModel groupModel = accountTranslator.toInfoModel( group );
         final GroupRestResponse response = new GroupRestResponse();
@@ -305,15 +305,16 @@ public final class AccountController
 
     @RequestMapping(value = "verifyUniqueEmail", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity verifyUniqueEmail( @RequestParam(value = "userstore", defaultValue = "") final String userStoreName,
-                                       @RequestParam(value = "email", defaultValue = "")  final String email)
+    public ResponseEntity verifyUniqueEmail(
+            @RequestParam(value = "userstore", defaultValue = "") final String userStoreName,
+            @RequestParam(value = "email", defaultValue = "") final String email )
     {
         final UserRestResponse response = new UserRestResponse();
 
         final UserStoreEntity userStore = userStoreDao.findByName( userStoreName );
         if ( userStore == null )
         {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity( HttpStatus.NOT_FOUND );
         }
         else
         {
@@ -334,14 +335,15 @@ public final class AccountController
 
     @RequestMapping(value = "userkey", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity getUserKeyByUserName( @RequestParam(value = "userstore", defaultValue = "") final String userStoreName,
-                                          @RequestParam(value = "username", defaultValue = "" ) final String userName )
+    public ResponseEntity getUserKeyByUserName(
+            @RequestParam(value = "userstore", defaultValue = "") final String userStoreName,
+            @RequestParam(value = "username", defaultValue = "") final String userName )
     {
         final UserRestResponse response = new UserRestResponse();
         UserStoreEntity userStore = userStoreDao.findByName( userStoreName );
         if ( userStore == null )
         {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity( HttpStatus.NOT_FOUND );
         }
         else
         {
@@ -362,9 +364,9 @@ public final class AccountController
     @RequestMapping(value = "notify", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity sendNotificationEmail( @RequestParam(value = "to", defaultValue = "") final String to,
-                                           @RequestParam(value = "cc", defaultValue = "") final String cc,
-                                           @RequestParam(value = "subject", defaultValue = "") final String subject,
-                                           @RequestParam(value = "message", defaultValue = "") final String message )
+                                                 @RequestParam(value = "cc", defaultValue = "") final String cc,
+                                                 @RequestParam(value = "subject", defaultValue = "") final String subject,
+                                                 @RequestParam(value = "message", defaultValue = "") final String message )
     {
         final RestResponse response = new RestResponse();
         UserEntity currentUser = getCurrentUser();
