@@ -203,7 +203,7 @@ public class GroupModel
 
     public int compareTo( AccountModel o )
     {
-        if ( ( o instanceof GroupModel ) && ( this.getDisplayName() != null ) && ( o.getDisplayName() != null ) )
+        if ( o instanceof GroupModel )
         {
             return this.getDisplayName().compareTo( o.getDisplayName() );
         }
