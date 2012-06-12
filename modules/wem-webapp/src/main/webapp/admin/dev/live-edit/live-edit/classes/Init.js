@@ -1,7 +1,4 @@
 (function( window ) {
-
-    window.AdminLiveEdit = {};
-
     $liveedit( document ).ready( function() {
         if (document.location.href.indexOf('liveedit=false') > -1) {
             return;

@@ -39,6 +39,28 @@ Harness.start(
                 'tests/account/test_ChangePasswordWindow.js',
                 'tests/account/test_DoublePasswordField.js'
             ]
+        },
+        {
+            group: 'Live Edit',
+            items: [
+                {
+                    group: 'Util',
+                    items: [
+                        {
+                            url: 'tests/liveedit/test_getBoxModelSize.js',
+                            hostPageUrl : 'tests/liveedit/test_util.html'
+                        },
+                        {
+                            url: 'tests/liveedit/test_getElementPagePosition.js',
+                            hostPageUrl : 'tests/liveedit/test_util.html'
+                        },
+                        {
+                            url: 'tests/liveedit/test_getClosestPageElementFromPoint.js',
+                            hostPageUrl : 'tests/liveedit/test_util.html'
+                        }
+                    ]
+                }
+            ]
         }
 );
 
