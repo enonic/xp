@@ -10,7 +10,6 @@ AdminLiveEdit.PageCanvas = function()
     {
         createCanvasElement();
         initCanvasClickEvent();
-        initResizeWindowEvent();
     }
 
 
@@ -101,24 +100,6 @@ AdminLiveEdit.PageCanvas = function()
         });
     }
 
-
-    // TODO: Move to global?
-    function initResizeWindowEvent()
-    {
-        var resizeTimeout = -1;
-        $liveedit(window).resize(function() {
-            hideCanvasElement();
-            AdminLiveEdit.Highlighter.hide();
-            AdminLiveEdit.PageElementSelector.setSelected( null );
-
-            if ( resizeTimeout !== false ) {
-                clearTimeout( resizeTimeout );
-            }
-
-            resizeTimeout = setTimeout( function(){
-            }, 200 );
-        });
-    }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // Public
