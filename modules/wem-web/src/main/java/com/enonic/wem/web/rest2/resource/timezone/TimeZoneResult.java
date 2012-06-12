@@ -56,7 +56,7 @@ public final class TimeZoneResult
     private String getHoursAsHumanReadable( Period offsetPeriod )
     {
         final StringBuilder s = new StringBuilder();
-        if ( offsetPeriod.getMinutes() < 0 )
+        if ( ( offsetPeriod.getMinutes() < 0 ) || ( offsetPeriod.getHours() < 0 ) )
         {
             s.append( "-" );
         }
@@ -65,16 +65,16 @@ public final class TimeZoneResult
             s.append( "+" );
         }
 
-        final int hours = offsetPeriod.getHours();
+        final int hours = Math.abs( offsetPeriod.getHours() );
 
         if ( hours < 10 && hours > ( -10 ) )
         {
             s.append( "0" );
         }
-        s.append( Math.abs( hours ) );
+        s.append( hours );
         s.append( ":" );
 
-        final int minutes = offsetPeriod.getMinutes();
+        final int minutes = Math.abs( offsetPeriod.getMinutes() );
         if ( minutes < 10 )
         {
             s.append( "0" );
