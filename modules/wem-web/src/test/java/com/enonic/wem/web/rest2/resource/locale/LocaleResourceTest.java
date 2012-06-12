@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.locale;
+package com.enonic.wem.web.rest2.resource.locale;
 
 import java.util.Locale;
 
@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.web.rest2.AbstractResourceTest;
+import com.enonic.wem.web.rest2.resource.AbstractResourceTest;
 
 import com.enonic.cms.core.locale.LocaleService;
 

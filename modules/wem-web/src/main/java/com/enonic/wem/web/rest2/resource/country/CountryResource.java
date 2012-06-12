@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.country;
+package com.enonic.wem.web.rest2.resource.country;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.timezone;
+package com.enonic.wem.web.rest2.resource.timezone;
 
 import java.util.List;
 

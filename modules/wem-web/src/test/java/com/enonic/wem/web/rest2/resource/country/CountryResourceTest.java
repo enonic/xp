@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.country;
+package com.enonic.wem.web.rest2.resource.country;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.web.rest2.AbstractResourceTest;
+import com.enonic.wem.web.rest2.resource.AbstractResourceTest;
 
 import com.enonic.cms.core.country.Country;
 import com.enonic.cms.core.country.CountryCode;
