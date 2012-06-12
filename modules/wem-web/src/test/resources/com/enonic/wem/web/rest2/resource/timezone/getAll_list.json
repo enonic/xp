@@ -1,5 +1,5 @@
 {
-    "total": 3,
+    "total": 4,
     "timezones": [
         {
             "id": "UTC",
@@ -13,8 +13,16 @@
             "humanizedId": "EST",
             "shortName": "EST",
             "name": "Eastern Standard Time",
-            "offset": "+05:00"
+            "offset": "-05:00"
         },
+        {
+            "id": "EET",
+            "humanizedId": "EET",
+            "shortName": "EEST",
+            "name": "Eastern European Summer Time",
+            "offset": "+03:00"
+        },
+
         {
             "id": "America/Caracas",
             "humanizedId": "America/Caracas",
