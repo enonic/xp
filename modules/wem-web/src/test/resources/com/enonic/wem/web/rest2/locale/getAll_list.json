@@ -1,0 +1,13 @@
+{
+    "total":2,
+    "locales":[
+        {
+            "id":"en",
+            "displayName":"English"
+        },
+        {
+            "id":"de",
+            "displayName":"German"
+        }
+    ]
+}
