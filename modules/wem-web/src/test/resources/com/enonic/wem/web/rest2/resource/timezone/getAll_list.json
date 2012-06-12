@@ -1,19 +1,26 @@
 {
-    "total":2,
-    "timezones":[
+    "total": 3,
+    "timezones": [
         {
-            "id":"UTC",
-            "humanizedId":"UTC",
-            "shortName":"UTC",
-            "name":"Coordinated Universal Time",
-            "offset":"+00:00"
+            "id": "UTC",
+            "humanizedId": "UTC",
+            "shortName": "UTC",
+            "name": "Coordinated Universal Time",
+            "offset": "+00:00"
         },
         {
-            "id":"EST",
-            "humanizedId":"EST",
-            "shortName":"EST",
-            "name":"Eastern Standard Time",
-            "offset":"+05:00"
+            "id": "EST",
+            "humanizedId": "EST",
+            "shortName": "EST",
+            "name": "Eastern Standard Time",
+            "offset": "+05:00"
+        },
+        {
+            "id": "America/Caracas",
+            "humanizedId": "America/Caracas",
+            "shortName": "VET",
+            "name": "Venezuela Time",
+            "offset": "-04:30"
         }
     ]
 }

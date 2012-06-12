@@ -47,6 +47,7 @@ public class TimeZoneResourceTest
     {
         this.timeZoneList.add( DateTimeZone.UTC );
         this.timeZoneList.add( DateTimeZone.forID( "EST" ) );
+        this.timeZoneList.add( DateTimeZone.forID( "America/Caracas" ) );
 
         final TimeZoneResult result = this.resource.getAll();
         assertJsonResult( "getAll_list.json", result );
