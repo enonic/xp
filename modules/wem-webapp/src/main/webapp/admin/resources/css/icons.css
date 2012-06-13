@@ -82,6 +82,10 @@
     background: transparent url("../images/icons/24x24/address_book3.png") 0 0 no-repeat;
 }
 
+.icon-userstore-add-24 {
+    background: transparent url("../images/icons/24x24/userstore_add.png") 0 0 no-repeat;
+}
+
 .icon-export-24 {
     background: transparent url("../images/icons/24x24/export.png") 0 0 no-repeat;
 }
