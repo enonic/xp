@@ -19,9 +19,9 @@ Ext.define( 'Admin.view.userstore.BrowseToolbar', {
                 defaults:buttonDefaults,
                 items:[
                     {
-                        text:'New Userstore',
+                        text:'New',
                         action:'newUserstore',
-                        iconCls:'icon-userstore-alt-24'
+                        iconCls:'icon-userstore-add-24'
                     }
                 ]
             },
