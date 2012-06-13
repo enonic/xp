@@ -1,5 +1,5 @@
 Ext.define( 'Admin.controller.userstore.DetailPanelController', {
-    extend:'Ext.app.Controller',
+    extend:'Admin.controller.userstore.MainPanelController',
 
     stores:[
         'Admin.store.userstore.UserstoreConfigStore',
@@ -10,7 +10,8 @@ Ext.define( 'Admin.controller.userstore.DetailPanelController', {
         'Admin.model.userstore.UserstoreConnectorModel'
     ],
     views:[
-        'Admin.view.userstore.UserstorePreviewPanel'
+        'Admin.view.userstore.preview.UserstorePreviewPanel',
+        'Admin.view.userstore.preview.UserstorePreviewToolbar'
     ],
 
     init:function ()
@@ -22,11 +23,13 @@ Ext.define( 'Admin.controller.userstore.DetailPanelController', {
 
         this.control( {
 
-            'browseToolbar button[action=editUserstore]':{
-                click:function ( item, e, eOpts )
+            'userstorePreviewToolbar button[action=editUserstore]': {
+                click: function( item, e, eOpts )
                 {
-                    var userstore = this.getDetailPanel().getData();
-                    this.application.fireEvent( 'editUserstore', userstore, false );
+                    var userstorePreviewPanel = item.up( 'userstorePreviewPanel' );
+                    var userstore = userstorePreviewPanel.getData();
+                    this.viewUserstore( userstore );
+                    userstorePreviewPanel.close();
                 }
             }
 

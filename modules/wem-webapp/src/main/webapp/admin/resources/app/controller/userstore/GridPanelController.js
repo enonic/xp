@@ -1,5 +1,5 @@
 Ext.define( 'Admin.controller.userstore.GridPanelController', {
-    extend:'Admin.controller.userstore.Controller',
+    extend:'Admin.controller.userstore.MainPanelController',
 
     stores:[
         'Admin.store.userstore.UserstoreConfigStore',
@@ -28,7 +28,7 @@ Ext.define( 'Admin.controller.userstore.GridPanelController', {
 
                 itemdblclick:function ( view, record, item, index, e, eOpts )
                 {
-                    this.application.fireEvent( 'editUserstore', record.data, false );
+                    this.viewUserstore( record.data );
                 },
 
                 itemcontextmenu:this.showContextMenu
@@ -37,15 +37,22 @@ Ext.define( 'Admin.controller.userstore.GridPanelController', {
             'userstoreGrid button[action=newUserstore]':{
                 click:function ( button, e, eOpts )
                 {
-                    this.application.fireEvent( 'editUserstore', null, true );
+                    this.createUserstoreTab();
                 }
             },
 
             'userstoreContextMenu menuitem[action=editUserstore]':{
                 click:function ( item, e, eOpts )
                 {
-                    var userstore = this.getGrid().getSelectionModel().getSelection()[0].data;
-                    this.application.fireEvent( 'editUserstore', userstore, false );
+                    var userstore = this.getUserstoreGridPanel().getSelectionModel().getSelection()[0].data;
+                    this.createUserstoreTab( userstore );
+                }
+            },
+            'userstoreContextMenu menuitem[action=viewUserstore]': {
+                click: function( item, e, eOpts )
+                {
+                    var userstore = this.getUserstoreGridPanel().getSelectionModel().getSelection()[0].data;
+                    this.viewUserstore( userstore );
                 }
             },
             'userstoreContextMenu menuitem[action=deleteUserstore]':{
@@ -62,11 +69,6 @@ Ext.define( 'Admin.controller.userstore.GridPanelController', {
         e.stopEvent();
         this.getContextMenu().showAt( e.getXY() );
         return false;
-    },
-
-    getGrid:function ()
-    {
-        return Ext.ComponentQuery.query( 'userstoreGrid' )[0];
     },
 
     getContextMenu:function ()

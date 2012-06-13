@@ -35,6 +35,10 @@ Ext.define( 'Admin.controller.userstore.MainPanelController', {
                 fn:this.createUserstoreTab,
                 scope:this
             },
+            viewUserstore:{
+                fn:this.viewUserstore,
+                scope:this
+            },
             closeUserstoreTab:{
                 fn:this.closeUserstoreTab,
                 scope:this
@@ -95,6 +99,21 @@ Ext.define( 'Admin.controller.userstore.MainPanelController', {
         if ( tabs ) {
             var tab = button.up( 'userstoreFormPanel' );
             tabs.remove( tab, true );
+        }
+    },
+
+    viewUserstore: function( userstore )
+    {
+        var tabs = this.getTabs();
+        if ( tabs ) {
+            var previewTab = tabs.addTab( {
+                xtype: 'userstorePreviewPanel',
+                tbar: {
+                    xtype: 'userstorePreviewToolbar'
+                },
+                title: userstore.name
+            } );
+            previewTab.setData( userstore );
         }
     },
 

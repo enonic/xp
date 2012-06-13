@@ -1,5 +1,5 @@
 Ext.define( 'Admin.controller.userstore.BrowseToolbarController', {
-    extend:'Admin.controller.userstore.Controller',
+    extend:'Admin.controller.userstore.MainPanelController',
 
     /*      Controller for handling Toolbar UI events       */
 
@@ -19,6 +19,20 @@ Ext.define( 'Admin.controller.userstore.BrowseToolbarController', {
                 click:function ()
                 {
                     this.showDeleteUserstoreWindow();
+                }
+            },
+            'browseToolbar *[action=viewUserstore]': {
+                click: function()
+                {
+                    var userstore = this.getUserstoreGridPanel().getSelection()[0].data;
+                    this.viewUserstore( userstore );
+                }
+            },
+            'browseToolbar button[action=editUserstore]': {
+                click: function( item, e, eOpts )
+                {
+                    var userstore = this.getUserstoreGridPanel().getSelection()[0].data;
+                    this.createUserstoreTab( userstore );
                 }
             }
         } );

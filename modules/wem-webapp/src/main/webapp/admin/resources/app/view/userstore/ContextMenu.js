@@ -9,6 +9,11 @@ Ext.define('Admin.view.userstore.ContextMenu', {
             action: 'editUserstore'
         },
         {
+            text: 'View Userstore',
+            iconCls: 'icon-view',
+            action: 'viewUserstore'
+        },
+        {
             text: 'Delete Userstore',
             iconCls: 'icon-delete',
             action: 'deleteUserstore'

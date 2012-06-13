@@ -45,6 +45,18 @@ Ext.define( 'Admin.view.userstore.BrowseToolbar', {
                 ]
             },
             {
+                xtype: 'buttongroup',
+                columns: 1,
+                defaults: buttonDefaults,
+                items: [
+                    {
+                        text: 'View',
+                        action: 'viewUserstore',
+                        iconCls: 'icon-view-24'
+                    }
+                ]
+            },
+            {
                 xtype:'buttongroup',
                 columns:1,
                 defaults:buttonDefaults,
