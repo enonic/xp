@@ -112,7 +112,7 @@
                             "cms": {
                                 "appUrl": "app-userstore.html"
                             },
-                            "iconCls": "icon-userstore-24"
+                            "iconCls": "icon-userstore-alt-24"
                         },
                         {
                             "text": "Cache",
