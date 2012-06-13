@@ -51,7 +51,7 @@ Harness.start(
                     group: 'Util',
                     items: [
                         {
-                            url: 'tests/liveedit/util/test_getBoxModelSize.js',
+                            url: 'tests/liveedit/util/test_getBoxModel.js',
                             hostPageUrl : 'tests/liveedit/util/host.html'
                         },
                         {

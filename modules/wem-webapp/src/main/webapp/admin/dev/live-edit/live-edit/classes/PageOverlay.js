@@ -84,7 +84,7 @@ AdminLiveEdit.PageOverlay = function()
             if ( closestElementFromPoint.length > 0 ) {
                 pageElementSelector.select( closestElementFromPoint );
             } else {
-                pageElementSelector.setSelected( null );
+                pageElementSelector.deselect();
             }
         });
     }

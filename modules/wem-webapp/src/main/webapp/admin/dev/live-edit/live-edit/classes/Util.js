@@ -21,7 +21,7 @@ AdminLiveEdit.Util = function()
         },
 
 
-        getBoxModelSize: function( element, contentOnly )
+        getBoxModel: function( element, contentOnly )
         {
             var el = $liveedit( element );
             var offset = el.offset(),

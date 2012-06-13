@@ -25,7 +25,7 @@ AdminLiveEdit.Toolbar = function()
     {
         var util = AdminLiveEdit.Util;
         var toolbar = getToolbar();
-        var highlighterBoxModel = util.getBoxModelSize(highlighter);
+        var highlighterBoxModel = util.getBoxModel(highlighter);
 
         toolbar.css({
             top: highlighterBoxModel.top + 2,
