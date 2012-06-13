@@ -1,41 +1,42 @@
 {
     "results": {
-        "content": [{
+        "content": [
+            {
                 "key": 1,
-                "name": "Travel" ,
+                "name": "Travel",
                 "type": "site",
                 "owner": "system",
                 "lastModified": "2010-10-10 10:10:00"
             },
             {
                 "key": 2,
-                "name": "News" ,
+                "name": "News",
                 "type": "contentType",
                 "owner": "system",
                 "lastModified": "2010-10-10 10:10:00"
-        },
+            },
             {
                 "key": 3,
-                "name": "Blueman" ,
+                "name": "Blueman",
                 "type": "site",
                 "owner": "system",
                 "lastModified": "2010-10-10 10:10:00"
-        },
+            },
             {
                 "key": 4,
-                "name": "Cityscape" ,
+                "name": "Cityscape",
                 "type": "site",
                 "owner": "system",
                 "lastModified": "2010-10-10 10:10:00"
-        },
+            },
             {
                 "key": 5,
-                "name": "Article" ,
+                "name": "Article",
                 "type": "contentType",
                 "owner": "system",
                 "lastModified": "2010-10-10 10:10:00"
-        }],
+            }
+        ],
         "total": 5
     }
-
 }

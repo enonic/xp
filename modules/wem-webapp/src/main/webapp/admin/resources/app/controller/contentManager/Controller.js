@@ -25,7 +25,8 @@ Ext.define( 'Admin.controller.contentManager.Controller', {
     viewContent: function( content, callback )
     {
         if ( !content ) {
-            content = this.getPersistentGridSelectionPlugin().getSelection();
+            var showPanel = this.getContentShowPanel();
+            content = showPanel.getSelection();
         } else {
             content = [].concat( content );
         }
@@ -45,7 +46,8 @@ Ext.define( 'Admin.controller.contentManager.Controller', {
     editContent: function( content, callback )
     {
         if ( !content ) {
-            content = this.getPersistentGridSelectionPlugin().getSelection();
+            var showPanel = this.getContentShowPanel();
+            content = showPanel.getSelection();
         } else {
             content = [].concat( content );
         }
@@ -104,7 +106,8 @@ Ext.define( 'Admin.controller.contentManager.Controller', {
     deleteContent: function( content )
     {
         if ( !content ) {
-            content = this.getPersistentGridSelectionPlugin().getSelection();
+            var showPanel = this.getContentShowPanel();
+            content = showPanel.getSelection();
         } else {
             content = [].concat( content );
         }
@@ -117,7 +120,8 @@ Ext.define( 'Admin.controller.contentManager.Controller', {
     duplicateContent: function( content )
     {
         if ( !content ) {
-            content = this.getPersistentGridSelectionPlugin().getSelection();
+            var showPanel = this.getContentShowPanel();
+            content = showPanel.getSelection();
         } else {
             content = [].concat( content );
         }
@@ -138,9 +142,19 @@ Ext.define( 'Admin.controller.contentManager.Controller', {
         return Ext.ComponentQuery.query( 'contentFilter' )[0];
     },
 
+    getContentShowPanel: function()
+    {
+        return Ext.ComponentQuery.query( 'contentShow' ) [0];
+    },
+
     getContentGridPanel: function()
     {
-        return Ext.ComponentQuery.query( 'contentGrid' )[0];
+        return this.getContentShowPanel().down( 'grid' );
+    },
+
+    getContentTreePanel: function()
+    {
+        return this.getContentShowPanel().down( 'tree' );
     },
 
     getContentDetailPanel: function()

@@ -48,6 +48,7 @@ Ext.define( 'Admin.view.contentManager.DetailPanel', {
         }
 
         this.callParent( arguments );
+        this.addEvents( 'deselectrecord' );
     },
 
 
@@ -224,13 +225,8 @@ Ext.define( 'Admin.view.contentManager.DetailPanel', {
         var className = target.className;
         if ( className && className === 'remove-selection' ) {
             var key = target.attributes.getNamedItem( 'id' ).nodeValue.split( 'remove-from-selection-button-' )[1];
-
-            if ( this.grid ) {
-                var record = this.grid.getStore().findRecord( 'key', key );
-                if ( record ) {
-                    Ext.get( 'selected-item-box-' + key ).remove();
-                    this.grid.getSelectionModel().deselect( record );
-                }
+            if ( !Ext.isEmpty( key ) ) {
+                this.fireEvent( 'deselectrecord', key );
             }
         }
     },
@@ -288,8 +284,7 @@ Ext.define( 'Admin.view.contentManager.DetailPanel', {
 
     updateTitle: function( data )
     {
-
-        var count = data.length;
+        var count = Ext.isObject( data ) ? 1 : data.length;
         var header = count + " item(s) selected";
         if ( count > 0 ) {
             header += " (<a href='javascript:;' class='clearSelection'>Clear selection</a>)";
@@ -298,11 +293,10 @@ Ext.define( 'Admin.view.contentManager.DetailPanel', {
 
         var clearSel = this.header.el.down( 'a.clearSelection' );
 
-        if ( clearSel && this.grid ) {
-            var selModel = this.grid.getSelectionModel();
+        if ( clearSel ) {
             clearSel.on( "click", function()
             {
-                selModel.deselectAll();
+                this.fireEvent( 'deselectrecord', -1 );
             }, this );
         }
 

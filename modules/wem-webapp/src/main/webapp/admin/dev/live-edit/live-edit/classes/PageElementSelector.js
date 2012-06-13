@@ -10,31 +10,33 @@ AdminLiveEdit.PageElementSelector = function()
 
     function selectElement( element )
     {
-        var canvas = AdminLiveEdit.PageCanvas;
+        var pageOverlay = AdminLiveEdit.PageOverlay;
         var util = AdminLiveEdit.Util;
         var highlighter = AdminLiveEdit.Highlighter;
         var tooltip = AdminLiveEdit.Tooltip;
         var pageElementTypeToSelect = util.getPageElementType( element );
-        var canvasColor, elementBoxModel;
+        var elementBoxModel;
 
         if ( pageElementTypeToSelect === 'window' ) {
-            canvasColor = [0, 0, 0, 0.4];
-            elementBoxModel = util.getBoxModelSize( element );
+            elementBoxModel = util.getBoxModel( element );
             highlighter.highlightWindow( element, true );
         } else if ( pageElementTypeToSelect === 'region' ) {
-            canvasColor = [0, 0, 255, 0.4];
-            elementBoxModel = util.getBoxModelSize( element, true );
+            elementBoxModel = util.getBoxModel( element, true );
             highlighter.highlightRegion( element, true );
         }
 
-        canvas.show();
-        canvas.resizeCanvas();
-        canvas.fillCanvas( canvasColor );
-        canvas.clearRectangle( elementBoxModel.left, elementBoxModel.top, elementBoxModel.width, elementBoxModel.height );
-
+        pageOverlay.clearRectangle( elementBoxModel.left, elementBoxModel.top, elementBoxModel.width, elementBoxModel.height );
 
         setSelected( element );
         tooltip.moveToPageElement( element );
+    }
+
+
+    function deselect()
+    {
+        AdminLiveEdit.PageOverlay.hide();
+        AdminLiveEdit.Tooltip.hide();
+        setSelected(null);
     }
 
 
@@ -58,6 +60,7 @@ AdminLiveEdit.PageElementSelector = function()
         });
     }
 
+
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // Public
 
@@ -66,16 +69,20 @@ AdminLiveEdit.PageElementSelector = function()
             init();
         },
 
-        selectElement: function(element) {
-            selectElement(element);
+        select: function( element ) {
+            selectElement( element );
         },
 
-        setSelected: function(element) {
-            setSelected(element);
+        deselect: function() {
+            deselect();
+        },
+
+        setSelected: function( element ) {
+            setSelected( element );
         },
 
         getSelected: function() {
-            getSelected();
+            return selected;
         }
     };
 

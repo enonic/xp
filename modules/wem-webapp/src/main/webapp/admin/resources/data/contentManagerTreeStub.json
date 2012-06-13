@@ -1,0 +1,57 @@
+{
+    "total": 5,
+    "name": ".",
+    "children": [
+        {
+            "name": "Sites",
+            "expanded": true,
+            "children": [
+                {
+                    "key": 1,
+                    "name": "Travel",
+                    "type": "site",
+                    "owner": "system",
+                    "lastModified": "2010-10-10 10:10:00",
+                    "leaf": true
+                },
+                {
+                    "key": 3,
+                    "name": "Blueman",
+                    "type": "site",
+                    "owner": "system",
+                    "lastModified": "2010-10-10 10:10:00",
+                    "leaf": true
+                },
+                {
+                    "key": 4,
+                    "name": "Cityscape",
+                    "type": "site",
+                    "owner": "system",
+                    "lastModified": "2010-10-10 10:10:00",
+                    "leaf": true
+                }
+            ]
+        },
+        {
+            "name": "Content Types",
+            "children": [
+                {
+                    "key": 2,
+                    "name": "News",
+                    "type": "contentType",
+                    "owner": "system",
+                    "lastModified": "2010-10-10 10:10:00",
+                    "leaf": true
+                },
+                {
+                    "key": 5,
+                    "name": "Article",
+                    "type": "contentType",
+                    "owner": "system",
+                    "lastModified": "2010-10-10 10:10:00",
+                    "leaf": true
+                }
+            ]
+        }
+    ]
+}

@@ -20,7 +20,7 @@ AdminLiveEdit.Highlighter = function()
     {
         var util = AdminLiveEdit.Util;
         var highlighterDiv = $liveedit( '#live-edit-highlighter' );
-        var windowBoxModel = util.getBoxModelSize( windowElement );
+        var windowBoxModel = util.getBoxModel( windowElement );
 
         windowElement.addClass( 'live-edit-position-relative' );
 
@@ -56,7 +56,7 @@ AdminLiveEdit.Highlighter = function()
     {
         var util = AdminLiveEdit.Util;
         var marker = $liveedit( '#live-edit-highlighter' );
-        var regionBoxModel = util.getBoxModelSize( regionElement, true );
+        var regionBoxModel = util.getBoxModel( regionElement, true );
 
         regionElement.addClass( 'live-edit-position-relative' );
 

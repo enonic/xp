@@ -4,12 +4,12 @@ AdminLiveEdit.Windows = function()
 
     function init()
     {
-        updatePlaceholders();
+        renderPlaceholders();
         initMouseEventListeners();
     }
 
 
-    function updatePlaceholders()
+    function renderPlaceholders()
     {
         getAll().each(function(index) {
             var window = $liveedit(this);
@@ -43,7 +43,7 @@ AdminLiveEdit.Windows = function()
 
         $liveedit('body').on('hover','[data-live-edit-window]',  function(event) {
             var window = $liveedit(this);
-            if (AdminLiveEdit.DragDrop.isDragging()) {
+            if (AdminLiveEdit.DragDrop.isDragging() || AdminLiveEdit.PageElementSelector.getSelected()) {
                 return false;
             }
             if ( event.type === 'mouseenter' ) {
@@ -61,11 +61,13 @@ AdminLiveEdit.Windows = function()
         init: function() {
             init();
         },
+
         getAll: function() {
             return getAll();
         },
+
         renderPlaceholders: function() {
-            updatePlaceholders();
+            renderPlaceholders();
         }
     };
 

@@ -21,7 +21,7 @@ AdminLiveEdit.Util = function()
         },
 
 
-        getBoxModelSize: function( element, contentOnly )
+        getBoxModel: function( element, contentOnly )
         {
             var el = $liveedit( element );
             var offset = el.offset(),
@@ -30,24 +30,23 @@ AdminLiveEdit.Util = function()
                     width = el.outerWidth(),
                     height = el.outerHeight();
 
+            var mt = parseInt( el.css( 'marginTop' ) );
+            var mr = parseInt( el.css( 'marginRight' ) );
+            var mb = parseInt( el.css( 'marginBottom' ) );
+            var ml = parseInt( el.css( 'marginLeft' ) );
+
+            var bt = parseInt( el.css( 'borderTopWidth' ) );
+            var br = parseInt( el.css( 'borderRightWidth' ) );
+            var bb = parseInt( el.css( 'borderBottomWidth' ) );
+            var bl = parseInt( el.css( 'borderLeftWidth' ) );
+
+            var pt = parseInt( el.css( 'paddingTop' ) );
+            var pr = parseInt( el.css( 'paddingRight' ) );
+            var pb = parseInt( el.css( 'paddingBottom' ) );
+            var pl = parseInt( el.css( 'paddingLeft' ) );
+
+            // TODO calculate margin and border
             if ( contentOnly ) {
-                var mt = parseInt( el.css( 'marginTop' ) );
-                var mr = parseInt( el.css( 'marginRight' ) );
-                var mb = parseInt( el.css( 'marginBottom' ) );
-                var ml = parseInt( el.css( 'marginLeft' ) );
-
-                var bt = parseInt( el.css( 'borderTopWidth' ) );
-                var br = parseInt( el.css( 'borderRightWidth' ) );
-                var bb = parseInt( el.css( 'borderBottomWidth' ) );
-                var bl = parseInt( el.css( 'borderLeftWidth' ) );
-
-                var pt = parseInt( el.css( 'paddingTop' ) );
-                var pr = parseInt( el.css( 'paddingRight' ) );
-                var pb = parseInt( el.css( 'paddingBottom' ) );
-                var pl = parseInt( el.css( 'paddingLeft' ) );
-
-                // TODO calculate margin and border
-
                 top = top + pt;
                 left = left + pl;
                 width = width - (pl + pr);
@@ -59,6 +58,10 @@ AdminLiveEdit.Util = function()
                 left: left,
                 width: width,
                 height: height,
+                borderTop: bt,
+                borderRight: br,
+                borderBottom: bb,
+                borderLeft: bl,
                 paddingTop: pt,
                 paddingRight: pr,
                 paddingBottom: pb,
@@ -77,9 +80,10 @@ AdminLiveEdit.Util = function()
         {
             var element = [];
             var elementFromPoint = $liveedit( this.elementFromPoint( x, y ) );
-            var parent = elementFromPoint.parents( '[data-live-edit-window]' );
 
-            if ( elementFromPoint.is( '[data-live-edit-window]' ) ) {
+            var parent = elementFromPoint.parents( '[data-live-edit-window]' );
+            var isWindowOrRegion = elementFromPoint.is( '[data-live-edit-window]' ) || elementFromPoint.is( '[data-live-edit-region]');
+            if ( isWindowOrRegion ) {
                 element = elementFromPoint;
             } else if ( parent.length > 0 ) {
                 element = parent;
