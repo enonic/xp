@@ -10,7 +10,7 @@ AdminLiveEdit.PageElementSelector = function()
 
     function selectElement( element )
     {
-        var canvas = AdminLiveEdit.PageCanvas;
+        var pageOverlay = AdminLiveEdit.PageOverlay;
         var util = AdminLiveEdit.Util;
         var highlighter = AdminLiveEdit.Highlighter;
         var tooltip = AdminLiveEdit.Tooltip;
@@ -25,13 +25,18 @@ AdminLiveEdit.PageElementSelector = function()
             highlighter.highlightRegion( element, true );
         }
 
-        canvas.show();
-        canvas.resizeCanvas();
-        canvas.fillCanvas();
-        canvas.clearRectangle( elementBoxModel.left, elementBoxModel.top, elementBoxModel.width, elementBoxModel.height );
+        pageOverlay.clearRectangle( elementBoxModel.left, elementBoxModel.top, elementBoxModel.width, elementBoxModel.height );
 
         setSelected( element );
         tooltip.moveToPageElement( element );
+    }
+
+
+    function deselect()
+    {
+        AdminLiveEdit.PageOverlay.hide();
+        AdminLiveEdit.Highlighter.hide();
+        setSelected(null);
     }
 
 
@@ -55,6 +60,7 @@ AdminLiveEdit.PageElementSelector = function()
         });
     }
 
+
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // Public
 
@@ -63,12 +69,16 @@ AdminLiveEdit.PageElementSelector = function()
             init();
         },
 
-        selectElement: function(element) {
-            selectElement(element);
+        select: function( element ) {
+            selectElement( element );
         },
 
-        setSelected: function(element) {
-            setSelected(element);
+        deselect: function() {
+            deselect();
+        },
+
+        setSelected: function( element ) {
+            setSelected( element );
         },
 
         getSelected: function() {

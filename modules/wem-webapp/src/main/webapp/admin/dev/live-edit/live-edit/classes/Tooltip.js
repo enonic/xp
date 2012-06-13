@@ -14,7 +14,7 @@ AdminLiveEdit.Tooltip = function()
 
         var tooltip = getTooltip();
         var elementBoxModel = AdminLiveEdit.Util.getBoxModelSize( element, (elementType === 'region') );
-        var top = elementBoxModel.top - 50;
+        var top = elementBoxModel.top - 54;
         var left = elementBoxModel.left + (elementBoxModel.width/2) - (tooltip.outerWidth()/2);
 
         tooltip.css( {
@@ -72,9 +72,11 @@ AdminLiveEdit.Tooltip = function()
         init: function() {
             init();
         },
+
         moveToPageElement: function( element ) {
             moveToPageElement( element );
         },
+
         hide: function() {
             hide( );
         }

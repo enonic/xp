@@ -16,7 +16,7 @@
         var liveEdit = window.AdminLiveEdit;
         liveEdit.Windows.init();
         liveEdit.Regions.init();
-        liveEdit.PageCanvas.init();
+        liveEdit.PageOverlay.init();
         liveEdit.Highlighter.init();
         liveEdit.PageElementSelector.init();
         liveEdit.Tooltip.init();

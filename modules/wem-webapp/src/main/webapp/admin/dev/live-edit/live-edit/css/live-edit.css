@@ -18,20 +18,29 @@
     top: 0; left: 0;
 }
 
+.live-edit-overlay {
+    position: absolute;
+    top: -15000px;
+    left: -15000px;
+    background-color: #000;
+    opacity: .5;
+}
+
 /* Selector */
 
 #live-edit-highlighter {
     position: absolute;
     top: -5000px; left: -5000px;
-    cursor: move;
 }
 
 .live-edit-window-highlighter {
     border: 2px dashed #000;
+    cursor: move;
 }
 
 .live-edit-window-selected {
     border: 2px solid #666;
+    cursor: move;
 }
 
 .live-edit-region-highlighter {
