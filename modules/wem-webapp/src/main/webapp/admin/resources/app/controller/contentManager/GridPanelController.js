@@ -4,7 +4,8 @@ Ext.define( 'Admin.controller.contentManager.GridPanelController', {
     /*      Controller for handling Grid & its Context Menu UI events       */
 
     stores: [
-        'Admin.store.contentManager.ContentStore'
+        'Admin.store.contentManager.ContentStore',
+        'Admin.store.contentManager.ContentTreeStore'
     ],
     models: [
         'Admin.model.contentManager.ContentModel'
@@ -20,6 +21,11 @@ Ext.define( 'Admin.controller.contentManager.GridPanelController', {
 
         this.control( {
             'contentGrid': {
+                selectionchange: this.updateSelection,
+                itemcontextmenu: this.popupMenu,
+                itemdblclick: this.viewContent
+            },
+            'contentTree': {
                 selectionchange: this.updateSelection,
                 itemcontextmenu: this.popupMenu,
                 itemdblclick: this.viewContent
@@ -48,8 +54,7 @@ Ext.define( 'Admin.controller.contentManager.GridPanelController', {
     updateSelection: function()
     {
         var detailPanel = this.getContentDetailPanel();
-        var plugin = this.getPersistentGridSelectionPlugin();
-        detailPanel.setData( plugin.getSelection() );
+        detailPanel.setData( this.getContentShowPanel().getSelection() );
     },
 
     popupMenu: function( view, rec, node, index, e )
