@@ -13,7 +13,7 @@ AdminLiveEdit.Tooltip = function()
         setText( elementType, ' - ' + (element.data()['liveEditWindow'] || element.data()['liveEditRegion']) );
 
         var tooltip = getTooltip();
-        var elementBoxModel = AdminLiveEdit.Util.getBoxModelSize( element, (elementType === 'region') );
+        var elementBoxModel = AdminLiveEdit.Util.getBoxModel( element, (elementType === 'region') );
         var top = elementBoxModel.top - 54;
         var left = elementBoxModel.left + (elementBoxModel.width/2) - (tooltip.outerWidth()/2);
 
@@ -78,7 +78,7 @@ AdminLiveEdit.Tooltip = function()
         },
 
         hide: function() {
-            hide( );
+            hide();
         }
     };
 

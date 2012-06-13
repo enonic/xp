@@ -18,10 +18,10 @@ AdminLiveEdit.PageElementSelector = function()
         var elementBoxModel;
 
         if ( pageElementTypeToSelect === 'window' ) {
-            elementBoxModel = util.getBoxModelSize( element );
+            elementBoxModel = util.getBoxModel( element );
             highlighter.highlightWindow( element, true );
         } else if ( pageElementTypeToSelect === 'region' ) {
-            elementBoxModel = util.getBoxModelSize( element, true );
+            elementBoxModel = util.getBoxModel( element, true );
             highlighter.highlightRegion( element, true );
         }
 
@@ -35,7 +35,7 @@ AdminLiveEdit.PageElementSelector = function()
     function deselect()
     {
         AdminLiveEdit.PageOverlay.hide();
-        AdminLiveEdit.Highlighter.hide();
+        AdminLiveEdit.Tooltip.hide();
         setSelected(null);
     }
 
