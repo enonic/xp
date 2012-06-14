@@ -21,7 +21,7 @@ Ext.define( 'Admin.view.NotifyUserWindow', {
                             xtype: 'textfield',
                             allowBlank: false,
                             validateOnChange: true,
-                            labelClsExtra: 'cms-form-label'
+                            labelClsExtra: 'admin-form-label'
                         },
                         items: [
                             {

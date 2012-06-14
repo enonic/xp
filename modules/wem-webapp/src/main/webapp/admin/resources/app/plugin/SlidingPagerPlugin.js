@@ -57,7 +57,7 @@ Ext.define('Admin.plugin.SlidingPagerPlugin', {
             }
         });
 
-        var total = Ext.create('Ext.toolbar.TextItem', {cls: 'cms-bold-text'});
+        var total = Ext.create('Ext.toolbar.TextItem', {cls: 'admin-bold-text'});
         var tbFill = Ext.create('Ext.toolbar.Fill', {});
         var displayInfo = Ext.create('Ext.toolbar.TextItem', {});
 

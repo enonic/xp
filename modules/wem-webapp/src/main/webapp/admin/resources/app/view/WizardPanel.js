@@ -8,7 +8,7 @@ Ext.define( 'Admin.view.WizardPanel', {
         type: 'wizard',
         animation: 'none'
     },
-    cls: 'cms-wizard',
+    cls: 'admin-wizard',
     autoHeight: true,
     defaults: {
         border: false,
@@ -43,7 +43,7 @@ Ext.define( 'Admin.view.WizardPanel', {
         this.dirtyItems = [];
         this.invalidItems = [];
 
-        this.cls += this.isNew ? ' cms-wizard-new' : ' cms-wizard-edit';
+        this.cls += this.isNew ? ' admin-wizard-new' : ' admin-wizard-edit';
         
         if ( this.showControls )
         {
@@ -99,8 +99,8 @@ Ext.define( 'Admin.view.WizardPanel', {
         this.dockedItems = [{
             xtype: 'panel',
             dock: 'top',
-            cls: 'cms-wizard-toolbar',
-            disabledCls: 'cms-wizard-toolbar-disabled',
+            cls: 'admin-wizard-toolbar',
+            disabledCls: 'admin-wizard-toolbar-disabled',
             itemId: 'progressBar',
             listeners: {
                 click: {
@@ -436,9 +436,9 @@ Ext.define( 'Admin.view.WizardPanel', {
             }
             if( next ) {
                 next.setDisabled( disable || !hasNext);
-                next.removeCls('cms-prev-button');
-                next.removeCls('cms-button');
-                next.addCls(hasPrev ? 'cms-prev-button' : 'cms-button');
+                next.removeCls('admin-prev-button');
+                next.removeCls('admin-button');
+                next.addCls(hasPrev ? 'admin-prev-button' : 'admin-button');
             }
         }
     },

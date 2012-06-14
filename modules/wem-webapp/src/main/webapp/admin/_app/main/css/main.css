@@ -16,17 +16,17 @@ span.link:hover {
 
 /*----- Activity stream -----*/
 
-.cms-activity-stream-panel-body {
+.admin-activity-stream-panel-body {
     background-color: #f5f5f5;
     padding: 0;
 }
 
-#cms-activity-stream-speak-out-panel-container {
+#admin-activity-stream-speak-out-panel-container {
     padding: 15px 10px 10px 10px;
     border-bottom: 1px solid #ccc;
 }
 
-#cms-activity-stream-speak-out-panel-container h1 {
+#admin-activity-stream-speak-out-panel-container h1 {
     font-size: 16px;
     font-weight: normal;
     color: #777777;
@@ -37,7 +37,7 @@ span.link:hover {
     margin: 5px 10px 0 0;
 }
 
-#cms-activity-stream-messages-container {
+#admin-activity-stream-messages-container {
     overflow: auto;
     position: absolute;
     width: 100%;
@@ -45,21 +45,21 @@ span.link:hover {
     bottom: 0;
 }
 
-.cms-activity-stream-message,
-.cms-activity-stream-message td {
+.admin-activity-stream-message,
+.admin-activity-stream-message td {
     font-size: 11px;
 }
 
-.cms-activity-stream-message {
+.admin-activity-stream-message {
     border-bottom: 1px solid #ccc;
     padding: 10px;
 }
 
-.cms-activity-stream-message:last-child {
+.admin-activity-stream-message:last-child {
     border-bottom: none !important;
 }
 
-.cms-activity-stream-message:hover {
+.admin-activity-stream-message:hover {
     background: #dbeeff;
     background: -moz-linear-gradient(top, #dbeeff 0%, #bbd2f0 100%);
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dbeeff), color-stop(100%, #bbd2f0));
@@ -70,59 +70,59 @@ span.link:hover {
     background: linear-gradient(top, #dbeeff 0%, #bbd2f0 100%);
 }
 
-.cms-activity-stream-message .photo-container {
+.admin-activity-stream-message .photo-container {
     padding-right: 10px;
 }
 
-.cms-activity-stream-message .photo-container img {
+.admin-activity-stream-message .photo-container img {
 }
 
-.cms-activity-stream-message .message-container {
+.admin-activity-stream-message .message-container {
     width: 200px;
 }
 
-.cms-activity-stream-message .photo {
+.admin-activity-stream-message .photo {
     width: 32px;
     height: 32px;
 }
 
-.cms-activity-stream-message .display-name-location {
+.admin-activity-stream-message .display-name-location {
     margin-bottom: 1px;
 }
 
-.cms-activity-stream-message .display-name-location,
-.cms-activity-stream-message .actions table .pretty-date,
+.admin-activity-stream-message .display-name-location,
+.admin-activity-stream-message .actions table .pretty-date,
 #activity-stream-speak-out-letters-left-container {
     color: #555;
 }
 
-.cms-activity-stream-message .actions {
+.admin-activity-stream-message .actions {
     margin-top: 5px;
 }
 
-.cms-activity-stream-message .actions table {
+.admin-activity-stream-message .actions table {
     width: 100%;
 }
 
-.cms-activity-stream-message .actions span.link {
+.admin-activity-stream-message .actions span.link {
     display: block;
 }
 
-.cms-activity-stream-message .actions span.link.favorite {
+.admin-activity-stream-message .actions span.link.favorite {
     background: url(../images/activity-stream/favorite.png) no-repeat scroll 0 -1px TRANSPARENT;
     padding-left: 19px;
 }
 
-.cms-activity-stream-message .actions span.link.favorited {
+.admin-activity-stream-message .actions span.link.favorited {
     background: url(../images/activity-stream/favorite-favorited.png) no-repeat scroll 0 -1px TRANSPARENT;
 }
 
-.cms-activity-stream-message .actions span.link.comment {
+.admin-activity-stream-message .actions span.link.comment {
     background: url(../images/activity-stream/reply.png) no-repeat scroll 0 1px TRANSPARENT;
     padding-left: 16px;
 }
 
-.cms-activity-stream-message .actions span.link.more {
+.admin-activity-stream-message .actions span.link.more {
     background: url(../images/activity-stream/more.png) no-repeat scroll 0 1px TRANSPARENT;
     width: 18px;
     height: 18px;
@@ -130,7 +130,7 @@ span.link:hover {
 
 /*----- Notifier -----*/
 
-.cms-notification-window {
+.admin-notification-window {
     border-radius: 6px;
     opacity: .9;
     padding: 10px 10px 20px 10px;
@@ -146,30 +146,30 @@ span.link:hover {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#444', endColorstr='#0e0e0e',GradientType=0 );
 }
 
-.cms-notification-window,
-.cms-notification-window td {
+.admin-notification-window,
+.admin-notification-window td {
     color: #f0f0f0;
     font-size: 11px;
 }
 
-.cms-notification-window table {
+.admin-notification-window table {
     width: 100%;
 }
 
-.cms-notification-window h1 {
+.admin-notification-window h1 {
     margin-bottom: 5px;
     font-size: 14px;
     font-weight: bold;
 }
 
-.cms-notification-window .message-text {
+.admin-notification-window .message-text {
 }
 
-.cms-notification-window span.link {
+.admin-notification-window span.link {
     color: lime;
 }
 
-.cms-notification-window p {
+.admin-notification-window p {
     margin-top: 10px;
 }
 
@@ -219,30 +219,30 @@ span.link:hover {
 
 /*----- Logged in user popup -----*/
 
-.cms-logged-in-user-popup {
+.admin-logged-in-user-popup {
     border: 1px solid #99BCE8;
     padding: 10px;
     background-color: #fff;
 }
 
-.cms-logged-in-user-popup h1 {
+.admin-logged-in-user-popup h1 {
     font-size: 14px;
 }
 
-.cms-logged-in-user-popup-left {
+.admin-logged-in-user-popup-left {
     float: left;
     margin-right: 10px;
 }
 
-.cms-logged-in-user-popup-right {
+.admin-logged-in-user-popup-right {
     float: left;
     width: 223px;
 }
 
-.cms-logged-in-user-popup-left img {
+.admin-logged-in-user-popup-left img {
     width: 64px;
 }
 
-.cms-logged-in-user-popup-log-out {
+.admin-logged-in-user-popup-log-out {
     marigin-top: 10px;
 }

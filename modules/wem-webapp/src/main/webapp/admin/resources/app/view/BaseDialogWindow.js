@@ -15,7 +15,7 @@ Ext.define( 'Admin.view.BaseDialogWindow', {
     maxHeight: 350,
     autoScroll: true,
 
-    cls: 'cms-dialog-window',
+    cls: 'admin-dialog-window',
     closeAction: 'hide',
     bodyPadding: 10,
     bodyStyle: 'background: #fff;',

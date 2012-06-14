@@ -3,7 +3,7 @@ Ext.define( 'Admin.view.datadesigner.DetailPanel', {
     alias: 'widget.contentTypeDetailPanel',
     layout: 'card',
 
-    cls: 'cms-preview-panel',
+    cls: 'admin-preview-panel',
     overflowX: 'hidden',
     overflowY: 'auto',
 

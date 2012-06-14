@@ -24,7 +24,7 @@ Ext.define( 'Admin.view.account.wizard.user.WizardStepMembershipPanel', {
                         typeAhead: true,
                         resizable: false,
                         xtype: 'boxselect',
-                        cls: 'cms-groups-boxselect',
+                        cls: 'admin-groups-boxselect',
                         resizable: false,
                         name: 'memberships',
                         store: 'Admin.store.account.GroupStore',
@@ -33,10 +33,10 @@ Ext.define( 'Admin.view.account.wizard.user.WizardStepMembershipPanel', {
                         itemClassResolver: function( values )
                         {
                             if ( values.type === 'role' ) {
-                                return 'cms-role-item';
+                                return 'admin-role-item';
                             }
                             else {
-                                return 'cms-group-item';
+                                return 'admin-group-item';
                             }
                         },
                         listConfig: {

@@ -110,14 +110,14 @@ Ext.define( 'App.controller.LauncherToolbarController', {
 
     showAboutWindow: function()
     {
-        var aboutWindow = Ext.ComponentQuery.query( '#cms-about-window' )[0];
+        var aboutWindow = Ext.ComponentQuery.query( '#admin-about-window' )[0];
         if ( aboutWindow ) {
             aboutWindow.show();
             return;
         }
 
         Ext.create( 'Ext.window.Window', {
-            itemId: 'cms-about-window',
+            itemId: 'admin-about-window',
             modal: true,
             resizable: false,
             title: 'About',

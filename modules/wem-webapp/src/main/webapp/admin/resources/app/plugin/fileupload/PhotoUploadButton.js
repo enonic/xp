@@ -7,10 +7,10 @@ Ext.define( 'Admin.plugin.fileupload.PhotoUploadButton', {
     progressBarHeight: 8,
 
     // TODO: Move markup to template file
-    tpl : new Ext.XTemplate( '<div id="{id}" title="{title}" class="cms-image-upload-button-container" style="width:{width - 9}px;height:{height - 9}px; margin: 0">' +
-                                     '<img src="{photoUrl}" class="cms-image-upload-button-image" style="width:{width - 11}px;height:{height - 11}px"/>' +
-                                     '<div class="cms-image-upload-button-progress-bar-container" style="width:{width - 12}px">' +
-                                     '<div class="cms-image-upload-button-progress-bar" style="height:{progressBarHeight}px"><!-- --></div>' +
+    tpl : new Ext.XTemplate( '<div id="{id}" title="{title}" class="admin-image-upload-button-container" style="width:{width - 9}px;height:{height - 9}px; margin: 0">' +
+                                     '<img src="{photoUrl}" class="admin-image-upload-button-image" style="width:{width - 11}px;height:{height - 11}px"/>' +
+                                     '<div class="admin-image-upload-button-progress-bar-container" style="width:{width - 12}px">' +
+                                     '<div class="admin-image-upload-button-progress-bar" style="height:{progressBarHeight}px"><!-- --></div>' +
                                      '</div>' + '</div>' ),
 
     initComponent: function()
@@ -143,18 +143,18 @@ Ext.define( 'Admin.plugin.fileupload.PhotoUploadButton', {
 
     getImageElement: function()
     {
-        return Ext.DomQuery.select( '#' + this.buttonElementId + ' .cms-image-upload-button-image' )[0];
+        return Ext.DomQuery.select( '#' + this.buttonElementId + ' .admin-image-upload-button-image' )[0];
     },
 
     getProgressBarContainerElement: function()
     {
         return Ext.DomQuery.select( '#' + this.buttonElementId +
-                                            ' .cms-image-upload-button-progress-bar-container' )[0];
+                                            ' .admin-image-upload-button-progress-bar-container' )[0];
     },
 
     getProgressBarElement: function()
     {
-        return Ext.DomQuery.select( '#' + this.buttonElementId + ' .cms-image-upload-button-progress-bar' )[0];
+        return Ext.DomQuery.select( '#' + this.buttonElementId + ' .admin-image-upload-button-progress-bar' )[0];
     },
 
     addBodyMouseEventListeners: function()
@@ -174,12 +174,12 @@ Ext.define( 'Admin.plugin.fileupload.PhotoUploadButton', {
 
         function highlightDropTarget()
         {
-            dropTarget.addCls( 'cms-file-upload-drop-target' );
+            dropTarget.addCls( 'admin-file-upload-drop-target' );
         }
 
         function removeHighlightFromDropTarget()
         {
-            dropTarget.dom.className = dropTarget.dom.className.replace( / cms-file-upload-drop-target/, '' );
+            dropTarget.dom.className = dropTarget.dom.className.replace( / admin-file-upload-drop-target/, '' );
         }
 
         dropTarget.on( 'mouseenter', function( event )

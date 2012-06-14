@@ -1,13 +1,13 @@
 <tpl for="users">
-    <div id="selected-item-box-{key}" class="cms-selected-item-box small x-btn-default-small clearfix">
-        <div class="cms-selected-item-box left">
+    <div id="selected-item-box-{key}" class="admin-selected-item-box small x-btn-default-small clearfix">
+        <div class="admin-selected-item-box left">
             <tpl if="hasPhoto"><img alt="User" src="data/user/photo?key={key}&thumb=true" alt="{displayName}"/></tpl>
             <tpl if="(!hasPhoto) && type==='user'"><img alt="User" src="resources/images/icons/256x256/dummy-user.png" alt="{displayName}"/></tpl>
             <tpl if="type==='group'"><img alt="Group" src="resources/images/icons/256x256/group.png" alt="{displayName}"/></tpl>
             <tpl if="type==='role'"><img alt="Group" src="resources/images/icons/256x256/masks.png" alt="{displayName}"/></tpl>
         </div>
-        <div class="cms-selected-item-box center"><h2>{displayName}</h2></div>
-        <div class="cms-selected-item-box right">
+        <div class="admin-selected-item-box center"><h2>{displayName}</h2></div>
+        <div class="admin-selected-item-box right">
             <a id="remove-from-selection-button-{key}" class="remove-selection" href="javascript:;"></a>
         </div>
     </div>
