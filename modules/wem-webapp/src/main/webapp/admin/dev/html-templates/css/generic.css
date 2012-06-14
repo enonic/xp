@@ -37,15 +37,15 @@ templates-index ul li {
 /* END: Only used for the templates example pages */
 
 
-.cms-left {
+.admin-left {
     float: left;
 }
 
-.cms-right {
+.admin-right {
     float: right;
 }
 
-.cms-question {
+.admin-question {
     width: 32px;
     height: 32px;
     background: TRANSPARENT url("../../../resources/lib/ext/resources/themes/images/default/shared/icon-question.gif") no-repeat;

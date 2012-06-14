@@ -4,7 +4,7 @@ Ext.define( 'Admin.view.userstore.UserstorePreviewPanel', {
 
     autoScroll:true,
     layout:'card',
-    cls:'cms-preview-panel',
+    cls:'admin-preview-panel',
 
     collapsible:true,
 

@@ -12,7 +12,7 @@ Ext.define( 'Admin.view.account.preview.user.UserPreviewPanel', {
     autoWidth: true,
     autoScroll: true,
 
-    cls: 'cms-user-preview-panel',
+    cls: 'admin-user-preview-panel',
     width: undefined,
 
     showToolbar: true,

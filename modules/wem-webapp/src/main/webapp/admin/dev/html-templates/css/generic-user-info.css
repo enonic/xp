@@ -1,8 +1,8 @@
-.cms-user-info .cms-user-photo {
+.admin-user-info .admin-user-photo {
     margin-right: 10px;
 }
 
-.cms-user-info img {
+.admin-user-info img {
     width: 48px;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;

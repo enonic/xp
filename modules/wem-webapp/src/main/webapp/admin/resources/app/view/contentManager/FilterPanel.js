@@ -62,7 +62,7 @@ Ext.define( 'Admin.view.contentManager.FilterPanel', {
                         name: 'type',
                         cls: 'facet-single-select-item',
                         checkedCls: 'x-form-cb-checked facet-selected',
-                        overCls: 'cms-cursor-clickable',
+                        overCls: 'admin-cursor-clickable',
                         width: 170
                     },
 
@@ -105,7 +105,7 @@ Ext.define( 'Admin.view.contentManager.FilterPanel', {
                         name: 'type',
                         cls: 'facet-single-select-item',
                         checkedCls: 'x-form-cb-checked facet-selected',
-                        overCls: 'cms-cursor-clickable',
+                        overCls: 'admin-cursor-clickable',
                         width: 170
                     },
 
@@ -144,7 +144,7 @@ Ext.define( 'Admin.view.contentManager.FilterPanel', {
                         name: 'userStoreKey',
                         cls: 'facet-single-select-item',
                         checkedCls: 'x-form-cb-checked facet-selected',
-                        overCls: 'cms-cursor-clickable',
+                        overCls: 'admin-cursor-clickable',
                         width: 170
                     },
 

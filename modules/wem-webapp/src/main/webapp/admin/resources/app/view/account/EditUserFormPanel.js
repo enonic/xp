@@ -9,7 +9,7 @@ Ext.define( 'Admin.view.account.EditUserFormPanel', {
         'Admin.view.account.DoublePasswordField'
     ],
 
-    cls: 'cms-form-panel',
+    cls: 'admin-form-panel',
 
     statics: {
             fieldLabels: {

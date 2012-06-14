@@ -29,7 +29,7 @@ Ext.define( 'Admin.view.account.wizard.group.GroupWizardPanel', {
         var groupWizardHeader = Ext.create( 'Ext.container.Container', {
             itemId: 'wizardHeader',
             autoHeight: true,
-            cls: 'cms-wizard-header-container',
+            cls: 'admin-wizard-header-container',
             border: false,
             tpl: new Ext.XTemplate( Templates.account.groupWizardHeader ),
             data: {

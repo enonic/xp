@@ -7,7 +7,7 @@ Ext.define( 'Admin.view.MegaMenu', {
         'Ext.util.Cookies'
     ],
 
-    bodyCls: 'cms-mega-menu',
+    bodyCls: 'admin-mega-menu',
     plain: true,
     bodyPadding: 0,
     showSeparator: false,
@@ -188,7 +188,7 @@ Ext.define( 'Admin.view.MegaMenu', {
     {
         return Ext.apply( {
             xtype: 'menuitem',
-            cls: 'cms-mega-menu-item medium'
+            cls: 'admin-mega-menu-item medium'
         }, item )
     },
 
@@ -198,7 +198,7 @@ Ext.define( 'Admin.view.MegaMenu', {
         return {
             xtype: 'panel',
             title: hasHeader ? '<h2>' + header + '</h2>' : undefined,
-            cls: 'cms-mega-menu-section',
+            cls: 'admin-mega-menu-section',
             border: false,
             plain: true,
             colspan: hasHeader ? 1 : 4,

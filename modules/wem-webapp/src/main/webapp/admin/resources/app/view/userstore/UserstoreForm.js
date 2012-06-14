@@ -12,7 +12,7 @@ Ext.define( 'Admin.view.userstore.UserstoreForm', {
             {
 
                 xtype: 'panel',
-                cls: 'cms-userstore-info',
+                cls: 'admin-userstore-info',
                 styleHtmlContent: true,
                 itemId: 'headerPanel',
                 tpl: new Ext.XTemplate( Templates.userstore.editFormHeader ),

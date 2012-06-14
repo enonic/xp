@@ -22,7 +22,7 @@ Ext.define( 'Admin.view.account.wizard.group.WizardStepMembersPanel', {
                         triggerOnClick: true,
                         typeAhead: true,
                         xtype:'boxselect',
-                        cls: 'cms-groups-boxselect',
+                        cls: 'admin-groups-boxselect',
                         resizable: false,
                         name: 'members',
                         itemId: 'members',
@@ -34,15 +34,15 @@ Ext.define( 'Admin.view.account.wizard.group.WizardStepMembersPanel', {
                         {
                             if (values.type === 'user' && !values.builtIn)
                             {
-                                return 'cms-user-item';
+                                return 'admin-user-item';
                             }
                             if (values.type === 'role' || values.builtIn)
                             {
-                                return 'cms-role-item';
+                                return 'admin-role-item';
                             }
                             else
                             {
-                                return 'cms-group-item';
+                                return 'admin-group-item';
                             }
                         },
                         listConfig: {

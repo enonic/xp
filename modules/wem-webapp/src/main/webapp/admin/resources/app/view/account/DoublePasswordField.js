@@ -80,7 +80,7 @@ Ext.define( 'Admin.view.account.DoublePasswordField', {
                         name: me.passwordName,
                         width: me.inputWidth,
                         labelWidth: me.labelWidth,
-                        cls: 'cms-glowing-item',
+                        cls: 'admin-glowing-item',
                         enableKeyEvents: true,
                         allowBlank: false,
                         validator: me.validatePassword,
@@ -96,7 +96,7 @@ Ext.define( 'Admin.view.account.DoublePasswordField', {
                     {
                         xtype: 'container',
                         itemId: 'passwordStatus',
-                        cls: 'cms-password-meter-status',
+                        cls: 'admin-password-meter-status',
                         width: me.messageWidth,
                         tpl: '<div class="passwordStatus" style="color: {color};">{text}</div>'
                     }
@@ -135,7 +135,7 @@ Ext.define( 'Admin.view.account.DoublePasswordField', {
                         itemId: 'repeatStatus',
                         tpl: '<div class="repeatStatus {type}">{text}</div> ',
                         width: me.messageWidth,
-                        cls: 'cms-validation-label',
+                        cls: 'admin-validation-label',
                         margin: '0 0 0 5'
                     }
                 ]
@@ -155,9 +155,9 @@ Ext.define( 'Admin.view.account.DoublePasswordField', {
             data = this.passwordStatuses[ passwordLevel ];
             var input = field.el.down( 'input' );
             if ( passwordLevel == 5 ) {
-                input.addCls( 'cms-password-extra-strong' );
+                input.addCls( 'admin-password-extra-strong' );
             } else {
-                input.removeCls( 'cms-password-extra-strong' )
+                input.removeCls( 'admin-password-extra-strong' )
             }
 
         } else {

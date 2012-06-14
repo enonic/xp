@@ -84,7 +84,7 @@ Ext.define( 'Admin.view.account.wizard.user.UserWizardPanel', {
                         height: 50,
                         border: 0,
                         itemId: 'imageToolTip',
-                        cls: 'cms-image-upload-button-image-tip',
+                        cls: 'admin-image-upload-button-image-tip',
                         html: '<div class="x-tip x-tip-default x-layer" role="tooltip">' +
                               '<div class="x-tip-anchor x-tip-anchor-top"></div>' +
                               '<div class="x-tip-body  x-tip-body-default x-tip-body-default">' +
@@ -113,7 +113,7 @@ Ext.define( 'Admin.view.account.wizard.user.UserWizardPanel', {
                         itemId: 'wizardHeader',
                         styleHtmlContent: true,
                         autoHeight: true,
-                        cls: 'cms-wizard-header-container',
+                        cls: 'admin-wizard-header-container',
                         listeners: {
                             afterrender: {
                                 fn: function()
@@ -232,14 +232,14 @@ Ext.define( 'Admin.view.account.wizard.user.UserWizardPanel', {
         wizardPanel.body.on( 'scroll', function()
         {
             // Ideally the element should be cached, but the navigation view is rendered (tpl.update()) for each step.
-            var navigationElement = Ext.get( Ext.DomQuery.selectNode( '.cms-wizard-navigation-container',
+            var navigationElement = Ext.get( Ext.DomQuery.selectNode( '.admin-wizard-navigation-container',
                     wizardPanel.body.dom ) );
             var bodyScrollTop = wizardPanel.body.getScroll().top;
             if ( bodyScrollTop > 73 ) {
-                navigationElement.addCls( 'cms-wizard-navigation-container-sticky' );
+                navigationElement.addCls( 'admin-wizard-navigation-container-sticky' );
             }
             else {
-                navigationElement.removeCls( 'cms-wizard-navigation-container-sticky' );
+                navigationElement.removeCls( 'admin-wizard-navigation-container-sticky' );
             }
         }, wizardPanel );
     },
@@ -247,18 +247,18 @@ Ext.define( 'Admin.view.account.wizard.user.UserWizardPanel', {
     toggleDisplayNameField: function( event, target )
     {
         var clickedElement = new Ext.Element( target );
-        var parentToClickedElementIsHeader = clickedElement.findParent( '.cms-wizard-header' );
-        var displayNameFieldElement = this.getEl().select( '.cms-display-name' ).item( 0 );
+        var parentToClickedElementIsHeader = clickedElement.findParent( '.admin-wizard-header' );
+        var displayNameFieldElement = this.getEl().select( '.admin-display-name' ).item( 0 );
 
         if ( parentToClickedElementIsHeader ) {
             displayNameFieldElement.dom.removeAttribute( 'readonly' );
-            displayNameFieldElement.addCls( 'cms-edited-field' );
+            displayNameFieldElement.addCls( 'admin-edited-field' );
         }
         else {
             displayNameFieldElement.set( {readonly: true} );
             var value = Ext.String.trim( displayNameFieldElement.getValue() );
             if ( value === '' || value === 'Display Name' ) {
-                displayNameFieldElement.removeCls( 'cms-edited-field' );
+                displayNameFieldElement.removeCls( 'admin-edited-field' );
             }
         }
     },
@@ -305,7 +305,7 @@ Ext.define( 'Admin.view.account.wizard.user.UserWizardPanel', {
     getData: function()
     {
         var wizardData = this.getWizardPanel().getData();
-        var displayNameField = this.el.select( 'input.cms-display-name' ).item( 0 );
+        var displayNameField = this.el.select( 'input.admin-display-name' ).item( 0 );
         if ( displayNameField ) {
             var data = {displayName: displayNameField.getValue() };
             Ext.merge( wizardData, data );

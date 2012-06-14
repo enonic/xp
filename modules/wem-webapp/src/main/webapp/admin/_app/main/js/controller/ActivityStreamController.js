@@ -31,8 +31,8 @@ Ext.define('App.controller.ActivityStreamController', {
             store: store,
             tpl: template,
             loadMask: false,
-            itemSelector: 'div.cms-activity-stream-message',
-            renderTo: 'cms-activity-stream-messages-container',
+            itemSelector: 'div.admin-activity-stream-message',
+            renderTo: 'admin-activity-stream-messages-container',
             emptyText: 'No messages',
             listeners: {
                 'itemmouseenter':  {
@@ -104,7 +104,7 @@ Ext.define('App.controller.ActivityStreamController', {
     appendSpeakOutPanel: function()
     {
         var template = new Ext.XTemplate(Templates.main.speakOutPanel);
-        var container = Ext.DomQuery.select( '#cms-activity-stream-speak-out-panel-container' )[0];
+        var container = Ext.DomQuery.select( '#admin-activity-stream-speak-out-panel-container' )[0];
         template.append( container, {});
 
         this.appendSpeakOutTextField();
