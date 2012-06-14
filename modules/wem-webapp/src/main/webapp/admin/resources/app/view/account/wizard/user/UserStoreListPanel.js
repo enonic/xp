@@ -6,7 +6,7 @@ Ext.define('Admin.view.account.wizard.user.UserStoreListPanel', {
 
     initComponent: function() {
         this.tpl = Templates.account.userstoreRadioButton;
-        this.itemSelector = 'div.cms-userstore';
+        this.itemSelector = 'div.admin-userstore';
         this.callParent(arguments);
     },
 

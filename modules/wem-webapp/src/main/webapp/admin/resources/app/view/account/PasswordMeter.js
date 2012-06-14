@@ -46,11 +46,11 @@ Ext.define( 'Admin.view.account.PasswordMeter', {
         var passwordInput = this.down( '#passwordInput' );
         if (passwordLevel == 5)
         {
-            passwordInput.addCls( 'cms-password-extra-strong' );
+            passwordInput.addCls( 'admin-password-extra-strong' );
         }
         else
         {
-            passwordInput.removeCls( 'cms-password-extra-strong' )
+            passwordInput.removeCls( 'admin-password-extra-strong' )
         }
         passwordStatus.update( this.passwordStatuses[passwordLevel] );
     },
@@ -130,7 +130,7 @@ Ext.define( 'Admin.view.account.PasswordMeter', {
             {
                 xtype: 'container',
                 itemId: 'passwordStatus',
-                cls: 'cms-password-meter-status',
+                cls: 'admin-password-meter-status',
                 width: 100,
                 hidden: true,
                 tpl: Templates.account.passwordStatus,

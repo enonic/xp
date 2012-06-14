@@ -1,37 +1,37 @@
 /* Wizard navigation */
-ul.cms-wizard-navigation {
+ul.admin-wizard-navigation {
     list-style-type: none !important;
     background-color: #ccc;
     margin: 0;
     padding: 1px;
 }
 
-ul.cms-wizard-navigation li {
+ul.admin-wizard-navigation li {
     float: left;
     padding-right: 14px;
     margin: 0;
     list-style: none;
 }
 
-ul.cms-wizard-navigation li {
+ul.admin-wizard-navigation li {
     background: TRANSPARENT url(../images/wizard-navigation-arrow.png) no-repeat top right;
 }
 
-ul.cms-wizard-navigation li.current,
-ul.cms-wizard-navigation li.current-last {
+ul.admin-wizard-navigation li.current,
+ul.admin-wizard-navigation li.current-last {
 
     background-image: url(../images/wizard-navigation-arrow-current.png);
 }
 
-ul.cms-wizard-navigation li.previous {
+ul.admin-wizard-navigation li.previous {
     background-image: url(../images/wizard-navigation-arrow-previous.png);
 }
 
-ul.cms-wizard-navigation li.last {
+ul.admin-wizard-navigation li.last {
     background-image: url(../images/wizard-navigation-arrow-last.png);
 }
 
-ul.cms-wizard-navigation li a {
+ul.admin-wizard-navigation li a {
     display: block;
     padding: 8px 15px 8px 15px;
     margin-right: 2px;
@@ -40,19 +40,19 @@ ul.cms-wizard-navigation li a {
     color: #222;
 }
 
-ul.cms-wizard-navigation li a.previous {
+ul.admin-wizard-navigation li a.previous {
 }
 
-ul.cms-wizard-navigation li a.current,
-ul.cms-wizard-navigation li a.current-last {
+ul.admin-wizard-navigation li a.current,
+ul.admin-wizard-navigation li a.current-last {
     color: #000;
     font-weight: bold;
     background-color: #fff;
     padding-right: 86px;
 }
-ul.cms-wizard-navigation a.next {
+ul.admin-wizard-navigation a.next {
     color: #acacac;
 }
-ul.cms-wizard-navigation a.last {
+ul.admin-wizard-navigation a.last {
     color: #acacac;
 }

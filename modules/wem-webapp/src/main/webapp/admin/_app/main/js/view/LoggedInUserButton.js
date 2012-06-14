@@ -50,8 +50,8 @@ Ext.define('App.view.LoggedInUserButton', {
         this.popup = Ext.create('Ext.Component', {
             width: 320,
             floating: true,
-            cls: 'cms-logged-in-user-popup',
-            bodyCls: 'cms-logged-in-user-popup-body',
+            cls: 'admin-logged-in-user-popup',
+            bodyCls: 'admin-logged-in-user-popup-body',
             renderTo: Ext.getBody()
         });
         this.popup.hide();

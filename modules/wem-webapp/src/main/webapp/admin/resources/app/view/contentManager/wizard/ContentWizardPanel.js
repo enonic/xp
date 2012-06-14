@@ -25,7 +25,7 @@ Ext.define( 'Admin.view.contentManager.wizard.ContentWizardPanel', {
             itemId: 'wizardHeader',
             styleHtmlContent: true,
             autoHeight: true,
-            cls: 'cms-wizard-header-container',
+            cls: 'admin-wizard-header-container',
             listeners: {
                 afterrender: {
                     fn: function()
@@ -138,14 +138,14 @@ Ext.define( 'Admin.view.contentManager.wizard.ContentWizardPanel', {
     toggleDisplayNameField: function( event, target )
     {
         var clickedElement = new Ext.Element( target );
-        var parentToClickedElementIsHeader = clickedElement.findParent( '.cms-wizard-header' );
-        var displayNameField = Ext.DomQuery.select( 'input.cms-display-name', this.getEl().dom )[0];
+        var parentToClickedElementIsHeader = clickedElement.findParent( '.admin-wizard-header' );
+        var displayNameField = Ext.DomQuery.select( 'input.admin-display-name', this.getEl().dom )[0];
         var displayNameFieldElement = new Ext.Element( displayNameField );
 
         if ( parentToClickedElementIsHeader )
         {
             displayNameFieldElement.dom.removeAttribute( 'readonly' );
-            displayNameFieldElement.addCls( 'cms-edited-field' );
+            displayNameFieldElement.addCls( 'admin-edited-field' );
         }
         else
         {
@@ -153,7 +153,7 @@ Ext.define( 'Admin.view.contentManager.wizard.ContentWizardPanel', {
             var value = Ext.String.trim( displayNameFieldElement.getValue() );
             if ( value === '' || value === 'Display Name' )
             {
-                displayNameFieldElement.removeCls( 'cms-edited-field' );
+                displayNameFieldElement.removeCls( 'admin-edited-field' );
             }
         }
     }

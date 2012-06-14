@@ -63,7 +63,7 @@ Ext.define('Admin.view.account.FilterPanel', {
                         name: 'type',
                         cls: 'facet-single-select-item',
                         checkedCls: 'x-form-cb-checked facet-selected',
-                        overCls: 'cms-cursor-clickable',
+                        overCls: 'admin-cursor-clickable',
                         width: 170
                     },
 
@@ -110,7 +110,7 @@ Ext.define('Admin.view.account.FilterPanel', {
                         name: 'userStoreKey',
                         cls: 'facet-single-select-item',
                         checkedCls: 'x-form-cb-checked facet-selected',
-                        overCls: 'cms-cursor-clickable',
+                        overCls: 'admin-cursor-clickable',
                         width: 170
                     },
 
@@ -139,7 +139,7 @@ Ext.define('Admin.view.account.FilterPanel', {
                         name: 'organizations',
                         cls: 'facet-single-select-item',
                         checkedCls: 'x-form-cb-checked facet-selected',
-                        overCls: 'cms-cursor-clickable',
+                        overCls: 'admin-cursor-clickable',
                         width: 170
                     },
 
