@@ -1,5 +1,5 @@
 Ext.define( 'Admin.controller.userstore.DetailPanelController', {
-    extend:'Admin.controller.userstore.MainPanelController',
+    extend:'Admin.controller.userstore.Controller',
 
     stores:[
         'Admin.store.userstore.UserstoreConfigStore',

@@ -1,5 +1,5 @@
 Ext.define( 'Admin.controller.userstore.BrowseToolbarController', {
-    extend:'Admin.controller.userstore.MainPanelController',
+    extend:'Admin.controller.userstore.Controller',
 
     /*      Controller for handling Toolbar UI events       */
 
@@ -34,6 +34,9 @@ Ext.define( 'Admin.controller.userstore.BrowseToolbarController', {
                     var userstore = this.getUserstoreGridPanel().getSelection()[0].data;
                     this.createUserstoreTab( userstore );
                 }
+            },
+            'browseToolbar *[action=newUserstore]':{
+                'click':this.createUserstoreTab
             }
         } );
     }
