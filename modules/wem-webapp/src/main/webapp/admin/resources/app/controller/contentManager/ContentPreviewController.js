@@ -22,8 +22,18 @@ Ext.define( 'Admin.controller.contentManager.ContentPreviewController', {
                 {
                     this.deleteContent( this.getContentPreviewPanel().data );
                 }
+            },
+            'contentDetailToolbar *[action=toggleLive]': {
+                click: this.toggleLiveDetail
             }
         } );
+    },
+
+
+    toggleLiveDetail: function( el, e )
+    {
+        el.setIconCls( el.pressed ? 'icon-lightbulb-on-24' : 'icon-lightbulb-24' );
+        this.getContentPreviewPanel().toggleLive();
     },
 
 

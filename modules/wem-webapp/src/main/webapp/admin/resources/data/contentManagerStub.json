@@ -6,6 +6,7 @@
                 "name": "Travel",
                 "type": "site",
                 "owner": "system",
+                "url": "/admin/resources/data/travel.html",
                 "lastModified": "2010-10-10 10:10:00"
             },
             {
@@ -20,6 +21,7 @@
                 "name": "Blueman",
                 "type": "site",
                 "owner": "system",
+                "url": "/admin/resources/data/blueman.html",
                 "lastModified": "2010-10-10 10:10:00"
             },
             {
@@ -27,6 +29,7 @@
                 "name": "Cityscape",
                 "type": "site",
                 "owner": "system",
+                "url": "/admin/resources/data/cityscape.html",
                 "lastModified": "2010-10-10 10:10:00"
             },
             {

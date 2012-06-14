@@ -23,12 +23,18 @@ Ext.define( 'Admin.controller.contentManager.GridPanelController', {
             'contentGrid': {
                 selectionchange: this.updateSelection,
                 itemcontextmenu: this.popupMenu,
-                itemdblclick: this.viewContent
+                itemdblclick: function( grid, record, el, index, event, opts )
+                {
+                    this.viewContent( record );
+                }
             },
             'contentTree': {
                 selectionchange: this.updateSelection,
                 itemcontextmenu: this.popupMenu,
-                itemdblclick: this.viewContent
+                itemdblclick: function( tree, record, el, index, event, opts )
+                {
+                    this.viewContent( record );
+                }
             },
             'contentManagerContextMenu *[action=deleteContent]': {
                 click: function( el, e )

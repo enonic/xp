@@ -190,10 +190,18 @@
     background: transparent url("../images/icons/24x24/cubes_blue_add.png") 0 0 no-repeat;
 }
 
+.icon-lightbulb-24 {
+    background: transparent url("../images/icons/24x24/lightbulb.png") 0 0 no-repeat;
+}
+
+.icon-lightbulb-on-24 {
+    background: transparent url("../images/icons/24x24/lightbulb_on.png") 0 0 no-repeat;
+}
+
 /*---- 32 px icons -----*/
 
-.icon-content-type-32 {
-    background: transparent url("../images/icons/32x32/document_plain_blue.png") 0 0 no-repeat;
+.icon-content-32 {
+    background: transparent url("../images/icons/32x32/cubes_blue.png") 0 0 no-repeat;
 }
 
 .icon-site-32 {

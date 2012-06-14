@@ -4,6 +4,10 @@
     "children": [
         {
             "name": "Sites",
+            "key": 6,
+            "type": "site",
+            "owner": "system",
+            "lastModified": "2010-10-10 10:10:00",
             "expanded": true,
             "children": [
                 {
@@ -11,6 +15,7 @@
                     "name": "Travel",
                     "type": "site",
                     "owner": "system",
+                    "url": "/admin/resources/data/travel.html",
                     "lastModified": "2010-10-10 10:10:00",
                     "leaf": true
                 },
@@ -19,6 +24,7 @@
                     "name": "Blueman",
                     "type": "site",
                     "owner": "system",
+                    "url": "/admin/resources/data/blueman.html",
                     "lastModified": "2010-10-10 10:10:00",
                     "leaf": true
                 },
@@ -27,6 +33,7 @@
                     "name": "Cityscape",
                     "type": "site",
                     "owner": "system",
+                    "url": "/admin/resources/data/cityscape.html",
                     "lastModified": "2010-10-10 10:10:00",
                     "leaf": true
                 }
@@ -34,6 +41,11 @@
         },
         {
             "name": "Content Types",
+            "key": 7,
+            "type": "contentType",
+            "owner": "system",
+            "lastModified": "2010-10-10 10:10:00",
+            "expanded": true,
             "children": [
                 {
                     "key": 2,

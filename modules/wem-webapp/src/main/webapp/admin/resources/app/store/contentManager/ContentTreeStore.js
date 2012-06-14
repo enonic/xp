@@ -12,6 +12,29 @@ Ext.define( 'Admin.store.contentManager.ContentTreeStore', {
             type: 'json',
             totalProperty: 'total'
         }
+    },
+
+    listeners: {
+        beforeappend: function( parentNode, node, opts )
+        {
+            var iconCls;
+            if ( node && Ext.isEmpty( node.get( 'iconCls' ) ) ) {
+                switch ( node.get( 'type' ) ) {
+                    case 'site':
+                        iconCls = 'icon-site-32';
+                        break;
+                    case 'contentType':
+                        iconCls = 'icon-content-32';
+                        break;
+                    default:
+                        iconCls = undefined;
+                        break;
+                }
+                if ( iconCls ) {
+                    node.set( 'iconCls', iconCls );
+                }
+            }
+        }
     }
 
 } );

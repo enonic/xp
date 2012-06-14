@@ -13,18 +13,21 @@ Ext.define( 'Admin.view.contentManager.DetailPanel', {
 
     collapsible: true,
     showToolbar: true,
-    grid: undefined,
+    isLiveMode: false,
 
     initComponent: function()
     {
-
         if ( Ext.isEmpty( this.data ) ) {
 
             this.activeItem = 'noSelection';
 
         } else if ( Ext.isObject( this.data ) || this.data.length == 1 ) {
 
-            this.activeItem = 'singleSelection';
+            if ( this.isLiveMode ) {
+                this.activeItem = 'livePreview';
+            } else {
+                this.activeItem = 'singleSelection';
+            }
 
         } else if ( this.data.length > 1 && this.data.length <= 10 ) {
 
@@ -40,7 +43,8 @@ Ext.define( 'Admin.view.contentManager.DetailPanel', {
             this.createNoSelection(),
             this.createSingleSelection( this.data ),
             this.createLargeBoxSelection( this.data ),
-            this.createSmallBoxSelection( this.data )
+            this.createSmallBoxSelection( this.data ),
+            this.createLivePreview( this.data )
         ];
 
         if ( this.showToolbar ) {
@@ -220,6 +224,17 @@ Ext.define( 'Admin.view.contentManager.DetailPanel', {
         return panel;
     },
 
+    createLivePreview: function( data )
+    {
+        return {
+            itemId: 'livePreview',
+            xtype: 'panel',
+            autoScroll: true,
+            styleHtmlContent: true
+        };
+    },
+
+
     deselectItem: function( event, target )
     {
         var className = target.className;
@@ -231,8 +246,7 @@ Ext.define( 'Admin.view.contentManager.DetailPanel', {
         }
     },
 
-
-    setData: function( data )
+    setData: function( data, updateTitle )
     {
         if ( !data ) {
             return;
@@ -245,18 +259,51 @@ Ext.define( 'Admin.view.contentManager.DetailPanel', {
 
         } else if ( Ext.isObject( this.data ) || this.data.length == 1 ) {
 
-            var data = this.data[0].data;
+            var singleData;
+            if ( Ext.isArray( this.data ) ) {
+                singleData = !Ext.isEmpty( this.data[0] ) ? this.data[0][ 'data' ] : undefined;
+            } else {
+                singleData = this.data[ 'data' ];
+            }
 
-            var previewHeader = this.down( '#previewHeader' );
-            previewHeader.update( data );
+            if ( this.isLiveMode ) {
 
-            var previewPhoto = this.down( '#previewPhoto' );
-            previewPhoto.update( data );
+                this.getLayout().setActiveItem( 'livePreview' );
 
-            var previewInfo = this.down( '#previewInfo' );
-            previewInfo.update( data );
+                var targetEl = this.down( '#livePreview' ).getTargetEl();
+                targetEl.mask( "Loading..." );
 
-            this.getLayout().setActiveItem( 'singleSelection' );
+                targetEl.load( {
+                    url: singleData.url,
+                    scripts: true,
+                    params: {
+                        param1: 'foo',
+                        param2: 'bar'
+                    },
+                    callback: function( el, success, resp, opts )
+                    {
+                        if ( !success && resp.status ) {
+                            this.target.update( '<h2 class="message">' +
+                                                resp.status + ': ' +
+                                                resp.statusText + '</h2>' );
+                        }
+                        targetEl.unmask();
+                    }
+                } );
+
+            } else {
+
+                var previewHeader = this.down( '#previewHeader' );
+                previewHeader.update( singleData );
+
+                var previewPhoto = this.down( '#previewPhoto' );
+                previewPhoto.update( singleData );
+
+                var previewInfo = this.down( '#previewInfo' );
+                previewInfo.update( singleData );
+
+                this.getLayout().setActiveItem( 'singleSelection' );
+            }
 
         } else if ( this.data.length > 1 && this.data.length <= 10 ) {
 
@@ -273,8 +320,9 @@ Ext.define( 'Admin.view.contentManager.DetailPanel', {
             this.getLayout().setActiveItem( smallBox );
 
         }
-
-        this.updateTitle( data );
+        if ( updateTitle !== false ) {
+            this.updateTitle( data );
+        }
     },
 
     getData: function()
@@ -300,7 +348,12 @@ Ext.define( 'Admin.view.contentManager.DetailPanel', {
             }, this );
         }
 
-    }
+    },
 
+    toggleLive: function()
+    {
+        this.isLiveMode = !this.isLiveMode;
+        this.setData( this.data, false )
+    }
 
 } );

@@ -14,6 +14,9 @@ Ext.define( 'Admin.controller.contentManager.FilterPanelController', {
         this.control( {
             'contentFilter #filterButton': {
                 click: this.doSearch
+            },
+            'contentFilter checkbox': {
+                change: this.doSearch
             }
         } );
     },
