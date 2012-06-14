@@ -440,11 +440,11 @@ Ext.define( 'Admin.controller.account.Controller', {
         for ( var i = 0; i < userStoreElements.length; i++ ) {
             var userStoreElement = new Ext.Element( userStoreElements[i] );
             if ( userStoreElement.id !== selectedUserStoreElement.id ) {
-                userStoreElement.removeCls( 'cms-userstore-active' );
+                userStoreElement.removeCls( 'admin-userstore-active' );
             }
         }
 
-        selectedUserStoreElement.addCls( 'cms-userstore-active' );
+        selectedUserStoreElement.addCls( 'admin-userstore-active' );
 
         var radioButton = selectedUserStoreElement.down( 'input' );
         radioButton.dom.checked = true;

@@ -79,7 +79,7 @@ Ext.define( 'Admin.view.account.UserFormField', {
             itemId: 'validationLabel',
             height: 16,
             margin: '0 0 0 15',
-            cls: 'cms-validation-label',
+            cls: 'admin-validation-label',
             hideMode: 'visibility'
         };
         if ( me.validationResultType == 'short' ) {
@@ -166,7 +166,7 @@ Ext.define( 'Admin.view.account.UserFormField', {
         var builderFunction = me.type ? me.fieldConfigBuilders[me.type] : me.fieldConfigBuilders.text;
         fieldConfig = builderFunction( fieldConfig, me );
         if ( me.remote ) {
-            fieldConfig.cls = 'cms-remote-field';
+            fieldConfig.cls = 'admin-remote-field';
         }
         return fieldConfig;
     },
@@ -244,7 +244,7 @@ Ext.define( 'Admin.view.account.UserFormField', {
         var passwordConfig;
 
         if ( me.fieldname == 'password' ) {
-            me.cls = 'cms-glowing-item';
+            me.cls = 'admin-glowing-item';
             passwordConfig = {
                 xtype: 'passwordMeter'
             }

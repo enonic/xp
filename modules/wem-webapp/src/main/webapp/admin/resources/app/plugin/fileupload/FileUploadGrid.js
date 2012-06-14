@@ -185,11 +185,11 @@ Ext.define( 'Admin.plugin.fileupload.FileUploadGrid', {
         }
 
         function addDragOverCls() {
-            gridHtmlElement.addCls('cms-file-upload-drop-target');
+            gridHtmlElement.addCls('admin-file-upload-drop-target');
         }
 
         function removeDragOverCls() {
-            gridHtmlElement.removeCls('cms-file-upload-drop-target');
+            gridHtmlElement.removeCls('admin-file-upload-drop-target');
         }
 
         bodyElement.on('dragover', function(event) {

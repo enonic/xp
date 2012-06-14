@@ -1,58 +1,58 @@
 /*****      Generic     *****/
-.cms-preview-panel .x-fieldset-header {
+.admin-preview-panel .x-fieldset-header {
     border-bottom: 1px solid #F0F0F0;
     display: block;
     width: 100%;
     padding: 0 15px;
 }
 
-.cms-preview-panel .x-fieldset-header-text {
+.admin-preview-panel .x-fieldset-header-text {
     color: #555;
     font-weight: bold;
     font-size: 12px;
     float: none;
 }
 
-.cms-preview-panel .x-fieldset {
+.admin-preview-panel .x-fieldset {
     border: 0 none;
     padding: 0;
     margin: 0 0 20px;
 }
 
-.cms-preview-panel .x-fieldset table {
+.admin-preview-panel .x-fieldset table {
     margin: 0 15px;
 }
 
-.cms-preview-panel, .cms-preview-panel td, .cms-preview-panel th {
+.admin-preview-panel, .admin-preview-panel td, .admin-preview-panel th {
     font-size: 11px;
 }
 
-.cms-preview-panel h1 {
+.admin-preview-panel h1 {
     margin-bottom: 4px;
     font-size: 26px;
     font-weight: normal;
 }
 
-.cms-preview-panel td, .cms-preview-panel th {
+.admin-preview-panel td, .admin-preview-panel th {
     padding: 1px;
     text-align: left;
 }
 
-.cms-preview-panel ul {
+.admin-preview-panel ul {
     margin: 0;
 }
 
-.cms-preview-panel th {
+.admin-preview-panel th {
     font-weight: bold;
     color: #555;
 }
 
-.cms-preview-panel td.label {
+.admin-preview-panel td.label {
     width: 100px;
     color: #777;
 }
 
-.cms-preview-panel .message {
+.admin-preview-panel .message {
     text-align: center;
     font-size: 21px;
     font-weight: normal;
@@ -61,77 +61,77 @@
 }
 
 /*****      West        *****/
-.cms-preview-panel .west img {
+.admin-preview-panel .west img {
     width: 100px;
     height: 100px;
 }
 
 /*****      Center      *****/
-.cms-preview-panel .center {
+.admin-preview-panel .center {
     border-left: 1px solid #f0f0f0;
     border-right: 1px solid #f0f0f0;
 }
 
-.cms-preview-panel .center, .cms-preview-panel .center th, .cms-preview-panel .center td {
+.admin-preview-panel .center, .admin-preview-panel .center th, .admin-preview-panel .center td {
     font-size: 12px;
 }
 
-.cms-preview-panel .center th, .cms-preview-panel .center td {
+.admin-preview-panel .center th, .admin-preview-panel .center td {
     padding: 2px;
 }
 
-.cms-preview-panel .center .email {
+.admin-preview-panel .center .email {
     color: #777;
 }
 
-.cms-preview-panel .center .container {
+.admin-preview-panel .center .container {
     margin: 5px 10px 5px 10px;
 }
 
-.cms-preview-panel .center .config-container textarea {
+.admin-preview-panel .center .config-container textarea {
     background: #FFF;
     border: 0 none;
 }
 
 /*****      East        *****/
-.cms-preview-panel .east .container {
+.admin-preview-panel .east .container {
     margin-bottom: 20px;
 }
 
 /*****      Tabs strip    *****/
-.cms-preview-panel .x-tab-bar-strip {
+.admin-preview-panel .x-tab-bar-strip {
     top: 40px !important; /* Default value is 20, we add 20 = 40 */
     display: none;
 }
 
-.cms-preview-panel .x-tab-bar {
+.admin-preview-panel .x-tab-bar {
     background: none #f0f0f0;
     margin: 0 0 20px;
     border: 0 none;
 }
 
-.cms-preview-panel .x-tab-bar * {
+.admin-preview-panel .x-tab-bar * {
     background: none transparent !important;
     border: 0 none !important;
 }
 
-.cms-preview-panel .x-tab-bar .x-tab-bar-body {
+.admin-preview-panel .x-tab-bar .x-tab-bar-body {
     height: 43px !important; /* Default value is 23, we add 20 = 43 */
     border: 0 none !important; /* Overides the border that appears on resizing the grid */
 }
 
-.cms-preview-panel .x-tab-bar .x-tab-bar-body .x-box-inner {
+.admin-preview-panel .x-tab-bar .x-tab-bar-body .x-box-inner {
     height: 41px !important; /* Default value is 21, we add 20 = 41 */
 }
 
-.cms-preview-panel .x-tab-bar .x-tab-bar-body .x-box-inner .x-tab {
+.admin-preview-panel .x-tab-bar .x-tab-bar-body .x-box-inner .x-tab {
     height: 41px !important; /* Default value is 21, we add 20 = 41 */
     -webkit-box-shadow: none;
     -o-box-shadow: none;
     box-shadow: none;
 }
 
-.cms-preview-panel .x-tab-bar .x-tab button {
+.admin-preview-panel .x-tab-bar .x-tab button {
     height: 33px !important; /* Default value 13, we add 20 = 33 */
     line-height: 33px !important; /* Default value 13, we add 20 = 33 */
     font-size: 12px;
@@ -139,33 +139,33 @@
     font-weight: normal;
 }
 
-.cms-preview-panel .x-tab-bar .x-tab-active button {
+.admin-preview-panel .x-tab-bar .x-tab-active button {
     color: #000;
 }
 
-.cms-preview-panel .x-panel-body-default {
+.admin-preview-panel .x-panel-body-default {
     border: 0 none;
 }
 
-fieldset.cms-memberships-container {
+fieldset.admin-memberships-container {
     margin-bottom: 0 !important;
 }
 
 /*****      Places Tab      *****/
-.cms-preview-panel .address {
+.admin-preview-panel .address {
     margin: 15px;
 }
 
-.cms-preview-panel .address  h3 {
+.admin-preview-panel .address  h3 {
     margin: 0 15px;
 }
 
-.cms-preview-panel .address .body {
+.admin-preview-panel .address .body {
     padding: 15px;
     border: 1px solid #ccc;
     background: #f5f5f5;
 }
 
-.cms-preview-panel .address .body table {
+.admin-preview-panel .address .body table {
     margin: 0;
 }

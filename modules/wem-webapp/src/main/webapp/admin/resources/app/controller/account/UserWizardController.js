@@ -224,7 +224,7 @@ Ext.define( 'Admin.controller.account.UserWizardController', {
     bindDisplayNameEvents:function ( wizard )
     {
         var wizardId = wizard.getId();
-        var displayName = Ext.query( '#' + wizardId + ' input.cms-display-name' );
+        var displayName = Ext.query( '#' + wizardId + ' input.admin-display-name' );
         if ( displayName ) {
             Ext.Element.get( displayName ).on( 'blur', this.displayNameBlur, this, {wizard:wizard} );
             Ext.Element.get( displayName ).on( 'focus', this.displayNameFocus, this );
@@ -339,7 +339,7 @@ Ext.define( 'Admin.controller.account.UserWizardController', {
     getDisplayNameValue:function ( userWizard )
     {
         var wizardPanelId = userWizard.getId();
-        var displayNameField = Ext.query( '#' + wizardPanelId + ' input.cms-display-name' )[0];
+        var displayNameField = Ext.query( '#' + wizardPanelId + ' input.admin-display-name' )[0];
         var displayName = displayNameField.value;
         return displayName === this.EMPTY_DISPLAY_NAME_TEXT ? '' : displayName;
     },

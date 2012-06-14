@@ -9,7 +9,7 @@ Ext.define( 'Admin.view.contentManager.DetailPanel', {
 
     autoScroll: true,
     layout: 'card',
-    cls: 'cms-preview-panel',
+    cls: 'admin-preview-panel',
 
     collapsible: true,
     showToolbar: true,

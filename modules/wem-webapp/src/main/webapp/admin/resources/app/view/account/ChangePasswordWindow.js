@@ -59,7 +59,7 @@ Ext.define( 'Admin.view.account.ChangePasswordWindow', {
                 method: 'POST',
                 url: 'data/user/changepassword',
                 bodyPadding: '10 0',
-                bodyCls: 'cms-no-border',
+                bodyCls: 'admin-no-border',
                 layout: 'anchor',
                 defaults: {
                     allowBlank: false

@@ -1,7 +1,3 @@
-/*
-    TODO: Rename cms- prefixes to admin-
-*/
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Override ext-all.css
 */
@@ -19,7 +15,7 @@ body, td,
 }
 
 .x-toolbar,
-.x-toolbar .cms-bold-toolbar-text.x-toolbar-text {
+.x-toolbar .admin-bold-toolbar-text.x-toolbar-text {
     color: #04408C !important;
     font-weight: bold;
 }
@@ -81,15 +77,15 @@ body, td,
     overflow-x: hidden !important
 }
 
-.cms-no-border {
+.admin-no-border {
     border: none !important;
 }
 
-.cms-left {
+.admin-left {
     float: left;
 }
 
-.cms-right {
+.admin-right {
     float: right;
 }
 
@@ -102,12 +98,12 @@ body, td,
     height: 0;
 }
 
-.cms-emphasis {
+.admin-emphasis {
     font-style: italic;
 }
 
-.cms-validation-label,
-.cms-password-meter-status {
+.admin-validation-label,
+.admin-password-meter-status {
     margin: 0 0 5px 5px;
 }
 
@@ -115,23 +111,23 @@ body, td,
     vertical-align: top;
 }
 
-.cms-cursor-clickable {
+.admin-cursor-clickable {
     cursor: pointer !important;
     text-decoration: underline;
 }
 
-.cms-bold-text {
+.admin-bold-text {
     font-weight: bold !important;
 }
 
-.cms-viewport {
+.admin-viewport {
     background-color: #DFE8F6;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Accounts
 */
-img.cms-grid-thumbnail {
+img.admin-grid-thumbnail {
     width: 32px;
     height: 32px;
 }
@@ -144,14 +140,14 @@ img.photo {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Accounts Grid
 */
-.cms-grid-title {
+.admin-grid-title {
     font-weight: bold;
 }
 
-.cms-grid-description {
+.admin-grid-description {
 }
 
-.x-grid-cell img.cms-thumbnail {
+.x-grid-cell img.admin-thumbnail {
     float: left;
     margin-right: 6px
 }
@@ -260,7 +256,7 @@ img.photo {
     background: url("../images/icon_remote_10px.gif") 0 3px no-repeat;
 }
 
-.cms-form-label>span {
+.admin-form-label>span {
     color: red;
 }
 
@@ -432,7 +428,7 @@ img.photo {
     vertical-align: middle;
 }
 
-.cms-dashboard-palette-item {
+.admin-dashboard-palette-item {
     cursor: move;
     background-color: #f0f0f0;
     padding: 4px;
@@ -440,34 +436,34 @@ img.photo {
     clear: both;
 }
 
-.cms-dashboard-palette-item:hover {
+.admin-dashboard-palette-item:hover {
     background-color: #f0f0f0;
 }
 
-.cms-dashboard-palette-item .item-icon {
+.admin-dashboard-palette-item .item-icon {
     float: left;
     width: 16px;
     height: 16px;
     margin-right: 8px;
 }
 
-.cms-dashboard-palette-item .item-text {
+.admin-dashboard-palette-item .item-text {
     float: left;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Userstore
 */
-.cms-userstore-info .cms-thumbnail {
+.admin-userstore-info .admin-thumbnail {
     float: left;
     margin-right: 10px;
 }
 
-.cms-userstore-info .x-panel-body {
+.admin-userstore-info .x-panel-body {
     border-width: 0 !important;
 }
 
-.cms-userstore-info .x-toolbar {
+.admin-userstore-info .x-toolbar {
     border-width: 1px !important;
 }
 
@@ -476,24 +472,24 @@ img.photo {
     padding-top: 3px;
 }
 
-.cms-group-display {
+.admin-group-display {
     background: #d3d3d3;
     margin-bottom: 3px;
     cursor: auto !important;
 }
 
-.cms-group-display button {
+.admin-group-display button {
     cursor: auto !important;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Cache
 */
-.cms-cache-info h1 {
+.admin-cache-info h1 {
     margin: 0;
 }
 
-.cms-cache-info h1 span {
+.admin-cache-info h1 span {
     font-size: 13px;
     font-style: normal;
     margin-left: 10px;
@@ -502,66 +498,66 @@ img.photo {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Grid selected item
 */
-.cms-selected-item-box {
+.admin-selected-item-box {
     float: left;
     display: inline-block;
 }
 
-.cms-selected-item-box.large .right a:hover,
-.cms-selected-item-box.small .right a:hover {
+.admin-selected-item-box.large .right a:hover,
+.admin-selected-item-box.small .right a:hover {
     border: 1px solid #d1d1d1;
 }
 
-.cms-selected-item-box .left {
+.admin-selected-item-box .left {
     float: left;
 }
 
-.cms-selected-item-box .center {
+.admin-selected-item-box .center {
     float: left;
     border: 0 none !important;
     border-right: 1px solid #F0F0F0 !important;
 }
 
-.cms-selected-item-box .right {
+.admin-selected-item-box .right {
     float: left;
 }
 
 /* Large */
-.cms-selected-item-box.large {
+.admin-selected-item-box.large {
     padding: 3px;
     margin: 0 10px 10px 0;
 }
 
-.cms-selected-item-box.large .left {
+.admin-selected-item-box.large .left {
     margin-left: 6px;
 }
 
-.cms-selected-item-box.large .left img {
+.admin-selected-item-box.large .left img {
     width: 32px;
     height: 32px;
 }
 
-.cms-selected-item-box.large .center {
+.admin-selected-item-box.large .center {
     margin-right: 10px;
     padding: 0 10px;
 }
 
-.cms-selected-item-box.large .center h2 {
+.admin-selected-item-box.large .center h2 {
     margin: 0;
     font-size: 14px;
     font-weight: normal;
 }
 
-.cms-selected-item-box.large .center p {
+.admin-selected-item-box.large .center p {
     margin: 0;
     color: #888;
 }
 
-.cms-selected-item-box.large .right {
+.admin-selected-item-box.large .right {
     margin: 6px 6px 0 0;
 }
 
-.cms-selected-item-box.large .right a {
+.admin-selected-item-box.large .right a {
     width: 22px;
     height: 22px;
     display: block;
@@ -570,40 +566,40 @@ img.photo {
 }
 
 /* Small */
-.cms-selected-item-box.small {
+.admin-selected-item-box.small {
     padding: 2px;
     margin: 0 10px 10px 0;
 }
 
-.cms-selected-item-box.small .left {
+.admin-selected-item-box.small .left {
     margin-left: 3px;
 }
 
-.cms-selected-item-box.small .left img {
+.admin-selected-item-box.small .left img {
     width: 20px;
     height: 20px;
 }
 
-.cms-selected-item-box.small .center {
+.admin-selected-item-box.small .center {
     margin-right: 5px;
     padding: 0 5px;
 }
 
-.cms-selected-item-box.small .center h2 {
+.admin-selected-item-box.small .center h2 {
     font-size: 11px;
     font-weight: normal;
     margin: 3px 0 0 0;
 }
 
-.cms-selected-item-box.small .center p {
+.admin-selected-item-box.small .center p {
     margin: 0;
 }
 
-.cms-selected-item-box.small .right {
+.admin-selected-item-box.small .right {
     margin: 4px 3px 0 0;
 }
 
-.cms-selected-item-box.small .right a {
+.admin-selected-item-box.small .right a {
     width: 12px;
     height: 12px;
     display: block;
@@ -614,7 +610,7 @@ img.photo {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Edit Form Header
 */
-.cms-display-name {
+.admin-display-name {
     border: none;
     margin: 5px 0 0 0;
     font-weight: bold;
@@ -623,37 +619,37 @@ img.photo {
     background: none;
 }
 
-.cms-user-info .cms-user-photo {
+.admin-user-info .admin-user-photo {
     margin-right: 10px;
 }
 
-.cms-user-info img {
+.admin-user-info img {
     width: 48px;
 }
 
-.cms-user-info h2 {
+.admin-user-info h2 {
     margin: 0;
 }
 
-.cms-userstore-block {
+.admin-userstore-block {
     padding: 5px;
     cursor: pointer;
 }
 
-.cms-userstore-block h2 {
+.admin-userstore-block h2 {
     margin-top: 4px;
     font-size: 18px;
     font-weight: normal;
 }
 
-.cms-userstore {
+.admin-userstore {
     padding-left: 10px;
     margin-bottom: 2px;
     border: 1px solid transparent;
 }
 
-div.cms-userstore:hover,
-div.cms-userstore-active {
+div.admin-userstore:hover,
+div.admin-userstore-active {
     background: #dbeeff;
     background: -moz-linear-gradient(top, #dbeeff 0%, #bbd2f0 100%);
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dbeeff), color-stop(100%, #bbd2f0));
@@ -665,49 +661,49 @@ div.cms-userstore-active {
     border: 1px solid #6495ed;
 }
 
-.cms-userstore input {
+.admin-userstore input {
     vertical-align: middle;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     New form
 */
-.cms-new-user-header {
+.admin-new-user-header {
 }
 
-.cms-new-user-header h4 {
+.admin-new-user-header h4 {
     margin: 0 !important;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Wizard navigation
 */
-.cms-wizard-toolbar {
+.admin-wizard-toolbar {
     z-index: 1000; /*TODO: z-index should be managed*/
     height: 50px;
 }
 
-.cms-wizard-toolbar .x-mask {
+.admin-wizard-toolbar .x-mask {
     display: none;
 }
 
-.cms-wizard-toolbar.x-item-disabled {
+.admin-wizard-toolbar.x-item-disabled {
     opacity: 1;
     filter: none;
 }
 
-div.cms-wizard-navigation-container {
+div.admin-wizard-navigation-container {
     padding: 7px 12px 0 6px;
     background-color: #fff;
 }
 
-div.cms-wizard-navigation-container-sticky {
+div.admin-wizard-navigation-container-sticky {
     position: fixed;
     top: 89px;
     width: 100%;
 }
 
-ul.cms-wizard-navigation {
+ul.admin-wizard-navigation {
     list-style-type: none !important;
     margin-left: 6px;
     padding: 1px;
@@ -715,34 +711,34 @@ ul.cms-wizard-navigation {
     margin: 0;
 }
 
-ul.cms-wizard-navigation li {
+ul.admin-wizard-navigation li {
     float: left;
     list-style: none;
     margin: 0;
     padding-right: 14px;
 }
 
-ul.cms-wizard-navigation li {
+ul.admin-wizard-navigation li {
     background: transparent url(../../resources/images/wizard-navigation-arrow.png) no-repeat top right;
 }
 
-ul.cms-wizard-navigation li.current {
+ul.admin-wizard-navigation li.current {
     background-image: url(../../resources/images/wizard-navigation-arrow-current.png);
 }
 
-ul.cms-wizard-navigation li.previous.immediate {
+ul.admin-wizard-navigation li.previous.immediate {
     background-image: url(../../resources/images/wizard-navigation-arrow-previous.png);
 }
 
-ul.cms-wizard-navigation li.last {
+ul.admin-wizard-navigation li.last {
     background-image: url(../../resources/images/wizard-navigation-arrow-last.png);
 }
 
-ul.cms-wizard-navigation li.current.last {
+ul.admin-wizard-navigation li.current.last {
     background-image: url(../../resources/images/wizard-navigation-arrow-current-last.png);
 }
 
-ul.cms-wizard-navigation li a {
+ul.admin-wizard-navigation li a {
     display: block;
     margin-right: 2px;
     padding: 8px 15px 8px 15px;
@@ -752,11 +748,11 @@ ul.cms-wizard-navigation li a {
     background-color: #eee;
 }
 
-ul.cms-wizard-navigation li a.previous {
+ul.admin-wizard-navigation li a.previous {
 }
 
-ul.cms-wizard-navigation li a.current,
-ul.cms-wizard-navigation li a.current.last {
+ul.admin-wizard-navigation li a.current,
+ul.admin-wizard-navigation li a.current.last {
     padding-right: 86px;
     color: #000;
     font-weight: bold;
@@ -766,14 +762,14 @@ ul.cms-wizard-navigation li a.current.last {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Wizard edit mode
 */
-.cms-wizard-edit ul.cms-wizard-navigation a.next,
-.cms-wizard-edit ul.cms-wizard-navigation a.next.immediate,
-.cms-wizard-edit ul.cms-wizard-navigation a.next.last {
+.admin-wizard-edit ul.admin-wizard-navigation a.next,
+.admin-wizard-edit ul.admin-wizard-navigation a.next.immediate,
+.admin-wizard-edit ul.admin-wizard-navigation a.next.last {
     color: #222;
     cursor: pointer;
 }
 
-.cms-wizard-edit .cms-wizard-toolbar-disabled ul.cms-wizard-navigation a.next.last {
+.admin-wizard-edit .admin-wizard-toolbar-disabled ul.admin-wizard-navigation a.next.last {
     color: #acacac;
     cursor: default;
 }
@@ -781,47 +777,47 @@ ul.cms-wizard-navigation li a.current.last {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Wizard new mode
 */
-.cms-wizard-new ul.cms-wizard-navigation li a.next {
+.admin-wizard-new ul.admin-wizard-navigation li a.next {
     color: #acacac;
     cursor: default;
 }
 
-.cms-wizard-new ul.cms-wizard-navigation li a.next.immediate {
+.admin-wizard-new ul.admin-wizard-navigation li a.next.immediate {
     color: #222;
     cursor: pointer;
 }
 
-.cms-wizard-new .cms-wizard-toolbar-disabled ul.cms-wizard-navigation a.next,
-.cms-wizard-new .cms-wizard-toolbar-disabled ul.cms-wizard-navigation a.next.immediate,
-.cms-wizard-new .cms-wizard-toolbar-disabled ul.cms-wizard-navigation a.next.last {
+.admin-wizard-new .admin-wizard-toolbar-disabled ul.admin-wizard-navigation a.next,
+.admin-wizard-new .admin-wizard-toolbar-disabled ul.admin-wizard-navigation a.next.immediate,
+.admin-wizard-new .admin-wizard-toolbar-disabled ul.admin-wizard-navigation a.next.last {
     color: #acacac;
     cursor: default;
 }
 
-.cms-wizard>div>.x-panel-body {
+.admin-wizard>div>.x-panel-body {
     border: 0 none;
 }
 
-.cms-wizard > div > .x-panel-body,
-.cms-glowing-item .x-panel-body,
-.cms-validation-label div,
-.cms-wizard .x-panel-body {
+.admin-wizard > div > .x-panel-body,
+.admin-glowing-item .x-panel-body,
+.admin-validation-label div,
+.admin-wizard .x-panel-body {
     border: 0 none;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Wizard header
 */
-.cms-wizard-header-container {
+.admin-wizard-header-container {
     margin: 0 10px 3px 5px;
     font-size: 12px;
 }
 
-.cms-wizard-header-container .cms-wizard-header {
+.admin-wizard-header-container .admin-wizard-header {
     position: relative;
 }
 
-.cms-wizard-header-container .cms-display-name {
+.admin-wizard-header-container .admin-display-name {
     width: 100%;
     border: 1px solid transparent;
     color: #555555;
@@ -834,17 +830,17 @@ ul.cms-wizard-navigation li a.current.last {
     background: white none;
 }
 
-.cms-wizard-header-container input.cms-display-name:hover {
+.admin-wizard-header-container input.admin-display-name:hover {
     border: 1px solid #98c9f2;
     box-shadow: 0 0 3px #98c9f2;
 }
 
-.cms-wizard-header-container input.cms-display-name:focus {
+.admin-wizard-header-container input.admin-display-name:focus {
     color: #000 !important;
     border: 1px solid #99BCE8 !important;
 }
 
-.cms-wizard-header-container .x-form-invalid-field {
+.admin-wizard-header-container .x-form-invalid-field {
     background-color: white;
     background-image: url('../lib/ext/resources/themes/images/default/grid/invalid_line.gif');
     background-repeat: repeat-x;
@@ -852,15 +848,15 @@ ul.cms-wizard-navigation li a.current.last {
     border-color: #C30;
 }
 
-.cms-wizard-header-container .cms-wizard-userstore {
+.admin-wizard-header-container .admin-wizard-userstore {
     padding-left: 3px;
 }
 
-.cms-edited-field {
+.admin-edited-field {
     color: #000 !important;
 }
 
-.cms-remote-field {
+.admin-remote-field {
     background: url('../images/icon_remote_10px.gif') 4px 6px no-repeat;
 }
 
@@ -869,24 +865,24 @@ ul.cms-wizard-navigation li a.current.last {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Image Upload Button
 */
-.cms-image-upload-button-container {
+.admin-image-upload-button-container {
     position: relative;
     cursor: pointer;
     padding: 1px;
 }
 
-.cms-file-upload-drop-target {
+.admin-file-upload-drop-target {
     border: 1px solid #98c9f2;
     box-shadow: 0 0 3px #98c9f2;
     padding: 0px;
 }
 
-.cms-image-upload-button-container {
+.admin-image-upload-button-container {
     border-left: 1px;
     border-top: 1px;
 }
 
-.cms-image-upload-button-container .cms-image-upload-button-progress-bar-container {
+.admin-image-upload-button-container .admin-image-upload-button-progress-bar-container {
     visibility: hidden;
     position: absolute;
     border: 1px solid #555;
@@ -898,7 +894,7 @@ ul.cms-wizard-navigation li a.current.last {
     border-radius: 4px;
 }
 
-.cms-image-upload-button-container .cms-image-upload-button-progress-bar {
+.admin-image-upload-button-container .admin-image-upload-button-progress-bar {
     font-size: 1px;
     background: #dbeeff;
     background: -moz-linear-gradient(top, #dbeeff 0%, #99BCE8 100%);
@@ -911,118 +907,118 @@ ul.cms-wizard-navigation li a.current.last {
     border-radius: 3px;
 }
 
-.cms-image-upload-button-image-tip {
+.admin-image-upload-button-image-tip {
     position: fixed;
     top: 205px
 }
 
-.cms-image-upload-button-image-tip,
-.cms-image-upload-button-image-tip>div {
+.admin-image-upload-button-image-tip,
+.admin-image-upload-button-image-tip>div {
     overflow: visible;
 }
 
-.cms-image-upload-button-image-tip .x-tip {
+.admin-image-upload-button-image-tip .x-tip {
     left: 0;
     width: 102px;
     height: 38px;
 }
 
-.cms-image-upload-button-image-tip .x-tip-anchor {
+.admin-image-upload-button-image-tip .x-tip-anchor {
     z-index: 1;
     left: 44px;
     top: -10px;
 }
 
-.cms-image-upload-button-image-tip .x-tip-body {
+.admin-image-upload-button-image-tip .x-tip-body {
     text-align: center;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Box select
 */
-.cms-list-item {
+.admin-list-item {
     height: 16px;
     width: 16px;
     display: inline-block;
     margin-right: 3px;
 }
 
-.cms-groups-boxselect table.x-form-trigger-wrap {
+.admin-groups-boxselect table.x-form-trigger-wrap {
     width: 100%;
 }
 
-.cms-groups-boxselect li.x-boxselect-item {
+.admin-groups-boxselect li.x-boxselect-item {
     margin: 4px 0 0 4px;
     padding: 0px 1px 4px 5px !important;
 }
 
-.cms-groups-boxselect div.x-boxselect-item-text {
+.admin-groups-boxselect div.x-boxselect-item-text {
     font-size: 11px;
     margin-left: 18px;
     padding-top: 2px;
 }
 
-li.cms-group-item {
+li.admin-group-item {
     background: url("../images/icons/16x16/group.png") no-repeat 3px 3px;
 }
 
-li.cms-group-item:hover {
+li.admin-group-item:hover {
     background: url("../images/icons/16x16/group.png") no-repeat 3px 3px !important;
 }
 
-li.cms-role-item {
+li.admin-role-item {
     background: url("../images/icons/16x16/masks.png") no-repeat 3px 3px;
 }
 
-li.cms-role-item:hover {
+li.admin-role-item:hover {
     background: url("../images/icons/16x16/masks.png") no-repeat 3px 3px !important;
 }
 
-li.cms-user-item {
+li.admin-user-item {
     background: url("../images/icons/16x16/user.png") no-repeat 3px 3px;
 }
 
-li.cms-user-item:hover {
+li.admin-user-item:hover {
     background: url("../images/icons/16x16/user.png") no-repeat 3px 3px !important;
 }
 
-li.cms-group-item,
-li.cms-role-item,
-li.cms-user-item,
-.cms-user-preview-panel li.cms-role-item:hover,
-.cms-user-preview-panel li.cms-role-item:hover {
+li.admin-group-item,
+li.admin-role-item,
+li.admin-user-item,
+.admin-user-preview-panel li.admin-role-item:hover,
+.admin-user-preview-panel li.admin-role-item:hover {
     background-color: #DEE7F8
 }
 
-li.cms-group-item:hover,
-li.cms-role-item:hover,
-li.cms-user-item:hover {
+li.admin-group-item:hover,
+li.admin-role-item:hover,
+li.admin-user-item:hover {
     background-color: #BBCEF1 !important
 }
 
-.cms-user-preview-panel li.cms-role-item:hover,
-.cms-user-preview-panel li.cms-role-item:hover {
+.admin-user-preview-panel li.admin-role-item:hover,
+.admin-user-preview-panel li.admin-role-item:hover {
     background-color: #DEE7F8 !important;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Base dialog Window
 */
-.cms-dialog-window .dialog-header h3 {
+.admin-dialog-window .dialog-header h3 {
     margin-top: 0;
 }
 
-.cms-dialog-window h3 {
+.admin-dialog-window h3 {
     margin: 0;
 }
 
-.cms-dialog-window h4 {
+.admin-dialog-window h4 {
     font-weight: normal;
     margin-bottom: 5px;
     margin-top: 3px;
 }
 
-.cms-dialog-window .dialog-info {
+.admin-dialog-window .dialog-info {
     color: #555;
     border: 1px solid #B5B8C8;
     padding: 10px;
@@ -1031,27 +1027,27 @@ li.cms-user-item:hover {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Mega Menu
 */
-.cms-mega-menu {
+.admin-mega-menu {
     background-color: #fff !important;
 }
 
-.cms-mega-menu .cms-mega-menu-section .x-panel-header,
-.cms-mega-menu .cms-mega-menu-section .x-panel-body {
+.admin-mega-menu .admin-mega-menu-section .x-panel-header,
+.admin-mega-menu .admin-mega-menu-section .x-panel-body {
     border: 0 none;
     background: none;
     padding: 0;
     box-shadow: none;
 }
 
-.cms-mega-menu .cms-mega-menu-section .x-panel-header {
+.admin-mega-menu .admin-mega-menu-section .x-panel-header {
     padding-top: 10px;
 }
 
-.cms-mega-menu .cms-mega-menu-section .x-panel-body {
+.admin-mega-menu .admin-mega-menu-section .x-panel-body {
     padding: 10px;
 }
 
-.cms-mega-menu .cms-mega-menu-section .x-panel-header h2 {
+.admin-mega-menu .admin-mega-menu-section .x-panel-header h2 {
     border-bottom: 1px solid #cccccc;
     font-size: 18px;
     margin-top: .2em;
@@ -1061,32 +1057,32 @@ li.cms-user-item:hover {
     color: #15428B;
 }
 
-.cms-mega-menu .cms-mega-menu-section.recent {
+.admin-mega-menu .admin-mega-menu-section.recent {
     background-color: #eee;
     border-right: 1px solid #cccccc;
 }
 
-.cms-mega-menu .cms-mega-menu-section.recent .nodata {
+.admin-mega-menu .admin-mega-menu-section.recent .nodata {
     text-align: center;
     font-weight: normal;
     color: #aaa;
     font-size: 13px;
 }
 
-.cms-mega-menu .cms-mega-menu-section.recent .x-panel-header h2 {
+.admin-mega-menu .admin-mega-menu-section.recent .x-panel-header h2 {
     border-bottom: 0 none;
 }
 
-.cms-mega-menu-item a {
+.admin-mega-menu-item a {
     position: relative;
     padding-right: 10px;
 }
 
-.cms-mega-menu-item.medium .x-menu-item-link {
+.admin-mega-menu-item.medium .x-menu-item-link {
     line-height: 24px;
 }
 
-.cms-mega-menu-item.medium .x-menu-item-icon {
+.admin-mega-menu-item.medium .x-menu-item-icon {
     width: 24px;
     height: 24px;
 }
@@ -1137,29 +1133,29 @@ li.cms-user-item:hover {
     color: green;
 }
 
-.cms-form-panel .cms-glowing-item div {
+.admin-form-panel .admin-glowing-item div {
     overflow: visible !important;
 }
 
-.cms-form-panel .x-fieldset-body {
+.admin-form-panel .x-fieldset-body {
     padding: 5px;
 }
 
-.cms-password-extra-strong {
+.admin-password-extra-strong {
     box-shadow: 0 0 5px #3B8150;
     z-index: 1000;
 }
 
-.cms-member-preview-el {
+.admin-member-preview-el {
     margin: 0px 5px 5px 10px !important;
     padding: 5px 20px 4px 5px !important;
 }
 
-.cms-prev-button {
+.admin-prev-button {
     margin: 0 0 0 10px !important;
 }
 
-.cms-button {
+.admin-button {
     margin: 0 0 0 135px !important;
 }
 

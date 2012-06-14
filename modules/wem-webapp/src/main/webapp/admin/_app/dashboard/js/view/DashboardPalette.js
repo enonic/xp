@@ -64,12 +64,12 @@ Ext.define('App.view.DashboardPalette', {
 
         var generalItem = Ext.create("Ext.view.View", {
             tpl: '<tpl for=".">' +
-                    '<div class="cms-dashboard-palette-item clearfix">' +
+                    '<div class="admin-dashboard-palette-item clearfix">' +
                     '<img class="item-icon" src="_app/dashboard/images/icon_enonic_logo.png"/>' +
                     '<div class="item-text">{title}</div>' +
                     '</div>' +
                     '</tpl>',
-            itemSelector: 'div.cms-dashboard-palette-item',
+            itemSelector: 'div.admin-dashboard-palette-item',
             singleSelect: true,
             store: generalStore,
             listeners: {
@@ -80,12 +80,12 @@ Ext.define('App.view.DashboardPalette', {
         });
         var reportsItem = Ext.create("Ext.view.View", {
             tpl: '<tpl for=".">' +
-                    '<div class="cms-dashboard-palette-item clearfix">' +
+                    '<div class="admin-dashboard-palette-item clearfix">' +
                     '<img class="item-icon" src="_app/dashboard/images/chart_curve.png"/>' +
                     '<div class="item-text">{title}</div>' +
                     '</div>' +
                     '</tpl>',
-            itemSelector: 'div.cms-dashboard-palette-item',
+            itemSelector: 'div.admin-dashboard-palette-item',
             singleSelect: true,
             store: reportsStore,
             listeners: {
@@ -96,12 +96,12 @@ Ext.define('App.view.DashboardPalette', {
         });
         var systemItem = Ext.create("Ext.view.View", {
             tpl: '<tpl for=".">' +
-                    '<div class="cms-dashboard-palette-item clearfix">' +
+                    '<div class="admin-dashboard-palette-item clearfix">' +
                     '<img class="item-icon" src="_app/dashboard/images/cog.png"/>' +
                     '<div class="item-text">{title}</div>' +
                     '</div>' +
                     '</tpl>',
-            itemSelector: 'div.cms-dashboard-palette-item',
+            itemSelector: 'div.admin-dashboard-palette-item',
             singleSelect: true,
             store: systemStore,
             listeners: {

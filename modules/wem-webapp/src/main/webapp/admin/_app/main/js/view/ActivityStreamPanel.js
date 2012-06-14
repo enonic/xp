@@ -12,12 +12,12 @@ Ext.define('App.view.ActivityStreamPanel', {
     minWidth: 200,
     maxWidth: 270,
     autoScroll: false,
-    bodyCls: 'cms-activity-stream-panel-body',
+    bodyCls: 'admin-activity-stream-panel-body',
 
     initComponent: function()
     {
-        this.html = '<div id="cms-activity-stream-speak-out-panel-container"><!-- --></div>' +
-                    '<div id="cms-activity-stream-messages-container"><!-- --></div>';
+        this.html = '<div id="admin-activity-stream-speak-out-panel-container"><!-- --></div>' +
+                    '<div id="admin-activity-stream-messages-container"><!-- --></div>';
 
         this.callParent(arguments);
     }

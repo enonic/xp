@@ -7,10 +7,10 @@ if ( !Templates ) {
 Templates.main = {
 
     loggedInUserButtonPopup:
-		'<div class="cms-logged-in-user-popup-left">' + 
+		'<div class="admin-logged-in-user-popup-left">' +
 		    '<img src="resources/images/x-user.png"/>' + 
 		'</div>' + 
-		'<div class="cms-logged-in-user-popup-right">' + 
+		'<div class="admin-logged-in-user-popup-right">' +
 		    '<h1>{displayName}</h1>' + 
 		    '<p>{qualifiedName}</p>' + 
 		    '<p>{email}</p>' + 
@@ -19,12 +19,12 @@ Templates.main = {
 		    '<p>&nbsp;</p>' + 
 		    '<p><span class="link">Edit Account</span></p>' + 
 		    '<p><span class="link">Change Password</span></p>' + 
-		    '<p class="cms-logged-in-user-popup-log-out" style="float:right"><a href="index.html">Log Out</a></p>' + 
+		    '<p class="admin-logged-in-user-popup-log-out" style="float:right"><a href="index.html">Log Out</a></p>' +
 		'</div>',
 
     activityStream:
 		'<tpl for=".">' + 
-		    '<div class="cms-activity-stream-message">' + 
+		    '<div class="admin-activity-stream-message">' +
 		        '<table border="0" cellspacing="0" cellpadding="0">' + 
 		            '<tr>' + 
 		                '<td valign="top" class="photo-container">' + 
@@ -68,19 +68,19 @@ Templates.main = {
 		    '<div id="activity-stream-speak-out-text-input"><!-- --></div>' + 
 		    '<div class="clearfix">' + 
 		        '<div class="clearfix">' + 
-		            '<div class="cms-left">' + 
+		            '<div class="admin-left">' +
 		                '<div id="activity-stream-speak-out-url-shortener-button-container"><!-- --></div>' + 
 		            '</div>' + 
-		            '<div class="cms-right">' + 
-		                '<div id="activity-stream-speak-out-letters-left-container" class="cms-left">140</div>' + 
-		                '<div id="activity-stream-speak-out-send-button-container" class="cms-left"><!-- --></div>' + 
+		            '<div class="admin-right">' +
+		                '<div id="activity-stream-speak-out-letters-left-container" class="admin-left">140</div>' +
+		                '<div id="activity-stream-speak-out-send-button-container" class="admin-left"><!-- --></div>' +
 		            '</div>' + 
 		        '</div>' + 
 		    '</div>' + 
 		'</div>',
 
     notificationWindow:
-		'<div class="cms-notification-window clearfix">' + 
+		'<div class="admin-notification-window clearfix">' +
 		    '<table border="0">' + 
 		        '<tr>' + 
 		            '<td style="width: 42px" valign="top">' + 

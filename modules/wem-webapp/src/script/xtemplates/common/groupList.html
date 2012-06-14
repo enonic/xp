@@ -1,8 +1,8 @@
 <div class="clearfix">
-    <div class="cms-left">
-        <span class="{[values.type==="user" && !values.builtIn ? "icon-user" : values.type==="role" || values.builtIn ? "icon-role" : "icon-group"]} cms-list-item"></span>
+    <div class="admin-left">
+        <span class="{[values.type==="user" && !values.builtIn ? "icon-user" : values.type==="role" || values.builtIn ? "icon-role" : "icon-group"]} admin-list-item"></span>
     </div>
-    <div class="cms-left">
+    <div class="admin-left">
         <span>
             <tpl if="type=='user'"> {name} ({qualifiedName})</tpl>
             <tpl if="type!='user'">{name} ({userStore})</tpl>
