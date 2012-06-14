@@ -1,4 +1,4 @@
-Ext.define( 'Admin.controller.userstore.DetailPanelController', {
+Ext.define( 'Admin.controller.userstore.UserstorePreviewController', {
     extend:'Admin.controller.userstore.Controller',
 
     stores:[
@@ -26,20 +26,33 @@ Ext.define( 'Admin.controller.userstore.DetailPanelController', {
             'userstorePreviewToolbar button[action=editUserstore]': {
                 click: function( item, e, eOpts )
                 {
-                    var userstorePreviewPanel = item.up( 'userstorePreviewPanel' );
-                    var userstore = userstorePreviewPanel.getData();
-                    this.viewUserstore( userstore );
-                    userstorePreviewPanel.close();
+                    this.createUserstoreTab( this.getCurrentUserstoreData() );
+                    this.getCmsTabPanel().getActiveTab().close();
+                }
+            },
+            'userstorePreviewToolbar button[action=deleteUserstore]': {
+                click: function( item, e, eOpts )
+                {
+                    this.showDeleteUserstoreWindow( {data: this.getCurrentUserstoreData()} );
                 }
             }
 
         } );
     },
 
+    getCurrentUserstoreData: function()
+    {
+        var userstorePreviewPanel = this.getCmsTabPanel().getActiveTab();
+        if (userstorePreviewPanel.getData)
+        {
+            return userstorePreviewPanel.getData();
+        }
+        return ;
+    },
+
     updatePanel:function ( selected )
     {
         var userstore = selected[0];
-        console.log(userstore)
         var detailPanel = this.getDetailPanel();
 
         if ( userstore ) {
@@ -54,6 +67,7 @@ Ext.define( 'Admin.controller.userstore.DetailPanelController', {
     {
         Ext.ComponentQuery.query( 'browseToolbar button[action=editUserstore]' )[0].setDisabled( disable );
         Ext.ComponentQuery.query( 'browseToolbar button[action=deleteUserstore]' )[0].setDisabled( disable );
+        Ext.ComponentQuery.query( 'browseToolbar button[action=viewUserstore]' )[0].setDisabled( disable );
     },
 
     getDetailPanel:function ()

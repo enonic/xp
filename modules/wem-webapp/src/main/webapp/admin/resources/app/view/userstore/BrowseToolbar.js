@@ -52,6 +52,7 @@ Ext.define( 'Admin.view.userstore.BrowseToolbar', {
                     {
                         text: 'View',
                         action: 'viewUserstore',
+                        disabled: true,
                         iconCls: 'icon-view-24'
                     }
                 ]

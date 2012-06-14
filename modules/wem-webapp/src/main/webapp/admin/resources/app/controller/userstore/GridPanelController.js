@@ -34,13 +34,6 @@ Ext.define( 'Admin.controller.userstore.GridPanelController', {
                 itemcontextmenu:this.showContextMenu
             },
 
-            'userstoreGrid button[action=newUserstore]':{
-                click:function ( button, e, eOpts )
-                {
-                    this.createUserstoreTab();
-                }
-            },
-
             'userstoreContextMenu menuitem[action=editUserstore]':{
                 click:function ( item, e, eOpts )
                 {
