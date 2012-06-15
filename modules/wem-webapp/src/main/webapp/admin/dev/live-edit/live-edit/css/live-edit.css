@@ -185,7 +185,8 @@
 .live-edit-button-icon {
     display: block;
     width: auto;
-    height: 32px;
+    height: 24px;
+    padding-bottom: 10px;
     background-color: transparent;
     background-repeat: no-repeat;
     background-position: center 5px;
