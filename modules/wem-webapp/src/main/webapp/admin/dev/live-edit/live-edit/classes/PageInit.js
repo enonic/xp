@@ -18,8 +18,9 @@
         liveEdit.Regions.init();
         liveEdit.PageOverlay.init();
         liveEdit.Highlighter.init();
-        liveEdit.PageElementSelector.init();
+        liveEdit.ElementSelector.init();
         liveEdit.Tooltip.init();
+        liveEdit.Toolbar.init();
         liveEdit.DragDrop.init();
     } );
 

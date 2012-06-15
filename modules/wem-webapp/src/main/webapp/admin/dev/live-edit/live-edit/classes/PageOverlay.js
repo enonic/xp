@@ -72,7 +72,7 @@ AdminLiveEdit.PageOverlay = function()
     function initOverlayClickEvent()
     {
         var util = AdminLiveEdit.Util;
-        var pageElementSelector = AdminLiveEdit.PageElementSelector;
+        var elementSelector = AdminLiveEdit.ElementSelector;
 
         $liveedit( '.live-edit-overlay' ).click( function( event ) {
             hideOverlay();
@@ -82,9 +82,9 @@ AdminLiveEdit.PageOverlay = function()
             var closestElementFromPoint = util.getClosestPageElementFromPoint( event.originalEvent.clientX,
                     event.originalEvent.clientY );
             if ( closestElementFromPoint.length > 0 ) {
-                pageElementSelector.select( closestElementFromPoint );
+                elementSelector.select( closestElementFromPoint );
             } else {
-                pageElementSelector.deselect();
+                elementSelector.deselect();
             }
         });
     }

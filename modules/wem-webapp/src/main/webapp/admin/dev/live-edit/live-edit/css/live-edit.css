@@ -9,7 +9,6 @@
     vertical-align: baseline;
 }
 
-
 /* Overlay */
 
 #live-edit-canvas {
@@ -98,9 +97,9 @@
     top: -5000px;
     left: -5000px;
     border: 2px solid #515e69;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
     padding: 9px 20px;
     text-align: center;
     font-size: 11px;
@@ -110,6 +109,7 @@
     background: -moz-linear-gradient(#3c4a58, #202933);
     background: -o-linear-gradient(#3c4a58, #202933);
     background: linear-gradient(#3c4a58, #202933);
+    box-shadow: 6px 6px 10px #444444;
 }
 
 #live-edit-tooltip-arrow-border {
@@ -137,7 +137,7 @@
 }
 
 #live-edit-tooltip-type-text {
-    color: #fff;
+    color: #bec9d4;
 }
 
 #live-edit-tooltip-name-text {
@@ -147,12 +147,52 @@
 /* Toolbar */
 
 #live-edit-toolbar {
-    width: 60px;
     position: absolute;
     top: -5000px; left: -5000px;
-    border: 1px solid #00008b;
-    padding: 5px;
-    background-color: #add8e6;
+    background-color: #272C31;
+    /*background-image: -moz-linear-gradient(center top , #4E5660, #272C31);*/
+    box-shadow: 6px 6px 10px #444444;
+}
+
+#live-edit-toolbar-inner {
+    outline: 1px solid #141414;
+    border: 1px solid #50575d;
+    padding: 10px 10px 25px 10px;
+}
+
+/* Button */
+
+.live-edit-button {
+    width: 74px;
+    background-color: #2e3338;
+    padding: 1px;
+    border-radius: 2px;
+}
+
+.live-edit-button button {
+    border: 1px solid #778189;
+    text-align: center;
+    background-color: #e3ebf5;
+    background-image: -moz-linear-gradient(center top , #5d656e, #393f45);
+    padding: 2px 1px 1px 1px;
+    cursor: pointer;
+    font: 11px arial;
+    color: #bec9d4;
+}
+
+/**/
+
+.live-edit-button-icon {
+    display: block;
+    width: auto;
+    height: 32px;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center 5px;
+}
+
+.live-edit-icon-parent {
+    background-image: url("../images/arrow_up_right_blue.png");
 }
 
 /* DD */

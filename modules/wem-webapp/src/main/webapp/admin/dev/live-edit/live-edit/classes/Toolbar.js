@@ -2,47 +2,50 @@ AdminLiveEdit.Toolbar = function()
 {
     function init()
     {
-        buildToolbar();
+        createToolbar();
     }
 
 
-    function buildToolbar()
+    function createToolbar()
     {
-        var toolbar = $liveedit('<div/>', {
-            id: 'live-edit-toolbar',
-            html: 'Parent'
-        });
+        var button = AdminLiveEdit.Button;
+        var toolbar = $liveedit( '<div id="live-edit-toolbar"><div id="live-edit-toolbar-inner"></div></div>' );
 
-        toolbar.click(function() {
-            AdminLiveEdit.Highlighter.selectParent();
+        var parentButton = button.create({
+            text: 'Parent',
+            iconCls: 'live-edit-icon-parent',
+            handler: function() {
+                var elementSelector = AdminLiveEdit.ElementSelector;
+                var selected = elementSelector.getSelected();
+                var parentOfSelected = AdminLiveEdit.Util.getParentPageElement( selected );
+                if ( parentOfSelected.length > 0 ) {
+                    elementSelector.select( parentOfSelected );
+                }
+            }
         });
 
         $liveedit( 'body' ).append( toolbar );
+        $liveedit( '#live-edit-toolbar-inner' ).append( parentButton );
     }
 
 
-    function moveToHighlighter( highlighter )
+    function moveTo( element )
     {
-        var util = AdminLiveEdit.Util;
         var toolbar = getToolbar();
-        var highlighterBoxModel = util.getBoxModel(highlighter);
+        var util = AdminLiveEdit.Util;
+
+        var elementType = util.getPageElementType(element);
+
+        var elementBoxModel = util.getBoxModel( element, elementType === 'region' );
+
+        var top = elementBoxModel.top;
+
+        var left = (elementBoxModel.left + elementBoxModel.width) - toolbar.outerWidth();
 
         toolbar.css({
-            top: highlighterBoxModel.top + 2,
-            left: (highlighterBoxModel.left + highlighterBoxModel.width) - toolbar.outerWidth() -2
+            top: top,
+            left: left
         });
-    }
-
-
-    function show()
-    {
-        getToolbar().show();
-    }
-
-
-    function hide()
-    {
-        getToolbar().hide();
     }
 
 
@@ -50,6 +53,16 @@ AdminLiveEdit.Toolbar = function()
     {
         return $liveedit( '#live-edit-toolbar' );
     }
+
+
+    function hide()
+    {
+        getToolbar().css({
+            top: '-5000px',
+            left: '-5000px'
+        });
+    }
+
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // Public
@@ -59,16 +72,12 @@ AdminLiveEdit.Toolbar = function()
             init();
         },
 
-        show: function() {
-            show();
+        moveTo: function( element ) {
+            moveTo( element );
         },
 
         hide: function() {
             hide();
-        },
-
-        moveToHighlighter: function(highlighter) {
-            moveToHighlighter(highlighter);
         }
     };
 

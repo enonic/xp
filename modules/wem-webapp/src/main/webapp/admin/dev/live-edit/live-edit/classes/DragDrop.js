@@ -22,7 +22,7 @@ AdminLiveEdit.DragDrop = function()
 
             start: function (event, ui) {
                 isDragging = true;
-                AdminLiveEdit.PageElementSelector.deselect();
+                AdminLiveEdit.ElementSelector.deselect();
                 ui.item.show();
                 ui.item.css({'opacity': 0.25});
                 ui.item.before(ui.placeholder);

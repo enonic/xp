@@ -94,6 +94,13 @@ AdminLiveEdit.Util = function()
         },
 
 
+        getParentPageElement: function( element )
+        {
+            // Right now region is the only parent :)
+            return element.parents('[data-live-edit-region]');
+        },
+
+
         elementFromPoint: function( x, y )
         {
             return document.elementFromPoint( x, y );

@@ -43,7 +43,7 @@ AdminLiveEdit.Windows = function()
 
         $liveedit('body').on('hover','[data-live-edit-window]',  function(event) {
             var window = $liveedit(this);
-            if (AdminLiveEdit.DragDrop.isDragging() || AdminLiveEdit.PageElementSelector.getSelected()) {
+            if (AdminLiveEdit.DragDrop.isDragging() || AdminLiveEdit.ElementSelector.getSelected()) {
                 return false;
             }
             if ( event.type === 'mouseenter' ) {

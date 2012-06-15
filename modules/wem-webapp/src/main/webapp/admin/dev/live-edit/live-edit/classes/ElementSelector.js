@@ -1,4 +1,4 @@
-AdminLiveEdit.PageElementSelector = function()
+AdminLiveEdit.ElementSelector = function()
 {
     var selected = null;
 
@@ -14,6 +14,7 @@ AdminLiveEdit.PageElementSelector = function()
         var util = AdminLiveEdit.Util;
         var highlighter = AdminLiveEdit.Highlighter;
         var tooltip = AdminLiveEdit.Tooltip;
+        var toolbar = AdminLiveEdit.Toolbar;
         var pageElementTypeToSelect = util.getPageElementType( element );
         var elementBoxModel;
 
@@ -29,6 +30,7 @@ AdminLiveEdit.PageElementSelector = function()
 
         setSelected( element );
         tooltip.moveToPageElement( element );
+        toolbar.moveTo( element );
     }
 
 
@@ -36,6 +38,7 @@ AdminLiveEdit.PageElementSelector = function()
     {
         AdminLiveEdit.PageOverlay.hide();
         AdminLiveEdit.Tooltip.hide();
+        AdminLiveEdit.Toolbar.hide();
         setSelected(null);
     }
 
