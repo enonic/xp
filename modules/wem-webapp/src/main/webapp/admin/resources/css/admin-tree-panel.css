@@ -1,0 +1,26 @@
+.admin-tree-panel .x-grid-cell .x-grid-cell-inner {
+    line-height: 32px;
+}
+
+.admin-tree-panel .x-grid-cell .x-grid-cell-inner .x-tree-icon {
+    height: 32px;
+    width: 32px;
+}
+
+.admin-tree-panel .x-grid-tree-node-expanded .icon-site-32 {
+    background: transparent url("../images/icons/32x32/earth2.png") 0 0 no-repeat;
+}
+
+.admin-tree-panel .x-grid-tree-node-expanded .icon-content-32 {
+    background: transparent url("../images/icons/32x32/cubes_blue.png") 0 0 no-repeat;
+}
+
+.admin-tree-panel .x-tree-elbow,
+.admin-tree-panel .x-tree-elbow-end,
+.admin-tree-panel .x-tree-elbow-plus,
+.admin-tree-panel .x-tree-elbow-end-plus,
+.admin-tree-panel .x-tree-elbow-empty,
+.admin-tree-panel .x-tree-elbow-line {
+    margin-top: 6px;
+    margin-bottom: 6px;
+}

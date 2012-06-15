@@ -91,6 +91,20 @@ Ext.define( 'Admin.view.contentManager.DetailToolbar', {
                         iconCls: 'icon-export-24'
                     }
                 ]
+            },
+            '->',
+            {
+                xtype: 'buttongroup',
+                columns: 1,
+                defaults: buttonDefaults,
+                items: [
+                    {
+                        text: 'Live Mode',
+                        action: 'toggleLive',
+                        iconCls: 'icon-lightbulb-24',
+                        enableToggle: true
+                    }
+                ]
             }
         ];
 
