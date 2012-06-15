@@ -5,17 +5,19 @@ AdminLiveEdit.Button = function()
         var text = config.text || '',
             iconCls = config.iconCls || '';
 
-        var html = '<div class="live-edit-button"><button class="live-edit-button">';
+        var html = '<div class="live-edit-button"><button>';
         if ( iconCls !== '' ) {
             html += '<span class="live-edit-button-icon ' + iconCls + '"></span>';
         }
         html += '<span>'+ text +'</span></button></div>';
 
         var button = $liveedit( html );
-        button.on('click', function() {
-            config.handler.call(this);
-        });
 
+        if  (config.handler) {
+            button.on('click', function() {
+                config.handler.call(this);
+            });
+        }
         return button;
     }
 

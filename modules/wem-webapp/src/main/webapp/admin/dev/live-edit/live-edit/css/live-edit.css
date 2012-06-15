@@ -150,14 +150,13 @@
     position: absolute;
     top: -5000px; left: -5000px;
     background-color: #272C31;
-    /*background-image: -moz-linear-gradient(center top , #4E5660, #272C31);*/
     box-shadow: 6px 6px 10px #444444;
 }
 
 #live-edit-toolbar-inner {
     outline: 1px solid #141414;
     border: 1px solid #50575d;
-    padding: 10px 10px 25px 10px;
+    padding: 0 0 25px 0;
 }
 
 /* Button */
@@ -170,6 +169,7 @@
 }
 
 .live-edit-button button {
+    width: 100%;
     border: 1px solid #778189;
     text-align: center;
     background-color: #e3ebf5;
@@ -180,7 +180,7 @@
     color: #bec9d4;
 }
 
-/**/
+/* Toolbar buttons */
 
 .live-edit-button-icon {
     display: block;
@@ -194,6 +194,18 @@
 
 .live-edit-icon-parent {
     background-image: url("../images/arrow_up_right_blue.png");
+}
+
+.live-edit-icon-edit {
+    background-image: url("../images/edit.png");
+}
+
+.live-edit-icon-settings {
+    background-image: url("../images/gear.png");
+}
+
+.live-edit-icon-remove {
+    background-image: url("../images/delete.png");
 }
 
 /* DD */

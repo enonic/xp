@@ -11,7 +11,8 @@ AdminLiveEdit.Toolbar = function()
         var button = AdminLiveEdit.Button;
         var toolbar = $liveedit( '<div id="live-edit-toolbar"><div id="live-edit-toolbar-inner"></div></div>' );
 
-        var parentButton = button.create({
+        // Hard code the buttons for now.
+        var selectParentButton = button.create({
             text: 'Parent',
             iconCls: 'live-edit-icon-parent',
             handler: function() {
@@ -24,8 +25,26 @@ AdminLiveEdit.Toolbar = function()
             }
         });
 
+        var editButton = button.create({
+            text: 'Edit',
+            iconCls: 'live-edit-icon-edit'
+        });
+
+        var settingsButton = button.create({
+            text: 'Settings',
+            iconCls: 'live-edit-icon-settings'
+        });
+
+        var removeButton = button.create({
+            text: 'Remove',
+            iconCls: 'live-edit-icon-remove'
+        });
+
         $liveedit( 'body' ).append( toolbar );
-        $liveedit( '#live-edit-toolbar-inner' ).append( parentButton );
+        $liveedit( '#live-edit-toolbar-inner' ).append( selectParentButton );
+        $liveedit( '#live-edit-toolbar-inner' ).append( editButton );
+        $liveedit( '#live-edit-toolbar-inner' ).append( settingsButton );
+        $liveedit( '#live-edit-toolbar-inner' ).append( removeButton );
     }
 
 
