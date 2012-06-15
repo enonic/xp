@@ -10,7 +10,9 @@ AdminLiveEdit.Tooltip = function()
     {
         var util = AdminLiveEdit.Util;
         var elementType = util.getPageElementType( element );
-        setText( elementType, ' - ' + (element.data()['liveEditWindow'] || element.data()['liveEditRegion']) );
+        var elementName = util.getPageElementName( element );
+
+        setText( elementType, ' - ' + elementName );
 
         var tooltip = getTooltip();
         var elementBoxModel = AdminLiveEdit.Util.getBoxModel( element, (elementType === 'region') );

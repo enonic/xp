@@ -71,8 +71,8 @@ AdminLiveEdit.Highlighter = function()
         marker.css( {
             top: regionBoxModel.paddingTop,
             left: regionBoxModel.paddingLeft,
-            width: regionBoxModel.width - 4, // minus marker css border size
-            height: regionBoxModel.height - 4 // minus marker css border size
+            width: regionBoxModel.width - 4, // minus highlighter css border size
+            height: regionBoxModel.height - 4 // minus highlighter css border size
         });
 
         regionElement.append( marker );

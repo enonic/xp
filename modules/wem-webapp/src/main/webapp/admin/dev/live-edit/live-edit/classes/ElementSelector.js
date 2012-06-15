@@ -57,7 +57,7 @@ AdminLiveEdit.ElementSelector = function()
 
     function initMouseClickEvent()
     {
-        $liveedit('body').on('click', '[data-live-edit-region], [data-live-edit-window]',  function(event) {
+        $liveedit('body').on('click', '[data-live-edit-type=region], [data-live-edit-type=window]',  function(event) {
             event.stopPropagation();
             selectElement( $liveedit( this ) );
         });

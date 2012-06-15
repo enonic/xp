@@ -11,7 +11,7 @@ AdminLiveEdit.Regions = function()
 
     function initMouseEventListeners()
     {
-        $liveedit('body').on('hover', '[data-live-edit-region]', function(event) {
+        $liveedit('body').on('hover', '[data-live-edit-type=region]', function(event) {
             var region = $liveedit(this);
             var placeholder = region.children('.live-edit-empty-region-placeholder');
             if ( placeholder.length > 0 ) {
@@ -52,7 +52,7 @@ AdminLiveEdit.Regions = function()
 
     function getAll()
     {
-        return $liveedit( '[data-live-edit-region]' );
+        return $liveedit( '[data-live-edit-type=region]' );
     }
 
 
@@ -64,7 +64,7 @@ AdminLiveEdit.Regions = function()
 
     function isRegionEmpty(region)
     {
-        var children = region.children('[data-live-edit-window]:not(:hidden)');
+        var children = region.children('[data-live-edit-type=window]:not(:hidden)');
         var dropTargetPlaceHolder = region.children('.live-edit-dd-drop-target-placeholder');
         // Region har kun dtarget placeholder
         // region.children().length === 1 && dropTargetPlaceHolder > 0;

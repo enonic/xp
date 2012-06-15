@@ -3,13 +3,12 @@ AdminLiveEdit.DragDrop = function()
     var isDragging = false;
     var cursorAt = AdminLiveEdit.Util.supportsTouch() ? {left: 15, top: 70} : {left: -15, top: -20};
 
-
     function init()
     {
-        $liveedit('[data-live-edit-region]').sortable({
+        $liveedit('[data-live-edit-type=region]').sortable({
             revert: 200,
-            connectWith: '[data-live-edit-region]',
-            items: '[data-live-edit-window]',
+            connectWith: '[data-live-edit-type=region]',
+            items: '[data-live-edit-type=window]',
             distance: 1,
             tolerance: 'pointer',
             cursor: 'pointer',
@@ -17,7 +16,7 @@ AdminLiveEdit.DragDrop = function()
             scrollSensitivity: Math.round(AdminLiveEdit.Util.getViewPortSize().height / 8),
             placeholder: 'live-edit-dd-drop-target-placeholder',
             helper: function (event, helper) {
-                return $liveedit('<div id="live-edit-dd-drag-helper" style="width: 150px; height: 16px; padding: 6px 8px 6px 8px"><img id="live-edit-drag-helper-status-icon" src="live-edit/images/drop-yes.gif"/>' + helper.attr('data-live-edit-window') + '</div>' );
+                return $liveedit('<div id="live-edit-dd-drag-helper" style="width: 150px; height: 16px; padding: 6px 8px 6px 8px"><img id="live-edit-drag-helper-status-icon" src="live-edit/images/drop-yes.gif"/>' + helper.attr('data-live-edit-name') + '</div>' );
             },
 
             start: function (event, ui) {
@@ -65,7 +64,7 @@ AdminLiveEdit.DragDrop = function()
 
     function refresh()
     {
-        $liveedit('[data-live-edit-region]').sortable('refresh');
+        $liveedit('[data-live-edit-type=region]').sortable('refresh');
     }
 
 

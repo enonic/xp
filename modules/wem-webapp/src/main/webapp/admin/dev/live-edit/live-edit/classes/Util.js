@@ -81,14 +81,14 @@ AdminLiveEdit.Util = function()
             var element = [];
             var elementFromPoint = $liveedit( this.elementFromPoint( x, y ) );
 
-            var parent = elementFromPoint.parents( '[data-live-edit-window]' );
-            var isWindowOrRegion = elementFromPoint.is( '[data-live-edit-window]' ) || elementFromPoint.is( '[data-live-edit-region]');
+            var parent = elementFromPoint.parents( '[data-live-edit-type=window]' );
+            var isWindowOrRegion = elementFromPoint.is( '[data-live-edit-type=window]' ) || elementFromPoint.is( '[data-live-edit-type=region]');
             if ( isWindowOrRegion ) {
                 element = elementFromPoint;
             } else if ( parent.length > 0 ) {
                 element = parent;
             } else {
-                element = elementFromPoint.parents( '[data-live-edit-region]' );
+                element = elementFromPoint.parents( '[data-live-edit-type=region]' );
             }
             return element;
         },
@@ -97,7 +97,7 @@ AdminLiveEdit.Util = function()
         getParentPageElement: function( element )
         {
             // Right now region is the only parent :)
-            return element.parents('[data-live-edit-region]');
+            return element.parents('[data-live-edit-type=region]');
         },
 
 
@@ -109,14 +109,13 @@ AdminLiveEdit.Util = function()
 
         getPageElementType: function( element )
         {
-            var data = element.data();
-            if ( data['liveEditWindow'] ) {
-                return 'window';
-            } else if ( data['liveEditRegion'] ) {
-                return 'region';
-            } else {
-                return undefined;
-            }
+            return element.data()['liveEditType'];
+        },
+
+
+        getPageElementName: function( element )
+        {
+            return element.data()['liveEditName'];
         },
 
 

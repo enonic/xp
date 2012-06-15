@@ -33,7 +33,7 @@ AdminLiveEdit.Windows = function()
 
     function getAll()
     {
-        return $liveedit('[data-live-edit-window]');
+        return $liveedit('[data-live-edit-type=window]');
     }
 
 
@@ -41,7 +41,7 @@ AdminLiveEdit.Windows = function()
     {
         var highlighter = AdminLiveEdit.Highlighter;
 
-        $liveedit('body').on('hover','[data-live-edit-window]',  function(event) {
+        $liveedit('body').on('hover','[data-live-edit-type=window]',  function(event) {
             var window = $liveedit(this);
             if (AdminLiveEdit.DragDrop.isDragging() || AdminLiveEdit.ElementSelector.getSelected()) {
                 return false;
