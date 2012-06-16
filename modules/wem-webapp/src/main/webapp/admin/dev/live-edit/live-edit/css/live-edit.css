@@ -165,19 +165,25 @@
     width: 74px;
     background-color: #2e3338;
     padding: 1px;
-    border-radius: 2px;
 }
 
-.live-edit-button button {
-    width: 100%;
+.live-edit-button .live-edit-button-inner {
+    display: block;
     border: 1px solid #778189;
+    border-radius: 2px;
     text-align: center;
     background-color: #e3ebf5;
     background-image: -moz-linear-gradient(center top , #5d656e, #393f45);
-    padding: 2px 1px 1px 1px;
+    padding: 2px 1px 5px 1px;
     cursor: pointer;
     font: 11px arial;
     color: #bec9d4;
+    text-decoration: none;
+}
+.live-edit-button .live-edit-button-inner:active {
+    background-image: -moz-linear-gradient(center top , #393f45, #5d656e);
+    box-shadow: 0px 5px 5px #111 inset;
+
 }
 
 /* Toolbar buttons */

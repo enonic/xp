@@ -3,13 +3,14 @@ AdminLiveEdit.Button = function()
     function createButton( config )
     {
         var text = config.text || '',
+            id = config.id || '',
             iconCls = config.iconCls || '';
 
-        var html = '<div class="live-edit-button"><button>';
+        var html = '<div id="' + id + '" class="live-edit-button"><a class="live-edit-button-inner">';
         if ( iconCls !== '' ) {
             html += '<span class="live-edit-button-icon ' + iconCls + '"></span>';
         }
-        html += '<span>'+ text +'</span></button></div>';
+        html += '<span>'+ text +'</span></a></div>';
 
         var button = $liveedit( html );
 
