@@ -109,7 +109,7 @@
     background: -moz-linear-gradient(#3c4a58, #202933);
     background: -o-linear-gradient(#3c4a58, #202933);
     background: linear-gradient(#3c4a58, #202933);
-    box-shadow: 6px 6px 10px #444444;
+    box-shadow: 5px 5px 28px #444444;
 }
 
 #live-edit-tooltip-arrow-border {
@@ -150,7 +150,7 @@
     position: absolute;
     top: -5000px; left: -5000px;
     background-color: #272C31;
-    box-shadow: 6px 6px 10px #444444;
+    box-shadow: 5px 5px 28px #444444;
 }
 
 #live-edit-toolbar-inner {

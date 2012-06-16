@@ -44,8 +44,21 @@ Harness.start(
             group: 'Live Edit',
             items: [
                 {
-                    url: 'tests/liveedit/test_jQueryNoConflict.js',
-                    hostPageUrl : 'tests/liveedit/test_jQueryNotConflict_host.html'
+                    group: 'JS library conflicts',
+                    items: [
+                        {
+                            url: 'tests/liveedit/conflicts/test_jQueryNoConflict.js',
+                            hostPageUrl : 'tests/liveedit/conflicts/test_jQueryNotConflict_host.html'
+                        },
+                        {
+                            url: 'tests/liveedit/conflicts/test_mootoolsNoConflict.js',
+                            hostPageUrl : 'tests/liveedit/conflicts/test_mootoolsNoConflict_host.html'
+                        },
+                        {
+                            url: 'tests/liveedit/conflicts/test_prototypeNoConflict.js',
+                            hostPageUrl : 'tests/liveedit/conflicts/test_prototypeNoConflict_host.html'
+                        },
+                    ]
                 },
                 {
                     group: 'Util',

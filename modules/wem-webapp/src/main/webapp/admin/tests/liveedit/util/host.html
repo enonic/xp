@@ -4,23 +4,78 @@
     <title>Live Edit Test</title>
     <style>
         .window {
-            position: absolute;
-            top: 30px;
-            left: 133px;
-            width: 300px;
-            height: 200px;
-            border: 1px solid black;
+            width: 130px;
+            height: 100px;
+            margin-top: 10px;
+            background-color: lightsteelblue;
         }
         .region {
+            width: 180px;
+            height: 400px;
             float: left;
+            margin-left: 10px;
             border: 1px solid grey;
+        }
+
+        .border1 {
+            border: 1px solid #000;
+        }
+
+        .padding10 {
+            padding: 10px;
+        }
+        .margin-left-10 {
+            margin-left: 10px;
         }
     </style>
 </head>
 <body>
 
-<div data-live-edit-window="Enterprise Edition Teaser" class="window">
+
+
+<div class="region" data-live-edit-type="region" data-live-edit-name="Region 1">
+    <div>Region 1</div>
+    <div class="window" data-live-edit-type="window" data-live-edit-name="Window 1">
+        Window 1
+    </div>
+    <div class="window" data-live-edit-type="window" data-live-edit-name="Window 2">
+        Window 2 <a href="#" id="link">Link</a>
+    </div>
+    <div class="window" data-live-edit-type="window" data-live-edit-name="Window 3">
+        Window 3
+    </div>
 </div>
+
+<div class="region" data-live-edit-type="region" data-live-edit-name="Region 2">
+<div>Region 2</div>
+    <div class="window margin-left-10" data-live-edit-type="window" data-live-edit-name="Window 4">
+        Window 4
+    </div>
+    <div class="window" data-live-edit-type="window" data-live-edit-name="Window 5">
+        Window 5
+    </div>
+    <div class="window padding10" data-live-edit-type="window" data-live-edit-name="Window 6">
+        Window 6
+    </div>
+</div>
+
+<div class="region" data-live-edit-type="region" data-live-edit-name="Region 3">
+<div>Region 3</div>
+    <div class="window border1" data-live-edit-type="window" data-live-edit-name="Window 7">
+        Window 7
+    </div>
+    <div class="window" data-live-edit-type="window" data-live-edit-name="Window 8">
+        Window 8
+    </div>
+    <div class="window" data-live-edit-type="window" data-live-edit-name="Window 9">
+        Window 9
+    </div>
+
+    <div id="not-a-window">Not a window</div>
+</div>
+
+
+
 
 <script type="text/javascript" src="../../../dev/live-edit/live-edit/lib/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="../../../dev/live-edit/live-edit/lib/jquery-ui-1.8.21.custom.min.js"></script>

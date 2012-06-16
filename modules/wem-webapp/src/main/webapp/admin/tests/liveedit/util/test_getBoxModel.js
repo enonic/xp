@@ -1,45 +1,45 @@
 StartTest(function(t) {
 
-    function getWindow() {
-        return $liveedit('[data-live-edit-window]')[0];
+    function getWindows() {
+        return $liveedit('[data-live-edit-type="window"]');
     }
+
+    t.diag('Test namespace');
 
     t.ok(AdminLiveEdit, 'AdminLiveEdit namespace is here');
 
-    var boxModel = AdminLiveEdit.Util.getBoxModel( getWindow() );
-    t.is( boxModel.width, 300, 'Window should have width 300px' );
-    t.is( boxModel.height, 200, 'Window should have height 200px' );
-    t.is( boxModel.top, 30, 'Window should have position top 30px' );
-    t.is( boxModel.left, 133, 'Window should have position left 133px' );
+    t.diag('Window 5 general test');
+
+    var window5 = getWindows()[4];
+    var boxModel = AdminLiveEdit.Util.getBoxModel( window5 );
+    t.is( boxModel.width, 130, 'Width should be 300' );
+    t.is( boxModel.height, 100, 'Height should be 200' );
+    t.is( boxModel.top, 136, 'Offset top should be 136' );
+    t.is( boxModel.left, 201, 'Offset left should be 201' );
     t.is( boxModel.paddingBottom, 0, 'Padding bottom should be 0' );
-    t.is( boxModel.borderTop, 1, 'Border top should be 1px' );
+    t.is( boxModel.borderTop, 0, 'Border top should be 0' );
 
+    t.diag('Window 6 padding test');
 
-    t.diag('Change window padding from 0 to 10 pixels');
+    var window6 = getWindows()[5];
+    boxModel = AdminLiveEdit.Util.getBoxModel( window6 );
 
-    $liveedit( getWindow() ).css( 'padding', '10px' );
-    boxModel = AdminLiveEdit.Util.getBoxModel( getWindow() );
-    t.is( boxModel.paddingTop, 10, 'Padding bottom should be 10px' );
-    t.is( boxModel.paddingRight, 10, 'Padding right should be 10px' );
-    t.is( boxModel.paddingBottom, 10, 'Padding bottom should be 10px' );
-    t.is( boxModel.paddingLeft, 10, 'Padding left should be 10px' );
+    t.is( boxModel.paddingTop, 10, 'Padding bottom should be 10' );
+    t.is( boxModel.paddingRight, 10, 'Padding bottom should be 10' );
+    t.is( boxModel.paddingBottom, 10, 'Padding bottom should be 10' );
+    t.is( boxModel.paddingLeft, 10, 'Padding bottom should be 10' );
 
     t.diag('Get window content box only');
+    boxModel = AdminLiveEdit.Util.getBoxModel( window6, true );
+    t.is( boxModel.width, 110, 'Width should be 110' );
+    t.is( boxModel.height, 80, 'Height should be 80' );
 
-    boxModel = AdminLiveEdit.Util.getBoxModel( getWindow(), true );
-    t.is( boxModel.width, 280, 'Window should have width 280' );
-    t.is( boxModel.height, 180, 'Window should have height 180' );
-
-    t.diag('Remove border');
-
-    $liveedit( getWindow() ).css( 'border', 'none' );
-    boxModel = AdminLiveEdit.Util.getBoxModel( getWindow() );
-    t.is( boxModel.borderTop, 0, 'Border top should be 0' );
-    t.is( boxModel.borderRight, 0, 'Border right should be 0' );
-    t.is( boxModel.borderBottom, 0, 'Border bottom should be 0' );
-    t.is( boxModel.borderLeft, 0, 'Border left should be 0' );
-
-    t.diag('Restore border');
-    $liveedit( getWindow() ).css( 'border', '1px solid black' );
+    t.diag('Window 7 border test');
+    var window7 = getWindows()[6];
+    boxModel = AdminLiveEdit.Util.getBoxModel( window7 );
+    t.is( boxModel.borderTop, 1, 'Border top for window 7 should be 1' );
+    t.is( boxModel.borderRight, 1, 'Border right for window 7 should be 1' );
+    t.is( boxModel.borderBottom, 1, 'Border bottom for window 7 should be 1' );
+    t.is( boxModel.borderLeft, 1, 'Border left for window 7 should be 1' );
 
 });

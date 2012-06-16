@@ -1,16 +1,17 @@
 StartTest(function(t) {
 
-    function getWindow() {
-        return $liveedit('[data-live-edit-window]')[0];
-    }
+    var window4 = $liveedit('[data-live-edit-type="window"]')[3];
+    var pagePosition = AdminLiveEdit.Util.getElementPagePosition( window4 );
 
-    t.diag('Change window position to top:100px, left:243px');
+    t.diag('Test window 4 page position');
+    t.is( pagePosition.top, 16, 'Page position top should 16' );
+    t.is( pagePosition.left, 201, 'Page position left should 201' );
 
-    $liveedit( getWindow() ).css( 'top', '100px' );
-    $liveedit( getWindow() ).css( 'left', '243px' );
+    t.diag('Test window 5 page position');
+    var window5 = $liveedit('[data-live-edit-type="window"]')[4];
+    pagePosition = AdminLiveEdit.Util.getElementPagePosition( window5 );
 
-    var windowPosition = AdminLiveEdit.Util.getElementPagePosition( getWindow() );
-    t.is( windowPosition.top, 100, 'Window should be positioned top at 100px' );
-    t.is( windowPosition.left, 243, 'Window should be positioned left at 243px' );
+    t.is( pagePosition.top, 126, 'Page position top should 126' );
+    t.is( pagePosition.left, 201, 'Page position left should 201' );
 
 });
