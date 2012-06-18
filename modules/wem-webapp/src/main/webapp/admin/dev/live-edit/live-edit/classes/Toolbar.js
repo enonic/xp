@@ -38,11 +38,13 @@ AdminLiveEdit.Toolbar = function()
             }
         });
 
+        /*
         var editButton = button.create({
             text: 'Edit',
             id: 'live-edit-button-edit',
             iconCls: 'live-edit-icon-edit'
         });
+        */
 
         var settingsButton = button.create({
             text: 'Settings',
@@ -58,7 +60,7 @@ AdminLiveEdit.Toolbar = function()
 
         var container = $liveedit( '#live-edit-toolbar-inner' );
         container.append( selectParentButton );
-        container.append( editButton );
+        // container.append( editButton );
         container.append( settingsButton );
         container.append( removeButton );
     }
