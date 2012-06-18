@@ -1,3 +1,12 @@
+* {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 .live-edit-empty-region-placeholder,
 .live-edit-dd-drop-target-placeholder,
 #live-edit-tooltip {
@@ -155,7 +164,7 @@
 
 #live-edit-toolbar-inner {
     outline: 1px solid #141414;
-    border: 1px solid #50575d;
+    /* border: 1px solid #50575d; */
     padding: 0;
 }
 
