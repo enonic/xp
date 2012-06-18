@@ -128,6 +128,45 @@ AdminLiveEdit.Util = function()
         supportsTouch: function()
         {
             return 'ontouchend' in document;
+        },
+
+
+        // TODO: Prototyping. Move this when things are clearer.
+        getPageConfiguration: function()
+        {
+            function createWindowsArray(region) {
+                var windows = [];
+                region.find('[data-live-edit-type="window"]' ).each(function(i) {
+                    windows.push({
+                        "key": i,
+                        "name": $liveedit(this ).attr('data-live-edit-name')
+                    });
+                });
+
+                return windows;
+            }
+
+            function createRegionsArray() {
+                var regions = [];
+                $liveedit('[data-live-edit-type="region"]' ).each(function(i) {
+                    var region = $liveedit(this);
+                    regions.push({
+                        "key": i,
+                        "name": region.attr('data-live-edit-name'),
+                        "windows": createWindowsArray(region)
+                    });
+
+                });
+                return regions;
+            }
+
+            return {
+                page: {
+                    "name": "Home",
+                    "key": 1987,
+                    "regions": createRegionsArray()
+                }
+            };
         }
 
     };
