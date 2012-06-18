@@ -10,6 +10,11 @@ AdminLiveEdit.ElementSelector = function()
 
     function selectElement( element )
     {
+        if ( getSelected() && element[0] === getSelected()[0] ) {
+            deselect();
+            return;
+        }
+
         var pageOverlay = AdminLiveEdit.PageOverlay;
         var util = AdminLiveEdit.Util;
         var highlighter = AdminLiveEdit.Highlighter;
@@ -39,6 +44,7 @@ AdminLiveEdit.ElementSelector = function()
         AdminLiveEdit.PageOverlay.hide();
         AdminLiveEdit.Tooltip.hide();
         AdminLiveEdit.Toolbar.hide();
+        AdminLiveEdit.Highlighter.hide();
         setSelected(null);
     }
 
