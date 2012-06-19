@@ -53,7 +53,7 @@
 
   <servlet-mapping>
     <servlet-name>rest2</servlet-name>
-    <url-pattern>/admin/data2/*</url-pattern>
+    <url-pattern>/admin/rest/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>

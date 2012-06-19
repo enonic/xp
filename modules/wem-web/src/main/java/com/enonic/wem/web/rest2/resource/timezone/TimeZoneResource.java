@@ -18,7 +18,6 @@ public final class TimeZoneResource
     private TimeZoneService timezoneService;
 
     @GET
-    @Path("list")
     public TimeZoneResult getAll()
     {
         return new TimeZoneResult( this.timezoneService.getTimeZones() );

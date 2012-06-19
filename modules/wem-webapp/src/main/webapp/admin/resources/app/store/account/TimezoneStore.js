@@ -8,7 +8,7 @@ Ext.define('Admin.store.account.TimezoneStore', {
 
     proxy: {
         type: 'ajax',
-        url: 'data/misc/timezone/list',
+        url: 'rest/misc/timezone',
         simpleSortMode: true,
         reader: {
             type: 'json',
