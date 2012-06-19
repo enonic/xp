@@ -1,3 +1,12 @@
+* {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 .live-edit-empty-region-placeholder,
 .live-edit-dd-drop-target-placeholder,
 #live-edit-tooltip {
@@ -155,8 +164,8 @@
 
 #live-edit-toolbar-inner {
     outline: 1px solid #141414;
-    border: 1px solid #50575d;
-    padding: 0 0 25px 0;
+    /* border: 1px solid #50575d; */
+    padding: 0;
 }
 
 /* Button */
@@ -172,8 +181,11 @@
     border: 1px solid #778189;
     border-radius: 2px;
     text-align: center;
-    background-color: #e3ebf5;
-    background-image: -moz-linear-gradient(center top , #5d656e, #393f45);
+    background-color: #393f45;
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(#5d656e), to(#393f45));
+    background: -moz-linear-gradient(#5d656e, #393f45);
+    background: -o-linear-gradient(#5d656e, #393f45);
+    background: linear-gradient(#5d656e, #393f45);
     padding: 2px 1px 5px 1px;
     cursor: pointer;
     font: 11px arial;
@@ -181,9 +193,12 @@
     text-decoration: none;
 }
 .live-edit-button .live-edit-button-inner:active {
-    background-image: -moz-linear-gradient(center top , #393f45, #5d656e);
+    background-color: #393f45;
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(#393f45), to(#5d656e));
+    background: -moz-linear-gradient(#393f45, #5d656e);
+    background: -o-linear-gradient(#393f45, #5d656e);
+    background: linear-gradient(#393f45, #5d656e);
     box-shadow: 0px 5px 5px #111 inset;
-
 }
 
 /* Toolbar buttons */

@@ -5,10 +5,10 @@ import java.io.IOException;
 
 import javax.jcr.RepositoryException;
 
-public interface JcrCallback<R>
+public interface JcrCallback
 {
 
-    public R doInJcr( JcrSession session )
+    public Object doInJcr( JcrSession session )
             throws IOException, RepositoryException;
 
 }

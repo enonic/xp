@@ -1,4 +1,4 @@
-package com.enonic.wem.core.jcr;
+package com.enonic.wem.migrate.jcr;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,15 +17,16 @@ public class JdbcAccountsRetriever
 {
     private static final Logger LOG = LoggerFactory.getLogger( JdbcAccountsRetriever.class );
 
-    public static final String USER_INFO_FIELDS_MAP = "FIELDSMAP";
+    static final String USER_INFO_FIELDS_MAP = "FIELDSMAP";
 
     private JdbcTemplate jdbcTemplate;
 
 
     public void fetchUserStores( ImportDataCallbackHandler handler )
     {
-        final String sql = "SELECT DOM_LKEY, DOM_BISDELETED, DOM_SNAME, DOM_BDEFAULTSTORE, DOM_SCONFIGNAME, DOM_XMLDATA " +
-            "FROM TDOMAIN WHERE DOM_BISDELETED = 0";
+        final String sql =
+                "SELECT DOM_LKEY, DOM_BISDELETED, DOM_SNAME, DOM_BDEFAULTSTORE, DOM_SCONFIGNAME, DOM_XMLDATA " +
+                        "FROM TDOMAIN WHERE DOM_BISDELETED = 0";
 
         List<Map<String, Object>> userStoreRows = jdbcTemplate.queryForList( sql );
         LOG.info( userStoreRows.size() + " user stores retrieved." );
@@ -39,7 +40,7 @@ public class JdbcAccountsRetriever
     public void fetchUsers( ImportDataCallbackHandler handler )
     {
         final String sql = "SELECT USR_HKEY, USR_SUID, USR_SFULLNAME, USR_DTETIMESTAMP, USR_UT_LKEY, " +
-            "USR_DOM_LKEY, USR_SSYNCVALUE, USR_SEMAIL, USR_SPASSWORD, USR_GRP_HKEY, USR_PHOTO, USR_BISDELETED FROM TUSER WHERE USR_BISDELETED = 0";
+                "USR_DOM_LKEY, USR_SSYNCVALUE, USR_SEMAIL, USR_SPASSWORD, USR_GRP_HKEY, USR_PHOTO, USR_BISDELETED FROM TUSER WHERE USR_BISDELETED = 0";
 
         List<Map<String, Object>> userRows = jdbcTemplate.queryForList( sql );
         LOG.info( userRows.size() + " users retrieved." );

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.jcr;
+package com.enonic.wem.migrate.jcr;
 
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.jcr;
+package com.enonic.wem.migrate.jcr;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -15,6 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.enonic.wem.core.jcr.JcrCallback;
+import com.enonic.wem.core.jcr.JcrCmsConstants;
+import com.enonic.wem.core.jcr.JcrDaoSupport;
+import com.enonic.wem.core.jcr.JcrNode;
+import com.enonic.wem.core.jcr.JcrSession;
 
 import com.enonic.cms.api.client.model.user.Gender;
 import com.enonic.cms.api.client.model.user.UserInfo;
