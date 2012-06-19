@@ -1,0 +1,41 @@
+<cms = 'http://www.enonic.com/cms'>
+[cms:base] > nt:base
+
+// Accounts node type definitions:
+
+// principal
+[cms:principal] > cms:base abstract
+- cms:displayname (string)
+- cms:key (string)
+
+// user
+[cms:user] > cms:principal, nt:unstructured
+
+// group
+[cms:group] > cms:principal, nt:unstructured
++ members (cms:users) multiple
+
+// role
+[cms:role] > cms:group
+
+// userstore
+[cms:userstore] > cms:base, nt:unstructured
+- cms:key (string)
++ roles (cms:roles)
++ groups (cms:groups) mandatory
++ users (cms:users) mandatory
+
+
+[cms:userstores] > cms:base
++ system (cms:userstore)
++ * (cms:userstore)
+
+[cms:users] > cms:base
++ * (cms:user)
+
+[cms:groups] > cms:base
++ * (cms:group)
+
+[cms:roles] > cms:base
++ * (cms:role)
+
