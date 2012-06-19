@@ -19,6 +19,11 @@ Ext.define( 'Admin.controller.liveedit.Controller', {
                 'liveeditToolbar > buttongroup > button[itemId=saveButton]': {
                     click: this.save
                 }
+                /*,
+                'liveeditToolbar > buttongroup > combo[itemId=insertDummyButton]': {
+                    change: this.insertDummyComponent
+                }
+                */
             }
         );
     },
@@ -28,7 +33,14 @@ Ext.define( 'Admin.controller.liveedit.Controller', {
     {
         var util = Admin.util.liveedit.Util;
         alert(JSON.stringify(util.getIframeWindow().AdminLiveEdit.Util.getPageConfiguration(), null, 4));
-
     }
+
+    /*
+    insertDummyComponent: function(combo, value)
+    {
+        var util = Admin.util.liveedit.Util;
+        util.getIframeWindow().AdminLiveEdit.Util.insertWindowComponent(value);
+    }
+    */
 
 });

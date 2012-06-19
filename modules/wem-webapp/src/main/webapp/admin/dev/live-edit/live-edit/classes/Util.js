@@ -131,7 +131,22 @@ AdminLiveEdit.Util = function()
         },
 
 
-        // TODO: Prototyping. Move this when things are clearer.
+        // ********************************************************************************************************** //
+        // TODO: Everything below is even more prototyping.
+        // Move this when things are clearer.
+
+        /*
+        windowCount: 0,
+        insertWindowComponent: function(to)
+        {
+            this.windowCount++;
+
+            var html = $liveedit( '<div data-live-edit-type="window" data-live-edit-name="Dummy window '+this.windowCount+'" style="margin-bottom: 10px"><h2>Window '+this.windowCount+'</h2>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth. </div>' );
+            $liveedit( to ).prepend( html ).trigger('liveedit.regionChange');
+        },
+        */
+
+
         getPageConfiguration: function()
         {
             function createWindowsArray(region) {
@@ -139,7 +154,7 @@ AdminLiveEdit.Util = function()
                 region.find('[data-live-edit-type="window"]' ).each(function(i) {
                     windows.push({
                         "key": i,
-                        "name": $liveedit(this ).attr('data-live-edit-name')
+                        "name": $liveedit( this ).attr( 'data-live-edit-name' )
                     });
                 });
 

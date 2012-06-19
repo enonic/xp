@@ -12,8 +12,21 @@ Ext.define( 'Admin.view.liveedit.Toolbar', {
             minWidth: 64
         };
 
-        this.items = [
+        // Dummy store for the combo
+        var regions = Ext.create('Ext.data.Store', {
+            fields: ['name', 'selector'],
+            data : [
+                {"name":"North", "selector":"#north"},
+                {"name":"West", "selector":"#west"},
+                {"name":"Center", "selector":"#center"},
+                {"name":"East", "selector":"#east"},
+                {"name":"South", "selector":"#south"}
+            ]
+        });
 
+
+
+        this.items = [
             {
                 xtype: 'buttongroup',
                 columns: 1,
@@ -25,7 +38,23 @@ Ext.define( 'Admin.view.liveedit.Toolbar', {
                         text: 'Save'
                     }
                 ]
-            }
+            }/*,
+            {
+                xtype: 'buttongroup',
+                columns: 1,
+                defaults: buttonDefaults,
+                items: [
+                    {
+                        xtype: 'combo',
+                        itemId: 'insertDummyButton',
+                        fieldLabel: 'Choose Region',
+                        store: regions,
+                        queryMode: 'local',
+                        displayField: 'name',
+                        valueField: 'selector'
+                    }
+                ]
+            }*/
         ];
 
         this.callParent( arguments );

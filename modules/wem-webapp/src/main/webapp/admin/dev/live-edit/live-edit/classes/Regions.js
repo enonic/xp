@@ -6,22 +6,7 @@ AdminLiveEdit.Regions = function()
     {
         renderPlaceholders();
         initMouseEventListeners();
-    }
-
-
-    function initMouseEventListeners()
-    {
-        $liveedit('body').on('hover', '[data-live-edit-type=region]', function(event) {
-            var region = $liveedit(this);
-            var placeholder = region.children('.live-edit-empty-region-placeholder');
-            if ( placeholder.length > 0 ) {
-                if ( event.type === 'mouseenter' ) {
-                    placeholder.addClass('live-edit-empty-region-placeholder-hover');
-                } else {
-                    placeholder.removeClass('live-edit-empty-region-placeholder-hover');
-                }
-            }
-        });
+        // initRegionChangeListener();
     }
 
 
@@ -66,11 +51,33 @@ AdminLiveEdit.Regions = function()
     {
         var children = region.children('[data-live-edit-type=window]:not(:hidden)');
         var dropTargetPlaceHolder = region.children('.live-edit-dd-drop-target-placeholder');
-        // Region har kun dtarget placeholder
-        // region.children().length === 1 && dropTargetPlaceHolder > 0;
         return children.length === 0 && dropTargetPlaceHolder.length === 0;
     }
 
+
+    function initMouseEventListeners()
+    {
+        $liveedit('body').on('hover', '[data-live-edit-type=region]', function(event) {
+            var region = $liveedit(this);
+            var placeholder = region.children('.live-edit-empty-region-placeholder');
+            if ( placeholder.length > 0 ) {
+                if ( event.type === 'mouseenter' ) {
+                    placeholder.addClass('live-edit-empty-region-placeholder-hover');
+                } else {
+                    placeholder.removeClass('live-edit-empty-region-placeholder-hover');
+                }
+            }
+        });
+    }
+
+    /*
+    function initRegionChangeListener()
+    {
+        $liveedit('[data-live-edit-type=region]').bind('liveedit.regionChange', function(event) {
+            renderPlaceholders();
+        });
+    }
+    */
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // Public
