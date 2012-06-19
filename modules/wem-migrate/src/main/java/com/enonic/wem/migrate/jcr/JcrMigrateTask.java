@@ -1,4 +1,4 @@
-package com.enonic.wem.core.jcr;
+package com.enonic.wem.migrate.jcr;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -22,6 +21,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
+
+import com.enonic.wem.core.jcr.JcrCallback;
+import com.enonic.wem.core.jcr.JcrSession;
+import com.enonic.wem.core.jcr.JcrTemplate;
+import com.enonic.wem.core.jcr.RepositoryRuntimeException;
+import com.enonic.wem.migrate.MigrateTask;
 
 import static com.enonic.wem.core.jcr.JcrCmsConstants.ENONIC_CMS_NAMESPACE;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.ENONIC_CMS_NAMESPACE_PREFIX;
@@ -38,26 +44,24 @@ import static com.enonic.wem.core.jcr.JcrCmsConstants.USERSTORE_NODE_TYPE;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.USERS_NODE;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.USERS_NODE_TYPE;
 
-//@Component
-public class JcrBootstrap
+@Component
+public class JcrMigrateTask implements MigrateTask
 {
-    private static final Logger LOG = LoggerFactory.getLogger( JcrBootstrap.class );
+    private static final Logger LOG = LoggerFactory.getLogger( JcrMigrateTask.class );
 
     private Resource compactNodeDefinitionFile;
 
-    @Autowired
     private JcrTemplate jcrTemplate;
 
-    @Autowired
     private JcrAccountsImporter jcrAccountsImporter;
 
-    public JcrBootstrap()
+    public JcrMigrateTask()
     {
     }
 
-    @PostConstruct
-    public void afterPropertiesSet()
-        throws Exception
+    @Override
+    public void migrate()
+            throws Exception
     {
         jcrTemplate.execute( new JcrCallback()
         {
@@ -65,50 +69,34 @@ public class JcrBootstrap
             public Object doInJcr( JcrSession session )
                     throws IOException, RepositoryException
             {
-                initialize( session.getRealSession() );
+                migrateToJcr( session.getRealSession() );
                 return null;
             }
         } );
     }
 
-    public void initialize( final Session jcrSession )
+    private void migrateToJcr( final Session session )
             throws RepositoryException, IOException
     {
-        LOG.info( "Initializing JCR repository..." );
-        try
-        {
-            registerNamespaces( jcrSession );
-
-            registerCustomNodeTypes( jcrSession );
-
-            createTreeStructure( jcrSession );
-
-            jcrSession.save();
-
-            jcrAccountsImporter.importAccounts();
-
-            // log imported tree
-//            LOG.info( JcrHelper.sessionViewToXml( jcrSession, "/enonic" ) );
-
-            jcrSession.save();
-        }
-        catch ( Exception e )
-        {
-            throw new RepositoryRuntimeException( "Error while initializing JCR repository", e );
-        }
-
-        LOG.info( "JCR repository initialized" );
+        registerNamespaces( session );
+        registerCustomNodeTypes( session );
+        createTreeStructure( session );
+        session.save();
+        jcrAccountsImporter.importAccounts();
+        session.save();
+        // log imported tree
+//            LOG.info( JcrHelper.sessionViewToXml( session, "/enonic" ) );
     }
 
-    private void createTreeStructure( Session jcrSession )
+    private void createTreeStructure( Session session )
         throws RepositoryException
     {
-        Node root = jcrSession.getRootNode();
+        Node root = session.getRootNode();
 
         if ( root.hasNode( ROOT_NODE ) )
         {
             root.getNode( ROOT_NODE ).remove();
-            jcrSession.save();
+            session.save();
         }
         Node enonic = root.addNode( ROOT_NODE, JcrConstants.NT_UNSTRUCTURED );
         Node userstores = enonic.addNode( USERSTORES_NODE, USERSTORES_NODE_TYPE );
@@ -132,13 +120,13 @@ public class JcrBootstrap
         systemRoles.addNode( "authenticated", "cms:role" );
     }
 
-    private void registerCustomNodeTypes( Session jcrSession )
+    private void registerCustomNodeTypes( Session session )
         throws RepositoryException, IOException
     {
         Reader fileReader = new InputStreamReader( compactNodeDefinitionFile.getInputStream() );
         try
         {
-            NodeType[] nodeTypes = CndImporter.registerNodeTypes( fileReader, jcrSession, true );
+            NodeType[] nodeTypes = CndImporter.registerNodeTypes( fileReader, session, true );
             for ( NodeType nt : nodeTypes )
             {
                 LOG.info( "Registered node type: " + nt.getName() );
@@ -150,10 +138,10 @@ public class JcrBootstrap
         }
     }
 
-    private void registerNamespaces( Session jcrSession )
+    private void registerNamespaces( Session session )
         throws RepositoryException
     {
-        Workspace workspace = jcrSession.getWorkspace();
+        Workspace workspace = session.getWorkspace();
         NamespaceRegistry reg = workspace.getNamespaceRegistry();
 
         String[] prefixes = reg.getPrefixes();
@@ -185,5 +173,17 @@ public class JcrBootstrap
     public void setCompactNodeDefinitionFile( Resource compactNodeDefinitionFile )
     {
         this.compactNodeDefinitionFile = compactNodeDefinitionFile;
+    }
+
+    @Autowired
+    public void setJcrTemplate( JcrTemplate jcrTemplate )
+    {
+        this.jcrTemplate = jcrTemplate;
+    }
+
+    @Autowired
+    public void setJcrAccountsImporter( JcrAccountsImporter jcrAccountsImporter )
+    {
+        this.jcrAccountsImporter = jcrAccountsImporter;
     }
 }
