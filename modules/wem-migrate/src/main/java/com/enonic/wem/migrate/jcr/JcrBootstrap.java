@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.core.jcr.RepositoryRuntimeException;
 import com.enonic.wem.migrate.MigrateTask;
 
-@Component
+//@Component
 public class JcrBootstrap
 {
     private static final Logger LOG = LoggerFactory.getLogger( JcrBootstrap.class );
