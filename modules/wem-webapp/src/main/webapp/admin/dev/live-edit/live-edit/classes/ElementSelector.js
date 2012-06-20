@@ -17,6 +17,7 @@ AdminLiveEdit.ElementSelector = function()
 
         var pageOverlay = AdminLiveEdit.PageOverlay;
         var util = AdminLiveEdit.Util;
+        var dragDrop = AdminLiveEdit.DragDrop;
         var highlighter = AdminLiveEdit.Highlighter;
         var tooltip = AdminLiveEdit.Tooltip;
         var toolbar = AdminLiveEdit.Toolbar;
@@ -36,6 +37,8 @@ AdminLiveEdit.ElementSelector = function()
         setSelected( element );
         tooltip.moveToPageElement( element );
         toolbar.moveTo( element );
+
+        dragDrop.enable();
     }
 
 
@@ -44,7 +47,12 @@ AdminLiveEdit.ElementSelector = function()
         AdminLiveEdit.PageOverlay.hide();
         AdminLiveEdit.Tooltip.hide();
         AdminLiveEdit.Toolbar.hide();
+
         setSelected(null);
+        var dragDrop = AdminLiveEdit.DragDrop;
+        if ( !dragDrop.isDragging() ) {
+            dragDrop.disable();
+        }
     }
 
 

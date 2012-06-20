@@ -4,12 +4,16 @@ AdminLiveEdit.Windows = function()
 
     function init()
     {
-        renderPlaceholders();
-        initMouseEventListeners();
+        renderPlaceholdersForEmptyWindows();
+
+        // Hover events are not necessary for touch.
+        if ( !AdminLiveEdit.Util.supportsTouch() ) {
+            initMouseHoverEventListeners();
+        }
     }
 
 
-    function renderPlaceholders()
+    function renderPlaceholdersForEmptyWindows()
     {
         getAll().each(function(index) {
             var window = $liveedit(this);
@@ -37,10 +41,9 @@ AdminLiveEdit.Windows = function()
     }
 
 
-    function initMouseEventListeners()
+    function initMouseHoverEventListeners()
     {
         var highlighter = AdminLiveEdit.Highlighter;
-
         $liveedit('body').on('hover','[data-live-edit-type=window]',  function(event) {
             var window = $liveedit(this);
             if (AdminLiveEdit.DragDrop.isDragging() || AdminLiveEdit.ElementSelector.getSelected()) {
@@ -66,8 +69,8 @@ AdminLiveEdit.Windows = function()
             return getAll();
         },
 
-        renderPlaceholders: function() {
-            renderPlaceholders();
+        renderPlaceholdersForEmptyWindows: function() {
+            renderPlaceholdersForEmptyWindows();
         }
     };
 

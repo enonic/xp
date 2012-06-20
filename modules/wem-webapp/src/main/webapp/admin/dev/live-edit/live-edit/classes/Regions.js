@@ -4,13 +4,13 @@ AdminLiveEdit.Regions = function()
 
     function init()
     {
-        renderPlaceholders();
+        renderPlaceholdersForEmptyRegions();
         initMouseEventListeners();
         // initRegionChangeListener();
     }
 
 
-    function renderPlaceholders()
+    function renderPlaceholdersForEmptyRegions()
     {
         removeAllPlaceholders();
 
@@ -91,8 +91,8 @@ AdminLiveEdit.Regions = function()
             return getAll();
         },
 
-        renderPlaceholders: function() {
-            renderPlaceholders();
+        renderPlaceholdersForEmptyRegions: function() {
+            renderPlaceholdersForEmptyRegions();
         }
     };
 

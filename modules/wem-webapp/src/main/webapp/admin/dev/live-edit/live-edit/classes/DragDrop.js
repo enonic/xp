@@ -33,12 +33,12 @@ AdminLiveEdit.DragDrop = function()
 
             over: function (event, ui) {
                 updateDragHelperStatusIcon('yes');
-                AdminLiveEdit.Regions.renderPlaceholders();
+                AdminLiveEdit.Regions.renderPlaceholdersForEmptyRegions();
             },
 
             out: function (event, ui) {
                 updateDragHelperStatusIcon('no');
-                AdminLiveEdit.Regions.renderPlaceholders();
+                AdminLiveEdit.Regions.renderPlaceholdersForEmptyRegions();
             },
 
             change: function (event, ui) {
@@ -47,7 +47,7 @@ AdminLiveEdit.DragDrop = function()
             },
 
             update: function (event, ui) {
-                AdminLiveEdit.Regions.renderPlaceholders();
+                AdminLiveEdit.Regions.renderPlaceholdersForEmptyRegions();
             },
 
             stop: function (event, ui) {
@@ -56,10 +56,14 @@ AdminLiveEdit.DragDrop = function()
                 if ( AdminLiveEdit.Util.supportsTouch() ) {
                     AdminLiveEdit.Highlighter.hide();
                 }
+                disableDragDrop();
+
                 ui.item.css({'opacity': ''});
             }
 
         }).disableSelection();
+
+        disableDragDrop();
     }
 
 
@@ -75,6 +79,15 @@ AdminLiveEdit.DragDrop = function()
     }
 
 
+    function enableDragDrop()
+    {
+        $liveedit('[data-live-edit-type=region]' ).sortable('enable');
+    }
+
+    function disableDragDrop() {
+        $liveedit('[data-live-edit-type=region]' ).sortable('disable');
+    }
+
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // Public
 
@@ -82,6 +95,14 @@ AdminLiveEdit.DragDrop = function()
         refresh: refresh,
 
         init: init,
+
+        enable: function() {
+            enableDragDrop();
+        },
+
+        disable: function() {
+            disableDragDrop();
+        },
 
         isDragging: function() {
             return isDragging;
