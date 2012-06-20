@@ -10,13 +10,14 @@ AdminLiveEdit.DragDrop = function()
             connectWith: '[data-live-edit-type=region]',
             items: '[data-live-edit-type=window]',
             distance: 1,
+            delay: 200,
             tolerance: 'pointer',
             cursor: 'pointer',
             cursorAt: cursorAt,
             scrollSensitivity: Math.round(AdminLiveEdit.Util.getViewPortSize().height / 8),
             placeholder: 'live-edit-dd-drop-target-placeholder',
             helper: function (event, helper) {
-                return $liveedit('<div id="live-edit-dd-drag-helper" style="width: 150px; height: 16px; padding: 6px 8px 6px 8px"><img id="live-edit-drag-helper-status-icon" src="live-edit/images/drop-yes.gif"/>' + helper.attr('data-live-edit-name') + '</div>' );
+                return $liveedit('<div id="live-edit-dd-drag-helper" style="width: 150px; height: 16px; padding: 6px 8px 6px 8px"><img id="live-edit-drag-helper-status-icon" src="../live-edit/images/drop-yes.gif"/>' + helper.attr('data-live-edit-name') + '</div>' );
             },
 
             start: function (event, ui) {
@@ -70,7 +71,7 @@ AdminLiveEdit.DragDrop = function()
 
     function updateDragHelperStatusIcon(status)
     {
-        $liveedit('#live-edit-drag-helper-status-icon' ).attr('src', 'live-edit/images/drop-'+status+'.gif');
+        $liveedit('#live-edit-drag-helper-status-icon' ).attr('src', '../live-edit/images/drop-'+status+'.gif');
     }
 
 
