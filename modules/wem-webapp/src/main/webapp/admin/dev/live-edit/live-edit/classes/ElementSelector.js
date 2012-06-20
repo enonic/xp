@@ -44,7 +44,6 @@ AdminLiveEdit.ElementSelector = function()
         AdminLiveEdit.PageOverlay.hide();
         AdminLiveEdit.Tooltip.hide();
         AdminLiveEdit.Toolbar.hide();
-        AdminLiveEdit.Highlighter.hide();
         setSelected(null);
     }
 
