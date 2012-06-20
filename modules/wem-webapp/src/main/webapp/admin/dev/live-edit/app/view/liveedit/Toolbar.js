@@ -1,63 +1,45 @@
-Ext.define( 'Admin.view.liveedit.Toolbar', {
-    extend: 'Ext.toolbar.Toolbar',
-    alias: 'widget.liveeditToolbar',
+Ext.define('Admin.view.liveedit.Toolbar', {
+    extend : 'Ext.toolbar.Toolbar',
+    alias : 'widget.liveeditToolbar',
 
-    border: false,
+    border : false,
 
-    initComponent: function()
-    {
+    initComponent : function () {
         var buttonDefaults = {
-            scale: 'medium',
-            iconAlign: 'top',
-            minWidth: 64
+            scale : 'medium',
+            iconAlign : 'top',
+            minWidth : 64
         };
 
         // Dummy store for the combo
         var regions = Ext.create('Ext.data.Store', {
-            fields: ['name', 'selector'],
+            fields : ['name', 'selector'],
             data : [
-                {"name":"North", "selector":"#north"},
-                {"name":"West", "selector":"#west"},
-                {"name":"Center", "selector":"#center"},
-                {"name":"East", "selector":"#east"},
-                {"name":"South", "selector":"#south"}
+                {"name" : "North", "selector" : "#north"},
+                {"name" : "West", "selector" : "#west"},
+                {"name" : "Center", "selector" : "#center"},
+                {"name" : "East", "selector" : "#east"},
+                {"name" : "South", "selector" : "#south"}
             ]
         });
 
 
-
         this.items = [
             {
-                xtype: 'buttongroup',
-                columns: 1,
-                defaults: buttonDefaults,
-                items: [
+                xtype : 'buttongroup',
+                columns : 1,
+                defaults : buttonDefaults,
+                items : [
                     {
-                        xtype: 'button',
-                        itemId: 'saveButton',
-                        text: 'Save'
+                        xtype : 'button',
+                        itemId : 'saveButton',
+                        text : 'Save'
                     }
                 ]
-            }/*,
-            {
-                xtype: 'buttongroup',
-                columns: 1,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        xtype: 'combo',
-                        itemId: 'insertDummyButton',
-                        fieldLabel: 'Choose Region',
-                        store: regions,
-                        queryMode: 'local',
-                        displayField: 'name',
-                        valueField: 'selector'
-                    }
-                ]
-            }*/
+            }
         ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
     }
 
 });

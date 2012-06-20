@@ -1,1 +1,3 @@
-if (!window.AdminLiveEdit) window.AdminLiveEdit = {};
+if (!window.AdminLiveEdit) {
+    window.AdminLiveEdit = {};
+}

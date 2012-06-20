@@ -1,87 +1,81 @@
-AdminLiveEdit.Tooltip = function()
-{
-    function init()
-    {
-        createTooltip();
+AdminLiveEdit.Tooltip = (function () {
+
+    function setText(typeText, nameText) {
+        $liveedit('#live-edit-tooltip-type-text').html(typeText);
+        $liveedit('#live-edit-tooltip-name-text').html(nameText);
     }
 
 
-    function moveToPageElement( element )
-    {
+    function scrollTooltipIntoView() {
         var util = AdminLiveEdit.Util;
-        var elementType = util.getPageElementType( element );
-        var elementName = util.getPageElementName( element );
+        var elementTopPosition = util.getElementPagePosition(getTooltip()).top;
+        if (elementTopPosition <= window.pageYOffset) {
+            $liveedit('html, body').animate({scrollTop : elementTopPosition - 10}, 200);
 
-        setText( elementType, ' - ' + elementName );
+        }
+    }
+
+
+    function moveToPageElement(element) {
+        var util = AdminLiveEdit.Util;
+        var elementType = util.getPageElementType(element);
+        var elementName = util.getPageElementName(element);
+
+        setText(elementType, ' - ' + elementName);
 
         var tooltip = getTooltip();
-        var elementBoxModel = AdminLiveEdit.Util.getBoxModel( element, (elementType === 'region') );
+        var elementBoxModel = AdminLiveEdit.Util.getBoxModel(element, (elementType === 'region'));
         var top = elementBoxModel.top - 54;
-        var left = elementBoxModel.left + (elementBoxModel.width/2) - (tooltip.outerWidth()/2);
+        var left = elementBoxModel.left + (elementBoxModel.width / 2) - (tooltip.outerWidth() / 2);
 
-        tooltip.css( {
-            top: top,
-            left: left
+        tooltip.css({
+            top : top,
+            left : left
         });
 
         scrollTooltipIntoView();
     }
 
 
-    function setText(typeText, nameText)
-    {
-        $liveedit( '#live-edit-tooltip-type-text' ).html(typeText);
-        $liveedit( '#live-edit-tooltip-name-text' ).html(nameText);
-    }
 
-
-    function hide()
-    {
-        $liveedit( '#live-edit-tooltip' ).css({
-            top: '-5000px',
-            left: '-5000px'
+    function hide() {
+        $liveedit('#live-edit-tooltip').css({
+            top : '-5000px',
+            left : '-5000px'
         })
     }
 
 
-    function scrollTooltipIntoView()
-    {
-        var util = AdminLiveEdit.Util;
-        var elementTopPosition = util.getElementPagePosition( getTooltip() ).top;
-        if ( elementTopPosition <= window.pageYOffset ) {
-            $liveedit( 'html, body' ).animate( {scrollTop: elementTopPosition-10}, 200 );
-
-        }
-    }
-
-
-    function createTooltip()
-    {
+    function createTooltip() {
         var tooltip = $liveedit('<div id="live-edit-tooltip"><span id="live-edit-tooltip-type-text"><!-- --></span><span id="live-edit-tooltip-name-text"><!-- --></span><div id="live-edit-tooltip-arrow-border"></div><div id="live-edit-tooltip-arrow"></div></div>');
-        $liveedit('body' ).append(tooltip);
+        $liveedit('body').append(tooltip);
     }
 
 
-    function getTooltip()
-    {
+    function getTooltip() {
         return $liveedit('#live-edit-tooltip');
     }
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    function init() {
+        createTooltip();
+    }
+
+    // *****************************************************************************************************************
     // Public
 
     return {
-        init: function() {
+        init : function () {
             init();
         },
 
-        moveToPageElement: function( element ) {
-            moveToPageElement( element );
+        moveToPageElement : function (element) {
+            moveToPageElement(element);
         },
 
-        hide: function() {
+        hide : function () {
             hide();
         }
     };
 
-}();
+}());

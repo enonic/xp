@@ -1,5 +1,5 @@
-(function( window ) {
-    $liveedit( document ).ready( function() {
+(function (window) {
+    $liveedit(document).ready(function () {
         if (document.location.href.indexOf('liveedit=false') > -1) {
             return;
         }
@@ -8,7 +8,7 @@
         // Disable all A elements.
         // This is very cheap as we should disable JS events too. See if we can find another way.
         // To enable links again: $liveedit(document).off('click.liveEditDisableLinkElements');
-        $liveedit( 'a' ).on( 'click.liveEditDisableLinkElements', function( event ) {
+        $liveedit('a').on('click.liveEditDisableLinkElements', function (event) {
             event.preventDefault();
             return false;
         });
@@ -22,6 +22,6 @@
         liveEdit.Tooltip.init();
         liveEdit.Toolbar.init();
         liveEdit.DragDrop.init();
-    } );
+    });
 
-})( window );
+}(window));

@@ -1,21 +1,19 @@
-AdminLiveEdit.Button = function()
-{
-    function createButton( config )
-    {
-        var text = config.text || '',
-            id = config.id || '',
-            iconCls = config.iconCls || '';
+AdminLiveEdit.Button = (function () {
+    function createButton (config) {
+        var text = config.text || '';
+        var id = config.id || '';
+        var iconCls = config.iconCls || '';
 
         var html = '<div id="' + id + '" class="live-edit-button"><a class="live-edit-button-inner">';
-        if ( iconCls !== '' ) {
+        if (iconCls !== '') {
             html += '<span class="live-edit-button-icon ' + iconCls + '"></span>';
         }
-        html += '<span>'+ text +'</span></a></div>';
+        html += '<span>' + text + '</span></a></div>';
 
-        var button = $liveedit( html );
+        var button = $liveedit(html);
 
-        if  (config.handler) {
-            button.on('click', function() {
+        if (config.handler) {
+            button.on('click', function () {
                 config.handler.call(this);
             });
         }
@@ -23,13 +21,13 @@ AdminLiveEdit.Button = function()
     }
 
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // *****************************************************************************************************************
     // Public
 
     return {
-        create: function( config ) {
-            return createButton( config );
+        create : function (config) {
+            return createButton(config);
         }
     };
 
-}();
+}());
