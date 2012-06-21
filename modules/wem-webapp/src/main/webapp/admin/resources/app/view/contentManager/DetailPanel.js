@@ -1,35 +1,34 @@
-Ext.define( 'Admin.view.contentManager.DetailPanel', {
-    extend: 'Ext.panel.Panel',
-    alias: 'widget.contentDetail',
+Ext.define('Admin.view.contentManager.DetailPanel', {
+    extend:'Ext.panel.Panel',
+    alias:'widget.contentDetail',
 
-    requires: [
+    requires:[
         'Admin.view.contentManager.DetailToolbar',
         'Admin.view.account.MembershipsGraphPanel'
     ],
 
-    autoScroll: true,
-    layout: 'card',
-    cls: 'admin-preview-panel',
+    autoScroll:true,
+    layout:'card',
+    cls:'admin-preview-panel',
 
-    collapsible: true,
-    showToolbar: true,
-    isLiveMode: false,
+    collapsible:true,
+    showToolbar:true,
+    isLiveMode:false,
 
-    initComponent: function()
-    {
-        if ( Ext.isEmpty( this.data ) ) {
+    initComponent:function () {
+        if (Ext.isEmpty(this.data)) {
 
             this.activeItem = 'noSelection';
 
-        } else if ( Ext.isObject( this.data ) || this.data.length == 1 ) {
+        } else if (Ext.isObject(this.data) || this.data.length == 1) {
 
-            if ( this.isLiveMode ) {
+            if (this.isLiveMode) {
                 this.activeItem = 'livePreview';
             } else {
                 this.activeItem = 'singleSelection';
             }
 
-        } else if ( this.data.length > 1 && this.data.length <= 10 ) {
+        } else if (this.data.length > 1 && this.data.length <= 10) {
 
             this.activeItem = 'largeBoxSelection';
 
@@ -41,116 +40,116 @@ Ext.define( 'Admin.view.contentManager.DetailPanel', {
 
         this.items = [
             this.createNoSelection(),
-            this.createSingleSelection( this.data ),
-            this.createLargeBoxSelection( this.data ),
-            this.createSmallBoxSelection( this.data ),
-            this.createLivePreview( this.data )
+            this.createSingleSelection(this.data),
+            this.createLargeBoxSelection(this.data),
+            this.createSmallBoxSelection(this.data),
+            this.createLivePreview(this.data)
         ];
 
-        if ( this.showToolbar ) {
-            this.tbar = Ext.createByAlias( 'widget.contentDetailToolbar' );
+        if (this.showToolbar) {
+            this.tbar = Ext.createByAlias('widget.contentDetailToolbar');
         }
 
-        this.callParent( arguments );
-        this.addEvents( 'deselectrecord' );
+        this.callParent(arguments);
+        this.addEvents('deselectrecord');
     },
 
 
-    createNoSelection: function()
-    {
+    createNoSelection:function () {
         return {
-            itemId: 'noSelection',
-            xtype: 'panel',
-            styleHtmlContent: true,
-            html: '<h2 class="message">Nothing selected</h2>'
+            itemId:'noSelection',
+            xtype:'panel',
+            styleHtmlContent:true,
+            bodyStyle:{
+                border:'none'
+            },
+            html:'<h2 class="message">Nothing selected</h2>'
         };
     },
 
-    createSingleSelection: function( data )
-    {
+    createSingleSelection:function (data) {
         var info;
-        if ( Ext.isArray( data ) && data.length > 0 ) {
+        if (Ext.isArray(data) && data.length > 0) {
             info = data[0].data
-        } else if ( !Ext.isEmpty( data ) ) {
+        } else if (!Ext.isEmpty(data)) {
             info = data.data;
         }
         return {
-            xtype: 'container',
-            itemId: 'singleSelection',
-            layout: {
-                type: 'column',
-                columns: 3
+            xtype:'container',
+            itemId:'singleSelection',
+            layout:{
+                type:'column',
+                columns:3
             },
-            defaults: {
-                border: 0
+            defaults:{
+                border:0
             },
-            items: [
+            items:[
                 {
-                    xtype: 'component',
-                    width: 100,
-                    cls: 'west',
-                    itemId: 'previewPhoto',
-                    tpl: Templates.contentManager.previewPhoto,
-                    data: info,
-                    margin: 5
+                    xtype:'component',
+                    width:100,
+                    cls:'west',
+                    itemId:'previewPhoto',
+                    tpl:Templates.contentManager.previewPhoto,
+                    data:info,
+                    margin:5
                 },
                 {
-                    xtype: 'container',
-                    columnWidth: 1,
-                    margin: '5 0',
-                    defaults: {
-                        border: 0
+                    xtype:'container',
+                    columnWidth:1,
+                    margin:'5 0',
+                    defaults:{
+                        border:0
                     },
-                    items: [
+                    items:[
                         {
-                            xtype: 'component',
-                            cls: 'north',
-                            itemId: 'previewHeader',
-                            padding: '5 5 15',
-                            tpl: Templates.contentManager.previewHeader,
-                            data: info
+                            xtype:'component',
+                            cls:'north',
+                            itemId:'previewHeader',
+                            padding:'5 5 15',
+                            tpl:Templates.contentManager.previewHeader,
+                            data:info
                         },
                         {
-                            flex: 1,
-                            cls: 'center',
-                            xtype: 'tabpanel',
-                            items: [
+                            flex:1,
+                            cls:'center',
+                            xtype:'tabpanel',
+                            items:[
                                 {
-                                    title: "Content",
-                                    itemId: 'contentTab',
-                                    html: 'Content'
+                                    title:"Content",
+                                    itemId:'contentTab',
+                                    html:'Content'
                                 },
                                 {
-                                    title: "Tree",
-                                    itemId: 'treeTab',
-                                    html: 'Tree'
+                                    title:"Tree",
+                                    itemId:'treeTab',
+                                    html:'Tree'
                                 },
                                 {
-                                    title: "Page",
-                                    itemId: 'pageTab',
-                                    html: 'Page'
+                                    title:"Page",
+                                    itemId:'pageTab',
+                                    html:'Page'
                                 },
                                 {
-                                    title: "Security",
-                                    itemId: 'securityTab',
-                                    html: 'Security'
+                                    title:"Security",
+                                    itemId:'securityTab',
+                                    html:'Security'
                                 },
                                 {
-                                    title: "Relations",
-                                    itemId: 'relationsTab',
-                                    items: [
+                                    title:"Relations",
+                                    itemId:'relationsTab',
+                                    items:[
                                         {
-                                            tpl: Templates.account.userPreviewMemberships
+                                            tpl:Templates.account.userPreviewMemberships
                                         },
                                         {
-                                            xtype: 'membershipsGraphPanel',
-                                            extraCls: 'admin-memberships-graph',
-                                            listeners: {
-                                                afterrender: function( cmp )
-                                                {
+                                            xtype:'membershipsGraphPanel',
+                                            extraCls:'admin-memberships-graph',
+                                            listeners:{
+                                                afterrender:function (cmp) {
                                                     var data = this.data ? this.data['graph'] : undefined;
-                                                    if ( data ) {
-                                                        cmp.setGraphData( data );
+                                                    if (data) {
+                                                        cmp.setGraphData(data);
                                                     }
                                                 }
                                             }
@@ -162,198 +161,188 @@ Ext.define( 'Admin.view.contentManager.DetailPanel', {
                     ]
                 },
                 {
-                    xtype: 'component',
-                    width: 300,
-                    margin: 5,
-                    itemId: 'previewInfo',
-                    cls: 'east',
-                    tpl: Templates.contentManager.previewCommonInfo,
-                    data: info
+                    xtype:'component',
+                    width:300,
+                    margin:5,
+                    itemId:'previewInfo',
+                    cls:'east',
+                    tpl:Templates.contentManager.previewCommonInfo,
+                    data:info
                 }
             ]
         };
     },
 
-    createLargeBoxSelection: function( data )
-    {
-        var tpl = Ext.Template( Templates.contentManager.previewSelectionLarge );
+    createLargeBoxSelection:function (data) {
+        var tpl = Ext.Template(Templates.contentManager.previewSelectionLarge);
 
         var panel = {
-            xtype: 'panel',
-            itemId: 'largeBoxSelection',
-            styleHtmlContent: true,
-            autoScroll: true,
-            listeners: {
-                click: {
-                    element: 'body',
-                    fn: this.deselectItem,
-                    scope: this
+            xtype:'panel',
+            itemId:'largeBoxSelection',
+            styleHtmlContent:true,
+            autoScroll:true,
+            listeners:{
+                click:{
+                    element:'body',
+                    fn:this.deselectItem,
+                    scope:this
                 }
             },
-            padding: 10,
-            border: 0,
-            tpl: tpl,
-            data: data
+            padding:10,
+            border:0,
+            tpl:tpl,
+            data:data
         };
 
         return panel;
     },
 
-    createSmallBoxSelection: function( data )
-    {
-        var tpl = Ext.Template( Templates.contentManager.previewSelectionSmall );
+    createSmallBoxSelection:function (data) {
+        var tpl = Ext.Template(Templates.contentManager.previewSelectionSmall);
 
         var panel = {
-            xtype: 'panel',
-            itemId: 'smallBoxSelection',
-            styleHtmlContent: true,
-            listeners: {
-                click: {
-                    element: 'body',
-                    fn: this.deselectItem,
-                    scope: this
+            xtype:'panel',
+            itemId:'smallBoxSelection',
+            styleHtmlContent:true,
+            listeners:{
+                click:{
+                    element:'body',
+                    fn:this.deselectItem,
+                    scope:this
                 }
             },
-            autoScroll: true,
-            padding: 10,
-            border: 0,
-            tpl: tpl,
-            data: data
+            autoScroll:true,
+            padding:10,
+            border:0,
+            tpl:tpl,
+            data:data
         };
 
         return panel;
     },
 
-    createLivePreview: function( data )
-    {
+    createLivePreview:function (data) {
         return {
-            itemId: 'livePreview',
-            xtype: 'panel',
-            autoScroll: true,
-            styleHtmlContent: true
+            itemId:'livePreview',
+            xtype:'panel',
+            autoScroll:true,
+            styleHtmlContent:true
         };
     },
 
 
-    deselectItem: function( event, target )
-    {
+    deselectItem:function (event, target) {
         var className = target.className;
-        if ( className && className === 'remove-selection' ) {
-            var key = target.attributes.getNamedItem( 'id' ).nodeValue.split( 'remove-from-selection-button-' )[1];
-            if ( !Ext.isEmpty( key ) ) {
-                this.fireEvent( 'deselectrecord', key );
+        if (className && className === 'remove-selection') {
+            var key = target.attributes.getNamedItem('id').nodeValue.split('remove-from-selection-button-')[1];
+            if (!Ext.isEmpty(key)) {
+                this.fireEvent('deselectrecord', key);
             }
         }
     },
 
-    setData: function( data, updateTitle )
-    {
-        if ( !data ) {
+    setData:function (data, updateTitle) {
+        if (!data) {
             return;
         }
         this.data = data;
 
-        if ( Ext.isEmpty( this.data ) ) {
+        if (Ext.isEmpty(this.data)) {
 
-            this.getLayout().setActiveItem( 'noSelection' );
+            this.getLayout().setActiveItem('noSelection');
 
-        } else if ( Ext.isObject( this.data ) || this.data.length == 1 ) {
+        } else if (Ext.isObject(this.data) || this.data.length == 1) {
 
             var singleData;
-            if ( Ext.isArray( this.data ) ) {
-                singleData = !Ext.isEmpty( this.data[0] ) ? this.data[0][ 'data' ] : undefined;
+            if (Ext.isArray(this.data)) {
+                singleData = !Ext.isEmpty(this.data[0]) ? this.data[0][ 'data' ] : undefined;
             } else {
                 singleData = this.data[ 'data' ];
             }
 
-            if ( this.isLiveMode ) {
+            if (this.isLiveMode) {
 
-                this.getLayout().setActiveItem( 'livePreview' );
+                this.getLayout().setActiveItem('livePreview');
 
-                var targetEl = this.down( '#livePreview' ).getTargetEl();
-                targetEl.mask( "Loading..." );
+                var targetEl = this.down('#livePreview').getTargetEl();
+                targetEl.mask("Loading...");
 
-                targetEl.load( {
-                    url: singleData.url,
-                    scripts: true,
-                    params: {
-                        param1: 'foo',
-                        param2: 'bar'
+                targetEl.load({
+                    url:singleData.url,
+                    scripts:true,
+                    params:{
+                        param1:'foo',
+                        param2:'bar'
                     },
-                    callback: function( el, success, resp, opts )
-                    {
-                        if ( !success && resp.status ) {
-                            this.target.update( '<h2 class="message">' +
-                                                resp.status + ': ' +
-                                                resp.statusText + '</h2>' );
+                    callback:function (el, success, resp, opts) {
+                        if (!success && resp.status) {
+                            this.target.update('<h2 class="message">' +
+                                resp.status + ': ' +
+                                resp.statusText + '</h2>');
                         }
                         targetEl.unmask();
                     }
-                } );
+                });
 
             } else {
 
-                var previewHeader = this.down( '#previewHeader' );
-                previewHeader.update( singleData );
+                var previewHeader = this.down('#previewHeader');
+                previewHeader.update(singleData);
 
-                var previewPhoto = this.down( '#previewPhoto' );
-                previewPhoto.update( singleData );
+                var previewPhoto = this.down('#previewPhoto');
+                previewPhoto.update(singleData);
 
-                var previewInfo = this.down( '#previewInfo' );
-                previewInfo.update( singleData );
+                var previewInfo = this.down('#previewInfo');
+                previewInfo.update(singleData);
 
-                this.getLayout().setActiveItem( 'singleSelection' );
+                this.getLayout().setActiveItem('singleSelection');
             }
 
-        } else if ( this.data.length > 1 && this.data.length <= 10 ) {
+        } else if (this.data.length > 1 && this.data.length <= 10) {
 
-            var largeBox = this.down( '#largeBoxSelection' );
-            largeBox.update( this.data );
+            var largeBox = this.down('#largeBoxSelection');
+            largeBox.update(this.data);
 
-            this.getLayout().setActiveItem( largeBox );
+            this.getLayout().setActiveItem(largeBox);
 
         } else {
 
-            var smallBox = this.down( '#smallBoxSelection' );
-            smallBox.update( this.data );
+            var smallBox = this.down('#smallBoxSelection');
+            smallBox.update(this.data);
 
-            this.getLayout().setActiveItem( smallBox );
+            this.getLayout().setActiveItem(smallBox);
 
         }
-        if ( updateTitle !== false ) {
-            this.updateTitle( data );
+        if (updateTitle !== false) {
+            this.updateTitle(data);
         }
     },
 
-    getData: function()
-    {
+    getData:function () {
         return this.data;
     },
 
-    updateTitle: function( data )
-    {
-        var count = Ext.isObject( data ) ? 1 : data.length;
+    updateTitle:function (data) {
+        var count = Ext.isObject(data) ? 1 : data.length;
         var header = count + " item(s) selected";
-        if ( count > 0 ) {
+        if (count > 0) {
             header += " (<a href='javascript:;' class='clearSelection'>Clear selection</a>)";
         }
-        this.setTitle( header );
+        this.setTitle(header);
 
-        var clearSel = this.header.el.down( 'a.clearSelection' );
+        var clearSel = this.header.el.down('a.clearSelection');
 
-        if ( clearSel ) {
-            clearSel.on( "click", function()
-            {
-                this.fireEvent( 'deselectrecord', -1 );
-            }, this );
+        if (clearSel) {
+            clearSel.on("click", function () {
+                this.fireEvent('deselectrecord', -1);
+            }, this);
         }
 
     },
 
-    toggleLive: function()
-    {
+    toggleLive:function () {
         this.isLiveMode = !this.isLiveMode;
-        this.setData( this.data, false )
+        this.setData(this.data, false)
     }
 
-} );
+});

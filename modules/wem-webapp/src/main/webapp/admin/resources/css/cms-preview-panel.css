@@ -143,7 +143,7 @@
     color: #000;
 }
 
-.admin-preview-panel .x-panel-body-default {
+.center .x-panel-body-default {
     border: 0 none;
 }
 
@@ -168,4 +168,9 @@ fieldset.admin-memberships-container {
 
 .admin-preview-panel .address .body table {
     margin: 0;
+}
+
+.admin-preview-panel > .x-panel-body {
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
 }
