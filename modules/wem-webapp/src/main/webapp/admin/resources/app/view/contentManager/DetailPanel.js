@@ -274,12 +274,8 @@ Ext.define( 'Admin.view.contentManager.DetailPanel', {
                 targetEl.mask( "Loading..." );
 
                 targetEl.load( {
-                    url: singleData.url,
+                    url: this.getAppUrl( singleData.url ),
                     scripts: true,
-                    params: {
-                        param1: 'foo',
-                        param2: 'bar'
-                    },
                     callback: function( el, success, resp, opts )
                     {
                         if ( !success && resp.status ) {
@@ -354,6 +350,27 @@ Ext.define( 'Admin.view.contentManager.DetailPanel', {
     {
         this.isLiveMode = !this.isLiveMode;
         this.setData( this.data, false )
+    },
+
+    getAppUrl: function( url )
+    {
+        if ( !Ext.isDefined( url ) ) {
+            return '';
+        } else if ( url.charAt( 0 ) == '/' ) {
+            url = url.substring( 1 );
+        }
+        var pathArray = location.pathname.split( '/' );
+        var urlArray = url.split( '/' );
+        var path = "/";
+        for ( var i = 1; i < pathArray.length - 1; i++ ) {
+            // add the path elements until we see a match with the desired url
+            if ( pathArray[i] != urlArray[0] ) {
+                path += pathArray[i] + "/";
+            } else {
+                break;
+            }
+        }
+        return path + url;
     }
 
 } );
