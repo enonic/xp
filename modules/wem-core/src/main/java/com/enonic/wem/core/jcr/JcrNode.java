@@ -50,4 +50,7 @@ public interface JcrNode
     JcrNode addNode( String relPath );
 
     JcrNode addNode( String relPath, String primaryNodeTypeName );
+
+    JcrNodeIterator getNodes( String namePattern );
+
 }
