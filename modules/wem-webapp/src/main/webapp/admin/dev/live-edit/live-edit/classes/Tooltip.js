@@ -10,7 +10,7 @@ AdminLiveEdit.Tooltip = (function () {
         var util = AdminLiveEdit.Util;
         var elementTopPosition = util.getElementPagePosition(getTooltip()).top;
         if (elementTopPosition <= window.pageYOffset) {
-            $liveedit('html, body').animate({scrollTop : elementTopPosition - 10}, 200);
+            $liveedit('html, body').animate({scrollTop: elementTopPosition - 10}, 200);
 
         }
     }
@@ -29,19 +29,17 @@ AdminLiveEdit.Tooltip = (function () {
         var left = elementBoxModel.left + (elementBoxModel.width / 2) - (tooltip.outerWidth() / 2);
 
         tooltip.css({
-            top : top,
-            left : left
+            top: top,
+            left: left
         });
-
         scrollTooltipIntoView();
     }
 
 
-
     function hide() {
         $liveedit('#live-edit-tooltip').css({
-            top : '-5000px',
-            left : '-5000px'
+            top: '-5000px',
+            left: '-5000px'
         })
     }
 
@@ -65,15 +63,15 @@ AdminLiveEdit.Tooltip = (function () {
     // Public
 
     return {
-        init : function () {
+        init: function () {
             init();
         },
 
-        moveToPageElement : function (element) {
+        moveToPageElement: function (element) {
             moveToPageElement(element);
         },
 
-        hide : function () {
+        hide: function () {
             hide();
         }
     };

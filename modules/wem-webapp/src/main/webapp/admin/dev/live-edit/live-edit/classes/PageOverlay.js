@@ -22,39 +22,39 @@ AdminLiveEdit.PageOverlay = (function () {
         var west = $liveedit('#live-edit-overlay-west');
 
         north.css({
-            top : 0,
-            left : 0,
-            width : docWidth,
-            height : y
+            top: 0,
+            left: 0,
+            width: docWidth,
+            height: y
         });
 
         east.css({
-            top : y,
-            left : x + w,
-            width : docWidth - (x + w),
-            height : h
+            top: y,
+            left: x + w,
+            width: docWidth - (x + w),
+            height: h
         });
 
         south.css({
-            top : y + h,
-            left : 0,
-            width : docWidth,
-            height : docHeight - (y + h)
+            top: y + h,
+            left: 0,
+            width: docWidth,
+            height: docHeight - (y + h)
         });
 
         west.css({
-            top : y,
-            left : 0,
-            width : x,
-            height : h
+            top: y,
+            left: 0,
+            width: x,
+            height: h
         });
     }
 
 
     function hideOverlay() {
         $liveedit('.live-edit-overlay').css({
-            top : '-15000px',
-            left : '-15000px'
+            top: '-15000px',
+            left: '-15000px'
         });
     }
 
@@ -69,7 +69,7 @@ AdminLiveEdit.PageOverlay = (function () {
             AdminLiveEdit.Tooltip.hide();
 
             var closestElementFromPoint = util.getClosestPageElementFromPoint(event.originalEvent.clientX,
-                    event.originalEvent.clientY);
+                event.originalEvent.clientY);
             if (closestElementFromPoint.length > 0) {
                 elementSelector.select(closestElementFromPoint);
             } else {
@@ -89,15 +89,15 @@ AdminLiveEdit.PageOverlay = (function () {
     // Public
 
     return {
-        init : function () {
+        init: function () {
             init();
         },
 
-        clearRectangle : function (x, y, w, h) {
+        clearRectangle: function (x, y, w, h) {
             clearRectangle(x, y, w, h);
         },
 
-        hide : function () {
+        hide: function () {
             hideOverlay();
         }
     };

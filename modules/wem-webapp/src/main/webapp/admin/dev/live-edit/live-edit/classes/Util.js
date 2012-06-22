@@ -1,24 +1,24 @@
 AdminLiveEdit.Util = (function () {
     return {
-        getDocumentSize : function () {
+        getDocumentSize: function () {
             var doc = $liveedit(document);
             return {
-                width : doc.width(),
-                height : doc.height()
+                width: doc.width(),
+                height: doc.height()
             };
         },
 
 
-        getViewPortSize : function () {
+        getViewPortSize: function () {
             var win = $liveedit(window);
             return {
-                width : win.width(),
-                height : win.height()
+                width: win.width(),
+                height: win.height()
             };
         },
 
 
-        getBoxModel : function (element, contentOnly) {
+        getBoxModel: function (element, contentOnly) {
             var el = $liveedit(element);
             var offset = el.offset();
             var top = offset.top;
@@ -50,28 +50,28 @@ AdminLiveEdit.Util = (function () {
             }
 
             return {
-                top : top,
-                left : left,
-                width : width,
-                height : height,
-                borderTop : bt,
-                borderRight : br,
-                borderBottom : bb,
-                borderLeft : bl,
-                paddingTop : pt,
-                paddingRight : pr,
-                paddingBottom : pb,
-                paddingLeft : pl
+                top: top,
+                left: left,
+                width: width,
+                height: height,
+                borderTop: bt,
+                borderRight: br,
+                borderBottom: bb,
+                borderLeft: bl,
+                paddingTop: pt,
+                paddingRight: pr,
+                paddingBottom: pb,
+                paddingLeft: pl
             };
         },
 
 
-        getElementPagePosition : function (element) {
+        getElementPagePosition: function (element) {
             return $liveedit(element).position();
         },
 
 
-        getClosestPageElementFromPoint : function (x, y) {
+        getClosestPageElementFromPoint: function (x, y) {
             var element = [];
             var elementFromPoint = $liveedit(this.elementFromPoint(x, y));
 
@@ -89,33 +89,33 @@ AdminLiveEdit.Util = (function () {
         },
 
 
-        getParentPageElement : function (element) {
+        getParentPageElement: function (element) {
             // Right now region is the only parent :)
             return element.parents('[data-live-edit-type=region]');
         },
 
 
-        elementFromPoint : function (x, y) {
+        elementFromPoint: function (x, y) {
             return document.elementFromPoint(x, y);
         },
 
 
-        getPageElementType : function (element) {
+        getPageElementType: function (element) {
             return element.data().liveEditType;
         },
 
 
-        getPageElementName : function (element) {
+        getPageElementName: function (element) {
             return element.data().liveEditName;
         },
 
 
-        isElementEmpty : function (element) {
+        isElementEmpty: function (element) {
             return $liveedit(element).children().length === 0;
         },
 
 
-        supportsTouch : function () {
+        supportsTouch: function () {
             return document.hasOwnProperty('ontouchend');
         },
 
@@ -136,13 +136,13 @@ AdminLiveEdit.Util = (function () {
          */
 
 
-        getPageConfiguration : function () {
+        getPageConfiguration: function () {
             function createWindowsArray(region) {
                 var windows = [];
                 region.find('[data-live-edit-type="window"]').each(function (i) {
                     windows.push({
-                        "key" : i,
-                        "name" : $liveedit(this).attr('data-live-edit-name')
+                        "key": i,
+                        "name": $liveedit(this).attr('data-live-edit-name')
                     });
                 });
 
@@ -154,9 +154,9 @@ AdminLiveEdit.Util = (function () {
                 $liveedit('[data-live-edit-type="region"]').each(function (i) {
                     var region = $liveedit(this);
                     regions.push({
-                        "key" : i,
-                        "name" : region.attr('data-live-edit-name'),
-                        "windows" : createWindowsArray(region)
+                        "key": i,
+                        "name": region.attr('data-live-edit-name'),
+                        "windows": createWindowsArray(region)
                     });
 
                 });
@@ -164,10 +164,10 @@ AdminLiveEdit.Util = (function () {
             }
 
             return {
-                page : {
-                    "name" : "Home",
-                    "key" : 1987,
-                    "regions" : createRegionsArray()
+                page: {
+                    "name": "Home",
+                    "key": 1987,
+                    "regions": createRegionsArray()
                 }
             };
         }

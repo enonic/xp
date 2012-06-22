@@ -7,10 +7,10 @@ AdminLiveEdit.Windows = (function () {
     }
 
 
-    function appendPlaceholder(window) {
+    function appendEmptyWindowPlaceholder(window) {
         var marker = $liveedit('<div/>', {
-            'class' : 'live-edit-empty-window-placeholder',
-            'html' : 'Empty Window'
+            'class': 'live-edit-empty-window-placeholder',
+            'html': 'Empty Window'
         });
         window.append(marker);
     }
@@ -21,7 +21,7 @@ AdminLiveEdit.Windows = (function () {
             var window = $liveedit(this);
             var windowIsEmpty = util.isElementEmpty(window);
             if (windowIsEmpty) {
-                appendPlaceholder(window);
+                appendEmptyWindowPlaceholder(window);
             }
         });
     }
@@ -56,15 +56,15 @@ AdminLiveEdit.Windows = (function () {
     // *****************************************************************************************************************
     // Public
     return {
-        init : function () {
+        init: function () {
             init();
         },
 
-        getAll : function () {
+        getAll: function () {
             return getAll();
         },
 
-        renderPlaceholdersForEmptyWindows : function () {
+        renderPlaceholdersForEmptyWindows: function () {
             renderPlaceholdersForEmptyWindows();
         }
     };

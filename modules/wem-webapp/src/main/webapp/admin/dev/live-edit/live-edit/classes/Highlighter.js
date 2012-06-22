@@ -2,7 +2,7 @@ AdminLiveEdit.Highlighter = (function () {
 
     function createHighlighter() {
         var marker = $liveedit('<div/>', {
-            id : 'live-edit-highlighter'
+            id: 'live-edit-highlighter'
         });
         $liveedit('body').append(marker);
     }
@@ -33,10 +33,10 @@ AdminLiveEdit.Highlighter = (function () {
         }
 
         highlighterDiv.css({
-            top : markerOffset + 'px',
-            left : markerOffset + 'px',
-            width : w,
-            height : h
+            top: markerOffset + 'px',
+            left: markerOffset + 'px',
+            width: w,
+            height: h
         });
 
         windowElement.append(highlighterDiv);
@@ -59,21 +59,21 @@ AdminLiveEdit.Highlighter = (function () {
         }
 
         marker.css({
-            top : regionBoxModel.paddingTop,
-            left : regionBoxModel.paddingLeft,
-            width : regionBoxModel.width - 4, // minus highlighter css border size
-            height : regionBoxModel.height - 4 // minus highlighter css border size
+            top: regionBoxModel.paddingTop,
+            left: regionBoxModel.paddingLeft,
+            width: regionBoxModel.width - 4, // minus highlighter css border size
+            height: regionBoxModel.height - 4 // minus highlighter css border size
         });
 
         regionElement.append(marker);
     }
 
 
-    function hide() {
+    function hideHighlighter() {
         var marker = $liveedit('#live-edit-highlighter');
         marker.css({
-            top : '-5000px',
-            left : '-5000px'
+            top: '-5000px',
+            left: '-5000px'
         });
         $liveedit('body').append(marker);
         marker.parent().removeClass('live-edit-position-relative');
@@ -88,14 +88,14 @@ AdminLiveEdit.Highlighter = (function () {
     // Public
 
     return {
-        init : init,
-        highlightWindow : function (window, select) {
+        init: init,
+        highlightWindow: function (window, select) {
             highlightWindow(window, select);
         },
-        highlightRegion : function (region, select) {
+        highlightRegion: function (region, select) {
             highlightRegion(region, select);
         },
-        hide : hide
+        hide: hideHighlighter
     };
 
 }());

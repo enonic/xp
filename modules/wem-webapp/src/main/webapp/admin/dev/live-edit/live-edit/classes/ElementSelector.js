@@ -48,7 +48,7 @@ AdminLiveEdit.ElementSelector = (function () {
         }
 
         pageOverlay.clearRectangle(elementBoxModel.left, elementBoxModel.top, elementBoxModel.width,
-                elementBoxModel.height);
+            elementBoxModel.height);
 
         setSelected(element);
         tooltip.moveToPageElement(element);
@@ -75,23 +75,23 @@ AdminLiveEdit.ElementSelector = (function () {
     // Public
 
     return {
-        init : function () {
+        init: function () {
             init();
         },
 
-        select : function (element) {
+        select: function (element) {
             selectElement(element);
         },
 
-        deselect : function () {
+        deselect: function () {
             deselect();
         },
 
-        setSelected : function (element) {
+        setSelected: function (element) {
             setSelected(element);
         },
 
-        getSelected : function () {
+        getSelected: function () {
             return selected;
         }
     };

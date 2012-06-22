@@ -1,7 +1,7 @@
 AdminLiveEdit.Toolbar = (function () {
     var f = {
-        region : ['parent'],
-        window : ['parent', 'edit', 'settings', 'remove']
+        region: ['parent'],
+        window: ['parent', 'edit', 'settings', 'remove']
     };
 
 
@@ -15,10 +15,10 @@ AdminLiveEdit.Toolbar = (function () {
 
         // Hard code the buttons for now.
         var selectParentButton = button.create({
-            text : 'Parent',
-            id : 'live-edit-button-parent',
-            iconCls : 'live-edit-icon-parent',
-            handler : function () {
+            text: 'Parent',
+            id: 'live-edit-button-parent',
+            iconCls: 'live-edit-icon-parent',
+            handler: function () {
                 var elementSelector = AdminLiveEdit.ElementSelector;
                 var selected = elementSelector.getSelected();
                 var parentOfSelected = AdminLiveEdit.Util.getParentPageElement(selected);
@@ -37,15 +37,15 @@ AdminLiveEdit.Toolbar = (function () {
          */
 
         var settingsButton = button.create({
-            text : 'Settings',
-            id : 'live-edit-button-settings',
-            iconCls : 'live-edit-icon-settings'
+            text: 'Settings',
+            id: 'live-edit-button-settings',
+            iconCls: 'live-edit-icon-settings'
         });
 
         var removeButton = button.create({
-            text : 'Remove',
-            id : 'live-edit-button-remove',
-            iconCls : 'live-edit-icon-remove'
+            text: 'Remove',
+            id: 'live-edit-button-remove',
+            iconCls: 'live-edit-icon-remove'
         });
 
         var container = $liveedit('#live-edit-toolbar-inner');
@@ -81,16 +81,16 @@ AdminLiveEdit.Toolbar = (function () {
         var top = elementBoxModel.top;
         var left = (elementBoxModel.left + elementBoxModel.width) - toolbar.outerWidth();
         toolbar.css({
-            top : top,
-            left : left
+            top: top,
+            left: left
         });
     }
 
 
     function hide() {
         getToolbar().css({
-            top : '-5000px',
-            left : '-5000px'
+            top: '-5000px',
+            left: '-5000px'
         });
     }
 
@@ -105,15 +105,15 @@ AdminLiveEdit.Toolbar = (function () {
     // Public
 
     return {
-        init : function () {
+        init: function () {
             init();
         },
 
-        moveTo : function (element) {
+        moveTo: function (element) {
             moveTo(element);
         },
 
-        hide : function () {
+        hide: function () {
             hide();
         }
     };

@@ -2,15 +2,6 @@ AdminLiveEdit.DragDrop = (function () {
     var isDragging = false;
     var cursorAt = AdminLiveEdit.Util.supportsTouch() ? {left : 15, top : 70} : {left : -15, top : -20};
 
-    function refresh() {
-        $liveedit('[data-live-edit-type=region]').sortable('refresh');
-    }
-
-
-    function updateDragHelperStatusIcon(status) {
-        $liveedit('#live-edit-drag-helper-status-icon').attr('src', '../live-edit/images/drop-' + status + '.gif');
-    }
-
 
     function enableDragDrop() {
         $liveedit('[data-live-edit-type=region]').sortable('enable');
@@ -19,6 +10,15 @@ AdminLiveEdit.DragDrop = (function () {
 
     function disableDragDrop() {
         $liveedit('[data-live-edit-type=region]').sortable('disable');
+    }
+
+    function refresh() {
+        $liveedit('[data-live-edit-type=region]').sortable('refresh');
+    }
+
+
+    function updateDragHelperStatusIcon(status) {
+        $liveedit('#live-edit-drag-helper-status-icon').attr('src', '../live-edit/images/drop-' + status + '.gif');
     }
 
 

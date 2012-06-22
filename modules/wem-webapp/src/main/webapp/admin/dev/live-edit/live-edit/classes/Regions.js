@@ -1,6 +1,26 @@
 AdminLiveEdit.Regions = function () {
     var util = AdminLiveEdit.Util;
 
+    function getAllRegions() {
+        return $liveedit('[data-live-edit-type=region]');
+    }
+
+
+    function appendPlaceholderToRegion(region) {
+        var placeholder = $liveedit('<div/>', {
+            'class': 'live-edit-empty-region-placeholder',
+            'html': 'Drag components here'
+        });
+        region.append(placeholder);
+    }
+
+
+    function isRegionEmpty(region) {
+        var children = region.children('[data-live-edit-type=window]:not(:hidden)');
+        var dropTargetPlaceHolder = region.children('.live-edit-dd-drop-target-placeholder');
+        return children.length === 0 && dropTargetPlaceHolder.length === 0;
+    }
+
 
     function removeAllPlaceholders() {
         $liveedit('.live-edit-empty-region-placeholder').remove();
@@ -10,7 +30,7 @@ AdminLiveEdit.Regions = function () {
     function renderPlaceholdersForEmptyRegions() {
         removeAllPlaceholders();
 
-        var regions = getAll();
+        var regions = getAllRegions();
         regions.each(function (index) {
             var region = $liveedit(this);
             var regionIsEmpty = isRegionEmpty(region);
@@ -18,27 +38,6 @@ AdminLiveEdit.Regions = function () {
                 appendPlaceholderToRegion(region);
             }
         });
-    }
-
-
-    function appendPlaceholderToRegion(region) {
-        var placeholder = $liveedit('<div/>', {
-            class : 'live-edit-empty-region-placeholder',
-            html : 'Drag components here'
-        });
-        region.append(placeholder);
-    }
-
-
-    function getAll() {
-        return $liveedit('[data-live-edit-type=region]');
-    }
-
-
-    function isRegionEmpty(region) {
-        var children = region.children('[data-live-edit-type=window]:not(:hidden)');
-        var dropTargetPlaceHolder = region.children('.live-edit-dd-drop-target-placeholder');
-        return children.length === 0 && dropTargetPlaceHolder.length === 0;
     }
 
 
@@ -67,15 +66,15 @@ AdminLiveEdit.Regions = function () {
     // Public
 
     return {
-        init : function () {
+        init: function () {
             init();
         },
 
-        getAll : function () {
-            return getAll();
+        getAll: function () {
+            return getAllRegions();
         },
 
-        renderPlaceholdersForEmptyRegions : function () {
+        renderPlaceholdersForEmptyRegions: function () {
             renderPlaceholdersForEmptyRegions();
         }
     };
