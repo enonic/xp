@@ -64,11 +64,20 @@ public class JdbcAccountsRetriever
 
         for ( Map<String, Object> userRow : userRows )
         {
-            // TODO fetch members
-            String groupKey = (String) userRow.get( "GRP_HKEY" );
-//            Map<String, Object> userFields = fetchUserFields( userKey );
-//            userRow.put( USER_INFO_FIELDS_MAP, userFields );
             handler.processDataEntry( userRow );
+        }
+    }
+
+    public void fetchMemberships( ImportDataCallbackHandler handler )
+    {
+        final String sql = "SELECT GGM_MBR_GRP_HKEY, GGM_GRP_HKEY FROM TGRPGRPMEMBERSHIP";
+
+        final List<Map<String, Object>> membershipRows = jdbcTemplate.queryForList( sql );
+        LOG.info( membershipRows.size() + " memberships retrieved." );
+
+        for ( Map<String, Object> membership : membershipRows )
+        {
+            handler.processDataEntry( membership );
         }
     }
 
