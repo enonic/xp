@@ -27,6 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.core.search.UserInfoHelper;
+
+import com.enonic.cms.api.client.model.user.Address;
 import com.enonic.cms.api.client.model.user.Gender;
 import com.enonic.cms.api.client.model.user.UserInfo;
 import com.enonic.cms.core.security.group.GroupEntity;
@@ -131,6 +134,8 @@ public class AccountJcrDaoImpl
         Ordering[] orderings = null;
 
         QueryObjectModel queryObj = factory.createQuery( source, constraint, orderings, columns );
+        queryObj.setOffset( index );
+        queryObj.setLimit( index );
         QueryResult result = queryObj.execute();
 
         NodeIterator nodeIterator = result.getNodes();
@@ -282,11 +287,37 @@ public class AccountJcrDaoImpl
         nodeToUserstore( userNode.getParent().getParent(), userstore );
         user.setUserStore( userstore );
 
-        final UserFields userFields = nodePropertiesToUserFields( userNode );
+        final UserInfo userInfo = nodePropertiesToUserFields( userNode );
+        final Address[] addresses = nodePropertiesToAddresses( userNode );
+        userInfo.setAddresses( addresses );
+        final UserFields userFields = UserInfoHelper.toUserFields( userInfo );
         user.setUserFields( userFields );
     }
 
-    private UserFields nodePropertiesToUserFields( final JcrNode userNode )
+    private Address[] nodePropertiesToAddresses( JcrNode userNode )
+    {
+        final List<Address> addressList = new ArrayList<Address>();
+        final JcrNode addresses = userNode.getNode( "addresses" );
+        JcrNodeIterator addressNodeIt = addresses.getNodes( "address" );
+        while ( addressNodeIt.hasNext() )
+        {
+            JcrNode addressNode = addressNodeIt.next();
+            final Address address = new Address();
+            address.setLabel( addressNode.getPropertyString( "label" ) );
+            address.setStreet( addressNode.getPropertyString( "street" ) );
+            address.setPostalAddress( addressNode.getPropertyString( "postalAddress" ) );
+            address.setPostalCode( addressNode.getPropertyString( "postalCode" ) );
+            address.setRegion( addressNode.getPropertyString( "region" ) );
+            address.setCountry( addressNode.getPropertyString( "country" ) );
+            address.setIsoRegion( addressNode.getPropertyString( "isoRegion" ) );
+            address.setIsoCountry( addressNode.getPropertyString( "isoCountry" ) );
+            addressList.add( address );
+        }
+
+        return addressList.toArray( new Address[addressList.size()] );
+    }
+
+    private UserInfo nodePropertiesToUserFields( final JcrNode userNode )
             throws RepositoryException
     {
         final UserInfo info = new UserInfo();
@@ -327,8 +358,7 @@ public class AccountJcrDaoImpl
         }
         info.setOrganization( userNode.getPropertyString( "organization" ) );
 
-        final UserInfoTransformer transformer = new UserInfoTransformer();
-        return transformer.toUserFields( info );
+        return info;
     }
 
     private void nodePropertiesToGroupFields( JcrNode groupNode, GroupEntity group )

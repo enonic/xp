@@ -2,7 +2,6 @@ package com.enonic.wem.migrate.jcr;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -11,6 +10,7 @@ import java.util.TimeZone;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,7 @@ import com.enonic.wem.core.jcr.JcrDaoSupport;
 import com.enonic.wem.core.jcr.JcrNode;
 import com.enonic.wem.core.jcr.JcrSession;
 
+import com.enonic.cms.api.client.model.user.Address;
 import com.enonic.cms.api.client.model.user.Gender;
 import com.enonic.cms.api.client.model.user.UserInfo;
 import com.enonic.cms.core.security.group.GroupType;
@@ -43,17 +44,34 @@ public class JcrAccountsImporter
     extends JcrDaoSupport
 {
     private static final Logger LOG = LoggerFactory.getLogger( JcrAccountsImporter.class );
+    private final static String F_COUNTRY = "country";
 
+    private final static String F_ISO_COUNTRY = "iso-country";
+
+    private final static String F_REGION = "region";
+
+    private final static String F_ISO_REGION = "iso-region";
+
+    private final static String F_LABEL = "label";
+
+    private final static String F_STREET = "street";
+
+    private final static String F_POSTAL_CODE = "postal-code";
+
+    private final static String F_POSTAL_ADDRESS = "postal-address";
     private static final int SYSTEM_USERSTORE_KEY = 0;
 
     @Autowired
     private JdbcAccountsRetriever jdbcAccountsRetriever;
 
-    private Map<Integer, String> userStoreKeyName;
+    private final Map<Integer, String> userStoreKeyName;
+
+    private final Map<String, String> groupKeyUIDMapping;
 
     public JcrAccountsImporter()
     {
         userStoreKeyName = new HashMap<Integer, String>();
+        groupKeyUIDMapping = new HashMap<String, String>();
     }
 
     public void importAccounts()
@@ -63,6 +81,8 @@ public class JcrAccountsImporter
         importUsers();
 
         importGroups();
+
+        releaseResources();
     }
 
     private void importUserStores()
@@ -110,6 +130,28 @@ public class JcrAccountsImporter
                 }
             }
         } );
+
+        jdbcAccountsRetriever.fetchMemberships( new ImportDataCallbackHandler()
+        {
+            public void processDataEntry( Map<String, Object> data )
+            {
+                try
+                {
+                    final String accountKey = (String) data.get( "GGM_MBR_GRP_HKEY" );
+                    final String memberKey = (String) data.get( "GGM_GRP_HKEY" );
+                }
+                catch ( Exception e )
+                {
+                    LOG.error( "Unable to import membership: " + data.get( "GGM_MBR_GRP_HKEY" ), e );
+                }
+            }
+        } );
+    }
+
+    private void releaseResources()
+    {
+        userStoreKeyName.clear();
+        groupKeyUIDMapping.clear();
     }
 
     private void storeGroup( final Map<String, Object> groupFields )
@@ -207,23 +249,79 @@ public class JcrAccountsImporter
     private void addUserInfoFields( JcrNode userNode, Map<String, Object> userInfoFields )
             throws RepositoryException
     {
-        UserFieldHelper userFieldHelper = new UserFieldHelper();
+        final UserFieldHelper userFieldHelper = new UserFieldHelper();
 
-        UserFields userFields = new UserFields( true );
+        final UserFields userFields = new UserFields( true );
         for ( String userFieldName : userInfoFields.keySet() )
         {
-            UserFieldType type = UserFieldType.fromName( userFieldName );
+            final UserFieldType type = UserFieldType.fromName( userFieldName );
             if ( type != null )
             {
-                Object value = userFieldHelper.fromString( type, userInfoFields.get( userFieldName ).toString() );
-                UserField field = new UserField( type, value );
+                final Object value = userFieldHelper.fromString( type, userInfoFields.get( userFieldName ).toString() );
+                final UserField field = new UserField( type, value );
                 userFields.add( field );
             }
         }
-        UserInfoTransformer transformer = new UserInfoTransformer();
-        UserInfo userInfo = transformer.toUserInfo( userFields );
+        final UserInfoTransformer transformer = new UserInfoTransformer();
+        final UserInfo userInfo = transformer.toUserInfo( userFields );
+
+        final Address[] addresses  = userFieldsToAddresses(userInfoFields);
+        userInfo.setAddresses( addresses );
 
         userInfoFieldsToNode( userInfo, userNode );
+    }
+
+    private Address[] userFieldsToAddresses( Map<String, Object> userFields )
+    {
+        final Map<String, Address> addresses = new HashMap<String, Address>();
+        for ( String fieldName : userFields.keySet() )
+        {
+            if ( fieldName.startsWith( "address[" ) )
+            {
+                final String addressId = StringUtils.substringBetween( fieldName, "address[", "]" );
+                Address address = addresses.get( addressId );
+                if ( address == null )
+                {
+                    address = new Address();
+                    addresses.put( addressId, address );
+                }
+                final String fieldId = StringUtils.substringAfter( fieldName, "." );
+                final String value = (String) userFields.get( fieldName );
+                if ( F_LABEL.equals( fieldId ) )
+                {
+                    address.setLabel( value );
+                }
+                else if ( F_COUNTRY.equals( fieldId ) )
+                {
+                    address.setCountry( value );
+                }
+                else if ( F_ISO_COUNTRY.equals( fieldId ) )
+                {
+                    address.setIsoCountry( value );
+                }
+                else if ( F_REGION.equals( fieldId ) )
+                {
+                    address.setRegion( value );
+                }
+                else if ( F_ISO_REGION.equals( fieldId ) )
+                {
+                    address.setIsoRegion( value );
+                }
+                else if ( F_STREET.equals( fieldId ) )
+                {
+                    address.setStreet( value );
+                }
+                else if ( F_POSTAL_CODE.equals( fieldId ) )
+                {
+                    address.setPostalCode( value );
+                }
+                else if ( F_POSTAL_ADDRESS.equals( fieldId ) )
+                {
+                    address.setPostalAddress( value );
+                }
+            }
+        }
+        return addresses.values().toArray( new Address[addresses.size()] );
     }
 
     private void addGroup( JcrSession session, Map<String, Object> groupFields )
@@ -338,16 +436,26 @@ public class JcrAccountsImporter
             userNode.setPropertyString( "gender", gender.toString() );
         }
         userNode.setPropertyString( "organization", userInfo.getOrganization() );
+
+        final Address[] addresses = userInfo.getAddresses();
+        final JcrNode addressesNode = userNode.addNode( "addresses" );
+        for ( Address address : addresses )
+        {
+            addAddressNode( address, addressesNode );
+        }
     }
 
-    private Calendar toCalendar( Date date )
+    private void addAddressNode( Address address, JcrNode addressesNode )
+            throws RepositoryException
     {
-        if ( date == null )
-        {
-            return null;
-        }
-        Calendar cal = Calendar.getInstance();
-        cal.setTime( date );
-        return cal;
+        final JcrNode addressNode = addressesNode.addNode( "address" );
+        addressNode.setPropertyString( "country", address.getCountry() );
+        addressNode.setPropertyString( "isoCountry", address.getIsoCountry() );
+        addressNode.setPropertyString( "isoRegion", address.getIsoRegion() );
+        addressNode.setPropertyString( "label", address.getLabel() );
+        addressNode.setPropertyString( "postalAddress", address.getPostalAddress() );
+        addressNode.setPropertyString( "postalCode", address.getPostalCode() );
+        addressNode.setPropertyString( "region", address.getRegion() );
+        addressNode.setPropertyString( "street", address.getStreet() );
     }
 }

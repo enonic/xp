@@ -310,6 +310,19 @@ class JcrNodeImpl
         }
     }
 
+    @Override
+    public JcrNodeIterator getNodes( String namePattern )
+    {
+        try
+        {
+            return new JcrNodeIteratorImpl( node.getNodes( namePattern ) );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
+
     private Calendar dateToCalendar( Date date )
     {
         if ( date == null )
