@@ -17,6 +17,7 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
     showToolbar:true,
 
     initComponent:function () {
+        var me = this;
         if (this.data && this.data.type == 'role') {
             this.data.staticDesc = this.getRoleDescription(this.data.name);
         }
@@ -61,6 +62,13 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
                                     {
                                         title:"Memberships",
                                         itemId:'membershipsTab',
+                                        listeners:{
+                                            afterrender:function () {
+                                                if (me.data && me.data['graph']) {
+                                                    me.down('membershipsGraphPanel').setGraphData(me.data['graph']);
+                                                }
+                                            }
+                                        },
                                         items:[
                                             {
                                                 tpl:Templates.account.userPreviewMemberships
