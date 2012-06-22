@@ -23,6 +23,24 @@ class JcrNodeImpl
         this.parent = null;
     }
 
+    public Node getInternalNode()
+    {
+        return node;
+    }
+
+    @Override
+    public String getIdentifier()
+    {
+        try
+        {
+            return node.getIdentifier();
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
+
     @Override
     public boolean hasProperty( String relPath )
     {
@@ -229,11 +247,37 @@ class JcrNodeImpl
     }
 
     @Override
+    public void setPropertyReference( String name, JcrNode value )
+    {
+        try
+        {
+            node.setProperty( name, ( (JcrNodeImpl) value ).getInternalNode() );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
+
+    @Override
     public String getName()
     {
         try
         {
             return node.getName();
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
+
+    @Override
+    public String getPath()
+    {
+        try
+        {
+            return node.getPath();
         }
         catch ( RepositoryException e )
         {
@@ -264,6 +308,10 @@ class JcrNodeImpl
         try
         {
             return new JcrNodeImpl( node.getNode( relPath ) );
+        }
+        catch ( PathNotFoundException pnfe )
+        {
+            return null;
         }
         catch ( RepositoryException e )
         {
@@ -321,6 +369,25 @@ class JcrNodeImpl
         {
             throw new RepositoryRuntimeException( e );
         }
+    }
+
+    @Override
+    public JcrPropertyIterator getReferences( String name )
+    {
+        try
+        {
+            return new JcrPropertyIteratorImpl( node.getReferences( name ) );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
+
+    @Override
+    public JcrPropertyIterator getReferences()
+    {
+        return getReferences( null );
     }
 
     private Calendar dateToCalendar( Date date )

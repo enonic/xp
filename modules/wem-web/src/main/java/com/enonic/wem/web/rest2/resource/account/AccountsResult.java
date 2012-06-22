@@ -112,7 +112,6 @@ public final class AccountsResult
 
         final List<Map<String, String>> groups = user.getGroups();
         final ArrayNode groupsJson = arrayNode();
-        json.put( "groups", groupsJson );
         for ( Map<String, String> groupItem : groups )
         {
             final ObjectNode groupJson = objectNode();
@@ -122,8 +121,7 @@ public final class AccountsResult
             }
             groupsJson.add( groupJson );
         }
-
-//        "graph": [ É ],
+        json.put( "groups", groupsJson );
 
         return json;
     }

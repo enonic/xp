@@ -19,46 +19,48 @@ public interface JcrSession
 
     void save();
 
+    JcrNode getNodeByIdentifier( String id );
+
     JcrNode getRootNode();
 
-    JcrNode getNode(String absPath);
+    JcrNode getNode( String absPath );
 
-    JcrNode getOrCreateNode(String absPath);
+    JcrNode getOrCreateNode( String absPath );
 
-    JcrNode getNode(Node node);
+    JcrNode getNode( Node node );
 
-    boolean nodeExists(String absPath);
+    boolean nodeExists( String absPath );
 
-    void removeItem(String absPath);
+    void removeItem( String absPath );
 
-    boolean propertyExists(String absPath);
+    boolean propertyExists( String absPath );
 
-    Property getProperty(String absPath);
-
-
-    String getPropertyString(String absPath);
-
-    boolean getPropertyBoolean(String absPath);
-
-    long getPropertyLong(String absPath);
-
-    double getPropertyDouble(String absPath);
-
-    Date getPropertyDate(String absPath);
-
-    Calendar getPropertyCalendar(String absPath);
+    Property getProperty( String absPath );
 
 
-    void setPropertyString(String absPath, String value);
+    String getPropertyString( String absPath );
 
-    void setPropertyBoolean(String absPath, boolean value);
+    boolean getPropertyBoolean( String absPath );
 
-    void setPropertyLong(String absPath, long value);
+    long getPropertyLong( String absPath );
 
-    void setPropertyDouble(String absPath, double value);
+    double getPropertyDouble( String absPath );
 
-    void setPropertyDate(String absPath, Date value);
+    Date getPropertyDate( String absPath );
 
-    void setPropertyCalendar(String absPath, Calendar value);
+    Calendar getPropertyCalendar( String absPath );
+
+
+    void setPropertyString( String absPath, String value );
+
+    void setPropertyBoolean( String absPath, boolean value );
+
+    void setPropertyLong( String absPath, long value );
+
+    void setPropertyDouble( String absPath, double value );
+
+    void setPropertyDate( String absPath, Date value );
+
+    void setPropertyCalendar( String absPath, Calendar value );
 
 }

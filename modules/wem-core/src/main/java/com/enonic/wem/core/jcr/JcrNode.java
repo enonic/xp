@@ -7,10 +7,17 @@ import javax.jcr.Property;
 
 public interface JcrNode
 {
+    String getIdentifier();
+
+    String getName();
+
+    String getPath();
+
+    JcrNode getParent();
+
     boolean hasProperty( String relPath );
 
     Property getProperty( String relPath );
-
 
     String getPropertyString( String relPath );
 
@@ -39,9 +46,7 @@ public interface JcrNode
 
     void setPropertyBinary( String relPath, byte[] value );
 
-    String getName();
-
-    JcrNode getParent();
+    void setPropertyReference( String name, JcrNode value );
 
     JcrNode getNode( String relPath );
 
@@ -52,5 +57,9 @@ public interface JcrNode
     JcrNode addNode( String relPath, String primaryNodeTypeName );
 
     JcrNodeIterator getNodes( String namePattern );
+
+    JcrPropertyIterator getReferences( String name );
+
+    JcrPropertyIterator getReferences();
 
 }

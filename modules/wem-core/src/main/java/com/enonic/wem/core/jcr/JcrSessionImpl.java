@@ -3,6 +3,7 @@ package com.enonic.wem.core.jcr;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
@@ -51,6 +52,23 @@ class JcrSessionImpl
         try
         {
             session.save();
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
+
+    @Override
+    public JcrNode getNodeByIdentifier( String id )
+    {
+        try
+        {
+            return new JcrNodeImpl( session.getNodeByIdentifier( id ) );
+        }
+        catch ( ItemNotFoundException nfe )
+        {
+            return null;
         }
         catch ( RepositoryException e )
         {

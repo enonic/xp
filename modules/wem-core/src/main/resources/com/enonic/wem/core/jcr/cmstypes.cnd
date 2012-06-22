@@ -9,10 +9,10 @@
 - cms:key (string)
 
 // user
-[cms:user] > cms:principal, nt:unstructured
+[cms:user] > cms:principal, mix:referenceable, nt:unstructured
 
 // group
-[cms:group] > cms:principal, nt:unstructured
+[cms:group] > cms:principal, mix:referenceable, nt:unstructured
 + members (cms:users) multiple
 
 // role

@@ -21,6 +21,8 @@ public class JcrCmsConstants
 
     public static final String GROUP_NODE_TYPE = "cms:group";
 
+    public static final String MEMBERS_NODE = "members";
+
     public static final String USERS_NODE = "users";
 
     public static final String USERS_NODE_TYPE = "cms:users";

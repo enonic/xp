@@ -114,7 +114,7 @@ public final class AccountResource
                                                @QueryParam("dir") @DefaultValue("ASC") String sortDir,
                                                @QueryParam("query") @DefaultValue("") String query,
 
-                                               @QueryParam("type") @DefaultValue("") String types,
+                                               @QueryParam("type") @DefaultValue("users,groups,roles") String types,
                                                @QueryParam("userstores") @DefaultValue("") String userstores,
                                                @QueryParam("organizations") @DefaultValue("") String organizations,
                                                @QueryParam("currentGroupKey") @DefaultValue("") String currentGroupKey,

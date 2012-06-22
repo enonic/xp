@@ -35,15 +35,17 @@ import com.enonic.cms.core.user.field.UserInfoTransformer;
 
 import static com.enonic.wem.core.jcr.JcrCmsConstants.GROUPS_NODE;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.GROUP_NODE_TYPE;
+import static com.enonic.wem.core.jcr.JcrCmsConstants.MEMBERS_NODE;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.USERSTORES_PATH;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.USERS_NODE;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.USER_NODE_TYPE;
 
 @Component
 public class JcrAccountsImporter
-    extends JcrDaoSupport
+        extends JcrDaoSupport
 {
     private static final Logger LOG = LoggerFactory.getLogger( JcrAccountsImporter.class );
+
     private final static String F_COUNTRY = "country";
 
     private final static String F_ISO_COUNTRY = "iso-country";
@@ -59,6 +61,7 @@ public class JcrAccountsImporter
     private final static String F_POSTAL_CODE = "postal-code";
 
     private final static String F_POSTAL_ADDRESS = "postal-address";
+
     private static final int SYSTEM_USERSTORE_KEY = 0;
 
     @Autowired
@@ -66,12 +69,15 @@ public class JcrAccountsImporter
 
     private final Map<Integer, String> userStoreKeyName;
 
-    private final Map<String, String> groupKeyUIDMapping;
+    private final Map<String, String> accountKeyToJcrUIDMapping;
+
+    private final Map<String, String> userGroupKeyToJcrUIDMapping;
 
     public JcrAccountsImporter()
     {
         userStoreKeyName = new HashMap<Integer, String>();
-        groupKeyUIDMapping = new HashMap<String, String>();
+        accountKeyToJcrUIDMapping = new HashMap<String, String>();
+        userGroupKeyToJcrUIDMapping = new HashMap<String, String>();
     }
 
     public void importAccounts()
@@ -137,8 +143,9 @@ public class JcrAccountsImporter
             {
                 try
                 {
-                    final String accountKey = (String) data.get( "GGM_MBR_GRP_HKEY" );
-                    final String memberKey = (String) data.get( "GGM_GRP_HKEY" );
+                    final String memberKey = (String) data.get( "GGM_MBR_GRP_HKEY" );
+                    final String accountKey = (String) data.get( "GGM_GRP_HKEY" );
+                    addMembership( accountKey, memberKey );
                 }
                 catch ( Exception e )
                 {
@@ -148,42 +155,81 @@ public class JcrAccountsImporter
         } );
     }
 
-    private void releaseResources()
-    {
-        userStoreKeyName.clear();
-        groupKeyUIDMapping.clear();
-    }
-
-    private void storeGroup( final Map<String, Object> groupFields )
+    private void addMembership( final String groupKey, final String memberKey )
     {
         getTemplate().execute( new JcrCallback()
         {
             public Object doInJcr( JcrSession session )
                     throws IOException, RepositoryException
             {
-                addGroup( session, groupFields );
+                final String groupNodeId = accountKeyToJcrUIDMapping.get( groupKey );
+                final String memberNodeId = accountKeyToJcrUIDMapping.get( memberKey );
+                if ( ( memberNodeId == null ) || ( groupNodeId == null ) )
+                {
+                    return null;
+                }
+                final JcrNode groupNode = session.getNodeByIdentifier( groupNodeId );
+                final JcrNode memberNode = session.getNodeByIdentifier( memberNodeId );
+                LOG.info( "Added account " + memberNode.getName() + " as member of " + groupNode.getName() );
 
-                session.save();
-
+                final JcrNode membersNode = groupNode.getNode( MEMBERS_NODE );
+                final JcrNode memberReferenceNode = membersNode.addNode( "member");
+                memberReferenceNode.setPropertyReference( "ref", memberNode );
+                memberReferenceNode.setPropertyString( "path", memberNode.getPath() );
+                memberReferenceNode.setPropertyString( "id", memberNode.getIdentifier() );
                 return null;
             }
         } );
+
+    }
+
+    private void releaseResources()
+    {
+        userStoreKeyName.clear();
+        accountKeyToJcrUIDMapping.clear();
+    }
+
+    private void storeGroup( final Map<String, Object> groupFields )
+    {
+        final JcrNode groupNode = (JcrNode) getTemplate().execute( new JcrCallback()
+        {
+            public Object doInJcr( JcrSession session )
+                    throws IOException, RepositoryException
+            {
+                final JcrNode groupNode = addGroup( session, groupFields );
+                session.save();
+                return groupNode;
+            }
+        } );
+
+        if ( groupNode != null )
+        {
+            final String groupId = groupNode.getIdentifier();
+            final String groupKey = (String) groupFields.get( "GRP_HKEY" );
+            accountKeyToJcrUIDMapping.put( groupKey, groupId );
+            final String groupName = (String) groupFields.get( "GRP_SNAME" );
+            LOG.info( "Group '" + groupName + "' imported with id " + groupId );
+        }
     }
 
     private void storeUser( final Map<String, Object> userFields )
     {
-        getTemplate().execute( new JcrCallback()
+        final JcrNode userNode = (JcrNode) getTemplate().execute( new JcrCallback()
         {
             public Object doInJcr( JcrSession session )
-                throws IOException, RepositoryException
+                    throws IOException, RepositoryException
             {
-                addUser( session, userFields );
-
+                final JcrNode userNode = addUser( session, userFields );
                 session.save();
-
-                return null;
+                return userNode;
             }
         } );
+
+        final String userId = userNode.getIdentifier();
+        final String userKey = (String) userFields.get( "USR_HKEY" );
+        accountKeyToJcrUIDMapping.put( userKey, userId );
+        final String userName = (String) userFields.get( "USR_SUID" );
+        LOG.info( "User '" + userName + "' imported with id " + userId );
     }
 
     private void storeUserstore( final Map<String, Object> userstoreFields )
@@ -191,19 +237,17 @@ public class JcrAccountsImporter
         getTemplate().execute( new JcrCallback()
         {
             public Object doInJcr( JcrSession session )
-                throws IOException, RepositoryException
+                    throws IOException, RepositoryException
             {
                 addUserstore( session, userstoreFields );
-
                 session.save();
-
                 return null;
             }
         } );
     }
 
-    private void addUser( JcrSession session, Map<String, Object> userFields )
-        throws RepositoryException, UnsupportedEncodingException
+    private JcrNode addUser( JcrSession session, Map<String, Object> userFields )
+            throws RepositoryException, UnsupportedEncodingException
     {
         String userName = (String) userFields.get( "USR_SUID" );
         Integer userStoreKey = (Integer) userFields.get( "USR_DOM_LKEY" );
@@ -240,10 +284,11 @@ public class JcrAccountsImporter
         }
 
         // user info fields
-        Map<String, Object> userInfoFields = (Map<String, Object>) userFields.get( JdbcAccountsRetriever.USER_INFO_FIELDS_MAP );
+        final Map<String, Object> userInfoFields =
+                (Map<String, Object>) userFields.get( JdbcAccountsRetriever.USER_INFO_FIELDS_MAP );
         addUserInfoFields( userNode, userInfoFields );
 
-        LOG.info( "User imported: " + userName );
+        return userNode;
     }
 
     private void addUserInfoFields( JcrNode userNode, Map<String, Object> userInfoFields )
@@ -265,7 +310,7 @@ public class JcrAccountsImporter
         final UserInfoTransformer transformer = new UserInfoTransformer();
         final UserInfo userInfo = transformer.toUserInfo( userFields );
 
-        final Address[] addresses  = userFieldsToAddresses(userInfoFields);
+        final Address[] addresses = userFieldsToAddresses( userInfoFields );
         userInfo.setAddresses( addresses );
 
         userInfoFieldsToNode( userInfo, userNode );
@@ -324,7 +369,7 @@ public class JcrAccountsImporter
         return addresses.values().toArray( new Address[addresses.size()] );
     }
 
-    private void addGroup( JcrSession session, Map<String, Object> groupFields )
+    private JcrNode addGroup( JcrSession session, Map<String, Object> groupFields )
             throws RepositoryException
     {
         String groupName = (String) groupFields.get( "GRP_SNAME" );
@@ -332,7 +377,7 @@ public class JcrAccountsImporter
         if ( groupType == GroupType.USER )
         {
             LOG.debug( "Skipping group of type User: " + groupName );
-            return;
+            return null;
         }
         Integer userStoreKey = (Integer) groupFields.get( "GRP_DOM_LKEY" );
         String userstoreNodeName = userStoreKeyName.get( userStoreKey );
@@ -344,6 +389,7 @@ public class JcrAccountsImporter
 
         String userParentNodePath = USERSTORES_PATH + userstoreNodeName + "/" + GROUPS_NODE;
         JcrNode userNode = session.getRootNode().getNode( userParentNodePath ).addNode( groupName, GROUP_NODE_TYPE );
+        userNode.addNode( MEMBERS_NODE );
 
         // common user properties
         String description = (String) groupFields.get( "GRP_SDESCRIPTION" );
@@ -359,11 +405,11 @@ public class JcrAccountsImporter
         userNode.setPropertyString( "syncValue", syncValue );
         userNode.setPropertyLong( "groupType", groupType.toInteger() );
 
-        LOG.info( "Group imported: " + groupName );
+        return userNode;
     }
 
     private void addUserstore( JcrSession session, Map<String, Object> userstoreFields )
-        throws RepositoryException, UnsupportedEncodingException
+            throws RepositoryException, UnsupportedEncodingException
     {
         String userstoreName = (String) userstoreFields.get( "DOM_SNAME" );
 
@@ -395,7 +441,7 @@ public class JcrAccountsImporter
     }
 
     private void userInfoFieldsToNode( UserInfo userInfo, JcrNode userNode )
-        throws RepositoryException
+            throws RepositoryException
     {
         userNode.setPropertyDate( "birthday", userInfo.getBirthday() );
         userNode.setPropertyString( "country", userInfo.getCountry() );

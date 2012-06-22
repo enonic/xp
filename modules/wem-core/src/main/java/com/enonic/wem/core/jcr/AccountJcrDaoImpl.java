@@ -41,7 +41,6 @@ import com.enonic.cms.core.security.user.UserType;
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
 import com.enonic.cms.core.security.userstore.UserStoreKey;
 import com.enonic.cms.core.user.field.UserFields;
-import com.enonic.cms.core.user.field.UserInfoTransformer;
 import com.enonic.cms.store.support.EntityPageList;
 
 import static com.enonic.wem.core.jcr.JcrCmsConstants.GROUP_NODE_TYPE;
@@ -179,16 +178,31 @@ public class AccountJcrDaoImpl
 
         NodeIterator nodeIterator = result.getNodes();
 
-        UserEntity user = null;
+        final UserEntity user;
         if ( nodeIterator.hasNext() )
         {
             user = new UserEntity();
             final JcrNode userNode = session.getNode( nodeIterator.nextNode() );
             nodePropertiesToUserFields( userNode, user );
             setUserPhoto( session, key, user );
+            setUserMemberships( session, userNode, user );
         }
-
+        else
+        {
+            user = null;
+        }
         return user;
+    }
+
+    private void setUserMemberships( JcrSession session, JcrNode userNode, UserEntity user )
+    {
+        final JcrPropertyIterator refIterator = userNode.getReferences();
+        while ( refIterator.hasNext() )
+        {
+            final JcrProperty property = refIterator.next();
+            final JcrNode memberOwnerNode = property.getNode();
+            LOG.info( memberOwnerNode.getPath() );
+        }
     }
 
     private GroupEntity queryGroupByKey( JcrSession session, GroupKey key )
