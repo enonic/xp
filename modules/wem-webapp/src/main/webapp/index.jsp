@@ -59,7 +59,7 @@
     </div>
 
     <div id="welcome">
-      <h1>Welcome to Enonic CMS</h1>
+      <h1>Welcome to Enonic WEM</h1>
 
       <p>
         Access this installation by choosing <strong>Admin Console</strong> above, or one of the

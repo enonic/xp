@@ -1,52 +1,40 @@
-AdminLiveEdit.Windows = function()
-{
+AdminLiveEdit.Windows = (function () {
     var util = AdminLiveEdit.Util;
 
-    function init()
-    {
-        renderPlaceholders();
-        initMouseEventListeners();
-    }
 
-
-    function renderPlaceholders()
-    {
-        getAll().each(function(index) {
-            var window = $liveedit(this);
-            var windowIsEmpty = util.isElementEmpty(window);
-            if ( windowIsEmpty ) {
-                appendPlaceholder(window);
-            }
-        });
-    }
-
-
-    function appendPlaceholder( window )
-    {
-        var marker = $liveedit( '<div/>', {
-            class: 'live-edit-empty-window-placeholder',
-            html: 'Empty Window'
-        });
-        window.append( marker );
-    }
-
-
-    function getAll()
-    {
+    function getAll() {
         return $liveedit('[data-live-edit-type=window]');
     }
 
 
-    function initMouseEventListeners()
-    {
-        var highlighter = AdminLiveEdit.Highlighter;
+    function appendEmptyWindowPlaceholder(window) {
+        var marker = $liveedit('<div/>', {
+            'class': 'live-edit-empty-window-placeholder',
+            'html': 'Empty Window'
+        });
+        window.append(marker);
+    }
 
-        $liveedit('body').on('hover','[data-live-edit-type=window]',  function(event) {
+
+    function renderPlaceholdersForEmptyWindows() {
+        getAll().each(function (index) {
+            var window = $liveedit(this);
+            var windowIsEmpty = util.isElementEmpty(window);
+            if (windowIsEmpty) {
+                appendEmptyWindowPlaceholder(window);
+            }
+        });
+    }
+
+
+    function initMouseHoverEventListeners() {
+        var highlighter = AdminLiveEdit.Highlighter;
+        $liveedit('body').on('hover', '[data-live-edit-type=window]', function (event) {
             var window = $liveedit(this);
             if (AdminLiveEdit.DragDrop.isDragging() || AdminLiveEdit.ElementSelector.getSelected()) {
                 return false;
             }
-            if ( event.type === 'mouseenter' ) {
+            if (event.type === 'mouseenter') {
                 highlighter.highlightWindow(window);
             } else {
                 highlighter.hide();
@@ -54,21 +42,31 @@ AdminLiveEdit.Windows = function()
         });
     }
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // Public
 
+    function init() {
+        renderPlaceholdersForEmptyWindows();
+
+        // Hover events are not necessary for touch.
+        if (!AdminLiveEdit.Util.supportsTouch()) {
+            initMouseHoverEventListeners();
+        }
+    }
+
+
+    // *****************************************************************************************************************
+    // Public
     return {
-        init: function() {
+        init: function () {
             init();
         },
 
-        getAll: function() {
+        getAll: function () {
             return getAll();
         },
 
-        renderPlaceholders: function() {
-            renderPlaceholders();
+        renderPlaceholdersForEmptyWindows: function () {
+            renderPlaceholdersForEmptyWindows();
         }
     };
 
-}();
+}());

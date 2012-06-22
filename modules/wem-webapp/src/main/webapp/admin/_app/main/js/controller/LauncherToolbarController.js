@@ -81,7 +81,7 @@ Ext.define( 'App.controller.LauncherToolbarController', {
 
     setDocumentTitle: function( title )
     {
-        window.document.title = 'Enonic CMS Admin - ' + title;
+        window.document.title = 'Enonic WEM Admin - ' + title;
     },
 
     showLoadMask: function()
