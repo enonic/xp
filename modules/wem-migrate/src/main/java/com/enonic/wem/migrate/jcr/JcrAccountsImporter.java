@@ -177,6 +177,9 @@ public class JcrAccountsImporter
                 memberReferenceNode.setPropertyReference( "ref", memberNode );
                 memberReferenceNode.setPropertyString( "path", memberNode.getPath() );
                 memberReferenceNode.setPropertyString( "id", memberNode.getIdentifier() );
+
+                session.save();
+
                 return null;
             }
         } );
@@ -226,7 +229,7 @@ public class JcrAccountsImporter
         } );
 
         final String userId = userNode.getIdentifier();
-        final String userKey = (String) userFields.get( "USR_HKEY" );
+        final String userKey = (String) userFields.get( "USR_GRP_HKEY" );
         accountKeyToJcrUIDMapping.put( userKey, userId );
         final String userName = (String) userFields.get( "USR_SUID" );
         LOG.info( "User '" + userName + "' imported with id " + userId );
@@ -388,8 +391,8 @@ public class JcrAccountsImporter
         }
 
         String userParentNodePath = USERSTORES_PATH + userstoreNodeName + "/" + GROUPS_NODE;
-        JcrNode userNode = session.getRootNode().getNode( userParentNodePath ).addNode( groupName, GROUP_NODE_TYPE );
-        userNode.addNode( MEMBERS_NODE );
+        JcrNode groupNode = session.getRootNode().getNode( userParentNodePath ).addNode( groupName, GROUP_NODE_TYPE );
+        groupNode.addNode( MEMBERS_NODE );
 
         // common user properties
         String description = (String) groupFields.get( "GRP_SDESCRIPTION" );
@@ -397,15 +400,15 @@ public class JcrAccountsImporter
         Date lastModified = new Date();
         String syncValue = (String) groupFields.get( "GRP_SSYNCVALUE" );
 
-        userNode.setPropertyString( "qualifiedName", groupName );
-        userNode.setPropertyString( "displayname", groupName );
-        userNode.setPropertyString( "description", description );
-        userNode.setPropertyString( "key", key );
-        userNode.setPropertyDate( "lastModified", lastModified );
-        userNode.setPropertyString( "syncValue", syncValue );
-        userNode.setPropertyLong( "groupType", groupType.toInteger() );
+        groupNode.setPropertyString( "qualifiedName", groupName );
+        groupNode.setPropertyString( "displayname", groupName );
+        groupNode.setPropertyString( "description", description );
+        groupNode.setPropertyString( "key", key );
+        groupNode.setPropertyDate( "lastModified", lastModified );
+        groupNode.setPropertyString( "syncValue", syncValue );
+        groupNode.setPropertyLong( "groupType", groupType.toInteger() );
 
-        return userNode;
+        return groupNode;
     }
 
     private void addUserstore( JcrSession session, Map<String, Object> userstoreFields )

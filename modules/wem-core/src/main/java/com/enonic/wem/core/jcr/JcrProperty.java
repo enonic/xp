@@ -29,4 +29,6 @@ public interface JcrProperty
     public boolean getBoolean();
 
     public JcrNode getNode();
+
+    public JcrNode getParent();
 }

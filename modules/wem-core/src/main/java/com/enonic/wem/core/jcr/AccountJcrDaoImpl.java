@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TimeZone;
 
 import javax.jcr.Binary;
@@ -167,7 +168,8 @@ public class AccountJcrDaoImpl
         Column[] columns = null;
         Constraint constrUserstoresDescendant = factory.descendantNode( "userNodes", USERSTORES_ABSOLUTE_PATH );
 
-        Constraint constrUserKey = factory.comparison( factory.propertyValue( "userNodes", "key" ), JCR_OPERATOR_EQUAL_TO,
+        Constraint constrUserKey = factory.comparison( factory.propertyValue( "userNodes", "key" ),
+                                                       JCR_OPERATOR_EQUAL_TO,
                                                        factory.literal( vf.createValue( key.toString() ) ) );
 
         Constraint constraint = factory.and( constrUserstoresDescendant, constrUserKey );
@@ -195,13 +197,26 @@ public class AccountJcrDaoImpl
     }
 
     private void setUserMemberships( JcrSession session, JcrNode userNode, UserEntity user )
+            throws RepositoryException, IOException
     {
+        final Set<GroupEntity> memberships = user.getAllMemberships();
         final JcrPropertyIterator refIterator = userNode.getReferences();
         while ( refIterator.hasNext() )
         {
             final JcrProperty property = refIterator.next();
-            final JcrNode memberOwnerNode = property.getNode();
-            LOG.info( memberOwnerNode.getPath() );
+            final JcrNode memberOwnerNode = property.getParent();
+            final JcrNode groupNode = memberOwnerNode.getParent().getParent();
+
+            final GroupKey groupKey = new GroupKey( groupNode.getPropertyString( "key" ) );
+            final GroupEntity group = this.queryGroupByKey( session, groupKey );
+            if ( group != null )
+            {
+                memberships.add( group );
+            }
+            else
+            {
+                LOG.warn( "Could not find group with key '" + groupKey.toString() + "'" );
+            }
         }
     }
 
@@ -306,6 +321,10 @@ public class AccountJcrDaoImpl
         userInfo.setAddresses( addresses );
         final UserFields userFields = UserInfoHelper.toUserFields( userInfo );
         user.setUserFields( userFields );
+
+        final GroupEntity userGroup=new GroupEntity();
+        userGroup.setType( GroupType.USER );
+        user.setUserGroup( userGroup );
     }
 
     private Address[] nodePropertiesToAddresses( JcrNode userNode )

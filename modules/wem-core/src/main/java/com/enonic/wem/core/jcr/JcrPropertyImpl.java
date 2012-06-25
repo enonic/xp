@@ -183,4 +183,17 @@ class JcrPropertyImpl
             throw new RepositoryRuntimeException( e );
         }
     }
+
+    @Override
+    public JcrNode getParent()
+    {
+        try
+        {
+            return new JcrNodeImpl( property.getParent() );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
 }
