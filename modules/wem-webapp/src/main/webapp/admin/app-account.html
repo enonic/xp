@@ -15,24 +15,24 @@
 
     <!-- Third party plugins -->
     <script type="text/javascript" src="resources/lib/plupload/js/plupload.full.js"></script>
-    <script type="text/javascript" src="resources/lib/jit/jit-yc.js"></script>
+    <script type="text/javascript" src="resources/lib/jit/jit.js"></script>
 
     <script type="text/javascript">
-        Ext.Loader.setConfig( {
-            enabled: true,
-            paths: {
-                'Common': 'common/js',
-                'Main': 'app/main/js',
-                'Admin': 'resources/app'
+        Ext.Loader.setConfig({
+            enabled:true,
+            paths:{
+                'Common':'common/js',
+                'Main':'app/main/js',
+                'Admin':'resources/app'
             },
-            disableCaching: false
-        } );
+            disableCaching:false
+        });
 
-        Ext.application( {
-            name: 'App',
-            appFolder: 'app/account/js',
+        Ext.application({
+            name:'App',
+            appFolder:'app/account/js',
 
-            controllers: [
+            controllers:[
                 'Admin.controller.account.Controller',
                 'Admin.controller.account.GridPanelController',
                 'Admin.controller.account.BrowseToolbarController',
@@ -46,46 +46,45 @@
                 'Admin.controller.NotifyUserController'
             ],
 
-            requires: [
+            requires:[
                 'Admin.view.TabPanel'
             ],
 
-            launch: function()
-            {
-                Ext.create( 'Ext.container.Viewport', {
-                    layout: 'fit',
-                    cls: 'admin-viewport',
-                    padding: 5,
+            launch:function () {
+                Ext.create('Ext.container.Viewport', {
+                    layout:'fit',
+                    cls:'admin-viewport',
+                    padding:5,
 
-                    items: [
+                    items:[
                         {
-                            xtype: 'cmsTabPanel',
-                            items: [
+                            xtype:'cmsTabPanel',
+                            items:[
                                 {
-                                    id: 'tab-browse',
-                                    title: 'Browse',
-                                    closable: false,
-                                    xtype: 'panel',
-                                    layout: 'border',
-                                    items: [
+                                    id:'tab-browse',
+                                    title:'Browse',
+                                    closable:false,
+                                    xtype:'panel',
+                                    layout:'border',
+                                    items:[
                                         {
-                                            region: 'west',
-                                            xtype: 'accountFilter',
-                                            width: 200
+                                            region:'west',
+                                            xtype:'accountFilter',
+                                            width:200
                                         },
                                         {
-                                            region: 'center',
-                                            xtype: 'accountShow'
+                                            region:'center',
+                                            xtype:'accountShow'
                                         }
                                     ]
                                 }
                             ]
                         }
                     ]
-                } );
+                });
             }
 
-        } );
+        });
 
     </script>
 
