@@ -1,12 +1,12 @@
 Ext.define('Admin.view.account.DetailPanel', {
-    extend: 'Ext.panel.Panel',
-    alias: 'widget.accountDetail',
-    split: true,
-    autoScroll: true,
-    layout: 'card',
-    collapsible: true,
+    extend:'Ext.panel.Panel',
+    alias:'widget.accountDetail',
+    split:true,
+    autoScroll:true,
+    layout:'card',
+    collapsible:true,
 
-    initComponent: function() {
+    initComponent:function () {
         var largeBoxesPanel = this.createLargeBoxSelection();
         var userPreviewPanel = this.createUserPreviewPanel();
         var groupPreviewPanel = this.createGroupPreviewPanel();
@@ -18,143 +18,130 @@ Ext.define('Admin.view.account.DetailPanel', {
         this.callParent(arguments);
     },
 
-    showAccountPreview: function( data )
-    {
-        if ( data ) {
+    showAccountPreview:function (data) {
+        if (data) {
             var activeTab;
             switch (data.type) {
                 case 'user':
-                    activeTab = this.down( 'userPreviewPanel' );
+                    activeTab = this.down('userPreviewPanel');
                     break;
                 case 'role':
                 case 'group':
-                    activeTab = this.down( 'groupPreviewPanel' );
+                    activeTab = this.down('groupPreviewPanel');
                     break;
             }
-            if ( activeTab ) {
-                this.getLayout().setActiveItem( activeTab );
-                activeTab.setData( data );
+            if (activeTab) {
+                activeTab.setData(data);
+                this.getLayout().setActiveItem(activeTab);
             }
         }
     },
 
 
-    showMultipleSelection: function(data, detailed){
+    showMultipleSelection:function (data, detailed) {
         var activeItem;
-        if (detailed)
-        {
+        if (detailed) {
             activeItem = this.down('#largeBoxPanel');
             this.getLayout().setActiveItem('largeBoxPanel');
         }
-        else
-        {
+        else {
             activeItem = this.down('#smallBoxPanel');
             this.getLayout().setActiveItem('smallBoxPanel');
         }
 
-        activeItem.update({users: data});
+        activeItem.update({users:data});
     },
 
-    showNoneSelection: function(data)
-    {
+    showNoneSelection:function (data) {
         var activeItem = this.down('#noneSelectedPanel');
         this.getLayout().setActiveItem('noneSelectedPanel');
         activeItem.update(data);
     },
 
-    createUserPreviewPanel: function()
-    {
+    createUserPreviewPanel:function () {
         return {
-            xtype: 'userPreviewPanel',
-            showToolbar: false
+            xtype:'userPreviewPanel',
+            showToolbar:false
         };
     },
 
-    createGroupPreviewPanel: function()
-    {
+    createGroupPreviewPanel:function () {
         return {
-            xtype: 'groupPreviewPanel',
-            showToolbar: false
+            xtype:'groupPreviewPanel',
+            showToolbar:false
         };
     },
 
-    createNoneSelection: function()
-    {
-        var tpl = new Ext.XTemplate( Templates.account.noUserSelected );
+    createNoneSelection:function () {
+        var tpl = new Ext.XTemplate(Templates.account.noUserSelected);
 
         var panel = {
-            xtype: 'panel',
-            itemId: 'noneSelectedPanel',
-            styleHtmlContent: true,
-            padding : 10,
-            border: 0,
-            tpl: tpl
+            xtype:'panel',
+            itemId:'noneSelectedPanel',
+            styleHtmlContent:true,
+            padding:10,
+            border:0,
+            tpl:tpl
         };
 
         return panel;
     },
 
-    createLargeBoxSelection: function()
-    {
-        var tpl = Ext.Template( Templates.account.selectedUserLarge );
+    createLargeBoxSelection:function () {
+        var tpl = Ext.Template(Templates.account.selectedUserLarge);
 
         var panel = {
-            xtype: 'panel',
-            itemId: 'largeBoxPanel',
-            styleHtmlContent: true,
-            autoScroll: true,
-            listeners: {
-                click: {
-                    element: 'body',
-                    fn: this.deselectItem,
-                    scope: this
+            xtype:'panel',
+            itemId:'largeBoxPanel',
+            styleHtmlContent:true,
+            autoScroll:true,
+            listeners:{
+                click:{
+                    element:'body',
+                    fn:this.deselectItem,
+                    scope:this
                 }
             },
-            padding: 10,
-            border: 0,
-            tpl: tpl
+            padding:10,
+            border:0,
+            tpl:tpl
         };
 
         return panel;
     },
 
-    createSmallBoxSelection: function()
-    {
-        var tpl = Ext.Template( Templates.account.selectedUserSmall );
+    createSmallBoxSelection:function () {
+        var tpl = Ext.Template(Templates.account.selectedUserSmall);
 
         var panel = {
-            xtype: 'panel',
-            itemId: 'smallBoxPanel',
-            styleHtmlContent: true,
-            listeners: {
-                click: {
-                    element: 'body',
-                    fn: this.deselectItem,
-                    scope: this
+            xtype:'panel',
+            itemId:'smallBoxPanel',
+            styleHtmlContent:true,
+            listeners:{
+                click:{
+                    element:'body',
+                    fn:this.deselectItem,
+                    scope:this
                 }
             },
-            autoScroll: true,
-            padding: 10,
-            border: 0,
-            tpl: tpl
+            autoScroll:true,
+            padding:10,
+            border:0,
+            tpl:tpl
         };
 
         return panel;
     },
 
-    deselectItem: function(event, target)
-    {
+    deselectItem:function (event, target) {
         var className = target.className;
-        if (className && className === 'remove-selection')
-        {
+        if (className && className === 'remove-selection') {
             var key = target.attributes.getNamedItem('id').nodeValue.split('remove-from-selection-button-')[1];
             var userGridSelModel = this.up('cmsTabPanel').down('accountGrid').getSelectionModel();
             var persistentGridSelection = this.persistentGridSelection;
             var selection = persistentGridSelection.getSelection();
-            Ext.each(selection, function(item)
-            {
-                if (item.get('key') == key)
-                {
+            Ext.each(selection, function (item) {
+                if (item.get('key') == key) {
                     Ext.get('selected-item-box-' + key).remove();
                     persistentGridSelection.deselect(item);
                 }
@@ -162,33 +149,28 @@ Ext.define('Admin.view.account.DetailPanel', {
         }
     },
 
-    setCurrentAccount: function(user)
-    {
+    setCurrentAccount:function (user) {
         this.currentAccount = user;
     },
 
-    getCurrentAccount: function()
-    {
+    getCurrentAccount:function () {
         return this.currentAccount;
     },
 
-    updateTitle: function( persistentGridSelection )
-    {
+    updateTitle:function (persistentGridSelection) {
         this.persistentGridSelection = persistentGridSelection;
         var count = persistentGridSelection.getSelectionCount();
         var header = count + " Account(s) selected";
-        if ( count > 0 )
-        {
+        if (count > 0) {
             header += " (<a href='javascript:;' class='clearSelection'>Clear selection</a>)";
         }
-        this.setTitle( header );
+        this.setTitle(header);
 
-        var clearSel = this.header.el.down( 'a.clearSelection' );
-        if ( clearSel )
-        {
-            clearSel.on( "click", function() {
+        var clearSel = this.header.el.down('a.clearSelection');
+        if (clearSel) {
+            clearSel.on("click", function () {
                 persistentGridSelection.clearSelection();
-            }, this );
+            }, this);
         }
 
     }
