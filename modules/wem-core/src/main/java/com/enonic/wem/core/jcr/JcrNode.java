@@ -17,7 +17,7 @@ public interface JcrNode
 
     boolean hasProperty( String relPath );
 
-    Property getProperty( String relPath );
+    JcrProperty getProperty( String relPath );
 
     String getPropertyString( String relPath );
 

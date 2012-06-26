@@ -36,6 +36,7 @@ import com.enonic.cms.core.user.field.UserInfoTransformer;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.GROUPS_NODE;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.GROUP_NODE_TYPE;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.MEMBERS_NODE;
+import static com.enonic.wem.core.jcr.JcrCmsConstants.MEMBER_NODE;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.USERSTORES_PATH;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.USERS_NODE;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.USER_NODE_TYPE;
@@ -71,13 +72,10 @@ public class JcrAccountsImporter
 
     private final Map<String, String> accountKeyToJcrUIDMapping;
 
-    private final Map<String, String> userGroupKeyToJcrUIDMapping;
-
     public JcrAccountsImporter()
     {
         userStoreKeyName = new HashMap<Integer, String>();
         accountKeyToJcrUIDMapping = new HashMap<String, String>();
-        userGroupKeyToJcrUIDMapping = new HashMap<String, String>();
     }
 
     public void importAccounts()
@@ -173,7 +171,7 @@ public class JcrAccountsImporter
                 LOG.info( "Added account " + memberNode.getName() + " as member of " + groupNode.getName() );
 
                 final JcrNode membersNode = groupNode.getNode( MEMBERS_NODE );
-                final JcrNode memberReferenceNode = membersNode.addNode( "member");
+                final JcrNode memberReferenceNode = membersNode.addNode( MEMBER_NODE );
                 memberReferenceNode.setPropertyReference( "ref", memberNode );
                 memberReferenceNode.setPropertyString( "path", memberNode.getPath() );
                 memberReferenceNode.setPropertyString( "id", memberNode.getIdentifier() );
@@ -285,6 +283,7 @@ public class JcrAccountsImporter
         {
             userNode.setPropertyBinary( "photo", photo );
         }
+        userNode.setPropertyString( "type", "user" );
 
         // user info fields
         final Map<String, Object> userInfoFields =
@@ -407,6 +406,7 @@ public class JcrAccountsImporter
         groupNode.setPropertyDate( "lastModified", lastModified );
         groupNode.setPropertyString( "syncValue", syncValue );
         groupNode.setPropertyLong( "groupType", groupType.toInteger() );
+        groupNode.setPropertyString( "type", "group" );
 
         return groupNode;
     }
