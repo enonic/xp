@@ -54,8 +54,7 @@ class JcrNodeImpl
         }
     }
 
-    @Override
-    public Property getProperty( String relPath )
+    private Property getInternalProperty( String relPath )
     {
         try
         {
@@ -72,9 +71,26 @@ class JcrNodeImpl
     }
 
     @Override
+    public JcrProperty getProperty( String relPath )
+    {
+        try
+        {
+            return new JcrPropertyImpl( node.getProperty( relPath ) );
+        }
+        catch ( PathNotFoundException e )
+        {
+            return null;
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
+
+    @Override
     public String getPropertyString( String relPath )
     {
-        Property property = getProperty( relPath );
+        Property property = getInternalProperty( relPath );
         try
         {
             return property == null ? null : property.getString();
@@ -88,7 +104,7 @@ class JcrNodeImpl
     @Override
     public Boolean getPropertyBoolean( String relPath )
     {
-        Property property = getProperty( relPath );
+        Property property = getInternalProperty( relPath );
         try
         {
             return property == null ? null : property.getBoolean();
@@ -102,7 +118,7 @@ class JcrNodeImpl
     @Override
     public long getPropertyLong( String relPath )
     {
-        Property property = getProperty( relPath );
+        Property property = getInternalProperty( relPath );
         try
         {
             return property == null ? null : property.getLong();
@@ -116,7 +132,7 @@ class JcrNodeImpl
     @Override
     public double getPropertyDouble( String relPath )
     {
-        Property property = getProperty( relPath );
+        Property property = getInternalProperty( relPath );
         try
         {
             return property == null ? null : property.getDouble();
@@ -130,7 +146,7 @@ class JcrNodeImpl
     @Override
     public Date getPropertyDate( String relPath )
     {
-        Property property = getProperty( relPath );
+        Property property = getInternalProperty( relPath );
         try
         {
             return property == null ? null : calendarToDate( property.getDate() );
@@ -144,7 +160,7 @@ class JcrNodeImpl
     @Override
     public Calendar getPropertyCalendar( String relPath )
     {
-        Property property = getProperty( relPath );
+        Property property = getInternalProperty( relPath );
         try
         {
             return property == null ? null : property.getDate();

@@ -45,6 +45,8 @@ import com.enonic.cms.core.user.field.UserFields;
 import com.enonic.cms.store.support.EntityPageList;
 
 import static com.enonic.wem.core.jcr.JcrCmsConstants.GROUP_NODE_TYPE;
+import static com.enonic.wem.core.jcr.JcrCmsConstants.MEMBERS_NODE;
+import static com.enonic.wem.core.jcr.JcrCmsConstants.MEMBER_NODE;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.USERSTORES_ABSOLUTE_PATH;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.USER_NODE_TYPE;
 import static javax.jcr.query.qom.QueryObjectModelConstants.JCR_OPERATOR_EQUAL_TO;
@@ -64,7 +66,7 @@ public class AccountJcrDaoImpl
             public Object doInJcr( JcrSession session )
                 throws IOException, RepositoryException
             {
-                return queryUserByKey( session, key );
+                return queryUserByKey( session, key, true );
             }
         } );
         return user;
@@ -78,7 +80,7 @@ public class AccountJcrDaoImpl
             public Object doInJcr( JcrSession session )
                     throws IOException, RepositoryException
             {
-                return queryGroupByKey( session, key );
+                return queryGroupByKey( session, key, true );
             }
         } );
         return group;
@@ -157,7 +159,7 @@ public class AccountJcrDaoImpl
         return new EntityPageList<UserEntity>( index, (int) nodeIterator.getSize(), userList );
     }
 
-    private UserEntity queryUserByKey( JcrSession session, UserKey key )
+    private UserEntity queryUserByKey( JcrSession session, UserKey key, boolean includeMemberships )
             throws RepositoryException, IOException
     {
         QueryManager queryManager = session.getRealSession().getWorkspace().getQueryManager();
@@ -187,7 +189,10 @@ public class AccountJcrDaoImpl
             final JcrNode userNode = session.getNode( nodeIterator.nextNode() );
             nodePropertiesToUserFields( userNode, user );
             setUserPhoto( session, key, user );
-            setUserMemberships( session, userNode, user );
+            if ( includeMemberships )
+            {
+                setUserMemberships( session, userNode, user );
+            }
         }
         else
         {
@@ -208,7 +213,7 @@ public class AccountJcrDaoImpl
             final JcrNode groupNode = memberOwnerNode.getParent().getParent();
 
             final GroupKey groupKey = new GroupKey( groupNode.getPropertyString( "key" ) );
-            final GroupEntity group = this.queryGroupByKey( session, groupKey );
+            final GroupEntity group = this.queryGroupByKey( session, groupKey, false );
             if ( group != null )
             {
                 memberships.add( group );
@@ -220,7 +225,7 @@ public class AccountJcrDaoImpl
         }
     }
 
-    private GroupEntity queryGroupByKey( JcrSession session, GroupKey key )
+    private GroupEntity queryGroupByKey( JcrSession session, GroupKey key, boolean includeMembers )
             throws RepositoryException, IOException
     {
         QueryManager queryManager = session.getRealSession().getWorkspace().getQueryManager();
@@ -249,11 +254,39 @@ public class AccountJcrDaoImpl
         if ( nodeIterator.hasNext() )
         {
             group = new GroupEntity();
+            group.setDeleted( false );
             final JcrNode groupNode = session.getNode( nodeIterator.nextNode() );
             nodePropertiesToGroupFields( groupNode, group );
+            if ( includeMembers )
+            {
+                setGroupMembers( session, groupNode, group );
+            }
         }
 
         return group;
+    }
+
+    private void setGroupMembers( JcrSession session, JcrNode groupNode, GroupEntity group )
+            throws RepositoryException, IOException
+    {
+        final JcrNodeIterator memberIterator = groupNode.getNode( MEMBERS_NODE ).getNodes( MEMBER_NODE );
+        while ( memberIterator.hasNext() )
+        {
+            final JcrNode memberRef = memberIterator.next();
+            final JcrNode groupMember = memberRef.getProperty( "ref" ).getNode();
+
+            final GroupKey groupKey = new GroupKey( groupMember.getPropertyString( "key" ) );
+            final GroupEntity memberGroup = this.queryGroupByKey( session, groupKey, false );
+            if ( memberGroup != null )
+            {
+                memberGroup.addMembership( group );
+            }
+            else
+            {
+                LOG.warn( "Could not find group with key '" + groupKey.toString() + "'" );
+            }
+        }
+
     }
 
     private byte[] queryUserPhotoByKey( JcrSession session, UserKey key )
