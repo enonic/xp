@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.userstore.UserstoreForm', {
+Ext.define('Admin.view.userstore.UserstoreForm', {
     extend: 'Ext.form.Panel',
     alias: 'widget.userstoreForm',
 
@@ -9,122 +9,122 @@ Ext.define( 'Admin.view.userstore.UserstoreForm', {
     border: false,
 
     items: [
-            {
+        {
 
-                xtype: 'panel',
-                cls: 'admin-userstore-info',
-                styleHtmlContent: true,
-                itemId: 'headerPanel',
-                tpl: new Ext.XTemplate( Templates.userstore.editFormHeader ),
-                border: false,
-                bodyPadding: '0 0 10 0',
-                height: 90,
-                bbar: [
-                    {
-                        text: 'Save',
-                        iconCls: 'icon-save',
-                        action: 'saveUserstore'
-                    },
-                    {
-                        text: 'Cancel',
-                        iconCls: 'icon-cancel',
-                        action: 'cancelUserstore'
-                    },
-                        '->',
-                    {
-                        text: 'Delete',
-                        iconCls: 'icon-delete',
-                        action: 'deleteUserstore'
-                    }
-                ]
-            },
-            {
-                xtype: 'fieldset',
-                title: 'Userstore',
-                layout: 'anchor',
-                margins: '10 0 0',
-                defaults: {
-                    anchor: '100%',
-                    enableKeyEvents: true
+            xtype: 'panel',
+            cls: 'admin-userstore-info',
+            styleHtmlContent: true,
+            itemId: 'headerPanel',
+            tpl: new Ext.XTemplate(Templates.userstore.editFormHeader),
+            border: false,
+            bodyPadding: '0 0 10 0',
+            height: 90,
+            bbar: [
+                {
+                    text: 'Save',
+                    iconCls: 'icon-save',
+                    action: 'saveUserstore'
                 },
-                items: [
-                    {
-                        xtype: 'hiddenfield',
-                        name: 'key'
-                    },
-                    {
-                        xtype: 'textfield',
-                        fieldLabel: 'Name',
-                        name: 'name',
-                        vtype: 'alphanum',
-                        allowBlank: false
-                    },
-                    {
-                        xtype: 'combo',
-                        fieldLabel: 'Connector',
-                        name: 'connectorName',
-                        triggerAction: 'all',
-                        queryMode: 'local',
-                        typeAhead: true,
-                        valueField: 'name',
-                        displayField: 'name',
-                        store : 'UserstoreConnectorStore',
-                        allowBlank: false,
-                        forceSelection: true
-                    }
-                    ,{
-                        xtype: 'checkbox',
-                        itemId: 'defaultCheckbox',
-                        fieldLabel: 'Set as default',
-                        name: 'defaultStore'
-                    }
-                ]
+                {
+                    text: 'Cancel',
+                    iconCls: 'icon-cancel',
+                    action: 'cancelUserstore'
+                },
+                '->',
+                {
+                    text: 'Delete',
+                    iconCls: 'icon-delete',
+                    action: 'deleteUserstore'
+                }
+            ]
+        },
+        {
+            xtype: 'fieldset',
+            title: 'Userstore',
+            layout: 'anchor',
+            margins: '10 0 0',
+            defaults: {
+                anchor: '100%',
+                enableKeyEvents: true
             },
-            {
-                xtype: 'fieldset',
-                title: 'Form configuration',
-                layout: 'fit',
-                flex: 1,
-                style: 'padding-bottom: 30',
-                items: [
-                    {
-                        xtype: 'textarea',
-                        fieldLabel: 'XML',
-                        name: 'configXML'
-                    }
-                ]
-            }
-        ],
+            items: [
+                {
+                    xtype: 'hiddenfield',
+                    name: 'key'
+                },
+                {
+                    xtype: 'textfield',
+                    fieldLabel: 'Name',
+                    name: 'name',
+                    vtype: 'alphanum',
+                    allowBlank: false
+                },
+                {
+                    xtype: 'combo',
+                    fieldLabel: 'Connector',
+                    name: 'connectorName',
+                    triggerAction: 'all',
+                    queryMode: 'local',
+                    typeAhead: true,
+                    valueField: 'name',
+                    displayField: 'name',
+                    store: 'UserstoreConnectorStore',
+                    allowBlank: false,
+                    forceSelection: true
+                },
+                {
+                    xtype: 'checkbox',
+                    itemId: 'defaultCheckbox',
+                    fieldLabel: 'Set as default',
+                    name: 'defaultStore'
+                }
+            ]
+        },
+        {
+            xtype: 'fieldset',
+            title: 'Form configuration',
+            layout: 'fit',
+            flex: 1,
+            style: 'padding-bottom: 30',
+            items: [
+                {
+                    xtype: 'textarea',
+                    fieldLabel: 'XML',
+                    name: 'configXML'
+                }
+            ]
+        }
+    ],
 
 
-    initComponent: function() {
+    initComponent: function () {
 
         Ext.apply(this.initialConfig, {
             method: "POST",
             url: '/admin/data/userstore/config'
         });
 
-        if ( !this.userstore ) {
+        if (!this.userstore) {
             this.userstore = { data: {
                 name: 'Userstore',
                 connectorName: "local"
             } };
         }
 
-        this.callParent( arguments );
+        this.callParent(arguments);
 
-        this.setUserstore( this.userstore );
-        this.updateUserstoreHeader( this.userstore );
+        this.setUserstore(this.userstore);
+        this.updateUserstoreHeader(this.userstore);
     },
 
-    setUserstore: function ( u ) {
+    setUserstore: function (u) {
         this.userstore = u;
-        this.getForm().setValues( u.data );
-        this.getForm().findField('defaultStore').setReadOnly( u.data.defaultStore );
+        this.getForm().setValues(u.data);
+        this.getForm().findField('defaultStore').setReadOnly(u.data.defaultStore);
     },
 
-    updateUserstoreHeader: function ( u ) {
-        this.child('#headerPanel').update( u.data );
+    updateUserstoreHeader: function (u) {
+        this.child('#headerPanel').update(u.data);
     }
 
 });

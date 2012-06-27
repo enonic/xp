@@ -1,4 +1,4 @@
-Ext.define( 'Lib.plugin.fileupload.PhotoUploadWindow', {
+Ext.define('Lib.plugin.fileupload.PhotoUploadWindow', {
     extend: 'Ext.window.Window',
     alias: 'widget.photoUploadWindow',
     modal: true,
@@ -12,7 +12,7 @@ Ext.define( 'Lib.plugin.fileupload.PhotoUploadWindow', {
     },
 
     listeners: {
-        resize: function() {
+        resize: function () {
             var slider = this.down('slider');
             var frameWidth = this.getFrame().getWidth();
             slider.setWidth(frameWidth);
@@ -22,7 +22,7 @@ Ext.define( 'Lib.plugin.fileupload.PhotoUploadWindow', {
     imageInitialWidth: null,
     imageInitialHeight: null,
 
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
 
         var uploadButton = {
@@ -34,7 +34,7 @@ Ext.define( 'Lib.plugin.fileupload.PhotoUploadWindow', {
             anchor: '100%',
             buttonText: 'Choose',
             listeners: {
-                change: function() {
+                change: function () {
                     me.onChangePhoto();
                 }
             }
@@ -43,13 +43,17 @@ Ext.define( 'Lib.plugin.fileupload.PhotoUploadWindow', {
         var cancelButton = {
             xtype: 'button',
             text: 'Cancel',
-            handler: function() { me.close() }
+            handler: function () {
+                me.close();
+            }
         };
 
         var setButton = {
             xtype: 'button',
             text: 'Set',
-            handler: function() { me.set() }
+            handler: function () {
+                me.set();
+            }
         };
 
         var previewContainer = {
@@ -84,7 +88,7 @@ Ext.define( 'Lib.plugin.fileupload.PhotoUploadWindow', {
             maxValue: 100,
             useTips: false,
             listeners: {
-                change: function(slider, newValue) {
+                change: function (slider, newValue) {
                     var image = me.getImage();
 
                     var newWidth = me.imageInitialWidth * newValue / 100;
@@ -105,15 +109,15 @@ Ext.define( 'Lib.plugin.fileupload.PhotoUploadWindow', {
             slider
         ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
     },
 
-    onChangePhoto: function() {
+    onChangePhoto: function () {
         // TODO: Break up
         var me = this;
         var file = me.getSelectedFiles()[0];
         var previewImage = me.getImage();
-        previewImage.on('load', function() {
+        previewImage.on('load', function () {
             me.displayImage(true);
             me.setInitialPhotoSize();
             me.centerImage();
@@ -125,19 +129,19 @@ Ext.define( 'Lib.plugin.fileupload.PhotoUploadWindow', {
 
             // TODO: Instantiate only once
             var dd = new Ext.dd.DD(previewImage.dom.id, 'carsDDGroup', {
-                isTarget  : false,
+                isTarget: false,
                 moveOnly: true,
                 maintainOffset: false,
                 scroll: false
             });
-            dd.onDrag = function(){
+            dd.onDrag = function () {
                 dd.resetConstraints();
             };
         });
         previewImage.set({src: window.URL.createObjectURL(file)});
     },
 
-    setInitialPhotoSize: function() {
+    setInitialPhotoSize: function () {
         var frame = this.getFrame();
         var image = this.getImage();
 
@@ -149,19 +153,15 @@ Ext.define( 'Lib.plugin.fileupload.PhotoUploadWindow', {
         image.setWidth('');
         image.setHeight('');
 
-        if ( iw > fw && ih > fh )
-        {
-            if ( ih > iw )
+        if (iw > fw && ih > fh) {
+            if (ih > iw) {
                 image.setWidth(frame.getWidth() + 20);
-            else
+            } else {
                 image.setHeight(frame.getHeight() + 20);
-        }
-        else  if ( ih > fh )
-        {
+            }
+        } else if (ih > fh) {
             image.setHeight(frame.getHeight());
-        }
-        else
-        {
+        } else {
             image.setWidth(frame.getWidth());
         }
 
@@ -169,7 +169,7 @@ Ext.define( 'Lib.plugin.fileupload.PhotoUploadWindow', {
         this.imageInitialHeight = image.getHeight();
     },
 
-    centerImage: function() {
+    centerImage: function () {
         var frame = this.getFrame();
         var image = this.getImage();
 
@@ -182,8 +182,8 @@ Ext.define( 'Lib.plugin.fileupload.PhotoUploadWindow', {
         var imageCenterX = (frameWidth - imageWidth) / 2 - 2; // -2 for frame border left/right
         var imageCenterY = (frameHeight - imageHeight) / 2 - 2; // -2 for frame border left/right
 
-        image.setLeft( imageCenterX + 'px' );
-        image.setTop( imageCenterY + 'px' );
+        image.setLeft(imageCenterX + 'px');
+        image.setTop(imageCenterY + 'px');
     },
 
     getFrame: function () {
@@ -195,25 +195,26 @@ Ext.define( 'Lib.plugin.fileupload.PhotoUploadWindow', {
     },
 
     getSelectedFiles: function () {
-        return this.getEl().down('input[type=file]' ).dom.files;
+        return this.getEl().down('input[type=file]').dom.files;
     },
 
     getSlider: function () {
         return this.down('slider');
     },
 
-    displayImage: function(show) {
-        if ( show )
+    displayImage: function (show) {
+        if (show) {
             this.getImage().show();
-        else
+        } else {
             this.getImage().hide();
+        }
     },
 
-    set: function() {
+    set: function () {
         this.close();
     },
 
-    open: function() {
+    open: function () {
         this.show();
     }
 

@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.account.wizard.user.WizardStepLoginInfoPanel', {
+Ext.define('Admin.view.account.wizard.user.WizardStepLoginInfoPanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.wizardStepLoginInfoPanel',
 
@@ -59,7 +59,7 @@ Ext.define( 'Admin.view.account.wizard.user.WizardStepLoginInfoPanel', {
                     queryMode: 'local',
                     minChars: 1,
                     emptyText: 'Please select',
-                    fieldStore: Ext.data.StoreManager.lookup( 'Admin.store.account.CountryStore' ),
+                    fieldStore: Ext.data.StoreManager.lookup('Admin.store.account.CountryStore'),
                     valueField: 'code',
                     displayField: 'englishName'
                 }
@@ -67,9 +67,8 @@ Ext.define( 'Admin.view.account.wizard.user.WizardStepLoginInfoPanel', {
         }
     ],
 
-    initComponent: function()
-    {
-        this.callParent( arguments );
+    initComponent: function () {
+        this.callParent(arguments);
     }
 
-} );
+});

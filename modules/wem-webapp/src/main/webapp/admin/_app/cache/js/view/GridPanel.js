@@ -1,6 +1,6 @@
-Ext.define( 'App.view.GridPanel', {
+Ext.define('App.view.GridPanel', {
     extend: 'Ext.grid.Panel',
-    alias : 'widget.systemCacheGrid',
+    alias: 'widget.systemCacheGrid',
 
     requires: [
         'Admin.plugin.PageSizePlugin'
@@ -11,29 +11,30 @@ Ext.define( 'App.view.GridPanel', {
     columnLines: true,
     frame: false,
     store: 'SystemCacheStore',
-    features: [{ftype:'grouping'}],
+    features: [
+        {ftype: 'grouping'}
+    ],
 
-    initComponent: function()
-    {
+    initComponent: function () {
         this.columns = [
             {
                 text: 'Name',
                 dataIndex: 'name',
                 sortable: true,
-                flex:1
+                flex: 1
             },
             {
                 text: 'Count',
                 dataIndex: 'objectCount',
                 xtype: 'numbercolumn',
-                format:'0,000',
+                format: '0,000',
                 sortable: true
             },
             {
                 text: 'Size',
                 dataIndex: 'memoryCapacity',
                 xtype: 'numbercolumn',
-                format:'0,000',
+                format: '0,000',
                 sortable: true
             },
             {
@@ -57,10 +58,10 @@ Ext.define( 'App.view.GridPanel', {
         ];
 
         this.viewConfig = {
-            trackOver : true,
+            trackOver: true,
             stripeRows: true
         };
 
-        this.callParent( arguments );
+        this.callParent(arguments);
     }
 });

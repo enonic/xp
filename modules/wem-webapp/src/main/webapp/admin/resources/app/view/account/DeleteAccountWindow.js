@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.account.DeleteAccountWindow', {
+Ext.define('Admin.view.account.DeleteAccountWindow', {
     extend: 'Admin.view.BaseDialogWindow',
     alias: 'widget.deleteAccountWindow',
 
@@ -24,21 +24,16 @@ Ext.define( 'Admin.view.account.DeleteAccountWindow', {
         }
     ],
 
-    initComponent: function()
-    {
-        this.callParent( arguments );
+    initComponent: function () {
+        this.callParent(arguments);
     },
 
-    doShow: function( selection )
-    {
-        if ( selection.length == 1 )
-        {
-            this.setDialogInfoTpl( Templates.common.userInfo );
-            this.callParent( [selection[0]] );
-        }
-        else
-        {
-            this.setDialogInfoTpl( Templates.account.deleteManyUsers );
+    doShow: function (selection) {
+        if (selection.length === 1) {
+            this.setDialogInfoTpl(Templates.common.userInfo);
+            this.callParent([selection[0]]);
+        } else {
+            this.setDialogInfoTpl(Templates.account.deleteManyUsers);
             this.callParent(
                 [
                     {
@@ -51,4 +46,4 @@ Ext.define( 'Admin.view.account.DeleteAccountWindow', {
             );
         }
     }
-} );
+});

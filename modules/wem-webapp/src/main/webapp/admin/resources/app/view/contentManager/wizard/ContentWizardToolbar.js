@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.contentManager.wizard.ContentWizardToolbar', {
+Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.contentWizardToolbar',
 
@@ -6,8 +6,7 @@ Ext.define( 'Admin.view.contentManager.wizard.ContentWizardToolbar', {
 
     isNewGroup: true,
 
-    initComponent: function()
-    {
+    initComponent: function () {
 
         var buttonDefaults = {
             scale: 'medium',
@@ -103,10 +102,11 @@ Ext.define( 'Admin.view.contentManager.wizard.ContentWizardToolbar', {
                         action: 'closeWizard',
                         iconCls: 'icon-cancel-24'
                     }
-                ]}
+                ]
+            }
 
         ];
-        this.callParent( arguments );
+        this.callParent(arguments);
     }
 
-} );
+});

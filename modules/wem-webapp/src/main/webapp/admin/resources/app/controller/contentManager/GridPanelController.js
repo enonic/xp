@@ -1,4 +1,4 @@
-Ext.define( 'Admin.controller.contentManager.GridPanelController', {
+Ext.define('Admin.controller.contentManager.GridPanelController', {
     extend: 'Admin.controller.contentManager.Controller',
 
     /*      Controller for handling Grid & its Context Menu UI events       */
@@ -16,70 +16,61 @@ Ext.define( 'Admin.controller.contentManager.GridPanelController', {
         'Admin.view.contentManager.ContextMenu'
     ],
 
-    init: function()
-    {
+    init: function () {
 
-        this.control( {
+        this.control({
             'contentGrid': {
                 selectionchange: this.updateSelection,
                 itemcontextmenu: this.popupMenu,
-                itemdblclick: function( grid, record, el, index, event, opts )
-                {
-                    this.viewContent( record );
+                itemdblclick: function (grid, record, el, index, event, opts) {
+                    this.viewContent(record);
                 }
             },
             'contentTree': {
                 selectionchange: this.updateSelection,
                 itemcontextmenu: this.popupMenu,
-                itemdblclick: function( tree, record, el, index, event, opts )
-                {
-                    this.viewContent( record );
+                itemdblclick: function (tree, record, el, index, event, opts) {
+                    this.viewContent(record);
                 }
             },
             'contentManagerContextMenu *[action=deleteContent]': {
-                click: function( el, e )
-                {
+                click: function (el, e) {
                     this.deleteContent();
                 }
             },
             'contentManagerContextMenu *[action=editContent]': {
-                click: function( el, e )
-                {
+                click: function (el, e) {
                     this.editContent();
                 }
             },
             'contentManagerContextMenu *[action=viewContent]': {
-                click: function( el, e )
-                {
+                click: function (el, e) {
                     this.viewContent();
                 }
             }
-        } );
+        });
     },
 
-    updateSelection: function()
-    {
+    updateSelection: function () {
         var detailPanel = this.getContentDetailPanel();
-        detailPanel.setData( this.getContentShowPanel().getSelection() );
+        detailPanel.setData(this.getContentShowPanel().getSelection());
     },
 
-    popupMenu: function( view, rec, node, index, e )
-    {
+    popupMenu: function (view, rec, node, index, e) {
         e.stopEvent();
-        this.getContentManagerContextMenu().showAt( e.getXY() );
+        this.getContentManagerContextMenu().showAt(e.getXY());
         return false;
     },
 
 
     /*      Getters     */
 
-    getContentManagerContextMenu: function()
-    {
-        var menu = Ext.ComponentQuery.query( 'contentManagerContextMenu' )[0];
-        if ( !menu ) {
-            menu = Ext.create( 'widget.contentManagerContextMenu' );
+    getContentManagerContextMenu: function () {
+        var menu = Ext.ComponentQuery.query('contentManagerContextMenu')[0];
+        if (!menu) {
+            menu = Ext.create('widget.contentManagerContextMenu');
         }
         return menu;
     }
 
-} );
+});

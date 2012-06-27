@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
 
     // Tooltip
     $('.tooltip').tooltip({
@@ -8,5 +8,5 @@ $(function() {
         showBody: ' - ',
         fade: 250
     });
-              
+
 });

@@ -1,4 +1,4 @@
-Ext.define( 'Admin.model.contentManager.ContentModel', {
+Ext.define('Admin.model.contentManager.ContentModel', {
     extend: 'Ext.data.Model',
 
     fields: [
@@ -6,4 +6,4 @@ Ext.define( 'Admin.model.contentManager.ContentModel', {
     ],
 
     idProperty: 'key'
-} );
+});

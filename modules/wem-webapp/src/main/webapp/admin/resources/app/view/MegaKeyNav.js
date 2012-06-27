@@ -3,7 +3,7 @@ Ext.define('Admin.view.MegaKeyNav', {
 
     requires: ['Ext.FocusManager'],
 
-    constructor: function(menu) {
+    constructor: function (menu) {
         var me = this;
 
         me.menu = menu;
@@ -19,20 +19,20 @@ Ext.define('Admin.view.MegaKeyNav', {
         }]);
     },
 
-    down: function(e) {
+    down: function (e) {
         var me = this,
             fi = me.menu.focusedItem;
 
-        if (fi && e.getKey() == Ext.EventObject.DOWN && me.isWhitelisted(fi)) {
+        if (fi && e.getKey() === Ext.EventObject.DOWN && me.isWhitelisted(fi)) {
             return true;
         }
-        var ni = me.menu.getItemBelow( fi );
-        if (me.menu.canActivateItem( ni )) {
-            me.menu.setActiveItem( ni );
+        var ni = me.menu.getItemBelow(fi);
+        if (me.menu.canActivateItem(ni)) {
+            me.menu.setActiveItem(ni);
         }
     },
 
-    enter: function(e) {
+    enter: function (e) {
         var menu = this.menu,
             focused = menu.focusedItem;
 
@@ -44,15 +44,15 @@ Ext.define('Admin.view.MegaKeyNav', {
         }
     },
 
-    escape: function(e) {
+    escape: function (e) {
         Ext.menu.Manager.hideAll();
     },
 
-    isWhitelisted: function(item) {
+    isWhitelisted: function (item) {
         return Ext.FocusManager.isWhitelisted(item);
     },
 
-    left: function(e) {
+    left: function (e) {
         var menu = this.menu,
             fi = menu.focusedItem;
 
@@ -60,13 +60,13 @@ Ext.define('Admin.view.MegaKeyNav', {
             return true;
         }
 
-        var ni = menu.getItemLeft( fi );
-        if (menu.canActivateItem( ni )) {
-            menu.setActiveItem( ni );
+        var ni = menu.getItemLeft(fi);
+        if (menu.canActivateItem(ni)) {
+            menu.setActiveItem(ni);
         }
     },
 
-    right: function(e) {
+    right: function (e) {
         var menu = this.menu,
             fi = menu.focusedItem;
 
@@ -74,13 +74,13 @@ Ext.define('Admin.view.MegaKeyNav', {
             return true;
         }
 
-        var ni = menu.getItemRight( fi );
-        if (menu.canActivateItem( ni )) {
-            menu.setActiveItem( ni );
+        var ni = menu.getItemRight(fi);
+        if (menu.canActivateItem(ni)) {
+            menu.setActiveItem(ni);
         }
     },
 
-    tab: function(e) {
+    tab: function (e) {
         var me = this;
 
         if (e.shiftKey) {
@@ -90,16 +90,16 @@ Ext.define('Admin.view.MegaKeyNav', {
         }
     },
 
-    up: function(e) {
+    up: function (e) {
         var me = this,
             fi = me.menu.focusedItem;
 
-        if (fi && e.getKey() == Ext.EventObject.UP && me.isWhitelisted(fi)) {
+        if (fi && e.getKey() === Ext.EventObject.UP && me.isWhitelisted(fi)) {
             return true;
         }
-        var ni = me.menu.getItemAbove( fi );
-        if (me.menu.canActivateItem( ni )) {
-            me.menu.setActiveItem( ni );
+        var ni = me.menu.getItemAbove(fi);
+        if (me.menu.canActivateItem(ni)) {
+            me.menu.setActiveItem(ni);
         }
     }
 });

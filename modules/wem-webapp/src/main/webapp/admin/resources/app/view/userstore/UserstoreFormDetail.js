@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.userstore.UserstoreFormDetail', {
+Ext.define('Admin.view.userstore.UserstoreFormDetail', {
     extend: 'Ext.form.Panel',
     alias: 'widget.userstoreFormDetail',
 
@@ -24,7 +24,8 @@ Ext.define( 'Admin.view.userstore.UserstoreFormDetail', {
                         {
                             fieldLabel: 'Users',
                             name: 'userCount'
-                        },{
+                        },
+                        {
                             fieldLabel: 'Groups',
                             name: 'groupCount'
                         },
@@ -33,7 +34,8 @@ Ext.define( 'Admin.view.userstore.UserstoreFormDetail', {
                             name: 'lastModified'
                         }
                     ]
-                },{
+                },
+                {
                     xtype: 'fieldset',
                     title: 'Connector',
                     defaults: {
@@ -45,7 +47,8 @@ Ext.define( 'Admin.view.userstore.UserstoreFormDetail', {
                         {
                             fieldLabel: 'Name',
                             name: 'connectorName'
-                        },{
+                        },
+                        {
                             fieldLabel: 'Plugin',
                             name: 'plugin'
                         },
@@ -67,18 +70,18 @@ Ext.define( 'Admin.view.userstore.UserstoreFormDetail', {
         }
     ],
 
-    initComponent: function() {
+    initComponent: function () {
 
-        this.callParent( arguments );
+        this.callParent(arguments);
 
-        if ( this.userstore ) {
-            this.setUserstore( this.userstore )
+        if (this.userstore) {
+            this.setUserstore(this.userstore);
         }
     },
 
-    setUserstore: function ( u ) {
+    setUserstore: function (u) {
         this.userstore = u;
-        this.getForm().setValues( u.data );
+        this.getForm().setValues(u.data);
     }
 
 });

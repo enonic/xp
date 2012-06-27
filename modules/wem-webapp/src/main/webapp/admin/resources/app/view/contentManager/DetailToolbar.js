@@ -1,9 +1,8 @@
-Ext.define( 'Admin.view.contentManager.DetailToolbar', {
+Ext.define('Admin.view.contentManager.DetailToolbar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.contentDetailToolbar',
 
-    initComponent: function()
-    {
+    initComponent: function () {
 
         var buttonDefaults = {
             scale: 'medium',
@@ -108,7 +107,7 @@ Ext.define( 'Admin.view.contentManager.DetailToolbar', {
             }
         ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
     }
 
-} );
+});

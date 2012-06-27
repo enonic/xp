@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.account.UserFormField', {
+Ext.define('Admin.view.account.UserFormField', {
     extend: 'Ext.form.FieldContainer',
     alias: 'widget.userFormField',
 
@@ -38,8 +38,7 @@ Ext.define( 'Admin.view.account.UserFormField', {
     },
 
 
-    initComponent: function()
-    {
+    initComponent: function () {
         var me = this;
         me.items = [];
         me.fieldConfigBuilders = {
@@ -53,27 +52,26 @@ Ext.define( 'Admin.view.account.UserFormField', {
         };
 
         var fieldConfig = me.createBasicFieldConfig();
-        Ext.Array.include( me.items, fieldConfig );
+        Ext.Array.include(me.items, fieldConfig);
 
-        if ( me.required && (me.fieldLabel != undefined) ) {
+        if (me.required && (me.fieldLabel !== undefined)) {
             me.fieldLabel += "<span style=\"color:red;\" ext:qtip=\"This field is required\">*</span>";
         }
-        if ( me.delayValidation ) {
+        if (me.delayValidation) {
             var spinningWheel = me.createWaitingLabel();
-            Ext.Array.include( me.items, spinningWheel );
+            Ext.Array.include(me.items, spinningWheel);
         }
 
         var validationLabel = me.createValidationLabel();
-        if ( validationLabel ) {
-            Ext.Array.include( me.items, validationLabel );
+        if (validationLabel) {
+            Ext.Array.include(me.items, validationLabel);
         }
 
-        me.callParent( arguments );
-        me.addEvents( 'validitychange' );
+        me.callParent(arguments);
+        me.addEvents('validitychange');
     },
 
-    createValidationLabel: function()
-    {
+    createValidationLabel: function () {
         var me = this;
         var validationLabel = {
             itemId: 'validationLabel',
@@ -82,25 +80,24 @@ Ext.define( 'Admin.view.account.UserFormField', {
             cls: 'admin-validation-label',
             hideMode: 'visibility'
         };
-        if ( me.validationResultType == 'short' ) {
+        if (me.validationResultType === 'short') {
             var shortLabel = {
                 width: 16,
                 tpl: Templates.account.shortValidationResult
             };
-            return Ext.apply( validationLabel, shortLabel );
+            return Ext.apply(validationLabel, shortLabel);
         }
-        if ( me.validationResultType == 'detail' ) {
+        if (me.validationResultType === 'detail') {
             var detailLabel = {
                 tpl: '<div class="{[ values.type==="info" ? "validationInfo" : "validationError" ]}">{text}</div> ',
                 data: {text: ''},
                 width: 200
             };
-            return Ext.apply( validationLabel, detailLabel );
+            return Ext.apply(validationLabel, detailLabel);
         }
     },
 
-    createWaitingLabel: function()
-    {
+    createWaitingLabel: function () {
         return {
             itemId: 'spinningWheel',
             xtype: 'component',
@@ -113,20 +110,17 @@ Ext.define( 'Admin.view.account.UserFormField', {
         };
     },
 
-    createBasicFieldConfig: function()
-    {
+    createBasicFieldConfig: function () {
         var me = this;
-        me.validationTask = new Ext.util.DelayedTask( function()
-        {
+        me.validationTask = new Ext.util.DelayedTask(function () {
             me.validate();
-        } );
-        var spinningWheelTask = new Ext.util.DelayedTask( function()
-        {
-            var spinningWheel = me.down( '#spinningWheel' );
-            var validationLabel = me.down( '#validationLabel' );
+        });
+        var spinningWheelTask = new Ext.util.DelayedTask(function () {
+            var spinningWheel = me.down('#spinningWheel');
+            var validationLabel = me.down('#validationLabel');
             spinningWheel.hide();
             validationLabel.show();
-        } );
+        });
         var fieldConfig = {
             enableKeyEvents: true,
             disabled: me.readonly,
@@ -143,64 +137,58 @@ Ext.define( 'Admin.view.account.UserFormField', {
             listeners: {
                 'validitychange': me.validityChanged,
                 'change': me.delayValidation ?
-                        me.callValidationTask : function()
-                {
+                    me.callValidationTask : function () {
                 },
-                'keyup': function( field, event )
-                {
-                    if ( me.delayValidation && (!event.isSpecialKey() ||
-                                                (event.getKey() == event.BACKSPACE) ||
-                                                (event.getKey() == event.DELETE)) ) {
-                        var spinningWheel = me.down( '#spinningWheel' );
-                        var validationLabel = me.down( '#validationLabel' );
+                'keyup': function (field, event) {
+                    if (me.delayValidation && (!event.isSpecialKey() ||
+                                               (event.getKey() === event.BACKSPACE) ||
+                                               (event.getKey() === event.DELETE))) {
+                        var spinningWheel = me.down('#spinningWheel');
+                        var validationLabel = me.down('#validationLabel');
                         spinningWheel.show();
                         validationLabel.hide();
-                        spinningWheelTask.delay( me.delayValidationTime );
+                        spinningWheelTask.delay(me.delayValidationTime);
                     }
                 }
             }
         };
-        if ( me.fieldWidth[me.fieldname] ) {
+        if (me.fieldWidth[me.fieldname]) {
             fieldConfig.width = me.fieldWidth[me.fieldname];
         }
         var builderFunction = me.type ? me.fieldConfigBuilders[me.type] : me.fieldConfigBuilders.text;
-        fieldConfig = builderFunction( fieldConfig, me );
-        if ( me.remote ) {
+        fieldConfig = builderFunction(fieldConfig, me);
+        if (me.remote) {
             fieldConfig.cls = 'admin-remote-field';
         }
         return fieldConfig;
     },
 
-    callValidationTask: function()
-    {
-        var userField = this.up( 'userFormField' );
+    callValidationTask: function () {
+        var userField = this.up('userFormField');
         var validationTask = userField.validationTask;
-        if ( validationTask ) {
-            validationTask.delay( userField.delayValidationTime );
+        if (validationTask) {
+            validationTask.delay(userField.delayValidationTime);
         }
     },
 
-    createCheckBoxConfig: function( fieldConfig )
-    {
+    createCheckBoxConfig: function (fieldConfig) {
         var checkBoxConfig = {xtype: 'checkbox',
             checked: fieldConfig.value};
-        return Ext.apply( fieldConfig, checkBoxConfig );
+        return Ext.apply(fieldConfig, checkBoxConfig);
     },
 
-    createDateConfig: function( fieldConfig )
-    {
-        fieldConfig.value = Ext.Date.parse( fieldConfig.value, 'Y-m-d' );
+    createDateConfig: function (fieldConfig) {
+        fieldConfig.value = Ext.Date.parse(fieldConfig.value, 'Y-m-d');
         var dateConfig = {
             xtype: 'datefield',
             format: 'Y-m-d'
         };
-        return Ext.apply( fieldConfig, dateConfig );
+        return Ext.apply(fieldConfig, dateConfig);
     },
 
-    createComboConfig: function( fieldConfig, me )
-    {
+    createComboConfig: function (fieldConfig, me) {
         var comboConfig;
-        if ( me.fieldStore && me.fieldStore.getTotalCount() > 0 ) {
+        if (me.fieldStore && me.fieldStore.getTotalCount() > 0) {
             comboConfig = {
                 xtype: 'combobox',
                 store: me.fieldStore,
@@ -212,15 +200,13 @@ Ext.define( 'Admin.view.account.UserFormField', {
                 emptyText: me.emptyText,
                 listConfig: me.displayConfig
             };
-        }
-        else {
+        } else {
             comboConfig = {xtype: 'textfield'};
         }
-        return Ext.apply( fieldConfig, comboConfig );
+        return Ext.apply(fieldConfig, comboConfig);
     },
 
-    createAutoCompleteConfig: function( fieldConfig, me )
-    {
+    createAutoCompleteConfig: function (fieldConfig, me) {
         var autoCompleteConfig = {
             xtype: 'combobox',
             enableKeyEvents: true,
@@ -236,20 +222,18 @@ Ext.define( 'Admin.view.account.UserFormField', {
             listConfig: me.displayConfig,
             action: 'initValue'
         };
-        return Ext.apply( fieldConfig, autoCompleteConfig );
+        return Ext.apply(fieldConfig, autoCompleteConfig);
     },
 
-    createPasswordConfig: function( fieldConfig, me )
-    {
+    createPasswordConfig: function (fieldConfig, me) {
         var passwordConfig;
 
-        if ( me.fieldname == 'password' ) {
+        if (me.fieldname === 'password') {
             me.cls = 'admin-glowing-item';
             passwordConfig = {
                 xtype: 'passwordMeter'
-            }
-        }
-        else {
+            };
+        } else {
             passwordConfig = {
                 xtype: 'textfield',
                 inputType: 'password',
@@ -257,86 +241,79 @@ Ext.define( 'Admin.view.account.UserFormField', {
             };
         }
 //        passwordConfig.validator = me.validatePassword;
-        return Ext.apply( fieldConfig, passwordConfig );
+        return Ext.apply(fieldConfig, passwordConfig);
     },
 
-    createFileConfig: function( fieldConfig )
-    {
+    createFileConfig: function (fieldConfig) {
         var fileConfig = {xtype: 'filefield'};
-        return Ext.apply( fieldConfig, fileConfig );
+        return Ext.apply(fieldConfig, fileConfig);
     },
 
-    createTextConfig: function( fieldConfig, me )
-    {
+    createTextConfig: function (fieldConfig, me) {
         var textConfig = {
             xtype: 'textfield',
             enableKeyEvents: true,
             bubbleEvents: ['keyup']
         };
-        if ( me.fieldname === 'username' ) {
+        if (me.fieldname === 'username') {
             textConfig.validator = me.validateUserName;
             textConfig.validValue = true;
-        } else if ( me.fieldname === 'email' ) {
+        } else if (me.fieldname === 'email') {
             textConfig.validator = me.validateUniqueEmail;
             textConfig.validValue = true;
-            textConfig.currentEmail = fieldConfig.value
+            textConfig.currentEmail = fieldConfig.value;
             textConfig.prevValue = fieldConfig.value || '';
         }
-        return Ext.apply( fieldConfig, textConfig );
+        return Ext.apply(fieldConfig, textConfig);
     },
 
-    validatePassword: function()
-    {
-        var validationStatus = this.up( 'userFormField' ).down( '#validationLabel' );
-        var passwordField = this.up( 'fieldset' ).down( '#password' );
-        var repeatPasswordField = this.up( 'fieldset' ).down( '#repeatPassword' );
-        if ( passwordField.getValue() == repeatPasswordField.getValue() ) {
-            validationStatus.update( {type: 'info', text: ''} );
+    validatePassword: function () {
+        var validationStatus = this.up('userFormField').down('#validationLabel');
+        var passwordField = this.up('fieldset').down('#password');
+        var repeatPasswordField = this.up('fieldset').down('#repeatPassword');
+        if (passwordField.getValue() === repeatPasswordField.getValue()) {
+            validationStatus.update({type: 'info', text: ''});
             return true;
-        }
-        else {
-            validationStatus.update( {type: 'error', text: 'Passwords don\'t match'} );
+        } else {
+            validationStatus.update({type: 'error', text: 'Passwords don\'t match'});
             return 'Passwords don\'t match';
         }
     },
 
-    validateUserName: function( value )
-    {
+    validateUserName: function (value) {
         var me = this;
-        var parentField = me.up( 'userFormField' );
-        var validationStatus = parentField.down( '#validationLabel' );
-        if ( me.prevValue != value && value !== '' ) {
+        var parentField = me.up('userFormField');
+        var validationStatus = parentField.down('#validationLabel');
+        if (me.prevValue !== value && value !== '') {
             this.prevValue = value;
-            if ( value.search( '\\W+' ) != -1 ) {
-                validationStatus.update( {type: 'error', text: 'Invalid characters'} );
-                return "Invalid characters"
+            if (value.search('\\W+') !== -1) {
+                validationStatus.update({type: 'error', text: 'Invalid characters'});
+                return "Invalid characters";
             }
-            var userForm = me.up( 'editUserFormPanel' );
+            var userForm = me.up('editUserFormPanel');
             var userStoreName = userForm.currentUser ? userForm.currentUser.userStore : userForm.defaultUserStoreName;
-            Ext.Ajax.request( {
+            Ext.Ajax.request({
                 url: 'data/account/userkey',
                 method: 'GET',
                 params: {
                     'userstore': userStoreName,
                     'username': value
                 },
-                success: function( response )
-                {
-                    var respObj = Ext.decode( response.responseText, true );
-                    if ( respObj.userkey != null ) {
+                success: function (response) {
+                    var respObj = Ext.decode(response.responseText, true);
+                    if (respObj.userkey !== null) {
                         me.validValue = false;
-                        validationStatus.update( {type: 'error', text: 'Not available'} );
-                    }
-                    else {
+                        validationStatus.update({type: 'error', text: 'Not available'});
+                    } else {
                         me.validValue = true;
-                        validationStatus.update( {type: 'info', text: 'Available'} );
+                        validationStatus.update({type: 'info', text: 'Available'});
                     }
                     me.validate();
                 }
-            } );
+            });
         }
-        if ( value === '' ) {
-            validationStatus.update( {type: 'info', text: ''} );
+        if (value === '') {
+            validationStatus.update({type: 'info', text: ''});
             return true;
         }
         var msg = "User with this user name already exists";
@@ -344,83 +321,75 @@ Ext.define( 'Admin.view.account.UserFormField', {
 
     },
 
-    emailChanged: function( field )
-    {
+    emailChanged: function (field) {
         field.pendingServerValidation = true;
     },
 
-    validateUniqueEmail: function( value )
-    {
+    validateUniqueEmail: function (value) {
         var me = this;
-        var parentField = me.up( 'userFormField' );
-        var validationStatus = parentField.down( '#validationLabel' );
-        if ( (me.prevValue !== value) && (value != '') ) {
+        var parentField = me.up('userFormField');
+        var validationStatus = parentField.down('#validationLabel');
+        if ((me.prevValue !== value) && (value !== '')) {
             me.prevValue = value;
-            if ( !Ext.data.validations.email( {}, value ) ) {
+            if (!Ext.data.validations.email({}, value)) {
                 // skip server unique-email validation, invalid email format will be triggered
-                validationStatus.update( {type: 'error', text: 'Invalid e-mail'} );
+                validationStatus.update({type: 'error', text: 'Invalid e-mail'});
                 return 'Invalid e-mail';
-            }
-            else {
-                validationStatus.update( {type: 'info', text: 'Valid e-mail'} );
+            } else {
+                validationStatus.update({type: 'info', text: 'Valid e-mail'});
             }
 
-            var userForm = me.up( 'editUserFormPanel' );
-            var userWizard = userForm.up( 'userWizardPanel' );
-            var currentUserKey = (!userWizard.isNewUser()) ? userWizard.userFields['key'] : null;
+            var userForm = me.up('editUserFormPanel');
+            var userWizard = userForm.up('userWizardPanel');
+            var currentUserKey = (!userWizard.isNewUser()) ? userWizard.userFields.key : null;
 
             var userStoreName = userForm.currentUser ? userForm.currentUser.userStore : userForm.defaultUserStoreName;
-            Ext.Ajax.request( {
+            Ext.Ajax.request({
                 url: 'data/account/verifyUniqueEmail',
                 method: 'GET',
                 params: {
                     'userstore': userStoreName,
                     'email': value
                 },
-                success: function( response )
-                {
-                    var respObj = Ext.decode( response.responseText, true );
-                    if ( respObj.emailInUse ) {
-                        validationStatus.update( {type: 'error', text: 'Not available'} );
+                success: function (response) {
+                    var respObj = Ext.decode(response.responseText, true);
+                    if (respObj.emailInUse) {
+                        validationStatus.update({type: 'error', text: 'Not available'});
                         me.validValue = (respObj.userkey === currentUserKey);
-                    }
-                    else {
-                        validationStatus.update( {type: 'info', text: 'Available'} );
+                    } else {
+                        validationStatus.update({type: 'info', text: 'Available'});
                         me.validValue = true;
                     }
                     me.validate();
                 }
-            } );
+            });
         }
-        if ( value == '' || value == me.currentEmail ) {
-            validationStatus.update( {type: 'info', text: ''} );
+        if (value === '' || value === me.currentEmail) {
+            validationStatus.update({type: 'info', text: ''});
             return true;
         }
         return me.validValue || "A user with this email already exists in the userstore";
     },
 
-    validityChanged: function( field, isValid, opts )
-    {
-        var parentField = field.up( 'userFormField' );
-        var validationLabel = parentField.down( '#validationLabel' );
-        if ( parentField.validationResultType != 'none' ) {
+    validityChanged: function (field, isValid, opts) {
+        var parentField = field.up('userFormField');
+        var validationLabel = parentField.down('#validationLabel');
+        if (parentField.validationResultType !== 'none') {
             field.clearInvalid();
         }
-        if ( parentField.validationResultType == 'short' ) {
-            validationLabel.update( {valid: isValid} );
+        if (parentField.validationResultType === 'short') {
+            validationLabel.update({valid: isValid});
         }
-        parentField.fireEvent( 'validitychange', parentField, isValid, opts );
+        parentField.fireEvent('validitychange', parentField, isValid, opts);
     },
 
-    validate: function()
-    {
-        this.items.each( function( item )
-        {
-            if ( item.validate ) {
+    validate: function () {
+        this.items.each(function (item) {
+            if (item.validate) {
                 item.validate();
             }
-        } )
+        });
     }
 
 
-} );
+});

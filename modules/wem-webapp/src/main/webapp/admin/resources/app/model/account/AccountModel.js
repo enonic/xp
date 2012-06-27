@@ -1,4 +1,4 @@
-Ext.define( 'Admin.model.account.AccountModel', {
+Ext.define('Admin.model.account.AccountModel', {
     extend: 'Ext.data.Model',
 
     fields: [
@@ -7,4 +7,4 @@ Ext.define( 'Admin.model.account.AccountModel', {
     ],
 
     idProperty: 'key'
-} );
+});

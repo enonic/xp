@@ -1,11 +1,10 @@
-Ext.define( 'Admin.view.account.BrowseToolbar', {
+Ext.define('Admin.view.account.BrowseToolbar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.browseToolbar',
 
     border: false,
 
-    initComponent: function()
-    {
+    initComponent: function () {
         var buttonDefaults = {
             scale: 'medium',
             iconAlign: 'top',
@@ -25,10 +24,10 @@ Ext.define( 'Admin.view.account.BrowseToolbar', {
                         action: 'newUser',
                         iconCls: 'icon-add-24',
                         cls: 'x-btn-as-arrow',
-                        menu: Ext.create( 'Admin.view.MegaMenu', {
+                        menu: Ext.create('Admin.view.MegaMenu', {
                             recentCount: 0,
                             url: 'resources/data/accountMenu.json'
-                        } )
+                        })
                     }
                 ]
             },
@@ -90,7 +89,7 @@ Ext.define( 'Admin.view.account.BrowseToolbar', {
             }
         ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
     }
 
-} );
+});

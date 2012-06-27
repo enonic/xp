@@ -1,8 +1,8 @@
-if ( !Admin ) {
+if (!Admin) {
     var Admin = {};
 }
 
-if ( !Admin.globals ) {
+if (!Admin.globals) {
     Admin.globals = {};
 }
 

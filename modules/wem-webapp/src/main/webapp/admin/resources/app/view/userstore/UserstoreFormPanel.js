@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.userstore.UserstoreFormPanel', {
+Ext.define('Admin.view.userstore.UserstoreFormPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.userstoreFormPanel',
 
@@ -14,7 +14,7 @@ Ext.define( 'Admin.view.userstore.UserstoreFormPanel', {
         style: 'background: #fff;'
     },
 
-    initComponent: function() {
+    initComponent: function () {
 
         this.items = [
             {
@@ -43,9 +43,9 @@ Ext.define( 'Admin.view.userstore.UserstoreFormPanel', {
                 userstore: this.userstore,
                 flex: 1
             }
-        ],
+        ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
 
     }
 

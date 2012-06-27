@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.account.SelectUserStoreWindow', {
+Ext.define('Admin.view.account.SelectUserStoreWindow', {
     extend: 'Admin.view.BaseDialogWindow',
     alias: 'widget.selectUserStoreWindow',
 
@@ -14,26 +14,26 @@ Ext.define( 'Admin.view.account.SelectUserStoreWindow', {
         }
     ],
 
-    initComponent: function()
-    {
+    initComponent: function () {
         // TODO: Why is caller and items set twice?
         this.items = [
-        {
-            xtype: 'userStoreListPanel',
-            caller: this.caller
-        }];
+            {
+                xtype: 'userStoreListPanel',
+                caller: this.caller
+            }
+        ];
 
         this.dialogTitle = this.createHtmlTitle();
         this.dialogSubTitle = 'Select Userstore';
 
-        this.callParent( arguments );
+        this.callParent(arguments);
     },
 
-    createHtmlTitle: function()
-    {
+    createHtmlTitle: function () {
         var icon = this.caller;
 
-        var title = '<div><img src="resources/images/icons/16x16/' + icon + '.png" alt="" style="vertical-align: text-top; margin:0 5px 5px 0"/>';
+        var title = '<div><img src="resources/images/icons/16x16/' + icon +
+                    '.png" alt="" style="vertical-align: text-top; margin:0 5px 5px 0"/>';
         title += this.caller === 'user' ? 'New User' : 'New Group';
 
         return title;

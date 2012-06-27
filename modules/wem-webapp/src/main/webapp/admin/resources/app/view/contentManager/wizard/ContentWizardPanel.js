@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.contentManager.wizard.ContentWizardPanel', {
+Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.contentWizardPanel',
     requires: [
@@ -15,37 +15,34 @@ Ext.define( 'Admin.view.contentManager.wizard.ContentWizardPanel', {
         border: false
     },
 
-    initComponent: function()
-    {
+    initComponent: function () {
         var me = this;
         me.headerData = {
             displayName: 'New Content'
         };
-        var contentWizardHeader = Ext.create( 'Ext.container.Container',  {
+        var contentWizardHeader = Ext.create('Ext.container.Container', {
             itemId: 'wizardHeader',
             styleHtmlContent: true,
             autoHeight: true,
             cls: 'admin-wizard-header-container',
             listeners: {
                 afterrender: {
-                    fn: function()
-                    {
+                    fn: function () {
                         var me = this;
-                        me.getEl().addListener( 'click', function( event, target, eOpts )
-                        {
-                            me.toggleDisplayNameField( event, target );
-                        } );
+                        me.getEl().addListener('click', function (event, target, eOpts) {
+                            me.toggleDisplayNameField(event, target);
+                        });
                     },
                     scope: this
                 }
             },
             tpl: new Ext.XTemplate(Templates.contentManager.contentWizardHeader),
             data: me.headerData
-        } );
+        });
 
-        me.tbar = Ext.createByAlias( 'widget.contentWizardToolbar', {
+        me.tbar = Ext.createByAlias('widget.contentWizardToolbar', {
             xtype: 'contentWizardToolbar'
-        } );
+        });
 
         me.items = [
             {
@@ -60,14 +57,13 @@ Ext.define( 'Admin.view.contentManager.wizard.ContentWizardPanel', {
                         height: 128,
                         cls: 'icon-content-128',
                         listeners: {
-                            render: function( cmp )
-                            {
-                                Ext.tip.QuickTipManager.register( {
+                            render: function (cmp) {
+                                Ext.tip.QuickTipManager.register({
                                     target: cmp.el,
                                     text: 'Content',
                                     width: 100,
                                     dismissDelay: 10000 // Hide after 10 seconds hover
-                                } );
+                                });
                             }
                         }
                     }
@@ -90,12 +86,11 @@ Ext.define( 'Admin.view.contentManager.wizard.ContentWizardPanel', {
             }
         ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
 
     },
 
-    getSteps: function()
-    {
+    getSteps: function () {
         var dataStep = {
             stepTitle: "Data",
             xtype: 'panel'
@@ -125,37 +120,30 @@ Ext.define( 'Admin.view.contentManager.wizard.ContentWizardPanel', {
 
     },
 
-    getWizardPanel: function()
-    {
-        return this.down( 'wizardPanel' );
+    getWizardPanel: function () {
+        return this.down('wizardPanel');
     },
 
-    getData: function()
-    {
+    getData: function () {
         return this.getWizardPanel().getData();
     },
 
-    toggleDisplayNameField: function( event, target )
-    {
-        var clickedElement = new Ext.Element( target );
-        var parentToClickedElementIsHeader = clickedElement.findParent( '.admin-wizard-header' );
-        var displayNameField = Ext.DomQuery.select( 'input.admin-display-name', this.getEl().dom )[0];
-        var displayNameFieldElement = new Ext.Element( displayNameField );
+    toggleDisplayNameField: function (event, target) {
+        var clickedElement = new Ext.Element(target);
+        var parentToClickedElementIsHeader = clickedElement.findParent('.admin-wizard-header');
+        var displayNameField = Ext.DomQuery.select('input.admin-display-name', this.getEl().dom)[0];
+        var displayNameFieldElement = new Ext.Element(displayNameField);
 
-        if ( parentToClickedElementIsHeader )
-        {
-            displayNameFieldElement.dom.removeAttribute( 'readonly' );
-            displayNameFieldElement.addCls( 'admin-edited-field' );
-        }
-        else
-        {
-            displayNameFieldElement.set( {readonly: true} );
-            var value = Ext.String.trim( displayNameFieldElement.getValue() );
-            if ( value === '' || value === 'Display Name' )
-            {
-                displayNameFieldElement.removeCls( 'admin-edited-field' );
+        if (parentToClickedElementIsHeader) {
+            displayNameFieldElement.dom.removeAttribute('readonly');
+            displayNameFieldElement.addCls('admin-edited-field');
+        } else {
+            displayNameFieldElement.set({readonly: true});
+            var value = Ext.String.trim(displayNameFieldElement.getValue());
+            if (value === '' || value === 'Display Name') {
+                displayNameFieldElement.removeCls('admin-edited-field');
             }
         }
     }
 
-} );
+});

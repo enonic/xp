@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.account.preview.user.UserPreviewPanel', {
+Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.userPreviewPanel',
     requires: [
@@ -17,8 +17,7 @@ Ext.define( 'Admin.view.account.preview.user.UserPreviewPanel', {
 
     showToolbar: true,
 
-    initComponent: function()
-    {
+    initComponent: function () {
         this.fieldSets = [
             {
                 title: 'Name',
@@ -39,9 +38,9 @@ Ext.define( 'Admin.view.account.preview.user.UserPreviewPanel', {
                 fields: ['phone', 'mobile', 'fax']
             }
         ];
-        var profileData = this.generateProfileData( this.data );
+        var profileData = this.generateProfileData(this.data);
 
-        if ( this.showToolbar ) {
+        if (this.showToolbar) {
             this.tbar = {
                 xtype: 'userPreviewToolbar',
                 isEditable: this.data.isEditable
@@ -70,7 +69,7 @@ Ext.define( 'Admin.view.account.preview.user.UserPreviewPanel', {
                         margin: 5
                     },
                     {
-                        columnWidth: .98,
+                        columnWidth: 0.98,
                         cls: 'center',
                         xtype: 'panel',
                         defaults: {
@@ -112,9 +111,8 @@ Ext.define( 'Admin.view.account.preview.user.UserPreviewPanel', {
                                                 xtype: 'membershipsGraphPanel',
                                                 extraCls: 'admin-memberships-graph',
                                                 listeners: {
-                                                    afterrender: function()
-                                                    {
-                                                        me.down( 'membershipsGraphPanel' ).setGraphData( me.data['graph'] );
+                                                    afterrender: function () {
+                                                        me.down('membershipsGraphPanel').setGraphData(me.data.graph);
                                                     }
                                                 }
                                             }
@@ -134,55 +132,51 @@ Ext.define( 'Admin.view.account.preview.user.UserPreviewPanel', {
                 ]
             }
         ];
-        this.callParent( arguments );
+        this.callParent(arguments);
 
 
     },
 
     listeners: {
-        afterrender: function()
-        {
-            this.setData( this.data );
+        afterrender: function () {
+            this.setData(this.data);
         }
     },
 
-    generateProfileData: function( userData )
-    {
+    generateProfileData: function (userData) {
         var fieldSetEmpty = true;
         var profileData = [];
-        if ( userData ) {
-            Ext.Array.each( this.fieldSets, function( fieldSet )
-            {
+        if (userData) {
+            Ext.Array.each(this.fieldSets, function (fieldSet) {
                 var fieldSetData = { title: fieldSet.title};
                 fieldSetData.fields = [];
-                Ext.Array.each( fieldSet.fields, function( field )
-                {
+                Ext.Array.each(fieldSet.fields, function (field) {
                     var value = userData[field] || (userData.userInfo ? userData.userInfo[field] : undefined);
-                    var title = Admin.view.account.EditUserFormPanel.fieldLabels[field]
-                            ? Admin.view.account.EditUserFormPanel.fieldLabels[field] : field
-                    if ( value ) {
-                        Ext.Array.include( fieldSetData.fields, {title: title, value: value} );
+                    var title = Admin.view.account.EditUserFormPanel.fieldLabels[field] || field;
+                    if (value) {
+                        Ext.Array.include(fieldSetData.fields, {title: title, value: value});
                         fieldSetEmpty = false;
                     }
-                } );
-                if ( !fieldSetEmpty ) {
-                    Ext.Array.include( profileData, fieldSetData );
+                });
+                if (!fieldSetEmpty) {
+                    Ext.Array.include(profileData, fieldSetData);
                     fieldSetEmpty = true;
                 }
-            } );
+            });
         }
         return profileData;
     },
 
-    isFieldsEnabled: function( fieldNames, userstoreName )
-    {
-        var userstores = Ext.data.StoreManager.lookup( 'Admin.store.account.UserstoreConfigStore' );
-        var userstore = userstores.findRecord( 'name', userstoreName );
-        if ( userstore && userstore.raw.userFields ) {
-            var fieldTypes = [].concat( fieldNames );
-            for ( var i = 0; i < userstore.raw.userFields.length; i++ ) {
-                for ( var j = 0; j < fieldTypes.length; j++ ) {
-                    if ( userstore.raw.userFields[ i ].type == fieldTypes[ j ] ) {
+    isFieldsEnabled: function (fieldNames, userstoreName) {
+        var userstores = Ext.data.StoreManager.lookup('Admin.store.account.UserstoreConfigStore');
+        var userstore = userstores.findRecord('name', userstoreName);
+        if (userstore && userstore.raw.userFields) {
+            var fieldTypes = [].concat(fieldNames);
+            var i;
+            var j;
+            for (i = 0; i < userstore.raw.userFields.length; i++) {
+                for (j = 0; j < fieldTypes.length; j++) {
+                    if (userstore.raw.userFields[i].type === fieldTypes[j]) {
                         return true;
                     }
                 }
@@ -191,69 +185,67 @@ Ext.define( 'Admin.view.account.preview.user.UserPreviewPanel', {
         return false;
     },
 
-    setData: function( data )
-    {
-        if ( data ) {
+    setData: function (data) {
+        if (data) {
             this.data = data;
 
-            var tabs = this.down( '#previewTabs' );
+            var tabs = this.down('#previewTabs');
 
-            var previewHeader = this.down( '#previewHeader' );
-            previewHeader.update( data );
+            var previewHeader = this.down('#previewHeader');
+            previewHeader.update(data);
 
-            var previewPhoto = this.down( '#previewPhoto' );
-            previewPhoto.update( data );
+            var previewPhoto = this.down('#previewPhoto');
+            previewPhoto.update(data);
 
-            var previewInfo = this.down( '#previewInfo' );
-            previewInfo.update( data );
+            var previewInfo = this.down('#previewInfo');
+            previewInfo.update(data);
 
-            var profileTab = this.down( '#profileTab' );
+            var profileTab = this.down('#profileTab');
             var profileFields = [];
-            for ( var i = 0; i < this.fieldSets.length; i++ ) {
-                profileFields = profileFields.concat( this.fieldSets[ i ].fields );
+            var i;
+            for (i = 0; i < this.fieldSets.length; i++) {
+                profileFields = profileFields.concat(this.fieldSets[i].fields);
             }
-            if ( this.isFieldsEnabled( profileFields, data.userStore ) ) {
-                profileTab.update( this.generateProfileData( data ) );
-                this.setTabVisible( tabs, profileTab, true );
+            if (this.isFieldsEnabled(profileFields, data.userStore)) {
+                profileTab.update(this.generateProfileData(data));
+                this.setTabVisible(tabs, profileTab, true);
             } else {
-                this.setTabVisible( tabs, profileTab, false );
+                this.setTabVisible(tabs, profileTab, false);
             }
 
-            var placesTab = this.down( '#placesTab' );
-            if ( this.isFieldsEnabled( 'address', data.userStore ) ) {
-                placesTab.update( data );
-                this.setTabVisible( tabs, placesTab, true );
+            var placesTab = this.down('#placesTab');
+            if (this.isFieldsEnabled('address', data.userStore)) {
+                placesTab.update(data);
+                this.setTabVisible(tabs, placesTab, true);
             } else {
-                this.setTabVisible( tabs, placesTab, false );
+                this.setTabVisible(tabs, placesTab, false);
             }
 
-            var membershipsTab = this.down( '#membershipsTab' );
-            if ( membershipsTab.rendered ) {
-                membershipsTab.down( 'membershipsGraphPanel' ).setGraphData( data['graph'] );
+            var membershipsTab = this.down('#membershipsTab');
+            if (membershipsTab.rendered) {
+                membershipsTab.down('membershipsGraphPanel').setGraphData(data.graph);
                 // Graph panel for some reason does not repaint itself
                 this.doLayout();
             }
         }
     },
 
-    setTabVisible: function( tabPanel, tabItem, visible )
-    {
-        tabItem.tab.setVisible( visible );
+    setTabVisible: function (tabPanel, tabItem, visible) {
+        tabItem.tab.setVisible(visible);
         // activate first tab if the item being hidden is active
         var tabLayout = tabPanel.getLayout();
-        if ( !visible && tabLayout.getActiveItem() == tabItem ) {
-            tabPanel.items.each( function( item, index )
-            {
-                if ( item.tab.isVisible() ) {
-                    tabLayout.setActiveItem( index );
+        if (!visible && tabLayout.getActiveItem() === tabItem) {
+            tabPanel.items.each(function (item, index) {
+                if (item.tab.isVisible()) {
+                    tabLayout.setActiveItem(index);
                     return false;
                 }
                 return true;
-            } );
+            });
 
         }
     }
 
 
 
-} );
+});

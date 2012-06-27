@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.account.GroupDetailButton', {
+Ext.define('Admin.view.account.GroupDetailButton', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.groupDetailButton',
 
@@ -8,8 +8,7 @@ Ext.define( 'Admin.view.account.GroupDetailButton', {
         background: 'lightGrey'
     },
 
-    initComponent: function()
-    {
+    initComponent: function () {
         var iconPane = {
             xtype: 'panel',
             layout: 'fit',
@@ -64,8 +63,8 @@ Ext.define( 'Admin.view.account.GroupDetailButton', {
             ]
         };
         this.items = [iconPane, displayNamePane, buttonPane];
-        this.callParent( arguments );
+        this.callParent(arguments);
     }
 
 
-} );
+});

@@ -23,7 +23,8 @@
 #live-edit-canvas {
     position: absolute;
     display: none;
-    top: 0; left: 0;
+    top: 0;
+    left: 0;
 }
 
 .live-edit-overlay {
@@ -38,7 +39,8 @@
 
 #live-edit-highlighter {
     position: absolute;
-    top: -5000px; left: -5000px;
+    top: -5000px;
+    left: -5000px;
 }
 
 .live-edit-window-highlighter {
@@ -101,7 +103,7 @@
 /* Tooltip */
 
 #live-edit-tooltip {
-    position:absolute;
+    position: absolute;
     cursor: default;
     top: -5000px;
     left: -5000px;
@@ -157,7 +159,8 @@
 
 #live-edit-toolbar {
     position: absolute;
-    top: -5000px; left: -5000px;
+    top: -5000px;
+    left: -5000px;
     background-color: #272C31;
     box-shadow: 5px 5px 28px #444444;
 }
@@ -192,6 +195,7 @@
     color: #bec9d4;
     text-decoration: none;
 }
+
 .live-edit-button .live-edit-button-inner:active {
     background-color: #393f45;
     background: -webkit-gradient(linear, 0 0, 0 100%, from(#393f45), to(#5d656e));

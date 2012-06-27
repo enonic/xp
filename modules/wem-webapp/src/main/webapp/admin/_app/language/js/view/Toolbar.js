@@ -10,7 +10,7 @@ Ext.define('App.view.Toolbar', {
         }
     ],
 
-    initComponent: function() {
+    initComponent: function () {
         this.callParent(arguments);
     }
 });

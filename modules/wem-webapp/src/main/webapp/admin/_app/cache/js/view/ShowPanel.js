@@ -1,6 +1,6 @@
 Ext.define('App.view.ShowPanel', {
     extend: 'Ext.panel.Panel',
-    alias : 'widget.systemCacheShow',
+    alias: 'widget.systemCacheShow',
 
     requires: [
         'App.view.GridPanel',
@@ -10,7 +10,7 @@ Ext.define('App.view.ShowPanel', {
     layout: 'border',
     border: false,
 
-    initComponent: function() {
+    initComponent: function () {
         this.items = [
             {
                 region: 'center',

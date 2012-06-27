@@ -12,7 +12,7 @@ Ext.define('App.store.PropertyStore', {
         reader: {
             type: 'json',
             root: 'properties',
-            totalProperty : 'total'
+            totalProperty: 'total'
         }
     }
 });

@@ -1,4 +1,4 @@
-Ext.define( 'App.store.SystemCacheStore', {
+Ext.define('App.store.SystemCacheStore', {
     extend: 'Ext.data.Store',
 
     model: 'App.model.SystemCacheModel',
@@ -14,7 +14,7 @@ Ext.define( 'App.store.SystemCacheStore', {
         reader: {
             type: 'json',
             root: 'caches',
-            totalProperty : 'total'
+            totalProperty: 'total'
         }
     }
-} );
+});

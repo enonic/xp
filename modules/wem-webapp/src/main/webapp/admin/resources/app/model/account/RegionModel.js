@@ -1,4 +1,4 @@
-Ext.define( 'Admin.model.account.RegionModel', {
+Ext.define('Admin.model.account.RegionModel', {
     extend: 'Ext.data.Model',
 
     idField: 'regionCode',
@@ -12,4 +12,4 @@ Ext.define( 'Admin.model.account.RegionModel', {
 
     belongsTo: 'CountryModel'
 
-} );
+});

@@ -12,7 +12,7 @@
     <script type="text/javascript" src="resources/app/plugin/humane.js"></script>
     <script type="text/javascript">
 
-        Ext.Loader.setConfig( {
+        Ext.Loader.setConfig({
             enabled: true,
             paths: {
                 'App': '_app/main/js',
@@ -20,14 +20,13 @@
                 'Admin': 'resources/app'
             },
             disableCaching: true
-        } );
+        });
 
-        Ext.require( 'Ext.app.Application' );
+        Ext.require('Ext.app.Application');
         var mainApp;
 
-        Ext.onReady( function()
-        {
-            mainApp = Ext.create( 'Ext.app.Application', {
+        Ext.onReady(function () {
+            mainApp = Ext.create('Ext.app.Application', {
                 name: 'App',
                 appFolder: '_app/main/js',
 
@@ -38,9 +37,8 @@
                     'Admin.controller.NotifyUserController'
                 ],
 
-                launch: function()
-                {
-                    Ext.create( 'Ext.container.Viewport', {
+                launch: function () {
+                    Ext.create('Ext.container.Viewport', {
                         id: 'main-viewport',
                         layout: 'border',
                         style: 'border: medium none',

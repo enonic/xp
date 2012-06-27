@@ -1,4 +1,4 @@
-Ext.define( 'Admin.controller.contentManager.BrowseToolbarController', {
+Ext.define('Admin.controller.contentManager.BrowseToolbarController', {
     extend: 'Admin.controller.contentManager.Controller',
 
     /*      Controller for handling Toolbar UI events       */
@@ -12,49 +12,42 @@ Ext.define( 'Admin.controller.contentManager.BrowseToolbarController', {
         'Admin.view.contentManager.wizard.ContentWizardPanel'
     ],
 
-    init: function()
-    {
+    init: function () {
 
-        this.control( {
+        this.control({
             'browseToolbar *[action=newContent]': {
-                click: function( el, e )
-                {
-                    this.createContent( 'contentType' );
+                click: function (el, e) {
+                    this.createContent('contentType');
                 }
             },
             'browseToolbar *[action=newSite]': {
-                click: function( el, e )
-                {
-                    this.createContent( 'site' );
+                click: function (el, e) {
+                    this.createContent('site');
                 }
             },
             'browseToolbar *[action=viewContent]': {
-                click: function( el, e )
-                {
+                click: function (el, e) {
                     this.viewContent();
                 }
             },
             'browseToolbar *[action=editContent]': {
-                click: function( el, e )
-                {
+                click: function (el, e) {
                     this.editContent();
                 }
             },
             'browseToolbar *[action=deleteContent]': {
-                click: function( el, e )
-                {
+                click: function (el, e) {
                     this.deleteContent();
                 }
             },
             'browseToolbar *[action=duplicateContent]': {
-                click: function( el, e )
-                {
+                click: function (el, e) {
                     this.duplicateContent();
                 }
             }
-        } );
+        });
     }
 
 
 
-} );
+});

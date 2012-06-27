@@ -1,14 +1,14 @@
 /**
  * Base controller for admin
  */
-Ext.define( 'Admin.controller.Controller', {
+Ext.define('Admin.controller.Controller', {
     extend: 'Ext.app.Controller',
 
     stores: [],
     models: [],
     views: [],
 
-    init: function() {
+    init: function () {
         // console.log('Admin.controller.Controller: init');
     },
 
@@ -16,9 +16,8 @@ Ext.define( 'Admin.controller.Controller', {
      * @return {Admin.view.TabPanel}
      */
 
-    getCmsTabPanel: function()
-    {
-        return Ext.ComponentQuery.query( 'cmsTabPanel' )[0];
+    getCmsTabPanel: function () {
+        return Ext.ComponentQuery.query('cmsTabPanel')[0];
     }
 
 });

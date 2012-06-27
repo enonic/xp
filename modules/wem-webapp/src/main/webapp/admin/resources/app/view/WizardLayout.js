@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.WizardLayout', {
+Ext.define('Admin.view.WizardLayout', {
     extend: 'Ext.layout.container.Card',
     alias: 'layout.wizard',
     mixins: ['Ext.util.Animate'],
@@ -9,108 +9,105 @@ Ext.define( 'Admin.view.WizardLayout', {
     easing: 'easeOut',
     duration: 500,
 
-    setActiveItem: function( item )
-    {
+    setActiveItem: function (item) {
 
         var owner = this.owner;
         var oldCard = this.activeItem;
-        var oldIndex = owner.items.indexOf( oldCard );
-        var newCard = this.parseActiveItem( item );
-        var newIndex = owner.items.indexOf( newCard );
+        var oldIndex = owner.items.indexOf(oldCard);
+        var newCard = this.parseActiveItem(item);
+        var newIndex = owner.items.indexOf(newCard);
 
-        if ( oldCard != newCard ) {
+        if (oldCard !== newCard) {
 
-            owner.fireEvent( "animationstarted", newCard, oldCard );
+            owner.fireEvent("animationstarted", newCard, oldCard);
 
-            if ( newCard.rendered && this.animation && this.animation != "none" ) {
+            if (newCard.rendered && this.animation && this.animation !== "none") {
 
                 this.syncFx();
 
                 var target = this.getRenderTarget();
-                newCard.setWidth( target.getWidth() - target.getPadding( "lr" ) - Ext.getScrollBarWidth() );
+                newCard.setWidth(target.getWidth() - target.getPadding("lr") - Ext.getScrollBarWidth());
 
-                switch ( this.animation ) {
-                    case 'fade':
-                        newCard.el.setStyle( {
-                            position: 'absolute',
-                            opacity: 0,
-                            top: this.getRenderTarget().getPadding( 't' ) + 'px'
-                        } );
-                        newCard.show();
+                switch (this.animation) {
+                case 'fade':
+                    newCard.el.setStyle({
+                        position: 'absolute',
+                        opacity: 0,
+                        top: this.getRenderTarget().getPadding('t') + 'px'
+                    });
+                    newCard.show();
 
-                        if ( oldCard ) {
-                            oldCard.el.fadeOut( {
-                                useDisplay: true,
-                                duration: this.duration,
-                                callback: function()
-                                {
-                                    this.hide()
-                                },
-                                scope: this.activeItem
-                            } );
-                        }
-                        owner.doLayout();
-                        newCard.el.fadeIn( {
+                    if (oldCard) {
+                        oldCard.el.fadeOut({
                             useDisplay: true,
                             duration: this.duration,
-                            callback: function()
-                            {
-                                newCard.el.setStyle( {
-                                    position: ''
-                                } );
-                                owner.fireEvent( "animationfinished", newCard, oldCard );
+                            callback: function () {
+                                this.hide();
                             },
-                            scope: this
-                        } );
-                        break;
-                    case 'slide':
-                        newCard.el.setStyle( {
-                            position: 'absolute',
-                            visibility: 'hidden',
-                            width: this.getRenderTarget().getWidth(),
-                            top: this.getRenderTarget().getPadding( 't' ) + 'px'
-                        } );
-                        newCard.show();
+                            scope: this.activeItem
+                        });
+                    }
+                    owner.doLayout();
+                    newCard.el.fadeIn({
+                        useDisplay: true,
+                        duration: this.duration,
+                        callback: function () {
+                            newCard.el.setStyle({
+                                position: ''
+                            });
+                            owner.fireEvent("animationfinished", newCard, oldCard);
+                        },
+                        scope: this
+                    });
+                    break;
+                case 'slide':
+                    newCard.el.setStyle({
+                        position: 'absolute',
+                        visibility: 'hidden',
+                        width: this.getRenderTarget().getWidth(),
+                        top: this.getRenderTarget().getPadding('t') + 'px'
+                    });
+                    newCard.show();
 
-                        if ( oldCard ) {
-                            oldCard.el.slideOut(
-                                    newIndex > oldIndex ? "l" : "r",
-                                    {
-                                        duration: this.duration,
-                                        easing: this.easing,
-                                        remove: false,
-                                        scope: this.activeItem,
-                                        callback: function()
-                                        {
-                                            this.hide()
-                                        }
-                                    } );
+                    if (oldCard) {
+                        oldCard.el.slideOut(
+                            newIndex > oldIndex ? "l" : "r",
+                            {
+                                duration: this.duration,
+                                easing: this.easing,
+                                remove: false,
+                                scope: this.activeItem,
+                                callback: function () {
+                                    this.hide();
+                                }
+                            }
+                        );
+                    }
+
+                    owner.doLayout();
+                    newCard.el.slideIn(
+                        newIndex > oldIndex ? "r" : "l",
+                        {
+                            duration: this.duration,
+                            easing: this.easing,
+                            scope: this,
+                            callback: function () {
+                                newCard.el.setStyle({
+                                    position: ''
+                                });
+                                owner.fireEvent("animationfinished", newCard, oldCard);
+                            }
                         }
-
-                        owner.doLayout();
-                        newCard.el.slideIn(
-                                newIndex > oldIndex ? "r" : "l",
-                                {
-                                    duration: this.duration,
-                                    easing: this.easing,
-                                    scope: this,
-                                    callback: function()
-                                    {
-                                        newCard.el.setStyle( {
-                                            position: ''
-                                        } );
-                                        owner.fireEvent( "animationfinished", newCard, oldCard );
-                                    }
-                                } );
-                        break;
+                    );
+                    break;
                 }
 
                 this.activeItem = newCard;
                 this.sequenceFx();
 
             } else {
-                this.callParent( [newCard] );
-                owner.fireEvent( "animationfinished", newCard, oldCard );
+                this.callParent([newCard]);
+                owner.fireEvent("animationfinished", newCard, oldCard);
             }
             return newCard;
         }
@@ -148,4 +145,4 @@ Ext.define( 'Admin.view.WizardLayout', {
      }
      */
 
-} );
+});

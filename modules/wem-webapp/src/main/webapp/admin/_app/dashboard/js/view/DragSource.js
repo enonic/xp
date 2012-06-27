@@ -1,46 +1,42 @@
-Ext.define( 'App.view.DragSource', {
+Ext.define('App.view.DragSource', {
     extend: 'Ext.dd.DragSource',
 
-    constructor : function( panel, cfg )
-    {
+    constructor: function (panel, cfg) {
         this.panel = panel;
         this.dragData = {panel: panel};
 
-        this.callParent( [panel.el, cfg] );
+        this.callParent([panel.el, cfg]);
 
         if (this.containerScroll) {
             Ext.dd.ScrollManager.register(this.el);
         }
     },
 
-    onInitDrag : function(x, y){
+    onInitDrag: function (x, y) {
         this.proxy.update(this.dragData.ddel.cloneNode(true));
         this.onStartDrag(x, y);
         return true;
     },
 
-    getDragData: function( e )
-    {
-        var sourceEl = e.getTarget( this.panel.itemSelector, 10 );
-        if ( sourceEl )
-        {
-            var d = sourceEl.cloneNode( true );
+    getDragData: function (e) {
+        var sourceEl = e.getTarget(this.panel.itemSelector, 10);
+        if (sourceEl) {
+            var d = sourceEl.cloneNode(true);
             d.id = Ext.id();
             return {
                 ddel: d,
                 sourceEl: sourceEl,
-                repairXY: Ext.fly( sourceEl ).getXY(),
-                draggedRecord: this.panel.getRecord( sourceEl )
-            }
+                repairXY: Ext.fly(sourceEl).getXY(),
+                draggedRecord: this.panel.getRecord(sourceEl)
+            };
         }
     },
 
-    getRepairXY: function()
-    {
+    getRepairXY: function () {
         return this.dragData.repairXY;
     },
 
-    afterRepair : function(){
+    afterRepair: function () {
         var me = this;
         if (Ext.enableFx) {
             Ext.fly(me.dragData.ddel).highlight(me.repairHighlightColor);
@@ -48,7 +44,7 @@ Ext.define( 'App.view.DragSource', {
         me.dragging = false;
     },
 
-    destroy : function(){
+    destroy: function () {
         this.callParent();
         if (this.containerScroll) {
             Ext.dd.ScrollManager.unregister(this.el);

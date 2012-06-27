@@ -8,12 +8,13 @@
     <link rel="stylesheet" type="text/css" href="../../resources/css/BoxSelect.css">
 
     <style type="text/css">
-        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-            Summary - Toolbar Container
-        */
+            /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                Summary - Toolbar Container
+            */
         .admin-tree-panel-toolbar-container {
             padding: 0 0 10px 0;
         }
+
         .admin-tree-panel-toolbar-container .key {
             margin-left: 5px;
             float: left;
@@ -21,9 +22,9 @@
             text-align: center;
         }
 
-        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-            Summary Tree Grid
-        */
+            /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                Summary Tree Grid
+            */
         .admin-summary-tree-panel tr.hidden {
             display: none;
         }
@@ -33,7 +34,7 @@
         .admin-summary-tree-panel td.removed,
         .admin-summary-tree-panel td.none,
         .admin-summary-tree-panel td.blank
-        .admin-summary-tree-panel .x-grid-cell-fieldColumn  {
+        .admin-summary-tree-panel .x-grid-cell-fieldColumn {
             /*padding: 1px 1px 1px 6px;*/
         }
 
@@ -78,35 +79,35 @@
         });
 
         Ext.application(
-            {
-                name: 'App',
-                appFolder: 'app',
-                requires: ['Admin.view.SummaryTreePanel'],
+                {
+                    name: 'App',
+                    appFolder: 'app',
+                    requires: ['Admin.view.SummaryTreePanel'],
 
-                launch: function() {
-                    Ext.create('Ext.container.Viewport', {
-                        layout: 'border',
-                        padding: 0,
-                        items: [
-                            {
-                                region: 'center',
-                                id: 'region-center',
-                                xtype: 'panel',
-                                items: [
-                                    {
-                                        xtype: 'summaryTreePanel'
-                                    }
-                                ]
-                            }
-                        ]
-                    });
+                    launch: function () {
+                        Ext.create('Ext.container.Viewport', {
+                            layout: 'border',
+                            padding: 0,
+                            items: [
+                                {
+                                    region: 'center',
+                                    id: 'region-center',
+                                    xtype: 'panel',
+                                    items: [
+                                        {
+                                            xtype: 'summaryTreePanel'
+                                        }
+                                    ]
+                                }
+                            ]
+                        });
 
-                    // Example load memory data
-                    var treePanel = Ext.ComponentQuery.query('summaryTreePanel')[0];
-                    treePanel.getStore().setRootNode(Ext.clone(g_summaryData));
-                    treePanel.renderBasicView();
-                }
-            });
+                        // Example load memory data
+                        var treePanel = Ext.ComponentQuery.query('summaryTreePanel')[0];
+                        treePanel.getStore().setRootNode(Ext.clone(g_summaryData));
+                        treePanel.renderBasicView();
+                    }
+                });
     </script>
 
 </head>

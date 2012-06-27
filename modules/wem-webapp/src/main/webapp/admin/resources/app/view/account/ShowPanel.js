@@ -1,6 +1,6 @@
-Ext.define( 'Admin.view.account.ShowPanel', {
+Ext.define('Admin.view.account.ShowPanel', {
     extend: 'Ext.panel.Panel',
-    alias : 'widget.accountShow',
+    alias: 'widget.accountShow',
 
     requires: [
         'Admin.view.account.BrowseToolbar',
@@ -12,8 +12,7 @@ Ext.define( 'Admin.view.account.ShowPanel', {
     border: false,
     padding: 5,
 
-    initComponent: function()
-    {
+    initComponent: function () {
         this.items = [
             {
                 region: 'north',
@@ -31,7 +30,7 @@ Ext.define( 'Admin.view.account.ShowPanel', {
             }
         ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
     }
 
-} );
+});

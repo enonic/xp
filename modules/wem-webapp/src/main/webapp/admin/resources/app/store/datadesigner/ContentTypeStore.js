@@ -1,4 +1,4 @@
-Ext.define( 'Admin.store.datadesigner.ContentTypeStore', {
+Ext.define('Admin.store.datadesigner.ContentTypeStore', {
     extend: 'Ext.data.Store',
 
     model: 'Admin.model.datadesigner.ContentTypeModel',
@@ -22,4 +22,4 @@ Ext.define( 'Admin.store.datadesigner.ContentTypeStore', {
             totalProperty: 'results.total'
         }
     }
-} );
+});

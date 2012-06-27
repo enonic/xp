@@ -5,8 +5,7 @@ Ext.define('App.controller.ActivityStreamController', {
     stores: ['ActivityStreamStore'],
     views: ['ActivityStreamPanel'],
 
-    init: function()
-    {
+    init: function () {
         this.control(
             {
                 'activityStreamPanel': {
@@ -16,14 +15,12 @@ Ext.define('App.controller.ActivityStreamController', {
         );
     },
 
-    afterPanelRender: function()
-    {
+    afterPanelRender: function () {
         this.appendSpeakOutPanel();
         this.createDataView();
     },
 
-    createDataView: function()
-    {
+    createDataView: function () {
         var store = this.getStore('ActivityStreamStore');
         var template = new Ext.XTemplate(Templates.main.activityStream);
 
@@ -35,13 +32,13 @@ Ext.define('App.controller.ActivityStreamController', {
             renderTo: 'admin-activity-stream-messages-container',
             emptyText: 'No messages',
             listeners: {
-                'itemmouseenter':  {
+                'itemmouseenter': {
                     fn: this.onMessageMouseEnter
                 },
-                'itemmouseleave':  {
+                'itemmouseleave': {
                     fn: this.onMessageMouseLeave
                 },
-                'itemclick':  {
+                'itemclick': {
                     fn: this.onMessageClick,
                     scope: this
                 }
@@ -49,8 +46,7 @@ Ext.define('App.controller.ActivityStreamController', {
         });
     },
 
-    onMessageMouseEnter: function(view, record, item, index, event, eOpts )
-    {
+    onMessageMouseEnter: function (view, record, item, index, event, eOpts) {
         var dom = Ext.DomQuery;
         var favorite = dom.selectNode('.favorite', item);
         var comment = dom.selectNode('.comment', item);
@@ -61,16 +57,14 @@ Ext.define('App.controller.ActivityStreamController', {
         more.style.visibility = 'visible';
     },
 
-    onMessageMouseLeave: function(view, record, item, index, event, eOpts )
-    {
+    onMessageMouseLeave: function (view, record, item, index, event, eOpts) {
         var dom = Ext.DomQuery;
         var favorite = dom.selectNode('.favorite', item);
         var comment = dom.selectNode('.comment', item);
         var more = dom.selectNode('.more', item);
 
         var messageIsFavorited = favorite.className.indexOf('favorited') === -1;
-        if (messageIsFavorited)
-        {
+        if (messageIsFavorited) {
             favorite.style.visibility = 'hidden';
         }
 
@@ -78,42 +72,35 @@ Ext.define('App.controller.ActivityStreamController', {
         more.style.visibility = 'hidden';
     },
 
-    onMessageClick: function( view, record, item, index, event, eOpts )
-    {
+    onMessageClick: function (view, record, item, index, event, eOpts) {
         var targetElement = new Ext.Element(event.target);
 
-        if (targetElement.hasCls('favorite'))
-        {
-            if ( targetElement.hasCls('favorited') )
-            {
+        if (targetElement.hasCls('favorite')) {
+            if (targetElement.hasCls('favorited')) {
                 targetElement.removeCls('favorited');
-            }
-            else
-            {
+            } else {
                 targetElement.addCls('favorited');
             }
         }
 
         // TODO: Testing the notifier.
-        if (targetElement.hasCls('comment'))
-        {
-            this.application.fireEvent('notifier.show', 'Comment added', 'Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.', true);
+        if (targetElement.hasCls('comment')) {
+            this.application.fireEvent('notifier.show', 'Comment added',
+                'Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.', true);
         }
     },
 
-    appendSpeakOutPanel: function()
-    {
+    appendSpeakOutPanel: function () {
         var template = new Ext.XTemplate(Templates.main.speakOutPanel);
-        var container = Ext.DomQuery.select( '#admin-activity-stream-speak-out-panel-container' )[0];
-        template.append( container, {});
+        var container = Ext.DomQuery.select('#admin-activity-stream-speak-out-panel-container')[0];
+        template.append(container, {});
 
         this.appendSpeakOutTextField();
         this.appendUrlShortenerButton();
         this.appendSpeakOutSendButton();
     },
 
-    appendSpeakOutTextField: function()
-    {
+    appendSpeakOutTextField: function () {
         new Ext.form.TextField(
             {
                 itemId: 'speakOutTextField',
@@ -123,7 +110,7 @@ Ext.define('App.controller.ActivityStreamController', {
                 width: 247,
                 enableKeyEvents: true,
                 listeners: {
-                    'keyup':  {
+                    'keyup': {
                         fn: this.onSpeakOutTextFieldKeyUp,
                         scope: this
                     }
@@ -132,27 +119,25 @@ Ext.define('App.controller.ActivityStreamController', {
         );
     },
 
-    appendUrlShortenerButton: function()
-    {
+    appendUrlShortenerButton: function () {
         new Ext.button.Button(
             {
                 renderTo: 'activity-stream-speak-out-url-shortener-button-container',
                 iconCls: 'icon-link',
-                handler: function() {
+                handler: function () {
                 }
             }
         );
     },
 
-    appendSpeakOutSendButton: function()
-    {
+    appendSpeakOutSendButton: function () {
         var me = this;
 
         new Ext.button.Button(
             {
                 renderTo: 'activity-stream-speak-out-send-button-container',
                 text: 'Send',
-                handler: function() {
+                handler: function () {
                     me.postMessage(me.getSpeakOutTextField().getValue());
                     me.resetSpeakOutTextField();
                 }
@@ -160,17 +145,15 @@ Ext.define('App.controller.ActivityStreamController', {
         );
     },
 
-    postMessage: function(message)
-    {
-        if (message.length === 0)
-        {
+    postMessage: function (message) {
+        if (message.length === 0) {
             return;
         }
 
         var store = this.getStore('ActivityStreamStore');
-        store.insert( 0, [
+        store.insert(0, [
             {
-                "displayName":"Morten Eriksen",
+                "displayName": "Morten Eriksen",
                 "photo": "resources/images/x-user.png",
                 "location": "Admin",
                 "action": "Said",
@@ -181,23 +164,20 @@ Ext.define('App.controller.ActivityStreamController', {
         ]);
     },
 
-    updateLettersLeftContainer: function()
-    {
+    updateLettersLeftContainer: function () {
         var speakOutTextField = this.getSpeakOutTextField();
-        var lettersLeftContainer = Ext.DomQuery.select( '#activity-stream-speak-out-letters-left-container' )[0];
+        var lettersLeftContainer = Ext.DomQuery.select('#activity-stream-speak-out-letters-left-container')[0];
         var textFieldMaxTextLength = speakOutTextField.maxLength;
         var textFieldTextLength = speakOutTextField.getValue().length;
 
-        if (textFieldTextLength <= textFieldMaxTextLength)
-        {
+        if (textFieldTextLength <= textFieldMaxTextLength) {
             lettersLeftContainer.innerHTML = String((textFieldMaxTextLength - textFieldTextLength));
         }
     },
 
-    onSpeakOutTextFieldKeyUp: function(textField, event, eOpts) {
+    onSpeakOutTextFieldKeyUp: function (textField, event, eOpts) {
         var isEnterKey = event.button === 12;
-        if ( isEnterKey )
-        {
+        if (isEnterKey) {
             this.postMessage(textField.getValue());
             this.resetSpeakOutTextField();
         }
@@ -205,16 +185,14 @@ Ext.define('App.controller.ActivityStreamController', {
         this.updateLettersLeftContainer();
     },
 
-    resetSpeakOutTextField: function()
-    {
+    resetSpeakOutTextField: function () {
         var textField = this.getSpeakOutTextField();
         textField.setValue('');
         textField.focus();
     },
 
-    getSpeakOutTextField: function()
-    {
-        return Ext.ComponentQuery.query( 'textfield[itemId=speakOutTextField]' )[0];
+    getSpeakOutTextField: function () {
+        return Ext.ComponentQuery.query('textfield[itemId=speakOutTextField]')[0];
     }
 
 });

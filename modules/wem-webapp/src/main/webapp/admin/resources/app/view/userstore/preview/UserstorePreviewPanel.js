@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.userstore.preview.UserstorePreviewPanel', {
+Ext.define('Admin.view.userstore.preview.UserstorePreviewPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.userstorePreviewPanel',
 
@@ -10,18 +10,16 @@ Ext.define( 'Admin.view.userstore.preview.UserstorePreviewPanel', {
 
     showToolbar: true,
 
-    initComponent: function()
-    {
+    initComponent: function () {
         this.items = [
             this.createNoneSelection(),
             this.createUserstoreSelection()
         ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
     },
 
-    createUserstoreSelection: function()
-    {
+    createUserstoreSelection: function () {
         return {
             xtype: 'container',
             itemId: 'userstoreDetails',
@@ -59,7 +57,6 @@ Ext.define( 'Admin.view.userstore.preview.UserstorePreviewPanel', {
                             data: this.data
                         },
                         {
-                            xtype: 'component',
                             flex: 1,
                             cls: 'center',
                             xtype: 'tabpanel',
@@ -96,9 +93,8 @@ Ext.define( 'Admin.view.userstore.preview.UserstorePreviewPanel', {
         };
     },
 
-    createNoneSelection: function()
-    {
-        var tpl = new Ext.XTemplate( Templates.userstore.noUserstoreSelected );
+    createNoneSelection: function () {
+        var tpl = new Ext.XTemplate(Templates.userstore.noUserstoreSelected);
         var panel = {
             xtype: 'panel',
             itemId: 'noneSelectedPanel',
@@ -112,34 +108,31 @@ Ext.define( 'Admin.view.userstore.preview.UserstorePreviewPanel', {
         return panel;
     },
 
-    setData: function( data )
-    {
-        if ( data ) {
+    setData: function (data) {
+        if (data) {
 
             this.data = data;
 
-            var previewHeader = this.down( '#previewHeader' );
-            previewHeader.update( data );
+            var previewHeader = this.down('#previewHeader');
+            previewHeader.update(data);
 
-            var previewPhoto = this.down( '#previewPhoto' );
-            previewPhoto.update( data );
+            var previewPhoto = this.down('#previewPhoto');
+            previewPhoto.update(data);
 
-            var previewInfo = this.down( '#previewInfo' );
-            previewInfo.update( data );
+            var previewInfo = this.down('#previewInfo');
+            previewInfo.update(data);
 
-            var configurationArea = this.down( '#configurationArea' );
-            configurationArea.setValue( data['configXML'] );
-            this.getLayout().setActiveItem( 'userstoreDetails' );
-        }
-        else {
-            this.getLayout().setActiveItem( 'noneSelectedPanel' );
+            var configurationArea = this.down('#configurationArea');
+            configurationArea.setValue(data.configXML);
+            this.getLayout().setActiveItem('userstoreDetails');
+        } else {
+            this.getLayout().setActiveItem('noneSelectedPanel');
         }
     },
 
-    getData: function()
-    {
+    getData: function () {
         return this.data;
     }
 
 
-} );
+});

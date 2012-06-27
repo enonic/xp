@@ -1,4 +1,4 @@
-Ext.define( 'App.view.Dashlet', {
+Ext.define('App.view.Dashlet', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.dashlet',
 
@@ -24,28 +24,24 @@ Ext.define( 'App.view.Dashlet', {
 
     html: 'Dashlet text',
 
-    initComponent: function()
-    {
+    initComponent: function () {
         this.tools = this.getTools();
-        this.callParent( arguments );
+        this.callParent(arguments);
     },
 
-    getTools: function()
-    {
+    getTools: function () {
         return [
             {
                 xtype: 'tool',
                 type: 'gear',
-                handler: function( e, target, panelHeader, tool )
-                {
+                handler: function (e, target, panelHeader, tool) {
                     var dashlet = panelHeader.ownerCt;
-                    dashlet.setLoading( 'Working...' );
-                    Ext.defer( function()
-                    {
-                        dashlet.setLoading( false );
-                    }, 2000 );
+                    dashlet.setLoading('Working...');
+                    Ext.defer(function () {
+                        dashlet.setLoading(false);
+                    }, 2000);
                 }
             }
         ];
     }
-} );
+});

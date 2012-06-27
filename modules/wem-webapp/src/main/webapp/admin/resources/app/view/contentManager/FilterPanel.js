@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.contentManager.FilterPanel', {
+Ext.define('Admin.view.contentManager.FilterPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.contentFilter',
     cls: 'facet-navigation',
@@ -7,8 +7,7 @@ Ext.define( 'Admin.view.contentManager.FilterPanel', {
     split: true,
     collapsible: true,
 
-    initComponent: function()
-    {
+    initComponent: function () {
         var search = {
             xtype: 'fieldcontainer',
             layout: 'hbox',
@@ -179,72 +178,66 @@ Ext.define( 'Admin.view.contentManager.FilterPanel', {
             ]
         };
 
-        Ext.apply( this, filter );
+        Ext.apply(this, filter);
         Ext.tip.QuickTipManager.init();
 
-        this.callParent( arguments );
+        this.callParent(arguments);
     },
 
 
-    getValues: function()
-    {
+    getValues: function () {
         var value, values = [];
 
-        var checkboxes = Ext.ComponentQuery.query( '#filterText, checkbox', this );
-        Ext.Array.each( checkboxes, function( checkbox )
-        {
-            if ( checkbox.getValue() ) {
+        var checkboxes = Ext.ComponentQuery.query('#filterText, checkbox', this);
+        Ext.Array.each(checkboxes, function (checkbox) {
+            if (checkbox.getValue()) {
                 value = {};
                 value[checkbox.getName()] = checkbox.getValue();
-                values.push( value );
+                values.push(value);
             }
-        } );
+        });
         return values;
     },
 
 
-    resetFilter: function()
-    {
-        var checkboxes = Ext.ComponentQuery.query( 'checkbox' );
-        Ext.Array.each( checkboxes, function( checkbox )
-        {
+    resetFilter: function () {
+        var checkboxes = Ext.ComponentQuery.query('checkbox');
+        Ext.Array.each(checkboxes, function (checkbox) {
             checkbox.suspendEvents();
-            checkbox.setValue( false );
+            checkbox.setValue(false);
             checkbox.show();
             checkbox.resumeEvents();
-        } );
+        });
 
-        var filterTextField = this.query( '#filterText' )[0];
+        var filterTextField = this.query('#filterText')[0];
         filterTextField.suspendEvents();
         filterTextField.reset();
         filterTextField.resumeEvents();
 
-        var filterButton = this.query( '#filterButton' )[0];
-        filterButton.fireEvent( 'click' );
+        var filterButton = this.query('#filterButton')[0];
+        filterButton.fireEvent('click');
     },
 
 
-    updateTitle: function()
-    {
+    updateTitle: function () {
         var values = this.getValues();
-        if ( values.length == 0 ) {
+        if (values.length === 0) {
 
-            this.setTitle( 'Filter' );
+            this.setTitle('Filter');
 
         } else {
 
             var title = "Filter   (<a href='javascript:;' class='clearSelection'>Clear filter</a>)";
-            this.setTitle( title );
+            this.setTitle(title);
 
-            var clearSel = this.header.el.down( 'a.clearSelection' );
-            if ( clearSel ) {
-                clearSel.on( "click", function()
-                {
+            var clearSel = this.header.el.down('a.clearSelection');
+            if (clearSel) {
+                clearSel.on("click", function () {
                     this.resetFilter();
-                }, this );
+                }, this);
             }
 
         }
     }
 
-} );
+});

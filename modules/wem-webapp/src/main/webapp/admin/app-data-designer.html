@@ -12,7 +12,7 @@
 
     <script type="text/javascript">
 
-        Ext.Loader.setConfig( {
+        Ext.Loader.setConfig({
             enabled: true,
             paths: {
                 'Common': 'common/js',
@@ -20,8 +20,8 @@
                 'Admin': 'resources/app'
             },
             disableCaching: false
-        } );
-        Ext.application( {
+        });
+        Ext.application({
             name: 'App',
 
             controllers: [
@@ -32,9 +32,8 @@
                 'Admin.view.TabPanel'
             ],
 
-            launch: function()
-            {
-                Ext.create( 'Ext.container.Viewport', {
+            launch: function () {
+                Ext.create('Ext.container.Viewport', {
                     region: 'center',
                     title: 'Browse',
                     layout: 'border',
@@ -89,9 +88,9 @@
                             ]
                         }
                     ]
-                } );
+                });
             }
-        } );
+        });
     </script>
 
 </head>

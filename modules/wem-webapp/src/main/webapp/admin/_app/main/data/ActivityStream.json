@@ -2,7 +2,7 @@
     "total": 999,
     "activitystreams": [
         {
-            "displayName":"Morten Eriksen",
+            "displayName": "Morten Eriksen",
             "photo": "resources/images/x-user.png",
             "location": "Admin",
             "action": "Created article",
@@ -11,7 +11,7 @@
             "birthday": false
         },
         {
-            "displayName":"Viktor Fedorov",
+            "displayName": "Viktor Fedorov",
             "location": "Admin",
             "photo": "_app/main/images/activity-stream/viktor.jpeg",
             "action": "Started user store sync",
@@ -20,7 +20,7 @@
             "birthday": true
         },
         {
-            "displayName":"Pavel Milkevich",
+            "displayName": "Pavel Milkevich",
             "photo": "_app/main/images/activity-stream/pavel.jpeg",
             "location": "Admin",
             "action": "Said",
@@ -30,7 +30,7 @@
         },
 
         {
-            "displayName":"Hein Haraldsen",
+            "displayName": "Hein Haraldsen",
             "photo": "_app/main/images/activity-stream/hein.jpg",
             "location": "Admin",
             "action": "Accidently deleted site",

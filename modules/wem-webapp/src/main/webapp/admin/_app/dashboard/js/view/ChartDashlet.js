@@ -17,16 +17,16 @@ Ext.define('App.view.ChartDashlet', {
     title: 'Chart Dashlet',
     html: 'Chart dashlet text',
     listeners: {
-        afterrender: function() {
+        afterrender: function () {
             this.doLayout();
         }
     },
 
-    generateData: function(n, floor){
+    generateData: function (n, floor) {
         var data = [],
             i;
 
-        floor = (!floor && floor !== 0)? 20 : floor;
+        floor = (!floor && floor !== 0) ? 20 : floor;
 
         for (i = 0; i < (n || 12); i++) {
             data.push({
@@ -44,10 +44,10 @@ Ext.define('App.view.ChartDashlet', {
             xtype: 'chart',
             style: 'background:#fff',
             animate: true,
-            store: Ext.create( "Ext.data.JsonStore", {
+            store: Ext.create("Ext.data.JsonStore", {
                 fields: ["name", "data1", "data2", "data3"],
                 data: this.generateData()
-            } ),
+            }),
             shadow: true,
             theme: 'Category1',
             legend: {

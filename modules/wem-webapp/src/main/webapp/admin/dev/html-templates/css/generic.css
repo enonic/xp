@@ -31,11 +31,10 @@ h2.header {
 }
 
 templates-index ul li {
-   list-style: disc;
+    list-style: disc;
 }
 
 /* END: Only used for the templates example pages */
-
 
 .admin-left {
     float: left;

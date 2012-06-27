@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.account.DoublePasswordField', {
+Ext.define('Admin.view.account.DoublePasswordField', {
     extend: 'Ext.container.Container',
     alias: 'widget.doublePasswordField',
 
@@ -48,21 +48,19 @@ Ext.define( 'Admin.view.account.DoublePasswordField', {
     isRepeatValid: false,
     updateRepeatDelayed: null,
 
-    initComponent: function()
-    {
+    initComponent: function () {
         var me = this;
 
-        this.updateRepeatDelayed = new Ext.util.DelayedTask( function()
-        {
+        this.updateRepeatDelayed = new Ext.util.DelayedTask(function () {
             var data;
             var repeat = me.getRepeatField();
-            if ( me.testEqual( repeat.getValue(), me.getPasswordField().getValue() ) ) {
+            if (me.testEqual(repeat.getValue(), me.getPasswordField().getValue())) {
                 data = {type: 'match', text: ''};
             } else {
                 data = {type: '', text: ''};
             }
-            me.getRepeatStatus().update( data );
-        } );
+            me.getRepeatStatus().update(data);
+        });
 
         me.items = [
             {
@@ -141,187 +139,171 @@ Ext.define( 'Admin.view.account.DoublePasswordField', {
                 ]
             }
         ];
-        me.callParent( arguments );
-        me.addEvents( 'validitychange' );
+        me.callParent(arguments);
+        me.addEvents('validitychange');
     },
 
 
-    updatePasswordStatus: function( field, event, opts )
-    {
+    updatePasswordStatus: function (field, event, opts) {
         var data;
-        if ( !Ext.isEmpty( field.getValue() ) ) {
+        if (!Ext.isEmpty(field.getValue())) {
 
-            var passwordLevel = this.calculatePasswordStrength( field.getValue() );
-            data = this.passwordStatuses[ passwordLevel ];
-            var input = field.el.down( 'input' );
-            if ( passwordLevel == 5 ) {
-                input.addCls( 'admin-password-extra-strong' );
+            var passwordLevel = this.calculatePasswordStrength(field.getValue());
+            data = this.passwordStatuses[passwordLevel];
+            var input = field.el.down('input');
+            if (passwordLevel === 5) {
+                input.addCls('admin-password-extra-strong');
             } else {
-                input.removeCls( 'admin-password-extra-strong' )
+                input.removeCls('admin-password-extra-strong');
             }
 
         } else {
-            data = { text: '' }
+            data = { text: '' };
         }
-        this.getPasswordStatus().update( data );
+        this.getPasswordStatus().update(data);
     },
 
-    calculatePasswordStrength: function( pwd )
-    {
+    calculatePasswordStrength: function (pwd) {
         var featuresNumber = 0;
 
         // Calculating feature count
         // Has text and numbers
-        if ( pwd.match( /\d+/g ) && pwd.match( /[A-Za-z]+/g ) ) {
+        if (pwd.match(/\d+/g) && pwd.match(/[A-Za-z]+/g)) {
             featuresNumber += 1;
         }
         // Has special chars
-        if ( pwd.match( /[\]\[!"#$%&'()*+,.\/:;<=>?@\^_`{|}~-]+/g ) ) {
+        if (pwd.match(/[\]\[!"#$%&'()*+,.\/:;<=>?@\^_`{|}~\-]+/g)) {
             featuresNumber += 1;
         }
         // Has at least two "text" and two "number" characters
-        if ( pwd.match( /\d\d+/g ) && pwd.match( /[A-Za-z]+/g ) ) {
+        if (pwd.match(/\d\d+/g) && pwd.match(/[A-Za-z]+/g)) {
             featuresNumber += 1;
         }
         // Has both uppercase and lower case text
-        if ( pwd.match( /[A-Z]+/g ) && pwd.match( /[a-z]+/g ) ) {
+        if (pwd.match(/[A-Z]+/g) && pwd.match(/[a-z]+/g)) {
             featuresNumber += 1;
         }
         // Calculating level
-        if ( (pwd.length >= 12) && (featuresNumber >= 4) ) {
+        if ((pwd.length >= 12) && (featuresNumber >= 4)) {
             return 5;
         }
-        if ( (pwd.length >= 10) && (featuresNumber >= 3) ) {
+        if ((pwd.length >= 10) && (featuresNumber >= 3)) {
             return 4;
         }
-        if ( (pwd.length >= 10) && (featuresNumber >= 2) ) {
+        if ((pwd.length >= 10) && (featuresNumber >= 2)) {
             return 3;
         }
-        if ( (pwd.length >= 8) && (featuresNumber >= 1) ) {
+        if ((pwd.length >= 8) && (featuresNumber >= 1)) {
             return 2;
         }
-        if ( (pwd.length >= 6) && (pwd.match( /\d+/g ) || pwd.match( /[A-Za-z]+/g )) ) {
+        if ((pwd.length >= 6) && (pwd.match(/\d+/g) || pwd.match(/[A-Za-z]+/g))) {
             return 1;
         }
 
         return 0;
     },
 
-    validatePassword: function( value )
-    {
-        var parent = this.up( 'doublePasswordField' );
-        if ( this.isDirty() ) {
-            parent.updatePasswordStatus( parent.getPasswordField() );
+    validatePassword: function (value) {
+        var parent = this.up('doublePasswordField');
+        if (this.isDirty()) {
+            parent.updatePasswordStatus(parent.getPasswordField());
         }
 
         var repeat = parent.getRepeatField();
-        if ( repeat.isDirty() ) {
+        if (repeat.isDirty()) {
             repeat.validate();
         }
         return true;
     },
 
-    passwordValidityChanged: function( field, isValid, opts )
-    {
-        var parent = field.up( 'doublePasswordField' );
+    passwordValidityChanged: function (field, isValid, opts) {
+        var parent = field.up('doublePasswordField');
         var wasValid = parent.isPasswordValid && parent.isRepeatValid;
         var nowValid = isValid && parent.isRepeatValid;
         parent.isPasswordValid = isValid;
 
         // fire change if both fields became either valid or invalid
-        if ( wasValid != nowValid ) {
-            parent.fireEvent( 'validitychange', parent, nowValid );
+        if (wasValid !== nowValid) {
+            parent.fireEvent('validitychange', parent, nowValid);
         }
     },
 
 
-    updateRepeatStatus: function( field, event, opts )
-    {
+    updateRepeatStatus: function (field, event, opts) {
         var isSpecialKey = event && event.isSpecialKey()
-                                   && event.getKey() != event.BACKSPACE && event.getKey() != event.DELETE;
-        if ( isSpecialKey ) {
+                               && event.getKey() !== event.BACKSPACE && event.getKey() !== event.DELETE;
+        if (isSpecialKey) {
             return;
         }
         var status = this.getRepeatStatus();
-        if ( !Ext.isEmpty( field.getValue() ) ) {
-            status.update( { type: 'loading', text: '' } );
-            this.updateRepeatDelayed.delay( this.repeatDelay );
+        if (!Ext.isEmpty(field.getValue())) {
+            status.update({ type: 'loading', text: '' });
+            this.updateRepeatDelayed.delay(this.repeatDelay);
         } else {
-            status.update( { type: '', text: '' } );
+            status.update({ type: '', text: '' });
         }
     },
 
-    testEqual: function( value1, value2 )
-    {
+    testEqual: function (value1, value2) {
         return value1 === value2;
     },
 
-    validateRepeat: function( value )
-    {
-        var parent = this.up( 'doublePasswordField' );
-        if ( this.isDirty() ) {
-            parent.updateRepeatStatus( parent.getRepeatField() );
+    validateRepeat: function (value) {
+        var parent = this.up('doublePasswordField');
+        if (this.isDirty()) {
+            parent.updateRepeatStatus(parent.getRepeatField());
         }
-        return parent.testEqual( value, parent.getPasswordField().getValue() );
+        return parent.testEqual(value, parent.getPasswordField().getValue());
     },
 
-    repeatValidityChanged: function( field, isValid, opts )
-    {
-        var parent = field.up( 'doublePasswordField' );
+    repeatValidityChanged: function (field, isValid, opts) {
+        var parent = field.up('doublePasswordField');
         var wasValid = parent.isPasswordValid && parent.isRepeatValid;
         var nowValid = parent.isPasswordValid && isValid;
         parent.isRepeatValid = isValid;
 
         // fire change if both fields became either valid or invalid
-        if ( wasValid != nowValid ) {
-            parent.fireEvent( 'validitychange', parent, nowValid );
+        if (wasValid !== nowValid) {
+            parent.fireEvent('validitychange', parent, nowValid);
         }
     },
 
 
-    getPasswordField: function()
-    {
-        return this.down( '#passwordInput' );
+    getPasswordField: function () {
+        return this.down('#passwordInput');
     },
 
-    getPasswordStatus: function()
-    {
-        return this.down( '#passwordStatus' );
+    getPasswordStatus: function () {
+        return this.down('#passwordStatus');
     },
 
-    getRepeatField: function()
-    {
-        return this.down( '#repeatInput' );
+    getRepeatField: function () {
+        return this.down('#repeatInput');
     },
 
-    getRepeatStatus: function()
-    {
-        return this.down( '#repeatStatus' );
+    getRepeatStatus: function () {
+        return this.down('#repeatStatus');
     },
 
-    getValue: function()
-    {
+    getValue: function () {
         return this.getPasswordField().getValue();
     },
 
-    setValue: function( value )
-    {
-        this.getPasswordField().setValue( value );
-        this.getRepeatField().setValue( value );
+    setValue: function (value) {
+        this.getPasswordField().setValue(value);
+        this.getRepeatField().setValue(value);
     },
 
-    validate: function()
-    {
+    validate: function () {
         return this.getPasswordField().validate()
-                && this.getRepeatField().validate();
+            && this.getRepeatField().validate();
     },
 
-    reset: function()
-    {
+    reset: function () {
         this.getPasswordField().reset();
-        this.getPasswordStatus().update( { color: 'black', text: '' } );
+        this.getPasswordStatus().update({ color: 'black', text: '' });
         this.getRepeatField().reset();
-        this.getRepeatStatus().update( { text: '' } );
+        this.getRepeatStatus().update({ text: '' });
     }
 
-} );
+});

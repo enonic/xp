@@ -3,8 +3,7 @@ Ext.define('App.controller.NotificationWindowController', {
 
     views: ['NotificationWindow'],
 
-    init: function()
-    {
+    init: function () {
         Ext.create('widget.notificationWindow');
 
         this.control({
@@ -23,21 +22,19 @@ Ext.define('App.controller.NotificationWindowController', {
 
     },
 
-    show: function(title, message, opts)
-    {
+    show: function (title, message, opts) {
         this.getNotificationWindow().update(
             {
                 messageTitle: title,
                 messageText: message,
-                notifyUser: opts.notifyUser === undefined ? false: opts.notifyUser
+                notifyUser: opts.notifyUser === undefined ? false : opts.notifyUser
             }
         );
-        this.getNotificationWindow().setNotifyOpts( opts );
+        this.getNotificationWindow().setNotifyOpts(opts);
         this.fadeWindowInOut();
     },
 
-    fadeWindowInOut: function()
-    {
+    fadeWindowInOut: function () {
         var self = this;
         var notificationWindow = this.getNotificationWindow();
         notificationWindow.show();
@@ -74,90 +71,79 @@ Ext.define('App.controller.NotificationWindowController', {
                     opacity: 0
                 },
                 listeners: {
-                    'afteranimate': function(t) {
-                        notificationWindow.setPosition(-5000, -5000)
-                    }, scope: this
+                    'afteranimate': function (t) {
+                        notificationWindow.setPosition(-5000, -5000);
+                    },
+                    scope: this
                 }
             }
         );
     },
 
-    hide: function()
-    {
+    hide: function () {
         var notificationWindow = this.getNotificationWindow();
         notificationWindow.stopAnimation();
         notificationWindow.getEl().setOpacity(0);
-        notificationWindow.setPosition(-5000, -5000)
+        notificationWindow.setPosition(-5000, -5000);
     },
 
-    addWindowClickListener: function()
-    {
+    addWindowClickListener: function () {
         var me = this;
         var notificationWindow = this.getNotificationWindow();
 
-        notificationWindow.getEl().on('mouseenter', function() {
+        notificationWindow.getEl().on('mouseenter', function () {
             notificationWindow.getActiveAnimation().paused = true;
         }, this);
 
-        notificationWindow.getEl().on('mouseleave', function() {
+        notificationWindow.getEl().on('mouseleave', function () {
             notificationWindow.getActiveAnimation().paused = false;
         }, this);
 
-        notificationWindow.getEl().on('click', function(event, target) {
-            if(target.className.indexOf('notify-user') > -1)
-            {
+        notificationWindow.getEl().on('click', function (event, target) {
+            if (target.className.indexOf('notify-user') > -1) {
                 var notifyOpts = notificationWindow.getNotifyOpts();
-                Ext.Ajax.request( {
-                      url: 'data/user/userinfo',
-                      method: 'GET',
-                      params: {key: notifyOpts.userKey},
-                      success: function( response )
-                      {
-                          var jsonObj = Ext.JSON.decode( response.responseText );
-                          var model = {data: jsonObj};
-                          if (notifyOpts.newUser)
-                          {
-                              model.subject = "User Created";
-                              model.message = Ext.String.format(Templates.common.notifyUserMessage,
-                                      jsonObj.displayName, jsonObj.name, jsonObj.userStore,
-                                      me.getCurrentUser().displayName);
-                          }
-                          else
-                          {
-                              model.subject = "User Updated";
+                Ext.Ajax.request({
+                    url: 'data/user/userinfo',
+                    method: 'GET',
+                    params: {key: notifyOpts.userKey},
+                    success: function (response) {
+                        var jsonObj = Ext.JSON.decode(response.responseText);
+                        var model = {data: jsonObj};
+                        if (notifyOpts.newUser) {
+                            model.subject = "User Created";
+                            model.message = Ext.String.format(Templates.common.notifyUserMessage,
+                                jsonObj.displayName, jsonObj.name, jsonObj.userStore,
+                                me.getCurrentUser().displayName);
+                        } else {
+                            model.subject = "User Updated";
 
-                          }
-                          me.application.fireEvent('showNotifyUserWindow ', model );
-                      }
-                  } );
+                        }
+                        me.application.fireEvent('showNotifyUserWindow ', model);
+                    }
+                });
             }
 
             this.hide();
         }, this);
     },
 
-    getNotificationWindow: function()
-    {
+    getNotificationWindow: function () {
         var win = Ext.ComponentQuery.query('notificationWindow')[0];
-        if ( !win )
-        {
-            win = Ext.create( 'widget.notificationWindow' );
+        if (!win) {
+            win = Ext.create('widget.notificationWindow');
         }
         return win;
     },
 
-    getCurrentUser: function()
-    {
+    getCurrentUser: function () {
         return {
-                   "name":"mer",
-                   "displayName":"Morten Øien Eriksen",
-                   "name":"mer",
-                   "key":"2AF735F668BB0B75F8AF886C4D304F049460EE43",
-                   "displayName":"Morten Eriksen",
-                   "lastModified":"2010-03-15 16:00:02",
-                   "qualifiedName":"enonic\\mer",
-                    "email":"mer@enonic.com"
-                };
+            "name": "mer",
+            "displayName": "Morten Øien Eriksen",
+            "key": "2AF735F668BB0B75F8AF886C4D304F049460EE43",
+            "lastModified": "2010-03-15 16:00:02",
+            "qualifiedName": "enonic\\mer",
+            "email": "mer@enonic.com"
+        };
     }
 
 });

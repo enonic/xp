@@ -13,8 +13,7 @@
 
         // One
 
-        function showDeleteOne()
-        {
+        function showDeleteOne() {
             var tpl1 = document.getElementById('tpl1').innerHTML;
             var win1 = Ext.create('Ext.window.Window', {
                 title: 'Delete User',
@@ -27,7 +26,7 @@
                 buttons: [
                     {
                         text: 'Cancel',
-                        handler: function() {
+                        handler: function () {
                             this.up('window').close();
                         }
                     },
@@ -40,11 +39,9 @@
         }
 
 
-
         // Many
 
-        function showDeleteMany()
-        {
+        function showDeleteMany() {
             var tpl2 = document.getElementById('tpl2').innerHTML;
             var win2 = Ext.create('Ext.window.Window', {
                 title: 'Delete Items?',
@@ -57,7 +54,7 @@
                 buttons: [
                     {
                         text: 'Cancel',
-                        handler: function() {
+                        handler: function () {
                             this.up('window').close();
                         }
                     },
