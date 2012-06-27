@@ -1,4 +1,4 @@
-Ext.define( 'Admin.controller.contentManager.ContentController', {
+Ext.define('Admin.controller.contentManager.ContentController', {
     extend: 'Admin.controller.contentManager.Controller',
 
     /*      Base controller for content model     */
@@ -7,29 +7,26 @@ Ext.define( 'Admin.controller.contentManager.ContentController', {
     models: [],
     views: [],
 
-    init: function()
-    {
+    init: function () {
     },
 
 
     /*   Public, only CRUD model methods here please     */
 
-    saveContentToDB: function( content, callback )
-    {
+    saveContentToDB: function (content, callback) {
         //TODO
         var key = -1;
-        if ( Ext.isFunction( callback ) ) {
-            callback.call( this, key );
+        if (Ext.isFunction(callback)) {
+            callback.call(this, key);
         }
     },
 
-    deleteContentFromDB: function( content, callback )
-    {
+    deleteContentFromDB: function (content, callback) {
         //TODO
         var success = true;
-        if ( Ext.isFunction( callback ) ) {
-            callback.call( this, success );
+        if (Ext.isFunction(callback)) {
+            callback.call(this, success);
         }
     }
 
-} );
+});

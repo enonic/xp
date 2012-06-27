@@ -1,72 +1,64 @@
-Ext.define( 'Admin.controller.userstore.GridPanelController', {
-    extend:'Admin.controller.userstore.Controller',
+Ext.define('Admin.controller.userstore.GridPanelController', {
+    extend: 'Admin.controller.userstore.Controller',
 
-    stores:[
+    stores: [
         'Admin.store.userstore.UserstoreConfigStore',
         'Admin.store.userstore.UserstoreConnectorStore'
     ],
-    models:[
+    models: [
         'Admin.model.userstore.UserstoreConfigModel',
         'Admin.model.userstore.UserstoreConnectorModel'
     ],
-    views:[
+    views: [
         'Admin.view.userstore.ContextMenu',
         'Admin.view.userstore.GridPanel'
     ],
 
-    init:function ()
-    {
-        Ext.create( 'widget.userstoreContextMenu' );
+    init: function () {
+        Ext.create('widget.userstoreContextMenu');
 
         // Add listeners to GUI controls.
-        this.control( {
-            'userstoreGrid':{
-                selectionchange:function ( selectionModel, selected, eOpts )
-                {
-                    this.application.fireEvent( 'updateDetailsPanel', selected )
+        this.control({
+            'userstoreGrid': {
+                selectionchange: function (selectionModel, selected, eOpts) {
+                    this.application.fireEvent('updateDetailsPanel', selected);
                 },
 
-                itemdblclick:function ( view, record, item, index, e, eOpts )
-                {
-                    this.viewUserstore( record.data );
+                itemdblclick: function (view, record, item, index, e, eOpts) {
+                    this.viewUserstore(record.data);
                 },
 
-                itemcontextmenu:this.showContextMenu
+                itemcontextmenu: this.showContextMenu
             },
 
-            'userstoreContextMenu menuitem[action=editUserstore]':{
-                click:function ( item, e, eOpts )
-                {
+            'userstoreContextMenu menuitem[action=editUserstore]': {
+                click: function (item, e, eOpts) {
                     var userstore = this.getUserstoreGridPanel().getSelectionModel().getSelection()[0].data;
-                    this.createUserstoreTab( userstore );
+                    this.createUserstoreTab(userstore);
                 }
             },
             'userstoreContextMenu menuitem[action=viewUserstore]': {
-                click: function( item, e, eOpts )
-                {
+                click: function (item, e, eOpts) {
                     var userstore = this.getUserstoreGridPanel().getSelectionModel().getSelection()[0].data;
-                    this.viewUserstore( userstore );
+                    this.viewUserstore(userstore);
                 }
             },
-            'userstoreContextMenu menuitem[action=deleteUserstore]':{
-                click:function ()
-                {
+            'userstoreContextMenu menuitem[action=deleteUserstore]': {
+                click: function () {
                     this.showDeleteUserstoreWindow();
                 }
             }
-        } );
+        });
     },
 
-    showContextMenu:function ( view, rec, node, index, e )
-    {
+    showContextMenu: function (view, rec, node, index, e) {
         e.stopEvent();
-        this.getContextMenu().showAt( e.getXY() );
+        this.getContextMenu().showAt(e.getXY());
         return false;
     },
 
-    getContextMenu:function ()
-    {
-        return Ext.ComponentQuery.query( 'userstoreContextMenu' )[0];
+    getContextMenu: function () {
+        return Ext.ComponentQuery.query('userstoreContextMenu')[0];
     }
 
-} );
+});

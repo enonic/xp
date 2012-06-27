@@ -13,7 +13,7 @@ Ext.define('Admin.store.account.CountryStore', {
         reader: {
             type: 'json',
             root: 'countries',
-            totalProperty : 'total'
+            totalProperty: 'total'
         }
     }
 });

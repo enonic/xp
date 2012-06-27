@@ -1,14 +1,16 @@
-Ext.define( 'Admin.store.account.AccountStore', {
+Ext.define('Admin.store.account.AccountStore', {
     extend: 'Ext.data.Store',
 
     model: 'Admin.model.account.AccountModel',
 
     pageSize: 50,
     remoteSort: true,
-    sorters: [{
-        property: 'lastModified',
-        direction: 'DESC'
-    }],
+    sorters: [
+        {
+            property: 'lastModified',
+            direction: 'DESC'
+        }
+    ],
 
     autoLoad: true,
 
@@ -19,7 +21,7 @@ Ext.define( 'Admin.store.account.AccountStore', {
         reader: {
             type: 'json',
             root: 'results.accounts',
-            totalProperty : 'results.total'
+            totalProperty: 'results.total'
         }
     }
-} );
+});

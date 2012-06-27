@@ -9,14 +9,14 @@
 
     <script type="text/javascript">
 
-    Ext.Loader.setConfig({
-        enabled: true,
-        paths: {
-                'App' : '_app/system/js',
-                'Common' : 'common/js',
+        Ext.Loader.setConfig({
+            enabled: true,
+            paths: {
+                'App': '_app/system/js',
+                'Common': 'common/js',
                 'Admin': 'resources/app'
             }
-    });
+        });
 
         Ext.application({
             name: 'App',
@@ -31,7 +31,7 @@
                 'App.view.NavigationPanel'
             ],
 
-            launch: function() {
+            launch: function () {
                 Ext.create('Ext.container.Viewport', {
                     layout: 'border',
                     padding: 5,
@@ -41,7 +41,8 @@
                             region: 'center',
                             xtype: 'cmsTabPanel',
                             id: 'systemTabPanelID',
-                            items: [ {
+                            items: [
+                                {
                                     id: 'tab-browse',
                                     title: 'Browse',
                                     closable: false,

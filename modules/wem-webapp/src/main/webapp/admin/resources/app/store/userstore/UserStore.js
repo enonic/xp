@@ -1,4 +1,4 @@
-Ext.define( 'Admin.store.userstore.UserStore', {
+Ext.define('Admin.store.userstore.UserStore', {
     extend: 'Ext.data.Store',
 
     model: 'Admin.model.account.AccountModel',
@@ -14,7 +14,7 @@ Ext.define( 'Admin.store.userstore.UserStore', {
         reader: {
             type: 'json',
             root: 'users',
-            totalProperty : 'total'
+            totalProperty: 'total'
         }
     }
-} );
+});

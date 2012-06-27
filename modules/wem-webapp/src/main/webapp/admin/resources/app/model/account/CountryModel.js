@@ -1,4 +1,4 @@
-Ext.define( 'Admin.model.account.CountryModel', {
+Ext.define('Admin.model.account.CountryModel', {
     extend: 'Ext.data.Model',
 
     idField: 'code',
@@ -27,4 +27,4 @@ Ext.define( 'Admin.model.account.CountryModel', {
         { model: 'Admin.model.account.CallingCodeModel', name: 'callingCodes' }
     ]
 
-} );
+});

@@ -1,46 +1,45 @@
-Ext.define( 'Admin.view.userstore.BrowseToolbar', {
-    extend:'Ext.toolbar.Toolbar',
-    alias:'widget.browseToolbar',
+Ext.define('Admin.view.userstore.BrowseToolbar', {
+    extend: 'Ext.toolbar.Toolbar',
+    alias: 'widget.browseToolbar',
 
-    border:false,
+    border: false,
 
-    initComponent:function ()
-    {
+    initComponent: function () {
         var buttonDefaults = {
-            scale:'medium',
-            iconAlign:'top',
-            minWidth:64
+            scale: 'medium',
+            iconAlign: 'top',
+            minWidth: 64
         };
 
         this.items = [
             {
-                xtype:'buttongroup',
-                columns:1,
-                defaults:buttonDefaults,
-                items:[
+                xtype: 'buttongroup',
+                columns: 1,
+                defaults: buttonDefaults,
+                items: [
                     {
-                        text:'New',
-                        action:'newUserstore',
-                        iconCls:'icon-userstore-add-24'
+                        text: 'New',
+                        action: 'newUserstore',
+                        iconCls: 'icon-userstore-add-24'
                     }
                 ]
             },
             {
-                xtype:'buttongroup',
-                columns:2,
-                defaults:buttonDefaults,
-                items:[
+                xtype: 'buttongroup',
+                columns: 2,
+                defaults: buttonDefaults,
+                items: [
                     {
-                        text:'Edit',
-                        action:'editUserstore',
-                        disabled:true,
-                        iconCls:'icon-edit-24'
+                        text: 'Edit',
+                        action: 'editUserstore',
+                        disabled: true,
+                        iconCls: 'icon-edit-24'
                     },
                     {
-                        text:'Delete',
-                        action:'deleteUserstore',
-                        disabled:true,
-                        iconCls:'icon-delete-24'
+                        text: 'Delete',
+                        action: 'deleteUserstore',
+                        disabled: true,
+                        iconCls: 'icon-delete-24'
                     }
                 ]
             },
@@ -58,20 +57,20 @@ Ext.define( 'Admin.view.userstore.BrowseToolbar', {
                 ]
             },
             {
-                xtype:'buttongroup',
-                columns:1,
-                defaults:buttonDefaults,
-                items:[
+                xtype: 'buttongroup',
+                columns: 1,
+                defaults: buttonDefaults,
+                items: [
                     {
-                        text:'Synchronize',
-                        iconCls:'icon-refresh',
-                        action:'syncUserstore'
+                        text: 'Synchronize',
+                        iconCls: 'icon-refresh',
+                        action: 'syncUserstore'
                     }
                 ]
             }
         ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
     }
 
-} );
+});

@@ -1,81 +1,81 @@
 Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
-    extend:'Ext.panel.Panel',
-    alias:'widget.groupPreviewPanel',
+    extend: 'Ext.panel.Panel',
+    alias: 'widget.groupPreviewPanel',
 
-    requires:[
+    requires: [
         'Admin.view.account.preview.group.GroupPreviewToolbar',
         'Admin.view.WizardPanel',
         'Admin.view.account.MembershipsGraphPanel'
     ],
 
-    autoWidth:true,
-    autoScroll:true,
+    autoWidth: true,
+    autoScroll: true,
 
-    cls:'admin-user-preview-panel',
-    width:undefined,
+    cls: 'admin-user-preview-panel',
+    width: undefined,
 
-    showToolbar:true,
+    showToolbar: true,
 
-    initComponent:function () {
+    initComponent: function () {
         var me = this;
-        if (this.data && this.data.type == 'role') {
+        if (this.data && this.data.type === 'role') {
             this.data.staticDesc = this.getRoleDescription(this.data.name);
         }
         this.items = [
             {
-                xtype:'panel',
-                layout:{
-                    type:'column',
-                    columns:3
+                xtype: 'panel',
+                layout: {
+                    type: 'column',
+                    columns: 3
                 },
-                autoHeight:true,
-                defaults:{
-                    border:0
+                autoHeight: true,
+                defaults: {
+                    border: 0
                 },
-                items:[
+                items: [
                     {
-                        width:100,
-                        itemId:'previewPhoto',
-                        tpl:Templates.account.userPreviewPhoto,
-                        data:this.data,
-                        margin:5
+                        width: 100,
+                        itemId: 'previewPhoto',
+                        tpl: Templates.account.userPreviewPhoto,
+                        data: this.data,
+                        margin: 5
                     },
                     {
-                        columnWidth:1,
-                        cls:'center',
-                        xtype:'panel',
-                        defaults:{
-                            border:0
+                        columnWidth: 1,
+                        cls: 'center',
+                        xtype: 'panel',
+                        defaults: {
+                            border: 0
                         },
-                        items:[
+                        items: [
                             {
-                                height:70,
-                                itemId:'previewHeader',
-                                tpl:Templates.account.userPreviewHeader,
-                                data:this.data
+                                height: 70,
+                                itemId: 'previewHeader',
+                                tpl: Templates.account.userPreviewHeader,
+                                data: this.data
                             },
                             {
-                                flex:1,
-                                cls:'center',
-                                xtype:'tabpanel',
-                                items:[
+                                flex: 1,
+                                cls: 'center',
+                                xtype: 'tabpanel',
+                                items: [
                                     {
-                                        title:"Memberships",
-                                        itemId:'membershipsTab',
-                                        listeners:{
-                                            afterrender:function () {
-                                                if (me.data && me.data['graph']) {
-                                                    me.down('membershipsGraphPanel').setGraphData(me.data['graph']);
+                                        title: "Memberships",
+                                        itemId: 'membershipsTab',
+                                        listeners: {
+                                            afterrender: function () {
+                                                if (me.data && me.data.graph) {
+                                                    me.down('membershipsGraphPanel').setGraphData(me.data.graph);
                                                 }
                                             }
                                         },
-                                        items:[
+                                        items: [
                                             {
-                                                tpl:Templates.account.userPreviewMemberships
+                                                tpl: Templates.account.userPreviewMemberships
                                             },
                                             {
-                                                xtype:'membershipsGraphPanel',
-                                                extraCls:'admin-memberships-graph'
+                                                xtype: 'membershipsGraphPanel',
+                                                extraCls: 'admin-memberships-graph'
                                             }
                                         ]
                                     }
@@ -84,12 +84,12 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
                         ]
                     },
                     {
-                        width:300,
-                        margin:5,
-                        itemId:'previewInfo',
-                        cls:'east',
-                        tpl:Templates.account.groupPreviewCommonInfo,
-                        data:this.data
+                        width: 300,
+                        margin: 5,
+                        itemId: 'previewInfo',
+                        cls: 'east',
+                        tpl: Templates.account.groupPreviewCommonInfo,
+                        data: this.data
                     }
                 ]
             }
@@ -97,9 +97,9 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
 
         if (this.showToolbar) {
             this.tbar = {
-                xtype:'groupPreviewToolbar',
-                isEditable:this.data.isEditable,
-                isRole:this.data.type == 'role'
+                xtype: 'groupPreviewToolbar',
+                isEditable: this.data.isEditable,
+                isRole: this.data.type === 'role'
             };
         }
 
@@ -107,7 +107,7 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
     },
 
 
-    setData:function (data) {
+    setData: function (data) {
         if (data) {
             this.data = data;
 
@@ -122,7 +122,7 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
 
             var membershipsTab = this.down('#membershipsTab');
             if (membershipsTab.rendered) {
-                membershipsTab.down('membershipsGraphPanel').setGraphData(data['graph']);
+                membershipsTab.down('membershipsGraphPanel').setGraphData(data.graph);
                 // Graph panel for some reason does not repaint itself
                 this.doLayout();
             }
@@ -130,7 +130,7 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
     },
 
     //TODO: Should be replaced, better move to some kind of service
-    getRoleDescription:function (name) {
+    getRoleDescription: function (name) {
         if (name === 'Contributors') {
             return 'Sed at commodo arcu. Integer mattis lorem pharetra ligula dignissim. ';
         }

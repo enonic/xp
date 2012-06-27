@@ -1,17 +1,16 @@
-Ext.define( 'Admin.controller.NotifyUserController', {
+Ext.define('Admin.controller.NotifyUserController', {
     extend: 'Ext.app.Controller',
 
     stores: [],
     models: [],
     views: [ 'Admin.view.NotifyUserWindow'],
 
-    init: function()
-    {
-        this.control( {
-            'notifyUserWindow *[action=send]':{
+    init: function () {
+        this.control({
+            'notifyUserWindow *[action=send]': {
                 click: this.doSend
             }
-        } );
+        });
         this.application.on({
             'showNotifyUserWindow ': this.showWindow,
             scope: this
@@ -22,20 +21,20 @@ Ext.define( 'Admin.controller.NotifyUserController', {
         });
     },
 
-    showWindow: function( model ) {
+    showWindow: function (model) {
         var notifyUserWindow = this.getNotifyUserWindow();
-        notifyUserWindow.doShow( model );
+        notifyUserWindow.doShow(model);
         notifyUserWindow.center();
     },
 
-    closeWindow: function() {
+    closeWindow: function () {
         this.getNotifyUserWindow().setPosition(-5000, -5000);
         this.getNotifyUserWindow().close();
     },
 
-    doSend: function( btn, evt ) {
+    doSend: function (btn, evt) {
         var form = btn.up('notifyUserWindow').down('form').getForm();
-        if( form.isValid() ) {
+        if (form.isValid()) {
             form.submit();
             this.closeWindow();
         } else {
@@ -43,14 +42,13 @@ Ext.define( 'Admin.controller.NotifyUserController', {
         }
     },
 
-    getNotifyUserWindow: function()
-    {
-        var win = Ext.ComponentQuery.query( 'notifyUserWindow' )[0];
-        if ( !win ) {
-            win = Ext.createWidget( 'notifyUserWindow' );
+    getNotifyUserWindow: function () {
+        var win = Ext.ComponentQuery.query('notifyUserWindow')[0];
+        if (!win) {
+            win = Ext.createWidget('notifyUserWindow');
         }
         return win;
     }
 
-} );
+});
 

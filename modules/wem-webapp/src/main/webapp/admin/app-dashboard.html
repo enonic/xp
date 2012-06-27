@@ -12,8 +12,8 @@
         Ext.Loader.setConfig({
             enabled: true,
             paths: {
-                'App' : '_app/dashboard/js',
-                'Common' : 'common/js'
+                'App': '_app/dashboard/js',
+                'Common': 'common/js'
             }
         });
 
@@ -29,7 +29,7 @@
                 'App.view.GridDashlet'
             ],
 
-            launch: function() {
+            launch: function () {
                 var me = this;
                 Ext.create('Ext.container.Viewport', {
                     cls: 'dashboard',
@@ -63,14 +63,18 @@
                                     ]
                                 },
                                 {
-                                    items: [{
-                                        xtype: 'chartDashlet'
-                                    }]
+                                    items: [
+                                        {
+                                            xtype: 'chartDashlet'
+                                        }
+                                    ]
                                 },
                                 {
-                                    items: [{
-                                        html: 'Aliquam ultrices fermentum pulvinar. Sed non nisi sed nulla pellentesque viverra. Praesent porta pellentesque pulvinar.'
-                                    }]
+                                    items: [
+                                        {
+                                            html: 'Aliquam ultrices fermentum pulvinar. Sed non nisi sed nulla pellentesque viverra. Praesent porta pellentesque pulvinar.'
+                                        }
+                                    ]
                                 }
                             ]
                         }

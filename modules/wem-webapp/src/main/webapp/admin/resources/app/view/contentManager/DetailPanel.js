@@ -1,26 +1,26 @@
 Ext.define('Admin.view.contentManager.DetailPanel', {
-    extend:'Ext.panel.Panel',
-    alias:'widget.contentDetail',
+    extend: 'Ext.panel.Panel',
+    alias: 'widget.contentDetail',
 
-    requires:[
+    requires: [
         'Admin.view.contentManager.DetailToolbar',
         'Admin.view.account.MembershipsGraphPanel'
     ],
 
-    autoScroll:true,
-    layout:'card',
-    cls:'admin-preview-panel',
+    autoScroll: true,
+    layout: 'card',
+    cls: 'admin-preview-panel',
 
-    collapsible:true,
-    showToolbar:true,
-    isLiveMode:false,
+    collapsible: true,
+    showToolbar: true,
+    isLiveMode: false,
 
-    initComponent:function () {
+    initComponent: function () {
         if (Ext.isEmpty(this.data)) {
 
             this.activeItem = 'noSelection';
 
-        } else if (Ext.isObject(this.data) || this.data.length == 1) {
+        } else if (Ext.isObject(this.data) || this.data.length === 1) {
 
             if (this.isLiveMode) {
                 this.activeItem = 'livePreview';
@@ -55,99 +55,99 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     },
 
 
-    createNoSelection:function () {
+    createNoSelection: function () {
         return {
-            itemId:'noSelection',
-            xtype:'panel',
-            styleHtmlContent:true,
-            bodyStyle:{
-                border:'none'
+            itemId: 'noSelection',
+            xtype: 'panel',
+            styleHtmlContent: true,
+            bodyStyle: {
+                border: 'none'
             },
-            html:'<h2 class="message">Nothing selected</h2>'
+            html: '<h2 class="message">Nothing selected</h2>'
         };
     },
 
-    createSingleSelection:function (data) {
+    createSingleSelection: function (data) {
         var info;
         if (Ext.isArray(data) && data.length > 0) {
-            info = data[0].data
+            info = data[0].data;
         } else if (!Ext.isEmpty(data)) {
             info = data.data;
         }
         return {
-            xtype:'container',
-            itemId:'singleSelection',
-            layout:{
-                type:'column',
-                columns:3
+            xtype: 'container',
+            itemId: 'singleSelection',
+            layout: {
+                type: 'column',
+                columns: 3
             },
-            defaults:{
-                border:0
+            defaults: {
+                border: 0
             },
-            items:[
+            items: [
                 {
-                    xtype:'component',
-                    width:100,
-                    cls:'west',
-                    itemId:'previewPhoto',
-                    tpl:Templates.contentManager.previewPhoto,
-                    data:info,
-                    margin:5
+                    xtype: 'component',
+                    width: 100,
+                    cls: 'west',
+                    itemId: 'previewPhoto',
+                    tpl: Templates.contentManager.previewPhoto,
+                    data: info,
+                    margin: 5
                 },
                 {
-                    xtype:'container',
-                    columnWidth:1,
-                    margin:'5 0',
-                    defaults:{
-                        border:0
+                    xtype: 'container',
+                    columnWidth: 1,
+                    margin: '5 0',
+                    defaults: {
+                        border: 0
                     },
-                    items:[
+                    items: [
                         {
-                            xtype:'component',
-                            cls:'north',
-                            itemId:'previewHeader',
-                            padding:'5 5 15',
-                            tpl:Templates.contentManager.previewHeader,
-                            data:info
+                            xtype: 'component',
+                            cls: 'north',
+                            itemId: 'previewHeader',
+                            padding: '5 5 15',
+                            tpl: Templates.contentManager.previewHeader,
+                            data: info
                         },
                         {
-                            flex:1,
-                            cls:'center',
-                            xtype:'tabpanel',
-                            items:[
+                            flex: 1,
+                            cls: 'center',
+                            xtype: 'tabpanel',
+                            items: [
                                 {
-                                    title:"Content",
-                                    itemId:'contentTab',
-                                    html:'Content'
+                                    title: "Content",
+                                    itemId: 'contentTab',
+                                    html: 'Content'
                                 },
                                 {
-                                    title:"Tree",
-                                    itemId:'treeTab',
-                                    html:'Tree'
+                                    title: "Tree",
+                                    itemId: 'treeTab',
+                                    html: 'Tree'
                                 },
                                 {
-                                    title:"Page",
-                                    itemId:'pageTab',
-                                    html:'Page'
+                                    title: "Page",
+                                    itemId: 'pageTab',
+                                    html: 'Page'
                                 },
                                 {
-                                    title:"Security",
-                                    itemId:'securityTab',
-                                    html:'Security'
+                                    title: "Security",
+                                    itemId: 'securityTab',
+                                    html: 'Security'
                                 },
                                 {
-                                    title:"Relations",
-                                    itemId:'relationsTab',
-                                    items:[
+                                    title: "Relations",
+                                    itemId: 'relationsTab',
+                                    items: [
                                         {
-                                            tpl:Templates.account.userPreviewMemberships
+                                            tpl: Templates.account.userPreviewMemberships
                                         },
                                         {
-                                            xtype:'membershipsGraphPanel',
-                                            extraCls:'admin-memberships-graph',
-                                            listeners:{
-                                                afterrender:function (cmp) {
-                                                    var data = this.data ? this.data['graph'] : undefined;
+                                            xtype: 'membershipsGraphPanel',
+                                            extraCls: 'admin-memberships-graph',
+                                            listeners: {
+                                                afterrender: function (cmp) {
+                                                    var data = this.data ? this.data.graph : undefined;
                                                     if (data) {
                                                         cmp.setGraphData(data);
                                                     }
@@ -161,77 +161,77 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                     ]
                 },
                 {
-                    xtype:'component',
-                    width:300,
-                    margin:5,
-                    itemId:'previewInfo',
-                    cls:'east',
-                    tpl:Templates.contentManager.previewCommonInfo,
-                    data:info
+                    xtype: 'component',
+                    width: 300,
+                    margin: 5,
+                    itemId: 'previewInfo',
+                    cls: 'east',
+                    tpl: Templates.contentManager.previewCommonInfo,
+                    data: info
                 }
             ]
         };
     },
 
-    createLargeBoxSelection:function (data) {
+    createLargeBoxSelection: function (data) {
         var tpl = Ext.Template(Templates.contentManager.previewSelectionLarge);
 
         var panel = {
-            xtype:'panel',
-            itemId:'largeBoxSelection',
-            styleHtmlContent:true,
-            autoScroll:true,
-            listeners:{
-                click:{
-                    element:'body',
-                    fn:this.deselectItem,
-                    scope:this
+            xtype: 'panel',
+            itemId: 'largeBoxSelection',
+            styleHtmlContent: true,
+            autoScroll: true,
+            listeners: {
+                click: {
+                    element: 'body',
+                    fn: this.deselectItem,
+                    scope: this
                 }
             },
-            padding:10,
-            border:0,
-            tpl:tpl,
-            data:data
+            padding: 10,
+            border: 0,
+            tpl: tpl,
+            data: data
         };
 
         return panel;
     },
 
-    createSmallBoxSelection:function (data) {
+    createSmallBoxSelection: function (data) {
         var tpl = Ext.Template(Templates.contentManager.previewSelectionSmall);
 
         var panel = {
-            xtype:'panel',
-            itemId:'smallBoxSelection',
-            styleHtmlContent:true,
-            listeners:{
-                click:{
-                    element:'body',
-                    fn:this.deselectItem,
-                    scope:this
+            xtype: 'panel',
+            itemId: 'smallBoxSelection',
+            styleHtmlContent: true,
+            listeners: {
+                click: {
+                    element: 'body',
+                    fn: this.deselectItem,
+                    scope: this
                 }
             },
-            autoScroll:true,
-            padding:10,
-            border:0,
-            tpl:tpl,
-            data:data
+            autoScroll: true,
+            padding: 10,
+            border: 0,
+            tpl: tpl,
+            data: data
         };
 
         return panel;
     },
 
-    createLivePreview:function (data) {
+    createLivePreview: function (data) {
         return {
-            itemId:'livePreview',
-            xtype:'panel',
-            autoScroll:true,
-            styleHtmlContent:true
+            itemId: 'livePreview',
+            xtype: 'panel',
+            autoScroll: true,
+            styleHtmlContent: true
         };
     },
 
 
-    deselectItem:function (event, target) {
+    deselectItem: function (event, target) {
         var className = target.className;
         if (className && className === 'remove-selection') {
             var key = target.attributes.getNamedItem('id').nodeValue.split('remove-from-selection-button-')[1];
@@ -241,7 +241,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
         }
     },
 
-    setData:function (data, updateTitle) {
+    setData: function (data, updateTitle) {
         if (!data) {
             return;
         }
@@ -251,13 +251,13 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
             this.getLayout().setActiveItem('noSelection');
 
-        } else if (Ext.isObject(this.data) || this.data.length == 1) {
+        } else if (Ext.isObject(this.data) || this.data.length === 1) {
 
             var singleData;
             if (Ext.isArray(this.data)) {
-                singleData = !Ext.isEmpty(this.data[0]) ? this.data[0][ 'data' ] : undefined;
+                singleData = !Ext.isEmpty(this.data[0]) ? this.data[0].data : undefined;
             } else {
-                singleData = this.data[ 'data' ];
+                singleData = this.data.data;
             }
 
             if (this.isLiveMode) {
@@ -267,15 +267,14 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                 var targetEl = this.down('#livePreview').getTargetEl();
                 targetEl.mask("Loading...");
 
-                targetEl.load( {
-                    url: this.getAppUrl( singleData.url ),
+                targetEl.load({
+                    url: this.getAppUrl(singleData.url),
                     scripts: true,
-                    callback: function( el, success, resp, opts )
-                    {
-                        if ( !success && resp.status ) {
-                            this.target.update( '<h2 class="message">' +
-                                                resp.status + ': ' +
-                                                resp.statusText + '</h2>' );
+                    callback: function (el, success, resp, opts) {
+                        if (!success && resp.status) {
+                            this.target.update('<h2 class="message">' +
+                                               resp.status + ': ' +
+                                               resp.statusText + '</h2>');
                         }
                         targetEl.unmask();
                     }
@@ -315,11 +314,11 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
         }
     },
 
-    getData:function () {
+    getData: function () {
         return this.data;
     },
 
-    updateTitle:function (data) {
+    updateTitle: function (data) {
         var count = Ext.isObject(data) ? 1 : data.length;
         var header = count + " item(s) selected";
         if (count > 0) {
@@ -337,24 +336,24 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
     },
 
-    toggleLive:function () {
+    toggleLive: function () {
         this.isLiveMode = !this.isLiveMode;
-        this.setData( this.data, false )
+        this.setData(this.data, false);
     },
 
-    getAppUrl: function( url )
-    {
-        if ( !Ext.isDefined( url ) ) {
+    getAppUrl: function (url) {
+        if (!Ext.isDefined(url)) {
             return '';
-        } else if ( url.charAt( 0 ) == '/' ) {
-            url = url.substring( 1 );
+        } else if (url.charAt(0) === '/') {
+            url = url.substring(1);
         }
-        var pathArray = location.pathname.split( '/' );
-        var urlArray = url.split( '/' );
+        var pathArray = location.pathname.split('/');
+        var urlArray = url.split('/');
         var path = "/";
-        for ( var i = 1; i < pathArray.length - 1; i++ ) {
+        var i;
+        for (i = 1; i < pathArray.length - 1; i++) {
             // add the path elements until we see a match with the desired url
-            if ( pathArray[i] != urlArray[0] ) {
+            if (pathArray[i] !== urlArray[0]) {
                 path += pathArray[i] + "/";
             } else {
                 break;

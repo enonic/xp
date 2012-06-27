@@ -1,4 +1,4 @@
-Ext.define( 'Admin.controller.account.GridPanelController', {
+Ext.define('Admin.controller.account.GridPanelController', {
     extend: 'Admin.controller.account.Controller',
 
     /*      Controller for handling Grid & its Context Menu UI events       */
@@ -17,14 +17,12 @@ Ext.define( 'Admin.controller.account.GridPanelController', {
         'Admin.view.account.ContextMenu'
     ],
 
-    init: function()
-    {
+    init: function () {
 
         this.control(
             {
                 'accountGrid': {
-                    selectionchange: function()
-                    {
+                    selectionchange: function () {
                         this.updateDetailsPanel();
                         this.updateActionItems();
                     },
@@ -47,85 +45,68 @@ Ext.define( 'Admin.controller.account.GridPanelController', {
         );
     },
 
-    deleteAccount: function( el, e )
-    {
+    deleteAccount: function (el, e) {
         this.showDeleteAccountWindow();
     },
 
-    editAccount: function( el, e )
-    {
+    editAccount: function (el, e) {
         this.showEditAccountPanel();
     },
 
-    changePassword: function( el, e )
-    {
+    changePassword: function (el, e) {
         this.showChangePasswordWindow();
     },
 
-    viewAccount: function( el, e )
-    {
+    viewAccount: function (el, e) {
         this.showPreviewAccountPanel();
     },
 
-    updateDetailsPanel: function()
-    {
+    updateDetailsPanel: function () {
         var detailPanel = this.getAccountDetailPanel();
         var persistentGridSelectionPlugin = this.getPersistentGridSelectionPlugin();
         var persistentSelection = persistentGridSelectionPlugin.getSelection();
         var persistentSelectionCount = persistentGridSelectionPlugin.getSelectionCount();
         var showAccountPreviewOnly = persistentSelectionCount === 1;
 
-        if ( persistentSelectionCount === 0 )
-        {
+        if (persistentSelectionCount === 0) {
             detailPanel.showNoneSelection();
-        }
-        else if ( showAccountPreviewOnly )
-        {
+        } else if (showAccountPreviewOnly) {
             // need raw to include fields like memberships, not defined in model
             var accountData = persistentSelection[0].raw;
-            if ( accountData )
-            {
-                detailPanel.setCurrentAccount( accountData );
-                detailPanel.showAccountPreview( accountData )
+            if (accountData) {
+                detailPanel.setCurrentAccount(accountData);
+                detailPanel.showAccountPreview(accountData);
             }
-        }
-        else
-        {
+        } else {
             var detailed = true;
-            if ( persistentSelectionCount > 10 )
-            {
+            if (persistentSelectionCount > 10) {
                 detailed = false;
             }
             var selectedUsers = [];
-            Ext.Array.each( persistentSelection, function( user )
-            {
-                Ext.Array.include( selectedUsers, user.data );
-            } );
-            detailPanel.showMultipleSelection( selectedUsers, detailed );
+            Ext.Array.each(persistentSelection, function (user) {
+                Ext.Array.include(selectedUsers, user.data);
+            });
+            detailPanel.showMultipleSelection(selectedUsers, detailed);
         }
 
-        detailPanel.updateTitle( persistentGridSelectionPlugin );
+        detailPanel.updateTitle(persistentGridSelectionPlugin);
     },
 
-    popupMenu: function( view, rec, node, index, e )
-    {
+    popupMenu: function (view, rec, node, index, e) {
         e.stopEvent();
-        this.getUserContextMenu().showAt( e.getXY() );
+        this.getUserContextMenu().showAt(e.getXY());
         return false;
     },
 
 
-
     /*      Getters     */
 
-    getUserContextMenu: function()
-    {
-        var menu = Ext.ComponentQuery.query( 'accountContextMenu' )[0];
-        if ( !menu )
-        {
-            menu = Ext.create( 'widget.accountContextMenu' );
+    getUserContextMenu: function () {
+        var menu = Ext.ComponentQuery.query('accountContextMenu')[0];
+        if (!menu) {
+            menu = Ext.create('widget.accountContextMenu');
         }
         return menu;
     }
 
-} );
+});

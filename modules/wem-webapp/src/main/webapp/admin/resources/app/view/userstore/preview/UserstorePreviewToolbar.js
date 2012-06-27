@@ -1,11 +1,10 @@
-Ext.define( 'Admin.view.userstore.preview.UserstorePreviewToolbar', {
+Ext.define('Admin.view.userstore.preview.UserstorePreviewToolbar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.userstorePreviewToolbar',
 
     border: false,
 
-    initComponent: function()
-    {
+    initComponent: function () {
         var buttonDefaults = {
             scale: 'medium',
             iconAlign: 'top',
@@ -44,7 +43,7 @@ Ext.define( 'Admin.view.userstore.preview.UserstorePreviewToolbar', {
             }
         ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
     }
 
-} );
+});

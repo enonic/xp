@@ -1,4 +1,4 @@
-Ext.define( 'Admin.controller.datadesigner.BrowseController', {
+Ext.define('Admin.controller.datadesigner.BrowseController', {
     extend: 'Admin.controller.datadesigner.Controller',
 
     stores: [
@@ -14,8 +14,7 @@ Ext.define( 'Admin.controller.datadesigner.BrowseController', {
         'Admin.view.datadesigner.DetailPanel'
     ],
 
-    init: function()
-    {
+    init: function () {
         Ext.create('widget.datadesignerContextMenu');
 
         this.control(
@@ -57,53 +56,48 @@ Ext.define( 'Admin.controller.datadesigner.BrowseController', {
     },
 
 
-    onGridSelectionChange: function( selModel, selected, opts )
-    {
-        this.updateDetailPanel( selModel, selected, opts );
-        this.enableToolbarButtons( selected.length > 0 );
+    onGridSelectionChange: function (selModel, selected, opts) {
+        this.updateDetailPanel(selModel, selected, opts);
+        this.enableToolbarButtons(selected.length > 0);
     },
 
 
-    updateDetailPanel: function( selModel, selected, opts )
-    {
-        if ( selected.length > 0 ) {
+    updateDetailPanel: function (selModel, selected, opts) {
+        if (selected.length > 0) {
             var panel = this.getDetailPanel();
             var cardLayout = panel.getLayout();
-            panel.setData( selected[0].raw );
+            panel.setData(selected[0].raw);
             cardLayout.setActiveItem('previewContainer');
         }
     },
 
 
-    enableToolbarButtons: function( enable )
-    {
+    enableToolbarButtons: function (enable) {
         var buttons = Ext.ComponentQuery.query('button[action=editContentType], ' +
                                                'button[action=deleteContentType], ' +
                                                'button[action=viewContentType]');
 
-        Ext.Array.each(buttons, function(button) {
-            button.setDisabled( !enable );
+        Ext.Array.each(buttons, function (button) {
+            button.setDisabled(!enable);
         });
     },
 
 
-    filterStore: function()
-    {
+    filterStore: function () {
         var store = this.getStore('Admin.store.datadesigner.ContentTypeStore');
-        var searchTextValue = this.getFilterPanel().getComponent( 'searchTextField' ).getValue();
-        var baseTypesOnly = this.getFilterPanel().getComponent( 'showBaseTypesOnlyCheckbox' ).getValue();
+        var searchTextValue = this.getFilterPanel().getComponent('searchTextField').getValue();
+        var baseTypesOnly = this.getFilterPanel().getComponent('showBaseTypesOnlyCheckbox').getValue();
         store.clearFilter();
 
-        this.doFilterStore( store, searchTextValue, baseTypesOnly );
+        this.doFilterStore(store, searchTextValue, baseTypesOnly);
     },
 
 
-    doFilterStore: function(store, searchText, baseTypesOnly )
-    {
-        var regExp = new RegExp( '^' + searchText, 'i' );
+    doFilterStore: function (store, searchText, baseTypesOnly) {
+        var regExp = new RegExp('^' + searchText, 'i');
 
-        store.filterBy(function(record) {
-            if ( baseTypesOnly ) {
+        store.filterBy(function (record) {
+            if (baseTypesOnly) {
                 return regExp.test(record.raw.name) && record.raw.type === 'system';
             } else {
                 return regExp.test(record.raw.name);
@@ -112,16 +106,14 @@ Ext.define( 'Admin.controller.datadesigner.BrowseController', {
     },
 
 
-    showContextMenu: function( view, rec, node, index, e )
-    {
+    showContextMenu: function (view, rec, node, index, e) {
         e.stopEvent();
-        this.getContextMenu().showAt( e.getXY() );
+        this.getContextMenu().showAt(e.getXY());
         return false;
     },
 
 
-    getContextMenu: function()
-    {
+    getContextMenu: function () {
         return Ext.ComponentQuery.query('datadesignerContextMenu')[0];
     }
 

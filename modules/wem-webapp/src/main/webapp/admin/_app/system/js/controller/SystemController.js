@@ -1,12 +1,11 @@
-Ext.define( 'App.controller.SystemController', {
+Ext.define('App.controller.SystemController', {
     extend: 'Ext.app.Controller',
 
     stores: [],
     models: [],
     views: [],
 
-    init: function()
-    {
+    init: function () {
         this.control({
             'viewport': {
                 afterrender: this.selectDefaultApplication
@@ -14,22 +13,23 @@ Ext.define( 'App.controller.SystemController', {
             'systemNavigation': {
                 itemclick: this.selectApplication
             }
-         });
+        });
     },
 
-    selectDefaultApplication: function( cmp, options ) {
+    selectDefaultApplication: function (cmp, options) {
         var nav = cmp.down('systemNavigation');
-        if ( nav ) {
+        if (nav) {
             var first = nav.getRootNode().firstChild;
-            nav.getSelectionModel().select( first );
+            nav.getSelectionModel().select(first);
             this.selectApplication(null, first);
         }
     },
 
-    selectApplication: function( view, record, item, index, evt, opts ) {
+    selectApplication: function (view, record, item, index, evt, opts) {
         var iframe = Ext.getDom('system-iframe');
-        if (iframe && record)
+        if (iframe && record) {
             iframe.src = record.data.appUrl;
+        }
     }
 
-} );
+});

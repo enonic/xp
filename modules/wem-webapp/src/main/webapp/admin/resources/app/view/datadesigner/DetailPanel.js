@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.datadesigner.DetailPanel', {
+Ext.define('Admin.view.datadesigner.DetailPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.contentTypeDetailPanel',
     layout: 'card',
@@ -8,13 +8,12 @@ Ext.define( 'Admin.view.datadesigner.DetailPanel', {
     overflowY: 'auto',
 
     listeners: {
-        afterrender: function( component ) {
-            component.down( '#noneSelectedComponent' ).update( {} );
+        afterrender: function (component) {
+            component.down('#noneSelectedComponent').update({});
         }
     },
 
-    initComponent: function()
-    {
+    initComponent: function () {
         var noneSelectedCmp = this.createNoneSelectedComponent();
         var previewCt = this.createPreviewContainer();
 
@@ -23,11 +22,10 @@ Ext.define( 'Admin.view.datadesigner.DetailPanel', {
             previewCt
         ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
     },
 
-    createPreviewContainer: function()
-    {
+    createPreviewContainer: function () {
         return  {
             xtype: 'container',
             itemId: 'previewContainer',
@@ -98,12 +96,11 @@ Ext.define( 'Admin.view.datadesigner.DetailPanel', {
                     data: this.data
                 }
             ]
-        }
+        };
     },
 
-    createNoneSelectedComponent: function()
-    {
-        var tpl = new Ext.XTemplate( Templates.datadesigner.noContentTypeSelected );
+    createNoneSelectedComponent: function () {
+        var tpl = new Ext.XTemplate(Templates.datadesigner.noContentTypeSelected);
 
         return {
             xtype: 'component',
@@ -115,27 +112,25 @@ Ext.define( 'Admin.view.datadesigner.DetailPanel', {
         };
     },
 
-    setData: function( data )
-    {
-        if ( data ) {
+    setData: function (data) {
+        if (data) {
             this.data = data;
 
-            var previewHeader = this.down( '#previewHeader' );
-            previewHeader.update( data );
+            var previewHeader = this.down('#previewHeader');
+            previewHeader.update(data);
 
-            var previewPhoto = this.down( '#previewIcon' );
-            previewPhoto.update( data );
+            var previewPhoto = this.down('#previewIcon');
+            previewPhoto.update(data);
 
-            var previewInfo = this.down( '#previewInfo' );
-            previewInfo.update( data );
+            var previewInfo = this.down('#previewInfo');
+            previewInfo.update(data);
 
-            var configurationArea = this.down( '#configurationArea' );
-            configurationArea.setValue( data['configXml'] );
+            var configurationArea = this.down('#configurationArea');
+            configurationArea.setValue(data.configXml);
         }
     },
 
-    getData: function()
-    {
+    getData: function () {
         return this.data;
     }
 

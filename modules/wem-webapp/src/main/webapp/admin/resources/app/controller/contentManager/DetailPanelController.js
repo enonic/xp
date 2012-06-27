@@ -1,4 +1,4 @@
-Ext.define( 'Admin.controller.contentManager.DetailPanelController', {
+Ext.define('Admin.controller.contentManager.DetailPanelController', {
     extend: 'Admin.controller.contentManager.Controller',
 
     /*      Controller for handling detail panel UI events       */
@@ -9,20 +9,18 @@ Ext.define( 'Admin.controller.contentManager.DetailPanelController', {
         'Admin.view.contentManager.DetailPanel'
     ],
 
-    init: function()
-    {
-        this.control( {
+    init: function () {
+        this.control({
             'contentDetail': {
                 deselectrecord: this.deselectRecord
             }
-        } );
+        });
     },
 
 
-    deselectRecord: function( key )
-    {
-        this.getContentShowPanel().deselect( key );
+    deselectRecord: function (key) {
+        this.getContentShowPanel().deselect(key);
     }
 
 
-} );
+});

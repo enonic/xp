@@ -1,4 +1,6 @@
-#admin-user-preview {}
+#admin-user-preview {
+}
+
 /*--- Generic ---*/
 .admin-user-preview,
 .admin-user-preview td,
@@ -54,16 +56,15 @@
     height: 100px;
 }
 
-
 /*--- Center Layout ---*/
 html>body .admin-user-preview .center {
     margin-left: 121px;
-    margin-right:241px;
+    margin-right: 241px;
 }
 
 .admin-user-preview .center {
     margin-left: 101px;
-    margin-right:101px;
+    margin-right: 101px;
 
     border-left: 1px solid #f0f0f0;
     border-right: 1px solid #f0f0f0;
@@ -93,7 +94,7 @@ html>body .admin-user-preview .center {
 }
 
 .admin-user-preview .center .container {
-    padding:  5px;
+    padding: 5px;
 }
 
 .admin-user-preview .center .navigation {

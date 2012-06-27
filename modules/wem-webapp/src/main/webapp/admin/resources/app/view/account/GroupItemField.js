@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.account.GroupItemField', {
+Ext.define('Admin.view.account.GroupItemField', {
     extend: 'Ext.form.FieldContainer',
     alias: 'widget.groupItemField',
 
@@ -8,8 +8,7 @@ Ext.define( 'Admin.view.account.GroupItemField', {
 
     width: 400,
 
-    initComponent: function()
-    {
+    initComponent: function () {
 
         this.items = [
             {
@@ -29,7 +28,7 @@ Ext.define( 'Admin.view.account.GroupItemField', {
                 action: 'deleteGroup'
             }
         ];
-        this.callParent( arguments );
+        this.callParent(arguments);
     }
 
-} );
+});

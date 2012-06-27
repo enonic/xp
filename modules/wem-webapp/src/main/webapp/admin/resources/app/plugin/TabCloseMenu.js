@@ -59,14 +59,12 @@ Ext.define('Admin.plugin.TabCloseMenu', {
 
     //public
     constructor: function (config) {
-        this.addEvents(
-            'aftermenu',
-            'beforemenu');
+        this.addEvents('aftermenu', 'beforemenu');
 
         this.mixins.observable.constructor.call(this, config);
     },
 
-    init : function(tabpanel){
+    init: function (tabpanel) {
         this.tabPanel = tabpanel;
         this.tabBar = tabpanel.down("tabbar");
 
@@ -77,7 +75,7 @@ Ext.define('Admin.plugin.TabCloseMenu', {
         });
     },
 
-    onAfterLayout: function() {
+    onAfterLayout: function () {
         this.mon(this.tabBar.el, {
             scope: this,
             contextmenu: this.onContextMenu,
@@ -85,13 +83,13 @@ Ext.define('Admin.plugin.TabCloseMenu', {
         });
     },
 
-    onBeforeDestroy : function(){
+    onBeforeDestroy: function () {
         Ext.destroy(this.menu);
         this.callParent(arguments);
     },
 
     // private
-    onContextMenu : function(event, target){
+    onContextMenu: function (event, target) {
         var me = this,
             menu = me.createMenu(),
             disableAll = true,
@@ -103,10 +101,10 @@ Ext.define('Admin.plugin.TabCloseMenu', {
         menu.child('*[text="' + me.closeTabText + '"]').setDisabled(!me.item.closable);
 
         if (me.showCloseAll || me.showCloseOthers) {
-            me.tabPanel.items.each(function(item) {
+            me.tabPanel.items.each(function (item) {
                 if (item.closable) {
                     disableAll = false;
-                    if (item != me.item) {
+                    if (item !== me.item) {
                         disableOthers = false;
                         return false;
                     }
@@ -129,15 +127,17 @@ Ext.define('Admin.plugin.TabCloseMenu', {
         menu.showAt(event.getXY());
     },
 
-    createMenu : function() {
+    createMenu: function () {
         var me = this;
 
         if (!me.menu) {
-            var items = [{
-                text: me.closeTabText,
-                scope: me,
-                handler: me.onClose
-            }];
+            var items = [
+                {
+                    text: me.closeTabText,
+                    scope: me,
+                    handler: me.onClose
+                }
+            ];
 
             if (me.showCloseAll || me.showCloseOthers) {
                 items.push('-');
@@ -186,30 +186,30 @@ Ext.define('Admin.plugin.TabCloseMenu', {
         me.fireEvent('aftermenu', me.menu, me);
     },
 
-    onClose : function(){
+    onClose: function () {
         this.tabPanel.remove(this.item);
     },
 
-    onCloseOthers : function(){
+    onCloseOthers: function () {
         this.doClose(true);
     },
 
-    onCloseAll : function(){
+    onCloseAll: function () {
         this.doClose(false);
     },
 
-    doClose : function(excludeActive){
+    doClose: function (excludeActive) {
         var items = [];
 
-        this.tabPanel.items.each(function(item){
-            if(item.closable){
-                if(!excludeActive || item != this.item){
+        this.tabPanel.items.each(function (item) {
+            if (item.closable) {
+                if (!excludeActive || item !== this.item) {
                     items.push(item);
                 }
             }
         }, this);
 
-        Ext.each(items, function(item){
+        Ext.each(items, function (item) {
             this.tabPanel.remove(item);
         }, this);
     }

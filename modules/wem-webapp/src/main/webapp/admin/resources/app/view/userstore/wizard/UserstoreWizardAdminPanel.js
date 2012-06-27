@@ -1,54 +1,45 @@
-Ext.define( 'Admin.view.userstore.wizard.UserstoreWizardAdminPanel', {
+Ext.define('Admin.view.userstore.wizard.UserstoreWizardAdminPanel', {
     extend: 'Ext.form.Panel',
-    alias : 'widget.userstoreWizardAdminPanel',
+    alias: 'widget.userstoreWizardAdminPanel',
 
     requires: [ 'Admin.plugin.BoxSelect' ],
 
 
-    initComponent: function()
-    {
+    initComponent: function () {
         var me = this;
         var memberKeys = [];
-        if (this.modelData && this.modelData.administrators)
-        {
-            Ext.Array.each(this.modelData.administrators, function (member)
-            {
+        if (this.modelData && this.modelData.administrators) {
+            Ext.Array.each(this.modelData.administrators, function (member) {
                 Ext.Array.include(memberKeys, member.key);
             });
         }
         var membersList = {
             allowBlank: true,
             minChars: 1,
-            forceSelection : true,
+            forceSelection: true,
             triggerOnClick: true,
             typeAhead: true,
-            xtype:'boxselect',
+            xtype: 'boxselect',
             cls: 'admin-groups-boxselect',
             resizable: false,
             name: 'administrators',
             itemId: 'administrators',
             value: memberKeys,
-            store: Ext.create( 'Admin.store.account.AccountStore' ),
+            store: Ext.create('Admin.store.account.AccountStore'),
             mode: 'local',
             displayField: 'displayName',
-            itemClassResolver: function (values)
-            {
-                if (values.type === 'user' && !values.builtIn)
-                {
+            itemClassResolver: function (values) {
+                if (values.type === 'user' && !values.builtIn) {
                     return 'admin-user-item';
                 }
-                if (values.type === 'role' || values.builtIn)
-                {
+                if (values.type === 'role' || values.builtIn) {
                     return 'admin-role-item';
-                }
-                else
-                {
+                } else {
                     return 'admin-group-item';
                 }
             },
             listConfig: {
-                getInnerTpl: function()
-                {
+                getInnerTpl: function () {
                     return Templates.common.groupList;
                 }
 
@@ -71,19 +62,18 @@ Ext.define( 'Admin.view.userstore.wizard.UserstoreWizardAdminPanel', {
                 items: [membersList]
             }
         ];
-        me.callParent( arguments );
+        me.callParent(arguments);
     },
 
-    getData: function()
-    {
-        var selectBox = this.down( 'comboboxselect' );
+    getData: function () {
+        var selectBox = this.down('comboboxselect');
         var values = selectBox.valueModels;
         var groupsSelected = [];
-        Ext.Array.each( values, function(group) {
-            var group = {key :group.data.key, name:group.data.name, userStore:group.data.userStore};
+        Ext.Array.each(values, function (group) {
+            var group = {key: group.data.key, name: group.data.name, userStore: group.data.userStore};
             groupsSelected.push(group);
         });
         var userData = { administrators: groupsSelected };
         return userData;
     }
-} );
+});

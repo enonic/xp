@@ -1,6 +1,6 @@
-Ext.define( 'Admin.view.account.GridPanel', {
+Ext.define('Admin.view.account.GridPanel', {
     extend: 'Ext.grid.Panel',
-    alias : 'widget.accountGrid',
+    alias: 'widget.accountGrid',
 
     requires: [
         'Admin.plugin.PersistentGridSelectionPlugin',
@@ -13,8 +13,7 @@ Ext.define( 'Admin.view.account.GridPanel', {
     frame: false,
     store: 'Admin.store.account.AccountStore',
 
-    initComponent: function()
-    {
+    initComponent: function () {
         this.columns = [
             {
                 text: 'Display Name',
@@ -74,28 +73,26 @@ Ext.define( 'Admin.view.account.GridPanel', {
         };
 
         this.viewConfig = {
-            trackOver : true,
+            trackOver: true,
             stripeRows: true,
             loadMask: true
         };
 
-        this.selModel = Ext.create( 'Ext.selection.CheckboxModel', {
+        this.selModel = Ext.create('Ext.selection.CheckboxModel', {
             //checkOnly: true
-        } );
+        });
 
-        this.callParent( arguments );
+        this.callParent(arguments);
     },
 
-    nameRenderer: function( value, p, record )
-    {
+    nameRenderer: function (value, p, record) {
         var account = record.data;
         var photoUrl = this.resolvePhotoUrl(account);
 
-        return Ext.String.format( Templates.account.gridPanelNameRenderer, photoUrl, value, account.name, account.userStore );
+        return Ext.String.format(Templates.account.gridPanelNameRenderer, photoUrl, value, account.name, account.userStore);
     },
 
-    resolvePhotoUrl: function( account )
-    {
+    resolvePhotoUrl: function (account) {
         var url;
         var builtIn = account.builtIn;
         var isEnterpriseAdministrator = builtIn && account.name === 'admin';
@@ -104,26 +101,17 @@ Ext.define( 'Admin.view.account.GridPanel', {
         var isRole = builtIn && account.type === 'role' && !isAnonymous;
         var isUser = !builtIn && account.type === 'user';
 
-        if ( isUser )
-        {
-            url = Ext.String.format( 'data/user/photo?key={0}&thumb=true&def=admin/resources%2Fimages%2Ficons%2F256x256%2Fdummy-user.png', account.key );
-        }
-        else
-        {
-            if ( isEnterpriseAdministrator )
-            {
+        if (isUser) {
+            url = Ext.String.format('data/user/photo?key={0}&thumb=true&def=admin/resources%2Fimages%2Ficons%2F256x256%2Fdummy-user.png',
+                account.key);
+        } else {
+            if (isEnterpriseAdministrator) {
                 url = 'resources/images/icons/32x32/superhero.png';
-            }
-            else if ( isAnonymous )
-            {
+            } else if (isAnonymous) {
                 url = 'resources/images/icons/32x32/ghost.png';
-            }
-            else if ( isRole )
-            {
+            } else if (isRole) {
                 url = 'resources/images/icons/32x32/masks.png';
-            }
-            else
-            {
+            } else {
                 url = 'resources/images/icons/32x32/group.png';
             }
         }
@@ -131,22 +119,16 @@ Ext.define( 'Admin.view.account.GridPanel', {
         return url;
     },
 
-    prettyDateRenderer: function( value, p, record )
-    {
-        try
-        {
-            if ( parent && Ext.isFunction( parent.humane_date ) )
-            {
-                return parent.humane_date( value );
-            }
-            else
-            {
+    prettyDateRenderer: function (value, p, record) {
+        try {
+            if (parent && Ext.isFunction(parent.humane_date)) {
+                return parent.humane_date(value);
+            } else {
                 return value;
             }
         }
-        catch( e )
-        {
+        catch (e) {
             return value;
         }
     }
-} );
+});

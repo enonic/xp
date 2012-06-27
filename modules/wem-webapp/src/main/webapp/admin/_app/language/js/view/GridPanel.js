@@ -1,6 +1,6 @@
 Ext.define('App.view.GridPanel', {
     extend: 'Ext.grid.Panel',
-    alias : 'widget.languageGrid',
+    alias: 'widget.languageGrid',
 
     requires: [
         'App.view.Toolbar',
@@ -12,7 +12,7 @@ Ext.define('App.view.GridPanel', {
     frame: false,
     store: 'LanguageStore',
 
-    initComponent: function() {
+    initComponent: function () {
 
         this.columns = [
             {
@@ -50,7 +50,7 @@ Ext.define('App.view.GridPanel', {
         };
 
         this.viewConfig = {
-            trackOver : true,
+            trackOver: true,
             stripeRows: true
         };
 

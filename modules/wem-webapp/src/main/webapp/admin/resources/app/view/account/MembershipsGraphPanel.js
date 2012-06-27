@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.account.MembershipsGraphPanel', {
+Ext.define('Admin.view.account.MembershipsGraphPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.membershipsGraphPanel',
     autoEl: {
@@ -10,17 +10,15 @@ Ext.define( 'Admin.view.account.MembershipsGraphPanel', {
     extraCls: null,
 
     listeners: {
-        resize: function( component, adjWidth, adjHeight )
-        {
+        resize: function (component, adjWidth, adjHeight) {
             // TODO: Why is adjWidth always undefined on resize?
             // Get the new width manually instead.
             var newWidth = component.getWidth();
-            this.onResize( component, newWidth, adjHeight );
+            this.onResize(component, newWidth, adjHeight);
         }
     },
 
-    afterRender: function()
-    {
+    afterRender: function () {
         this.setStyles();
         this.implementAccountIcon();
         this.createRGraph();
@@ -28,12 +26,11 @@ Ext.define( 'Admin.view.account.MembershipsGraphPanel', {
         this.currentWidth = this.getWidth();
     },
 
-    createRGraph: function()
-    {
+    createRGraph: function () {
         var me = this;
         var levelDistance = 150;
 
-        me.graph = new $jit.RGraph( {
+        me.graph = new $jit.RGraph({
             'injectInto': me.getEl().id + '-body',
 
             'withLabels': true,
@@ -64,48 +61,42 @@ Ext.define( 'Admin.view.account.MembershipsGraphPanel', {
 
             // Add the node's name into the label.
             // This method is called only once, on label creation.
-            onCreateLabel: function( domElement, node )
-            {
-                me.onCreateLabel.call( me, domElement, node );
+            onCreateLabel: function (domElement, node) {
+                me.onCreateLabel.call(me, domElement, node);
             },
             // Change the node's style based on its position.
             // This method is called each time a label is rendered/positioned during an animation.
-            onPlaceLabel: function( domElement, node )
-            {
-                me.onPlaceLabel.call( me, domElement, node );
+            onPlaceLabel: function (domElement, node) {
+                me.onPlaceLabel.call(me, domElement, node);
             }
-        } );
+        });
     },
 
-    createDetails: function()
-    {
+    createDetails: function () {
         var dh = Ext.DomHelper;
         var spec = {
             tag: 'div',
             cls: 'admin-graph-details',
             id: 'admin-graph-details-' + this.getEl().id
         };
-        dh.insertAfter( this.getEl(), spec );
+        dh.insertAfter(this.getEl(), spec);
     },
 
-    setGraphData: function( json )
-    {
-        this.graph.loadJSON( json );
+    setGraphData: function (json) {
+        this.graph.loadJSON(json);
         this.graph.refresh();
         // Flag the graph as loaded so icons are not loaded when navigating the graph.
         this.graph._loaded = true;
     },
 
-    implementAccountIcon: function()
-    {
+    implementAccountIcon: function () {
         var me = this;
 
-        $jit.RGraph.Plot.NodeTypes.implement( {
+        $jit.RGraph.Plot.NodeTypes.implement({
             'accountIcon': {
-                'render': function( node, canvas )
-                {
+                'render': function (node, canvas) {
                     var context = canvas.getCtx();
-                    var nodePosition = node.pos.getc( true );
+                    var nodePosition = node.pos.getc(true);
                     var data = node.data;
                     var text = node.name;
                     var iconSize = 16;
@@ -113,7 +104,7 @@ Ext.define( 'Admin.view.account.MembershipsGraphPanel', {
                     var leftRightPadding = 4;
 
                     context.font = '11px Arial';
-                    var textWidth = Math.round( context.measureText( text ).width );
+                    var textWidth = Math.round(context.measureText(text).width);
 
                     var width = textWidth + (leftRightPadding * 2) + (iconSize + iconMarginRight);
                     var height = 22;
@@ -125,22 +116,22 @@ Ext.define( 'Admin.view.account.MembershipsGraphPanel', {
                     context.lineWidth = 3;
                     context.fillStyle = 'rgba(222, 231, 248, 1)';
                     context.beginPath();
-                    context.moveTo( x + radius, y );
-                    context.lineTo( x + width - radius, y );
-                    context.quadraticCurveTo( x + width, y, x + width, y + radius );
-                    context.lineTo( x + width, y + height - radius );
-                    context.quadraticCurveTo( x + width, y + height, x + width - radius, y + height );
-                    context.lineTo( x + radius, y + height );
-                    context.quadraticCurveTo( x, y + height, x, y + height - radius );
-                    context.lineTo( x, y + radius );
-                    context.quadraticCurveTo( x, y, x + radius, y );
+                    context.moveTo(x + radius, y);
+                    context.lineTo(x + width - radius, y);
+                    context.quadraticCurveTo(x + width, y, x + width, y + radius);
+                    context.lineTo(x + width, y + height - radius);
+                    context.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+                    context.lineTo(x + radius, y + height);
+                    context.quadraticCurveTo(x, y + height, x, y + height - radius);
+                    context.lineTo(x, y + radius);
+                    context.quadraticCurveTo(x, y, x + radius, y);
                     context.closePath();
                     context.stroke();
                     context.fill();
 
                     context.fillStyle = 'black';
                     context.textBaseline = 'middle';
-                    context.fillText( text, (x + leftRightPadding + iconSize + iconMarginRight), (y + height / 2) );
+                    context.fillText(text, (x + leftRightPadding + iconSize + iconMarginRight), (y + height / 2));
 
                     var image = new Image();
                     var imageX = (x + leftRightPadding);
@@ -149,29 +140,26 @@ Ext.define( 'Admin.view.account.MembershipsGraphPanel', {
                     var isEnterpriseAdministrator = data.builtIn && data.name === 'admin';
                     var isAnonymous = data.builtIn && data.name === 'anonymous';
                     var imageFileName = data.type === 'role' ? 'resources/images/icons/64x64/masks.png'
-                            : 'resources/images/icons/64x64/group.png';
-                    if ( isEnterpriseAdministrator ) {
+                        : 'resources/images/icons/64x64/group.png';
+                    if (isEnterpriseAdministrator) {
                         imageFileName = 'resources/images/icons/32x32/superhero.png';
-                    }
-                    else if ( isAnonymous ) {
+                    } else if (isAnonymous) {
                         imageFileName = 'resources/images/icons/32x32/ghost.png';
-                    }
-                    else if ( data.type === 'user' ) {
+                    } else if (data.type === 'user') {
                         imageFileName =
-                        Ext.String.format( 'data/user/photo?key={0}&thumb=false&def=admin/resources%2Fimages%2Ficons%2F256x256%2Fdummy-user.png',
-                                node.data.key );
+                        Ext.String.format('data/user/photo?key={0}&thumb=false&def=admin/resources%2Fimages%2Ficons%2F256x256%2Fdummy-user.png',
+                            node.data.key);
                     }
                     image.src = imageFileName;
 
                     // Only request image the first time the so it is not requested when navigating the graph.
-                    if ( !me.graph._loaded ) {
-                        image.onload = function()
-                        {
-                            context.drawImage( image, imageX, imageY, iconSize, iconSize );
+                    if (!me.graph._loaded) {
+                        image.onload = function () {
+                            context.drawImage(image, imageX, imageY, iconSize, iconSize);
                         }
                     } else {
                         // Image should be cached.
-                        context.drawImage( image, imageX, imageY, iconSize, iconSize );
+                        context.drawImage(image, imageX, imageY, iconSize, iconSize);
                     }
 
                     node._width = width;
@@ -180,15 +168,14 @@ Ext.define( 'Admin.view.account.MembershipsGraphPanel', {
                     node._y = y;
                 }
             }
-        } );
+        });
     },
 
 
     /**
      * @private
      */
-    onCreateLabel: function( domElement, node )
-    {
+    onCreateLabel: function (domElement, node) {
         var me = this;
         // Toggle a node selection when clicking its name. This is done by animating some
         // node styles like its dimension and the color and lineWidth of its adjacencies.
@@ -196,12 +183,11 @@ Ext.define( 'Admin.view.account.MembershipsGraphPanel', {
         style.width = node._width + 'px';
         style.height = node._height + 'px';
 
-        domElement.onclick = function()
-        {
-            me.graph.onClick( node.id, {
+        domElement.onclick = function () {
+            me.graph.onClick(node.id, {
                 hideLabels: false
-            } );
-            me.showMembershipList.call( me, node )
+            });
+            me.showMembershipList.call(me, node)
         };
     },
 
@@ -209,20 +195,19 @@ Ext.define( 'Admin.view.account.MembershipsGraphPanel', {
     /**
      * @private
      */
-    onPlaceLabel: function( domElement, node )
-    {
+    onPlaceLabel: function (domElement, node) {
         var style = domElement.style;
         style.display = '';
 
-        if ( node._depth === 0 ) {
+        if (node._depth === 0) {
             style.fontSize = "16px";
             style.color = "#000";
         }
-        if ( node._depth === 1 ) {
+        if (node._depth === 1) {
             style.fontSize = "11px";
             style.color = "#000";
         }
-        else if ( node._depth >= 2 ) {
+        else if (node._depth >= 2) {
             style.fontSize = "10px";
             style.color = "#666";
         }
@@ -231,8 +216,8 @@ Ext.define( 'Admin.view.account.MembershipsGraphPanel', {
 
         var canvasScaleOffsetX = this.graph.canvas.scaleOffsetX;
 
-        var left = parseInt( style.left );
-        var top = parseInt( style.top );
+        var left = parseInt(style.left);
+        var top = parseInt(style.top);
         var width = domElement.offsetWidth;
 
         var nw = node._width * (canvasScaleOffsetX * 2) / 2 + 8;
@@ -248,27 +233,24 @@ Ext.define( 'Admin.view.account.MembershipsGraphPanel', {
     /**
      * @private
      */
-    showMembershipList: function( node )
-    {
+    showMembershipList: function (node) {
         var me = this;
 
         var html = '<h4>' + node.name + '</h4><ul>';
         var list = [];
-        node.eachAdjacency( function( adj )
-        {
-            if ( adj.getData( 'alpha' ) ) {
-                list.push( '<li>' + adj.nodeTo.name + '</li>' );
+        node.eachAdjacency(function (adj) {
+            if (adj.getData('alpha')) {
+                list.push('<li>' + adj.nodeTo.name + '</li>');
             }
-        } );
-        $jit.id( 'admin-graph-details-' + me.getEl().id ).innerHTML = html + list.join( '' ) + '</ul>';
+        });
+        $jit.id('admin-graph-details-' + me.getEl().id).innerHTML = html + list.join('') + '</ul>';
 
         // We need to manually recalculate the container's layout in order to make the list visible.
-        if ( me.up() ) {
+        if (me.up()) {
             // Somehow we need to wait a bit before we doLayout. Not sure why.
-            Ext.Function.defer( function()
-            {
+            Ext.Function.defer(function () {
                 me.up().doLayout()
-            }, 10 );
+            }, 10);
         }
     },
 
@@ -276,25 +258,23 @@ Ext.define( 'Admin.view.account.MembershipsGraphPanel', {
     /**
      * @private
      */
-    setStyles: function()
-    {
-        this.body.setWidth( this.width );
-        this.body.setHeight( this.height );
-        if ( this.extraCls ) {
-            this.body.addCls( this.extraCls );
+    setStyles: function () {
+        this.body.setWidth(this.width);
+        this.body.setHeight(this.height);
+        if (this.extraCls) {
+            this.body.addCls(this.extraCls);
         }
     },
 
     /**
      * @private
      */
-    onResize: function( component, adjWidth, adjHeight )
-    {
+    onResize: function (component, adjWidth, adjHeight) {
         // Only exectue when width is resized as the rendering of the membership list sizes the height
-        if ( component.currentWidth !== adjWidth ) {
-            component.graph.canvas.resize( adjWidth, adjHeight );
+        if (component.currentWidth !== adjWidth) {
+            component.graph.canvas.resize(adjWidth, adjHeight);
             component.currentWidth = adjWidth;
         }
     }
 
-} );
+});

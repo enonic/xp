@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.datadesigner.BrowseToolbar', {
+Ext.define('Admin.view.datadesigner.BrowseToolbar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.datadesigner.browseToolbar',
 
@@ -7,8 +7,7 @@ Ext.define( 'Admin.view.datadesigner.BrowseToolbar', {
         iconAlign: 'top'
     },
 
-    initComponent: function()
-    {
+    initComponent: function () {
         var buttonDefaults = {
             scale: 'medium',
             iconAlign: 'top',
@@ -26,52 +25,49 @@ Ext.define( 'Admin.view.datadesigner.BrowseToolbar', {
                         iconCls: 'icon-data-designer-24',
                         menu: [
                             {text: 'Shortcut', menu: [
-                                    {
-                                        text: 'Site'
-                                    }
-                                ]
-                            },
+                                {
+                                    text: 'Site'
+                                }
+                            ]},
                             {text: 'Folder'},
                             {text: 'Structured'},
                             {text: 'Media', menu: [
-                                    {
-                                        text: 'unknown'
-                                    },
-                                    {
-                                        text: 'Audio'
-                                    },
-                                    {
-                                        text: 'Image'
-                                    },
-                                    {
-                                        text: 'Video'
-                                    },
-                                    {
-                                        text: 'Document'
-                                    },
-                                    {
-                                        text: 'Presentation'
-                                    },
-                                    {
-                                        text: 'Spreadsheets'
-                                    },
-                                    {
-                                        text: 'XML'
-                                    },
-                                    {
-                                        text: 'HTML'
-                                    },
-                                    {
-                                        text: 'Archive'
-                                    }
-                                ]
-                            },
+                                {
+                                    text: 'unknown'
+                                },
+                                {
+                                    text: 'Audio'
+                                },
+                                {
+                                    text: 'Image'
+                                },
+                                {
+                                    text: 'Video'
+                                },
+                                {
+                                    text: 'Document'
+                                },
+                                {
+                                    text: 'Presentation'
+                                },
+                                {
+                                    text: 'Spreadsheets'
+                                },
+                                {
+                                    text: 'XML'
+                                },
+                                {
+                                    text: 'HTML'
+                                },
+                                {
+                                    text: 'Archive'
+                                }
+                            ]},
                             {text: 'Form', menu: [
-                                    {
-                                        text: 'Response'
-                                    }
-                                ]
-                            },
+                                {
+                                    text: 'Response'
+                                }
+                            ]}
                         ]
                     }
                 ]
@@ -134,7 +130,7 @@ Ext.define( 'Admin.view.datadesigner.BrowseToolbar', {
             }
         ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
     }
 
 });

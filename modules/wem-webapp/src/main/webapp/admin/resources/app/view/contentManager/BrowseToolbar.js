@@ -1,11 +1,10 @@
-Ext.define( 'Admin.view.contentManager.BrowseToolbar', {
+Ext.define('Admin.view.contentManager.BrowseToolbar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.browseToolbar',
 
     border: false,
 
-    initComponent: function()
-    {
+    initComponent: function () {
         var buttonDefaults = {
             scale: 'medium',
             iconAlign: 'top',
@@ -24,11 +23,11 @@ Ext.define( 'Admin.view.contentManager.BrowseToolbar', {
                         action: 'newContent',
                         iconCls: 'icon-content-add-24',
                         cls: 'x-btn-as-arrow',
-                        menu: Ext.create( 'Admin.view.MegaMenu', {
+                        menu: Ext.create('Admin.view.MegaMenu', {
                             recentCount: 4,
                             cookieKey: 'admin.contentmanager.megamenu',
                             url: 'resources/data/contentManagerMenu.json'
-                        } )
+                        })
                     }
                 ]
             },
@@ -116,7 +115,7 @@ Ext.define( 'Admin.view.contentManager.BrowseToolbar', {
             }
         ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
     }
 
-} );
+});

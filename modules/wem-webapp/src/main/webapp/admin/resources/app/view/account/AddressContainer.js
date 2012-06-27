@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.account.AddressContainer', {
+Ext.define('Admin.view.account.AddressContainer', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.addressContainer',
 
@@ -14,15 +14,14 @@ Ext.define( 'Admin.view.account.AddressContainer', {
         "Admin.view.account.AddressColumn"
     ],
 
-    initComponent: function()
-    {
+    initComponent: function () {
         var button = {
             xtype: 'button',
             text: 'Add New Address',
             action: 'addNewAddress',
             currentUser: this.currentUser
         };
-        var addresses =  this.items;
+        var addresses = this.items;
         this.items = [
             {
                 xtype: 'addressColumn',
@@ -30,7 +29,7 @@ Ext.define( 'Admin.view.account.AddressContainer', {
             },
             button
         ];
-        this.callParent( arguments );
+        this.callParent(arguments);
         this.addEvents({
             validatedrop: true,
             beforedragover: true,
@@ -41,22 +40,20 @@ Ext.define( 'Admin.view.account.AddressContainer', {
         this.on("drop", this.doLayout, this);
     },
 
-    initEvents: function ()
-    {
+    initEvents: function () {
         this.callParent();
         this.dd = Ext.create("Admin.view.account.AddressDropTarget", this, this.dropConfig);
     },
 
     beforeDestroy: function () {
         if (this.dd) {
-            this.dd.unreg()
+            this.dd.unreg();
         }
         this.callParent();
     },
 
-    getItems: function()
-    {
+    getItems: function () {
         return this.query('addressPanel');
     }
 
-} );
+});

@@ -5,7 +5,7 @@ Ext.define('App.controller.LanguageController', {
     models: ['LanguageModel'],
     views: ['Toolbar', 'GridPanel'],
 
-    init: function() {
+    init: function () {
         this.control({
             '*[action=newLanguage]': {
                 click: this.newLanguage
@@ -13,21 +13,20 @@ Ext.define('App.controller.LanguageController', {
         });
     },
 
-    newLanguage: function()
-    {
+    newLanguage: function () {
         var editor = this.getLanguageGrid().getPlugin('cellEditor');
         editor.cancelEdit();
-        var r = Ext.ModelManager.create( {
-                                             key: '',
-                                             languageCode: '',
-                                             description: '',
-                                             lastModified: new Date()
-                                         }, 'App.model.LanguageModel' );
-        this.getLanguageStoreStore().insert( 0, r );
-        editor.startEditByPosition( {row: 0, column: 0} );
+        var r = Ext.ModelManager.create({
+            key: '',
+            languageCode: '',
+            description: '',
+            lastModified: new Date()
+        }, 'App.model.LanguageModel');
+        this.getLanguageStoreStore().insert(0, r);
+        editor.startEditByPosition({row: 0, column: 0});
     },
 
-    getLanguageGrid: function() {
+    getLanguageGrid: function () {
         return Ext.ComponentQuery.query('languageGrid')[0];
     }
 

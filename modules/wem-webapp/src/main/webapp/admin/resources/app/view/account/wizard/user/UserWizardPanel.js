@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.account.wizard.user.UserWizardPanel', {
+Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.userWizardPanel',
     requires: [
@@ -23,20 +23,18 @@ Ext.define( 'Admin.view.account.wizard.user.UserWizardPanel', {
 
     displayNameAutoGenerate: true,
 
-    initComponent: function()
-    {
+    initComponent: function () {
         var me = this;
         var isNew = this.isNewUser();
         var photoUrl;
         var userGroups = [];
         var displayNameValue = 'Display Name';
-        if ( me.userFields ) {
-            photoUrl =
-            me.hasPhoto ? 'data/user/photo?key=' + me.userFields.key : 'resources/images/icons/256x256/dummy-user.png';
+        if (me.userFields) {
+            photoUrl = me.hasPhoto ? 'data/user/photo?key=' + me.userFields.key : 'resources/images/icons/256x256/dummy-user.png';
             userGroups = me.userFields.groups;
             displayNameValue = me.userFields.displayName;
 
-            this.preProcessAddresses( me.userFields );
+            this.preProcessAddresses(me.userFields);
         }
         me.headerData = {
             displayName: displayNameValue,
@@ -67,14 +65,12 @@ Ext.define( 'Admin.view.account.wizard.user.UserWizardPanel', {
                         title: "User",
                         progressBarHeight: 6,
                         listeners: {
-                            mouseenter: function()
-                            {
-                                var imageToolTip = me.down( '#imageToolTip' );
+                            mouseenter: function () {
+                                var imageToolTip = me.down('#imageToolTip');
                                 imageToolTip.show();
                             },
-                            mouseleave: function()
-                            {
-                                var imageToolTip = me.down( '#imageToolTip' );
+                            mouseleave: function () {
+                                var imageToolTip = me.down('#imageToolTip');
                                 imageToolTip.hide();
                             }
                         }
@@ -90,12 +86,10 @@ Ext.define( 'Admin.view.account.wizard.user.UserWizardPanel', {
                               '<div class="x-tip-body  x-tip-body-default x-tip-body-default">' +
                               'Click to upload photo</div></div>',
                         listeners: {
-                            afterrender: function( cmp )
-                            {
-                                Ext.Function.defer( function()
-                                {
+                            afterrender: function (cmp) {
+                                Ext.Function.defer(function () {
                                     cmp.hide();
-                                }, 10000 );
+                                }, 10000);
                             }
                         }
                     }
@@ -116,18 +110,16 @@ Ext.define( 'Admin.view.account.wizard.user.UserWizardPanel', {
                         cls: 'admin-wizard-header-container',
                         listeners: {
                             afterrender: {
-                                fn: function()
-                                {
+                                fn: function () {
                                     var me = this;
-                                    me.getEl().addListener( 'click', function( event, target, eOpts )
-                                    {
-                                        me.toggleDisplayNameField( event, target );
-                                    } );
+                                    me.getEl().addListener('click', function (event, target, eOpts) {
+                                        me.toggleDisplayNameField(event, target);
+                                    });
                                 },
                                 scope: this
                             }
                         },
-                        tpl: new Ext.XTemplate( Templates.account.userWizardHeader ),
+                        tpl: new Ext.XTemplate(Templates.account.userWizardHeader),
                         data: me.headerData
                     },
                     {
@@ -165,10 +157,9 @@ Ext.define( 'Admin.view.account.wizard.user.UserWizardPanel', {
                                 xtype: 'wizardStepMembershipPanel',
                                 listeners: {
                                     afterrender: {
-                                        fn: function()
-                                        {
-                                            var membershipPanel = this.down( 'wizardStepMembershipPanel' );
-                                            this.getWizardPanel().addData( membershipPanel.getData() );
+                                        fn: function () {
+                                            var membershipPanel = this.down('wizardStepMembershipPanel');
+                                            this.getWizardPanel().addData(membershipPanel.getData());
                                         },
                                         scope: this
                                     }
@@ -184,149 +175,129 @@ Ext.define( 'Admin.view.account.wizard.user.UserWizardPanel', {
             }
         ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
 
-        var uploader = this.down( 'photoUploadButton' );
-        uploader.on( 'fileuploaded', me.photoUploaded, me );
+        var uploader = this.down('photoUploadButton');
+        uploader.on('fileuploaded', me.photoUploaded, me);
 
 
         // Make wizard navigation sticky
-        me.on( 'afterrender', function( userWizard )
-        {
-            this.addStickyNavigation( userWizard );
+        me.on('afterrender', function (userWizard) {
+            this.addStickyNavigation(userWizard);
             //Render all user forms
-            if ( me.userFields && me.userFields.userStore ) {
-                me.renderUserForms( me.userFields.userStore );
+            if (me.userFields && me.userFields.userStore) {
+                me.renderUserForms(me.userFields.userStore);
+            } else {
+                me.renderUserForms(me.userstore);
             }
-            else {
-                me.renderUserForms( me.userstore );
-            }
-            me.removeEmptySteps( userWizard.getWizardPanel() );
+            me.removeEmptySteps(userWizard.getWizardPanel());
             // Set active item to first one. D-02010 bug workaround
-            me.getWizardPanel().getLayout().setActiveItem( 0 );
-        } );
+            me.getWizardPanel().getLayout().setActiveItem(0);
+        });
     },
 
-    preProcessAddresses: function( userFields )
-    {
+    preProcessAddresses: function (userFields) {
         // assign each address a position to be able to reflect this in diff
-        if ( userFields.userInfo && userFields.userInfo.addresses ) {
-            for ( var i = 0; i < userFields.userInfo.addresses.length; i++ ) {
-                userFields.userInfo.addresses[ i ].oldPos = i;
+        if (userFields.userInfo && userFields.userInfo.addresses) {
+            var i;
+            for (i = 0; i < userFields.userInfo.addresses.length; i++) {
+                userFields.userInfo.addresses[i].oldPos = i;
             }
         }
     },
 
-    removeEmptySteps: function( wizardPanel )
-    {
-        wizardPanel.items.each( function( item )
-        {
-            if ( !item.alwaysKeep && item.getForm && ( item.getForm().getFields().getCount() == 0  ) ) {
-                wizardPanel.remove( item );
+    removeEmptySteps: function (wizardPanel) {
+        wizardPanel.items.each(function (item) {
+            if (!item.alwaysKeep && item.getForm && (item.getForm().getFields().getCount() === 0)) {
+                wizardPanel.remove(item);
             }
-        } );
+        });
     },
 
-    addStickyNavigation: function( wizardPanel )
-    {
-        wizardPanel.body.on( 'scroll', function()
-        {
+    addStickyNavigation: function (wizardPanel) {
+        wizardPanel.body.on('scroll', function () {
             // Ideally the element should be cached, but the navigation view is rendered (tpl.update()) for each step.
-            var navigationElement = Ext.get( Ext.DomQuery.selectNode( '.admin-wizard-navigation-container',
-                    wizardPanel.body.dom ) );
+            var navigationElement = Ext.get(Ext.DomQuery.selectNode('.admin-wizard-navigation-container',
+                wizardPanel.body.dom));
             var bodyScrollTop = wizardPanel.body.getScroll().top;
-            if ( bodyScrollTop > 73 ) {
-                navigationElement.addCls( 'admin-wizard-navigation-container-sticky' );
+            if (bodyScrollTop > 73) {
+                navigationElement.addCls('admin-wizard-navigation-container-sticky');
+            } else {
+                navigationElement.removeCls('admin-wizard-navigation-container-sticky');
             }
-            else {
-                navigationElement.removeCls( 'admin-wizard-navigation-container-sticky' );
-            }
-        }, wizardPanel );
+        }, wizardPanel);
     },
 
-    toggleDisplayNameField: function( event, target )
-    {
-        var clickedElement = new Ext.Element( target );
-        var parentToClickedElementIsHeader = clickedElement.findParent( '.admin-wizard-header' );
-        var displayNameFieldElement = this.getEl().select( '.admin-display-name' ).item( 0 );
+    toggleDisplayNameField: function (event, target) {
+        var clickedElement = new Ext.Element(target);
+        var parentToClickedElementIsHeader = clickedElement.findParent('.admin-wizard-header');
+        var displayNameFieldElement = this.getEl().select('.admin-display-name').item(0);
 
-        if ( parentToClickedElementIsHeader ) {
-            displayNameFieldElement.dom.removeAttribute( 'readonly' );
-            displayNameFieldElement.addCls( 'admin-edited-field' );
-        }
-        else {
-            displayNameFieldElement.set( {readonly: true} );
-            var value = Ext.String.trim( displayNameFieldElement.getValue() );
-            if ( value === '' || value === 'Display Name' ) {
-                displayNameFieldElement.removeCls( 'admin-edited-field' );
+        if (parentToClickedElementIsHeader) {
+            displayNameFieldElement.dom.removeAttribute('readonly');
+            displayNameFieldElement.addCls('admin-edited-field');
+        } else {
+            displayNameFieldElement.set({readonly: true});
+            var value = Ext.String.trim(displayNameFieldElement.getValue());
+            if (value === '' || value === 'Display Name') {
+                displayNameFieldElement.removeCls('admin-edited-field');
             }
         }
     },
 
-    resizeFileUpload: function( file )
-    {
-        file.el.down( 'input[type=file]' ).setStyle( {
+    resizeFileUpload: function (file) {
+        file.el.down('input[type=file]').setStyle({
             width: file.getWidth(),
             height: file.getHeight()
-        } );
+        });
     },
 
-    setFileUploadDisabled: function( disable )
-    {
+    setFileUploadDisabled: function (disable) {
         //TODO: disable image upload
         //this.uploadForm.setDisabled( disable );
     },
 
-    renderUserForms: function( userStore )
-    {
-        var userForms = this.query( 'editUserFormPanel' );
-        Ext.Array.each( userForms, function( userForm )
-        {
-            userForm.renderUserForm( {userStore: userStore} );
-        } );
+    renderUserForms: function (userStore) {
+        var userForms = this.query('editUserFormPanel');
+        Ext.Array.each(userForms, function (userForm) {
+            userForm.renderUserForm({userStore: userStore});
+        });
     },
 
-    updateHeader: function( data )
-    {
-        Ext.apply( this.headerData, data );
-        this.down( '#wizardHeader' ).update( this.headerData );
+    updateHeader: function (data) {
+        Ext.apply(this.headerData, data);
+        this.down('#wizardHeader').update(this.headerData);
     },
 
-    isNewUser: function()
-    {
-        return this.userFields == undefined;
+    isNewUser: function () {
+        return this.userFields === undefined;
     },
 
-    getWizardPanel: function()
-    {
-        return this.down( 'wizardPanel' );
+    getWizardPanel: function () {
+        return this.down('wizardPanel');
     },
 
-    getData: function()
-    {
+    getData: function () {
         var wizardData = this.getWizardPanel().getData();
-        var displayNameField = this.el.select( 'input.admin-display-name' ).item( 0 );
-        if ( displayNameField ) {
+        var displayNameField = this.el.select('input.admin-display-name').item(0);
+        if (displayNameField) {
             var data = {displayName: displayNameField.getValue() };
-            Ext.merge( wizardData, data );
+            Ext.merge(wizardData, data);
         }
         return wizardData;
     },
 
-    photoUploaded: function( photoUploadButton, response )
-    {
-        var wizard = this.down( 'wizardPanel' );
-        wizard.addData( {photo: response.photoRef} );
+    photoUploaded: function (photoUploadButton, response) {
+        var wizard = this.down('wizardPanel');
+        wizard.addData({photo: response.photoRef});
     },
 
-    getSteps: function()
-    {
+    getSteps: function () {
         var items = this.getWizardPanel().items;
-        items = items.filterBy( function( item )
-        {
+        items = items.filterBy(function (item) {
             return item.items.length > 0;
-        } );
+        });
         return items;
     }
 
-} );
+});

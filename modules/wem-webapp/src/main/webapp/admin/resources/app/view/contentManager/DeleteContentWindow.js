@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.contentManager.DeleteContentWindow', {
+Ext.define('Admin.view.contentManager.DeleteContentWindow', {
     extend: 'Admin.view.BaseDialogWindow',
     alias: 'widget.deleteContentWindow',
 
@@ -24,29 +24,26 @@ Ext.define( 'Admin.view.contentManager.DeleteContentWindow', {
         }
     ],
 
-    initComponent: function()
-    {
-        this.callParent( arguments );
+    initComponent: function () {
+        this.callParent(arguments);
     },
 
-    doShow: function( selection )
-    {
-        if ( selection.length == 1 ) {
-            this.setDialogInfoTpl( Templates.contentManager.deleteSingle );
-            this.callParent( [selection[0]] );
-        }
-        else {
-            this.setDialogInfoTpl( Templates.contentManager.deleteMultiple );
+    doShow: function (selection) {
+        if (selection.length === 1) {
+            this.setDialogInfoTpl(Templates.contentManager.deleteSingle);
+            this.callParent([selection[0]]);
+        } else {
+            this.setDialogInfoTpl(Templates.contentManager.deleteMultiple);
             this.callParent(
-                    [
-                        {
-                            data: {
-                                selection: selection,
-                                selectionLength: selection.length
-                            }
+                [
+                    {
+                        data: {
+                            selection: selection,
+                            selectionLength: selection.length
                         }
-                    ]
+                    }
+                ]
             );
         }
     }
-} );
+});
