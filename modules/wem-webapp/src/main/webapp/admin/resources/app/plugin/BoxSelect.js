@@ -1052,6 +1052,13 @@ Ext.define('Admin.plugin.BoxSelect', {
         }
     },
 
+    isDirty:function () {
+        var originalValue = this.convertValueToString(this.originalValue);
+        var currentValue = this.convertValueToString(this.value);
+        console.log(originalValue + " and " + currentValue);
+        return originalValue != currentValue;
+    },
+
     convertValueToString:function (value) {
         if (Ext.isString(value)) {
             return value;
@@ -1062,7 +1069,7 @@ Ext.define('Admin.plugin.BoxSelect', {
                     return val.get(this.valueField);
                 }
                 return val;
-            }, this).join(this.delimiter);
+            }, this).sort().join(this.delimiter);
     },
 
     /**

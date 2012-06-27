@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.cms.core.country.CountryService;
 
-@Path("country/locale")
+@Path("misc/country")
 @Produces(MediaType.APPLICATION_JSON)
 @Component
 public final class CountryResource
@@ -18,7 +18,6 @@ public final class CountryResource
     private CountryService countryService;
 
     @GET
-    @Path("list")
     public CountryResult getAll()
     {
         return new CountryResult( this.countryService.getCountries() );

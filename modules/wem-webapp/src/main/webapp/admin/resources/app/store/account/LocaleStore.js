@@ -8,7 +8,7 @@ Ext.define('Admin.store.account.LocaleStore', {
 
     proxy: {
         type: 'ajax',
-        url: 'data/misc/locale/list',
+        url: 'rest/misc/locale',
         simpleSortMode: true,
         reader: {
             type: 'json',

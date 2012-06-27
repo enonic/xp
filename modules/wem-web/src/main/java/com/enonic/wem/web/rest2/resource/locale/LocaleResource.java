@@ -18,7 +18,6 @@ public final class LocaleResource
     private LocaleService localeService;
 
     @GET
-    @Path("list")
     public LocaleResult getAll()
     {
         return new LocaleResult( this.localeService.getLocales() );
