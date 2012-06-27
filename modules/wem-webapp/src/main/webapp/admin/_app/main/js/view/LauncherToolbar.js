@@ -1,4 +1,4 @@
-Ext.define( 'App.view.LauncherToolbar', {
+Ext.define('App.view.LauncherToolbar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.launcherToolbar',
     id: 'app-launcher-toolbar',
@@ -10,7 +10,8 @@ Ext.define( 'App.view.LauncherToolbar', {
 
     items: [
         {
-            xtype: 'tbspacer', width: 5
+            xtype: 'tbspacer',
+            width: 5
         },
         // Logo
         {
@@ -21,11 +22,13 @@ Ext.define( 'App.view.LauncherToolbar', {
             }
         },
         {
-            xtype: 'tbspacer', width: 5
+            xtype: 'tbspacer',
+            width: 5
         },
         '-',
         {
-            xtype: 'tbspacer', width: 5
+            xtype: 'tbspacer',
+            width: 5
         },
         // Start button
         {
@@ -34,10 +37,10 @@ Ext.define( 'App.view.LauncherToolbar', {
             xtype: 'button',
             scale: 'medium',
             text: 'Dashboard',
-            menu: Ext.create( 'Admin.view.MegaMenu', {
+            menu: Ext.create('Admin.view.MegaMenu', {
                 recentCount: 9,
                 url: '_app/main/data/megaMenu.json'
-            } )
+            })
         },
         '->',
         // Logged in user
@@ -75,5 +78,5 @@ Ext.define( 'App.view.LauncherToolbar', {
         }
     ]
 
-} );
+});
 

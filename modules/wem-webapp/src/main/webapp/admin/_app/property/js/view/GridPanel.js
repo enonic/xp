@@ -1,6 +1,6 @@
 Ext.define('App.view.GridPanel', {
     extend: 'Ext.grid.Panel',
-    alias : 'widget.propertyGrid',
+    alias: 'widget.propertyGrid',
 
     layout: 'fit',
     loadMask: true,
@@ -8,7 +8,7 @@ Ext.define('App.view.GridPanel', {
     frame: false,
     store: 'PropertyStore',
 
-    initComponent: function() {
+    initComponent: function () {
 
         this.columns = [
             {
@@ -27,7 +27,7 @@ Ext.define('App.view.GridPanel', {
 
 
         this.viewConfig = {
-            trackOver : true,
+            trackOver: true,
             stripeRows: true
         };
 

@@ -5,13 +5,12 @@ Ext.define('App.view.LoggedInUserButton', {
     menu: [],
     enableToggle: true,
 
-    constructor: function(config)
-    {
+    constructor: function (config) {
         config = config || {};
         config.listeners = config.listeners || {};
 
         Ext.applyIf(config.listeners, {
-            move: {scope:this, fn:function(component, x, y, options) {
+            move: {scope: this, fn: function (component, x, y, options) {
                 this.updatePopupPosition(component, x, y, options);
             }}
         });
@@ -20,26 +19,23 @@ Ext.define('App.view.LoggedInUserButton', {
         App.view.LoggedInUserButton.superclass.constructor.apply(this, arguments);
     },
 
-    onRender: function()
-    {
+    onRender: function () {
         // Can we use 'this' here instead of CMS.view ..?
         App.view.LoggedInUserButton.superclass.onRender.apply(this, arguments);
 
         this.createPopup();
     },
 
-    toggleHandler: function(button, state)
-    {
+    toggleHandler: function (button, state) {
         state ? this.popup.show() : this.popup.hide();
 
-        if ( state ) {
+        if (state) {
             var changeUserInput = Ext.get(Ext.DomQuery.selectNode('#main-change-user-input'));
             changeUserInput.dom.focus();
         }
     },
 
-    createPopup: function()
-    {
+    createPopup: function () {
         var user = {
             uid: '2fcab58712467eab4004583eb8fb7f89',
             displayName: 'Morten Eriksen',
@@ -60,13 +56,11 @@ Ext.define('App.view.LoggedInUserButton', {
         this.updatePopupPosition();
     },
 
-    createPopupTemplate: function()
-    {
-        return new Ext.XTemplate( Templates.main.loggedInUserButtonPopup );
+    createPopupTemplate: function () {
+        return new Ext.XTemplate(Templates.main.loggedInUserButtonPopup);
     },
 
-    updatePopupPosition: function()
-    {
+    updatePopupPosition: function () {
         var buttonArea = this.getEl().getPageBox();
         var popupX = buttonArea.right - this.popup.width;
         var popupY = buttonArea.bottom;

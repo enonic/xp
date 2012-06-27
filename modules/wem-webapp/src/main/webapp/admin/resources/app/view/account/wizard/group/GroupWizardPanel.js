@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.account.wizard.group.GroupWizardPanel', {
+Ext.define('Admin.view.account.wizard.group.GroupWizardPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.groupWizardPanel',
     requires: [
@@ -18,31 +18,30 @@ Ext.define( 'Admin.view.account.wizard.group.GroupWizardPanel', {
         border: false
     },
 
-    initComponent: function()
-    {
+    initComponent: function () {
         var me = this;
         var isNew = this.isNewGroup();
         var isRole = this.isRole();
         var displayNameValue = isNew ? 'Display name' : me.modelData.displayName;
         var qualifiedName = isNew ? me.userstore + '\\' : me.modelData.qualifiedName;
         var steps = me.getSteps();
-        var groupWizardHeader = Ext.create( 'Ext.container.Container', {
+        var groupWizardHeader = Ext.create('Ext.container.Container', {
             itemId: 'wizardHeader',
             autoHeight: true,
             cls: 'admin-wizard-header-container',
             border: false,
-            tpl: new Ext.XTemplate( Templates.account.groupWizardHeader ),
+            tpl: new Ext.XTemplate(Templates.account.groupWizardHeader),
             data: {
                 displayName: displayNameValue,
                 qualifiedName: qualifiedName
             }
-        } );
+        });
 
-        me.tbar = Ext.createByAlias( 'widget.groupWizardToolbar', {
+        me.tbar = Ext.createByAlias('widget.groupWizardToolbar', {
             xtype: 'groupWizardToolbar',
             isNew: isNew,
             isRole: isRole
-        } );
+        });
 
         me.items = [
             {
@@ -58,14 +57,13 @@ Ext.define( 'Admin.view.account.wizard.group.GroupWizardPanel', {
                         cls: me.modelData &&
                              (me.modelData.type === 'role') ? 'icon-role-128' : 'icon-group-128',
                         listeners: {
-                            render: function( cmp )
-                            {
-                                Ext.tip.QuickTipManager.register( {
+                            render: function (cmp) {
+                                Ext.tip.QuickTipManager.register({
                                     target: cmp.el,
-                                    text: me.modelData ? Ext.String.capitalize( me.modelData.type ) : 'Group',
+                                    text: me.modelData ? Ext.String.capitalize(me.modelData.type) : 'Group',
                                     width: 100,
                                     dismissDelay: 10000 // Hide after 10 seconds hover
-                                } );
+                                });
                             }
                         }
                     }
@@ -89,27 +87,25 @@ Ext.define( 'Admin.view.account.wizard.group.GroupWizardPanel', {
             }
         ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
 
-        this.on( 'afterrender', function( groupWizard )
-        {
-            me.removeEmptySteps( groupWizard.getWizardPanel() );
-        } );
+        this.on('afterrender', function (groupWizard) {
+            me.removeEmptySteps(groupWizard.getWizardPanel());
+        });
 
-        if ( me.modelData ) {
-            var wizard = me.down( 'wizardPanel' );
-            wizard.addData( {userStore: me.modelData.userStore} );
-            wizard.addData( {key: me.modelData.key} );
-            wizard.addData( {'displayName': me.modelData.displayName} );
-            wizard.addData( {builtIn: me.modelData.type === 'role'} );
+        if (me.modelData) {
+            var wizard = me.down('wizardPanel');
+            wizard.addData({userStore: me.modelData.userStore});
+            wizard.addData({key: me.modelData.key});
+            wizard.addData({'displayName': me.modelData.displayName});
+            wizard.addData({builtIn: me.modelData.type === 'role'});
         }
 
     },
 
-    getSteps: function()
-    {
+    getSteps: function () {
         var me = this;
-        var isRole = me.modelData != undefined ? me.modelData.type === 'role' : false;
+        var isRole = me.modelData !== undefined ? me.modelData.type === 'role' : false;
         var generalStep = {
             stepTitle: "General",
             modelData: this.modelData,
@@ -125,45 +121,38 @@ Ext.define( 'Admin.view.account.wizard.group.GroupWizardPanel', {
             stepTitle: 'Summary',
             modelData: this.modelData,
             xtype: 'summaryTreePanel'
-        }
+        };
 
-        if ( isRole ) {
+        if (isRole) {
             return [membersStep, summaryStep];
-        }
-        else {
+        } else {
             return [generalStep, membersStep, summaryStep];
         }
 
     },
 
-    removeEmptySteps: function( wizardPanel )
-    {
-        wizardPanel.items.each( function( item )
-        {
-            if ( !item.alwaysKeep && item.getForm && ( item.getForm().getFields().getCount() == 0  ) ) {
-                wizardPanel.remove( item );
+    removeEmptySteps: function (wizardPanel) {
+        wizardPanel.items.each(function (item) {
+            if (!item.alwaysKeep && item.getForm && (item.getForm().getFields().getCount() === 0)) {
+                wizardPanel.remove(item);
             }
-        } );
+        });
     },
 
-    isNewGroup: function()
-    {
-        return this.modelData == undefined;
+    isNewGroup: function () {
+        return this.modelData === undefined;
     },
 
-    isRole: function()
-    {
-        return this.modelData && this.modelData.type == 'role';
+    isRole: function () {
+        return this.modelData && this.modelData.type === 'role';
     },
 
-    getWizardPanel: function()
-    {
-        return this.down( 'wizardPanel' );
+    getWizardPanel: function () {
+        return this.down('wizardPanel');
     },
 
-    getData: function()
-    {
+    getData: function () {
         return this.getWizardPanel().getData();
     }
 
-} );
+});

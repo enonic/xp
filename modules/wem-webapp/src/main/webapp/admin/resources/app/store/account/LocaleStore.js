@@ -13,7 +13,7 @@ Ext.define('Admin.store.account.LocaleStore', {
         reader: {
             type: 'json',
             root: 'locales',
-            totalProperty : 'total'
+            totalProperty: 'total'
         }
     }
 });

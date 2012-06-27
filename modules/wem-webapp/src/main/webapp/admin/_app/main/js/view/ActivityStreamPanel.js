@@ -1,10 +1,10 @@
 Ext.define('App.view.ActivityStreamPanel', {
     extend: 'Ext.panel.Panel',
-    alias : 'widget.activityStreamPanel',
+    alias: 'widget.activityStreamPanel',
     title: 'Activity Stream',
-    tools:[
+    tools: [
         {
-            type:'gear'
+            type: 'gear'
         }
     ],
     collapsible: true,
@@ -14,8 +14,7 @@ Ext.define('App.view.ActivityStreamPanel', {
     autoScroll: false,
     bodyCls: 'admin-activity-stream-panel-body',
 
-    initComponent: function()
-    {
+    initComponent: function () {
         this.html = '<div id="admin-activity-stream-speak-out-panel-container"><!-- --></div>' +
                     '<div id="admin-activity-stream-messages-container"><!-- --></div>';
 

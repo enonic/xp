@@ -1,5 +1,5 @@
 AdminLiveEdit.Button = (function () {
-    function createButton (config) {
+    function createButton(config) {
         var text = config.text || '';
         var id = config.id || '';
         var iconCls = config.iconCls || '';
@@ -25,7 +25,7 @@ AdminLiveEdit.Button = (function () {
     // Public
 
     return {
-        create : function (config) {
+        create: function (config) {
             return createButton(config);
         }
     };

@@ -1,4 +1,4 @@
-Ext.define( 'Admin.controller.contentManager.FilterPanelController', {
+Ext.define('Admin.controller.contentManager.FilterPanelController', {
     extend: 'Admin.controller.contentManager.Controller',
 
     /*      Controller for handling filter panel UI events       */
@@ -9,21 +9,19 @@ Ext.define( 'Admin.controller.contentManager.FilterPanelController', {
         'Admin.view.contentManager.FilterPanel'
     ],
 
-    init: function()
-    {
-        this.control( {
+    init: function () {
+        this.control({
             'contentFilter #filterButton': {
                 click: this.doSearch
             },
             'contentFilter checkbox': {
                 change: this.doSearch
             }
-        } );
+        });
     },
 
 
-    doSearch: function()
-    {
+    doSearch: function () {
         // update filter title
         var filterPanel = this.getContentFilter();
         filterPanel.updateTitle();
@@ -34,12 +32,12 @@ Ext.define( 'Admin.controller.contentManager.FilterPanelController', {
 
         // set the list mode
         var showPanel = this.getContentShowPanel();
-        showPanel.setActiveList( values.length == 0 ? 'tree' : 'grid' );
+        showPanel.setActiveList(values.length === 0 ? 'tree' : 'grid');
 
         // update details to current selection
         var detailPanel = this.getContentDetailPanel();
-        detailPanel.setData( showPanel.getSelection() );
+        detailPanel.setData(showPanel.getSelection());
     }
 
 
-} );
+});

@@ -1,12 +1,12 @@
 Ext.define('Admin.view.userstore.MainPanel', {
     extend: 'Ext.panel.Panel',
-    alias : 'widget.mainPanel',
+    alias: 'widget.mainPanel',
 
     layout: 'border',
     border: false,
     padding: 0,
 
-    initComponent: function() {
+    initComponent: function () {
         this.items = [
             {
                 region: 'center',

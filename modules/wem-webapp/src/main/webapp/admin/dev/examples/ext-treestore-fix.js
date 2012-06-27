@@ -1,7 +1,7 @@
 // http://www.sencha.com/forum/showthread.php?151211-Reloading-TreeStore-adds-all-records-to-store-getRemovedRecords
 
 Ext.override(Ext.data.TreeStore, {
-    load : function(options) {
+    load: function (options) {
         options = options || {};
         options.params = options.params || {};
 
@@ -12,7 +12,7 @@ Ext.override(Ext.data.TreeStore, {
         // create one for them.
         if (!node) {
             node = me.setRootNode({
-                expanded : true
+                expanded: true
             });
         }
 
@@ -35,7 +35,7 @@ Ext.override(Ext.data.TreeStore, {
         }
 
         Ext.applyIf(options, {
-            node : node
+            node: node
         });
         options.params[me.nodeParam] = node ? node.getId() : 'root';
 

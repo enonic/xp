@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.contentManager.ShowPanel', {
+Ext.define('Admin.view.contentManager.ShowPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.contentShow',
 
@@ -13,8 +13,7 @@ Ext.define( 'Admin.view.contentManager.ShowPanel', {
     border: false,
     padding: 5,
 
-    initComponent: function()
-    {
+    initComponent: function () {
 
         this.tbar = {
             xtype: 'browseToolbar'
@@ -46,29 +45,26 @@ Ext.define( 'Admin.view.contentManager.ShowPanel', {
             }
         ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
     },
 
     // possible values : 0,1,tree,grid
-    setActiveList: function( listId )
-    {
-        this.down( '#contentList' ).getLayout().setActiveItem( listId );
+    setActiveList: function (listId) {
+        this.down('#contentList').getLayout().setActiveItem(listId);
     },
 
-    getActiveList: function()
-    {
-        return this.down( '#contentList' ).getLayout().getActiveItem();
+    getActiveList: function () {
+        return this.down('#contentList').getLayout().getActiveItem();
     },
 
-    getSelection: function()
-    {
+    getSelection: function () {
         var selection = [];
         var activeList = this.getActiveList();
-        if ( activeList.xtype == 'contentTree' ) {
+        if (activeList.xtype === 'contentTree') {
             selection = activeList.getSelectionModel().getSelection();
-        } else if ( activeList.xtype == 'contentGrid' ) {
-            var plugin = activeList.getPlugin( 'persistentGridSelection' );
-            if ( plugin ) {
+        } else if (activeList.xtype === 'contentGrid') {
+            var plugin = activeList.getPlugin('persistentGridSelection');
+            if (plugin) {
                 selection = plugin.getSelection();
             } else {
                 selection = activeList.getSelectionModel().getSelection();
@@ -78,37 +74,37 @@ Ext.define( 'Admin.view.contentManager.ShowPanel', {
     },
 
     // -1 deselects all
-    deselect: function( key )
-    {
+    deselect: function (key) {
         var activeList = this.getActiveList();
         var selModel = activeList.getSelectionModel();
-        if ( key == -1 ) {
-            if ( activeList.xtype == 'contentTree' ) {
+        if (key === -1) {
+            if (activeList.xtype === 'contentTree') {
                 selModel.deselectAll();
-            } else if ( activeList.xtype == 'contentGrid' ) {
-                var plugin = activeList.getPlugin( 'persistentGridSelection' );
-                if ( plugin ) {
+            } else if (activeList.xtype === 'contentGrid') {
+                var plugin = activeList.getPlugin('persistentGridSelection');
+                if (plugin) {
                     plugin.clearSelection();
                 } else {
                     selModel.deselectAll();
                 }
             }
         } else {
-            if ( activeList.xtype == 'contentTree' ) {
+            if (activeList.xtype === 'contentTree') {
                 var selNodes = selModel.getSelection();
-                for ( var i = 0; i < selNodes.length; i++ ) {
+                var i;
+                for (i = 0; i < selNodes.length; i++) {
                     var selNode = selNodes[i];
-                    if ( key == selNode.get( 'key' ) ) {
-                        selModel.deselect( selNode );
+                    if (key === selNode.get('key')) {
+                        selModel.deselect(selNode);
                     }
                 }
-            } else if ( activeList.xtype == 'contentGrid' ) {
-                var record = activeList.getStore().findRecord( 'key', key );
-                if ( record ) {
-                    selModel.deselect( record );
+            } else if (activeList.xtype === 'contentGrid') {
+                var record = activeList.getStore().findRecord('key', key);
+                if (record) {
+                    selModel.deselect(record);
                 }
             }
         }
     }
 
-} );
+});

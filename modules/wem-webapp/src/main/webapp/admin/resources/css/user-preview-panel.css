@@ -174,17 +174,21 @@ fieldset.admin-memberships-container {
     color: #ccc;
     margin: 20px;
 }
+
 .admin-user-preview-panel .address {
     margin: 15px;
 }
+
 .admin-user-preview-panel .address  h3 {
     margin: 0 15px;
 }
+
 .admin-user-preview-panel .address .body {
     padding: 15px;
     border: 1px solid #ccc;
     background: #f5f5f5;
 }
+
 .admin-user-preview-panel .address .body table {
     margin: 0;
 }

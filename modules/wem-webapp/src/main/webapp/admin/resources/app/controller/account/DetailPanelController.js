@@ -1,4 +1,4 @@
-Ext.define( 'Admin.controller.account.DetailPanelController', {
+Ext.define('Admin.controller.account.DetailPanelController', {
     extend: 'Admin.controller.account.Controller',
 
     /*      Controller for handling Account Detail UI events       */
@@ -7,8 +7,7 @@ Ext.define( 'Admin.controller.account.DetailPanelController', {
     models: [],
     views: [],
 
-    init: function()
-    {
+    init: function () {
         this.control(
             {
                 'accountDetail': {
@@ -18,11 +17,10 @@ Ext.define( 'Admin.controller.account.DetailPanelController', {
         );
     },
 
-    initDetailToolbar: function()
-    {
+    initDetailToolbar: function () {
         var accountDetail = this.getAccountDetailPanel();
-        accountDetail.updateTitle( this.getPersistentGridSelectionPlugin() );
+        accountDetail.updateTitle(this.getPersistentGridSelectionPlugin());
         accountDetail.showNoneSelection();
     }
 
-} );
+});

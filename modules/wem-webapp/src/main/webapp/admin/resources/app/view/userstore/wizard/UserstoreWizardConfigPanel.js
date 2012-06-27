@@ -1,34 +1,34 @@
-Ext.define( 'Admin.view.userstore.wizard.UserstoreWizardConfigPanel', {
+Ext.define('Admin.view.userstore.wizard.UserstoreWizardConfigPanel', {
     extend: 'Ext.form.Panel',
-    alias : 'widget.userstoreWizardConfigPanel',
+    alias: 'widget.userstoreWizardConfigPanel',
 
 
-    initComponent: function()
-    {
+    initComponent: function () {
         var me = this;
         var configXml = me.modelData ? me.modelData.configXML : "";
-        me.items = [{
-            xtype: 'fieldset',
-            title: 'Config',
-            padding: '10px 15px',
-            defaults: {
-                width: 600
-            },
-            items: [
-               {
-                   xtype: 'textarea',
-                   fieldLabel: 'XML',
-                   height: 400,
-                   value: configXml,
-                   name: 'configXML'
-                }
-            ]
-        }];
-        me.callParent( arguments );
+        me.items = [
+            {
+                xtype: 'fieldset',
+                title: 'Config',
+                padding: '10px 15px',
+                defaults: {
+                    width: 600
+                },
+                items: [
+                    {
+                        xtype: 'textarea',
+                        fieldLabel: 'XML',
+                        height: 400,
+                        value: configXml,
+                        name: 'configXML'
+                    }
+                ]
+            }
+        ];
+        me.callParent(arguments);
     },
 
-    getData: function()
-    {
+    getData: function () {
         var form = this.getForm();
         var configXML = form.findField('configXML').getValue();
         var data = {
@@ -36,4 +36,4 @@ Ext.define( 'Admin.view.userstore.wizard.UserstoreWizardConfigPanel', {
         };
         return data;
     }
-} );
+});

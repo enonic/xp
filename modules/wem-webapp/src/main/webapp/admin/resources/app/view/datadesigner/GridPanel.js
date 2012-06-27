@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.datadesigner.GridPanel', {
+Ext.define('Admin.view.datadesigner.GridPanel', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.contentTypeGridPanel',
     store: 'Admin.store.datadesigner.ContentTypeStore',
@@ -10,8 +10,7 @@ Ext.define( 'Admin.view.datadesigner.GridPanel', {
         }
     ],
 
-    initComponent: function()
-    {
+    initComponent: function () {
         this.columns = [
             {
                 header: 'Name',
@@ -26,27 +25,24 @@ Ext.define( 'Admin.view.datadesigner.GridPanel', {
             }
         ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
     },
 
-    nameRenderer: function( value, p, record )
-    {
+    nameRenderer: function (value, p, record) {
         var contentType = record.data;
         var icon = contentType.icon === '' ? 'resources/images/icons/32x32/cubes.png' : contentType.icon;
-        return Ext.String.format( Templates.datadesigner.gridPanelRenderer, icon, contentType.displayName, contentType.extends );
+        return Ext.String.format(Templates.datadesigner.gridPanelRenderer, icon, contentType.displayName, contentType['extends']);
     },
 
-    prettyDateRenderer: function( value, p, record )
-    {
+    prettyDateRenderer: function (value, p, record) {
         try {
-            if ( parent && Ext.isFunction( parent.humane_date ) ) {
-                return parent.humane_date( value );
-            }
-            else {
+            if (parent && Ext.isFunction(parent.humane_date)) {
+                return parent.humane_date(value);
+            } else {
                 return value;
             }
         }
-        catch ( e ) {
+        catch (e) {
             return value;
         }
     }

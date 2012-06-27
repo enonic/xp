@@ -1,4 +1,4 @@
-Ext.define( 'App.view.GaugePanel', {
+Ext.define('App.view.GaugePanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.systemCacheGauge',
 
@@ -9,7 +9,7 @@ Ext.define( 'App.view.GaugePanel', {
     gaugeColor: '#4e8cc6',
     gaugeStore: null,
 
-    initComponent: function() {
+    initComponent: function () {
 
         this.gaugeStore = Ext.create('Ext.data.JsonStore', {
             fields: ['name', 'data']
@@ -42,23 +42,24 @@ Ext.define( 'App.view.GaugePanel', {
             ]
         };
         var me = this;
-        this.tools = [{
-            type:'refresh',
-            tooltip: 'Refresh form Data',
+        this.tools = [
+            {
+                type: 'refresh',
+                tooltip: 'Refresh form Data',
                 // hidden:true,
-                handler: function( event, toolEl, panel ){
+                handler: function (event, toolEl, panel) {
                     me.updateData();
                 }
             }
-        ],
-
+        ];
         this.callParent(arguments);
 
     },
 
-    updateData: function( data ) {
-        if ( data )
-            this.gaugeStore.loadData( data );
+    updateData: function (data) {
+        if (data) {
+            this.gaugeStore.loadData(data);
+        }
     }
 
-} );
+});

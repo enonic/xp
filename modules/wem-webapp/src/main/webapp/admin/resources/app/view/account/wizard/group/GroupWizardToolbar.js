@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.account.wizard.group.GroupWizardToolbar', {
+Ext.define('Admin.view.account.wizard.group.GroupWizardToolbar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.groupWizardToolbar',
 
@@ -6,8 +6,7 @@ Ext.define( 'Admin.view.account.wizard.group.GroupWizardToolbar', {
 
     isNewGroup: true,
 
-    initComponent: function()
-    {
+    initComponent: function () {
 
         var buttonDefaults = {
             scale: 'medium',
@@ -32,8 +31,8 @@ Ext.define( 'Admin.view.account.wizard.group.GroupWizardToolbar', {
             }
         ];
 
-        if ( !this.isNew && !this.isRole ) {
-            leftGrp.push( {
+        if (!this.isNew && !this.isRole) {
+            leftGrp.push({
                 xtype: 'buttongroup',
                 columns: 1,
                 defaults: buttonDefaults,
@@ -44,7 +43,7 @@ Ext.define( 'Admin.view.account.wizard.group.GroupWizardToolbar', {
                         iconCls: 'icon-delete-user-24'
                     }
                 ]
-            } );
+            });
         }
 
         var rightGrp = {
@@ -57,10 +56,11 @@ Ext.define( 'Admin.view.account.wizard.group.GroupWizardToolbar', {
                     action: 'closeWizard',
                     iconCls: 'icon-cancel-24'
                 }
-            ]};
+            ]
+        };
 
-        this.items = leftGrp.concat( '->', rightGrp );
-        this.callParent( arguments );
+        this.items = leftGrp.concat('->', rightGrp);
+        this.callParent(arguments);
     }
 
-} );
+});

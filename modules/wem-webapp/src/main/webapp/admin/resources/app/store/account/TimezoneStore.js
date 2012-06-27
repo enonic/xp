@@ -13,7 +13,7 @@ Ext.define('Admin.store.account.TimezoneStore', {
         reader: {
             type: 'json',
             root: 'timezones',
-            totalProperty : 'total'
+            totalProperty: 'total'
         }
     }
 });

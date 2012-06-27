@@ -1,9 +1,8 @@
-Ext.define( 'Admin.view.account.preview.group.GroupPreviewToolbar', {
+Ext.define('Admin.view.account.preview.group.GroupPreviewToolbar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.groupPreviewToolbar',
 
-    initComponent: function()
-    {
+    initComponent: function () {
 
         var buttonDefaults = {
             scale: 'medium',
@@ -24,12 +23,12 @@ Ext.define( 'Admin.view.account.preview.group.GroupPreviewToolbar', {
             ]
         };
 
-        if ( !this.isRole ) {
-            leftGrp.items.push( {
+        if (!this.isRole) {
+            leftGrp.items.push({
                 text: 'Delete',
                 action: 'deleteGroup',
                 iconCls: 'icon-delete-user-24'
-            } )
+            });
         }
 
         var rightGrp = {
@@ -46,7 +45,7 @@ Ext.define( 'Admin.view.account.preview.group.GroupPreviewToolbar', {
         };
 
         this.items = [ leftGrp, '->', rightGrp ];
-        this.callParent( arguments );
+        this.callParent(arguments);
     }
 
-} );
+});

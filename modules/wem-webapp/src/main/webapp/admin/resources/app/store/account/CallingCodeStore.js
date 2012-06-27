@@ -1,4 +1,4 @@
-Ext.define( 'Admin.store.account.CallingCodeStore', {
+Ext.define('Admin.store.account.CallingCodeStore', {
     extend: 'Ext.data.Store',
 
     model: 'Admin.model.account.CallingCodeModel',
@@ -15,4 +15,4 @@ Ext.define( 'Admin.store.account.CallingCodeStore', {
             root: 'codes'
         }
     }
-} );
+});

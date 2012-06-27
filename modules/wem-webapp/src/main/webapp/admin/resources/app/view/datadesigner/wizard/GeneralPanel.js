@@ -1,12 +1,11 @@
-Ext.define( 'Admin.view.datadesigner.wizard.GeneralPanel', {
+Ext.define('Admin.view.datadesigner.wizard.GeneralPanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.dataDesignerWizardGeneralPanel',
 
-    initComponent: function()
-    {
+    initComponent: function () {
         var me = this;
 
-        console.log( this.modelData )
+        console.log(this.modelData)
         me.items = [
             {
                 xtype: 'fieldset',
@@ -38,14 +37,13 @@ Ext.define( 'Admin.view.datadesigner.wizard.GeneralPanel', {
             }
         ];
 
-        me.callParent( arguments );
+        me.callParent(arguments);
     },
 
-    getData: function()
-    {
+    getData: function () {
         var form = this.getForm();
-        var name = form.findField( 'name' ).getValue();
-        var module = form.findField( 'module' ).getValue();
+        var name = form.findField('name').getValue();
+        var module = form.findField('module').getValue();
 
         var data = {
             'name': name,
@@ -53,4 +51,4 @@ Ext.define( 'Admin.view.datadesigner.wizard.GeneralPanel', {
         };
         return data;
     }
-} );
+});

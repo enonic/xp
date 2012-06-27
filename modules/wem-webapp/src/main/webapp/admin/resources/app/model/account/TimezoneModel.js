@@ -9,7 +9,7 @@ Ext.define('Admin.model.account.TimezoneModel', {
         'offset',
         {
             name: 'humanizedIdAndOffset',
-            convert: function(value, record) {
+            convert: function (value, record) {
                 return record.get('humanizedId') + ' (' + record.get('offset') + ')';
             }
         }

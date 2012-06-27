@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.contentManager.TreePanel', {
+Ext.define('Admin.view.contentManager.TreePanel', {
     extend: 'Ext.tree.Panel',
     alias: 'widget.contentTree',
 
@@ -41,4 +41,4 @@ Ext.define( 'Admin.view.contentManager.TreePanel', {
     ]
 
 
-} );
+});

@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.account.AddressPanel', {
+Ext.define('Admin.view.account.AddressPanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.addressPanel',
 
@@ -25,19 +25,18 @@ Ext.define( 'Admin.view.account.AddressPanel', {
 
     closeAction: 'hide',
 
-    initComponent: function()
-    {
-        if ( this.values == null ) {
+    initComponent: function () {
+        if (this.values === null) {
             this.values = [];
         }
-        this.title = this.values['label'] == null ? '[no title]' : this.values['label'];
+        this.title = this.values.label === null ? '[no title]' : this.values.label;
 
-        if ( this.remote ) {
-            this.cls += ' remote'
+        if (this.remote) {
+            this.cls += ' remote';
         }
 
         var countryField, regionField;
-        if ( this.iso ) {
+        if (this.iso) {
             countryField = {
                 xtype: 'combobox',
                 store: 'Admin.store.account.CountryStore',
@@ -49,12 +48,12 @@ Ext.define( 'Admin.view.account.AddressPanel', {
                 emptyText: 'Please select',
                 name: 'isoCountry',
                 itemId: 'isoCountry',
-                value: this.values['isoCountry'],
+                value: this.values.isoCountry,
                 width: 400,
                 disabled: this.readonly
             };
 
-            regionField = new Ext.form.field.ComboBox( {
+            regionField = new Ext.form.field.ComboBox({
                 xtype: 'combobox',
                 store: 'Admin.store.account.RegionStore',
                 valueField: 'code',
@@ -66,17 +65,16 @@ Ext.define( 'Admin.view.account.AddressPanel', {
                 name: 'isoRegion',
                 itemId: 'isoRegion',
                 width: 400,
-                value: this.values['isoRegion'],
-                disabled: this.values['isoRegion'] == null
-            } );
-        }
-        else {
+                value: this.values.isoRegion,
+                disabled: this.values.isoRegion === null
+            });
+        } else {
             countryField = {
                 xtype: 'textfield',
                 fieldLabel: 'Country',
                 name: 'country',
                 itemId: 'address-country',
-                value: this.values['country'],
+                value: this.values.country,
                 width: 400,
                 disabled: this.readonly
             };
@@ -86,7 +84,7 @@ Ext.define( 'Admin.view.account.AddressPanel', {
                 name: 'region',
                 itemId: 'address-region',
                 width: 400,
-                value: this.values['region'],
+                value: this.values.region,
                 disabled: this.readonly
             };
         }
@@ -97,7 +95,7 @@ Ext.define( 'Admin.view.account.AddressPanel', {
                 name: 'label',
                 itemId: 'address-label',
                 enableKeyEvents: true,
-                value: this.values['label'],
+                value: this.values.label,
                 bubbleEvents: ['keyup'],
                 disabled: this.readonly
             },
@@ -106,7 +104,7 @@ Ext.define( 'Admin.view.account.AddressPanel', {
                 fieldLabel: 'Street',
                 name: 'street',
                 itemId: 'address-street',
-                value: this.values['street'],
+                value: this.values.street,
                 disabled: this.readonly
             },
             {
@@ -114,7 +112,7 @@ Ext.define( 'Admin.view.account.AddressPanel', {
                 fieldLabel: 'Postal Code',
                 name: 'postalCode',
                 itemId: 'address-postal-code',
-                value: this.values['postalCode'],
+                value: this.values.postalCode,
                 disabled: this.readonly
             },
             {
@@ -122,7 +120,7 @@ Ext.define( 'Admin.view.account.AddressPanel', {
                 fieldLabel: 'Postal Address',
                 name: 'postalAddress',
                 itemId: 'address-postal-address',
-                value: this.values['postalAddress'],
+                value: this.values.postalAddress,
                 disabled: this.readonly
             },
             countryField,
@@ -130,37 +128,34 @@ Ext.define( 'Admin.view.account.AddressPanel', {
             {
                 xtype: 'hiddenfield',
                 name: 'oldPos',
-                value: this.values['oldPos']
+                value: this.values.oldPos
             }
         ];
         this.listeners = {
             beforeclose: {
-                fn: function( panel, opts )
-                {
-                    panel.setDisabled( true );
+                fn: function (panel, opts) {
+                    panel.setDisabled(true);
                 }
             }
         };
-        this.callParent( arguments );
+        this.callParent(arguments);
     },
 
-    setClosable: function( isClosable )
-    {
-        if ( isClosable ) {
-            if ( !this.closable ) {
-                this.addClsWithUI( 'closable' );
-                this.addTool( {
+    setClosable: function (isClosable) {
+        if (isClosable) {
+            if (!this.closable) {
+                this.addClsWithUI('closable');
+                this.addTool({
                     type: 'close',
-                    handler: Ext.Function.bind( this.close, this, [] )
-                } );
+                    handler: Ext.Function.bind(this.close, this, [])
+                });
             }
-        }
-        else {
-            if ( this.closable ) {
+        } else {
+            if (this.closable) {
                 this.tools.close.destroy();
             }
         }
         this.closable = isClosable;
 
     }
-} );
+});

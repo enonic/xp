@@ -1,13 +1,12 @@
-Ext.define( 'Admin.view.account.AccountKeyMap', {
+Ext.define('Admin.view.account.AccountKeyMap', {
     extend: 'Ext.util.KeyMap',
 
     disableOnMask: true,
 
-    constructor: function( actionHandlers )
-    {
+    constructor: function (actionHandlers) {
         var me = this;
         var document = Ext.getDoc();
-        me.callParent( [document, [
+        me.callParent([document, [
             {
                 key: "n",
                 ctrl: true,
@@ -64,15 +63,15 @@ Ext.define( 'Admin.view.account.AccountKeyMap', {
                 defaultEventAction: 'stopEvent',
                 fn: actionHandlers.deleteItem
             }
-        ]] );
+        ]]);
     },
 
-    checkModifiers: function( binding, e ) {
+    checkModifiers: function (binding, e) {
         var isMasked = false;
-        if ( this.disableOnMask ) {
-            isMasked = Ext.getDoc().select( 'body.x-body-masked' ).getCount() > 0;
+        if (this.disableOnMask) {
+            isMasked = Ext.getDoc().select('body.x-body-masked').getCount() > 0;
         }
-        return !isMasked && this.callParent( arguments );
+        return !isMasked && this.callParent(arguments);
     }
 
-} );
+});

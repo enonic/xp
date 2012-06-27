@@ -3,49 +3,51 @@
     background: transparent url(images/external.png) no-repeat center right;
 }
 
-blockquote {background:url('images/quote.gif') no-repeat top left;}
+blockquote {
+    background: url('images/quote.gif') no-repeat top left;
+}
 
 /* borders and frame */
 #east .frame, #west .frame {
-  border: 1px solid #d7d7d7;
-  background: #fff url('images/framegradient.gif') repeat-x top left;
+    border: 1px solid #d7d7d7;
+    background: #fff url('images/framegradient.gif') repeat-x top left;
 }
 
 /* frontpage - case study box */
 .casestudybox {
-  float:left;
-  width:600px;
-  margin-right: 20px;
-  height: auto!important;
-  height: 375px;
-  min-height: 375px;
-  overflow: hidden;
-  background:#ddd url('images/bgcasestudy.jpg') repeat-x top left;
-  position:relative;
+    float: left;
+    width: 600px;
+    margin-right: 20px;
+    height: auto !important;
+    height: 375px;
+    min-height: 375px;
+    overflow: hidden;
+    background: #ddd url('images/bgcasestudy.jpg') repeat-x top left;
+    position: relative;
 }
 
 .casestudy-navigation a:hover, .casestudy-navigation a.active {
-  background:transparent url('images/numbg.gif') no-repeat 6px 4px;
-  color: #000;
-  text-decoration:none;
+    background: transparent url('images/numbg.gif') no-repeat 6px 4px;
+    color: #000;
+    text-decoration: none;
 }
 
 .casestudybox.bannersize {
-  width:950px;
-  margin: 0;
-  height: 300px !important;
-  min-height: 300px !important;
-  overflow: hidden;
-  background:#ddd url('images/bgcasestudy-banner.jpg') no-repeat top left;
-  position:relative;
+    width: 950px;
+    margin: 0;
+    height: 300px !important;
+    min-height: 300px !important;
+    overflow: hidden;
+    background: #ddd url('images/bgcasestudy-banner.jpg') no-repeat top left;
+    position: relative;
 }
 
 /* vignettes on frontpage */
 .shadowboxes .item {
-  width: 288px;
-  height: auto !important;
-  border:1px solid #d7d7d7;
-  float:left;
-  margin-right:20px;
-  background:#fff url('images/boxgradient.gif') repeat-x top left;
+    width: 288px;
+    height: auto !important;
+    border: 1px solid #d7d7d7;
+    float: left;
+    margin-right: 20px;
+    background: #fff url('images/boxgradient.gif') repeat-x top left;
 }

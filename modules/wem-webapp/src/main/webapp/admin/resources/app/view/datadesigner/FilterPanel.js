@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.datadesigner.FilterPanel', {
+Ext.define('Admin.view.datadesigner.FilterPanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.filterPanel',
     layout: 'form',
@@ -22,9 +22,8 @@ Ext.define( 'Admin.view.datadesigner.FilterPanel', {
         }
     ],
 
-    initComponent: function()
-    {
-        this.callParent( arguments );
+    initComponent: function () {
+        this.callParent(arguments);
     }
 
 });

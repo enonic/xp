@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.datadesigner.wizard.WizardPanel', {
+Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.dataDesignerWizardPanel',
     requires: [
@@ -15,31 +15,30 @@ Ext.define( 'Admin.view.datadesigner.wizard.WizardPanel', {
     },
 
 
-    initComponent: function()
-    {
+    initComponent: function () {
         var me = this;
         var steps = me.getSteps();
         var isNew = this.isNewContentType();
         /*
-        var displayNameValue = isNew ? 'Display name' : me.modelData.name;
-        var steps = me.getSteps();
-        var groupWizardHeader = Ext.create( 'Ext.container.Container', {
-            itemId: 'wizardHeader',
-            autoHeight: true,
-            cls: 'admin-wizard-header-container',
-            border: false,
-            tpl: new Ext.XTemplate(Templates.account.groupWizardHeader),
-            data: {
-                displayName: displayNameValue
-            }
-        } );
-        */
+         var displayNameValue = isNew ? 'Display name' : me.modelData.name;
+         var steps = me.getSteps();
+         var groupWizardHeader = Ext.create( 'Ext.container.Container', {
+         itemId: 'wizardHeader',
+         autoHeight: true,
+         cls: 'admin-wizard-header-container',
+         border: false,
+         tpl: new Ext.XTemplate(Templates.account.groupWizardHeader),
+         data: {
+         displayName: displayNameValue
+         }
+         } );
+         */
 
         /*
-        me.tbar = Ext.createByAlias( 'widget.dataDesignerWizardToolbar', {
-            isNew: isNew
-        } );
-        */
+         me.tbar = Ext.createByAlias( 'widget.dataDesignerWizardToolbar', {
+         isNew: isNew
+         } );
+         */
 
         me.items = [
             {
@@ -54,7 +53,7 @@ Ext.define( 'Admin.view.datadesigner.wizard.WizardPanel', {
                         height: 128,
                         cls: 'icon-data-designer-128',
                         listeners: {
-                            render: function( cmp ) {
+                            render: function (cmp) {
                                 Ext.tip.QuickTipManager.register({
                                     target: cmp.el,
                                     text: 'Content type',
@@ -84,17 +83,16 @@ Ext.define( 'Admin.view.datadesigner.wizard.WizardPanel', {
             }
         ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
 
-        this.on( 'afterrender', function( groupWizard ) {
+        this.on('afterrender', function (groupWizard) {
             //me.removeEmptySteps( groupWizard.getWizardPanel() );
         });
 
     },
 
 
-    getSteps: function()
-    {
+    getSteps: function () {
         var me = this;
         var nameStep = {
             stepTitle: "General",
@@ -116,30 +114,27 @@ Ext.define( 'Admin.view.datadesigner.wizard.WizardPanel', {
     },
 
 
-    removeEmptySteps: function( wizardPanel ) {
-        wizardPanel.items.each( function( item ){
-            if ( !item.alwaysKeep && item.getForm && ( item.getForm().getFields().getCount() == 0  ))
-            {
-                wizardPanel.remove( item );
+    removeEmptySteps: function (wizardPanel) {
+        wizardPanel.items.each(function (item) {
+            if (!item.alwaysKeep && item.getForm && (item.getForm().getFields().getCount() === 0)) {
+                wizardPanel.remove(item);
             }
         });
     },
 
 
-    isNewContentType: function()
-    {
+    isNewContentType: function () {
         return this.modelData == undefined;
     },
 
 
-    getWizardPanel: function() {
+    getWizardPanel: function () {
         return this.down('wizardPanel');
     },
 
 
-    getData: function()
-    {
+    getData: function () {
         return this.getWizardPanel().getData();
     }
 
-} );
+});

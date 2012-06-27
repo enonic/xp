@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.account.wizard.user.UserWizardToolbar', {
+Ext.define('Admin.view.account.wizard.user.UserWizardToolbar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.userWizardToolbar',
 
@@ -6,8 +6,7 @@ Ext.define( 'Admin.view.account.wizard.user.UserWizardToolbar', {
 
     isNewUser: true,
 
-    initComponent: function()
-    {
+    initComponent: function () {
 
         var buttonDefaults = {
             scale: 'medium',
@@ -32,8 +31,8 @@ Ext.define( 'Admin.view.account.wizard.user.UserWizardToolbar', {
             }
         ];
 
-        if ( !this.isNewUser ) {
-            leftGrp.push( {
+        if (!this.isNewUser) {
+            leftGrp.push({
                 xtype: 'buttongroup',
                 columns: 1,
                 defaults: buttonDefaults,
@@ -55,7 +54,7 @@ Ext.define( 'Admin.view.account.wizard.user.UserWizardToolbar', {
                         iconCls: 'icon-change-password-24'
                     }
                 ]
-            } );
+            });
         }
 
         var rightGrp = {
@@ -68,10 +67,11 @@ Ext.define( 'Admin.view.account.wizard.user.UserWizardToolbar', {
                     action: 'closeWizard',
                     iconCls: 'icon-cancel-24'
                 }
-            ]};
+            ]
+        };
 
-        this.items = leftGrp.concat( [ '->', rightGrp ] );
-        this.callParent( arguments );
+        this.items = leftGrp.concat([ '->', rightGrp ]);
+        this.callParent(arguments);
     }
 
-} );
+});

@@ -6,15 +6,13 @@ Ext.define('Admin.store.account.UserstoreConfigStore', {
 
     sorters: [
         {
-            sorterFn: function(a, b) {
-                var nameA= a.get('name').toLowerCase();
+            sorterFn: function (a, b) {
+                var nameA = a.get('name').toLowerCase();
                 var nameB = b.get('name').toLowerCase();
-                if (nameA < nameB)
-                {
+                if (nameA < nameB) {
                     return -1;
                 }
-                if (nameA > nameB)
-                {
+                if (nameA > nameB) {
                     return 1;
                 }
                 return 0;

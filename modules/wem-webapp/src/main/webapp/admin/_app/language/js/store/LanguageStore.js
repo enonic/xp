@@ -8,7 +8,7 @@ Ext.define('App.store.LanguageStore', {
 
     sorters: [
         {
-            property : 'languageCode',
+            property: 'languageCode',
             direction: 'ASC'
         }
     ],
@@ -19,7 +19,7 @@ Ext.define('App.store.LanguageStore', {
         reader: {
             type: 'json',
             root: 'languages',
-            totalProperty : 'total'
+            totalProperty: 'total'
         }
     }
 });

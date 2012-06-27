@@ -2,91 +2,91 @@
     "total": 80,
     "regions": [
         {
-            "englishName":"Akershus",
+            "englishName": "Akershus",
             "code": 1
         },
         {
-            "englishName":"Aust-Agder",
+            "englishName": "Aust-Agder",
             "code": 2
         },
         {
-            "englishName":"Buskerud",
+            "englishName": "Buskerud",
             "code": 3
         },
         {
-            "englishName":"Finnmark",
+            "englishName": "Finnmark",
             "code": 4
         },
         {
-            "englishName":"Hedmark",
+            "englishName": "Hedmark",
             "code": 5
         },
         {
-            "englishName":"Hordaland",
+            "englishName": "Hordaland",
             "code": 6
         },
         {
-            "englishName":"Møre og Romsdal",
+            "englishName": "Møre og Romsdal",
             "code": 7
         },
         {
-            "englishName":"Akershus",
+            "englishName": "Akershus",
             "code": 8
         },
         {
-            "englishName":"Nordland",
+            "englishName": "Nordland",
             "code": 9
         },
         {
-            "englishName":"Nord Trøndelag",
+            "englishName": "Nord Trøndelag",
             "code": 10
         },
         {
-            "englishName":"Oppland",
+            "englishName": "Oppland",
             "code": 11
         },
         {
-            "englishName":"Oslo",
+            "englishName": "Oslo",
             "code": 12
         },
         {
-            "englishName":"Rogaland",
+            "englishName": "Rogaland",
             "code": 13
         },
         {
-            "englishName":"Sogn og Fjordane",
+            "englishName": "Sogn og Fjordane",
             "code": 14
         },
         {
-            "englishName":"Sør Trøndelag",
+            "englishName": "Sør Trøndelag",
             "code": 15
         },
         {
-            "englishName":"Telemark",
+            "englishName": "Telemark",
             "code": 16
         },
         {
-            "englishName":"Troms",
+            "englishName": "Troms",
             "code": 17
         },
         {
-            "englishName":"Vest-Agder",
+            "englishName": "Vest-Agder",
             "code": 18
         },
         {
-            "englishName":"Vestfold",
+            "englishName": "Vestfold",
             "code": 19
         },
         {
-            "englishName":"Østfold",
+            "englishName": "Østfold",
             "code": 20
         },
         {
-            "englishName":"Vestfold",
+            "englishName": "Vestfold",
             "code": 21
         },
         {
-            "englishName":"Svalbard",
+            "englishName": "Svalbard",
             "code": 22
         }
 

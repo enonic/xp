@@ -1,4 +1,4 @@
-Ext.define( 'Admin.store.contentManager.ContentStore', {
+Ext.define('Admin.store.contentManager.ContentStore', {
     extend: 'Ext.data.Store',
 
     model: 'Admin.model.contentManager.ContentModel',
@@ -12,7 +12,7 @@ Ext.define( 'Admin.store.contentManager.ContentStore', {
         reader: {
             type: 'json',
             root: 'results.content',
-            totalProperty : 'results.total'
+            totalProperty: 'results.total'
         }
     }
-} );
+});

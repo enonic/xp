@@ -1,4 +1,4 @@
-Ext.define( 'Admin.view.userstore.wizard.UserstoreWizardPanel', {
+Ext.define('Admin.view.userstore.wizard.UserstoreWizardPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.userstoreWizardPanel',
     requires: [
@@ -19,13 +19,12 @@ Ext.define( 'Admin.view.userstore.wizard.UserstoreWizardPanel', {
         border: false
     },
 
-    initComponent: function()
-    {
+    initComponent: function () {
         var me = this;
         var isNew = this.isNewUserstore();
         var displayNameValue = isNew ? 'Display name' : me.modelData.name;
         var steps = me.getSteps();
-        var groupWizardHeader = Ext.create( 'Ext.container.Container', {
+        var groupWizardHeader = Ext.create('Ext.container.Container', {
             itemId: 'wizardHeader',
             autoHeight: true,
             cls: 'admin-wizard-header-container',
@@ -34,11 +33,11 @@ Ext.define( 'Admin.view.userstore.wizard.UserstoreWizardPanel', {
             data: {
                 displayName: displayNameValue
             }
-        } );
+        });
 
-        me.tbar = Ext.createByAlias( 'widget.userstoreWizardToolbar', {
+        me.tbar = Ext.createByAlias('widget.userstoreWizardToolbar', {
             isNew: isNew
-        } );
+        });
 
         me.items = [
             {
@@ -53,7 +52,7 @@ Ext.define( 'Admin.view.userstore.wizard.UserstoreWizardPanel', {
                         height: 128,
                         cls: 'icon-userstore-128',
                         listeners: {
-                            render: function( cmp ) {
+                            render: function (cmp) {
                                 Ext.tip.QuickTipManager.register({
                                     target: cmp.el,
                                     text: 'Userstore',
@@ -83,16 +82,15 @@ Ext.define( 'Admin.view.userstore.wizard.UserstoreWizardPanel', {
             }
         ];
 
-        this.callParent( arguments );
+        this.callParent(arguments);
 
-        this.on( 'afterrender', function( groupWizard ) {
-            me.removeEmptySteps( groupWizard.getWizardPanel() );
+        this.on('afterrender', function (groupWizard) {
+            me.removeEmptySteps(groupWizard.getWizardPanel());
         });
 
     },
 
-    getSteps: function()
-    {
+    getSteps: function () {
         var me = this;
         var generalStep = {
             stepTitle: "General",
@@ -118,27 +116,24 @@ Ext.define( 'Admin.view.userstore.wizard.UserstoreWizardPanel', {
         return [generalStep, configStep, adminStep, summaryStep];
     },
 
-    removeEmptySteps: function( wizardPanel ) {
-        wizardPanel.items.each( function( item ){
-            if ( !item.alwaysKeep && item.getForm && ( item.getForm().getFields().getCount() == 0  ))
-            {
-                wizardPanel.remove( item );
+    removeEmptySteps: function (wizardPanel) {
+        wizardPanel.items.each(function (item) {
+            if (!item.alwaysKeep && item.getForm && ( item.getForm().getFields().getCount() === 0)) {
+                wizardPanel.remove(item);
             }
         });
     },
 
-    isNewUserstore: function()
-    {
-        return this.modelData == undefined;
+    isNewUserstore: function () {
+        return this.modelData === undefined;
     },
 
-    getWizardPanel: function() {
+    getWizardPanel: function () {
         return this.down('wizardPanel');
     },
 
-    getData: function()
-    {
+    getData: function () {
         return this.getWizardPanel().getData();
     }
 
-} );
+});

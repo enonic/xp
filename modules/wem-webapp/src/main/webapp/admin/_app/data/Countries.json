@@ -2,7 +2,7 @@
     "total": 80,
     "countries": [
         {
-            "englishName":"Albania",
+            "englishName": "Albania",
             "code": 1,
             "regions": [
                 {
@@ -16,319 +16,319 @@
             ]
         },
         {
-            "englishName":"Angola",
+            "englishName": "Angola",
             "code": 2
         },
         {
-            "englishName":"Argentina",
+            "englishName": "Argentina",
             "code": 3
         },
         {
-            "englishName":"Aserbajdsjan",
+            "englishName": "Aserbajdsjan",
             "code": 4
         },
         {
-            "englishName":"Australia",
+            "englishName": "Australia",
             "code": 5
         },
         {
-            "englishName":"Bangladesh",
+            "englishName": "Bangladesh",
             "code": 6
         },
         {
-            "englishName":"Belgia",
+            "englishName": "Belgia",
             "code": 7
         },
         {
-            "englishName":"Bosnia-Hercegovina",
+            "englishName": "Bosnia-Hercegovina",
             "code": 8
         },
         {
-            "englishName":"Brasil",
+            "englishName": "Brasil",
             "code": 9
         },
         {
-            "englishName":"Canada",
+            "englishName": "Canada",
             "code": 10
         },
         {
-            "englishName":"Chile",
+            "englishName": "Chile",
             "code": 11
         },
         {
-            "englishName":"Danmark",
+            "englishName": "Danmark",
             "code": 12
         },
         {
-            "englishName":"De forente arabiske emirater",
+            "englishName": "De forente arabiske emirater",
             "code": 13
         },
         {
-            "englishName":"Egypt",
+            "englishName": "Egypt",
             "code": 14
         },
         {
-            "englishName":"Elfenbenskysten",
+            "englishName": "Elfenbenskysten",
             "code": 15
         },
         {
-            "englishName":"Etiopia",
+            "englishName": "Etiopia",
             "code": 16
         },
         {
-            "englishName":"Filippinene",
+            "englishName": "Filippinene",
             "code": 17
         },
         {
-            "englishName":"Finland",
+            "englishName": "Finland",
             "code": 18
         },
         {
-            "englishName":"Frankrike",
+            "englishName": "Frankrike",
             "code": 19
         },
         {
-            "englishName":"Guatemala",
+            "englishName": "Guatemala",
             "code": 20
         },
         {
-            "englishName":"Hellas",
+            "englishName": "Hellas",
             "code": 21
         },
         {
-            "englishName":"India",
+            "englishName": "India",
             "code": 22
         },
         {
-            "englishName":"Indonesia",
+            "englishName": "Indonesia",
             "code": 23
         },
         {
-            "englishName":"Iran",
+            "englishName": "Iran",
             "code": 24
         },
         {
-            "englishName":"Irak",
+            "englishName": "Irak",
             "code": 25
         },
         {
-            "englishName":"Irland",
+            "englishName": "Irland",
             "code": 26
         },
         {
-            "englishName":"Island",
+            "englishName": "Island",
             "code": 27
         },
         {
-            "englishName":"Israel",
+            "englishName": "Israel",
             "code": 28
         },
         {
-            "englishName":"Italia",
+            "englishName": "Italia",
             "code": 29
         },
         {
-            "englishName":"Japan",
+            "englishName": "Japan",
             "code": 30
         },
         {
-            "englishName":"Jordan",
+            "englishName": "Jordan",
             "code": 31
         },
         {
-            "englishName":"Jugoslavia",
+            "englishName": "Jugoslavia",
             "code": 32
         },
         {
-            "englishName":"Kenya",
+            "englishName": "Kenya",
             "code": 33
         },
         {
-            "englishName":"Kina",
+            "englishName": "Kina",
             "code": 34
         },
         {
-            "englishName":"Kroatia",
+            "englishName": "Kroatia",
             "code": 35
         },
         {
-            "englishName":"Latvia",
+            "englishName": "Latvia",
             "code": 36
         },
         {
-            "englishName":"Litauen",
+            "englishName": "Litauen",
             "code": 37
         },
         {
-            "englishName":"Makedonia",
+            "englishName": "Makedonia",
             "code": 38
         },
         {
-            "englishName":"Malawi",
+            "englishName": "Malawi",
             "code": 39
         },
         {
-            "englishName":"Malaysia",
+            "englishName": "Malaysia",
             "code": 40
         },
         {
-            "englishName":"Marokko",
+            "englishName": "Marokko",
             "code": 41
         },
         {
-            "englishName":"Mexico",
+            "englishName": "Mexico",
             "code": 42
         },
         {
-            "englishName":"Mosambik",
+            "englishName": "Mosambik",
             "code": 43
         },
         {
-            "englishName":"Nederland",
+            "englishName": "Nederland",
             "code": 44
         },
         {
-            "englishName":"Nepal",
+            "englishName": "Nepal",
             "code": 45
         },
         {
-            "englishName":"Nicaragua",
+            "englishName": "Nicaragua",
             "code": 46
         },
         {
-            "englishName":"Nigeria",
+            "englishName": "Nigeria",
             "code": 47
         },
         {
-            "englishName":"Norge",
+            "englishName": "Norge",
             "code": 48
         },
         {
-            "englishName":"Oman",
+            "englishName": "Oman",
             "code": 49
         },
         {
-            "englishName":"Pakistan",
+            "englishName": "Pakistan",
             "code": 50
         },
         {
-            "englishName":"Polen",
+            "englishName": "Polen",
             "code": 51
         },
         {
-            "englishName":"Pakistan",
+            "englishName": "Pakistan",
             "code": 52
         },
         {
-            "englishName":"Portugal",
+            "englishName": "Portugal",
             "code": 53
         },
         {
-            "englishName":"Romania",
+            "englishName": "Romania",
             "code": 54
         },
         {
-            "englishName":"Russland",
+            "englishName": "Russland",
             "code": 55
         },
         {
-            "englishName":"Saudia-Arabia",
+            "englishName": "Saudia-Arabia",
             "code": 56
         },
         {
-            "englishName":"Singapore",
+            "englishName": "Singapore",
             "code": 57
         },
         {
-            "englishName":"Spania",
+            "englishName": "Spania",
             "code": 58
         },
         {
-            "englishName":"Sri Lanka",
+            "englishName": "Sri Lanka",
             "code": 59
         },
         {
-            "englishName":"Storbritannia",
+            "englishName": "Storbritannia",
             "code": 60
         },
         {
-            "englishName":"Sveits",
+            "englishName": "Sveits",
             "code": 61
         },
         {
-            "englishName":"Sverige",
+            "englishName": "Sverige",
             "code": 62
         },
         {
-            "englishName":"Syria",
+            "englishName": "Syria",
             "code": 63
         },
         {
-            "englishName":"Sør-Afrika",
+            "englishName": "Sør-Afrika",
             "code": 64
         },
         {
-            "englishName":"Sør-Korea",
+            "englishName": "Sør-Korea",
             "code": 65
         },
         {
-            "englishName":"Tanzania",
+            "englishName": "Tanzania",
             "code": 66
         },
         {
-            "englishName":"Thailand",
+            "englishName": "Thailand",
             "code": 67
         },
         {
-            "englishName":"Tsjekkia",
+            "englishName": "Tsjekkia",
             "code": 68
         },
         {
-            "englishName":"Tunisia",
+            "englishName": "Tunisia",
             "code": 69
         },
         {
-            "englishName":"Tyrkia",
+            "englishName": "Tyrkia",
             "code": 70
         },
         {
-            "englishName":"Tyskland",
+            "englishName": "Tyskland",
             "code": 71
         },
         {
-            "englishName":"Uganda",
+            "englishName": "Uganda",
             "code": 72
         },
         {
-            "englishName":"Ukraina",
+            "englishName": "Ukraina",
             "code": 73
         },
         {
-            "englishName":"Ungarn",
+            "englishName": "Ungarn",
             "code": 74
         },
         {
-            "englishName":"USA",
+            "englishName": "USA",
             "code": 75
         },
         {
-            "englishName":"Venezuela",
+            "englishName": "Venezuela",
             "code": 76
         },
         {
-            "englishName":"Vietnam",
+            "englishName": "Vietnam",
             "code": 77
         },
         {
-            "englishName":"Zambia",
+            "englishName": "Zambia",
             "code": 78
         },
         {
-            "englishName":"Zimbabwe",
+            "englishName": "Zimbabwe",
             "code": 79
         },
         {
-            "englishName":"Østerrike",
+            "englishName": "Østerrike",
             "code": 80
         }
     ]
