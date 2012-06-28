@@ -1,9 +1,7 @@
 package com.enonic.wem.core.jcr.accounts;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
@@ -24,12 +22,12 @@ public final class JcrUser
 
     private JcrUserInfo userInfo;
 
-    private final Map<String, JcrGroup> memberships;
+    private final Set<JcrGroup> memberships;
 
     public JcrUser()
     {
         super( JcrAccountType.USER );
-        this.memberships = new HashMap<String, JcrGroup>();
+        this.memberships = new HashSet<JcrGroup>();
     }
 
     public DateTime getLastLogged()
@@ -94,7 +92,7 @@ public final class JcrUser
 
     public Set<JcrGroup> getMemberships()
     {
-        return new HashSet<JcrGroup>( memberships.values() );
+        return memberships;
     }
 
     public void setMemberships( final Collection<JcrGroup> memberships )
@@ -102,17 +100,17 @@ public final class JcrUser
         this.memberships.clear();
         for ( JcrGroup membership : memberships )
         {
-            this.memberships.put( membership.getId(), membership );
+            this.memberships.add( membership );
         }
     }
 
     public void addMembership( final JcrGroup membership )
     {
-        this.memberships.put( membership.getId(), membership );
+        this.memberships.add( membership );
     }
 
     public boolean isMemberOf( final JcrGroup group )
     {
-        return this.memberships.containsKey( group.getId() );
+        return this.memberships.contains( group );
     }
 }

@@ -3,6 +3,8 @@ package com.enonic.wem.core.jcr.accounts;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joda.time.DateTime;
+
 public class JcrUserInfo
 {
     private String firstName;
@@ -11,7 +13,7 @@ public class JcrUserInfo
 
     private String middleName;
 
-    private String birthday;
+    private DateTime birthday;
 
     private String country;
 
@@ -21,7 +23,7 @@ public class JcrUserInfo
 
     private String globalPosition;
 
-    private String htmlEmail;
+    private Boolean htmlEmail;
 
     private String locale;
 
@@ -49,7 +51,7 @@ public class JcrUserInfo
 
     private String timeZone;
 
-    private String gender;
+    private Gender gender;
 
     private final List<JcrAddress> addresses;
 
@@ -89,12 +91,12 @@ public class JcrUserInfo
         this.middleName = middleName;
     }
 
-    public String getBirthday()
+    public DateTime getBirthday()
     {
         return birthday;
     }
 
-    public void setBirthday( String birthday )
+    public void setBirthday( DateTime birthday )
     {
         this.birthday = birthday;
     }
@@ -139,12 +141,12 @@ public class JcrUserInfo
         this.globalPosition = globalPosition;
     }
 
-    public String getHtmlEmail()
+    public Boolean getHtmlEmail()
     {
         return htmlEmail;
     }
 
-    public void setHtmlEmail( String htmlEmail )
+    public void setHtmlEmail( Boolean htmlEmail )
     {
         this.htmlEmail = htmlEmail;
     }
@@ -295,12 +297,12 @@ public class JcrUserInfo
         this.addresses.add( address );
     }
 
-    public String getGender()
+    public Gender getGender()
     {
         return gender;
     }
 
-    public void setGender( String gender )
+    public void setGender( Gender gender )
     {
         this.gender = gender;
     }

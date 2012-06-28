@@ -1,16 +1,14 @@
 package com.enonic.wem.core.jcr.accounts;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class JcrGroup
     extends JcrAccountBase
     implements JcrAccount
 {
-    private final Map<String, JcrAccount> members;
+    private final Set<JcrAccount> members;
 
     private int membersCount;
 
@@ -19,13 +17,13 @@ public class JcrGroup
     public JcrGroup()
     {
         super( JcrAccountType.GROUP );
-        this.members = new HashMap<String, JcrAccount>();
+        this.members = new HashSet<JcrAccount>();
     }
 
     protected JcrGroup( JcrAccountType type )
     {
         super( type );
-        this.members = new HashMap<String, JcrAccount>();
+        this.members = new HashSet<JcrAccount>();
     }
 
     public boolean hasPhoto()
@@ -55,7 +53,7 @@ public class JcrGroup
 
     public Set<JcrAccount> getMembers()
     {
-        return new HashSet<JcrAccount>( members.values() );
+        return members;
     }
 
     public void setMembers( final Collection<JcrAccount> members )
@@ -63,17 +61,17 @@ public class JcrGroup
         this.members.clear();
         for ( JcrAccount member : members )
         {
-            this.members.put( member.getId(), member );
+            this.members.add( member );
         }
     }
 
     public void addMember( final JcrAccount member )
     {
-        this.members.put( member.getId(), member );
+        this.members.add( member );
     }
 
     public boolean hasMember( final JcrAccount member )
     {
-        return this.members.containsKey( member.getId() );
+        return this.members.contains( member );
     }
 }

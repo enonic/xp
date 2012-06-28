@@ -15,8 +15,6 @@ public interface JcrAccount
 
     String getName();
 
-    void setQualifiedName( String qualifiedName );
-
     String getQualifiedName();
 
     void setUserStore( String userStore );
@@ -37,7 +35,7 @@ public interface JcrAccount
 
     boolean isBuiltIn();
 
-    boolean isEditable();
+    JcrAccountType getType();
 
     boolean isUser();
 

@@ -2,6 +2,7 @@ package com.enonic.wem.core.jcr;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -9,9 +10,10 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.value.BinaryValue;
+import org.joda.time.DateTime;
 
 class JcrNodeImpl
-        implements JcrNode
+    implements JcrNode
 {
     private Node node;
 
@@ -158,12 +160,12 @@ class JcrNodeImpl
     }
 
     @Override
-    public Calendar getPropertyCalendar( String relPath )
+    public DateTime getPropertyDateTime( String relPath )
     {
         Property property = getInternalProperty( relPath );
         try
         {
-            return property == null ? null : property.getDate();
+            return property == null ? null : new DateTime( property.getDate() );
         }
         catch ( RepositoryException e )
         {
@@ -237,11 +239,11 @@ class JcrNodeImpl
     }
 
     @Override
-    public void setPropertyCalendar( String relPath, Calendar value )
+    public void setPropertyDateTime( String relPath, DateTime value )
     {
         try
         {
-            node.setProperty( relPath, value );
+            node.setProperty( relPath, value.toCalendar( Locale.getDefault() ) );
         }
         catch ( RepositoryException e )
         {

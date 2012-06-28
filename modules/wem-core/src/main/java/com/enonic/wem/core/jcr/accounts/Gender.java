@@ -1,12 +1,11 @@
 package com.enonic.wem.core.jcr.accounts;
 
-public enum JcrAccountType
+public enum Gender
 {
-    USER,
-    GROUP,
-    ROLE;
+    MALE,
+    FEMALE;
 
-    public static JcrAccountType fromName( String name )
+    public static Gender fromName( String name )
     {
         if ( name == null )
         {
@@ -14,7 +13,7 @@ public enum JcrAccountType
         }
         try
         {
-            return JcrAccountType.valueOf( name.toUpperCase() );
+            return Gender.valueOf( name );
         }
         catch ( IllegalArgumentException e )
         {

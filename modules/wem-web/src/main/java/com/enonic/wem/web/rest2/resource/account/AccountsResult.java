@@ -1,8 +1,7 @@
 package com.enonic.wem.web.rest2.resource.account;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
@@ -11,24 +10,25 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.enonic.wem.web.rest.account.AccountModel;
-import com.enonic.wem.web.rest.account.AccountsModel;
-import com.enonic.wem.web.rest.account.AddressModel;
-import com.enonic.wem.web.rest.account.GroupModel;
-import com.enonic.wem.web.rest.account.UserInfoModel;
-import com.enonic.wem.web.rest.account.UserModel;
+import com.enonic.wem.core.jcr.PageList;
+import com.enonic.wem.core.jcr.accounts.Gender;
+import com.enonic.wem.core.jcr.accounts.JcrAccount;
+import com.enonic.wem.core.jcr.accounts.JcrAddress;
+import com.enonic.wem.core.jcr.accounts.JcrGroup;
+import com.enonic.wem.core.jcr.accounts.JcrUser;
+import com.enonic.wem.core.jcr.accounts.JcrUserInfo;
 import com.enonic.wem.web.rest2.common.JsonResult;
 
 public final class AccountsResult
-        extends JsonResult
+    extends JsonResult
 {
     private static final DateTimeFormatter dateFormatter = DateTimeFormat.forPattern( "yyyy-MM-dd HH:mm:ss" );
 
-    private final AccountsModel results;
+    private final PageList<JcrAccount> accountsList;
 
-    public AccountsResult( AccountsModel accountsModel )
+    public AccountsResult( PageList<JcrAccount> accountsList )
     {
-        this.results = accountsModel;
+        this.accountsList = accountsList;
     }
 
     @Override
@@ -36,19 +36,19 @@ public final class AccountsResult
     {
         final ObjectNode json = objectNode();
         json.put( "success", true );
-        json.put( "results", toJson( this.results ) );
+        json.put( "results", accountsToJson( this.accountsList ) );
         return json;
     }
 
-    private ObjectNode toJson( final AccountsModel results )
+    private ObjectNode accountsToJson( final PageList<JcrAccount> accountsList )
     {
         final ObjectNode json = objectNode();
-        json.put( "total", results.getTotal() );
+        json.put( "total", accountsList.getTotal() );
 
         final ArrayNode accountsJson = arrayNode();
-        for ( AccountModel account : results.getAccounts() )
+        for ( JcrAccount account : accountsList.getList() )
         {
-            final ObjectNode resultJson = toJson( account );
+            final ObjectNode resultJson = accountToJson( account );
             accountsJson.add( resultJson );
         }
         json.put( "accounts", accountsJson );
@@ -56,44 +56,42 @@ public final class AccountsResult
         return json;
     }
 
-    private ObjectNode toJson( AccountModel account )
+    private ObjectNode accountToJson( JcrAccount account )
     {
         final ObjectNode json = objectNode();
-        json.put( "type", account.getAccountType() );
-        json.put( "key", account.getKey() );
+        json.put( "type", account.getAccountType().name().toLowerCase() );
+        json.put( "key", account.getId() );
         json.put( "name", account.getName() );
         json.put( "qualifiedName", account.getQualifiedName() );
         json.put( "userStore", account.getUserStore() );
         json.put( "displayName", account.getDisplayName() );
         putJsonDate( json, "lastModified", account.getLastModified() );
         json.put( "hasPhoto", account.hasPhoto() );
-        json.put( "isEditable", account.isEditable() );
+        json.put( "isEditable", true ); // model.setEditable(!(entity.isAnonymous() || isAdmin));
         json.put( "builtIn", account.isBuiltIn() );
 
-        if ( account instanceof GroupModel )
+        if ( account.isGroup() )
         {
-            groupToJson( json, (GroupModel) account );
+            groupToJson( (JcrGroup) account, json );
         }
-        else if ( account instanceof UserModel )
+        else if ( account.isUser() )
         {
-            userToJson( json, (UserModel) account );
+            userToJson( (JcrUser) account, json );
         }
 
         return json;
     }
 
-    private ObjectNode groupToJson( final ObjectNode json, final GroupModel group )
+    private ObjectNode groupToJson( final JcrGroup group, final ObjectNode json )
     {
         json.put( "description", group.getDescription() );
-        json.put( "lastLogged", group.getLastLogged() );
         json.put( "membersCount", group.getMembersCount() );
-        json.put( "restricted", group.isRestricted() );
-        json.put( "public", group.isPublic() );
-        final List<AccountModel> members = group.getMembers();
+
+        final Set<JcrAccount> members = group.getMembers();
         final ArrayNode membersJson = arrayNode();
-        for ( AccountModel member : members )
+        for ( JcrAccount member : members )
         {
-            final ObjectNode memberJson = toJson( member );
+            final ObjectNode memberJson = accountToJson( member );
             membersJson.add( memberJson );
         }
         json.put( "members", membersJson );
@@ -101,24 +99,19 @@ public final class AccountsResult
         return json;
     }
 
-    private ObjectNode userToJson( final ObjectNode json, final UserModel user )
+    private ObjectNode userToJson( final JcrUser user, final ObjectNode json )
     {
-        json.put( "photo", user.getPhoto() );
-        json.put( "lastLogged", user.getLastLogged() );
+        putJsonDate( json, "lastLogged", user.getLastLogged() );
         json.put( "created", user.getCreated() );
         json.put( "email", user.getEmail() );
         final ObjectNode userInfojson = userInfoToJson( user.getUserInfo() );
         json.put( "userInfo", userInfojson );
 
-        final List<Map<String, String>> groups = user.getGroups();
+        final Set<JcrGroup> groups = user.getMemberships();
         final ArrayNode groupsJson = arrayNode();
-        for ( Map<String, String> groupItem : groups )
+        for ( JcrGroup groupMembership : groups )
         {
-            final ObjectNode groupJson = objectNode();
-            for ( String propName : groupItem.keySet() )
-            {
-                groupJson.put( propName, groupItem.get( propName ) );
-            }
+            final ObjectNode groupJson = accountToJson( groupMembership );
             groupsJson.add( groupJson );
         }
         json.put( "groups", groupsJson );
@@ -126,13 +119,13 @@ public final class AccountsResult
         return json;
     }
 
-    private ObjectNode userInfoToJson( final UserInfoModel userInfo )
+    private ObjectNode userInfoToJson( final JcrUserInfo userInfo )
     {
         final ObjectNode json = objectNode();
         json.put( "firstName", userInfo.getFirstName() );
         json.put( "lastName", userInfo.getLastName() );
         json.put( "middleName", userInfo.getMiddleName() );
-        json.put( "birthday", userInfo.getBirthday() );
+        putJsonDate( json, "birthday", userInfo.getBirthday() );
         json.put( "country", userInfo.getCountry() );
         json.put( "description", userInfo.getDescription() );
         json.put( "initials", userInfo.getInitials() );
@@ -150,12 +143,13 @@ public final class AccountsResult
         json.put( "mobile", userInfo.getMobile() );
         json.put( "phone", userInfo.getPhone() );
         json.put( "fax", userInfo.getFax() );
-        json.put( "gender", userInfo.getGender() );
+        final Gender gender = userInfo.getGender();
+        json.put( "gender", gender == null ? null : gender.name() );
         json.put( "timezone", userInfo.getTimeZone() );
 
         final ArrayNode addressesJson = arrayNode();
-        final List<AddressModel> addresses = userInfo.getAddresses();
-        for ( AddressModel address : addresses )
+        final List<JcrAddress> addresses = userInfo.getAddresses();
+        for ( JcrAddress address : addresses )
         {
             ObjectNode addressJson = addressToJson( address );
             addressesJson.add( addressJson );
@@ -165,7 +159,7 @@ public final class AccountsResult
         return json;
     }
 
-    private ObjectNode addressToJson( final AddressModel address )
+    private ObjectNode addressToJson( final JcrAddress address )
     {
         final ObjectNode json = objectNode();
         json.put( "label", address.getLabel() );
@@ -179,9 +173,9 @@ public final class AccountsResult
         return json;
     }
 
-    private void putJsonDate( ObjectNode json, String fieldName, Date value )
+    private void putJsonDate( ObjectNode json, String fieldName, DateTime value )
     {
-        final String valueStr = dateFormatter.print( new DateTime( value ) );
+        final String valueStr = dateFormatter.print( value );
         json.put( fieldName, valueStr );
     }
 }

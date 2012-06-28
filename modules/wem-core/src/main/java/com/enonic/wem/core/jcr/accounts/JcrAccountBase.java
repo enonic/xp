@@ -1,10 +1,13 @@
 package com.enonic.wem.core.jcr.accounts;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.joda.time.DateTime;
 
 abstract class JcrAccountBase
         implements JcrAccount
 {
+    private static final char USER_STORE_SEPARATOR = '\\';
+
     private final JcrAccountType type;
 
     private String id;
@@ -20,8 +23,6 @@ abstract class JcrAccountBase
     private DateTime lastModified;
 
     private boolean builtIn;
-
-    private boolean editable;
 
 
     protected JcrAccountBase( JcrAccountType type )
@@ -67,16 +68,19 @@ abstract class JcrAccountBase
     public void setName( String name )
     {
         this.name = name;
+        qualifiedName = null;
     }
 
     public String getQualifiedName()
     {
+        if ( qualifiedName == null )
+        {
+            if ( name != null )
+            {
+                qualifiedName = userStore != null ? userStore + USER_STORE_SEPARATOR + name : name;
+            }
+        }
         return qualifiedName;
-    }
-
-    public void setQualifiedName( String qualifiedName )
-    {
-        this.qualifiedName = qualifiedName;
     }
 
     public String getDisplayName()
@@ -97,6 +101,7 @@ abstract class JcrAccountBase
     public void setUserStore( String userStore )
     {
         this.userStore = userStore;
+        qualifiedName = null;
     }
 
     public DateTime getLastModified()
@@ -119,14 +124,40 @@ abstract class JcrAccountBase
         this.builtIn = builtIn;
     }
 
-    public boolean isEditable()
+    public JcrAccountType getType()
     {
-        return editable;
+        return this.type;
     }
 
-    public void setEditable( boolean editable )
+    @Override
+    public boolean equals( final Object o )
     {
-        this.editable = editable;
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof JcrAccount ) )
+        {
+            return false;
+        }
+
+        final JcrAccount that = (JcrAccount) o;
+
+        if ( getId() != null ? !getId().equals( that.getId() ) : that.getId() != null )
+        {
+            return false;
+        }
+        if ( getType() != that.getType() )
+        {
+            return false;
+        }
+
+        return true;
     }
 
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder().append( id ).append( type ).toHashCode();
+    }
 }

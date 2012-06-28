@@ -1,18 +1,16 @@
 package com.enonic.wem.core.jcr;
 
-import com.enonic.cms.core.security.group.GroupEntity;
-import com.enonic.cms.core.security.group.GroupKey;
-import com.enonic.cms.core.security.user.UserEntity;
-import com.enonic.cms.core.security.user.UserKey;
-import com.enonic.cms.store.support.EntityPageList;
+import com.enonic.wem.core.jcr.accounts.JcrAccount;
+import com.enonic.wem.core.jcr.accounts.JcrGroup;
+import com.enonic.wem.core.jcr.accounts.JcrUser;
 
 public interface AccountJcrDao
 {
-    UserEntity findUserByKey( UserKey key );
+    JcrUser findUserById( String accountId );
 
-    GroupEntity findGroupByKey( GroupKey key );
+    JcrGroup findGroupById( String accountId );
 
-    EntityPageList<UserEntity> findAll( int index, int count, String query, String order );
+    PageList<JcrAccount> findAll( int index, int count, String query, String order );
 
-    byte[] findUserPhotoByKey( String key );
+    byte[] findUserPhotoByKey( String accountId );
 }

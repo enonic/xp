@@ -11,22 +11,22 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ContextResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.wem.core.jcr.AccountJcrDao;
+import com.enonic.wem.core.jcr.PageList;
+import com.enonic.wem.core.jcr.accounts.JcrAccount;
+import com.enonic.wem.core.jcr.accounts.JcrGroup;
+import com.enonic.wem.core.jcr.accounts.JcrUser;
 import com.enonic.wem.core.search.Facet;
 import com.enonic.wem.core.search.FacetEntry;
 import com.enonic.wem.core.search.Facets;
@@ -66,7 +66,6 @@ import com.enonic.cms.core.security.userstore.UserStoreService;
 import com.enonic.cms.store.dao.GroupDao;
 import com.enonic.cms.store.dao.UserDao;
 import com.enonic.cms.store.dao.UserStoreDao;
-import com.enonic.cms.store.support.EntityPageList;
 
 
 @Path("account/")
@@ -150,37 +149,32 @@ public final class AccountResource
             searchResults = doSearch( req );
         }
 
-        final List list = new ArrayList();
-        GroupKey currentGroup = new GroupKey( currentGroupKey );
+        final List<JcrAccount> list = new ArrayList<JcrAccount>();
         for ( AccountSearchHit searchHit : searchResults )
         {
             switch ( searchHit.getAccountType() )
             {
                 case ROLE:
                 case GROUP:
-                    final GroupKey group = new GroupKey( searchHit.getKey().toString() );
-                    final GroupEntity groupEntity = accountJcrDao.findGroupByKey( group );
-                    if ( groupEntity != null && !groupEntity.getGroupKey().equals( currentGroup ) )
+                    final JcrGroup group = accountJcrDao.findGroupById( searchHit.getKey().toString() );
+                    if ( group != null && !group.getId().equals( currentGroupKey ) )
                     {
-                        list.add( groupEntity );
+                        list.add( group );
                     }
                     break;
 
                 case USER:
-                    final UserKey user = new UserKey( searchHit.getKey().toString() );
-                    final UserEntity userEntity = accountJcrDao.findUserByKey( user );
-                    if ( userEntity != null )
+                    final JcrUser user = accountJcrDao.findUserById( searchHit.getKey().toString() );
+                    if ( user != null )
                     {
-                        list.add( userEntity );
+                        list.add( user );
                     }
                     break;
             }
         }
 
-        final EntityPageList accountList = new EntityPageList( searchResults.getCount(), searchResults.getTotal(), list );
-        AccountsModel accountsModel = accountTranslator.toInfoModel( accountList );
-        setFacets( accountsModel, searchResults );
-        return new AccountsResult( accountsModel );
+        final PageList<JcrAccount> accountList = new PageList<JcrAccount>( searchResults.getCount(), searchResults.getTotal(), list );
+        return new AccountsResult( accountList );
     }
 
     private AccountSearchResults findAccountsByKey( String accountKeys )

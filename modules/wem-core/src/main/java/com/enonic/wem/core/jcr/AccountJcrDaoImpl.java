@@ -2,11 +2,7 @@ package com.enonic.wem.core.jcr;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.TimeZone;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;
@@ -23,26 +19,21 @@ import javax.jcr.query.qom.QueryObjectModelFactory;
 import javax.jcr.query.qom.Selector;
 
 import org.apache.commons.io.IOUtils;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.core.search.UserInfoHelper;
+import com.enonic.wem.core.jcr.accounts.Gender;
+import com.enonic.wem.core.jcr.accounts.JcrAccount;
+import com.enonic.wem.core.jcr.accounts.JcrAccountType;
+import com.enonic.wem.core.jcr.accounts.JcrAddress;
+import com.enonic.wem.core.jcr.accounts.JcrGroup;
+import com.enonic.wem.core.jcr.accounts.JcrUser;
+import com.enonic.wem.core.jcr.accounts.JcrUserInfo;
+import com.enonic.wem.core.jcr.accounts.JcrUserStore;
 
-import com.enonic.cms.api.client.model.user.Address;
-import com.enonic.cms.api.client.model.user.Gender;
-import com.enonic.cms.api.client.model.user.UserInfo;
-import com.enonic.cms.core.security.group.GroupEntity;
-import com.enonic.cms.core.security.group.GroupKey;
 import com.enonic.cms.core.security.group.GroupType;
-import com.enonic.cms.core.security.user.UserEntity;
-import com.enonic.cms.core.security.user.UserKey;
 import com.enonic.cms.core.security.user.UserType;
-import com.enonic.cms.core.security.userstore.UserStoreEntity;
-import com.enonic.cms.core.security.userstore.UserStoreKey;
-import com.enonic.cms.core.user.field.UserFields;
-import com.enonic.cms.store.support.EntityPageList;
 
 import static com.enonic.wem.core.jcr.JcrCmsConstants.GROUP_NODE_TYPE;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.MEMBERS_NODE;
@@ -54,33 +45,33 @@ import static javax.jcr.query.qom.QueryObjectModelConstants.JCR_OPERATOR_EQUAL_T
 @Component
 public class AccountJcrDaoImpl
     extends JcrDaoSupport
-        implements AccountJcrDao
+    implements AccountJcrDao
 {
     private static final Logger LOG = LoggerFactory.getLogger( AccountJcrDaoImpl.class );
 
     @Override
-    public UserEntity findUserByKey( final UserKey key )
+    public JcrUser findUserById( final String accountId )
     {
-        UserEntity user = (UserEntity) getTemplate().execute( new JcrCallback()
+        JcrUser user = (JcrUser) getTemplate().execute( new JcrCallback()
         {
             public Object doInJcr( JcrSession session )
                 throws IOException, RepositoryException
             {
-                return queryUserByKey( session, key, true );
+                return queryUserById( session, accountId, true );
             }
         } );
         return user;
     }
 
     @Override
-    public GroupEntity findGroupByKey( final GroupKey key )
+    public JcrGroup findGroupById( final String accountId )
     {
-        GroupEntity group = (GroupEntity) getTemplate().execute( new JcrCallback()
+        JcrGroup group = (JcrGroup) getTemplate().execute( new JcrCallback()
         {
             public Object doInJcr( JcrSession session )
-                    throws IOException, RepositoryException
+                throws IOException, RepositoryException
             {
-                return queryGroupByKey( session, key, true );
+                return queryGroupById( session, accountId, true );
             }
         } );
         return group;
@@ -88,43 +79,41 @@ public class AccountJcrDaoImpl
     }
 
     @Override
-    public EntityPageList<UserEntity> findAll( final int index, final int count, final String query,
-                                               final String order )
+    public PageList<JcrAccount> findAll( final int index, final int count, final String query, final String order )
     {
-        @SuppressWarnings("unchecked") EntityPageList<UserEntity> users =
-            (EntityPageList<UserEntity>) getTemplate().execute( new JcrCallback()
+        @SuppressWarnings("unchecked") PageList<JcrAccount> accounts = (PageList<JcrAccount>) getTemplate().execute( new JcrCallback()
+        {
+            public Object doInJcr( JcrSession session )
+                throws IOException, RepositoryException
             {
-                public Object doInJcr( JcrSession session )
-                    throws IOException, RepositoryException
-                {
-                    return queryAllUsers( session, index, count, query, order );
-                }
-            } );
-        return users;
+                return queryAllAccounts( session, index, count, query, order );
+            }
+        } );
+        return accounts;
     }
 
     @Override
-    public byte[] findUserPhotoByKey( final String key )
+    public byte[] findUserPhotoByKey( final String userId )
     {
         byte[] photo = (byte[]) getTemplate().execute( new JcrCallback()
         {
             public Object doInJcr( JcrSession session )
                 throws IOException, RepositoryException
             {
-                return queryUserPhotoByKey( session, new UserKey( key ) );
+                return queryUserPhotoByKey( session, userId );
             }
         } );
         return photo;
     }
 
-    private void setUserPhoto( final JcrSession session, final UserKey userKey, final UserEntity user )
-            throws RepositoryException, IOException
+    private void setUserPhoto( final JcrSession session, final String userId, final JcrUser user )
+        throws RepositoryException, IOException
     {
-        final byte[] photo = queryUserPhotoByKey( session,userKey);
+        final byte[] photo = queryUserPhotoByKey( session, userId );
         user.setPhoto( photo );
     }
 
-    private EntityPageList<UserEntity> queryAllUsers( JcrSession session, int index, int count, String query, String order )
+    private PageList<JcrAccount> queryAllAccounts( JcrSession session, int index, int count, String query, String order )
         throws RepositoryException
     {
         QueryManager queryManager = session.getRealSession().getWorkspace().getQueryManager();
@@ -142,13 +131,13 @@ public class AccountJcrDaoImpl
 
         NodeIterator nodeIterator = result.getNodes();
 
-        LOG.info( nodeIterator.getSize() + " users found" );
+        LOG.info( nodeIterator.getSize() + " accounts found" );
 
-        List<UserEntity> userList = new ArrayList<UserEntity>();
+        final List<JcrAccount> userList = new ArrayList<JcrAccount>();
         while ( nodeIterator.hasNext() )
         {
-            UserEntity user = new UserEntity();
             final JcrNode userNode = session.getNode( nodeIterator.nextNode() );
+            JcrUser user = new JcrUser();
             nodePropertiesToUserFields( userNode, user );
 
             userList.add( user );
@@ -156,140 +145,10 @@ public class AccountJcrDaoImpl
             LOG.info( user.toString() );
         }
 
-        return new EntityPageList<UserEntity>( index, (int) nodeIterator.getSize(), userList );
+        return new PageList<JcrAccount>( index, (int) nodeIterator.getSize(), userList );
     }
 
-    private UserEntity queryUserByKey( JcrSession session, UserKey key, boolean includeMemberships )
-            throws RepositoryException, IOException
-    {
-        QueryManager queryManager = session.getRealSession().getWorkspace().getQueryManager();
-        QueryObjectModelFactory factory = queryManager.getQOMFactory();
-        ValueFactory vf = session.getRealSession().getValueFactory();
-
-        Selector source = factory.selector( USER_NODE_TYPE, "userNodes" );
-        Column[] columns = null;
-        Constraint constrUserstoresDescendant = factory.descendantNode( "userNodes", USERSTORES_ABSOLUTE_PATH );
-
-        Constraint constrUserKey = factory.comparison( factory.propertyValue( "userNodes", "key" ),
-                                                       JCR_OPERATOR_EQUAL_TO,
-                                                       factory.literal( vf.createValue( key.toString() ) ) );
-
-        Constraint constraint = factory.and( constrUserstoresDescendant, constrUserKey );
-
-        Ordering[] orderings = null;
-        QueryObjectModel queryObj = factory.createQuery( source, constraint, orderings, columns );
-        QueryResult result = queryObj.execute();
-
-        NodeIterator nodeIterator = result.getNodes();
-
-        final UserEntity user;
-        if ( nodeIterator.hasNext() )
-        {
-            user = new UserEntity();
-            final JcrNode userNode = session.getNode( nodeIterator.nextNode() );
-            nodePropertiesToUserFields( userNode, user );
-            setUserPhoto( session, key, user );
-            if ( includeMemberships )
-            {
-                setUserMemberships( session, userNode, user );
-            }
-        }
-        else
-        {
-            user = null;
-        }
-        return user;
-    }
-
-    private void setUserMemberships( JcrSession session, JcrNode userNode, UserEntity user )
-            throws RepositoryException, IOException
-    {
-        final Set<GroupEntity> memberships = user.getAllMemberships();
-        final JcrPropertyIterator refIterator = userNode.getReferences();
-        while ( refIterator.hasNext() )
-        {
-            final JcrProperty property = refIterator.next();
-            final JcrNode memberOwnerNode = property.getParent();
-            final JcrNode groupNode = memberOwnerNode.getParent().getParent();
-
-            final GroupKey groupKey = new GroupKey( groupNode.getPropertyString( "key" ) );
-            final GroupEntity group = this.queryGroupByKey( session, groupKey, false );
-            if ( group != null )
-            {
-                memberships.add( group );
-            }
-            else
-            {
-                LOG.warn( "Could not find group with key '" + groupKey.toString() + "'" );
-            }
-        }
-    }
-
-    private GroupEntity queryGroupByKey( JcrSession session, GroupKey key, boolean includeMembers )
-            throws RepositoryException, IOException
-    {
-        QueryManager queryManager = session.getRealSession().getWorkspace().getQueryManager();
-        QueryObjectModelFactory factory = queryManager.getQOMFactory();
-        ValueFactory vf = session.getRealSession().getValueFactory();
-
-        Selector source = factory.selector( GROUP_NODE_TYPE, "groupNodes" );
-        Column[] columns = null;
-        Constraint constrUserstoresDescendant = factory.descendantNode( "groupNodes", USERSTORES_ABSOLUTE_PATH );
-
-        Constraint constrGroupKey =
-                factory.comparison( factory.propertyValue( "groupNodes", "key" ), JCR_OPERATOR_EQUAL_TO,
-                                    factory.literal( vf.createValue( key.toString() ) ) );
-
-        Constraint constraint = factory.and( constrUserstoresDescendant, constrGroupKey );
-
-        Ordering[] orderings = null;
-        QueryObjectModel queryObj = factory.createQuery( source, constraint, orderings, columns );
-        QueryResult result = queryObj.execute();
-
-        NodeIterator nodeIterator = result.getNodes();
-
-        LOG.info( nodeIterator.getSize() + " groups found" );
-
-        GroupEntity group = null;
-        if ( nodeIterator.hasNext() )
-        {
-            group = new GroupEntity();
-            group.setDeleted( false );
-            final JcrNode groupNode = session.getNode( nodeIterator.nextNode() );
-            nodePropertiesToGroupFields( groupNode, group );
-            if ( includeMembers )
-            {
-                setGroupMembers( session, groupNode, group );
-            }
-        }
-
-        return group;
-    }
-
-    private void setGroupMembers( JcrSession session, JcrNode groupNode, GroupEntity group )
-            throws RepositoryException, IOException
-    {
-        final JcrNodeIterator memberIterator = groupNode.getNode( MEMBERS_NODE ).getNodes( MEMBER_NODE );
-        while ( memberIterator.hasNext() )
-        {
-            final JcrNode memberRef = memberIterator.next();
-            final JcrNode groupMember = memberRef.getProperty( "ref" ).getNode();
-
-            final GroupKey groupKey = new GroupKey( groupMember.getPropertyString( "key" ) );
-            final GroupEntity memberGroup = this.queryGroupByKey( session, groupKey, false );
-            if ( memberGroup != null )
-            {
-                memberGroup.addMembership( group );
-            }
-            else
-            {
-                LOG.warn( "Could not find group with key '" + groupKey.toString() + "'" );
-            }
-        }
-
-    }
-
-    private byte[] queryUserPhotoByKey( JcrSession session, UserKey key )
+    private JcrUser queryUserById( final JcrSession session, final String userId, final boolean includeMemberships )
         throws RepositoryException, IOException
     {
         QueryManager queryManager = session.getRealSession().getWorkspace().getQueryManager();
@@ -301,7 +160,154 @@ public class AccountJcrDaoImpl
         Constraint constrUserstoresDescendant = factory.descendantNode( "userNodes", USERSTORES_ABSOLUTE_PATH );
 
         Constraint constrUserKey = factory.comparison( factory.propertyValue( "userNodes", "key" ), JCR_OPERATOR_EQUAL_TO,
-                                                       factory.literal( vf.createValue( key.toString() ) ) );
+                                                       factory.literal( vf.createValue( userId ) ) );
+
+        Constraint constraint = factory.and( constrUserstoresDescendant, constrUserKey );
+
+        Ordering[] orderings = null;
+        QueryObjectModel queryObj = factory.createQuery( source, constraint, orderings, columns );
+        QueryResult result = queryObj.execute();
+
+        NodeIterator nodeIterator = result.getNodes();
+
+        final JcrUser user;
+        if ( nodeIterator.hasNext() )
+        {
+            final JcrNode userNode = session.getNode( nodeIterator.nextNode() );
+            user = buildUser( session, userNode, includeMemberships );
+        }
+        else
+        {
+            user = null;
+        }
+        return user;
+    }
+
+    private JcrUser buildUser( JcrSession session, JcrNode userNode, boolean includeMemberships )
+        throws RepositoryException, IOException
+    {
+        final JcrUser user = new JcrUser();
+        nodePropertiesToUserFields( userNode, user );
+        if ( includeMemberships )
+        {
+            setUserMemberships( session, userNode, user );
+        }
+        return user;
+    }
+
+    private void setUserMemberships( JcrSession session, JcrNode userNode, JcrUser user )
+        throws RepositoryException, IOException
+    {
+        final JcrPropertyIterator refIterator = userNode.getReferences();
+        while ( refIterator.hasNext() )
+        {
+            final JcrProperty property = refIterator.next();
+            final JcrNode memberOwnerNode = property.getParent();
+            final JcrNode groupNode = memberOwnerNode.getParent().getParent();
+
+            final String groupId = groupNode.getPropertyString( "key" );
+            final JcrGroup group = this.queryGroupById( session, groupId, false );
+            if ( group != null )
+            {
+                user.addMembership( group );
+            }
+            else
+            {
+                LOG.warn( "Could not find group with key '" + groupId + "'" );
+            }
+        }
+    }
+
+    private JcrGroup queryGroupById( JcrSession session, String groupId, boolean includeMembers )
+        throws RepositoryException, IOException
+    {
+        QueryManager queryManager = session.getRealSession().getWorkspace().getQueryManager();
+        QueryObjectModelFactory factory = queryManager.getQOMFactory();
+        ValueFactory vf = session.getRealSession().getValueFactory();
+
+        Selector source = factory.selector( GROUP_NODE_TYPE, "groupNodes" );
+        Column[] columns = null;
+        Constraint constrUserstoresDescendant = factory.descendantNode( "groupNodes", USERSTORES_ABSOLUTE_PATH );
+
+        Constraint constrGroupKey = factory.comparison( factory.propertyValue( "groupNodes", "key" ), JCR_OPERATOR_EQUAL_TO,
+                                                        factory.literal( vf.createValue( groupId ) ) );
+
+        Constraint constraint = factory.and( constrUserstoresDescendant, constrGroupKey );
+
+        Ordering[] orderings = null;
+        QueryObjectModel queryObj = factory.createQuery( source, constraint, orderings, columns );
+        QueryResult result = queryObj.execute();
+
+        NodeIterator nodeIterator = result.getNodes();
+
+        LOG.info( nodeIterator.getSize() + " groups found" );
+
+        JcrGroup group = null;
+        if ( nodeIterator.hasNext() )
+        {
+            final JcrNode groupNode = session.getNode( nodeIterator.nextNode() );
+            group = buildGroup( session, groupNode, includeMembers );
+        }
+
+        return group;
+    }
+
+    private JcrAccount buildAccount( JcrSession session, JcrNode accountNode, boolean includeMemberships )
+        throws RepositoryException, IOException
+    {
+        final String accountType = accountNode.getPropertyString( "type" );
+        final JcrAccountType type = JcrAccountType.fromName( accountType );
+        switch ( type )
+        {
+            case USER:
+                return buildUser( session, accountNode, includeMemberships );
+
+            case ROLE:
+            case GROUP:
+                return buildGroup( session, accountNode, includeMemberships );
+        }
+
+        throw new IllegalArgumentException( "Invalid account type: " + accountType );
+    }
+
+    private JcrGroup buildGroup( JcrSession session, JcrNode groupNode, boolean includeMembers )
+        throws RepositoryException, IOException
+    {
+        final JcrGroup group = new JcrGroup();
+        nodePropertiesToGroupFields( groupNode, group );
+        if ( includeMembers )
+        {
+            setGroupMembers( session, groupNode, group );
+        }
+        return group;
+    }
+
+    private void setGroupMembers( JcrSession session, JcrNode groupNode, JcrGroup group )
+        throws RepositoryException, IOException
+    {
+        final JcrNodeIterator memberIterator = groupNode.getNode( MEMBERS_NODE ).getNodes( MEMBER_NODE );
+        while ( memberIterator.hasNext() )
+        {
+            final JcrNode memberRef = memberIterator.next();
+            final JcrNode groupMember = memberRef.getProperty( "ref" ).getNode();
+            final JcrAccount member = buildAccount( session, groupMember, false );
+            group.addMember( member );
+        }
+    }
+
+    private byte[] queryUserPhotoByKey( JcrSession session, String key )
+        throws RepositoryException, IOException
+    {
+        QueryManager queryManager = session.getRealSession().getWorkspace().getQueryManager();
+        QueryObjectModelFactory factory = queryManager.getQOMFactory();
+        ValueFactory vf = session.getRealSession().getValueFactory();
+
+        Selector source = factory.selector( USER_NODE_TYPE, "userNodes" );
+        Column[] columns = null;
+        Constraint constrUserstoresDescendant = factory.descendantNode( "userNodes", USERSTORES_ABSOLUTE_PATH );
+
+        Constraint constrUserKey = factory.comparison( factory.propertyValue( "userNodes", "key" ), JCR_OPERATOR_EQUAL_TO,
+                                                       factory.literal( vf.createValue( key ) ) );
 
         Constraint constraint = factory.and( constrUserstoresDescendant, constrUserKey );
 
@@ -325,50 +331,39 @@ public class AccountJcrDaoImpl
         return photo;
     }
 
-    private void nodePropertiesToUserFields( JcrNode userNode, UserEntity user )
+    private void nodePropertiesToUserFields( JcrNode userNode, JcrUser user )
         throws RepositoryException
     {
         user.setName( userNode.getName() );
-        user.setDisplayName( userNode.getProperty( "displayname" ).getString() );
-        if ( userNode.hasProperty( "email" ) )
+        user.setDisplayName( userNode.getPropertyString( "displayname" ) );
+        user.setEmail( userNode.getPropertyString( "email" ) );
+        user.setId( userNode.getPropertyString( "key" ) );
+        user.setLastModified( userNode.getPropertyDateTime( "lastModified" ) );
+        if ( userNode.hasProperty( "photo" ) )
         {
-            user.setEmail( userNode.getProperty( "email" ).getString() );
-        }
-        user.setKey( new UserKey( userNode.getProperty( "key" ).getString() ) );
-
-        Calendar lastmodified = userNode.getProperty( "lastModified" ).getDate();
-        if ( lastmodified != null )
-        {
-            DateTime timestamp = new DateTime( lastmodified );
-            user.setTimestamp( timestamp );
+            user.setHasPhoto( true );
         }
 
-        user.setType( userTypeFromString( userNode.getProperty( "userType" ).getString() ) );
+//        user.setType( userTypeFromString( userNode.getProperty( "userType" ).getString() ) );
 
-        UserStoreEntity userstore = new UserStoreEntity();
-        nodeToUserstore( userNode.getParent().getParent(), userstore );
-        user.setUserStore( userstore );
+        final JcrUserStore userstore = nodeToUserstore( userNode.getParent().getParent() );
+        user.setUserStore( userstore.getName() );
 
-        final UserInfo userInfo = nodePropertiesToUserFields( userNode );
-        final Address[] addresses = nodePropertiesToAddresses( userNode );
+        final JcrUserInfo userInfo = nodePropertiesToUserFields( userNode );
+        final List<JcrAddress> addresses = nodePropertiesToAddresses( userNode );
         userInfo.setAddresses( addresses );
-        final UserFields userFields = UserInfoHelper.toUserFields( userInfo );
-        user.setUserFields( userFields );
-
-        final GroupEntity userGroup=new GroupEntity();
-        userGroup.setType( GroupType.USER );
-        user.setUserGroup( userGroup );
+        user.setUserInfo( userInfo );
     }
 
-    private Address[] nodePropertiesToAddresses( JcrNode userNode )
+    private List<JcrAddress> nodePropertiesToAddresses( JcrNode userNode )
     {
-        final List<Address> addressList = new ArrayList<Address>();
+        final List<JcrAddress> addressList = new ArrayList<JcrAddress>();
         final JcrNode addresses = userNode.getNode( "addresses" );
         JcrNodeIterator addressNodeIt = addresses.getNodes( "address" );
         while ( addressNodeIt.hasNext() )
         {
             JcrNode addressNode = addressNodeIt.next();
-            final Address address = new Address();
+            final JcrAddress address = new JcrAddress();
             address.setLabel( addressNode.getPropertyString( "label" ) );
             address.setStreet( addressNode.getPropertyString( "street" ) );
             address.setPostalAddress( addressNode.getPropertyString( "postalAddress" ) );
@@ -380,15 +375,15 @@ public class AccountJcrDaoImpl
             addressList.add( address );
         }
 
-        return addressList.toArray( new Address[addressList.size()] );
+        return addressList;
     }
 
-    private UserInfo nodePropertiesToUserFields( final JcrNode userNode )
-            throws RepositoryException
+    private JcrUserInfo nodePropertiesToUserFields( final JcrNode userNode )
+        throws RepositoryException
     {
-        final UserInfo info = new UserInfo();
+        final JcrUserInfo info = new JcrUserInfo();
 
-        info.setBirthday( userNode.getPropertyDate( "birthday" ) );
+        info.setBirthday( userNode.getPropertyDateTime( "birthday" ) );
         info.setCountry( userNode.getPropertyString( "country" ) );
         info.setDescription( userNode.getPropertyString( "description" ) );
         info.setFax( userNode.getPropertyString( "fax" ) );
@@ -398,11 +393,7 @@ public class AccountJcrDaoImpl
         info.setHtmlEmail( userNode.getPropertyBoolean( "htmlemail" ) );
         info.setInitials( userNode.getPropertyString( "initials" ) );
         info.setLastName( userNode.getPropertyString( "lastname" ) );
-        final String locale = userNode.getPropertyString( "locale" );
-        if ( locale != null )
-        {
-            info.setLocale( new Locale( locale ) );
-        }
+        info.setLocale( userNode.getPropertyString( "locale" ) );
         info.setMemberId( userNode.getPropertyString( "memberid" ) );
         info.setMiddleName( userNode.getPropertyString( "middlename" ) );
         info.setMobile( userNode.getPropertyString( "mobile" ) );
@@ -411,53 +402,39 @@ public class AccountJcrDaoImpl
         info.setPhone( userNode.getPropertyString( "phone" ) );
         info.setPrefix( userNode.getPropertyString( "prefix" ) );
         info.setSuffix( userNode.getPropertyString( "suffix" ) );
-        final String timezone = userNode.getPropertyString( "timezone" );
-        if ( timezone != null )
-        {
-            info.setTimezone( TimeZone.getTimeZone( timezone ) );
-        }
+        info.setTimeZone( userNode.getPropertyString( "timezone" ) );
         info.setTitle( userNode.getPropertyString( "title" ) );
-        final String gender = userNode.getPropertyString( "gender" );
-        if ( gender != null )
-        {
-            info.setGender( Gender.valueOf( gender ) );
-        }
+        info.setGender( Gender.fromName( userNode.getPropertyString( "gender" ) ) );
         info.setOrganization( userNode.getPropertyString( "organization" ) );
 
         return info;
     }
 
-    private void nodePropertiesToGroupFields( JcrNode groupNode, GroupEntity group )
-            throws RepositoryException
+    private void nodePropertiesToGroupFields( JcrNode groupNode, JcrGroup group )
+        throws RepositoryException
     {
         group.setName( groupNode.getName() );
         if ( groupNode.hasProperty( "description" ) )
         {
-            group.setDescription( groupNode.getProperty( "description" ).getString() );
+            group.setDescription( groupNode.getPropertyString( "description" ) );
         }
-        group.setKey( new GroupKey( groupNode.getProperty( "key" ).getString() ) );
-        group.setType( groupTypeFromString( (int) groupNode.getProperty( "groupType" ).getLong() ) );
-        group.setRestricted( true );
+        group.setId( groupNode.getPropertyString( "key" ) );
+//        group.setType( groupTypeFromString( (int) groupNode.getProperty( "groupType" ).getLong() ) );
+//        group.setRestricted( true );
 
-        UserStoreEntity userstore = new UserStoreEntity();
-        nodeToUserstore( groupNode.getParent().getParent(), userstore );
-        group.setUserStore( userstore );
+        final JcrUserStore userstore = nodeToUserstore( groupNode.getParent().getParent() );
+        group.setUserStore( userstore.getName() );
     }
 
-    private void nodeToUserstore( JcrNode userStoreNode, UserStoreEntity userStoreEntity )
+    private JcrUserStore nodeToUserstore( JcrNode userStoreNode )
         throws RepositoryException
     {
-        userStoreEntity.setName( userStoreNode.getName() );
-        userStoreEntity.setKey( new UserStoreKey( userStoreNode.getPropertyString( "key" ) ) );
-    }
-
-    private GroupType groupTypeFromString(final int value)
-    {
-        return GroupType.get( value );
-    }
-
-    private UserType userTypeFromString(final String value)
-    {
-        return UserType.valueOf( value.toUpperCase() );
+        final JcrUserStore userStore = new JcrUserStore();
+        userStore.setName( userStoreNode.getName() );
+        userStore.setId( userStoreNode.getPropertyString( "key" ) );
+        userStore.setDefaultStore( userStoreNode.getPropertyBoolean( "default" ) );
+        userStore.setConnectorName( userStoreNode.getPropertyString( "connector" ) );
+        userStore.setXmlConfig( userStoreNode.getPropertyString( "xmlconfig" ) );
+        return userStore;
     }
 }

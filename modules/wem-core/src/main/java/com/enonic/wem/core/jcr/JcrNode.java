@@ -1,9 +1,8 @@
 package com.enonic.wem.core.jcr;
 
-import java.util.Calendar;
 import java.util.Date;
 
-import javax.jcr.Property;
+import org.joda.time.DateTime;
 
 public interface JcrNode
 {
@@ -29,8 +28,7 @@ public interface JcrNode
 
     Date getPropertyDate( String relPath );
 
-    Calendar getPropertyCalendar( String relPath );
-
+    DateTime getPropertyDateTime( String relPath );
 
     void setPropertyString( String relPath, String value );
 
@@ -42,7 +40,7 @@ public interface JcrNode
 
     void setPropertyDate( String relPath, Date value );
 
-    void setPropertyCalendar( String relPath, Calendar value );
+    void setPropertyDateTime( String relPath, DateTime value );
 
     void setPropertyBinary( String relPath, byte[] value );
 
