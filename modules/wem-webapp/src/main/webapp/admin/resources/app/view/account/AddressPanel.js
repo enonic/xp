@@ -26,8 +26,8 @@ Ext.define('Admin.view.account.AddressPanel', {
     closeAction: 'hide',
 
     initComponent: function () {
-        if (this.values === null) {
-            this.values = [];
+        if (!Ext.isDefined(this.values)) {
+            this.values = {};
         }
         this.title = this.values.label === null ? '[no title]' : this.values.label;
 
@@ -127,8 +127,8 @@ Ext.define('Admin.view.account.AddressPanel', {
             regionField,
             {
                 xtype: 'hiddenfield',
-                name: 'oldPos',
-                value: this.values.oldPos
+                name: 'originalIndex',
+                value: this.values.originalIndex
             }
         ];
         this.listeners = {

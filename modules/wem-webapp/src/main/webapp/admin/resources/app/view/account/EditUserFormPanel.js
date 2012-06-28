@@ -495,7 +495,7 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
 
     getAddresses: function (formValues) {
         var addressFields = ['country', 'region', 'street',
-            'postalCode', 'postalAddress', 'label', 'isoCountry', 'isoRegion', 'oldPos'];
+            'postalCode', 'postalAddress', 'label', 'isoCountry', 'isoRegion', 'originalIndex'];
         var address;
         var addresses = [];
         if (Ext.isArray(formValues.label)) {

@@ -201,7 +201,7 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
         if (userFields.userInfo && userFields.userInfo.addresses) {
             var i;
             for (i = 0; i < userFields.userInfo.addresses.length; i++) {
-                userFields.userInfo.addresses[i].oldPos = i;
+                userFields.userInfo.addresses[i].originalIndex = i;
             }
         }
     },

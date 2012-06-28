@@ -28,7 +28,8 @@ Harness.start(
     {
         group: 'Common',
         items: [
-            'tests/common/test_TabPanel.js'
+            'tests/common/test_TabPanel.js',
+            'tests/common/test_Diff.js'
         ]
     },
     {
@@ -57,7 +58,7 @@ Harness.start(
                     {
                         url: 'tests/liveedit/conflicts/test_prototypeNoConflict.js',
                         hostPageUrl: 'tests/liveedit/conflicts/test_prototypeNoConflict_host.html'
-                    },
+                    }
                 ]
             },
             {
