@@ -63,4 +63,5 @@ public interface JcrSession
 
     void setPropertyCalendar( String absPath, Calendar value );
 
+    JcrNodeIterator execute( JcrQuery query );
 }

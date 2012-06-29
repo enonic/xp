@@ -10,7 +10,7 @@ public interface AccountJcrDao
 
     JcrGroup findGroupById( String accountId );
 
-    PageList<JcrAccount> findAll( int index, int count, String query, String order );
+    PageList<JcrAccount> findAll( int index, int count );
 
     byte[] findUserPhotoByKey( String accountId );
 }

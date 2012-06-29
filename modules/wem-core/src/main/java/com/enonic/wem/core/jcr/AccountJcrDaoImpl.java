@@ -4,21 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.Binary;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.ValueFactory;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
-import javax.jcr.query.qom.Column;
-import javax.jcr.query.qom.Constraint;
-import javax.jcr.query.qom.Ordering;
-import javax.jcr.query.qom.QueryObjectModel;
-import javax.jcr.query.qom.QueryObjectModelFactory;
-import javax.jcr.query.qom.Selector;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -32,15 +19,12 @@ import com.enonic.wem.core.jcr.accounts.JcrUser;
 import com.enonic.wem.core.jcr.accounts.JcrUserInfo;
 import com.enonic.wem.core.jcr.accounts.JcrUserStore;
 
-import com.enonic.cms.core.security.group.GroupType;
-import com.enonic.cms.core.security.user.UserType;
-
+import static com.enonic.wem.core.jcr.JcrCmsConstants.ACCOUNT_NODE_TYPE;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.GROUP_NODE_TYPE;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.MEMBERS_NODE;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.MEMBER_NODE;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.USERSTORES_ABSOLUTE_PATH;
 import static com.enonic.wem.core.jcr.JcrCmsConstants.USER_NODE_TYPE;
-import static javax.jcr.query.qom.QueryObjectModelConstants.JCR_OPERATOR_EQUAL_TO;
 
 @Component
 public class AccountJcrDaoImpl
@@ -79,14 +63,14 @@ public class AccountJcrDaoImpl
     }
 
     @Override
-    public PageList<JcrAccount> findAll( final int index, final int count, final String query, final String order )
+    public PageList<JcrAccount> findAll( final int index, final int count )
     {
         @SuppressWarnings("unchecked") PageList<JcrAccount> accounts = (PageList<JcrAccount>) getTemplate().execute( new JcrCallback()
         {
             public Object doInJcr( JcrSession session )
                 throws IOException, RepositoryException
             {
-                return queryAllAccounts( session, index, count, query, order );
+                return queryAllAccounts( session, index, count );
             }
         } );
         return accounts;
@@ -106,81 +90,47 @@ public class AccountJcrDaoImpl
         return photo;
     }
 
-    private void setUserPhoto( final JcrSession session, final String userId, final JcrUser user )
-        throws RepositoryException, IOException
-    {
-        final byte[] photo = queryUserPhotoByKey( session, userId );
-        user.setPhoto( photo );
-    }
-
-    private PageList<JcrAccount> queryAllAccounts( JcrSession session, int index, int count, String query, String order )
+    private PageList<JcrAccount> queryAllAccounts( JcrSession session, int index, int count )
         throws RepositoryException
     {
-        QueryManager queryManager = session.getRealSession().getWorkspace().getQueryManager();
-        QueryObjectModelFactory factory = queryManager.getQOMFactory();
-
-        Selector source = factory.selector( USER_NODE_TYPE, "userNodes" );
-        Column[] columns = null;
-        Constraint constraint = factory.descendantNode( "userNodes", USERSTORES_ABSOLUTE_PATH );
-        Ordering[] orderings = null;
-
-        QueryObjectModel queryObj = factory.createQuery( source, constraint, orderings, columns );
-        queryObj.setOffset( index );
-        queryObj.setLimit( index );
-        QueryResult result = queryObj.execute();
-
-        NodeIterator nodeIterator = result.getNodes();
+        final JcrQuery query = new JcrQuery( session )
+            .descendantOf( USERSTORES_ABSOLUTE_PATH )
+            .selectNodeType( ACCOUNT_NODE_TYPE )
+            .offset( index )
+            .limit( count );
+        final JcrNodeIterator nodeIterator = session.execute( query );
 
         LOG.info( nodeIterator.getSize() + " accounts found" );
 
         final List<JcrAccount> userList = new ArrayList<JcrAccount>();
         while ( nodeIterator.hasNext() )
         {
-            final JcrNode userNode = session.getNode( nodeIterator.nextNode() );
-            JcrUser user = new JcrUser();
+            final JcrNode userNode = nodeIterator.nextNode();
+            final JcrUser user = new JcrUser();
             nodePropertiesToUserFields( userNode, user );
-
             userList.add( user );
-
-            LOG.info( user.toString() );
         }
-
         return new PageList<JcrAccount>( index, (int) nodeIterator.getSize(), userList );
     }
 
     private JcrUser queryUserById( final JcrSession session, final String userId, final boolean includeMemberships )
         throws RepositoryException, IOException
     {
-        QueryManager queryManager = session.getRealSession().getWorkspace().getQueryManager();
-        QueryObjectModelFactory factory = queryManager.getQOMFactory();
-        ValueFactory vf = session.getRealSession().getValueFactory();
+        final JcrQuery query = new JcrQuery( session )
+            .descendantOf( USERSTORES_ABSOLUTE_PATH )
+            .selectNodeType( USER_NODE_TYPE )
+            .propertyEqualsTo( "key", userId );
+        final JcrNodeIterator nodeIterator = session.execute( query );
 
-        Selector source = factory.selector( USER_NODE_TYPE, "userNodes" );
-        Column[] columns = null;
-        Constraint constrUserstoresDescendant = factory.descendantNode( "userNodes", USERSTORES_ABSOLUTE_PATH );
-
-        Constraint constrUserKey = factory.comparison( factory.propertyValue( "userNodes", "key" ), JCR_OPERATOR_EQUAL_TO,
-                                                       factory.literal( vf.createValue( userId ) ) );
-
-        Constraint constraint = factory.and( constrUserstoresDescendant, constrUserKey );
-
-        Ordering[] orderings = null;
-        QueryObjectModel queryObj = factory.createQuery( source, constraint, orderings, columns );
-        QueryResult result = queryObj.execute();
-
-        NodeIterator nodeIterator = result.getNodes();
-
-        final JcrUser user;
         if ( nodeIterator.hasNext() )
         {
-            final JcrNode userNode = session.getNode( nodeIterator.nextNode() );
-            user = buildUser( session, userNode, includeMemberships );
+            final JcrNode userNode = nodeIterator.nextNode();
+            return buildUser( session, userNode, includeMemberships );
         }
         else
         {
-            user = null;
+            return null;
         }
-        return user;
     }
 
     private JcrUser buildUser( JcrSession session, JcrNode userNode, boolean includeMemberships )
@@ -213,7 +163,7 @@ public class AccountJcrDaoImpl
             }
             else
             {
-                LOG.warn( "Could not find group with key '" + groupId + "'" );
+                LOG.warn( "Could not find group with id '" + groupId + "'" );
             }
         }
     }
@@ -221,35 +171,21 @@ public class AccountJcrDaoImpl
     private JcrGroup queryGroupById( JcrSession session, String groupId, boolean includeMembers )
         throws RepositoryException, IOException
     {
-        QueryManager queryManager = session.getRealSession().getWorkspace().getQueryManager();
-        QueryObjectModelFactory factory = queryManager.getQOMFactory();
-        ValueFactory vf = session.getRealSession().getValueFactory();
+        final JcrQuery query = new JcrQuery( session )
+            .descendantOf( USERSTORES_ABSOLUTE_PATH )
+            .selectNodeType( GROUP_NODE_TYPE )
+            .propertyEqualsTo( "key", groupId );
+        final JcrNodeIterator nodeIterator = session.execute( query );
 
-        Selector source = factory.selector( GROUP_NODE_TYPE, "groupNodes" );
-        Column[] columns = null;
-        Constraint constrUserstoresDescendant = factory.descendantNode( "groupNodes", USERSTORES_ABSOLUTE_PATH );
-
-        Constraint constrGroupKey = factory.comparison( factory.propertyValue( "groupNodes", "key" ), JCR_OPERATOR_EQUAL_TO,
-                                                        factory.literal( vf.createValue( groupId ) ) );
-
-        Constraint constraint = factory.and( constrUserstoresDescendant, constrGroupKey );
-
-        Ordering[] orderings = null;
-        QueryObjectModel queryObj = factory.createQuery( source, constraint, orderings, columns );
-        QueryResult result = queryObj.execute();
-
-        NodeIterator nodeIterator = result.getNodes();
-
-        LOG.info( nodeIterator.getSize() + " groups found" );
-
-        JcrGroup group = null;
         if ( nodeIterator.hasNext() )
         {
-            final JcrNode groupNode = session.getNode( nodeIterator.nextNode() );
-            group = buildGroup( session, groupNode, includeMembers );
+            final JcrNode groupNode = nodeIterator.nextNode();
+            return buildGroup( session, groupNode, includeMembers );
         }
-
-        return group;
+        else
+        {
+            return null;
+        }
     }
 
     private JcrAccount buildAccount( JcrSession session, JcrNode accountNode, boolean includeMemberships )
@@ -295,40 +231,24 @@ public class AccountJcrDaoImpl
         }
     }
 
-    private byte[] queryUserPhotoByKey( JcrSession session, String key )
+    private byte[] queryUserPhotoByKey( JcrSession session, String userId )
         throws RepositoryException, IOException
     {
-        QueryManager queryManager = session.getRealSession().getWorkspace().getQueryManager();
-        QueryObjectModelFactory factory = queryManager.getQOMFactory();
-        ValueFactory vf = session.getRealSession().getValueFactory();
+        final JcrQuery query = new JcrQuery( session )
+            .descendantOf( USERSTORES_ABSOLUTE_PATH )
+            .selectNodeType( USER_NODE_TYPE )
+            .propertyEqualsTo( "key", userId );
+        final JcrNodeIterator nodeIterator = session.execute( query );
 
-        Selector source = factory.selector( USER_NODE_TYPE, "userNodes" );
-        Column[] columns = null;
-        Constraint constrUserstoresDescendant = factory.descendantNode( "userNodes", USERSTORES_ABSOLUTE_PATH );
-
-        Constraint constrUserKey = factory.comparison( factory.propertyValue( "userNodes", "key" ), JCR_OPERATOR_EQUAL_TO,
-                                                       factory.literal( vf.createValue( key ) ) );
-
-        Constraint constraint = factory.and( constrUserstoresDescendant, constrUserKey );
-
-        Ordering[] orderings = null;
-        QueryObjectModel queryObj = factory.createQuery( source, constraint, orderings, columns );
-        QueryResult result = queryObj.execute();
-
-        NodeIterator nodeIterator = result.getNodes();
-
-        byte[] photo = new byte[0];
         if ( nodeIterator.hasNext() )
         {
-            Node userNode = nodeIterator.nextNode();
+            JcrNode userNode = nodeIterator.nextNode();
             if ( userNode.hasProperty( "photo" ) )
             {
-                Binary binaryPhoto = userNode.getProperty( "photo" ).getValue().getBinary();
-                photo = IOUtils.toByteArray( binaryPhoto.getStream() );
+                return userNode.getPropertyBinary( "photo" );
             }
         }
-
-        return photo;
+        return null;
     }
 
     private void nodePropertiesToUserFields( JcrNode userNode, JcrUser user )

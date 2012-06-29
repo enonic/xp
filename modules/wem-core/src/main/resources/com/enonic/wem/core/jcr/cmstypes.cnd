@@ -3,16 +3,15 @@
 
 // Accounts node type definitions:
 
-// principal
-[cms:principal] > cms:base abstract
+[cms:account] > cms:base abstract
 - cms:displayname (string)
 - cms:key (string)
 
 // user
-[cms:user] > cms:principal, mix:referenceable, nt:unstructured
+[cms:user] > cms:account, mix:referenceable, nt:unstructured
 
 // group
-[cms:group] > cms:principal, mix:referenceable, nt:unstructured
+[cms:group] > cms:account, mix:referenceable, nt:unstructured
 + members (cms:users) multiple
 
 // role

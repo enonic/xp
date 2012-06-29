@@ -1,14 +1,17 @@
 package com.enonic.wem.core.jcr;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.value.BinaryValue;
 import org.joda.time.DateTime;
 
@@ -110,6 +113,32 @@ class JcrNodeImpl
         try
         {
             return property == null ? null : property.getBoolean();
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
+
+    @Override
+    public byte[] getPropertyBinary( final String relPath )
+    {
+        Property property = getInternalProperty( relPath );
+        try
+        {
+            if ( property == null )
+            {
+                return null;
+            }
+            else
+            {
+                final Binary binaryValue = property.getValue().getBinary();
+                return IOUtils.toByteArray( binaryValue.getStream() );
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new RepositoryRuntimeException( e );
         }
         catch ( RepositoryException e )
         {

@@ -35,6 +35,8 @@ public class JcrCmsConstants
 
     public static final String ROLES_NODE_TYPE = "cms:roles";
 
+    public static final String ACCOUNT_NODE_TYPE = "cms:account";
+
     public static final String SYSTEM_USERSTORE_NODE = "system";
 
     public static final int SYSTEM_USERSTORE_KEY = 0;

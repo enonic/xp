@@ -11,7 +11,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 class JcrSessionImpl
-        implements JcrSession
+    implements JcrSession
 {
     private Session session;
 
@@ -333,6 +333,18 @@ class JcrSessionImpl
         {
             Property property = session.getProperty( absPath );
             property.setValue( value );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
+
+    public JcrNodeIterator execute( final JcrQuery query )
+    {
+        try
+        {
+            return new JcrNodeIteratorImpl( query.execute() );
         }
         catch ( RepositoryException e )
         {
