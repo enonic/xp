@@ -3,28 +3,15 @@
  **************/
 
 /* Blueprint override */
-body {
-    font-size: 100%;
-    background-color: #141414;
-}
-
-a:focus, a:hover {
-    color: #186dcb;
-    text-decoration: none;
-}
-
-a {
-    color: #186dcb;
-    text-decoration: none;
-}
+body {font-size:100%;background-color:#141414;}
+a:focus, a:hover {color:#186dcb;text-decoration:none;}
+a {color:#186dcb;text-decoration:none;}
 
 /* framework */
-#header {
-    height: 36px;
-}
+#header {height:36px;}
 
 #top-menu {
-    padding: 2px 0;
+    padding:2px 0;
     font-size: 72%;
     float: right;
 }
@@ -67,25 +54,15 @@ a {
     font-weight: bold;
 }
 
-#footer a {
-    color: #fff;
-}
-
-#footer img {
-    float: left;
-    margin: 0 5px 0 0;
-}
-
-#footer {
-    color: #9D9D9D;
-    font-size: .6em;
-}
+#footer a {color:#fff;}
+#footer img {float:left;margin:0 5px 0 0;}
+#footer {color:#9D9D9D;font-size:.6em;}
 
 /* Frame */
 #center .frame {
     border: solid #b5b1ad;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
+    -moz-border-radius:4px;
+    -webkit-border-radius:4px;
 }
 
 #west .frame, #center .frame, #east .frame {
@@ -114,8 +91,8 @@ a {
 
 .casestudybox.bannersize {
     background: #EFEFEF url(images-mobile/bgcasestudy.gif) repeat-x scroll center -40px;
-    height: auto !important;
-    width: auto !important;
+    height: auto!important;
+    width: auto!important;
 }
 
 .casestudybox h1 {
@@ -128,7 +105,7 @@ a {
 }
 
 .casestudybox .inner-item, .casestudybox.bannersize .inner-item {
-    padding: 230px 12px 44px;
+  padding: 230px 12px 44px;
 }
 
 .casestudybox.bannersize .inner-item {
@@ -177,11 +154,11 @@ a {
     border-top: 1px solid #fff;
 }
 
-#menu li.active div, #menu li.active a {
+#menu li.active div, #menu li.active a{
     color: #222;
 }
 
-#menu li.active li div, #menu li.active li a {
+#menu li.active li div, #menu li.active li a{
     color: #186dcb;
 }
 
@@ -355,27 +332,28 @@ a {
     margin-bottom: 1.8em;
 }
 
+
 .case-study-banner {
-    height: 250px;
-    overflow: hidden;
-    margin: -12px -12px 0 -12px;
-    background: url(images/bannerbg.gif) no-repeat top;
+	height: 250px;
+	overflow: hidden;
+	margin: -12px -12px 0 -12px;
+	background: url(images/bannerbg.gif) no-repeat top;
 }
 
 .case-study-banner .panel {
-    position: relative;
-    height: 250px;
-
+	position: relative;
+	height: 250px;
+	
 }
 
 .case-study-banner .panel-wrapper {
-    width: 296px;
-    margin: 12px;
-    text-align: center;
+	width: 296px;
+	margin: 12px;
+	text-align: center;
 }
 
 .case-study-banner .panel-title {
-    display: none;
+	display: none;
 }
 
 .case-study-banner img {
@@ -383,8 +361,8 @@ a {
 }
 
 .case-study-banner p a {
-    text-decoration: none;
-    color: #333;
+	text-decoration: none;
+	color: #333;
 }
 
 .case-study-banner a {
@@ -392,130 +370,63 @@ a {
 }
 
 /* Most common stuff you'll need to change */
-
-.coda-slider-wrapper {
-    padding: 0 0;
-    position: relative;
-}
-
-/* Use this to keep the slider content contained in a box even when JavaScript is disabled */
-.coda-slider-no-js .coda-slider {
-    height: 200px;
-    overflow: auto !important;
-    padding-right: 0
-}
-
-/* Change the width of the entire slider (without dynamic arrows) */
-.coda-slider {
-    width: 320px;
-}
-
-.coda-slider .panel {
-    width: 320px;
-}
-
-/* Change margin and width of the slider (with dynamic arrows) */
-.coda-slider-wrapper.arrows .coda-slider,
-.coda-slider-wrapper.arrows .coda-slider .panel {
-    width: 320px;
-}
-
-.coda-slider-wrapper.arrows .coda-slider {
-    margin: 0 0px
-}
-
-/* Arrow styling */
-/*.coda-nav-left a, .coda-nav-right a { background: #000; color: #fff; padding: 5px; width: 100px }*/
-
-/* Tab nav */
-.coda-nav ul li a.current, .coda-nav ul li a.current:hover {
-    background: #186DCB;
-    color: #fff;
-}
-
-/* Panel padding */
-/*.coda-slider .panel-wrapper { padding: 0; margin: 0; border: 0; }*/
-
-/* Preloader */
-.coda-slider p.loading {
-    padding: 20px;
-    text-align: center
-}
-
-/* Don't change anything below here unless you know what you're doing */
-
-/* Tabbed nav */
-.coda-nav ul {
-    position: absolute;
-    top: 228px;
-    left: 12px;
-    z-index: 1001;
-}
-
-.coda-nav ul {
-    clear: both;
-    display: block;
-    margin: auto;
-    overflow: hidden;
-}
-
-.coda-nav ul li {
-    display: inline
-}
-
-.coda-nav ul li a {
-    background: #fff;
-    color: #333;
-    display: block;
-    float: left;
-    margin-right: 1px;
-    padding: 0px 4px;
-    text-decoration: none;
-    border: 1px solid #aaa;
-    font-size: 10px;
-}
-
-.coda-nav ul li a:hover {
-    background: #ddd;
-}
-
-/* Miscellaneous */
-.coda-slider-wrapper {
-    clear: both;
-    overflow: visible;
-}
-
-.coda-slider {
-    float: left;
-    overflow: hidden;
-    position: relative
-}
-
-.coda-slider .panel {
-    display: block;
-    float: left
-}
-
-.coda-slider .panel-container {
-    position: relative
-}
-
-.coda-nav-left, .coda-nav-right {
-    float: left
-}
-
-.coda-nav-left a, .coda-nav-right a {
-    display: block;
-    text-align: center;
-    text-decoration: none
-}
-
-.shadowboxes .item .button,
+        		
+        		.coda-slider-wrapper { padding: 0 0; position: relative;}
+        		
+        		/* Use this to keep the slider content contained in a box even when JavaScript is disabled */
+        		.coda-slider-no-js .coda-slider { height: 200px; overflow: auto !important; padding-right: 0 }
+        		
+        		/* Change the width of the entire slider (without dynamic arrows) */
+        		.coda-slider { width: 320px; }
+        		.coda-slider .panel { width: 320px;} 
+        		
+        		/* Change margin and width of the slider (with dynamic arrows) */
+        		.coda-slider-wrapper.arrows .coda-slider,
+        		.coda-slider-wrapper.arrows .coda-slider .panel { width: 320px;  }
+        		.coda-slider-wrapper.arrows .coda-slider { margin: 0 0px }
+        		
+        		/* Arrow styling */
+        		/*.coda-nav-left a, .coda-nav-right a { background: #000; color: #fff; padding: 5px; width: 100px }*/
+        		
+        		/* Tab nav */
+        		.coda-nav ul li a.current, .coda-nav ul li a.current:hover { background: #186DCB; color: #fff; }
+        		
+        		/* Panel padding */
+        		/*.coda-slider .panel-wrapper { padding: 0; margin: 0; border: 0; }*/
+        		
+        		/* Preloader */
+        		.coda-slider p.loading { padding: 20px; text-align: center }
+        		
+        		/* Don't change anything below here unless you know what you're doing */
+        		
+        		/* Tabbed nav */
+        		.coda-nav ul {position: absolute; top: 228px; left: 12px; z-index: 1001; } 
+        		.coda-nav ul { clear: both; display: block; margin: auto; overflow: hidden; }
+        		.coda-nav ul li { display: inline }
+        		.coda-nav ul li a { background: #fff; color: #333; display: block; float: left; margin-right: 1px; padding: 0px 4px; text-decoration: none; border: 1px solid #aaa; font-size: 10px; }
+        		.coda-nav ul li a:hover { background: #ddd; }
+        		
+        		/* Miscellaneous */
+        		.coda-slider-wrapper { clear: both; overflow: visible; }
+        		.coda-slider { float: left; overflow: hidden; position: relative }
+        		.coda-slider .panel { display: block; float: left }
+        		.coda-slider .panel-container { position: relative }
+        		.coda-nav-left, .coda-nav-right { float: left }
+        		.coda-nav-left a, .coda-nav-right a { display: block; text-align: center; text-decoration: none }
+        		
+        		
+        	
+        	
+        	
+ .shadowboxes .item .button,
 .shadowboxes .item p {
-    position: static !important;
-    clear: both;
-}
-
+     position: static !important;
+     clear: both;
+ }       	
+ 	
+        		
+        		
+        		
 a.button {
     background: transparent url('images/button-background.gif') top right no-repeat;
     display: block;

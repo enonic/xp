@@ -21,6 +21,7 @@
     border-color: #c0c0c0;
 }
 
+
 /* Large */
 .admin-selected-item-box.large {
     border-radius: 8px;
@@ -62,6 +63,7 @@
     padding: 3px;
     background: transparent url(../../../resources/images/cross.png) 3px 3px no-repeat;
 }
+
 
 /* Small */
 .admin-selected-item-box.small {

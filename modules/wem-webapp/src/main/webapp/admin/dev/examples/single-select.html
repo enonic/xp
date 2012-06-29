@@ -31,7 +31,7 @@
 </div>
 
 <script type="text/javascript">
-    var $ = function (id) {
+    var $ = function(id) {
         return document.getElementById(id);
     };
 
@@ -43,10 +43,10 @@
     function createHtmlPlaceholders() {
         var container = $('container');
         container.innerHTML = '<div><label>Name: </label><span id="user-name"><!-- --></span>' +
-                              ', <label>e-mail: </label><span id="user-email"><!-- --></span></div>';
+                ', <label>e-mail: </label><span id="user-email"><!-- --></span></div>';
     }
 
-    window.addEventListener('load', function (event) {
+    window.addEventListener('load', function(event) {
         createHtmlPlaceholders();
     }, false);
 

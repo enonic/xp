@@ -10,10 +10,11 @@
     <script type="text/javascript" src="../../resources/lib/ext/ext-all-debug.js"></script>
 
 
+
     <script type="text/javascript">
 
         var store = Ext.create('Ext.data.Store', {
-            fields: ['name', 'terms'],
+            fields:['name', 'terms'],
             autoLoad: true,
             proxy: {
                 type: 'ajax',
@@ -26,18 +27,18 @@
         });
 
         var template = new Ext.XTemplate(
-                '<tpl for=".">',
-                '<div class="admin-facets-group">',
-                '<h2>{name}</h2>',
-                '<tpl for="terms">',
-                '<tpl if="count &gt; 0">',
-                '<div class="admin-facet">',
-                '<tpl if="selected===true"><input type="checkbox" id="facet-{key}" name="facet-{key}" value="{key}" checked="true" class="admin-facet-cb"/><label for="facet-{key}" class="admin-facet-lbl"> {name} ({count})</label></tpl>' +
-                '<tpl if="selected===false"><input type="checkbox" id="facet-{key}" name="facet-{key}" value="{key}" class="admin-facet-cb"/><label for="facet-{key}" class="admin-facet-lbl"> {name} ({count})</label></tpl>' +
-                '</div>',
-                '</tpl>',
-                '</tpl>',
-                '</div>',
+                '<tpl for=".">' ,
+                    '<div class="admin-facets-group">' ,
+                        '<h2>{name}</h2>' ,
+                        '<tpl for="terms">' ,
+                            '<tpl if="count &gt; 0">' ,
+                                '<div class="admin-facet">' ,
+                                    '<tpl if="selected===true"><input type="checkbox" id="facet-{key}" name="facet-{key}" value="{key}" checked="true" class="admin-facet-cb"/><label for="facet-{key}" class="admin-facet-lbl"> {name} ({count})</label></tpl>' +
+                                    '<tpl if="selected===false"><input type="checkbox" id="facet-{key}" name="facet-{key}" value="{key}" class="admin-facet-cb"/><label for="facet-{key}" class="admin-facet-lbl"> {name} ({count})</label></tpl>' +
+                                '</div>' ,
+                            '</tpl>' ,
+                        '</tpl>' ,
+                    '</div>' ,
                 '</tpl>'
 
         );
@@ -50,8 +51,8 @@
             emptyText: 'None',
             autoScroll: true,
             listeners: {
-                'itemclick': {
-                    fn: function (view, record, item, index, e, opts) {
+                'itemclick':  {
+                    fn: function(view, record, item, index, e, opts) {
                         console.log(e);
                     }
                 }
@@ -64,8 +65,8 @@
         Ext.Loader.setConfig({
             enabled: true,
             paths: {
-                'Common': 'common/js',
-                'Main': 'app/main/js',
+                'Common' : 'common/js',
+                'Main' : 'app/main/js',
                 'Admin': 'resources/app'
             },
             disableCaching: false
@@ -80,7 +81,7 @@
             requires: [
             ],
 
-            launch: function () {
+            launch: function() {
                 Ext.create('Ext.container.Viewport', {
                     layout: 'border',
                     defaults: {
@@ -97,24 +98,24 @@
                             tbar: [
                                 {
                                     text: 'Update',
-                                    handler: function () {
-                                        if (!this.facetsTwoLoaded) {
-                                            store.load({url: 'facets2.json'});
+                                    handler: function() {
+                                        if ( !this.facetsTwoLoaded ) {
+                                            store.load({url:'facets2.json'});
                                             this.facetsTwoLoaded = true;
 
                                         } else {
-                                            store.load({url: 'facets1.json'});
+                                            store.load({url:'facets1.json'});
                                             this.facetsTwoLoaded = false;
                                         }
                                     }
                                 },
                                 {
                                     text: 'Get Selected',
-                                    handler: function () {
+                                    handler: function() {
                                         var selectedCheckboxes = Ext.DomQuery.select('.admin-facets-group input');
                                         var selectedPretty = 'selectedFacets(\n';
-                                        Ext.Array.each(selectedCheckboxes, function (cb) {
-                                            if (cb.checked) {
+                                        Ext.Array.each(selectedCheckboxes, function(cb) {
+                                            if ( cb.checked ) {
                                                 selectedPretty += '\t"' + cb.name + '" => ' + cb.value + ',\n';
                                             }
                                         });

@@ -50,11 +50,9 @@ ul.admin-wizard-navigation li a.current-last {
     background-color: #fff;
     padding-right: 86px;
 }
-
 ul.admin-wizard-navigation a.next {
     color: #acacac;
 }
-
 ul.admin-wizard-navigation a.last {
     color: #acacac;
 }

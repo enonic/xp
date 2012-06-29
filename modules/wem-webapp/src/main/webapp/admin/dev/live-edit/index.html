@@ -20,7 +20,7 @@
                 'Admin.controller.liveedit.Controller'
             ],
 
-            launch: function () {
+            launch: function() {
                 Ext.create('Ext.container.Viewport', {
                     layout: 'border',
                     padding: 0,
@@ -29,12 +29,10 @@
                             region: 'center',
                             xtype: 'panel',
                             autoScroll: true,
-                            dockedItems: [
-                                {
-                                    xtype: 'liveeditToolbar',
-                                    dock: 'top'
-                                }
-                            ],
+                            dockedItems: [{
+                                xtype: 'liveeditToolbar',
+                                dock: 'top'
+                            }],
                             items: [
                                 {
                                     xtype: 'container',

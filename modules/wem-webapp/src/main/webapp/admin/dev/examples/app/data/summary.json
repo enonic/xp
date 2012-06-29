@@ -10,40 +10,40 @@
             "leaf": true
         },
         {
-            "label": "1. Profile",
-            "expanded": true,
+            "label":"1. Profile",
+            "expanded":true,
             "children": [
                 {
-                    "label": "First Name",
+                    "label":"First Name",
                     "fieldType": "String",
-                    "newValue": "Thomas",
+                    "newValue":"Thomas",
                     "previousValue": "Tomas",
                     "changeType": "added",
-                    "leaf": true
+                    "leaf":true
                 },
                 {
-                    "label": "Middle Name",
+                    "label":"Middle Name",
                     "fieldType": "String",
-                    "newValue": "",
+                    "newValue":"",
                     "previousValue": "Lund",
                     "changeType": "removed",
-                    "leaf": true
+                    "leaf":true
                 },
                 {
-                    "label": "Last Name",
+                    "label":"Last Name",
                     "fieldType": "String",
-                    "newValue": "Sigdestad",
+                    "newValue":"Sigdestad",
                     "previousValue": "Sig",
                     "changeType": "modified",
-                    "leaf": true
+                    "leaf":true
                 },
                 {
-                    "label": "Organization",
+                    "label":"Organization",
                     "fieldType": "String",
-                    "newValue": "Enonic",
+                    "newValue":"Enonic",
                     "previousValue": "NordiCom",
                     "changeType": "modified",
-                    "leaf": true
+                    "leaf":true
                 }
             ]
         },

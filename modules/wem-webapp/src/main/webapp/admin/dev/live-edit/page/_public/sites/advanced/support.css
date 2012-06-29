@@ -11,11 +11,11 @@ COMMON
     width: 100%;
     height: 100%;
     background-color: #333;
-    filter: alpha(opacity = 50);
-    -moz-opacity: 0.5;
-    -khtml-opacity: 0.5;
-    opacity: 0.5;
-    z-index: 1999;
+    filter:alpha(opacity=50);
+	-moz-opacity:0.5;
+	-khtml-opacity: 0.5;
+	opacity: 0.5;
+	z-index: 1999;
 }
 
 #tlo-lightbox {
@@ -30,12 +30,12 @@ COMMON
     position: absolute;
     z-index: 1999;
     width: 100%;
-    height: 100%;
-    background-color: #333;
-    filter: alpha(opacity = 50);
-    -moz-opacity: 0.5;
-    -khtml-opacity: 0.5;
-    opacity: 0.5;
+	height: 100%;
+	background-color: #333;
+    filter:alpha(opacity=50);
+	-moz-opacity:0.5;
+	-khtml-opacity: 0.5;
+	opacity: 0.5;
 }
 
 #tlo-lightbox .content {
@@ -153,6 +153,7 @@ SUPPORT ISSUE FORM
     background-image: url('../../modules/support/images/add-new-abort.png');
 }
 
+
 #support-issue-form #support-form {
     display: none;
 }
@@ -162,7 +163,7 @@ SUPPORT ISSUE FORM
 }
 
 #support-issue-form #support-form fieldset fieldset {
-    padding-left: 0;
+    padding-left: 0;    
     float: left;
     clear: left;
 }
@@ -218,7 +219,6 @@ SUPPORT ISSUE FORM
     float: left;
     clear: left;
 }
-
 /*
 #support-issue-form #issue-title {
     width: 60%;
@@ -228,9 +228,11 @@ SUPPORT ISSUE FORM
     display: none;
 }
 
+
 .support-level-description {
     margin-bottom: 20px;
 }
+
 
 /*.attachments input,
 .attachments a {
@@ -306,6 +308,7 @@ SUPPORT ISSUE LIST
     width: 700px;
 }
 
+
 #support-issue-list .heading {
     width: 690px;
     padding: 5px;
@@ -328,7 +331,6 @@ SUPPORT ISSUE LIST
     background-color: #fafafa;
     float: right;
 }
-
 /*
 #support-issue-list .control ul {
     list-style: none;
@@ -387,10 +389,9 @@ SUPPORT ISSUE LIST
 
 #support-issue-list tr.closed td {
     opacity: 0.3;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-    filter: alpha(opacity = 30);
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+    filter: alpha(opacity=30);
 }
-
 /*
 #support-issue-list th {
     background: #596a72;
@@ -465,13 +466,14 @@ SUPPORT ISSUE LIST
     margin-left: 10px;
 }
 
+
 #filter {
-    width: 180px;
-    border: 1px solid #d7d7d7;
-    background: #fff url('../../skins/advanced/standard/images/boxgradient.gif') repeat-x top left;
-    float: left;
-    clear: left;
-    padding: 5px;
+  width: 180px;
+  border:1px solid #d7d7d7;
+  background:#fff url('../../skins/advanced/standard/images/boxgradient.gif') repeat-x top left;
+  float: left;
+  clear: left;
+  padding: 5px;
 }
 
 #filter form select {
@@ -512,14 +514,15 @@ SUPPORT ISSUE LIST
 }
 
 #special-message {
-    width: 180px;
-    border: 1px solid #d7d7d7;
-    background: #fff url('../../skins/advanced/standard/images/boxgradient.gif') repeat-x top left;
-    float: left;
-    clear: left;
-    padding: 5px;
-    margin-bottom: 20px;
+  width: 180px;
+  border:1px solid #d7d7d7;
+  background:#fff url('../../skins/advanced/standard/images/boxgradient.gif') repeat-x top left;
+  float: left;
+  clear: left;
+  padding: 5px;
+  margin-bottom: 20px;
 }
+
 
 /****************************
 SUPPORT ISSUE SHOW
@@ -549,8 +552,8 @@ SUPPORT ISSUE SHOW
     background-color: #E6EFC2;
     border: 1px solid #C6D880;
     opacity: 0.3;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-    filter: alpha(opacity = 30);
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+    filter: alpha(opacity=30);
 }
 
 #support-issue-show #issue-status .status {
@@ -568,8 +571,8 @@ SUPPORT ISSUE SHOW
 
 #support-issue-show #issue-status span.label {
     margin-right: 5px;
-    filter: alpha(opacity = 60);
-    -moz-opacity: 0.6;
+    filter:alpha(opacity=60);
+    -moz-opacity:0.6;
     -khtml-opacity: 0.6;
     opacity: 0.6;
 }
@@ -686,7 +689,7 @@ SUPPORT ISSUE SHOW
     margin: 20px 0 30px 0;
 }
 
-#support-issue-show .description {
+#support-issue-show .description {  
     overflow: hidden;
     clear: both;
 }
@@ -695,7 +698,7 @@ SUPPORT ISSUE SHOW
     float: left;
 }
 
-#support-issue-show .description > div {
+#support-issue-show .description > div{    
     border: 1px solid #ddd;
     border-radius: 5px;
     moz-border-radius: 5px;
@@ -708,13 +711,15 @@ SUPPORT ISSUE SHOW
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#eee), to(#fafafa)) !important;
 }
 
+
 #support-issue-show #comments {
     overflow: hidden;
     clear: both;
 }
 
-#support-issue-show #comment-form {
 
+#support-issue-show #comment-form {
+    
 }
 
 #support-issue-show #comment-form fieldset {
@@ -788,6 +793,7 @@ SUPPORT ISSUE SHOW
     padding: 0;
 }
 
+
 #support-issue-show h2 {
     border-bottom: 1px solid #bbb;
     margin-bottom: 10px;
@@ -806,7 +812,7 @@ SUPPORT ISSUE SHOW
 #support-issue-show #comments .comment {
     overflow: hidden;
     /*clear: both;*/
-    display: block;
+    display:block;
     width: 840px;
     margin-bottom: 5px;
 }
@@ -852,12 +858,12 @@ SUPPORT ISSUE SHOW
     background: #fafafa none;
 }*/
 
-#support-issue-show #comments .comment .message {
+#support-issue-show #comments .comment .message {  
     overflow: hidden;
     clear: both;
 }
 
-#support-issue-show #comments .comment .message > div {
+#support-issue-show #comments .comment .message > div{    
     border: 1px solid #ddd;
     border-radius: 5px;
     moz-border-radius: 5px;
@@ -866,25 +872,27 @@ SUPPORT ISSUE SHOW
 }
 
 #support-issue-show #comments .comment.customer .message > div,
-#support-issue-show #comments .comment.issue-owner .message > div {
+#support-issue-show #comments .comment.issue-owner .message > div {  
     background-color: #eee !important;
     background-image: -moz-linear-gradient(100% 100% 90deg, #fafafa, #eee) !important;
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#eee), to(#fafafa)) !important;
 }
 
-#support-issue-show #comments .comment.enonic .message > div {
+#support-issue-show #comments .comment.enonic .message > div{    
     background-color: #f0f5fb;
     background-image: -moz-linear-gradient(100% 100% 90deg, #f5f9fc, #f0f5fb);
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#f0f5fb), to(#f5f9fc));
 }
 
+
 #support-issue-show #comments .comment.internal .message > div {
     opacity: 0.7;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
-    filter: alpha(opacity = 70);
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
+    filter: alpha(opacity=70);
     border: 1px dashed #bbb;
     background: #fafafa none;
 }
+
 
 #support-issue-show #comments .comment-type label,
 #support-issue-show #comments .comment-type input {
@@ -894,7 +902,7 @@ SUPPORT ISSUE SHOW
 }
 
 #support-issue-show #comments .comment.customer .avatar,
-#support-issue-show #comments .comment.issue-owner .avatar {
+#support-issue-show #comments .comment.issue-owner .avatar{
     float: left !important;
     margin: 0 10px 0 0 !important;
 }
@@ -917,7 +925,7 @@ SUPPORT ISSUE SHOW
 }
 
 #support-issue-show #comments .comment.customer .meta,
-#support-issue-show #comments .comment.issue-owner .meta {
+#support-issue-show #comments .comment.issue-owner .meta{
     float: left !important;
 }
 
@@ -925,18 +933,20 @@ SUPPORT ISSUE SHOW
     float: right;
 }
 
-#support-issue-show #comments .comment .message > div {
+
+#support-issue-show #comments .comment .message > div{
     width: 750px;
 }
 
 #support-issue-show #comments .comment.customer .message > div,
-#support-issue-show #comments .comment.issue-owner .message > div {
+#support-issue-show #comments .comment.issue-owner .message > div{
     float: right !important;
 }
 
 #support-issue-show #comments .comment.enonic .message > div {
     float: left;
 }
+
 
 #support-issue-show #comments .comment ul {
     list-style: disc inside;
@@ -946,6 +956,8 @@ SUPPORT ISSUE SHOW
     float: right;
     font-size: 10px;
 }
+
+
 
 #support-issue-show .tooltip {
     width: 200px;
@@ -965,6 +977,8 @@ SUPPORT ISSUE SHOW
     margin-top: 0;
 }
 
+
+
 #support-stats #select-person select,
 #support-stats #select-person span {
     float: right;
@@ -975,7 +989,7 @@ SUPPORT ISSUE SHOW
 }
 
 #enonic-tasks form {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 a.button {
@@ -998,6 +1012,7 @@ a.button span {
     color: #fff;
 }
 
+
 /****************************
 SUPPORT TEAM LIST
 ****************************/
@@ -1016,6 +1031,8 @@ SUPPORT TEAM LIST
     float: left;
     margin: 0 20px 20px 0;
 }
+
+
 
 /****************************
 SUPPORT ADMIN
@@ -1036,6 +1053,7 @@ SUPPORT ADMIN
 #support-admin .info span {
     display: block;
 }
+
 
 /****************************
 IE8 COMPATABILITY MODE HACK

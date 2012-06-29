@@ -1,11 +1,11 @@
 Ext.define('Admin.view.SummaryTreePanel', {
     extend: 'Ext.tree.Panel',
-    alias: 'widget.summaryTreePanel',
+    alias : 'widget.summaryTreePanel',
     cls: 'admin-summary-tree-panel',
     autoHeight: true,
     border: false,
     useArrows: true,
-    rootVisible: false,
+    rootVisible:  false,
     multiSelect: false,
     singleExpand: false,
 
@@ -13,16 +13,16 @@ Ext.define('Admin.view.SummaryTreePanel', {
     comparisonMode: false,
 
     listeners: {
-        afterRender: function () {
+        afterRender: function() {
             this.initToolbar();
         }
     },
 
-    initComponent: function () {
+    initComponent: function() {
         var self = this;
 
         this.store = Ext.create('Ext.data.TreeStore', {
-            fields: [
+            fields:[
                 {name: 'label', type: 'string'},
                 {name: 'fieldType', type: 'string'},
                 {name: 'newValue', type: 'string'},
@@ -78,13 +78,14 @@ Ext.define('Admin.view.SummaryTreePanel', {
         this.callParent(arguments);
     },
 
-    renderBasicView: function () {
-        this.down('#newColumn').renderer = function (value, metaData, record, rowIndex, colIndex, store) {
+    renderBasicView: function()
+    {
+        this.down('#newColumn').renderer = function ( value, metaData, record, rowIndex, colIndex, store ) {
             metaData.tdCls = record.get('changeType');
             return value;
         };
 
-        this.down('#previousColumn').renderer = function (value, metaData, record, rowIndex, colIndex, store) {
+        this.down('#previousColumn').renderer = function ( value, metaData, record, rowIndex, colIndex, store ) {
             metaData.tdCls = record.get('changeType');
             return value;
         };
@@ -92,23 +93,26 @@ Ext.define('Admin.view.SummaryTreePanel', {
         this.getView().refresh();
     },
 
-    renderComparisonView: function () {
-        this.down('#newColumn').renderer = function (value, metaData, record, rowIndex, colIndex, store) {
+    renderComparisonView: function()
+    {
+        this.down('#newColumn').renderer = function ( value, metaData, record, rowIndex, colIndex, store ) {
             var changeType = record.get('changeType');
-            if (changeType !== 'removed') {
+            if ( changeType !== 'removed' )
+            {
                 metaData.tdCls = changeType;
             }
             return value;
         };
 
-        this.down('#previousColumn').renderer = function (value, metaData, record, rowIndex, colIndex, store) {
+        this.down('#previousColumn').renderer = function ( value, metaData, record, rowIndex, colIndex, store ) {
             var changeType = record.get('changeType');
             var fieldType = record.get('fieldType');
             var val = value;
 
             metaData.tdCls = changeType !== 'added' ? changeType : 'blank';
 
-            if (fieldType === 'RelatedList') {
+            if ( fieldType === 'RelatedList' )
+            {
                 val = '';
             }
             return val;
@@ -117,21 +121,27 @@ Ext.define('Admin.view.SummaryTreePanel', {
         this.getView().refresh();
     },
 
-    showPreviousColumn: function (show) {
-        var previousColumn = this.down('#previousColumn');
-        if (show) {
+    showPreviousColumn: function ( show )
+    {
+        var previousColumn = this.down( '#previousColumn' );
+        if ( show )
+        {
             previousColumn.show();
-        } else {
+        }
+        else
+        {
             previousColumn.hide();
         }
     },
 
-    initToolbar: function () {
+    initToolbar: function()
+    {
         // TODO: Refactor when summary is finalized
         var toolbar = this.getDockedItems('#admin-tree-panel-toolbar-container')[0];
-        toolbar.getEl().addListener('click', function (event, target) {
-            var targetElement = Ext.get(target);
-            if (targetElement.hasCls('admin-summary-show-all-fields-button')) {
+        toolbar.getEl().addListener('click', function( event, target ) {
+            var targetElement = Ext.get( target );
+            if ( targetElement.hasCls( 'admin-summary-show-all-fields-button' ) )
+            {
 
                 this.toggleShowAllView();
 
@@ -140,24 +150,30 @@ Ext.define('Admin.view.SummaryTreePanel', {
                 targetElement.dom.innerHTML = this.showAllMode ? 'Hide unmodified fields' : 'Show all fields';
             }
 
-            if (targetElement.hasCls('admin-summary-show-comparison-button')) {
+            if ( targetElement.hasCls( 'admin-summary-show-comparison-button' ) )
+            {
                 this.toggleComparisonView();
                 targetElement.dom.innerHTML = this.comparisonMode ? 'Hide comparison' : 'Show comparison';
             }
         }, this);
     },
 
-    toggleShowAllView: function () {
+    toggleShowAllView: function()
+    {
         // TODO: Both TreeStore filter and NodeInterface -> show/hide are missing in ExtJs 4.x
         this.showAllMode = !this.showAllMode;
     },
 
-    toggleComparisonView: function () {
-        if (this.comparisonMode) {
-            this.showPreviousColumn(false);
+    toggleComparisonView: function()
+    {
+        if ( this.comparisonMode )
+        {
+            this.showPreviousColumn( false );
             this.renderBasicView();
-        } else {
-            this.showPreviousColumn(true);
+        }
+        else
+        {
+            this.showPreviousColumn( true );
             this.renderComparisonView();
         }
 

@@ -10,7 +10,7 @@
     <style type="text/css">
 
         .infovis-container {
-            overflow: hidden;
+            overflow:hidden;
             margin-right: 10px;
             cursor: move;
             font-size: 11px;
@@ -36,8 +36,8 @@
         .admin-graph-details {
             top: 5px;
             right: 5px;
-            list-style: none;
-            margin: 7px;
+            list-style:none;
+            margin:7px;
             color: #777777;
         }
 
@@ -68,42 +68,13 @@
     <script type="text/javascript" src="../../resources/lib/ext/ext-all-debug.js"></script>
     <script type="text/javascript">
         var key = 'D78B393C8656BC51BA48794CBBA576F107FD903C';
-        var membershipsJson = [
-            {"id": "D78B393C8656BC51BA48794CBBA576F107FD903C", "name": "Thomas Sigdestad", "adjacencies": [
-                {nodeTo: key + "node1_0"},
-                {nodeTo: key + "node1_1"},
-                {nodeTo: key + "node1_2"},
-                {nodeTo: key + "node1_3"},
-                {nodeTo: key + "node1_4"}
-            ], "data": {key: 'D78B393C8656BC51BA48794CBBA576F107FD903C', type: 'user'}},
-            {"id": key + "node1_0", "name": "Developers", "adjacencies": [
-                {nodeTo: key + "node1_1"},
-                {nodeTo: key + "node2_0"},
-                {nodeTo: key + "node2_1"},
-                {nodeTo: key + "node2_2"}
-            ], "data": {type: 'role'}},
-            {"id": key + "node1_1", "name": "Enonic Employees", "adjacencies": [
-                {nodeTo: key + "node2_3"}
-            ], "data": {type: 'role'}},
-            {"id": key + "node1_2", "name": "Enterprise Administrators", "data": {type: 'role'}},
-            {"id": key + "node1_3", "name": "Newsletter", "data": {type: 'group'}},
-            {"id": key + "node1_4", "name": "Userstore Administrators", "data": {type: 'role'}},
-            {"id": key + "node2_0", "name": "Administrators", "data": {type: 'role'}},
-            {"id": key + "node2_1", "name": "Enonic Community Users", "adjacencies": [
-                {nodeTo: key + "node1_1"},
-                {nodeTo: key + "node1_3"},
-                {nodeTo: key + "node3_0"}
-            ], "data": {type: 'group'}},
-            {"id": key + "node2_2", "name": "Expert Contributors", "data": {type: 'role'}},
-            {"id": key + "node2_3", "name": "Kundeservice", "data": {type: 'group'}},
-            {"id": key + "node3_0", "name": "Acme Corporation", "data": {type: 'group'}}
-        ];
+        var membershipsJson=[{"id":"D78B393C8656BC51BA48794CBBA576F107FD903C","name":"Thomas Sigdestad","adjacencies":[{nodeTo:key+"node1_0"},{nodeTo:key+"node1_1"},{nodeTo:key+"node1_2"},{nodeTo:key+"node1_3"},{nodeTo:key+"node1_4"}],"data":{key:'D78B393C8656BC51BA48794CBBA576F107FD903C',type:'user'}},{"id":key+"node1_0","name":"Developers","adjacencies":[{nodeTo:key+"node1_1"},{nodeTo:key+"node2_0"},{nodeTo:key+"node2_1"},{nodeTo:key+"node2_2"}],"data":{type:'role'}},{"id":key+"node1_1","name":"Enonic Employees","adjacencies":[{nodeTo:key+"node2_3"}],"data":{type:'role'}},{"id":key+"node1_2","name":"Enterprise Administrators","data":{type:'role'}},{"id":key+"node1_3","name":"Newsletter","data":{type:'group'}},{"id":key+"node1_4","name":"Userstore Administrators","data":{type:'role'}},{"id":key+"node2_0","name":"Administrators","data":{type:'role'}},{"id":key+"node2_1","name":"Enonic Community Users","adjacencies":[{nodeTo:key+"node1_1"},{nodeTo:key+"node1_3"},{nodeTo:key+"node3_0"}],"data":{type:'group'}},{"id":key+"node2_2","name":"Expert Contributors","data":{type:'role'}},{"id":key+"node2_3","name":"Kundeservice","data":{type:'group'}},{"id":key+"node3_0","name":"Acme Corporation","data":{type:'group'}}];
 
         Ext.Loader.setConfig({
             enabled: true,
             paths: {
-                'App': 'app/account/js',
-                'Common': '../../common/js',
+                'App' : 'app/account/js',
+                'Common' : '../../common/js',
                 'Admin': '../../resources/app',
                 'Lib': '../../resources/lib'
             },
@@ -118,7 +89,7 @@
 
                     requires: ['Admin.view.account.MembershipsGraphPanel'],
 
-                    launch: function () {
+                    launch: function() {
                         Ext.create('Ext.container.Viewport', {
                             layout: 'border',
                             padding: 0,

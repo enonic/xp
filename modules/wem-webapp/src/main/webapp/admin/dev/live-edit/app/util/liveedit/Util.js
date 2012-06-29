@@ -1,15 +1,15 @@
 Ext.define('Admin.util.liveedit.Util', {
-    singleton: true,
+    singleton : true,
 
-    getIframe: function () {
+    getIframe : function () {
         return Ext.DomQuery.selectNode('#live-edit-page-frame');
     },
 
-    getIframeWindow: function () {
+    getIframeWindow : function () {
         return (this.getIframe().contentWindow || this.getIframe().window);
     },
 
-    getIframeDocument: function () {
+    getIframeDocument : function () {
         return (this.getIframe().contentDocument || this.getIframe().document);
     }
 

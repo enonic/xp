@@ -1,7 +1,7 @@
 <html>
 <head>
     <title>Enonic WEM Admin</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     <link rel="stylesheet" type="text/css" href="../../resources/lib/ext/resources/css/ext-all.css">
     <link rel="stylesheet" type="text/css" href="../../resources/css/main.css">
@@ -11,96 +11,96 @@
 
     <script type="text/javascript">
         App.lib.util.Messages.setMap(
-                {
-                    'exampleText': 'The quick {0} {1} jumps over the {2} {3}',
-                    'updateSuccessFeedback': '{0} was successfully updated',
-                    'msSinceEpoch': '{0} ms since epoch',
-                    'percentage': '{0}% of {1} is {2}',
-                    'id': 'ID',
-                    'created': 'Created',
-                    'modified': 'Modified'
-                }
+            {
+                'exampleText': 'The quick {0} {1} jumps over the {2} {3}',
+                'updateSuccessFeedback': '{0} was successfully updated',
+                'msSinceEpoch': '{0} ms since epoch',
+                'percentage': '{0}% of {1} is {2}',
+                'id': 'ID',
+                'created': 'Created',
+                'modified': 'Modified'
+            }
         );
     </script>
 
     <script type="text/javascript">
         Ext.Loader.setConfig(
-                {
-                    enabled: true
-                }
+            {
+                enabled: true
+            }
         );
 
         Ext.application(
+            {
+                name: 'App',
+                appFolder: 'app',
+
+                launch:function ()
                 {
-                    name: 'App',
-                    appFolder: 'app',
 
-                    launch: function () {
-
-                        Ext.create('Ext.container.Viewport', {
-                            layout: 'border',
-                            padding: '5 5 5 280',
-                            items: [
-                                {
-                                    region: 'center',
-                                    xtype: 'panel',
-                                    autoScroll: true,
-                                    bodyPadding: 10,
-                                    defaults: {
-                                        margin: '15 0 0 0'
+                    Ext.create( 'Ext.container.Viewport', {
+                        layout: 'border',
+                        padding: '5 5 5 280',
+                        items: [
+                            {
+                                region: 'center',
+                                xtype: 'panel',
+                                autoScroll: true,
+                                bodyPadding: 10,
+                                defaults: {
+                                    margin: '15 0 0 0'
+                                },
+                                items: [
+                                    {
+                                        xtype: 'button',
+                                        margin: 0,
+                                        text: App.lib.util.Messages.get('exampleText', 'brown', 'fox', 'lazy', 'dog')
                                     },
-                                    items: [
-                                        {
-                                            xtype: 'button',
-                                            margin: 0,
-                                            text: App.lib.util.Messages.get('exampleText', 'brown', 'fox', 'lazy', 'dog')
-                                        },
-                                        {
-                                            xtype: 'component',
-                                            tpl: tpl,
-                                            listeners: {
-                                                afterrender: function (component, eOpts) {
-                                                    this.update({})
-                                                }
-                                            }
-                                        },
-                                        {
-                                            xtype: 'component',
-                                            html: App.lib.util.Messages.get('updateSuccessFeedback', 'enonic\\mer')
-                                        },
-                                        {
-                                            xtype: 'component',
-                                            html: App.lib.util.Messages.get('msSinceEpoch', new Date().getTime())
-                                        },
-                                        {
-                                            xtype: 'component',
-                                            html: App.lib.util.Messages.get('percentage', 91, 1000, function () {
-                                                return (91 * 1000) / 100
-                                            })
-                                        },
-                                        {
-                                            xtype: 'panel',
-                                            title: 'Title',
-                                            bodyPadding: 10,
-                                            items: {  // Let's put an empty grid in just to illustrate fit layout
-                                                xtype: 'grid',
-                                                border: false,
-                                                columns: [
-                                                    { header: App.lib.util.Messages.get('id') },
-                                                    { header: App.lib.util.Messages.get('title'), flex: 1 },
-                                                    { header: App.lib.util.Messages.get('created') },
-                                                    { header: App.lib.util.Messages.get('modified') }
-                                                ],
-                                                store: Ext.create('Ext.data.ArrayStore', {})
+                                    {
+                                        xtype: 'component',
+                                        tpl: tpl,
+                                        listeners:{
+                                            afterrender:function ( component, eOpts )
+                                            {
+                                                this.update( {} )
                                             }
                                         }
+                                    },
+                                    {
+                                        xtype: 'component',
+                                        html:  App.lib.util.Messages.get('updateSuccessFeedback', 'enonic\\mer')
+                                    },
+                                    {
+                                        xtype: 'component',
+                                        html:  App.lib.util.Messages.get('msSinceEpoch', new Date().getTime())
+                                    },
+                                    {
+                                        xtype: 'component',
+                                        html:  App.lib.util.Messages.get('percentage', 91, 1000, function() { return (91*1000)/100 })
+                                    },
+                                    {
+                                        xtype: 'panel',
+                                        title: 'Title',
+                                        bodyPadding: 10,
+                                        items: {  // Let's put an empty grid in just to illustrate fit layout
+                                            xtype: 'grid',
+                                            border: false,
+                                            columns: [
+                                                { header: App.lib.util.Messages.get('id') },
+                                                { header: App.lib.util.Messages.get('title'), flex: 1 },
+                                                { header: App.lib.util.Messages.get('created') },
+                                                { header: App.lib.util.Messages.get('modified') }
+                                            ],
+                                            store: Ext.create('Ext.data.ArrayStore', {})
+                                        }
+                                    }
 
-                                    ]
-                                }
-                            ]
-                        });
-                    }
+                                ]
+                            }
+                        ]
+                    } );
                 }
+            }
         );
     </script>
 

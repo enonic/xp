@@ -5,54 +5,15 @@
  **************/
 
 /* Blueprint override */
-h1 {
-    font-size: 1.3em;
-    line-height: 1;
-    margin-bottom: 0.5em;
-}
-
-h2 {
-    font-size: 1.2em;
-    margin-bottom: 0.75em;
-}
-
-h3 {
-    font-size: 1.1em;
-    line-height: 1;
-    margin-bottom: 1em;
-}
-
-label {
-    padding: 4px 0;
-    display: block;
-    clear: both;
-}
-
-input[type=text], input[type=password], input.text, input.title, textarea, select {
-    margin: 0 0 10px;
-}
-
-input.text, input.title {
-    display: block;
-    clear: both;
-    width: 94%;
-}
-
-select {
-    width: 100%;
-}
-
-textarea {
-    height: 200px;
-    font-family: 'Trebuchet MS', sans-serif;
-    font-size: 72%;
-    width: 94%;
-}
-
-input[type=checkbox], input[type=radio], input.checkbox, input.radio {
-    margin: 0 10px 10px 0;
-    float: left;
-}
+h1 {font-size:1.3em;line-height:1;margin-bottom:0.5em;}
+h2 {font-size:1.2em;margin-bottom:0.75em;}
+h3 {font-size:1.1em;line-height:1;margin-bottom:1em;}
+label {padding:4px 0;display:block;clear:both;}
+input[type=text], input[type=password], input.text, input.title, textarea, select {margin:0 0 10px;}
+input.text, input.title {display:block;clear:both;width:94%;}
+select {width:100%;}
+textarea {height:200px;font-family:'Trebuchet MS',sans-serif;font-size:72%;width:94%;}
+input[type=checkbox], input[type=radio], input.checkbox, input.radio {margin:0 10px 10px 0;float:left;}
 
 /* UI override */
 .ui-tabs .ui-tabs-nav li {
@@ -64,10 +25,7 @@ input[type=checkbox], input[type=radio], input.checkbox, input.radio {
 }
 
 /* general */
-.icon.text, .list .item img.icon.text {
-    float: left;
-    margin: 3px 5px 0 0;
-}
+.icon.text, .list .item img.icon.text {float:left;margin:3px 5px 0 0;}
 
 p.preface {
     font-size: 110%;
@@ -105,17 +63,8 @@ div.forum-thread .list .item {
 }
 
 /* framework */
-#logo {
-    width: 112px;
-    height: 34px;
-    position: absolute;
-    left: 7px;
-    top: 9px
-}
-
-#outer-container {
-    background: #fff;
-}
+#logo {width:112px;height:34px;position:absolute;left:7px;top:9px}
+#outer-container {background:#fff;}
 
 /* forms */
 label.error {
@@ -237,10 +186,15 @@ ul.menu.navigation li.end, ul.menu.navigation li.number {
 
 ul.menu.navigation div, ul.menu.navigation a {
     margin-left: 5px;
-    white-space:
+    white-space: 
 }
 
+
+
+
+
 /******** SUPPORT *********/
+
 
 #support-issue-list #issue-list {
     width: 295px;
@@ -336,34 +290,35 @@ ul.menu.navigation div, ul.menu.navigation a {
 
 #support-issue-show .description > div {
     width: 250px;
-
+    
 }
 
 a.download-button {
-    width: 92%;
-    height: 60px;
-    padding: 10px;
+	width: 92%; 
+	height: 60px; 
+	padding: 10px;
 }
 
 span.grad-button-text-wrapper {
-    display: inline-block;
-    float: left;
-    text-align: left;
+	display: inline-block; 
+	float: left; 
+	text-align: left;
 }
 
 span.grad-button-large-text {
-    display: block;
-    font-size: 1.4em;
-    line-height: 1.3;
-    margin-top: .4em;
-
+	display: block; 
+	font-size: 1.4em; 
+	line-height: 1.3;
+	margin-top: .4em;
+	
 }
 
 span.grad-button-small-text {
-    display: block;
-    font-size: 50%;
-    color: #555;
+	display: block; 
+	font-size: 50%;
+	color: #555;
 }
+
 
 /*
 
