@@ -7,15 +7,12 @@ Ext.define('Admin.view.datadesigner.DetailPanel', {
     overflowX: 'hidden',
     overflowY: 'auto',
 
-    listeners: {
-        afterrender: function (component) {
-            component.down('#noneSelectedComponent').update({});
-        }
-    },
-
     initComponent: function () {
-        var noneSelectedCmp = this.createNoneSelectedComponent();
-        var previewCt = this.createPreviewContainer();
+
+        this.activeItem = this.resolveActiveItem(this.data);
+
+        var noneSelectedCmp = this.createNoSelection();
+        var previewCt = this.createSingleSelection(this.data);
 
         this.items = [
             noneSelectedCmp,
@@ -25,10 +22,18 @@ Ext.define('Admin.view.datadesigner.DetailPanel', {
         this.callParent(arguments);
     },
 
-    createPreviewContainer: function () {
-        return  {
+    createSingleSelection: function (data) {
+
+        var singleData = {};
+        if (Ext.isArray(data)) {
+            singleData = !Ext.isEmpty(data[0]) ? data[0].data : undefined;
+        } else if (Ext.isObject(data)) {
+            singleData = data.data;
+        }
+
+        return {
             xtype: 'container',
-            itemId: 'previewContainer',
+            itemId: 'singleSelection',
             layout: {
                 type: 'column',
                 columns: 3
@@ -43,7 +48,7 @@ Ext.define('Admin.view.datadesigner.DetailPanel', {
                     cls: 'west',
                     itemId: 'previewIcon',
                     tpl: Templates.datadesigner.previewIcon,
-                    data: this.data,
+                    data: singleData,
                     margin: 5
                 },
                 {
@@ -60,7 +65,7 @@ Ext.define('Admin.view.datadesigner.DetailPanel', {
                             itemId: 'previewHeader',
                             padding: '5 5 15',
                             tpl: Templates.datadesigner.previewHeader,
-                            data: this.data
+                            data: singleData
                         },
                         {
                             flex: 1,
@@ -78,7 +83,8 @@ Ext.define('Admin.view.datadesigner.DetailPanel', {
                                             grow: true,
                                             readOnly: true,
                                             anchor: '100%',
-                                            itemId: 'configurationArea'
+                                            itemId: 'configurationArea',
+                                            value: singleData.configXml
                                         }
                                     ]
                                 }
@@ -93,45 +99,94 @@ Ext.define('Admin.view.datadesigner.DetailPanel', {
                     itemId: 'previewInfo',
                     cls: 'east',
                     tpl: Templates.datadesigner.previewCommonInfo,
-                    data: this.data
+                    data: singleData
                 }
             ]
         };
     },
 
-    createNoneSelectedComponent: function () {
+    createNoSelection: function () {
         var tpl = new Ext.XTemplate(Templates.datadesigner.noContentTypeSelected);
 
         return {
             xtype: 'component',
-            itemId: 'noneSelectedComponent',
+            itemId: 'noSelection',
             styleHtmlContent: true,
             border: true,
             padding: 5,
-            tpl: tpl
+            tpl: tpl,
+            data: {}
         };
     },
 
     setData: function (data) {
-        if (data) {
-            this.data = data;
+
+        if (!data) {
+            return;
+        }
+
+        this.data = data;
+
+        if (Ext.isEmpty(this.data)) {
+
+            this.getLayout().setActiveItem('noSelection');
+
+        } else if (Ext.isObject(this.data) || this.data.length === 1) {
+
+            var singleData;
+            if (Ext.isArray(this.data)) {
+                singleData = !Ext.isEmpty(this.data[0]) ? this.data[0].data : undefined;
+            } else {
+                singleData = this.data.data;
+            }
 
             var previewHeader = this.down('#previewHeader');
-            previewHeader.update(data);
+            previewHeader.update(singleData);
 
             var previewPhoto = this.down('#previewIcon');
-            previewPhoto.update(data);
+            previewPhoto.update(singleData);
 
             var previewInfo = this.down('#previewInfo');
-            previewInfo.update(data);
+            previewInfo.update(singleData);
 
             var configurationArea = this.down('#configurationArea');
-            configurationArea.setValue(data.configXml);
+            configurationArea.setValue(singleData.configXml);
+
+            this.getLayout().setActiveItem('singleSelection');
+
+        } else if (this.data.length > 1 && this.data.length <= 10) {
+
+            var largeBox = this.down('#largeBoxSelection');
+            largeBox.update(this.data);
+
+            this.getLayout().setActiveItem(largeBox);
+
+        } else {
+
+            var smallBox = this.down('#smallBoxSelection');
+            smallBox.update(this.data);
+
+            this.getLayout().setActiveItem(smallBox);
+
         }
     },
 
     getData: function () {
         return this.data;
+    },
+
+    resolveActiveItem: function (data) {
+        var activeItem;
+        if (Ext.isEmpty(this.data)) {
+            activeItem = 'noSelection';
+        } else if (Ext.isObject(this.data) || this.data.length === 1) {
+            activeItem = 'singleSelection';
+        } else if (this.data.length > 1 && this.data.length <= 10) {
+            activeItem = 'largeBoxSelection';
+        } else {
+            activeItem = 'smallBoxSelection';
+        }
+        return activeItem;
     }
 
 });

@@ -20,18 +20,26 @@ Ext.define('Admin.controller.datadesigner.BrowseController', {
         this.control(
             {
                 '*[action=editContentType]': {
-                    click: this.showEditContentTypePanel
+                    click: function (btn, evt) {
+                        this.showEditContentTypePanel();
+                    }
                 },
                 '*[action=viewContentType]': {
-                    click: this.showPreviewContentTypePanel
+                    click: function (btn, evt) {
+                        this.showPreviewContentTypePanel();
+                    }
                 },
                 '*[action=deleteContentType]': {
-                    click: this.showDeleteContentTypeWindow
+                    click: function (btn, evt) {
+                        this.showDeleteContentTypeWindow();
+                    }
                 },
                 'contentTypeGridPanel': {
                     selectionchange: this.onGridSelectionChange,
                     itemcontextmenu: this.showContextMenu,
-                    itemdblclick: this.showPreviewContentTypePanel
+                    itemdblclick: function (btn, evt) {
+                        this.showPreviewContentTypePanel();
+                    }
                 },
                 '#searchTextField': {
                     change: this.filterStore
@@ -64,10 +72,7 @@ Ext.define('Admin.controller.datadesigner.BrowseController', {
 
     updateDetailPanel: function (selModel, selected, opts) {
         if (selected.length > 0) {
-            var panel = this.getDetailPanel();
-            var cardLayout = panel.getLayout();
-            panel.setData(selected[0].raw);
-            cardLayout.setActiveItem('previewContainer');
+            this.getDetailPanel().setData(selected);
         }
     },
 

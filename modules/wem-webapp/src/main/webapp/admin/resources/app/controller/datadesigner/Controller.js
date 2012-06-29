@@ -24,26 +24,41 @@ Ext.define('Admin.controller.datadesigner.Controller', {
     },
 
 
-    showEditContentTypePanel: function () {
-        var selection = this.getGridPanel().getSelectionModel().getSelection();
-        if (selection.length === 1) {
-            this.createEditContentPanel(selection[0]);
+    showEditContentTypePanel: function (contentType, callback) {
+        if (!contentType) {
+            contentType = this.getGridPanel().getSelectionModel().getSelection();
+        } else {
+            contentType = [].concat(contentType);
+        }
+        var i;
+        for (i = 0; i < contentType.length; i += 1) {
+            this.createEditContentPanel(contentType[i]);
         }
     },
 
 
-    showPreviewContentTypePanel: function () {
-        var selection = this.getGridPanel().getSelectionModel().getSelection();
-        if (selection.length === 1) {
-            Ext.Msg.alert('Preivew', 'Name: ' + selection[0].raw.name + ', key: ' + selection[0].raw.key);
+    showPreviewContentTypePanel: function (contentType, callback) {
+        if (!contentType) {
+            contentType = this.getGridPanel().getSelectionModel().getSelection();
+        } else {
+            contentType = [].concat(contentType);
         }
+        var i;
+        for (i = 0; i < contentType.length; i += 1) {
+            this.createPreviewContentPanel(contentType[i]);
+        }
+
     },
 
 
-    showDeleteContentTypeWindow: function () {
-        var selection = this.getGridPanel().getSelectionModel().getSelection();
-        if (selection.length === 1) {
-            Ext.Msg.alert('Delete', 'Name: ' + selection[0].raw.name + ', key: ' + selection[0].raw.key);
+    showDeleteContentTypeWindow: function (contentType) {
+        if (!contentType) {
+            contentType = this.getGridPanel().getSelectionModel().getSelection();
+        } else {
+            contentType = [].concat(contentType);
+        }
+        if (contentType.length === 1) {
+            Ext.Msg.alert('Delete', 'Name: ' + contentType[0].raw.name + ', key: ' + contentType[0].raw.key);
         }
     },
 
@@ -78,6 +93,18 @@ Ext.define('Admin.controller.datadesigner.Controller', {
             tabPanel.addTab({
                 xtype: 'dataDesignerWizardPanel',
                 title: 'New Content Type'
+            });
+        }
+    },
+
+    createPreviewContentPanel: function (contentType) {
+        var tabs = this.getCmsTabPanel();
+
+        if (contentType) {
+            tabs.addTab({
+                xtype: 'contentTypeDetailPanel',
+                data: contentType,
+                title: 'View Content Type'
             });
         }
     },
