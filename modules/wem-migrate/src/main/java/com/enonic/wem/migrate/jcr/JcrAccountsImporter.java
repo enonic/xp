@@ -226,11 +226,14 @@ public class JcrAccountsImporter
             }
         } );
 
-        final String userId = userNode.getIdentifier();
-        final String userKey = (String) userFields.get( "USR_GRP_HKEY" );
-        accountKeyToJcrUIDMapping.put( userKey, userId );
-        final String userName = (String) userFields.get( "USR_SUID" );
-        LOG.info( "User '" + userName + "' imported with id " + userId );
+        if ( userNode != null )
+        {
+            final String userId = userNode.getIdentifier();
+            final String userKey = (String) userFields.get( "USR_GRP_HKEY" );
+            accountKeyToJcrUIDMapping.put( userKey, userId );
+            final String userName = (String) userFields.get( "USR_SUID" );
+            LOG.info( "User '" + userName + "' imported with id " + userId );
+        }
     }
 
     private void storeUserstore( final Map<String, Object> userstoreFields )
@@ -259,8 +262,14 @@ public class JcrAccountsImporter
             userstoreNodeName = userStoreKeyName.get( userStoreKey );
         }
 
-        String userParentNodePath = USERSTORES_PATH + userstoreNodeName + "/" + USERS_NODE;
-        JcrNode userNode = session.getRootNode().getNode( userParentNodePath ).addNode( userName, USER_NODE_TYPE );
+        final String userParentNodePath = USERSTORES_PATH + userstoreNodeName + "/" + USERS_NODE;
+        final JcrNode userStoreNode = session.getRootNode().getNode( userParentNodePath );
+        if ( userStoreNode.hasNode( userName ) )
+        {
+            LOG.warn( "Skipping creation of existing user: " + userstoreNodeName + "//" + userName );
+            return null;
+        }
+        final JcrNode userNode = userStoreNode.addNode( userName, USER_NODE_TYPE );
 
         // common user properties
         String qualifiedName = (String) userFields.get( "USR_SUID" );
@@ -389,8 +398,14 @@ public class JcrAccountsImporter
             userstoreNodeName = userStoreKeyName.get( userStoreKey );
         }
 
-        String userParentNodePath = USERSTORES_PATH + userstoreNodeName + "/" + GROUPS_NODE;
-        JcrNode groupNode = session.getRootNode().getNode( userParentNodePath ).addNode( groupName, GROUP_NODE_TYPE );
+        final String userParentNodePath = USERSTORES_PATH + userstoreNodeName + "/" + GROUPS_NODE;
+        final JcrNode userStoreNode = session.getRootNode().getNode( userParentNodePath );
+        if ( userStoreNode.hasNode( groupName ) )
+        {
+            LOG.warn( "Skipping creation of existing group: " + userstoreNodeName + "//" + groupName );
+            return null;
+        }
+        final JcrNode groupNode = userStoreNode.addNode( groupName, GROUP_NODE_TYPE );
         groupNode.addNode( MEMBERS_NODE );
 
         // common user properties
