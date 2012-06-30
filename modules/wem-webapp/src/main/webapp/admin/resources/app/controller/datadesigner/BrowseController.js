@@ -2,14 +2,15 @@ Ext.define('Admin.controller.datadesigner.BrowseController', {
     extend: 'Admin.controller.datadesigner.Controller',
 
     stores: [
-        'Admin.store.datadesigner.ContentTypeStore'
+        'Admin.store.datadesigner.ContentTypeStore',
+        'Admin.store.datadesigner.ContentTypeTreeStore'
     ],
 
     models: [],
 
     views: [
         'Admin.view.datadesigner.FilterPanel',
-        'Admin.view.datadesigner.GridPanel',
+        'Admin.view.datadesigner.TreeGridPanel',
         'Admin.view.datadesigner.ContextMenu',
         'Admin.view.datadesigner.DetailPanel'
     ],
@@ -34,7 +35,7 @@ Ext.define('Admin.controller.datadesigner.BrowseController', {
                         this.showDeleteContentTypeWindow();
                     }
                 },
-                'contentTypeGridPanel': {
+                'contentTypeTreeGridPanel grid, treepanel': {
                     selectionchange: this.onGridSelectionChange,
                     itemcontextmenu: this.showContextMenu,
                     itemdblclick: function (btn, evt) {
@@ -92,8 +93,13 @@ Ext.define('Admin.controller.datadesigner.BrowseController', {
         var store = this.getStore('Admin.store.datadesigner.ContentTypeStore');
         var searchTextValue = this.getFilterPanel().getComponent('searchTextField').getValue();
         var baseTypesOnly = this.getFilterPanel().getComponent('showBaseTypesOnlyCheckbox').getValue();
+        var treeGridPanel = this.getTreeGridPanel();
         store.clearFilter();
-
+        if (searchTextValue !== '') {
+            treeGridPanel.setActiveList('grid');
+        } else {
+            treeGridPanel.setActiveList('tree');
+        }
         this.doFilterStore(store, searchTextValue, baseTypesOnly);
     },
 

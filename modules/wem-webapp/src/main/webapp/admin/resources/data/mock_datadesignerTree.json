@@ -1,147 +1,113 @@
-[
-    {
-        "text": "Shortcut",
-        "expanded": true,
-        "children": [
-            {
-                "text": "docs",
-                "leaf": true
-            },
-            {
-                "text": "Site",
-                "expanded": true,
-                "children": [
-                    {
-                        "text": "Enonic.com (en)",
-                        "leaf": true
-                    },
-                    {
-                        "text": "Intranet",
-                        "leaf": true
-                    },
-                    {
-                        "text": "Publisering",
-                        "leaf": true
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "text": "Folder",
-        "expanded": true,
-        "children": [
-            {
-                "text": "News",
-                "leaf": true
-            },
-            {
-                "text": "Persons",
-                "leaf": true
-            }
-        ]
-    },
-    {
-        "text": "Structured",
-        "expanded": true,
-        "children": [
-            {
-                "text": "Discussion",
-                "leaf": true
-            },
-            {
-                "text": "Result",
-                "leaf": true
-            }
-        ]
-    },
-    {
-        "text": "Media",
-        "expanded": true,
-        "children": [
-            {
-                "text": "unknown",
-                "expanded": true,
-                "children": [
+{
+    "total": 5,
+    "name": ".",
+    "children": [
+        {
+            "name": "Form",
+            "type": "form",
+            "key": 1,
+            "expanded": true,
+            "lastModified": "2010-10-10 10:10:00",
+            "children": [
 
-                ]
-            },
-            {
-                "text": "Audio",
-                "expanded": true,
-                "children": [
+            ]
+        },
+        {
+            "name": "Folder",
+            "key": 2,
+            "type": "folder",
+            "expanded": true,
+            "lastModified": "2010-10-10 10:10:00",
+            "children": [
+                {
+                    "name": "News",
+                    "type": "folder",
+                    "lastModified": "2010-10-10 10:10:00",
+                    "key": 3,
+                    "expanded": true,
+                    "children": []
+                },
+                {
+                    "name": "Persons",
+                    "type": "folder",
+                    "expanded": true,
+                    "lastModified": "2010-10-10 10:10:00",
+                    "key": 5,
+                    "children": []
+                }
+            ]
+        },
+        {
+            "name": "Media",
+            "key": 6,
+            "type": "media",
+            "lastModified": "2010-10-10 10:10:00",
+            "expanded": true,
+            "children": [
+                {
+                    "name": "Audio",
+                    "key": 7,
+                    "type": "media",
+                    "lastModified": "2010-10-10 10:10:00",
+                    "expanded": true,
+                    "children": [
 
-                ]
-            },
-            {
-                "text": "Image",
-                "expanded": true,
-                "children": [
+                    ]
+                },
+                {
+                    "name": "Image",
+                    "key": 8,
+                    "lastModified": "2010-10-10 10:10:00",
+                    "type": "media",
+                    "expanded": true,
+                    "children": [
 
-                ]
-            },
-            {
-                "text": "Video",
-                "expanded": true,
-                "children": [
+                    ]
+                },
+                {
+                    "name": "Video",
+                    "key": 9,
+                    "lastModified": "2010-10-10 10:10:00",
+                    "type": "media",
+                    "expanded": true,
+                    "children": [
 
-                ]
-            },
-            {
-                "text": "Document",
-                "expanded": true,
-                "children": [
+                    ]
+                },
+                {
+                    "name": "Document",
+                    "key": 10,
+                    "type": "media",
+                    "lastModified": "2010-10-10 10:10:00",
+                    "expanded": true,
+                    "children": [
 
-                ]
-            },
-            {
-                "text": "Presentation",
-                "expanded": true,
-                "children": [
-
-                ]
-            },
-            {
-                "text": "Spreadsheet",
-                "expanded": true,
-                "children": [
-
-                ]
-            },
-            {
-                "text": "XML",
-                "expanded": true,
-                "children": [
-
-                ]
-            },
-            {
-                "text": "HTML",
-                "expanded": true,
-                "children": [
-
-                ]
-            },
-            {
-                "text": "Archive",
-                "expanded": true,
-                "children": [
-
-                ]
-            }
-        ]
-    },
-    {
-        "text": "Form",
-        "expanded": true,
-        "children": [
-            {
-                "text": "Response",
-                "expanded": true,
-                "children": [
-
-                ]
-            }
-        ]
-    }
-]
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Structured",
+            "key": 11,
+            "type": "struct",
+            "lastModified": "2010-10-10 10:10:00",
+            "expanded": true,
+            "children": [
+                {
+                    "name": "Discussion",
+                    "key": 12,
+                    "type": "struct",
+                    "lastModified": "2010-10-10 10:10:00",
+                    "leaf": true
+                },
+                {
+                    "name": "Result",
+                    "lastModified": "2010-10-10 10:10:00",
+                    "type": "struct",
+                    "key": 13,
+                    "leaf": true
+                }
+            ]
+        }
+    ]
+}

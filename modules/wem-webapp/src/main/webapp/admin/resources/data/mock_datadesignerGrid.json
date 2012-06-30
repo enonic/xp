@@ -161,7 +161,7 @@
                 "configXml": "<config>\n  <user-fields/>\n</config>",
                 "usageCount": 1,
                 "icon": "resources/images/icons/128x128/earth2.png"
-            },
+            }
 
         ]
     }
