@@ -22,4 +22,5 @@ public class RadioButtons
     {
         return getValueType().validValue( fieldValue );
     }
+
 }

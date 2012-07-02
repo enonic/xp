@@ -9,4 +9,5 @@ public abstract class FieldEntryJsonGenerator
 {
     public abstract void generate( FieldEntry fieldEntry, JsonGenerator g )
         throws IOException;
+
 }
