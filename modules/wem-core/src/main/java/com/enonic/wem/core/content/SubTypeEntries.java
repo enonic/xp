@@ -36,7 +36,7 @@ public class SubTypeEntries
     }
 
     @Override
-    public FieldEntryJsonGenerator getJsonGenerator()
+    public FieldEntryJsonGeneratorTmp getJsonGenerator()
     {
         return SubTypeEntriesJsonGenerator.DEFAULT;
     }

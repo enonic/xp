@@ -4,10 +4,10 @@ package com.enonic.wem.core.content.config.field.type;
 import com.enonic.wem.core.content.FieldValue;
 import com.enonic.wem.core.content.config.field.type.value.ValueTypes;
 
-public class RadioButtons
+public class RadioButtonsTmp
     extends AbstractBaseFieldType
 {
-    RadioButtons()
+    RadioButtonsTmp()
     {
         super( "radioButtons", ValueTypes.SINGLE_LINED_STRING );
     }
@@ -22,5 +22,4 @@ public class RadioButtons
     {
         return getValueType().validValue( fieldValue );
     }
-
 }

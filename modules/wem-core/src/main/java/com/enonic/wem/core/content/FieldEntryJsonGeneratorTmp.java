@@ -5,9 +5,8 @@ import java.io.IOException;
 
 import org.codehaus.jackson.JsonGenerator;
 
-public abstract class FieldEntryJsonGenerator
+public abstract class FieldEntryJsonGeneratorTmp
 {
     public abstract void generate( FieldEntry fieldEntry, JsonGenerator g )
         throws IOException;
-
 }

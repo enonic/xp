@@ -16,6 +16,6 @@ public class BuiltInFieldTypes
 
     public static final FieldType dropdown = new Dropdown();
 
-    public static final FieldType radioButtons = new RadioButtons();
+    public static final FieldType radioButtons = new RadioButtonsTmp();
 
 }

@@ -4,6 +4,6 @@ public abstract class FieldEntry
 {
     public abstract FieldEntryPath getPath();
 
-    public abstract FieldEntryJsonGenerator getJsonGenerator();
+    public abstract FieldEntryJsonGeneratorTmp getJsonGenerator();
 
 }

@@ -20,7 +20,7 @@ public class FieldSetEntries
     }
 
     @Override
-    public FieldEntryJsonGenerator getJsonGenerator()
+    public FieldEntryJsonGeneratorTmp getJsonGenerator()
     {
         return null;
     }

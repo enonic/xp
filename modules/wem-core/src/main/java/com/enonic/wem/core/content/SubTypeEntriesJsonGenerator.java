@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.codehaus.jackson.JsonGenerator;
 
 public class SubTypeEntriesJsonGenerator
-    extends FieldEntryJsonGenerator
+    extends FieldEntryJsonGeneratorTmp
 {
     public final static SubTypeEntriesJsonGenerator DEFAULT = new SubTypeEntriesJsonGenerator();
 
