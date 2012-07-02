@@ -34,7 +34,7 @@ public class FieldValue
     }
 
     @Override
-    public FieldEntryJsonGeneratorTmp getJsonGenerator()
+    public FieldEntryJsonGenerator getJsonGenerator()
     {
         return FieldValueJsonGenerator.DEFAULT;
     }
