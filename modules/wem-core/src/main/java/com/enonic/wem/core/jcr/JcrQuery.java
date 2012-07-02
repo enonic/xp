@@ -3,7 +3,6 @@ package com.enonic.wem.core.jcr;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
@@ -79,7 +78,7 @@ public class JcrQuery
         return this;
     }
 
-    public JcrQuery descendantOf( final String path )
+    public JcrQuery from( final String path )
     {
         try
         {
@@ -168,25 +167,31 @@ public class JcrQuery
         return valueFactory;
     }
 
-    NodeIterator execute()
-        throws RepositoryException
+    public JcrNodeIterator execute()
     {
-        QueryObjectModelFactory factory = getModelFactory();
-
-        Selector source = factory.selector( nodeType, SELECTOR_NAME );
-        Column[] columns = null;
-        Ordering[] orderings = null;
-        Constraint constraint = consolidateConstraints( this.constraints, factory );
-
-        QueryObjectModel queryObj = factory.createQuery( source, constraint, orderings, columns );
-        if ( limit >= 0 )
+        try
         {
-            queryObj.setLimit( limit );
-        }
-        queryObj.setOffset( offset );
-        QueryResult result = queryObj.execute();
+            QueryObjectModelFactory factory = getModelFactory();
 
-        return result.getNodes();
+            Selector source = factory.selector( nodeType, SELECTOR_NAME );
+            Column[] columns = null;
+            Ordering[] orderings = null;
+            Constraint constraint = consolidateConstraints( this.constraints, factory );
+
+            QueryObjectModel queryObj = factory.createQuery( source, constraint, orderings, columns );
+            if ( limit >= 0 )
+            {
+                queryObj.setLimit( limit );
+            }
+            queryObj.setOffset( offset );
+            QueryResult result = queryObj.execute();
+
+            return new JcrNodeIteratorImpl( result.getNodes() );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
     }
 
     private Constraint consolidateConstraints( final List<Constraint> constraints, final QueryObjectModelFactory factory )
@@ -210,4 +215,5 @@ public class JcrQuery
         }
         return andConstraint;
     }
+
 }

@@ -93,12 +93,12 @@ public class AccountJcrDaoImpl
     private PageList<JcrAccount> queryAllAccounts( JcrSession session, int index, int count )
         throws RepositoryException
     {
-        final JcrQuery query = new JcrQuery( session )
-            .descendantOf( USERSTORES_ABSOLUTE_PATH )
+        final JcrNodeIterator nodeIterator = session.createQuery()
             .selectNodeType( ACCOUNT_NODE_TYPE )
+            .from( USERSTORES_ABSOLUTE_PATH )
             .offset( index )
-            .limit( count );
-        final JcrNodeIterator nodeIterator = session.execute( query );
+            .limit( count )
+            .execute();
 
         LOG.info( nodeIterator.getSize() + " accounts found" );
 
@@ -116,11 +116,11 @@ public class AccountJcrDaoImpl
     private JcrUser queryUserById( final JcrSession session, final String userId, final boolean includeMemberships )
         throws RepositoryException, IOException
     {
-        final JcrQuery query = new JcrQuery( session )
-            .descendantOf( USERSTORES_ABSOLUTE_PATH )
+        final JcrNodeIterator nodeIterator = session.createQuery()
             .selectNodeType( USER_NODE_TYPE )
-            .propertyEqualsTo( "key", userId );
-        final JcrNodeIterator nodeIterator = session.execute( query );
+            .from( USERSTORES_ABSOLUTE_PATH )
+            .propertyEqualsTo( "key", userId )
+            .execute();
 
         if ( nodeIterator.hasNext() )
         {
@@ -171,11 +171,11 @@ public class AccountJcrDaoImpl
     private JcrGroup queryGroupById( JcrSession session, String groupId, boolean includeMembers )
         throws RepositoryException, IOException
     {
-        final JcrQuery query = new JcrQuery( session )
-            .descendantOf( USERSTORES_ABSOLUTE_PATH )
+        final JcrNodeIterator nodeIterator = session.createQuery()
             .selectNodeType( GROUP_NODE_TYPE )
-            .propertyEqualsTo( "key", groupId );
-        final JcrNodeIterator nodeIterator = session.execute( query );
+            .from( USERSTORES_ABSOLUTE_PATH )
+            .propertyEqualsTo( "key", groupId )
+            .execute();
 
         if ( nodeIterator.hasNext() )
         {
@@ -234,11 +234,11 @@ public class AccountJcrDaoImpl
     private byte[] queryUserPhotoByKey( JcrSession session, String userId )
         throws RepositoryException, IOException
     {
-        final JcrQuery query = new JcrQuery( session )
-            .descendantOf( USERSTORES_ABSOLUTE_PATH )
+        final JcrNodeIterator nodeIterator = session.createQuery()
             .selectNodeType( USER_NODE_TYPE )
-            .propertyEqualsTo( "key", userId );
-        final JcrNodeIterator nodeIterator = session.execute( query );
+            .from( USERSTORES_ABSOLUTE_PATH )
+            .propertyEqualsTo( "key", userId )
+            .execute();
 
         if ( nodeIterator.hasNext() )
         {

@@ -2,6 +2,7 @@ package com.enonic.wem.core.jcr;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -9,6 +10,8 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+
+import org.joda.time.DateTime;
 
 class JcrSessionImpl
     implements JcrSession
@@ -249,12 +252,12 @@ class JcrSessionImpl
         }
     }
 
-    public Calendar getPropertyCalendar( String absPath )
+    public DateTime getPropertyDateTime( String absPath )
     {
         Property property = getProperty( absPath );
         try
         {
-            return property == null ? null : property.getDate();
+            return property == null ? null : new DateTime( property.getDate() );
         }
         catch ( RepositoryException e )
         {
@@ -327,12 +330,12 @@ class JcrSessionImpl
         }
     }
 
-    public void setPropertyCalendar( String absPath, Calendar value )
+    public void setPropertyDateTime( String absPath, DateTime value )
     {
         try
         {
             Property property = session.getProperty( absPath );
-            property.setValue( value );
+            property.setValue( value.toCalendar( Locale.getDefault() ) );
         }
         catch ( RepositoryException e )
         {
@@ -340,16 +343,10 @@ class JcrSessionImpl
         }
     }
 
-    public JcrNodeIterator execute( final JcrQuery query )
+    @Override
+    public JcrQuery createQuery()
     {
-        try
-        {
-            return new JcrNodeIteratorImpl( query.execute() );
-        }
-        catch ( RepositoryException e )
-        {
-            throw new RepositoryRuntimeException( e );
-        }
+        return new JcrQuery( this );
     }
 
     private Calendar dateToCalendar( Date date )

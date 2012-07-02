@@ -1,11 +1,12 @@
 package com.enonic.wem.core.jcr;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.Session;
+
+import org.joda.time.DateTime;
 
 public interface JcrSession
 {
@@ -37,7 +38,6 @@ public interface JcrSession
 
     Property getProperty( String absPath );
 
-
     String getPropertyString( String absPath );
 
     boolean getPropertyBoolean( String absPath );
@@ -48,8 +48,7 @@ public interface JcrSession
 
     Date getPropertyDate( String absPath );
 
-    Calendar getPropertyCalendar( String absPath );
-
+    DateTime getPropertyDateTime( String absPath );
 
     void setPropertyString( String absPath, String value );
 
@@ -61,7 +60,7 @@ public interface JcrSession
 
     void setPropertyDate( String absPath, Date value );
 
-    void setPropertyCalendar( String absPath, Calendar value );
+    void setPropertyDateTime( String absPath, DateTime value );
 
-    JcrNodeIterator execute( JcrQuery query );
+    JcrQuery createQuery();
 }
