@@ -327,6 +327,19 @@ class JcrNodeImpl
     }
 
     @Override
+    public boolean isNodeType( final String nodeTypeName )
+    {
+        try
+        {
+            return node.isNodeType( nodeTypeName );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
+
+    @Override
     public String getPath()
     {
         try

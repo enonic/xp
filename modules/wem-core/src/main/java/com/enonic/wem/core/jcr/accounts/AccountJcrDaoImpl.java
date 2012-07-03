@@ -19,7 +19,6 @@ import com.enonic.wem.core.jcr.JcrProperty;
 import com.enonic.wem.core.jcr.JcrPropertyIterator;
 import com.enonic.wem.core.jcr.JcrSession;
 import com.enonic.wem.core.jcr.JcrWemConstants;
-import com.enonic.wem.core.jcr.PageList;
 
 import static com.enonic.wem.core.jcr.JcrWemConstants.ACCOUNT_NODE_TYPE;
 import static com.enonic.wem.core.jcr.JcrWemConstants.GROUPS_NODE;
@@ -78,17 +77,51 @@ public class AccountJcrDaoImpl
     }
 
     @Override
-    public PageList<JcrAccount> findAll( final int index, final int count )
+    public int getGroupsCount()
     {
-        @SuppressWarnings("unchecked") PageList<JcrAccount> accounts = (PageList<JcrAccount>) getTemplate().execute( new JcrCallback()
+        return 0;
+    }
+
+    @Override
+    public int getUsersCount()
+    {
+        return 0;
+    }
+
+    @Override
+    public List<JcrAccount> findAll( final int from, final int count )
+    {
+        @SuppressWarnings("unchecked")
+        List<JcrAccount> accounts = (List<JcrAccount>) getTemplate().execute( new JcrCallback()
         {
             public Object doInJcr( JcrSession session )
                 throws IOException, RepositoryException
             {
-                return queryAllAccounts( session, index, count );
+                return queryAllAccounts( session, from, count );
             }
         } );
         return accounts;
+    }
+
+    @Override
+    public List<JcrUser> findAllUsers( final int from, final int count )
+    {
+        @SuppressWarnings("unchecked")
+        List<JcrUser> users = (List<JcrUser>) getTemplate().execute( new JcrCallback()
+        {
+            public Object doInJcr( JcrSession session )
+                throws IOException, RepositoryException
+            {
+                return queryAllUsers( session, from, count );
+            }
+        } );
+        return users;
+    }
+
+    @Override
+    public List<JcrGroup> findAllGroups( int from, int count )
+    {
+        return null;
     }
 
     @Override
@@ -334,7 +367,7 @@ public class AccountJcrDaoImpl
         user.setId( userNode.getIdentifier() );
     }
 
-    private PageList<JcrAccount> queryAllAccounts( JcrSession session, int index, int count )
+    private List<JcrAccount> queryAllAccounts( JcrSession session, int index, int count )
         throws RepositoryException
     {
         final JcrNodeIterator nodeIterator = session.createQuery()
@@ -350,25 +383,40 @@ public class AccountJcrDaoImpl
         while ( nodeIterator.hasNext() )
         {
             final JcrNode userNode = nodeIterator.nextNode();
-            final JcrUser user = new JcrUser();
-            nodePropertiesToUserFields( userNode, user );
+            final JcrUser user = accountJcrMapping.toUser( userNode );
             userList.add( user );
         }
-        return new PageList<JcrAccount>( index, (int) nodeIterator.getSize(), userList );
+        return userList;
+    }
+
+    private List<JcrUser> queryAllUsers( JcrSession session, int index, int count )
+        throws RepositoryException
+    {
+        final JcrNodeIterator nodeIterator = session.createQuery()
+            .selectNodeType( USER_NODE_TYPE )
+            .from( USERSTORES_ABSOLUTE_PATH )
+            .offset( index )
+            .limit( count )
+            .execute();
+
+        LOG.info( nodeIterator.getSize() + " users found" );
+
+        final List<JcrUser> userList = new ArrayList<JcrUser>();
+        while ( nodeIterator.hasNext() )
+        {
+            final JcrNode userNode = nodeIterator.nextNode();
+            final JcrUser user = accountJcrMapping.toUser( userNode );
+            userList.add( user );
+        }
+        return userList;
     }
 
     private JcrUser queryUserById( final JcrSession session, final String userId, final boolean includeMemberships )
         throws RepositoryException, IOException
     {
-        final JcrNodeIterator nodeIterator = session.createQuery()
-            .selectNodeType( USER_NODE_TYPE )
-            .from( USERSTORES_ABSOLUTE_PATH )
-            .propertyEqualsTo( "key", userId )
-            .execute();
-
-        if ( nodeIterator.hasNext() )
+        final JcrNode userNode = session.getNodeByIdentifier( userId );
+        if ( ( userNode != null ) && ( userNode.isNodeType( USER_NODE_TYPE ) ) )
         {
-            final JcrNode userNode = nodeIterator.nextNode();
             return buildUser( session, userNode, includeMemberships );
         }
         else
@@ -380,8 +428,7 @@ public class AccountJcrDaoImpl
     private JcrUser buildUser( JcrSession session, JcrNode userNode, boolean includeMemberships )
         throws RepositoryException, IOException
     {
-        final JcrUser user = new JcrUser();
-        nodePropertiesToUserFields( userNode, user );
+        final JcrUser user = accountJcrMapping.toUser( userNode );
         if ( includeMemberships )
         {
             setUserMemberships( session, userNode, user );
@@ -399,7 +446,7 @@ public class AccountJcrDaoImpl
             final JcrNode memberOwnerNode = property.getParent();
             final JcrNode groupNode = memberOwnerNode.getParent().getParent();
 
-            final String groupId = groupNode.getPropertyString( "key" );
+            final String groupId = groupNode.getIdentifier();
             final JcrGroup group = this.queryGroupById( session, groupId, false );
             if ( group != null )
             {
@@ -415,15 +462,9 @@ public class AccountJcrDaoImpl
     private JcrGroup queryGroupById( JcrSession session, String groupId, boolean includeMembers )
         throws RepositoryException, IOException
     {
-        final JcrNodeIterator nodeIterator = session.createQuery()
-            .selectNodeType( GROUP_NODE_TYPE )
-            .from( USERSTORES_ABSOLUTE_PATH )
-            .propertyEqualsTo( "key", groupId )
-            .execute();
-
-        if ( nodeIterator.hasNext() )
+        final JcrNode groupNode = session.getNodeByIdentifier( groupId );
+        if ( ( groupNode != null ) && ( groupNode.isNodeType( GROUP_NODE_TYPE ) ) )
         {
-            final JcrNode groupNode = nodeIterator.nextNode();
             return buildGroup( session, groupNode, includeMembers );
         }
         else
@@ -495,83 +536,6 @@ public class AccountJcrDaoImpl
         return null;
     }
 
-    private void nodePropertiesToUserFields( JcrNode userNode, JcrUser user )
-        throws RepositoryException
-    {
-        user.setName( userNode.getName() );
-        user.setDisplayName( userNode.getPropertyString( "displayname" ) );
-        user.setEmail( userNode.getPropertyString( "email" ) );
-        user.setId( userNode.getPropertyString( "key" ) );
-        user.setLastModified( userNode.getPropertyDateTime( "lastModified" ) );
-        if ( userNode.hasProperty( "photo" ) )
-        {
-            user.setHasPhoto( true );
-        }
-
-        final JcrUserStore userstore = userStoreJcrMapping.toUserStore( userNode.getParent().getParent() );
-        user.setUserStore( userstore.getName() );
-
-        final JcrUserInfo userInfo = nodePropertiesToUserFields( userNode );
-        final List<JcrAddress> addresses = nodePropertiesToAddresses( userNode );
-        userInfo.setAddresses( addresses );
-        user.setUserInfo( userInfo );
-    }
-
-    private List<JcrAddress> nodePropertiesToAddresses( JcrNode userNode )
-    {
-        final List<JcrAddress> addressList = new ArrayList<JcrAddress>();
-        final JcrNode addresses = userNode.getNode( "addresses" );
-        JcrNodeIterator addressNodeIt = addresses.getNodes( "address" );
-        while ( addressNodeIt.hasNext() )
-        {
-            JcrNode addressNode = addressNodeIt.next();
-            final JcrAddress address = new JcrAddress();
-            address.setLabel( addressNode.getPropertyString( "label" ) );
-            address.setStreet( addressNode.getPropertyString( "street" ) );
-            address.setPostalAddress( addressNode.getPropertyString( "postalAddress" ) );
-            address.setPostalCode( addressNode.getPropertyString( "postalCode" ) );
-            address.setRegion( addressNode.getPropertyString( "region" ) );
-            address.setCountry( addressNode.getPropertyString( "country" ) );
-            address.setIsoRegion( addressNode.getPropertyString( "isoRegion" ) );
-            address.setIsoCountry( addressNode.getPropertyString( "isoCountry" ) );
-            addressList.add( address );
-        }
-
-        return addressList;
-    }
-
-    private JcrUserInfo nodePropertiesToUserFields( final JcrNode userNode )
-        throws RepositoryException
-    {
-        final JcrUserInfo info = new JcrUserInfo();
-
-        info.setBirthday( userNode.getPropertyDateTime( "birthday" ) );
-        info.setCountry( userNode.getPropertyString( "country" ) );
-        info.setDescription( userNode.getPropertyString( "description" ) );
-        info.setFax( userNode.getPropertyString( "fax" ) );
-        info.setFirstName( userNode.getPropertyString( "firstname" ) );
-        info.setGlobalPosition( userNode.getPropertyString( "globalposition" ) );
-        info.setHomePage( userNode.getPropertyString( "homepage" ) );
-        info.setHtmlEmail( userNode.getPropertyBoolean( "htmlemail" ) );
-        info.setInitials( userNode.getPropertyString( "initials" ) );
-        info.setLastName( userNode.getPropertyString( "lastname" ) );
-        info.setLocale( userNode.getPropertyString( "locale" ) );
-        info.setMemberId( userNode.getPropertyString( "memberid" ) );
-        info.setMiddleName( userNode.getPropertyString( "middlename" ) );
-        info.setMobile( userNode.getPropertyString( "mobile" ) );
-        info.setOrganization( userNode.getPropertyString( "organization" ) );
-        info.setPersonalId( userNode.getPropertyString( "personalid" ) );
-        info.setPhone( userNode.getPropertyString( "phone" ) );
-        info.setPrefix( userNode.getPropertyString( "prefix" ) );
-        info.setSuffix( userNode.getPropertyString( "suffix" ) );
-        info.setTimeZone( userNode.getPropertyString( "timezone" ) );
-        info.setTitle( userNode.getPropertyString( "title" ) );
-        info.setGender( Gender.fromName( userNode.getPropertyString( "gender" ) ) );
-        info.setOrganization( userNode.getPropertyString( "organization" ) );
-
-        return info;
-    }
-
     private void nodePropertiesToGroupFields( JcrNode groupNode, JcrGroup group )
         throws RepositoryException
     {
@@ -580,7 +544,7 @@ public class AccountJcrDaoImpl
         {
             group.setDescription( groupNode.getPropertyString( "description" ) );
         }
-        group.setId( groupNode.getPropertyString( "key" ) );
+        group.setId( groupNode.getIdentifier() );
 //        group.setType( groupTypeFromString( (int) groupNode.getProperty( "groupType" ).getLong() ) );
 //        group.setRestricted( true );
 

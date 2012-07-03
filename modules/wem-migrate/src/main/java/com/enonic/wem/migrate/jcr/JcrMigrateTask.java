@@ -29,20 +29,11 @@ import com.enonic.wem.core.jcr.JcrTemplate;
 import com.enonic.wem.core.jcr.RepositoryRuntimeException;
 import com.enonic.wem.migrate.MigrateTask;
 
-import static com.enonic.wem.core.jcr.JcrCmsConstants.ENONIC_CMS_NAMESPACE;
-import static com.enonic.wem.core.jcr.JcrCmsConstants.ENONIC_CMS_NAMESPACE_PREFIX;
-import static com.enonic.wem.core.jcr.JcrCmsConstants.GROUPS_NODE;
-import static com.enonic.wem.core.jcr.JcrCmsConstants.GROUPS_NODE_TYPE;
-import static com.enonic.wem.core.jcr.JcrCmsConstants.ROLES_NODE;
-import static com.enonic.wem.core.jcr.JcrCmsConstants.ROLES_NODE_TYPE;
-import static com.enonic.wem.core.jcr.JcrCmsConstants.ROOT_NODE;
-import static com.enonic.wem.core.jcr.JcrCmsConstants.SYSTEM_USERSTORE_KEY;
-import static com.enonic.wem.core.jcr.JcrCmsConstants.SYSTEM_USERSTORE_NODE;
-import static com.enonic.wem.core.jcr.JcrCmsConstants.USERSTORES_NODE;
-import static com.enonic.wem.core.jcr.JcrCmsConstants.USERSTORES_NODE_TYPE;
-import static com.enonic.wem.core.jcr.JcrCmsConstants.USERSTORE_NODE_TYPE;
-import static com.enonic.wem.core.jcr.JcrCmsConstants.USERS_NODE;
-import static com.enonic.wem.core.jcr.JcrCmsConstants.USERS_NODE_TYPE;
+import static com.enonic.wem.core.jcr.JcrWemConstants.ENONIC_CMS_NAMESPACE;
+import static com.enonic.wem.core.jcr.JcrWemConstants.ENONIC_CMS_NAMESPACE_PREFIX;
+import static com.enonic.wem.core.jcr.JcrWemConstants.ROOT_NODE;
+import static com.enonic.wem.core.jcr.JcrWemConstants.USERSTORES_NODE;
+import static com.enonic.wem.core.jcr.JcrWemConstants.USERSTORES_NODE_TYPE;
 
 @Component
 public class JcrMigrateTask implements MigrateTask
@@ -84,8 +75,6 @@ public class JcrMigrateTask implements MigrateTask
         session.save();
         jcrAccountsImporter.importAccounts();
         session.save();
-        // log imported tree
-//            LOG.info( JcrHelper.sessionViewToXml( session, "/enonic" ) );
     }
 
     private void createTreeStructure( Session session )
@@ -101,23 +90,23 @@ public class JcrMigrateTask implements MigrateTask
         Node enonic = root.addNode( ROOT_NODE, JcrConstants.NT_UNSTRUCTURED );
         Node userstores = enonic.addNode( USERSTORES_NODE, USERSTORES_NODE_TYPE );
 
-        Node systemUserstore = userstores.addNode( SYSTEM_USERSTORE_NODE, USERSTORE_NODE_TYPE );
-        systemUserstore.setProperty( "key", Integer.toString( SYSTEM_USERSTORE_KEY ) );
-        systemUserstore.setProperty( "default", true );
-        systemUserstore.setProperty( "connector", "" );
-        systemUserstore.setProperty( "xmlconfig", "" );
-
-        Node groupsRoles = systemUserstore.addNode( GROUPS_NODE, GROUPS_NODE_TYPE );
-        Node usersRoles = systemUserstore.addNode( USERS_NODE, USERS_NODE_TYPE );
-        Node systemRoles = systemUserstore.addNode( ROLES_NODE, ROLES_NODE_TYPE );
-
-        systemRoles.addNode( "ea", "cms:role" );
-        systemRoles.addNode( "developer", "cms:role" );
-        systemRoles.addNode( "administrator", "cms:role" );
-        systemRoles.addNode( "contributor", "cms:role" );
-        systemRoles.addNode( "expert", "cms:role" );
-        systemRoles.addNode( "everyone", "cms:role" );
-        systemRoles.addNode( "authenticated", "cms:role" );
+//        Node systemUserstore = userstores.addNode( SYSTEM_USERSTORE_NODE, USERSTORE_NODE_TYPE );
+//        systemUserstore.setProperty( "key", Integer.toString( SYSTEM_USERSTORE_KEY ) );
+//        systemUserstore.setProperty( "default", true );
+//        systemUserstore.setProperty( "connector", "" );
+//        systemUserstore.setProperty( "xmlconfig", "" );
+//
+//        Node groupsRoles = systemUserstore.addNode( GROUPS_NODE, GROUPS_NODE_TYPE );
+//        Node usersRoles = systemUserstore.addNode( USERS_NODE, USERS_NODE_TYPE );
+//        Node systemRoles = systemUserstore.addNode( ROLES_NODE, ROLES_NODE_TYPE );
+//
+//        systemRoles.addNode( "ea", "cms:role" );
+//        systemRoles.addNode( "developer", "cms:role" );
+//        systemRoles.addNode( "administrator", "cms:role" );
+//        systemRoles.addNode( "contributor", "cms:role" );
+//        systemRoles.addNode( "expert", "cms:role" );
+//        systemRoles.addNode( "everyone", "cms:role" );
+//        systemRoles.addNode( "authenticated", "cms:role" );
     }
 
     private void registerCustomNodeTypes( Session session )

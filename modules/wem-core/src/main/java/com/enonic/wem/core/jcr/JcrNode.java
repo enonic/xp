@@ -10,6 +10,8 @@ public interface JcrNode
 
     String getName();
 
+    boolean isNodeType( String nodeTypeName );
+
     String getPath();
 
     JcrNode getParent();
