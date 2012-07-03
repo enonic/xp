@@ -119,10 +119,18 @@ public class AccountJcrDaoImpl
     }
 
     @Override
-    public List<JcrGroup> findAllGroups( int from, int count )
+    public List<JcrGroup> findAllGroups( final int from, final int count )
     {
-        return null;
-    }
+        @SuppressWarnings("unchecked")
+        List<JcrGroup> groups = (List<JcrGroup>) getTemplate().execute( new JcrCallback()
+        {
+            public Object doInJcr( JcrSession session )
+                throws IOException, RepositoryException
+            {
+                return queryAllGroups( session, from, count );
+            }
+        } );
+        return groups;    }
 
     @Override
     public byte[] findUserPhotoByKey( final String userId )
@@ -411,6 +419,28 @@ public class AccountJcrDaoImpl
         return userList;
     }
 
+    private List<JcrGroup> queryAllGroups( JcrSession session, int index, int count )
+        throws RepositoryException
+    {
+        final JcrNodeIterator nodeIterator = session.createQuery()
+            .selectNodeType( GROUP_NODE_TYPE )
+            .from( USERSTORES_ABSOLUTE_PATH )
+            .offset( index )
+            .limit( count )
+            .execute();
+
+        LOG.info( nodeIterator.getSize() + " groups found" );
+
+        final List<JcrGroup> groupList = new ArrayList<JcrGroup>();
+        while ( nodeIterator.hasNext() )
+        {
+            final JcrNode groupNode = nodeIterator.nextNode();
+            final JcrGroup group = accountJcrMapping.toGroup( groupNode );
+            groupList.add( group );
+        }
+        return groupList;
+    }
+
     private JcrUser queryUserById( final JcrSession session, final String userId, final boolean includeMemberships )
         throws RepositoryException, IOException
     {
@@ -494,8 +524,7 @@ public class AccountJcrDaoImpl
     private JcrGroup buildGroup( JcrSession session, JcrNode groupNode, boolean includeMembers )
         throws RepositoryException, IOException
     {
-        final JcrGroup group = new JcrGroup();
-        nodePropertiesToGroupFields( groupNode, group );
+        final JcrGroup group = accountJcrMapping.toGroup( groupNode );
         if ( includeMembers )
         {
             setGroupMembers( session, groupNode, group );
@@ -534,22 +563,6 @@ public class AccountJcrDaoImpl
             }
         }
         return null;
-    }
-
-    private void nodePropertiesToGroupFields( JcrNode groupNode, JcrGroup group )
-        throws RepositoryException
-    {
-        group.setName( groupNode.getName() );
-        if ( groupNode.hasProperty( "description" ) )
-        {
-            group.setDescription( groupNode.getPropertyString( "description" ) );
-        }
-        group.setId( groupNode.getIdentifier() );
-//        group.setType( groupTypeFromString( (int) groupNode.getProperty( "groupType" ).getLong() ) );
-//        group.setRestricted( true );
-
-        final JcrUserStore userstore = userStoreJcrMapping.toUserStore( groupNode.getParent().getParent() );
-        group.setUserStore( userstore.getName() );
     }
 
 }

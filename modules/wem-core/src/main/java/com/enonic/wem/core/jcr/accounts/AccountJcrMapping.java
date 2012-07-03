@@ -48,7 +48,13 @@ public class AccountJcrMapping
 
     public JcrGroup toGroup( JcrNode node )
     {
-        return null;
+        final JcrGroup group = new JcrGroup();
+        group.setName( node.getName() );
+        group.setDescription( node.getPropertyString( "description" ) );
+        group.setId( node.getIdentifier() );
+        final String userstore = node.getParent().getParent().getName();
+        group.setUserStore( userstore );
+        return group;
     }
 
     public void groupToJcr( JcrGroup group, JcrNode node )
