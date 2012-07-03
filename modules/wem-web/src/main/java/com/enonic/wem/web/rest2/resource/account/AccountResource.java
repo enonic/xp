@@ -22,7 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.enonic.wem.core.jcr.AccountJcrDao;
+import com.enonic.wem.core.jcr.accounts.AccountJcrDao;
 import com.enonic.wem.core.jcr.PageList;
 import com.enonic.wem.core.jcr.accounts.JcrAccount;
 import com.enonic.wem.core.jcr.accounts.JcrGroup;

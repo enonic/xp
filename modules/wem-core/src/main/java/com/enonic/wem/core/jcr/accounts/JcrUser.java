@@ -28,6 +28,7 @@ public final class JcrUser
     {
         super( JcrAccountType.USER );
         this.memberships = new HashSet<JcrGroup>();
+        this.userInfo = new JcrUserInfo();
     }
 
     public DateTime getLastLogged()

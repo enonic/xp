@@ -1,7 +1,8 @@
-package com.enonic.wem.core.jcr;
+package com.enonic.wem.core.jcr.accounts;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
@@ -10,21 +11,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.core.jcr.accounts.Gender;
-import com.enonic.wem.core.jcr.accounts.JcrAccount;
-import com.enonic.wem.core.jcr.accounts.JcrAccountType;
-import com.enonic.wem.core.jcr.accounts.JcrAddress;
-import com.enonic.wem.core.jcr.accounts.JcrGroup;
-import com.enonic.wem.core.jcr.accounts.JcrUser;
-import com.enonic.wem.core.jcr.accounts.JcrUserInfo;
-import com.enonic.wem.core.jcr.accounts.JcrUserStore;
+import com.enonic.wem.core.jcr.JcrCallback;
+import com.enonic.wem.core.jcr.JcrDaoSupport;
+import com.enonic.wem.core.jcr.JcrNode;
+import com.enonic.wem.core.jcr.JcrNodeIterator;
+import com.enonic.wem.core.jcr.JcrProperty;
+import com.enonic.wem.core.jcr.JcrPropertyIterator;
+import com.enonic.wem.core.jcr.JcrSession;
+import com.enonic.wem.core.jcr.JcrWemConstants;
+import com.enonic.wem.core.jcr.PageList;
 
-import static com.enonic.wem.core.jcr.JcrCmsConstants.ACCOUNT_NODE_TYPE;
-import static com.enonic.wem.core.jcr.JcrCmsConstants.GROUP_NODE_TYPE;
-import static com.enonic.wem.core.jcr.JcrCmsConstants.MEMBERS_NODE;
-import static com.enonic.wem.core.jcr.JcrCmsConstants.MEMBER_NODE;
-import static com.enonic.wem.core.jcr.JcrCmsConstants.USERSTORES_ABSOLUTE_PATH;
-import static com.enonic.wem.core.jcr.JcrCmsConstants.USER_NODE_TYPE;
+import static com.enonic.wem.core.jcr.JcrWemConstants.ACCOUNT_NODE_TYPE;
+import static com.enonic.wem.core.jcr.JcrWemConstants.GROUPS_NODE;
+import static com.enonic.wem.core.jcr.JcrWemConstants.GROUP_NODE_TYPE;
+import static com.enonic.wem.core.jcr.JcrWemConstants.MEMBERS_NODE;
+import static com.enonic.wem.core.jcr.JcrWemConstants.MEMBER_NODE;
+import static com.enonic.wem.core.jcr.JcrWemConstants.USERSTORES_ABSOLUTE_PATH;
+import static com.enonic.wem.core.jcr.JcrWemConstants.USERSTORES_PATH;
+import static com.enonic.wem.core.jcr.JcrWemConstants.USERS_NODE;
+import static com.enonic.wem.core.jcr.JcrWemConstants.USER_NODE_TYPE;
 
 @Component
 public class AccountJcrDaoImpl
@@ -32,6 +37,16 @@ public class AccountJcrDaoImpl
     implements AccountJcrDao
 {
     private static final Logger LOG = LoggerFactory.getLogger( AccountJcrDaoImpl.class );
+
+    private final UserStoreJcrMapping userStoreJcrMapping;
+
+    private final AccountJcrMapping accountJcrMapping;
+
+    public AccountJcrDaoImpl()
+    {
+        userStoreJcrMapping = new UserStoreJcrMapping();
+        accountJcrMapping = new AccountJcrMapping();
+    }
 
     @Override
     public JcrUser findUserById( final String accountId )
@@ -88,6 +103,235 @@ public class AccountJcrDaoImpl
             }
         } );
         return photo;
+    }
+
+    @Override
+    public void saveAccount( final JcrAccount account )
+    {
+        switch ( account.getType() )
+        {
+            case USER:
+                saveUser( (JcrUser) account );
+                break;
+
+            case GROUP:
+                saveGroup( (JcrGroup) account );
+                break;
+
+            case ROLE:
+                //saveRole(account);
+                break;
+        }
+    }
+
+    @Override
+    public void deleteAccount( final JcrAccount account )
+    {
+
+    }
+
+    @Override
+    public void deleteAccount( final String accountId )
+    {
+
+    }
+
+    @Override
+    public JcrUserStore findUserStoreByName( String userStoreName )
+    {
+        return null;
+    }
+
+    @Override
+    public void createUserStore( final JcrUserStore userStore )
+    {
+        getTemplate().execute( new JcrCallback()
+        {
+            @Override
+            public Object doInJcr( final JcrSession session )
+                throws IOException, RepositoryException
+            {
+                createUserStoreJcr( session, userStore );
+                session.save();
+                return null;
+            }
+        } );
+    }
+
+    @Override
+    public void addMemberships( final String groupId, final Collection<String> memberIds )
+    {
+        getTemplate().execute( new JcrCallback()
+        {
+            @Override
+            public Object doInJcr( final JcrSession session )
+                throws IOException, RepositoryException
+            {
+                for ( String memberId : memberIds )
+                {
+                    addMembershipJcr( session, groupId, memberId );
+                }
+                session.save();
+                return null;
+            }
+        } );
+    }
+
+    @Override
+    public void addMembership( final String groupId, final String memberId )
+    {
+        getTemplate().execute( new JcrCallback()
+        {
+            @Override
+            public Object doInJcr( final JcrSession session )
+                throws IOException, RepositoryException
+            {
+                addMembershipJcr( session, groupId, memberId );
+                session.save();
+                return null;
+            }
+        } );
+    }
+
+    public void addMembershipJcr( JcrSession session, final String groupId, final String memberId )
+    {
+        final JcrNode groupNode = session.getNodeByIdentifier( groupId );
+        if ( groupNode == null )
+        {
+            throw new IllegalArgumentException( "Could not find group with id: " + groupId );
+        }
+        final JcrNode memberNode = session.getNodeByIdentifier( memberId );
+        if ( memberNode == null )
+        {
+            throw new IllegalArgumentException( "Could not find account with id: " + memberId );
+        }
+
+        final JcrNode membersNode = groupNode.getNode( MEMBERS_NODE );
+        final JcrNode memberReferenceNode = membersNode.addNode( MEMBER_NODE );
+        memberReferenceNode.setPropertyReference( "ref", memberNode );
+    }
+
+    public void createUserStoreJcr( JcrSession session, JcrUserStore userStore )
+    {
+        JcrNode userstoresNode = session.getRootNode().getNode( JcrWemConstants.USERSTORES_PATH );
+        String userStoreName = userStore.getName();
+        if ( ( userStoreName == null ) || userstoresNode.hasNode( userStoreName ) )
+        {
+            throw new IllegalArgumentException( "Unable to create UserStore with existing name: " + userStoreName );
+        }
+
+        JcrNode userstoreNode = userstoresNode.addNode( userStoreName, JcrWemConstants.USERSTORE_NODE_TYPE );
+        userStoreJcrMapping.userStoreToJcr( userStore, userstoreNode );
+
+        userstoreNode.addNode( JcrWemConstants.GROUPS_NODE, JcrWemConstants.GROUPS_NODE_TYPE );
+        userstoreNode.addNode( JcrWemConstants.USERS_NODE, JcrWemConstants.USERS_NODE_TYPE );
+        userstoreNode.addNode( JcrWemConstants.ROLES_NODE, JcrWemConstants.ROLES_NODE_TYPE );
+    }
+
+    private void saveGroup( final JcrGroup group )
+    {
+        getTemplate().execute( new JcrCallback()
+        {
+            @Override
+            public Object doInJcr( final JcrSession session )
+                throws IOException, RepositoryException
+            {
+                if ( group.getId() == null )
+                {
+                    insertGroupJcr( session, group );
+                }
+                else
+                {
+                    updateGroupJcr( session, group );
+                }
+                session.save();
+                return null;
+            }
+        } );
+    }
+
+    private void updateGroupJcr( final JcrSession session, final JcrGroup group )
+    {
+        final JcrNode groupNode = session.getNodeByIdentifier( group.getId() );
+        if ( groupNode == null )
+        {
+            throw new IllegalArgumentException( "Could not find group with id: " + group.getId() );
+        }
+        accountJcrMapping.groupToJcr( group, groupNode );
+        group.setId( groupNode.getIdentifier() );
+    }
+
+    private void insertGroupJcr( final JcrSession session, final JcrGroup group )
+    {
+        final String groupName = group.getName();
+        final String userstoreName = group.getUserStore();
+        if ( userstoreName == null )
+        {
+            throw new IllegalArgumentException( "Undefined userstore in group" );
+        }
+        final String userParentNodePath = USERSTORES_PATH + userstoreName + "/" + GROUPS_NODE;
+        final JcrNode userStoreNode = session.getRootNode().getNode( userParentNodePath );
+        if ( userStoreNode.hasNode( groupName ) )
+        {
+            throw new IllegalArgumentException( "Group already exists in userstore: " + userstoreName + "//" + groupName );
+        }
+        final JcrNode groupNode = userStoreNode.addNode( groupName, GROUP_NODE_TYPE );
+        accountJcrMapping.groupToJcr( group, groupNode );
+        groupNode.addNode( MEMBERS_NODE );
+        group.setId( groupNode.getIdentifier() );
+    }
+
+    private void saveUser( final JcrUser user )
+    {
+        getTemplate().execute( new JcrCallback()
+        {
+            @Override
+            public Object doInJcr( final JcrSession session )
+                throws IOException, RepositoryException
+            {
+                if ( user.getId() == null )
+                {
+                    insertUserJcr( session, user );
+                }
+                else
+                {
+                    updateUserJcr( session, user );
+                }
+                session.save();
+                return null;
+            }
+        } );
+    }
+
+    private void insertUserJcr( final JcrSession session, final JcrUser user )
+    {
+        final String userName = user.getName();
+        final String userstoreName = user.getUserStore();
+        if ( userstoreName == null )
+        {
+            throw new IllegalArgumentException( "Undefined userstore in user" );
+        }
+
+        final String userParentNodePath = USERSTORES_PATH + userstoreName + "/" + USERS_NODE;
+        final JcrNode userStoreNode = session.getRootNode().getNode( userParentNodePath );
+        if ( userStoreNode.hasNode( userName ) )
+        {
+            throw new IllegalArgumentException( "User already exists in userstore: " + userstoreName + "//" + userName );
+        }
+        final JcrNode userNode = userStoreNode.addNode( userName, USER_NODE_TYPE );
+        accountJcrMapping.userToJcr( user, userNode );
+        user.setId( userNode.getIdentifier() );
+    }
+
+    private void updateUserJcr( final JcrSession session, final JcrUser user )
+    {
+        final JcrNode userNode = session.getNodeByIdentifier( user.getId() );
+        if ( userNode == null )
+        {
+            throw new IllegalArgumentException( "Could not find user with id: " + user.getId() );
+        }
+        accountJcrMapping.userToJcr( user, userNode );
+        user.setId( userNode.getIdentifier() );
     }
 
     private PageList<JcrAccount> queryAllAccounts( JcrSession session, int index, int count )
@@ -264,9 +508,7 @@ public class AccountJcrDaoImpl
             user.setHasPhoto( true );
         }
 
-//        user.setType( userTypeFromString( userNode.getProperty( "userType" ).getString() ) );
-
-        final JcrUserStore userstore = nodeToUserstore( userNode.getParent().getParent() );
+        final JcrUserStore userstore = userStoreJcrMapping.toUserStore( userNode.getParent().getParent() );
         user.setUserStore( userstore.getName() );
 
         final JcrUserInfo userInfo = nodePropertiesToUserFields( userNode );
@@ -342,19 +584,8 @@ public class AccountJcrDaoImpl
 //        group.setType( groupTypeFromString( (int) groupNode.getProperty( "groupType" ).getLong() ) );
 //        group.setRestricted( true );
 
-        final JcrUserStore userstore = nodeToUserstore( groupNode.getParent().getParent() );
+        final JcrUserStore userstore = userStoreJcrMapping.toUserStore( groupNode.getParent().getParent() );
         group.setUserStore( userstore.getName() );
     }
 
-    private JcrUserStore nodeToUserstore( JcrNode userStoreNode )
-        throws RepositoryException
-    {
-        final JcrUserStore userStore = new JcrUserStore();
-        userStore.setName( userStoreNode.getName() );
-        userStore.setId( userStoreNode.getPropertyString( "key" ) );
-        userStore.setDefaultStore( userStoreNode.getPropertyBoolean( "default" ) );
-        userStore.setConnectorName( userStoreNode.getPropertyString( "connector" ) );
-        userStore.setXmlConfig( userStoreNode.getPropertyString( "xmlconfig" ) );
-        return userStore;
-    }
 }

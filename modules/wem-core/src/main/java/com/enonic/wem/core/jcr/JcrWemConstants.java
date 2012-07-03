@@ -1,6 +1,6 @@
 package com.enonic.wem.core.jcr;
 
-public class JcrCmsConstants
+public class JcrWemConstants
 {
     public static final String ENONIC_CMS_NAMESPACE = "http://www.enonic.com/cms";
 
@@ -41,7 +41,7 @@ public class JcrCmsConstants
 
     public static final int SYSTEM_USERSTORE_KEY = 0;
 
-    public static final String USERSTORES_PATH = JcrCmsConstants.ROOT_NODE + "/" + JcrCmsConstants.USERSTORES_NODE + "/";
+    public static final String USERSTORES_PATH = JcrWemConstants.ROOT_NODE + "/" + JcrWemConstants.USERSTORES_NODE + "/";
 
     public static final String USERSTORES_ABSOLUTE_PATH = "/" + USERSTORES_PATH;
 
