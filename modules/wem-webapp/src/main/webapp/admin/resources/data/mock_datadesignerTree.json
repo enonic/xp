@@ -5,8 +5,8 @@
         {
             "name": "Form",
             "type": "form",
+            "icon": "resources/images/icons/128x128/form_blue.png",
             "key": 1,
-            "expanded": true,
             "lastModified": "2010-10-10 10:10:00",
             "children": [
 
@@ -16,21 +16,21 @@
             "name": "Folder",
             "key": 2,
             "type": "folder",
-            "expanded": true,
+            "icon": "resources/images/icons/128x128/folder_blue.png",
             "lastModified": "2010-10-10 10:10:00",
             "children": [
                 {
                     "name": "News",
                     "type": "folder",
+                    "icon": "resources/images/icons/128x128/folder_blue.png",
                     "lastModified": "2010-10-10 10:10:00",
                     "key": 3,
-                    "expanded": true,
                     "children": []
                 },
                 {
                     "name": "Persons",
                     "type": "folder",
-                    "expanded": true,
+                    "icon": "resources/images/icons/128x128/folder_blue.png",
                     "lastModified": "2010-10-10 10:10:00",
                     "key": 5,
                     "children": []
@@ -42,14 +42,14 @@
             "key": 6,
             "type": "media",
             "lastModified": "2010-10-10 10:10:00",
-            "expanded": true,
+            "icon": "resources/images/icons/128x128/film.png",
             "children": [
                 {
                     "name": "Audio",
                     "key": 7,
                     "type": "media",
+                    "icon": "resources/images/icons/128x128/film.png",
                     "lastModified": "2010-10-10 10:10:00",
-                    "expanded": true,
                     "children": [
 
                     ]
@@ -59,7 +59,7 @@
                     "key": 8,
                     "lastModified": "2010-10-10 10:10:00",
                     "type": "media",
-                    "expanded": true,
+                    "icon": "resources/images/icons/128x128/film.png",
                     "children": [
 
                     ]
@@ -69,7 +69,7 @@
                     "key": 9,
                     "lastModified": "2010-10-10 10:10:00",
                     "type": "media",
-                    "expanded": true,
+                    "icon": "resources/images/icons/128x128/film.png",
                     "children": [
 
                     ]
@@ -78,8 +78,8 @@
                     "name": "Document",
                     "key": 10,
                     "type": "media",
+                    "icon": "resources/images/icons/128x128/film.png",
                     "lastModified": "2010-10-10 10:10:00",
-                    "expanded": true,
                     "children": [
 
                     ]
@@ -87,23 +87,35 @@
             ]
         },
         {
+            "name": "Shortcut",
+            "type": "shortcut",
+            "icon": "resources/images/icons/128x128/link.png",
+            "key": 21,
+            "lastModified": "2010-10-10 10:10:00",
+            "children": [
+
+            ]
+        },
+        {
             "name": "Structured",
             "key": 11,
             "type": "struct",
+            "icon": "resources/images/icons/128x128/books_blue.png",
             "lastModified": "2010-10-10 10:10:00",
-            "expanded": true,
             "children": [
                 {
-                    "name": "Discussion",
+                    "name": "Fruit",
                     "key": 12,
                     "type": "struct",
+                    "icon": "resources/images/icons/128x128/books_blue.png",
                     "lastModified": "2010-10-10 10:10:00",
                     "leaf": true
                 },
                 {
-                    "name": "Result",
+                    "name": "Person",
                     "lastModified": "2010-10-10 10:10:00",
                     "type": "struct",
+                    "icon": "resources/images/icons/128x128/books_blue.png",
                     "key": 13,
                     "leaf": true
                 }

@@ -15,7 +15,8 @@ Ext.define('Admin.view.datadesigner.TreeGridPanel', {
         folder: 'icon-folder-32',
         media: 'icon-media-32',
         shortcut: 'icon-shortcut-32',
-        struct: 'icon-struct-32'
+        struct: 'icon-struct-32',
+        shortcut: 'icon-shortcut-32'
     },
 
     initComponent: function () {
