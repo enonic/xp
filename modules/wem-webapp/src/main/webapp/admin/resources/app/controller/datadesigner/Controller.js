@@ -26,7 +26,7 @@ Ext.define('Admin.controller.datadesigner.Controller', {
 
     showEditContentTypePanel: function (contentType, callback) {
         if (!contentType) {
-            contentType = this.getGridPanel().getSelectionModel().getSelection();
+            contentType = this.getTreeGridPanel().getSelection();
         } else {
             contentType = [].concat(contentType);
         }
@@ -39,7 +39,7 @@ Ext.define('Admin.controller.datadesigner.Controller', {
 
     showPreviewContentTypePanel: function (contentType, callback) {
         if (!contentType) {
-            contentType = this.getGridPanel().getSelectionModel().getSelection();
+            contentType = this.getTreeGridPanel().getSelection();
         } else {
             contentType = [].concat(contentType);
         }
@@ -53,7 +53,7 @@ Ext.define('Admin.controller.datadesigner.Controller', {
 
     showDeleteContentTypeWindow: function (contentType) {
         if (!contentType) {
-            contentType = this.getGridPanel().getSelectionModel().getSelection();
+            contentType = this.getTreeGridPanel().getSelection();
         } else {
             contentType = [].concat(contentType);
         }
@@ -110,8 +110,8 @@ Ext.define('Admin.controller.datadesigner.Controller', {
     },
 
 
-    getGridPanel: function () {
-        return Ext.ComponentQuery.query('contentTypeGridPanel')[0];
+    getTreeGridPanel: function () {
+        return Ext.ComponentQuery.query('contentTypeTreeGridPanel')[0];
     },
 
 

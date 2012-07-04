@@ -208,6 +208,30 @@
     background: transparent url("../images/icons/32x32/earth2.png") 0 0 no-repeat;
 }
 
+.icon-form-32 {
+    background: transparent url("../images/icons/32x32/form_blue.png") 0 0 no-repeat;
+}
+
+.icon-folder-32 {
+    background: transparent url("../images/icons/32x32/folder_blue.png") 0 0 no-repeat;
+}
+
+.icon-media-32 {
+    background: transparent url("../images/icons/32x32/film.png") 0 0 no-repeat;
+}
+
+.icon-shortcut-32 {
+    background: transparent url("../images/icons/32x32/link.png") 0 0 no-repeat;
+}
+
+.icon-struct-32 {
+    background: transparent url("../images/icons/32x32/books_blue.png") 0 0 no-repeat;
+}
+
+.icon-struct-32 {
+    background: transparent url("../images/icons/32x32/link.png") 0 0 no-repeat;
+}
+
 /*---- 128 px icons ----*/
 
 .icon-group-128 {
