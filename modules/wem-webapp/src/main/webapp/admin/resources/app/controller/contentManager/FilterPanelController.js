@@ -31,12 +31,12 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
         //TODO: submit the search
 
         // set the list mode
-        var showPanel = this.getContentShowPanel();
-        showPanel.setActiveList(values.length === 0 ? 'tree' : 'grid');
+        var treeGridPanel = this.getContentTreeGridPanel();
+        treeGridPanel.setActiveList(values.length === 0 ? 'tree' : 'grid');
 
         // update details to current selection
         var detailPanel = this.getContentDetailPanel();
-        detailPanel.setData(showPanel.getSelection());
+        detailPanel.setData(treeGridPanel.getSelection());
     }
 
 

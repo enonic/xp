@@ -154,21 +154,21 @@ Ext.define('Admin.view.datadesigner.DetailPanel', {
 
             this.getLayout().setActiveItem('singleSelection');
 
-        } else if (this.data.length > 1 && this.data.length <= 10) {
+        } //else if (this.data.length > 1 && this.data.length <= 10) {
+        //TODO: Do we need multiple selection here?
+        //var largeBox = this.down('#largeBoxSelection');
+        //largeBox.update(this.data);
 
-            var largeBox = this.down('#largeBoxSelection');
-            largeBox.update(this.data);
+        //this.getLayout().setActiveItem(largeBox);
 
-            this.getLayout().setActiveItem(largeBox);
+        //} else {
 
-        } else {
+        //var smallBox = this.down('#smallBoxSelection');
+        //smallBox.update(this.data);
 
-            var smallBox = this.down('#smallBoxSelection');
-            smallBox.update(this.data);
+        //this.getLayout().setActiveItem(smallBox);
 
-            this.getLayout().setActiveItem(smallBox);
-
-        }
+        //}
     },
 
     getData: function () {

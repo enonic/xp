@@ -1,13 +1,13 @@
-Ext.define('Admin.store.contentManager.ContentTreeStore', {
+Ext.define('Admin.store.datadesigner.ContentTypeTreeStore', {
     extend: 'Ext.data.TreeStore',
 
-    model: 'Admin.model.contentManager.ContentModel',
+    model: 'Admin.model.datadesigner.ContentTypeModel',
 
     folderSort: true,
 
     proxy: {
         type: 'ajax',
-        url: 'resources/data/contentManagerTreeStub.json',
+        url: 'resources/data/mock_datadesignerTree.json',
         reader: {
             type: 'json',
             totalProperty: 'total'
