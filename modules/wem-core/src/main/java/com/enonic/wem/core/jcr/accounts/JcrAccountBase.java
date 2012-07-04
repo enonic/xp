@@ -24,6 +24,8 @@ abstract class JcrAccountBase
 
     private boolean builtIn;
 
+    private String syncValue;
+
 
     protected JcrAccountBase( JcrAccountType type )
     {
@@ -127,6 +129,16 @@ abstract class JcrAccountBase
     public JcrAccountType getType()
     {
         return this.type;
+    }
+
+    public String getSyncValue()
+    {
+        return syncValue;
+    }
+
+    public void setSyncValue( final String syncValue )
+    {
+        this.syncValue = syncValue;
     }
 
     @Override

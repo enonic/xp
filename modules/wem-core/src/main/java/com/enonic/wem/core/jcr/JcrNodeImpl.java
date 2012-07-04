@@ -272,7 +272,14 @@ class JcrNodeImpl
     {
         try
         {
-            node.setProperty( relPath, value.toCalendar( Locale.getDefault() ) );
+            if ( value == null )
+            {
+                node.setProperty( relPath, (Calendar) null );
+            }
+            else
+            {
+                node.setProperty( relPath, value.toCalendar( Locale.getDefault() ) );
+            }
         }
         catch ( RepositoryException e )
         {
@@ -312,6 +319,19 @@ class JcrNodeImpl
         try
         {
             return node.getName();
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
+
+    @Override
+    public boolean isNodeType( final String nodeTypeName )
+    {
+        try
+        {
+            return node.isNodeType( nodeTypeName );
         }
         catch ( RepositoryException e )
         {
