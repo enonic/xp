@@ -5,7 +5,8 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
         'Admin.view.WizardPanel',
         'Admin.view.datadesigner.wizard.GeneralPanel',
         'Admin.view.datadesigner.wizard.ConfigPanel',
-        'Admin.view.SummaryTreePanel'
+        'Admin.view.SummaryTreePanel',
+        'Admin.plugin.fileupload.PhotoUploadButton'
     ],
     layout: 'column',
     border: 0,
@@ -42,24 +43,49 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
 
         me.items = [
             {
-                width: 138,
-                padding: 5,
-                border: false,
+                width: 121,
+                padding: 9,
                 items: [
                     {
-                        xtype: 'container',
-                        plain: true,
-                        width: 128,
-                        height: 128,
-                        cls: 'icon-data-designer-128',
+                        xtype: 'photoUploadButton',
+                        width: 111,
+                        height: 111,
+                        photoUrl: "resources/images/icons/128x128/cubes.png",
+                        title: "Content",
+                        style: {
+                            margin: '1px'
+                        },
+                        progressBarHeight: 6,
                         listeners: {
-                            render: function (cmp) {
-                                Ext.tip.QuickTipManager.register({
-                                    target: cmp.el,
-                                    text: 'Content type',
-                                    width: 100,
-                                    dismissDelay: 10000
-                                });
+                            mouseenter: function () {
+                                var imageToolTip = me.down('#imageToolTip');
+                                imageToolTip.show();
+                            },
+                            mouseleave: function () {
+                                var imageToolTip = me.down('#imageToolTip');
+                                imageToolTip.hide();
+                            }
+                        }
+                    },
+                    {
+                        styleHtmlContent: true,
+                        height: 50,
+                        border: 0,
+                        itemId: 'imageToolTip',
+                        style: {
+                            top: '141px',
+                            left: '10px'
+                        },
+                        cls: 'admin-image-upload-button-image-tip',
+                        html: '<div class="x-tip x-tip-default x-layer" role="tooltip">' +
+                              '<div class="x-tip-anchor x-tip-anchor-top"></div>' +
+                              '<div class="x-tip-body  x-tip-body-default x-tip-body-default">' +
+                              'Click to upload icon</div></div>',
+                        listeners: {
+                            afterrender: function (cmp) {
+                                Ext.Function.defer(function () {
+                                    cmp.hide();
+                                }, 10000);
                             }
                         }
                     }
@@ -72,7 +98,6 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
                     border: false
                 },
                 items: [
-                    ,
                     {
                         xtype: 'wizardPanel',
                         showControls: true,
