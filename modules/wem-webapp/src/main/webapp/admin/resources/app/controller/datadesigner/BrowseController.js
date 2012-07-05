@@ -20,6 +20,11 @@ Ext.define('Admin.controller.datadesigner.BrowseController', {
 
         this.control(
             {
+                '*[action=newContentType]': {
+                    click: function (btn, evt) {
+                        this.showNewContentTypePanel();
+                    }
+                },
                 '*[action=editContentType]': {
                     click: function (btn, evt) {
                         this.showEditContentTypePanel();

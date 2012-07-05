@@ -3,6 +3,7 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
     alias: 'widget.dataDesignerWizardPanel',
     requires: [
         'Admin.view.WizardPanel',
+        'Admin.view.datadesigner.wizard.ContentTypePanel',
         'Admin.view.datadesigner.wizard.GeneralPanel',
         'Admin.view.datadesigner.wizard.ConfigPanel',
         'Admin.view.SummaryTreePanel',
@@ -119,6 +120,12 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
 
     getSteps: function () {
         var me = this;
+
+        var chooseTypeStep = {
+            stepTitle: 'Content Type',
+            modelData: me.modelData,
+            xtype: 'dataDesignerWizardContentTypePanel'
+        };
         var nameStep = {
             stepTitle: "General",
             modelData: me.modelData,
@@ -135,7 +142,7 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
             xtype: 'summaryTreePanel'
         };
 
-        return [nameStep, configStep, summaryStep];
+        return [chooseTypeStep, nameStep, configStep, summaryStep];
     },
 
 
@@ -149,7 +156,7 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
 
 
     isNewContentType: function () {
-        return this.modelData == undefined;
+        return this.modelData === undefined;
     },
 
 

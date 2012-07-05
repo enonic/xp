@@ -8,6 +8,10 @@ Ext.define('Admin.controller.datadesigner.Controller', {
 
     init: function () {
         this.application.on({
+            showNewContentTypePanel: {
+                fn: this.showNewContentTypePanel,
+                scope: this
+            },
             showEditContentTypePanel: {
                 fn: this.showEditContentTypePanel,
                 scope: this
@@ -23,6 +27,10 @@ Ext.define('Admin.controller.datadesigner.Controller', {
         });
     },
 
+
+    showNewContentTypePanel: function () {
+        this.createEditContentPanel(null, true);
+    },
 
     showEditContentTypePanel: function (contentType, callback) {
         if (!contentType) {
@@ -68,27 +76,36 @@ Ext.define('Admin.controller.datadesigner.Controller', {
 
         if (contentType && !forceNew) {
 
-            tabPanel.el.mask("Loading...");
+            /*tabPanel.el.mask("Loading...");
 
-            Ext.Ajax.request({
-                url: 'resources/data/mock_dataDesignerContentType.json',
-                method: 'GET',
-                params: {
-                    key: contentType.raw.key
-                },
-                success: function (response) {
-                    var obj = Ext.decode(response.responseText, true);
-                    tabPanel.el.unmask();
+             Ext.Ajax.request({
+             url: 'resources/data/mock_dataDesignerContentType.json',
+             method: 'GET',
+             params: {
+             key: contentType.raw.key
+             },
+             success: function (response) {
+             var obj = Ext.decode(response.responseText, true);
+             tabPanel.el.unmask();
 
-                    tabPanel.addTab({
-                        xtype: 'dataDesignerWizardPanel',
-                        id: 'tab-content-type-' + contentType.raw.key,
-                        title: contentType.raw.name,
-                        iconCls: 'icon-data-designer-16',
-                        modelData: obj
-                    });
-                }
+             tabPanel.addTab({
+             xtype: 'dataDesignerWizardPanel',
+             id: 'tab-content-type-' + contentType.raw.key,
+             title: contentType.raw.name,
+             iconCls: 'icon-data-designer-16',
+             modelData: obj
+             });
+             }
+             });*/
+
+            tabPanel.addTab({
+                xtype: 'dataDesignerWizardPanel',
+                id: 'tab-content-type-' + contentType.raw.key,
+                title: contentType.raw.name,
+                iconCls: 'icon-data-designer-16',
+                modelData: contentType.raw
             });
+
         } else {
             tabPanel.addTab({
                 xtype: 'dataDesignerWizardPanel',

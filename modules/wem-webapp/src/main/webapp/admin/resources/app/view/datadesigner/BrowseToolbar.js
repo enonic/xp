@@ -23,52 +23,7 @@ Ext.define('Admin.view.datadesigner.BrowseToolbar', {
                     {
                         text: 'New',
                         iconCls: 'icon-data-designer-24',
-                        menu: [
-                            {text: 'Shortcut', menu: [
-                                {
-                                    text: 'Site'
-                                }
-                            ]},
-                            {text: 'Folder'},
-                            {text: 'Structured'},
-                            {text: 'Media', menu: [
-                                {
-                                    text: 'unknown'
-                                },
-                                {
-                                    text: 'Audio'
-                                },
-                                {
-                                    text: 'Image'
-                                },
-                                {
-                                    text: 'Video'
-                                },
-                                {
-                                    text: 'Document'
-                                },
-                                {
-                                    text: 'Presentation'
-                                },
-                                {
-                                    text: 'Spreadsheets'
-                                },
-                                {
-                                    text: 'XML'
-                                },
-                                {
-                                    text: 'HTML'
-                                },
-                                {
-                                    text: 'Archive'
-                                }
-                            ]},
-                            {text: 'Form', menu: [
-                                {
-                                    text: 'Response'
-                                }
-                            ]}
-                        ]
+                        action: 'newContentType'
                     }
                 ]
             },
