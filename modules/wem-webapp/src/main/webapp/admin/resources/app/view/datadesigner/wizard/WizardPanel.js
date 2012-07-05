@@ -44,7 +44,7 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
         me.items = [
             {
                 width: 121,
-                padding: 5,
+                padding: 9,
                 items: [
                     {
                         xtype: 'photoUploadButton',
@@ -52,6 +52,9 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
                         height: 111,
                         photoUrl: "resources/images/icons/128x128/cubes.png",
                         title: "Content",
+                        style: {
+                            margin: '1px'
+                        },
                         progressBarHeight: 6,
                         listeners: {
                             mouseenter: function () {
@@ -70,7 +73,8 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
                         border: 0,
                         itemId: 'imageToolTip',
                         style: {
-                            top: 'auto'
+                            top: '141px',
+                            left: '10px'
                         },
                         cls: 'admin-image-upload-button-image-tip',
                         html: '<div class="x-tip x-tip-default x-layer" role="tooltip">' +
