@@ -64,4 +64,5 @@ public interface JcrNode
 
     JcrPropertyIterator getReferences();
 
+    void remove();
 }

@@ -457,6 +457,19 @@ class JcrNodeImpl
         return getReferences( null );
     }
 
+    @Override
+    public void remove()
+    {
+        try
+        {
+            node.remove();
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
+
     private Calendar dateToCalendar( Date date )
     {
         if ( date == null )

@@ -22,7 +22,7 @@ public interface AccountJcrDao
 
     JcrGroup findGroupById( String accountId );
 
-    byte[] findUserPhotoByKey( String accountId );
+    byte[] findUserPhotoById( String accountId );
 
 
     void saveAccount( JcrAccount account );

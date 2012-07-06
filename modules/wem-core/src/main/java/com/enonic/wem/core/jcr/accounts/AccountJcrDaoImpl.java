@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.google.common.primitives.Ints;
+
 import com.enonic.wem.core.jcr.JcrCallback;
 import com.enonic.wem.core.jcr.JcrDaoSupport;
 import com.enonic.wem.core.jcr.JcrNode;
@@ -79,13 +81,29 @@ public class AccountJcrDaoImpl
     @Override
     public int getGroupsCount()
     {
-        return 0;
+        Integer count = (Integer) getTemplate().execute( new JcrCallback()
+        {
+            public Object doInJcr( JcrSession session )
+                throws IOException, RepositoryException
+            {
+                return queryGroupsCount( session );
+            }
+        } );
+        return count;
     }
 
     @Override
     public int getUsersCount()
     {
-        return 0;
+        Integer count = (Integer) getTemplate().execute( new JcrCallback()
+        {
+            public Object doInJcr( JcrSession session )
+                throws IOException, RepositoryException
+            {
+                return queryUsersCount( session );
+            }
+        } );
+        return count;
     }
 
     @Override
@@ -130,17 +148,18 @@ public class AccountJcrDaoImpl
                 return queryAllGroups( session, from, count );
             }
         } );
-        return groups;    }
+        return groups;
+    }
 
     @Override
-    public byte[] findUserPhotoByKey( final String userId )
+    public byte[] findUserPhotoById( final String userId )
     {
         byte[] photo = (byte[]) getTemplate().execute( new JcrCallback()
         {
             public Object doInJcr( JcrSession session )
                 throws IOException, RepositoryException
             {
-                return queryUserPhotoByKey( session, userId );
+                return queryUserPhotoById( session, userId );
             }
         } );
         return photo;
@@ -168,13 +187,32 @@ public class AccountJcrDaoImpl
     @Override
     public void deleteAccount( final JcrAccount account )
     {
-
+        deleteAccount( account.getId() );
     }
 
     @Override
     public void deleteAccount( final String accountId )
     {
+        getTemplate().execute( new JcrCallback()
+        {
+            @Override
+            public Object doInJcr( final JcrSession session )
+                throws IOException, RepositoryException
+            {
+                deleteAccountJcr( session, accountId );
+                session.save();
+                return null;
+            }
+        } );
+    }
 
+    private void deleteAccountJcr( final JcrSession session, final String accountId )
+    {
+        final JcrNode accountNode = session.getNodeByIdentifier( accountId );
+        if ( ( accountNode != null ) && ( accountNode.isNodeType( ACCOUNT_NODE_TYPE ) ) )
+        {
+            accountNode.remove();
+        }
     }
 
     @Override
@@ -376,7 +414,6 @@ public class AccountJcrDaoImpl
     }
 
     private List<JcrAccount> queryAllAccounts( JcrSession session, int index, int count )
-        throws RepositoryException
     {
         final JcrNodeIterator nodeIterator = session.createQuery()
             .selectNodeType( ACCOUNT_NODE_TYPE )
@@ -398,7 +435,6 @@ public class AccountJcrDaoImpl
     }
 
     private List<JcrUser> queryAllUsers( JcrSession session, int index, int count )
-        throws RepositoryException
     {
         final JcrNodeIterator nodeIterator = session.createQuery()
             .selectNodeType( USER_NODE_TYPE )
@@ -420,7 +456,6 @@ public class AccountJcrDaoImpl
     }
 
     private List<JcrGroup> queryAllGroups( JcrSession session, int index, int count )
-        throws RepositoryException
     {
         final JcrNodeIterator nodeIterator = session.createQuery()
             .selectNodeType( GROUP_NODE_TYPE )
@@ -441,8 +476,27 @@ public class AccountJcrDaoImpl
         return groupList;
     }
 
+    private int queryUsersCount( JcrSession session )
+    {
+        final JcrNodeIterator nodeIterator = session.createQuery()
+            .selectNodeType( USER_NODE_TYPE )
+            .from( USERSTORES_ABSOLUTE_PATH )
+            .execute();
+
+        return Ints.saturatedCast( nodeIterator.getSize() );
+    }
+
+    private int queryGroupsCount( JcrSession session )
+    {
+        final JcrNodeIterator nodeIterator = session.createQuery()
+        .selectNodeType( GROUP_NODE_TYPE )
+        .from( USERSTORES_ABSOLUTE_PATH )
+        .execute();
+
+        return Ints.saturatedCast( nodeIterator.getSize() );
+    }
+
     private JcrUser queryUserById( final JcrSession session, final String userId, final boolean includeMemberships )
-        throws RepositoryException, IOException
     {
         final JcrNode userNode = session.getNodeByIdentifier( userId );
         if ( ( userNode != null ) && ( userNode.isNodeType( USER_NODE_TYPE ) ) )
@@ -456,7 +510,6 @@ public class AccountJcrDaoImpl
     }
 
     private JcrUser buildUser( JcrSession session, JcrNode userNode, boolean includeMemberships )
-        throws RepositoryException, IOException
     {
         final JcrUser user = accountJcrMapping.toUser( userNode );
         if ( includeMemberships )
@@ -467,7 +520,6 @@ public class AccountJcrDaoImpl
     }
 
     private void setUserMemberships( JcrSession session, JcrNode userNode, JcrUser user )
-        throws RepositoryException, IOException
     {
         final JcrPropertyIterator refIterator = userNode.getReferences();
         while ( refIterator.hasNext() )
@@ -490,7 +542,6 @@ public class AccountJcrDaoImpl
     }
 
     private JcrGroup queryGroupById( JcrSession session, String groupId, boolean includeMembers )
-        throws RepositoryException, IOException
     {
         final JcrNode groupNode = session.getNodeByIdentifier( groupId );
         if ( ( groupNode != null ) && ( groupNode.isNodeType( GROUP_NODE_TYPE ) ) )
@@ -504,7 +555,6 @@ public class AccountJcrDaoImpl
     }
 
     private JcrAccount buildAccount( JcrSession session, JcrNode accountNode, boolean includeMemberships )
-        throws RepositoryException, IOException
     {
         final String accountType = accountNode.getPropertyString( "type" );
         final JcrAccountType type = JcrAccountType.fromName( accountType );
@@ -522,7 +572,6 @@ public class AccountJcrDaoImpl
     }
 
     private JcrGroup buildGroup( JcrSession session, JcrNode groupNode, boolean includeMembers )
-        throws RepositoryException, IOException
     {
         final JcrGroup group = accountJcrMapping.toGroup( groupNode );
         if ( includeMembers )
@@ -533,7 +582,6 @@ public class AccountJcrDaoImpl
     }
 
     private void setGroupMembers( JcrSession session, JcrNode groupNode, JcrGroup group )
-        throws RepositoryException, IOException
     {
         final JcrNodeIterator memberIterator = groupNode.getNode( MEMBERS_NODE ).getNodes( MEMBER_NODE );
         while ( memberIterator.hasNext() )
@@ -545,18 +593,11 @@ public class AccountJcrDaoImpl
         }
     }
 
-    private byte[] queryUserPhotoByKey( JcrSession session, String userId )
-        throws RepositoryException, IOException
+    private byte[] queryUserPhotoById( JcrSession session, String userId )
     {
-        final JcrNodeIterator nodeIterator = session.createQuery()
-            .selectNodeType( USER_NODE_TYPE )
-            .from( USERSTORES_ABSOLUTE_PATH )
-            .propertyEqualsTo( "key", userId )
-            .execute();
-
-        if ( nodeIterator.hasNext() )
+        final JcrNode userNode = session.getNodeByIdentifier( userId );
+        if ( ( userNode != null ) && ( userNode.isNodeType( USER_NODE_TYPE ) ) )
         {
-            JcrNode userNode = nodeIterator.nextNode();
             if ( userNode.hasProperty( "photo" ) )
             {
                 return userNode.getPropertyBinary( "photo" );

@@ -171,20 +171,20 @@ public class JcrQuery
     {
         try
         {
-            QueryObjectModelFactory factory = getModelFactory();
+            final QueryObjectModelFactory factory = getModelFactory();
 
-            Selector source = factory.selector( nodeType, SELECTOR_NAME );
-            Column[] columns = null;
-            Ordering[] orderings = null;
-            Constraint constraint = consolidateConstraints( this.constraints, factory );
+            final Selector source = factory.selector( nodeType, SELECTOR_NAME );
+            final Column[] columns = null;
+            final Ordering[] orderings = null;
+            final Constraint constraint = consolidateConstraints( this.constraints, factory );
 
-            QueryObjectModel queryObj = factory.createQuery( source, constraint, orderings, columns );
+            final QueryObjectModel queryObj = factory.createQuery( source, constraint, orderings, columns );
             if ( limit >= 0 )
             {
                 queryObj.setLimit( limit );
             }
             queryObj.setOffset( offset );
-            QueryResult result = queryObj.execute();
+            final QueryResult result = queryObj.execute();
 
             return new JcrNodeIteratorImpl( result.getNodes() );
         }
