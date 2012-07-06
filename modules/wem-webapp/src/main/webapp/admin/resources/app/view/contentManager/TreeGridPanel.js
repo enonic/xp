@@ -1,19 +1,22 @@
-Ext.define('Admin.view.contentManager.GridPanel', {
-    extend: 'Ext.grid.Panel',
-    alias: 'widget.contentGrid',
-
-    requires: [
-        'Admin.plugin.PersistentGridSelectionPlugin',
-        'Admin.plugin.SlidingPagerPlugin'
-    ],
-    plugins: [ 'persistentGridSelection' ],
-    layout: 'fit',
-    multiSelect: true,
-    columnLines: true,
-    frame: false,
+Ext.define('Admin.view.contentManager.TreeGridPanel', {
+    extend: 'Admin.view.TreeGridPanel',
+    alias: 'widget.contentTreeGridPanel',
     store: 'Admin.store.contentManager.ContentStore',
+    treeStore: 'Admin.store.contentManager.ContentTreeStore',
+
+
+    nodeIconClasses: {
+        site: 'icon-site-32',
+        contentType: 'icon-content-32'
+    },
+
+    gridConf: {
+        selModel: Ext.create('Ext.selection.CheckboxModel', {}),
+        plugins: [ 'persistentGridSelection' ]
+    },
 
     initComponent: function () {
+
         this.columns = [
             {
                 text: 'Display Name',
@@ -39,29 +42,13 @@ Ext.define('Admin.view.contentManager.GridPanel', {
                 sortable: true
             }
         ];
-
-        this.tbar = {
-            xtype: 'pagingtoolbar',
-            store: this.store,
-            plugins: ['slidingPagerPlugin']
-        };
-
-        this.viewConfig = {
-            trackOver: true,
-            stripeRows: true,
-            loadMask: true
-        };
-
-        this.selModel = Ext.create('Ext.selection.CheckboxModel', {
-            //checkOnly: true
-        });
-
         this.callParent(arguments);
     },
 
+
     nameRenderer: function (value, p, record) {
         var account = record.data;
-        var photoUrl = this.resolvePhotoUrl(account);
+        var photoUrl = this.up('contentTreeGridPanel').resolvePhotoUrl(account);
 
         return Ext.String.format(Templates.contentManager.gridPanelNameRenderer, photoUrl, value, account.name, account.userStore);
     },
@@ -85,9 +72,9 @@ Ext.define('Admin.view.contentManager.GridPanel', {
             } else {
                 return value;
             }
-        }
-        catch (e) {
+        } catch (e) {
             return value;
         }
     }
+
 });

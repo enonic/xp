@@ -1,14 +1,23 @@
-Ext.define('Admin.view.datadesigner.GridPanel', {
-    extend: 'Ext.grid.Panel',
-    alias: 'widget.contentTypeGridPanel',
+Ext.define('Admin.view.datadesigner.TreeGridPanel', {
+    extend: 'Admin.view.TreeGridPanel',
+    alias: 'widget.contentTypeTreeGridPanel',
     store: 'Admin.store.datadesigner.ContentTypeStore',
+    treeStore: 'Admin.store.datadesigner.ContentTypeTreeStore',
     requires: 'Admin.view.datadesigner.BrowseToolbar',
-
     dockedItems: [
         {
             xtype: 'datadesigner.browseToolbar'
         }
     ],
+
+    nodeIconClasses: {
+        form: 'icon-form-32',
+        folder: 'icon-folder-32',
+        media: 'icon-media-32',
+        shortcut: 'icon-shortcut-32',
+        struct: 'icon-struct-32',
+        shortcut: 'icon-shortcut-32'
+    },
 
     initComponent: function () {
         this.columns = [
@@ -24,7 +33,6 @@ Ext.define('Admin.view.datadesigner.GridPanel', {
                 renderer: this.prettyDateRenderer
             }
         ];
-
         this.callParent(arguments);
     },
 
@@ -41,10 +49,8 @@ Ext.define('Admin.view.datadesigner.GridPanel', {
             } else {
                 return value;
             }
-        }
-        catch (e) {
+        } catch (e) {
             return value;
         }
     }
-
 });

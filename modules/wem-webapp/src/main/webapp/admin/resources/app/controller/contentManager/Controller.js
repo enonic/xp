@@ -23,7 +23,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
     viewContent: function (content, callback) {
         if (!content) {
-            var showPanel = this.getContentShowPanel();
+            var showPanel = this.getContentTreeGridPanel();
             content = showPanel.getSelection();
         } else {
             content = [].concat(content);
@@ -44,7 +44,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
     editContent: function (content, callback) {
         if (!content) {
-            var showPanel = this.getContentShowPanel();
+            var showPanel = this.getContentTreeGridPanel();
             content = showPanel.getSelection();
         } else {
             content = [].concat(content);
@@ -103,7 +103,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
     deleteContent: function (content) {
         if (!content) {
-            var showPanel = this.getContentShowPanel();
+            var showPanel = this.getContentTreeGridPanel();
             content = showPanel.getSelection();
         } else {
             content = [].concat(content);
@@ -116,7 +116,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
     duplicateContent: function (content) {
         if (!content) {
-            var showPanel = this.getContentShowPanel();
+            var showPanel = this.getContentTreeGridPanel();
             content = showPanel.getSelection();
         } else {
             content = [].concat(content);
@@ -141,12 +141,8 @@ Ext.define('Admin.controller.contentManager.Controller', {
         return Ext.ComponentQuery.query('contentShow')[0];
     },
 
-    getContentGridPanel: function () {
-        return this.getContentShowPanel().down('grid');
-    },
-
-    getContentTreePanel: function () {
-        return this.getContentShowPanel().down('tree');
+    getContentTreeGridPanel: function () {
+        return this.getContentShowPanel().down('contentTreeGridPanel');
     },
 
     getContentDetailPanel: function () {

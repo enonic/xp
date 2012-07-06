@@ -19,6 +19,30 @@
     background: transparent url("../images/icons/32x32/cubes_blue.png") 0 0 no-repeat;
 }
 
+.admin-tree-panel .x-grid-tree-node-expanded .icon-form-32 {
+    background: transparent url("../images/icons/32x32/form_blue.png") 0 0 no-repeat;
+}
+
+.admin-tree-panel .x-grid-tree-node-expanded .icon-folder-32 {
+    background: transparent url("../images/icons/32x32/folder_blue.png") 0 0 no-repeat;
+}
+
+.admin-tree-panel .x-grid-tree-node-expanded .icon-media-32 {
+    background: transparent url("../images/icons/32x32/film.png") 0 0 no-repeat;
+}
+
+.admin-tree-panel .x-grid-tree-node-expanded .icon-shortcut-32 {
+    background: transparent url("../images/icons/32x32/link.png") 0 0 no-repeat;
+}
+
+.admin-tree-panel .x-grid-tree-node-expanded .icon-struct-32 {
+    background: transparent url("../images/icons/32x32/books_blue.png") 0 0 no-repeat;
+}
+
+.admin-tree-panel .x-grid-tree-node-expanded .icon-struct-32 {
+    background: transparent url("../images/icons/32x32/link.png") 0 0 no-repeat;
+}
+
 .admin-tree-panel .x-tree-elbow,
 .admin-tree-panel .x-tree-elbow-end,
 .admin-tree-panel .x-tree-elbow-plus,
