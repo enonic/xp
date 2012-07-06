@@ -266,6 +266,8 @@ public class AccountSearchService
         try
         {
             this.client.admin().indices().deleteMapping( deleteMappingRequest ).get();
+            final FlushRequest flushRequest = new FlushRequest();
+            this.client.admin().indices().flush( flushRequest ).get();
         }
         catch ( IndexMissingException e )
         {

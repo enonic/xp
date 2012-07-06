@@ -14,8 +14,6 @@ public interface JcrSession
 
     JcrRepository getRepository();
 
-    void login();
-
     void logout();
 
     void save();

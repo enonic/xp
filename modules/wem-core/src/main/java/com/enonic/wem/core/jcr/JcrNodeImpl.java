@@ -18,7 +18,7 @@ import org.joda.time.DateTime;
 class JcrNodeImpl
     implements JcrNode
 {
-    private Node node;
+    private final Node node;
 
     private JcrNode parent;
 

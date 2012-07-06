@@ -13,6 +13,7 @@ import javax.jcr.query.qom.Comparison;
 import javax.jcr.query.qom.Constraint;
 import javax.jcr.query.qom.DescendantNode;
 import javax.jcr.query.qom.DynamicOperand;
+import javax.jcr.query.qom.NodeLocalName;
 import javax.jcr.query.qom.Ordering;
 import javax.jcr.query.qom.QueryObjectModel;
 import javax.jcr.query.qom.QueryObjectModelFactory;
@@ -92,31 +93,48 @@ public class JcrQuery
         return this;
     }
 
-    public JcrQuery propertyEqualsTo( final String propertyName, final String value )
+    public JcrQuery withPropertyEqualsTo( final String propertyName, final String value )
     {
         Value jcrValue = getValueFactory().createValue( value );
         addPropertyEqualsToConstraint( propertyName, jcrValue );
         return this;
     }
 
-    public JcrQuery propertyEqualsTo( final String propertyName, final boolean value )
+    public JcrQuery withPropertyEqualsTo( final String propertyName, final boolean value )
     {
         Value jcrValue = getValueFactory().createValue( value );
         addPropertyEqualsToConstraint( propertyName, jcrValue );
         return this;
     }
 
-    public JcrQuery propertyEqualsTo( final String propertyName, final long value )
+    public JcrQuery withPropertyEqualsTo( final String propertyName, final long value )
     {
         Value jcrValue = getValueFactory().createValue( value );
         addPropertyEqualsToConstraint( propertyName, jcrValue );
         return this;
     }
 
-    public JcrQuery propertyEqualsTo( final String propertyName, final double value )
+    public JcrQuery withPropertyEqualsTo( final String propertyName, final double value )
     {
         Value jcrValue = getValueFactory().createValue( value );
         addPropertyEqualsToConstraint( propertyName, jcrValue );
+        return this;
+    }
+
+    public JcrQuery withName( final String nodeName )
+    {
+        try
+        {
+            final NodeLocalName nodeNameConstraint = getModelFactory().nodeLocalName( SELECTOR_NAME );
+            final Value nameValue = getValueFactory().createValue( nodeName );
+            final StaticOperand nameOperand = getModelFactory().literal( nameValue );
+            final Comparison nameComparison = getModelFactory().comparison( nodeNameConstraint, JCR_OPERATOR_EQUAL_TO, nameOperand );
+            constraints.add( nameComparison );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
         return this;
     }
 

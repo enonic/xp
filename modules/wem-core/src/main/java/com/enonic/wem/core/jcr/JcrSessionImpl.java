@@ -16,9 +16,9 @@ import org.joda.time.DateTime;
 class JcrSessionImpl
     implements JcrSession
 {
-    private Session session;
+    private final Session session;
 
-    private JcrRepository repository;
+    private final JcrRepository repository;
 
 
     JcrSessionImpl( Session session, JcrRepository repository )
@@ -35,11 +35,6 @@ class JcrSessionImpl
     public JcrRepository getRepository()
     {
         return repository;
-    }
-
-    public void login()
-    {
-
     }
 
     public void logout()

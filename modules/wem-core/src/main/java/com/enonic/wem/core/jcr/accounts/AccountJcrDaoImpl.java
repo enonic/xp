@@ -29,6 +29,7 @@ import static com.enonic.wem.core.jcr.JcrWemConstants.MEMBERS_NODE;
 import static com.enonic.wem.core.jcr.JcrWemConstants.MEMBER_NODE;
 import static com.enonic.wem.core.jcr.JcrWemConstants.USERSTORES_ABSOLUTE_PATH;
 import static com.enonic.wem.core.jcr.JcrWemConstants.USERSTORES_PATH;
+import static com.enonic.wem.core.jcr.JcrWemConstants.USERSTORE_NODE_TYPE;
 import static com.enonic.wem.core.jcr.JcrWemConstants.USERS_NODE;
 import static com.enonic.wem.core.jcr.JcrWemConstants.USER_NODE_TYPE;
 
@@ -57,7 +58,7 @@ public class AccountJcrDaoImpl
             public Object doInJcr( JcrSession session )
                 throws IOException, RepositoryException
             {
-                return queryUserById( session, accountId, true );
+                return queryUserById( session, accountId );
             }
         } );
         return user;
@@ -216,8 +217,31 @@ public class AccountJcrDaoImpl
     }
 
     @Override
-    public JcrUserStore findUserStoreByName( String userStoreName )
+    public JcrUserStore findUserStoreByName( final String userStoreName )
     {
+        JcrUserStore userStore = (JcrUserStore) getTemplate().execute( new JcrCallback()
+        {
+            public Object doInJcr( JcrSession session )
+                throws IOException, RepositoryException
+            {
+                return queryUserstoreByName( session, userStoreName );
+            }
+        } );
+        return userStore;
+    }
+
+    private JcrUserStore queryUserstoreByName( final JcrSession session, final String userStoreName )
+    {
+        final JcrNodeIterator nodeIterator = session.createQuery()
+            .selectNodeType( USERSTORE_NODE_TYPE )
+            .withName( userStoreName )
+            .execute();
+
+        if ( nodeIterator.hasNext() )
+        {
+            final JcrNode userStoreNode = nodeIterator.next();
+            return userStoreJcrMapping.toUserStore( userStoreNode );
+        }
         return null;
     }
 
@@ -272,7 +296,7 @@ public class AccountJcrDaoImpl
         } );
     }
 
-    public void addMembershipJcr( JcrSession session, final String groupId, final String memberId )
+    private void addMembershipJcr( JcrSession session, final String groupId, final String memberId )
     {
         final JcrNode groupNode = session.getNodeByIdentifier( groupId );
         if ( groupNode == null )
@@ -290,7 +314,7 @@ public class AccountJcrDaoImpl
         memberReferenceNode.setPropertyReference( "ref", memberNode );
     }
 
-    public void createUserStoreJcr( JcrSession session, JcrUserStore userStore )
+    private void createUserStoreJcr( JcrSession session, JcrUserStore userStore )
     {
         JcrNode userstoresNode = session.getRootNode().getNode( JcrWemConstants.USERSTORES_PATH );
         String userStoreName = userStore.getName();
@@ -496,12 +520,12 @@ public class AccountJcrDaoImpl
         return Ints.saturatedCast( nodeIterator.getSize() );
     }
 
-    private JcrUser queryUserById( final JcrSession session, final String userId, final boolean includeMemberships )
+    private JcrUser queryUserById( final JcrSession session, final String userId )
     {
         final JcrNode userNode = session.getNodeByIdentifier( userId );
         if ( ( userNode != null ) && ( userNode.isNodeType( USER_NODE_TYPE ) ) )
         {
-            return buildUser( session, userNode, includeMemberships );
+            return buildUser( session, userNode, true );
         }
         else
         {
@@ -554,18 +578,18 @@ public class AccountJcrDaoImpl
         }
     }
 
-    private JcrAccount buildAccount( JcrSession session, JcrNode accountNode, boolean includeMemberships )
+    private JcrAccount buildAccount( JcrSession session, JcrNode accountNode )
     {
         final String accountType = accountNode.getPropertyString( "type" );
         final JcrAccountType type = JcrAccountType.fromName( accountType );
         switch ( type )
         {
             case USER:
-                return buildUser( session, accountNode, includeMemberships );
+                return buildUser( session, accountNode, false );
 
             case ROLE:
             case GROUP:
-                return buildGroup( session, accountNode, includeMemberships );
+                return buildGroup( session, accountNode, false );
         }
 
         throw new IllegalArgumentException( "Invalid account type: " + accountType );
@@ -588,7 +612,7 @@ public class AccountJcrDaoImpl
         {
             final JcrNode memberRef = memberIterator.next();
             final JcrNode groupMember = memberRef.getProperty( "ref" ).getNode();
-            final JcrAccount member = buildAccount( session, groupMember, false );
+            final JcrAccount member = buildAccount( session, groupMember );
             group.addMember( member );
         }
     }

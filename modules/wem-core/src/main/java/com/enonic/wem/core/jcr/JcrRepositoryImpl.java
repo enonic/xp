@@ -5,7 +5,7 @@ import javax.jcr.Repository;
 class JcrRepositoryImpl
     implements JcrRepository
 {
-    private Repository repository;
+    private final Repository repository;
 
     JcrRepositoryImpl( Repository repository )
     {
