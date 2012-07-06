@@ -114,8 +114,8 @@ Ext.define('Admin.controller.account.GroupWizardController', {
             var groupWizard = wizard.up('groupWizardPanel');
             var treePanel = newStep;
 
-            treePanel.getStore().setRootNode(Admin.plugin.Diff.compareGroups(groupWizard.getData(),
-                groupWizard.modelData));
+            treePanel.setDiffData(groupWizard.getData(),
+                groupWizard.modelData);
         }
     },
 

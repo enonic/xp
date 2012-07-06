@@ -32,6 +32,22 @@ Ext.define('Admin.plugin.Diff', {
 
     /*      public      */
 
+    compare: function (type, newOne, oldOne, changedOnly) {
+        if (type !== 'user' && type !== 'group' && type !== 'userstore') {
+            throw new Error('Unknown type for comparison: ' + type);
+        }
+        switch (type) {
+        case 'user':
+            return this.compareUsers(newOne, oldOne, changedOnly);
+        case 'group':
+            return this.compareGroups(newOne, oldOne, changedOnly);
+        case 'userstore':
+            return this.compareUserstores(newOne, oldOne, changedOnly);
+        default:
+            return {};
+        }
+    },
+
     compareUsers: function (newOne, oldOne, changedOnly) {
 
         if (newOne === null) {
@@ -633,7 +649,7 @@ Ext.define('Admin.plugin.Diff', {
         if (!label) {
             label = (Admin && Admin.view && Admin.view.account && Admin.view.account.EditUserFormPanel &&
                      Admin.view.account.EditUserFormPanel.fieldLabels && Admin.view.account.EditUserFormPanel.fieldLabels[name]) ?
-                    Admin.view.account.EditUserFormPanel.fieldLabels[name] : name;
+                Admin.view.account.EditUserFormPanel.fieldLabels[name] : name;
         }
         return label;
     },

@@ -110,6 +110,7 @@ Ext.define('Admin.view.userstore.wizard.UserstoreWizardPanel', {
         var summaryStep = {
             stepTitle: 'Summary',
             modelData: me.modelData,
+            dataType: 'userstore',
             xtype: 'summaryTreePanel'
         };
 
