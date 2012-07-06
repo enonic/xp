@@ -8,7 +8,7 @@ Ext.define('Admin.view.SummaryTreePanel', {
     rootVisible: false,
     multiSelect: false,
     singleExpand: false,
-
+    dataType: '',
     showAllMode: false,
     comparisonMode: false,
 
@@ -173,6 +173,25 @@ Ext.define('Admin.view.SummaryTreePanel', {
     toggleShowAllView: function () {
         // TODO: Both TreeStore filter and NodeInterface -> show/hide are missing in ExtJs 4.x
         this.showAllMode = !this.showAllMode;
+        if (this.changedData && this.initialData) {
+            this.setRootNode();
+        }
+    },
+
+    setDiffData: function (initialData, changedData) {
+        this.initialData = initialData;
+        this.changedData = changedData;
+        delete this.shortenDiff;
+        delete this.fullDiff;
+        this.setRootNode();
+    },
+
+    setRootNode: function () {
+        if (this.showAllMode) {
+            this.getStore().setRootNode(this.getFullDiff());
+        } else {
+            this.getStore().setRootNode(this.getShortenDiff());
+        }
     },
 
     toggleComparisonView: function () {
@@ -185,5 +204,19 @@ Ext.define('Admin.view.SummaryTreePanel', {
         }
 
         this.comparisonMode = !this.comparisonMode;
+    },
+
+    getShortenDiff: function () {
+        if (!this.shortenDiff && this.changedData && this.initialData) {
+            this.shortenDiff = Admin.plugin.Diff.compare(this.dataType, this.initialData, this.changedData, true);
+        }
+        return Ext.clone(this.shortenDiff || {});
+    },
+
+    getFullDiff: function () {
+        if (!this.fullDiff && this.changedData && this.initialData) {
+            this.fullDiff = Admin.plugin.Diff.compare(this.dataType, this.initialData, this.changedData);
+        }
+        return Ext.clone(this.fullDiff || {});
     }
 });
