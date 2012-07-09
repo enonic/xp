@@ -341,7 +341,7 @@ public class AccountJcrDaoImpl
 
         final JcrNode membersNode = groupNode.getNode( MEMBERS_NODE );
         final JcrNode memberReferenceNode = membersNode.addNode( MEMBER_NODE );
-        memberReferenceNode.setPropertyReference( "ref", memberNode );
+        memberReferenceNode.setPropertyReference( AccountJcrMapping.MEMBER_REFERENCE, memberNode );
     }
 
     private void createUserStoreJcr( JcrSession session, JcrUserStore userStore )
@@ -707,7 +707,7 @@ public class AccountJcrDaoImpl
 
     private JcrAccount buildAccount( JcrSession session, JcrNode accountNode )
     {
-        final String accountType = accountNode.getPropertyString( "type" );
+        final String accountType = accountNode.getPropertyString( AccountJcrMapping.TYPE );
         final JcrAccountType type = JcrAccountType.fromName( accountType );
         switch ( type )
         {
@@ -748,7 +748,7 @@ public class AccountJcrDaoImpl
         while ( memberIterator.hasNext() )
         {
             final JcrNode memberRef = memberIterator.next();
-            final JcrNode groupMember = memberRef.getProperty( "ref" ).getNode();
+            final JcrNode groupMember = memberRef.getProperty( AccountJcrMapping.MEMBER_REFERENCE ).getNode();
             final JcrAccount member = buildAccount( session, groupMember );
             group.addMember( member );
         }
@@ -759,9 +759,9 @@ public class AccountJcrDaoImpl
         final JcrNode userNode = session.getNodeByIdentifier( userId );
         if ( ( userNode != null ) && ( userNode.isNodeType( USER_NODE_TYPE ) ) )
         {
-            if ( userNode.hasProperty( "photo" ) )
+            if ( userNode.hasProperty( AccountJcrMapping.PHOTO ) )
             {
-                return userNode.getPropertyBinary( "photo" );
+                return userNode.getPropertyBinary( AccountJcrMapping.PHOTO );
             }
         }
         return null;

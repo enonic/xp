@@ -4,23 +4,32 @@ import com.enonic.wem.core.jcr.JcrNode;
 
 public class UserStoreJcrMapping
 {
+
+    static final String KEY = "key";
+
+    static final String DEFAULT = "default";
+
+    static final String CONNECTOR = "connector";
+
+    static final String XML_CONFIG = "xmlconfig";
+
     public JcrUserStore toUserStore( JcrNode node )
     {
         final JcrUserStore userStore = new JcrUserStore();
         userStore.setName( node.getName() );
-        userStore.setId( node.getPropertyString( "key" ) );
-        userStore.setDefaultStore( node.getPropertyBoolean( "default" ) );
-        userStore.setConnectorName( node.getPropertyString( "connector" ) );
-        userStore.setXmlConfig( node.getPropertyString( "xmlconfig" ) );
+        userStore.setId( node.getPropertyString( KEY ) );
+        userStore.setDefaultStore( node.getPropertyBoolean( DEFAULT ) );
+        userStore.setConnectorName( node.getPropertyString( CONNECTOR ) );
+        userStore.setXmlConfig( node.getPropertyString( XML_CONFIG ) );
         return userStore;
     }
 
     public void userStoreToJcr( JcrUserStore userStore, JcrNode node )
     {
-        node.setPropertyString( "key", userStore.getId() );
-        node.setPropertyBoolean( "default", userStore.isDefaultStore() );
-        node.setPropertyString( "connector", userStore.getConnectorName() );
-        node.setPropertyString( "xmlconfig", userStore.getXmlConfig() );
+        node.setPropertyString( KEY, userStore.getId() );
+        node.setPropertyBoolean( DEFAULT, userStore.isDefaultStore() );
+        node.setPropertyString( CONNECTOR, userStore.getConnectorName() );
+        node.setPropertyString( XML_CONFIG, userStore.getXmlConfig() );
     }
 
 }

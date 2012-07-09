@@ -8,15 +8,96 @@ import com.enonic.wem.core.jcr.JcrNodeIterator;
 
 public class AccountJcrMapping
 {
+
+    static final String DISPLAY_NAME = "displayname";
+
+    static final String EMAIL = "email";
+
+    static final String LAST_MODIFIED = "lastModified";
+
+    static final String PHOTO = "photo";
+
+    static final String NAME = "name";
+
+    static final String SYNC_VALUE = "syncValue";
+
+    static final String TYPE = "type";
+
+    static final String DESCRIPTION = "description";
+
+    static final String QUALIFIED_NAME = "qualifiedName";
+
+    static final String BIRTHDAY = "birthday";
+
+    static final String COUNTRY = "country";
+
+    static final String FAX = "fax";
+
+    static final String FIRST_NAME = "firstname";
+
+    static final String GLOBAL_POSITION = "globalposition";
+
+    static final String HOME_PAGE = "homepage";
+
+    static final String HTML_EMAIL = "htmlemail";
+
+    static final String INITIALS = "initials";
+
+    static final String LAST_NAME = "lastname";
+
+    static final String LOCALE = "locale";
+
+    static final String MEMBER_ID = "memberid";
+
+    static final String MIDDLE_NAME = "middlename";
+
+    static final String MOBILE = "mobile";
+
+    static final String ORGANIZATION = "organization";
+
+    static final String PERSONAL_ID = "personalid";
+
+    static final String PHONE = "phone";
+
+    static final String PREFIX = "prefix";
+
+    static final String SUFFIX = "suffix";
+
+    static final String TIMEZONE = "timezone";
+
+    static final String TITLE = "title";
+
+    static final String GENDER = "gender";
+
+    static final String ADDRESSES = "addresses";
+
+    static final String ADDRESS = "address";
+
+    static final String ISO_COUNTRY = "isoCountry";
+
+    static final String ISO_REGION = "isoRegion";
+
+    static final String LABEL = "label";
+
+    static final String POSTAL_ADDRESS = "postalAddress";
+
+    static final String POSTAL_CODE = "postalCode";
+
+    static final String REGION = "region";
+
+    static final String STREET = "street";
+
+    static final String MEMBER_REFERENCE = "ref";
+
     public JcrUser toUser( JcrNode userNode )
     {
         final JcrUser user = new JcrUser();
         user.setId( userNode.getIdentifier() );
         user.setName( userNode.getName() );
-        user.setDisplayName( userNode.getPropertyString( "displayname" ) );
-        user.setEmail( userNode.getPropertyString( "email" ) );
-        user.setLastModified( userNode.getPropertyDateTime( "lastModified" ) );
-        if ( userNode.hasProperty( "photo" ) )
+        user.setDisplayName( userNode.getPropertyString( DISPLAY_NAME ) );
+        user.setEmail( userNode.getPropertyString( EMAIL ) );
+        user.setLastModified( userNode.getPropertyDateTime( LAST_MODIFIED ) );
+        if ( userNode.hasProperty( PHOTO ) )
         {
             user.setHasPhoto( true );
         }
@@ -32,16 +113,16 @@ public class AccountJcrMapping
 
     public void userToJcr( JcrUser user, JcrNode node )
     {
-        node.setPropertyString( "name", user.getName() );
-        node.setPropertyString( "displayname", user.getDisplayName() );
-        node.setPropertyString( "email", user.getEmail() );
-        node.setPropertyDateTime( "lastModified", user.getLastModified() );
-        node.setPropertyString( "syncValue", user.getSyncValue() );
+        node.setPropertyString( NAME, user.getName() );
+        node.setPropertyString( DISPLAY_NAME, user.getDisplayName() );
+        node.setPropertyString( EMAIL, user.getEmail() );
+        node.setPropertyDateTime( LAST_MODIFIED, user.getLastModified() );
+        node.setPropertyString( SYNC_VALUE, user.getSyncValue() );
         if ( user.getPhoto() != null )
         {
-            node.setPropertyBinary( "photo", user.getPhoto() );
+            node.setPropertyBinary( PHOTO, user.getPhoto() );
         }
-        node.setPropertyString( "type", JcrAccountType.USER.name() );
+        node.setPropertyString( TYPE, JcrAccountType.USER.name() );
 
         userInfoToJcr( user.getUserInfo(), node );
     }
@@ -50,7 +131,7 @@ public class AccountJcrMapping
     {
         final JcrRole role = new JcrRole();
         role.setName( node.getName() );
-        role.setDescription( node.getPropertyString( "description" ) );
+        role.setDescription( node.getPropertyString( DESCRIPTION ) );
         role.setId( node.getIdentifier() );
         final String userstore = node.getParent().getParent().getName();
         role.setUserStore( userstore );
@@ -60,14 +141,14 @@ public class AccountJcrMapping
     public void roleToJcr( JcrRole role, JcrNode node )
     {
         groupPropertiesToJcr( role, node );
-        node.setPropertyString( "type", JcrAccountType.ROLE.name() );
+        node.setPropertyString( TYPE, JcrAccountType.ROLE.name() );
     }
 
     public JcrGroup toGroup( JcrNode node )
     {
         final JcrGroup group = new JcrGroup();
         group.setName( node.getName() );
-        group.setDescription( node.getPropertyString( "description" ) );
+        group.setDescription( node.getPropertyString( DESCRIPTION ) );
         group.setId( node.getIdentifier() );
         final String userstore = node.getParent().getParent().getName();
         group.setUserStore( userstore );
@@ -77,52 +158,52 @@ public class AccountJcrMapping
     public void groupToJcr( JcrGroup group, JcrNode node )
     {
         groupPropertiesToJcr( group, node );
-        node.setPropertyString( "type", JcrAccountType.GROUP.name() );
+        node.setPropertyString( TYPE, JcrAccountType.GROUP.name() );
     }
 
     private void groupPropertiesToJcr( JcrGroup group, JcrNode node )
     {
-        node.setPropertyString( "qualifiedName", group.getName() );
-        node.setPropertyString( "displayname", group.getDisplayName() );
-        node.setPropertyString( "description", group.getDescription() );
-        node.setPropertyDateTime( "lastModified", group.getLastModified() );
-        node.setPropertyString( "syncValue", group.getSyncValue() );
+        node.setPropertyString( QUALIFIED_NAME, group.getName() );
+        node.setPropertyString( DISPLAY_NAME, group.getDisplayName() );
+        node.setPropertyString( DESCRIPTION, group.getDescription() );
+        node.setPropertyDateTime( LAST_MODIFIED, group.getLastModified() );
+        node.setPropertyString( SYNC_VALUE, group.getSyncValue() );
     }
 
     private void userInfoToJcr( JcrUserInfo userInfo, JcrNode userNode )
     {
-        userNode.setPropertyDateTime( "birthday", userInfo.getBirthday() );
-        userNode.setPropertyString( "country", userInfo.getCountry() );
-        userNode.setPropertyString( "description", userInfo.getDescription() );
-        userNode.setPropertyString( "fax", userInfo.getFax() );
-        userNode.setPropertyString( "firstname", userInfo.getFirstName() );
-        userNode.setPropertyString( "globalposition", userInfo.getGlobalPosition() );
-        userNode.setPropertyString( "homepage", userInfo.getHomePage() );
+        userNode.setPropertyDateTime( BIRTHDAY, userInfo.getBirthday() );
+        userNode.setPropertyString( COUNTRY, userInfo.getCountry() );
+        userNode.setPropertyString( DESCRIPTION, userInfo.getDescription() );
+        userNode.setPropertyString( FAX, userInfo.getFax() );
+        userNode.setPropertyString( FIRST_NAME, userInfo.getFirstName() );
+        userNode.setPropertyString( GLOBAL_POSITION, userInfo.getGlobalPosition() );
+        userNode.setPropertyString( HOME_PAGE, userInfo.getHomePage() );
         if ( userInfo.getHtmlEmail() != null )
         {
-            userNode.setPropertyBoolean( "htmlemail", userInfo.getHtmlEmail() );
+            userNode.setPropertyBoolean( HTML_EMAIL, userInfo.getHtmlEmail() );
         }
-        userNode.setPropertyString( "initials", userInfo.getInitials() );
-        userNode.setPropertyString( "lastname", userInfo.getLastName() );
-        userNode.setPropertyString( "locale", userInfo.getLocale() );
-        userNode.setPropertyString( "memberid", userInfo.getMemberId() );
-        userNode.setPropertyString( "middlename", userInfo.getMiddleName() );
-        userNode.setPropertyString( "mobile", userInfo.getMobile() );
-        userNode.setPropertyString( "organization", userInfo.getOrganization() );
-        userNode.setPropertyString( "personalid", userInfo.getPersonalId() );
-        userNode.setPropertyString( "phone", userInfo.getPhone() );
-        userNode.setPropertyString( "prefix", userInfo.getPrefix() );
-        userNode.setPropertyString( "suffix", userInfo.getSuffix() );
-        userNode.setPropertyString( "timezone", userInfo.getTimeZone() );
-        userNode.setPropertyString( "title", userInfo.getTitle() );
+        userNode.setPropertyString( INITIALS, userInfo.getInitials() );
+        userNode.setPropertyString( LAST_NAME, userInfo.getLastName() );
+        userNode.setPropertyString( LOCALE, userInfo.getLocale() );
+        userNode.setPropertyString( MEMBER_ID, userInfo.getMemberId() );
+        userNode.setPropertyString( MIDDLE_NAME, userInfo.getMiddleName() );
+        userNode.setPropertyString( MOBILE, userInfo.getMobile() );
+        userNode.setPropertyString( ORGANIZATION, userInfo.getOrganization() );
+        userNode.setPropertyString( PERSONAL_ID, userInfo.getPersonalId() );
+        userNode.setPropertyString( PHONE, userInfo.getPhone() );
+        userNode.setPropertyString( PREFIX, userInfo.getPrefix() );
+        userNode.setPropertyString( SUFFIX, userInfo.getSuffix() );
+        userNode.setPropertyString( TIMEZONE, userInfo.getTimeZone() );
+        userNode.setPropertyString( TITLE, userInfo.getTitle() );
         Gender gender = userInfo.getGender();
         if ( gender != null )
         {
-            userNode.setPropertyString( "gender", gender.toString() );
+            userNode.setPropertyString( GENDER, gender.toString() );
         }
-        userNode.setPropertyString( "organization", userInfo.getOrganization() );
+        userNode.setPropertyString( ORGANIZATION, userInfo.getOrganization() );
         final List<JcrAddress> addresses = userInfo.getAddresses();
-        final JcrNode addressesNode = userNode.addNode( "addresses" );
+        final JcrNode addressesNode = userNode.addNode( ADDRESSES );
         for ( JcrAddress address : addresses )
         {
             addAddressNode( address, addressesNode );
@@ -131,63 +212,63 @@ public class AccountJcrMapping
 
     private void addAddressNode( JcrAddress address, JcrNode addressesNode )
     {
-        final JcrNode addressNode = addressesNode.addNode( "address" );
-        addressNode.setPropertyString( "country", address.getCountry() );
-        addressNode.setPropertyString( "isoCountry", address.getIsoCountry() );
-        addressNode.setPropertyString( "isoRegion", address.getIsoRegion() );
-        addressNode.setPropertyString( "label", address.getLabel() );
-        addressNode.setPropertyString( "postalAddress", address.getPostalAddress() );
-        addressNode.setPropertyString( "postalCode", address.getPostalCode() );
-        addressNode.setPropertyString( "region", address.getRegion() );
-        addressNode.setPropertyString( "street", address.getStreet() );
+        final JcrNode addressNode = addressesNode.addNode( ADDRESS );
+        addressNode.setPropertyString( COUNTRY, address.getCountry() );
+        addressNode.setPropertyString( ISO_COUNTRY, address.getIsoCountry() );
+        addressNode.setPropertyString( ISO_REGION, address.getIsoRegion() );
+        addressNode.setPropertyString( LABEL, address.getLabel() );
+        addressNode.setPropertyString( POSTAL_ADDRESS, address.getPostalAddress() );
+        addressNode.setPropertyString( POSTAL_CODE, address.getPostalCode() );
+        addressNode.setPropertyString( REGION, address.getRegion() );
+        addressNode.setPropertyString( STREET, address.getStreet() );
     }
 
     private JcrUserInfo toUserInfo( final JcrNode userNode )
     {
         final JcrUserInfo info = new JcrUserInfo();
-        info.setBirthday( userNode.getPropertyDateTime( "birthday" ) );
-        info.setCountry( userNode.getPropertyString( "country" ) );
-        info.setDescription( userNode.getPropertyString( "description" ) );
-        info.setFax( userNode.getPropertyString( "fax" ) );
-        info.setFirstName( userNode.getPropertyString( "firstname" ) );
-        info.setGlobalPosition( userNode.getPropertyString( "globalposition" ) );
-        info.setHomePage( userNode.getPropertyString( "homepage" ) );
-        info.setHtmlEmail( userNode.getPropertyBoolean( "htmlemail" ) );
-        info.setInitials( userNode.getPropertyString( "initials" ) );
-        info.setLastName( userNode.getPropertyString( "lastname" ) );
-        info.setLocale( userNode.getPropertyString( "locale" ) );
-        info.setMemberId( userNode.getPropertyString( "memberid" ) );
-        info.setMiddleName( userNode.getPropertyString( "middlename" ) );
-        info.setMobile( userNode.getPropertyString( "mobile" ) );
-        info.setOrganization( userNode.getPropertyString( "organization" ) );
-        info.setPersonalId( userNode.getPropertyString( "personalid" ) );
-        info.setPhone( userNode.getPropertyString( "phone" ) );
-        info.setPrefix( userNode.getPropertyString( "prefix" ) );
-        info.setSuffix( userNode.getPropertyString( "suffix" ) );
-        info.setTimeZone( userNode.getPropertyString( "timezone" ) );
-        info.setTitle( userNode.getPropertyString( "title" ) );
-        info.setGender( Gender.fromName( userNode.getPropertyString( "gender" ) ) );
-        info.setOrganization( userNode.getPropertyString( "organization" ) );
+        info.setBirthday( userNode.getPropertyDateTime( BIRTHDAY ) );
+        info.setCountry( userNode.getPropertyString( COUNTRY ) );
+        info.setDescription( userNode.getPropertyString( DESCRIPTION ) );
+        info.setFax( userNode.getPropertyString( FAX ) );
+        info.setFirstName( userNode.getPropertyString( FIRST_NAME ) );
+        info.setGlobalPosition( userNode.getPropertyString( GLOBAL_POSITION ) );
+        info.setHomePage( userNode.getPropertyString( HOME_PAGE ) );
+        info.setHtmlEmail( userNode.getPropertyBoolean( HTML_EMAIL ) );
+        info.setInitials( userNode.getPropertyString( INITIALS ) );
+        info.setLastName( userNode.getPropertyString( LAST_NAME ) );
+        info.setLocale( userNode.getPropertyString( LOCALE ) );
+        info.setMemberId( userNode.getPropertyString( MEMBER_ID ) );
+        info.setMiddleName( userNode.getPropertyString( MIDDLE_NAME ) );
+        info.setMobile( userNode.getPropertyString( MOBILE ) );
+        info.setOrganization( userNode.getPropertyString( ORGANIZATION ) );
+        info.setPersonalId( userNode.getPropertyString( PERSONAL_ID ) );
+        info.setPhone( userNode.getPropertyString( PHONE ) );
+        info.setPrefix( userNode.getPropertyString( PREFIX ) );
+        info.setSuffix( userNode.getPropertyString( SUFFIX ) );
+        info.setTimeZone( userNode.getPropertyString( TIMEZONE ) );
+        info.setTitle( userNode.getPropertyString( TITLE ) );
+        info.setGender( Gender.fromName( userNode.getPropertyString( GENDER ) ) );
+        info.setOrganization( userNode.getPropertyString( ORGANIZATION ) );
         return info;
     }
 
     private List<JcrAddress> nodePropertiesToAddresses( JcrNode userNode )
     {
         final List<JcrAddress> addressList = new ArrayList<JcrAddress>();
-        final JcrNode addresses = userNode.getNode( "addresses" );
-        JcrNodeIterator addressNodeIt = addresses.getNodes( "address" );
+        final JcrNode addresses = userNode.getNode( ADDRESSES );
+        JcrNodeIterator addressNodeIt = addresses.getNodes( ADDRESS );
         while ( addressNodeIt.hasNext() )
         {
             JcrNode addressNode = addressNodeIt.next();
             final JcrAddress address = new JcrAddress();
-            address.setLabel( addressNode.getPropertyString( "label" ) );
-            address.setStreet( addressNode.getPropertyString( "street" ) );
-            address.setPostalAddress( addressNode.getPropertyString( "postalAddress" ) );
-            address.setPostalCode( addressNode.getPropertyString( "postalCode" ) );
-            address.setRegion( addressNode.getPropertyString( "region" ) );
-            address.setCountry( addressNode.getPropertyString( "country" ) );
-            address.setIsoRegion( addressNode.getPropertyString( "isoRegion" ) );
-            address.setIsoCountry( addressNode.getPropertyString( "isoCountry" ) );
+            address.setLabel( addressNode.getPropertyString( LABEL ) );
+            address.setStreet( addressNode.getPropertyString( STREET ) );
+            address.setPostalAddress( addressNode.getPropertyString( POSTAL_ADDRESS ) );
+            address.setPostalCode( addressNode.getPropertyString( POSTAL_CODE ) );
+            address.setRegion( addressNode.getPropertyString( REGION ) );
+            address.setCountry( addressNode.getPropertyString( COUNTRY ) );
+            address.setIsoRegion( addressNode.getPropertyString( ISO_REGION ) );
+            address.setIsoCountry( addressNode.getPropertyString( ISO_COUNTRY ) );
             addressList.add( address );
         }
         return addressList;
