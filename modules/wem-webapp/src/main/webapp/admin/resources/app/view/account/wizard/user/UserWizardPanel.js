@@ -167,6 +167,7 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
                             },
                             {
                                 stepTitle: 'Summary',
+                                dataType: 'user',
                                 xtype: 'summaryTreePanel'
                             }
                         ]

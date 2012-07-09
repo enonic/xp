@@ -120,6 +120,7 @@ Ext.define('Admin.view.account.wizard.group.GroupWizardPanel', {
         var summaryStep = {
             stepTitle: 'Summary',
             modelData: this.modelData,
+            dataType: 'group',
             xtype: 'summaryTreePanel'
         };
 
