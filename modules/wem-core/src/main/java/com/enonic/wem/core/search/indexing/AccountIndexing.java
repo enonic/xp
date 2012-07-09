@@ -15,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.search.account.Account;
@@ -24,6 +26,7 @@ import com.enonic.wem.core.search.account.Group;
 import com.enonic.wem.core.search.account.User;
 
 @Component
+@DependsOn("jcrBootstrap")
 public class AccountIndexing
     implements InitializingBean, Runnable
 {
@@ -237,12 +240,14 @@ public class AccountIndexing
     }
 
     @Autowired
+    @Qualifier("jcrGroupLoader")
     public void setGroupLoader( BatchLoader<Group> groupLoader )
     {
         this.groupLoader = groupLoader;
     }
 
     @Autowired
+    @Qualifier("jcrUserLoader")
     public void setUserLoader( BatchLoader<User> userLoader )
     {
         this.userLoader = userLoader;

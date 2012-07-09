@@ -17,10 +17,13 @@ public interface AccountJcrDao
 
     List<JcrGroup> findAllGroups( int from, int count );
 
+    JcrAccount findAccountById( String accountId );
 
     JcrUser findUserById( String accountId );
 
     JcrGroup findGroupById( String accountId );
+
+    JcrRole findRoleById( String accountId );
 
     byte[] findUserPhotoById( String accountId );
 

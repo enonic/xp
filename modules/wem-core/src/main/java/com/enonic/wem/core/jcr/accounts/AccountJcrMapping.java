@@ -46,6 +46,23 @@ public class AccountJcrMapping
         userInfoToJcr( user.getUserInfo(), node );
     }
 
+    public JcrRole toRole( JcrNode node )
+    {
+        final JcrRole role = new JcrRole();
+        role.setName( node.getName() );
+        role.setDescription( node.getPropertyString( "description" ) );
+        role.setId( node.getIdentifier() );
+        final String userstore = node.getParent().getParent().getName();
+        role.setUserStore( userstore );
+        return role;
+    }
+
+    public void roleToJcr( JcrRole role, JcrNode node )
+    {
+        groupPropertiesToJcr( role, node );
+        node.setPropertyString( "type", JcrAccountType.ROLE.name() );
+    }
+
     public JcrGroup toGroup( JcrNode node )
     {
         final JcrGroup group = new JcrGroup();
@@ -59,13 +76,17 @@ public class AccountJcrMapping
 
     public void groupToJcr( JcrGroup group, JcrNode node )
     {
+        groupPropertiesToJcr( group, node );
+        node.setPropertyString( "type", JcrAccountType.GROUP.name() );
+    }
+
+    private void groupPropertiesToJcr( JcrGroup group, JcrNode node )
+    {
         node.setPropertyString( "qualifiedName", group.getName() );
         node.setPropertyString( "displayname", group.getDisplayName() );
         node.setPropertyString( "description", group.getDescription() );
         node.setPropertyDateTime( "lastModified", group.getLastModified() );
         node.setPropertyString( "syncValue", group.getSyncValue() );
-//        node.setPropertyLong( "groupType", groupType.toInteger() );
-        node.setPropertyString( "type", JcrAccountType.GROUP.name() );
     }
 
     private void userInfoToJcr( JcrUserInfo userInfo, JcrNode userNode )

@@ -70,7 +70,7 @@ public final class AccountsResult
         json.put( "isEditable", true ); // model.setEditable(!(entity.isAnonymous() || isAdmin));
         json.put( "builtIn", account.isBuiltIn() );
 
-        if ( account.isGroup() )
+        if ( account.isGroup() || account.isRole() )
         {
             groupToJson( (JcrGroup) account, json );
         }

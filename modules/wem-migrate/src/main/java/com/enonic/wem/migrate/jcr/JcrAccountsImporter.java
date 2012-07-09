@@ -18,6 +18,7 @@ import com.enonic.wem.core.jcr.JcrDaoSupport;
 import com.enonic.wem.core.jcr.accounts.AccountJcrDao;
 import com.enonic.wem.core.jcr.accounts.JcrAddress;
 import com.enonic.wem.core.jcr.accounts.JcrGroup;
+import com.enonic.wem.core.jcr.accounts.JcrRole;
 import com.enonic.wem.core.jcr.accounts.JcrUser;
 import com.enonic.wem.core.jcr.accounts.JcrUserInfo;
 import com.enonic.wem.core.jcr.accounts.JcrUserStore;
@@ -187,7 +188,7 @@ public class JcrAccountsImporter
             userStoreKey = SYSTEM_USERSTORE_KEY;
             userstoreName = userStoreKeyName.get( userStoreKey );
         }
-        final JcrGroup group = new JcrGroup();
+        final JcrGroup group = groupType.isBuiltIn() ? new JcrRole() : new JcrGroup();
         final String description = (String) groupFields.get( "GRP_SDESCRIPTION" );
         final DateTime lastModified = new DateTime();
         final String syncValue = (String) groupFields.get( "GRP_SSYNCVALUE" );
@@ -198,7 +199,6 @@ public class JcrAccountsImporter
         group.setLastModified(lastModified );
         group.setSyncValue(  syncValue );
         group.setUserStore( userstoreName );
-//        group.setGroupType( groupType.toInteger() );
 
         accountDao.saveAccount( group );
 

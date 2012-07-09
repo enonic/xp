@@ -68,7 +68,7 @@ public class JcrGroupLoader
     }
 
     private Group jcrUserToIndexUser(final JcrGroup jcrGroup) {
-        Group group = new Group();
+        Group group = new Group(jcrGroup.isRole());
         group.setKey( new AccountKey( jcrGroup.getId() ) );
         group.setName( jcrGroup.getName() );
         group.setGroupType( GroupType.GLOBAL_GROUP);

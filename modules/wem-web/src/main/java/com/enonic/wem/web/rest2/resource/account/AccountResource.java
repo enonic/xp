@@ -26,6 +26,7 @@ import com.enonic.wem.core.jcr.accounts.AccountJcrDao;
 import com.enonic.wem.core.jcr.PageList;
 import com.enonic.wem.core.jcr.accounts.JcrAccount;
 import com.enonic.wem.core.jcr.accounts.JcrGroup;
+import com.enonic.wem.core.jcr.accounts.JcrRole;
 import com.enonic.wem.core.jcr.accounts.JcrUser;
 import com.enonic.wem.core.search.Facet;
 import com.enonic.wem.core.search.FacetEntry;
@@ -155,6 +156,13 @@ public final class AccountResource
             switch ( searchHit.getAccountType() )
             {
                 case ROLE:
+                    final JcrRole role = accountJcrDao.findRoleById( searchHit.getKey().toString() );
+                    if ( role != null && !role.getId().equals( currentGroupKey ) )
+                    {
+                        list.add( role );
+                    }
+                    break;
+
                 case GROUP:
                     final JcrGroup group = accountJcrDao.findGroupById( searchHit.getKey().toString() );
                     if ( group != null && !group.getId().equals( currentGroupKey ) )

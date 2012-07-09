@@ -27,6 +27,8 @@ import static com.enonic.wem.core.jcr.JcrWemConstants.GROUPS_NODE;
 import static com.enonic.wem.core.jcr.JcrWemConstants.GROUP_NODE_TYPE;
 import static com.enonic.wem.core.jcr.JcrWemConstants.MEMBERS_NODE;
 import static com.enonic.wem.core.jcr.JcrWemConstants.MEMBER_NODE;
+import static com.enonic.wem.core.jcr.JcrWemConstants.ROLES_NODE;
+import static com.enonic.wem.core.jcr.JcrWemConstants.ROLE_NODE_TYPE;
 import static com.enonic.wem.core.jcr.JcrWemConstants.USERSTORES_ABSOLUTE_PATH;
 import static com.enonic.wem.core.jcr.JcrWemConstants.USERSTORES_PATH;
 import static com.enonic.wem.core.jcr.JcrWemConstants.USERSTORE_NODE_TYPE;
@@ -77,6 +79,26 @@ public class AccountJcrDaoImpl
         } );
         return group;
 
+    }
+
+    @Override
+    public JcrRole findRoleById( final String accountId )
+    {
+        JcrRole role = (JcrRole) getTemplate().execute( new JcrCallback()
+        {
+            public Object doInJcr( JcrSession session )
+                throws IOException, RepositoryException
+            {
+                return queryRoleById( session, accountId, true );
+            }
+        } );
+        return role;
+    }
+
+    @Override
+    public JcrAccount findAccountById( final String accountId )
+    {
+        return null;
     }
 
     @Override
@@ -180,7 +202,7 @@ public class AccountJcrDaoImpl
                 break;
 
             case ROLE:
-                //saveRole(account);
+                saveRole( (JcrRole) account );
                 break;
         }
     }
@@ -331,6 +353,59 @@ public class AccountJcrDaoImpl
         userstoreNode.addNode( JcrWemConstants.ROLES_NODE, JcrWemConstants.ROLES_NODE_TYPE );
     }
 
+    private void saveRole( final JcrRole role )
+    {
+        getTemplate().execute( new JcrCallback()
+        {
+            @Override
+            public Object doInJcr( final JcrSession session )
+                throws IOException, RepositoryException
+            {
+                if ( role.getId() == null )
+                {
+                    insertRoleJcr( session, role );
+                }
+                else
+                {
+                    updateRoleJcr( session, role );
+                }
+                session.save();
+                return null;
+            }
+        } );
+    }
+
+    private void updateRoleJcr( final JcrSession session, final JcrRole role )
+    {
+        final JcrNode roleNode = session.getNodeByIdentifier( role.getId() );
+        if ( roleNode == null )
+        {
+            throw new IllegalArgumentException( "Could not find role with id: " + role.getId() );
+        }
+        accountJcrMapping.roleToJcr( role, roleNode );
+        role.setId( roleNode.getIdentifier() );
+    }
+
+    private void insertRoleJcr( final JcrSession session, final JcrRole role )
+    {
+        final String roleName = role.getName();
+        final String userstoreName = role.getUserStore();
+        if ( userstoreName == null )
+        {
+            throw new IllegalArgumentException( "Undefined userstore for role" );
+        }
+        final String userParentNodePath = USERSTORES_PATH + userstoreName + "/" + ROLES_NODE;
+        final JcrNode userStoreNode = session.getRootNode().getNode( userParentNodePath );
+        if ( userStoreNode.hasNode( roleName ) )
+        {
+            throw new IllegalArgumentException( "Role already exists in userstore: " + userstoreName + "//" + roleName );
+        }
+        final JcrNode roleNode = userStoreNode.addNode( roleName, ROLE_NODE_TYPE );
+        accountJcrMapping.roleToJcr( role, roleNode );
+        roleNode.addNode( MEMBERS_NODE );
+        role.setId( roleNode.getIdentifier() );
+    }
+
     private void saveGroup( final JcrGroup group )
     {
         getTemplate().execute( new JcrCallback()
@@ -370,7 +445,7 @@ public class AccountJcrDaoImpl
         final String userstoreName = group.getUserStore();
         if ( userstoreName == null )
         {
-            throw new IllegalArgumentException( "Undefined userstore in group" );
+            throw new IllegalArgumentException( "Undefined userstore for group" );
         }
         final String userParentNodePath = USERSTORES_PATH + userstoreName + "/" + GROUPS_NODE;
         final JcrNode userStoreNode = session.getRootNode().getNode( userParentNodePath );
@@ -412,7 +487,7 @@ public class AccountJcrDaoImpl
         final String userstoreName = user.getUserStore();
         if ( userstoreName == null )
         {
-            throw new IllegalArgumentException( "Undefined userstore in user" );
+            throw new IllegalArgumentException( "Undefined userstore for user" );
         }
 
         final String userParentNodePath = USERSTORES_PATH + userstoreName + "/" + USERS_NODE;
@@ -494,8 +569,17 @@ public class AccountJcrDaoImpl
         while ( nodeIterator.hasNext() )
         {
             final JcrNode groupNode = nodeIterator.nextNode();
-            final JcrGroup group = accountJcrMapping.toGroup( groupNode );
-            groupList.add( group );
+            LOG.info( groupNode.getName() + " group found" );
+            if ( groupNode.isNodeType( ROLE_NODE_TYPE ) )
+            {
+                final JcrRole role = accountJcrMapping.toRole( groupNode );
+                groupList.add( role );
+            }
+            else
+            {
+                final JcrGroup group = accountJcrMapping.toGroup( groupNode );
+                groupList.add( group );
+            }
         }
         return groupList;
     }
@@ -553,6 +637,7 @@ public class AccountJcrDaoImpl
             final JcrNode groupNode = memberOwnerNode.getParent().getParent();
 
             final String groupId = groupNode.getIdentifier();
+            // TODO: roles
             final JcrGroup group = this.queryGroupById( session, groupId, false );
             if ( group != null )
             {
@@ -562,6 +647,19 @@ public class AccountJcrDaoImpl
             {
                 LOG.warn( "Could not find group with id '" + groupId + "'" );
             }
+        }
+    }
+
+    private JcrRole queryRoleById( JcrSession session, String roleId, boolean includeMembers )
+    {
+        final JcrNode roleNode = session.getNodeByIdentifier( roleId );
+        if ( ( roleNode != null ) && ( roleNode.isNodeType( ROLE_NODE_TYPE ) ) )
+        {
+            return buildRole( session, roleNode, includeMembers );
+        }
+        else
+        {
+            return null;
         }
     }
 
@@ -586,13 +684,23 @@ public class AccountJcrDaoImpl
         {
             case USER:
                 return buildUser( session, accountNode, false );
-
             case ROLE:
+                return buildRole( session, accountNode, false );
             case GROUP:
                 return buildGroup( session, accountNode, false );
         }
 
         throw new IllegalArgumentException( "Invalid account type: " + accountType );
+    }
+
+    private JcrRole buildRole( JcrSession session, JcrNode roleNode, boolean includeMembers )
+    {
+        final JcrRole role = accountJcrMapping.toRole( roleNode );
+        if ( includeMembers )
+        {
+            setGroupMembers( session, roleNode, role );
+        }
+        return role;
     }
 
     private JcrGroup buildGroup( JcrSession session, JcrNode groupNode, boolean includeMembers )

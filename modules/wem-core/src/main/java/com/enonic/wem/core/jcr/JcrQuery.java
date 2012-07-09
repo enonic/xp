@@ -20,10 +20,15 @@ import javax.jcr.query.qom.QueryObjectModelFactory;
 import javax.jcr.query.qom.Selector;
 import javax.jcr.query.qom.StaticOperand;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static javax.jcr.query.qom.QueryObjectModelConstants.JCR_OPERATOR_EQUAL_TO;
 
 public class JcrQuery
 {
+    private static final Logger LOG = LoggerFactory.getLogger( JcrQuery.class );
+
     private final static String SELECTOR_NAME = "selectorName";
 
     private final JcrSession session;
@@ -202,6 +207,11 @@ public class JcrQuery
                 queryObj.setLimit( limit );
             }
             queryObj.setOffset( offset );
+
+            if ( LOG.isInfoEnabled() )
+            {
+                LOG.info( "Executing Jcr query: " + queryObj.getStatement() );
+            }
             final QueryResult result = queryObj.execute();
 
             return new JcrNodeIteratorImpl( result.getNodes() );

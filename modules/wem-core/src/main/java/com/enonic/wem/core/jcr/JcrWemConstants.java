@@ -35,6 +35,8 @@ public class JcrWemConstants
 
     public static final String ROLES_NODE_TYPE = "cms:roles";
 
+    public static final String ROLE_NODE_TYPE = "cms:role";
+
     public static final String ACCOUNT_NODE_TYPE = "cms:account";
 
     public static final String SYSTEM_USERSTORE_NODE = "system";
