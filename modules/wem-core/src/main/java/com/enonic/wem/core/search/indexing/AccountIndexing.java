@@ -26,7 +26,7 @@ import com.enonic.wem.core.search.account.Group;
 import com.enonic.wem.core.search.account.User;
 
 @Component
-@DependsOn("jcrBootstrap")
+//@DependsOn("jcrBootstrap")
 public class AccountIndexing
     implements InitializingBean, Runnable
 {
@@ -240,14 +240,14 @@ public class AccountIndexing
     }
 
     @Autowired
-    @Qualifier("jcrGroupLoader")
+//    @Qualifier("jcrGroupLoader")
     public void setGroupLoader( BatchLoader<Group> groupLoader )
     {
         this.groupLoader = groupLoader;
     }
 
     @Autowired
-    @Qualifier("jcrUserLoader")
+//    @Qualifier("jcrUserLoader")
     public void setUserLoader( BatchLoader<User> userLoader )
     {
         this.userLoader = userLoader;
