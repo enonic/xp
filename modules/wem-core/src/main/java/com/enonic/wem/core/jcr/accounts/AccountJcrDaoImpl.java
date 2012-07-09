@@ -98,7 +98,15 @@ public class AccountJcrDaoImpl
     @Override
     public JcrAccount findAccountById( final String accountId )
     {
-        return null;
+        JcrAccount account = (JcrAccount) getTemplate().execute( new JcrCallback()
+        {
+            public Object doInJcr( JcrSession session )
+                throws IOException, RepositoryException
+            {
+                return queryAccountById( session, accountId );
+            }
+        } );
+        return account;
     }
 
     @Override
@@ -648,6 +656,27 @@ public class AccountJcrDaoImpl
                 LOG.warn( "Could not find group with id '" + groupId + "'" );
             }
         }
+    }
+
+    private JcrAccount queryAccountById( JcrSession session, String accountId )
+    {
+        final JcrNode accountNode = session.getNodeByIdentifier( accountId );
+        if ( accountNode != null )
+        {
+            if ( accountNode.isNodeType( USER_NODE_TYPE ) )
+            {
+                return queryUserById( session, accountId );
+            }
+            else if ( accountNode.isNodeType( ROLE_NODE_TYPE ) )
+            {
+                return queryRoleById( session, accountId, true );
+            }
+            else if ( accountNode.isNodeType( GROUP_NODE_TYPE ) )
+            {
+                return queryGroupById( session, accountId, true );
+            }
+        }
+        return null;
     }
 
     private JcrRole queryRoleById( JcrSession session, String roleId, boolean includeMembers )

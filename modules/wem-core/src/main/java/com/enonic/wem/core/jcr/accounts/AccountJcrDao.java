@@ -3,8 +3,6 @@ package com.enonic.wem.core.jcr.accounts;
 import java.util.Collection;
 import java.util.List;
 
-import com.enonic.wem.core.jcr.PageList;
-
 public interface AccountJcrDao
 {
     int getGroupsCount();

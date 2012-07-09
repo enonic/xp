@@ -22,12 +22,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.enonic.wem.core.jcr.accounts.AccountJcrDao;
 import com.enonic.wem.core.jcr.PageList;
+import com.enonic.wem.core.jcr.accounts.AccountJcrDao;
 import com.enonic.wem.core.jcr.accounts.JcrAccount;
-import com.enonic.wem.core.jcr.accounts.JcrGroup;
-import com.enonic.wem.core.jcr.accounts.JcrRole;
-import com.enonic.wem.core.jcr.accounts.JcrUser;
 import com.enonic.wem.core.search.Facet;
 import com.enonic.wem.core.search.FacetEntry;
 import com.enonic.wem.core.search.Facets;
@@ -140,62 +137,55 @@ public final class AccountResource
                               req.getOrganizations() + ", keys=" + accountKeys );
         }
 
-        final AccountSearchResults searchResults;
+        final List<JcrAccount> list = new ArrayList<JcrAccount>();
+        final int count;
+        final int total;
         if ( StringUtils.isNotBlank( accountKeys ) )
         {
-            searchResults = findAccountsByKey( accountKeys );
+            final String[] ids = accountKeys.split( "," );
+            for ( String accountId : ids )
+            {
+                final JcrAccount account = accountJcrDao.findAccountById( accountId.trim() );
+                if ( account != null )
+                {
+                    list.add( account );
+                }
+            }
+            count = ids.length;
+            total = ids.length;
         }
         else
         {
-            searchResults = doSearch( req );
-        }
-
-        final List<JcrAccount> list = new ArrayList<JcrAccount>();
-        for ( AccountSearchHit searchHit : searchResults )
-        {
-            switch ( searchHit.getAccountType() )
+            final AccountSearchResults searchResults = doSearch( req );
+            for ( AccountSearchHit searchHit : searchResults )
             {
-                case ROLE:
-                    final JcrRole role = accountJcrDao.findRoleById( searchHit.getKey().toString() );
-                    if ( role != null && !role.getId().equals( currentGroupKey ) )
-                    {
-                        list.add( role );
-                    }
-                    break;
-
-                case GROUP:
-                    final JcrGroup group = accountJcrDao.findGroupById( searchHit.getKey().toString() );
-                    if ( group != null && !group.getId().equals( currentGroupKey ) )
-                    {
-                        list.add( group );
-                    }
-                    break;
-
-                case USER:
-                    final JcrUser user = accountJcrDao.findUserById( searchHit.getKey().toString() );
-                    if ( user != null )
-                    {
-                        list.add( user );
-                    }
-                    break;
+                final JcrAccount account = findAccountById( searchHit.getAccountType(), searchHit.getKey().toString() );
+                if ( ( account != null ) && !account.getId().equals( currentGroupKey ) )
+                {
+                    list.add( account );
+                }
             }
+            count = searchResults.getCount();
+            total = searchResults.getTotal();
         }
 
-        final PageList<JcrAccount> accountList = new PageList<JcrAccount>( searchResults.getCount(), searchResults.getTotal(), list );
+        final PageList<JcrAccount> accountList = new PageList<JcrAccount>( count, total, list );
         return new AccountsResult( accountList );
     }
 
-    private AccountSearchResults findAccountsByKey( String accountKeys )
+    private JcrAccount findAccountById( final AccountType accountType, final String id )
     {
-        final String[] keys = accountKeys.split( "," );
-        final AccountSearchResults searchResults = new AccountSearchResults( 0, keys.length );
-        for ( String key : keys )
+        switch ( accountType )
         {
-            key = key.trim();
-            final AccountType type = findAccountType( key );
-            searchResults.add( new AccountKey( key ), type, 1 );
+            case ROLE:
+                return accountJcrDao.findRoleById( id );
+            case GROUP:
+                return accountJcrDao.findGroupById( id );
+            case USER:
+                return accountJcrDao.findUserById( id );
+            default:
+                throw new IllegalArgumentException( "Unsupported account type: " + accountType );
         }
-        return searchResults;
     }
 
     private AccountSearchResults doSearch( final AccountLoadRequest req )
