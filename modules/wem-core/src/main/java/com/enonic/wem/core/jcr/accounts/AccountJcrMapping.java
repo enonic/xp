@@ -9,7 +9,9 @@ import com.enonic.wem.core.jcr.JcrNodeIterator;
 public class AccountJcrMapping
 {
 
-    static final String DISPLAY_NAME = "displayname";
+    static final String CREATED = "created";
+
+    static final String DISPLAY_NAME = "displayName";
 
     static final String EMAIL = "email";
 
@@ -25,37 +27,37 @@ public class AccountJcrMapping
 
     static final String DESCRIPTION = "description";
 
-    static final String QUALIFIED_NAME = "qualifiedName";
-
     static final String BIRTHDAY = "birthday";
 
     static final String COUNTRY = "country";
 
     static final String FAX = "fax";
 
-    static final String FIRST_NAME = "firstname";
+    static final String FIRST_NAME = "firstName";
 
-    static final String GLOBAL_POSITION = "globalposition";
+    static final String GLOBAL_POSITION = "globalPosition";
 
-    static final String HOME_PAGE = "homepage";
+    static final String HOME_PAGE = "homePage";
 
-    static final String HTML_EMAIL = "htmlemail";
+    static final String HTML_EMAIL = "htmlEmail";
 
     static final String INITIALS = "initials";
 
-    static final String LAST_NAME = "lastname";
+    static final String LAST_NAME = "lastName";
 
     static final String LOCALE = "locale";
 
-    static final String MEMBER_ID = "memberid";
+    static final String MEMBER_ID = "memberId";
 
-    static final String MIDDLE_NAME = "middlename";
+    static final String MIDDLE_NAME = "middleName";
 
     static final String MOBILE = "mobile";
 
+    static final String NICK_NAME = "nickName";
+
     static final String ORGANIZATION = "organization";
 
-    static final String PERSONAL_ID = "personalid";
+    static final String PERSONAL_ID = "personalId";
 
     static final String PHONE = "phone";
 
@@ -93,13 +95,17 @@ public class AccountJcrMapping
     {
         final JcrUser user = new JcrUser();
         user.setId( userNode.getIdentifier() );
-        user.setName( userNode.getName() );
+        user.setName( userNode.getPropertyString( NAME ) );
         user.setDisplayName( userNode.getPropertyString( DISPLAY_NAME ) );
+        user.setCreated( userNode.getPropertyString( CREATED ) );
         user.setEmail( userNode.getPropertyString( EMAIL ) );
         user.setLastModified( userNode.getPropertyDateTime( LAST_MODIFIED ) );
+        user.setSyncValue( userNode.getPropertyString( SYNC_VALUE ) );
+
         if ( userNode.hasProperty( PHOTO ) )
         {
             user.setHasPhoto( true );
+            user.setPhoto( userNode.getPropertyBinary( PHOTO ) );
         }
         final String userstore = userNode.getParent().getParent().getName();
         user.setUserStore( userstore );
@@ -115,6 +121,7 @@ public class AccountJcrMapping
     {
         node.setPropertyString( NAME, user.getName() );
         node.setPropertyString( DISPLAY_NAME, user.getDisplayName() );
+        node.setPropertyString( CREATED, user.getCreated() );
         node.setPropertyString( EMAIL, user.getEmail() );
         node.setPropertyDateTime( LAST_MODIFIED, user.getLastModified() );
         node.setPropertyString( SYNC_VALUE, user.getSyncValue() );
@@ -130,8 +137,11 @@ public class AccountJcrMapping
     public JcrRole toRole( JcrNode node )
     {
         final JcrRole role = new JcrRole();
-        role.setName( node.getName() );
+        role.setName( node.getPropertyString( NAME ) );
+        role.setDisplayName( node.getPropertyString( DISPLAY_NAME ) );
         role.setDescription( node.getPropertyString( DESCRIPTION ) );
+        role.setLastModified( node.getPropertyDateTime( LAST_MODIFIED ) );
+        role.setSyncValue( node.getPropertyString( SYNC_VALUE ) );
         role.setId( node.getIdentifier() );
         final String userstore = node.getParent().getParent().getName();
         role.setUserStore( userstore );
@@ -147,8 +157,11 @@ public class AccountJcrMapping
     public JcrGroup toGroup( JcrNode node )
     {
         final JcrGroup group = new JcrGroup();
-        group.setName( node.getName() );
+        group.setName( node.getPropertyString( NAME ) );
+        group.setDisplayName( node.getPropertyString( DISPLAY_NAME ) );
         group.setDescription( node.getPropertyString( DESCRIPTION ) );
+        group.setLastModified( node.getPropertyDateTime( LAST_MODIFIED ) );
+        group.setSyncValue( node.getPropertyString( SYNC_VALUE ) );
         group.setId( node.getIdentifier() );
         final String userstore = node.getParent().getParent().getName();
         group.setUserStore( userstore );
@@ -163,7 +176,7 @@ public class AccountJcrMapping
 
     private void groupPropertiesToJcr( JcrGroup group, JcrNode node )
     {
-        node.setPropertyString( QUALIFIED_NAME, group.getName() );
+        node.setPropertyString( NAME, group.getName() );
         node.setPropertyString( DISPLAY_NAME, group.getDisplayName() );
         node.setPropertyString( DESCRIPTION, group.getDescription() );
         node.setPropertyDateTime( LAST_MODIFIED, group.getLastModified() );
@@ -189,6 +202,7 @@ public class AccountJcrMapping
         userNode.setPropertyString( MEMBER_ID, userInfo.getMemberId() );
         userNode.setPropertyString( MIDDLE_NAME, userInfo.getMiddleName() );
         userNode.setPropertyString( MOBILE, userInfo.getMobile() );
+        userNode.setPropertyString( NICK_NAME, userInfo.getNickName() );
         userNode.setPropertyString( ORGANIZATION, userInfo.getOrganization() );
         userNode.setPropertyString( PERSONAL_ID, userInfo.getPersonalId() );
         userNode.setPropertyString( PHONE, userInfo.getPhone() );
@@ -203,7 +217,7 @@ public class AccountJcrMapping
         }
         userNode.setPropertyString( ORGANIZATION, userInfo.getOrganization() );
         final List<JcrAddress> addresses = userInfo.getAddresses();
-        final JcrNode addressesNode = userNode.addNode( ADDRESSES );
+        final JcrNode addressesNode = userNode.hasNode( ADDRESSES ) ? userNode.getNode( ADDRESSES ) : userNode.addNode( ADDRESSES );
         for ( JcrAddress address : addresses )
         {
             addAddressNode( address, addressesNode );
@@ -240,6 +254,7 @@ public class AccountJcrMapping
         info.setMemberId( userNode.getPropertyString( MEMBER_ID ) );
         info.setMiddleName( userNode.getPropertyString( MIDDLE_NAME ) );
         info.setMobile( userNode.getPropertyString( MOBILE ) );
+        info.setNickName( userNode.getPropertyString( NICK_NAME ) );
         info.setOrganization( userNode.getPropertyString( ORGANIZATION ) );
         info.setPersonalId( userNode.getPropertyString( PERSONAL_ID ) );
         info.setPhone( userNode.getPropertyString( PHONE ) );
@@ -248,7 +263,6 @@ public class AccountJcrMapping
         info.setTimeZone( userNode.getPropertyString( TIMEZONE ) );
         info.setTitle( userNode.getPropertyString( TITLE ) );
         info.setGender( Gender.fromName( userNode.getPropertyString( GENDER ) ) );
-        info.setOrganization( userNode.getPropertyString( ORGANIZATION ) );
         return info;
     }
 

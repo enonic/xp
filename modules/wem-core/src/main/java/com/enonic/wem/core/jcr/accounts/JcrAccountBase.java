@@ -126,11 +126,6 @@ abstract class JcrAccountBase
         this.builtIn = builtIn;
     }
 
-    public JcrAccountType getType()
-    {
-        return this.type;
-    }
-
     public String getSyncValue()
     {
         return syncValue;
@@ -159,7 +154,7 @@ abstract class JcrAccountBase
         {
             return false;
         }
-        if ( getType() != that.getType() )
+        if ( getAccountType() != that.getAccountType() )
         {
             return false;
         }

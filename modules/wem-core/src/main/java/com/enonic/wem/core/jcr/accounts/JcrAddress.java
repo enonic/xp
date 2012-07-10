@@ -1,5 +1,8 @@
 package com.enonic.wem.core.jcr.accounts;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 public class JcrAddress
 {
     private String label;
@@ -102,4 +105,42 @@ public class JcrAddress
         this.isoCountry = isoCountry;
     }
 
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder()
+            .append( this.label )
+            .append( this.street )
+            .append( this.postalAddress )
+            .append( this.postalCode )
+            .append( this.region )
+            .append( this.country )
+            .append( this.isoRegion )
+            .append( this.isoCountry )
+            .toHashCode();
+    }
+
+    @Override
+    public boolean equals( final Object obj )
+    {
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( getClass() != obj.getClass() )
+        {
+            return false;
+        }
+        final JcrAddress other = (JcrAddress) obj;
+        return new EqualsBuilder()
+            .append( this.label, other.label )
+            .append( this.street, other.street )
+            .append( this.postalAddress, other.postalAddress )
+            .append( this.postalCode, other.postalCode )
+            .append( this.region, other.region )
+            .append( this.country, other.country )
+            .append( this.isoRegion, other.isoRegion )
+            .append( this.isoCountry, other.isoCountry )
+            .isEquals();
+    }
 }

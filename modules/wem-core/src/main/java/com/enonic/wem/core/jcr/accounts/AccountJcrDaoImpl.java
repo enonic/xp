@@ -199,7 +199,7 @@ public class AccountJcrDaoImpl
     @Override
     public void saveAccount( final JcrAccount account )
     {
-        switch ( account.getType() )
+        switch ( account.getAccountType() )
         {
             case USER:
                 saveUser( (JcrUser) account );

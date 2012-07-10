@@ -35,8 +35,6 @@ public interface JcrAccount
 
     boolean isBuiltIn();
 
-    JcrAccountType getType();
-
     boolean isUser();
 
     boolean isGroup();
