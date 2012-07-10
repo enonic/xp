@@ -26,7 +26,7 @@ Ext.define('Admin.view.account.AddressPanel', {
     closeAction: 'hide',
 
     initComponent: function () {
-        if (!Ext.isDefined(this.values)) {
+        if (Ext.isEmpty(this.values)) {
             this.values = {};
         }
         this.title = this.values.label === null ? '[no title]' : this.values.label;
