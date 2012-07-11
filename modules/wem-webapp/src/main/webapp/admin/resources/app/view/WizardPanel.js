@@ -285,16 +285,16 @@ Ext.define('Admin.view.WizardPanel', {
         var isNew = this.isNew;
         var isDisabled = progressBar.isDisabled();
 
-        var li = Ext.fly(target).up('li');
+        var li = target && target.tagName === "LI" ? Ext.fly(target) : Ext.fly(target).up('li');
 
         // allow click only the next immediate step in new mode
         // or any step in edit mode when valid
         // or any except the last in edit when not valid
         // or all previous steps in any mode
-        if ((!isDisabled && isNew && li.hasCls('next') && li.hasCls('immediate'))
+        if ((!isDisabled && isNew && li && li.hasCls('next') && li.hasCls('immediate'))
                 || (!isDisabled && !isNew)
-                || (isDisabled && !isNew && !li.hasCls('last'))
-            || li.hasCls('previous')) {
+                || (isDisabled && !isNew && li && !li.hasCls('last'))
+            || (li && li.hasCls('previous'))) {
             var step = Number(li.getAttribute('wizardStep'));
             this.navigate(step - 1);
         }
@@ -443,6 +443,8 @@ Ext.define('Admin.view.WizardPanel', {
         me.items.each(function (item) {
             if (item.getData) {
                 me.addData(item.getData());
+            } else if (item.getForm) {
+                me.addData(item.getForm().getFieldValues());
             }
         });
         return me.data;

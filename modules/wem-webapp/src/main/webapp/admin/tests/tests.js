@@ -29,7 +29,8 @@ Harness.start(
         group: 'Common',
         items: [
             'tests/common/test_TabPanel.js',
-            'tests/common/test_Diff.js'
+            'tests/common/test_Diff.js',
+            'tests/common/test_WizardPanel.js'
         ]
     },
     {
