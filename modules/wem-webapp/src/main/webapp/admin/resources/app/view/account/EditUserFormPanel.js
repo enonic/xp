@@ -103,6 +103,10 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
             }
         ]
     },
+    validationUrls: {
+        username: 'data/account/userkey',
+        email: 'data/account/verifyUniqueEmail'
+    },
 
     autoScroll: false,
     autoHeight: true,
@@ -181,7 +185,7 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
             'title': this.createTextField,
             'description': this.createTextField,
             'htmlEmail': this.createCheckBoxField,
-            'homepage': this.createTextField
+            'homePage': this.createTextField
         };
         this.locationFieldSet = {
             'timezone': this.createComboBoxField,
@@ -337,14 +341,18 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
     createTextField: function (field) {
         var validationResultType = 'none';
         var delayValidation = false;
+        var validationData = {};
         if (field.type === 'username' || field.type === 'email') {
             validationResultType = 'detail';
             delayValidation = true;
+            validationData.userStore = this.currentUser ? this.currentUser.userStore : this.defaultUserStoreName;
+            validationData.userKey = this.userFields ? this.userFields.key : undefined;
         }
         return {
             xtype: 'userFormField',
             validationResultType: validationResultType,
             delayValidation: delayValidation,
+            validationData: validationData,
             type: 'text'
         };
     },
@@ -366,6 +374,7 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
     createPasswordField: function (field) {
         return {
             xtype: 'doublePasswordField',
+            itemId: 'password',
             passwordLabel: 'Password<span style="color: red;">*</span>',
             repeatLabel: 'Repeat password<span style="color: red;">*</span>',
             labelWidth: 120
@@ -456,10 +465,11 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
                     readonly: item.readOnly || false || (item.type === 'username' && me.userFields),
                     vtype: item.vtype,
                     fieldValue: fieldValue,
+                    validationUrl: me.validationUrls[item.type],
                     currentUser: me.currentUser
                 };
                 var createFunc = fieldSet[item.type];
-                var newField = createFunc(item);
+                var newField = createFunc.call(me, item);
                 newField = Ext.apply(newField, baseConfig);
                 Ext.Array.include(fieldItems, newField);
             }

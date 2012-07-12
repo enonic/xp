@@ -8,6 +8,9 @@ Ext.define('Admin.view.account.UserFormField', {
         type: 'hbox'
     },
 
+    validationUrls: {},
+    validationData: {},
+
     validationResultType: 'none',
 
     width: 1000,
@@ -167,7 +170,7 @@ Ext.define('Admin.view.account.UserFormField', {
         var userField = this.up('userFormField');
         var validationTask = userField.validationTask;
         if (validationTask) {
-            validationTask.delay(userField.delayValidationTime);
+            validationTask.delay(5000/*userField.delayValidationTime*/);
         }
     },
 
@@ -290,13 +293,11 @@ Ext.define('Admin.view.account.UserFormField', {
                 validationStatus.update({type: 'error', text: 'Invalid characters'});
                 return "Invalid characters";
             }
-            var userForm = me.up('editUserFormPanel');
-            var userStoreName = userForm.currentUser ? userForm.currentUser.userStore : userForm.defaultUserStoreName;
             Ext.Ajax.request({
-                url: 'data/account/userkey',
+                url: parentField.validationUrl,
                 method: 'GET',
                 params: {
-                    'userstore': userStoreName,
+                    'userstore': parentField.validationData.userStore,
                     'username': value
                 },
                 success: function (response) {
@@ -329,6 +330,7 @@ Ext.define('Admin.view.account.UserFormField', {
         var me = this;
         var parentField = me.up('userFormField');
         var validationStatus = parentField.down('#validationLabel');
+        console.log(parentField.validationData);
         if ((me.prevValue !== value) && (value !== '')) {
             me.prevValue = value;
             if (!Ext.data.validations.email({}, value)) {
@@ -339,23 +341,18 @@ Ext.define('Admin.view.account.UserFormField', {
                 validationStatus.update({type: 'info', text: 'Valid e-mail'});
             }
 
-            var userForm = me.up('editUserFormPanel');
-            var userWizard = userForm.up('userWizardPanel');
-            var currentUserKey = (!userWizard.isNewUser()) ? userWizard.userFields.key : null;
-
-            var userStoreName = userForm.currentUser ? userForm.currentUser.userStore : userForm.defaultUserStoreName;
             Ext.Ajax.request({
-                url: 'data/account/verifyUniqueEmail',
+                url: parentField.validationUrl,
                 method: 'GET',
                 params: {
-                    'userstore': userStoreName,
+                    'userstore': parentField.validationData.userStore,
                     'email': value
                 },
                 success: function (response) {
                     var respObj = Ext.decode(response.responseText, true);
                     if (respObj.emailInUse) {
                         validationStatus.update({type: 'error', text: 'Not available'});
-                        me.validValue = (respObj.userkey === currentUserKey);
+                        me.validValue = (respObj.userkey === parentField.validationData.userKey);
                     } else {
                         validationStatus.update({type: 'info', text: 'Available'});
                         me.validValue = true;
