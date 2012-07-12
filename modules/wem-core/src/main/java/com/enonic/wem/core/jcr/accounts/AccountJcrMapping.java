@@ -91,6 +91,8 @@ public class AccountJcrMapping
 
     static final String MEMBER_REFERENCE = "ref";
 
+    static final String BUILT_IN = "builtIn";
+
     public JcrUser toUser( JcrNode userNode )
     {
         final JcrUser user = new JcrUser();
@@ -142,6 +144,7 @@ public class AccountJcrMapping
         role.setDescription( node.getPropertyString( DESCRIPTION ) );
         role.setLastModified( node.getPropertyDateTime( LAST_MODIFIED ) );
         role.setSyncValue( node.getPropertyString( SYNC_VALUE ) );
+        role.setBuiltIn( node.getPropertyBoolean( BUILT_IN, false ) );
         role.setId( node.getIdentifier() );
         final String userstore = node.getParent().getParent().getName();
         role.setUserStore( userstore );
@@ -162,6 +165,7 @@ public class AccountJcrMapping
         group.setDescription( node.getPropertyString( DESCRIPTION ) );
         group.setLastModified( node.getPropertyDateTime( LAST_MODIFIED ) );
         group.setSyncValue( node.getPropertyString( SYNC_VALUE ) );
+        group.setBuiltIn( node.getPropertyBoolean( BUILT_IN, false ) );
         group.setId( node.getIdentifier() );
         final String userstore = node.getParent().getParent().getName();
         group.setUserStore( userstore );
@@ -181,6 +185,7 @@ public class AccountJcrMapping
         node.setPropertyString( DESCRIPTION, group.getDescription() );
         node.setPropertyDateTime( LAST_MODIFIED, group.getLastModified() );
         node.setPropertyString( SYNC_VALUE, group.getSyncValue() );
+        node.setPropertyBoolean( BUILT_IN, group.isBuiltIn() );
     }
 
     private void userInfoToJcr( JcrUserInfo userInfo, JcrNode userNode )

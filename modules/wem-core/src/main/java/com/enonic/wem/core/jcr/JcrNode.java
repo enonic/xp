@@ -24,6 +24,8 @@ public interface JcrNode
 
     Boolean getPropertyBoolean( String relPath );
 
+    Boolean getPropertyBoolean( String relPath, boolean defaultValue );
+
     byte[] getPropertyBinary( String relPath );
 
     long getPropertyLong( String relPath );

@@ -94,7 +94,9 @@ public class AccountJcrMappingTest
 
         // convert back from JCR
         final JcrUser userFromJcr = mapping.toUser( userNode );
-
+        assertTrue( userFromJcr.isUser() );
+        assertFalse( userFromJcr.isGroup() );
+        assertFalse( userFromJcr.isRole() );
         assertUserEquals( user, userFromJcr );
     }
 
@@ -330,7 +332,9 @@ public class AccountJcrMappingTest
 
         // convert back from JCR
         final JcrGroup groupFromJcr = mapping.toGroup( groupNode );
-
+        assertFalse( groupFromJcr.isUser() );
+        assertTrue( groupFromJcr.isGroup() );
+        assertFalse( groupFromJcr.isRole() );
         assertGroupEquals( group, groupFromJcr );
     }
 
@@ -417,6 +421,9 @@ public class AccountJcrMappingTest
         final JcrRole role = mapping.toRole( roleNode );
 
         // verify
+        assertFalse( role.isUser() );
+        assertFalse( role.isGroup() );
+        assertTrue( role.isRole() );
         assertEquals( "test role", role.getName() );
         assertEquals( "disp_name", role.getDisplayName() );
         assertEquals( lastModified, role.getLastModified() );
@@ -453,6 +460,22 @@ public class AccountJcrMappingTest
         assertEquals( role.getSyncValue(), roleNode.getPropertyString( "syncValue" ) );
         assertEquals( role.getDisplayName(), roleNode.getPropertyString( "displayName" ) );
         assertEquals( role.getLastModified(), roleNode.getPropertyDateTime( "lastModified" ) );
+    }
+
+    @Test
+    public void testJcrAccountType()
+    {
+        final JcrAccountType roleType = JcrAccountType.fromName( "role" );
+        final JcrAccountType userType = JcrAccountType.fromName( "user" );
+        final JcrAccountType groupType = JcrAccountType.fromName( "group" );
+        final JcrAccountType nullType = JcrAccountType.fromName( null );
+        final JcrAccountType unknownType = JcrAccountType.fromName( "invalidType" );
+
+        assertEquals( JcrAccountType.USER, userType );
+        assertEquals( JcrAccountType.GROUP, groupType );
+        assertEquals( JcrAccountType.ROLE, roleType );
+        assertNull( unknownType );
+        assertNull( nullType );
     }
 
     private boolean usersEquals( JcrUser user1, JcrUser user2 )

@@ -11,12 +11,15 @@ public class UserStoreJcrMapping
 
     static final String CONNECTOR = "connector";
 
-    static final String XML_CONFIG = "xmlconfig";
+    static final String XML_CONFIG = "xmlConfig";
+
+    static final String NAME = "name";
+
 
     public JcrUserStore toUserStore( JcrNode node )
     {
         final JcrUserStore userStore = new JcrUserStore();
-        userStore.setName( node.getName() );
+        userStore.setName( node.getPropertyString( NAME ) );
         userStore.setId( node.getPropertyString( KEY ) );
         userStore.setDefaultStore( node.getPropertyBoolean( DEFAULT ) );
         userStore.setConnectorName( node.getPropertyString( CONNECTOR ) );
@@ -26,6 +29,7 @@ public class UserStoreJcrMapping
 
     public void userStoreToJcr( JcrUserStore userStore, JcrNode node )
     {
+        node.setPropertyString( NAME, userStore.getName() );
         node.setPropertyString( KEY, userStore.getId() );
         node.setPropertyBoolean( DEFAULT, userStore.isDefaultStore() );
         node.setPropertyString( CONNECTOR, userStore.getConnectorName() );

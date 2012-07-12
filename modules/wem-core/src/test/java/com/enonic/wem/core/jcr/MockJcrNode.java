@@ -140,6 +140,12 @@ public class MockJcrNode
     }
 
     @Override
+    public Boolean getPropertyBoolean( final String relPath, final boolean defaultValue )
+    {
+        return properties.containsKey( relPath ) ? (Boolean) properties.get( relPath ) : defaultValue;
+    }
+
+    @Override
     public byte[] getPropertyBinary( final String relPath )
     {
         return (byte[]) properties.get( relPath );

@@ -121,6 +121,20 @@ class JcrNodeImpl
     }
 
     @Override
+    public Boolean getPropertyBoolean( String relPath, boolean defaultValue )
+    {
+        Property property = getInternalProperty( relPath );
+        try
+        {
+            return property == null ? defaultValue : property.getBoolean();
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
+
+    @Override
     public byte[] getPropertyBinary( final String relPath )
     {
         Property property = getInternalProperty( relPath );
