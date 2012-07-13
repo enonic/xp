@@ -2,7 +2,6 @@ var Harness = Siesta.Harness.Browser.ExtJS;
 
 Harness.configure({
     title: 'Admin Test Suite',
-    defaultTimeout: 30000,
     loaderPath: {
         'App': 'app/account/js',
         'Common': 'common/js',
@@ -21,7 +20,7 @@ Harness.configure({
         'resources/css/user-preview-panel.css',
         'resources/css/BoxSelect.css',
         'resources/app/view/XTemplates.js',
-        'resources/lib/ext/ext-all.js'
+        'resources/lib/ext/ext-all-debug.js'
     ]
 });
 

@@ -118,12 +118,7 @@ Ext.define('Admin.view.account.UserFormField', {
         me.validationTask = new Ext.util.DelayedTask(function () {
             me.validate();
         });
-        var spinningWheelTask = new Ext.util.DelayedTask(function () {
-            var spinningWheel = me.down('#spinningWheel');
-            var validationLabel = me.down('#validationLabel');
-            spinningWheel.hide();
-            validationLabel.show();
-        });
+
         var fieldConfig = {
             enableKeyEvents: true,
             disabled: me.readonly,
@@ -146,10 +141,24 @@ Ext.define('Admin.view.account.UserFormField', {
                     if (me.delayValidation && (!event.isSpecialKey() ||
                                                (event.getKey() === event.BACKSPACE) ||
                                                (event.getKey() === event.DELETE))) {
+                        var spinningWheelTask = new Ext.util.DelayedTask(function () {
+                            var spinningWheel = me.down('#spinningWheel');
+                            var validationLabel = me.down('#validationLabel');
+                            if (spinningWheel) {
+                                spinningWheel.hide();
+                            }
+                            if (validationLabel) {
+                                validationLabel.show();
+                            }
+                        });
                         var spinningWheel = me.down('#spinningWheel');
                         var validationLabel = me.down('#validationLabel');
-                        spinningWheel.show();
-                        validationLabel.hide();
+                        if (spinningWheel) {
+                            spinningWheel.show();
+                        }
+                        if (validationLabel) {
+                            validationLabel.hide();
+                        }
                         spinningWheelTask.delay(me.delayValidationTime);
                     }
                 }
@@ -170,7 +179,7 @@ Ext.define('Admin.view.account.UserFormField', {
         var userField = this.up('userFormField');
         var validationTask = userField.validationTask;
         if (validationTask) {
-            validationTask.delay(5000/*userField.delayValidationTime*/);
+            validationTask.delay(userField.delayValidationTime);
         }
     },
 
@@ -309,7 +318,7 @@ Ext.define('Admin.view.account.UserFormField', {
                         me.validValue = true;
                         validationStatus.update({type: 'info', text: 'Available'});
                     }
-                    me.validate();
+                    parentField.validate();
                 }
             });
         }
@@ -330,7 +339,6 @@ Ext.define('Admin.view.account.UserFormField', {
         var me = this;
         var parentField = me.up('userFormField');
         var validationStatus = parentField.down('#validationLabel');
-        console.log(parentField.validationData);
         if ((me.prevValue !== value) && (value !== '')) {
             me.prevValue = value;
             if (!Ext.data.validations.email({}, value)) {
@@ -357,7 +365,7 @@ Ext.define('Admin.view.account.UserFormField', {
                         validationStatus.update({type: 'info', text: 'Available'});
                         me.validValue = true;
                     }
-                    me.validate();
+                    parentField.validate();
                 }
             });
         }
