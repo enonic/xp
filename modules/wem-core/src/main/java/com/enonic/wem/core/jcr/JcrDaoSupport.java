@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class JcrDaoSupport
 {
-    @Autowired
     private JcrTemplate template;
 
     protected JcrTemplate getTemplate()
@@ -12,4 +11,9 @@ public abstract class JcrDaoSupport
         return template;
     }
 
+    @Autowired
+    public void setTemplate( JcrTemplate template )
+    {
+        this.template = template;
+    }
 }
