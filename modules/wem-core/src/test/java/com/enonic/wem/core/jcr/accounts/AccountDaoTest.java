@@ -1,5 +1,7 @@
 package com.enonic.wem.core.jcr.accounts;
 
+import java.util.List;
+
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +64,7 @@ public class AccountDaoTest
     @Test
     public void createUserTest()
     {
-        final JcrUserStore userStore = newUserstore();
+        final JcrUserStore userStore = addUserstore();
         final JcrUser user = newDummyUser( userStore.getName() );
 
         accountJcrDao.saveAccount( user );
@@ -77,7 +79,7 @@ public class AccountDaoTest
     @Test
     public void deleteUserTest()
     {
-        final JcrUserStore userStore = newUserstore();
+        final JcrUserStore userStore = addUserstore();
         final JcrUser user = newDummyUser( userStore.getName() );
 
         accountJcrDao.saveAccount( user );
@@ -95,7 +97,7 @@ public class AccountDaoTest
     @Test
     public void updateUserTest()
     {
-        final JcrUserStore userStore = newUserstore();
+        final JcrUserStore userStore = addUserstore();
         final JcrUser user = newDummyUser( userStore.getName() );
 
         accountJcrDao.saveAccount( user );
@@ -116,7 +118,7 @@ public class AccountDaoTest
     @Test
     public void createGroupTest()
     {
-        final JcrUserStore userStore = newUserstore();
+        final JcrUserStore userStore = addUserstore();
         final JcrGroup group = newDummyGroup( userStore.getName() );
 
         accountJcrDao.saveAccount( group );
@@ -131,7 +133,7 @@ public class AccountDaoTest
     @Test
     public void deleteGroupTest()
     {
-        final JcrUserStore userStore = newUserstore();
+        final JcrUserStore userStore = addUserstore();
         final JcrGroup group = newDummyGroup( userStore.getName() );
 
         accountJcrDao.saveAccount( group );
@@ -149,7 +151,7 @@ public class AccountDaoTest
     @Test
     public void updateGroupTest()
     {
-        final JcrUserStore userStore = newUserstore();
+        final JcrUserStore userStore = addUserstore();
         final JcrGroup group = newDummyGroup( userStore.getName() );
 
         accountJcrDao.saveAccount( group );
@@ -170,7 +172,7 @@ public class AccountDaoTest
     @Test
     public void createRoleTest()
     {
-        final JcrUserStore userStore = newUserstore();
+        final JcrUserStore userStore = addUserstore();
         final JcrRole role = newDummyRole( userStore.getName() );
 
         accountJcrDao.saveAccount( role );
@@ -185,7 +187,7 @@ public class AccountDaoTest
     @Test
     public void deleteRoleTest()
     {
-        final JcrUserStore userStore = newUserstore();
+        final JcrUserStore userStore = addUserstore();
         final JcrRole role = newDummyRole( userStore.getName() );
 
         accountJcrDao.saveAccount( role );
@@ -203,7 +205,7 @@ public class AccountDaoTest
     @Test
     public void updateRoleTest()
     {
-        final JcrUserStore userStore = newUserstore();
+        final JcrUserStore userStore = addUserstore();
         final JcrRole role = newDummyRole( userStore.getName() );
 
         accountJcrDao.saveAccount( role );
@@ -219,6 +221,35 @@ public class AccountDaoTest
         assertNotNull( updatedRole );
         assertEquals( updatedRole.getDescription(), "Deprecated role" );
         assertEquals( retrievedRole.getId(), updatedRole.getId() );
+    }
+
+    @Test
+    public void findAccountsTest()
+    {
+        int groupCount = accountJcrDao.getGroupsCount();
+        int userCount = accountJcrDao.getUsersCount();
+        assertEquals( 0, groupCount );
+        assertEquals( 0, userCount );
+
+        final JcrUserStore userStore = addUserstore();
+        final JcrGroup group = newDummyGroup( userStore.getName() );
+        final JcrRole role = newDummyRole( userStore.getName() );
+        final JcrUser user = newDummyUser( userStore.getName() );
+
+        accountJcrDao.saveAccount( user );
+        accountJcrDao.saveAccount( group );
+        accountJcrDao.saveAccount( role );
+
+        groupCount = accountJcrDao.getGroupsCount();
+        userCount = accountJcrDao.getUsersCount();
+        assertEquals( 2, groupCount );
+        assertEquals( 1, userCount );
+
+        final List<JcrAccount> allAccounts = accountJcrDao.findAll( 0, Integer.MAX_VALUE );
+        assertEquals( 3, allAccounts.size() );
+        assertTrue( allAccounts.contains( group ));
+        assertTrue( allAccounts.contains( role ));
+        assertTrue( allAccounts.contains( user ));
     }
 
     private JcrUser newDummyUser( final String userStoreName )
@@ -254,7 +285,7 @@ public class AccountDaoTest
         return role;
     }
 
-    private JcrUserStore newUserstore()
+    private JcrUserStore addUserstore()
     {
         final JcrUserStore userStore = new JcrUserStore();
         userStore.setName( "enonic" );

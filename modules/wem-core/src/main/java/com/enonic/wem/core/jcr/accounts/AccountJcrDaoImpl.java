@@ -532,14 +532,27 @@ public class AccountJcrDaoImpl
 
         LOG.info( nodeIterator.getSize() + " accounts found" );
 
-        final List<JcrAccount> userList = new ArrayList<JcrAccount>();
+        final List<JcrAccount> accountList = new ArrayList<JcrAccount>();
         while ( nodeIterator.hasNext() )
         {
-            final JcrNode userNode = nodeIterator.nextNode();
-            final JcrUser user = accountJcrMapping.toUser( userNode );
-            userList.add( user );
+            final JcrNode accountNode = nodeIterator.nextNode();
+            if ( accountNode.isNodeType( USER_NODE_TYPE ) )
+            {
+                final JcrUser user = buildUser( session, accountNode, false );
+                accountList.add( user );
+            }
+            else if ( accountNode.isNodeType( ROLE_NODE_TYPE ) )
+            {
+                final JcrRole role = buildRole( session, accountNode, false );
+                accountList.add( role );
+            }
+            else if ( accountNode.isNodeType( GROUP_NODE_TYPE ) )
+            {
+                final JcrGroup group = buildGroup( session, accountNode, false );
+                accountList.add( group );
+            }
         }
-        return userList;
+        return accountList;
     }
 
     private List<JcrUser> queryAllUsers( JcrSession session, int index, int count )
