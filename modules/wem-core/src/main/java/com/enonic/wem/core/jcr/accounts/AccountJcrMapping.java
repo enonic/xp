@@ -17,6 +17,8 @@ public class AccountJcrMapping
 
     static final String LAST_MODIFIED = "lastModified";
 
+    static final String LAST_LOGGED = "lastLogged";
+
     static final String PHOTO = "photo";
 
     static final String NAME = "name";
@@ -102,6 +104,7 @@ public class AccountJcrMapping
         user.setCreated( userNode.getPropertyString( CREATED ) );
         user.setEmail( userNode.getPropertyString( EMAIL ) );
         user.setLastModified( userNode.getPropertyDateTime( LAST_MODIFIED ) );
+        user.setLastLogged( userNode.getPropertyDateTime( LAST_LOGGED ) );
         user.setSyncValue( userNode.getPropertyString( SYNC_VALUE ) );
 
         if ( userNode.hasProperty( PHOTO ) )
@@ -126,6 +129,7 @@ public class AccountJcrMapping
         node.setPropertyString( CREATED, user.getCreated() );
         node.setPropertyString( EMAIL, user.getEmail() );
         node.setPropertyDateTime( LAST_MODIFIED, user.getLastModified() );
+        node.setPropertyDateTime( LAST_LOGGED, user.getLastLogged() );
         node.setPropertyString( SYNC_VALUE, user.getSyncValue() );
         if ( user.getPhoto() != null )
         {

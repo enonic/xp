@@ -34,7 +34,7 @@ public class AccountJcrMappingTest
     }
 
     @Test
-    public void testRoundTripUserConversion()
+    public void roundTripUserConversionTest()
     {
         final String USERSTORE_NAME = "enonic";
         final String USER_ID = "58a6410c-724d-4081-814d-f9ba9ec37f36";
@@ -55,6 +55,7 @@ public class AccountJcrMappingTest
         user.setSyncValue( "sync" );
         user.setDisplayName( "disp" );
         user.setLastModified( new DateTime() );
+        user.setLastLogged( new DateTime().minusMinutes( 1 ) );
         user.setEmail( "abc@host.com" );
         final JcrUserInfo userInfo = user.getUserInfo();
         userInfo.setBirthday( DateTime.parse( "2000-12-31" ) );
@@ -97,11 +98,11 @@ public class AccountJcrMappingTest
         assertTrue( userFromJcr.isUser() );
         assertFalse( userFromJcr.isGroup() );
         assertFalse( userFromJcr.isRole() );
-        assertUserEquals( user, userFromJcr );
+        AssertAccounts.assertUserEquals( user, userFromJcr );
     }
 
     @Test
-    public void testToUser()
+    public void toUserTest()
     {
         final AccountJcrMapping mapping = new AccountJcrMapping();
 
@@ -208,7 +209,7 @@ public class AccountJcrMappingTest
     }
 
     @Test
-    public void testUserToJcr()
+    public void userToJcrTest()
     {
         final String USERSTORE_NAME = "enonic";
         final String USER_ID = "58a6410c-724d-4081-814d-f9ba9ec37f36";
@@ -307,7 +308,7 @@ public class AccountJcrMappingTest
     }
 
     @Test
-    public void testRoundTripGroupConversion()
+    public void roundTripGroupConversionTest()
     {
         final String USERSTORE_NAME = "enonic";
         final String GROUP_ID = "4497e4de-ca96-464f-a9e8-10f260e2468e";
@@ -335,11 +336,11 @@ public class AccountJcrMappingTest
         assertFalse( groupFromJcr.isUser() );
         assertTrue( groupFromJcr.isGroup() );
         assertFalse( groupFromJcr.isRole() );
-        assertGroupEquals( group, groupFromJcr );
+        AssertAccounts.assertGroupEquals( group, groupFromJcr );
     }
 
     @Test
-    public void testToGroup()
+    public void toGroupTest()
     {
         final AccountJcrMapping mapping = new AccountJcrMapping();
 
@@ -369,7 +370,7 @@ public class AccountJcrMappingTest
     }
 
     @Test
-    public void testGroupToJcr()
+    public void groupToJcrTest()
     {
         final String USERSTORE_NAME = "enonic";
         final String GROUP_ID = "4497e4de-ca96-464f-a9e8-10f260e2468e";
@@ -400,7 +401,7 @@ public class AccountJcrMappingTest
 
 
     @Test
-    public void testToRole()
+    public void toRoleTest()
     {
         final AccountJcrMapping mapping = new AccountJcrMapping();
 
@@ -433,7 +434,7 @@ public class AccountJcrMappingTest
     }
 
     @Test
-    public void testRoleToJcr()
+    public void roleToJcrTest()
     {
         final String USERSTORE_NAME = "enonic";
         final String ROLE_ID = "4497e4de-ca96-464f-a9e8-10f260e2468e";
@@ -463,7 +464,7 @@ public class AccountJcrMappingTest
     }
 
     @Test
-    public void testJcrAccountType()
+    public void jcrAccountTypeTest()
     {
         final JcrAccountType roleType = JcrAccountType.fromName( "role" );
         final JcrAccountType userType = JcrAccountType.fromName( "user" );
@@ -478,87 +479,4 @@ public class AccountJcrMappingTest
         assertNull( nullType );
     }
 
-    private boolean usersEquals( JcrUser user1, JcrUser user2 )
-    {
-        if ( ( user1 == null ) || ( user2 == null ) )
-        {
-            return user1 == user2;
-        }
-        if ( !user1.equals( user2 ) )
-        {
-            return false;
-        }
-        final EqualsBuilder eb = new EqualsBuilder();
-        eb.append( user1.getName(), user2.getName() );
-        eb.append( user1.getSyncValue(), user2.getSyncValue() );
-        eb.append( user1.getDisplayName(), user2.getDisplayName() );
-        eb.append( user1.getLastLogged(), user2.getLastLogged() );
-        eb.append( user1.getLastModified(), user2.getLastModified() );
-        eb.append( user1.getEmail(), user2.getEmail() );
-        eb.append( user1.getQualifiedName(), user2.getQualifiedName() );
-        eb.append( user1.getUserStore(), user2.getUserStore() );
-        eb.append( user1.getCreated(), user2.getCreated() );
-        eb.append( user1.getPhoto(), user2.getPhoto() );
-        eb.append( user1.getAccountType(), user2.getAccountType() );
-
-        return eb.isEquals() && usersInfoEquals( user1.getUserInfo(), user2.getUserInfo() );
-    }
-
-    private boolean usersInfoEquals( JcrUserInfo user1, JcrUserInfo user2 )
-    {
-        if ( ( user1 == null ) || ( user2 == null ) )
-        {
-            return user1 == user2;
-        }
-        return EqualsBuilder.reflectionEquals( user1, user2 );
-    }
-
-    private void assertUserEquals( JcrUser user1, JcrUser user2 )
-    {
-        assertUserEquals( null, user1, user2 );
-    }
-
-    private void assertUserEquals( String message, JcrUser user1, JcrUser user2 )
-    {
-        boolean equals = usersEquals( user1, user2 );
-        if ( !equals )
-        {
-            final String userStr1 = ToStringBuilder.reflectionToString( user1, ToStringStyle.MULTI_LINE_STYLE );
-            final String userStr2 = ToStringBuilder.reflectionToString( user2, ToStringStyle.MULTI_LINE_STYLE );
-            assertEquals( message, userStr1, userStr2 );
-        }
-    }
-
-    private boolean groupsEquals( JcrGroup group1, JcrGroup group2 )
-    {
-        if ( ( group1 == null ) || ( group2 == null ) )
-        {
-            return group1 == group2;
-        }
-        if ( !group1.equals( group2 ) )
-        {
-            return false;
-        }
-        final EqualsBuilder eb = new EqualsBuilder();
-        eb.append( group1.getName(), group2.getName() );
-        eb.append( group1.getSyncValue(), group2.getSyncValue() );
-        eb.append( group1.getDisplayName(), group2.getDisplayName() );
-        eb.append( group1.getLastModified(), group2.getLastModified() );
-        eb.append( group1.getQualifiedName(), group2.getQualifiedName() );
-        eb.append( group1.getUserStore(), group2.getUserStore() );
-        eb.append( group1.getAccountType(), group2.getAccountType() );
-
-        return eb.isEquals();
-    }
-
-    private void assertGroupEquals( JcrGroup group1, JcrGroup group2 )
-    {
-        boolean equals = groupsEquals( group1, group2 );
-        if ( !equals )
-        {
-            final String groupStr1 = ToStringBuilder.reflectionToString( group1, ToStringStyle.MULTI_LINE_STYLE );
-            final String groupStr2 = ToStringBuilder.reflectionToString( group2, ToStringStyle.MULTI_LINE_STYLE );
-            assertEquals( groupStr1, groupStr2 );
-        }
-    }
 }

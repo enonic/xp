@@ -1,5 +1,6 @@
 package com.enonic.wem.core.jcr.accounts;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import com.enonic.wem.core.jcr.JcrTemplate;
 import com.enonic.wem.itest.AbstractSpringTest;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class AccountDaoTest
     extends AbstractSpringTest
@@ -31,7 +33,6 @@ public class AccountDaoTest
         jcrInitializer.setJcrTemplate( jcrTemplate );
         jcrInitializer.setCompactNodeDefinitionFile( new ClassPathResource( "com/enonic/wem/core/jcr/cmstypes.cnd" ) );
         jcrInitializer.initializeJcrRepository();
-
     }
 
     @Test
@@ -53,6 +54,215 @@ public class AccountDaoTest
         assertEquals( userStore.getConnectorName(), userstoreRetrieved.getConnectorName() );
         assertEquals( userStore.isDefaultStore(), userstoreRetrieved.isDefaultStore() );
         assertEquals( userStore.getXmlConfig(), userstoreRetrieved.getXmlConfig() );
+
+        final JcrUserStore missingUserstore = accountJcrDao.findUserStoreByName( "myuserstore" );
+        assertNull( missingUserstore );
     }
 
+    @Test
+    public void createUserTest()
+    {
+        final JcrUserStore userStore = newUserstore();
+        final JcrUser user = newDummyUser( userStore.getName() );
+
+        accountJcrDao.saveAccount( user );
+        assertNotNull( user.getId() );
+
+        JcrUser retrievedUser = accountJcrDao.findUserById( user.getId() );
+        assertNotNull( retrievedUser );
+        assertNotSame( retrievedUser.getId(), user.getId() );
+        AssertAccounts.assertUserEquals( user, retrievedUser );
+    }
+
+    @Test
+    public void deleteUserTest()
+    {
+        final JcrUserStore userStore = newUserstore();
+        final JcrUser user = newDummyUser( userStore.getName() );
+
+        accountJcrDao.saveAccount( user );
+        assertNotNull( user.getId() );
+
+        JcrUser retrievedUser = accountJcrDao.findUserById( user.getId() );
+        assertNotNull( retrievedUser );
+
+        accountJcrDao.deleteAccount( retrievedUser );
+
+        JcrUser deletedUser = accountJcrDao.findUserById( user.getId() );
+        assertNull( deletedUser );
+    }
+
+    @Test
+    public void updateUserTest()
+    {
+        final JcrUserStore userStore = newUserstore();
+        final JcrUser user = newDummyUser( userStore.getName() );
+
+        accountJcrDao.saveAccount( user );
+        assertNotNull( user.getId() );
+
+        JcrUser retrievedUser = accountJcrDao.findUserById( user.getId() );
+        assertNotNull( retrievedUser );
+
+        retrievedUser.setEmail( "john@enonic.com" );
+        accountJcrDao.saveAccount( retrievedUser );
+
+        JcrUser updatedUser = accountJcrDao.findUserById( user.getId() );
+        assertNotNull( updatedUser );
+        assertEquals( updatedUser.getEmail(), "john@enonic.com" );
+        assertEquals( retrievedUser.getId(), updatedUser.getId() );
+    }
+
+    @Test
+    public void createGroupTest()
+    {
+        final JcrUserStore userStore = newUserstore();
+        final JcrGroup group = newDummyGroup( userStore.getName() );
+
+        accountJcrDao.saveAccount( group );
+        assertNotNull( group.getId() );
+
+        JcrGroup retrievedGroup = accountJcrDao.findGroupById( group.getId() );
+        assertNotNull( retrievedGroup );
+        assertNotSame( retrievedGroup.getId(), group.getId() );
+        AssertAccounts.assertGroupEquals( group, retrievedGroup );
+    }
+
+    @Test
+    public void deleteGroupTest()
+    {
+        final JcrUserStore userStore = newUserstore();
+        final JcrGroup group = newDummyGroup( userStore.getName() );
+
+        accountJcrDao.saveAccount( group );
+        assertNotNull( group.getId() );
+
+        JcrGroup retrievedGroup = accountJcrDao.findGroupById( group.getId() );
+        assertNotNull( retrievedGroup );
+
+        accountJcrDao.deleteAccount( retrievedGroup );
+
+        JcrGroup deletedGroup = accountJcrDao.findGroupById( group.getId() );
+        assertNull( deletedGroup );
+    }
+
+    @Test
+    public void updateGroupTest()
+    {
+        final JcrUserStore userStore = newUserstore();
+        final JcrGroup group = newDummyGroup( userStore.getName() );
+
+        accountJcrDao.saveAccount( group );
+        assertNotNull( group.getId() );
+
+        JcrGroup retrievedGroup = accountJcrDao.findGroupById( group.getId() );
+        assertNotNull( retrievedGroup );
+
+        retrievedGroup.setDescription( "Legacy group" );
+        accountJcrDao.saveAccount( retrievedGroup );
+
+        JcrGroup updatedGroup = accountJcrDao.findGroupById( group.getId() );
+        assertNotNull( updatedGroup );
+        assertEquals( updatedGroup.getDescription(), "Legacy group" );
+        assertEquals( retrievedGroup.getId(), updatedGroup.getId() );
+    }
+
+    @Test
+    public void createRoleTest()
+    {
+        final JcrUserStore userStore = newUserstore();
+        final JcrRole role = newDummyRole( userStore.getName() );
+
+        accountJcrDao.saveAccount( role );
+        assertNotNull( role.getId() );
+
+        JcrRole retrievedRole = accountJcrDao.findRoleById( role.getId() );
+        assertNotNull( retrievedRole );
+        assertNotSame( retrievedRole.getId(), role.getId() );
+        AssertAccounts.assertGroupEquals( role, retrievedRole );
+    }
+
+    @Test
+    public void deleteRoleTest()
+    {
+        final JcrUserStore userStore = newUserstore();
+        final JcrRole role = newDummyRole( userStore.getName() );
+
+        accountJcrDao.saveAccount( role );
+        assertNotNull( role.getId() );
+
+        JcrRole retrievedRole = accountJcrDao.findRoleById( role.getId() );
+        assertNotNull( retrievedRole );
+
+        accountJcrDao.deleteAccount( retrievedRole );
+
+        JcrRole deletedRole = accountJcrDao.findRoleById( role.getId() );
+        assertNull( deletedRole );
+    }
+
+    @Test
+    public void updateRoleTest()
+    {
+        final JcrUserStore userStore = newUserstore();
+        final JcrRole role = newDummyRole( userStore.getName() );
+
+        accountJcrDao.saveAccount( role );
+        assertNotNull( role.getId() );
+
+        JcrRole retrievedRole = accountJcrDao.findRoleById( role.getId() );
+        assertNotNull( retrievedRole );
+
+        retrievedRole.setDescription( "Deprecated role" );
+        accountJcrDao.saveAccount( retrievedRole );
+
+        JcrRole updatedRole = accountJcrDao.findRoleById( role.getId() );
+        assertNotNull( updatedRole );
+        assertEquals( updatedRole.getDescription(), "Deprecated role" );
+        assertEquals( retrievedRole.getId(), updatedRole.getId() );
+    }
+
+    private JcrUser newDummyUser( final String userStoreName )
+    {
+        final JcrUser user = new JcrUser();
+        user.setName( "johnsmith" );
+        user.setEmail( "john.smith@company.com" );
+        user.setLastLogged( new DateTime() );
+        user.setDisplayName( "John Smith" );
+        user.setUserStore( userStoreName );
+        return user;
+    }
+
+    private JcrGroup newDummyGroup( final String userStoreName )
+    {
+        final JcrGroup group = new JcrGroup();
+        group.setName( "dummy" );
+        group.setDescription( "Dummy people group" );
+        group.setBuiltIn( false );
+        group.setDisplayName( "Dummy Group" );
+        group.setUserStore( userStoreName );
+        return group;
+    }
+
+    private JcrRole newDummyRole( final String userStoreName )
+    {
+        final JcrRole role = new JcrRole();
+        role.setName( "dummy" );
+        role.setDescription( "Gummy people group" );
+        role.setBuiltIn( true );
+        role.setDisplayName( "Dummy Group" );
+        role.setUserStore( userStoreName );
+        return role;
+    }
+
+    private JcrUserStore newUserstore()
+    {
+        final JcrUserStore userStore = new JcrUserStore();
+        userStore.setName( "enonic" );
+        userStore.setConnectorName( "local" );
+        userStore.setDefaultStore( true );
+        userStore.setXmlConfig( CONFIG_XML );
+
+        accountJcrDao.createUserStore( userStore );
+        return userStore;
+    }
 }

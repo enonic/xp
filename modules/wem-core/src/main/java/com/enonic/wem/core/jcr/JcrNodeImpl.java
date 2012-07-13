@@ -292,7 +292,7 @@ class JcrNodeImpl
             }
             else
             {
-                node.setProperty( relPath, value.toCalendar( Locale.getDefault() ) );
+                node.setProperty( relPath, value.toGregorianCalendar() );
             }
         }
         catch ( RepositoryException e )
