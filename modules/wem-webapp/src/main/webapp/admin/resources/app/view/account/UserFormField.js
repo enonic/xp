@@ -8,6 +8,9 @@ Ext.define('Admin.view.account.UserFormField', {
         type: 'hbox'
     },
 
+    validationUrls: {},
+    validationData: {},
+
     validationResultType: 'none',
 
     width: 1000,
@@ -115,12 +118,7 @@ Ext.define('Admin.view.account.UserFormField', {
         me.validationTask = new Ext.util.DelayedTask(function () {
             me.validate();
         });
-        var spinningWheelTask = new Ext.util.DelayedTask(function () {
-            var spinningWheel = me.down('#spinningWheel');
-            var validationLabel = me.down('#validationLabel');
-            spinningWheel.hide();
-            validationLabel.show();
-        });
+
         var fieldConfig = {
             enableKeyEvents: true,
             disabled: me.readonly,
@@ -143,10 +141,24 @@ Ext.define('Admin.view.account.UserFormField', {
                     if (me.delayValidation && (!event.isSpecialKey() ||
                                                (event.getKey() === event.BACKSPACE) ||
                                                (event.getKey() === event.DELETE))) {
+                        var spinningWheelTask = new Ext.util.DelayedTask(function () {
+                            var spinningWheel = me.down('#spinningWheel');
+                            var validationLabel = me.down('#validationLabel');
+                            if (spinningWheel) {
+                                spinningWheel.hide();
+                            }
+                            if (validationLabel) {
+                                validationLabel.show();
+                            }
+                        });
                         var spinningWheel = me.down('#spinningWheel');
                         var validationLabel = me.down('#validationLabel');
-                        spinningWheel.show();
-                        validationLabel.hide();
+                        if (spinningWheel) {
+                            spinningWheel.show();
+                        }
+                        if (validationLabel) {
+                            validationLabel.hide();
+                        }
                         spinningWheelTask.delay(me.delayValidationTime);
                     }
                 }
@@ -290,13 +302,11 @@ Ext.define('Admin.view.account.UserFormField', {
                 validationStatus.update({type: 'error', text: 'Invalid characters'});
                 return "Invalid characters";
             }
-            var userForm = me.up('editUserFormPanel');
-            var userStoreName = userForm.currentUser ? userForm.currentUser.userStore : userForm.defaultUserStoreName;
             Ext.Ajax.request({
-                url: 'data/account/userkey',
+                url: parentField.validationUrl,
                 method: 'GET',
                 params: {
-                    'userstore': userStoreName,
+                    'userstore': parentField.validationData.userStore,
                     'username': value
                 },
                 success: function (response) {
@@ -308,7 +318,7 @@ Ext.define('Admin.view.account.UserFormField', {
                         me.validValue = true;
                         validationStatus.update({type: 'info', text: 'Available'});
                     }
-                    me.validate();
+                    parentField.validate();
                 }
             });
         }
@@ -339,28 +349,23 @@ Ext.define('Admin.view.account.UserFormField', {
                 validationStatus.update({type: 'info', text: 'Valid e-mail'});
             }
 
-            var userForm = me.up('editUserFormPanel');
-            var userWizard = userForm.up('userWizardPanel');
-            var currentUserKey = (!userWizard.isNewUser()) ? userWizard.userFields.key : null;
-
-            var userStoreName = userForm.currentUser ? userForm.currentUser.userStore : userForm.defaultUserStoreName;
             Ext.Ajax.request({
-                url: 'data/account/verifyUniqueEmail',
+                url: parentField.validationUrl,
                 method: 'GET',
                 params: {
-                    'userstore': userStoreName,
+                    'userstore': parentField.validationData.userStore,
                     'email': value
                 },
                 success: function (response) {
                     var respObj = Ext.decode(response.responseText, true);
                     if (respObj.emailInUse) {
                         validationStatus.update({type: 'error', text: 'Not available'});
-                        me.validValue = (respObj.userkey === currentUserKey);
+                        me.validValue = (respObj.userkey === parentField.validationData.userKey);
                     } else {
                         validationStatus.update({type: 'info', text: 'Available'});
                         me.validValue = true;
                     }
-                    me.validate();
+                    parentField.validate();
                 }
             });
         }

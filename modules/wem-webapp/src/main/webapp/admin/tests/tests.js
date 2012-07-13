@@ -2,12 +2,12 @@ var Harness = Siesta.Harness.Browser.ExtJS;
 
 Harness.configure({
     title: 'Admin Test Suite',
-
     loaderPath: {
         'App': 'app/account/js',
         'Common': 'common/js',
         'Main': 'app/main/js',
-        'Admin': 'resources/app'
+        'Admin': 'resources/app',
+        'Test': 'tests'
     },
 
     testClass: AdminTestUtil,
@@ -20,7 +20,7 @@ Harness.configure({
         'resources/css/user-preview-panel.css',
         'resources/css/BoxSelect.css',
         'resources/app/view/XTemplates.js',
-        'resources/lib/ext/ext-all.js'
+        'resources/lib/ext/ext-all-debug.js'
     ]
 });
 
@@ -39,7 +39,8 @@ Harness.start(
             'tests/account/test_Sanity.js',
             'tests/account/test_AccountModel.js',
             'tests/account/test_ChangePasswordWindow.js',
-            'tests/account/test_DoublePasswordField.js'
+            'tests/account/test_DoublePasswordField.js',
+            'tests/account/test_EditUserFormPanel.js'
         ]
     },
     {
