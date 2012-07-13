@@ -355,6 +355,7 @@ public class AccountJcrDaoImpl
 
         JcrNode userstoreNode = userstoresNode.addNode( userStoreName, JcrWemConstants.USERSTORE_NODE_TYPE );
         userStoreJcrMapping.userStoreToJcr( userStore, userstoreNode );
+        userStore.setId( userstoreNode.getIdentifier() );
 
         userstoreNode.addNode( JcrWemConstants.GROUPS_NODE, JcrWemConstants.GROUPS_NODE_TYPE );
         userstoreNode.addNode( JcrWemConstants.USERS_NODE, JcrWemConstants.USERS_NODE_TYPE );
