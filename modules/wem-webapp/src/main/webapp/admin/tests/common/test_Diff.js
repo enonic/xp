@@ -717,33 +717,23 @@ StartTest(function (t) {
     t.requireOk(
         [
             'Admin.plugin.Diff',
-            'Admin.store.account.UserstoreConfigStore',
             'Admin.view.account.EditUserFormPanel'
         ],
         function () {
 
             var diff = Admin.plugin.Diff;
-            var us = Ext.create('Admin.store.account.UserstoreConfigStore', {
-                // needed to be able to lookup it, added automatically by controller
-                storeId: 'Admin.store.account.UserstoreConfigStore',
-                listeners: {
-                    load: function () {
 
-                        testObjects(t, diff);
-                        testObjects(t, diff, true);
+            testObjects(t, diff);
+            testObjects(t, diff, true);
 
-                        testUsers(t, diff);
-                        testUsers(t, diff, true);
+            testUsers(t, diff);
+            testUsers(t, diff, true);
 
-                        testGroups(t, diff);
-                        testGroups(t, diff, true);
+            testGroups(t, diff);
+            testGroups(t, diff, true);
 
-                        testUserstores(t, diff);
-                        testUserstores(t, diff, true);
-
-                    }
-                }
-            });
+            testUserstores(t, diff);
+            testUserstores(t, diff, true);
         }
     );
 });
