@@ -479,4 +479,18 @@ public class AccountJcrMappingTest
         assertNull( nullType );
     }
 
+    @Test
+    public void genderTypeTest()
+    {
+        final Gender male = Gender.fromName( "male" );
+        final Gender female = Gender.fromName( "female" );
+        final Gender nullType = Gender.fromName( null );
+        final Gender unknownType = Gender.fromName( "invalidType" );
+
+        assertEquals( Gender.MALE, male );
+        assertEquals( Gender.FEMALE, female );
+        assertNull( unknownType );
+        assertNull( nullType );
+    }
+
 }

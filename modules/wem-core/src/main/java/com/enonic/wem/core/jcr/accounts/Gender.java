@@ -13,7 +13,7 @@ public enum Gender
         }
         try
         {
-            return Gender.valueOf( name );
+            return Gender.valueOf( name.toUpperCase() );
         }
         catch ( IllegalArgumentException e )
         {

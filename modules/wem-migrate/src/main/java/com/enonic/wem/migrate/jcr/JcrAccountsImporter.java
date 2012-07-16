@@ -162,7 +162,7 @@ public class JcrAccountsImporter
         {
             return;
         }
-        accountDao.addMembership( groupId, memberId );
+        accountDao.addMemberships( groupId, memberId );
         LOG.info( "Added account " + memberKey + " as member of " + groupKey );
     }
 

@@ -40,5 +40,5 @@ public interface AccountJcrDao
 
     void addMemberships( String groupId, Collection<String> memberIds );
 
-    void addMembership( String groupId, String memberId );
+    void addMemberships( String groupId, String... memberId );
 }

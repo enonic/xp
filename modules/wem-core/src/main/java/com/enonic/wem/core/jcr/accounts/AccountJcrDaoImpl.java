@@ -2,6 +2,7 @@ package com.enonic.wem.core.jcr.accounts;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -311,19 +312,9 @@ public class AccountJcrDaoImpl
     }
 
     @Override
-    public void addMembership( final String groupId, final String memberId )
+    public void addMemberships( final String groupId, final String... memberIds )
     {
-        getTemplate().execute( new JcrCallback()
-        {
-            @Override
-            public Object doInJcr( final JcrSession session )
-                throws IOException, RepositoryException
-            {
-                addMembershipJcr( session, groupId, memberId );
-                session.save();
-                return null;
-            }
-        } );
+        addMemberships( groupId, Arrays.asList( memberIds ) );
     }
 
     private void addMembershipJcr( JcrSession session, final String groupId, final String memberId )
@@ -659,7 +650,6 @@ public class AccountJcrDaoImpl
             final JcrNode groupNode = memberOwnerNode.getParent().getParent();
 
             final String groupId = groupNode.getIdentifier();
-            // TODO: roles
             final JcrGroup group = this.queryGroupById( session, groupId, false );
             if ( group != null )
             {
@@ -711,7 +701,14 @@ public class AccountJcrDaoImpl
         final JcrNode groupNode = session.getNodeByIdentifier( groupId );
         if ( ( groupNode != null ) && ( groupNode.isNodeType( GROUP_NODE_TYPE ) ) )
         {
-            return buildGroup( session, groupNode, includeMembers );
+            if ( groupNode.isNodeType( ROLE_NODE_TYPE ) )
+            {
+                return buildRole( session, groupNode, includeMembers );
+            }
+            else
+            {
+                return buildGroup( session, groupNode, includeMembers );
+            }
         }
         else
         {
@@ -743,22 +740,38 @@ public class AccountJcrDaoImpl
         {
             setGroupMembers( session, roleNode, role );
         }
+        else
+        {
+            role.setMembersCount( countGroupMembers( roleNode ) );
+        }
         return role;
     }
 
     private JcrGroup buildGroup( JcrSession session, JcrNode groupNode, boolean includeMembers )
     {
         final JcrGroup group = accountJcrMapping.toGroup( groupNode );
+
         if ( includeMembers )
         {
             setGroupMembers( session, groupNode, group );
         }
+        else
+        {
+            group.setMembersCount( countGroupMembers( groupNode ) );
+        }
         return group;
+    }
+
+    private int countGroupMembers( final JcrNode groupNode )
+    {
+        final JcrNodeIterator memberIterator = groupNode.getNode( MEMBERS_NODE ).getNodes( MEMBER_NODE );
+        return Ints.saturatedCast( memberIterator.getSize() );
     }
 
     private void setGroupMembers( JcrSession session, JcrNode groupNode, JcrGroup group )
     {
         final JcrNodeIterator memberIterator = groupNode.getNode( MEMBERS_NODE ).getNodes( MEMBER_NODE );
+        group.setMembersCount( Ints.saturatedCast( memberIterator.getSize() ) );
         while ( memberIterator.hasNext() )
         {
             final JcrNode memberRef = memberIterator.next();
