@@ -1,16 +1,21 @@
 package com.enonic.wem.web.rest2.resource.account;
 
+import java.awt.image.BufferedImage;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -45,6 +50,7 @@ import com.enonic.wem.web.rest.account.AccountsModel;
 import com.enonic.wem.web.rest.account.GroupRestResponse;
 import com.enonic.wem.web.rest.account.SearchFacetModel;
 import com.enonic.wem.web.rest.account.UserIdGenerator;
+import com.enonic.wem.web.rest.account.UserPhotoService;
 import com.enonic.wem.web.rest.account.UserRestResponse;
 import com.enonic.wem.web.rest.common.RestResponse;
 
@@ -102,6 +108,9 @@ public final class AccountResource
 
     @Autowired
     private AccountJcrDao accountJcrDao;
+
+    @Autowired
+    private UserPhotoService photoService;
 
     @GET
     @Path("search")
@@ -461,6 +470,40 @@ public final class AccountResource
 
         res.setSuccess( success );
         return res;
+    }
+
+    @GET
+    @Path("photo")
+    @Produces("image/png")
+    public Response getPhoto( @QueryParam("key") final String key,
+                            @QueryParam("thumb") @DefaultValue("false") final boolean thumb,
+                            @QueryParam("def") @DefaultValue("") final String defaultImageUrl,
+                            @Context HttpServletRequest request )
+        throws Exception
+    {
+        final JcrAccount account = accountJcrDao.findAccountById( key );
+        if ( account == null )
+        {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        final byte[] photo = accountJcrDao.findUserPhotoById( key );
+        if ( photo == null )
+        {
+            if ( defaultImageUrl == null )
+            {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+            else
+            {
+                String redirectUrl = defaultImageUrl.startsWith( "http://" )
+                    ? defaultImageUrl
+                    : String.format( "%s/%s", request.getContextPath(), defaultImageUrl );
+                return Response.seeOther( new URI( redirectUrl ) ).build();
+            }
+        }
+
+        final BufferedImage image = this.photoService.renderPhoto( photo, thumb ? 40 : 100 );
+        return Response.ok( image ).build();
     }
 
     private void removeAccountIndex( final String accountKey )

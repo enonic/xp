@@ -3,6 +3,7 @@ package com.enonic.wem.core.jcr;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -16,6 +17,9 @@ import org.joda.time.DateTime;
 class JcrSessionImpl
     implements JcrSession
 {
+    // UUID pattern: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    private final static Pattern NODE_ID_PATTERN = Pattern.compile( "[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}" );
+
     private final Session session;
 
     private final JcrRepository repository;
@@ -58,8 +62,13 @@ class JcrSessionImpl
     }
 
     @Override
-    public JcrNode getNodeByIdentifier( String id )
+    public JcrNode getNodeByIdentifier( final String id )
     {
+        // check id format to avoid generic RepositoryException thrown
+        if ( !isValidUUID( id ) )
+        {
+            return null;
+        }
         try
         {
             return new JcrNodeImpl( session.getNodeByIdentifier( id ) );
@@ -358,5 +367,10 @@ class JcrSessionImpl
     private Date calendarToDate( Calendar calendar )
     {
         return calendar == null ? null : calendar.getTime();
+    }
+
+    private boolean isValidUUID( final String id )
+    {
+        return NODE_ID_PATTERN.matcher( id ).matches();
     }
 }

@@ -3,7 +3,6 @@ package com.enonic.wem.core.jcr;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;

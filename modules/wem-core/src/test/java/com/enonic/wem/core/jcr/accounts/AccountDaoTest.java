@@ -415,9 +415,11 @@ public class AccountDaoTest
 
         assertTrue( updatedUser.getMemberships().contains( group ) );
         assertTrue( updatedGroup.hasMember( updatedUser ) );
+        assertTrue( updatedUser.isMemberOf( updatedGroup ) );
 
         assertTrue( updatedUser.getMemberships().contains( role ) );
         assertTrue( updatedRole.hasMember( updatedUser ) );
+        assertTrue( updatedUser.isMemberOf( updatedRole ) );
 
         assertFalse( updatedUser2.getMemberships().contains( group ) );
         assertTrue( updatedUser2.getMemberships().contains( role ) );
