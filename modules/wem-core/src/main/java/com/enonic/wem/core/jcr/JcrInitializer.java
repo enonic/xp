@@ -77,7 +77,7 @@ public class JcrInitializer
     }
 
     private void registerCustomNodeTypes( Session session )
-        throws RepositoryException, IOException
+        throws IOException
     {
         final Reader fileReader = new InputStreamReader( compactNodeDefinitionFile.getInputStream() );
         try

@@ -116,6 +116,12 @@ public class MockJcrNode
     }
 
     @Override
+    public void addMixin( final String mixinName )
+    {
+
+    }
+
+    @Override
     public boolean hasProperty( final String relPath )
     {
         return properties.containsKey( relPath );
@@ -176,6 +182,12 @@ public class MockJcrNode
     }
 
     @Override
+    public JcrNode getPropertyReference( final String relPath )
+    {
+        return (JcrNode) properties.get( relPath );
+    }
+
+    @Override
     public void setPropertyString( final String relPath, final String value )
     {
         properties.put( relPath, value );
@@ -220,7 +232,7 @@ public class MockJcrNode
     @Override
     public void setPropertyReference( final String name, final JcrNode value )
     {
-
+        properties.put( name, value );
     }
 
     @Override

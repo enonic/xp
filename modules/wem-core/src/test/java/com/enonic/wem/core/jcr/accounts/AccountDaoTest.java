@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 
 public class AccountDaoTest
     extends AbstractSpringTest
-
 {
     private static final String CONFIG_XML =
         "<?xml version=\"1.0\"?><config><user-fields><prefix/><first-name/><middle-name/><last-name/><suffix/><initials/><nick-name/></user-fields></config>";

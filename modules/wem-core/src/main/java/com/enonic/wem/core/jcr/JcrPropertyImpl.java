@@ -1,12 +1,19 @@
 package com.enonic.wem.core.jcr;
 
+import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
 
+import javax.jcr.Binary;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.jackrabbit.value.BinaryValue;
+import org.joda.time.DateTime;
+
 class JcrPropertyImpl
-        implements JcrProperty
+    implements JcrProperty
 {
     private final Property property;
 
@@ -68,11 +75,31 @@ class JcrPropertyImpl
     }
 
     @Override
-    public void setValue( Calendar value )
+    public void setValue( Date value )
     {
         try
         {
-            property.setValue( value );
+            property.setValue( dateToCalendar( value ) );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
+
+    @Override
+    public void setValue( final DateTime value )
+    {
+        try
+        {
+            if ( value == null )
+            {
+                property.setValue( (Calendar) null );
+            }
+            else
+            {
+                property.setValue( value.toGregorianCalendar() );
+            }
         }
         catch ( RepositoryException e )
         {
@@ -99,6 +126,19 @@ class JcrPropertyImpl
         try
         {
             property.setValue( ( (JcrNodeImpl) value ).getInternalNode() );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
+
+    @Override
+    public void setValue( final byte[] value )
+    {
+        try
+        {
+            property.setValue( new BinaryValue( value ) );
         }
         catch ( RepositoryException e )
         {
@@ -146,11 +186,24 @@ class JcrPropertyImpl
     }
 
     @Override
-    public Calendar getDate()
+    public Date getDate()
     {
         try
         {
-            return property.getDate();
+            return calendarToDate( property.getDate() );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
+
+    @Override
+    public DateTime getDateTime()
+    {
+        try
+        {
+            return property == null ? null : new DateTime( property.getDate() );
         }
         catch ( RepositoryException e )
         {
@@ -185,6 +238,24 @@ class JcrPropertyImpl
     }
 
     @Override
+    public byte[] getBinary()
+    {
+        try
+        {
+            final Binary binaryValue = property.getValue().getBinary();
+            return IOUtils.toByteArray( binaryValue.getStream() );
+        }
+        catch ( IOException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
+
+    @Override
     public JcrNode getParent()
     {
         try
@@ -196,4 +267,21 @@ class JcrPropertyImpl
             throw new RepositoryRuntimeException( e );
         }
     }
+
+    private Calendar dateToCalendar( Date date )
+    {
+        if ( date == null )
+        {
+            return null;
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime( date );
+        return cal;
+    }
+
+    private Date calendarToDate( Calendar calendar )
+    {
+        return calendar == null ? null : calendar.getTime();
+    }
+
 }

@@ -12,6 +12,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
 class JcrSessionImpl
@@ -121,7 +122,7 @@ class JcrSessionImpl
         {
             try
             {
-                return new JcrNodeImpl( session.getRootNode().addNode( absPath ) );
+                return new JcrNodeImpl( session.getRootNode().addNode( StringUtils.removeStart( absPath, "/" ) ) );
             }
             catch ( RepositoryException re )
             {

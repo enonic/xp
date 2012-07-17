@@ -1,34 +1,44 @@
 package com.enonic.wem.core.jcr;
 
-import java.util.Calendar;
+import java.util.Date;
+
+import org.joda.time.DateTime;
 
 public interface JcrProperty
 {
-    public void setValue( String value );
+    void setValue( String value );
 
-    public void setValue( String[] values );
+    void setValue( String[] values );
 
-    public void setValue( long value );
+    void setValue( long value );
 
-    public void setValue( double value );
+    void setValue( double value );
 
-    public void setValue( Calendar value );
+    void setValue( Date value );
 
-    public void setValue( boolean value );
+    void setValue( DateTime value );
 
-    public void setValue( JcrNode value );
+    void setValue( boolean value );
 
-    public String getString();
+    void setValue( JcrNode value );
 
-    public long getLong();
+    void setValue( byte[] value );
 
-    public double getDouble();
+    String getString();
 
-    public Calendar getDate();
+    long getLong();
 
-    public boolean getBoolean();
+    double getDouble();
 
-    public JcrNode getNode();
+    Date getDate();
 
-    public JcrNode getParent();
+    DateTime getDateTime();
+
+    boolean getBoolean();
+
+    JcrNode getNode();
+
+    byte[] getBinary();
+
+    JcrNode getParent();
 }

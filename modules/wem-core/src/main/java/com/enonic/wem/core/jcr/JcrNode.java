@@ -16,6 +16,8 @@ public interface JcrNode
 
     JcrNode getParent();
 
+    void addMixin(String mixinName);
+
     boolean hasProperty( String relPath );
 
     JcrProperty getProperty( String relPath );
@@ -35,6 +37,8 @@ public interface JcrNode
     Date getPropertyDate( String relPath );
 
     DateTime getPropertyDateTime( String relPath );
+
+    JcrNode getPropertyReference( String relPath );
 
     void setPropertyString( String relPath, String value );
 

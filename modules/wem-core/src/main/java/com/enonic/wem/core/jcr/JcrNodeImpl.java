@@ -216,6 +216,19 @@ class JcrNodeImpl
     }
 
     @Override
+    public JcrNode getPropertyReference( String relPath ){
+        Property property = getInternalProperty( relPath );
+        try
+        {
+            return property == null ? null : new JcrNodeImpl( property.getNode() );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
+    }
+
+    @Override
     public void setPropertyString( String relPath, String value )
     {
         try
@@ -380,6 +393,19 @@ class JcrNodeImpl
             }
         }
         return parent;
+    }
+
+    @Override
+    public void addMixin( String mixinName )
+    {
+        try
+        {
+            node.addMixin( mixinName );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RepositoryRuntimeException( e );
+        }
     }
 
     @Override

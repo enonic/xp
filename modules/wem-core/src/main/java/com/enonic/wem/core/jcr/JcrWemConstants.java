@@ -39,10 +39,6 @@ public class JcrWemConstants
 
     public static final String ACCOUNT_NODE_TYPE = "cms:account";
 
-    public static final String SYSTEM_USERSTORE_NODE = "system";
-
-    public static final int SYSTEM_USERSTORE_KEY = 0;
-
     public static final String USERSTORES_PATH = JcrWemConstants.ROOT_NODE + "/" + JcrWemConstants.USERSTORES_NODE + "/";
 
     public static final String USERSTORES_ABSOLUTE_PATH = "/" + USERSTORES_PATH;
