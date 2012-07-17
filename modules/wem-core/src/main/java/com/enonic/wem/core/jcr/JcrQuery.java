@@ -31,6 +31,8 @@ public class JcrQuery
 
     private final static String SELECTOR_NAME = "selectorName";
 
+    private final static String BASE_NODE_TYPE = "nt:base";
+
     private final JcrSession session;
 
     private QueryObjectModelFactory objectModelFactory;
@@ -196,6 +198,7 @@ public class JcrQuery
         {
             final QueryObjectModelFactory factory = getModelFactory();
 
+            final String nodeType = ( this.nodeType == null ) ? BASE_NODE_TYPE : this.nodeType;
             final Selector source = factory.selector( nodeType, SELECTOR_NAME );
             final Column[] columns = null;
             final Ordering[] orderings = null;
