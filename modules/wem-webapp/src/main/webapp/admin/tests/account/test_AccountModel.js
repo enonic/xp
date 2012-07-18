@@ -4,7 +4,7 @@ StartTest(function (t) {
 
         var model = t.createUserModel();
 
-        t.is(model.get('displayName'), 'Jorgen Sivesind', 'Found display name');
+        t.is(model.get('displayName'), 'J\u00F6rgen Sivesind', 'Found display name, utf chars ok');
         t.is(model.get('email'), 'jsi@enonic.com', 'Could read email');
     });
 });

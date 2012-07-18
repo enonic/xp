@@ -11,7 +11,7 @@ Class('AdminTestUtil', {
                 'name': 'jsi',
                 'email': 'jsi@enonic.com',
                 'qualifiedName': 'enonic\\jsi',
-                'displayName': 'J�rgen Sivesind',
+                'displayName': 'J\u00F6rgen Sivesind',
                 'userStore': 'enonic',
                 'lastModified': '2009-11-05 10:50:04',
                 'hasPhoto': true,
