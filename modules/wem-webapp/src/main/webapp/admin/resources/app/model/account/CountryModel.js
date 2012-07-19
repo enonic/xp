@@ -1,7 +1,12 @@
 Ext.define('Admin.model.account.CountryModel', {
     extend: 'Ext.data.Model',
 
-    idField: 'code',
+    requires: [
+        'Admin.model.account.RegionModel',
+        'Admin.model.account.CallingCodeModel'
+    ],
+
+    idProperty: 'code',
 
     fields: [
         'code',

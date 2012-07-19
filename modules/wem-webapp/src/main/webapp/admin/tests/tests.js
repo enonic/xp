@@ -39,6 +39,7 @@ Harness.start(
         items: [
             'tests/account/test_Sanity.js',
             'tests/account/test_AccountModel.js',
+            'tests/account/test_CountryModel.js',
             'tests/account/test_ChangePasswordWindow.js',
             'tests/account/test_DoublePasswordField.js',
             'tests/account/test_EditUserFormPanel.js'
