@@ -252,7 +252,6 @@ Ext.define('Admin.view.account.UserFormField', {
                 validator: me.validatePassword
             };
         }
-//        passwordConfig.validator = me.validatePassword;
         return Ext.apply(fieldConfig, passwordConfig);
     },
 
@@ -394,6 +393,14 @@ Ext.define('Admin.view.account.UserFormField', {
                 item.validate();
             }
         });
+    },
+
+    getValue: function () {
+        return this.down('#' + this.fieldname).getValue();
+    },
+
+    isValid: function () {
+        return this.down('#' + this.fieldname).isValid();
     }
 
 

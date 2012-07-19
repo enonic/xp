@@ -41,7 +41,8 @@ Harness.start(
             'tests/account/test_AccountModel.js',
             'tests/account/test_ChangePasswordWindow.js',
             'tests/account/test_DoublePasswordField.js',
-            'tests/account/test_EditUserFormPanel.js'
+            'tests/account/test_EditUserFormPanel.js',
+            'tests/account/test_UserFormField.js'
         ]
     },
     {
