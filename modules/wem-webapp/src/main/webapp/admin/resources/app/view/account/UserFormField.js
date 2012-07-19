@@ -71,6 +71,7 @@ Ext.define('Admin.view.account.UserFormField', {
         }
 
         me.callParent(arguments);
+        me.childField = me.down('#' + me.fieldname);
         me.addEvents('validitychange');
     },
 
@@ -401,7 +402,20 @@ Ext.define('Admin.view.account.UserFormField', {
 
     isValid: function () {
         return this.down('#' + this.fieldname).isValid();
+    },
+
+    onDestroy: function () {
+        // Cancel validation task if any
+        if (this.validationTask) {
+            this.validationTask.cancel();
+        }
+        // Cancel typeAheadTask if any. Either it can break tests
+        if (this.childField && this.childField.typeAheadTask) {
+            this.childField.typeAheadTask.cancel();
+        }
+        this.callParent();
     }
+
 
 
 });

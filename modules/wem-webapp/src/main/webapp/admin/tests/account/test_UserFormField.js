@@ -81,7 +81,7 @@ function testAutocompleteField(t) {
             },
             function () {
                 t.is(uff.getValue(), 2, 'Autocomplete was correct');
-                Ext.destroy(uff);
+                Ext.destroy(uff.down('combobox'), uff);
             }
         );
     });
