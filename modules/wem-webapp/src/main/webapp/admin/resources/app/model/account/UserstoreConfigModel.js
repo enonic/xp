@@ -10,5 +10,9 @@ Ext.define('Admin.model.account.UserstoreConfigModel', {
         'connectorName',
         'configXML',
         { name: 'lastModified', type: 'date', defaultValue: new Date() }
+    ],
+
+    hasMany: [
+        { model: 'Admin.model.account.UserFieldModel', name: 'userFields'}
     ]
 });
