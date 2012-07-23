@@ -43,7 +43,32 @@ Harness.start(
             'tests/account/test_ChangePasswordWindow.js',
             'tests/account/test_DoublePasswordField.js',
             'tests/account/test_EditUserFormPanel.js',
-            'tests/account/test_UserFormField.js'
+            'tests/account/test_UserFormField.js',
+            'tests/account/test_UserstoreConfigModel.js',
+            'tests/account/test_GroupModel.js',
+            'tests/account/test_LanguageModel.js',
+            'tests/account/test_LocaleModel.js',
+            'tests/account/test_TimezoneModel.js',
+            'tests/account/test_UserFieldModel.js'
+        ]
+    },
+    {
+        group: 'Content Manager',
+        items: [
+            'tests/contentManager/test_ContentManagerModel.js'
+        ]
+    },
+    {
+        group: 'Data Designer',
+        items: [
+            'tests/datadesigner/test_ContentTypeModel.js'
+        ]
+    },
+    {
+        group: 'Userstore',
+        items: [
+            'tests/userstore/test_UserstoreConfigModel.js',
+            'tests/userstore/test_UserstoreConnectorModel.js'
         ]
     },
     {

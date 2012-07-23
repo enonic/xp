@@ -160,8 +160,8 @@
             "userCount": 10,
             "groupCount": 32,
             "created": "2012-07-09 15:24:18",
-            "lastModified": "2012-07-09 15:24:18",
-            "configXML": null,
+            "lastModified": "2012-07-09",
+            "configXML": "<config><user-fields></user-fields></config>",
             "userFields": [
                 {
                     "type": "firstName",
