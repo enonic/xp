@@ -13,4 +13,9 @@ public interface FieldType
 
     FieldTypeJsonGenerator getJsonGenerator();
 
+    boolean requiresConfig();
+
+    Class requiredConfigClass();
+
+    FieldTypeConfigJsonGenerator getFieldTypeConfigJsonGenerator();
 }

@@ -4,6 +4,7 @@ package com.enonic.wem.core.content.config.field;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.config.field.type.FieldType;
+import com.enonic.wem.core.content.config.field.type.FieldTypeConfig;
 
 public class Field
     extends ConfigItem
@@ -29,9 +30,14 @@ public class Field
 
     private String helpText;
 
-    private Object fieldConfig;
+    private FieldTypeConfig fieldTypeConfig;
 
-    public FieldType getType()
+    protected Field()
+    {
+        super( ConfigType.FIELD );
+    }
+
+    public FieldType getFieldType()
     {
         return type;
     }
@@ -81,9 +87,9 @@ public class Field
         return helpText;
     }
 
-    public Object getFieldConfig()
+    public FieldTypeConfig getFieldTypeConfig()
     {
-        return fieldConfig;
+        return fieldTypeConfig;
     }
 
     @Override
@@ -198,17 +204,30 @@ public class Field
             return this;
         }
 
-        public Builder fieldConfig( Object object )
+        public Builder fieldTypeConfig( FieldTypeConfig value )
         {
-            field.fieldConfig = object;
+            field.fieldTypeConfig = value;
             return this;
         }
 
         public Field build()
         {
             Preconditions.checkNotNull( field.getName(), "name cannot be null" );
-            Preconditions.checkNotNull( field.getType(), "type cannot be null" );
+            Preconditions.checkNotNull( field.getFieldType(), "type cannot be null" );
 
+            if ( field.getFieldType().requiresConfig() )
+            {
+                Preconditions.checkArgument( field.getFieldTypeConfig() != null,
+                                             "Field [name='%s', type=%s] is missing required FieldTypeConfig: %s", field.getName(),
+                                             field.getFieldType().getName(), field.getFieldType().requiredConfigClass().getName() );
+
+                Preconditions.checkArgument( field.getFieldType().requiredConfigClass().isInstance( field.getFieldTypeConfig() ),
+                                             "Field [name='%s', type=%s] expects FieldTypeConfig of type [%s] but was: %s", field.getName(),
+                                             field.getFieldType().getName(), field.getFieldType().requiredConfigClass().getName(),
+                                             field.getFieldTypeConfig().getClass().getName() );
+            }
+
+            field.setPath( new FieldPath( field.getName() ) );
             return field;
         }
     }

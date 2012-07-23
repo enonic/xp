@@ -5,26 +5,40 @@ import org.junit.Test;
 
 import com.enonic.wem.core.content.config.field.ConfigItems;
 import com.enonic.wem.core.content.config.field.Field;
-import com.enonic.wem.core.content.config.field.RadioButtonsConfig;
 import com.enonic.wem.core.content.config.field.SubType;
-import com.enonic.wem.core.content.config.field.type.BuiltInFieldTypes;
+import com.enonic.wem.core.content.config.field.type.DropdownConfig;
+import com.enonic.wem.core.content.config.field.type.FieldTypes;
+import com.enonic.wem.core.content.config.field.type.RadioButtonsConfig;
 
 public class ContentDataTest
 {
     @Test
-    public void asdfasdf()
+    public void dropdown()
     {
         ConfigItems dataConfig = new ConfigItems();
-        dataConfig.addField( Field.newBuilder().name( "myTextLine" ).type( BuiltInFieldTypes.textline ).build() );
-        dataConfig.addField( Field.newBuilder().name( "myTextArea" ).type( BuiltInFieldTypes.textarea ).build() );
-        dataConfig.addField( Field.newBuilder().name( "myDropdown" ).type( BuiltInFieldTypes.dropdown ).build() );
-        dataConfig.addField( Field.newBuilder().name( "myPhone" ).type( BuiltInFieldTypes.phone ).required( true ).build() );
+        DropdownConfig dropdownConfig = DropdownConfig.newBuilder().addOption( "o1", "Option 1" ).build();
+        dataConfig.addField(
+            Field.newBuilder().name( "myDropdown" ).type( FieldTypes.dropdown ).fieldTypeConfig( dropdownConfig ).build() );
 
         ContentData contentData = new ContentData( dataConfig );
-        contentData.setFieldValue( "myTextLine", "A line of text" );
-        contentData.setFieldValue( "myTextArea", "A line of text.\nAnother line of text." );
         contentData.setFieldValue( "myDropdown", "V1" );
-        contentData.setFieldValue( "myPhone", "98327891" );
+
+        ContentDataJsonGenerator generator = new ContentDataJsonGenerator();
+        String json = generator.toJson( contentData );
+        System.out.println( json );
+    }
+
+    @Test
+    public void radioButtons()
+    {
+        ConfigItems dataConfig = new ConfigItems();
+        RadioButtonsConfig myRadioButtonsConfig =
+            RadioButtonsConfig.newBuilder().addOption( "myFirstChoice", "c1" ).addOption( "mySecondChoice", "c2" ).build();
+        dataConfig.addField(
+            Field.newBuilder().name( "myRadioButtons" ).type( FieldTypes.radioButtons ).fieldTypeConfig( myRadioButtonsConfig ).build() );
+
+        ContentData contentData = new ContentData( dataConfig );
+        contentData.setFieldValue( "myRadioButtons", "V1" );
 
         ContentDataJsonGenerator generator = new ContentDataJsonGenerator();
         String json = generator.toJson( contentData );
@@ -35,9 +49,9 @@ public class ContentDataTest
     public void multiple_textlines()
     {
         ConfigItems dataConfig = new ConfigItems();
-        dataConfig.addField( Field.newBuilder().name( "myTextLine" ).type( BuiltInFieldTypes.textline ).build() );
+        dataConfig.addField( Field.newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );
         dataConfig.addField(
-            Field.newBuilder().name( "myMultipleTextLine" ).type( BuiltInFieldTypes.textline ).required( false ).multiple( true ).build() );
+            Field.newBuilder().name( "myMultipleTextLine" ).type( FieldTypes.textline ).required( false ).multiple( true ).build() );
 
         ContentData contentData = new ContentData( dataConfig );
         contentData.setFieldValue( "myTextLine", "A single line" );
@@ -53,7 +67,7 @@ public class ContentDataTest
     public void tags()
     {
         ConfigItems dataConfig = new ConfigItems();
-        dataConfig.addField( Field.newBuilder().name( "myTags" ).type( BuiltInFieldTypes.tags ).build() );
+        dataConfig.addField( Field.newBuilder().name( "myTags" ).type( FieldTypes.tags ).build() );
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
         ContentData contentData = new ContentData( dataConfig );
@@ -68,7 +82,7 @@ public class ContentDataTest
     public void phone()
     {
         ConfigItems dataConfig = new ConfigItems();
-        dataConfig.addField( Field.newBuilder().name( "myPhone" ).type( BuiltInFieldTypes.phone ).required( true ).build() );
+        dataConfig.addField( Field.newBuilder().name( "myPhone" ).type( FieldTypes.phone ).required( true ).build() );
 
         ContentData contentData = new ContentData( dataConfig );
         contentData.setFieldValue( "myPhone", "98327891" );
@@ -85,9 +99,8 @@ public class ContentDataTest
             RadioButtonsConfig.newBuilder().addOption( "Norway", "NO" ).addOption( "South Africa", "ZA" ).build();
 
         ConfigItems dataConfig = new ConfigItems();
-        dataConfig.addField(
-            Field.newBuilder().name( "myRadiobuttons" ).type( BuiltInFieldTypes.radioButtons ).required( true ).fieldConfig(
-                radioButtonsConfig ).build() );
+        dataConfig.addField( Field.newBuilder().name( "myRadiobuttons" ).type( FieldTypes.radioButtons ).required( true ).fieldTypeConfig(
+            radioButtonsConfig ).build() );
 
         ContentData contentData = new ContentData( dataConfig );
         contentData.setFieldValue( "myRadiobuttons", "Norway" );
@@ -101,15 +114,15 @@ public class ContentDataTest
     public void subtype()
     {
         ConfigItems dataConfig = new ConfigItems();
-        dataConfig.addField( Field.newBuilder().name( "name" ).type( BuiltInFieldTypes.textline ).required( true ).build() );
+        dataConfig.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
 
         SubType.Builder subTypeBuilder = SubType.newBuilder();
         subTypeBuilder.name( "personalia" );
         subTypeBuilder.label( "Personalia" );
         SubType subType = subTypeBuilder.build();
         dataConfig.addField( subType );
-        subType.addField( Field.newBuilder().name( "eyeColour" ).type( BuiltInFieldTypes.textline ).build() );
-        subType.addField( Field.newBuilder().name( "hairColour" ).type( BuiltInFieldTypes.textline ).build() );
+        subType.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        subType.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
         ContentData contentData = new ContentData( dataConfig );
         contentData.setFieldValue( "name", "Ola Nordmann" );
@@ -125,7 +138,7 @@ public class ContentDataTest
     public void multiple_subtype()
     {
         ConfigItems dataConfig = new ConfigItems();
-        dataConfig.addField( Field.newBuilder().name( "name" ).type( BuiltInFieldTypes.textline ).required( true ).build() );
+        dataConfig.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
 
         SubType.Builder subTypeBuilder = SubType.newBuilder();
         subTypeBuilder.name( "personalia" );
@@ -133,9 +146,9 @@ public class ContentDataTest
         subTypeBuilder.multiple( true );
         SubType subType = subTypeBuilder.build();
         dataConfig.addField( subType );
-        subType.addField( Field.newBuilder().name( "name" ).type( BuiltInFieldTypes.textline ).build() );
-        subType.addField( Field.newBuilder().name( "eyeColour" ).type( BuiltInFieldTypes.textline ).build() );
-        subType.addField( Field.newBuilder().name( "hairColour" ).type( BuiltInFieldTypes.textline ).build() );
+        subType.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
+        subType.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        subType.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
         ContentData contentData = new ContentData( dataConfig );
         contentData.setFieldValue( "name", "Norske" );

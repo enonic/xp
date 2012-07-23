@@ -37,4 +37,53 @@ public abstract class AbstractBaseFieldType
 
     public abstract boolean validValue( FieldValue fieldValue );
 
+    public FieldTypeConfigJsonGenerator getFieldTypeConfigJsonGenerator()
+    {
+        return null;
+    }
+
+    @Override
+    public String toString()
+    {
+        return name;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof AbstractBaseFieldType ) )
+        {
+            return false;
+        }
+
+        final AbstractBaseFieldType that = (AbstractBaseFieldType) o;
+
+        if ( !className.equals( that.className ) )
+        {
+            return false;
+        }
+        if ( !name.equals( that.name ) )
+        {
+            return false;
+        }
+        if ( !valueType.equals( that.valueType ) )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = className.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + valueType.hashCode();
+        return result;
+    }
 }

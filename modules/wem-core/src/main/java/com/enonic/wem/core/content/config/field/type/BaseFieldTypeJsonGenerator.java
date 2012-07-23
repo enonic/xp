@@ -10,7 +10,6 @@ public class BaseFieldTypeJsonGenerator
 {
     public static final BaseFieldTypeJsonGenerator DEFAULT = new BaseFieldTypeJsonGenerator();
 
-
     @Override
     public void generate( final FieldType fieldType, final JsonGenerator g )
         throws IOException
@@ -19,9 +18,7 @@ public class BaseFieldTypeJsonGenerator
 
         g.writeFieldName( "fieldType" );
         g.writeStartObject();
-        g.writeStringField( "name", baseFieldType.getName() );
         g.writeStringField( "className", baseFieldType.getClassName() );
-        g.writeStringField( "valueType", baseFieldType.getValueType().toString() );
         g.writeEndObject();
     }
 }

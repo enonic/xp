@@ -16,6 +16,7 @@ public class SubTypeJsonGenerator
         SubType subType = (SubType) configItem;
 
         g.writeStartObject();
+        g.writeStringField( "type", subType.getConfigType().toString() );
         g.writeStringField( "path", subType.getPath().toString() );
         g.writeStringField( "name", subType.getName() );
         g.writeStringField( "label", subType.getLabel() );

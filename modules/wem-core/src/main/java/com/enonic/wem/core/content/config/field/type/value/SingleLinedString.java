@@ -4,6 +4,7 @@ package com.enonic.wem.core.content.config.field.type.value;
 import com.enonic.wem.core.content.FieldValue;
 
 public class SingleLinedString
+    extends AbstractBaseValueType
     implements ValueType
 {
     public boolean validValue( final FieldValue fieldValue )
@@ -24,4 +25,5 @@ public class SingleLinedString
 
         return true;
     }
+
 }

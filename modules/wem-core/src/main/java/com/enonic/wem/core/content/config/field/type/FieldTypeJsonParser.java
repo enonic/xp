@@ -3,40 +3,44 @@ package com.enonic.wem.core.content.config.field.type;
 
 import java.io.IOException;
 
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
 
-public class FieldTypeParser
+import com.enonic.wem.core.content.JsonParserUtil;
+
+public class FieldTypeJsonParser
 {
+    public static FieldType parse( final JsonNode node )
+        throws IOException
+    {
+        String className = JsonParserUtil.getStringValue( "className", node );
+
+        return instantiate( className );
+    }
+
     public static FieldType parse( final JsonParser jp )
         throws IOException
     {
         String className = null;
-        String name = null;
-        String valueType = null;
 
         JsonToken token = jp.nextToken();
         while ( token != JsonToken.END_OBJECT )
         {
-
             if ( "className".equals( jp.getCurrentName() ) && token == JsonToken.FIELD_NAME )
             {
                 jp.nextToken();
                 className = jp.getText();
             }
-            else if ( "name".equals( jp.getCurrentName() ) && token == JsonToken.FIELD_NAME )
-            {
-                jp.nextToken();
-                name = jp.getText();
-            }
-            else if ( "valueType".equals( jp.getCurrentName() ) && token == JsonToken.FIELD_NAME )
-            {
-                jp.nextToken();
-                valueType = jp.getText();
-            }
             token = jp.nextToken();
         }
 
+        return instantiate( className );
+
+    }
+
+    private static FieldType instantiate( final String className )
+    {
         Class clazz;
         try
         {
@@ -55,6 +59,5 @@ public class FieldTypeParser
         {
             throw new RuntimeException( e );
         }
-
     }
 }

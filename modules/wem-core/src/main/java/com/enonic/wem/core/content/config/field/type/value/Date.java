@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 import com.enonic.wem.core.content.FieldValue;
 
 public class Date
+    extends AbstractBaseValueType
     implements ValueType
 {
     public boolean validValue( final FieldValue fieldValue )

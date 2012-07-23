@@ -22,5 +22,20 @@ public class Dropdown
     {
         return getValueType().validValue( fieldValue );
     }
+
+    public boolean requiresConfig()
+    {
+        return true;
+    }
+
+    public Class requiredConfigClass()
+    {
+        return DropdownConfig.class;
+    }
+
+    public FieldTypeConfigJsonGenerator getFieldTypeConfigJsonGenerator()
+    {
+        return DropdownConfigJsonGenerator.DEFAULT;
+    }
 }
 

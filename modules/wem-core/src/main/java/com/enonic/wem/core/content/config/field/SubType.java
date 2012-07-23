@@ -20,6 +20,11 @@ public class SubType
 
     private String helpText;
 
+    protected SubType()
+    {
+        super( ConfigType.SUB_TYPE );
+    }
+
 
     @Override
     void setPath( final FieldPath fieldPath )
@@ -179,7 +184,7 @@ public class SubType
         public SubType build()
         {
             Preconditions.checkNotNull( subType.getName(), "name cannot be null" );
-
+            subType.setPath( new FieldPath( subType.getName() ) );
             return subType;
         }
     }

@@ -1,9 +1,10 @@
-package com.enonic.wem.core.content.config.field;
+package com.enonic.wem.core.content.config.field.type;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RadioButtonsConfig
+    implements FieldTypeConfig
 {
     private List<Option> options = new ArrayList<Option>();
 

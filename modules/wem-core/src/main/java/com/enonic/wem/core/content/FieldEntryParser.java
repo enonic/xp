@@ -8,7 +8,7 @@ import org.codehaus.jackson.JsonToken;
 
 import com.enonic.wem.core.content.config.field.ConfigItems;
 import com.enonic.wem.core.content.config.field.Field;
-import com.enonic.wem.core.content.config.field.FieldParser;
+import com.enonic.wem.core.content.config.field.FieldJsonParser;
 
 public class FieldEntryParser
 {
@@ -30,7 +30,7 @@ public class FieldEntryParser
             if ( token == JsonToken.FIELD_NAME && "field".equals( jp.getCurrentName() ) )
             {
                 jp.nextToken();
-                Field field = FieldParser.parse( jp, configItems );
+                Field field = FieldJsonParser.parse( jp, configItems );
                 builder.field( field );
             }
             token = jp.nextToken();

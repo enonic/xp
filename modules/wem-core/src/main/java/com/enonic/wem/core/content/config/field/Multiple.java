@@ -31,4 +31,38 @@ public class Multiple
     {
         return maximumEntries;
     }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final Multiple multiple = (Multiple) o;
+
+        if ( maximumEntries != multiple.maximumEntries )
+        {
+            return false;
+        }
+        if ( minimumEntries != multiple.minimumEntries )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = minimumEntries;
+        result = 31 * result + maximumEntries;
+        return result;
+    }
 }

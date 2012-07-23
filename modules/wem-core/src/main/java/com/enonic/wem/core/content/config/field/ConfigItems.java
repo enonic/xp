@@ -43,4 +43,9 @@ public class ConfigItems
     {
         return items.values().iterator();
     }
+
+    public int size()
+    {
+        return items.size();
+    }
 }

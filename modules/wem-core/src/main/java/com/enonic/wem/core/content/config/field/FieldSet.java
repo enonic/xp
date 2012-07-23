@@ -9,6 +9,11 @@ public class FieldSet
 
     private List<Field> fields;
 
+    protected FieldSet()
+    {
+        super( ConfigType.FIELD_SET );
+    }
+
     @Override
     ConfigItemJsonGenerator getJsonGenerator()
     {

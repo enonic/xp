@@ -21,4 +21,14 @@ public class TextArea
     {
         return getValueType().validValue( fieldValue );
     }
+
+    public boolean requiresConfig()
+    {
+        return false;
+    }
+
+    public Class requiredConfigClass()
+    {
+        return null;
+    }
 }

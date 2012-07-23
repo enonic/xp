@@ -6,8 +6,8 @@ import org.junit.Test;
 import com.enonic.wem.core.content.config.ContentType;
 import com.enonic.wem.core.content.config.field.ConfigItems;
 import com.enonic.wem.core.content.config.field.Field;
-import com.enonic.wem.core.content.config.field.RadioButtonsConfig;
-import com.enonic.wem.core.content.config.field.type.BuiltInFieldTypes;
+import com.enonic.wem.core.content.config.field.type.FieldTypes;
+import com.enonic.wem.core.content.config.field.type.RadioButtonsConfig;
 
 public class ContentDataJsonGeneratorTest
 {
@@ -17,8 +17,8 @@ public class ContentDataJsonGeneratorTest
         ContentType contentType = new ContentType();
         contentType.setName( "MyContentType" );
         ConfigItems configItems = contentType.getConfigItems();
-        configItems.addField( Field.newBuilder().name( "myTextarea" ).type( BuiltInFieldTypes.textarea ).required( true ).build() );
-        configItems.addField( Field.newBuilder().name( "myPhone" ).type( BuiltInFieldTypes.phone ).build() );
+        configItems.addField( Field.newBuilder().name( "myTextarea" ).type( FieldTypes.textarea ).required( true ).build() );
+        configItems.addField( Field.newBuilder().name( "myPhone" ).type( FieldTypes.phone ).build() );
 
         ContentData contentData = new ContentData( configItems );
         contentData.setFieldValue( "myTextarea", "My test\n text." );
@@ -37,9 +37,8 @@ public class ContentDataJsonGeneratorTest
             RadioButtonsConfig.newBuilder().addOption( "Norway", "NO" ).addOption( "South Africa", "ZA" ).build();
 
         ConfigItems configItems = new ConfigItems();
-        configItems.addField(
-            Field.newBuilder().name( "myRadiobuttons" ).type( BuiltInFieldTypes.radioButtons ).required( true ).fieldConfig(
-                radioButtonsConfig ).build() );
+        configItems.addField( Field.newBuilder().name( "myRadiobuttons" ).type( FieldTypes.radioButtons ).required( true ).fieldTypeConfig(
+            radioButtonsConfig ).build() );
 
         ContentData contentData = new ContentData( configItems );
         contentData.setFieldValue( "myRadiobuttons", "Norway" );

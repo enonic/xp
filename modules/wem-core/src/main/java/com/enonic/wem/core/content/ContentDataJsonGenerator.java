@@ -42,7 +42,7 @@ public class ContentDataJsonGenerator
     {
         try
         {
-            final JsonFactory f = new JsonFactory();
+            final JsonFactory f = JsonFactoryHolder.DEFAULT_FACTORY;
             final JsonParser jp = f.createJsonParser( json );
 
             final ContentData contentData = new ContentData( configItems );

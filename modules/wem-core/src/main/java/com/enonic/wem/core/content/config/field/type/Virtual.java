@@ -33,4 +33,19 @@ public class Virtual
     {
         return BaseFieldTypeJsonGenerator.DEFAULT;
     }
+
+    public boolean requiresConfig()
+    {
+        return false;
+    }
+
+    public Class requiredConfigClass()
+    {
+        return null;
+    }
+
+    public FieldTypeConfigJsonGenerator getFieldTypeConfigJsonGenerator()
+    {
+        return null;
+    }
 }

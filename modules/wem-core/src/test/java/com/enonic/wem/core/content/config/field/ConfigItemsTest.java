@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.config.field;
 
 import org.junit.Test;
 
-import com.enonic.wem.core.content.config.field.type.BuiltInFieldTypes;
+import com.enonic.wem.core.content.config.field.type.FieldTypes;
 
 import static org.junit.Assert.*;
 
@@ -18,8 +18,8 @@ public class ConfigItemsTest
         subTypeBuilder.label( "Personalia" );
         SubType subType = subTypeBuilder.build();
         configItems.addField( subType );
-        subType.addField( Field.newBuilder().name( "eyeColour" ).type( BuiltInFieldTypes.textline ).build() );
-        subType.addField( Field.newBuilder().name( "hairColour" ).type( BuiltInFieldTypes.textline ).build() );
+        subType.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        subType.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
         // exercise & verify
         ConfigItem personaliaConfig = configItems.getConfig( new FieldPath( "personalia" ) );
@@ -35,8 +35,8 @@ public class ConfigItemsTest
         subTypeBuilder.label( "Personalia" );
         SubType subType = subTypeBuilder.build();
         configItems.addField( subType );
-        subType.addField( Field.newBuilder().name( "eyeColour" ).type( BuiltInFieldTypes.textline ).build() );
-        subType.addField( Field.newBuilder().name( "hairColour" ).type( BuiltInFieldTypes.textline ).build() );
+        subType.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        subType.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
         // exercise & verify
         ConfigItem personaliaEyeColourConfig = configItems.getConfig( new FieldPath( "personalia.eyeColour" ) );

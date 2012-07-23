@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.elasticsearch.common.base.Preconditions;
-
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 public class FieldPath

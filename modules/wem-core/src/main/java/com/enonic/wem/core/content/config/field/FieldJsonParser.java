@@ -6,9 +6,9 @@ import java.io.IOException;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
 
-import com.enonic.wem.core.content.config.field.type.FieldTypeParser;
+import com.enonic.wem.core.content.config.field.type.FieldTypeJsonParser;
 
-public class FieldParser
+public class FieldJsonParser
 {
     public static Field parse( JsonParser jp, ConfigItems configItems )
         throws IOException
@@ -45,7 +45,7 @@ public class FieldParser
             }
             else if ( "type".equals( jp.getCurrentName() ) )
             {
-                builder.type( FieldTypeParser.parse( jp ) );
+                builder.type( FieldTypeJsonParser.parse( jp ) );
             }
             else if ( "fieldConfig".equals( jp.getCurrentName() ) )
             {
