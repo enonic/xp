@@ -31,25 +31,31 @@ Harness.start(
             'tests/common/test_TabPanel.js',
             'tests/common/test_Diff.js',
             'tests/common/test_WizardPanel.js',
-            'tests/common/test_TreeGridPanel.js'
+            'tests/common/test_TreeGridPanel.js',
+            'tests/common/test_BaseDialogWindow.js'
         ]
     },
     {
         group: 'Account',
         items: [
+            {
+                group: 'Model',
+                items: [
+                    'tests/account/test_AccountModel.js',
+                    'tests/account/test_CountryModel.js',
+                    'tests/account/test_UserstoreConfigModel.js',
+                    'tests/account/test_GroupModel.js',
+                    'tests/account/test_LanguageModel.js',
+                    'tests/account/test_LocaleModel.js',
+                    'tests/account/test_TimezoneModel.js',
+                    'tests/account/test_UserFieldModel.js'
+                ]
+            },
             'tests/account/test_Sanity.js',
-            'tests/account/test_AccountModel.js',
-            'tests/account/test_CountryModel.js',
             'tests/account/test_ChangePasswordWindow.js',
             'tests/account/test_DoublePasswordField.js',
             'tests/account/test_EditUserFormPanel.js',
-            'tests/account/test_UserFormField.js',
-            'tests/account/test_UserstoreConfigModel.js',
-            'tests/account/test_GroupModel.js',
-            'tests/account/test_LanguageModel.js',
-            'tests/account/test_LocaleModel.js',
-            'tests/account/test_TimezoneModel.js',
-            'tests/account/test_UserFieldModel.js'
+            'tests/account/test_UserFormField.js'
         ]
     },
     {
