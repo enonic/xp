@@ -26,14 +26,6 @@ Ext.define('Admin.view.BaseDialogWindow', {
 
     listeners: {
         show: function (cmp) {
-            var header = this.down('#dialogHeader');
-            if (header) {
-                header.doLayout();
-            }
-            var info = this.down('#dialogInfo');
-            if (info) {
-                info.doLayout();
-            }
             var form = cmp.down('form');
             if (form) {
                 form.getForm().reset();
@@ -55,8 +47,12 @@ Ext.define('Admin.view.BaseDialogWindow', {
     },
 
     initComponent: function () {
+
         var me = this;
-        me.dockedItems = [];
+
+        if (!me.dockedItems) {
+            me.dockedItems = [];
+        }
         Ext.Array.insert(this.dockedItems, 0, [
             {
                 xtype: 'toolbar',
@@ -64,6 +60,7 @@ Ext.define('Admin.view.BaseDialogWindow', {
                 autoHeight: true,
                 items: [
                     {
+                        itemId: 'closeButton',
                         scale: 'medium',
                         iconAlign: 'top',
                         text: 'Close',
@@ -71,7 +68,7 @@ Ext.define('Admin.view.BaseDialogWindow', {
                         iconCls: 'icon-close',
                         listeners: {
                             click: function (btn, evt) {
-                                btn.up('baseDialogWindow').close();
+                                me.close();
                             }
                         }
                     }
@@ -79,50 +76,81 @@ Ext.define('Admin.view.BaseDialogWindow', {
             }
         ]);
 
+        if (!me.items) {
+            me.items = [];
+        }
 
-        var dialogHtml = '<h3>' + me.dialogTitle + '</h3>';
-        dialogHtml += (Ext.isEmpty(me.dialogSubTitle)) ? '' : '<h4>' + me.dialogSubTitle + '</h4>';
+        if (me.dialogTitle || me.dialogSubTitle) {
+            var dialogHtml = '<h3>' + me.dialogTitle + '</h3>';
+            dialogHtml += (Ext.isEmpty(me.dialogSubTitle)) ? '' : '<h4>' + me.dialogSubTitle + '</h4>';
+            me.createDialogHeader(dialogHtml);
+        }
 
-        Ext.Array.insert(this.items, 0, [
-            {
-                itemId: 'dialogHeader',
-                xtype: 'container',
-                cls: 'dialog-header',
-                styleHtmlContent: true,
-                html: dialogHtml
-            }
-
-        ]);
-        if (this.dialogInfoTpl) {
-            Ext.Array.insert(this.items, 1, [
-                {
-                    itemId: 'dialogInfo',
-                    cls: 'dialog-info',
-                    xtype: 'container',
-                    border: false,
-                    height: 80,
-                    styleHtmlContent: true,
-                    tpl: new Ext.XTemplate(me.dialogInfoTpl)
-                }
-            ]);
+        if (me.dialogInfoTpl) {
+            me.createDialogInfo(me.dialogInfoTpl);
         }
 
         this.callParent(arguments);
     },
 
-    setDialogInfoTpl: function (tpl) {
-        var dialogInfo = this.down('#dialogInfo');
-        dialogInfo.tpl = new Ext.XTemplate(tpl);
+    createDialogHeader: function (title) {
+        Ext.Array.insert(this.items, 0, [
+            {
+                itemId: 'dialogHeader',
+                xtype: 'component',
+                cls: 'dialog-header',
+                styleHtmlContent: true,
+                html: title
+            }
+
+        ]);
     },
 
-    doShow: function (model) {
+    createDialogInfo: function (tpl) {
+        Ext.Array.insert(this.items, 1, [
+            {
+                itemId: 'dialogInfo',
+                cls: 'dialog-info',
+                xtype: 'component',
+                border: false,
+                height: 80,
+                styleHtmlContent: true,
+                tpl: new Ext.XTemplate(tpl)
+            }
+        ]);
+    },
+
+    setDialogHeader: function (title) {
+        var dialogHeader = this.down('#dialogHeader');
+        if (dialogHeader) {
+            dialogHeader.update(title);
+        } else {
+            this.createDialogHeader(title);
+        }
+    },
+
+    setDialogInfoTpl: function (tpl) {
+        var dialogInfo = this.down('#dialogInfo');
+        if (dialogInfo) {
+            dialogInfo.tpl = new Ext.XTemplate(tpl);
+        } else {
+            this.createDialogInfo(tpl);
+        }
+    },
+
+    setDialogInfoData: function (model) {
         if (model) {
             this.modelData = model.data;
             var info = this.down('#dialogInfo');
             if (info) {
                 info.update(this.modelData);
             }
+
         }
+    },
+
+    doShow: function (model) {
+        this.setDialogInfoData(model);
         this.show();
     }
 
