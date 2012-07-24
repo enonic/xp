@@ -29,3 +29,4 @@ public final class LocaleResource
         this.localeService = localeService;
     }
 }
+

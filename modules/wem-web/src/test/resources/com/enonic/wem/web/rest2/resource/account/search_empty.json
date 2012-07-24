@@ -1,0 +1,27 @@
+{
+    "total": 0,
+    "accounts": [ ],
+    "facets": [
+        {
+            "name": "type",
+            "terms": {
+                "role": 0,
+                "group": 0,
+                "user": 0
+            }
+        },
+        {
+            "name": "userstore",
+            "terms": {
+                "global": 0,
+                "enonic": 0
+            }
+        },
+        {
+            "name": "organization",
+            "terms": {
+                "Enonic": 0
+            }
+        }
+    ]
+}

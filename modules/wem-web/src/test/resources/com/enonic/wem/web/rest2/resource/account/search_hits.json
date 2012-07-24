@@ -1,0 +1,58 @@
+{
+    "total": 3,
+    "accounts": [
+        {
+            "key": "E6C593DE14515428B06F1A16E0D28E2341FC5AB4",
+            "type": "user",
+            "name": "dummy",
+            "userStore": "enonic",
+            "qualifiedName": "enonic\\dummy",
+            "displayName": "Dummy User",
+            "lastModified": "2011-08-09 08:23:07",
+            "hasPhoto": true
+        },
+        {
+            "key": "E34B614B26C666AA9929F90EF3FA723B3DAAAAB2",
+            "type": "group",
+            "name": "group1",
+            "userStore": "global",
+            "qualifiedName": "enonic\\group1",
+            "displayName": "Group One",
+            "lastModified": "2012-07-24 16:18:35",
+            "hasPhoto": false
+        },
+        {
+            "key": "18311D321165D73043C10A9101016CDF3765898E",
+            "type": "role",
+            "name": "authenticated",
+            "userStore": "enonic",
+            "qualifiedName": "enonic\\authenticated",
+            "displayName": "Authenticated Users",
+            "lastModified": "2012-07-24 16:19:50",
+            "hasPhoto": false
+        }
+    ],
+    "facets": [
+        {
+            "name": "type",
+            "terms": {
+                "role": 1,
+                "group": 1,
+                "user": 1
+            }
+        },
+        {
+            "name": "userstore",
+            "terms": {
+                "global": 1,
+                "enonic": 2
+            }
+        },
+        {
+            "name": "organization",
+            "terms": {
+                "Enonic": 2
+            }
+        }
+    ]
+}
