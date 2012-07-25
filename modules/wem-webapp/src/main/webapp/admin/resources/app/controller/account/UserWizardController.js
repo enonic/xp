@@ -16,6 +16,7 @@ Ext.define('Admin.controller.account.UserWizardController', {
     ],
     models: [
         'Admin.model.account.UserstoreConfigModel',
+        'Admin.model.account.UserFieldModel',
         'Admin.model.account.CountryModel',
         'Admin.model.account.RegionModel',
         'Admin.model.account.TimezoneModel',

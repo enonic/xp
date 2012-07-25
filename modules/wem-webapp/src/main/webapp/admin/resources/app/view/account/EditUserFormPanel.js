@@ -50,28 +50,28 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
                 type: 'username',
                 required: true,
                 remote: false,
-                readonly: false
+                readOnly: false
             },
             {
                 label: 'Password',
                 type: 'password',
                 required: true,
                 remote: false,
-                readonly: false
+                readOnly: false
             },
             {
                 label: 'E-mail',
                 type: 'email',
                 required: true,
                 remote: false,
-                readonly: false
+                readOnly: false
             },
             {
                 label: 'Display name',
                 type: 'displayName',
                 required: true,
                 remote: false,
-                readonly: false
+                readOnly: false
             },
             {
                 "type": "country",
@@ -237,7 +237,7 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
         var me = this;
         me.currentUser = user;
         var userStoreName = user ? user.userStore : me.defaultUserStoreName;
-        var userStore = me.store.findRecord('name', userStoreName).raw;
+        var userStore = me.store.findRecord('name', userStoreName);
         me.removeAll();
         me.generateForm(userStore);
         me.doLayout();
@@ -248,7 +248,7 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
         var f = {
             xtype: 'userFormField',
             type: 'autocomplete',
-            fieldLabel: field.fieldlabel,
+            fieldLabel: field.get('fieldlabel'),
             fieldStore: callingCodeStore,
             valueField: 'callingCode',
             displayField: 'callingCode',
@@ -296,23 +296,23 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
                     }
                 }
             };
-        } else if (field.type === 'locale') {
+        } else if (field.get('type') === 'locale') {
             fieldStore = Ext.data.StoreManager.lookup('Admin.store.account.LocaleStore');
             valueField = 'id';
             displayField = 'displayName';
-        } else if (field.type === 'country') {
+        } else if (field.get('type') === 'country') {
             fieldStore = Ext.data.StoreManager.lookup('Admin.store.account.CountryStore');
             valueField = 'code';
             displayField = 'englishName';
-        } else if (field.type === 'region') {
+        } else if (field.get('type') === 'region') {
             fieldStore = Ext.create('Admin.store.account.RegionStore');
             valueField = 'code';
             displayField = 'englishName';
-        } else if (field.type === 'locale') {
+        } else if (field.get('type') === 'locale') {
             fieldStore = Ext.data.StoreManager.lookup('Admin.store.account.LanguageStore');
             valueField = 'languageCode';
             displayField = 'description';
-        } else if (field.type === 'gender') {
+        } else if (field.get('type') === 'gender') {
             fieldStore = new Ext.data.Store({
                 fields: ['label', 'value'],
                 data: [
@@ -342,7 +342,7 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
         var validationResultType = 'none';
         var delayValidation = false;
         var validationData = {};
-        if (field.type === 'username' || field.type === 'email') {
+        if (field.get('type') === 'username' || field.get('type') === 'email') {
             validationResultType = 'detail';
             delayValidation = true;
             validationData.userStore = this.currentUser ? this.currentUser.userStore : this.defaultUserStoreName;
@@ -396,18 +396,21 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
             this.excludedFields = excludedFields;
         }
         if (storeConfig && storeConfig.userFields) {
-            var fields = Ext.Array.filter(Ext.Array.toArray(storeConfig.userFields), function (field) {
+            var fields = Ext.Array.filter(Ext.Array.toArray(storeConfig.userFields().getRange()), function (field) {
                 var index;
                 for (index in this.staticFields) {
                     if (this.staticFields.hasOwnProperty(index)) {
-                        if (this.staticFields[index].type === field.type) {
+                        if (this.staticFields[index].type === field.get('type')) {
                             return false;
                         }
                     }
                 }
                 return true;
             }, this);
-            fields = Ext.Array.merge(this.staticFields, fields);
+            Ext.Array.forEach(this.staticFields, function (staticField) {
+                var fieldModel = Ext.create('Admin.model.account.UserFieldModel', staticField);
+                fields.push(fieldModel);
+            });
             this.add(this.generateFieldSet('User', this.userFieldSet, fields));
             if (!this.userFields) {
                 this.add(this.generateFieldSet('Security', this.securityFieldSet, fields));
@@ -445,30 +448,31 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
         Ext.Array.each(storeConfig, function (item) {
             var canBeAdded = true;
             if (this.includedFields) {
-                canBeAdded = Ext.Array.contains(this.includedFields, item.type);
+                canBeAdded = Ext.Array.contains(this.includedFields, item.get('type'));
             } else {
-                canBeAdded = !Ext.Array.contains(this.excludedFields, item.type);
+                canBeAdded = !Ext.Array.contains(this.excludedFields, item.get('type'));
             }
-            if (fieldSet[item.type] && canBeAdded) {
+            if (fieldSet[item.get('type')] && canBeAdded) {
                 var fieldValue;
                 if (me.userFields) {
-                    fieldValue = me.userFields[item.type];
+                    fieldValue = me.userFields[item.get('type')];
                     if ((fieldValue === undefined) && (me.userFields.userInfo !== undefined)) {
-                        fieldValue = me.userFields.userInfo[item.type];
+                        fieldValue = me.userFields.userInfo[item.get('type')];
                     }
                 }
                 var baseConfig = {
-                    fieldLabel: self.fieldLabels[item.type] || item.type,
-                    fieldname: item.type,
-                    required: item.required || false,
-                    remote: item.remote || false,
-                    readonly: item.readOnly || false || (item.type === 'username' && me.userFields),
-                    vtype: item.vtype,
+                    fieldLabel: self.fieldLabels[item.get('type')] || item.get('type'),
+                    fieldname: item.get('type'),
+                    required: item.get('required') || false,
+                    remote: item.get('remote') || false,
+                    readonly: item.get('readOnly') || false || (item.get('type') === 'username' && me.userFields),
+                    // what is that field?
+                    vtype: item.get('vtype'),
                     fieldValue: fieldValue,
-                    validationUrl: me.validationUrls[item.type],
+                    validationUrl: me.validationUrls[item.get('type')],
                     currentUser: me.currentUser
                 };
-                var createFunc = fieldSet[item.type];
+                var createFunc = fieldSet[item.get('type')];
                 var newField = createFunc.call(me, item);
                 newField = Ext.apply(newField, baseConfig);
                 Ext.Array.include(fieldItems, newField);
@@ -489,8 +493,8 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
             xtype: 'addressPanel',
             values: values,
             closable: closable || false,
-            readonly: field.readonly,
-            iso: field.iso,
+            readonly: field.get('readOnly'),
+            iso: field.get('iso'),
             remote: remote
         };
         return addressPanel;
