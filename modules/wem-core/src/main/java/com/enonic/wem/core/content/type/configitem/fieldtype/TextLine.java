@@ -1,14 +1,14 @@
-package com.enonic.wem.core.content.type.configitem.field.type;
+package com.enonic.wem.core.content.type.configitem.fieldtype;
 
 import com.enonic.wem.core.content.data.Value;
 import com.enonic.wem.core.content.type.valuetype.ValueTypes;
 
-public class TextArea
+public class TextLine
     extends BaseFieldType
 {
-    TextArea()
+    TextLine()
     {
-        super( "textArea", ValueTypes.MULTI_LINED_STRING );
+        super( "textLine", ValueTypes.SINGLE_LINED_STRING );
     }
 
     public FieldTypeJsonGenerator getJsonGenerator()
@@ -31,4 +31,6 @@ public class TextArea
     {
         return null;
     }
+
+
 }

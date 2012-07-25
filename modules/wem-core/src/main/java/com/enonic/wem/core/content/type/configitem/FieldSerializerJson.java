@@ -7,7 +7,7 @@ import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
 
-import com.enonic.wem.core.content.type.configitem.field.type.FieldTypeJsonParser;
+import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeJsonParser;
 
 public class FieldSerializerJson
     extends ConfigItemSerializerJson

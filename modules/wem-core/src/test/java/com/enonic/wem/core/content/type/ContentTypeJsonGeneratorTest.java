@@ -5,9 +5,9 @@ import org.junit.Test;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.SubType;
-import com.enonic.wem.core.content.type.configitem.field.type.DropdownConfig;
-import com.enonic.wem.core.content.type.configitem.field.type.FieldTypes;
-import com.enonic.wem.core.content.type.configitem.field.type.RadioButtonsConfig;
+import com.enonic.wem.core.content.type.configitem.fieldtype.DropdownConfig;
+import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
+import com.enonic.wem.core.content.type.configitem.fieldtype.RadioButtonsConfig;
 
 
 public class ContentTypeJsonGeneratorTest

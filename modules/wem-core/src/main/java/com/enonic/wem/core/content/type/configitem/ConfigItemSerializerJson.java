@@ -7,9 +7,9 @@ import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
 import com.enonic.wem.core.content.JsonParserUtil;
-import com.enonic.wem.core.content.type.configitem.field.type.FieldType;
-import com.enonic.wem.core.content.type.configitem.field.type.FieldTypeConfigProxySerializerJson;
-import com.enonic.wem.core.content.type.configitem.field.type.FieldTypeJsonParser;
+import com.enonic.wem.core.content.type.configitem.fieldtype.FieldType;
+import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeConfigProxySerializerJson;
+import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeJsonParser;
 
 public abstract class ConfigItemSerializerJson
 {

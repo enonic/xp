@@ -12,10 +12,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.core.content.JsonFactoryHolder;
-import com.enonic.wem.core.content.type.configitem.field.type.DropdownConfig;
-import com.enonic.wem.core.content.type.configitem.field.type.FieldTypeConfig;
-import com.enonic.wem.core.content.type.configitem.field.type.FieldTypes;
-import com.enonic.wem.core.content.type.configitem.field.type.RadioButtonsConfig;
+import com.enonic.wem.core.content.type.configitem.fieldtype.DropdownConfig;
+import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeConfig;
+import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
+import com.enonic.wem.core.content.type.configitem.fieldtype.RadioButtonsConfig;
 
 import static org.junit.Assert.*;
 

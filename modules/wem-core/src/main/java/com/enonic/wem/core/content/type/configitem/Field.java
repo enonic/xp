@@ -3,8 +3,8 @@ package com.enonic.wem.core.content.type.configitem;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.core.content.type.configitem.field.type.FieldType;
-import com.enonic.wem.core.content.type.configitem.field.type.FieldTypeConfig;
+import com.enonic.wem.core.content.type.configitem.fieldtype.FieldType;
+import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeConfig;
 
 public class Field
     extends ConfigItem

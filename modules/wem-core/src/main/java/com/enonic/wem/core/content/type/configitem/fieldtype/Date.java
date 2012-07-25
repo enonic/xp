@@ -1,15 +1,15 @@
-package com.enonic.wem.core.content.type.configitem.field.type;
+package com.enonic.wem.core.content.type.configitem.fieldtype;
 
 
 import com.enonic.wem.core.content.data.Value;
 import com.enonic.wem.core.content.type.valuetype.ValueTypes;
 
-public class RadioButtons
+public class Date
     extends BaseFieldType
 {
-    RadioButtons()
+    Date()
     {
-        super( "radioButtons", ValueTypes.SINGLE_LINED_STRING );
+        super( "date", ValueTypes.DATE );
     }
 
     public FieldTypeJsonGenerator getJsonGenerator()
@@ -25,16 +25,12 @@ public class RadioButtons
 
     public boolean requiresConfig()
     {
-        return true;
+        return false;
     }
 
     public Class requiredConfigClass()
     {
-        return RadioButtonsConfig.class;
-    }
-
-    public FieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator()
-    {
-        return RadioButtonsConfigSerializerJson.DEFAULT;
+        return null;
     }
 }
+

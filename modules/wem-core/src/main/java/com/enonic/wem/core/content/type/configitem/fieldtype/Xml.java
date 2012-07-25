@@ -1,15 +1,14 @@
-package com.enonic.wem.core.content.type.configitem.field.type;
-
+package com.enonic.wem.core.content.type.configitem.fieldtype;
 
 import com.enonic.wem.core.content.data.Value;
 import com.enonic.wem.core.content.type.valuetype.ValueTypes;
 
-public class Dropdown
+public class Xml
     extends BaseFieldType
 {
-    Dropdown()
+    Xml()
     {
-        super( "dropdown", ValueTypes.SINGLE_LINED_STRING );
+        super( "xml", ValueTypes.XML );
     }
 
     public FieldTypeJsonGenerator getJsonGenerator()
@@ -25,17 +24,11 @@ public class Dropdown
 
     public boolean requiresConfig()
     {
-        return true;
+        return false;
     }
 
     public Class requiredConfigClass()
     {
-        return DropdownConfig.class;
-    }
-
-    public FieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator()
-    {
-        return DropdownConfigSerializerJson.DEFAULT;
+        return null;
     }
 }
-

@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.type.configitem;
 
 import org.junit.Test;
 
-import com.enonic.wem.core.content.type.configitem.field.type.FieldTypes;
+import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 
 import static org.junit.Assert.*;
 

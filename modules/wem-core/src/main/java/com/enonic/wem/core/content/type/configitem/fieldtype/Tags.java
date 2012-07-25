@@ -1,14 +1,14 @@
-package com.enonic.wem.core.content.type.configitem.field.type;
+package com.enonic.wem.core.content.type.configitem.fieldtype;
 
 import com.enonic.wem.core.content.data.Value;
 import com.enonic.wem.core.content.type.valuetype.ValueTypes;
 
-public class Xml
+public class Tags
     extends BaseFieldType
 {
-    Xml()
+    Tags()
     {
-        super( "xml", ValueTypes.XML );
+        super( "tags", ValueTypes.SINGLE_LINED_STRING );
     }
 
     public FieldTypeJsonGenerator getJsonGenerator()
@@ -32,3 +32,4 @@ public class Xml
         return null;
     }
 }
+

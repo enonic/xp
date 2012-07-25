@@ -1,9 +1,9 @@
-package com.enonic.wem.core.content.type.configitem.field.type;
+package com.enonic.wem.core.content.type.configitem.fieldtype;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RadioButtonsConfig
+public class DropdownConfig
     implements FieldTypeConfig
 {
     private List<Option> options = new ArrayList<Option>();
@@ -48,7 +48,12 @@ public class RadioButtonsConfig
 
     public static class Builder
     {
-        private RadioButtonsConfig config = new RadioButtonsConfig();
+        private DropdownConfig config = new DropdownConfig();
+
+        Builder()
+        {
+            // protection
+        }
 
         public Builder addOption( String label, String value )
         {
@@ -56,7 +61,7 @@ public class RadioButtonsConfig
             return this;
         }
 
-        public RadioButtonsConfig build()
+        public DropdownConfig build()
         {
             return config;
         }
