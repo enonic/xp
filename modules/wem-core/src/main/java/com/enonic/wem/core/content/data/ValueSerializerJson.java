@@ -36,7 +36,7 @@ public class ValueSerializerJson
         String pathAsString = JsonParserUtil.getStringValue( "path", entryNode );
         String valueAsString = JsonParserUtil.getStringValue( "value", entryNode );
 
-        builder.path( new ValuePath( pathAsString ) );
+        builder.path( new EntryPath( pathAsString ) );
         builder.value( valueAsString );
 
         return builder.build();

@@ -50,12 +50,12 @@ public class ContentDataTest
     @Test
     public void multiple_textlines()
     {
-        ConfigItems dataConfig = new ConfigItems();
-        dataConfig.addConfig( Field.newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );
-        dataConfig.addConfig(
+        ConfigItems configItems = new ConfigItems();
+        configItems.addConfig( Field.newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );
+        configItems.addConfig(
             Field.newBuilder().name( "myMultipleTextLine" ).type( FieldTypes.textline ).required( false ).multiple( true ).build() );
 
-        ContentData contentData = new ContentData( dataConfig );
+        ContentData contentData = new ContentData( configItems );
         contentData.setValue( "myTextLine", "A single line" );
         contentData.setValue( "myMultipleTextLine[0]", "First line" );
         contentData.setValue( "myMultipleTextLine[1]", "Second line" );
@@ -63,6 +63,9 @@ public class ContentDataTest
         ContentDataSerializerJson generator = new ContentDataSerializerJson();
         String json = generator.toJson( contentData );
         System.out.println( json );
+        assertEquals( "A single line", contentData.getValue( "myTextLine" ).getValue() );
+        assertEquals( "First line", contentData.getValue( "myMultipleTextLine[0]" ).getValue() );
+        assertEquals( "Second line", contentData.getValue( "myMultipleTextLine[1]" ).getValue() );
     }
 
     @Test
@@ -187,15 +190,15 @@ public class ContentDataTest
         data.setValue( "child[1].features.eyeColour", "Brown" );
         data.setValue( "child[1].features.hairColour", "Black" );
 
-        assertEquals( "Thomas", data.getEntries().getValue( "firstName" ).getValue() );
-        assertEquals( "Joachim", data.getEntries().getValue( "child[0].name" ).getValue() );
-        assertEquals( "9", data.getEntries().getValue( "child[0].age" ).getValue() );
-        assertEquals( "Blue", data.getEntries().getValue( "child[0].features.eyeColour" ).getValue() );
-        assertEquals( "Blonde", data.getEntries().getValue( "child[0].features.hairColour" ).getValue() );
-        assertEquals( "Madeleine", data.getEntries().getValue( "child[1].name" ).getValue() );
-        assertEquals( "7", data.getEntries().getValue( "child[1].age" ).getValue() );
-        assertEquals( "Brown", data.getEntries().getValue( "child[1].features.eyeColour" ).getValue() );
-        assertEquals( "Black", data.getEntries().getValue( "child[1].features.hairColour" ).getValue() );
+        assertEquals( "Thomas", data.getValue( "firstName" ).getValue() );
+        assertEquals( "Joachim", data.getValue( "child[0].name" ).getValue() );
+        assertEquals( "9", data.getValue( "child[0].age" ).getValue() );
+        assertEquals( "Blue", data.getValue( "child[0].features.eyeColour" ).getValue() );
+        assertEquals( "Blonde", data.getValue( "child[0].features.hairColour" ).getValue() );
+        assertEquals( "Madeleine", data.getValue( "child[1].name" ).getValue() );
+        assertEquals( "7", data.getValue( "child[1].age" ).getValue() );
+        assertEquals( "Brown", data.getValue( "child[1].features.eyeColour" ).getValue() );
+        assertEquals( "Black", data.getValue( "child[1].features.hairColour" ).getValue() );
 
         String json = ContentDataSerializerJson.toJson( data );
         System.out.println( json );

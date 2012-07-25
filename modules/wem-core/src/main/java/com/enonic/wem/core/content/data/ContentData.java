@@ -15,7 +15,7 @@ public class ContentData
      */
     public ContentData( final ConfigItems configItems )
     {
-        this.entries = new Entries( new ValuePath(), configItems );
+        this.entries = new Entries( new EntryPath(), configItems );
     }
 
     /**
@@ -23,7 +23,7 @@ public class ContentData
      */
     public ContentData()
     {
-        this.entries = new Entries( new ValuePath() );
+        this.entries = new Entries( new EntryPath() );
     }
 
     void setEntries( final Entries entries )
@@ -31,19 +31,29 @@ public class ContentData
         this.entries = entries;
     }
 
-    public void setValue( final ValuePath name, final Object value )
+    public void setValue( final EntryPath name, final Object value )
     {
         entries.setValue( name, value );
     }
 
     public void setValue( final String fieldEntryPath, final Object value )
     {
-        entries.setValue( new ValuePath( fieldEntryPath ), value );
+        entries.setValue( new EntryPath( fieldEntryPath ), value );
     }
 
     public void setValue( final String fieldEntryPath, final SubType value )
     {
-        entries.setValue( new ValuePath( fieldEntryPath ), value );
+        entries.setValue( new EntryPath( fieldEntryPath ), value );
+    }
+
+    public Value getValue( final String path )
+    {
+        return entries.getValue( new EntryPath( path ) );
+    }
+
+    public Value getValue( final EntryPath path )
+    {
+        return entries.getValue( path );
     }
 
     public Entries getEntries()

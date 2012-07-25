@@ -10,30 +10,30 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.core.content.type.configitem.FieldPath;
 
-public class ValuePath
-    implements Iterable<ValuePath.Element>
+public class EntryPath
+    implements Iterable<EntryPath.Element>
 {
     private final static String ELEMENT_DIVIDER = ".";
 
     private List<Element> elements;
 
-    public ValuePath()
+    public EntryPath()
     {
         elements = new ArrayList<Element>();
     }
 
-    public ValuePath( List<Element> pathElements )
+    public EntryPath( List<Element> pathElements )
     {
         Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
         elements = pathElements;
     }
 
-    public ValuePath( ValuePath parentPath, String element )
+    public EntryPath( EntryPath parentPath, String element )
     {
         this( parentPath, new Element( element ) );
     }
 
-    public ValuePath( ValuePath parentPath, Element element )
+    public EntryPath( EntryPath parentPath, Element element )
     {
         Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
         Preconditions.checkNotNull( element, "element cannot be null" );
@@ -43,7 +43,7 @@ public class ValuePath
         elements.add( element );
     }
 
-    public ValuePath( String path )
+    public EntryPath( String path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
 
@@ -61,7 +61,7 @@ public class ValuePath
     }
 
 
-    public boolean startsWith( final ValuePath path )
+    public boolean startsWith( final EntryPath path )
     {
         if ( path.elements.size() > this.elements.size() )
         {
@@ -91,14 +91,14 @@ public class ValuePath
         return new FieldPath( fieldPathElements );
     }
 
-    public ValuePath asNewUsingFirstPathElement()
+    public EntryPath asNewUsingFirstPathElement()
     {
         List<Element> pathElements = Lists.newArrayList();
         pathElements.add( elements.get( 0 ) );
-        return new ValuePath( pathElements );
+        return new EntryPath( pathElements );
     }
 
-    public ValuePath asNewWithoutFirstPathElement()
+    public EntryPath asNewWithoutFirstPathElement()
     {
         List<Element> pathElements = Lists.newArrayList();
         for ( int i = 0; i < elements.size(); i++ )
@@ -108,7 +108,7 @@ public class ValuePath
                 pathElements.add( elements.get( i ) );
             }
         }
-        return new ValuePath( pathElements );
+        return new EntryPath( pathElements );
     }
 
     public int elementCount()
@@ -133,7 +133,7 @@ public class ValuePath
             return false;
         }
 
-        final ValuePath fieldEntryPath = (ValuePath) o;
+        final EntryPath fieldEntryPath = (EntryPath) o;
 
         return elements.equals( fieldEntryPath.elements );
     }

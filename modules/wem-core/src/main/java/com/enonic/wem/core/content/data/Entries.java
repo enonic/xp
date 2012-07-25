@@ -15,11 +15,11 @@ import com.enonic.wem.core.content.type.configitem.SubType;
 public class Entries
     implements Iterable<Entry>
 {
-    private ValuePath path;
+    private EntryPath path;
 
     private ConfigItems configItems;
 
-    private LinkedHashMap<ValuePath.Element, Entry> entries = new LinkedHashMap<ValuePath.Element, Entry>();
+    private LinkedHashMap<EntryPath.Element, Entry> entries = new LinkedHashMap<EntryPath.Element, Entry>();
 
     /**
      * Structured.
@@ -29,7 +29,7 @@ public class Entries
     public Entries( final ConfigItems configItems )
     {
         Preconditions.checkNotNull( configItems, "configItems cannot be null" );
-        this.path = new ValuePath();
+        this.path = new EntryPath();
         Preconditions.checkArgument( configItems.getPath().equals( path.resolveFieldPath() ),
                                      "path [%s] does not correspond with configItems.path: " + configItems.getPath(), path.toString() );
         this.configItems = configItems;
@@ -40,7 +40,7 @@ public class Entries
      *
      * @param configItems
      */
-    public Entries( final ValuePath path, final ConfigItems configItems )
+    public Entries( final EntryPath path, final ConfigItems configItems )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkNotNull( configItems, "configItems cannot be null" );
@@ -54,13 +54,13 @@ public class Entries
     /**
      * Unstructured.
      */
-    public Entries( final ValuePath path )
+    public Entries( final EntryPath path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         this.path = path;
     }
 
-    public ValuePath getPath()
+    public EntryPath getPath()
     {
         return path;
     }
@@ -75,7 +75,7 @@ public class Entries
         entries.put( entry.getPath().getLastElement(), entry );
     }
 
-    public void setValue( final ValuePath path, final Object value )
+    public void setValue( final EntryPath path, final Object value )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
@@ -85,10 +85,10 @@ public class Entries
             if ( path.elementCount() > 1 )
             {
                 Entry entry = entries.get( path.getFirstElement() );
-                ValuePath newPath = path.asNewWithoutFirstPathElement();
+                EntryPath newPath = path.asNewWithoutFirstPathElement();
                 if ( entry == null )
                 {
-                    SubTypeEntry subTypeEntry = new SubTypeEntry( new ValuePath( this.path, path.getFirstElement() ) );
+                    SubTypeEntry subTypeEntry = new SubTypeEntry( new EntryPath( this.path, path.getFirstElement() ) );
                     entries.put( path.getFirstElement(), subTypeEntry );
                     subTypeEntry.setValue( newPath, value );
                 }
@@ -101,7 +101,7 @@ public class Entries
             }
             else
             {
-                Value newValue = Value.newBuilder().path( new ValuePath( this.path, path.getFirstElement() ) ).value( value ).build();
+                Value newValue = Value.newBuilder().path( new EntryPath( this.path, path.getFirstElement() ) ).value( value ).build();
                 doSetEntry( path.getLastElement(), newValue );
             }
         }
@@ -130,24 +130,29 @@ public class Entries
         }
     }
 
-    private void forwardSetValueToSubTypeEntry( final ValuePath path, final Object value, final SubType subType )
+    private void forwardSetValueToSubTypeEntry( final EntryPath path, final Object value, final SubType subType )
     {
-        final ValuePath.Element pathFirstElement = path.getFirstElement();
+        final EntryPath.Element pathFirstElement = path.getFirstElement();
         SubTypeEntry subTypeEntry = (SubTypeEntry) entries.get( pathFirstElement );
         if ( subTypeEntry == null )
         {
-            subTypeEntry = new SubTypeEntry( subType, new ValuePath( this.path, pathFirstElement ) );
+            subTypeEntry = new SubTypeEntry( subType, new EntryPath( this.path, pathFirstElement ) );
             doSetEntry( pathFirstElement, subTypeEntry );
         }
         subTypeEntry.setValue( path.asNewWithoutFirstPathElement(), value );
     }
 
-    private void doSetEntry( ValuePath.Element element, Entry entry )
+    private void doSetEntry( EntryPath.Element element, Entry entry )
     {
         entries.put( element, entry );
     }
 
     public Value getValue( final String path )
+    {
+        return getValue( new EntryPath( path ) );
+    }
+
+    public Value getValue( final EntryPath path )
     {
         final Entry entry = getEntry( path );
         if ( entry == null )
@@ -155,15 +160,16 @@ public class Entries
             return null;
         }
         Preconditions.checkArgument( ( entry instanceof Value ), "Entry at path [%s] is not a Value: " + entry, path );
+        //noinspection ConstantConditions
         return (Value) entry;
     }
 
     public Entry getEntry( String path )
     {
-        return getEntry( new ValuePath( path ) );
+        return getEntry( new EntryPath( path ) );
     }
 
-    public Entry getEntry( final ValuePath path )
+    public Entry getEntry( final EntryPath path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
@@ -178,7 +184,7 @@ public class Entries
         }
     }
 
-    private Entry forwardGetEntryToSubTypeEntry( final ValuePath path )
+    private Entry forwardGetEntryToSubTypeEntry( final EntryPath path )
     {
         final Entry foundEntry = entries.get( path.getFirstElement() );
         if ( foundEntry == null )
@@ -191,10 +197,10 @@ public class Entries
                                      foundEntry.getName(), this.getPath() );
 
         //noinspection ConstantConditions
-        return ( (SubTypeEntry) foundEntry ).getEntries().getEntry( path.asNewWithoutFirstPathElement() );
+        return ( (SubTypeEntry) foundEntry ).getEntry( path.asNewWithoutFirstPathElement() );
     }
 
-    private Entry doGetEntry( final ValuePath path )
+    private Entry doGetEntry( final EntryPath path )
     {
         Preconditions.checkArgument( path.elementCount() == 1, "path expected to contain only one element: " + path );
 
@@ -204,9 +210,9 @@ public class Entries
             return null;
         }
 
-        Preconditions.checkArgument( foundEntry instanceof Value,
-                                     "Entry [%s] in Entries [$s] expected to be a Value: " + foundEntry.getClass().getName(),
-                                     foundEntry.getName(), this.getPath() );
+        //Preconditions.checkArgument( foundEntry instanceof Value,
+        //                             "Entry [%s] in Entries [%s] expected to be a Value: " + foundEntry.getClass().getName(),
+        //                             foundEntry.getName(), this.getPath() );
 
         return foundEntry;
     }

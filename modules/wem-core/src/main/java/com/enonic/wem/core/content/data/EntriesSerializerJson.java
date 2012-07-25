@@ -40,14 +40,14 @@ public class EntriesSerializerJson
     public static Entries parse( final JsonNode entriesNode, final ConfigItems configItems )
     {
         final JsonNode entriesArray = entriesNode.get( "entries" );
-        final ValuePath entriesPath = new ValuePath( JsonParserUtil.getStringValue( "path", entriesNode ) );
+        final EntryPath entriesPath = new EntryPath( JsonParserUtil.getStringValue( "path", entriesNode ) );
 
         final Entries entries = newEntries( entriesPath, configItems );
         final Iterator<JsonNode> entryIt = entriesArray.getElements();
         while ( entryIt.hasNext() )
         {
             final JsonNode entryNode = entryIt.next();
-            final ValuePath path = new ValuePath( JsonParserUtil.getStringValue( "path", entryNode ) );
+            final EntryPath path = new EntryPath( JsonParserUtil.getStringValue( "path", entryNode ) );
 
             if ( configItems == null )
             {
@@ -97,7 +97,7 @@ public class EntriesSerializerJson
         return node.get( "entries" ) != null;
     }
 
-    private static Entries newEntries( final ValuePath path, ConfigItems configItems )
+    private static Entries newEntries( final EntryPath path, ConfigItems configItems )
     {
         if ( configItems == null )
         {

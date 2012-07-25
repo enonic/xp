@@ -5,7 +5,7 @@ package com.enonic.wem.core.content.data;
  */
 public abstract class Entry
 {
-    public abstract ValuePath getPath();
+    public abstract EntryPath getPath();
 
     public String getName()
     {

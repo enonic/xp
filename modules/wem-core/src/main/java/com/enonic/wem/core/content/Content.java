@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.core.content.data.ContentData;
-import com.enonic.wem.core.content.data.ValuePath;
+import com.enonic.wem.core.content.data.EntryPath;
 import com.enonic.wem.core.content.type.ContentType;
 
 public class Content
@@ -12,7 +12,14 @@ public class Content
 
     public void init()
     {
-        data = new ContentData( type.getConfigItems() );
+        if ( type == null )
+        {
+            data = new ContentData();
+        }
+        else
+        {
+            data = new ContentData( type.getConfigItems() );
+        }
     }
 
     public ContentType getType()
@@ -32,6 +39,6 @@ public class Content
 
     public void setData( final String path, final Object value )
     {
-        this.data.setValue( new ValuePath( path ), value );
+        this.data.setValue( new EntryPath( path ), value );
     }
 }

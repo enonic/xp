@@ -6,7 +6,7 @@ import com.enonic.wem.core.content.type.configitem.Field;
 public class Value
     extends Entry
 {
-    private ValuePath valuePath;
+    private EntryPath valuePath;
 
     /**
      * Optional.
@@ -26,7 +26,7 @@ public class Value
     }
 
     @Override
-    public ValuePath getPath()
+    public EntryPath getPath()
     {
         return valuePath;
     }
@@ -63,7 +63,7 @@ public class Value
             return this;
         }
 
-        public Builder path( ValuePath value )
+        public Builder path( EntryPath value )
         {
             this.value.valuePath = value;
             return this;

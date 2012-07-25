@@ -28,7 +28,7 @@ public class EntriesTest
 
         try
         {
-            entries.setValue( new ValuePath( "unknown.eyeColour" ), "Brown" );
+            entries.setValue( new EntryPath( "unknown.eyeColour" ), "Brown" );
         }
         catch ( Exception e )
         {
@@ -47,8 +47,8 @@ public class EntriesTest
         configItems.addConfig( subType );
 
         Entries entries = new Entries( configItems );
-        entries.setValue( new ValuePath( "personalia.eyeColour" ), "Brown" );
-        entries.setValue( new ValuePath( "personalia.hairColour" ), "Brown" );
+        entries.setValue( new EntryPath( "personalia.eyeColour" ), "Brown" );
+        entries.setValue( new EntryPath( "personalia.hairColour" ), "Brown" );
 
         assertEquals( "Brown", entries.getValue( "personalia.eyeColour" ).getValue() );
         assertEquals( "Brown", entries.getValue( "personalia.hairColour" ).getValue() );
@@ -66,10 +66,10 @@ public class EntriesTest
         configItems.addConfig( personalia );
 
         Entries entries = new Entries( configItems );
-        entries.setValue( new ValuePath( "personalia.crimes[0].description" ), "Stole purse from old lady." );
-        entries.setValue( new ValuePath( "personalia.crimes[0].year" ), "2011" );
-        entries.setValue( new ValuePath( "personalia.crimes[1].description" ), "Drove car in 80 in 50 zone." );
-        entries.setValue( new ValuePath( "personalia.crimes[1].year" ), "2012" );
+        entries.setValue( new EntryPath( "personalia.crimes[0].description" ), "Stole purse from old lady." );
+        entries.setValue( new EntryPath( "personalia.crimes[0].year" ), "2011" );
+        entries.setValue( new EntryPath( "personalia.crimes[1].description" ), "Drove car in 80 in 50 zone." );
+        entries.setValue( new EntryPath( "personalia.crimes[1].year" ), "2012" );
 
         assertEquals( "Stole purse from old lady.", entries.getValue( "personalia.crimes[0].description" ).getValue() );
         assertEquals( "2011", entries.getValue( "personalia.crimes[0].year" ).getValue() );
@@ -87,8 +87,8 @@ public class EntriesTest
         configItems.addConfig( subType );
 
         Entries entries = new Entries( configItems );
-        entries.setValue( new ValuePath( "persons[0].name" ), "Arn" );
-        entries.setValue( new ValuePath( "persons[0].eyeColour" ), "Brown" );
+        entries.setValue( new EntryPath( "persons[0].name" ), "Arn" );
+        entries.setValue( new EntryPath( "persons[0].eyeColour" ), "Brown" );
 
         assertEquals( "Arn", entries.getValue( "persons[0].name" ).getValue() );
         assertEquals( "Brown", entries.getValue( "persons[0].eyeColour" ).getValue() );
