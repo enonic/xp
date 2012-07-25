@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.data;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.core.content.type.item.SubType;
+import com.enonic.wem.core.content.type.configitem.SubType;
 
 public class SubTypeEntry
     extends Entry

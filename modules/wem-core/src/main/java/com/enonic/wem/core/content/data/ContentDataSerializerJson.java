@@ -11,7 +11,7 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.enonic.wem.core.content.JsonFactoryHolder;
-import com.enonic.wem.core.content.type.item.ConfigItems;
+import com.enonic.wem.core.content.type.configitem.ConfigItems;
 
 public class ContentDataSerializerJson
 {

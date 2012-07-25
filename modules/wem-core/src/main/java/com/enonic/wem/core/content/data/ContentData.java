@@ -1,8 +1,8 @@
 package com.enonic.wem.core.content.data;
 
 
-import com.enonic.wem.core.content.type.item.ConfigItems;
-import com.enonic.wem.core.content.type.item.SubType;
+import com.enonic.wem.core.content.type.configitem.ConfigItems;
+import com.enonic.wem.core.content.type.configitem.SubType;
 
 public class ContentData
 {

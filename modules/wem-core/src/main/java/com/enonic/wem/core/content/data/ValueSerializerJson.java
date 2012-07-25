@@ -6,7 +6,7 @@ import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
 import com.enonic.wem.core.content.JsonParserUtil;
-import com.enonic.wem.core.content.type.item.ConfigItem;
+import com.enonic.wem.core.content.type.configitem.ConfigItem;
 
 public class ValueSerializerJson
 {

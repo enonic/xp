@@ -8,7 +8,7 @@ import java.util.StringTokenizer;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.core.content.type.item.FieldPath;
+import com.enonic.wem.core.content.type.configitem.FieldPath;
 
 public class ValuePath
     implements Iterable<ValuePath.Element>

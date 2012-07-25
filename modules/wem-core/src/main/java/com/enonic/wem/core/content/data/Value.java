@@ -1,6 +1,6 @@
 package com.enonic.wem.core.content.data;
 
-import com.enonic.wem.core.content.type.item.Field;
+import com.enonic.wem.core.content.type.configitem.Field;
 
 
 public class Value

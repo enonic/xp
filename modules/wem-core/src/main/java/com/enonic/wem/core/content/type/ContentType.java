@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.type;
 
 
-import com.enonic.wem.core.content.type.item.ConfigItems;
+import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.module.Module;
 
 public class ContentType

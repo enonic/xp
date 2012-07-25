@@ -6,11 +6,11 @@ import java.util.LinkedHashMap;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.core.content.type.item.ConfigItem;
-import com.enonic.wem.core.content.type.item.ConfigItems;
-import com.enonic.wem.core.content.type.item.Field;
-import com.enonic.wem.core.content.type.item.FieldPath;
-import com.enonic.wem.core.content.type.item.SubType;
+import com.enonic.wem.core.content.type.configitem.ConfigItem;
+import com.enonic.wem.core.content.type.configitem.ConfigItems;
+import com.enonic.wem.core.content.type.configitem.Field;
+import com.enonic.wem.core.content.type.configitem.FieldPath;
+import com.enonic.wem.core.content.type.configitem.SubType;
 
 public class Entries
     implements Iterable<Entry>

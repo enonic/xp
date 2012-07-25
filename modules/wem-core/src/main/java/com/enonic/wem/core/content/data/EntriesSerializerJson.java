@@ -8,11 +8,11 @@ import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
 import com.enonic.wem.core.content.JsonParserUtil;
-import com.enonic.wem.core.content.type.item.ConfigItem;
-import com.enonic.wem.core.content.type.item.ConfigItemType;
-import com.enonic.wem.core.content.type.item.ConfigItems;
-import com.enonic.wem.core.content.type.item.FieldPath;
-import com.enonic.wem.core.content.type.item.SubType;
+import com.enonic.wem.core.content.type.configitem.ConfigItem;
+import com.enonic.wem.core.content.type.configitem.ConfigItemType;
+import com.enonic.wem.core.content.type.configitem.ConfigItems;
+import com.enonic.wem.core.content.type.configitem.FieldPath;
+import com.enonic.wem.core.content.type.configitem.SubType;
 
 public class EntriesSerializerJson
 {
