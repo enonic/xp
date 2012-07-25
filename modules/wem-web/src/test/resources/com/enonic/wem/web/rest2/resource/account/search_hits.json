@@ -9,7 +9,10 @@
             "qualifiedName": "enonic\\dummy",
             "displayName": "Dummy User",
             "lastModified": "2011-08-09 08:23:07",
-            "hasPhoto": true
+            "created": "2011-08-09 08:23:07",
+            "hasPhoto": true,
+            "builtIn": false,
+            "isEditable": true
         },
         {
             "key": "E34B614B26C666AA9929F90EF3FA723B3DAAAAB2",
@@ -19,7 +22,10 @@
             "qualifiedName": "enonic\\group1",
             "displayName": "Group One",
             "lastModified": "2012-07-24 16:18:35",
-            "hasPhoto": false
+            "created": "2011-08-09 08:23:07",
+            "hasPhoto": false,
+            "builtIn": true,
+            "isEditable": false
         },
         {
             "key": "18311D321165D73043C10A9101016CDF3765898E",
@@ -29,7 +35,10 @@
             "qualifiedName": "enonic\\authenticated",
             "displayName": "Authenticated Users",
             "lastModified": "2012-07-24 16:19:50",
-            "hasPhoto": false
+            "created": "2011-08-09 08:23:07",
+            "hasPhoto": false,
+            "builtIn": false,
+            "isEditable": true
         }
     ],
     "facets": [
