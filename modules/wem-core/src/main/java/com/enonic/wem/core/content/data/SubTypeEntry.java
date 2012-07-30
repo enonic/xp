@@ -5,9 +5,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 
-/**
- * TOOD: Mpve code from Entries into SubTypEntry when we know that ContentData can use SubTypeEntry as container instead of Entries.
- */
+
 public class SubTypeEntry
     extends Entry
 {
