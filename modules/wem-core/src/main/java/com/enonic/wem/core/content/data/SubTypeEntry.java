@@ -66,6 +66,21 @@ public class SubTypeEntry
         return entries.getEntry( path );
     }
 
+    public Entry getEntry( final String path )
+    {
+        return getEntry( new EntryPath( path ) );
+    }
+
+    public Value getValue( final String path )
+    {
+        return entries.getValue( new EntryPath( path ) );
+    }
+
+    public Value getValue( final EntryPath path )
+    {
+        return entries.getValue( path );
+    }
+
     public Entries getEntries()
     {
         return entries;

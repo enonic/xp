@@ -12,7 +12,7 @@ import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldPath;
 import com.enonic.wem.core.content.type.configitem.SubType;
 
-public class Entries
+class Entries
     implements Iterable<Entry>
 {
     private EntryPath path;
@@ -26,7 +26,7 @@ public class Entries
      *
      * @param configItems
      */
-    public Entries( final ConfigItems configItems )
+    Entries( final ConfigItems configItems )
     {
         Preconditions.checkNotNull( configItems, "configItems cannot be null" );
         this.path = new EntryPath();
@@ -40,7 +40,7 @@ public class Entries
      *
      * @param configItems
      */
-    public Entries( final EntryPath path, final ConfigItems configItems )
+    Entries( final EntryPath path, final ConfigItems configItems )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkNotNull( configItems, "configItems cannot be null" );
@@ -54,18 +54,18 @@ public class Entries
     /**
      * Unstructured.
      */
-    public Entries( final EntryPath path )
+    Entries( final EntryPath path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         this.path = path;
     }
 
-    public EntryPath getPath()
+    EntryPath getPath()
     {
         return path;
     }
 
-    public boolean isUnstructured()
+    boolean isUnstructured()
     {
         return configItems == null;
     }
@@ -75,58 +75,68 @@ public class Entries
         entries.put( entry.getPath().getLastElement(), entry );
     }
 
-    public void setValue( final EntryPath path, final Object value )
+    void setValue( final EntryPath path, final Object value )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
 
         if ( isUnstructured() )
         {
-            if ( path.elementCount() > 1 )
-            {
-                Entry entry = entries.get( path.getFirstElement() );
-                EntryPath newPath = path.asNewWithoutFirstPathElement();
-                if ( entry == null )
-                {
-                    SubTypeEntry subTypeEntry = new SubTypeEntry( new EntryPath( this.path, path.getFirstElement() ) );
-                    entries.put( path.getFirstElement(), subTypeEntry );
-                    subTypeEntry.setValue( newPath, value );
-                }
-                else
-                {
-                    SubTypeEntry subTypeEntry = (SubTypeEntry) entry;
-                    subTypeEntry.setValue( newPath, value );
-                }
-
-            }
-            else
-            {
-                Value newValue = Value.newBuilder().path( new EntryPath( this.path, path.getFirstElement() ) ).value( value ).build();
-                doSetEntry( path.getLastElement(), newValue );
-            }
+            setUnstructuredValue( path, value );
         }
         else
         {
-            final FieldPath fieldPath = path.resolveFieldPath();
-            ConfigItem foundConfig = configItems.getConfig( fieldPath.getFirstElement() );
-            if ( foundConfig == null )
-            {
-                throw new IllegalArgumentException( "No ConfigItem found at: " + path );
-            }
+            setStructuredValue( path, value );
+        }
+    }
 
-            if ( path.elementCount() > 1 )
-            {
-                Preconditions.checkArgument( foundConfig instanceof SubType,
-                                             "ConfigItem at path [%s] expected to be of type SubType: " + foundConfig.getItemType(), path );
+    private void setStructuredValue( final EntryPath path, final Object value )
+    {
+        final FieldPath fieldPath = path.resolveFieldPath();
+        ConfigItem foundConfig = configItems.getConfig( fieldPath.getFirstElement() );
+        if ( foundConfig == null )
+        {
+            throw new IllegalArgumentException( "No ConfigItem found at: " + path );
+        }
 
-                @SuppressWarnings("ConstantConditions") final SubType subType = (SubType) foundConfig;
-                forwardSetValueToSubTypeEntry( path, value, subType );
+        if ( path.elementCount() > 1 )
+        {
+            Preconditions.checkArgument( foundConfig instanceof SubType,
+                                         "ConfigItem at path [%s] expected to be of type SubType: " + foundConfig.getItemType(), path );
+
+            @SuppressWarnings("ConstantConditions") final SubType subType = (SubType) foundConfig;
+            forwardSetValueToSubTypeEntry( path, value, subType );
+        }
+        else
+        {
+            final Field field = (Field) foundConfig;
+            doSetEntry( path.getLastElement(), Value.newBuilder().field( field ).path( path ).value( value ).build() );
+        }
+    }
+
+    private void setUnstructuredValue( final EntryPath path, final Object value )
+    {
+        if ( path.elementCount() > 1 )
+        {
+            Entry entry = entries.get( path.getFirstElement() );
+            EntryPath newPath = path.asNewWithoutFirstPathElement();
+            if ( entry == null )
+            {
+                SubTypeEntry subTypeEntry = new SubTypeEntry( new EntryPath( this.path, path.getFirstElement() ) );
+                entries.put( path.getFirstElement(), subTypeEntry );
+                subTypeEntry.setValue( newPath, value );
             }
             else
             {
-                final Field field = (Field) foundConfig;
-                doSetEntry( path.getLastElement(), Value.newBuilder().field( field ).path( path ).value( value ).build() );
+                SubTypeEntry subTypeEntry = (SubTypeEntry) entry;
+                subTypeEntry.setValue( newPath, value );
             }
+
+        }
+        else
+        {
+            Value newValue = Value.newBuilder().path( new EntryPath( this.path, path.getFirstElement() ) ).value( value ).build();
+            doSetEntry( path.getLastElement(), newValue );
         }
     }
 
@@ -147,12 +157,12 @@ public class Entries
         entries.put( element, entry );
     }
 
-    public Value getValue( final String path )
+    Value getValue( final String path )
     {
         return getValue( new EntryPath( path ) );
     }
 
-    public Value getValue( final EntryPath path )
+    Value getValue( final EntryPath path )
     {
         final Entry entry = getEntry( path );
         if ( entry == null )
@@ -164,12 +174,24 @@ public class Entries
         return (Value) entry;
     }
 
-    public Entry getEntry( String path )
+    SubTypeEntry getSubTypeEntry( final EntryPath path )
+    {
+        final Entry entry = getEntry( path );
+        if ( entry == null )
+        {
+            return null;
+        }
+        Preconditions.checkArgument( ( entry instanceof SubTypeEntry ), "Entry at path [%s] is not a SubTypeEntry: " + entry, path );
+        //noinspection ConstantConditions
+        return (SubTypeEntry) entry;
+    }
+
+    Entry getEntry( String path )
     {
         return getEntry( new EntryPath( path ) );
     }
 
-    public Entry getEntry( final EntryPath path )
+    Entry getEntry( final EntryPath path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
@@ -246,4 +268,6 @@ public class Entries
         }
         return s.toString();
     }
+
+
 }

@@ -14,9 +14,9 @@ import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.FieldPath;
 import com.enonic.wem.core.content.type.configitem.SubType;
 
-public class EntriesSerializerJson
+class EntriesSerializerJson
 {
-    public static void generate( final Entries entries, final JsonGenerator g )
+    static void generate( final Entries entries, final JsonGenerator g )
         throws IOException
     {
         g.writeStartObject();
@@ -37,7 +37,7 @@ public class EntriesSerializerJson
         g.writeEndObject();
     }
 
-    public static Entries parse( final JsonNode entriesNode, final ConfigItems configItems )
+    static Entries parse( final JsonNode entriesNode, final ConfigItems configItems )
     {
         final JsonNode entriesArray = entriesNode.get( "entries" );
         final EntryPath entriesPath = new EntryPath( JsonParserUtil.getStringValue( "path", entriesNode ) );

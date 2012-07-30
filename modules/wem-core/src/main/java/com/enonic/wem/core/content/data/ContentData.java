@@ -56,7 +56,17 @@ public class ContentData
         return entries.getValue( path );
     }
 
-    public Entries getEntries()
+    public SubTypeEntry getSubTypeEntry( final String path )
+    {
+        return getSubTypeEntry( new EntryPath( path ) );
+    }
+
+    public SubTypeEntry getSubTypeEntry( final EntryPath path )
+    {
+        return entries.getSubTypeEntry( path );
+    }
+
+    Entries getEntries()
     {
         return entries;
     }

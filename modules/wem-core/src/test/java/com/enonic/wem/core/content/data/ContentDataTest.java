@@ -203,4 +203,62 @@ public class ContentDataTest
         String json = ContentDataSerializerJson.toJson( data );
         System.out.println( json );
     }
+
+    @Test
+    public void unstructured_getSubTypeEntry()
+    {
+        ContentData data = new ContentData();
+        data.setValue( "child[0].name", "Joachim" );
+        data.setValue( "child[0].age", "9" );
+        data.setValue( "child[0].features.eyeColour", "Blue" );
+        data.setValue( "child[0].features.hairColour", "Blonde" );
+        data.setValue( "child[1].name", "Madeleine" );
+        data.setValue( "child[1].age", "7" );
+        data.setValue( "child[1].features.eyeColour", "Brown" );
+        data.setValue( "child[1].features.hairColour", "Black" );
+
+        SubTypeEntry subTypeEntryChild0 = data.getSubTypeEntry( "child[0]" );
+        assertEquals( "Joachim", subTypeEntryChild0.getValue( "name" ).getValue() );
+        assertEquals( "9", subTypeEntryChild0.getValue( "age" ).getValue() );
+        assertEquals( "Blue", subTypeEntryChild0.getValue( "features.eyeColour" ).getValue() );
+
+        SubTypeEntry subTypeEntryChild1 = data.getSubTypeEntry( "child[1]" );
+        assertEquals( "Madeleine", subTypeEntryChild1.getValue( "name" ).getValue() );
+        assertEquals( "7", subTypeEntryChild1.getValue( "age" ).getValue() );
+        assertEquals( "Brown", subTypeEntryChild1.getValue( "features.eyeColour" ).getValue() );
+    }
+
+    @Test
+    public void structured_getSubTypeEntry()
+    {
+        SubType child = SubType.newBuilder().name( "child" ).multiple( true ).build();
+        child.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
+        child.addField( Field.newBuilder().name( "age" ).type( FieldTypes.textline ).build() );
+        SubType features = SubType.newBuilder().name( "features" ).multiple( false ).build();
+        features.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        features.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
+        child.addSubType( features );
+        ConfigItems configItems = new ConfigItems();
+        configItems.addConfig( child );
+
+        ContentData data = new ContentData( configItems );
+        data.setValue( "child[0].name", "Joachim" );
+        data.setValue( "child[0].age", "9" );
+        data.setValue( "child[0].features.eyeColour", "Blue" );
+        data.setValue( "child[0].features.hairColour", "Blonde" );
+        data.setValue( "child[1].name", "Madeleine" );
+        data.setValue( "child[1].age", "7" );
+        data.setValue( "child[1].features.eyeColour", "Brown" );
+        data.setValue( "child[1].features.hairColour", "Black" );
+
+        SubTypeEntry subTypeEntryChild0 = data.getSubTypeEntry( "child[0]" );
+        assertEquals( "Joachim", subTypeEntryChild0.getValue( "name" ).getValue() );
+        assertEquals( "9", subTypeEntryChild0.getValue( "age" ).getValue() );
+        assertEquals( "Blue", subTypeEntryChild0.getValue( "features.eyeColour" ).getValue() );
+
+        SubTypeEntry subTypeEntryChild1 = data.getSubTypeEntry( "child[1]" );
+        assertEquals( "Madeleine", subTypeEntryChild1.getValue( "name" ).getValue() );
+        assertEquals( "7", subTypeEntryChild1.getValue( "age" ).getValue() );
+        assertEquals( "Brown", subTypeEntryChild1.getValue( "features.eyeColour" ).getValue() );
+    }
 }
