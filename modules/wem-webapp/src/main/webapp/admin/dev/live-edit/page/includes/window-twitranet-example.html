@@ -1,0 +1,32 @@
+<div data-live-edit-type="window" data-live-edit-key="50" data-live-edit-name="Twitranet">
+    <h2>Twitranet</h2>
+    <div id="twitranet-tweets-container">
+
+    </div>
+    <script type="text/javascript">
+        var $tweetContainer = $('#twitranet-tweets-container');
+        var _twitranetTick = 0;
+        var _twitranetTweetHtml = '<p class="js-tweet-text">Nice tutorial by <a href="/Jelastic" class="twitter-atreply pretty-link"><s>@</s><b>Jelastic</b></a> - How to deploy Enonic CMS to Jelastic cloud <a href="http://t.co/2UVC7Oxb" class="twitter-timeline-link" data-expanded-url="http://bit.ly/PBkwo8" target="_blank"><span style="font-size:0; line-height:0">http://</span><span class="js-display-url">bit.ly/PBkwo8</span><span style="font-size:0; line-height:0"></span><span class="tco-ellipsis"><span style="font-size:0; line-height:0">&nbsp;</span></span></a> <a href="/search/%23java" data-query-source="hashtag_click" class="twitter-hashtag pretty-link">‪<s>#</s><b>java</b>‬</a> <a href="/search/%23cloud" data-query-source="hashtag_click" class="twitter-hashtag pretty-link">‪<s>#</s><b>cloud</b>‬</a> <a href="/search/%23tomcat" data-query-source="hashtag_click" class="twitter-hashtag pretty-link">‪<s>#</s><b>tomcat</b>‬</a> <a href="/search/%23postgresql" data-query-source="hashtag_click" class="twitter-hashtag pretty-link">‪<s>#</s><b>postgresql</b>‬</a> </p>';
+
+        function appendTweet() {
+            var $tweetHtml = $(_twitranetTweetHtml).hide();
+            $tweetContainer.append($tweetHtml);
+            $tweetHtml.fadeIn();
+
+        }
+
+        var _twitranetTimer = setInterval(function() {
+            if ( $tweetContainer.children('.js-tweet-text').length === 10) {
+                $tweetContainer.empty();
+                _twitranetTick = 0;
+
+            }
+
+            appendTweet();
+
+            _twitranetTick++;
+        }, 7000);
+
+        appendTweet();
+    </script>
+</div>

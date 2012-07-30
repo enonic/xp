@@ -1,0 +1,19 @@
+Live Edit currently make use of the following cutting edge web technologies:
+
+* SVG (for highlighting)
+* CSS Gradients
+
+Which are supported by:
+
+* Latest Firefox / Latest Chrome / Latest Opera
+* IE >= 9
+
+
+TODO:
+
+* Navigate to Page
+* Fix so drag helper tooltip width is not fixed.
+* Make sure the pointer cursor that is added to the component on mouseover is removed on mouseout
+* Remove SELECTOR strings from Regions and Windows
+* Parent button: Dynamically resolve what the parent component is
+* Use DOM Mutation Observers for changing the selected component highlighter dimensions / Alternatively use a timer and check for width/height changes on the selected component.

@@ -1,3 +1,43 @@
+/*
+    TODO: Review z-indexes
+*/
+
+/*** Reset */
+
+svg#live-edit-highlighter,
+svg#live-edit-highlighter rect,
+svg#live-edit-selected-border,
+svg#live-edit-selected-border rect,
+.live-edit-empty-region-placeholder,
+.live-edit-empty-window-placeholder,
+.live-edit-drop-target-placeholder,
+#live-edit-tooltip,
+#live-edit-tooltip-arrow-border,
+#live-edit-tooltip-arrow,
+#live-edit-tooltip-type-text,
+#live-edit-tooltip-name-text,
+#live-edit-context-menu,
+#live-edit-context-menu-inner,
+.live-edit-button,
+.live-edit-button-text,
+.live-edit-button-icon,
+#live-edit-drag-helper,
+#live-edit-drag-helper-status-icon
+{
+    border: 0;
+    color: #000;
+    font: 11px Tahoma;
+    font-size: 11px;
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+}
+
+#live-edit-drag-helper img { border: 0; }
+
+/*** Misc */
+
 * {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -7,201 +47,173 @@
     user-select: none;
 }
 
-.live-edit-empty-region-placeholder,
-.live-edit-dd-drop-target-placeholder,
-#live-edit-tooltip {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 11px;
-    font: 11px Arial;
-    vertical-align: baseline;
-}
+/*
+    Disable pointer events for A elements ("disables CSS hover selectors on links")
+    Can we find a better cross browser solution that includes IE?
+*/
+a { pointer-events: none; }
 
-/* Overlay */
+[data-live-edit-type] { /*cursor: pointer;*/ }
 
-#live-edit-canvas {
-    position: absolute;
-    display: none;
-    top: 0; left: 0;
-}
 
-.live-edit-overlay {
-    position: absolute;
-    top: -15000px;
-    left: -15000px;
-    background-color: #000;
-    opacity: .5;
-}
+/*** Highlighter */
 
-/* Selector */
-
-#live-edit-highlighter {
-    position: absolute;
-    top: -5000px; left: -5000px;
-}
-
-.live-edit-window-highlighter {
-    border: 2px dashed #000;
-    cursor: move;
-}
-
-.live-edit-window-selected {
-    border: 2px solid #666;
-    cursor: move;
-}
-
-.live-edit-region-highlighter {
-    border: 2px dashed blue;
-}
-
-.live-edit-region-selected {
-    border: 2px solid blue;
-}
-
-.live-edit-position-relative {
+.live-edit-selected-component {
     position: relative;
+    box-shadow: 1px 1px 10px #1e90ff;
 }
 
-/* Placeholders */
+svg#live-edit-highlighter {
+    pointer-events: none;
+    position: absolute;
+    z-index: 1000040;
+}
+
+svg#live-edit-highlighter rect {
+    fill-opacity: 0;
+    stroke-dasharray: 5 5;
+    stroke-width: 4;
+}
+
+svg#live-edit-selected-border {
+    height: 100%;
+    pointer-events: none;
+    position: absolute;
+    z-index: 1000000;
+}
+
+svg#live-edit-selected-border rect {
+    stroke-width: 2;
+    fill-opacity: 0;
+}
+
+
+/*** Placeholders for Empty components */
 
 .live-edit-empty-region-placeholder {
-    border: 2px dashed #add8e6;
-    padding: 28px;
-    cursor: default;
-    color: #add8e6;
-    font-size: 20px;
-    text-align: center;
     background-color: #fff;
-}
-
-.live-edit-empty-region-placeholder-hover {
-    border: 2px dashed #0000ee;
+    border: 2px dashed #add8e6;
+    clear: both;
+    color: #add8e6;
+    cursor: default;
+    font-size: 20px;
+    padding: 28px;
+    text-align: center;
 }
 
 .live-edit-empty-window-placeholder {
     border: 1px dashed #aaa;
-    padding: 11px;
+    clear: both;
     color: #d3d3d3;
     font-size: 11px;
-    text-align: center;
     margin-bottom: 10px;
+    padding: 11px;
+    text-align: center;
 }
 
-.live-edit-dd-drop-target-placeholder {
-    border: 2px dashed #000;
-    padding: 28px;
-    color: #000;
-    font-size: 20px;
-    text-align: center;
-    background-color: #eee;
-    margin-bottom: 10px;
-}
 
-/* Tooltip */
+/*** Tooltip */
 
 #live-edit-tooltip {
-    position:absolute;
+    background: #3f4c6b;
+    /*border: 1px solid #606c88;*/
     cursor: default;
-    top: -5000px;
-    left: -5000px;
-    border: 2px solid #515e69;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-    padding: 9px 20px;
+    padding: 12px 19px;
     text-align: center;
-    font-size: 11px;
     line-height: 1.3em;
-    background: #202933;
-    background: -webkit-gradient(linear, 0 0, 0 100%, from(#3c4a58), to(#202933));
-    background: -moz-linear-gradient(#3c4a58, #202933);
-    background: -o-linear-gradient(#3c4a58, #202933);
-    background: linear-gradient(#3c4a58, #202933);
-    box-shadow: 5px 5px 28px #444444;
+    position: absolute;
+    z-index: 1000100;
+    left: -5000px;
+    top: -5000px;
+    border: 1px solid #20252A;
+
 }
 
 #live-edit-tooltip-arrow-border {
-    border-color: #515e69 transparent transparent transparent;
+    border-color: #606c88 transparent transparent;
     border-style: solid;
-    border-width: 12px;
+    border-width: 8px;
+    bottom: -16px;
     height: 0;
-    width: 0;
-    position: absolute;
-    bottom: -24px;
     left: 50%;
     margin-left: -10px;
+    position: absolute;
+    width: 0;
 }
 
 #live-edit-tooltip-arrow {
-    border-color: #202933 transparent transparent transparent;
+    border-color: #3f4c6b transparent transparent;
     border-style: solid;
-    border-width: 12px;
+    border-width: 8px;
+    bottom: -16px;
     height: 0;
-    width: 0;
-    position: absolute;
-    bottom: -21px;
     left: 50%;
     margin-left: -10px;
+    position: absolute;
+    width: 0;
 }
 
 #live-edit-tooltip-type-text {
-    color: #bec9d4;
+    font-weight: bold;
+    color: #ccc;
 }
 
 #live-edit-tooltip-name-text {
-    color: #87cefa;
+    font-weight: bold;
+    color: #fff;
 }
 
-/* Toolbar */
 
-#live-edit-toolbar {
+/*** Context menu */
+
+#live-edit-context-menu {
     position: absolute;
-    top: -5000px; left: -5000px;
-    background-color: #272C31;
-    box-shadow: 5px 5px 28px #444444;
+    z-index: 1000050;
+    background-color: #1e90ff;
+    padding: 1px 1px 0 1px;
 }
 
-#live-edit-toolbar-inner {
-    outline: 1px solid #141414;
-    /* border: 1px solid #50575d; */
-    padding: 0;
+#live-edit-context-menu-inner {
 }
 
-/* Button */
+/*** Button */
 
 .live-edit-button {
-    width: 74px;
-    background-color: #2e3338;
-    padding: 1px;
-}
-
-.live-edit-button .live-edit-button-inner {
+    width: 62px;
+    cursor: pointer !important;
+    margin-bottom: 1px;
     display: block;
-    border: 1px solid #778189;
-    border-radius: 2px;
     text-align: center;
-    background-color: #393f45;
-    background: -webkit-gradient(linear, 0 0, 0 100%, from(#5d656e), to(#393f45));
-    background: -moz-linear-gradient(#5d656e, #393f45);
-    background: -o-linear-gradient(#5d656e, #393f45);
-    background: linear-gradient(#5d656e, #393f45);
     padding: 2px 1px 5px 1px;
     cursor: pointer;
-    font: 11px arial;
-    color: #bec9d4;
+    font: 11px Tahoma;
     text-decoration: none;
-}
-.live-edit-button .live-edit-button-inner:active {
-    background-color: #393f45;
-    background: -webkit-gradient(linear, 0 0, 0 100%, from(#393f45), to(#5d656e));
-    background: -moz-linear-gradient(#393f45, #5d656e);
-    background: -o-linear-gradient(#393f45, #5d656e);
-    background: linear-gradient(#393f45, #5d656e);
-    box-shadow: 0px 5px 5px #111 inset;
+    border: 1px solid #98bede;
+
+    background: #deefff; /* Old browsers */
+    background: -moz-linear-gradient(top,  #deefff 0%, #98bede 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#deefff), color-stop(100%,#98bede)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #deefff 0%,#98bede 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #deefff 0%,#98bede 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #deefff 0%,#98bede 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #deefff 0%,#98bede 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#deefff', endColorstr='#98bede',GradientType=0 ); /* IE6-9 */
+
 }
 
-/* Toolbar buttons */
+.live-edit-button:hover {
+}
+
+.live-edit-button:active {
+}
+
+.live-edit-button-text {
+    text-transform: capitalize;
+    color: #000;
+}
+
+
+/*** Context Menu buttons */
 
 .live-edit-button-icon {
     display: block;
@@ -213,32 +225,46 @@
     background-position: center 5px;
 }
 
-.live-edit-icon-parent {
-    background-image: url("../images/arrow_up_right_blue.png");
-}
+/*** Button icons */
 
-.live-edit-icon-edit {
-    background-image: url("../images/edit.png");
-}
+.live-edit-icon-drag { background-image: url("../images/hand_grab2.png"); }
+.live-edit-icon-parent { background-image: url("../images/arrow_up_right_blue.png"); }
+.live-edit-icon-settings { background-image: url("../images/gear.png"); }
+.live-edit-icon-remove { background-image: url("../images/delete.png"); }
 
-.live-edit-icon-settings {
-    background-image: url("../images/gear.png");
-}
 
-.live-edit-icon-remove {
-    background-image: url("../images/delete.png");
-}
+/*** Drag and Drop */
 
-/* DD */
+#live-edit-drag-helper {
+    border: 1px solid #c6c6c6;
+    background-color: #fff;
+    font-size: 11px;
+    box-shadow: 2px 2px 2px 0 #888888;
+}
 
 #live-edit-drag-helper-status-icon {
     vertical-align: middle;
     margin-right: 5px;
 }
 
-#live-edit-dd-drag-helper {
-    border: 1px solid #c6c6c6;
-    background-color: #fff;
-    font-size: 11px;
-    box-shadow: 2px 2px 2px 0 #888888;
+.live-edit-drop-target-placeholder {
+    clear: both;
+    border: 2px dashed #000;
+    padding: 28px;
+    color: #000;
+    font-size: 20px;
+    text-align: center;
+    background-color: #eee;
+    margin: 1px 0 10px 0;
+}
+
+
+/*** HTML Object placeholders */
+
+.live-edit-html-object-placeholder { background-color: #ffffce; }
+
+.live-edit-html5-multimedia {
+    background-image: url("../images/placeholder_html5_multimedia.png");
+    background-repeat: no-repeat;
+    background-position: center;
 }

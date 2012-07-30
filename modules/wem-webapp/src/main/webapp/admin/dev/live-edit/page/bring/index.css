@@ -1,0 +1,213 @@
+/* ::::: http://www.bring.com/_public/shared/styles/screen.css?_ts=1376f2f0982 ::::: */
+
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, code, del, dfn, em, img, q, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td { margin: 0px; padding: 0px; border: 0px none; font-weight: inherit; font-style: inherit; font-size: 100%; font-family: inherit; vertical-align: baseline; }
+body { line-height: 1.5; }
+table { border-collapse: separate; border-spacing: 0px; }
+caption, th, td { text-align: left; font-weight: normal; }
+table, td, th { vertical-align: middle; }
+a img { border: medium none; }
+body { min-width: 1006px; padding: 0px; margin: 0px; font: 62.5% Arial,"Helvetica Neue",Helvetica,sans-serif; color: rgb(77, 79, 83); }
+.framework { font-size: 1.2em; }
+h2, h3, h4, h5, h6, .style2, .style3, .style4, .style5 { font-weight: normal; }
+h1, .style1 { font-size: 3.2em; font-family: Arial,Helvetica,Sans-serif; color: white; }
+h2, .style2 { font-size: 2.33em; margin-bottom: 20px; }
+h3, .style3 { font-size: 1.67em; line-height: 1; margin-bottom: 1em; padding: 0.1em 0px; }
+h4, .style4 { font-size: 1.33em; font-weight: bold; line-height: 1; margin-bottom: 0px; margin-top: 0px; padding: 0.1em 0px 1em; }
+div.linklist ul.with-background { background-color: rgb(239, 239, 240); padding: 10px 10px 5px; }
+p { margin: 0px 0px 1.5em; }
+a:focus, a:hover { color: rgb(77, 79, 83); }
+a { color: rgb(0, 178, 228); text-decoration: none; }
+.read-more, .article-links, .add-more, .forward, .backward, .about, .nextpage, .lastpage { font-weight: bold; text-transform: uppercase; }
+a.read-more { padding-left: 18px; clear: both; display: block; }
+ul { list-style-type: none; }
+li { margin-bottom: 5px; }
+input { font-family: inherit; }
+input.text, textarea, select { color: rgb(77, 79, 83); border: 1px solid rgb(141, 142, 143); background: none repeat scroll 0% 0% white; }
+.site-search input.text { vertical-align: middle; height: 16px; width: 160px; }
+.site-search input.site-search-btn { vertical-align: middle; margin: 0px; padding: 0px; border-width: 1px 1px 1px 0px; border-style: solid solid solid none; border-color: rgb(141, 142, 143) rgb(141, 142, 143) rgb(141, 142, 143) -moz-use-text-color; -moz-border-top-colors: none; -moz-border-right-colors: none; -moz-border-bottom-colors: none; -moz-border-left-colors: none; -moz-border-image: none; }
+div#menu-main, div#menu-main-minisite { float: left; height: 62px; }
+ul.menu-main, ul.menu-main-minisite { float: left; margin: 0px; padding: 0px; list-style-type: none; }
+ul.menu-main li, ul.menu-sub li { float: left; margin: 0px; line-height: 32px; height: 32px; }
+ul.menu-main li a:hover, ul.menu-main li.path a { float: left; }
+ul.menu-main li a span, ul.menu-main-minisite li a span { float: left; height: 32px; padding: 0px 15px 0px 10px; display: block; cursor: pointer; }
+ul.menu-main li a, ul.menu-top li a, ul.menu-sub li a, ul.menu-main-minisite li a { font-family: Arial; text-transform: uppercase; display: block; }
+ul.menu-main li a, ul.menu-sub li a, ul.menu-main-minisite li a { padding: 0px 0px 0px 5px; }
+ul.menu-main li a, ul.menu-top li a, ul.menu-main-minisite li a { color: rgb(77, 79, 83); }
+ul.menu-top { float: right; height: 30px; }
+ul.menu-top li { float: left; height: 30px; }
+ul.menu-top li a { padding: 13px 11px 0px; font-size: 0.9em; font-weight: 400; }
+ul.menu-top li div, .site-search { padding-top: 8px; }
+#ourWebsitesDropdown { position: absolute; top: 0px; left: 0px; width: 100%; display: none; z-index: 50000; background: url('ourwebsitesdropdownshadow.png') repeat-x scroll left bottom transparent; padding-bottom: 13px; }
+#ourWebsitesDropdown .ddbg { background: none repeat scroll 0% 0% rgb(113, 112, 116); padding-bottom: 10px; }
+#ourWebsitesDropdown .dropdown { width: 986px; margin: 0px auto; }
+#ourWebsitesDropdown .dropdown div.links { float: left; padding-top: 10px; width: 986px; }
+#ourWebsitesDropdown .dropdown .specialists { float: left; width: 429px; }
+#ourWebsitesDropdown .dropdown .countries { float: left; width: 557px; padding: 0px; }
+#ourWebsitesDropdown .dropdown .countries .linksColumn { float: left; margin: 0px 0px 0px 10px; }
+#ourWebsitesDropdown .dropdown .countries .linksColumn .block { padding-bottom: 15px; }
+#ourWebsitesDropdown .dropdown .countries .column-1 { width: 214px; }
+#ourWebsitesDropdown .dropdown .countries .column-2 { width: 322px; }
+li.ourWebsitesDropdown { background-image: none ! important; }
+li.ourWebsitesDropdown a { box-shadow: 4px 5px 6px rgb(206, 206, 207), -4px 0px 6px rgb(229, 230, 231); }
+li.ourWebsitesDropdown a, a#ourWebsitesDropdownActiveTrigger { padding: 10px ! important; background-color: rgb(229, 230, 231); }
+li.ourWebsitesDropdown a span, a#ourWebsitesDropdownActiveTrigger span { background: url('arrow-blk-down.png') no-repeat scroll right 50% transparent; padding-right: 22px; }
+a#ourWebsitesDropdownActiveTrigger { font-size: 10.8px; float: right; text-transform: uppercase; background-color: rgb(113, 112, 116); }
+a#ourWebsitesDropdownActiveTrigger span { color: white; background-image: url('icon-close-wht.png'); text-align: center; }
+a#ourWebsitesDropdownActiveTrigger:hover span { color: white; }
+#dropdownLogo { padding-top: 10px; float: left; display: block; }
+#ourWebsitesDropdown .dropdown .specialists ul { width: 429px; }
+#ourWebsitesDropdown .dropdown .specialists li { color: white; margin-bottom: 10px; font-size: 1.2em; }
+#ourWebsitesDropdown .dropdown .specialists li a { color: white; font-size: 1em; position: static; font-weight: bold; }
+#ourWebsitesDropdown .dropdown h2 { font-size: 14px; color: white; padding-bottom: 0.9em; margin-bottom: 0px; }
+#ourWebsitesDropdown .dropdown .countries ul { float: left; }
+#ourWebsitesDropdown .dropdown .countries li { float: left; width: 100%; clear: left; margin-bottom: 6px; }
+#ourWebsitesDropdown .dropdown .countries li img.flag { margin-right: 10px; float: left; }
+#ourWebsitesDropdown .dropdown .countries li span { float: left; font-size: 12px; cursor: pointer; color: white; padding-bottom: 6px; }
+#ourWebsitesDropdown .dropdown .countries li a { position: static; color: white; display: block; float: left; font-weight: bold; }
+#ourWebsitesDropdown { height: auto; }
+div.frameworkFooter { clear: left; padding-top: 20px; }
+div.frameworkFooter div.containerFooter { border-top: 1px solid rgb(113, 112, 116); padding-top: 1px; }
+div.frameworkFooter div.footer-outer { border-top: 1px solid rgb(113, 112, 116); }
+div.frameworkFooter .footer-outer { border-top: 1px solid rgb(213, 212, 214); background-color: rgb(113, 112, 116); }
+div.frameworkFooter .footer { margin: 0px auto; padding: 15px 0px 0px; width: 986px; }
+div.frameworkFooter .footer h2.style4 { color: white; padding: 0px; }
+div.frameworkFooter .footer .specialists ul { width: 590px; }
+div.frameworkFooter .footer .specialists li { color: white; }
+div.frameworkFooter .footer .specialists li a { font-weight: bold; }
+div.frameworkFooter .footer .disclaimer { color: white; padding: 35px 0px 10px; clear: left; }
+div.frameworkFooter .footer .disclaimer a { color: white; font-weight: bold; }
+div.footerLinkList li a { color: white; font-weight: bold; }
+div.footerLinkList { float: left; text-align: left; width: 270px; }
+div.frameworkFooter div.footer .specialists { width: 590px; margin-right: 10px; }
+div.footerLinkList ul { margin-top: 25px; float: left; width: 270px; }
+div.footerLinkList li { margin-bottom: 10px; float: left; clear: left; width: 235px; }
+div.footerLinkList li.even { clear: none; width: 345px; }
+div.footerLinkList li.odd { margin-right: 10px; }
+div.footerLinkList li.last { margin-bottom: 0px; }
+html.hasNewStyleFooter { background: none repeat scroll 0% 0% rgb(113, 112, 116); }
+html.hasNewStyleFooter .container.body { min-height: 300px; }
+.hover { cursor: pointer; }
+div#genTwoHeader { margin-bottom: 10px; padding-bottom: 29px; height: 108px; background-image: url('sprite.png'); }
+div#genTwoHeader div#menu-main, div#genTwoHeader div#menu-main-minisite { height: auto; }
+div#genTwoHeader .container { height: auto; background: none repeat scroll 0% 0% transparent; overflow: visible; margin-bottom: 0px; position: static; }
+div#genTwoHeader .container .span-6 { clear: both; }
+div#genTwoHeader ul.genTwo li { margin-right: 1px; line-height: 38px; height: 39px; }
+div#genTwoHeader ul.genTwo li a { position: relative; background: url('sprite.png') repeat-x scroll left -844px transparent; color: white; float: left; z-index: 99; padding: 0px; }
+div#genTwoHeader ul.genTwo li.hover a, div#genTwoHeader ul.genTwo li.path a, div#genTwoHeader ul.genTwo li a:hover { background-image: url('sprite.png'); margin-top: -1px; }
+div#genTwoHeader ul.genTwo li a span.shadow { height: 44px; display: none; position: absolute; left: -5px; top: -5px; right: -5px; background: url('sprite.png') no-repeat scroll right -800px transparent; padding: 0px 10px 0px 0px; }
+div#genTwoHeader ul.genTwo li a span.shadow-inner { height: 44px; display: block; background: url('sprite.png') no-repeat scroll left -800px transparent; padding: 0px; position: absolute; left: 0px; right: 10px; top: 0px; }
+div#genTwoHeader ul.genTwo li.hover a span.shadow, div#genTwoHeader ul.genTwo li.path a span.shadow, div#genTwoHeader ul.genTwo li a:hover span.shadow { display: block; }
+div#genTwoHeader ul.genTwo a span.menuText { height: 38px; padding: 0px 20px; background-image: none; }
+div#genTwoHeader ul.genTwo li.hover a span.menuText, div#genTwoHeader ul.genTwo li.path a span.menuText, div#genTwoHeader ul.genTwo li a:hover span.menuText { height: 40px; line-height: 40px; }
+div#genTwoHeader ul.genTwo a:focus, div#genTwoHeader ul.genTwo a:focus span { outline: medium none; }
+div#genTwoHeader ul.genTwo a:active, div#genTwoHeader ul.genTwo a:active span { outline: medium none; }
+@media projection, screen {
+}
+.span-1, .span-1-extend, .span-1-minus-10, .span-2, .span-three, .span-2-extend, .span-3, .span-4, .span-5, .span-2-minus-10 { float: left; margin-right: 10px; }
+.span-6 { float: left; }
+.span-1 { width: 156px; }
+.span-2 { width: 322px; }
+.span-4 { width: 654px; }
+.span-5 { width: 820px; }
+.span-6 { width: 986px; margin-right: 0px; }
+.append-span-2 { width: 302px; }
+.append-span-1, .append-span-1-extend, .append-span-three, .append-span-2, .append-span-3, .append-span-4, .append-span-5 { padding: 10px; float: left; margin-right: 10px; }
+.append-span4 .span-4, .span-4 .append-span-4, div.span-4 .span-4 { margin-right: 0px; }
+.last { margin-right: 0px; }
+.wrap { background-color: white; }
+.push-1 { margin-top: 10px; }
+.push-3 { margin-bottom: 10px; }
+.append-1 { padding-top: 10px; }
+.append-3 { padding-bottom: 10px; }
+.container { margin: 0px auto; padding: 0px; text-align: left; width: 986px; }
+.rightcol { width: 322px; float: right; margin: 0px; padding: 0px; }
+.rightcol * { margin-right: 0px; }
+.framework { margin: 0px auto; padding: 0px; text-align: center; }
+.framework.header { background-position: 0px -10px; }
+.framework.header .container.header { height: 178px; overflow: hidden; margin-bottom: 10px; }
+.framework.header .container.header #menu-search { height: 39px; float: right; }
+.framework.header .container.header #menu-search .site-search { padding-top: 0px; }
+.framework.header .container.header #menu-search .site-search input.site-search-btn { border-width: 0px; }
+.framework.header .container.header #menu-search .site-search input.text { line-height: 21px; border: 0px none; padding: 2px 0px 5px 10px; width: 142px; font-size: 12px; }
+.framework.header .container.header #logo-bar { height: 59px; }
+.framework.header .container.header { position: relative; }
+.hide { display: none; }
+img { border: 0px none; }
+.clear { clear: both; }
+.ruler { height: 10px; font-size: 1px; background-color: rgb(253, 187, 47); display: block; clear: both; }
+.left { float: left; }
+button span { font-family: Arial,Helvetica,Sans-serif; }
+span.btn-glossy-outer { position: relative; display: inline-block; border: 0px none; margin: 0px; padding: 0px 22px 0px 0px; overflow: visible; }
+span.btn-glossy-inner { position: relative; display: inline-block; white-space: nowrap; height: 40px; color: rgb(255, 255, 255); border: 0px none; margin: 0px; padding: 0px 0px 0px 20px; line-height: 36px; font-weight: bold; text-transform: uppercase; }
+button.btn-glossy { overflow: visible; background: none repeat scroll 0% 0% transparent; margin: 0px; padding: 0px; border: 0px none; cursor: pointer; }
+.jqmWindow { background-color: rgb(255, 255, 255); border: 0px none; color: rgb(77, 79, 83); display: none; left: 50%; margin-left: -493px; padding: 12px; position: absolute; top: 220px; width: 962px; }
+.rightcol .span-2 { overflow: visible; }
+.jqmWindowTipafriend { background-color: rgb(255, 255, 255); border: 0px none; color: rgb(77, 79, 83); display: none; left: 50%; margin-left: -223px; padding: 12px; position: fixed; top: 220px; }
+div.footerstyle { width: 115px; white-space: nowrap; }
+.mybringFront button::-moz-focus-inner { border: 0px none; padding: 0px; }
+.mybringFront input::-moz-focus-inner { border: 0px none; padding: 0px; }
+div.campaignBlock { padding: 10px; }
+div.campaignBlock div.papernote { width: 204px; float: left; margin-right: 11px; }
+div.campaignBlock div.last { margin-right: 0px; }
+div.campaignBlock div.papernote .image { margin-bottom: 7px; }
+div.campaignBlock div.papernote .colorimage { display: none; }
+div.campaignBlock div.papernote .content { padding: 10px; background: none repeat scroll 0% 0% rgb(240, 240, 241); height: 177px; position: relative; }
+div.campaignBlock div.papernote .heading { padding: 0px 0px 7px; color: rgb(77, 79, 83); font-size: 16px; letter-spacing: -1px; }
+div.campaignBlock div.papernote .link a { position: absolute; bottom: 10px; left: 10px; font-weight: bold; }
+.box-shadow { box-shadow: 0px 2px 5px 0px rgb(206, 207, 208); }
+#productBox { padding: 10px; background-color: white; overflow: hidden; }
+#productBox .content { width: 201px; float: left; margin-right: 15px; margin-bottom: 10px; overflow: hidden; }
+#productBox .content .hover.green { background-color: rgb(123, 193, 68); }
+#productBox .content.last { margin-right: 0px; }
+#productBox .content .noHover { text-align: center; background-color: rgb(240, 240, 241); width: 201px; height: 118px; padding-top: 15px; padding-bottom: 5px; }
+#productBox .content .noHover h3 a { color: rgb(77, 79, 83); font-size: 16px; font-weight: bold; }
+#productBox .content .noHover .image { height: 85px; overflow: hidden; padding-bottom: 5px; }
+#productBox .content .hover { display: none; text-align: center; width: 201px; height: 118px; padding-top: 15px; padding-bottom: 5px; }
+#productBox .content .hover .image { height: 85px; overflow: hidden; padding-bottom: 5px; }
+#productBox .content .hover h3 a { color: white; font-size: 16px; font-weight: bold; }
+#productBox .content .hover h3 { margin-bottom: 0px; }
+.searchField .wrapper { background-color: rgb(204, 205, 208); padding: 10px; }
+.searchField .wrapper p { margin: 0px 0px 5px; padding: 0px; }
+.searchField .wrapper form input.text-search { height: 26px; width: 195px; font-size: 1.3em; line-height: 22px; border-width: 1px; border-style: solid; border-color: rgb(114, 114, 114) rgb(180, 180, 180) rgb(218, 218, 218); }
+.searchField .wrapper form input.checkbox-search { margin: 0px 10px 0px 0px; }
+.searchField .links { margin-top: 10px; }
+.searchField .links .separator { display: inline; padding: 0px 5px; }
+.searchField button.submitButton { font-size: 1em; margin-top: 3px; margin-left: 4px; }
+.searchField button.submitButton .btn-glossy-inner { width: 40px; }
+.box-shadow { box-shadow: 0px 2px 5px 0px rgb(206, 207, 208); }
+/* ::::: http://www.bring.com/_public/bring/styles/site.css?_ts=1378414e765 ::::: */
+
+body { background: url('bg_body.gif') repeat scroll 0% 0% rgb(191, 192, 196); }
+h2, h3, h4, h5, h6, .style2, .style3, .style4, .style5, .style6, a.read-more, a.add-more, a.backward, a.about, div.country.hover, div.country.hover a, a.main_country:hover, a.main_country_subtext:hover, .linklist-headings a:hover, .article strong, .mini_article strong, .loud { color: rgb(123, 193, 68); }
+a.read-more { background: url('read_more.gif') no-repeat scroll 0px 0.2em transparent; }
+input.text, textarea, select { background: url('input_text_bg.gif') repeat-x scroll left top white; }
+.text:focus, textarea:focus, select:focus { border: 1px solid rgb(123, 193, 68); }
+.submitButton, .resetButton { background-color: rgb(123, 193, 68); color: white; }
+.hover .menuitem ul li.active, .menuitem ul.items li.hover, .product-group li.hover, ul.menu-main li a:hover, ul.menu-main li.path a, ul.items li.hover a, .product-group.hover .menuitem ul li.active a, .product.hover .menuitem ul li.active a, div.menuitem ul.items li.hover_back, div.menuitem ul.items li.hover_back a { background-color: rgb(123, 193, 68); color: white; }
+ul.menu-main li a:hover, ul.menu-main li.path a { background: url('menu_main_left.png') no-repeat scroll left top transparent; }
+ul.menu-main li a:hover span, ul.menu-main li.path a span { background: url('menu_main.png') no-repeat scroll right top transparent; }
+div#genTwoHeader { background-position: left -960px; }
+div#genTwoHeader ul.genTwo li.hover a, div#genTwoHeader ul.genTwo li.path a, div#genTwoHeader ul.genTwo li a:hover { background-position: left -920px; }
+div#genTwoHeader ul.genTwo li.hover a span.menuText, div#genTwoHeader ul.genTwo li.path a span.menuText, div#genTwoHeader ul.genTwo li a:hover span.menuText { color: white ! important; background-position: right -378px ! important; }
+.framework.header { background: url('bg_top.png') repeat-x scroll 0px -10px transparent; }
+.framework.header .container.header { background: url('bg_top_mid.png') repeat-x scroll 0px -10px transparent; }
+.framework.header .container.header #menu-search .site-search input.text { background: url('search-bg-menu-main.png') repeat-x scroll left top white; }
+span.btn-glossy-outer { background: url('btn-right.png') no-repeat scroll right center transparent; }
+span.btn-glossy-inner { background: url('btn-left.png') no-repeat scroll left center transparent; }
+a.read-more:hover, a.add-more:hover, .contentheading a, .latest-news li a:focus, .latest-news li a:hover, table.availablepositions tr a:hover { color: rgb(123, 193, 68); }
+div.frameworkFooter .footer .disclaimer a:hover { color: rgb(255, 255, 255); }
+div.footerLinkList li a:hover { color: rgb(255, 255, 255); }
+#ourWebsitesDropdown .dropdown .countries li a:hover span { color: rgb(123, 193, 68); }
+#ourWebsitesDropdown .dropdown .specialists li a:hover { color: rgb(123, 193, 68); }
+html { background-color: rgb(196, 197, 199); }
+html.hasNewStyleFooter { background-color: rgb(168, 168, 170); }
+#page-posten { background: -moz-linear-gradient(center top , rgb(226, 227, 228) 50%, rgb(196, 197, 199) 100%) repeat scroll 0% 0% transparent; padding-top: 30px; margin-top: -10px; padding-bottom: 50px; }
+div.frameworkFooter div.containerFooter { border-top: medium none; padding-top: 0px; }
+div.frameworkFooter { padding-top: 0px; }
+div.frameworkFooter div.footer-outer { background: url('footer.png') repeat-x scroll left top rgb(168, 168, 170); padding: 35px 0px; position: relative; border-top: medium none; }
+div.frameworkFooter .footer h2.style4 { color: rgb(77, 79, 83); }
+div.frameworkFooter .footer .specialists li { color: rgb(77, 79, 83); }
+div.frameworkFooter .footer a:hover { text-decoration: underline; color: rgb(255, 255, 255); }
+div.frameworkFooter .footer { position: relative; }
+div.footerLinkList ul { margin-top: 15px; }
+.article .editor table tbody tr.even, .article .editor table tbody tr:nth-child(2n) { background-color: rgb(239, 239, 240); }

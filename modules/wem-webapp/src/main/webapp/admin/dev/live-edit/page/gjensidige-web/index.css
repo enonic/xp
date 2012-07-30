@@ -1,0 +1,108 @@
+/* ::::: http://gjensidige.com/web/_public/Gjensidige.com/styles/screen_com.css?_ts=1364f10676b ::::: */
+
+/* ::::: http://gjensidige.com/web/_public/Gjensidige.com/styles/framework_com.css ::::: */
+
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td { margin: 0px; padding: 0px; }
+table { border-collapse: collapse; border-spacing: 0px; }
+fieldset, img { border: 0px none; }
+ol, ul { list-style: none outside none; }
+body { font-family: Verdana,Arial,Helvetica,sans-serif; font-size: 82%; }
+input, select { font-family: Verdana,Arial,Helvetica,sans-serif; font-size: 87%; }
+h1, h2, h3, h4, h5, h6 { padding: 1em 0px 0px; color: rgb(60, 60, 60); }
+h2 { font-size: 1.3em; font-weight: normal; }
+h3 { font-size: 1.1em; }
+p, address { padding: 0.7em 0px 0.5em; line-height: 1.3em; color: rgb(60, 60, 60); }
+ol, ul, dl { padding: 0.7em 1em 0.2em 1.5em; color: rgb(60, 60, 60); }
+li { margin: 0.5em 0.5em 0.5em 1em; list-style-image: url('v2-bullet.gif'); list-style-position: outside; }
+table { margin: 1em 0px; color: rgb(60, 60, 60); }
+td, th { padding: 5px 5px 5px 0px; }
+a { color: rgb(0, 70, 173); text-decoration: none; }
+.date { color: rgb(52, 51, 48); }
+body { text-align: center; background: url('v2-bg.gif') repeat scroll 0% 0% rgb(255, 255, 255); }
+#framewrap { background: url('v2-main_shade_com.gif') repeat-y scroll center center transparent; }
+#framework { width: 1085px; margin: 0px auto; text-align: left; background: none repeat scroll 0% 0% rgb(255, 255, 255); }
+#header { width: 1085px; height: 116px; display: block; position: relative; background-color: rgb(255, 255, 255); }
+#header a.logo { display: block; padding: 38px 0px 20px 82px; width: 300px; }
+#copy { min-width: 1085px; text-align: right; height: 40px; margin-right: -2px; background: url('v2-footer_shade_com.gif') no-repeat scroll center top transparent; }
+.copy { width: 1085px; margin: 0px auto; height: 40px; font-weight: normal; }
+.copy a { color: rgb(87, 94, 95); text-decoration: none; font-weight: bold; font-size: 82%; margin-right: 25px; }
+#sidebar1 { width: 240px; float: right; display: inline; padding-top: 5px; }
+#content { width: 840px; float: left; border-top: 5px solid rgb(255, 255, 255); margin-left: 5px; display: inline; }
+.twocol-leftnav #framework, .threecol #framework { background: url('v2-main_shade_grey_left_com.gif') repeat-y scroll center center rgb(255, 255, 255); }
+.fltlft { float: left; }
+.clearfloat { clear: both; height: 0px; font-size: 1px; line-height: 0px; }
+#globalmenu { position: absolute; top: 0px; right: 250px; }
+#globalmenu li { display: inline; float: left; margin: 0px 5px; font-size: 85%; line-height: 160%; }
+#globalmenu a { color: rgb(166, 166, 166); }
+#globalmenu .small { font-size: 90%; }
+#globalmenu .normal { font-size: 100%; }
+#globalmenu a.fontsize { color: rgb(60, 60, 60); }
+#path { margin-top: 5px; padding: 0px 5px; background: none repeat scroll 0% 0% rgb(255, 255, 255); }
+#path div { padding: 7px 16px 6px 10px; margin: 0px; background-color: rgb(0, 70, 173); color: rgb(255, 255, 255); text-transform: uppercase; font-family: Arial,Helvetica,sans-serif; font-weight: bold; }
+#path a { color: rgb(255, 255, 255); }
+#segmentmenu { position: absolute; right: 0px; bottom: 0px; padding-bottom: 0px; }
+#segmentmenu li { display: inline; float: left; margin: 0px 5px 0px 0px; }
+#segmentmenu li a { font-family: Arial,Helvetica,sans-serif; font-size: 90%; font-weight: bold; text-decoration: none; color: rgb(166, 166, 166); text-transform: uppercase; display: block; padding: 4px 10px; }
+.leftnav { width: 215px; float: left; display: inline; list-style-image: none; clear: left; }
+.leftnav ul { margin: 0px; padding: 0px 0px 10px; font-size: 87%; }
+.leftnav > ul > li > a { font-size: 175%; color: rgb(0, 70, 173); background-color: white; display: block; padding-top: 20px; padding-bottom: 5px; background-image: none; font-family: arial,helvetica,sans-serif; font-weight: normal; }
+.leftnav ul li { display: block; font-weight: bold; margin: 0px; padding: 0px; list-style-image: none; }
+.leftnav ul li ul { padding: 0px 10px 0px 0px; margin: 0px; font-size: 100%; }
+.leftnav > ul > li > ul { padding-left: 10px; padding-top: 15px; }
+.leftnav ul li ul li { font-weight: normal; margin: 0px; padding: 0px; }
+.leftnav ul li ul li ul li a { margin-left: 10px ! important; }
+.leftnav li a, .leftnav li.selected li a { background: url('v2-bullet.gif') no-repeat scroll 0px 7px transparent; color: rgb(60, 60, 60); margin-bottom: 1px; padding: 3px 0px 3px 7px; text-decoration: none; display: block; }
+.leftnav li.selected li a { color: rgb(60, 60, 60) ! important; }
+.leftnav li.selected > a { color: rgb(0, 70, 173); background-image: none; }
+#topsearch { position: absolute; top: 5px; right: 5px; }
+#topsearch .textfield { border-width: 1px; padding: 2px 4px; width: 150px; font-size: 90%; background-color: rgb(236, 236, 236); vertical-align: top; }
+#topsearch .button { background: url('button_bg_40.gif') repeat-y scroll center center transparent; color: rgb(69, 69, 69); height: 20px; width: 40px; padding: 1px 3px; font-size: 85%; border: medium none; }
+#content .illustration { border-bottom: 5px solid rgb(255, 255, 255); }
+#frontpagecampaign { float: left; }
+.columns {  }
+.columns h3 { background-color: rgb(236, 236, 236); font-size: 1em; padding: 6px 12px; }
+.columns p, .columns ul, .columns ol { font-size: 0.85em; padding-left: 12px; padding-right: 12px; }
+.columns .column { margin: 0px 5px 1px 0px; }
+.columns .column.isLast { margin-right: 0px; }
+.columns .column.isLast > .illustrationContainer { float: right; }
+.threecol .column h3, .threecol .column p { padding-left: 0px; padding-right: 0px; }
+.threecol .smartObject .column.isFirst.wrap25, .threecol .smartObject .column.isFirst.wrap33, .threecol .smartObject .column.isFirst.wrap50, .threecol .smartObject .column.isFirst.wrap66, .threecol .smartObject .column.isFirst.wrap100 .articleContainer, .threecol .smartObject .column.isFirst.wrap100 .linkContainer { margin-left: 25px; }
+.threecol .wrap100 { width: 620px; }
+.threecol .wrap50 { width: 295px; }
+.component { margin: 5px; color: rgb(103, 103, 103); }
+.component h2, .message h2 { text-transform: uppercase; font-size: 90%; margin: 0px; font-weight: bold; color: rgb(32, 32, 32); font-family: Arial,Helvetica,sans-serif; background-color: rgb(224, 224, 224); padding: 7px 12px; }
+.component h2 { background: url('bg_comp_header.gif') no-repeat scroll right bottom transparent; height: 17px; }
+.component h2.open { background-image: url('bg_comp_header_open.gif'); cursor: pointer; }
+.component h2.collapsed { background-image: url('bg_comp_header_closed.gif'); cursor: pointer; }
+.component .wrapper { line-height: 1.2em; font-size: 85%; color: rgb(84, 84, 84); background-color: rgb(245, 245, 245); padding: 7px 9px; width: 206px; margin: 2px; border-right: 1px solid rgb(204, 204, 204); border-left: 1px solid rgb(204, 204, 204); border-style: solid; border-color: rgb(204, 204, 204); -moz-border-top-colors: none; -moz-border-right-colors: none; -moz-border-bottom-colors: none; -moz-border-left-colors: none; -moz-border-image: none; border-width: 0px 1px; }
+.component p { padding: 0.3em 0px 0.2em; }
+.component ul { padding-left: 0px; margin-left: 0px; }
+.component li { list-style-image: none; margin: 3px 0px; padding: 0px; }
+.component a { color: rgb(63, 90, 136); text-decoration: none; }
+.threecol .mainContent { float: right; width: 620px; }
+.lowerContent { border-top: 1px solid rgb(224, 222, 216); margin-top: 10px; }
+.threecol .lowerContent { float: right; width: 595px; }
+.lowerContent .pressReleases { float: left; margin: 0px 5px 1px 0px; padding: 13px 2px 0px 24px; }
+.lowerContent.column_1 .pressReleases {  }
+.threecol .lowerContent .pressReleases { padding-left: 0px; }
+.lowerContent h2 { padding-top: 2px; color: black; }
+.lowerContent .pressReleases li { font-size: 0.85em; color: black; }
+.pressReleases a { text-decoration: none; font-weight: normal; }
+.pressReleases ul { padding: 0px; margin-top: 10px; }
+.pressReleases li { list-style: none outside none; padding: 0px 0px 10px; margin: 0px; }
+.stockInfo { background-color: rgb(223, 223, 223); color: rgb(52, 51, 48); margin: 0px 5px; padding-left: 12px; padding-bottom: 10px; }
+.stockInfo h2 { color: rgb(52, 51, 48); }
+.stockInfo table { border-collapse: collapse; font-size: 85%; margin-bottom: 0px; }
+.stockInfo table td { padding: 0px 15px 0px 0px; color: rgb(52, 51, 48); }
+.stockInfo .graph { overflow: hidden; width: 200px; height: 100px; }
+.stockInfo .graphFooter { text-align: center; font-size: 85%; }
+.stockInfo iframe { background-color: rgb(223, 223, 223) ! important; }
+.articleListSection { margin-top: 20px; padding-left: 25px; color: rgb(0, 77, 175); }
+.articleListSection .column.isFirst .articleContainer, .articleListSection .articleContainer { border-top: 1px solid rgb(224, 222, 216); padding: 10px 10px 10px 0px; }
+.articleListSection h3 { padding: 0px; background-color: transparent; }
+.articleListSection p { color: rgb(0, 77, 175); }
+.articleListSection .imageContainer { float: left; margin-right: 10px; margin-bottom: 10px; }
+/* ::::: http://gjensidige.com/web/_public/shared/styles/v2-colors.css ::::: */
+
+#segmentmenu a.active, #segmentmenu a:hover { background-color: rgb(0, 70, 173); color: rgb(255, 255, 255); }
+#path div, .path div, #path { background-color: rgb(0, 70, 173); }
