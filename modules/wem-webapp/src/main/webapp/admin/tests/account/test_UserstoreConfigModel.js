@@ -1,6 +1,5 @@
 function testUserStoreConfigModel(t, model) {
     t.diag('Test basic fields for existence');
-    console.log(model.getData(false));
     t.ok(model.get('key'), 'Key field is present');
     t.ok(model.get('name'), 'Name field is present');
     t.ok(model.get('defaultStore'), 'defaultStore field is present');
