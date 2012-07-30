@@ -35,7 +35,7 @@ public class FieldSet
 
     public void addField( final Field field )
     {
-        Preconditions.checkState( getPath() != null, "Cannot add Field before this SubType is added" );
+        Preconditions.checkState( getPath() != null, "Cannot add Field before this FieldSet is added" );
 
         field.setPath( new FieldPath( getPath(), field.getName() ) );
         this.configItems.addConfig( field );
