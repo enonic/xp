@@ -10,7 +10,7 @@ import com.enonic.wem.core.content.type.configitem.ConfigItem;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldPath;
-import com.enonic.wem.core.content.type.configitem.SubType;
+import com.enonic.wem.core.content.type.configitem.FieldSet;
 
 class Entries
     implements Iterable<Entry>
@@ -101,11 +101,11 @@ class Entries
 
         if ( path.elementCount() > 1 )
         {
-            Preconditions.checkArgument( foundConfig instanceof SubType,
+            Preconditions.checkArgument( foundConfig instanceof FieldSet,
                                          "ConfigItem at path [%s] expected to be of type SubType: " + foundConfig.getItemType(), path );
 
-            @SuppressWarnings("ConstantConditions") final SubType subType = (SubType) foundConfig;
-            forwardSetValueToSubTypeEntry( path, value, subType );
+            @SuppressWarnings("ConstantConditions") final FieldSet fieldSet = (FieldSet) foundConfig;
+            forwardSetValueToSubTypeEntry( path, value, fieldSet );
         }
         else
         {
@@ -140,13 +140,13 @@ class Entries
         }
     }
 
-    private void forwardSetValueToSubTypeEntry( final EntryPath path, final Object value, final SubType subType )
+    private void forwardSetValueToSubTypeEntry( final EntryPath path, final Object value, final FieldSet fieldSet )
     {
         final EntryPath.Element pathFirstElement = path.getFirstElement();
         SubTypeEntry subTypeEntry = (SubTypeEntry) entries.get( pathFirstElement );
         if ( subTypeEntry == null )
         {
-            subTypeEntry = new SubTypeEntry( subType, new EntryPath( this.path, pathFirstElement ) );
+            subTypeEntry = new SubTypeEntry( fieldSet, new EntryPath( this.path, pathFirstElement ) );
             doSetEntry( pathFirstElement, subTypeEntry );
         }
         subTypeEntry.setValue( path.asNewWithoutFirstPathElement(), value );

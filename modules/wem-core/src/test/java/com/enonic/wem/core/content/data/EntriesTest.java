@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
-import com.enonic.wem.core.content.type.configitem.SubType;
+import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 
 import static org.junit.Assert.*;
@@ -16,13 +16,13 @@ public class EntriesTest
     public void setValue_when_given_path_does_not_exists()
     {
         ConfigItems configItems = new ConfigItems();
-        SubType.Builder subTypeBuilder = SubType.newBuilder();
+        FieldSet.Builder subTypeBuilder = FieldSet.newBuilder();
         subTypeBuilder.name( "personalia" );
         subTypeBuilder.label( "Personalia" );
         subTypeBuilder.multiple( true );
-        SubType subType = subTypeBuilder.build();
-        subType.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        configItems.addConfig( subType );
+        FieldSet fieldSet = subTypeBuilder.build();
+        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        configItems.addConfig( fieldSet );
 
         Entries entries = new Entries( configItems );
 
@@ -40,11 +40,11 @@ public class EntriesTest
     @Test
     public void getValue_when_having_sub_type()
     {
-        SubType subType = SubType.newBuilder().name( "personalia" ).multiple( false ).build();
-        subType.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        subType.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
+        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).multiple( false ).build();
+        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
         ConfigItems configItems = new ConfigItems();
-        configItems.addConfig( subType );
+        configItems.addConfig( fieldSet );
 
         Entries entries = new Entries( configItems );
         entries.setValue( new EntryPath( "personalia.eyeColour" ), "Brown" );
@@ -57,11 +57,11 @@ public class EntriesTest
     @Test
     public void getValue_when_having_multiple_sub_type_in_single_sub_type()
     {
-        SubType personalia = SubType.newBuilder().name( "personalia" ).label( "Personalia" ).multiple( false ).build();
-        SubType crimes = SubType.newBuilder().name( "crimes" ).multiple( true ).build();
+        FieldSet personalia = FieldSet.newBuilder().name( "personalia" ).label( "Personalia" ).multiple( false ).build();
+        FieldSet crimes = FieldSet.newBuilder().name( "crimes" ).multiple( true ).build();
         crimes.addField( Field.newBuilder().name( "description" ).type( FieldTypes.textline ).build() );
         crimes.addField( Field.newBuilder().name( "year" ).type( FieldTypes.textline ).build() );
-        personalia.addSubType( crimes );
+        personalia.addFieldSet( crimes );
         ConfigItems configItems = new ConfigItems();
         configItems.addConfig( personalia );
 
@@ -81,10 +81,10 @@ public class EntriesTest
     public void getValue_when_having_multiple_sub_type()
     {
         ConfigItems configItems = new ConfigItems();
-        SubType subType = SubType.newBuilder().name( "persons" ).multiple( true ).build();
-        subType.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
-        subType.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        configItems.addConfig( subType );
+        FieldSet fieldSet = FieldSet.newBuilder().name( "persons" ).multiple( true ).build();
+        fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        configItems.addConfig( fieldSet );
 
         Entries entries = new Entries( configItems );
         entries.setValue( new EntryPath( "persons[0].name" ), "Arn" );

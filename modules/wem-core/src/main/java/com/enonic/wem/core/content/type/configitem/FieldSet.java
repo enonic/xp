@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.type.configitem;
 
 import com.google.common.base.Preconditions;
 
-public class SubType
+public class FieldSet
     extends ConfigItem
 {
     private String label;
@@ -20,9 +20,9 @@ public class SubType
 
     private String helpText;
 
-    protected SubType()
+    protected FieldSet()
     {
-        super( ConfigItemType.SUB_TYPE );
+        super( ConfigItemType.FIELD_SET );
     }
 
 
@@ -41,12 +41,12 @@ public class SubType
         this.configItems.addConfig( field );
     }
 
-    public void addSubType( final SubType subType )
+    public void addFieldSet( final FieldSet fieldSet )
     {
-        Preconditions.checkState( getPath() != null, "Cannot add SubType before this SubType is added" );
+        Preconditions.checkState( getPath() != null, "Cannot add FieldSet before this FieldSet is added" );
 
-        subType.setPath( new FieldPath( getPath(), subType.getName() ) );
-        this.configItems.addConfig( subType );
+        fieldSet.setPath( new FieldPath( getPath(), fieldSet.getName() ) );
+        this.configItems.addConfig( fieldSet );
     }
 
     public String getLabel()
@@ -124,21 +124,21 @@ public class SubType
     @Override
     ConfigItemSerializerJson getJsonGenerator()
     {
-        return SubTypeSerializerJson.DEFAULT;
+        return FieldSetSerializerJson.DEFAULT;
     }
 
     public static class Builder
     {
-        private SubType subType;
+        private FieldSet fieldSet;
 
         private Builder()
         {
-            subType = new SubType();
+            fieldSet = new FieldSet();
         }
 
         public Builder name( String value )
         {
-            subType.setName( value );
+            fieldSet.setName( value );
             return this;
         }
 
@@ -146,19 +146,19 @@ public class SubType
         {
             Preconditions.checkNotNull( value, "label cannot be null" );
 
-            subType.label = value;
+            fieldSet.label = value;
             return this;
         }
 
         public Builder required( boolean value )
         {
-            subType.required = value;
+            fieldSet.required = value;
             return this;
         }
 
         public Builder immutable( boolean value )
         {
-            subType.immutable = value;
+            fieldSet.immutable = value;
             return this;
         }
 
@@ -166,11 +166,11 @@ public class SubType
         {
             if ( value )
             {
-                subType.multiple = new Multiple( 0, 0 );
+                fieldSet.multiple = new Multiple( 0, 0 );
             }
             else
             {
-                subType.multiple = null;
+                fieldSet.multiple = null;
             }
             return this;
         }
@@ -180,27 +180,27 @@ public class SubType
             Preconditions.checkArgument( minEntries >= 0 );
             Preconditions.checkArgument( maxEntries >= 0 );
 
-            subType.multiple = new Multiple( minEntries, maxEntries );
+            fieldSet.multiple = new Multiple( minEntries, maxEntries );
             return this;
         }
 
         public Builder customText( String value )
         {
-            subType.customText = value;
+            fieldSet.customText = value;
             return this;
         }
 
         public Builder helpText( String value )
         {
-            subType.helpText = value;
+            fieldSet.helpText = value;
             return this;
         }
 
-        public SubType build()
+        public FieldSet build()
         {
-            Preconditions.checkNotNull( subType.getName(), "name cannot be null" );
-            subType.setPath( new FieldPath( subType.getName() ) );
-            return subType;
+            Preconditions.checkNotNull( fieldSet.getName(), "name cannot be null" );
+            fieldSet.setPath( new FieldPath( fieldSet.getName() ) );
+            return fieldSet;
         }
     }
 }

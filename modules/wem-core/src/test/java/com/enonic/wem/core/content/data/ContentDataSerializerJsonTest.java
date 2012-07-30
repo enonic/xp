@@ -6,7 +6,7 @@ import org.junit.Test;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
-import com.enonic.wem.core.content.type.configitem.SubType;
+import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.content.type.configitem.fieldtype.RadioButtonsConfig;
 
@@ -85,18 +85,18 @@ public class ContentDataSerializerJsonTest
     }
 
     @Test
-    public void subType()
+    public void groupedSubType()
     {
         ConfigItems configItems = new ConfigItems();
         configItems.addConfig( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
 
-        SubType.Builder subTypeBuilder = SubType.newBuilder();
-        subTypeBuilder.name( "personalia" );
-        subTypeBuilder.label( "Personalia" );
-        SubType subType = subTypeBuilder.build();
-        configItems.addConfig( subType );
-        subType.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        subType.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
+        FieldSet.Builder fieldSetBuilder = FieldSet.newBuilder();
+        fieldSetBuilder.name( "personalia" );
+        fieldSetBuilder.label( "Personalia" );
+        FieldSet fieldSet = fieldSetBuilder.build();
+        configItems.addConfig( fieldSet );
+        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
         ContentData contentData = new ContentData( configItems );
         contentData.setValue( "name", "Ola Nordmann" );
@@ -123,11 +123,11 @@ public class ContentDataSerializerJsonTest
         Field nameField = Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build();
         configItems.addConfig( nameField );
 
-        SubType subType = SubType.newBuilder().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
-        configItems.addConfig( subType );
-        subType.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
-        subType.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        subType.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
+        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
+        configItems.addConfig( fieldSet );
+        fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
         ContentData contentData = new ContentData( configItems );
         contentData.setValue( "name", "Norske" );

@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
-import com.enonic.wem.core.content.type.configitem.SubType;
+import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.DropdownConfig;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.content.type.configitem.fieldtype.RadioButtonsConfig;
@@ -32,10 +32,10 @@ public class ContentTypeJsonGeneratorTest
         configItems.addConfig( Field.newBuilder().name( "myPhone" ).type( FieldTypes.phone ).build() );
         configItems.addConfig( Field.newBuilder().name( "myXml" ).type( FieldTypes.xml ).build() );
 
-        SubType subType = SubType.newBuilder().name( "personalia" ).build();
-        configItems.addConfig( subType );
-        subType.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        subType.addField( Field.newBuilder().name( "hairColour" ).multiple( 1, 3 ).type( FieldTypes.textline ).build() );
+        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).build();
+        configItems.addConfig( fieldSet );
+        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "hairColour" ).multiple( 1, 3 ).type( FieldTypes.textline ).build() );
 
         ContentTypeSerializerJson generator = new ContentTypeSerializerJson();
         String json = generator.toJson( contentType );
@@ -49,10 +49,10 @@ public class ContentTypeJsonGeneratorTest
 
         configItems.addConfig( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
 
-        SubType subType = SubType.newBuilder().name( "personalia" ).label( "Personalia" ).build();
-        configItems.addConfig( subType );
-        subType.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        subType.addField( Field.newBuilder().name( "hairColour" ).multiple( 1, 3 ).type( FieldTypes.textline ).build() );
+        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).label( "Personalia" ).build();
+        configItems.addConfig( fieldSet );
+        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "hairColour" ).multiple( 1, 3 ).type( FieldTypes.textline ).build() );
 
         ContentType contentType = new ContentType();
         contentType.setConfigItems( configItems );

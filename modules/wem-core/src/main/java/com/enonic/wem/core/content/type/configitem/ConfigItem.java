@@ -187,9 +187,9 @@ public abstract class ConfigItem
             {
                 return buildField();
             }
-            else if ( itemType == ConfigItemType.SUB_TYPE )
+            else if ( itemType == ConfigItemType.FIELD_SET )
             {
-                return buildSubType();
+                return buildFieldSet();
             }
             else
             {
@@ -197,9 +197,9 @@ public abstract class ConfigItem
             }
         }
 
-        private SubType buildSubType()
+        private FieldSet buildFieldSet()
         {
-            SubType.Builder builder = SubType.newBuilder();
+            FieldSet.Builder builder = FieldSet.newBuilder();
             builder.name( name );
             builder.label( label );
             builder.required( required );
