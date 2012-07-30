@@ -1,6 +1,10 @@
 Ext.define('Admin.model.account.UserstoreConfigModel', {
     extend: 'Ext.data.Model',
 
+    requires: [
+        'Admin.model.account.UserFieldModel'
+    ],
+
     idProperty: 'id',
 
     fields: [
