@@ -210,4 +210,88 @@ public final class AccountSearchQuery
         this.roles = roles;
         return this;
     }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final AccountSearchQuery that = (AccountSearchQuery) o;
+
+        if ( count != that.count )
+        {
+            return false;
+        }
+        if ( from != that.from )
+        {
+            return false;
+        }
+        if ( groups != that.groups )
+        {
+            return false;
+        }
+        if ( includeFacets != that.includeFacets )
+        {
+            return false;
+        }
+        if ( includeResults != that.includeResults )
+        {
+            return false;
+        }
+        if ( roles != that.roles )
+        {
+            return false;
+        }
+        if ( users != that.users )
+        {
+            return false;
+        }
+        if ( !Arrays.equals( organization, that.organization ) )
+        {
+            return false;
+        }
+        if ( query != null ? !query.equals( that.query ) : that.query != null )
+        {
+            return false;
+        }
+        if ( sortField != that.sortField )
+        {
+            return false;
+        }
+        if ( sortOrder != that.sortOrder )
+        {
+            return false;
+        }
+        if ( !Arrays.equals( userStore, that.userStore ) )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = query != null ? query.hashCode() : 0;
+        result = 31 * result + from;
+        result = 31 * result + count;
+        result = 31 * result + ( userStore != null ? Arrays.hashCode( userStore ) : 0 );
+        result = 31 * result + ( users ? 1 : 0 );
+        result = 31 * result + ( groups ? 1 : 0 );
+        result = 31 * result + ( roles ? 1 : 0 );
+        result = 31 * result + ( sortOrder != null ? sortOrder.hashCode() : 0 );
+        result = 31 * result + ( sortField != null ? sortField.hashCode() : 0 );
+        result = 31 * result + ( includeResults ? 1 : 0 );
+        result = 31 * result + ( includeFacets ? 1 : 0 );
+        result = 31 * result + ( organization != null ? Arrays.hashCode( organization ) : 0 );
+        return result;
+    }
 }
