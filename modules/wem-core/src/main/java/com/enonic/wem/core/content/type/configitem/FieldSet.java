@@ -1,25 +1,206 @@
 package com.enonic.wem.core.content.type.configitem;
 
-import java.util.List;
 
-/**
- *
- */
+import com.google.common.base.Preconditions;
+
 public class FieldSet
     extends ConfigItem
 {
-    private String displayName;
+    private String label;
 
-    private List<ConfigItem> fields;
+    private ConfigItems configItems = new ConfigItems();
+
+    private boolean required;
+
+    private boolean immutable;
+
+    private Multiple multiple;
+
+    private String customText;
+
+    private String helpText;
 
     protected FieldSet()
     {
         super( ConfigItemType.FIELD_SET );
     }
 
+
+    @Override
+    void setPath( final FieldPath fieldPath )
+    {
+        super.setPath( fieldPath );
+        configItems.setPath( fieldPath );
+    }
+
+    public void addField( final Field field )
+    {
+        Preconditions.checkState( getPath() != null, "Cannot add Field before this FieldSet is added" );
+
+        field.setPath( new FieldPath( getPath(), field.getName() ) );
+        this.configItems.addConfig( field );
+    }
+
+    public void addFieldSet( final FieldSet fieldSet )
+    {
+        Preconditions.checkState( getPath() != null, "Cannot add FieldSet before this FieldSet is added" );
+
+        fieldSet.setPath( new FieldPath( getPath(), fieldSet.getName() ) );
+        this.configItems.addConfig( fieldSet );
+    }
+
+    public String getLabel()
+    {
+        return label;
+    }
+
+    public boolean isRequired()
+    {
+        return required;
+    }
+
+    public boolean isImmutable()
+    {
+        return immutable;
+    }
+
+    boolean isMultiple()
+    {
+        return multiple != null;
+    }
+
+
+    public Multiple getMultiple()
+    {
+        return multiple;
+    }
+
+    public String getCustomText()
+    {
+        return customText;
+    }
+
+    public String getHelpText()
+    {
+        return helpText;
+    }
+
+    public ConfigItems getConfigItems()
+    {
+        return configItems;
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder s = new StringBuilder();
+        FieldPath fieldPath = getPath();
+        if ( fieldPath != null )
+        {
+            s.append( fieldPath.toString() );
+        }
+        else
+        {
+            s.append( getName() ).append( "?" );
+        }
+        if ( isMultiple() )
+        {
+            s.append( "[]" );
+        }
+
+        return s.toString();
+    }
+
+    public static Builder newBuilder()
+    {
+        return new Builder();
+    }
+
+    public ConfigItem getConfig( final FieldPath fieldPath )
+    {
+        return configItems.getConfig( fieldPath.getLastElement() );
+    }
+
     @Override
     ConfigItemSerializerJson getJsonGenerator()
     {
-        return null;
+        return FieldSetSerializerJson.DEFAULT;
+    }
+
+    public static class Builder
+    {
+        private FieldSet fieldSet;
+
+        private Builder()
+        {
+            fieldSet = new FieldSet();
+        }
+
+        public Builder name( String value )
+        {
+            fieldSet.setName( value );
+            return this;
+        }
+
+        public Builder label( String value )
+        {
+            Preconditions.checkNotNull( value, "label cannot be null" );
+
+            fieldSet.label = value;
+            return this;
+        }
+
+        public Builder required( boolean value )
+        {
+            fieldSet.required = value;
+            return this;
+        }
+
+        public Builder immutable( boolean value )
+        {
+            fieldSet.immutable = value;
+            return this;
+        }
+
+        public Builder multiple( boolean value )
+        {
+            if ( value )
+            {
+                fieldSet.multiple = new Multiple( 0, 0 );
+            }
+            else
+            {
+                fieldSet.multiple = null;
+            }
+            return this;
+        }
+
+        public Builder multiple( int minEntries, int maxEntries )
+        {
+            Preconditions.checkArgument( minEntries >= 0 );
+            Preconditions.checkArgument( maxEntries >= 0 );
+
+            fieldSet.multiple = new Multiple( minEntries, maxEntries );
+            return this;
+        }
+
+        public Builder customText( String value )
+        {
+            fieldSet.customText = value;
+            return this;
+        }
+
+        public Builder helpText( String value )
+        {
+            fieldSet.helpText = value;
+            return this;
+        }
+
+        public FieldSet build()
+        {
+            Preconditions.checkNotNull( fieldSet.getName(), "name cannot be null" );
+            fieldSet.setPath( new FieldPath( fieldSet.getName() ) );
+            return fieldSet;
+        }
     }
 }

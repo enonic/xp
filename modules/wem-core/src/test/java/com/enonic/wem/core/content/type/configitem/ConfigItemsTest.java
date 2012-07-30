@@ -13,13 +13,13 @@ public class ConfigItemsTest
     public void getConfig()
     {
         ConfigItems configItems = new ConfigItems();
-        SubType.Builder subTypeBuilder = SubType.newBuilder();
+        FieldSet.Builder subTypeBuilder = FieldSet.newBuilder();
         subTypeBuilder.name( "personalia" );
         subTypeBuilder.label( "Personalia" );
-        SubType subType = subTypeBuilder.build();
-        configItems.addConfig( subType );
-        subType.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        subType.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
+        FieldSet fieldSet = subTypeBuilder.build();
+        configItems.addConfig( fieldSet );
+        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
         // exercise & verify
         ConfigItem personaliaConfig = configItems.getConfig( new FieldPath( "personalia" ).getLastElement() );
@@ -30,13 +30,13 @@ public class ConfigItemsTest
     public void getConfig2()
     {
         ConfigItems configItems = new ConfigItems();
-        SubType subType = SubType.newBuilder().name( "personalia" ).label( "Personalia" ).build();
-        configItems.addConfig( subType );
-        subType.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        subType.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
+        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).label( "Personalia" ).build();
+        configItems.addConfig( fieldSet );
+        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
         // exercise & verify
-        ConfigItem personaliaEyeColourConfig = subType.getConfigItems().getConfig( "eyeColour" );
+        ConfigItem personaliaEyeColourConfig = fieldSet.getConfigItems().getConfig( "eyeColour" );
         assertEquals( "personalia.eyeColour", personaliaEyeColourConfig.getPath().toString() );
     }
 }

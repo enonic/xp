@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
-import com.enonic.wem.core.content.type.configitem.SubType;
+import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.DropdownConfig;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.content.type.configitem.fieldtype.RadioButtonsConfig;
@@ -121,13 +121,13 @@ public class ContentDataTest
         ConfigItems dataConfig = new ConfigItems();
         dataConfig.addConfig( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
 
-        SubType.Builder subTypeBuilder = SubType.newBuilder();
+        FieldSet.Builder subTypeBuilder = FieldSet.newBuilder();
         subTypeBuilder.name( "personalia" );
         subTypeBuilder.label( "Personalia" );
-        SubType subType = subTypeBuilder.build();
-        dataConfig.addConfig( subType );
-        subType.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        subType.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
+        FieldSet fieldSet = subTypeBuilder.build();
+        dataConfig.addConfig( fieldSet );
+        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
         ContentData contentData = new ContentData( dataConfig );
         contentData.setValue( "name", "Ola Nordmann" );
@@ -150,15 +150,15 @@ public class ContentDataTest
         Field nameField = nameFieldBuilder.build();
         dataConfig.addConfig( nameField );
 
-        SubType.Builder subTypeBuilder = SubType.newBuilder();
+        FieldSet.Builder subTypeBuilder = FieldSet.newBuilder();
         subTypeBuilder.name( "personalia" );
         subTypeBuilder.label( "Personalia" );
         subTypeBuilder.multiple( true );
-        SubType subType = subTypeBuilder.build();
-        dataConfig.addConfig( subType );
-        subType.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
-        subType.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        subType.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
+        FieldSet fieldSet = subTypeBuilder.build();
+        dataConfig.addConfig( fieldSet );
+        fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
         ContentData contentData = new ContentData( dataConfig );
         contentData.setValue( "name", "Norske" );
@@ -231,13 +231,13 @@ public class ContentDataTest
     @Test
     public void structured_getSubTypeEntry()
     {
-        SubType child = SubType.newBuilder().name( "child" ).multiple( true ).build();
+        FieldSet child = FieldSet.newBuilder().name( "child" ).multiple( true ).build();
         child.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
         child.addField( Field.newBuilder().name( "age" ).type( FieldTypes.textline ).build() );
-        SubType features = SubType.newBuilder().name( "features" ).multiple( false ).build();
+        FieldSet features = FieldSet.newBuilder().name( "features" ).multiple( false ).build();
         features.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         features.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
-        child.addSubType( features );
+        child.addFieldSet( features );
         ConfigItems configItems = new ConfigItems();
         configItems.addConfig( child );
 

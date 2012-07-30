@@ -130,14 +130,11 @@ Class('AdminTestUtil', {
             var Ext = this.global.Ext;
 
             return Ext.create('Admin.model.account.UserFieldModel', {
-                'id': 1,
-                'userstore_id': 12,
-                'fieldname': 'username',
-                'fieldlabel': 'Username',
-                'fieldtype': 'text',
-                'readonly': true,
+                'type': 'text',
+                'readOnly': true,
                 'required': true,
-                'remote': true
+                'remote': true,
+                'iso': true
             });
         }
     }

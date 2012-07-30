@@ -19,6 +19,13 @@ public class FieldSetSerializerJson
         g.writeStringField( "type", fieldSet.getItemType().toString() );
         g.writeStringField( "path", fieldSet.getPath().toString() );
         g.writeStringField( "name", fieldSet.getName() );
+        g.writeStringField( "label", fieldSet.getLabel() );
+        g.writeBooleanField( "required", fieldSet.isRequired() );
+        g.writeBooleanField( "immutable", fieldSet.isImmutable() );
+        MultipleSerializerJson.generate( fieldSet.getMultiple(), g );
+        g.writeStringField( "customText", fieldSet.getCustomText() );
+        g.writeStringField( "helpText", fieldSet.getHelpText() );
+        ConfigItemsSerializerJson.generate( fieldSet.getConfigItems(), g );
 
         g.writeEndObject();
     }

@@ -12,7 +12,7 @@ import com.enonic.wem.core.content.type.configitem.ConfigItem;
 import com.enonic.wem.core.content.type.configitem.ConfigItemType;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.FieldPath;
-import com.enonic.wem.core.content.type.configitem.SubType;
+import com.enonic.wem.core.content.type.configitem.FieldSet;
 
 class EntriesSerializerJson
 {
@@ -79,11 +79,11 @@ class EntriesSerializerJson
                     final Entry entry = ValueSerializerJson.parse( entryNode, item );
                     entries.add( entry );
                 }
-                else if ( item.getItemType() == ConfigItemType.SUB_TYPE )
+                else if ( item.getItemType() == ConfigItemType.FIELD_SET )
                 {
-                    final SubType subType = (SubType) item;
-                    final Entries childEntries = EntriesSerializerJson.parse( entryNode, subType.getConfigItems() );
-                    final SubTypeEntry entry = new SubTypeEntry( subType, path, childEntries );
+                    final FieldSet fieldSet = (FieldSet) item;
+                    final Entries childEntries = EntriesSerializerJson.parse( entryNode, fieldSet.getConfigItems() );
+                    final SubTypeEntry entry = new SubTypeEntry( fieldSet, path, childEntries );
                     entries.add( entry );
                 }
             }

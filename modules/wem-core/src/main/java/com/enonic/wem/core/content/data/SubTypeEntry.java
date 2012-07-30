@@ -3,11 +3,9 @@ package com.enonic.wem.core.content.data;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.core.content.type.configitem.SubType;
+import com.enonic.wem.core.content.type.configitem.FieldSet;
 
-/**
- * TOOD: Mpve code from Entries into SubTypEntry when we know that ContentData can use SubTypeEntry as container instead of Entries.
- */
+
 public class SubTypeEntry
     extends Entry
 {
@@ -15,7 +13,7 @@ public class SubTypeEntry
 
     private Entries entries;
 
-    private SubType subType;
+    private FieldSet fieldSet;
 
     public SubTypeEntry( final EntryPath path )
     {
@@ -25,23 +23,23 @@ public class SubTypeEntry
         this.entries = new Entries( path );
     }
 
-    public SubTypeEntry( final SubType subType, final EntryPath path )
+    public SubTypeEntry( final FieldSet fieldSet, final EntryPath path )
     {
-        Preconditions.checkNotNull( subType, "subType cannot be null" );
+        Preconditions.checkNotNull( fieldSet, "subType cannot be null" );
         Preconditions.checkNotNull( path, "path cannot be null" );
 
-        this.subType = subType;
+        this.fieldSet = fieldSet;
         this.path = path;
-        this.entries = new Entries( path, subType.getConfigItems() );
+        this.entries = new Entries( path, fieldSet.getConfigItems() );
     }
 
-    public SubTypeEntry( final SubType subType, final EntryPath path, final Entries entries )
+    public SubTypeEntry( final FieldSet fieldSet, final EntryPath path, final Entries entries )
     {
-        Preconditions.checkNotNull( subType, "subType cannot be null" );
+        Preconditions.checkNotNull( fieldSet, "subType cannot be null" );
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkNotNull( entries, "entries cannot be null" );
 
-        this.subType = subType;
+        this.fieldSet = fieldSet;
         this.path = path;
         this.entries = entries;
     }

@@ -151,11 +151,11 @@ public class ConfigItemSerializerJsonTest
     }
 
     @Test
-    public void subType()
+    public void fieldSet()
         throws IOException
     {
         // setup
-        SubType.Builder builder = SubType.newBuilder();
+        FieldSet.Builder builder = FieldSet.newBuilder();
         builder.name( "mySubType" );
         builder.label( "My sub type" );
         builder.immutable( true );
@@ -163,27 +163,27 @@ public class ConfigItemSerializerJsonTest
         builder.multiple( 1, 100 );
         builder.customText( "Custom text" );
         builder.helpText( "Help text" );
-        SubType subType = builder.build();
+        FieldSet fieldSet = builder.build();
 
-        String json = subTypeToJson( subType );
+        String json = fieldSetToJson( fieldSet );
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
         ConfigItem configItem = ConfigItemSerializerJson.parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
-        assertTrue( configItem instanceof SubType );
+        assertTrue( configItem instanceof FieldSet );
         assertEquals( "mySubType", configItem.getName() );
-        SubType parsedSubType = (SubType) configItem;
-        assertEquals( "My sub type", parsedSubType.getLabel() );
-        assertEquals( true, parsedSubType.isRequired() );
-        assertEquals( true, parsedSubType.isImmutable() );
+        FieldSet parsedFieldSet = (FieldSet) configItem;
+        assertEquals( "My sub type", parsedFieldSet.getLabel() );
+        assertEquals( true, parsedFieldSet.isRequired() );
+        assertEquals( true, parsedFieldSet.isImmutable() );
     }
 
-    private String subTypeToJson( SubType field )
+    private String fieldSetToJson( FieldSet field )
         throws IOException
     {
-        SubTypeSerializerJson.DEFAULT.generate( field, g );
+        FieldSetSerializerJson.DEFAULT.generate( field, g );
         g.close();
         return sw.toString();
     }

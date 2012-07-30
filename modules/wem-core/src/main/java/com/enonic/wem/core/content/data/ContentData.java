@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.data;
 
 
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
-import com.enonic.wem.core.content.type.configitem.SubType;
+import com.enonic.wem.core.content.type.configitem.FieldSet;
 
 public class ContentData
 {
@@ -41,7 +41,7 @@ public class ContentData
         entries.setValue( new EntryPath( fieldEntryPath ), value );
     }
 
-    public void setValue( final String fieldEntryPath, final SubType value )
+    public void setValue( final String fieldEntryPath, final FieldSet value )
     {
         entries.setValue( new EntryPath( fieldEntryPath ), value );
     }
