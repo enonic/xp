@@ -1,12 +1,15 @@
 package com.enonic.wem.core.content.data;
 
+import org.elasticsearch.common.base.Preconditions;
+
 import com.enonic.wem.core.content.type.configitem.Field;
+import com.enonic.wem.core.content.type.valuetype.BasalValueType;
 
 
 public class Value
     extends Entry
 {
-    private EntryPath valuePath;
+    private EntryPath path;
 
     /**
      * Optional.
@@ -14,6 +17,8 @@ public class Value
     private Field field;
 
     private Object value;
+
+    private BasalValueType basalValueType;
 
     private Value()
     {
@@ -28,7 +33,7 @@ public class Value
     @Override
     public EntryPath getPath()
     {
-        return valuePath;
+        return path;
     }
 
     public Object getValue()
@@ -36,6 +41,10 @@ public class Value
         return value;
     }
 
+    public BasalValueType getBasalValueType()
+    {
+        return basalValueType;
+    }
 
     @Override
     public String toString()
@@ -50,33 +59,71 @@ public class Value
 
     public static class Builder
     {
-        private Value value;
+        private EntryPath path;
+
+        private Field field;
+
+        private Object value;
+
+        private BasalValueType type;
+
 
         public Builder()
         {
             value = new Value();
         }
 
-        public Builder field( Field field )
+        public Builder field( Field value )
         {
-            value.field = field;
+            this.field = value;
             return this;
         }
 
         public Builder path( EntryPath value )
         {
-            this.value.valuePath = value;
+            this.path = value;
+            return this;
+        }
+
+        public Builder type( BasalValueType value )
+        {
+            this.type = value;
             return this;
         }
 
         public Builder value( Object value )
         {
-            this.value.value = value;
+            this.value = value;
             return this;
         }
 
         public Value build()
         {
+            final Value value = new Value();
+            value.path = path;
+            value.field = field;
+            value.value = this.value;
+
+            final BasalValueType resolvedType = BasalValueType.resolveType( this.value );
+            Preconditions.checkArgument( resolvedType != null, "value is of unknown type: " + value.value.getClass().getName() );
+
+            if ( type != null )
+            {
+                Preconditions.checkArgument( type == resolvedType, "value is not of expected type [%s]: " + type, resolvedType );
+                value.basalValueType = type;
+            }
+            else
+            {
+                value.basalValueType = resolvedType;
+            }
+
+            if ( field != null )
+            {
+                BasalValueType basalValueTypeOfField = field.getFieldType().getValueType().getBasalValueType();
+                Preconditions.checkArgument( value.basalValueType == basalValueTypeOfField,
+                                             "value is not of expected type [%s]: " + value.basalValueType, basalValueTypeOfField );
+            }
+
             return value;
         }
     }

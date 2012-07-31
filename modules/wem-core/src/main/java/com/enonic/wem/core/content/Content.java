@@ -37,7 +37,12 @@ public class Content
         return data;
     }
 
-    public void setData( final String path, final Object value )
+    public void setValue( final String path, final Object value )
+    {
+        this.data.setValue( new EntryPath( path ), value );
+    }
+
+    public void setValue( final String path, final String value )
     {
         this.data.setValue( new EntryPath( path ), value );
     }

@@ -7,6 +7,7 @@ import org.codehaus.jackson.JsonNode;
 
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.type.configitem.ConfigItem;
+import com.enonic.wem.core.content.type.valuetype.BasalValueType;
 
 public class ValueSerializerJson
 {
@@ -17,6 +18,10 @@ public class ValueSerializerJson
 
         g.writeStartObject();
         g.writeStringField( "path", fieldValue.getPath().toString() );
+        if ( fieldValue.getBasalValueType() != null )
+        {
+            g.writeStringField( "type", fieldValue.getBasalValueType().toString() );
+        }
         if ( fieldValue.getValue() != null )
         {
             g.writeStringField( "value", String.valueOf( fieldValue.getValue() ) );
@@ -35,9 +40,14 @@ public class ValueSerializerJson
 
         String pathAsString = JsonParserUtil.getStringValue( "path", entryNode );
         String valueAsString = JsonParserUtil.getStringValue( "value", entryNode );
+        String typeAsString = JsonParserUtil.getStringValue( "type", entryNode, null );
 
         builder.path( new EntryPath( pathAsString ) );
         builder.value( valueAsString );
+        if ( typeAsString != null )
+        {
+            builder.type( BasalValueType.valueOf( typeAsString ) );
+        }
 
         return builder.build();
     }

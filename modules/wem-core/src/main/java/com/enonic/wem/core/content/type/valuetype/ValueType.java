@@ -5,5 +5,7 @@ import com.enonic.wem.core.content.data.Value;
 
 public interface ValueType
 {
-    public boolean validValue( final Value fieldValue );
+    boolean validValue( final Value fieldValue );
+
+    BasalValueType getBasalValueType();
 }

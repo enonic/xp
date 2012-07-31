@@ -114,13 +114,13 @@ public class Entries
                                          "ConfigItem at path [%s] expected to be of type FieldSet: " + foundConfig.getConfigItemType(),
                                          path );
 
-            @SuppressWarnings("ConstantConditions") final FieldSet fieldSet = (FieldSet) foundConfig;
-            forwardSetValueToEntries( path, value, fieldSet );
+            //noinspection ConstantConditions
+            forwardSetValueToEntries( path, value, (FieldSet) foundConfig );
         }
         else
         {
             final Field field = (Field) foundConfig;
-            doSetEntry( path.getLastElement(), Value.newBuilder().field( field ).path( path ).value( value ).build() );
+            doSetEntry( path.getFirstElement(), Value.newBuilder().field( field ).path( path ).value( value ).build() );
         }
     }
 
@@ -128,36 +128,33 @@ public class Entries
     {
         if ( path.elementCount() > 1 )
         {
-            final Entry entry = entries.get( path.getFirstElement() );
-            final EntryPath newPath = path.asNewWithoutFirstPathElement();
-            if ( entry == null )
-            {
-                final Entries newEntries = new Entries( new EntryPath( this.path, path.getFirstElement() ) );
-                entries.put( path.getFirstElement(), newEntries );
-                newEntries.setValue( newPath, value );
-            }
-            else
-            {
-                final Entries existingEntries = (Entries) entry;
-                existingEntries.setValue( newPath, value );
-            }
-
+            forwardSetValueToEntries( path, value );
         }
         else
         {
             Value newValue = Value.newBuilder().path( new EntryPath( this.path, path.getFirstElement() ) ).value( value ).build();
-            doSetEntry( path.getLastElement(), newValue );
+            doSetEntry( path.getFirstElement(), newValue );
         }
+    }
+
+    private void forwardSetValueToEntries( final EntryPath path, final Object value )
+    {
+        Entries existingEntries = (Entries) this.entries.get( path.getFirstElement() );
+        if ( existingEntries == null )
+        {
+            existingEntries = new Entries( new EntryPath( this.path, path.getFirstElement() ) );
+            doSetEntry( path.getFirstElement(), existingEntries );
+        }
+        existingEntries.setValue( path.asNewWithoutFirstPathElement(), value );
     }
 
     private void forwardSetValueToEntries( final EntryPath path, final Object value, final FieldSet fieldSet )
     {
-        final EntryPath.Element pathFirstElement = path.getFirstElement();
-        Entries existingEntries = (Entries) this.entries.get( pathFirstElement );
+        Entries existingEntries = (Entries) this.entries.get( path.getFirstElement() );
         if ( existingEntries == null )
         {
-            existingEntries = new Entries( new EntryPath( this.path, pathFirstElement ), fieldSet );
-            doSetEntry( pathFirstElement, existingEntries );
+            existingEntries = new Entries( new EntryPath( this.path, path.getFirstElement() ), fieldSet );
+            doSetEntry( path.getFirstElement(), existingEntries );
         }
         existingEntries.setValue( path.asNewWithoutFirstPathElement(), value );
     }

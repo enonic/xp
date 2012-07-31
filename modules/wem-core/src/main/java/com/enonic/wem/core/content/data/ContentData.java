@@ -36,6 +36,11 @@ public class ContentData
         entries.setValue( path, value );
     }
 
+    public void setValue( final EntryPath path, final String value )
+    {
+        entries.setValue( path, value );
+    }
+
     public void setValue( final String path, final Object value )
     {
         entries.setValue( new EntryPath( path ), value );
