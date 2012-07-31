@@ -22,18 +22,18 @@ public class ContentTypeJsonGeneratorTest
         ContentType contentType = new ContentType();
         ConfigItems configItems = new ConfigItems();
         contentType.setConfigItems( configItems );
-        configItems.addConfig( Field.newBuilder().name( "myDate" ).type( FieldTypes.date ).build() );
-        configItems.addConfig(
+        configItems.addConfigItem( Field.newBuilder().name( "myDate" ).type( FieldTypes.date ).build() );
+        configItems.addConfigItem(
             Field.newBuilder().name( "myDropdown" ).type( FieldTypes.dropdown ).fieldTypeConfig( dropdownConfig ).build() );
-        configItems.addConfig( Field.newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );
-        configItems.addConfig( Field.newBuilder().name( "myTextArea" ).type( FieldTypes.textarea ).build() );
-        configItems.addConfig(
+        configItems.addConfigItem( Field.newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );
+        configItems.addConfigItem( Field.newBuilder().name( "myTextArea" ).type( FieldTypes.textarea ).build() );
+        configItems.addConfigItem(
             Field.newBuilder().name( "myRadiobuttons" ).type( FieldTypes.radioButtons ).fieldTypeConfig( myRadioButtonsConfig ).build() );
-        configItems.addConfig( Field.newBuilder().name( "myPhone" ).type( FieldTypes.phone ).build() );
-        configItems.addConfig( Field.newBuilder().name( "myXml" ).type( FieldTypes.xml ).build() );
+        configItems.addConfigItem( Field.newBuilder().name( "myPhone" ).type( FieldTypes.phone ).build() );
+        configItems.addConfigItem( Field.newBuilder().name( "myXml" ).type( FieldTypes.xml ).build() );
 
         FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).build();
-        configItems.addConfig( fieldSet );
+        configItems.addConfigItem( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).multiple( 1, 3 ).type( FieldTypes.textline ).build() );
 
@@ -47,10 +47,10 @@ public class ContentTypeJsonGeneratorTest
     {
         ConfigItems configItems = new ConfigItems();
 
-        configItems.addConfig( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
+        configItems.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
 
         FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).label( "Personalia" ).build();
-        configItems.addConfig( fieldSet );
+        configItems.addConfigItem( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).multiple( 1, 3 ).type( FieldTypes.textline ).build() );
 

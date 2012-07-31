@@ -40,7 +40,7 @@ public class FieldSet
         Preconditions.checkState( getPath() != null, "Cannot add Field before this FieldSet is added" );
 
         field.setPath( new FieldPath( getPath(), field.getName() ) );
-        this.configItems.addConfig( field );
+        this.configItems.addConfigItem( field );
     }
 
     public void addFieldSet( final FieldSet fieldSet )
@@ -48,7 +48,7 @@ public class FieldSet
         Preconditions.checkState( getPath() != null, "Cannot add FieldSet before this FieldSet is added" );
 
         fieldSet.setPath( new FieldPath( getPath(), fieldSet.getName() ) );
-        this.configItems.addConfig( fieldSet );
+        this.configItems.addConfigItem( fieldSet );
     }
 
     public FieldSetType getType()
@@ -125,7 +125,7 @@ public class FieldSet
 
     public ConfigItem getConfig( final FieldPath fieldPath )
     {
-        return configItems.getConfig( fieldPath.getLastElement() );
+        return configItems.getConfigItem( fieldPath.getLastElement() );
     }
 
     public static class Builder

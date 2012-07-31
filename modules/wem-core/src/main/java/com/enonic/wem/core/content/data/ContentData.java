@@ -26,6 +26,11 @@ public class ContentData
         this.entries = new Entries( new EntryPath() );
     }
 
+    public void setConfigItems( final ConfigItems configItems )
+    {
+        this.entries.setConfigItems( configItems );
+    }
+
     void setEntries( final Entries entries )
     {
         this.entries = entries;

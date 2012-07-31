@@ -6,7 +6,6 @@ import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
 import com.enonic.wem.core.content.JsonParserUtil;
-import com.enonic.wem.core.content.type.configitem.ConfigItem;
 import com.enonic.wem.core.content.type.valuetype.BasalValueType;
 
 public class ValueSerializerJson
@@ -34,7 +33,7 @@ public class ValueSerializerJson
         g.writeEndObject();
     }
 
-    public static Entry parse( JsonNode entryNode, ConfigItem item )
+    public static Entry parse( JsonNode entryNode )
     {
         Value.Builder builder = Value.newBuilder();
 

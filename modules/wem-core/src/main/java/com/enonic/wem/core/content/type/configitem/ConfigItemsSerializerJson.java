@@ -27,7 +27,7 @@ public class ConfigItemsSerializerJson
         final Iterator<JsonNode> configItemIt = configItemsNode.getElements();
         while ( configItemIt.hasNext() )
         {
-            configItems.addConfig( ConfigItemSerializerJson.parse( configItemIt.next() ) );
+            configItems.addConfigItem( ConfigItemSerializerJson.parse( configItemIt.next() ) );
         }
 
         return configItems;

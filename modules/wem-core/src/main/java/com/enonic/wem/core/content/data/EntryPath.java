@@ -91,13 +91,6 @@ public class EntryPath
         return new FieldPath( fieldPathElements );
     }
 
-    public EntryPath asNewUsingFirstPathElement()
-    {
-        List<Element> pathElements = Lists.newArrayList();
-        pathElements.add( elements.get( 0 ) );
-        return new EntryPath( pathElements );
-    }
-
     public EntryPath asNewWithoutFirstPathElement()
     {
         List<Element> pathElements = Lists.newArrayList();

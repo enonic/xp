@@ -60,7 +60,7 @@ public class EntriesSerializerJson
                 }
                 else
                 {
-                    final Entry entry = ValueSerializerJson.parse( entryNode, null );
+                    final Entry entry = ValueSerializerJson.parse( entryNode );
                     entries.add( entry );
                 }
             }
@@ -68,7 +68,7 @@ public class EntriesSerializerJson
             {
                 final FieldPath fieldPath = path.resolveFieldPath();
 
-                final ConfigItem item = configItems.getConfig( fieldPath.getLastElement() );
+                final ConfigItem item = configItems.getConfigItem( fieldPath.getLastElement() );
 
                 if ( item == null )
                 {
@@ -76,7 +76,7 @@ public class EntriesSerializerJson
                 }
                 else if ( item.getConfigItemType() == ConfigItemType.FIELD )
                 {
-                    final Entry entry = ValueSerializerJson.parse( entryNode, item );
+                    final Entry entry = ValueSerializerJson.parse( entryNode );
                     entries.add( entry );
                 }
                 else if ( item.getConfigItemType() == ConfigItemType.FIELD_SET )

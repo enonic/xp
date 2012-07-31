@@ -3,6 +3,7 @@ package com.enonic.wem.core.content.data;
 import org.elasticsearch.common.base.Preconditions;
 
 import com.enonic.wem.core.content.type.configitem.Field;
+import com.enonic.wem.core.content.type.configitem.FieldPath;
 import com.enonic.wem.core.content.type.valuetype.BasalValueType;
 
 
@@ -23,6 +24,14 @@ public class Value
     private Value()
     {
         // protection
+    }
+
+    void setField( final Field field )
+    {
+        FieldPath fieldPath = path.resolveFieldPath();
+        Preconditions.checkArgument( fieldPath.equals( field.getPath() ),
+                                     "This Value's path [%s] does not match given field's path: " + field.getPath(), fieldPath.toString() );
+        this.field = field;
     }
 
     public Field getField()

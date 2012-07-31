@@ -20,7 +20,7 @@ public class ContentDataTest
         ConfigItems configItems = new ConfigItems();
         DropdownConfig dropdownConfig = DropdownConfig.newBuilder().addOption( "o1", "Option 1" ).addOption( "o2", "Option 2" ).build();
         Field myDropdown = Field.newBuilder().name( "myDropdown" ).type( FieldTypes.dropdown ).fieldTypeConfig( dropdownConfig ).build();
-        configItems.addConfig( myDropdown );
+        configItems.addConfigItem( myDropdown );
 
         ContentData contentData = new ContentData( configItems );
         contentData.setValue( "myDropdown", "o1" );
@@ -36,7 +36,7 @@ public class ContentDataTest
         ConfigItems dataConfig = new ConfigItems();
         RadioButtonsConfig myRadioButtonsConfig =
             RadioButtonsConfig.newBuilder().addOption( "myFirstChoice", "c1" ).addOption( "mySecondChoice", "c2" ).build();
-        dataConfig.addConfig(
+        dataConfig.addConfigItem(
             Field.newBuilder().name( "myRadioButtons" ).type( FieldTypes.radioButtons ).fieldTypeConfig( myRadioButtonsConfig ).build() );
 
         ContentData contentData = new ContentData( dataConfig );
@@ -51,8 +51,8 @@ public class ContentDataTest
     public void multiple_textlines()
     {
         ConfigItems configItems = new ConfigItems();
-        configItems.addConfig( Field.newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );
-        configItems.addConfig(
+        configItems.addConfigItem( Field.newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );
+        configItems.addConfigItem(
             Field.newBuilder().name( "myMultipleTextLine" ).type( FieldTypes.textline ).required( false ).multiple( true ).build() );
 
         ContentData contentData = new ContentData( configItems );
@@ -72,7 +72,7 @@ public class ContentDataTest
     public void tags()
     {
         ConfigItems dataConfig = new ConfigItems();
-        dataConfig.addConfig( Field.newBuilder().name( "myTags" ).type( FieldTypes.tags ).build() );
+        dataConfig.addConfigItem( Field.newBuilder().name( "myTags" ).type( FieldTypes.tags ).build() );
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
         ContentData contentData = new ContentData( dataConfig );
@@ -87,7 +87,7 @@ public class ContentDataTest
     public void phone()
     {
         ConfigItems dataConfig = new ConfigItems();
-        dataConfig.addConfig( Field.newBuilder().name( "myPhone" ).type( FieldTypes.phone ).required( true ).build() );
+        dataConfig.addConfigItem( Field.newBuilder().name( "myPhone" ).type( FieldTypes.phone ).required( true ).build() );
 
         ContentData contentData = new ContentData( dataConfig );
         contentData.setValue( "myPhone", "98327891" );
@@ -104,8 +104,9 @@ public class ContentDataTest
             RadioButtonsConfig.newBuilder().addOption( "Norway", "NO" ).addOption( "South Africa", "ZA" ).build();
 
         ConfigItems dataConfig = new ConfigItems();
-        dataConfig.addConfig( Field.newBuilder().name( "myRadiobuttons" ).type( FieldTypes.radioButtons ).required( true ).fieldTypeConfig(
-            radioButtonsConfig ).build() );
+        dataConfig.addConfigItem(
+            Field.newBuilder().name( "myRadiobuttons" ).type( FieldTypes.radioButtons ).required( true ).fieldTypeConfig(
+                radioButtonsConfig ).build() );
 
         ContentData contentData = new ContentData( dataConfig );
         contentData.setValue( "myRadiobuttons", "Norway" );
@@ -119,10 +120,10 @@ public class ContentDataTest
     public void groupedFieldSet()
     {
         ConfigItems dataConfig = new ConfigItems();
-        dataConfig.addConfig( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
+        dataConfig.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
 
         FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).build();
-        dataConfig.addConfig( fieldSet );
+        dataConfig.addConfigItem( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
@@ -141,10 +142,10 @@ public class ContentDataTest
     {
         ConfigItems dataConfig = new ConfigItems();
         Field nameField = Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build();
-        dataConfig.addConfig( nameField );
+        dataConfig.addConfigItem( nameField );
 
         FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).multiple( true ).build();
-        dataConfig.addConfig( fieldSet );
+        dataConfig.addConfigItem( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
@@ -228,7 +229,7 @@ public class ContentDataTest
         features.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
         child.addFieldSet( features );
         ConfigItems configItems = new ConfigItems();
-        configItems.addConfig( child );
+        configItems.addConfigItem( child );
 
         ContentData data = new ContentData( configItems );
         data.setValue( "child[0].name", "Joachim" );

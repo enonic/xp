@@ -14,12 +14,12 @@ public class ConfigItemsTest
     {
         ConfigItems configItems = new ConfigItems();
         FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).build();
-        configItems.addConfig( fieldSet );
+        configItems.addConfigItem( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
         // exercise & verify
-        ConfigItem personaliaConfig = configItems.getConfig( new FieldPath( "personalia" ).getLastElement() );
+        ConfigItem personaliaConfig = configItems.getConfigItem( new FieldPath( "personalia" ).getLastElement() );
         assertEquals( "personalia", personaliaConfig.getPath().toString() );
     }
 
@@ -28,12 +28,12 @@ public class ConfigItemsTest
     {
         ConfigItems configItems = new ConfigItems();
         FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).label( "Personalia" ).build();
-        configItems.addConfig( fieldSet );
+        configItems.addConfigItem( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
         // exercise & verify
-        ConfigItem personaliaEyeColourConfig = fieldSet.getConfigItems().getConfig( "eyeColour" );
+        ConfigItem personaliaEyeColourConfig = fieldSet.getConfigItems().getConfigItem( "eyeColour" );
         assertEquals( "personalia.eyeColour", personaliaEyeColourConfig.getPath().toString() );
     }
 }

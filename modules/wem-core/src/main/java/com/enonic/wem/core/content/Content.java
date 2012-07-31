@@ -8,19 +8,7 @@ public class Content
 {
     private ContentType type;
 
-    private ContentData data;
-
-    public void init()
-    {
-        if ( type == null )
-        {
-            data = new ContentData();
-        }
-        else
-        {
-            data = new ContentData( type.getConfigItems() );
-        }
-    }
+    private ContentData data = new ContentData();
 
     public ContentType getType()
     {
@@ -30,6 +18,7 @@ public class Content
     public void setType( final ContentType type )
     {
         this.type = type;
+        this.data.setConfigItems( type.getConfigItems() );
     }
 
     public ContentData getData()

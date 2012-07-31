@@ -21,8 +21,8 @@ public class ContentDataSerializerJsonTest
         ContentType contentType = new ContentType();
         contentType.setName( "MyContentType" );
         ConfigItems configItems = contentType.getConfigItems();
-        configItems.addConfig( Field.newBuilder().name( "myTextarea" ).type( FieldTypes.textarea ).required( true ).build() );
-        configItems.addConfig( Field.newBuilder().name( "myPhone" ).type( FieldTypes.phone ).build() );
+        configItems.addConfigItem( Field.newBuilder().name( "myTextarea" ).type( FieldTypes.textarea ).required( true ).build() );
+        configItems.addConfigItem( Field.newBuilder().name( "myPhone" ).type( FieldTypes.phone ).build() );
 
         ContentData contentData = new ContentData( configItems );
         contentData.setValue( "myTextarea", "My test\n text." );
@@ -47,8 +47,9 @@ public class ContentDataSerializerJsonTest
             RadioButtonsConfig.newBuilder().addOption( "Norway", "NO" ).addOption( "South Africa", "ZA" ).build();
 
         ConfigItems configItems = new ConfigItems();
-        configItems.addConfig( Field.newBuilder().name( "myRadiobuttons" ).type( FieldTypes.radioButtons ).required( true ).fieldTypeConfig(
-            radioButtonsConfig ).build() );
+        configItems.addConfigItem(
+            Field.newBuilder().name( "myRadiobuttons" ).type( FieldTypes.radioButtons ).required( true ).fieldTypeConfig(
+                radioButtonsConfig ).build() );
 
         ContentData contentData = new ContentData( configItems );
         contentData.setValue( "myRadiobuttons", "Norway" );
@@ -66,8 +67,8 @@ public class ContentDataSerializerJsonTest
     public void multiple_textlines()
     {
         ConfigItems configItems = new ConfigItems();
-        configItems.addConfig( Field.newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );
-        configItems.addConfig(
+        configItems.addConfigItem( Field.newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );
+        configItems.addConfigItem(
             Field.newBuilder().name( "myMultipleTextLine" ).type( FieldTypes.textline ).required( false ).multiple( true ).build() );
 
         ContentData contentData = new ContentData( configItems );
@@ -89,10 +90,10 @@ public class ContentDataSerializerJsonTest
     public void groupedFieldSet()
     {
         ConfigItems configItems = new ConfigItems();
-        configItems.addConfig( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
+        configItems.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
 
         FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).build();
-        configItems.addConfig( fieldSet );
+        configItems.addConfigItem( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
@@ -119,11 +120,11 @@ public class ContentDataSerializerJsonTest
     {
         ConfigItems configItems = new ConfigItems();
         Field nameField = Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build();
-        configItems.addConfig( nameField );
+        configItems.addConfigItem( nameField );
 
         FieldSet fieldSet =
             FieldSet.newBuilder().type( FieldSetType.GROUP ).name( "personalia" ).label( "Personalia" ).multiple( true ).build();
-        configItems.addConfig( fieldSet );
+        configItems.addConfigItem( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );

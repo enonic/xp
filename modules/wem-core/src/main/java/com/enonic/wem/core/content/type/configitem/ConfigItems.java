@@ -28,30 +28,47 @@ public class ConfigItems
         this.path = path;
     }
 
-    public void addConfig( final ConfigItem item )
+    public void addConfigItem( final ConfigItem item )
     {
         item.setPath( new FieldPath( path, item.getName() ) );
         Object previous = items.put( item.getName(), item );
         Preconditions.checkArgument( previous == null, "ConfigItem already added: " + item );
     }
 
-    public ConfigItem getConfig( final String name )
+    public ConfigItem getConfigItem( final String name )
     {
         return items.get( name );
     }
 
-    /* TODO: remove:
-    public ConfigItem getConfig( final FieldPath fieldPath )
+    public FieldSet getFieldSet( final String name )
     {
-        ConfigItem foundConfigItem = items.get( fieldPath );
-        if ( foundConfigItem != null )
+        final ConfigItem configItem = items.get( name );
+        if ( configItem == null )
         {
-            return foundConfigItem;
+            return null;
         }
 
-        final FieldPath fieldPathToMatchWith = fieldPath.asNewUsingAllExceptLastPathElement();
-        return items.get( fieldPathToMatchWith );
-    }*/
+        Preconditions.checkArgument( ( configItem instanceof FieldSet ),
+                                     "ConfigItem at path [%s] is not a FieldSet: " + configItem.getConfigItemType(), configItem.getPath() );
+
+        //noinspection ConstantConditions
+        return (FieldSet) configItem;
+    }
+
+    public Field getField( final String name )
+    {
+        final ConfigItem configItem = items.get( name );
+        if ( configItem == null )
+        {
+            return null;
+        }
+
+        Preconditions.checkArgument( ( configItem instanceof Field ),
+                                     "ConfigItem at path [%s] is not a Field: " + configItem.getConfigItemType(), configItem.getPath() );
+
+        //noinspection ConstantConditions
+        return (Field) configItem;
+    }
 
     public Iterator<ConfigItem> iterator()
     {

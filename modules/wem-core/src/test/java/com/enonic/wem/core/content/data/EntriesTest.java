@@ -18,7 +18,7 @@ public class EntriesTest
         ConfigItems configItems = new ConfigItems();
         FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).multiple( true ).build();
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        configItems.addConfig( fieldSet );
+        configItems.addConfigItem( fieldSet );
 
         Entries entries = new Entries( new EntryPath(), configItems );
 
@@ -40,7 +40,7 @@ public class EntriesTest
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
         ConfigItems configItems = new ConfigItems();
-        configItems.addConfig( fieldSet );
+        configItems.addConfigItem( fieldSet );
 
         Entries entries = new Entries( new EntryPath(), configItems );
         entries.setValue( new EntryPath( "personalia.eyeColour" ), "Brown" );
@@ -59,7 +59,7 @@ public class EntriesTest
         crimes.addField( Field.newBuilder().name( "year" ).type( FieldTypes.textline ).build() );
         personalia.addFieldSet( crimes );
         ConfigItems configItems = new ConfigItems();
-        configItems.addConfig( personalia );
+        configItems.addConfigItem( personalia );
 
         Entries entries = new Entries( new EntryPath(), configItems );
         entries.setValue( new EntryPath( "personalia.crimes[0].description" ), "Stole purse from old lady." );
@@ -80,7 +80,7 @@ public class EntriesTest
         FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "persons" ).multiple( true ).build();
         fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        configItems.addConfig( fieldSet );
+        configItems.addConfigItem( fieldSet );
 
         Entries entries = new Entries( new EntryPath(), configItems );
         entries.setValue( new EntryPath( "persons[0].name" ), "Arn" );

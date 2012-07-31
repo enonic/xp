@@ -25,18 +25,18 @@ public class ContentTypeJsonParserTest
         ContentType contentType = new ContentType();
         ConfigItems configItems = new ConfigItems();
         contentType.setConfigItems( configItems );
-        configItems.addConfig( Field.newBuilder().name( "myDate" ).type( FieldTypes.date ).build() );
-        configItems.addConfig(
+        configItems.addConfigItem( Field.newBuilder().name( "myDate" ).type( FieldTypes.date ).build() );
+        configItems.addConfigItem(
             Field.newBuilder().name( "myDropdown" ).type( FieldTypes.dropdown ).fieldTypeConfig( dropdownConfig ).build() );
-        configItems.addConfig( Field.newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );
-        configItems.addConfig( Field.newBuilder().name( "myTextArea" ).type( FieldTypes.textarea ).build() );
-        configItems.addConfig(
+        configItems.addConfigItem( Field.newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );
+        configItems.addConfigItem( Field.newBuilder().name( "myTextArea" ).type( FieldTypes.textarea ).build() );
+        configItems.addConfigItem(
             Field.newBuilder().name( "myRadioButtons" ).type( FieldTypes.radioButtons ).fieldTypeConfig( myRadioButtonsConfig ).build() );
-        configItems.addConfig( Field.newBuilder().name( "myPhone" ).type( FieldTypes.phone ).build() );
-        configItems.addConfig( Field.newBuilder().name( "myXml" ).type( FieldTypes.xml ).build() );
+        configItems.addConfigItem( Field.newBuilder().name( "myPhone" ).type( FieldTypes.phone ).build() );
+        configItems.addConfigItem( Field.newBuilder().name( "myXml" ).type( FieldTypes.xml ).build() );
 
         FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).label( "Personalia" ).build();
-        configItems.addConfig( fieldSet );
+        configItems.addConfigItem( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).multiple( 1, 3 ).type( FieldTypes.textline ).build() );
 
@@ -55,14 +55,14 @@ public class ContentTypeJsonParserTest
         assertNotNull( actualConfigItems );
         assertEquals( 8, actualConfigItems.size() );
 
-        assertNotNull( actualConfigItems.getConfig( new FieldPath( "myDate" ).getLastElement() ) );
-        assertNotNull( actualConfigItems.getConfig( new FieldPath( "myDropdown" ).getLastElement() ) );
-        assertNotNull( actualConfigItems.getConfig( new FieldPath( "myTextLine" ).getLastElement() ) );
-        assertNotNull( actualConfigItems.getConfig( new FieldPath( "myTextArea" ).getLastElement() ) );
-        assertNotNull( actualConfigItems.getConfig( new FieldPath( "myRadioButtons" ).getLastElement() ) );
-        assertNotNull( actualConfigItems.getConfig( new FieldPath( "myPhone" ).getLastElement() ) );
-        assertNotNull( actualConfigItems.getConfig( new FieldPath( "myXml" ).getLastElement() ) );
-        assertNotNull( actualConfigItems.getConfig( new FieldPath( "personalia" ).getLastElement() ) );
+        assertNotNull( actualConfigItems.getConfigItem( new FieldPath( "myDate" ).getLastElement() ) );
+        assertNotNull( actualConfigItems.getConfigItem( new FieldPath( "myDropdown" ).getLastElement() ) );
+        assertNotNull( actualConfigItems.getConfigItem( new FieldPath( "myTextLine" ).getLastElement() ) );
+        assertNotNull( actualConfigItems.getConfigItem( new FieldPath( "myTextArea" ).getLastElement() ) );
+        assertNotNull( actualConfigItems.getConfigItem( new FieldPath( "myRadioButtons" ).getLastElement() ) );
+        assertNotNull( actualConfigItems.getConfigItem( new FieldPath( "myPhone" ).getLastElement() ) );
+        assertNotNull( actualConfigItems.getConfigItem( new FieldPath( "myXml" ).getLastElement() ) );
+        assertNotNull( actualConfigItems.getConfigItem( new FieldPath( "personalia" ).getLastElement() ) );
 
     }
 

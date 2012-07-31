@@ -40,7 +40,7 @@ public class Entries
         this.configItems = configItems;
     }
 
-    public Entries( final EntryPath path, final FieldSet fieldSet )
+    private Entries( final EntryPath path, final FieldSet fieldSet )
     {
         Preconditions.checkNotNull( fieldSet, "fieldSet cannot be null" );
         Preconditions.checkNotNull( path, "path cannot be null" );
@@ -49,7 +49,7 @@ public class Entries
         this.path = path;
     }
 
-    public Entries( final EntryPath path, final Entries entries )
+    Entries( final EntryPath path, final Entries entries )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkNotNull( entries, "entries cannot be null" );
@@ -68,6 +68,40 @@ public class Entries
         this.path = path;
         this.entries = entries.entries;
     }
+
+    public void setConfigItems( final ConfigItems configItems )
+    {
+        Preconditions.checkNotNull( configItems, "configItems cannot be null" );
+
+        FieldPath fieldPath = path.resolveFieldPath();
+        org.elasticsearch.common.base.Preconditions.checkArgument( fieldPath.equals( configItems.getPath() ),
+                                                                   "This Entries' path [%s] does not match given ConfigItems' path: " +
+                                                                       configItems.getPath(), fieldPath.toString() );
+        this.configItems = configItems;
+
+        for ( Entry entry : entries.values() )
+        {
+            if ( entry instanceof Value )
+            {
+                final Value value = (Value) entry;
+                final Field field = configItems.getField( entry.getName() );
+                if ( field != null )
+                {
+                    value.setField( field );
+                }
+            }
+            else if ( entry instanceof Entries )
+            {
+                final Entries entries = (Entries) entry;
+                final FieldSet fieldSet = configItems.getFieldSet( entry.getName() );
+                if ( fieldSet != null )
+                {
+                    entries.setConfigItems( fieldSet.getConfigItems() );
+                }
+            }
+        }
+    }
+
 
     public EntryPath getPath()
     {
@@ -102,7 +136,7 @@ public class Entries
     private void setStructuredValue( final EntryPath path, final Object value )
     {
         final FieldPath fieldPath = path.resolveFieldPath();
-        final ConfigItem foundConfig = configItems.getConfig( fieldPath.getFirstElement() );
+        final ConfigItem foundConfig = configItems.getConfigItem( fieldPath.getFirstElement() );
         if ( foundConfig == null )
         {
             throw new IllegalArgumentException( "No ConfigItem found at: " + path );
