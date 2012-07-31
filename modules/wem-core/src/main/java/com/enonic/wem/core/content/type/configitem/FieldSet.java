@@ -6,6 +6,8 @@ import com.google.common.base.Preconditions;
 public class FieldSet
     extends ConfigItem
 {
+    private FieldSetType type;
+
     private String label;
 
     private ConfigItems configItems = new ConfigItems();
@@ -47,6 +49,11 @@ public class FieldSet
 
         fieldSet.setPath( new FieldPath( getPath(), fieldSet.getName() ) );
         this.configItems.addConfig( fieldSet );
+    }
+
+    public FieldSetType getType()
+    {
+        return type;
     }
 
     public String getLabel()
@@ -121,12 +128,6 @@ public class FieldSet
         return configItems.getConfig( fieldPath.getLastElement() );
     }
 
-    @Override
-    ConfigItemSerializerJson getJsonGenerator()
-    {
-        return FieldSetSerializerJson.DEFAULT;
-    }
-
     public static class Builder
     {
         private FieldSet fieldSet;
@@ -134,6 +135,24 @@ public class FieldSet
         private Builder()
         {
             fieldSet = new FieldSet();
+        }
+
+        public Builder typeGroup()
+        {
+            fieldSet.type = FieldSetType.GROUP;
+            return this;
+        }
+
+        public Builder typeVisual()
+        {
+            fieldSet.type = FieldSetType.VISUAL;
+            return this;
+        }
+
+        public Builder type( FieldSetType type )
+        {
+            fieldSet.type = type;
+            return this;
         }
 
         public Builder name( String value )
@@ -198,7 +217,8 @@ public class FieldSet
 
         public FieldSet build()
         {
-            Preconditions.checkNotNull( fieldSet.getName(), "name cannot be null" );
+            Preconditions.checkNotNull( fieldSet.type, "type must be specified" );
+            Preconditions.checkNotNull( fieldSet.getName(), "name must be specified" );
             fieldSet.setPath( new FieldPath( fieldSet.getName() ) );
             return fieldSet;
         }

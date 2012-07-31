@@ -156,6 +156,7 @@ public class ConfigItemSerializerJsonTest
     {
         // setup
         FieldSet.Builder builder = FieldSet.newBuilder();
+        builder.typeGroup();
         builder.name( "mySubType" );
         builder.label( "My sub type" );
         builder.immutable( true );
@@ -166,6 +167,7 @@ public class ConfigItemSerializerJsonTest
         FieldSet fieldSet = builder.build();
 
         String json = fieldSetToJson( fieldSet );
+        System.out.println( json );
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
@@ -183,7 +185,7 @@ public class ConfigItemSerializerJsonTest
     private String fieldSetToJson( FieldSet field )
         throws IOException
     {
-        FieldSetSerializerJson.DEFAULT.generate( field, g );
+        ConfigItemSerializerJson.generate( field, g );
         g.close();
         return sw.toString();
     }
@@ -191,7 +193,7 @@ public class ConfigItemSerializerJsonTest
     private String fieldToJson( Field field )
         throws IOException
     {
-        FieldSerializerJson.DEFAULT.generate( field, g );
+        ConfigItemSerializerJson.generate( field, g );
         g.close();
         return sw.toString();
     }

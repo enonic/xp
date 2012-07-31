@@ -16,15 +16,11 @@ public class EntriesTest
     public void setValue_when_given_path_does_not_exists()
     {
         ConfigItems configItems = new ConfigItems();
-        FieldSet.Builder subTypeBuilder = FieldSet.newBuilder();
-        subTypeBuilder.name( "personalia" );
-        subTypeBuilder.label( "Personalia" );
-        subTypeBuilder.multiple( true );
-        FieldSet fieldSet = subTypeBuilder.build();
+        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).multiple( true ).build();
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         configItems.addConfig( fieldSet );
 
-        Entries entries = new Entries( configItems );
+        Entries entries = new Entries( new EntryPath(), configItems );
 
         try
         {
@@ -40,13 +36,13 @@ public class EntriesTest
     @Test
     public void getValue_when_having_sub_type()
     {
-        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).multiple( false ).build();
+        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).multiple( false ).build();
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
         ConfigItems configItems = new ConfigItems();
         configItems.addConfig( fieldSet );
 
-        Entries entries = new Entries( configItems );
+        Entries entries = new Entries( new EntryPath(), configItems );
         entries.setValue( new EntryPath( "personalia.eyeColour" ), "Brown" );
         entries.setValue( new EntryPath( "personalia.hairColour" ), "Brown" );
 
@@ -57,15 +53,15 @@ public class EntriesTest
     @Test
     public void getValue_when_having_multiple_sub_type_in_single_sub_type()
     {
-        FieldSet personalia = FieldSet.newBuilder().name( "personalia" ).label( "Personalia" ).multiple( false ).build();
-        FieldSet crimes = FieldSet.newBuilder().name( "crimes" ).multiple( true ).build();
+        FieldSet personalia = FieldSet.newBuilder().typeGroup().name( "personalia" ).label( "Personalia" ).multiple( false ).build();
+        FieldSet crimes = FieldSet.newBuilder().typeGroup().name( "crimes" ).multiple( true ).build();
         crimes.addField( Field.newBuilder().name( "description" ).type( FieldTypes.textline ).build() );
         crimes.addField( Field.newBuilder().name( "year" ).type( FieldTypes.textline ).build() );
         personalia.addFieldSet( crimes );
         ConfigItems configItems = new ConfigItems();
         configItems.addConfig( personalia );
 
-        Entries entries = new Entries( configItems );
+        Entries entries = new Entries( new EntryPath(), configItems );
         entries.setValue( new EntryPath( "personalia.crimes[0].description" ), "Stole purse from old lady." );
         entries.setValue( new EntryPath( "personalia.crimes[0].year" ), "2011" );
         entries.setValue( new EntryPath( "personalia.crimes[1].description" ), "Drove car in 80 in 50 zone." );
@@ -81,12 +77,12 @@ public class EntriesTest
     public void getValue_when_having_multiple_sub_type()
     {
         ConfigItems configItems = new ConfigItems();
-        FieldSet fieldSet = FieldSet.newBuilder().name( "persons" ).multiple( true ).build();
+        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "persons" ).multiple( true ).build();
         fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         configItems.addConfig( fieldSet );
 
-        Entries entries = new Entries( configItems );
+        Entries entries = new Entries( new EntryPath(), configItems );
         entries.setValue( new EntryPath( "persons[0].name" ), "Arn" );
         entries.setValue( new EntryPath( "persons[0].eyeColour" ), "Brown" );
 

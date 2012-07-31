@@ -31,19 +31,19 @@ public class ContentData
         this.entries = entries;
     }
 
-    public void setValue( final EntryPath name, final Object value )
+    public void setValue( final EntryPath path, final Object value )
     {
-        entries.setValue( name, value );
+        entries.setValue( path, value );
     }
 
-    public void setValue( final String fieldEntryPath, final Object value )
+    public void setValue( final String path, final Object value )
     {
-        entries.setValue( new EntryPath( fieldEntryPath ), value );
+        entries.setValue( new EntryPath( path ), value );
     }
 
-    public void setValue( final String fieldEntryPath, final FieldSet value )
+    public void setValue( final String path, final FieldSet value )
     {
-        entries.setValue( new EntryPath( fieldEntryPath ), value );
+        entries.setValue( new EntryPath( path ), value );
     }
 
     public Value getValue( final String path )
@@ -56,14 +56,14 @@ public class ContentData
         return entries.getValue( path );
     }
 
-    public SubTypeEntry getSubTypeEntry( final String path )
+    public Entries getEntries( final String path )
     {
-        return getSubTypeEntry( new EntryPath( path ) );
+        return getEntries( new EntryPath( path ) );
     }
 
-    public SubTypeEntry getSubTypeEntry( final EntryPath path )
+    public Entries getEntries( final EntryPath path )
     {
-        return entries.getSubTypeEntry( path );
+        return entries.getEntries( path );
     }
 
     Entries getEntries()

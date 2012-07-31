@@ -14,7 +14,7 @@ import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.FieldPath;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 
-class EntriesSerializerJson
+public class EntriesSerializerJson
 {
     static void generate( final Entries entries, final JsonGenerator g )
         throws IOException
@@ -24,9 +24,9 @@ class EntriesSerializerJson
         g.writeArrayFieldStart( "entries" );
         for ( final Entry entry : entries )
         {
-            if ( entry instanceof SubTypeEntry )
+            if ( entry instanceof Entries )
             {
-                EntriesSerializerJson.generate( ( (SubTypeEntry) entry ).getEntries(), g );
+                EntriesSerializerJson.generate( ( (Entries) entry ), g );
             }
             else if ( entry instanceof Value )
             {
@@ -51,11 +51,11 @@ class EntriesSerializerJson
 
             if ( configItems == null )
             {
-                if ( isSubTypeEntry( entryNode ) )
+                if ( isEntriesNode( entryNode ) )
                 {
 
                     final Entries childEntries = EntriesSerializerJson.parse( entryNode, null );
-                    final SubTypeEntry entry = new SubTypeEntry( path, childEntries );
+                    final Entries entry = new Entries( path, childEntries );
                     entries.add( entry );
                 }
                 else
@@ -74,16 +74,16 @@ class EntriesSerializerJson
                 {
                     //
                 }
-                else if ( item.getItemType() == ConfigItemType.FIELD )
+                else if ( item.getConfigItemType() == ConfigItemType.FIELD )
                 {
                     final Entry entry = ValueSerializerJson.parse( entryNode, item );
                     entries.add( entry );
                 }
-                else if ( item.getItemType() == ConfigItemType.FIELD_SET )
+                else if ( item.getConfigItemType() == ConfigItemType.FIELD_SET )
                 {
                     final FieldSet fieldSet = (FieldSet) item;
                     final Entries childEntries = EntriesSerializerJson.parse( entryNode, fieldSet.getConfigItems() );
-                    final SubTypeEntry entry = new SubTypeEntry( fieldSet, path, childEntries );
+                    final Entries entry = new Entries( path, fieldSet, childEntries );
                     entries.add( entry );
                 }
             }
@@ -92,7 +92,7 @@ class EntriesSerializerJson
         return entries;
     }
 
-    private static boolean isSubTypeEntry( JsonNode node )
+    private static boolean isEntriesNode( JsonNode node )
     {
         return node.get( "entries" ) != null;
     }

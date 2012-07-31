@@ -7,6 +7,7 @@ import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
+import com.enonic.wem.core.content.type.configitem.FieldSetType;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.content.type.configitem.fieldtype.RadioButtonsConfig;
 
@@ -85,15 +86,12 @@ public class ContentDataSerializerJsonTest
     }
 
     @Test
-    public void groupedSubType()
+    public void groupedFieldSet()
     {
         ConfigItems configItems = new ConfigItems();
         configItems.addConfig( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
 
-        FieldSet.Builder fieldSetBuilder = FieldSet.newBuilder();
-        fieldSetBuilder.name( "personalia" );
-        fieldSetBuilder.label( "Personalia" );
-        FieldSet fieldSet = fieldSetBuilder.build();
+        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).build();
         configItems.addConfig( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
@@ -123,7 +121,8 @@ public class ContentDataSerializerJsonTest
         Field nameField = Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build();
         configItems.addConfig( nameField );
 
-        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
+        FieldSet fieldSet =
+            FieldSet.newBuilder().type( FieldSetType.GROUP ).name( "personalia" ).label( "Personalia" ).multiple( true ).build();
         configItems.addConfig( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
@@ -241,14 +240,14 @@ public class ContentDataSerializerJsonTest
         assertEquals( "Sten Roger", topEntries.getValue( "company.names[1]" ).getValue() );
         assertEquals( "Alex", topEntries.getValue( "company.names[2]" ).getValue() );
 
-        SubTypeEntry companyEntries = (SubTypeEntry) topEntries.getEntry( "company" );
-        Value value0 = (Value) companyEntries.getEntries().getEntry( "names[0]" );
+        Entries companyEntries = (Entries) topEntries.getEntry( "company" );
+        Value value0 = (Value) companyEntries.getEntry( "names[0]" );
         assertEquals( "company.names[0]", value0.getPath().toString() );
         assertEquals( "Thomas", value0.getValue() );
-        Value value1 = (Value) companyEntries.getEntries().getEntry( "names[1]" );
+        Value value1 = (Value) companyEntries.getEntry( "names[1]" );
         assertEquals( "company.names[1]", value1.getPath().toString() );
         assertEquals( "Sten Roger", value1.getValue() );
-        Value value2 = (Value) companyEntries.getEntries().getEntry( "names[2]" );
+        Value value2 = (Value) companyEntries.getEntry( "names[2]" );
         assertEquals( "company.names[2]", value2.getPath().toString() );
         assertEquals( "Alex", value2.getValue() );
     }

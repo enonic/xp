@@ -32,7 +32,7 @@ public class ContentTypeJsonGeneratorTest
         configItems.addConfig( Field.newBuilder().name( "myPhone" ).type( FieldTypes.phone ).build() );
         configItems.addConfig( Field.newBuilder().name( "myXml" ).type( FieldTypes.xml ).build() );
 
-        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).build();
+        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).build();
         configItems.addConfig( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).multiple( 1, 3 ).type( FieldTypes.textline ).build() );
@@ -49,7 +49,7 @@ public class ContentTypeJsonGeneratorTest
 
         configItems.addConfig( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
 
-        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).label( "Personalia" ).build();
+        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).label( "Personalia" ).build();
         configItems.addConfig( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).multiple( 1, 3 ).type( FieldTypes.textline ).build() );

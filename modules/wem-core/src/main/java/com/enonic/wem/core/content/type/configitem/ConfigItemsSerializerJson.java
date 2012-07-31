@@ -15,7 +15,7 @@ public class ConfigItemsSerializerJson
         g.writeArrayFieldStart( "items" );
         for ( ConfigItem configItem : configItems )
         {
-            configItem.getJsonGenerator().generate( configItem, g );
+            ConfigItemSerializerJson.generate( configItem, g );
         }
         g.writeEndArray();
     }

@@ -35,10 +35,7 @@ public class ContentTypeJsonParserTest
         configItems.addConfig( Field.newBuilder().name( "myPhone" ).type( FieldTypes.phone ).build() );
         configItems.addConfig( Field.newBuilder().name( "myXml" ).type( FieldTypes.xml ).build() );
 
-        FieldSet.Builder subTypeBuilder = FieldSet.newBuilder();
-        subTypeBuilder.name( "personalia" );
-        subTypeBuilder.label( "Personalia" );
-        FieldSet fieldSet = subTypeBuilder.build();
+        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).label( "Personalia" ).build();
         configItems.addConfig( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).multiple( 1, 3 ).type( FieldTypes.textline ).build() );

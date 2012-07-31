@@ -26,7 +26,6 @@ public class MultipleSerializerJson
     }
 
     public static Multiple parse( final JsonNode node )
-        throws IOException
     {
         int minEntries = 0;
         int maxEntries = 0;

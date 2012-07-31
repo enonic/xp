@@ -12,7 +12,6 @@ import com.enonic.wem.core.content.JsonParserUtil;
 public class FieldTypeJsonParser
 {
     public static FieldType parse( final JsonNode node )
-        throws IOException
     {
         String className = JsonParserUtil.getStringValue( "className", node );
 

@@ -92,12 +92,6 @@ public class Field
         return fieldTypeConfig;
     }
 
-    @Override
-    ConfigItemSerializerJson getJsonGenerator()
-    {
-        return FieldSerializerJson.DEFAULT;
-    }
-
 
     @Override
     public String toString()

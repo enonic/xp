@@ -1,6 +1,5 @@
 package com.enonic.wem.core.content.type.configitem.fieldtype;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -9,7 +8,6 @@ import org.codehaus.jackson.JsonNode;
 public class FieldTypeConfigProxySerializerJson
 {
     public static FieldTypeConfig parse( final JsonNode node )
-        throws IOException
     {
         Iterator<Map.Entry<String, JsonNode>> it = node.getFields();
         Map.Entry<String, JsonNode> fieldTypeConfigNodeEntry = it.next();

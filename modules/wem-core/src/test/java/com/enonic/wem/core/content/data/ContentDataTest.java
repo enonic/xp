@@ -116,15 +116,12 @@ public class ContentDataTest
     }
 
     @Test
-    public void subtype()
+    public void groupedFieldSet()
     {
         ConfigItems dataConfig = new ConfigItems();
         dataConfig.addConfig( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
 
-        FieldSet.Builder subTypeBuilder = FieldSet.newBuilder();
-        subTypeBuilder.name( "personalia" );
-        subTypeBuilder.label( "Personalia" );
-        FieldSet fieldSet = subTypeBuilder.build();
+        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).build();
         dataConfig.addConfig( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
@@ -143,18 +140,10 @@ public class ContentDataTest
     public void multiple_subtype()
     {
         ConfigItems dataConfig = new ConfigItems();
-        Field.Builder nameFieldBuilder = Field.newBuilder();
-        nameFieldBuilder.name( "name" );
-        nameFieldBuilder.type( FieldTypes.textline );
-        nameFieldBuilder.required( true );
-        Field nameField = nameFieldBuilder.build();
+        Field nameField = Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build();
         dataConfig.addConfig( nameField );
 
-        FieldSet.Builder subTypeBuilder = FieldSet.newBuilder();
-        subTypeBuilder.name( "personalia" );
-        subTypeBuilder.label( "Personalia" );
-        subTypeBuilder.multiple( true );
-        FieldSet fieldSet = subTypeBuilder.build();
+        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).multiple( true ).build();
         dataConfig.addConfig( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
@@ -205,7 +194,7 @@ public class ContentDataTest
     }
 
     @Test
-    public void unstructured_getSubTypeEntry()
+    public void unstructured_getEntries()
     {
         ContentData data = new ContentData();
         data.setValue( "child[0].name", "Joachim" );
@@ -217,24 +206,24 @@ public class ContentDataTest
         data.setValue( "child[1].features.eyeColour", "Brown" );
         data.setValue( "child[1].features.hairColour", "Black" );
 
-        SubTypeEntry subTypeEntryChild0 = data.getSubTypeEntry( "child[0]" );
+        Entries subTypeEntryChild0 = data.getEntries( "child[0]" );
         assertEquals( "Joachim", subTypeEntryChild0.getValue( "name" ).getValue() );
         assertEquals( "9", subTypeEntryChild0.getValue( "age" ).getValue() );
         assertEquals( "Blue", subTypeEntryChild0.getValue( "features.eyeColour" ).getValue() );
 
-        SubTypeEntry subTypeEntryChild1 = data.getSubTypeEntry( "child[1]" );
+        Entries subTypeEntryChild1 = data.getEntries( "child[1]" );
         assertEquals( "Madeleine", subTypeEntryChild1.getValue( "name" ).getValue() );
         assertEquals( "7", subTypeEntryChild1.getValue( "age" ).getValue() );
         assertEquals( "Brown", subTypeEntryChild1.getValue( "features.eyeColour" ).getValue() );
     }
 
     @Test
-    public void structured_getSubTypeEntry()
+    public void structured_getEntries()
     {
-        FieldSet child = FieldSet.newBuilder().name( "child" ).multiple( true ).build();
+        FieldSet child = FieldSet.newBuilder().typeGroup().name( "child" ).multiple( true ).build();
         child.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
         child.addField( Field.newBuilder().name( "age" ).type( FieldTypes.textline ).build() );
-        FieldSet features = FieldSet.newBuilder().name( "features" ).multiple( false ).build();
+        FieldSet features = FieldSet.newBuilder().typeGroup().name( "features" ).multiple( false ).build();
         features.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         features.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
         child.addFieldSet( features );
@@ -251,12 +240,12 @@ public class ContentDataTest
         data.setValue( "child[1].features.eyeColour", "Brown" );
         data.setValue( "child[1].features.hairColour", "Black" );
 
-        SubTypeEntry subTypeEntryChild0 = data.getSubTypeEntry( "child[0]" );
+        Entries subTypeEntryChild0 = data.getEntries( "child[0]" );
         assertEquals( "Joachim", subTypeEntryChild0.getValue( "name" ).getValue() );
         assertEquals( "9", subTypeEntryChild0.getValue( "age" ).getValue() );
         assertEquals( "Blue", subTypeEntryChild0.getValue( "features.eyeColour" ).getValue() );
 
-        SubTypeEntry subTypeEntryChild1 = data.getSubTypeEntry( "child[1]" );
+        Entries subTypeEntryChild1 = data.getEntries( "child[1]" );
         assertEquals( "Madeleine", subTypeEntryChild1.getValue( "name" ).getValue() );
         assertEquals( "7", subTypeEntryChild1.getValue( "age" ).getValue() );
         assertEquals( "Brown", subTypeEntryChild1.getValue( "features.eyeColour" ).getValue() );

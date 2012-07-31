@@ -22,7 +22,7 @@ public abstract class ConfigItem
         this.itemType = itemType;
     }
 
-    public ConfigItemType getItemType()
+    public ConfigItemType getConfigItemType()
     {
         return itemType;
     }
@@ -47,7 +47,6 @@ public abstract class ConfigItem
         return path;
     }
 
-    abstract ConfigItemSerializerJson getJsonGenerator();
 
     public static ConfigItem.Builder newConfigItemBuilder()
     {
@@ -57,6 +56,8 @@ public abstract class ConfigItem
 
     public static class Builder
     {
+        private FieldSetType fieldSetType;
+
         private String name;
 
         private String label;
@@ -87,9 +88,15 @@ public abstract class ConfigItem
 
         }
 
-        public Builder itemType( final ConfigItemType value )
+        public Builder configItemType( final ConfigItemType value )
         {
             itemType = value;
+            return this;
+        }
+
+        public Builder fieldSetType( FieldSetType value )
+        {
+            fieldSetType = value;
             return this;
         }
 
@@ -200,6 +207,7 @@ public abstract class ConfigItem
         private FieldSet buildFieldSet()
         {
             FieldSet.Builder builder = FieldSet.newBuilder();
+            builder.type( fieldSetType );
             builder.name( name );
             builder.label( label );
             builder.required( required );
