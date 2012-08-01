@@ -11,8 +11,11 @@ public final class AccountSearchResults
     implements Iterable<AccountSearchHit>
 {
     private final int from;
+
     private final int total;
+
     private final List<AccountSearchHit> hits;
+
     private final Facets facets;
 
     public AccountSearchResults( int from, int total )
@@ -38,10 +41,11 @@ public final class AccountSearchResults
         return this.from;
     }
 
-    public void add(AccountSearchHit hit)
+    public void add( AccountSearchHit hit )
     {
-        if (hit != null) {
-            this.hits.add(hit);
+        if ( hit != null )
+        {
+            this.hits.add( hit );
         }
     }
 
@@ -58,5 +62,49 @@ public final class AccountSearchResults
     public Facets getFacets()
     {
         return facets;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final AccountSearchResults that = (AccountSearchResults) o;
+
+        if ( from != that.from )
+        {
+            return false;
+        }
+        if ( total != that.total )
+        {
+            return false;
+        }
+        if ( facets != null ? !facets.equals( that.facets ) : that.facets != null )
+        {
+            return false;
+        }
+        if ( hits != null ? !hits.equals( that.hits ) : that.hits != null )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = from;
+        result = 31 * result + total;
+        result = 31 * result + ( hits != null ? hits.hashCode() : 0 );
+        result = 31 * result + ( facets != null ? facets.hashCode() : 0 );
+        return result;
     }
 }
