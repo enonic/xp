@@ -1,5 +1,11 @@
 package com.enonic.wem.web.rest2.resource.account;
 
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ws.rs.core.Response;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -15,6 +21,7 @@ import com.enonic.wem.core.search.account.AccountSearchResults;
 import com.enonic.wem.core.search.account.AccountSearchService;
 import com.enonic.wem.core.search.account.AccountType;
 import com.enonic.wem.web.rest2.resource.AbstractResourceTest;
+import com.enonic.wem.web.rest2.service.account.AccountCsvExportService;
 
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.group.GroupKey;
@@ -33,6 +40,8 @@ public class AccountResourceTest
 
     private AccountSearchService service;
 
+    private AccountCsvExportService exportService;
+
     private UserDao userDao;
 
     private GroupDao groupDao;
@@ -41,12 +50,14 @@ public class AccountResourceTest
     public void setUp()
     {
         this.service = Mockito.mock( AccountSearchService.class );
+        this.exportService = Mockito.mock( AccountCsvExportService.class );
         this.userDao = Mockito.mock( UserDao.class );
         this.groupDao = Mockito.mock( GroupDao.class );
         this.resource = new AccountResource();
         this.resource.setAccountSearchService( service );
         this.resource.setUserDao( userDao );
         this.resource.setGroupDao( groupDao );
+        this.resource.setAccountCsvExportService( exportService );
     }
 
     @Test
@@ -95,6 +106,53 @@ public class AccountResourceTest
         AccountsResult results = resource.search( start, limit, sort, sortDir, query, types, userStores, organizations );
 
         assertJsonResult( "search_hits.json", results );
+    }
+
+    @Test
+    public void testExportQuery()
+        throws Exception
+    {
+        String query = "",
+            types = "users,groups,roles",
+            userStores = "",
+            organizations = "",
+            sort = AccountIndexField.DISPLAY_NAME_FIELD.id(),
+            sortDir = SearchSortOrder.ASC.toString().toUpperCase();
+        int start = 0, limit = 5000;
+
+        AccountSearchResults emptyResults = createEmptyResults();
+        AccountSearchQuery searchQuery = resource.buildSearchQuery( query, types, userStores, organizations, start, limit, sort, sortDir );
+
+        Mockito.when( service.search( searchQuery ) ).thenReturn( emptyResults );
+        Mockito.when( exportService.generateCsv( emptyResults, "," ) ).thenReturn( createEmptyCsvResponse() );
+
+        Response response = resource.exportQuery( sort, sortDir, query, types, userStores, organizations, "UTF-8", "," );
+
+        String stringResponse = new String( (byte[]) response.getEntity() );
+        assert ( createEmptyCsvResponse().compareTo( stringResponse ) == 0 );
+    }
+
+    @Test
+    public void testExportKeys()
+        throws Exception
+    {
+        List<String> keys = new ArrayList<String>();
+        keys.add( "E6C593DE14515428B06F1A16E0D28E2341FC5AB4" );
+        keys.add( "E34B614B26C666AA9929F90EF3FA723B3DAAAAB2" );
+
+        Mockito.when( userDao.findByKey( new UserKey( "E6C593DE14515428B06F1A16E0D28E2341FC5AB4" ) ) ).thenReturn(
+            createUser( "E6C593DE14515428B06F1A16E0D28E2341FC5AB4" ) );
+        Mockito.when( groupDao.findByKey( new GroupKey( "E34B614B26C666AA9929F90EF3FA723B3DAAAAB2" ) ) ).thenReturn(
+            createGroup( "E34B614B26C666AA9929F90EF3FA723B3DAAAAB2" ) );
+
+        AccountSearchResults searchResults = resource.getAccountListForKeys( keys );
+
+        Mockito.when( exportService.generateCsv( searchResults, "," ) ).thenReturn( createEmptyCsvResponse() );
+
+        Response response = resource.exportKeys( keys, "UTF-8", "," );
+
+        String stringResponse = new String( (byte[]) response.getEntity() );
+        assert ( createEmptyCsvResponse().compareTo( stringResponse ) == 0 );
     }
 
     private GroupEntity createRole( final String key )
@@ -158,6 +216,50 @@ public class AccountResourceTest
         facets.addFacet( organization );
 
         return searchResults;
+    }
+
+    private String createEmptyCsvResponse()
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "Type, " );
+        builder.append( "Display Name, " );
+        builder.append( "Local Name, " );
+        builder.append( "User Store, " );
+        builder.append( "Last Modified, " );
+        builder.append( "Description, " );
+        builder.append( "Email, " );
+        builder.append( "First Name, " );
+        builder.append( "Middle Name, " );
+        builder.append( "Last Name, " );
+        builder.append( "Initials, " );
+        builder.append( "Title, " );
+        builder.append( "Prefix, " );
+        builder.append( "Suffix, " );
+        builder.append( "Nickname, " );
+        builder.append( "Gender, " );
+
+        builder.append( "Birthdate, " );
+        builder.append( "Organization, " );
+        builder.append( "Country, " );
+        builder.append( "Global Position, " );
+        builder.append( "Home Page, " );
+        builder.append( "Locale, " );
+        builder.append( "Member Id, " );
+        builder.append( "Personal Id, " );
+        builder.append( "Phone, " );
+        builder.append( "Mobile, " );
+        builder.append( "Fax, " );
+        builder.append( "Time Zone, " );
+
+        builder.append( "Address Label, " );
+        builder.append( "Address Street, " );
+        builder.append( "Address Postal Address, " );
+        builder.append( "Address Postal Code, " );
+        builder.append( "Address Region, " );
+        builder.append( "Address ISO Region, " );
+        builder.append( "Address Country, " );
+        builder.append( "Address ISO Country, " );
+        return builder.toString();
     }
 
     private AccountSearchResults createAllResults()

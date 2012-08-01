@@ -1,6 +1,6 @@
 package com.enonic.wem.web.rest.account;
 
-class CsvBuilder
+public class CsvBuilder
 {
     private final static String DEFAULT_SEPARATOR = ",";
 
