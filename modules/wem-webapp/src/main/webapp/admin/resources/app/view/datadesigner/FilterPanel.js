@@ -1,29 +1,28 @@
 Ext.define('Admin.view.datadesigner.FilterPanel', {
-    extend: 'Ext.form.Panel',
-    alias: 'widget.filterPanel',
-    layout: 'form',
-    frame: true,
-    bodyPadding: 5,
-    title: 'Filter',
+    extend: 'Admin.view.FilterPanel',
+    alias: 'widget.datadesignerFilter',
 
-    items: [
+    includeSearch: true,
+    includeFacets: [
         {
-            xtype: 'textfield',
-            itemId: 'searchTextField',
-            emptyText: 'Search',
-            enableKeyEvents: true,
-            flex: 1
-        },
-        {
-            xtype: 'checkbox',
-            boxLabel: 'Show base types only',
-            inputValue: '1',
-            itemId: 'showBaseTypesOnlyCheckbox'
+            title: 'Type',
+            xtype: 'checkboxgroup',
+            name: 'type',
+            items: [
+                {
+                    boxLabel: 'Field',
+                    inputValue: 'field'
+                },
+                {
+                    boxLabel: 'Fieldset',
+                    inputValue: 'fieldset'
+                },
+                {
+                    boxLabel: 'Content type',
+                    inputValue: 'contenttype'
+                }
+            ]
         }
-    ],
-
-    initComponent: function () {
-        this.callParent(arguments);
-    }
+    ]
 
 });

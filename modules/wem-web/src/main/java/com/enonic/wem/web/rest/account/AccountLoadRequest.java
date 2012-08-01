@@ -10,14 +10,13 @@ public class AccountLoadRequest
 {
 
 
-    static private String SELECT_USERS = "users";
+    static private String SELECT_USERS = "user";
 
-    static private String SELECT_GROUPS = "groups";
+    static private String SELECT_GROUPS = "group";
 
-    static private String SELECT_ROLES = "roles";
+    static private String SELECT_ROLES = "role";
 
-    static private List<String> DEFAULT_TYPES =
-            Arrays.asList(new String[]{SELECT_ROLES, SELECT_USERS, SELECT_GROUPS});
+    static private List<String> DEFAULT_TYPES = Arrays.asList( new String[]{SELECT_ROLES, SELECT_USERS, SELECT_GROUPS} );
 
     private String userstores = "";
 
@@ -28,9 +27,9 @@ public class AccountLoadRequest
     private String organizations = "";
 
 
-    public void setType(List<String> types)
+    public void setTypes( List<String> types )
     {
-        if (types.size() > 0)
+        if ( types.size() > 0 )
         {
             this.types = types;
         }

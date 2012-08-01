@@ -1,17 +1,17 @@
-Ext.define('Admin.controller.contentManager.FilterPanelController', {
-    extend: 'Admin.controller.contentManager.Controller',
+Ext.define('Admin.controller.datadesigner.FilterPanelController', {
+    extend: 'Admin.controller.datadesigner.Controller',
 
     /*      Controller for handling filter panel UI events       */
 
     stores: [],
     models: [],
     views: [
-        'Admin.view.contentManager.FilterPanel'
+        'Admin.view.datadesigner.FilterPanel'
     ],
 
     init: function () {
         this.control({
-            'contentFilter': {
+            'datadesignerFilter': {
                 search: this.doSearch
             }
         });
@@ -23,16 +23,16 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
         // set browse tab active
         this.getCmsTabPanel().setActiveTab(0);
 
-        var filterPanel = this.getContentFilter();
+        var filterPanel = this.getFilterPanel();
 
         //TODO: submit the search
 
         // set the list mode
-        var treeGridPanel = this.getContentTreeGridPanel();
+        var treeGridPanel = this.getTreeGridPanel();
         treeGridPanel.setActiveList(filterPanel.isDirty() ? 'grid' : 'tree');
 
         // update details to current selection
-        var detailPanel = this.getContentDetailPanel();
+        var detailPanel = this.getDetailPanel();
         detailPanel.setData(treeGridPanel.getSelection());
     }
 

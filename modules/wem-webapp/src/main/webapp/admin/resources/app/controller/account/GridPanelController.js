@@ -27,7 +27,12 @@ Ext.define('Admin.controller.account.GridPanelController', {
                         this.updateActionItems();
                     },
                     itemcontextmenu: this.popupMenu,
-                    itemdblclick: this.viewAccount
+                    itemdblclick: this.viewAccount,
+                    afterrender: function (grid) {
+                        var gridStore = grid.getStore();
+                        gridStore.on('load', this.updateFilterPanel, this);
+                        gridStore.load();
+                    }
                 },
                 'accountContextMenu *[action=deleteAccount]': {
                     click: this.deleteAccount
@@ -90,6 +95,14 @@ Ext.define('Admin.controller.account.GridPanelController', {
         }
 
         detailPanel.updateTitle(persistentGridSelectionPlugin);
+    },
+
+    updateFilterPanel: function (store, records, success, opts) {
+        var data = store.proxy.reader.jsonData;
+        var facets = data && data.results ? data.results.facets : null;
+        if (facets) {
+            this.getAccountFilter().updateFacets(facets);
+        }
     },
 
     popupMenu: function (view, rec, node, index, e) {

@@ -12,7 +12,7 @@ Ext.define('Admin.store.account.AccountStore', {
         }
     ],
 
-    autoLoad: true,
+    autoLoad: false,
 
     proxy: {
         type: 'ajax',
