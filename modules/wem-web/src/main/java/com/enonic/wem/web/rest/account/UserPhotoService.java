@@ -11,7 +11,7 @@ import com.enonic.cms.core.image.filter.effect.ScaleSquareFilter;
 import com.enonic.cms.core.security.user.UserEntity;
 
 @Service
-public final class UserPhotoService
+public class UserPhotoService
 {
 
     public UserPhotoService()
