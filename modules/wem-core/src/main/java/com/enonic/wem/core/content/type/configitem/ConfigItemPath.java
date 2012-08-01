@@ -6,31 +6,31 @@ import java.util.StringTokenizer;
 
 import com.google.common.base.Preconditions;
 
-public class FieldPath
+public class ConfigItemPath
 {
     private final static String ELEMENT_DIVIDER = ".";
 
     private List<String> elements;
 
-    public FieldPath()
+    public ConfigItemPath()
     {
         elements = new ArrayList<String>();
     }
 
-    public FieldPath( List<String> pathElements )
+    public ConfigItemPath( List<String> pathElements )
     {
         Preconditions.checkNotNull( pathElements );
         elements = pathElements;
     }
 
-    public FieldPath( FieldPath fieldPath, String name )
+    public ConfigItemPath( ConfigItemPath configItemPath, String name )
     {
         elements = new ArrayList<String>();
-        elements.addAll( fieldPath.elements );
+        elements.addAll( configItemPath.elements );
         elements.add( name );
     }
 
-    public FieldPath( String path )
+    public ConfigItemPath( String path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
 
@@ -59,9 +59,9 @@ public class FieldPath
             return false;
         }
 
-        final FieldPath fieldPath = (FieldPath) o;
+        final ConfigItemPath configItemPath = (ConfigItemPath) o;
 
-        return elements.equals( fieldPath.elements );
+        return elements.equals( configItemPath.elements );
     }
 
     @Override

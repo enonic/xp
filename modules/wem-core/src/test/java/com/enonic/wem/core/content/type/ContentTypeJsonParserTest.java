@@ -2,9 +2,9 @@ package com.enonic.wem.core.content.type;
 
 import org.junit.Test;
 
+import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
-import com.enonic.wem.core.content.type.configitem.FieldPath;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.DropdownConfig;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
@@ -55,14 +55,14 @@ public class ContentTypeJsonParserTest
         assertNotNull( actualConfigItems );
         assertEquals( 8, actualConfigItems.size() );
 
-        assertNotNull( actualConfigItems.getConfigItem( new FieldPath( "myDate" ).getLastElement() ) );
-        assertNotNull( actualConfigItems.getConfigItem( new FieldPath( "myDropdown" ).getLastElement() ) );
-        assertNotNull( actualConfigItems.getConfigItem( new FieldPath( "myTextLine" ).getLastElement() ) );
-        assertNotNull( actualConfigItems.getConfigItem( new FieldPath( "myTextArea" ).getLastElement() ) );
-        assertNotNull( actualConfigItems.getConfigItem( new FieldPath( "myRadioButtons" ).getLastElement() ) );
-        assertNotNull( actualConfigItems.getConfigItem( new FieldPath( "myPhone" ).getLastElement() ) );
-        assertNotNull( actualConfigItems.getConfigItem( new FieldPath( "myXml" ).getLastElement() ) );
-        assertNotNull( actualConfigItems.getConfigItem( new FieldPath( "personalia" ).getLastElement() ) );
+        assertNotNull( actualConfigItems.getConfigItem( new ConfigItemPath( "myDate" ).getLastElement() ) );
+        assertNotNull( actualConfigItems.getConfigItem( new ConfigItemPath( "myDropdown" ).getLastElement() ) );
+        assertNotNull( actualConfigItems.getConfigItem( new ConfigItemPath( "myTextLine" ).getLastElement() ) );
+        assertNotNull( actualConfigItems.getConfigItem( new ConfigItemPath( "myTextArea" ).getLastElement() ) );
+        assertNotNull( actualConfigItems.getConfigItem( new ConfigItemPath( "myRadioButtons" ).getLastElement() ) );
+        assertNotNull( actualConfigItems.getConfigItem( new ConfigItemPath( "myPhone" ).getLastElement() ) );
+        assertNotNull( actualConfigItems.getConfigItem( new ConfigItemPath( "myXml" ).getLastElement() ) );
+        assertNotNull( actualConfigItems.getConfigItem( new ConfigItemPath( "personalia" ).getLastElement() ) );
 
     }
 

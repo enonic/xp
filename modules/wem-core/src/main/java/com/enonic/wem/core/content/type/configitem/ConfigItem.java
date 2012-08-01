@@ -13,7 +13,7 @@ public abstract class ConfigItem
 {
     private String name;
 
-    private FieldPath path;
+    private ConfigItemPath path;
 
     private ConfigItemType itemType;
 
@@ -37,12 +37,12 @@ public abstract class ConfigItem
         return name;
     }
 
-    void setPath( final FieldPath path )
+    void setPath( final ConfigItemPath path )
     {
         this.path = path;
     }
 
-    public FieldPath getPath()
+    public ConfigItemPath getPath()
     {
         return path;
     }

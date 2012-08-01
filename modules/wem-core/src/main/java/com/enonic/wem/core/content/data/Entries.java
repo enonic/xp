@@ -7,9 +7,9 @@ import java.util.LinkedHashMap;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.type.configitem.ConfigItem;
+import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
-import com.enonic.wem.core.content.type.configitem.FieldPath;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 
 public class Entries
@@ -33,7 +33,7 @@ public class Entries
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkNotNull( configItems, "configItems cannot be null" );
-        Preconditions.checkArgument( configItems.getPath().equals( path.resolveFieldPath() ),
+        Preconditions.checkArgument( configItems.getPath().equals( path.resolveConfigItemPath() ),
                                      "path [%s] does not correspond with configItems.path: " + configItems.getPath(), path.toString() );
 
         this.path = path;
@@ -73,10 +73,10 @@ public class Entries
     {
         Preconditions.checkNotNull( configItems, "configItems cannot be null" );
 
-        FieldPath fieldPath = path.resolveFieldPath();
-        org.elasticsearch.common.base.Preconditions.checkArgument( fieldPath.equals( configItems.getPath() ),
+        ConfigItemPath configItemPath = path.resolveConfigItemPath();
+        org.elasticsearch.common.base.Preconditions.checkArgument( configItemPath.equals( configItems.getPath() ),
                                                                    "This Entries' path [%s] does not match given ConfigItems' path: " +
-                                                                       configItems.getPath(), fieldPath.toString() );
+                                                                       configItems.getPath(), configItemPath.toString() );
         this.configItems = configItems;
 
         for ( Entry entry : entries.values() )
@@ -135,8 +135,8 @@ public class Entries
 
     private void setStructuredValue( final EntryPath path, final Object value )
     {
-        final FieldPath fieldPath = path.resolveFieldPath();
-        final ConfigItem foundConfig = configItems.getConfigItem( fieldPath.getFirstElement() );
+        final ConfigItemPath configItemPath = path.resolveConfigItemPath();
+        final ConfigItem foundConfig = configItems.getConfigItem( configItemPath.getFirstElement() );
         if ( foundConfig == null )
         {
             throw new IllegalArgumentException( "No ConfigItem found at: " + path );

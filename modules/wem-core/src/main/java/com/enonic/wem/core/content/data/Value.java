@@ -2,8 +2,8 @@ package com.enonic.wem.core.content.data;
 
 import org.elasticsearch.common.base.Preconditions;
 
+import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.Field;
-import com.enonic.wem.core.content.type.configitem.FieldPath;
 import com.enonic.wem.core.content.type.valuetype.BasalValueType;
 
 
@@ -28,9 +28,10 @@ public class Value
 
     void setField( final Field field )
     {
-        FieldPath fieldPath = path.resolveFieldPath();
-        Preconditions.checkArgument( fieldPath.equals( field.getPath() ),
-                                     "This Value's path [%s] does not match given field's path: " + field.getPath(), fieldPath.toString() );
+        ConfigItemPath configItemPath = path.resolveConfigItemPath();
+        Preconditions.checkArgument( configItemPath.equals( field.getPath() ),
+                                     "This Value's path [%s] does not match given field's path: " + field.getPath(),
+                                     configItemPath.toString() );
         this.field = field;
     }
 

@@ -9,28 +9,28 @@ import com.google.common.base.Preconditions;
 public class ConfigItems
     implements Iterable<ConfigItem>
 {
-    private FieldPath path;
+    private ConfigItemPath path;
 
     private LinkedHashMap<String, ConfigItem> items = new LinkedHashMap<String, ConfigItem>();
 
     public ConfigItems()
     {
-        path = new FieldPath();
+        path = new ConfigItemPath();
     }
 
-    public FieldPath getPath()
+    public ConfigItemPath getPath()
     {
         return path;
     }
 
-    public void setPath( final FieldPath path )
+    public void setPath( final ConfigItemPath path )
     {
         this.path = path;
     }
 
     public void addConfigItem( final ConfigItem item )
     {
-        item.setPath( new FieldPath( path, item.getName() ) );
+        item.setPath( new ConfigItemPath( path, item.getName() ) );
         Object previous = items.put( item.getName(), item );
         Preconditions.checkArgument( previous == null, "ConfigItem already added: " + item );
     }

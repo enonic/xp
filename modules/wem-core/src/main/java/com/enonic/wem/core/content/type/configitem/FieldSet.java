@@ -29,17 +29,17 @@ public class FieldSet
 
 
     @Override
-    void setPath( final FieldPath fieldPath )
+    void setPath( final ConfigItemPath configItemPath )
     {
-        super.setPath( fieldPath );
-        configItems.setPath( fieldPath );
+        super.setPath( configItemPath );
+        configItems.setPath( configItemPath );
     }
 
     public void addField( final Field field )
     {
         Preconditions.checkState( getPath() != null, "Cannot add Field before this FieldSet is added" );
 
-        field.setPath( new FieldPath( getPath(), field.getName() ) );
+        field.setPath( new ConfigItemPath( getPath(), field.getName() ) );
         this.configItems.addConfigItem( field );
     }
 
@@ -47,7 +47,7 @@ public class FieldSet
     {
         Preconditions.checkState( getPath() != null, "Cannot add FieldSet before this FieldSet is added" );
 
-        fieldSet.setPath( new FieldPath( getPath(), fieldSet.getName() ) );
+        fieldSet.setPath( new ConfigItemPath( getPath(), fieldSet.getName() ) );
         this.configItems.addConfigItem( fieldSet );
     }
 
@@ -101,10 +101,10 @@ public class FieldSet
     public String toString()
     {
         StringBuilder s = new StringBuilder();
-        FieldPath fieldPath = getPath();
-        if ( fieldPath != null )
+        ConfigItemPath configItemPath = getPath();
+        if ( configItemPath != null )
         {
-            s.append( fieldPath.toString() );
+            s.append( configItemPath.toString() );
         }
         else
         {
@@ -123,9 +123,9 @@ public class FieldSet
         return new Builder();
     }
 
-    public ConfigItem getConfig( final FieldPath fieldPath )
+    public ConfigItem getConfig( final ConfigItemPath configItemPath )
     {
-        return configItems.getConfigItem( fieldPath.getLastElement() );
+        return configItems.getConfigItem( configItemPath.getLastElement() );
     }
 
     public static class Builder
@@ -219,7 +219,7 @@ public class FieldSet
         {
             Preconditions.checkNotNull( fieldSet.type, "type must be specified" );
             Preconditions.checkNotNull( fieldSet.getName(), "name must be specified" );
-            fieldSet.setPath( new FieldPath( fieldSet.getName() ) );
+            fieldSet.setPath( new ConfigItemPath( fieldSet.getName() ) );
             return fieldSet;
         }
     }

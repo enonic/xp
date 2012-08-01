@@ -88,7 +88,7 @@ public class ConfigItemSerializerJson
         parseMultiple( builder, configItemNode.get( "multiple" ) );
 
         final ConfigItem configItem = builder.build();
-        configItem.setPath( new FieldPath( JsonParserUtil.getStringValue( "path", configItemNode ) ) );
+        configItem.setPath( new ConfigItemPath( JsonParserUtil.getStringValue( "path", configItemNode ) ) );
         return configItem;
     }
 

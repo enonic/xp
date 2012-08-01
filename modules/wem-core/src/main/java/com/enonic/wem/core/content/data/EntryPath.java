@@ -8,7 +8,7 @@ import java.util.StringTokenizer;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.core.content.type.configitem.FieldPath;
+import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 
 public class EntryPath
     implements Iterable<EntryPath.Element>
@@ -81,14 +81,14 @@ public class EntryPath
         return true;
     }
 
-    public FieldPath resolveFieldPath()
+    public ConfigItemPath resolveConfigItemPath()
     {
-        List<String> fieldPathElements = new ArrayList<String>();
+        List<String> configItemPathElements = new ArrayList<String>();
         for ( Element element : elements )
         {
-            fieldPathElements.add( element.getName() );
+            configItemPathElements.add( element.getName() );
         }
-        return new FieldPath( fieldPathElements );
+        return new ConfigItemPath( configItemPathElements );
     }
 
     public EntryPath asNewWithoutFirstPathElement()

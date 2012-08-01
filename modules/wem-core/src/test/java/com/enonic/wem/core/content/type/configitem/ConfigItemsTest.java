@@ -19,7 +19,7 @@ public class ConfigItemsTest
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
         // exercise & verify
-        ConfigItem personaliaConfig = configItems.getConfigItem( new FieldPath( "personalia" ).getLastElement() );
+        ConfigItem personaliaConfig = configItems.getConfigItem( new ConfigItemPath( "personalia" ).getLastElement() );
         assertEquals( "personalia", personaliaConfig.getPath().toString() );
     }
 

@@ -9,9 +9,9 @@ import org.codehaus.jackson.JsonNode;
 
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.type.configitem.ConfigItem;
+import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItemType;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
-import com.enonic.wem.core.content.type.configitem.FieldPath;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 
 public class EntriesSerializerJson
@@ -66,9 +66,9 @@ public class EntriesSerializerJson
             }
             else
             {
-                final FieldPath fieldPath = path.resolveFieldPath();
+                final ConfigItemPath configItemPath = path.resolveConfigItemPath();
 
-                final ConfigItem item = configItems.getConfigItem( fieldPath.getLastElement() );
+                final ConfigItem item = configItems.getConfigItem( configItemPath.getLastElement() );
 
                 if ( item == null )
                 {

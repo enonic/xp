@@ -96,10 +96,10 @@ public class Field
     @Override
     public String toString()
     {
-        FieldPath fieldPath = getPath();
-        if ( fieldPath != null )
+        ConfigItemPath configItemPath = getPath();
+        if ( configItemPath != null )
         {
-            return fieldPath.toString();
+            return configItemPath.toString();
         }
         else
         {
@@ -222,7 +222,7 @@ public class Field
                                              field.getFieldTypeConfig().getClass().getName() );
             }
 
-            field.setPath( new FieldPath( field.getName() ) );
+            field.setPath( new ConfigItemPath( field.getName() ) );
             return field;
         }
     }
