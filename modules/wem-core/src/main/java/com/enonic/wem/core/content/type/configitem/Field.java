@@ -3,6 +3,7 @@ package com.enonic.wem.core.content.type.configitem;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.core.content.data.Value;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldType;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeConfig;
 
@@ -92,6 +93,18 @@ public class Field
         return fieldTypeConfig;
     }
 
+    public boolean breaksRequiredContract( final Value value )
+    {
+        Preconditions.checkArgument( value.getField() != null, "Given value have no field" );
+        Preconditions.checkArgument( value.getField().equals( this ), "Given value's field is not this" );
+
+        if ( !required )
+        {
+            return false;
+        }
+
+        return type.breaksRequiredContract( value );
+    }
 
     @Override
     public String toString()

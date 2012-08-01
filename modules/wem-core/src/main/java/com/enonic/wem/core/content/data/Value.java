@@ -56,6 +56,16 @@ public class Value
         return basalValueType;
     }
 
+    public boolean breaksRequiredContract()
+    {
+        if ( field == null )
+        {
+            return false;
+        }
+
+        return field.breaksRequiredContract( this );
+    }
+
     @Override
     public String toString()
     {
@@ -114,8 +124,12 @@ public class Value
             value.field = field;
             value.value = this.value;
 
-            final BasalValueType resolvedType = BasalValueType.resolveType( this.value );
-            Preconditions.checkArgument( resolvedType != null, "value is of unknown type: " + value.value.getClass().getName() );
+            BasalValueType resolvedType = null;
+            if ( this.value != null )
+            {
+                resolvedType = BasalValueType.resolveType( this.value );
+                Preconditions.checkArgument( resolvedType != null, "value is of unknown type: " + value.value.getClass().getName() );
+            }
 
             if ( type != null )
             {
@@ -127,7 +141,7 @@ public class Value
                 value.basalValueType = resolvedType;
             }
 
-            if ( field != null )
+            if ( field != null & value.basalValueType != null )
             {
                 BasalValueType basalValueTypeOfField = field.getFieldType().getValueType().getBasalValueType();
                 Preconditions.checkArgument( value.basalValueType == basalValueTypeOfField,

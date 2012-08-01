@@ -12,4 +12,5 @@ public abstract class Entry
         return getPath().getLastElement().getName();
     }
 
+    public abstract boolean breaksRequiredContract();
 }

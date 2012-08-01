@@ -80,4 +80,9 @@ public class ContentData
     {
         return entries;
     }
+
+    public boolean breaksRequiredContract()
+    {
+        return entries.breaksRequiredContract();
+    }
 }

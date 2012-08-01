@@ -273,11 +273,19 @@ public class Entries
             return null;
         }
 
-        //Preconditions.checkArgument( foundEntry instanceof Value,
-        //                             "Entry [%s] in Entries [%s] expected to be a Value: " + foundEntry.getClass().getName(),
-        //                             foundEntry.getName(), this.getPath() );
-
         return foundEntry;
+    }
+
+    public boolean breaksRequiredContract()
+    {
+        for ( Entry entry : entries.values() )
+        {
+            if ( entry.breaksRequiredContract() )
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Iterator<Entry> iterator()

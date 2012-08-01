@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content.type.configitem.fieldtype;
 
 
+import com.enonic.wem.core.content.data.Value;
 import com.enonic.wem.core.content.type.valuetype.ValueType;
 import com.enonic.wem.core.content.type.valuetype.ValueTypes;
 
@@ -47,5 +48,12 @@ public class Virtual
     public FieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator()
     {
         return null;
+    }
+
+    @Override
+    public boolean breaksRequiredContract( final Value value )
+    {
+        // TODO
+        return false;
     }
 }

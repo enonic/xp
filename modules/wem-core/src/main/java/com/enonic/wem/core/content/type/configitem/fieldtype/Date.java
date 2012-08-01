@@ -32,5 +32,12 @@ public class Date
     {
         return null;
     }
+
+    @Override
+    public boolean breaksRequiredContract( final Value value )
+    {
+        // TODO
+        return false;
+    }
 }
 
