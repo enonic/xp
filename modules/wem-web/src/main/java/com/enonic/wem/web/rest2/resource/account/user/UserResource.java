@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.web.rest.account.UserPhotoService;
-import com.enonic.wem.web.rest.exception.EntityNotFoundException;
 
 import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.store.dao.UserDao;
@@ -47,7 +46,7 @@ public final class UserResource
         UserEntity entity = userDao.findByKey( key );
         if ( entity == null )
         {
-            throw new EntityNotFoundException();
+            return null;
         }
         if ( entity.getPhoto() == null )
         {

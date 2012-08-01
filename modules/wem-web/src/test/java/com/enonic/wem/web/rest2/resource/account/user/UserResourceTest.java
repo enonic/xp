@@ -49,7 +49,7 @@ public class UserResourceTest
         Mockito.when( photoService.renderPhoto( user, 100 ) ).thenReturn( getPhoto() );
         Response response = userResource.getPhoto( "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9" );
         BufferedImage image = (BufferedImage) response.getEntity();
-        assert ( getPhoto().equals( image ) );
+        assert ( compareImages( getPhoto(), image ) );
     }
 
     private BufferedImage getPhoto()
@@ -76,5 +76,32 @@ public class UserResourceTest
         UserStoreEntity userstore = new UserStoreEntity();
         userstore.setName( name );
         return userstore;
+    }
+
+    private boolean compareImages( BufferedImage image1, BufferedImage image2 )
+    {
+        int width;
+        int height;
+        boolean imagesEqual = true;
+
+        if ( image1.getWidth() == ( width = image2.getWidth() ) && image1.getHeight() == ( height = image2.getHeight() ) )
+        {
+
+            for ( int x = 0; imagesEqual == true && x < width; x++ )
+            {
+                for ( int y = 0; imagesEqual == true && y < height; y++ )
+                {
+                    if ( image1.getRGB( x, y ) != image2.getRGB( x, y ) )
+                    {
+                        imagesEqual = false;
+                    }
+                }
+            }
+        }
+        else
+        {
+            imagesEqual = false;
+        }
+        return imagesEqual;
     }
 }
