@@ -41,7 +41,9 @@ Ext.define('Admin.controller.account.FilterPanelController', {
     },
 
     buildAccountSearchQuery: function (values) {
-        var query = {};
+        var query = {
+            query: values.query
+        };
         if (!Ext.isEmpty(values.type)) {
             query.types = Ext.isArray(values.type) ? values.type.join(',') : values.type;
         }
