@@ -9,6 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.google.common.io.ByteStreams;
+
 import com.enonic.wem.web.rest.account.UserPhotoService;
 import com.enonic.wem.web.rest2.resource.AbstractResourceTest;
 
@@ -56,6 +58,7 @@ public class UserResourceTest
     }
 
     private UserEntity createUser( final String key )
+        throws Exception
     {
         UserEntity user = new UserEntity();
         user.setKey( new UserKey( key ) );
@@ -64,7 +67,7 @@ public class UserResourceTest
         user.setUserStore( createUserstore( "enonic" ) );
         user.setName( "dummy" );
         user.setDisplayName( "Dummy User" );
-        user.setPhoto( new byte[0] );
+        user.setPhoto( ByteStreams.toByteArray( getClass().getResourceAsStream( "x-user.png" ) ) );
         return user;
     }
 
