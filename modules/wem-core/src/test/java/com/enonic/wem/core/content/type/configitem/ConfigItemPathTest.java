@@ -19,4 +19,12 @@ public class ConfigItemPathTest
     {
         assertEquals( "car.model", new ConfigItemPath( new ConfigItemPath( "car" ), "model" ).toString() );
     }
+
+    @Test
+    public void asNewWithoutFirstPathElement()
+    {
+        assertEquals( "", new ConfigItemPath( "first" ).asNewWithoutFirstPathElement().toString() );
+        assertEquals( "second", new ConfigItemPath( "first.second" ).asNewWithoutFirstPathElement().toString() );
+        assertEquals( "second.third", new ConfigItemPath( "first.second.third" ).asNewWithoutFirstPathElement().toString() );
+    }
 }

@@ -8,11 +8,6 @@ public class DropdownConfig
 {
     private List<Option> options = new ArrayList<Option>();
 
-    public void add( Option option )
-    {
-        this.options.add( option );
-    }
-
     public List<Option> getOptions()
     {
         return options;
@@ -57,7 +52,7 @@ public class DropdownConfig
 
         public Builder addOption( String label, String value )
         {
-            config.add( new Option( label, value ) );
+            config.options.add( new Option( label, value ) );
             return this;
         }
 

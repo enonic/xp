@@ -120,6 +120,23 @@ public class Field
         }
     }
 
+    @Override
+    public Field copy()
+    {
+        final Field copy = (Field) super.copy();
+        copy.type = type;
+        copy.label = label;
+        copy.required = required;
+        copy.immutable = immutable;
+        copy.multiple = multiple;
+        copy.indexed = indexed;
+        copy.customText = customText;
+        copy.validationRegexp = validationRegexp;
+        copy.helpText = helpText;
+        copy.fieldTypeConfig = fieldTypeConfig;
+        return copy;
+    }
+
     public static Builder newBuilder()
     {
         return new Builder();
@@ -148,8 +165,6 @@ public class Field
 
         public Builder label( String value )
         {
-            Preconditions.checkNotNull( value, "label cannot be null" );
-
             field.label = value;
             return this;
         }
@@ -163,6 +178,12 @@ public class Field
         public Builder immutable( boolean value )
         {
             field.immutable = value;
+            return this;
+        }
+
+        public Builder multiple( Multiple multiple )
+        {
+            this.field.multiple = multiple;
             return this;
         }
 

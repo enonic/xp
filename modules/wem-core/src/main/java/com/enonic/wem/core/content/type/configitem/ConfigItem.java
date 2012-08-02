@@ -47,6 +47,25 @@ public abstract class ConfigItem
         return path;
     }
 
+    public ConfigItem copy()
+    {
+        try
+        {
+            ConfigItem configItem = this.getClass().newInstance();
+            configItem.path = path;
+            configItem.name = name;
+            configItem.itemType = itemType;
+            return configItem;
+        }
+        catch ( InstantiationException e )
+        {
+            throw new RuntimeException( "Failed to copy ConfigItem", e );
+        }
+        catch ( IllegalAccessException e )
+        {
+            throw new RuntimeException( "Failed to copy ConfigItem", e );
+        }
+    }
 
     public static ConfigItem.Builder newConfigItemBuilder()
     {

@@ -11,6 +11,8 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.enonic.wem.core.content.JsonFactoryHolder;
+import com.enonic.wem.core.content.JsonParserUtil;
+import com.enonic.wem.core.content.JsonParsingException;
 import com.enonic.wem.core.content.type.configitem.ConfigItemsSerializerJson;
 
 public class ContentTypeSerializerJson
@@ -23,6 +25,16 @@ public class ContentTypeSerializerJson
             JsonGenerator g = JsonFactoryHolder.DEFAULT_FACTORY.createJsonGenerator( sw );
             g.useDefaultPrettyPrinter();
             g.writeStartObject();
+            g.writeStringField( "name", contentType.getName() );
+            if ( contentType.getModule() != null )
+            {
+                g.writeStringField( "module", contentType.getModule().getName() );
+            }
+            else
+            {
+                g.writeNullField( "module" );
+            }
+
             ConfigItemsSerializerJson.generate( contentType.getConfigItems(), g );
             g.writeEndObject();
             g.close();
@@ -35,7 +47,7 @@ public class ContentTypeSerializerJson
         }
     }
 
-    public static ContentType parse( String json )
+    public ContentType parse( String json )
     {
         try
         {
@@ -59,11 +71,22 @@ public class ContentTypeSerializerJson
         }
     }
 
-    public static ContentType parse( JsonNode contentTypeNode )
+    private ContentType parse( final JsonNode contentTypeNode )
         throws IOException
     {
-        ContentType contentType = new ContentType();
-        contentType.setConfigItems( ConfigItemsSerializerJson.parse( contentTypeNode.get( "items" ) ) );
+        final ConfigItemsSerializerJson configItemsSerializer = new ConfigItemsSerializerJson();
+        final ContentType contentType = new ContentType();
+        contentType.setName( JsonParserUtil.getStringValue( "name", contentTypeNode ) );
+
+        try
+        {
+            contentType.setConfigItems( configItemsSerializer.parse( contentTypeNode.get( "items" ) ) );
+        }
+        catch ( Exception e )
+        {
+            throw new JsonParsingException( "Failed to parse content type: " + contentTypeNode.toString(), e );
+        }
+
         return contentType;
     }
 }

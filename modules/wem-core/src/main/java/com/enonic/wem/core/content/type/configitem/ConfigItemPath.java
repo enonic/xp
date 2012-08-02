@@ -5,7 +5,11 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
+/**
+ * Immutable.
+ */
 public class ConfigItemPath
 {
     private final static String ELEMENT_DIVIDER = ".";
@@ -45,6 +49,24 @@ public class ConfigItemPath
     public String getLastElement()
     {
         return elements.get( elements.size() - 1 );
+    }
+
+    public int elementCount()
+    {
+        return elements.size();
+    }
+
+    public ConfigItemPath asNewWithoutFirstPathElement()
+    {
+        List<String> pathElements = Lists.newArrayList();
+        for ( int i = 0; i < elements.size(); i++ )
+        {
+            if ( i > 0 )
+            {
+                pathElements.add( elements.get( i ) );
+            }
+        }
+        return new ConfigItemPath( pathElements );
     }
 
     @Override

@@ -57,7 +57,7 @@ public class ConfigItemSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        ConfigItem configItem = ConfigItemSerializerJson.parse( objectMapper.readValue( jp, JsonNode.class ) );
+        ConfigItem configItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
         assertTrue( configItem instanceof Field );
@@ -90,7 +90,7 @@ public class ConfigItemSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        ConfigItem configItem = ConfigItemSerializerJson.parse( objectMapper.readValue( jp, JsonNode.class ) );
+        ConfigItem configItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
         assertTrue( configItem instanceof Field );
@@ -128,7 +128,7 @@ public class ConfigItemSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        ConfigItem configItem = ConfigItemSerializerJson.parse( objectMapper.readValue( jp, JsonNode.class ) );
+        ConfigItem configItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
         assertTrue( configItem instanceof Field );
@@ -171,7 +171,7 @@ public class ConfigItemSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        ConfigItem configItem = ConfigItemSerializerJson.parse( objectMapper.readValue( jp, JsonNode.class ) );
+        ConfigItem configItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
         assertTrue( configItem instanceof FieldSet );

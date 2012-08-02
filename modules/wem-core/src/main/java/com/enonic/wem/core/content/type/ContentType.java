@@ -1,7 +1,12 @@
 package com.enonic.wem.core.content.type;
 
 
+import com.enonic.wem.core.content.type.configitem.ConfigItem;
+import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
+import com.enonic.wem.core.content.type.configitem.Field;
+import com.enonic.wem.core.content.type.configitem.FieldSet;
+import com.enonic.wem.core.content.type.configitem.TemplateReferenceFetcher;
 import com.enonic.wem.core.module.Module;
 
 public class ContentType
@@ -18,7 +23,7 @@ public class ContentType
 
     private ComputedDisplayName computedDisplayName;
 
-    private ConfigItems configItems;
+    private ConfigItems configItems = new ConfigItems();
 
     public ContentType()
     {
@@ -93,5 +98,25 @@ public class ContentType
     public ConfigItems getConfigItems()
     {
         return configItems;
+    }
+
+    public void addConfigItem( final ConfigItem configItem )
+    {
+        this.configItems.addConfigItem( configItem );
+    }
+
+    public Field getField( final String path )
+    {
+        return configItems.getField( new ConfigItemPath( path ) );
+    }
+
+    public FieldSet getFieldSet( final String path )
+    {
+        return configItems.getFieldSet( new ConfigItemPath( path ) );
+    }
+
+    public void templateReferencesToConfigItems( final TemplateReferenceFetcher templateReferenceFetcher )
+    {
+        configItems.templateReferencesToConfigItems( templateReferenceFetcher );
     }
 }

@@ -20,17 +20,18 @@ public class JsonParserUtil
         JsonNode subNode = node.get( fieldName );
         if ( subNode == null )
         {
-            throw new IllegalArgumentException( "Node not found: " + fieldName );
+            throw new JsonParsingException( "Field [" + fieldName + "]  does not exist in: " + node.toString() );
         }
         return subNode.getTextValue();
     }
+
 
     public static Boolean getBooleanValue( String fieldName, JsonNode node )
     {
         JsonNode subNode = node.get( fieldName );
         if ( subNode == null )
         {
-            throw new IllegalArgumentException( "Node not found: " + fieldName );
+            throw new JsonParsingException( "Field [" + fieldName + "]  does not exist in: " + node.toString() );
         }
         return subNode.getBooleanValue();
     }

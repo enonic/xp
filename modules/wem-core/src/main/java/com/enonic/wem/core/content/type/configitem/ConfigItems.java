@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.core.content.type.FieldSetTemplate;
+
 public class ConfigItems
     implements Iterable<ConfigItem>
 {
@@ -35,6 +37,27 @@ public class ConfigItems
         Preconditions.checkArgument( previous == null, "ConfigItem already added: " + item );
     }
 
+    public ConfigItem getConfigItem( final ConfigItemPath path )
+    {
+        Preconditions.checkNotNull( path, "path cannot be null" );
+        Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
+
+        if ( path.elementCount() > 1 )
+        {
+            ConfigItem foundConfig = items.get( path.getFirstElement() );
+            Preconditions.checkArgument( foundConfig instanceof FieldSet,
+                                         "ConfigItem at path [%s] expected to be of type FieldSet: " + foundConfig.getConfigItemType(),
+                                         path );
+            //noinspection ConstantConditions
+            FieldSet fieldSet = (FieldSet) foundConfig;
+            return fieldSet.getConfig( path.asNewWithoutFirstPathElement() );
+        }
+        else
+        {
+            return items.get( path.getFirstElement() );
+        }
+    }
+
     public ConfigItem getConfigItem( final String name )
     {
         return items.get( name );
@@ -55,9 +78,39 @@ public class ConfigItems
         return (FieldSet) configItem;
     }
 
+    public FieldSet getFieldSet( final ConfigItemPath path )
+    {
+        final ConfigItem configItem = getConfigItem( path );
+        if ( configItem == null )
+        {
+            return null;
+        }
+
+        Preconditions.checkArgument( ( configItem instanceof FieldSet ),
+                                     "ConfigItem at path [%s] is not a FieldSet: " + configItem.getConfigItemType(), configItem.getPath() );
+
+        //noinspection ConstantConditions
+        return (FieldSet) configItem;
+    }
+
     public Field getField( final String name )
     {
         final ConfigItem configItem = items.get( name );
+        if ( configItem == null )
+        {
+            return null;
+        }
+
+        Preconditions.checkArgument( ( configItem instanceof Field ),
+                                     "ConfigItem at path [%s] is not a Field: " + configItem.getConfigItemType(), configItem.getPath() );
+
+        //noinspection ConstantConditions
+        return (Field) configItem;
+    }
+
+    public Field getField( final ConfigItemPath path )
+    {
+        final ConfigItem configItem = getConfigItem( path );
         if ( configItem == null )
         {
             return null;
@@ -98,5 +151,30 @@ public class ConfigItems
             index++;
         }
         return s.toString();
+    }
+
+    public ConfigItems copy()
+    {
+        ConfigItems copy = new ConfigItems();
+        copy.path = path;
+        for ( ConfigItem ci : this )
+        {
+            ConfigItem copyOfCi = ci.copy();
+            copy.items.put( copyOfCi.getName(), copyOfCi );
+        }
+        return copy;
+    }
+
+    public void templateReferencesToConfigItems( final TemplateReferenceFetcher templateReferenceFetcher )
+    {
+        for ( ConfigItem configItem : this )
+        {
+            if ( configItem.getConfigItemType() == ConfigItemType.REFERENCE )
+            {
+                TemplateReference templateReference = (TemplateReference) configItem;
+                FieldSetTemplate fieldSetTemplate = templateReferenceFetcher.getTemplate( templateReference.getTemplateQualifiedName() );
+                items.put( templateReference.getName(), fieldSetTemplate.createFieldSet( templateReference ) );
+            }
+        }
     }
 }

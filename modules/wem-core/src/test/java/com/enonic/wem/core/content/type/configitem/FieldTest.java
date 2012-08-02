@@ -20,4 +20,22 @@ public class FieldTest
         assertEquals( true, field.breaksRequiredContract( Value.newBuilder().field( field ).value( " " ).build() ) );
         assertEquals( false, field.breaksRequiredContract( Value.newBuilder().field( field ).value( "something" ).build() ) );
     }
+
+    @Test
+    public void copy()
+    {
+        // setup
+        Field original = Field.newBuilder().name( "myField" ).type( FieldTypes.textline ).build();
+
+        // exercise
+        Field copy = original.copy();
+
+        // verify
+        assertNotSame( original, copy );
+        assertEquals( "myField", copy.getName() );
+        assertSame( original.getName(), copy.getName() );
+        assertSame( original.getLabel(), copy.getLabel() );
+        assertSame( original.getCustomText(), copy.getCustomText() );
+        assertSame( original.getFieldType(), copy.getFieldType() );
+    }
 }

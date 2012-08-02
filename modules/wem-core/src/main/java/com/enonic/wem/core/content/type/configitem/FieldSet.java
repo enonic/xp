@@ -27,12 +27,16 @@ public class FieldSet
         super( ConfigItemType.FIELD_SET );
     }
 
-
     @Override
     void setPath( final ConfigItemPath configItemPath )
     {
         super.setPath( configItemPath );
         configItems.setPath( configItemPath );
+    }
+
+    public void addConfigItem( final ConfigItem configItem )
+    {
+        this.configItems.addConfigItem( configItem );
     }
 
     public void addField( final Field field )
@@ -118,6 +122,21 @@ public class FieldSet
         return s.toString();
     }
 
+    @Override
+    public FieldSet copy()
+    {
+        FieldSet fieldSet = (FieldSet) super.copy();
+        fieldSet.type = type;
+        fieldSet.label = label;
+        fieldSet.required = required;
+        fieldSet.immutable = immutable;
+        fieldSet.multiple = multiple;
+        fieldSet.customText = customText;
+        fieldSet.helpText = helpText;
+        fieldSet.configItems = configItems.copy();
+        return fieldSet;
+    }
+
     public static Builder newBuilder()
     {
         return new Builder();
@@ -125,7 +144,7 @@ public class FieldSet
 
     public ConfigItem getConfig( final ConfigItemPath configItemPath )
     {
-        return configItems.getConfigItem( configItemPath.getLastElement() );
+        return configItems.getConfigItem( configItemPath );
     }
 
     public static class Builder
@@ -178,6 +197,12 @@ public class FieldSet
         public Builder immutable( boolean value )
         {
             fieldSet.immutable = value;
+            return this;
+        }
+
+        public Builder multiple( Multiple multiple )
+        {
+            fieldSet.multiple = multiple;
             return this;
         }
 
