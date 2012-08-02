@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.ws.rs.core.Response;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,8 +21,6 @@ import com.enonic.cms.store.dao.UserDao;
 public class UserResourceTest
     extends AbstractResourceTest
 {
-
-
     private UserDao userDao;
 
     private UserPhotoService photoService;
@@ -32,12 +29,12 @@ public class UserResourceTest
 
     @Before
     public void setUp()
+        throws Exception
     {
         userDao = Mockito.mock( UserDao.class );
         photoService = Mockito.mock( UserPhotoService.class );
         userResource = new UserResource();
         userResource.setUserDao( userDao );
-        userResource.setPhotoService( photoService );
     }
 
     @Test
@@ -47,8 +44,8 @@ public class UserResourceTest
         UserEntity user = createUser( "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9" );
         Mockito.when( userDao.findByKey( "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9" ) ).thenReturn( user );
         Mockito.when( photoService.renderPhoto( user, 100 ) ).thenReturn( getPhoto() );
-        Response response = userResource.getPhoto( "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9" );
-        BufferedImage image = (BufferedImage) response.getEntity();
+
+        BufferedImage image = userResource.getPhoto( "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9", 100 );
         assert ( compareImages( getPhoto(), image ) );
     }
 
