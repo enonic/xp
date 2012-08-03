@@ -252,6 +252,9 @@ svg#live-edit-selected-border rect {
 
 /*** Button icons */
 
+.live-edit-icon-insert { background-image: url("../images/component_blue_add.png"); }
+.live-edit-icon-reset { background-image: url("../images/nav_undo_blue.png"); }
+.live-edit-icon-empty { background-image: url("../images/selection_delete.png"); }
 .live-edit-icon-drag { background-image: url("../images/hand_grab2.png"); }
 .live-edit-icon-parent { background-image: url("../images/arrow_up_right_blue.png"); }
 .live-edit-icon-view { background-image: url("../images/eye_blue.png"); }

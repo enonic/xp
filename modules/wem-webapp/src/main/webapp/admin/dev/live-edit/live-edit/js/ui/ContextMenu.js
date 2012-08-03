@@ -2,7 +2,7 @@ AdminLiveEdit.ui.ContextMenu = (function () {
 
     var buttonConfig = {
         'page'      : ['settings'],
-        'region'    : ['parent'],
+        'region'    : ['parent', 'insert', 'reset', 'empty'],
         'window'    : ['parent', 'drag', 'settings', 'remove'],
         'content'   : ['parent', 'view'],
         'paragraph' : ['parent']
@@ -53,6 +53,33 @@ AdminLiveEdit.ui.ContextMenu = (function () {
             handler: function (event) {
                 event.stopPropagation();
                 $liveedit.publish('/page/component/select-parent');
+            }
+        });
+
+        var $insertButton = button.create({
+            text: 'Insert',
+            id: 'live-edit-button-insert',
+            iconCls: 'live-edit-icon-insert',
+            handler: function (event) {
+                event.stopPropagation();
+            }
+        });
+
+        var $resetButton = button.create({
+            text: 'Reset',
+            id: 'live-edit-button-reset',
+            iconCls: 'live-edit-icon-reset',
+            handler: function (event) {
+                event.stopPropagation();
+            }
+        });
+
+        var $emptyButton = button.create({
+            text: 'Empty',
+            id: 'live-edit-button-empty',
+            iconCls: 'live-edit-icon-empty',
+            handler: function (event) {
+                event.stopPropagation();
             }
         });
 
@@ -118,6 +145,9 @@ AdminLiveEdit.ui.ContextMenu = (function () {
 
         var $container = $liveedit('#live-edit-context-menu-inner');
         $container.append($parentButton);
+        $container.append($insertButton);
+        $container.append($resetButton);
+        $container.append($emptyButton);
         $container.append($viewButton);
         $container.append($dragButton);
         $container.append($settingsButton);
@@ -165,13 +195,17 @@ AdminLiveEdit.ui.ContextMenu = (function () {
 
         updateButtonsDisplay($component);
 
-        var componentBoxModel = AdminLiveEdit.Util.getBoxModel($component);
-        var topPos = Math.round(componentBoxModel.top);
-        var leftPos = Math.round(componentBoxModel.left + componentBoxModel.width);
+        var componentBoxModel = util.getBoxModel($component);
+        var menuTopPos = Math.round(componentBoxModel.top);
+        var menuLeftPos = Math.round(componentBoxModel.left + componentBoxModel.width);
+        var documentSize = util.getDocumentSize();
+        if (menuLeftPos >= documentSize.width) {
+            menuLeftPos = menuLeftPos - $menu.width();
+        }
 
         $menu.css({
-            top: topPos,
-            left: leftPos
+            top: menuTopPos,
+            left: menuLeftPos
         });
     }
 
