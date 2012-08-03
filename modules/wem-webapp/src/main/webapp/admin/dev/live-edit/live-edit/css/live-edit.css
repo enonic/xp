@@ -11,11 +11,12 @@ svg#live-edit-selected-border rect,
 .live-edit-empty-region-placeholder,
 .live-edit-empty-window-placeholder,
 .live-edit-drop-target-placeholder,
-#live-edit-tooltip,
-#live-edit-tooltip-arrow-border,
-#live-edit-tooltip-arrow,
-#live-edit-tooltip-type-text,
-#live-edit-tooltip-name-text,
+#live-edit-info-tip,
+#live-edit-info-tip-arrow-border,
+#live-edit-info-tip-arrow,
+#live-edit-info-tip-type-text,
+#live-edit-info-tip-name-text,
+#live-edit-tool-tip,
 #live-edit-context-menu,
 #live-edit-context-menu-inner,
 .live-edit-button,
@@ -53,7 +54,17 @@ svg#live-edit-selected-border rect,
 */
 a { pointer-events: none; }
 
-[data-live-edit-type] { /*cursor: pointer;*/ }
+
+/*** Cursor for components */
+
+[data-live-edit-type],
+.live-edit-empty-region-placeholder {
+    cursor: pointer;
+}
+
+[data-live-edit-type=window] {
+    cursor: move;
+}
 
 
 /*** Highlighter */
@@ -95,7 +106,6 @@ svg#live-edit-selected-border rect {
     border: 2px dashed #add8e6;
     clear: both;
     color: #add8e6;
-    cursor: default;
     font-size: 20px;
     padding: 28px;
     text-align: center;
@@ -112,13 +122,12 @@ svg#live-edit-selected-border rect {
 }
 
 
-/*** Tooltip */
+/*** Info tip */
 
-#live-edit-tooltip {
-    background: #3f4c6b;
-    /*border: 1px solid #606c88;*/
+#live-edit-info-tip {
+    /*<img src="../live-edit/images/component_blue.png" style="padding-right: 7px; vertical-align: top"/>*/
     cursor: default;
-    padding: 12px 19px;
+    padding: 5px 15px 5px 15px;
     text-align: center;
     line-height: 1.3em;
     position: absolute;
@@ -127,10 +136,30 @@ svg#live-edit-selected-border rect {
     top: -5000px;
     border: 1px solid #20252A;
 
+    background: #fefcea; /* Old browsers */
+    background: -moz-linear-gradient(top,  #fefcea 0%, #f1da36 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fefcea), color-stop(100%,#f1da36)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #fefcea 0%,#f1da36 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', endColorstr='#f1da36',GradientType=0 ); /* IE6-9 */
 }
 
-#live-edit-tooltip-arrow-border {
-    border-color: #606c88 transparent transparent;
+#live-edit-info-tip-arrow-border {
+    border-color: #606C88 transparent transparent;
+    border-style: solid;
+    border-width: 8px;
+    bottom: -17px;
+    height: 0;
+    left: 50%;
+    margin-left: -10px;
+    position: absolute;
+    width: 0;
+}
+
+#live-edit-info-tip-arrow {
+    border-color: #f1da36 transparent transparent;
     border-style: solid;
     border-width: 8px;
     bottom: -16px;
@@ -141,36 +170,32 @@ svg#live-edit-selected-border rect {
     width: 0;
 }
 
-#live-edit-tooltip-arrow {
-    border-color: #3f4c6b transparent transparent;
-    border-style: solid;
-    border-width: 8px;
-    bottom: -16px;
-    height: 0;
-    left: 50%;
-    margin-left: -10px;
+#live-edit-info-tip-type-text {
+    color: #00f;
+}
+
+#live-edit-info-tip-name-text {
+    color: #000;
+}
+
+
+/*** Tool tip ***/
+
+#live-edit-tool-tip {
+    z-index: 1000200;
     position: absolute;
-    width: 0;
+    background-color:#ffffc7;
+    padding:10px;
 }
-
-#live-edit-tooltip-type-text {
-    font-weight: bold;
-    color: #ccc;
-}
-
-#live-edit-tooltip-name-text {
-    font-weight: bold;
-    color: #fff;
-}
-
 
 /*** Context menu */
 
 #live-edit-context-menu {
     position: absolute;
     z-index: 1000050;
-    background-color: #1e90ff;
+    background-color: #20252A;
     padding: 1px 1px 0 1px;
+    /*-moz-transition: all .2s ease-in-out;*/
 }
 
 #live-edit-context-menu-inner {
@@ -229,6 +254,7 @@ svg#live-edit-selected-border rect {
 
 .live-edit-icon-drag { background-image: url("../images/hand_grab2.png"); }
 .live-edit-icon-parent { background-image: url("../images/arrow_up_right_blue.png"); }
+.live-edit-icon-view { background-image: url("../images/eye_blue.png"); }
 .live-edit-icon-settings { background-image: url("../images/gear.png"); }
 .live-edit-icon-remove { background-image: url("../images/delete.png"); }
 
@@ -256,15 +282,4 @@ svg#live-edit-selected-border rect {
     text-align: center;
     background-color: #eee;
     margin: 1px 0 10px 0;
-}
-
-
-/*** HTML Object placeholders */
-
-.live-edit-html-object-placeholder { background-color: #ffffce; }
-
-.live-edit-html5-multimedia {
-    background-image: url("../images/placeholder_html5_multimedia.png");
-    background-repeat: no-repeat;
-    background-position: center;
 }

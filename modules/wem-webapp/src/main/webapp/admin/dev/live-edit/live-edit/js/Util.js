@@ -66,33 +66,63 @@ AdminLiveEdit.Util = (function () {
         },
 
 
-        getPageComponentPagePosition: function (element) {
-            return $liveedit(element).position();
+        getIconForComponent: function (componentType) {
+            var icon = '';
+            switch (componentType) {
+            case 'region':
+                icon = '../live-edit/images/layout_vertical.png';
+                break;
+            case 'window':
+                icon = '../live-edit/images/component_blue.png';
+                break;
+            case 'content':
+                icon = '../live-edit/images/data_blue.png';
+                break;
+            case 'paragraph':
+                icon = '../live-edit/images/text_rich_marked.png';
+                break;
+            case 'page':
+                icon = '../live-edit/images/document_plain_blue.png';
+                break;
+            default:
+                icon = '';
+            }
+            return icon;
+        },
+
+
+        getPageComponentPagePosition: function ($element) {
+            return $liveedit($element).position();
         },
 
 
         getPageComponentInfo: function ($component) {
             var t = this;
             return {
-                type: t.getPageComponentType($component),
-                key: t.getPageComponentKey($component),
-                name: t.getPageComponentName($component)
+                type: t.getTypeFromComponent($component),
+                key: t.getKeyFromComponent($component),
+                name: t.getNameFromComponent($component)
             };
         },
 
 
-        getPageComponentType: function ($component) {
+        getTypeFromComponent: function ($component) {
             return $component[0].getAttribute('data-live-edit-type');
         },
 
 
-        getPageComponentKey: function ($component) {
+        getKeyFromComponent: function ($component) {
             return $component[0].getAttribute('data-live-edit-key');
         },
 
 
-        getPageComponentName: function ($component) {
+        getNameFromComponent: function ($component) {
             return $component[0].getAttribute('data-live-edit-name');
+        },
+
+
+        getTagNameForComponent: function ($component) {
+            return $component[0].tagName.toLowerCase();
         },
 
 

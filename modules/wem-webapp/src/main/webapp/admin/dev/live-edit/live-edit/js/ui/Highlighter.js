@@ -1,5 +1,6 @@
-AdminLiveEdit.Highlighter = (function () {
+AdminLiveEdit.ui.Highlighter = (function () {
 
+    var PAGE_BORDER_COLOR       = '#141414';
     var REGION_BORDER_COLOR     = '#141414';
     var WINDOW_BORDER_COLOR     = '#141414';
     var CONTENT_BORDER_COLOR    = '#141414';
@@ -47,7 +48,16 @@ AdminLiveEdit.Highlighter = (function () {
             top : '-5000px',
             left: '-5000px'
         });
-        $liveedit.publish('/highlighter/hide');
+        // $liveedit.publish('/highlighter/hide');
+    }
+
+
+    function scrollComponentIntoView($component) {
+        var util = AdminLiveEdit.Util;
+        var componentTopPosition = util.getPageComponentPagePosition($component).top;
+        if (componentTopPosition <= window.pageYOffset) {
+            $liveedit('html, body').animate({scrollTop: componentTopPosition - 10}, 200);
+        }
     }
 
 
@@ -57,8 +67,6 @@ AdminLiveEdit.Highlighter = (function () {
         hideHighlighter();
 
         setSelectedComponent($liveedit());
-
-        $liveedit.publish('/page/component/deselect');
     }
 
 
@@ -70,9 +78,11 @@ AdminLiveEdit.Highlighter = (function () {
         // Add position relative to the page component in order have absolute positioned elements inside.
         $liveedit('.live-edit-selected-component').removeClass('live-edit-selected-component');
         $component.addClass('live-edit-selected-component');
+
+        /*TODO: Should we add the border or not*/
+        /*
         var w = componentBoxModel.width;
         var h = componentBoxModel.height;
-        /*
         $border.css({
             width   : componentBoxModel.width,
             height  : componentBoxModel.height,
@@ -104,37 +114,34 @@ AdminLiveEdit.Highlighter = (function () {
     }
 
 
-    function selectComponent($component) {
-        var $selected = getSelectedComponent();
-
-        if ($selected.length > 0 && $component[0] === $selected[0]) {
-            deselectComponent();
-            return;
-        }
+    function selectComponent(event, $component) {
         addSelectedBorder($component);
-
-        hideHighlighter();
-
         setSelectedComponent($component);
-
-        $liveedit.publish('/page/component/select', [$component]);
+        scrollComponentIntoView($component);
     }
 
 
     function selectParentComponent() {
         var $parent = getSelectedComponent().parents('[data-live-edit-type]');
         if ($parent && $parent.length > 0) {
-            selectComponent($liveedit($parent[0]));
+            $liveedit.publish('/page/component/select', [$liveedit($parent[0])]);
         }
     }
 
 
-    function highlight($component) {
+    function highlight(event, $component) {
+        var componentType = AdminLiveEdit.Util.getTypeFromComponent($component);
+        var tagName = AdminLiveEdit.Util.getTagNameForComponent($component);
         var componentBoxModel = AdminLiveEdit.Util.getBoxModel($component);
         var w       = Math.round(componentBoxModel.width);
         var h       = Math.round(componentBoxModel.height);
         var top     = Math.round(componentBoxModel.top);
         var left    = Math.round(componentBoxModel.left);
+
+        // We need to get the full height of the page/document.
+        if (componentType === 'page' && tagName === 'body') {
+            h = AdminLiveEdit.Util.getDocumentSize().height;
+        }
 
         var $highlighter = $liveedit('#live-edit-highlighter');
         var $highlighterRect = $highlighter.find('rect');
@@ -148,7 +155,6 @@ AdminLiveEdit.Highlighter = (function () {
             left: left
         });
 
-        var componentType = AdminLiveEdit.Util.getPageComponentType($component);
         switch (componentType) {
         case 'region':
             $highlighter.css('stroke', REGION_BORDER_COLOR);
@@ -162,62 +168,32 @@ AdminLiveEdit.Highlighter = (function () {
         case 'paragraph':
             $highlighter.css('stroke', PARAGRAPH_BORDER_COLOR);
             break;
+        case 'page':
+            $highlighter.css('stroke', PAGE_BORDER_COLOR);
+            break;
         default:
             $highlighter.css('stroke', 'red');
         }
-
-        $liveedit.publish('/page/component/highlight', [$component]);
-    }
-
-
-
-
-    function attachEventListeners() {
-        $liveedit(document).on('mouseover', '[data-live-edit-type]', function (event) {
-            var $component = $liveedit(this);
-
-            var disableHover = $component.hasClass('live-edit-selected-component')
-                                   || AdminLiveEdit.DragDrop.isDragging() || $component.find('.live-edit-selected-component').length > 0;
-            if (disableHover) {
-                return;
-            }
-            event.stopPropagation();
-            highlight($component);
-
-            // TODO: Use class and remove on mouse out.
-            $component.css('cursor', 'pointer');
-        });
-
-        $liveedit('body').on('mouseover', function (event) {
-            AdminLiveEdit.Highlighter.hide();
-        });
-
-        $liveedit('body').on('click touchstart', '[data-live-edit-type]', function (event) {
-            event.stopPropagation();
-            event.preventDefault();
-
-            var $closestFromTarget = $liveedit(event.target).closest('[data-live-edit-type]');
-
-            selectComponent($closestFromTarget);
-
-            return false;
-        });
-
-        $liveedit(document).on('click', function (event) {
-            deselectComponent();
-        });
     }
 
 
     function registerSubscribers() {
-        $liveedit.subscribe('/page/component/dragstart', hideHighlighter);
+        $liveedit.subscribe('/page/component/highlight', highlight);
+        $liveedit.subscribe('/page/component/hide-highlighter', hideHighlighter);
+        $liveedit.subscribe('/page/component/select', selectComponent);
+        $liveedit.subscribe('/page/component/select-parent', selectParentComponent);
+        $liveedit.subscribe('/page/component/deselect', deselectComponent);
+        $liveedit.subscribe('/page/component/sortstart', hideHighlighter);
+        $liveedit.subscribe('/page/component/sortstop', function (event, uiEvent, ui) {
+            $liveedit.publish('/page/component/select', [ui.item]);
+        });
     }
 
 
     function init() {
         createHighlighter();
         createBorderForSelectedComponent();
-        attachEventListeners();
+        registerSubscribers();
     }
 
     // ***********************************************************************************************************************************//
@@ -225,25 +201,6 @@ AdminLiveEdit.Highlighter = (function () {
 
     return {
         init: init,
-
-        highlight: function ($component) {
-            highlight($component);
-        },
-
-        hide: function () {
-            hideHighlighter();
-        },
-        select: function ($component) {
-            selectComponent($component);
-        },
-
-        selectParent: function () {
-            selectParentComponent();
-        },
-
-        deselect: function () {
-            deselectComponent();
-        },
 
         getSelected: function () {
             return $selectedComponent;

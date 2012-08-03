@@ -25,10 +25,10 @@
   <link rel="stylesheet" href="../live-edit/css/live-edit.css" type="text/css"/>
 
 </head>
-<body class=" threecol  "><a name="top"><!--//--></a>
+<body class=" threecol"><a name="top"><!--//--></a>
 
 <div id="framewrap">
-<div id="framework">
+<div id="framework" data-live-edit-type="page" data-live-edit-key="87" data-live-edit-name="Home">
 <div class="noindex" id="header"><a class="logo" href="http://gjensidige.com/web/Forsiden"><img alt="Gjensidige.com" class="logo"
                                                                                                 src="gjensidige-web/logo_gjensidige.gif"></a>
 

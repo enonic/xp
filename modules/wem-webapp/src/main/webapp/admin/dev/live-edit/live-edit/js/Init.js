@@ -1,38 +1,61 @@
 (function (window) {
 
-    $liveedit(document).ready(function () {
+    // Map jQuery served with Live Edit
+    window.$liveedit = $.noConflict(true);
 
+    // Namespaces
+    if (!window.AdminLiveEdit) {
+        window.AdminLiveEdit = {};
+        window.AdminLiveEdit.components = {};
+        window.AdminLiveEdit.ui = {};
+    }
+
+    $liveedit(document).ready(function () {
         var scripts = [
             'Util',
-            'Windows',
-            'Regions',
-            'Highlighter',
-            'Tooltip',
-            'Button',
-            'ContextMenu',
-            'DragDrop',
+            // 'components.Base',
+            // 'components.Page',
+            // 'components.Regions',
+            // 'components.Windows',
+            // 'components.Contents',
+            // 'components.Paragraphs',
+            'components.PageComponent',
+            'components.WindowComponents',
+            'components.RegionComponents',
+            'components.ParagraphComponents',
+            'components.ContentComponents',
+            'ui.Highlighter',
+            'ui.InfoTip',
+            'ui.ToolTip',
+            'ui.Button',
+            'ui.ContextMenu',
+            'ui.DragDrop',
             'PubSub',
             'PageLeave'
-            //,'Log'
         ];
 
-        function loadScript(index) {
-            $liveedit.getScript('../live-edit/js/' + scripts[index] + '.js', function () {
+        function loadScripts(index) {
+            console.log('Load: ' + scripts[index].replace(/\./g, '/'));
+            $liveedit.getScript('../live-edit/js/' + scripts[index].replace(/\./g, '/') + '.js', function () {
                 index++;
                 if (index < scripts.length) {
-                    loadScript(index);
+                    loadScripts(index);
                 } else {
                     // Finish loading all scripts, execute.
-                    var j = 0;
-
+                    var j = 0,
+                        script;
                     for (j = 0; j < scripts.length; j++) {
-                        if (AdminLiveEdit[scripts[j]] && AdminLiveEdit[scripts[j]].init) {
-                            AdminLiveEdit[scripts[j]].init();
+                        script = eval('AdminLiveEdit.' + scripts[j]);
+                        if (script && script.init) {
+                            script.init();
                         }
                     }
                 }
             });
         }
+
+
+
 
 
         // *******************************************************************************************************************************//
@@ -50,7 +73,7 @@
         });
         // *******************************************************************************************************************************//
 
-        loadScript(0);
+        loadScripts(0);
     });
 
 }(window));

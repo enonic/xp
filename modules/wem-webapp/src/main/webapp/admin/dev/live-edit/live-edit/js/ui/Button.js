@@ -1,4 +1,4 @@
-AdminLiveEdit.Button = (function () {
+AdminLiveEdit.ui.Button = (function () {
     function createButton(config) {
         var id = config.id || '';
         var text = config.text || '';

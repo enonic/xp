@@ -1,9 +1,10 @@
-AdminLiveEdit.ContextMenu = (function () {
+AdminLiveEdit.ui.ContextMenu = (function () {
 
     var buttonConfig = {
-        'region'    : [],
+        'page'      : ['settings'],
+        'region'    : ['parent'],
         'window'    : ['parent', 'drag', 'settings', 'remove'],
-        'content'   : ['parent'],
+        'content'   : ['parent', 'view'],
         'paragraph' : ['parent']
     };
 
@@ -27,6 +28,7 @@ AdminLiveEdit.ContextMenu = (function () {
             right: ''
 
         });
+
         $liveedit('body').append($menu);
     }
 
@@ -34,23 +36,32 @@ AdminLiveEdit.ContextMenu = (function () {
     function fadeOutAndHide() {
         var $menu = getMenu();
         $menu.fadeOut(500, function () {
-            AdminLiveEdit.Highlighter.deselect();
+            $liveedit.publish('/page/component/deselect');
         });
     }
 
 
     function createButtons() {
-        var button = AdminLiveEdit.Button;
+        var button = AdminLiveEdit.ui.Button;
 
         // Hard code the buttons for now.
-        var $selectParentButton = button.create({
+
+        var $parentButton = button.create({
             text: 'Parent',
             id: 'live-edit-button-parent',
             iconCls: 'live-edit-icon-parent',
             handler: function (event) {
                 event.stopPropagation();
-                AdminLiveEdit.Highlighter.selectParent();
+                $liveedit.publish('/page/component/select-parent');
+            }
+        });
 
+        var $viewButton = button.create({
+            text: 'View',
+            id: 'live-edit-button-view',
+            iconCls: 'live-edit-icon-view',
+            handler: function (event) {
+                event.stopPropagation();
             }
         });
 
@@ -74,14 +85,14 @@ AdminLiveEdit.ContextMenu = (function () {
 
         $dragButton.on('mousedown', function (event) {
             this._mouseDown = true;
-            AdminLiveEdit.DragDrop.enable();
+            AdminLiveEdit.ui.DragDrop.enable();
         });
 
         $dragButton.on('mousemove', function (event) {
             if (this._mouseDown) {
                 this._mouseDown = false;
                 fadeOutAndHide();
-                var highlighter = AdminLiveEdit.Highlighter;
+                var highlighter = AdminLiveEdit.ui.Highlighter;
                 var $selectedComponent = highlighter.getSelected();
                 var evt = document.createEvent('MouseEvents');
                 evt.initMouseEvent('mousedown', true, true, window, 0, event.screenX, event.screenY, event.clientX, event.clientY, false,
@@ -93,7 +104,7 @@ AdminLiveEdit.ContextMenu = (function () {
 
         $dragButton.on('mouseup', function (event) {
             this._mouseDown = false;
-            AdminLiveEdit.DragDrop.disable();
+            AdminLiveEdit.ui.DragDrop.disable();
         });
 
         var $removeButton = button.create({
@@ -106,17 +117,20 @@ AdminLiveEdit.ContextMenu = (function () {
         });
 
         var $container = $liveedit('#live-edit-context-menu-inner');
-        $container.append($selectParentButton);
+        $container.append($parentButton);
+        $container.append($viewButton);
         $container.append($dragButton);
         $container.append($settingsButton);
         $container.append($removeButton);
     }
 
 
-    function updateButtonTexts() {
-        var $parentComponentOfSelected = $liveedit(AdminLiveEdit.Highlighter.getSelected().parents('[data-live-edit-type]')[0]);
-        var parentComponentType = AdminLiveEdit.Util.getPageComponentType($parentComponentOfSelected);
-        $liveedit('#live-edit-button-parent').find('.live-edit-button-text').html(parentComponentType);
+    function updateParentButtonText() {
+        var $parentComponentOfSelected = $liveedit(AdminLiveEdit.ui.Highlighter.getSelected().parents('[data-live-edit-type]')[0]);
+        if ($parentComponentOfSelected.length === 1) {
+            var parentComponentType = AdminLiveEdit.Util.getTypeFromComponent($parentComponentOfSelected);
+            $liveedit('#live-edit-button-parent').find('.live-edit-button-text').html(parentComponentType);
+        }
     }
 
 
@@ -126,7 +140,7 @@ AdminLiveEdit.ContextMenu = (function () {
 
 
     function updateButtonsDisplay($component) {
-        var componentType = AdminLiveEdit.Util.getPageComponentType($component);
+        var componentType = AdminLiveEdit.Util.getTypeFromComponent($component);
         if (buttonConfig.hasOwnProperty(componentType)) {
             var buttonArray = buttonConfig[componentType];
             getAllButtons().each(function (i) {
@@ -145,7 +159,7 @@ AdminLiveEdit.ContextMenu = (function () {
 
     function moveMenuTo(event, $component) {
         var util = AdminLiveEdit.Util;
-        var componentType = util.getPageComponentType($component);
+        var componentType = util.getTypeFromComponent($component);
         var $menu = getMenu();
         $menu.show();
 
@@ -153,20 +167,19 @@ AdminLiveEdit.ContextMenu = (function () {
 
         var componentBoxModel = AdminLiveEdit.Util.getBoxModel($component);
         var topPos = Math.round(componentBoxModel.top);
-        var leftPos = Math.round(componentBoxModel.left + componentBoxModel.width - $menu.width());
+        var leftPos = Math.round(componentBoxModel.left + componentBoxModel.width);
 
         $menu.css({
             top: topPos,
             left: leftPos
         });
-
-        updateButtonTexts();
     }
 
 
     function initSubscribers() {
         $liveedit.subscribe('/page/component/select', moveMenuTo);
         $liveedit.subscribe('/page/component/deselect', hide);
+        $liveedit.subscribe('/page/component/sortstart', fadeOutAndHide);
     }
 
 
