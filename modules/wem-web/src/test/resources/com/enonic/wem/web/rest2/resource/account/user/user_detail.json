@@ -1,7 +1,8 @@
 {
-    "key": "E6C593DE14515428B06F1A16E0D28E2341FC5AB4",
+    "key": "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9",
     "type": "user",
     "name": "dummy",
+    "email": "user@email.com",
     "userStore": "enonic",
     "qualifiedName": "enonic\\dummy",
     "displayName": "Dummy User",
@@ -9,11 +10,10 @@
     "created": "2011-08-09 08:23:07",
     "hasPhoto": true,
     "builtIn": false,
-    "isEditable": true,
-    "email": "dummy@radagio.com",
+    "editable": true,
     "info": {
-        "firstName": "Adriaan",
-        "lastName": "Bloem",
+        "firstName": null,
+        "lastName": null,
         "middleName": null,
         "birthday": null,
         "country": null,
@@ -22,29 +22,20 @@
         "globalPosition": null,
         "htmlEmail": null,
         "locale": null,
-        "nickName": "test",
+        "nickName": null,
         "personalId": null,
         "memberId": null,
-        "organization": "test",
+        "organization": null,
         "prefix": null,
         "suffix": null,
         "title": null,
         "homePage": null,
-        "mobile": "12312312",
+        "mobile": null,
         "phone": null,
         "fax": null,
         "gender": null,
         "addresses": [ ],
         "timezone": null
     },
-    "memberships": [
-        {
-            "key": "AC16A0357BA5632DF513C96687B287C1B97B2C78",
-            "type": "group",
-            "qualifiedName": "enonic\\group1",
-            "name": "group1",
-            "displayName": "Group One",
-            "builtIn": false
-        }
-    ]
+    "memberships": [ ]
 }

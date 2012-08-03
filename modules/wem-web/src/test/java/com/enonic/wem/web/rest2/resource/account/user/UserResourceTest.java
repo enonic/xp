@@ -47,6 +47,22 @@ public class UserResourceTest
         Assertions.assertThat( image ).isEqualTo( readPhoto() );
     }
 
+    @Test
+    public void testGetInfo()
+        throws Exception
+    {
+        UserEntity user = createUser( "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9" );
+        Mockito.when( userDao.findByKey( "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9" ) ).thenReturn( user );
+
+        //Mockito can't mock static methods needed in UserInfoHelper.toUserInfo( user ) therefore using nulls for test
+        // http://code.google.com/p/mockito/wiki/FAQ
+
+        UserResult info = userResource.getInfo( "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9" );
+
+        assertJsonResult( "user_detail.json", info );
+
+    }
+
     private BufferedImage readPhoto()
         throws IOException
     {
