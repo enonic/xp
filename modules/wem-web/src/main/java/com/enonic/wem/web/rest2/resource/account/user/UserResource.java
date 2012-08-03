@@ -9,7 +9,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,8 +35,15 @@ public final class UserResource
     @Path("{key}")
     public UserResult getInfo( @PathParam("key") final String key )
     {
-        // TODO: Implementation here. Do not implement "account graph" since this will be implemented elsewhere
-        return null;
+        UserEntity entity = userDao.findByKey( key );
+        if ( entity == null )
+        {
+            return null;
+        }
+        else
+        {
+            return new UserResult( entity );
+        }
     }
 
     @GET
