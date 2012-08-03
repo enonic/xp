@@ -258,6 +258,7 @@ svg#live-edit-selected-border rect {
 .live-edit-icon-drag { background-image: url("../images/hand_grab2.png"); }
 .live-edit-icon-parent { background-image: url("../images/arrow_up_right_blue.png"); }
 .live-edit-icon-view { background-image: url("../images/eye_blue.png"); }
+.live-edit-icon-edit { background-image: url("../images/pencil.png"); }
 .live-edit-icon-settings { background-image: url("../images/gear.png"); }
 .live-edit-icon-remove { background-image: url("../images/delete.png"); }
 

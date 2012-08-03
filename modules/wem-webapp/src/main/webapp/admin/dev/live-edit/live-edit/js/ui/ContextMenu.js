@@ -4,7 +4,7 @@ AdminLiveEdit.ui.ContextMenu = (function () {
         'page'      : ['settings'],
         'region'    : ['parent', 'insert', 'reset', 'empty'],
         'window'    : ['parent', 'drag', 'settings', 'remove'],
-        'content'   : ['parent', 'view'],
+        'content'   : ['parent', 'view', 'edit'],
         'paragraph' : ['parent']
     };
 
@@ -92,6 +92,15 @@ AdminLiveEdit.ui.ContextMenu = (function () {
             }
         });
 
+        var $editButton = button.create({
+            text: 'edit',
+            id: 'live-edit-button-edit',
+            iconCls: 'live-edit-icon-edit',
+            handler: function (event) {
+                event.stopPropagation();
+            }
+        });
+
         var $settingsButton = button.create({
             text: 'Settings',
             id: 'live-edit-button-settings',
@@ -149,6 +158,7 @@ AdminLiveEdit.ui.ContextMenu = (function () {
         $container.append($resetButton);
         $container.append($emptyButton);
         $container.append($viewButton);
+        $container.append($editButton);
         $container.append($dragButton);
         $container.append($settingsButton);
         $container.append($removeButton);
