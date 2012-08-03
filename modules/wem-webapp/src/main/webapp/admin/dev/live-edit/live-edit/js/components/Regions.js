@@ -5,7 +5,7 @@
         this.attachMouseOutEvent();
         this.attachClickEvent();
     };
-    // Inherit from Base
+    // Inherit from Base prototype
     regions.prototype = new AdminLiveEdit.components.Base();
     regions.constructor = regions;
 

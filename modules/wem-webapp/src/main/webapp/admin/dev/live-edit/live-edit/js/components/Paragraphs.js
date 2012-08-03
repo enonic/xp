@@ -5,7 +5,7 @@
         this.attachMouseOutEvent();
         this.attachClickEvent();
     };
-    // Inherit from Base
+    // Inherit from Base prototype
     paragraphs.prototype = new AdminLiveEdit.components.Base();
     paragraphs.constructor = paragraphs;
 

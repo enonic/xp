@@ -5,7 +5,7 @@
         this.attachMouseOutEvent();
         this.attachClickEvent();
     };
-    // Inherit from Base
+    // Inherit from Base prototype
     page.prototype = new AdminLiveEdit.components.Base();
     page.constructor = page;
 
