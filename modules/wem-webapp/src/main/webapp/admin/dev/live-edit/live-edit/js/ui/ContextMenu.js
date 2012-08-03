@@ -5,7 +5,7 @@ AdminLiveEdit.ui.ContextMenu = (function () {
         'region'    : ['parent', 'insert', 'reset', 'empty'],
         'window'    : ['parent', 'drag', 'settings', 'remove'],
         'content'   : ['parent', 'view', 'edit'],
-        'paragraph' : ['parent']
+        'paragraph' : ['parent', 'edit']
     };
 
 
