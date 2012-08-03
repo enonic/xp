@@ -38,12 +38,9 @@ AdminLiveEdit.ui.ToolTip = (function () {
 
     function attachEventListeners() {
         $liveedit(document).on('mousemove', '[data-live-edit-type]', function (event) {
-            var $component = $liveedit(event.target).closest('[data-live-edit-type]');
-            var isSelected = $component.hasClass('live-edit-selected-component');
-            if (isSelected) {
-                return;
-            }
             var util = AdminLiveEdit.Util;
+
+            var $component = $liveedit(event.target).closest('[data-live-edit-type]');
             var $toolTip = getToolTip();
             var type = util.getTypeFromComponent($component);
             var name = util.getNameFromComponent($component);
