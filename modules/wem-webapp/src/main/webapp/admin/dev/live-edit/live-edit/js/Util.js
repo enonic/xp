@@ -18,6 +18,11 @@ AdminLiveEdit.Util = (function () {
         },
 
 
+        getDocumentScrollTop: function() {
+            return $liveedit(document).scrollTop();
+        },
+
+
         getBoxModel: function ($element, contentOnly) {
             var $el = $liveedit($element);
             var offset = $el.offset();
