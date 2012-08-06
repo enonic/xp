@@ -11,12 +11,12 @@ AdminLiveEdit.ui.ContextMenu = (function () {
 
     function createMenu() {
         $liveedit('body')
-            .append('<div id="live-edit-context-menu" style="top:-5000px; left:-5000px;"><div id="live-edit-context-menu-inner"></div></div>');
+            .append('<div class="live-edit-context-menu" style="top:-5000px; left:-5000px;"></div>');
     }
 
 
     function getMenu() {
-        return $liveedit('#live-edit-context-menu');
+        return $liveedit('.live-edit-context-menu');
     }
 
 
@@ -152,16 +152,16 @@ AdminLiveEdit.ui.ContextMenu = (function () {
             }
         });
 
-        var $container = $liveedit('#live-edit-context-menu-inner');
-        $container.append($parentButton);
-        $container.append($insertButton);
-        $container.append($resetButton);
-        $container.append($emptyButton);
-        $container.append($viewButton);
-        $container.append($editButton);
-        $container.append($dragButton);
-        $container.append($settingsButton);
-        $container.append($removeButton);
+        var $menu = getMenu();
+        $menu.append($parentButton);
+        $menu.append($insertButton);
+        $menu.append($resetButton);
+        $menu.append($emptyButton);
+        $menu.append($viewButton);
+        $menu.append($editButton);
+        $menu.append($dragButton);
+        $menu.append($settingsButton);
+        $menu.append($removeButton);
     }
 
 

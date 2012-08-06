@@ -8,11 +8,13 @@
         window.AdminLiveEdit = {};
         window.AdminLiveEdit.components = {};
         window.AdminLiveEdit.ui = {};
+        window.AdminLiveEdit.ui2 = {};
     }
 
     $liveedit(document).ready(function () {
         var scripts = [
             'Util',
+            'PubSub',
             // 'components.Base',
             // 'components.Page',
             // 'components.Regions',
@@ -30,9 +32,9 @@
             'ui.Button',
             'ui.ContextMenu',
             'ui.DragDrop',
-            'PubSub',
             'PageLeave'
         ];
+
 
         function loadScripts(index) {
             console.log('Load: ' + scripts[index].replace(/\./g, '/'));

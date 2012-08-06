@@ -17,8 +17,8 @@ svg#live-edit-selected-border rect,
 #live-edit-info-tip-type-text,
 #live-edit-info-tip-name-text,
 #live-edit-tool-tip,
-#live-edit-context-menu,
-#live-edit-context-menu-inner,
+.live-edit-context-menu,
+.live-edit-context-menu-inner,
 .live-edit-button,
 .live-edit-button-text,
 .live-edit-button-icon,
@@ -190,7 +190,7 @@ svg#live-edit-selected-border rect {
 
 /*** Context menu */
 
-#live-edit-context-menu {
+.live-edit-context-menu {
     position: absolute;
     z-index: 1000050;
     background-color: #20252A;
@@ -198,8 +198,6 @@ svg#live-edit-selected-border rect {
     /*-moz-transition: all .2s ease-in-out;*/
 }
 
-#live-edit-context-menu-inner {
-}
 
 /*** Button */
 
