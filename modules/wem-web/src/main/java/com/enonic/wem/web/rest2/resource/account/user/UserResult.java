@@ -144,12 +144,12 @@ public final class UserResult
         {
             ObjectNode json = objectNode();
 
-            json.put( "displayName", "Display name" );      //TODO
-            json.put( "name", group.getName() );
-            json.put( "qualifiedName", group.getQualifiedName() != null ? group.getQualifiedName().toString() : null );
-            json.put( "builtIn", group.isBuiltIn() );
-            json.put( "type", group.isBuiltIn() ? TYPE_ROLE : TYPE_GROUP );
             json.put( "key", group.getGroupKey().toString() );
+            json.put( "type", group.isBuiltIn() ? TYPE_ROLE : TYPE_GROUP );
+            json.put( "qualifiedName", group.getQualifiedName() != null ? group.getQualifiedName().toString() : null );
+            json.put( "name", group.getName() );
+            json.put( "displayName", "Display name" );      //TODO
+            json.put( "builtIn", group.isBuiltIn() );
             jsons.add( json );
         }
         return jsons;

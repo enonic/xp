@@ -12,8 +12,8 @@
     "builtIn": false,
     "editable": true,
     "info": {
-        "firstName": null,
-        "lastName": null,
+        "firstName": "Jack",
+        "lastName": "Daniels",
         "middleName": null,
         "birthday": null,
         "country": null,
@@ -28,14 +28,23 @@
         "organization": null,
         "prefix": null,
         "suffix": null,
-        "title": null,
+        "title": "Mr.",
         "homePage": null,
         "mobile": null,
-        "phone": null,
+        "phone": "123123123",
         "fax": null,
         "gender": null,
         "addresses": [ ],
         "timezone": null
     },
-    "memberships": [ ]
+    "memberships": [
+        {
+            "key": "AC16A0357BA5632DF513C96687B287C1B97B2C78",
+            "type": "group",
+            "qualifiedName": "enonic\\group1",
+            "name": "group1",
+            "displayName": "Display name",
+            "builtIn": false
+        }
+    ]
 }
