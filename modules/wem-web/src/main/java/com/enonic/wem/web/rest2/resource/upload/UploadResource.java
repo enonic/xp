@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataParam;
-import com.sun.jersey.multipart.file.FileDataBodyPart;
 
 import com.enonic.wem.web.rest2.service.upload.UploadItem;
 import com.enonic.wem.web.rest2.service.upload.UploadService;
