@@ -39,16 +39,34 @@ AdminLiveEdit.ui.ToolTip = (function () {
     function attachEventListeners() {
         $liveedit(document).on('mousemove', '[data-live-edit-type]', function (event) {
             var util = AdminLiveEdit.Util;
-
             var $component = $liveedit(event.target).closest('[data-live-edit-type]');
             var $toolTip = getToolTip();
-            var type = util.getTypeFromComponent($component);
-            var name = util.getNameFromComponent($component);
+
+            var pageX = event.pageX;
+            var pageY = event.pageY;
+            var viewPortSize = util.getViewPortSize();
+            var scrollTop = util.getDocumentScrollTop();
+            var toolTipWidth = $toolTip.width();
+            var toolTipHeight = $toolTip.height();
+
+            var xPos = pageX + OFFSET_X;
+            var yPos = pageY + OFFSET_Y;
+
+            if (xPos + toolTipWidth > (viewPortSize.width - OFFSET_X * 2)) {
+                xPos = pageX - toolTipWidth - (OFFSET_X * 2);
+            }
+
+            if (yPos + toolTipHeight > (viewPortSize.height + scrollTop - OFFSET_Y * 2)) {
+                yPos = pageY - toolTipHeight - (OFFSET_Y * 2);
+            }
 
             $toolTip.css({
-                top: event.pageY + OFFSET_Y,
-                left: event.pageX + OFFSET_X
+                top: yPos,
+                left: xPos
             });
+
+            var type = util.getTypeFromComponent($component);
+            var name = util.getNameFromComponent($component);
 
             updateIcon(type);
             updateText(name);
