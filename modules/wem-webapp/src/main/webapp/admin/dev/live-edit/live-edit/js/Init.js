@@ -8,19 +8,12 @@
         window.AdminLiveEdit = {};
         window.AdminLiveEdit.components = {};
         window.AdminLiveEdit.ui = {};
-        window.AdminLiveEdit.ui2 = {};
     }
 
     $liveedit(document).ready(function () {
         var scripts = [
             'Util',
             'PubSub',
-            // 'components.Base',
-            // 'components.Page',
-            // 'components.Regions',
-            // 'components.Windows',
-            // 'components.Contents',
-            // 'components.Paragraphs',
             'components.PageComponent',
             'components.WindowComponents',
             'components.RegionComponents',
