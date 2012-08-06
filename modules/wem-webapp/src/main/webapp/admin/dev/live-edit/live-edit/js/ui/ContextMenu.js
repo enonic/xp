@@ -187,7 +187,6 @@ AdminLiveEdit.ui.ContextMenu = (function () {
                 var button = $liveedit(this);
                 var id = button.attr('id');
                 var subStr = id.substring(id.lastIndexOf('-') + 1, id.length);
-                console.log(subStr);
                 if (buttonArray.indexOf(subStr) > -1) {
                     button.show();
                 } else {

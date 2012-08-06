@@ -38,6 +38,10 @@ AdminLiveEdit.ui.ToolTip = (function () {
 
     function attachEventListeners() {
         $liveedit(document).on('mousemove', '[data-live-edit-type]', function (event) {
+            if (AdminLiveEdit.ui.DragDrop.isDragging()) {
+                hide();
+                return;
+            }
             var util = AdminLiveEdit.Util;
             var $component = $liveedit(event.target).closest('[data-live-edit-type]');
             var $toolTip = getToolTip();
