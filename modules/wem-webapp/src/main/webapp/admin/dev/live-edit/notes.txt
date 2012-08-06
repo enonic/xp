@@ -10,8 +10,7 @@ Which are supported by:
 
 
 TODO:
-
-* Navigate to Page
+* Redefine data attributes. Scope data-live-edit-key value in order to avoid conflicts. Eg. "paragraph:2"
 * Fix so drag helper tooltip width is not fixed.
 * Make sure the pointer cursor that is added to the component on mouseover is removed on mouseout
 * Remove SELECTOR strings from Regions and Windows

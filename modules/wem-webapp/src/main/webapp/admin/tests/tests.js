@@ -76,7 +76,8 @@ Harness.start(
             'tests/userstore/test_UserstoreConfigModel.js',
             'tests/userstore/test_UserstoreConnectorModel.js'
         ]
-    },
+    }
+    /*,
     {
         group: 'Live Edit',
         items: [
@@ -116,5 +117,6 @@ Harness.start(
             }
         ]
     }
+    */
 );
 
