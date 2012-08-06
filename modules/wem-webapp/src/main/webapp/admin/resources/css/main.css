@@ -211,7 +211,7 @@ img.photo {
 .facet-navigation .facet-header {
     font-weight: bold;
     text-transform: capitalize;
-    margin: 15px 0 5px 0;
+    margin: 6px 0 5px 0;
 }
 
 .facet-navigation .facet-box {
@@ -219,8 +219,8 @@ img.photo {
 }
 
 .facet-navigation .facet-box .count {
-    margin-left: 10px;
-    color: #bbb;
+    margin-left: 3px;
+    /*    color: #bbb;*/
 }
 
 .facet-navigation label {
@@ -230,8 +230,8 @@ img.photo {
 .facet-navigation .facet-single-select-item,
 .facet-navigation .facet-multi-select-item {
     color: #000;
-    text-transform: capitalize;
-    margin: 0;
+    /*text-transform: capitalize;*/
+    margin: 0 0 -2px 0;
 }
 
 .facet-navigation .facet-selected label {
