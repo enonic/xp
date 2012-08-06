@@ -8,12 +8,32 @@
         }
 
         hr {
-            border: none;
             height: 1px;
             color: #ccc;
+            border: none;
             background: #ccc;
         }
+
+        #github-commits {
+            background-color: #fff;
+        }
+
+        #github-commits ul {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        #github-commits ul li {
+            margin-bottom: .15em;
+        }
+
+        #github-commits img.github-avatar {
+            vertical-align: top;
+        }
     </style>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="resources/lib/jquery/github.commits.widget-min.js"></script>
 </head>
 <body>
 <h1>Enonic WEM - Admin Console</h1>
@@ -88,6 +108,21 @@
         <a href="dev/html-templates/wizard-navigation.html">Wizard Navigation</a>
     </li>
 </ul>
+
+<hr/>
+<h2>GitHub</h2>
+<p>
+    Repo: <a href="http://github.com/enonic/wem-ce">enonic/wem-ce</a>
+</p>
+<div id="github-commits"></div>
+
+<script>
+    $(function () {
+        $('#github-commits').githubInfoWidget(
+                { user: 'enonic', repo: 'wem-ce', branch: 'master', last: 10 });
+    });
+</script>
+
 </body>
 </html>
 
