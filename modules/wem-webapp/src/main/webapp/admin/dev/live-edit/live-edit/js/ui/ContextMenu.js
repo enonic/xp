@@ -175,7 +175,7 @@ AdminLiveEdit.ui.ContextMenu = (function () {
 
 
     function getAllButtons() {
-        return $liveedit('#live-edit-context-menu-inner').find('.live-edit-button');
+        return $liveedit('.live-edit-context-menu').find('.live-edit-button');
     }
 
 
@@ -187,6 +187,7 @@ AdminLiveEdit.ui.ContextMenu = (function () {
                 var button = $liveedit(this);
                 var id = button.attr('id');
                 var subStr = id.substring(id.lastIndexOf('-') + 1, id.length);
+                console.log(subStr);
                 if (buttonArray.indexOf(subStr) > -1) {
                     button.show();
                 } else {
