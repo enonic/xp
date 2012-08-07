@@ -109,8 +109,7 @@
 <body data-live-edit-type="page" data-live-edit-key="1867" data-live-edit-name="Home"><!--stopindex-->
 
 
-
-
+<%@ include file="live-edit/loader-splash.html" %>
 
 
 <ul id="accessibility-links" class="screen">

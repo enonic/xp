@@ -3,7 +3,9 @@
 */
 
 /*** Reset */
-
+.live-edit-loader-splash-shader,
+.live-edit-loader-splash-content,
+.live-edit-loader-splash-content div,
 svg.live-edit-highlighter,
 svg.live-edit-highlighter rect,
 svg.live-edit-selected-border,
@@ -22,6 +24,7 @@ svg.live-edit-selected-border rect,
 .live-edit-button,
 .live-edit-button-text,
 .live-edit-button-icon,
+
 #live-edit-drag-helper,
 #live-edit-drag-helper-status-icon
 {
@@ -54,6 +57,55 @@ svg.live-edit-selected-border rect,
 */
 a { pointer-events: none; }
 
+/*** Loader splash */
+
+@-moz-keyframes live-edit-spinner {
+	0% { -moz-transform:rotate(0deg); }
+	100% { -moz-transform:rotate(360deg); }
+}
+@-webkit-keyframes spin {
+	0% { -webkit-transform:rotate(0deg); }
+	100% { -webkit-transform:rotate(360deg); }
+}
+
+.live-edit-loader-splash-shader,
+.live-edit-loader-splash-content {
+    cursor: progress !important;
+}
+
+.live-edit-loader-splash-shader {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #141414;
+    opacity: .9;
+    z-index: 2000000;
+}
+
+.live-edit-loader-splash-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -36px;
+    margin-left: -36px;
+    text-align: center;
+    z-index: 2000010;
+}
+
+.live-edit-loader-splash-content img {
+    width: 72px;
+    height: 72px;
+    border: none;
+    -moz-animation: live-edit-spinner .5s infinite linear;
+    -webkit-animation: live-edit-spinner .5s infinite linear;
+}
+
+.live-edit-loader-splash-content div {
+    color: #bbb;
+    margin-top: .7em;
+}
 
 /*** Cursor for components */
 

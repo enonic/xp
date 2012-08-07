@@ -25,18 +25,21 @@
         });
         // *******************************************************************************************************************************//
 
-        var page = new AdminLiveEdit.components2.Page();
-        var regions = new AdminLiveEdit.components2.Regions();
-        var windows = new AdminLiveEdit.components2.Windows();
-        var contents = new AdminLiveEdit.components2.Contents();
-        var paragraphs = new AdminLiveEdit.components2.Paragraphs();
-        var highlighter = new AdminLiveEdit.ui2.Highlighter();
-        var selectedComponent = new AdminLiveEdit.ui2.SelectedComponent();
+        // TODO: Remove timeout when loader splash(CMS-29) is accepted.
+        setTimeout(function() {
+            var page = new AdminLiveEdit.components2.Page();
+            var regions = new AdminLiveEdit.components2.Regions();
+            var windows = new AdminLiveEdit.components2.Windows();
+            var contents = new AdminLiveEdit.components2.Contents();
+            var paragraphs = new AdminLiveEdit.components2.Paragraphs();
+            var highlighter = new AdminLiveEdit.ui2.Highlighter();
+            var selectedComponent = new AdminLiveEdit.ui2.SelectedComponent();
+            var infoTip = new AdminLiveEdit.ui2.InfoTip();
+            var toolTip = new AdminLiveEdit.ui2.ToolTip();
+            var componentMenu = new AdminLiveEdit.ui2.ComponentMenu();
 
-        var infoTip = new AdminLiveEdit.ui2.InfoTip();
-        var toolTip = new AdminLiveEdit.ui2.ToolTip();
-        var componentMenu = new AdminLiveEdit.ui2.ComponentMenu();
-
+            $liveedit('.live-edit-loader-splash-container').remove();
+        }, 1000);
 
     });
 
