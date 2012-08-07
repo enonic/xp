@@ -1,0 +1,36 @@
+{
+    "key": "BDA046019C23F8A3BCDFB9360E77375BB4BBBEC4",
+    "type": "role",
+    "name": "Userstore admins",
+    "userStore": "enonic",
+    "qualifiedName": "enonic\\Userstore admins",
+    "displayName": "displayName",
+    "description": "Userstore Administrators",
+    "lastModified": "2012-07-24 16:18:35",
+    "created": "2012-07-24 16:18:35",
+    "builtIn": true,
+    "editable": true,
+    "members": [
+        {
+            "name": "admins",
+            "qualifiedName": "admins",
+            "displayName": "displayName",
+            "type": "role",
+            "key": "CD4BD95895F1813D7AE18FAC595CEEB43C625089"
+        },
+        {
+            "name": "group1",
+            "qualifiedName": "enonic\\group1",
+            "displayName": "displayName",
+            "type": "group",
+            "key": "007B84CC2EF921EFFA9272735F98162D78006929"
+        },
+        {
+            "name": "user1",
+            "qualifiedName": "enonic\\user1",
+            "displayName": "User One",
+            "type": "user",
+            "key": "8809BF63D942551DCA973876552EA7361071761F"
+        }
+    ]
+}
