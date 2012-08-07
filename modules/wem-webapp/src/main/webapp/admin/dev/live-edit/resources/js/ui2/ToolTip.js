@@ -57,6 +57,14 @@
         var self = this;
 
         $liveedit(document).on('mousemove', '[data-live-edit-type]', function (event) {
+            // TODO: Make this more efficient.
+            var isUi = $liveedit(event.target).is('.live-edit-info-tip, .live-edit-button') || $liveedit(event.target).parents('.live-edit-info-tip, .live-edit-button').length > 0;
+            // TODO: Use PubSub instead of calling DragDrop object.
+            if (isUi || AdminLiveEdit.ui2.DragDrop.isDragging()) {
+                self.hide();
+                return;
+            }
+
             var $component = $liveedit(event.target).closest('[data-live-edit-type]');
             var type = util.getTypeFromComponent($component);
             var name = util.getNameFromComponent($component);

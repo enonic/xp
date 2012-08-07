@@ -6,14 +6,18 @@
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();
         this.attachClickEvent();
+        this.registerSubscribers();
     };
+
     // Inherit from Base prototype
     regions.prototype = new AdminLiveEdit.components2.Base();
 
     // Fix constructor as it now is Base
     regions.constructor = regions;
 
+    // Shorthand ref to the prototype
     var p = regions.prototype;
+
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -23,11 +27,23 @@
         $liveedit.subscribe('/page/component/sortupdate', function () {
             self.renderEmptyPlaceholders.call(self);
         });
-        $liveedit.subscribe('/page/component/sortupdate', function () {
-            self.renderEmptyPlaceholders.call(self);
-        });
+
         $liveedit.subscribe('/page/component/dragover', function () {
             self.renderEmptyPlaceholders.call(self);
+        });
+    };
+
+
+    p.renderEmptyPlaceholders = function () {
+        var self = this;
+        self.removeAllRegionPlaceholders();
+        var $regions = self.getAll();
+        $regions.each(function (index) {
+            var $region = $liveedit(this);
+            var regionIsEmpty = self.isRegionEmpty.call(self, $region);
+            if (regionIsEmpty) {
+                self.appendEmptyPlaceholder.call(self, $region);
+            }
         });
     };
 
@@ -50,20 +66,6 @@
 
     p.removeAllRegionPlaceholders = function () {
         $liveedit('.live-edit-empty-region-placeholder').remove();
-    };
-
-
-    p.renderEmptyPlaceholders = function () {
-        var self = this;
-        self.removeAllRegionPlaceholders();
-        var $regions = self.getAll();
-        $regions.each(function (index) {
-            var $region = $liveedit(this);
-            var regionIsEmpty = self.isRegionEmpty.call(self, $region);
-            if (regionIsEmpty) {
-                self.appendEmptyPlaceholder.call(self, $region);
-            }
-        });
     };
 
 }());

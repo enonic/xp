@@ -38,7 +38,10 @@
             var toolTip = new AdminLiveEdit.ui2.ToolTip();
             var componentMenu = new AdminLiveEdit.ui2.ComponentMenu();
 
+            AdminLiveEdit.ui2.DragDrop.init();
+
             $liveedit('.live-edit-loader-splash-container').remove();
+
         }, 1000);
 
     });

@@ -33,14 +33,17 @@
 
     p.registerSubscribers = function() {
         var self = this;
+
         $liveedit.subscribe('/page/component/select', function (event, $component) {
             self.show.call(self, event, $component);
         });
+
         $liveedit.subscribe('/page/component/deselect', function() {
             self.hide.call(self);
         });
+
         $liveedit.subscribe('/page/component/sortstart', function() {
-            self.call.fadeOutAndHide();
+            self.fadeOutAndHide.call(self);
         });
     };
 
@@ -202,12 +205,22 @@
                 event.stopPropagation();
             }
         });
+
+
+        dragButton.getEl().on('mousedown', function (event) {
+            this._mouseDown = true;
+            // TODO: Use PubSub
+            AdminLiveEdit.ui2.DragDrop.enable();
+        });
+
+
         dragButton.getEl().on('mousemove', function (event) {
             if (this._mouseDown) {
                 this._mouseDown = false;
                 self.fadeOutAndHide();
-                var highlighter = AdminLiveEdit.ui.Highlighter;
-                var $selectedComponent = highlighter.getSelected();
+                // TODO: Get the selected using PubSub
+                var $selectedComponent = $liveedit('.live-edit-selected-component');
+
                 var evt = document.createEvent('MouseEvents');
                 evt.initMouseEvent('mousedown', true, true, window, 0, event.screenX, event.screenY, event.clientX, event.clientY, false,
                     false, false, false, 0, null);
@@ -217,7 +230,8 @@
         });
         dragButton.getEl().on('mouseup', function (event) {
             this._mouseDown = false;
-            AdminLiveEdit.ui.DragDrop.disable();
+            // TODO: remove reference to DragDrop, use PubSub.
+            AdminLiveEdit.ui2.DragDrop.disable();
         });
         self.buttons.push(dragButton);
 

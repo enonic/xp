@@ -23,10 +23,13 @@
 
     p.registerSubscribers = function () {
         var self = this;
-        $liveedit.subscribe('/page/component/highlight', function(event, $component, borderColor) {
+        $liveedit.subscribe('/page/component/highlight', function (event, $component, borderColor) {
             self.highlight.call(self, event, $component, borderColor);
         });
-        $liveedit.subscribe('/page/component/hide-highlighter', self.hide.call(self));
+
+        $liveedit.subscribe('/page/component/hide-highlighter', function () {
+            self.hide.call(self);
+        });
     };
 
 

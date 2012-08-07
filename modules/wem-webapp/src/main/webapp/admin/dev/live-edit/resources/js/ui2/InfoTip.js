@@ -25,6 +25,7 @@
         $liveedit.subscribe('/page/component/select', function(event, $component) {
             self.moveToComponent.call(self, event, $component);
         });
+
         $liveedit.subscribe('/page/component/deselect', function() {
             self.hide.call(self);
         });
@@ -41,6 +42,11 @@
 
         this.createElement(html);
         this.appendTo($liveedit('body'));
+
+        // Make sure component is not deselected when the infotip element is clicked.
+        this.getEl().on('click', function(event) {
+            event.stopPropagation();
+        });
     };
 
 
