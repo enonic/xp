@@ -2,6 +2,7 @@
     // Class definition (constructor function)
     var infoTip = AdminLiveEdit.ui2.InfoTip = function () {
         this.create();
+        this.registerSubscribers();
     };
 
     // Inherits ui.Base
@@ -19,13 +20,23 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+    p.registerSubscribers = function () {
+        var self = this;
+        $liveedit.subscribe('/page/component/select', function(event, $component) {
+            self.moveToComponent.call(self, event, $component);
+        });
+        $liveedit.subscribe('/page/component/deselect', function() {
+            self.hide.call(self);
+        });
+    };
+
 
     p.create = function () {
-        var html = '<div id="live-edit-info-tip" style="top:-5000px; left:-5000px;">' +
+        var html = '<div class="live-edit-info-tip" style="top:-5000px; left:-5000px;">' +
                    '    <img src="../live-edit/images/component_blue.png" style="padding-right: 7px; vertical-align: top"/>' + // TODO: Create a class
-                   '    <span id="live-edit-info-tip-name-text"><!-- --></span>' +
-                   '    <div id="live-edit-info-tip-arrow-border"></div>' +
-                   '    <div id="live-edit-info-tip-arrow"></div>' +
+                   '    <span class="live-edit-info-tip-name-text"><!-- --></span>' +
+                   '    <div class="live-edit-info-tip-arrow-border"></div>' +
+                   '    <div class="live-edit-info-tip-arrow"></div>' +
                    '</div>';
 
         this.createElement(html);
@@ -33,35 +44,31 @@
     };
 
 
-    p.registerSubscribers = function () {
-        $liveedit.subscribe('/page/component/select', moveToComponent);
-        $liveedit.subscribe('/page/component/deselect', hide);
-    };
-
-
     p.moveToComponent = function (event, $component) {
+        var $infoTip = this.getEl();
         var componentName = util.getNameFromComponent($component);
         var componentType = util.getTypeFromComponent($component);
+
+        // Set text and icon first so position is calculated correctly.
+        this.setText(componentName);
+        this.setIcon(componentType);
+
         var componentBoxModel = util.getBoxModel($component);
         var top = componentBoxModel.top - 50;
-        var left = componentBoxModel.left + (componentBoxModel.width / 2) - ($infoTip.outerWidth() / 2);
-
-        p.updateText(componentName);
-        p.updateIcon(componentType);
-
-        this.getEl().css({
+        var left = componentBoxModel.left + (componentBoxModel.width / 2) - ($infoTip.width() / 2);
+        $infoTip.css({
             top: top + 12,
             left: left
         });
     };
 
 
-    p.updateText = function (text) {
+    p.setText = function (text) {
         this.getEl().find('.live-edit-info-tip-name-text').text(text);
     };
 
 
-    p.updateIcon = function (componentType) {
+    p.setIcon = function (componentType) {
         this.getEl().find('img').attr('src', util.getIconForComponent(componentType));
     };
 

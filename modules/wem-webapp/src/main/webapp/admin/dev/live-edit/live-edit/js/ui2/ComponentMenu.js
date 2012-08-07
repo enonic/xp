@@ -2,8 +2,18 @@
     // Class definition (constructor)
     var componentMenu = AdminLiveEdit.ui2.ComponentMenu = function () {
         this.buttons = [];
+        this.buttonConfig = {
+            'page'      : ['settings'],
+            'region'    : ['parent', 'insert', 'reset', 'empty'],
+            'window'    : ['parent', 'drag', 'settings', 'remove'],
+            'content'   : ['parent', 'view', 'edit'],
+            'paragraph' : ['parent', 'edit']
+        };
+
         this.create();
+        this.registerSubscribers();
     };
+
 
     // Inherits ui.Base.js
     componentMenu.prototype = new AdminLiveEdit.ui2.Base();
@@ -21,19 +31,17 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 
-    p.buttonConfig = {
-        'page'      : ['settings'],
-        'region'    : ['parent', 'insert', 'reset', 'empty'],
-        'window'    : ['parent', 'drag', 'settings', 'remove'],
-        'content'   : ['parent', 'view', 'edit'],
-        'paragraph' : ['parent', 'edit']
-    };
-
-
-    p.initSubscribers = function() {
-        $liveedit.subscribe('/page/component/select', this.show);
-        $liveedit.subscribe('/page/component/deselect', this.hide);
-        $liveedit.subscribe('/page/component/sortstart', this.fadeOutAndHide);
+    p.registerSubscribers = function() {
+        var self = this;
+        $liveedit.subscribe('/page/component/select', function (event, $component) {
+            self.show.call(self, event, $component);
+        });
+        $liveedit.subscribe('/page/component/deselect', function() {
+            self.hide.call(self);
+        });
+        $liveedit.subscribe('/page/component/sortstart', function() {
+            self.call.fadeOutAndHide();
+        });
     };
 
 
@@ -43,14 +51,13 @@
                            '</div>');
         this.appendTo($liveedit('body'));
         this.addButtons();
-        this.initSubscribers();
     };
 
 
-    p.show = function ($component) {
+    p.show = function (event, $component) {
         var componentType = util.getTypeFromComponent($component);
-        this.getMenu(componentType);
-        this.moveTo($component);
+        this.getMenuForComponent(componentType);
+        this.moveToComponent($component);
     };
 
 
@@ -59,7 +66,7 @@
     };
 
 
-    p.moveTo = function($component) {
+    p.moveToComponent = function($component) {
         var componentBoxModel = util.getBoxModel($component);
         var menuTopPos = Math.round(componentBoxModel.top),
             menuLeftPos = Math.round(componentBoxModel.left + componentBoxModel.width),
@@ -76,10 +83,9 @@
     };
 
 
-    p.getMenu = function (componentType) {
-
-        if (p.buttonConfig.hasOwnProperty(componentType)) {
-            var buttonArray = p.buttonConfig[componentType];
+    p.getMenuForComponent = function (componentType) {
+        if (this.buttonConfig.hasOwnProperty(componentType)) {
+            var buttonArray = this.buttonConfig[componentType];
             var buttons = this.getButtons();
 
             for (var i = 0; i < buttons.length; i++) {
@@ -102,7 +108,7 @@
 
 
     p.addButtons = function () {
-        var t = this;
+        var self = this;
 
         var parentButton = new AdminLiveEdit.ui2.Button();
         parentButton.create({
@@ -114,7 +120,7 @@
                 $liveedit.publish('/page/component/select-parent');
             }
         });
-        t.buttons.push(parentButton);
+        self.buttons.push(parentButton);
 
 
         var insertButton = new AdminLiveEdit.ui2.Button();
@@ -126,7 +132,7 @@
                 event.stopPropagation();
             }
         });
-        t.buttons.push(insertButton);
+        self.buttons.push(insertButton);
 
         var resetButton = new AdminLiveEdit.ui2.Button();
         resetButton.create({
@@ -137,7 +143,7 @@
                 event.stopPropagation();
             }
         });
-        t.buttons.push(resetButton);
+        self.buttons.push(resetButton);
 
 
         var emptyButton = new AdminLiveEdit.ui2.Button();
@@ -149,7 +155,7 @@
                 event.stopPropagation();
             }
         });
-        t.buttons.push(emptyButton);
+        self.buttons.push(emptyButton);
 
 
         var viewButton = new AdminLiveEdit.ui2.Button();
@@ -161,7 +167,7 @@
                 event.stopPropagation();
             }
         });
-        t.buttons.push(viewButton);
+        self.buttons.push(viewButton);
 
 
         var editButton = new AdminLiveEdit.ui2.Button();
@@ -173,7 +179,7 @@
                 event.stopPropagation();
             }
         });
-        t.buttons.push(editButton);
+        self.buttons.push(editButton);
 
 
         var settingsButton = new AdminLiveEdit.ui2.Button();
@@ -185,7 +191,7 @@
                 event.stopPropagation();
             }
         });
-        t.buttons.push(settingsButton);
+        self.buttons.push(settingsButton);
 
         var dragButton = new AdminLiveEdit.ui2.Button();
         dragButton.create({
@@ -199,7 +205,7 @@
         dragButton.getEl().on('mousemove', function (event) {
             if (this._mouseDown) {
                 this._mouseDown = false;
-                t.fadeOutAndHide();
+                self.fadeOutAndHide();
                 var highlighter = AdminLiveEdit.ui.Highlighter;
                 var $selectedComponent = highlighter.getSelected();
                 var evt = document.createEvent('MouseEvents');
@@ -213,7 +219,7 @@
             this._mouseDown = false;
             AdminLiveEdit.ui.DragDrop.disable();
         });
-        t.buttons.push(dragButton);
+        self.buttons.push(dragButton);
 
 
         var removeButton = new AdminLiveEdit.ui2.Button();
@@ -225,12 +231,11 @@
                 event.stopPropagation();
             }
         });
-        t.buttons.push(removeButton);
+        self.buttons.push(removeButton);
 
-        for (var i = 0; i < t.buttons.length; i++) {
-            t.buttons[i].appendTo(t.getEl());
+        for (var i = 0; i < self.buttons.length; i++) {
+            self.buttons[i].appendTo(self.getEl());
         }
-
     };
 
 

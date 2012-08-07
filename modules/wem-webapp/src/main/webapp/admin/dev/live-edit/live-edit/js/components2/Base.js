@@ -1,22 +1,26 @@
 // Namespace
-AdminLiveEdit.components = {};
+AdminLiveEdit.components2 = {};
 
-AdminLiveEdit.components.Base = function (selector) {
-    this.selector = selector;
+AdminLiveEdit.components2.Base = function () {
+    this.selector = '';
+    this.highlightColor = '#141414';
 };
 
-AdminLiveEdit.components.Base.prototype = {
+AdminLiveEdit.components2.Base.prototype = {
     attachMouseOverEvent: function () {
+        var self = this;
         $liveedit(document).on('mouseover', this.selector, function (event) {
             var $component = $liveedit(this);
             var componentIsDescendantOfSelected = $component.parents('.live-edit-selected-component').length === 1;
-            var disableHover = componentIsDescendantOfSelected || AdminLiveEdit.ui.DragDrop.isDragging();
+            // TODO: Get isDragging
+            //var disableHover = componentIsDescendantOfSelected || AdminLiveEdit.ui.DragDrop.isDragging();
+            var disableHover = componentIsDescendantOfSelected;
             if (disableHover) {
                 return;
             }
             event.stopPropagation();
 
-            $liveedit.publish('/page/component/highlight', [$component]);
+            $liveedit.publish('/page/component/highlight', [$component, self.highlightColor]);
         });
     },
 

@@ -3,60 +3,12 @@
     // Map jQuery served with Live Edit
     window.$liveedit = $.noConflict(true);
 
-    // Namespaces
+    // Root Namespace
     if (!window.AdminLiveEdit) {
         window.AdminLiveEdit = {};
-        window.AdminLiveEdit.components = {};
-        window.AdminLiveEdit.ui = {};
-        window.AdminLiveEdit.ui2 = {};
     }
 
     $liveedit(document).ready(function () {
-        var scripts = [
-            'Util',
-            'PubSub',
-            'components2.Base',
-            'components2.Page',
-            'components2.Regions',
-            'components2.Windows',
-            'components2.Contents',
-            'components2.Paragraphs',
-            'ui2.Base',
-            'ui2.Button',
-            'ui2.ComponentMenu',
-            'ui2.Highlighter',
-            'ui2.SelectedComponent',
-            'ui2.ToolTip',
-            'ui2.InfoTip',
-            'ui.DragDrop',
-            'PageLeave'
-        ];
-
-
-        function loadScripts(index) {
-            var fileName = scripts[index].replace(/\./g, '/');
-            console.log('Load: ' + fileName);
-            $liveedit.getScript('../live-edit/js/' + fileName + '.js', function () {
-                index++;
-                if (index < scripts.length) {
-                    loadScripts(index);
-                } else {
-                    // Finish loading all scripts, execute.
-                    var j = 0,
-                        script;
-                    for (j = 0; j < scripts.length; j++) {
-                        script = eval('AdminLiveEdit.' + scripts[j]);
-                        if (script && script.init) {
-                            script.init();
-                        }
-                    }
-                }
-            });
-        }
-
-
-
-
 
         // *******************************************************************************************************************************//
         // Experiment: Simple replace all A href's on page in order to not navigate if a link is clicked.
@@ -73,7 +25,19 @@
         });
         // *******************************************************************************************************************************//
 
-        loadScripts(0);
+        var page = new AdminLiveEdit.components2.Page();
+        var regions = new AdminLiveEdit.components2.Regions();
+        var windows = new AdminLiveEdit.components2.Windows();
+        var contents = new AdminLiveEdit.components2.Contents();
+        var paragraphs = new AdminLiveEdit.components2.Paragraphs();
+        var highlighter = new AdminLiveEdit.ui2.Highlighter();
+        var selectedComponent = new AdminLiveEdit.ui2.SelectedComponent();
+
+        var infoTip = new AdminLiveEdit.ui2.InfoTip();
+        var toolTip = new AdminLiveEdit.ui2.ToolTip();
+        var componentMenu = new AdminLiveEdit.ui2.ComponentMenu();
+
+
     });
 
 }(window));

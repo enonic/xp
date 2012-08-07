@@ -1,17 +1,36 @@
 (function () {
-    var regions = AdminLiveEdit.components.Regions = function () {
+    var regions = AdminLiveEdit.components2.Regions = function () {
         this.selector = '[data-live-edit-type=region]';
+        this.highlightColor = '#141414';
+        this.renderEmptyPlaceholders();
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();
         this.attachClickEvent();
     };
     // Inherit from Base prototype
-    regions.prototype = new AdminLiveEdit.components.Base();
+    regions.prototype = new AdminLiveEdit.components2.Base();
+
+    // Fix constructor as it now is Base
     regions.constructor = regions;
 
     var p = regions.prototype;
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+
+    p.registerSubscribers = function () {
+        var self = this;
+        $liveedit.subscribe('/page/component/sortupdate', function () {
+            self.renderEmptyPlaceholders.call(self);
+        });
+        $liveedit.subscribe('/page/component/sortupdate', function () {
+            self.renderEmptyPlaceholders.call(self);
+        });
+        $liveedit.subscribe('/page/component/dragover', function () {
+            self.renderEmptyPlaceholders.call(self);
+        });
+    };
+
 
     p.appendEmptyPlaceholder = function ($region) {
         var $placeholder = $liveedit('<div/>', {
@@ -35,24 +54,16 @@
 
 
     p.renderEmptyPlaceholders = function () {
-        var t = this;
-        t.removeAllRegionPlaceholders();
-        var $regions = t.getAll();
+        var self = this;
+        self.removeAllRegionPlaceholders();
+        var $regions = self.getAll();
         $regions.each(function (index) {
             var $region = $liveedit(this);
-            var regionIsEmpty = t.isRegionEmpty($region);
+            var regionIsEmpty = self.isRegionEmpty($region);
             if (regionIsEmpty) {
-                t.appendEmptyPlaceholder($region);
+                self.appendEmptyPlaceholder($region);
             }
         });
-    };
-
-
-    p.registerSubscribers = function () {
-        var t = this;
-        $liveedit.subscribe('/page/component/sortupdate', t.renderEmptyPlaceholders);
-        $liveedit.subscribe('/page/component/sortupdate', t.renderEmptyPlaceholders);
-        $liveedit.subscribe('/page/component/dragover', t.renderEmptyPlaceholders);
     };
 
 }());

@@ -3,8 +3,8 @@
     var toolTip = AdminLiveEdit.ui2.ToolTip = function () {
         this.OFFSET_X = 15;
         this.OFFSET_Y = 15;
-
         this.create();
+        this.registerSubscribers();
     };
 
     // Inherits ui.Base
@@ -23,6 +23,14 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 
+    p.registerSubscribers = function () {
+        var self = this;
+        $liveedit.subscribe('/page/component/select', function() {
+            self.hide.call(self);
+        });
+    };
+
+
     p.create = function () {
         var html ='<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
                   '    <img src="../live-edit/images/component_blue.png" style="padding-right: 7px; vertical-align: top"/>' +
@@ -32,43 +40,39 @@
         this.createElement(html);
         this.appendTo($liveedit('body'));
         this.attachEventListeners();
-        this.registerSubscribers();
     };
 
 
-    p.registerSubscribers = function () {
-        $liveedit.subscribe('/page/component/select', this.hide);
-    };
-
-
-    p.updateIcon = function (componentType) {
+    p.setIcon = function (componentType) {
         this.getEl().find('img').attr('src', util.getIconForComponent(componentType));
     };
 
 
-    p.updateText = function (text) {
+    p.setText = function (text) {
         this.getEl().find('.live-edit-tool-tip-text').text(text);
     };
 
 
     p.attachEventListeners = function () {
-        var t = this;
+        var self = this;
 
         $liveedit(document).on('mousemove', '[data-live-edit-type]', function (event) {
             var $component = $liveedit(event.target).closest('[data-live-edit-type]');
             var type = util.getTypeFromComponent($component);
             var name = util.getNameFromComponent($component);
-            var pos = t.resolvePosition(event);
+            var pos = self.resolvePosition(event);
 
-            t.getEl().css({
+            self.getEl().css({
                 top: pos.y,
                 left: pos.x
             });
-            t.updateIcon(type);
-            t.updateText(name);
+            self.setIcon(type);
+            self.setText(name);
         });
 
-        $liveedit(document).on('mouseout', t.hide.call(t));
+        $liveedit(document).on('mouseout', function() {
+            self.hide.call(self);
+        });
     };
 
 
