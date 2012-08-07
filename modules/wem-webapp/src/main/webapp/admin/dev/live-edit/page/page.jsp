@@ -191,6 +191,7 @@
 
             <!-- Region -->
             <div id="center" class="column clearfix" data-live-edit-type="region" data-live-edit-key="55" data-live-edit-name="Center">
+              <%@ include file="components/window-flash.html" %>
 
             </div>
 
