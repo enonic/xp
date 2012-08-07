@@ -9,6 +9,8 @@ AdminLiveEdit.ui2.Base = function () {
 
 // Methods
 AdminLiveEdit.ui2.Base.prototype = {
+    blankImage: 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==',
+
     createElement: function (htmlString) {
         var $element = $liveedit(htmlString);
         $element.attr('id', 'live-edit-cmp-' + AdminLiveEdit.Util.createGUID());

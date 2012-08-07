@@ -26,7 +26,7 @@ AdminLiveEdit.ui.DragDrop = (function () {
 
 
     function updateHelperStatusIcon(status) {
-        $liveedit('#live-edit-drag-helper-status-icon').attr('src', '../live-edit/images/drop-' + status + '.gif');
+        $liveedit('#live-edit-drag-helper-status-icon').attr('src', '../resources/images/drop-' + status + '.gif');
     }
 
 

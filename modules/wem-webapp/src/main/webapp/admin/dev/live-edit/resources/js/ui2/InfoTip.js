@@ -33,7 +33,7 @@
 
     p.create = function () {
         var html = '<div class="live-edit-info-tip" style="top:-5000px; left:-5000px;">' +
-                   '    <img src="../live-edit/images/component_blue.png" style="padding-right: 7px; vertical-align: top"/>' + // TODO: Create a class
+                   '    <img src="' + this.blankImage + '" style="padding-right: 7px; vertical-align: top"/>' + // TODO: Create a class
                    '    <span class="live-edit-info-tip-name-text"><!-- --></span>' +
                    '    <div class="live-edit-info-tip-arrow-border"></div>' +
                    '    <div class="live-edit-info-tip-arrow"></div>' +

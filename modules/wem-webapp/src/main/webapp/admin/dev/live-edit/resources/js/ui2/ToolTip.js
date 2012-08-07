@@ -33,7 +33,7 @@
 
     p.create = function () {
         var html ='<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
-                  '    <img src="../live-edit/images/component_blue.png" style="padding-right: 7px; vertical-align: top"/>' +
+                  '    <img src="' + this.blankImage + '" style="padding-right: 7px; vertical-align: top"/>' +
                   '    <span class="live-edit-tool-tip-text"><!-- --></span>' +
                   '</div>';
 

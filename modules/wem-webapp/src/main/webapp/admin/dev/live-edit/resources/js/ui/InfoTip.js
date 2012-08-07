@@ -44,7 +44,7 @@ AdminLiveEdit.ui.InfoTip = (function () {
 
     function createInfoTip() {
         var $infoTip = $liveedit('<div id="live-edit-info-tip" style="top:-5000px; left:-5000px;">' +
-                                 '<img src="../live-edit/images/component_blue.png" style="padding-right: 7px; vertical-align: top"/>' + // TODO: Create a class
+                                 '<img src="../resources/images/component_blue.png" style="padding-right: 7px; vertical-align: top"/>' + // TODO: Create a class
                                  '<span id="live-edit-info-tip-name-text"><!-- --></span>' +
                                  '<div id="live-edit-info-tip-arrow-border"></div><div id="live-edit-info-tip-arrow"></div></div>');
         $liveedit('body').append($infoTip);

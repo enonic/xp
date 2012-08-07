@@ -177,7 +177,6 @@ svg.live-edit-selected-border rect {
 /*** Info tip */
 
 .live-edit-info-tip {
-    /*<img src="../live-edit/images/component_blue.png" style="padding-right: 7px; vertical-align: top"/>*/
     cursor: default;
     padding: 5px 15px 5px 15px;
     text-align: center;

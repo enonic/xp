@@ -19,7 +19,7 @@ AdminLiveEdit.ui.ToolTip = (function () {
 
     function createToolTip() {
         var $toolTip = $liveedit('<div id="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
-                                 '<img src="../live-edit/images/component_blue.png" style="padding-right: 7px; vertical-align: top"/>' +
+                                 '<img src="../resources/images/component_blue.png" style="padding-right: 7px; vertical-align: top"/>' +
                                  '<span id="live-edit-tool-tip-text"><!-- --></span>' +
                                  '</div>');
         $liveedit('body').append($toolTip);

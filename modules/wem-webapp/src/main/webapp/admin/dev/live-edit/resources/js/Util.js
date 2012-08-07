@@ -75,19 +75,19 @@ AdminLiveEdit.Util = (function () {
             var icon = '';
             switch (componentType) {
             case 'region':
-                icon = '../live-edit/images/layout_vertical.png';
+                icon = '../resources/images/layout_vertical.png';
                 break;
             case 'window':
-                icon = '../live-edit/images/component_blue.png';
+                icon = '../resources/images/component_blue.png';
                 break;
             case 'content':
-                icon = '../live-edit/images/data_blue.png';
+                icon = '../resources/images/data_blue.png';
                 break;
             case 'paragraph':
-                icon = '../live-edit/images/text_rich_marked.png';
+                icon = '../resources/images/text_rich_marked.png';
                 break;
             case 'page':
-                icon = '../live-edit/images/document_plain_blue.png';
+                icon = '../resources/images/document_plain_blue.png';
                 break;
             default:
                 icon = '';
