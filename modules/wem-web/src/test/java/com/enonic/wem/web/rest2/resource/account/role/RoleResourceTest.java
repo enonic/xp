@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.resource.account.group;
+package com.enonic.wem.web.rest2.resource.account.role;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,58 +18,77 @@ import com.enonic.cms.core.security.user.UserType;
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
 import com.enonic.cms.store.dao.GroupDao;
 
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
-public class GroupResourceTest
+public class RoleResourceTest
     extends AbstractResourceTest
 {
     private GroupDao groupDao;
 
-    private GroupResource groupResource;
+    private RoleResource roleResource;
 
     @Before
     public void setUp()
         throws Exception
     {
         groupDao = Mockito.mock( GroupDao.class );
-        groupResource = new GroupResource();
-        groupResource.setGroupDao( groupDao );
+        roleResource = new RoleResource();
+        roleResource.setGroupDao( groupDao );
     }
 
     @Test
     public void testGetInfo()
         throws Exception
     {
-        GroupEntity group = createGroup( "BDA046019C23F8A3BCDFB9360E77375BB4BBBEC4" );
+        GroupEntity group = createRole( "BDA046019C23F8A3BCDFB9360E77375BB4BBBEC4" );
         Mockito.when( groupDao.find( "BDA046019C23F8A3BCDFB9360E77375BB4BBBEC4" ) ).thenReturn( group );
 
-        GroupResult info = groupResource.getInfo( "BDA046019C23F8A3BCDFB9360E77375BB4BBBEC4" );
+        RoleResult info = roleResource.getInfo( "BDA046019C23F8A3BCDFB9360E77375BB4BBBEC4" );
 
-        assertJsonResult( "group_detail.json", info );
+        assertJsonResult( "role_detail.json", info );
 
     }
 
     @Test
-    public void testMissingGroup()
+    public void testMissingRole()
         throws Exception
     {
         Mockito.when( groupDao.find( "BDA046019C23F8A3BCDFB9360E77375BB4BBBEC4" ) ).thenReturn( null );
 
-        GroupResult info = groupResource.getInfo( "BDA046019C23F8A3BCDFB9360E77375BB4BBBEC4" );
+        RoleResult info = roleResource.getInfo( "BDA046019C23F8A3BCDFB9360E77375BB4BBBEC4" );
         assertNull( info );
     }
 
-    private GroupEntity createGroup( final String key )
+    @Test
+    public void testGetInfoGroup()
+        throws Exception
+    {
+        final GroupEntity group = new GroupEntity();
+        group.setKey( new GroupKey( "007B84CC2EF921EFFA9272735F98162D78006929" ) );
+        group.setType( GroupType.USERSTORE_GROUP );
+        group.setUserStore( createUserstore( "enonic" ) );
+        group.setName( "group1" );
+        group.setDescription( "Group One" );
+        group.setDeleted( false );
+
+        Mockito.when( groupDao.find( "007B84CC2EF921EFFA9272735F98162D78006929" ) ).thenReturn( group );
+
+        RoleResult info = roleResource.getInfo( "007B84CC2EF921EFFA9272735F98162D78006929" );
+        assertNull( info );
+    }
+
+    private GroupEntity createRole( final String key )
         throws Exception
     {
         GroupEntity group = new GroupEntity();
 
         group.setKey( new GroupKey( key ) );
-        group.setType( GroupType.USERSTORE_GROUP );
+        group.setType( GroupType.USERSTORE_ADMINS );
         group.setUserStore( createUserstore( "enonic" ) );
-        group.setName( "dummygroup" );
-        group.setDescription( "Dummygroup description" );
+        group.setName( "Userstore admins" );
+        group.setDescription( "Userstore Administrators" );
         group.setMembers( createMembers() );
+        group.isBuiltIn();
 
         return group;
     }
@@ -88,10 +107,10 @@ public class GroupResourceTest
 
         final GroupEntity group2 = new GroupEntity();
         group2.setKey( new GroupKey( "CD4BD95895F1813D7AE18FAC595CEEB43C625089" ) );
-        group2.setType( GroupType.USERSTORE_GROUP );
+        group2.setType( GroupType.ENTERPRISE_ADMINS );
         group2.setUserStore( createUserstore( "enonic" ) );
-        group2.setName( "group2" );
-        group2.setDescription( "Group Two" );
+        group2.setName( "admins" );
+        group2.setDescription( "Enterprise administrators" );
         group2.setDeleted( false );
         members.add( group2 );
 
