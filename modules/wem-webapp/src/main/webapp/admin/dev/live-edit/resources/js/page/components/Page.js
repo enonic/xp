@@ -1,18 +1,18 @@
 (function () {
-    var paragraphs = AdminLiveEdit.components2.Paragraphs = function () {
-        this.selector = '[data-live-edit-type=paragraph]';
+    var page = AdminLiveEdit.page.components.Page = function () {
+        this.selector = '[data-live-edit-type=page]';
         this.highlightColor = '#141414';
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();
         this.attachClickEvent();
     };
     // Inherit from Base prototype
-    paragraphs.prototype = new AdminLiveEdit.components2.Base();
+    page.prototype = new AdminLiveEdit.page.components.Base;
 
     // Fix constructor as it now is Base
-    paragraphs.constructor = paragraphs;
+    page.constructor = page;
 
-    var p = paragraphs.prototype;
+    var p = page.prototype;
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 

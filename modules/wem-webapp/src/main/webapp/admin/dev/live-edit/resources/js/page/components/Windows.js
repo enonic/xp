@@ -1,5 +1,5 @@
 (function () {
-    var windows = AdminLiveEdit.components2.Windows = function () {
+    var windows = AdminLiveEdit.page.components.Windows = function () {
         this.selector = '[data-live-edit-type=window]';
         this.highlightColor = '#141414';
         this.renderEmptyPlaceholders();
@@ -8,7 +8,7 @@
         this.attachClickEvent();
     };
     // Inherit from Base prototype
-    windows.prototype = new AdminLiveEdit.components2.Base();
+    windows.prototype = new AdminLiveEdit.page.components.Base();
 
     // Fix constructor as it now is Base
     windows.constructor = windows;

@@ -27,11 +27,11 @@
 
         // TODO: Remove timeout when loader splash(CMS-29) is accepted.
         setTimeout(function() {
-            var page = new AdminLiveEdit.components2.Page();
-            var regions = new AdminLiveEdit.components2.Regions();
-            var windows = new AdminLiveEdit.components2.Windows();
-            var contents = new AdminLiveEdit.components2.Contents();
-            var paragraphs = new AdminLiveEdit.components2.Paragraphs();
+            var page = new AdminLiveEdit.page.components.Page();
+            var regions = new AdminLiveEdit.page.components.Regions();
+            var windows = new AdminLiveEdit.page.components.Windows();
+            var contents = new AdminLiveEdit.page.components.Contents();
+            var paragraphs = new AdminLiveEdit.page.components.Paragraphs();
             var highlighter = new AdminLiveEdit.ui2.Highlighter();
             var selectedComponent = new AdminLiveEdit.ui2.SelectedComponent();
             var infoTip = new AdminLiveEdit.ui2.InfoTip();

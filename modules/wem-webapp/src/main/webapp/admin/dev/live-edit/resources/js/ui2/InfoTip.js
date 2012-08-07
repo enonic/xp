@@ -61,7 +61,7 @@
 
         var componentBoxModel = util.getBoxModel($component);
         var top = componentBoxModel.top - 50;
-        var left = componentBoxModel.left + (componentBoxModel.width / 2) - ($infoTip.width() / 2);
+        var left = componentBoxModel.left + (componentBoxModel.width / 2) - (this.getEl().width() / 2);
         $infoTip.css({
             top: top + 12,
             left: left
