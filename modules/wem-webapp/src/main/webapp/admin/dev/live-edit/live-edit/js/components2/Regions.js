@@ -42,7 +42,7 @@
 
 
     p.isRegionEmpty = function ($region) {
-        var hasNotWindows = $region.children(this.selector + ':not(:hidden)').length === 0;
+        var hasNotWindows = $region.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
         var hasNotDropTargetPlaceholder = $region.children('.live-edit-drop-target-placeholder').length === 0;
         return hasNotWindows && hasNotDropTargetPlaceholder;
     };
@@ -59,9 +59,9 @@
         var $regions = self.getAll();
         $regions.each(function (index) {
             var $region = $liveedit(this);
-            var regionIsEmpty = self.isRegionEmpty($region);
+            var regionIsEmpty = self.isRegionEmpty.call(self, $region);
             if (regionIsEmpty) {
-                self.appendEmptyPlaceholder($region);
+                self.appendEmptyPlaceholder.call(self, $region);
             }
         });
     };
