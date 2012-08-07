@@ -3,7 +3,7 @@
 */
 
 /*** Reset */
-.live-edit-loader-splash-shader,
+.live-edit-loader-splash-container,
 .live-edit-loader-splash-content,
 .live-edit-loader-splash-content div,
 svg.live-edit-highlighter,
@@ -80,19 +80,18 @@ a { pointer-events: none; }
 	100% { transform:rotate(360deg); }
 }
 
-.live-edit-loader-splash-shader,
 .live-edit-loader-splash-content {
     cursor: progress !important;
 }
 
-.live-edit-loader-splash-shader {
+.live-edit-loader-splash-container {
     position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
+    opacity: 0.9;
     background-color: #141414;
-    opacity: .9;
     z-index: 2000000;
 }
 
