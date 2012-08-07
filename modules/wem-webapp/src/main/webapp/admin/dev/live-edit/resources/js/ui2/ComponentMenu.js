@@ -45,6 +45,7 @@
         $liveedit.subscribe('/page/component/sortstart', function() {
             self.fadeOutAndHide.call(self);
         });
+
     };
 
 
@@ -58,14 +59,21 @@
 
 
     p.show = function (event, $component) {
-        var componentType = util.getTypeFromComponent($component);
-        this.getMenuForComponent(componentType);
+        this.getMenuForComponent($component);
         this.moveToComponent($component);
+        this.getEl().show();
     };
 
 
     p.hide = function () {
         this.getEl().css({ top: '-5000px', left: '-5000px', right: '' });
+    };
+
+
+    p.fadeOutAndHide = function () {
+        this.getEl().fadeOut(500, function () {
+            $liveedit.publish('/page/component/deselect');
+        });
     };
 
 
@@ -86,7 +94,8 @@
     };
 
 
-    p.getMenuForComponent = function (componentType) {
+    p.getMenuForComponent = function ($component) {
+        var componentType = util.getTypeFromComponent($component);
         if (this.buttonConfig.hasOwnProperty(componentType)) {
             var buttonArray = this.buttonConfig[componentType];
             var buttons = this.getButtons();
@@ -251,13 +260,5 @@
             self.buttons[i].appendTo(self.getEl());
         }
     };
-
-
-    p.fadeOutAndHide = function () {
-        this.getEl().fadeOut(500, function () {
-            $liveedit.publish('/page/component/deselect');
-        });
-    };
-
 
 }());

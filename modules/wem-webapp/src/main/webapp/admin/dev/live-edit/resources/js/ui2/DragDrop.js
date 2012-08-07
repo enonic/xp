@@ -76,7 +76,6 @@ AdminLiveEdit.ui2.DragDrop = (function () {
             $liveedit.publish('/page/component/hide-highlighter');
         }
 
-        // disableDragDrop();
         $liveedit.publish('/page/component/sortstop', [event, ui]);
     }
 

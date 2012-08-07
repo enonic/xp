@@ -27,12 +27,15 @@
         $liveedit.subscribe('/page/component/select', function(event, $component) {
             self.select.call(self, event, $component);
         });
+
         $liveedit.subscribe('/page/component/select-parent', function() {
             self.selectParent.call(self);
         });
+
         $liveedit.subscribe('/page/component/deselect', function () {
             self.deselect.call(self);
         });
+
         $liveedit.subscribe('/page/component/sortstop', function (event, uiEvent, ui) {
             $liveedit.publish('/page/component/select', [ui.item]);
         });
