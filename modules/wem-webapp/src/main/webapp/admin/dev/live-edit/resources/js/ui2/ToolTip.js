@@ -78,6 +78,12 @@
             self.setText(name);
         });
 
+        $liveedit(document).on('hover', '[data-live-edit-type]', function(event) {
+            if (event.type === 'mouseenter') {
+                self.getEl().hide().fadeIn(300);
+            }
+        });
+
         $liveedit(document).on('mouseout', function() {
             self.hide.call(self);
         });
