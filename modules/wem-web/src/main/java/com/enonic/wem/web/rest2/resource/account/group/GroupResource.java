@@ -1,6 +1,5 @@
 package com.enonic.wem.web.rest2.resource.account.group;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -13,6 +12,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.group.GroupType;
@@ -36,14 +37,14 @@ public final class GroupResource
         }
         else
         {
-            final Collection members = getGroupMembers( groupEntity );
+            final Collection<Object> members = getGroupMembers( groupEntity );
             return new GroupResult( groupEntity, members );
         }
     }
 
-    private Collection getGroupMembers( final GroupEntity groupEntity )
+    private Collection<Object> getGroupMembers( final GroupEntity groupEntity )
     {
-        final List members = new ArrayList();
+        final List<Object> members = Lists.newArrayList();
         final Set<GroupEntity> memberGroups = groupEntity.getMembers( false );
         for ( GroupEntity memberGroup : memberGroups )
         {

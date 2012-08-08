@@ -23,9 +23,9 @@ public final class GroupResult
 
     private final GroupEntity group;
 
-    private final Collection members;
+    private final Collection<Object> members;
 
-    public GroupResult( final GroupEntity group, final Collection members )
+    public GroupResult( final GroupEntity group, final Collection<Object> members )
     {
         this.group = group;
         this.members = members;
