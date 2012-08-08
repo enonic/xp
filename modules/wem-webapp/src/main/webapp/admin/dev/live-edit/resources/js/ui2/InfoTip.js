@@ -22,11 +22,11 @@
 
     p.registerSubscribers = function () {
         var self = this;
-        $liveedit.subscribe('/page/component/select', function(event, $component) {
-            self.moveToComponent.call(self, event, $component);
+        $liveedit.subscribe('/page/component/select', function ($component) {
+            self.moveToComponent.call(self, $component);
         });
 
-        $liveedit.subscribe('/page/component/deselect', function() {
+        $liveedit.subscribe('/page/component/deselect', function () {
             self.hide.call(self);
         });
     };
@@ -50,7 +50,7 @@
     };
 
 
-    p.moveToComponent = function (event, $component) {
+    p.moveToComponent = function ($component) {
         var $infoTip = this.getEl();
         var componentName = util.getNameFromComponent($component);
         var componentType = util.getTypeFromComponent($component);

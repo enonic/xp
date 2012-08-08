@@ -3,11 +3,11 @@
     var componentMenu = AdminLiveEdit.ui2.ComponentMenu = function () {
         this.buttons = [];
         this.buttonConfig = {
-            'page'      : ['settings'],
-            'region'    : ['parent', 'insert', 'reset', 'empty'],
-            'window'    : ['parent', 'drag', 'settings', 'remove'],
-            'content'   : ['parent', 'view', 'edit'],
-            'paragraph' : ['parent', 'edit']
+            'page': ['settings'],
+            'region': ['parent', 'insert', 'reset', 'empty'],
+            'window': ['parent', 'drag', 'settings', 'remove'],
+            'content': ['parent', 'view', 'edit'],
+            'paragraph': ['parent', 'edit']
         };
 
         this.create();
@@ -31,18 +31,18 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 
-    p.registerSubscribers = function() {
+    p.registerSubscribers = function () {
         var self = this;
 
-        $liveedit.subscribe('/page/component/select', function (event, $component) {
-            self.show.call(self, event, $component);
+        $liveedit.subscribe('/page/component/select', function ($component) {
+            self.show.call(self, $component);
         });
 
-        $liveedit.subscribe('/page/component/deselect', function() {
+        $liveedit.subscribe('/page/component/deselect', function () {
             self.hide.call(self);
         });
 
-        $liveedit.subscribe('/page/component/sortstart', function() {
+        $liveedit.subscribe('/page/component/sortstart', function () {
             self.fadeOutAndHide.call(self);
         });
 
@@ -58,7 +58,7 @@
     };
 
 
-    p.show = function (event, $component) {
+    p.show = function ($component) {
         this.getMenuForComponent($component);
         this.moveToComponent($component);
         this.getEl().show();
@@ -77,7 +77,7 @@
     };
 
 
-    p.moveToComponent = function($component) {
+    p.moveToComponent = function ($component) {
         var componentBoxModel = util.getBoxModel($component);
         var menuTopPos = Math.round(componentBoxModel.top),
             menuLeftPos = Math.round(componentBoxModel.left + componentBoxModel.width),
@@ -100,7 +100,8 @@
             var buttonArray = this.buttonConfig[componentType];
             var buttons = this.getButtons();
 
-            for (var i = 0; i < buttons.length; i++) {
+            var i;
+            for (i = 0; i < buttons.length; i++) {
                 var $button = buttons[i].getEl();
                 var id = $button.attr('data-live-edit-cmp-id');
                 var subStr = id.substring(id.lastIndexOf('-') + 1, id.length);

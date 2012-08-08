@@ -24,11 +24,11 @@
 
     p.registerSubscribers = function () {
         var self = this;
-        $liveedit.subscribe('/page/component/select', function(event, $component) {
-            self.select.call(self, event, $component);
+        $liveedit.subscribe('/page/component/select', function ($component) {
+            self.select.call(self, $component);
         });
 
-        $liveedit.subscribe('/page/component/select-parent', function() {
+        $liveedit.subscribe('/page/component/select-parent', function () {
             self.selectParent.call(self);
         });
 
@@ -36,7 +36,7 @@
             self.deselect.call(self);
         });
 
-        $liveedit.subscribe('/page/component/sortstop', function (event, uiEvent, ui) {
+        $liveedit.subscribe('/page/component/sortstop', function (uiEvent, ui) {
             $liveedit.publish('/page/component/select', [ui.item]);
         });
     };
@@ -81,7 +81,7 @@
     };
 
 
-    p.select = function (event, $component) {
+    p.select = function ($component) {
         var $el = this.getEl();
         var $borderRect = $el.find('rect');
         var componentBoxModel = util.getBoxModel($component);

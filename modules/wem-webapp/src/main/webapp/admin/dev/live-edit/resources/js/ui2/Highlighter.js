@@ -23,8 +23,8 @@
 
     p.registerSubscribers = function () {
         var self = this;
-        $liveedit.subscribe('/page/component/highlight', function (event, $component, borderColor) {
-            self.highlight.call(self, event, $component, borderColor);
+        $liveedit.subscribe('/page/component/highlight', function ($component, borderColor) {
+            self.highlight.call(self, $component, borderColor);
         });
 
         $liveedit.subscribe('/page/component/hide-highlighter', function () {
@@ -42,7 +42,7 @@
     };
 
 
-    p.highlight = function (event, $component, borderColor) {
+    p.highlight = function ($component, borderColor) {
         var componentType = util.getTypeFromComponent($component);
         var componentTagName = util.getTagNameForComponent($component);
         var componentBoxModel = util.getBoxModel($component);

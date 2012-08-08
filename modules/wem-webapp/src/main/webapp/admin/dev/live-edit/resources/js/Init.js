@@ -3,55 +3,12 @@
     // Map jQuery served with Live Edit
     window.$liveedit = $.noConflict(true);
 
-    // Namespaces
+    // Root Namespace
     if (!window.AdminLiveEdit) {
         window.AdminLiveEdit = {};
-        window.AdminLiveEdit.components = {};
-        window.AdminLiveEdit.ui = {};
     }
 
     $liveedit(document).ready(function () {
-        var scripts = [
-            'Util',
-            'PubSub',
-            'components.PageComponent',
-            'components.WindowComponents',
-            'components.RegionComponents',
-            'components.ParagraphComponents',
-            'components.ContentComponents',
-            'ui.Highlighter',
-            'ui.InfoTip',
-            'ui.ToolTip',
-            'ui.Button',
-            'ui.ContextMenu',
-            'ui.DragDrop',
-            'PageLeave'
-        ];
-
-
-        function loadScripts(index) {
-            console.log('Load: ' + scripts[index].replace(/\./g, '/'));
-            $liveedit.getScript('../live-edit/js/' + scripts[index].replace(/\./g, '/') + '.js', function () {
-                index++;
-                if (index < scripts.length) {
-                    loadScripts(index);
-                } else {
-                    // Finish loading all scripts, execute.
-                    var j = 0,
-                        script;
-                    for (j = 0; j < scripts.length; j++) {
-                        script = eval('AdminLiveEdit.' + scripts[j]);
-                        if (script && script.init) {
-                            script.init();
-                        }
-                    }
-                }
-            });
-        }
-
-
-
-
 
         // *******************************************************************************************************************************//
         // Experiment: Simple replace all A href's on page in order to not navigate if a link is clicked.
@@ -68,7 +25,25 @@
         });
         // *******************************************************************************************************************************//
 
-        loadScripts(0);
+        // TODO: Remove timeout when loader splash(CMS-29) is accepted.
+        setTimeout(function() {
+            var page = new AdminLiveEdit.page.components.Page();
+            var regions = new AdminLiveEdit.page.components.Regions();
+            var windows = new AdminLiveEdit.page.components.Windows();
+            var contents = new AdminLiveEdit.page.components.Contents();
+            var paragraphs = new AdminLiveEdit.page.components.Paragraphs();
+            var highlighter = new AdminLiveEdit.ui2.Highlighter();
+            var selectedComponent = new AdminLiveEdit.ui2.SelectedComponent();
+            var infoTip = new AdminLiveEdit.ui2.InfoTip();
+            var toolTip = new AdminLiveEdit.ui2.ToolTip();
+            var componentMenu = new AdminLiveEdit.ui2.ComponentMenu();
+
+            AdminLiveEdit.ui2.DragDrop.init();
+
+            $liveedit('.live-edit-loader-splash-container').remove();
+
+        }, 1000);
+
     });
 
 }(window));
