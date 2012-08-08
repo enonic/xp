@@ -20,7 +20,7 @@ AdminLiveEdit.ui2.DragDrop = (function () {
 
     function createDragHelper(event, helper) {
         // Inline style is needed in order to keep the width and height while draging an item.
-        return $liveedit('<div id="live-edit-drag-helper" style="width: 150px; height: 16px; padding: 6px 8px 6px 8px"><img id="live-edit-drag-helper-status-icon" src="../live-edit/images/drop-yes.gif"/>' +
+        return $liveedit('<div id="live-edit-drag-helper" style="width: 150px; height: 16px; padding: 6px 8px 6px 8px"><img id="live-edit-drag-helper-status-icon" src="../live-edit/resources/drop-yes.gif"/>' +
                          util.getNameFromComponent(helper) + '</div>');
     }
 
@@ -31,7 +31,7 @@ AdminLiveEdit.ui2.DragDrop = (function () {
 
 
     function updateHelperStatusIcon(status) {
-        $liveedit('#live-edit-drag-helper-status-icon').attr('src', '../resources/images/drop-' + status + '.gif');
+        $liveedit('#live-edit-drag-helper-status-icon').attr('src', '../resources/resources/drop-' + status + '.gif');
     }
 
 
