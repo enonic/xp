@@ -15,7 +15,7 @@ AdminLiveEdit.ui2.Base.prototype = {
         var $element = $liveedit(htmlString);
         $element.attr('id', 'live-edit-cmp-' + AdminLiveEdit.Util.createGUID());
         this.$element = $element;
-        console.log(AdminLiveEdit.ui2.Base.prototype.counter);
+
         return this.$element;
     },
 
