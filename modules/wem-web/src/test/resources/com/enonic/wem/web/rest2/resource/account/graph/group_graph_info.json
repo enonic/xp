@@ -4,7 +4,7 @@
             "id": "1343213539380_E34B614B26C666AA9929F90EF3FA723B3DAAAAB2",
             "name": "Togservice",
             "data": {
-                "builtIn": "false",
+                "builtIn": false,
                 "type": "group",
                 "key": "E34B614B26C666AA9929F90EF3FA723B3DAAAAB2",
                 "name": "Togservice"
@@ -17,12 +17,12 @@
         },
         {
             "id": "1343213539380_E34B614B26C666AA9929F90EF3FA723B3DAAAAB2_4DCC2040F37F8129E31231268691DBD88473747C",
-            "name": "magne",
+            "name": "Magne Magnesson",
             "data": {
-                "builtIn": "false",
+                "builtIn": false,
                 "type": "user",
                 "key": "4DCC2040F37F8129E31231268691DBD88473747C",
-                "name": "Togservice"
+                "name": "magne"
             }
         }
     ]

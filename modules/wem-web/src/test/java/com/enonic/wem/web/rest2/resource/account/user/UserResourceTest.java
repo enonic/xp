@@ -34,6 +34,7 @@ public class UserResourceTest
 
     private UserResource userResource;
 
+
     @Before
     public void setUp()
         throws Exception
@@ -66,6 +67,7 @@ public class UserResourceTest
         assertJsonResult( "user_detail.json", info );
 
     }
+
 
     private BufferedImage readPhoto()
         throws IOException
@@ -120,4 +122,6 @@ public class UserResourceTest
         userstore.setName( name );
         return userstore;
     }
+
+
 }

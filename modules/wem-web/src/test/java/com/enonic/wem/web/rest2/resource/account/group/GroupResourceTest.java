@@ -18,7 +18,7 @@ import com.enonic.cms.core.security.user.UserType;
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
 import com.enonic.cms.store.dao.GroupDao;
 
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class GroupResourceTest
     extends AbstractResourceTest
@@ -33,7 +33,7 @@ public class GroupResourceTest
     {
         groupDao = Mockito.mock( GroupDao.class );
         groupResource = new GroupResource();
-        groupResource.setGroupDao( groupDao );
+//        groupResource.setGroupDao( groupDao );
     }
 
     @Test
