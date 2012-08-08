@@ -33,7 +33,7 @@ public class GroupResourceTest
     {
         groupDao = Mockito.mock( GroupDao.class );
         groupResource = new GroupResource();
-//        groupResource.setGroupDao( groupDao );
+        groupResource.setGroupDao( groupDao );
     }
 
     @Test
