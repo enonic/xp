@@ -175,7 +175,7 @@ Ext.define('Admin.view.FilterPanel', {
 
                             facetItems.push({
                                 name: facet.name,
-                                boxLabel: field + "<span class='count'>( " + facet.terms[field] + " )</span>",
+                                boxLabel: field + "<span class='count'>(" + facet.terms[field] + ")</span>",
                                 inputValue: field
                             });
                         }

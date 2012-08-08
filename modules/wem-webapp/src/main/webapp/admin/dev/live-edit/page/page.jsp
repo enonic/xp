@@ -33,11 +33,10 @@
     <link rel="stylesheet" href="_public/skins/advanced/standard/all-_ts=12623e07168.css" type="text/css"/>
     <link rel="stylesheet" href="_public/skins/advanced/standard/pc-_ts=12f0c3b4f7e.css" type="text/css"/>
 
+    <%@ include file="live-edit/css.html" %>
 
-    <link rel="stylesheet" href="../live-edit/css/live-edit.css" type="text/css"/>
 
-
-    <!--[if lt IE 8]>
+  <!--[if lt IE 8]>
     <link rel="stylesheet" type="text/css" href="_public/sites/advanced/ie-_ts=12623b9724c.css"/><![endif]-->
 
 
@@ -110,6 +109,9 @@
 <body data-live-edit-type="page" data-live-edit-key="1867" data-live-edit-name="Home"><!--stopindex-->
 
 
+<%@ include file="live-edit/loader-splash.html" %>
+
+
 <ul id="accessibility-links" class="screen">
     <li><a href="#" accesskey="m">Go to main menu (Alt + m + enter)</a></li>
     <li><a href="#" accesskey="c">Go to main content (Alt + c + enter)</a></li>
@@ -171,7 +173,7 @@
         <!-- Region -->
         <div id="north" class="clear clearfix" data-live-edit-type="region" data-live-edit-key="70" data-live-edit-name="North">
 
-          <%@ include file="includes/window-page-banner-training.html" %>
+          <%@ include file="components/window-page-banner-training.html" %>
 
         </div>
 
@@ -182,13 +184,14 @@
             <!-- Region -->
             <div class="column clear clearfix screen" id="west" data-live-edit-type="region" data-live-edit-key="49" data-live-edit-name="West">
 
-              <%@ include file="includes/window-upcomming-training.html" %>
+              <%@ include file="components/window-upcomming-training.html" %>
 
             </div>
 
 
             <!-- Region -->
             <div id="center" class="column clearfix" data-live-edit-type="region" data-live-edit-key="55" data-live-edit-name="Center">
+              <%@ include file="components/window-flash.html" %>
 
             </div>
 
@@ -196,15 +199,15 @@
             <!-- Region -->
             <div class="column clearfix screen" id="east" data-live-edit-type="region" data-live-edit-key="31" data-live-edit-name="East">
 
-              <%@ include file="includes/window-empty.html" %>
+              <%@ include file="components/window-empty.html" %>
 
-              <%@ include file="includes/window-tagcloud.html" %>
+              <%@ include file="components/window-tagcloud.html" %>
 
-              <%@ include file="includes/window-enterprise-ed-teaser.html" %>
+              <%@ include file="components/window-enterprise-ed-teaser.html" %>
 
-              <%@ include file="includes/window-svg-html5-logo.html" %>
+              <%@ include file="components/window-svg-html5-logo.html" %>
 
-              <%@ include file="includes/window-formbuilder-example.html" %>
+              <%@ include file="components/window-formbuilder-example.html" %>
 
             </div>
 
@@ -214,7 +217,7 @@
         <!-- Region -->
         <div id="south" class="clear clearfix" data-live-edit-type="region" data-live-edit-key="99" data-live-edit-name="South">
 
-          <%@ include file="includes/window-press-release-list.html" %>
+          <%@ include file="components/window-press-release-list.html" %>
 
         </div>
 
@@ -235,8 +238,9 @@
 </div>
 
 
+
 <!-- Injected -->
-<%@ include file="includes/live-edit-scripts.html" %>
+<%@ include file="live-edit/scripts.html" %>
 
 
 

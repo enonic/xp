@@ -13,6 +13,8 @@ import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.web.rest2.service.account.user.UserGraphService;
+
 import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.store.dao.UserDao;
 
@@ -24,6 +26,8 @@ public final class UserResource
     private final PhotoHelper photoHelper;
 
     private UserDao userDao;
+
+    private UserGraphService userGraphService;
 
     public UserResource()
         throws Exception
@@ -65,5 +69,11 @@ public final class UserResource
     public void setUserDao( final UserDao userDao )
     {
         this.userDao = userDao;
+    }
+
+    @Autowired
+    public void setUserGraphService( final UserGraphService userGraphService )
+    {
+        this.userGraphService = userGraphService;
     }
 }
