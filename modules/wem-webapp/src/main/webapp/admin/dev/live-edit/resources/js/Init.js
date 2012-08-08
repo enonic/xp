@@ -37,6 +37,7 @@
             var infoTip = new AdminLiveEdit.ui2.InfoTip();
             var toolTip = new AdminLiveEdit.ui2.ToolTip();
             var componentMenu = new AdminLiveEdit.ui2.ComponentMenu();
+            var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
 
             AdminLiveEdit.ui2.DragDrop.init();
 

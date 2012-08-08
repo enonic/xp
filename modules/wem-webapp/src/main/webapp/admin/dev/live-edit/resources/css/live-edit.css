@@ -40,6 +40,7 @@ svg.live-edit-selected-border rect,
 
 #live-edit-drag-helper img { border: 0; }
 
+
 /*** Misc */
 
 * {
@@ -56,6 +57,7 @@ svg.live-edit-selected-border rect,
     Can we find a better cross browser solution that includes IE?
 */
 a { pointer-events: none; }
+
 
 /*** Loader splash */
 
@@ -120,6 +122,7 @@ a { pointer-events: none; }
     color: #bbb;
     margin-top: .7em;
 }
+
 
 /*** Cursor for components */
 
@@ -313,6 +316,7 @@ svg.live-edit-selected-border rect {
     background-position: center 5px;
 }
 
+
 /*** Button icons */
 
 .live-edit-icon-insert { background-image: url("../images/component_blue_add.png"); }
@@ -349,4 +353,18 @@ svg.live-edit-selected-border rect {
     text-align: center;
     background-color: #eee;
     margin: 1px 0 10px 0;
+}
+
+
+/*** HTML element placeholders */
+
+.live-edit-html-element-placeholder {
+    color: #444;
+    background-color: Lightgoldenrodyellow;
+}
+
+.live-edit-html-element-placeholder .live-edit-iframe {
+}
+
+.live-edit-html-element-placeholder .live-edit-flash {
 }
