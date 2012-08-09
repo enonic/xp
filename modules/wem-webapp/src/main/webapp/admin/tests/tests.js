@@ -76,8 +76,7 @@ Harness.start(
             'tests/userstore/test_UserstoreConfigModel.js',
             'tests/userstore/test_UserstoreConnectorModel.js'
         ]
-    }
-    /*,
+    },
     {
         group: 'Live Edit',
         items: [
@@ -85,16 +84,16 @@ Harness.start(
                 group: 'JS library conflicts',
                 items: [
                     {
-                        url: 'tests/liveedit/conflicts/test_jQueryNoConflict.js',
-                        hostPageUrl: 'tests/liveedit/conflicts/test_jQueryNotConflict_host.html'
+                        url: 'tests/liveedit/noconflict/test_jQueryNoConflict.js',
+                        hostPageUrl: 'tests/liveedit/noconflict/test_jQueryNoConflict_host.html'
                     },
                     {
-                        url: 'tests/liveedit/conflicts/test_mootoolsNoConflict.js',
-                        hostPageUrl: 'tests/liveedit/conflicts/test_mootoolsNoConflict_host.html'
+                        url: 'tests/liveedit/noconflict/test_mootoolsNoConflict.js',
+                        hostPageUrl: 'tests/liveedit/noconflict/test_mootoolsNoConflict_host.html'
                     },
                     {
-                        url: 'tests/liveedit/conflicts/test_prototypeNoConflict.js',
-                        hostPageUrl: 'tests/liveedit/conflicts/test_prototypeNoConflict_host.html'
+                        url: 'tests/liveedit/noconflict/test_prototypeNoConflict.js',
+                        hostPageUrl: 'tests/liveedit/noconflict/test_prototypeNoConflict_host.html'
                     }
                 ]
             },
@@ -104,19 +103,10 @@ Harness.start(
                     {
                         url: 'tests/liveedit/util/test_getBoxModel.js',
                         hostPageUrl: 'tests/liveedit/util/host.html'
-                    },
-                    {
-                        url: 'tests/liveedit/util/test_getElementPagePosition.js',
-                        hostPageUrl: 'tests/liveedit/util/host.html'
-                    },
-                    {
-                        url: 'tests/liveedit/util/test_getClosestPageElementFromPoint.js',
-                        hostPageUrl: 'tests/liveedit/util/host.html'
                     }
                 ]
             }
         ]
     }
-    */
 );
 
