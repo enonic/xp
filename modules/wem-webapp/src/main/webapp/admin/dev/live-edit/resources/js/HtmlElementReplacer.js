@@ -19,8 +19,7 @@
 
     p.replaceElementsWithPlaceholders = function () {
         var self = this;
-        var $elements = $liveedit('iframe, object');
-
+        var $elements = $liveedit('[data-live-edit-type=window] > iframe, object');
         $elements.each(function (i) {
             self.replace($liveedit(this));
         });
@@ -34,17 +33,17 @@
 
 
     p.createPlaceholder = function ($element) {
-        var dummyText = '(' + $element[0].tagName.toLowerCase() + ' replaced with div)';
-        var $placeholder = $liveedit('<div>' + dummyText + '</div>');
+        var $placeholder = $liveedit('<div></div>');
         $placeholder.addClass('live-edit-html-element-placeholder');
         $placeholder.width(this.getWidth($element));
         $placeholder.height(this.getHeight($element));
+
+        var $icon = $liveedit('<div/>');
+        $icon.addClass(this.resolveIconCssClass($element));
+        $icon.append('<div>' + $element[0].tagName.toLowerCase() + '</div>');
+        $placeholder.append($icon);
+
         return $placeholder;
-    };
-
-
-    p.hideElement = function ($element) {
-        $element.hide();
     };
 
 
@@ -52,7 +51,8 @@
         var attrWidth = $element.attr('width');
         if (!attrWidth) {
             // Return computed style width (int/pixels);
-            return $element.width();
+            // -2 for placeholder border
+            return $element.width() - 2;
         }
         return attrWidth;
     };
@@ -62,9 +62,27 @@
         var attrHeight = $element.attr('height');
         if (!attrHeight) {
             // Return computed style height (int/pixels);
-            return $element.height();
+            // -2 for placeholder border
+            return $element.height() - 2;
         }
         return attrHeight;
+    };
+
+
+    p.hideElement = function ($element) {
+        $element.hide();
+    };
+
+
+    p.resolveIconCssClass = function ($element) {
+        var tagName = $element[0].tagName.toLowerCase();
+        var clsName = '';
+        if (tagName === 'iframe') {
+            clsName = 'live-edit-iframe';
+        } else {
+            clsName = 'live-edit-object';
+        }
+        return clsName;
     };
 
 }());

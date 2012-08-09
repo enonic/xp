@@ -359,12 +359,27 @@ svg.live-edit-selected-border rect {
 /*** HTML element placeholders */
 
 .live-edit-html-element-placeholder {
+    position: relative;
     color: #444;
     background-color: Lightgoldenrodyellow;
+    border: 1px solid #ccc;
+}
+
+.live-edit-html-element-placeholder div {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 32px;
+    height: 32px;
+    margin-left: -16px;
+    margin-top: -16px;
+    padding-top: 22px;
 }
 
 .live-edit-html-element-placeholder .live-edit-iframe {
+    background: transparent url("../images/window_star.png") no-repeat;
 }
 
-.live-edit-html-element-placeholder .live-edit-flash {
+.live-edit-html-element-placeholder .live-edit-object {
+    background: transparent url("../images/plug.png") no-repeat;
 }
