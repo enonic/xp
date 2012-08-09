@@ -70,12 +70,12 @@ StartTest(function (t) {
 
     t.diag('Test: getPageComponentInfo');
 
-    var info = AdminLiveEdit.Util.getPageComponentInfo($liveedit(getWindows()[4]));
+    var info = AdminLiveEdit.Util.getComponentInfo($liveedit(getWindows()[4]));
     t.is(info.type, 'window', 'type is window');
     t.is(info.key, '7', 'key is 7');
     t.is(info.name, 'Window 5', 'name is Window 5');
 
-    info = AdminLiveEdit.Util.getPageComponentInfo($liveedit(getRegions()[1]));
+    info = AdminLiveEdit.Util.getComponentInfo($liveedit(getRegions()[1]));
     t.is(info.type, 'region', 'type is region');
     t.is(info.key, '5', 'key is 5');
     t.is(info.name, 'Region 2', 'name is Region 2');
@@ -83,26 +83,26 @@ StartTest(function (t) {
 
     // ***
 
-    t.diag('Test: getTypeFromComponent');
+    t.diag('Test: getComponentType');
 
-    t.is(AdminLiveEdit.Util.getTypeFromComponent($liveedit(getWindows()[4])), 'window', 'type for Window 5 is "window"');
-    t.is(AdminLiveEdit.Util.getTypeFromComponent($liveedit(getRegions()[1])), 'region', 'type for Region 2 is "region"');
-
-
-    // ***
-
-    t.diag('Test: getKeyFromComponent');
-
-    t.is(AdminLiveEdit.Util.getKeyFromComponent($liveedit(getWindows()[4])), '7', 'key for Window 5 is 7');
-    t.is(AdminLiveEdit.Util.getKeyFromComponent($liveedit(getRegions()[1])), '5', 'key for Region 2 is 5');
+    t.is(AdminLiveEdit.Util.getComponentType($liveedit(getWindows()[4])), 'window', 'type for Window 5 is "window"');
+    t.is(AdminLiveEdit.Util.getComponentType($liveedit(getRegions()[1])), 'region', 'type for Region 2 is "region"');
 
 
     // ***
 
-    t.diag('Test: getKeyFromComponent');
+    t.diag('Test: getComponentKey');
 
-    t.is(AdminLiveEdit.Util.getNameFromComponent($liveedit(getWindows()[4])), 'Window 5', 'name for Window 5 is "Window 5"');
-    t.is(AdminLiveEdit.Util.getNameFromComponent($liveedit(getRegions()[1])), 'Region 2', 'name for Region 2 is "Region 2"');
+    t.is(AdminLiveEdit.Util.getComponentKey($liveedit(getWindows()[4])), '7', 'key for Window 5 is 7');
+    t.is(AdminLiveEdit.Util.getComponentKey($liveedit(getRegions()[1])), '5', 'key for Region 2 is 5');
+
+
+    // ***
+
+    t.diag('Test: getComponentName');
+
+    t.is(AdminLiveEdit.Util.getComponentName($liveedit(getWindows()[4])), 'Window 5', 'name for Window 5 is "Window 5"');
+    t.is(AdminLiveEdit.Util.getComponentName($liveedit(getRegions()[1])), 'Region 2', 'name for Region 2 is "Region 2"');
 
 
     // ***

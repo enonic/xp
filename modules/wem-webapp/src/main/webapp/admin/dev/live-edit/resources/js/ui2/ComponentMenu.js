@@ -95,7 +95,7 @@
 
 
     p.getMenuForComponent = function ($component) {
-        var componentType = util.getTypeFromComponent($component);
+        var componentType = util.getComponentType($component);
         if (this.buttonConfig.hasOwnProperty(componentType)) {
             var buttonArray = this.buttonConfig[componentType];
             var buttons = this.getButtons();

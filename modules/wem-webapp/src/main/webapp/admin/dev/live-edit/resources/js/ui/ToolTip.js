@@ -69,8 +69,8 @@ AdminLiveEdit.ui.ToolTip = (function () {
                 left: xPos
             });
 
-            var type = util.getTypeFromComponent($component);
-            var name = util.getNameFromComponent($component);
+            var type = util.getComponentType($component);
+            var name = util.getComponentName($component);
 
             updateIcon(type);
             updateText(name);

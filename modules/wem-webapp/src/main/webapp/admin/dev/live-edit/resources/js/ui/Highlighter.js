@@ -130,7 +130,7 @@ AdminLiveEdit.ui.Highlighter = (function () {
 
 
     function highlight(event, $component) {
-        var componentType = AdminLiveEdit.Util.getTypeFromComponent($component);
+        var componentType = AdminLiveEdit.Util.getComponentType($component);
         var tagName = AdminLiveEdit.Util.getTagNameForComponent($component);
         var componentBoxModel = AdminLiveEdit.Util.getBoxModel($component);
         var w       = Math.round(componentBoxModel.width);

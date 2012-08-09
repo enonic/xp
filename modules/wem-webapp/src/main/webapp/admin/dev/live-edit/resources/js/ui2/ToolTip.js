@@ -66,8 +66,8 @@
             }
 
             var $component = $liveedit(event.target).closest('[data-live-edit-type]');
-            var type = util.getTypeFromComponent($component);
-            var name = util.getNameFromComponent($component);
+            var type = util.getComponentType($component);
+            var name = util.getComponentName($component);
             var pos = self.resolvePosition(event);
 
             self.getEl().css({

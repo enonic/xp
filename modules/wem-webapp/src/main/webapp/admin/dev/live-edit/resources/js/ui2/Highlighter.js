@@ -43,7 +43,7 @@
 
 
     p.highlight = function ($component, borderColor) {
-        var componentType = util.getTypeFromComponent($component);
+        var componentType = util.getComponentType($component);
         var componentTagName = util.getTagNameForComponent($component);
         var componentBoxModel = util.getBoxModel($component);
         var w       = Math.round(componentBoxModel.width);

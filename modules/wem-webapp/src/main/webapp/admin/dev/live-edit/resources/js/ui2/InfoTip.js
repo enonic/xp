@@ -52,8 +52,8 @@
 
     p.moveToComponent = function ($component) {
         var $infoTip = this.getEl();
-        var componentName = util.getNameFromComponent($component);
-        var componentType = util.getTypeFromComponent($component);
+        var componentName = util.getComponentName($component);
+        var componentType = util.getComponentType($component);
 
         // Set text and icon first so position is calculated correctly.
         this.setText(componentName);

@@ -168,7 +168,7 @@ AdminLiveEdit.ui.ContextMenu = (function () {
     function updateParentButtonText() {
         var $parentComponentOfSelected = $liveedit(AdminLiveEdit.ui.Highlighter.getSelected().parents('[data-live-edit-type]')[0]);
         if ($parentComponentOfSelected.length === 1) {
-            var parentComponentType = AdminLiveEdit.Util.getTypeFromComponent($parentComponentOfSelected);
+            var parentComponentType = AdminLiveEdit.Util.getComponentType($parentComponentOfSelected);
             $liveedit('#live-edit-button-parent').find('.live-edit-button-text').html(parentComponentType);
         }
     }
@@ -180,7 +180,7 @@ AdminLiveEdit.ui.ContextMenu = (function () {
 
 
     function updateButtonsDisplay($component) {
-        var componentType = AdminLiveEdit.Util.getTypeFromComponent($component);
+        var componentType = AdminLiveEdit.Util.getComponentType($component);
         if (buttonConfig.hasOwnProperty(componentType)) {
             var buttonArray = buttonConfig[componentType];
             getAllButtons().each(function (i) {
@@ -199,7 +199,7 @@ AdminLiveEdit.ui.ContextMenu = (function () {
 
     function moveMenuTo(event, $component) {
         var util = AdminLiveEdit.Util;
-        var componentType = util.getTypeFromComponent($component);
+        var componentType = util.getComponentType($component);
         var $menu = getMenu();
         $menu.show();
 

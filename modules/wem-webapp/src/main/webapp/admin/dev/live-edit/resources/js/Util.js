@@ -102,27 +102,27 @@ AdminLiveEdit.Util = (function () {
         },
 
 
-        getPageComponentInfo: function ($component) {
+        getComponentInfo: function ($component) {
             var t = this;
             return {
-                type: t.getTypeFromComponent($component),
-                key: t.getKeyFromComponent($component),
-                name: t.getNameFromComponent($component)
+                type: t.getComponentType($component),
+                key: t.getComponentKey($component),
+                name: t.getComponentName($component)
             };
         },
 
 
-        getTypeFromComponent: function ($component) {
+        getComponentType: function ($component) {
             return $component[0].getAttribute('data-live-edit-type');
         },
 
 
-        getKeyFromComponent: function ($component) {
+        getComponentKey: function ($component) {
             return $component[0].getAttribute('data-live-edit-key');
         },
 
 
-        getNameFromComponent: function ($component) {
+        getComponentName: function ($component) {
             return $component[0].getAttribute('data-live-edit-name');
         },
 

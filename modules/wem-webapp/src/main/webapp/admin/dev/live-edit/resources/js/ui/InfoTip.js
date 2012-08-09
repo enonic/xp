@@ -16,8 +16,8 @@ AdminLiveEdit.ui.InfoTip = (function () {
 
     function moveToComponent(event, $component) {
         var util = AdminLiveEdit.Util;
-        var componentName = util.getNameFromComponent($component);
-        var componentType = util.getTypeFromComponent($component);
+        var componentName = util.getComponentName($component);
+        var componentType = util.getComponentType($component);
 
         updateText(componentName);
         updateIcon(componentType);
