@@ -147,8 +147,7 @@ Ext.define('Admin.view.account.MembershipsGraphPanel', {
                         imageFileName = 'resources/images/icons/32x32/ghost.png';
                     } else if (data.type === 'user') {
                         imageFileName =
-                        Ext.String.format('data/user/photo?key={0}&thumb=false&def=admin/resources%2Fimages%2Ficons%2F256x256%2Fdummy-user.png',
-                            node.data.key);
+                        Ext.String.format('rest/account/user/{0}/photo?size={1}', node.data.key, 16);
                     }
                     image.src = imageFileName;
 

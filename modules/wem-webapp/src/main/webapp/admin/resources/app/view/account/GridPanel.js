@@ -102,8 +102,7 @@ Ext.define('Admin.view.account.GridPanel', {
         var isUser = !builtIn && account.type === 'user';
 
         if (isUser) {
-            url = Ext.String.format('data/user/photo?key={0}&thumb=true&def=admin/resources%2Fimages%2Ficons%2F256x256%2Fdummy-user.png',
-                account.key);
+            url = Ext.String.format('rest/account/user/{0}/photo?size={1}', account.key, 32);
         } else {
             if (isEnterpriseAdministrator) {
                 url = 'resources/images/icons/32x32/superhero.png';
