@@ -1,13 +1,5 @@
 (function (window) {
 
-    // Map jQuery served with Live Edit
-    window.$liveedit = $.noConflict(true);
-
-    // Root Namespace
-    if (!window.AdminLiveEdit) {
-        window.AdminLiveEdit = {};
-    }
-
     $liveedit(document).ready(function () {
 
         // *******************************************************************************************************************************//
