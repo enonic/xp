@@ -21,7 +21,6 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-
     p.registerSubscribers = function () {
         var self = this;
         $liveedit.subscribe('/page/component/select', function ($component) {
@@ -83,8 +82,6 @@
 
     p.select = function ($component) {
         var $el = this.getEl();
-        var $borderRect = $el.find('rect');
-        var componentBoxModel = util.getBoxModel($component);
 
         // Add position relative to the page component in order have absolute positioned elements inside.
         $liveedit('.live-edit-selected-component').removeClass('live-edit-selected-component');

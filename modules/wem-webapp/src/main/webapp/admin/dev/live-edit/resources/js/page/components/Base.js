@@ -24,11 +24,13 @@ AdminLiveEdit.page.components.Base.prototype = {
         });
     },
 
+
     attachMouseOutEvent: function () {
         $liveedit(document).on('mouseout', function (event) {
             $liveedit.publish('/page/component/hide-highlighter');
         });
     },
+
 
     attachClickEvent: function () {
         $liveedit(document).on('click touchstart', this.selector, function (event) {

@@ -18,7 +18,7 @@
         // *******************************************************************************************************************************//
 
         // TODO: Remove timeout when loader splash(CMS-29) is accepted.
-        setTimeout(function() {
+        setTimeout(function () {
             var page = new AdminLiveEdit.page.components.Page();
             var regions = new AdminLiveEdit.page.components.Regions();
             var windows = new AdminLiveEdit.page.components.Windows();

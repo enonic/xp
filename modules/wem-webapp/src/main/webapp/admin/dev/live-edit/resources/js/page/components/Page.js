@@ -7,7 +7,7 @@
         this.attachClickEvent();
     };
     // Inherit from Base prototype
-    page.prototype = new AdminLiveEdit.page.components.Base;
+    page.prototype = new AdminLiveEdit.page.components.Base();
 
     // Fix constructor as it now is Base
     page.constructor = page;

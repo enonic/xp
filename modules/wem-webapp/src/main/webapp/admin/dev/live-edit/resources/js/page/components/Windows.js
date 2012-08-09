@@ -15,6 +15,7 @@
 
     var p = windows.prototype;
 
+
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.appendEmptyPlaceholder = function ($window) {

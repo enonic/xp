@@ -17,7 +17,6 @@
 
         #github-commits {
             background-color: #fff;
-            font-size: 85%;
         }
 
         #github-commits ul {
@@ -121,7 +120,7 @@
 <script>
     $(function () {
         $('#github-commits').githubInfoWidget(
-                { user: 'enonic', repo: 'wem-ce', branch: 'master', last: 10 });
+                { user: 'enonic', repo: 'wem-ce', branch: 'master', last: 10, limitMessageTo: 50 });
     });
 </script>
 

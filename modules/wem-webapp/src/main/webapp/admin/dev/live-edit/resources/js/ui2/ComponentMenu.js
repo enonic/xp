@@ -30,7 +30,6 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-
     p.registerSubscribers = function () {
         var self = this;
 
@@ -217,16 +216,16 @@
         });
 
 
-        dragButton.getEl().on('mousedown', function (event) {
-            this._mouseDown = true;
+        dragButton.getEl().on('mousedown', function () {
+            this.le_mouseIsDown = true;
             // TODO: Use PubSub
             AdminLiveEdit.ui2.DragDrop.enable();
         });
 
 
         dragButton.getEl().on('mousemove', function (event) {
-            if (this._mouseDown) {
-                this._mouseDown = false;
+            if (this.le_mouseIsDown) {
+                this.le_mouseIsDown = false;
                 self.fadeOutAndHide();
                 // TODO: Get the selected using PubSub
                 var $selectedComponent = $liveedit('.live-edit-selected-component');
@@ -238,8 +237,8 @@
                 $selectedComponent[0].dispatchEvent(evt);
             }
         });
-        dragButton.getEl().on('mouseup', function (event) {
-            this._mouseDown = false;
+        dragButton.getEl().on('mouseup', function () {
+            this.le_mouseIsDown = false;
             // TODO: remove reference to DragDrop, use PubSub.
             AdminLiveEdit.ui2.DragDrop.disable();
         });
@@ -257,7 +256,8 @@
         });
         self.buttons.push(removeButton);
 
-        for (var i = 0; i < self.buttons.length; i++) {
+        var i;
+        for (i = 0; i < self.buttons.length; i++) {
             self.buttons[i].appendTo(self.getEl());
         }
     };

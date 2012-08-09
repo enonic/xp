@@ -22,7 +22,6 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-
     p.registerSubscribers = function () {
         var self = this;
         $liveedit.subscribe('/page/component/select', function () {
@@ -32,10 +31,10 @@
 
 
     p.create = function () {
-        var html ='<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
-                  '    <img src="' + this.blankImage + '" style="padding-right: 7px; vertical-align: top"/>' +
-                  '    <span class="live-edit-tool-tip-text"><!-- --></span>' +
-                  '</div>';
+        var html = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
+                   '    <img src="' + this.blankImage + '" style="padding-right: 7px; vertical-align: top"/>' +
+                   '    <span class="live-edit-tool-tip-text"><!-- --></span>' +
+                   '</div>';
 
         this.createElement(html);
         this.appendTo($liveedit('body'));
@@ -58,7 +57,8 @@
 
         $liveedit(document).on('mousemove', '[data-live-edit-type]', function (event) {
             // TODO: Make this more efficient.
-            var isUi = $liveedit(event.target).is('.live-edit-info-tip, .live-edit-button') || $liveedit(event.target).parents('.live-edit-info-tip, .live-edit-button').length > 0;
+            var isUi = $liveedit(event.target).is('.live-edit-info-tip, .live-edit-button') ||
+                       $liveedit(event.target).parents('.live-edit-info-tip, .live-edit-button').length > 0;
             // TODO: Use PubSub instead of calling DragDrop object.
             if (isUi || AdminLiveEdit.ui2.DragDrop.isDragging()) {
                 self.hide();
@@ -78,13 +78,13 @@
             self.setText(name);
         });
 
-        $liveedit(document).on('hover', '[data-live-edit-type]', function(event) {
+        $liveedit(document).on('hover', '[data-live-edit-type]', function (event) {
             if (event.type === 'mouseenter') {
                 self.getEl().hide().fadeIn(300);
             }
         });
 
-        $liveedit(document).on('mouseout', function() {
+        $liveedit(document).on('mouseout', function () {
             self.hide.call(self);
         });
     };

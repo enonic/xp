@@ -20,7 +20,6 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-
     p.registerSubscribers = function () {
         var self = this;
         $liveedit.subscribe('/page/component/highlight', function ($component, borderColor) {

@@ -18,7 +18,7 @@ AdminLiveEdit.Util = (function () {
         },
 
 
-        getDocumentScrollTop: function() {
+        getDocumentScrollTop: function () {
             return $liveedit(document).scrollTop();
         },
 

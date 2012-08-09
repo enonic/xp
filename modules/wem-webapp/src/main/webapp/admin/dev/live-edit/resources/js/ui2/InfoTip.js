@@ -44,7 +44,7 @@
         this.appendTo($liveedit('body'));
 
         // Make sure component is not deselected when the infotip element is clicked.
-        this.getEl().on('click', function(event) {
+        this.getEl().on('click', function (event) {
             event.stopPropagation();
         });
     };
@@ -84,6 +84,6 @@
             top: '-5000px',
             left: '-5000px'
         });
-    }
+    };
 
 }());
