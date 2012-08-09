@@ -90,14 +90,15 @@ AdminLiveEdit.Util = (function () {
                 icon = '../resources/images/document_plain_blue.png';
                 break;
             default:
-                icon = '';
+                // TODO: Use a fallback icon?
+                icon = '../resources/images/component_blue.png';
             }
             return icon;
         },
 
 
-        getPageComponentPagePosition: function ($element) {
-            return $liveedit($element).position();
+        getPageComponentPagePosition: function ($component) {
+            return $liveedit($component).position();
         },
 
 
