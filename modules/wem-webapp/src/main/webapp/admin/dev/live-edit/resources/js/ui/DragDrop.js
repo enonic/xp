@@ -35,19 +35,19 @@ AdminLiveEdit.ui.DragDrop = (function () {
         ui.placeholder.html('Drop component here');
         refresh();
 
-        $liveedit.publish('/page/component/sortstart', [event, ui]);
+        $liveedit.publish('/ui/dragdrop/on-sortstart', [event, ui]);
     }
 
 
     function handleDragOver(event, ui) {
         updateHelperStatusIcon('yes');
-        $liveedit.publish('/page/component/dragover', [event, ui]);
+        $liveedit.publish('/ui/dragdrop/on-dragover', [event, ui]);
     }
 
 
     function handleDragOut(event, ui) {
         updateHelperStatusIcon('no');
-        $liveedit.publish('/page/component/dragout', [event, ui]);
+        $liveedit.publish('/ui/dragdrop/on-dragout', [event, ui]);
     }
 
 
@@ -55,12 +55,12 @@ AdminLiveEdit.ui.DragDrop = (function () {
         updateHelperStatusIcon('yes');
         ui.placeholder.show();
 
-        $liveedit.publish('/page/component/sortchange', [event, ui]);
+        $liveedit.publish('/ui/dragdrop/on-sortchange', [event, ui]);
     }
 
 
     function handleSortUpdate(event, ui) {
-        $liveedit.publish('/page/component/sortupdate', [event, ui]);
+        $liveedit.publish('/ui/dragdrop/on-sortupdate', [event, ui]);
     }
 
 
@@ -68,21 +68,21 @@ AdminLiveEdit.ui.DragDrop = (function () {
         isDragging = false;
 
         if (AdminLiveEdit.Util.supportsTouch()) {
-            $liveedit.publish('/page/component/hide-highlighter');
+            $liveedit.publish('/ui/highlighter/on-hide');
         }
 
         // disableDragDrop();
-        $liveedit.publish('/page/component/sortstop', [event, ui]);
+        $liveedit.publish('/ui/dragdrop/on-sortstop', [event, ui]);
     }
 
 
     function initSubscribers() {
-        $liveedit.subscribe('/page/component/select', function () {
+        $liveedit.subscribe('/ui/selectedcomponent/on-select', function () {
             if (AdminLiveEdit.Util.supportsTouch()) {
                 enableDragDrop();
             }
         });
-        $liveedit.subscribe('/page/component/deselect', function () {
+        $liveedit.subscribe('/ui/selectedcomponent/on-deselect', function () {
             if (AdminLiveEdit.Util.supportsTouch() && !isDragging) {
                 disableDragDrop();
             }

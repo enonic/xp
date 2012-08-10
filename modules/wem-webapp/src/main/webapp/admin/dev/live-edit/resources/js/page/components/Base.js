@@ -23,14 +23,14 @@
                 }
                 event.stopPropagation();
 
-                $liveedit.publish('/page/component/highlight', [$component, self.highlightColor]);
+                $liveedit.publish('/ui/highlighter/on-highlight', [$component, self.highlightColor]);
             });
         },
 
 
         attachMouseOutEvent: function () {
             $liveedit(document).on('mouseout', function (event) {
-                $liveedit.publish('/page/component/hide-highlighter');
+                $liveedit.publish('/ui/highlighter/on-hide');
             });
         },
 
@@ -42,9 +42,9 @@
                 var $closestComponentFromTarget = $liveedit(event.target).closest('[data-live-edit-type]');
                 var componentIsSelected = $closestComponentFromTarget.hasClass('live-edit-selected-component');
                 if (componentIsSelected) {
-                    $liveedit.publish('/page/component/deselect');
+                    $liveedit.publish('/ui/selectedcomponent/on-deselect');
                 } else {
-                    $liveedit.publish('/page/component/select', [$closestComponentFromTarget]);
+                    $liveedit.publish('/ui/selectedcomponent/on-select', [$closestComponentFromTarget]);
                 }
                 return false;
             });

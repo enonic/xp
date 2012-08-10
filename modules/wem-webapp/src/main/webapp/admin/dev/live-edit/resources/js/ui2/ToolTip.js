@@ -24,7 +24,7 @@
 
     p.registerSubscribers = function () {
         var self = this;
-        $liveedit.subscribe('/page/component/select', function () {
+        $liveedit.subscribe('/ui/selectedcomponent/on-select', function () {
             self.hide.call(self);
         });
     };

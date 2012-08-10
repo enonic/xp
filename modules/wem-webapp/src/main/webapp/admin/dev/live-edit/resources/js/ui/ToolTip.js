@@ -81,7 +81,7 @@ AdminLiveEdit.ui.ToolTip = (function () {
 
 
     function registerSubscribers() {
-        $liveedit.subscribe('/page/component/select', hide);
+        $liveedit.subscribe('/ui/selectedcomponent/on-select', hide);
     }
 
 

@@ -23,20 +23,20 @@
 
     p.registerSubscribers = function () {
         var self = this;
-        $liveedit.subscribe('/page/component/select', function ($component) {
+        $liveedit.subscribe('/ui/selectedcomponent/on-select', function ($component) {
             self.select.call(self, $component);
         });
 
-        $liveedit.subscribe('/page/component/select-parent', function () {
+        $liveedit.subscribe('/ui/selectedcomponent/on-selectparent', function () {
             self.selectParent.call(self);
         });
 
-        $liveedit.subscribe('/page/component/deselect', function () {
+        $liveedit.subscribe('/ui/selectedcomponent/on-deselect', function () {
             self.deselect.call(self);
         });
 
-        $liveedit.subscribe('/page/component/sortstop', function (uiEvent, ui) {
-            $liveedit.publish('/page/component/select', [ui.item]);
+        $liveedit.subscribe('/ui/dragdrop/on-sortstop', function (uiEvent, ui) {
+            $liveedit.publish('/ui/selectedcomponent/on-select', [ui.item]);
         });
     };
 
@@ -92,18 +92,18 @@
     };
 
 
+    p.selectParent = function () {
+        var $parent = this.getSelected().parents('[data-live-edit-type]');
+        if ($parent && $parent.length > 0) {
+            $liveedit.publish('/ui/selectedcomponent/on-select', [$liveedit($parent[0])]);
+        }
+    };
+
+
     p.deselect = function () {
         $liveedit('.live-edit-selected-component').removeClass('live-edit-selected-component');
         this.hide();
         this.setSelected($liveedit([]));
-    };
-
-
-    p.selectParent = function () {
-        var $parent = this.getSelected().parents('[data-live-edit-type]');
-        if ($parent && $parent.length > 0) {
-            $liveedit.publish('/page/component/select', [$liveedit($parent[0])]);
-        }
     };
 
 }());

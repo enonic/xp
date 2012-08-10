@@ -36,7 +36,7 @@ AdminLiveEdit.ui.ContextMenu = (function () {
     function fadeOutAndHide() {
         var $menu = getMenu();
         $menu.fadeOut(500, function () {
-            $liveedit.publish('/page/component/deselect');
+            $liveedit.publish('/ui/selectedcomponent/on-deselect');
         });
     }
 
@@ -52,7 +52,7 @@ AdminLiveEdit.ui.ContextMenu = (function () {
             iconCls: 'live-edit-icon-parent',
             handler: function (event) {
                 event.stopPropagation();
-                $liveedit.publish('/page/component/select-parent');
+                $liveedit.publish('/ui/selectedcomponent/on-selectparent');
             }
         });
 
@@ -221,9 +221,9 @@ AdminLiveEdit.ui.ContextMenu = (function () {
 
 
     function initSubscribers() {
-        $liveedit.subscribe('/page/component/select', moveMenuTo);
-        $liveedit.subscribe('/page/component/deselect', hide);
-        $liveedit.subscribe('/page/component/sortstart', fadeOutAndHide);
+        $liveedit.subscribe('/ui/selectedcomponent/on-select', moveMenuTo);
+        $liveedit.subscribe('/ui/selectedcomponent/on-deselect', hide);
+        $liveedit.subscribe('/ui/dragdrop/on-sortstart', fadeOutAndHide);
     }
 
 

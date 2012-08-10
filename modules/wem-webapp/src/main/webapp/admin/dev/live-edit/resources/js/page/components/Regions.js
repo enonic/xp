@@ -24,11 +24,11 @@
 
     p.registerSubscribers = function () {
         var self = this;
-        $liveedit.subscribe('/page/component/sortupdate', function () {
+        $liveedit.subscribe('/ui/dragdrop/on-sortupdate', function () {
             self.renderEmptyPlaceholders.call(self);
         });
 
-        $liveedit.subscribe('/page/component/dragover', function () {
+        $liveedit.subscribe('/ui/dragdrop/on-dragover', function () {
             self.renderEmptyPlaceholders.call(self);
         });
     };

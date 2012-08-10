@@ -22,11 +22,11 @@
 
     p.registerSubscribers = function () {
         var self = this;
-        $liveedit.subscribe('/page/component/highlight', function ($component, borderColor) {
+        $liveedit.subscribe('/ui/highlighter/on-highlight', function ($component, borderColor) {
             self.highlight.call(self, $component, borderColor);
         });
 
-        $liveedit.subscribe('/page/component/hide-highlighter', function () {
+        $liveedit.subscribe('/ui/highlighter/on-hide', function () {
             self.hide.call(self);
         });
     };

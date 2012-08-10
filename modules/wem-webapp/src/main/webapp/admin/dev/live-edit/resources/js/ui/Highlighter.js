@@ -124,7 +124,7 @@ AdminLiveEdit.ui.Highlighter = (function () {
     function selectParentComponent() {
         var $parent = getSelectedComponent().parents('[data-live-edit-type]');
         if ($parent && $parent.length > 0) {
-            $liveedit.publish('/page/component/select', [$liveedit($parent[0])]);
+            $liveedit.publish('/ui/selectedcomponent/on-select', [$liveedit($parent[0])]);
         }
     }
 
@@ -178,14 +178,14 @@ AdminLiveEdit.ui.Highlighter = (function () {
 
 
     function registerSubscribers() {
-        $liveedit.subscribe('/page/component/highlight', highlight);
-        $liveedit.subscribe('/page/component/hide-highlighter', hideHighlighter);
-        $liveedit.subscribe('/page/component/select', selectComponent);
-        $liveedit.subscribe('/page/component/select-parent', selectParentComponent);
-        $liveedit.subscribe('/page/component/deselect', deselectComponent);
-        $liveedit.subscribe('/page/component/sortstart', hideHighlighter);
-        $liveedit.subscribe('/page/component/sortstop', function (event, uiEvent, ui) {
-            $liveedit.publish('/page/component/select', [ui.item]);
+        $liveedit.subscribe('/ui/highlighter/on-highlight', highlight);
+        $liveedit.subscribe('/ui/highlighter/on-hide', hideHighlighter);
+        $liveedit.subscribe('/ui/selectedcomponent/on-select', selectComponent);
+        $liveedit.subscribe('/ui/selectedcomponent/on-selectparent', selectParentComponent);
+        $liveedit.subscribe('/ui/selectedcomponent/on-deselect', deselectComponent);
+        $liveedit.subscribe('/ui/dragdrop/on-sortstart', hideHighlighter);
+        $liveedit.subscribe('/ui/dragdrop/on-sortstop', function (event, uiEvent, ui) {
+            $liveedit.publish('/ui/selectedcomponent/on-select', [ui.item]);
         });
     }
 

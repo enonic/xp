@@ -22,11 +22,11 @@
 
     p.registerSubscribers = function () {
         var self = this;
-        $liveedit.subscribe('/page/component/select', function ($component) {
+        $liveedit.subscribe('/ui/selectedcomponent/on-select', function ($component) {
             self.moveToComponent.call(self, $component);
         });
 
-        $liveedit.subscribe('/page/component/deselect', function () {
+        $liveedit.subscribe('/ui/selectedcomponent/on-deselect', function () {
             self.hide.call(self);
         });
     };

@@ -54,11 +54,11 @@ AdminLiveEdit.components.RegionComponents = (function () {
 
             event.stopPropagation();
 
-            $liveedit.publish('/page/component/highlight', [$component]);
+            $liveedit.publish('/ui/highlighter/on-highlight', [$component]);
         });
 
         $liveedit(document).on('mouseout', function (event) {
-            $liveedit.publish('/page/component/hide-highlighter');
+            $liveedit.publish('/ui/highlighter/on-hide');
         });
 
         $liveedit(document).on('click touchstart', SELECTOR, function (event) {
@@ -67,9 +67,9 @@ AdminLiveEdit.components.RegionComponents = (function () {
             var $closestComponentFromTarget = $liveedit(event.target).closest('[data-live-edit-type]');
             var componentIsSelected = $closestComponentFromTarget.hasClass('live-edit-selected-component');
             if (componentIsSelected) {
-                $liveedit.publish('/page/component/deselect');
+                $liveedit.publish('/ui/selectedcomponent/on-deselect');
             } else {
-                $liveedit.publish('/page/component/select', [$closestComponentFromTarget]);
+                $liveedit.publish('/ui/selectedcomponent/on-select', [$closestComponentFromTarget]);
             }
 
             return false;
@@ -78,9 +78,9 @@ AdminLiveEdit.components.RegionComponents = (function () {
 
 
     function registerSubscribers() {
-        $liveedit.subscribe('/page/component/sortupdate', renderPlaceholdersForEmptyRegions);
-        $liveedit.subscribe('/page/component/sortupdate', renderPlaceholdersForEmptyRegions);
-        $liveedit.subscribe('/page/component/dragover', renderPlaceholdersForEmptyRegions);
+        $liveedit.subscribe('/ui/dragdrop/on-sortupdate', renderPlaceholdersForEmptyRegions);
+        $liveedit.subscribe('/ui/dragdrop/on-sortupdate', renderPlaceholdersForEmptyRegions);
+        $liveedit.subscribe('/ui/dragdrop/on-dragover', renderPlaceholdersForEmptyRegions);
     }
 
 

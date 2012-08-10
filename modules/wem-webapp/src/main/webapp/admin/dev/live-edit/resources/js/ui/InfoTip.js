@@ -52,8 +52,8 @@ AdminLiveEdit.ui.InfoTip = (function () {
 
 
     function registerSubscribers() {
-        $liveedit.subscribe('/page/component/select', moveToComponent);
-        $liveedit.subscribe('/page/component/deselect', hide);
+        $liveedit.subscribe('/ui/selectedcomponent/on-select', moveToComponent);
+        $liveedit.subscribe('/ui/selectedcomponent/on-deselect', hide);
     }
 
 
