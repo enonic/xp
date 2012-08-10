@@ -85,6 +85,7 @@ public final class AccountController
 
     @RequestMapping(value = "search", method = RequestMethod.GET)
     @ResponseBody
+    // Has been ported
     public RestResponse<AccountsModel> list( final AccountLoadRequest req,
                                      @RequestParam(value = "key", defaultValue = "") final String accountKeys )
     {
@@ -208,6 +209,7 @@ public final class AccountController
 
     @RequestMapping(value = "export", method = RequestMethod.GET)
     @ResponseBody
+    // Has been ported
     public ResponseEntity<byte[]> exportAsCsv( final AccountExportRequest req,
                                   @RequestParam(value = "encoding", defaultValue = "ISO-8859-1") String characterEncoding,
                                   @RequestParam(value = "separator", defaultValue = SEPARATOR_PARAM_TAB) String separator )
@@ -269,6 +271,7 @@ public final class AccountController
 
     @RequestMapping(value = "suggestusername", method = RequestMethod.GET)
     @ResponseBody
+    // TODO: Port to rest2 under UserResource (account/user/suggest-name)
     public ResponseEntity suggestUsername( @RequestParam(value = "firstname", defaultValue = "") final String firstName,
                                      @RequestParam(value = "lastname", defaultValue = "") final String lastName,
                                      @RequestParam(value = "userstore", defaultValue = "") final String userStoreName )
@@ -290,6 +293,7 @@ public final class AccountController
 
     @RequestMapping(value = "groupinfo", method = RequestMethod.GET)
     @ResponseBody
+    // Has been ported
     public ResponseEntity getGroupinfo( @RequestParam(value = "key", defaultValue = "") final String groupKey )
     {
         GroupEntity group = groupDao.find( groupKey );
@@ -305,6 +309,7 @@ public final class AccountController
 
     @RequestMapping(value = "verifyUniqueEmail", method = RequestMethod.GET)
     @ResponseBody
+    // TODO: Port to rest2 under UserResource (account/user/verify-unique-email)
     public ResponseEntity verifyUniqueEmail(
             @RequestParam(value = "userstore", defaultValue = "") final String userStoreName,
             @RequestParam(value = "email", defaultValue = "") final String email )
@@ -335,6 +340,7 @@ public final class AccountController
 
     @RequestMapping(value = "userkey", method = RequestMethod.GET)
     @ResponseBody
+    // TODO: Is this in use?
     public ResponseEntity getUserKeyByUserName(
             @RequestParam(value = "userstore", defaultValue = "") final String userStoreName,
             @RequestParam(value = "username", defaultValue = "") final String userName )
@@ -363,6 +369,7 @@ public final class AccountController
 
     @RequestMapping(value = "notify", method = RequestMethod.POST)
     @ResponseBody
+    // TODO: This should be a more generic service. Let's wait.
     public ResponseEntity sendNotificationEmail( @RequestParam(value = "to", defaultValue = "") final String to,
                                                  @RequestParam(value = "cc", defaultValue = "") final String cc,
                                                  @RequestParam(value = "subject", defaultValue = "") final String subject,
@@ -385,6 +392,7 @@ public final class AccountController
 
     @RequestMapping(value = "delete", method = RequestMethod.POST)
     @ResponseBody
+    // TODO: Port delete to rest2 package. Should be under /account/delete. Can also delete users & groups.
     public RestResponse deleteAccount( @RequestParam("key") final List<String> keys )
     {
         final RestResponse res = new RestResponse();
