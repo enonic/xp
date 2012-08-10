@@ -25,7 +25,7 @@
             var contents = new AdminLiveEdit.page.components.Contents();
             var paragraphs = new AdminLiveEdit.page.components.Paragraphs();
             var highlighter = new AdminLiveEdit.ui2.Highlighter();
-            var selectedComponent = new AdminLiveEdit.ui2.ComponentSelector();
+            var componentSelector = new AdminLiveEdit.ui2.ComponentSelector();
             var infoTip = new AdminLiveEdit.ui2.InfoTip();
             var toolTip = new AdminLiveEdit.ui2.ToolTip();
             var componentMenu = new AdminLiveEdit.ui2.ComponentMenu();

@@ -42,7 +42,7 @@
                 var $closestComponentFromTarget = $liveedit(event.target).closest('[data-live-edit-type]');
                 var componentIsSelected = $closestComponentFromTarget.hasClass('live-edit-selected-component');
                 if (componentIsSelected) {
-                    $liveedit.publish('/ui/selectedcomponent/on-deselect');
+                    $liveedit.publish('/ui/componentselector/on-deselect');
                 } else {
                     $liveedit.publish('/ui/componentselector/on-select', [$closestComponentFromTarget]);
                 }
