@@ -25,7 +25,7 @@
             var contents = new AdminLiveEdit.page.components.Contents();
             var paragraphs = new AdminLiveEdit.page.components.Paragraphs();
             var highlighter = new AdminLiveEdit.ui2.Highlighter();
-            var selectedComponent = new AdminLiveEdit.ui2.SelectedComponent();
+            var selectedComponent = new AdminLiveEdit.ui2.ComponentSelector();
             var infoTip = new AdminLiveEdit.ui2.InfoTip();
             var toolTip = new AdminLiveEdit.ui2.ToolTip();
             var componentMenu = new AdminLiveEdit.ui2.ComponentMenu();
@@ -33,8 +33,10 @@
 
             AdminLiveEdit.ui2.DragDrop.init();
 
+            /*
             var logger = new AdminLiveEdit.Logger();
             logger.create();
+            */
 
             $liveedit('.live-edit-loader-splash-container').remove();
 

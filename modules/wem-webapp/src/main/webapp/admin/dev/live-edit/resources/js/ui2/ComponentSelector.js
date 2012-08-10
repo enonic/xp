@@ -1,19 +1,19 @@
 (function () {
     // Class definition (constructor function)
-    var selectedComponent = AdminLiveEdit.ui2.SelectedComponent = function () {
+    var componentSelector = AdminLiveEdit.ui2.ComponentSelector = function () {
         this.$selectedComponent = $liveedit([]); // Empty jQuery object
         this.create();
         this.registerSubscribers();
     };
 
     // Inherits ui.Base
-    selectedComponent.prototype = new AdminLiveEdit.ui2.Base();
+    componentSelector.prototype = new AdminLiveEdit.ui2.Base();
 
     // Fix constructor as it now is Base
-    selectedComponent.constructor = selectedComponent;
+    componentSelector.constructor = componentSelector;
 
     // Shorthand ref to the prototype
-    var p = selectedComponent.prototype;
+    var p = componentSelector.prototype;
 
     // Uses
     var util = AdminLiveEdit.Util;
@@ -23,20 +23,20 @@
 
     p.registerSubscribers = function () {
         var self = this;
-        $liveedit.subscribe('/ui/selectedcomponent/on-select', function ($component) {
+        $liveedit.subscribe('/ui/componentselector/on-select', function ($component) {
             self.select.call(self, $component);
         });
 
-        $liveedit.subscribe('/ui/selectedcomponent/on-selectparent', function () {
+        $liveedit.subscribe('/ui/componentselector/on-select-parent', function () {
             self.selectParent.call(self);
         });
 
-        $liveedit.subscribe('/ui/selectedcomponent/on-deselect', function () {
+        $liveedit.subscribe('/ui/componentselector/on-deselect', function () {
             self.deselect.call(self);
         });
 
         $liveedit.subscribe('/ui/dragdrop/on-sortstop', function (uiEvent, ui) {
-            $liveedit.publish('/ui/selectedcomponent/on-select', [ui.item]);
+            $liveedit.publish('/ui/componentselector/on-select', [ui.item]);
         });
     };
 
@@ -95,7 +95,7 @@
     p.selectParent = function () {
         var $parent = this.getSelected().parents('[data-live-edit-type]');
         if ($parent && $parent.length > 0) {
-            $liveedit.publish('/ui/selectedcomponent/on-select', [$liveedit($parent[0])]);
+            $liveedit.publish('/ui/componentselector/on-select', [$liveedit($parent[0])]);
         }
     };
 

@@ -18,7 +18,7 @@
 
     p.registerSubscribers = function () {
         var self = this;
-        $liveedit.subscribe('/ui/selectedcomponent/on-select', function ($component) {
+        $liveedit.subscribe('/ui/componentselector/on-select', function ($component) {
             self.addMessage.call(self, 'on-select: ' + '(' + util.getComponentType($component) + ') ' + util.getComponentName($component));
         });
 

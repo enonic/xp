@@ -33,11 +33,11 @@
     p.registerSubscribers = function () {
         var self = this;
 
-        $liveedit.subscribe('/ui/selectedcomponent/on-select', function ($component) {
+        $liveedit.subscribe('/ui/componentselector/on-select', function ($component) {
             self.show.call(self, $component);
         });
 
-        $liveedit.subscribe('/ui/selectedcomponent/on-deselect', function () {
+        $liveedit.subscribe('/ui/componentselector/on-deselect', function () {
             self.hide.call(self);
         });
 
@@ -71,7 +71,7 @@
 
     p.fadeOutAndHide = function () {
         this.getEl().fadeOut(500, function () {
-            $liveedit.publish('/ui/selectedcomponent/on-deselect');
+            $liveedit.publish('/ui/componentselector/on-deselect');
         });
     };
 
@@ -129,7 +129,7 @@
             iconCls: 'live-edit-icon-parent',
             handler: function (event) {
                 event.stopPropagation();
-                $liveedit.publish('/ui/selectedcomponent/on-selectparent');
+                $liveedit.publish('/ui/componentselector/on-select-parent');
             }
         });
         self.buttons.push(parentButton);

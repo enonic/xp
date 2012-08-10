@@ -44,7 +44,7 @@
                 if (componentIsSelected) {
                     $liveedit.publish('/ui/selectedcomponent/on-deselect');
                 } else {
-                    $liveedit.publish('/ui/selectedcomponent/on-select', [$closestComponentFromTarget]);
+                    $liveedit.publish('/ui/componentselector/on-select', [$closestComponentFromTarget]);
                 }
                 return false;
             });

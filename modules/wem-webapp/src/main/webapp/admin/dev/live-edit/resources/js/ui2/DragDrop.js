@@ -81,13 +81,13 @@ AdminLiveEdit.ui2.DragDrop = (function () {
 
 
     function initSubscribers() {
-        $liveedit.subscribe('/ui/selectedcomponent/on-select', function () {
+        $liveedit.subscribe('/ui/componentselector/on-select', function () {
             if (AdminLiveEdit.Util.supportsTouch()) {
                 enableDragDrop();
             }
         });
 
-        $liveedit.subscribe('/ui/selectedcomponent/on-deselect', function () {
+        $liveedit.subscribe('/ui/componentselector/on-deselect', function () {
             if (AdminLiveEdit.Util.supportsTouch() && !isDragging) {
                 disableDragDrop();
             }
