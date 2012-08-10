@@ -22,7 +22,7 @@ Ext.define('Test.account.store.UserstoreConfigStore', {
 
     proxy: {
         type: 'ajax',
-        url: 'tests/account/json/UserstoresData.json',
+        url: 'account/json/UserstoresData.json',
         simpleSortMode: true,
         reader: {
             type: 'json',

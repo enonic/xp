@@ -37,8 +37,8 @@ function createEditUserFormPanelWithConfig(userstoreStore, additionalConfig) {
 function createEditUserFormPanel(userstoreStore) {
     return createEditUserFormPanelWithConfig(userstoreStore, {
         validationUrls: {
-            username: 'tests/account/json/UniqueUserNameResponse.json',
-            email: 'tests/account/json/UniqueEmailResponse.json'
+            username: 'account/json/UniqueUserNameResponse.json',
+            email: 'account/json/UniqueEmailResponse.json'
         }
     });
 }
@@ -82,8 +82,8 @@ function testEditUserFormPanelWithIncludedFields(t, userstoreStore) {
         includedFields: ['username', 'email', 'password',
             'country', 'locale', 'timezone', 'globalPosition'],
         validationUrls: {
-            username: 'tests/account/json/UniqueUserNameResponse.json',
-            email: 'tests/account/json/UniqueEmailResponse.json'
+            username: 'account/json/UniqueUserNameResponse.json',
+            email: 'account/json/UniqueEmailResponse.json'
         }
     });
     //Test fields that are explicitly included in user form
@@ -101,8 +101,8 @@ function testEditUserFormPanelWithExcludedFields(t, userstoreStore) {
     var eufp = createEditUserFormPanelWithConfig(userstoreStore, {
         excludedFields: [ 'address', 'birthday', 'country', 'firstName', 'lastName', 'fax'],
         validationUrls: {
-            username: 'tests/account/json/UniqueUserNameResponse.json',
-            email: 'tests/account/json/UniqueEmailResponse.json'
+            username: 'account/json/UniqueUserNameResponse.json',
+            email: 'account/json/UniqueEmailResponse.json'
         }
     });
     //Test fields that are explicitly excluded from user form
@@ -296,8 +296,8 @@ function testEditUserFormRemoteValidation(t, userstoreStore) {
     var eufp1 = createEditUserFormPanelWithConfig(userstoreStore, {
         includedFields: ['username', 'email'],
         validationUrls: {
-            username: 'tests/account/json/NonUniqueUserNameResponse.json',
-            email: 'tests/account/json/NonUniqueEmailResponse.json'
+            username: 'account/json/NonUniqueUserNameResponse.json',
+            email: 'account/json/NonUniqueEmailResponse.json'
         }
     });
     t.chain(
@@ -320,8 +320,8 @@ function testEditUserFormRemoteValidation(t, userstoreStore) {
     var eufp2 = createEditUserFormPanelWithConfig(userstoreStore, {
         includedFields: ['username', 'email'],
         validationUrls: {
-            username: 'tests/account/json/UniqueUserNameResponse.json',
-            email: 'tests/account/json/UniqueEmailResponse.json'
+            username: 'account/json/UniqueUserNameResponse.json',
+            email: 'account/json/UniqueEmailResponse.json'
         }
     });
     t.chain(

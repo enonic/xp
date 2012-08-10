@@ -9,7 +9,7 @@ StartTest(function (t) {
             });
             //Create tab from request
             var requestConfig = {
-                url: 'tests/account/json/UserData.json',
+                url: 'account/json/UserData.json',
                 method: 'GET',
                 createTabFromResponse: function (response) {
                     var jsonObj = Ext.JSON.decode(response.responseText);

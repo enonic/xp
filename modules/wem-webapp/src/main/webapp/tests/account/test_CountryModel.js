@@ -41,7 +41,7 @@ StartTest(function (t) {
             autoLoad: true,
             proxy: {
                 type: 'ajax',
-                url: 'tests/account/json/CountriesData.json',
+                url: 'account/json/CountriesData.json',
                 reader: {
                     type: 'json',
                     root: 'countries',
