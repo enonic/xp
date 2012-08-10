@@ -1,0 +1,72 @@
+<div data-live-edit-type="window"  data-live-edit-key="94" data-live-edit-name="JS Carousel: Customers" class="clear clearfix">
+    <script type="text/javascript">
+        var animationDuration = 200;
+        var slideInterval = 4000;
+
+        $(document).ready(function () {
+            $(".casestudybox").hover(function () {
+                        window.slideShowHover = true;
+                    },
+                    function () {
+                        window.slideShowHover = false;
+                    });
+            $(".casestudybox .item")
+                    .removeClass("active")
+                    .css("display", "none")
+                    .eq(0).css("display", "block").addClass("active");
+
+            function showSlide(i) {
+                $(".inner-casenav a[class!='prev'][class!='next']")
+                        .removeClass("active")
+                        .eq(i).addClass("active");
+
+                $(".casestudybox .item").stop(true, true);
+                $(".casestudybox .item.active")
+                        .fadeOut(animationDuration, function () {
+                            $(".casestudybox .item").removeClass("active").css("display", "none").eq(i)
+                                    .css("display", "block")
+                                    .addClass("active")
+                                    .fadeIn(animationDuration);
+                        });
+            }
+
+            $(".inner-casenav a[class!='prev'][class!='next']").each(function (i) {
+                $(this)
+                        .click(function (e) {
+                            e.preventDefault();
+                            showSlide(i);
+                        });
+            });
+
+            function getCurrentSlide() {
+                var currentSlide = 0;
+                $(".inner-casenav a[class!='prev'][class!='next']").each(function (i) {
+                    if ($(this).hasClass("active")) {
+                        currentSlide = i;
+                    }
+                });
+                return currentSlide;
+            }
+
+            function getSlideCount() {
+                return $(".casestudybox .item").length;
+            }
+
+            function flipSlides(pageCount) {
+                showSlide((getSlideCount() + getCurrentSlide() + pageCount) % getSlideCount());
+            }
+
+            $(".inner-casenav a.prev").click(function () {
+                flipSlides(- 1);
+            });
+
+            $(".inner-casenav a.next").click(function () {
+                flipSlides(1);
+            })
+
+            window.setInterval(function () {
+                        if (! window.slideShowHover) flipSlides(1);
+                    },
+                    slideInterval);
+        });</script><div class="casestudybox bannersize"><div style="display: none;" class="item"><div class="inner-item"><div class="image-container"><a href="http://www.enonic.com/en/home/reference-customers/private-sector/get" title="Get"><img src="http://www.enonic.com/en/home/reference-customers/_image/120867/label/small.png?_encoded=2f66666666666678302f35382f2930202c323531202c3434322865646977656c616373&amp;_ts=1335ea35ce1" alt="Get.no screenshot" title="Get" height="152" width="244"></a></div><h2><a href="http://www.enonic.com/en/home/reference-customers/private-sector/get" title="Get">Get</a></h2><p>Get is Norway's leading digital television and broadband provider, delivering daily services to over 440,000 homes in Norway...</p><a href="http://www.enonic.com/en/home/reference-customers/private-sector/get" title="Get">More about the project</a></div></div><div class="item" style="display: none;"><div class="inner-item"><div class="image-container"><a href="http://www.enonic.com/en/home/reference-customers/private-sector/projectiondesign" title="projectiondesign"><img src="http://www.enonic.com/en/home/reference-customers/_image/120866/label/small.png?_encoded=2f66666666666678302f35382f2930202c323531202c3434322865646977656c616373&amp;_ts=1335e9c2c9d" alt="projectiondesign.com" title="projectiondesign" height="152" width="244"></a></div><h2><a href="http://www.enonic.com/en/home/reference-customers/private-sector/projectiondesign" title="projectiondesign">projectiondesign</a></h2><p>projectiondesign is a Norwegian company that designs, manufactures and markets a range of high performance projectors for...</p><a href="http://www.enonic.com/en/home/reference-customers/private-sector/projectiondesign" title="projectiondesign">More about the project</a></div></div><div class="item active" style="display: block;"><div class="inner-item"><div class="image-container"><a href="http://www.enonic.com/en/home/reference-customers/public-sector/finansportalen.no" title="Finansportalen.no"><img src="http://www.enonic.com/en/home/reference-customers/_image/87165/label/small.png?_encoded=2f66666666666678302f35382f2930202c323531202c3434322865646977656c616373&amp;_ts=1245d47dbd9" alt="Finansportalen screenshot" title="Finansportalen.no" height="135" width="244"></a></div><h2><a href="http://www.enonic.com/en/home/reference-customers/public-sector/finansportalen.no" title="Finansportalen.no">Finansportalen.no</a></h2><p>The only website in Norway that provides a complete overview of services within finance, savings and insurance. They cover 150...</p><a href="http://www.enonic.com/en/home/reference-customers/public-sector/finansportalen.no" title="Finansportalen.no">More about the project</a></div></div><div class="item" style="display:none;"><div class="inner-item"><div class="image-container"><a href="http://www.enonic.com/en/home/reference-customers/private-sector/norway-post" title="Norway Post"><img src="http://www.enonic.com/en/home/reference-customers/_image/87167/label/small.png?_encoded=2f66666666666678302f35382f2930202c323531202c3434322865646977656c616373&amp;_ts=1245d48acfa" alt="Posten Screenshot" title="Norway Post" height="135" width="244"></a></div><h2><a href="http://www.enonic.com/en/home/reference-customers/private-sector/norway-post" title="Norway Post">Norway Post</a></h2><p>Norway Post develops and delivers complete solutions within postal services, communications and logistics, with the Nordic...</p><a href="http://www.enonic.com/en/home/reference-customers/private-sector/norway-post" title="Norway Post">More about the project</a></div></div><div class="item" style="display:none;"><div class="inner-item"><div class="image-container"><a href="http://www.enonic.com/en/home/reference-customers/private-sector/norsk-tipping" title="Norsk Tipping"><img src="http://www.enonic.com/en/home/reference-customers/_image/87022/label/small.png?_encoded=2f66666666666678302f35382f2930202c323531202c3434322865646977656c616373&amp;_ts=12453a34363" alt="Norsk Tipping" title="Norsk Tipping" height="143" width="244"></a></div><h2><a href="http://www.enonic.com/en/home/reference-customers/private-sector/norsk-tipping" title="Norsk Tipping">Norsk Tipping</a></h2><p>Norsk Tipping is Norway’s leading games company, wholly-owned by the Norwegian state.</p><a href="http://www.enonic.com/en/home/reference-customers/private-sector/norsk-tipping" title="Norsk Tipping">More about the project</a></div></div><div class="item" style="display:none;"><div class="inner-item"><div class="image-container"><a href="http://www.enonic.com/en/home/reference-customers/private-sector/tine" title="TINE"><img src="http://www.enonic.com/en/home/reference-customers/_image/87020/label/small.png?_encoded=2f66666666666678302f35382f2930202c323531202c3434322865646977656c616373&amp;_ts=124539ef18e" alt="TINE screenshot" title="TINE" height="152" width="244"></a></div><h2><a href="http://www.enonic.com/en/home/reference-customers/private-sector/tine" title="TINE">TINE</a></h2><p>TINE is Norway's largest producer, distributor and exporter of dairyproducts. TINE is strongly positioned in the Norwegian...</p><a href="http://www.enonic.com/en/home/reference-customers/private-sector/tine" title="TINE">More about the project</a></div></div><div class="item" style="display:none;"><div class="inner-item"><div class="image-container"><a href="http://www.enonic.com/en/home/reference-customers/public-sector/statens-vegvesen" title="Statens Vegvesen"><img src="http://www.enonic.com/en/home/reference-customers/_image/87016/label/small.png?_encoded=2f66666666666678302f35382f2930202c323531202c3434322865646977656c616373&amp;_ts=12453aec62d" alt="Road Administration screenshot" title="Statens Vegvesen" height="143" width="244"></a></div><h2><a href="http://www.enonic.com/en/home/reference-customers/public-sector/statens-vegvesen" title="Statens Vegvesen">Statens Vegvesen</a></h2><p>The Norwegian Public Roads Administration is responsible for the planning, construction and operation of the national and...</p><a href="http://www.enonic.com/en/home/reference-customers/public-sector/statens-vegvesen" title="Statens Vegvesen">More about the project</a></div></div><div class="item" style="display:none;"><div class="inner-item"><div class="image-container"><a href="http://www.enonic.com/en/home/reference-customers/public-sector/nav" title="NAV"><img src="http://www.enonic.com/en/home/reference-customers/_image/87015/label/small.png?_encoded=2f66666666666678302f35382f2930202c323531202c3434322865646977656c616373&amp;_ts=124538804ec" alt="NAV Screenshot 2" title="NAV" height="152" width="244"></a></div><h2><a href="http://www.enonic.com/en/home/reference-customers/public-sector/nav" title="NAV">NAV</a></h2><p>The Norwegian Labour and Welfare Service (NAV) play a broad participatory role in the world of work and society, and...</p><a href="http://www.enonic.com/en/home/reference-customers/public-sector/nav" title="NAV">More about the project</a></div></div><div class="item" style="display:none;"><div class="inner-item"><div class="image-container"><a href="http://www.enonic.com/en/home/reference-customers/private-sector/gjensidige" title="Gjensidige"><img src="http://www.enonic.com/en/home/reference-customers/_image/86125/label/small.png?_encoded=2f66666666666678302f35382f2930202c323531202c3434322865646977656c616373&amp;_ts=12410477082" alt="Gjensidige - norwegian insurance company - www.gjensidige.no" title="Gjensidige" height="152" width="244"></a></div><h2><a href="http://www.enonic.com/en/home/reference-customers/private-sector/gjensidige" title="Gjensidige">Gjensidige</a></h2><p>Gjensidige is a total provider of financial services, offering non-life insurance, banking, loans and saving.</p><a href="http://www.enonic.com/en/home/reference-customers/private-sector/gjensidige" title="Gjensidige">More about the project</a></div></div><div class="item" style="display:none;"><div class="inner-item"><div class="image-container"><a href="http://www.enonic.com/en/home/reference-customers/organizations/rainforest-foundation" title="Rainforest Foundation"><img src="http://www.enonic.com/en/home/reference-customers/_image/87026/label/small.png?_encoded=2f66666666666678302f35382f2930202c323531202c3434322865646977656c616373&amp;_ts=12453aadf57" alt="Rainforest Foundation screenshot" title="Rainforest Foundation" height="143" width="244"></a></div><h2><a href="http://www.enonic.com/en/home/reference-customers/organizations/rainforest-foundation" title="Rainforest Foundation">Rainforest Foundation</a></h2><p>Rainforest Foundation Norway supports indigenous peoples and traditional populations of the world's rainforests in their...</p><a href="http://www.enonic.com/en/home/reference-customers/organizations/rainforest-foundation" title="Rainforest Foundation">More about the project</a></div></div><div class="casestudy-navigation"><div class="inner-casenav"><a href="javascript:void(0);" rel="prev" title="Previous" class="prev">Previous</a><a href="javascript:void(0);" class="slidelink" title="Get">1</a><a href="javascript:void(0);" class="slidelink" title="projectiondesign">2</a><a href="javascript:void(0);" class="slidelink active" title="Finansportalen.no">3</a><a href="javascript:void(0);" class="slidelink" title="Norway Post">4</a><a href="javascript:void(0);" class="slidelink" title="Norsk Tipping">5</a><a href="javascript:void(0);" class="slidelink" title="TINE">6</a><a href="javascript:void(0);" class="slidelink" title="Statens Vegvesen">7</a><a href="javascript:void(0);" class="slidelink" title="NAV">8</a><a href="javascript:void(0);" class="slidelink" title="Gjensidige">9</a><a href="javascript:void(0);" class="slidelink" title="Rainforest Foundation">10</a><a href="javascript:void(0);" rel="next" title="Next" class="next">Next</a></div></div></div>
+</div>
