@@ -33,6 +33,9 @@
 
             AdminLiveEdit.ui2.DragDrop.init();
 
+            var logger = new AdminLiveEdit.Logger();
+            logger.create();
+
             $liveedit('.live-edit-loader-splash-container').remove();
 
         }, 1000);
