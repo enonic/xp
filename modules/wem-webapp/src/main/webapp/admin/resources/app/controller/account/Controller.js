@@ -153,17 +153,16 @@ Ext.define('Admin.controller.account.Controller', {
                 }
                 return {
                     xtype: 'groupPreviewPanel',
-                    data: jsonObj.group,
-                    group: jsonObj.group
+                    data: jsonObj,
+                    group: jsonObj
                 };
             };
         for (i = 0; i < selection.length; i++) {
             var selected = selection[i].data || selection[i];
             if (selected.type === 'user') {
                 requestConfig = {
-                    url: 'data/user/userinfo',
+                    url: Admin.lib.UriHelper.getAccountInfoUri(selected),
                     method: 'GET',
-                    params: {key: selected.key },
                     createTabFromResponse: createUserTabFn
                 };
                 tabItem = {
@@ -181,9 +180,8 @@ Ext.define('Admin.controller.account.Controller', {
                 tabPane.addTab(tabItem, index >= 0 ? index : undefined, requestConfig);
             } else {
                 requestConfig = {
-                    url: 'data/account/groupinfo',
+                    url: Admin.lib.UriHelper.getAccountInfoUri(selected),
                     method: 'GET',
-                    params: {key: selected.key },
                     createTabFromResponse: createGroupTabFn
                 };
                 tabItem = {
@@ -234,8 +232,8 @@ Ext.define('Admin.controller.account.Controller', {
                 var jsonObj = Ext.JSON.decode(response.responseText);
                 var tab = {
                     xtype: 'groupWizardPanel',
-                    modelData: jsonObj.group,
-                    userstore: jsonObj.group.userStore,
+                    modelData: jsonObj,
+                    userstore: jsonObjgit.userStore,
                     autoScroll: true
                 };
                 if (Ext.isFunction(callback)) {
@@ -247,12 +245,11 @@ Ext.define('Admin.controller.account.Controller', {
         selection = [].concat(selection);
         for (i = 0; i < selection.length; i++) {
             var selected = selection[i].data || selection[i];
-            if (selected.isEditable) {
+            if (selected.editable) {
                 if (selected.type === 'user') {
                     requestConfig = {
-                        url: 'data/user/userinfo',
+                        url: Admin.lib.UriHelper.getAccountInfoUri(selected),
                         method: 'GET',
-                        params: {key: selected.key},
                         createTabFromResponse: createUserWizardFn
                     };
                     tabItem = {
@@ -270,9 +267,8 @@ Ext.define('Admin.controller.account.Controller', {
                     tabPane.addTab(tabItem, index >= 0 ? index : undefined, requestConfig);
                 } else {
                     requestConfig = {
-                        url: 'data/account/groupinfo',
+                        url: Admin.lib.UriHelper.getAccountInfoUri(selected),
                         method: 'GET',
-                        params: {key: selected.key},
                         createTabFromResponse: createGroupWizardFn
                     };
 
@@ -335,7 +331,7 @@ Ext.define('Admin.controller.account.Controller', {
 
         if (selectionCount === 1) {
             var selection = this.getPersistentGridSelectionPlugin().getSelection()[0];
-            var isEditable = selection.get('isEditable');
+            var isEditable = selection.get('editable');
             var isUser = selection.get('type') === 'user';
             var isRole = selection.get('type') === 'role';
 

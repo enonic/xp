@@ -43,7 +43,7 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
         if (this.showToolbar) {
             this.tbar = {
                 xtype: 'userPreviewToolbar',
-                isEditable: this.data.isEditable
+                isEditable: this.data.editable
             };
         }
 
@@ -103,18 +103,31 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
                                     {
                                         title: "Memberships",
                                         itemId: 'membershipsTab',
+                                        listeners: {
+                                            show: function () {
+                                                if (!me.graphData) {
+                                                    var mask = new Ext.LoadMask(this, {msg: "Please wait..."});
+                                                    mask.show();
+                                                    Ext.Ajax.request({
+                                                        url: Admin.lib.UriHelper.getAccountGraphUri(me.data),
+                                                        success: function (response) {
+                                                            var graphData = Ext.JSON.decode(response.responseText).graph;
+                                                            me.graphData = graphData;
+                                                            me.down('membershipsGraphPanel').setGraphData(graphData);
+                                                            mask.hide();
+                                                        }
+                                                    });
+
+                                                }
+                                            }
+                                        },
                                         items: [
                                             {
                                                 tpl: Templates.account.userPreviewMemberships
                                             },
                                             {
                                                 xtype: 'membershipsGraphPanel',
-                                                extraCls: 'admin-memberships-graph',
-                                                listeners: {
-                                                    afterrender: function () {
-                                                        me.down('membershipsGraphPanel').setGraphData(me.data.graph);
-                                                    }
-                                                }
+                                                extraCls: 'admin-memberships-graph'
                                             }
                                         ]
                                     }
@@ -151,7 +164,7 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
                 var fieldSetData = { title: fieldSet.title};
                 fieldSetData.fields = [];
                 Ext.Array.each(fieldSet.fields, function (field) {
-                    var value = userData[field] || (userData.userInfo ? userData.userInfo[field] : undefined);
+                    var value = userData[field] || (userData.info ? userData.info[field] : undefined);
                     var title = Admin.view.account.EditUserFormPanel.fieldLabels[field] || field;
                     if (value) {
                         Ext.Array.include(fieldSetData.fields, {title: title, value: value});
@@ -222,10 +235,10 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
             }
 
             var membershipsTab = this.down('#membershipsTab');
+
             if (membershipsTab.rendered) {
-                membershipsTab.down('membershipsGraphPanel').setGraphData(data.graph);
-                // Graph panel for some reason does not repaint itself
-                this.doLayout();
+                delete this.graphData;
+                membershipsTab.fireEvent("show");
             }
         }
     },
