@@ -16,5 +16,6 @@ public abstract class CommandHandler<C extends Command>
         return this.type;
     }
 
-    public abstract void handle( C command );
+    public abstract void handle( CommandContext context, C command )
+        throws Exception;
 }

@@ -1,11 +1,11 @@
 package com.enonic.wem.api.command;
 
-import com.enonic.wem.api.command.resource.GetResourceBuilder;
+import com.enonic.wem.api.command.account.AccountCommands;
 
 public abstract class Commands
 {
-    public static GetResourceBuilder getResource()
+    public static AccountCommands account()
     {
-        return new GetResourceBuilder();
+        return new AccountCommands();
     }
 }

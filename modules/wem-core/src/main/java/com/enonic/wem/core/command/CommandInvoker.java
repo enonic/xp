@@ -4,5 +4,5 @@ import com.enonic.wem.api.command.Command;
 
 public interface CommandInvoker
 {
-    public void invoke( Command command );
+    public void invoke( CommandContext context, Command command );
 }
