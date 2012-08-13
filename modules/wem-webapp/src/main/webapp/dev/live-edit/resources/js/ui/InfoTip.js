@@ -1,12 +1,12 @@
 (function () {
     // Class definition (constructor function)
-    var infoTip = AdminLiveEdit.ui2.InfoTip = function () {
+    var infoTip = AdminLiveEdit.ui.InfoTip = function () {
         this.create();
         this.registerSubscribers();
     };
 
     // Inherits ui.Base
-    infoTip.prototype = new AdminLiveEdit.ui2.Base();
+    infoTip.prototype = new AdminLiveEdit.ui.Base();
 
     // Fix constructor as it now is Base
     infoTip.constructor = infoTip;
@@ -51,20 +51,24 @@
 
 
     p.moveToComponent = function ($component) {
-        var $infoTip = this.getEl();
         var componentName = util.getComponentName($component);
         var componentType = util.getComponentType($component);
+        var componentTagName = util.getTagNameForComponent($component);
 
         // Set text and icon first so position is calculated correctly.
         this.setText(componentName);
         this.setIcon(componentType);
 
         var componentBoxModel = util.getBoxModel($component);
-        var top = componentBoxModel.top - 50;
-        var left = componentBoxModel.left + (componentBoxModel.width / 2) - (this.getEl().width() / 2);
-        $infoTip.css({
-            top: top + 12,
-            left: left
+        var leftPos = componentBoxModel.left + (componentBoxModel.width / 2) - (this.getEl().width() / 2);
+        var topPos = componentBoxModel.top - 38;
+        if (componentType === 'page' && componentTagName === 'body') {
+            topPos = 0;
+        }
+
+        this.getEl().css({
+            top: topPos,
+            left: leftPos
         });
     };
 

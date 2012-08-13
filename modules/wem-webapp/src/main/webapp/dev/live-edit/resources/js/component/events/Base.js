@@ -1,29 +1,28 @@
 (function () {
     // Namespaces
-    AdminLiveEdit.page = {};
-    AdminLiveEdit.page.components = {};
+    AdminLiveEdit.components = {};
+    AdminLiveEdit.components.events = {};
 
 
-    AdminLiveEdit.page.components.Base = function () {
+    AdminLiveEdit.components.events.Base = function () {
         this.selector = '';
-        this.highlightColor = '#141414';
     };
 
 
-    AdminLiveEdit.page.components.Base.prototype = {
+    AdminLiveEdit.components.events.Base.prototype = {
         attachMouseOverEvent: function () {
             var self = this;
             $liveedit(document).on('mouseover', this.selector, function (event) {
                 var $component = $liveedit(this);
                 var componentIsDescendantOfSelected = $component.parents('.live-edit-selected-component').length === 1;
                 // TODO: remove reference to DragDrop, use PubSub.
-                var disableHover = componentIsDescendantOfSelected || AdminLiveEdit.ui2.DragDrop.isDragging();
+                var disableHover = componentIsDescendantOfSelected || AdminLiveEdit.ui.DragDrop.isDragging();
                 if (disableHover) {
                     return;
                 }
                 event.stopPropagation();
 
-                $liveedit.publish('/ui/highlighter/on-highlight', [$component, self.highlightColor]);
+                $liveedit.publish('/ui/highlighter/on-highlight', [$component]);
             });
         },
 

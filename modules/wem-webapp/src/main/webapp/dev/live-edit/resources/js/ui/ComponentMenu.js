@@ -1,6 +1,6 @@
 (function () {
     // Class definition (constructor)
-    var componentMenu = AdminLiveEdit.ui2.ComponentMenu = function () {
+    var componentMenu = AdminLiveEdit.ui.ComponentMenu = function () {
         this.buttons = [];
         this.buttonConfig = {
             'page': ['settings'],
@@ -16,7 +16,7 @@
 
 
     // Inherits ui.Base.js
-    componentMenu.prototype = new AdminLiveEdit.ui2.Base();
+    componentMenu.prototype = new AdminLiveEdit.ui.Base();
 
     // Fix constructor as it now is Base
     componentMenu.constructor = componentMenu;
@@ -122,7 +122,7 @@
     p.addButtons = function () {
         var self = this;
 
-        var parentButton = new AdminLiveEdit.ui2.Button();
+        var parentButton = new AdminLiveEdit.ui.Button();
         parentButton.create({
             id: 'live-edit-button-parent',
             text: 'Parent',
@@ -135,7 +135,7 @@
         self.buttons.push(parentButton);
 
 
-        var insertButton = new AdminLiveEdit.ui2.Button();
+        var insertButton = new AdminLiveEdit.ui.Button();
         insertButton.create({
             text: 'Insert',
             id: 'live-edit-button-insert',
@@ -146,7 +146,7 @@
         });
         self.buttons.push(insertButton);
 
-        var resetButton = new AdminLiveEdit.ui2.Button();
+        var resetButton = new AdminLiveEdit.ui.Button();
         resetButton.create({
             text: 'Reset',
             id: 'live-edit-button-reset',
@@ -158,7 +158,7 @@
         self.buttons.push(resetButton);
 
 
-        var emptyButton = new AdminLiveEdit.ui2.Button();
+        var emptyButton = new AdminLiveEdit.ui.Button();
         emptyButton.create({
             text: 'Empty',
             id: 'live-edit-button-empty',
@@ -170,7 +170,7 @@
         self.buttons.push(emptyButton);
 
 
-        var viewButton = new AdminLiveEdit.ui2.Button();
+        var viewButton = new AdminLiveEdit.ui.Button();
         viewButton.create({
             text: 'View',
             id: 'live-edit-button-view',
@@ -182,7 +182,7 @@
         self.buttons.push(viewButton);
 
 
-        var editButton = new AdminLiveEdit.ui2.Button();
+        var editButton = new AdminLiveEdit.ui.Button();
         editButton.create({
             text: 'edit',
             id: 'live-edit-button-edit',
@@ -194,7 +194,7 @@
         self.buttons.push(editButton);
 
 
-        var settingsButton = new AdminLiveEdit.ui2.Button();
+        var settingsButton = new AdminLiveEdit.ui.Button();
         settingsButton.create({
             text: 'Settings',
             id: 'live-edit-button-settings',
@@ -205,7 +205,7 @@
         });
         self.buttons.push(settingsButton);
 
-        var dragButton = new AdminLiveEdit.ui2.Button();
+        var dragButton = new AdminLiveEdit.ui.Button();
         dragButton.create({
             text: 'Drag',
             id: 'live-edit-button-drag',
@@ -219,7 +219,7 @@
         dragButton.getEl().on('mousedown', function () {
             this.le_mouseIsDown = true;
             // TODO: Use PubSub
-            AdminLiveEdit.ui2.DragDrop.enable();
+            AdminLiveEdit.ui.DragDrop.enable();
         });
 
 
@@ -240,12 +240,12 @@
         dragButton.getEl().on('mouseup', function () {
             this.le_mouseIsDown = false;
             // TODO: remove reference to DragDrop, use PubSub.
-            AdminLiveEdit.ui2.DragDrop.disable();
+            AdminLiveEdit.ui.DragDrop.disable();
         });
         self.buttons.push(dragButton);
 
 
-        var removeButton = new AdminLiveEdit.ui2.Button();
+        var removeButton = new AdminLiveEdit.ui.Button();
         removeButton.create({
             text: 'Remove',
             id: 'live-edit-button-remove',

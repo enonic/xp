@@ -1,13 +1,13 @@
 (function () {
     // Class definition (constructor function)
-    var componentSelector = AdminLiveEdit.ui2.ComponentSelector = function () {
+    var componentSelector = AdminLiveEdit.ui.ComponentSelector = function () {
         this.$selectedComponent = $liveedit([]); // Empty jQuery object
         this.create();
         this.registerSubscribers();
     };
 
     // Inherits ui.Base
-    componentSelector.prototype = new AdminLiveEdit.ui2.Base();
+    componentSelector.prototype = new AdminLiveEdit.ui.Base();
 
     // Fix constructor as it now is Base
     componentSelector.constructor = componentSelector;

@@ -1,4 +1,4 @@
-AdminLiveEdit.ui2.DragDrop = (function () {
+AdminLiveEdit.ui.DragDrop = (function () {
     var util = AdminLiveEdit.Util;
 
     var isDragging = false;
