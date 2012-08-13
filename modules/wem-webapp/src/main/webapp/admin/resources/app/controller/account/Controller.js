@@ -214,7 +214,6 @@ Ext.define('Admin.controller.account.Controller', {
                     userstore: jsonObj.userStore,
                     qUserName: jsonObj.name,
                     userFields: jsonObj,
-                    hasPhoto: jsonObj.hasPhoto,
                     autoScroll: true
                 };
                 var tabCmp = Ext.widget(tab.xtype, tab);
