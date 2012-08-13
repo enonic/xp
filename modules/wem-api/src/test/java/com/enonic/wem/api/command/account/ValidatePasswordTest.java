@@ -2,18 +2,18 @@ package com.enonic.wem.api.command.account;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 import com.enonic.wem.api.account.AccountKey;
 
-public class ChangePasswordTest
+import static org.junit.Assert.*;
+
+public class ValidatePasswordTest
 {
     @Test
     public void testValid()
     {
         final AccountKey key = AccountKey.from( "user:other:dummy" );
 
-        final ChangePassword command = new ChangePassword();
+        final ValidatePassword command = new ValidatePassword();
         command.key( key );
         command.password( "password" );
 
@@ -26,7 +26,7 @@ public class ChangePasswordTest
     @Test(expected = NullPointerException.class)
     public void testNotValid_nullKey()
     {
-        final ChangePassword command = new ChangePassword();
+        final ValidatePassword command = new ValidatePassword();
         command.key( null );
 
         command.validate();
@@ -35,18 +35,8 @@ public class ChangePasswordTest
     @Test(expected = NullPointerException.class)
     public void testNotValid_nullPassword()
     {
-        final ChangePassword command = new ChangePassword();
+        final ValidatePassword command = new ValidatePassword();
         command.password( null );
-
-        command.validate();
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testNotValid_superUser()
-    {
-        final ChangePassword command = new ChangePassword();
-        command.key( AccountKey.superUser() );
-        command.password( "password" );
 
         command.validate();
     }
@@ -54,7 +44,7 @@ public class ChangePasswordTest
     @Test(expected = IllegalArgumentException.class)
     public void testNotValid_anonymous()
     {
-        final ChangePassword command = new ChangePassword();
+        final ValidatePassword command = new ValidatePassword();
         command.key( AccountKey.anonymous() );
         command.password( "password" );
 
@@ -64,7 +54,7 @@ public class ChangePasswordTest
     @Test(expected = IllegalArgumentException.class)
     public void testNotValid_notUser()
     {
-        final ChangePassword command = new ChangePassword();
+        final ValidatePassword command = new ValidatePassword();
         command.key( AccountKey.from( "group:other:dummy" ) );
         command.password( "password" );
 
