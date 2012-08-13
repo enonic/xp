@@ -87,35 +87,9 @@ Ext.define('Admin.view.account.GridPanel', {
 
     nameRenderer: function (value, p, record) {
         var account = record.data;
-        var photoUrl = this.resolvePhotoUrl(account);
+        var photoUrl = Admin.plugin.UriHelper.getAccountIconUri(account, 32);
 
         return Ext.String.format(Templates.account.gridPanelNameRenderer, photoUrl, value, account.name, account.userStore);
-    },
-
-    resolvePhotoUrl: function (account) {
-        var url;
-        var builtIn = account.builtIn;
-        var isEnterpriseAdministrator = builtIn && account.name === 'admin';
-        var isAnonymous = builtIn && account.name === 'anonymous';
-        // TODO: Remove && !isAnonymous when EA and Anonymous has been re-classified as "user" (B-02818)
-        var isRole = builtIn && account.type === 'role' && !isAnonymous;
-        var isUser = !builtIn && account.type === 'user';
-
-        if (isUser) {
-            url = Ext.String.format('rest/account/user/{0}/photo?size={1}', account.key, 32);
-        } else {
-            if (isEnterpriseAdministrator) {
-                url = 'resources/images/icons/32x32/superhero.png';
-            } else if (isAnonymous) {
-                url = 'resources/images/icons/32x32/ghost.png';
-            } else if (isRole) {
-                url = 'resources/images/icons/32x32/masks.png';
-            } else {
-                url = 'resources/images/icons/32x32/group.png';
-            }
-        }
-
-        return url;
     },
 
     prettyDateRenderer: function (value, p, record) {
@@ -125,8 +99,7 @@ Ext.define('Admin.view.account.GridPanel', {
             } else {
                 return value;
             }
-        }
-        catch (e) {
+        } catch (e) {
             return value;
         }
     }
