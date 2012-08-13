@@ -89,6 +89,9 @@ Ext.define('Admin.lib.UriHelper', {
 
     getAbsoluteUri: function (uri) {
         var currentLocation = window.location;
+        if (Ext.isEmpty(uri)) {
+            return "";
+        }
         var currentPath = currentLocation.pathname.substring(0, currentLocation.pathname.lastIndexOf("/"));
         if (uri.charAt(0) !== "/") {
             uri = "/" + uri;
