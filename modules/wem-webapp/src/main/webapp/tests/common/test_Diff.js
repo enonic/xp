@@ -716,12 +716,12 @@ function testUserstores(t, diff, changedOnly) {
 StartTest(function (t) {
     t.requireOk(
         [
-            'Admin.plugin.Diff',
+            'Admin.lib.Diff',
             'Admin.view.account.EditUserFormPanel'
         ],
         function () {
 
-            var diff = Admin.plugin.Diff;
+            var diff = Admin.lib.Diff;
 
             testObjects(t, diff);
             testObjects(t, diff, true);

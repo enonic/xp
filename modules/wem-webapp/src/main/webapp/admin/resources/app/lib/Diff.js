@@ -1,4 +1,4 @@
-Ext.define('Admin.plugin.Diff', {
+Ext.define('Admin.lib.Diff', {
 
     singleton: true,
 

@@ -208,7 +208,7 @@ Ext.define('Admin.view.SummaryTreePanel', {
 
     getShortenDiff: function () {
         if (!this.shortenDiff && this.changedData && this.initialData) {
-            this.shortenDiff = Admin.plugin.Diff.compare(this.dataType, this.initialData, this.changedData, true);
+            this.shortenDiff = Admin.lib.Diff.compare(this.dataType, this.initialData, this.changedData, true);
         }
         return Ext.clone(this.shortenDiff || {});
     },

@@ -30,7 +30,7 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
         var userGroups = [];
         var displayNameValue = 'Display Name';
         if (me.userFields) {
-            photoUrl = Admin.plugin.UriHelper.getAccountIconUri(me.userFields);
+            photoUrl = Admin.lib.UriHelper.getAccountIconUri(me.userFields);
             userGroups = me.userFields.groups;
             displayNameValue = me.userFields.displayName;
 

@@ -4,7 +4,7 @@ Ext.define('Admin.controller.account.UserWizardController', {
     /*      Controller for handling User Wizard UI events       */
 
     requires: [
-        'Admin.plugin.Diff'
+        'Admin.lib.Diff'
     ],
 
     stores: [
