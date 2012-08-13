@@ -11,20 +11,32 @@ public class ChangePasswordTest
     @Test
     public void testValid()
     {
-        final ChangePassword command = new ChangePassword();
-
         final AccountKey key = AccountKey.from( "user:other:dummy" );
+
+        final ChangePassword command = new ChangePassword();
         command.key( key );
+        command.password( "password" );
+
         assertEquals( key, command.getKey() );
+        assertEquals( "password", command.getPassword() );
 
         command.validate();
     }
 
     @Test(expected = NullPointerException.class)
-    public void testNotValid_null()
+    public void testNotValid_nullKey()
     {
         final ChangePassword command = new ChangePassword();
         command.key( null );
+
+        command.validate();
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testNotValid_nullPassword()
+    {
+        final ChangePassword command = new ChangePassword();
+        command.password( null );
 
         command.validate();
     }
@@ -34,6 +46,7 @@ public class ChangePasswordTest
     {
         final ChangePassword command = new ChangePassword();
         command.key( AccountKey.superUser() );
+        command.password( "password" );
 
         command.validate();
     }
@@ -43,6 +56,7 @@ public class ChangePasswordTest
     {
         final ChangePassword command = new ChangePassword();
         command.key( AccountKey.anonymous() );
+        command.password( "password" );
 
         command.validate();
     }
@@ -52,6 +66,7 @@ public class ChangePasswordTest
     {
         final ChangePassword command = new ChangePassword();
         command.key( AccountKey.from( "group:other:dummy" ) );
+        command.password( "password" );
 
         command.validate();
     }
