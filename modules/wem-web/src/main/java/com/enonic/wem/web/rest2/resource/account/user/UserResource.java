@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.web.rest.account.UserIdGenerator;
 import com.enonic.wem.web.rest2.service.account.user.UserGraphService;
 
 import com.enonic.cms.core.security.user.UserEntity;
@@ -93,6 +94,24 @@ public final class UserResource
         {
             return new UniqueEmailResult( true, existingUserWithEmail.toString() );
         }
+    }
+
+    @GET
+    @Path("/suggest-name")
+    public NameSuggestionResult suggestUsername( @QueryParam("firstname") @DefaultValue("") final String firstName,
+                                                 @QueryParam("lastname") @DefaultValue("") final String lastName,
+                                                 @QueryParam("userstore") @DefaultValue("") final String userStoreName )
+    {
+        final UserStoreEntity store = userStoreDao.findByName( userStoreName );
+        if ( store == null )
+        {
+            return null;
+        }
+
+        final UserIdGenerator userIdGenerator = new UserIdGenerator( userDao );
+        final String suggestedUserName = userIdGenerator.generateUserId( firstName.trim(), lastName.trim(), store.getKey() );
+
+        return new NameSuggestionResult( suggestedUserName );
     }
 
     private UserKey findUserByEmail( final UserStoreKey userStoreKey, final String email )

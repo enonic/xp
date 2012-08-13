@@ -155,6 +155,42 @@ public class UserResourceTest
         assertJsonResult( "verifyUniqueEmailMissing.json", uniqueEmail );
     }
 
+    @Test
+    public void testSuggestUsername()
+        throws Exception
+    {
+        final UserStoreKey userStoreKey = new UserStoreKey( "33" );
+        final String userStoreName = "enonic";
+        final UserStoreEntity userStore = createUserstore( userStoreName );
+        userStore.setKey( userStoreKey );
+        Mockito.when( userStoreDao.findByName( userStoreName ) ).thenReturn( userStore );
+
+        final NameSuggestionResult nameSuggestion = userResource.suggestUsername( "First Name", "Last Name", "enonic" );
+        assertEquals("firstnal", nameSuggestion.getUsername());
+        assertJsonResult( "suggestUsername.json", nameSuggestion );
+
+        final NameSuggestionResult nameSuggestionLastName = userResource.suggestUsername( "", "Last Name", "enonic" );
+        assertEquals("lastnam", nameSuggestionLastName.getUsername());
+        assertJsonResult( "suggestUsername2.json", nameSuggestionLastName );
+
+        final NameSuggestionResult nameSuggestionFirstName = userResource.suggestUsername( "First Name", "", "enonic" );
+        assertEquals("firstna", nameSuggestionFirstName.getUsername());
+        assertJsonResult( "suggestUsername3.json", nameSuggestionFirstName );
+    }
+
+    @Test
+    public void testSuggestUsernameNoUserstore()
+        throws Exception
+    {
+        final UserStoreKey userStoreKey = new UserStoreKey( "33" );
+        final String userStoreName = "enonic";
+        final UserStoreEntity userStore = createUserstore( userStoreName );
+        userStore.setKey( userStoreKey );
+
+        final NameSuggestionResult nameSuggestion = userResource.suggestUsername( "First Name", "Last Name", "enonic" );
+        assertNull(nameSuggestion);
+    }
+
     private BufferedImage readPhoto()
         throws IOException
     {
