@@ -17,7 +17,7 @@
                 var $component = $liveedit(this);
                 var componentIsDescendantOfSelected = $component.parents('.live-edit-selected-component').length === 1;
                 // TODO: remove reference to DragDrop, use PubSub.
-                var disableHover = componentIsDescendantOfSelected || AdminLiveEdit.ui2.DragDrop.isDragging();
+                var disableHover = componentIsDescendantOfSelected || AdminLiveEdit.ui.DragDrop.isDragging();
                 if (disableHover) {
                     return;
                 }

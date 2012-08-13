@@ -1,6 +1,6 @@
 (function () {
     // Class definition (constructor function)
-    var toolTip = AdminLiveEdit.ui2.ToolTip = function () {
+    var toolTip = AdminLiveEdit.ui.ToolTip = function () {
         this.OFFSET_X = 15;
         this.OFFSET_Y = 15;
         this.create();
@@ -8,7 +8,7 @@
     };
 
     // Inherits ui.Base
-    toolTip.prototype = new AdminLiveEdit.ui2.Base();
+    toolTip.prototype = new AdminLiveEdit.ui.Base();
 
     // Fix constructor as it now is Base
     toolTip.constructor = toolTip;
@@ -60,7 +60,7 @@
             var isUi = $liveedit(event.target).is('.live-edit-info-tip, .live-edit-button') ||
                        $liveedit(event.target).parents('.live-edit-info-tip, .live-edit-button').length > 0;
             // TODO: Use PubSub instead of calling DragDrop object.
-            if (isUi || AdminLiveEdit.ui2.DragDrop.isDragging()) {
+            if (isUi || AdminLiveEdit.ui.DragDrop.isDragging()) {
                 self.hide();
                 return;
             }

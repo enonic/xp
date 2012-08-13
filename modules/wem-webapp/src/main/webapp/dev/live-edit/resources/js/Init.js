@@ -24,14 +24,14 @@
             var windows = new AdminLiveEdit.components.events.Windows();
             var contents = new AdminLiveEdit.components.events.Contents();
             var paragraphs = new AdminLiveEdit.components.events.Paragraphs();
-            var highlighter = new AdminLiveEdit.ui2.Highlighter();
-            var componentSelector = new AdminLiveEdit.ui2.ComponentSelector();
-            var infoTip = new AdminLiveEdit.ui2.InfoTip();
-            var toolTip = new AdminLiveEdit.ui2.ToolTip();
-            var componentMenu = new AdminLiveEdit.ui2.ComponentMenu();
+            var highlighter = new AdminLiveEdit.ui.Highlighter();
+            var componentSelector = new AdminLiveEdit.ui.ComponentSelector();
+            var infoTip = new AdminLiveEdit.ui.InfoTip();
+            var toolTip = new AdminLiveEdit.ui.ToolTip();
+            var componentMenu = new AdminLiveEdit.ui.ComponentMenu();
             var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
 
-            AdminLiveEdit.ui2.DragDrop.init();
+            AdminLiveEdit.ui.DragDrop.init();
 
             /*
             var logger = new AdminLiveEdit.Logger();

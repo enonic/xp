@@ -1,12 +1,12 @@
 (function () {
     // Class definition (constructor function)
-    var infoTip = AdminLiveEdit.ui2.InfoTip = function () {
+    var infoTip = AdminLiveEdit.ui.InfoTip = function () {
         this.create();
         this.registerSubscribers();
     };
 
     // Inherits ui.Base
-    infoTip.prototype = new AdminLiveEdit.ui2.Base();
+    infoTip.prototype = new AdminLiveEdit.ui.Base();
 
     // Fix constructor as it now is Base
     infoTip.constructor = infoTip;

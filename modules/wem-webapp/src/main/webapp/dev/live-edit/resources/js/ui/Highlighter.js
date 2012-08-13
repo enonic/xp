@@ -1,12 +1,12 @@
 (function () {
     // Class definition (constructor function)
-    var highlighter = AdminLiveEdit.ui2.Highlighter = function () {
+    var highlighter = AdminLiveEdit.ui.Highlighter = function () {
         this.create();
         this.registerSubscribers();
     };
 
     // Inherits ui.Base
-    highlighter.prototype = new AdminLiveEdit.ui2.Base();
+    highlighter.prototype = new AdminLiveEdit.ui.Base();
 
     // Fix constructor as it now is Base
     highlighter.constructor = highlighter;
