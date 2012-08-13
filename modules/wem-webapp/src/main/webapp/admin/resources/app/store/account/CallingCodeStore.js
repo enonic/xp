@@ -3,7 +3,7 @@ Ext.define('Admin.store.account.CallingCodeStore', {
 
     model: 'Admin.model.account.CallingCodeModel',
 
-    autoLoad: true,
+    autoLoad: false,
 
     remoteFilter: false,
 

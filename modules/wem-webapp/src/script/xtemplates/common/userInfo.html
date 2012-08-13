@@ -2,13 +2,7 @@
     <div class="admin-user-info clearfix">
         <div class="admin-user-photo west admin-left">
             <div class="photo-placeholder">
-                <tpl if="name==='admin' && builtIn===true"><img src="resources/images/icons/128x128/superhero.png" alt="{name}"/></tpl>
-                <tpl if="name==='anonymous' && builtIn===true"><img src="resources/images/icons/128x128/ghost.png" alt="{displayName}"/>
-                </tpl>
-                <tpl if="type==='role' && builtIn===true && name!=='anonymous'"><img src="resources/images/icons/128x128/masks.png"
-                                                                                     alt="{displayName}"/></tpl>
-                <tpl if="type==='user' && (!builtIn)"><img src="/admin/rest/account/user/{key}/photo" alt="{displayName}"/></tpl>
-                <tpl if="type==='group'"><img src="resources/images/icons/128x128/group.png" alt="{displayName}"/></tpl>
+                <img src="{[Admin.plugin.UriHelper.getAccountIconUri(values)]}" alt="{name}"/>
             </div>
         </div>
         <div class="admin-left">

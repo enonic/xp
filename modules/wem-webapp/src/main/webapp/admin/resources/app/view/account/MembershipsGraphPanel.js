@@ -137,25 +137,13 @@ Ext.define('Admin.view.account.MembershipsGraphPanel', {
                     var imageX = (x + leftRightPadding);
                     var imageY = (y + 3);
 
-                    var isEnterpriseAdministrator = data.builtIn && data.name === 'admin';
-                    var isAnonymous = data.builtIn && data.name === 'anonymous';
-                    var imageFileName = data.type === 'role' ? 'resources/images/icons/64x64/masks.png'
-                        : 'resources/images/icons/64x64/group.png';
-                    if (isEnterpriseAdministrator) {
-                        imageFileName = 'resources/images/icons/32x32/superhero.png';
-                    } else if (isAnonymous) {
-                        imageFileName = 'resources/images/icons/32x32/ghost.png';
-                    } else if (data.type === 'user') {
-                        imageFileName =
-                        Ext.String.format('rest/account/user/{0}/photo?size={1}', node.data.key, 16);
-                    }
-                    image.src = imageFileName;
+                    image.src = Admin.plugin.UriHelper.getAccountIconUri(data, 16);
 
                     // Only request image the first time the so it is not requested when navigating the graph.
                     if (!me.graph._loaded) {
                         image.onload = function () {
                             context.drawImage(image, imageX, imageY, iconSize, iconSize);
-                        }
+                        };
                     } else {
                         // Image should be cached.
                         context.drawImage(image, imageX, imageY, iconSize, iconSize);
