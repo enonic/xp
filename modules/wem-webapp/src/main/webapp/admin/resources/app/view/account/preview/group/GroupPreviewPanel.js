@@ -64,8 +64,18 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
                                         itemId: 'membershipsTab',
                                         listeners: {
                                             afterrender: function () {
-                                                if (me.data && me.data.graph) {
-                                                    me.down('membershipsGraphPanel').setGraphData(me.data.graph);
+                                                if (me.data) {
+                                                    var mask = new Ext.LoadMask(this, {msg: "Please wait..."});
+                                                    mask.show();
+                                                    Ext.Ajax.request({
+                                                        url: Admin.lib.UriHelper.getAccountGraphUri(me.data),
+                                                        success: function (response) {
+                                                            var graphData = Ext.JSON.decode(response.responseText).graph;
+                                                            me.graphData = graphData;
+                                                            me.down('membershipsGraphPanel').setGraphData(graphData);
+                                                            mask.hide();
+                                                        }
+                                                    });
                                                 }
                                             }
                                         },
@@ -98,7 +108,7 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
         if (this.showToolbar) {
             this.tbar = {
                 xtype: 'groupPreviewToolbar',
-                isEditable: this.data.isEditable,
+                isEditable: this.data.editable,
                 isRole: this.data.type === 'role'
             };
         }
@@ -109,6 +119,7 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
 
     setData: function (data) {
         if (data) {
+            var me = this;
             this.data = data;
 
             var previewHeader = this.down('#previewHeader');
@@ -121,9 +132,13 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
             previewInfo.update(data);
 
             var membershipsTab = this.down('#membershipsTab');
+            var graph = this.down('membershipsGraphPanel');
+
             if (membershipsTab.rendered) {
-                membershipsTab.down('membershipsGraphPanel').setGraphData(data.graph);
+                //membershipsTab.down('membershipsGraphPanel').setGraphData(data.graph);
                 // Graph panel for some reason does not repaint itself
+                //graph.setGraphData(data.graph);
+                membershipsTab.fireEvent('afterrender');
                 this.doLayout();
             }
         }

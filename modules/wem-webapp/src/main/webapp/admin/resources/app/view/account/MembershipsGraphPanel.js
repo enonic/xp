@@ -70,6 +70,10 @@ Ext.define('Admin.view.account.MembershipsGraphPanel', {
                 me.onPlaceLabel.call(me, domElement, node);
             }
         });
+        // Set empty graph data: jit graph throws error on resize if there is no data
+        me.setGraphData([
+            {}
+        ]);
     },
 
     createDetails: function () {
@@ -133,20 +137,21 @@ Ext.define('Admin.view.account.MembershipsGraphPanel', {
                     context.textBaseline = 'middle';
                     context.fillText(text, (x + leftRightPadding + iconSize + iconMarginRight), (y + height / 2));
 
-                    var image = new Image();
-                    var imageX = (x + leftRightPadding);
-                    var imageY = (y + 3);
-
-                    image.src = Admin.lib.UriHelper.getAccountIconUri(data, 16);
-
                     // Only request image the first time the so it is not requested when navigating the graph.
-                    if (!me.graph._loaded) {
-                        image.onload = function () {
+                    if (data.type) {
+                        var image = new Image();
+                        var imageX = (x + leftRightPadding);
+                        var imageY = (y + 3);
+
+                        image.src = Admin.lib.UriHelper.getAccountIconUri(data, 16);
+                        if (!me.graph._loaded) {
+                            image.onload = function () {
+                                context.drawImage(image, imageX, imageY, iconSize, iconSize);
+                            };
+                        } else {
+                            // Image should be cached.
                             context.drawImage(image, imageX, imageY, iconSize, iconSize);
-                        };
-                    } else {
-                        // Image should be cached.
-                        context.drawImage(image, imageX, imageY, iconSize, iconSize);
+                        }
                     }
 
                     node._width = width;

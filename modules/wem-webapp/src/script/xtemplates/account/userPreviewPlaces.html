@@ -2,12 +2,12 @@
     <h2 class="message">No data</h2>
 </tpl>
 
-<tpl if="userInfo != null && userInfo.addresses != null && userInfo.addresses.length &gt; 0">
+<tpl if="info != null && info.addresses != null && info.addresses.length &gt; 0">
     <fieldset class="x-fieldset x-fieldset-default admin-addresses-container">
         <legend class="x-fieldset-header x-fieldset-header-default">
             <div class="x-component x-fieldset-header-text x-component-default">Addresses</div>
         </legend>
-        <tpl for="userInfo.addresses">
+        <tpl for="info.addresses">
             <div class="address">
                 <tpl if="label != null">
                     <h3 class="x-fieldset-header-text">{label}</h3>
