@@ -18,7 +18,7 @@ public class FindMembersTest
         assertEquals( key, command.getKey() );
         assertEquals( false, command.isIncludeTransitive() );
 
-        command.isIncludeTransitive();
+        command.includeTransitive();
         assertEquals( true, command.isIncludeTransitive() );
 
         command.validate();
