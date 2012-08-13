@@ -16,12 +16,12 @@ Ext.define('Admin.store.account.AccountStore', {
 
     proxy: {
         type: 'ajax',
-        url: 'data/account/search',
+        url: Admin.lib.UriHelper.getAccountSearchUri(),
         simpleSortMode: true,
         reader: {
             type: 'json',
-            root: 'results.accounts',
-            totalProperty: 'results.total'
+            root: 'accounts',
+            totalProperty: 'total'
         }
     }
 });

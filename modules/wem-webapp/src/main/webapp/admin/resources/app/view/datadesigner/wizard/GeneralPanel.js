@@ -5,7 +5,6 @@ Ext.define('Admin.view.datadesigner.wizard.GeneralPanel', {
     initComponent: function () {
         var me = this;
 
-        console.log(this.modelData)
         me.items = [
             {
                 xtype: 'fieldset',

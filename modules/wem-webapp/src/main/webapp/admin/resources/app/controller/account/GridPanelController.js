@@ -77,11 +77,18 @@ Ext.define('Admin.controller.account.GridPanelController', {
             detailPanel.showNoneSelection();
         } else if (showAccountPreviewOnly) {
             // need raw to include fields like memberships, not defined in model
+            var mask = new Ext.LoadMask(detailPanel, {msg: "Please wait..."});
+            mask.show();
             var accountData = persistentSelection[0].raw;
-            if (accountData) {
-                detailPanel.setCurrentAccount(accountData);
-                detailPanel.showAccountPreview(accountData);
-            }
+            Ext.Ajax.request({
+                url: Admin.lib.UriHelper.getAccountInfoUri(accountData),
+                success: function (response) {
+                    var remoteData = Ext.JSON.decode(response.responseText);
+                    detailPanel.setCurrentAccount(remoteData);
+                    detailPanel.showAccountPreview(remoteData);
+                    mask.hide();
+                }
+            });
         } else {
             var detailed = true;
             if (persistentSelectionCount > 10) {
@@ -99,7 +106,7 @@ Ext.define('Admin.controller.account.GridPanelController', {
 
     updateFilterPanel: function (store, records, success, opts) {
         var data = store.proxy.reader.jsonData;
-        var facets = data && data.results ? data.results.facets : null;
+        var facets = data ? data.facets : null;
         if (facets) {
             this.getAccountFilter().updateFacets(facets);
         }

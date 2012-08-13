@@ -200,8 +200,8 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
         };
         this.addressFieldSet = {
             'address': function (field) {
-                if (me.userFields && me.userFields.userInfo && me.userFields.userInfo.addresses) {
-                    var addresses = me.userFields.userInfo.addresses;
+                if (me.userFields && me.userFields.info && me.userFields.info.addresses) {
+                    var addresses = me.userFields.info.addresses;
                     var tabs = [];
                     var index;
                     for (index in addresses) {
@@ -456,8 +456,8 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
                 var fieldValue;
                 if (me.userFields) {
                     fieldValue = me.userFields[item.get('type')];
-                    if ((fieldValue === undefined) && (me.userFields.userInfo !== undefined)) {
-                        fieldValue = me.userFields.userInfo[item.get('type')];
+                    if ((fieldValue === undefined) && (me.userFields.info !== undefined)) {
+                        fieldValue = me.userFields.info[item.get('type')];
                     }
                 }
                 var baseConfig = {
@@ -545,11 +545,11 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
         var isPlacesForm = formValues.label;
         if (isPlacesForm) {
             userData = {
-                userInfo: {addresses: this.getAddresses(formValues) }
+                info: {addresses: this.getAddresses(formValues) }
             };
         } else {
             userData = {
-                userInfo: formValues
+                info: formValues
             };
             if (formValues.username) {
                 userData.username = formValues.username;
