@@ -1,7 +1,6 @@
 (function () {
     var regions = AdminLiveEdit.components.events.Regions = function () {
         this.selector = '[data-live-edit-type=region]';
-        this.highlightColor = '#141414';
         this.renderEmptyPlaceholders();
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();

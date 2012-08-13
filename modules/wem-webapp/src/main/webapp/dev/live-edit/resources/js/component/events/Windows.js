@@ -1,7 +1,6 @@
 (function () {
     var windows = AdminLiveEdit.components.events.Windows = function () {
         this.selector = '[data-live-edit-type=window]';
-        this.highlightColor = '#141414';
         this.renderEmptyPlaceholders();
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();

@@ -41,7 +41,7 @@
     };
 
 
-    p.highlight = function ($component, borderColor) {
+    p.highlight = function ($component) {
         var componentType = util.getComponentType($component);
         var componentTagName = util.getTagNameForComponent($component);
         var componentBoxModel = util.getBoxModel($component);
@@ -67,7 +67,7 @@
             left: left
         });
 
-        $highlighter.css('stroke', borderColor);
+        $highlighter.css('stroke', this.getBorderColor($component));
     };
 
 
@@ -76,6 +76,32 @@
             top: '-5000px',
             left: '-5000px'
         });
+    };
+
+
+    p.getBorderColor = function ($component) {
+        var componentType = util.getComponentType($component);
+        var color = '';
+        switch (componentType) {
+        case 'region':
+            color = '#141414';
+            break;
+        case 'window':
+            color = '#141414';
+            break;
+        case 'content':
+            color = '#141414';
+            break;
+        case 'paragraph':
+            color = '#141414';
+            break;
+        case 'page':
+            color = '#141414';
+            break;
+        default:
+            color = '#ff0000';
+        }
+        return color;
     };
 
 }());

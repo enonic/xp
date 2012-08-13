@@ -1,7 +1,6 @@
 (function () {
     var page = AdminLiveEdit.components.events.Page = function () {
         this.selector = '[data-live-edit-type=page]';
-        this.highlightColor = '#141414';
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();
         this.attachClickEvent();

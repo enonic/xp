@@ -1,7 +1,6 @@
 (function () {
     var paragraphs = AdminLiveEdit.components.events.Paragraphs = function () {
         this.selector = '[data-live-edit-type=paragraph]';
-        this.highlightColor = '#141414';
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();
         this.attachClickEvent();

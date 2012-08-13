@@ -6,7 +6,6 @@
 
     AdminLiveEdit.components.events.Base = function () {
         this.selector = '';
-        this.highlightColor = '#141414';
     };
 
 
@@ -23,7 +22,7 @@
                 }
                 event.stopPropagation();
 
-                $liveedit.publish('/ui/highlighter/on-highlight', [$component, self.highlightColor]);
+                $liveedit.publish('/ui/highlighter/on-highlight', [$component]);
             });
         },
 
