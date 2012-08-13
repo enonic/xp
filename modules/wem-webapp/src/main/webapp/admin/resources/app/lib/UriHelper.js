@@ -1,4 +1,4 @@
-Ext.define('Admin.plugin.UriHelper', {
+Ext.define('Admin.lib.UriHelper', {
 
     singleton: true,
 

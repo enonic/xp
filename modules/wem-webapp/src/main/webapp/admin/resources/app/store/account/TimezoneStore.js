@@ -8,7 +8,7 @@ Ext.define('Admin.store.account.TimezoneStore', {
 
     proxy: {
         type: 'ajax',
-        url: Admin.plugin.UriHelper.getAccountTimezoneUri(),
+        url: Admin.lib.UriHelper.getAccountTimezoneUri(),
         simpleSortMode: true,
         reader: {
             type: 'json',

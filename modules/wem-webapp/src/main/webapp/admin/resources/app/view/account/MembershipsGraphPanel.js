@@ -137,7 +137,7 @@ Ext.define('Admin.view.account.MembershipsGraphPanel', {
                     var imageX = (x + leftRightPadding);
                     var imageY = (y + 3);
 
-                    image.src = Admin.plugin.UriHelper.getAccountIconUri(data, 16);
+                    image.src = Admin.lib.UriHelper.getAccountIconUri(data, 16);
 
                     // Only request image the first time the so it is not requested when navigating the graph.
                     if (!me.graph._loaded) {

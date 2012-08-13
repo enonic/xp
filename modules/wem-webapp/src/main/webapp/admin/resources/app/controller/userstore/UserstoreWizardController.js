@@ -2,7 +2,7 @@ Ext.define('Admin.controller.userstore.UserstoreWizardController', {
     extend: 'Admin.controller.userstore.UserstoreController',
 
     requires: [
-        'Admin.plugin.Diff'
+        'Admin.lib.Diff'
     ],
 
     views: [

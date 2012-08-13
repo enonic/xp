@@ -8,7 +8,7 @@ Ext.define('Admin.store.account.CountryStore', {
 
     proxy: {
         type: 'ajax',
-        url: Admin.plugin.UriHelper.getAccountCountryUri(),
+        url: Admin.lib.UriHelper.getAccountCountryUri(),
         reader: {
             type: 'json',
             root: 'countries',

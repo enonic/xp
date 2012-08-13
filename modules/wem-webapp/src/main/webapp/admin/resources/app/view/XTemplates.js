@@ -99,7 +99,7 @@ Templates.account = {
     selectedUserLarge: '<tpl for="users">' +
                        '<div id="selected-item-box-{key}" class="admin-selected-item-box large x-btn-default-large clearfix">' +
                        '<div class="left">' +
-                       '<img src="{[Admin.plugin.UriHelper.getAccountIconUri(values, 32)]}" alt="{displayName}"/>' +
+                       '<img src="{[Admin.lib.UriHelper.getAccountIconUri(values, 32)]}" alt="{displayName}"/>' +
                        '</div>' +
                        '<div class="center"><h2>{displayName}</h2>' +
                        '<p>{userStore}\\\\{name}</p></div>' +
@@ -112,7 +112,7 @@ Templates.account = {
     selectedUserSmall: '<tpl for="users">' +
                        '<div id="selected-item-box-{key}" class="admin-selected-item-box small x-btn-default-small clearfix">' +
                        '<div class="admin-selected-item-box left">' +
-                       '<img src="{[Admin.plugin.UriHelper.getAccountIconUri(values, 20)]}" alt="{displayName}"/>' +
+                       '<img src="{[Admin.lib.UriHelper.getAccountIconUri(values, 20)]}" alt="{displayName}"/>' +
                        '</div>' +
                        '<div class="admin-selected-item-box center"><h2>{displayName}</h2></div>' +
                        '<div class="admin-selected-item-box right">' +
@@ -226,7 +226,7 @@ Templates.account = {
 
     userPreviewPhoto: '<div class="admin-user-photo west admin-left">' +
                       '<div class="photo-placeholder">' +
-                      '<img src="{[Admin.plugin.UriHelper.getAccountIconUri(values)]}" alt="{name}"/>' +
+                      '<img src="{[Admin.lib.UriHelper.getAccountIconUri(values)]}" alt="{name}"/>' +
                       '</div>' +
                       '</div>',
 
@@ -362,7 +362,7 @@ Templates.common = {
               '<div class="admin-user-info clearfix">' +
               '<div class="admin-user-photo west admin-left">' +
               '<div class="photo-placeholder">' +
-              '<img src="{[Admin.plugin.UriHelper.getAccountIconUri(values)]}" alt="{name}"/>' +
+              '<img src="{[Admin.lib.UriHelper.getAccountIconUri(values)]}" alt="{name}"/>' +
               '</div>' +
               '</div>' +
               '<div class="admin-left">' +
