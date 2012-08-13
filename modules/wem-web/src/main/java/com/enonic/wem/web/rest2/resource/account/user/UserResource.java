@@ -1,6 +1,7 @@
 package com.enonic.wem.web.rest2.resource.account.user;
 
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -16,7 +17,12 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.web.rest2.service.account.user.UserGraphService;
 
 import com.enonic.cms.core.security.user.UserEntity;
+import com.enonic.cms.core.security.user.UserKey;
+import com.enonic.cms.core.security.user.UserSpecification;
+import com.enonic.cms.core.security.userstore.UserStoreEntity;
+import com.enonic.cms.core.security.userstore.UserStoreKey;
 import com.enonic.cms.store.dao.UserDao;
+import com.enonic.cms.store.dao.UserStoreDao;
 
 @Path("account/user")
 @Produces(MediaType.APPLICATION_JSON)
@@ -28,6 +34,8 @@ public final class UserResource
     private UserDao userDao;
 
     private UserGraphService userGraphService;
+
+    private UserStoreDao userStoreDao;
 
     public UserResource()
         throws Exception
@@ -65,6 +73,47 @@ public final class UserResource
         return this.photoHelper.renderPhoto( entity, size );
     }
 
+    @GET
+    @Path("/verify-unique-email")
+    public UniqueEmailResult verifyUniqueEmail( @QueryParam("userstore") @DefaultValue("") final String userStoreName,
+                                                @QueryParam("email") @DefaultValue("") final String email )
+    {
+        final UserStoreEntity userStore = userStoreDao.findByName( userStoreName );
+        if ( userStore == null )
+        {
+            return new UniqueEmailResult( false );
+        }
+
+        final UserKey existingUserWithEmail = findUserByEmail( userStore.getKey(), email );
+        if ( existingUserWithEmail == null )
+        {
+            return new UniqueEmailResult( false );
+        }
+        else
+        {
+            return new UniqueEmailResult( true, existingUserWithEmail.toString() );
+        }
+    }
+
+    private UserKey findUserByEmail( final UserStoreKey userStoreKey, final String email )
+    {
+        final UserSpecification userByEmailSpec = new UserSpecification();
+        userByEmailSpec.setEmail( email );
+        userByEmailSpec.setUserStoreKey( userStoreKey );
+        userByEmailSpec.setDeletedStateNotDeleted();
+
+        final List<UserEntity> usersWithThisEmail = userDao.findBySpecification( userByEmailSpec );
+
+        if ( usersWithThisEmail.size() == 0 )
+        {
+            return null;
+        }
+        else
+        {
+            return usersWithThisEmail.get( 0 ).getKey();
+        }
+    }
+
     @Autowired
     public void setUserDao( final UserDao userDao )
     {
@@ -75,5 +124,11 @@ public final class UserResource
     public void setUserGraphService( final UserGraphService userGraphService )
     {
         this.userGraphService = userGraphService;
+    }
+
+    @Autowired
+    public void setUserStoreDao( final UserStoreDao userStoreDao )
+    {
+        this.userStoreDao = userStoreDao;
     }
 }
