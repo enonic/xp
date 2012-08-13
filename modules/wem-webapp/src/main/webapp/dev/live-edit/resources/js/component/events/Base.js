@@ -1,16 +1,16 @@
 (function () {
     // Namespaces
-    AdminLiveEdit.page = {};
-    AdminLiveEdit.page.components = {};
+    AdminLiveEdit.components = {};
+    AdminLiveEdit.components.events = {};
 
 
-    AdminLiveEdit.page.components.Base = function () {
+    AdminLiveEdit.components.events.Base = function () {
         this.selector = '';
         this.highlightColor = '#141414';
     };
 
 
-    AdminLiveEdit.page.components.Base.prototype = {
+    AdminLiveEdit.components.events.Base.prototype = {
         attachMouseOverEvent: function () {
             var self = this;
             $liveedit(document).on('mouseover', this.selector, function (event) {

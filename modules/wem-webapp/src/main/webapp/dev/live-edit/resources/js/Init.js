@@ -1,4 +1,4 @@
-(function (window) {
+(function () {
 
     $liveedit(document).ready(function () {
 
@@ -19,11 +19,11 @@
 
         // TODO: Remove timeout when loader splash(CMS-29) is accepted.
         setTimeout(function () {
-            var page = new AdminLiveEdit.page.components.Page();
-            var regions = new AdminLiveEdit.page.components.Regions();
-            var windows = new AdminLiveEdit.page.components.Windows();
-            var contents = new AdminLiveEdit.page.components.Contents();
-            var paragraphs = new AdminLiveEdit.page.components.Paragraphs();
+            var page = new AdminLiveEdit.components.events.Page();
+            var regions = new AdminLiveEdit.components.events.Regions();
+            var windows = new AdminLiveEdit.components.events.Windows();
+            var contents = new AdminLiveEdit.components.events.Contents();
+            var paragraphs = new AdminLiveEdit.components.events.Paragraphs();
             var highlighter = new AdminLiveEdit.ui2.Highlighter();
             var componentSelector = new AdminLiveEdit.ui2.ComponentSelector();
             var infoTip = new AdminLiveEdit.ui2.InfoTip();
@@ -44,4 +44,4 @@
 
     });
 
-}(window));
+}());

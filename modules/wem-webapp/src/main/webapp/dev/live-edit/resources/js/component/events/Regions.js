@@ -1,5 +1,5 @@
 (function () {
-    var regions = AdminLiveEdit.page.components.Regions = function () {
+    var regions = AdminLiveEdit.components.events.Regions = function () {
         this.selector = '[data-live-edit-type=region]';
         this.highlightColor = '#141414';
         this.renderEmptyPlaceholders();
@@ -10,7 +10,7 @@
     };
 
     // Inherit from Base prototype
-    regions.prototype = new AdminLiveEdit.page.components.Base();
+    regions.prototype = new AdminLiveEdit.components.events.Base();
 
     // Fix constructor as it now is Base
     regions.constructor = regions;

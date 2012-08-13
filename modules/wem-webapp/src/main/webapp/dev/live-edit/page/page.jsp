@@ -206,7 +206,7 @@
 
               <%@ include file="components/window-tagcloud.html" %>
 
-              <%@ include file="components/window-enterprise-ed-teaser.html" %>
+              <%@ include file="components/window-enterprise-ed-teaser.jsp" %>
 
               <%@ include file="components/window-svg-html5-logo.html" %>
 
