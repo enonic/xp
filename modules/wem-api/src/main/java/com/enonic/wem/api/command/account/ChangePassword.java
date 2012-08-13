@@ -6,7 +6,7 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Command;
 
 public final class ChangePassword
-    extends Command<AccountKey>
+    extends Command<Boolean>
 {
     private AccountKey key;
 
