@@ -20,7 +20,8 @@ Harness.configure({
         '../admin/resources/css/user-preview-panel.css',
         '../admin/resources/css/BoxSelect.css',
         '../admin/resources/app/view/XTemplates.js',
-        '../admin/resources/lib/ext/ext-all-debug.js'
+        '../admin/resources/lib/ext/ext-all-debug.js',
+        '../admin/resources/app/lib/UriHelper.js'
     ]
 });
 
