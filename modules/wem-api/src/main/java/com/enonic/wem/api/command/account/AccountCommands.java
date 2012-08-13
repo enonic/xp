@@ -6,4 +6,9 @@ public final class AccountCommands
     {
         return new ChangePassword();
     }
+
+    public ValidatePassword validatePassword()
+    {
+        return new ValidatePassword();
+    }
 }
