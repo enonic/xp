@@ -6,8 +6,6 @@ import java.util.LinkedHashMap;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.core.content.type.Template;
-
 public class ConfigItems
     implements Iterable<ConfigItem>
 {
@@ -45,7 +43,7 @@ public class ConfigItems
         if ( path.elementCount() > 1 )
         {
             ConfigItem foundConfig = items.get( path.getFirstElement() );
-            Preconditions.checkArgument( foundConfig instanceof FieldSet,
+            Preconditions.checkArgument( foundConfig.getConfigItemType() == ConfigItemType.FIELD_SET,
                                          "ConfigItem at path [%s] expected to be of type FieldSet: " + foundConfig.getConfigItemType(),
                                          path );
             //noinspection ConstantConditions
@@ -71,7 +69,7 @@ public class ConfigItems
             return null;
         }
 
-        Preconditions.checkArgument( ( configItem instanceof FieldSet ),
+        Preconditions.checkArgument( ( configItem.getConfigItemType() == ConfigItemType.FIELD_SET ),
                                      "ConfigItem at path [%s] is not a FieldSet: " + configItem.getConfigItemType(), configItem.getPath() );
 
         //noinspection ConstantConditions
@@ -86,7 +84,7 @@ public class ConfigItems
             return null;
         }
 
-        Preconditions.checkArgument( ( configItem instanceof FieldSet ),
+        Preconditions.checkArgument( ( configItem.getConfigItemType() == ConfigItemType.FIELD_SET ),
                                      "ConfigItem at path [%s] is not a FieldSet: " + configItem.getConfigItemType(), configItem.getPath() );
 
         //noinspection ConstantConditions

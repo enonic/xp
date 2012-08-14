@@ -1,8 +1,5 @@
-package com.enonic.wem.core.content.type;
+package com.enonic.wem.core.content.type.configitem;
 
-import com.enonic.wem.core.content.type.configitem.ConfigItem;
-import com.enonic.wem.core.content.type.configitem.Field;
-import com.enonic.wem.core.content.type.configitem.TemplateReference;
 import com.enonic.wem.core.module.Module;
 
 public class FieldTemplate

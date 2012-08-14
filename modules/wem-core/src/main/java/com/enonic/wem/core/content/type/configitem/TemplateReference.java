@@ -1,8 +1,6 @@
 package com.enonic.wem.core.content.type.configitem;
 
 
-import com.enonic.wem.core.content.type.TemplateQualifiedName;
-
 public class TemplateReference
     extends ConfigItem
 {

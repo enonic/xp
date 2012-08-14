@@ -13,6 +13,10 @@ import gherkin.formatter.model.DataTableRow;
 
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.Field;
+import com.enonic.wem.core.content.type.configitem.FieldTemplate;
+import com.enonic.wem.core.content.type.configitem.FieldTemplateBuilder;
+import com.enonic.wem.core.content.type.configitem.MockTemplateReferenceFetcher;
+import com.enonic.wem.core.content.type.configitem.TemplateQualifiedName;
 import com.enonic.wem.core.content.type.configitem.TemplateReference;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.module.Module;

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.type;
+package com.enonic.wem.core.content.type.configitem;
 
 
 import org.junit.Test;

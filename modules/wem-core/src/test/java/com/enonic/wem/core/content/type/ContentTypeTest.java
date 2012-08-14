@@ -5,6 +5,9 @@ import org.junit.Test;
 
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
+import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
+import com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder;
+import com.enonic.wem.core.content.type.configitem.MockTemplateReferenceFetcher;
 import com.enonic.wem.core.content.type.configitem.TemplateReference;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.module.Module;

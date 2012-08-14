@@ -8,7 +8,6 @@ import org.codehaus.jackson.JsonNode;
 
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.type.TemplateQualifiedName;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldType;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeConfigProxySerializerJson;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeJsonParser;

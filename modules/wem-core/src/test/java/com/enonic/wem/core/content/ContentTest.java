@@ -4,12 +4,12 @@ package com.enonic.wem.core.content;
 import org.junit.Test;
 
 import com.enonic.wem.core.content.type.ContentType;
-import com.enonic.wem.core.content.type.FieldSetTemplate;
-import com.enonic.wem.core.content.type.FieldSetTemplateBuilder;
-import com.enonic.wem.core.content.type.MockTemplateReferenceFetcher;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
+import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
+import com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder;
+import com.enonic.wem.core.content.type.configitem.MockTemplateReferenceFetcher;
 import com.enonic.wem.core.content.type.configitem.TemplateReference;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.content.type.valuetype.BasalValueType;

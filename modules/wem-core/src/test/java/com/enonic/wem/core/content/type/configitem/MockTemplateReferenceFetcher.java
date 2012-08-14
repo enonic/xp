@@ -1,9 +1,7 @@
-package com.enonic.wem.core.content.type;
+package com.enonic.wem.core.content.type.configitem;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import com.enonic.wem.core.content.type.configitem.TemplateReferenceFetcher;
 
 public class MockTemplateReferenceFetcher
     implements TemplateReferenceFetcher
