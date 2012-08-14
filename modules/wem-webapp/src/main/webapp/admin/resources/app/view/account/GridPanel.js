@@ -14,7 +14,8 @@ Ext.define('Admin.view.account.GridPanel', {
     store: 'Admin.store.account.AccountStore',
 
     initComponent: function () {
-        this.columns = [
+        var me = this;
+        me.columns = [
             {
                 text: 'Display Name',
                 dataIndex: 'displayName',
@@ -66,23 +67,25 @@ Ext.define('Admin.view.account.GridPanel', {
             }
         ];
 
-        this.tbar = {
+        me.tbar = {
             xtype: 'pagingtoolbar',
-            store: this.store,
+            store: me.store,
             plugins: ['slidingPagerPlugin']
         };
 
-        this.viewConfig = {
+        me.viewConfig = {
             trackOver: true,
             stripeRows: true,
-            loadMask: true
+            loadMask: {
+                store: me.store
+            }
         };
 
-        this.selModel = Ext.create('Ext.selection.CheckboxModel', {
+        me.selModel = Ext.create('Ext.selection.CheckboxModel', {
             //checkOnly: true
         });
 
-        this.callParent(arguments);
+        me.callParent(arguments);
     },
 
     nameRenderer: function (value, p, record) {
