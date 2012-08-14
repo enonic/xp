@@ -184,7 +184,6 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml
       <!-- Region -->
       <div class="column clear clearfix screen" id="west" data-live-edit-type="region" data-live-edit-key="49" data-live-edit-name="West">
 
-        <%@ include file="components/window-twitranet.html" %>
 
       </div>
 
@@ -193,6 +192,10 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml
       <div id="center" class="column clearfix" data-live-edit-type="region" data-live-edit-key="55" data-live-edit-name="Center">
 
         <%@ include file="components/window-flash.html" %>
+
+        <%@ include file="components/window-applet.html" %>
+
+        <%@ include file="components/window-iframe.html" %>
 
       </div>
 

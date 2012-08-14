@@ -186,15 +186,15 @@
 
               <%@ include file="components/window-upcomming-training.html" %>
 
+              <%@ include file="components/window-twitranet.html" %>
+
             </div>
 
 
             <!-- Region -->
             <div id="center" class="column clearfix" data-live-edit-type="region" data-live-edit-key="55" data-live-edit-name="Center">
 
-              <%@ include file="components/window-flash.html" %>
-
-              <%@ include file="components/window-iframe.html" %>
+              <%@ include file="components/window-press-release-list.html" %>
 
             </div>
 
@@ -220,7 +220,6 @@
         <!-- Region -->
         <div id="south" class="clear clearfix" data-live-edit-type="region" data-live-edit-key="99" data-live-edit-name="South">
 
-          <%@ include file="components/window-press-release-list.html" %>
 
         </div>
 

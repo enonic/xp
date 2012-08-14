@@ -1,6 +1,8 @@
 (function () {
     // Class definition (constructor function)
     var htmlElementReplacer = AdminLiveEdit.HtmlElementReplacer = function () {
+        this.elements = ['iframe', 'object'];
+
         this.replaceElementsWithPlaceholders();
     };
 
@@ -19,8 +21,7 @@
 
     p.replaceElementsWithPlaceholders = function () {
         var self = this;
-        var $elements = $liveedit('[data-live-edit-type=window] > iframe, object');
-        $elements.each(function (i) {
+        self.getElements().each(function () {
             self.replace($liveedit(this));
         });
     };
@@ -28,18 +29,24 @@
 
     p.replace = function ($element) {
         this.hideElement($element);
+        this.addPlaceholder($element);
+    };
+
+
+    p.addPlaceholder = function ($element) {
         this.createPlaceholder($element).insertAfter($element);
     };
 
 
     p.createPlaceholder = function ($element) {
+        var self = this;
         var $placeholder = $liveedit('<div></div>');
         $placeholder.addClass('live-edit-html-element-placeholder');
-        $placeholder.width(this.getWidth($element));
-        $placeholder.height(this.getHeight($element));
+        $placeholder.width(self.getElementWidth($element));
+        $placeholder.height(self.getElementHeight($element));
 
         var $icon = $liveedit('<div/>');
-        $icon.addClass(this.resolveIconCssClass($element));
+        $icon.addClass(self.resolveIconCssClass($element));
         $icon.append('<div>' + $element[0].tagName.toLowerCase() + '</div>');
         $placeholder.append($icon);
 
@@ -47,7 +54,12 @@
     };
 
 
-    p.getWidth = function ($element) {
+    p.getElements = function () {
+        return $liveedit('[data-live-edit-type=window] > ' + this.elements.toString());
+    };
+
+
+    p.getElementWidth = function ($element) {
         var attrWidth = $element.attr('width');
         if (!attrWidth) {
             // Return computed style width (int/pixels);
@@ -58,7 +70,7 @@
     };
 
 
-    p.getHeight = function ($element) {
+    p.getElementHeight = function ($element) {
         var attrHeight = $element.attr('height');
         if (!attrHeight) {
             // Return computed style height (int/pixels);
@@ -66,6 +78,11 @@
             return $element.height() - 2;
         }
         return attrHeight;
+    };
+
+
+    p.showElement = function ($element) {
+        $element.show();
     };
 
 
