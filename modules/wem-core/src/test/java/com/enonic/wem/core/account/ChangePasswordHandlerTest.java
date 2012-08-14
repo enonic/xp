@@ -2,7 +2,6 @@ package com.enonic.wem.core.account;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
@@ -13,7 +12,6 @@ import com.enonic.wem.core.client.StandardClient;
 import com.enonic.wem.core.command.CommandInvokerImpl;
 
 import com.enonic.cms.core.security.SecurityService;
-import com.enonic.cms.core.security.user.QualifiedUsername;
 import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.core.security.user.UserKey;
 import com.enonic.cms.core.security.user.UserType;
@@ -21,7 +19,7 @@ import com.enonic.cms.core.security.userstore.UserStoreEntity;
 import com.enonic.cms.store.dao.UserDao;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
@@ -115,23 +113,5 @@ public class ChangePasswordHandlerTest
         final UserStoreEntity userStore = new UserStoreEntity();
         userStore.setName( name );
         return userStore;
-    }
-
-    private class IsQualifiedUsername
-        extends ArgumentMatcher<QualifiedUsername>
-    {
-        private final QualifiedUsername qualifiedName;
-
-        public IsQualifiedUsername( final QualifiedUsername qualifiedName )
-        {
-            this.qualifiedName = qualifiedName;
-        }
-
-        public boolean matches( Object other )
-        {
-            final QualifiedUsername otherQualifiedName = (QualifiedUsername) other;
-            return this.qualifiedName.getUsername().equals( otherQualifiedName.getUsername() ) &&
-                this.qualifiedName.getUserStoreName().equals( otherQualifiedName.getUserStoreName() );
-        }
     }
 }

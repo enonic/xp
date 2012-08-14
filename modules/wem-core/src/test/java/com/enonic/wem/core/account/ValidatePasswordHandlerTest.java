@@ -2,7 +2,6 @@ package com.enonic.wem.core.account;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
@@ -148,21 +147,4 @@ public class ValidatePasswordHandlerTest
         return userStore;
     }
 
-    private class IsQualifiedUsername
-        extends ArgumentMatcher<QualifiedUsername>
-    {
-        private final QualifiedUsername qualifiedName;
-
-        public IsQualifiedUsername( final QualifiedUsername qualifiedName )
-        {
-            this.qualifiedName = qualifiedName;
-        }
-
-        public boolean matches( Object other )
-        {
-            final QualifiedUsername otherQualifiedName = (QualifiedUsername) other;
-            return this.qualifiedName.getUsername().equals( otherQualifiedName.getUsername() ) &&
-                this.qualifiedName.getUserStoreName().equals( otherQualifiedName.getUserStoreName() );
-        }
-    }
 }
