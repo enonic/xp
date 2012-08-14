@@ -64,8 +64,9 @@ public final class FindMembersHandler
         final Set<AccountKey> accountSet = Sets.newHashSet();
         for ( GroupEntity member : members )
         {
-            final AccountKey memberAccount =
-                createAccountKey( getAccountType( member ), member.getUserStore().getName(), member.getName() );
+            final AccountType type = getAccountType( member );
+            final String name = getAccountName( member );
+            final AccountKey memberAccount = createAccountKey( type, member.getUserStore().getName(), name );
             accountSet.add( memberAccount );
             if ( includeTransitive )
             {
@@ -74,6 +75,18 @@ public final class FindMembersHandler
             }
         }
         return accountSet;
+    }
+
+    private String getAccountName( final GroupEntity group )
+    {
+        if ( group.getType() == GroupType.USER )
+        {
+            return group.getUser().getName();
+        }
+        else
+        {
+            return group.getName();
+        }
     }
 
     private AccountKey createAccountKey( final AccountType type, final String userStore, final String localName )

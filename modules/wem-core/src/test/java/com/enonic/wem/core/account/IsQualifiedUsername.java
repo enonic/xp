@@ -19,6 +19,10 @@ class IsQualifiedUsername
 
     public boolean matches( Object other )
     {
+        if ( other == null )
+        {
+            return false;
+        }
         final QualifiedUsername otherQualifiedName = (QualifiedUsername) other;
         return this.qualifiedName.getUsername().equals( otherQualifiedName.getUsername() ) &&
             this.qualifiedName.getUserStoreName().equals( otherQualifiedName.getUserStoreName() );
