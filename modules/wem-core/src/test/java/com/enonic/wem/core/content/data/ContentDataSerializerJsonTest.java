@@ -31,8 +31,6 @@ public class ContentDataSerializerJsonTest
         ContentDataSerializerJson generator = new ContentDataSerializerJson();
         String json = generator.toJson( contentData );
 
-        System.out.println( json );
-
         // exercise
         ContentData actualContentData = generator.parse( json, configItems );
 
@@ -56,11 +54,9 @@ public class ContentDataSerializerJsonTest
 
         ContentDataSerializerJson generator = new ContentDataSerializerJson();
         String json = generator.toJson( contentData );
-        System.out.println( json );
 
         ContentData parsedContentData = generator.parse( json, configItems );
 
-        System.out.println( parsedContentData );
     }
 
     @Test
@@ -78,7 +74,6 @@ public class ContentDataSerializerJsonTest
 
         ContentDataSerializerJson serializer = new ContentDataSerializerJson();
         String json = serializer.toJson( contentData );
-        System.out.println( json );
         ContentData parsedContentData = serializer.parse( json, configItems );
 
         assertEquals( "A single line", parsedContentData.getValue( "myTextLine" ).getValue() );
@@ -104,7 +99,6 @@ public class ContentDataSerializerJsonTest
 
         ContentDataSerializerJson serializer = new ContentDataSerializerJson();
         String json = serializer.toJson( contentData );
-        System.out.println( json );
 
         // exercise
         ContentData actualContentData = serializer.parse( json, configItems );
@@ -139,9 +133,7 @@ public class ContentDataSerializerJsonTest
         contentData.setValue( "personalia[1].hairColour", "Brown" );
 
         ContentDataSerializerJson serializer = new ContentDataSerializerJson();
-        //System.out.println(transformer.toJson2( contentData ));
         String json = serializer.toJson( contentData );
-        System.out.println( json );
 
         // exercise
         ContentData actualContentData = serializer.parse( json, configItems );
@@ -173,7 +165,6 @@ public class ContentDataSerializerJsonTest
         data.setValue( "child[1].features.hairColour", "Black" );
 
         String json = ContentDataSerializerJson.toJson( data );
-        System.out.println( json );
 
         // exercise
         ContentDataSerializerJson serializer = new ContentDataSerializerJson();
@@ -203,7 +194,6 @@ public class ContentDataSerializerJsonTest
         data.setValue( "names[2]", "Alex" );
 
         String json = ContentDataSerializerJson.toJson( data );
-        System.out.println( json );
 
         // exercise
         ContentDataSerializerJson serializer = new ContentDataSerializerJson();
@@ -227,7 +217,6 @@ public class ContentDataSerializerJsonTest
         data.setValue( "company.names[2]", "Alex" );
 
         String json = ContentDataSerializerJson.toJson( data );
-        System.out.println( json );
 
         // exercise
         ContentDataSerializerJson serializer = new ContentDataSerializerJson();

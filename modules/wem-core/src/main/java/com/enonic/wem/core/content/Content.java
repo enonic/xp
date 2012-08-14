@@ -8,6 +8,8 @@ public class Content
 {
     private ContentType type;
 
+    private String name;
+
     private ContentData data = new ContentData();
 
     public ContentType getType()
@@ -19,6 +21,16 @@ public class Content
     {
         this.type = type;
         this.data.setConfigItems( type.getConfigItems() );
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName( final String name )
+    {
+        this.name = name;
     }
 
     public ContentData getData()
@@ -34,5 +46,10 @@ public class Content
     public void setValue( final String path, final String value )
     {
         this.data.setValue( new EntryPath( path ), value );
+    }
+
+    public String getValueAsString( final String path )
+    {
+        return this.data.getValueAsString( new EntryPath( path ) );
     }
 }

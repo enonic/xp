@@ -167,7 +167,6 @@ public class ConfigItemSerializerJsonTest
         FieldSet fieldSet = builder.build();
 
         String json = fieldSetToJson( fieldSet );
-        System.out.println( json );
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise

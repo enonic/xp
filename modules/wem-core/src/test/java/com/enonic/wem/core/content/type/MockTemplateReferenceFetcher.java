@@ -8,10 +8,10 @@ import com.enonic.wem.core.content.type.configitem.TemplateReferenceFetcher;
 public class MockTemplateReferenceFetcher
     implements TemplateReferenceFetcher
 {
-    private Map<TemplateQualifiedName, FieldSetTemplate> templateMap = new HashMap<TemplateQualifiedName, FieldSetTemplate>();
+    private Map<TemplateQualifiedName, Template> templateMap = new HashMap<TemplateQualifiedName, Template>();
 
     @Override
-    public FieldSetTemplate getTemplate( final TemplateQualifiedName templateQualifiedName )
+    public Template getTemplate( final TemplateQualifiedName templateQualifiedName )
     {
         return templateMap.get( templateQualifiedName );
     }
@@ -19,5 +19,10 @@ public class MockTemplateReferenceFetcher
     public void add( final FieldSetTemplate fieldSetTemplate )
     {
         templateMap.put( fieldSetTemplate.getTemplateQualifiedName(), fieldSetTemplate );
+    }
+
+    public void add( final FieldTemplate fieldtemplate )
+    {
+        templateMap.put( fieldtemplate.getTemplateQualifiedName(), fieldtemplate );
     }
 }

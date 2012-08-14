@@ -35,9 +35,15 @@ public class TemplateReference
             return this;
         }
 
-        public Builder template( TemplateQualifiedName value )
+        public Builder template( String templateQualifiedName )
         {
-            this.templateQualifiedName = value;
+            this.templateQualifiedName = new TemplateQualifiedName( templateQualifiedName );
+            return this;
+        }
+
+        public Builder template( TemplateQualifiedName templateQualifiedName )
+        {
+            this.templateQualifiedName = templateQualifiedName;
             return this;
         }
 

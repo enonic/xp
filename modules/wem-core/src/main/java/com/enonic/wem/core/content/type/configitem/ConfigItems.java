@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.core.content.type.FieldSetTemplate;
+import com.enonic.wem.core.content.type.Template;
 
 public class ConfigItems
     implements Iterable<ConfigItem>
@@ -172,8 +172,8 @@ public class ConfigItems
             if ( configItem.getConfigItemType() == ConfigItemType.REFERENCE )
             {
                 TemplateReference templateReference = (TemplateReference) configItem;
-                FieldSetTemplate fieldSetTemplate = templateReferenceFetcher.getTemplate( templateReference.getTemplateQualifiedName() );
-                items.put( templateReference.getName(), fieldSetTemplate.createFieldSet( templateReference ) );
+                Template template = templateReferenceFetcher.getTemplate( templateReference.getTemplateQualifiedName() );
+                items.put( templateReference.getName(), template.create( templateReference ) );
             }
         }
     }

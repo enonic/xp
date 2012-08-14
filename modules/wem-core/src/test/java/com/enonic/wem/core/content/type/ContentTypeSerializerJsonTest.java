@@ -45,7 +45,6 @@ public class ContentTypeSerializerJsonTest
 
         ContentTypeSerializerJson generator = new ContentTypeSerializerJson();
         String json = generator.toJson( contentType );
-        System.out.println( json );
     }
 
     @Test
@@ -65,7 +64,6 @@ public class ContentTypeSerializerJsonTest
 
         ContentTypeSerializerJson generator = new ContentTypeSerializerJson();
         String json = generator.toJson( contentType );
-        System.out.println( json );
     }
 
     @Test
@@ -94,8 +92,6 @@ public class ContentTypeSerializerJsonTest
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).multiple( 1, 3 ).type( FieldTypes.textline ).build() );
 
         String json = ContentTypeSerializerJson.toJson( contentType );
-
-        System.out.println( json );
 
         // exercise
         ContentType actualContentType = new ContentTypeSerializerJson().parse( json );

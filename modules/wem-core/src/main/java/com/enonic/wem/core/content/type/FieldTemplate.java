@@ -1,22 +1,20 @@
 package com.enonic.wem.core.content.type;
 
 import com.enonic.wem.core.content.type.configitem.ConfigItem;
-import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
-import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.TemplateReference;
 import com.enonic.wem.core.module.Module;
 
-public class FieldSetTemplate
+public class FieldTemplate
     implements Template
 {
     private String name;
 
     private Module module;
 
-    private ConfigItems configItems = new ConfigItems();
+    private Field field;
 
-    FieldSetTemplate()
+    FieldTemplate()
     {
     }
 
@@ -46,25 +44,18 @@ public class FieldSetTemplate
         return new TemplateQualifiedName( module.getName(), name );
     }
 
-    public ConfigItems getConfigItems()
+    public Field getField()
     {
-        return configItems;
+        return field;
     }
 
-    public void addField( final Field field )
+    public void setField( final Field value )
     {
-        configItems.addConfigItem( field );
+        this.field = value;
     }
-
 
     public ConfigItem create( final TemplateReference templateReference )
     {
-        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( templateReference.getName() ).build();
-
-        for ( ConfigItem configItem : configItems )
-        {
-            fieldSet.addConfigItem( configItem.copy() );
-        }
-        return fieldSet;
+        return field.copy( templateReference.getName() );
     }
 }

@@ -28,7 +28,6 @@ public class ContentTypeTest
         contentType.addConfigItem( fieldSet );
 
         String json = ContentTypeSerializerJson.toJson( contentType );
-        System.out.println( json );
     }
 
     @Test

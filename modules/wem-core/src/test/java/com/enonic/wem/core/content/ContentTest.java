@@ -4,11 +4,16 @@ package com.enonic.wem.core.content;
 import org.junit.Test;
 
 import com.enonic.wem.core.content.type.ContentType;
+import com.enonic.wem.core.content.type.FieldSetTemplate;
+import com.enonic.wem.core.content.type.FieldSetTemplateBuilder;
+import com.enonic.wem.core.content.type.MockTemplateReferenceFetcher;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
+import com.enonic.wem.core.content.type.configitem.TemplateReference;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.content.type.valuetype.BasalValueType;
+import com.enonic.wem.core.module.Module;
 
 import static org.junit.Assert.*;
 
@@ -66,5 +71,37 @@ public class ContentTest
         assertEquals( "personalia.hairColour", content.getData().getValue( "personalia.hairColour" ).getField().getPath().toString() );
         assertEquals( "crimes.description", content.getData().getValue( "crimes[1].description" ).getField().getPath().toString() );
         assertEquals( "crimes.year", content.getData().getValue( "crimes[1].year" ).getField().getPath().toString() );
+    }
+
+
+    @Test
+    public void fieldSetTemplate()
+    {
+        Module module = new Module();
+        module.setName( "myModule" );
+        FieldSetTemplate fieldSetTemplate = FieldSetTemplateBuilder.create().module( module ).name( "myAddressTemplate" ).build();
+        fieldSetTemplate.addField( Field.newBuilder().type( FieldTypes.textline ).name( "street" ).build() );
+        fieldSetTemplate.addField( Field.newBuilder().type( FieldTypes.textline ).name( "postalCode" ).build() );
+        fieldSetTemplate.addField( Field.newBuilder().type( FieldTypes.textline ).name( "postalPlace" ).build() );
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( Field.newBuilder().type( FieldTypes.textline ).name( "name" ).build() );
+        contentType.addConfigItem( TemplateReference.newBuilder().name( "address" ).template( "myModule:myAddressTemplate" ).build() );
+
+        MockTemplateReferenceFetcher templateReferenceFetcher = new MockTemplateReferenceFetcher();
+        templateReferenceFetcher.add( fieldSetTemplate );
+        contentType.templateReferencesToConfigItems( templateReferenceFetcher );
+
+        Content content = new Content();
+        content.setType( contentType );
+        content.setValue( "name", "Ola Normann" );
+        content.setValue( "address.street", "Norvegen 99" );
+        content.setValue( "address.postalCode", "0001" );
+        content.setValue( "address.postalPlace", "Kaupang" );
+
+        assertEquals( "Ola Normann", content.getValueAsString( "name" ) );
+        assertEquals( "Norvegen 99", content.getValueAsString( "address.street" ) );
+        assertEquals( "0001", content.getValueAsString( "address.postalCode" ) );
+        assertEquals( "Kaupang", content.getValueAsString( "address.postalPlace" ) );
     }
 }
