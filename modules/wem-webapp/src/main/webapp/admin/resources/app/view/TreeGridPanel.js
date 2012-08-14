@@ -31,12 +31,14 @@ Ext.define('Admin.view.TreeGridPanel', {
             xtype: 'treepanel',
             cls: 'admin-tree-panel',
             itemId: 'tree',
-            collapsible: true,
             useArrows: true,
             rootVisible: false,
 
             viewConfig: {
-                stripeRows: true
+                stripeRows: true,
+                loadMask: {
+                    store: me.treeStore
+                }
             },
             store: this.treeStore,
             columns: treeColumns
@@ -55,7 +57,9 @@ Ext.define('Admin.view.TreeGridPanel', {
             viewConfig: {
                 trackOver: true,
                 stripeRows: true,
-                loadMask: true
+                loadMask: {
+                    store: me.store
+                }
             },
             store: this.store,
             columns: this.columns
