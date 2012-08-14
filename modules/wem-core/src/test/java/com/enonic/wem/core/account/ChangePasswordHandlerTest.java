@@ -80,13 +80,14 @@ public class ChangePasswordHandlerTest
         client.execute( Commands.account().changePassword().key( account ).password( newPassword ) );
     }
 
-    @Test(expected = AccountNotFoundException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testChangePasswordNonUserAccount()
         throws Exception
     {
         final String newPassword = "passw0rd";
         final AccountKey account = AccountKey.from( "group:enonic:devs" );
 
+        // validation fails before attempting to execute command (cannot change password of a group)
         client.execute( Commands.account().changePassword().key( account ).password( newPassword ) );
     }
 

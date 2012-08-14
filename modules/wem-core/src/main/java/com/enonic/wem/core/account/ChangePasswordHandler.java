@@ -32,11 +32,6 @@ public final class ChangePasswordHandler
         throws Exception
     {
         final AccountKey user = command.getKey();
-        if ( !user.isUser() )
-        {
-            throw new AccountNotFoundException( user );
-        }
-
         final QualifiedUsername userQualifiedName = QualifiedUsername.parse( user.getQualifiedName() );
         final UserEntity userEntity = userDao.findByQualifiedUsername( userQualifiedName );
         if ( userEntity == null )

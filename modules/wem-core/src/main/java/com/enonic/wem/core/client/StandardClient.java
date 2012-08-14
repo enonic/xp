@@ -16,6 +16,7 @@ public final class StandardClient
     @Override
     public <R, C extends Command<R>> R execute( final C command )
     {
+        command.validate();
         this.invoker.invoke( null, command );
         return command.getResult();
     }
