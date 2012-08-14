@@ -9,7 +9,7 @@ Ext.define('Admin.lib.UriHelper', {
 
     uris: {
         Account: {
-            Search: 'admin/rest/account/search',
+            Search: 'admin/rest/account',
             Country: 'admin/rest/misc/country',
             Timezone: 'admin/rest/misc/timezone',
             Locale: 'admin/rest/misc/locale',
@@ -18,6 +18,9 @@ Ext.define('Admin.lib.UriHelper', {
             },
             Info: function (account) {
                 return Ext.String.format('/admin/rest/account/{0}/{1}', account.type, account.key);
+            },
+            Graph: function (account) {
+                return Ext.String.format('/admin/rest/account/graph/{0}', account.key);
             },
             Icon: {
                 user: 'admin/rest/account/user/{0}/photo?size={1}',
@@ -86,6 +89,9 @@ Ext.define('Admin.lib.UriHelper', {
 
     getAbsoluteUri: function (uri) {
         var currentLocation = window.location;
+        if (Ext.isEmpty(uri)) {
+            return "";
+        }
         var currentPath = currentLocation.pathname.substring(0, currentLocation.pathname.lastIndexOf("/"));
         if (uri.charAt(0) !== "/") {
             uri = "/" + uri;

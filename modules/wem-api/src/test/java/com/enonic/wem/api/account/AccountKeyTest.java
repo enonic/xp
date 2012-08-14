@@ -21,6 +21,7 @@ public class AccountKeyTest
         assertEquals( false, ref.isRole() );
         assertEquals( false, ref.isSuperUser() );
         assertEquals( false, ref.isAnonymous() );
+        assertEquals( false, ref.isBuiltIn() );
     }
 
     @Test
@@ -38,6 +39,7 @@ public class AccountKeyTest
         assertEquals( false, ref.isRole() );
         assertEquals( false, ref.isSuperUser() );
         assertEquals( false, ref.isAnonymous() );
+        assertEquals( false, ref.isBuiltIn() );
     }
 
     @Test
@@ -55,6 +57,7 @@ public class AccountKeyTest
         assertEquals( true, ref.isRole() );
         assertEquals( false, ref.isSuperUser() );
         assertEquals( false, ref.isAnonymous() );
+        assertEquals( true, ref.isBuiltIn() );
     }
 
     @Test
@@ -72,6 +75,7 @@ public class AccountKeyTest
         assertEquals( false, ref.isRole() );
         assertEquals( true, ref.isSuperUser() );
         assertEquals( false, ref.isAnonymous() );
+        assertEquals( true, ref.isBuiltIn() );
     }
 
     @Test
@@ -89,6 +93,7 @@ public class AccountKeyTest
         assertEquals( false, ref.isRole() );
         assertEquals( false, ref.isSuperUser() );
         assertEquals( true, ref.isAnonymous() );
+        assertEquals( true, ref.isBuiltIn() );
     }
 
     @Test

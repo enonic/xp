@@ -29,7 +29,7 @@ public class UserGraphService
         GraphResult userResult = new GraphResult();
         userResult.addAccountNode( buildGraphData( entity ) );
 
-        for ( GroupEntity group : entity.getAllMembershipsGroups() )
+        for ( GroupEntity group : entity.getDirectMemberships() )
         {
             ObjectNode node = buildGraphData( group );
             userResult.addAccountNode( node );

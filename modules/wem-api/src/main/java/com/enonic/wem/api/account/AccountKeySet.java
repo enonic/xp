@@ -1,7 +1,7 @@
 package com.enonic.wem.api.account;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -17,9 +17,9 @@ public final class AccountKeySet
 {
     private final ImmutableSet<AccountKey> set;
 
-    private AccountKeySet( final Iterable<AccountKey> refs )
+    private AccountKeySet( final ImmutableSet<AccountKey> set )
     {
-        this.set = ImmutableSet.copyOf( refs );
+        this.set = set;
     }
 
     public int getSize()
@@ -50,7 +50,8 @@ public final class AccountKeySet
     public AccountKeySet filterTypes( final AccountType... types )
     {
         final Collection<AccountKey> list = Collections2.filter( this.set, new TypePredicate( types ) );
-        return new AccountKeySet( list );
+        final ImmutableSet<AccountKey> set = ImmutableSet.copyOf( list );
+        return new AccountKeySet( set );
     }
 
     public boolean contains( final AccountKey ref )
@@ -69,27 +70,55 @@ public final class AccountKeySet
         return this.set.iterator();
     }
 
+    public AccountKeySet add( final AccountKeySet set )
+    {
+        final HashSet<AccountKey> tmp = Sets.newHashSet();
+        tmp.addAll( this.set );
+        tmp.addAll( set.getSet() );
+
+        final ImmutableSet<AccountKey> result = ImmutableSet.copyOf( tmp );
+        return new AccountKeySet( result );
+    }
+
+    public AccountKeySet remove( final AccountKeySet set )
+    {
+        final HashSet<AccountKey> tmp = Sets.newHashSet();
+        tmp.addAll( this.set );
+        tmp.removeAll( set.getSet() );
+
+        final ImmutableSet<AccountKey> result = ImmutableSet.copyOf( tmp );
+        return new AccountKeySet( result );
+    }
+
     public String toString()
     {
         return this.set.toString();
+    }
+
+    public static AccountKeySet empty()
+    {
+        final ImmutableSet<AccountKey> set = ImmutableSet.of();
+        return new AccountKeySet( set );
     }
 
     public static AccountKeySet from( final String... keys )
     {
         final Collection<String> list = Lists.newArrayList( keys );
         final Collection<AccountKey> keyList = Collections2.transform( list, new ParseFunction() );
-        return new AccountKeySet( keyList );
+        final ImmutableSet<AccountKey> set = ImmutableSet.copyOf( keyList );
+        return new AccountKeySet( set );
     }
 
     public static AccountKeySet from( final AccountKey... keys )
     {
-        final ArrayList<AccountKey> list = Lists.newArrayList( keys );
-        return new AccountKeySet( list );
+        final ImmutableSet<AccountKey> set = ImmutableSet.copyOf( keys );
+        return new AccountKeySet( set );
     }
 
     public static AccountKeySet from( final Iterable<AccountKey> keys )
     {
-        return new AccountKeySet( keys );
+        final ImmutableSet<AccountKey> set = ImmutableSet.copyOf( keys );
+        return new AccountKeySet( set );
     }
 
     private final class TypePredicate

@@ -637,7 +637,7 @@ Ext.define('Admin.lib.Diff', {
                     break;
                 }
             }
-            var info = obj.userInfo;
+            var info = obj.info;
             result = info && info[name] ? info[name] : obj[name];
         }
         return result;
