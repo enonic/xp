@@ -52,7 +52,7 @@ public final class AccountResource
     public AccountsResult search( @QueryParam("start") @DefaultValue("0") int start, @QueryParam("limit") @DefaultValue("10") int limit,
                                   @QueryParam("sort") @DefaultValue("") String sort, @QueryParam("dir") @DefaultValue("ASC") String sortDir,
                                   @QueryParam("query") @DefaultValue("") String query,
-                                  @QueryParam("type") @DefaultValue("users,groups,roles") String types,
+                                  @QueryParam("types") @DefaultValue("user,group,role") String types,
                                   @QueryParam("userstores") @DefaultValue("") String userStores,
                                   @QueryParam("organizations") @DefaultValue("") String organizations )
     {
@@ -129,9 +129,9 @@ public final class AccountResource
 
         String[] userstoreList = ( userstores == null ) ? new String[0] : userstores.split( "," );
         final String[] organizationList = ( organizations == null ) ? new String[0] : organizations.split( "," );
-        final boolean isSelectUsers = types.contains( "users" );
-        final boolean isSelectGroups = types.contains( "groups" );
-        final boolean isSelectRoles = types.contains( "roles" );
+        final boolean isSelectUsers = types.contains( "user" );
+        final boolean isSelectGroups = types.contains( "group" );
+        final boolean isSelectRoles = types.contains( "role" );
         AccountIndexField sortField = AccountIndexField.parse( sort );
         if ( sortField == null )
         {

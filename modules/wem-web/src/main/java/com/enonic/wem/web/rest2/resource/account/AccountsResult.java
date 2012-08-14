@@ -107,7 +107,7 @@ public final class AccountsResult
         json.put( "name", group.getName() );
         json.put( "userStore", group.getUserStore() != null ? group.getUserStore().getName() : "null" );
         json.put( "qualifiedName", String.valueOf( group.getQualifiedName() ) );
-        json.put( "displayName", "Display name" );        //TODO
+        json.put( "displayName", group.getName() );        //TODO: temporary solution
         json.put( "lastModified", "2012-07-24 16:18:35" );          //TODO
         json.put( "created", "2012-07-24 16:18:35" );           //TODO
         json.put( "hasPhoto", false );

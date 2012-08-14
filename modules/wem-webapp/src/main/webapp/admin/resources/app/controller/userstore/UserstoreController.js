@@ -12,7 +12,6 @@ Ext.define('Admin.controller.userstore.UserstoreController', {
 
     saveUserstoreToDB: function (userstore, callback) {
         var me = this;
-        console.log(userstore);
         Ext.Ajax.request({
             url: 'data/userstore/config',
             method: 'POST',

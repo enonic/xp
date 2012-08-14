@@ -1064,7 +1064,6 @@ Ext.define('Admin.plugin.BoxSelect', {
     isDirty: function () {
         var originalValue = this.convertValueToString(this.originalValue);
         var currentValue = this.convertValueToString(this.value);
-        console.log(originalValue + " and " + currentValue);
         return originalValue !== currentValue;
     },
 
