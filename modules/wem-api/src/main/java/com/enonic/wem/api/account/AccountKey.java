@@ -80,6 +80,11 @@ public final class AccountKey
         return ANON_USER.equals( this );
     }
 
+    public boolean isBuiltIn()
+    {
+        return isRole() || isAnonymous() || isSuperUser();
+    }
+
     public boolean equals( final Object o )
     {
         return ( o instanceof AccountKey ) && ( (AccountKey) o ).refString.equals( this.refString );

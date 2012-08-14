@@ -9,6 +9,7 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class AccountKeySetTest
 {
@@ -133,10 +134,44 @@ public class AccountKeySetTest
         assertFalse( set2.contains( AccountKey.from( "group:other:party" ) ) );
         assertFalse( set2.contains( AccountKey.from( "role:other:admin" ) ) );
 
-        final AccountKeySet set3 = set1.filterTypes(AccountType.GROUP, AccountType.ROLE);
+        final AccountKeySet set3 = set1.filterTypes( AccountType.GROUP, AccountType.ROLE );
         assertEquals( 2, set3.getSize() );
         assertFalse( set3.contains( AccountKey.from( "user:other:dummy" ) ) );
         assertTrue( set3.contains( AccountKey.from( "group:other:party" ) ) );
+        assertTrue( set3.contains( AccountKey.from( "role:other:admin" ) ) );
+    }
+
+    @Test
+    public void testEmpty()
+    {
+        final AccountKeySet set = AccountKeySet.empty();
+        assertTrue( set.isEmpty() );
+        assertEquals( 0, set.getSize() );
+    }
+
+    @Test
+    public void testAdd()
+    {
+        final AccountKeySet set1 = AccountKeySet.from( "user:other:dummy", "group:other:party" );
+        final AccountKeySet set2 = AccountKeySet.from( "role:other:admin" );
+
+        final AccountKeySet set3 = set1.add( set2 );
+        assertEquals( 2, set1.getSize() );
+        assertEquals( 1, set2.getSize() );
+        assertEquals( 3, set3.getSize() );
+        assertTrue( set3.contains( AccountKey.from( "role:other:admin" ) ) );
+    }
+
+    @Test
+    public void testRemove()
+    {
+        final AccountKeySet set1 = AccountKeySet.from( "user:other:dummy", "group:other:party", "role:other:admin" );
+        final AccountKeySet set2 = AccountKeySet.from( "user:other:dummy", "group:other:party" );
+
+        final AccountKeySet set3 = set1.remove( set2 );
+        assertEquals( 3, set1.getSize() );
+        assertEquals( 2, set2.getSize() );
+        assertEquals( 1, set3.getSize() );
         assertTrue( set3.contains( AccountKey.from( "role:other:admin" ) ) );
     }
 }
