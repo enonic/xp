@@ -87,7 +87,6 @@ public final class AccountsResult
         json.put( "displayName", user.getDisplayName() );
         json.put( "lastModified", "2011-08-09 08:23:07" );          //TODO
         json.put( "created", "2011-08-09 08:23:07" );           //TODO
-        json.put( "hasPhoto", user.hasPhoto() );
         json.put( "builtIn", user.isBuiltIn() );
         json.put( "editable", !( isAnonym || isAdmin ) );
 
@@ -110,7 +109,6 @@ public final class AccountsResult
         json.put( "displayName", group.getName() );        //TODO: temporary solution
         json.put( "lastModified", "2012-07-24 16:18:35" );          //TODO
         json.put( "created", "2012-07-24 16:18:35" );           //TODO
-        json.put( "hasPhoto", false );
         json.put( "builtIn", builtIn );
         json.put( "editable", !( isAuth || isAnonym ) );
 
