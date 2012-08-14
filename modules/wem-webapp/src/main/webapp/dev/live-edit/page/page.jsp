@@ -173,7 +173,7 @@
         <!-- Region -->
         <div id="north" class="clear clearfix" data-live-edit-type="region" data-live-edit-key="70" data-live-edit-name="North">
 
-          <%@ include file="components/window-page-banner-training.html" %>
+          <%@ include file="components/window-html5-video.html" %>
 
         </div>
 
@@ -220,6 +220,7 @@
         <!-- Region -->
         <div id="south" class="clear clearfix" data-live-edit-type="region" data-live-edit-key="99" data-live-edit-name="South">
 
+          <%@ include file="components/window-page-banner-training.html" %>
 
         </div>
 
