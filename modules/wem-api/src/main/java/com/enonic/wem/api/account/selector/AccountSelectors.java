@@ -3,7 +3,7 @@ package com.enonic.wem.api.account.selector;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeySet;
 
-public final class AccountSelectors
+public abstract class AccountSelectors
 {
     public static AccountKeySelector keys( final AccountKey... keys )
     {

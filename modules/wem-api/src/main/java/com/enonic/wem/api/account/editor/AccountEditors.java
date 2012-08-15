@@ -2,7 +2,7 @@ package com.enonic.wem.api.account.editor;
 
 import com.enonic.wem.api.account.AccountKeySet;
 
-public final class AccountEditors
+public abstract class AccountEditors
 {
     public static AccountEditor addMembers( final AccountKeySet keys )
     {
