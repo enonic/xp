@@ -33,8 +33,8 @@
 
         attachMouseOutEvent: function () {
             $liveedit(document).on('mouseout', function (event) {
-                var $body = $liveedit('body');
-                $body.css('cursor', '');
+                // var $body = $liveedit('body');
+                // $body.css('cursor', '');
                 // $liveedit.publish('/ui/highlighter/on-hide');
             });
         },
@@ -49,7 +49,12 @@
                 if (componentIsSelected) {
                     $liveedit.publish('/ui/componentselector/on-deselect');
                 } else {
-                    $liveedit.publish('/ui/componentselector/on-select', [$closestComponentFromTarget]);
+                    var pageHasComponentSelected = $liveedit('.live-edit-selected-component').length > 0;
+                    if (pageHasComponentSelected) {
+                        $liveedit.publish('/ui/componentselector/on-deselect');
+                    } else {
+                        $liveedit.publish('/ui/componentselector/on-select', [$closestComponentFromTarget]);
+                    }
                 }
                 return false;
             });

@@ -16,6 +16,10 @@
         $liveedit.subscribe('/ui/highlighter/on-highlight', function ($component) {
             self.updateCursor.call(self, $component);
         });
+
+        $liveedit.subscribe('/ui/componentselector/on-select', function ($component) {
+            self.updateCursor.call(self, $component);
+        });
     };
 
 

@@ -131,6 +131,7 @@ a { pointer-events: none; }
     left: -15000px;
     background-color: #000;
     opacity: .5;
+    cursor: default !important;
     z-index: 1000045;
 }
 
