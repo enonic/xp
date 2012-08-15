@@ -28,7 +28,6 @@ StartTest(function (t) {
     t.requireOk('Admin.model.account.UserstoreConfigModel');
 
     t.requireOk('Admin.store.account.AccountStore');
-    t.requireOk('Admin.store.account.CallingCodeStore');
     t.requireOk('Admin.store.account.CountryStore');
     t.requireOk('Admin.store.account.GroupStore');
     t.requireOk('Admin.store.account.LanguageStore');

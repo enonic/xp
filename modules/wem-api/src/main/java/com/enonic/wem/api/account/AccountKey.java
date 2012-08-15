@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 public final class AccountKey
@@ -112,10 +113,7 @@ public final class AccountKey
 
     public static AccountKey from( final String value )
     {
-        if ( Strings.isNullOrEmpty( value ) )
-        {
-            throw new IllegalArgumentException( "Account key cannot be null or empty" );
-        }
+        Preconditions.checkArgument( !Strings.isNullOrEmpty( value ), "Account key cannot be null or empty" );
 
         final Matcher matcher = REF_PATTERN.matcher( value );
         if ( !matcher.find() )
@@ -128,5 +126,26 @@ public final class AccountKey
         final String localName = matcher.group( 3 );
 
         return new AccountKey( type, userStore, localName );
+    }
+
+    private static AccountKey from( final AccountType type, final String qName )
+    {
+        Preconditions.checkArgument( !Strings.isNullOrEmpty( qName ), "Account qualified name cannot be null or empty" );
+        return from( type.toString().toLowerCase() + ":" + qName );
+    }
+
+    public static AccountKey user( final String qName )
+    {
+        return from( AccountType.USER, qName );
+    }
+
+    public static AccountKey group( final String qName )
+    {
+        return from( AccountType.GROUP, qName );
+    }
+
+    public static AccountKey role( final String qName )
+    {
+        return from( AccountType.ROLE, qName );
     }
 }

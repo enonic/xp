@@ -4,13 +4,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.account.mutable.MutableAccount;
+import com.enonic.wem.api.account.Account;
+import com.enonic.wem.api.account.RoleAccount;
 
 import static org.junit.Assert.*;
 
 public class CompositeEditorTest
 {
-    private MutableAccount account;
+    private Account account;
 
     private AccountEditor editorEdit;
 
@@ -20,7 +21,7 @@ public class CompositeEditorTest
     public void setUp()
         throws Exception
     {
-        this.account = Mockito.mock( MutableAccount.class );
+        this.account = RoleAccount.create( "other:dummy" );
 
         this.editorEdit = Mockito.mock( AccountEditor.class );
         Mockito.when( this.editorEdit.edit( this.account ) ).thenReturn( true );
