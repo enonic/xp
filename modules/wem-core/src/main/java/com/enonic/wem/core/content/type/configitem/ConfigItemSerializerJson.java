@@ -85,6 +85,7 @@ public class ConfigItemSerializerJson
         g.writeStringField( "path", templateReference.getPath().toString() );
         g.writeStringField( "name", templateReference.getName() );
         g.writeStringField( "reference", templateReference.getTemplateQualifiedName().toString() );
+        g.writeStringField( "templateType", templateReference.getTemplateType().toString() );
         g.writeEndObject();
     }
 
@@ -153,7 +154,7 @@ public class ConfigItemSerializerJson
         TemplateReference.Builder builder = TemplateReference.newBuilder();
         builder.name( JsonParserUtil.getStringValue( "name", configItemNode ) );
         builder.template( new TemplateQualifiedName( JsonParserUtil.getStringValue( "reference", configItemNode ) ) );
-
+        builder.type( TemplateType.valueOf( JsonParserUtil.getStringValue( "templateType", configItemNode ) ) );
         return builder.build();
     }
 

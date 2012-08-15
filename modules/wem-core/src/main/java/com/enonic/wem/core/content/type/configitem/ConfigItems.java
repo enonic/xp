@@ -113,7 +113,6 @@ public class ConfigItems
         {
             return null;
         }
-
         Preconditions.checkArgument( ( configItem instanceof Field ),
                                      "ConfigItem at path [%s] is not a Field: " + configItem.getConfigItemType(), configItem.getPath() );
 
@@ -171,7 +170,22 @@ public class ConfigItems
             {
                 TemplateReference templateReference = (TemplateReference) configItem;
                 Template template = templateReferenceFetcher.getTemplate( templateReference.getTemplateQualifiedName() );
-                items.put( templateReference.getName(), template.create( templateReference ) );
+                if ( template != null )
+                {
+                    Preconditions.checkArgument( templateReference.getTemplateType() == template.getType(),
+                                                 "Template expected to be of type %s: " + template.getType(),
+                                                 templateReference.getTemplateType() );
+
+                    ConfigItem configItemCreatedFromTemplate = template.create( templateReference );
+
+                    if ( configItemCreatedFromTemplate instanceof FieldSet )
+                    {
+                        FieldSet fieldSet = (FieldSet) configItemCreatedFromTemplate;
+                        fieldSet.getConfigItems().templateReferencesToConfigItems( templateReferenceFetcher );
+                    }
+
+                    items.put( configItem.getName(), configItemCreatedFromTemplate );
+                }
             }
         }
     }

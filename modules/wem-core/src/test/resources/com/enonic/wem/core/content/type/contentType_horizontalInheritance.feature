@@ -13,5 +13,5 @@ Feature: Horizontal Inheritance, used by a ContentType
     And adding TemplateReference named myName referencing FieldTemplate myModule:myTemplate to ContentType cty2
     When translating template references to configItems for all content types
     Then the following ConfigItems should exist in the following ContentTypes:
-      | cty1 | myName |
-      | cty2 | myName |
+      | cty1 | myName | FIELD |
+      | cty2 | myName | FIELD |

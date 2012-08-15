@@ -8,13 +8,17 @@ import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
-import com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder;
+import com.enonic.wem.core.content.type.configitem.FieldTemplate;
 import com.enonic.wem.core.content.type.configitem.MockTemplateReferenceFetcher;
-import com.enonic.wem.core.content.type.configitem.TemplateReference;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.content.type.valuetype.BasalValueType;
 import com.enonic.wem.core.module.Module;
 
+import static com.enonic.wem.core.content.type.configitem.Field.newField;
+import static com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder.newFieldSetTemplate;
+import static com.enonic.wem.core.content.type.configitem.FieldTemplateBuilder.newFieldTemplate;
+import static com.enonic.wem.core.content.type.configitem.TemplateReference.newTemplateReference;
+import static com.enonic.wem.core.module.Module.newModule;
 import static org.junit.Assert.*;
 
 public class ContentTest
@@ -73,35 +77,79 @@ public class ContentTest
         assertEquals( "crimes.year", content.getData().getValue( "crimes[1].year" ).getField().getPath().toString() );
     }
 
-
     @Test
-    public void fieldSetTemplate()
+    public void templates()
     {
-        Module module = new Module();
-        module.setName( "myModule" );
-        FieldSetTemplate fieldSetTemplate = FieldSetTemplateBuilder.create().module( module ).name( "myAddressTemplate" ).build();
-        fieldSetTemplate.addField( Field.newBuilder().type( FieldTypes.textline ).name( "street" ).build() );
-        fieldSetTemplate.addField( Field.newBuilder().type( FieldTypes.textline ).name( "postalCode" ).build() );
-        fieldSetTemplate.addField( Field.newBuilder().type( FieldTypes.textline ).name( "postalPlace" ).build() );
+        Module module = newModule().name( "myModule" ).build();
+
+        FieldTemplate ageTemplate =
+            newFieldTemplate().module( module ).name( "age" ).field( newField().name( "age" ).type( FieldTypes.textline ).build() ).build();
+
+        FieldSetTemplate personTemplate = newFieldSetTemplate().name( "person" ).module( module ).build();
+        personTemplate.addField( newField().name( "name" ).type( FieldTypes.textline ).build() );
+        personTemplate.addTemplateReference( newTemplateReference( ageTemplate ).name( "age" ).build() );
+
+        FieldSetTemplate addressTemplate = newFieldSetTemplate().module( module ).name( "myAddressTemplate" ).build();
+        addressTemplate.addField( newField().type( FieldTypes.textline ).name( "street" ).build() );
+        addressTemplate.addField( newField().type( FieldTypes.textline ).name( "postalCode" ).build() );
+        addressTemplate.addField( newField().type( FieldTypes.textline ).name( "postalPlace" ).build() );
+
+        personTemplate.addConfigItem( newTemplateReference( addressTemplate ).name( "address" ).build() );
 
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( Field.newBuilder().type( FieldTypes.textline ).name( "name" ).build() );
-        contentType.addConfigItem( TemplateReference.newBuilder().name( "address" ).template( "myModule:myAddressTemplate" ).build() );
+        contentType.setName( "person" );
+        contentType.addConfigItem( newField().type( FieldTypes.textline ).name( "id" ).build() );
+        contentType.addConfigItem( newTemplateReference( personTemplate ).name( "person" ).build() );
 
         MockTemplateReferenceFetcher templateReferenceFetcher = new MockTemplateReferenceFetcher();
-        templateReferenceFetcher.add( fieldSetTemplate );
+        templateReferenceFetcher.add( ageTemplate );
+        templateReferenceFetcher.add( personTemplate );
+        templateReferenceFetcher.add( addressTemplate );
         contentType.templateReferencesToConfigItems( templateReferenceFetcher );
 
         Content content = new Content();
         content.setType( contentType );
-        content.setValue( "name", "Ola Normann" );
-        content.setValue( "address.street", "Norvegen 99" );
-        content.setValue( "address.postalCode", "0001" );
-        content.setValue( "address.postalPlace", "Kaupang" );
+        content.setValue( "id", "1" );
+        content.setValue( "person.name", "Ola Normann" );
+        content.setValue( "person.age", "37" );
+        content.setValue( "person.address.street", "Norvegen 99" );
+        content.setValue( "person.address.postalCode", "0001" );
+        content.setValue( "person.address.postalPlace", "Kaupang" );
 
-        assertEquals( "Ola Normann", content.getValueAsString( "name" ) );
-        assertEquals( "Norvegen 99", content.getValueAsString( "address.street" ) );
-        assertEquals( "0001", content.getValueAsString( "address.postalCode" ) );
-        assertEquals( "Kaupang", content.getValueAsString( "address.postalPlace" ) );
+        assertEquals( "1", content.getValueAsString( "id" ) );
+        assertEquals( "Ola Normann", content.getValueAsString( "person.name" ) );
+        assertEquals( "37", content.getValueAsString( "person.age" ) );
+        assertEquals( "Norvegen 99", content.getValueAsString( "person.address.street" ) );
+        assertEquals( "0001", content.getValueAsString( "person.address.postalCode" ) );
+        assertEquals( "Kaupang", content.getValueAsString( "person.address.postalPlace" ) );
+    }
+
+    @Test
+    public void trying_to_set_data_to_a_fieldSetTemplate_when_template_is_missing()
+    {
+        Module module = newModule().name( "myModule" ).build();
+        FieldSetTemplate fieldSetTemplate = newFieldSetTemplate().module( module ).name( "myAddressTemplate" ).build();
+        fieldSetTemplate.addField( newField().type( FieldTypes.textline ).name( "street" ).build() );
+        fieldSetTemplate.addField( newField().type( FieldTypes.textline ).name( "postalCode" ).build() );
+        fieldSetTemplate.addField( newField().type( FieldTypes.textline ).name( "postalPlace" ).build() );
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newField().type( FieldTypes.textline ).name( "name" ).build() );
+        contentType.addConfigItem( newTemplateReference().name( "address" ).typeField().template( "myModule:myAddressTemplate" ).build() );
+
+        contentType.templateReferencesToConfigItems( new MockTemplateReferenceFetcher() );
+
+        Content content = new Content();
+        content.setType( contentType );
+        content.setValue( "name", "Ola Normann" );
+        try
+        {
+            content.setValue( "address.street", "Norvegen 99" );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( e instanceof IllegalArgumentException );
+        }
+
     }
 }

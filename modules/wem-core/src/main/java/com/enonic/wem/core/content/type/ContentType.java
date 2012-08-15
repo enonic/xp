@@ -1,6 +1,8 @@
 package com.enonic.wem.core.content.type;
 
 
+import org.elasticsearch.common.base.Preconditions;
+
 import com.enonic.wem.core.content.type.configitem.ConfigItem;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
@@ -107,12 +109,21 @@ public class ContentType
 
     public Field getField( final String path )
     {
-        return configItems.getField( new ConfigItemPath( path ) );
+        final ConfigItemPath configItemPath = new ConfigItemPath( path );
+        final Field field = configItems.getField( configItemPath );
+
+        Preconditions.checkState( field.getPath().equals( configItemPath ),
+                                  "Found Field at path [%s] have unexpected path: " + field.getPath(), configItemPath );
+        return field;
     }
 
     public FieldSet getFieldSet( final String path )
     {
-        return configItems.getFieldSet( new ConfigItemPath( path ) );
+        final ConfigItemPath configItemPath = new ConfigItemPath( path );
+        final FieldSet fieldSet = configItems.getFieldSet( configItemPath );
+        Preconditions.checkState( fieldSet.getPath().equals( configItemPath ),
+                                  "Found FieldSet at path [%s] have unexpected path: " + fieldSet.getPath(), configItemPath );
+        return fieldSet;
     }
 
     public void templateReferencesToConfigItems( final TemplateReferenceFetcher templateReferenceFetcher )

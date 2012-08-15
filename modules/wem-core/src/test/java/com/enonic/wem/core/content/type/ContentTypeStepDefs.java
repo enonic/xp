@@ -12,15 +12,17 @@ import cucumber.table.DataTable;
 import gherkin.formatter.model.DataTableRow;
 
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
+import com.enonic.wem.core.content.type.configitem.ConfigItemType;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldTemplate;
 import com.enonic.wem.core.content.type.configitem.FieldTemplateBuilder;
 import com.enonic.wem.core.content.type.configitem.MockTemplateReferenceFetcher;
 import com.enonic.wem.core.content.type.configitem.TemplateQualifiedName;
-import com.enonic.wem.core.content.type.configitem.TemplateReference;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.module.Module;
 
+import static com.enonic.wem.core.content.type.configitem.TemplateReference.newTemplateReference;
+import static com.enonic.wem.core.module.Module.newModule;
 import static org.junit.Assert.*;
 
 public class ContentTypeStepDefs
@@ -41,8 +43,7 @@ public class ContentTypeStepDefs
     public void a_module_named_name( String name )
         throws Throwable
     {
-        Module module = new Module();
-        module.setName( name );
+        Module module = newModule().name( name ).build();
         moduleByName.put( name, module );
     }
 
@@ -59,8 +60,8 @@ public class ContentTypeStepDefs
         throws Throwable
     {
         FieldTemplate fieldTemplate =
-            FieldTemplateBuilder.create().module( moduleByName.get( moduleName ) ).name( fieldTemplateName ).build();
-        fieldTemplate.setField( fieldByName.get( fieldName ) );
+            FieldTemplateBuilder.create().module( moduleByName.get( moduleName ) ).name( fieldTemplateName ).field(
+                fieldByName.get( fieldName ) ).build();
         fieldTemplateByTemplateQualifiedName.put( new TemplateQualifiedName( moduleName, fieldTemplateName ), fieldTemplate );
     }
 
@@ -81,7 +82,7 @@ public class ContentTypeStepDefs
 
         FieldTemplate fieldTemplate = fieldTemplateByTemplateQualifiedName.get( new TemplateQualifiedName( templateQualifiedName ) );
         ContentType contentType = contentTypeByName.get( contentTypeName );
-        contentType.addConfigItem( TemplateReference.newBuilder().name( templateReferenceName ).template( templateQualifiedName ).build() );
+        contentType.addConfigItem( newTemplateReference( fieldTemplate ).name( templateReferenceName ).build() );
 
         mockTemplateReferenceFetcher.add( fieldTemplate );
         contentType.templateReferencesToConfigItems( mockTemplateReferenceFetcher );
@@ -108,9 +109,11 @@ public class ContentTypeStepDefs
         {
             String contentTypeName = row.getCells().get( 0 );
             String configItemPath = row.getCells().get( 1 );
+            ConfigItemType configItemType = ConfigItemType.valueOf( row.getCells().get( 2 ) );
             ContentType contentType = contentTypeByName.get( contentTypeName );
             assertNotNull( "configItem not found at path: " + configItemPath,
                            contentType.getConfigItems().getConfigItem( new ConfigItemPath( configItemPath ) ) );
+            assertEquals( ConfigItemType.FIELD, configItemType );
         }
     }
 

@@ -1,5 +1,7 @@
 package com.enonic.wem.core.content.type.configitem;
 
+import org.elasticsearch.common.base.Preconditions;
+
 import com.enonic.wem.core.module.Module;
 
 public class FieldSetTemplate
@@ -33,7 +35,12 @@ public class FieldSetTemplate
     void setModule( final Module module )
     {
         this.module = module;
+    }
 
+    @Override
+    public TemplateType getType()
+    {
+        return TemplateType.FIELD_SET;
     }
 
     public TemplateQualifiedName getTemplateQualifiedName()
@@ -41,9 +48,17 @@ public class FieldSetTemplate
         return new TemplateQualifiedName( module.getName(), name );
     }
 
-    public ConfigItems getConfigItems()
+    public void addConfigItem( final ConfigItem configItem )
     {
-        return configItems;
+        //if ( configItem.getConfigItemType() == ConfigItemType.REFERENCE )
+        if ( false )
+        {
+            TemplateReference templateReference = (TemplateReference) configItem;
+            Preconditions.checkArgument( templateReference.getTemplateType() == TemplateType.FIELD,
+                                         "A template cannot reference other templates unless it's of type %s: " +
+                                             templateReference.getTemplateType(), TemplateType.FIELD );
+        }
+        configItems.addConfigItem( configItem );
     }
 
     public void addField( final Field field )
@@ -51,10 +66,15 @@ public class FieldSetTemplate
         configItems.addConfigItem( field );
     }
 
+    public void addTemplateReference( final TemplateReference templateReference )
+    {
+        addConfigItem( templateReference );
+    }
 
     public ConfigItem create( final TemplateReference templateReference )
     {
         FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( templateReference.getName() ).build();
+        fieldSet.setPath( templateReference.getPath() );
 
         for ( ConfigItem configItem : configItems )
         {

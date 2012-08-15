@@ -33,4 +33,9 @@ public class FieldSetTemplateBuilder
     {
         return new FieldSetTemplateBuilder();
     }
+
+    public static FieldSetTemplateBuilder newFieldSetTemplate()
+    {
+        return new FieldSetTemplateBuilder();
+    }
 }
