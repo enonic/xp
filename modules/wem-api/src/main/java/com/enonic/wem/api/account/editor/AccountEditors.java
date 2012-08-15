@@ -1,5 +1,6 @@
 package com.enonic.wem.api.account.editor;
 
+import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKeySet;
 
 public abstract class AccountEditors
@@ -22,5 +23,10 @@ public abstract class AccountEditors
     public static AccountEditor composite( final AccountEditor... editors )
     {
         return new CompositeEditor( editors );
+    }
+
+    public static AccountEditor setAccount( final Account account )
+    {
+        return new SetAccountEditor( account );
     }
 }
