@@ -30,6 +30,7 @@
         var componentSelector = new AdminLiveEdit.ui.ComponentSelector();
         var infoTip = new AdminLiveEdit.ui.InfoTip();
         var toolTip = new AdminLiveEdit.ui.ToolTip();
+        var cursor = new AdminLiveEdit.ui.Cursor();
         var componentMenu = new AdminLiveEdit.ui.ComponentMenu();
         var shader = new AdminLiveEdit.ui.Shader();
         var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();

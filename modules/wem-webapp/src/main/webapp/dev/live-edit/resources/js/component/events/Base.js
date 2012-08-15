@@ -12,9 +12,10 @@
     AdminLiveEdit.components.events.Base.prototype = {
         attachMouseOverEvent: function () {
             var self = this;
+
             $liveedit(document).on('mouseover', this.selector, function (event) {
                 var $component = $liveedit(this);
-                // TODO: remove reference to DragDrop, use PubSub.
+
                 var isUi = $liveedit(event.target).is('.live-edit-info-tip, .live-edit-button') ||
                            $liveedit(event.target).parents('.live-edit-info-tip, .live-edit-button').length > 0;
 
@@ -31,11 +32,11 @@
 
 
         attachMouseOutEvent: function () {
-            /*
             $liveedit(document).on('mouseout', function (event) {
-                $liveedit.publish('/ui/highlighter/on-hide');
+                var $body = $liveedit('body');
+                $body.css('cursor', '');
+                // $liveedit.publish('/ui/highlighter/on-hide');
             });
-            */
         },
 
 

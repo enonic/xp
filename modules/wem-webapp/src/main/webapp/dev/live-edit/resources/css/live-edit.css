@@ -135,18 +135,6 @@ a { pointer-events: none; }
 }
 
 
-/*** Cursor for components */
-
-[data-live-edit-type],
-.live-edit-empty-region-placeholder {
-    cursor: pointer;
-}
-
-[data-live-edit-type=window] {
-    cursor: move;
-}
-
-
 /*** Highlighter */
 
 .live-edit-selected-component {
