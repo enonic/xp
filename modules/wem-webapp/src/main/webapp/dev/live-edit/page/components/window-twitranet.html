@@ -26,23 +26,17 @@
         }
 
         function appendTweet() {
-            var $tweet = $('<div style="margin-bottom:1em">'+_twitters[randomFromTo(0, _twitters.length-1)] + '</div>');
-            console.log($tweet );
+            var $tweet = $('<div class="js-tweet-text" style="margin-bottom:1em">'+_twitters[randomFromTo(0, _twitters.length-1)] + '</div>');
             $tweetContainer.append($tweet);
             $tweet.fadeIn();
-
         }
 
         var _twitranetTimer = setInterval(function() {
             if ( $tweetContainer.children('.js-tweet-text').length === 10) {
                 $tweetContainer.empty();
-                _twitranetTick = 0;
-
             }
 
             appendTweet();
-
-            _twitranetTick++;
         }, 7000);
 
         appendTweet();

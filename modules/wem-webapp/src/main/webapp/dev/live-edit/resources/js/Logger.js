@@ -18,11 +18,15 @@
 
     p.registerSubscribers = function () {
         var self = this;
+        $liveedit.subscribe('/ui/highlighter/on-highlight', function ($component) {
+            self.addMessage.call(self, 'highlight: ' + '(' + util.getComponentType($component) + ') ' + util.getComponentName($component));
+        });
+
         $liveedit.subscribe('/ui/componentselector/on-select', function ($component) {
             self.addMessage.call(self, 'on-select: ' + '(' + util.getComponentType($component) + ') ' + util.getComponentName($component));
         });
 
-        $liveedit.subscribe('/ui/selectedcomponent/on-deselect', function () {
+        $liveedit.subscribe('/ui/componentselector/on-deselect', function () {
             self.addMessage.call(self, 'on-deselect');
         });
 
