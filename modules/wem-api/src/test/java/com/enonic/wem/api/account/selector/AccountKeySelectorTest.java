@@ -6,13 +6,13 @@ import com.enonic.wem.api.account.AccountKeySet;
 
 import static org.junit.Assert.*;
 
-public class AccountKeySelectorImplTest
+public class AccountKeySelectorTest
 {
     @Test
     public void testSimple()
     {
         final AccountKeySet set = AccountKeySet.from( "user:other:dummy" );
-        final AccountKeySelectorImpl selector = new AccountKeySelectorImpl( set );
+        final AccountKeySelector selector = new AccountKeySelector( set );
         assertSame( set, selector.getKeys() );
     }
 }

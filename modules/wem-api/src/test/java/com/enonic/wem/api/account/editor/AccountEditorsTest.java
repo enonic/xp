@@ -3,12 +3,52 @@ package com.enonic.wem.api.account.editor;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.account.mutable.MutableAccount;
+import com.enonic.wem.api.account.AccountKeySet;
 
 import static org.junit.Assert.*;
 
 public class AccountEditorsTest
 {
+    @Test
+    public void testSetMembers()
+        throws Exception
+    {
+        final AccountKeySet set = AccountKeySet.empty();
+        final AccountEditor editor = AccountEditors.setMembers( set );
+
+        verifyMembersEditor( editor, set, MembersEditor.Operation.SET );
+    }
+
+    @Test
+    public void testAddMembers()
+        throws Exception
+    {
+        final AccountKeySet set = AccountKeySet.empty();
+        final AccountEditor editor = AccountEditors.addMembers( set );
+
+        verifyMembersEditor( editor, set, MembersEditor.Operation.ADD );
+    }
+
+    @Test
+    public void testRemoveMembers()
+        throws Exception
+    {
+        final AccountKeySet set = AccountKeySet.empty();
+        final AccountEditor editor = AccountEditors.removeMembers( set );
+
+        verifyMembersEditor( editor, set, MembersEditor.Operation.REMOVE );
+    }
+
+    private void verifyMembersEditor( final AccountEditor editor, final AccountKeySet set, final MembersEditor.Operation operation )
+        throws Exception
+    {
+        assertTrue( editor instanceof MembersEditor );
+
+        final MembersEditor membersEditor = (MembersEditor) editor;
+        assertSame( set, membersEditor.keys );
+        assertEquals( operation, membersEditor.operation );
+    }
+
     @Test
     public void testComposite()
         throws Exception
@@ -17,13 +57,13 @@ public class AccountEditorsTest
         final AccountEditor editor2 = Mockito.mock( AccountEditor.class );
 
         final AccountEditor editor3 = AccountEditors.composite( editor1, editor2 );
-        assertNotNull( editor3 );
-        assertTrue( editor3 instanceof CompositeEditor);
 
-        final MutableAccount account = Mockito.mock( MutableAccount.class );
-        editor3.edit( account );
+        assertTrue( editor3 instanceof CompositeEditor );
 
-        Mockito.verify( editor1, Mockito.times( 1 ) ).edit( account );
-        Mockito.verify( editor2, Mockito.times( 1 ) ).edit( account );
+        final CompositeEditor compositeEditor = (CompositeEditor) editor3;
+        assertNotNull( compositeEditor.editors );
+        assertEquals( 2, compositeEditor.editors.length );
+        assertSame( editor1, compositeEditor.editors[0] );
+        assertSame( editor2, compositeEditor.editors[1] );
     }
 }

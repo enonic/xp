@@ -9,55 +9,79 @@ public class AccountKeyTest
     @Test
     public void testUser()
     {
-        final AccountKey ref = AccountKey.from( "user:other:dummy" );
-        assertNotNull( ref );
-        assertEquals( AccountType.USER, ref.getType() );
-        assertEquals( "other", ref.getUserStore() );
-        assertEquals( "dummy", ref.getLocalName() );
-        assertEquals( "other:dummy", ref.getQualifiedName() );
-        assertEquals( "user:other:dummy", ref.toString() );
-        assertEquals( true, ref.isUser() );
-        assertEquals( false, ref.isGroup() );
-        assertEquals( false, ref.isRole() );
-        assertEquals( false, ref.isSuperUser() );
-        assertEquals( false, ref.isAnonymous() );
-        assertEquals( false, ref.isBuiltIn() );
+        final AccountKey key1 = AccountKey.from( "user:other:dummy" );
+        testUser( key1 );
+
+        final AccountKey key2 = AccountKey.user( "other:dummy" );
+        testUser( key2 );
+    }
+
+    private void testUser( final AccountKey key )
+    {
+        assertNotNull( key );
+        assertEquals( AccountType.USER, key.getType() );
+        assertEquals( "other", key.getUserStore() );
+        assertEquals( "dummy", key.getLocalName() );
+        assertEquals( "other:dummy", key.getQualifiedName() );
+        assertEquals( "user:other:dummy", key.toString() );
+        assertEquals( true, key.isUser() );
+        assertEquals( false, key.isGroup() );
+        assertEquals( false, key.isRole() );
+        assertEquals( false, key.isSuperUser() );
+        assertEquals( false, key.isAnonymous() );
+        assertEquals( false, key.isBuiltIn() );
     }
 
     @Test
     public void testGroup()
     {
-        final AccountKey ref = AccountKey.from( "group:other:dummy" );
-        assertNotNull( ref );
-        assertEquals( AccountType.GROUP, ref.getType() );
-        assertEquals( "other", ref.getUserStore() );
-        assertEquals( "dummy", ref.getLocalName() );
-        assertEquals( "other:dummy", ref.getQualifiedName() );
-        assertEquals( "group:other:dummy", ref.toString() );
-        assertEquals( false, ref.isUser() );
-        assertEquals( true, ref.isGroup() );
-        assertEquals( false, ref.isRole() );
-        assertEquals( false, ref.isSuperUser() );
-        assertEquals( false, ref.isAnonymous() );
-        assertEquals( false, ref.isBuiltIn() );
+        final AccountKey key1 = AccountKey.from( "group:other:dummy" );
+        testGroup( key1 );
+
+        final AccountKey key2 = AccountKey.group( "other:dummy" );
+        testGroup( key2 );
+    }
+
+    private void testGroup( final AccountKey key )
+    {
+        assertNotNull( key );
+        assertEquals( AccountType.GROUP, key.getType() );
+        assertEquals( "other", key.getUserStore() );
+        assertEquals( "dummy", key.getLocalName() );
+        assertEquals( "other:dummy", key.getQualifiedName() );
+        assertEquals( "group:other:dummy", key.toString() );
+        assertEquals( false, key.isUser() );
+        assertEquals( true, key.isGroup() );
+        assertEquals( false, key.isRole() );
+        assertEquals( false, key.isSuperUser() );
+        assertEquals( false, key.isAnonymous() );
+        assertEquals( false, key.isBuiltIn() );
     }
 
     @Test
     public void testRole()
     {
-        final AccountKey ref = AccountKey.from( "role:other:dummy" );
-        assertNotNull( ref );
-        assertEquals( AccountType.ROLE, ref.getType() );
-        assertEquals( "other", ref.getUserStore() );
-        assertEquals( "dummy", ref.getLocalName() );
-        assertEquals( "other:dummy", ref.getQualifiedName() );
-        assertEquals( "role:other:dummy", ref.toString() );
-        assertEquals( false, ref.isUser() );
-        assertEquals( false, ref.isGroup() );
-        assertEquals( true, ref.isRole() );
-        assertEquals( false, ref.isSuperUser() );
-        assertEquals( false, ref.isAnonymous() );
-        assertEquals( true, ref.isBuiltIn() );
+        final AccountKey key1 = AccountKey.from( "role:other:dummy" );
+        testRole( key1 );
+
+        final AccountKey key2 = AccountKey.role( "other:dummy" );
+        testRole( key2 );
+    }
+
+    private void testRole( final AccountKey key )
+    {
+        assertNotNull( key );
+        assertEquals( AccountType.ROLE, key.getType() );
+        assertEquals( "other", key.getUserStore() );
+        assertEquals( "dummy", key.getLocalName() );
+        assertEquals( "other:dummy", key.getQualifiedName() );
+        assertEquals( "role:other:dummy", key.toString() );
+        assertEquals( false, key.isUser() );
+        assertEquals( false, key.isGroup() );
+        assertEquals( true, key.isRole() );
+        assertEquals( false, key.isSuperUser() );
+        assertEquals( false, key.isAnonymous() );
+        assertEquals( true, key.isBuiltIn() );
     }
 
     @Test

@@ -1,11 +1,11 @@
 package com.enonic.wem.api.account.editor;
 
-import com.enonic.wem.api.account.mutable.MutableAccount;
+import com.enonic.wem.api.account.Account;
 
 final class CompositeEditor
     implements AccountEditor
 {
-    private final AccountEditor[] editors;
+    protected final AccountEditor[] editors;
 
     public CompositeEditor( final AccountEditor... editors )
     {
@@ -13,10 +13,11 @@ final class CompositeEditor
     }
 
     @Override
-    public boolean edit( final MutableAccount account )
+    public boolean edit( final Account account )
         throws Exception
     {
         boolean result = false;
+
         for ( final AccountEditor editor : this.editors )
         {
             final boolean flag = editor.edit( account );

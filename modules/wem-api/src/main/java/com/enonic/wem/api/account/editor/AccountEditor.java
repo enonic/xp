@@ -1,9 +1,9 @@
 package com.enonic.wem.api.account.editor;
 
-import com.enonic.wem.api.account.mutable.MutableAccount;
+import com.enonic.wem.api.account.Account;
 
 public interface AccountEditor
 {
-    public boolean edit( MutableAccount account )
+    public boolean edit( Account account )
         throws Exception;
 }

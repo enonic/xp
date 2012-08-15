@@ -22,6 +22,6 @@ public abstract class AccountSelectors
 
     public static AccountKeySelector keys( final AccountKeySet keys )
     {
-        return new AccountKeySelectorImpl( keys );
+        return new AccountKeySelector( keys );
     }
 }
