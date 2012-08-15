@@ -5,5 +5,7 @@ public interface Template
 {
     public TemplateQualifiedName getTemplateQualifiedName();
 
+    public TemplateType getType();
+
     public ConfigItem create( final TemplateReference templateReference );
 }

@@ -1,17 +1,27 @@
 package com.enonic.wem.core.content.type.configitem;
 
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.core.module.Module;
 
 public class FieldTemplateBuilder
 {
     private String name;
 
+    private Field field;
+
     private Module module;
 
     public FieldTemplateBuilder name( String value )
     {
         this.name = value;
+        return this;
+    }
+
+    public FieldTemplateBuilder field( Field value )
+    {
+        this.field = value;
         return this;
     }
 
@@ -23,13 +33,22 @@ public class FieldTemplateBuilder
 
     public FieldTemplate build()
     {
+        Preconditions.checkNotNull( field, "field is required" );
+        Preconditions.checkNotNull( name, "field is required" );
+
         FieldTemplate fieldTemplate = new FieldTemplate();
+        fieldTemplate.setField( field );
         fieldTemplate.setName( name );
         fieldTemplate.setModule( module );
         return fieldTemplate;
     }
 
     public static FieldTemplateBuilder create()
+    {
+        return new FieldTemplateBuilder();
+    }
+
+    public static FieldTemplateBuilder newFieldTemplate()
     {
         return new FieldTemplateBuilder();
     }

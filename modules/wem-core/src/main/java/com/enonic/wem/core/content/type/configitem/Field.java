@@ -107,20 +107,6 @@ public class Field
     }
 
     @Override
-    public String toString()
-    {
-        ConfigItemPath configItemPath = getPath();
-        if ( configItemPath != null )
-        {
-            return configItemPath.toString();
-        }
-        else
-        {
-            return getName() + "?";
-        }
-    }
-
-    @Override
     public Field copy()
     {
         final Field copy = (Field) super.copy();
@@ -142,6 +128,11 @@ public class Field
         final Field field = copy();
         field.setName( name );
         return field;
+    }
+
+    public static Builder newField()
+    {
+        return new Builder();
     }
 
     public static Builder newBuilder()

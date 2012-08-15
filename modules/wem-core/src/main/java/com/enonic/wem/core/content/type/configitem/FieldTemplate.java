@@ -36,6 +36,12 @@ public class FieldTemplate
 
     }
 
+    @Override
+    public TemplateType getType()
+    {
+        return TemplateType.FIELD;
+    }
+
     public TemplateQualifiedName getTemplateQualifiedName()
     {
         return new TemplateQualifiedName( module.getName(), name );
@@ -46,13 +52,15 @@ public class FieldTemplate
         return field;
     }
 
-    public void setField( final Field value )
+    void setField( final Field value )
     {
         this.field = value;
     }
 
     public ConfigItem create( final TemplateReference templateReference )
     {
-        return field.copy( templateReference.getName() );
+        Field field = this.field.copy( name );
+        field.setPath( templateReference.getPath() );
+        return field;
     }
 }
