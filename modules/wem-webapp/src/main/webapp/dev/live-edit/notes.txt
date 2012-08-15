@@ -10,6 +10,9 @@ Which are supported by:
 
 
 TODO:
+* Try set cursor on the body element on hover events (not predefined in the live-edit.css)
+
+* Create button sub class for each menu button
 * Redefine data attributes. Scope data-live-edit-key value in order to avoid conflicts. Eg. "paragraph:2"
 * Fix so drag helper tooltip width is not fixed.
 * Make sure the pointer cursor that is added to the component on mouseover is removed on mouseout

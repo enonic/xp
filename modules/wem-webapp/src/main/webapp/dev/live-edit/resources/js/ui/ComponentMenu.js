@@ -10,6 +10,8 @@
             'paragraph': ['parent', 'edit']
         };
 
+        this.$currentComponent = $liveedit([]);
+
         this.create();
         this.registerSubscribers();
     };
@@ -34,6 +36,10 @@
         var self = this;
 
         $liveedit.subscribe('/ui/componentselector/on-select', function ($component) {
+            self.show.call(self, $component);
+        });
+
+        $liveedit.subscribe('/ui/highlighter/on-highlight', function ($component) {
             self.show.call(self, $component);
         });
 
@@ -77,12 +83,14 @@
 
 
     p.moveToComponent = function ($component) {
+        this.$currentComponent = $component;
         var componentBoxModel = util.getBoxModel($component);
-        var menuTopPos = Math.round(componentBoxModel.top),
-            menuLeftPos = Math.round(componentBoxModel.left + componentBoxModel.width),
+        var offsetLeft = 2,
+            menuTopPos = Math.round(componentBoxModel.top),
+            menuLeftPos = Math.round(componentBoxModel.left + componentBoxModel.width) - offsetLeft,
             documentSize = util.getDocumentSize();
 
-        if (menuLeftPos >= documentSize.width) {
+        if (menuLeftPos >= (documentSize.width - offsetLeft)) {
             menuLeftPos = menuLeftPos - this.getEl().width();
         }
 
@@ -129,7 +137,10 @@
             iconCls: 'live-edit-icon-parent',
             handler: function (event) {
                 event.stopPropagation();
-                $liveedit.publish('/ui/componentselector/on-select-parent');
+                var $parent = self.$currentComponent.parents('[data-live-edit-type]');
+                if ($parent && $parent.length > 0) {
+                    $liveedit.publish('/ui/componentselector/on-select', [$liveedit($parent[0])]);
+                }
             }
         });
         self.buttons.push(parentButton);
@@ -194,17 +205,6 @@
         self.buttons.push(editButton);
 
 
-        var settingsButton = new AdminLiveEdit.ui.Button();
-        settingsButton.create({
-            text: 'Settings',
-            id: 'live-edit-button-settings',
-            iconCls: 'live-edit-icon-settings',
-            handler: function (event) {
-                event.stopPropagation();
-            }
-        });
-        self.buttons.push(settingsButton);
-
         var dragButton = new AdminLiveEdit.ui.Button();
         dragButton.create({
             text: 'Drag',
@@ -228,7 +228,7 @@
                 this.le_mouseIsDown = false;
                 self.fadeOutAndHide();
                 // TODO: Get the selected using PubSub
-                var $selectedComponent = $liveedit('.live-edit-selected-component');
+                var $selectedComponent = self.$currentComponent;
 
                 var evt = document.createEvent('MouseEvents');
                 evt.initMouseEvent('mousedown', true, true, window, 0, event.screenX, event.screenY, event.clientX, event.clientY, false,
@@ -243,6 +243,18 @@
             AdminLiveEdit.ui.DragDrop.disable();
         });
         self.buttons.push(dragButton);
+
+
+        var settingsButton = new AdminLiveEdit.ui.Button();
+        settingsButton.create({
+            text: 'Settings',
+            id: 'live-edit-button-settings',
+            iconCls: 'live-edit-icon-settings',
+            handler: function (event) {
+                event.stopPropagation();
+            }
+        });
+        self.buttons.push(settingsButton);
 
 
         var removeButton = new AdminLiveEdit.ui.Button();

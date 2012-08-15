@@ -35,9 +35,10 @@
         var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
 
         AdminLiveEdit.ui.DragDrop.init();
-
+        /*
         var logger = new AdminLiveEdit.Logger();
         logger.create();
+        */
     });
 
 }());

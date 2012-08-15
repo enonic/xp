@@ -14,10 +14,12 @@
             var self = this;
             $liveedit(document).on('mouseover', this.selector, function (event) {
                 var $component = $liveedit(this);
-                // var componentIsDescendantOfSelected = $component.parents('.live-edit-selected-component').length === 1;
                 // TODO: remove reference to DragDrop, use PubSub.
+                var isUi = $liveedit(event.target).is('.live-edit-info-tip, .live-edit-button') ||
+                           $liveedit(event.target).parents('.live-edit-info-tip, .live-edit-button').length > 0;
+
                 var pageHasComponentSelected = $liveedit('.live-edit-selected-component').length > 0;
-                var disableHover = pageHasComponentSelected || AdminLiveEdit.ui.DragDrop.isDragging();
+                var disableHover = isUi || pageHasComponentSelected || AdminLiveEdit.ui.DragDrop.isDragging();
                 if (disableHover) {
                     return;
                 }
@@ -29,9 +31,11 @@
 
 
         attachMouseOutEvent: function () {
+            /*
             $liveedit(document).on('mouseout', function (event) {
                 $liveedit.publish('/ui/highlighter/on-hide');
             });
+            */
         },
 
 
