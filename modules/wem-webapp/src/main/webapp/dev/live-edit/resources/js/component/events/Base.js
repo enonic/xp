@@ -14,9 +14,10 @@
             var self = this;
             $liveedit(document).on('mouseover', this.selector, function (event) {
                 var $component = $liveedit(this);
-                var componentIsDescendantOfSelected = $component.parents('.live-edit-selected-component').length === 1;
+                // var componentIsDescendantOfSelected = $component.parents('.live-edit-selected-component').length === 1;
                 // TODO: remove reference to DragDrop, use PubSub.
-                var disableHover = componentIsDescendantOfSelected || AdminLiveEdit.ui.DragDrop.isDragging();
+                var pageHasComponentSelected = $liveedit('.live-edit-selected-component').length > 0;
+                var disableHover = pageHasComponentSelected || AdminLiveEdit.ui.DragDrop.isDragging();
                 if (disableHover) {
                     return;
                 }

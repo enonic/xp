@@ -26,6 +26,10 @@
             self.highlight.call(self, $component, borderColor);
         });
 
+        $liveedit.subscribe('/ui/componentselector/on-select', function () {
+            self.hide.call(self);
+        });
+
         $liveedit.subscribe('/ui/highlighter/on-hide', function () {
             self.hide.call(self);
         });

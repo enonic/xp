@@ -1,5 +1,9 @@
 (function () {
 
+    $liveedit(window).load(function () {
+        $liveedit('.live-edit-loader-splash-container').remove();
+    });
+
     $liveedit(document).ready(function () {
 
         // *******************************************************************************************************************************//
@@ -17,31 +21,23 @@
         });
         // *******************************************************************************************************************************//
 
-        // TODO: Remove timeout when loader splash(CMS-29) is accepted.
-        setTimeout(function () {
-            var page = new AdminLiveEdit.components.events.Page();
-            var regions = new AdminLiveEdit.components.events.Regions();
-            var windows = new AdminLiveEdit.components.events.Windows();
-            var contents = new AdminLiveEdit.components.events.Contents();
-            var paragraphs = new AdminLiveEdit.components.events.Paragraphs();
-            var highlighter = new AdminLiveEdit.ui.Highlighter();
-            var componentSelector = new AdminLiveEdit.ui.ComponentSelector();
-            var infoTip = new AdminLiveEdit.ui.InfoTip();
-            var toolTip = new AdminLiveEdit.ui.ToolTip();
-            var componentMenu = new AdminLiveEdit.ui.ComponentMenu();
-            var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
+        var page = new AdminLiveEdit.components.events.Page();
+        var regions = new AdminLiveEdit.components.events.Regions();
+        var windows = new AdminLiveEdit.components.events.Windows();
+        var contents = new AdminLiveEdit.components.events.Contents();
+        var paragraphs = new AdminLiveEdit.components.events.Paragraphs();
+        var highlighter = new AdminLiveEdit.ui.Highlighter();
+        var componentSelector = new AdminLiveEdit.ui.ComponentSelector();
+        var infoTip = new AdminLiveEdit.ui.InfoTip();
+        var toolTip = new AdminLiveEdit.ui.ToolTip();
+        var componentMenu = new AdminLiveEdit.ui.ComponentMenu();
+        var shader = new AdminLiveEdit.ui.Shader();
+        var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
 
-            AdminLiveEdit.ui.DragDrop.init();
+        AdminLiveEdit.ui.DragDrop.init();
 
-            /*
-            var logger = new AdminLiveEdit.Logger();
-            logger.create();
-            */
-
-            $liveedit('.live-edit-loader-splash-container').remove();
-
-        }, 1000);
-
+        var logger = new AdminLiveEdit.Logger();
+        logger.create();
     });
 
 }());

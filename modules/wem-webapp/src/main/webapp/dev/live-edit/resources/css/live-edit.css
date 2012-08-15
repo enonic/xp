@@ -123,6 +123,18 @@ a { pointer-events: none; }
 }
 
 
+/*** Shader */
+
+.live-edit-shader {
+    position: absolute;
+    top: -15000px;
+    left: -15000px;
+    background-color: #000;
+    opacity: .5;
+    z-index: 1000045;
+}
+
+
 /*** Cursor for components */
 
 [data-live-edit-type],
@@ -139,7 +151,6 @@ a { pointer-events: none; }
 
 .live-edit-selected-component {
     position: relative;
-    box-shadow: 1px 1px 10px #1e90ff;
 }
 
 svg.live-edit-highlighter {
