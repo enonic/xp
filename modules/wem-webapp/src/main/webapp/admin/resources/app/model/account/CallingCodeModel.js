@@ -1,7 +1,7 @@
 Ext.define('Admin.model.account.CallingCodeModel', {
     extend: 'Ext.data.Model',
 
-    idField: 'callingCode',
+    idProperty: 'callingCode',
 
     fields: [
         'countryCode',

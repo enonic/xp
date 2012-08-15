@@ -10,7 +10,6 @@ Ext.define('Admin.controller.account.UserWizardController', {
     stores: [
         'Admin.store.account.UserstoreConfigStore',
         'Admin.store.account.CountryStore',
-        'Admin.store.account.RegionStore',
         'Admin.store.account.TimezoneStore',
         'Admin.store.account.LocaleStore'
     ],

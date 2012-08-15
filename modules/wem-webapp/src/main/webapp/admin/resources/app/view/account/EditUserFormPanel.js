@@ -243,22 +243,47 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
         me.doLayout();
     },
 
+    getCallingCodesStore: function () {
+        var codeStore = Ext.create('Ext.data.Store', {
+            remoteSort: false,
+            model: 'Admin.model.account.CallingCodeModel'
+        });
+        var countryStore = Ext.data.StoreManager.lookup('Admin.store.account.CountryStore');
+        if (countryStore) {
+            var i, codes;
+            for (i = 0; i < countryStore.getCount(); i++) {
+                codes = countryStore.getAt(i).callingCodes().getRange();
+                if (codes && codes.length > 0) {
+                    codeStore.add(codes);
+                }
+            }
+            codeStore.sort('callingCode', 'ASC');
+        }
+        return codeStore;
+    },
+
     createAutoCompleteField: function (field) {
-        var callingCodeStore = Ext.data.StoreManager.lookup('Admin.store.account.CallingCodeStore');
-        var f = {
+        var store;
+        switch (field.get('type')) {
+        case 'phone':
+        case 'mobile':
+        case 'fax':
+            store = this.getCallingCodesStore();
+            break;
+        }
+        return {
             xtype: 'userFormField',
             type: 'autocomplete',
             fieldLabel: field.get('fieldlabel'),
-            fieldStore: callingCodeStore,
+            fieldStore: store,
             valueField: 'callingCode',
             displayField: 'callingCode',
             displayConfig: {
                 getInnerTpl: function () {
-                    return '{callingCode} ({englishName})';
+                    return '+{callingCode}';
                 }
             }
         };
-        return f;
     },
 
     createComboBoxField: function (field) {
@@ -301,15 +326,17 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
             valueField = 'id';
             displayField = 'displayName';
         } else if (field.get('type') === 'country') {
-            fieldStore = Ext.data.StoreManager.lookup('Admin.store.account.CountryStore');
+            fieldStore = Ext.create('Admin.store.account.CountryStore');
             valueField = 'code';
             displayField = 'englishName';
         } else if (field.get('type') === 'region') {
-            fieldStore = Ext.create('Admin.store.account.RegionStore');
+            fieldStore = Ext.create('Ext.data.Store', {
+                model: 'Admin.model.account.RegionModel'
+            });
             valueField = 'code';
             displayField = 'englishName';
         } else if (field.get('type') === 'locale') {
-            fieldStore = Ext.data.StoreManager.lookup('Admin.store.account.LanguageStore');
+            fieldStore = 'Admin.store.account.LanguageStore';
             valueField = 'languageCode';
             displayField = 'description';
         } else if (field.get('type') === 'gender') {

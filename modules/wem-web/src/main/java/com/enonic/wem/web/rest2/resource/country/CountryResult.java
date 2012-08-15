@@ -44,14 +44,23 @@ public final class CountryResult
         json.put( "localName", model.getLocalName() );
         json.put( "regionsEnglishName", model.getRegionsEnglishName() );
         json.put( "regionsLocalName", model.getRegionsLocalName() );
-        json.put( "callingCode", model.getCallingCode() );
 
-        final ArrayNode array = json.putArray( "regions" );
+        final ArrayNode codes = json.putArray( "callingCodes" );
+        codes.add( toJson( model.getCallingCode() ) );
+
+        final ArrayNode regions = json.putArray( "regions" );
         for ( final Region region : model.getRegions() )
         {
-            array.add( toJson( region ) );
+            regions.add( toJson( region ) );
         }
 
+        return json;
+    }
+
+    private JsonNode toJson( final String callingCode )
+    {
+        final ObjectNode json = objectNode();
+        json.put( "callingCode", callingCode );
         return json;
     }
 

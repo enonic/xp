@@ -55,7 +55,9 @@ Ext.define('Admin.view.account.AddressPanel', {
 
             regionField = new Ext.form.field.ComboBox({
                 xtype: 'combobox',
-                store: 'Admin.store.account.RegionStore',
+                store: Ext.create('Ext.data.Store', {
+                    model: 'Admin.model.account.RegionModel'
+                }),
                 valueField: 'code',
                 displayField: 'englishName',
                 queryMode: 'local',

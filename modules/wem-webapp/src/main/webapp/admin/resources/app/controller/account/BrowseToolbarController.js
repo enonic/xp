@@ -4,8 +4,7 @@ Ext.define('Admin.controller.account.BrowseToolbarController', {
     /*      Controller for handling Toolbar UI events       */
 
     stores: [
-        'Admin.store.account.GroupStore',
-        'Admin.store.account.CallingCodeStore'
+        'Admin.store.account.GroupStore'
     ],
     models: [
         'Admin.model.account.GroupModel',

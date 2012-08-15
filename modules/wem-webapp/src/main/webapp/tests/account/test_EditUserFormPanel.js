@@ -235,27 +235,28 @@ function testEditUserFormPanelGetData(t, userstoreStore) {
         function (next) {
             var formData = eufp.getData();
             t.ok(formData, 'Form data is valid');
-            t.ok(formData.userInfo, 'User info section presents');
-            t.is(new Date(formData.userInfo.birthday).toDateString(), new Date(testData.birthday).toDateString(),
+            var info = formData.info;
+            t.ok(info, 'User info section presents');
+            t.is(new Date(info.birthday).toDateString(), new Date(testData.birthday).toDateString(),
                 'Birthday value is right');
-            t.is(formData.userInfo.description, testData.description, 'Description value is right');
-            t.is(formData.userInfo.fax, testData.fax, 'Fax value is right');
-            t.is(formData.userInfo.firstName, testData.firstName, 'First name value is right');
-            t.is(formData.userInfo.gender, testData.gender, 'Gender value is right');
-            t.is(formData.userInfo.homePage, testData.homePage, 'Home page value is right');
-            t.is(formData.userInfo.htmlEmail, testData.htmlEmail, 'HTML email value is right');
-            t.is(formData.userInfo.initials, testData.initials, 'Initials value is right');
-            t.is(formData.userInfo.lastName, testData.lastName, 'Last name value is right');
-            t.is(formData.userInfo.memberId, testData.memberId, 'Member ID value is right');
-            t.is(formData.userInfo.middleName, testData.middleName, 'Middle name value is right');
-            t.is(formData.userInfo.mobile, testData.mobile, 'Mobile value is right');
-            t.is(formData.userInfo.nickName, testData.nickName, 'Nick name value is right');
-            t.is(formData.userInfo.organization, testData.organization, 'Organization value is right');
-            t.is(formData.userInfo.personalId, testData.personalId, 'Personal ID value is right');
-            t.is(formData.userInfo.prefix, testData.prefix, 'Prefix value is right');
-            t.is(formData.userInfo.suffix, testData.suffix, 'Suffix value is right');
-            t.is(formData.userInfo.title, testData.title, 'Title value is right');
-            t.is(formData.userInfo.phone, testData.phone, 'Phone value is right');
+            t.is(info.description, testData.description, 'Description value is right');
+            t.is(info.fax, testData.fax, 'Fax value is right');
+            t.is(info.firstName, testData.firstName, 'First name value is right');
+            t.is(info.gender, testData.gender, 'Gender value is right');
+            t.is(info.homePage, testData.homePage, 'Home page value is right');
+            t.is(info.htmlEmail, testData.htmlEmail, 'HTML email value is right');
+            t.is(info.initials, testData.initials, 'Initials value is right');
+            t.is(info.lastName, testData.lastName, 'Last name value is right');
+            t.is(info.memberId, testData.memberId, 'Member ID value is right');
+            t.is(info.middleName, testData.middleName, 'Middle name value is right');
+            t.is(info.mobile, testData.mobile, 'Mobile value is right');
+            t.is(info.nickName, testData.nickName, 'Nick name value is right');
+            t.is(info.organization, testData.organization, 'Organization value is right');
+            t.is(info.personalId, testData.personalId, 'Personal ID value is right');
+            t.is(info.prefix, testData.prefix, 'Prefix value is right');
+            t.is(info.suffix, testData.suffix, 'Suffix value is right');
+            t.is(info.title, testData.title, 'Title value is right');
+            t.is(info.phone, testData.phone, 'Phone value is right');
             Ext.destroy(eufp);
         }
     );
@@ -346,7 +347,8 @@ StartTest(function (t) {
     t.requireOk(
         [
             'Admin.view.account.EditUserFormPanel',
-            'Test.account.store.UserstoreConfigStore'
+            'Test.account.store.UserstoreConfigStore',
+            'Admin.model.account.CallingCodeModel'
         ],
         function () {
             var userstoreStore = Ext.create('Test.account.store.UserstoreConfigStore', {});

@@ -1,18 +1,22 @@
 {
-    "total":1,
-    "countries":[
+    "total": 1,
+    "countries": [
         {
-            "code":"NO",
-            "englishName":"NORWAY",
-            "localName":"NORGE",
-            "regionsEnglishName":"County",
-            "regionsLocalName":"Fylke",
-            "callingCode":"+47",
-            "regions":[
+            "code": "NO",
+            "englishName": "NORWAY",
+            "localName": "NORGE",
+            "regionsEnglishName": "County",
+            "regionsLocalName": "Fylke",
+            "callingCodes": [
                 {
-                    "regionCode":"02",
-                    "englishName":"Akershus",
-                    "localName":"Akershus"
+                    "callingCode": "+47"
+                }
+            ],
+            "regions": [
+                {
+                    "regionCode": "02",
+                    "englishName": "Akershus",
+                    "localName": "Akershus"
                 }
             ]
         }

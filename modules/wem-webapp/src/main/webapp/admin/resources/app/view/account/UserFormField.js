@@ -136,7 +136,7 @@ Ext.define('Admin.view.account.UserFormField', {
             listeners: {
                 'validitychange': me.validityChanged,
                 'change': me.delayValidation ?
-                    me.callValidationTask : function () {
+                          me.callValidationTask : function () {
                 },
                 'keyup': function (field, event) {
                     if (me.delayValidation && (!event.isSpecialKey() ||
@@ -201,7 +201,7 @@ Ext.define('Admin.view.account.UserFormField', {
 
     createComboConfig: function (fieldConfig, me) {
         var comboConfig;
-        if (me.fieldStore && me.fieldStore.getTotalCount() > 0) {
+        if (me.fieldStore) {
             comboConfig = {
                 xtype: 'combobox',
                 store: me.fieldStore,
