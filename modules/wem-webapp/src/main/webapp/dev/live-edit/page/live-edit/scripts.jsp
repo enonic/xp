@@ -1,3 +1,7 @@
+<%
+  if ( request.getParameter( "edit" ) == null || !request.getParameter( "edit" ).equals( "false" ) )
+  {
+%>
 <script type="text/javascript" charset="UTF-8" src="../resources/lib/jquery-1.8.0.min.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../resources/lib/jquery-ui-1.8.22.custom.min.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../resources/lib/jquery.ui.touch-punch.min.js"></script>
@@ -29,3 +33,6 @@
 <script type="text/javascript" charset="UTF-8" src="../resources/js/ui/ToolTip.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../resources/js/ui/InfoTip.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../resources/js/ui/DragDrop.js"></script>
+<%
+  }
+%>

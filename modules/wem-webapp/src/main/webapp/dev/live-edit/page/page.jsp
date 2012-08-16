@@ -33,7 +33,7 @@
     <link rel="stylesheet" href="_public/skins/advanced/standard/all-_ts=12623e07168.css" type="text/css"/>
     <link rel="stylesheet" href="_public/skins/advanced/standard/pc-_ts=12f0c3b4f7e.css" type="text/css"/>
 
-    <%@ include file="live-edit/css.html" %>
+    <%@ include file="live-edit/css.jsp" %>
 
 
   <!--[if lt IE 8]>
@@ -109,7 +109,7 @@
 <body data-live-edit-type="page" data-live-edit-key="1867" data-live-edit-name="Home"><!--stopindex-->
 
 
-<%@ include file="live-edit/loader-splash.html" %>
+<%@ include file="live-edit/loader-splash.jsp" %>
 
 
 <ul id="accessibility-links" class="screen">
@@ -202,7 +202,7 @@
             <!-- Region -->
             <div class="column clearfix screen" id="east" data-live-edit-type="region" data-live-edit-key="31" data-live-edit-name="East">
 
-              <%@ include file="components/window-empty.html" %>
+              <%@ include file="components/window-empty.jsp" %>
 
               <%@ include file="components/window-tagcloud.html" %>
 
@@ -243,7 +243,7 @@
 
 
 <!-- Injected -->
-<%@ include file="live-edit/scripts.html" %>
+<%@ include file="live-edit/scripts.jsp" %>
 
 
 

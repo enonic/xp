@@ -33,7 +33,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml
   <link rel="stylesheet" href="_public/skins/advanced/standard/all-_ts=12623e07168.css" type="text/css"/>
   <link rel="stylesheet" href="_public/skins/advanced/standard/pc-_ts=12f0c3b4f7e.css" type="text/css"/>
 
-  <%@ include file="live-edit/css.html" %>
+  <%@ include file="live-edit/css.jsp" %>
 
 
   <!--[if lt IE 8]>
@@ -109,7 +109,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml
 <body data-live-edit-type="page" data-live-edit-key="1867" data-live-edit-name="Home"><!--stopindex-->
 
 
-<%@ include file="live-edit/loader-splash.html" %>
+<%@ include file="live-edit/loader-splash.jsp" %>
 
 
 <ul id="accessibility-links" class="screen">
@@ -236,7 +236,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml
 
 
 <!-- Injected -->
-<%@ include file="live-edit/scripts.html" %>
+<%@ include file="live-edit/scripts.jsp" %>
 
 
 
