@@ -60,7 +60,7 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
                                 xtype: 'tabpanel',
                                 items: [
                                     {
-                                        title: "Memberships",
+                                        title: "Members",
                                         itemId: 'membershipsTab',
                                         listeners: {
                                             afterrender: function () {

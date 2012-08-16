@@ -29,7 +29,7 @@ public class UserGraphServiceTest
         throws IOException
     {
         final String userKey = "J346JK346H2G7UI3G73J573L73KLG6735KL7G3L7G35L";
-        GraphResult result = userGraphService.buildGraph( createUser( userKey ) );
+        GraphResult result = userGraphService.generateGraph( createUser( userKey ) );
         assertNotNull( result.toJson().get( GraphResult.GRAPH_PARAM ) );
 
         ArrayNode graph = (ArrayNode) result.toJson().get( GraphResult.GRAPH_PARAM );
@@ -44,8 +44,8 @@ public class UserGraphServiceTest
         ObjectNode data = (ObjectNode) user.get( GraphResult.DATA_PARAM );
         assertEquals( data.get( GraphResult.KEY_PARAM ).getTextValue(), userKey );
 
-        assertNotNull( user.get( "adjacencies" ) );
-        ArrayNode adjacencies = (ArrayNode) user.get( "adjacencies" );
+        assertNotNull( user.get( GraphResult.ADJACENCIES_PARAM ) );
+        ArrayNode adjacencies = (ArrayNode) user.get( GraphResult.ADJACENCIES_PARAM );
         assertEquals( adjacencies.size(), 1 );
 
         assertEquals( group.get( GraphResult.NAME_PARAM ).getTextValue(), "group1" );

@@ -35,7 +35,7 @@ public class GroupGraphServiceTest
     @Test
     public void testBuildGraph()
     {
-        GraphResult group = groupGraphService.buildGraph( createTestGroupGraph() );
+        GraphResult group = groupGraphService.generateGraph( createTestGroupGraph() );
 
         assertNotNull( group.toJson().get( GraphResult.GRAPH_PARAM ) );
         ArrayNode graph = (ArrayNode) group.toJson().get( GraphResult.GRAPH_PARAM );
@@ -54,7 +54,7 @@ public class GroupGraphServiceTest
     @Test
     public void testGraphAdjacencies()
     {
-        GraphResult group = groupGraphService.buildGraph( createTestGroupGraph() );
+        GraphResult group = groupGraphService.generateGraph( createTestGroupGraph() );
         assertNotNull( group.toJson().get( GraphResult.GRAPH_PARAM ) );
         ArrayNode graph = (ArrayNode) group.toJson().get( GraphResult.GRAPH_PARAM );
         ObjectNode parentNode = (ObjectNode) graph.get( 0 );
@@ -74,9 +74,8 @@ public class GroupGraphServiceTest
     @Test
     public void testDataSection()
     {
-        GraphResult group = groupGraphService.buildGraph( createTestGroupGraph() );
+        GraphResult group = groupGraphService.generateGraph( createTestGroupGraph() );
         assertNotNull( group.toJson().get( GraphResult.GRAPH_PARAM ) );
-        System.out.println( group.toJson() );
         ArrayNode graph = (ArrayNode) group.toJson().get( GraphResult.GRAPH_PARAM );
         Iterator<JsonNode> elements = graph.getElements();
         assert ( elements.hasNext() );
