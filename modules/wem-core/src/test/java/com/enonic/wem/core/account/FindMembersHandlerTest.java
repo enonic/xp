@@ -68,8 +68,8 @@ public class FindMembersHandlerTest
     public void testFindMembersNotTransitive()
         throws Exception
     {
-        final AccountKey groupAccount = AccountKey.from( "group:enonic:devs" );
-        final AccountKey account = AccountKey.from( "user:enonic:johndoe" );
+        final AccountKey groupAccount = AccountKey.group( "enonic:devs" );
+        final AccountKey account = AccountKey.user( "enonic:johndoe" );
 
         // setup
         final UserEntity user = createUser( "ASDD8F", account.getUserStore(), account.getLocalName() );
@@ -92,10 +92,10 @@ public class FindMembersHandlerTest
         // verify
         assertNotNull( members );
         assertEquals( 3, members.getSize() );
-        assertTrue( members.contains( AccountKey.from( "group:enonic:group1" ) ) );
-        assertTrue( members.contains( AccountKey.from( "group:enonic:group2" ) ) );
-//        assertTrue( members.contains( AccountKey.from( "user:enonic:user1" ) ) );
-        assertTrue( members.contains( AccountKey.from( "role:enonic:role1" ) ) );
+        assertTrue( members.contains( AccountKey.group( "enonic:group1" ) ) );
+        assertTrue( members.contains( AccountKey.group( "enonic:group2" ) ) );
+//        assertTrue( members.contains( AccountKey.user( "enonic:user1" ) ) );
+        assertTrue( members.contains( AccountKey.role( "enonic:role1" ) ) );
     }
 
     @Test
@@ -103,8 +103,8 @@ public class FindMembersHandlerTest
         throws Exception
     {
         // TODO improve this test when using JCR for storage
-        final AccountKey groupAccount = AccountKey.from( "group:enonic:devs" );
-        final AccountKey account = AccountKey.from( "user:enonic:johndoe" );
+        final AccountKey groupAccount = AccountKey.group( "enonic:devs" );
+        final AccountKey account = AccountKey.user( "enonic:johndoe" );
 
         // setup
         final UserEntity user = createUser( "ASDD8F", account.getUserStore(), account.getLocalName() );
@@ -126,17 +126,17 @@ public class FindMembersHandlerTest
         // verify
         assertNotNull( members );
         assertEquals( 3, members.getSize() );
-        assertTrue( members.contains( AccountKey.from( "group:enonic:group1" ) ) );
-        assertTrue( members.contains( AccountKey.from( "group:enonic:group2" ) ) );
-//        assertTrue( members.contains( AccountKey.from( "user:enonic:user1" ) ) );
-        assertTrue( members.contains( AccountKey.from( "role:enonic:role1" ) ) );
+        assertTrue( members.contains( AccountKey.group( "enonic:group1" ) ) );
+        assertTrue( members.contains( AccountKey.group( "enonic:group2" ) ) );
+//        assertTrue( members.contains( AccountKey.user( "enonic:user1" ) ) );
+        assertTrue( members.contains( AccountKey.role( "enonic:role1" ) ) );
     }
 
     @Test(expected = AccountNotFoundException.class)
     public void testFindMembersMissingAccount()
         throws Exception
     {
-        final AccountKey groupAccount = AccountKey.from( "group:enonic:group1" );
+        final AccountKey groupAccount = AccountKey.group( "enonic:group1" );
         createUserStore( groupAccount.getUserStore(), USERSTORE_KEY );
 
         client.execute( Commands.account().findMembers().key( groupAccount ) );
@@ -146,7 +146,7 @@ public class FindMembersHandlerTest
     public void testFindMembersUserAccount()
         throws Exception
     {
-        final AccountKey groupAccount = AccountKey.from( "user:enonic:user1" );
+        final AccountKey groupAccount = AccountKey.user( "enonic:user1" );
         client.execute( Commands.account().findMembers().key( groupAccount ) );
     }
 

@@ -72,9 +72,9 @@ public class DeleteAccountHandlerTest
     public void deleteExistingAccounts()
         throws Exception
     {
-        final AccountKey account1 = AccountKey.from( "user:enonic:joe" );
-        final AccountKey account2 = AccountKey.from( "group:enonic:people" );
-        final AccountKey account3 = AccountKey.from( "role:enonic:admin" );
+        final AccountKey account1 = AccountKey.user( "enonic:joe" );
+        final AccountKey account2 = AccountKey.group( "enonic:people" );
+        final AccountKey account3 = AccountKey.role( "enonic:admin" );
 
         // setup
         final UserEntity user = createUser( "ASDD8F", account1.getUserStore(), account1.getLocalName() );
@@ -95,9 +95,9 @@ public class DeleteAccountHandlerTest
     public void deleteMissingAccounts()
         throws Exception
     {
-        final AccountKey account1 = AccountKey.from( "user:enonic:joe" );
-        final AccountKey account2 = AccountKey.from( "group:enonic:people" );
-        final AccountKey account3 = AccountKey.from( "role:enonic:admin" );
+        final AccountKey account1 = AccountKey.user( "enonic:joe" );
+        final AccountKey account2 = AccountKey.group( "enonic:people" );
+        final AccountKey account3 = AccountKey.role( "enonic:admin" );
 
         createUserStore( account1.getUserStore(), USERSTORE_KEY );
 
@@ -114,9 +114,9 @@ public class DeleteAccountHandlerTest
     public void deleteMissingAccountsAndUserStore()
         throws Exception
     {
-        final AccountKey account1 = AccountKey.from( "user:enonic:joe" );
-        final AccountKey account2 = AccountKey.from( "group:enonic:people" );
-        final AccountKey account3 = AccountKey.from( "role:enonic:admin" );
+        final AccountKey account1 = AccountKey.user( "enonic:joe" );
+        final AccountKey account2 = AccountKey.group( "enonic:people" );
+        final AccountKey account3 = AccountKey.role( "enonic:admin" );
         // exercise
         final Integer deletedCount =
             client.execute( Commands.account().delete().selector( AccountSelectors.keys( account1, account2, account3 ) ) );
