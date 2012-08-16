@@ -8,7 +8,10 @@ Ext.define('Admin.store.account.GroupStore', {
 
     proxy: {
         type: 'ajax',
-        url: 'data/group/list',
+        url: Admin.lib.UriHelper.getAccountSearchUri(),
+        extraParams: {
+            types: 'group,role'
+        },
         reader: {
             type: 'json',
             root: 'accounts'

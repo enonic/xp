@@ -174,4 +174,27 @@ public class AccountKeySetTest
         assertEquals( 1, set3.getSize() );
         assertTrue( set3.contains( AccountKey.from( "role:other:admin" ) ) );
     }
+
+    @Test
+    public void testHashCode()
+    {
+        final AccountKeySet set1 = AccountKeySet.from( "user:other:dummy" );
+        final AccountKeySet set2 = AccountKeySet.from( "user:other:dummy" );
+        final AccountKeySet set3 = AccountKeySet.empty();
+
+        assertTrue( set1.hashCode() == set2.hashCode() );
+        assertFalse( set1.hashCode() == set3.hashCode() );
+    }
+
+    @Test
+    public void testEquals()
+    {
+        final AccountKeySet set1 = AccountKeySet.from( "user:other:dummy" );
+        final AccountKeySet set2 = AccountKeySet.from( "user:other:dummy" );
+        final AccountKeySet set3 = AccountKeySet.empty();
+
+        assertTrue( set1.equals( set1 ) );
+        assertTrue( set2.equals( set1 ) );
+        assertFalse( set3.equals( set1 ) );
+    }
 }

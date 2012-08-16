@@ -30,7 +30,7 @@ public class AccountSelectorsTest
     @Test
     public void testKeys3()
     {
-        final AccountKeySet set = AccountKeySet.from("user:other:dummy");
+        final AccountKeySet set = AccountKeySet.from( "user:other:dummy" );
         final AccountKeySelector selector = AccountSelectors.keys( set );
         assertNotNull( selector );
         assertNotNull( selector.getKeys() );
@@ -41,10 +41,18 @@ public class AccountSelectorsTest
     @Test
     public void testKeys4()
     {
-        final AccountKeySet set = AccountKeySet.from("user:other:dummy");
+        final AccountKeySet set = AccountKeySet.from( "user:other:dummy" );
         final AccountKeySelector selector = AccountSelectors.keys( set.getSet() );
         assertNotNull( selector );
         assertNotNull( selector.getKeys() );
         assertEquals( 1, selector.getKeys().getSize() );
+    }
+
+    @Test
+    public void testQuery()
+    {
+        final AccountQuery selector = AccountSelectors.query( "text" );
+        assertNotNull( selector );
+        assertEquals( "text", selector.getQuery() );
     }
 }

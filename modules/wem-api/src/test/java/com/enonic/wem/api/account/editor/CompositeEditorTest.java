@@ -4,30 +4,21 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.account.Account;
-import com.enonic.wem.api.account.RoleAccount;
-
-import static org.junit.Assert.*;
-
 public class CompositeEditorTest
 {
-    private Account account;
+    private EditableUserAccount account;
 
-    private AccountEditor editorEdit;
+    private AccountEditor editor1;
 
-    private AccountEditor editorNoEdit;
+    private AccountEditor editor2;
 
     @Before
     public void setUp()
         throws Exception
     {
-        this.account = RoleAccount.create( "other:dummy" );
-
-        this.editorEdit = Mockito.mock( AccountEditor.class );
-        Mockito.when( this.editorEdit.edit( this.account ) ).thenReturn( true );
-
-        this.editorNoEdit = Mockito.mock( AccountEditor.class );
-        Mockito.when( this.editorNoEdit.edit( this.account ) ).thenReturn( false );
+        this.account = Mockito.mock( EditableUserAccount.class );
+        this.editor1 = Mockito.mock( AccountEditor.class );
+        this.editor2 = Mockito.mock( AccountEditor.class );
     }
 
     @Test
@@ -35,52 +26,25 @@ public class CompositeEditorTest
         throws Exception
     {
         final CompositeEditor editor = new CompositeEditor();
-        assertFalse( editor.edit( this.account ) );
+        editor.edit( this.account );
     }
 
     @Test
-    public void testSingle1()
+    public void testSingle()
         throws Exception
     {
-        final CompositeEditor editor = new CompositeEditor( this.editorEdit );
-        assertTrue( editor.edit( this.account ) );
-        Mockito.verify( this.editorEdit, Mockito.times( 1 ) ).edit( this.account );
+        final CompositeEditor editor = new CompositeEditor( this.editor1 );
+        editor.edit( this.account );
+        Mockito.verify( this.editor1, Mockito.times( 1 ) ).edit( this.account );
     }
 
     @Test
-    public void testSingle2()
+    public void testMultiple()
         throws Exception
     {
-        final CompositeEditor editor = new CompositeEditor( this.editorNoEdit );
-        assertFalse( editor.edit( this.account ) );
-        Mockito.verify( this.editorNoEdit, Mockito.times( 1 ) ).edit( this.account );
-    }
-
-    @Test
-    public void testMultiple1()
-        throws Exception
-    {
-        final CompositeEditor editor = new CompositeEditor( this.editorEdit, this.editorEdit );
-        assertTrue( editor.edit( this.account ) );
-        Mockito.verify( this.editorEdit, Mockito.times( 2 ) ).edit( this.account );
-    }
-
-    @Test
-    public void testMultiple2()
-        throws Exception
-    {
-        final CompositeEditor editor = new CompositeEditor( this.editorNoEdit, this.editorNoEdit );
-        assertFalse( editor.edit( this.account ) );
-        Mockito.verify( this.editorNoEdit, Mockito.times( 2 ) ).edit( this.account );
-    }
-
-    @Test
-    public void testMultiple3()
-        throws Exception
-    {
-        final CompositeEditor editor = new CompositeEditor( this.editorNoEdit, this.editorEdit );
-        assertTrue( editor.edit( this.account ) );
-        Mockito.verify( this.editorEdit, Mockito.times( 1 ) ).edit( this.account );
-        Mockito.verify( this.editorNoEdit, Mockito.times( 1 ) ).edit( this.account );
+        final CompositeEditor editor = new CompositeEditor( this.editor1, this.editor2 );
+        editor.edit( this.account );
+        Mockito.verify( this.editor1, Mockito.times( 1 ) ).edit( this.account );
+        Mockito.verify( this.editor2, Mockito.times( 1 ) ).edit( this.account );
     }
 }
