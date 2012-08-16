@@ -14,6 +14,21 @@ import com.enonic.cms.core.security.group.GroupType;
 public abstract class AccountGraphService
 {
 
+    private String timestamp = "";
+
+    protected void setTimestamp( String timestamp )
+    {
+        this.timestamp = timestamp;
+    }
+
+    protected String generateId( String key )
+    {
+        StringBuffer strBuffer = new StringBuffer( timestamp );
+        strBuffer.append( "_" );
+        strBuffer.append( key );
+        return strBuffer.toString();
+    }
+
     protected ObjectNode createGraphData( String key, String type, boolean builtIn, String name )
     {
 
@@ -32,7 +47,7 @@ public abstract class AccountGraphService
         {
             ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
             String nodeId = getMemberKey( membership );
-            objectNode.put( GraphResult.NODETO_PARAM, nodeId );
+            objectNode.put( GraphResult.NODETO_PARAM, generateId( nodeId ) );
             arrayNode.add( objectNode );
         }
         return arrayNode;

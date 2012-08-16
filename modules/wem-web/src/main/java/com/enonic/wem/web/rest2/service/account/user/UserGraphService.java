@@ -25,10 +25,11 @@ public class UserGraphService
 
     public GraphResult generateGraph( UserEntity user )
     {
+        setTimestamp( String.valueOf( System.currentTimeMillis() ) );
         return generateGraph( user, null, -1 );
     }
 
-    public GraphResult generateGraph( UserEntity user, GraphResult graph, int level )
+    private GraphResult generateGraph( UserEntity user, GraphResult graph, int level )
     {
         if ( graph == null )
         {
@@ -44,7 +45,7 @@ public class UserGraphService
     }
 
 
-    public GraphResult generateGraph( GroupEntity entity, GraphResult graph, int level )
+    private GraphResult generateGraph( GroupEntity entity, GraphResult graph, int level )
     {
         if ( graph == null )
         {

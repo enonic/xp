@@ -18,10 +18,11 @@ public class GroupGraphService
 
     public GraphResult generateGraph( GroupEntity entity )
     {
+        setTimestamp( String.valueOf( System.currentTimeMillis() ) );
         return generateGraph( entity, null, -1 );
     }
 
-    public GraphResult generateGraph( GroupEntity entity, GraphResult graph, int level )
+    private GraphResult generateGraph( GroupEntity entity, GraphResult graph, int level )
     {
         if ( graph == null )
         {
@@ -56,7 +57,7 @@ public class GroupGraphService
     protected ObjectNode buildGraphData( GroupEntity groupEntity )
     {
         ObjectNode node = JsonNodeFactory.instance.objectNode();
-        node.put( GraphResult.ID_PARAM, groupEntity.getGroupKey().toString() );
+        node.put( GraphResult.ID_PARAM, generateId( groupEntity.getGroupKey().toString() ) );
 
         node.put( GraphResult.NAME_PARAM, groupEntity.getName() );
 
@@ -70,7 +71,7 @@ public class GroupGraphService
     protected ObjectNode buildGraphData( UserEntity userEntity )
     {
         ObjectNode node = JsonNodeFactory.instance.objectNode();
-        node.put( GraphResult.ID_PARAM, userEntity.getKey().toString() );
+        node.put( GraphResult.ID_PARAM, generateId( userEntity.getKey().toString() ) );
 
         node.put( GraphResult.NAME_PARAM, userEntity.getDisplayName() );
 

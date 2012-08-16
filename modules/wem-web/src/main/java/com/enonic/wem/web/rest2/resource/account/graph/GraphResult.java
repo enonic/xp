@@ -33,35 +33,36 @@ public final class GraphResult
 
     public static final String GRAPH_PARAM = "graph";
 
-    private ObjectNode json;
+
+    private ArrayNode graph;
 
     public GraphResult()
     {
-        json = objectNode();
-        json.put( GRAPH_PARAM, arrayNode() );
+        graph = arrayNode();
     }
 
     @Override
     public JsonNode toJson()
     {
+        ObjectNode json = objectNode();
+        json.put( GRAPH_PARAM, graph );
         return json;
     }
 
     public void addAccountNode( ObjectNode node )
     {
-        ArrayNode graph = getGraph();
         graph.add( node );
     }
 
-    public void merge( GraphResult graph )
+    public void merge( GraphResult graphResult )
     {
-        ArrayNode graphToMerge = graph.getGraph();
-        getGraph().addAll( graphToMerge );
+        ArrayNode graphToMerge = graphResult.getGraph();
+        graph.addAll( graphToMerge );
     }
 
     protected ArrayNode getGraph()
     {
-        return (ArrayNode) json.get( GRAPH_PARAM );
+        return graph;
     }
 
     public boolean containsEntity( GroupEntity group )
