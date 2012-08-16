@@ -2,12 +2,14 @@ package com.enonic.wem.web.rest2.resource.account;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import com.enonic.wem.core.search.Facet;
@@ -23,15 +25,24 @@ import com.enonic.wem.core.search.account.AccountType;
 import com.enonic.wem.web.rest2.resource.AbstractResourceTest;
 import com.enonic.wem.web.rest2.service.account.AccountCsvExportService;
 
+import com.enonic.cms.core.security.group.DeleteGroupCommand;
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.group.GroupKey;
 import com.enonic.cms.core.security.group.GroupType;
+import com.enonic.cms.core.security.user.DeleteUserCommand;
 import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.core.security.user.UserKey;
 import com.enonic.cms.core.security.user.UserType;
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
+import com.enonic.cms.core.security.userstore.UserStoreService;
 import com.enonic.cms.store.dao.GroupDao;
 import com.enonic.cms.store.dao.UserDao;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class AccountResourceTest
     extends AbstractResourceTest
@@ -46,6 +57,8 @@ public class AccountResourceTest
 
     private GroupDao groupDao;
 
+    private UserStoreService userStoreService;
+
     @Before
     public void setUp()
     {
@@ -53,11 +66,13 @@ public class AccountResourceTest
         this.exportService = Mockito.mock( AccountCsvExportService.class );
         this.userDao = Mockito.mock( UserDao.class );
         this.groupDao = Mockito.mock( GroupDao.class );
+        this.userStoreService = Mockito.mock( UserStoreService.class );
         this.resource = new AccountResource();
         this.resource.setAccountSearchService( service );
         this.resource.setUserDao( userDao );
         this.resource.setGroupDao( groupDao );
         this.resource.setAccountCsvExportService( exportService );
+        this.resource.setUserStoreService( userStoreService );
     }
 
     @Test
@@ -95,8 +110,7 @@ public class AccountResourceTest
 
         AccountSearchQuery searchQuery = resource.buildSearchQuery( query, types, userStores, organizations, start, limit, sort, sortDir );
 
-        Mockito.when( userDao.findByKey( new UserKey( "E6C593DE14515428B06F1A16E0D28E2341FC5AB4" ) ) ).thenReturn(
-            createUser( "E6C593DE14515428B06F1A16E0D28E2341FC5AB4" ) );
+        createUser( "E6C593DE14515428B06F1A16E0D28E2341FC5AB4" );
         Mockito.when( groupDao.findByKey( new GroupKey( "E34B614B26C666AA9929F90EF3FA723B3DAAAAB2" ) ) ).thenReturn(
             createGroup( "E34B614B26C666AA9929F90EF3FA723B3DAAAAB2" ) );
         Mockito.when( groupDao.findByKey( new GroupKey( "18311D321165D73043C10A9101016CDF3765898E" ) ) ).thenReturn(
@@ -140,10 +154,8 @@ public class AccountResourceTest
         keys.add( "E6C593DE14515428B06F1A16E0D28E2341FC5AB4" );
         keys.add( "E34B614B26C666AA9929F90EF3FA723B3DAAAAB2" );
 
-        Mockito.when( userDao.findByKey( new UserKey( "E6C593DE14515428B06F1A16E0D28E2341FC5AB4" ) ) ).thenReturn(
-            createUser( "E6C593DE14515428B06F1A16E0D28E2341FC5AB4" ) );
-        Mockito.when( groupDao.findByKey( new GroupKey( "E34B614B26C666AA9929F90EF3FA723B3DAAAAB2" ) ) ).thenReturn(
-            createGroup( "E34B614B26C666AA9929F90EF3FA723B3DAAAAB2" ) );
+        createUser( "E6C593DE14515428B06F1A16E0D28E2341FC5AB4" );
+        createGroup( "E34B614B26C666AA9929F90EF3FA723B3DAAAAB2" );
 
         AccountSearchResults searchResults = resource.getAccountListForKeys( keys );
 
@@ -153,6 +165,64 @@ public class AccountResourceTest
 
         String stringResponse = new String( (byte[]) response.getEntity() );
         assert ( createEmptyCsvResponse().compareTo( stringResponse ) == 0 );
+    }
+
+    @Test
+    public void testDeleteAccounts()
+        throws Exception
+    {
+        final UserEntity adminUser = createUser( "18311D321165D73043C10A9101016CDF3765898E" );
+        final UserEntity user = createUser( "E6C593DE14515428B06F1A16E0D28E2341FC5AB4" );
+        final GroupEntity group = createGroup( "E34B614B26C666AA9929F90EF3FA723B3DAAAAB2" );
+
+        Mockito.when( userDao.findBuiltInEnterpriseAdminUser() ).thenReturn( adminUser );
+
+        final List<String> keys = Arrays.asList( user.getKey().toString(), group.getGroupKey().toString() );
+        final AccountDeleteResult result = resource.deleteAccount( keys );
+
+        verify( userStoreService, atLeastOnce() ).deleteUser( Matchers.<DeleteUserCommand>any() );
+        verify( userStoreService, atLeastOnce() ).deleteGroup( Matchers.<DeleteGroupCommand>any() );
+
+        assertTrue( result.isSuccess() );
+        assertJsonResult( "delete_accounts_ok.json", result );
+    }
+
+    @Test
+    public void testDeleteMissingAccount()
+        throws Exception
+    {
+        final UserEntity adminUser = createUser( "18311D321165D73043C10A9101016CDF3765898E" );
+
+        Mockito.when( userDao.findBuiltInEnterpriseAdminUser() ).thenReturn( adminUser );
+
+        final List<String> keys = Arrays.asList( "E6C593DE14515428B06F1A16E0D28E2341FC5AB4" );
+        final AccountDeleteResult result = resource.deleteAccount( keys );
+
+        verify( userStoreService, never() ).deleteUser( Matchers.<DeleteUserCommand>any() );
+
+        assertTrue( result.isSuccess() );
+        assertJsonResult( "delete_accounts_ok.json", result );
+    }
+
+    @Test
+    public void testDeleteAccountWithException()
+        throws Exception
+    {
+        final UserEntity adminUser = createUser( "18311D321165D73043C10A9101016CDF3765898E" );
+        final UserEntity user = createUser( "E6C593DE14515428B06F1A16E0D28E2341FC5AB4" );
+        final GroupEntity group = createGroup( "E34B614B26C666AA9929F90EF3FA723B3DAAAAB2" );
+
+        Mockito.when( userDao.findBuiltInEnterpriseAdminUser() ).thenReturn( adminUser );
+        doThrow( new RuntimeException( "Unexpected exception" ) ).when( userStoreService ).deleteUser( Matchers.<DeleteUserCommand>any() );
+
+        final List<String> keys = Arrays.asList( user.getKey().toString(), group.getGroupKey().toString() );
+        final AccountDeleteResult result = resource.deleteAccount( keys );
+
+        verify( userStoreService, atLeastOnce() ).deleteUser( Matchers.<DeleteUserCommand>any() );
+
+        assertFalse( result.isSuccess() );
+        assertNotNull( result.getError() );
+        assertNotNull( result.toJson() );
     }
 
     private GroupEntity createRole( final String key )
@@ -179,14 +249,19 @@ public class AccountResourceTest
 
     private UserEntity createUser( final String key )
     {
-        UserEntity user = new UserEntity();
-        user.setKey( new UserKey( key ) );
+        final UserKey userKey = new UserKey( key );
+        final UserEntity user = new UserEntity();
+        user.setKey( userKey );
         user.setType( UserType.NORMAL );
         user.setEmail( "user@email.com" );
         user.setUserStore( createUserstore( "enonic" ) );
         user.setName( "dummy" );
         user.setDisplayName( "Dummy User" );
         user.setPhoto( new byte[0] );
+
+        Mockito.when( userDao.findByKey( userKey ) ).thenReturn( user );
+        Mockito.when( userDao.findByKey( key ) ).thenReturn( user );
+
         return user;
     }
 

@@ -1,12 +1,14 @@
 package com.enonic.wem.web.rest2.resource.account;
 
 import java.io.UnsupportedEncodingException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -27,10 +29,15 @@ import com.enonic.wem.core.search.account.AccountSearchService;
 import com.enonic.wem.core.search.account.AccountType;
 import com.enonic.wem.web.rest2.service.account.AccountCsvExportService;
 
+import com.enonic.cms.core.security.group.DeleteGroupCommand;
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.group.GroupKey;
+import com.enonic.cms.core.security.group.GroupSpecification;
+import com.enonic.cms.core.security.user.DeleteUserCommand;
 import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.core.security.user.UserKey;
+import com.enonic.cms.core.security.user.UserSpecification;
+import com.enonic.cms.core.security.userstore.UserStoreService;
 import com.enonic.cms.store.dao.GroupDao;
 import com.enonic.cms.store.dao.UserDao;
 
@@ -43,6 +50,8 @@ public final class AccountResource
     private UserDao userDao;
 
     private GroupDao groupDao;
+
+    private UserStoreService userStoreService;
 
     private AccountSearchService accountSearchService;
 
@@ -93,6 +102,49 @@ public final class AccountResource
         AccountSearchResults searchResults = getAccountListForKeys( keys );
 
         return createCsvExportResponse( searchResults, separator, characterEncoding );
+    }
+
+    @POST
+    @Path("delete")
+    public AccountDeleteResult deleteAccount( @QueryParam("key") @DefaultValue("") final List<String> keys )
+    {
+        final UserEntity deleter = getCurrentUser();
+        for ( String accountKey : keys )
+        {
+            try
+            {
+                final AccountType type = findAccountType( accountKey );
+                switch ( type )
+                {
+                    case USER:
+                        final UserSpecification userSpec = new UserSpecification();
+                        userSpec.setKey( new UserKey( accountKey ) );
+                        final DeleteUserCommand deleteUserCommand = new DeleteUserCommand( deleter.getKey(), userSpec );
+                        userStoreService.deleteUser( deleteUserCommand );
+                        break;
+
+                    case GROUP:
+                        final GroupSpecification groupSpec = new GroupSpecification();
+                        groupSpec.setKey( new GroupKey( accountKey ) );
+                        final DeleteGroupCommand deleteGroupCommand = new DeleteGroupCommand( deleter, groupSpec );
+                        userStoreService.deleteGroup( deleteGroupCommand );
+                        break;
+                }
+                removeAccountIndex( accountKey );
+            }
+            catch ( Exception e )
+            {
+                final String errorMsg = MessageFormat.format( "Unable to delete account with key {0}", accountKey );
+                return new AccountDeleteResult( false, errorMsg );
+            }
+        }
+
+        return new AccountDeleteResult( true );
+    }
+
+    private void removeAccountIndex( final String accountKey )
+    {
+        accountSearchService.deleteIndex( accountKey, true );
     }
 
     private Response createCsvExportResponse( AccountSearchResults results, String separator, String encoding )
@@ -180,6 +232,11 @@ public final class AccountResource
         return list;
     }
 
+    private UserEntity getCurrentUser()
+    {
+        return userDao.findBuiltInEnterpriseAdminUser();
+    }
+
     @Autowired
     public void setUserDao( final UserDao userDao )
     {
@@ -210,4 +267,9 @@ public final class AccountResource
         return this.accountCsvExportService;
     }
 
+    @Autowired
+    public void setUserStoreService( final UserStoreService userStoreService )
+    {
+        this.userStoreService = userStoreService;
+    }
 }
