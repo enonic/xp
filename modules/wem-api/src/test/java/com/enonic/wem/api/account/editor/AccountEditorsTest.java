@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.UserAccount;
 
 import static org.junit.Assert.*;
 
@@ -65,5 +66,17 @@ public class AccountEditorsTest
         assertEquals( 2, compositeEditor.editors.length );
         assertSame( editor1, compositeEditor.editors[0] );
         assertSame( editor2, compositeEditor.editors[1] );
+    }
+
+    @Test
+    public void testSetAccount()
+        throws Exception
+    {
+        final UserAccount account = Mockito.mock( UserAccount.class );
+        final AccountEditor editor = AccountEditors.setAccount( account );
+
+        assertNotNull( editor );
+        assertTrue( editor instanceof SetAccountEditor);
+        assertSame( account, ((SetAccountEditor)editor).source );
     }
 }

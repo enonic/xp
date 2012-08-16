@@ -90,6 +90,16 @@ public final class AccountKeySet
         return new AccountKeySet( result );
     }
 
+    public int hashCode()
+    {
+        return this.set.hashCode();
+    }
+
+    public boolean equals( final Object o )
+    {
+        return ( o instanceof AccountKeySet ) && this.set.equals( ( (AccountKeySet) o ).set );
+    }
+
     public String toString()
     {
         return this.set.toString();
