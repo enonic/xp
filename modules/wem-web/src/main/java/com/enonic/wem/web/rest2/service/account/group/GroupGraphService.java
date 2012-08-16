@@ -16,51 +16,47 @@ public class GroupGraphService
     extends AccountGraphService
 {
 
-    public GraphResult buildGraph( GroupEntity entity )
+    public GraphResult generateGraph( GroupEntity entity )
     {
-        setParentKey( System.currentTimeMillis() + "_" + String.valueOf( entity.getGroupKey() ) );
-        GraphResult groupResult = new GraphResult();
-        ObjectNode groupData = buildGroupData( entity );
-        groupResult.addAccountNode( groupData );
+        return generateGraph( entity, null, -1 );
+    }
 
-        for ( GroupEntity group : entity.getAllMembersRecursively() )
+    public GraphResult generateGraph( GroupEntity entity, GraphResult graph, int level )
+    {
+        if ( graph == null )
         {
-            ObjectNode node;
-            if ( group.isOfType( GroupType.USER, false ) )
+            graph = new GraphResult();
+        }
+        ObjectNode groupNode = buildGraphData( entity );
+        graph.addAccountNode( groupNode );
+
+        if ( level != 0 )
+        {
+            for ( GroupEntity group : entity.getMembers( false ) )
             {
-                node = buildGraphData( group.getUser() );
+                if ( graph.containsEntity( group ) )
+                {
+                    // Skip current iteration because we've already put this group into the graph
+                    continue;
+                }
+                if ( group.isOfType( GroupType.USER, false ) )
+                {
+                    graph.addAccountNode( buildGraphData( group.getUser() ) );
+                }
+                else
+                {
+                    generateGraph( group, graph, level - 1 );
+                }
             }
-            else
-            {
-                node = buildGraphData( group );
-            }
-            groupResult.addAccountNode( node );
         }
 
-        return groupResult;
+        return graph;
     }
-
-    protected ObjectNode buildGroupData( GroupEntity groupEntity )
-    {
-        ObjectNode node = JsonNodeFactory.instance.objectNode();
-
-        node.put( GraphResult.ID_PARAM, getParentKey() );
-
-        node.put( GraphResult.NAME_PARAM, groupEntity.getName() );
-
-        node.put( GraphResult.DATA_PARAM,
-                  createGraphData( String.valueOf( groupEntity.getGroupKey() ), groupEntity.isBuiltIn() ? "role" : "group",
-                                   groupEntity.isBuiltIn(), groupEntity.getName() ) );
-        node.put( GraphResult.ADJACENCIES_PARAM, createGraphAdjacencies( groupEntity.getMembers( false ) ) );
-        return node;
-    }
-
 
     protected ObjectNode buildGraphData( GroupEntity groupEntity )
     {
         ObjectNode node = JsonNodeFactory.instance.objectNode();
-        String groupKey = getParentKey() + "_" + String.valueOf( groupEntity.getGroupKey() );
-        node.put( GraphResult.ID_PARAM, groupKey );
+        node.put( GraphResult.ID_PARAM, groupEntity.getGroupKey().toString() );
 
         node.put( GraphResult.NAME_PARAM, groupEntity.getName() );
 
@@ -74,8 +70,7 @@ public class GroupGraphService
     protected ObjectNode buildGraphData( UserEntity userEntity )
     {
         ObjectNode node = JsonNodeFactory.instance.objectNode();
-        String groupKey = getParentKey() + "_" + String.valueOf( userEntity.getKey() );
-        node.put( GraphResult.ID_PARAM, groupKey );
+        node.put( GraphResult.ID_PARAM, userEntity.getKey().toString() );
 
         node.put( GraphResult.NAME_PARAM, userEntity.getDisplayName() );
 

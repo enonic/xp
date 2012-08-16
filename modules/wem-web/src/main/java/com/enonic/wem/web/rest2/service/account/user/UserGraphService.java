@@ -23,25 +23,66 @@ public class UserGraphService
     extends GroupGraphService
 {
 
-    public GraphResult buildGraph( UserEntity entity )
+    public GraphResult generateGraph( UserEntity user )
     {
-        setParentKey( System.currentTimeMillis() + "_" + String.valueOf( entity.getKey() ) );
-        GraphResult userResult = new GraphResult();
-        userResult.addAccountNode( buildGraphData( entity ) );
+        return generateGraph( user, null, -1 );
+    }
 
-        for ( GroupEntity group : entity.getDirectMemberships() )
+    public GraphResult generateGraph( UserEntity user, GraphResult graph, int level )
+    {
+        if ( graph == null )
         {
-            ObjectNode node = buildGraphData( group );
-            userResult.addAccountNode( node );
+            graph = new GraphResult();
+        }
+        graph.addAccountNode( buildGraphData( user ) );
+        for ( GroupEntity group : user.getDirectMemberships() )
+        {
+            generateGraph( group, graph, level - 1 );
         }
 
-        return userResult;
+        return graph;
+    }
+
+
+    public GraphResult generateGraph( GroupEntity entity, GraphResult graph, int level )
+    {
+        if ( graph == null )
+        {
+            graph = new GraphResult();
+        }
+        ObjectNode groupNode = buildGraphData( entity );
+        graph.addAccountNode( groupNode );
+
+        if ( level != 0 )
+        {
+            for ( GroupEntity group : entity.getMemberships( false ) )
+            {
+                if ( graph.containsEntity( group ) )
+                {
+                    // Skip current iteration because we've already put this group into the graph
+                    continue;
+                }
+                if ( !group.isOfType( GroupType.USER, false ) )
+                {
+                    generateGraph( group, graph, level - 1 );
+                }
+            }
+        }
+
+        return graph;
+    }
+
+
+    protected ObjectNode buildGraphData( GroupEntity groupEntity )
+    {
+        ObjectNode node = super.buildGraphData( groupEntity );
+        node.put( GraphResult.ADJACENCIES_PARAM, createGraphAdjacencies( groupEntity.getMemberships( false ) ) );
+        return node;
     }
 
     protected ObjectNode buildGraphData( UserEntity userEntity )
     {
         ObjectNode node = super.buildGraphData( userEntity );
-        node.put( GraphResult.ID_PARAM, getParentKey() );
         node.put( GraphResult.ADJACENCIES_PARAM, createGraphAdjacencies( userEntity.getDirectMemberships() ) );
         return node;
     }

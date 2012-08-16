@@ -1,10 +1,16 @@
 package com.enonic.wem.web.rest2.resource.account.graph;
 
+import java.util.List;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.web.rest2.common.JsonResult;
+
+import com.enonic.cms.core.security.group.GroupEntity;
+import com.enonic.cms.core.security.group.GroupType;
+import com.enonic.cms.core.security.user.UserEntity;
 
 public final class GraphResult
     extends JsonResult
@@ -43,7 +49,36 @@ public final class GraphResult
 
     public void addAccountNode( ObjectNode node )
     {
-        ArrayNode graph = (ArrayNode) json.get( "graph" );
+        ArrayNode graph = getGraph();
         graph.add( node );
+    }
+
+    public void merge( GraphResult graph )
+    {
+        ArrayNode graphToMerge = graph.getGraph();
+        getGraph().addAll( graphToMerge );
+    }
+
+    protected ArrayNode getGraph()
+    {
+        return (ArrayNode) json.get( GRAPH_PARAM );
+    }
+
+    public boolean containsEntity( GroupEntity group )
+    {
+        if ( group.isOfType( GroupType.USER, false ) )
+        {
+            return containsEntity( group.getUser() );
+        }
+        List<String> keysInGraph = getGraph().findValuesAsText( ID_PARAM );
+        String groupKey = group.getGroupKey().toString();
+        return keysInGraph.contains( groupKey );
+    }
+
+    public boolean containsEntity( UserEntity user )
+    {
+        List<String> keysInGraph = getGraph().findValuesAsText( ID_PARAM );
+        String userKey = user.getKey().toString();
+        return keysInGraph.contains( userKey );
     }
 }
