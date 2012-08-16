@@ -24,4 +24,9 @@ public abstract class AccountSelectors
     {
         return new AccountKeySelector( keys );
     }
+
+    public static AccountQuery query( final String query )
+    {
+        return new AccountQuery( query );
+    }
 }
