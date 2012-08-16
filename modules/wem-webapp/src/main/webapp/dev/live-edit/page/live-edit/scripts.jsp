@@ -1,5 +1,5 @@
 <%
-  if ( request.getParameter( "edit" ) == null || !request.getParameter( "edit" ).equals( "false" ) )
+  if ( !"false".equals( request.getParameter( "edit" ) ) )
   {
 %>
 <script type="text/javascript" charset="UTF-8" src="../resources/lib/jquery-1.8.0.min.js"></script>

@@ -1,5 +1,5 @@
 <%
-  if ( request.getParameter( "edit" ) == null || !request.getParameter( "edit" ).equals( "false" ) )
+  if ( !"false".equals( request.getParameter( "edit" ) ) )
   {
 %>
 <div class="live-edit-loader-splash-container">
