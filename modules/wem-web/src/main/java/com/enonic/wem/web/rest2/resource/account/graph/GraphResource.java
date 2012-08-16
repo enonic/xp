@@ -40,11 +40,11 @@ public final class GraphResource
         GroupEntity groupEntity = groupDao.findByKey( new GroupKey( key ) );
         if ( userEntity != null )
         {
-            return userGraphService.buildGraph( userEntity );
+            return userGraphService.generateGraph( userEntity );
         }
         else if ( groupEntity != null )
         {
-            return groupGraphService.buildGraph( groupEntity );
+            return groupGraphService.generateGraph( groupEntity );
         }
         else
         {

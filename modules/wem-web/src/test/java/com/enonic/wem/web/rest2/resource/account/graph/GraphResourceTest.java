@@ -55,7 +55,7 @@ public class GraphResourceTest
     {
         UserEntity user = createUser( "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9" );
         Mockito.when( userDao.findByKey( "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9" ) ).thenReturn( user );
-        Mockito.when( userGraphService.buildGraph( user ) ).thenReturn( generateUserGraph() );
+        Mockito.when( userGraphService.generateGraph( user ) ).thenReturn( generateUserGraph() );
 
         GraphResult result = graphResource.getInfo( "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9" );
         assertJsonResult( "user_graph_info.json", result );
@@ -67,7 +67,7 @@ public class GraphResourceTest
     {
         GroupEntity group = createGroup( "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9" );
         Mockito.when( groupDao.findByKey( new GroupKey( "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9" ) ) ).thenReturn( group );
-        Mockito.when( groupGraphService.buildGraph( group ) ).thenReturn( generateGroupGraph() );
+        Mockito.when( groupGraphService.generateGraph( group ) ).thenReturn( generateGroupGraph() );
 
         GraphResult result = graphResource.getInfo( "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9" );
         assertJsonResult( "group_graph_info.json", result );

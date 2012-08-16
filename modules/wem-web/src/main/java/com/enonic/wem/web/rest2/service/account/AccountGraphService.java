@@ -14,11 +14,19 @@ import com.enonic.cms.core.security.group.GroupType;
 public abstract class AccountGraphService
 {
 
-    private String parentKey;
+    private String timestamp = "";
 
-    public AccountGraphService()
+    protected void setTimestamp( String timestamp )
     {
-        parentKey = "";
+        this.timestamp = timestamp;
+    }
+
+    protected String generateId( String key )
+    {
+        StringBuffer strBuffer = new StringBuffer( timestamp );
+        strBuffer.append( "_" );
+        strBuffer.append( key );
+        return strBuffer.toString();
     }
 
     protected ObjectNode createGraphData( String key, String type, boolean builtIn, String name )
@@ -37,39 +45,24 @@ public abstract class AccountGraphService
         ArrayNode arrayNode = JsonNodeFactory.instance.arrayNode();
         for ( GroupEntity membership : memberships )
         {
-            if ( getParentKey().contains( String.valueOf( membership.getGroupKey() ) ) )
-            {
-                continue;
-            }
             ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
             String nodeId = getMemberKey( membership );
-            objectNode.put( GraphResult.NODETO_PARAM, nodeId );
+            objectNode.put( GraphResult.NODETO_PARAM, generateId( nodeId ) );
             arrayNode.add( objectNode );
         }
         return arrayNode;
     }
 
-
-    protected void setParentKey( String parentKey )
-    {
-        this.parentKey = parentKey;
-    }
-
-    protected String getParentKey()
-    {
-        return this.parentKey;
-    }
-
     protected String getMemberKey( GroupEntity member )
     {
-        String nodeId = getParentKey() + "_";
+        String nodeId;
         if ( !member.isOfType( GroupType.USER, true ) )
         {
-            nodeId += String.valueOf( member.getGroupKey() );
+            nodeId = String.valueOf( member.getGroupKey() );
         }
         else
         {
-            nodeId += String.valueOf( member.getUser().getKey() );
+            nodeId = String.valueOf( member.getUser().getKey() );
         }
         return nodeId;
     }
