@@ -55,7 +55,7 @@ public class ChangePasswordHandlerTest
         throws Exception
     {
         final String newPassword = "passw0rd";
-        final AccountKey account = AccountKey.from( "user:enonic:johndoe" );
+        final AccountKey account = AccountKey.user( "enonic:johndoe" );
 
         final UserEntity user = createUser( "ASDD8F", account.getUserStore(), account.getLocalName() );
         mockAddUserToDaoByQualifiedName( user );
@@ -73,7 +73,7 @@ public class ChangePasswordHandlerTest
         throws Exception
     {
         final String newPassword = "passw0rd";
-        final AccountKey account = AccountKey.from( "user:enonic:johndoe" );
+        final AccountKey account = AccountKey.user( "enonic:johndoe" );
 
         client.execute( Commands.account().changePassword().key( account ).password( newPassword ) );
     }
@@ -83,7 +83,7 @@ public class ChangePasswordHandlerTest
         throws Exception
     {
         final String newPassword = "passw0rd";
-        final AccountKey account = AccountKey.from( "group:enonic:devs" );
+        final AccountKey account = AccountKey.group( "enonic:devs" );
 
         // validation fails before attempting to execute command (cannot change password of a group)
         client.execute( Commands.account().changePassword().key( account ).password( newPassword ) );

@@ -57,7 +57,7 @@ public class ValidatePasswordHandlerTest
         throws Exception
     {
         final String userPassword = "passw0rd";
-        final AccountKey account = AccountKey.from( "user:enonic:johndoe" );
+        final AccountKey account = AccountKey.user( "enonic:johndoe" );
 
         // setup
         final UserEntity user = createUser( "ASDD8F", account.getUserStore(), account.getLocalName() );
@@ -81,7 +81,7 @@ public class ValidatePasswordHandlerTest
         throws Exception
     {
         final String userPassword = "passw0rd";
-        final AccountKey account = AccountKey.from( "user:enonic:johndoe" );
+        final AccountKey account = AccountKey.user( "enonic:johndoe" );
 
         // setup
         final UserEntity user = createUser( "ASDD8F", account.getUserStore(), account.getLocalName() );
@@ -105,7 +105,7 @@ public class ValidatePasswordHandlerTest
         throws Exception
     {
         final String userPassword = "passw0rd";
-        final AccountKey account = AccountKey.from( "user:enonic:johndoe" );
+        final AccountKey account = AccountKey.user( "enonic:johndoe" );
 
         client.execute( Commands.account().validatePassword().key( account ).password( userPassword ) );
     }
@@ -115,7 +115,7 @@ public class ValidatePasswordHandlerTest
         throws Exception
     {
         final String userPassword = "passw0rd";
-        final AccountKey account = AccountKey.from( "group:enonic:devs" );
+        final AccountKey account = AccountKey.group( "enonic:devs" );
 
         // validation fails before attempting to execute command (cannot validate password of a group)
         client.execute( Commands.account().validatePassword().key( account ).password( userPassword ) );
