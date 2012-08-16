@@ -232,7 +232,7 @@ Ext.define('Admin.controller.account.Controller', {
                 var tab = {
                     xtype: 'groupWizardPanel',
                     modelData: jsonObj,
-                    userstore: jsonObjgit.userStore,
+                    userstore: jsonObj.userStore,
                     autoScroll: true
                 };
                 if (Ext.isFunction(callback)) {
