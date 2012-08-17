@@ -19,3 +19,17 @@ TODO:
 * Remove SELECTOR strings from Regions and Windows
 * Parent button: Dynamically resolve what the parent component is
 * Use DOM Mutation Observers for changing the selected component highlighter dimensions / Alternatively use a timer and check for width/height changes on the selected component.
+
+
+Current PubSub Topics
+
+/ui/highlighter/on-highlight
+/ui/componentselector/on-select
+/ui/componentselector/on-deselect
+/ui/dragdrop/on-sortstart
+/ui/dragdrop/on-dragover
+/ui/dragdrop/on-dragout
+/ui/dragdrop/on-sortchange
+/ui/dragdrop/on-sortupdate
+/ui/highlighter/on-hide
+/ui/dragdrop/on-sortstop
