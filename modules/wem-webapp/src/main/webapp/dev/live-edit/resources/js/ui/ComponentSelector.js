@@ -35,8 +35,10 @@
             self.deselect.call(self);
         });
 
-        $liveedit.subscribe('/ui/dragdrop/on-sortstop', function (uiEvent, ui) {
-            $liveedit.publish('/ui/componentselector/on-select', [ui.item]);
+        $liveedit.subscribe('/ui/dragdrop/on-sortstop', function (uiEvent, ui, wasSelectedOnSortStart) {
+            if (wasSelectedOnSortStart) {
+                $liveedit.publish('/ui/componentselector/on-select', [ui.item]);
+            }
         });
     };
 

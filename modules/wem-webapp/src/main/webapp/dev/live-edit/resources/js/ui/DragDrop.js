@@ -37,6 +37,12 @@ AdminLiveEdit.ui.DragDrop = (function () {
 
     function handleSortStart(event, ui) {
         isDragging = true;
+
+        // Temporary store the selection info during the drag drop lifecycle.
+        // Data is nullified on drag stop.
+        var componentIsSelected = ui.item.hasClass('live-edit-selected-component');
+        ui.item.data('live-edit-selected-on-sort-start', componentIsSelected);
+
         ui.placeholder.html('Drop component here');
         refresh();
 
@@ -76,7 +82,12 @@ AdminLiveEdit.ui.DragDrop = (function () {
             $liveedit.publish('/ui/highlighter/on-hide');
         }
 
-        $liveedit.publish('/ui/dragdrop/on-sortstop', [event, ui]);
+        // Added on sort start
+        var wasSelectedOnSortStart = ui.item.data('live-edit-selected-on-sort-start');
+
+        $liveedit.publish('/ui/dragdrop/on-sortstop', [event, ui, wasSelectedOnSortStart]);
+
+        ui.item.removeData('live-edit-selected-on-sort-start');
     }
 
 
@@ -116,8 +127,6 @@ AdminLiveEdit.ui.DragDrop = (function () {
             update              : handleSortUpdate, // This event is triggered when the user stopped sorting and the DOM position has changed.
             stop                : handleSortStop    // This event is triggered when sorting has stopped.
         }).disableSelection();
-
-        // disableDragDrop();
 
         initSubscribers();
     }
