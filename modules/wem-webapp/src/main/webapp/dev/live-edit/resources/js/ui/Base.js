@@ -17,7 +17,7 @@
         createElement: function (htmlString) {
             var id = AdminLiveEdit.ui.Base.prototype.counter++;
             var $element = $liveedit(htmlString);
-            $element.attr('id', 'live-edit-cmp-' + id);
+            $element.attr('id', 'live-edit-ui-cmp-' + id);
             this.$element = $element;
 
             return this.$element;

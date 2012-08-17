@@ -19,7 +19,7 @@
         var id = config.id || '';
         var text = config.text || '';
         var iconCls = config.iconCls || '';
-        var html = '<div data-live-edit-cmp-id="' + id + '" class="live-edit-button">';
+        var html = '<div data-live-edit-ui-cmp-id="' + id + '" class="live-edit-button">';
         if (iconCls !== '') {
             html += '<span class="live-edit-button-icon ' + iconCls + '"></span>';
         }

@@ -110,7 +110,7 @@
             var i;
             for (i = 0; i < buttons.length; i++) {
                 var $button = buttons[i].getEl();
-                var id = $button.attr('data-live-edit-cmp-id');
+                var id = $button.attr('data-live-edit-ui-cmp-id');
                 var subStr = id.substring(id.lastIndexOf('-') + 1, id.length);
                 if (buttonArray.indexOf(subStr) > -1) {
                     $button.show();

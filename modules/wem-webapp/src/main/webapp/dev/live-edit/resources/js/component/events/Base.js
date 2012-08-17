@@ -16,11 +16,11 @@
             $liveedit(document).on('mouseover', this.selector, function (event) {
                 var $component = $liveedit(this);
 
-                var isUi = $liveedit(event.target).is('.live-edit-info-tip, .live-edit-button') ||
-                           $liveedit(event.target).parents('.live-edit-info-tip, .live-edit-button').length > 0;
+                var targetIsUiComponent = $liveedit(event.target).is('[id*=live-edit-ui-cmp]') ||
+                           $liveedit(event.target).parents('[id*=live-edit-ui-cmp]').length > 0;
 
                 var pageHasComponentSelected = $liveedit('.live-edit-selected-component').length > 0;
-                var disableHover = isUi || pageHasComponentSelected || AdminLiveEdit.ui.DragDrop.isDragging();
+                var disableHover = targetIsUiComponent || pageHasComponentSelected || AdminLiveEdit.ui.DragDrop.isDragging();
                 if (disableHover) {
                     return;
                 }
