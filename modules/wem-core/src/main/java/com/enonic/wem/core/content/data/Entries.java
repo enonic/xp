@@ -149,7 +149,8 @@ public class Entries
                                          path );
 
             //noinspection ConstantConditions
-            forwardSetValueToEntries( path, value, (FieldSet) foundConfig );
+            FieldSet foundFieldSet = (FieldSet) foundConfig;
+            forwardSetValueToEntries( path, value, foundFieldSet );
         }
         else
         {
@@ -184,6 +185,13 @@ public class Entries
 
     private void forwardSetValueToEntries( final EntryPath path, final Object value, final FieldSet fieldSet )
     {
+        if ( path.getFirstElement().hasPosition() )
+        {
+            Preconditions.checkArgument( fieldSet.isMultiple(),
+                                         "Trying to set an occurrence on a non-multiple FieldSet [%s]: " + path.getFirstElement(),
+                                         fieldSet );
+        }
+
         Entries existingEntries = (Entries) this.entries.get( path.getFirstElement() );
         if ( existingEntries == null )
         {

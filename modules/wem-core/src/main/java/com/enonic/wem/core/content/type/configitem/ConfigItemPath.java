@@ -27,11 +27,18 @@ public class ConfigItemPath
         elements = pathElements;
     }
 
-    public ConfigItemPath( ConfigItemPath configItemPath, String name )
+    public ConfigItemPath( ConfigItemPath parentPath, String name )
     {
         elements = new ArrayList<String>();
-        elements.addAll( configItemPath.elements );
+        elements.addAll( parentPath.elements );
         elements.add( name );
+    }
+
+    public ConfigItemPath( final ConfigItemPath parentPath, final ConfigItemPath childPath )
+    {
+        elements = new ArrayList<String>();
+        elements.addAll( parentPath.elements );
+        elements.addAll( childPath.elements );
     }
 
     public ConfigItemPath( String path )

@@ -7,11 +7,9 @@ import com.enonic.wem.core.module.Module;
 public class FieldSetTemplate
     implements Template
 {
-    private String name;
-
     private Module module;
 
-    private ConfigItems configItems = new ConfigItems();
+    private FieldSet fieldSet = new FieldSet();
 
     FieldSetTemplate()
     {
@@ -19,12 +17,7 @@ public class FieldSetTemplate
 
     public String getName()
     {
-        return name;
-    }
-
-    void setName( final String name )
-    {
-        this.name = name;
+        return fieldSet.getName();
     }
 
     public Module getModule()
@@ -37,6 +30,11 @@ public class FieldSetTemplate
         this.module = module;
     }
 
+    public void setFieldSet( final FieldSet fieldSet )
+    {
+        this.fieldSet = fieldSet;
+    }
+
     @Override
     public TemplateType getType()
     {
@@ -45,41 +43,26 @@ public class FieldSetTemplate
 
     public TemplateQualifiedName getTemplateQualifiedName()
     {
-        return new TemplateQualifiedName( module.getName(), name );
+        return new TemplateQualifiedName( module.getName(), getName() );
     }
 
     public void addConfigItem( final ConfigItem configItem )
     {
-        //if ( configItem.getConfigItemType() == ConfigItemType.REFERENCE )
-        if ( false )
+        if ( configItem.getConfigItemType() == ConfigItemType.REFERENCE )
         {
             TemplateReference templateReference = (TemplateReference) configItem;
             Preconditions.checkArgument( templateReference.getTemplateType() == TemplateType.FIELD,
-                                         "A template cannot reference other templates unless it's of type %s: " +
+                                         "A template cannot reference other templates unless it is of type %s: " +
                                              templateReference.getTemplateType(), TemplateType.FIELD );
         }
-        configItems.addConfigItem( configItem );
-    }
-
-    public void addField( final Field field )
-    {
-        configItems.addConfigItem( field );
-    }
-
-    public void addTemplateReference( final TemplateReference templateReference )
-    {
-        addConfigItem( templateReference );
+        fieldSet.addConfigItem( configItem );
     }
 
     public ConfigItem create( final TemplateReference templateReference )
     {
-        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( templateReference.getName() ).build();
+        FieldSet fieldSet = this.fieldSet.copy();
+        fieldSet.setName( templateReference.getName() );
         fieldSet.setPath( templateReference.getPath() );
-
-        for ( ConfigItem configItem : configItems )
-        {
-            fieldSet.addConfigItem( configItem.copy() );
-        }
         return fieldSet;
     }
 }

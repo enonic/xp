@@ -75,11 +75,10 @@ public class FieldSet
         return immutable;
     }
 
-    boolean isMultiple()
+    public boolean isMultiple()
     {
         return multiple != null;
     }
-
 
     public Multiple getMultiple()
     {
@@ -138,6 +137,11 @@ public class FieldSet
     }
 
     public static Builder newBuilder()
+    {
+        return new Builder();
+    }
+
+    public static Builder newFieldSet()
     {
         return new Builder();
     }
@@ -240,10 +244,16 @@ public class FieldSet
             return this;
         }
 
+        public Builder addConfigItem( ConfigItem value )
+        {
+            fieldSet.addConfigItem( value );
+            return this;
+        }
+
         public FieldSet build()
         {
-            Preconditions.checkNotNull( fieldSet.type, "type must be specified" );
-            Preconditions.checkNotNull( fieldSet.getName(), "name must be specified" );
+            Preconditions.checkNotNull( fieldSet.type, "a type for the FieldSet is required" );
+            Preconditions.checkNotNull( fieldSet.getName(), "a name for the FieldSet is required" );
             fieldSet.setPath( new ConfigItemPath( fieldSet.getName() ) );
             return fieldSet;
         }

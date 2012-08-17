@@ -10,6 +10,10 @@ public class TemplateReference
 
     private TemplateType templateType;
 
+    private boolean required;
+
+    private boolean immutable;
+
     protected TemplateReference()
     {
         super( ConfigItemType.REFERENCE );

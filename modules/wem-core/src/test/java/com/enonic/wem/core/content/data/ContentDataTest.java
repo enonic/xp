@@ -18,7 +18,7 @@ public class ContentDataTest
     public void dropdown()
     {
         ConfigItems configItems = new ConfigItems();
-        DropdownConfig dropdownConfig = DropdownConfig.newBuilder().addOption( "o1", "Option 1" ).addOption( "o2", "Option 2" ).build();
+        DropdownConfig dropdownConfig = DropdownConfig.newBuilder().addOption( "Option 1", "o1" ).addOption( "Option 2", "o2" ).build();
         Field myDropdown = Field.newBuilder().name( "myDropdown" ).type( FieldTypes.dropdown ).fieldTypeConfig( dropdownConfig ).build();
         configItems.addConfigItem( myDropdown );
 
@@ -39,7 +39,7 @@ public class ContentDataTest
             Field.newBuilder().name( "myRadioButtons" ).type( FieldTypes.radioButtons ).fieldTypeConfig( myRadioButtonsConfig ).build() );
 
         ContentData contentData = new ContentData( dataConfig );
-        contentData.setValue( "myRadioButtons", "V1" );
+        contentData.setValue( "myRadioButtons", "c1" );
 
         ContentDataSerializerJson generator = new ContentDataSerializerJson();
         String json = generator.toJson( contentData );
@@ -104,7 +104,7 @@ public class ContentDataTest
                 radioButtonsConfig ).build() );
 
         ContentData contentData = new ContentData( dataConfig );
-        contentData.setValue( "myRadiobuttons", "Norway" );
+        contentData.setValue( "myRadiobuttons", "NO" );
 
         ContentDataSerializerJson generator = new ContentDataSerializerJson();
         String json = generator.toJson( contentData );

@@ -7,8 +7,6 @@ import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder;
-import com.enonic.wem.core.content.type.configitem.FieldTemplate;
-import com.enonic.wem.core.content.type.configitem.FieldTemplateBuilder;
 import com.enonic.wem.core.content.type.configitem.MockTemplateReferenceFetcher;
 import com.enonic.wem.core.content.type.configitem.TemplateReference;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
@@ -45,12 +43,12 @@ public class ContentTypeTest
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        FieldSetTemplate template = FieldSetTemplateBuilder.create().name( "address" ).module( module ).build();
-
-        template.addField( newField().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() );
-        template.addField( newField().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() );
-        template.addField( newField().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.textline ).build() );
-        template.addField( newField().name( "country" ).label( "Country" ).type( FieldTypes.textline ).build() );
+        FieldSetTemplate template = FieldSetTemplateBuilder.create().module( module ).fieldSet(
+            FieldSet.newFieldSet().typeGroup().name( "address" ).addConfigItem(
+                newField().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() ).addConfigItem(
+                newField().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() ).addConfigItem(
+                newField().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.textline ).build() ).addConfigItem(
+                newField().name( "country" ).label( "Country" ).type( FieldTypes.textline ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
         cty.addConfigItem( newTemplateReference( template ).name( "home" ).build() );
@@ -63,50 +61,8 @@ public class ContentTypeTest
         cty.templateReferencesToConfigItems( templateReferenceFetcher );
 
         // verify:
-        assertNotNull( cty.getField( "home.street" ) );
-        assertNotNull( cty.getField( "cabin.street" ) );
-    }
-
-    @Test
-    public void fieldSetTemplate_cannot_reference_other_fieldSetTemplates()
-    {
-        // setup
-        Module module = newModule().name( "myModule" ).build();
-
-        FieldTemplate ageTemplate = FieldTemplateBuilder.create().module( module ).name( "age" ).field(
-            newField().name( "age" ).type( FieldTypes.textline ).build() ).build();
-
-        FieldSetTemplate personTemplate = FieldSetTemplateBuilder.create().name( "person" ).module( module ).build();
-        personTemplate.addField( newField().name( "name" ).type( FieldTypes.textline ).build() );
-        personTemplate.addTemplateReference( newTemplateReference( ageTemplate ).name( "age" ).build() );
-
-        FieldSetTemplate addressTemplate = FieldSetTemplateBuilder.create().name( "address" ).module( module ).build();
-        addressTemplate.addField( newField().name( "label" ).type( FieldTypes.textline ).build() );
-        addressTemplate.addField( newField().name( "street" ).type( FieldTypes.textline ).build() );
-        addressTemplate.addField( newField().name( "postalNo" ).type( FieldTypes.textline ).build() );
-        addressTemplate.addField( newField().name( "country" ).type( FieldTypes.textline ).build() );
-
-        personTemplate.addConfigItem( newTemplateReference( addressTemplate ).name( "address" ).build() );
-
-        ContentType cty = new ContentType();
-        cty.addConfigItem( newField().name( "id" ).type( FieldTypes.textline ).build() );
-        cty.addConfigItem( newTemplateReference( personTemplate ).name( "person" ).build() );
-
-        MockTemplateReferenceFetcher templateReferenceFetcher = new MockTemplateReferenceFetcher();
-        templateReferenceFetcher.add( ageTemplate );
-        templateReferenceFetcher.add( personTemplate );
-        templateReferenceFetcher.add( addressTemplate );
-
-        // exercise
-        cty.templateReferencesToConfigItems( templateReferenceFetcher );
-
-        // verify:
-        assertEquals( "id", cty.getField( "id" ).getPath().toString() );
-        assertEquals( "person", cty.getFieldSet( "person" ).getPath().toString() );
-        assertEquals( "person.name", cty.getField( "person.name" ).getPath().toString() );
-        assertEquals( "person.age", cty.getField( "person.age" ).getPath().toString() );
-        assertEquals( "person.address.label", cty.getField( "person.address.label" ).getPath().toString() );
-        assertEquals( "person.address.street", cty.getField( "person.address.street" ).getPath().toString() );
+        assertEquals( "home.street", cty.getField( "home.street" ).getPath().toString() );
+        assertEquals( "cabin.street", cty.getField( "cabin.street" ).getPath().toString() );
     }
 
     @Test
@@ -115,9 +71,10 @@ public class ContentTypeTest
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        FieldSetTemplate fieldSetTemplate = newFieldSetTemplate().name( "address" ).module( module ).build();
-        fieldSetTemplate.addField( newField().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() );
-        fieldSetTemplate.addField( newField().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() );
+        FieldSetTemplate fieldSetTemplate = newFieldSetTemplate().module( module ).fieldSet(
+            FieldSet.newFieldSet().typeGroup().name( "address" ).addConfigItem(
+                newField().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() ).addConfigItem(
+                newField().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
         cty.addConfigItem(

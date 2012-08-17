@@ -124,12 +124,12 @@ public class ContentTypeSerializerJsonTest
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        FieldSetTemplate template = FieldSetTemplateBuilder.create().name( "address" ).module( module ).build();
-
-        template.addField( newBuilder().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() );
-        template.addField( newBuilder().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() );
-        template.addField( newBuilder().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.textline ).build() );
-        template.addField( newBuilder().name( "country" ).label( "Country" ).type( FieldTypes.textline ).build() );
+        FieldSetTemplate template = FieldSetTemplateBuilder.create().module( module ).fieldSet(
+            FieldSet.newFieldSet().typeGroup().name( "address" ).addConfigItem(
+                newBuilder().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() ).addConfigItem(
+                newBuilder().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() ).addConfigItem(
+                newBuilder().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.textline ).build() ).addConfigItem(
+                newBuilder().name( "country" ).label( "Country" ).type( FieldTypes.textline ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
         cty.addConfigItem( newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );

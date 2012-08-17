@@ -69,7 +69,7 @@ public class ContentData
         Preconditions.checkNotNull( path, "path cannot be null" );
 
         Value value = getValue( path );
-        Preconditions.checkNotNull( value, "No value at path: " + path );
+        Preconditions.checkArgument( value != null, "No value at path: " + path );
 
         Preconditions.checkArgument( value.getBasalValueType() == BasalValueType.STRING, "Value is not of type %", BasalValueType.STRING );
         return (String) value.getValue();

@@ -60,8 +60,7 @@ public class ContentTypeStepDefs
         throws Throwable
     {
         FieldTemplate fieldTemplate =
-            FieldTemplateBuilder.create().module( moduleByName.get( moduleName ) ).name( fieldTemplateName ).field(
-                fieldByName.get( fieldName ) ).build();
+            FieldTemplateBuilder.create().module( moduleByName.get( moduleName ) ).field( fieldByName.get( fieldName ) ).build();
         fieldTemplateByTemplateQualifiedName.put( new TemplateQualifiedName( moduleName, fieldTemplateName ), fieldTemplate );
     }
 

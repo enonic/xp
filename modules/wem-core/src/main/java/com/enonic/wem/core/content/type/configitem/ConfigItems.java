@@ -25,7 +25,13 @@ public class ConfigItems
 
     public void setPath( final ConfigItemPath path )
     {
+        final ConfigItemPath previousPath = this.path;
         this.path = path;
+
+        for ( ConfigItem configItem : items.values() )
+        {
+            configItem.setParentPath( path );
+        }
     }
 
     public void addConfigItem( final ConfigItem item )
@@ -134,7 +140,14 @@ public class ConfigItems
     public String toString()
     {
         final StringBuilder s = new StringBuilder();
-        s.append( path.toString() );
+        if ( path != null )
+        {
+            s.append( path.toString() );
+        }
+        else
+        {
+            s.append( "?" );
+        }
         s.append( ": " );
         int index = 0;
         final int size = items.size();
@@ -164,20 +177,19 @@ public class ConfigItems
 
     public void templateReferencesToConfigItems( final TemplateReferenceFetcher templateReferenceFetcher )
     {
-        for ( ConfigItem configItem : this )
+        for ( final ConfigItem configItem : this )
         {
             if ( configItem.getConfigItemType() == ConfigItemType.REFERENCE )
             {
-                TemplateReference templateReference = (TemplateReference) configItem;
-                Template template = templateReferenceFetcher.getTemplate( templateReference.getTemplateQualifiedName() );
+                final TemplateReference templateReference = (TemplateReference) configItem;
+                final Template template = templateReferenceFetcher.getTemplate( templateReference.getTemplateQualifiedName() );
                 if ( template != null )
                 {
                     Preconditions.checkArgument( templateReference.getTemplateType() == template.getType(),
                                                  "Template expected to be of type %s: " + template.getType(),
                                                  templateReference.getTemplateType() );
 
-                    ConfigItem configItemCreatedFromTemplate = template.create( templateReference );
-
+                    final ConfigItem configItemCreatedFromTemplate = template.create( templateReference );
                     if ( configItemCreatedFromTemplate instanceof FieldSet )
                     {
                         FieldSet fieldSet = (FieldSet) configItemCreatedFromTemplate;

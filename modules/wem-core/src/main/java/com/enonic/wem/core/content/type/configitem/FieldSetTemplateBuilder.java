@@ -5,15 +5,9 @@ import com.enonic.wem.core.module.Module;
 
 public class FieldSetTemplateBuilder
 {
-    private String name;
-
     private Module module;
 
-    public FieldSetTemplateBuilder name( String value )
-    {
-        this.name = value;
-        return this;
-    }
+    private FieldSet fieldSet;
 
     public FieldSetTemplateBuilder module( Module value )
     {
@@ -21,11 +15,18 @@ public class FieldSetTemplateBuilder
         return this;
     }
 
+    public FieldSetTemplateBuilder fieldSet( FieldSet value )
+    {
+        this.fieldSet = value;
+        return this;
+    }
+
     public FieldSetTemplate build()
     {
         FieldSetTemplate fieldSetTemplate = new FieldSetTemplate();
-        fieldSetTemplate.setName( name );
         fieldSetTemplate.setModule( module );
+        fieldSetTemplate.setFieldSet( fieldSet );
+
         return fieldSetTemplate;
     }
 

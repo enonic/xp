@@ -41,4 +41,24 @@ public class FieldSetTest
         // verify
         assertEquals( "myFieldSet.myField", field.getPath().toString() );
     }
+
+    @Test
+    public void setPath()
+    {
+        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "address" ).label( "Address" ).build();
+        fieldSet.addField( Field.newBuilder().name( "street" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "postalCode" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "postalPlace" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "country" ).type( FieldTypes.textline ).build() );
+
+        // exercise & verify
+        fieldSet.setName( "homeAddress" );
+        fieldSet.setPath( new ConfigItemPath( "homeAddress" ) );
+
+        // verify
+        assertEquals( "homeAddress.street", fieldSet.getConfig( new ConfigItemPath( "street" ) ).getPath().toString() );
+        assertEquals( "homeAddress.postalCode", fieldSet.getConfig( new ConfigItemPath( "postalCode" ) ).getPath().toString() );
+        assertEquals( "homeAddress.postalPlace", fieldSet.getConfig( new ConfigItemPath( "postalPlace" ) ).getPath().toString() );
+        assertEquals( "homeAddress.country", fieldSet.getConfig( new ConfigItemPath( "country" ) ).getPath().toString() );
+    }
 }
