@@ -46,7 +46,7 @@ public final class CountryResult
         json.put( "regionsLocalName", model.getRegionsLocalName() );
 
         final ArrayNode codes = json.putArray( "callingCodes" );
-        codes.add( toJson( model.getCallingCode() ) );
+        codes.add( toJson( model.getCallingCode(), model ) );
 
         final ArrayNode regions = json.putArray( "regions" );
         for ( final Region region : model.getRegions() )
@@ -57,10 +57,12 @@ public final class CountryResult
         return json;
     }
 
-    private JsonNode toJson( final String callingCode )
+    private JsonNode toJson( final String callingCode, final Country model )
     {
         final ObjectNode json = objectNode();
-        json.put( "callingCode", callingCode );
+        json.put( "callingCode", "+" + callingCode );
+        json.put( "englishName", model.getEnglishName() );
+        json.put( "localName", model.getLocalName() );
         return json;
     }
 
