@@ -66,6 +66,12 @@ public class Value
         return field.breaksRequiredContract( this );
     }
 
+    public boolean isValid()
+    {
+        return field == null || field.isValidAccordingToFieldTypeConfig( this );
+    }
+
+
     @Override
     public String toString()
     {
@@ -147,6 +153,8 @@ public class Value
                 Preconditions.checkArgument( value.basalValueType == basalValueTypeOfField,
                                              "value is not of expected type [%s]: " + value.basalValueType, basalValueTypeOfField );
             }
+
+            Preconditions.checkArgument( value.isValid(), "Value is not valid for field [%s]: " + value.value, field );
 
             return value;
         }

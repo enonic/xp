@@ -50,7 +50,7 @@ public class ContentDataSerializerJsonTest
                 radioButtonsConfig ).build() );
 
         ContentData contentData = new ContentData( configItems );
-        contentData.setValue( "myRadiobuttons", "Norway" );
+        contentData.setValue( "myRadiobuttons", "NO" );
 
         ContentDataSerializerJson generator = new ContentDataSerializerJson();
         String json = generator.toJson( contentData );

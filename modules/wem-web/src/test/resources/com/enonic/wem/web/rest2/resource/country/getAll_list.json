@@ -9,7 +9,9 @@
             "regionsLocalName": "Fylke",
             "callingCodes": [
                 {
-                    "callingCode": "+47"
+                    "callingCode": "+47",
+                    "englishName": "NORWAY",
+                    "localName": "NORGE"
                 }
             ],
             "regions": [

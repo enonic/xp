@@ -6,6 +6,7 @@ import static org.junit.Assert.*;
 
 import org.mockito.Mockito;
 
+import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserAccount;
 
 public class CreateAccountTest
@@ -14,6 +15,8 @@ public class CreateAccountTest
     public void testValid()
     {
         final UserAccount account = Mockito.mock( UserAccount.class );
+        final AccountKey accountKey = AccountKey.user( "enonic:user1" );
+        Mockito.when( account.getKey() ).thenReturn( accountKey );
         final CreateAccount command = new CreateAccount();
 
         command.account( account );
@@ -27,6 +30,18 @@ public class CreateAccountTest
     {
         final CreateAccount command = new CreateAccount();
         command.account( null );
+
+        command.validate();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testNotValid_roleAccount()
+    {
+        final UserAccount account = Mockito.mock( UserAccount.class );
+        final AccountKey accountKey = AccountKey.role( "enonic:myrole" );
+        Mockito.when( account.getKey() ).thenReturn( accountKey );
+        final CreateAccount command = new CreateAccount();
+        command.account( account );
 
         command.validate();
     }

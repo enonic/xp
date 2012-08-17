@@ -106,6 +106,11 @@ public class Field
         return type.breaksRequiredContract( value );
     }
 
+    public boolean isValidAccordingToFieldTypeConfig( final Value value )
+    {
+        return fieldTypeConfig == null || fieldTypeConfig.isValid( value );
+    }
+
     @Override
     public Field copy()
     {

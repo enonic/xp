@@ -1,5 +1,6 @@
 package com.enonic.wem.core.content.type.configitem;
 
+import org.elasticsearch.common.base.Preconditions;
 
 /**
  *
@@ -24,20 +25,35 @@ public abstract class ConfigItem
 
     void setName( final String name )
     {
+        Preconditions.checkArgument( !name.contains( "." ), "name cannot contain punctations: " + name );
         this.name = name;
     }
 
-    public String getName()
+    public final String getName()
     {
         return name;
     }
 
     void setPath( final ConfigItemPath path )
     {
+        Preconditions.checkArgument( name.equals( path.getLastElement() ),
+                                     "Last element of path must be equal to name [%s]: " + path.getLastElement(), name );
         this.path = path;
     }
 
-    public ConfigItemPath getPath()
+    void setParentPath( final ConfigItemPath parentPath )
+    {
+        Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
+
+        if ( this.path == null || this.path.elementCount() == 0 )
+        {
+            throw new IllegalStateException( "Cannot set parent path unless there is already an existing path" );
+        }
+
+        this.path = new ConfigItemPath( parentPath, this.path.getLastElement() );
+    }
+
+    public final ConfigItemPath getPath()
     {
         return path;
     }

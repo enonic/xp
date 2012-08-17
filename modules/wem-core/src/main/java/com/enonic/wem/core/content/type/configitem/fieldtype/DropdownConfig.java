@@ -1,16 +1,28 @@
 package com.enonic.wem.core.content.type.configitem.fieldtype;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import com.enonic.wem.core.content.data.Value;
 
 public class DropdownConfig
     implements FieldTypeConfig
 {
-    private List<Option> options = new ArrayList<Option>();
+    private List<Option> optionsAsList = new ArrayList<Option>();
+
+    private HashMap<String, Option> optionsAsMap = new HashMap<String, Option>();
 
     public List<Option> getOptions()
     {
-        return options;
+        return optionsAsList;
+    }
+
+    @Override
+    public boolean isValid( final Value value )
+    {
+        String valueAsString = String.valueOf( value.getValue() );
+        return optionsAsMap.containsKey( valueAsString );
     }
 
     public static class Option
@@ -52,7 +64,8 @@ public class DropdownConfig
 
         public Builder addOption( String label, String value )
         {
-            config.options.add( new Option( label, value ) );
+            config.optionsAsList.add( new Option( label, value ) );
+            config.optionsAsMap.put( value, new Option( label, value ) );
             return this;
         }
 
