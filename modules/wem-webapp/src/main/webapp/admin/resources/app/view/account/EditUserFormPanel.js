@@ -280,7 +280,7 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
             displayField: 'callingCode',
             displayConfig: {
                 getInnerTpl: function () {
-                    return '+{callingCode}';
+                    return '<b>{callingCode}</b> ({englishName})';
                 }
             }
         };
