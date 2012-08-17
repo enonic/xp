@@ -43,7 +43,7 @@ AdminLiveEdit.ui.DragDrop = (function () {
         var componentIsSelected = ui.item.hasClass('live-edit-selected-component');
         ui.item.data('live-edit-selected-on-sort-start', componentIsSelected);
 
-        ui.placeholder.html('Drop component here');
+        ui.placeholder.text('Drop component here');
         refresh();
 
         $liveedit.publish('/ui/dragdrop/on-sortstart', [event, ui]);
