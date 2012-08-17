@@ -33,6 +33,10 @@
         $liveedit.subscribe('/ui/highlighter/on-hide', function () {
             self.hide.call(self);
         });
+
+        $liveedit.subscribe('/ui/dragdrop/on-sortstart', function () {
+            self.hide.call(self);
+        });
     };
 
 
