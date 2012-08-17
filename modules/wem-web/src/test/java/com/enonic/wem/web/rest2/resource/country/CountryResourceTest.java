@@ -49,11 +49,11 @@ public class CountryResourceTest
     {
         this.countries.clear();
 
-        final Country country = new Country( new CountryCode( "NO" ), "NORWAY", "NORGE", "+47" );
+        final Country country = new Country( new CountryCode( "NO" ), "NORWAY", "NORGE", "47" );
         country.setRegionsEnglishName( "County" );
         country.setRegionsLocalName( "Fylke" );
 
-        final Region region = new Region("02", "Akershus", "Akershus");
+        final Region region = new Region( "02", "Akershus", "Akershus" );
         country.addRegion( region );
 
         this.countries.add( country );
