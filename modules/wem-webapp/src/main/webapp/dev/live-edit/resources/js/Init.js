@@ -2,6 +2,21 @@
 
     $liveedit(window).load(function () {
         $liveedit('.live-edit-loader-splash-container').remove();
+        var page = new AdminLiveEdit.components.events.Page();
+        var regions = new AdminLiveEdit.components.events.Regions();
+        var windows = new AdminLiveEdit.components.events.Windows();
+        var contents = new AdminLiveEdit.components.events.Contents();
+        var paragraphs = new AdminLiveEdit.components.events.Paragraphs();
+        var highlighter = new AdminLiveEdit.ui.Highlighter();
+        var componentSelector = new AdminLiveEdit.ui.ComponentSelector();
+        var infoTip = new AdminLiveEdit.ui.InfoTip();
+        var toolTip = new AdminLiveEdit.ui.ToolTip();
+        var cursor = new AdminLiveEdit.ui.Cursor();
+        var componentMenu = new AdminLiveEdit.ui.componentmenu.ComponentMenu();
+        var shader = new AdminLiveEdit.ui.Shader();
+        var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
+
+        AdminLiveEdit.ui.DragDrop.init();
     });
 
     $liveedit(document).ready(function () {
@@ -19,27 +34,7 @@
             // Use standard DOM appendChild as jQuery append is buggy regarding script elements.
             $body.appendChild(script);
         });
-        // *******************************************************************************************************************************//
 
-        var page = new AdminLiveEdit.components.events.Page();
-        var regions = new AdminLiveEdit.components.events.Regions();
-        var windows = new AdminLiveEdit.components.events.Windows();
-        var contents = new AdminLiveEdit.components.events.Contents();
-        var paragraphs = new AdminLiveEdit.components.events.Paragraphs();
-        var highlighter = new AdminLiveEdit.ui.Highlighter();
-        var componentSelector = new AdminLiveEdit.ui.ComponentSelector();
-        var infoTip = new AdminLiveEdit.ui.InfoTip();
-        var toolTip = new AdminLiveEdit.ui.ToolTip();
-        var cursor = new AdminLiveEdit.ui.Cursor();
-        var componentMenu = new AdminLiveEdit.ui.componentmenu.ComponentMenu();
-        var shader = new AdminLiveEdit.ui.Shader();
-        var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
-
-        AdminLiveEdit.ui.DragDrop.init();
-        /*
-        var logger = new AdminLiveEdit.Logger();
-        logger.create();
-        */
     });
 
 }());
