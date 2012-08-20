@@ -4,7 +4,7 @@
     "name": "Userstore admins",
     "userStore": "enonic",
     "qualifiedName": "enonic\\Userstore admins",
-    "displayName": "displayName",
+    "displayName": "Userstore admins",
     "description": "Userstore Administrators",
     "lastModified": "2012-07-24 16:18:35",
     "created": "2012-07-24 16:18:35",
@@ -14,14 +14,14 @@
         {
             "name": "admins",
             "qualifiedName": "admins",
-            "displayName": "displayName",
+            "displayName": "admins",
             "type": "role",
             "key": "CD4BD95895F1813D7AE18FAC595CEEB43C625089"
         },
         {
             "name": "group1",
             "qualifiedName": "enonic\\group1",
-            "displayName": "displayName",
+            "displayName": "group1",
             "type": "group",
             "key": "007B84CC2EF921EFFA9272735F98162D78006929"
         },
