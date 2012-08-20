@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <title>Enonic WEM Admin</title>
     <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/ext-all.css">
     <link rel="stylesheet" type="text/css" href="resources/css/main.css">
@@ -20,7 +20,7 @@
                 'Common': 'common/js',
                 'Admin': 'resources/app'
             },
-            disableCaching: true
+            disableCaching: false
         });
 
         Ext.require('Ext.app.Application');
@@ -30,6 +30,10 @@
             mainApp = Ext.create('Ext.app.Application', {
                 name: 'App',
                 appFolder: '_app/main/js',
+
+                requires: [
+                    'Admin.lib.UriHelper'
+                ],
 
                 controllers: [
                     'LauncherToolbarController',
