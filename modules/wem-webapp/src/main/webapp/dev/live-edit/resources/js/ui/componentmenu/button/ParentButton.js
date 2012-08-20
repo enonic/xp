@@ -1,6 +1,6 @@
 (function () {
     // Class definition (constructor function)
-    var parentButton = AdminLiveEdit.ui.componentmenu.ParentButton = function (componentMenu) {
+    var parentButton = AdminLiveEdit.ui.componentmenu.button.ParentButton = function (componentMenu) {
         this.componentMenu = componentMenu;
         this.init();
     };
@@ -18,18 +18,23 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.init = function () {
-        // var parentButton = new AdminLiveEdit.ui.Button();
-        var $button = this.create({
+        var self = this;
+
+        var $button = self.create({
             id: 'live-edit-button-parent',
             text: 'Parent',
             iconCls: 'live-edit-icon-parent',
             handler: function (event) {
                 event.stopPropagation();
+                var $parent = self.componentMenu.$currentComponent.parents('[data-live-edit-type]');
+                if ($parent && $parent.length > 0) {
+                    $liveedit.publish('/ui/componentselector/on-select', [$liveedit($parent[0])]);
+                }
             }
         });
 
-        this.appendTo(this.componentMenu.getEl());
-        this.componentMenu.buttons.push(this);
+        self.appendTo(this.componentMenu.getEl());
+        self.componentMenu.buttons.push(self);
     };
 
 }());

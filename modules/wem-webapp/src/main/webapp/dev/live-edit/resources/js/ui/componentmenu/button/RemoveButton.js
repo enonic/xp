@@ -1,25 +1,25 @@
 (function () {
     // Class definition (constructor function)
-    var button = AdminLiveEdit.ui.componentmenu.RemoveButton = function (componentMenu) {
+    var removeButton = AdminLiveEdit.ui.componentmenu.button.RemoveButton = function (componentMenu) {
         this.componentMenu = componentMenu;
         this.init();
     };
 
     // Inherits ui.Base
-    button.prototype = new AdminLiveEdit.ui.Button();
+    removeButton.prototype = new AdminLiveEdit.ui.Button();
 
     // Fix constructor as it now is Base
-    button.constructor = button;
+    removeButton.constructor = removeButton;
 
     // Shorthand ref to the prototype
-    var p = button.prototype;
+    var p = removeButton.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.init = function () {
-        // var parentButton = new AdminLiveEdit.ui.Button();
-        var btn = this.create({
+        var self = this;
+        var $button = self.create({
             text: 'Remove',
             id: 'live-edit-button-remove',
             iconCls: 'live-edit-icon-remove',
@@ -28,8 +28,8 @@
             }
         });
 
-        this.appendTo(this.componentMenu.getEl());
-        this.componentMenu.buttons.push(this);
+        self.appendTo(self.componentMenu.getEl());
+        self.componentMenu.buttons.push(self);
     };
 
 }());

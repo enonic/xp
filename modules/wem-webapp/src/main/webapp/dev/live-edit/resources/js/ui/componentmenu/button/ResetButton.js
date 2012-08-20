@@ -1,34 +1,36 @@
 (function () {
     // Class definition (constructor function)
-    var button = AdminLiveEdit.ui.componentmenu.SettingsButton = function (componentMenu) {
+    var resetButton = AdminLiveEdit.ui.componentmenu.button.ResetButton = function (componentMenu) {
         this.componentMenu = componentMenu;
         this.init();
     };
 
     // Inherits ui.Base
-    button.prototype = new AdminLiveEdit.ui.Button();
+    resetButton.prototype = new AdminLiveEdit.ui.Button();
 
     // Fix constructor as it now is Base
-    button.constructor = button;
+    resetButton.constructor = resetButton;
 
     // Shorthand ref to the prototype
-    var p = button.prototype;
+    var p = resetButton.prototype;
+
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.init = function () {
-        // var parentButton = new AdminLiveEdit.ui.Button();
-        var btn = this.create({
-            text: 'Settings',
-            id: 'live-edit-button-settings',
-            iconCls: 'live-edit-icon-settings',
+        var self = this;
+
+        var $button = self.create({
+            text: 'Reset',
+            id: 'live-edit-button-reset',
+            iconCls: 'live-edit-icon-reset',
             handler: function (event) {
                 event.stopPropagation();
             }
         });
 
-        this.appendTo(this.componentMenu.getEl());
-        this.componentMenu.buttons.push(this);
+        self.appendTo(self.componentMenu.getEl());
+        self.componentMenu.buttons.push(self);
     };
 
 }());
