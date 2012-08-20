@@ -4,6 +4,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
     requires: [
         'Admin.view.contentManager.DetailToolbar',
+        'Admin.view.contentManager.LivePreview',
         'Admin.view.account.MembershipsGraphPanel'
     ],
 
@@ -224,9 +225,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     createLivePreview: function (data) {
         return {
             itemId: 'livePreview',
-            xtype: 'panel',
-            autoScroll: true,
-            styleHtmlContent: true
+            xtype: 'contentLive'
         };
     },
 
@@ -262,23 +261,10 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
             if (this.isLiveMode) {
 
-                this.getLayout().setActiveItem('livePreview');
+                var livePreview = this.down('#livePreview');
+                this.getLayout().setActiveItem(livePreview);
 
-                var targetEl = this.down('#livePreview').getTargetEl();
-                targetEl.mask("Loading...");
-
-                targetEl.load({
-                    url: this.getAppUrl(singleData.url),
-                    scripts: true,
-                    callback: function (el, success, resp, opts) {
-                        if (!success && resp.status) {
-                            this.target.update('<h2 class="message">' +
-                                               resp.status + ': ' +
-                                               resp.statusText + '</h2>');
-                        }
-                        targetEl.unmask();
-                    }
-                });
+                livePreview.load(singleData.url);
 
             } else {
 
@@ -339,27 +325,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     toggleLive: function () {
         this.isLiveMode = !this.isLiveMode;
         this.setData(this.data, false);
-    },
-
-    getAppUrl: function (url) {
-        if (!Ext.isDefined(url)) {
-            return '';
-        } else if (url.charAt(0) === '/') {
-            url = url.substring(1);
-        }
-        var pathArray = location.pathname.split('/');
-        var urlArray = url.split('/');
-        var path = "/";
-        var i;
-        for (i = 1; i < pathArray.length - 1; i++) {
-            // add the path elements until we see a match with the desired url
-            if (pathArray[i] !== urlArray[0]) {
-                path += pathArray[i] + "/";
-            } else {
-                break;
-            }
-        }
-        return path + url;
     }
 
 });

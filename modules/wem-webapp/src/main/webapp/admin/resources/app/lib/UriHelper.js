@@ -1,6 +1,9 @@
 Ext.define('Admin.lib.UriHelper', {
 
     singleton: true,
+    statics: {
+        deployPath: undefined
+    },
 
     // UriHelper generates getters from the uris object
     // in the following format: get + <Module> + <Entity> + Uri()
@@ -91,40 +94,49 @@ Ext.define('Admin.lib.UriHelper', {
         var currentLocation = window.location;
         if (Ext.isEmpty(uri)) {
             return "";
+        } else if (uri.indexOf("http") === 0) {
+            return uri;
+        } else if (uri.indexOf("www") === 0) {
+            return "http://" + uri;
         }
         var currentPath = currentLocation.pathname.substring(0, currentLocation.pathname.lastIndexOf("/"));
-        if (uri.charAt(0) !== "/") {
+        var startsWithSlash = uri.charAt(0) === "/";
+        if (!startsWithSlash) {
             uri = "/" + uri;
         }
         var targetLocation = this.getLocationFromUri(uri);
         var targetPath = targetLocation.pathname;
 
-        var targetUri = currentLocation.protocol + "//" + currentLocation.host;
+        var targetHost = currentLocation.protocol + "//" + currentLocation.host;
 
         var currentSegments = currentPath.split("/");
         var targetSegments = targetPath.split("/");
 
-        var i, j;
-        // add current segments one by one until we see match with target segments
-        for (i = 1; i < currentSegments.length; i++) {
-            var currentSegment = currentSegments[i];
-            var contains = false;
-            for (j = 1; j < targetSegments.length; j++) {
-                if (targetSegments[j] === currentSegment) {
-                    contains = true;
+        if (Admin.lib.UriHelper.deployPath === undefined) {
+            var deployPath = "";
+            var i;
+            var firstTargetSegment = targetSegments[1];
+            // add current segments one by one until we see match with target segments
+            for (i = 1; i < currentSegments.length; i++) {
+                var currentSegment = currentSegments[i];
+                if (firstTargetSegment !== currentSegment) {
+                    // segments don't match so add until they do or we are out of segments
+                    deployPath += "/" + currentSegment;
+                    if (startsWithSlash) {
+                        // url starts with a slash meaning we want it
+                        // right after deploy url which is the first segment
+                        break;
+                    }
+                } else {
+                    // segments matched so no need to add more
                     break;
                 }
             }
-            if (!contains) {
-                targetUri += "/" + currentSegment;
-            } else {
-                break;
-            }
+            // save deploy path to use it if we get non-intersecting urls
+            Admin.lib.UriHelper.deployPath = deployPath;
         }
 
-        targetUri += targetPath;
-
-        return targetUri;
+        return targetHost + Admin.lib.UriHelper.deployPath + targetPath;
     },
 
     getLocationFromUri: function (uri) {

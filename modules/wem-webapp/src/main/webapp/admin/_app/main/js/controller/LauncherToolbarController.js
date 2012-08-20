@@ -56,13 +56,19 @@ Ext.define('App.controller.LauncherToolbarController', {
     },
 
     appendIframe: function (selectedMenuItem) {
-        Ext.core.DomHelper.append('app-frames',
-            {
-                tag: 'iframe',
-                src: selectedMenuItem.cms.appUrl,
-                id: 'iframe-' + selectedMenuItem.initialConfig.id,
-                style: 'width: 100%; height: 100%; border: 0'
-            });
+
+        var iframe = Ext.core.DomHelper.append('app-frames', {
+            tag: 'iframe',
+            src: selectedMenuItem.cms.appUrl,
+            id: 'iframe-' + selectedMenuItem.initialConfig.id,
+            style: 'width: 100%; height: 100%; border: 0'
+        }, false);
+        // enable children iframes access to UriHelper singleton
+        iframe.contentWindow.Admin = {
+            lib: {
+                UriHelper: Admin.lib.UriHelper
+            }
+        };
     },
 
     updateStartButton: function (selectedMenuItem) {
