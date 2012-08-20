@@ -23,7 +23,7 @@
     p.registerSubscribers = function () {
         var self = this;
         $liveedit.subscribe('/ui/componentselector/on-select', function ($component) {
-            self.moveToComponent.call(self, $component);
+            self.show.call(self, $component);
         });
 
         $liveedit.subscribe('/ui/componentselector/on-deselect', function () {
@@ -50,7 +50,7 @@
     };
 
 
-    p.moveToComponent = function ($component) {
+    p.show = function ($component) {
         var componentName = util.getComponentName($component);
         var componentType = util.getComponentType($component);
         var componentTagName = util.getTagNameForComponent($component);
@@ -62,8 +62,12 @@
         var componentBoxModel = util.getBoxModel($component);
         var leftPos = componentBoxModel.left + (componentBoxModel.width / 2) - (this.getEl().width() / 2);
         var topPos = componentBoxModel.top - 38;
+
         if (componentType === 'page' && componentTagName === 'body') {
             topPos = 0;
+            this.hideArrows(true);
+        } else {
+            this.hideArrows(false);
         }
 
         this.getEl().css({
@@ -80,6 +84,16 @@
 
     p.setIcon = function (componentType) {
         this.getEl().find('img').attr('src', util.getIconForComponent(componentType));
+    };
+
+
+    p.hideArrows = function (hide) {
+        var $arrowElements = this.getEl().children('div[class*="live-edit-info-tip-arrow"]');
+        if (hide) {
+            $arrowElements.hide();
+        } else {
+            $arrowElements.show();
+        }
     };
 
 
