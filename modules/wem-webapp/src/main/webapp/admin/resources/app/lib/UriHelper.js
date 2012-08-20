@@ -57,6 +57,10 @@ Ext.define('Admin.lib.UriHelper', {
         },
         Userstore: {
             Search: 'admin/rest/userstore/search'
+        },
+        ContentManager: {
+            Search: 'admin/resources/data/contentManagerStub.json',
+            SearchTree: 'admin/resources/data/contentManagerTreeStub.json'
         }
     },
 
@@ -106,6 +110,7 @@ Ext.define('Admin.lib.UriHelper', {
         }
         var targetLocation = this.getLocationFromUri(uri);
         var targetPath = targetLocation.pathname;
+        var targetSearch = targetLocation.search;
 
         var targetHost = currentLocation.protocol + "//" + currentLocation.host;
 
@@ -136,7 +141,7 @@ Ext.define('Admin.lib.UriHelper', {
             Admin.lib.UriHelper.deployPath = deployPath;
         }
 
-        return targetHost + Admin.lib.UriHelper.deployPath + targetPath;
+        return targetHost + Admin.lib.UriHelper.deployPath + targetPath + targetSearch;
     },
 
     getLocationFromUri: function (uri) {

@@ -15,7 +15,7 @@
                     "name": "Travel",
                     "type": "site",
                     "owner": "system",
-                    "url": "/dev/live-edit/page/page.jsp?edit=false",
+                    "url": "/dev/live-edit/page/page.jsp",
                     "lastModified": "2010-10-10 10:10:00",
                     "leaf": true
                 },
@@ -24,7 +24,7 @@
                     "name": "Blueman",
                     "type": "site",
                     "owner": "system",
-                    "url": "/dev/live-edit/page/plug-ins.jsp?edit=false",
+                    "url": "/dev/live-edit/page/plug-ins.jsp",
                     "lastModified": "2010-10-10 10:10:00",
                     "leaf": true
                 },
@@ -33,7 +33,7 @@
                     "name": "Cityscape",
                     "type": "site",
                     "owner": "system",
-                    "url": "/dev/live-edit/page/page.jsp?edit=false",
+                    "url": "/dev/live-edit/page/page.jsp",
                     "lastModified": "2010-10-10 10:10:00",
                     "leaf": true
                 }
@@ -51,6 +51,7 @@
                     "key": 2,
                     "name": "News",
                     "type": "contentType",
+                    "url": "/dev/live-edit/page/page.jsp",
                     "owner": "system",
                     "lastModified": "2010-10-10 10:10:00",
                     "leaf": true
@@ -59,6 +60,7 @@
                     "key": 5,
                     "name": "Article",
                     "type": "contentType",
+                    "url": "/dev/live-edit/page/page.jsp",
                     "owner": "system",
                     "lastModified": "2010-10-10 10:10:00",
                     "leaf": true

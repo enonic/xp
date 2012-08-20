@@ -13,10 +13,11 @@ Ext.define('Admin.view.contentManager.LivePreview', {
 
     },
 
-    load: function (url) {
+    load: function (url, isEdit) {
         var iframe = this.getTargetEl().down('iframe');
+        isEdit = isEdit || false;
         if (!Ext.isEmpty(url)) {
-            iframe.dom.src = Admin.lib.UriHelper.getAbsoluteUri(url);
+            iframe.dom.src = Admin.lib.UriHelper.getAbsoluteUri(url + "?edit=" + isEdit);
         } else {
             iframe.update("<h2 class='message'>Page can't be found.</h2>");
         }

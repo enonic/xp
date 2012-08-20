@@ -6,10 +6,12 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         'Admin.view.contentManager.wizard.ContentWizardToolbar'
     ],
 
-    layout: 'column',
+    layout: 'card',
 
     border: 0,
     autoScroll: true,
+
+    isLiveMode: false,
 
     defaults: {
         border: false
@@ -44,48 +46,64 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             xtype: 'contentWizardToolbar'
         });
 
-        me.items = [
-            {
-                width: 138,
-                padding: 5,
-                border: false,
-                items: [
-                    {
-                        xtype: 'container',
-                        plain: true,
-                        width: 128,
-                        height: 128,
-                        cls: 'icon-content-128',
-                        listeners: {
-                            render: function (cmp) {
-                                Ext.tip.QuickTipManager.register({
-                                    target: cmp.el,
-                                    text: 'Content',
-                                    width: 100,
-                                    dismissDelay: 10000 // Hide after 10 seconds hover
-                                });
+        var wizardPanel = {
+            layout: 'column',
+            itemId: 'wizardPanel',
+            border: 0,
+            autoScroll: true,
+
+            defaults: {
+                border: false
+            },
+            items: [
+                {
+                    width: 138,
+                    padding: 5,
+                    border: false,
+                    items: [
+                        {
+                            xtype: 'container',
+                            plain: true,
+                            width: 128,
+                            height: 128,
+                            cls: 'icon-content-128',
+                            listeners: {
+                                render: function (cmp) {
+                                    Ext.tip.QuickTipManager.register({
+                                        target: cmp.el,
+                                        text: 'Content',
+                                        width: 100,
+                                        dismissDelay: 10000 // Hide after 10 seconds hover
+                                    });
+                                }
                             }
                         }
-                    }
-                ]
-            },
-            {
-                columnWidth: 1,
-                padding: '10 10 10 0',
-                defaults: {
-                    border: false
+                    ]
                 },
-                items: [
-                    contentWizardHeader,
-                    {
-                        xtype: 'wizardPanel',
-                        showControls: true,
-                        items: me.getSteps()
-                    }
-                ]
-            }
-        ];
+                {
+                    columnWidth: 1,
+                    padding: '10 10 10 0',
+                    defaults: {
+                        border: false
+                    },
+                    items: [
+                        contentWizardHeader,
+                        {
+                            xtype: 'wizardPanel',
+                            showControls: true,
+                            items: me.getSteps()
+                        }
+                    ]
+                }
+            ]
+        };
 
+        var liveEdit = {
+            itemId: 'livePreview',
+            xtype: 'contentLive'
+        };
+
+        this.items = [wizardPanel, liveEdit];
         this.callParent(arguments);
 
     },
@@ -143,6 +161,19 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             if (value === '' || value === 'Display Name') {
                 displayNameFieldElement.removeCls('admin-edited-field');
             }
+        }
+    },
+
+    toggleLiveEdit: function () {
+        this.isLiveMode = !this.isLiveMode;
+        if (this.isLiveMode) {
+            var url = this.data ? this.data.get('url') : '';
+            var livePreview = this.down('#livePreview');
+            livePreview.load(url, true);
+            this.getLayout().setActiveItem(livePreview);
+        } else {
+            var wizardPanel = this.down('#wizardPanel');
+            this.getLayout().setActiveItem(wizardPanel);
         }
     }
 
