@@ -1,4 +1,6 @@
 (function () {
+    'use strict';
+
     // Namespaces
     AdminLiveEdit.ui.componentmenu = {};
     AdminLiveEdit.ui.componentmenu.button = {};

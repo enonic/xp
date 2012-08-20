@@ -1,4 +1,6 @@
 (function () {
+    'use strict';
+
     // Class definition (constructor function)
     var settingsButton = AdminLiveEdit.ui.componentmenu.button.SettingsButton = function (componentMenu) {
         this.componentMenu = componentMenu;
@@ -18,7 +20,7 @@
 
     p.init = function () {
         var self = this;
-        
+
         var $button = self.createButton({
             text: 'Settings',
             id: 'live-edit-button-settings',

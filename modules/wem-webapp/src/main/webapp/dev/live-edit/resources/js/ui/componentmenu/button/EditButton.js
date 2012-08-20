@@ -1,4 +1,6 @@
 (function () {
+    'use strict';
+
     // Class definition (constructor function)
     var editButton = AdminLiveEdit.ui.componentmenu.button.EditButton = function (componentMenu) {
         this.componentMenu = componentMenu;

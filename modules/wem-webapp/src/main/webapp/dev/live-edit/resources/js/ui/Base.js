@@ -1,4 +1,6 @@
 (function () {
+    'use strict';
+
     // Namespace
     AdminLiveEdit.ui = {};
 

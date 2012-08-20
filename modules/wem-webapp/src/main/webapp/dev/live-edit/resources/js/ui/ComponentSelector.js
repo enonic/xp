@@ -1,4 +1,6 @@
 (function () {
+    'use strict';
+
     // Class definition (constructor function)
     var componentSelector = AdminLiveEdit.ui.ComponentSelector = function () {
         this.$selectedComponent = $liveedit([]); // Empty jQuery object

@@ -1,7 +1,8 @@
 (function () {
+    'use strict';
+
     // Class definition (constructor function)
     var logger = AdminLiveEdit.Logger = function () {
-        this.$logger = null;
     };
 
     // Fix constructor

@@ -1,4 +1,6 @@
 (function () {
+    'use strict';
+
     // Class definition (constructor function)
     var cursor = AdminLiveEdit.ui.Cursor = function () {
         this.registerSubscribers();
@@ -6,7 +8,6 @@
 
     // Shorthand ref to the prototype
     var p = cursor.prototype;
-
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 

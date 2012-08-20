@@ -83,13 +83,13 @@
             top: y + h,
             left: 0,
             width: docWidth,
-            height: docHeight - ( y + h )
+            height: docHeight - (y + h)
         });
 
         west.css({
             top: y,
             left: 0,
-            width: 0 + x,
+            width: x,
             height: h
         });
     };

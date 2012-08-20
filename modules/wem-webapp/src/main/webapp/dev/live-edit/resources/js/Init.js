@@ -1,4 +1,5 @@
 (function () {
+    'use strict';
 
     $liveedit(window).load(function () {
         $liveedit('.live-edit-loader-splash-container').remove();
@@ -28,7 +29,7 @@
         // Experiment: Move all scripts without @src to the body element in order to prevent script elements to be dragged.
         // TODO: Update CSS selector to only include page components.
         var $scripts = $liveedit('script:not([src])');
-        $scripts.each(function (i) {
+        $scripts.each(function () {
             var script = this;
             var $body = $liveedit('body')[0];
             // Use standard DOM appendChild as jQuery append is buggy regarding script elements.

@@ -1,4 +1,6 @@
 AdminLiveEdit.Util = (function () {
+    'use strict';
+
     return {
         getDocumentSize: function () {
             var $document = $liveedit(document);

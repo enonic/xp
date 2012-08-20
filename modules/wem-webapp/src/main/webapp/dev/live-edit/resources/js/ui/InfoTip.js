@@ -1,4 +1,6 @@
 (function () {
+    'use strict';
+
     // Class definition (constructor function)
     var infoTip = AdminLiveEdit.ui.InfoTip = function () {
         this.create();

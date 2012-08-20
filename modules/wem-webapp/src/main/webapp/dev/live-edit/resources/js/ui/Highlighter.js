@@ -1,4 +1,6 @@
 (function () {
+    'use strict';
+
     // Class definition (constructor function)
     var highlighter = AdminLiveEdit.ui.Highlighter = function () {
         this.create();

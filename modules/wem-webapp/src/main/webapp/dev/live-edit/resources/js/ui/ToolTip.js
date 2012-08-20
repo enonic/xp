@@ -1,4 +1,6 @@
 (function () {
+    'use strict';
+
     // Class definition (constructor function)
     var toolTip = AdminLiveEdit.ui.ToolTip = function () {
         this.OFFSET_X = 15;

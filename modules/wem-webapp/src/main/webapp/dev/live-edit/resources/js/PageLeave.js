@@ -1,4 +1,5 @@
 AdminLiveEdit.PageLeave = (function () {
+    'use strict';
 
     function init() {
         /*

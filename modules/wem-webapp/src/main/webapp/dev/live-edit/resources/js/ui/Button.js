@@ -1,4 +1,6 @@
 (function () {
+    'use strict';
+
     // Class definition (constructor function)
     var button = AdminLiveEdit.ui.Button = function () {
     };
@@ -11,7 +13,6 @@
 
     // Shorthand ref to the prototype
     var p = button.prototype;
-
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
