@@ -53,7 +53,7 @@ public class EntriesTest
     @Test
     public void getValue_when_having_multiple_sub_type_in_single_sub_type()
     {
-        FieldSet personalia = FieldSet.newBuilder().typeGroup().name( "personalia" ).label( "Personalia" ).multiple( false ).build();
+        FieldSet personalia = FieldSet.newBuilder().typeGroup().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
         FieldSet crimes = FieldSet.newBuilder().typeGroup().name( "crimes" ).multiple( true ).build();
         crimes.addField( Field.newBuilder().name( "description" ).type( FieldTypes.textline ).build() );
         crimes.addField( Field.newBuilder().name( "year" ).type( FieldTypes.textline ).build() );

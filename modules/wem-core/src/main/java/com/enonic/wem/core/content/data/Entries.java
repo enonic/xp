@@ -284,6 +284,21 @@ public class Entries
         return foundEntry;
     }
 
+    public void checkBreaksRequiredContract()
+    {
+        // check existing entries..
+        for ( Entry entry : entries.values() )
+        {
+            entry.checkBreaksRequiredContract();
+        }
+
+        // check missing required entries
+        for ( ConfigItem configItem : configItems )
+        {
+            // TODO: check that required configItems have entries
+        }
+    }
+
     public boolean breaksRequiredContract()
     {
         for ( Entry entry : entries.values() )

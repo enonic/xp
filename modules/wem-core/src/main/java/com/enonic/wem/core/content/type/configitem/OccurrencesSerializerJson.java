@@ -6,41 +6,41 @@ import java.io.IOException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
-public class MultipleSerializerJson
+public class OccurrencesSerializerJson
 {
-    public static void generate( final Multiple multiple, final JsonGenerator g )
+    public static void generate( final Occurrences occurrences, final JsonGenerator g )
         throws IOException
     {
-        g.writeFieldName( "multiple" );
-        if ( multiple == null )
+        g.writeFieldName( "occurrences" );
+        if ( occurrences == null )
         {
             g.writeNull();
         }
         else
         {
             g.writeStartObject();
-            g.writeNumberField( "minEntries", multiple.getMinimumEntries() );
-            g.writeNumberField( "maxEntries", multiple.getMaximumEntries() );
+            g.writeNumberField( "minimum", occurrences.getMinimum() );
+            g.writeNumberField( "maximum", occurrences.getMaximum() );
             g.writeEndObject();
         }
     }
 
-    public static Multiple parse( final JsonNode node )
+    public static Occurrences parse( final JsonNode node )
     {
         int minEntries = 0;
         int maxEntries = 0;
 
-        JsonNode minEntriesNode = node.get( "minEntries" );
+        JsonNode minEntriesNode = node.get( "minimum" );
         if ( minEntriesNode != null )
         {
             minEntries = minEntriesNode.getIntValue();
         }
-        JsonNode maxEntriesNode = node.get( "maxEntries" );
+        JsonNode maxEntriesNode = node.get( "maximum" );
         if ( maxEntriesNode != null )
         {
             maxEntries = maxEntriesNode.getIntValue();
         }
 
-        return new Multiple( minEntries, maxEntries );
+        return new Occurrences( minEntries, maxEntries );
     }
 }

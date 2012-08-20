@@ -50,8 +50,7 @@ public class ContentDataTest
     {
         ConfigItems configItems = new ConfigItems();
         configItems.addConfigItem( Field.newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );
-        configItems.addConfigItem(
-            Field.newBuilder().name( "myMultipleTextLine" ).type( FieldTypes.textline ).required( false ).multiple( true ).build() );
+        configItems.addConfigItem( Field.newBuilder().name( "myMultipleTextLine" ).type( FieldTypes.textline ).multiple( true ).build() );
 
         ContentData contentData = new ContentData( configItems );
         contentData.setValue( "myTextLine", "A single line" );

@@ -13,4 +13,6 @@ public abstract class Entry
     }
 
     public abstract boolean breaksRequiredContract();
+
+    public abstract void checkBreaksRequiredContract();
 }

@@ -10,7 +10,7 @@ public class TemplateReference
 
     private TemplateType templateType;
 
-    private boolean required;
+    private Occurrences occurrences;
 
     private boolean immutable;
 

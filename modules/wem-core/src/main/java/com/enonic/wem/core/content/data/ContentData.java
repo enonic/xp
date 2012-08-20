@@ -99,4 +99,9 @@ public class ContentData
     {
         return entries.breaksRequiredContract();
     }
+
+    public void checkBreaksRequiredContract()
+    {
+        entries.breaksRequiredContract();
+    }
 }
