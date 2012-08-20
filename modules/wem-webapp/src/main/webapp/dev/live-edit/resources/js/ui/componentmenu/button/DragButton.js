@@ -20,7 +20,7 @@
     p.init = function () {
         var self = this;
         // var parentButton = new AdminLiveEdit.ui.Button();
-        var $button = self.create({
+        var $button = self.createButton({
             text: 'Drag',
             id: 'live-edit-button-drag',
             iconCls: 'live-edit-icon-drag',

@@ -20,7 +20,7 @@
     p.init = function () {
         var self = this;
 
-        var $button = self.create({
+        var $button = self.createButton({
             text: 'Reset',
             id: 'live-edit-button-reset',
             iconCls: 'live-edit-icon-reset',

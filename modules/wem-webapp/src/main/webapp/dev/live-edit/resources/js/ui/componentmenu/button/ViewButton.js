@@ -20,7 +20,7 @@
     p.init = function () {
         var self = this;
 
-        var $button = self.create({
+        var $button = self.createButton({
             text: 'View',
             id: 'live-edit-button-view',
             iconCls: 'live-edit-icon-view',

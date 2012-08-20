@@ -15,7 +15,7 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.create = function (config) {
+    p.createButton = function (config) {
         var id = config.id || '';
         var text = config.text || '';
         var iconCls = config.iconCls || '';
