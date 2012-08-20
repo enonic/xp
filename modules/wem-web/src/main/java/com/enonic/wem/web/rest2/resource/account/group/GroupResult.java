@@ -45,7 +45,7 @@ public final class GroupResult
         json.put( "name", group.getName() );
         json.put( "userStore", group.getUserStore() != null ? group.getUserStore().getName() : "null" );
         json.put( "qualifiedName", String.valueOf( group.getQualifiedName() ) );
-        json.put( "displayName", "displayName" ); // TODO
+        json.put( "displayName", group.getName() ); // TODO
         json.put( "description", group.getDescription() );
         json.put( "lastModified", "2012-07-24 16:18:35" ); // TODO
         json.put( "created", "2012-07-24 16:18:35" ); // TODO
@@ -79,7 +79,7 @@ public final class GroupResult
                 final String type = group.isBuiltIn() ? TYPE_ROLE : TYPE_GROUP;
                 json.put( "name", group.getName() );
                 json.put( "qualifiedName", group.getQualifiedName() != null ? group.getQualifiedName().toString() : null );
-                json.put( "displayName", "displayName" );
+                json.put( "displayName", group.getName() );
                 json.put( "type", type );
                 json.put( "key", group.getGroupKey().toString() );
             }
