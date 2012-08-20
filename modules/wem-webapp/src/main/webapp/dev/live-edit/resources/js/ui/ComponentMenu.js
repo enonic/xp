@@ -55,8 +55,8 @@
 
 
     p.create = function () {
-        this.createElement('<div class="live-edit-context-menu" style="top:-5000px; left:-5000px;">' +
-                           '    <div class="live-edit-context-menu-inner"></div>' +
+        this.createElement('<div class="live-edit-component-menu" style="top:-5000px; left:-5000px;">' +
+                           '    <div class="live-edit-component-menu-inner"></div>' +
                            '</div>');
         this.appendTo($liveedit('body'));
         this.addButtons();

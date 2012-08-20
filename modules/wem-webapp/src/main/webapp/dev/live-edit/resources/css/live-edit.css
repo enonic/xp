@@ -3,29 +3,47 @@
 */
 
 /*** Reset */
+.live-edit-loader-splash-content,
 .live-edit-loader-splash-container,
 .live-edit-loader-splash-content,
+.live-edit-loader-splash-content img,
 .live-edit-loader-splash-content div,
+.live-edit-shader,
 svg.live-edit-highlighter,
 svg.live-edit-highlighter rect,
 svg.live-edit-selected-border,
 svg.live-edit-selected-border rect,
 .live-edit-empty-region-placeholder,
 .live-edit-empty-window-placeholder,
-.live-edit-drop-target-placeholder,
 .live-edit-info-tip,
 .live-edit-info-tip-arrow-border,
 .live-edit-info-tip-arrow,
 .live-edit-info-tip-type-text,
 .live-edit-info-tip-name-text,
 .live-edit-tool-tip,
-.live-edit-context-menu,
-.live-edit-context-menu-inner,
+.live-edit-component-menu,
 .live-edit-button,
+.live-edit-button:hover,
+.live-edit-button:active,
 .live-edit-button-text,
 .live-edit-button-icon,
+.live-edit-icon-insert,
+.live-edit-icon-reset,
+.live-edit-icon-empty,
+.live-edit-icon-drag,
+.live-edit-icon-parent,
+.live-edit-icon-view,
+.live-edit-icon-edit,
+.live-edit-icon-settings,
+.live-edit-icon-remove,
 #live-edit-drag-helper,
-#live-edit-drag-helper-status-icon
+#live-edit-drag-helper img,
+#live-edit-drag-helper-status-icon,
+.live-edit-drop-target-placeholder,
+.live-edit-html-element-placeholder,
+.live-edit-html-element-placeholder div,
+.live-edit-html-element-placeholder .live-edit-iframe,
+.live-edit-html-element-placeholder .live-edit-object
 {
     border: 0;
     color: #000;
@@ -36,8 +54,6 @@ svg.live-edit-selected-border rect,
     padding: 0;
     vertical-align: baseline;
 }
-
-#live-edit-drag-helper img { border: 0; }
 
 
 /*** Misc */
@@ -255,9 +271,9 @@ svg.live-edit-selected-border rect {
     padding:10px;
 }
 
-/*** Context menu */
+/*** Component menu */
 
-.live-edit-context-menu {
+.live-edit-component-menu {
     position: absolute;
     z-index: 1000050;
     background-color: #20252A;
@@ -303,7 +319,7 @@ svg.live-edit-selected-border rect {
 }
 
 
-/*** Context Menu buttons */
+/*** Component Menu buttons */
 
 .live-edit-button-icon {
     display: block;
@@ -340,6 +356,8 @@ svg.live-edit-selected-border rect {
     font-size: 11px;
     box-shadow: 2px 2px 2px 0 #888888;
 }
+
+#live-edit-drag-helper img { border: 0; }
 
 #live-edit-drag-helper-status-icon {
     vertical-align: middle;
