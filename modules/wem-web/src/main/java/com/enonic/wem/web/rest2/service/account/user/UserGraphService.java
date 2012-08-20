@@ -58,7 +58,7 @@ public class UserGraphService
         {
             for ( GroupEntity group : entity.getMemberships( false ) )
             {
-                if ( graph.containsEntity( group ) )
+                if ( graph.containsEntity( getTimestamp(), group ) )
                 {
                     // Skip current iteration because we've already put this group into the graph
                     continue;

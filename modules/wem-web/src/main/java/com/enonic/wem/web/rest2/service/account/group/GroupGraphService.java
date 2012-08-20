@@ -35,7 +35,7 @@ public class GroupGraphService
         {
             for ( GroupEntity group : entity.getMembers( false ) )
             {
-                if ( graph.containsEntity( group ) )
+                if ( graph.containsEntity( getTimestamp(), group ) )
                 {
                     // Skip current iteration because we've already put this group into the graph
                     continue;

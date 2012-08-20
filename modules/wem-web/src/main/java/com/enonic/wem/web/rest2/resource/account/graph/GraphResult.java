@@ -65,21 +65,24 @@ public final class GraphResult
         return graph;
     }
 
-    public boolean containsEntity( GroupEntity group )
+    private boolean containsKey( String prefix, String key )
+    {
+        List<String> keysInGraph = getGraph().findValuesAsText( ID_PARAM );
+        String nodeKey = new StringBuffer( prefix ).append( "_" ).append( key ).toString();
+        return keysInGraph.contains( nodeKey );
+    }
+
+    public boolean containsEntity( String prefix, GroupEntity group )
     {
         if ( group.isOfType( GroupType.USER, false ) )
         {
-            return containsEntity( group.getUser() );
+            return containsEntity( prefix, group.getUser() );
         }
-        List<String> keysInGraph = getGraph().findValuesAsText( ID_PARAM );
-        String groupKey = group.getGroupKey().toString();
-        return keysInGraph.contains( groupKey );
+        return containsKey( prefix, group.getGroupKey().toString() );
     }
 
-    public boolean containsEntity( UserEntity user )
+    public boolean containsEntity( String prefix, UserEntity user )
     {
-        List<String> keysInGraph = getGraph().findValuesAsText( ID_PARAM );
-        String userKey = user.getKey().toString();
-        return keysInGraph.contains( userKey );
+        return containsKey( prefix, user.getKey().toString() );
     }
 }

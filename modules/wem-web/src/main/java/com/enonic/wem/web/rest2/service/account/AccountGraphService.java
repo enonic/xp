@@ -21,6 +21,11 @@ public abstract class AccountGraphService
         this.timestamp = timestamp;
     }
 
+    protected String getTimestamp()
+    {
+        return timestamp;
+    }
+
     protected String generateId( String key )
     {
         StringBuffer strBuffer = new StringBuffer( timestamp );
