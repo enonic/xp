@@ -2,11 +2,11 @@
 
     $liveedit(window).load(function () {
         $liveedit('.live-edit-loader-splash-container').remove();
-        var page = new AdminLiveEdit.components.events.Page();
-        var regions = new AdminLiveEdit.components.events.Regions();
-        var windows = new AdminLiveEdit.components.events.Windows();
-        var contents = new AdminLiveEdit.components.events.Contents();
-        var paragraphs = new AdminLiveEdit.components.events.Paragraphs();
+        var page = new AdminLiveEdit.components.Page();
+        var regions = new AdminLiveEdit.components.Regions();
+        var windows = new AdminLiveEdit.components.Windows();
+        var contents = new AdminLiveEdit.components.Contents();
+        var paragraphs = new AdminLiveEdit.components.Paragraphs();
         var highlighter = new AdminLiveEdit.ui.Highlighter();
         var componentSelector = new AdminLiveEdit.ui.ComponentSelector();
         var infoTip = new AdminLiveEdit.ui.InfoTip();

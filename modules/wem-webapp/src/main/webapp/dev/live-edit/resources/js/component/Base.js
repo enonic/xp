@@ -1,15 +1,13 @@
 (function () {
     // Namespaces
     AdminLiveEdit.components = {};
-    AdminLiveEdit.components.events = {};
 
-
-    AdminLiveEdit.components.events.Base = function () {
+    AdminLiveEdit.components.Base = function () {
         this.selector = '';
     };
 
 
-    AdminLiveEdit.components.events.Base.prototype = {
+    AdminLiveEdit.components.Base.prototype = {
         attachMouseOverEvent: function () {
             var self = this;
 

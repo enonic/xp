@@ -1,5 +1,5 @@
 (function () {
-    var windows = AdminLiveEdit.components.events.Windows = function () {
+    var windows = AdminLiveEdit.components.Windows = function () {
         this.selector = '[data-live-edit-type=window]';
         this.renderEmptyPlaceholders();
         this.attachMouseOverEvent();
@@ -7,7 +7,7 @@
         this.attachClickEvent();
     };
     // Inherit from Base prototype
-    windows.prototype = new AdminLiveEdit.components.events.Base();
+    windows.prototype = new AdminLiveEdit.components.Base();
 
     // Fix constructor as it now is Base
     windows.constructor = windows;

@@ -1,5 +1,5 @@
 (function () {
-    var regions = AdminLiveEdit.components.events.Regions = function () {
+    var regions = AdminLiveEdit.components.Regions = function () {
         this.selector = '[data-live-edit-type=region]';
         this.renderEmptyPlaceholders();
         this.attachMouseOverEvent();
@@ -9,7 +9,7 @@
     };
 
     // Inherit from Base prototype
-    regions.prototype = new AdminLiveEdit.components.events.Base();
+    regions.prototype = new AdminLiveEdit.components.Base();
 
     // Fix constructor as it now is Base
     regions.constructor = regions;

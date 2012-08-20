@@ -1,18 +1,19 @@
 (function () {
-    var page = AdminLiveEdit.components.events.Page = function () {
-        this.selector = '[data-live-edit-type=page]';
+    var contents = AdminLiveEdit.components.Contents = function () {
+        this.selector = '[data-live-edit-type=content]';
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();
         this.attachClickEvent();
     };
     // Inherit from Base prototype
-    page.prototype = new AdminLiveEdit.components.events.Base();
+    contents.prototype = new AdminLiveEdit.components.Base();
 
     // Fix constructor as it now is Base
-    page.constructor = page;
+    contents.constructor = contents;
 
-    var p = page.prototype;
+    var p = contents.prototype;
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
 
 }());

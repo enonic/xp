@@ -16,12 +16,12 @@
 <script type="text/javascript" charset="UTF-8" src="../resources/js/PageLeave.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../resources/js/Logger.js"></script>
 
-<script type="text/javascript" charset="UTF-8" src="../resources/js/component/events/Base.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../resources/js/component/events/Page.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../resources/js/component/events/Regions.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../resources/js/component/events/Windows.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../resources/js/component/events/Contents.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../resources/js/component/events/Paragraphs.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../resources/js/component/Base.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../resources/js/component/Page.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../resources/js/component/Regions.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../resources/js/component/Windows.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../resources/js/component/Contents.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../resources/js/component/Paragraphs.js"></script>
 
 <script type="text/javascript" charset="UTF-8" src="../resources/js/ui/Base.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../resources/js/ui/Shader.js"></script>
