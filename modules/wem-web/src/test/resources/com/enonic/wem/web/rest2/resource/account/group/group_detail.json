@@ -4,7 +4,7 @@
     "name": "dummygroup",
     "userStore": "enonic",
     "qualifiedName": "enonic\\dummygroup",
-    "displayName": "displayName",
+    "displayName": "dummygroup",
     "description": "Dummygroup description",
     "lastModified": "2012-07-24 16:18:35",
     "created": "2012-07-24 16:18:35",
@@ -14,14 +14,14 @@
         {
             "name": "group2",
             "qualifiedName": "enonic\\group2",
-            "displayName": "displayName",
+            "displayName": "group2",
             "type": "group",
             "key": "CD4BD95895F1813D7AE18FAC595CEEB43C625089"
         },
         {
             "name": "group1",
             "qualifiedName": "enonic\\group1",
-            "displayName": "displayName",
+            "displayName": "group1",
             "type": "group",
             "key": "007B84CC2EF921EFFA9272735F98162D78006929"
         },
