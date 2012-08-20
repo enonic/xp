@@ -7,7 +7,7 @@ Ext.define('Admin.store.contentManager.ContentStore', {
 
     proxy: {
         type: 'ajax',
-        url: 'resources/data/contentManagerStub.json',
+        url: Admin.lib.UriHelper.getContentManagerSearchUri(),
         simpleSortMode: true,
         reader: {
             type: 'json',

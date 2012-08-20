@@ -98,6 +98,19 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
                 defaults: buttonDefaults,
                 items: [
                     {
+                        text: 'Live Mode',
+                        action: 'toggleLive',
+                        iconCls: 'icon-lightbulb-24',
+                        enableToggle: true
+                    }
+                ]
+            },
+            {
+                xtype: 'buttongroup',
+                columns: 1,
+                defaults: buttonDefaults,
+                items: [
+                    {
                         text: 'Close',
                         action: 'closeWizard',
                         iconCls: 'icon-cancel-24'

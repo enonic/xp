@@ -26,11 +26,19 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
                 click: function (el, e) {
                     this.deleteContent(this.getContentWizardPanel().data);
                 }
+            },
+            'contentWizardToolbar *[action=toggleLive]': {
+                click: this.toggleLiveEdit
             }
         });
 
         me.application.on({
         });
+    },
+
+    toggleLiveEdit: function (el, e) {
+        el.setIconCls(el.pressed ? 'icon-lightbulb-on-24' : 'icon-lightbulb-24');
+        this.getContentWizardPanel().toggleLiveEdit();
     },
 
     closeWizard: function (el, e) {

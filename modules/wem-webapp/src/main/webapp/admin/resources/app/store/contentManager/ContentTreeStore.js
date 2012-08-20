@@ -7,7 +7,7 @@ Ext.define('Admin.store.contentManager.ContentTreeStore', {
 
     proxy: {
         type: 'ajax',
-        url: 'resources/data/contentManagerTreeStub.json',
+        url: Admin.lib.UriHelper.getContentManagerSearchTreeUri(),
         reader: {
             type: 'json',
             totalProperty: 'total'
