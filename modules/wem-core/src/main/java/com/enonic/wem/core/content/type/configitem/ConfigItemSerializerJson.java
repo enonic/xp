@@ -44,7 +44,7 @@ public class ConfigItemSerializerJson
         g.writeStringField( "label", field.getLabel() );
         g.writeBooleanField( "required", field.isRequired() );
         g.writeBooleanField( "immutable", field.isImmutable() );
-        MultipleSerializerJson.generate( field.getMultiple(), g );
+        OccurrencesSerializerJson.generate( field.getOccurrences(), g );
         g.writeBooleanField( "indexed", field.isIndexed() );
         g.writeStringField( "customText", field.getCustomText() );
         g.writeStringField( "validationRegexp", field.getValidationRegexp() );
@@ -69,7 +69,7 @@ public class ConfigItemSerializerJson
         g.writeStringField( "label", fieldSet.getLabel() );
         g.writeBooleanField( "required", fieldSet.isRequired() );
         g.writeBooleanField( "immutable", fieldSet.isImmutable() );
-        MultipleSerializerJson.generate( fieldSet.getMultiple(), g );
+        OccurrencesSerializerJson.generate( fieldSet.getOccurrences(), g );
         g.writeStringField( "customText", fieldSet.getCustomText() );
         g.writeStringField( "helpText", fieldSet.getHelpText() );
         ConfigItemsSerializerJson.generate( fieldSet.getConfigItems(), g );
@@ -121,12 +121,11 @@ public class ConfigItemSerializerJson
         Field.Builder builder = Field.newBuilder();
         builder.name( JsonParserUtil.getStringValue( "name", configItemNode ) );
         builder.label( JsonParserUtil.getStringValue( "label", configItemNode, null ) );
-        builder.required( JsonParserUtil.getBooleanValue( "required", configItemNode ) );
         builder.immutable( JsonParserUtil.getBooleanValue( "immutable", configItemNode ) );
         builder.helpText( JsonParserUtil.getStringValue( "helpText", configItemNode ) );
         builder.customText( JsonParserUtil.getStringValue( "customText", configItemNode ) );
 
-        parseMultiple( builder, configItemNode.get( "multiple" ) );
+        parseOccurrences( builder, configItemNode.get( "occurrences" ) );
         parseFieldType( builder, configItemNode.get( "fieldType" ) );
         parseFieldTypeConfig( builder, configItemNode.get( "fieldTypeConfig" ) );
 
@@ -138,12 +137,12 @@ public class ConfigItemSerializerJson
         FieldSet.Builder builder = FieldSet.newBuilder();
         builder.name( JsonParserUtil.getStringValue( "name", configItemNode ) );
         builder.label( JsonParserUtil.getStringValue( "label", configItemNode, null ) );
-        builder.required( JsonParserUtil.getBooleanValue( "required", configItemNode ) );
+        builder.immutable( JsonParserUtil.getBooleanValue( "immutable", configItemNode ) );
         builder.immutable( JsonParserUtil.getBooleanValue( "immutable", configItemNode ) );
         builder.helpText( JsonParserUtil.getStringValue( "helpText", configItemNode ) );
         builder.customText( JsonParserUtil.getStringValue( "customText", configItemNode ) );
 
-        parseMultiple( builder, configItemNode.get( "multiple" ) );
+        parseOccurrences( builder, configItemNode.get( "occurrences" ) );
         parseFieldSetType( builder, configItemNode.get( "type" ) );
 
         return builder.build();
@@ -166,11 +165,11 @@ public class ConfigItemSerializerJson
         }
     }
 
-    private void parseMultiple( final Field.Builder builder, final JsonNode multipleNode )
+    private void parseOccurrences( final Field.Builder builder, final JsonNode occurrencesNode )
     {
-        if ( multipleNode != null )
+        if ( occurrencesNode != null )
         {
-            builder.multiple( MultipleSerializerJson.parse( multipleNode ) );
+            builder.occurrences( OccurrencesSerializerJson.parse( occurrencesNode ) );
         }
         else
         {
@@ -178,11 +177,11 @@ public class ConfigItemSerializerJson
         }
     }
 
-    private void parseMultiple( final FieldSet.Builder builder, final JsonNode multipleNode )
+    private void parseOccurrences( final FieldSet.Builder builder, final JsonNode occurrencesNode )
     {
-        if ( multipleNode != null )
+        if ( occurrencesNode != null )
         {
-            builder.multiple( MultipleSerializerJson.parse( multipleNode ) );
+            builder.occurrences( OccurrencesSerializerJson.parse( occurrencesNode ) );
         }
         else
         {

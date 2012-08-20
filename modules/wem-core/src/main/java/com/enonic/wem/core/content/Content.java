@@ -52,4 +52,9 @@ public class Content
     {
         return this.data.getValueAsString( new EntryPath( path ) );
     }
+
+    public void checkBreaksRequiredContract()
+    {
+        this.data.breaksRequiredContract();
+    }
 }

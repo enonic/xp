@@ -16,6 +16,7 @@ import com.enonic.wem.core.content.type.valuetype.BasalValueType;
 import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.configitem.Field.newField;
+import static com.enonic.wem.core.content.type.configitem.FieldSet.newFieldSet;
 import static com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder.newFieldSetTemplate;
 import static com.enonic.wem.core.content.type.configitem.FieldTemplateBuilder.newFieldTemplate;
 import static com.enonic.wem.core.content.type.configitem.TemplateReference.newTemplateReference;
@@ -90,7 +91,7 @@ public class ContentTest
                 DropdownConfig.newBuilder().addOption( "Norway", "NO" ).build() ).build() ).build();
 
         FieldSetTemplate addressTemplate = newFieldSetTemplate().module( module ).fieldSet(
-            FieldSet.newFieldSet().typeGroup().name( "address" ).addConfigItem(
+            newFieldSet().typeGroup().name( "address" ).addConfigItem(
                 newField().name( "street" ).type( FieldTypes.textline ).build() ).addConfigItem(
                 newTemplateReference( postalCodeTemplate ).name( "postalCode" ).build() ).addConfigItem(
                 newField().name( "postalPlace" ).type( FieldTypes.textline ).build() ).addConfigItem(
@@ -128,7 +129,7 @@ public class ContentTest
         Module module = newModule().name( "myModule" ).build();
 
         FieldSetTemplate addressTemplate = newFieldSetTemplate().module( module ).fieldSet(
-            FieldSet.newFieldSet().typeGroup().name( "address" ).multiple( true ).addConfigItem(
+            newFieldSet().typeGroup().name( "address" ).multiple( true ).addConfigItem(
                 newField().type( FieldTypes.textline ).name( "label" ).build() ).addConfigItem(
                 newField().type( FieldTypes.textline ).name( "street" ).build() ).addConfigItem(
                 newField().type( FieldTypes.textline ).name( "postalCode" ).build() ).addConfigItem(
@@ -190,5 +191,39 @@ public class ContentTest
             assertTrue( e instanceof IllegalArgumentException );
             assertEquals( "ConfigItem at path [address.street] expected to be of type FieldSet: REFERENCE", e.getMessage() );
         }
+    }
+
+    @Test
+    public void required()
+    {
+        // setup
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newField().name( "name" ).type( FieldTypes.textline ).build() );
+
+        FieldSet personaliaFieldSet = newFieldSet().typeGroup().name( "personalia" ).multiple( false ).required( true ).build();
+        personaliaFieldSet.addField( newField().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        personaliaFieldSet.addField( newField().name( "hairColour" ).type( FieldTypes.textline ).build() );
+        contentType.addConfigItem( personaliaFieldSet );
+
+        FieldSet crimesFieldSet = newFieldSet().typeGroup().name( "crimes" ).multiple( true ).build();
+        contentType.addConfigItem( crimesFieldSet );
+        crimesFieldSet.addField( newField().name( "description" ).type( FieldTypes.textline ).build() );
+        crimesFieldSet.addField( newField().name( "year" ).type( FieldTypes.textline ).build() );
+
+        Content content = new Content();
+        content.setType( contentType );
+
+        content.setValue( "name", "Thomas" );
+        content.setValue( "personalia.eyeColour", "Blue" );
+        content.setValue( "personalia.hairColour", "Blonde" );
+        content.setValue( "crimes[0].description", "Stole tomatoes from neighbour" );
+        content.setValue( "crimes[0].year", "1989" );
+        content.setValue( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
+        content.setValue( "crimes[1].year", "1990" );
+
+        content.checkBreaksRequiredContract();
+
+        // exercise
+
     }
 }

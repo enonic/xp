@@ -1,7 +1,13 @@
 package com.enonic.wem.core.content.type.configitem;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.base.Preconditions;
+
+import com.enonic.wem.core.content.data.Entries;
+import com.enonic.wem.core.content.data.Entry;
 
 public class FieldSet
     extends ConfigItem
@@ -12,11 +18,9 @@ public class FieldSet
 
     private ConfigItems configItems = new ConfigItems();
 
-    private boolean required;
-
     private boolean immutable;
 
-    private Multiple multiple;
+    private final Occurrences occurrences = new Occurrences( 0, 1 );
 
     private String customText;
 
@@ -67,7 +71,7 @@ public class FieldSet
 
     public boolean isRequired()
     {
-        return required;
+        return occurrences.impliesRequired();
     }
 
     public boolean isImmutable()
@@ -77,12 +81,12 @@ public class FieldSet
 
     public boolean isMultiple()
     {
-        return multiple != null;
+        return occurrences.isMultiple();
     }
 
-    public Multiple getMultiple()
+    public Occurrences getOccurrences()
     {
-        return multiple;
+        return occurrences;
     }
 
     public String getCustomText()
@@ -124,16 +128,16 @@ public class FieldSet
     @Override
     public FieldSet copy()
     {
-        FieldSet fieldSet = (FieldSet) super.copy();
-        fieldSet.type = type;
-        fieldSet.label = label;
-        fieldSet.required = required;
-        fieldSet.immutable = immutable;
-        fieldSet.multiple = multiple;
-        fieldSet.customText = customText;
-        fieldSet.helpText = helpText;
-        fieldSet.configItems = configItems.copy();
-        return fieldSet;
+        FieldSet copy = (FieldSet) super.copy();
+        copy.type = type;
+        copy.label = label;
+        copy.immutable = immutable;
+        copy.occurrences.setMinOccurences( occurrences.getMinimum() );
+        copy.occurrences.setMaxOccurences( occurrences.getMaximum() );
+        copy.customText = customText;
+        copy.helpText = helpText;
+        copy.configItems = configItems.copy();
+        return copy;
     }
 
     public static Builder newBuilder()
@@ -151,62 +155,114 @@ public class FieldSet
         return configItems.getConfigItem( configItemPath );
     }
 
+    public boolean breaksRequiredContract( Entries entries )
+    {
+        Preconditions.checkNotNull( entries, "Given entries is null" );
+        //Preconditions.checkArgument( entries.getFieldSet() != null, "Given value have no field" );
+        //Preconditions.checkArgument( entries.getFieldSet().equals( this ), "Given value's field is not this" );
+
+        if ( !isRequired() )
+        {
+            return false;
+        }
+
+        if ( entries.size() == 0 )
+        {
+            return true;
+        }
+
+        for ( Entry entry : entries )
+        {
+            if ( entry.breaksRequiredContract() )
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public static class Builder
     {
-        private FieldSet fieldSet;
+        private FieldSetType type;
+
+        private String name;
+
+        private String label;
+
+        private boolean immutable;
+
+        private Occurrences occurrences = new Occurrences( 0, 1 );
+
+        private String customText;
+
+        private String helpText;
+
+        private List<ConfigItem> configItems = new ArrayList<ConfigItem>();
 
         private Builder()
         {
-            fieldSet = new FieldSet();
+
         }
 
         public Builder typeGroup()
         {
-            fieldSet.type = FieldSetType.GROUP;
+            type = FieldSetType.GROUP;
             return this;
         }
 
         public Builder typeVisual()
         {
-            fieldSet.type = FieldSetType.VISUAL;
+            type = FieldSetType.VISUAL;
             return this;
         }
 
-        public Builder type( FieldSetType type )
+        public Builder type( FieldSetType value )
         {
-            fieldSet.type = type;
+            type = value;
             return this;
         }
 
         public Builder name( String value )
         {
-            fieldSet.setName( value );
+            name = value;
             return this;
         }
 
         public Builder label( String value )
         {
-            Preconditions.checkNotNull( value, "label cannot be null" );
-
-            fieldSet.label = value;
-            return this;
-        }
-
-        public Builder required( boolean value )
-        {
-            fieldSet.required = value;
+            label = value;
             return this;
         }
 
         public Builder immutable( boolean value )
         {
-            fieldSet.immutable = value;
+            immutable = value;
             return this;
         }
 
-        public Builder multiple( Multiple multiple )
+        public Builder occurrences( Occurrences value )
         {
-            fieldSet.multiple = multiple;
+            occurrences = value;
+            return this;
+        }
+
+        public Builder occurrences( int minOccurrences, int maxOccurrences )
+        {
+            occurrences = new Occurrences( minOccurrences, maxOccurrences );
+            return this;
+        }
+
+        public Builder required( boolean value )
+        {
+            if ( value && !occurrences.impliesRequired() )
+            {
+                occurrences.setMinOccurences( 1 );
+            }
+            else if ( !value && occurrences.impliesRequired() )
+            {
+                occurrences.setMinOccurences( 0 );
+            }
             return this;
         }
 
@@ -214,44 +270,49 @@ public class FieldSet
         {
             if ( value )
             {
-                fieldSet.multiple = new Multiple( 0, 0 );
+                occurrences.setMaxOccurences( 0 );
             }
             else
             {
-                fieldSet.multiple = null;
+                occurrences.setMaxOccurences( 1 );
             }
-            return this;
-        }
-
-        public Builder multiple( int minEntries, int maxEntries )
-        {
-            Preconditions.checkArgument( minEntries >= 0 );
-            Preconditions.checkArgument( maxEntries >= 0 );
-
-            fieldSet.multiple = new Multiple( minEntries, maxEntries );
             return this;
         }
 
         public Builder customText( String value )
         {
-            fieldSet.customText = value;
+            customText = value;
             return this;
         }
 
         public Builder helpText( String value )
         {
-            fieldSet.helpText = value;
+            helpText = value;
             return this;
         }
 
         public Builder addConfigItem( ConfigItem value )
         {
-            fieldSet.addConfigItem( value );
+            configItems.add( value );
             return this;
         }
 
         public FieldSet build()
         {
+            FieldSet fieldSet = new FieldSet();
+            fieldSet.setName( name );
+            fieldSet.type = type;
+            fieldSet.label = label;
+            fieldSet.immutable = immutable;
+            fieldSet.occurrences.setMinOccurences( occurrences.getMinimum() );
+            fieldSet.occurrences.setMaxOccurences( occurrences.getMaximum() );
+            fieldSet.customText = customText;
+            fieldSet.helpText = helpText;
+            for ( ConfigItem configItem : configItems )
+            {
+                fieldSet.addConfigItem( configItem );
+            }
+
             Preconditions.checkNotNull( fieldSet.type, "a type for the FieldSet is required" );
             Preconditions.checkNotNull( fieldSet.getName(), "a name for the FieldSet is required" );
             fieldSet.setPath( new ConfigItemPath( fieldSet.getName() ) );

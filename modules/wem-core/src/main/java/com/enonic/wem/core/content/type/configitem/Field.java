@@ -14,14 +14,9 @@ public class Field
 
     private String label;
 
-    private boolean required;
-
     private boolean immutable;
 
-    /**
-     * If set, the field is multiple. Otherwise it is not.
-     */
-    private Multiple multiple;
+    private final Occurrences occurrences = new Occurrences( 0, 1 );
 
     private boolean indexed;
 
@@ -50,7 +45,7 @@ public class Field
 
     public boolean isRequired()
     {
-        return required;
+        return occurrences.impliesRequired();
     }
 
     public boolean isImmutable()
@@ -58,14 +53,14 @@ public class Field
         return immutable;
     }
 
-    boolean isMultiple()
+    public boolean isMultiple()
     {
-        return multiple != null;
+        return occurrences.isMultiple();
     }
 
-    public Multiple getMultiple()
+    public Occurrences getOccurrences()
     {
-        return multiple;
+        return occurrences;
     }
 
     public boolean isIndexed()
@@ -95,10 +90,11 @@ public class Field
 
     public boolean breaksRequiredContract( final Value value )
     {
+        Preconditions.checkNotNull( value, "Given value is null" );
         Preconditions.checkArgument( value.getField() != null, "Given value have no field" );
         Preconditions.checkArgument( value.getField().equals( this ), "Given value's field is not this" );
 
-        if ( !required )
+        if ( !isRequired() )
         {
             return false;
         }
@@ -117,9 +113,9 @@ public class Field
         final Field copy = (Field) super.copy();
         copy.type = type;
         copy.label = label;
-        copy.required = required;
         copy.immutable = immutable;
-        copy.multiple = multiple;
+        copy.occurrences.setMinOccurences( occurrences.getMinimum() );
+        copy.occurrences.setMaxOccurences( occurrences.getMaximum() );
         copy.indexed = indexed;
         copy.customText = customText;
         copy.validationRegexp = validationRegexp;
@@ -172,21 +168,36 @@ public class Field
             return this;
         }
 
-        public Builder required( boolean value )
-        {
-            field.required = value;
-            return this;
-        }
-
         public Builder immutable( boolean value )
         {
             field.immutable = value;
             return this;
         }
 
-        public Builder multiple( Multiple multiple )
+        public Builder occurrences( Occurrences occurrences )
         {
-            this.field.multiple = multiple;
+            field.occurrences.setMinOccurences( occurrences.getMinimum() );
+            field.occurrences.setMaxOccurences( occurrences.getMaximum() );
+            return this;
+        }
+
+        public Builder occurrences( int minOccurrences, int maxOccurrences )
+        {
+            field.occurrences.setMinOccurences( minOccurrences );
+            field.occurrences.setMaxOccurences( maxOccurrences );
+            return this;
+        }
+
+        public Builder required( boolean value )
+        {
+            if ( value && !field.occurrences.impliesRequired() )
+            {
+                field.occurrences.setMinOccurences( 1 );
+            }
+            else if ( !value && field.occurrences.impliesRequired() )
+            {
+                field.occurrences.setMinOccurences( 0 );
+            }
             return this;
         }
 
@@ -194,21 +205,12 @@ public class Field
         {
             if ( value )
             {
-                field.multiple = new Multiple( 0, 0 );
+                field.occurrences.setMaxOccurences( 0 );
             }
             else
             {
-                field.multiple = null;
+                field.occurrences.setMaxOccurences( 1 );
             }
-            return this;
-        }
-
-        public Builder multiple( int minEntries, int maxEntries )
-        {
-            Preconditions.checkArgument( minEntries >= 0 );
-            Preconditions.checkArgument( maxEntries >= 0 );
-
-            field.multiple = new Multiple( minEntries, maxEntries );
             return this;
         }
 

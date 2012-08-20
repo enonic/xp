@@ -45,7 +45,7 @@ public class ContentTypeSerializerJsonTest
         FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).build();
         configItems.addConfigItem( fieldSet );
         fieldSet.addField( newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( newBuilder().name( "hairColour" ).multiple( 1, 3 ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( newBuilder().name( "hairColour" ).occurrences( 1, 3 ).type( FieldTypes.textline ).build() );
 
         ContentTypeSerializerJson generator = new ContentTypeSerializerJson();
         String json = generator.toJson( contentType );
@@ -61,7 +61,7 @@ public class ContentTypeSerializerJsonTest
         FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).label( "Personalia" ).build();
         configItems.addConfigItem( fieldSet );
         fieldSet.addField( newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( newBuilder().name( "hairColour" ).multiple( 1, 3 ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( newBuilder().name( "hairColour" ).occurrences( 1, 3 ).type( FieldTypes.textline ).build() );
 
         ContentType contentType = new ContentType();
         contentType.setConfigItems( configItems );
@@ -93,7 +93,7 @@ public class ContentTypeSerializerJsonTest
         FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).label( "Personalia" ).build();
         configItems.addConfigItem( fieldSet );
         fieldSet.addField( newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( newBuilder().name( "hairColour" ).multiple( 1, 3 ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( newBuilder().name( "hairColour" ).occurrences( 1, 3 ).type( FieldTypes.textline ).build() );
 
         String json = ContentTypeSerializerJson.toJson( contentType );
 

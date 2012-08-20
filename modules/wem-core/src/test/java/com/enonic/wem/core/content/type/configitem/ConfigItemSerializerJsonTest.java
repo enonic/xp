@@ -50,10 +50,11 @@ public class ConfigItemSerializerJsonTest
         builder.indexed( true );
         builder.helpText( null );
         builder.customText( "Custom text" );
-        builder.multiple( 1, 100 );
+        builder.occurrences( 1, 100 );
         Field field = builder.build();
 
         String json = fieldToJson( field );
+        System.out.println( json );
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
@@ -69,7 +70,7 @@ public class ConfigItemSerializerJsonTest
         assertEquals( null, parsedField.getLabel() );
         assertEquals( null, parsedField.getHelpText() );
         assertEquals( "Custom text", parsedField.getCustomText() );
-        assertEquals( new Multiple( 1, 100 ), parsedField.getMultiple() );
+        assertEquals( new Occurrences( 1, 100 ), parsedField.getOccurrences() );
         assertEquals( FieldTypes.textline, parsedField.getFieldType() );
         assertNull( parsedField.getFieldTypeConfig() );
     }
@@ -161,7 +162,7 @@ public class ConfigItemSerializerJsonTest
         builder.label( "My sub type" );
         builder.immutable( true );
         builder.required( true );
-        builder.multiple( 1, 100 );
+        builder.occurrences( 1, 100 );
         builder.customText( "Custom text" );
         builder.helpText( "Help text" );
         FieldSet fieldSet = builder.build();

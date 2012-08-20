@@ -2,6 +2,7 @@ package com.enonic.wem.core.content.data;
 
 import org.elasticsearch.common.base.Preconditions;
 
+import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.valuetype.BasalValueType;
@@ -56,21 +57,24 @@ public class Value
         return basalValueType;
     }
 
+    @Override
+    public void checkBreaksRequiredContract()
+    {
+        if ( breaksRequiredContract() )
+        {
+            throw new BreaksRequiredContractException( this );
+        }
+    }
+
     public boolean breaksRequiredContract()
     {
-        if ( field == null )
-        {
-            return false;
-        }
-
-        return field.breaksRequiredContract( this );
+        return field != null && field.breaksRequiredContract( this );
     }
 
     public boolean isValid()
     {
         return field == null || field.isValidAccordingToFieldTypeConfig( this );
     }
-
 
     @Override
     public String toString()
