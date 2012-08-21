@@ -7,10 +7,10 @@
         this.init();
     };
 
-    // Inherits ui.Base
+    // Inherits ui.Button
     insertButton.prototype = new AdminLiveEdit.ui.Button();
 
-    // Fix constructor as it now is Base
+    // Fix constructor as it now is Button
     insertButton.constructor = insertButton;
 
     // Shorthand ref to the prototype

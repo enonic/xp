@@ -1,6 +1,8 @@
 (function () {
+    'use strict';
+
     var page = AdminLiveEdit.components.Page = function () {
-        this.selector = '[data-live-edit-type=page]';
+        this.cssSelector = '[data-live-edit-type=page]';
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();
         this.attachClickEvent();

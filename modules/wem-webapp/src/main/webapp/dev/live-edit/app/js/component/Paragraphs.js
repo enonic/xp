@@ -1,6 +1,8 @@
 (function () {
+    'use strict';
+
     var paragraphs = AdminLiveEdit.components.Paragraphs = function () {
-        this.selector = '[data-live-edit-type=paragraph]';
+        this.cssSelector = '[data-live-edit-type=paragraph]';
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();
         this.attachClickEvent();

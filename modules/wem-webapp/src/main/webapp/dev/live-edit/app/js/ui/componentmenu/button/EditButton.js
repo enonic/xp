@@ -7,7 +7,7 @@
         this.init();
     };
 
-    // Inherits ui.Base
+    // Inherits ui.Button
     editButton.prototype = new AdminLiveEdit.ui.Button();
 
     // Fix constructor as it now is Button

@@ -1,9 +1,11 @@
 (function () {
+    'use strict';
+
     // Namespaces
     AdminLiveEdit.components = {};
 
     AdminLiveEdit.components.Base = function () {
-        this.selector = '';
+        this.cssSelector = '';
     };
 
 
@@ -11,7 +13,7 @@
         attachMouseOverEvent: function () {
             var self = this;
 
-            $liveedit(document).on('mouseover', this.selector, function (event) {
+            $liveedit(document).on('mouseover', this.cssSelector, function (event) {
                 var $component = $liveedit(this);
 
                 var targetIsUiComponent = $liveedit(event.target).is('[id*=live-edit-ui-cmp]') ||
@@ -37,7 +39,7 @@
 
 
         attachClickEvent: function () {
-            $liveedit(document).on('click touchstart', this.selector, function (event) {
+            $liveedit(document).on('click touchstart', this.cssSelector, function (event) {
                 event.stopPropagation();
                 event.preventDefault();
                 var $closestComponentFromTarget = $liveedit(event.target).closest('[data-live-edit-type]');
@@ -58,7 +60,7 @@
 
 
         getAll: function () {
-            return $liveedit(this.selector);
+            return $liveedit(this.cssSelector);
         }
 
     };

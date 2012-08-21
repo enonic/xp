@@ -1,6 +1,8 @@
 (function () {
+    'use strict';
+
     var windows = AdminLiveEdit.components.Windows = function () {
-        this.selector = '[data-live-edit-type=window]';
+        this.cssSelector = '[data-live-edit-type=window]';
         this.renderEmptyPlaceholders();
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();

@@ -1,6 +1,8 @@
 (function () {
+    'use strict';
+
     var regions = AdminLiveEdit.components.Regions = function () {
-        this.selector = '[data-live-edit-type=region]';
+        this.cssSelector = '[data-live-edit-type=region]';
         this.renderEmptyPlaceholders();
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();
