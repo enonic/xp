@@ -36,7 +36,7 @@
             cursor = 'move';
             break;
         case 'paragraph':
-            cursor = 'url(../resources/images/pencil_16x16.png), default';
+            cursor = 'url(../app/images/pencil_16x16.png), default';
             break;
         default:
             cursor = 'default';

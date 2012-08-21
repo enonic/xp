@@ -77,23 +77,23 @@ AdminLiveEdit.Util = (function () {
             var icon = '';
             switch (componentType) {
             case 'region':
-                icon = '../resources/images/layout_vertical.png';
+                icon = '../app/images/layout_vertical.png';
                 break;
             case 'window':
-                icon = '../resources/images/component_blue.png';
+                icon = '../app/images/component_blue.png';
                 break;
             case 'content':
-                icon = '../resources/images/data_blue.png';
+                icon = '../app/images/data_blue.png';
                 break;
             case 'paragraph':
-                icon = '../resources/images/text_rich_marked.png';
+                icon = '../app/images/text_rich_marked.png';
                 break;
             case 'page':
-                icon = '../resources/images/document_plain_blue.png';
+                icon = '../app/images/document_plain_blue.png';
                 break;
             default:
                 // TODO: Use a fallback icon?
-                icon = '../resources/images/component_blue.png';
+                icon = '../app/images/component_blue.png';
             }
             return icon;
         },
