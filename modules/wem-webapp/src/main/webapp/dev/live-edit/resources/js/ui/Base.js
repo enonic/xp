@@ -35,7 +35,18 @@
 
         getEl: function () {
             return this.$element;
+        },
+
+
+        setCssPosition: function($component) {
+            var componentInfo = AdminLiveEdit.Util.getComponentInfo($component);
+            if (componentInfo.tagName === 'body' && componentInfo.type === 'page') {
+                this.getEl().css('position', 'fixed');
+            } else {
+                this.getEl().css('position', 'absolute');
+            }
         }
+
     };
 
 }());

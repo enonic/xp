@@ -175,6 +175,7 @@ svg.live-edit-selected-border {
     z-index: 1000000;
 }
 
+
 svg.live-edit-selected-border rect {
     stroke-width: 2;
     fill-opacity: 0;
@@ -276,7 +277,6 @@ svg.live-edit-selected-border rect {
     z-index: 1000050;
     background-color: #20252A;
     padding: 1px 1px 0 1px;
-    /*-moz-transition: all .2s ease-in-out;*/
 }
 
 

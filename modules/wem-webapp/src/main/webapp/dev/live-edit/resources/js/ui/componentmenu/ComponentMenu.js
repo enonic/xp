@@ -46,7 +46,15 @@
         });
 
         $liveedit.subscribe('/ui/highlighter/on-highlight', function ($component) {
+            var componentInfo = util.getComponentInfo($component);
+            if (componentInfo.tagName === 'body' && componentInfo.type === 'page') {
+                return;
+            }
             self.show.call(self, $component);
+        });
+
+        $liveedit.subscribe('/ui/highlighter/on-hide', function ($component) {
+            self.hide.call(self);
         });
 
         $liveedit.subscribe('/ui/componentselector/on-deselect', function () {
@@ -56,7 +64,6 @@
         $liveedit.subscribe('/ui/dragdrop/on-sortstart', function () {
             self.fadeOutAndHide.call(self);
         });
-
     };
 
 
@@ -89,7 +96,12 @@
 
 
     p.moveToComponent = function ($component) {
-        this.$currentComponent = $component;
+        var self = this;
+
+        self.$currentComponent = $component;
+
+        self.setCssPosition($component);
+
         var componentBoxModel = util.getBoxModel($component);
         var offsetLeft = 2,
             menuTopPos = Math.round(componentBoxModel.top),
@@ -97,10 +109,10 @@
             documentSize = util.getDocumentSize();
 
         if (menuLeftPos >= (documentSize.width - offsetLeft)) {
-            menuLeftPos = menuLeftPos - this.getEl().width();
+            menuLeftPos = menuLeftPos - self.getEl().width();
         }
 
-        this.getEl().css({
+        self.getEl().css({
             top: menuTopPos,
             left: menuLeftPos
         });

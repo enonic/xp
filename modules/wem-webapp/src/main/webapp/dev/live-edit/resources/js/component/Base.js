@@ -33,7 +33,7 @@
             $liveedit(document).on('mouseout', function (event) {
                 // var $body = $liveedit('body');
                 // $body.css('cursor', '');
-                // $liveedit.publish('/ui/highlighter/on-hide');
+                $liveedit.publish('/ui/highlighter/on-hide');
             });
         },
 

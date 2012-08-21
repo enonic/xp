@@ -23,7 +23,7 @@
     p.registerSubscribers = function () {
         var self = this;
         $liveedit.subscribe('/ui/componentselector/on-select', function ($component) {
-            self.showAt.call(self, $component);
+            self.show.call(self, $component);
         });
 
         $liveedit.subscribe('/ui/componentselector/on-deselect', function ($component) {
@@ -42,6 +42,9 @@
         $liveedit('body').append('<div class="live-edit-shader" id="live-edit-shader-east"/>');
         $liveedit('body').append('<div class="live-edit-shader" id="live-edit-shader-south"/>');
         $liveedit('body').append('<div class="live-edit-shader" id="live-edit-shader-west"/>');
+
+        $liveedit('body').append('<div class="live-edit-shader" id="live-edit-page-shader"/>');
+
         $liveedit('.live-edit-shader').click(function (event) {
             event.stopPropagation();
             $liveedit.publish('/ui/componentselector/on-deselect');
@@ -49,7 +52,34 @@
     };
 
 
-    p.showAt = function ($component) {
+    p.show = function ($component) {
+        var self = this;
+
+        self.hide();
+        var componentInfo = util.getComponentInfo($component);
+        if (componentInfo.type === 'page' && componentInfo.tagName === 'body') {
+            self.showForPageBody();
+        } else {
+            self.showForComponent($component);
+        }
+    };
+
+
+    p.showForPageBody = function () {
+        var documentSize = util.getDocumentSize(),
+            docWidth = documentSize.width,
+            docHeight = documentSize.height;
+
+        $liveedit('#live-edit-page-shader').css({
+            top: 0,
+            left: 0,
+            width: docWidth,
+            height: docHeight
+        });
+    };
+
+
+    p.showForComponent = function ($component) {
         var documentSize = util.getDocumentSize(),
             docWidth = documentSize.width,
             docHeight = documentSize.height;

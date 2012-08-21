@@ -109,7 +109,8 @@ AdminLiveEdit.Util = (function () {
             return {
                 type: t.getComponentType($component),
                 key: t.getComponentKey($component),
-                name: t.getComponentName($component)
+                name: t.getComponentName($component),
+                tagName: t.getTagNameForComponent($component)
             };
         },
 

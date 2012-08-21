@@ -24,6 +24,7 @@
 
     p.registerSubscribers = function () {
         var self = this;
+
         $liveedit.subscribe('/ui/componentselector/on-select', function ($component) {
             self.show.call(self, $component);
         });
@@ -53,26 +54,29 @@
 
 
     p.show = function ($component) {
+        var self = this;
+
         var componentName = util.getComponentName($component);
         var componentType = util.getComponentType($component);
         var componentTagName = util.getTagNameForComponent($component);
 
         // Set text and icon first so position is calculated correctly.
-        this.setText(componentName);
-        this.setIcon(componentType);
+        self.setText(componentName);
+        self.setIcon(componentType);
 
         var componentBoxModel = util.getBoxModel($component);
-        var leftPos = componentBoxModel.left + (componentBoxModel.width / 2) - (this.getEl().width() / 2);
+        var leftPos = componentBoxModel.left + (componentBoxModel.width / 2) - (self.getEl().width() / 2);
         var topPos = componentBoxModel.top - 38;
 
         if (componentType === 'page' && componentTagName === 'body') {
             topPos = 0;
-            this.hideArrows(true);
+            self.hideArrows(true);
         } else {
-            this.hideArrows(false);
+            self.hideArrows(false);
         }
 
-        this.getEl().css({
+        self.setCssPosition($component);
+        self.getEl().css({
             top: topPos,
             left: leftPos
         });
