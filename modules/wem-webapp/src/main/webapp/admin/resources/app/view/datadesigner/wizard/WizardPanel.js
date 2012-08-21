@@ -4,7 +4,6 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
     requires: [
         'Admin.view.WizardPanel',
         'Admin.view.datadesigner.wizard.ContentTypePanel',
-        'Admin.view.datadesigner.wizard.GeneralPanel',
         'Admin.view.datadesigner.wizard.ConfigPanel',
         'Admin.view.SummaryTreePanel',
         'Admin.plugin.fileupload.PhotoUploadButton'
@@ -16,31 +15,21 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
         border: false
     },
 
+    EMPTY_DISPLAY_NAME_TEXT: 'Display Name',
 
     initComponent: function () {
         var me = this;
         var steps = me.getSteps();
         var isNew = this.isNewContentType();
-        /*
-         var displayNameValue = isNew ? 'Display name' : me.modelData.name;
-         var steps = me.getSteps();
-         var groupWizardHeader = Ext.create( 'Ext.container.Container', {
-         itemId: 'wizardHeader',
-         autoHeight: true,
-         cls: 'admin-wizard-header-container',
-         border: false,
-         tpl: new Ext.XTemplate(Templates.account.groupWizardHeader),
-         data: {
-         displayName: displayNameValue
-         }
-         } );
-         */
 
-        /*
-         me.tbar = Ext.createByAlias( 'widget.dataDesignerWizardToolbar', {
-         isNew: isNew
-         } );
-         */
+        var displayNameValue = 'Display Name';
+        if (me.modelData) {
+            displayNameValue = me.modelData.displayName || me.modelData.name;
+
+        }
+        me.headerData = {
+            displayName: displayNameValue
+        };
 
         me.items = [
             {
@@ -100,6 +89,21 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
                 },
                 items: [
                     {
+                        xtype: 'container',
+                        itemId: 'wizardHeader',
+                        styleHtmlContent: true,
+                        autoHeight: true,
+                        cls: 'admin-wizard-header-container',
+                        listeners: {
+                            afterrender: function (header) {
+                                me.headerRendered = true;
+                                me.bindDisplayNameEvents();
+                            }
+                        },
+                        tpl: new Ext.XTemplate(Templates.datadesigner.wizardHeader),
+                        data: me.headerData
+                    },
+                    {
                         xtype: 'wizardPanel',
                         showControls: true,
                         isNew: isNew,
@@ -110,11 +114,6 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
         ];
 
         this.callParent(arguments);
-
-        this.on('afterrender', function (groupWizard) {
-            //me.removeEmptySteps( groupWizard.getWizardPanel() );
-        });
-
     },
 
 
@@ -124,12 +123,13 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
         var chooseTypeStep = {
             stepTitle: 'Content Type',
             modelData: me.modelData,
-            xtype: 'dataDesignerWizardContentTypePanel'
-        };
-        var nameStep = {
-            stepTitle: "General",
-            modelData: me.modelData,
-            xtype: 'dataDesignerWizardGeneralPanel'
+            xtype: 'dataDesignerWizardContentTypePanel',
+            listeners: {
+                afterrender: function (panel) {
+                    me.panelRendered = true;
+                    me.bindDisplayNameEvents();
+                }
+            }
         };
         var configStep = {
             stepTitle: "Config",
@@ -142,7 +142,7 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
             xtype: 'summaryTreePanel'
         };
 
-        return [chooseTypeStep, nameStep, configStep, summaryStep];
+        return [chooseTypeStep, configStep, summaryStep];
     },
 
 
@@ -167,6 +167,82 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
 
     getData: function () {
         return this.getWizardPanel().getData();
+    },
+
+
+    bindDisplayNameEvents: function () {
+        if (this.headerRendered && this.panelRendered) {
+
+            var displayName = this.el.down('input.admin-display-name', false);
+            if (displayName) {
+                displayName.on('focus', this.onDisplayNameFocused, this);
+                displayName.on('blur', this.onDisplayNameBlur, this);
+            }
+
+            var name = this.down('dataDesignerWizardContentTypePanel #name');
+            if (name) {
+                name.on('change', this.onNameChanged, this);
+            }
+
+            this.el.on('click', this.toggleDisplayNameField, this);
+        }
+    },
+
+    onNameChanged: function (field, newVal, oldVal, opts) {
+        if (!this.headerEdited) {
+            this.setDisplayName(newVal, false);
+        }
+    },
+
+    toggleDisplayNameField: function (event, target, opts) {
+        var clickedElement = new Ext.Element(target);
+        var displayName;
+        if (clickedElement.hasCls('admin-display-name')) {
+            displayName = clickedElement;
+            displayName.dom.removeAttribute('readonly');
+            displayName.addCls('admin-edited-field');
+        } else {
+            displayName = this.el.down('input.admin-display-name', false);
+            displayName.set({readonly: true});
+            var value = Ext.String.trim(displayName.getValue());
+            if (value === '' || value === this.EMPTY_DISPLAY_NAME_TEXT) {
+                displayName.removeCls('admin-edited-field');
+            }
+        }
+    },
+
+    onDisplayNameFocused: function (event, element) {
+        if (Ext.String.trim(element.value) === this.EMPTY_DISPLAY_NAME_TEXT) {
+            element.value = '';
+        }
+    },
+
+    onDisplayNameBlur: function (event, element, opts) {
+        this.setDisplayName(element.value, true);
+    },
+
+    setDisplayName: function (text, updateEdited) {
+        text = this.processDisplayName(text);
+        var displayName = this.el.down('input.admin-display-name', false);
+        if (Ext.isEmpty(text)) {
+            displayName.dom.value = this.EMPTY_DISPLAY_NAME_TEXT;
+            if (updateEdited) {
+                this.headerEdited = false;
+            }
+        } else {
+            displayName.dom.value = text;
+            Ext.apply(this.headerData, {
+                displayName: text
+            });
+            if (updateEdited) {
+                this.headerEdited = true;
+            }
+        }
+    },
+
+    processDisplayName: function (string) {
+        string = Ext.String.trim(string);
+        return string.length > 0 ? Ext.String.capitalize(string) : "";
     }
 
 });

@@ -28,6 +28,24 @@ Ext.define('Admin.view.datadesigner.wizard.ContentTypePanel', {
                         valueField: 'type',
                         name: 'contentType',
                         disabled: Ext.isDefined(contentTypeValue)
+                    },
+                    {
+                        xtype: 'textfield',
+                        fieldLabel: 'Name <span style="color: red;">*</span>',
+                        allowBlank: false,
+                        value: me.modelData ? me.modelData.name : '',
+                        name: 'name',
+                        itemId: 'name',
+                        enableKeyEvents: true
+                    },
+                    {
+                        xtype: 'textfield',
+                        fieldLabel: 'Module <span style="color: red;">*</span>',
+                        allowBlank: false,
+                        value: me.modelData ? me.modelData.module : '',
+                        name: 'module',
+                        itemId: 'module',
+                        enableKeyEvents: true
                     }
                 ]
             }
@@ -52,6 +70,15 @@ Ext.define('Admin.view.datadesigner.wizard.ContentTypePanel', {
     },
 
     getData: function () {
-        return this.getForm().getFieldValues();
+        var form = this.getForm();
+        var type = form.findField('contentType').getValue();
+        var name = form.findField('name').getValue();
+        var module = form.findField('module').getValue();
+
+        return {
+            'type': type,
+            'name': name,
+            'module': module
+        };
     }
 });
