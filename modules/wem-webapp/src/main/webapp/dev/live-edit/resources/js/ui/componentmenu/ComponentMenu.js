@@ -48,13 +48,13 @@
         $liveedit.subscribe('/component/on-mouse-over', function ($component) {
             var componentInfo = util.getComponentInfo($component);
             if (componentInfo.tagName === 'body' && componentInfo.type === 'page') {
+                self.hide.call(self);
                 return;
             }
             self.show.call(self, $component);
         });
 
         $liveedit.subscribe('/component/on-mouse-out', function ($component) {
-            self.hide.call(self);
         });
 
         $liveedit.subscribe('/component/on-deselect', function () {

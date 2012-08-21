@@ -30,10 +30,8 @@
 
 
         attachMouseOutEvent: function () {
-            $liveedit(document).on('mouseout', function (event) {
-                // var $body = $liveedit('body');
-                // $body.css('cursor', '');
-                // $liveedit.publish('/component/on-mouse-out');
+            $liveedit(document).on('mouseout', function () {
+                $liveedit.publish('/component/on-mouse-out');
             });
         },
 

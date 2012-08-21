@@ -32,10 +32,6 @@
             self.hide.call(self);
         });
 
-        $liveedit.subscribe('/component/on-mouse-out', function () {
-            self.hide.call(self);
-        });
-
         $liveedit.subscribe('/ui/dragdrop/on-sortstart', function () {
             self.hide.call(self);
         });
