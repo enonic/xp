@@ -11,7 +11,7 @@ import com.enonic.wem.core.content.JsonParsingException;
 
 public class ConfigItemsSerializerJson
 {
-    private ConfigItemSerializerJson configItemSerializer = new ConfigItemSerializerJson();
+    private ConfigItemSerializerJson configItemSerializer = new ConfigItemSerializerJson( this );
 
     public static void generate( ConfigItems configItems, JsonGenerator g )
         throws IOException
@@ -25,7 +25,6 @@ public class ConfigItemsSerializerJson
     }
 
     public ConfigItems parse( final JsonNode configItemsNode )
-        throws IOException
     {
         final ConfigItems configItems = new ConfigItems();
         final Iterator<JsonNode> configItemIt = configItemsNode.getElements();

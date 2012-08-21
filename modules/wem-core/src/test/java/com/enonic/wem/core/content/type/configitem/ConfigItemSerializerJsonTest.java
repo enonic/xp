@@ -157,7 +157,6 @@ public class ConfigItemSerializerJsonTest
     {
         // setup
         FieldSet.Builder builder = FieldSet.newBuilder();
-        builder.typeGroup();
         builder.name( "mySubType" );
         builder.label( "My sub type" );
         builder.immutable( true );

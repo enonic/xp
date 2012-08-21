@@ -3,14 +3,19 @@ package com.enonic.wem.core.content.data;
 
 import org.junit.Test;
 
+import com.enonic.wem.core.content.Content;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
-import com.enonic.wem.core.content.type.configitem.FieldSetType;
+import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.content.type.configitem.fieldtype.RadioButtonsConfig;
 
+import static com.enonic.wem.core.content.type.configitem.Field.newField;
+import static com.enonic.wem.core.content.type.configitem.FieldSet.newBuilder;
+import static com.enonic.wem.core.content.type.configitem.FieldSet.newFieldSet;
+import static com.enonic.wem.core.content.type.configitem.VisualFieldSet.newVisualFieldSet;
 import static org.junit.Assert.*;
 
 public class ContentDataSerializerJsonTest
@@ -87,7 +92,7 @@ public class ContentDataSerializerJsonTest
         ConfigItems configItems = new ConfigItems();
         configItems.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
 
-        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).build();
+        FieldSet fieldSet = newBuilder().name( "personalia" ).build();
         configItems.addConfigItem( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
@@ -116,8 +121,7 @@ public class ContentDataSerializerJsonTest
         Field nameField = Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build();
         configItems.addConfigItem( nameField );
 
-        FieldSet fieldSet =
-            FieldSet.newBuilder().type( FieldSetType.GROUP ).name( "personalia" ).label( "Personalia" ).multiple( true ).build();
+        FieldSet fieldSet = newFieldSet().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
         configItems.addConfigItem( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
@@ -240,6 +244,34 @@ public class ContentDataSerializerJsonTest
         Value value2 = (Value) companyEntries.getEntry( "names[2]" );
         assertEquals( "company.names[2]", value2.getPath().toString() );
         assertEquals( "Alex", value2.getValue() );
+    }
+
+    @Test
+    public void visualFieldSet()
+    {
+        ContentType contentType = new ContentType();
+        contentType.setName( "test" );
+        contentType.addConfigItem( newField().name( "myField" ).type( FieldTypes.textline ).build() );
+        VisualFieldSet visualFieldSet =
+            newVisualFieldSet().label( "Personalia" ).add( newField().name( "eyeColour" ).type( FieldTypes.textline ).build() ).add(
+                newField().name( "hairColour" ).type( FieldTypes.textline ).build() ).build();
+        contentType.addConfigItem( visualFieldSet );
+
+        Content content = new Content();
+        content.setType( contentType );
+        content.setValue( "myField", "myValue" );
+        content.setValue( "eyeColour", "Blue" );
+        content.setValue( "hairColour", "Blonde" );
+
+        String json = ContentDataSerializerJson.toJson( content.getData() );
+        System.out.println( json );
+
+        // exercise
+        ContentDataSerializerJson serializer = new ContentDataSerializerJson();
+        ContentData parsedContentData = serializer.parse( json, null );
+        assertEquals( "myValue", parsedContentData.getValueAsString( new EntryPath( "myField" ) ) );
+        assertEquals( "Blue", parsedContentData.getValueAsString( new EntryPath( "eyeColour" ) ) );
+        assertEquals( "Blonde", parsedContentData.getValueAsString( new EntryPath( "hairColour" ) ) );
     }
 
 }

@@ -10,6 +10,7 @@ import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
 import com.enonic.wem.core.content.type.configitem.FieldTemplate;
 import com.enonic.wem.core.content.type.configitem.MockTemplateReferenceFetcher;
+import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.DropdownConfig;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.content.type.valuetype.BasalValueType;
@@ -20,6 +21,7 @@ import static com.enonic.wem.core.content.type.configitem.FieldSet.newFieldSet;
 import static com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder.newFieldSetTemplate;
 import static com.enonic.wem.core.content.type.configitem.FieldTemplateBuilder.newFieldTemplate;
 import static com.enonic.wem.core.content.type.configitem.TemplateReference.newTemplateReference;
+import static com.enonic.wem.core.content.type.configitem.VisualFieldSet.newVisualFieldSet;
 import static com.enonic.wem.core.module.Module.newModule;
 import static org.junit.Assert.*;
 
@@ -61,10 +63,10 @@ public class ContentTest
         // exercise
         ConfigItems configItems = new ConfigItems();
         configItems.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
-        configItems.addConfigItem( FieldSet.newBuilder().typeGroup().name( "personalia" ).multiple( false ).build() );
+        configItems.addConfigItem( FieldSet.newBuilder().name( "personalia" ).multiple( false ).build() );
         configItems.getFieldSet( "personalia" ).addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         configItems.getFieldSet( "personalia" ).addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
-        configItems.addConfigItem( FieldSet.newBuilder().typeGroup().name( "crimes" ).multiple( true ).build() );
+        configItems.addConfigItem( FieldSet.newBuilder().name( "crimes" ).multiple( true ).build() );
         configItems.getFieldSet( "crimes" ).addField( Field.newBuilder().name( "description" ).type( FieldTypes.textline ).build() );
         configItems.getFieldSet( "crimes" ).addField( Field.newBuilder().name( "year" ).type( FieldTypes.textline ).build() );
         ContentType type = new ContentType();
@@ -91,10 +93,9 @@ public class ContentTest
                 DropdownConfig.newBuilder().addOption( "Norway", "NO" ).build() ).build() ).build();
 
         FieldSetTemplate addressTemplate = newFieldSetTemplate().module( module ).fieldSet(
-            newFieldSet().typeGroup().name( "address" ).addConfigItem(
-                newField().name( "street" ).type( FieldTypes.textline ).build() ).addConfigItem(
-                newTemplateReference( postalCodeTemplate ).name( "postalCode" ).build() ).addConfigItem(
-                newField().name( "postalPlace" ).type( FieldTypes.textline ).build() ).addConfigItem(
+            newFieldSet().name( "address" ).add( newField().name( "street" ).type( FieldTypes.textline ).build() ).add(
+                newTemplateReference( postalCodeTemplate ).name( "postalCode" ).build() ).add(
+                newField().name( "postalPlace" ).type( FieldTypes.textline ).build() ).add(
                 newTemplateReference( countryTemplate ).name( "country" ).build() ).build() ).build();
 
         ContentType contentType = new ContentType();
@@ -129,11 +130,10 @@ public class ContentTest
         Module module = newModule().name( "myModule" ).build();
 
         FieldSetTemplate addressTemplate = newFieldSetTemplate().module( module ).fieldSet(
-            newFieldSet().typeGroup().name( "address" ).multiple( true ).addConfigItem(
-                newField().type( FieldTypes.textline ).name( "label" ).build() ).addConfigItem(
-                newField().type( FieldTypes.textline ).name( "street" ).build() ).addConfigItem(
-                newField().type( FieldTypes.textline ).name( "postalCode" ).build() ).addConfigItem(
-                newField().type( FieldTypes.textline ).name( "postalPlace" ).build() ).addConfigItem(
+            newFieldSet().name( "address" ).multiple( true ).add( newField().type( FieldTypes.textline ).name( "label" ).build() ).add(
+                newField().type( FieldTypes.textline ).name( "street" ).build() ).add(
+                newField().type( FieldTypes.textline ).name( "postalCode" ).build() ).add(
+                newField().type( FieldTypes.textline ).name( "postalPlace" ).build() ).add(
                 newField().type( FieldTypes.textline ).name( "country" ).build() ).build() ).build();
 
         ContentType contentType = new ContentType();
@@ -200,12 +200,12 @@ public class ContentTest
         ContentType contentType = new ContentType();
         contentType.addConfigItem( newField().name( "name" ).type( FieldTypes.textline ).build() );
 
-        FieldSet personaliaFieldSet = newFieldSet().typeGroup().name( "personalia" ).multiple( false ).required( true ).build();
+        FieldSet personaliaFieldSet = newFieldSet().name( "personalia" ).multiple( false ).required( true ).build();
         personaliaFieldSet.addField( newField().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         personaliaFieldSet.addField( newField().name( "hairColour" ).type( FieldTypes.textline ).build() );
         contentType.addConfigItem( personaliaFieldSet );
 
-        FieldSet crimesFieldSet = newFieldSet().typeGroup().name( "crimes" ).multiple( true ).build();
+        FieldSet crimesFieldSet = newFieldSet().name( "crimes" ).multiple( true ).build();
         contentType.addConfigItem( crimesFieldSet );
         crimesFieldSet.addField( newField().name( "description" ).type( FieldTypes.textline ).build() );
         crimesFieldSet.addField( newField().name( "year" ).type( FieldTypes.textline ).build() );
@@ -224,6 +224,29 @@ public class ContentTest
         content.checkBreaksRequiredContract();
 
         // exercise
+        // TODO
+    }
 
+    @Test
+    public void visualFieldSet()
+    {
+        // setup
+        ContentType contentType = new ContentType();
+        contentType.setName( "test" );
+        VisualFieldSet visualFieldSet =
+            newVisualFieldSet().label( "Personalia" ).add( newField().name( "eyeColour" ).type( FieldTypes.textline ).build() ).add(
+                newField().name( "hairColour" ).type( FieldTypes.textline ).build() ).build();
+        contentType.addConfigItem( visualFieldSet );
+
+        Content content = new Content();
+        content.setType( contentType );
+
+        // exercise
+        content.setValue( "eyeColour", "Blue" );
+        content.setValue( "hairColour", "Blonde" );
+
+        // verify
+        assertEquals( "Blue", content.getValueAsString( "eyeColour" ) );
+        assertEquals( "Blonde", content.getValueAsString( "hairColour" ) );
     }
 }

@@ -16,7 +16,7 @@ public class EntriesTest
     public void setValue_when_given_path_does_not_exists()
     {
         ConfigItems configItems = new ConfigItems();
-        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).multiple( true ).build();
+        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).multiple( true ).build();
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         configItems.addConfigItem( fieldSet );
 
@@ -36,7 +36,7 @@ public class EntriesTest
     @Test
     public void getValue_when_having_sub_type()
     {
-        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).multiple( false ).build();
+        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).multiple( false ).build();
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
         ConfigItems configItems = new ConfigItems();
@@ -53,8 +53,8 @@ public class EntriesTest
     @Test
     public void getValue_when_having_multiple_sub_type_in_single_sub_type()
     {
-        FieldSet personalia = FieldSet.newBuilder().typeGroup().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
-        FieldSet crimes = FieldSet.newBuilder().typeGroup().name( "crimes" ).multiple( true ).build();
+        FieldSet personalia = FieldSet.newBuilder().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
+        FieldSet crimes = FieldSet.newBuilder().name( "crimes" ).multiple( true ).build();
         crimes.addField( Field.newBuilder().name( "description" ).type( FieldTypes.textline ).build() );
         crimes.addField( Field.newBuilder().name( "year" ).type( FieldTypes.textline ).build() );
         personalia.addFieldSet( crimes );
@@ -77,7 +77,7 @@ public class EntriesTest
     public void getValue_when_having_multiple_sub_type()
     {
         ConfigItems configItems = new ConfigItems();
-        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "persons" ).multiple( true ).build();
+        FieldSet fieldSet = FieldSet.newBuilder().name( "persons" ).multiple( true ).build();
         fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         configItems.addConfigItem( fieldSet );

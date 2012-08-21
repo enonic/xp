@@ -3,35 +3,49 @@ package com.enonic.wem.core.content.type;
 
 import org.junit.Test;
 
-import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
-import com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder;
 import com.enonic.wem.core.content.type.configitem.MockTemplateReferenceFetcher;
 import com.enonic.wem.core.content.type.configitem.TemplateReference;
+import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.configitem.Field.newField;
+import static com.enonic.wem.core.content.type.configitem.FieldSet.newFieldSet;
 import static com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder.newFieldSetTemplate;
 import static com.enonic.wem.core.content.type.configitem.TemplateReference.newTemplateReference;
+import static com.enonic.wem.core.content.type.configitem.VisualFieldSet.newVisualFieldSet;
 import static com.enonic.wem.core.module.Module.newModule;
 import static org.junit.Assert.*;
 
 public class ContentTypeTest
 {
+    @Test
+    public void visualFieldSet()
+    {
+        ContentType contentType = new ContentType();
+        contentType.setName( "test" );
+        VisualFieldSet visualFieldSet =
+            newVisualFieldSet().label( "Personalia" ).add( newField().name( "eyeColour" ).type( FieldTypes.textline ).build() ).add(
+                newField().name( "hairColour" ).type( FieldTypes.textline ).build() ).build();
+        contentType.addConfigItem( visualFieldSet );
+
+        String json = ContentTypeSerializerJson.toJson( contentType );
+        System.out.println( json );
+    }
 
     @Test
     public void address()
     {
-        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "address" ).build();
-        fieldSet.addField( Field.newBuilder().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( Field.newBuilder().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( Field.newBuilder().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( Field.newBuilder().name( "country" ).label( "Country" ).type( FieldTypes.textline ).build() );
+        FieldSet fieldSet = newFieldSet().name( "address" ).build();
+        fieldSet.addField( newField().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( newField().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( newField().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( newField().name( "country" ).label( "Country" ).type( FieldTypes.textline ).build() );
 
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( Field.newBuilder().name( "title" ).type( FieldTypes.textline ).build() );
+        contentType.addConfigItem( newField().name( "title" ).type( FieldTypes.textline ).build() );
         contentType.addConfigItem( fieldSet );
 
         String json = ContentTypeSerializerJson.toJson( contentType );
@@ -43,11 +57,10 @@ public class ContentTypeTest
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        FieldSetTemplate template = FieldSetTemplateBuilder.create().module( module ).fieldSet(
-            FieldSet.newFieldSet().typeGroup().name( "address" ).addConfigItem(
-                newField().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() ).addConfigItem(
-                newField().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() ).addConfigItem(
-                newField().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.textline ).build() ).addConfigItem(
+        FieldSetTemplate template = newFieldSetTemplate().module( module ).fieldSet(
+            newFieldSet().name( "address" ).add( newField().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() ).add(
+                newField().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() ).add(
+                newField().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.textline ).build() ).add(
                 newField().name( "country" ).label( "Country" ).type( FieldTypes.textline ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
@@ -72,8 +85,7 @@ public class ContentTypeTest
         Module module = newModule().name( "myModule" ).build();
 
         FieldSetTemplate fieldSetTemplate = newFieldSetTemplate().module( module ).fieldSet(
-            FieldSet.newFieldSet().typeGroup().name( "address" ).addConfigItem(
-                newField().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() ).addConfigItem(
+            newFieldSet().name( "address" ).add( newField().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() ).add(
                 newField().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
@@ -93,5 +105,23 @@ public class ContentTypeTest
             assertTrue( e instanceof IllegalArgumentException );
             assertEquals( "Template expected to be of type FIELD: FIELD_SET", e.getMessage() );
         }
+    }
+
+    @Test
+    public void fieldSet_in_FieldSet()
+    {
+        ContentType contentType = new ContentType();
+        contentType.setName( "test" );
+        FieldSet fieldSet =
+            newFieldSet().name( "top-fieldSet" ).add( newField().name( "myField" ).type( FieldTypes.textline ).build() ).add(
+                newFieldSet().name( "inner-fieldSet" ).add(
+                    newField().name( "myInnerField" ).type( FieldTypes.textline ).build() ).build() ).build();
+        contentType.addConfigItem( fieldSet );
+
+        assertEquals( "top-fieldSet", contentType.getFieldSet( "top-fieldSet" ).getPath().toString() );
+        assertEquals( "top-fieldSet.myField", contentType.getField( "top-fieldSet.myField" ).getPath().toString() );
+        assertEquals( "top-fieldSet.inner-fieldSet", contentType.getFieldSet( "top-fieldSet.inner-fieldSet" ).getPath().toString() );
+        assertEquals( "top-fieldSet.inner-fieldSet.myInnerField",
+                      contentType.getField( "top-fieldSet.inner-fieldSet.myInnerField" ).getPath().toString() );
     }
 }

@@ -115,7 +115,7 @@ public class ContentDataTest
         ConfigItems dataConfig = new ConfigItems();
         dataConfig.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
 
-        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).build();
+        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).build();
         dataConfig.addConfigItem( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
@@ -136,7 +136,7 @@ public class ContentDataTest
         Field nameField = Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build();
         dataConfig.addConfigItem( nameField );
 
-        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).multiple( true ).build();
+        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).multiple( true ).build();
         dataConfig.addConfigItem( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
@@ -210,10 +210,10 @@ public class ContentDataTest
     @Test
     public void structured_getEntries()
     {
-        FieldSet child = FieldSet.newBuilder().typeGroup().name( "child" ).multiple( true ).build();
+        FieldSet child = FieldSet.newBuilder().name( "child" ).multiple( true ).build();
         child.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
         child.addField( Field.newBuilder().name( "age" ).type( FieldTypes.textline ).build() );
-        FieldSet features = FieldSet.newBuilder().typeGroup().name( "features" ).multiple( false ).build();
+        FieldSet features = FieldSet.newBuilder().name( "features" ).multiple( false ).build();
         features.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         features.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
         child.addFieldSet( features );

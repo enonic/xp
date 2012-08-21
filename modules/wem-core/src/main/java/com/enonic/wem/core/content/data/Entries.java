@@ -102,7 +102,6 @@ public class Entries
         }
     }
 
-
     public EntryPath getPath()
     {
         return path;

@@ -13,6 +13,8 @@ public class ConfigItems
 
     private LinkedHashMap<String, ConfigItem> items = new LinkedHashMap<String, ConfigItem>();
 
+    private LinkedHashMap<String, VisualFieldSet> visualFieldSets = new LinkedHashMap<String, VisualFieldSet>();
+
     public ConfigItems()
     {
         path = new ConfigItemPath();
@@ -25,9 +27,7 @@ public class ConfigItems
 
     public void setPath( final ConfigItemPath path )
     {
-        final ConfigItemPath previousPath = this.path;
         this.path = path;
-
         for ( ConfigItem configItem : items.values() )
         {
             configItem.setParentPath( path );
@@ -36,9 +36,18 @@ public class ConfigItems
 
     public void addConfigItem( final ConfigItem item )
     {
-        item.setPath( new ConfigItemPath( path, item.getName() ) );
+        if ( item.getConfigItemType() != ConfigItemType.VISUAL_FIELD_SET )
+        {
+            item.setPath( new ConfigItemPath( path, item.getName() ) );
+        }
+
         Object previous = items.put( item.getName(), item );
         Preconditions.checkArgument( previous == null, "ConfigItem already added: " + item );
+
+        if ( item.getConfigItemType() == ConfigItemType.VISUAL_FIELD_SET )
+        {
+            visualFieldSets.put( item.getName(), (VisualFieldSet) item );
+        }
     }
 
     public ConfigItem getConfigItem( final ConfigItemPath path )
@@ -48,7 +57,7 @@ public class ConfigItems
 
         if ( path.elementCount() > 1 )
         {
-            ConfigItem foundConfig = items.get( path.getFirstElement() );
+            ConfigItem foundConfig = getConfigItem( path.getFirstElement() );
             Preconditions.checkArgument( foundConfig.getConfigItemType() == ConfigItemType.FIELD_SET,
                                          "ConfigItem at path [%s] expected to be of type FieldSet: " + foundConfig.getConfigItemType(),
                                          path );
@@ -58,18 +67,23 @@ public class ConfigItems
         }
         else
         {
-            return items.get( path.getFirstElement() );
+            return getConfigItem( path.getFirstElement() );
         }
     }
 
     public ConfigItem getConfigItem( final String name )
     {
-        return items.get( name );
+        ConfigItem foundConfig = items.get( name );
+        if ( foundConfig == null )
+        {
+            foundConfig = searchConfigItemInVisualFieldSets( name );
+        }
+        return foundConfig;
     }
 
     public FieldSet getFieldSet( final String name )
     {
-        final ConfigItem configItem = items.get( name );
+        final ConfigItem configItem = getConfigItem( name );
         if ( configItem == null )
         {
             return null;
@@ -99,7 +113,7 @@ public class ConfigItems
 
     public Field getField( final String name )
     {
-        final ConfigItem configItem = items.get( name );
+        final ConfigItem configItem = getConfigItem( name );
         if ( configItem == null )
         {
             return null;
@@ -200,5 +214,20 @@ public class ConfigItems
                 }
             }
         }
+    }
+
+    private ConfigItem searchConfigItemInVisualFieldSets( final String name )
+    {
+        ConfigItem foundConfig = null;
+
+        for ( final VisualFieldSet visualFieldSet : visualFieldSets.values() )
+        {
+            foundConfig = visualFieldSet.getConfigItem( name );
+            if ( foundConfig != null )
+            {
+                break;
+            }
+        }
+        return foundConfig;
     }
 }

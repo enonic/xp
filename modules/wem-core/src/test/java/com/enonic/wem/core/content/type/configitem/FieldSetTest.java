@@ -13,7 +13,7 @@ public class FieldSetTest
     public void copy()
     {
         // setup
-        FieldSet original = FieldSet.newBuilder().typeGroup().name( "name" ).label( "Label" ).multiple( true ).build();
+        FieldSet original = FieldSet.newBuilder().name( "name" ).label( "Label" ).multiple( true ).build();
         original.addField( Field.newBuilder().name( "myField" ).type( FieldTypes.textline ).build() );
 
         // exercise
@@ -32,7 +32,7 @@ public class FieldSetTest
     public void getConfig()
     {
         // setup
-        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "myFieldSet" ).label( "Label" ).multiple( true ).build();
+        FieldSet fieldSet = FieldSet.newBuilder().name( "myFieldSet" ).label( "Label" ).multiple( true ).build();
         fieldSet.addField( Field.newBuilder().name( "myField" ).type( FieldTypes.textline ).build() );
 
         // exercise
@@ -45,7 +45,7 @@ public class FieldSetTest
     @Test
     public void setPath()
     {
-        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "address" ).label( "Address" ).build();
+        FieldSet fieldSet = FieldSet.newBuilder().name( "address" ).label( "Address" ).build();
         fieldSet.addField( Field.newBuilder().name( "street" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "postalCode" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "postalPlace" ).type( FieldTypes.textline ).build() );

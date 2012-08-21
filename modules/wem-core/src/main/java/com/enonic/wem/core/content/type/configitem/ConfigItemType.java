@@ -5,5 +5,6 @@ public enum ConfigItemType
 {
     FIELD,
     FIELD_SET,
+    VISUAL_FIELD_SET,
     REFERENCE
 }

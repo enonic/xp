@@ -12,9 +12,26 @@ import com.enonic.wem.core.content.type.configitem.fieldtype.FieldType;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeConfigProxySerializerJson;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeJsonParser;
 
+import static com.enonic.wem.core.content.type.configitem.FieldSet.newFieldSet;
+import static com.enonic.wem.core.content.type.configitem.TemplateReference.newTemplateReference;
+import static com.enonic.wem.core.content.type.configitem.VisualFieldSet.newVisualFieldSet;
+
 public class ConfigItemSerializerJson
 {
     private FieldTypeJsonParser fieldTypeJsonParser = new FieldTypeJsonParser();
+
+    private final ConfigItemsSerializerJson configItemsSerializerJson;
+
+
+    public ConfigItemSerializerJson()
+    {
+        this.configItemsSerializerJson = new ConfigItemsSerializerJson();
+    }
+
+    public ConfigItemSerializerJson( final ConfigItemsSerializerJson configItemsSerializerJson )
+    {
+        this.configItemsSerializerJson = configItemsSerializerJson;
+    }
 
     public static void generate( ConfigItem configItem, JsonGenerator g )
         throws IOException
@@ -22,6 +39,10 @@ public class ConfigItemSerializerJson
         if ( configItem instanceof FieldSet )
         {
             generateFieldSet( (FieldSet) configItem, g );
+        }
+        else if ( configItem instanceof VisualFieldSet )
+        {
+            generateVisualFieldSet( (VisualFieldSet) configItem, g );
         }
         else if ( configItem instanceof Field )
         {
@@ -63,7 +84,6 @@ public class ConfigItemSerializerJson
     {
         g.writeStartObject();
         g.writeStringField( "configItemType", fieldSet.getConfigItemType().toString() );
-        g.writeStringField( "type", fieldSet.getType().toString() );
         g.writeStringField( "path", fieldSet.getPath().toString() );
         g.writeStringField( "name", fieldSet.getName() );
         g.writeStringField( "label", fieldSet.getLabel() );
@@ -73,6 +93,17 @@ public class ConfigItemSerializerJson
         g.writeStringField( "customText", fieldSet.getCustomText() );
         g.writeStringField( "helpText", fieldSet.getHelpText() );
         ConfigItemsSerializerJson.generate( fieldSet.getConfigItems(), g );
+
+        g.writeEndObject();
+    }
+
+    private static void generateVisualFieldSet( final VisualFieldSet visualFieldSet, JsonGenerator g )
+        throws IOException
+    {
+        g.writeStartObject();
+        g.writeStringField( "configItemType", visualFieldSet.getConfigItemType().toString() );
+        g.writeStringField( "label", visualFieldSet.getLabel() );
+        ConfigItemsSerializerJson.generate( visualFieldSet.getConfigItems(), g );
 
         g.writeEndObject();
     }
@@ -103,6 +134,10 @@ public class ConfigItemSerializerJson
         {
             configItem = parseFieldSet( configItemNode );
         }
+        else if ( configItemType == ConfigItemType.VISUAL_FIELD_SET )
+        {
+            configItem = parseVisualFieldSet( configItemNode );
+        }
         else if ( configItemType == ConfigItemType.REFERENCE )
         {
             configItem = parseTemplateReference( configItemNode );
@@ -112,13 +147,21 @@ public class ConfigItemSerializerJson
             throw new JsonParsingException( "Unknown ConfigItemType: " + configItemType );
         }
 
-        configItem.setPath( new ConfigItemPath( JsonParserUtil.getStringValue( "path", configItemNode ) ) );
+        applyPath( configItemNode, configItem );
         return configItem;
+    }
+
+    private void applyPath( final JsonNode configItemNode, final ConfigItem configItem )
+    {
+        if ( configItem.getConfigItemType() != ConfigItemType.VISUAL_FIELD_SET )
+        {
+            configItem.setPath( new ConfigItemPath( JsonParserUtil.getStringValue( "path", configItemNode ) ) );
+        }
     }
 
     private ConfigItem parseField( final JsonNode configItemNode )
     {
-        Field.Builder builder = Field.newBuilder();
+        final Field.Builder builder = Field.newBuilder();
         builder.name( JsonParserUtil.getStringValue( "name", configItemNode ) );
         builder.label( JsonParserUtil.getStringValue( "label", configItemNode, null ) );
         builder.immutable( JsonParserUtil.getBooleanValue( "immutable", configItemNode ) );
@@ -134,7 +177,7 @@ public class ConfigItemSerializerJson
 
     private ConfigItem parseFieldSet( final JsonNode configItemNode )
     {
-        FieldSet.Builder builder = FieldSet.newBuilder();
+        final FieldSet.Builder builder = newFieldSet();
         builder.name( JsonParserUtil.getStringValue( "name", configItemNode ) );
         builder.label( JsonParserUtil.getStringValue( "label", configItemNode, null ) );
         builder.immutable( JsonParserUtil.getBooleanValue( "immutable", configItemNode ) );
@@ -143,26 +186,37 @@ public class ConfigItemSerializerJson
         builder.customText( JsonParserUtil.getStringValue( "customText", configItemNode ) );
 
         parseOccurrences( builder, configItemNode.get( "occurrences" ) );
-        parseFieldSetType( builder, configItemNode.get( "type" ) );
+
+        final ConfigItems configItems = configItemsSerializerJson.parse( configItemNode.get( "items" ) );
+        for ( ConfigItem configItem : configItems )
+        {
+            builder.add( configItem );
+        }
+
+        return builder.build();
+    }
+
+    private ConfigItem parseVisualFieldSet( final JsonNode configItemNode )
+    {
+        final VisualFieldSet.Builder builder = newVisualFieldSet();
+        builder.label( JsonParserUtil.getStringValue( "label", configItemNode, null ) );
+
+        final ConfigItems configItems = configItemsSerializerJson.parse( configItemNode.get( "items" ) );
+        for ( ConfigItem configItem : configItems )
+        {
+            builder.add( configItem );
+        }
 
         return builder.build();
     }
 
     private ConfigItem parseTemplateReference( final JsonNode configItemNode )
     {
-        TemplateReference.Builder builder = TemplateReference.newBuilder();
+        final TemplateReference.Builder builder = newTemplateReference();
         builder.name( JsonParserUtil.getStringValue( "name", configItemNode ) );
         builder.template( new TemplateQualifiedName( JsonParserUtil.getStringValue( "reference", configItemNode ) ) );
         builder.type( TemplateType.valueOf( JsonParserUtil.getStringValue( "templateType", configItemNode ) ) );
         return builder.build();
-    }
-
-    private void parseFieldSetType( final FieldSet.Builder builder, final JsonNode fieldSetTypeNode )
-    {
-        if ( fieldSetTypeNode != null )
-        {
-            builder.type( FieldSetType.valueOf( fieldSetTypeNode.getTextValue() ) );
-        }
     }
 
     private void parseOccurrences( final Field.Builder builder, final JsonNode occurrencesNode )

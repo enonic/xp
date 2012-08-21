@@ -9,13 +9,17 @@ import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder;
 import com.enonic.wem.core.content.type.configitem.MockTemplateReferenceFetcher;
+import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.DropdownConfig;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.content.type.configitem.fieldtype.RadioButtonsConfig;
 import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.configitem.Field.newBuilder;
+import static com.enonic.wem.core.content.type.configitem.Field.newField;
+import static com.enonic.wem.core.content.type.configitem.FieldSet.newFieldSet;
 import static com.enonic.wem.core.content.type.configitem.TemplateReference.newTemplateReference;
+import static com.enonic.wem.core.content.type.configitem.VisualFieldSet.newVisualFieldSet;
 import static com.enonic.wem.core.module.Module.newModule;
 import static org.junit.Assert.*;
 
@@ -42,7 +46,7 @@ public class ContentTypeSerializerJsonTest
         configItems.addConfigItem( newBuilder().name( "myPhone" ).type( FieldTypes.phone ).build() );
         configItems.addConfigItem( newBuilder().name( "myXml" ).type( FieldTypes.xml ).build() );
 
-        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).build();
+        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).build();
         configItems.addConfigItem( fieldSet );
         fieldSet.addField( newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( newBuilder().name( "hairColour" ).occurrences( 1, 3 ).type( FieldTypes.textline ).build() );
@@ -58,7 +62,7 @@ public class ContentTypeSerializerJsonTest
 
         configItems.addConfigItem( newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
 
-        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).label( "Personalia" ).build();
+        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).label( "Personalia" ).build();
         configItems.addConfigItem( fieldSet );
         fieldSet.addField( newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( newBuilder().name( "hairColour" ).occurrences( 1, 3 ).type( FieldTypes.textline ).build() );
@@ -90,7 +94,7 @@ public class ContentTypeSerializerJsonTest
         configItems.addConfigItem( newBuilder().name( "myPhone" ).type( FieldTypes.phone ).build() );
         configItems.addConfigItem( newBuilder().name( "myXml" ).type( FieldTypes.xml ).build() );
 
-        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).label( "Personalia" ).build();
+        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).label( "Personalia" ).build();
         configItems.addConfigItem( fieldSet );
         fieldSet.addField( newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( newBuilder().name( "hairColour" ).occurrences( 1, 3 ).type( FieldTypes.textline ).build() );
@@ -125,10 +129,9 @@ public class ContentTypeSerializerJsonTest
         Module module = newModule().name( "myModule" ).build();
 
         FieldSetTemplate template = FieldSetTemplateBuilder.create().module( module ).fieldSet(
-            FieldSet.newFieldSet().typeGroup().name( "address" ).addConfigItem(
-                newBuilder().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() ).addConfigItem(
-                newBuilder().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() ).addConfigItem(
-                newBuilder().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.textline ).build() ).addConfigItem(
+            newFieldSet().name( "address" ).add( newBuilder().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() ).add(
+                newBuilder().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() ).add(
+                newBuilder().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.textline ).build() ).add(
                 newBuilder().name( "country" ).label( "Country" ).type( FieldTypes.textline ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
@@ -150,5 +153,43 @@ public class ContentTypeSerializerJsonTest
 
         // verify items past the reference is null
         assertEquals( null, parsedContentType.getConfigItems().getConfigItem( "home.street" ) );
+    }
+
+    @Test
+    public void parseFieldSet_in_FieldSet()
+    {
+        ContentType contentType = new ContentType();
+        contentType.setName( "test" );
+        FieldSet fieldSet =
+            newFieldSet().name( "top-fieldSet" ).add( newField().name( "myField" ).type( FieldTypes.textline ).build() ).add(
+                newFieldSet().name( "inner-fieldSet" ).add(
+                    newField().name( "myInnerField" ).type( FieldTypes.textline ).build() ).build() ).build();
+        contentType.addConfigItem( fieldSet );
+
+        String json = ContentTypeSerializerJson.toJson( contentType );
+
+        ContentType parsedContentType = new ContentTypeSerializerJson().parse( json );
+        assertEquals( "top-fieldSet", parsedContentType.getFieldSet( "top-fieldSet" ).getPath().toString() );
+        assertEquals( "top-fieldSet.myField", parsedContentType.getField( "top-fieldSet.myField" ).getPath().toString() );
+        assertEquals( "top-fieldSet.inner-fieldSet", parsedContentType.getFieldSet( "top-fieldSet.inner-fieldSet" ).getPath().toString() );
+        assertEquals( "top-fieldSet.inner-fieldSet.myInnerField",
+                      parsedContentType.getField( "top-fieldSet.inner-fieldSet.myInnerField" ).getPath().toString() );
+    }
+
+    @Test
+    public void visualFieldSet()
+    {
+        ContentType contentType = new ContentType();
+        contentType.setName( "test" );
+        VisualFieldSet visualFieldSet =
+            newVisualFieldSet().label( "Personalia" ).add( newField().name( "eyeColour" ).type( FieldTypes.textline ).build() ).add(
+                newField().name( "hairColour" ).type( FieldTypes.textline ).build() ).build();
+        contentType.addConfigItem( visualFieldSet );
+
+        String json = ContentTypeSerializerJson.toJson( contentType );
+
+        ContentType parsedContentType = new ContentTypeSerializerJson().parse( json );
+        assertEquals( "eyeColour", parsedContentType.getField( "eyeColour" ).getPath().toString() );
+        assertEquals( "hairColour", parsedContentType.getField( "hairColour" ).getPath().toString() );
     }
 }
