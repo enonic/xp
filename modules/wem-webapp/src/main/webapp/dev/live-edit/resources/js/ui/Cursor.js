@@ -14,11 +14,11 @@
     p.registerSubscribers = function () {
         var self = this;
 
-        $liveedit.subscribe('/ui/highlighter/on-highlight', function ($component) {
+        $liveedit.subscribe('/component/on-mouse-over', function ($component) {
             self.updateCursor.call(self, $component);
         });
 
-        $liveedit.subscribe('/ui/componentselector/on-select', function ($component) {
+        $liveedit.subscribe('/component/on-select', function ($component) {
             self.updateCursor.call(self, $component);
         });
     };

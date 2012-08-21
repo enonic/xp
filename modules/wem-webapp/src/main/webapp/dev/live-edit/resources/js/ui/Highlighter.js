@@ -24,15 +24,15 @@
 
     p.registerSubscribers = function () {
         var self = this;
-        $liveedit.subscribe('/ui/highlighter/on-highlight', function ($component, borderColor) {
+        $liveedit.subscribe('/component/on-mouse-over', function ($component, borderColor) {
             self.highlight.call(self, $component, borderColor);
         });
 
-        $liveedit.subscribe('/ui/componentselector/on-select', function () {
+        $liveedit.subscribe('/component/on-select', function () {
             self.hide.call(self);
         });
 
-        $liveedit.subscribe('/ui/highlighter/on-hide', function () {
+        $liveedit.subscribe('/component/on-mouse-out', function () {
             self.hide.call(self);
         });
 

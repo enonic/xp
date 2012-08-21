@@ -25,21 +25,21 @@
 
     p.registerSubscribers = function () {
         var self = this;
-        $liveedit.subscribe('/ui/componentselector/on-select', function ($component) {
+        $liveedit.subscribe('/component/on-select', function ($component) {
             self.select.call(self, $component);
         });
 
-        $liveedit.subscribe('/ui/componentselector/on-select-parent', function () {
+        $liveedit.subscribe('/component/on-select-parent', function () {
             self.selectParent.call(self);
         });
 
-        $liveedit.subscribe('/ui/componentselector/on-deselect', function () {
+        $liveedit.subscribe('/component/on-deselect', function () {
             self.deselect.call(self);
         });
 
         $liveedit.subscribe('/ui/dragdrop/on-sortstop', function (uiEvent, ui, wasSelectedOnSortStart) {
             if (wasSelectedOnSortStart) {
-                $liveedit.publish('/ui/componentselector/on-select', [ui.item]);
+                $liveedit.publish('/component/on-select', [ui.item]);
             }
         });
     };
@@ -99,7 +99,7 @@
     p.selectParent = function () {
         var $parent = this.getSelected().parents('[data-live-edit-type]');
         if ($parent && $parent.length > 0) {
-            $liveedit.publish('/ui/componentselector/on-select', [$liveedit($parent[0])]);
+            $liveedit.publish('/component/on-select', [$liveedit($parent[0])]);
         }
     };
 

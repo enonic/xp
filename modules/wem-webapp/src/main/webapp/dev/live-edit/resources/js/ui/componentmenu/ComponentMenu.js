@@ -41,11 +41,11 @@
     p.registerSubscribers = function () {
         var self = this;
 
-        $liveedit.subscribe('/ui/componentselector/on-select', function ($component) {
+        $liveedit.subscribe('/component/on-select', function ($component) {
             self.show.call(self, $component);
         });
 
-        $liveedit.subscribe('/ui/highlighter/on-highlight', function ($component) {
+        $liveedit.subscribe('/component/on-mouse-over', function ($component) {
             var componentInfo = util.getComponentInfo($component);
             if (componentInfo.tagName === 'body' && componentInfo.type === 'page') {
                 return;
@@ -53,11 +53,11 @@
             self.show.call(self, $component);
         });
 
-        $liveedit.subscribe('/ui/highlighter/on-hide', function ($component) {
+        $liveedit.subscribe('/component/on-mouse-out', function ($component) {
             self.hide.call(self);
         });
 
-        $liveedit.subscribe('/ui/componentselector/on-deselect', function () {
+        $liveedit.subscribe('/component/on-deselect', function () {
             self.hide.call(self);
         });
 
@@ -90,7 +90,7 @@
 
     p.fadeOutAndHide = function () {
         this.getEl().fadeOut(500, function () {
-            $liveedit.publish('/ui/componentselector/on-deselect');
+            $liveedit.publish('/component/on-deselect');
         });
     };
 

@@ -81,7 +81,7 @@ AdminLiveEdit.ui.DragDrop = (function () {
         isDragging = false;
 
         if (AdminLiveEdit.Util.supportsTouch()) {
-            $liveedit.publish('/ui/highlighter/on-hide');
+            $liveedit.publish('/component/on-mouse-out');
         }
 
         // Added on sort start
@@ -94,13 +94,13 @@ AdminLiveEdit.ui.DragDrop = (function () {
 
 
     function initSubscribers() {
-        $liveedit.subscribe('/ui/componentselector/on-select', function () {
+        $liveedit.subscribe('/component/on-select', function () {
             if (AdminLiveEdit.Util.supportsTouch()) {
                 enableDragDrop();
             }
         });
 
-        $liveedit.subscribe('/ui/componentselector/on-deselect', function () {
+        $liveedit.subscribe('/component/on-deselect', function () {
             if (AdminLiveEdit.Util.supportsTouch() && !isDragging) {
                 disableDragDrop();
             }

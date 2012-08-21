@@ -25,11 +25,11 @@
     p.registerSubscribers = function () {
         var self = this;
 
-        $liveedit.subscribe('/ui/componentselector/on-select', function ($component) {
+        $liveedit.subscribe('/component/on-select', function ($component) {
             self.show.call(self, $component);
         });
 
-        $liveedit.subscribe('/ui/componentselector/on-deselect', function () {
+        $liveedit.subscribe('/component/on-deselect', function () {
             self.hide.call(self);
         });
     };

@@ -22,11 +22,11 @@
 
     p.registerSubscribers = function () {
         var self = this;
-        $liveedit.subscribe('/ui/componentselector/on-select', function ($component) {
+        $liveedit.subscribe('/component/on-select', function ($component) {
             self.show.call(self, $component);
         });
 
-        $liveedit.subscribe('/ui/componentselector/on-deselect', function ($component) {
+        $liveedit.subscribe('/component/on-deselect', function ($component) {
             self.hide.call(self);
         });
 
@@ -47,7 +47,7 @@
 
         $liveedit('.live-edit-shader').click(function (event) {
             event.stopPropagation();
-            $liveedit.publish('/ui/componentselector/on-deselect');
+            $liveedit.publish('/component/on-deselect');
         });
     };
 
