@@ -1,11 +1,15 @@
-Ext.define('Admin.view.datadesigner.DetailPanel', {
+Ext.define('Admin.view.datadesigner.preview.DetailPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.contentTypeDetailPanel',
     layout: 'card',
 
+    requires: [
+        'Admin.view.datadesigner.preview.Toolbar'
+    ],
     cls: 'admin-preview-panel',
     overflowX: 'hidden',
     overflowY: 'auto',
+    showToolbar: true,
 
     initComponent: function () {
 
@@ -13,7 +17,11 @@ Ext.define('Admin.view.datadesigner.DetailPanel', {
 
         var noneSelectedCmp = this.createNoSelection();
         var previewCt = this.createSingleSelection(this.data);
-
+        if (this.showToolbar) {
+            this.tbar = {
+                xtype: 'dataDesignerPreviewToolbar'
+            };
+        }
         this.items = [
             noneSelectedCmp,
             previewCt

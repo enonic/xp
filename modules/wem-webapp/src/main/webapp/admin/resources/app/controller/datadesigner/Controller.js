@@ -4,9 +4,20 @@ Ext.define('Admin.controller.datadesigner.Controller', {
     stores: [],
     models: [],
 
-    views: ['Admin.view.datadesigner.wizard.WizardPanel'],
+    views: [
+        'Admin.view.datadesigner.wizard.WizardPanel',
+        'Admin.view.datadesigner.preview.DetailPanel'
+    ],
 
     init: function () {
+        this.control({
+            'contentTypeDetailPanel *[action=closePreview]': {
+                click: this.closePreview
+            },
+            'dataDesignerWizardPanel *[action=closeWizard]': {
+                click: this.closeWizard
+            }
+        });
         this.application.on({
             showNewContentTypePanel: {
                 fn: this.showNewContentTypePanel,
@@ -126,6 +137,17 @@ Ext.define('Admin.controller.datadesigner.Controller', {
         }
     },
 
+    closePreview: function (el, e) {
+        this.getCurrentTab().close();
+    },
+
+    closeWizard: function (el, e) {
+        this.getCurrentTab().close();
+    },
+
+    getCurrentTab: function () {
+        return this.getCmsTabPanel().getActiveTab();
+    },
 
     getTreeGridPanel: function () {
         return Ext.ComponentQuery.query('contentTypeTreeGridPanel')[0];

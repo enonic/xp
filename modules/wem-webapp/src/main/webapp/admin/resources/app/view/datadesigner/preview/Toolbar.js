@@ -1,6 +1,6 @@
-Ext.define('Admin.view.datadesigner.wizard.Toolbar', {
+Ext.define('Admin.view.datadesigner.preview.Toolbar', {
     extend: 'Ext.toolbar.Toolbar',
-    alias: 'widget.dataDesignerWizardToolbar',
+    alias: 'widget.dataDesignerPreviewToolbar',
 
     border: false,
 
@@ -20,8 +20,12 @@ Ext.define('Admin.view.datadesigner.wizard.Toolbar', {
             defaults: buttonDefaults,
             items: [
                 {
-                    text: 'Save',
-                    iconCls: 'icon-save-24'
+                    text: 'Edit',
+                    iconCls: 'icon-edit-generic'
+                },
+                {
+                    text: 'Delete',
+                    iconCls: 'icon-delete-user-24'
                 }
             ]
         };
@@ -33,19 +37,11 @@ Ext.define('Admin.view.datadesigner.wizard.Toolbar', {
             items: [
                 {
                     text: 'Close',
-                    action: 'closeWizard',
+                    action: 'closePreview',
                     iconCls: 'icon-cancel-24'
                 }
             ]
         };
-
-        if (!this.isNew) {
-            leftGrp.items.push({
-                text: 'Delete',
-                iconCls: 'icon-delete-user-24'
-            });
-
-        }
 
         this.items = [ leftGrp, '->', rightGrp ];
         this.callParent(arguments);

@@ -12,7 +12,7 @@ Ext.define('Admin.controller.datadesigner.BrowseController', {
         'Admin.view.datadesigner.FilterPanel',
         'Admin.view.datadesigner.TreeGridPanel',
         'Admin.view.datadesigner.ContextMenu',
-        'Admin.view.datadesigner.DetailPanel'
+        'Admin.view.datadesigner.preview.DetailPanel'
     ],
 
     init: function () {

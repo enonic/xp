@@ -6,6 +6,7 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
         'Admin.view.datadesigner.wizard.ContentTypePanel',
         'Admin.view.datadesigner.wizard.GeneralPanel',
         'Admin.view.datadesigner.wizard.ConfigPanel',
+        'Admin.view.datadesigner.wizard.Toolbar',
         'Admin.view.SummaryTreePanel',
         'Admin.plugin.fileupload.PhotoUploadButton'
     ],
@@ -41,7 +42,10 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
          isNew: isNew
          } );
          */
-
+        this.tbar = {
+            xtype: 'dataDesignerWizardToolbar',
+            isNew: isNew
+        };
         me.items = [
             {
                 width: 121,
@@ -73,10 +77,6 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
                         height: 50,
                         border: 0,
                         itemId: 'imageToolTip',
-                        style: {
-                            top: '141px',
-                            left: '10px'
-                        },
                         cls: 'admin-image-upload-button-image-tip',
                         html: '<div class="x-tip x-tip-default x-layer" role="tooltip">' +
                               '<div class="x-tip-anchor x-tip-anchor-top"></div>' +
