@@ -60,6 +60,7 @@ public final class CountryResult
     private JsonNode toJson( final String callingCode, final Country model )
     {
         final ObjectNode json = objectNode();
+        json.put( "callingCodeId", callingCode + "_" + model.getCode() );
         json.put( "callingCode", "+" + callingCode );
         json.put( "englishName", model.getEnglishName() );
         json.put( "localName", model.getLocalName() );
