@@ -1,9 +1,6 @@
 Ext.define('Admin.lib.UriHelper', {
 
     singleton: true,
-    statics: {
-        deployPath: undefined
-    },
 
     // UriHelper generates getters from the uris object
     // in the following format: get + <Module> + <Entity> + Uri()
