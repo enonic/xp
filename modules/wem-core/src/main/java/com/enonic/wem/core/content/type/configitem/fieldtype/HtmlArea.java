@@ -21,12 +21,6 @@ public class HtmlArea
     }
 
     @Override
-    public FieldTypeJsonGenerator getJsonGenerator()
-    {
-        return null;
-    }
-
-    @Override
     public boolean requiresConfig()
     {
         return true;

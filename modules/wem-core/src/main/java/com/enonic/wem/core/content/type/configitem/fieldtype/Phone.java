@@ -14,11 +14,6 @@ public class Phone
         super( "phone", DataTypes.SINGLE_LINED_STRING );
     }
 
-    public FieldTypeJsonGenerator getJsonGenerator()
-    {
-        return BaseFieldTypeJsonGenerator.DEFAULT;
-    }
-
     @Override
     public boolean validData( final Data data )
     {

@@ -15,13 +15,11 @@ public interface FieldType
 
     DataType getDataType();
 
-    FieldTypeJsonGenerator getJsonGenerator();
-
     boolean requiresConfig();
 
     Class requiredConfigClass();
 
-    FieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator();
+    AbstractFieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator();
 
     boolean breaksRequiredContract( Data data );
 }

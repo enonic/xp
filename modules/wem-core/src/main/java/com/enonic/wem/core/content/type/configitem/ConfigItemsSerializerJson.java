@@ -13,13 +13,13 @@ public class ConfigItemsSerializerJson
 {
     private ConfigItemSerializerJson configItemSerializer = new ConfigItemSerializerJson( this );
 
-    public static void generate( ConfigItems configItems, JsonGenerator g )
+    public void generate( ConfigItems configItems, JsonGenerator g )
         throws IOException
     {
         g.writeArrayFieldStart( "items" );
         for ( ConfigItem configItem : configItems )
         {
-            ConfigItemSerializerJson.generate( configItem, g );
+            configItemSerializer.generate( configItem, g );
         }
         g.writeEndArray();
     }

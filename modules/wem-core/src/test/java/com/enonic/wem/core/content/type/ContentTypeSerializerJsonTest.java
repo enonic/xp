@@ -5,6 +5,7 @@ import org.junit.Test;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItemType;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
+import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder;
@@ -29,30 +30,44 @@ public class ContentTypeSerializerJsonTest
     @Test
     public void generate_all_types()
     {
-        DropdownConfig dropdownConfig = DropdownConfig.newBuilder().addOption( "myOption 1", "o1" ).addOption( "myOption 2", "o2" ).build();
+        // setup
+        DropdownConfig dropdownConfig =
+            DropdownConfig.newBuilder().addOption( "My Option 1", "o1" ).addOption( "My Option 2", "o2" ).build();
         RadioButtonsConfig myRadioButtonsConfig =
             RadioButtonsConfig.newBuilder().addOption( "myFirstChoice", "c1" ).addOption( "mySecondChoice", "c2" ).build();
 
         ContentType contentType = new ContentType();
-        ConfigItems configItems = new ConfigItems();
-        contentType.setConfigItems( configItems );
-        configItems.addConfigItem( newBuilder().name( "myDate" ).type( FieldTypes.date ).build() );
-        configItems.addConfigItem(
-            newBuilder().name( "myDropdown" ).type( FieldTypes.dropdown ).fieldTypeConfig( dropdownConfig ).build() );
-        configItems.addConfigItem( newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );
-        configItems.addConfigItem( newBuilder().name( "myTextArea" ).type( FieldTypes.textarea ).build() );
-        configItems.addConfigItem(
-            newBuilder().name( "myRadiobuttons" ).type( FieldTypes.radioButtons ).fieldTypeConfig( myRadioButtonsConfig ).build() );
-        configItems.addConfigItem( newBuilder().name( "myPhone" ).type( FieldTypes.phone ).build() );
-        configItems.addConfigItem( newBuilder().name( "myXml" ).type( FieldTypes.xml ).build() );
+        contentType.addConfigItem( newField().name( "myDate" ).type( FieldTypes.date ).build() );
+        contentType.addConfigItem( newField().name( "myDropdown" ).type( FieldTypes.dropdown ).fieldTypeConfig( dropdownConfig ).build() );
+        contentType.addConfigItem( newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );
+        contentType.addConfigItem( newBuilder().name( "myTextArea" ).type( FieldTypes.textarea ).build() );
+        contentType.addConfigItem(
+            newField().name( "myRadiobuttons" ).type( FieldTypes.radioButtons ).fieldTypeConfig( myRadioButtonsConfig ).build() );
+        contentType.addConfigItem( newField().name( "myPhone" ).type( FieldTypes.phone ).build() );
+        contentType.addConfigItem( newField().name( "myXml" ).type( FieldTypes.xml ).build() );
 
-        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).build();
-        configItems.addConfigItem( fieldSet );
-        fieldSet.addField( newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( newBuilder().name( "hairColour" ).occurrences( 1, 3 ).type( FieldTypes.textline ).build() );
+        FieldSet fieldSet = newFieldSet().name( "personalia" ).build();
+        fieldSet.addField( newField().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( newField().name( "hairColour" ).occurrences( 1, 3 ).type( FieldTypes.textline ).build() );
+        contentType.addConfigItem( fieldSet );
 
-        ContentTypeSerializerJson generator = new ContentTypeSerializerJson();
-        String json = generator.toJson( contentType );
+        ContentTypeSerializerJson serializer = new ContentTypeSerializerJson();
+        String json = serializer.toJson( contentType );
+        System.out.println( json );
+        // exercise
+        ContentType parsedContentType = serializer.parse( json );
+
+        // verify
+        Field parsedMyDate = parsedContentType.getField( "myDate" );
+        assertEquals( "myDate", parsedMyDate.getPath().toString() );
+        assertEquals( "myDate", parsedMyDate.getName() );
+        assertEquals( "com.enonic.wem.core.content.type.configitem.fieldtype.Date", parsedMyDate.getFieldType().getClassName() );
+        assertEquals( "date", parsedMyDate.getFieldType().getName() );
+
+        Field parsedMyDropdown = parsedContentType.getField( "myDropdown" );
+        assertEquals( "myDropdown", parsedMyDropdown.getPath().toString() );
+        assertEquals( "My Option 1", ( (DropdownConfig) parsedMyDropdown.getFieldTypeConfig() ).getOptions().get( 0 ).getLabel() );
+        assertEquals( "My Option 2", ( (DropdownConfig) parsedMyDropdown.getFieldTypeConfig() ).getOptions().get( 1 ).getLabel() );
     }
 
     @Test
@@ -99,7 +114,7 @@ public class ContentTypeSerializerJsonTest
         fieldSet.addField( newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( newBuilder().name( "hairColour" ).occurrences( 1, 3 ).type( FieldTypes.textline ).build() );
 
-        String json = ContentTypeSerializerJson.toJson( contentType );
+        String json = new ContentTypeSerializerJson().toJson( contentType );
 
         // exercise
         ContentType actualContentType = new ContentTypeSerializerJson().parse( json );
@@ -142,7 +157,7 @@ public class ContentTypeSerializerJsonTest
         MockTemplateReferenceFetcher templateReferenceFetcher = new MockTemplateReferenceFetcher();
         templateReferenceFetcher.add( template );
 
-        String json = ContentTypeSerializerJson.toJson( cty );
+        String json = new ContentTypeSerializerJson().toJson( cty );
 
         // exercise
         ContentType parsedContentType = new ContentTypeSerializerJson().parse( json );
@@ -166,7 +181,7 @@ public class ContentTypeSerializerJsonTest
                     newField().name( "myInnerField" ).type( FieldTypes.textline ).build() ).build() ).build();
         contentType.addConfigItem( fieldSet );
 
-        String json = ContentTypeSerializerJson.toJson( contentType );
+        String json = new ContentTypeSerializerJson().toJson( contentType );
 
         ContentType parsedContentType = new ContentTypeSerializerJson().parse( json );
         assertEquals( "top-fieldSet", parsedContentType.getFieldSet( "top-fieldSet" ).getPath().toString() );
@@ -186,7 +201,7 @@ public class ContentTypeSerializerJsonTest
                 newField().name( "hairColour" ).type( FieldTypes.textline ).build() ).build();
         contentType.addConfigItem( visualFieldSet );
 
-        String json = ContentTypeSerializerJson.toJson( contentType );
+        String json = new ContentTypeSerializerJson().toJson( contentType );
 
         ContentType parsedContentType = new ContentTypeSerializerJson().parse( json );
         assertEquals( "eyeColour", parsedContentType.getField( "eyeColour" ).getPath().toString() );

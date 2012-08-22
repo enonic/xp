@@ -9,8 +9,8 @@ import org.codehaus.jackson.JsonNode;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldType;
-import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeConfigProxySerializerJson;
-import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeJsonParser;
+import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeConfigSerializerJson;
+import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeSerializerJson;
 
 import static com.enonic.wem.core.content.type.configitem.FieldSet.newFieldSet;
 import static com.enonic.wem.core.content.type.configitem.TemplateReference.newTemplateReference;
@@ -18,7 +18,9 @@ import static com.enonic.wem.core.content.type.configitem.VisualFieldSet.newVisu
 
 public class ConfigItemSerializerJson
 {
-    private FieldTypeJsonParser fieldTypeJsonParser = new FieldTypeJsonParser();
+    private FieldTypeSerializerJson fieldTypeSerializer = new FieldTypeSerializerJson();
+
+    private FieldTypeConfigSerializerJson fieldTypeConfigSerializer = new FieldTypeConfigSerializerJson();
 
     private final ConfigItemsSerializerJson configItemsSerializerJson;
 
@@ -33,7 +35,7 @@ public class ConfigItemSerializerJson
         this.configItemsSerializerJson = configItemsSerializerJson;
     }
 
-    public static void generate( ConfigItem configItem, JsonGenerator g )
+    public void generate( ConfigItem configItem, JsonGenerator g )
         throws IOException
     {
         if ( configItem instanceof FieldSet )
@@ -54,14 +56,14 @@ public class ConfigItemSerializerJson
         }
     }
 
-    private static void generateField( final Field field, final JsonGenerator g )
+    private void generateField( final Field field, final JsonGenerator g )
         throws IOException
     {
         g.writeStartObject();
         g.writeStringField( "configItemType", field.getConfigItemType().toString() );
         g.writeStringField( "path", field.getPath().toString() );
-        field.getFieldType().getJsonGenerator().generate( field.getFieldType(), g );
         g.writeStringField( "name", field.getName() );
+        fieldTypeSerializer.generate( field.getFieldType(), g );
         g.writeStringField( "label", field.getLabel() );
         g.writeBooleanField( "required", field.isRequired() );
         g.writeBooleanField( "immutable", field.isImmutable() );
@@ -73,13 +75,13 @@ public class ConfigItemSerializerJson
         if ( field.getFieldType().requiresConfig() && field.getFieldTypeConfig() != null )
         {
             g.writeFieldName( "fieldTypeConfig" );
-            field.getFieldType().getFieldTypeConfigJsonGenerator().generateBase( field.getFieldTypeConfig(), g );
+            field.getFieldType().getFieldTypeConfigJsonGenerator().generate( field.getFieldTypeConfig(), g );
         }
 
         g.writeEndObject();
     }
 
-    private static void generateFieldSet( final FieldSet fieldSet, JsonGenerator g )
+    private void generateFieldSet( final FieldSet fieldSet, JsonGenerator g )
         throws IOException
     {
         g.writeStartObject();
@@ -92,23 +94,23 @@ public class ConfigItemSerializerJson
         OccurrencesSerializerJson.generate( fieldSet.getOccurrences(), g );
         g.writeStringField( "customText", fieldSet.getCustomText() );
         g.writeStringField( "helpText", fieldSet.getHelpText() );
-        ConfigItemsSerializerJson.generate( fieldSet.getConfigItems(), g );
+        configItemsSerializerJson.generate( fieldSet.getConfigItems(), g );
 
         g.writeEndObject();
     }
 
-    private static void generateVisualFieldSet( final VisualFieldSet visualFieldSet, JsonGenerator g )
+    private void generateVisualFieldSet( final VisualFieldSet visualFieldSet, JsonGenerator g )
         throws IOException
     {
         g.writeStartObject();
         g.writeStringField( "configItemType", visualFieldSet.getConfigItemType().toString() );
         g.writeStringField( "label", visualFieldSet.getLabel() );
-        ConfigItemsSerializerJson.generate( visualFieldSet.getConfigItems(), g );
+        configItemsSerializerJson.generate( visualFieldSet.getConfigItems(), g );
 
         g.writeEndObject();
     }
 
-    private static void generateReference( final TemplateReference templateReference, final JsonGenerator g )
+    private void generateReference( final TemplateReference templateReference, final JsonGenerator g )
         throws IOException
     {
         g.writeStartObject();
@@ -247,7 +249,7 @@ public class ConfigItemSerializerJson
     {
         if ( fieldTypeConfigNode != null )
         {
-            builder.fieldTypeConfig( FieldTypeConfigProxySerializerJson.parse( fieldTypeConfigNode ) );
+            builder.fieldTypeConfig( fieldTypeConfigSerializer.parse( fieldTypeConfigNode ) );
         }
     }
 
@@ -255,7 +257,7 @@ public class ConfigItemSerializerJson
     {
         if ( fieldTypeNode != null )
         {
-            FieldType fieldType = fieldTypeJsonParser.parse( fieldTypeNode );
+            FieldType fieldType = fieldTypeSerializer.parse( fieldTypeNode );
             builder.type( fieldType );
         }
     }

@@ -31,7 +31,7 @@ public class ContentTypeTest
                 newField().name( "hairColour" ).type( FieldTypes.textline ).build() ).build();
         contentType.addConfigItem( visualFieldSet );
 
-        String json = ContentTypeSerializerJson.toJson( contentType );
+        String json = new ContentTypeSerializerJson().toJson( contentType );
         System.out.println( json );
     }
 
@@ -48,7 +48,7 @@ public class ContentTypeTest
         contentType.addConfigItem( newField().name( "title" ).type( FieldTypes.textline ).build() );
         contentType.addConfigItem( fieldSet );
 
-        String json = ContentTypeSerializerJson.toJson( contentType );
+        String json = new ContentTypeSerializerJson().toJson( contentType );
     }
 
     @Test
