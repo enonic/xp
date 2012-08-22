@@ -1,8 +1,8 @@
 package com.enonic.wem.core.content.type.configitem.fieldtype;
 
 
-import com.enonic.wem.core.content.data.Value;
-import com.enonic.wem.core.content.type.valuetype.ValueType;
+import com.enonic.wem.core.content.data.Data;
+import com.enonic.wem.core.content.type.datatype.DataType;
 
 public abstract class BaseFieldType
     implements FieldType
@@ -11,12 +11,12 @@ public abstract class BaseFieldType
 
     private String name;
 
-    private ValueType valueType;
+    private DataType dataType;
 
-    BaseFieldType( final String name, final ValueType valueType )
+    BaseFieldType( final String name, final DataType dataType )
     {
         this.name = name;
-        this.valueType = valueType;
+        this.dataType = dataType;
         this.className = this.getClass().getName();
     }
 
@@ -30,12 +30,12 @@ public abstract class BaseFieldType
         return className;
     }
 
-    public ValueType getValueType()
+    public DataType getDataType()
     {
-        return valueType;
+        return dataType;
     }
 
-    public abstract boolean validValue( Value fieldValue );
+    public abstract boolean validData( Data data );
 
     public FieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator()
     {
@@ -70,7 +70,7 @@ public abstract class BaseFieldType
         {
             return false;
         }
-        if ( !valueType.equals( that.valueType ) )
+        if ( !dataType.equals( that.dataType ) )
         {
             return false;
         }
@@ -83,7 +83,7 @@ public abstract class BaseFieldType
     {
         int result = className.hashCode();
         result = 31 * result + name.hashCode();
-        result = 31 * result + valueType.hashCode();
+        result = 31 * result + dataType.hashCode();
         return result;
     }
 }

@@ -3,19 +3,19 @@ package com.enonic.wem.core.content.type.configitem.fieldtype;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.wem.core.content.data.Value;
-import com.enonic.wem.core.content.type.valuetype.ValueTypes;
+import com.enonic.wem.core.content.data.Data;
+import com.enonic.wem.core.content.type.datatype.DataTypes;
 
 public class HtmlArea
     extends BaseFieldType
 {
     HtmlArea()
     {
-        super( "htmlArea", ValueTypes.HTML_PART );
+        super( "htmlArea", DataTypes.HTML_PART );
     }
 
     @Override
-    public boolean validValue( final Value fieldValue )
+    public boolean validData( final Data data )
     {
         return true;
     }
@@ -39,9 +39,9 @@ public class HtmlArea
     }
 
     @Override
-    public boolean breaksRequiredContract( final Value value )
+    public boolean breaksRequiredContract( final Data data )
     {
-        String stringValue = (String) value.getValue();
+        String stringValue = (String) data.getValue();
         return StringUtils.isBlank( stringValue );
     }
 }

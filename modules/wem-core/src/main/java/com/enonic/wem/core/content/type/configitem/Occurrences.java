@@ -89,4 +89,12 @@ public class Occurrences
         result = 31 * result + maximum;
         return result;
     }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder s = new StringBuilder();
+        s.append( "min=" ).append( minimum ).append( ", max=" ).append( maximum );
+        return s.toString();
+    }
 }

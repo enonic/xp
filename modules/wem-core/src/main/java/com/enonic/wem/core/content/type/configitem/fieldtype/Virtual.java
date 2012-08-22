@@ -1,9 +1,9 @@
 package com.enonic.wem.core.content.type.configitem.fieldtype;
 
 
-import com.enonic.wem.core.content.data.Value;
-import com.enonic.wem.core.content.type.valuetype.ValueType;
-import com.enonic.wem.core.content.type.valuetype.ValueTypes;
+import com.enonic.wem.core.content.data.Data;
+import com.enonic.wem.core.content.type.datatype.DataType;
+import com.enonic.wem.core.content.type.datatype.DataTypes;
 
 public class Virtual
     implements FieldType
@@ -25,9 +25,9 @@ public class Virtual
         return className;
     }
 
-    public ValueType getValueType()
+    public DataType getDataType()
     {
-        return ValueTypes.COMPUTED;
+        return DataTypes.COMPUTED;
     }
 
     public FieldTypeJsonGenerator getJsonGenerator()
@@ -51,7 +51,7 @@ public class Virtual
     }
 
     @Override
-    public boolean breaksRequiredContract( final Value value )
+    public boolean breaksRequiredContract( final Data data )
     {
         // TODO
         return false;

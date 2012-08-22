@@ -24,14 +24,12 @@ public class FieldSetTemplateTest
             newFieldTemplate().module( module ).field( newField().name( "age" ).type( FieldTypes.textline ).build() ).build();
 
         FieldSetTemplate personTemplate = newFieldSetTemplate().module( module ).fieldSet(
-            FieldSet.newFieldSet().typeGroup().name( "person" ).addConfigItem(
-                newField().name( "name" ).type( FieldTypes.textline ).build() ).addConfigItem(
+            FieldSet.newFieldSet().name( "person" ).add( newField().name( "name" ).type( FieldTypes.textline ).build() ).add(
                 newTemplateReference( ageTemplate ).name( "age" ).build() ).build() ).build();
 
         FieldSetTemplate addressTemplate = newFieldSetTemplate().module( module ).fieldSet(
-            FieldSet.newFieldSet().typeGroup().name( "address" ).addConfigItem(
-                newField().type( FieldTypes.textline ).name( "street" ).build() ).addConfigItem(
-                newField().type( FieldTypes.textline ).name( "postalCode" ).build() ).addConfigItem(
+            FieldSet.newFieldSet().name( "address" ).add( newField().type( FieldTypes.textline ).name( "street" ).build() ).add(
+                newField().type( FieldTypes.textline ).name( "postalCode" ).build() ).add(
                 newField().type( FieldTypes.textline ).name( "postalPlace" ).build() ).build() ).build();
 
         try

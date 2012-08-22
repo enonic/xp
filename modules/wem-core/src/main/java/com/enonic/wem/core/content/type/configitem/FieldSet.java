@@ -6,14 +6,12 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.core.content.data.Entries;
+import com.enonic.wem.core.content.data.DataSet;
 import com.enonic.wem.core.content.data.Entry;
 
 public class FieldSet
     extends ConfigItem
 {
-    private FieldSetType type;
-
     private String label;
 
     private ConfigItems configItems = new ConfigItems();
@@ -59,11 +57,6 @@ public class FieldSet
         this.configItems.addConfigItem( fieldSet );
     }
 
-    public FieldSetType getType()
-    {
-        return type;
-    }
-
     public String getLabel()
     {
         return label;
@@ -105,6 +98,16 @@ public class FieldSet
     }
 
     @Override
+    void setParentPath( final ConfigItemPath parentPath )
+    {
+        super.setParentPath( parentPath );
+        for ( ConfigItem configItem : configItems )
+        {
+            configItem.setParentPath( this.getPath() );
+        }
+    }
+
+    @Override
     public String toString()
     {
         StringBuilder s = new StringBuilder();
@@ -129,7 +132,6 @@ public class FieldSet
     public FieldSet copy()
     {
         FieldSet copy = (FieldSet) super.copy();
-        copy.type = type;
         copy.label = label;
         copy.immutable = immutable;
         copy.occurrences.setMinOccurences( occurrences.getMinimum() );
@@ -155,23 +157,23 @@ public class FieldSet
         return configItems.getConfigItem( configItemPath );
     }
 
-    public boolean breaksRequiredContract( Entries entries )
+    public boolean breaksRequiredContract( DataSet dataSet )
     {
-        Preconditions.checkNotNull( entries, "Given entries is null" );
-        //Preconditions.checkArgument( entries.getFieldSet() != null, "Given value have no field" );
-        //Preconditions.checkArgument( entries.getFieldSet().equals( this ), "Given value's field is not this" );
+        Preconditions.checkNotNull( dataSet, "Given dataSet is null" );
+        //Preconditions.checkArgument( entries.getFieldSet() != null, "Given dataSet have no field" );
+        //Preconditions.checkArgument( entries.getFieldSet().equals( this ), "Given dataSet's field is not this" );
 
         if ( !isRequired() )
         {
             return false;
         }
 
-        if ( entries.size() == 0 )
+        if ( dataSet.size() == 0 )
         {
             return true;
         }
 
-        for ( Entry entry : entries )
+        for ( Entry entry : dataSet )
         {
             if ( entry.breaksRequiredContract() )
             {
@@ -184,8 +186,6 @@ public class FieldSet
 
     public static class Builder
     {
-        private FieldSetType type;
-
         private String name;
 
         private String label;
@@ -203,24 +203,6 @@ public class FieldSet
         private Builder()
         {
 
-        }
-
-        public Builder typeGroup()
-        {
-            type = FieldSetType.GROUP;
-            return this;
-        }
-
-        public Builder typeVisual()
-        {
-            type = FieldSetType.VISUAL;
-            return this;
-        }
-
-        public Builder type( FieldSetType value )
-        {
-            type = value;
-            return this;
         }
 
         public Builder name( String value )
@@ -291,7 +273,7 @@ public class FieldSet
             return this;
         }
 
-        public Builder addConfigItem( ConfigItem value )
+        public Builder add( ConfigItem value )
         {
             configItems.add( value );
             return this;
@@ -301,7 +283,6 @@ public class FieldSet
         {
             FieldSet fieldSet = new FieldSet();
             fieldSet.setName( name );
-            fieldSet.type = type;
             fieldSet.label = label;
             fieldSet.immutable = immutable;
             fieldSet.occurrences.setMinOccurences( occurrences.getMinimum() );
@@ -313,7 +294,6 @@ public class FieldSet
                 fieldSet.addConfigItem( configItem );
             }
 
-            Preconditions.checkNotNull( fieldSet.type, "a type for the FieldSet is required" );
             Preconditions.checkNotNull( fieldSet.getName(), "a name for the FieldSet is required" );
             fieldSet.setPath( new ConfigItemPath( fieldSet.getName() ) );
             return fieldSet;

@@ -13,7 +13,7 @@ public class ConfigItemsTest
     public void getConfig()
     {
         ConfigItems configItems = new ConfigItems();
-        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).build();
+        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).build();
         configItems.addConfigItem( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
@@ -27,7 +27,7 @@ public class ConfigItemsTest
     public void getConfig2()
     {
         ConfigItems configItems = new ConfigItems();
-        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).label( "Personalia" ).build();
+        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).label( "Personalia" ).build();
         configItems.addConfigItem( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );

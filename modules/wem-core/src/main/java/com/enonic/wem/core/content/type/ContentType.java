@@ -111,6 +111,10 @@ public class ContentType
     {
         final ConfigItemPath configItemPath = new ConfigItemPath( path );
         final Field field = configItems.getField( configItemPath );
+        if ( field == null )
+        {
+            return null;
+        }
 
         Preconditions.checkState( field.getPath().equals( configItemPath ),
                                   "Found Field at path [%s] have unexpected path: " + field.getPath(), configItemPath );

@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.data;
 
 /**
- * Entry is the base class for Value and Entries.
+ * Entry is the base class for Data and DataSet.
  */
 public abstract class Entry
 {

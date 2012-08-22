@@ -10,9 +10,10 @@ import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
 import com.enonic.wem.core.content.type.configitem.FieldTemplate;
 import com.enonic.wem.core.content.type.configitem.MockTemplateReferenceFetcher;
+import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.DropdownConfig;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
-import com.enonic.wem.core.content.type.valuetype.BasalValueType;
+import com.enonic.wem.core.content.type.datatype.BasalValueType;
 import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.configitem.Field.newField;
@@ -20,6 +21,7 @@ import static com.enonic.wem.core.content.type.configitem.FieldSet.newFieldSet;
 import static com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder.newFieldSetTemplate;
 import static com.enonic.wem.core.content.type.configitem.FieldTemplateBuilder.newFieldTemplate;
 import static com.enonic.wem.core.content.type.configitem.TemplateReference.newTemplateReference;
+import static com.enonic.wem.core.content.type.configitem.VisualFieldSet.newVisualFieldSet;
 import static com.enonic.wem.core.module.Module.newModule;
 import static org.junit.Assert.*;
 
@@ -30,14 +32,14 @@ public class ContentTest
     {
         // setup
         Content content = new Content();
-        content.setValue( "name", "Thomas" );
-        content.setValue( "personalia.eyeColour", "Blue" );
-        content.setValue( "personalia.hairColour", "Blonde" );
+        content.setData( "name", "Thomas" );
+        content.setData( "personalia.eyeColour", "Blue" );
+        content.setData( "personalia.hairColour", "Blonde" );
 
-        assertNull( content.getData().getValue( "personalia.eyeColour" ).getField() );
-        assertEquals( BasalValueType.STRING, content.getData().getValue( "personalia.eyeColour" ).getBasalValueType() );
-        assertEquals( "Blue", content.getData().getValue( "personalia.eyeColour" ).getValue() );
-        assertEquals( "personalia.eyeColour", content.getData().getValue( "personalia.eyeColour" ).getPath().toString() );
+        assertNull( content.getData().setData( "personalia.eyeColour" ).getField() );
+        assertEquals( BasalValueType.STRING, content.getData().setData( "personalia.eyeColour" ).getBasalValueType() );
+        assertEquals( "Blue", content.getData().setData( "personalia.eyeColour" ).getValue() );
+        assertEquals( "personalia.eyeColour", content.getData().setData( "personalia.eyeColour" ).getPath().toString() );
     }
 
     @Test
@@ -45,38 +47,38 @@ public class ContentTest
     {
         // setup
         Content content = new Content();
-        content.setValue( "name", "Thomas" );
-        content.setValue( "personalia.eyeColour", "Blue" );
-        content.setValue( "personalia.hairColour", "Blonde" );
-        content.setValue( "crimes[0].description", "Stole tomatoes from neighbour" );
-        content.setValue( "crimes[0].year", "1989" );
-        content.setValue( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
-        content.setValue( "crimes[1].year", "1990" );
+        content.setData( "name", "Thomas" );
+        content.setData( "personalia.eyeColour", "Blue" );
+        content.setData( "personalia.hairColour", "Blonde" );
+        content.setData( "crimes[0].description", "Stole tomatoes from neighbour" );
+        content.setData( "crimes[0].year", "1989" );
+        content.setData( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
+        content.setData( "crimes[1].year", "1990" );
 
-        assertNull( content.getData().getValue( "personalia.eyeColour" ).getField() );
-        assertEquals( BasalValueType.STRING, content.getData().getValue( "personalia.eyeColour" ).getBasalValueType() );
-        assertEquals( "Blue", content.getData().getValue( "personalia.eyeColour" ).getValue() );
-        assertEquals( "personalia.eyeColour", content.getData().getValue( "personalia.eyeColour" ).getPath().toString() );
+        assertNull( content.getData().setData( "personalia.eyeColour" ).getField() );
+        assertEquals( BasalValueType.STRING, content.getData().setData( "personalia.eyeColour" ).getBasalValueType() );
+        assertEquals( "Blue", content.getData().setData( "personalia.eyeColour" ).getValue() );
+        assertEquals( "personalia.eyeColour", content.getData().setData( "personalia.eyeColour" ).getPath().toString() );
 
         // exercise
         ConfigItems configItems = new ConfigItems();
         configItems.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
-        configItems.addConfigItem( FieldSet.newBuilder().typeGroup().name( "personalia" ).multiple( false ).build() );
+        configItems.addConfigItem( FieldSet.newBuilder().name( "personalia" ).multiple( false ).build() );
         configItems.getFieldSet( "personalia" ).addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         configItems.getFieldSet( "personalia" ).addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
-        configItems.addConfigItem( FieldSet.newBuilder().typeGroup().name( "crimes" ).multiple( true ).build() );
+        configItems.addConfigItem( FieldSet.newBuilder().name( "crimes" ).multiple( true ).build() );
         configItems.getFieldSet( "crimes" ).addField( Field.newBuilder().name( "description" ).type( FieldTypes.textline ).build() );
         configItems.getFieldSet( "crimes" ).addField( Field.newBuilder().name( "year" ).type( FieldTypes.textline ).build() );
         ContentType type = new ContentType();
         type.setConfigItems( configItems );
         content.setType( type );
 
-        assertEquals( BasalValueType.STRING, content.getData().getValue( "personalia.eyeColour" ).getBasalValueType() );
-        assertEquals( "Blue", content.getData().getValue( "personalia.eyeColour" ).getValue() );
-        assertEquals( "personalia.eyeColour", content.getData().getValue( "personalia.eyeColour" ).getField().getPath().toString() );
-        assertEquals( "personalia.hairColour", content.getData().getValue( "personalia.hairColour" ).getField().getPath().toString() );
-        assertEquals( "crimes.description", content.getData().getValue( "crimes[1].description" ).getField().getPath().toString() );
-        assertEquals( "crimes.year", content.getData().getValue( "crimes[1].year" ).getField().getPath().toString() );
+        assertEquals( BasalValueType.STRING, content.getData().setData( "personalia.eyeColour" ).getBasalValueType() );
+        assertEquals( "Blue", content.getData().setData( "personalia.eyeColour" ).getValue() );
+        assertEquals( "personalia.eyeColour", content.getData().setData( "personalia.eyeColour" ).getField().getPath().toString() );
+        assertEquals( "personalia.hairColour", content.getData().setData( "personalia.hairColour" ).getField().getPath().toString() );
+        assertEquals( "crimes.description", content.getData().setData( "crimes[1].description" ).getField().getPath().toString() );
+        assertEquals( "crimes.year", content.getData().setData( "crimes[1].year" ).getField().getPath().toString() );
     }
 
     @Test
@@ -91,10 +93,9 @@ public class ContentTest
                 DropdownConfig.newBuilder().addOption( "Norway", "NO" ).build() ).build() ).build();
 
         FieldSetTemplate addressTemplate = newFieldSetTemplate().module( module ).fieldSet(
-            newFieldSet().typeGroup().name( "address" ).addConfigItem(
-                newField().name( "street" ).type( FieldTypes.textline ).build() ).addConfigItem(
-                newTemplateReference( postalCodeTemplate ).name( "postalCode" ).build() ).addConfigItem(
-                newField().name( "postalPlace" ).type( FieldTypes.textline ).build() ).addConfigItem(
+            newFieldSet().name( "address" ).add( newField().name( "street" ).type( FieldTypes.textline ).build() ).add(
+                newTemplateReference( postalCodeTemplate ).name( "postalCode" ).build() ).add(
+                newField().name( "postalPlace" ).type( FieldTypes.textline ).build() ).add(
                 newTemplateReference( countryTemplate ).name( "country" ).build() ).build() ).build();
 
         ContentType contentType = new ContentType();
@@ -110,11 +111,11 @@ public class ContentTest
 
         Content content = new Content();
         content.setType( contentType );
-        content.setValue( "name", "Ola Normann" );
-        content.setValue( "address.street", "Bakkebygrenda 1" );
-        content.setValue( "address.postalCode", "2676" );
-        content.setValue( "address.postalPlace", "Heidal" );
-        content.setValue( "address.country", "NO" );
+        content.setData( "name", "Ola Normann" );
+        content.setData( "address.street", "Bakkebygrenda 1" );
+        content.setData( "address.postalCode", "2676" );
+        content.setData( "address.postalPlace", "Heidal" );
+        content.setData( "address.country", "NO" );
 
         assertEquals( "Ola Normann", content.getValueAsString( "name" ) );
         assertEquals( "Bakkebygrenda 1", content.getValueAsString( "address.street" ) );
@@ -129,11 +130,10 @@ public class ContentTest
         Module module = newModule().name( "myModule" ).build();
 
         FieldSetTemplate addressTemplate = newFieldSetTemplate().module( module ).fieldSet(
-            newFieldSet().typeGroup().name( "address" ).multiple( true ).addConfigItem(
-                newField().type( FieldTypes.textline ).name( "label" ).build() ).addConfigItem(
-                newField().type( FieldTypes.textline ).name( "street" ).build() ).addConfigItem(
-                newField().type( FieldTypes.textline ).name( "postalCode" ).build() ).addConfigItem(
-                newField().type( FieldTypes.textline ).name( "postalPlace" ).build() ).addConfigItem(
+            newFieldSet().name( "address" ).multiple( true ).add( newField().type( FieldTypes.textline ).name( "label" ).build() ).add(
+                newField().type( FieldTypes.textline ).name( "street" ).build() ).add(
+                newField().type( FieldTypes.textline ).name( "postalCode" ).build() ).add(
+                newField().type( FieldTypes.textline ).name( "postalPlace" ).build() ).add(
                 newField().type( FieldTypes.textline ).name( "country" ).build() ).build() ).build();
 
         ContentType contentType = new ContentType();
@@ -146,16 +146,16 @@ public class ContentTest
 
         Content content = new Content();
         content.setType( contentType );
-        content.setValue( "address[0].label", "Home" );
-        content.setValue( "address[0].street", "Bakkebygrenda 1" );
-        content.setValue( "address[0].postalCode", "2676" );
-        content.setValue( "address[0].postalPlace", "Heidal" );
-        content.setValue( "address[0].country", "NO" );
-        content.setValue( "address[1].label", "Cabin" );
-        content.setValue( "address[1].street", "Heia" );
-        content.setValue( "address[1].postalCode", "2676" );
-        content.setValue( "address[1].postalPlace", "Gjende" );
-        content.setValue( "address[1].country", "NO" );
+        content.setData( "address[0].label", "Home" );
+        content.setData( "address[0].street", "Bakkebygrenda 1" );
+        content.setData( "address[0].postalCode", "2676" );
+        content.setData( "address[0].postalPlace", "Heidal" );
+        content.setData( "address[0].country", "NO" );
+        content.setData( "address[1].label", "Cabin" );
+        content.setData( "address[1].street", "Heia" );
+        content.setData( "address[1].postalCode", "2676" );
+        content.setData( "address[1].postalPlace", "Gjende" );
+        content.setData( "address[1].country", "NO" );
 
         assertEquals( "Home", content.getValueAsString( "address[0].label" ) );
         assertEquals( "Bakkebygrenda 1", content.getValueAsString( "address[0].street" ) );
@@ -181,10 +181,10 @@ public class ContentTest
 
         Content content = new Content();
         content.setType( contentType );
-        content.setValue( "name", "Ola Normann" );
+        content.setData( "name", "Ola Normann" );
         try
         {
-            content.setValue( "address.street", "Norvegen 99" );
+            content.setData( "address.street", "Norvegen 99" );
         }
         catch ( Exception e )
         {
@@ -200,12 +200,12 @@ public class ContentTest
         ContentType contentType = new ContentType();
         contentType.addConfigItem( newField().name( "name" ).type( FieldTypes.textline ).build() );
 
-        FieldSet personaliaFieldSet = newFieldSet().typeGroup().name( "personalia" ).multiple( false ).required( true ).build();
+        FieldSet personaliaFieldSet = newFieldSet().name( "personalia" ).multiple( false ).required( true ).build();
         personaliaFieldSet.addField( newField().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         personaliaFieldSet.addField( newField().name( "hairColour" ).type( FieldTypes.textline ).build() );
         contentType.addConfigItem( personaliaFieldSet );
 
-        FieldSet crimesFieldSet = newFieldSet().typeGroup().name( "crimes" ).multiple( true ).build();
+        FieldSet crimesFieldSet = newFieldSet().name( "crimes" ).multiple( true ).build();
         contentType.addConfigItem( crimesFieldSet );
         crimesFieldSet.addField( newField().name( "description" ).type( FieldTypes.textline ).build() );
         crimesFieldSet.addField( newField().name( "year" ).type( FieldTypes.textline ).build() );
@@ -213,17 +213,40 @@ public class ContentTest
         Content content = new Content();
         content.setType( contentType );
 
-        content.setValue( "name", "Thomas" );
-        content.setValue( "personalia.eyeColour", "Blue" );
-        content.setValue( "personalia.hairColour", "Blonde" );
-        content.setValue( "crimes[0].description", "Stole tomatoes from neighbour" );
-        content.setValue( "crimes[0].year", "1989" );
-        content.setValue( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
-        content.setValue( "crimes[1].year", "1990" );
+        content.setData( "name", "Thomas" );
+        content.setData( "personalia.eyeColour", "Blue" );
+        content.setData( "personalia.hairColour", "Blonde" );
+        content.setData( "crimes[0].description", "Stole tomatoes from neighbour" );
+        content.setData( "crimes[0].year", "1989" );
+        content.setData( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
+        content.setData( "crimes[1].year", "1990" );
 
         content.checkBreaksRequiredContract();
 
         // exercise
+        // TODO
+    }
 
+    @Test
+    public void visualFieldSet()
+    {
+        // setup
+        ContentType contentType = new ContentType();
+        contentType.setName( "test" );
+        VisualFieldSet visualFieldSet =
+            newVisualFieldSet().label( "Personalia" ).add( newField().name( "eyeColour" ).type( FieldTypes.textline ).build() ).add(
+                newField().name( "hairColour" ).type( FieldTypes.textline ).build() ).build();
+        contentType.addConfigItem( visualFieldSet );
+
+        Content content = new Content();
+        content.setType( contentType );
+
+        // exercise
+        content.setData( "eyeColour", "Blue" );
+        content.setData( "hairColour", "Blonde" );
+
+        // verify
+        assertEquals( "Blue", content.getValueAsString( "eyeColour" ) );
+        assertEquals( "Blonde", content.getValueAsString( "hairColour" ) );
     }
 }

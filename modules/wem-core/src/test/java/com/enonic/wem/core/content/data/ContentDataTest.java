@@ -23,7 +23,7 @@ public class ContentDataTest
         configItems.addConfigItem( myDropdown );
 
         ContentData contentData = new ContentData( configItems );
-        contentData.setValue( "myDropdown", "o1" );
+        contentData.setData( "myDropdown", "o1" );
 
         ContentDataSerializerJson generator = new ContentDataSerializerJson();
         String json = generator.toJson( contentData );
@@ -39,7 +39,7 @@ public class ContentDataTest
             Field.newBuilder().name( "myRadioButtons" ).type( FieldTypes.radioButtons ).fieldTypeConfig( myRadioButtonsConfig ).build() );
 
         ContentData contentData = new ContentData( dataConfig );
-        contentData.setValue( "myRadioButtons", "c1" );
+        contentData.setData( "myRadioButtons", "c1" );
 
         ContentDataSerializerJson generator = new ContentDataSerializerJson();
         String json = generator.toJson( contentData );
@@ -53,15 +53,15 @@ public class ContentDataTest
         configItems.addConfigItem( Field.newBuilder().name( "myMultipleTextLine" ).type( FieldTypes.textline ).multiple( true ).build() );
 
         ContentData contentData = new ContentData( configItems );
-        contentData.setValue( "myTextLine", "A single line" );
-        contentData.setValue( "myMultipleTextLine[0]", "First line" );
-        contentData.setValue( "myMultipleTextLine[1]", "Second line" );
+        contentData.setData( "myTextLine", "A single line" );
+        contentData.setData( "myMultipleTextLine[0]", "First line" );
+        contentData.setData( "myMultipleTextLine[1]", "Second line" );
 
         ContentDataSerializerJson generator = new ContentDataSerializerJson();
         String json = generator.toJson( contentData );
-        assertEquals( "A single line", contentData.getValue( "myTextLine" ).getValue() );
-        assertEquals( "First line", contentData.getValue( "myMultipleTextLine[0]" ).getValue() );
-        assertEquals( "Second line", contentData.getValue( "myMultipleTextLine[1]" ).getValue() );
+        assertEquals( "A single line", contentData.setData( "myTextLine" ).getValue() );
+        assertEquals( "First line", contentData.setData( "myMultipleTextLine[0]" ).getValue() );
+        assertEquals( "Second line", contentData.setData( "myMultipleTextLine[1]" ).getValue() );
     }
 
     @Test
@@ -72,7 +72,7 @@ public class ContentDataTest
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
         ContentData contentData = new ContentData( dataConfig );
-        contentData.setValue( "myTags", "A line of text" );
+        contentData.setData( "myTags", "A line of text" );
 
         ContentDataSerializerJson generator = new ContentDataSerializerJson();
         String json = generator.toJson( contentData );
@@ -85,7 +85,7 @@ public class ContentDataTest
         dataConfig.addConfigItem( Field.newBuilder().name( "myPhone" ).type( FieldTypes.phone ).required( true ).build() );
 
         ContentData contentData = new ContentData( dataConfig );
-        contentData.setValue( "myPhone", "98327891" );
+        contentData.setData( "myPhone", "98327891" );
 
         ContentDataSerializerJson generator = new ContentDataSerializerJson();
         String json = generator.toJson( contentData );
@@ -103,7 +103,7 @@ public class ContentDataTest
                 radioButtonsConfig ).build() );
 
         ContentData contentData = new ContentData( dataConfig );
-        contentData.setValue( "myRadiobuttons", "NO" );
+        contentData.setData( "myRadiobuttons", "NO" );
 
         ContentDataSerializerJson generator = new ContentDataSerializerJson();
         String json = generator.toJson( contentData );
@@ -115,15 +115,15 @@ public class ContentDataTest
         ConfigItems dataConfig = new ConfigItems();
         dataConfig.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
 
-        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).build();
+        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).build();
         dataConfig.addConfigItem( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
         ContentData contentData = new ContentData( dataConfig );
-        contentData.setValue( "name", "Ola Nordmann" );
-        contentData.setValue( "personalia.eyeColour", "Blue" );
-        contentData.setValue( "personalia.hairColour", "blonde" );
+        contentData.setData( "name", "Ola Nordmann" );
+        contentData.setData( "personalia.eyeColour", "Blue" );
+        contentData.setData( "personalia.hairColour", "blonde" );
 
         ContentDataSerializerJson generator = new ContentDataSerializerJson();
         String json = generator.toJson( contentData );
@@ -136,21 +136,21 @@ public class ContentDataTest
         Field nameField = Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build();
         dataConfig.addConfigItem( nameField );
 
-        FieldSet fieldSet = FieldSet.newBuilder().typeGroup().name( "personalia" ).multiple( true ).build();
+        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).multiple( true ).build();
         dataConfig.addConfigItem( fieldSet );
         fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
         ContentData contentData = new ContentData( dataConfig );
-        contentData.setValue( "name", "Norske" );
-        contentData.setValue( "name", "Norske" );
-        contentData.setValue( "personalia[0].name", "Ola Nordmann" );
-        contentData.setValue( "personalia[0].eyeColour", "Blue" );
-        contentData.setValue( "personalia[0].hairColour", "blonde" );
-        contentData.setValue( "personalia[1].name", "Kari Trestakk" );
-        contentData.setValue( "personalia[1].eyeColour", "Green" );
-        contentData.setValue( "personalia[1].hairColour", "Brown" );
+        contentData.setData( "name", "Norske" );
+        contentData.setData( "name", "Norske" );
+        contentData.setData( "personalia[0].name", "Ola Nordmann" );
+        contentData.setData( "personalia[0].eyeColour", "Blue" );
+        contentData.setData( "personalia[0].hairColour", "blonde" );
+        contentData.setData( "personalia[1].name", "Kari Trestakk" );
+        contentData.setData( "personalia[1].eyeColour", "Green" );
+        contentData.setData( "personalia[1].hairColour", "Brown" );
 
         ContentDataSerializerJson generator = new ContentDataSerializerJson();
         String json = generator.toJson( contentData );
@@ -160,25 +160,25 @@ public class ContentDataTest
     public void unstructured()
     {
         ContentData data = new ContentData();
-        data.setValue( "firstName", "Thomas" );
-        data.setValue( "child[0].name", "Joachim" );
-        data.setValue( "child[0].age", "9" );
-        data.setValue( "child[0].features.eyeColour", "Blue" );
-        data.setValue( "child[0].features.hairColour", "Blonde" );
-        data.setValue( "child[1].name", "Madeleine" );
-        data.setValue( "child[1].age", "7" );
-        data.setValue( "child[1].features.eyeColour", "Brown" );
-        data.setValue( "child[1].features.hairColour", "Black" );
+        data.setData( "firstName", "Thomas" );
+        data.setData( "child[0].name", "Joachim" );
+        data.setData( "child[0].age", "9" );
+        data.setData( "child[0].features.eyeColour", "Blue" );
+        data.setData( "child[0].features.hairColour", "Blonde" );
+        data.setData( "child[1].name", "Madeleine" );
+        data.setData( "child[1].age", "7" );
+        data.setData( "child[1].features.eyeColour", "Brown" );
+        data.setData( "child[1].features.hairColour", "Black" );
 
-        assertEquals( "Thomas", data.getValue( "firstName" ).getValue() );
-        assertEquals( "Joachim", data.getValue( "child[0].name" ).getValue() );
-        assertEquals( "9", data.getValue( "child[0].age" ).getValue() );
-        assertEquals( "Blue", data.getValue( "child[0].features.eyeColour" ).getValue() );
-        assertEquals( "Blonde", data.getValue( "child[0].features.hairColour" ).getValue() );
-        assertEquals( "Madeleine", data.getValue( "child[1].name" ).getValue() );
-        assertEquals( "7", data.getValue( "child[1].age" ).getValue() );
-        assertEquals( "Brown", data.getValue( "child[1].features.eyeColour" ).getValue() );
-        assertEquals( "Black", data.getValue( "child[1].features.hairColour" ).getValue() );
+        assertEquals( "Thomas", data.setData( "firstName" ).getValue() );
+        assertEquals( "Joachim", data.setData( "child[0].name" ).getValue() );
+        assertEquals( "9", data.setData( "child[0].age" ).getValue() );
+        assertEquals( "Blue", data.setData( "child[0].features.eyeColour" ).getValue() );
+        assertEquals( "Blonde", data.setData( "child[0].features.hairColour" ).getValue() );
+        assertEquals( "Madeleine", data.setData( "child[1].name" ).getValue() );
+        assertEquals( "7", data.setData( "child[1].age" ).getValue() );
+        assertEquals( "Brown", data.setData( "child[1].features.eyeColour" ).getValue() );
+        assertEquals( "Black", data.setData( "child[1].features.hairColour" ).getValue() );
 
         String json = ContentDataSerializerJson.toJson( data );
     }
@@ -187,33 +187,33 @@ public class ContentDataTest
     public void unstructured_getEntries()
     {
         ContentData data = new ContentData();
-        data.setValue( "child[0].name", "Joachim" );
-        data.setValue( "child[0].age", "9" );
-        data.setValue( "child[0].features.eyeColour", "Blue" );
-        data.setValue( "child[0].features.hairColour", "Blonde" );
-        data.setValue( "child[1].name", "Madeleine" );
-        data.setValue( "child[1].age", "7" );
-        data.setValue( "child[1].features.eyeColour", "Brown" );
-        data.setValue( "child[1].features.hairColour", "Black" );
+        data.setData( "child[0].name", "Joachim" );
+        data.setData( "child[0].age", "9" );
+        data.setData( "child[0].features.eyeColour", "Blue" );
+        data.setData( "child[0].features.hairColour", "Blonde" );
+        data.setData( "child[1].name", "Madeleine" );
+        data.setData( "child[1].age", "7" );
+        data.setData( "child[1].features.eyeColour", "Brown" );
+        data.setData( "child[1].features.hairColour", "Black" );
 
-        Entries subTypeEntryChild0 = data.getEntries( "child[0]" );
-        assertEquals( "Joachim", subTypeEntryChild0.getValue( "name" ).getValue() );
-        assertEquals( "9", subTypeEntryChild0.getValue( "age" ).getValue() );
-        assertEquals( "Blue", subTypeEntryChild0.getValue( "features.eyeColour" ).getValue() );
+        DataSet subTypeEntryChild0 = data.getDataSet( "child[0]" );
+        assertEquals( "Joachim", subTypeEntryChild0.getData( "name" ).getValue() );
+        assertEquals( "9", subTypeEntryChild0.getData( "age" ).getValue() );
+        assertEquals( "Blue", subTypeEntryChild0.getData( "features.eyeColour" ).getValue() );
 
-        Entries subTypeEntryChild1 = data.getEntries( "child[1]" );
-        assertEquals( "Madeleine", subTypeEntryChild1.getValue( "name" ).getValue() );
-        assertEquals( "7", subTypeEntryChild1.getValue( "age" ).getValue() );
-        assertEquals( "Brown", subTypeEntryChild1.getValue( "features.eyeColour" ).getValue() );
+        DataSet subTypeEntryChild1 = data.getDataSet( "child[1]" );
+        assertEquals( "Madeleine", subTypeEntryChild1.getData( "name" ).getValue() );
+        assertEquals( "7", subTypeEntryChild1.getData( "age" ).getValue() );
+        assertEquals( "Brown", subTypeEntryChild1.getData( "features.eyeColour" ).getValue() );
     }
 
     @Test
     public void structured_getEntries()
     {
-        FieldSet child = FieldSet.newBuilder().typeGroup().name( "child" ).multiple( true ).build();
+        FieldSet child = FieldSet.newBuilder().name( "child" ).multiple( true ).build();
         child.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
         child.addField( Field.newBuilder().name( "age" ).type( FieldTypes.textline ).build() );
-        FieldSet features = FieldSet.newBuilder().typeGroup().name( "features" ).multiple( false ).build();
+        FieldSet features = FieldSet.newBuilder().name( "features" ).multiple( false ).build();
         features.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         features.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
         child.addFieldSet( features );
@@ -221,23 +221,23 @@ public class ContentDataTest
         configItems.addConfigItem( child );
 
         ContentData data = new ContentData( configItems );
-        data.setValue( "child[0].name", "Joachim" );
-        data.setValue( "child[0].age", "9" );
-        data.setValue( "child[0].features.eyeColour", "Blue" );
-        data.setValue( "child[0].features.hairColour", "Blonde" );
-        data.setValue( "child[1].name", "Madeleine" );
-        data.setValue( "child[1].age", "7" );
-        data.setValue( "child[1].features.eyeColour", "Brown" );
-        data.setValue( "child[1].features.hairColour", "Black" );
+        data.setData( "child[0].name", "Joachim" );
+        data.setData( "child[0].age", "9" );
+        data.setData( "child[0].features.eyeColour", "Blue" );
+        data.setData( "child[0].features.hairColour", "Blonde" );
+        data.setData( "child[1].name", "Madeleine" );
+        data.setData( "child[1].age", "7" );
+        data.setData( "child[1].features.eyeColour", "Brown" );
+        data.setData( "child[1].features.hairColour", "Black" );
 
-        Entries subTypeEntryChild0 = data.getEntries( "child[0]" );
-        assertEquals( "Joachim", subTypeEntryChild0.getValue( "name" ).getValue() );
-        assertEquals( "9", subTypeEntryChild0.getValue( "age" ).getValue() );
-        assertEquals( "Blue", subTypeEntryChild0.getValue( "features.eyeColour" ).getValue() );
+        DataSet subTypeEntryChild0 = data.getDataSet( "child[0]" );
+        assertEquals( "Joachim", subTypeEntryChild0.getData( "name" ).getValue() );
+        assertEquals( "9", subTypeEntryChild0.getData( "age" ).getValue() );
+        assertEquals( "Blue", subTypeEntryChild0.getData( "features.eyeColour" ).getValue() );
 
-        Entries subTypeEntryChild1 = data.getEntries( "child[1]" );
-        assertEquals( "Madeleine", subTypeEntryChild1.getValue( "name" ).getValue() );
-        assertEquals( "7", subTypeEntryChild1.getValue( "age" ).getValue() );
-        assertEquals( "Brown", subTypeEntryChild1.getValue( "features.eyeColour" ).getValue() );
+        DataSet subTypeEntryChild1 = data.getDataSet( "child[1]" );
+        assertEquals( "Madeleine", subTypeEntryChild1.getData( "name" ).getValue() );
+        assertEquals( "7", subTypeEntryChild1.getData( "age" ).getValue() );
+        assertEquals( "Brown", subTypeEntryChild1.getData( "features.eyeColour" ).getValue() );
     }
 }

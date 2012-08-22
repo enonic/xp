@@ -1,26 +1,26 @@
 package com.enonic.wem.core.content.type.configitem;
 
 
-import com.enonic.wem.core.content.data.Value;
+import com.enonic.wem.core.content.data.Data;
 
 public class BreaksRequiredContractException
     extends RuntimeException
 {
-    private Value value;
+    private Data data;
 
-    public BreaksRequiredContractException( final Value value )
+    public BreaksRequiredContractException( final Data data )
     {
-        super( buildMessage( value ) );
-        this.value = value;
+        super( buildMessage( data ) );
+        this.data = data;
     }
 
-    public Value getValue()
+    public Data getValue()
     {
-        return value;
+        return data;
     }
 
-    private static String buildMessage( final Value value )
+    private static String buildMessage( final Data data )
     {
-        return "Required contract for field [" + value.getField() + "] is broken, value was: " + value.getValue();
+        return "Required contract for field [" + data.getField() + "] is broken, value was: " + data.getValue();
     }
 }

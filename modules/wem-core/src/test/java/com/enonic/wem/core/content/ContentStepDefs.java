@@ -42,7 +42,7 @@ public class ContentStepDefs
     {
 
         Content content = contentByName.get( contentName );
-        content.setValue( path, value );
+        content.setData( path, value );
     }
 
     @When("^getting value \"([^\"]*)\" from content named \"([^\"]*)\"$")
