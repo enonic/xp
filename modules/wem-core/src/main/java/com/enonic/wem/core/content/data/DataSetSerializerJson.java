@@ -42,7 +42,7 @@ public class DataSetSerializerJson
         final JsonNode entriesArray = entriesNode.get( "entries" );
         final EntryPath entriesPath = new EntryPath( JsonParserUtil.getStringValue( "path", entriesNode ) );
 
-        final DataSet dataSet = newEntries( entriesPath, configItems );
+        final DataSet dataSet = newDataSet( entriesPath, configItems );
         final Iterator<JsonNode> entryIt = entriesArray.getElements();
         while ( entryIt.hasNext() )
         {
@@ -97,7 +97,7 @@ public class DataSetSerializerJson
         return node.get( "entries" ) != null;
     }
 
-    private static DataSet newEntries( final EntryPath path, ConfigItems configItems )
+    private static DataSet newDataSet( final EntryPath path, ConfigItems configItems )
     {
         if ( configItems == null )
         {
