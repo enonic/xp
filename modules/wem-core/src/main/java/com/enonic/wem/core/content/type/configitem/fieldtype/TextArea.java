@@ -13,11 +13,6 @@ public class TextArea
         super( "textArea", DataTypes.MULTI_LINED_STRING );
     }
 
-    public FieldTypeJsonGenerator getJsonGenerator()
-    {
-        return BaseFieldTypeJsonGenerator.DEFAULT;
-    }
-
     @Override
     public boolean validData( final Data data )
     {

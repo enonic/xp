@@ -12,11 +12,6 @@ public class Date
         super( "date", DataTypes.DATE );
     }
 
-    public FieldTypeJsonGenerator getJsonGenerator()
-    {
-        return BaseFieldTypeJsonGenerator.DEFAULT;
-    }
-
     @Override
     public boolean validData( final Data data )
     {

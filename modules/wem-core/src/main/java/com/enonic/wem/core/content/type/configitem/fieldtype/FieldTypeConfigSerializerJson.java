@@ -1,25 +1,42 @@
 package com.enonic.wem.core.content.type.configitem.fieldtype;
 
+import java.util.Iterator;
+import java.util.Map;
 
-import java.io.IOException;
-
-import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
-public abstract class FieldTypeConfigSerializerJson
+public class FieldTypeConfigSerializerJson
 {
-    public void generateBase( FieldTypeConfig config, JsonGenerator g )
-        throws IOException
+    public FieldTypeConfig parse( final JsonNode fieldTypeConfigNode )
     {
-        g.writeStartObject();
-        g.writeFieldName( config.getClass().getName() );
-        generate( config, g );
-        g.writeEndObject();
+        final Iterator<Map.Entry<String, JsonNode>> it = fieldTypeConfigNode.getFields();
+        final Map.Entry<String, JsonNode> fieldTypeConfigNodeEntry = it.next();
+        final String className = fieldTypeConfigNodeEntry.getKey();
+        final String serializerClassName = className + "SerializerJson";
+
+        AbstractFieldTypeConfigSerializerJson parser = instantiateFieldTypeConfigJsonParser( serializerClassName );
+        return parser.parseConfig( fieldTypeConfigNodeEntry.getValue() );
     }
 
-    public abstract void generate( FieldTypeConfig config, JsonGenerator g )
-        throws IOException;
+    private AbstractFieldTypeConfigSerializerJson instantiateFieldTypeConfigJsonParser( String className )
+    {
+        try
+        {
+            Class cls = Class.forName( className );
 
-
-    public abstract FieldTypeConfig parse( final JsonNode jp );
+            return (AbstractFieldTypeConfigSerializerJson) cls.newInstance();
+        }
+        catch ( ClassNotFoundException e )
+        {
+            throw new RuntimeException( e );
+        }
+        catch ( InstantiationException e )
+        {
+            throw new RuntimeException( e );
+        }
+        catch ( IllegalAccessException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
 }

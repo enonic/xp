@@ -13,11 +13,6 @@ public class Xml
         super( "xml", DataTypes.XML );
     }
 
-    public FieldTypeJsonGenerator getJsonGenerator()
-    {
-        return BaseFieldTypeJsonGenerator.DEFAULT;
-    }
-
     @Override
     public boolean validData( final Data data )
     {

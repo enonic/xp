@@ -17,7 +17,9 @@ import com.enonic.wem.core.content.type.configitem.ConfigItemsSerializerJson;
 
 public class ContentTypeSerializerJson
 {
-    public static String toJson( ContentType contentType )
+    private ConfigItemsSerializerJson configItemsSerializerJson = new ConfigItemsSerializerJson();
+
+    public String toJson( ContentType contentType )
     {
         try
         {
@@ -34,8 +36,7 @@ public class ContentTypeSerializerJson
             {
                 g.writeNullField( "module" );
             }
-
-            ConfigItemsSerializerJson.generate( contentType.getConfigItems(), g );
+            configItemsSerializerJson.generate( contentType.getConfigItems(), g );
             g.writeEndObject();
             g.close();
             sw.close();

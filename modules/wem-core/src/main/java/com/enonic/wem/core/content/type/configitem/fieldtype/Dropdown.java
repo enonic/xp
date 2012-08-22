@@ -14,11 +14,6 @@ public class Dropdown
         super( "dropdown", DataTypes.SINGLE_LINED_STRING );
     }
 
-    public FieldTypeJsonGenerator getJsonGenerator()
-    {
-        return BaseFieldTypeJsonGenerator.DEFAULT;
-    }
-
     @Override
     public boolean validData( final Data data )
     {
@@ -35,7 +30,7 @@ public class Dropdown
         return DropdownConfig.class;
     }
 
-    public FieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator()
+    public AbstractFieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator()
     {
         return DropdownConfigSerializerJson.DEFAULT;
     }

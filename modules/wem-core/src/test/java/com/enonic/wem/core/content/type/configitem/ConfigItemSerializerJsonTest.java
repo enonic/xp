@@ -184,7 +184,7 @@ public class ConfigItemSerializerJsonTest
     private String fieldSetToJson( FieldSet field )
         throws IOException
     {
-        ConfigItemSerializerJson.generate( field, g );
+        new ConfigItemSerializerJson().generate( field, g );
         g.close();
         return sw.toString();
     }
@@ -192,7 +192,7 @@ public class ConfigItemSerializerJsonTest
     private String fieldToJson( Field field )
         throws IOException
     {
-        ConfigItemSerializerJson.generate( field, g );
+        new ConfigItemSerializerJson().generate( field, g );
         g.close();
         return sw.toString();
     }
