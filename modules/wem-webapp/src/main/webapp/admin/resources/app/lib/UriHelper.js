@@ -17,13 +17,13 @@ Ext.define('Admin.lib.UriHelper', {
             Timezone: 'admin/rest/misc/timezone',
             Locale: 'admin/rest/misc/locale',
             Delete: function (account) {
-                return Ext.String.format('/admin/rest/account/{0}/delete', account.key);
+                return Ext.String.format('admin/rest/account/{0}/delete', account.key);
             },
             Info: function (account) {
-                return Ext.String.format('/admin/rest/account/{0}/{1}', account.type, account.key);
+                return Ext.String.format('admin/rest/account/{0}/{1}', account.type, account.key);
             },
             Graph: function (account) {
-                return Ext.String.format('/admin/rest/account/graph/{0}', account.key);
+                return Ext.String.format('admin/rest/account/graph/{0}', account.key);
             },
             Icon: {
                 user: 'admin/rest/account/user/{0}/photo?size={1}',
@@ -95,68 +95,7 @@ Ext.define('Admin.lib.UriHelper', {
     },
 
     getAbsoluteUri: function (uri) {
-        var currentLocation = window.location;
-        if (Ext.isEmpty(uri)) {
-            return "";
-        } else if (uri.indexOf("http") === 0) {
-            return uri;
-        } else if (uri.indexOf("www") === 0) {
-            return "http://" + uri;
-        }
-        var currentPath = currentLocation.pathname.substring(0, currentLocation.pathname.lastIndexOf("/"));
-        var startsWithSlash = uri.charAt(0) === "/";
-        if (!startsWithSlash) {
-            uri = "/" + uri;
-        }
-        var targetLocation = this.getLocationFromUri(uri);
-        var targetPath = targetLocation.pathname;
-        var targetSearch = targetLocation.search;
-
-        var targetHost = currentLocation.protocol + "//" + currentLocation.host;
-
-        var currentSegments = currentPath.split("/");
-        var targetSegments = targetPath.split("/");
-
-        if (Admin.lib.UriHelper.deployPath === undefined) {
-            var deployPath = "";
-            var i;
-            var firstTargetSegment = targetSegments[1];
-            // add current segments one by one until we see match with target segments
-            for (i = 1; i < currentSegments.length; i++) {
-                var currentSegment = currentSegments[i];
-                if (firstTargetSegment !== currentSegment) {
-                    // segments don't match so add until they do or we are out of segments
-                    deployPath += "/" + currentSegment;
-                    if (startsWithSlash) {
-                        // url starts with a slash meaning we want it
-                        // right after deploy url which is the first segment
-                        break;
-                    }
-                } else {
-                    // segments matched so no need to add more
-                    break;
-                }
-            }
-            // save deploy path to use it if we get non-intersecting urls
-            Admin.lib.UriHelper.deployPath = deployPath;
-        }
-
-        return targetHost + Admin.lib.UriHelper.deployPath + targetPath + targetSearch;
-    },
-
-    getLocationFromUri: function (uri) {
-        var a = document.createElement("a");
-        a.href = uri;
-        return {
-            href: a.href,
-            host: a.host,
-            hostname: a.hostname,
-            port: a.port,
-            pathname: a.pathname,
-            protocol: a.protocol,
-            hash: a.hash,
-            search: a.search
-        };
+        return window.CONFIG.baseUrl + '/' + uri;
     },
 
     // addMethod - By John Resig (MIT Licensed)
