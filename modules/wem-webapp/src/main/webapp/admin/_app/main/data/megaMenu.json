@@ -25,7 +25,7 @@
                             "text": "Content Manager",
                             "id": "app-100",
                             "cms": {
-                                "appUrl": "app-contentManager.html"
+                                "appUrl": "app-content-manager.jsp"
                             },
                             "iconCls": "icon-content-manager-24"
                         },
@@ -48,7 +48,7 @@
                             "text": "Accounts",
                             "id": "app-200",
                             "cms": {
-                                "appUrl": "app-account.html"
+                                "appUrl": "app-account.jsp"
                             },
                             "iconCls": "icon-woman-24"
                         },
