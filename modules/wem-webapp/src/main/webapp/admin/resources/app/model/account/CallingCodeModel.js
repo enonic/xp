@@ -1,10 +1,10 @@
 Ext.define('Admin.model.account.CallingCodeModel', {
     extend: 'Ext.data.Model',
 
-    idProperty: 'callingCode',
+    idProperty: 'callingCodeId',
 
     fields: [
-        'countryCode',
+        'callingCodeId',
         'callingCode',
         'englishName',
         'localName'
