@@ -10,14 +10,7 @@ Ext.define('Admin.controller.datadesigner.Controller', {
     ],
 
     init: function () {
-        this.control({
-            'contentTypeDetailPanel *[action=closePreview]': {
-                click: this.closePreview
-            },
-            'dataDesignerWizardPanel *[action=closeWizard]': {
-                click: this.closeWizard
-            }
-        });
+
         this.application.on({
             showNewContentTypePanel: {
                 fn: this.showNewContentTypePanel,
@@ -51,7 +44,7 @@ Ext.define('Admin.controller.datadesigner.Controller', {
         }
         var i;
         for (i = 0; i < contentType.length; i += 1) {
-            this.createEditContentPanel(contentType[i]);
+            this.createEditContentPanel(contentType[i].raw);
         }
     },
 
@@ -77,7 +70,9 @@ Ext.define('Admin.controller.datadesigner.Controller', {
             contentType = [].concat(contentType);
         }
         if (contentType.length === 1) {
-            Ext.Msg.alert('Delete', 'Name: ' + contentType[0].raw.name + ', key: ' + contentType[0].raw.key);
+            var name = contentType[0].raw ? contentType[0].raw.name : contentType[0].name;
+            var key = contentType[0].raw ? contentType[0].raw.key : contentType[0].key;
+            Ext.Msg.alert('Delete', 'Name: ' + name + ', key: ' + key);
         }
     },
 
@@ -111,10 +106,10 @@ Ext.define('Admin.controller.datadesigner.Controller', {
 
             tabPanel.addTab({
                 xtype: 'dataDesignerWizardPanel',
-                id: 'tab-content-type-' + contentType.raw.key,
-                title: contentType.raw.name,
+                id: 'tab-content-type-' + contentType.key,
+                title: contentType.name,
                 iconCls: 'icon-data-designer-16',
-                modelData: contentType.raw
+                modelData: contentType
             });
 
         } else {
@@ -135,14 +130,6 @@ Ext.define('Admin.controller.datadesigner.Controller', {
                 title: 'View Content Type'
             });
         }
-    },
-
-    closePreview: function (el, e) {
-        this.getCurrentTab().close();
-    },
-
-    closeWizard: function (el, e) {
-        this.getCurrentTab().close();
     },
 
     getCurrentTab: function () {

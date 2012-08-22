@@ -42,6 +42,7 @@ Ext.define('Admin.view.datadesigner.wizard.Toolbar', {
         if (!this.isNew) {
             leftGrp.items.push({
                 text: 'Delete',
+                action: 'deleteContentType',
                 iconCls: 'icon-delete-user-24'
             });
 

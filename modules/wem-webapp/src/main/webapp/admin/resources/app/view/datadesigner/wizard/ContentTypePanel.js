@@ -17,6 +17,11 @@ Ext.define('Admin.view.datadesigner.wizard.ContentTypePanel', {
                 },
                 items: [
                     {
+                        xtype: 'hiddenfield',
+                        name: 'key',
+                        value: me.modelData ? me.modelData.key : ''
+                    },
+                    {
                         xtype: 'combobox',
                         fieldLabel: 'Content Type<span style="color: red;">*</span>',
                         forceSelection: true,
@@ -74,8 +79,10 @@ Ext.define('Admin.view.datadesigner.wizard.ContentTypePanel', {
         var type = form.findField('contentType').getValue();
         var name = form.findField('name').getValue();
         var module = form.findField('module').getValue();
+        var key = form.findField('key').getValue();
 
         return {
+            'key': key,
             'type': type,
             'name': name,
             'module': module

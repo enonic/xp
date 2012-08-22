@@ -38,7 +38,7 @@ Ext.define('Admin.view.datadesigner.preview.DetailPanel', {
         } else if (Ext.isObject(data)) {
             singleData = data.data;
         }
-
+        this.data = singleData;
         return {
             xtype: 'container',
             itemId: 'singleSelection',

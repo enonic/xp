@@ -21,10 +21,12 @@ Ext.define('Admin.view.datadesigner.preview.Toolbar', {
             items: [
                 {
                     text: 'Edit',
+                    action: 'editContentType',
                     iconCls: 'icon-edit-generic'
                 },
                 {
                     text: 'Delete',
+                    action: 'deleteContentType',
                     iconCls: 'icon-delete-user-24'
                 }
             ]
