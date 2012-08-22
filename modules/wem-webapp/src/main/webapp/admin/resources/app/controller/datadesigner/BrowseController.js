@@ -12,7 +12,7 @@ Ext.define('Admin.controller.datadesigner.BrowseController', {
         'Admin.view.datadesigner.FilterPanel',
         'Admin.view.datadesigner.TreeGridPanel',
         'Admin.view.datadesigner.ContextMenu',
-        'Admin.view.datadesigner.DetailPanel'
+        'Admin.view.datadesigner.preview.DetailPanel'
     ],
 
     init: function () {
@@ -20,22 +20,22 @@ Ext.define('Admin.controller.datadesigner.BrowseController', {
 
         this.control(
             {
-                '*[action=newContentType]': {
+                'contentTypeTreeGridPanel *[action=newContentType]': {
                     click: function (btn, evt) {
                         this.showNewContentTypePanel();
                     }
                 },
-                '*[action=editContentType]': {
+                'contentTypeTreeGridPanel *[action=editContentType]': {
                     click: function (btn, evt) {
                         this.showEditContentTypePanel();
                     }
                 },
-                '*[action=viewContentType]': {
+                'contentTypeTreeGridPanel *[action=viewContentType]': {
                     click: function (btn, evt) {
                         this.showPreviewContentTypePanel();
                     }
                 },
-                '*[action=deleteContentType]': {
+                'contentTypeTreeGridPanel *[action=deleteContentType]': {
                     click: function (btn, evt) {
                         this.showDeleteContentTypeWindow();
                     }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <title>Enonic WEM Admin</title>
     <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/ext-all.css">
     <link rel="stylesheet" type="text/css" href="resources/css/main.css">
@@ -28,8 +28,11 @@
             name: 'App',
 
             controllers: [
+                'Admin.controller.datadesigner.Controller',
                 'Admin.controller.datadesigner.BrowseController',
-                'Admin.controller.datadesigner.FilterPanelController'
+                'Admin.controller.datadesigner.FilterPanelController',
+                'Admin.controller.datadesigner.WizardController' ,
+                'Admin.controller.datadesigner.PreviewController'
             ],
 
             requires: [
@@ -77,6 +80,7 @@
                                                 {
                                                     region: 'south',
                                                     xtype: 'contentTypeDetailPanel',
+                                                    showToolbar: false,
                                                     collapsible: true,
                                                     border: true,
                                                     split: true,
