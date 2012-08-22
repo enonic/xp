@@ -45,12 +45,12 @@ StartTest(function (t) {
 
     t.diag('Test: getIconForComponent');
 
-    t.is(AdminLiveEdit.Util.getIconForComponent('region'), '../resources/images/layout_vertical.png', 'Region icon ok');
-    t.is(AdminLiveEdit.Util.getIconForComponent('window'), '../resources/images/component_blue.png', 'Window icon ok');
-    t.is(AdminLiveEdit.Util.getIconForComponent('content'), '../resources/images/data_blue.png', 'Content icon ok');
-    t.is(AdminLiveEdit.Util.getIconForComponent('paragraph'), '../resources/images/text_rich_marked.png', 'Paragraph icon ok');
-    t.is(AdminLiveEdit.Util.getIconForComponent('page'), '../resources/images/document_plain_blue.png', 'Page icon ok');
-    t.is(AdminLiveEdit.Util.getIconForComponent('fisk'), '../resources/images/component_blue.png', 'Unknown icon ok');
+    t.is(AdminLiveEdit.Util.getIconForComponent('region'), '../app/images/layout_vertical.png', 'Region icon ok');
+    t.is(AdminLiveEdit.Util.getIconForComponent('window'), '../app/images/component_blue.png', 'Window icon ok');
+    t.is(AdminLiveEdit.Util.getIconForComponent('content'), '../app/images/data_blue.png', 'Content icon ok');
+    t.is(AdminLiveEdit.Util.getIconForComponent('paragraph'), '../app/images/text_rich_marked.png', 'Paragraph icon ok');
+    t.is(AdminLiveEdit.Util.getIconForComponent('page'), '../app/images/document_plain_blue.png', 'Page icon ok');
+    t.is(AdminLiveEdit.Util.getIconForComponent('fisk'), '../app/images/component_blue.png', 'Unknown icon ok');
 
 
     // ****
