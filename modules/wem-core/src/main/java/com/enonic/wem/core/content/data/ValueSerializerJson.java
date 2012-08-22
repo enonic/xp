@@ -6,24 +6,24 @@ import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
 import com.enonic.wem.core.content.JsonParserUtil;
-import com.enonic.wem.core.content.type.valuetype.BasalValueType;
+import com.enonic.wem.core.content.type.datatype.BasalValueType;
 
 public class ValueSerializerJson
 {
     public static void generate( final Entry entry, final JsonGenerator g )
         throws IOException
     {
-        final Value fieldValue = (Value) entry;
+        final Data data = (Data) entry;
 
         g.writeStartObject();
-        g.writeStringField( "path", fieldValue.getPath().toString() );
-        if ( fieldValue.getBasalValueType() != null )
+        g.writeStringField( "path", data.getPath().toString() );
+        if ( data.getBasalValueType() != null )
         {
-            g.writeStringField( "type", fieldValue.getBasalValueType().toString() );
+            g.writeStringField( "type", data.getBasalValueType().toString() );
         }
-        if ( fieldValue.getValue() != null )
+        if ( data.getValue() != null )
         {
-            g.writeStringField( "value", String.valueOf( fieldValue.getValue() ) );
+            g.writeStringField( "value", String.valueOf( data.getValue() ) );
         }
         else
         {
@@ -35,7 +35,7 @@ public class ValueSerializerJson
 
     public static Entry parse( JsonNode entryNode )
     {
-        Value.Builder builder = Value.newBuilder();
+        Data.Builder builder = Data.newBuilder();
 
         String pathAsString = JsonParserUtil.getStringValue( "path", entryNode );
         String valueAsString = JsonParserUtil.getStringValue( "value", entryNode );

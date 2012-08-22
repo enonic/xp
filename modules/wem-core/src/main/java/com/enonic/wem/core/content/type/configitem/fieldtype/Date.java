@@ -1,15 +1,15 @@
 package com.enonic.wem.core.content.type.configitem.fieldtype;
 
 
-import com.enonic.wem.core.content.data.Value;
-import com.enonic.wem.core.content.type.valuetype.ValueTypes;
+import com.enonic.wem.core.content.data.Data;
+import com.enonic.wem.core.content.type.datatype.DataTypes;
 
 public class Date
     extends BaseFieldType
 {
     Date()
     {
-        super( "date", ValueTypes.DATE );
+        super( "date", DataTypes.DATE );
     }
 
     public FieldTypeJsonGenerator getJsonGenerator()
@@ -18,9 +18,9 @@ public class Date
     }
 
     @Override
-    public boolean validValue( final Value fieldValue )
+    public boolean validData( final Data data )
     {
-        return getValueType().validValue( fieldValue );
+        return getDataType().validData( data );
     }
 
     public boolean requiresConfig()
@@ -34,7 +34,7 @@ public class Date
     }
 
     @Override
-    public boolean breaksRequiredContract( final Value value )
+    public boolean breaksRequiredContract( final Data data )
     {
         // TODO
         return false;

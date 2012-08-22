@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.type.configitem;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.core.content.data.Value;
+import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldType;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeConfig;
 
@@ -88,23 +88,23 @@ public class Field
         return fieldTypeConfig;
     }
 
-    public boolean breaksRequiredContract( final Value value )
+    public boolean breaksRequiredContract( final Data data )
     {
-        Preconditions.checkNotNull( value, "Given value is null" );
-        Preconditions.checkArgument( value.getField() != null, "Given value have no field" );
-        Preconditions.checkArgument( value.getField().equals( this ), "Given value's field is not this" );
+        Preconditions.checkNotNull( data, "Given data is null" );
+        Preconditions.checkArgument( data.getField() != null, "Given data have no field" );
+        Preconditions.checkArgument( data.getField().equals( this ), "Given data's field is not this" );
 
         if ( !isRequired() )
         {
             return false;
         }
 
-        return type.breaksRequiredContract( value );
+        return type.breaksRequiredContract( data );
     }
 
-    public boolean isValidAccordingToFieldTypeConfig( final Value value )
+    public boolean isValidAccordingToFieldTypeConfig( final Data data )
     {
-        return fieldTypeConfig == null || fieldTypeConfig.isValid( value );
+        return fieldTypeConfig == null || fieldTypeConfig.isValid( data );
     }
 
     @Override

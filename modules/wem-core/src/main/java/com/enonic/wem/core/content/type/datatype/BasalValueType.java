@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.type.valuetype;
+package com.enonic.wem.core.content.type.datatype;
 
 
 import org.joda.time.DateMidnight;

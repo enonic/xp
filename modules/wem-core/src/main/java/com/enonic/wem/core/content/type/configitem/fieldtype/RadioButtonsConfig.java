@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.enonic.wem.core.content.data.Value;
+import com.enonic.wem.core.content.data.Data;
 
 public class RadioButtonsConfig
     implements FieldTypeConfig
@@ -24,9 +24,9 @@ public class RadioButtonsConfig
     }
 
     @Override
-    public boolean isValid( final Value value )
+    public boolean isValid( final Data data )
     {
-        String valueAsString = String.valueOf( value.getValue() );
+        String valueAsString = String.valueOf( data.getValue() );
         return optionsAsMap.containsKey( valueAsString );
     }
 

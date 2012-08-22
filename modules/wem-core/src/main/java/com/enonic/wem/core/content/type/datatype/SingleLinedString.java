@@ -1,25 +1,25 @@
-package com.enonic.wem.core.content.type.valuetype;
+package com.enonic.wem.core.content.type.datatype;
 
 
-import com.enonic.wem.core.content.data.Value;
+import com.enonic.wem.core.content.data.Data;
 
 public class SingleLinedString
-    extends AbstractValueType
-    implements ValueType
+    extends AbstractDataType
+    implements DataType
 {
     public SingleLinedString()
     {
         super( BasalValueType.STRING );
     }
 
-    public boolean validValue( final Value fieldValue )
+    public boolean validData( final Data data )
     {
-        if ( !( fieldValue.getValue() instanceof String ) )
+        if ( !( data.getValue() instanceof String ) )
         {
             return false;
         }
 
-        String stringValue = (String) fieldValue.getValue();
+        String stringValue = (String) data.getValue();
         if ( stringValue != null )
         {
             if ( stringValue.contains( "\r" ) || stringValue.contains( "\n" ) )

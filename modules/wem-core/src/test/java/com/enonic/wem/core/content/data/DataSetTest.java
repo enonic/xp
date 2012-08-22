@@ -10,7 +10,7 @@ import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 
 import static org.junit.Assert.*;
 
-public class EntriesTest
+public class DataSetTest
 {
     @Test
     public void setValue_when_given_path_does_not_exists()
@@ -20,11 +20,11 @@ public class EntriesTest
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         configItems.addConfigItem( fieldSet );
 
-        Entries entries = new Entries( new EntryPath(), configItems );
+        DataSet dataSet = new DataSet( new EntryPath(), configItems );
 
         try
         {
-            entries.setValue( new EntryPath( "unknown.eyeColour" ), "Brown" );
+            dataSet.setData( new EntryPath( "unknown.eyeColour" ), "Brown" );
         }
         catch ( Exception e )
         {
@@ -42,12 +42,12 @@ public class EntriesTest
         ConfigItems configItems = new ConfigItems();
         configItems.addConfigItem( fieldSet );
 
-        Entries entries = new Entries( new EntryPath(), configItems );
-        entries.setValue( new EntryPath( "personalia.eyeColour" ), "Brown" );
-        entries.setValue( new EntryPath( "personalia.hairColour" ), "Brown" );
+        DataSet dataSet = new DataSet( new EntryPath(), configItems );
+        dataSet.setData( new EntryPath( "personalia.eyeColour" ), "Brown" );
+        dataSet.setData( new EntryPath( "personalia.hairColour" ), "Brown" );
 
-        assertEquals( "Brown", entries.getValue( "personalia.eyeColour" ).getValue() );
-        assertEquals( "Brown", entries.getValue( "personalia.hairColour" ).getValue() );
+        assertEquals( "Brown", dataSet.getData( "personalia.eyeColour" ).getValue() );
+        assertEquals( "Brown", dataSet.getData( "personalia.hairColour" ).getValue() );
     }
 
     @Test
@@ -61,16 +61,16 @@ public class EntriesTest
         ConfigItems configItems = new ConfigItems();
         configItems.addConfigItem( personalia );
 
-        Entries entries = new Entries( new EntryPath(), configItems );
-        entries.setValue( new EntryPath( "personalia.crimes[0].description" ), "Stole purse from old lady." );
-        entries.setValue( new EntryPath( "personalia.crimes[0].year" ), "2011" );
-        entries.setValue( new EntryPath( "personalia.crimes[1].description" ), "Drove car in 80 in 50 zone." );
-        entries.setValue( new EntryPath( "personalia.crimes[1].year" ), "2012" );
+        DataSet dataSet = new DataSet( new EntryPath(), configItems );
+        dataSet.setData( new EntryPath( "personalia.crimes[0].description" ), "Stole purse from old lady." );
+        dataSet.setData( new EntryPath( "personalia.crimes[0].year" ), "2011" );
+        dataSet.setData( new EntryPath( "personalia.crimes[1].description" ), "Drove car in 80 in 50 zone." );
+        dataSet.setData( new EntryPath( "personalia.crimes[1].year" ), "2012" );
 
-        assertEquals( "Stole purse from old lady.", entries.getValue( "personalia.crimes[0].description" ).getValue() );
-        assertEquals( "2011", entries.getValue( "personalia.crimes[0].year" ).getValue() );
-        assertEquals( "Drove car in 80 in 50 zone.", entries.getValue( "personalia.crimes[1].description" ).getValue() );
-        assertEquals( "2012", entries.getValue( "personalia.crimes[1].year" ).getValue() );
+        assertEquals( "Stole purse from old lady.", dataSet.getData( "personalia.crimes[0].description" ).getValue() );
+        assertEquals( "2011", dataSet.getData( "personalia.crimes[0].year" ).getValue() );
+        assertEquals( "Drove car in 80 in 50 zone.", dataSet.getData( "personalia.crimes[1].description" ).getValue() );
+        assertEquals( "2012", dataSet.getData( "personalia.crimes[1].year" ).getValue() );
     }
 
     @Test
@@ -82,11 +82,11 @@ public class EntriesTest
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
         configItems.addConfigItem( fieldSet );
 
-        Entries entries = new Entries( new EntryPath(), configItems );
-        entries.setValue( new EntryPath( "persons[0].name" ), "Arn" );
-        entries.setValue( new EntryPath( "persons[0].eyeColour" ), "Brown" );
+        DataSet dataSet = new DataSet( new EntryPath(), configItems );
+        dataSet.setData( new EntryPath( "persons[0].name" ), "Arn" );
+        dataSet.setData( new EntryPath( "persons[0].eyeColour" ), "Brown" );
 
-        assertEquals( "Arn", entries.getValue( "persons[0].name" ).getValue() );
-        assertEquals( "Brown", entries.getValue( "persons[0].eyeColour" ).getValue() );
+        assertEquals( "Arn", dataSet.getData( "persons[0].name" ).getValue() );
+        assertEquals( "Brown", dataSet.getData( "persons[0].eyeColour" ).getValue() );
     }
 }

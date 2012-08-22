@@ -1,8 +1,8 @@
 package com.enonic.wem.core.content.type.configitem.fieldtype;
 
 
-import com.enonic.wem.core.content.data.Value;
-import com.enonic.wem.core.content.type.valuetype.ValueType;
+import com.enonic.wem.core.content.data.Data;
+import com.enonic.wem.core.content.type.datatype.DataType;
 
 /**
  * Common interface for all kinds of field types.
@@ -13,7 +13,7 @@ public interface FieldType
 
     String getClassName();
 
-    ValueType getValueType();
+    DataType getDataType();
 
     FieldTypeJsonGenerator getJsonGenerator();
 
@@ -23,5 +23,5 @@ public interface FieldType
 
     FieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator();
 
-    boolean breaksRequiredContract( Value value );
+    boolean breaksRequiredContract( Data data );
 }

@@ -5,10 +5,10 @@ import org.elasticsearch.common.base.Preconditions;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.Field;
-import com.enonic.wem.core.content.type.valuetype.BasalValueType;
+import com.enonic.wem.core.content.type.datatype.BasalValueType;
 
 
-public class Value
+public class Data
     extends Entry
 {
     private EntryPath path;
@@ -22,7 +22,7 @@ public class Value
 
     private BasalValueType basalValueType;
 
-    private Value()
+    private Data()
     {
         // protection
     }
@@ -31,7 +31,7 @@ public class Value
     {
         ConfigItemPath configItemPath = path.resolveConfigItemPath();
         Preconditions.checkArgument( configItemPath.equals( field.getPath() ),
-                                     "This Value's path [%s] does not match given field's path: " + field.getPath(),
+                                     "This Data's path [%s] does not match given field's path: " + field.getPath(),
                                      configItemPath.toString() );
         this.field = field;
     }
@@ -87,6 +87,11 @@ public class Value
         return new Builder();
     }
 
+    public static Builder newData()
+    {
+        return new Builder();
+    }
+
     public static class Builder
     {
         private EntryPath path;
@@ -100,7 +105,7 @@ public class Value
 
         public Builder()
         {
-            value = new Value();
+            value = new Data();
         }
 
         public Builder field( Field value )
@@ -127,40 +132,40 @@ public class Value
             return this;
         }
 
-        public Value build()
+        public Data build()
         {
-            final Value value = new Value();
-            value.path = path;
-            value.field = field;
-            value.value = this.value;
+            final Data data = new Data();
+            data.path = path;
+            data.field = field;
+            data.value = this.value;
 
             BasalValueType resolvedType = null;
             if ( this.value != null )
             {
                 resolvedType = BasalValueType.resolveType( this.value );
-                Preconditions.checkArgument( resolvedType != null, "value is of unknown type: " + value.value.getClass().getName() );
+                Preconditions.checkArgument( resolvedType != null, "value is of unknown type: " + data.value.getClass().getName() );
             }
 
             if ( type != null )
             {
                 Preconditions.checkArgument( type == resolvedType, "value is not of expected type [%s]: " + type, resolvedType );
-                value.basalValueType = type;
+                data.basalValueType = type;
             }
             else
             {
-                value.basalValueType = resolvedType;
+                data.basalValueType = resolvedType;
             }
 
-            if ( field != null & value.basalValueType != null )
+            if ( field != null & data.basalValueType != null )
             {
-                BasalValueType basalValueTypeOfField = field.getFieldType().getValueType().getBasalValueType();
-                Preconditions.checkArgument( value.basalValueType == basalValueTypeOfField,
-                                             "value is not of expected type [%s]: " + value.basalValueType, basalValueTypeOfField );
+                BasalValueType basalValueTypeOfField = field.getFieldType().getDataType().getBasalValueType();
+                Preconditions.checkArgument( data.basalValueType == basalValueTypeOfField,
+                                             "value is not of expected type [%s]: " + data.basalValueType, basalValueTypeOfField );
             }
 
-            Preconditions.checkArgument( value.isValid(), "Value is not valid for field [%s]: " + value.value, field );
+            Preconditions.checkArgument( data.isValid(), "Value is not valid for field [%s]: " + data.value, field );
 
-            return value;
+            return data;
         }
     }
 }

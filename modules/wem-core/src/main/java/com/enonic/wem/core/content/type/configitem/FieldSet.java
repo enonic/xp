@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.core.content.data.Entries;
+import com.enonic.wem.core.content.data.DataSet;
 import com.enonic.wem.core.content.data.Entry;
 
 public class FieldSet
@@ -157,23 +157,23 @@ public class FieldSet
         return configItems.getConfigItem( configItemPath );
     }
 
-    public boolean breaksRequiredContract( Entries entries )
+    public boolean breaksRequiredContract( DataSet dataSet )
     {
-        Preconditions.checkNotNull( entries, "Given entries is null" );
-        //Preconditions.checkArgument( entries.getFieldSet() != null, "Given value have no field" );
-        //Preconditions.checkArgument( entries.getFieldSet().equals( this ), "Given value's field is not this" );
+        Preconditions.checkNotNull( dataSet, "Given dataSet is null" );
+        //Preconditions.checkArgument( entries.getFieldSet() != null, "Given dataSet have no field" );
+        //Preconditions.checkArgument( entries.getFieldSet().equals( this ), "Given dataSet's field is not this" );
 
         if ( !isRequired() )
         {
             return false;
         }
 
-        if ( entries.size() == 0 )
+        if ( dataSet.size() == 0 )
         {
             return true;
         }
 
-        for ( Entry entry : entries )
+        for ( Entry entry : dataSet )
         {
             if ( entry.breaksRequiredContract() )
             {

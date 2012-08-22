@@ -5,11 +5,11 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
-import com.enonic.wem.core.content.type.valuetype.BasalValueType;
+import com.enonic.wem.core.content.type.datatype.BasalValueType;
 
 public class ContentData
 {
-    private Entries entries;
+    private DataSet dataSet;
 
     /**
      * Structured data.
@@ -18,7 +18,7 @@ public class ContentData
      */
     public ContentData( final ConfigItems configItems )
     {
-        this.entries = new Entries( new EntryPath(), configItems );
+        this.dataSet = new DataSet( new EntryPath(), configItems );
     }
 
     /**
@@ -26,82 +26,82 @@ public class ContentData
      */
     public ContentData()
     {
-        this.entries = new Entries( new EntryPath() );
+        this.dataSet = new DataSet( new EntryPath() );
     }
 
     public void setConfigItems( final ConfigItems configItems )
     {
-        this.entries.setConfigItems( configItems );
+        this.dataSet.setConfigItems( configItems );
     }
 
-    void setEntries( final Entries entries )
+    void setDataSet( final DataSet dataSet )
     {
-        this.entries = entries;
+        this.dataSet = dataSet;
     }
 
-    public void setValue( final EntryPath path, final Object value )
+    public void setData( final EntryPath path, final Object value )
     {
-        entries.setValue( path, value );
+        dataSet.setData( path, value );
     }
 
-    public void setValue( final EntryPath path, final String value )
+    public void setData( final EntryPath path, final String value )
     {
-        entries.setValue( path, value );
+        dataSet.setData( path, value );
     }
 
-    public void setValue( final String path, final Object value )
+    public void setData( final String path, final Object value )
     {
-        entries.setValue( new EntryPath( path ), value );
+        dataSet.setData( new EntryPath( path ), value );
     }
 
-    public void setValue( final String path, final FieldSet value )
+    public void setData( final String path, final FieldSet value )
     {
-        entries.setValue( new EntryPath( path ), value );
+        dataSet.setData( new EntryPath( path ), value );
     }
 
-    public Value getValue( final String path )
+    public Data setData( final String path )
     {
-        return entries.getValue( new EntryPath( path ) );
+        return dataSet.getData( new EntryPath( path ) );
     }
 
     public String getValueAsString( final EntryPath path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
 
-        Value value = getValue( path );
-        Preconditions.checkArgument( value != null, "No value at path: " + path );
+        Data data = getData( path );
+        Preconditions.checkArgument( data != null, "No data at path: " + path );
 
-        Preconditions.checkArgument( value.getBasalValueType() == BasalValueType.STRING, "Value is not of type %", BasalValueType.STRING );
-        return (String) value.getValue();
+        Preconditions.checkArgument( data.getBasalValueType() == BasalValueType.STRING, "Value is not of type %", BasalValueType.STRING );
+        return (String) data.getValue();
     }
 
-    public Value getValue( final EntryPath path )
+    public Data getData( final EntryPath path )
     {
-        return entries.getValue( path );
+        return dataSet.getData( path );
     }
 
-    public Entries getEntries( final String path )
+    public DataSet getDataSet( final String path )
     {
-        return getEntries( new EntryPath( path ) );
+        return getDataSet( new EntryPath( path ) );
     }
 
-    public Entries getEntries( final EntryPath path )
+    public DataSet getDataSet( final EntryPath path )
     {
-        return entries.getEntries( path );
+        return dataSet.getDataSet( path );
     }
 
-    Entries getEntries()
+    DataSet getDataSet()
     {
-        return entries;
+        return dataSet;
     }
 
     public boolean breaksRequiredContract()
     {
-        return entries.breaksRequiredContract();
+        return dataSet.breaksRequiredContract();
     }
 
     public void checkBreaksRequiredContract()
     {
-        entries.breaksRequiredContract();
+        dataSet.breaksRequiredContract();
     }
 }

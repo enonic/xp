@@ -12,7 +12,7 @@ import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 
-public class Entries
+public class DataSet
     extends Entry
     implements Iterable<Entry>
 {
@@ -22,14 +22,14 @@ public class Entries
 
     private LinkedHashMap<EntryPath.Element, Entry> entries = new LinkedHashMap<EntryPath.Element, Entry>();
 
-    public Entries( final EntryPath path )
+    public DataSet( final EntryPath path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
 
         this.path = path;
     }
 
-    public Entries( final EntryPath path, final ConfigItems configItems )
+    public DataSet( final EntryPath path, final ConfigItems configItems )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkNotNull( configItems, "configItems cannot be null" );
@@ -40,7 +40,7 @@ public class Entries
         this.configItems = configItems;
     }
 
-    private Entries( final EntryPath path, final FieldSet fieldSet )
+    private DataSet( final EntryPath path, final FieldSet fieldSet )
     {
         Preconditions.checkNotNull( fieldSet, "fieldSet cannot be null" );
         Preconditions.checkNotNull( path, "path cannot be null" );
@@ -49,24 +49,24 @@ public class Entries
         this.path = path;
     }
 
-    Entries( final EntryPath path, final Entries entries )
+    DataSet( final EntryPath path, final DataSet dataSet )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
-        Preconditions.checkNotNull( entries, "entries cannot be null" );
+        Preconditions.checkNotNull( dataSet, "entries cannot be null" );
 
         this.path = path;
-        this.entries = entries.entries;
+        this.entries = dataSet.entries;
     }
 
-    public Entries( final EntryPath path, final FieldSet fieldSet, final Entries entries )
+    public DataSet( final EntryPath path, final FieldSet fieldSet, final DataSet dataSet )
     {
         Preconditions.checkNotNull( fieldSet, "fieldSet cannot be null" );
         Preconditions.checkNotNull( path, "path cannot be null" );
-        Preconditions.checkNotNull( entries, "entries cannot be null" );
+        Preconditions.checkNotNull( dataSet, "entries cannot be null" );
 
         this.configItems = fieldSet.getConfigItems();
         this.path = path;
-        this.entries = entries.entries;
+        this.entries = dataSet.entries;
     }
 
     public void setConfigItems( final ConfigItems configItems )
@@ -75,28 +75,28 @@ public class Entries
 
         ConfigItemPath configItemPath = path.resolveConfigItemPath();
         org.elasticsearch.common.base.Preconditions.checkArgument( configItemPath.equals( configItems.getPath() ),
-                                                                   "This Entries' path [%s] does not match given ConfigItems' path: " +
+                                                                   "This DataSet' path [%s] does not match given ConfigItems' path: " +
                                                                        configItems.getPath(), configItemPath.toString() );
         this.configItems = configItems;
 
         for ( Entry entry : entries.values() )
         {
-            if ( entry instanceof Value )
+            if ( entry instanceof Data )
             {
-                final Value value = (Value) entry;
+                final Data data = (Data) entry;
                 final Field field = configItems.getField( entry.getName() );
                 if ( field != null )
                 {
-                    value.setField( field );
+                    data.setField( field );
                 }
             }
-            else if ( entry instanceof Entries )
+            else if ( entry instanceof DataSet )
             {
-                final Entries entries = (Entries) entry;
+                final DataSet dataSet = (DataSet) entry;
                 final FieldSet fieldSet = configItems.getFieldSet( entry.getName() );
                 if ( fieldSet != null )
                 {
-                    entries.setConfigItems( fieldSet.getConfigItems() );
+                    dataSet.setConfigItems( fieldSet.getConfigItems() );
                 }
             }
         }
@@ -117,22 +117,22 @@ public class Entries
         entries.put( entry.getPath().getLastElement(), entry );
     }
 
-    void setValue( final EntryPath path, final Object value )
+    void setData( final EntryPath path, final Object value )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
 
         if ( isUnstructured() )
         {
-            setUnstructuredValue( path, value );
+            setUnstructuredData( path, value );
         }
         else
         {
-            setStructuredValue( path, value );
+            setStructuredData( path, value );
         }
     }
 
-    private void setStructuredValue( final EntryPath path, final Object value )
+    private void setStructuredData( final EntryPath path, final Object value )
     {
         final ConfigItemPath configItemPath = path.resolveConfigItemPath();
         final ConfigItem foundConfig = configItems.getConfigItem( configItemPath.getFirstElement() );
@@ -149,40 +149,40 @@ public class Entries
 
             //noinspection ConstantConditions
             FieldSet foundFieldSet = (FieldSet) foundConfig;
-            forwardSetValueToEntries( path, value, foundFieldSet );
+            forwardSetDataToDataSet( path, value, foundFieldSet );
         }
         else
         {
             final Field field = (Field) foundConfig;
-            doSetEntry( path.getFirstElement(), Value.newBuilder().field( field ).path( path ).value( value ).build() );
+            doSetEntry( path.getFirstElement(), Data.newBuilder().field( field ).path( path ).value( value ).build() );
         }
     }
 
-    private void setUnstructuredValue( final EntryPath path, final Object value )
+    private void setUnstructuredData( final EntryPath path, final Object value )
     {
         if ( path.elementCount() > 1 )
         {
-            forwardSetValueToEntries( path, value );
+            forwardSetDataToDataSet( path, value );
         }
         else
         {
-            Value newValue = Value.newBuilder().path( new EntryPath( this.path, path.getFirstElement() ) ).value( value ).build();
-            doSetEntry( path.getFirstElement(), newValue );
+            Data newData = Data.newBuilder().path( new EntryPath( this.path, path.getFirstElement() ) ).value( value ).build();
+            doSetEntry( path.getFirstElement(), newData );
         }
     }
 
-    private void forwardSetValueToEntries( final EntryPath path, final Object value )
+    private void forwardSetDataToDataSet( final EntryPath path, final Object value )
     {
-        Entries existingEntries = (Entries) this.entries.get( path.getFirstElement() );
-        if ( existingEntries == null )
+        DataSet existingDataSet = (DataSet) this.entries.get( path.getFirstElement() );
+        if ( existingDataSet == null )
         {
-            existingEntries = new Entries( new EntryPath( this.path, path.getFirstElement() ) );
-            doSetEntry( path.getFirstElement(), existingEntries );
+            existingDataSet = new DataSet( new EntryPath( this.path, path.getFirstElement() ) );
+            doSetEntry( path.getFirstElement(), existingDataSet );
         }
-        existingEntries.setValue( path.asNewWithoutFirstPathElement(), value );
+        existingDataSet.setData( path.asNewWithoutFirstPathElement(), value );
     }
 
-    private void forwardSetValueToEntries( final EntryPath path, final Object value, final FieldSet fieldSet )
+    private void forwardSetDataToDataSet( final EntryPath path, final Object value, final FieldSet fieldSet )
     {
         if ( path.getFirstElement().hasPosition() )
         {
@@ -191,13 +191,13 @@ public class Entries
                                          fieldSet );
         }
 
-        Entries existingEntries = (Entries) this.entries.get( path.getFirstElement() );
-        if ( existingEntries == null )
+        DataSet existingDataSet = (DataSet) this.entries.get( path.getFirstElement() );
+        if ( existingDataSet == null )
         {
-            existingEntries = new Entries( new EntryPath( this.path, path.getFirstElement() ), fieldSet );
-            doSetEntry( path.getFirstElement(), existingEntries );
+            existingDataSet = new DataSet( new EntryPath( this.path, path.getFirstElement() ), fieldSet );
+            doSetEntry( path.getFirstElement(), existingDataSet );
         }
-        existingEntries.setValue( path.asNewWithoutFirstPathElement(), value );
+        existingDataSet.setData( path.asNewWithoutFirstPathElement(), value );
     }
 
     private void doSetEntry( EntryPath.Element element, Entry entry )
@@ -205,33 +205,33 @@ public class Entries
         entries.put( element, entry );
     }
 
-    Value getValue( final String path )
+    Data getData( final String path )
     {
-        return getValue( new EntryPath( path ) );
+        return getData( new EntryPath( path ) );
     }
 
-    Value getValue( final EntryPath path )
+    Data getData( final EntryPath path )
     {
         final Entry entry = getEntry( path );
         if ( entry == null )
         {
             return null;
         }
-        Preconditions.checkArgument( ( entry instanceof Value ), "Entry at path [%s] is not a Value: " + entry, path );
+        Preconditions.checkArgument( ( entry instanceof Data ), "Entry at path [%s] is not a Data: " + entry, path );
         //noinspection ConstantConditions
-        return (Value) entry;
+        return (Data) entry;
     }
 
-    Entries getEntries( final EntryPath path )
+    DataSet getDataSet( final EntryPath path )
     {
         final Entry entry = getEntry( path );
         if ( entry == null )
         {
             return null;
         }
-        Preconditions.checkArgument( ( entry instanceof Entries ), "Entry at path [%s] is not a Entries: " + entry, path );
+        Preconditions.checkArgument( ( entry instanceof DataSet ), "Entry at path [%s] is not a DataSet: " + entry, path );
         //noinspection ConstantConditions
-        return (Entries) entry;
+        return (DataSet) entry;
     }
 
     Entry getEntry( String path )
@@ -246,7 +246,7 @@ public class Entries
 
         if ( path.elementCount() > 1 )
         {
-            return forwardGetEntryToEntries( path );
+            return forwardGetEntryToDataSet( path );
         }
         else
         {
@@ -254,7 +254,7 @@ public class Entries
         }
     }
 
-    private Entry forwardGetEntryToEntries( final EntryPath path )
+    private Entry forwardGetEntryToDataSet( final EntryPath path )
     {
         final Entry foundEntry = entries.get( path.getFirstElement() );
         if ( foundEntry == null )
@@ -262,12 +262,12 @@ public class Entries
             return null;
         }
 
-        Preconditions.checkArgument( foundEntry instanceof Entries,
-                                     "Entry [%s] in Entries [%s] expected to be a Entries: " + foundEntry.getClass().getName(),
+        Preconditions.checkArgument( foundEntry instanceof DataSet,
+                                     "Entry [%s] in DataSet [%s] expected to be a DataSet: " + foundEntry.getClass().getName(),
                                      foundEntry.getName(), this.getPath() );
 
         //noinspection ConstantConditions
-        return ( (Entries) foundEntry ).getEntry( path.asNewWithoutFirstPathElement() );
+        return ( (DataSet) foundEntry ).getEntry( path.asNewWithoutFirstPathElement() );
     }
 
     private Entry doGetEntry( final EntryPath path )
