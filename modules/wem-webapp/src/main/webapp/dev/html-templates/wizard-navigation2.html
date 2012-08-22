@@ -1,0 +1,99 @@
+<html>
+<head>
+    <title>HTML Templates - Wizard Navigation</title>
+    <link rel="stylesheet" type="text/css" href="../../admin/resources/lib/ext/resources/css/ext-all.css">
+    <link rel="stylesheet" type="text/css" href="../../admin/resources/css/main.css">
+    <style type="text/css">
+
+        .breadcrumb {
+            background-color: #ccc;
+            list-style: none;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+
+        .breadcrumb li {
+            float: left;
+        }
+
+        .breadcrumb li a {
+            color: #222;
+            text-decoration: none;
+            padding: 10px 0 10px 50px;
+            background-color: #eee;
+            position: relative;
+            display: block;
+            float: left;
+        }
+
+        .breadcrumb li a:after {
+            content: " ";
+            display: block;
+            width: 0;
+            height: 0;
+            border-top: 50px solid transparent; /* Go big on the size, and let overflow hide */
+            border-bottom: 50px solid transparent;
+            border-left: 30px solid #eee;
+            position: absolute;
+            top: 50%;
+            margin-top: -50px;
+            left: 100%;
+            z-index: 2;
+        }
+
+        .breadcrumb li a:before {
+            content: " ";
+            display: block;
+            width: 0;
+            height: 0;
+            border-top: 50px solid transparent; /* Go big on the size, and let overflow hide */
+            border-bottom: 50px solid transparent;
+            border-left: 30px solid #ccc;
+            position: absolute;
+            top: 50%;
+            margin-top: -50px;
+            margin-left: 1px;
+            left: 100%;
+            z-index: 1;
+        }
+
+        .breadcrumb li a.selected {
+            background-color: #fff;
+            font-weight: bold;
+        }
+
+        .breadcrumb li a.selected:after {
+            border-left: 30px solid #fff;
+        }
+
+        .breadcrumb li a.selected:before {
+            border-left: 30px solid #fff;
+        }
+
+        .breadcrumb li a.next {
+            color: #acacac;
+        }
+
+        .breadcrumb li a.next:after {
+        }
+
+        .breadcrumb li a.next:before {
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Template START -->
+<ul class="breadcrumb">
+    <li><a class="previous" href="#">Data</a></li>
+    <li><a class="previous" href="#">Tree</a></li>
+    <li><a class="previous" href="#">Page</a></li>
+    <li><a class="selected" href="#">Meta</a></li>
+    <li><a class="next" href="#">Security</a></li>
+    <li><a class="next" href="#">Summary</a></li>
+</ul>
+<!-- Template END -->
+
+</body>
+</html>
