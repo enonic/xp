@@ -8,9 +8,8 @@
   <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/ext-all.css">
   <link rel="stylesheet" type="text/css" href="resources/css/main.css">
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
-  <link rel="stylesheet" type="text/css" href="resources/css/user-preview.css">
-  <link rel="stylesheet" type="text/css" href="resources/css/user-preview-panel.css">
-  <link rel="stylesheet" type="text/css" href="resources/css/BoxSelect.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/datadesigner-preview-panel.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/admin-tree-panel.css">
 
   <!-- ExtJS -->
 
@@ -32,7 +31,6 @@
         'Admin': 'resources/app'
       }
     });
-
   </script>
 
   <!-- Templates -->
@@ -42,7 +40,6 @@
   <!-- Third party plugins -->
 
   <script type="text/javascript" src="resources/lib/plupload/js/plupload.full.js"></script>
-  <script type="text/javascript" src="resources/lib/jit/jit.js"></script>
 
   <!-- Application -->
 
@@ -51,17 +48,8 @@
       name: 'App',
 
       controllers: [
-        'Admin.controller.account.Controller',
-        'Admin.controller.account.GridPanelController',
-        'Admin.controller.account.BrowseToolbarController',
-        'Admin.controller.account.DetailPanelController',
-        'Admin.controller.account.FilterPanelController',
-        'Admin.controller.account.EditUserPanelController',
-        'Admin.controller.account.UserWizardController',
-        'Admin.controller.account.GroupWizardController',
-        'Admin.controller.account.UserPreviewController',
-        'Admin.controller.account.GroupPreviewController',
-        'Admin.controller.NotifyUserController'
+        'Admin.controller.datadesigner.BrowseController',
+        'Admin.controller.datadesigner.FilterPanelController'
       ],
 
       requires: [
@@ -71,29 +59,51 @@
 
       launch: function () {
         Ext.create('Ext.container.Viewport', {
-          layout: 'fit',
-          cls: 'admin-viewport',
-          padding: 5,
-
+          region: 'center',
+          title: 'Browse',
+          layout: 'border',
+          padding: 0,
           items: [
             {
+              region: 'center',
               xtype: 'cmsTabPanel',
+              bodyCls: 'admin-no-border',
               items: [
                 {
-                  id: 'tab-browse',
                   title: 'Browse',
                   closable: false,
-                  xtype: 'panel',
                   layout: 'border',
+                  border: false,
                   items: [
                     {
                       region: 'west',
-                      xtype: 'accountFilter',
-                      width: 200
+                      xtype: 'datadesignerFilter',
+                      width: 182,
+                      minSize: 100,
+                      maxSize: 500,
+                      margins: '3 0 5 5'
+
                     },
                     {
                       region: 'center',
-                      xtype: 'accountShow'
+                      layout: 'border',
+                      border: false,
+                      margins: '3 5 5 0',
+                      items: [
+                        {
+                          region: 'center',
+                          xtype: 'contentTypeTreeGridPanel',
+                          flex: 2
+                        },
+                        {
+                          region: 'south',
+                          xtype: 'contentTypeDetailPanel',
+                          collapsible: true,
+                          border: true,
+                          split: true,
+                          flex: 1
+                        }
+                      ]
                     }
                   ]
                 }
@@ -102,9 +112,7 @@
           ]
         });
       }
-
     });
-
   </script>
 
 </head>

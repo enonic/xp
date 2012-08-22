@@ -9,61 +9,52 @@
   <link rel="stylesheet" type="text/css" href="resources/css/main.css">
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
   <link rel="stylesheet" type="text/css" href="resources/css/cms-preview-panel.css">
-  <link rel="stylesheet" type="text/css" href="resources/css/admin-tree-panel.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/BoxSelect.css">
 
-  <!-- ExtJS -->
+  <!-- Ext JS -->
 
   <script type="text/javascript" src="resources/lib/ext/ext-all-debug.js"></script>
-
-  <!-- Configuration -->
-
-  <script type="text/javascript" src="config.js"></script>
-  <script type="text/javascript" charset="utf-8">
-
-    window.CONFIG = {
-      baseUrl: '<%= helper.getBaseUrl().substring( 0, helper.getBaseUrl().lastIndexOf( "/admin" ) )%>'
-    };
-
-    Ext.Loader.setConfig({
-      paths: {
-        'Common': 'common/js',
-        'Admin': 'resources/app'
-      }
-    });
-
-  </script>
 
   <!-- Templates -->
 
   <script type="text/javascript" src="resources/app/view/XTemplates.js"></script>
 
-  <!-- Third party plugins -->
+  <!-- Configuration -->
 
-  <script type="text/javascript" src="resources/lib/jit/jit-yc.js"></script>
+  <script type="text/javascript" src="config.js"></script>
+  <script type="text/javascript">
+
+    Ext.Loader.setConfig({
+      enabled: true,
+      paths: {
+        'Common': 'common/js',
+        'Main': '_app/main/js',
+        'Admin': 'resources/app'
+      },
+      disableCaching: false
+    });
+
+  </script>
 
   <!-- Application -->
 
   <script type="text/javascript">
     Ext.application({
       name: 'App',
+      appFolder: '_app/userstore/js',
 
       controllers: [
-        'Admin.controller.contentManager.GridPanelController',
-        'Admin.controller.contentManager.DetailPanelController',
-        'Admin.controller.contentManager.FilterPanelController',
-        'Admin.controller.contentManager.BrowseToolbarController',
-        'Admin.controller.contentManager.ContentWizardController',
-        'Admin.controller.contentManager.ContentPreviewController',
-        'Admin.controller.contentManager.DialogWindowController'
+        'Admin.controller.userstore.GridPanelController',
+        'Admin.controller.userstore.UserstorePreviewController',
+        'Admin.controller.userstore.UserstoreWizardController',
+        'Admin.controller.userstore.BrowseToolbarController'
       ],
 
       requires: [
-        'Admin.view.TabPanel',
-        'Admin.lib.UriHelper'
+        'Admin.view.TabPanel'
       ],
 
       launch: function () {
-
         Ext.create('Ext.container.Viewport', {
           layout: 'fit',
           cls: 'admin-viewport',
@@ -77,19 +68,7 @@
                   id: 'tab-browse',
                   title: 'Browse',
                   closable: false,
-                  xtype: 'panel',
-                  layout: 'border',
-                  items: [
-                    {
-                      region: 'west',
-                      xtype: 'contentFilter',
-                      width: 200
-                    },
-                    {
-                      region: 'center',
-                      xtype: 'contentShow'
-                    }
-                  ]
+                  xtype: 'mainPanel'
                 }
               ]
             }

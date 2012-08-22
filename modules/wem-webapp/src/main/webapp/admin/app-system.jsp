@@ -1,31 +1,23 @@
-<%@ taglib prefix="w" uri="uri:enonic.wem.taglib" %>
 <!DOCTYPE html>
-<w:helper var="helper"/>
 <html>
 <head>
   <meta charset="utf-8"/>
   <title>Enonic WEM Admin</title>
   <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/ext-all.css">
   <link rel="stylesheet" type="text/css" href="resources/css/main.css">
-  <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
-  <link rel="stylesheet" type="text/css" href="resources/css/cms-preview-panel.css">
-  <link rel="stylesheet" type="text/css" href="resources/css/admin-tree-panel.css">
 
-  <!-- ExtJS -->
+  <!-- Ext JS -->
 
   <script type="text/javascript" src="resources/lib/ext/ext-all-debug.js"></script>
 
-  <!-- Configuration -->
+  <!-- Configuartion -->
 
   <script type="text/javascript" src="config.js"></script>
-  <script type="text/javascript" charset="utf-8">
-
-    window.CONFIG = {
-      baseUrl: '<%= helper.getBaseUrl().substring( 0, helper.getBaseUrl().lastIndexOf( "/admin" ) )%>'
-    };
+  <script type="text/javascript">
 
     Ext.Loader.setConfig({
       paths: {
+        'App': '_app/system/js',
         'Common': 'common/js',
         'Admin': 'resources/app'
       }
@@ -33,45 +25,32 @@
 
   </script>
 
-  <!-- Templates -->
-
-  <script type="text/javascript" src="resources/app/view/XTemplates.js"></script>
-
-  <!-- Third party plugins -->
-
-  <script type="text/javascript" src="resources/lib/jit/jit-yc.js"></script>
-
   <!-- Application -->
 
   <script type="text/javascript">
     Ext.application({
       name: 'App',
+      appFolder: '_app/system/js',
 
       controllers: [
-        'Admin.controller.contentManager.GridPanelController',
-        'Admin.controller.contentManager.DetailPanelController',
-        'Admin.controller.contentManager.FilterPanelController',
-        'Admin.controller.contentManager.BrowseToolbarController',
-        'Admin.controller.contentManager.ContentWizardController',
-        'Admin.controller.contentManager.ContentPreviewController',
-        'Admin.controller.contentManager.DialogWindowController'
+        'SystemController'
       ],
 
       requires: [
         'Admin.view.TabPanel',
-        'Admin.lib.UriHelper'
+        'App.view.NavigationPanel'
       ],
 
       launch: function () {
-
         Ext.create('Ext.container.Viewport', {
-          layout: 'fit',
-          cls: 'admin-viewport',
+          layout: 'border',
           padding: 5,
 
           items: [
             {
+              region: 'center',
               xtype: 'cmsTabPanel',
+              id: 'systemTabPanelID',
               items: [
                 {
                   id: 'tab-browse',
@@ -82,12 +61,14 @@
                   items: [
                     {
                       region: 'west',
-                      xtype: 'contentFilter',
-                      width: 200
+                      width: 225,
+                      xtype: 'systemNavigation'
                     },
                     {
+                      id: 'system-center',
                       region: 'center',
-                      xtype: 'contentShow'
+                      bodyCls: 'system-center-inner',
+                      html: '<iframe id="system-iframe" src="blank.html"><!-- --></iframe>'
                     }
                   ]
                 }

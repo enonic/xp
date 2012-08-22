@@ -55,29 +55,29 @@
 <h2>Apps</h2>
 <ul>
     <li>
-        <a href="main.html">Main</a>
+        <a href="main.jsp">Main</a>
     </li>
     <li>
         <a href="app-content-manager.jsp">Content Manager</a>
     </li>
     <li>
-        <a href="app-dashboard.html">Dashboard</a>
+        <a href="app-dashboard.jsp">Dashboard</a>
     </li>
     <li>
         <a href="app-account.jsp">Accounts</a>
     </li>
     <li>
-        <a href="app-system.html">System</a>
+        <a href="app-system.jsp">System</a>
         <ul>
-            <li><a href="about.html">About</a></li>
-            <li><a href="app-property.html">Properties</a></li>
-            <li><a href="app-systemCache.html">Cache</a></li>
-            <li><a href="app-userstore.html">Userstore</a></li>
-            <li><a href="app-language.html">Languages</a></li>
+            <li><a href="about.jsp">About</a></li>
+            <li><a href="app-property.jsp">Properties</a></li>
+            <li><a href="app-system-cache.jsp">Cache</a></li>
+            <li><a href="app-userstore.jsp">Userstore</a></li>
+            <li><a href="app-language.jsp">Languages</a></li>
         </ul>
     </li>
     <li>
-        <a href="app-data-designer.html">Data Designer</a>
+        <a href="app-data-designer.jsp">Data Designer</a>
     </li>
 </ul>
 

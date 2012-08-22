@@ -22,9 +22,9 @@ Ext.define('App.view.NavigationPanel', {
 
     getChildren: function () {
         return [
-            {text: "About", leaf: true, appUrl: "about.html"},
-            {text: "Properties", leaf: true, appUrl: "app-property.html"},
-            {text: "Languages", leaf: true, appUrl: "app-language.html"},
+            {text: "About", leaf: true, appUrl: "about.jsp"},
+            {text: "Properties", leaf: true, appUrl: "app-property.jsp"},
+            {text: "Languages", leaf: true, appUrl: "app-language.jsp"},
             {text: "Countries", leaf: true, appUrl: "blank.html"},
             {text: "Time Zones", leaf: true, appUrl: "blank.html"},
             {text: "Sites", leaf: true, appUrl: "blank.html"},

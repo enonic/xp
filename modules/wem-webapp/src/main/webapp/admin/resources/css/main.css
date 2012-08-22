@@ -46,6 +46,7 @@ body, td,
     top: 0;
     width: 100%;
     z-index: 100;
+    background-color: #fff;
 }
 
 .x-mask-msg {

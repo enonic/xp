@@ -10,7 +10,7 @@
                             "default": true,
                             "text": "Dashboard",
                             "cms": {
-                                "appUrl": "app-dashboard.html"
+                                "appUrl": "app-dashboard.jsp"
                             },
                             "iconCls": "icon-dashboard-24"
                         }
@@ -87,7 +87,7 @@
                             "text": "Data Designer",
                             "id": "app-300",
                             "cms": {
-                                "appUrl": "app-data-designer.html"
+                                "appUrl": "app-data-designer.jsp"
                             },
                             "iconCls": "icon-data-designer-24"
                         },
@@ -110,7 +110,7 @@
                             "text": "Userstores",
                             "id": "app-400",
                             "cms": {
-                                "appUrl": "app-userstore.html"
+                                "appUrl": "app-userstore.jsp"
                             },
                             "iconCls": "icon-userstore-alt-24"
                         },
@@ -118,7 +118,7 @@
                             "text": "Cache",
                             "id": "app-401",
                             "cms": {
-                                "appUrl": "app-systemCache.html"
+                                "appUrl": "app-system-cache.jsp"
                             },
                             "iconCls": "icon-cache-24"
                         },
