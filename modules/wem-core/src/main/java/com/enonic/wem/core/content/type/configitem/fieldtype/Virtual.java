@@ -30,11 +30,6 @@ public class Virtual
         return DataTypes.COMPUTED;
     }
 
-    public FieldTypeJsonGenerator getJsonGenerator()
-    {
-        return BaseFieldTypeJsonGenerator.DEFAULT;
-    }
-
     public boolean requiresConfig()
     {
         return false;
@@ -45,7 +40,7 @@ public class Virtual
         return null;
     }
 
-    public FieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator()
+    public AbstractFieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator()
     {
         return null;
     }

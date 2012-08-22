@@ -37,7 +37,7 @@ public abstract class BaseFieldType
 
     public abstract boolean validData( Data data );
 
-    public FieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator()
+    public AbstractFieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator()
     {
         return null;
     }
