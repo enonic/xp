@@ -42,6 +42,16 @@
 <script type="text/javascript" charset="UTF-8" src="../app/js/ui/ToolTip.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/ui/InfoTip.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/ui/DragDrop.js"></script>
+
+<%
+  if ( "true".equals( request.getParameter( "toolbar" ) ) )
+  {
+%>
+<script type="text/javascript" charset="UTF-8" src="../app/js/ui/ToolbarTest.js"></script>
+<%
+  }
+%>
+
 <%
   }
 %>
