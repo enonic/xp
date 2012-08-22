@@ -30,14 +30,12 @@
       enabled: true,
       paths: {
         'Common': 'common/js',
-        'Main': '_app/main/js',
         'Admin': 'resources/app'
       },
       disableCaching: false
     });
     Ext.application({
       name: 'App',
-      appFolder: '_app/contentManager/js',
 
       controllers: [
         'Admin.controller.contentManager.GridPanelController',
