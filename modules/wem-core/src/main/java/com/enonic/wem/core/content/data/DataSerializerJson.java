@@ -8,7 +8,7 @@ import org.codehaus.jackson.JsonNode;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.type.datatype.BasalValueType;
 
-public class ValueSerializerJson
+public class DataSerializerJson
 {
     public static void generate( final Entry entry, final JsonGenerator g )
         throws IOException

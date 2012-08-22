@@ -14,7 +14,7 @@ import com.enonic.wem.core.content.type.configitem.ConfigItemType;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 
-public class EntriesSerializerJson
+public class DataSetSerializerJson
 {
     static void generate( final DataSet dataSet, final JsonGenerator g )
         throws IOException
@@ -26,11 +26,11 @@ public class EntriesSerializerJson
         {
             if ( entry instanceof DataSet )
             {
-                EntriesSerializerJson.generate( ( (DataSet) entry ), g );
+                DataSetSerializerJson.generate( ( (DataSet) entry ), g );
             }
             else if ( entry instanceof Data )
             {
-                ValueSerializerJson.generate( entry, g );
+                DataSerializerJson.generate( entry, g );
             }
         }
         g.writeEndArray();
@@ -54,13 +54,13 @@ public class EntriesSerializerJson
                 if ( isEntriesNode( entryNode ) )
                 {
 
-                    final DataSet childDataSet = EntriesSerializerJson.parse( entryNode, null );
+                    final DataSet childDataSet = DataSetSerializerJson.parse( entryNode, null );
                     final DataSet entry = new DataSet( path, childDataSet );
                     dataSet.add( entry );
                 }
                 else
                 {
-                    final Entry entry = ValueSerializerJson.parse( entryNode );
+                    final Entry entry = DataSerializerJson.parse( entryNode );
                     dataSet.add( entry );
                 }
             }
@@ -76,13 +76,13 @@ public class EntriesSerializerJson
                 }
                 else if ( item.getConfigItemType() == ConfigItemType.FIELD )
                 {
-                    final Entry entry = ValueSerializerJson.parse( entryNode );
+                    final Entry entry = DataSerializerJson.parse( entryNode );
                     dataSet.add( entry );
                 }
                 else if ( item.getConfigItemType() == ConfigItemType.FIELD_SET )
                 {
                     final FieldSet fieldSet = (FieldSet) item;
-                    final DataSet childDataSet = EntriesSerializerJson.parse( entryNode, fieldSet.getConfigItems() );
+                    final DataSet childDataSet = DataSetSerializerJson.parse( entryNode, fieldSet.getConfigItems() );
                     final DataSet entry = new DataSet( path, fieldSet, childDataSet );
                     dataSet.add( entry );
                 }

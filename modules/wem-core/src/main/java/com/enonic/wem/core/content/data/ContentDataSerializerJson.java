@@ -27,7 +27,7 @@ public class ContentDataSerializerJson
             StringWriter sw = new StringWriter();
             JsonGenerator g = JsonFactoryHolder.DEFAULT_FACTORY.createJsonGenerator( sw );
             g.useDefaultPrettyPrinter();
-            EntriesSerializerJson.generate( contentData.getDataSet(), g );
+            DataSetSerializerJson.generate( contentData.getDataSet(), g );
             g.close();
             sw.close();
             return sw.toString();
@@ -48,7 +48,7 @@ public class ContentDataSerializerJson
             ObjectMapper mapper = new ObjectMapper();
             final JsonNode contentDataNode = mapper.readValue( jp, JsonNode.class );
 
-            DataSet dataSet = EntriesSerializerJson.parse( contentDataNode, configItems );
+            DataSet dataSet = DataSetSerializerJson.parse( contentDataNode, configItems );
             ContentData contentData;
             if ( configItems == null )
             {
