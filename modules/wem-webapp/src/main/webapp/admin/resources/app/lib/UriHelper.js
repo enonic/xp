@@ -1,3 +1,4 @@
+// console.log('window.CONFIG.baseUrl: ' + window.CONFIG.baseUrl);
 Ext.define('Admin.lib.UriHelper', {
 
     singleton: true,
