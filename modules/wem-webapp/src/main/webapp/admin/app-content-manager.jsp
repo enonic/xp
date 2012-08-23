@@ -17,7 +17,7 @@
 
   <!-- Configuration -->
 
-  <script type="text/javascript" src="config.js"></script>
+  <script type="text/javascript" src="global.config.js"></script>
   <script type="text/javascript" charset="utf-8">
 
     window.CONFIG = {

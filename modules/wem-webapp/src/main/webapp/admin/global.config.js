@@ -1,28 +1,25 @@
-// Define the property in JS file so JS tools in the IDE recognizes it
-window.CONFIG = {};
-
-Ext.Loader.setConfig({
-    enabled: true,
-    disableCaching: true
-});
-
-
-
-
-// TODO: Refactor
-
 (function () {
+    // Define this property here so JS tools in the IDE recognizes it
+    window.CONFIG = {};
 
-    function cms_getParentWindow() {
-        return window.parent.parent || window.parent;
-    }
+    Ext.Loader.setConfig({
+        enabled: true,
+        disableCaching: true
+    });
 
-    // set the default load mask properties
     Ext.override(Ext.LoadMask, {
         floating: {
             shadow: false
         }
     });
+
+
+
+    // TODO: Refactor
+    function cms_getParentWindow() {
+        return window.parent.parent || window.parent;
+    }
+
 
     function cms_hideLoadMaskOnLoad() {
         if (window.addEventListener) {
@@ -57,4 +54,4 @@ Ext.Loader.setConfig({
         cms_hideLoadMaskOnLoad();
         cms_hideMainMenusOnClick();
     }
-})();
+}());
