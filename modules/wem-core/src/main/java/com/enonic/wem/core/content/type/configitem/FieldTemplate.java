@@ -1,12 +1,8 @@
 package com.enonic.wem.core.content.type.configitem;
 
-import com.enonic.wem.core.module.Module;
-
 public class FieldTemplate
-    implements Template
+    extends Template
 {
-    private Module module;
-
     private Field field;
 
     FieldTemplate()
@@ -18,26 +14,10 @@ public class FieldTemplate
         return field.getName();
     }
 
-    public Module getModule()
-    {
-        return module;
-    }
-
-    void setModule( final Module module )
-    {
-        this.module = module;
-
-    }
-
     @Override
     public TemplateType getType()
     {
         return TemplateType.FIELD;
-    }
-
-    public TemplateQualifiedName getTemplateQualifiedName()
-    {
-        return new TemplateQualifiedName( module.getName(), getName() );
     }
 
     public Field getField()

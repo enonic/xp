@@ -1,11 +1,35 @@
 package com.enonic.wem.core.content.type.configitem;
 
 
-public interface Template
+import com.enonic.wem.core.module.Module;
+
+public abstract class Template
 {
-    public TemplateQualifiedName getTemplateQualifiedName();
+    private Module module;
 
-    public TemplateType getType();
+    Template()
+    {
 
-    public ConfigItem create( final TemplateReference templateReference );
+    }
+
+    public abstract String getName();
+
+    public Module getModule()
+    {
+        return module;
+    }
+
+    public void setModule( final Module module )
+    {
+        this.module = module;
+    }
+
+    public TemplateQualifiedName getTemplateQualifiedName()
+    {
+        return new TemplateQualifiedName( module.getName(), getName() );
+    }
+
+    public abstract TemplateType getType();
+
+    public abstract ConfigItem create( final TemplateReference templateReference );
 }

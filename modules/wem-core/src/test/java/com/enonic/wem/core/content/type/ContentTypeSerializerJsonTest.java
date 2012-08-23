@@ -143,7 +143,7 @@ public class ContentTypeSerializerJsonTest
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        FieldSetTemplate template = FieldSetTemplateBuilder.create().module( module ).fieldSet(
+        FieldSetTemplate template = FieldSetTemplateBuilder.newFieldSetTemplate().module( module ).fieldSet(
             newFieldSet().name( "address" ).add( newBuilder().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() ).add(
                 newBuilder().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() ).add(
                 newBuilder().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.textline ).build() ).add(

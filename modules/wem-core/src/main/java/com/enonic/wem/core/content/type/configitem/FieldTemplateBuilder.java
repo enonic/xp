@@ -33,11 +33,6 @@ public class FieldTemplateBuilder
         return fieldTemplate;
     }
 
-    public static FieldTemplateBuilder create()
-    {
-        return new FieldTemplateBuilder();
-    }
-
     public static FieldTemplateBuilder newFieldTemplate()
     {
         return new FieldTemplateBuilder();

@@ -30,11 +30,6 @@ public class FieldSetTemplateBuilder
         return fieldSetTemplate;
     }
 
-    public static FieldSetTemplateBuilder create()
-    {
-        return new FieldSetTemplateBuilder();
-    }
-
     public static FieldSetTemplateBuilder newFieldSetTemplate()
     {
         return new FieldSetTemplateBuilder();
