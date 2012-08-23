@@ -3,7 +3,6 @@ package com.enonic.wem.web.rest.account;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -14,7 +13,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,27 +20,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.enonic.cms.framework.util.ImageHelper;
-
-import com.enonic.cms.core.image.filter.ImageFilter;
-import com.enonic.cms.core.image.filter.effect.ScaleSquareFilter;
 
 import com.enonic.wem.core.search.UserInfoHelper;
 import com.enonic.wem.core.search.account.AccountIndexData;
 import com.enonic.wem.core.search.account.AccountKey;
 import com.enonic.wem.core.search.account.AccountSearchService;
+import com.enonic.wem.web.rest.common.RestResponse;
+
+import com.enonic.cms.framework.util.ImageHelper;
+
+import com.enonic.cms.core.image.filter.ImageFilter;
+import com.enonic.cms.core.image.filter.effect.ScaleSquareFilter;
 import com.enonic.cms.core.security.user.StoreNewUserCommand;
 import com.enonic.cms.core.security.user.UpdateUserCommand;
 import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.core.security.user.UserKey;
 import com.enonic.cms.core.security.userstore.UserStoreService;
 import com.enonic.cms.store.dao.UserDao;
-import com.enonic.wem.web.rest.common.RestResponse;
-import com.enonic.wem.web.rest.exception.EntityNotFoundException;
-import com.enonic.wem.web.rest.exception.EntityRedirectException;
 
 @Controller
 @RequestMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -72,53 +67,11 @@ public final class UserController
     @Autowired
     private AccountSearchService searchService;
 
-    @RequestMapping(value = "userinfo", method = RequestMethod.GET)
-    @ResponseBody
-    public AccountModel getUserInfo( @RequestParam("key") final String key )
-    {
-        final UserEntity entity = findEntity( key );
-        return accountModelTranslator.toInfoModel( entity );
-    }
-
-    @RequestMapping(value = "photo", method = RequestMethod.GET,
-                    produces = MediaType.IMAGE_PNG_VALUE)
-    public HttpEntity<BufferedImage> getPhoto( @RequestParam("key") final String key, @RequestParam(value = "thumb",
-                                                                                                    defaultValue = "false") final boolean thumb,
-                                               @RequestParam(value = "def",
-                                                             defaultValue = "") final String defaultImageUrl,
-                                               WebRequest request )
-            throws Exception
-    {
-        final String contextPath = request.getContextPath();
-        final UserEntity entity = findEntity( key );
-        if ( entity == null )
-        {
-            throw new EntityNotFoundException();
-        }
-        if ( entity.getPhoto() == null )
-        {
-            if ( defaultImageUrl == null )
-            {
-                throw new EntityNotFoundException();
-            }
-            else
-            {
-                String redirectUrl = defaultImageUrl.startsWith( "http://" )
-                        ? defaultImageUrl
-                        : String.format( "%s/%s", request.getContextPath(), defaultImageUrl );
-                throw new EntityRedirectException( new URI( redirectUrl ) );
-            }
-        }
-
-        final BufferedImage photo = this.photoService.renderPhoto( entity, thumb ? 40 : 100 );
-        return new HttpEntity<BufferedImage>( photo );
-    }
 
     @RequestMapping(value = "/photo", method = RequestMethod.POST,
                     consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
-    public PhotoRestResponse uploadPhoto( @RequestParam("file") MultipartFile multipartFile,
-                                          HttpServletRequest request )
+    public PhotoRestResponse uploadPhoto( @RequestParam("file") MultipartFile multipartFile, HttpServletRequest request )
     {
         PhotoRestResponse response = new PhotoRestResponse();
         try
@@ -150,7 +103,7 @@ public final class UserController
     }
 
     private void scaleImage( BufferedImage image, File imageFile )
-            throws IOException
+        throws IOException
     {
         ImageFilter scaleFilter = new ScaleSquareFilter( DEFAULT_IMAGE_SIZE );
         image = scaleFilter.filter( image );
@@ -224,16 +177,14 @@ public final class UserController
 
             if ( userData.getKey() == null )
             {
-                StoreNewUserCommand command =
-                        accountModelTranslator.getUserModelTranslator().toNewUserCommand( userData );
+                StoreNewUserCommand command = accountModelTranslator.getUserModelTranslator().toNewUserCommand( userData );
                 UserKey userKey = userStoreService.storeNewUser( command );
                 res.setUserkey( userKey.toString() );
                 indexUser( userKey.toString() );
             }
             else
             {
-                UpdateUserCommand command =
-                        accountModelTranslator.getUserModelTranslator().toUpdateUserCommand( userData );
+                UpdateUserCommand command = accountModelTranslator.getUserModelTranslator().toUpdateUserCommand( userData );
                 userStoreService.updateUser( command );
                 res.setUserkey( userData.getKey() );
                 indexUser( userData.getKey() );
@@ -271,26 +222,9 @@ public final class UserController
 
     private boolean isValidUserData( UserModel userData )
     {
-        boolean isValid =
-                StringUtils.isNotBlank( userData.getDisplayName() ) && StringUtils.isNotBlank( userData.getName() ) &&
-                        StringUtils.isNotBlank( userData.getEmail() );
+        boolean isValid = StringUtils.isNotBlank( userData.getDisplayName() ) && StringUtils.isNotBlank( userData.getName() ) &&
+            StringUtils.isNotBlank( userData.getEmail() );
         return isValid;
-    }
-
-    private UserEntity findEntity( final String key )
-    {
-        if ( key == null )
-        {
-            return null;
-        }
-
-        final UserEntity entity = this.userDao.findByKey( key );
-        if ( ( entity == null ) || entity.isDeleted() )
-        {
-            return null;
-        }
-
-        return entity;
     }
 
 }

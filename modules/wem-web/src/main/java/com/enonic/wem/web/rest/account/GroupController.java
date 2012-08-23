@@ -1,10 +1,7 @@
 package com.enonic.wem.web.rest.account;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -27,6 +24,7 @@ import com.enonic.wem.core.search.account.AccountSearchQuery;
 import com.enonic.wem.core.search.account.AccountSearchResults;
 import com.enonic.wem.core.search.account.AccountSearchService;
 import com.enonic.wem.core.search.account.Group;
+
 import com.enonic.cms.core.security.SecurityService;
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.group.GroupKey;
@@ -92,9 +90,8 @@ public final class GroupController
             return getGroups( groupKeys );
         }
         final AccountSearchQuery searchQueryCountFacets =
-                new AccountSearchQuery().setCount( limit ).setIncludeResults( true ).setQuery( query ).setGroups(
-                        true ).setUsers( false ).setIncludeFacets( false ).setSortField(
-                        AccountIndexField.DISPLAY_NAME_FIELD ).setSortOrder( SearchSortOrder.ASC );
+            new AccountSearchQuery().setCount( limit ).setIncludeResults( true ).setQuery( query ).setGroups( true ).setUsers(
+                false ).setIncludeFacets( false ).setSortField( AccountIndexField.DISPLAY_NAME_FIELD ).setSortOrder( SearchSortOrder.ASC );
 
         final AccountSearchResults searchResults = searchService.search( searchQueryCountFacets );
 
@@ -107,23 +104,6 @@ public final class GroupController
         }
 
         return accountModelTranslator.toModel( groups );
-    }
-
-    @RequestMapping(value = "detail", method = RequestMethod.GET)
-    @ResponseBody
-    public AccountModel getGroupDetails( HttpServletResponse response, @RequestParam("key") final String key )
-            throws IOException
-    {
-        final GroupEntity entity = findEntity( key );
-        if ( entity != null )
-        {
-            return accountModelTranslator.toModel( entity );
-        }
-        else
-        {
-            response.sendError( HttpServletResponse.SC_NOT_FOUND );
-            return new GroupModel();
-        }
     }
 
     private AccountsModel getGroups( final String... groupKeys )
@@ -152,8 +132,7 @@ public final class GroupController
         {
             if ( group.getKey() == null )
             {
-                StoreNewGroupCommand command =
-                        accountModelTranslator.getGroupModelTranslator().toNewGroupCommand( group );
+                StoreNewGroupCommand command = accountModelTranslator.getGroupModelTranslator().toNewGroupCommand( group );
                 command.setExecutor( getCurrentUser() );
                 GroupKey groupKey = userStoreService.storeNewGroup( command );
                 res.setGroupkey( groupKey.toString() );
@@ -162,8 +141,7 @@ public final class GroupController
             else
             {
                 UpdateGroupCommand command =
-                        accountModelTranslator.getGroupModelTranslator().toUpdateGroupCommand( group,
-                                                                                               getCurrentUser().getKey() );
+                    accountModelTranslator.getGroupModelTranslator().toUpdateGroupCommand( group, getCurrentUser().getKey() );
                 userStoreService.updateGroup( command );
                 res.setGroupkey( group.getKey() );
                 indexGroup( group.getKey() );
@@ -197,8 +175,7 @@ public final class GroupController
 
     private String validateMembersInUserStore( GroupModel groupData )
     {
-        UserStoreEntity userStore =
-                ( groupData.getUserStore() == null ) ? null : userStoreDao.findByName( groupData.getUserStore() );
+        UserStoreEntity userStore = ( groupData.getUserStore() == null ) ? null : userStoreDao.findByName( groupData.getUserStore() );
         if ( userStore == null )
         {
             userStore = userStoreService.getDefaultUserStore();
@@ -214,8 +191,8 @@ public final class GroupController
             if ( isUserStoreRemote && !memberUserStoreKey.equals( userStoreKey ) )
             {
                 String errorMsg = "'" + getMemberName( memberKey ) +
-                        "' cannot be member of group '" + groupData.getName() +
-                        "'. Group and member must be located in same user store if it is remote.";
+                    "' cannot be member of group '" + groupData.getName() +
+                    "'. Group and member must be located in same user store if it is remote.";
                 LOG.warn( errorMsg );
                 return errorMsg;
             }
@@ -296,22 +273,6 @@ public final class GroupController
         final AccountIndexData accountIndexData = new AccountIndexData( group );
 
         searchService.index( accountIndexData );
-    }
-
-    private GroupEntity findEntity( final String key )
-    {
-        if ( key == null )
-        {
-            return null;
-        }
-
-        final GroupEntity entity = this.groupDao.find( key );
-        if ( ( entity == null ) || entity.isDeleted() )
-        {
-            return null;
-        }
-
-        return entity;
     }
 
     private UserEntity getCurrentUser()
