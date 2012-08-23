@@ -2,8 +2,6 @@ package com.enonic.wem.web.jsp;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
@@ -29,20 +27,26 @@ final class JspHelperImpl
     @Override
     public String createUrl( final String path )
     {
-        String url = ServletUriComponentsBuilder.fromRequest( this.servletRequest ).build().toString();
-        if ( url.endsWith( "/" ) )
-        {
-            url = url.substring( 0, url.length() - 1 );
-        }
+        StringBuilder builder =
+            new StringBuilder( this.servletRequest.getScheme() ).append( "://" ).append( this.servletRequest.getServerName() );
 
-        if ( Strings.isNullOrEmpty( path ) )
+        if ( this.servletRequest.getServerPort() != 80 )
         {
-            return url;
+            builder.append( ":" ).append( this.servletRequest.getServerPort() );
         }
-        else
+        if ( !Strings.isNullOrEmpty( this.servletRequest.getContextPath() ) )
         {
-            return url + "/" + path;
+            builder.append( this.servletRequest.getContextPath() );
         }
+        if ( !Strings.isNullOrEmpty( path ) )
+        {
+            if ( '/' != path.charAt( 0 ) )
+            {
+                builder.append( "/" );
+            }
+            builder.append( path );
+        }
+        return builder.toString();
     }
 
     @Override

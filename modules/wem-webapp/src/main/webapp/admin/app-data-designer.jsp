@@ -21,7 +21,7 @@
   <script type="text/javascript">
 
     window.CONFIG = {
-      baseUrl: '<%= helper.getBaseUrl().substring( 0, helper.getBaseUrl().lastIndexOf( "/admin" ) )%>'
+      baseUrl: '<%= helper.getBaseUrl() %>'
     };
 
     Ext.Loader.setConfig({
