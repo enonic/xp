@@ -112,6 +112,9 @@
   <li>
     <a href="../dev/html-templates/wizard-navigation.html">Wizard Navigation</a>
   </li>
+  <li>
+    <a href="../dev/html-templates/wizard-navigation2.html">Wizard Navigation (rev 2)</a>
+  </li>
 </ul>
 
 <hr/>

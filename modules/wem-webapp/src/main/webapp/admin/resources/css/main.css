@@ -711,60 +711,79 @@ div.admin-wizard-navigation-container-sticky {
     width: 100%;
 }
 
-ul.admin-wizard-navigation {
-    list-style-type: none !important;
-    margin-left: 6px;
-    padding: 1px;
+.admin-wizard-navigation {
+    margin: 0 !important;
+    padding: 0 !important;
     background-color: #ccc;
-    margin: 0;
-}
-
-ul.admin-wizard-navigation li {
-    float: left;
     list-style: none;
-    margin: 0;
-    padding-right: 14px;
+    overflow: hidden;
+    border: 1px solid #ccc;
 }
 
-ul.admin-wizard-navigation li {
-    background: transparent url(../../resources/images/wizard-navigation-arrow.png) no-repeat top right;
+.admin-wizard-navigation li {
+    float: left;
 }
 
-ul.admin-wizard-navigation li.current {
-    background-image: url(../../resources/images/wizard-navigation-arrow-current.png);
-}
-
-ul.admin-wizard-navigation li.previous.immediate {
-    background-image: url(../../resources/images/wizard-navigation-arrow-previous.png);
-}
-
-ul.admin-wizard-navigation li.last {
-    background-image: url(../../resources/images/wizard-navigation-arrow-last.png);
-}
-
-ul.admin-wizard-navigation li.current.last {
-    background-image: url(../../resources/images/wizard-navigation-arrow-current-last.png);
-}
-
-ul.admin-wizard-navigation li a {
-    display: block;
-    margin-right: 2px;
-    padding: 8px 15px 8px 15px;
+.admin-wizard-navigation li a {
     color: #222;
     text-decoration: none !important;
-    cursor: pointer;
+    padding: 10px 0 10px 50px;
     background-color: #eee;
+    position: relative;
+    display: block;
+    float: left;
 }
 
-ul.admin-wizard-navigation li a.previous {
+.admin-wizard-navigation li a:after {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 50px solid transparent; /* Go big on the size, and let overflow hide */
+    border-bottom: 50px solid transparent;
+    border-left: 30px solid #eee;
+    position: absolute;
+    top: 50%;
+    margin-top: -50px;
+    left: 100%;
+    z-index: 2;
 }
 
-ul.admin-wizard-navigation li a.current,
-ul.admin-wizard-navigation li a.current.last {
-    padding-right: 86px;
-    color: #000;
+.admin-wizard-navigation li a:before {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 50px solid transparent; /* Go big on the size, and let overflow hide */
+    border-bottom: 50px solid transparent;
+    border-left: 30px solid #ccc;
+    position: absolute;
+    top: 50%;
+    margin-top: -50px;
+    margin-left: 1px;
+    left: 100%;
+    z-index: 1;
+}
+
+.admin-wizard-navigation li a.previous {
     font-weight: bold;
+}
+
+.admin-wizard-navigation li a.current {
     background-color: #fff;
+    font-weight: bold;
+}
+
+.admin-wizard-navigation li a.current:after {
+    border-left: 30px solid #fff;
+}
+
+.admin-wizard-navigation li a.current:before {
+    border-left: 30px solid #fff;
+}
+
+.admin-wizard-navigation li a.next {
+    color: #acacac;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
