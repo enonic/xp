@@ -87,6 +87,7 @@ Ext.define('Admin.view.account.MembershipsGraphPanel', {
     },
 
     setGraphData: function (json) {
+        this.graph._loaded = false;
         this.graph.loadJSON(json);
         this.graph.refresh();
         // Flag the graph as loaded so icons are not loaded when navigating the graph.
