@@ -727,11 +727,15 @@ div.admin-wizard-navigation-container-sticky {
 .admin-wizard-navigation li a {
     color: #222;
     text-decoration: none !important;
-    padding: 10px 0 10px 50px;
+    padding: 8px 0 8px 48px;
     background-color: #eee;
     position: relative;
     display: block;
     float: left;
+}
+
+.admin-wizard-navigation li a.first {
+    padding-left: 20px;
 }
 
 .admin-wizard-navigation li a:after {
