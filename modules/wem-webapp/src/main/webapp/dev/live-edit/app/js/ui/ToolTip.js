@@ -34,8 +34,7 @@
 
     p.create = function () {
         var html = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
-                   '    <img src="' + this.blankImage + '" style="padding-right: 7px; vertical-align: top"/>' +
-                   '    <span class="live-edit-tool-tip-text"><!-- --></span>' +
+                   '    <span class="live-edit-tool-tip-type-text"></span>: <span class="live-edit-tool-tip-name-text"></span>' +
                    '</div>';
 
         this.createElement(html);
@@ -44,13 +43,10 @@
     };
 
 
-    p.setIcon = function (componentType) {
-        this.getEl().find('img').attr('src', util.getIconForComponent(componentType));
-    };
-
-
-    p.setText = function (text) {
-        this.getEl().find('.live-edit-tool-tip-text').text(text);
+    p.setText = function (componentType, componentName) {
+        var $tooltip = this.getEl();
+        $tooltip.children('.live-edit-tool-tip-type-text').text(componentType);
+        $tooltip.children('.live-edit-tool-tip-name-text').text(componentName);
     };
 
 
@@ -80,8 +76,7 @@
                 top: pos.y,
                 left: pos.x
             });
-            self.setIcon(type);
-            self.setText(name);
+            self.setText(type, name);
         });
 
         $liveedit(document).on('hover', '[data-live-edit-type]', function (event) {
