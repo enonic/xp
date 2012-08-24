@@ -7,8 +7,10 @@
 
   <title>Tests: Enonic WEM Admin</title>
 
-  <link rel="stylesheet" type="text/css" href="../admin/resources/lib/siesta/resources/css/siesta-all.css">
+  <!-- Siesta CSS -->
+  <link rel="stylesheet" type="text/css" href="siesta/resources/css/siesta-all.css">
 
+  <!-- CSS used by the application -->
   <link rel="stylesheet" type="text/css" href="../admin/resources/lib/ext/resources/css/ext-all.css">
   <link rel="stylesheet" type="text/css" href="../admin/resources/css/main.css">
   <link rel="stylesheet" type="text/css" href="../admin/resources/css/icons.css">
@@ -22,20 +24,27 @@
     }
   </style>
 
+  <!-- Ext JS -->
   <script type="text/javascript" src="../admin/resources/lib/ext/ext-all-debug.js"></script>
   <script type="text/javascript" src="../admin/resources/app/view/XTemplates.js"></script>
+
+  <!-- Configuration -->
   <script type="text/javascript" src="../admin/global.config.js"></script>
   <script type="text/javascript">
     window.CONFIG = {
       baseUrl: '<%= helper.getBaseUrl() %>'
     };
   </script>
+
   <!-- Third party plugins -->
   <script type="text/javascript" src="../admin/resources/lib/plupload/js/plupload.full.js"></script>
   <script type="text/javascript" src="../admin/resources/lib/jit/jit-yc.js"></script>
 
-  <script type="text/javascript" src="../admin/resources/lib/siesta/siesta-all.js"></script>
+  <!-- Siesta -->
+  <script type="text/javascript" src="siesta/siesta-all.js"></script>
   <script type="text/javascript" src="AdminTestUtil.js"></script>
+
+  <!-- Harness / Dashboard -->
   <script type="text/javascript" src="harness.setup.js"></script>
 
 </head>
