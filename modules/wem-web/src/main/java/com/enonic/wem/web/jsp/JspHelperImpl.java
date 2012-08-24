@@ -29,16 +29,12 @@ final class JspHelperImpl
     @Override
     public String createUrl( final String path )
     {
-        String url = ServletUriComponentsBuilder.fromContextPath( this.servletRequest ).build().toString();
+        ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromContextPath( this.servletRequest );
         if ( !Strings.isNullOrEmpty( path ) )
         {
-            if ( '/' != path.charAt( 0 ) )
-            {
-                url += "/";
-            }
-            url += path;
+            builder.pathSegment( path );
         }
-        return url;
+        return builder.build().toString();
     }
 
     @Override
