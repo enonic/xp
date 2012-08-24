@@ -1,10 +1,5 @@
 var Harness = Siesta.Harness.Browser.ExtJS;
 
-Harness.on('testsuitestart', function (event, harness) {
-    console.log(harness);
-    console.log(window.CONFIG);
-}, this, { single : true });
-
 Harness.configure({
     title: 'Admin Test Suite',
     loaderPath: {
@@ -18,7 +13,7 @@ Harness.configure({
     testClass: AdminTestUtil,
 
     preload: [
-        './config.js.jsp',
+        { text : 'window.CONFIG = window.CONFIG = ' + JSON.stringify(window.CONFIG) },
         '../admin/resources/lib/ext/resources/css/ext-all.css',
         '../admin/resources/css/main.css',
         '../admin/resources/css/icons.css',

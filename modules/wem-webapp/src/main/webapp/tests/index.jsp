@@ -1,4 +1,6 @@
+<%@ taglib prefix="w" uri="uri:enonic.wem.taglib" %>
 <!DOCTYPE html>
+<w:helper var="helper"/>
 <html>
 <head>
   <meta charset="utf-8"/>
@@ -23,17 +25,18 @@
   <script type="text/javascript" src="../admin/resources/lib/ext/ext-all-debug.js"></script>
   <script type="text/javascript" src="../admin/resources/app/view/XTemplates.js"></script>
   <script type="text/javascript" src="../admin/global.config.js"></script>
-
+  <script type="text/javascript">
+    window.CONFIG = {
+      baseUrl: '<%= helper.getBaseUrl() %>'
+    };
+  </script>
   <!-- Third party plugins -->
   <script type="text/javascript" src="../admin/resources/lib/plupload/js/plupload.full.js"></script>
   <script type="text/javascript" src="../admin/resources/lib/jit/jit-yc.js"></script>
 
-
   <script type="text/javascript" src="../admin/resources/lib/siesta/siesta-all.js"></script>
-
   <script type="text/javascript" src="AdminTestUtil.js"></script>
-
-  <script type="text/javascript" src="index.js"></script>
+  <script type="text/javascript" src="harness.setup.js"></script>
 
 </head>
 <body>
