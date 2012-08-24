@@ -12,7 +12,9 @@
             "lastModified": "2011-08-09 08:23:07",
             "created": "2011-08-09 08:23:07",
             "builtIn": false,
-            "editable": true
+            "editable": true,
+            "info_uri" : "account/user/E6C593DE14515428B06F1A16E0D28E2341FC5AB4",
+            "image_uri" : "account/user/E6C593DE14515428B06F1A16E0D28E2341FC5AB4/photo"
         },
         {
             "key": "E34B614B26C666AA9929F90EF3FA723B3DAAAAB2",
@@ -24,7 +26,9 @@
             "lastModified": "2012-07-24 16:18:35",
             "created": "2012-07-24 16:18:35",
             "builtIn": false,
-            "editable": true
+            "editable": true,
+            "image_uri" : null,
+            "info_uri" : "account/group/E34B614B26C666AA9929F90EF3FA723B3DAAAAB2"
         },
         {
             "key": "18311D321165D73043C10A9101016CDF3765898E",
@@ -36,7 +40,9 @@
             "lastModified": "2012-07-24 16:18:35",
             "created": "2012-07-24 16:18:35",
             "builtIn": true,
-            "editable": false
+            "editable": false,
+            "image_uri" : null,
+            "info_uri" : "account/role/18311D321165D73043C10A9101016CDF3765898E"
         }
     ],
     "facets": [

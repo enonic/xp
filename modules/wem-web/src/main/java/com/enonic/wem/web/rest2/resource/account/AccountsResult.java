@@ -6,6 +6,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
+import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.core.search.Facet;
 import com.enonic.wem.core.search.FacetEntry;
 import com.enonic.wem.core.search.Facets;
@@ -74,11 +75,12 @@ public final class AccountsResult
     {
         final ObjectNode json = objectNode();
 
-        UserStoreEntity userstore = user.getUserStore();
-        boolean isAdmin = userstore != null && user.isEnterpriseAdmin() && USERSTORE_SYSTEM.equals( userstore.getName() );
-        boolean isAnonym = user.isAnonymous();
+        final UserStoreEntity userstore = user.getUserStore();
+        final boolean isAdmin = userstore != null && user.isEnterpriseAdmin() && USERSTORE_SYSTEM.equals( userstore.getName() );
+        final boolean isAnonym = user.isAnonymous();
+        final String key = String.valueOf( user.getKey() );
 
-        json.put( "key", String.valueOf( user.getKey() ) );
+        json.put( "key", key );
         json.put( "type", TYPE_USER );
         json.put( "name", user.getName() );
         json.put( "email", user.getEmail() );
@@ -89,7 +91,9 @@ public final class AccountsResult
         json.put( "created", "2011-08-09 08:23:07" );           //TODO
         json.put( "builtIn", user.isBuiltIn() );
         json.put( "editable", !( isAnonym || isAdmin ) );
-
+        json.put( "info_uri", RestUriBuilder.getAccountInfoUri( AccountType.USER, key ) );
+        final String imageUri = user.hasPhoto() ? RestUriBuilder.getImageUri( AccountType.USER, key ) : null;
+        json.put( "image_uri", imageUri );
         return json;
     }
 
@@ -97,11 +101,12 @@ public final class AccountsResult
     {
         final ObjectNode json = objectNode();
 
-        boolean builtIn = group.isBuiltIn();
-        boolean isAuth = GroupType.AUTHENTICATED_USERS.equals( group.getType() );
-        boolean isAnonym = GroupType.ANONYMOUS.equals( group.getType() );
+        final boolean builtIn = group.isBuiltIn();
+        final boolean isAuth = GroupType.AUTHENTICATED_USERS.equals( group.getType() );
+        final boolean isAnonym = GroupType.ANONYMOUS.equals( group.getType() );
+        final String key = String.valueOf( group.getGroupKey() );
 
-        json.put( "key", String.valueOf( group.getGroupKey() ) );
+        json.put( "key", key );
         json.put( "type", builtIn ? TYPE_ROLE : TYPE_GROUP );
         json.put( "name", group.getName() );
         json.put( "userStore", group.getUserStore() != null ? group.getUserStore().getName() : "null" );
@@ -111,6 +116,10 @@ public final class AccountsResult
         json.put( "created", "2012-07-24 16:18:35" );           //TODO
         json.put( "builtIn", builtIn );
         json.put( "editable", !( isAuth || isAnonym ) );
+
+        final AccountType accountType = builtIn ? AccountType.ROLE : AccountType.GROUP;
+        json.put( "image_uri", RestUriBuilder.getImageUri( accountType, key ) );
+        json.put( "info_uri", RestUriBuilder.getAccountInfoUri( accountType, key ) );
 
         return json;
     }
