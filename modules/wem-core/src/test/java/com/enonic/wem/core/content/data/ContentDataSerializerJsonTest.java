@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 
 public class ContentDataSerializerJsonTest
 {
+    /*
     @Test
     public void asdfsdf()
     {
@@ -273,5 +274,6 @@ public class ContentDataSerializerJsonTest
         assertEquals( "Blue", parsedContentData.getValueAsString( new EntryPath( "eyeColour" ) ) );
         assertEquals( "Blonde", parsedContentData.getValueAsString( new EntryPath( "hairColour" ) ) );
     }
+    */
 
 }
