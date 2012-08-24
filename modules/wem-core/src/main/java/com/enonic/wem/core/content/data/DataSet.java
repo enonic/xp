@@ -9,6 +9,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.core.content.type.configitem.ConfigItem;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
+import com.enonic.wem.core.content.type.configitem.DirectAccessibleConfigItem;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 
@@ -135,7 +136,7 @@ public class DataSet
     private void setStructuredData( final EntryPath path, final Object value )
     {
         final ConfigItemPath configItemPath = path.resolveConfigItemPath();
-        final ConfigItem foundConfig = configItems.getConfigItem( configItemPath.getFirstElement() );
+        final DirectAccessibleConfigItem foundConfig = configItems.getDirectAccessibleConfigItem( configItemPath.getFirstElement() );
         if ( foundConfig == null )
         {
             throw new IllegalArgumentException( "No ConfigItem found at: " + path );
@@ -205,7 +206,7 @@ public class DataSet
         entries.put( element, entry );
     }
 
-    Data getData( final String path )
+    public Data getData( final String path )
     {
         return getData( new EntryPath( path ) );
     }
@@ -292,7 +293,7 @@ public class DataSet
         }
 
         // check missing required entries
-        for ( ConfigItem configItem : configItems )
+        for ( ConfigItem configItem : configItems.iterable() )
         {
             // TODO: check that required configItems have entries
         }

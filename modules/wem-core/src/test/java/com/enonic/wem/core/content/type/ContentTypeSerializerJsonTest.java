@@ -9,7 +9,7 @@ import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder;
-import com.enonic.wem.core.content.type.configitem.MockTemplateReferenceFetcher;
+import com.enonic.wem.core.content.type.configitem.MockTemplateFetcher;
 import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.DropdownConfig;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
@@ -53,7 +53,7 @@ public class ContentTypeSerializerJsonTest
 
         ContentTypeSerializerJson serializer = new ContentTypeSerializerJson();
         String json = serializer.toJson( contentType );
-        System.out.println( json );
+
         // exercise
         ContentType parsedContentType = serializer.parse( json );
 
@@ -154,7 +154,7 @@ public class ContentTypeSerializerJsonTest
         cty.addConfigItem( newTemplateReference( template ).name( "home" ).build() );
         cty.addConfigItem( newTemplateReference( template ).name( "cabin" ).build() );
 
-        MockTemplateReferenceFetcher templateReferenceFetcher = new MockTemplateReferenceFetcher();
+        MockTemplateFetcher templateReferenceFetcher = new MockTemplateFetcher();
         templateReferenceFetcher.add( template );
 
         String json = new ContentTypeSerializerJson().toJson( cty );
@@ -196,9 +196,9 @@ public class ContentTypeSerializerJsonTest
     {
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
-        VisualFieldSet visualFieldSet =
-            newVisualFieldSet().label( "Personalia" ).add( newField().name( "eyeColour" ).type( FieldTypes.textline ).build() ).add(
-                newField().name( "hairColour" ).type( FieldTypes.textline ).build() ).build();
+        VisualFieldSet visualFieldSet = newVisualFieldSet().label( "Personalia" ).name( "personalia" ).add(
+            newField().name( "eyeColour" ).type( FieldTypes.textline ).build() ).add(
+            newField().name( "hairColour" ).type( FieldTypes.textline ).build() ).build();
         contentType.addConfigItem( visualFieldSet );
 
         String json = new ContentTypeSerializerJson().toJson( contentType );
@@ -206,5 +206,7 @@ public class ContentTypeSerializerJsonTest
         ContentType parsedContentType = new ContentTypeSerializerJson().parse( json );
         assertEquals( "eyeColour", parsedContentType.getField( "eyeColour" ).getPath().toString() );
         assertEquals( "hairColour", parsedContentType.getField( "hairColour" ).getPath().toString() );
+
+        assertNotNull( parsedContentType.getConfigItems().getConfigItem( "personalia" ) );
     }
 }

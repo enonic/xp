@@ -7,7 +7,7 @@ import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 
 import static org.junit.Assert.*;
 
-public class ConfigItemTest
+public class DirectAccessibleConfigItemTest
 {
     @Test
     public void setParentPath()

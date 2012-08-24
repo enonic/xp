@@ -1,6 +1,8 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.core.content.data.ContentData;
+import com.enonic.wem.core.content.data.Data;
+import com.enonic.wem.core.content.data.DataSet;
 import com.enonic.wem.core.content.data.EntryPath;
 import com.enonic.wem.core.content.type.ContentType;
 
@@ -20,7 +22,7 @@ public class Content
     public void setType( final ContentType type )
     {
         this.type = type;
-        this.data.setConfigItems( type.getConfigItems() );
+        this.data.setContentType( type );
     }
 
     public String getName()
@@ -33,7 +35,12 @@ public class Content
         this.name = name;
     }
 
-    public ContentData getData()
+    void setData( final ContentData value )
+    {
+        this.data = value;
+    }
+
+    ContentData getData()
     {
         return data;
     }
@@ -48,9 +55,19 @@ public class Content
         this.data.setData( new EntryPath( path ), value );
     }
 
+    public Data getData( final String path )
+    {
+        return this.data.getData( new EntryPath( path ) );
+    }
+
     public String getValueAsString( final String path )
     {
         return this.data.getValueAsString( new EntryPath( path ) );
+    }
+
+    public DataSet getDataSet( String path )
+    {
+        return this.data.getDataSet( new EntryPath( path ) );
     }
 
     public void checkBreaksRequiredContract()

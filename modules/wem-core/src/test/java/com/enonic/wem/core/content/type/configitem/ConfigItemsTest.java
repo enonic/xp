@@ -19,7 +19,8 @@ public class ConfigItemsTest
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
         // exercise & verify
-        ConfigItem personaliaConfig = configItems.getConfigItem( new ConfigItemPath( "personalia" ).getLastElement() );
+        DirectAccessibleConfigItem personaliaConfig =
+            configItems.getDirectAccessibleConfigItem( new ConfigItemPath( "personalia" ).getLastElement() );
         assertEquals( "personalia", personaliaConfig.getPath().toString() );
     }
 
@@ -33,7 +34,31 @@ public class ConfigItemsTest
         fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
 
         // exercise & verify
-        ConfigItem personaliaEyeColourConfig = fieldSet.getConfigItems().getConfigItem( "eyeColour" );
+        DirectAccessibleConfigItem personaliaEyeColourConfig = fieldSet.getConfigItems().getDirectAccessibleConfigItem( "eyeColour" );
         assertEquals( "personalia.eyeColour", personaliaEyeColourConfig.getPath().toString() );
+    }
+
+    @Test
+    public void toString_with_two_fields()
+    {
+        ConfigItems configItems = new ConfigItems();
+        configItems.addConfigItem( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        configItems.addConfigItem( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
+
+        // exercise & verify
+        assertEquals( "eyeColour, hairColour", configItems.toString() );
+    }
+
+    @Test
+    public void toString_with_visualFieldSet()
+    {
+        ConfigItems configItems = new ConfigItems();
+        configItems.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
+        configItems.addConfigItem( VisualFieldSet.newVisualFieldSet().label( "Visual" ).name( "visual" ).add(
+            Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() ).add(
+            Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() ).build() );
+
+        // exercise & verify
+        assertEquals( "name, visual{eyeColour, hairColour}", configItems.toString() );
     }
 }

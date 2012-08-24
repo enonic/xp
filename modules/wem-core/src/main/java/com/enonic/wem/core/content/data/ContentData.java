@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.data;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.core.content.type.configitem.ConfigItems;
+import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.datatype.BasalValueType;
 
@@ -14,11 +14,11 @@ public class ContentData
     /**
      * Structured data.
      *
-     * @param configItems
+     * @param contentType
      */
-    public ContentData( final ConfigItems configItems )
+    public ContentData( final ContentType contentType )
     {
-        this.dataSet = new DataSet( new EntryPath(), configItems );
+        this.dataSet = new DataSet( new EntryPath(), contentType.getConfigItems() );
     }
 
     /**
@@ -29,9 +29,9 @@ public class ContentData
         this.dataSet = new DataSet( new EntryPath() );
     }
 
-    public void setConfigItems( final ConfigItems configItems )
+    public void setContentType( final ContentType contentType )
     {
-        this.dataSet.setConfigItems( configItems );
+        this.dataSet.setConfigItems( contentType.getConfigItems() );
     }
 
     void setDataSet( final DataSet dataSet )
@@ -57,11 +57,6 @@ public class ContentData
     public void setData( final String path, final FieldSet value )
     {
         dataSet.setData( new EntryPath( path ), value );
-    }
-
-    public Data setData( final String path )
-    {
-        return dataSet.getData( new EntryPath( path ) );
     }
 
     public String getValueAsString( final EntryPath path )

@@ -25,7 +25,7 @@ public class FieldSetTest
         assertSame( original.getName(), copy.getName() );
         assertSame( original.getLabel(), copy.getLabel() );
         assertNotSame( original.getConfigItems(), copy.getConfigItems() );
-        assertNotSame( original.getConfig( new ConfigItemPath( "myField" ) ), copy.getConfig( new ConfigItemPath( "myField" ) ) );
+        assertNotSame( original.getConfigItem( new ConfigItemPath( "myField" ) ), copy.getConfigItem( new ConfigItemPath( "myField" ) ) );
     }
 
     @Test
@@ -36,7 +36,7 @@ public class FieldSetTest
         fieldSet.addField( Field.newBuilder().name( "myField" ).type( FieldTypes.textline ).build() );
 
         // exercise
-        ConfigItem field = fieldSet.getConfig( new ConfigItemPath( "myField" ) );
+        DirectAccessibleConfigItem field = fieldSet.getConfigItem( new ConfigItemPath( "myField" ) );
 
         // verify
         assertEquals( "myFieldSet.myField", field.getPath().toString() );
@@ -56,9 +56,9 @@ public class FieldSetTest
         fieldSet.setPath( new ConfigItemPath( "homeAddress" ) );
 
         // verify
-        assertEquals( "homeAddress.street", fieldSet.getConfig( new ConfigItemPath( "street" ) ).getPath().toString() );
-        assertEquals( "homeAddress.postalCode", fieldSet.getConfig( new ConfigItemPath( "postalCode" ) ).getPath().toString() );
-        assertEquals( "homeAddress.postalPlace", fieldSet.getConfig( new ConfigItemPath( "postalPlace" ) ).getPath().toString() );
-        assertEquals( "homeAddress.country", fieldSet.getConfig( new ConfigItemPath( "country" ) ).getPath().toString() );
+        assertEquals( "homeAddress.street", fieldSet.getConfigItem( new ConfigItemPath( "street" ) ).getPath().toString() );
+        assertEquals( "homeAddress.postalCode", fieldSet.getConfigItem( new ConfigItemPath( "postalCode" ) ).getPath().toString() );
+        assertEquals( "homeAddress.postalPlace", fieldSet.getConfigItem( new ConfigItemPath( "postalPlace" ) ).getPath().toString() );
+        assertEquals( "homeAddress.country", fieldSet.getConfigItem( new ConfigItemPath( "country" ) ).getPath().toString() );
     }
 }

@@ -10,7 +10,7 @@ import com.enonic.wem.core.content.data.DataSet;
 import com.enonic.wem.core.content.data.Entry;
 
 public class FieldSet
-    extends ConfigItem
+    extends DirectAccessibleConfigItem
 {
     private String label;
 
@@ -101,7 +101,7 @@ public class FieldSet
     void setParentPath( final ConfigItemPath parentPath )
     {
         super.setParentPath( parentPath );
-        for ( ConfigItem configItem : configItems )
+        for ( DirectAccessibleConfigItem configItem : configItems.iterableForDirectAccessConfigItems() )
         {
             configItem.setParentPath( this.getPath() );
         }
@@ -152,7 +152,7 @@ public class FieldSet
         return new Builder();
     }
 
-    public ConfigItem getConfig( final ConfigItemPath configItemPath )
+    public DirectAccessibleConfigItem getConfigItem( final ConfigItemPath configItemPath )
     {
         return configItems.getConfigItem( configItemPath );
     }

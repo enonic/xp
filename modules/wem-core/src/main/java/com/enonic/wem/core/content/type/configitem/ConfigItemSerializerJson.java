@@ -105,6 +105,7 @@ public class ConfigItemSerializerJson
         g.writeStartObject();
         g.writeStringField( "configItemType", visualFieldSet.getConfigItemType().toString() );
         g.writeStringField( "label", visualFieldSet.getLabel() );
+        g.writeStringField( "name", visualFieldSet.getName() );
         configItemsSerializerJson.generate( visualFieldSet.getConfigItems(), g );
 
         g.writeEndObject();
@@ -149,11 +150,14 @@ public class ConfigItemSerializerJson
             throw new JsonParsingException( "Unknown ConfigItemType: " + configItemType );
         }
 
-        applyPath( configItemNode, configItem );
+        if ( configItem instanceof DirectAccessibleConfigItem )
+        {
+            applyPath( configItemNode, (DirectAccessibleConfigItem) configItem );
+        }
         return configItem;
     }
 
-    private void applyPath( final JsonNode configItemNode, final ConfigItem configItem )
+    private void applyPath( final JsonNode configItemNode, final DirectAccessibleConfigItem configItem )
     {
         if ( configItem.getConfigItemType() != ConfigItemType.VISUAL_FIELD_SET )
         {
@@ -161,7 +165,7 @@ public class ConfigItemSerializerJson
         }
     }
 
-    private ConfigItem parseField( final JsonNode configItemNode )
+    private DirectAccessibleConfigItem parseField( final JsonNode configItemNode )
     {
         final Field.Builder builder = Field.newBuilder();
         builder.name( JsonParserUtil.getStringValue( "name", configItemNode ) );
@@ -177,7 +181,7 @@ public class ConfigItemSerializerJson
         return builder.build();
     }
 
-    private ConfigItem parseFieldSet( final JsonNode configItemNode )
+    private DirectAccessibleConfigItem parseFieldSet( final JsonNode configItemNode )
     {
         final FieldSet.Builder builder = newFieldSet();
         builder.name( JsonParserUtil.getStringValue( "name", configItemNode ) );
@@ -190,7 +194,7 @@ public class ConfigItemSerializerJson
         parseOccurrences( builder, configItemNode.get( "occurrences" ) );
 
         final ConfigItems configItems = configItemsSerializerJson.parse( configItemNode.get( "items" ) );
-        for ( ConfigItem configItem : configItems )
+        for ( ConfigItem configItem : configItems.iterable() )
         {
             builder.add( configItem );
         }
@@ -202,9 +206,10 @@ public class ConfigItemSerializerJson
     {
         final VisualFieldSet.Builder builder = newVisualFieldSet();
         builder.label( JsonParserUtil.getStringValue( "label", configItemNode, null ) );
+        builder.name( JsonParserUtil.getStringValue( "name", configItemNode, null ) );
 
         final ConfigItems configItems = configItemsSerializerJson.parse( configItemNode.get( "items" ) );
-        for ( ConfigItem configItem : configItems )
+        for ( ConfigItem configItem : configItems.iterable() )
         {
             builder.add( configItem );
         }
@@ -212,7 +217,7 @@ public class ConfigItemSerializerJson
         return builder.build();
     }
 
-    private ConfigItem parseTemplateReference( final JsonNode configItemNode )
+    private DirectAccessibleConfigItem parseTemplateReference( final JsonNode configItemNode )
     {
         final TemplateReference.Builder builder = newTemplateReference();
         builder.name( JsonParserUtil.getStringValue( "name", configItemNode ) );

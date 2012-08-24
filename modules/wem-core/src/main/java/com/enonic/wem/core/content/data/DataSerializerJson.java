@@ -6,11 +6,12 @@ import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
 import com.enonic.wem.core.content.JsonParserUtil;
+import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.datatype.BasalValueType;
 
 public class DataSerializerJson
 {
-    public static void generate( final Entry entry, final JsonGenerator g )
+    public void generate( final Entry entry, final JsonGenerator g )
         throws IOException
     {
         final Data data = (Data) entry;
@@ -33,9 +34,9 @@ public class DataSerializerJson
         g.writeEndObject();
     }
 
-    public static Entry parse( JsonNode entryNode )
+    public Entry parse( final JsonNode entryNode, final Field field )
     {
-        Data.Builder builder = Data.newBuilder();
+        Data.Builder builder = Data.newData();
 
         String pathAsString = JsonParserUtil.getStringValue( "path", entryNode );
         String valueAsString = JsonParserUtil.getStringValue( "value", entryNode );
@@ -47,6 +48,7 @@ public class DataSerializerJson
         {
             builder.type( BasalValueType.valueOf( typeAsString ) );
         }
+        builder.field( field );
 
         return builder.build();
     }

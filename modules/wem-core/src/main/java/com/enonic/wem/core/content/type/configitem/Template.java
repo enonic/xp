@@ -24,12 +24,12 @@ public abstract class Template
         this.module = module;
     }
 
-    public TemplateQualifiedName getTemplateQualifiedName()
+    public TemplateQualifiedName getQualifiedName()
     {
         return new TemplateQualifiedName( module.getName(), getName() );
     }
 
     public abstract TemplateType getType();
 
-    public abstract ConfigItem create( final TemplateReference templateReference );
+    public abstract DirectAccessibleConfigItem create( final TemplateReference templateReference );
 }

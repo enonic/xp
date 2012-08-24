@@ -17,7 +17,7 @@ public class ConfigItemsSerializerJson
         throws IOException
     {
         g.writeArrayFieldStart( "items" );
-        for ( ConfigItem configItem : configItems )
+        for ( ConfigItem configItem : configItems.iterable() )
         {
             configItemSerializer.generate( configItem, g );
         }

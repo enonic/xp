@@ -3,6 +3,9 @@ package com.enonic.wem.core.content.type.configitem;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Preconditions;
+
+
 public class VisualFieldSet
     extends ConfigItem
 {
@@ -18,6 +21,15 @@ public class VisualFieldSet
     public String getLabel()
     {
         return label;
+    }
+
+    @Override
+    public VisualFieldSet copy()
+    {
+        final VisualFieldSet copy = (VisualFieldSet) super.copy();
+        copy.label = label;
+        copy.configItems = configItems.copy();
+        return copy;
     }
 
     public static Builder newVisualFieldSet()
@@ -40,15 +52,28 @@ public class VisualFieldSet
         return configItems.getConfigItem( name );
     }
 
+    void forwardSetPath( ConfigItemPath path )
+    {
+        configItems.setPath( path );
+    }
+
     public static class Builder
     {
         private String label;
+
+        private String name;
 
         private List<ConfigItem> configItems = new ArrayList<ConfigItem>();
 
         public Builder label( String value )
         {
             this.label = value;
+            return this;
+        }
+
+        public Builder name( String value )
+        {
+            this.name = value;
             return this;
         }
 
@@ -60,9 +85,12 @@ public class VisualFieldSet
 
         public VisualFieldSet build()
         {
+            Preconditions.checkNotNull( this.label, "label is required" );
+            Preconditions.checkNotNull( this.name, "name is required" );
+
             VisualFieldSet visualFieldSet = new VisualFieldSet();
             visualFieldSet.label = this.label;
-            visualFieldSet.setName( this.label );
+            visualFieldSet.setName( this.name );
             for ( ConfigItem configItem : configItems )
             {
                 visualFieldSet.addConfigItem( configItem );

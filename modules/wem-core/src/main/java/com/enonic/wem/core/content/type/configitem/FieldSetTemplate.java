@@ -27,9 +27,9 @@ public class FieldSetTemplate
         return TemplateType.FIELD_SET;
     }
 
-    public void addConfigItem( final ConfigItem configItem )
+    public void addConfigItem( final DirectAccessibleConfigItem configItem )
     {
-        if ( configItem.getConfigItemType() == ConfigItemType.REFERENCE )
+        if ( configItem instanceof TemplateReference )
         {
             TemplateReference templateReference = (TemplateReference) configItem;
             Preconditions.checkArgument( templateReference.getTemplateType() == TemplateType.FIELD,
@@ -39,7 +39,7 @@ public class FieldSetTemplate
         fieldSet.addConfigItem( configItem );
     }
 
-    public ConfigItem create( final TemplateReference templateReference )
+    public DirectAccessibleConfigItem create( final TemplateReference templateReference )
     {
         FieldSet fieldSet = this.fieldSet.copy();
         fieldSet.setName( templateReference.getName() );

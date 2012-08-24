@@ -4,7 +4,7 @@ package com.enonic.wem.core.content.type.configitem;
 import org.elasticsearch.common.base.Preconditions;
 
 public class TemplateReference
-    extends ConfigItem
+    extends DirectAccessibleConfigItem
 {
     private TemplateQualifiedName templateQualifiedName;
 
@@ -52,7 +52,7 @@ public class TemplateReference
     {
         Builder builder = new Builder();
         builder.templateType = template.getType();
-        builder.templateQualifiedName = template.getTemplateQualifiedName();
+        builder.templateQualifiedName = template.getQualifiedName();
         return builder;
     }
 

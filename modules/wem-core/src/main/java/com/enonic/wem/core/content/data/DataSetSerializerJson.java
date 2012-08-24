@@ -10,37 +10,45 @@ import org.codehaus.jackson.JsonNode;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.type.configitem.ConfigItem;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
-import com.enonic.wem.core.content.type.configitem.ConfigItemType;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
+import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 
 public class DataSetSerializerJson
 {
-    static void generate( final DataSet dataSet, final JsonGenerator g )
+    private DataSerializerJson dataSerializer = new DataSerializerJson();
+
+    void generate( final DataSet dataSet, final JsonGenerator g, boolean wrapInObject )
         throws IOException
     {
-        g.writeStartObject();
+        if ( wrapInObject )
+        {
+            g.writeStartObject();
+        }
         g.writeStringField( "path", dataSet.getPath().toString() );
         g.writeArrayFieldStart( "entries" );
         for ( final Entry entry : dataSet )
         {
             if ( entry instanceof DataSet )
             {
-                DataSetSerializerJson.generate( ( (DataSet) entry ), g );
+                generate( ( (DataSet) entry ), g, true );
             }
             else if ( entry instanceof Data )
             {
-                DataSerializerJson.generate( entry, g );
+                dataSerializer.generate( entry, g );
             }
         }
         g.writeEndArray();
-        g.writeEndObject();
+        if ( wrapInObject )
+        {
+            g.writeEndObject();
+        }
     }
 
-    static DataSet parse( final JsonNode entriesNode, final ConfigItems configItems )
+    DataSet parse( final JsonNode entriesNode, final ConfigItems configItems )
     {
-        final JsonNode entriesArray = entriesNode.get( "entries" );
         final EntryPath entriesPath = new EntryPath( JsonParserUtil.getStringValue( "path", entriesNode ) );
+        final JsonNode entriesArray = entriesNode.get( "entries" );
 
         final DataSet dataSet = newDataSet( entriesPath, configItems );
         final Iterator<JsonNode> entryIt = entriesArray.getElements();
@@ -54,13 +62,13 @@ public class DataSetSerializerJson
                 if ( isEntriesNode( entryNode ) )
                 {
 
-                    final DataSet childDataSet = DataSetSerializerJson.parse( entryNode, null );
+                    final DataSet childDataSet = parse( entryNode, null );
                     final DataSet entry = new DataSet( path, childDataSet );
                     dataSet.add( entry );
                 }
                 else
                 {
-                    final Entry entry = DataSerializerJson.parse( entryNode );
+                    final Entry entry = dataSerializer.parse( entryNode, null );
                     dataSet.add( entry );
                 }
             }
@@ -74,15 +82,15 @@ public class DataSetSerializerJson
                 {
                     //
                 }
-                else if ( item.getConfigItemType() == ConfigItemType.FIELD )
+                else if ( item instanceof Field )
                 {
-                    final Entry entry = DataSerializerJson.parse( entryNode );
+                    final Entry entry = dataSerializer.parse( entryNode, (Field) item );
                     dataSet.add( entry );
                 }
-                else if ( item.getConfigItemType() == ConfigItemType.FIELD_SET )
+                else if ( item instanceof FieldSet )
                 {
                     final FieldSet fieldSet = (FieldSet) item;
-                    final DataSet childDataSet = DataSetSerializerJson.parse( entryNode, fieldSet.getConfigItems() );
+                    final DataSet childDataSet = parse( entryNode, fieldSet.getConfigItems() );
                     final DataSet entry = new DataSet( path, fieldSet, childDataSet );
                     dataSet.add( entry );
                 }

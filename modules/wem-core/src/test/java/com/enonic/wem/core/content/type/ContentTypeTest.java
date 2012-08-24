@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
-import com.enonic.wem.core.content.type.configitem.MockTemplateReferenceFetcher;
+import com.enonic.wem.core.content.type.configitem.MockTemplateFetcher;
 import com.enonic.wem.core.content.type.configitem.TemplateReference;
 import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
@@ -26,13 +26,24 @@ public class ContentTypeTest
     {
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
-        VisualFieldSet visualFieldSet =
-            newVisualFieldSet().label( "Personalia" ).add( newField().name( "eyeColour" ).type( FieldTypes.textline ).build() ).add(
-                newField().name( "hairColour" ).type( FieldTypes.textline ).build() ).build();
+        VisualFieldSet visualFieldSet = newVisualFieldSet().label( "Personalia" ).name( "personalia" ).add(
+            newField().name( "eyeColour" ).type( FieldTypes.textline ).build() ).build();
         contentType.addConfigItem( visualFieldSet );
 
-        String json = new ContentTypeSerializerJson().toJson( contentType );
-        System.out.println( json );
+        assertEquals( "eyeColour", contentType.getField( "eyeColour" ).getPath().toString() );
+    }
+
+    @Test
+    public void visualFieldSet_inside_fieldSet()
+    {
+        ContentType contentType = new ContentType();
+        contentType.setName( "test" );
+        VisualFieldSet visualFieldSet = newVisualFieldSet().label( "Personalia" ).name( "personalia" ).add(
+            newField().name( "eyeColour" ).type( FieldTypes.textline ).build() ).build();
+        FieldSet myFieldSet = newFieldSet().name( "myFieldSet" ).add( visualFieldSet ).build();
+        contentType.addConfigItem( myFieldSet );
+
+        assertEquals( "myFieldSet.eyeColour", contentType.getField( "myFieldSet.eyeColour" ).getPath().toString() );
     }
 
     @Test
@@ -48,7 +59,11 @@ public class ContentTypeTest
         contentType.addConfigItem( newField().name( "title" ).type( FieldTypes.textline ).build() );
         contentType.addConfigItem( fieldSet );
 
-        String json = new ContentTypeSerializerJson().toJson( contentType );
+        assertEquals( "title", contentType.getField( "title" ).getPath().toString() );
+        assertEquals( "address.label", contentType.getField( "address.label" ).getPath().toString() );
+        assertEquals( "address.street", contentType.getField( "address.street" ).getPath().toString() );
+        assertEquals( "address.postalNo", contentType.getField( "address.postalNo" ).getPath().toString() );
+        assertEquals( "address.country", contentType.getField( "address.country" ).getPath().toString() );
     }
 
     @Test
@@ -67,7 +82,7 @@ public class ContentTypeTest
         cty.addConfigItem( newTemplateReference( template ).name( "home" ).build() );
         cty.addConfigItem( newTemplateReference( template ).name( "cabin" ).build() );
 
-        MockTemplateReferenceFetcher templateReferenceFetcher = new MockTemplateReferenceFetcher();
+        MockTemplateFetcher templateReferenceFetcher = new MockTemplateFetcher();
         templateReferenceFetcher.add( template );
 
         // exercise
@@ -77,6 +92,35 @@ public class ContentTypeTest
         assertEquals( "home.street", cty.getField( "home.street" ).getPath().toString() );
         assertEquals( "cabin.street", cty.getField( "cabin.street" ).getPath().toString() );
     }
+
+    @Test
+    public void templateReferencesToConfigItems_visual_field_set()
+    {
+        // setup
+        Module module = newModule().name( "myModule" ).build();
+
+        FieldSetTemplate template = newFieldSetTemplate().module( module ).fieldSet( newFieldSet().name( "address" ).add(
+            newVisualFieldSet().label( "My Visual Field Set" ).name( "vfs" ).add(
+                newField().name( "myFieldInVFS" ).label( "MyFieldInVFS" ).type( FieldTypes.textline ).build() ).build() ).add(
+            newField().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() ).add(
+            newField().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() ).add(
+            newField().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.textline ).build() ).add(
+            newField().name( "country" ).label( "Country" ).type( FieldTypes.textline ).build() ).build() ).build();
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newTemplateReference( template ).name( "home" ).build() );
+
+        MockTemplateFetcher templateReferenceFetcher = new MockTemplateFetcher();
+        templateReferenceFetcher.add( template );
+
+        // exercise
+        contentType.templateReferencesToConfigItems( templateReferenceFetcher );
+
+        // verify:
+        assertEquals( "home.street", contentType.getField( "home.street" ).getPath().toString() );
+        assertEquals( "home.myFieldInVFS", contentType.getField( "home.myFieldInVFS" ).getPath().toString() );
+    }
+
 
     @Test
     public void templateReferencesToConfigItems_throws_exception_when_template_is_not_of_expected_type()
@@ -90,9 +134,9 @@ public class ContentTypeTest
 
         ContentType cty = new ContentType();
         cty.addConfigItem(
-            TemplateReference.newBuilder().name( "home" ).typeField().template( fieldSetTemplate.getTemplateQualifiedName() ).build() );
+            TemplateReference.newBuilder().name( "home" ).typeField().template( fieldSetTemplate.getQualifiedName() ).build() );
 
-        MockTemplateReferenceFetcher templateReferenceFetcher = new MockTemplateReferenceFetcher();
+        MockTemplateFetcher templateReferenceFetcher = new MockTemplateFetcher();
         templateReferenceFetcher.add( fieldSetTemplate );
 
         // exercise

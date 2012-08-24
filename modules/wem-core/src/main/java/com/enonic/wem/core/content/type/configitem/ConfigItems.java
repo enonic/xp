@@ -7,11 +7,13 @@ import java.util.LinkedHashMap;
 import com.google.common.base.Preconditions;
 
 public class ConfigItems
-    implements Iterable<ConfigItem>
 {
     private ConfigItemPath path;
 
     private LinkedHashMap<String, ConfigItem> items = new LinkedHashMap<String, ConfigItem>();
+
+    private LinkedHashMap<String, DirectAccessibleConfigItem> directAccessibleConfigItems =
+        new LinkedHashMap<String, DirectAccessibleConfigItem>();
 
     private LinkedHashMap<String, VisualFieldSet> visualFieldSets = new LinkedHashMap<String, VisualFieldSet>();
 
@@ -25,49 +27,60 @@ public class ConfigItems
         return path;
     }
 
-    public void setPath( final ConfigItemPath path )
-    {
-        this.path = path;
-        for ( ConfigItem configItem : items.values() )
-        {
-            configItem.setParentPath( path );
-        }
-    }
-
     public void addConfigItem( final ConfigItem item )
     {
-        if ( item.getConfigItemType() != ConfigItemType.VISUAL_FIELD_SET )
+        if ( item instanceof DirectAccessibleConfigItem )
         {
-            item.setPath( new ConfigItemPath( path, item.getName() ) );
+            ( (DirectAccessibleConfigItem) item ).setPath( new ConfigItemPath( path, item.getName() ) );
         }
 
         Object previous = items.put( item.getName(), item );
         Preconditions.checkArgument( previous == null, "ConfigItem already added: " + item );
 
-        if ( item.getConfigItemType() == ConfigItemType.VISUAL_FIELD_SET )
+        if ( item instanceof VisualFieldSet )
         {
             visualFieldSets.put( item.getName(), (VisualFieldSet) item );
         }
+        else if ( item instanceof DirectAccessibleConfigItem )
+        {
+            directAccessibleConfigItems.put( item.getName(), (DirectAccessibleConfigItem) item );
+        }
     }
 
-    public ConfigItem getConfigItem( final ConfigItemPath path )
+    public void setPath( final ConfigItemPath path )
+    {
+        this.path = path;
+        for ( final ConfigItem configItem : items.values() )
+        {
+            if ( configItem instanceof DirectAccessibleConfigItem )
+            {
+                ( (DirectAccessibleConfigItem) configItem ).setParentPath( path );
+            }
+            else if ( configItem instanceof VisualFieldSet )
+            {
+                ( (VisualFieldSet) configItem ).forwardSetPath( path );
+            }
+        }
+    }
+
+    public DirectAccessibleConfigItem getConfigItem( final ConfigItemPath path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
 
         if ( path.elementCount() > 1 )
         {
-            ConfigItem foundConfig = getConfigItem( path.getFirstElement() );
+            DirectAccessibleConfigItem foundConfig = getDirectAccessibleConfigItem( path.getFirstElement() );
             Preconditions.checkArgument( foundConfig.getConfigItemType() == ConfigItemType.FIELD_SET,
                                          "ConfigItem at path [%s] expected to be of type FieldSet: " + foundConfig.getConfigItemType(),
                                          path );
             //noinspection ConstantConditions
             FieldSet fieldSet = (FieldSet) foundConfig;
-            return fieldSet.getConfig( path.asNewWithoutFirstPathElement() );
+            return fieldSet.getConfigItem( path.asNewWithoutFirstPathElement() );
         }
         else
         {
-            return getConfigItem( path.getFirstElement() );
+            return getDirectAccessibleConfigItem( path.getFirstElement() );
         }
     }
 
@@ -81,9 +94,25 @@ public class ConfigItems
         return foundConfig;
     }
 
+    public DirectAccessibleConfigItem getDirectAccessibleConfigItem( final String name )
+    {
+        ConfigItem configItem = getConfigItem( name );
+        if ( configItem == null )
+        {
+            return null;
+        }
+
+        Preconditions.checkArgument( configItem instanceof DirectAccessibleConfigItem,
+                                     "ConfigItem [%s] in [%s] is not of type AccessibleConfigItem: " + configItem.getClass().getName(),
+                                     this.getPath(), configItem.getName() );
+
+        //noinspection ConstantConditions
+        return (DirectAccessibleConfigItem) configItem;
+    }
+
     public FieldSet getFieldSet( final String name )
     {
-        final ConfigItem configItem = getConfigItem( name );
+        final DirectAccessibleConfigItem configItem = getDirectAccessibleConfigItem( name );
         if ( configItem == null )
         {
             return null;
@@ -98,7 +127,7 @@ public class ConfigItems
 
     public FieldSet getFieldSet( final ConfigItemPath path )
     {
-        final ConfigItem configItem = getConfigItem( path );
+        final DirectAccessibleConfigItem configItem = getConfigItem( path );
         if ( configItem == null )
         {
             return null;
@@ -113,7 +142,7 @@ public class ConfigItems
 
     public Field getField( final String name )
     {
-        final ConfigItem configItem = getConfigItem( name );
+        final DirectAccessibleConfigItem configItem = getDirectAccessibleConfigItem( name );
         if ( configItem == null )
         {
             return null;
@@ -128,7 +157,7 @@ public class ConfigItems
 
     public Field getField( final ConfigItemPath path )
     {
-        final ConfigItem configItem = getConfigItem( path );
+        final DirectAccessibleConfigItem configItem = getConfigItem( path );
         if ( configItem == null )
         {
             return null;
@@ -145,6 +174,16 @@ public class ConfigItems
         return items.values().iterator();
     }
 
+    public Iterable<ConfigItem> iterable()
+    {
+        return items.values();
+    }
+
+    public Iterable<DirectAccessibleConfigItem> iterableForDirectAccessConfigItems()
+    {
+        return directAccessibleConfigItems.values();
+    }
+
     public int size()
     {
         return items.size();
@@ -154,25 +193,26 @@ public class ConfigItems
     public String toString()
     {
         final StringBuilder s = new StringBuilder();
-        if ( path != null )
-        {
-            s.append( path.toString() );
-        }
-        else
-        {
-            s.append( "?" );
-        }
-        s.append( ": " );
         int index = 0;
         final int size = items.size();
         for ( ConfigItem entry : items.values() )
         {
-            s.append( entry.getName() );
-            if ( index < size - 1 )
+            if ( entry instanceof DirectAccessibleConfigItem )
             {
-                s.append( "," );
+                s.append( entry.getName() );
+                if ( index < size - 1 )
+                {
+                    s.append( ", " );
+                }
+                index++;
             }
-            index++;
+            else if ( entry instanceof VisualFieldSet )
+            {
+                VisualFieldSet visualFieldSet = (VisualFieldSet) entry;
+                s.append( visualFieldSet.getName() ).append( "{" );
+                s.append( visualFieldSet.getConfigItems().toString() );
+                s.append( "}" );
+            }
         }
         return s.toString();
     }
@@ -181,33 +221,38 @@ public class ConfigItems
     {
         ConfigItems copy = new ConfigItems();
         copy.path = path;
-        for ( ConfigItem ci : this )
+        for ( ConfigItem ci : this.items.values() )
         {
             ConfigItem copyOfCi = ci.copy();
             copy.items.put( copyOfCi.getName(), copyOfCi );
+
+            if ( copyOfCi instanceof VisualFieldSet )
+            {
+                copy.visualFieldSets.put( copyOfCi.getName(), (VisualFieldSet) copyOfCi );
+            }
         }
         return copy;
     }
 
-    public void templateReferencesToConfigItems( final TemplateReferenceFetcher templateReferenceFetcher )
+    public void templateReferencesToConfigItems( final TemplateFetcher templateFetcher )
     {
-        for ( final ConfigItem configItem : this )
+        for ( final ConfigItem configItem : items.values() )
         {
-            if ( configItem.getConfigItemType() == ConfigItemType.REFERENCE )
+            if ( configItem instanceof TemplateReference )
             {
                 final TemplateReference templateReference = (TemplateReference) configItem;
-                final Template template = templateReferenceFetcher.getTemplate( templateReference.getTemplateQualifiedName() );
+                final Template template = templateFetcher.getTemplate( templateReference.getTemplateQualifiedName() );
                 if ( template != null )
                 {
                     Preconditions.checkArgument( templateReference.getTemplateType() == template.getType(),
                                                  "Template expected to be of type %s: " + template.getType(),
                                                  templateReference.getTemplateType() );
 
-                    final ConfigItem configItemCreatedFromTemplate = template.create( templateReference );
+                    final DirectAccessibleConfigItem configItemCreatedFromTemplate = template.create( templateReference );
                     if ( configItemCreatedFromTemplate instanceof FieldSet )
                     {
                         FieldSet fieldSet = (FieldSet) configItemCreatedFromTemplate;
-                        fieldSet.getConfigItems().templateReferencesToConfigItems( templateReferenceFetcher );
+                        fieldSet.getConfigItems().templateReferencesToConfigItems( templateFetcher );
                     }
 
                     items.put( configItem.getName(), configItemCreatedFromTemplate );

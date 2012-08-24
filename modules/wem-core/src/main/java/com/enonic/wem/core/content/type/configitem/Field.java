@@ -8,7 +8,7 @@ import com.enonic.wem.core.content.type.configitem.fieldtype.FieldType;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeConfig;
 
 public class Field
-    extends ConfigItem
+    extends DirectAccessibleConfigItem
 {
     private FieldType type;
 

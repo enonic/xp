@@ -16,7 +16,7 @@ import com.enonic.wem.core.content.type.configitem.ConfigItemType;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldTemplate;
 import com.enonic.wem.core.content.type.configitem.FieldTemplateBuilder;
-import com.enonic.wem.core.content.type.configitem.MockTemplateReferenceFetcher;
+import com.enonic.wem.core.content.type.configitem.MockTemplateFetcher;
 import com.enonic.wem.core.content.type.configitem.TemplateQualifiedName;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.module.Module;
@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 
 public class ContentTypeStepDefs
 {
-    public final MockTemplateReferenceFetcher mockTemplateReferenceFetcher = new MockTemplateReferenceFetcher();
+    public final MockTemplateFetcher mockTemplateReferenceFetcher = new MockTemplateFetcher();
 
     public final Map<String, Module> moduleByName = new HashMap<String, Module>();
 

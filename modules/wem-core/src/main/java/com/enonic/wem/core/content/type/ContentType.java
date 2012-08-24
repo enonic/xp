@@ -8,7 +8,7 @@ import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
-import com.enonic.wem.core.content.type.configitem.TemplateReferenceFetcher;
+import com.enonic.wem.core.content.type.configitem.TemplateFetcher;
 import com.enonic.wem.core.module.Module;
 
 public class ContentType
@@ -40,6 +40,11 @@ public class ContentType
     public void setName( final String name )
     {
         this.name = name;
+    }
+
+    public ContentTypeQualifiedName getQualifiedName()
+    {
+        return new ContentTypeQualifiedName( module.getName(), name );
     }
 
     public ContentType getSuperType()
@@ -130,8 +135,9 @@ public class ContentType
         return fieldSet;
     }
 
-    public void templateReferencesToConfigItems( final TemplateReferenceFetcher templateReferenceFetcher )
+    public void templateReferencesToConfigItems( final TemplateFetcher templateFetcher )
     {
-        configItems.templateReferencesToConfigItems( templateReferenceFetcher );
+        configItems.templateReferencesToConfigItems( templateFetcher );
     }
+
 }
