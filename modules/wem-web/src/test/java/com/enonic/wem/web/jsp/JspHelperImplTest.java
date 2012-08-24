@@ -4,9 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import static org.junit.Assert.*;
-
 import com.enonic.cms.core.product.ProductVersion;
+
+import static org.junit.Assert.*;
 
 public class JspHelperImplTest
 {
@@ -51,10 +51,11 @@ public class JspHelperImplTest
 
         req.setRequestURI( "/test" );
         final String url2 = this.helper.getBaseUrl();
-        assertEquals( "http://localhost/test", url2 );
+        assertEquals( "http://localhost", url2 );
 
         req.setServerPort( 8888 );
-        req.setRequestURI( "/test/" );
+        req.setContextPath( "/test" );
+        req.setRequestURI( "/foo" );
         final String url3 = this.helper.getBaseUrl();
         assertEquals( "http://localhost:8888/test", url3 );
     }

@@ -32,7 +32,14 @@ final class JspHelperImpl
         ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromContextPath( this.servletRequest );
         if ( !Strings.isNullOrEmpty( path ) )
         {
-            builder.pathSegment( path );
+            if ( '/' == path.charAt( 0 ) )
+            {
+                builder.pathSegment( path.substring( 1 ) );
+            }
+            else
+            {
+                builder.pathSegment( path );
+            }
         }
         return builder.build().toString();
     }
