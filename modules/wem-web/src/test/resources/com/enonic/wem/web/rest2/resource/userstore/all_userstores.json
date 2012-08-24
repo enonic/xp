@@ -1,0 +1,20 @@
+{"total": 3, "userStores": [
+    {
+        "key": "1",
+        "name": "default",
+        "default": true,
+        "connector": null
+    },
+    {
+        "key": "2",
+        "name": "Supertest",
+        "default": false,
+        "connector": "enonic"
+    },
+    {
+        "key": "3",
+        "name": "Example",
+        "default": false,
+        "connector": "enonic"
+    }
+]}
