@@ -6,7 +6,7 @@
         this.OFFSET_X = 15;
         this.OFFSET_Y = 15;
         this.create();
-        this.registerSubscribers();
+        this.bindEvents();
     };
 
     // Inherits ui.Base
@@ -24,22 +24,21 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.registerSubscribers = function () {
-        var self = this;
-        $liveedit.subscribe('/component/on-select', function () {
-            self.hide.call(self);
-        });
+    p.bindEvents = function () {
+        $liveedit(window).on('/component/on-select', $liveedit.proxy(this.hide, this));
     };
 
 
     p.create = function () {
+        var self = this;
         var html = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
-                   '    <span class="live-edit-tool-tip-type-text"></span>: <span class="live-edit-tool-tip-name-text"></span>' +
+                   '    <span class="live-edit-tool-tip-type-text"></span>: ' +
+                   '    <span class="live-edit-tool-tip-name-text"></span>' +
                    '</div>';
 
-        this.createElement(html);
-        this.appendTo($liveedit('body'));
-        this.attachEventListeners();
+        self.createElement(html);
+        self.appendTo($liveedit('body'));
+        self.attachEventListeners();
     };
 
 
@@ -54,13 +53,10 @@
         var self = this;
 
         $liveedit(document).on('mousemove', '[data-live-edit-type]', function (event) {
-
-            // TODO: Make this more efficient.
             var targetIsUiComponent = $liveedit(event.target).is('[id*=live-edit-ui-cmp]') ||
                                       $liveedit(event.target).parents('[id*=live-edit-ui-cmp]').length > 0;
 
             // TODO: Use PubSub instead of calling DragDrop object.
-
             var pageHasComponentSelected = $liveedit('.live-edit-selected-component').length > 0;
             if (targetIsUiComponent || pageHasComponentSelected || AdminLiveEdit.ui.DragDrop.isDragging()) {
                 self.hide();
@@ -68,15 +64,15 @@
             }
 
             var $component = $liveedit(event.target).closest('[data-live-edit-type]');
-            var type = util.getComponentType($component);
-            var name = util.getComponentName($component);
+            var componentInfo = util.getComponentInfo($component);
             var pos = self.resolvePosition(event);
 
             self.getEl().css({
                 top: pos.y,
                 left: pos.x
             });
-            self.setText(type, name);
+
+            self.setText(componentInfo.type, componentInfo.name);
         });
 
         $liveedit(document).on('hover', '[data-live-edit-type]', function (event) {

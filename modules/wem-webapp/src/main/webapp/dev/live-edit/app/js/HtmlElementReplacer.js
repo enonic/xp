@@ -17,7 +17,7 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.registerSubscribers = function () {
+    p.bindEvents = function () {
     };
 
 

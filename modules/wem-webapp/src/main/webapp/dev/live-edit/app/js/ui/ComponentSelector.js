@@ -5,7 +5,7 @@
     var componentSelector = AdminLiveEdit.ui.ComponentSelector = function () {
         this.$selectedComponent = $liveedit([]); // Empty jQuery object
         this.create();
-        this.registerSubscribers();
+        this.bindEvents();
     };
 
     // Inherits ui.Base
@@ -23,23 +23,14 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.registerSubscribers = function () {
-        var self = this;
-        $liveedit.subscribe('/component/on-select', function ($component) {
-            self.select.call(self, $component);
-        });
+    p.bindEvents = function () {
+        $liveedit(window).on('/component/on-select', $liveedit.proxy(this.select, this));
 
-        $liveedit.subscribe('/component/on-select-parent', function () {
-            self.selectParent.call(self);
-        });
+        $liveedit(window).on('/component/on-deselect', $liveedit.proxy(this.deselect, this));
 
-        $liveedit.subscribe('/component/on-deselect', function () {
-            self.deselect.call(self);
-        });
-
-        $liveedit.subscribe('/ui/dragdrop/on-sortstop', function (uiEvent, ui, wasSelectedOnSortStart) {
+        $liveedit(window).on('/ui/dragdrop/on-sortstop', function (event, uiEvent, ui, wasSelectedOnSortStart) {
             if (wasSelectedOnSortStart) {
-                $liveedit.publish('/component/on-select', [ui.item]);
+                $liveedit(window).trigger('/component/on-select', [ui.item]);
             }
         });
     };
@@ -84,7 +75,7 @@
     };
 
 
-    p.select = function ($component) {
+    p.select = function (event, $component) {
         var $el = this.getEl();
 
         // Add position relative to the page component in order have absolute positioned elements inside.
@@ -93,14 +84,6 @@
 
         this.setSelected($component);
         this.scrollComponentIntoView($component);
-    };
-
-
-    p.selectParent = function () {
-        var $parent = this.getSelected().parents('[data-live-edit-type]');
-        if ($parent && $parent.length > 0) {
-            $liveedit.publish('/component/on-select', [$liveedit($parent[0])]);
-        }
     };
 
 

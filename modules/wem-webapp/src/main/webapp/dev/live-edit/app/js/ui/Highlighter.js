@@ -4,7 +4,7 @@
     // Class definition (constructor function)
     var highlighter = AdminLiveEdit.ui.Highlighter = function () {
         this.create();
-        this.registerSubscribers();
+        this.bindEvents();
     };
 
     // Inherits ui.Base
@@ -22,19 +22,12 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.registerSubscribers = function () {
-        var self = this;
-        $liveedit.subscribe('/component/on-mouse-over', function ($component, borderColor) {
-            self.highlight.call(self, $component, borderColor);
-        });
+    p.bindEvents = function () {
+        $liveedit(window).on('/component/on-mouse-over', $liveedit.proxy(this.highlight, this));
 
-        $liveedit.subscribe('/component/on-select', function () {
-            self.hide.call(self);
-        });
+        $liveedit(window).on('/component/on-select', $liveedit.proxy(this.hide, this));
 
-        $liveedit.subscribe('/ui/dragdrop/on-sortstart', function () {
-            self.hide.call(self);
-        });
+        $liveedit(window).on('/ui/dragdrop/on-sortstart', $liveedit.proxy(this.hide, this));
     };
 
 
@@ -47,7 +40,7 @@
     };
 
 
-    p.highlight = function ($component) {
+    p.highlight = function (event, $component) {
         var componentType = util.getComponentType($component);
         var componentTagName = util.getTagNameForComponent($component);
         var componentBoxModel = util.getBoxModel($component);

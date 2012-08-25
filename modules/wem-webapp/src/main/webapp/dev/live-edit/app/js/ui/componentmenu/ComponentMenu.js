@@ -7,8 +7,9 @@
 
     // Class definition (constructor)
     var componentMenu = AdminLiveEdit.ui.componentmenu.ComponentMenu = function () {
-        this.buttons = [];
-        this.buttonConfig = {
+        var self = this;
+        self.buttons = [];
+        self.buttonConfig = {
             'page': ['settings'],
             'region': ['parent', 'insert', 'reset', 'empty'],
             'window': ['parent', 'drag', 'settings', 'remove'],
@@ -16,10 +17,9 @@
             'paragraph': ['parent', 'edit']
         };
 
-        this.$currentComponent = $liveedit([]);
-
-        this.create();
-        this.registerSubscribers();
+        self.$currentComponent = $liveedit([]);
+        self.create();
+        self.bindEvents();
     };
 
 
@@ -38,45 +38,35 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.registerSubscribers = function () {
-        var self = this;
+    p.bindEvents = function () {
+        $liveedit(window).on('/component/on-select', $liveedit.proxy(this.show, this));
 
-        $liveedit.subscribe('/component/on-select', function ($component) {
-            self.show.call(self, $component);
-        });
+        $liveedit(window).on('/component/on-mouse-over', $liveedit.proxy(this.show, this));
 
-        $liveedit.subscribe('/component/on-mouse-over', function ($component) {
-            var componentInfo = util.getComponentInfo($component);
-            if (componentInfo.tagName === 'body' && componentInfo.type === 'page') {
-                self.hide.call(self);
-                return;
-            }
-            self.show.call(self, $component);
-        });
+        $liveedit(window).on('/component/on-deselect', $liveedit.proxy(this.hide, this));
 
-        $liveedit.subscribe('/component/on-mouse-out', function ($component) {
-        });
-
-        $liveedit.subscribe('/component/on-deselect', function () {
-            self.hide.call(self);
-        });
-
-        $liveedit.subscribe('/ui/dragdrop/on-sortstart', function () {
-            self.fadeOutAndHide.call(self);
-        });
+        $liveedit(window).on('/ui/dragdrop/on-sortstart', $liveedit.proxy(this.fadeOutAndHide, this));
     };
 
 
     p.create = function () {
-        this.createElement('<div class="live-edit-component-menu" style="top:-5000px; left:-5000px;">' +
+        var self = this;
+
+        self.createElement('<div class="live-edit-component-menu" style="top:-5000px; left:-5000px;">' +
                            '    <div class="live-edit-component-menu-inner"></div>' +
                            '</div>');
-        this.appendTo($liveedit('body'));
-        this.addButtons();
+        self.appendTo($liveedit('body'));
+        self.addButtons();
     };
 
 
-    p.show = function ($component) {
+    p.show = function (event, $component) {
+        var componentInfo = util.getComponentInfo($component);
+        if (componentInfo.tagName === 'body' && componentInfo.type === 'page') {
+            this.hide();
+            return;
+        }
+
         this.getMenuForComponent($component);
         this.moveToComponent($component);
         this.getEl().show();
@@ -90,7 +80,7 @@
 
     p.fadeOutAndHide = function () {
         this.getEl().fadeOut(500, function () {
-            $liveedit.publish('/component/on-deselect');
+            $liveedit(window).trigger('/component/on-deselect');
         });
     };
 
@@ -99,7 +89,6 @@
         var self = this;
 
         self.$currentComponent = $component;
-
         self.setCssPosition($component);
 
         var componentBoxModel = util.getBoxModel($component);

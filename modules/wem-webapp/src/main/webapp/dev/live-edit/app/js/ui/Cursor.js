@@ -3,7 +3,7 @@
 
     // Class definition (constructor function)
     var cursor = AdminLiveEdit.ui.Cursor = function () {
-        this.registerSubscribers();
+        this.bindEvents();
     };
 
     // Shorthand ref to the prototype
@@ -11,20 +11,14 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.registerSubscribers = function () {
-        var self = this;
+    p.bindEvents = function () {
+        $liveedit(window).on('/component/on-mouse-over', $liveedit.proxy(this.updateCursor, this));
 
-        $liveedit.subscribe('/component/on-mouse-over', function ($component) {
-            self.updateCursor.call(self, $component);
-        });
-
-        $liveedit.subscribe('/component/on-select', function ($component) {
-            self.updateCursor.call(self, $component);
-        });
+        $liveedit(window).on('/component/on-select', $liveedit.proxy(this.updateCursor, this));
     };
 
 
-    p.updateCursor = function ($component) {
+    p.updateCursor = function (event, $component) {
         var componentType = AdminLiveEdit.Util.getComponentType($component);
         var $body = $liveedit('body');
         var cursor = 'default';

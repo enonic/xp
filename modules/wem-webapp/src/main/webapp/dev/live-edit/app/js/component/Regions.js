@@ -7,7 +7,7 @@
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();
         this.attachClickEvent();
-        this.registerSubscribers();
+        this.bindEvents();
     };
 
     // Inherit from Base prototype
@@ -23,15 +23,10 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 
-    p.registerSubscribers = function () {
-        var self = this;
-        $liveedit.subscribe('/ui/dragdrop/on-sortupdate', function () {
-            self.renderEmptyPlaceholders.call(self);
-        });
+    p.bindEvents = function () {
+        $liveedit(window).on('/ui/dragdrop/on-sortupdate', $liveedit.proxy(this.renderEmptyPlaceholders, this));
 
-        $liveedit.subscribe('/ui/dragdrop/on-dragover', function () {
-            self.renderEmptyPlaceholders.call(self);
-        });
+        $liveedit(window).on('/ui/dragdrop/on-dragover', $liveedit.proxy(this.renderEmptyPlaceholders, this));
     };
 
 

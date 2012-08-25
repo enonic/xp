@@ -4,7 +4,7 @@
     // Class definition (constructor function)
     var infoTip = AdminLiveEdit.ui.InfoTip = function () {
         this.create();
-        this.registerSubscribers();
+        this.bindEvents();
     };
 
     // Inherits ui.Base
@@ -22,16 +22,10 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.registerSubscribers = function () {
-        var self = this;
+    p.bindEvents = function () {
+        $liveedit(window).on('/component/on-select', $liveedit.proxy(this.show, this));
 
-        $liveedit.subscribe('/component/on-select', function ($component) {
-            self.show.call(self, $component);
-        });
-
-        $liveedit.subscribe('/component/on-deselect', function () {
-            self.hide.call(self);
-        });
+        $liveedit(window).on('/component/on-deselect', $liveedit.proxy(this.hide, this));
     };
 
 
@@ -53,7 +47,7 @@
     };
 
 
-    p.show = function ($component) {
+    p.show = function (event, $component) {
         var self = this;
 
         var componentName = util.getComponentName($component);
