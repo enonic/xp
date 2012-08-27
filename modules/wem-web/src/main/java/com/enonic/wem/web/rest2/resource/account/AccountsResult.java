@@ -91,8 +91,8 @@ public final class AccountsResult
         json.put( "created", "2011-08-09 08:23:07" );           //TODO
         json.put( "builtIn", user.isBuiltIn() );
         json.put( "editable", !( isAnonym || isAdmin ) );
-        json.put( "info_uri", RestUriBuilder.getAccountInfoUri( AccountType.USER, key ) );
-        final String imageUri = user.hasPhoto() ? RestUriBuilder.getImageUri( AccountType.USER, key ) : null;
+        json.put( "info_uri", AccountUriHelper.getAccountInfoUri( AccountType.USER, key ) );
+        final String imageUri = user.hasPhoto() ? AccountUriHelper.getImageUri( AccountType.USER, key ) : null;
         json.put( "image_uri", imageUri );
         return json;
     }
@@ -118,8 +118,8 @@ public final class AccountsResult
         json.put( "editable", !( isAuth || isAnonym ) );
 
         final AccountType accountType = builtIn ? AccountType.ROLE : AccountType.GROUP;
-        json.put( "image_uri", RestUriBuilder.getImageUri( accountType, key ) );
-        json.put( "info_uri", RestUriBuilder.getAccountInfoUri( accountType, key ) );
+        json.put( "image_uri", AccountUriHelper.getImageUri( accountType, key ) );
+        json.put( "info_uri", AccountUriHelper.getAccountInfoUri( accountType, key ) );
 
         return json;
     }

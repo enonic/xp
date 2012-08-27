@@ -13,9 +13,9 @@ public class RestUriBuilderTest
     public void testGetImageUri()
     {
         final String key = "2BF83E35709BC83C6A80874D660788C65A32C93F";
-        final String imageUserUri = RestUriBuilder.getImageUri( AccountType.USER, key );
-        final String imageGroupUri = RestUriBuilder.getImageUri( AccountType.GROUP, key );
-        final String imageRoleUri = RestUriBuilder.getImageUri( AccountType.ROLE, key );
+        final String imageUserUri = AccountUriHelper.getImageUri( AccountType.USER, key );
+        final String imageGroupUri = AccountUriHelper.getImageUri( AccountType.GROUP, key );
+        final String imageRoleUri = AccountUriHelper.getImageUri( AccountType.ROLE, key );
 
         assertEquals( "account/user/2BF83E35709BC83C6A80874D660788C65A32C93F/photo", imageUserUri );
         assertNull( imageGroupUri );
@@ -26,9 +26,9 @@ public class RestUriBuilderTest
     public void testGetAccountInfoUri()
     {
         final String key = "2BF83E35709BC83C6A80874D660788C65A32C93F";
-        final String userInfoUri = RestUriBuilder.getAccountInfoUri( AccountType.USER, key );
-        final String groupInfoUri = RestUriBuilder.getAccountInfoUri( AccountType.GROUP, key );
-        final String roleInfoUri = RestUriBuilder.getAccountInfoUri( AccountType.ROLE, key );
+        final String userInfoUri = AccountUriHelper.getAccountInfoUri( AccountType.USER, key );
+        final String groupInfoUri = AccountUriHelper.getAccountInfoUri( AccountType.GROUP, key );
+        final String roleInfoUri = AccountUriHelper.getAccountInfoUri( AccountType.ROLE, key );
 
         assertEquals( "account/user/2BF83E35709BC83C6A80874D660788C65A32C93F", userInfoUri );
         assertEquals( "account/group/2BF83E35709BC83C6A80874D660788C65A32C93F", groupInfoUri );
@@ -39,7 +39,7 @@ public class RestUriBuilderTest
     public void testGetAccountInfoUriNull()
     {
         final String key = "2BF83E35709BC83C6A80874D660788C65A32C93F";
-        final String accountInfoUri = RestUriBuilder.getAccountInfoUri( null, key );
+        final String accountInfoUri = AccountUriHelper.getAccountInfoUri( null, key );
         assertNull( accountInfoUri );
     }
 
