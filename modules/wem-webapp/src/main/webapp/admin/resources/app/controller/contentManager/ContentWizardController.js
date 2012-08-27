@@ -27,8 +27,8 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
                     this.deleteContent(this.getContentWizardPanel().data);
                 }
             },
-            'contentWizardToolbar *[action=toggleLive]': {
-                click: this.toggleLiveEdit
+            'contentWizardToolbar *[action=cycleMode]': {
+                click: this.cycleMode
             }
         });
 
@@ -36,9 +36,28 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
         });
     },
 
-    toggleLiveEdit: function (el, e) {
-        el.setIconCls(el.pressed ? 'icon-lightbulb-on-24' : 'icon-lightbulb-24');
-        this.getContentWizardPanel().toggleLiveEdit();
+    cycleMode: function (el, e) {
+        var mode = this.getContentWizardPanel().cycleLiveEdit();
+        var text, cls;
+        switch (mode) {
+        case 0:
+            // form
+            text = 'Form View';
+            cls = 'icon-keyboard-key-24';
+            break;
+        case 1:
+            // split
+            text = 'Split View';
+            cls = 'icon-split-hor-24';
+            break;
+        case 2:
+            // live
+            text = 'Live View';
+            cls = 'icon-monitor-24';
+            break;
+        }
+        el.setText(text);
+        el.setIconCls(cls);
     },
 
     closeWizard: function (el, e) {

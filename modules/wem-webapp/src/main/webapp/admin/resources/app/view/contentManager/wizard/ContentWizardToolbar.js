@@ -98,10 +98,9 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
                 defaults: buttonDefaults,
                 items: [
                     {
-                        text: 'Live Mode',
-                        action: 'toggleLive',
-                        iconCls: 'icon-lightbulb-24',
-                        enableToggle: true
+                        text: 'Form View',
+                        action: 'cycleMode',
+                        iconCls: 'icon-keyboard-key-24'
                     }
                 ]
             },
