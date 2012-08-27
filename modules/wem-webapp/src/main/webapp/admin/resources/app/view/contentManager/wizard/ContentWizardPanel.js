@@ -6,12 +6,16 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         'Admin.view.contentManager.wizard.ContentWizardToolbar'
     ],
 
-    layout: 'card',
+    layout: {
+        type: 'hbox',
+        align: 'stretch'
+    },
 
     border: 0,
     autoScroll: true,
 
-    isLiveMode: false,
+    // split modes 0 - form, 1 - split, 2 - live
+    splitMode: 0,
 
     defaults: {
         border: false
@@ -47,9 +51,10 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         });
 
         var wizardPanel = {
+            flex: 1,
             layout: 'column',
             itemId: 'wizardPanel',
-            border: 0,
+            border: false,
             autoScroll: true,
 
             defaults: {
@@ -99,11 +104,21 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         };
 
         var liveEdit = {
+            flex: 1,
             itemId: 'livePreview',
-            xtype: 'contentLive'
+            xtype: 'contentLive',
+            border: false,
+            hidden: true
         };
 
-        this.items = [wizardPanel, liveEdit];
+        var splitter = {
+            itemId: 'splitter',
+            xtype: 'component',
+            width: 5,
+            style: 'background-color: #DFE8F6;'
+        };
+
+        this.items = [wizardPanel, splitter, liveEdit];
         this.callParent(arguments);
 
     },
@@ -164,17 +179,37 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         }
     },
 
-    toggleLiveEdit: function () {
-        this.isLiveMode = !this.isLiveMode;
-        if (this.isLiveMode) {
-            var url = this.data ? this.data.get('url') : '';
-            var livePreview = this.down('#livePreview');
-            livePreview.load(url, true);
-            this.getLayout().setActiveItem(livePreview);
+    cycleLiveEdit: function () {
+        // cycle mode
+        if (this.splitMode === 2) {
+            this.splitMode = 0;
         } else {
-            var wizardPanel = this.down('#wizardPanel');
-            this.getLayout().setActiveItem(wizardPanel);
+            this.splitMode += 1;
         }
+
+        var wizardPanel = this.down('#wizardPanel');
+        var livePreview = this.down('#livePreview');
+        var splitter = this.down('#splitter');
+        switch (this.splitMode) {
+        case 0:
+            //form
+            wizardPanel.show();
+            livePreview.hide();
+            break;
+        case 1:
+            // split
+            var url = this.data ? this.data.get('url') : '';
+            livePreview.load(url, true);
+            splitter.show();
+            livePreview.show();
+            break;
+        case 2:
+            // live
+            splitter.hide();
+            wizardPanel.hide();
+            break;
+        }
+        return this.splitMode;
     }
 
 });
