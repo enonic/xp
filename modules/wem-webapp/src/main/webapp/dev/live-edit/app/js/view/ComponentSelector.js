@@ -2,14 +2,14 @@
     'use strict';
 
     // Class definition (constructor function)
-    var componentSelector = AdminLiveEdit.ui.ComponentSelector = function () {
+    var componentSelector = AdminLiveEdit.view.ComponentSelector = function () {
         this.$selectedComponent = $liveedit([]); // Empty jQuery object
         this.create();
         this.bindEvents();
     };
 
     // Inherits ui.Base
-    componentSelector.prototype = new AdminLiveEdit.ui.Base();
+    componentSelector.prototype = new AdminLiveEdit.view.Base();
 
     // Fix constructor as it now is Base
     componentSelector.constructor = componentSelector;
@@ -28,8 +28,8 @@
 
         $liveedit(window).on('component:deselect', $liveedit.proxy(this.deselect, this));
 
-        $liveedit(window).on('component:drag:stop', function (event, uiEvent, ui, wasSelectedOnSortStart) {
-            if (wasSelectedOnSortStart) {
+        $liveedit(window).on('component:drag:stop', function (event, uiEvent, ui, wasSelectedOnDragStart) {
+            if (wasSelectedOnDragStart) {
                 $liveedit(window).trigger('component:select', [ui.item]);
             }
         });

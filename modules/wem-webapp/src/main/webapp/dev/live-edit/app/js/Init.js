@@ -8,16 +8,16 @@
         var windows = new AdminLiveEdit.components.Windows();
         var contents = new AdminLiveEdit.components.Contents();
         var paragraphs = new AdminLiveEdit.components.Paragraphs();
-        var highlighter = new AdminLiveEdit.ui.Highlighter();
-        var componentSelector = new AdminLiveEdit.ui.ComponentSelector();
-        var infoTip = new AdminLiveEdit.ui.InfoTip();
-        var toolTip = new AdminLiveEdit.ui.ToolTip();
-        var cursor = new AdminLiveEdit.ui.Cursor();
-        var componentMenu = new AdminLiveEdit.ui.componentmenu.ComponentMenu();
-        var shader = new AdminLiveEdit.ui.Shader();
+        var highlighter = new AdminLiveEdit.view.Highlighter();
+        var componentSelector = new AdminLiveEdit.view.ComponentSelector();
+        var infoTip = new AdminLiveEdit.view.InfoTip();
+        var toolTip = new AdminLiveEdit.view.ToolTip();
+        var cursor = new AdminLiveEdit.view.Cursor();
+        var componentMenu = new AdminLiveEdit.view.componentmenu.ComponentMenu();
+        var shader = new AdminLiveEdit.view.Shader();
         var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
 
-        AdminLiveEdit.ui.DragDrop.init();
+        AdminLiveEdit.DragDrop.init();
     });
 
     $liveedit(document).ready(function () {

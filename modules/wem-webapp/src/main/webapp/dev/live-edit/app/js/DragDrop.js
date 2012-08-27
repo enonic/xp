@@ -1,4 +1,4 @@
-AdminLiveEdit.ui.DragDrop = (function () {
+AdminLiveEdit.DragDrop = (function () {
     'use strict';
 
     var util = AdminLiveEdit.Util;
@@ -84,10 +84,10 @@ AdminLiveEdit.ui.DragDrop = (function () {
         }
 
         // Added on sort start
-        var wasSelectedOnSortStart = ui.item.data('live-edit-selected-on-sort-start');
-        $liveedit(window).trigger('component:drag:stop', [event, ui, wasSelectedOnSortStart]);
+        var wasSelectedOnDragStart = ui.item.data('live-edit-selected-on-drag-start');
+        $liveedit(window).trigger('component:drag:stop', [event, ui, wasSelectedOnDragStart]);
 
-        ui.item.removeData('live-edit-selected-on-sort-start');
+        ui.item.removeData('live-edit-selected-on-drag-start');
     }
 
 

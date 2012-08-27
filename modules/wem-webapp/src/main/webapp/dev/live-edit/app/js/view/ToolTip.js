@@ -2,7 +2,7 @@
     'use strict';
 
     // Class definition (constructor function)
-    var toolTip = AdminLiveEdit.ui.ToolTip = function () {
+    var toolTip = AdminLiveEdit.view.ToolTip = function () {
         this.OFFSET_X = 15;
         this.OFFSET_Y = 15;
         this.create();
@@ -10,7 +10,7 @@
     };
 
     // Inherits ui.Base
-    toolTip.prototype = new AdminLiveEdit.ui.Base();
+    toolTip.prototype = new AdminLiveEdit.view.Base();
 
     // Fix constructor as it now is Base
     toolTip.constructor = toolTip;
@@ -58,7 +58,7 @@
 
             // TODO: Use PubSub instead of calling DragDrop object.
             var pageHasComponentSelected = $liveedit('.live-edit-selected-component').length > 0;
-            if (targetIsUiComponent || pageHasComponentSelected || AdminLiveEdit.ui.DragDrop.isDragging()) {
+            if (targetIsUiComponent || pageHasComponentSelected || AdminLiveEdit.DragDrop.isDragging()) {
                 self.hide();
                 return;
             }

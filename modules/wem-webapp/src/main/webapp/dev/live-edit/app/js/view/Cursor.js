@@ -2,7 +2,7 @@
     'use strict';
 
     // Class definition (constructor function)
-    var cursor = AdminLiveEdit.ui.Cursor = function () {
+    var cursor = AdminLiveEdit.view.Cursor = function () {
         this.bindEvents();
     };
 

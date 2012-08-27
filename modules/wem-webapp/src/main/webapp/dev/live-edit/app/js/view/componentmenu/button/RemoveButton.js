@@ -2,13 +2,13 @@
     'use strict';
 
     // Class definition (constructor function)
-    var removeButton = AdminLiveEdit.ui.componentmenu.button.RemoveButton = function (componentMenu) {
+    var removeButton = AdminLiveEdit.view.componentmenu.button.RemoveButton = function (componentMenu) {
         this.componentMenu = componentMenu;
         this.init();
     };
 
     // Inherits ui.Button
-    removeButton.prototype = new AdminLiveEdit.ui.Button();
+    removeButton.prototype = new AdminLiveEdit.view.Button();
 
     // Fix constructor as it now is Button
     removeButton.constructor = removeButton;

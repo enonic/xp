@@ -20,7 +20,7 @@
                            $liveedit(event.target).parents('[id*=live-edit-ui-cmp]').length > 0;
 
                 var pageHasComponentSelected = $liveedit('.live-edit-selected-component').length > 0;
-                var disableHover = targetIsUiComponent || pageHasComponentSelected || AdminLiveEdit.ui.DragDrop.isDragging();
+                var disableHover = targetIsUiComponent || pageHasComponentSelected || AdminLiveEdit.DragDrop.isDragging();
                 if (disableHover) {
                     return;
                 }

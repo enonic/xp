@@ -2,11 +2,11 @@
     'use strict';
 
     // Class definition (constructor function)
-    var button = AdminLiveEdit.ui.Button = function () {
+    var button = AdminLiveEdit.view.Button = function () {
     };
 
     // Inherits ui.Base
-    button.prototype = new AdminLiveEdit.ui.Base();
+    button.prototype = new AdminLiveEdit.view.Base();
 
     // Fix constructor as it now is Base
     button.constructor = button;

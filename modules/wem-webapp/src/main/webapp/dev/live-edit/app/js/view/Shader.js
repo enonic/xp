@@ -1,12 +1,12 @@
 (function () {
     // Class definition (constructor function)
-    var shader = AdminLiveEdit.ui.Shader = function () {
+    var shader = AdminLiveEdit.view.Shader = function () {
         this.create();
         this.bindEvents();
     };
 
     // Inherits ui.Base
-    shader.prototype = new AdminLiveEdit.ui.Base();
+    shader.prototype = new AdminLiveEdit.view.Base();
 
     // Fix constructor as it now is Base
     shader.constructor = shader;

@@ -2,13 +2,13 @@
     'use strict';
 
     // Class definition (constructor function)
-    var infoTip = AdminLiveEdit.ui.InfoTip = function () {
+    var infoTip = AdminLiveEdit.view.InfoTip = function () {
         this.create();
         this.bindEvents();
     };
 
     // Inherits ui.Base
-    infoTip.prototype = new AdminLiveEdit.ui.Base();
+    infoTip.prototype = new AdminLiveEdit.view.Base();
 
     // Fix constructor as it now is Base
     infoTip.constructor = infoTip;

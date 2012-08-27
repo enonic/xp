@@ -2,13 +2,13 @@
     'use strict';
 
     // Class definition (constructor function)
-    var parentButton = AdminLiveEdit.ui.componentmenu.button.ParentButton = function (componentMenu) {
+    var parentButton = AdminLiveEdit.view.componentmenu.button.ParentButton = function (componentMenu) {
         this.componentMenu = componentMenu;
         this.init();
     };
 
     // Inherits ui.Button
-    parentButton.prototype = new AdminLiveEdit.ui.Button();
+    parentButton.prototype = new AdminLiveEdit.view.Button();
 
     // Fix constructor as it now is Button
     parentButton.constructor = parentButton;

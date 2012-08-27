@@ -13,7 +13,6 @@
 <script type="text/javascript" charset="UTF-8" src="../app/js/Util.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/HtmlElementReplacer.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/PageLeave.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/Logger.js"></script>
 
 <script type="text/javascript" charset="UTF-8" src="../app/js/component/Base.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/component/Page.js"></script>
@@ -22,31 +21,31 @@
 <script type="text/javascript" charset="UTF-8" src="../app/js/component/Contents.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/component/Paragraphs.js"></script>
 
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/Base.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/Shader.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/Button.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/Cursor.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/componentmenu/ComponentMenu.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/componentmenu/button/ParentButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/componentmenu/button/InsertButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/componentmenu/button/EditButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/componentmenu/button/ResetButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/componentmenu/button/EmptyButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/componentmenu/button/ViewButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/componentmenu/button/DragButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/componentmenu/button/SettingsButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/componentmenu/button/RemoveButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/Highlighter.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/ComponentSelector.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/ToolTip.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/InfoTip.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/DragDrop.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/Base.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/Shader.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/Button.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/Cursor.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/ComponentMenu.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/ParentButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/InsertButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/EditButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/ResetButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/EmptyButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/ViewButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/DragButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/SettingsButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/RemoveButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/Highlighter.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/ComponentSelector.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/ToolTip.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/InfoTip.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/DragDrop.js"></script>
 
 <%
   if ( "true".equals( request.getParameter( "toolbar" ) ) )
   {
 %>
-<script type="text/javascript" charset="UTF-8" src="../app/js/ui/ToolbarTest.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/ToolbarTest.js"></script>
 <%
   }
 %>

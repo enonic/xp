@@ -2,13 +2,13 @@
     'use strict';
 
     // Class definition (constructor function)
-    var dragButton = AdminLiveEdit.ui.componentmenu.button.DragButton = function (componentMenu) {
+    var dragButton = AdminLiveEdit.view.componentmenu.button.DragButton = function (componentMenu) {
         this.componentMenu = componentMenu;
         this.init();
     };
 
     // Inherits ui.Button
-    dragButton.prototype = new AdminLiveEdit.ui.Button();
+    dragButton.prototype = new AdminLiveEdit.view.Button();
 
     // Fix constructor as it now is Button
     dragButton.constructor = dragButton;
@@ -21,7 +21,7 @@
 
     p.init = function () {
         var self = this;
-        // var parentButton = new AdminLiveEdit.ui.Button();
+        // var parentButton = new AdminLiveEdit.view.Button();
         var $button = self.createButton({
             text: 'Drag',
             id: 'live-edit-button-drag',
@@ -34,7 +34,7 @@
         self.getEl().on('mousedown', function () {
             this.le_mouseIsDown = true;
             // TODO: Use PubSub
-            AdminLiveEdit.ui.DragDrop.enable();
+            AdminLiveEdit.DragDrop.enable();
         });
 
         self.getEl().on('mousemove', function (event) {
@@ -54,7 +54,7 @@
         self.getEl().on('mouseup', function () {
             this.le_mouseIsDown = false;
             // TODO: remove reference to DragDrop, use PubSub.
-            AdminLiveEdit.ui.DragDrop.disable();
+            AdminLiveEdit.DragDrop.disable();
         });
 
         this.appendTo(this.componentMenu.getEl());
