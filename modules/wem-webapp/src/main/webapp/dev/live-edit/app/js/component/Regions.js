@@ -24,9 +24,9 @@
 
 
     p.bindEvents = function () {
-        $liveedit(window).on('/ui/dragdrop/on-sortupdate', $liveedit.proxy(this.renderEmptyPlaceholders, this));
+        $liveedit(window).on('component:drag:update', $liveedit.proxy(this.renderEmptyPlaceholders, this));
 
-        $liveedit(window).on('/ui/dragdrop/on-dragover', $liveedit.proxy(this.renderEmptyPlaceholders, this));
+        $liveedit(window).on('component:drag:over', $liveedit.proxy(this.renderEmptyPlaceholders, this));
     };
 
 

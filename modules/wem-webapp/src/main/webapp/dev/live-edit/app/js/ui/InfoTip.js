@@ -23,9 +23,9 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.bindEvents = function () {
-        $liveedit(window).on('/component/on-select', $liveedit.proxy(this.show, this));
+        $liveedit(window).on('component:select', $liveedit.proxy(this.show, this));
 
-        $liveedit(window).on('/component/on-deselect', $liveedit.proxy(this.hide, this));
+        $liveedit(window).on('component:deselect', $liveedit.proxy(this.hide, this));
     };
 
 

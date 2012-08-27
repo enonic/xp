@@ -21,11 +21,11 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.bindEvents = function () {
-        $liveedit(window).on('/component/on-select', $liveedit.proxy(this.show, this));
+        $liveedit(window).on('component:select', $liveedit.proxy(this.show, this));
 
-        $liveedit(window).on('/component/on-deselect', $liveedit.proxy(this.hide, this));
+        $liveedit(window).on('component:deselect', $liveedit.proxy(this.hide, this));
 
-        $liveedit(window).on('/ui/dragdrop/on-sortstart', $liveedit.proxy(this.hide, this));
+        $liveedit(window).on('component:drag:start', $liveedit.proxy(this.hide, this));
     };
 
 
@@ -40,7 +40,7 @@
 
         $liveedit('.live-edit-shader').click(function (event) {
             event.stopPropagation();
-            $liveedit(window).trigger('/component/on-deselect');
+            $liveedit(window).trigger('component:deselect');
         });
     };
 

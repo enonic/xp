@@ -26,14 +26,14 @@
                 }
                 event.stopPropagation();
 
-                $liveedit(window).trigger('/component/on-mouse-over', [$component]);
+                $liveedit(window).trigger('component:mouseover', [$component]);
             });
         },
 
 
         attachMouseOutEvent: function () {
             $liveedit(document).on('mouseout', function () {
-                $liveedit(window).trigger('/component/on-mouse-out');
+                $liveedit(window).trigger('component:mouseout');
             });
         },
 
@@ -45,13 +45,13 @@
                 var $closestComponentFromTarget = $liveedit(event.target).closest('[data-live-edit-type]');
                 var componentIsSelected = $closestComponentFromTarget.hasClass('live-edit-selected-component');
                 if (componentIsSelected) {
-                    $liveedit(window).trigger('/component/on-deselect');
+                    $liveedit(window).trigger('component:deselect');
                 } else {
                     var pageHasComponentSelected = $liveedit('.live-edit-selected-component').length > 0;
                     if (pageHasComponentSelected) {
-                        $liveedit(window).trigger('/component/on-deselect');
+                        $liveedit(window).trigger('component:deselect');
                     } else {
-                        $liveedit(window).trigger('/component/on-select', [$closestComponentFromTarget]);
+                        $liveedit(window).trigger('component:select', [$closestComponentFromTarget]);
                     }
                 }
                 return false;

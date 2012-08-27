@@ -23,11 +23,11 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.bindEvents = function () {
-        $liveedit(window).on('/component/on-mouse-over', $liveedit.proxy(this.highlight, this));
+        $liveedit(window).on('component:mouseover', $liveedit.proxy(this.highlight, this));
 
-        $liveedit(window).on('/component/on-select', $liveedit.proxy(this.hide, this));
+        $liveedit(window).on('component:select', $liveedit.proxy(this.hide, this));
 
-        $liveedit(window).on('/ui/dragdrop/on-sortstart', $liveedit.proxy(this.hide, this));
+        $liveedit(window).on('component:drag:start', $liveedit.proxy(this.hide, this));
     };
 
 

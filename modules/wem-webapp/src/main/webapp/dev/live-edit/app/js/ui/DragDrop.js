@@ -48,31 +48,31 @@ AdminLiveEdit.ui.DragDrop = (function () {
         ui.placeholder.text('Drop component here');
         refresh();
 
-        $liveedit(window).trigger('/ui/dragdrop/on-sortstart', [event, ui]);
+        $liveedit(window).trigger('component:drag:start', [event, ui]);
     }
 
 
     function handleDragOver(event, ui) {
         updateHelperStatusIcon('yes');
-        $liveedit(window).trigger('/ui/dragdrop/on-dragover', [event, ui]);
+        $liveedit(window).trigger('component:drag:over', [event, ui]);
     }
 
 
     function handleDragOut(event, ui) {
         updateHelperStatusIcon('no');
-        $liveedit(window).trigger('/ui/dragdrop/on-dragout', [event, ui]);
+        $liveedit(window).trigger('component:drag:out', [event, ui]);
     }
 
 
     function handleSortChange(event, ui) {
         updateHelperStatusIcon('yes');
         ui.placeholder.show();
-        $liveedit(window).trigger('/ui/dragdrop/on-sortchange', [event, ui]);
+        $liveedit(window).trigger('component:drag:change', [event, ui]);
     }
 
 
     function handleSortUpdate(event, ui) {
-        $liveedit(window).trigger('/ui/dragdrop/on-sortupdate', [event, ui]);
+        $liveedit(window).trigger('component:drag:update', [event, ui]);
     }
 
 
@@ -80,25 +80,25 @@ AdminLiveEdit.ui.DragDrop = (function () {
         isDragging = false;
 
         if (AdminLiveEdit.Util.supportsTouch()) {
-            $liveedit(window).trigger('/component/on-mouse-out');
+            $liveedit(window).trigger('component:mouseout');
         }
 
         // Added on sort start
         var wasSelectedOnSortStart = ui.item.data('live-edit-selected-on-sort-start');
-        $liveedit(window).trigger('/ui/dragdrop/on-sortstop', [event, ui, wasSelectedOnSortStart]);
+        $liveedit(window).trigger('component:drag:stop', [event, ui, wasSelectedOnSortStart]);
 
         ui.item.removeData('live-edit-selected-on-sort-start');
     }
 
 
     function initSubscribers() {
-        $liveedit(window).on('/component/on-select', function () {
+        $liveedit(window).on('component:select', function () {
             if (AdminLiveEdit.Util.supportsTouch()) {
                 enableDragDrop();
             }
         });
 
-        $liveedit(window).on('/component/on-deselect', function () {
+        $liveedit(window).on('component:deselect', function () {
             if (AdminLiveEdit.Util.supportsTouch() && !isDragging) {
                 disableDragDrop();
             }

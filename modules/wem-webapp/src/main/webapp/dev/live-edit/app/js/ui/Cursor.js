@@ -12,9 +12,9 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.bindEvents = function () {
-        $liveedit(window).on('/component/on-mouse-over', $liveedit.proxy(this.updateCursor, this));
+        $liveedit(window).on('component:mouseover', $liveedit.proxy(this.updateCursor, this));
 
-        $liveedit(window).on('/component/on-select', $liveedit.proxy(this.updateCursor, this));
+        $liveedit(window).on('component:select', $liveedit.proxy(this.updateCursor, this));
     };
 
 

@@ -24,13 +24,13 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.bindEvents = function () {
-        $liveedit(window).on('/component/on-select', $liveedit.proxy(this.select, this));
+        $liveedit(window).on('component:select', $liveedit.proxy(this.select, this));
 
-        $liveedit(window).on('/component/on-deselect', $liveedit.proxy(this.deselect, this));
+        $liveedit(window).on('component:deselect', $liveedit.proxy(this.deselect, this));
 
-        $liveedit(window).on('/ui/dragdrop/on-sortstop', function (event, uiEvent, ui, wasSelectedOnSortStart) {
+        $liveedit(window).on('component:drag:stop', function (event, uiEvent, ui, wasSelectedOnSortStart) {
             if (wasSelectedOnSortStart) {
-                $liveedit(window).trigger('/component/on-select', [ui.item]);
+                $liveedit(window).trigger('component:select', [ui.item]);
             }
         });
     };
