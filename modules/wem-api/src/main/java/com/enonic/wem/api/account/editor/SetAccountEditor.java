@@ -17,38 +17,38 @@ final class SetAccountEditor
     }
 
     @Override
-    public void edit( final EditableAccount account )
+    public void edit( final Account account )
         throws Exception
     {
         edit( this.source, account );
     }
 
-    private static void edit( final Account source, final EditableAccount target )
+    private static void edit( final Account source, final Account target )
         throws Exception
     {
-        if ( ( source instanceof UserAccount ) && ( target instanceof EditableUserAccount ) )
+        if ( ( source instanceof UserAccount ) && ( target instanceof UserAccount ) )
         {
-            editUser( (UserAccount) source, (EditableUserAccount) target );
+            editUser( (UserAccount) source, (UserAccount) target );
         }
-        else if ( ( source instanceof GroupAccount ) && ( target instanceof EditableGroupAccount ) )
+        else if ( ( source instanceof GroupAccount ) && ( target instanceof GroupAccount ) )
         {
-            editNonUser( (GroupAccount) source, (EditableGroupAccount) target );
+            editNonUser( (GroupAccount) source, (GroupAccount) target );
         }
-        else if ( ( source instanceof RoleAccount ) && ( target instanceof EditableRoleAccount ) )
+        else if ( ( source instanceof RoleAccount ) && ( target instanceof RoleAccount ) )
         {
-            editNonUser( (RoleAccount) source, (EditableRoleAccount) target );
+            editNonUser( (RoleAccount) source, (RoleAccount) target );
         }
     }
 
-    private static void editUser( final UserAccount source, final EditableUserAccount target )
+    private static void editUser( final UserAccount source, final UserAccount target )
         throws Exception
     {
         target.setDisplayName( source.getDisplayName() );
         target.setEmail( source.getEmail() );
-        target.setPhoto( source.getPhoto() );
+        target.setImage( source.getImage() );
     }
 
-    private static void editNonUser( final NonUserAccount source, final EditableNonUserAccount target )
+    private static void editNonUser( final NonUserAccount source, final NonUserAccount target )
         throws Exception
     {
         target.setDisplayName( source.getDisplayName() );
