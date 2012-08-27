@@ -21,6 +21,8 @@ public class UserStoreResults
 
     private static final String CONNECTOR = "connector";
 
+    private static final String USER_STORES = "userStores";
+
     private final Collection<UserStoreEntity> userStores;
 
     public UserStoreResults( final Collection<UserStoreEntity> userStores )
@@ -32,18 +34,23 @@ public class UserStoreResults
     public JsonNode toJson()
     {
         ObjectNode node = objectNode();
-        node.put( "total", userStores.size() );
+        node.put( TOTAL, userStores.size() );
         ArrayNode items = arrayNode();
         for ( UserStoreEntity entity : userStores )
         {
-            ObjectNode userStoreNode = objectNode();
-            userStoreNode.put( KEY, entity.getKey().toString() );
-            userStoreNode.put( NAME, entity.getName() );
-            userStoreNode.put( DEFAULT, entity.isDefaultUserStore() );
-            userStoreNode.put( CONNECTOR, entity.getConnectorName() );
-            items.add( userStoreNode );
+            items.add( createUserStoreNode( entity ) );
         }
-        node.put( "userStores", items );
+        node.put( USER_STORES, items );
         return node;
+    }
+
+    private ObjectNode createUserStoreNode( UserStoreEntity entity )
+    {
+        ObjectNode userStoreNode = objectNode();
+        userStoreNode.put( KEY, entity.getKey().toString() );
+        userStoreNode.put( NAME, entity.getName() );
+        userStoreNode.put( DEFAULT, entity.isDefaultUserStore() );
+        userStoreNode.put( CONNECTOR, entity.getConnectorName() );
+        return userStoreNode;
     }
 }
