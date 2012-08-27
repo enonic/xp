@@ -13,7 +13,7 @@ Harness.configure({
     testClass: AdminTestUtil,
 
     preload: [
-        { text : 'window.CONFIG = window.CONFIG = ' + JSON.stringify(window.CONFIG) },
+        { text : 'window.CONFIG = ' + JSON.stringify(window.CONFIG) },
         '../admin/resources/lib/ext/resources/css/ext-all.css',
         '../admin/resources/css/main.css',
         '../admin/resources/css/icons.css',
