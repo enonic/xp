@@ -2,20 +2,13 @@
     'use strict';
 
     // Class definition (constructor function)
-    var componentSelector = AdminLiveEdit.view.ComponentSelector = function () {
+    var selection = AdminLiveEdit.Selection = function () {
         this.$selectedComponent = $liveedit([]); // Empty jQuery object
-        this.create();
         this.bindEvents();
     };
 
-    // Inherits ui.Base
-    componentSelector.prototype = new AdminLiveEdit.view.Base();
-
-    // Fix constructor as it now is Base
-    componentSelector.constructor = componentSelector;
-
     // Shorthand ref to the prototype
-    var p = componentSelector.prototype;
+    var p = selection.prototype;
 
     // Uses
     var util = AdminLiveEdit.Util;
@@ -36,16 +29,6 @@
     };
 
 
-    p.create = function () {
-        var html = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-selected-border">' +
-                   '    <rect width="150" height="150"/>' +
-                   '</svg>';
-
-        this.createElement(html);
-        this.appendTo($liveedit('body'));
-    };
-
-
     p.getSelected = function () {
         return this.$selectedComponent;
     };
@@ -53,17 +36,6 @@
 
     p.setSelected = function ($component) {
         this.$selectedComponent = $component;
-    };
-
-
-    p.hide = function () {
-        var $el = this.getEl();
-        $liveedit('body').append(this.getEl());
-
-        $el.css({
-            top: '-5000px',
-            left: '-5000px'
-        });
     };
 
 
@@ -76,9 +48,7 @@
 
 
     p.select = function (event, $component) {
-        var $el = this.getEl();
-
-        // Add position relative to the page component in order have absolute positioned elements inside.
+        // Add CSS position relative to the page component in order have absolute positioned elements inside.
         $liveedit('.live-edit-selected-component').removeClass('live-edit-selected-component');
         $component.addClass('live-edit-selected-component');
 
@@ -89,7 +59,6 @@
 
     p.deselect = function () {
         $liveedit('.live-edit-selected-component').removeClass('live-edit-selected-component');
-        this.hide();
         this.setSelected($liveedit([]));
     };
 
