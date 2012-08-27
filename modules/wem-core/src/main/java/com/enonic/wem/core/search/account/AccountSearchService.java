@@ -269,20 +269,9 @@ public class AccountSearchService
             final FlushRequest flushRequest = new FlushRequest();
             this.client.admin().indices().flush( flushRequest ).get();
         }
-        catch ( IndexMissingException e )
-        {
-            LOG.warn( "Index mapping not found, could not be dropped." );
-        }
         catch ( Exception e )
         {
-            if ( getRootCause(e) instanceof IndexMissingException )
-            {
-                LOG.warn( "Index mapping not found, could not be dropped." );
-            }
-            else
-            {
-                throw new RuntimeException( e );
-            }
+            LOG.warn( "Error dropping index. Ignoring." );
         }
 
         final DeleteIndexRequest deleteRequest = new DeleteIndexRequest(  )
