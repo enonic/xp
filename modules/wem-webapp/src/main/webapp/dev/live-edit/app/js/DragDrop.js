@@ -22,8 +22,10 @@ AdminLiveEdit.DragDrop = (function () {
 
     function createDragHelper(event, helper) {
         // Inline style is needed in order to keep the width and height while draging an item.
-        return $liveedit('<div id="live-edit-drag-helper" style="width: 150px; height: 16px; padding: 6px 8px 6px 8px"><img id="live-edit-drag-helper-status-icon" src="../app/images/drop-yes.gif"/>' +
-                         util.getComponentName(helper) + '</div>');
+        return $liveedit('<div id="live-edit-drag-helper" style="width: 150px; height: 16px;">' +
+                         '  <img id="live-edit-drag-helper-status-icon" src="../app/images/drop-yes.gif"/>' +
+                         util.getComponentName(helper) +
+                         '</div>');
     }
 
 
@@ -53,6 +55,7 @@ AdminLiveEdit.DragDrop = (function () {
 
 
     function handleDragOver(event, ui) {
+        console.log($liveedit('#live-edit-drag-helper'));
         updateHelperStatusIcon('yes');
         $liveedit(window).trigger('component:drag:over', [event, ui]);
     }

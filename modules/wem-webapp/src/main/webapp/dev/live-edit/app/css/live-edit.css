@@ -357,12 +357,20 @@ svg.live-edit-selected-border rect {
 
 #live-edit-drag-helper {
     border: 1px solid #c6c6c6;
+    padding: 6px 8px 6px 8px;
+    box-shadow: 2px 2px 2px 0 #888888;
     background-color: #fff;
     font-size: 11px;
-    box-shadow: 2px 2px 2px 0 #888888;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-#live-edit-drag-helper img { border: 0; }
+#live-edit-drag-helper img {
+    border: 0;
+    vertical-align: top;
+    margin-right: 5px;
+}
 
 #live-edit-drag-helper-status-icon {
     vertical-align: middle;
