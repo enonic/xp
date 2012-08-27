@@ -26,7 +26,7 @@ public final class ImageResource
     @GET
     @Path("{name}")
     @Produces("image/png")
-    public BufferedImage getImageAsPng( @PathParam("name") final String name, @QueryParam("size") @DefaultValue("100") final int size )
+    public BufferedImage getImage( @PathParam("name") final String name, @QueryParam("size") @DefaultValue("100") final int size )
         throws Exception
     {
         return this.helper.getImage( name, size );
