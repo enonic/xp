@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
-import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataParam;
+import com.sun.jersey.multipart.file.StreamDataBodyPart;
 
 import com.enonic.wem.web.rest2.service.upload.UploadItem;
 import com.enonic.wem.web.rest2.service.upload.UploadService;
@@ -28,28 +28,28 @@ public final class UploadResource
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public UploadResult upload( final @FormDataParam("file") List<FormDataBodyPart> parts )
+    public UploadResult upload( final @FormDataParam("file") List<StreamDataBodyPart> parts )
         throws Exception
     {
         final List<UploadItem> items = Lists.newArrayList();
-        for ( final FormDataBodyPart part : parts )
+
+        if ( parts != null )
         {
-            upload( items, part );
+            for ( final StreamDataBodyPart part : parts )
+            {
+                upload( items, part );
+            }
         }
 
         return new UploadResult( items );
     }
 
-    private void upload( final List<UploadItem> items, final FormDataBodyPart part )
+    private void upload( final List<UploadItem> items, final StreamDataBodyPart part )
         throws Exception
     {
-        if (part.isSimple()) {
-            return;
-        }
-
-        final String name = part.getContentDisposition().getFileName();
+        final String name = part.getFilename();
         final String mediaType = part.getMediaType().toString();
-        final InputStream in = part.getValueAs( InputStream.class );
+        final InputStream in = part.getStreamEntity();
 
         final UploadItem item = this.uploadService.upload( name, mediaType, in );
         items.add( item );

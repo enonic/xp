@@ -18,8 +18,6 @@ import com.enonic.cms.store.dao.UserStoreDao;
 @Component
 public class UserStoreResource
 {
-
-    @Autowired
     private UserStoreDao userStoreDao;
 
     @GET
@@ -29,11 +27,7 @@ public class UserStoreResource
         return new UserStoreResults( userStores );
     }
 
-    public UserStoreDao getUserStoreDao()
-    {
-        return userStoreDao;
-    }
-
+    @Autowired
     public void setUserStoreDao( final UserStoreDao userStoreDao )
     {
         this.userStoreDao = userStoreDao;

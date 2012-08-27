@@ -7,7 +7,7 @@ import com.enonic.wem.web.rest2.resource.account.group.GroupResource;
 import com.enonic.wem.web.rest2.resource.account.role.RoleResource;
 import com.enonic.wem.web.rest2.resource.account.user.UserResource;
 
-public class RestUriBuilder
+public class AccountUriHelper
 {
     // TODO: refactor to use com.enonic.wem.api.account.AccountKey for parameters, instead of String
 

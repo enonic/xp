@@ -13,18 +13,17 @@ import com.enonic.cms.core.security.userstore.UserStoreEntity;
 public class UserStoreResults
     extends JsonResult
 {
+    private static final String KEY = "key";
 
-    public static final String KEY = "key";
+    private static final String NAME = "name";
 
-    public static final String NAME = "name";
+    private static final String DEFAULT = "default";
 
-    public static final String DEFAULT = "default";
+    private static final String CONNECTOR = "connector";
 
-    public static final String CONNECTOR = "connector";
+    private final Collection<UserStoreEntity> userStores;
 
-    private Collection<UserStoreEntity> userStores;
-
-    public UserStoreResults( Collection<UserStoreEntity> userStores )
+    public UserStoreResults( final Collection<UserStoreEntity> userStores )
     {
         this.userStores = userStores;
     }
