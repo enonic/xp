@@ -269,12 +269,13 @@ svg.live-edit-selected-border rect {
     position: absolute;
     z-index: 1000200;
     border: 1px solid #000;
-    padding: 3px;
+    padding: 3px 6px;
     background-color:#ffffc7;
 }
 
 .live-edit-tool-tip-type-text {
     text-transform: capitalize;
+    color: #333;
 }
 
 /*** Component menu */

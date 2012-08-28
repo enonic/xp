@@ -1,35 +1,31 @@
-Live Edit currently make use of the following cutting edge web technologies:
+Known issues
 
+Does not work with IE <= 9
+Reason:
 * SVG (for highlighting)
 * CSS Gradients
 
-Which are supported by:
-
-* Latest Firefox / Latest Chrome / Latest Opera
-* IE >= 9
-
 
 TODO:
-* Try set cursor on the body element on hover events (not predefined in the live-edit.css)
+* DONE: Try set cursor on the body element on hover events (not predefined in the live-edit.css)
+* DONE: Create button sub class for each menu button
+* DONE: Fix so drag helper tooltip width is not fixed.
 
-* Create button sub class for each menu button
+* Fixed tooltip is not shown for page.
 * Redefine data attributes. Scope data-live-edit-key value in order to avoid conflicts. Eg. "paragraph:2"
-* Fix so drag helper tooltip width is not fixed.
-* Make sure the pointer cursor that is added to the component on mouseover is removed on mouseout
-* Remove SELECTOR strings from Regions and Windows
 * Parent button: Dynamically resolve what the parent component is
 * Use DOM Mutation Observers for changing the selected component highlighter dimensions / Alternatively use a timer and check for width/height changes on the selected component.
 
 
 Current PubSub Topics
 
-/ui/highlighter/on-highlight
-/ui/componentselector/on-select
-/ui/componentselector/on-deselect
-/ui/dragdrop/on-sortstart
-/ui/dragdrop/on-dragover
-/ui/dragdrop/on-dragout
-/ui/dragdrop/on-sortchange
-/ui/dragdrop/on-sortupdate
-/ui/highlighter/on-hide
-/ui/dragdrop/on-sortstop
+component:drag:start
+component:drag:over
+component:drag:out
+component:drag:change
+component:drag:update
+component:drag:stop
+component:mouseout
+component:mouseover
+component:select
+component:deselect
