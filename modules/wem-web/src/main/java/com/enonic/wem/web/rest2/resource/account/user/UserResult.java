@@ -73,8 +73,7 @@ public final class UserResult
 
         json.put( "memberships", toJson( user.getAllMemberships() ) );
 
-        final String imageUri = user.hasPhoto() ? AccountUriHelper.getAccountImageUri( AccountType.USER, key ) : null;
-        json.put( "image_uri", imageUri );
+        json.put( "image_uri", AccountUriHelper.getAccountImageUri( user ) );
         json.put( "graph_uri", AccountUriHelper.getAccountGraphUri( key ) );
 
         return json;

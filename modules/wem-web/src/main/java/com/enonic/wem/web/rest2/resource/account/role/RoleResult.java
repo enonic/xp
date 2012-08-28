@@ -6,7 +6,6 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.web.rest2.common.JsonResult;
 import com.enonic.wem.web.rest2.resource.account.AccountUriHelper;
 
@@ -55,7 +54,7 @@ public final class RoleResult
         json.put( "builtIn", builtIn );
         json.put( "editable", !( isAuth || isAnonym ) );
 
-        json.put( "image_uri", AccountUriHelper.getAccountImageUri( AccountType.ROLE, key ) );
+        json.put( "image_uri", AccountUriHelper.getAccountImageUri( group ) );
         json.put( "graph_uri", AccountUriHelper.getAccountGraphUri( key ) );
 
         json.put( "members", toJson( members ) );
