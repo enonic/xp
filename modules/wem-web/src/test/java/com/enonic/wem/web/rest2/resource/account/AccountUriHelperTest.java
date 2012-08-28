@@ -6,16 +6,16 @@ import com.enonic.wem.api.account.AccountType;
 
 import static org.junit.Assert.*;
 
-public class RestUriBuilderTest
+public class AccountUriHelperTest
 {
 
     @Test
     public void testGetImageUri()
     {
         final String key = "2BF83E35709BC83C6A80874D660788C65A32C93F";
-        final String imageUserUri = AccountUriHelper.getImageUri( AccountType.USER, key );
-        final String imageGroupUri = AccountUriHelper.getImageUri( AccountType.GROUP, key );
-        final String imageRoleUri = AccountUriHelper.getImageUri( AccountType.ROLE, key );
+        final String imageUserUri = AccountUriHelper.getAccountImageUri( AccountType.USER, key );
+        final String imageGroupUri = AccountUriHelper.getAccountImageUri( AccountType.GROUP, key );
+        final String imageRoleUri = AccountUriHelper.getAccountImageUri( AccountType.ROLE, key );
 
         assertEquals( "account/user/2BF83E35709BC83C6A80874D660788C65A32C93F/photo", imageUserUri );
         assertNull( imageGroupUri );

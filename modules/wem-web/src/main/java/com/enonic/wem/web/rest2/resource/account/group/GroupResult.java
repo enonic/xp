@@ -6,7 +6,9 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
+import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.web.rest2.common.JsonResult;
+import com.enonic.wem.web.rest2.resource.account.AccountUriHelper;
 
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.group.GroupType;
@@ -36,11 +38,12 @@ public final class GroupResult
     {
         final ObjectNode json = objectNode();
 
-        boolean builtIn = group.isBuiltIn();
-        boolean isAuth = GroupType.AUTHENTICATED_USERS.equals( group.getType() );
-        boolean isAnonym = GroupType.ANONYMOUS.equals( group.getType() );
+        final boolean builtIn = group.isBuiltIn();
+        final boolean isAuth = GroupType.AUTHENTICATED_USERS.equals( group.getType() );
+        final boolean isAnonym = GroupType.ANONYMOUS.equals( group.getType() );
+        final String key = String.valueOf( group.getGroupKey() );
 
-        json.put( "key", String.valueOf( group.getGroupKey() ) );
+        json.put( "key", key );
         json.put( "type", TYPE_GROUP );
         json.put( "name", group.getName() );
         json.put( "userStore", group.getUserStore() != null ? group.getUserStore().getName() : "null" );
@@ -51,6 +54,9 @@ public final class GroupResult
         json.put( "created", "2012-07-24 16:18:35" ); // TODO
         json.put( "builtIn", builtIn );
         json.put( "editable", !( isAuth || isAnonym ) );
+
+        json.put( "image_uri", AccountUriHelper.getAccountImageUri( AccountType.GROUP, key ) );
+        json.put( "graph_uri", AccountUriHelper.getAccountGraphUri( key ) );
 
         json.put( "members", toJson( members ) );
 

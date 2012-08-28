@@ -7,8 +7,10 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
+import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.core.search.UserInfoHelper;
 import com.enonic.wem.web.rest2.common.JsonResult;
+import com.enonic.wem.web.rest2.resource.account.AccountUriHelper;
 
 import com.enonic.cms.api.client.model.user.Address;
 import com.enonic.cms.api.client.model.user.UserInfo;
@@ -50,11 +52,12 @@ public final class UserResult
 
         final ObjectNode json = objectNode();
 
-        UserStoreEntity userstore = user.getUserStore();
-        boolean isAdmin = userstore != null && user.isEnterpriseAdmin() && USERSTORE_SYSTEM.equals( userstore.getName() );
-        boolean isAnonym = user.isAnonymous();
+        final UserStoreEntity userstore = user.getUserStore();
+        final boolean isAdmin = userstore != null && user.isEnterpriseAdmin() && USERSTORE_SYSTEM.equals( userstore.getName() );
+        final boolean isAnonym = user.isAnonymous();
+        final String key = String.valueOf( user.getKey() );
 
-        json.put( "key", String.valueOf( user.getKey() ) );
+        json.put( "key", key );
         json.put( "type", TYPE_USER );
         json.put( "name", user.getName() );
         json.put( "email", user.getEmail() );
@@ -69,6 +72,10 @@ public final class UserResult
         json.put( "info", toJson( UserInfoHelper.toUserInfo( user ) ) );
 
         json.put( "memberships", toJson( user.getAllMemberships() ) );
+
+        final String imageUri = user.hasPhoto() ? AccountUriHelper.getAccountImageUri( AccountType.USER, key ) : null;
+        json.put( "image_uri", imageUri );
+        json.put( "graph_uri", AccountUriHelper.getAccountGraphUri( key ) );
 
         return json;
     }
