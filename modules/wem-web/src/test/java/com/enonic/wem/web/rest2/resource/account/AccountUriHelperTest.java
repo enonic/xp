@@ -22,15 +22,28 @@ public class AccountUriHelperTest
     {
         final String key = "2BF83E35709BC83C6A80874D660788C65A32C93F";
         final UserEntity user = createUser( key, "user1" );
-        user.setPhoto("a".getBytes() );
+        user.setPhoto( "a".getBytes() );
+        final UserEntity userNoPhoto = createUser( key, "user2" );
         final GroupEntity group = createGroup( key, "group1" );
         final GroupEntity role = createRole( key, "role1" );
 
+        final UserEntity anonymousUser = createUser( key, "anoymous" );
+        anonymousUser.setType( UserType.ANONYMOUS );
+
+        final UserEntity adminUser = createUser( key, "admin" );
+        adminUser.setType( UserType.ADMINISTRATOR );
+
         final String imageUserUri = AccountUriHelper.getAccountImageUri( user );
+        final String imageUserNoPhotoUri = AccountUriHelper.getAccountImageUri( userNoPhoto );
+        final String imageAdminUserUri = AccountUriHelper.getAccountImageUri( adminUser );
+        final String imageAnonymousUserUri = AccountUriHelper.getAccountImageUri( anonymousUser );
         final String imageGroupUri = AccountUriHelper.getAccountImageUri( group );
         final String imageRoleUri = AccountUriHelper.getAccountImageUri( role );
 
         assertEquals( "account/user/2BF83E35709BC83C6A80874D660788C65A32C93F/photo", imageUserUri );
+        assertEquals( "misc/image/user", imageUserNoPhotoUri );
+        assertEquals( "misc/image/admin", imageAdminUserUri );
+        assertEquals( "misc/image/anonymous", imageAnonymousUserUri );
         assertEquals( "misc/image/group", imageGroupUri );
         assertEquals( "misc/image/role", imageRoleUri );
     }
