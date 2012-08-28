@@ -28,7 +28,7 @@
             "created": "2012-07-24 16:18:35",
             "builtIn": false,
             "editable": true,
-            "image_uri": null,
+            "image_uri": "misc/image/group",
             "info_uri": "account/group/E34B614B26C666AA9929F90EF3FA723B3DAAAAB2",
             "graph_uri": "account/graph/E34B614B26C666AA9929F90EF3FA723B3DAAAAB2"
         },
@@ -43,7 +43,7 @@
             "created": "2012-07-24 16:18:35",
             "builtIn": true,
             "editable": false,
-            "image_uri": null,
+            "image_uri": "misc/image/role",
             "info_uri": "account/role/18311D321165D73043C10A9101016CDF3765898E",
             "graph_uri": "account/graph/18311D321165D73043C10A9101016CDF3765898E"
         }

@@ -55,7 +55,7 @@ public final class GroupResult
         json.put( "builtIn", builtIn );
         json.put( "editable", !( isAuth || isAnonym ) );
 
-        json.put( "image_uri", AccountUriHelper.getAccountImageUri( AccountType.GROUP, key ) );
+        json.put( "image_uri", AccountUriHelper.getAccountImageUri( group ) );
         json.put( "graph_uri", AccountUriHelper.getAccountGraphUri( key ) );
 
         json.put( "members", toJson( members ) );
