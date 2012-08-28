@@ -19,7 +19,6 @@ import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.facet.Facet;
@@ -54,12 +53,12 @@ public class AccountSearchService
             CreateIndexRequest createIndexRequest = new CreateIndexRequest( CMS_INDEX );
             ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder().loadFromSource(jsonBuilder()
                 .startObject()
-                    .startObject("analysis")
-                        .startObject("analyzer")
-                            .startObject("keywordlowercase")
-                                .field("type", "custom")
-                                .field("tokenizer", "keyword")
-                                .field("filter", new String[]{"lowercase"})
+                    .startObject( "analysis" )
+                        .startObject( "analyzer" )
+                            .startObject( "keywordlowercase" )
+                                .field( "type", "custom" )
+                                .field( "tokenizer", "keyword" )
+                                .field( "filter", new String[]{"lowercase"} )
                             .endObject()
                         .endObject()
                     .endObject()
@@ -73,6 +72,10 @@ public class AccountSearchService
             putMappingRequest.source( mapping );
 
             client.admin().indices().putMapping( putMappingRequest ).actionGet();
+        }
+        catch ( org.elasticsearch.indices.IndexAlreadyExistsException e )
+        {
+            LOG.warn( "Index already exists; skipping index creation", e );
         }
         catch ( Exception e )
         {
@@ -178,7 +181,7 @@ public class AccountSearchService
         final String id  = account.getKey().toString();
 
         final IndexRequest req = Requests.indexRequest()
-                .id(id)
+                .id( id )
                 .index( CMS_INDEX )
                 .type( ACCOUNT_INDEX_TYPE )
                 .source( data );
@@ -257,9 +260,10 @@ public class AccountSearchService
         }
     }
 
-    public void dropIndex() {
+    public void dropIndex()
+    {
         final String[] indices = new String[]{CMS_INDEX};
-        final DeleteMappingRequest deleteMappingRequest = new DeleteMappingRequest(  )
+        final DeleteMappingRequest deleteMappingRequest = new DeleteMappingRequest()
             .indices( indices )
             .type( ACCOUNT_INDEX_TYPE );
 
@@ -271,25 +275,25 @@ public class AccountSearchService
         }
         catch ( Exception e )
         {
-            LOG.warn( "Error dropping index. Ignoring." );
+            LOG.warn( "Unable to delete ElasticSearch mapping", e );
         }
 
-        final DeleteIndexRequest deleteRequest = new DeleteIndexRequest(  )
-            .indices( CMS_INDEX );
-        this.client.admin().indices().delete( deleteRequest );
+        try
+        {
+            final DeleteIndexRequest deleteRequest = new DeleteIndexRequest()
+                .indices( CMS_INDEX );
+            this.client.admin().indices().delete( deleteRequest ).get();
+        }
+        catch ( Exception e )
+        {
+            LOG.warn( "Unable to delete ElasticSearch index", e );
+        }
     }
 
     public boolean indexExists() {
         final IndicesExistsRequest indicesExistRequest = new IndicesExistsRequest(CMS_INDEX);
         IndicesExistsResponse response = this.client.admin().indices().exists( indicesExistRequest ).actionGet();
         return response.exists();
-    }
-
-    private Throwable getRootCause(Throwable e) {
-        if (e.getCause() == null) {
-            return e;
-        }
-        return getRootCause( e.getCause() );
     }
 
     public void deleteIndex(String id) {
@@ -307,9 +311,9 @@ public class AccountSearchService
             flush();
         }
     }
-    
+
     private void flush() {
-        this.client.admin().indices().flush( new FlushRequest( CMS_INDEX ).refresh( true ) ).actionGet();        
+        this.client.admin().indices().flush( new FlushRequest( CMS_INDEX ).refresh( true ) ).actionGet();
     }
 
     @Autowired
