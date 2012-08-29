@@ -1,30 +1,17 @@
 package com.enonic.wem.web.rest2.resource.userstore;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.core.Response;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.web.rest2.resource.AbstractResourceTest;
-import com.enonic.wem.web.rest2.resource.account.IsQualifiedUsername;
-import com.enonic.wem.web.rest2.service.userstore.UserStoreUpdateService;
 
-import com.enonic.cms.core.security.SecurityService;
-import com.enonic.cms.core.security.user.QualifiedUsername;
-import com.enonic.cms.core.security.user.UserEntity;
-import com.enonic.cms.core.security.userstore.UserStoreConnectorManager;
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
 import com.enonic.cms.core.security.userstore.UserStoreKey;
-import com.enonic.cms.core.security.userstore.connector.config.UserStoreConnectorConfig;
 import com.enonic.cms.store.dao.UserStoreDao;
-
-import static org.junit.Assert.*;
 
 public class UserStoreResourceTest
     extends AbstractResourceTest
@@ -40,6 +27,8 @@ public class UserStoreResourceTest
 
     private UserStoreConnectorManager connectorManager;
 
+    private UserStoreService userStoreService;
+
     @Before
     public void setUp()
     {
@@ -47,11 +36,13 @@ public class UserStoreResourceTest
         securityService = Mockito.mock( SecurityService.class );
         userStoreUpdateService = Mockito.mock( UserStoreUpdateService.class );
         connectorManager = Mockito.mock( UserStoreConnectorManager.class );
+        userStoreService = Mockito.mock( UserStoreService.class );
         userStoreResource = new UserStoreResource();
         userStoreResource.setSecurityService( securityService );
         userStoreResource.setUserStoreUpdateService( userStoreUpdateService );
         userStoreResource.setUserStoreDao( userStoreDao );
         userStoreResource.setConnectorManager( connectorManager );
+        userStoreResource.setUserStoreService( userStoreService );
     }
 
     @Test
@@ -121,6 +112,7 @@ public class UserStoreResourceTest
         entity.setName( name );
         entity.setConnectorName( connector );
         entity.setDefaultStore( isDefault );
+        entity.setConfig( createUserStoreConfig() );
         return entity;
     }
 

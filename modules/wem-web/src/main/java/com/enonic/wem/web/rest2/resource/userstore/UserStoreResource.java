@@ -42,11 +42,33 @@ public class UserStoreResource
     @Autowired
     private UserStoreConnectorManager connectorManager;
 
+    @Autowired
+    private UserStoreService userStoreService;
+
     @GET
     public UserStoreResults getAll()
     {
         final List<UserStoreEntity> userStores = userStoreDao.findAll();
         return new UserStoreResults( userStores );
+    }
+
+    @Path("{key}")
+    public UserStoreDetailsResult getDetails( @PathParam("key") final String key )
+    {
+        final UserStoreEntity userStore = userStoreDao.findByKey( new UserStoreKey( key ) );
+        if ( userStore == null )
+        {
+            return null;
+        }
+        else
+        {
+            GroupSpecification groupSpec = new GroupSpecification();
+            groupSpec.setUserStoreKey( userStore.getKey() );
+            List<GroupEntity> groups = userStoreService.getGroups( groupSpec );
+            List<UserEntity> users = userStoreService.getUsers( userStore.getKey() );
+            UserStoreConnectorConfig connectorConfig = connectorManager.getUserStoreConnectorConfig( userStore.getKey() );
+            return new UserStoreDetailsResult( userStore, connectorConfig, groups, users );
+        }
     }
 
     @POST
