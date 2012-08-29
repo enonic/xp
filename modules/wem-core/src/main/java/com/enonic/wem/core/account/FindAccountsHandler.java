@@ -111,7 +111,6 @@ public final class FindAccountsHandler
         searchQuery.setFrom( accountQuery.getOffset() );
         searchQuery.setCount( accountQuery.getLimit() );
         searchQuery.setQuery( accountQuery.getQuery() );
-        searchQuery.setOrganizations( setToArray( accountQuery.getOrganizations() ) );
         searchQuery.setUserStores( setToArray( accountQuery.getUserStores() ) );
         final Set<AccountType> accountTypes = accountQuery.getTypes();
         searchQuery.setUsers( accountTypes.contains( AccountType.USER ) );

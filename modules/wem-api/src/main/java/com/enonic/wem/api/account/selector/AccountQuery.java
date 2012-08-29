@@ -20,8 +20,6 @@ public final class AccountQuery
 
     private Set<AccountType> types;
 
-    private Set<String> organizations;
-
     private Set<String> userStores;
 
     private int limit;
@@ -36,7 +34,6 @@ public final class AccountQuery
     {
         this.query = query != null ? query : "";
         this.types = ImmutableSet.copyOf( AccountType.values() );
-        this.organizations = ImmutableSet.of();
         this.userStores = ImmutableSet.of();
         this.sortDirection = Direction.ASC;
         this.offset = 0;
@@ -51,11 +48,6 @@ public final class AccountQuery
     public Set<AccountType> getTypes()
     {
         return this.types;
-    }
-
-    public Set<String> getOrganizations()
-    {
-        return this.organizations;
     }
 
     public Set<String> getUserStores()
@@ -86,12 +78,6 @@ public final class AccountQuery
     public AccountQuery types( final AccountType... values )
     {
         this.types = ImmutableSet.copyOf( values );
-        return this;
-    }
-
-    public AccountQuery organizations( final String... values )
-    {
-        this.organizations = ImmutableSet.copyOf( values );
         return this;
     }
 
