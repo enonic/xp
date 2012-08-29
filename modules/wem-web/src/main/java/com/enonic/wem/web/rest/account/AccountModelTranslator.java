@@ -1,7 +1,5 @@
 package com.enonic.wem.web.rest.account;
 
-import java.util.Collection;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -51,20 +49,6 @@ public final class AccountModelTranslator
         else
         {
             throw new IllegalArgumentException( "Expected UserEntity or GroupEntity." );
-        }
-        return model;
-    }
-
-
-    public AccountsModel toModel( final Collection accounts )
-    {
-        final AccountsModel model = new AccountsModel();
-        model.setTotal( accounts.size() );
-
-        for ( final Object entity : accounts )
-        {
-            AccountModel aModel = toModel( entity );
-            model.addAccount( aModel );
         }
         return model;
     }
