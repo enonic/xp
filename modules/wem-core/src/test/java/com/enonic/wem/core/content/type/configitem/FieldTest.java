@@ -10,15 +10,11 @@ import static org.junit.Assert.*;
 
 public class FieldTest
 {
-    @Test
-    public void breaksRequiredContract()
+    @Test(expected = BreaksRequiredContractException.class)
+    public void breaksRequiredContract_throws_exception_when_broken()
     {
         Field field = Field.newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).required( true ).build();
-
-        assertEquals( true, field.breaksRequiredContract( Data.newBuilder().field( field ).value( null ).build() ) );
-        assertEquals( true, field.breaksRequiredContract( Data.newBuilder().field( field ).value( "" ).build() ) );
-        assertEquals( true, field.breaksRequiredContract( Data.newBuilder().field( field ).value( " " ).build() ) );
-        assertEquals( false, field.breaksRequiredContract( Data.newBuilder().field( field ).value( "something" ).build() ) );
+        field.checkBreaksRequiredContract( Data.newData().field( field ).value( null ).build() );
     }
 
     @Test

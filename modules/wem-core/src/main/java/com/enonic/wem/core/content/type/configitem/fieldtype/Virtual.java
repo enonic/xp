@@ -2,6 +2,7 @@ package com.enonic.wem.core.content.type.configitem.fieldtype;
 
 
 import com.enonic.wem.core.content.data.Data;
+import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.datatype.DataType;
 import com.enonic.wem.core.content.type.datatype.DataTypes;
 
@@ -46,9 +47,9 @@ public class Virtual
     }
 
     @Override
-    public boolean breaksRequiredContract( final Data data )
+    public void checkBreaksRequiredContract( final Data data )
+        throws BreaksRequiredContractException
     {
-        // TODO
-        return false;
+        // never - the referred fields are checked instead
     }
 }

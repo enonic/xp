@@ -4,6 +4,7 @@ package com.enonic.wem.core.content.data;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.type.ContentType;
+import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.datatype.BasalValueType;
 
@@ -75,11 +76,6 @@ public class ContentData
         return dataSet.getData( path );
     }
 
-    public DataSet getDataSet( final String path )
-    {
-        return getDataSet( new EntryPath( path ) );
-    }
-
     public DataSet getDataSet( final EntryPath path )
     {
         return dataSet.getDataSet( path );
@@ -90,13 +86,9 @@ public class ContentData
         return dataSet;
     }
 
-    public boolean breaksRequiredContract()
-    {
-        return dataSet.breaksRequiredContract();
-    }
-
     public void checkBreaksRequiredContract()
+        throws BreaksRequiredContractException
     {
-        dataSet.breaksRequiredContract();
+        dataSet.checkBreaksRequiredContract();
     }
 }

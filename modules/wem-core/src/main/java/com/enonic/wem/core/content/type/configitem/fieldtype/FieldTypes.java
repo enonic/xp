@@ -9,6 +9,8 @@ public class FieldTypes
 
     public static final FieldType dropdown = new Dropdown();
 
+    public static final FieldType htmlArea = new HtmlArea();
+
     public static final FieldType phone = new Phone();
 
     public static final FieldType radioButtons = new RadioButtons();

@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.core.content.data.DataSet;
 import com.enonic.wem.core.content.type.ContentType;
+import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
@@ -411,40 +412,6 @@ public class ContentTest
     }
 
     @Test
-    public void required()
-    {
-        // setup
-        ContentType contentType = new ContentType();
-        contentType.addConfigItem( newField().name( "name" ).type( FieldTypes.textline ).build() );
-
-        FieldSet personaliaFieldSet = newFieldSet().name( "personalia" ).multiple( false ).required( true ).build();
-        personaliaFieldSet.addField( newField().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        personaliaFieldSet.addField( newField().name( "hairColour" ).type( FieldTypes.textline ).build() );
-        contentType.addConfigItem( personaliaFieldSet );
-
-        FieldSet crimesFieldSet = newFieldSet().name( "crimes" ).multiple( true ).build();
-        contentType.addConfigItem( crimesFieldSet );
-        crimesFieldSet.addField( newField().name( "description" ).type( FieldTypes.textline ).build() );
-        crimesFieldSet.addField( newField().name( "year" ).type( FieldTypes.textline ).build() );
-
-        Content content = new Content();
-        content.setType( contentType );
-
-        content.setData( "name", "Thomas" );
-        content.setData( "personalia.eyeColour", "Blue" );
-        content.setData( "personalia.hairColour", "Blonde" );
-        content.setData( "crimes[0].description", "Stole tomatoes from neighbour" );
-        content.setData( "crimes[0].year", "1989" );
-        content.setData( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
-        content.setData( "crimes[1].year", "1990" );
-
-        content.checkBreaksRequiredContract();
-
-        // exercise
-        // TODO
-    }
-
-    @Test
     public void visualFieldSet()
     {
         // setup
@@ -478,5 +445,204 @@ public class ContentTest
         assertEquals( "Skull on left arm", content.getValueAsString( "tattoo[0]" ) );
         assertEquals( "Mothers name on right arm", content.getValueAsString( "tattoo[1]" ) );
         assertEquals( "Chin", content.getValueAsString( "scar[0]" ) );
+    }
+
+    @Test()
+    public void given_required_field_with_data_when_checkBreaksRequiredContract_then_exception_is_not_thrown()
+    {
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newField().name( "myField" ).type( FieldTypes.textline ).required( true ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+        content.setData( "myField", "value" );
+
+        // exercise
+        try
+        {
+            content.checkBreaksRequiredContract();
+        }
+        catch ( Exception e )
+        {
+            fail( "No exception expected" );
+        }
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_required_field_with_no_data_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newField().name( "myField" ).type( FieldTypes.textline ).required( true ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+
+        // exercise
+        content.checkBreaksRequiredContract();
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_required_field_with_no_data_within_visualFieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
+            newField().name( "myField" ).type( FieldTypes.textline ).required( true ).build() ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+
+        // exercise
+        content.checkBreaksRequiredContract();
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_required_field_with_no_data_within_visualFieldSet_within_visualFieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newVisualFieldSet().label( "My outer visual field set" ).name( "myOuterVisualFieldSet" ).add(
+            newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
+                newField().name( "myField" ).type( FieldTypes.textline ).required( true ).build() ).build() ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+
+        // exercise
+        content.checkBreaksRequiredContract();
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_required_field_with_no_data_within_fieldSet_within_visualFieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
+            newFieldSet().name( "myFieldSet" ).required( true ).add(
+                newField().name( "myField" ).type( FieldTypes.textline ).required( true ).build() ).build() ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+        content.setData( "myFieldSet.myField", "" );
+
+        // exercise
+        content.checkBreaksRequiredContract();
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_required_field_with_no_data_within_fieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
+            newField().name( "myField" ).type( FieldTypes.textline ).required( true ).build() ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+        content.setData( "myFieldSet.myField", "" );
+
+        // exercise
+        content.checkBreaksRequiredContract();
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_required_field_with_no_data_within_visualFieldSet_within_a_fieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
+            newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSEt" ).add(
+                newField().name( "myField" ).type( FieldTypes.textline ).required( true ).build() ).build() ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+        content.setData( "myFieldSet.myField", "" );
+
+        // exercise
+        content.checkBreaksRequiredContract();
+    }
+
+    @Test()
+    public void given_required_fieldSet_with_data_when_checkBreaksRequiredContract_then_exception_is_not_thrown()
+    {
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
+            newField().name( "myField" ).type( FieldTypes.textline ).build() ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+        content.setData( "myFieldSet.myField", "value" );
+
+        // exercise
+        try
+        {
+            content.checkBreaksRequiredContract();
+        }
+        catch ( Exception e )
+        {
+            fail( "No exception expected" );
+        }
+
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_required_fieldSet_with_no_data_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
+            newField().name( "myField" ).type( FieldTypes.textline ).build() ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+
+        // exercise
+        content.checkBreaksRequiredContract();
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_required_fieldSet_with_no_data_within_visualFieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
+            newFieldSet().name( "myFieldSet" ).required( true ).add(
+                newField().name( "myField" ).type( FieldTypes.textline ).build() ).build() ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+
+        // exercise
+        content.checkBreaksRequiredContract();
+    }
+
+    @Test
+    public void given_required_fieldSet_with_no_data_and_other_fields_with_data_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+        // setup
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newField().name( "name" ).type( FieldTypes.textline ).build() );
+
+        FieldSet personaliaFieldSet = newFieldSet().name( "personalia" ).multiple( false ).required( true ).build();
+        personaliaFieldSet.addField( newField().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        personaliaFieldSet.addField( newField().name( "hairColour" ).type( FieldTypes.textline ).build() );
+        contentType.addConfigItem( personaliaFieldSet );
+
+        FieldSet crimesFieldSet = newFieldSet().name( "crimes" ).multiple( true ).build();
+        contentType.addConfigItem( crimesFieldSet );
+        crimesFieldSet.addField( newField().name( "description" ).type( FieldTypes.textline ).build() );
+        crimesFieldSet.addField( newField().name( "year" ).type( FieldTypes.textline ).build() );
+
+        Content content = new Content();
+        content.setType( contentType );
+
+        content.setData( "name", "Thomas" );
+        content.setData( "crimes[0].description", "Stole tomatoes from neighbour" );
+        content.setData( "crimes[0].year", "1989" );
+        content.setData( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
+        content.setData( "crimes[1].year", "1990" );
+
+        // exercise
+        try
+        {
+            content.checkBreaksRequiredContract();
+            fail( "Expected exception" );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( e instanceof BreaksRequiredContractException );
+            assertEquals( "Required contract is broken, data missing for FieldSet: personalia", e.getMessage() );
+        }
     }
 }

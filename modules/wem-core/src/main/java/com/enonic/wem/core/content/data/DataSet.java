@@ -6,12 +6,14 @@ import java.util.LinkedHashMap;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.configitem.ConfigItem;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.DirectAccessibleConfigItem;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
+import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
 
 public class DataSet
     extends Entry
@@ -154,6 +156,9 @@ public class DataSet
         }
         else
         {
+            Preconditions.checkArgument( foundConfig instanceof Field,
+                                         "ConfigItem at path [%s] expected to be of type Field: " + foundConfig.getConfigItemType(), path );
+            //noinspection ConstantConditions
             final Field field = (Field) foundConfig;
             doSetEntry( path.getFirstElement(), Data.newBuilder().field( field ).path( path ).value( value ).build() );
         }
@@ -285,6 +290,7 @@ public class DataSet
     }
 
     public void checkBreaksRequiredContract()
+        throws BreaksRequiredContractException
     {
         // check existing entries..
         for ( Entry entry : entries.values() )
@@ -295,7 +301,21 @@ public class DataSet
         // check missing required entries
         for ( ConfigItem configItem : configItems.iterable() )
         {
-            // TODO: check that required configItems have entries
+            if ( configItem instanceof Field )
+            {
+                Field field = (Field) configItem;
+                field.checkBreaksRequiredContract( this );
+            }
+            else if ( configItem instanceof FieldSet )
+            {
+                FieldSet fieldSet = (FieldSet) configItem;
+                fieldSet.checkBreaksRequiredContract( this );
+            }
+            else if ( configItem instanceof VisualFieldSet )
+            {
+                VisualFieldSet visualFieldSet = (VisualFieldSet) configItem;
+                visualFieldSet.checkBreaksRequiredContract( this );
+            }
         }
     }
 
@@ -341,5 +361,37 @@ public class DataSet
         return s.toString();
     }
 
+
+    public boolean hasDataAtPath( ConfigItemPath path )
+    {
+        for ( Entry entry : entries.values() )
+        {
+            if ( entry instanceof Data )
+            {
+                Data data = (Data) entry;
+                if ( data.getField() != null && data.getField().getPath().equals( path ) )
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean hasDataSetAtPath( ConfigItemPath path )
+    {
+        for ( Entry entry : entries.values() )
+        {
+            if ( entry instanceof DataSet )
+            {
+                DataSet dataSet = (DataSet) entry;
+                if ( dataSet.configItems.getPath().equals( path ) )
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 }
