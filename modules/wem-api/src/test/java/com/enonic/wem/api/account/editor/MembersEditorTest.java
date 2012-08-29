@@ -2,24 +2,29 @@ package com.enonic.wem.api.account.editor;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+
+import static org.junit.Assert.*;
 
 import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.GroupAccount;
+import com.enonic.wem.api.account.NonUserAccount;
+import com.enonic.wem.api.account.RoleAccount;
+import com.enonic.wem.api.account.UserAccount;
 
 public class MembersEditorTest
 {
-    private EditableUserAccount user;
+    private UserAccount user;
 
-    private EditableGroupAccount group;
+    private GroupAccount group;
 
-    private EditableRoleAccount role;
+    private RoleAccount role;
 
     @Before
     public void setUp()
     {
-        this.user = Mockito.mock( EditableUserAccount.class );
-        this.group = Mockito.mock( EditableGroupAccount.class );
-        this.role = Mockito.mock( EditableRoleAccount.class );
+        this.user = UserAccount.create( "other:dummy" );
+        this.group = GroupAccount.create( "other:dummy" );
+        this.role = RoleAccount.create( "other:dummy" );
     }
 
     @Test
@@ -49,7 +54,7 @@ public class MembersEditorTest
         testNoOperation( this.user, MembersEditor.Operation.REMOVE );
     }
 
-    private void testNoOperation( final EditableUserAccount account, final MembersEditor.Operation operation )
+    private void testNoOperation( final UserAccount account, final MembersEditor.Operation operation )
         throws Exception
     {
         final AccountKeySet keys = AccountKeySet.from( "user:other:dummy" );
@@ -57,42 +62,46 @@ public class MembersEditorTest
         editor.edit( account );
     }
 
-    private void testSetMembers( final EditableNonUserAccount account )
+    private void testSetMembers( final NonUserAccount account )
         throws Exception
     {
+        account.setMembers( AccountKeySet.empty() );
+
         final AccountKeySet keys = AccountKeySet.from( "user:other:dummy" );
         final MembersEditor editor = new MembersEditor( MembersEditor.Operation.SET, keys );
 
         editor.edit( account );
 
-        Mockito.verify( account, Mockito.times( 1 ) ).setMembers( keys );
+        assertEquals( keys, account.getMembers() );
     }
 
-    private void testAddMembers( final EditableNonUserAccount account )
+    private void testAddMembers( final NonUserAccount account )
         throws Exception
     {
         final AccountKeySet set1 = AccountKeySet.from( "user:other:dummy" );
+        account.setMembers( set1 );
+
         final AccountKeySet set2 = AccountKeySet.from( "role:other:admin" );
         final MembersEditor editor = new MembersEditor( MembersEditor.Operation.ADD, set2 );
 
-        Mockito.when( account.getMembers() ).thenReturn( set1 );
         editor.edit( account );
 
         final AccountKeySet set3 = set1.add( set2 );
-        Mockito.verify( account, Mockito.times( 1 ) ).setMembers( Mockito.eq( set3 ) );
+        assertEquals( set3, account.getMembers() );
     }
 
-    private void testRemoveMembers( final EditableNonUserAccount account )
+    private void testRemoveMembers( final NonUserAccount account )
         throws Exception
     {
         final AccountKeySet set1 = AccountKeySet.from( "user:other:dummy", "role:other:admin" );
+        account.setMembers( set1 );
+
         final AccountKeySet set2 = AccountKeySet.from( "role:other:admin" );
         final MembersEditor editor = new MembersEditor( MembersEditor.Operation.REMOVE, set2 );
 
-        Mockito.when( account.getMembers() ).thenReturn( set1 );
         editor.edit( account );
 
         final AccountKeySet set3 = set1.remove( set2 );
-        Mockito.verify( account, Mockito.times( 1 ) ).setMembers( Mockito.eq( set3 ) );
+        assertEquals( set3, account.getMembers() );
     }
 }

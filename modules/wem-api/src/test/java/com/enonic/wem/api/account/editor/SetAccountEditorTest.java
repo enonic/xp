@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import static org.junit.Assert.*;
+
 import com.enonic.wem.api.account.AccountKeySet;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.RoleAccount;
@@ -17,11 +19,11 @@ public class SetAccountEditorTest
 
     private RoleAccount role;
 
-    private EditableUserAccount editableUser;
+    private UserAccount editableUser;
 
-    private EditableGroupAccount editableGroup;
+    private GroupAccount editableGroup;
 
-    private EditableRoleAccount editableRole;
+    private RoleAccount editableRole;
 
     private byte[] photo;
 
@@ -30,88 +32,103 @@ public class SetAccountEditorTest
     @Before
     public void setUp()
     {
-        this.user = Mockito.mock( UserAccount.class );
-        this.group = Mockito.mock( GroupAccount.class );
-        this.role = Mockito.mock( RoleAccount.class );
-        this.editableUser = Mockito.mock( EditableUserAccount.class );
-        this.editableGroup = Mockito.mock( EditableGroupAccount.class );
-        this.editableRole = Mockito.mock( EditableRoleAccount.class );
+        this.user = UserAccount.create( "other:dummy" );
+        this.group = GroupAccount.create( "other:dummy" );
+        this.role = RoleAccount.create( "other:dummy" );
+        this.editableUser = UserAccount.create( "other:dummy" );
+        this.editableGroup = GroupAccount.create( "other:dummy" );
+        this.editableRole = RoleAccount.create( "other:dummy" );
 
         this.photo = new byte[10];
         this.members = AccountKeySet.from( "role:other:admin" );
 
-        Mockito.when( this.user.getEmail() ).thenReturn( "dummy@other.com" );
-        Mockito.when( this.user.getDisplayName() ).thenReturn( "Dummy User" );
-        Mockito.when( this.user.getPhoto() ).thenReturn( photo );
+        this.user.setEmail( "dummy@other.com" );
+        this.user.setDisplayName( "Dummy User" );
+        this.user.setImage( this.photo );
 
-        Mockito.when( this.group.getDisplayName() ).thenReturn( "Dummy Group" );
-        Mockito.when( this.group.getMembers() ).thenReturn( this.members );
+        this.group.setDisplayName( "Dummy Group" );
+        this.group.setMembers( this.members );
 
-        Mockito.when( this.role.getDisplayName() ).thenReturn( "Dummy Role" );
-        Mockito.when( this.role.getMembers() ).thenReturn( this.members );
+        this.role.setDisplayName( "Dummy Role" );
+        this.role.setMembers( this.members );
     }
 
     @Test
     public void testSetUser()
         throws Exception
     {
+        assertEquals( false, this.editableUser.isDirty() );
+
         final SetAccountEditor editor = new SetAccountEditor( this.user );
         editor.edit( this.editableUser );
 
-        Mockito.verify( this.editableUser, Mockito.times( 1 ) ).setEmail( "dummy@other.com" );
-        Mockito.verify( this.editableUser, Mockito.times( 1 ) ).setDisplayName( "Dummy User" );
-        Mockito.verify( this.editableUser, Mockito.times( 1 ) ).setPhoto( this.photo );
+        assertEquals( true, this.editableUser.isDirty() );
+        assertEquals( "dummy@other.com", this.editableUser.getEmail() );
+        assertEquals( "Dummy User", this.editableUser.getDisplayName() );
+        assertSame( this.photo, this.editableUser.getImage() );
     }
 
     @Test
     public void testSetGroup()
         throws Exception
     {
+        assertEquals( false, this.editableGroup.isDirty() );
+
         final SetAccountEditor editor = new SetAccountEditor( this.group );
         editor.edit( this.editableGroup );
 
-        Mockito.verify( this.editableGroup, Mockito.times( 1 ) ).setDisplayName( "Dummy Group" );
-        Mockito.verify( this.editableGroup, Mockito.times( 1 ) ).setMembers( this.members );
+        assertEquals( true, this.editableGroup.isDirty() );
+        assertEquals( "Dummy Group", this.editableGroup.getDisplayName() );
+        assertSame( this.members, this.editableGroup.getMembers() );
     }
 
     @Test
     public void testSetRole()
         throws Exception
     {
+        assertEquals( false, this.editableRole.isDirty() );
+
         final SetAccountEditor editor = new SetAccountEditor( this.role );
         editor.edit( this.editableRole );
 
-        Mockito.verify( this.editableRole, Mockito.times( 1 ) ).setDisplayName( "Dummy Role" );
-        Mockito.verify( this.editableRole, Mockito.times( 1 ) ).setMembers( this.members );
+        assertEquals( true, this.editableRole.isDirty() );
+        assertEquals( "Dummy Role", this.editableRole.getDisplayName() );
+        assertSame( this.members, this.editableRole.getMembers() );
     }
 
     @Test
     public void testSetUser_Wrong()
         throws Exception
     {
+        assertEquals( false, this.editableUser.isDirty() );
+
         final SetAccountEditor editor = new SetAccountEditor( this.group );
         editor.edit( this.editableUser );
 
-        Mockito.verify( this.editableUser, Mockito.times( 0 ) ).setDisplayName( Mockito.anyString() );
+        assertEquals( false, this.editableUser.isDirty() );
     }
 
     @Test
     public void testSetGroup_Wrong()
         throws Exception
     {
+        assertEquals( false, this.editableGroup.isDirty() );
+
         final SetAccountEditor editor = new SetAccountEditor( this.user );
         editor.edit( this.editableGroup );
 
-        Mockito.verify( this.editableGroup, Mockito.times( 0 ) ).setDisplayName( Mockito.anyString() );
+        assertEquals( false, this.editableGroup.isDirty() );
     }
 
     @Test
     public void testSetRole_Wrong()
         throws Exception
     {
+        assertEquals( false, this.editableRole.isDirty() );
+
         final SetAccountEditor editor = new SetAccountEditor( this.user );
         editor.edit( this.editableRole );
 
-        Mockito.verify( this.editableRole, Mockito.times( 0 ) ).setDisplayName( Mockito.anyString() );
+        assertEquals( false, this.editableRole.isDirty() );
     }
 }

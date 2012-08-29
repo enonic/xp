@@ -1,22 +1,65 @@
 package com.enonic.wem.api.account.result;
 
+import java.util.Iterator;
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.wem.api.account.Account;
-import com.enonic.wem.api.account.AccountKeySet;
 
-public interface AccountResult
-    extends Iterable<Account>
+public final class AccountResult
+    implements Iterable<Account>
 {
-    public int getSize();
+    private final int totalSize;
 
-    public int getTotalSize();
+    private final List<Account> accounts;
 
-    public boolean isEmpty();
+    private AccountFacets facets;
 
-    public Account first();
+    public AccountResult( final int totalSize, final List<Account> accounts )
+    {
+        this.totalSize = totalSize;
+        this.accounts = ImmutableList.copyOf( accounts );
+    }
 
-    public Account firstOrNull();
+    public int getSize()
+    {
+        return this.accounts.size();
+    }
 
-    public AccountKeySet asKeySet();
+    public int getTotalSize()
+    {
+        return this.totalSize;
+    }
 
-    public AccountFacets getFacets();
+    public boolean isEmpty()
+    {
+        return this.accounts.isEmpty();
+    }
+
+    public Account first()
+    {
+        return this.accounts.isEmpty() ? null : this.accounts.get( 0 );
+    }
+
+    public List<Account> getAll()
+    {
+        return ImmutableList.copyOf( this.accounts );
+    }
+
+    public AccountFacets getFacets()
+    {
+        return this.facets;
+    }
+
+    public void setFacets( final AccountFacets facets )
+    {
+        this.facets = facets;
+    }
+
+    @Override
+    public Iterator<Account> iterator()
+    {
+        return this.accounts.iterator();
+    }
 }

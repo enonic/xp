@@ -2,17 +2,95 @@ package com.enonic.wem.api.account;
 
 import org.joda.time.DateTime;
 
-public interface Account
+public abstract class Account
 {
-    public AccountKey getKey();
+    private final AccountKey key;
 
-    public String getDisplayName();
+    private String displayName;
 
-    public DateTime getCreatedTime();
+    private DateTime createdTime;
 
-    public DateTime getModifiedTime();
+    private DateTime modifiedTime;
 
-    public boolean isDeleted();
+    private boolean deleted;
 
-    public boolean isEditable();
+    private boolean editable;
+
+    private boolean dirty;
+
+    public Account( final AccountKey key )
+    {
+        this.key = key;
+    }
+
+    public final AccountKey getKey()
+    {
+        return this.key;
+    }
+
+    public final String getDisplayName()
+    {
+        return this.displayName != null ? this.displayName : this.key.getQualifiedName();
+    }
+
+    public final DateTime getCreatedTime()
+    {
+        return this.createdTime;
+    }
+
+    public final DateTime getModifiedTime()
+    {
+        return this.modifiedTime;
+    }
+
+    public final boolean isDeleted()
+    {
+        return this.deleted;
+    }
+
+    public final boolean isEditable()
+    {
+        return this.editable;
+    }
+
+    public final void setDisplayName( final String value )
+    {
+        this.displayName = value;
+        setDirtyFlag();
+    }
+
+    public final void setCreatedTime( final DateTime value )
+    {
+        this.createdTime = value;
+    }
+
+    public final void setModifiedTime( final DateTime value )
+    {
+        this.modifiedTime = value;
+    }
+
+    public final void setDeleted( final boolean value )
+    {
+        this.deleted = value;
+    }
+
+    public final void setEditable( final boolean value )
+    {
+        this.editable = value;
+    }
+
+    public final boolean isDirty()
+    {
+        return this.dirty;
+    }
+
+    public final void clearDirtyFlag()
+    {
+        this.dirty = false;
+    }
+
+    protected final void setDirtyFlag()
+    {
+        this.dirty = true;
+    }
 }

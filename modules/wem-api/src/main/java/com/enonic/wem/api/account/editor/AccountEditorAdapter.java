@@ -1,34 +1,37 @@
 package com.enonic.wem.api.account.editor;
 
+import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.GroupAccount;
+import com.enonic.wem.api.account.RoleAccount;
+import com.enonic.wem.api.account.UserAccount;
 
 public abstract class AccountEditorAdapter
     implements AccountEditor
 {
     @Override
-    public final void edit( final EditableAccount account )
+    public final void edit( final Account account )
         throws Exception
     {
-        if ( account instanceof EditableUserAccount )
+        if ( account instanceof UserAccount )
         {
-            this.editUser( (EditableUserAccount) account );
+            this.editUser( (UserAccount) account );
         }
         else if ( account instanceof GroupAccount )
         {
-            editGroup( (EditableGroupAccount) account );
+            editGroup( (GroupAccount) account );
         }
-        else if ( account instanceof EditableRoleAccount )
+        else if ( account instanceof RoleAccount )
         {
-            editRole( (EditableRoleAccount) account );
+            editRole( (RoleAccount) account );
         }
     }
 
-    protected abstract void editUser( final EditableUserAccount account )
+    protected abstract void editUser( final UserAccount account )
         throws Exception;
 
-    protected abstract void editGroup( final EditableGroupAccount account )
+    protected abstract void editGroup( final GroupAccount account )
         throws Exception;
 
-    protected abstract void editRole( final EditableRoleAccount account )
+    protected abstract void editRole( final RoleAccount account )
         throws Exception;
 }

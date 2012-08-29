@@ -18,9 +18,9 @@ public class FindAccountsTest
         command.selector( selector );
         assertSame( selector, command.getSelector() );
 
-        assertFalse( command.isIncludePhoto() );
-        command.includePhoto();
-        assertTrue( command.isIncludePhoto() );
+        assertFalse( command.isIncludeImage() );
+        command.includeImage();
+        assertTrue( command.isIncludeImage() );
 
         assertFalse( command.isIncludeMembers() );
         command.includeMembers();
