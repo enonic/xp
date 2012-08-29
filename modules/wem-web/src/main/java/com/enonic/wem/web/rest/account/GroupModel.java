@@ -41,8 +41,6 @@ public class GroupModel
 
     private boolean restricted;
 
-    private List<Map<String, Object>> graph;
-
     public GroupModel() {
         this.members = new ArrayList<AccountModel>();
     }
@@ -189,13 +187,5 @@ public class GroupModel
 
     public void setRestricted(boolean restricted) {
         this.restricted = restricted;
-    }
-
-    public List<Map<String, Object>> getGraph() {
-        return graph;
-    }
-
-    public void setGraph(List<Map<String, Object>> graph) {
-        this.graph = graph;
     }
 }

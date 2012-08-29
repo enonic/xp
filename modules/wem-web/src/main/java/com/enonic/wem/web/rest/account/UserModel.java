@@ -218,13 +218,4 @@ public final class UserModel implements AccountModel {
     public void setPhoto(String photo) {
         this.photo = photo;
     }
-
-
-    public List<Map<String, Object>> getGraph() {
-        return graph;
-    }
-
-    public void setGraph(List<Map<String, Object>> graph) {
-        this.graph = graph;
-    }
 }

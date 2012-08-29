@@ -45,8 +45,7 @@ public class GroupModelTranslator
         model.setBuiltIn(entity.isBuiltIn());
         model.setPublic(!entity.isRestricted());
         model.setDescription(entity.getDescription());
-        GroupGraphDataBuilder graphBuilder = new GroupGraphDataBuilder();
-        model.setGraph(graphBuilder.buildGraph(entity));
+
         model.setEditable(!isAuthenticatedUsersRole(entity) && !isAnonymousUsersRole(entity));
         if (entity.getUserStore() != null) {
             model.setUserStore(entity.getUserStore().getName());

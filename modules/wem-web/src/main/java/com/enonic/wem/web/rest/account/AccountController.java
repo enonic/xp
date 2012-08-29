@@ -29,7 +29,6 @@ import com.enonic.cms.core.security.user.UserSpecification;
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
 import com.enonic.cms.core.security.userstore.UserStoreKey;
 import com.enonic.cms.core.security.userstore.UserStoreService;
-import com.enonic.cms.store.dao.GroupDao;
 import com.enonic.cms.store.dao.UserDao;
 import com.enonic.cms.store.dao.UserStoreDao;
 
@@ -42,9 +41,6 @@ public final class AccountController
 
     @Autowired
     private UserDao userDao;
-
-    @Autowired
-    private GroupDao groupDao;
 
     @Autowired
     private UserStoreDao userStoreDao;
