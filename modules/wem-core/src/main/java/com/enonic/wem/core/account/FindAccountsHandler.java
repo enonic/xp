@@ -73,7 +73,7 @@ public final class FindAccountsHandler
         throws Exception
     {
         final boolean includeMembers = command.isIncludeMembers();
-        final boolean includePhoto = command.isIncludePhoto();
+        final boolean includePhoto = command.isIncludeImage();
         final AccountSelector selector = command.getSelector();
 
         final AccountResult result = findBySelector( selector, includeMembers, includePhoto );

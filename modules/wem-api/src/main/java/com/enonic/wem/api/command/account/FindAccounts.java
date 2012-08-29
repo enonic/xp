@@ -11,7 +11,7 @@ public final class FindAccounts
 {
     private AccountSelector selector;
 
-    private boolean includePhoto;
+    private boolean includeImage;
 
     private boolean includeMembers;
 
@@ -20,9 +20,9 @@ public final class FindAccounts
         return this.selector;
     }
 
-    public boolean isIncludePhoto()
+    public boolean isIncludeImage()
     {
-        return this.includePhoto;
+        return this.includeImage;
     }
 
     public boolean isIncludeMembers()
@@ -36,9 +36,9 @@ public final class FindAccounts
         return this;
     }
 
-    public FindAccounts includePhoto()
+    public FindAccounts includeImage()
     {
-        this.includePhoto = true;
+        this.includeImage = true;
         return this;
     }
 
