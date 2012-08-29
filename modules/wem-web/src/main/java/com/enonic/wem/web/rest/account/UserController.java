@@ -59,9 +59,6 @@ public final class UserController
     private UserStoreService userStoreService;
 
     @Autowired
-    private UserPhotoService photoService;
-
-    @Autowired
     private AccountModelTranslator accountModelTranslator;
 
     @Autowired
