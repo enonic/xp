@@ -53,7 +53,7 @@ public class AccountUriHelper
         }
         if ( userAccount.hasPhoto() )
         {
-            return UriBuilder.fromResource( UserResource.class ).path( userAccount.getKey().toString() ).path( "photo" ).build().toString();
+            return UriBuilder.fromResource( UserResource.class ).path( userAccount.getKey().toString() ).path( "image" ).build().toString();
         }
         else
         {
