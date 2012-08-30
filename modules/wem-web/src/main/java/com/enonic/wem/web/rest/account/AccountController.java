@@ -51,28 +51,6 @@ public final class AccountController
     private AccountSearchService searchService;
 
 
-    @RequestMapping(value = "suggestusername", method = RequestMethod.GET)
-    @ResponseBody
-    // TODO: Port to rest2 under UserResource (account/user/suggest-name)
-    public ResponseEntity suggestUsername( @RequestParam(value = "firstname", defaultValue = "") final String firstName,
-                                           @RequestParam(value = "lastname", defaultValue = "") final String lastName,
-                                           @RequestParam(value = "userstore", defaultValue = "") final String userStoreName )
-    {
-        final UserIdGenerator userIdGenerator = new UserIdGenerator( userDao );
-
-        final UserStoreEntity store = userStoreDao.findByName( userStoreName );
-
-        if ( store == null )
-        {
-            return new ResponseEntity( HttpStatus.NOT_FOUND );
-        }
-
-        final String suggestedUserName = userIdGenerator.generateUserId( firstName.trim(), lastName.trim(), store.getKey() );
-        final UserRestResponse response = new UserRestResponse();
-        response.setUsername( suggestedUserName );
-        return new ResponseEntity( response, HttpStatus.OK );
-    }
-
     @RequestMapping(value = "userkey", method = RequestMethod.GET)
     @ResponseBody
     // TODO: Is this in use?

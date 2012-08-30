@@ -342,7 +342,7 @@ Ext.define('Admin.controller.account.UserWizardController', {
         }
 
         Ext.Ajax.request({
-            url: 'data/account/suggestusername',
+            url: Admin.lib.UriHelper.getAccountSuggestUserNameUri(),
             method: 'GET',
             params: {
                 'firstname': firstName,
