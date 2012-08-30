@@ -2,6 +2,7 @@ package com.enonic.wem.core.content.type.datatype;
 
 
 import com.enonic.wem.core.content.data.Data;
+import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 
 public class SingleLinedString
     extends AbstractDataType
@@ -9,7 +10,7 @@ public class SingleLinedString
 {
     public SingleLinedString()
     {
-        super( BasalValueType.STRING );
+        super( BasalValueType.STRING, FieldTypes.TEXT_LINE );
     }
 
     public boolean validData( final Data data )

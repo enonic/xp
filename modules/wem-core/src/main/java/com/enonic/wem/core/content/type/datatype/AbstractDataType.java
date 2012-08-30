@@ -1,6 +1,8 @@
 package com.enonic.wem.core.content.type.datatype;
 
 
+import com.enonic.wem.core.content.type.configitem.fieldtype.FieldType;
+
 public abstract class AbstractDataType
     implements DataType
 {
@@ -8,10 +10,18 @@ public abstract class AbstractDataType
 
     private BasalValueType basalValueType;
 
-    public AbstractDataType( BasalValueType basalValueType )
+    private FieldType defaultFieldType;
+
+    public AbstractDataType( BasalValueType basalValueType, FieldType defaultFieldType )
     {
         this.name = this.getClass().getName();
         this.basalValueType = basalValueType;
+        this.defaultFieldType = defaultFieldType;
+    }
+
+    public FieldType getDefaultFieldType()
+    {
+        return defaultFieldType;
     }
 
     @Override

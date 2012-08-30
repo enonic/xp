@@ -12,20 +12,20 @@ public class DirectAccessibleConfigItemTest
     @Test
     public void setParentPath()
     {
-        Field field = Field.newField().name( "myField" ).type( FieldTypes.textline ).build();
+        Field field = Field.newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build();
         field.setParentPath( new ConfigItemPath( "myParent" ) );
         assertEquals( "myParent.myField", field.getPath().toString() );
 
-        field = Field.newField().name( "myField" ).type( FieldTypes.textline ).build();
+        field = Field.newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build();
         field.setPath( new ConfigItemPath( "myParent.myField" ) );
         field.setParentPath( new ConfigItemPath( "myNewParent" ) );
         assertEquals( "myNewParent.myField", field.getPath().toString() );
 
-        field = Field.newField().name( "myField" ).type( FieldTypes.textline ).build();
+        field = Field.newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build();
         field.setParentPath( new ConfigItemPath( "myGrandParent.myParent" ) );
         assertEquals( "myGrandParent.myParent.myField", field.getPath().toString() );
 
-        field = Field.newField().name( "myField" ).type( FieldTypes.textline ).build();
+        field = Field.newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build();
         field.setPath( new ConfigItemPath( "myParent.myField" ) );
         field.setParentPath( new ConfigItemPath( "myNewGrandParent.myNewParent" ) );
         assertEquals( "myNewGrandParent.myNewParent.myField", field.getPath().toString() );

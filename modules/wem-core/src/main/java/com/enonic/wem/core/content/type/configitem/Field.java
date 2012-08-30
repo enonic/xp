@@ -134,13 +134,6 @@ public class Field
         return copy;
     }
 
-    public Field copy( final String name )
-    {
-        final Field field = copy();
-        field.setName( name );
-        return field;
-    }
-
     public static Builder newField()
     {
         return new Builder();

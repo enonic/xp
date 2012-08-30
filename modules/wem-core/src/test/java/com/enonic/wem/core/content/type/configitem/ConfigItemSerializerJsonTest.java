@@ -43,7 +43,7 @@ public class ConfigItemSerializerJsonTest
     {
         // setup
         Field.Builder builder = Field.newBuilder();
-        builder.type( FieldTypes.textline );
+        builder.type( FieldTypes.TEXT_LINE );
         builder.name( "myTextLine" );
         builder.required( true );
         builder.immutable( true );
@@ -71,7 +71,7 @@ public class ConfigItemSerializerJsonTest
         assertEquals( null, parsedField.getHelpText() );
         assertEquals( "Custom text", parsedField.getCustomText() );
         assertEquals( new Occurrences( 1, 100 ), parsedField.getOccurrences() );
-        assertEquals( FieldTypes.textline, parsedField.getFieldType() );
+        assertEquals( FieldTypes.TEXT_LINE, parsedField.getFieldType() );
         assertNull( parsedField.getFieldTypeConfig() );
     }
 
@@ -81,7 +81,7 @@ public class ConfigItemSerializerJsonTest
     {
         // setup
         Field.Builder builder = Field.newBuilder();
-        builder.type( FieldTypes.dropdown );
+        builder.type( FieldTypes.DROPDOWN );
         builder.name( "myDropdown" );
         builder.label( "My Dropdown" );
         builder.fieldTypeConfig( DropdownConfig.newBuilder().addOption( "Option 1", "o1" ).addOption( "Option 2", "o2" ).build() );
@@ -101,7 +101,7 @@ public class ConfigItemSerializerJsonTest
         assertEquals( false, parsedField.isRequired() );
         assertEquals( false, parsedField.isIndexed() );
         assertEquals( false, parsedField.isImmutable() );
-        assertEquals( FieldTypes.dropdown, parsedField.getFieldType() );
+        assertEquals( FieldTypes.DROPDOWN, parsedField.getFieldType() );
         FieldTypeConfig fieldTypeConfig = parsedField.getFieldTypeConfig();
         assertNotNull( fieldTypeConfig );
         assertTrue( fieldTypeConfig instanceof DropdownConfig );
@@ -119,7 +119,7 @@ public class ConfigItemSerializerJsonTest
     {
         // setup
         Field.Builder builder = Field.newBuilder();
-        builder.type( FieldTypes.radioButtons );
+        builder.type( FieldTypes.RADIO_BUTTONS );
         builder.name( "myRadioButtons" );
         builder.label( "My Radio buttons" );
         builder.fieldTypeConfig( RadioButtonsConfig.newBuilder().addOption( "Option 1", "o1" ).addOption( "Option 2", "o2" ).build() );
@@ -139,7 +139,7 @@ public class ConfigItemSerializerJsonTest
         assertEquals( false, parsedField.isRequired() );
         assertEquals( false, parsedField.isIndexed() );
         assertEquals( false, parsedField.isImmutable() );
-        assertEquals( FieldTypes.radioButtons, parsedField.getFieldType() );
+        assertEquals( FieldTypes.RADIO_BUTTONS, parsedField.getFieldType() );
         FieldTypeConfig fieldTypeConfig = parsedField.getFieldTypeConfig();
         assertNotNull( fieldTypeConfig );
         assertTrue( fieldTypeConfig instanceof RadioButtonsConfig );
