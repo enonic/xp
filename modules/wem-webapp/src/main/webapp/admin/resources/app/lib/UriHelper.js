@@ -17,14 +17,15 @@ Ext.define('Admin.lib.UriHelper', {
                 return Ext.String.format('admin/rest/account/{0}/delete', account.key);
             },
             Info: function (account) {
-                return 'admin/rest/'+account.info_uri;
+                return 'admin/rest/' + account.info_uri;
             },
             Graph: function (account) {
-                return 'admin/rest/'+account.graph_uri;
+                return 'admin/rest/' + account.graph_uri;
             },
             Icon: function (account) {
-                return 'admin/rest/'+account.image_uri;
-            }
+                return 'admin/rest/' + account.image_uri;
+            },
+            VerifyEmail: 'admin/rest/account/user/verify-unique-email'
         },
         Userstore: {
             Search: 'admin/rest/userstore/search'
