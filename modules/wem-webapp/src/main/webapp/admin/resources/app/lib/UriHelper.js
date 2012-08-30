@@ -25,7 +25,10 @@ Ext.define('Admin.lib.UriHelper', {
             Icon: function (account) {
                 return 'admin/rest/' + account.image_uri;
             },
-            VerifyEmail: 'admin/rest/account/user/verify-unique-email'
+            VerifyEmail: 'admin/rest/account/user/verify-unique-email',
+            ChangePassword: function (account) {
+                return Ext.String.format("admin/rest/account/user/{0}/change-password", account.key);
+            }
         },
         Userstore: {
             Search: 'admin/rest/userstore/search'
