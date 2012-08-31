@@ -2,7 +2,7 @@
     "key": "1",
     "name": "Enonic",
     "default": false,
-    "connector": "Remote",
+    "connector": null,
     "configXML": "<config>\r\n  <user-fields>\r\n    <first-name readonly=\"false\" required=\"true\" remote=\"true\" />\r\n    <gender readonly=\"true\" required=\"false\" remote=\"false\" />\r\n    <phone readonly=\"false\" required=\"false\" remote=\"false\" />\r\n  </user-fields>\r\n</config>\r\n\r\n",
     "userFields": [
         {
@@ -27,19 +27,6 @@
             "iso": true
         }
     ],
-    "plugin": "SpaceshipPlugin",
-    "userPolicy": {
-        "create": true,
-        "updatePassword": true,
-        "update": true,
-        "delete": true
-    },
-    "groupPolicy": {
-        "create": true,
-        "read": true,
-        "update": true,
-        "delete": true
-    },
     "userCount": 5,
     "groupCount": 3,
     "administrators": [

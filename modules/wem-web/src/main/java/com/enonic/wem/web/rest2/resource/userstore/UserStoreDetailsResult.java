@@ -192,55 +192,29 @@ public class UserStoreDetailsResult
         return jsons;
     }
 
-    private String getGroupPolicy( UserStoreConnectorConfig connectorConfig )
+    private ObjectNode getGroupPolicy( UserStoreConnectorConfig connectorConfig )
     {
-        if ( connectorConfig == null )
+        ObjectNode json = objectNode();
+        if ( connectorConfig != null )
         {
-            return null;
+            json.put( "create", connectorConfig.canCreateGroup() );
+            json.put( "read", connectorConfig.canReadGroup() );
+            json.put( "update", connectorConfig.canUpdateGroup() );
+            json.put( "delete", connectorConfig.canDeleteGroup() );
         }
-        StringBuilder sb = new StringBuilder();
-        if ( connectorConfig.canReadGroup() )
-        {
-            sb.append( "read, " );
-        }
-        if ( connectorConfig.canCreateGroup() )
-        {
-            sb.append( "create, " );
-        }
-        if ( connectorConfig.canUpdateGroup() )
-        {
-            sb.append( "update, " );
-        }
-        if ( connectorConfig.canDeleteGroup() )
-        {
-            sb.append( "delete, " );
-        }
-        return sb.length() > 2 ? sb.substring( 0, sb.length() - 2 ) : sb.toString();
+        return json;
     }
 
-    private String getUserPolicy( UserStoreConnectorConfig connectorConfig )
+    private ObjectNode getUserPolicy( UserStoreConnectorConfig connectorConfig )
     {
-        if ( connectorConfig == null )
+        ObjectNode json = objectNode();
+        if ( connectorConfig != null )
         {
-            return null;
+            json.put( "create", connectorConfig.canCreateUser() );
+            json.put( "updatePassword", connectorConfig.canUpdateUserPassword() );
+            json.put( "update", connectorConfig.canUpdateUser() );
+            json.put( "delete", connectorConfig.canDeleteUser() );
         }
-        StringBuilder sb = new StringBuilder();
-        if ( connectorConfig.canCreateUser() )
-        {
-            sb.append( "create, " );
-        }
-        if ( connectorConfig.canUpdateUser() )
-        {
-            sb.append( "update, " );
-        }
-        if ( connectorConfig.canUpdateUserPassword() )
-        {
-            sb.append( "update password, " );
-        }
-        if ( connectorConfig.canDeleteUser() )
-        {
-            sb.append( "delete, " );
-        }
-        return sb.length() > 2 ? sb.substring( 0, sb.length() - 2 ) : sb.toString();
+        return json;
     }
 }
