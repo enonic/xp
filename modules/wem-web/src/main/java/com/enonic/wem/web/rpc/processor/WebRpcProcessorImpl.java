@@ -1,5 +1,7 @@
 package com.enonic.wem.web.rpc.processor;
 
+import java.util.Set;
+
 import org.codehaus.jackson.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -74,5 +76,11 @@ public final class WebRpcProcessorImpl
     public void setHandlers( final WebRpcHandler... handlers )
     {
         this.handlerMap = new WebRpcHandlerMap( handlers );
+    }
+
+    @Override
+    public Set<String> getMethodNames()
+    {
+        return this.handlerMap.getMethodNames();
     }
 }

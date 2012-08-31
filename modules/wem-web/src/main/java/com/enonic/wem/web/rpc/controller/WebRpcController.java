@@ -86,6 +86,11 @@ public abstract class WebRpcController
         return this.processor.process( req );
     }
 
+    protected final WebRpcProcessor getProcessor()
+    {
+        return this.processor;
+    }
+
     @Autowired
     public final void setProcessor( final WebRpcProcessor processor )
     {
