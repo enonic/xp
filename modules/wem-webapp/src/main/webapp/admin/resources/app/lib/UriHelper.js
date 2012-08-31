@@ -22,7 +22,8 @@ Ext.define('Admin.lib.UriHelper', {
             },
             Icon: function (account) {
                 return 'admin/rest/' + account.image_uri;
-            }
+            },
+            VerifyEmail: 'admin/rest/account/user/verify-unique-email'
         },
         Userstore: {
             Search: 'admin/rest/userstore/search'

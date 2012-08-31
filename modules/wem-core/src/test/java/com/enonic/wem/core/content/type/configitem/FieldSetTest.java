@@ -14,7 +14,7 @@ public class FieldSetTest
     {
         // setup
         FieldSet original = FieldSet.newBuilder().name( "name" ).label( "Label" ).multiple( true ).build();
-        original.addField( Field.newBuilder().name( "myField" ).type( FieldTypes.textline ).build() );
+        original.addField( Field.newBuilder().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise
         FieldSet copy = original.copy();
@@ -33,7 +33,7 @@ public class FieldSetTest
     {
         // setup
         FieldSet fieldSet = FieldSet.newBuilder().name( "myFieldSet" ).label( "Label" ).multiple( true ).build();
-        fieldSet.addField( Field.newBuilder().name( "myField" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise
         DirectAccessibleConfigItem field = fieldSet.getConfigItem( new ConfigItemPath( "myField" ) );
@@ -46,10 +46,10 @@ public class FieldSetTest
     public void setPath()
     {
         FieldSet fieldSet = FieldSet.newBuilder().name( "address" ).label( "Address" ).build();
-        fieldSet.addField( Field.newBuilder().name( "street" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( Field.newBuilder().name( "postalCode" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( Field.newBuilder().name( "postalPlace" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( Field.newBuilder().name( "country" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "street" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Field.newBuilder().name( "postalCode" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Field.newBuilder().name( "postalPlace" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Field.newBuilder().name( "country" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise & verify
         fieldSet.setName( "homeAddress" );

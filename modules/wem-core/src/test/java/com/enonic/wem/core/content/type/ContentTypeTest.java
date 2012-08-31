@@ -27,7 +27,7 @@ public class ContentTypeTest
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
         VisualFieldSet visualFieldSet = newVisualFieldSet().label( "Personalia" ).name( "personalia" ).add(
-            newField().name( "eyeColour" ).type( FieldTypes.textline ).build() ).build();
+            newField().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() ).build();
         contentType.addConfigItem( visualFieldSet );
 
         assertEquals( "eyeColour", contentType.getField( "eyeColour" ).getPath().toString() );
@@ -39,7 +39,7 @@ public class ContentTypeTest
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
         VisualFieldSet visualFieldSet = newVisualFieldSet().label( "Personalia" ).name( "personalia" ).add(
-            newField().name( "eyeColour" ).type( FieldTypes.textline ).build() ).build();
+            newField().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() ).build();
         FieldSet myFieldSet = newFieldSet().name( "myFieldSet" ).add( visualFieldSet ).build();
         contentType.addConfigItem( myFieldSet );
 
@@ -50,13 +50,13 @@ public class ContentTypeTest
     public void address()
     {
         FieldSet fieldSet = newFieldSet().name( "address" ).build();
-        fieldSet.addField( newField().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( newField().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( newField().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( newField().name( "country" ).label( "Country" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( newField().name( "label" ).label( "Label" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( newField().name( "street" ).label( "Street" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( newField().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( newField().name( "country" ).label( "Country" ).type( FieldTypes.TEXT_LINE ).build() );
 
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newField().name( "title" ).type( FieldTypes.textline ).build() );
+        contentType.addConfigItem( newField().name( "title" ).type( FieldTypes.TEXT_LINE ).build() );
         contentType.addConfigItem( fieldSet );
 
         assertEquals( "title", contentType.getField( "title" ).getPath().toString() );
@@ -73,10 +73,10 @@ public class ContentTypeTest
         Module module = newModule().name( "myModule" ).build();
 
         FieldSetTemplate template = newFieldSetTemplate().module( module ).fieldSet(
-            newFieldSet().name( "address" ).add( newField().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() ).add(
-                newField().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() ).add(
-                newField().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.textline ).build() ).add(
-                newField().name( "country" ).label( "Country" ).type( FieldTypes.textline ).build() ).build() ).build();
+            newFieldSet().name( "address" ).add( newField().name( "label" ).label( "Label" ).type( FieldTypes.TEXT_LINE ).build() ).add(
+                newField().name( "street" ).label( "Street" ).type( FieldTypes.TEXT_LINE ).build() ).add(
+                newField().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.TEXT_LINE ).build() ).add(
+                newField().name( "country" ).label( "Country" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
         cty.addConfigItem( newTemplateReference( template ).name( "home" ).build() );
@@ -101,11 +101,11 @@ public class ContentTypeTest
 
         FieldSetTemplate template = newFieldSetTemplate().module( module ).fieldSet( newFieldSet().name( "address" ).add(
             newVisualFieldSet().label( "My Visual Field Set" ).name( "vfs" ).add(
-                newField().name( "myFieldInVFS" ).label( "MyFieldInVFS" ).type( FieldTypes.textline ).build() ).build() ).add(
-            newField().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() ).add(
-            newField().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() ).add(
-            newField().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.textline ).build() ).add(
-            newField().name( "country" ).label( "Country" ).type( FieldTypes.textline ).build() ).build() ).build();
+                newField().name( "myFieldInVFS" ).label( "MyFieldInVFS" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).add(
+            newField().name( "label" ).label( "Label" ).type( FieldTypes.TEXT_LINE ).build() ).add(
+            newField().name( "street" ).label( "Street" ).type( FieldTypes.TEXT_LINE ).build() ).add(
+            newField().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.TEXT_LINE ).build() ).add(
+            newField().name( "country" ).label( "Country" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType contentType = new ContentType();
         contentType.addConfigItem( newTemplateReference( template ).name( "home" ).build() );
@@ -129,8 +129,8 @@ public class ContentTypeTest
         Module module = newModule().name( "myModule" ).build();
 
         FieldSetTemplate fieldSetTemplate = newFieldSetTemplate().module( module ).fieldSet(
-            newFieldSet().name( "address" ).add( newField().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() ).add(
-                newField().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() ).build() ).build();
+            newFieldSet().name( "address" ).add( newField().name( "label" ).label( "Label" ).type( FieldTypes.TEXT_LINE ).build() ).add(
+                newField().name( "street" ).label( "Street" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
         cty.addConfigItem(
@@ -157,9 +157,9 @@ public class ContentTypeTest
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
         FieldSet fieldSet =
-            newFieldSet().name( "top-fieldSet" ).add( newField().name( "myField" ).type( FieldTypes.textline ).build() ).add(
+            newFieldSet().name( "top-fieldSet" ).add( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() ).add(
                 newFieldSet().name( "inner-fieldSet" ).add(
-                    newField().name( "myInnerField" ).type( FieldTypes.textline ).build() ).build() ).build();
+                    newField().name( "myInnerField" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).build();
         contentType.addConfigItem( fieldSet );
 
         assertEquals( "top-fieldSet", contentType.getFieldSet( "top-fieldSet" ).getPath().toString() );
