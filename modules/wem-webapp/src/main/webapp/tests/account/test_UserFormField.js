@@ -12,34 +12,37 @@ function createUserFormField(fieldName, type, label, value, config) {
     return Ext.create('Admin.view.account.UserFormField', initialConfig);
 }
 
-function testTextField(t) {
+function testTextField(t, callback) {
     t.diag('Test plain text field');
     var uff = createUserFormField('firstName', 'text', 'First Name', 'John');
     t.ok(uff.down('textfield'), 'Plain text field is present');
     t.is(uff.getValue(), 'John', 'Value initialization was correct');
     t.is(uff.getFieldLabel(), 'First Name', 'Field label set correct');
     Ext.destroy(uff);
+    callback();
 }
 
-function testDateField(t) {
+function testDateField(t, callback) {
     t.diag('Test date field');
     var uff = createUserFormField('birthday', 'date', 'Birthday', '2012-07-17');
     t.ok(uff.down('datefield'), 'Plain date field is present');
     t.is(new Date(uff.getValue()).toDateString(), new Date('2012-07-17').toDateString(), 'Value initialization was correct');
     t.is(uff.getFieldLabel(), 'Birthday', 'Field label set correct');
     Ext.destroy(uff);
+    callback();
 }
 
-function testFileField(t) {
+function testFileField(t, callback) {
     t.diag('Test file field');
     var uff = createUserFormField('photo', 'file', 'Photo', '/path/to/file');
     t.ok(uff.down('filefield'), 'File field is rpesent');
     t.is(uff.getFieldLabel(), 'Photo', 'Field label set correct');
     Ext.destroy(uff);
+    callback();
 }
 
-function testComboBoxField(t) {
-    var userstoreStore = Ext.create('Test.account.store.UserstoreConfigStore', {});
+function testComboBoxField(t, callback) {
+    var userstoreStore = Ext.create('Test.account.store.UserstoreConfigStore');
     t.loadStoresAndThen(userstoreStore, function () {
         t.diag('Test combobox field');
         var uff = createUserFormField('userstores', 'combo', 'Userstores', '2', {
@@ -54,11 +57,12 @@ function testComboBoxField(t) {
         t.click(Ext.getBody().query('.x-boundlist-item')[0]);
         t.is(uff.getValue(), '1', 'Userstore with key = 1 was selected');
         Ext.destroy(uff);
+        callback();
     });
 }
 
-function testAutocompleteField(t) {
-    var userstoreStore = Ext.create('Test.account.store.UserstoreConfigStore', {});
+function testAutocompleteField(t, callback) {
+    var userstoreStore = Ext.create('Test.account.store.UserstoreConfigStore');
     t.loadStoresAndThen(userstoreStore, function () {
         t.diag('Test autocomplete field');
         var uff = createUserFormField('userstores', 'autocomplete', 'Userstores', undefined, {
@@ -66,28 +70,29 @@ function testAutocompleteField(t) {
             valueField: 'key',
             displayField: 'name'
         });
-        t.ok(uff.down('combobox'), 'Combobox field is present');
+        var combo = uff.down('combobox');
+        t.ok(combo, 'Combobox field is present');
         t.is(uff.getFieldLabel(), 'Userstores', 'Field label set correct');
         t.chain(
             {
                 action: 'type',
-                target: uff.down('combobox'),
+                target: combo,
                 text: 'test'
             },
-            {
-                action: 'type',
-                target: uff.down('combobox'),
-                text: '[ENTER]'
+            function (next) {
+                var picker = combo.getPicker();
+                t.click(picker, next);
             },
-            function () {
-                t.is(uff.getValue(), 2, 'Autocomplete was correct');
-                Ext.destroy(uff.down('combobox'), uff);
+            function (next) {
+                t.is(combo.getValue(), 2, 'Autocomplete was correct');
+                Ext.destroy(combo, uff);
+                callback();
             }
         );
     });
 }
 
-function testBooleanField(t) {
+function testBooleanField(t, callback) {
     t.diag('Test boolean field');
     var uff = createUserFormField('local', 'boolean', 'Local', true);
     t.ok(uff.down('checkbox'), 'Checkbox field is present');
@@ -96,18 +101,20 @@ function testBooleanField(t) {
     t.click(uff.down('checkbox'), function () {
         t.is(uff.getValue(), false, 'Field was unchecked, value is correct');
         Ext.destroy(uff);
+        callback();
     });
 }
 
-function testUserFormFieldValidation(t) {
+function testUserFormFieldValidation(t, callback) {
     t.diag('Test simple validation');
     var uff = createUserFormField('name', 'text', 'Name', undefined, {
         required: true
     });
     t.is(uff.isValid(), false, 'Field is not valid. Validation is correct');
-    t.type(uff.down('textfield'), 'John', function () {
+    t.type(uff.down('textfield').getActionEl(), 'John', function () {
         t.is(uff.isValid(), true, 'Field is valid. Validation is correct');
         Ext.destroy(uff);
+        callback();
     });
     //TODO: remote validation tests should be written too
 }
@@ -119,13 +126,29 @@ StartTest(function (t) {
             'Test.account.store.UserstoreConfigStore'
         ],
         function () {
-            testTextField(t);
-            testDateField(t);
-            testFileField(t);
-            testComboBoxField(t);
-            testAutocompleteField(t);
-            testBooleanField(t);
-            testUserFormFieldValidation(t);
+            t.chain(
+                function (next) {
+                    testTextField(t, next);
+                },
+                function (next) {
+                    testDateField(t, next);
+                },
+                function (next) {
+                    testFileField(t, next);
+                },
+                function (next) {
+                    testComboBoxField(t, next);
+                },
+                function (next) {
+                    testAutocompleteField(t, next);
+                },
+                function (next) {
+                    testBooleanField(t, next);
+                },
+                function (next) {
+                    testUserFormFieldValidation(t, next);
+                }
+            );
         }
     );
 
