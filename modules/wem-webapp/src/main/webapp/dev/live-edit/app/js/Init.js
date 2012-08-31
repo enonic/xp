@@ -9,7 +9,7 @@
         var contents = new AdminLiveEdit.components.Contents();
         var paragraphs = new AdminLiveEdit.components.Paragraphs();
         var highlighter = new AdminLiveEdit.view.Highlighter();
-        var componentSelector = new AdminLiveEdit.view.ComponentSelector();
+        var selection = new AdminLiveEdit.Selection();
         var infoTip = new AdminLiveEdit.view.InfoTip();
         var toolTip = new AdminLiveEdit.view.ToolTip();
         var cursor = new AdminLiveEdit.view.Cursor();

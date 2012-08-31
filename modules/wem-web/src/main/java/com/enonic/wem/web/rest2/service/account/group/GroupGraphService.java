@@ -4,6 +4,7 @@ import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.web.rest2.resource.account.AccountUriHelper;
 import com.enonic.wem.web.rest2.resource.account.graph.GraphResult;
 import com.enonic.wem.web.rest2.service.account.AccountGraphService;
 
@@ -63,7 +64,7 @@ public class GroupGraphService
 
         node.put( GraphResult.DATA_PARAM,
                   createGraphData( String.valueOf( groupEntity.getGroupKey() ), groupEntity.isBuiltIn() ? "role" : "group",
-                                   groupEntity.isBuiltIn(), groupEntity.getName() ) );
+                                   groupEntity.isBuiltIn(), groupEntity.getName(), AccountUriHelper.getAccountImageUri( groupEntity ) ) );
         node.put( GraphResult.ADJACENCIES_PARAM, createGraphAdjacencies( groupEntity.getMembers( false ) ) );
         return node;
     }
@@ -76,7 +77,8 @@ public class GroupGraphService
         node.put( GraphResult.NAME_PARAM, userEntity.getDisplayName() );
 
         node.put( GraphResult.DATA_PARAM,
-                  createGraphData( String.valueOf( userEntity.getKey() ), "user", userEntity.isBuiltIn(), userEntity.getName() ) );
+                  createGraphData( String.valueOf( userEntity.getKey() ), "user", userEntity.isBuiltIn(), userEntity.getName(),
+                                   AccountUriHelper.getAccountImageUri( userEntity ) ) );
         return node;
     }
 

@@ -1,3 +1,6 @@
+/**
+ * TODO: As InfoTip has changed look'n feel this object may be obsolete and we may use ToolTip instead.
+ */
 (function () {
     'use strict';
 
@@ -30,18 +33,18 @@
 
 
     p.create = function () {
-        var html = '<div class="live-edit-info-tip" style="top:-5000px; left:-5000px;">' +
-                   '    <img src="' + this.blankImage + '" style="padding-right: 7px; vertical-align: top"/>' + // TODO: Create a class
-                   '    <span class="live-edit-info-tip-name-text"><!-- --></span>' +
-                   '    <div class="live-edit-info-tip-arrow-border"></div>' +
-                   '    <div class="live-edit-info-tip-arrow"></div>' +
+        var self = this;
+
+        var html = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
+                   '    <span class="live-edit-tool-tip-type-text"></span>: ' +
+                   '    <span class="live-edit-tool-tip-name-text"></span>' +
                    '</div>';
 
-        this.createElement(html);
-        this.appendTo($liveedit('body'));
+        self.createElement(html);
+        self.appendTo($liveedit('body'));
 
         // Make sure component is not deselected when the infotip element is clicked.
-        this.getEl().on('click', function (event) {
+        self.getEl().on('click', function (event) {
             event.stopPropagation();
         });
     };
@@ -50,23 +53,16 @@
     p.show = function (event, $component) {
         var self = this;
 
-        var componentName = util.getComponentName($component);
-        var componentType = util.getComponentType($component);
-        var componentTagName = util.getTagNameForComponent($component);
+        var info = util.getComponentInfo($component);
+        // Set text first so width is calculated correctly.
+        self.setText(info.type, info.name);
 
-        // Set text and icon first so position is calculated correctly.
-        self.setText(componentName);
-        self.setIcon(componentType);
+        var componentBox = util.getBoxModel($component),
+            leftPos = componentBox.left + (componentBox.width / 2 - self.getEl().width() / 2),
+            topPos = componentBox.top - 32;
 
-        var componentBoxModel = util.getBoxModel($component);
-        var leftPos = componentBoxModel.left + (componentBoxModel.width / 2) - (self.getEl().width() / 2);
-        var topPos = componentBoxModel.top - 38;
-
-        if (componentType === 'page' && componentTagName === 'body') {
+        if (info.type === 'page' && info.tagName === 'body') {
             topPos = 0;
-            self.hideArrows(true);
-        } else {
-            self.hideArrows(false);
         }
 
         self.setCssPosition($component);
@@ -77,23 +73,10 @@
     };
 
 
-    p.setText = function (text) {
-        this.getEl().find('.live-edit-info-tip-name-text').text(text);
-    };
-
-
-    p.setIcon = function (componentType) {
-        this.getEl().find('img').attr('src', util.getIconForComponent(componentType));
-    };
-
-
-    p.hideArrows = function (hide) {
-        var $arrowElements = this.getEl().children('div[class*="live-edit-info-tip-arrow"]');
-        if (hide) {
-            $arrowElements.hide();
-        } else {
-            $arrowElements.show();
-        }
+    p.setText = function (componentType, componentName) {
+        var $infoTip = this.getEl();
+        $infoTip.children('.live-edit-tool-tip-type-text').text(componentType);
+        $infoTip.children('.live-edit-tool-tip-name-text').text(componentName);
     };
 
 

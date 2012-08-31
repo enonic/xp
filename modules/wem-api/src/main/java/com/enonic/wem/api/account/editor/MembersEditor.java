@@ -1,5 +1,6 @@
 package com.enonic.wem.api.account.editor;
 
+import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKeySet;
 import com.enonic.wem.api.account.NonUserAccount;
 
@@ -24,16 +25,16 @@ final class MembersEditor
     }
 
     @Override
-    public void edit( final EditableAccount account )
+    public void edit( final Account account )
         throws Exception
     {
         if ( account instanceof NonUserAccount )
         {
-            editNonUser( (EditableNonUserAccount) account );
+            editNonUser( (NonUserAccount) account );
         }
     }
 
-    private void editNonUser( final EditableNonUserAccount account )
+    private void editNonUser( final NonUserAccount account )
         throws Exception
     {
         final AccountKeySet original = account.getMembers();

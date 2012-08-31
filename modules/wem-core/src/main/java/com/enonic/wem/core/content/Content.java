@@ -5,6 +5,7 @@ import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.data.DataSet;
 import com.enonic.wem.core.content.data.EntryPath;
 import com.enonic.wem.core.content.type.ContentType;
+import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 
 public class Content
 {
@@ -71,7 +72,9 @@ public class Content
     }
 
     public void checkBreaksRequiredContract()
+        throws BreaksRequiredContractException
     {
-        this.data.breaksRequiredContract();
+        this.data.checkBreaksRequiredContract();
+        ;
     }
 }

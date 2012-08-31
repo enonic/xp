@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.web.rest.account.UserIdGenerator;
-import com.enonic.wem.web.rest2.service.account.user.UserGraphService;
 
 import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.core.security.user.UserKey;
@@ -30,19 +29,9 @@ import com.enonic.cms.store.dao.UserStoreDao;
 @Component
 public final class UserResource
 {
-    private final PhotoHelper photoHelper;
-
     private UserDao userDao;
 
-    private UserGraphService userGraphService;
-
     private UserStoreDao userStoreDao;
-
-    public UserResource()
-        throws Exception
-    {
-        this.photoHelper = new PhotoHelper();
-    }
 
     @GET
     @Path("{key}")
@@ -60,7 +49,7 @@ public final class UserResource
     }
 
     @GET
-    @Path("{key}/photo")
+    @Path("{key}/image")
     @Produces("image/png")
     public BufferedImage getPhoto( @PathParam("key") final String key, @QueryParam("size") @DefaultValue("100") final int size )
         throws Exception
@@ -71,7 +60,7 @@ public final class UserResource
             return null;
         }
 
-        return this.photoHelper.renderPhoto( entity, size );
+        return PhotoHelper.renderPhoto( entity, size );
     }
 
     @GET
@@ -137,12 +126,6 @@ public final class UserResource
     public void setUserDao( final UserDao userDao )
     {
         this.userDao = userDao;
-    }
-
-    @Autowired
-    public void setUserGraphService( final UserGraphService userGraphService )
-    {
-        this.userGraphService = userGraphService;
     }
 
     @Autowired

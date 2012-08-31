@@ -5,34 +5,38 @@ import java.util.LinkedHashMap;
 
 public class FieldTypes
 {
-    public static final FieldType date = new Date();
+    public static final FieldType DATE = new Date();
 
-    public static final FieldType dropdown = new Dropdown();
+    public static final FieldType DROPDOWN = new Dropdown();
 
-    public static final FieldType phone = new Phone();
+    public static final FieldType HTML_AREA = new HtmlArea();
 
-    public static final FieldType radioButtons = new RadioButtons();
+    public static final FieldType PHONE = new Phone();
 
-    public static final FieldType tags = new Tags();
+    public static final FieldType RADIO_BUTTONS = new RadioButtons();
 
-    public static final FieldType textline = new TextLine();
+    public static final FieldType TAGS = new Tags();
 
-    public static final FieldType textarea = new TextArea();
+    public static final FieldType TEXT_LINE = new TextLine();
 
-    public static final FieldType xml = new Xml();
+    public static final FieldType TEXT_AREA = new TextArea();
+
+    public static final FieldType VIRTUAL = new Virtual();
+
+    public static final FieldType XML = new Xml();
 
     private static LinkedHashMap<String, FieldType> fieldTypeByName = new LinkedHashMap<String, FieldType>();
 
     static
     {
-        fieldTypeByName.put( date.getName(), date );
-        fieldTypeByName.put( dropdown.getName(), dropdown );
-        fieldTypeByName.put( phone.getName(), phone );
-        fieldTypeByName.put( radioButtons.getName(), radioButtons );
-        fieldTypeByName.put( tags.getName(), tags );
-        fieldTypeByName.put( textline.getName(), textline );
-        fieldTypeByName.put( textarea.getName(), textarea );
-        fieldTypeByName.put( xml.getName(), xml );
+        fieldTypeByName.put( DATE.getName(), DATE );
+        fieldTypeByName.put( DROPDOWN.getName(), DROPDOWN );
+        fieldTypeByName.put( PHONE.getName(), PHONE );
+        fieldTypeByName.put( RADIO_BUTTONS.getName(), RADIO_BUTTONS );
+        fieldTypeByName.put( TAGS.getName(), TAGS );
+        fieldTypeByName.put( TEXT_LINE.getName(), TEXT_LINE );
+        fieldTypeByName.put( TEXT_AREA.getName(), TEXT_AREA );
+        fieldTypeByName.put( XML.getName(), XML );
     }
 
     public static FieldType parse( final String fieldTypeName )

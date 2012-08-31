@@ -17,7 +17,6 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeySet;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.UserAccount;
-import com.enonic.wem.api.account.builder.AccountBuilders;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.core.client.StandardClient;
 import com.enonic.wem.core.command.CommandInvokerImpl;
@@ -92,8 +91,10 @@ public class CreateAccountHandlerTest
         Mockito.when( securityService.getImpersonatedPortalUser() ).thenReturn( loggedInUser );
 
         // exercise
-        final UserAccount user = AccountBuilders.user( "enonic:user1" ).email( "user1@enonic.com" ).displayName( "The User #1" ).photo(
-            "photodata".getBytes() ).build();
+        final UserAccount user = UserAccount.create( "enonic:user1" );
+        user.setEmail( "user1@enonic.com" );
+        user.setDisplayName( "The User #1" );
+        user.setImage( "photodata".getBytes() );
 
         final AccountKey createdUserKey = client.execute( Commands.account().create().account( user ) );
 
@@ -114,7 +115,8 @@ public class CreateAccountHandlerTest
         createUserStore( "enonic" );
 
         // exercise
-        final GroupAccount group = AccountBuilders.group( "enonic:group1" ).displayName( "The User #1" ).build();
+        final GroupAccount group = GroupAccount.create( "enonic:group1" );
+        group.setDisplayName( "The User #1" );
 
         final AccountKey createdGroupKey = client.execute( Commands.account().create().account( group ) );
 
@@ -137,7 +139,9 @@ public class CreateAccountHandlerTest
 
         // exercise
         final AccountKeySet members = AccountKeySet.from( "user:enonic:user1", "group:enonic:group2" );
-        final GroupAccount group = AccountBuilders.group( "enonic:group1" ).displayName( "The User #1" ).members( members ).build();
+        final GroupAccount group = GroupAccount.create( "enonic:group1" );
+        group.setDisplayName( "The User #1" );
+        group.setMembers( members );
 
         final AccountKey createdGroupKey = client.execute( Commands.account().create().account( group ) );
 

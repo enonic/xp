@@ -2,6 +2,7 @@ package com.enonic.wem.core.content.type.datatype;
 
 
 import com.enonic.wem.core.content.data.Data;
+import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 
 public class Xml
     extends AbstractDataType
@@ -9,7 +10,7 @@ public class Xml
 {
     public Xml()
     {
-        super( BasalValueType.STRING );
+        super( BasalValueType.STRING, FieldTypes.XML );
     }
 
     public boolean validData( final Data data )

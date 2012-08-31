@@ -34,7 +34,7 @@ public abstract class AccountGraphService
         return strBuffer.toString();
     }
 
-    protected ObjectNode createGraphData( String key, String type, boolean builtIn, String name )
+    protected ObjectNode createGraphData( String key, String type, boolean builtIn, String name, String imageUri )
     {
 
         ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
@@ -42,6 +42,7 @@ public abstract class AccountGraphService
         objectNode.put( GraphResult.TYPE_PARAM, type );
         objectNode.put( GraphResult.BUILTIN_PARAM, builtIn );
         objectNode.put( GraphResult.NAME_PARAM, name );
+        objectNode.put( GraphResult.IMAGE_URI_PARAM, imageUri );
         return objectNode;
     }
 

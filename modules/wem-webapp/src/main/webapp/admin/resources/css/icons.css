@@ -198,6 +198,18 @@
     background: transparent url("../images/icons/24x24/lightbulb_on.png") 0 0 no-repeat;
 }
 
+.icon-split-hor-24 {
+    background: transparent url("../images/icons/24x24/window_split_hor.png") 0 0 no-repeat;
+}
+
+.icon-monitor-24 {
+    background: transparent url("../images/icons/24x24/monitor.png") 0 0 no-repeat;
+}
+
+.icon-keyboard-key-24 {
+    background: transparent url("../images/icons/24x24/keyboard_key.png") 0 0 no-repeat;
+}
+
 /*---- 32 px icons -----*/
 
 .icon-content-32 {

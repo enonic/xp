@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.core.search.UserInfoHelper;
 import com.enonic.wem.core.search.account.AccountSearchHit;
 import com.enonic.wem.core.search.account.AccountSearchResults;
-import com.enonic.wem.web.rest.account.CsvBuilder;
 
 import com.enonic.cms.api.client.model.user.Address;
 import com.enonic.cms.api.client.model.user.UserInfo;

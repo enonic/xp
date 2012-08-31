@@ -4,9 +4,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.wem.api.account.UserAccount;
+
 public class CompositeEditorTest
 {
-    private EditableUserAccount account;
+    private UserAccount account;
 
     private AccountEditor editor1;
 
@@ -16,7 +18,7 @@ public class CompositeEditorTest
     public void setUp()
         throws Exception
     {
-        this.account = Mockito.mock( EditableUserAccount.class );
+        this.account = UserAccount.create( "other:dummy" );
         this.editor1 = Mockito.mock( AccountEditor.class );
         this.editor2 = Mockito.mock( AccountEditor.class );
     }

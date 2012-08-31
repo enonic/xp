@@ -96,7 +96,7 @@ public class FindAccountsHandlerTest
         final AccountKeySet accounts = AccountKeySet.from( "group:enonic:group1", "role:enonic:contributors", "user:enonic:user1" );
 
         AccountResult accountResult =
-            client.execute( Commands.account().find().selector( AccountSelectors.keys( accounts ) ).includeMembers().includePhoto() );
+            client.execute( Commands.account().find().selector( AccountSelectors.keys( accounts ) ).includeMembers().includeImage() );
 
         // verify
         assertNotNull( accountResult );
@@ -127,7 +127,7 @@ public class FindAccountsHandlerTest
         // exercise
         final AccountQuery query = AccountSelectors.query( "" ).offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.USER );
 
-        AccountResult accountResult = client.execute( Commands.account().find().selector( query ).includePhoto() );
+        AccountResult accountResult = client.execute( Commands.account().find().selector( query ).includeImage() );
 
         // verify
         assertNotNull( accountResult );

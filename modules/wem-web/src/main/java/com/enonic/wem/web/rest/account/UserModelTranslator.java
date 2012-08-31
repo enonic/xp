@@ -61,8 +61,6 @@ public final class UserModelTranslator
         //TODO: not implemented
         model.setCreated("13-09-1998");
         model.setGroups(buildGroups(entity));
-        UserGraphDataBuilder graphBuilder = new UserGraphDataBuilder();
-        model.setGraph(graphBuilder.buildGraph(entity));
         if (userstore != null) {
             model.setUserStore(userstore.getName());
         } else {

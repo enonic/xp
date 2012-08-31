@@ -8,16 +8,18 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeySet;
 import com.enonic.wem.api.account.AccountType;
+import com.enonic.wem.api.account.GroupAccount;
+import com.enonic.wem.api.account.NonUserAccount;
+import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
-import com.enonic.wem.api.account.editor.EditableRoleAccount;
 import com.enonic.wem.api.account.result.AccountFacet;
+import com.enonic.wem.api.account.result.AccountFacetEntry;
 import com.enonic.wem.api.account.result.AccountFacets;
 import com.enonic.wem.api.account.result.AccountResult;
 import com.enonic.wem.api.account.selector.AccountKeySelector;
@@ -71,7 +73,7 @@ public final class FindAccountsHandler
         throws Exception
     {
         final boolean includeMembers = command.isIncludeMembers();
-        final boolean includePhoto = command.isIncludePhoto();
+        final boolean includePhoto = command.isIncludeImage();
         final AccountSelector selector = command.getSelector();
 
         final AccountResult result = findBySelector( selector, includeMembers, includePhoto );
@@ -100,10 +102,7 @@ public final class FindAccountsHandler
     {
         final AccountKeySet keys = accountKeySelector.getKeys();
         final List<Account> accounts = fetchAccounts( keys, includeMembers, includePhoto );
-        final AccountResultImpl accountResult = new AccountResultImpl();
-        accountResult.setAccounts( accounts );
-        accountResult.setTotalSize( accounts.size() );
-        return accountResult;
+        return new AccountResult( accounts.size(), accounts );
     }
 
     private AccountResult findByQuery( final AccountQuery accountQuery, final boolean includeMembers, final boolean includePhoto )
@@ -112,7 +111,6 @@ public final class FindAccountsHandler
         searchQuery.setFrom( accountQuery.getOffset() );
         searchQuery.setCount( accountQuery.getLimit() );
         searchQuery.setQuery( accountQuery.getQuery() );
-        searchQuery.setOrganizations( setToArray( accountQuery.getOrganizations() ) );
         searchQuery.setUserStores( setToArray( accountQuery.getUserStores() ) );
         final Set<AccountType> accountTypes = accountQuery.getTypes();
         searchQuery.setUsers( accountTypes.contains( AccountType.USER ) );
@@ -126,9 +124,7 @@ public final class FindAccountsHandler
         final List<Account> accounts = getSearchResults( searchResults, includeMembers, includePhoto );
         final AccountFacets facets = getSearchFacets( searchResults );
 
-        final AccountResultImpl accountResult = new AccountResultImpl();
-        accountResult.setAccounts( accounts );
-        accountResult.setTotalSize( searchResults.getTotal() );
+        final AccountResult accountResult = new AccountResult( searchResults.getTotal(), accounts );
         accountResult.setFacets( facets );
         return accountResult;
     }
@@ -172,9 +168,7 @@ public final class FindAccountsHandler
 
     private UserAccount buildUserAccount( final UserEntity user, final boolean includePhoto )
     {
-        final EditableUserAccountImpl userAccount = new EditableUserAccountImpl();
-        final AccountKey key = AccountKey.user( qualifiedName( user.getQualifiedName() ) );
-        userAccount.setKey( key );
+        final UserAccount userAccount = UserAccount.create( qualifiedName( user.getQualifiedName() ) );
         userAccount.setDisplayName( user.getDisplayName() );
         userAccount.setEmail( user.getEmail() );
         userAccount.setLastLoginTime( DateTime.now() ); // TODO fix when login-time is stored in backend
@@ -184,43 +178,32 @@ public final class FindAccountsHandler
         userAccount.setEditable( true ); // TODO evaluate if account is editable in the current context
         if ( includePhoto )
         {
-            userAccount.setPhoto( user.getPhoto() );
+            userAccount.setImage( user.getPhoto() );
         }
         return userAccount;
     }
 
-    private EditableGroupAccountImpl buildGroupAccount( final GroupEntity groupEntity, final boolean includeMembers )
+    private GroupAccount buildGroupAccount( final GroupEntity groupEntity, final boolean includeMembers )
     {
-        final EditableGroupAccountImpl group = new EditableGroupAccountImpl();
+        final GroupAccount group = GroupAccount.create( qualifiedName( groupEntity.getQualifiedName() ) );
         buildNonUserAccount( group, groupEntity, includeMembers );
         return group;
     }
 
-    private EditableRoleAccount buildRoleAccount( final GroupEntity groupEntity, final boolean includeMembers )
+    private RoleAccount buildRoleAccount( final GroupEntity groupEntity, final boolean includeMembers )
     {
-        final EditableRoleAccountImpl role = new EditableRoleAccountImpl();
+        final RoleAccount role = RoleAccount.create( qualifiedName( groupEntity.getQualifiedName() ) );
         buildNonUserAccount( role, groupEntity, includeMembers );
         return role;
     }
 
-    private void buildNonUserAccount( final EditableNonUserAccountImpl nonUser, final GroupEntity groupEntity,
-                                      final boolean includeMembers )
+    private void buildNonUserAccount( final NonUserAccount nonUser, final GroupEntity groupEntity, final boolean includeMembers )
     {
         nonUser.setDisplayName( groupEntity.getDescription() );
         nonUser.setCreatedTime( DateTime.now() ); // TODO fix when created-time is stored in backend
         nonUser.setModifiedTime( DateTime.now() ); // TODO fix when modified-time is stored in backend
         nonUser.setDeleted( groupEntity.isDeleted() );
         nonUser.setEditable( true ); // TODO evaluate if account is editable in the current context
-        AccountKey key;
-        if ( groupEntity.isBuiltIn() )
-        {
-            key = AccountKey.role( qualifiedName( groupEntity.getQualifiedName() ) );
-        }
-        else
-        {
-            key = AccountKey.group( qualifiedName( groupEntity.getQualifiedName() ) );
-        }
-        nonUser.setKey( key );
 
         if ( includeMembers )
         {
@@ -330,7 +313,7 @@ public final class FindAccountsHandler
 
     private AccountFacets getSearchFacets( final AccountSearchResults searchResults )
     {
-        final AccountFacetsImpl accountFacets = new AccountFacetsImpl();
+        final AccountFacets accountFacets = new AccountFacets();
         final Facets searchFacets = searchResults.getFacets();
         for ( Facet searchFacet : searchFacets )
         {
@@ -342,12 +325,13 @@ public final class FindAccountsHandler
 
     private AccountFacet getSearchFacets( final Facet searchFacet )
     {
-        final List<AccountFacet.Entry> entries = Lists.newArrayList();
+        final AccountFacet facet = new AccountFacet( searchFacet.getName() );
         for ( FacetEntry facetEntry : searchFacet )
         {
-            entries.add( new EntryImpl( facetEntry.getTerm(), facetEntry.getCount() ) );
+            facet.addEntry( new AccountFacetEntry( facetEntry.getTerm(), facetEntry.getCount() ) );
         }
-        return new AccountFacetImpl( searchFacet.getName(), entries );
+
+        return facet;
     }
 
     private String[] setToArray( final Set<String> values )

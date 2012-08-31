@@ -5,12 +5,15 @@ import org.junit.Test;
 
 import com.enonic.wem.core.content.data.DataSet;
 import com.enonic.wem.core.content.type.ContentType;
+import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
 import com.enonic.wem.core.content.type.configitem.FieldTemplate;
 import com.enonic.wem.core.content.type.configitem.MockTemplateFetcher;
+import com.enonic.wem.core.content.type.configitem.TemplateReference;
+import com.enonic.wem.core.content.type.configitem.TemplateType;
 import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.DropdownConfig;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
@@ -35,7 +38,7 @@ public class ContentTest
     {
         ContentType contentType = new ContentType();
         DropdownConfig dropdownConfig = DropdownConfig.newBuilder().addOption( "Option 1", "o1" ).addOption( "Option 2", "o2" ).build();
-        Field myDropdown = Field.newBuilder().name( "myDropdown" ).type( FieldTypes.dropdown ).fieldTypeConfig( dropdownConfig ).build();
+        Field myDropdown = Field.newBuilder().name( "myDropdown" ).type( FieldTypes.DROPDOWN ).fieldTypeConfig( dropdownConfig ).build();
         contentType.addConfigItem( myDropdown );
 
         Content content = new Content();
@@ -52,7 +55,7 @@ public class ContentTest
         RadioButtonsConfig myRadioButtonsConfig =
             RadioButtonsConfig.newBuilder().addOption( "myFirstChoice", "c1" ).addOption( "mySecondChoice", "c2" ).build();
         contentType.addConfigItem(
-            Field.newBuilder().name( "myRadioButtons" ).type( FieldTypes.radioButtons ).fieldTypeConfig( myRadioButtonsConfig ).build() );
+            Field.newBuilder().name( "myRadioButtons" ).type( FieldTypes.RADIO_BUTTONS ).fieldTypeConfig( myRadioButtonsConfig ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -65,8 +68,8 @@ public class ContentTest
     public void multiple_textlines()
     {
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( Field.newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );
-        contentType.addConfigItem( Field.newBuilder().name( "myMultipleTextLine" ).type( FieldTypes.textline ).multiple( true ).build() );
+        contentType.addConfigItem( Field.newBuilder().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.addConfigItem( Field.newBuilder().name( "myMultipleTextLine" ).type( FieldTypes.TEXT_LINE ).multiple( true ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -83,7 +86,7 @@ public class ContentTest
     public void tags()
     {
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( Field.newBuilder().name( "myTags" ).type( FieldTypes.tags ).build() );
+        contentType.addConfigItem( Field.newBuilder().name( "myTags" ).type( FieldTypes.TAGS ).build() );
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
         Content content = new Content();
@@ -94,10 +97,33 @@ public class ContentTest
     }
 
     @Test
+    public void tags_using_fieldTemplate()
+    {
+        Module module = newModule().name( "system" ).build();
+        Field field = newField().name( "tags" ).label( "Tags" ).type( FieldTypes.TEXT_LINE ).multiple( true ).build();
+        FieldTemplate fieldTemplate = newFieldTemplate().module( module ).field( field ).build();
+        MockTemplateFetcher templateFetcher = new MockTemplateFetcher();
+        templateFetcher.add( fieldTemplate );
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem(
+            TemplateReference.newTemplateReference().name( "myTags" ).template( "system:tags" ).type( TemplateType.FIELD ).build() );
+        contentType.templateReferencesToConfigItems( templateFetcher );
+
+        Content content = new Content();
+        content.setType( contentType );
+        content.setData( "myTags[0]", "Java" );
+        content.setData( "myTags[1]", "XML" );
+        content.setData( "myTags[2]", "JSON" );
+
+        assertEquals( "Java", content.getData( "myTags" ).getValue() );
+    }
+
+    @Test
     public void phone()
     {
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( Field.newBuilder().name( "myPhone" ).type( FieldTypes.phone ).required( true ).build() );
+        contentType.addConfigItem( Field.newBuilder().name( "myPhone" ).type( FieldTypes.PHONE ).required( true ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -110,12 +136,12 @@ public class ContentTest
     public void groupedFieldSet()
     {
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
+        contentType.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
 
         FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).build();
         contentType.addConfigItem( fieldSet );
-        fieldSet.addField( newField().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( newField().name( "hairColour" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( newField().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( newField().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -132,14 +158,14 @@ public class ContentTest
     public void multiple_subtype()
     {
         ContentType contentType = new ContentType();
-        Field nameField = Field.newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build();
+        Field nameField = Field.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).required( true ).build();
         contentType.addConfigItem( nameField );
 
         FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).multiple( true ).build();
         contentType.addConfigItem( fieldSet );
-        fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -213,11 +239,11 @@ public class ContentTest
     public void structured_getEntries()
     {
         FieldSet child = FieldSet.newBuilder().name( "child" ).multiple( true ).build();
-        child.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
-        child.addField( Field.newBuilder().name( "age" ).type( FieldTypes.textline ).build() );
+        child.addField( Field.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+        child.addField( Field.newBuilder().name( "age" ).type( FieldTypes.TEXT_LINE ).build() );
         FieldSet features = FieldSet.newBuilder().name( "features" ).multiple( false ).build();
-        features.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        features.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
+        features.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        features.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
         child.addFieldSet( features );
         ContentType contentType = new ContentType();
         contentType.addConfigItem( child );
@@ -279,13 +305,13 @@ public class ContentTest
 
         // exercise
         ConfigItems configItems = new ConfigItems();
-        configItems.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
+        configItems.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
         configItems.addConfigItem( FieldSet.newBuilder().name( "personalia" ).multiple( false ).build() );
-        configItems.getFieldSet( "personalia" ).addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        configItems.getFieldSet( "personalia" ).addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
+        configItems.getFieldSet( "personalia" ).addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        configItems.getFieldSet( "personalia" ).addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
         configItems.addConfigItem( FieldSet.newBuilder().name( "crimes" ).multiple( true ).build() );
-        configItems.getFieldSet( "crimes" ).addField( Field.newBuilder().name( "description" ).type( FieldTypes.textline ).build() );
-        configItems.getFieldSet( "crimes" ).addField( Field.newBuilder().name( "year" ).type( FieldTypes.textline ).build() );
+        configItems.getFieldSet( "crimes" ).addField( Field.newBuilder().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
+        configItems.getFieldSet( "crimes" ).addField( Field.newBuilder().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
         ContentType type = new ContentType();
         type.setConfigItems( configItems );
         content.setType( type );
@@ -304,20 +330,20 @@ public class ContentTest
         Module module = newModule().name( "myModule" ).build();
 
         FieldTemplate postalCodeTemplate =
-            newFieldTemplate().module( module ).field( Field.newField().name( "postalCode" ).type( FieldTypes.textline ).build() ).build();
+            newFieldTemplate().module( module ).field( Field.newField().name( "postalCode" ).type( FieldTypes.TEXT_LINE ).build() ).build();
         FieldTemplate countryTemplate = newFieldTemplate().module( module ).field(
-            Field.newField().name( "country" ).type( FieldTypes.dropdown ).fieldTypeConfig(
+            Field.newField().name( "country" ).type( FieldTypes.DROPDOWN ).fieldTypeConfig(
                 DropdownConfig.newBuilder().addOption( "Norway", "NO" ).build() ).build() ).build();
 
         FieldSetTemplate addressTemplate = newFieldSetTemplate().module( module ).fieldSet(
-            newFieldSet().name( "address" ).add( newField().name( "street" ).type( FieldTypes.textline ).build() ).add(
+            newFieldSet().name( "address" ).add( newField().name( "street" ).type( FieldTypes.TEXT_LINE ).build() ).add(
                 newTemplateReference( postalCodeTemplate ).name( "postalCode" ).build() ).add(
-                newField().name( "postalPlace" ).type( FieldTypes.textline ).build() ).add(
+                newField().name( "postalPlace" ).type( FieldTypes.TEXT_LINE ).build() ).add(
                 newTemplateReference( countryTemplate ).name( "country" ).build() ).build() ).build();
 
         ContentType contentType = new ContentType();
         contentType.setName( "person" );
-        contentType.addConfigItem( newField().type( FieldTypes.textline ).name( "name" ).build() );
+        contentType.addConfigItem( newField().type( FieldTypes.TEXT_LINE ).name( "name" ).build() );
         contentType.addConfigItem( newTemplateReference( addressTemplate ).name( "address" ).build() );
 
         MockTemplateFetcher templateReferenceFetcher = new MockTemplateFetcher();
@@ -347,11 +373,11 @@ public class ContentTest
         Module module = newModule().name( "myModule" ).build();
 
         FieldSetTemplate addressTemplate = newFieldSetTemplate().module( module ).fieldSet(
-            newFieldSet().name( "address" ).multiple( true ).add( newField().type( FieldTypes.textline ).name( "label" ).build() ).add(
-                newField().type( FieldTypes.textline ).name( "street" ).build() ).add(
-                newField().type( FieldTypes.textline ).name( "postalCode" ).build() ).add(
-                newField().type( FieldTypes.textline ).name( "postalPlace" ).build() ).add(
-                newField().type( FieldTypes.textline ).name( "country" ).build() ).build() ).build();
+            newFieldSet().name( "address" ).multiple( true ).add( newField().type( FieldTypes.TEXT_LINE ).name( "label" ).build() ).add(
+                newField().type( FieldTypes.TEXT_LINE ).name( "street" ).build() ).add(
+                newField().type( FieldTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(
+                newField().type( FieldTypes.TEXT_LINE ).name( "postalPlace" ).build() ).add(
+                newField().type( FieldTypes.TEXT_LINE ).name( "country" ).build() ).build() ).build();
 
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
@@ -391,7 +417,7 @@ public class ContentTest
     public void trying_to_set_data_to_a_fieldSetTemplate_when_template_is_missing()
     {
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newField().type( FieldTypes.textline ).name( "name" ).build() );
+        contentType.addConfigItem( newField().type( FieldTypes.TEXT_LINE ).name( "name" ).build() );
         contentType.addConfigItem( newTemplateReference().name( "address" ).typeField().template( "myModule:myAddressTemplate" ).build() );
 
         contentType.templateReferencesToConfigItems( new MockTemplateFetcher() );
@@ -411,52 +437,18 @@ public class ContentTest
     }
 
     @Test
-    public void required()
-    {
-        // setup
-        ContentType contentType = new ContentType();
-        contentType.addConfigItem( newField().name( "name" ).type( FieldTypes.textline ).build() );
-
-        FieldSet personaliaFieldSet = newFieldSet().name( "personalia" ).multiple( false ).required( true ).build();
-        personaliaFieldSet.addField( newField().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        personaliaFieldSet.addField( newField().name( "hairColour" ).type( FieldTypes.textline ).build() );
-        contentType.addConfigItem( personaliaFieldSet );
-
-        FieldSet crimesFieldSet = newFieldSet().name( "crimes" ).multiple( true ).build();
-        contentType.addConfigItem( crimesFieldSet );
-        crimesFieldSet.addField( newField().name( "description" ).type( FieldTypes.textline ).build() );
-        crimesFieldSet.addField( newField().name( "year" ).type( FieldTypes.textline ).build() );
-
-        Content content = new Content();
-        content.setType( contentType );
-
-        content.setData( "name", "Thomas" );
-        content.setData( "personalia.eyeColour", "Blue" );
-        content.setData( "personalia.hairColour", "Blonde" );
-        content.setData( "crimes[0].description", "Stole tomatoes from neighbour" );
-        content.setData( "crimes[0].year", "1989" );
-        content.setData( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
-        content.setData( "crimes[1].year", "1990" );
-
-        content.checkBreaksRequiredContract();
-
-        // exercise
-        // TODO
-    }
-
-    @Test
     public void visualFieldSet()
     {
         // setup
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
-        contentType.addConfigItem( newField().name( "name" ).type( FieldTypes.textline ).build() );
+        contentType.addConfigItem( newField().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
         VisualFieldSet personalia = newVisualFieldSet().label( "Personalia" ).name( "personalia" ).add(
-            newField().name( "eyeColour" ).type( FieldTypes.textline ).build() ).add(
-            newField().name( "hairColour" ).type( FieldTypes.textline ).build() ).build();
+            newField().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() ).add(
+            newField().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() ).build();
         VisualFieldSet tatoos = newVisualFieldSet().label( "Characteristics" ).name( "characteristics" ).add(
-            newField().name( "tattoo" ).type( FieldTypes.textline ).multiple( true ).build() ).add(
-            newField().name( "scar" ).type( FieldTypes.textline ).multiple( true ).build() ).build();
+            newField().name( "tattoo" ).type( FieldTypes.TEXT_LINE ).multiple( true ).build() ).add(
+            newField().name( "scar" ).type( FieldTypes.TEXT_LINE ).multiple( true ).build() ).build();
         personalia.addConfigItem( tatoos );
         contentType.addConfigItem( personalia );
 
@@ -478,5 +470,204 @@ public class ContentTest
         assertEquals( "Skull on left arm", content.getValueAsString( "tattoo[0]" ) );
         assertEquals( "Mothers name on right arm", content.getValueAsString( "tattoo[1]" ) );
         assertEquals( "Chin", content.getValueAsString( "scar[0]" ) );
+    }
+
+    @Test()
+    public void given_required_field_with_data_when_checkBreaksRequiredContract_then_exception_is_not_thrown()
+    {
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+        content.setData( "myField", "value" );
+
+        // exercise
+        try
+        {
+            content.checkBreaksRequiredContract();
+        }
+        catch ( Exception e )
+        {
+            fail( "No exception expected" );
+        }
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_required_field_with_no_data_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+
+        // exercise
+        content.checkBreaksRequiredContract();
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_required_field_with_no_data_within_visualFieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
+            newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+
+        // exercise
+        content.checkBreaksRequiredContract();
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_required_field_with_no_data_within_visualFieldSet_within_visualFieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newVisualFieldSet().label( "My outer visual field set" ).name( "myOuterVisualFieldSet" ).add(
+            newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
+                newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+
+        // exercise
+        content.checkBreaksRequiredContract();
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_required_field_with_no_data_within_fieldSet_within_visualFieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
+            newFieldSet().name( "myFieldSet" ).required( true ).add(
+                newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+        content.setData( "myFieldSet.myField", "" );
+
+        // exercise
+        content.checkBreaksRequiredContract();
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_required_field_with_no_data_within_fieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
+            newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+        content.setData( "myFieldSet.myField", "" );
+
+        // exercise
+        content.checkBreaksRequiredContract();
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_required_field_with_no_data_within_visualFieldSet_within_a_fieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
+            newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSEt" ).add(
+                newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+        content.setData( "myFieldSet.myField", "" );
+
+        // exercise
+        content.checkBreaksRequiredContract();
+    }
+
+    @Test()
+    public void given_required_fieldSet_with_data_when_checkBreaksRequiredContract_then_exception_is_not_thrown()
+    {
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
+            newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+        content.setData( "myFieldSet.myField", "value" );
+
+        // exercise
+        try
+        {
+            content.checkBreaksRequiredContract();
+        }
+        catch ( Exception e )
+        {
+            fail( "No exception expected" );
+        }
+
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_required_fieldSet_with_no_data_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
+            newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+
+        // exercise
+        content.checkBreaksRequiredContract();
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_required_fieldSet_with_no_data_within_visualFieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
+            newFieldSet().name( "myFieldSet" ).required( true ).add(
+                newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).build() );
+        Content content = new Content();
+        content.setType( contentType );
+
+        // exercise
+        content.checkBreaksRequiredContract();
+    }
+
+    @Test
+    public void given_required_fieldSet_with_no_data_and_other_fields_with_data_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+        // setup
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( newField().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+
+        FieldSet personaliaFieldSet = newFieldSet().name( "personalia" ).multiple( false ).required( true ).build();
+        personaliaFieldSet.addField( newField().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        personaliaFieldSet.addField( newField().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.addConfigItem( personaliaFieldSet );
+
+        FieldSet crimesFieldSet = newFieldSet().name( "crimes" ).multiple( true ).build();
+        contentType.addConfigItem( crimesFieldSet );
+        crimesFieldSet.addField( newField().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
+        crimesFieldSet.addField( newField().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
+
+        Content content = new Content();
+        content.setType( contentType );
+
+        content.setData( "name", "Thomas" );
+        content.setData( "crimes[0].description", "Stole tomatoes from neighbour" );
+        content.setData( "crimes[0].year", "1989" );
+        content.setData( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
+        content.setData( "crimes[1].year", "1990" );
+
+        // exercise
+        try
+        {
+            content.checkBreaksRequiredContract();
+            fail( "Expected exception" );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( e instanceof BreaksRequiredContractException );
+            assertEquals( "Required contract is broken, data missing for FieldSet: personalia", e.getMessage() );
+        }
     }
 }

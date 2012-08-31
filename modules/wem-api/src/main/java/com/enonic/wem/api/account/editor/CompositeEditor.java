@@ -1,5 +1,7 @@
 package com.enonic.wem.api.account.editor;
 
+import com.enonic.wem.api.account.Account;
+
 final class CompositeEditor
     implements AccountEditor
 {
@@ -11,7 +13,7 @@ final class CompositeEditor
     }
 
     @Override
-    public void edit( final EditableAccount account )
+    public void edit( final Account account )
         throws Exception
     {
         for ( final AccountEditor editor : this.editors )

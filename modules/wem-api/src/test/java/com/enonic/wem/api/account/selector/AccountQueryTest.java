@@ -57,24 +57,6 @@ public class AccountQueryTest
     }
 
     @Test
-    public void testOrganizations()
-    {
-        final AccountQuery query = new AccountQuery( "text" );
-        assertNotNull( query.getOrganizations() );
-        assertEquals( 0, query.getOrganizations().size() );
-
-        assertSame( query, query.organizations() );
-        assertNotNull( query.getOrganizations() );
-        assertEquals( 0, query.getOrganizations().size() );
-
-        assertSame( query, query.organizations( "other", "corporation" ) );
-        assertNotNull( query.getOrganizations() );
-        assertEquals( 2, query.getOrganizations().size() );
-        assertTrue( query.getOrganizations().contains( "other" ) );
-        assertTrue( query.getOrganizations().contains( "corporation" ) );
-    }
-
-    @Test
     public void testUserStores()
     {
         final AccountQuery query = new AccountQuery( "text" );

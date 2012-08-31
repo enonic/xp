@@ -72,7 +72,7 @@ public class AccountEditorsTest
     public void testSetAccount()
         throws Exception
     {
-        final UserAccount account = Mockito.mock( UserAccount.class );
+        final UserAccount account = UserAccount.create( "other:dummy" );
         final AccountEditor editor = AccountEditors.setAccount( account );
 
         assertNotNull( editor );

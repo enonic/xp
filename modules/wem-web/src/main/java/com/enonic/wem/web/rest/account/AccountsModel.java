@@ -9,12 +9,9 @@ public class AccountsModel
 
     private final List<AccountModel> accounts;
 
-    private final List<SearchFacetModel> facets;
-
     public AccountsModel()
     {
         this.accounts = new ArrayList<AccountModel>();
-        this.facets = new ArrayList<SearchFacetModel>();
     }
 
     public int getTotal()
@@ -36,15 +33,4 @@ public class AccountsModel
     {
         this.accounts.add( account );
     }
-
-    public List<SearchFacetModel> getFacets()
-    {
-        return facets;
-    }
-
-    public void addFacet( SearchFacetModel facet )
-    {
-        this.facets.add( facet );
-    }
-
 }

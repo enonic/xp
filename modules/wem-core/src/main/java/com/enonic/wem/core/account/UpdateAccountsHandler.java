@@ -12,7 +12,9 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.NonUserAccount;
+import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.editor.AccountEditor;
 import com.enonic.wem.api.account.selector.AccountKeySelector;
@@ -70,14 +72,14 @@ public final class UpdateAccountsHandler
         int accountsUpdated = 0;
         for ( AccountKey accountKey : accountKeys )
         {
-            final EditableAccountImpl account = retrieveAccount( accountKey );
+            final Account account = retrieveAccount( accountKey );
             if ( account != null )
             {
-                account.resetModified();
+                account.clearDirtyFlag();
 
                 editor.edit( account );
 
-                if ( account.isModified() )
+                if ( account.isDirty() )
                 {
                     updateAccount( account );
                     accountsUpdated++;
@@ -101,12 +103,12 @@ public final class UpdateAccountsHandler
         }
     }
 
-    private EditableAccountImpl retrieveAccount( final AccountKey account )
+    private Account retrieveAccount( final AccountKey account )
     {
         return account.isUser() ? retrieveUser( account ) : retrieveGroup( account );
     }
 
-    private EditableUserAccountImpl retrieveUser( final AccountKey userAccount )
+    private UserAccount retrieveUser( final AccountKey userAccount )
     {
         final UserEntity userEntity = findUserEntity( userAccount );
         if ( userEntity == null )
@@ -117,7 +119,7 @@ public final class UpdateAccountsHandler
         return buildUserAccount( userEntity );
     }
 
-    private EditableNonUserAccountImpl retrieveGroup( final AccountKey groupAccount )
+    private NonUserAccount retrieveGroup( final AccountKey groupAccount )
     {
         final GroupEntity groupEntity = findGroupEntity( groupAccount );
         if ( groupEntity == null )
@@ -135,53 +137,41 @@ public final class UpdateAccountsHandler
         }
     }
 
-    private EditableUserAccountImpl buildUserAccount( final UserEntity userEntity )
+    private UserAccount buildUserAccount( final UserEntity userEntity )
     {
-        final EditableUserAccountImpl user = new EditableUserAccountImpl();
+        final UserAccount user = UserAccount.create( qualifiedName( userEntity.getQualifiedName() ) );
         user.setDisplayName( userEntity.getDisplayName() );
         user.setEmail( userEntity.getEmail() );
         user.setLastLoginTime( DateTime.now() ); // TODO fix when login-time is stored in backend
         user.setCreatedTime( userEntity.getTimestamp() ); // TODO fix when created-time is stored in backend
-        user.setPhoto( userEntity.getPhoto() );
+        user.setImage( userEntity.getPhoto() );
         user.setModifiedTime( userEntity.getTimestamp() );
         user.setDeleted( userEntity.isDeleted() );
         user.setEditable( true ); // TODO evaluate if account is editable in the current context
-        final AccountKey key = AccountKey.user( qualifiedName( userEntity.getQualifiedName() ) );
-        user.setKey( key );
         return user;
     }
 
-    private EditableGroupAccountImpl buildGroupAccount( final GroupEntity groupEntity )
+    private GroupAccount buildGroupAccount( final GroupEntity groupEntity )
     {
-        final EditableGroupAccountImpl group = new EditableGroupAccountImpl();
+        final GroupAccount group = GroupAccount.create( qualifiedName( groupEntity.getQualifiedName() ) );
         buildNonUserAccount( group, groupEntity );
         return group;
     }
 
-    private EditableRoleAccountImpl buildRoleAccount( final GroupEntity groupEntity )
+    private RoleAccount buildRoleAccount( final GroupEntity groupEntity )
     {
-        final EditableRoleAccountImpl role = new EditableRoleAccountImpl();
+        final RoleAccount role = RoleAccount.create( qualifiedName( groupEntity.getQualifiedName() ) );
         buildNonUserAccount( role, groupEntity );
         return role;
     }
 
-    private void buildNonUserAccount( final EditableNonUserAccountImpl nonUser, final GroupEntity groupEntity )
+    private void buildNonUserAccount( final NonUserAccount nonUser, final GroupEntity groupEntity )
     {
         nonUser.setDisplayName( groupEntity.getDescription() );
         nonUser.setCreatedTime( DateTime.now() ); // TODO fix when created-time is stored in backend
         nonUser.setModifiedTime( DateTime.now() ); // TODO fix when modified-time is stored in backend
         nonUser.setDeleted( groupEntity.isDeleted() );
         nonUser.setEditable( true ); // TODO evaluate if account is editable in the current context
-        AccountKey key;
-        if ( groupEntity.isBuiltIn() )
-        {
-            key = AccountKey.role( qualifiedName( groupEntity.getQualifiedName() ) );
-        }
-        else
-        {
-            key = AccountKey.group( qualifiedName( groupEntity.getQualifiedName() ) );
-        }
-        nonUser.setKey( key );
 
         final AccountKeySet accountMembers = buildAccountMembers( groupEntity );
         nonUser.setMembers( accountMembers );
@@ -297,9 +287,10 @@ public final class UpdateAccountsHandler
 
         userStoreService.updateGroup( command );
     }
+
     private UserEntity findUserEntity( final AccountKey accountKey )
     {
-        final QualifiedUsername qualifiedUserName = new QualifiedUsername(accountKey.getUserStore(), accountKey.getLocalName() );
+        final QualifiedUsername qualifiedUserName = new QualifiedUsername( accountKey.getUserStore(), accountKey.getLocalName() );
         return userDao.findByQualifiedUsername( qualifiedUserName );
     }
 

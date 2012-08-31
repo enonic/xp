@@ -1,6 +1,5 @@
 package com.enonic.wem.web.rest.account;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,13 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.enonic.wem.core.search.SearchSortOrder;
 import com.enonic.wem.core.search.account.AccountIndexData;
-import com.enonic.wem.core.search.account.AccountIndexField;
 import com.enonic.wem.core.search.account.AccountKey;
-import com.enonic.wem.core.search.account.AccountSearchHit;
-import com.enonic.wem.core.search.account.AccountSearchQuery;
-import com.enonic.wem.core.search.account.AccountSearchResults;
 import com.enonic.wem.core.search.account.AccountSearchService;
 import com.enonic.wem.core.search.account.Group;
 
@@ -75,50 +69,6 @@ public final class GroupController
         {
             groupDao.delete( group );
         }
-    }
-
-
-    @RequestMapping(value = "list", method = RequestMethod.GET)
-    @ResponseBody
-    public AccountsModel getGroups( @RequestParam(value = "query", defaultValue = "") String query,
-                                    @RequestParam(value = "key", defaultValue = "") String key,
-                                    @RequestParam(value = "limit", defaultValue = "50") final int limit )
-    {
-        if ( StringUtils.isNotEmpty( key ) )
-        {
-            final String[] groupKeys = StringUtils.split( key, "," );
-            return getGroups( groupKeys );
-        }
-        final AccountSearchQuery searchQueryCountFacets =
-            new AccountSearchQuery().setCount( limit ).setIncludeResults( true ).setQuery( query ).setGroups( true ).setUsers(
-                false ).setIncludeFacets( false ).setSortField( AccountIndexField.DISPLAY_NAME_FIELD ).setSortOrder( SearchSortOrder.ASC );
-
-        final AccountSearchResults searchResults = searchService.search( searchQueryCountFacets );
-
-        final List<GroupEntity> groups = new ArrayList<GroupEntity>();
-
-        for ( AccountSearchHit searchHit : searchResults )
-        {
-            GroupEntity groupEntity = this.groupDao.findByKey( new GroupKey( searchHit.getKey().toString() ) );
-            groups.add( groupEntity );
-        }
-
-        return accountModelTranslator.toModel( groups );
-    }
-
-    private AccountsModel getGroups( final String... groupKeys )
-    {
-        final List<GroupEntity> groups = new ArrayList<GroupEntity>();
-        for ( String groupKey : groupKeys )
-        {
-            GroupEntity groupEntity = this.groupDao.findByKey( new GroupKey( groupKey.trim() ) );
-            if ( groupEntity != null )
-            {
-                groups.add( groupEntity );
-            }
-        }
-
-        return accountModelTranslator.toModel( groups );
     }
 
     @RequestMapping(value = "update", method = RequestMethod.POST,

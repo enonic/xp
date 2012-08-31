@@ -59,16 +59,31 @@ public class Data
 
     @Override
     public void checkBreaksRequiredContract()
+        throws BreaksRequiredContractException
     {
-        if ( breaksRequiredContract() )
+        if ( field != null )
         {
-            throw new BreaksRequiredContractException( this );
+            field.checkBreaksRequiredContract( this );
         }
     }
 
     public boolean breaksRequiredContract()
     {
-        return field != null && field.breaksRequiredContract( this );
+        if ( field == null )
+        {
+            return false;
+        }
+
+        try
+        {
+            checkBreaksRequiredContract();
+        }
+        catch ( BreaksRequiredContractException e )
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public boolean isValid()

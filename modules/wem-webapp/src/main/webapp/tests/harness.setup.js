@@ -116,6 +116,15 @@ Harness.start(
                         hostPageUrl: 'liveedit/core/test_htmlElementReplacer.html'
                     }
                 ]
+            },
+            {
+                group: 'View',
+                items: [
+                    {
+                        url: 'liveedit/view/test_Base.js',
+                        hostPageUrl: 'liveedit/view/host.html'
+                    }
+                ]
             }
         ]
     }

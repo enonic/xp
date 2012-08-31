@@ -33,6 +33,8 @@ public final class GraphResult
 
     public static final String GRAPH_PARAM = "graph";
 
+    public static final String IMAGE_URI_PARAM = "image_uri";
+
 
     private ArrayNode graph;
 

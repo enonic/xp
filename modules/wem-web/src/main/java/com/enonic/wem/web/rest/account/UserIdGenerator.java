@@ -105,25 +105,4 @@ public class UserIdGenerator
         UserEntity user = userDao.findByQualifiedUsername( qualifiedUsername );
         return user != null;
     }
-
-    public int getMaximumLength()
-    {
-        return maximumLength;
-    }
-
-    public void setMaximumLength( int maximumLength )
-    {
-        this.maximumLength = maximumLength;
-    }
-
-    public int getMaximumSuffixCount()
-    {
-        return maximumSuffixCount;
-    }
-
-    public void setMaximumSuffixCount( int maximumSuffixCount )
-    {
-        this.maximumSuffixCount = maximumSuffixCount;
-    }
-
 }

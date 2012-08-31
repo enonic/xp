@@ -184,6 +184,14 @@ public class FieldSet
         return true;
     }
 
+    public void checkBreaksRequiredContract( final DataSet dataSet )
+    {
+        if ( isRequired() && !dataSet.hasDataSetAtPath( getPath() ) )
+        {
+            throw new BreaksRequiredContractException( this );
+        }
+    }
+
     public static class Builder
     {
         private String name;

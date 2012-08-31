@@ -3,11 +3,14 @@ package com.enonic.wem.core.content.data;
 
 import org.junit.Test;
 
+import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 
+import static com.enonic.wem.core.content.type.configitem.Field.newField;
+import static com.enonic.wem.core.content.type.configitem.FieldSet.newFieldSet;
 import static org.junit.Assert.*;
 
 public class DataSetTest
@@ -17,7 +20,7 @@ public class DataSetTest
     {
         ConfigItems configItems = new ConfigItems();
         FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).multiple( true ).build();
-        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
         configItems.addConfigItem( fieldSet );
 
         DataSet dataSet = new DataSet( new EntryPath(), configItems );
@@ -37,8 +40,8 @@ public class DataSetTest
     public void getValue_when_having_sub_type()
     {
         FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).multiple( false ).build();
-        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
         ConfigItems configItems = new ConfigItems();
         configItems.addConfigItem( fieldSet );
 
@@ -55,8 +58,8 @@ public class DataSetTest
     {
         FieldSet personalia = FieldSet.newBuilder().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
         FieldSet crimes = FieldSet.newBuilder().name( "crimes" ).multiple( true ).build();
-        crimes.addField( Field.newBuilder().name( "description" ).type( FieldTypes.textline ).build() );
-        crimes.addField( Field.newBuilder().name( "year" ).type( FieldTypes.textline ).build() );
+        crimes.addField( Field.newBuilder().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
+        crimes.addField( Field.newBuilder().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
         personalia.addFieldSet( crimes );
         ConfigItems configItems = new ConfigItems();
         configItems.addConfigItem( personalia );
@@ -78,8 +81,8 @@ public class DataSetTest
     {
         ConfigItems configItems = new ConfigItems();
         FieldSet fieldSet = FieldSet.newBuilder().name( "persons" ).multiple( true ).build();
-        fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
         configItems.addConfigItem( fieldSet );
 
         DataSet dataSet = new DataSet( new EntryPath(), configItems );
@@ -89,4 +92,87 @@ public class DataSetTest
         assertEquals( "Arn", dataSet.getData( "persons[0].name" ).getValue() );
         assertEquals( "Brown", dataSet.getData( "persons[0].eyeColour" ).getValue() );
     }
+
+    @Test()
+    public void given_field_with_data_when_checkBreaksRequiredContract_then_exception_is_not_thrown()
+    {
+
+        ConfigItems configItems = new ConfigItems();
+        configItems.addConfigItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
+        DataSet dataSet = new DataSet( new EntryPath(), configItems );
+        dataSet.setData( new EntryPath( "myField" ), "value" );
+
+        // exercise
+        try
+        {
+            dataSet.checkBreaksRequiredContract();
+        }
+        catch ( Exception e )
+        {
+            fail( "No exception expected" );
+        }
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_field_with_no_data_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+
+        ConfigItems configItems = new ConfigItems();
+        configItems.addConfigItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
+        DataSet dataSet = new DataSet( new EntryPath(), configItems );
+
+        // exercise
+        dataSet.checkBreaksRequiredContract();
+    }
+
+    @Test()
+    public void given_fieldSet_with_data_when_checkBreaksRequiredContract_then_exception_is_not_thrown()
+    {
+
+        ConfigItems configItems = new ConfigItems();
+        configItems.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
+            newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() ).build() );
+        DataSet dataSet = new DataSet( new EntryPath(), configItems );
+        dataSet.setData( new EntryPath( "myFieldSet.myField" ), "value" );
+
+        // exercise
+        try
+        {
+            dataSet.checkBreaksRequiredContract();
+        }
+        catch ( Exception e )
+        {
+            fail( "No exception expected" );
+        }
+
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_fieldSet_with_no_data_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+
+        ConfigItems configItems = new ConfigItems();
+        configItems.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
+            newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() ).build() );
+        DataSet dataSet = new DataSet( new EntryPath(), configItems );
+
+        // exercise
+        dataSet.checkBreaksRequiredContract();
+    }
+
+    @Test(expected = BreaksRequiredContractException.class)
+    public void given_fieldSet_with_only_empty_string_for_required_textLine_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    {
+
+        ConfigItems configItems = new ConfigItems();
+        configItems.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
+            newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() ).build() );
+        DataSet dataSet = new DataSet( new EntryPath(), configItems );
+        dataSet.setData( new EntryPath( "myFieldSet.myField" ), "" );
+
+        // exercise
+        dataSet.checkBreaksRequiredContract();
+    }
+
+
 }

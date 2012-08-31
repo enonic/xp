@@ -36,8 +36,6 @@
         $liveedit('body').append('<div class="live-edit-shader" id="live-edit-shader-south"/>');
         $liveedit('body').append('<div class="live-edit-shader" id="live-edit-shader-west"/>');
 
-        $liveedit('body').append('<div class="live-edit-shader" id="live-edit-page-shader"/>');
-
         $liveedit('.live-edit-shader').click(function (event) {
             event.stopPropagation();
             $liveedit(window).trigger('component:deselect');
@@ -58,16 +56,59 @@
     };
 
 
+    // TODO: Should not be here. Need some code restructuring
     p.showForPageBody = function () {
-        var documentSize = util.getDocumentSize(),
-            docWidth = documentSize.width,
-            docHeight = documentSize.height;
+        var $regions = $liveedit('[data-live-edit-type=region]'),
+            $component,
+            $componentShader,
+            $componentHighlighter,
+            componentBoxModel;
 
-        $liveedit('#live-edit-page-shader').css({
-            top: 0,
-            left: 0,
-            width: docWidth,
-            height: docHeight
+        $regions.each(function (i) {
+            $component = $liveedit(this);
+            componentBoxModel = util.getBoxModel($component);
+            $componentShader = $liveedit('<div/>');
+            $componentShader.addClass('live-edit-shader live-edit-shader-page');
+            $componentShader.css({
+                top: componentBoxModel.top,
+                left: componentBoxModel.left,
+                width: componentBoxModel.width,
+                height: componentBoxModel.height
+            });
+            $liveedit('body').append($componentShader);
+        });
+        this.addWindowBorders();
+    };
+
+
+    // TODO: Should not be here. Need some code restructuring
+    p.addWindowBorders = function () {
+        var $windows = $liveedit('[data-live-edit-type=window]'),
+            $component,
+            $componentHighlighter,
+            componentBoxModel;
+
+        $windows.each(function (i) {
+            $component = $liveedit(this);
+            componentBoxModel = util.getBoxModel($component);
+
+            var html = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-highlighter live-edit-highlighter-page" style="top:-5000px;left:-5000px">' +
+                       '    <rect width="150" height="150"/>' +
+                       '</svg>';
+            $componentHighlighter = $liveedit(html);
+            $componentHighlighter.css({
+                top: componentBoxModel.top,
+                left: componentBoxModel.left,
+                width: componentBoxModel.width,
+                height: componentBoxModel.height
+            });
+            var $highlighterRect = $componentHighlighter.find('rect');
+            $highlighterRect[0].setAttribute('width', componentBoxModel.width);
+            $highlighterRect[0].setAttribute('height', componentBoxModel.height);
+            $componentHighlighter.css('stroke', '#141414');
+
+            $liveedit('body').append($componentHighlighter);
+
         });
     };
 
@@ -123,6 +164,9 @@
             top: '-15000px',
             left: '-15000px'
         });
+        $liveedit('.live-edit-shader-page').remove();
+        $liveedit('.live-edit-highlighter-page').remove();
+
     };
 
 }());

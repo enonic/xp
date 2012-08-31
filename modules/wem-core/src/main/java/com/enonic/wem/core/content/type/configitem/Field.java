@@ -4,6 +4,7 @@ package com.enonic.wem.core.content.type.configitem;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.data.Data;
+import com.enonic.wem.core.content.data.DataSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldType;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeConfig;
 
@@ -88,18 +89,27 @@ public class Field
         return fieldTypeConfig;
     }
 
-    public boolean breaksRequiredContract( final Data data )
+    public void checkBreaksRequiredContract( final Data data )
+        throws BreaksRequiredContractException
     {
         Preconditions.checkNotNull( data, "Given data is null" );
         Preconditions.checkArgument( data.getField() != null, "Given data have no field" );
         Preconditions.checkArgument( data.getField().equals( this ), "Given data's field is not this" );
 
-        if ( !isRequired() )
+        if ( isRequired() )
         {
-            return false;
+            type.checkBreaksRequiredContract( data );
         }
+    }
 
-        return type.breaksRequiredContract( data );
+    public void checkBreaksRequiredContract( final DataSet dataSet )
+    {
+        Preconditions.checkNotNull( dataSet, "Given dataSet is null" );
+
+        if ( isRequired() && !dataSet.hasDataAtPath( getPath() ) )
+        {
+            throw new BreaksRequiredContractException( this );
+        }
     }
 
     public boolean isValidAccordingToFieldTypeConfig( final Data data )
@@ -122,13 +132,6 @@ public class Field
         copy.helpText = helpText;
         copy.fieldTypeConfig = fieldTypeConfig;
         return copy;
-    }
-
-    public Field copy( final String name )
-    {
-        final Field field = copy();
-        field.setName( name );
-        return field;
     }
 
     public static Builder newField()
