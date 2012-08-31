@@ -3,9 +3,7 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
     alias: 'widget.groupPreviewPanel',
 
     requires: [
-        'Admin.view.account.preview.group.GroupPreviewToolbar',
-        'Admin.view.WizardPanel',
-        'Admin.view.account.MembershipsGraphPanel'
+        'Admin.view.account.preview.group.GroupPreviewToolbar', 'Admin.view.WizardPanel', 'Admin.view.account.MembershipsGraphPanel'
     ],
 
     autoWidth: true,
@@ -67,15 +65,12 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
                                                 if (me.data) {
                                                     var mask = new Ext.LoadMask(this, {msg: "Please wait..."});
                                                     mask.show();
-                                                    Ext.Ajax.request({
-                                                        url: Admin.lib.UriHelper.getAccountGraphUri(me.data),
-                                                        success: function (response) {
-                                                            var graphData = Ext.JSON.decode(response.responseText).graph;
+                                                    Admin.lib.RemoteService.account_getGraph({"key": me.data.key}, function (response) {
+                                                            var graphData = response.graph;
                                                             me.graphData = graphData;
                                                             me.down('membershipsGraphPanel').setGraphData(graphData);
                                                             mask.hide();
-                                                        }
-                                                    });
+                                                        });
                                                 }
                                             }
                                         },
@@ -115,7 +110,6 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
 
         this.callParent(arguments);
     },
-
 
     setData: function (data) {
         if (data) {

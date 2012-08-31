@@ -15,8 +15,8 @@ Ext.define('Admin.store.account.AccountStore', {
     autoLoad: false,
 
     proxy: {
-        type: 'ajax',
-        url: Admin.lib.UriHelper.getAccountSearchUri(),
+        type: 'direct',
+        directFn: Admin.lib.RemoteService.account_search,
         simpleSortMode: true,
         reader: {
             type: 'json',
