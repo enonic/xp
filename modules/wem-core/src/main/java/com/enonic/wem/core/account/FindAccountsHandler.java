@@ -246,7 +246,12 @@ public final class FindAccountsHandler
 
     private String qualifiedName( QualifiedName qualifiedName )
     {
-        return qualifiedName.toString().replace( '\\', ':' );
+        String qName = qualifiedName.toString().replace( '\\', ':' );
+        if (!qName.contains( ":" )) {
+            qName = "system:" + qName;
+        }
+
+        return qName;
     }
 
     private List<Account> fetchAccounts( final AccountKeySet keys, final boolean includeMembers, final boolean includePhoto )

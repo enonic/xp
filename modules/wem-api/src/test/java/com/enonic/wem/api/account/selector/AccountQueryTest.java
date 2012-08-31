@@ -43,12 +43,6 @@ public class AccountQueryTest
         assertTrue( query.getTypes().contains( AccountType.GROUP ) );
         assertTrue( query.getTypes().contains( AccountType.ROLE ) );
 
-        assertSame( query, query.types() );
-        assertNotNull( query.getTypes() );
-        assertFalse( query.getTypes().contains( AccountType.USER ) );
-        assertFalse( query.getTypes().contains( AccountType.GROUP ) );
-        assertFalse( query.getTypes().contains( AccountType.ROLE ) );
-
         assertSame( query, query.types( AccountType.USER ) );
         assertNotNull( query.getTypes() );
         assertTrue( query.getTypes().contains( AccountType.USER ) );

@@ -4,6 +4,7 @@ import java.util.Set;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.account.AccountType;
 
@@ -81,6 +82,24 @@ public final class AccountQuery
         return this;
     }
 
+    public AccountQuery types( final String... values )
+    {
+        this.types = Sets.newHashSet();
+        for ( final String value : values )
+        {
+            try
+            {
+                this.types.add( AccountType.valueOf( value.toUpperCase() ) );
+            }
+            catch ( final IllegalArgumentException e )
+            {
+                // Do nothing
+            }
+        }
+
+        return this;
+    }
+
     public AccountQuery userStores( final String... values )
     {
         this.userStores = ImmutableSet.copyOf( values );
@@ -103,15 +122,18 @@ public final class AccountQuery
 
     public AccountQuery sortAsc( final String field )
     {
-        this.sortField = field;
-        this.sortDirection = Direction.ASC;
-        return this;
+        return sort( field, true );
     }
 
     public AccountQuery sortDesc( final String field )
     {
+        return sort( field, false );
+    }
+
+    public AccountQuery sort( final String field, final boolean asc )
+    {
         this.sortField = field;
-        this.sortDirection = Direction.DESC;
+        this.sortDirection = asc ? Direction.ASC : Direction.DESC;
         return this;
     }
 }
