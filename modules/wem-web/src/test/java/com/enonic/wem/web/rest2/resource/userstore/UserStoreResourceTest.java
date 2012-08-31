@@ -46,12 +46,10 @@ public class UserStoreResourceTest
         userStoreDao = Mockito.mock( UserStoreDao.class );
         securityService = Mockito.mock( SecurityService.class );
         userStoreUpdateService = Mockito.mock( UserStoreUpdateService.class );
-        userStoreResource = new UserStoreResource();
-        userStoreResource.setUserStoreDao( userStoreDao );
-        userStoreResource.setSecurityService( securityService );
-        userStoreResource.setUserStoreUpdateService( userStoreUpdateService );
         connectorManager = Mockito.mock( UserStoreConnectorManager.class );
         userStoreResource = new UserStoreResource();
+        userStoreResource.setSecurityService( securityService );
+        userStoreResource.setUserStoreUpdateService( userStoreUpdateService );
         userStoreResource.setUserStoreDao( userStoreDao );
         userStoreResource.setConnectorManager( connectorManager );
     }

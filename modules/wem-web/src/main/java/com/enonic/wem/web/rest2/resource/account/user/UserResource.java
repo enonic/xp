@@ -4,7 +4,9 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.web.rest.account.UserIdGenerator;
+import com.enonic.wem.web.rest2.resource.account.AccountGenericResult;
 
 import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.core.security.user.UserKey;
@@ -101,6 +104,23 @@ public final class UserResource
         final String suggestedUserName = userIdGenerator.generateUserId( firstName.trim(), lastName.trim(), store.getKey() );
 
         return new NameSuggestionResult( suggestedUserName );
+    }
+
+    @POST
+    @Path("{key}/change-password")
+    public AccountGenericResult changePassword( @PathParam("key") final String userKey, @FormParam("newPassword") final String newPassword )
+    {
+
+        AccountGenericResult result;
+        if ( newPassword.length() <= 64 && newPassword.length() >= 8 )
+        {
+            result = new AccountGenericResult( true );
+        }
+        else
+        {
+            result = new AccountGenericResult( false, "Password is out of possible length" );
+        }
+        return result;
     }
 
     private UserKey findUserByEmail( final UserStoreKey userStoreKey, final String email )

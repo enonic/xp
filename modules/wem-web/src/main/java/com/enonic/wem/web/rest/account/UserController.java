@@ -113,26 +113,6 @@ public final class UserController
 
     }
 
-    @RequestMapping(value = "changepassword", method = RequestMethod.POST)
-    @ResponseBody
-    public RestResponse changePassword( @RequestParam("newPassword") final String newPassword,
-                                        @RequestParam("userKey") final String userKey )
-    {
-
-        RestResponse res = new RestResponse();
-        if ( newPassword.length() <= 64 && newPassword.length() >= 8 )
-        {
-            LOG.info( "Password has been changed for user " + userKey );
-            res.setSuccess( true );
-        }
-        else
-        {
-            res.setSuccess( false );
-            res.setError( "Password is out of possible length" );
-        }
-        return res;
-    }
-
     @RequestMapping(value = "delete", method = RequestMethod.POST)
     @ResponseBody
     public RestResponse deleteUser( @RequestParam("key") final List<String> key )

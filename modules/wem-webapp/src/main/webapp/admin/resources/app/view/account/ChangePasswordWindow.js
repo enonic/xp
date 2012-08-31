@@ -21,10 +21,8 @@ Ext.define('Admin.view.account.ChangePasswordWindow', {
                 var form = Ext.getCmp('userChangePasswordForm').getForm();
                 if (form.isValid()) {
                     form.submit({
-                        params: {
-                            userKey: me.modelData.key
-                        },
-                        success: function (form, action) {
+                        url: Admin.lib.UriHelper.getAccountChangePasswordUri(me.modelData),
+                        success: function () {
                             me.close();
                             if (parentApp) {
                                 parentApp.fireEvent('notifier.show', "Password was changed",
@@ -32,7 +30,7 @@ Ext.define('Admin.view.account.ChangePasswordWindow', {
                             }
                         },
                         failure: function (form, action) {
-                            Ext.Msg.alert('Failed', action.result.msg);
+                            Ext.Msg.alert('Failed', action.result.error);
                         }
                     });
                 }
@@ -56,7 +54,6 @@ Ext.define('Admin.view.account.ChangePasswordWindow', {
                 xtype: 'form',
                 id: 'userChangePasswordForm',
                 method: 'POST',
-                url: 'data/user/changepassword',
                 bodyPadding: '10 0',
                 bodyCls: 'admin-no-border',
                 layout: 'anchor',
