@@ -13,13 +13,6 @@ import com.enonic.cms.core.security.userstore.UserStoreEntity;
 public class UserStoreResults
     extends JsonResult
 {
-    private static final String KEY = "key";
-
-    private static final String NAME = "name";
-
-    private static final String DEFAULT = "default";
-
-    private static final String CONNECTOR = "connector";
 
     private final Collection<UserStoreEntity> userStores;
 
@@ -36,14 +29,19 @@ public class UserStoreResults
         ArrayNode items = arrayNode();
         for ( UserStoreEntity entity : userStores )
         {
-            ObjectNode userStoreNode = objectNode();
-            userStoreNode.put( KEY, entity.getKey().toString() );
-            userStoreNode.put( NAME, entity.getName() );
-            userStoreNode.put( DEFAULT, entity.isDefaultUserStore() );
-            userStoreNode.put( CONNECTOR, entity.getConnectorName() );
-            items.add( userStoreNode );
+            items.add( createUserStoreNode( entity ) );
         }
         node.put( "userStores", items );
         return node;
+    }
+
+    private ObjectNode createUserStoreNode( UserStoreEntity entity )
+    {
+        ObjectNode userStoreNode = objectNode();
+        userStoreNode.put( "key", entity.getKey().toString() );
+        userStoreNode.put( "name", entity.getName() );
+        userStoreNode.put( "default", entity.isDefaultUserStore() );
+        userStoreNode.put( "connector", entity.getConnectorName() );
+        return userStoreNode;
     }
 }
