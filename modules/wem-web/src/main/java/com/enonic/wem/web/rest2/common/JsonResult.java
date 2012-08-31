@@ -7,6 +7,8 @@ import org.codehaus.jackson.node.ObjectNode;
 
 public abstract class JsonResult
 {
+    public static String TOTAL = "total";
+
     protected final ObjectNode objectNode()
     {
         return JsonNodeFactory.instance.objectNode();
