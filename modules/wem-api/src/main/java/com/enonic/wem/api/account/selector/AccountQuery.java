@@ -4,7 +4,6 @@ import java.util.Set;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.account.AccountType;
 
@@ -79,24 +78,6 @@ public final class AccountQuery
     public AccountQuery types( final AccountType... values )
     {
         this.types = ImmutableSet.copyOf( values );
-        return this;
-    }
-
-    public AccountQuery types( final String... values )
-    {
-        this.types = Sets.newHashSet();
-        for ( final String value : values )
-        {
-            try
-            {
-                this.types.add( AccountType.valueOf( value.toUpperCase() ) );
-            }
-            catch ( final IllegalArgumentException e )
-            {
-                // Do nothing
-            }
-        }
-
         return this;
     }
 
