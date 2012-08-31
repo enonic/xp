@@ -14,30 +14,6 @@ public class ConnectorResults
     extends JsonResult
 {
 
-    public static final String CONNECTORS = "connectors";
-
-    public static final String NAME = "name";
-
-    public static final String CAN_CREATE_GROUP = "canCreateGroup";
-
-    public static final String CAN_CREATE_USER = "canCreateUser";
-
-    public static final String CAN_DELETE_GROUP = "canDeleteGroup";
-
-    public static final String CAN_DELETE_USER = "canDeleteUser";
-
-    public static final String CAN_READ_GROUP = "canReadGroup";
-
-    public static final String CAN_UPDATE_GROUP = "canUpdateGroup";
-
-    public static final String CAN_UPDATE_USER = "canUpdateUser";
-
-    public static final String CAN_UPDATE_USER_PASSWORD = "canUpdateUserPassword";
-
-    public static final String PLUGIN_TYPE = "pluginType";
-
-    public static final String GROUPS_LOCAL = "groupsLocal";
-
     private Collection<UserStoreConnectorConfig> connectors;
 
     public ConnectorResults( Collection<UserStoreConnectorConfig> connectors )
@@ -49,30 +25,30 @@ public class ConnectorResults
     public JsonNode toJson()
     {
         ObjectNode node = objectNode();
-        node.put( TOTAL, connectors.size() );
+        node.put( "total", connectors.size() );
         ArrayNode connectorsNode = arrayNode();
         for ( UserStoreConnectorConfig connector : connectors )
         {
             connectorsNode.add( createConnectorNode( connector ) );
         }
-        node.put( CONNECTORS, connectorsNode );
+        node.put( "connectors", connectorsNode );
         return node;
     }
 
     private ObjectNode createConnectorNode( UserStoreConnectorConfig connector )
     {
         ObjectNode connectorNode = objectNode();
-        connectorNode.put( NAME, connector.getName() );
-        connectorNode.put( CAN_CREATE_GROUP, connector.canCreateGroup() );
-        connectorNode.put( CAN_CREATE_USER, connector.canCreateUser() );
-        connectorNode.put( CAN_DELETE_GROUP, connector.canDeleteGroup() );
-        connectorNode.put( CAN_DELETE_USER, connector.canDeleteUser() );
-        connectorNode.put( CAN_READ_GROUP, connector.canReadGroup() );
-        connectorNode.put( CAN_UPDATE_GROUP, connector.canUpdateGroup() );
-        connectorNode.put( CAN_UPDATE_USER, connector.canUpdateUser() );
-        connectorNode.put( CAN_UPDATE_USER_PASSWORD, connector.canUpdateUserPassword() );
-        connectorNode.put( PLUGIN_TYPE, connector.getPluginType() );
-        connectorNode.put( GROUPS_LOCAL, connector.groupsStoredLocal() );
+        connectorNode.put( "name", connector.getName() );
+        connectorNode.put( "canCreateGroup", connector.canCreateGroup() );
+        connectorNode.put( "canCreateUser", connector.canCreateUser() );
+        connectorNode.put( "canDeleteGroup", connector.canDeleteGroup() );
+        connectorNode.put( "canDeleteUser", connector.canDeleteUser() );
+        connectorNode.put( "canReadGroup", connector.canReadGroup() );
+        connectorNode.put( "canUpdateGroup", connector.canUpdateGroup() );
+        connectorNode.put( "canUpdateUser", connector.canUpdateUser() );
+        connectorNode.put( "canUpdateUserPassword", connector.canUpdateUserPassword() );
+        connectorNode.put( "pluginType", connector.getPluginType() );
+        connectorNode.put( "groupsLocal", connector.groupsStoredLocal() );
         return connectorNode;
     }
 }
