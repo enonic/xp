@@ -11,11 +11,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.esl.containers.ExtendedMap;
 import com.enonic.wem.web.rest2.service.userstore.UserStoreUpdateService;
 
 import com.enonic.cms.core.security.SecurityService;
@@ -65,17 +63,7 @@ public class UserStoreResource
             return Response.status( Response.Status.NOT_ACCEPTABLE ).build();
         }
 
-        ExtendedMap formItems = new ExtendedMap( 5 );
-        formItems.putString( UserStoreUpdateService.KEY, key );
-        formItems.putString( UserStoreUpdateService.NAME, name );
-        formItems.putBoolean( UserStoreUpdateService.DEFAULT_USERSTORE, defaultUserstore );
-        formItems.putString( UserStoreUpdateService.CONFIG, config );
-        if ( !StringUtils.isEmpty( connector ) )
-        {
-            formItems.putString( UserStoreUpdateService.CONFIG, connector );
-        }
-
-        userStoreUpdateService.updateUserStore( user, formItems, administrators );
+        userStoreUpdateService.updateUserStore( user, key, name, defaultUserstore, config, connector, administrators );
         return Response.ok().build();
     }
 

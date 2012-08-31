@@ -7,7 +7,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.esl.containers.ExtendedMap;
 import com.enonic.wem.core.search.account.AccountIndexData;
 import com.enonic.wem.core.search.account.AccountKey;
 import com.enonic.wem.core.search.account.AccountSearchService;
@@ -35,16 +34,6 @@ import com.enonic.cms.core.security.userstore.config.UserStoreConfigParser;
 public class UserStoreUpdateService
 {
 
-    public static final String KEY = "key";
-
-    public static final String DEFAULT_USERSTORE = "defaultUserstore";
-
-    public static final String CONNECTOR_NAME = "connectorName";
-
-    public static final String CONFIG = "config";
-
-    public static final String NAME = "name";
-
     @Autowired
     private AccountSearchService searchService;
 
@@ -57,16 +46,16 @@ public class UserStoreUpdateService
     @Autowired
     private UserStoreService userStoreService;
 
-    public void updateUserStore( User user, ExtendedMap userStoreProps, List<String> administrators )
+    public void updateUserStore( User user, String userStoreKey, String name, Boolean defaultUserStore, String configXML, String connector,
+                                 List<String> administrators )
     {
-        String userStoreKey = userStoreProps.getString( KEY );
         if ( StringUtils.isNotEmpty( userStoreKey ) )
         {
-            updateUserstore( user, userStoreProps );
+            updateUserstore( user, userStoreKey, name, defaultUserStore, configXML, connector );
         }
         else
         {
-            userStoreKey = createUserstore( user, userStoreProps );
+            userStoreKey = createUserstore( user, name, defaultUserStore, configXML, connector );
         }
         if ( administrators != null && administrators.size() > 0 )
         {
@@ -74,29 +63,26 @@ public class UserStoreUpdateService
         }
     }
 
-    private void updateUserstore( User user, ExtendedMap formItems )
+    private void updateUserstore( User user, String userStoreKey, String name, Boolean defaultUserStore, String configXML,
+                                  String connector )
     {
-        final UserStoreKey userStoreKey = new UserStoreKey( formItems.getString( KEY ) );
-        final boolean newDefaultUserStore = formItems.getBoolean( DEFAULT_USERSTORE, false );
-        final String connectorName = formItems.getString( CONNECTOR_NAME, null );
-        final String configXmlString = formItems.getString( CONFIG, null );
 
         UserStoreConfig config = new UserStoreConfig();
-        if ( configXmlString != null && configXmlString.trim().length() > 0 )
+        if ( configXML != null && configXML.trim().length() > 0 )
         {
-            config = UserStoreConfigParser.parse( XMLDocumentFactory.create( configXmlString ).
-                getAsJDOMDocument().getRootElement(), connectorName != null );
+            config = UserStoreConfigParser.parse( XMLDocumentFactory.create( configXML ).
+                getAsJDOMDocument().getRootElement(), connector != null );
         }
 
         final UpdateUserStoreCommand command = new UpdateUserStoreCommand();
         command.setUpdater( user.getKey() );
-        command.setKey( userStoreKey );
-        command.setName( formItems.getString( NAME, null ) );
-        if ( newDefaultUserStore )
+        command.setKey( new UserStoreKey( userStoreKey ) );
+        command.setName( name );
+        if ( defaultUserStore )
         {
             command.setAsNewDefaultStore();
         }
-        command.setConnectorName( connectorName );
+        command.setConnectorName( connector );
         command.setConfig( config );
 
         userStoreService.updateUserStore( command );
@@ -104,17 +90,12 @@ public class UserStoreUpdateService
         userStoreService.invalidateUserStoreCachedConfig( command.getKey() );
     }
 
-    private String createUserstore( User user, ExtendedMap formItems )
+    private String createUserstore( User user, String name, Boolean defaultUserStore, String connectorName, String configXML )
     {
-        final String name = formItems.getString( NAME, null );
-        final boolean defaultUserStore = formItems.getBoolean( DEFAULT_USERSTORE, false );
-        final String connectorName = formItems.getString( CONNECTOR_NAME, null );
-        final String configXmlString = formItems.getString( CONFIG, null );
-
         UserStoreConfig config = new UserStoreConfig();
-        if ( configXmlString != null && configXmlString.trim().length() > 0 )
+        if ( configXML != null && configXML.trim().length() > 0 )
         {
-            config = UserStoreConfigParser.parse( XMLDocumentFactory.create( configXmlString ).
+            config = UserStoreConfigParser.parse( XMLDocumentFactory.create( configXML ).
                 getAsJDOMDocument().getRootElement(), connectorName != null );
         }
 
@@ -125,12 +106,12 @@ public class UserStoreUpdateService
         }
         command.setStorer( user.getKey() );
         command.setName( name );
-        command.setDefaultStore( formItems.getBoolean( DEFAULT_USERSTORE, false ) );
+        command.setDefaultStore( defaultUserStore );
         command.setConnectorName( connectorName );
         command.setConfig( config );
 
         UserStoreKey key = userStoreService.storeNewUserStore( command );
-        return key == null ? key.toString() : null;
+        return key.toString();
     }
 
     private void updateUserstoreAdministrators( User user, String userStoreKey, List<String> administrators )
