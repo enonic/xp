@@ -88,8 +88,8 @@
   <li>
     <span>Live Edit Test Page</span>
     <ul>
-      <li><a href="../dev/live-edit/page/page.jsp">All components</a> (page component is &lt;body&gt;)</li>
-      <li><a href="../dev/live-edit/page/page2.jsp">All components</a> (page component is a descendant of &lt;body&gt;)</li>
+      <li><a href="../dev/live-edit/page/page.jsp">All component types</a> (page component is &lt;body&gt;)</li>
+      <li><a href="../dev/live-edit/page/page2.jsp">All component types</a> (page component is a descendant of &lt;body&gt;)</li>
       <li><a href="../dev/live-edit/page/plug-ins.jsp">With draggables containing plugins</a></li>
       <li><a href="../dev/live-edit/page/blank.jsp">Blank page</a> (with no windows components)</li>
     </ul>
