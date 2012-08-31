@@ -20,6 +20,7 @@ import org.mockito.Mockito;
 import com.google.common.io.ByteStreams;
 
 import com.enonic.wem.web.rest2.resource.AbstractResourceTest;
+import com.enonic.wem.web.rest2.resource.account.AccountGenericResult;
 
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.group.GroupKey;
@@ -111,6 +112,29 @@ public class UserResourceTest
     }
 
     @Test
+    public void testChangePassword_validPassword()
+        throws Exception
+    {
+        AccountGenericResult result = userResource.changePassword( "AF7AF7S9F79SDF7S98DF7S9DF87", "vAl1dPa55W0rD" );
+        assertTrue( result.isSuccess() );
+    }
+
+    @Test
+    public void testChangePassword_invalidPassword()
+        throws Exception
+    {
+        AccountGenericResult shortPasswordResult = userResource.changePassword( "DF7SD6F87SD6FA7F68A", "123" );
+        assertFalse( shortPasswordResult.isSuccess() );
+        StringBuilder longPassword = new StringBuilder( "123456789" );
+        while ( longPassword.length() <= 64 )
+        {
+            longPassword.append( "123456789" );
+        }
+        AccountGenericResult longPasswordResult = userResource.changePassword( "SDF7SDF7S8D7F9S8D7FS89", longPassword.toString() );
+        assertFalse( longPasswordResult.isSuccess() );
+    }
+
+    @Test
     public void testVerifyUniqueEmailMissing()
         throws Exception
     {
@@ -166,15 +190,15 @@ public class UserResourceTest
         Mockito.when( userStoreDao.findByName( userStoreName ) ).thenReturn( userStore );
 
         final NameSuggestionResult nameSuggestion = userResource.suggestUsername( "First Name", "Last Name", "enonic" );
-        assertEquals("firstnal", nameSuggestion.getUsername());
+        assertEquals( "firstnal", nameSuggestion.getUsername() );
         assertJsonResult( "suggestUsername.json", nameSuggestion );
 
         final NameSuggestionResult nameSuggestionLastName = userResource.suggestUsername( "", "Last Name", "enonic" );
-        assertEquals("lastnam", nameSuggestionLastName.getUsername());
+        assertEquals( "lastnam", nameSuggestionLastName.getUsername() );
         assertJsonResult( "suggestUsername2.json", nameSuggestionLastName );
 
         final NameSuggestionResult nameSuggestionFirstName = userResource.suggestUsername( "First Name", "", "enonic" );
-        assertEquals("firstna", nameSuggestionFirstName.getUsername());
+        assertEquals( "firstna", nameSuggestionFirstName.getUsername() );
         assertJsonResult( "suggestUsername3.json", nameSuggestionFirstName );
     }
 
@@ -188,7 +212,7 @@ public class UserResourceTest
         userStore.setKey( userStoreKey );
 
         final NameSuggestionResult nameSuggestion = userResource.suggestUsername( "First Name", "Last Name", "enonic" );
-        assertNull(nameSuggestion);
+        assertNull( nameSuggestion );
     }
 
     private BufferedImage readPhoto()

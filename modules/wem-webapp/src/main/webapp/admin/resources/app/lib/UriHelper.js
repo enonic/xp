@@ -42,6 +42,11 @@ Ext.define('Admin.lib.UriHelper', {
         return this.getAbsoluteUri('admin/rest/account/user/verify-unique-email');
     },
 
+    getAccountChangePasswordUri: function (account) {
+        return Ext.String.format("admin/rest/account/user/{0}/change-password", account.key);
+    },
+ 
+
     getUserstoreSearchUri: function () {
         return this.getAbsoluteUri('admin/rest/userstore/search');
     },
