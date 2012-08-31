@@ -43,7 +43,10 @@ function createEditUserFormPanel(userstoreStore) {
     });
 }
 
-function testEditUserFormPanel(t, userstoreStore) {
+function testEditUserFormPanel(t, userstoreStore, callback) {
+
+    t.diag('Basic edit user form test');
+
     var eufp = createEditUserFormPanel(userstoreStore);
     eufp.renderUserForm({userStore: "teststore"});
     // Test fields from userstore config
@@ -75,9 +78,13 @@ function testEditUserFormPanel(t, userstoreStore) {
     t.notOk(eufp.down('#password'), 'Password field is excluded');
     t.notOk(eufp.down('#timezone'), 'Time zone field is excluded');
     Ext.destroy(eufp);
+    callback();
 }
 
-function testEditUserFormPanelWithIncludedFields(t, userstoreStore) {
+function testEditUserFormPanelWithIncludedFields(t, userstoreStore, callback) {
+
+    t.diag('Test included fields');
+
     var eufp = createEditUserFormPanelWithConfig(userstoreStore, {
         includedFields: ['username', 'email', 'password',
             'country', 'locale', 'timezone', 'globalPosition'],
@@ -95,9 +102,13 @@ function testEditUserFormPanelWithIncludedFields(t, userstoreStore) {
     t.ok(eufp.down('#timezone'), 'Timezone field is present');
     t.ok(eufp.down('#globalPosition'), 'Global position field is present');
     Ext.destroy(eufp);
+    callback();
 }
 
-function testEditUserFormPanelWithExcludedFields(t, userstoreStore) {
+function testEditUserFormPanelWithExcludedFields(t, userstoreStore, callback) {
+
+    t.diag('Test excluded fields');
+
     var eufp = createEditUserFormPanelWithConfig(userstoreStore, {
         excludedFields: [ 'address', 'birthday', 'country', 'firstName', 'lastName', 'fax'],
         validationUrls: {
@@ -132,9 +143,13 @@ function testEditUserFormPanelWithExcludedFields(t, userstoreStore) {
     t.ok(eufp.down('#timezone'), 'Time zone field should be included');
     t.ok(eufp.down('#title'), 'Title field should be included');
     Ext.destroy(eufp);
+    callback();
 }
 
-function testEditUserFormPanelGetData(t, userstoreStore) {
+function testEditUserFormPanelGetData(t, userstoreStore, callback) {
+
+    t.diag('Test get data');
+
     var eufp = createEditUserFormPanel(userstoreStore);
     var testData = getFormData();
     t.chain(
@@ -258,11 +273,15 @@ function testEditUserFormPanelGetData(t, userstoreStore) {
             t.is(info.title, testData.title, 'Title value is right');
             t.is(info.phone, testData.phone, 'Phone value is right');
             Ext.destroy(eufp);
+            callback();
         }
     );
 }
 
-function testEditUserFormValidation(t, userstoreStore) {
+function testEditUserFormValidation(t, userstoreStore, callback) {
+
+    t.diag('Test field validation');
+
     var eufp = createEditUserFormPanel(userstoreStore);
     t.is(eufp.getForm().isValid(), false, 'Form is invalid');
     t.chain(
@@ -280,65 +299,65 @@ function testEditUserFormValidation(t, userstoreStore) {
             t.is(eufp.getForm().isValid(), false, 'Form is still invalid');
             next();
         },
-        {
-            action: 'type',
-            target: eufp.down('#lastName'),
-            text: 'Doe'
+        function (next) {
+            t.waitForEvent(eufp.getForm(), 'validitychange', next, this, 3000);
+            t.type(eufp.down('#lastName'), 'Doe');
         },
         function (next) {
             t.is(eufp.getForm().isValid(), true, 'Form is valid');
             Ext.destroy(eufp);
+            callback();
         }
     );
 
 }
 
-function testEditUserFormRemoteValidation(t, userstoreStore) {
-    var eufp1 = createEditUserFormPanelWithConfig(userstoreStore, {
+function testEditUserFormRemoteValidation(t, userstoreStore, callback) {
+
+    t.diag('Test remote validation');
+
+    var eufp = createEditUserFormPanelWithConfig(userstoreStore, {
         includedFields: ['username', 'email'],
         validationUrls: {
             username: 'account/json/NonUniqueUserNameResponse.json',
             email: 'account/json/NonUniqueEmailResponse.json'
         }
     });
+    t.is(eufp.getForm().isValid(), false, 'Created non unique form. Initially not valid.');
     t.chain(
         {
             action: 'type',
-            target: eufp1.down('#username'),
+            target: eufp.down('#username'),
             text: 'newname'
         },
         {
             action: 'type',
-            target: eufp1.down('#email'),
+            target: eufp.down('#email'),
             text: 'test@email.com'
         },
-        function () {
-            t.is(eufp1.getForm().isValid(), false, 'Form is not valid. That\'s ok');
-            Ext.destroy(eufp1);
-        }
-    );
+        function (next) {
+            t.is(eufp.getForm().isValid(), false, 'Form is not valid after all filling values. That\'s ok');
+            Ext.destroy(eufp);
 
-    var eufp2 = createEditUserFormPanelWithConfig(userstoreStore, {
-        includedFields: ['username', 'email'],
-        validationUrls: {
-            username: 'account/json/UniqueUserNameResponse.json',
-            email: 'account/json/UniqueEmailResponse.json'
-        }
-    });
-    t.chain(
-        {
-            action: 'type',
-            target: eufp2.down('#username'),
-            text: 'newname'
+            eufp = createEditUserFormPanelWithConfig(userstoreStore, {
+                includedFields: ['username', 'email'],
+                validationUrls: {
+                    username: 'account/json/UniqueUserNameResponse.json',
+                    email: 'account/json/UniqueEmailResponse.json'
+                }
+            });
+            t.is(eufp.getForm().isValid(), false, 'Created unique form. Initially not valid.');
+            next();
         },
-        {
-            action: 'type',
-            target: eufp2.down('#email'),
-            text: 'test@email.com'
+        function (next) {
+            eufp.down('#username').setValue('newname');
+            eufp.down('#email').setValue('test@email.com');
+            t.waitForEvent(eufp.getForm(), 'validitychange', next, this, 3000);
         },
-        function () {
-            t.is(eufp2.getForm().isValid(), true, 'Form is valid. Remote validation succeded.');
-            Ext.destroy(eufp2);
+        function (next) {
+            t.is(eufp.getForm().isValid(), true, 'Form is valid. Remote validation succeded.');
+            Ext.destroy(eufp);
+            callback();
         }
     );
 }
@@ -353,12 +372,26 @@ StartTest(function (t) {
         function () {
             var userstoreStore = Ext.create('Test.account.store.UserstoreConfigStore', {});
             t.loadStoresAndThen(userstoreStore, function () {
-                testEditUserFormPanel(t, userstoreStore);
-                testEditUserFormPanelWithIncludedFields(t, userstoreStore);
-                testEditUserFormPanelWithExcludedFields(t, userstoreStore);
-                testEditUserFormPanelGetData(t, userstoreStore);
-                testEditUserFormValidation(t, userstoreStore);
-                testEditUserFormRemoteValidation(t, userstoreStore);
+                t.chain(
+                    function (next) {
+                        testEditUserFormPanel(t, userstoreStore, next);
+                    },
+                    function (next) {
+                        testEditUserFormPanelWithIncludedFields(t, userstoreStore, next);
+                    },
+                    function (next) {
+                        testEditUserFormPanelWithExcludedFields(t, userstoreStore, next);
+                    },
+                    function (next) {
+                        testEditUserFormPanelGetData(t, userstoreStore, next);
+                    },
+                    function (next) {
+                        testEditUserFormValidation(t, userstoreStore, next);
+                    },
+                    function (next) {
+                        testEditUserFormRemoteValidation(t, userstoreStore, next);
+                    }
+                );
             });
         }
     );

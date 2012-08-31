@@ -1,165 +1,144 @@
 /*
 
-Siesta 1.0.8
+Siesta 1.1.1
 Copyright(c) 2009-2012 Bryntum AB
 http://bryntum.com/contact
 http://bryntum.com/products/siesta/license
 
 */
-.splashpanel .x-panel-body-default
-{
-    background:transparent;
+.splashpanel .x-panel-body-default {
+    background: transparent;
 }
 
-.splash-links li
-{
-    margin-top:10px;
-    margin-left:10px;
+.splash-links li {
+    margin-top: 10px;
+    margin-left: 10px;
 }
 
-.splash-links a
-{
-    padding-left:22px;
-    text-decoration:none;
-    height:20px;
-    line-height:20px;
-    display:block;
+.splash-links a {
+    padding-left: 22px;
+    text-decoration: none;
+    height: 20px;
+    line-height: 20px;
+    display: block;
 }
 
-.splash-links a:hover
-{
-    text-decoration:underline;
+.splash-links a:hover {
+    text-decoration: underline;
 }
 
-.report-bug
-{
+.report-bug {
     background: url(../images/bug.png) no-repeat left 2px;
 }
 
-.docs
-{
+.docs {
     background: url(../images/book.png) no-repeat left 2px;
 }
 
-.forum
-{
+.forum {
     background: url(../images/group.png) no-repeat left 2px;
 }
 
-.buy
-{
+.buy {
     background: url(../images/cart.png) no-repeat left 2px;
 }
 
-.videos .video
-{
+.videos .video {
     background: url(../images/video.png) no-repeat center 2px;
 }
 
-.videos .book
-{
+.videos .book {
     background: url(../images/book_48.png) no-repeat center 2px;
 }
 
-.videos dl
-{
+.videos dl {
     border: 1px solid #ddd;
-    border-radius:6px;
-    padding:5px 15px;
-    margin-top:15px;
-    float:left;
-    margin-left:35px;
-    width:185px;
-    height:100px;
-    font-size:90%;
-    overflow:hidden;
-    cursor:hand;
+    border-radius: 6px;
+    padding: 5px 15px;
+    margin-top: 15px;
+    float: left;
+    margin-left: 35px;
+    width: 185px;
+    height: 100px;
+    font-size: 90%;
+    overflow: hidden;
+    cursor: hand;
 }
 
-.videos dl:hover
-{
+.videos dl:hover {
     border: 1px solid #aaa;
 }
 
-.videos a
-{
-    display:block;
-    text-align:center;
-    height:45px;
+.videos a {
+    display: block;
+    text-align: center;
+    height: 45px;
 }
 
 /*=======================================================================================================================================================================================================================
     Test suite title
 */
 
-.tr-title .x-panel-body 
-{
-    background:transparent;
-    color               : black;
-    line-height         : 50px;
-    font-size           : 20px;
-    padding-left        : 10px
+.tr-title .x-panel-body {
+    background: transparent;
+    color: black;
+    line-height: 50px;
+    font-size: 20px;
+    padding-left: 10px
 }
 
-.tr-title .x-btn
-{
+.tr-title .x-btn {
     border-radius: 3px;
-    border-color:grey;
-    box-shadow:1px 0px 2px #bbb;
+    border-color: grey;
+    box-shadow: 1px 0px 2px #bbb;
 }
 
-.x-ie .tr-title .x-btn button
-{
-    overflow-x:hidden;
+.x-ie .tr-title .x-btn button {
+    overflow-x: hidden;
 }
-
 
 .tr-logo {
-    float               : right;
-    width               : 115px;
-    height              : 30px;
-    background-image    : url(../images/logo.png);
-    background-repeat   : no-repeat;
-    background-position : left 5px;
-    cursor              : pointer;
+    float: right;
+    width: 115px;
+    height: 30px;
+    background-image: url(../images/logo.png);
+    background-repeat: no-repeat;
+    background-position: left 5px;
+    cursor: pointer;
 }
 
-.tr-title
-{
+.tr-title {
 }
 
 .tr-siesta-logo {
-	background     : url(../images/logo_small2.png) no-repeat 10px center;
-    position        : absolute;
-    left            : 5px !important;
-    top             : 6px !important;
-    width           : 250px;
-    height          : 105px;
-    z-index         : 1000;
+    background: url(../images/logo_small2.png) no-repeat 10px center;
+    position: absolute;
+    left: 5px !important;
+    top: 6px !important;
+    width: 250px;
+    height: 105px;
+    z-index: 1000;
 }
 
 .tr-status-indicator {
-    
-    display     : inline-block;
-    float       : left;
-    
-    margin-right        : 10px;
-    
+
+    display: inline-block;
+    float: left;
+
+    margin-right: 10px;
+
     /*background-image    : url(../images/to_do_list.png) !important;*/
-    background-repeat   : no-repeat;
-    background-position : left center; 
+    background-repeat: no-repeat;
+    background-position: left center;
 }
 
-
-.tr-version-indicator
-{
-    position:absolute;
-    color:DarkOrchid;
-    font-size:10px;
-    left:191px !important;
-    top:26px !important;
+.tr-version-indicator {
+    position: absolute;
+    color: DarkOrchid;
+    font-size: 10px;
+    left: 191px !important;
+    top: 26px !important;
 }
-
 
 /*=======================================================================================================================================================================================================================
     Icons
@@ -197,6 +176,7 @@ http://bryntum.com/products/siesta/license
 .tr-icon-collapse-all {
     background-image: url(../images/arrow_in.png) !important;
 }
+
 /*
 
 Play icons from:
@@ -208,17 +188,31 @@ License :	Creative Commons Attribution 3.0 License
 
 */
 iframe {
-    position    : absolute;
-    
-    left        : -10000px;
-    top         : -10000px;
-    
-    background-color    : white;
+    position: absolute;
+
+    left: -10000px;
+    top: -10000px;
+
+    background-color: white;
 }
 
-body
-{
-    background:#fff url(../images/bodybg.gif) repeat-x left top !important;
+iframe.tr-iframe-forced {
+    z-index: 100000;
+
+    border: 5px solid;
+    border-color: #d5e7f0;
+    -moz-border-radius: 14px;
+    -webkit-border-radius: 14px;
+    border-radius: 14px;
+}
+
+iframe.tr-iframe-hidden {
+    left: -10000px !important;
+    top: -10000px !important;
+}
+
+body {
+    background: transparent url(../images/bodybg.gif) repeat-x left top !important;
 }
 
 /*=======================================================================================================================================================================================================================
@@ -226,79 +220,74 @@ body
 */
 
 .tr-status-allgreen {
-    background-image    : url(../images/checkmark32.png) !important;
+    background-image: url(../images/checkmark32.png) !important;
 }
 
 .tr-status-bugs {
-    background-image    : url(../images/bug32.png) !important;
+    background-image: url(../images/bug32.png) !important;
 }
 
 .tr-status-running {
-    background-image    : url(../images/lightning32.png) !important;
+    background-image: url(../images/lightning32.png) !important;
 }
 
 .tr-status-allgreen-small {
-    background-image    : url(../images/ok.png) !important;
+    background-image: url(../images/ok.png) !important;
 }
 
 .tr-status-bugs-small {
-    background-image    : url(../images/bug.png) !important;
+    background-image: url(../images/bug.png) !important;
 }
 
 .tr-status-running-small {
-    background-image    : url(../images/lightning.png) !important;
+    background-image: url(../images/lightning.png) !important;
 }
 
 .tr-status-neutral-small {
-    background-image    : url(../images/to_do_list_small.png) !important;
+    background-image: url(../images/to_do_list_small.png) !important;
 }
-
-
-
 
 /*=======================================================================================================================================================================================================================
     Vertically aligned content
 */
 
 .tr-vertical-align-helper-content {
-    display         : -moz-inline-box;
-    display         : inline-block;
-    vertical-align  : middle;
-    zoom            : 1;
+    display: -moz-inline-box;
+    display: inline-block;
+    vertical-align: middle;
+    zoom: 1;
 }
 
-
 .tr-vertical-align-helper {
-    display         : -moz-inline-box;
-    display         : inline-block;
-    vertical-align  : middle;
-    height          : 100%;
-    width           : 0px;
-    zoom            : 1;
+    display: -moz-inline-box;
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+    width: 0px;
+    zoom: 1;
 }
 
 .tr-rounded-box {
-    background              : #FFFFFF;
-    color                   : black;
-    font-size               : larger;
-    
-    border                  : 3px solid #d5e7f0;
-    
-    padding                 : 30px;
-    
-    -moz-border-radius      : 24px;
-    -webkit-border-radius   : 24px;
-    border-radius           : 24px;
+    background: #FFFFFF;
+    color: black;
+    font-size: larger;
+
+    border: 3px solid #d5e7f0;
+
+    padding: 30px;
+
+    -moz-border-radius: 24px;
+    -webkit-border-radius: 24px;
+    border-radius: 24px;
 }
 
-.launching
-{
+.launching {
     background: url(../images/clock_48.png) no-repeat 5px center !important;
-    padding-left:60px;
+    padding-left: 60px;
 }
 
 .tr-main-area-centered {
-    text-align         : center;
+    text-align: center;
 }
 
 /* Ext 4.0.7+ defines this as white*/
@@ -306,28 +295,30 @@ body
     background-color: transparent;
 }
 
+.x-splitter, body {
+    background-color: #DFE8F6;
+}
+
 /*=======================================================================================================================================================================================================================
     Ghost cursor
 */
 
-.ghost-cursor
-{
-    height:22px;
-    width:19px;
-    position:absolute;
-    top:-1000px;
-    left:-1000px;
-    z-index:102;
+.ghost-cursor {
+    height: 22px;
+    width: 19px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    display: none;
+    z-index: 1000001;
     background: url(../images/cursor-hand.png) no-repeat left center;
 }
 
-.ghost-cursor-press
-{
+.ghost-cursor-press {
     background: url(../images/cursor-hand-press.png) no-repeat left center;
 }
 
-.ghost-cursor-message
-{
+.ghost-cursor-message {
     background: none repeat scroll 0 0 #FFFFFF;
     border: 1px solid #CCCCCC;
     color: #666666;
@@ -335,67 +326,63 @@ body
     position: absolute;
     z-index: 101;
     border-radius: 5px;
-    box-shadow: 1px 1px 1px rgba(200, 200, 200, 0.1); 
+    box-shadow: 1px 1px 1px rgba(200, 200, 200, 0.1);
     -webkit-transition-property: opacity, top;
     -webkit-transition-duration: 2s;
     -moz-transition-property: opacity, top;
     -moz-transition-duration: 2s;
     transition-property: opacity, top;
     transition-duration: 2s;
-    opacity : 1;
+    opacity: 1;
 }
 
-.ghost-cursor-click-indicator
-{
-    position:absolute;
+.ghost-cursor-click-indicator {
+    position: absolute;
     border-radius: 100%;
-    margin-left:-3px;
-    margin-top:-3px;
+    margin-left: -3px;
+    margin-top: -3px;
     -webkit-transition-property: opacity, width, height, margin-left, margin-top;
     -webkit-transition-duration: 2.5s;
     -moz-transition-property: opacity, width, height, margin-left, margin-top;
     -moz-transition-duration: 2.5s;
     transition-property: opacity, width, height, margin-left, margin-top;
     transition-duration: 2.5s;
-    background-color:darkred;
-    opacity : 0.7;
-    width:7px;
-    height:7px;
+    background-color: darkred;
+    opacity: 0.7;
+    width: 7px;
+    height: 7px;
     z-index: 101;
 }
 
-.ghost-cursor-click-indicator-big
-{
-    background-color:red;
-    margin-left:-21px;
-    margin-top:-21px;
-    height: 50px; 
+.ghost-cursor-click-indicator-big {
+    background-color: red;
+    margin-left: -21px;
+    margin-top: -21px;
+    height: 50px;
     width: 50px;
-    opacity : 0;
+    opacity: 0;
 }
 
-.x-ie .ghost-cursor
-{
-    z-index:-1;
-    display:none;
+.x-ie .ghost-cursor {
+    z-index: -1;
+    display: none;
 }
+
 /*=======================================================================================================================================================================================================================
     Row in tests grid - result cell
 */
 
-.tr-testgrid .x-grid-dirty-cell 
-{
-    background-image:none;
+.tr-testgrid .x-grid-dirty-cell {
+    background-image: none;
 }
 
 .tr-testgrid .x-grid-cell-inner {
-    height          : 20px !important;
+    height: 20px !important;
 }
 
 .x-ie .tr-testgrid .x-grid-cell-inner {
-    white-space     : nowrap !important;
+    white-space: nowrap !important;
 }
-
 
 .tr-test-status {
     background-position: 3px center;
@@ -403,317 +390,362 @@ body
 }
 
 .tr-test-status .x-tree-icon {
-    background-position     : left center;
-    background-repeat       : no-repeat;
+    background-position: left center;
+    background-repeat: no-repeat;
 }
 
 .tr-test-status-empty .x-tree-icon {
-    background-image : url(../images/document_16.png) !important;
+    background-image: url(../images/document_16.png) !important;
 }
 
 .tr-test-status-failed .x-tree-icon {
-    background-image : url(../images/bug.png) !important;
+    background-image: url(../images/bug.png) !important;
 }
 
 .tr-test-status-thrown .x-tree-icon {
-    background-image : url(../images/flag-red.png) !important;
+    background-image: url(../images/flag-red.png) !important;
 }
 
 .tr-test-status-working .x-tree-icon {
-    background-image : url(../images/hourglass.png) !important;
+    background-image: url(../images/hourglass.png) !important;
 }
 
 .tr-test-status-passed .x-tree-icon {
-    background-image : url(../images/ok.png) !important;
+    background-image: url(../images/ok.png) !important;
 }
 
 .tr-test-status-missing .x-tree-icon {
-    background-image : url(../images/cross.png) !important;
+    background-image: url(../images/cross.png) !important;
 }
 
 .tr-test-status-running .x-tree-icon {
-    background-image : url(../images/lightning.png) !important;
+    background-image: url(../images/lightning.png) !important;
 }
 
 .tr-folder-green .x-tree-icon {
-    background-image : url(../images/folder_green.png) !important;
+    background-image: url(../images/folder_green.png) !important;
 }
 
 .tr-folder-yellow .x-tree-icon {
-    background-image : url(../images/folder_yellow.png) !important;
+    background-image: url(../images/folder_yellow.png) !important;
 }
 
 .tr-folder-red .x-tree-icon {
-    background-image : url(../images/folder_red.png) !important;
+    background-image: url(../images/folder_red.png) !important;
 }
 
-.tr-test-todo-pass
-{
-    color: green;    
-    font-weight:bold;
+.tr-folder-working .x-tree-icon {
+    background-image: url(../images/hourglass.png) !important;
 }
 
-.tr-test-todo-fail
-{
-    color: #666;    
-}/*=======================================================================================================================================================================================================================
+.tr-test-todo-pass {
+    color: green;
+    font-weight: bold;
+}
+
+.tr-test-todo-fail {
+    color: #666;
+}
+
+.tr-testgrid .x-toolbar {
+    padding: 3px 0 3px;
+}
+
+/*=======================================================================================================================================================================================================================
+    Panel with test iframe
+*/
+
+.tr-container {
+    visibility: visible !important;
+}
+
+.tr-container .x-panel-collapsed {
+    display: block !important;
+
+    visibility: hidden !important;
+
+    z-index: -1 !important;
+}
+
+td.tr-td-vertical-align {
+    vertical-align: middle;
+}
+
+/*=======================================================================================================================================================================================================================
+    Toolbar icons
+*/
+
+.view-source {
+    background: url(../images/text_align_left.png) no-repeat left center;
+}
+
+.test-source-ct .syntaxhighlighter {
+    overflow: hidden !important;
+}
+
+.show-dom {
+    background: url(../images/monitor.png) no-repeat left center;
+}
+
+.show-simulated-actions {
+    background: url(../images/lightning.png) no-repeat left center;
+}
+
+.rerun {
+    background: url(../images/arrow_rotate_anticlockwise.png) no-repeat left center;
+}
+
+/*=======================================================================================================================================================================================================================
     Diagnostic row
 */
 
-.tr-diagnostic-row{
-    background-color        : #d5e7f0 !important;
-    line-height : 25px;
-    padding-left : 10px;
+.tr-diagnostic-row,
+.tr-summary-row {
+    background-color: #d5e7f0 !important;
+    line-height: 25px;
+    padding-left: 10px;
+}
+
+.tr-summary-failure {
+    background-color: #FF8186 !important;
+}
+
+.tr-summary-failure span {
+    font-weight: bold;
 }
 
 .tr-diagnostic-row td,
-.tr-simulation-row td
-{
-    background-image:none !important;
+.tr-simulation-row td {
+    background-image: none !important;
 }
 
-.tr-diagnostic-row td
-{
-    border-width:0 0 !important;
+.tr-diagnostic-row td {
+    border-width: 0 0 !important;
 }
 
-.tr-diag-headercell,
-.tr-diag-headercell .x-grid-cell-inner
-{
-    overflow:visible;
+.assertion-index,
+.assertion-status {
+    width: 25px;
+    height: 18px;
+    position: absolute;
 }
 
-.tr-diagnostic-row .tr-diag-headercell .x-grid-cell-inner
-{
-    position:relative;
-    left:-85px;
+.assertion-status {
+    left: 25px;
 }
+
+.assertion-text {
+    left: 55px;
+    position: relative;
+}
+
+.assertion-text,
+.assertion-index,
+.assertion-status {
+    display: block;
+    line-height: 17px;
+}
+
+.tr-diagnostic-row .assertion-index,
+.tr-diagnostic-row .assertion-status,
+.tr-summary-row .assertion-index,
+.tr-summary-row .assertion-status {
+    display: none;
+}
+
+.tr-diagnostic-row .assertion-text,
+.tr-summary-row .assertion-text {
+    left: 0;
+}
+
+.tr-diagnostic-row span.assertion-text {
+    font-weight: bold;
+}
+
+.assertiongrid-initializing {
+    color: #777;
+    margin: 5px;
+    font-size: 10px;
+    text-align: left;
+}
+
+.tr-diagnostic-row .tr-warning span.assertion-text {
+    color: red;
+}
+
 /*=======================================================================================================================================================================================================================
     Annotation
 */
 
 .tr-assert-row-annontation {
-	font-family        : "Courier New", monospace, serif;
-	font-size          : 1em;
-	
-	padding-top        : 10px;
-}
+    font-family: "Courier New", monospace, serif;
+    font-size: 1em;
 
+    padding-top: 10px;
+}
 
 /*=======================================================================================================================================================================================================================
     Assertion row - result cell
 */
 
 .tr-row-failed-assertion {
-	background-color       : #ff8186;
+    background-color: #ff8186;
 }
 
 .tr-row-failed-assertion.x-grid-row-over, .tr-row-failed-assertion.x-grid-row-over .x-grid-cell {
-	background-color       : #f7a2a6;
-	background-image       : none;
+    background-color: #f7a2a6;
+    background-image: none;
 }
 
 .tr-row-failed-assertion .x-grid-cell, .tr-row-failed-assertion.x-grid-row-alt .x-grid-cell, .tr-row-failed-assertion.x-grid-row-alt .x-grid-rowwrap-div {
-    background-color       : transparent;
+    background-color: transparent;
 }
 
-.tr-assert-row-ok-cell {
+.assertion-status {
     background-position: center center;
     background-repeat: no-repeat;
-    background-image : url(../images/ok.png) !important;
 }
 
-.tr-assert-row-ok-todo-cell {
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-image : url(../images/ok-todo.png) !important;
+.tr-assert-row-ok-cell .assertion-status {
+    background-image: url(../images/ok.png) !important;
 }
 
-.tr-assert-row-bug-cell {
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-image : url(../images/bug.png) !important;
+.tr-assert-row-ok-todo-cell .assertion-status {
+    background-image: url(../images/ok-todo.png) !important;
 }
 
-
-.tr-assert-row-bug-todo-cell {
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-image : url(../images/bug-todo.png) !important;
+.tr-assert-row-bug-cell .assertion-status {
+    background-image: url(../images/bug.png) !important;
 }
 
-
-/*=======================================================================================================================================================================================================================
-    Panel with test iframe
-*/
-
-
-.tr-container {
-    visibility     : visible !important;
+.tr-assert-row-waiting-cell .assertion-status {
+    background-image: url(../images/spinner.gif) !important;
 }
 
-.tr-container .x-panel-collapsed {
-    display        : block !important;
-    
-    visibility     : hidden !important;
-    
-    z-index        : -1 !important;
+.tr-assert-row-waiting-ok-cell .assertion-status {
+    background-image: url(../images/clock_check.png) !important;
 }
 
-
-td.tr-td-vertical-align {
-	vertical-align     : middle;
+.tr-assert-row-waiting-ok-cell .assertion-text {
+    color: navy;
 }
 
+.tr-assert-row-waiting-cell .assertion-text {
+    color: #666;
+}
+
+.tr-assert-row-bug-todo-cell .assertion-status {
+    background-image: url(../images/bug-todo.png) !important;
+}
 
 /*=======================================================================================================================================================================================================================
     Simulated Events
 */
 
-.tr-simulation-row td
-{
-    background:#F5F9C9;
+.tr-simulation-row td {
+    background: #F5F9C9;
 }
 
-.tr-simulation-row
-{
-    background:#F5F9C9;
+.tr-simulation-row {
+    background: #F5F9C9;
 }
 
-.hide-simulated .tr-simulation-row td .x-grid-cell-inner
-{
-    height:0;
-    overflow:hidden;
-    padding:0;
+.hide-simulated .tr-simulation-row td .x-grid-cell-inner {
+    height: 0;
+    overflow: hidden;
+    padding: 0;
 }
 
-.hide-simulated .tr-simulation-row td
-{
-    border-width:0 !important;
+.hide-simulated .tr-simulation-row td {
+    border-width: 0 !important;
 }
 
-.tr-simulation-row 
-{
-    line-height : 20px;
-    padding-left : 5px;
-    color:#666;
+.tr-simulation-row {
+    line-height: 20px;
+    padding-left: 5px;
+    color: #666;
 }
 
-.simulated
-{
-    padding-left:25px;
-    height:16px;
+.simulated {
+    padding-left: 25px;
+    height: 16px;
 }
 
-.simulated-event-name
-{
-    font-weight : bold;
+.simulated-event-name {
+    font-weight: bold;
 }
 
-
-.simulated-click 
-{
-    background : url(../images/mouse_click.png) no-repeat left center;
+.simulated-click {
+    background: url(../images/mouse_click.png) no-repeat left center;
 }
 
-.simulated-dblclick 
-{
-    background : url(../images/mouse_doubleclick.png) no-repeat left center;
+.simulated-dblclick {
+    background: url(../images/mouse_doubleclick.png) no-repeat left center;
 }
 
-.simulated-contextmenu
-{
-    background : url(../images/mouse_context.png) no-repeat left center;
+.simulated-contextmenu {
+    background: url(../images/mouse_context.png) no-repeat left center;
 }
 
-.simulated-mousemove 
-{
-    background : url(../images/mouse_move.png) no-repeat left center;
+.simulated-mousemove {
+    background: url(../images/mouse_move.png) no-repeat left center;
 }
 
 .simulated-mouseover,
-.simulated-mouseenter
-{
-    background : url(../images/mouse_over.png) no-repeat left center;
+.simulated-mouseenter {
+    background: url(../images/mouse_over.png) no-repeat left center;
 }
 
 .simulated-mouseout,
-.simulated-mouseleave
-{
-    background : url(../images/mouse_out.png) no-repeat left center;
+.simulated-mouseleave {
+    background: url(../images/mouse_out.png) no-repeat left center;
 }
 
-.simulated-mousedown 
-{
-    background : url(../images/mouse_down.png) no-repeat left center;
+.simulated-mousedown {
+    background: url(../images/mouse_down.png) no-repeat left center;
 }
 
-.simulated-mouseup
-{
-    background : url(../images/mouse_up.png) no-repeat left center;
+.simulated-mouseup {
+    background: url(../images/mouse_up.png) no-repeat left center;
 }
 
 .simulated-keydown,
 .simulated-keypress,
-.simulated-keyup
-{
-    background : url(../images/key_up.png) no-repeat left center;
+.simulated-keyup {
+    background: url(../images/key_up.png) no-repeat left center;
 }
 
 .simulated-touchstart,
-.simulated-touchmove
-{
+.simulated-touchmove {
     background: url(../images/cursor-hand-press.png) no-repeat left center;
 }
 
-.simulated-touchend
-{
+.simulated-touchend {
     background: url(../images/cursor-hand.png) no-repeat left center;
 }
 
-
-.view-source
-{
-    background : url(../images/text_align_left.png) no-repeat left center;
+.siesta-hidden {
+    position: absolute;
+    left: -10000px;
+    top: -10000px;
 }
 
-.test-source-ct .syntaxhighlighter
-{
-    overflow:hidden !important;
-}
-
-
-.show-dom
-{
-    background : url(../images/monitor.png) no-repeat left center;
-}
-
-.show-simulated-actions
-{
-    background : url(../images/lightning.png) no-repeat left center;
-}
-
-
-.rerun
-{
-    background : url(../images/arrow_rotate_anticlockwise.png) no-repeat left center;
-}
 /**
- * SyntaxHighlighter
- * http://alexgorbatchev.com/SyntaxHighlighter
- *
- * SyntaxHighlighter is donationware. If you are using it, please donate.
- * http://alexgorbatchev.com/SyntaxHighlighter/donate.html
- *
- * @version
- * 3.0.83 (July 02 2010)
- * 
- * @copyright
- * Copyright (C) 2004-2010 Alex Gorbatchev.
- *
- * @license
- * Dual licensed under the MIT and GPL licenses.
- */
+* SyntaxHighlighter
+* http://alexgorbatchev.com/SyntaxHighlighter
+*
+* SyntaxHighlighter is donationware. If you are using it, please donate.
+* http://alexgorbatchev.com/SyntaxHighlighter/donate.html
+*
+* @version
+* 3.0.83 (July 02 2010)
+*
+* @copyright
+* Copyright (C) 2004-2010 Alex Gorbatchev.
+*
+* @license
+* Dual licensed under the MIT and GPL licenses.
+*/
 .syntaxhighlighter a,
 .syntaxhighlighter div,
 .syntaxhighlighter code,
@@ -724,320 +756,394 @@ td.tr-td-vertical-align {
 .syntaxhighlighter table thead,
 .syntaxhighlighter table caption,
 .syntaxhighlighter textarea {
-  -moz-border-radius: 0 0 0 0 !important;
-  -webkit-border-radius: 0 0 0 0 !important;
-  background: none !important;
-  border: 0 !important;
-  bottom: auto !important;
-  float: none !important;
-  height: auto !important;
-  left: auto !important;
-  line-height: 1.1em !important;
-  margin: 0 !important;
-  outline: 0 !important;
-  overflow: visible !important;
-  padding: 0 !important;
-  position: static !important;
-  right: auto !important;
-  text-align: left !important;
-  top: auto !important;
-  vertical-align: baseline !important;
-  width: auto !important;
-  box-sizing: content-box !important;
-  font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace !important;
-  font-weight: normal !important;
-  font-style: normal !important;
-  font-size: 1em !important;
-  min-height: inherit !important;
-  min-height: auto !important;
+    -moz-border-radius: 0 0 0 0 !important;
+    -webkit-border-radius: 0 0 0 0 !important;
+    background: none !important;
+    border: 0 !important;
+    bottom: auto !important;
+    float: none !important;
+    height: auto !important;
+    left: auto !important;
+    line-height: 1.1em !important;
+    margin: 0 !important;
+    outline: 0 !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    position: static !important;
+    right: auto !important;
+    text-align: left !important;
+    top: auto !important;
+    vertical-align: baseline !important;
+    width: auto !important;
+    box-sizing: content-box !important;
+    font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    font-size: 1em !important;
+    min-height: inherit !important;
+    min-height: auto !important;
 }
 
 .syntaxhighlighter {
-  width: 100% !important;
-  margin: 1em 0 1em 0 !important;
-  position: relative !important;
-  overflow: auto !important;
-  font-size: 1em !important;
+    width: 100% !important;
+    margin: 1em 0 1em 0 !important;
+    position: relative !important;
+    overflow: auto !important;
+    font-size: 1em !important;
 }
+
 .syntaxhighlighter.source {
-  overflow: hidden !important;
+    overflow: hidden !important;
 }
+
 .syntaxhighlighter .bold {
-  font-weight: bold !important;
+    font-weight: bold !important;
 }
+
 .syntaxhighlighter .italic {
-  font-style: italic !important;
+    font-style: italic !important;
 }
+
 .syntaxhighlighter .line {
-  white-space: pre !important;
+    white-space: pre !important;
 }
+
 .syntaxhighlighter table {
-  width: 100% !important;
+    width: 100% !important;
 }
+
 .syntaxhighlighter table caption {
-  text-align: left !important;
-  padding: .5em 0 0.5em 1em !important;
+    text-align: left !important;
+    padding: .5em 0 0.5em 1em !important;
 }
+
 .syntaxhighlighter table td.code {
-  width: 100% !important;
+    width: 100% !important;
 }
+
 .syntaxhighlighter table td.code .container {
-  position: relative !important;
+    position: relative !important;
 }
+
 .syntaxhighlighter table td.code .container textarea {
-  box-sizing: border-box !important;
-  position: absolute !important;
-  left: 0 !important;
-  top: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  border: none !important;
-  background: white !important;
-  padding-left: 1em !important;
-  overflow: hidden !important;
-  white-space: pre !important;
+    box-sizing: border-box !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+    background: white !important;
+    padding-left: 1em !important;
+    overflow: hidden !important;
+    white-space: pre !important;
 }
+
 .syntaxhighlighter table td.gutter .line {
-  text-align: right !important;
-  padding: 0 0.5em 0 1em !important;
+    text-align: right !important;
+    padding: 0 0.5em 0 1em !important;
 }
+
 .syntaxhighlighter table td.code .line {
-  padding: 0 1em !important;
+    padding: 0 1em !important;
 }
+
 .syntaxhighlighter.nogutter td.code .container textarea, .syntaxhighlighter.nogutter td.code .line {
-  padding-left: 0em !important;
+    padding-left: 0em !important;
 }
+
 .syntaxhighlighter.show {
-  display: block !important;
+    display: block !important;
 }
+
 .syntaxhighlighter.collapsed table {
-  display: none !important;
+    display: none !important;
 }
+
 .syntaxhighlighter.collapsed .toolbar {
-  padding: 0.1em 0.8em 0em 0.8em !important;
-  font-size: 1em !important;
-  position: static !important;
-  width: auto !important;
-  height: auto !important;
+    padding: 0.1em 0.8em 0em 0.8em !important;
+    font-size: 1em !important;
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
 }
+
 .syntaxhighlighter.collapsed .toolbar span {
-  display: inline !important;
-  margin-right: 1em !important;
+    display: inline !important;
+    margin-right: 1em !important;
 }
+
 .syntaxhighlighter.collapsed .toolbar span a {
-  padding: 0 !important;
-  display: none !important;
+    padding: 0 !important;
+    display: none !important;
 }
+
 .syntaxhighlighter.collapsed .toolbar span a.expandSource {
-  display: inline !important;
+    display: inline !important;
 }
+
 .syntaxhighlighter .toolbar {
-  position: absolute !important;
-  right: 1px !important;
-  top: 1px !important;
-  width: 11px !important;
-  height: 11px !important;
-  font-size: 10px !important;
-  z-index: 10 !important;
+    position: absolute !important;
+    right: 1px !important;
+    top: 1px !important;
+    width: 11px !important;
+    height: 11px !important;
+    font-size: 10px !important;
+    z-index: 10 !important;
 }
+
 .syntaxhighlighter .toolbar span.title {
-  display: inline !important;
+    display: inline !important;
 }
+
 .syntaxhighlighter .toolbar a {
-  display: block !important;
-  text-align: center !important;
-  text-decoration: none !important;
-  padding-top: 1px !important;
+    display: block !important;
+    text-align: center !important;
+    text-decoration: none !important;
+    padding-top: 1px !important;
 }
+
 .syntaxhighlighter .toolbar a.expandSource {
-  display: none !important;
+    display: none !important;
 }
+
 .syntaxhighlighter.ie {
-  font-size: .9em !important;
-  padding: 1px 0 1px 0 !important;
+    font-size: .9em !important;
+    padding: 1px 0 1px 0 !important;
 }
+
 .syntaxhighlighter.ie .toolbar {
-  line-height: 8px !important;
+    line-height: 8px !important;
 }
+
 .syntaxhighlighter.ie .toolbar a {
-  padding-top: 0px !important;
+    padding-top: 0px !important;
 }
+
 .syntaxhighlighter.printing .line.alt1 .content,
 .syntaxhighlighter.printing .line.alt2 .content,
 .syntaxhighlighter.printing .line.highlighted .number,
 .syntaxhighlighter.printing .line.highlighted.alt1 .content,
 .syntaxhighlighter.printing .line.highlighted.alt2 .content {
-  background: none !important;
+    background: none !important;
 }
+
 .syntaxhighlighter.printing .line .number {
-  color: #bbbbbb !important;
+    color: #bbbbbb !important;
 }
+
 .syntaxhighlighter.printing .line .content {
-  color: black !important;
+    color: black !important;
 }
+
 .syntaxhighlighter.printing .toolbar {
-  display: none !important;
+    display: none !important;
 }
+
 .syntaxhighlighter.printing a {
-  text-decoration: none !important;
+    text-decoration: none !important;
 }
+
 .syntaxhighlighter.printing .plain, .syntaxhighlighter.printing .plain a {
-  color: black !important;
+    color: black !important;
 }
+
 .syntaxhighlighter.printing .comments, .syntaxhighlighter.printing .comments a {
-  color: #008200 !important;
+    color: #008200 !important;
 }
+
 .syntaxhighlighter.printing .string, .syntaxhighlighter.printing .string a {
-  color: blue !important;
+    color: blue !important;
 }
+
 .syntaxhighlighter.printing .keyword {
-  color: #006699 !important;
-  font-weight: bold !important;
+    color: #006699 !important;
+    font-weight: bold !important;
 }
+
 .syntaxhighlighter.printing .preprocessor {
-  color: gray !important;
+    color: gray !important;
 }
+
 .syntaxhighlighter.printing .variable {
-  color: #aa7700 !important;
+    color: #aa7700 !important;
 }
+
 .syntaxhighlighter.printing .value {
-  color: #009900 !important;
+    color: #009900 !important;
 }
+
 .syntaxhighlighter.printing .functions {
-  color: #ff1493 !important;
+    color: #ff1493 !important;
 }
+
 .syntaxhighlighter.printing .constants {
-  color: #0066cc !important;
+    color: #0066cc !important;
 }
+
 .syntaxhighlighter.printing .script {
-  font-weight: bold !important;
+    font-weight: bold !important;
 }
+
 .syntaxhighlighter.printing .color1, .syntaxhighlighter.printing .color1 a {
-  color: gray !important;
+    color: gray !important;
 }
+
 .syntaxhighlighter.printing .color2, .syntaxhighlighter.printing .color2 a {
-  color: #ff1493 !important;
+    color: #ff1493 !important;
 }
+
 .syntaxhighlighter.printing .color3, .syntaxhighlighter.printing .color3 a {
-  color: red !important;
+    color: red !important;
 }
+
 .syntaxhighlighter.printing .break, .syntaxhighlighter.printing .break a {
-  color: black !important;
+    color: black !important;
 }
+
 /**
- * SyntaxHighlighter
- * http://alexgorbatchev.com/SyntaxHighlighter
- *
- * SyntaxHighlighter is donationware. If you are using it, please donate.
- * http://alexgorbatchev.com/SyntaxHighlighter/donate.html
- *
- * @version
- * 3.0.83 (July 02 2010)
- * 
- * @copyright
- * Copyright (C) 2004-2010 Alex Gorbatchev.
- *
- * @license
- * Dual licensed under the MIT and GPL licenses.
- */
+* SyntaxHighlighter
+* http://alexgorbatchev.com/SyntaxHighlighter
+*
+* SyntaxHighlighter is donationware. If you are using it, please donate.
+* http://alexgorbatchev.com/SyntaxHighlighter/donate.html
+*
+* @version
+* 3.0.83 (July 02 2010)
+*
+* @copyright
+* Copyright (C) 2004-2010 Alex Gorbatchev.
+*
+* @license
+* Dual licensed under the MIT and GPL licenses.
+*/
 .syntaxhighlighter {
-  background-color: white !important;
+    background-color: white !important;
 }
+
 .syntaxhighlighter .line.alt1 {
-  background-color: white !important;
+    background-color: white !important;
 }
+
 .syntaxhighlighter .line.alt2 {
-  background-color: white !important;
+    background-color: white !important;
 }
+
 .syntaxhighlighter .line.highlighted.alt1, .syntaxhighlighter .line.highlighted.alt2 {
-  background-color: #e0e0e0 !important;
+    background-color: #e0e0e0 !important;
 }
+
 .syntaxhighlighter .line.highlighted.number {
-  color: black !important;
+    color: black !important;
 }
+
 .syntaxhighlighter table caption {
-  color: black !important;
+    color: black !important;
 }
+
 .syntaxhighlighter .gutter {
-  color: #afafaf !important;
+    color: #afafaf !important;
 }
+
 .syntaxhighlighter .gutter .line {
-  border-right: 3px solid #6ce26c !important;
+    border-right: 3px solid #6ce26c !important;
 }
+
 .syntaxhighlighter .gutter .line.highlighted {
-  background-color: #6ce26c !important;
-  color: white !important;
+    background-color: #6ce26c !important;
+    color: white !important;
 }
+
 .syntaxhighlighter.printing .line .content {
-  border: none !important;
+    border: none !important;
 }
+
 .syntaxhighlighter.collapsed {
-  overflow: visible !important;
+    overflow: visible !important;
 }
+
 .syntaxhighlighter.collapsed .toolbar {
-  color: blue !important;
-  background: white !important;
-  border: 1px solid #6ce26c !important;
+    color: blue !important;
+    background: white !important;
+    border: 1px solid #6ce26c !important;
 }
+
 .syntaxhighlighter.collapsed .toolbar a {
-  color: blue !important;
+    color: blue !important;
 }
+
 .syntaxhighlighter.collapsed .toolbar a:hover {
-  color: red !important;
+    color: red !important;
 }
+
 .syntaxhighlighter .toolbar {
-  color: white !important;
-  background: #6ce26c !important;
-  border: none !important;
+    color: white !important;
+    background: #6ce26c !important;
+    border: none !important;
 }
+
 .syntaxhighlighter .toolbar a {
-  color: white !important;
+    color: white !important;
 }
+
 .syntaxhighlighter .toolbar a:hover {
-  color: black !important;
+    color: black !important;
 }
+
 .syntaxhighlighter .plain, .syntaxhighlighter .plain a {
-  color: black !important;
+    color: black !important;
 }
+
 .syntaxhighlighter .comments, .syntaxhighlighter .comments a {
-  color: #008200 !important;
+    color: #008200 !important;
 }
+
 .syntaxhighlighter .string, .syntaxhighlighter .string a {
-  color: blue !important;
-}
-.syntaxhighlighter .keyword {
-  color: #006699 !important;
-}
-.syntaxhighlighter .preprocessor {
-  color: gray !important;
-}
-.syntaxhighlighter .variable {
-  color: #aa7700 !important;
-}
-.syntaxhighlighter .value {
-  color: #009900 !important;
-}
-.syntaxhighlighter .functions {
-  color: #ff1493 !important;
-}
-.syntaxhighlighter .constants {
-  color: #0066cc !important;
-}
-.syntaxhighlighter .script {
-  font-weight: bold !important;
-  color: #006699 !important;
-  background-color: none !important;
-}
-.syntaxhighlighter .color1, .syntaxhighlighter .color1 a {
-  color: gray !important;
-}
-.syntaxhighlighter .color2, .syntaxhighlighter .color2 a {
-  color: #ff1493 !important;
-}
-.syntaxhighlighter .color3, .syntaxhighlighter .color3 a {
-  color: red !important;
+    color: blue !important;
 }
 
 .syntaxhighlighter .keyword {
-  font-weight: bold !important;
+    color: #006699 !important;
+}
+
+.syntaxhighlighter .preprocessor {
+    color: gray !important;
+}
+
+.syntaxhighlighter .variable {
+    color: #aa7700 !important;
+}
+
+.syntaxhighlighter .value {
+    color: #009900 !important;
+}
+
+.syntaxhighlighter .functions {
+    color: #ff1493 !important;
+}
+
+.syntaxhighlighter .constants {
+    color: #0066cc !important;
+}
+
+.syntaxhighlighter .script {
+    font-weight: bold !important;
+    color: #006699 !important;
+    background-color: none !important;
+}
+
+.syntaxhighlighter .color1, .syntaxhighlighter .color1 a {
+    color: gray !important;
+}
+
+.syntaxhighlighter .color2, .syntaxhighlighter .color2 a {
+    color: #ff1493 !important;
+}
+
+.syntaxhighlighter .color3, .syntaxhighlighter .color3 a {
+    color: red !important;
+}
+
+.syntaxhighlighter .keyword {
+    font-weight: bold !important;
 }

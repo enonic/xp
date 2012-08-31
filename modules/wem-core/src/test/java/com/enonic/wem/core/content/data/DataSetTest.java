@@ -20,7 +20,7 @@ public class DataSetTest
     {
         ConfigItems configItems = new ConfigItems();
         FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).multiple( true ).build();
-        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
         configItems.addConfigItem( fieldSet );
 
         DataSet dataSet = new DataSet( new EntryPath(), configItems );
@@ -40,8 +40,8 @@ public class DataSetTest
     public void getValue_when_having_sub_type()
     {
         FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).multiple( false ).build();
-        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
         ConfigItems configItems = new ConfigItems();
         configItems.addConfigItem( fieldSet );
 
@@ -58,8 +58,8 @@ public class DataSetTest
     {
         FieldSet personalia = FieldSet.newBuilder().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
         FieldSet crimes = FieldSet.newBuilder().name( "crimes" ).multiple( true ).build();
-        crimes.addField( Field.newBuilder().name( "description" ).type( FieldTypes.textline ).build() );
-        crimes.addField( Field.newBuilder().name( "year" ).type( FieldTypes.textline ).build() );
+        crimes.addField( Field.newBuilder().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
+        crimes.addField( Field.newBuilder().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
         personalia.addFieldSet( crimes );
         ConfigItems configItems = new ConfigItems();
         configItems.addConfigItem( personalia );
@@ -81,8 +81,8 @@ public class DataSetTest
     {
         ConfigItems configItems = new ConfigItems();
         FieldSet fieldSet = FieldSet.newBuilder().name( "persons" ).multiple( true ).build();
-        fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
         configItems.addConfigItem( fieldSet );
 
         DataSet dataSet = new DataSet( new EntryPath(), configItems );
@@ -98,7 +98,7 @@ public class DataSetTest
     {
 
         ConfigItems configItems = new ConfigItems();
-        configItems.addConfigItem( newField().name( "myField" ).type( FieldTypes.textline ).required( true ).build() );
+        configItems.addConfigItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
         DataSet dataSet = new DataSet( new EntryPath(), configItems );
         dataSet.setData( new EntryPath( "myField" ), "value" );
 
@@ -118,7 +118,7 @@ public class DataSetTest
     {
 
         ConfigItems configItems = new ConfigItems();
-        configItems.addConfigItem( newField().name( "myField" ).type( FieldTypes.textline ).required( true ).build() );
+        configItems.addConfigItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
         DataSet dataSet = new DataSet( new EntryPath(), configItems );
 
         // exercise
@@ -131,7 +131,7 @@ public class DataSetTest
 
         ConfigItems configItems = new ConfigItems();
         configItems.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
-            newField().name( "myField" ).type( FieldTypes.textline ).build() ).build() );
+            newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() ).build() );
         DataSet dataSet = new DataSet( new EntryPath(), configItems );
         dataSet.setData( new EntryPath( "myFieldSet.myField" ), "value" );
 
@@ -153,7 +153,7 @@ public class DataSetTest
 
         ConfigItems configItems = new ConfigItems();
         configItems.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
-            newField().name( "myField" ).type( FieldTypes.textline ).build() ).build() );
+            newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() ).build() );
         DataSet dataSet = new DataSet( new EntryPath(), configItems );
 
         // exercise
@@ -166,7 +166,7 @@ public class DataSetTest
 
         ConfigItems configItems = new ConfigItems();
         configItems.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
-            newField().name( "myField" ).type( FieldTypes.textline ).required( true ).build() ).build() );
+            newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() ).build() );
         DataSet dataSet = new DataSet( new EntryPath(), configItems );
         dataSet.setData( new EntryPath( "myFieldSet.myField" ), "" );
 

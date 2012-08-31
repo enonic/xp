@@ -5,7 +5,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.web.rest2.common.JsonResult;
 
-public final class AccountDeleteResult
+public final class AccountGenericResult
     extends JsonResult
 {
     private final boolean success;
@@ -13,13 +13,13 @@ public final class AccountDeleteResult
     private final String error;
 
 
-    public AccountDeleteResult( final boolean success, final String errorMessage )
+    public AccountGenericResult( final boolean success, final String errorMessage )
     {
         this.success = success;
         this.error = errorMessage;
     }
 
-    public AccountDeleteResult( final boolean success )
+    public AccountGenericResult( final boolean success )
     {
         this.success = success;
         this.error = null;

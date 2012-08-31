@@ -230,7 +230,7 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
     },
 
     toggleDisplayNameField: function (event, target) {
-        var clickedElement = new Ext.Element(target);
+        var clickedElement = Ext.fly(target);
         var parentToClickedElementIsHeader = clickedElement.findParent('.admin-wizard-header');
         var displayNameFieldElement = this.getEl().select('.admin-display-name').item(0);
 

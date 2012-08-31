@@ -178,7 +178,7 @@ public class AccountResourceTest
         Mockito.when( userDao.findBuiltInEnterpriseAdminUser() ).thenReturn( adminUser );
 
         final List<String> keys = Arrays.asList( user.getKey().toString(), group.getGroupKey().toString() );
-        final AccountDeleteResult result = resource.deleteAccount( keys );
+        final AccountGenericResult result = resource.deleteAccount( keys );
 
         verify( userStoreService, atLeastOnce() ).deleteUser( Matchers.<DeleteUserCommand>any() );
         verify( userStoreService, atLeastOnce() ).deleteGroup( Matchers.<DeleteGroupCommand>any() );
@@ -196,7 +196,7 @@ public class AccountResourceTest
         Mockito.when( userDao.findBuiltInEnterpriseAdminUser() ).thenReturn( adminUser );
 
         final List<String> keys = Arrays.asList( "E6C593DE14515428B06F1A16E0D28E2341FC5AB4" );
-        final AccountDeleteResult result = resource.deleteAccount( keys );
+        final AccountGenericResult result = resource.deleteAccount( keys );
 
         verify( userStoreService, never() ).deleteUser( Matchers.<DeleteUserCommand>any() );
 
@@ -216,7 +216,7 @@ public class AccountResourceTest
         doThrow( new RuntimeException( "Unexpected exception" ) ).when( userStoreService ).deleteUser( Matchers.<DeleteUserCommand>any() );
 
         final List<String> keys = Arrays.asList( user.getKey().toString(), group.getGroupKey().toString() );
-        final AccountDeleteResult result = resource.deleteAccount( keys );
+        final AccountGenericResult result = resource.deleteAccount( keys );
 
         verify( userStoreService, atLeastOnce() ).deleteUser( Matchers.<DeleteUserCommand>any() );
 

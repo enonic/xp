@@ -109,7 +109,7 @@ function testWizard(t, wizard) {
             t.notOk(wizard.isWizardValid, "Wizard must have been not valid after clearing mandatory field.");
             t.notOk(wizard.isStepValid(), "Wizard first step must have been not valid after clearing mandatory field.");
 
-            t.type(textOne.getActionEl(), '1');
+            textOne.reset();
             t.waitForEvent(wizard, 'stepchanged', next);
             wizard.next();
         },

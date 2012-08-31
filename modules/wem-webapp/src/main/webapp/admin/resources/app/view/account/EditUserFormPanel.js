@@ -105,7 +105,7 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
     },
     validationUrls: {
         username: 'data/account/userkey',
-        email: 'data/account/verifyUniqueEmail'
+        email: Admin.lib.UriHelper.getAccountVerifyEmailUri()
     },
 
     autoScroll: false,

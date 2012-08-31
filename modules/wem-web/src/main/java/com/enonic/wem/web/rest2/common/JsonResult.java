@@ -9,6 +9,8 @@ import com.enonic.wem.web.json.JsonSerializable;
 public abstract class JsonResult
     implements JsonSerializable
 {
+    public static String TOTAL = "total";
+
     protected final ObjectNode objectNode()
     {
         return JsonNodeFactory.instance.objectNode();

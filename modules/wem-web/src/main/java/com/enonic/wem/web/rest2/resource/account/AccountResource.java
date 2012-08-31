@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -106,7 +107,7 @@ public final class AccountResource
 
     @POST
     @Path("delete")
-    public AccountDeleteResult deleteAccount( @QueryParam("key") @DefaultValue("") final List<String> keys )
+    public AccountGenericResult deleteAccount( @QueryParam("key") @DefaultValue("") final List<String> keys )
     {
         final UserEntity deleter = getCurrentUser();
         for ( String accountKey : keys )
@@ -135,11 +136,11 @@ public final class AccountResource
             catch ( Exception e )
             {
                 final String errorMsg = MessageFormat.format( "Unable to delete account with key {0}", accountKey );
-                return new AccountDeleteResult( false, errorMsg );
+                return new AccountGenericResult( false, errorMsg );
             }
         }
 
-        return new AccountDeleteResult( true );
+        return new AccountGenericResult( true );
     }
 
     private void removeAccountIndex( final String accountKey )
