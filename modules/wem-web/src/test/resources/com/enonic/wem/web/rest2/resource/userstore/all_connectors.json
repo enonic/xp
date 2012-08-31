@@ -1,0 +1,31 @@
+{
+    "total": 2,
+    "connectors": [
+        {
+            "name": "corporate",
+            "canCreateGroup": false,
+            "canCreateUser": false,
+            "canDeleteGroup": false,
+            "canDeleteUser": false,
+            "canReadGroup": false,
+            "canUpdateGroup": false,
+            "canUpdateUser": false,
+            "canUpdateUserPassword": false,
+            "pluginType": "CustomClass",
+            "groupsLocal": false
+        },
+        {
+            "name": "enonic",
+            "canCreateGroup": true,
+            "canCreateUser": false,
+            "canDeleteGroup": true,
+            "canDeleteUser": false,
+            "canReadGroup": false,
+            "canUpdateGroup": true,
+            "canUpdateUser": false,
+            "canUpdateUserPassword": false,
+            "pluginType": "ldap",
+            "groupsLocal": true
+        }
+    ]
+}

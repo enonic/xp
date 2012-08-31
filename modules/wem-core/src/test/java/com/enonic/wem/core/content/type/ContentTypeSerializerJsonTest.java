@@ -37,18 +37,18 @@ public class ContentTypeSerializerJsonTest
             RadioButtonsConfig.newBuilder().addOption( "myFirstChoice", "c1" ).addOption( "mySecondChoice", "c2" ).build();
 
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newField().name( "myDate" ).type( FieldTypes.date ).build() );
-        contentType.addConfigItem( newField().name( "myDropdown" ).type( FieldTypes.dropdown ).fieldTypeConfig( dropdownConfig ).build() );
-        contentType.addConfigItem( newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );
-        contentType.addConfigItem( newBuilder().name( "myTextArea" ).type( FieldTypes.textarea ).build() );
+        contentType.addConfigItem( newField().name( "myDate" ).type( FieldTypes.DATE ).build() );
+        contentType.addConfigItem( newField().name( "myDropdown" ).type( FieldTypes.DROPDOWN ).fieldTypeConfig( dropdownConfig ).build() );
+        contentType.addConfigItem( newBuilder().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.addConfigItem( newBuilder().name( "myTextArea" ).type( FieldTypes.TEXT_AREA ).build() );
         contentType.addConfigItem(
-            newField().name( "myRadiobuttons" ).type( FieldTypes.radioButtons ).fieldTypeConfig( myRadioButtonsConfig ).build() );
-        contentType.addConfigItem( newField().name( "myPhone" ).type( FieldTypes.phone ).build() );
-        contentType.addConfigItem( newField().name( "myXml" ).type( FieldTypes.xml ).build() );
+            newField().name( "myRadiobuttons" ).type( FieldTypes.RADIO_BUTTONS ).fieldTypeConfig( myRadioButtonsConfig ).build() );
+        contentType.addConfigItem( newField().name( "myPhone" ).type( FieldTypes.PHONE ).build() );
+        contentType.addConfigItem( newField().name( "myXml" ).type( FieldTypes.XML ).build() );
 
         FieldSet fieldSet = newFieldSet().name( "personalia" ).build();
-        fieldSet.addField( newField().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( newField().name( "hairColour" ).occurrences( 1, 3 ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( newField().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( newField().name( "hairColour" ).occurrences( 1, 3 ).type( FieldTypes.TEXT_LINE ).build() );
         contentType.addConfigItem( fieldSet );
 
         ContentTypeSerializerJson serializer = new ContentTypeSerializerJson();
@@ -75,12 +75,12 @@ public class ContentTypeSerializerJsonTest
     {
         ConfigItems configItems = new ConfigItems();
 
-        configItems.addConfigItem( newBuilder().name( "name" ).type( FieldTypes.textline ).required( true ).build() );
+        configItems.addConfigItem( newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
 
         FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).label( "Personalia" ).build();
         configItems.addConfigItem( fieldSet );
-        fieldSet.addField( newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( newBuilder().name( "hairColour" ).occurrences( 1, 3 ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( newBuilder().name( "hairColour" ).occurrences( 1, 3 ).type( FieldTypes.TEXT_LINE ).build() );
 
         ContentType contentType = new ContentType();
         contentType.setConfigItems( configItems );
@@ -99,20 +99,20 @@ public class ContentTypeSerializerJsonTest
         ContentType contentType = new ContentType();
         ConfigItems configItems = new ConfigItems();
         contentType.setConfigItems( configItems );
-        configItems.addConfigItem( newBuilder().name( "myDate" ).type( FieldTypes.date ).build() );
+        configItems.addConfigItem( newBuilder().name( "myDate" ).type( FieldTypes.DATE ).build() );
         configItems.addConfigItem(
-            newBuilder().name( "myDropdown" ).type( FieldTypes.dropdown ).fieldTypeConfig( dropdownConfig ).build() );
-        configItems.addConfigItem( newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );
-        configItems.addConfigItem( newBuilder().name( "myTextArea" ).type( FieldTypes.textarea ).build() );
+            newBuilder().name( "myDropdown" ).type( FieldTypes.DROPDOWN ).fieldTypeConfig( dropdownConfig ).build() );
+        configItems.addConfigItem( newBuilder().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).build() );
+        configItems.addConfigItem( newBuilder().name( "myTextArea" ).type( FieldTypes.TEXT_AREA ).build() );
         configItems.addConfigItem(
-            newBuilder().name( "myRadioButtons" ).type( FieldTypes.radioButtons ).fieldTypeConfig( myRadioButtonsConfig ).build() );
-        configItems.addConfigItem( newBuilder().name( "myPhone" ).type( FieldTypes.phone ).build() );
-        configItems.addConfigItem( newBuilder().name( "myXml" ).type( FieldTypes.xml ).build() );
+            newBuilder().name( "myRadioButtons" ).type( FieldTypes.RADIO_BUTTONS ).fieldTypeConfig( myRadioButtonsConfig ).build() );
+        configItems.addConfigItem( newBuilder().name( "myPhone" ).type( FieldTypes.PHONE ).build() );
+        configItems.addConfigItem( newBuilder().name( "myXml" ).type( FieldTypes.XML ).build() );
 
         FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).label( "Personalia" ).build();
         configItems.addConfigItem( fieldSet );
-        fieldSet.addField( newBuilder().name( "eyeColour" ).type( FieldTypes.textline ).build() );
-        fieldSet.addField( newBuilder().name( "hairColour" ).occurrences( 1, 3 ).type( FieldTypes.textline ).build() );
+        fieldSet.addField( newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( newBuilder().name( "hairColour" ).occurrences( 1, 3 ).type( FieldTypes.TEXT_LINE ).build() );
 
         String json = new ContentTypeSerializerJson().toJson( contentType );
 
@@ -144,13 +144,13 @@ public class ContentTypeSerializerJsonTest
         Module module = newModule().name( "myModule" ).build();
 
         FieldSetTemplate template = FieldSetTemplateBuilder.newFieldSetTemplate().module( module ).fieldSet(
-            newFieldSet().name( "address" ).add( newBuilder().name( "label" ).label( "Label" ).type( FieldTypes.textline ).build() ).add(
-                newBuilder().name( "street" ).label( "Street" ).type( FieldTypes.textline ).build() ).add(
-                newBuilder().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.textline ).build() ).add(
-                newBuilder().name( "country" ).label( "Country" ).type( FieldTypes.textline ).build() ).build() ).build();
+            newFieldSet().name( "address" ).add( newBuilder().name( "label" ).label( "Label" ).type( FieldTypes.TEXT_LINE ).build() ).add(
+                newBuilder().name( "street" ).label( "Street" ).type( FieldTypes.TEXT_LINE ).build() ).add(
+                newBuilder().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.TEXT_LINE ).build() ).add(
+                newBuilder().name( "country" ).label( "Country" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
-        cty.addConfigItem( newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).build() );
+        cty.addConfigItem( newBuilder().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).build() );
         cty.addConfigItem( newTemplateReference( template ).name( "home" ).build() );
         cty.addConfigItem( newTemplateReference( template ).name( "cabin" ).build() );
 
@@ -176,9 +176,9 @@ public class ContentTypeSerializerJsonTest
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
         FieldSet fieldSet =
-            newFieldSet().name( "top-fieldSet" ).add( newField().name( "myField" ).type( FieldTypes.textline ).build() ).add(
+            newFieldSet().name( "top-fieldSet" ).add( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() ).add(
                 newFieldSet().name( "inner-fieldSet" ).add(
-                    newField().name( "myInnerField" ).type( FieldTypes.textline ).build() ).build() ).build();
+                    newField().name( "myInnerField" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).build();
         contentType.addConfigItem( fieldSet );
 
         String json = new ContentTypeSerializerJson().toJson( contentType );
@@ -197,8 +197,8 @@ public class ContentTypeSerializerJsonTest
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
         VisualFieldSet visualFieldSet = newVisualFieldSet().label( "Personalia" ).name( "personalia" ).add(
-            newField().name( "eyeColour" ).type( FieldTypes.textline ).build() ).add(
-            newField().name( "hairColour" ).type( FieldTypes.textline ).build() ).build();
+            newField().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() ).add(
+            newField().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() ).build();
         contentType.addConfigItem( visualFieldSet );
 
         String json = new ContentTypeSerializerJson().toJson( contentType );

@@ -13,7 +13,7 @@ public class FieldTest
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_throws_exception_when_broken()
     {
-        Field field = Field.newBuilder().name( "myTextLine" ).type( FieldTypes.textline ).required( true ).build();
+        Field field = Field.newBuilder().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).required( true ).build();
         field.checkBreaksRequiredContract( Data.newData().field( field ).value( null ).build() );
     }
 
@@ -21,7 +21,7 @@ public class FieldTest
     public void copy()
     {
         // setup
-        Field original = Field.newBuilder().name( "myField" ).type( FieldTypes.textline ).build();
+        Field original = Field.newBuilder().name( "myField" ).type( FieldTypes.TEXT_LINE ).build();
 
         // exercise
         Field copy = original.copy();
