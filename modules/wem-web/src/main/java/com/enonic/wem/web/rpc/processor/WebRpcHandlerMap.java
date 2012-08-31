@@ -1,7 +1,5 @@
 package com.enonic.wem.web.rpc.processor;
 
-import java.util.Set;
-
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.wem.web.rpc.WebRpcError;
@@ -34,10 +32,5 @@ final class WebRpcHandlerMap
 
         final WebRpcError error = WebRpcError.methodNotFound( name );
         throw new WebRpcException( error );
-    }
-
-    public Set<String> getMethodNames()
-    {
-        return this.map.keySet();
     }
 }

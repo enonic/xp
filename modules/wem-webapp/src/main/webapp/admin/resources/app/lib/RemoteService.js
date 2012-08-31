@@ -5,7 +5,7 @@ Ext.define('Admin.lib.RemoteService', {
     singleton: true,
 
     methodsToRegister: [
-        "account_search", "account_getGraph", "util_getCountries", "util_getLocales", "util_getTimeZones"
+        "account_search", "account_getGraph", "account_changePassword", "util_getCountries", "util_getLocales", "util_getTimeZones"
     ],
 
     init: function () {
@@ -31,6 +31,10 @@ Ext.define('Admin.lib.RemoteService', {
     },
 
     account_getGraph: function (params, callback) {
+        console.log(params, callback);
+    },
+
+    account_changePassword: function (params, callback) {
         console.log(params, callback);
     },
 
