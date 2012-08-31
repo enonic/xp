@@ -32,7 +32,8 @@ public class FieldTemplate
 
     public DirectAccessibleConfigItem create( final TemplateReference templateReference )
     {
-        Field field = this.field.copy( getName() );
+        Field field = this.field.copy();
+        field.setName( templateReference.getName() );
         field.setPath( templateReference.getPath() );
         return field;
     }

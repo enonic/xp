@@ -21,16 +21,16 @@ public class FieldSetTemplateTest
         Module module = newModule().name( "myModule" ).build();
 
         FieldTemplate ageTemplate =
-            newFieldTemplate().module( module ).field( newField().name( "age" ).type( FieldTypes.textline ).build() ).build();
+            newFieldTemplate().module( module ).field( newField().name( "age" ).type( FieldTypes.TEXT_LINE ).build() ).build();
 
         FieldSetTemplate personTemplate = newFieldSetTemplate().module( module ).fieldSet(
-            FieldSet.newFieldSet().name( "person" ).add( newField().name( "name" ).type( FieldTypes.textline ).build() ).add(
+            FieldSet.newFieldSet().name( "person" ).add( newField().name( "name" ).type( FieldTypes.TEXT_LINE ).build() ).add(
                 newTemplateReference( ageTemplate ).name( "age" ).build() ).build() ).build();
 
         FieldSetTemplate addressTemplate = newFieldSetTemplate().module( module ).fieldSet(
-            FieldSet.newFieldSet().name( "address" ).add( newField().type( FieldTypes.textline ).name( "street" ).build() ).add(
-                newField().type( FieldTypes.textline ).name( "postalCode" ).build() ).add(
-                newField().type( FieldTypes.textline ).name( "postalPlace" ).build() ).build() ).build();
+            FieldSet.newFieldSet().name( "address" ).add( newField().type( FieldTypes.TEXT_LINE ).name( "street" ).build() ).add(
+                newField().type( FieldTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(
+                newField().type( FieldTypes.TEXT_LINE ).name( "postalPlace" ).build() ).build() ).build();
 
         try
         {

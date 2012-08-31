@@ -13,9 +13,8 @@ Ext.define('Admin.lib.UriHelper', {
             Country: 'admin/rest/misc/country',
             Timezone: 'admin/rest/misc/timezone',
             Locale: 'admin/rest/misc/locale',
-            Delete: function (account) {
-                return Ext.String.format('admin/rest/account/{0}/delete', account.key);
-            },
+            Delete: 'admin/rest/account/delete',
+            SuggestUserName: 'admin/rest/account/user/suggest-name',
             Info: function (account) {
                 return 'admin/rest/' + account.info_uri;
             },
