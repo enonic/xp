@@ -23,6 +23,9 @@
 
   <script type="text/javascript" src="global.config.js"></script>
   <script type="text/javascript">
+    window.CONFIG = {
+      baseUrl: '<%= helper.getBaseUrl() %>'
+    };
 
     Ext.Loader.setConfig({
       enabled: true,
@@ -51,7 +54,8 @@
       ],
 
       requires: [
-        'Admin.view.TabPanel'
+        'Admin.view.TabPanel',
+        'Admin.lib.UriHelper'
       ],
 
       launch: function () {
