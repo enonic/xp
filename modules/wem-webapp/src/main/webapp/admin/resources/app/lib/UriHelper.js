@@ -23,7 +23,7 @@ Ext.define('Admin.lib.UriHelper', {
     },
 
     getAccountSuggestUserNameUri: function () {
-        this.getAbsoluteUri('admin/rest/account/user/suggest-name');
+        return this.getAbsoluteUri('admin/rest/account/user/suggest-name');
     },
 
     getAccountInfoUri: function (account) {
