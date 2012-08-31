@@ -22,6 +22,9 @@ Ext.define('Admin.controller.account.Controller', {
             },
             'userStoreListPanel': {
                 itemclick: this.openNewAccountTab
+            },
+            'deleteAccountWindow [action=deleteAccounts]': {
+                click: this.deleteAccounts
             }
 
         });
@@ -468,6 +471,28 @@ Ext.define('Admin.controller.account.Controller', {
         window.close();
     },
 
+    deleteAccounts: function (item) {
+        var me = this;
+        var deleteAccountWindow = item.up('deleteAccountWindow');
+        var keys = deleteAccountWindow.getDeleteKeys();
+        Ext.Ajax.request({
+            url: Admin.lib.UriHelper.getAccountDeleteUri(),
+            method: 'POST',
+            params: {
+                key: keys
+            },
+            success: function (response) {
+                var serverResponse = Ext.JSON.decode(response.responseText);
+                deleteAccountWindow.close();
+                if (!serverResponse.success) {
+                    Ext.Msg.alert("Error", serverResponse.error);
+                } else {
+                    var current = me.getAccountGridPanel().store.currentPage;
+                    me.getAccountGridPanel().store.loadPage(current);
+                }
+            }
+        });
+    },
 
     /*      Getters     */
 

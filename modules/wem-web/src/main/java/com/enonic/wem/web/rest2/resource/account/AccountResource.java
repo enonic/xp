@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -106,7 +107,7 @@ public final class AccountResource
 
     @POST
     @Path("delete")
-    public AccountDeleteResult deleteAccount( @QueryParam("key") @DefaultValue("") final List<String> keys )
+    public AccountDeleteResult deleteAccount( @FormParam("key") @DefaultValue("") final List<String> keys )
     {
         final UserEntity deleter = getCurrentUser();
         for ( String accountKey : keys )

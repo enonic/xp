@@ -18,7 +18,7 @@ Ext.define('Admin.view.account.DeleteAccountWindow', {
                     text: 'Delete',
                     iconCls: 'icon-delete-user-24',
                     itemId: 'deleteAccountButton',
-                    action: 'deleteAccount'
+                    action: 'deleteAccounts'
                 }
             ]
         }
@@ -29,6 +29,7 @@ Ext.define('Admin.view.account.DeleteAccountWindow', {
     },
 
     doShow: function (selection) {
+        this.setDeleteKeys(selection);
         if (selection.length === 1) {
             this.setDialogInfoTpl(Templates.common.userInfo);
             this.callParent([selection[0]]);
@@ -45,5 +46,16 @@ Ext.define('Admin.view.account.DeleteAccountWindow', {
                 ]
             );
         }
+    },
+
+    setDeleteKeys: function (accounts) {
+        this.keys = Ext.Array.map(accounts, function (item) {
+            return item.data.key;
+        });
+    },
+
+    getDeleteKeys: function () {
+        return this.keys;
     }
+
 });
