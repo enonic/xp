@@ -15,14 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.enonic.wem.core.search.account.AccountSearchService;
-import com.enonic.wem.core.search.account.AccountType;
 import com.enonic.wem.web.rest.common.RestResponse;
 
 import com.enonic.cms.core.mail.MessageSettings;
-import com.enonic.cms.core.security.group.DeleteGroupCommand;
-import com.enonic.cms.core.security.group.GroupKey;
-import com.enonic.cms.core.security.group.GroupSpecification;
-import com.enonic.cms.core.security.user.DeleteUserCommand;
 import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.core.security.user.UserKey;
 import com.enonic.cms.core.security.user.UserSpecification;
@@ -100,64 +95,6 @@ public final class AccountController
 
         response.setStatus( "ok" );
         return new ResponseEntity( response, HttpStatus.OK );
-    }
-
-    @RequestMapping(value = "delete", method = RequestMethod.POST)
-    @ResponseBody
-    // TODO: Port delete to rest2 package. Should be under /account/delete. Can also delete users & groups.
-    public RestResponse deleteAccount( @RequestParam("key") final List<String> keys )
-    {
-        final RestResponse res = new RestResponse();
-        boolean success = true;
-
-        final UserEntity deleter = getCurrentUser();
-        for ( String accountKey : keys )
-        {
-            try
-            {
-                final AccountType type = findAccountType( accountKey );
-                switch ( type )
-                {
-                    case USER:
-                        final UserSpecification userSpec = new UserSpecification();
-                        userSpec.setKey( new UserKey( accountKey ) );
-                        final DeleteUserCommand deleteUserCommand = new DeleteUserCommand( deleter.getKey(), userSpec );
-                        userStoreService.deleteUser( deleteUserCommand );
-                        LOG.info( "User deleted: " + accountKey );
-                        break;
-
-                    case GROUP:
-                        final GroupSpecification groupSpec = new GroupSpecification();
-                        groupSpec.setKey( new GroupKey( accountKey ) );
-                        final DeleteGroupCommand deleteGroupCommand = new DeleteGroupCommand( deleter, groupSpec );
-                        userStoreService.deleteGroup( deleteGroupCommand );
-
-                        LOG.info( "Group deleted: " + accountKey );
-                        break;
-                }
-                removeAccountIndex( accountKey );
-            }
-            catch ( Exception e )
-            {
-                LOG.error( "Unable to delete account: " + accountKey, e );
-                success = false;
-                res.setError( "Unable to delete account with key '" + accountKey + "'" );
-                break;
-            }
-        }
-
-        res.setSuccess( success );
-        return res;
-    }
-
-    private void removeAccountIndex( final String accountKey )
-    {
-        searchService.deleteIndex( accountKey, true );
-    }
-
-    private AccountType findAccountType( final String accountKey )
-    {
-        return userDao.findByKey( accountKey ) == null ? AccountType.GROUP : AccountType.USER;
     }
 
     private UserEntity getCurrentUser()
