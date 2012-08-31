@@ -7,8 +7,6 @@ public final class WebRpcResponse
 {
     private JsonNode result;
 
-    private long processingTime;
-
     public JsonNode getResult()
     {
         return this.result;
@@ -17,16 +15,6 @@ public final class WebRpcResponse
     public void setResult( final JsonNode result )
     {
         this.result = result;
-    }
-
-    public long getProcessingTime()
-    {
-        return this.processingTime;
-    }
-
-    public void setProcessingTime( final long processingTime )
-    {
-        this.processingTime = processingTime;
     }
 
     public static WebRpcResponse from( final WebRpcRequest req )

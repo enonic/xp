@@ -24,7 +24,6 @@ public final class WebRpcProcessorImpl
     public WebRpcResponse process( final WebRpcRequest req )
     {
         final WebRpcResponse res = WebRpcResponse.from( req );
-        final long startTime = System.currentTimeMillis();
 
         try
         {
@@ -33,10 +32,6 @@ public final class WebRpcProcessorImpl
         catch ( final WebRpcException e )
         {
             res.setError( e.getError() );
-        }
-        finally
-        {
-            res.setProcessingTime( System.currentTimeMillis() - startTime );
         }
 
         return res;
