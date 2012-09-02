@@ -3,11 +3,12 @@ Ext.define('Admin.store.account.CountryStore', {
 
     model: 'Admin.model.account.CountryModel',
 
+    //pageSize: 100,
     autoLoad: true,
 
     proxy: {
-        type: 'direct',
-        directFn: Admin.lib.RemoteService.util_getCountries,
+        type: 'ajax',
+        url: Admin.lib.UriHelper.getAccountCountryUri(),
         reader: {
             type: 'json',
             root: 'countries',

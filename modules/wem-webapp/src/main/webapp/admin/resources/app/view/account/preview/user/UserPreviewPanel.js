@@ -2,7 +2,9 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.userPreviewPanel',
     requires: [
-        'Admin.view.account.preview.user.UserPreviewToolbar', 'Admin.view.WizardPanel', 'Admin.view.account.MembershipsGraphPanel'
+        'Admin.view.account.preview.user.UserPreviewToolbar',
+        'Admin.view.WizardPanel',
+        'Admin.view.account.MembershipsGraphPanel'
     ],
 
     dialogTitle: 'User Preview',
@@ -19,11 +21,13 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
         this.fieldSets = [
             {
                 title: 'Name',
-                fields: [ 'prefix', 'firstName', 'middleName', 'lastName', 'suffix', 'initials', 'nickName']
+                fields: [ 'prefix', 'firstName', 'middleName',
+                    'lastName', 'suffix', 'initials', 'nickName']
             },
             {
                 title: 'Personal Information',
-                fields: ['personalId', 'memberId', 'organization', 'birthday', 'gender', 'title', 'description', 'htmlEmail', 'homepage']
+                fields: ['personalId', 'memberId', 'organization', 'birthday',
+                    'gender', 'title', 'description', 'htmlEmail', 'homepage']
             },
             {
                 title: 'Settings',
@@ -104,12 +108,16 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
                                                 if (!me.graphData) {
                                                     var mask = new Ext.LoadMask(this, {msg: "Please wait..."});
                                                     mask.show();
-                                                    Admin.lib.RemoteService.account_getGraph({"key": me.data.key}, function (response) {
-                                                            var graphData = response.graph;
+                                                    Ext.Ajax.request({
+                                                        url: Admin.lib.UriHelper.getAccountGraphUri(me.data),
+                                                        success: function (response) {
+                                                            var graphData = Ext.JSON.decode(response.responseText).graph;
                                                             me.graphData = graphData;
                                                             me.down('membershipsGraphPanel').setGraphData(graphData);
                                                             mask.hide();
-                                                        });
+                                                        }
+                                                    });
+
                                                 }
                                             }
                                         },
@@ -138,6 +146,7 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
             }
         ];
         this.callParent(arguments);
+
 
     },
 
@@ -178,8 +187,8 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
             var fieldTypes = [].concat(fieldNames);
             var i;
             var j;
-            for ( i = 0; i < userstore.raw.userFields.length; i++ ) {
-                for ( j = 0; j < fieldTypes.length; j++ ) {
+            for (i = 0; i < userstore.raw.userFields.length; i++) {
+                for (j = 0; j < fieldTypes.length; j++) {
                     if (userstore.raw.userFields[i].type === fieldTypes[j]) {
                         return true;
                     }
@@ -207,7 +216,7 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
             var profileTab = this.down('#profileTab');
             var profileFields = [];
             var i;
-            for ( i = 0; i < this.fieldSets.length; i++ ) {
+            for (i = 0; i < this.fieldSets.length; i++) {
                 profileFields = profileFields.concat(this.fieldSets[i].fields);
             }
             if (this.isFieldsEnabled(profileFields, data.userStore)) {

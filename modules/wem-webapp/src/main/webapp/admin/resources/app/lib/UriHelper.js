@@ -2,6 +2,22 @@ Ext.define('Admin.lib.UriHelper', {
 
     singleton: true,
 
+    getAccountSearchUri: function () {
+        return this.getAbsoluteUri('admin/rest/account');
+    },
+
+    getAccountCountryUri: function () {
+        return this.getAbsoluteUri('admin/rest/misc/country');
+    },
+
+    getAccountTimezoneUri: function () {
+        return this.getAbsoluteUri('admin/rest/misc/timezone');
+    },
+
+    getAccountLocaleUri: function () {
+        return this.getAbsoluteUri('admin/rest/misc/locale');
+    },
+
     getAccountDeleteUri: function () {
         return this.getAbsoluteUri('admin/rest/account/delete');
     },
@@ -12,6 +28,10 @@ Ext.define('Admin.lib.UriHelper', {
 
     getAccountInfoUri: function (account) {
         return this.getAbsoluteUri('admin/rest/' + account.info_uri);
+    },
+
+    getAccountGraphUri: function (account) {
+        return this.getAbsoluteUri('admin/rest/' + account.graph_uri);
     },
 
     getAccountIconUri: function (account) {
@@ -25,6 +45,7 @@ Ext.define('Admin.lib.UriHelper', {
     getAccountChangePasswordUri: function (account) {
         return Ext.String.format("admin/rest/account/user/{0}/change-password", account.key);
     },
+ 
 
     getUserstoreSearchUri: function () {
         return this.getAbsoluteUri('admin/rest/userstore/search');
@@ -40,10 +61,6 @@ Ext.define('Admin.lib.UriHelper', {
 
     getAbsoluteUri: function (uri) {
         return window.CONFIG.baseUrl + '/' + uri;
-    },
-
-    getExtDirectUri: function () {
-        return this.getAbsoluteUri('admin/rest/rpc/extdirect');
     }
 
 });

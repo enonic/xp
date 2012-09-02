@@ -7,8 +7,8 @@ Ext.define('Admin.store.account.TimezoneStore', {
     autoLoad: true,
 
     proxy: {
-        type: 'direct',
-        directFn: Admin.lib.RemoteService.util_getTimeZones,
+        type: 'ajax',
+        url: Admin.lib.UriHelper.getAccountTimezoneUri(),
         simpleSortMode: true,
         reader: {
             type: 'json',

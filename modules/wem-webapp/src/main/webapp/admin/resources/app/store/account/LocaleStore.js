@@ -7,8 +7,8 @@ Ext.define('Admin.store.account.LocaleStore', {
     autoLoad: true,
 
     proxy: {
-        type: 'direct',
-        directFn: Admin.lib.RemoteService.util_getLocales,
+        type: 'ajax',
+        url: Admin.lib.UriHelper.getAccountLocaleUri(),
         simpleSortMode: true,
         reader: {
             type: 'json',

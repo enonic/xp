@@ -66,8 +66,7 @@
 
       requires: [
         'Admin.view.TabPanel',
-        'Admin.lib.UriHelper',
-        'Admin.lib.RemoteService'
+        'Admin.lib.UriHelper'
       ],
 
       launch: function () {
@@ -105,8 +104,6 @@
       }
 
     });
-
-
 
   </script>
 

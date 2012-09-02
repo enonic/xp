@@ -7,10 +7,8 @@ Ext.define('Admin.store.account.GroupStore', {
     //autoLoad: true,
 
     proxy: {
-        // type: 'ajax',
-        // url: Admin.lib.UriHelper.getAccountSearchUri(),
-        type: 'direct',
-        directFn: Admin.lib.RemoteService.account_search,
+        type: 'ajax',
+        url: Admin.lib.UriHelper.getAccountSearchUri(),
         extraParams: {
             types: 'group,role'
         },
