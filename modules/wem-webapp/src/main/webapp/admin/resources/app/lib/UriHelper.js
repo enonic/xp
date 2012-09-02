@@ -6,18 +6,6 @@ Ext.define('Admin.lib.UriHelper', {
         return this.getAbsoluteUri('admin/rest/account');
     },
 
-    getAccountCountryUri: function () {
-        return this.getAbsoluteUri('admin/rest/misc/country');
-    },
-
-    getAccountTimezoneUri: function () {
-        return this.getAbsoluteUri('admin/rest/misc/timezone');
-    },
-
-    getAccountLocaleUri: function () {
-        return this.getAbsoluteUri('admin/rest/misc/locale');
-    },
-
     getAccountDeleteUri: function () {
         return this.getAbsoluteUri('admin/rest/account/delete');
     },
