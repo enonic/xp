@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
 import com.enonic.wem.web.json.JsonSerializable;
 import com.enonic.wem.web.rest2.resource.timezone.TimeZoneResource;
-import com.enonic.wem.web.rpc.JsonRpcContext;
+import com.enonic.wem.web.jsonrpc.JsonRpcContext;
 
 @Component
 public final class GetTimeZonesRpcHandler

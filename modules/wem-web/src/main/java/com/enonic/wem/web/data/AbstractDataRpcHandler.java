@@ -3,7 +3,7 @@ package com.enonic.wem.web.data;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.web.rpc.JsonRpcHandler;
+import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
 
 public abstract class AbstractDataRpcHandler
     extends JsonRpcHandler

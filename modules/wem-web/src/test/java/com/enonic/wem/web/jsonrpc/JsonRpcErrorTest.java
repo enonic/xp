@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rpc;
+package com.enonic.wem.web.jsonrpc;
 
 import org.junit.Test;
 

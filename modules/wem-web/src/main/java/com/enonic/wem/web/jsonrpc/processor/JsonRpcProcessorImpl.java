@@ -1,12 +1,12 @@
-package com.enonic.wem.web.rpc.processor;
+package com.enonic.wem.web.jsonrpc.processor;
 
 import org.codehaus.jackson.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.web.rpc.JsonRpcError;
-import com.enonic.wem.web.rpc.JsonRpcException;
-import com.enonic.wem.web.rpc.JsonRpcHandler;
+import com.enonic.wem.web.jsonrpc.JsonRpcError;
+import com.enonic.wem.web.jsonrpc.JsonRpcException;
+import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
 
 import com.enonic.cms.api.util.LogFacade;
 

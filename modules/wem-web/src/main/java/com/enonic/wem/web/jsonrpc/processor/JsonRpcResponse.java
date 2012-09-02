@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rpc.processor;
+package com.enonic.wem.web.jsonrpc.processor;
 
 import org.codehaus.jackson.JsonNode;
 

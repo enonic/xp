@@ -1,10 +1,10 @@
-package com.enonic.wem.web.rpc.processor;
+package com.enonic.wem.web.jsonrpc.processor;
 
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Test;
 
-import com.enonic.wem.web.rpc.JsonRpcError;
+import com.enonic.wem.web.jsonrpc.JsonRpcError;
 
 import static org.junit.Assert.*;
 

@@ -1,6 +1,6 @@
-package com.enonic.wem.web.rpc.processor;
+package com.enonic.wem.web.jsonrpc.processor;
 
-import com.enonic.wem.web.rpc.JsonRpcError;
+import com.enonic.wem.web.jsonrpc.JsonRpcError;
 
 public abstract class JsonRpcMessage
 {
