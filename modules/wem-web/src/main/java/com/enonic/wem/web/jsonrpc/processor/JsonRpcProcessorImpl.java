@@ -57,7 +57,7 @@ public final class JsonRpcProcessorImpl
         }
         catch ( final Exception e )
         {
-            LOG.errorCause( "Error occurred processing webRpc request", e );
+            LOG.errorCause( "Error occurred processing request", e );
             final JsonRpcError error = JsonRpcError.internalError( e.getMessage() );
             throw new JsonRpcException( error );
         }

@@ -1,54 +1,43 @@
-package com.enonic.wem.web.rest2.resource.country;
+package com.enonic.wem.web.data.util;
 
 import java.util.List;
-
-import org.junit.Before;
+import java.util.Locale;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.web.rest2.resource.AbstractResourceTest;
+import com.enonic.wem.web.data.AbstractRpcHandlerTest;
+import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
 
 import com.enonic.cms.core.country.Country;
 import com.enonic.cms.core.country.CountryCode;
 import com.enonic.cms.core.country.CountryService;
 import com.enonic.cms.core.country.Region;
 
-public class CountryResourceTest
-    extends AbstractResourceTest
+public class GetCountriesRpcHandlerTest
+    extends AbstractRpcHandlerTest
 {
-    private CountryResource resource;
-
     private List<Country> countries;
 
-    @Before
-    public void setUp()
+    @Override
+    protected JsonRpcHandler createHandler()
+        throws Exception
     {
         this.countries = Lists.newArrayList();
 
         final CountryService service = Mockito.mock( CountryService.class );
         Mockito.when( service.getCountries() ).thenReturn( this.countries );
 
-        this.resource = new CountryResource();
-        this.resource.setCountryService( service );
+        final GetCountriesRpcHandler handler = new GetCountriesRpcHandler();
+        handler.setCountryService( service );
+        return handler;
     }
 
     @Test
-    public void testGetAll_empty()
+    public void testRequest()
         throws Exception
     {
-        this.countries.clear();
-        final CountryResult result = this.resource.getAll();
-        assertJsonResult( "getAll_empty.json", result );
-    }
-
-    @Test
-    public void testGetAll_list()
-        throws Exception
-    {
-        this.countries.clear();
-
         final Country country = new Country( new CountryCode( "NO" ), "NORWAY", "NORGE", "47" );
         country.setRegionsEnglishName( "County" );
         country.setRegionsLocalName( "Fylke" );
@@ -58,7 +47,6 @@ public class CountryResourceTest
 
         this.countries.add( country );
 
-        final CountryResult result = this.resource.getAll();
-        assertJsonResult( "getAll_list.json", result );
+        testSuccess( null, "getCountries_result.json" );
     }
 }

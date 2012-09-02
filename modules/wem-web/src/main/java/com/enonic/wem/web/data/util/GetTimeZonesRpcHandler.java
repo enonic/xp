@@ -4,16 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
-import com.enonic.wem.web.json.JsonSerializable;
-import com.enonic.wem.web.rest2.resource.timezone.TimeZoneResource;
 import com.enonic.wem.web.jsonrpc.JsonRpcContext;
+
+import com.enonic.cms.core.timezone.TimeZoneService;
 
 @Component
 public final class GetTimeZonesRpcHandler
     extends AbstractDataRpcHandler
 {
-    @Autowired
-    private TimeZoneResource resource;
+    private TimeZoneService timezoneService;
 
     public GetTimeZonesRpcHandler()
     {
@@ -24,7 +23,13 @@ public final class GetTimeZonesRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final JsonSerializable json = this.resource.getAll();
-        context.setResult( json );
+        final TimeZoneJsonResult result = new TimeZoneJsonResult( this.timezoneService.getTimeZones() );
+        context.setResult( result );
+    }
+
+    @Autowired
+    public void setTimezoneService( final TimeZoneService timezoneService )
+    {
+        this.timezoneService = timezoneService;
     }
 }

@@ -1,4 +1,5 @@
 {
+    "success": true,
     "total": 4,
     "timezones": [
         {
@@ -22,7 +23,6 @@
             "name": "Eastern European Summer Time",
             "offset": "+03:00"
         },
-
         {
             "id": "America/Caracas",
             "humanizedId": "America/Caracas",

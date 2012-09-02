@@ -1,48 +1,41 @@
-package com.enonic.wem.web.rest2.resource.timezone;
+package com.enonic.wem.web.data.util;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.joda.time.DateTimeZone;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.web.rest2.resource.AbstractResourceTest;
+import com.enonic.wem.web.data.AbstractRpcHandlerTest;
+import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
 
+import com.enonic.cms.core.locale.LocaleService;
 import com.enonic.cms.core.timezone.TimeZoneService;
 
-public class TimeZoneResourceTest
-    extends AbstractResourceTest
+public class GetTimeZonesRpcHandlerTest
+    extends AbstractRpcHandlerTest
 {
-    private TimeZoneResource resource;
-
     private List<DateTimeZone> timeZoneList;
 
-    @Before
-    public void setUp()
+    @Override
+    protected JsonRpcHandler createHandler()
+        throws Exception
     {
         this.timeZoneList = Lists.newArrayList();
 
         final TimeZoneService service = Mockito.mock( TimeZoneService.class );
         Mockito.when( service.getTimeZones() ).thenReturn( this.timeZoneList );
 
-        this.resource = new TimeZoneResource();
-        this.resource.setTimezoneService( service );
+        final GetTimeZonesRpcHandler handler = new GetTimeZonesRpcHandler();
+        handler.setTimezoneService( service );
+        return handler;
     }
 
     @Test
-    public void testGetAll_empty()
-        throws Exception
-    {
-        this.timeZoneList.clear();
-        final TimeZoneResult result = this.resource.getAll();
-        assertJsonResult( "getAll_empty.json", result );
-    }
-
-    @Test
-    public void testGetAll_list()
+    public void testRequest()
         throws Exception
     {
         this.timeZoneList.add( DateTimeZone.UTC );
@@ -50,7 +43,6 @@ public class TimeZoneResourceTest
         this.timeZoneList.add( DateTimeZone.forID( "EET" ) );
         this.timeZoneList.add( DateTimeZone.forID( "America/Caracas" ) );
 
-        final TimeZoneResult result = this.resource.getAll();
-        assertJsonResult( "getAll_list.json", result );
+        testSuccess( null, "getTimeZones_result.json" );
     }
 }

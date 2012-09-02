@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.resource.country;
+package com.enonic.wem.web.data.util;
 
 import java.util.Collection;
 
@@ -6,25 +6,24 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.web.rest2.common.JsonResult;
+import com.enonic.wem.web.json.result.JsonSuccessResult;
 
 import com.enonic.cms.core.country.Country;
 import com.enonic.cms.core.country.Region;
 
-public final class CountryResult
-    extends JsonResult
+final class CountryJsonResult
+    extends JsonSuccessResult
 {
     private final Collection<Country> list;
 
-    public CountryResult( final Collection<Country> list )
+    public CountryJsonResult( final Collection<Country> list )
     {
         this.list = list;
     }
 
     @Override
-    public JsonNode toJson()
+    protected void serialize( final ObjectNode json )
     {
-        final ObjectNode json = objectNode();
         json.put( "total", this.list.size() );
 
         final ArrayNode array = json.putArray( "countries" );
@@ -32,8 +31,6 @@ public final class CountryResult
         {
             array.add( toJson( model ) );
         }
-
-        return json;
     }
 
     private ObjectNode toJson( final Country model )

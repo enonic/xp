@@ -1,6 +1,7 @@
 package com.enonic.wem.web.json.result;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 
@@ -25,5 +26,15 @@ public abstract class JsonDataResult
         json.put( "success", this.success );
         serialize( json );
         return json;
+    }
+
+    protected final ObjectNode objectNode()
+    {
+        return JsonNodeFactory.instance.objectNode();
+    }
+
+    protected final ArrayNode arrayNode()
+    {
+        return JsonNodeFactory.instance.arrayNode();
     }
 }

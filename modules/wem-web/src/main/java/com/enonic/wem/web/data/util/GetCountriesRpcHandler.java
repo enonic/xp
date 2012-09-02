@@ -4,16 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
-import com.enonic.wem.web.json.JsonSerializable;
-import com.enonic.wem.web.rest2.resource.country.CountryResource;
 import com.enonic.wem.web.jsonrpc.JsonRpcContext;
+
+import com.enonic.cms.core.country.CountryService;
 
 @Component
 public final class GetCountriesRpcHandler
     extends AbstractDataRpcHandler
 {
-    @Autowired
-    private CountryResource resource;
+    private CountryService countryService;
 
     public GetCountriesRpcHandler()
     {
@@ -24,7 +23,13 @@ public final class GetCountriesRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final JsonSerializable json = this.resource.getAll();
-        context.setResult( json );
+        final CountryJsonResult result = new CountryJsonResult( this.countryService.getCountries() );
+        context.setResult( result );
+    }
+
+    @Autowired
+    public void setCountryService( final CountryService countryService )
+    {
+        this.countryService = countryService;
     }
 }

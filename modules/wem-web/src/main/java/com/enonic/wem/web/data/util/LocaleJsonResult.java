@@ -1,43 +1,37 @@
-package com.enonic.wem.web.rest2.resource.locale;
+package com.enonic.wem.web.data.util;
 
 import java.util.Locale;
 
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.web.rest2.common.JsonResult;
+import com.enonic.wem.web.json.result.JsonSuccessResult;
 
-public final class LocaleResult
-    extends JsonResult
+final class LocaleJsonResult
+    extends JsonSuccessResult
 {
     private final Locale[] list;
 
-    public LocaleResult( final Locale... list )
+    public LocaleJsonResult( final Locale... list )
     {
         this.list = list;
     }
 
     @Override
-    public JsonNode toJson()
+    protected void serialize( final ObjectNode json )
     {
-        final ObjectNode json = objectNode();
         json.put( "total", this.list.length );
 
         final ArrayNode array = json.putArray( "locales" );
         for ( final Locale model : this.list )
         {
-            array.add( toJson( model ) );
+            serialize( array.addObject(), model );
         }
-
-        return json;
     }
 
-    private ObjectNode toJson( final Locale model )
+    private void serialize( final ObjectNode json, final Locale model )
     {
-        final ObjectNode json = objectNode();
         json.put( "id", model.toString() );
         json.put( "displayName", model.getDisplayName() );
-        return json;
     }
 }
