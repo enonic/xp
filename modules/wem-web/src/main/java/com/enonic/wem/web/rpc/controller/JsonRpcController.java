@@ -18,10 +18,10 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.web.rpc.WebRpcException;
-import com.enonic.wem.web.rpc.processor.WebRpcProcessor;
-import com.enonic.wem.web.rpc.processor.WebRpcRequest;
-import com.enonic.wem.web.rpc.processor.WebRpcResponse;
+import com.enonic.wem.web.rpc.JsonRpcException;
+import com.enonic.wem.web.rpc.processor.JsonRpcProcessor;
+import com.enonic.wem.web.rpc.processor.JsonRpcRequest;
+import com.enonic.wem.web.rpc.processor.JsonRpcResponse;
 
 @Component
 @Path("jsonrpc")
@@ -30,7 +30,7 @@ public final class JsonRpcController
 {
     private final JsonRpcMessageHelper helper;
 
-    private WebRpcProcessor processor;
+    private JsonRpcProcessor processor;
 
     public JsonRpcController()
     {
@@ -41,8 +41,8 @@ public final class JsonRpcController
     @Path("{method}")
     public Response handleGet( @PathParam("method") final String method, @Context final UriInfo uriInfo )
     {
-        final WebRpcRequest req = this.helper.createRequest( method, uriInfo.getQueryParameters() );
-        final WebRpcResponse res = doProcessSingle( req );
+        final JsonRpcRequest req = this.helper.createRequest( method, uriInfo.getQueryParameters() );
+        final JsonRpcResponse res = doProcessSingle( req );
         return this.helper.toResponse( res );
     }
 
@@ -54,24 +54,24 @@ public final class JsonRpcController
         {
             return doHandlePost( json );
         }
-        catch ( final WebRpcException e )
+        catch ( final JsonRpcException e )
         {
             return this.helper.toResponse( e );
         }
     }
 
     private Response doHandlePost( final String json )
-        throws WebRpcException
+        throws JsonRpcException
     {
-        final List<WebRpcRequest> list = this.helper.parseJson( json );
-        final List<WebRpcResponse> result = doProcessList( list );
+        final List<JsonRpcRequest> list = this.helper.parseJson( json );
+        final List<JsonRpcResponse> result = doProcessList( list );
         return this.helper.toResponse( result );
     }
 
-    private List<WebRpcResponse> doProcessList( final List<WebRpcRequest> list )
+    private List<JsonRpcResponse> doProcessList( final List<JsonRpcRequest> list )
     {
-        final List<WebRpcResponse> result = Lists.newArrayList();
-        for ( final WebRpcRequest req : list )
+        final List<JsonRpcResponse> result = Lists.newArrayList();
+        for ( final JsonRpcRequest req : list )
         {
             result.add( doProcessSingle( req ) );
         }
@@ -79,18 +79,18 @@ public final class JsonRpcController
         return result;
     }
 
-    private WebRpcResponse doProcessSingle( final WebRpcRequest req )
+    private JsonRpcResponse doProcessSingle( final JsonRpcRequest req )
     {
         if ( req.hasError() )
         {
-            return WebRpcResponse.from( req );
+            return JsonRpcResponse.from( req );
         }
 
         return this.processor.process( req );
     }
 
     @Autowired
-    public void setProcessor( final WebRpcProcessor processor )
+    public void setProcessor( final JsonRpcProcessor processor )
     {
         this.processor = processor;
     }

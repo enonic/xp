@@ -10,17 +10,17 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.web.json.JsonSerializable;
-import com.enonic.wem.web.rpc.WebRpcContext;
-import com.enonic.wem.web.rpc.WebRpcParam;
+import com.enonic.wem.web.rpc.JsonRpcContext;
+import com.enonic.wem.web.rpc.JsonRpcParam;
 
-final class WebRpcContextImpl
-    implements WebRpcContext
+final class JsonRpcContextImpl
+    implements JsonRpcContext
 {
-    private final Map<String, WebRpcParam> params;
+    private final Map<String, JsonRpcParam> params;
 
     private JsonNode result;
 
-    public WebRpcContextImpl( final ObjectNode params )
+    public JsonRpcContextImpl( final ObjectNode params )
     {
         this.params = Maps.newHashMap();
 
@@ -36,7 +36,7 @@ final class WebRpcContextImpl
         while ( it.hasNext() )
         {
             final String name = it.next();
-            this.params.put( name, WebRpcParamImpl.create( name, json.get( name ) ) );
+            this.params.put( name, JsonRpcParamImpl.create( name, json.get( name ) ) );
         }
     }
 
@@ -47,21 +47,21 @@ final class WebRpcContextImpl
     }
 
     @Override
-    public WebRpcParam param( final String name )
+    public JsonRpcParam param( final String name )
     {
-        final WebRpcParam param = this.params.get( name );
+        final JsonRpcParam param = this.params.get( name );
         if ( param != null )
         {
             return param;
         }
         else
         {
-            return WebRpcParamImpl.create( name, null );
+            return JsonRpcParamImpl.create( name, null );
         }
     }
 
     @Override
-    public Iterator<WebRpcParam> iterator()
+    public Iterator<JsonRpcParam> iterator()
     {
         return this.params.values().iterator();
     }

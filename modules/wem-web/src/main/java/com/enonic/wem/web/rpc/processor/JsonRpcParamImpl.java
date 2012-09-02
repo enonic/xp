@@ -9,18 +9,18 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.web.rpc.WebRpcParam;
-import com.enonic.wem.web.rpc.WebRpcError;
-import com.enonic.wem.web.rpc.WebRpcException;
+import com.enonic.wem.web.rpc.JsonRpcError;
+import com.enonic.wem.web.rpc.JsonRpcException;
+import com.enonic.wem.web.rpc.JsonRpcParam;
 
-final class WebRpcParamImpl
-    implements WebRpcParam
+final class JsonRpcParamImpl
+    implements JsonRpcParam
 {
     private final String name;
 
     private final JsonNode[] values;
 
-    private WebRpcParamImpl( final String name, final JsonNode[] values )
+    private JsonRpcParamImpl( final String name, final JsonNode[] values )
     {
         this.name = name;
         this.values = values;
@@ -39,13 +39,13 @@ final class WebRpcParamImpl
     }
 
     @Override
-    public WebRpcParam required()
-        throws WebRpcException
+    public JsonRpcParam required()
+        throws JsonRpcException
     {
         if ( isNull() )
         {
-            final WebRpcError error = WebRpcError.invalidParams( "Parameter [" + this.name + "] is required" );
-            throw new WebRpcException( error );
+            final JsonRpcError error = JsonRpcError.invalidParams( "Parameter [" + this.name + "] is required" );
+            throw new JsonRpcException( error );
         }
 
         return this;
@@ -225,10 +225,10 @@ final class WebRpcParamImpl
         return result;
     }
 
-    public static WebRpcParamImpl create( final String name, final JsonNode json )
+    public static JsonRpcParamImpl create( final String name, final JsonNode json )
     {
         final JsonNode[] array = toArray( json );
-        return new WebRpcParamImpl( name, array );
+        return new JsonRpcParamImpl( name, array );
     }
 
     private static JsonNode[] toArray( final JsonNode json )

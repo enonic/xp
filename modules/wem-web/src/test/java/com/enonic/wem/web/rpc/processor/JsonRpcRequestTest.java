@@ -4,16 +4,16 @@ import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Test;
 
-import com.enonic.wem.web.rpc.WebRpcError;
+import com.enonic.wem.web.rpc.JsonRpcError;
 
 import static org.junit.Assert.*;
 
-public class WebRpcRequestTest
+public class JsonRpcRequestTest
 {
     @Test
     public void testBasic()
     {
-        final WebRpcRequest req = new WebRpcRequest();
+        final JsonRpcRequest req = new JsonRpcRequest();
 
         assertNull( req.getId() );
         req.setId( "id" );
@@ -23,7 +23,7 @@ public class WebRpcRequestTest
         req.setMethod( "method" );
         assertEquals( "method", req.getMethod() );
 
-        final WebRpcError error = WebRpcError.internalError( "Message" );
+        final JsonRpcError error = JsonRpcError.internalError( "Message" );
         assertNull( req.getError() );
         req.setError( error );
         assertSame( error, req.getError() );

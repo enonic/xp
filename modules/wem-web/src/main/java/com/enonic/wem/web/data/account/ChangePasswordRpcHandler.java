@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
 import com.enonic.wem.web.json.JsonSerializable;
 import com.enonic.wem.web.rest2.resource.account.user.UserResource;
-import com.enonic.wem.web.rpc.WebRpcContext;
+import com.enonic.wem.web.rpc.JsonRpcContext;
 
 @Component
 public final class ChangePasswordRpcHandler
@@ -21,7 +21,7 @@ public final class ChangePasswordRpcHandler
     }
 
     @Override
-    public void handle( final WebRpcContext context )
+    public void handle( final JsonRpcContext context )
         throws Exception
     {
         final String key = context.param( "key" ).required().asString();

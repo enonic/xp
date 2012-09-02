@@ -2,8 +2,8 @@ package com.enonic.wem.web.rpc.processor;
 
 import org.codehaus.jackson.node.ObjectNode;
 
-public final class WebRpcRequest
-    extends WebRpcMessage
+public final class JsonRpcRequest
+    extends JsonRpcMessage
 {
     private ObjectNode params;
 

@@ -4,12 +4,12 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class WebRpcErrorTest
+public class JsonRpcErrorTest
 {
     @Test
     public void testMethodNotFound()
     {
-        final WebRpcError error = WebRpcError.methodNotFound( "Message" );
+        final JsonRpcError error = JsonRpcError.methodNotFound( "Message" );
         assertNotNull( error );
         assertEquals( -32601, error.getCode() );
         assertEquals( 404, error.getHttpStatus() );
@@ -19,7 +19,7 @@ public class WebRpcErrorTest
     @Test
     public void testInternalError()
     {
-        final WebRpcError error = WebRpcError.internalError( "Message" );
+        final JsonRpcError error = JsonRpcError.internalError( "Message" );
         assertNotNull( error );
         assertEquals( -32603, error.getCode() );
         assertEquals( 500, error.getHttpStatus() );
@@ -29,7 +29,7 @@ public class WebRpcErrorTest
     @Test
     public void testParseError()
     {
-        final WebRpcError error = WebRpcError.parseError( "Message" );
+        final JsonRpcError error = JsonRpcError.parseError( "Message" );
         assertNotNull( error );
         assertEquals( -32700, error.getCode() );
         assertEquals( 500, error.getHttpStatus() );
@@ -39,7 +39,7 @@ public class WebRpcErrorTest
     @Test
     public void testInvalidParams()
     {
-        final WebRpcError error = WebRpcError.invalidParams( "Message" );
+        final JsonRpcError error = JsonRpcError.invalidParams( "Message" );
         assertNotNull( error );
         assertEquals( -32602, error.getCode() );
         assertEquals( 400, error.getHttpStatus() );
@@ -49,7 +49,7 @@ public class WebRpcErrorTest
     @Test
     public void testInvalidRequest()
     {
-        final WebRpcError error = WebRpcError.invalidRequest( "Message" );
+        final JsonRpcError error = JsonRpcError.invalidRequest( "Message" );
         assertNotNull( error );
         assertEquals( -32600, error.getCode() );
         assertEquals( 500, error.getHttpStatus() );

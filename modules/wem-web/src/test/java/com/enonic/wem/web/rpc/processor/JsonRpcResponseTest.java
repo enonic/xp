@@ -4,16 +4,16 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.junit.Test;
 
-import com.enonic.wem.web.rpc.WebRpcError;
+import com.enonic.wem.web.rpc.JsonRpcError;
 
 import static org.junit.Assert.*;
 
-public class WebRpcResponseTest
+public class JsonRpcResponseTest
 {
     @Test
     public void testBasic()
     {
-        final WebRpcResponse res = new WebRpcResponse();
+        final JsonRpcResponse res = new JsonRpcResponse();
 
         assertNull( res.getId() );
         res.setId( "id" );
@@ -23,7 +23,7 @@ public class WebRpcResponseTest
         res.setMethod( "method" );
         assertEquals( "method", res.getMethod() );
 
-        final WebRpcError error = WebRpcError.internalError( "Message" );
+        final JsonRpcError error = JsonRpcError.internalError( "Message" );
         assertNull( res.getError() );
         res.setError( error );
         assertSame( error, res.getError() );
@@ -37,14 +37,14 @@ public class WebRpcResponseTest
     @Test
     public void testCreateFrom()
     {
-        final WebRpcRequest req = new WebRpcRequest();
+        final JsonRpcRequest req = new JsonRpcRequest();
         req.setId( "id" );
         req.setMethod( "method" );
 
-        final WebRpcError error = WebRpcError.internalError( "Message" );
+        final JsonRpcError error = JsonRpcError.internalError( "Message" );
         req.setError( error );
 
-        final WebRpcResponse res = WebRpcResponse.from( req );
+        final JsonRpcResponse res = JsonRpcResponse.from( req );
         assertEquals( "id", res.getId() );
         assertEquals( "method", res.getMethod() );
         assertSame( error, res.getError() );

@@ -16,10 +16,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.web.rest2.provider.ObjectMapperFactory;
-import com.enonic.wem.web.rpc.WebRpcError;
-import com.enonic.wem.web.rpc.WebRpcException;
-import com.enonic.wem.web.rpc.processor.WebRpcRequest;
-import com.enonic.wem.web.rpc.processor.WebRpcResponse;
+import com.enonic.wem.web.rpc.JsonRpcError;
+import com.enonic.wem.web.rpc.JsonRpcException;
+import com.enonic.wem.web.rpc.processor.JsonRpcRequest;
+import com.enonic.wem.web.rpc.processor.JsonRpcResponse;
 
 final class JsonRpcMessageHelper
 {
@@ -33,18 +33,18 @@ final class JsonRpcMessageHelper
         this.counter = new AtomicLong( 0L );
     }
 
-    public final Response toResponse( final WebRpcException ex )
+    public final Response toResponse( final JsonRpcException ex )
     {
-        final WebRpcResponse res = new WebRpcResponse();
+        final JsonRpcResponse res = new JsonRpcResponse();
         res.setError( ex.getError() );
 
         return toResponse( res );
     }
 
-    public final Response toResponse( final WebRpcResponse response )
+    public final Response toResponse( final JsonRpcResponse response )
     {
         final ObjectNode json = toJson( response );
-        final WebRpcError error = response.getError();
+        final JsonRpcError error = response.getError();
 
         if ( error != null )
         {
@@ -56,7 +56,7 @@ final class JsonRpcMessageHelper
         }
     }
 
-    public final Response toResponse( final List<WebRpcResponse> list )
+    public final Response toResponse( final List<JsonRpcResponse> list )
     {
         if ( list.isEmpty() )
         {
@@ -70,7 +70,7 @@ final class JsonRpcMessageHelper
         }
 
         final ArrayNode result = JsonNodeFactory.instance.arrayNode();
-        for ( final WebRpcResponse item : list )
+        for ( final JsonRpcResponse item : list )
         {
             result.add( toJson( item ) );
         }
@@ -78,9 +78,9 @@ final class JsonRpcMessageHelper
         return Response.ok().entity( result ).build();
     }
 
-    public final WebRpcRequest createRequest( final String method, final MultivaluedMap<String, String> params )
+    public final JsonRpcRequest createRequest( final String method, final MultivaluedMap<String, String> params )
     {
-        final WebRpcRequest req = new WebRpcRequest();
+        final JsonRpcRequest req = new JsonRpcRequest();
         req.setId( String.valueOf( this.counter.incrementAndGet() ) );
         req.setMethod( method );
         req.setParams( createParams( params ) );
@@ -124,8 +124,8 @@ final class JsonRpcMessageHelper
         return array;
     }
 
-    public final List<WebRpcRequest> parseJson( final String json )
-        throws WebRpcException
+    public final List<JsonRpcRequest> parseJson( final String json )
+        throws JsonRpcException
     {
         try
         {
@@ -133,12 +133,12 @@ final class JsonRpcMessageHelper
         }
         catch ( final Exception e )
         {
-            final WebRpcError error = WebRpcError.parseError( e.getMessage() );
-            throw new WebRpcException( error );
+            final JsonRpcError error = JsonRpcError.parseError( e.getMessage() );
+            throw new JsonRpcException( error );
         }
     }
 
-    private List<WebRpcRequest> doParseJson( final JsonNode json )
+    private List<JsonRpcRequest> doParseJson( final JsonNode json )
     {
         if ( json instanceof ArrayNode )
         {
@@ -150,9 +150,9 @@ final class JsonRpcMessageHelper
         }
     }
 
-    private List<WebRpcRequest> doParseArray( final ArrayNode json )
+    private List<JsonRpcRequest> doParseArray( final ArrayNode json )
     {
-        final List<WebRpcRequest> list = Lists.newArrayList();
+        final List<JsonRpcRequest> list = Lists.newArrayList();
         for ( final JsonNode node : json )
         {
             list.add( doParseSingle( node ) );
@@ -161,9 +161,9 @@ final class JsonRpcMessageHelper
         return list;
     }
 
-    private WebRpcRequest doParseSingle( final JsonNode json )
+    private JsonRpcRequest doParseSingle( final JsonNode json )
     {
-        final WebRpcRequest req = new WebRpcRequest();
+        final JsonRpcRequest req = new JsonRpcRequest();
 
         if ( json instanceof ObjectNode )
         {
@@ -171,25 +171,25 @@ final class JsonRpcMessageHelper
         }
         else
         {
-            req.setError( WebRpcError.invalidRequest( "Expected json object" ) );
+            req.setError( JsonRpcError.invalidRequest( "Expected json object" ) );
         }
 
         return req;
     }
 
-    private ObjectNode toJson(final WebRpcResponse res)
+    private ObjectNode toJson(final JsonRpcResponse res)
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
         toJson( res, json );
         return json;
     }
 
-    private void toJson( final WebRpcResponse res, final ObjectNode json )
+    private void toJson( final JsonRpcResponse res, final ObjectNode json )
     {
         json.put( "jsonrpc", "2.0" );
         json.put( "id", res.getId() );
 
-        final WebRpcError error = res.getError();
+        final JsonRpcError error = res.getError();
         if ( error != null )
         {
             final ObjectNode errorJson = json.putObject( "error" );
@@ -202,7 +202,7 @@ final class JsonRpcMessageHelper
         }
     }
 
-    private void doParseSingle( final WebRpcRequest req, final ObjectNode json )
+    private void doParseSingle( final JsonRpcRequest req, final ObjectNode json )
     {
         final JsonNode version = json.get( "jsonrpc" );
         final JsonNode id = json.get( "id" );
@@ -211,19 +211,19 @@ final class JsonRpcMessageHelper
 
         if ( version == null )
         {
-            req.setError( WebRpcError.invalidRequest( "Version field must be set" ) );
+            req.setError( JsonRpcError.invalidRequest( "Version field must be set" ) );
             return;
         }
 
         if ( !"2.0".equals( version.asText() ) )
         {
-            req.setError( WebRpcError.invalidRequest( "Must be version 2.0" ) );
+            req.setError( JsonRpcError.invalidRequest( "Must be version 2.0" ) );
             return;
         }
 
         if ( method == null )
         {
-            req.setError( WebRpcError.invalidRequest( "Method must be set" ) );
+            req.setError( JsonRpcError.invalidRequest( "Method must be set" ) );
             return;
         }
 
@@ -234,14 +234,14 @@ final class JsonRpcMessageHelper
         {
             req.setParams( findData( params ) );
         }
-        catch ( final WebRpcException e )
+        catch ( final JsonRpcException e )
         {
             req.setError( e.getError() );
         }
     }
 
     private ObjectNode findData( final JsonNode node )
-        throws WebRpcException
+        throws JsonRpcException
     {
         if ( node == null )
         {
@@ -258,7 +258,7 @@ final class JsonRpcMessageHelper
             return (ObjectNode) node;
         }
 
-        final WebRpcError error = WebRpcError.invalidRequest( "Only named parameters are supported" );
-        throw new WebRpcException( error );
+        final JsonRpcError error = JsonRpcError.invalidRequest( "Only named parameters are supported" );
+        throw new JsonRpcException( error );
     }
 }

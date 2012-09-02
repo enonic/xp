@@ -1,10 +1,10 @@
 package com.enonic.wem.web.rpc;
 
-public abstract class WebRpcHandler
+public abstract class JsonRpcHandler
 {
     private final String name;
 
-    public WebRpcHandler( final String name )
+    public JsonRpcHandler( final String name )
     {
         this.name = name;
     }
@@ -14,6 +14,6 @@ public abstract class WebRpcHandler
         return this.name;
     }
 
-    public abstract void handle( final WebRpcContext context )
+    public abstract void handle( final JsonRpcContext context )
         throws Exception;
 }

@@ -1,14 +1,14 @@
 package com.enonic.wem.web.rpc.processor;
 
-import com.enonic.wem.web.rpc.WebRpcError;
+import com.enonic.wem.web.rpc.JsonRpcError;
 
-public abstract class WebRpcMessage
+public abstract class JsonRpcMessage
 {
     private String id;
 
     private String method;
 
-    private WebRpcError error;
+    private JsonRpcError error;
 
     public final String getId()
     {
@@ -30,12 +30,12 @@ public abstract class WebRpcMessage
         this.method = method;
     }
 
-    public final WebRpcError getError()
+    public final JsonRpcError getError()
     {
         return this.error;
     }
 
-    public final void setError( final WebRpcError error )
+    public final void setError( final JsonRpcError error )
     {
         this.error = error;
     }

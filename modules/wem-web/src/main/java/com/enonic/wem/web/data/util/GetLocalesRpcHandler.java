@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
 import com.enonic.wem.web.json.JsonSerializable;
 import com.enonic.wem.web.rest2.resource.locale.LocaleResource;
-import com.enonic.wem.web.rpc.WebRpcContext;
+import com.enonic.wem.web.rpc.JsonRpcContext;
 
 @Component
 public final class GetLocalesRpcHandler
@@ -21,7 +21,7 @@ public final class GetLocalesRpcHandler
     }
 
     @Override
-    public void handle( final WebRpcContext context )
+    public void handle( final JsonRpcContext context )
         throws Exception
     {
         final JsonSerializable json = this.resource.getAll();

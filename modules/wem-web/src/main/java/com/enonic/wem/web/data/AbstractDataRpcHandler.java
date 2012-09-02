@@ -3,10 +3,10 @@ package com.enonic.wem.web.data;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.web.rpc.WebRpcHandler;
+import com.enonic.wem.web.rpc.JsonRpcHandler;
 
 public abstract class AbstractDataRpcHandler
-    extends WebRpcHandler
+    extends JsonRpcHandler
 {
     protected Client client;
 

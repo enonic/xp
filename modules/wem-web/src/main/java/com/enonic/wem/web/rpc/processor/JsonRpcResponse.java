@@ -2,8 +2,8 @@ package com.enonic.wem.web.rpc.processor;
 
 import org.codehaus.jackson.JsonNode;
 
-public final class WebRpcResponse
-    extends WebRpcMessage
+public final class JsonRpcResponse
+    extends JsonRpcMessage
 {
     private JsonNode result;
 
@@ -17,9 +17,9 @@ public final class WebRpcResponse
         this.result = result;
     }
 
-    public static WebRpcResponse from( final WebRpcRequest req )
+    public static JsonRpcResponse from( final JsonRpcRequest req )
     {
-        final WebRpcResponse res = new WebRpcResponse();
+        final JsonRpcResponse res = new JsonRpcResponse();
         res.setId( req.getId() );
         res.setMethod( req.getMethod() );
         res.setError( req.getError() );

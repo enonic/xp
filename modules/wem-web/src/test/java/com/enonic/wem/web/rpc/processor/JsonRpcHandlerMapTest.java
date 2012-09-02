@@ -3,43 +3,43 @@ package com.enonic.wem.web.rpc.processor;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.web.rpc.WebRpcContext;
-import com.enonic.wem.web.rpc.WebRpcException;
-import com.enonic.wem.web.rpc.WebRpcHandler;
+import com.enonic.wem.web.rpc.JsonRpcContext;
+import com.enonic.wem.web.rpc.JsonRpcException;
+import com.enonic.wem.web.rpc.JsonRpcHandler;
 
 import static org.junit.Assert.*;
 
-public class WebRpcHandlerMapTest
+public class JsonRpcHandlerMapTest
 {
-    private WebRpcHandlerMap handlerMap;
+    private JsonRpcHandlerMap handlerMap;
 
-    private WebRpcHandler handler;
+    private JsonRpcHandler handler;
 
     @Before
     public void setUp()
     {
-        this.handler = new WebRpcHandler( "myMethod" )
+        this.handler = new JsonRpcHandler( "myMethod" )
         {
             @Override
-            public void handle( final WebRpcContext context )
+            public void handle( final JsonRpcContext context )
                 throws Exception
             {
             }
         };
 
-        this.handlerMap = new WebRpcHandlerMap( this.handler );
+        this.handlerMap = new JsonRpcHandlerMap( this.handler );
     }
 
     @Test
     public void testFound()
         throws Exception
     {
-        final WebRpcHandler result = this.handlerMap.getHandler( "myMethod" );
+        final JsonRpcHandler result = this.handlerMap.getHandler( "myMethod" );
         assertNotNull( result );
         assertSame( this.handler, result );
     }
 
-    @Test(expected = WebRpcException.class)
+    @Test(expected = JsonRpcException.class)
     public void testNotFound()
         throws Exception
     {

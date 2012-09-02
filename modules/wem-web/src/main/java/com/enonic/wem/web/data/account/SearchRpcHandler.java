@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
 import com.enonic.wem.web.json.JsonSerializable;
 import com.enonic.wem.web.rest2.resource.account.AccountResource;
-import com.enonic.wem.web.rpc.WebRpcContext;
+import com.enonic.wem.web.rpc.JsonRpcContext;
 
 @Component
 public final class SearchRpcHandler
@@ -21,7 +21,7 @@ public final class SearchRpcHandler
     }
 
     @Override
-    public void handle( final WebRpcContext context )
+    public void handle( final JsonRpcContext context )
         throws Exception
     {
         final int start = context.param( "start" ).asInteger( 0 );

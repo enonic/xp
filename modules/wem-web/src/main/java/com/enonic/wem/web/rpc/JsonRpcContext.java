@@ -4,12 +4,12 @@ import org.codehaus.jackson.JsonNode;
 
 import com.enonic.wem.web.json.JsonSerializable;
 
-public interface WebRpcContext
-    extends Iterable<WebRpcParam>
+public interface JsonRpcContext
+    extends Iterable<JsonRpcParam>
 {
     public JsonNode getResult();
 
-    public WebRpcParam param( final String name );
+    public JsonRpcParam param( final String name );
 
     public void setResult( final String value );
 

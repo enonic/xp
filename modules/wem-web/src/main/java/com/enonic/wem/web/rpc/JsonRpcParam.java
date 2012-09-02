@@ -2,14 +2,14 @@ package com.enonic.wem.web.rpc;
 
 import org.codehaus.jackson.node.ObjectNode;
 
-public interface WebRpcParam
+public interface JsonRpcParam
 {
     public String getName();
 
     public boolean isNull();
 
-    public WebRpcParam required()
-        throws WebRpcException;
+    public JsonRpcParam required()
+        throws JsonRpcException;
 
     public String asString();
 

@@ -1,17 +1,17 @@
 package com.enonic.wem.web.rpc;
 
-public final class WebRpcException
+public final class JsonRpcException
     extends Exception
 {
-    private final WebRpcError error;
+    private final JsonRpcError error;
 
-    public WebRpcException( final WebRpcError error )
+    public JsonRpcException( final JsonRpcError error )
     {
         super( error.getMessage() );
         this.error = error;
     }
 
-    public WebRpcError getError()
+    public JsonRpcError getError()
     {
         return this.error;
     }
