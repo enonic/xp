@@ -19,10 +19,6 @@ public class WebRpcResponseTest
         res.setId( "id" );
         assertEquals( "id", res.getId() );
 
-        assertNull( res.getAction() );
-        res.setAction( "action" );
-        assertEquals( "action", res.getAction() );
-
         assertNull( res.getMethod() );
         res.setMethod( "method" );
         assertEquals( "method", res.getMethod() );
@@ -44,14 +40,12 @@ public class WebRpcResponseTest
         final WebRpcRequest req = new WebRpcRequest();
         req.setId( "id" );
         req.setMethod( "method" );
-        req.setAction( "action" );
 
         final WebRpcError error = WebRpcError.internalError( "Message" );
         req.setError( error );
 
         final WebRpcResponse res = WebRpcResponse.from( req );
         assertEquals( "id", res.getId() );
-        assertEquals( "action", res.getAction() );
         assertEquals( "method", res.getMethod() );
         assertSame( error, res.getError() );
     }

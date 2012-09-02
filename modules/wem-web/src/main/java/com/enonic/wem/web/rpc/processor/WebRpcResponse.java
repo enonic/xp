@@ -22,7 +22,6 @@ public final class WebRpcResponse
         final WebRpcResponse res = new WebRpcResponse();
         res.setId( req.getId() );
         res.setMethod( req.getMethod() );
-        res.setAction( req.getAction() );
         res.setError( req.getError() );
         return res;
     }

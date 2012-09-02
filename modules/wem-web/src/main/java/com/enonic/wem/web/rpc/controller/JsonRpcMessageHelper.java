@@ -21,13 +21,13 @@ import com.enonic.wem.web.rpc.WebRpcException;
 import com.enonic.wem.web.rpc.processor.WebRpcRequest;
 import com.enonic.wem.web.rpc.processor.WebRpcResponse;
 
-public abstract class WebRpcMessageHelper
+final class JsonRpcMessageHelper
 {
     private final ObjectMapper mapper;
 
     private final AtomicLong counter;
 
-    public WebRpcMessageHelper()
+    public JsonRpcMessageHelper()
     {
         this.mapper = ObjectMapperFactory.create();
         this.counter = new AtomicLong( 0L );
@@ -184,7 +184,81 @@ public abstract class WebRpcMessageHelper
         return json;
     }
 
-    protected abstract void toJson( final WebRpcResponse res, final ObjectNode json );
+    private void toJson( final WebRpcResponse res, final ObjectNode json )
+    {
+        json.put( "jsonrpc", "2.0" );
+        json.put( "id", res.getId() );
 
-    protected abstract void doParseSingle( final WebRpcRequest req, final ObjectNode json );
+        final WebRpcError error = res.getError();
+        if ( error != null )
+        {
+            final ObjectNode errorJson = json.putObject( "error" );
+            errorJson.put( "code", error.getCode() );
+            errorJson.put( "message", error.getMessage() );
+        }
+        else
+        {
+            json.put( "result", res.getResult() );
+        }
+    }
+
+    private void doParseSingle( final WebRpcRequest req, final ObjectNode json )
+    {
+        final JsonNode version = json.get( "jsonrpc" );
+        final JsonNode id = json.get( "id" );
+        final JsonNode method = json.get( "method" );
+        final JsonNode params = json.get( "params" );
+
+        if ( version == null )
+        {
+            req.setError( WebRpcError.invalidRequest( "Version field must be set" ) );
+            return;
+        }
+
+        if ( !"2.0".equals( version.asText() ) )
+        {
+            req.setError( WebRpcError.invalidRequest( "Must be version 2.0" ) );
+            return;
+        }
+
+        if ( method == null )
+        {
+            req.setError( WebRpcError.invalidRequest( "Method must be set" ) );
+            return;
+        }
+
+        req.setId( id != null ? id.asText() : null );
+        req.setMethod( method.asText() );
+
+        try
+        {
+            req.setParams( findData( params ) );
+        }
+        catch ( final WebRpcException e )
+        {
+            req.setError( e.getError() );
+        }
+    }
+
+    private ObjectNode findData( final JsonNode node )
+        throws WebRpcException
+    {
+        if ( node == null )
+        {
+            return null;
+        }
+
+        if ( node.isNull() )
+        {
+            return null;
+        }
+
+        if ( node instanceof ObjectNode )
+        {
+            return (ObjectNode) node;
+        }
+
+        final WebRpcError error = WebRpcError.invalidRequest( "Only named parameters are supported" );
+        throw new WebRpcException( error );
+    }
 }

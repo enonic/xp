@@ -1,26 +1,18 @@
 Ext.define('Admin.lib.RemoteService', {
 
-    requires: ['Admin.lib.UriHelper'],
+    requires: ['Admin.lib.UriHelper', 'Admin.lib.JsonRpcProvider'],
 
     singleton: true,
 
-    methodsToRegister: [
-        "account_search", "account_getGraph", "account_changePassword", "util_getCountries", "util_getLocales", "util_getTimeZones"
-    ],
-
     init: function () {
         var config = {
-            "url": Admin.lib.UriHelper.getExtDirectUri(),
-            "type": "remoting",
-            "namespace": "Admin.lib",
-            "actions": {
-                "RemoteService": []
-            }
+            "url": Admin.lib.UriHelper.getAbsoluteUri("admin/rest/jsonrpc"),
+            "type": "jsonrpc",
+            "namespace": "Admin.lib.RemoteService",
+            "methods": [
+                "account_search", "account_getGraph", "account_changePassword", "util_getCountries", "util_getLocales", "util_getTimeZones"
+            ]
         };
-
-        for ( var i = 0; i < this.methodsToRegister.length; i++ ) {
-            config.actions.RemoteService.push({"name": this.methodsToRegister[i], "len": 1})
-        }
 
         Ext.Direct.addProvider(config);
         Ext.direct.RemotingProvider.enableBuffer = 20;
@@ -50,7 +42,8 @@ Ext.define('Admin.lib.RemoteService', {
         console.log(params, callback);
     }
 
+}, function () {
+    this.init();
 });
 
-Admin.lib.RemoteService.init();
 

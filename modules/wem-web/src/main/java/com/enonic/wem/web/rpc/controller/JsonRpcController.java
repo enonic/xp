@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 
@@ -22,21 +23,23 @@ import com.enonic.wem.web.rpc.processor.WebRpcProcessor;
 import com.enonic.wem.web.rpc.processor.WebRpcRequest;
 import com.enonic.wem.web.rpc.processor.WebRpcResponse;
 
+@Component
+@Path("jsonrpc")
 @Produces(MediaType.APPLICATION_JSON)
-public abstract class WebRpcController
+public final class JsonRpcController
 {
-    private final WebRpcMessageHelper helper;
+    private final JsonRpcMessageHelper helper;
 
     private WebRpcProcessor processor;
 
-    public WebRpcController( final WebRpcMessageHelper helper )
+    public JsonRpcController()
     {
-        this.helper = helper;
+        this.helper = new JsonRpcMessageHelper();
     }
 
     @GET
     @Path("{method}")
-    public final Response handleGet( @PathParam("method") final String method, @Context final UriInfo uriInfo )
+    public Response handleGet( @PathParam("method") final String method, @Context final UriInfo uriInfo )
     {
         final WebRpcRequest req = this.helper.createRequest( method, uriInfo.getQueryParameters() );
         final WebRpcResponse res = doProcessSingle( req );
@@ -45,7 +48,7 @@ public abstract class WebRpcController
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public final Response handlePost( final String json )
+    public Response handlePost( final String json )
     {
         try
         {
@@ -86,13 +89,8 @@ public abstract class WebRpcController
         return this.processor.process( req );
     }
 
-    protected final WebRpcProcessor getProcessor()
-    {
-        return this.processor;
-    }
-
     @Autowired
-    public final void setProcessor( final WebRpcProcessor processor )
+    public void setProcessor( final WebRpcProcessor processor )
     {
         this.processor = processor;
     }

@@ -19,10 +19,6 @@ public class WebRpcRequestTest
         req.setId( "id" );
         assertEquals( "id", req.getId() );
 
-        assertNull( req.getAction() );
-        req.setAction( "action" );
-        assertEquals( "action", req.getAction() );
-
         assertNull( req.getMethod() );
         req.setMethod( "method" );
         assertEquals( "method", req.getMethod() );

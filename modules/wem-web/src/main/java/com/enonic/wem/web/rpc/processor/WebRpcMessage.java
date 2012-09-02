@@ -8,8 +8,6 @@ public abstract class WebRpcMessage
 
     private String method;
 
-    private String action;
-
     private WebRpcError error;
 
     public final String getId()
@@ -30,16 +28,6 @@ public abstract class WebRpcMessage
     public final void setMethod( final String method )
     {
         this.method = method;
-    }
-
-    public final String getAction()
-    {
-        return this.action;
-    }
-
-    public final void setAction( final String action )
-    {
-        this.action = action;
     }
 
     public final WebRpcError getError()
