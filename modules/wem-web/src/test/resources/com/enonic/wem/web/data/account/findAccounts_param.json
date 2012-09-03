@@ -1,0 +1,9 @@
+{
+    "start": 0,
+    "limit": 10,
+    "query": "test",
+    "types": ["user", "group"],
+    "userstores": ["dummy"],
+    "sort": "userstore",
+    "dir": "asc"
+}

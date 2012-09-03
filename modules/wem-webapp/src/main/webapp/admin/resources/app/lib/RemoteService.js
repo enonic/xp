@@ -10,7 +10,7 @@ Ext.define('Admin.lib.RemoteService', {
             "type": "jsonrpc",
             "namespace": "Admin.lib.RemoteService",
             "methods": [
-                "account_search", "account_getGraph", "account_changePassword", "util_getCountries", "util_getLocales", "util_getTimeZones"
+                "account_find", "account_getGraph", "account_changePassword", "util_getCountries", "util_getLocales", "util_getTimeZones"
             ]
         };
 
@@ -18,7 +18,7 @@ Ext.define('Admin.lib.RemoteService', {
         Ext.direct.RemotingProvider.enableBuffer = 20;
     },
 
-    account_search: function (params, callback) {
+    account_find: function (params, callback) {
         console.log(params, callback);
     },
 
@@ -45,5 +45,4 @@ Ext.define('Admin.lib.RemoteService', {
 }, function () {
     this.init();
 });
-
 
