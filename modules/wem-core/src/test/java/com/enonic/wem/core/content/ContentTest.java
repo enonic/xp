@@ -6,7 +6,6 @@ import org.junit.Test;
 import com.enonic.wem.core.content.data.DataSet;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
-import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
@@ -18,7 +17,7 @@ import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.DropdownConfig;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.content.type.configitem.fieldtype.RadioButtonsConfig;
-import com.enonic.wem.core.content.type.datatype.BasalValueType;
+import com.enonic.wem.core.content.type.datatype.DataTypes;
 import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.configitem.Field.newField;
@@ -190,7 +189,8 @@ public class ContentTest
     public void unstructured()
     {
         Content content = new Content();
-        content.setData( "firstName", "Thomas" );
+        content.setData( "firstName", "Thomas", DataTypes.STRING );
+        content.setData( "description", "Grew up in Noetteveien", DataTypes.HTML_PART );
         content.setData( "child[0].name", "Joachim" );
         content.setData( "child[0].age", "9" );
         content.setData( "child[0].features.eyeColour", "Blue" );
@@ -201,6 +201,8 @@ public class ContentTest
         content.setData( "child[1].features.hairColour", "Black" );
 
         assertEquals( "Thomas", content.getData( "firstName" ).getValue() );
+        assertEquals( DataTypes.STRING, content.getData( "firstName" ).getDataType() );
+        assertEquals( DataTypes.HTML_PART, content.getData( "description" ).getDataType() );
         assertEquals( "Joachim", content.getData( "child[0].name" ).getValue() );
         assertEquals( "9", content.getData( "child[0].age" ).getValue() );
         assertEquals( "Blue", content.getData( "child[0].features.eyeColour" ).getValue() );
@@ -276,11 +278,11 @@ public class ContentTest
         // setup
         Content content = new Content();
         content.setData( "name", "Thomas" );
-        content.setData( "personalia.eyeColour", "Blue" );
+        content.setData( "personalia.eyeColour", "Blue", DataTypes.STRING );
         content.setData( "personalia.hairColour", "Blonde" );
 
         assertNull( content.getData( "personalia.eyeColour" ).getField() );
-        assertEquals( BasalValueType.STRING, content.getData( "personalia.eyeColour" ).getBasalValueType() );
+        assertEquals( DataTypes.STRING, content.getData( "personalia.eyeColour" ).getDataType() );
         assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getValue() );
         assertEquals( "personalia.eyeColour", content.getData( "personalia.eyeColour" ).getPath().toString() );
     }
@@ -299,24 +301,22 @@ public class ContentTest
         content.setData( "crimes[1].year", "1990" );
 
         assertNull( content.getData( "personalia.eyeColour" ).getField() );
-        assertEquals( BasalValueType.STRING, content.getData( "personalia.eyeColour" ).getBasalValueType() );
+        assertEquals( DataTypes.STRING, content.getData( "personalia.eyeColour" ).getDataType() );
         assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getValue() );
         assertEquals( "personalia.eyeColour", content.getData( "personalia.eyeColour" ).getPath().toString() );
 
         // exercise
-        ConfigItems configItems = new ConfigItems();
-        configItems.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
-        configItems.addConfigItem( FieldSet.newBuilder().name( "personalia" ).multiple( false ).build() );
-        configItems.getFieldSet( "personalia" ).addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        configItems.getFieldSet( "personalia" ).addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        configItems.addConfigItem( FieldSet.newBuilder().name( "crimes" ).multiple( true ).build() );
-        configItems.getFieldSet( "crimes" ).addField( Field.newBuilder().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
-        configItems.getFieldSet( "crimes" ).addField( Field.newBuilder().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
-        ContentType type = new ContentType();
-        type.setConfigItems( configItems );
-        content.setType( type );
+        ContentType contentType = new ContentType();
+        contentType.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.addConfigItem( FieldSet.newBuilder().name( "personalia" ).multiple( false ).build() );
+        contentType.getFieldSet( "personalia" ).addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.getFieldSet( "personalia" ).addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.addConfigItem( FieldSet.newBuilder().name( "crimes" ).multiple( true ).build() );
+        contentType.getFieldSet( "crimes" ).addField( Field.newBuilder().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.getFieldSet( "crimes" ).addField( Field.newBuilder().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
+        content.setType( contentType );
 
-        assertEquals( BasalValueType.STRING, content.getData( "personalia.eyeColour" ).getBasalValueType() );
+        assertEquals( DataTypes.STRING, content.getData( "personalia.eyeColour" ).getDataType() );
         assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getValue() );
         assertEquals( "personalia.eyeColour", content.getData( "personalia.eyeColour" ).getField().getPath().toString() );
         assertEquals( "personalia.hairColour", content.getData( "personalia.hairColour" ).getField().getPath().toString() );

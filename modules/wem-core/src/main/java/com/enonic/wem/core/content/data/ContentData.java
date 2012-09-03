@@ -5,8 +5,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
-import com.enonic.wem.core.content.type.configitem.FieldSet;
-import com.enonic.wem.core.content.type.datatype.BasalValueType;
+import com.enonic.wem.core.content.type.datatype.DataType;
 
 public class ContentData
 {
@@ -40,24 +39,14 @@ public class ContentData
         this.dataSet = dataSet;
     }
 
-    public void setData( final EntryPath path, final Object value )
+    public void setData( final EntryPath path, final Object value, final DataType dataType )
     {
-        dataSet.setData( path, value );
+        dataSet.setData( path, value, dataType );
     }
 
     public void setData( final EntryPath path, final String value )
     {
-        dataSet.setData( path, value );
-    }
-
-    public void setData( final String path, final Object value )
-    {
-        dataSet.setData( new EntryPath( path ), value );
-    }
-
-    public void setData( final String path, final FieldSet value )
-    {
-        dataSet.setData( new EntryPath( path ), value );
+        dataSet.setData( path, value, null );
     }
 
     public String getValueAsString( final EntryPath path )
@@ -67,7 +56,7 @@ public class ContentData
         Data data = getData( path );
         Preconditions.checkArgument( data != null, "No data at path: " + path );
 
-        Preconditions.checkArgument( data.getBasalValueType() == BasalValueType.STRING, "Value is not of type %", BasalValueType.STRING );
+        //TODO: Preconditions.checkArgument( data.getDataType() == BasalValueType.STRING, "Value is not of type %", BasalValueType.STRING );
         return (String) data.getValue();
     }
 

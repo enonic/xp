@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.enonic.wem.core.content.data.Data;
+import com.enonic.wem.core.content.type.configitem.InvalidValueException;
 
 public class DropdownConfig
     implements FieldTypeConfig
@@ -19,10 +20,28 @@ public class DropdownConfig
     }
 
     @Override
-    public boolean isValid( final Data data )
+    public void checkValidity( final Data data )
+        throws InvalidValueException
     {
-        String valueAsString = String.valueOf( data.getValue() );
-        return optionsAsMap.containsKey( valueAsString );
+        final String valueAsString = String.valueOf( data.getValue() );
+        if ( !optionsAsMap.containsKey( valueAsString ) )
+        {
+            throw new InvalidValueException( "Value can only be of one the following strings: " + optionValuesAsCommaSeparatedString() );
+        }
+    }
+
+    private String optionValuesAsCommaSeparatedString()
+    {
+        StringBuilder s = new StringBuilder();
+        for ( int i = 0; i < optionsAsList.size(); i++ )
+        {
+            s.append( optionsAsList.get( i ).getValue() );
+            if ( i < optionsAsList.size() - 1 )
+            {
+                s.append( ", " );
+            }
+        }
+        return s.toString();
     }
 
     public static class Option

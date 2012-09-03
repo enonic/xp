@@ -12,13 +12,7 @@ public class Phone
 {
     Phone()
     {
-        super( "phone", DataTypes.SINGLE_LINED_STRING );
-    }
-
-    @Override
-    public boolean validData( final Data data )
-    {
-        return getDataType().validData( data );
+        super( "phone", DataTypes.STRING );
     }
 
     public boolean requiresConfig()

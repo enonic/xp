@@ -14,6 +14,7 @@ import com.enonic.wem.core.content.type.configitem.DirectAccessibleConfigItem;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
+import com.enonic.wem.core.content.type.datatype.DataType;
 
 public class DataSet
     extends Entry
@@ -110,7 +111,7 @@ public class DataSet
         return path;
     }
 
-    boolean isUnstructured()
+    boolean isUntyped()
     {
         return configItems == null;
     }
@@ -120,22 +121,22 @@ public class DataSet
         entries.put( entry.getPath().getLastElement(), entry );
     }
 
-    void setData( final EntryPath path, final Object value )
+    void setData( final EntryPath path, final Object value, final DataType dataType )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
 
-        if ( isUnstructured() )
+        if ( isUntyped() )
         {
-            setUnstructuredData( path, value );
+            setUntypedData( path, value, dataType );
         }
         else
         {
-            setStructuredData( path, value );
+            setTypedData( path, value, dataType );
         }
     }
 
-    private void setStructuredData( final EntryPath path, final Object value )
+    private void setTypedData( final EntryPath path, final Object value, DataType dataType )
     {
         final ConfigItemPath configItemPath = path.resolveConfigItemPath();
         final DirectAccessibleConfigItem foundConfig = configItems.getDirectAccessibleConfigItem( configItemPath.getFirstElement() );
@@ -152,7 +153,7 @@ public class DataSet
 
             //noinspection ConstantConditions
             FieldSet foundFieldSet = (FieldSet) foundConfig;
-            forwardSetDataToDataSet( path, value, foundFieldSet );
+            forwardSetDataToDataSet( path, value, dataType, foundFieldSet );
         }
         else
         {
@@ -160,24 +161,29 @@ public class DataSet
                                          "ConfigItem at path [%s] expected to be of type Field: " + foundConfig.getConfigItemType(), path );
             //noinspection ConstantConditions
             final Field field = (Field) foundConfig;
+            if ( dataType == null )
+            {
+                dataType = field.getFieldType().getDataType();
+            }
             doSetEntry( path.getFirstElement(), Data.newBuilder().field( field ).path( path ).value( value ).build() );
         }
     }
 
-    private void setUnstructuredData( final EntryPath path, final Object value )
+    private void setUntypedData( final EntryPath path, final Object value, final DataType dataType )
     {
         if ( path.elementCount() > 1 )
         {
-            forwardSetDataToDataSet( path, value );
+            forwardSetDataToDataSet( path, value, dataType );
         }
         else
         {
-            Data newData = Data.newBuilder().path( new EntryPath( this.path, path.getFirstElement() ) ).value( value ).build();
+            final EntryPath newEntryPath = new EntryPath( this.path, path.getFirstElement() );
+            final Data newData = Data.newData().path( newEntryPath ).type( dataType ).value( value ).build();
             doSetEntry( path.getFirstElement(), newData );
         }
     }
 
-    private void forwardSetDataToDataSet( final EntryPath path, final Object value )
+    private void forwardSetDataToDataSet( final EntryPath path, final Object value, final DataType dataType )
     {
         DataSet existingDataSet = (DataSet) this.entries.get( path.getFirstElement() );
         if ( existingDataSet == null )
@@ -185,10 +191,10 @@ public class DataSet
             existingDataSet = new DataSet( new EntryPath( this.path, path.getFirstElement() ) );
             doSetEntry( path.getFirstElement(), existingDataSet );
         }
-        existingDataSet.setData( path.asNewWithoutFirstPathElement(), value );
+        existingDataSet.setData( path.asNewWithoutFirstPathElement(), value, dataType );
     }
 
-    private void forwardSetDataToDataSet( final EntryPath path, final Object value, final FieldSet fieldSet )
+    private void forwardSetDataToDataSet( final EntryPath path, final Object value, final DataType dataType, final FieldSet fieldSet )
     {
         if ( path.getFirstElement().hasPosition() )
         {
@@ -203,7 +209,7 @@ public class DataSet
             existingDataSet = new DataSet( new EntryPath( this.path, path.getFirstElement() ), fieldSet );
             doSetEntry( path.getFirstElement(), existingDataSet );
         }
-        existingDataSet.setData( path.asNewWithoutFirstPathElement(), value );
+        existingDataSet.setData( path.asNewWithoutFirstPathElement(), value, dataType );
     }
 
     private void doSetEntry( EntryPath.Element element, Entry entry )
@@ -238,11 +244,6 @@ public class DataSet
         Preconditions.checkArgument( ( entry instanceof DataSet ), "Entry at path [%s] is not a DataSet: " + entry, path );
         //noinspection ConstantConditions
         return (DataSet) entry;
-    }
-
-    Entry getEntry( String path )
-    {
-        return getEntry( new EntryPath( path ) );
     }
 
     Entry getEntry( final EntryPath path )

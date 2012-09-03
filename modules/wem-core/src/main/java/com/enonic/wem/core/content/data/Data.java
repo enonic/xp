@@ -1,11 +1,17 @@
 package com.enonic.wem.core.content.data;
 
 import org.elasticsearch.common.base.Preconditions;
+import org.joda.time.DateMidnight;
+
+import com.google.common.base.Objects;
 
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.Field;
-import com.enonic.wem.core.content.type.datatype.BasalValueType;
+import com.enonic.wem.core.content.type.configitem.InvalidValueException;
+import com.enonic.wem.core.content.type.datatype.DataType;
+import com.enonic.wem.core.content.type.datatype.InvalidValueTypeException;
+import com.enonic.wem.core.content.type.datatype.JavaType;
 
 
 public class Data
@@ -20,7 +26,7 @@ public class Data
 
     private Object value;
 
-    private BasalValueType basalValueType;
+    private DataType type;
 
     private Data()
     {
@@ -52,9 +58,24 @@ public class Data
         return value;
     }
 
-    public BasalValueType getBasalValueType()
+    public String getString()
     {
-        return basalValueType;
+        if ( type.isConvertibleTo( JavaType.STRING ) )
+        {
+            return type.convertToString( value );
+        }
+        return null;
+    }
+
+    public DateMidnight getDate()
+    {
+        //return DataTypes.DATE.toDate( this );
+        return JavaType.DATE.toDate( this );
+    }
+
+    public DataType getDataType()
+    {
+        return type;
     }
 
     @Override
@@ -86,15 +107,38 @@ public class Data
         return false;
     }
 
-    public boolean isValid()
+    public void checkValidity()
+        throws InvalidValueTypeException, InvalidDataException, InvalidValueException
     {
-        return field == null || field.isValidAccordingToFieldTypeConfig( this );
+        try
+        {
+            if ( value == null )
+            {
+                return;
+            }
+
+            if ( field != null )
+            {
+                field.checkValidityAccordingToFieldTypeConfig( this );
+            }
+
+            type.checkValidity( this.getValue() );
+        }
+        catch ( InvalidValueTypeException e )
+        {
+            throw new InvalidDataException( this, e );
+        }
     }
 
     @Override
     public String toString()
     {
-        return String.valueOf( value );
+        final Objects.ToStringHelper s = Objects.toStringHelper( this );
+        s.add( "path", path );
+        s.add( "field", field );
+        s.add( "type", type.getName() );
+        s.add( "value", value );
+        return s.toString();
     }
 
     public static Builder newBuilder()
@@ -115,7 +159,7 @@ public class Data
 
         private Object value;
 
-        private BasalValueType type;
+        private DataType type;
 
 
         public Builder()
@@ -126,6 +170,10 @@ public class Data
         public Builder field( Field value )
         {
             this.field = value;
+            if ( value != null )
+            {
+                this.type = this.field.getFieldType().getDataType();
+            }
             return this;
         }
 
@@ -135,7 +183,7 @@ public class Data
             return this;
         }
 
-        public Builder type( BasalValueType value )
+        public Builder type( DataType value )
         {
             this.type = value;
             return this;
@@ -149,36 +197,24 @@ public class Data
 
         public Data build()
         {
+            if ( field != null )
+            {
+                Preconditions.checkArgument( this.type.equals( this.field.getFieldType().getDataType() ),
+                                             "Given DataType [%s] does not match the given field's DataType: " +
+                                                 field.getFieldType().getDataType(), type );
+            }
+
+            Preconditions.checkNotNull( this.type, "type is required" );
+
             final Data data = new Data();
-            data.path = path;
-            data.field = field;
-            data.value = this.value;
+            data.path = this.path;
+            data.field = this.field;
+            data.type = this.type;
+            data.value = this.value != null
+                ? data.type.ensureType( this.value )
+                : null; // TODO: Research, is null values needed? If not should not be allowed...
 
-            BasalValueType resolvedType = null;
-            if ( this.value != null )
-            {
-                resolvedType = BasalValueType.resolveType( this.value );
-                Preconditions.checkArgument( resolvedType != null, "value is of unknown type: " + data.value.getClass().getName() );
-            }
-
-            if ( type != null )
-            {
-                Preconditions.checkArgument( type == resolvedType, "value is not of expected type [%s]: " + type, resolvedType );
-                data.basalValueType = type;
-            }
-            else
-            {
-                data.basalValueType = resolvedType;
-            }
-
-            if ( field != null & data.basalValueType != null )
-            {
-                BasalValueType basalValueTypeOfField = field.getFieldType().getDataType().getBasalValueType();
-                Preconditions.checkArgument( data.basalValueType == basalValueTypeOfField,
-                                             "value is not of expected type [%s]: " + data.basalValueType, basalValueTypeOfField );
-            }
-
-            Preconditions.checkArgument( data.isValid(), "Value is not valid for field [%s]: " + data.value, field );
+            data.checkValidity();
 
             return data;
         }

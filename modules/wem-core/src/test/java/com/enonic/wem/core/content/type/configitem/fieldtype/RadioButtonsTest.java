@@ -7,21 +7,23 @@ import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractExcepti
 
 public class RadioButtonsTest
 {
+    private RadioButtons radioButtons = new RadioButtons();
+
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_null_throws_exception()
     {
-        new RadioButtons().checkBreaksRequiredContract( Data.newData().value( null ).build() );
+        radioButtons.checkBreaksRequiredContract( Data.newData().type( radioButtons.getDataType() ).value( null ).build() );
     }
 
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_empty_throws_exception()
     {
-        new RadioButtons().checkBreaksRequiredContract( Data.newData().value( "" ).build() );
+        new RadioButtons().checkBreaksRequiredContract( Data.newData().type( radioButtons.getDataType() ).value( "" ).build() );
     }
 
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_blank_throws_exception()
     {
-        new RadioButtons().checkBreaksRequiredContract( Data.newData().value( " " ).build() );
+        new RadioButtons().checkBreaksRequiredContract( Data.newData().type( radioButtons.getDataType() ).value( " " ).build() );
     }
 }

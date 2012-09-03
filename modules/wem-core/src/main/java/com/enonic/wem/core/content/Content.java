@@ -1,11 +1,15 @@
 package com.enonic.wem.core.content;
 
+import org.joda.time.DateMidnight;
+
 import com.enonic.wem.core.content.data.ContentData;
 import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.data.DataSet;
 import com.enonic.wem.core.content.data.EntryPath;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
+import com.enonic.wem.core.content.type.datatype.DataType;
+import com.enonic.wem.core.content.type.datatype.DataTypes;
 
 public class Content
 {
@@ -46,14 +50,29 @@ public class Content
         return data;
     }
 
-    public void setData( final String path, final Object value )
-    {
-        this.data.setData( new EntryPath( path ), value );
-    }
-
     public void setData( final String path, final String value )
     {
-        this.data.setData( new EntryPath( path ), value );
+        this.data.setData( new EntryPath( path ), value, DataTypes.STRING );
+    }
+
+    public void setData( final String path, final DateMidnight value )
+    {
+        this.data.setData( new EntryPath( path ), value, DataTypes.DATE );
+    }
+
+    public void setData( final String path, final Long value )
+    {
+        this.data.setData( new EntryPath( path ), value, DataTypes.WHOLE_NUMBER );
+    }
+
+    public void setData( final String path, final Double value )
+    {
+        this.data.setData( new EntryPath( path ), value, DataTypes.DECIMAL_NUMBER );
+    }
+
+    public void setData( final String path, final Object value, DataType dataType )
+    {
+        this.data.setData( new EntryPath( path ), value, dataType );
     }
 
     public Data getData( final String path )
@@ -75,6 +94,11 @@ public class Content
         throws BreaksRequiredContractException
     {
         this.data.checkBreaksRequiredContract();
-        ;
+    }
+
+    public Object getIndexableValues()
+    {
+        // TODO
+        return null;
     }
 }

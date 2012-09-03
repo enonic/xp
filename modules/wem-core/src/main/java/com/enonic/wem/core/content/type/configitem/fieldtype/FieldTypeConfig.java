@@ -2,6 +2,7 @@ package com.enonic.wem.core.content.type.configitem.fieldtype;
 
 
 import com.enonic.wem.core.content.data.Data;
+import com.enonic.wem.core.content.type.configitem.InvalidValueException;
 
 /**
  * A FieldTypeConfig can be any kind of class. Currently this interface only works as a marker,
@@ -9,5 +10,6 @@ import com.enonic.wem.core.content.data.Data;
  */
 public interface FieldTypeConfig
 {
-    boolean isValid( Data data );
+    void checkValidity( Data data )
+        throws InvalidValueException;
 }

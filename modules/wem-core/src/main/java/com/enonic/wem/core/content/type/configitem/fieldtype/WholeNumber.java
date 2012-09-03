@@ -1,16 +1,17 @@
 package com.enonic.wem.core.content.type.configitem.fieldtype;
 
+import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.datatype.DataTypes;
 
-public class Date
+public class WholeNumber
     extends BaseFieldType
 {
-    Date()
+    WholeNumber()
     {
-        super( "date", DataTypes.DATE );
+        super( "wholeNumber", DataTypes.WHOLE_NUMBER );
     }
 
     public boolean requiresConfig()
@@ -27,10 +28,10 @@ public class Date
     public void checkBreaksRequiredContract( final Data data )
         throws BreaksRequiredContractException
     {
-        if ( data.getValue() == null )
+        final String stringValue = (String) data.getValue();
+        if ( StringUtils.isBlank( stringValue ) )
         {
             throw new BreaksRequiredContractException( data );
         }
     }
 }
-

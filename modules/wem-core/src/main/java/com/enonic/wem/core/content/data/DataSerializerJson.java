@@ -7,7 +7,7 @@ import org.codehaus.jackson.JsonNode;
 
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.type.configitem.Field;
-import com.enonic.wem.core.content.type.datatype.BasalValueType;
+import com.enonic.wem.core.content.type.datatype.DataTypes;
 
 public class DataSerializerJson
 {
@@ -18,9 +18,9 @@ public class DataSerializerJson
 
         g.writeStartObject();
         g.writeStringField( "path", data.getPath().toString() );
-        if ( data.getBasalValueType() != null )
+        if ( data.getDataType() != null )
         {
-            g.writeStringField( "type", data.getBasalValueType().toString() );
+            g.writeNumberField( "type", data.getDataType().getKey() );
         }
         if ( data.getValue() != null )
         {
@@ -40,13 +40,13 @@ public class DataSerializerJson
 
         String pathAsString = JsonParserUtil.getStringValue( "path", entryNode );
         String valueAsString = JsonParserUtil.getStringValue( "value", entryNode );
-        String typeAsString = JsonParserUtil.getStringValue( "type", entryNode, null );
+        Integer typeAsInteger = JsonParserUtil.getIntegerValue( "type", entryNode, null );
 
         builder.path( new EntryPath( pathAsString ) );
         builder.value( valueAsString );
-        if ( typeAsString != null )
+        if ( typeAsInteger != null )
         {
-            builder.type( BasalValueType.valueOf( typeAsString ) );
+            builder.type( DataTypes.parse( typeAsInteger ) );
         }
         builder.field( field );
 

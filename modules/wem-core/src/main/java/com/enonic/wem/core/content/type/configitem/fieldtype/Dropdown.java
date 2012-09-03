@@ -12,13 +12,7 @@ public class Dropdown
 {
     Dropdown()
     {
-        super( "dropdown", DataTypes.SINGLE_LINED_STRING );
-    }
-
-    @Override
-    public boolean validData( final Data data )
-    {
-        return getDataType().validData( data );
+        super( "dropdown", DataTypes.STRING );
     }
 
     public boolean requiresConfig()

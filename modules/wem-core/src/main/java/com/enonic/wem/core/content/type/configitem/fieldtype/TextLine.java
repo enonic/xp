@@ -11,13 +11,7 @@ public class TextLine
 {
     TextLine()
     {
-        super( "textLine", DataTypes.SINGLE_LINED_STRING );
-    }
-
-    @Override
-    public boolean validData( final Data data )
-    {
-        return getDataType().validData( data );
+        super( "textLine", DataTypes.STRING );
     }
 
     public boolean requiresConfig()

@@ -12,13 +12,7 @@ public class RadioButtons
 {
     RadioButtons()
     {
-        super( "radioButtons", DataTypes.SINGLE_LINED_STRING );
-    }
-
-    @Override
-    public boolean validData( final Data data )
-    {
-        return getDataType().validData( data );
+        super( "radioButtons", DataTypes.STRING );
     }
 
     public boolean requiresConfig()

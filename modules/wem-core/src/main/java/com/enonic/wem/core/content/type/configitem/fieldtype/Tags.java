@@ -11,13 +11,7 @@ public class Tags
 {
     Tags()
     {
-        super( "tags", DataTypes.SINGLE_LINED_STRING );
-    }
-
-    @Override
-    public boolean validData( final Data data )
-    {
-        return getDataType().validData( data );
+        super( "tags", DataTypes.STRING );
     }
 
     public boolean requiresConfig()

@@ -10,6 +10,7 @@ import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.content.type.configitem.fieldtype.RadioButtonsConfig;
+import com.enonic.wem.core.content.type.datatype.DataTypes;
 import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.configitem.Field.newField;
@@ -43,7 +44,7 @@ public class ContentSerializerJsonTest
         content.setData( "myPhone", "+4712123123" );
 
         String json = serializer.toJson( content );
-
+        System.out.println( json );
         // exercise
         Content parsedContent = serializer.parse( json );
 
@@ -225,6 +226,7 @@ public class ContentSerializerJsonTest
 
         // verify
         assertEquals( "Thomas", parsedContent.getData( "names[0]" ).getValue() );
+        assertEquals( DataTypes.STRING, parsedContent.getData( "names[0]" ).getDataType() );
         assertEquals( "Sten Roger", parsedContent.getData( "names[1]" ).getValue() );
         assertEquals( "Alex", parsedContent.getData( "names[2]" ).getValue() );
     }

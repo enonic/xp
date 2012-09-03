@@ -6,8 +6,8 @@ public class HtmlAreaConfig
     implements FieldTypeConfig
 {
     @Override
-    public boolean isValid( final Data data )
+    public void checkValidity( final Data data )
     {
-        return true;
+
     }
 }

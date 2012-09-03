@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.enonic.wem.core.content.data.Data;
+import com.enonic.wem.core.content.type.configitem.InvalidValueException;
 
 public class RadioButtonsConfig
     implements FieldTypeConfig
@@ -24,10 +25,27 @@ public class RadioButtonsConfig
     }
 
     @Override
-    public boolean isValid( final Data data )
+    public void checkValidity( final Data data )
     {
-        String valueAsString = String.valueOf( data.getValue() );
-        return optionsAsMap.containsKey( valueAsString );
+        final String valueAsString = String.valueOf( data.getValue() );
+        if ( !optionsAsMap.containsKey( valueAsString ) )
+        {
+            throw new InvalidValueException( "Value can only be of one the following strings: " + optionValuesAsCommaSeparatedString() );
+        }
+    }
+
+    private String optionValuesAsCommaSeparatedString()
+    {
+        StringBuilder s = new StringBuilder();
+        for ( int i = 0; i < options.size(); i++ )
+        {
+            s.append( options.get( i ).getValue() );
+            if ( i < options.size() - 1 )
+            {
+                s.append( ", " );
+            }
+        }
+        return s.toString();
     }
 
     public static class Option

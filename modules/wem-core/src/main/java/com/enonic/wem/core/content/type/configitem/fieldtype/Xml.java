@@ -14,12 +14,6 @@ public class Xml
         super( "xml", DataTypes.XML );
     }
 
-    @Override
-    public boolean validData( final Data data )
-    {
-        return getDataType().validData( data );
-    }
-
     public boolean requiresConfig()
     {
         return false;

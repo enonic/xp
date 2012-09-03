@@ -16,12 +16,6 @@ public class HtmlArea
     }
 
     @Override
-    public boolean validData( final Data data )
-    {
-        return true;
-    }
-
-    @Override
     public boolean requiresConfig()
     {
         return true;

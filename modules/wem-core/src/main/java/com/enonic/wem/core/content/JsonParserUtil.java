@@ -5,6 +5,16 @@ import org.codehaus.jackson.JsonNode;
 
 public class JsonParserUtil
 {
+    public static Integer getIntegerValue( String fieldName, JsonNode node, Integer defaultValue )
+    {
+        JsonNode subNode = node.get( fieldName );
+        if ( subNode == null )
+        {
+            return defaultValue;
+        }
+        return subNode.isNull() ? defaultValue : subNode.getIntValue();
+    }
+
     public static String getStringValue( String fieldName, JsonNode node, String defaultValue )
     {
         JsonNode subNode = node.get( fieldName );

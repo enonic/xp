@@ -112,9 +112,13 @@ public class Field
         }
     }
 
-    public boolean isValidAccordingToFieldTypeConfig( final Data data )
+    public void checkValidityAccordingToFieldTypeConfig( final Data data )
+        throws InvalidValueException
     {
-        return fieldTypeConfig == null || fieldTypeConfig.isValid( data );
+        if ( fieldTypeConfig != null )
+        {
+            fieldTypeConfig.checkValidity( data );
+        }
     }
 
     @Override

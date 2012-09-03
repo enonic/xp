@@ -11,13 +11,7 @@ public class TextArea
 {
     TextArea()
     {
-        super( "textArea", DataTypes.MULTI_LINED_STRING );
-    }
-
-    @Override
-    public boolean validData( final Data data )
-    {
-        return getDataType().validData( data );
+        super( "textArea", DataTypes.STRING );
     }
 
     public boolean requiresConfig()

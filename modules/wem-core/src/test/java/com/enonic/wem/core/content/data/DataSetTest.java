@@ -8,6 +8,7 @@ import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
+import com.enonic.wem.core.content.type.datatype.DataTypes;
 
 import static com.enonic.wem.core.content.type.configitem.Field.newField;
 import static com.enonic.wem.core.content.type.configitem.FieldSet.newFieldSet;
@@ -27,7 +28,7 @@ public class DataSetTest
 
         try
         {
-            dataSet.setData( new EntryPath( "unknown.eyeColour" ), "Brown" );
+            dataSet.setData( new EntryPath( "unknown.eyeColour" ), "Brown", DataTypes.STRING );
         }
         catch ( Exception e )
         {
@@ -46,8 +47,8 @@ public class DataSetTest
         configItems.addConfigItem( fieldSet );
 
         DataSet dataSet = new DataSet( new EntryPath(), configItems );
-        dataSet.setData( new EntryPath( "personalia.eyeColour" ), "Brown" );
-        dataSet.setData( new EntryPath( "personalia.hairColour" ), "Brown" );
+        dataSet.setData( new EntryPath( "personalia.eyeColour" ), "Brown", DataTypes.STRING );
+        dataSet.setData( new EntryPath( "personalia.hairColour" ), "Brown", DataTypes.STRING );
 
         assertEquals( "Brown", dataSet.getData( "personalia.eyeColour" ).getValue() );
         assertEquals( "Brown", dataSet.getData( "personalia.hairColour" ).getValue() );
@@ -65,10 +66,10 @@ public class DataSetTest
         configItems.addConfigItem( personalia );
 
         DataSet dataSet = new DataSet( new EntryPath(), configItems );
-        dataSet.setData( new EntryPath( "personalia.crimes[0].description" ), "Stole purse from old lady." );
-        dataSet.setData( new EntryPath( "personalia.crimes[0].year" ), "2011" );
-        dataSet.setData( new EntryPath( "personalia.crimes[1].description" ), "Drove car in 80 in 50 zone." );
-        dataSet.setData( new EntryPath( "personalia.crimes[1].year" ), "2012" );
+        dataSet.setData( new EntryPath( "personalia.crimes[0].description" ), "Stole purse from old lady.", DataTypes.STRING );
+        dataSet.setData( new EntryPath( "personalia.crimes[0].year" ), "2011", DataTypes.STRING );
+        dataSet.setData( new EntryPath( "personalia.crimes[1].description" ), "Drove car in 80 in 50 zone.", DataTypes.STRING );
+        dataSet.setData( new EntryPath( "personalia.crimes[1].year" ), "2012", DataTypes.STRING );
 
         assertEquals( "Stole purse from old lady.", dataSet.getData( "personalia.crimes[0].description" ).getValue() );
         assertEquals( "2011", dataSet.getData( "personalia.crimes[0].year" ).getValue() );
@@ -86,8 +87,8 @@ public class DataSetTest
         configItems.addConfigItem( fieldSet );
 
         DataSet dataSet = new DataSet( new EntryPath(), configItems );
-        dataSet.setData( new EntryPath( "persons[0].name" ), "Arn" );
-        dataSet.setData( new EntryPath( "persons[0].eyeColour" ), "Brown" );
+        dataSet.setData( new EntryPath( "persons[0].name" ), "Arn", DataTypes.STRING );
+        dataSet.setData( new EntryPath( "persons[0].eyeColour" ), "Brown", DataTypes.STRING );
 
         assertEquals( "Arn", dataSet.getData( "persons[0].name" ).getValue() );
         assertEquals( "Brown", dataSet.getData( "persons[0].eyeColour" ).getValue() );
@@ -100,7 +101,7 @@ public class DataSetTest
         ConfigItems configItems = new ConfigItems();
         configItems.addConfigItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
         DataSet dataSet = new DataSet( new EntryPath(), configItems );
-        dataSet.setData( new EntryPath( "myField" ), "value" );
+        dataSet.setData( new EntryPath( "myField" ), "value", DataTypes.STRING );
 
         // exercise
         try
@@ -133,7 +134,7 @@ public class DataSetTest
         configItems.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
             newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() ).build() );
         DataSet dataSet = new DataSet( new EntryPath(), configItems );
-        dataSet.setData( new EntryPath( "myFieldSet.myField" ), "value" );
+        dataSet.setData( new EntryPath( "myFieldSet.myField" ), "value", DataTypes.STRING );
 
         // exercise
         try
@@ -168,7 +169,7 @@ public class DataSetTest
         configItems.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
             newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() ).build() );
         DataSet dataSet = new DataSet( new EntryPath(), configItems );
-        dataSet.setData( new EntryPath( "myFieldSet.myField" ), "" );
+        dataSet.setData( new EntryPath( "myFieldSet.myField" ), "", DataTypes.STRING );
 
         // exercise
         dataSet.checkBreaksRequiredContract();
