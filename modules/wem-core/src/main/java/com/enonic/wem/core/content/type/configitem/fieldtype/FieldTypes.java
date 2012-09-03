@@ -5,6 +5,9 @@ import java.util.LinkedHashMap;
 
 import org.elasticsearch.common.base.Preconditions;
 
+import com.enonic.wem.core.content.datatype.DataType;
+import com.enonic.wem.core.content.datatype.DataTypes;
+
 public class FieldTypes
 {
     public static final FieldType COLOR = new Color();
@@ -37,6 +40,8 @@ public class FieldTypes
 
     private static LinkedHashMap<String, FieldType> fieldTypeByName = new LinkedHashMap<String, FieldType>();
 
+    private static LinkedHashMap<Integer, FieldType> fieldTypeByDataTypeKey = new LinkedHashMap<Integer, FieldType>();
+
     static
     {
         register( COLOR );
@@ -52,12 +57,24 @@ public class FieldTypes
         register( XML );
         register( WHOLE_NUMBER );
         register( DECIMAL_NUMBER );
+
+        registerDefaultFieldType( DataTypes.DATE, DATE );
+        registerDefaultFieldType( DataTypes.STRING, TEXT_AREA );
+        registerDefaultFieldType( DataTypes.XML, XML );
+        registerDefaultFieldType( DataTypes.WHOLE_NUMBER, WHOLE_NUMBER );
+        registerDefaultFieldType( DataTypes.DECIMAL_NUMBER, DECIMAL_NUMBER );
     }
 
     private static void register( FieldType fieldType )
     {
         Object previous = fieldTypeByName.put( fieldType.getName(), fieldType );
         Preconditions.checkState( previous == null, "FieldType already registered: " + fieldType.getName() );
+    }
+
+    private static void registerDefaultFieldType( DataType dataType, FieldType fieldType )
+    {
+        Object previousDataType = fieldTypeByDataTypeKey.put( dataType.getKey(), fieldType );
+        Preconditions.checkState( previousDataType == null, "Default FieldType already registered for DataType: " + dataType );
     }
 
     public static FieldType parse( final String fieldTypeName )

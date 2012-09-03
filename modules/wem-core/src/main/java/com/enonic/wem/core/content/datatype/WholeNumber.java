@@ -1,14 +1,12 @@
 package com.enonic.wem.core.content.datatype;
 
 
-import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
-
 public class WholeNumber
     extends AbstractDataType
 {
     WholeNumber( int key )
     {
-        super( key, JavaType.LONG, FieldTypes.WHOLE_NUMBER );
+        super( key, JavaType.LONG );
     }
 
     @Override

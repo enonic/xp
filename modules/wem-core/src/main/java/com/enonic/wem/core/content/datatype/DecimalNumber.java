@@ -1,13 +1,11 @@
 package com.enonic.wem.core.content.datatype;
 
-import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
-
 public class DecimalNumber
     extends AbstractDataType
 {
     DecimalNumber( int key )
     {
-        super( key, JavaType.DOUBLE, FieldTypes.WHOLE_NUMBER );
+        super( key, JavaType.DOUBLE );
     }
 
     @Override

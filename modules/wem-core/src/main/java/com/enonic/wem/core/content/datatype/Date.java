@@ -5,8 +5,6 @@ import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 
-import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
-
 public class Date
     extends AbstractDataType
 {
@@ -15,7 +13,7 @@ public class Date
 
     Date( int key )
     {
-        super( key, JavaType.DATE, FieldTypes.DATE );
+        super( key, JavaType.DATE );
     }
 
     @Override

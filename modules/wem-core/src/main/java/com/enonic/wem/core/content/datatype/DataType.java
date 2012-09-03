@@ -2,7 +2,6 @@ package com.enonic.wem.core.content.datatype;
 
 
 import com.enonic.wem.core.content.type.configitem.InvalidValueException;
-import com.enonic.wem.core.content.type.configitem.fieldtype.FieldType;
 
 /**
  * DataTypes should only be created when:
@@ -14,8 +13,6 @@ public interface DataType
     int getKey();
 
     String getName();
-
-    public FieldType getDefaultFieldType();
 
     JavaType getJavaType();
 

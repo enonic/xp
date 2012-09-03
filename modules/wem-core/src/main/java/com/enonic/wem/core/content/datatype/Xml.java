@@ -1,14 +1,12 @@
 package com.enonic.wem.core.content.datatype;
 
 
-import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
-
 public class Xml
     extends AbstractDataType
 {
     Xml( int key )
     {
-        super( key, JavaType.STRING, FieldTypes.XML );
+        super( key, JavaType.STRING );
     }
 
     @Override

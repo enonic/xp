@@ -1,14 +1,12 @@
 package com.enonic.wem.core.content.datatype;
 
 
-import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
-
 public class GeographicCoordinate
     extends AbstractDataType
 {
     GeographicCoordinate( int key )
     {
-        super( key, JavaType.STRING, FieldTypes.GEO_LOCATION );
+        super( key, JavaType.STRING );
     }
 
     @Override

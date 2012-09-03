@@ -3,8 +3,6 @@ package com.enonic.wem.core.content.datatype;
 
 import com.google.common.base.Objects;
 
-import com.enonic.wem.core.content.type.configitem.fieldtype.FieldType;
-
 public abstract class AbstractDataType
     implements DataType
 {
@@ -14,14 +12,11 @@ public abstract class AbstractDataType
 
     private JavaType javaType;
 
-    private FieldType defaultFieldType;
-
-    public AbstractDataType( int key, JavaType javaType, FieldType defaultFieldType )
+    public AbstractDataType( int key, JavaType javaType )
     {
         this.key = key;
         this.name = this.getClass().getName();
         this.javaType = javaType;
-        this.defaultFieldType = defaultFieldType;
     }
 
     @Override
@@ -34,12 +29,6 @@ public abstract class AbstractDataType
     public String getName()
     {
         return name;
-    }
-
-    @Override
-    public FieldType getDefaultFieldType()
-    {
-        return defaultFieldType;
     }
 
     @Override
@@ -122,7 +111,6 @@ public abstract class AbstractDataType
         s.add( "key", key );
         s.add( "name", name );
         s.add( "javaType", javaType );
-        s.add( "defaultFieldType", defaultFieldType );
         return s.toString();
     }
 
