@@ -5,13 +5,13 @@ import org.joda.time.DateMidnight;
 
 import com.google.common.base.Objects;
 
+import com.enonic.wem.core.content.datatype.DataType;
+import com.enonic.wem.core.content.datatype.InvalidValueTypeException;
+import com.enonic.wem.core.content.datatype.JavaType;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.InvalidValueException;
-import com.enonic.wem.core.content.type.datatype.DataType;
-import com.enonic.wem.core.content.type.datatype.InvalidValueTypeException;
-import com.enonic.wem.core.content.type.datatype.JavaType;
 
 
 public class Data

@@ -3,8 +3,8 @@ package com.enonic.wem.core.content.type.configitem.fieldtype;
 
 import org.junit.Test;
 
+import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
-import com.enonic.wem.core.content.type.datatype.DataTypes;
 
 import static com.enonic.wem.core.content.data.Data.newData;
 

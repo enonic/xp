@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.type.datatype;
+package com.enonic.wem.core.content.datatype;
 
 
 public class InvalidValueTypeException

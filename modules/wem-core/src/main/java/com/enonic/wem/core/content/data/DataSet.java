@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.core.content.datatype.DataType;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.configitem.ConfigItem;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
@@ -14,7 +15,6 @@ import com.enonic.wem.core.content.type.configitem.DirectAccessibleConfigItem;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
-import com.enonic.wem.core.content.type.datatype.DataType;
 
 public class DataSet
     extends Entry

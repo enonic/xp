@@ -3,9 +3,9 @@ package com.enonic.wem.core.content.data;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.core.content.datatype.DataType;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
-import com.enonic.wem.core.content.type.datatype.DataType;
 
 public class ContentData
 {

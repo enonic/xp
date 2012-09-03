@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.data;
 
 
-import com.enonic.wem.core.content.type.datatype.InvalidValueTypeException;
+import com.enonic.wem.core.content.datatype.InvalidValueTypeException;
 
 public class InvalidDataException
     extends RuntimeException

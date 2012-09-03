@@ -3,12 +3,12 @@ package com.enonic.wem.core.content.data;
 
 import org.junit.Test;
 
+import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
-import com.enonic.wem.core.content.type.datatype.DataTypes;
 
 import static com.enonic.wem.core.content.type.configitem.Field.newField;
 import static com.enonic.wem.core.content.type.configitem.FieldSet.newFieldSet;

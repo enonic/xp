@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.type.configitem.fieldtype;
 
 
-import com.enonic.wem.core.content.type.datatype.DataType;
+import com.enonic.wem.core.content.datatype.DataType;
 
 public abstract class BaseFieldType
     implements FieldType

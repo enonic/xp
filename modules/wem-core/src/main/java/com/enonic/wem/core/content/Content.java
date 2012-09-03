@@ -6,10 +6,10 @@ import com.enonic.wem.core.content.data.ContentData;
 import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.data.DataSet;
 import com.enonic.wem.core.content.data.EntryPath;
+import com.enonic.wem.core.content.datatype.DataType;
+import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
-import com.enonic.wem.core.content.type.datatype.DataType;
-import com.enonic.wem.core.content.type.datatype.DataTypes;
 
 public class Content
 {

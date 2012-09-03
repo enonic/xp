@@ -4,8 +4,8 @@ package com.enonic.wem.core.content.type.configitem.fieldtype;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.core.content.data.Data;
+import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
-import com.enonic.wem.core.content.type.datatype.DataTypes;
 
 public class HtmlArea
     extends BaseFieldType

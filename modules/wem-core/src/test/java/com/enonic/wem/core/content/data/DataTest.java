@@ -3,8 +3,8 @@ package com.enonic.wem.core.content.data;
 
 import org.junit.Test;
 
-import com.enonic.wem.core.content.type.datatype.DataTypes;
-import com.enonic.wem.core.content.type.datatype.InconvertibleException;
+import com.enonic.wem.core.content.datatype.DataTypes;
+import com.enonic.wem.core.content.datatype.InconvertibleException;
 
 import static com.enonic.wem.core.content.data.Data.newData;
 
