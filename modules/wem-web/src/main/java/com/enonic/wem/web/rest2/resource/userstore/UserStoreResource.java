@@ -15,13 +15,20 @@ import javax.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Strings;
+
 import com.enonic.wem.web.rest2.service.userstore.UserStoreUpdateService;
 
 import com.enonic.cms.core.security.SecurityService;
+import com.enonic.cms.core.security.group.GroupEntity;
+import com.enonic.cms.core.security.group.GroupSpecification;
 import com.enonic.cms.core.security.user.QualifiedUsername;
 import com.enonic.cms.core.security.user.User;
+import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.core.security.userstore.UserStoreConnectorManager;
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
+import com.enonic.cms.core.security.userstore.UserStoreKey;
+import com.enonic.cms.core.security.userstore.UserStoreService;
 import com.enonic.cms.core.security.userstore.connector.config.UserStoreConnectorConfig;
 import com.enonic.cms.store.dao.UserStoreDao;
 
@@ -42,11 +49,43 @@ public class UserStoreResource
     @Autowired
     private UserStoreConnectorManager connectorManager;
 
+    @Autowired
+    private UserStoreService userStoreService;
+
     @GET
     public UserStoreResults getAll()
     {
         final List<UserStoreEntity> userStores = userStoreDao.findAll();
         return new UserStoreResults( userStores );
+    }
+
+    @GET
+    @Path("{key}")
+    public UserStoreDetailsResult getDetails( @PathParam("key") final String key )
+    {
+        if ( Strings.isNullOrEmpty( key ) )
+        {
+            return null;
+        }
+
+        final UserStoreEntity userStore = userStoreDao.findByKey( new UserStoreKey( key ) );
+        if ( userStore == null )
+        {
+            return null;
+        }
+        else
+        {
+            final GroupSpecification groupSpec = new GroupSpecification();
+            groupSpec.setUserStoreKey( userStore.getKey() );
+            final List<GroupEntity> groups = userStoreService.getGroups( groupSpec );
+            final List<UserEntity> users = userStoreService.getUsers( userStore.getKey() );
+            UserStoreConnectorConfig connectorConfig = null;
+            if ( !userStore.isLocal() )
+            {
+                connectorConfig = connectorManager.getUserStoreConnectorConfig( userStore.getKey() );
+            }
+            return new UserStoreDetailsResult( userStore, connectorConfig, groups, users );
+        }
     }
 
     @POST
@@ -83,6 +122,7 @@ public class UserStoreResource
         return new ConnectorResults( connectors );
     }
 
+
     public UserStoreDao getUserStoreDao()
     {
         return userStoreDao;
@@ -111,5 +151,10 @@ public class UserStoreResource
     public void setConnectorManager( final UserStoreConnectorManager connectorManager )
     {
         this.connectorManager = connectorManager;
+    }
+
+    public void setUserStoreService( final UserStoreService userStoreService )
+    {
+        this.userStoreService = userStoreService;
     }
 }

@@ -1,0 +1,93 @@
+{
+    "key": "1",
+    "name": "Enonic",
+    "default": false,
+    "connector": "Remote",
+    "configXML": "<config>\r\n  <user-fields>\r\n    <first-name readonly=\"false\" required=\"true\" remote=\"true\" />\r\n    <gender readonly=\"true\" required=\"false\" remote=\"false\" />\r\n    <phone readonly=\"false\" required=\"false\" remote=\"false\" />\r\n  </user-fields>\r\n</config>\r\n\r\n",
+    "userFields": [
+        {
+            "type": "firstName",
+            "readOnly": false,
+            "remote": true,
+            "required": true,
+            "iso": true
+        },
+        {
+            "type": "gender",
+            "readOnly": true,
+            "remote": false,
+            "required": false,
+            "iso": true
+        },
+        {
+            "type": "phone",
+            "readOnly": false,
+            "remote": false,
+            "required": false,
+            "iso": true
+        }
+    ],
+    "plugin": "SpaceshipPlugin",
+    "userPolicy": {
+        "create": true,
+        "updatePassword": true,
+        "update": true,
+        "delete": true
+    },
+    "groupPolicy": {
+        "create": true,
+        "read": true,
+        "update": true,
+        "delete": true
+    },
+    "userCount": 5,
+    "groupCount": 3,
+    "administrators": [
+        {
+            "key": "2",
+            "type": "user",
+            "name": "member1",
+            "email": "email1",
+            "userStore": "Enonic",
+            "qualifiedName": "Enonic\\member1",
+            "displayName": "name1",
+            "lastModified": "2011-08-09 08:23:07",
+            "created": "2011-08-09 08:23:07",
+            "builtIn": false,
+            "editable": true,
+            "info_uri": "account/user/2",
+            "image_uri": "account/user/2/image",
+            "graph_uri": "account/graph/2"
+        },
+        {
+            "key": "3",
+            "type": "group",
+            "name": "member2",
+            "userStore": "Enonic",
+            "qualifiedName": "member2",
+            "displayName": "member2",
+            "lastModified": "2012-07-24 16:18:35",
+            "created": "2012-07-24 16:18:35",
+            "builtIn": false,
+            "editable": true,
+            "image_uri": "misc/image/group",
+            "info_uri": "account/group/3",
+            "graph_uri": "account/graph/3"
+        },
+        {
+            "key": "4",
+            "type": "group",
+            "name": "member3",
+            "userStore": "Enonic",
+            "qualifiedName": "Enonic\\member3",
+            "displayName": "member3",
+            "lastModified": "2012-07-24 16:18:35",
+            "created": "2012-07-24 16:18:35",
+            "builtIn": false,
+            "editable": true,
+            "image_uri": "misc/image/group",
+            "info_uri": "account/group/4",
+            "graph_uri": "account/graph/4"
+        }
+    ]
+}
