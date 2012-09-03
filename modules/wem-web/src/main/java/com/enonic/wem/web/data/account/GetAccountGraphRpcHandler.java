@@ -9,13 +9,13 @@ import com.enonic.wem.web.rest2.resource.account.graph.GraphResource;
 import com.enonic.wem.web.jsonrpc.JsonRpcContext;
 
 @Component
-public final class GetGraphRpcHandler
+public final class GetAccountGraphRpcHandler
     extends AbstractDataRpcHandler
 {
     @Autowired
     private GraphResource resource;
 
-    public GetGraphRpcHandler()
+    public GetAccountGraphRpcHandler()
     {
         super( "account_getGraph" );
     }
