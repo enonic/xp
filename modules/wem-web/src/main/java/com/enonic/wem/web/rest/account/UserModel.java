@@ -1,16 +1,18 @@
 package com.enonic.wem.web.rest.account;
 
-import org.codehaus.jackson.annotate.JsonAutoDetect;
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonProperty;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonProperty;
+
 @JsonAutoDetect
-public final class UserModel implements AccountModel {
+public final class UserModel
+    implements AccountModel
+{
     public final static String USER_NAME = "username";
 
     public final static String EMAIL = "email";
@@ -19,7 +21,7 @@ public final class UserModel implements AccountModel {
 
     public final static String DISPLAY_NAME = "displayName";
 
-    public final static String USER_INFO = "userInfo";
+    public final static String USER_INFO = "info";
 
     public final static String USERSTORE = "userStore";
 
@@ -27,19 +29,21 @@ public final class UserModel implements AccountModel {
 
     private String key;
 
-    public UserModel() {
+    public UserModel()
+    {
     }
 
     @JsonCreator
-    public UserModel(@JsonProperty(USER_NAME) String name, @JsonProperty(EMAIL) String email,
-                     @JsonProperty(KEY) String key, @JsonProperty(DISPLAY_NAME) String displayName,
-                     @JsonProperty(USERSTORE) String userStore, @JsonProperty(USER_INFO) Map<String, Object> userInfo) {
+    public UserModel( @JsonProperty(USER_NAME) String name, @JsonProperty(EMAIL) String email, @JsonProperty(KEY) String key,
+                      @JsonProperty(DISPLAY_NAME) String displayName, @JsonProperty(USERSTORE) String userStore,
+                      @JsonProperty(USER_INFO) Map<String, Object> userInfo )
+    {
         this.name = name;
         this.email = email;
         this.key = key;
         this.displayName = displayName;
         this.userStore = userStore;
-        this.userInfo = new UserInfoModel(userInfo);
+        this.userInfo = new UserInfoModel( userInfo );
         this.groups = new ArrayList<Map<String, String>>();
     }
 
@@ -71,151 +75,186 @@ public final class UserModel implements AccountModel {
 
     private List<Map<String, Object>> graph;
 
-    public List<Map<String, String>> getGroups() {
+    public List<Map<String, String>> getGroups()
+    {
         return groups;
     }
 
-    public void setGroups(List<Map<String, String>> groups) {
+    public void setGroups( List<Map<String, String>> groups )
+    {
         this.groups = groups;
     }
 
-    public String getLastLogged() {
+    public String getLastLogged()
+    {
         return lastLogged;
     }
 
-    public void setLastLogged(String lastLogged) {
+    public void setLastLogged( String lastLogged )
+    {
         this.lastLogged = lastLogged;
     }
 
-    public String getCreated() {
+    public String getCreated()
+    {
         return created;
     }
 
-    public void setCreated(String created) {
+    public void setCreated( String created )
+    {
         this.created = created;
     }
 
     private String created;
 
     @JsonProperty(USER_INFO)
-    public UserInfoModel getUserInfo() {
+    public UserInfoModel getUserInfo()
+    {
         return userInfo;
     }
 
-    public void setUserInfo(UserInfoModel userInfo) {
+    public void setUserInfo( UserInfoModel userInfo )
+    {
         this.userInfo = userInfo;
     }
 
-    public String getAccountType() {
+    public String getAccountType()
+    {
         return "user";
     }
 
-    public void setKey(String key) {
+    public void setKey( String key )
+    {
         this.key = key;
     }
 
 
-    public void setName(String name) {
+    public void setName( String name )
+    {
         this.name = name;
     }
 
 
-    public void setEmail(String email) {
+    public void setEmail( String email )
+    {
         this.email = email;
     }
 
 
-    public void setQualifiedName(String qualifiedName) {
+    public void setQualifiedName( String qualifiedName )
+    {
         this.qualifiedName = qualifiedName;
     }
 
 
-    public void setUserStore(String userStore) {
+    public void setUserStore( String userStore )
+    {
         this.userStore = userStore;
     }
 
 
-    public void setDisplayName(String displayName) {
+    public void setDisplayName( String displayName )
+    {
         this.displayName = displayName;
     }
 
 
-    public void setLastModified(Date lastModified) {
+    public void setLastModified( Date lastModified )
+    {
         this.lastModified = lastModified;
     }
 
-    public String getKey() {
+    public String getKey()
+    {
         return key;
     }
 
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
     //TODO: need unification, it duplicates name field in JSON response
-    public String getUsername() {
+    public String getUsername()
+    {
         return name;
     }
 
-    public String getEmail() {
+    public String getEmail()
+    {
         return email;
     }
 
-    public String getQualifiedName() {
+    public String getQualifiedName()
+    {
         return qualifiedName;
     }
 
-    public String getDisplayName() {
+    public String getDisplayName()
+    {
         return displayName;
     }
 
-    public String getUserStore() {
+    public String getUserStore()
+    {
         return userStore;
     }
 
-    public Date getLastModified() {
+    public Date getLastModified()
+    {
         return lastModified;
     }
 
-    public boolean hasPhoto() {
+    public boolean hasPhoto()
+    {
         return this.hasPhoto;
     }
 
-    public void setBuiltIn(boolean builtIn) {
+    public void setBuiltIn( boolean builtIn )
+    {
         this.builtIn = builtIn;
     }
 
-    public boolean isBuiltIn() {
+    public boolean isBuiltIn()
+    {
         return builtIn;
     }
 
-    public boolean isEditable() {
+    public boolean isEditable()
+    {
         return editable;
     }
 
-    public void setEditable(boolean editable) {
+    public void setEditable( boolean editable )
+    {
         this.editable = editable;
     }
 
-    public void setHasPhoto(boolean hasPhoto) {
+    public void setHasPhoto( boolean hasPhoto )
+    {
         this.hasPhoto = hasPhoto;
     }
 
-    public int compareTo(AccountModel o) {
-        if (o instanceof UserModel) {
-            return this.getDisplayName().compareTo(o.getDisplayName());
+    public int compareTo( AccountModel o )
+    {
+        if ( o instanceof UserModel )
+        {
+            return this.getDisplayName().compareTo( o.getDisplayName() );
         }
-        if (o instanceof GroupModel) {
+        if ( o instanceof GroupModel )
+        {
             return 1;
         }
-        return this.getName().compareTo(o.getName());
+        return this.getName().compareTo( o.getName() );
     }
 
-    public String getPhoto() {
+    public String getPhoto()
+    {
         return photo;
     }
 
-    public void setPhoto(String photo) {
+    public void setPhoto( String photo )
+    {
         this.photo = photo;
     }
 }
