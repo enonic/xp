@@ -11,7 +11,7 @@ public class Color
 {
     Color()
     {
-        super( "color", DataTypes.DECIMAL_NUMBER );
+        super( "color", DataTypes.STRING );
     }
 
     public boolean requiresConfig()

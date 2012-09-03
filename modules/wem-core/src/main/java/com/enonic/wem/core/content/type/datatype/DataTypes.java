@@ -22,9 +22,7 @@ public class DataTypes
 
     public static final DecimalNumber DECIMAL_NUMBER = new DecimalNumber( 7 );
 
-    public static final Color COLOUR = new Color( 8 );
-
-    public static final GeographicCoordinate GEOGRAPHIC_COORDINATE = new GeographicCoordinate( 9 );
+    public static final GeographicCoordinate GEOGRAPHIC_COORDINATE = new GeographicCoordinate( 8 );
 
     private static final Map<Integer, DataType> typesByKey = new HashMap<Integer, DataType>();
 
@@ -37,7 +35,6 @@ public class DataTypes
         register( COMPUTED );
         register( WHOLE_NUMBER );
         register( DECIMAL_NUMBER );
-        register( COLOUR );
         register( GEOGRAPHIC_COORDINATE );
     }
 
