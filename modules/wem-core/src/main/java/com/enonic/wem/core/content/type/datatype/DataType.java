@@ -4,6 +4,11 @@ package com.enonic.wem.core.content.type.datatype;
 import com.enonic.wem.core.content.type.configitem.InvalidValueException;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldType;
 
+/**
+ * DataTypes should only be created when:
+ * * the type can give something more when indexed
+ * * needs validation.
+ */
 public interface DataType
 {
     int getKey();
