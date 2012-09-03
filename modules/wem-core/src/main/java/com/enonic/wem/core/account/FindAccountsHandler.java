@@ -200,8 +200,9 @@ public final class FindAccountsHandler
     private void buildNonUserAccount( final NonUserAccount nonUser, final GroupEntity groupEntity, final boolean includeMembers )
     {
         nonUser.setDisplayName( groupEntity.getDescription() );
-        nonUser.setCreatedTime( DateTime.now() ); // TODO fix when created-time is stored in backend
-        nonUser.setModifiedTime( DateTime.now() ); // TODO fix when modified-time is stored in backend
+        final DateTime dummyTime = DateTime.parse("2012-01-01T10:01:10.101+01:00"); // temporary setting a fixed timestamp for testing
+        nonUser.setCreatedTime( dummyTime ); // TODO fix when created-time is stored in backend
+        nonUser.setModifiedTime( dummyTime ); // TODO fix when modified-time is stored in backend
         nonUser.setDeleted( groupEntity.isDeleted() );
         nonUser.setEditable( true ); // TODO evaluate if account is editable in the current context
 

@@ -1,2 +1,46 @@
 {
+    "success" : true,
+    "total" : 10,
+    "accounts" : [ {
+        "key" : "user:enonic:user1",
+        "type" : "user",
+        "name" : "user1",
+        "userStore" : "enonic",
+        "qualifiedName" : "enonic:user1",
+        "builtIn" : false,
+        "displayName" : "User user1",
+        "modifiedTime" : "2012-01-01T10:01:10.101+01:00",
+        "createdTime" : "2012-01-01T10:01:10.101+01:00",
+        "editable" : true,
+        "deleted" : false,
+        "image_url" : "http://localhost/admin/rest/binary/account/image/default/user",
+        "email" : "user@email.com"
+    }, {
+        "key" : "role:enonic:contributors",
+        "type" : "role",
+        "name" : "contributors",
+        "userStore" : "enonic",
+        "qualifiedName" : "enonic:contributors",
+        "builtIn" : true,
+        "displayName" : "Group contributors",
+        "modifiedTime" : "2012-01-01T10:01:10.101+01:00",
+        "createdTime" : "2012-01-01T10:01:10.101+01:00",
+        "editable" : true,
+        "deleted" : false,
+        "image_url" : "http://localhost/admin/rest/binary/account/image/default/group"
+    }, {
+        "key" : "group:enonic:group1",
+        "type" : "group",
+        "name" : "group1",
+        "userStore" : "enonic",
+        "qualifiedName" : "enonic:group1",
+        "builtIn" : false,
+        "displayName" : "Group group1",
+        "modifiedTime" : "2012-01-01T10:01:10.101+01:00",
+        "createdTime" : "2012-01-01T10:01:10.101+01:00",
+        "editable" : true,
+        "deleted" : false,
+        "image_url" : "http://localhost/admin/rest/binary/account/image/default/role"
+    } ],
+    "facets" : [ ]
 }
