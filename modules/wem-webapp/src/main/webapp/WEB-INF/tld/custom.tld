@@ -9,8 +9,8 @@
 
   <tag>
     <name>helper</name>
-    <tag-class>com.enonic.wem.web.jsp.JspHelperTag</tag-class>
-    <tei-class>com.enonic.wem.web.jsp.JspHelperTagInfo</tei-class>
+    <tag-class>com.enonic.wem.taglib.JspHelperTag</tag-class>
+    <tei-class>com.enonic.wem.taglib.JspHelperTagInfo</tei-class>
     <body-content>empty</body-content>
     <attribute>
       <name>var</name>
@@ -21,11 +21,11 @@
 
   <tag>
     <name>siteList</name>
-    <tag-class>com.enonic.wem.web.jsp.site.SiteBeanTag</tag-class>
+    <tag-class>com.enonic.wem.taglib.site.SiteBeanTag</tag-class>
     <body-content>JSP</body-content>
     <variable>
       <name-given>site</name-given>
-      <variable-class>com.enonic.wem.web.jsp.site.SiteBean</variable-class>
+      <variable-class>com.enonic.wem.taglib.site.SiteBean</variable-class>
       <declare>true</declare>
       <scope>NESTED</scope>
     </variable>
