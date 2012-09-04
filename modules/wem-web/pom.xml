@@ -69,6 +69,11 @@
       <artifactId>jersey-multipart</artifactId>
       <version>1.12</version>
     </dependency>
+    <dependency>
+      <groupId>ro.isdc.wro4j</groupId>
+      <artifactId>wro4j-core</artifactId>
+      <version>1.4.8.1</version>
+    </dependency>
   </dependencies>
 
 </project>
