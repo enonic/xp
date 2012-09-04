@@ -30,6 +30,6 @@ public class GetLocalesRpcHandlerTest
         throws Exception
     {
         Mockito.when( localeService.getLocales() ).thenReturn( new Locale[]{Locale.ENGLISH, Locale.GERMAN} );
-        testSuccess( null, "getLocales_result.json" );
+        testSuccess( "getLocales_result.json" );
     }
 }

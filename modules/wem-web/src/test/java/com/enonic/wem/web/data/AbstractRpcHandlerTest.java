@@ -4,6 +4,7 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Before;
@@ -34,17 +35,78 @@ public abstract class AbstractRpcHandlerTest
     protected abstract JsonRpcHandler createHandler()
         throws Exception;
 
+
+    protected ObjectNode objectNode()
+    {
+        return JsonNodeFactory.instance.objectNode();
+    }
+
+    protected ArrayNode arrayNode()
+    {
+        return JsonNodeFactory.instance.arrayNode();
+    }
+
+
+    protected final void testSuccess( final String resultFile )
+        throws Exception
+    {
+        final JsonNode resultJson = parseJson( resultFile );
+        testJson( null, resultJson );
+    }
+
+    protected final void testSuccess( final JsonNode resultJson )
+        throws Exception
+    {
+        testJson( null, resultJson );
+    }
+
     protected final void testSuccess( final String paramsFile, final String resultFile )
+        throws Exception
+    {
+        final JsonNode paramsJson = parseJson( paramsFile );
+        final JsonNode resultJson = parseJson( resultFile );
+        assertNotNull( paramsJson );
+        assertTrue( paramsJson instanceof ObjectNode );
+        testJson( paramsJson, resultJson );
+    }
+
+    protected final void testSuccess( final String paramsFile, final JsonNode resultJson )
         throws Exception
     {
         final JsonNode paramsJson = parseJson( paramsFile );
         assertNotNull( paramsJson );
         assertTrue( paramsJson instanceof ObjectNode );
+        testJson( paramsJson, resultJson );
+    }
 
+    protected final void testSuccess( final JsonNode paramsJson, final String resultFile )
+        throws Exception
+    {
+        final JsonNode resultJson = parseJson( resultFile );
+        assertNotNull( paramsJson );
+        assertTrue( paramsJson instanceof ObjectNode );
+        testJson( paramsJson, resultJson );
+    }
+
+    protected final void testSuccess( final JsonNode paramsJson, final JsonNode resultJson )
+        throws Exception
+    {
+        assertNotNull( paramsJson );
+        assertTrue( paramsJson instanceof ObjectNode );
+        testJson( paramsJson, resultJson );
+    }
+
+
+    private void testJson( final JsonNode paramsJson, final JsonNode resultJson )
+        throws Exception
+    {
         final JsonRpcRequest req = new JsonRpcRequest();
         req.setId( "1" );
         req.setMethod( this.handler.getName() );
-        req.setParams( (ObjectNode) paramsJson );
+        if ( paramsJson != null )
+        {
+            req.setParams( (ObjectNode) paramsJson );
+        }
 
         final JsonRpcResponse res = this.processor.process( req );
         assertNotNull( res );
@@ -52,7 +114,7 @@ public abstract class AbstractRpcHandlerTest
 
         final JsonNode result = res.getResult();
         assertNotNull( result );
-        assertJson( resultFile, result );
+        assertJson( resultJson, result );
     }
 
     private JsonNode parseJson( final String fileName )
@@ -74,12 +136,6 @@ public abstract class AbstractRpcHandlerTest
     {
         final ObjectMapper mapper = ObjectMapperFactory.create();
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString( value );
-    }
-
-    private void assertJson( final String expectedFile, final JsonNode actual )
-        throws Exception
-    {
-        assertJson( parseJson( expectedFile ), actual );
     }
 
     private void assertJson( final JsonNode expected, final JsonNode actual )

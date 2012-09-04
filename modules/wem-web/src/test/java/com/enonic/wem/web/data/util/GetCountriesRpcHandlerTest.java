@@ -1,7 +1,7 @@
 package com.enonic.wem.web.data.util;
 
 import java.util.List;
-import java.util.Locale;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -47,6 +47,6 @@ public class GetCountriesRpcHandlerTest
 
         this.countries.add( country );
 
-        testSuccess( null, "getCountries_result.json" );
+        testSuccess( "getCountries_result.json" );
     }
 }

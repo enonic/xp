@@ -1,7 +1,6 @@
 package com.enonic.wem.web.data.util;
 
 import java.util.List;
-import java.util.Locale;
 
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
@@ -12,7 +11,6 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.web.data.AbstractRpcHandlerTest;
 import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
 
-import com.enonic.cms.core.locale.LocaleService;
 import com.enonic.cms.core.timezone.TimeZoneService;
 
 public class GetTimeZonesRpcHandlerTest
@@ -43,6 +41,6 @@ public class GetTimeZonesRpcHandlerTest
         this.timeZoneList.add( DateTimeZone.forID( "EET" ) );
         this.timeZoneList.add( DateTimeZone.forID( "America/Caracas" ) );
 
-        testSuccess( null, "getTimeZones_result.json" );
+        testSuccess( "getTimeZones_result.json" );
     }
 }
