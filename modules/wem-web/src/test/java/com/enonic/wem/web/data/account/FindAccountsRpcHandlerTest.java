@@ -1,113 +1,111 @@
 package com.enonic.wem.web.data.account;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.core.account.FindAccountsHandler;
-import com.enonic.wem.core.client.StandardClient;
-import com.enonic.wem.core.command.CommandInvokerImpl;
-import com.enonic.wem.core.search.account.AccountKey;
-import com.enonic.wem.core.search.account.AccountSearchQuery;
-import com.enonic.wem.core.search.account.AccountSearchResults;
-import com.enonic.wem.core.search.account.AccountSearchService;
-import com.enonic.wem.core.search.account.AccountType;
+import com.enonic.wem.api.account.Account;
+import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.GroupAccount;
+import com.enonic.wem.api.account.RoleAccount;
+import com.enonic.wem.api.account.UserAccount;
+import com.enonic.wem.api.account.result.AccountFacet;
+import com.enonic.wem.api.account.result.AccountFacetEntry;
+import com.enonic.wem.api.account.result.AccountFacets;
+import com.enonic.wem.api.account.result.AccountResult;
+import com.enonic.wem.api.command.account.FindAccounts;
 import com.enonic.wem.web.data.AbstractRpcHandlerTest;
 import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
-import com.enonic.wem.web.rest2.resource.account.IsQualifiedUsername;
-
-import com.enonic.cms.core.security.group.GroupEntity;
-import com.enonic.cms.core.security.group.GroupKey;
-import com.enonic.cms.core.security.group.GroupType;
-import com.enonic.cms.core.security.user.QualifiedUsername;
-import com.enonic.cms.core.security.user.UserEntity;
-import com.enonic.cms.core.security.user.UserKey;
-import com.enonic.cms.core.security.user.UserType;
-import com.enonic.cms.core.security.userstore.UserStoreEntity;
-import com.enonic.cms.core.security.userstore.UserStoreKey;
-import com.enonic.cms.store.dao.GroupDao;
-import com.enonic.cms.store.dao.UserDao;
-import com.enonic.cms.store.dao.UserStoreDao;
-
-import static org.mockito.Mockito.doReturn;
 
 public class FindAccountsRpcHandlerTest
     extends AbstractRpcHandlerTest
 {
-    private UserDao userDao;
 
-    private GroupDao groupDao;
-
-    private UserStoreDao userStoreDao;
-
-    private AccountSearchService accountSearchService;
-
-    private FindAccountsHandler findAccountsHandler;
-
-    public void setup()
-    {
-        userDao = Mockito.mock( UserDao.class );
-        groupDao = Mockito.mock( GroupDao.class );
-        userStoreDao = Mockito.mock( UserStoreDao.class );
-        accountSearchService = Mockito.mock( AccountSearchService.class );
-
-        findAccountsHandler = new FindAccountsHandler();
-        findAccountsHandler.setUserDao( userDao );
-        findAccountsHandler.setGroupDao( groupDao );
-        findAccountsHandler.setUserStoreDao( userStoreDao );
-        findAccountsHandler.setAccountSearchService( accountSearchService );
-    }
+    private Client client;
 
     @Override
     protected JsonRpcHandler createHandler()
         throws Exception
     {
-        setup();
-
+        client = Mockito.mock( Client.class );
         final FindAccountsRpcHandler handler = new FindAccountsRpcHandler();
-        handler.setClient( getClient() );
+        handler.setClient( client );
         return handler;
     }
 
     @Test
-    public void testRequest()
+    public void testRequestNoResults()
         throws Exception
     {
-        final GroupEntity group = createGroup( "enonic", "group1" );
-        final GroupEntity role = createRole( "enonic", "contributors" );
-        final UserEntity user = createUser( "enonic", "user1" );
-
-        final AccountSearchResults searchResults = new AccountSearchResults( 0, 10 );
-        searchResults.add( new AccountKey( user.getKey().toString() ), AccountType.USER, 1 );
-        searchResults.add( new AccountKey( role.getGroupKey().toString() ), AccountType.ROLE, 1 );
-        searchResults.add( new AccountKey( group.getGroupKey().toString() ), AccountType.GROUP, 1 );
-        doReturn( searchResults ).when( accountSearchService ).search( Matchers.<AccountSearchQuery>any() );
-
         mockCurrentContextHttpRequest();
+
+        final AccountResult result = createAccountResult( 0 );
+        setResult( result );
+
+        testSuccess( "findAccounts_param.json", "findAccounts_result_empty.json" );
+    }
+
+    @Test
+    public void testRequestAccounts()
+        throws Exception
+    {
+        mockCurrentContextHttpRequest();
+
+        final UserAccount admin = createUser( AccountKey.superUser() );
+        final UserAccount anonymous = createUser( AccountKey.anonymous() );
+        final UserAccount user1 = createUser( "enonic:user1" );
+        final GroupAccount group1 = createGroup( "enonic:group1", user1.getKey() );
+        final RoleAccount role1 = createRole( "system:contributors", user1.getKey() );
+
+        final AccountResult result = createAccountResult( 10, user1, group1, role1, admin, anonymous );
+        setResult( result );
 
         testSuccess( "findAccounts_param.json", "findAccounts_result.json" );
     }
 
-    private Client getClient()
+    @Test
+    public void testRequestAccountsAndFacets()
+        throws Exception
     {
-        final StandardClient standardClient = new StandardClient();
-        final CommandInvokerImpl commandInvoker = new CommandInvokerImpl();
-        commandInvoker.setHandlers( findAccountsHandler );
-        standardClient.setInvoker( commandInvoker );
-        return standardClient;
+        mockCurrentContextHttpRequest();
+
+        final UserAccount user1 = createUser( "enonic:user1" );
+        final GroupAccount group1 = createGroup( "enonic:group1", user1.getKey() );
+        final RoleAccount role1 = createRole( "system:contributors", user1.getKey() );
+
+        final AccountResult result = createAccountResult( 10, user1, group1, role1);
+        final AccountFacet facet = new AccountFacet("userstore" );
+        facet.addEntry( new AccountFacetEntry( "enonic",2 ) );
+        facet.addEntry( new AccountFacetEntry( "system",1 ) );
+        result.getFacets().addFacet( facet );
+
+        setResult( result );
+
+        testSuccess( "findAccounts_param.json", "findAccounts_result_with_facets.json" );
+    }
+
+    private AccountResult createAccountResult( final int totalSize, final Account... accounts )
+    {
+        final List<Account> accountList = Lists.newArrayList( accounts );
+        final AccountResult result = new AccountResult( totalSize, accountList );
+        result.setFacets( new AccountFacets() );
+        return result;
+    }
+
+    private void setResult( final AccountResult result )
+    {
+        Mockito.when( client.execute( Mockito.<FindAccounts>any() ) ).thenReturn( result );
     }
 
     private void mockCurrentContextHttpRequest()
@@ -117,86 +115,43 @@ public class FindAccountsRpcHandlerTest
         RequestContextHolder.setRequestAttributes( attrs );
     }
 
-    private GroupEntity createRole( final String userStore, final String name )
+    private UserAccount createUser( final String qName )
     {
-        return createGroupOrRole( userStore, name, true );
+        final AccountKey accountKey = AccountKey.user( qName );
+        return createUser( accountKey );
     }
 
-    private GroupEntity createGroup( final String userStore, final String name )
-
+    private UserAccount createUser( final AccountKey accountKey )
     {
-        return createGroupOrRole( userStore, name, false );
-    }
-
-    private GroupEntity createGroupOrRole( final String userStore, final String name, final boolean isRole )
-
-    {
-        final UserStoreEntity userStoreEntity = createUserStore( userStore );
-        final GroupEntity group = Mockito.mock( GroupEntity.class, Mockito.CALLS_REAL_METHODS );
-        final GroupKey key = new GroupKey( Integer.toString( Math.abs( name.hashCode() ) ) );
-
-        group.setKey( key );
-        group.setType( isRole ? GroupType.USERSTORE_ADMINS : GroupType.USERSTORE_GROUP );
-        group.setUserStore( userStoreEntity );
-        group.setName( name );
-        group.setDescription( "Group " + name );
-        group.setDeleted( false );
-        group.setMemberships( Sets.<GroupEntity>newHashSet() );
-
-        final Set<GroupEntity> memberSet = Sets.newHashSet();
-        group.setMembers( memberSet );
-
-        mockAddGroupToUserStore( userStoreEntity, group );
-        Mockito.when( groupDao.findByKey( key ) ).thenReturn( group );
-
-        return group;
-    }
-
-    private void mockAddGroupToUserStore( final UserStoreEntity userStore, final GroupEntity group )
-    {
-        final List<GroupEntity> userStoreResults = new ArrayList<GroupEntity>();
-        userStoreResults.add( group );
-        Mockito.when( groupDao.findByUserStoreKeyAndGroupname( userStore.getKey(), group.getName(), false ) ).thenReturn(
-            userStoreResults );
-    }
-
-    private UserEntity createUser( final String userStore, final String name )
-    {
-        final UserEntity user = Mockito.mock( UserEntity.class, Mockito.CALLS_REAL_METHODS );
-        final UserKey key = new UserKey( Integer.toString( Math.abs( name.hashCode() ) ) );
-
-        user.setKey( key );
-        user.setType( UserType.NORMAL );
-        user.setEmail( "user@email.com" );
-        user.setUserStore( createUserStore( userStore ) );
-        user.setName( name );
-        user.setDisplayName( "User " + name );
-        user.setDeleted( false );
-        user.setTimestamp( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
-
-        final QualifiedUsername qualifiedName = user.getQualifiedName();
-        Mockito.when( user.getQualifiedName() ).thenReturn( qualifiedName );
-        Mockito.when( userDao.findByQualifiedUsername( Mockito.argThat( new IsQualifiedUsername( qualifiedName ) ) ) ).thenReturn( user );
-        Mockito.when( userDao.findByKey( key.toString() ) ).thenReturn( user );
-
-        final GroupEntity userGroup = createGroup( userStore, "G" + user.getKey().toString() );
-        userGroup.setType( GroupType.USER );
-        Mockito.when( user.getUserGroup() ).thenReturn( userGroup );
-        doReturn( user ).when( userGroup ).getUser();
-
+        final UserAccount user = UserAccount.create( accountKey );
+        user.setDisplayName( accountKey.getLocalName().toUpperCase() );
+        user.setEmail( accountKey.getLocalName() + "@" + accountKey.getUserStore() + ".com" );
+        user.setCreatedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
+        user.setModifiedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
+        user.setImage( "image".getBytes() );
         return user;
     }
 
-    private UserStoreEntity createUserStore( final String name )
+    private GroupAccount createGroup( final String qName, final AccountKey... members )
     {
-        final UserStoreEntity userStore = Mockito.mock( UserStoreEntity.class, Mockito.CALLS_REAL_METHODS );
-        userStore.setName( name );
-        final UserStoreKey userStoreKey = new UserStoreKey( Math.abs( name.hashCode() ) );
-        userStore.setKey( userStoreKey );
-
-        Mockito.when( userStoreDao.findByKey( userStoreKey ) ).thenReturn( userStore );
-        Mockito.when( userStoreDao.findByName( name ) ).thenReturn( userStore );
-
-        return userStore;
+        final AccountKey accountKey = AccountKey.group( qName );
+        final GroupAccount group = GroupAccount.create( accountKey );
+        group.setDisplayName( accountKey.getLocalName().toUpperCase() );
+        group.setCreatedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
+        group.setModifiedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
+        group.setMembers( AccountKeySet.from( members ) );
+        return group;
     }
+
+    private RoleAccount createRole( final String qName, final AccountKey... members )
+    {
+        final AccountKey accountKey = AccountKey.role( qName );
+        final RoleAccount group = RoleAccount.create( accountKey );
+        group.setDisplayName( accountKey.getLocalName().toUpperCase() );
+        group.setCreatedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
+        group.setModifiedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
+        group.setMembers( AccountKeySet.from( members ) );
+        return group;
+    }
+
 }

@@ -86,10 +86,10 @@ final class FindAccountsJsonResult
 
         if ( account instanceof RoleAccount )
         {
-            return buildImageUrl( "default/group" );
+            return buildImageUrl( "default/role" );
         }
 
-        return buildImageUrl( "default/role" );
+        return buildImageUrl( "default/group" );
     }
 
     private String getImageUrl( final UserAccount account )
