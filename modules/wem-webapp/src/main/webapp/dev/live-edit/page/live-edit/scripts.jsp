@@ -39,7 +39,7 @@
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/RemoveButton.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Highlighter.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/ToolTip.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/InfoTip.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/ComponentTip.js"></script>
 
 <%
   if ( "true".equals( request.getParameter( "toolbar" ) ) )

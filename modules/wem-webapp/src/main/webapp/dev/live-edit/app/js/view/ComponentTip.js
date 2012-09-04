@@ -1,23 +1,23 @@
 /**
- * TODO: As InfoTip has changed look'n feel this object may be obsolete and we may use ToolTip instead.
+ * TODO: As ComponentTip has changed look'n feel this object may be obsolete and we may use ToolTip instead.
  */
 (function () {
     'use strict';
 
     // Class definition (constructor function)
-    var infoTip = AdminLiveEdit.view.InfoTip = function () {
+    var componentTip = AdminLiveEdit.view.ComponentTip = function () {
         this.create();
         this.bindEvents();
     };
 
     // Inherits ui.Base
-    infoTip.prototype = new AdminLiveEdit.view.Base();
+    componentTip.prototype = new AdminLiveEdit.view.Base();
 
     // Fix constructor as it now is Base
-    infoTip.constructor = infoTip;
+    componentTip.constructor = componentTip;
 
     // Shorthand ref to the prototype
-    var p = infoTip.prototype;
+    var p = componentTip.prototype;
 
     // Uses
     var util = AdminLiveEdit.Util;
@@ -43,7 +43,7 @@
         self.createElement(html);
         self.appendTo($liveedit('body'));
 
-        // Make sure component is not deselected when the infotip element is clicked.
+        // Make sure component is not deselected when the conponentTip element is clicked.
         self.getEl().on('click', function (event) {
             event.stopPropagation();
         });
@@ -74,9 +74,9 @@
 
 
     p.setText = function (componentType, componentName) {
-        var $infoTip = this.getEl();
-        $infoTip.children('.live-edit-tool-tip-type-text').text(componentType);
-        $infoTip.children('.live-edit-tool-tip-name-text').text(componentName);
+        var $componentTip = this.getEl();
+        $componentTip.children('.live-edit-tool-tip-type-text').text(componentType);
+        $componentTip.children('.live-edit-tool-tip-name-text').text(componentName);
     };
 
 
