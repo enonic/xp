@@ -300,7 +300,7 @@ Ext.define('Admin.controller.account.Controller', {
             'email': userData.email,
             'username': userData.name,
             'displayName': userData.displayName,
-            'userInfo': userData.userInfo
+            'info': userData.info
         };
         return data;
     },
