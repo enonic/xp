@@ -21,14 +21,7 @@ public final class SiteBeanTag
     extends TagSupport
     implements IterationTag
 {
-    private String var;
-
     private Iterator<SiteBeanImpl> current;
-
-    public void setVar( final String var )
-    {
-        this.var = var;
-    }
 
     @Override
     public int doStartTag()
@@ -60,7 +53,7 @@ public final class SiteBeanTag
 
     private void assignElement()
     {
-        this.pageContext.setAttribute( this.var, this.current.next() );
+        this.pageContext.setAttribute( "site", this.current.next() );
     }
 
     public List<SiteBeanImpl> getAllSites()

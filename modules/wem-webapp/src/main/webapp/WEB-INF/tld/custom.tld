@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
-<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN" "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
-<taglib>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+        version="2.0">
   <tlib-version>1.0</tlib-version>
-  <jsp-version>2.0</jsp-version>
   <short-name>wem</short-name>
   <uri>uri:enonic.wem.taglib</uri>
 
@@ -19,15 +20,15 @@
   </tag>
 
   <tag>
-    <name>site</name>
+    <name>siteList</name>
     <tag-class>com.enonic.wem.web.jsp.site.SiteBeanTag</tag-class>
-    <tei-class>com.enonic.wem.web.jsp.site.SiteBeanTagInfo</tei-class>
     <body-content>JSP</body-content>
-    <attribute>
-      <name>var</name>
-      <required>true</required>
-      <type>java.lang.String</type>
-    </attribute>
+    <variable>
+      <name-given>site</name-given>
+      <variable-class>com.enonic.wem.web.jsp.site.SiteBean</variable-class>
+      <declare>true</declare>
+      <scope>NESTED</scope>
+    </variable>
   </tag>
 
 </taglib>

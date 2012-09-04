@@ -131,7 +131,7 @@
     <div id="sites" class="box">
       <h2>Sites</h2>
       <ul>
-        <w:site var="site">
+        <w:siteList>
           <%
             String siteUrl = helper.createUrl( "site/" + site.getKey() );
           %>
@@ -141,7 +141,7 @@
               <span><%= helper.ellipsis( siteUrl, 30 ) %></span>
             </a>
           </li>
-        </w:site>
+        </w:siteList>
       </ul>
     </div>
   </div>
