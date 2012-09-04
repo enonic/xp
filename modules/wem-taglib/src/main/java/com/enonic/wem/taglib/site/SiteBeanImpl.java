@@ -1,4 +1,4 @@
-package com.enonic.wem.web.jsp.site;
+package com.enonic.wem.taglib.site;
 
 final class SiteBeanImpl
     implements SiteBean, Comparable<SiteBeanImpl>

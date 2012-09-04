@@ -1,4 +1,4 @@
-package com.enonic.wem.web.jsp;
+package com.enonic.wem.taglib;
 
 import java.util.Hashtable;
 
