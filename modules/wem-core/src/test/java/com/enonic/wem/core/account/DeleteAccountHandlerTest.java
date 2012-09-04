@@ -29,6 +29,7 @@ import com.enonic.cms.core.security.user.UserKey;
 import com.enonic.cms.core.security.user.UserType;
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
 import com.enonic.cms.core.security.userstore.UserStoreKey;
+import com.enonic.cms.core.security.userstore.UserStoreService;
 import com.enonic.cms.store.dao.GroupDao;
 import com.enonic.cms.store.dao.UserDao;
 import com.enonic.cms.store.dao.UserStoreDao;
@@ -47,6 +48,8 @@ public class DeleteAccountHandlerTest
 
     private UserStoreDao userStoreDao;
 
+    private UserStoreService userStoreService;
+
 
     @Before
     public void setUp()
@@ -55,11 +58,13 @@ public class DeleteAccountHandlerTest
         userDao = Mockito.mock( UserDao.class );
         groupDao = Mockito.mock( GroupDao.class );
         userStoreDao = Mockito.mock( UserStoreDao.class );
+        userStoreService = Mockito.mock( UserStoreService.class );
 
         final DeleteAccountsHandler deleteAccountsHandler = new DeleteAccountsHandler();
         deleteAccountsHandler.setUserDao( userDao );
         deleteAccountsHandler.setGroupDao( groupDao );
         deleteAccountsHandler.setUserStoreDao( userStoreDao );
+        deleteAccountsHandler.setUserStoreService( userStoreService );
 
         final StandardClient standardClient = new StandardClient();
         final CommandInvokerImpl commandInvoker = new CommandInvokerImpl();
@@ -77,6 +82,9 @@ public class DeleteAccountHandlerTest
         final AccountKey account3 = AccountKey.role( "enonic:admin" );
 
         // setup
+        final UserEntity admin = createUser( "10000", "system", "admin" );
+        Mockito.when( userDao.findBuiltInEnterpriseAdminUser() ).thenReturn( admin );
+
         final UserEntity user = createUser( "ASDD8F", account1.getUserStore(), account1.getLocalName() );
         final GroupEntity group1 = createGroup( "10001", account2.getUserStore(), account2.getLocalName() );
         final GroupEntity role1 = createGroup( "10004", account3.getUserStore(), account3.getLocalName() );

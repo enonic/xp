@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeySet;
@@ -14,16 +15,21 @@ import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 
+import com.enonic.cms.core.security.group.DeleteGroupCommand;
 import com.enonic.cms.core.security.group.GroupEntity;
+import com.enonic.cms.core.security.group.GroupSpecification;
+import com.enonic.cms.core.security.user.DeleteUserCommand;
 import com.enonic.cms.core.security.user.QualifiedUsername;
 import com.enonic.cms.core.security.user.UserEntity;
+import com.enonic.cms.core.security.user.UserSpecification;
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
+import com.enonic.cms.core.security.userstore.UserStoreService;
 import com.enonic.cms.store.dao.GroupDao;
 import com.enonic.cms.store.dao.UserDao;
 import com.enonic.cms.store.dao.UserStoreDao;
 
 @Component
-public final class DeleteAccountsHandler
+public class DeleteAccountsHandler
     extends CommandHandler<DeleteAccounts>
 {
     private GroupDao groupDao;
@@ -32,12 +38,15 @@ public final class DeleteAccountsHandler
 
     private UserStoreDao userStoreDao;
 
+    private UserStoreService userStoreService;
+
     public DeleteAccountsHandler()
     {
         super( DeleteAccounts.class );
     }
 
     @Override
+    @Transactional
     public void handle( final CommandContext context, final DeleteAccounts command )
         throws Exception
     {
@@ -74,7 +83,13 @@ public final class DeleteAccountsHandler
         {
             return false;
         }
-        userDao.delete( userEntity );
+
+        final UserEntity deleter = userDao.findBuiltInEnterpriseAdminUser(); // TODO get logged in user
+
+        final UserSpecification userSpec = UserSpecification.usingKey( userEntity.getKey() );
+        final DeleteUserCommand deleteUserCommand = new DeleteUserCommand( deleter.getKey(), userSpec );
+        userStoreService.deleteUser( deleteUserCommand );
+
         return true;
     }
 
@@ -91,7 +106,18 @@ public final class DeleteAccountsHandler
         {
             return false;
         }
-        groupDao.delete( groups.get( 0 ) );
+
+        final UserEntity deleter = userDao.findBuiltInEnterpriseAdminUser(); // TODO get logged in user
+
+        final GroupEntity group =  groups.get( 0 ) ;
+        final GroupSpecification groupSpec = new GroupSpecification();
+        groupSpec.setKey( group.getGroupKey() );
+        groupSpec.setName( group.getName() );
+
+        final DeleteGroupCommand deleteGroupCommand = new DeleteGroupCommand( deleter, groupSpec );
+        deleteGroupCommand.setRespondWithException( true );
+        userStoreService.deleteGroup( deleteGroupCommand );
+
         return true;
     }
 
@@ -124,5 +150,11 @@ public final class DeleteAccountsHandler
     public void setGroupDao( final GroupDao groupDao )
     {
         this.groupDao = groupDao;
+    }
+
+    @Autowired
+    public void setUserStoreService( final UserStoreService userStoreService )
+    {
+        this.userStoreService = userStoreService;
     }
 }
