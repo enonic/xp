@@ -16,7 +16,7 @@ Ext.define('Admin.controller.account.UserController', {
     saveUserToDB: function (user, callback) {
         var me = this;
         Ext.Ajax.request({
-            url: 'data/user/update',
+            url: Admin.lib.UriHelper.getUserUpdateUri(user),
             method: 'POST',
             jsonData: user,
             success: function (response, opts) {

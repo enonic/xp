@@ -17,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.web.rest.account.UserIdGenerator;
+import com.enonic.wem.web.rest.account.UserModel;
 import com.enonic.wem.web.rest2.resource.account.AccountGenericResult;
+import com.enonic.wem.web.rest2.service.account.user.UserUpdateService;
 
 import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.core.security.user.UserKey;
@@ -35,6 +37,9 @@ public final class UserResource
     private UserDao userDao;
 
     private UserStoreDao userStoreDao;
+
+    private UserUpdateService userUpdateService;
+
 
     @GET
     @Path("{key}")
@@ -123,6 +128,14 @@ public final class UserResource
         return result;
     }
 
+    @POST
+    @Path("{key}/update")
+    public UserUpdateResult updateUser( @PathParam("key") String userKey, UserModel user )
+    {
+
+        return userUpdateService.updateUser( userKey, user );
+    }
+
     private UserKey findUserByEmail( final UserStoreKey userStoreKey, final String email )
     {
         final UserSpecification userByEmailSpec = new UserSpecification();
@@ -152,5 +165,11 @@ public final class UserResource
     public void setUserStoreDao( final UserStoreDao userStoreDao )
     {
         this.userStoreDao = userStoreDao;
+    }
+
+    @Autowired
+    public void setUserUpdateService( final UserUpdateService userUpdateService )
+    {
+        this.userUpdateService = userUpdateService;
     }
 }

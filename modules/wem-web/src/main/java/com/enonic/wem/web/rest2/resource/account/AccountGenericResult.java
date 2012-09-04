@@ -5,7 +5,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.web.rest2.common.JsonResult;
 
-public final class AccountGenericResult
+public class AccountGenericResult
     extends JsonResult
 {
     private final boolean success;

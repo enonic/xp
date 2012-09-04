@@ -199,10 +199,10 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
 
     preProcessAddresses: function (userFields) {
         // assign each address a position to be able to reflect this in diff
-        if (userFields.userInfo && userFields.userInfo.addresses) {
+        if (userFields.info && userFields.info.addresses) {
             var i;
-            for (i = 0; i < userFields.userInfo.addresses.length; i++) {
-                userFields.userInfo.addresses[i].originalIndex = i;
+            for (i = 0; i < userFields.info.addresses.length; i++) {
+                userFields.info.addresses[i].originalIndex = i;
             }
         }
     },
