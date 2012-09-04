@@ -3,19 +3,19 @@
 
     $liveedit(window).load(function () {
         $liveedit('.live-edit-loader-splash-container').remove();
-        var page = new AdminLiveEdit.components.Page();
-        var regions = new AdminLiveEdit.components.Regions();
-        var windows = new AdminLiveEdit.components.Windows();
-        var contents = new AdminLiveEdit.components.Contents();
-        var paragraphs = new AdminLiveEdit.components.Paragraphs();
-        var highlighter = new AdminLiveEdit.view.Highlighter();
-        var selection = new AdminLiveEdit.Selection();
-        var componentTip = new AdminLiveEdit.view.ComponentTip();
-        var toolTip = new AdminLiveEdit.view.ToolTip();
-        var cursor = new AdminLiveEdit.view.Cursor();
-        var componentMenu = new AdminLiveEdit.view.componentmenu.ComponentMenu();
-        var shader = new AdminLiveEdit.view.Shader();
+        var selection           = new AdminLiveEdit.Selection();
         var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
+        var page                = new AdminLiveEdit.model.component.Page();
+        var regions             = new AdminLiveEdit.model.component.Regions();
+        var windows             = new AdminLiveEdit.model.component.Windows();
+        var contents            = new AdminLiveEdit.model.component.Contents();
+        var paragraphs          = new AdminLiveEdit.model.component.Paragraphs();
+        var highlighter         = new AdminLiveEdit.view.Highlighter();
+        var componentTip        = new AdminLiveEdit.view.ComponentTip();
+        var toolTip             = new AdminLiveEdit.view.ToolTip();
+        var cursor              = new AdminLiveEdit.view.Cursor();
+        var componentMenu       = new AdminLiveEdit.view.componentmenu.ComponentMenu();
+        var shader              = new AdminLiveEdit.view.Shader();
 
         AdminLiveEdit.DragDrop.init();
     });

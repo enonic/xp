@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var windows = AdminLiveEdit.components.Windows = function () {
+    var windows =  AdminLiveEdit.model.component.Windows = function () {
         this.cssSelector = '[data-live-edit-type=window]';
         this.renderEmptyPlaceholders();
         this.attachMouseOverEvent();
@@ -9,7 +9,7 @@
         this.attachClickEvent();
     };
     // Inherit from Base prototype
-    windows.prototype = new AdminLiveEdit.components.Base();
+    windows.prototype = new AdminLiveEdit.model.component.Base();
 
     // Fix constructor as it now is Base
     windows.constructor = windows;

@@ -2,14 +2,14 @@
     'use strict';
 
     // Namespaces
-    AdminLiveEdit.components = {};
+    AdminLiveEdit.model.component = {};
 
-    AdminLiveEdit.components.Base = function () {
+    AdminLiveEdit.model.component.Base = function () {
         this.cssSelector = '';
     };
 
 
-    AdminLiveEdit.components.Base.prototype = {
+    AdminLiveEdit.model.component.Base.prototype = {
         attachMouseOverEvent: function () {
             var self = this;
 

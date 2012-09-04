@@ -55,7 +55,6 @@ AdminLiveEdit.DragDrop = (function () {
 
 
     function handleDragOver(event, ui) {
-        console.log($liveedit('#live-edit-drag-helper'));
         updateHelperStatusIcon('yes');
         $liveedit(window).trigger('component:drag:over', [event, ui]);
     }

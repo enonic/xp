@@ -16,12 +16,13 @@
 <script type="text/javascript" charset="UTF-8" src="../app/js/DragDrop.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/PageLeave.js"></script>
 
-<script type="text/javascript" charset="UTF-8" src="../app/js/component/Base.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/component/Page.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/component/Regions.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/component/Windows.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/component/Contents.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/component/Paragraphs.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/model/Base.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/model/component/Base.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/model/component/Page.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/model/component/Regions.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/model/component/Windows.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/model/component/Contents.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/model/component/Paragraphs.js"></script>
 
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Base.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Shader.js"></script>
@@ -40,15 +41,6 @@
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Highlighter.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/ToolTip.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/ComponentTip.js"></script>
-
-<%
-  if ( "true".equals( request.getParameter( "toolbar" ) ) )
-  {
-%>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/ToolbarTest.js"></script>
-<%
-  }
-%>
 
 <%
   }
