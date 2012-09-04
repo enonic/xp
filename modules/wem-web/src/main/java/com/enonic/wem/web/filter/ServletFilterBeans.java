@@ -12,6 +12,8 @@ import org.springframework.web.filter.RequestContextFilter;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.web.filter.bundle.BundleFilter;
+
 @Configuration
 public class ServletFilterBeans
 {
@@ -21,6 +23,7 @@ public class ServletFilterBeans
         final List<Filter> filters = Lists.newArrayList();
         filters.add( requestContextFilter() );
         filters.add( openSessionInViewFilter() );
+        filters.add( bundleFilter() );
 
         final CompositeFilter filter = new CompositeFilter();
         filter.setFilters( filters );
@@ -39,5 +42,11 @@ public class ServletFilterBeans
         final OpenSessionInViewFilter filter = new OpenSessionInViewFilter();
         filter.setSingleSession( true );
         return filter;
+    }
+
+    @Bean
+    public BundleFilter bundleFilter()
+    {
+        return new BundleFilter();
     }
 }
