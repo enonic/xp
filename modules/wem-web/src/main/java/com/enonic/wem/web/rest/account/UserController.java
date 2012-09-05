@@ -3,7 +3,6 @@ package com.enonic.wem.web.rest.account;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
@@ -26,7 +25,6 @@ import com.enonic.wem.core.search.UserInfoHelper;
 import com.enonic.wem.core.search.account.AccountIndexData;
 import com.enonic.wem.core.search.account.AccountKey;
 import com.enonic.wem.core.search.account.AccountSearchService;
-import com.enonic.wem.web.rest.common.RestResponse;
 
 import com.enonic.cms.framework.util.ImageHelper;
 
@@ -111,21 +109,6 @@ public final class UserController
         }
         ImageIO.write( image, type, imageFile );
 
-    }
-
-    @RequestMapping(value = "delete", method = RequestMethod.POST)
-    @ResponseBody
-    public RestResponse deleteUser( @RequestParam("key") final List<String> key )
-    {
-        RestResponse res = new RestResponse();
-
-        for ( String k : key )
-        {
-            LOG.info( "Delete account: " + k );
-        }
-
-        res.setSuccess( true );
-        return res;
     }
 
     @RequestMapping(value = "update", method = RequestMethod.POST,
