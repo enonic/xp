@@ -47,12 +47,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.10</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>info.cukes</groupId>
       <artifactId>cucumber-java</artifactId>
       <version>1.0.11</version>
@@ -68,12 +62,6 @@
       <groupId>info.cukes</groupId>
       <artifactId>cucumber-picocontainer</artifactId>
       <version>1.0.11</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.spockframework</groupId>
-      <artifactId>spock-core</artifactId>
-      <version>0.6-groovy-1.8</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -8,7 +8,7 @@ import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes
 
 import static com.enonic.wem.core.content.type.configitem.Field.newField
 
-class ContentSpec extends spock.lang.Specification
+class ContentSpecTest extends spock.lang.Specification
 {
     def "Given required Field not given Data then checkBreaksRequiredContract should throw exception"( )
     {
