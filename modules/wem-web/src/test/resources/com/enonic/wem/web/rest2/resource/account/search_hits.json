@@ -15,7 +15,7 @@
             "builtIn": false,
             "editable": true,
             "info_uri": "account/user/E6C593DE14515428B06F1A16E0D28E2341FC5AB4",
-            "image_uri": "account/user/E6C593DE14515428B06F1A16E0D28E2341FC5AB4/image",
+            "image_uri": "binary/account/image/user:enonic:dummy",
             "graph_uri": "account/graph/E6C593DE14515428B06F1A16E0D28E2341FC5AB4"
         },
         {
@@ -30,7 +30,7 @@
             "created": "2012-07-24 16:18:35",
             "builtIn": false,
             "editable": true,
-            "image_uri": "misc/image/group",
+            "image_uri": "binary/account/image/default/group",
             "info_uri": "account/group/E34B614B26C666AA9929F90EF3FA723B3DAAAAB2",
             "graph_uri": "account/graph/E34B614B26C666AA9929F90EF3FA723B3DAAAAB2"
         },
@@ -46,7 +46,7 @@
             "created": "2012-07-24 16:18:35",
             "builtIn": true,
             "editable": false,
-            "image_uri": "misc/image/role",
+            "image_uri": "binary/account/image/default/role",
             "info_uri": "account/role/18311D321165D73043C10A9101016CDF3765898E",
             "graph_uri": "account/graph/18311D321165D73043C10A9101016CDF3765898E"
         }

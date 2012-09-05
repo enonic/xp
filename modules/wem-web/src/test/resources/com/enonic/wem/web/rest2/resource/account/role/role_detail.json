@@ -10,8 +10,8 @@
     "created": "2012-07-24 16:18:35",
     "builtIn": true,
     "editable": true,
-    "image_uri" : "misc/image/role",
-    "graph_uri" : "account/graph/BDA046019C23F8A3BCDFB9360E77375BB4BBBEC4",
+    "image_uri": "binary/account/image/default/role",
+    "graph_uri": "account/graph/BDA046019C23F8A3BCDFB9360E77375BB4BBBEC4",
     "members": [
         {
             "name": "admins",

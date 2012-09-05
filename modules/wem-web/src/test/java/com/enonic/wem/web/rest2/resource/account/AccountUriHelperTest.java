@@ -40,12 +40,12 @@ public class AccountUriHelperTest
         final String imageGroupUri = AccountUriHelper.getAccountImageUri( group );
         final String imageRoleUri = AccountUriHelper.getAccountImageUri( role );
 
-        assertEquals( "account/user/2BF83E35709BC83C6A80874D660788C65A32C93F/image", imageUserUri );
-        assertEquals( "misc/image/user", imageUserNoPhotoUri );
-        assertEquals( "misc/image/admin", imageAdminUserUri );
-        assertEquals( "misc/image/anonymous", imageAnonymousUserUri );
-        assertEquals( "misc/image/group", imageGroupUri );
-        assertEquals( "misc/image/role", imageRoleUri );
+        assertEquals( "binary/account/image/user:system:user1", imageUserUri );
+        assertEquals( "binary/account/image/default/user", imageUserNoPhotoUri );
+        assertEquals( "binary/account/image/default/admin", imageAdminUserUri );
+        assertEquals( "binary/account/image/default/anonymous", imageAnonymousUserUri );
+        assertEquals( "binary/account/image/default/group", imageGroupUri );
+        assertEquals( "binary/account/image/default/role", imageRoleUri );
     }
 
     @Test

@@ -3,22 +3,20 @@ package com.enonic.wem.web.rest2.resource.account;
 import javax.ws.rs.core.UriBuilder;
 
 import com.enonic.wem.api.account.AccountType;
+import com.enonic.wem.web.data.binary.AccountImageController;
 import com.enonic.wem.web.rest2.resource.account.graph.GraphResource;
 import com.enonic.wem.web.rest2.resource.account.group.GroupResource;
 import com.enonic.wem.web.rest2.resource.account.role.RoleResource;
 import com.enonic.wem.web.rest2.resource.account.user.UserResource;
-import com.enonic.wem.web.rest2.resource.image.ImageResource;
 
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.user.UserEntity;
 
 public class AccountUriHelper
 {
-    // TODO: refactor to use com.enonic.wem.api.account.AccountKey for parameters, instead of String
-
     private static String getImageUri( final String name )
     {
-        return UriBuilder.fromResource( ImageResource.class ).path( name ).build().toString();
+        return UriBuilder.fromResource( AccountImageController.class ).path( "default" ).path( name ).build().toString();
     }
 
     public static String getAccountInfoUri( final AccountType type, final String accountKey )
@@ -53,7 +51,8 @@ public class AccountUriHelper
         }
         if ( userAccount.hasPhoto() )
         {
-            return UriBuilder.fromResource( UserResource.class ).path( userAccount.getKey().toString() ).path( "image" ).build().toString();
+            return UriBuilder.fromResource( AccountImageController.class ).path(
+                NewAccountKeyHelper.composeNewKey( userAccount ) ).build().toString();
         }
         else
         {

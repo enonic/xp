@@ -1,7 +1,5 @@
 package com.enonic.wem.web.rest2.resource.account.user;
 
-import java.awt.image.BufferedImage;
-
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -50,21 +48,6 @@ public final class UserResource
         {
             return new UserResult( entity );
         }
-    }
-
-    @GET
-    @Path("{key}/image")
-    @Produces("image/png")
-    public BufferedImage getPhoto( @PathParam("key") final String key, @QueryParam("size") @DefaultValue("100") final int size )
-        throws Exception
-    {
-        final UserEntity entity = userDao.findByKey( key );
-        if ( entity == null )
-        {
-            return null;
-        }
-
-        return PhotoHelper.renderPhoto( entity, size );
     }
 
     @GET

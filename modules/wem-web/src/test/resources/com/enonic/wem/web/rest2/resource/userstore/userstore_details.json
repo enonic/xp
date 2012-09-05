@@ -56,7 +56,7 @@
             "builtIn": false,
             "editable": true,
             "info_uri": "account/user/2",
-            "image_uri": "account/user/2/image",
+            "image_uri": "binary/account/image/user:Enonic:member1",
             "graph_uri": "account/graph/2"
         },
         {
@@ -70,7 +70,7 @@
             "created": "2012-07-24 16:18:35",
             "builtIn": false,
             "editable": true,
-            "image_uri": "misc/image/group",
+            "image_uri": "binary/account/image/default/group",
             "info_uri": "account/group/3",
             "graph_uri": "account/graph/3"
         },
@@ -85,7 +85,7 @@
             "created": "2012-07-24 16:18:35",
             "builtIn": false,
             "editable": true,
-            "image_uri": "misc/image/group",
+            "image_uri": "binary/account/image/default/group",
             "info_uri": "account/group/4",
             "graph_uri": "account/graph/4"
         }

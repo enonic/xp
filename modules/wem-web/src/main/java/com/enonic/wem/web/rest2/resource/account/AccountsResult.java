@@ -81,7 +81,7 @@ public final class AccountsResult
         final String key = String.valueOf( user.getKey() );
 
         json.put( "key", key );
-        json.put( "new_key", composeNewKey( user ) );
+        json.put( "new_key", NewAccountKeyHelper.composeNewKey( user ) );
         json.put( "type", TYPE_USER );
         json.put( "name", user.getName() );
         json.put( "email", user.getEmail() );
@@ -108,7 +108,7 @@ public final class AccountsResult
         final String key = String.valueOf( group.getGroupKey() );
 
         json.put( "key", key );
-        json.put( "new_key", composeNewKey( group ) );
+        json.put( "new_key", NewAccountKeyHelper.composeNewKey( group ) );
         json.put( "type", builtIn ? TYPE_ROLE : TYPE_GROUP );
         json.put( "name", group.getName() );
         json.put( "userStore", group.getUserStore() != null ? group.getUserStore().getName() : "null" );
@@ -139,34 +139,5 @@ public final class AccountsResult
         }
 
         return json;
-    }
-
-    private String composeNewKey( final UserEntity entity )
-    {
-        return composeNewKey( "user", entity.getUserStore(), entity.getName() );
-    }
-
-    private String composeNewKey( final GroupEntity entity )
-    {
-        final String type = entity.isBuiltIn() ? TYPE_ROLE : TYPE_GROUP;
-        return composeNewKey( type, entity.getUserStore(), entity.getName() );
-    }
-
-    private String composeNewKey( final String type, final UserStoreEntity userStore, final String localName )
-    {
-        final StringBuilder str = new StringBuilder( type );
-        str.append( ":" );
-
-        if ( userStore != null )
-        {
-            str.append( userStore.getName() );
-        }
-        else
-        {
-            str.append( "system" );
-        }
-
-        str.append( ":" ).append( localName );
-        return str.toString();
     }
 }

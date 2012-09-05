@@ -9,7 +9,6 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
-import org.fest.assertions.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -54,17 +53,6 @@ public class UserResourceTest
         userResource = new UserResource();
         userResource.setUserDao( userDao );
         userResource.setUserStoreDao( userStoreDao );
-    }
-
-    @Test
-    public void testGetPhoto()
-        throws Exception
-    {
-        UserEntity user = createUser( "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9" );
-        Mockito.when( userDao.findByKey( "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9" ) ).thenReturn( user );
-
-        BufferedImage image = userResource.getPhoto( "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9", 100 );
-        Assertions.assertThat( image ).isEqualTo( readPhoto() );
     }
 
     @Test
