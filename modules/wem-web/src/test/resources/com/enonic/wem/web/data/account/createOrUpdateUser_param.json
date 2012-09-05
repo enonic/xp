@@ -1,0 +1,11 @@
+{
+    "key": "user:enonic:user1",
+    "email": "user1@enonic.com",
+    "displayName": "User One",
+    "imageRef": "01d0cc1d-ac2a-4952-a423-295cc9756bba",
+    "members": [
+        "user:enonic:user5",
+        "group:enonic:group2",
+        "role:enonic:contributors"
+    ]
+}
