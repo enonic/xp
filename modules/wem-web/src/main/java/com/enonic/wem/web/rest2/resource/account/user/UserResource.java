@@ -1,7 +1,6 @@
 package com.enonic.wem.web.rest2.resource.account.user;
 
 import java.awt.image.BufferedImage;
-import java.util.List;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
@@ -22,10 +21,7 @@ import com.enonic.wem.web.rest2.resource.account.AccountGenericResult;
 import com.enonic.wem.web.rest2.service.account.user.UserUpdateService;
 
 import com.enonic.cms.core.security.user.UserEntity;
-import com.enonic.cms.core.security.user.UserKey;
-import com.enonic.cms.core.security.user.UserSpecification;
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
-import com.enonic.cms.core.security.userstore.UserStoreKey;
 import com.enonic.cms.store.dao.UserDao;
 import com.enonic.cms.store.dao.UserStoreDao;
 
@@ -72,28 +68,6 @@ public final class UserResource
     }
 
     @GET
-    @Path("/verify-unique-email")
-    public UniqueEmailResult verifyUniqueEmail( @QueryParam("userstore") @DefaultValue("") final String userStoreName,
-                                                @QueryParam("email") @DefaultValue("") final String email )
-    {
-        final UserStoreEntity userStore = userStoreDao.findByName( userStoreName );
-        if ( userStore == null )
-        {
-            return new UniqueEmailResult( false );
-        }
-
-        final UserKey existingUserWithEmail = findUserByEmail( userStore.getKey(), email );
-        if ( existingUserWithEmail == null )
-        {
-            return new UniqueEmailResult( false );
-        }
-        else
-        {
-            return new UniqueEmailResult( true, existingUserWithEmail.toString() );
-        }
-    }
-
-    @GET
     @Path("/suggest-name")
     public NameSuggestionResult suggestUsername( @QueryParam("firstname") @DefaultValue("") final String firstName,
                                                  @QueryParam("lastname") @DefaultValue("") final String lastName,
@@ -134,25 +108,6 @@ public final class UserResource
     {
 
         return userUpdateService.updateUser( userKey, user );
-    }
-
-    private UserKey findUserByEmail( final UserStoreKey userStoreKey, final String email )
-    {
-        final UserSpecification userByEmailSpec = new UserSpecification();
-        userByEmailSpec.setEmail( email );
-        userByEmailSpec.setUserStoreKey( userStoreKey );
-        userByEmailSpec.setDeletedStateNotDeleted();
-
-        final List<UserEntity> usersWithThisEmail = userDao.findBySpecification( userByEmailSpec );
-
-        if ( usersWithThisEmail.size() == 0 )
-        {
-            return null;
-        }
-        else
-        {
-            return usersWithThisEmail.get( 0 ).getKey();
-        }
     }
 
     @Autowired

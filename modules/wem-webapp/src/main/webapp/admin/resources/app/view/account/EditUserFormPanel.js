@@ -104,8 +104,9 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
         ]
     },
     validationUrls: {
-        username: 'data/account/userkey',
-        email: Admin.lib.UriHelper.getAccountVerifyEmailUri()
+        // TODO: Add validation of email and userName based on rpc calls
+        // username: 'data/account/userkey',
+        // email: Admin.lib.UriHelper.getAccountVerifyEmailUri()
     },
 
     autoScroll: false,

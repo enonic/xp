@@ -2,11 +2,8 @@ package com.enonic.wem.web.rest2.resource.account.user;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,7 +24,6 @@ import com.enonic.cms.core.security.group.GroupKey;
 import com.enonic.cms.core.security.group.GroupType;
 import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.core.security.user.UserKey;
-import com.enonic.cms.core.security.user.UserSpecification;
 import com.enonic.cms.core.security.user.UserType;
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
 import com.enonic.cms.core.security.userstore.UserStoreKey;
@@ -38,7 +34,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 
 public class UserResourceTest
     extends AbstractResourceTest
@@ -86,32 +81,6 @@ public class UserResourceTest
     }
 
     @Test
-    public void testVerifyUniqueEmail()
-        throws Exception
-    {
-        final String email = "user@email.com";
-        final String userKey = "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9";
-        final UserStoreKey userStoreKey = new UserStoreKey( "33" );
-        final String userStoreName = "enonic";
-
-        UserEntity user = createUser( userKey );
-        Mockito.when( userDao.findByKey( userKey ) ).thenReturn( user );
-
-        UserStoreEntity userStore = createUserstore( userStoreName );
-        userStore.setKey( userStoreKey );
-        Mockito.when( userStoreDao.findByName( userStoreName ) ).thenReturn( userStore );
-
-        final List<UserEntity> usersWithThisEmail = new ArrayList<UserEntity>();
-        usersWithThisEmail.add( user );
-        Mockito.when( userDao.findBySpecification( any( UserSpecification.class ) ) ).thenReturn( usersWithThisEmail );
-
-        final UniqueEmailResult uniqueEmail = userResource.verifyUniqueEmail( userStoreName, email );
-        assertTrue( uniqueEmail.isEmailInUse() );
-        assertEquals( userKey, uniqueEmail.getUserkey() );
-        assertJsonResult( "verifyUniqueEmail.json", uniqueEmail );
-    }
-
-    @Test
     public void testChangePassword_validPassword()
         throws Exception
     {
@@ -132,51 +101,6 @@ public class UserResourceTest
         }
         AccountGenericResult longPasswordResult = userResource.changePassword( "SDF7SDF7S8D7F9S8D7FS89", longPassword.toString() );
         assertFalse( longPasswordResult.isSuccess() );
-    }
-
-    @Test
-    public void testVerifyUniqueEmailMissing()
-        throws Exception
-    {
-        final String email = "newuser@enonic.com";
-        final String userKey = "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9";
-        final UserStoreKey userStoreKey = new UserStoreKey( "33" );
-        final String userStoreName = "enonic";
-
-        UserEntity user = createUser( userKey );
-        Mockito.when( userDao.findByKey( userKey ) ).thenReturn( user );
-
-        UserStoreEntity userStore = createUserstore( userStoreName );
-        userStore.setKey( userStoreKey );
-        Mockito.when( userStoreDao.findByName( userStoreName ) ).thenReturn( userStore );
-        Mockito.when( userDao.findBySpecification( any( UserSpecification.class ) ) ).thenReturn( Collections.<UserEntity>emptyList() );
-
-        final UniqueEmailResult uniqueEmail = userResource.verifyUniqueEmail( userStoreName, email );
-        assertFalse( uniqueEmail.isEmailInUse() );
-        assertNull( uniqueEmail.getUserkey() );
-        assertJsonResult( "verifyUniqueEmailMissing.json", uniqueEmail );
-    }
-
-    @Test
-    public void testVerifyUniqueEmailMissingUserstore()
-        throws Exception
-    {
-        final String email = "newuser@enonic.com";
-        final String userKey = "ASDD8F7S9F9AFAF7A89F7A87F98A7F9A87FA89F79AS98G7A9";
-        final UserStoreKey userStoreKey = new UserStoreKey( "33" );
-        final String userStoreName = "myuserstore";
-
-        UserEntity user = createUser( userKey );
-        Mockito.when( userDao.findByKey( userKey ) ).thenReturn( user );
-
-        UserStoreEntity userStore = createUserstore( userStoreName );
-        userStore.setKey( userStoreKey );
-        Mockito.when( userStoreDao.findByName( userStoreName ) ).thenReturn( userStore );
-
-        final UniqueEmailResult uniqueEmail = userResource.verifyUniqueEmail( "enonic", email );
-        assertFalse( uniqueEmail.isEmailInUse() );
-        assertNull( uniqueEmail.getUserkey() );
-        assertJsonResult( "verifyUniqueEmailMissing.json", uniqueEmail );
     }
 
     @Test
