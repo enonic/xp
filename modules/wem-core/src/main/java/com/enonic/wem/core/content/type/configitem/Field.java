@@ -5,6 +5,8 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.data.DataSet;
+import com.enonic.wem.core.content.data.InvalidDataException;
+import com.enonic.wem.core.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldType;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeConfig;
 
@@ -120,6 +122,29 @@ public class Field
             fieldTypeConfig.checkValidity( data );
         }
     }
+
+    public void checkValidity( final Data data )
+        throws InvalidValueTypeException, InvalidDataException, InvalidValueException
+    {
+        try
+
+        {
+            if ( data == null )
+            {
+                return;
+            }
+
+            if ( data != null )
+            {
+                checkValidityAccordingToFieldTypeConfig( data );
+            }
+        }
+        catch ( InvalidValueTypeException e )
+        {
+            throw new InvalidDataException( data, e );
+        }
+    }
+
 
     @Override
     public Field copy()

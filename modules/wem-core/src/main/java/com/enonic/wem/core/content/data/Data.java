@@ -6,7 +6,6 @@ import org.joda.time.DateMidnight;
 import com.google.common.base.Objects;
 
 import com.enonic.wem.core.content.datatype.DataType;
-import com.enonic.wem.core.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.core.content.datatype.JavaType;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.Field;
@@ -78,26 +77,9 @@ public class Data
     }
 
     public void checkValidity()
-        throws InvalidValueTypeException, InvalidDataException, InvalidValueException
+        throws InvalidValueException
     {
-        try
-        {
-            if ( value == null )
-            {
-                return;
-            }
-
-            if ( field != null )
-            {
-                field.checkValidityAccordingToFieldTypeConfig( this );
-            }
-
-            type.checkValidity( this.getValue() );
-        }
-        catch ( InvalidValueTypeException e )
-        {
-            throw new InvalidDataException( this, e );
-        }
+        type.checkValidity( value );
     }
 
     @Override
@@ -183,8 +165,6 @@ public class Data
             data.value = this.value != null
                 ? data.type.ensureType( this.value )
                 : null; // TODO: Research, is null values needed? If not should not be allowed...
-
-            data.checkValidity();
 
             return data;
         }

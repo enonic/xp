@@ -112,18 +112,22 @@ public class ContentType
         this.configItems.addConfigItem( configItem );
     }
 
-    public Field getField( final String path )
+    Field getField( final ConfigItemPath path )
     {
-        final ConfigItemPath configItemPath = new ConfigItemPath( path );
-        final Field field = configItems.getField( configItemPath );
+        final Field field = configItems.getField( path );
         if ( field == null )
         {
             return null;
         }
 
-        Preconditions.checkState( field.getPath().equals( configItemPath ),
-                                  "Found Field at path [%s] have unexpected path: " + field.getPath(), configItemPath );
+        Preconditions.checkState( field.getPath().equals( path ), "Found Field at path [%s] have unexpected path: " + field.getPath(),
+                                  path );
         return field;
+    }
+
+    public Field getField( final String path )
+    {
+        return getField( new ConfigItemPath( path ) );
     }
 
     public FieldSet getFieldSet( final String path )

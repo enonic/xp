@@ -10,6 +10,7 @@ import com.enonic.wem.core.content.datatype.DataType;
 import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.RequiredContractVerifier;
+import com.enonic.wem.core.content.type.Validator;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 
 public class Content
@@ -95,6 +96,11 @@ public class Content
         throws BreaksRequiredContractException
     {
         new RequiredContractVerifier( type ).verify( data );
+    }
+
+    public void checkValidity()
+    {
+        new Validator( type ).validate( data );
     }
 
     public Object getIndexableValues()
