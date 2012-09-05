@@ -1,6 +1,5 @@
 package com.enonic.wem.web.data.account;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
