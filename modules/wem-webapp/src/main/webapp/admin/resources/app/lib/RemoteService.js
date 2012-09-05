@@ -10,7 +10,8 @@ Ext.define('Admin.lib.RemoteService', {
             "type": "jsonrpc",
             "namespace": "Admin.lib.RemoteService",
             "methods": [
-                "account_find", "account_getGraph", "account_changePassword", "util_getCountries", "util_getLocales", "util_getTimeZones"
+                "account_find", "account_getGraph", "account_changePassword", "account_verifyUniqueEmail", "account_suggestUserName",
+                "account_createOrUpdate", "account_delete", "account_get", "util_getCountries", "util_getLocales", "util_getTimeZones"
             ]
         };
 
@@ -27,6 +28,26 @@ Ext.define('Admin.lib.RemoteService', {
     },
 
     account_changePassword: function (params, callback) {
+        console.log(params, callback);
+    },
+
+    account_verifyUniqueEmail: function (params, callback) {
+        console.log(params, callback);
+    },
+
+    account_suggestUserName: function (params, callback) {
+        console.log(params, callback);
+    },
+
+    account_createOrUpdate: function (params, callback) {
+        console.log(params, callback);
+    },
+
+    account_delete: function (params, callback) {
+        console.log(params, callback);
+    },
+
+    account_get: function (params, callback) {
         console.log(params, callback);
     },
 
