@@ -8,10 +8,10 @@ public class InvalidDataException
 {
     public InvalidDataException( final Data data, final InvalidValueTypeException e )
     {
-        super( buildMessage( data, e ), e );
+        super( buildMessage( data ), e );
     }
 
-    private static String buildMessage( final Data data, final InvalidValueTypeException e )
+    private static String buildMessage( final Data data )
     {
         StringBuilder s = new StringBuilder();
         s.append( "Invalid data: " ).append( data );

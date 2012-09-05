@@ -6,9 +6,6 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.core.content.data.DataSet;
-import com.enonic.wem.core.content.data.Entry;
-
 public class FieldSet
     extends DirectAccessibleConfigItem
 {
@@ -155,41 +152,6 @@ public class FieldSet
     public DirectAccessibleConfigItem getConfigItem( final ConfigItemPath configItemPath )
     {
         return configItems.getConfigItem( configItemPath );
-    }
-
-    public boolean breaksRequiredContract( DataSet dataSet )
-    {
-        Preconditions.checkNotNull( dataSet, "Given dataSet is null" );
-        //Preconditions.checkArgument( entries.getFieldSet() != null, "Given dataSet have no field" );
-        //Preconditions.checkArgument( entries.getFieldSet().equals( this ), "Given dataSet's field is not this" );
-
-        if ( !isRequired() )
-        {
-            return false;
-        }
-
-        if ( dataSet.size() == 0 )
-        {
-            return true;
-        }
-
-        for ( Entry entry : dataSet )
-        {
-            if ( entry.breaksRequiredContract() )
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public void checkBreaksRequiredContract( final DataSet dataSet )
-    {
-        if ( isRequired() && !dataSet.hasDataSetAtPath( getPath() ) )
-        {
-            throw new BreaksRequiredContractException( this );
-        }
     }
 
     public static class Builder

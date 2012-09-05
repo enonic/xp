@@ -9,6 +9,7 @@ import com.enonic.wem.core.content.data.EntryPath;
 import com.enonic.wem.core.content.datatype.DataType;
 import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.ContentType;
+import com.enonic.wem.core.content.type.RequiredContractVerifier;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 
 public class Content
@@ -45,7 +46,7 @@ public class Content
         this.data = value;
     }
 
-    ContentData getData()
+    public ContentData getData()
     {
         return data;
     }
@@ -93,7 +94,7 @@ public class Content
     public void checkBreaksRequiredContract()
         throws BreaksRequiredContractException
     {
-        this.data.checkBreaksRequiredContract();
+        new RequiredContractVerifier( type ).verify( data );
     }
 
     public Object getIndexableValues()

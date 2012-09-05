@@ -1,13 +1,15 @@
 package com.enonic.wem.core.content.data;
 
 
+import java.util.Iterator;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.datatype.DataType;
 import com.enonic.wem.core.content.type.ContentType;
-import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 
 public class ContentData
+    implements EntrySelector, Iterable<Entry>
 {
     private DataSet dataSet;
 
@@ -75,9 +77,10 @@ public class ContentData
         return dataSet;
     }
 
-    public void checkBreaksRequiredContract()
-        throws BreaksRequiredContractException
+
+    @Override
+    public Iterator<Entry> iterator()
     {
-        dataSet.checkBreaksRequiredContract();
+        return dataSet.iterator();
     }
 }
