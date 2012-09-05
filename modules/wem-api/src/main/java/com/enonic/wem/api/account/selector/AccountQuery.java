@@ -30,6 +30,8 @@ public final class AccountQuery
 
     private Direction sortDirection;
 
+    private String email;
+
     public AccountQuery( final String query )
     {
         this.query = query != null ? query : "";
@@ -75,6 +77,11 @@ public final class AccountQuery
         return this.sortDirection;
     }
 
+    public String getEmail()
+    {
+        return email;
+    }
+
     public AccountQuery types( final AccountType... values )
     {
         this.types = ImmutableSet.copyOf( values );
@@ -115,6 +122,12 @@ public final class AccountQuery
     {
         this.sortField = field;
         this.sortDirection = asc ? Direction.ASC : Direction.DESC;
+        return this;
+    }
+
+    public AccountQuery email( final String email )
+    {
+        this.email = email;
         return this;
     }
 }

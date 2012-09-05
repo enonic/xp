@@ -220,6 +220,12 @@ public final class AccountQueryTranslator
             qb.must( termsQuery( AccountIndexField.ORGANIZATION_FIELD.lowerCaseId(), organizationList ) );
         }
 
+        final String email = query.getEmail();
+        if ( email != null )
+        {
+            qb.must( termQuery( AccountIndexField.EMAIL_FIELD.id(), email ) );
+        }
+
         if ( ! query.getUsers() )
         {
             qb.mustNot( termQuery( AccountIndexField.TYPE_FIELD.id(), AccountType.USER.name().toLowerCase() ) );
