@@ -6,10 +6,6 @@ Ext.define('Admin.lib.UriHelper', {
         return this.getAbsoluteUri('admin/rest/account');
     },
 
-    getAccountDeleteUri: function () {
-        return this.getAbsoluteUri('admin/rest/account/delete');
-    },
-
     getAccountSuggestUserNameUri: function () {
         return this.getAbsoluteUri('admin/rest/account/user/suggest-name');
     },

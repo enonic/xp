@@ -10,7 +10,6 @@ Ext.define('Admin.controller.account.Controller', {
     models: [],
     views: [],
 
-
     init: function () {
 
         this.control({
@@ -50,7 +49,6 @@ Ext.define('Admin.controller.account.Controller', {
 
     },
 
-
     /*      Public, should operate with accounts only      */
 
     showDeleteAccountWindow: function (accounts) {
@@ -85,8 +83,7 @@ Ext.define('Admin.controller.account.Controller', {
         } else if (accounts.length > 5 && accounts.length <= 50) {
             var confirmText = Ext.String.format("You have select {0} account(s) for editing/viewing. Are you sure you want to continue?",
                 accounts.length);
-            Ext.MessageBox.confirm("Conform multi-account action", confirmText,
-                function (button) {
+            Ext.MessageBox.confirm("Conform multi-account action", confirmText, function (button) {
                     if (button === "yes") {
                         this.openEditAccountTabs(accounts, callback);
                     }
@@ -110,8 +107,7 @@ Ext.define('Admin.controller.account.Controller', {
         } else if (accounts.length > 5 && accounts.length <= 50) {
             var confirmText = Ext.String.format("You have select {0} account(s) for editing/viewing. Are you sure you want to continue?",
                 accounts.length);
-            Ext.MessageBox.confirm("Conform multi-account action", confirmText,
-                function (button) {
+            Ext.MessageBox.confirm("Conform multi-account action", confirmText, function (button) {
                     if (button === "yes") {
                         this.openPreviewAccountTabs(accounts, callback);
                     }
@@ -128,17 +124,10 @@ Ext.define('Admin.controller.account.Controller', {
         window.show();
     },
 
-
     /*      Private     */
 
     openPreviewAccountTabs: function (selection, callback) {
-        var me = this,
-            tabPane = me.getCmsTabPanel(),
-            i = 0,
-            requestConfig,
-            tabItem,
-            index,
-            createUserTabFn = function (response) {
+        var me = this, tabPane = me.getCmsTabPanel(), i = 0, requestConfig, tabItem, index, createUserTabFn = function (response) {
                 var jsonObj = Ext.JSON.decode(response.responseText);
                 if (Ext.isFunction(callback)) {
                     callback();
@@ -148,8 +137,7 @@ Ext.define('Admin.controller.account.Controller', {
                     data: jsonObj,
                     user: jsonObj
                 };
-            },
-            createGroupTabFn = function (response) {
+            }, createGroupTabFn = function (response) {
                 var jsonObj = Ext.JSON.decode(response.responseText);
                 if (Ext.isFunction(callback)) {
                     callback();
@@ -160,7 +148,7 @@ Ext.define('Admin.controller.account.Controller', {
                     group: jsonObj
                 };
             };
-        for (i = 0; i < selection.length; i++) {
+        for ( i = 0; i < selection.length; i++ ) {
             var selected = selection[i].data || selection[i];
             if (selected.type === 'user') {
                 requestConfig = {
@@ -169,8 +157,7 @@ Ext.define('Admin.controller.account.Controller', {
                     createTabFromResponse: createUserTabFn
                 };
                 tabItem = {
-                    title: selected.displayName + ' (' +
-                           selected.qualifiedName + ')',
+                    title: selected.displayName + ' (' + selected.qualifiedName + ')',
                     id: 'tab-preview-user-' + selected.key,
                     closable: true,
                     layout: 'fit'
@@ -204,13 +191,7 @@ Ext.define('Admin.controller.account.Controller', {
     },
 
     openEditAccountTabs: function (selection, callback) {
-        var tabPane = this.getCmsTabPanel(),
-            me = this,
-            i,
-            requestConfig,
-            tabItem,
-            index,
-            createUserWizardFn = function (response) {
+        var tabPane = this.getCmsTabPanel(), me = this, i, requestConfig, tabItem, index, createUserWizardFn = function (response) {
                 var jsonObj = Ext.JSON.decode(response.responseText);
                 var tab = {
                     xtype: 'userWizardPanel',
@@ -229,8 +210,7 @@ Ext.define('Admin.controller.account.Controller', {
                     callback();
                 }
                 return tabCmp;
-            },
-            createGroupWizardFn = function (response) {
+            }, createGroupWizardFn = function (response) {
                 var jsonObj = Ext.JSON.decode(response.responseText);
                 var tab = {
                     xtype: 'groupWizardPanel',
@@ -245,7 +225,7 @@ Ext.define('Admin.controller.account.Controller', {
             };
         // Make sure it is array
         selection = [].concat(selection);
-        for (i = 0; i < selection.length; i++) {
+        for ( i = 0; i < selection.length; i++ ) {
             var selected = selection[i].data || selection[i];
             if (selected.editable) {
                 if (selected.type === 'user') {
@@ -320,9 +300,9 @@ Ext.define('Admin.controller.account.Controller', {
         var multipleSelection = selectionCount > 1;
         var disable = selectionCount === 0;
         var i, j, k;
-        for (i = 0; i < actionItems2d.length; i++) {
+        for ( i = 0; i < actionItems2d.length; i++ ) {
             actionItems = actionItems2d[i];
-            for (j = 0; j < actionItems.length; j++) {
+            for ( j = 0; j < actionItems.length; j++ ) {
                 actionItems[j].setDisabled(disable);
                 if (multipleSelection && actionItems[j].disableOnMultipleSelection) {
                     actionItems[j].setDisabled(true);
@@ -330,20 +310,19 @@ Ext.define('Admin.controller.account.Controller', {
             }
         }
 
-
         if (selectionCount === 1) {
             var selection = this.getPersistentGridSelectionPlugin().getSelection()[0];
             var isEditable = selection.get('editable');
             var isUser = selection.get('type') === 'user';
             var isRole = selection.get('type') === 'role';
 
-            for (j = 0; j < editButtons.length; j++) {
+            for ( j = 0; j < editButtons.length; j++ ) {
                 editButtons[j].setDisabled(!isEditable);
             }
-            for (j = 0; j < changePasswordButtons.length; j++) {
+            for ( j = 0; j < changePasswordButtons.length; j++ ) {
                 changePasswordButtons[j].setDisabled(!isUser || !isEditable);
             }
-            for (k = 0; k < deleteButtons.length; k++) {
+            for ( k = 0; k < deleteButtons.length; k++ ) {
                 deleteButtons[k].setDisabled(isRole || !isEditable);
             }
         }
@@ -372,37 +351,37 @@ Ext.define('Admin.controller.account.Controller', {
             },
             saveItem: function () {
                 var eventName;
-                switch (activeTab.getXType()) {
-                case 'groupWizardPanel':
-                    eventName = 'saveNewUser';
-                    break;
-                case 'userWizardPanel':
-                    eventName = 'saveGroup';
-                    break;
+                switch ( activeTab.getXType() ) {
+                    case 'groupWizardPanel':
+                        eventName = 'saveNewUser';
+                        break;
+                    case 'userWizardPanel':
+                        eventName = 'saveGroup';
+                        break;
                 }
                 this.application.fireEvent(eventName);
             },
             prevStep: function () {
                 var eventName;
-                switch (activeTab.getXType()) {
-                case 'groupWizardPanel':
-                    eventName = 'groupWizardPrev';
-                    break;
-                case 'userWizardPanel':
-                    eventName = 'userWizardPrev';
-                    break;
+                switch ( activeTab.getXType() ) {
+                    case 'groupWizardPanel':
+                        eventName = 'groupWizardPrev';
+                        break;
+                    case 'userWizardPanel':
+                        eventName = 'userWizardPrev';
+                        break;
                 }
                 this.application.fireEvent(eventName);
             },
             nextStep: function () {
                 var eventName;
-                switch (activeTab.getXType()) {
-                case 'groupWizardPanel':
-                    eventName = 'groupWizardNext';
-                    break;
-                case 'userWizardPanel':
-                    eventName = 'userWizardNext';
-                    break;
+                switch ( activeTab.getXType() ) {
+                    case 'groupWizardPanel':
+                        eventName = 'groupWizardNext';
+                        break;
+                    case 'userWizardPanel':
+                        eventName = 'userWizardNext';
+                        break;
                 }
                 this.application.fireEvent(eventName);
             },
@@ -421,7 +400,7 @@ Ext.define('Admin.controller.account.Controller', {
         var selectedUserStoreElement = new Ext.Element(item);
         var userStoreElements = view.getNodes();
         var i;
-        for (i = 0; i < userStoreElements.length; i++) {
+        for ( i = 0; i < userStoreElements.length; i++ ) {
             var userStoreElement = new Ext.Element(userStoreElements[i]);
             if (userStoreElement.id !== selectedUserStoreElement.id) {
                 userStoreElement.removeCls('admin-userstore-active');
@@ -475,23 +454,16 @@ Ext.define('Admin.controller.account.Controller', {
         var me = this;
         var deleteAccountWindow = item.up('deleteAccountWindow');
         var keys = deleteAccountWindow.getDeleteKeys();
-        Ext.Ajax.request({
-            url: Admin.lib.UriHelper.getAccountDeleteUri(),
-            method: 'POST',
-            params: {
-                key: keys
-            },
-            success: function (response) {
-                var serverResponse = Ext.JSON.decode(response.responseText);
+
+        Admin.lib.RemoteService.account_delete({key: keys}, function (response) {
                 deleteAccountWindow.close();
-                if (!serverResponse.success) {
-                    Ext.Msg.alert("Error", serverResponse.error);
+                if (!response.success) {
+                    Ext.Msg.alert("Error", response.error);
                 } else {
                     var current = me.getAccountGridPanel().store.currentPage;
                     me.getAccountGridPanel().store.loadPage(current);
                 }
-            }
-        });
+            });
     },
 
     /*      Getters     */

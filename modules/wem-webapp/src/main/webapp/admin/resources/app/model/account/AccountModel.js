@@ -3,7 +3,7 @@ Ext.define('Admin.model.account.AccountModel', {
 
     fields: [
         'key', 'name', 'email', 'qualifiedName', 'displayName', 'userStore', 'lastModified',
-        'type', 'builtIn', 'editable', 'image_uri', 'info_uri', 'graph_uri'
+        'type', 'builtIn', 'editable', 'image_uri', 'info_uri', 'graph_uri', 'new_key'
     ],
 
     idProperty: 'key'
