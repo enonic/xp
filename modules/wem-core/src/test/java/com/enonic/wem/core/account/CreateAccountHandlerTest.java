@@ -87,15 +87,14 @@ public class CreateAccountHandlerTest
         throws Exception
     {
         // setup
-        final UserEntity loggedInUser = createUser( "enonic", "admin" );
-        Mockito.when( securityService.getImpersonatedPortalUser() ).thenReturn( loggedInUser );
+        logInAdminUser();
 
-        // exercise
         final UserAccount user = UserAccount.create( "enonic:user1" );
         user.setEmail( "user1@enonic.com" );
         user.setDisplayName( "The User #1" );
         user.setImage( "photodata".getBytes() );
 
+        // exercise
         final AccountKey createdUserKey = client.execute( Commands.account().create().account( user ) );
 
         // verify
@@ -110,14 +109,13 @@ public class CreateAccountHandlerTest
         throws Exception
     {
         // setup
-        final UserEntity loggedInUser = createUser( "enonic", "admin" );
-        Mockito.when( securityService.getImpersonatedPortalUser() ).thenReturn( loggedInUser );
+        logInAdminUser();
         createUserStore( "enonic" );
 
-        // exercise
         final GroupAccount group = GroupAccount.create( "enonic:group1" );
         group.setDisplayName( "The User #1" );
 
+        // exercise
         final AccountKey createdGroupKey = client.execute( Commands.account().create().account( group ) );
 
         // verify
@@ -132,17 +130,16 @@ public class CreateAccountHandlerTest
         throws Exception
     {
         // setup
-        final UserEntity loggedInUser = createUser( "enonic", "admin" );
-        Mockito.when( securityService.getImpersonatedPortalUser() ).thenReturn( loggedInUser );
+        logInAdminUser();
         createUser( "enonic", "user1" );
         createGroup( "enonic", "group2" );
 
-        // exercise
         final AccountKeySet members = AccountKeySet.from( "user:enonic:user1", "group:enonic:group2" );
         final GroupAccount group = GroupAccount.create( "enonic:group1" );
         group.setDisplayName( "The User #1" );
         group.setMembers( members );
 
+        // exercise
         final AccountKey createdGroupKey = client.execute( Commands.account().create().account( group ) );
 
         // verify
@@ -150,6 +147,14 @@ public class CreateAccountHandlerTest
         assertNotNull( createdGroupKey );
         assertTrue( createdGroupKey.isGroup() );
         assertEquals( group.getKey(), createdGroupKey );
+    }
+
+    private void logInAdminUser()
+        throws Exception
+    {
+        final UserEntity loggedInUser = createUser( "enonic", "admin" );
+        Mockito.when( securityService.getImpersonatedPortalUser() ).thenReturn( loggedInUser );
+        Mockito.when( userDao.findBuiltInEnterpriseAdminUser() ).thenReturn( loggedInUser );
     }
 
     private GroupEntity createGroup( final String userStore, final String name )
