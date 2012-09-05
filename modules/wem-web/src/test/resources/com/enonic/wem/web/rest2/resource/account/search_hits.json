@@ -3,6 +3,7 @@
     "accounts": [
         {
             "key": "E6C593DE14515428B06F1A16E0D28E2341FC5AB4",
+            "new_key": "user:enonic:dummy",
             "type": "user",
             "name": "dummy",
             "email": "user@email.com",
@@ -19,6 +20,7 @@
         },
         {
             "key": "E34B614B26C666AA9929F90EF3FA723B3DAAAAB2",
+            "new_key": "group:global:group1",
             "type": "group",
             "name": "group1",
             "userStore": "global",
@@ -34,6 +36,7 @@
         },
         {
             "key": "18311D321165D73043C10A9101016CDF3765898E",
+            "new_key": "role:enonic:authenticated",
             "type": "role",
             "name": "authenticated",
             "userStore": "enonic",

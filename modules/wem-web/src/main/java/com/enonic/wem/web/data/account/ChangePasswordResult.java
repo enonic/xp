@@ -5,7 +5,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.web.json.result.JsonDataResult;
 
 
-public class ChangePasswordResult
+final class ChangePasswordResult
     extends JsonDataResult
 {
 
