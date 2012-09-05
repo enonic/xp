@@ -275,4 +275,9 @@ public class ConfigItems
         }
         return foundConfig;
     }
+
+    public Iterable<ConfigItem> getIterable()
+    {
+        return items.values();
+    }
 }

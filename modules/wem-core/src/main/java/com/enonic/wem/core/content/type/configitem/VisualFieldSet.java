@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content.type.configitem;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
@@ -10,6 +11,7 @@ import com.enonic.wem.core.content.data.DataSet;
 
 public class VisualFieldSet
     extends ConfigItem
+    implements Iterable<ConfigItem>
 {
     private String label;
 
@@ -23,6 +25,12 @@ public class VisualFieldSet
     public String getLabel()
     {
         return label;
+    }
+
+    @Override
+    public Iterator<ConfigItem> iterator()
+    {
+        return configItems.iterator();
     }
 
     @Override
@@ -86,6 +94,11 @@ public class VisualFieldSet
                 visualFieldSet.checkBreaksRequiredContract( dataSet );
             }
         }
+    }
+
+    public Iterable<ConfigItem> getConfigItemsIterable()
+    {
+        return configItems.iterable();
     }
 
     public static class Builder

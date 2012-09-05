@@ -1,0 +1,8 @@
+{
+    "key": "group:enonic:group2",
+    "displayName": "Group Two",
+    "imageRef": "01d0cc1d-ac2a-4952-a423-295cc9756bba",
+    "members": [
+        "user:enonic:user1"
+    ]
+}

@@ -12,7 +12,7 @@ public final class CompositeScriptGenerator
 
     public CompositeScriptGenerator()
     {
-        this.generators = new ScriptGenerator[]{new JoinScriptGenerator(), new I18NScriptGenerator(), new TemplateScriptGenerator()};
+        this.generators = new ScriptGenerator[]{new JoinScriptGenerator(), new TemplateScriptGenerator()};
     }
 
     @Override

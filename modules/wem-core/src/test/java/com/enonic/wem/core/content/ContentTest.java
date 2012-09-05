@@ -598,7 +598,8 @@ public class ContentTest
         }
         catch ( Exception e )
         {
-            fail( "No exception expected" );
+            e.printStackTrace();
+            fail( "No exception expected: " + e );
         }
 
     }

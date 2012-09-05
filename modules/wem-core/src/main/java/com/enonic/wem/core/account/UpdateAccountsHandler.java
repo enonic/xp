@@ -229,7 +229,8 @@ public final class UpdateAccountsHandler
         specification.setName( user.getKey().getLocalName() );
         specification.setDeletedStateNotDeleted();
 
-        final UserEntity updater = securityService.getImpersonatedPortalUser();
+//        final UserEntity updater = securityService.getImpersonatedPortalUser();
+        final UserEntity updater = userDao.findBuiltInEnterpriseAdminUser(); // TODO get logged in user
         final UpdateUserCommand command = new UpdateUserCommand( updater.getKey(), specification );
         command.setupModifyStrategy();
         command.setAllowUpdateSelf( true );
@@ -241,14 +242,15 @@ public final class UpdateAccountsHandler
 
     private void updateGroupOrRole( final NonUserAccount groupOrRole )
     {
-        final User oldUser = securityService.getLoggedInAdminConsoleUser();
+//        final User oldUser = securityService.getLoggedInAdminConsoleUser();
+        final UserEntity oldUser = userDao.findBuiltInEnterpriseAdminUser(); // TODO get logged in user
         final UserEntity user = securityService.getUser( oldUser );
 
         final GroupKey groupKey = findGroupEntity( groupOrRole.getKey() ).getGroupKey();
         final String name = groupOrRole.getKey().getLocalName();
         final String description = groupOrRole.getDisplayName();
 
-        final Set<AccountKey> members = groupOrRole.getMembers().getSet();
+        final Set<AccountKey> members = groupOrRole.getMembers() == null ? null : groupOrRole.getMembers().getSet();
 
         final UpdateGroupCommand command = new UpdateGroupCommand( user.getKey(), groupKey );
         command.setName( name );

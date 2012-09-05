@@ -51,6 +51,8 @@ import com.enonic.cms.store.dao.GroupDao;
 import com.enonic.cms.store.dao.UserDao;
 import com.enonic.cms.store.dao.UserStoreDao;
 
+import static com.enonic.wem.api.account.selector.AccountQuery.Direction;
+
 @Component
 public final class FindAccountsHandler
     extends CommandHandler<FindAccounts>
@@ -117,8 +119,8 @@ public final class FindAccountsHandler
         searchQuery.setGroups( accountTypes.contains( AccountType.GROUP ) );
         searchQuery.setRoles( accountTypes.contains( AccountType.ROLE ) );
         searchQuery.setSortField( AccountIndexField.parse( accountQuery.getSortField() ) );
-        searchQuery.setSortOrder(
-            accountQuery.getSortDirection() == AccountQuery.Direction.ASC ? SearchSortOrder.ASC : SearchSortOrder.DESC );
+        searchQuery.setSortOrder( accountQuery.getSortDirection() == Direction.ASC ? SearchSortOrder.ASC : SearchSortOrder.DESC );
+        searchQuery.setEmail( accountQuery.getEmail() );
 
         final AccountSearchResults searchResults = accountSearchService.search( searchQuery );
         final List<Account> accounts = getSearchResults( searchResults, includeMembers, includePhoto );

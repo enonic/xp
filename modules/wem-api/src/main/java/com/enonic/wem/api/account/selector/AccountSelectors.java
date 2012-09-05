@@ -29,4 +29,9 @@ public abstract class AccountSelectors
     {
         return new AccountQuery( query );
     }
+
+    public static AccountQuery queryByEmail( final String email )
+    {
+        return new AccountQuery( "" ).email( email );
+    }
 }

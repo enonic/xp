@@ -1,6 +1,5 @@
 package com.enonic.wem.web.data.account;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
@@ -8,15 +7,11 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.account.ChangePassword;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
 import com.enonic.wem.web.jsonrpc.JsonRpcContext;
-import com.enonic.wem.web.rest2.resource.account.user.UserResource;
 
 @Component
 public final class ChangePasswordRpcHandler
     extends AbstractDataRpcHandler
 {
-    @Autowired
-    private UserResource resource;
-
     public ChangePasswordRpcHandler()
     {
         super( "account_changePassword" );
@@ -61,6 +56,4 @@ public final class ChangePasswordRpcHandler
 
         context.setResult( new ChangePasswordResult( changed, error ) );
     }
-
-
 }

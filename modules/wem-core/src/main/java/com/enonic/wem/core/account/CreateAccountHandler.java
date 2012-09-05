@@ -73,7 +73,8 @@ public final class CreateAccountHandler
 
     private void createUser( final UserAccount user )
     {
-        final UserEntity storer = securityService.getImpersonatedPortalUser();
+//        final UserEntity storer = securityService.getImpersonatedPortalUser();
+        final UserEntity storer = userDao.findBuiltInEnterpriseAdminUser(); // TODO get logged in user
         final UserStoreEntity userStoreEntity = userStoreDao.findByName( user.getKey().getUserStore() );
         if ( userStoreEntity == null )
         {
@@ -116,7 +117,8 @@ public final class CreateAccountHandler
         final String userStoreKey = userStoreEntity.getKey().toString();
         final UserStoreEntity userStore = new UserStoreParser( userStoreDao ).parseUserStore( userStoreKey );
 
-        UserEntity runningUser = securityService.getImpersonatedPortalUser();
+//        final UserEntity runningUser = securityService.getImpersonatedPortalUser();
+        final UserEntity runningUser = userDao.findBuiltInEnterpriseAdminUser(); // TODO get logged in user
 
         StoreNewGroupCommand storeNewGroupCommand = new StoreNewGroupCommand();
         storeNewGroupCommand.setName( group.getKey().getLocalName() );

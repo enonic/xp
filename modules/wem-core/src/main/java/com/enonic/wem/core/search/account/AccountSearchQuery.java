@@ -30,6 +30,8 @@ public final class AccountSearchQuery
 
     private String[] organization;
 
+    private String email;
+
     public AccountSearchQuery()
     {
         this.query = "";
@@ -43,26 +45,6 @@ public final class AccountSearchQuery
         this.sortField = null;
         this.includeResults = true;
         this.includeFacets = true;
-    }
-
-    public AccountSearchQuery( AccountSearchQuery accountSearchQuery )
-    {
-        this.query = accountSearchQuery.query;
-        this.from = accountSearchQuery.from;
-        this.count = accountSearchQuery.count;
-        if ( userStore != null )
-        {
-            this.userStore = Arrays.copyOf( accountSearchQuery.userStore, accountSearchQuery.userStore.length );
-        }
-        if ( organization != null )
-        {
-            this.organization = Arrays.copyOf( accountSearchQuery.organization, accountSearchQuery.organization.length );
-        }
-        this.users = accountSearchQuery.users;
-        this.groups = accountSearchQuery.groups;
-        this.sortField = accountSearchQuery.sortField;
-        this.includeResults = accountSearchQuery.includeResults;
-        this.includeFacets = accountSearchQuery.includeFacets;
     }
 
     public boolean getGroups()
@@ -211,6 +193,17 @@ public final class AccountSearchQuery
         return this;
     }
 
+    public String getEmail()
+    {
+        return email;
+    }
+
+    public AccountSearchQuery setEmail( final String email )
+    {
+        this.email = email;
+        return this;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -273,6 +266,10 @@ public final class AccountSearchQuery
         {
             return false;
         }
+        if ( email != null ? !email.equals( that.email ) : that.email != null )
+        {
+            return false;
+        }
 
         return true;
     }
@@ -292,6 +289,7 @@ public final class AccountSearchQuery
         result = 31 * result + ( includeResults ? 1 : 0 );
         result = 31 * result + ( includeFacets ? 1 : 0 );
         result = 31 * result + ( organization != null ? Arrays.hashCode( organization ) : 0 );
+        result = 31 * result + ( email != null ? email.hashCode() : 0 );
         return result;
     }
 }

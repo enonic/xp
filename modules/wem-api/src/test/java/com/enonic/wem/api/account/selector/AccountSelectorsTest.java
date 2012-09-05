@@ -55,4 +55,12 @@ public class AccountSelectorsTest
         assertNotNull( selector );
         assertEquals( "text", selector.getQuery() );
     }
+
+    @Test
+    public void testEmail()
+    {
+        final AccountQuery selector = AccountSelectors.query( "" ).email( "user@domain.com" );
+        assertNotNull( selector );
+        assertEquals( "user@domain.com", selector.getEmail() );
+    }
 }

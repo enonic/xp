@@ -86,9 +86,7 @@ public class UpdateAccountsHandlerTest
         throws Exception
     {
         // setup
-        final UserEntity loggedInUser = createUser( "enonic", "admin" );
-        Mockito.when( securityService.getImpersonatedPortalUser() ).thenReturn( loggedInUser );
-        Mockito.when( securityService.getUser( Matchers.<User>any() ) ).thenReturn( loggedInUser );
+        logInAdminUser();
 
         createGroup( "enonic", "group1" );
         createRole( "enonic", "contributors" );
@@ -120,9 +118,7 @@ public class UpdateAccountsHandlerTest
         throws Exception
     {
         // setup
-        final UserEntity loggedInUser = createUser( "enonic", "admin" );
-        Mockito.when( securityService.getImpersonatedPortalUser() ).thenReturn( loggedInUser );
-        Mockito.when( securityService.getUser( Matchers.<User>any() ) ).thenReturn( loggedInUser );
+        logInAdminUser();
 
         final GroupEntity group1 = createGroup( "enonic", "group1" );
         final GroupEntity role1 = createRole( "enonic", "contributors" );
@@ -171,9 +167,7 @@ public class UpdateAccountsHandlerTest
         throws Exception
     {
         // setup
-        final UserEntity loggedInUser = createUser( "enonic", "admin" );
-        Mockito.when( securityService.getImpersonatedPortalUser() ).thenReturn( loggedInUser );
-        Mockito.when( securityService.getUser( Matchers.<User>any() ) ).thenReturn( loggedInUser );
+        logInAdminUser();
 
         createUser( "enonic", "user1" );
         createUser( "enonic", "user2" );
@@ -210,9 +204,7 @@ public class UpdateAccountsHandlerTest
         throws Exception
     {
         // setup
-        final UserEntity loggedInUser = createUser( "enonic", "admin" );
-        Mockito.when( securityService.getImpersonatedPortalUser() ).thenReturn( loggedInUser );
-        Mockito.when( securityService.getUser( Matchers.<User>any() ) ).thenReturn( loggedInUser );
+        logInAdminUser();
 
         // exercise
         final AccountKeySet accounts = AccountKeySet.from( "group:enonic:group1", "role:enonic:contributors", "user:enonic:user1" );
@@ -234,6 +226,15 @@ public class UpdateAccountsHandlerTest
         assertNotNull( totalUpdated );
         assertEquals( 0l, totalUpdated.longValue() );
         assertTrue( keysEdited.isEmpty() );
+    }
+
+    private void logInAdminUser()
+        throws Exception
+    {
+        final UserEntity loggedInUser = createUser( "enonic", "admin" );
+        Mockito.when( securityService.getImpersonatedPortalUser() ).thenReturn( loggedInUser );
+        Mockito.when( userDao.findBuiltInEnterpriseAdminUser() ).thenReturn( loggedInUser );
+        Mockito.when( securityService.getUser( Matchers.<User>any() ) ).thenReturn( loggedInUser );
     }
 
     private void addMembers( final GroupEntity group, final GroupEntity... members )

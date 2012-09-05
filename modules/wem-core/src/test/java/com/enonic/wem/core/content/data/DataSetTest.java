@@ -4,14 +4,11 @@ package com.enonic.wem.core.content.data;
 import org.junit.Test;
 
 import com.enonic.wem.core.content.datatype.DataTypes;
-import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 
-import static com.enonic.wem.core.content.type.configitem.Field.newField;
-import static com.enonic.wem.core.content.type.configitem.FieldSet.newFieldSet;
 import static org.junit.Assert.*;
 
 public class DataSetTest
@@ -94,86 +91,6 @@ public class DataSetTest
         assertEquals( "Brown", dataSet.getData( "persons[0].eyeColour" ).getValue() );
     }
 
-    @Test()
-    public void given_field_with_data_when_checkBreaksRequiredContract_then_exception_is_not_thrown()
-    {
-
-        ConfigItems configItems = new ConfigItems();
-        configItems.addConfigItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
-        DataSet dataSet = new DataSet( new EntryPath(), configItems );
-        dataSet.setData( new EntryPath( "myField" ), "value", DataTypes.STRING );
-
-        // exercise
-        try
-        {
-            dataSet.checkBreaksRequiredContract();
-        }
-        catch ( Exception e )
-        {
-            fail( "No exception expected" );
-        }
-    }
-
-    @Test(expected = BreaksRequiredContractException.class)
-    public void given_field_with_no_data_when_checkBreaksRequiredContract_then_exception_is_thrown()
-    {
-
-        ConfigItems configItems = new ConfigItems();
-        configItems.addConfigItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
-        DataSet dataSet = new DataSet( new EntryPath(), configItems );
-
-        // exercise
-        dataSet.checkBreaksRequiredContract();
-    }
-
-    @Test()
-    public void given_fieldSet_with_data_when_checkBreaksRequiredContract_then_exception_is_not_thrown()
-    {
-
-        ConfigItems configItems = new ConfigItems();
-        configItems.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
-            newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() ).build() );
-        DataSet dataSet = new DataSet( new EntryPath(), configItems );
-        dataSet.setData( new EntryPath( "myFieldSet.myField" ), "value", DataTypes.STRING );
-
-        // exercise
-        try
-        {
-            dataSet.checkBreaksRequiredContract();
-        }
-        catch ( Exception e )
-        {
-            fail( "No exception expected" );
-        }
-
-    }
-
-    @Test(expected = BreaksRequiredContractException.class)
-    public void given_fieldSet_with_no_data_when_checkBreaksRequiredContract_then_exception_is_thrown()
-    {
-
-        ConfigItems configItems = new ConfigItems();
-        configItems.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
-            newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() ).build() );
-        DataSet dataSet = new DataSet( new EntryPath(), configItems );
-
-        // exercise
-        dataSet.checkBreaksRequiredContract();
-    }
-
-    @Test(expected = BreaksRequiredContractException.class)
-    public void given_fieldSet_with_only_empty_string_for_required_textLine_when_checkBreaksRequiredContract_then_exception_is_thrown()
-    {
-
-        ConfigItems configItems = new ConfigItems();
-        configItems.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
-            newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() ).build() );
-        DataSet dataSet = new DataSet( new EntryPath(), configItems );
-        dataSet.setData( new EntryPath( "myFieldSet.myField" ), "", DataTypes.STRING );
-
-        // exercise
-        dataSet.checkBreaksRequiredContract();
-    }
-
 
 }
+

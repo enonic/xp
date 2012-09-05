@@ -8,7 +8,6 @@ import com.google.common.base.Objects;
 import com.enonic.wem.core.content.datatype.DataType;
 import com.enonic.wem.core.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.core.content.datatype.JavaType;
-import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.InvalidValueException;
@@ -76,35 +75,6 @@ public class Data
     public DataType getDataType()
     {
         return type;
-    }
-
-    @Override
-    public void checkBreaksRequiredContract()
-        throws BreaksRequiredContractException
-    {
-        if ( field != null )
-        {
-            field.checkBreaksRequiredContract( this );
-        }
-    }
-
-    public boolean breaksRequiredContract()
-    {
-        if ( field == null )
-        {
-            return false;
-        }
-
-        try
-        {
-            checkBreaksRequiredContract();
-        }
-        catch ( BreaksRequiredContractException e )
-        {
-            return true;
-        }
-
-        return false;
     }
 
     public void checkValidity()
