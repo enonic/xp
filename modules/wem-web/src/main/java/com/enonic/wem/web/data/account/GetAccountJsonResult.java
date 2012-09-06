@@ -7,11 +7,9 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.UserAccount;
-import com.enonic.wem.web.json.result.account.AccountJsonResult;
 
-
-public class GetAccountJsonResult
-    extends AccountJsonResult
+class GetAccountJsonResult
+    extends AbstractAccountJsonResult
 {
     protected Account account;
 

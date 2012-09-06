@@ -7,10 +7,9 @@ import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.result.AccountFacet;
 import com.enonic.wem.api.account.result.AccountFacetEntry;
 import com.enonic.wem.api.account.result.AccountResult;
-import com.enonic.wem.web.json.result.account.AccountJsonResult;
 
 final class FindAccountsJsonResult
-    extends AccountJsonResult
+    extends AbstractAccountJsonResult
 {
     private final AccountResult result;
 

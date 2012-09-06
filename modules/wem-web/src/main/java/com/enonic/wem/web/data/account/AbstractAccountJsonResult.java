@@ -1,4 +1,4 @@
-package com.enonic.wem.web.json.result.account;
+package com.enonic.wem.web.data.account;
 
 import org.codehaus.jackson.node.ObjectNode;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -8,10 +8,10 @@ import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.web.json.result.JsonResult;
 
-public abstract class AccountJsonResult
+abstract class AbstractAccountJsonResult
     extends JsonResult
 {
-    public AccountJsonResult()
+    public AbstractAccountJsonResult()
     {
         super( true );
     }

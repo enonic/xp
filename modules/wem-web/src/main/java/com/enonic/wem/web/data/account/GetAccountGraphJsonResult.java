@@ -10,14 +10,13 @@ import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.web.json.result.JsonResult;
 
-public class GetAccountGraphJsonResult
+final class GetAccountGraphJsonResult
     extends JsonResult
 {
-
-    private Map<Account, List<Account>> graphData;
+    private final Map<Account, List<Account>> graphData;
 
     // Nodes ids should be unique, even among different graphs
-    private String timestamp;
+    private final String timestamp;
 
     public GetAccountGraphJsonResult( boolean success, Map<Account, List<Account>> graphData )
     {
@@ -40,7 +39,7 @@ public class GetAccountGraphJsonResult
 
     private String getGraphNodeId( Account account )
     {
-        StringBuffer id = new StringBuffer( timestamp );
+        StringBuilder id = new StringBuilder( timestamp );
         id.append( "_" );
         id.append( account.getKey() );
         return id.toString();
