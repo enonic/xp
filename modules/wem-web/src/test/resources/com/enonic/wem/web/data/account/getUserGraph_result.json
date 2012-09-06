@@ -1,0 +1,29 @@
+{
+    "success": true,
+    "graph": [
+        {
+            "id": "1343213539380_user:enonic:aro",
+            "name": "ARO",
+            "data": {
+                "type": "user",
+                "key": "user:enonic:aro",
+                "name": "aro"
+            },
+            "adjacencies": [
+                {
+                    "nodeTo": "1343213539380_group:enonic:Togservice"
+                }
+            ]
+        },
+        {
+            "id": "1343213539380_group:enonic:Togservice",
+            "name": "TOGSERVICE",
+            "data": {
+                "type": "group",
+                "key": "group:enonic:Togservice",
+                "name": "Togservice"
+            },
+            "adjacencies": []
+        }
+    ]
+}

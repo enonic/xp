@@ -97,6 +97,25 @@ public abstract class AbstractRpcHandlerTest
     }
 
 
+    protected JsonNode getJsonResult( final JsonNode paramsJson )
+    {
+        final JsonRpcRequest req = new JsonRpcRequest();
+        req.setId( "1" );
+        req.setMethod( this.handler.getName() );
+        if ( paramsJson != null )
+        {
+            req.setParams( (ObjectNode) paramsJson );
+        }
+
+        final JsonRpcResponse res = this.processor.process( req );
+        assertNotNull( res );
+        assertFalse( res.hasError() );
+
+        final JsonNode result = res.getResult();
+        assertNotNull( result );
+        return result;
+    }
+
     private void testJson( final JsonNode paramsJson, final JsonNode resultJson )
         throws Exception
     {
@@ -117,7 +136,7 @@ public abstract class AbstractRpcHandlerTest
         assertJson( resultJson, result );
     }
 
-    private JsonNode parseJson( final String fileName )
+    protected JsonNode parseJson( final String fileName )
         throws Exception
     {
         if ( fileName == null )

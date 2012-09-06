@@ -1,0 +1,42 @@
+{
+    "success": true,
+    "graph": [
+        {
+            "id": "1343213539380_user:enonic:aro",
+            "name": "ARO",
+            "data": {
+                "type": "user",
+                "key": "user:enonic:aro",
+                "name": "aro"
+            },
+            "adjacencies": []
+        },
+        {
+            "id": "1343213539380_group:enonic:Togservice",
+            "name": "TOGSERVICE",
+            "data": {
+                "type": "group",
+                "key": "group:enonic:Togservice",
+                "name": "Togservice"
+            },
+            "adjacencies": []
+        },
+        {
+            "id": "1343213539380_role:enonic:admin",
+            "name": "ADMIN",
+            "data": {
+                "type": "role",
+                "key": "role:enonic:admin",
+                "name": "admin"
+            },
+            "adjacencies": [
+                {
+                    "nodeTo": "1343213539380_group:enonic:Togservice"
+                },
+                {
+                    "nodeTo": "1343213539380_user:enonic:aro"
+                }
+            ]
+        }
+    ]
+}
