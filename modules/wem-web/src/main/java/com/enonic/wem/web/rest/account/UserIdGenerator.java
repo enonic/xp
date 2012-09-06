@@ -1,108 +1,87 @@
 package com.enonic.wem.web.rest.account;
 
-import com.enonic.cms.core.security.user.QualifiedUsername;
-import com.enonic.cms.core.security.user.UserEntity;
-import com.enonic.cms.core.security.userstore.UserStoreKey;
-import com.enonic.cms.store.dao.UserDao;
-
 public class UserIdGenerator
 {
     private final static int MAXIMUM_LENGTH = 8;
 
-    private final static int MAXIMUM_SUFFIX_COUNT = 100;
 
+    private final String firstName;
 
-    private final UserDao userDao;
+    private final String lastName;
 
-    private final AsciiLettersTextFilter asciiLettersFilter;
+    private String suffix;
 
-    private int maximumLength;
+    private int counter;
 
-    private int maximumSuffixCount;
+    private int iterations;
 
-    public UserIdGenerator( UserDao userDao )
-    {
-        this.userDao = userDao;
-        this.asciiLettersFilter = new AsciiLettersTextFilter();
-        this.maximumLength = MAXIMUM_LENGTH;
-        this.maximumSuffixCount = MAXIMUM_SUFFIX_COUNT;
-    }
+    private int currentIteration;
 
-    public String generateUserId( String firstName, String lastName, UserStoreKey userStoreKey )
+    public UserIdGenerator( final String firstName, final String lastName )
     {
         if ( firstName == null || lastName == null )
         {
-            return null;
+            throw new IllegalArgumentException( "First name and last name cannot be null" );
         }
-
         if ( firstName.length() == 0 && lastName.length() == 0 )
         {
-            return null;
+            throw new IllegalArgumentException( "First name and last name cannot be empty" );
         }
 
+        final AsciiLettersTextFilter asciiLettersFilter = new AsciiLettersTextFilter();
         if ( firstName.length() == 0 )
         {
-            firstName = lastName;
-            lastName = "";
+            this.firstName = latinToAZ( asciiLettersFilter, lastName );
+            this.lastName = "";
+        }
+        else
+        {
+            this.firstName = latinToAZ( asciiLettersFilter, firstName );
+            this.lastName = latinToAZ( asciiLettersFilter, lastName );
         }
 
-        final String first = latinToAZ( firstName ).toLowerCase();
-        final String last = latinToAZ( lastName ).toLowerCase();
+        initialize();
+    }
 
-        String suffix = "";
-        int counter = 0;
-        boolean done = false;
-        String newUID = null;
+    private void initialize()
+    {
+        suffix = "";
+        counter = 0;
+        resetIteration();
+    }
 
-        while ( !done )
+    private void resetIteration()
+    {
+        iterations = lastName.length() + firstName.length() - 1;
+        if ( ( iterations + 1 ) > ( MAXIMUM_LENGTH - suffix.length() ) )
         {
+            iterations -= iterations + 1 - ( MAXIMUM_LENGTH - suffix.length() );
+        }
+        currentIteration = 1;
+    }
 
-            int iterations = last.length() + first.length() - 1;
-            if ( ( iterations + 1 ) > ( maximumLength - suffix.length() ) )
-            {
-                iterations -= iterations + 1 - ( maximumLength - suffix.length() );
-            }
+    public String nextUserName()
+    {
+        final int lettersFromLastName = Math.min( Math.min( currentIteration, lastName.length() ), MAXIMUM_LENGTH - 1 - suffix.length() );
+        final int lettersFromFirstName = Math.min( firstName.length(), MAXIMUM_LENGTH - lettersFromLastName - suffix.length() ) -
+            Math.max( 0, currentIteration - lettersFromLastName );
 
-            for ( int i = 1; i <= iterations; i++ )
-            {
-                int lettersFromSname = Math.min( Math.min( i, last.length() ), maximumLength - 1 - suffix.length() );
-                int lettersFromFname =
-                    Math.min( first.length(), maximumLength - lettersFromSname - suffix.length() ) - Math.max( 0, i - lettersFromSname );
+        final String userName = firstName.substring( 0, lettersFromFirstName ) + lastName.substring( 0, lettersFromLastName ) + suffix;
 
-                newUID = first.substring( 0, lettersFromFname ) + last.substring( 0, lettersFromSname ) + suffix;
-
-                if ( !userExists( newUID, userStoreKey ) )
-                {
-                    done = true;
-                    break;
-                }
-                else
-                {
-                    newUID = null;
-                }
-            }
+        currentIteration++;
+        if ( currentIteration > iterations )
+        {
             counter++;
             suffix = Integer.toString( counter );
-
-            // Not very likely to happen, exit to prevent infinite loop
-            if ( counter == maximumSuffixCount )
-            {
-                return null;
-            }
+            resetIteration();
         }
 
-        return newUID;
+        return userName;
     }
 
-    private String latinToAZ( String text )
+    private String latinToAZ( final AsciiLettersTextFilter asciiLettersFilter, String text )
     {
-        return asciiLettersFilter.convertUnicodeToAsciiLetters( text );
+        return asciiLettersFilter.convertUnicodeToAsciiLetters( text ).toLowerCase();
     }
 
-    private boolean userExists( String uid, UserStoreKey userStoreKey )
-    {
-        QualifiedUsername qualifiedUsername = new QualifiedUsername( userStoreKey, uid );
-        UserEntity user = userDao.findByQualifiedUsername( qualifiedUsername );
-        return user != null;
-    }
 }

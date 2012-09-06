@@ -25,21 +25,15 @@ import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.core.security.user.UserKey;
 import com.enonic.cms.core.security.user.UserType;
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
-import com.enonic.cms.core.security.userstore.UserStoreKey;
 import com.enonic.cms.store.dao.UserDao;
-import com.enonic.cms.store.dao.UserStoreDao;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 
 public class UserResourceTest
     extends AbstractResourceTest
 {
     private UserDao userDao;
-
-    private UserStoreDao userStoreDao;
 
     private UserResource userResource;
 
@@ -49,10 +43,8 @@ public class UserResourceTest
         throws Exception
     {
         userDao = Mockito.mock( UserDao.class );
-        userStoreDao = Mockito.mock( UserStoreDao.class );
         userResource = new UserResource();
         userResource.setUserDao( userDao );
-        userResource.setUserStoreDao( userStoreDao );
     }
 
     @Test
@@ -89,42 +81,6 @@ public class UserResourceTest
         }
         AccountGenericResult longPasswordResult = userResource.changePassword( "SDF7SDF7S8D7F9S8D7FS89", longPassword.toString() );
         assertFalse( longPasswordResult.isSuccess() );
-    }
-
-    @Test
-    public void testSuggestUsername()
-        throws Exception
-    {
-        final UserStoreKey userStoreKey = new UserStoreKey( "33" );
-        final String userStoreName = "enonic";
-        final UserStoreEntity userStore = createUserstore( userStoreName );
-        userStore.setKey( userStoreKey );
-        Mockito.when( userStoreDao.findByName( userStoreName ) ).thenReturn( userStore );
-
-        final NameSuggestionResult nameSuggestion = userResource.suggestUsername( "First Name", "Last Name", "enonic" );
-        assertEquals( "firstnal", nameSuggestion.getUsername() );
-        assertJsonResult( "suggestUsername.json", nameSuggestion );
-
-        final NameSuggestionResult nameSuggestionLastName = userResource.suggestUsername( "", "Last Name", "enonic" );
-        assertEquals( "lastnam", nameSuggestionLastName.getUsername() );
-        assertJsonResult( "suggestUsername2.json", nameSuggestionLastName );
-
-        final NameSuggestionResult nameSuggestionFirstName = userResource.suggestUsername( "First Name", "", "enonic" );
-        assertEquals( "firstna", nameSuggestionFirstName.getUsername() );
-        assertJsonResult( "suggestUsername3.json", nameSuggestionFirstName );
-    }
-
-    @Test
-    public void testSuggestUsernameNoUserstore()
-        throws Exception
-    {
-        final UserStoreKey userStoreKey = new UserStoreKey( "33" );
-        final String userStoreName = "enonic";
-        final UserStoreEntity userStore = createUserstore( userStoreName );
-        userStore.setKey( userStoreKey );
-
-        final NameSuggestionResult nameSuggestion = userResource.suggestUsername( "First Name", "Last Name", "enonic" );
-        assertNull( nameSuggestion );
     }
 
     private BufferedImage readPhoto()

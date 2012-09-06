@@ -13,15 +13,12 @@ import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.web.rest.account.UserIdGenerator;
 import com.enonic.wem.web.rest.account.UserModel;
 import com.enonic.wem.web.rest2.resource.account.AccountGenericResult;
 import com.enonic.wem.web.rest2.service.account.user.UserUpdateService;
 
 import com.enonic.cms.core.security.user.UserEntity;
-import com.enonic.cms.core.security.userstore.UserStoreEntity;
 import com.enonic.cms.store.dao.UserDao;
-import com.enonic.cms.store.dao.UserStoreDao;
 
 @Path("account/user")
 @Produces(MediaType.APPLICATION_JSON)
@@ -29,8 +26,6 @@ import com.enonic.cms.store.dao.UserStoreDao;
 public final class UserResource
 {
     private UserDao userDao;
-
-    private UserStoreDao userStoreDao;
 
     private UserUpdateService userUpdateService;
 
@@ -56,16 +51,7 @@ public final class UserResource
                                                  @QueryParam("lastname") @DefaultValue("") final String lastName,
                                                  @QueryParam("userstore") @DefaultValue("") final String userStoreName )
     {
-        final UserStoreEntity store = userStoreDao.findByName( userStoreName );
-        if ( store == null )
-        {
-            return null;
-        }
-
-        final UserIdGenerator userIdGenerator = new UserIdGenerator( userDao );
-        final String suggestedUserName = userIdGenerator.generateUserId( firstName.trim(), lastName.trim(), store.getKey() );
-
-        return new NameSuggestionResult( suggestedUserName );
+        return new NameSuggestionResult( "TO-BE-REMOVED" );
     }
 
     @POST
@@ -97,12 +83,6 @@ public final class UserResource
     public void setUserDao( final UserDao userDao )
     {
         this.userDao = userDao;
-    }
-
-    @Autowired
-    public void setUserStoreDao( final UserStoreDao userStoreDao )
-    {
-        this.userStoreDao = userStoreDao;
     }
 
     @Autowired
