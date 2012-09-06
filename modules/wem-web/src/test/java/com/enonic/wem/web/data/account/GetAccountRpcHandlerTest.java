@@ -1,38 +1,25 @@
 package com.enonic.wem.web.data.account;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
-import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.account.Account;
-import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeySet;
-import com.enonic.wem.api.account.GroupAccount;
-import com.enonic.wem.api.account.RoleAccount;
-import com.enonic.wem.api.account.UserAccount;
-import com.enonic.wem.api.account.result.AccountFacets;
-import com.enonic.wem.api.account.result.AccountResult;
 import com.enonic.wem.api.command.account.FindAccounts;
 import com.enonic.wem.api.command.account.FindMembers;
 import com.enonic.wem.api.command.account.FindMemberships;
-import com.enonic.wem.web.data.AbstractRpcHandlerTest;
 import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
 
 public class GetAccountRpcHandlerTest
-    extends AbstractRpcHandlerTest
+    extends AbstractAccountRpcHandlerTest
 {
 
     private Client client;
@@ -140,14 +127,6 @@ public class GetAccountRpcHandlerTest
         return params;
     }
 
-    private AccountResult createAccountResult( final int totalSize, final Account... accounts )
-    {
-        final List<Account> accountList = Lists.newArrayList( accounts );
-        final AccountResult result = new AccountResult( totalSize, accountList );
-        result.setFacets( new AccountFacets() );
-        return result;
-    }
-
     private AccountKeySet createAccountKeySet( String... keys )
     {
         return AccountKeySet.from( keys );
@@ -158,40 +137,6 @@ public class GetAccountRpcHandlerTest
         final HttpServletRequest req = new MockHttpServletRequest();
         final ServletRequestAttributes attrs = new ServletRequestAttributes( req );
         RequestContextHolder.setRequestAttributes( attrs );
-    }
-
-    private UserAccount createUser( final String qName )
-    {
-        final AccountKey accountKey = AccountKey.user( qName );
-        final UserAccount user = UserAccount.create( accountKey );
-        user.setDisplayName( accountKey.getLocalName().toUpperCase() );
-        user.setEmail( accountKey.getLocalName() + "@" + accountKey.getUserStore() + ".com" );
-        user.setCreatedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
-        user.setModifiedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
-        user.setImage( "image".getBytes() );
-        return user;
-    }
-
-    private GroupAccount createGroup( final String qName, final AccountKey... members )
-    {
-        final AccountKey accountKey = AccountKey.group( qName );
-        final GroupAccount group = GroupAccount.create( accountKey );
-        group.setDisplayName( accountKey.getLocalName().toUpperCase() );
-        group.setCreatedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
-        group.setModifiedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
-        group.setMembers( AccountKeySet.from( members ) );
-        return group;
-    }
-
-    private RoleAccount createRole( final String qName, final AccountKey... members )
-    {
-        final AccountKey accountKey = AccountKey.role( qName );
-        final RoleAccount group = RoleAccount.create( accountKey );
-        group.setDisplayName( accountKey.getLocalName().toUpperCase() );
-        group.setCreatedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
-        group.setModifiedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
-        group.setMembers( AccountKeySet.from( members ) );
-        return group;
     }
 
 }
