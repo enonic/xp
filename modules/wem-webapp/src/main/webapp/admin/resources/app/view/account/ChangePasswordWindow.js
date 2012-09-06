@@ -19,18 +19,18 @@ Ext.define('Admin.view.account.ChangePasswordWindow', {
             handler: function () {
                 var parentApp = parent.mainApp;
                 var form = Ext.getCmp('userChangePasswordForm').getForm();
+                var accountKey = me.modelData.new_key;
+                var pwdValue = form.items[0].getValue();
                 if (form.isValid()) {
-                    form.submit({
-                        url: Admin.lib.UriHelper.getAccountChangePasswordUri(me.modelData),
-                        success: function () {
+                    Admin.lib.RemoteService.account_changePassword({ key: accountKey, password: pwdValue }, function (response) {
+                        if (response.success) {
                             me.close();
                             if (parentApp) {
                                 parentApp.fireEvent('notifier.show', "Password was changed",
                                     "Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.");
                             }
-                        },
-                        failure: function (form, action) {
-                            Ext.Msg.alert('Failed', action.result.error);
+                        } else {
+                            Ext.Msg.alert('Failed', response.error);
                         }
                     });
                 }
