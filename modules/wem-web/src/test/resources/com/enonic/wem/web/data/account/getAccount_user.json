@@ -1,0 +1,46 @@
+{
+    "success": true,
+    "key": "user:enonic:1",
+    "type": "user",
+    "name": "1",
+    "userStore": "enonic",
+    "qualifiedName": "enonic:1",
+    "builtIn": false,
+    "displayName": "1",
+    "modifiedTime": "2012-01-01T10:01:10.101+01:00",
+    "createdTime": "2012-01-01T10:01:10.101+01:00",
+    "editable": false,
+    "deleted": false,
+    "image_url": "http://localhost/admin/rest/binary/account/image/user:enonic:1",
+    "email": "1@enonic.com",
+    "memberships": [
+        {
+            "key": "group:enonic:2",
+            "type": "group",
+            "name": "2",
+            "userStore": "enonic",
+            "qualifiedName": "enonic:2",
+            "builtIn": false,
+            "displayName": "2",
+            "modifiedTime": "2012-01-01T10:01:10.101+01:00",
+            "createdTime": "2012-01-01T10:01:10.101+01:00",
+            "editable": false,
+            "deleted": false,
+            "image_url": "http://localhost/admin/rest/binary/account/image/default/group"
+        },
+        {
+            "key": "role:enonic:3",
+            "type": "role",
+            "name": "3",
+            "userStore": "enonic",
+            "qualifiedName": "enonic:3",
+            "builtIn": true,
+            "displayName": "3",
+            "modifiedTime": "2012-01-01T10:01:10.101+01:00",
+            "createdTime": "2012-01-01T10:01:10.101+01:00",
+            "editable": false,
+            "deleted": false,
+            "image_url": "http://localhost/admin/rest/binary/account/image/default/role"
+        }
+    ]
+}

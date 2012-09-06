@@ -2,16 +2,16 @@ package com.enonic.wem.web.data.account;
 
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.web.json.result.JsonDataResult;
+import com.enonic.wem.web.json.result.JsonResult;
 
 
-final class ChangePasswordResult
-    extends JsonDataResult
+public class ChangePasswordJsonResult
+    extends JsonResult
 {
 
     protected String error;
 
-    public ChangePasswordResult( final boolean success, String error )
+    public ChangePasswordJsonResult( final boolean success, String error )
     {
         super( success );
         this.error = error;

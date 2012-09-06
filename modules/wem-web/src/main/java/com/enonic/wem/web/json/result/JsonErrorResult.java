@@ -5,7 +5,7 @@ import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 
 public final class JsonErrorResult
-    extends JsonDataResult
+    extends JsonResult
 {
     private final ArrayNode errors;
 
@@ -21,9 +21,11 @@ public final class JsonErrorResult
         node.put( "id", id );
         node.put( "msg", message );
 
-        if (data != null) {
+        if ( data != null )
+        {
             final ArrayNode array = node.putArray( "data" );
-            for (final Object o : data) {
+            for ( final Object o : data )
+            {
                 array.add( o.toString() );
             }
         }

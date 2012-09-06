@@ -7,12 +7,12 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.web.json.JsonSerializable;
 
-public abstract class JsonDataResult
+public abstract class JsonResult
     implements JsonSerializable
 {
     private final boolean success;
 
-    public JsonDataResult( final boolean success )
+    public JsonResult( final boolean success )
     {
         this.success = success;
     }

@@ -54,6 +54,6 @@ public final class ChangePasswordRpcHandler
             error = "Password size must be between 8 and 64 symbols";
         }
 
-        context.setResult( new ChangePasswordResult( changed, error ) );
+        context.setResult( new ChangePasswordJsonResult( changed, error ) );
     }
 }

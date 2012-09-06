@@ -1,7 +1,7 @@
 package com.enonic.wem.web.json.result;
 
 public abstract class JsonSuccessResult
-    extends JsonDataResult
+    extends JsonResult
 {
     public JsonSuccessResult()
     {
