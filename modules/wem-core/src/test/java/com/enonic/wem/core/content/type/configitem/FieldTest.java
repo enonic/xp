@@ -4,6 +4,7 @@ package com.enonic.wem.core.content.type.configitem;
 import org.junit.Test;
 
 import com.enonic.wem.core.content.data.Data;
+import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 
 import static org.junit.Assert.*;
@@ -14,7 +15,7 @@ public class FieldTest
     public void breaksRequiredContract_throws_exception_when_broken()
     {
         Field field = Field.newBuilder().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).required( true ).build();
-        field.checkBreaksRequiredContract( Data.newData().field( field ).value( null ).build() );
+        field.checkBreaksRequiredContract( Data.newData().type( DataTypes.STRING ).value( null ).build() );
     }
 
     @Test

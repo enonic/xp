@@ -29,7 +29,7 @@ public class Content
     public void setType( final ContentType type )
     {
         this.type = type;
-        this.data.setContentType( type );
+        //this.data.setContentType( type );
     }
 
     public String getName()

@@ -6,34 +6,16 @@ import java.util.Iterator;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.datatype.DataType;
-import com.enonic.wem.core.content.type.ContentType;
+import com.enonic.wem.core.content.datatype.DataTypes;
 
 public class ContentData
     implements EntrySelector, Iterable<Entry>
 {
     private DataSet dataSet;
 
-    /**
-     * Structured data.
-     *
-     * @param contentType
-     */
-    public ContentData( final ContentType contentType )
-    {
-        this.dataSet = new DataSet( new EntryPath(), contentType.getConfigItems() );
-    }
-
-    /**
-     * Unstructured data.
-     */
     public ContentData()
     {
         this.dataSet = new DataSet( new EntryPath() );
-    }
-
-    public void setContentType( final ContentType contentType )
-    {
-        this.dataSet.setConfigItems( contentType.getConfigItems() );
     }
 
     void setDataSet( final DataSet dataSet )
@@ -48,7 +30,7 @@ public class ContentData
 
     public void setData( final EntryPath path, final String value )
     {
-        dataSet.setData( path, value, null );
+        dataSet.setData( path, value, DataTypes.STRING );
     }
 
     public String getValueAsString( final EntryPath path )

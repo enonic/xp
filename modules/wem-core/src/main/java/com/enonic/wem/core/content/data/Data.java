@@ -7,8 +7,6 @@ import com.google.common.base.Objects;
 
 import com.enonic.wem.core.content.datatype.DataType;
 import com.enonic.wem.core.content.datatype.JavaType;
-import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
-import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.InvalidValueException;
 
 
@@ -17,11 +15,6 @@ public class Data
 {
     private EntryPath path;
 
-    /**
-     * Optional.
-     */
-    private Field field;
-
     private Object value;
 
     private DataType type;
@@ -29,20 +22,6 @@ public class Data
     private Data()
     {
         // protection
-    }
-
-    void setField( final Field field )
-    {
-        ConfigItemPath configItemPath = path.resolveConfigItemPath();
-        Preconditions.checkArgument( configItemPath.equals( field.getPath() ),
-                                     "This Data's path [%s] does not match given field's path: " + field.getPath(),
-                                     configItemPath.toString() );
-        this.field = field;
-    }
-
-    public Field getField()
-    {
-        return field;
     }
 
     @Override
@@ -54,6 +33,11 @@ public class Data
     public Object getValue()
     {
         return value;
+    }
+
+    public void setValue( Object value )
+    {
+        this.value = value;
     }
 
     public String getString()
@@ -87,7 +71,6 @@ public class Data
     {
         final Objects.ToStringHelper s = Objects.toStringHelper( this );
         s.add( "path", path );
-        s.add( "field", field );
         s.add( "type", type.getName() );
         s.add( "value", value );
         return s.toString();
@@ -107,8 +90,6 @@ public class Data
     {
         private EntryPath path;
 
-        private Field field;
-
         private Object value;
 
         private DataType type;
@@ -117,16 +98,6 @@ public class Data
         public Builder()
         {
             value = new Data();
-        }
-
-        public Builder field( Field value )
-        {
-            this.field = value;
-            if ( value != null )
-            {
-                this.type = this.field.getFieldType().getDataType();
-            }
-            return this;
         }
 
         public Builder path( EntryPath value )
@@ -149,18 +120,10 @@ public class Data
 
         public Data build()
         {
-            if ( field != null )
-            {
-                Preconditions.checkArgument( this.type.equals( this.field.getFieldType().getDataType() ),
-                                             "Given DataType [%s] does not match the given field's DataType: " +
-                                                 field.getFieldType().getDataType(), type );
-            }
-
             Preconditions.checkNotNull( this.type, "type is required" );
 
             final Data data = new Data();
             data.path = this.path;
-            data.field = this.field;
             data.type = this.type;
             data.value = this.value != null
                 ? data.type.ensureType( this.value )

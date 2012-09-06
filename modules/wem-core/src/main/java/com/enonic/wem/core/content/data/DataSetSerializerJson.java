@@ -50,7 +50,7 @@ public class DataSetSerializerJson
         final EntryPath entriesPath = new EntryPath( JsonParserUtil.getStringValue( "path", entriesNode ) );
         final JsonNode entriesArray = entriesNode.get( "entries" );
 
-        final DataSet dataSet = newDataSet( entriesPath, configItems );
+        final DataSet dataSet = new DataSet( entriesPath );
         final Iterator<JsonNode> entryIt = entriesArray.getElements();
         while ( entryIt.hasNext() )
         {
@@ -68,7 +68,7 @@ public class DataSetSerializerJson
                 }
                 else
                 {
-                    final Entry entry = dataSerializer.parse( entryNode, null );
+                    final Entry entry = dataSerializer.parse( entryNode );
                     dataSet.add( entry );
                 }
             }
@@ -84,14 +84,14 @@ public class DataSetSerializerJson
                 }
                 else if ( item instanceof Field )
                 {
-                    final Entry entry = dataSerializer.parse( entryNode, (Field) item );
+                    final Entry entry = dataSerializer.parse( entryNode );
                     dataSet.add( entry );
                 }
                 else if ( item instanceof FieldSet )
                 {
                     final FieldSet fieldSet = (FieldSet) item;
                     final DataSet childDataSet = parse( entryNode, fieldSet.getConfigItems() );
-                    final DataSet entry = new DataSet( path, fieldSet, childDataSet );
+                    final DataSet entry = new DataSet( path, childDataSet );
                     dataSet.add( entry );
                 }
             }
@@ -105,15 +105,4 @@ public class DataSetSerializerJson
         return node.get( "entries" ) != null;
     }
 
-    private static DataSet newDataSet( final EntryPath path, ConfigItems configItems )
-    {
-        if ( configItems == null )
-        {
-            return new DataSet( path );
-        }
-        else
-        {
-            return new DataSet( path, configItems );
-        }
-    }
 }

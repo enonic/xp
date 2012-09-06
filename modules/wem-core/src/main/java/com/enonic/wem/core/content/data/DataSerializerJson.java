@@ -7,7 +7,6 @@ import org.codehaus.jackson.JsonNode;
 
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.datatype.DataTypes;
-import com.enonic.wem.core.content.type.configitem.Field;
 
 public class DataSerializerJson
 {
@@ -34,7 +33,7 @@ public class DataSerializerJson
         g.writeEndObject();
     }
 
-    public Entry parse( final JsonNode entryNode, final Field field )
+    public Entry parse( final JsonNode entryNode )
     {
         Data.Builder builder = Data.newData();
 
@@ -48,7 +47,6 @@ public class DataSerializerJson
         {
             builder.type( DataTypes.parse( typeAsInteger ) );
         }
-        builder.field( field );
 
         return builder.build();
     }

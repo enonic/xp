@@ -37,7 +37,7 @@ public class ContentDataSerializerJson
         }
         else
         {
-            contentData = new ContentData( contentType );
+            contentData = new ContentData();
             contentData.setDataSet( dataSetSerializer.parse( contentDataNode, contentType.getConfigItems() ) );
         }
 

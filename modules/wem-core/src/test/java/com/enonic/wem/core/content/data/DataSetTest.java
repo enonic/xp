@@ -21,7 +21,7 @@ public class DataSetTest
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
         configItems.addConfigItem( fieldSet );
 
-        DataSet dataSet = new DataSet( new EntryPath(), configItems );
+        DataSet dataSet = new DataSet( new EntryPath() );
 
         try
         {
@@ -43,7 +43,7 @@ public class DataSetTest
         ConfigItems configItems = new ConfigItems();
         configItems.addConfigItem( fieldSet );
 
-        DataSet dataSet = new DataSet( new EntryPath(), configItems );
+        DataSet dataSet = new DataSet( new EntryPath() );
         dataSet.setData( new EntryPath( "personalia.eyeColour" ), "Brown", DataTypes.STRING );
         dataSet.setData( new EntryPath( "personalia.hairColour" ), "Brown", DataTypes.STRING );
 
@@ -62,7 +62,7 @@ public class DataSetTest
         ConfigItems configItems = new ConfigItems();
         configItems.addConfigItem( personalia );
 
-        DataSet dataSet = new DataSet( new EntryPath(), configItems );
+        DataSet dataSet = new DataSet( new EntryPath() );
         dataSet.setData( new EntryPath( "personalia.crimes[0].description" ), "Stole purse from old lady.", DataTypes.STRING );
         dataSet.setData( new EntryPath( "personalia.crimes[0].year" ), "2011", DataTypes.STRING );
         dataSet.setData( new EntryPath( "personalia.crimes[1].description" ), "Drove car in 80 in 50 zone.", DataTypes.STRING );
@@ -83,7 +83,7 @@ public class DataSetTest
         fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
         configItems.addConfigItem( fieldSet );
 
-        DataSet dataSet = new DataSet( new EntryPath(), configItems );
+        DataSet dataSet = new DataSet( new EntryPath() );
         dataSet.setData( new EntryPath( "persons[0].name" ), "Arn", DataTypes.STRING );
         dataSet.setData( new EntryPath( "persons[0].eyeColour" ), "Brown", DataTypes.STRING );
 

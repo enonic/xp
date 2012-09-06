@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content.type.configitem.fieldtype;
 
 
+import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.datatype.DataType;
 
 public abstract class BaseFieldType
@@ -37,6 +38,16 @@ public abstract class BaseFieldType
     public AbstractFieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator()
     {
         return null;
+    }
+
+    @Override
+    public void ensureType( final Data data )
+    {
+        if ( data.getDataType().equals( dataType ) )
+        {
+            return;
+        }
+        dataType.ensureType( data );
     }
 
     @Override

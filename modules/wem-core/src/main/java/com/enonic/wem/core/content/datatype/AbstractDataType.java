@@ -3,6 +3,8 @@ package com.enonic.wem.core.content.datatype;
 
 import com.google.common.base.Objects;
 
+import com.enonic.wem.core.content.data.Data;
+
 public abstract class AbstractDataType
     implements DataType
 {
@@ -35,6 +37,13 @@ public abstract class AbstractDataType
     public JavaType getJavaType()
     {
         return this.javaType;
+    }
+
+    @Override
+    public void ensureType( final Data data )
+        throws InconvertibleException
+    {
+        data.setValue( ensureType( data.getValue() ) );
     }
 
     @Override

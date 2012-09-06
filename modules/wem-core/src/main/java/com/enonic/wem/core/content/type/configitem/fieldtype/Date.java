@@ -29,7 +29,7 @@ public class Date
     {
         if ( data.getValue() == null )
         {
-            throw new BreaksRequiredContractException( data );
+            throw new BreaksRequiredContractException( data, this );
         }
     }
 }

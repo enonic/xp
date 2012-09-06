@@ -37,7 +37,7 @@ public class Dropdown
         final String stringValue = (String) data.getValue();
         if ( StringUtils.isBlank( stringValue ) )
         {
-            throw new BreaksRequiredContractException( data );
+            throw new BreaksRequiredContractException( data, this );
         }
     }
 }

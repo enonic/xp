@@ -25,4 +25,5 @@ public interface FieldType
     void checkBreaksRequiredContract( Data data )
         throws BreaksRequiredContractException;
 
+    void ensureType( Data data );
 }

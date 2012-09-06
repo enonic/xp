@@ -52,4 +52,10 @@ public class Virtual
     {
         // never - the referred fields are checked instead
     }
+
+    @Override
+    public void ensureType( final Data data )
+    {
+        // TODO:
+    }
 }

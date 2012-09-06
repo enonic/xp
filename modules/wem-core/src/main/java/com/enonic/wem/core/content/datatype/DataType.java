@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content.datatype;
 
 
+import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.type.configitem.InvalidValueException;
 
 /**
@@ -26,5 +27,8 @@ public interface DataType
         throws InvalidValueException;
 
     Object ensureType( Object value )
+        throws InconvertibleException;
+
+    void ensureType( Data data )
         throws InconvertibleException;
 }

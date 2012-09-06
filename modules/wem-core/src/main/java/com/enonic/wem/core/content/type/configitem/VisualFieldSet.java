@@ -6,8 +6,6 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.core.content.data.DataSet;
-
 
 public class VisualFieldSet
     extends ConfigItem
@@ -65,35 +63,6 @@ public class VisualFieldSet
     void forwardSetPath( ConfigItemPath path )
     {
         configItems.setPath( path );
-    }
-
-    public void checkBreaksRequiredContract( final DataSet dataSet )
-    {
-        // check missing required entries
-        for ( ConfigItem configItem : configItems.iterable() )
-        {
-            if ( configItem instanceof Field )
-            {
-                Field field = (Field) configItem;
-                if ( field.isRequired() && !dataSet.hasDataAtPath( field.getPath() ) )
-                {
-                    throw new BreaksRequiredContractException( field );
-                }
-            }
-            else if ( configItem instanceof FieldSet )
-            {
-                FieldSet fieldSet = (FieldSet) configItem;
-                if ( fieldSet.isRequired() && !dataSet.hasDataSetAtPath( fieldSet.getPath() ) )
-                {
-                    throw new BreaksRequiredContractException( fieldSet );
-                }
-            }
-            else if ( configItem instanceof VisualFieldSet )
-            {
-                VisualFieldSet visualFieldSet = (VisualFieldSet) configItem;
-                visualFieldSet.checkBreaksRequiredContract( dataSet );
-            }
-        }
     }
 
     public Iterable<ConfigItem> getConfigItemsIterable()

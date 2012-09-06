@@ -4,7 +4,6 @@ package com.enonic.wem.core.content.type.configitem;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.data.Data;
-import com.enonic.wem.core.content.data.DataSet;
 import com.enonic.wem.core.content.data.InvalidDataException;
 import com.enonic.wem.core.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldType;
@@ -95,22 +94,10 @@ public class Field
         throws BreaksRequiredContractException
     {
         Preconditions.checkNotNull( data, "Given data is null" );
-        Preconditions.checkArgument( data.getField() != null, "Given data have no field" );
-        Preconditions.checkArgument( data.getField().equals( this ), "Given data's field is not this" );
 
         if ( isRequired() )
         {
             type.checkBreaksRequiredContract( data );
-        }
-    }
-
-    public void checkBreaksRequiredContract( final DataSet dataSet )
-    {
-        Preconditions.checkNotNull( dataSet, "Given dataSet is null" );
-
-        if ( isRequired() && !dataSet.hasDataAtPath( getPath() ) )
-        {
-            throw new BreaksRequiredContractException( this );
         }
     }
 

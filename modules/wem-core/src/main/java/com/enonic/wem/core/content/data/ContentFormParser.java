@@ -4,6 +4,7 @@ package com.enonic.wem.core.content.data;
 import java.util.Map;
 
 import com.enonic.wem.core.content.type.ContentType;
+import com.enonic.wem.core.content.type.DataTypeFixer;
 
 public class ContentFormParser
 {
@@ -16,7 +17,7 @@ public class ContentFormParser
 
     public ContentData parse( final Map<String, String> submittedValues )
     {
-        final ContentData contentData = new ContentData( contentType );
+        final ContentData contentData = new ContentData();
 
         for ( Map.Entry<String, String> entry : submittedValues.entrySet() )
         {
@@ -25,6 +26,8 @@ public class ContentFormParser
 
             contentData.setData( entryPath, valueAsString );
         }
+
+        new DataTypeFixer( contentType ).fix( contentData );
 
         return contentData;
     }

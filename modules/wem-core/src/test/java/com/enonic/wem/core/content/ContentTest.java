@@ -281,7 +281,6 @@ public class ContentTest
         content.setData( "personalia.eyeColour", "Blue", DataTypes.STRING );
         content.setData( "personalia.hairColour", "Blonde" );
 
-        assertNull( content.getData( "personalia.eyeColour" ).getField() );
         assertEquals( DataTypes.STRING, content.getData( "personalia.eyeColour" ).getDataType() );
         assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getValue() );
         assertEquals( "personalia.eyeColour", content.getData( "personalia.eyeColour" ).getPath().toString() );
@@ -300,7 +299,6 @@ public class ContentTest
         content.setData( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
         content.setData( "crimes[1].year", "1990" );
 
-        assertNull( content.getData( "personalia.eyeColour" ).getField() );
         assertEquals( DataTypes.STRING, content.getData( "personalia.eyeColour" ).getDataType() );
         assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getValue() );
         assertEquals( "personalia.eyeColour", content.getData( "personalia.eyeColour" ).getPath().toString() );
@@ -318,10 +316,7 @@ public class ContentTest
 
         assertEquals( DataTypes.STRING, content.getData( "personalia.eyeColour" ).getDataType() );
         assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getValue() );
-        assertEquals( "personalia.eyeColour", content.getData( "personalia.eyeColour" ).getField().getPath().toString() );
-        assertEquals( "personalia.hairColour", content.getData( "personalia.hairColour" ).getField().getPath().toString() );
-        assertEquals( "crimes.description", content.getData( "crimes[1].description" ).getField().getPath().toString() );
-        assertEquals( "crimes.year", content.getData( "crimes[1].year" ).getField().getPath().toString() );
+        content.checkValidity();
     }
 
     @Test

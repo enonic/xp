@@ -8,10 +8,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.datatype.DataType;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
-import com.enonic.wem.core.content.type.configitem.ConfigItems;
-import com.enonic.wem.core.content.type.configitem.DirectAccessibleConfigItem;
-import com.enonic.wem.core.content.type.configitem.Field;
-import com.enonic.wem.core.content.type.configitem.FieldSet;
 
 public class DataSet
     extends Entry
@@ -19,34 +15,12 @@ public class DataSet
 {
     private EntryPath path;
 
-    private ConfigItems configItems;
-
     private LinkedHashMap<EntryPath.Element, Entry> entries = new LinkedHashMap<EntryPath.Element, Entry>();
 
     public DataSet( final EntryPath path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
 
-        this.path = path;
-    }
-
-    public DataSet( final EntryPath path, final ConfigItems configItems )
-    {
-        Preconditions.checkNotNull( path, "path cannot be null" );
-        Preconditions.checkNotNull( configItems, "configItems cannot be null" );
-        Preconditions.checkArgument( configItems.getPath().equals( path.resolveConfigItemPath() ),
-                                     "path [%s] does not correspond with configItems.path: " + configItems.getPath(), path.toString() );
-
-        this.path = path;
-        this.configItems = configItems;
-    }
-
-    private DataSet( final EntryPath path, final FieldSet fieldSet )
-    {
-        Preconditions.checkNotNull( fieldSet, "fieldSet cannot be null" );
-        Preconditions.checkNotNull( path, "path cannot be null" );
-
-        this.configItems = fieldSet.getConfigItems();
         this.path = path;
     }
 
@@ -59,58 +33,9 @@ public class DataSet
         this.entries = dataSet.entries;
     }
 
-    public DataSet( final EntryPath path, final FieldSet fieldSet, final DataSet dataSet )
-    {
-        Preconditions.checkNotNull( fieldSet, "fieldSet cannot be null" );
-        Preconditions.checkNotNull( path, "path cannot be null" );
-        Preconditions.checkNotNull( dataSet, "entries cannot be null" );
-
-        this.configItems = fieldSet.getConfigItems();
-        this.path = path;
-        this.entries = dataSet.entries;
-    }
-
-    public void setConfigItems( final ConfigItems configItems )
-    {
-        Preconditions.checkNotNull( configItems, "configItems cannot be null" );
-
-        ConfigItemPath configItemPath = path.resolveConfigItemPath();
-        org.elasticsearch.common.base.Preconditions.checkArgument( configItemPath.equals( configItems.getPath() ),
-                                                                   "This DataSet' path [%s] does not match given ConfigItems' path: " +
-                                                                       configItems.getPath(), configItemPath.toString() );
-        this.configItems = configItems;
-
-        for ( Entry entry : entries.values() )
-        {
-            if ( entry instanceof Data )
-            {
-                final Data data = (Data) entry;
-                final Field field = configItems.getField( entry.getName() );
-                if ( field != null )
-                {
-                    data.setField( field );
-                }
-            }
-            else if ( entry instanceof DataSet )
-            {
-                final DataSet dataSet = (DataSet) entry;
-                final FieldSet fieldSet = configItems.getFieldSet( entry.getName() );
-                if ( fieldSet != null )
-                {
-                    dataSet.setConfigItems( fieldSet.getConfigItems() );
-                }
-            }
-        }
-    }
-
     public EntryPath getPath()
     {
         return path;
-    }
-
-    boolean isUntyped()
-    {
-        return configItems == null;
     }
 
     void add( Entry entry )
@@ -123,51 +48,6 @@ public class DataSet
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
 
-        if ( isUntyped() )
-        {
-            setUntypedData( path, value, dataType );
-        }
-        else
-        {
-            setTypedData( path, value, dataType );
-        }
-    }
-
-    private void setTypedData( final EntryPath path, final Object value, DataType dataType )
-    {
-        final ConfigItemPath configItemPath = path.resolveConfigItemPath();
-        final DirectAccessibleConfigItem foundConfig = configItems.getDirectAccessibleConfigItem( configItemPath.getFirstElement() );
-        if ( foundConfig == null )
-        {
-            throw new IllegalArgumentException( "No ConfigItem found at: " + path );
-        }
-
-        if ( path.elementCount() > 1 )
-        {
-            Preconditions.checkArgument( foundConfig instanceof FieldSet,
-                                         "ConfigItem at path [%s] expected to be of type FieldSet: " + foundConfig.getConfigItemType(),
-                                         path );
-
-            //noinspection ConstantConditions
-            FieldSet foundFieldSet = (FieldSet) foundConfig;
-            forwardSetDataToDataSet( path, value, dataType, foundFieldSet );
-        }
-        else
-        {
-            Preconditions.checkArgument( foundConfig instanceof Field,
-                                         "ConfigItem at path [%s] expected to be of type Field: " + foundConfig.getConfigItemType(), path );
-            //noinspection ConstantConditions
-            final Field field = (Field) foundConfig;
-            if ( dataType == null )
-            {
-                dataType = field.getFieldType().getDataType();
-            }
-            doSetEntry( path.getFirstElement(), Data.newBuilder().field( field ).path( path ).value( value ).build() );
-        }
-    }
-
-    private void setUntypedData( final EntryPath path, final Object value, final DataType dataType )
-    {
         if ( path.elementCount() > 1 )
         {
             forwardSetDataToDataSet( path, value, dataType );
@@ -186,24 +66,6 @@ public class DataSet
         if ( existingDataSet == null )
         {
             existingDataSet = new DataSet( new EntryPath( this.path, path.getFirstElement() ) );
-            doSetEntry( path.getFirstElement(), existingDataSet );
-        }
-        existingDataSet.setData( path.asNewWithoutFirstPathElement(), value, dataType );
-    }
-
-    private void forwardSetDataToDataSet( final EntryPath path, final Object value, final DataType dataType, final FieldSet fieldSet )
-    {
-        if ( path.getFirstElement().hasPosition() )
-        {
-            Preconditions.checkArgument( fieldSet.isMultiple(),
-                                         "Trying to set an occurrence on a non-multiple FieldSet [%s]: " + path.getFirstElement(),
-                                         fieldSet );
-        }
-
-        DataSet existingDataSet = (DataSet) this.entries.get( path.getFirstElement() );
-        if ( existingDataSet == null )
-        {
-            existingDataSet = new DataSet( new EntryPath( this.path, path.getFirstElement() ), fieldSet );
             doSetEntry( path.getFirstElement(), existingDataSet );
         }
         existingDataSet.setData( path.asNewWithoutFirstPathElement(), value, dataType );
@@ -326,7 +188,7 @@ public class DataSet
             if ( entry instanceof Data )
             {
                 Data data = (Data) entry;
-                if ( data.getField() != null && data.getPath().resolveConfigItemPath().equals( path ) )
+                if ( data.getPath().resolveConfigItemPath().equals( path ) )
                 {
                     return true;
                 }
@@ -334,21 +196,4 @@ public class DataSet
         }
         return false;
     }
-
-    public boolean hasDataSetAtPath( ConfigItemPath path )
-    {
-        for ( Entry entry : entries.values() )
-        {
-            if ( entry instanceof DataSet )
-            {
-                DataSet dataSet = (DataSet) entry;
-                if ( dataSet.configItems.getPath().equals( path ) )
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
 }
