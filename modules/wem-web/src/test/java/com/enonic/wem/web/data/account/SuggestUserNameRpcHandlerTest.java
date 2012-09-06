@@ -92,7 +92,7 @@ public class SuggestUserNameRpcHandlerTest
         final AccountResult accountResult = new AccountResult( 1, Lists.<Account>newArrayList( user ) );
         final AccountResult accountResultEmpty = new AccountResult( 0, Collections.<Account>emptyList() );
 
-        OngoingStubbing<AccountResult> mockResponse = Mockito.when( client.execute( Mockito.<FindAccounts>any() ) );
+        OngoingStubbing<AccountResult> mockResponse = Mockito.when( client.execute( Mockito.any( FindAccounts.class ) ) );
         for ( int i = 0; i < foundTimes; i++ )
         {
             mockResponse = mockResponse.thenReturn( accountResult );

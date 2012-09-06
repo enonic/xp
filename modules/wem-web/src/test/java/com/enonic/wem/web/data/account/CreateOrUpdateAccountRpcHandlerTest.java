@@ -52,8 +52,8 @@ public class CreateOrUpdateAccountRpcHandlerTest
     public void testRequestCreateAccount()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.<UpdateAccounts>any() ) ).thenReturn( 1 );
-        Mockito.when( client.execute( Mockito.<FindAccounts>any() ) ).thenReturn(
+        Mockito.when( client.execute( Mockito.any( UpdateAccounts.class ) ) ).thenReturn( 1 );
+        Mockito.when( client.execute( Mockito.any( FindAccounts.class ) ) ).thenReturn(
             new AccountResult( 0, Collections.<Account>emptyList() ) );
         uploadFile( "01d0cc1d-ac2a-4952-a423-295cc9756bba", "photo.png", "IMAGEDATA".getBytes(), "image/png" );
 
@@ -70,10 +70,10 @@ public class CreateOrUpdateAccountRpcHandlerTest
     {
         final AccountKey key = AccountKey.user( "enonic:user1" );
         final UserAccount user = UserAccount.create( key );
-        Mockito.when( client.execute( Mockito.<CreateAccount>any() ) ).thenReturn( key );
+        Mockito.when( client.execute( Mockito.any( CreateAccount.class ) ) ).thenReturn( key );
 
         final AccountResult accountResult = new AccountResult( 1, Lists.<Account>newArrayList( user ) );
-        Mockito.when( client.execute( Mockito.<FindAccounts>any() ) ).thenReturn( accountResult );
+        Mockito.when( client.execute( Mockito.any( FindAccounts.class ) ) ).thenReturn( accountResult );
         uploadFile( "01d0cc1d-ac2a-4952-a423-295cc9756bba", "photo.png", "IMAGEDATA".getBytes(), "image/png" );
 
         final ObjectNode resultJson = objectNode();
@@ -89,10 +89,10 @@ public class CreateOrUpdateAccountRpcHandlerTest
     {
         final AccountKey key = AccountKey.group( "enonic:group2" );
         final GroupAccount group = GroupAccount.create( key );
-        Mockito.when( client.execute( Mockito.<CreateAccount>any() ) ).thenReturn( key );
+        Mockito.when( client.execute( Mockito.any( CreateAccount.class ) ) ).thenReturn( key );
 
         final AccountResult accountResult = new AccountResult( 1, Lists.<Account>newArrayList( group ) );
-        Mockito.when( client.execute( Mockito.<FindAccounts>any() ) ).thenReturn( accountResult );
+        Mockito.when( client.execute( Mockito.any( FindAccounts.class ) ) ).thenReturn( accountResult );
 
         final ObjectNode resultJson = objectNode();
         resultJson.put( "success", true );

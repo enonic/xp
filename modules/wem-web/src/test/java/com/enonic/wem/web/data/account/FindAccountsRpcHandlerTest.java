@@ -105,7 +105,7 @@ public class FindAccountsRpcHandlerTest
 
     private void setResult( final AccountResult result )
     {
-        Mockito.when( client.execute( Mockito.<FindAccounts>any() ) ).thenReturn( result );
+        Mockito.when( client.execute( Mockito.any( FindAccounts.class ) ) ).thenReturn( result );
     }
 
     private void mockCurrentContextHttpRequest()

@@ -59,7 +59,7 @@ public class ChangePasswordRpcHandlerTest
         throws Exception
     {
         mockCurrentContextHttpRequest();
-        Mockito.when( client.execute( Mockito.<ChangePassword>any() ) ).thenReturn( true );
+        Mockito.when( client.execute( Mockito.any( ChangePassword.class ) ) ).thenReturn( true );
         testSuccess( createParams( "user:enonic:1", "t3stPa55word!" ), createResult( true, null ) );
     }
 

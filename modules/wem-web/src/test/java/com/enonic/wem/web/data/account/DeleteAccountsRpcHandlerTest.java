@@ -44,6 +44,6 @@ public class DeleteAccountsRpcHandlerTest
 
     private void setResult( final int result )
     {
-        Mockito.when( client.execute( Mockito.<DeleteAccounts>any() ) ).thenReturn( result );
+        Mockito.when( client.execute( Mockito.any( DeleteAccounts.class ) ) ).thenReturn( result );
     }
 }

@@ -36,7 +36,7 @@ public class VerifyUniqueEmailRpcHandlerTest
     {
         final UserAccount user = UserAccount.create( AccountKey.user( "enonic:user1" ) );
         final AccountResult accountResult = new AccountResult( 1, Lists.<Account>newArrayList( user ) );
-        Mockito.when( client.execute( Mockito.<FindAccounts>any() ) ).thenReturn( accountResult );
+        Mockito.when( client.execute( Mockito.any( FindAccounts.class ) ) ).thenReturn( accountResult );
 
         final ObjectNode params = objectNode();
         params.put( "userStore", "enonic" );
@@ -55,7 +55,7 @@ public class VerifyUniqueEmailRpcHandlerTest
         throws Exception
     {
         final AccountResult accountResult = new AccountResult( 0, Lists.<Account>newArrayList() );
-        Mockito.when( client.execute( Mockito.<FindAccounts>any() ) ).thenReturn( accountResult );
+        Mockito.when( client.execute( Mockito.any( FindAccounts.class ) ) ).thenReturn( accountResult );
 
         final ObjectNode params = objectNode();
         params.put( "userStore", "enonic" );
