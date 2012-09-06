@@ -2,6 +2,7 @@ package com.enonic.wem.api.account.selector;
 
 import java.util.Set;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 
@@ -138,60 +139,27 @@ public final class AccountQuery
         {
             return true;
         }
-        if ( o == null || getClass() != o.getClass() )
+
+        if ( !( o instanceof AccountQuery ) )
         {
             return false;
         }
 
         final AccountQuery that = (AccountQuery) o;
-
-        if ( limit != that.limit )
-        {
-            return false;
-        }
-        if ( offset != that.offset )
-        {
-            return false;
-        }
-        if ( email != null ? !email.equals( that.email ) : that.email != null )
-        {
-            return false;
-        }
-        if ( query != null ? !query.equals( that.query ) : that.query != null )
-        {
-            return false;
-        }
-        if ( sortDirection != that.sortDirection )
-        {
-            return false;
-        }
-        if ( sortField != null ? !sortField.equals( that.sortField ) : that.sortField != null )
-        {
-            return false;
-        }
-        if ( types != null ? !types.equals( that.types ) : that.types != null )
-        {
-            return false;
-        }
-        if ( userStores != null ? !userStores.equals( that.userStores ) : that.userStores != null )
-        {
-            return false;
-        }
-
-        return true;
+        return Objects.equal( this.limit, that.limit ) &&
+            Objects.equal( this.offset, that.offset ) &&
+            Objects.equal( this.email, that.email ) &&
+            Objects.equal( this.query, that.query ) &&
+            Objects.equal( this.sortDirection, that.sortDirection ) &&
+            Objects.equal( this.sortField, that.sortField ) &&
+            Objects.equal( this.types, that.types ) &&
+            Objects.equal( this.userStores, that.userStores );
     }
 
     @Override
     public int hashCode()
     {
-        int result = query != null ? query.hashCode() : 0;
-        result = 31 * result + ( types != null ? types.hashCode() : 0 );
-        result = 31 * result + ( userStores != null ? userStores.hashCode() : 0 );
-        result = 31 * result + limit;
-        result = 31 * result + offset;
-        result = 31 * result + ( sortField != null ? sortField.hashCode() : 0 );
-        result = 31 * result + ( sortDirection != null ? sortDirection.hashCode() : 0 );
-        result = 31 * result + ( email != null ? email.hashCode() : 0 );
-        return result;
+        return Objects.hashCode( this.query, this.types, this.userStores, this.limit, this.offset, this.sortField, this.sortDirection,
+                                 this.email );
     }
 }
