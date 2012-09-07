@@ -4,33 +4,37 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.account.Account;
+import com.enonic.wem.api.account.Accounts;
 import com.enonic.wem.api.account.query.AccountFacet;
 import com.enonic.wem.api.account.query.AccountFacetEntry;
-import com.enonic.wem.api.account.query.AccountResult;
+import com.enonic.wem.api.account.query.AccountQueryHits;
 
 final class FindAccountsJsonResult
     extends AbstractAccountJsonResult
 {
-    private final AccountResult result;
+    private final AccountQueryHits hits;
 
-    public FindAccountsJsonResult( final AccountResult result )
+    private final Accounts accounts;
+
+    public FindAccountsJsonResult( final AccountQueryHits hits, final Accounts accounts )
     {
-        this.result = result;
+        this.hits = hits;
+        this.accounts = accounts;
     }
 
     @Override
     protected void serialize( final ObjectNode json )
     {
-        json.put( "total", this.result.getTotalSize() );
+        json.put( "total", this.hits.getTotalSize() );
 
         final ArrayNode accounts = json.putArray( "accounts" );
-        for ( final Account account : this.result )
+        for ( final Account account : this.accounts )
         {
             serializeAccount( accounts.addObject(), account );
         }
 
         final ArrayNode facets = json.putArray( "facets" );
-        for ( final AccountFacet facet : this.result.getFacets() )
+        for ( final AccountFacet facet : this.hits.getFacets() )
         {
             serializeFacet( facets.addObject(), facet );
         }

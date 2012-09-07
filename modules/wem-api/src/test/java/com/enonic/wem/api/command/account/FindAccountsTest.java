@@ -18,14 +18,6 @@ public class FindAccountsTest
         command.query( query );
         assertSame( query, command.getQuery() );
 
-        assertFalse( command.isIncludeImage() );
-        command.includeImage();
-        assertTrue( command.isIncludeImage() );
-
-        assertFalse( command.isIncludeMembers() );
-        command.includeMembers();
-        assertTrue( command.isIncludeMembers() );
-
         command.validate();
     }
 

@@ -1,15 +1,13 @@
 package com.enonic.wem.web.data.account;
 
 import org.codehaus.jackson.node.ObjectNode;
-import org.elasticsearch.common.collect.Lists;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.UserAccount;
-import com.enonic.wem.api.account.query.AccountResult;
+import com.enonic.wem.api.account.AccountKeys;
+import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.command.account.FindAccounts;
 import com.enonic.wem.web.data.AbstractRpcHandlerTest;
 import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
@@ -34,8 +32,8 @@ public class VerifyUniqueEmailRpcHandlerTest
     public void testRequestEmailInUse()
         throws Exception
     {
-        final UserAccount user = UserAccount.create( AccountKey.user( "enonic:user1" ) );
-        final AccountResult accountResult = new AccountResult( 1, Lists.<Account>newArrayList( user ) );
+        final AccountKey user = AccountKey.user( "enonic:user1" );
+        final AccountQueryHits accountResult = new AccountQueryHits( 1, AccountKeys.from( user ) );
         Mockito.when( client.execute( Mockito.any( FindAccounts.class ) ) ).thenReturn( accountResult );
 
         final ObjectNode params = objectNode();
@@ -45,7 +43,7 @@ public class VerifyUniqueEmailRpcHandlerTest
         final ObjectNode result = objectNode();
         result.put( "success", true );
         result.put( "emailInUse", true );
-        result.put( "key", user.getKey().toString() );
+        result.put( "key", user.toString() );
 
         testSuccess( params, result );
     }
@@ -54,7 +52,7 @@ public class VerifyUniqueEmailRpcHandlerTest
     public void testRequestEmailNotInUse()
         throws Exception
     {
-        final AccountResult accountResult = new AccountResult( 0, Lists.<Account>newArrayList() );
+        final AccountQueryHits accountResult = new AccountQueryHits( 0, AccountKeys.empty() );
         Mockito.when( client.execute( Mockito.any( FindAccounts.class ) ) ).thenReturn( accountResult );
 
         final ObjectNode params = objectNode();

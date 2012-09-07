@@ -15,7 +15,7 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.api.account.query.AccountFacet;
-import com.enonic.wem.api.account.query.AccountResult;
+import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.account.query.AccountQuery;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.core.client.StandardClient;
@@ -69,7 +69,6 @@ public class FindAccountsHandlerTest
         final FindAccountsHandler findAccountsHandler = new FindAccountsHandler();
         findAccountsHandler.setUserDao( userDao );
         findAccountsHandler.setGroupDao( groupDao );
-        findAccountsHandler.setUserStoreDao( userStoreDao );
         findAccountsHandler.setAccountSearchService( accountSearchService );
 
         final StandardClient standardClient = new StandardClient();
@@ -102,7 +101,7 @@ public class FindAccountsHandlerTest
         // exercise
         final AccountQuery query = new AccountQuery().offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.USER );
 
-        AccountResult accountResult = client.execute( Commands.account().find().query( query ).includeImage() );
+        AccountQueryHits accountResult = client.execute( Commands.account().find().query( query ) );
 
         // verify
         assertNotNull( accountResult );
@@ -140,7 +139,7 @@ public class FindAccountsHandlerTest
         final AccountQuery query =
             new AccountQuery().offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.GROUP, AccountType.ROLE );
 
-        AccountResult accountResult = client.execute( Commands.account().find().query( query ).includeMembers() );
+        AccountQueryHits accountResult = client.execute( Commands.account().find().query( query ) );
 
         // verify
         assertNotNull( accountResult );
@@ -183,7 +182,7 @@ public class FindAccountsHandlerTest
         final AccountQuery query =
             new AccountQuery().offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.GROUP, AccountType.ROLE );
 
-        AccountResult accountResult = client.execute( Commands.account().find().query( query ).includeMembers() );
+        AccountQueryHits accountResult = client.execute( Commands.account().find().query( query ) );
 
         // verify
         assertNotNull( accountResult );

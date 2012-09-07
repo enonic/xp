@@ -7,7 +7,8 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.account.AccountType;
-import com.enonic.wem.api.account.query.AccountResult;
+import com.enonic.wem.api.account.Accounts;
+import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.account.query.AccountQuery;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
@@ -37,8 +38,9 @@ public final class FindAccountsRpcHandler
             selector.types( getAccountTypes( context ) );
         }
 
-        final AccountResult result = this.client.execute( Commands.account().find().query( selector ).includeImage() );
-        context.setResult( new FindAccountsJsonResult( result ) );
+        final AccountQueryHits hits = this.client.execute( Commands.account().find().query( selector ) );
+        final Accounts accounts = this.client.execute( Commands.account().get().keys( hits.getKeys() ).includeImage() );
+        context.setResult( new FindAccountsJsonResult( hits, accounts ) );
     }
 
     private AccountType[] getAccountTypes( final JsonRpcContext context )

@@ -7,8 +7,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
@@ -17,15 +15,15 @@ import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.query.AccountFacets;
-import com.enonic.wem.api.account.query.AccountResult;
+import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.web.data.AbstractRpcHandlerTest;
 
 public abstract class AbstractAccountRpcHandlerTest
     extends AbstractRpcHandlerTest
 {
-    protected AccountResult createAccountResult( final int totalSize, final Account... list )
+    protected AccountQueryHits createAccountResult( final int totalSize, final Accounts accounts )
     {
-        final AccountResult result = new AccountResult( totalSize, Lists.newArrayList( list ) );
+        final AccountQueryHits result = new AccountQueryHits( totalSize, accounts.getKeys() );
         result.setFacets( new AccountFacets() );
         return result;
     }

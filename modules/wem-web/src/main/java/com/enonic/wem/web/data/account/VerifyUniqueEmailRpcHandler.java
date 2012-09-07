@@ -2,7 +2,7 @@ package com.enonic.wem.web.data.account;
 
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.account.query.AccountResult;
+import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.account.query.AccountQuery;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
@@ -25,7 +25,7 @@ public final class VerifyUniqueEmailRpcHandler
         final String email = context.param( "email" ).required().asString();
 
         final AccountQuery selector = new AccountQuery().email( email ).userStores( userStore );
-        final AccountResult result = this.client.execute( Commands.account().find().query( selector ) );
+        final AccountQueryHits result = this.client.execute( Commands.account().find().query( selector ) );
 
         if ( result.isEmpty() )
         {
@@ -33,7 +33,7 @@ public final class VerifyUniqueEmailRpcHandler
         }
         else
         {
-            context.setResult( new VerifyUniqueEmailJsonResult( true, result.first().getKey().toString() ) );
+            context.setResult( new VerifyUniqueEmailJsonResult( true, result.getKeys().getFirst().toString() ) );
         }
     }
 }
