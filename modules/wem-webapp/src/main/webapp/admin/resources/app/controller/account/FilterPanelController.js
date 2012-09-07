@@ -50,9 +50,6 @@ Ext.define('Admin.controller.account.FilterPanelController', {
         if (!Ext.isEmpty(values.userstore)) {
             query.userstores = Ext.isArray(values.userstore) ? values.userstore.join(',') : values.userstore;
         }
-        if (!Ext.isEmpty(values.organization)) {
-            query.organizations = Ext.isArray(values.organization) ? values.organization.join(',') : values.organization;
-        }
         return query;
     }
 
