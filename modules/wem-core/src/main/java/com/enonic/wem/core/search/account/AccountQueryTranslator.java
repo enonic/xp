@@ -10,7 +10,6 @@ import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.facet.FacetBuilders;
-import org.elasticsearch.search.facet.terms.TermsFacet;
 import org.elasticsearch.search.facet.terms.TermsFacetBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
@@ -37,7 +36,7 @@ public final class AccountQueryTranslator
 
     private static final int DEFAULT_SEARCH_COUNT = 10;
 
-    public SearchSourceBuilder build(AccountSearchQuery query)
+    public SearchSourceBuilder build( AccountSearchQuery query )
     {
         final SearchSourceBuilder builder = new SearchSourceBuilder();
         if ( query.getFrom() >= 0 )
@@ -54,28 +53,20 @@ public final class AccountQueryTranslator
             builder.size( DEFAULT_SEARCH_COUNT );
         }
 
-        builder.query( buildQuery( query ));
+        builder.query( buildQuery( query ) );
 
         if ( query.isIncludeFacets() )
         {
-            final TermsFacetBuilder typeFacet = FacetBuilders.termsFacet( "type" )
-                .field( AccountIndexField.TYPE_FIELD.id() )
-                .allTerms( true );
+            final TermsFacetBuilder typeFacet =
+                FacetBuilders.termsFacet( "type" ).field( AccountIndexField.TYPE_FIELD.id() ).allTerms( true );
 
-            final TermsFacetBuilder userStoreFacet = FacetBuilders.termsFacet( "userstore" )
-                .field( AccountIndexField.USERSTORE_FIELD.notAnalyzedId() )
-                .allTerms( true );
+            final TermsFacetBuilder userStoreFacet =
+                FacetBuilders.termsFacet( "userstore" ).field( AccountIndexField.USERSTORE_FIELD.notAnalyzedId() ).allTerms( true );
 
-            final TermsFacetBuilder organizationFacet = FacetBuilders.termsFacet( "organization" )
-                .field( AccountIndexField.ORGANIZATION_FIELD.notAnalyzedId() )
-                .size( 1000 )
-                .order( TermsFacet.ComparatorType.COUNT )
-                .allTerms( true );
-
-            builder.facet( typeFacet ).facet( userStoreFacet ).facet( organizationFacet );
+            builder.facet( typeFacet ).facet( userStoreFacet );
         }
 
-        setupSorting(query, builder);
+        setupSorting( query, builder );
 
         LOG.info( "Search query: " + builder.toString() );
 
@@ -112,8 +103,8 @@ public final class AccountQueryTranslator
         else
         {
             // default sort
-            FieldSortBuilder sortBuilder = SortBuilders.fieldSort( AccountIndexField.LAST_MODIFIED_FIELD.id() )
-                .order( SortOrder.DESC ).missing( "_last" );
+            FieldSortBuilder sortBuilder =
+                SortBuilders.fieldSort( AccountIndexField.LAST_MODIFIED_FIELD.id() ).order( SortOrder.DESC ).missing( "_last" );
             searchBuilder.sort( sortBuilder );
         }
     }
@@ -174,26 +165,22 @@ public final class AccountQueryTranslator
 
     private FilterBuilder buildFilterTermStrict( final String term )
     {
-        if ( term.endsWith( "*" ) && (term.length() > 1) )
+        if ( term.endsWith( "*" ) && ( term.length() > 1 ) )
         {
             final String prefix = StringUtils.substringBeforeLast( term, "*" );
-            return FilterBuilders.orFilter(
-                prefixFilter( AccountIndexField.NAME_FIELD.id(), prefix ),
-                prefixFilter( AccountIndexField.DISPLAY_NAME_FIELD.id(), prefix ),
-                prefixFilter( AccountIndexField.FIRST_NAME_FIELD.id(), prefix ),
-                prefixFilter( AccountIndexField.EMAIL_FIELD.id(), prefix ),
-                prefixFilter( AccountIndexField.ORGANIZATION_FIELD.id(), prefix )
-            );
+            return FilterBuilders.orFilter( prefixFilter( AccountIndexField.NAME_FIELD.id(), prefix ),
+                                            prefixFilter( AccountIndexField.DISPLAY_NAME_FIELD.id(), prefix ),
+                                            prefixFilter( AccountIndexField.FIRST_NAME_FIELD.id(), prefix ),
+                                            prefixFilter( AccountIndexField.EMAIL_FIELD.id(), prefix ),
+                                            prefixFilter( AccountIndexField.ORGANIZATION_FIELD.id(), prefix ) );
         }
         else
         {
-            return FilterBuilders.orFilter(
-                termsFilter( AccountIndexField.NAME_FIELD.id(), term ),
-                termsFilter( AccountIndexField.DISPLAY_NAME_FIELD.id(), term ),
-                termsFilter( AccountIndexField.FIRST_NAME_FIELD.id(), term ),
-                termsFilter( AccountIndexField.EMAIL_FIELD.id(), term ),
-                termsFilter( AccountIndexField.ORGANIZATION_FIELD.id(), term )
-            );
+            return FilterBuilders.orFilter( termsFilter( AccountIndexField.NAME_FIELD.id(), term ),
+                                            termsFilter( AccountIndexField.DISPLAY_NAME_FIELD.id(), term ),
+                                            termsFilter( AccountIndexField.FIRST_NAME_FIELD.id(), term ),
+                                            termsFilter( AccountIndexField.EMAIL_FIELD.id(), term ),
+                                            termsFilter( AccountIndexField.ORGANIZATION_FIELD.id(), term ) );
         }
     }
 
@@ -226,15 +213,15 @@ public final class AccountQueryTranslator
             qb.must( termQuery( AccountIndexField.EMAIL_FIELD.id(), email ) );
         }
 
-        if ( ! query.getUsers() )
+        if ( !query.getUsers() )
         {
             qb.mustNot( termQuery( AccountIndexField.TYPE_FIELD.id(), AccountType.USER.name().toLowerCase() ) );
         }
-        if ( ! query.getGroups() )
+        if ( !query.getGroups() )
         {
             qb.mustNot( termQuery( AccountIndexField.TYPE_FIELD.id(), AccountType.GROUP.name().toLowerCase() ) );
         }
-        if ( ! query.getRoles() )
+        if ( !query.getRoles() )
         {
             qb.mustNot( termQuery( AccountIndexField.TYPE_FIELD.id(), AccountType.ROLE.name().toLowerCase() ) );
         }
