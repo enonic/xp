@@ -17,41 +17,47 @@ final class SetAccountEditor
     }
 
     @Override
-    public void edit( final Account account )
+    public boolean edit( final Account account )
         throws Exception
     {
-        edit( this.source, account );
+        return edit( this.source, account );
     }
 
-    private static void edit( final Account source, final Account target )
+    private static boolean edit( final Account source, final Account target )
         throws Exception
     {
         if ( ( source instanceof UserAccount ) && ( target instanceof UserAccount ) )
         {
-            editUser( (UserAccount) source, (UserAccount) target );
+            return editUser( (UserAccount) source, (UserAccount) target );
         }
         else if ( ( source instanceof GroupAccount ) && ( target instanceof GroupAccount ) )
         {
-            editNonUser( (GroupAccount) source, (GroupAccount) target );
+            return editNonUser( (GroupAccount) source, (GroupAccount) target );
         }
         else if ( ( source instanceof RoleAccount ) && ( target instanceof RoleAccount ) )
         {
-            editNonUser( (RoleAccount) source, (RoleAccount) target );
+            return editNonUser( (RoleAccount) source, (RoleAccount) target );
+        }
+        else
+        {
+            return false;
         }
     }
 
-    private static void editUser( final UserAccount source, final UserAccount target )
+    private static boolean editUser( final UserAccount source, final UserAccount target )
         throws Exception
     {
         target.setDisplayName( source.getDisplayName() );
         target.setEmail( source.getEmail() );
         target.setImage( source.getImage() );
+        return true;
     }
 
-    private static void editNonUser( final NonUserAccount source, final NonUserAccount target )
+    private static boolean editNonUser( final NonUserAccount source, final NonUserAccount target )
         throws Exception
     {
         target.setDisplayName( source.getDisplayName() );
         target.setMembers( source.getMembers() );
+        return true;
     }
 }

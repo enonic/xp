@@ -25,16 +25,20 @@ final class MembersEditor
     }
 
     @Override
-    public void edit( final Account account )
+    public boolean edit( final Account account )
         throws Exception
     {
         if ( account instanceof NonUserAccount )
         {
-            editNonUser( (NonUserAccount) account );
+            return editNonUser( (NonUserAccount) account );
+        }
+        else
+        {
+            return false;
         }
     }
 
-    private void editNonUser( final NonUserAccount account )
+    private boolean editNonUser( final NonUserAccount account )
         throws Exception
     {
         final AccountKeys original = account.getMembers();
@@ -51,5 +55,7 @@ final class MembersEditor
         {
             account.setMembers( original.remove( this.keys ) );
         }
+
+        return true;
     }
 }

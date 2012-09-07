@@ -56,12 +56,9 @@ public class SetAccountEditorTest
     public void testSetUser()
         throws Exception
     {
-        assertEquals( false, this.editableUser.isDirty() );
-
         final SetAccountEditor editor = new SetAccountEditor( this.user );
-        editor.edit( this.editableUser );
+        assertTrue( editor.edit( this.editableUser ) );
 
-        assertEquals( true, this.editableUser.isDirty() );
         assertEquals( "dummy@other.com", this.editableUser.getEmail() );
         assertEquals( "Dummy User", this.editableUser.getDisplayName() );
         assertSame( this.photo, this.editableUser.getImage() );
@@ -71,12 +68,9 @@ public class SetAccountEditorTest
     public void testSetGroup()
         throws Exception
     {
-        assertEquals( false, this.editableGroup.isDirty() );
-
         final SetAccountEditor editor = new SetAccountEditor( this.group );
-        editor.edit( this.editableGroup );
+        assertTrue( editor.edit( this.editableGroup ) );
 
-        assertEquals( true, this.editableGroup.isDirty() );
         assertEquals( "Dummy Group", this.editableGroup.getDisplayName() );
         assertSame( this.members, this.editableGroup.getMembers() );
     }
@@ -85,12 +79,9 @@ public class SetAccountEditorTest
     public void testSetRole()
         throws Exception
     {
-        assertEquals( false, this.editableRole.isDirty() );
-
         final SetAccountEditor editor = new SetAccountEditor( this.role );
-        editor.edit( this.editableRole );
+        assertTrue( editor.edit( this.editableRole ) );
 
-        assertEquals( true, this.editableRole.isDirty() );
         assertEquals( "Dummy Role", this.editableRole.getDisplayName() );
         assertSame( this.members, this.editableRole.getMembers() );
     }
@@ -99,35 +90,23 @@ public class SetAccountEditorTest
     public void testSetUser_Wrong()
         throws Exception
     {
-        assertEquals( false, this.editableUser.isDirty() );
-
         final SetAccountEditor editor = new SetAccountEditor( this.group );
-        editor.edit( this.editableUser );
-
-        assertEquals( false, this.editableUser.isDirty() );
+        assertFalse( editor.edit( this.editableUser ) );
     }
 
     @Test
     public void testSetGroup_Wrong()
         throws Exception
     {
-        assertEquals( false, this.editableGroup.isDirty() );
-
         final SetAccountEditor editor = new SetAccountEditor( this.user );
-        editor.edit( this.editableGroup );
-
-        assertEquals( false, this.editableGroup.isDirty() );
+        assertFalse( editor.edit( this.editableGroup ) );
     }
 
     @Test
     public void testSetRole_Wrong()
         throws Exception
     {
-        assertEquals( false, this.editableRole.isDirty() );
-
         final SetAccountEditor editor = new SetAccountEditor( this.user );
-        editor.edit( this.editableRole );
-
-        assertEquals( false, this.editableRole.isDirty() );
+        assertFalse( editor.edit( this.editableRole ) );
     }
 }

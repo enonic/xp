@@ -18,6 +18,5 @@ public abstract class NonUserAccount
     public final void setMembers( final AccountKeys members )
     {
         this.members = members;
-        setDirtyFlag();
     }
 }

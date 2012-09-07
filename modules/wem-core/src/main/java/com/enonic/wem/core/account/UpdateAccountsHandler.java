@@ -70,11 +70,8 @@ public final class UpdateAccountsHandler
             final Account account = retrieveAccount( accountKey );
             if ( account != null )
             {
-                account.clearDirtyFlag();
-
-                editor.edit( account );
-
-                if ( account.isDirty() )
+                final boolean flag = editor.edit( account );
+                if ( flag )
                 {
                     updateAccount( account );
                     accountsUpdated++;

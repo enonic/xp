@@ -4,6 +4,6 @@ import com.enonic.wem.api.account.Account;
 
 public interface AccountEditor
 {
-    public void edit( Account account )
+    public boolean edit( Account account )
         throws Exception;
 }

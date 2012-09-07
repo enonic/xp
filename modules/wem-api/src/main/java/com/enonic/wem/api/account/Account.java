@@ -16,8 +16,6 @@ public abstract class Account
 
     private boolean editable;
 
-    private boolean dirty;
-
     public Account( final AccountKey key )
     {
         this.key = key;
@@ -56,7 +54,6 @@ public abstract class Account
     public final void setDisplayName( final String value )
     {
         this.displayName = value;
-        setDirtyFlag();
     }
 
     public final void setCreatedTime( final DateTime value )
@@ -77,20 +74,5 @@ public abstract class Account
     public final void setEditable( final boolean value )
     {
         this.editable = value;
-    }
-
-    public final boolean isDirty()
-    {
-        return this.dirty;
-    }
-
-    public final void clearDirtyFlag()
-    {
-        this.dirty = false;
-    }
-
-    public final void setDirtyFlag()
-    {
-        this.dirty = true;
     }
 }

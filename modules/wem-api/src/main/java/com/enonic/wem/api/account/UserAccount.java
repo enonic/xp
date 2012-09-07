@@ -45,13 +45,11 @@ public final class UserAccount
     public void setEmail( final String value )
     {
         this.email = value;
-        setDirtyFlag();
     }
 
     public void setImage( final byte[] value )
     {
         this.image = value;
-        setDirtyFlag();
     }
 
     public void setLastLoginTime( final DateTime value )
@@ -62,7 +60,6 @@ public final class UserAccount
     public void setProfile( final UserProfile profile )
     {
         this.profile = profile;
-        setDirtyFlag();
     }
 
     public static UserAccount create( final String qName )

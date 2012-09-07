@@ -98,10 +98,11 @@ public class UpdateAccountsHandlerTest
         final Integer totalUpdated = client.execute( Commands.account().update().keys( accounts ).editor( new AccountEditor()
         {
             @Override
-            public void edit( final Account account )
+            public boolean edit( final Account account )
                 throws Exception
             {
                 keysEdited.add( account.getKey() );
+                return false;
             }
         } ) );
 
@@ -136,7 +137,7 @@ public class UpdateAccountsHandlerTest
         final Integer totalUpdated = client.execute( Commands.account().update().keys( accounts ).editor( new AccountEditor()
         {
             @Override
-            public void edit( final Account account )
+            public boolean edit( final Account account )
                 throws Exception
             {
                 account.setDisplayName( account.getDisplayName() + "_updated" );
@@ -151,6 +152,7 @@ public class UpdateAccountsHandlerTest
                 }
 
                 keysEdited.add( account.getKey() );
+                return true;
             }
         } ) );
 
@@ -178,7 +180,7 @@ public class UpdateAccountsHandlerTest
         final Integer totalUpdated = client.execute( Commands.account().update().keys( accounts ).editor( new AccountEditor()
         {
             @Override
-            public void edit( final Account account )
+            public boolean edit( final Account account )
                 throws Exception
             {
                 account.setDisplayName( account.getDisplayName() + "_updated" );
@@ -187,6 +189,7 @@ public class UpdateAccountsHandlerTest
                 user.setImage( getRandomPhoto() );
 
                 keysEdited.add( account.getKey() );
+                return true;
             }
         } ) );
 
@@ -210,11 +213,12 @@ public class UpdateAccountsHandlerTest
         final Integer totalUpdated = client.execute( Commands.account().update().keys( accounts ).editor( new AccountEditor()
         {
             @Override
-            public void edit( final Account account )
+            public boolean edit( final Account account )
                 throws Exception
             {
                 account.setDisplayName( account.getDisplayName() + "_updated" );
                 keysEdited.add( account.getKey() );
+                return true;
             }
         } ) );
 

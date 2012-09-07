@@ -17,12 +17,10 @@ public abstract class NonUserAccountTest<T extends NonUserAccount>
     public void testMembers()
     {
         final T account = create( "other:dummy" );
-        assertFalse( account.isDirty() );
         assertNull( account.getMembers() );
 
         final AccountKeys members = AccountKeys.empty();
         account.setMembers( members );
         assertSame( members, account.getMembers() );
-        assertTrue( account.isDirty() );
     }
 }

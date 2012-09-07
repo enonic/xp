@@ -13,12 +13,16 @@ final class CompositeEditor
     }
 
     @Override
-    public void edit( final Account account )
+    public boolean edit( final Account account )
         throws Exception
     {
+        boolean flag = false;
         for ( final AccountEditor editor : this.editors )
         {
-            editor.edit( account );
+            final boolean result = editor.edit( account );
+            flag = flag || result;
         }
+
+        return flag;
     }
 }
