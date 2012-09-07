@@ -1,22 +1,19 @@
 package com.enonic.wem.api.account;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 
 public final class Accounts
     implements Iterable<Account>
 {
-    private final ArrayList<Account> list;
+    private final ImmutableList<Account> list;
 
-    private Accounts()
+    private Accounts( final ImmutableList<Account> list )
     {
-        this.list = Lists.newArrayList();
+        this.list = list;
     }
 
     public int getSize()
@@ -36,36 +33,31 @@ public final class Accounts
 
     public List<Account> getList()
     {
-        return ImmutableList.copyOf( this.list );
+        return this.list;
     }
 
     public Accounts add( final Account... accounts )
     {
-        return add( Lists.newArrayList( accounts ) );
+        return add( ImmutableList.copyOf( accounts ) );
     }
 
     public Accounts add( final Iterable<? extends Account> accounts )
     {
-        return add( Lists.newArrayList( accounts ) );
+        return add( ImmutableList.copyOf( accounts ) );
     }
 
-    public Accounts add( final Collection<? extends Account> accounts )
+    private Accounts add( final ImmutableList<Account> accounts )
     {
-        this.list.addAll( accounts );
-        return this;
+        final ImmutableList.Builder<Account> builder = ImmutableList.builder();
+        builder.addAll( this.list );
+        builder.addAll( accounts );
+        return new Accounts( builder.build() );
     }
 
     @Override
     public Iterator<Account> iterator()
     {
-        return Iterators.unmodifiableIterator( this.list.iterator() );
-    }
-
-    public Accounts copy()
-    {
-        final Accounts result = new Accounts();
-        result.list.addAll( this.list );
-        return result;
+        return this.list.iterator();
     }
 
     public int hashCode()
@@ -80,21 +72,22 @@ public final class Accounts
 
     public static Accounts empty()
     {
-        return new Accounts();
+        final ImmutableList<Account> list = ImmutableList.of();
+        return new Accounts( list );
     }
 
     public static Accounts from( final Account... accounts )
     {
-        return empty().add( accounts );
+        return new Accounts( ImmutableList.copyOf( accounts ) );
     }
 
     public static Accounts from( final Iterable<? extends Account> accounts )
     {
-        return empty().add( accounts );
+        return new Accounts( ImmutableList.copyOf( accounts ) );
     }
 
     public static Accounts from( final Collection<? extends Account> accounts )
     {
-        return empty().add( accounts );
+        return new Accounts( ImmutableList.copyOf( accounts ) );
     }
 }

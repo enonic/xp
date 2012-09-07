@@ -98,20 +98,6 @@ public final class AccountsTest
     }
 
     @Test
-    public void testCopy()
-    {
-        final Accounts list1 = Accounts.from( this.account1 );
-        final Accounts list2 = list1.copy();
-
-        assertEquals( 1, list1.getSize() );
-        assertEquals( 1, list2.getSize() );
-
-        list1.add( this.account2 );
-        assertEquals( 2, list1.getSize() );
-        assertEquals( 1, list2.getSize() );
-    }
-
-    @Test
     public void testHashCode()
     {
         final Accounts list1 = Accounts.from( this.account1 );
@@ -132,5 +118,25 @@ public final class AccountsTest
         assertTrue( list1.equals( list1 ) );
         assertTrue( list2.equals( list1 ) );
         assertFalse( list3.equals( list1 ) );
+    }
+
+    @Test
+    public void testAdd_accounts()
+    {
+        final Accounts original = Accounts.from( this.account1 );
+        final Accounts total = original.add( this.account2 );
+
+        assertEquals( 1, original.getSize() );
+        assertEquals( 2, total.getSize() );
+    }
+
+    @Test
+    public void testAdd_iterator()
+    {
+        final Accounts original = Accounts.from( this.account1 );
+        final Accounts total = original.add( Lists.newArrayList( this.account2 ) );
+
+        assertEquals( 1, original.getSize() );
+        assertEquals( 2, total.getSize() );
     }
 }

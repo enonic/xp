@@ -75,24 +75,50 @@ public final class AccountKeys
         return this.set.iterator();
     }
 
-    public AccountKeys add( final AccountKeys set )
+    public AccountKeys add( final String... keys )
     {
-        final HashSet<AccountKey> tmp = Sets.newHashSet();
-        tmp.addAll( this.set );
-        tmp.addAll( set.getSet() );
-
-        final ImmutableSet<AccountKey> result = ImmutableSet.copyOf( tmp );
-        return new AccountKeys( result );
+        return add( parseKeys( keys ) );
     }
 
-    public AccountKeys remove( final AccountKeys set )
+    public AccountKeys add( final AccountKey... keys )
+    {
+        return add( ImmutableSet.copyOf( keys ) );
+    }
+
+    public AccountKeys add( final Iterable<AccountKey> keys )
+    {
+        return add( ImmutableSet.copyOf( keys ) );
+    }
+
+    private AccountKeys add( final ImmutableSet<AccountKey> keys )
     {
         final HashSet<AccountKey> tmp = Sets.newHashSet();
         tmp.addAll( this.set );
-        tmp.removeAll( set.getSet() );
+        tmp.addAll( keys );
+        return new AccountKeys( ImmutableSet.copyOf( tmp ) );
+    }
 
-        final ImmutableSet<AccountKey> result = ImmutableSet.copyOf( tmp );
-        return new AccountKeys( result );
+    public AccountKeys remove( final String... keys )
+    {
+        return remove( parseKeys( keys ) );
+    }
+
+    public AccountKeys remove( final AccountKey... keys )
+    {
+        return remove( ImmutableSet.copyOf( keys ) );
+    }
+
+    public AccountKeys remove( final Iterable<AccountKey> keys )
+    {
+        return remove( ImmutableSet.copyOf( keys ) );
+    }
+
+    private AccountKeys remove( final ImmutableSet<AccountKey> keys )
+    {
+        final HashSet<AccountKey> tmp = Sets.newHashSet();
+        tmp.addAll( this.set );
+        tmp.removeAll( keys );
+        return new AccountKeys( ImmutableSet.copyOf( tmp ) );
     }
 
     public int hashCode()
@@ -118,22 +144,24 @@ public final class AccountKeys
 
     public static AccountKeys from( final String... keys )
     {
-        final Collection<String> list = Lists.newArrayList( keys );
-        final Collection<AccountKey> keyList = Collections2.transform( list, new ParseFunction() );
-        final ImmutableSet<AccountKey> set = ImmutableSet.copyOf( keyList );
-        return new AccountKeys( set );
+        return new AccountKeys( parseKeys( keys ) );
     }
 
     public static AccountKeys from( final AccountKey... keys )
     {
-        final ImmutableSet<AccountKey> set = ImmutableSet.copyOf( keys );
-        return new AccountKeys( set );
+        return new AccountKeys( ImmutableSet.copyOf( keys ) );
     }
 
     public static AccountKeys from( final Iterable<AccountKey> keys )
     {
-        final ImmutableSet<AccountKey> set = ImmutableSet.copyOf( keys );
-        return new AccountKeys( set );
+        return new AccountKeys( ImmutableSet.copyOf( keys ) );
+    }
+
+    private static ImmutableSet<AccountKey> parseKeys( final String... keys )
+    {
+        final Collection<String> list = Lists.newArrayList( keys );
+        final Collection<AccountKey> keyList = Collections2.transform( list, new ParseFunction() );
+        return ImmutableSet.copyOf( keyList );
     }
 
     private final class TypePredicate

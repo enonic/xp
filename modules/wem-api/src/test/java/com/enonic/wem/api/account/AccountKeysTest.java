@@ -150,29 +150,65 @@ public class AccountKeysTest
     }
 
     @Test
-    public void testAdd()
+    public void testAdd_keys()
     {
-        final AccountKeys set1 = AccountKeys.from( "user:other:dummy", "group:other:party" );
-        final AccountKeys set2 = AccountKeys.from( "role:other:admin" );
-
-        final AccountKeys set3 = set1.add( set2 );
-        assertEquals( 2, set1.getSize() );
-        assertEquals( 1, set2.getSize() );
-        assertEquals( 3, set3.getSize() );
-        assertTrue( set3.contains( AccountKey.from( "role:other:admin" ) ) );
+        final AccountKeys original = AccountKeys.from( "user:other:dummy", "group:other:party" );
+        final AccountKeys total = original.add( AccountKey.from( "role:other:admin" ) );
+        testAdd( original, total );
     }
 
     @Test
-    public void testRemove()
+    public void testAdd_iterator()
     {
-        final AccountKeys set1 = AccountKeys.from( "user:other:dummy", "group:other:party", "role:other:admin" );
-        final AccountKeys set2 = AccountKeys.from( "user:other:dummy", "group:other:party" );
+        final AccountKeys original = AccountKeys.from( "user:other:dummy", "group:other:party" );
+        final AccountKeys total = original.add( Lists.newArrayList( AccountKey.from( "role:other:admin" ) ) );
+        testAdd( original, total );
+    }
 
-        final AccountKeys set3 = set1.remove( set2 );
-        assertEquals( 3, set1.getSize() );
-        assertEquals( 2, set2.getSize() );
-        assertEquals( 1, set3.getSize() );
-        assertTrue( set3.contains( AccountKey.from( "role:other:admin" ) ) );
+    @Test
+    public void testAdd_keyStrings()
+    {
+        final AccountKeys original = AccountKeys.from( "user:other:dummy", "group:other:party" );
+        final AccountKeys total = original.add( "role:other:admin" );
+        testAdd( original, total );
+    }
+
+    private void testAdd( final AccountKeys original, final AccountKeys total )
+    {
+        assertEquals( 2, original.getSize() );
+        assertEquals( 3, total.getSize() );
+        assertTrue( total.contains( AccountKey.from( "role:other:admin" ) ) );
+    }
+
+    @Test
+    public void testRemove_keys()
+    {
+        final AccountKeys original = AccountKeys.from( "user:other:dummy", "role:other:admin" );
+        final AccountKeys total = original.remove( AccountKey.from( "user:other:dummy" ) );
+        testRemove( original, total );
+    }
+
+    @Test
+    public void testRemove_iterator()
+    {
+        final AccountKeys original = AccountKeys.from( "user:other:dummy", "role:other:admin" );
+        final AccountKeys total = original.remove( Lists.newArrayList( AccountKey.from( "user:other:dummy" ) ) );
+        testRemove( original, total );
+    }
+
+    @Test
+    public void testRemove_keyStrings()
+    {
+        final AccountKeys original = AccountKeys.from( "user:other:dummy", "role:other:admin" );
+        final AccountKeys total = original.remove( "user:other:dummy" );
+        testRemove( original, total );
+    }
+
+    private void testRemove( final AccountKeys original, final AccountKeys total )
+    {
+        assertEquals( 2, original.getSize() );
+        assertEquals( 1, total.getSize() );
+        assertTrue( total.contains( AccountKey.from( "role:other:admin" ) ) );
     }
 
     @Test
