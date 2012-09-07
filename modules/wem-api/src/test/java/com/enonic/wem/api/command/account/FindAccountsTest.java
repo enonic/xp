@@ -1,22 +1,22 @@
 package com.enonic.wem.api.command.account;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
 
-import com.enonic.wem.api.account.selector.AccountSelector;
+import com.enonic.wem.api.account.query.AccountQuery;
 
 public class FindAccountsTest
 {
     @Test
     public void testValid()
     {
-        final AccountSelector selector = Mockito.mock( AccountSelector.class );
+        final AccountQuery query = new AccountQuery();
         final FindAccounts command = new FindAccounts();
 
-        command.selector( selector );
-        assertSame( selector, command.getSelector() );
+        assertNull( command.getQuery() );
+        command.query( query );
+        assertSame( query, command.getQuery() );
 
         assertFalse( command.isIncludeImage() );
         command.includeImage();
@@ -33,7 +33,7 @@ public class FindAccountsTest
     public void testNotValid_nullSelector()
     {
         final FindAccounts command = new FindAccounts();
-        command.selector( null );
+        command.query( null );
 
         command.validate();
     }

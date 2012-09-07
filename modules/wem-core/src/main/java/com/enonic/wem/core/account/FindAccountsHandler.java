@@ -22,11 +22,8 @@ import com.enonic.wem.api.account.query.AccountFacet;
 import com.enonic.wem.api.account.query.AccountFacetEntry;
 import com.enonic.wem.api.account.query.AccountFacets;
 import com.enonic.wem.api.account.query.AccountResult;
-import com.enonic.wem.api.account.selector.AccountKeySelector;
 import com.enonic.wem.api.account.query.AccountQuery;
-import com.enonic.wem.api.account.selector.AccountSelector;
 import com.enonic.wem.api.command.account.FindAccounts;
-import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.search.Facet;
@@ -76,35 +73,10 @@ public final class FindAccountsHandler
     {
         final boolean includeMembers = command.isIncludeMembers();
         final boolean includePhoto = command.isIncludeImage();
-        final AccountSelector selector = command.getSelector();
+        final AccountQuery selector = command.getQuery();
 
-        final AccountResult result = findBySelector( selector, includeMembers, includePhoto );
-
+        final AccountResult result = findByQuery( selector, includeMembers, includePhoto );
         command.setResult( result );
-    }
-
-    private AccountResult findBySelector( final AccountSelector selector, final boolean includeMembers, final boolean includePhoto )
-    {
-        if ( selector instanceof AccountKeySelector )
-        {
-            return findByKeySelector( (AccountKeySelector) selector, includeMembers, includePhoto );
-        }
-        else if ( selector instanceof AccountQuery )
-        {
-            return findByQuery( (AccountQuery) selector, includeMembers, includePhoto );
-        }
-        else
-        {
-            throw new SystemException( "Account selector of type {0} is not supported", selector.getClass().getName() );
-        }
-    }
-
-    private AccountResult findByKeySelector( final AccountKeySelector accountKeySelector, final boolean includeMembers,
-                                             final boolean includePhoto )
-    {
-        final AccountKeys keys = accountKeySelector.getKeys();
-        final List<Account> accounts = fetchAccounts( keys, includeMembers, includePhoto );
-        return new AccountResult( accounts.size(), accounts );
     }
 
     private AccountResult findByQuery( final AccountQuery accountQuery, final boolean includeMembers, final boolean includePhoto )

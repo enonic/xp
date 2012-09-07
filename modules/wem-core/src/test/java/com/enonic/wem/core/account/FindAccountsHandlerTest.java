@@ -13,15 +13,11 @@ import org.mockito.Mockito;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.api.account.query.AccountFacet;
 import com.enonic.wem.api.account.query.AccountResult;
 import com.enonic.wem.api.account.query.AccountQuery;
-import com.enonic.wem.api.account.selector.AccountSelector;
-import com.enonic.wem.api.account.selector.AccountSelectors;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.client.StandardClient;
 import com.enonic.wem.core.command.CommandInvokerImpl;
 import com.enonic.wem.core.search.Facet;
@@ -84,27 +80,6 @@ public class FindAccountsHandlerTest
     }
 
     @Test
-    public void testFindAccountsByKeys()
-        throws Exception
-    {
-        // setup
-        createGroup( "enonic", "group1" );
-        createRole( "enonic", "contributors" );
-        createUser( "enonic", "user1" );
-
-        // exercise
-        final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "role:enonic:contributors", "user:enonic:user1" );
-
-        AccountResult accountResult =
-            client.execute( Commands.account().find().selector( AccountSelectors.keys( accounts ) ).includeMembers().includeImage() );
-
-        // verify
-        assertNotNull( accountResult );
-        assertEquals( 3, accountResult.getSize() );
-        assertEquals( 3, accountResult.getTotalSize() );
-    }
-
-    @Test
     public void testFindAccountsByQueryUsers()
         throws Exception
     {
@@ -125,9 +100,9 @@ public class FindAccountsHandlerTest
         doReturn( searchResults ).when( accountSearchService ).search( Matchers.<AccountSearchQuery>any() );
 
         // exercise
-        final AccountQuery query = AccountSelectors.query( "" ).offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.USER );
+        final AccountQuery query = new AccountQuery().offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.USER );
 
-        AccountResult accountResult = client.execute( Commands.account().find().selector( query ).includeImage() );
+        AccountResult accountResult = client.execute( Commands.account().find().query( query ).includeImage() );
 
         // verify
         assertNotNull( accountResult );
@@ -163,9 +138,9 @@ public class FindAccountsHandlerTest
 
         // exercise
         final AccountQuery query =
-            AccountSelectors.query( "" ).offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.GROUP, AccountType.ROLE );
+            new AccountQuery().offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.GROUP, AccountType.ROLE );
 
-        AccountResult accountResult = client.execute( Commands.account().find().selector( query ).includeMembers() );
+        AccountResult accountResult = client.execute( Commands.account().find().query( query ).includeMembers() );
 
         // verify
         assertNotNull( accountResult );
@@ -206,9 +181,9 @@ public class FindAccountsHandlerTest
 
         // exercise
         final AccountQuery query =
-            AccountSelectors.query( "" ).offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.GROUP, AccountType.ROLE );
+            new AccountQuery().offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.GROUP, AccountType.ROLE );
 
-        AccountResult accountResult = client.execute( Commands.account().find().selector( query ).includeMembers() );
+        AccountResult accountResult = client.execute( Commands.account().find().query( query ).includeMembers() );
 
         // verify
         assertNotNull( accountResult );
@@ -221,17 +196,6 @@ public class FindAccountsHandlerTest
         assertEquals( 3, facetInResults.getEntries().size() );
         assertEquals( "organization",facetInResults.getName());
         assertEquals( 3, facetInResults.getEntries().size());
-    }
-
-    @Test(expected = SystemException.class)
-    public void testFindAccountsUnsupportedAccountSelector()
-        throws Exception
-    {
-        // exercise
-        final AccountSelector customAccountSelector = new AccountSelector()
-        {
-        };
-        client.execute( Commands.account().find().selector( customAccountSelector ) );
     }
 
     private void addMembers( final GroupEntity group, final GroupEntity... members )

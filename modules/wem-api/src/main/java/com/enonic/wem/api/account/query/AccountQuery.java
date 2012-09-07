@@ -7,10 +7,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.wem.api.account.AccountType;
-import com.enonic.wem.api.account.selector.AccountSelector;
 
 public final class AccountQuery
-    implements AccountSelector
 {
     public enum Direction
     {

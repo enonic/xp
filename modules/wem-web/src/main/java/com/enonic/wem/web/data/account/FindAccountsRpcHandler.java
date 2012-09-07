@@ -9,7 +9,6 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.api.account.query.AccountResult;
 import com.enonic.wem.api.account.query.AccountQuery;
-import com.enonic.wem.api.account.selector.AccountSelectors;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
 import com.enonic.wem.web.jsonrpc.JsonRpcContext;
@@ -27,7 +26,7 @@ public final class FindAccountsRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final AccountQuery selector = AccountSelectors.query( context.param( "query" ).asString( "" ) );
+        final AccountQuery selector = new AccountQuery( context.param( "query" ).asString( "" ) );
         selector.offset( context.param( "start" ).asInteger( 0 ) );
         selector.limit( context.param( "limit" ).asInteger( 10 ) );
         selector.userStores( context.param( "userstores" ).asStringArray() );
@@ -38,7 +37,7 @@ public final class FindAccountsRpcHandler
             selector.types( getAccountTypes( context ) );
         }
 
-        final AccountResult result = this.client.execute( Commands.account().find().selector( selector ).includeImage() );
+        final AccountResult result = this.client.execute( Commands.account().find().query( selector ).includeImage() );
         context.setResult( new FindAccountsJsonResult( result ) );
     }
 

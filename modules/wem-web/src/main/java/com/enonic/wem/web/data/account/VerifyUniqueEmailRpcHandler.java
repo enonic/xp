@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.query.AccountResult;
 import com.enonic.wem.api.account.query.AccountQuery;
-import com.enonic.wem.api.account.selector.AccountSelectors;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
 import com.enonic.wem.web.jsonrpc.JsonRpcContext;
@@ -25,8 +24,8 @@ public final class VerifyUniqueEmailRpcHandler
         final String userStore = context.param( "userStore" ).required().asString();
         final String email = context.param( "email" ).required().asString();
 
-        final AccountQuery selector = AccountSelectors.queryByEmail( email ).userStores( userStore );
-        final AccountResult result = this.client.execute( Commands.account().find().selector( selector ) );
+        final AccountQuery selector = new AccountQuery().email( email ).userStores( userStore );
+        final AccountResult result = this.client.execute( Commands.account().find().query( selector ) );
 
         if ( result.isEmpty() )
         {
