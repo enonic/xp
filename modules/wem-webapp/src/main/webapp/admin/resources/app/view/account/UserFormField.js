@@ -349,25 +349,18 @@ Ext.define('Admin.view.account.UserFormField', {
                 validationStatus.update({type: 'info', text: 'Valid e-mail'});
             }
 
-            Ext.Ajax.request({
-                url: parentField.validationUrl,
-                method: 'GET',
-                params: {
-                    'userstore': parentField.validationData.userStore,
-                    'email': value
-                },
-                success: function (response) {
-                    var respObj = Ext.decode(response.responseText, true);
-                    if (respObj.emailInUse) {
+            Admin.lib.RemoteService.account_verifyUniqueEmail( { userStore: parentField.validationData.userStore, email: value }, function(response) {
+                if (response.success) {
+                    if (response.emailInUse) {
                         validationStatus.update({type: 'error', text: 'Not available'});
-                        me.validValue = (respObj.userkey === parentField.validationData.userKey);
+                        me.validValue = (response.key === parentField.validationData.userKey);
                     } else {
                         validationStatus.update({type: 'info', text: 'Available'});
                         me.validValue = true;
                     }
                     parentField.validate();
                 }
-            });
+            } );
         }
         if (value === '' || value === me.currentEmail) {
             validationStatus.update({type: 'info', text: ''});
