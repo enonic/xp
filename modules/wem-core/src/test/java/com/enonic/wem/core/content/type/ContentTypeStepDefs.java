@@ -13,7 +13,7 @@ import gherkin.formatter.model.DataTableRow;
 
 import com.enonic.wem.core.content.type.formitem.Component;
 import com.enonic.wem.core.content.type.formitem.ComponentTemplate;
-import com.enonic.wem.core.content.type.formitem.FieldTemplateBuilder;
+import com.enonic.wem.core.content.type.formitem.ComponentTemplateBuilder;
 import com.enonic.wem.core.content.type.formitem.FormItemPath;
 import com.enonic.wem.core.content.type.formitem.FormItemType;
 import com.enonic.wem.core.content.type.formitem.MockTemplateFetcher;
@@ -60,7 +60,8 @@ public class ContentTypeStepDefs
         throws Throwable
     {
         ComponentTemplate componentTemplate =
-            FieldTemplateBuilder.newFieldTemplate().module( moduleByName.get( moduleName ) ).field( fieldByName.get( fieldName ) ).build();
+            ComponentTemplateBuilder.newComponentTemplate().module( moduleByName.get( moduleName ) ).component(
+                fieldByName.get( fieldName ) ).build();
         fieldTemplateByTemplateQualifiedName.put( new TemplateQualifiedName( moduleName, fieldTemplateName ), componentTemplate );
     }
 
@@ -88,8 +89,8 @@ public class ContentTypeStepDefs
         contentType.templateReferencesToFormItems( mockTemplateReferenceFetcher );
     }
 
-    @When("^translating template references to configItems for all content types$")
-    public void translating_template_references_to_configItems_for_all_content_types()
+    @When("^translating template references to formItems for all content types$")
+    public void translating_template_references_to_formItems_for_all_content_types()
         throws Throwable
     {
 
@@ -99,8 +100,8 @@ public class ContentTypeStepDefs
         }
     }
 
-    @Then("^the following ConfigItems should exist in the following ContentTypes:$")
-    public void the_following_ConfigItems_should_exist_in_the_following_ContentTypes( DataTable dataTable )
+    @Then("^the following FormItems should exist in the following ContentTypes:$")
+    public void the_following_FormItems_should_exist_in_the_following_ContentTypes( DataTable dataTable )
         throws Throwable
     {
 
@@ -108,11 +109,11 @@ public class ContentTypeStepDefs
         for ( DataTableRow row : list )
         {
             String contentTypeName = row.getCells().get( 0 );
-            String configItemPath = row.getCells().get( 1 );
+            String formItemPath = row.getCells().get( 1 );
             FormItemType formItemType = FormItemType.valueOf( row.getCells().get( 2 ) );
             ContentType contentType = contentTypeByName.get( contentTypeName );
-            assertNotNull( "configItem not found at path: " + configItemPath,
-                           contentType.getFormItems().getFormItem( new FormItemPath( configItemPath ) ) );
+            assertNotNull( "formItem not found at path: " + formItemPath,
+                           contentType.getFormItems().getFormItem( new FormItemPath( formItemPath ) ) );
             assertEquals( FormItemType.FIELD, formItemType );
         }
     }

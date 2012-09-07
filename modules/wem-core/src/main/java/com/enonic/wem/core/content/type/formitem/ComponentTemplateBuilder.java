@@ -5,19 +5,19 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.module.Module;
 
-public class FieldTemplateBuilder
+public class ComponentTemplateBuilder
 {
     private Component component;
 
     private Module module;
 
-    public FieldTemplateBuilder field( Component value )
+    public ComponentTemplateBuilder component( Component value )
     {
         this.component = value;
         return this;
     }
 
-    public FieldTemplateBuilder module( Module value )
+    public ComponentTemplateBuilder module( Module value )
     {
         this.module = value;
         return this;
@@ -33,8 +33,8 @@ public class FieldTemplateBuilder
         return componentTemplate;
     }
 
-    public static FieldTemplateBuilder newFieldTemplate()
+    public static ComponentTemplateBuilder newComponentTemplate()
     {
-        return new FieldTemplateBuilder();
+        return new ComponentTemplateBuilder();
     }
 }

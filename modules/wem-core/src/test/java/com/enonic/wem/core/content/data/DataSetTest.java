@@ -18,7 +18,7 @@ public class DataSetTest
     {
         FormItems formItems = new FormItems();
         FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).multiple( true ).build();
-        formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
         formItems.addFormItem( formItemSet );
 
         DataSet dataSet = new DataSet( new EntryPath() );
@@ -30,7 +30,7 @@ public class DataSetTest
         catch ( Exception e )
         {
             assertTrue( e instanceof IllegalArgumentException );
-            assertTrue( e.getMessage().startsWith( "No ConfigItem found at: unknown.eyeColour" ) );
+            assertTrue( e.getMessage().startsWith( "No FormItem found at: unknown.eyeColour" ) );
         }
     }
 
@@ -38,8 +38,8 @@ public class DataSetTest
     public void getValue_when_having_sub_type()
     {
         FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).multiple( false ).build();
-        formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        formItemSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
         FormItems formItems = new FormItems();
         formItems.addFormItem( formItemSet );
 
@@ -56,8 +56,8 @@ public class DataSetTest
     {
         FormItemSet personalia = FormItemSet.newBuilder().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
         FormItemSet crimes = FormItemSet.newBuilder().name( "crimes" ).multiple( true ).build();
-        crimes.addField( Component.newBuilder().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
-        crimes.addField( Component.newBuilder().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
+        crimes.addItem( Component.newBuilder().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
+        crimes.addItem( Component.newBuilder().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
         personalia.addFieldSet( crimes );
         FormItems formItems = new FormItems();
         formItems.addFormItem( personalia );
@@ -79,8 +79,8 @@ public class DataSetTest
     {
         FormItems formItems = new FormItems();
         FormItemSet formItemSet = FormItemSet.newBuilder().name( "persons" ).multiple( true ).build();
-        formItemSet.addField( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
-        formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
         formItems.addFormItem( formItemSet );
 
         DataSet dataSet = new DataSet( new EntryPath() );

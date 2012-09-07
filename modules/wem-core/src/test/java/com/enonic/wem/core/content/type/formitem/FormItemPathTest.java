@@ -15,7 +15,7 @@ public class FormItemPathTest
     }
 
     @Test
-    public void new_given_existing_configItemPath_and_name()
+    public void new_given_existing_formItemPath_and_name()
     {
         assertEquals( "car.model", new FormItemPath( new FormItemPath( "car" ), "model" ).toString() );
     }

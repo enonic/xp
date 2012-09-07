@@ -38,7 +38,7 @@ public class FormItemSet
         this.formItems.addFormItem( formItem );
     }
 
-    public void addField( final Component component )
+    public void addItem( final Component component )
     {
         Preconditions.checkState( getPath() != null, "Cannot add Field before this FieldSet is added" );
 
@@ -144,7 +144,7 @@ public class FormItemSet
         return new Builder();
     }
 
-    public static Builder newFieldSet()
+    public static Builder newFormItemTest()
     {
         return new Builder();
     }

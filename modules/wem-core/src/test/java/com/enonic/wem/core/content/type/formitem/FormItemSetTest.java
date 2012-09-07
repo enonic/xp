@@ -14,7 +14,7 @@ public class FormItemSetTest
     {
         // setup
         FormItemSet original = FormItemSet.newBuilder().name( "name" ).label( "Label" ).multiple( true ).build();
-        original.addField( Component.newBuilder().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() );
+        original.addItem( Component.newBuilder().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise
         FormItemSet copy = original.copy();
@@ -33,7 +33,7 @@ public class FormItemSetTest
     {
         // setup
         FormItemSet formItemSet = FormItemSet.newBuilder().name( "myFieldSet" ).label( "Label" ).multiple( true ).build();
-        formItemSet.addField( Component.newBuilder().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise
         DirectAccessibleFormItem field = formItemSet.getFormItem( new FormItemPath( "myField" ) );
@@ -46,10 +46,10 @@ public class FormItemSetTest
     public void setPath()
     {
         FormItemSet formItemSet = FormItemSet.newBuilder().name( "address" ).label( "Address" ).build();
-        formItemSet.addField( Component.newBuilder().name( "street" ).type( FieldTypes.TEXT_LINE ).build() );
-        formItemSet.addField( Component.newBuilder().name( "postalCode" ).type( FieldTypes.TEXT_LINE ).build() );
-        formItemSet.addField( Component.newBuilder().name( "postalPlace" ).type( FieldTypes.TEXT_LINE ).build() );
-        formItemSet.addField( Component.newBuilder().name( "country" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "street" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "postalCode" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "postalPlace" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "country" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise & verify
         formItemSet.setName( "homeAddress" );

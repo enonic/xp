@@ -150,7 +150,7 @@ public class Component
         return copy;
     }
 
-    public static Builder newField()
+    public static Builder newComponent()
     {
         return new Builder();
     }

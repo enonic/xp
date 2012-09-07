@@ -16,7 +16,7 @@ public class EntryPathTest
     }
 
     @Test
-    public void new_given_existing_configItemPath_and_name()
+    public void new_given_existing_formItemPath_and_name()
     {
         assertEquals( "car[0].model", new EntryPath( new EntryPath( "car[0]" ), "model" ).toString() );
     }
@@ -34,7 +34,7 @@ public class EntryPathTest
     }
 
     @Test
-    public void resolveConfigItemPath()
+    public void resolveFormItemPath()
     {
         assertEquals( "car", new EntryPath( "car[0]" ).resolveFormItemPath().toString() );
         assertEquals( "car.model", new EntryPath( "car[0].model" ).resolveFormItemPath().toString() );

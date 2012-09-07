@@ -6,7 +6,7 @@ import com.enonic.wem.core.content.type.formitem.FormItemSet
 import com.enonic.wem.core.content.type.formitem.VisualFieldSet
 import com.enonic.wem.core.content.type.formitem.fieldtype.FieldTypes
 
-import static com.enonic.wem.core.content.type.formitem.Component.newField
+import static com.enonic.wem.core.content.type.formitem.Component.newComponent
 
 class ContentSpecTest extends spock.lang.Specification
 {
@@ -14,7 +14,7 @@ class ContentSpecTest extends spock.lang.Specification
     {
         given:
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( newComponent().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
         Content content = new Content();
         content.setType( contentType );
 
@@ -29,8 +29,8 @@ class ContentSpecTest extends spock.lang.Specification
     {
         given:
         ContentType contentType = new ContentType();
-        FormItemSet fieldSet = FormItemSet.newFieldSet().name( "myFieldSet" ).required( true ).build();
-        fieldSet.addField( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( false ).build() )
+        FormItemSet fieldSet = FormItemSet.newFormItemTest().name( "myFieldSet" ).required( true ).build();
+        fieldSet.addItem( newComponent().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( false ).build() )
         contentType.addFormItem( fieldSet );
         Content content = new Content();
         content.setType( contentType );
@@ -46,8 +46,8 @@ class ContentSpecTest extends spock.lang.Specification
     {
         given:
         ContentType contentType = new ContentType();
-        FormItemSet fieldSet = FormItemSet.newFieldSet().name( "myFieldSet" ).required( true ).build();
-        fieldSet.addField( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() )
+        FormItemSet fieldSet = FormItemSet.newFormItemTest().name( "myFieldSet" ).required( true ).build();
+        fieldSet.addItem( newComponent().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() )
         contentType.addFormItem( fieldSet );
         Content content = new Content();
         content.setType( contentType );
@@ -64,8 +64,8 @@ class ContentSpecTest extends spock.lang.Specification
     {
         given:
         ContentType contentType = new ContentType();
-        FormItemSet fieldSet = FormItemSet.newFieldSet().name( "myFieldSet" ).required( false ).build();
-        fieldSet.addField( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() )
+        FormItemSet fieldSet = FormItemSet.newFormItemTest().name( "myFieldSet" ).required( false ).build();
+        fieldSet.addItem( newComponent().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() )
         contentType.addFormItem( fieldSet );
         Content content = new Content();
         content.setType( contentType );
@@ -82,8 +82,8 @@ class ContentSpecTest extends spock.lang.Specification
     {
         given:
         ContentType contentType = new ContentType();
-        FormItemSet fieldSet = FormItemSet.newFieldSet().name( "myFieldSet" ).required( false ).build();
-        fieldSet.addField( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() )
+        FormItemSet fieldSet = FormItemSet.newFormItemTest().name( "myFieldSet" ).required( false ).build();
+        fieldSet.addItem( newComponent().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() )
         contentType.addFormItem( fieldSet );
         Content content = new Content();
         content.setType( contentType );
@@ -100,7 +100,7 @@ class ContentSpecTest extends spock.lang.Specification
         given:
         ContentType contentType = new ContentType();
         VisualFieldSet visualFieldSet = VisualFieldSet.newVisualFieldSet().name( "myVisualFieldSet" ).label( "My VisualFieldSet" ).build();
-        visualFieldSet.addFormItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() )
+        visualFieldSet.addFormItem( newComponent().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() )
         contentType.addFormItem( visualFieldSet );
         Content content = new Content();
         content.setType( contentType );

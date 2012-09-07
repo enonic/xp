@@ -15,8 +15,8 @@ public class FormItemsTest
         FormItems formItems = new FormItems();
         FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).build();
         formItems.addFormItem( formItemSet );
-        formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        formItemSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise & verify
         DirectAccessibleFormItem personaliaConfig =
@@ -30,8 +30,8 @@ public class FormItemsTest
         FormItems formItems = new FormItems();
         FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).label( "Personalia" ).build();
         formItems.addFormItem( formItemSet );
-        formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        formItemSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise & verify
         DirectAccessibleFormItem personaliaEyeColourConfig = formItemSet.getFormItems().getDirectAccessibleFormItem( "eyeColour" );

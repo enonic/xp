@@ -13,7 +13,7 @@ import com.enonic.wem.core.content.data.EntryPath;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.formitem.fieldtype.FieldTypes;
 
-import static com.enonic.wem.core.content.type.formitem.Component.newField;
+import static com.enonic.wem.core.content.type.formitem.Component.newComponent;
 import static org.junit.Assert.*;
 
 public class ContentFormParserTest
@@ -22,13 +22,13 @@ public class ContentFormParserTest
     public void parse()
     {
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newField().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).build() );
-        contentType.addFormItem( newField().name( "myTextArea" ).type( FieldTypes.TEXT_AREA ).build() );
-        contentType.addFormItem( newField().name( "myXml" ).type( FieldTypes.XML ).build() );
-        contentType.addFormItem( newField().name( "myDate" ).type( FieldTypes.DATE ).build() );
-        contentType.addFormItem( newField().name( "myWholeNumber" ).type( FieldTypes.WHOLE_NUMBER ).build() );
-        contentType.addFormItem( newField().name( "myDecimalNumber" ).type( FieldTypes.DECIMAL_NUMBER ).build() );
-        contentType.addFormItem( newField().name( "myGeoLocation" ).type( FieldTypes.GEO_LOCATION ).build() );
+        contentType.addFormItem( newComponent().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newComponent().name( "myTextArea" ).type( FieldTypes.TEXT_AREA ).build() );
+        contentType.addFormItem( newComponent().name( "myXml" ).type( FieldTypes.XML ).build() );
+        contentType.addFormItem( newComponent().name( "myDate" ).type( FieldTypes.DATE ).build() );
+        contentType.addFormItem( newComponent().name( "myWholeNumber" ).type( FieldTypes.WHOLE_NUMBER ).build() );
+        contentType.addFormItem( newComponent().name( "myDecimalNumber" ).type( FieldTypes.DECIMAL_NUMBER ).build() );
+        contentType.addFormItem( newComponent().name( "myGeoLocation" ).type( FieldTypes.GEO_LOCATION ).build() );
 
         Map<String, String> submittedValues = new LinkedHashMap<String, String>();
         submittedValues.put( "myTextLine", "Text line" );

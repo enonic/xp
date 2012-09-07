@@ -13,9 +13,9 @@ import com.enonic.wem.core.content.type.formitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.content.type.formitem.fieldtype.RadioButtonsConfig;
 import com.enonic.wem.core.module.Module;
 
-import static com.enonic.wem.core.content.type.formitem.Component.newField;
+import static com.enonic.wem.core.content.type.formitem.Component.newComponent;
 import static com.enonic.wem.core.content.type.formitem.FormItemSet.newBuilder;
-import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFieldSet;
+import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemTest;
 import static com.enonic.wem.core.content.type.formitem.VisualFieldSet.newVisualFieldSet;
 import static org.junit.Assert.*;
 
@@ -116,8 +116,8 @@ public class ContentSerializerJsonTest
 
         FormItemSet formItemSet = newBuilder().name( "personalia" ).build();
         contentType.addFormItem( formItemSet );
-        formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        formItemSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -146,11 +146,11 @@ public class ContentSerializerJsonTest
         contentType.addFormItem( nameComponent );
         contentTypeFetcher.add( contentType );
 
-        FormItemSet formItemSet = newFieldSet().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
+        FormItemSet formItemSet = newFormItemTest().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
         contentType.addFormItem( formItemSet );
-        formItemSet.addField( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
-        formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        formItemSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -256,10 +256,10 @@ public class ContentSerializerJsonTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newComponent().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() );
         VisualFieldSet visualFieldSet = newVisualFieldSet().label( "Personalia" ).name( "personalia" ).add(
-            newField().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() ).add(
-            newField().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() ).build();
+            newComponent().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() ).add(
+            newComponent().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() ).build();
         contentType.addFormItem( visualFieldSet );
 
         Content content = new Content();

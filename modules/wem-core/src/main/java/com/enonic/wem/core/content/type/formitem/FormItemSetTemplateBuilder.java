@@ -30,7 +30,7 @@ public class FormItemSetTemplateBuilder
         return formItemSetTemplate;
     }
 
-    public static FormItemSetTemplateBuilder newFieldSetTemplate()
+    public static FormItemSetTemplateBuilder newFormItemSetTemplate()
     {
         return new FormItemSetTemplateBuilder();
     }
