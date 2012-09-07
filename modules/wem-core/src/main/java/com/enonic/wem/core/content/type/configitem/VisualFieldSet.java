@@ -13,11 +13,11 @@ public class VisualFieldSet
 {
     private String label;
 
-    private ConfigItems configItems = new ConfigItems();
+    private FormItems formItems = new FormItems();
 
     protected VisualFieldSet()
     {
-        super( ConfigItemType.VISUAL_FIELD_SET );
+        super( FormItemType.VISUAL_FIELD_SET );
     }
 
     public String getLabel()
@@ -28,7 +28,7 @@ public class VisualFieldSet
     @Override
     public Iterator<FormItem> iterator()
     {
-        return configItems.iterator();
+        return formItems.iterator();
     }
 
     @Override
@@ -36,7 +36,7 @@ public class VisualFieldSet
     {
         final VisualFieldSet copy = (VisualFieldSet) super.copy();
         copy.label = label;
-        copy.configItems = configItems.copy();
+        copy.formItems = formItems.copy();
         return copy;
     }
 
@@ -45,29 +45,29 @@ public class VisualFieldSet
         return new Builder();
     }
 
-    public void addConfigItem( final FormItem formItem )
+    public void addFormItem( final FormItem formItem )
     {
-        this.configItems.addConfigItem( formItem );
+        this.formItems.addFormItem( formItem );
     }
 
-    ConfigItems getConfigItems()
+    FormItems getFormItems()
     {
-        return configItems;
+        return formItems;
     }
 
-    public FormItem getConfigItem( final String name )
+    public FormItem getFormItem( final String name )
     {
-        return configItems.getConfigItem( name );
+        return formItems.getFormItem( name );
     }
 
-    void forwardSetPath( ConfigItemPath path )
+    void forwardSetPath( FormItemPath path )
     {
-        configItems.setPath( path );
+        formItems.setPath( path );
     }
 
-    public Iterable<FormItem> getConfigItemsIterable()
+    public Iterable<FormItem> getFormItemsIterable()
     {
-        return configItems.iterable();
+        return formItems.iterable();
     }
 
     public static class Builder
@@ -106,7 +106,7 @@ public class VisualFieldSet
             visualFieldSet.setName( this.name );
             for ( FormItem formItem : formItems )
             {
-                visualFieldSet.addConfigItem( formItem );
+                visualFieldSet.addFormItem( formItem );
             }
             return visualFieldSet;
         }

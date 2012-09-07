@@ -36,8 +36,8 @@ public class EntryPathTest
     @Test
     public void resolveConfigItemPath()
     {
-        assertEquals( "car", new EntryPath( "car[0]" ).resolveConfigItemPath().toString() );
-        assertEquals( "car.model", new EntryPath( "car[0].model" ).resolveConfigItemPath().toString() );
+        assertEquals( "car", new EntryPath( "car[0]" ).resolveFormItemPath().toString() );
+        assertEquals( "car.model", new EntryPath( "car[0].model" ).resolveFormItemPath().toString() );
     }
 
     @Test

@@ -19,7 +19,7 @@ import com.enonic.wem.core.content.type.configitem.fieldtype.RadioButtonsConfig;
 
 import static org.junit.Assert.*;
 
-public class ConfigItemSerializerJsonTest
+public class FormItemSerializerJsonTest
 {
     private final JsonFactory jsonFactory = JsonFactoryHolder.DEFAULT_FACTORY;
 
@@ -58,7 +58,7 @@ public class ConfigItemSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        FormItem formItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
+        FormItem formItem = new FormItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
         assertTrue( formItem instanceof Component );
@@ -91,7 +91,7 @@ public class ConfigItemSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        FormItem formItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
+        FormItem formItem = new FormItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
         assertTrue( formItem instanceof Component );
@@ -129,7 +129,7 @@ public class ConfigItemSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        FormItem formItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
+        FormItem formItem = new FormItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
         assertTrue( formItem instanceof Component );
@@ -170,7 +170,7 @@ public class ConfigItemSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        FormItem formItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
+        FormItem formItem = new FormItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
         assertTrue( formItem instanceof FormItemSet );
@@ -184,7 +184,7 @@ public class ConfigItemSerializerJsonTest
     private String fieldSetToJson( FormItemSet formItemSet )
         throws IOException
     {
-        new ConfigItemSerializerJson().generate( formItemSet, g );
+        new FormItemSerializerJson().generate( formItemSet, g );
         g.close();
         return sw.toString();
     }
@@ -192,7 +192,7 @@ public class ConfigItemSerializerJsonTest
     private String fieldToJson( Component component )
         throws IOException
     {
-        new ConfigItemSerializerJson().generate( component, g );
+        new FormItemSerializerJson().generate( component, g );
         g.close();
         return sw.toString();
     }

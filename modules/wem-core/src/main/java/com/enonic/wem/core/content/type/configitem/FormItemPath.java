@@ -10,38 +10,38 @@ import com.google.common.collect.Lists;
 /**
  * Immutable.
  */
-public class ConfigItemPath
+public class FormItemPath
 {
     private final static String ELEMENT_DIVIDER = ".";
 
     private List<String> elements;
 
-    public ConfigItemPath()
+    public FormItemPath()
     {
         elements = new ArrayList<String>();
     }
 
-    public ConfigItemPath( List<String> pathElements )
+    public FormItemPath( List<String> pathElements )
     {
         Preconditions.checkNotNull( pathElements );
         elements = pathElements;
     }
 
-    public ConfigItemPath( ConfigItemPath parentPath, String name )
+    public FormItemPath( FormItemPath parentPath, String name )
     {
         elements = new ArrayList<String>();
         elements.addAll( parentPath.elements );
         elements.add( name );
     }
 
-    public ConfigItemPath( final ConfigItemPath parentPath, final ConfigItemPath childPath )
+    public FormItemPath( final FormItemPath parentPath, final FormItemPath childPath )
     {
         elements = new ArrayList<String>();
         elements.addAll( parentPath.elements );
         elements.addAll( childPath.elements );
     }
 
-    public ConfigItemPath( String path )
+    public FormItemPath( String path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
 
@@ -63,7 +63,7 @@ public class ConfigItemPath
         return elements.size();
     }
 
-    public ConfigItemPath asNewWithoutFirstPathElement()
+    public FormItemPath asNewWithoutFirstPathElement()
     {
         List<String> pathElements = Lists.newArrayList();
         for ( int i = 0; i < elements.size(); i++ )
@@ -73,7 +73,7 @@ public class ConfigItemPath
                 pathElements.add( elements.get( i ) );
             }
         }
-        return new ConfigItemPath( pathElements );
+        return new FormItemPath( pathElements );
     }
 
     @Override
@@ -88,9 +88,9 @@ public class ConfigItemPath
             return false;
         }
 
-        final ConfigItemPath configItemPath = (ConfigItemPath) o;
+        final FormItemPath formItemPath = (FormItemPath) o;
 
-        return elements.equals( configItemPath.elements );
+        return elements.equals( formItemPath.elements );
     }
 
     @Override

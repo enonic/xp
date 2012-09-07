@@ -16,23 +16,23 @@ import static com.enonic.wem.core.content.type.configitem.FormItemSet.newFieldSe
 import static com.enonic.wem.core.content.type.configitem.TemplateReference.newTemplateReference;
 import static com.enonic.wem.core.content.type.configitem.VisualFieldSet.newVisualFieldSet;
 
-public class ConfigItemSerializerJson
+public class FormItemSerializerJson
 {
     private FieldTypeSerializerJson fieldTypeSerializer = new FieldTypeSerializerJson();
 
     private FieldTypeConfigSerializerJson fieldTypeConfigSerializer = new FieldTypeConfigSerializerJson();
 
-    private final ConfigItemsSerializerJson configItemsSerializerJson;
+    private final FormItemsSerializerJson formItemsSerializerJson;
 
 
-    public ConfigItemSerializerJson()
+    public FormItemSerializerJson()
     {
-        this.configItemsSerializerJson = new ConfigItemsSerializerJson();
+        this.formItemsSerializerJson = new FormItemsSerializerJson();
     }
 
-    public ConfigItemSerializerJson( final ConfigItemsSerializerJson configItemsSerializerJson )
+    public FormItemSerializerJson( final FormItemsSerializerJson formItemsSerializerJson )
     {
-        this.configItemsSerializerJson = configItemsSerializerJson;
+        this.formItemsSerializerJson = formItemsSerializerJson;
     }
 
     public void generate( FormItem formItem, JsonGenerator g )
@@ -60,7 +60,7 @@ public class ConfigItemSerializerJson
         throws IOException
     {
         g.writeStartObject();
-        g.writeStringField( "configItemType", component.getConfigItemType().toString() );
+        g.writeStringField( "formItemType", component.getFormItemType().toString() );
         g.writeStringField( "path", component.getPath().toString() );
         g.writeStringField( "name", component.getName() );
         fieldTypeSerializer.generate( component.getFieldType(), g );
@@ -85,7 +85,7 @@ public class ConfigItemSerializerJson
         throws IOException
     {
         g.writeStartObject();
-        g.writeStringField( "configItemType", formItemSet.getConfigItemType().toString() );
+        g.writeStringField( "formItemType", formItemSet.getFormItemType().toString() );
         g.writeStringField( "path", formItemSet.getPath().toString() );
         g.writeStringField( "name", formItemSet.getName() );
         g.writeStringField( "label", formItemSet.getLabel() );
@@ -94,7 +94,7 @@ public class ConfigItemSerializerJson
         OccurrencesSerializerJson.generate( formItemSet.getOccurrences(), g );
         g.writeStringField( "customText", formItemSet.getCustomText() );
         g.writeStringField( "helpText", formItemSet.getHelpText() );
-        configItemsSerializerJson.generate( formItemSet.getConfigItems(), g );
+        formItemsSerializerJson.generate( formItemSet.getFormItems(), g );
 
         g.writeEndObject();
     }
@@ -103,10 +103,10 @@ public class ConfigItemSerializerJson
         throws IOException
     {
         g.writeStartObject();
-        g.writeStringField( "configItemType", visualFieldSet.getConfigItemType().toString() );
+        g.writeStringField( "formItemType", visualFieldSet.getFormItemType().toString() );
         g.writeStringField( "label", visualFieldSet.getLabel() );
         g.writeStringField( "name", visualFieldSet.getName() );
-        configItemsSerializerJson.generate( visualFieldSet.getConfigItems(), g );
+        formItemsSerializerJson.generate( visualFieldSet.getFormItems(), g );
 
         g.writeEndObject();
     }
@@ -115,7 +115,7 @@ public class ConfigItemSerializerJson
         throws IOException
     {
         g.writeStartObject();
-        g.writeStringField( "configItemType", templateReference.getConfigItemType().toString() );
+        g.writeStringField( "formItemType", templateReference.getFormItemType().toString() );
         g.writeStringField( "path", templateReference.getPath().toString() );
         g.writeStringField( "name", templateReference.getName() );
         g.writeStringField( "reference", templateReference.getTemplateQualifiedName().toString() );
@@ -123,78 +123,78 @@ public class ConfigItemSerializerJson
         g.writeEndObject();
     }
 
-    public FormItem parse( final JsonNode configItemNode )
+    public FormItem parse( final JsonNode formItemNode )
     {
-        ConfigItemType configItemType = ConfigItemType.valueOf( JsonParserUtil.getStringValue( "configItemType", configItemNode ) );
+        FormItemType formItemType = FormItemType.valueOf( JsonParserUtil.getStringValue( "formItemType", formItemNode ) );
 
         FormItem formItem;
 
-        if ( configItemType == ConfigItemType.FIELD )
+        if ( formItemType == FormItemType.FIELD )
         {
-            formItem = parseField( configItemNode );
+            formItem = parseField( formItemNode );
         }
-        else if ( configItemType == ConfigItemType.FIELD_SET )
+        else if ( formItemType == FormItemType.FIELD_SET )
         {
-            formItem = parseFieldSet( configItemNode );
+            formItem = parseFieldSet( formItemNode );
         }
-        else if ( configItemType == ConfigItemType.VISUAL_FIELD_SET )
+        else if ( formItemType == FormItemType.VISUAL_FIELD_SET )
         {
-            formItem = parseVisualFieldSet( configItemNode );
+            formItem = parseVisualFieldSet( formItemNode );
         }
-        else if ( configItemType == ConfigItemType.REFERENCE )
+        else if ( formItemType == FormItemType.REFERENCE )
         {
-            formItem = parseTemplateReference( configItemNode );
+            formItem = parseTemplateReference( formItemNode );
         }
         else
         {
-            throw new JsonParsingException( "Unknown ConfigItemType: " + configItemType );
+            throw new JsonParsingException( "Unknown FormItemType: " + formItemType );
         }
 
         if ( formItem instanceof DirectAccessibleFormItem )
         {
-            applyPath( configItemNode, (DirectAccessibleFormItem) formItem );
+            applyPath( formItemNode, (DirectAccessibleFormItem) formItem );
         }
         return formItem;
     }
 
-    private void applyPath( final JsonNode configItemNode, final DirectAccessibleFormItem configItem )
+    private void applyPath( final JsonNode formItemNode, final DirectAccessibleFormItem formItem )
     {
-        if ( configItem.getConfigItemType() != ConfigItemType.VISUAL_FIELD_SET )
+        if ( formItem.getFormItemType() != FormItemType.VISUAL_FIELD_SET )
         {
-            configItem.setPath( new ConfigItemPath( JsonParserUtil.getStringValue( "path", configItemNode ) ) );
+            formItem.setPath( new FormItemPath( JsonParserUtil.getStringValue( "path", formItemNode ) ) );
         }
     }
 
-    private DirectAccessibleFormItem parseField( final JsonNode configItemNode )
+    private DirectAccessibleFormItem parseField( final JsonNode formItemNode )
     {
         final Component.Builder builder = Component.newBuilder();
-        builder.name( JsonParserUtil.getStringValue( "name", configItemNode ) );
-        builder.label( JsonParserUtil.getStringValue( "label", configItemNode, null ) );
-        builder.immutable( JsonParserUtil.getBooleanValue( "immutable", configItemNode ) );
-        builder.helpText( JsonParserUtil.getStringValue( "helpText", configItemNode ) );
-        builder.customText( JsonParserUtil.getStringValue( "customText", configItemNode ) );
+        builder.name( JsonParserUtil.getStringValue( "name", formItemNode ) );
+        builder.label( JsonParserUtil.getStringValue( "label", formItemNode, null ) );
+        builder.immutable( JsonParserUtil.getBooleanValue( "immutable", formItemNode ) );
+        builder.helpText( JsonParserUtil.getStringValue( "helpText", formItemNode ) );
+        builder.customText( JsonParserUtil.getStringValue( "customText", formItemNode ) );
 
-        parseOccurrences( builder, configItemNode.get( "occurrences" ) );
-        parseFieldType( builder, configItemNode.get( "fieldType" ) );
-        parseFieldTypeConfig( builder, configItemNode.get( "fieldTypeConfig" ) );
+        parseOccurrences( builder, formItemNode.get( "occurrences" ) );
+        parseFieldType( builder, formItemNode.get( "fieldType" ) );
+        parseFieldTypeConfig( builder, formItemNode.get( "fieldTypeConfig" ) );
 
         return builder.build();
     }
 
-    private DirectAccessibleFormItem parseFieldSet( final JsonNode configItemNode )
+    private DirectAccessibleFormItem parseFieldSet( final JsonNode formItemNode )
     {
         final FormItemSet.Builder builder = newFieldSet();
-        builder.name( JsonParserUtil.getStringValue( "name", configItemNode ) );
-        builder.label( JsonParserUtil.getStringValue( "label", configItemNode, null ) );
-        builder.immutable( JsonParserUtil.getBooleanValue( "immutable", configItemNode ) );
-        builder.immutable( JsonParserUtil.getBooleanValue( "immutable", configItemNode ) );
-        builder.helpText( JsonParserUtil.getStringValue( "helpText", configItemNode ) );
-        builder.customText( JsonParserUtil.getStringValue( "customText", configItemNode ) );
+        builder.name( JsonParserUtil.getStringValue( "name", formItemNode ) );
+        builder.label( JsonParserUtil.getStringValue( "label", formItemNode, null ) );
+        builder.immutable( JsonParserUtil.getBooleanValue( "immutable", formItemNode ) );
+        builder.immutable( JsonParserUtil.getBooleanValue( "immutable", formItemNode ) );
+        builder.helpText( JsonParserUtil.getStringValue( "helpText", formItemNode ) );
+        builder.customText( JsonParserUtil.getStringValue( "customText", formItemNode ) );
 
-        parseOccurrences( builder, configItemNode.get( "occurrences" ) );
+        parseOccurrences( builder, formItemNode.get( "occurrences" ) );
 
-        final ConfigItems configItems = configItemsSerializerJson.parse( configItemNode.get( "items" ) );
-        for ( FormItem formItem : configItems.iterable() )
+        final FormItems formItems = formItemsSerializerJson.parse( formItemNode.get( "items" ) );
+        for ( FormItem formItem : formItems.iterable() )
         {
             builder.add( formItem );
         }
@@ -202,14 +202,14 @@ public class ConfigItemSerializerJson
         return builder.build();
     }
 
-    private FormItem parseVisualFieldSet( final JsonNode configItemNode )
+    private FormItem parseVisualFieldSet( final JsonNode formItemNode )
     {
         final VisualFieldSet.Builder builder = newVisualFieldSet();
-        builder.label( JsonParserUtil.getStringValue( "label", configItemNode, null ) );
-        builder.name( JsonParserUtil.getStringValue( "name", configItemNode, null ) );
+        builder.label( JsonParserUtil.getStringValue( "label", formItemNode, null ) );
+        builder.name( JsonParserUtil.getStringValue( "name", formItemNode, null ) );
 
-        final ConfigItems configItems = configItemsSerializerJson.parse( configItemNode.get( "items" ) );
-        for ( FormItem formItem : configItems.iterable() )
+        final FormItems formItems = formItemsSerializerJson.parse( formItemNode.get( "items" ) );
+        for ( FormItem formItem : formItems.iterable() )
         {
             builder.add( formItem );
         }
@@ -217,12 +217,12 @@ public class ConfigItemSerializerJson
         return builder.build();
     }
 
-    private DirectAccessibleFormItem parseTemplateReference( final JsonNode configItemNode )
+    private DirectAccessibleFormItem parseTemplateReference( final JsonNode formItemNode )
     {
         final TemplateReference.Builder builder = newTemplateReference();
-        builder.name( JsonParserUtil.getStringValue( "name", configItemNode ) );
-        builder.template( new TemplateQualifiedName( JsonParserUtil.getStringValue( "reference", configItemNode ) ) );
-        builder.type( TemplateType.valueOf( JsonParserUtil.getStringValue( "templateType", configItemNode ) ) );
+        builder.name( JsonParserUtil.getStringValue( "name", formItemNode ) );
+        builder.template( new TemplateQualifiedName( JsonParserUtil.getStringValue( "reference", formItemNode ) ) );
+        builder.type( TemplateType.valueOf( JsonParserUtil.getStringValue( "templateType", formItemNode ) ) );
         return builder.build();
     }
 

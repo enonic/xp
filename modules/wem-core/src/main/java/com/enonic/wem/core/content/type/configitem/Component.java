@@ -32,7 +32,7 @@ public class Component
 
     protected Component()
     {
-        super( ConfigItemType.FIELD );
+        super( FormItemType.FIELD );
     }
 
     public FieldType getFieldType()
@@ -281,7 +281,7 @@ public class Component
                                              component.getFieldTypeConfig().getClass().getName() );
             }
 
-            component.setPath( new ConfigItemPath( component.getName() ) );
+            component.setPath( new FormItemPath( component.getName() ) );
             return component;
         }
     }

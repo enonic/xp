@@ -5,14 +5,14 @@ import org.elasticsearch.common.base.Preconditions;
 public abstract class DirectAccessibleFormItem
     extends FormItem
 {
-    private ConfigItemPath path;
+    private FormItemPath path;
 
-    protected DirectAccessibleFormItem( final ConfigItemType type )
+    protected DirectAccessibleFormItem( final FormItemType type )
     {
         super( type );
     }
 
-    void setPath( final ConfigItemPath path )
+    void setPath( final FormItemPath path )
     {
         Preconditions.checkNotNull( path, "Given path is null" );
         Preconditions.checkArgument( getName().equals( path.getLastElement() ),
@@ -20,7 +20,7 @@ public abstract class DirectAccessibleFormItem
         this.path = path;
     }
 
-    void setParentPath( final ConfigItemPath parentPath )
+    void setParentPath( final FormItemPath parentPath )
     {
         Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
 
@@ -29,28 +29,28 @@ public abstract class DirectAccessibleFormItem
             throw new IllegalStateException( "Cannot set parent path unless there is already an existing path" );
         }
 
-        this.path = new ConfigItemPath( parentPath, this.path.getLastElement() );
+        this.path = new FormItemPath( parentPath, this.path.getLastElement() );
     }
 
-    public final ConfigItemPath getPath()
+    public final FormItemPath getPath()
     {
         return path;
     }
 
     public DirectAccessibleFormItem copy()
     {
-        final DirectAccessibleFormItem configItem = (DirectAccessibleFormItem) super.copy();
-        configItem.path = path;
-        return configItem;
+        final DirectAccessibleFormItem formItem = (DirectAccessibleFormItem) super.copy();
+        formItem.path = path;
+        return formItem;
     }
 
     @Override
     public String toString()
     {
-        ConfigItemPath configItemPath = getPath();
-        if ( configItemPath != null )
+        FormItemPath formItemPath = getPath();
+        if ( formItemPath != null )
         {
-            return configItemPath.toString();
+            return formItemPath.toString();
         }
         else
         {

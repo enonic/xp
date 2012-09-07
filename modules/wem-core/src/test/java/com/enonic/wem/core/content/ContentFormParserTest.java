@@ -22,13 +22,13 @@ public class ContentFormParserTest
     public void parse()
     {
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newField().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).build() );
-        contentType.addConfigItem( newField().name( "myTextArea" ).type( FieldTypes.TEXT_AREA ).build() );
-        contentType.addConfigItem( newField().name( "myXml" ).type( FieldTypes.XML ).build() );
-        contentType.addConfigItem( newField().name( "myDate" ).type( FieldTypes.DATE ).build() );
-        contentType.addConfigItem( newField().name( "myWholeNumber" ).type( FieldTypes.WHOLE_NUMBER ).build() );
-        contentType.addConfigItem( newField().name( "myDecimalNumber" ).type( FieldTypes.DECIMAL_NUMBER ).build() );
-        contentType.addConfigItem( newField().name( "myGeoLocation" ).type( FieldTypes.GEO_LOCATION ).build() );
+        contentType.addFormItem( newField().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newField().name( "myTextArea" ).type( FieldTypes.TEXT_AREA ).build() );
+        contentType.addFormItem( newField().name( "myXml" ).type( FieldTypes.XML ).build() );
+        contentType.addFormItem( newField().name( "myDate" ).type( FieldTypes.DATE ).build() );
+        contentType.addFormItem( newField().name( "myWholeNumber" ).type( FieldTypes.WHOLE_NUMBER ).build() );
+        contentType.addFormItem( newField().name( "myDecimalNumber" ).type( FieldTypes.DECIMAL_NUMBER ).build() );
+        contentType.addFormItem( newField().name( "myGeoLocation" ).type( FieldTypes.GEO_LOCATION ).build() );
 
         Map<String, String> submittedValues = new LinkedHashMap<String, String>();
         submittedValues.put( "myTextLine", "Text line" );

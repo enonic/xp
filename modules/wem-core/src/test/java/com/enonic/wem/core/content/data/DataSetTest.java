@@ -5,8 +5,8 @@ import org.junit.Test;
 
 import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.configitem.Component;
-import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.FormItemSet;
+import com.enonic.wem.core.content.type.configitem.FormItems;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 
 import static org.junit.Assert.*;
@@ -16,10 +16,10 @@ public class DataSetTest
     @Test
     public void setValue_when_given_path_does_not_exists()
     {
-        ConfigItems configItems = new ConfigItems();
+        FormItems formItems = new FormItems();
         FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).multiple( true ).build();
         formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        configItems.addConfigItem( formItemSet );
+        formItems.addFormItem( formItemSet );
 
         DataSet dataSet = new DataSet( new EntryPath() );
 
@@ -40,8 +40,8 @@ public class DataSetTest
         FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).multiple( false ).build();
         formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
         formItemSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        ConfigItems configItems = new ConfigItems();
-        configItems.addConfigItem( formItemSet );
+        FormItems formItems = new FormItems();
+        formItems.addFormItem( formItemSet );
 
         DataSet dataSet = new DataSet( new EntryPath() );
         dataSet.setData( new EntryPath( "personalia.eyeColour" ), "Brown", DataTypes.STRING );
@@ -59,8 +59,8 @@ public class DataSetTest
         crimes.addField( Component.newBuilder().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
         crimes.addField( Component.newBuilder().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
         personalia.addFieldSet( crimes );
-        ConfigItems configItems = new ConfigItems();
-        configItems.addConfigItem( personalia );
+        FormItems formItems = new FormItems();
+        formItems.addFormItem( personalia );
 
         DataSet dataSet = new DataSet( new EntryPath() );
         dataSet.setData( new EntryPath( "personalia.crimes[0].description" ), "Stole purse from old lady.", DataTypes.STRING );
@@ -77,11 +77,11 @@ public class DataSetTest
     @Test
     public void getValue_when_having_multiple_sub_type()
     {
-        ConfigItems configItems = new ConfigItems();
+        FormItems formItems = new FormItems();
         FormItemSet formItemSet = FormItemSet.newBuilder().name( "persons" ).multiple( true ).build();
         formItemSet.addField( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
         formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        configItems.addConfigItem( formItemSet );
+        formItems.addFormItem( formItemSet );
 
         DataSet dataSet = new DataSet( new EntryPath() );
         dataSet.setData( new EntryPath( "persons[0].name" ), "Arn", DataTypes.STRING );

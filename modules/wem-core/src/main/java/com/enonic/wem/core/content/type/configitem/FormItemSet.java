@@ -11,7 +11,7 @@ public class FormItemSet
 {
     private String label;
 
-    private ConfigItems configItems = new ConfigItems();
+    private FormItems formItems = new FormItems();
 
     private boolean immutable;
 
@@ -23,35 +23,35 @@ public class FormItemSet
 
     protected FormItemSet()
     {
-        super( ConfigItemType.FIELD_SET );
+        super( FormItemType.FIELD_SET );
     }
 
     @Override
-    void setPath( final ConfigItemPath configItemPath )
+    void setPath( final FormItemPath formItemPath )
     {
-        super.setPath( configItemPath );
-        configItems.setPath( configItemPath );
+        super.setPath( formItemPath );
+        formItems.setPath( formItemPath );
     }
 
-    public void addConfigItem( final FormItem formItem )
+    public void addFormItem( final FormItem formItem )
     {
-        this.configItems.addConfigItem( formItem );
+        this.formItems.addFormItem( formItem );
     }
 
     public void addField( final Component component )
     {
         Preconditions.checkState( getPath() != null, "Cannot add Field before this FieldSet is added" );
 
-        component.setPath( new ConfigItemPath( getPath(), component.getName() ) );
-        this.configItems.addConfigItem( component );
+        component.setPath( new FormItemPath( getPath(), component.getName() ) );
+        this.formItems.addFormItem( component );
     }
 
     public void addFieldSet( final FormItemSet formItemSet )
     {
         Preconditions.checkState( getPath() != null, "Cannot add FieldSet before this FieldSet is added" );
 
-        formItemSet.setPath( new ConfigItemPath( getPath(), formItemSet.getName() ) );
-        this.configItems.addConfigItem( formItemSet );
+        formItemSet.setPath( new FormItemPath( getPath(), formItemSet.getName() ) );
+        this.formItems.addFormItem( formItemSet );
     }
 
     public String getLabel()
@@ -89,18 +89,18 @@ public class FormItemSet
         return helpText;
     }
 
-    public ConfigItems getConfigItems()
+    public FormItems getFormItems()
     {
-        return configItems;
+        return formItems;
     }
 
     @Override
-    void setParentPath( final ConfigItemPath parentPath )
+    void setParentPath( final FormItemPath parentPath )
     {
         super.setParentPath( parentPath );
-        for ( DirectAccessibleFormItem configItem : configItems.iterableForDirectAccessConfigItems() )
+        for ( DirectAccessibleFormItem formItem : formItems.iterableForDirectAccessFormItems() )
         {
-            configItem.setParentPath( this.getPath() );
+            formItem.setParentPath( this.getPath() );
         }
     }
 
@@ -108,10 +108,10 @@ public class FormItemSet
     public String toString()
     {
         StringBuilder s = new StringBuilder();
-        ConfigItemPath configItemPath = getPath();
-        if ( configItemPath != null )
+        FormItemPath formItemPath = getPath();
+        if ( formItemPath != null )
         {
-            s.append( configItemPath.toString() );
+            s.append( formItemPath.toString() );
         }
         else
         {
@@ -135,7 +135,7 @@ public class FormItemSet
         copy.occurrences.setMaxOccurences( occurrences.getMaximum() );
         copy.customText = customText;
         copy.helpText = helpText;
-        copy.configItems = configItems.copy();
+        copy.formItems = formItems.copy();
         return copy;
     }
 
@@ -149,9 +149,9 @@ public class FormItemSet
         return new Builder();
     }
 
-    public DirectAccessibleFormItem getConfigItem( final ConfigItemPath configItemPath )
+    public DirectAccessibleFormItem getFormItem( final FormItemPath formItemPath )
     {
-        return configItems.getConfigItem( configItemPath );
+        return formItems.getFormItem( formItemPath );
     }
 
     public static class Builder
@@ -261,11 +261,11 @@ public class FormItemSet
             formItemSet.helpText = helpText;
             for ( FormItem formItem : formItems )
             {
-                formItemSet.addConfigItem( formItem );
+                formItemSet.addFormItem( formItem );
             }
 
             Preconditions.checkNotNull( formItemSet.getName(), "a name for the FieldSet is required" );
-            formItemSet.setPath( new ConfigItemPath( formItemSet.getName() ) );
+            formItemSet.setPath( new FormItemPath( formItemSet.getName() ) );
             return formItemSet;
         }
     }

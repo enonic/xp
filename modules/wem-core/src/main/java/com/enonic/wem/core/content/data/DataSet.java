@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.datatype.DataType;
-import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
+import com.enonic.wem.core.content.type.configitem.FormItemPath;
 
 public class DataSet
     extends Entry
@@ -181,14 +181,14 @@ public class DataSet
     }
 
 
-    public boolean hasDataAtPath( ConfigItemPath path )
+    public boolean hasDataAtPath( FormItemPath path )
     {
         for ( Entry entry : entries.values() )
         {
             if ( entry instanceof Data )
             {
                 Data data = (Data) entry;
-                if ( data.getPath().resolveConfigItemPath().equals( path ) )
+                if ( data.getPath().resolveFormItemPath().equals( path ) )
                 {
                     return true;
                 }

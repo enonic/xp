@@ -24,8 +24,8 @@ public class FormItemSetTest
         assertEquals( "name", copy.getName() );
         assertSame( original.getName(), copy.getName() );
         assertSame( original.getLabel(), copy.getLabel() );
-        assertNotSame( original.getConfigItems(), copy.getConfigItems() );
-        assertNotSame( original.getConfigItem( new ConfigItemPath( "myField" ) ), copy.getConfigItem( new ConfigItemPath( "myField" ) ) );
+        assertNotSame( original.getFormItems(), copy.getFormItems() );
+        assertNotSame( original.getFormItem( new FormItemPath( "myField" ) ), copy.getFormItem( new FormItemPath( "myField" ) ) );
     }
 
     @Test
@@ -36,7 +36,7 @@ public class FormItemSetTest
         formItemSet.addField( Component.newBuilder().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise
-        DirectAccessibleFormItem field = formItemSet.getConfigItem( new ConfigItemPath( "myField" ) );
+        DirectAccessibleFormItem field = formItemSet.getFormItem( new FormItemPath( "myField" ) );
 
         // verify
         assertEquals( "myFieldSet.myField", field.getPath().toString() );
@@ -53,12 +53,12 @@ public class FormItemSetTest
 
         // exercise & verify
         formItemSet.setName( "homeAddress" );
-        formItemSet.setPath( new ConfigItemPath( "homeAddress" ) );
+        formItemSet.setPath( new FormItemPath( "homeAddress" ) );
 
         // verify
-        assertEquals( "homeAddress.street", formItemSet.getConfigItem( new ConfigItemPath( "street" ) ).getPath().toString() );
-        assertEquals( "homeAddress.postalCode", formItemSet.getConfigItem( new ConfigItemPath( "postalCode" ) ).getPath().toString() );
-        assertEquals( "homeAddress.postalPlace", formItemSet.getConfigItem( new ConfigItemPath( "postalPlace" ) ).getPath().toString() );
-        assertEquals( "homeAddress.country", formItemSet.getConfigItem( new ConfigItemPath( "country" ) ).getPath().toString() );
+        assertEquals( "homeAddress.street", formItemSet.getFormItem( new FormItemPath( "street" ) ).getPath().toString() );
+        assertEquals( "homeAddress.postalCode", formItemSet.getFormItem( new FormItemPath( "postalCode" ) ).getPath().toString() );
+        assertEquals( "homeAddress.postalPlace", formItemSet.getFormItem( new FormItemPath( "postalPlace" ) ).getPath().toString() );
+        assertEquals( "homeAddress.country", formItemSet.getFormItem( new FormItemPath( "country" ) ).getPath().toString() );
     }
 }

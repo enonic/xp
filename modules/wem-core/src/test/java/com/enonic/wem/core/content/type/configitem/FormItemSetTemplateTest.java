@@ -34,7 +34,7 @@ public class FormItemSetTemplateTest
 
         try
         {
-            personTemplate.addConfigItem( newTemplateReference( addressTemplate ).name( "address" ).build() );
+            personTemplate.addFormItem( newTemplateReference( addressTemplate ).name( "address" ).build() );
         }
         catch ( Exception e )
         {

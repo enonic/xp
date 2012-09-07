@@ -7,14 +7,14 @@ public abstract class FormItem
 {
     private String name;
 
-    private ConfigItemType itemType;
+    private FormItemType itemType;
 
-    FormItem( final ConfigItemType itemType )
+    FormItem( final FormItemType itemType )
     {
         this.itemType = itemType;
     }
 
-    public ConfigItemType getConfigItemType()
+    public FormItemType getFormItemType()
     {
         return itemType;
     }
@@ -41,11 +41,11 @@ public abstract class FormItem
         }
         catch ( InstantiationException e )
         {
-            throw new RuntimeException( "Failed to copy ConfigItem", e );
+            throw new RuntimeException( "Failed to copy FormItem", e );
         }
         catch ( IllegalAccessException e )
         {
-            throw new RuntimeException( "Failed to copy ConfigItem", e );
+            throw new RuntimeException( "Failed to copy FormItem", e );
         }
     }
 

@@ -4,10 +4,10 @@ package com.enonic.wem.core.content.type;
 import org.elasticsearch.common.base.Preconditions;
 
 import com.enonic.wem.core.content.type.configitem.Component;
-import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
-import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.FormItem;
+import com.enonic.wem.core.content.type.configitem.FormItemPath;
 import com.enonic.wem.core.content.type.configitem.FormItemSet;
+import com.enonic.wem.core.content.type.configitem.FormItems;
 import com.enonic.wem.core.content.type.configitem.TemplateFetcher;
 import com.enonic.wem.core.module.Module;
 
@@ -25,11 +25,11 @@ public class ContentType
 
     private ComputedDisplayName computedDisplayName;
 
-    private ConfigItems configItems = new ConfigItems();
+    private FormItems formItems = new FormItems();
 
     public ContentType()
     {
-        configItems = new ConfigItems();
+        formItems = new FormItems();
     }
 
     public String getName()
@@ -97,24 +97,24 @@ public class ContentType
         this.computedDisplayName = computedDisplayName;
     }
 
-    public void setConfigItems( final ConfigItems configItems )
+    public void setFormItems( final FormItems formItems )
     {
-        this.configItems = configItems;
+        this.formItems = formItems;
     }
 
-    public ConfigItems getConfigItems()
+    public FormItems getFormItems()
     {
-        return configItems;
+        return formItems;
     }
 
-    public void addConfigItem( final FormItem formItem )
+    public void addFormItem( final FormItem formItem )
     {
-        this.configItems.addConfigItem( formItem );
+        this.formItems.addFormItem( formItem );
     }
 
-    Component getField( final ConfigItemPath path )
+    Component getField( final FormItemPath path )
     {
-        final Component component = configItems.getField( path );
+        final Component component = formItems.getField( path );
         if ( component == null )
         {
             return null;
@@ -127,21 +127,21 @@ public class ContentType
 
     public Component getField( final String path )
     {
-        return getField( new ConfigItemPath( path ) );
+        return getField( new FormItemPath( path ) );
     }
 
     public FormItemSet getFieldSet( final String path )
     {
-        final ConfigItemPath configItemPath = new ConfigItemPath( path );
-        final FormItemSet formItemSet = configItems.getFieldSet( configItemPath );
-        Preconditions.checkState( formItemSet.getPath().equals( configItemPath ),
-                                  "Found FieldSet at path [%s] have unexpected path: " + formItemSet.getPath(), configItemPath );
+        final FormItemPath formItemPath = new FormItemPath( path );
+        final FormItemSet formItemSet = formItems.getFormItemSet( formItemPath );
+        Preconditions.checkState( formItemSet.getPath().equals( formItemPath ),
+                                  "Found FieldSet at path [%s] have unexpected path: " + formItemSet.getPath(), formItemPath );
         return formItemSet;
     }
 
-    public void templateReferencesToConfigItems( final TemplateFetcher templateFetcher )
+    public void templateReferencesToFormItems( final TemplateFetcher templateFetcher )
     {
-        configItems.templateReferencesToConfigItems( templateFetcher );
+        formItems.templateReferencesToFormItems( templateFetcher );
     }
 
 }

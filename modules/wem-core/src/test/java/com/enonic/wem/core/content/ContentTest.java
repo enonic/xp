@@ -39,7 +39,7 @@ public class ContentTest
         DropdownConfig dropdownConfig = DropdownConfig.newBuilder().addOption( "Option 1", "o1" ).addOption( "Option 2", "o2" ).build();
         Component myDropdown =
             Component.newBuilder().name( "myDropdown" ).type( FieldTypes.DROPDOWN ).fieldTypeConfig( dropdownConfig ).build();
-        contentType.addConfigItem( myDropdown );
+        contentType.addFormItem( myDropdown );
 
         Content content = new Content();
         content.setType( contentType );
@@ -54,7 +54,7 @@ public class ContentTest
         ContentType contentType = new ContentType();
         RadioButtonsConfig myRadioButtonsConfig =
             RadioButtonsConfig.newBuilder().addOption( "myFirstChoice", "c1" ).addOption( "mySecondChoice", "c2" ).build();
-        contentType.addConfigItem( Component.newBuilder().name( "myRadioButtons" ).type( FieldTypes.RADIO_BUTTONS ).fieldTypeConfig(
+        contentType.addFormItem( Component.newBuilder().name( "myRadioButtons" ).type( FieldTypes.RADIO_BUTTONS ).fieldTypeConfig(
             myRadioButtonsConfig ).build() );
 
         Content content = new Content();
@@ -68,8 +68,8 @@ public class ContentTest
     public void multiple_textlines()
     {
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( Component.newBuilder().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).build() );
-        contentType.addConfigItem(
+        contentType.addFormItem( Component.newBuilder().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.addFormItem(
             Component.newBuilder().name( "myMultipleTextLine" ).type( FieldTypes.TEXT_LINE ).multiple( true ).build() );
 
         Content content = new Content();
@@ -87,7 +87,7 @@ public class ContentTest
     public void tags()
     {
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( Component.newBuilder().name( "myTags" ).type( FieldTypes.TAGS ).build() );
+        contentType.addFormItem( Component.newBuilder().name( "myTags" ).type( FieldTypes.TAGS ).build() );
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
         Content content = new Content();
@@ -107,9 +107,9 @@ public class ContentTest
         templateFetcher.add( componentTemplate );
 
         ContentType contentType = new ContentType();
-        contentType.addConfigItem(
+        contentType.addFormItem(
             TemplateReference.newTemplateReference().name( "myTags" ).template( "system:tags" ).type( TemplateType.FIELD ).build() );
-        contentType.templateReferencesToConfigItems( templateFetcher );
+        contentType.templateReferencesToFormItems( templateFetcher );
 
         Content content = new Content();
         content.setType( contentType );
@@ -124,7 +124,7 @@ public class ContentTest
     public void phone()
     {
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( Component.newBuilder().name( "myPhone" ).type( FieldTypes.PHONE ).required( true ).build() );
+        contentType.addFormItem( Component.newBuilder().name( "myPhone" ).type( FieldTypes.PHONE ).required( true ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -137,10 +137,10 @@ public class ContentTest
     public void groupedFieldSet()
     {
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
 
         FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).build();
-        contentType.addConfigItem( formItemSet );
+        contentType.addFormItem( formItemSet );
         formItemSet.addField( newField().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
         formItemSet.addField( newField().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
@@ -160,10 +160,10 @@ public class ContentTest
     {
         ContentType contentType = new ContentType();
         Component nameComponent = Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).required( true ).build();
-        contentType.addConfigItem( nameComponent );
+        contentType.addFormItem( nameComponent );
 
         FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).multiple( true ).build();
-        contentType.addConfigItem( formItemSet );
+        contentType.addFormItem( formItemSet );
         formItemSet.addField( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
         formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
         formItemSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
@@ -250,7 +250,7 @@ public class ContentTest
         features.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
         child.addFieldSet( features );
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( child );
+        contentType.addFormItem( child );
 
         Content content = new Content();
         content.setType( contentType );
@@ -307,12 +307,12 @@ public class ContentTest
 
         // exercise
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
-        contentType.addConfigItem( FormItemSet.newBuilder().name( "personalia" ).multiple( false ).build() );
+        contentType.addFormItem( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( FormItemSet.newBuilder().name( "personalia" ).multiple( false ).build() );
         contentType.getFieldSet( "personalia" ).addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
         contentType.getFieldSet( "personalia" ).addField(
             Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        contentType.addConfigItem( FormItemSet.newBuilder().name( "crimes" ).multiple( true ).build() );
+        contentType.addFormItem( FormItemSet.newBuilder().name( "crimes" ).multiple( true ).build() );
         contentType.getFieldSet( "crimes" ).addField( Component.newBuilder().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
         contentType.getFieldSet( "crimes" ).addField( Component.newBuilder().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
         content.setType( contentType );
@@ -341,14 +341,14 @@ public class ContentTest
 
         ContentType contentType = new ContentType();
         contentType.setName( "person" );
-        contentType.addConfigItem( newField().type( FieldTypes.TEXT_LINE ).name( "name" ).build() );
-        contentType.addConfigItem( newTemplateReference( addressTemplate ).name( "address" ).build() );
+        contentType.addFormItem( newField().type( FieldTypes.TEXT_LINE ).name( "name" ).build() );
+        contentType.addFormItem( newTemplateReference( addressTemplate ).name( "address" ).build() );
 
         MockTemplateFetcher templateReferenceFetcher = new MockTemplateFetcher();
         templateReferenceFetcher.add( postalCodeTemplate );
         templateReferenceFetcher.add( countryTemplate );
         templateReferenceFetcher.add( addressTemplate );
-        contentType.templateReferencesToConfigItems( templateReferenceFetcher );
+        contentType.templateReferencesToFormItems( templateReferenceFetcher );
 
         Content content = new Content();
         content.setType( contentType );
@@ -379,11 +379,11 @@ public class ContentTest
 
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
-        contentType.addConfigItem( newTemplateReference( addressTemplate ).name( "address" ).build() );
+        contentType.addFormItem( newTemplateReference( addressTemplate ).name( "address" ).build() );
 
         MockTemplateFetcher templateReferenceFetcher = new MockTemplateFetcher();
         templateReferenceFetcher.add( addressTemplate );
-        contentType.templateReferencesToConfigItems( templateReferenceFetcher );
+        contentType.templateReferencesToFormItems( templateReferenceFetcher );
 
         Content content = new Content();
         content.setType( contentType );
@@ -415,10 +415,10 @@ public class ContentTest
     public void trying_to_set_data_to_a_fieldSetTemplate_when_template_is_missing()
     {
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newField().type( FieldTypes.TEXT_LINE ).name( "name" ).build() );
-        contentType.addConfigItem( newTemplateReference().name( "address" ).typeField().template( "myModule:myAddressTemplate" ).build() );
+        contentType.addFormItem( newField().type( FieldTypes.TEXT_LINE ).name( "name" ).build() );
+        contentType.addFormItem( newTemplateReference().name( "address" ).typeField().template( "myModule:myAddressTemplate" ).build() );
 
-        contentType.templateReferencesToConfigItems( new MockTemplateFetcher() );
+        contentType.templateReferencesToFormItems( new MockTemplateFetcher() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -440,15 +440,15 @@ public class ContentTest
         // setup
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
-        contentType.addConfigItem( newField().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newField().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
         VisualFieldSet personalia = newVisualFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newField().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() ).add(
             newField().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() ).build();
         VisualFieldSet tatoos = newVisualFieldSet().label( "Characteristics" ).name( "characteristics" ).add(
             newField().name( "tattoo" ).type( FieldTypes.TEXT_LINE ).multiple( true ).build() ).add(
             newField().name( "scar" ).type( FieldTypes.TEXT_LINE ).multiple( true ).build() ).build();
-        personalia.addConfigItem( tatoos );
-        contentType.addConfigItem( personalia );
+        personalia.addFormItem( tatoos );
+        contentType.addFormItem( personalia );
 
         Content content = new Content();
         content.setType( contentType );
@@ -474,7 +474,7 @@ public class ContentTest
     public void given_required_field_with_data_when_checkBreaksRequiredContract_then_exception_is_not_thrown()
     {
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
         Content content = new Content();
         content.setType( contentType );
         content.setData( "myField", "value" );
@@ -495,7 +495,7 @@ public class ContentTest
     {
 
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
         Content content = new Content();
         content.setType( contentType );
 
@@ -508,7 +508,7 @@ public class ContentTest
     {
 
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
+        contentType.addFormItem( newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
             newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
@@ -522,7 +522,7 @@ public class ContentTest
     {
 
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newVisualFieldSet().label( "My outer visual field set" ).name( "myOuterVisualFieldSet" ).add(
+        contentType.addFormItem( newVisualFieldSet().label( "My outer visual field set" ).name( "myOuterVisualFieldSet" ).add(
             newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
                 newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
         Content content = new Content();
@@ -536,7 +536,7 @@ public class ContentTest
     public void given_required_field_with_no_data_within_fieldSet_within_visualFieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
     {
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
+        contentType.addFormItem( newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
             newFieldSet().name( "myFieldSet" ).required( true ).add(
                 newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
         Content content = new Content();
@@ -552,7 +552,7 @@ public class ContentTest
     {
 
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
+        contentType.addFormItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
             newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
@@ -567,7 +567,7 @@ public class ContentTest
     {
 
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
+        contentType.addFormItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
             newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSEt" ).add(
                 newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
         Content content = new Content();
@@ -583,7 +583,7 @@ public class ContentTest
     {
 
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
+        contentType.addFormItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
             newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
@@ -607,7 +607,7 @@ public class ContentTest
     {
 
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
+        contentType.addFormItem( newFieldSet().name( "myFieldSet" ).required( true ).add(
             newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
@@ -621,7 +621,7 @@ public class ContentTest
     {
 
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
+        contentType.addFormItem( newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
             newFieldSet().name( "myFieldSet" ).required( true ).add(
                 newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).build() );
         Content content = new Content();
@@ -636,15 +636,15 @@ public class ContentTest
     {
         // setup
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newField().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newField().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
 
         FormItemSet personaliaFormItemSet = newFieldSet().name( "personalia" ).multiple( false ).required( true ).build();
         personaliaFormItemSet.addField( newField().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
         personaliaFormItemSet.addField( newField().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        contentType.addConfigItem( personaliaFormItemSet );
+        contentType.addFormItem( personaliaFormItemSet );
 
         FormItemSet crimesFormItemSet = newFieldSet().name( "crimes" ).multiple( true ).build();
-        contentType.addConfigItem( crimesFormItemSet );
+        contentType.addFormItem( crimesFormItemSet );
         crimesFormItemSet.addField( newField().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
         crimesFormItemSet.addField( newField().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
 

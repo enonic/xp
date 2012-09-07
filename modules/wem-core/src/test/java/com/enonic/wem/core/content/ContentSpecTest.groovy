@@ -14,7 +14,7 @@ class ContentSpecTest extends spock.lang.Specification
     {
         given:
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
         Content content = new Content();
         content.setType( contentType );
 
@@ -31,7 +31,7 @@ class ContentSpecTest extends spock.lang.Specification
         ContentType contentType = new ContentType();
         FormItemSet fieldSet = FormItemSet.newFieldSet().name( "myFieldSet" ).required( true ).build();
         fieldSet.addField( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( false ).build() )
-        contentType.addConfigItem( fieldSet );
+        contentType.addFormItem( fieldSet );
         Content content = new Content();
         content.setType( contentType );
 
@@ -48,7 +48,7 @@ class ContentSpecTest extends spock.lang.Specification
         ContentType contentType = new ContentType();
         FormItemSet fieldSet = FormItemSet.newFieldSet().name( "myFieldSet" ).required( true ).build();
         fieldSet.addField( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() )
-        contentType.addConfigItem( fieldSet );
+        contentType.addFormItem( fieldSet );
         Content content = new Content();
         content.setType( contentType );
         content.setData( "myFieldSet.myField", "" );
@@ -66,7 +66,7 @@ class ContentSpecTest extends spock.lang.Specification
         ContentType contentType = new ContentType();
         FormItemSet fieldSet = FormItemSet.newFieldSet().name( "myFieldSet" ).required( false ).build();
         fieldSet.addField( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() )
-        contentType.addConfigItem( fieldSet );
+        contentType.addFormItem( fieldSet );
         Content content = new Content();
         content.setType( contentType );
         content.setData( "myFieldSet.myField", "" );
@@ -84,7 +84,7 @@ class ContentSpecTest extends spock.lang.Specification
         ContentType contentType = new ContentType();
         FormItemSet fieldSet = FormItemSet.newFieldSet().name( "myFieldSet" ).required( false ).build();
         fieldSet.addField( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() )
-        contentType.addConfigItem( fieldSet );
+        contentType.addFormItem( fieldSet );
         Content content = new Content();
         content.setType( contentType );
 
@@ -100,8 +100,8 @@ class ContentSpecTest extends spock.lang.Specification
         given:
         ContentType contentType = new ContentType();
         VisualFieldSet visualFieldSet = VisualFieldSet.newVisualFieldSet().name( "myVisualFieldSet" ).label( "My VisualFieldSet" ).build();
-        visualFieldSet.addConfigItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() )
-        contentType.addConfigItem( visualFieldSet );
+        visualFieldSet.addFormItem( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() )
+        contentType.addFormItem( visualFieldSet );
         Content content = new Content();
         content.setType( contentType );
 

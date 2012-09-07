@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.type.configitem;
 
 
-public enum ConfigItemType
+public enum FormItemType
 {
     FIELD,
     FIELD_SET,

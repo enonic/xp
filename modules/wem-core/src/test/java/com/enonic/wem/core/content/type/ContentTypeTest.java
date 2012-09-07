@@ -28,7 +28,7 @@ public class ContentTypeTest
         contentType.setName( "test" );
         VisualFieldSet visualFieldSet = newVisualFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newField().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() ).build();
-        contentType.addConfigItem( visualFieldSet );
+        contentType.addFormItem( visualFieldSet );
 
         assertEquals( "eyeColour", contentType.getField( "eyeColour" ).getPath().toString() );
     }
@@ -41,7 +41,7 @@ public class ContentTypeTest
         VisualFieldSet visualFieldSet = newVisualFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newField().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() ).build();
         FormItemSet myFormItemSet = newFieldSet().name( "myFieldSet" ).add( visualFieldSet ).build();
-        contentType.addConfigItem( myFormItemSet );
+        contentType.addFormItem( myFormItemSet );
 
         assertEquals( "myFieldSet.eyeColour", contentType.getField( "myFieldSet.eyeColour" ).getPath().toString() );
     }
@@ -56,8 +56,8 @@ public class ContentTypeTest
         formItemSet.addField( newField().name( "country" ).label( "Country" ).type( FieldTypes.TEXT_LINE ).build() );
 
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newField().name( "title" ).type( FieldTypes.TEXT_LINE ).build() );
-        contentType.addConfigItem( formItemSet );
+        contentType.addFormItem( newField().name( "title" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( formItemSet );
 
         assertEquals( "title", contentType.getField( "title" ).getPath().toString() );
         assertEquals( "address.label", contentType.getField( "address.label" ).getPath().toString() );
@@ -79,14 +79,14 @@ public class ContentTypeTest
                 newField().name( "country" ).label( "Country" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
-        cty.addConfigItem( newTemplateReference( template ).name( "home" ).build() );
-        cty.addConfigItem( newTemplateReference( template ).name( "cabin" ).build() );
+        cty.addFormItem( newTemplateReference( template ).name( "home" ).build() );
+        cty.addFormItem( newTemplateReference( template ).name( "cabin" ).build() );
 
         MockTemplateFetcher templateReferenceFetcher = new MockTemplateFetcher();
         templateReferenceFetcher.add( template );
 
         // exercise
-        cty.templateReferencesToConfigItems( templateReferenceFetcher );
+        cty.templateReferencesToFormItems( templateReferenceFetcher );
 
         // verify:
         assertEquals( "home.street", cty.getField( "home.street" ).getPath().toString() );
@@ -108,13 +108,13 @@ public class ContentTypeTest
             newField().name( "country" ).label( "Country" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( newTemplateReference( template ).name( "home" ).build() );
+        contentType.addFormItem( newTemplateReference( template ).name( "home" ).build() );
 
         MockTemplateFetcher templateReferenceFetcher = new MockTemplateFetcher();
         templateReferenceFetcher.add( template );
 
         // exercise
-        contentType.templateReferencesToConfigItems( templateReferenceFetcher );
+        contentType.templateReferencesToFormItems( templateReferenceFetcher );
 
         // verify:
         assertEquals( "home.street", contentType.getField( "home.street" ).getPath().toString() );
@@ -133,7 +133,7 @@ public class ContentTypeTest
                 newField().name( "street" ).label( "Street" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
-        cty.addConfigItem(
+        cty.addFormItem(
             TemplateReference.newBuilder().name( "home" ).typeField().template( formItemSetTemplate.getQualifiedName() ).build() );
 
         MockTemplateFetcher templateReferenceFetcher = new MockTemplateFetcher();
@@ -142,7 +142,7 @@ public class ContentTypeTest
         // exercise
         try
         {
-            cty.templateReferencesToConfigItems( templateReferenceFetcher );
+            cty.templateReferencesToFormItems( templateReferenceFetcher );
         }
         catch ( Exception e )
         {
@@ -160,7 +160,7 @@ public class ContentTypeTest
             newFieldSet().name( "top-fieldSet" ).add( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() ).add(
                 newFieldSet().name( "inner-fieldSet" ).add(
                     newField().name( "myInnerField" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).build();
-        contentType.addConfigItem( formItemSet );
+        contentType.addFormItem( formItemSet );
 
         assertEquals( "top-fieldSet", contentType.getFieldSet( "top-fieldSet" ).getPath().toString() );
         assertEquals( "top-fieldSet.myField", contentType.getField( "top-fieldSet.myField" ).getPath().toString() );

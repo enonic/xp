@@ -6,36 +6,36 @@ import java.util.LinkedHashMap;
 
 import com.google.common.base.Preconditions;
 
-public class ConfigItems
+public class FormItems
 {
-    private ConfigItemPath path;
+    private FormItemPath path;
 
     private LinkedHashMap<String, FormItem> items = new LinkedHashMap<String, FormItem>();
 
-    private LinkedHashMap<String, DirectAccessibleFormItem> directAccessibleConfigItems =
+    private LinkedHashMap<String, DirectAccessibleFormItem> directAccessibleFormItems =
         new LinkedHashMap<String, DirectAccessibleFormItem>();
 
     private LinkedHashMap<String, VisualFieldSet> visualFieldSets = new LinkedHashMap<String, VisualFieldSet>();
 
-    public ConfigItems()
+    public FormItems()
     {
-        path = new ConfigItemPath();
+        path = new FormItemPath();
     }
 
-    public ConfigItemPath getPath()
+    public FormItemPath getPath()
     {
         return path;
     }
 
-    public void addConfigItem( final FormItem item )
+    public void addFormItem( final FormItem item )
     {
         if ( item instanceof DirectAccessibleFormItem )
         {
-            ( (DirectAccessibleFormItem) item ).setPath( new ConfigItemPath( path, item.getName() ) );
+            ( (DirectAccessibleFormItem) item ).setPath( new FormItemPath( path, item.getName() ) );
         }
 
         Object previous = items.put( item.getName(), item );
-        Preconditions.checkArgument( previous == null, "ConfigItem already added: " + item );
+        Preconditions.checkArgument( previous == null, "FormItem already added: " + item );
 
         if ( item instanceof VisualFieldSet )
         {
@@ -43,11 +43,11 @@ public class ConfigItems
         }
         else if ( item instanceof DirectAccessibleFormItem )
         {
-            directAccessibleConfigItems.put( item.getName(), (DirectAccessibleFormItem) item );
+            directAccessibleFormItems.put( item.getName(), (DirectAccessibleFormItem) item );
         }
     }
 
-    public void setPath( final ConfigItemPath path )
+    public void setPath( final FormItemPath path )
     {
         this.path = path;
         for ( final FormItem formItem : items.values() )
@@ -63,47 +63,46 @@ public class ConfigItems
         }
     }
 
-    public DirectAccessibleFormItem getConfigItem( final ConfigItemPath path )
+    public DirectAccessibleFormItem getFormItem( final FormItemPath path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
 
         if ( path.elementCount() > 1 )
         {
-            DirectAccessibleFormItem foundConfig = getDirectAccessibleConfigItem( path.getFirstElement() );
-            Preconditions.checkArgument( foundConfig.getConfigItemType() == ConfigItemType.FIELD_SET,
-                                         "ConfigItem at path [%s] expected to be of type FieldSet: " + foundConfig.getConfigItemType(),
-                                         path );
+            DirectAccessibleFormItem foundConfig = getDirectAccessibleFormItem( path.getFirstElement() );
+            Preconditions.checkArgument( foundConfig.getFormItemType() == FormItemType.FIELD_SET,
+                                         "FormItem at path [%s] expected to be of type FieldSet: " + foundConfig.getFormItemType(), path );
             //noinspection ConstantConditions
             FormItemSet formItemSet = (FormItemSet) foundConfig;
-            return formItemSet.getConfigItem( path.asNewWithoutFirstPathElement() );
+            return formItemSet.getFormItem( path.asNewWithoutFirstPathElement() );
         }
         else
         {
-            return getDirectAccessibleConfigItem( path.getFirstElement() );
+            return getDirectAccessibleFormItem( path.getFirstElement() );
         }
     }
 
-    public FormItem getConfigItem( final String name )
+    public FormItem getFormItem( final String name )
     {
         FormItem foundFormItem = items.get( name );
         if ( foundFormItem == null )
         {
-            foundFormItem = searchConfigItemInVisualFieldSets( name );
+            foundFormItem = searchFormItemInVisualFieldSets( name );
         }
         return foundFormItem;
     }
 
-    public DirectAccessibleFormItem getDirectAccessibleConfigItem( final String name )
+    public DirectAccessibleFormItem getDirectAccessibleFormItem( final String name )
     {
-        FormItem formItem = getConfigItem( name );
+        FormItem formItem = getFormItem( name );
         if ( formItem == null )
         {
             return null;
         }
 
         Preconditions.checkArgument( formItem instanceof DirectAccessibleFormItem,
-                                     "ConfigItem [%s] in [%s] is not of type AccessibleConfigItem: " + formItem.getClass().getName(),
+                                     "FormItem [%s] in [%s] is not of type DirectAccessibleFormItem: " + formItem.getClass().getName(),
                                      this.getPath(), formItem.getName() );
 
         //noinspection ConstantConditions
@@ -112,61 +111,61 @@ public class ConfigItems
 
     public FormItemSet getFieldSet( final String name )
     {
-        final DirectAccessibleFormItem configItem = getDirectAccessibleConfigItem( name );
-        if ( configItem == null )
+        final DirectAccessibleFormItem formItem = getDirectAccessibleFormItem( name );
+        if ( formItem == null )
         {
             return null;
         }
 
-        Preconditions.checkArgument( ( configItem.getConfigItemType() == ConfigItemType.FIELD_SET ),
-                                     "ConfigItem at path [%s] is not a FieldSet: " + configItem.getConfigItemType(), configItem.getPath() );
+        Preconditions.checkArgument( ( formItem.getFormItemType() == FormItemType.FIELD_SET ),
+                                     "FormItem at path [%s] is not a FormItemSet: " + formItem.getFormItemType(), formItem.getPath() );
 
         //noinspection ConstantConditions
-        return (FormItemSet) configItem;
+        return (FormItemSet) formItem;
     }
 
-    public FormItemSet getFieldSet( final ConfigItemPath path )
+    public FormItemSet getFormItemSet( final FormItemPath path )
     {
-        final DirectAccessibleFormItem configItem = getConfigItem( path );
-        if ( configItem == null )
+        final DirectAccessibleFormItem formItem = getFormItem( path );
+        if ( formItem == null )
         {
             return null;
         }
 
-        Preconditions.checkArgument( ( configItem.getConfigItemType() == ConfigItemType.FIELD_SET ),
-                                     "ConfigItem at path [%s] is not a FieldSet: " + configItem.getConfigItemType(), configItem.getPath() );
+        Preconditions.checkArgument( ( formItem.getFormItemType() == FormItemType.FIELD_SET ),
+                                     "FormItem at path [%s] is not a FormItemSet: " + formItem.getFormItemType(), formItem.getPath() );
 
         //noinspection ConstantConditions
-        return (FormItemSet) configItem;
+        return (FormItemSet) formItem;
     }
 
     public Component getField( final String name )
     {
-        final DirectAccessibleFormItem configItem = getDirectAccessibleConfigItem( name );
-        if ( configItem == null )
+        final DirectAccessibleFormItem formItem = getDirectAccessibleFormItem( name );
+        if ( formItem == null )
         {
             return null;
         }
 
-        Preconditions.checkArgument( ( configItem instanceof Component ),
-                                     "ConfigItem at path [%s] is not a Field: " + configItem.getConfigItemType(), configItem.getPath() );
+        Preconditions.checkArgument( ( formItem instanceof Component ),
+                                     "FormItem at path [%s] is not a Component: " + formItem.getFormItemType(), formItem.getPath() );
 
         //noinspection ConstantConditions
-        return (Component) configItem;
+        return (Component) formItem;
     }
 
-    public Component getField( final ConfigItemPath path )
+    public Component getField( final FormItemPath path )
     {
-        final DirectAccessibleFormItem configItem = getConfigItem( path );
-        if ( configItem == null )
+        final DirectAccessibleFormItem formItem = getFormItem( path );
+        if ( formItem == null )
         {
             return null;
         }
-        Preconditions.checkArgument( ( configItem instanceof Component ),
-                                     "ConfigItem at path [%s] is not a Field: " + configItem.getConfigItemType(), configItem.getPath() );
+        Preconditions.checkArgument( ( formItem instanceof Component ),
+                                     "FormItem at path [%s] is not a Field: " + formItem.getFormItemType(), formItem.getPath() );
 
         //noinspection ConstantConditions
-        return (Component) configItem;
+        return (Component) formItem;
     }
 
     public Iterator<FormItem> iterator()
@@ -179,9 +178,9 @@ public class ConfigItems
         return items.values();
     }
 
-    public Iterable<DirectAccessibleFormItem> iterableForDirectAccessConfigItems()
+    public Iterable<DirectAccessibleFormItem> iterableForDirectAccessFormItems()
     {
-        return directAccessibleConfigItems.values();
+        return directAccessibleFormItems.values();
     }
 
     public int size()
@@ -210,16 +209,16 @@ public class ConfigItems
             {
                 VisualFieldSet visualFieldSet = (VisualFieldSet) entry;
                 s.append( visualFieldSet.getName() ).append( "{" );
-                s.append( visualFieldSet.getConfigItems().toString() );
+                s.append( visualFieldSet.getFormItems().toString() );
                 s.append( "}" );
             }
         }
         return s.toString();
     }
 
-    public ConfigItems copy()
+    public FormItems copy()
     {
-        ConfigItems copy = new ConfigItems();
+        FormItems copy = new FormItems();
         copy.path = path;
         for ( FormItem ci : this.items.values() )
         {
@@ -234,7 +233,7 @@ public class ConfigItems
         return copy;
     }
 
-    public void templateReferencesToConfigItems( final TemplateFetcher templateFetcher )
+    public void templateReferencesToFormItems( final TemplateFetcher templateFetcher )
     {
         for ( final FormItem formItem : items.values() )
         {
@@ -248,26 +247,26 @@ public class ConfigItems
                                                  "Template expected to be of type %s: " + template.getType(),
                                                  templateReference.getTemplateType() );
 
-                    final DirectAccessibleFormItem configItemCreatedFromTemplate = template.create( templateReference );
-                    if ( configItemCreatedFromTemplate instanceof FormItemSet )
+                    final DirectAccessibleFormItem formItemCreatedFromTemplate = template.create( templateReference );
+                    if ( formItemCreatedFromTemplate instanceof FormItemSet )
                     {
-                        FormItemSet formItemSet = (FormItemSet) configItemCreatedFromTemplate;
-                        formItemSet.getConfigItems().templateReferencesToConfigItems( templateFetcher );
+                        FormItemSet formItemSet = (FormItemSet) formItemCreatedFromTemplate;
+                        formItemSet.getFormItems().templateReferencesToFormItems( templateFetcher );
                     }
 
-                    items.put( formItem.getName(), configItemCreatedFromTemplate );
+                    items.put( formItem.getName(), formItemCreatedFromTemplate );
                 }
             }
         }
     }
 
-    private FormItem searchConfigItemInVisualFieldSets( final String name )
+    private FormItem searchFormItemInVisualFieldSets( final String name )
     {
         FormItem foundFormItem = null;
 
         for ( final VisualFieldSet visualFieldSet : visualFieldSets.values() )
         {
-            foundFormItem = visualFieldSet.getConfigItem( name );
+            foundFormItem = visualFieldSet.getFormItem( name );
             if ( foundFormItem != null )
             {
                 break;

@@ -27,16 +27,16 @@ public class FormItemSetTemplate
         return TemplateType.FIELD_SET;
     }
 
-    public void addConfigItem( final DirectAccessibleFormItem configItem )
+    public void addFormItem( final DirectAccessibleFormItem formItem )
     {
-        if ( configItem instanceof TemplateReference )
+        if ( formItem instanceof TemplateReference )
         {
-            TemplateReference templateReference = (TemplateReference) configItem;
+            TemplateReference templateReference = (TemplateReference) formItem;
             Preconditions.checkArgument( templateReference.getTemplateType() == TemplateType.FIELD,
                                          "A template cannot reference other templates unless it is of type %s: " +
                                              templateReference.getTemplateType(), TemplateType.FIELD );
         }
-        formItemSet.addConfigItem( configItem );
+        formItemSet.addFormItem( formItem );
     }
 
     public DirectAccessibleFormItem create( final TemplateReference templateReference )

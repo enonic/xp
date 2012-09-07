@@ -7,58 +7,58 @@ import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 
 import static org.junit.Assert.*;
 
-public class ConfigItemsTest
+public class FormItemsTest
 {
     @Test
     public void getConfig()
     {
-        ConfigItems configItems = new ConfigItems();
+        FormItems formItems = new FormItems();
         FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).build();
-        configItems.addConfigItem( formItemSet );
+        formItems.addFormItem( formItemSet );
         formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
         formItemSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise & verify
         DirectAccessibleFormItem personaliaConfig =
-            configItems.getDirectAccessibleConfigItem( new ConfigItemPath( "personalia" ).getLastElement() );
+            formItems.getDirectAccessibleFormItem( new FormItemPath( "personalia" ).getLastElement() );
         assertEquals( "personalia", personaliaConfig.getPath().toString() );
     }
 
     @Test
     public void getConfig2()
     {
-        ConfigItems configItems = new ConfigItems();
+        FormItems formItems = new FormItems();
         FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).label( "Personalia" ).build();
-        configItems.addConfigItem( formItemSet );
+        formItems.addFormItem( formItemSet );
         formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
         formItemSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise & verify
-        DirectAccessibleFormItem personaliaEyeColourConfig = formItemSet.getConfigItems().getDirectAccessibleConfigItem( "eyeColour" );
+        DirectAccessibleFormItem personaliaEyeColourConfig = formItemSet.getFormItems().getDirectAccessibleFormItem( "eyeColour" );
         assertEquals( "personalia.eyeColour", personaliaEyeColourConfig.getPath().toString() );
     }
 
     @Test
     public void toString_with_two_fields()
     {
-        ConfigItems configItems = new ConfigItems();
-        configItems.addConfigItem( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        configItems.addConfigItem( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        FormItems formItems = new FormItems();
+        formItems.addFormItem( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItems.addFormItem( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise & verify
-        assertEquals( "eyeColour, hairColour", configItems.toString() );
+        assertEquals( "eyeColour, hairColour", formItems.toString() );
     }
 
     @Test
     public void toString_with_visualFieldSet()
     {
-        ConfigItems configItems = new ConfigItems();
-        configItems.addConfigItem( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
-        configItems.addConfigItem( VisualFieldSet.newVisualFieldSet().label( "Visual" ).name( "visual" ).add(
+        FormItems formItems = new FormItems();
+        formItems.addFormItem( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItems.addFormItem( VisualFieldSet.newVisualFieldSet().label( "Visual" ).name( "visual" ).add(
             Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() ).add(
             Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() ).build() );
 
         // exercise & verify
-        assertEquals( "name, visual{eyeColour, hairColour}", configItems.toString() );
+        assertEquals( "name, visual{eyeColour, hairColour}", formItems.toString() );
     }
 }

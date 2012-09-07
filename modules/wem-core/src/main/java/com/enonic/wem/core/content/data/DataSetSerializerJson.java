@@ -9,10 +9,10 @@ import org.codehaus.jackson.JsonNode;
 
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.type.configitem.Component;
-import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
-import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.FormItem;
+import com.enonic.wem.core.content.type.configitem.FormItemPath;
 import com.enonic.wem.core.content.type.configitem.FormItemSet;
+import com.enonic.wem.core.content.type.configitem.FormItems;
 
 public class DataSetSerializerJson
 {
@@ -45,7 +45,7 @@ public class DataSetSerializerJson
         }
     }
 
-    DataSet parse( final JsonNode entriesNode, final ConfigItems configItems )
+    DataSet parse( final JsonNode entriesNode, final FormItems formItems )
     {
         final EntryPath entriesPath = new EntryPath( JsonParserUtil.getStringValue( "path", entriesNode ) );
         final JsonNode entriesArray = entriesNode.get( "entries" );
@@ -57,7 +57,7 @@ public class DataSetSerializerJson
             final JsonNode entryNode = entryIt.next();
             final EntryPath path = new EntryPath( JsonParserUtil.getStringValue( "path", entryNode ) );
 
-            if ( configItems == null )
+            if ( formItems == null )
             {
                 if ( isEntriesNode( entryNode ) )
                 {
@@ -74,9 +74,9 @@ public class DataSetSerializerJson
             }
             else
             {
-                final ConfigItemPath configItemPath = path.resolveConfigItemPath();
+                final FormItemPath formItemPath = path.resolveFormItemPath();
 
-                final FormItem item = configItems.getConfigItem( configItemPath.getLastElement() );
+                final FormItem item = formItems.getFormItem( formItemPath.getLastElement() );
 
                 if ( item == null )
                 {
@@ -90,7 +90,7 @@ public class DataSetSerializerJson
                 else if ( item instanceof FormItemSet )
                 {
                     final FormItemSet formItemSet = (FormItemSet) item;
-                    final DataSet childDataSet = parse( entryNode, formItemSet.getConfigItems() );
+                    final DataSet childDataSet = parse( entryNode, formItemSet.getFormItems() );
                     final DataSet entry = new DataSet( path, childDataSet );
                     dataSet.add( entry );
                 }

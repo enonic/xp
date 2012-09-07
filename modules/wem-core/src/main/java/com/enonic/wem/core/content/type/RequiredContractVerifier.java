@@ -23,13 +23,13 @@ public class RequiredContractVerifier
 
     public void verify( final ContentData contentData )
     {
-        processConfigItems( contentType.getConfigItems().getIterable(), contentData );
+        processFormItems( contentType.getFormItems().getIterable(), contentData );
     }
 
-    private void processConfigItems( final Iterable<FormItem> configItems, final EntrySelector entrySelector )
+    private void processFormItems( final Iterable<FormItem> formItems, final EntrySelector entrySelector )
     {
         // check missing required entries
-        for ( FormItem formItem : configItems )
+        for ( FormItem formItem : formItems )
         {
             if ( formItem instanceof Component )
             {
@@ -41,7 +41,7 @@ public class RequiredContractVerifier
             }
             else if ( formItem instanceof VisualFieldSet )
             {
-                processConfigItems( ( (VisualFieldSet) formItem ).getConfigItemsIterable(), entrySelector );
+                processFormItems( ( (VisualFieldSet) formItem ).getFormItemsIterable(), entrySelector );
             }
         }
     }
@@ -65,11 +65,11 @@ public class RequiredContractVerifier
 
         if ( dataSet != null )
         {
-            processConfigItems( formItemSet.getConfigItems().iterable(), dataSet );
+            processFormItems( formItemSet.getFormItems().iterable(), dataSet );
         }
         else
         {
-            processConfigItems( formItemSet.getConfigItems().iterable(), null );
+            processFormItems( formItemSet.getFormItems().iterable(), null );
         }
     }
 

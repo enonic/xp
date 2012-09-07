@@ -13,9 +13,9 @@ import gherkin.formatter.model.DataTableRow;
 
 import com.enonic.wem.core.content.type.configitem.Component;
 import com.enonic.wem.core.content.type.configitem.ComponentTemplate;
-import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
-import com.enonic.wem.core.content.type.configitem.ConfigItemType;
 import com.enonic.wem.core.content.type.configitem.FieldTemplateBuilder;
+import com.enonic.wem.core.content.type.configitem.FormItemPath;
+import com.enonic.wem.core.content.type.configitem.FormItemType;
 import com.enonic.wem.core.content.type.configitem.MockTemplateFetcher;
 import com.enonic.wem.core.content.type.configitem.TemplateQualifiedName;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
@@ -82,10 +82,10 @@ public class ContentTypeStepDefs
         ComponentTemplate componentTemplate =
             fieldTemplateByTemplateQualifiedName.get( new TemplateQualifiedName( templateQualifiedName ) );
         ContentType contentType = contentTypeByName.get( contentTypeName );
-        contentType.addConfigItem( newTemplateReference( componentTemplate ).name( templateReferenceName ).build() );
+        contentType.addFormItem( newTemplateReference( componentTemplate ).name( templateReferenceName ).build() );
 
         mockTemplateReferenceFetcher.add( componentTemplate );
-        contentType.templateReferencesToConfigItems( mockTemplateReferenceFetcher );
+        contentType.templateReferencesToFormItems( mockTemplateReferenceFetcher );
     }
 
     @When("^translating template references to configItems for all content types$")
@@ -95,7 +95,7 @@ public class ContentTypeStepDefs
 
         for ( ContentType contentType : contentTypeByName.values() )
         {
-            contentType.templateReferencesToConfigItems( mockTemplateReferenceFetcher );
+            contentType.templateReferencesToFormItems( mockTemplateReferenceFetcher );
         }
     }
 
@@ -109,11 +109,11 @@ public class ContentTypeStepDefs
         {
             String contentTypeName = row.getCells().get( 0 );
             String configItemPath = row.getCells().get( 1 );
-            ConfigItemType configItemType = ConfigItemType.valueOf( row.getCells().get( 2 ) );
+            FormItemType formItemType = FormItemType.valueOf( row.getCells().get( 2 ) );
             ContentType contentType = contentTypeByName.get( contentTypeName );
             assertNotNull( "configItem not found at path: " + configItemPath,
-                           contentType.getConfigItems().getConfigItem( new ConfigItemPath( configItemPath ) ) );
-            assertEquals( ConfigItemType.FIELD, configItemType );
+                           contentType.getFormItems().getFormItem( new FormItemPath( configItemPath ) ) );
+            assertEquals( FormItemType.FIELD, formItemType );
         }
     }
 

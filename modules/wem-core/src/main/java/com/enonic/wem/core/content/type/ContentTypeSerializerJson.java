@@ -13,11 +13,11 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.enonic.wem.core.content.JsonFactoryHolder;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.type.configitem.ConfigItemsSerializerJson;
+import com.enonic.wem.core.content.type.configitem.FormItemsSerializerJson;
 
 public class ContentTypeSerializerJson
 {
-    private ConfigItemsSerializerJson configItemsSerializerJson = new ConfigItemsSerializerJson();
+    private FormItemsSerializerJson formItemsSerializerJson = new FormItemsSerializerJson();
 
     public String toJson( ContentType contentType )
     {
@@ -36,7 +36,7 @@ public class ContentTypeSerializerJson
             {
                 g.writeNullField( "module" );
             }
-            configItemsSerializerJson.generate( contentType.getConfigItems(), g );
+            formItemsSerializerJson.generate( contentType.getFormItems(), g );
             g.writeEndObject();
             g.close();
             sw.close();
@@ -75,13 +75,13 @@ public class ContentTypeSerializerJson
     private ContentType parse( final JsonNode contentTypeNode )
         throws IOException
     {
-        final ConfigItemsSerializerJson configItemsSerializer = new ConfigItemsSerializerJson();
+        final FormItemsSerializerJson formItemsSerializer = new FormItemsSerializerJson();
         final ContentType contentType = new ContentType();
         contentType.setName( JsonParserUtil.getStringValue( "name", contentTypeNode ) );
 
         try
         {
-            contentType.setConfigItems( configItemsSerializer.parse( contentTypeNode.get( "items" ) ) );
+            contentType.setFormItems( formItemsSerializer.parse( contentTypeNode.get( "items" ) ) );
         }
         catch ( Exception e )
         {
