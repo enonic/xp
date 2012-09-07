@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
-import com.enonic.wem.api.account.selector.AccountSelectors;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
 import com.enonic.wem.web.json.JsonSerializable;
@@ -50,7 +49,7 @@ public final class GetAccountGraphRpcHandler
             generateMembersGraph( accountKey, -1, nodeMap );
         }
         List<Account> accounts =
-            this.client.execute( Commands.account().find().selector( AccountSelectors.keys( nodeMap.keySet() ) ).includeImage() ).getAll();
+            this.client.execute( Commands.account().get().keys( AccountKeys.from( nodeMap.keySet() ) ).includeImage() ).getList();
         Map<Account, List<Account>> result = new HashMap<Account, List<Account>>();
         for ( Map.Entry<AccountKey, AccountKeys> entry : nodeMap.entrySet() )
         {
