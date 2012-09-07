@@ -8,15 +8,14 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKeys;
-import com.enonic.wem.api.command.account.FindAccounts;
 import com.enonic.wem.api.command.account.FindMembers;
 import com.enonic.wem.api.command.account.FindMemberships;
+import com.enonic.wem.api.command.account.GetAccounts;
 import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
 
 public class GetAccountRpcHandlerTest
     extends AbstractAccountRpcHandlerTest
 {
-
     private Client client;
 
     @Override
@@ -28,7 +27,6 @@ public class GetAccountRpcHandlerTest
         handler.setClient( client );
         return handler;
     }
-
 
     @Test
     public void testGetAccountIncorrectKey()
@@ -43,17 +41,8 @@ public class GetAccountRpcHandlerTest
         throws Exception
     {
         mockCurrentContextHttpRequest();
-        Mockito.when( client.execute( Mockito.any( FindAccounts.class ) ) ).thenReturn( createAccountResult( 0 ) );
+        Mockito.when( client.execute( Mockito.any( GetAccounts.class ) ) ).thenReturn( createAccountsObject() );
         testSuccess( createParams( "user:enonic:1" ), createResult( false, "No account(s) were found for key [user:enonic:1]" ) );
-    }
-
-    @Test
-    public void testGetAccountMultipleResults()
-        throws Exception
-    {
-        mockCurrentContextHttpRequest();
-        Mockito.when( client.execute( Mockito.any( FindAccounts.class ) ) ).thenReturn( createAccountResult( 2 ) );
-        testSuccess( createParams( "user:enonic:1" ), createResult( false, "2 account(s) were found for key [user:enonic:1]" ) );
     }
 
     @Test
@@ -62,8 +51,8 @@ public class GetAccountRpcHandlerTest
     {
         mockCurrentContextHttpRequest();
 
-        Mockito.when( client.execute( Mockito.isA( FindAccounts.class ) ) ).thenReturn(
-            createAccountResult( 1, createRole( "enonic:1" ) ) ).thenReturn( createAccountResult( 1, createUser( "enonic:2" ) ) );
+        Mockito.when( client.execute( Mockito.isA( GetAccounts.class ) ) ).thenReturn(
+            createAccountsObject( createRole( "enonic:1" ) ) ).thenReturn( createAccountsObject( createUser( "enonic:2" ) ) );
 
         Mockito.when( client.execute( Mockito.isA( FindMembers.class ) ) ).thenReturn( createAccountKeySet( "user:enonic:2" ) );
 
@@ -76,8 +65,8 @@ public class GetAccountRpcHandlerTest
     {
         mockCurrentContextHttpRequest();
 
-        Mockito.when( client.execute( Mockito.isA( FindAccounts.class ) ) ).thenReturn(
-            createAccountResult( 1, createGroup( "enonic:1" ) ) ).thenReturn( createAccountResult( 1, createUser( "enonic:2" ) ) );
+        Mockito.when( client.execute( Mockito.isA( GetAccounts.class ) ) ).thenReturn(
+            createAccountsObject( createGroup( "enonic:1" ) ) ).thenReturn( createAccountsObject( createUser( "enonic:2" ) ) );
 
         Mockito.when( client.execute( Mockito.isA( FindMembers.class ) ) ).thenReturn( createAccountKeySet( "user:enonic:2" ) );
 
@@ -90,9 +79,9 @@ public class GetAccountRpcHandlerTest
     {
         mockCurrentContextHttpRequest();
 
-        Mockito.when( client.execute( Mockito.isA( FindAccounts.class ) ) ).thenReturn(
-            createAccountResult( 1, createUser( "enonic:1" ) ) ).thenReturn(
-            createAccountResult( 2, createGroup( "enonic:2" ), createRole( "enonic:3" ) ) );
+        Mockito.when( client.execute( Mockito.isA( GetAccounts.class ) ) ).thenReturn(
+            createAccountsObject( createUser( "enonic:1" ) ) ).thenReturn(
+            createAccountsObject( createGroup( "enonic:2" ), createRole( "enonic:3" ) ) );
 
         Mockito.when( client.execute( Mockito.isA( FindMemberships.class ) ) ).thenReturn( createAccountKeySet( "user:enonic:1" ) );
 

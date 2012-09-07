@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
+import com.enonic.wem.api.account.Accounts;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
@@ -30,6 +31,11 @@ public abstract class AbstractAccountRpcHandlerTest
         final AccountResult result = new AccountResult( totalSize, accountList );
         result.setFacets( new AccountFacets() );
         return result;
+    }
+
+    protected Accounts createAccountsObject( final Account... accounts )
+    {
+        return Accounts.from( accounts );
     }
 
     protected UserAccount createUser( final String qName )
