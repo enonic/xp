@@ -1,4 +1,4 @@
-// This file was auto-generated on 2012-08-27 10:45:15 CEST
+// This file was auto-generated on 2012-09-07 15:05:16 CEST
 
 if ( !Templates ) {
     var Templates = {};
@@ -239,7 +239,7 @@ Templates.account = {
     userPreviewPhoto:
 		'<div class="admin-user-photo west admin-left">' + 
 		    '<div class="photo-placeholder">' + 
-		        '<img src="{[values.image_url]}" alt="{name}"/>' +
+		        '<img src="{[Admin.lib.UriHelper.getAccountIconUri(values)]}" alt="{name}"/>' + 
 		    '</div>' + 
 		'</div>',
 

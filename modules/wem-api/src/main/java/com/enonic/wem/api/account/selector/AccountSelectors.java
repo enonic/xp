@@ -2,6 +2,7 @@ package com.enonic.wem.api.account.selector;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
+import com.enonic.wem.api.account.query.AccountQuery;
 
 public abstract class AccountSelectors
 {

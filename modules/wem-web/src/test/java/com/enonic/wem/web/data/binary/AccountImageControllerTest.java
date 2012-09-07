@@ -15,7 +15,7 @@ import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
-import com.enonic.wem.api.account.result.AccountResult;
+import com.enonic.wem.api.account.query.AccountResult;
 import com.enonic.wem.api.command.account.FindAccounts;
 
 import static org.junit.Assert.assertEquals;

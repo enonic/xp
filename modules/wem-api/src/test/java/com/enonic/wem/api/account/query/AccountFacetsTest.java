@@ -1,8 +1,11 @@
-package com.enonic.wem.api.account.result;
+package com.enonic.wem.api.account.query;
 
 import java.util.Iterator;
 
 import org.junit.Test;
+
+import com.enonic.wem.api.account.query.AccountFacet;
+import com.enonic.wem.api.account.query.AccountFacets;
 
 import static org.junit.Assert.*;
 

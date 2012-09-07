@@ -16,7 +16,7 @@ import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.editor.AccountEditor;
 import com.enonic.wem.api.account.editor.AccountEditors;
-import com.enonic.wem.api.account.result.AccountResult;
+import com.enonic.wem.api.account.query.AccountResult;
 import com.enonic.wem.api.account.selector.AccountSelectors;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.account.AccountType;
-import com.enonic.wem.api.account.result.AccountResult;
-import com.enonic.wem.api.account.selector.AccountQuery;
+import com.enonic.wem.api.account.query.AccountResult;
+import com.enonic.wem.api.account.query.AccountQuery;
 import com.enonic.wem.api.account.selector.AccountSelectors;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;

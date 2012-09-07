@@ -2,8 +2,8 @@ package com.enonic.wem.web.data.account;
 
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.account.result.AccountResult;
-import com.enonic.wem.api.account.selector.AccountQuery;
+import com.enonic.wem.api.account.query.AccountResult;
+import com.enonic.wem.api.account.query.AccountQuery;
 import com.enonic.wem.api.account.selector.AccountSelectors;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;

@@ -18,12 +18,12 @@ import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.NonUserAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
-import com.enonic.wem.api.account.result.AccountFacet;
-import com.enonic.wem.api.account.result.AccountFacetEntry;
-import com.enonic.wem.api.account.result.AccountFacets;
-import com.enonic.wem.api.account.result.AccountResult;
+import com.enonic.wem.api.account.query.AccountFacet;
+import com.enonic.wem.api.account.query.AccountFacetEntry;
+import com.enonic.wem.api.account.query.AccountFacets;
+import com.enonic.wem.api.account.query.AccountResult;
 import com.enonic.wem.api.account.selector.AccountKeySelector;
-import com.enonic.wem.api.account.selector.AccountQuery;
+import com.enonic.wem.api.account.query.AccountQuery;
 import com.enonic.wem.api.account.selector.AccountSelector;
 import com.enonic.wem.api.command.account.FindAccounts;
 import com.enonic.wem.api.exception.SystemException;
@@ -51,7 +51,7 @@ import com.enonic.cms.store.dao.GroupDao;
 import com.enonic.cms.store.dao.UserDao;
 import com.enonic.cms.store.dao.UserStoreDao;
 
-import static com.enonic.wem.api.account.selector.AccountQuery.Direction;
+import static com.enonic.wem.api.account.query.AccountQuery.Direction;
 
 @Component
 public final class FindAccountsHandler

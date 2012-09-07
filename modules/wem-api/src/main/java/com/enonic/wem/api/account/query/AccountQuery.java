@@ -1,4 +1,4 @@
-package com.enonic.wem.api.account.selector;
+package com.enonic.wem.api.account.query;
 
 import java.util.Set;
 
@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.wem.api.account.AccountType;
+import com.enonic.wem.api.account.selector.AccountSelector;
 
 public final class AccountQuery
     implements AccountSelector
@@ -32,6 +33,11 @@ public final class AccountQuery
     private Direction sortDirection;
 
     private String email;
+
+    public AccountQuery()
+    {
+        this( null );
+    }
 
     public AccountQuery( final String query )
     {

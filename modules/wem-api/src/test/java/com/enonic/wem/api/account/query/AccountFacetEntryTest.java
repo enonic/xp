@@ -1,6 +1,8 @@
-package com.enonic.wem.api.account.result;
+package com.enonic.wem.api.account.query;
 
 import org.junit.Test;
+
+import com.enonic.wem.api.account.query.AccountFacetEntry;
 
 import static org.junit.Assert.*;
 

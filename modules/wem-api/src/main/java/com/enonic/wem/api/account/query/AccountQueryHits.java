@@ -4,7 +4,6 @@ import java.util.Iterator;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
-import com.enonic.wem.api.account.result.AccountFacets;
 
 public final class AccountQueryHits
     implements Iterable<AccountKey>

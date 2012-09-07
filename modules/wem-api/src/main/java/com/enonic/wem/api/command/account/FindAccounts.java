@@ -2,7 +2,7 @@ package com.enonic.wem.api.command.account;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.account.result.AccountResult;
+import com.enonic.wem.api.account.query.AccountResult;
 import com.enonic.wem.api.account.selector.AccountSelector;
 import com.enonic.wem.api.command.Command;
 

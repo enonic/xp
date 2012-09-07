@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
-import com.enonic.wem.api.account.result.AccountResult;
+import com.enonic.wem.api.account.query.AccountResult;
 import com.enonic.wem.api.account.selector.AccountSelector;
 import com.enonic.wem.api.account.selector.AccountSelectors;
 import com.enonic.wem.api.command.Commands;

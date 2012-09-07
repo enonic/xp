@@ -1,4 +1,4 @@
-package com.enonic.wem.api.account.result;
+package com.enonic.wem.api.account.query;
 
 import java.util.Iterator;
 import java.util.List;

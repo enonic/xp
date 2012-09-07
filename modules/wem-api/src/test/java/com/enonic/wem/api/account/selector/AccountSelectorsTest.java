@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
+import com.enonic.wem.api.account.query.AccountQuery;
 
 import static org.junit.Assert.*;
 

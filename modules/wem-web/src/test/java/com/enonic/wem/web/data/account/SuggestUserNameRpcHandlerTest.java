@@ -12,7 +12,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserAccount;
-import com.enonic.wem.api.account.result.AccountResult;
+import com.enonic.wem.api.account.query.AccountResult;
 import com.enonic.wem.api.command.account.FindAccounts;
 import com.enonic.wem.web.data.AbstractRpcHandlerTest;
 import com.enonic.wem.web.jsonrpc.JsonRpcHandler;

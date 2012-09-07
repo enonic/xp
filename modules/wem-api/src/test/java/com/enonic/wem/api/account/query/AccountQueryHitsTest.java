@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
-import com.enonic.wem.api.account.result.AccountFacets;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;

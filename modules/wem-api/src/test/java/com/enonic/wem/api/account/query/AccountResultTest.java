@@ -1,4 +1,4 @@
-package com.enonic.wem.api.account.result;
+package com.enonic.wem.api.account.query;
 
 import java.util.Iterator;
 import java.util.List;
@@ -9,6 +9,8 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.UserAccount;
+import com.enonic.wem.api.account.query.AccountFacets;
+import com.enonic.wem.api.account.query.AccountResult;
 
 import static org.junit.Assert.*;
 

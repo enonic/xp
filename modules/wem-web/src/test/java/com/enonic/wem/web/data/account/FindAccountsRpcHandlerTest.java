@@ -8,9 +8,9 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
-import com.enonic.wem.api.account.result.AccountFacet;
-import com.enonic.wem.api.account.result.AccountFacetEntry;
-import com.enonic.wem.api.account.result.AccountResult;
+import com.enonic.wem.api.account.query.AccountFacet;
+import com.enonic.wem.api.account.query.AccountFacetEntry;
+import com.enonic.wem.api.account.query.AccountResult;
 import com.enonic.wem.api.command.account.FindAccounts;
 import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
 

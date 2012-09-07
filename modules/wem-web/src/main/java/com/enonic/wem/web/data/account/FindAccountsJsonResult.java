@@ -4,9 +4,9 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.account.Account;
-import com.enonic.wem.api.account.result.AccountFacet;
-import com.enonic.wem.api.account.result.AccountFacetEntry;
-import com.enonic.wem.api.account.result.AccountResult;
+import com.enonic.wem.api.account.query.AccountFacet;
+import com.enonic.wem.api.account.query.AccountFacetEntry;
+import com.enonic.wem.api.account.query.AccountResult;
 
 final class FindAccountsJsonResult
     extends AbstractAccountJsonResult

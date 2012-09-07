@@ -1,8 +1,9 @@
-package com.enonic.wem.api.account.selector;
+package com.enonic.wem.api.account.query;
 
 import org.junit.Test;
 
 import com.enonic.wem.api.account.AccountType;
+import com.enonic.wem.api.account.query.AccountQuery;
 
 import static org.junit.Assert.*;
 
@@ -100,5 +101,37 @@ public class AccountQueryTest
     {
         final AccountQuery query = new AccountQuery( "text" );
         query.offset( -1 );
+    }
+
+    @Test
+    public void testHashCode()
+    {
+        final AccountQuery query1 = new AccountQuery();
+        final AccountQuery query2 = new AccountQuery();
+
+        assertTrue( query1.hashCode() == query2.hashCode() );
+
+        query1.email( "test" );
+        assertFalse( query1.hashCode() == query2.hashCode() );
+
+        query2.email( "test" );
+        assertTrue( query1.hashCode() == query2.hashCode() );
+    }
+
+    @Test
+    public void testEquals()
+    {
+        final AccountQuery query1 = new AccountQuery();
+        final AccountQuery query2 = new AccountQuery();
+
+        assertFalse( query1.equals( "test" ) );
+        assertTrue( query1.equals( query1 ) );
+        assertTrue( query1.equals( query2 ) );
+
+        query1.email( "test" );
+        assertFalse( query1.equals( query2 ) );
+
+        query2.email( "test" );
+        assertTrue( query1.equals( query2 ) );
     }
 }
