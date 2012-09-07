@@ -10,10 +10,6 @@ Ext.define('Admin.lib.UriHelper', {
         return this.getAbsoluteUri('admin/rest/' + account.info_uri);
     },
 
-    getAccountGraphUri: function (account) {
-        return this.getAbsoluteUri('admin/rest/' + account.graph_uri);
-    },
-
     getAccountIconUri: function (account) {
         return this.getAbsoluteUri('admin/rest/' + account.image_uri);
     },
