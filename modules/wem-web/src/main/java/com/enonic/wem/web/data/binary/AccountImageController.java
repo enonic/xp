@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.Account;
-import com.enonic.wem.api.account.selector.AccountSelectors;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
 
 @Component
@@ -38,7 +38,7 @@ public final class AccountImageController
         throws Exception
     {
         final Account account =
-            this.client.execute( Commands.account().find().selector( AccountSelectors.keys( key ) ).includeImage() ).first();
+            this.client.execute( Commands.account().get().keys( AccountKeys.from( key ) ).includeImage() ).getFirst();
 
         return this.helper.getAccountImage( account, size );
     }

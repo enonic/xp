@@ -10,14 +10,13 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
+import com.enonic.wem.api.account.Accounts;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.NonUserAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.editor.AccountEditor;
 import com.enonic.wem.api.account.editor.AccountEditors;
-import com.enonic.wem.api.account.query.AccountResult;
-import com.enonic.wem.api.account.selector.AccountSelectors;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
 import com.enonic.wem.web.jsonrpc.JsonRpcContext;
@@ -54,7 +53,7 @@ public final class CreateOrUpdateAccountRpcHandler
 
     private boolean accountExists( final AccountKey accountKey )
     {
-        final AccountResult accounts = this.client.execute( Commands.account().find().selector( AccountSelectors.keys( accountKey ) ) );
+        final Accounts accounts = this.client.execute( Commands.account().get().keys( AccountKeys.from( accountKey ) ) );
         return !accounts.isEmpty();
     }
 

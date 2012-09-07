@@ -1,7 +1,5 @@
 package com.enonic.wem.web.data.account;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.joda.time.DateTime;
@@ -25,10 +23,9 @@ import com.enonic.wem.web.data.AbstractRpcHandlerTest;
 public abstract class AbstractAccountRpcHandlerTest
     extends AbstractRpcHandlerTest
 {
-    protected AccountResult createAccountResult( final int totalSize, final Account... accounts )
+    protected AccountResult createAccountResult( final int totalSize, final Account... list )
     {
-        final List<Account> accountList = Lists.newArrayList( accounts );
-        final AccountResult result = new AccountResult( totalSize, accountList );
+        final AccountResult result = new AccountResult( totalSize, Lists.newArrayList( list ) );
         result.setFacets( new AccountFacets() );
         return result;
     }

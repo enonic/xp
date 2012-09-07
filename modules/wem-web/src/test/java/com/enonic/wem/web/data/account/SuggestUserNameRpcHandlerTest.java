@@ -1,19 +1,15 @@
 package com.enonic.wem.web.data.account;
 
-import java.util.Collections;
-
 import org.codehaus.jackson.node.ObjectNode;
-import org.elasticsearch.common.collect.Lists;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.OngoingStubbing;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.Accounts;
 import com.enonic.wem.api.account.UserAccount;
-import com.enonic.wem.api.account.query.AccountResult;
-import com.enonic.wem.api.command.account.FindAccounts;
+import com.enonic.wem.api.command.account.GetAccounts;
 import com.enonic.wem.web.data.AbstractRpcHandlerTest;
 import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
 
@@ -89,10 +85,10 @@ public class SuggestUserNameRpcHandlerTest
     private void mockFindAccounts( final int foundTimes )
     {
         final UserAccount user = UserAccount.create( AccountKey.user( "enonic:dummy" ) );
-        final AccountResult accountResult = new AccountResult( 1, Lists.<Account>newArrayList( user ) );
-        final AccountResult accountResultEmpty = new AccountResult( 0, Collections.<Account>emptyList() );
+        final Accounts accountResult = Accounts.from( user );
+        final Accounts accountResultEmpty = Accounts.empty();
 
-        OngoingStubbing<AccountResult> mockResponse = Mockito.when( client.execute( Mockito.any( FindAccounts.class ) ) );
+        OngoingStubbing<Accounts> mockResponse = Mockito.when( client.execute( Mockito.any( GetAccounts.class ) ) );
         for ( int i = 0; i < foundTimes; i++ )
         {
             mockResponse = mockResponse.thenReturn( accountResult );

@@ -2,24 +2,21 @@ package com.enonic.wem.web.data.account;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.UUID;
 
 import org.codehaus.jackson.node.ObjectNode;
-import org.elasticsearch.common.collect.Lists;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.Files;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.Accounts;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.UserAccount;
-import com.enonic.wem.api.account.query.AccountResult;
 import com.enonic.wem.api.command.account.CreateAccount;
-import com.enonic.wem.api.command.account.FindAccounts;
+import com.enonic.wem.api.command.account.GetAccounts;
 import com.enonic.wem.api.command.account.UpdateAccounts;
 import com.enonic.wem.web.data.AbstractRpcHandlerTest;
 import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
@@ -53,8 +50,7 @@ public class CreateOrUpdateAccountRpcHandlerTest
         throws Exception
     {
         Mockito.when( client.execute( Mockito.any( UpdateAccounts.class ) ) ).thenReturn( 1 );
-        Mockito.when( client.execute( Mockito.any( FindAccounts.class ) ) ).thenReturn(
-            new AccountResult( 0, Collections.<Account>emptyList() ) );
+        Mockito.when( client.execute( Mockito.any( GetAccounts.class ) ) ).thenReturn( Accounts.empty() );
         uploadFile( "01d0cc1d-ac2a-4952-a423-295cc9756bba", "photo.png", "IMAGEDATA".getBytes(), "image/png" );
 
         final ObjectNode resultJson = objectNode();
@@ -72,15 +68,15 @@ public class CreateOrUpdateAccountRpcHandlerTest
         final UserAccount user = UserAccount.create( key );
         Mockito.when( client.execute( Mockito.any( CreateAccount.class ) ) ).thenReturn( key );
 
-        final AccountResult accountResult = new AccountResult( 1, Lists.<Account>newArrayList( user ) );
-        Mockito.when( client.execute( Mockito.any( FindAccounts.class ) ) ).thenReturn( accountResult );
+        final Accounts accountResult = Accounts.from( user );
+        Mockito.when( client.execute( Mockito.any( GetAccounts.class ) ) ).thenReturn( accountResult );
         uploadFile( "01d0cc1d-ac2a-4952-a423-295cc9756bba", "photo.png", "IMAGEDATA".getBytes(), "image/png" );
 
         final ObjectNode resultJson = objectNode();
         resultJson.put( "success", true );
-        resultJson.put( "created", false);
+        resultJson.put( "created", false );
         resultJson.put( "updated", true );
-        testSuccess( "createOrUpdateUser_param.json", resultJson);
+        testSuccess( "createOrUpdateUser_param.json", resultJson );
     }
 
     @Test
@@ -91,14 +87,14 @@ public class CreateOrUpdateAccountRpcHandlerTest
         final GroupAccount group = GroupAccount.create( key );
         Mockito.when( client.execute( Mockito.any( CreateAccount.class ) ) ).thenReturn( key );
 
-        final AccountResult accountResult = new AccountResult( 1, Lists.<Account>newArrayList( group ) );
-        Mockito.when( client.execute( Mockito.any( FindAccounts.class ) ) ).thenReturn( accountResult );
+        final Accounts accountResult = Accounts.from( group );
+        Mockito.when( client.execute( Mockito.any( GetAccounts.class ) ) ).thenReturn( accountResult );
 
         final ObjectNode resultJson = objectNode();
         resultJson.put( "success", true );
-        resultJson.put( "created", false);
+        resultJson.put( "created", false );
         resultJson.put( "updated", true );
-        testSuccess( "createOrUpdateGroup_param.json", resultJson);
+        testSuccess( "createOrUpdateGroup_param.json", resultJson );
     }
 
     private void uploadFile( final String id, final String name, final byte[] data, final String type )

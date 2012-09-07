@@ -12,11 +12,11 @@ import com.google.common.io.Resources;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.Account;
+import com.enonic.wem.api.account.Accounts;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
-import com.enonic.wem.api.account.query.AccountResult;
-import com.enonic.wem.api.command.account.FindAccounts;
+import com.enonic.wem.api.command.account.GetAccounts;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -42,9 +42,9 @@ public class AccountImageControllerTest
             list.add( account );
         }
 
-        final AccountResult result = new AccountResult( 1, list );
+        final Accounts result = Accounts.from( list );
         final Client client = Mockito.mock( Client.class );
-        Mockito.when( client.execute( Mockito.any( FindAccounts.class ) ) ).thenReturn( result );
+        Mockito.when( client.execute( Mockito.any( GetAccounts.class ) ) ).thenReturn( result );
 
         this.controller.setClient( client );
     }

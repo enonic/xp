@@ -3,8 +3,8 @@ package com.enonic.wem.web.data.account;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.query.AccountResult;
-import com.enonic.wem.api.account.selector.AccountSelectors;
+import com.enonic.wem.api.account.AccountKeys;
+import com.enonic.wem.api.account.Accounts;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
 import com.enonic.wem.web.jsonrpc.JsonRpcContext;
@@ -43,7 +43,7 @@ public final class SuggestUserNameRpcHandler
 
     private boolean userExists( final AccountKey accountKey )
     {
-        final AccountResult result = this.client.execute( Commands.account().find().selector( AccountSelectors.keys( accountKey ) ) );
+        final Accounts result = this.client.execute( Commands.account().get().keys( AccountKeys.from( accountKey ) ) );
         return !result.isEmpty();
     }
 }
