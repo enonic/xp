@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 
 public final class Accounts
@@ -54,6 +56,12 @@ public final class Accounts
         return new Accounts( builder.build() );
     }
 
+    public AccountKeys getKeys()
+    {
+        final Collection<AccountKey> keys = Collections2.transform( this.list, new ToKeyFunction() );
+        return AccountKeys.from( keys );
+    }
+
     @Override
     public Iterator<Account> iterator()
     {
@@ -89,5 +97,15 @@ public final class Accounts
     public static Accounts from( final Collection<? extends Account> accounts )
     {
         return new Accounts( ImmutableList.copyOf( accounts ) );
+    }
+
+    private final static class ToKeyFunction
+        implements Function<Account, AccountKey>
+    {
+        @Override
+        public AccountKey apply( final Account value )
+        {
+            return value.getKey();
+        }
     }
 }

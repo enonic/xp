@@ -139,4 +139,15 @@ public final class AccountsTest
         assertEquals( 1, original.getSize() );
         assertEquals( 2, total.getSize() );
     }
+
+    @Test
+    public void testGetKeys()
+    {
+        final Accounts list = Accounts.from( this.account1, this.account2 );
+        final AccountKeys keys = list.getKeys();
+
+        assertEquals( 2, keys.getSize() );
+        assertTrue( keys.contains( this.account1.getKey() ) );
+        assertTrue( keys.contains( this.account2.getKey() ) );
+    }
 }
