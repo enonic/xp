@@ -1,15 +1,10 @@
 package com.enonic.wem.web.data.account;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKeys;
@@ -130,13 +125,6 @@ public class GetAccountRpcHandlerTest
     private AccountKeys createAccountKeySet( String... keys )
     {
         return AccountKeys.from( keys );
-    }
-
-    private void mockCurrentContextHttpRequest()
-    {
-        final HttpServletRequest req = new MockHttpServletRequest();
-        final ServletRequestAttributes attrs = new ServletRequestAttributes( req );
-        RequestContextHolder.setRequestAttributes( attrs );
     }
 
 }

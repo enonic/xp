@@ -108,16 +108,13 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
                                                 if (!me.graphData) {
                                                     var mask = new Ext.LoadMask(this, {msg: "Please wait..."});
                                                     mask.show();
-                                                    Ext.Ajax.request({
-                                                        url: Admin.lib.UriHelper.getAccountGraphUri(me.data),
-                                                        success: function (response) {
-                                                            var graphData = Ext.JSON.decode(response.responseText).graph;
-                                                            me.graphData = graphData;
-                                                            me.down('membershipsGraphPanel').setGraphData(graphData);
-                                                            mask.hide();
+                                                    Admin.lib.RemoteService.account_getGraph({key: me.data.new_key}, function (r) {
+                                                        if (r.success) {
+                                                            me.graphData = r.graph;
+                                                            me.down('membershipsGraphPanel').setGraphData(me.graphData);
                                                         }
+                                                        mask.hide();
                                                     });
-
                                                 }
                                             }
                                         },

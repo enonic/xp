@@ -8,6 +8,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.web.data.binary.AccountImageUriResolver;
 import com.enonic.wem.web.json.result.JsonResult;
 
 final class GetAccountGraphJsonResult
@@ -51,6 +52,7 @@ final class GetAccountGraphJsonResult
         ObjectNode node = objectNode();
         node.put( "type", accountKey.getType().toString().toLowerCase() );
         node.put( "key", accountKey.toString() );
+        node.put( "image_uri", AccountImageUriResolver.resolve( account ) );
         node.put( "name", accountKey.getLocalName() );
         return node;
     }
