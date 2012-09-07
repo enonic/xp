@@ -103,8 +103,10 @@ public final class FindMembershipsHandler
         {
             final AccountType type = getAccountType( member );
             final String name = getAccountName( member );
-            final AccountKey memberAccount = createAccountKey( type, member.getUserStore().getName(), name );
+            final String userStoreName = member.getUserStore() == null ? "system" : member.getUserStore().getName();
+            final AccountKey memberAccount = createAccountKey( type, userStoreName, name );
             accountSet.add( memberAccount );
+
             if ( includeTransitive )
             {
                 final Set<AccountKey> transitiveAccountSet = membershipsToAccountKeys( member.getMemberships( false ), includeTransitive );

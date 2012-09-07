@@ -30,7 +30,7 @@ public final class GetAccountRpcHandler
         {
             AccountKey accountKey = AccountKey.from( key );
             AccountSelector selector = AccountSelectors.keys( accountKey );
-            final AccountResult account = this.client.execute( Commands.account().find().selector( selector ) );
+            final AccountResult account = this.client.execute( Commands.account().find().selector( selector ).includeImage() );
 
             if ( account.getTotalSize() == 1 )
             {

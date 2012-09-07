@@ -239,7 +239,7 @@ Templates.account = {
     userPreviewPhoto:
 		'<div class="admin-user-photo west admin-left">' + 
 		    '<div class="photo-placeholder">' + 
-		        '<img src="{[Admin.lib.UriHelper.getAccountIconUri(values)]}" alt="{name}"/>' + 
+		        '<img src="{[values.image_url]}" alt="{name}"/>' +
 		    '</div>' + 
 		'</div>',
 

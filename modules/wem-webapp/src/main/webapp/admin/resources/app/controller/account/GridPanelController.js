@@ -80,15 +80,14 @@ Ext.define('Admin.controller.account.GridPanelController', {
             var mask = new Ext.LoadMask(detailPanel, {msg: "Please wait..."});
             mask.show();
             var accountData = persistentSelection[0].raw;
-            Ext.Ajax.request({
-                url: Admin.lib.UriHelper.getAccountInfoUri(accountData),
-                success: function (response) {
-                    var remoteData = Ext.JSON.decode(response.responseText);
-                    detailPanel.setCurrentAccount(remoteData);
-                    detailPanel.showAccountPreview(remoteData);
-                    mask.hide();
+            Admin.lib.RemoteService.account_get({ key: accountData.new_key }, function (response) {
+                    if (response.success) {
+                        detailPanel.setCurrentAccount(response);
+                        detailPanel.showAccountPreview(response);
+                        mask.hide();
+                    }
                 }
-            });
+            );
         } else {
             var detailed = true;
             if (persistentSelectionCount > 10) {
