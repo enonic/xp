@@ -7,7 +7,7 @@ import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.formitem.Component;
 import com.enonic.wem.core.content.type.formitem.FormItemSet;
 import com.enonic.wem.core.content.type.formitem.FormItems;
-import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentTypes;
+import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
 
 import static org.junit.Assert.*;
 

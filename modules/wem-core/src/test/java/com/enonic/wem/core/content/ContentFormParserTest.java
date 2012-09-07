@@ -11,7 +11,7 @@ import com.enonic.wem.core.content.data.ContentData;
 import com.enonic.wem.core.content.data.ContentFormParser;
 import com.enonic.wem.core.content.data.EntryPath;
 import com.enonic.wem.core.content.type.ContentType;
-import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentTypes;
+import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
 
 import static com.enonic.wem.core.content.type.formitem.Component.newComponent;
 import static org.junit.Assert.*;

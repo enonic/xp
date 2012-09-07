@@ -6,8 +6,8 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.data.InvalidDataException;
 import com.enonic.wem.core.content.datatype.InvalidValueTypeException;
-import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentType;
-import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentTypeConfig;
+import com.enonic.wem.core.content.type.formitem.comptype.ComponentType;
+import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeConfig;
 
 public class Component
     extends DirectAccessibleFormItem

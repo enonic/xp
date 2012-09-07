@@ -11,9 +11,9 @@ import com.enonic.wem.core.content.type.formitem.FormItemType;
 import com.enonic.wem.core.content.type.formitem.FormItems;
 import com.enonic.wem.core.content.type.formitem.MockTemplateFetcher;
 import com.enonic.wem.core.content.type.formitem.VisualFieldSet;
-import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentTypes;
-import com.enonic.wem.core.content.type.formitem.fieldtype.DropdownConfig;
-import com.enonic.wem.core.content.type.formitem.fieldtype.RadioButtonsConfig;
+import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
+import com.enonic.wem.core.content.type.formitem.comptype.DropdownConfig;
+import com.enonic.wem.core.content.type.formitem.comptype.RadioButtonsConfig;
 import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.formitem.Component.newBuilder;

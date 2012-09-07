@@ -4,7 +4,7 @@ import com.enonic.wem.core.content.type.ContentType
 import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException
 import com.enonic.wem.core.content.type.formitem.FormItemSet
 import com.enonic.wem.core.content.type.formitem.VisualFieldSet
-import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentTypes
+import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes
 
 import static com.enonic.wem.core.content.type.formitem.Component.newComponent
 

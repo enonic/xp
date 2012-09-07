@@ -8,9 +8,9 @@ import org.codehaus.jackson.JsonNode;
 
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentType;
-import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentTypeConfigSerializerJson;
-import com.enonic.wem.core.content.type.formitem.fieldtype.FieldTypeSerializerJson;
+import com.enonic.wem.core.content.type.formitem.comptype.ComponentType;
+import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeConfigSerializerJson;
+import com.enonic.wem.core.content.type.formitem.comptype.FieldTypeSerializerJson;
 
 import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemTest;
 import static com.enonic.wem.core.content.type.formitem.TemplateReference.newTemplateReference;

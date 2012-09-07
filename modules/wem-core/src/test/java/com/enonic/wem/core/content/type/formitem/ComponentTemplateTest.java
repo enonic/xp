@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.type.formitem;
 
 import org.junit.Test;
 
-import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentTypes;
+import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.formitem.Component.newComponent;

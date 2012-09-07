@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.type.formitem;
 
 
 import com.enonic.wem.core.content.data.Data;
-import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentType;
+import com.enonic.wem.core.content.type.formitem.comptype.ComponentType;
 
 public class BreaksRequiredContractException
     extends RuntimeException
