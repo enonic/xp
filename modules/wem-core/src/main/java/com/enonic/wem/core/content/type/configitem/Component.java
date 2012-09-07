@@ -10,7 +10,7 @@ import com.enonic.wem.core.content.type.configitem.fieldtype.FieldType;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeConfig;
 
 public class Component
-    extends DirectAccessibleConfigItem
+    extends DirectAccessibleFormItem
 {
     private FieldType type;
 

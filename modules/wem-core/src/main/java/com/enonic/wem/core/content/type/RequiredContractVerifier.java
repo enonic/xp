@@ -8,8 +8,8 @@ import com.enonic.wem.core.content.data.EntryPath;
 import com.enonic.wem.core.content.data.EntrySelector;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.configitem.Component;
-import com.enonic.wem.core.content.type.configitem.ConfigItem;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
+import com.enonic.wem.core.content.type.configitem.FormItem;
 import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
 
 public class RequiredContractVerifier
@@ -26,22 +26,22 @@ public class RequiredContractVerifier
         processConfigItems( contentType.getConfigItems().getIterable(), contentData );
     }
 
-    private void processConfigItems( final Iterable<ConfigItem> configItems, final EntrySelector entrySelector )
+    private void processConfigItems( final Iterable<FormItem> configItems, final EntrySelector entrySelector )
     {
         // check missing required entries
-        for ( ConfigItem configItem : configItems )
+        for ( FormItem formItem : configItems )
         {
-            if ( configItem instanceof Component )
+            if ( formItem instanceof Component )
             {
-                processField( (Component) configItem, entrySelector );
+                processField( (Component) formItem, entrySelector );
             }
-            else if ( configItem instanceof FieldSet )
+            else if ( formItem instanceof FieldSet )
             {
-                processFieldSet( (FieldSet) configItem, entrySelector );
+                processFieldSet( (FieldSet) formItem, entrySelector );
             }
-            else if ( configItem instanceof VisualFieldSet )
+            else if ( formItem instanceof VisualFieldSet )
             {
-                processConfigItems( ( (VisualFieldSet) configItem ).getConfigItemsIterable(), entrySelector );
+                processConfigItems( ( (VisualFieldSet) formItem ).getConfigItemsIterable(), entrySelector );
             }
         }
     }

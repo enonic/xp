@@ -9,10 +9,10 @@ import org.codehaus.jackson.JsonNode;
 
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.type.configitem.Component;
-import com.enonic.wem.core.content.type.configitem.ConfigItem;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
+import com.enonic.wem.core.content.type.configitem.FormItem;
 
 public class DataSetSerializerJson
 {
@@ -76,7 +76,7 @@ public class DataSetSerializerJson
             {
                 final ConfigItemPath configItemPath = path.resolveConfigItemPath();
 
-                final ConfigItem item = configItems.getConfigItem( configItemPath.getLastElement() );
+                final FormItem item = configItems.getConfigItem( configItemPath.getLastElement() );
 
                 if ( item == null )
                 {

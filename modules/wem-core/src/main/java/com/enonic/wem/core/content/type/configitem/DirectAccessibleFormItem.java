@@ -2,12 +2,12 @@ package com.enonic.wem.core.content.type.configitem;
 
 import org.elasticsearch.common.base.Preconditions;
 
-public abstract class DirectAccessibleConfigItem
-    extends ConfigItem
+public abstract class DirectAccessibleFormItem
+    extends FormItem
 {
     private ConfigItemPath path;
 
-    protected DirectAccessibleConfigItem( final ConfigItemType type )
+    protected DirectAccessibleFormItem( final ConfigItemType type )
     {
         super( type );
     }
@@ -37,9 +37,9 @@ public abstract class DirectAccessibleConfigItem
         return path;
     }
 
-    public DirectAccessibleConfigItem copy()
+    public DirectAccessibleFormItem copy()
     {
-        final DirectAccessibleConfigItem configItem = (DirectAccessibleConfigItem) super.copy();
+        final DirectAccessibleFormItem configItem = (DirectAccessibleFormItem) super.copy();
         configItem.path = path;
         return configItem;
     }

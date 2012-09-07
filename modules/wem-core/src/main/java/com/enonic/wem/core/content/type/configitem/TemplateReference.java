@@ -4,7 +4,7 @@ package com.enonic.wem.core.content.type.configitem;
 import org.elasticsearch.common.base.Preconditions;
 
 public class TemplateReference
-    extends DirectAccessibleConfigItem
+    extends DirectAccessibleFormItem
 {
     private TemplateQualifiedName templateQualifiedName;
 

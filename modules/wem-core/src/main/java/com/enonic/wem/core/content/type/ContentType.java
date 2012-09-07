@@ -4,10 +4,10 @@ package com.enonic.wem.core.content.type;
 import org.elasticsearch.common.base.Preconditions;
 
 import com.enonic.wem.core.content.type.configitem.Component;
-import com.enonic.wem.core.content.type.configitem.ConfigItem;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
+import com.enonic.wem.core.content.type.configitem.FormItem;
 import com.enonic.wem.core.content.type.configitem.TemplateFetcher;
 import com.enonic.wem.core.module.Module;
 
@@ -107,9 +107,9 @@ public class ContentType
         return configItems;
     }
 
-    public void addConfigItem( final ConfigItem configItem )
+    public void addConfigItem( final FormItem formItem )
     {
-        this.configItems.addConfigItem( configItem );
+        this.configItems.addConfigItem( formItem );
     }
 
     Component getField( final ConfigItemPath path )

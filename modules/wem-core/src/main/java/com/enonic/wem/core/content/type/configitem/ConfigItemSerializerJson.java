@@ -35,24 +35,24 @@ public class ConfigItemSerializerJson
         this.configItemsSerializerJson = configItemsSerializerJson;
     }
 
-    public void generate( ConfigItem configItem, JsonGenerator g )
+    public void generate( FormItem formItem, JsonGenerator g )
         throws IOException
     {
-        if ( configItem instanceof FieldSet )
+        if ( formItem instanceof FieldSet )
         {
-            generateFieldSet( (FieldSet) configItem, g );
+            generateFieldSet( (FieldSet) formItem, g );
         }
-        else if ( configItem instanceof VisualFieldSet )
+        else if ( formItem instanceof VisualFieldSet )
         {
-            generateVisualFieldSet( (VisualFieldSet) configItem, g );
+            generateVisualFieldSet( (VisualFieldSet) formItem, g );
         }
-        else if ( configItem instanceof Component )
+        else if ( formItem instanceof Component )
         {
-            generateField( (Component) configItem, g );
+            generateField( (Component) formItem, g );
         }
-        else if ( configItem instanceof TemplateReference )
+        else if ( formItem instanceof TemplateReference )
         {
-            generateReference( (TemplateReference) configItem, g );
+            generateReference( (TemplateReference) formItem, g );
         }
     }
 
@@ -123,41 +123,41 @@ public class ConfigItemSerializerJson
         g.writeEndObject();
     }
 
-    public ConfigItem parse( final JsonNode configItemNode )
+    public FormItem parse( final JsonNode configItemNode )
     {
         ConfigItemType configItemType = ConfigItemType.valueOf( JsonParserUtil.getStringValue( "configItemType", configItemNode ) );
 
-        ConfigItem configItem;
+        FormItem formItem;
 
         if ( configItemType == ConfigItemType.FIELD )
         {
-            configItem = parseField( configItemNode );
+            formItem = parseField( configItemNode );
         }
         else if ( configItemType == ConfigItemType.FIELD_SET )
         {
-            configItem = parseFieldSet( configItemNode );
+            formItem = parseFieldSet( configItemNode );
         }
         else if ( configItemType == ConfigItemType.VISUAL_FIELD_SET )
         {
-            configItem = parseVisualFieldSet( configItemNode );
+            formItem = parseVisualFieldSet( configItemNode );
         }
         else if ( configItemType == ConfigItemType.REFERENCE )
         {
-            configItem = parseTemplateReference( configItemNode );
+            formItem = parseTemplateReference( configItemNode );
         }
         else
         {
             throw new JsonParsingException( "Unknown ConfigItemType: " + configItemType );
         }
 
-        if ( configItem instanceof DirectAccessibleConfigItem )
+        if ( formItem instanceof DirectAccessibleFormItem )
         {
-            applyPath( configItemNode, (DirectAccessibleConfigItem) configItem );
+            applyPath( configItemNode, (DirectAccessibleFormItem) formItem );
         }
-        return configItem;
+        return formItem;
     }
 
-    private void applyPath( final JsonNode configItemNode, final DirectAccessibleConfigItem configItem )
+    private void applyPath( final JsonNode configItemNode, final DirectAccessibleFormItem configItem )
     {
         if ( configItem.getConfigItemType() != ConfigItemType.VISUAL_FIELD_SET )
         {
@@ -165,7 +165,7 @@ public class ConfigItemSerializerJson
         }
     }
 
-    private DirectAccessibleConfigItem parseField( final JsonNode configItemNode )
+    private DirectAccessibleFormItem parseField( final JsonNode configItemNode )
     {
         final Component.Builder builder = Component.newBuilder();
         builder.name( JsonParserUtil.getStringValue( "name", configItemNode ) );
@@ -181,7 +181,7 @@ public class ConfigItemSerializerJson
         return builder.build();
     }
 
-    private DirectAccessibleConfigItem parseFieldSet( final JsonNode configItemNode )
+    private DirectAccessibleFormItem parseFieldSet( final JsonNode configItemNode )
     {
         final FieldSet.Builder builder = newFieldSet();
         builder.name( JsonParserUtil.getStringValue( "name", configItemNode ) );
@@ -194,30 +194,30 @@ public class ConfigItemSerializerJson
         parseOccurrences( builder, configItemNode.get( "occurrences" ) );
 
         final ConfigItems configItems = configItemsSerializerJson.parse( configItemNode.get( "items" ) );
-        for ( ConfigItem configItem : configItems.iterable() )
+        for ( FormItem formItem : configItems.iterable() )
         {
-            builder.add( configItem );
+            builder.add( formItem );
         }
 
         return builder.build();
     }
 
-    private ConfigItem parseVisualFieldSet( final JsonNode configItemNode )
+    private FormItem parseVisualFieldSet( final JsonNode configItemNode )
     {
         final VisualFieldSet.Builder builder = newVisualFieldSet();
         builder.label( JsonParserUtil.getStringValue( "label", configItemNode, null ) );
         builder.name( JsonParserUtil.getStringValue( "name", configItemNode, null ) );
 
         final ConfigItems configItems = configItemsSerializerJson.parse( configItemNode.get( "items" ) );
-        for ( ConfigItem configItem : configItems.iterable() )
+        for ( FormItem formItem : configItems.iterable() )
         {
-            builder.add( configItem );
+            builder.add( formItem );
         }
 
         return builder.build();
     }
 
-    private DirectAccessibleConfigItem parseTemplateReference( final JsonNode configItemNode )
+    private DirectAccessibleFormItem parseTemplateReference( final JsonNode configItemNode )
     {
         final TemplateReference.Builder builder = newTemplateReference();
         builder.name( JsonParserUtil.getStringValue( "name", configItemNode ) );

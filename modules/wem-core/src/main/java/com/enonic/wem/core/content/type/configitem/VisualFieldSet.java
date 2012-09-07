@@ -8,8 +8,8 @@ import com.google.common.base.Preconditions;
 
 
 public class VisualFieldSet
-    extends ConfigItem
-    implements Iterable<ConfigItem>
+    extends FormItem
+    implements Iterable<FormItem>
 {
     private String label;
 
@@ -26,7 +26,7 @@ public class VisualFieldSet
     }
 
     @Override
-    public Iterator<ConfigItem> iterator()
+    public Iterator<FormItem> iterator()
     {
         return configItems.iterator();
     }
@@ -45,9 +45,9 @@ public class VisualFieldSet
         return new Builder();
     }
 
-    public void addConfigItem( final ConfigItem configItem )
+    public void addConfigItem( final FormItem formItem )
     {
-        this.configItems.addConfigItem( configItem );
+        this.configItems.addConfigItem( formItem );
     }
 
     ConfigItems getConfigItems()
@@ -55,7 +55,7 @@ public class VisualFieldSet
         return configItems;
     }
 
-    public ConfigItem getConfigItem( final String name )
+    public FormItem getConfigItem( final String name )
     {
         return configItems.getConfigItem( name );
     }
@@ -65,7 +65,7 @@ public class VisualFieldSet
         configItems.setPath( path );
     }
 
-    public Iterable<ConfigItem> getConfigItemsIterable()
+    public Iterable<FormItem> getConfigItemsIterable()
     {
         return configItems.iterable();
     }
@@ -76,7 +76,7 @@ public class VisualFieldSet
 
         private String name;
 
-        private List<ConfigItem> configItems = new ArrayList<ConfigItem>();
+        private List<FormItem> formItems = new ArrayList<FormItem>();
 
         public Builder label( String value )
         {
@@ -90,9 +90,9 @@ public class VisualFieldSet
             return this;
         }
 
-        public Builder add( ConfigItem configItem )
+        public Builder add( FormItem formItem )
         {
-            this.configItems.add( configItem );
+            this.formItems.add( formItem );
             return this;
         }
 
@@ -104,9 +104,9 @@ public class VisualFieldSet
             VisualFieldSet visualFieldSet = new VisualFieldSet();
             visualFieldSet.label = this.label;
             visualFieldSet.setName( this.name );
-            for ( ConfigItem configItem : configItems )
+            for ( FormItem formItem : formItems )
             {
-                visualFieldSet.addConfigItem( configItem );
+                visualFieldSet.addConfigItem( formItem );
             }
             return visualFieldSet;
         }

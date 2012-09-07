@@ -30,7 +30,7 @@ public class FieldTemplate
         this.component = value;
     }
 
-    public DirectAccessibleConfigItem create( final TemplateReference templateReference )
+    public DirectAccessibleFormItem create( final TemplateReference templateReference )
     {
         Component component = this.component.copy();
         component.setName( templateReference.getName() );

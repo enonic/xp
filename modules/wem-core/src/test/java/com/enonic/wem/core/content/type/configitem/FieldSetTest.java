@@ -36,7 +36,7 @@ public class FieldSetTest
         fieldSet.addField( Component.newBuilder().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise
-        DirectAccessibleConfigItem field = fieldSet.getConfigItem( new ConfigItemPath( "myField" ) );
+        DirectAccessibleFormItem field = fieldSet.getConfigItem( new ConfigItemPath( "myField" ) );
 
         // verify
         assertEquals( "myFieldSet.myField", field.getPath().toString() );

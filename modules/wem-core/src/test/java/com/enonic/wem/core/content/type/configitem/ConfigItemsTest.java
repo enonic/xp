@@ -19,7 +19,7 @@ public class ConfigItemsTest
         fieldSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise & verify
-        DirectAccessibleConfigItem personaliaConfig =
+        DirectAccessibleFormItem personaliaConfig =
             configItems.getDirectAccessibleConfigItem( new ConfigItemPath( "personalia" ).getLastElement() );
         assertEquals( "personalia", personaliaConfig.getPath().toString() );
     }
@@ -34,7 +34,7 @@ public class ConfigItemsTest
         fieldSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise & verify
-        DirectAccessibleConfigItem personaliaEyeColourConfig = fieldSet.getConfigItems().getDirectAccessibleConfigItem( "eyeColour" );
+        DirectAccessibleFormItem personaliaEyeColourConfig = fieldSet.getConfigItems().getDirectAccessibleConfigItem( "eyeColour" );
         assertEquals( "personalia.eyeColour", personaliaEyeColourConfig.getPath().toString() );
     }
 

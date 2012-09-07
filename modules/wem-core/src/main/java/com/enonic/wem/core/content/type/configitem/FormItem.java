@@ -3,13 +3,13 @@ package com.enonic.wem.core.content.type.configitem;
 
 import org.elasticsearch.common.base.Preconditions;
 
-public abstract class ConfigItem
+public abstract class FormItem
 {
     private String name;
 
     private ConfigItemType itemType;
 
-    ConfigItem( final ConfigItemType itemType )
+    FormItem( final ConfigItemType itemType )
     {
         this.itemType = itemType;
     }
@@ -30,14 +30,14 @@ public abstract class ConfigItem
         return name;
     }
 
-    public ConfigItem copy()
+    public FormItem copy()
     {
         try
         {
-            ConfigItem configItem = this.getClass().newInstance();
-            configItem.name = name;
-            configItem.itemType = itemType;
-            return configItem;
+            FormItem formItem = this.getClass().newInstance();
+            formItem.name = name;
+            formItem.itemType = itemType;
+            return formItem;
         }
         catch ( InstantiationException e )
         {

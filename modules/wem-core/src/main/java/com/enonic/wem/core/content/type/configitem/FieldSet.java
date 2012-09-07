@@ -7,7 +7,7 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 
 public class FieldSet
-    extends DirectAccessibleConfigItem
+    extends DirectAccessibleFormItem
 {
     private String label;
 
@@ -33,9 +33,9 @@ public class FieldSet
         configItems.setPath( configItemPath );
     }
 
-    public void addConfigItem( final ConfigItem configItem )
+    public void addConfigItem( final FormItem formItem )
     {
-        this.configItems.addConfigItem( configItem );
+        this.configItems.addConfigItem( formItem );
     }
 
     public void addField( final Component component )
@@ -98,7 +98,7 @@ public class FieldSet
     void setParentPath( final ConfigItemPath parentPath )
     {
         super.setParentPath( parentPath );
-        for ( DirectAccessibleConfigItem configItem : configItems.iterableForDirectAccessConfigItems() )
+        for ( DirectAccessibleFormItem configItem : configItems.iterableForDirectAccessConfigItems() )
         {
             configItem.setParentPath( this.getPath() );
         }
@@ -149,7 +149,7 @@ public class FieldSet
         return new Builder();
     }
 
-    public DirectAccessibleConfigItem getConfigItem( final ConfigItemPath configItemPath )
+    public DirectAccessibleFormItem getConfigItem( final ConfigItemPath configItemPath )
     {
         return configItems.getConfigItem( configItemPath );
     }
@@ -168,7 +168,7 @@ public class FieldSet
 
         private String helpText;
 
-        private List<ConfigItem> configItems = new ArrayList<ConfigItem>();
+        private List<FormItem> formItems = new ArrayList<FormItem>();
 
         private Builder()
         {
@@ -243,9 +243,9 @@ public class FieldSet
             return this;
         }
 
-        public Builder add( ConfigItem value )
+        public Builder add( FormItem value )
         {
-            configItems.add( value );
+            formItems.add( value );
             return this;
         }
 
@@ -259,9 +259,9 @@ public class FieldSet
             fieldSet.occurrences.setMaxOccurences( occurrences.getMaximum() );
             fieldSet.customText = customText;
             fieldSet.helpText = helpText;
-            for ( ConfigItem configItem : configItems )
+            for ( FormItem formItem : formItems )
             {
-                fieldSet.addConfigItem( configItem );
+                fieldSet.addConfigItem( formItem );
             }
 
             Preconditions.checkNotNull( fieldSet.getName(), "a name for the FieldSet is required" );

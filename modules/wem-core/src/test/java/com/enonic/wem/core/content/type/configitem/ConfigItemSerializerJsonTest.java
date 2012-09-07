@@ -58,12 +58,12 @@ public class ConfigItemSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        ConfigItem configItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
+        FormItem formItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
-        assertTrue( configItem instanceof Component );
-        assertEquals( "myTextLine", configItem.getName() );
-        Component parsedComponent = (Component) configItem;
+        assertTrue( formItem instanceof Component );
+        assertEquals( "myTextLine", formItem.getName() );
+        Component parsedComponent = (Component) formItem;
         assertEquals( true, parsedComponent.isRequired() );
         assertEquals( false, parsedComponent.isIndexed() );
         assertEquals( true, parsedComponent.isImmutable() );
@@ -91,12 +91,12 @@ public class ConfigItemSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        ConfigItem configItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
+        FormItem formItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
-        assertTrue( configItem instanceof Component );
-        assertEquals( "myDropdown", configItem.getName() );
-        Component parsedComponent = (Component) configItem;
+        assertTrue( formItem instanceof Component );
+        assertEquals( "myDropdown", formItem.getName() );
+        Component parsedComponent = (Component) formItem;
         assertEquals( "My Dropdown", parsedComponent.getLabel() );
         assertEquals( false, parsedComponent.isRequired() );
         assertEquals( false, parsedComponent.isIndexed() );
@@ -129,12 +129,12 @@ public class ConfigItemSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        ConfigItem configItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
+        FormItem formItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
-        assertTrue( configItem instanceof Component );
-        assertEquals( "myRadioButtons", configItem.getName() );
-        Component parsedComponent = (Component) configItem;
+        assertTrue( formItem instanceof Component );
+        assertEquals( "myRadioButtons", formItem.getName() );
+        Component parsedComponent = (Component) formItem;
         assertEquals( "My Radio buttons", parsedComponent.getLabel() );
         assertEquals( false, parsedComponent.isRequired() );
         assertEquals( false, parsedComponent.isIndexed() );
@@ -170,12 +170,12 @@ public class ConfigItemSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        ConfigItem configItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
+        FormItem formItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
-        assertTrue( configItem instanceof FieldSet );
-        assertEquals( "mySubType", configItem.getName() );
-        FieldSet parsedFieldSet = (FieldSet) configItem;
+        assertTrue( formItem instanceof FieldSet );
+        assertEquals( "mySubType", formItem.getName() );
+        FieldSet parsedFieldSet = (FieldSet) formItem;
         assertEquals( "My sub type", parsedFieldSet.getLabel() );
         assertEquals( true, parsedFieldSet.isRequired() );
         assertEquals( true, parsedFieldSet.isImmutable() );
