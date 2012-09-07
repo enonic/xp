@@ -2,7 +2,12 @@ package com.enonic.wem.web.data.account;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.joda.time.DateTime;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.common.collect.Lists;
 
@@ -64,5 +69,12 @@ public abstract class AbstractAccountRpcHandlerTest
         group.setModifiedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
         group.setMembers( AccountKeys.from( members ) );
         return group;
+    }
+
+    protected void mockCurrentContextHttpRequest()
+    {
+        final HttpServletRequest req = new MockHttpServletRequest();
+        final ServletRequestAttributes attrs = new ServletRequestAttributes( req );
+        RequestContextHolder.setRequestAttributes( attrs );
     }
 }

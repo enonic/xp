@@ -6,9 +6,9 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.web.rest2.common.JsonResult;
 import com.enonic.wem.web.rest2.resource.account.AccountUriHelper;
+import com.enonic.wem.web.rest2.resource.account.NewAccountKeyHelper;
 
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.group.GroupType;
@@ -44,6 +44,7 @@ public final class GroupResult
         final String key = String.valueOf( group.getGroupKey() );
 
         json.put( "key", key );
+        json.put( "new_key", NewAccountKeyHelper.composeNewKey( group ) );
         json.put( "type", TYPE_GROUP );
         json.put( "name", group.getName() );
         json.put( "userStore", group.getUserStore() != null ? group.getUserStore().getName() : "null" );

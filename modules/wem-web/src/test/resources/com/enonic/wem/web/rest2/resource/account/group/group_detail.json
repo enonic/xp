@@ -1,5 +1,6 @@
 {
     "key": "BDA046019C23F8A3BCDFB9360E77375BB4BBBEC4",
+    "new_key": "group:enonic:dummygroup",
     "type": "group",
     "name": "dummygroup",
     "userStore": "enonic",
