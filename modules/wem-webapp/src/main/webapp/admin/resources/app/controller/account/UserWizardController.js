@@ -341,21 +341,15 @@ Ext.define('Admin.controller.account.UserWizardController', {
             return;
         }
 
-        Ext.Ajax.request({
-            url: Admin.lib.UriHelper.getAccountSuggestUserNameUri(),
-            method: 'GET',
-            params: {
-                'firstname': firstName,
-                'lastname': lastName,
-                'userstore': userStoreName
-            },
-            success: function (response) {
-                var respObj = Ext.decode(response.responseText, true);
-                if (usernameField.getValue() === '') {
-                    usernameField.setValue(respObj.username);
+        Admin.lib.RemoteService.account_suggestUserName({ userStore: userStoreName, firstName: firstName, lastName: lastName },
+            function (response) {
+                if (response.success) {
+                    if (usernameField.getValue() === '') {
+                        usernameField.setValue(response.username);
+                    }
                 }
             }
-        });
+        );
     },
 
     createNewGroup: function (el, e) {
