@@ -114,7 +114,7 @@ public class ContentTypeStepDefs
             ContentType contentType = contentTypeByName.get( contentTypeName );
             assertNotNull( "formItem not found at path: " + formItemPath,
                            contentType.getFormItems().getFormItem( new FormItemPath( formItemPath ) ) );
-            assertEquals( FormItemType.FIELD, formItemType );
+            assertEquals( FormItemType.COMPONENT, formItemType );
         }
     }
 

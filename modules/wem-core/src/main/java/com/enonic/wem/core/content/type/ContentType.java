@@ -130,12 +130,12 @@ public class ContentType
         return getField( new FormItemPath( path ) );
     }
 
-    public FormItemSet getFieldSet( final String path )
+    public FormItemSet getFormItemSet( final String path )
     {
         final FormItemPath formItemPath = new FormItemPath( path );
         final FormItemSet formItemSet = formItems.getFormItemSet( formItemPath );
         Preconditions.checkState( formItemSet.getPath().equals( formItemPath ),
-                                  "Found FieldSet at path [%s] have unexpected path: " + formItemSet.getPath(), formItemPath );
+                                  "Found FormItemSet at path [%s] have unexpected path: " + formItemSet.getPath(), formItemPath );
         return formItemSet;
     }
 

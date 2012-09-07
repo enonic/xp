@@ -33,11 +33,11 @@ public class RequiredContractVerifier
         {
             if ( formItem instanceof Component )
             {
-                processField( (Component) formItem, entrySelector );
+                processComponent( (Component) formItem, entrySelector );
             }
             else if ( formItem instanceof FormItemSet )
             {
-                processFieldSet( (FormItemSet) formItem, entrySelector );
+                processFormItemSet( (FormItemSet) formItem, entrySelector );
             }
             else if ( formItem instanceof VisualFieldSet )
             {
@@ -46,7 +46,7 @@ public class RequiredContractVerifier
         }
     }
 
-    private void processField( final Component component, final EntrySelector entrySelector )
+    private void processComponent( final Component component, final EntrySelector entrySelector )
     {
         Data data = entrySelector != null ? entrySelector.getData( new EntryPath( component.getPath().toString() ) ) : null;
         if ( component.isRequired() )
@@ -55,12 +55,12 @@ public class RequiredContractVerifier
         }
     }
 
-    private void processFieldSet( final FormItemSet formItemSet, final EntrySelector entrySelector )
+    private void processFormItemSet( final FormItemSet formItemSet, final EntrySelector entrySelector )
     {
         DataSet dataSet = entrySelector != null ? entrySelector.getDataSet( new EntryPath( formItemSet.getPath().toString() ) ) : null;
         if ( formItemSet.isRequired() )
         {
-            verifyRequiredFieldSet( formItemSet, dataSet );
+            verifyRequiredFormItemSet( formItemSet, dataSet );
         }
 
         if ( dataSet != null )
@@ -86,7 +86,7 @@ public class RequiredContractVerifier
         }
     }
 
-    private void verifyRequiredFieldSet( final FormItemSet formItemSet, final DataSet dataSet )
+    private void verifyRequiredFormItemSet( final FormItemSet formItemSet, final DataSet dataSet )
     {
         if ( dataSet == null )
         {

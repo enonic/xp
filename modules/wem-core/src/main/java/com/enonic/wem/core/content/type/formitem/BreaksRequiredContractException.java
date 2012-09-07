@@ -42,6 +42,6 @@ public class BreaksRequiredContractException
 
     private static String buildMessage( final FormItemSet formItemSet )
     {
-        return "Required contract is broken, data missing for FieldSet: " + formItemSet.getPath().toString();
+        return "Required contract is broken, data missing for FormItemSet: " + formItemSet.getPath().toString();
     }
 }

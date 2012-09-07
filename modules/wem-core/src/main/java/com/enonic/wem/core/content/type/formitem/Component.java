@@ -32,7 +32,7 @@ public class Component
 
     protected Component()
     {
-        super( FormItemType.FIELD );
+        super( FormItemType.COMPONENT );
     }
 
     public FieldType getFieldType()

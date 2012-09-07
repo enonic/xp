@@ -58,7 +58,7 @@ public class DataSetTest
         FormItemSet crimes = FormItemSet.newBuilder().name( "crimes" ).multiple( true ).build();
         crimes.addItem( Component.newBuilder().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
         crimes.addItem( Component.newBuilder().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
-        personalia.addFieldSet( crimes );
+        personalia.addFormItemSet( crimes );
         FormItems formItems = new FormItems();
         formItems.addFormItem( personalia );
 

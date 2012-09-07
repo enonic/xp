@@ -71,8 +71,9 @@ public class FormItems
         if ( path.elementCount() > 1 )
         {
             DirectAccessibleFormItem foundConfig = getDirectAccessibleFormItem( path.getFirstElement() );
-            Preconditions.checkArgument( foundConfig.getFormItemType() == FormItemType.FIELD_SET,
-                                         "FormItem at path [%s] expected to be of type FieldSet: " + foundConfig.getFormItemType(), path );
+            Preconditions.checkArgument( foundConfig.getFormItemType() == FormItemType.FORM_ITEM_SET,
+                                         "FormItem at path [%s] expected to be of type FormItemSet: " + foundConfig.getFormItemType(),
+                                         path );
             //noinspection ConstantConditions
             FormItemSet formItemSet = (FormItemSet) foundConfig;
             return formItemSet.getFormItem( path.asNewWithoutFirstPathElement() );
@@ -109,7 +110,7 @@ public class FormItems
         return (DirectAccessibleFormItem) formItem;
     }
 
-    public FormItemSet getFieldSet( final String name )
+    public FormItemSet getFormItemSet( final String name )
     {
         final DirectAccessibleFormItem formItem = getDirectAccessibleFormItem( name );
         if ( formItem == null )
@@ -117,7 +118,7 @@ public class FormItems
             return null;
         }
 
-        Preconditions.checkArgument( ( formItem.getFormItemType() == FormItemType.FIELD_SET ),
+        Preconditions.checkArgument( ( formItem.getFormItemType() == FormItemType.FORM_ITEM_SET ),
                                      "FormItem at path [%s] is not a FormItemSet: " + formItem.getFormItemType(), formItem.getPath() );
 
         //noinspection ConstantConditions
@@ -132,7 +133,7 @@ public class FormItems
             return null;
         }
 
-        Preconditions.checkArgument( ( formItem.getFormItemType() == FormItemType.FIELD_SET ),
+        Preconditions.checkArgument( ( formItem.getFormItemType() == FormItemType.FORM_ITEM_SET ),
                                      "FormItem at path [%s] is not a FormItemSet: " + formItem.getFormItemType(), formItem.getPath() );
 
         //noinspection ConstantConditions

@@ -90,13 +90,13 @@ public class TemplateReference
 
         public Builder typeField()
         {
-            this.templateType = TemplateType.FIELD;
+            this.templateType = TemplateType.COMPONENT;
             return this;
         }
 
-        public Builder typeFieldSet()
+        public Builder typeFormItemSet()
         {
-            this.templateType = TemplateType.FIELD_SET;
+            this.templateType = TemplateType.FORM_ITEM_SET;
             return this;
         }
 

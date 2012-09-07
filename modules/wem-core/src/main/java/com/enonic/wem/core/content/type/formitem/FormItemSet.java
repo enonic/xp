@@ -23,7 +23,7 @@ public class FormItemSet
 
     protected FormItemSet()
     {
-        super( FormItemType.FIELD_SET );
+        super( FormItemType.FORM_ITEM_SET );
     }
 
     @Override
@@ -40,15 +40,15 @@ public class FormItemSet
 
     public void addItem( final Component component )
     {
-        Preconditions.checkState( getPath() != null, "Cannot add Field before this FieldSet is added" );
+        Preconditions.checkState( getPath() != null, "Cannot add Field before this FormItemSet is added" );
 
         component.setPath( new FormItemPath( getPath(), component.getName() ) );
         this.formItems.addFormItem( component );
     }
 
-    public void addFieldSet( final FormItemSet formItemSet )
+    public void addFormItemSet( final FormItemSet formItemSet )
     {
-        Preconditions.checkState( getPath() != null, "Cannot add FieldSet before this FieldSet is added" );
+        Preconditions.checkState( getPath() != null, "Cannot add FormItemSet before this FormItemSet is added" );
 
         formItemSet.setPath( new FormItemPath( getPath(), formItemSet.getName() ) );
         this.formItems.addFormItem( formItemSet );
@@ -264,7 +264,7 @@ public class FormItemSet
                 formItemSet.addFormItem( formItem );
             }
 
-            Preconditions.checkNotNull( formItemSet.getName(), "a name for the FieldSet is required" );
+            Preconditions.checkNotNull( formItemSet.getName(), "a name for the FormItemSet is required" );
             formItemSet.setPath( new FormItemPath( formItemSet.getName() ) );
             return formItemSet;
         }

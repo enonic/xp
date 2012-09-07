@@ -15,7 +15,7 @@ public class FormItemSetTemplateBuilder
         return this;
     }
 
-    public FormItemSetTemplateBuilder fieldSet( FormItemSet value )
+    public FormItemSetTemplateBuilder formItemSet( FormItemSet value )
     {
         this.formItemSet = value;
         return this;

@@ -40,7 +40,7 @@ public class FormItemSerializerJson
     {
         if ( formItem instanceof FormItemSet )
         {
-            generateFieldSet( (FormItemSet) formItem, g );
+            generateFormItemSet( (FormItemSet) formItem, g );
         }
         else if ( formItem instanceof VisualFieldSet )
         {
@@ -81,7 +81,7 @@ public class FormItemSerializerJson
         g.writeEndObject();
     }
 
-    private void generateFieldSet( final FormItemSet formItemSet, JsonGenerator g )
+    private void generateFormItemSet( final FormItemSet formItemSet, JsonGenerator g )
         throws IOException
     {
         g.writeStartObject();
@@ -129,13 +129,13 @@ public class FormItemSerializerJson
 
         FormItem formItem;
 
-        if ( formItemType == FormItemType.FIELD )
+        if ( formItemType == FormItemType.COMPONENT )
         {
             formItem = parseField( formItemNode );
         }
-        else if ( formItemType == FormItemType.FIELD_SET )
+        else if ( formItemType == FormItemType.FORM_ITEM_SET )
         {
-            formItem = parseFieldSet( formItemNode );
+            formItem = parseFormItemSet( formItemNode );
         }
         else if ( formItemType == FormItemType.VISUAL_FIELD_SET )
         {
@@ -181,7 +181,7 @@ public class FormItemSerializerJson
         return builder.build();
     }
 
-    private DirectAccessibleFormItem parseFieldSet( final JsonNode formItemNode )
+    private DirectAccessibleFormItem parseFormItemSet( final JsonNode formItemNode )
     {
         final FormItemSet.Builder builder = newFormItemTest();
         builder.name( JsonParserUtil.getStringValue( "name", formItemNode ) );

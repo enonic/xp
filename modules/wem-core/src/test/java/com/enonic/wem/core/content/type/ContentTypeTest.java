@@ -72,7 +72,7 @@ public class ContentTypeTest
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        FormItemSetTemplate template = newFormItemSetTemplate().module( module ).fieldSet( newFormItemTest().name( "address" ).add(
+        FormItemSetTemplate template = newFormItemSetTemplate().module( module ).formItemSet( newFormItemTest().name( "address" ).add(
             newComponent().name( "label" ).label( "Label" ).type( FieldTypes.TEXT_LINE ).build() ).add(
             newComponent().name( "street" ).label( "Street" ).type( FieldTypes.TEXT_LINE ).build() ).add(
             newComponent().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.TEXT_LINE ).build() ).add(
@@ -99,7 +99,7 @@ public class ContentTypeTest
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        FormItemSetTemplate template = newFormItemSetTemplate().module( module ).fieldSet( newFormItemTest().name( "address" ).add(
+        FormItemSetTemplate template = newFormItemSetTemplate().module( module ).formItemSet( newFormItemTest().name( "address" ).add(
             newVisualFieldSet().label( "My Visual Field Set" ).name( "vfs" ).add(
                 newComponent().name( "myFieldInVFS" ).label( "MyFieldInVFS" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).add(
             newComponent().name( "label" ).label( "Label" ).type( FieldTypes.TEXT_LINE ).build() ).add(
@@ -128,7 +128,7 @@ public class ContentTypeTest
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        FormItemSetTemplate formItemSetTemplate = newFormItemSetTemplate().module( module ).fieldSet(
+        FormItemSetTemplate formItemSetTemplate = newFormItemSetTemplate().module( module ).formItemSet(
             newFormItemTest().name( "address" ).add(
                 newComponent().name( "label" ).label( "Label" ).type( FieldTypes.TEXT_LINE ).build() ).add(
                 newComponent().name( "street" ).label( "Street" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).build();
@@ -148,7 +148,7 @@ public class ContentTypeTest
         catch ( Exception e )
         {
             assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "Template expected to be of type FIELD: FIELD_SET", e.getMessage() );
+            assertEquals( "Template expected to be of type COMPONENT: FORM_ITEM_SET", e.getMessage() );
         }
     }
 
@@ -163,9 +163,9 @@ public class ContentTypeTest
                     newComponent().name( "myInnerField" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).build();
         contentType.addFormItem( formItemSet );
 
-        assertEquals( "top-fieldSet", contentType.getFieldSet( "top-fieldSet" ).getPath().toString() );
+        assertEquals( "top-fieldSet", contentType.getFormItemSet( "top-fieldSet" ).getPath().toString() );
         assertEquals( "top-fieldSet.myField", contentType.getField( "top-fieldSet.myField" ).getPath().toString() );
-        assertEquals( "top-fieldSet.inner-fieldSet", contentType.getFieldSet( "top-fieldSet.inner-fieldSet" ).getPath().toString() );
+        assertEquals( "top-fieldSet.inner-fieldSet", contentType.getFormItemSet( "top-fieldSet.inner-fieldSet" ).getPath().toString() );
         assertEquals( "top-fieldSet.inner-fieldSet.myInnerField",
                       contentType.getField( "top-fieldSet.inner-fieldSet.myInnerField" ).getPath().toString() );
     }

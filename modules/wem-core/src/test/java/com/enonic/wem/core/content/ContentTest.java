@@ -108,7 +108,7 @@ public class ContentTest
 
         ContentType contentType = new ContentType();
         contentType.addFormItem(
-            TemplateReference.newTemplateReference().name( "myTags" ).template( "system:tags" ).type( TemplateType.FIELD ).build() );
+            TemplateReference.newTemplateReference().name( "myTags" ).template( "system:tags" ).type( TemplateType.COMPONENT ).build() );
         contentType.templateReferencesToFormItems( templateFetcher );
 
         Content content = new Content();
@@ -248,7 +248,7 @@ public class ContentTest
         FormItemSet features = FormItemSet.newBuilder().name( "features" ).multiple( false ).build();
         features.addItem( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
         features.addItem( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        child.addFieldSet( features );
+        child.addFormItemSet( features );
         ContentType contentType = new ContentType();
         contentType.addFormItem( child );
 
@@ -309,11 +309,13 @@ public class ContentTest
         ContentType contentType = new ContentType();
         contentType.addFormItem( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
         contentType.addFormItem( FormItemSet.newBuilder().name( "personalia" ).multiple( false ).build() );
-        contentType.getFieldSet( "personalia" ).addItem( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        contentType.getFieldSet( "personalia" ).addItem( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.getFormItemSet( "personalia" ).addItem(
+            Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.getFormItemSet( "personalia" ).addItem(
+            Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
         contentType.addFormItem( FormItemSet.newBuilder().name( "crimes" ).multiple( true ).build() );
-        contentType.getFieldSet( "crimes" ).addItem( Component.newBuilder().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
-        contentType.getFieldSet( "crimes" ).addItem( Component.newBuilder().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.getFormItemSet( "crimes" ).addItem( Component.newBuilder().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.getFormItemSet( "crimes" ).addItem( Component.newBuilder().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
         content.setType( contentType );
 
         assertEquals( DataTypes.STRING, content.getData( "personalia.eyeColour" ).getDataType() );
@@ -332,7 +334,7 @@ public class ContentTest
             Component.newComponent().name( "country" ).type( FieldTypes.DROPDOWN ).fieldTypeConfig(
                 DropdownConfig.newBuilder().addOption( "Norway", "NO" ).build() ).build() ).build();
 
-        FormItemSetTemplate addressTemplate = newFormItemSetTemplate().module( module ).fieldSet(
+        FormItemSetTemplate addressTemplate = newFormItemSetTemplate().module( module ).formItemSet(
             newFormItemTest().name( "address" ).add( newComponent().name( "street" ).type( FieldTypes.TEXT_LINE ).build() ).add(
                 newTemplateReference( postalCodeTemplate ).name( "postalCode" ).build() ).add(
                 newComponent().name( "postalPlace" ).type( FieldTypes.TEXT_LINE ).build() ).add(
@@ -369,7 +371,7 @@ public class ContentTest
     {
         Module module = newModule().name( "myModule" ).build();
 
-        FormItemSetTemplate addressTemplate = newFormItemSetTemplate().module( module ).fieldSet(
+        FormItemSetTemplate addressTemplate = newFormItemSetTemplate().module( module ).formItemSet(
             newFormItemTest().name( "address" ).multiple( true ).add(
                 newComponent().type( FieldTypes.TEXT_LINE ).name( "label" ).build() ).add(
                 newComponent().type( FieldTypes.TEXT_LINE ).name( "street" ).build() ).add(
@@ -666,7 +668,7 @@ public class ContentTest
         catch ( Exception e )
         {
             assertTrue( e instanceof BreaksRequiredContractException );
-            assertEquals( "Required contract is broken, data missing for FieldSet: personalia", e.getMessage() );
+            assertEquals( "Required contract is broken, data missing for FormItemSet: personalia", e.getMessage() );
         }
     }
 }

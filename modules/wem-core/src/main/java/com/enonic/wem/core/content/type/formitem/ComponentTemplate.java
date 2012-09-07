@@ -17,7 +17,7 @@ public class ComponentTemplate
     @Override
     public TemplateType getType()
     {
-        return TemplateType.FIELD;
+        return TemplateType.COMPONENT;
     }
 
     public Component getComponent()

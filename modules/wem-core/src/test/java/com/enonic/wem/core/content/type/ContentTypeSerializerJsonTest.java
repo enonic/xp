@@ -143,7 +143,7 @@ public class ContentTypeSerializerJsonTest
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        FormItemSetTemplate template = FormItemSetTemplateBuilder.newFormItemSetTemplate().module( module ).fieldSet(
+        FormItemSetTemplate template = FormItemSetTemplateBuilder.newFormItemSetTemplate().module( module ).formItemSet(
             newFormItemTest().name( "address" ).add(
                 newBuilder().name( "label" ).label( "Label" ).type( FieldTypes.TEXT_LINE ).build() ).add(
                 newBuilder().name( "street" ).label( "Street" ).type( FieldTypes.TEXT_LINE ).build() ).add(
@@ -185,9 +185,10 @@ public class ContentTypeSerializerJsonTest
         String json = new ContentTypeSerializerJson().toJson( contentType );
 
         ContentType parsedContentType = new ContentTypeSerializerJson().parse( json );
-        assertEquals( "top-fieldSet", parsedContentType.getFieldSet( "top-fieldSet" ).getPath().toString() );
+        assertEquals( "top-fieldSet", parsedContentType.getFormItemSet( "top-fieldSet" ).getPath().toString() );
         assertEquals( "top-fieldSet.myField", parsedContentType.getField( "top-fieldSet.myField" ).getPath().toString() );
-        assertEquals( "top-fieldSet.inner-fieldSet", parsedContentType.getFieldSet( "top-fieldSet.inner-fieldSet" ).getPath().toString() );
+        assertEquals( "top-fieldSet.inner-fieldSet",
+                      parsedContentType.getFormItemSet( "top-fieldSet.inner-fieldSet" ).getPath().toString() );
         assertEquals( "top-fieldSet.inner-fieldSet.myInnerField",
                       parsedContentType.getField( "top-fieldSet.inner-fieldSet.myInnerField" ).getPath().toString() );
     }

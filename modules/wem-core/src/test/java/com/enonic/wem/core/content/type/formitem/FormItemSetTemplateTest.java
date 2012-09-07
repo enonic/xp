@@ -23,11 +23,11 @@ public class FormItemSetTemplateTest
         ComponentTemplate ageTemplate =
             newComponentTemplate().module( module ).component( newComponent().name( "age" ).type( FieldTypes.TEXT_LINE ).build() ).build();
 
-        FormItemSetTemplate personTemplate = newFormItemSetTemplate().module( module ).fieldSet(
+        FormItemSetTemplate personTemplate = newFormItemSetTemplate().module( module ).formItemSet(
             FormItemSet.newFormItemTest().name( "person" ).add( newComponent().name( "name" ).type( FieldTypes.TEXT_LINE ).build() ).add(
                 newTemplateReference( ageTemplate ).name( "age" ).build() ).build() ).build();
 
-        FormItemSetTemplate addressTemplate = newFormItemSetTemplate().module( module ).fieldSet(
+        FormItemSetTemplate addressTemplate = newFormItemSetTemplate().module( module ).formItemSet(
             FormItemSet.newFormItemTest().name( "address" ).add( newComponent().type( FieldTypes.TEXT_LINE ).name( "street" ).build() ).add(
                 newComponent().type( FieldTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(
                 newComponent().type( FieldTypes.TEXT_LINE ).name( "postalPlace" ).build() ).build() ).build();
@@ -39,7 +39,7 @@ public class FormItemSetTemplateTest
         catch ( Exception e )
         {
             assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "A template cannot reference other templates unless it is of type FIELD: FIELD_SET", e.getMessage() );
+            assertEquals( "A template cannot reference other templates unless it is of type COMPONENT: FORM_ITEM_SET", e.getMessage() );
         }
     }
 

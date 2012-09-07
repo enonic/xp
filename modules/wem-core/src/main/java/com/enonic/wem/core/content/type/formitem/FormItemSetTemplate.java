@@ -24,7 +24,7 @@ public class FormItemSetTemplate
     @Override
     public TemplateType getType()
     {
-        return TemplateType.FIELD_SET;
+        return TemplateType.FORM_ITEM_SET;
     }
 
     public void addFormItem( final DirectAccessibleFormItem formItem )
@@ -32,9 +32,9 @@ public class FormItemSetTemplate
         if ( formItem instanceof TemplateReference )
         {
             TemplateReference templateReference = (TemplateReference) formItem;
-            Preconditions.checkArgument( templateReference.getTemplateType() == TemplateType.FIELD,
+            Preconditions.checkArgument( templateReference.getTemplateType() == TemplateType.COMPONENT,
                                          "A template cannot reference other templates unless it is of type %s: " +
-                                             templateReference.getTemplateType(), TemplateType.FIELD );
+                                             templateReference.getTemplateType(), TemplateType.COMPONENT );
         }
         formItemSet.addFormItem( formItem );
     }
