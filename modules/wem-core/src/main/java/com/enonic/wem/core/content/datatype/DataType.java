@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.datatype;
 
 
 import com.enonic.wem.core.content.data.Data;
-import com.enonic.wem.core.content.type.configitem.InvalidValueException;
+import com.enonic.wem.core.content.type.formitem.InvalidValueException;
 
 /**
  * DataTypes should only be created when:

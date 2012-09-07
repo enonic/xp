@@ -8,7 +8,7 @@ import java.util.StringTokenizer;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.core.content.type.configitem.FormItemPath;
+import com.enonic.wem.core.content.type.formitem.FormItemPath;
 
 public class EntryPath
     implements Iterable<EntryPath.Element>

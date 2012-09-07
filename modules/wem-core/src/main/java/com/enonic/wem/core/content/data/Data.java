@@ -7,7 +7,7 @@ import com.google.common.base.Objects;
 
 import com.enonic.wem.core.content.datatype.DataType;
 import com.enonic.wem.core.content.datatype.JavaType;
-import com.enonic.wem.core.content.type.configitem.InvalidValueException;
+import com.enonic.wem.core.content.type.formitem.InvalidValueException;
 
 
 public class Data

@@ -3,12 +3,12 @@ package com.enonic.wem.core.content.type;
 
 import org.elasticsearch.common.base.Preconditions;
 
-import com.enonic.wem.core.content.type.configitem.Component;
-import com.enonic.wem.core.content.type.configitem.FormItem;
-import com.enonic.wem.core.content.type.configitem.FormItemPath;
-import com.enonic.wem.core.content.type.configitem.FormItemSet;
-import com.enonic.wem.core.content.type.configitem.FormItems;
-import com.enonic.wem.core.content.type.configitem.TemplateFetcher;
+import com.enonic.wem.core.content.type.formitem.Component;
+import com.enonic.wem.core.content.type.formitem.FormItem;
+import com.enonic.wem.core.content.type.formitem.FormItemPath;
+import com.enonic.wem.core.content.type.formitem.FormItemSet;
+import com.enonic.wem.core.content.type.formitem.FormItems;
+import com.enonic.wem.core.content.type.formitem.TemplateFetcher;
 import com.enonic.wem.core.module.Module;
 
 public class ContentType

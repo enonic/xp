@@ -11,9 +11,9 @@ import com.enonic.wem.core.content.data.ContentData;
 import com.enonic.wem.core.content.data.ContentFormParser;
 import com.enonic.wem.core.content.data.EntryPath;
 import com.enonic.wem.core.content.type.ContentType;
-import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
+import com.enonic.wem.core.content.type.formitem.fieldtype.FieldTypes;
 
-import static com.enonic.wem.core.content.type.configitem.Component.newField;
+import static com.enonic.wem.core.content.type.formitem.Component.newField;
 import static org.junit.Assert.*;
 
 public class ContentFormParserTest

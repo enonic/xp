@@ -11,7 +11,7 @@ import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.RequiredContractVerifier;
 import com.enonic.wem.core.content.type.Validator;
-import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
+import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException;
 
 public class Content
 {

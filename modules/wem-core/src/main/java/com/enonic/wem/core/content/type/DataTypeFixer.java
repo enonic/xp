@@ -4,7 +4,7 @@ package com.enonic.wem.core.content.type;
 import com.enonic.wem.core.content.data.ContentData;
 import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.data.Entry;
-import com.enonic.wem.core.content.type.configitem.Component;
+import com.enonic.wem.core.content.type.formitem.Component;
 
 public class DataTypeFixer
 {

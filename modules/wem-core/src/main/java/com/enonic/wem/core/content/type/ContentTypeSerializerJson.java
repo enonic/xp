@@ -13,7 +13,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.enonic.wem.core.content.JsonFactoryHolder;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.type.configitem.FormItemsSerializerJson;
+import com.enonic.wem.core.content.type.formitem.FormItemsSerializerJson;
 
 public class ContentTypeSerializerJson
 {

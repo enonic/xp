@@ -3,19 +3,19 @@ package com.enonic.wem.core.content.type;
 
 import org.junit.Test;
 
-import com.enonic.wem.core.content.type.configitem.FormItemSet;
-import com.enonic.wem.core.content.type.configitem.FormItemSetTemplate;
-import com.enonic.wem.core.content.type.configitem.MockTemplateFetcher;
-import com.enonic.wem.core.content.type.configitem.TemplateReference;
-import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
-import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
+import com.enonic.wem.core.content.type.formitem.FormItemSet;
+import com.enonic.wem.core.content.type.formitem.FormItemSetTemplate;
+import com.enonic.wem.core.content.type.formitem.MockTemplateFetcher;
+import com.enonic.wem.core.content.type.formitem.TemplateReference;
+import com.enonic.wem.core.content.type.formitem.VisualFieldSet;
+import com.enonic.wem.core.content.type.formitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.module.Module;
 
-import static com.enonic.wem.core.content.type.configitem.Component.newField;
-import static com.enonic.wem.core.content.type.configitem.FormItemSet.newFieldSet;
-import static com.enonic.wem.core.content.type.configitem.FormItemSetTemplateBuilder.newFieldSetTemplate;
-import static com.enonic.wem.core.content.type.configitem.TemplateReference.newTemplateReference;
-import static com.enonic.wem.core.content.type.configitem.VisualFieldSet.newVisualFieldSet;
+import static com.enonic.wem.core.content.type.formitem.Component.newField;
+import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFieldSet;
+import static com.enonic.wem.core.content.type.formitem.FormItemSetTemplateBuilder.newFieldSetTemplate;
+import static com.enonic.wem.core.content.type.formitem.TemplateReference.newTemplateReference;
+import static com.enonic.wem.core.content.type.formitem.VisualFieldSet.newVisualFieldSet;
 import static com.enonic.wem.core.module.Module.newModule;
 import static org.junit.Assert.*;
 

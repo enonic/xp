@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.datatype.DataType;
-import com.enonic.wem.core.content.type.configitem.FormItemPath;
+import com.enonic.wem.core.content.type.formitem.FormItemPath;
 
 public class DataSet
     extends Entry

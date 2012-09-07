@@ -11,17 +11,17 @@ import cucumber.annotation.en.When;
 import cucumber.table.DataTable;
 import gherkin.formatter.model.DataTableRow;
 
-import com.enonic.wem.core.content.type.configitem.Component;
-import com.enonic.wem.core.content.type.configitem.ComponentTemplate;
-import com.enonic.wem.core.content.type.configitem.FieldTemplateBuilder;
-import com.enonic.wem.core.content.type.configitem.FormItemPath;
-import com.enonic.wem.core.content.type.configitem.FormItemType;
-import com.enonic.wem.core.content.type.configitem.MockTemplateFetcher;
-import com.enonic.wem.core.content.type.configitem.TemplateQualifiedName;
-import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
+import com.enonic.wem.core.content.type.formitem.Component;
+import com.enonic.wem.core.content.type.formitem.ComponentTemplate;
+import com.enonic.wem.core.content.type.formitem.FieldTemplateBuilder;
+import com.enonic.wem.core.content.type.formitem.FormItemPath;
+import com.enonic.wem.core.content.type.formitem.FormItemType;
+import com.enonic.wem.core.content.type.formitem.MockTemplateFetcher;
+import com.enonic.wem.core.content.type.formitem.TemplateQualifiedName;
+import com.enonic.wem.core.content.type.formitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.module.Module;
 
-import static com.enonic.wem.core.content.type.configitem.TemplateReference.newTemplateReference;
+import static com.enonic.wem.core.content.type.formitem.TemplateReference.newTemplateReference;
 import static com.enonic.wem.core.module.Module.newModule;
 import static org.junit.Assert.*;
 
