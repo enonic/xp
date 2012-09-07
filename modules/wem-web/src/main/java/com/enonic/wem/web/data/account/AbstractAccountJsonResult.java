@@ -1,11 +1,10 @@
 package com.enonic.wem.web.data.account;
 
 import org.codehaus.jackson.node.ObjectNode;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.enonic.wem.api.account.Account;
-import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
+import com.enonic.wem.web.data.binary.AccountImageUriResolver;
 import com.enonic.wem.web.json.result.JsonResult;
 
 abstract class AbstractAccountJsonResult
@@ -33,7 +32,7 @@ abstract class AbstractAccountJsonResult
         json.put( "createdTime", account.getCreatedTime().toString() );
         json.put( "editable", account.isEditable() );
         json.put( "deleted", account.isDeleted() );
-        json.put( "image_url", getImageUrl( account ) );
+        json.put( "image_url", AccountImageUriResolver.resolve( account ) );
 
         if ( account instanceof UserAccount )
         {
@@ -44,48 +43,5 @@ abstract class AbstractAccountJsonResult
     private void serializeUser( final ObjectNode json, final UserAccount account )
     {
         json.put( "email", account.getEmail() );
-    }
-
-    protected String getImageUrl( final Account account )
-    {
-        if ( account instanceof UserAccount )
-        {
-            return getImageUrl( (UserAccount) account );
-        }
-
-        if ( account instanceof RoleAccount )
-        {
-            return buildImageUrl( "default/role" );
-        }
-
-        return buildImageUrl( "default/group" );
-    }
-
-    private String getImageUrl( final UserAccount account )
-    {
-        if ( account.getKey().isAnonymous() )
-        {
-            return buildImageUrl( "default/anonymous" );
-        }
-
-        if ( account.getKey().isSuperUser() )
-        {
-            return buildImageUrl( "default/admin" );
-        }
-
-        if ( account.getImage() != null )
-        {
-            return buildImageUrl( account.getKey().toString() );
-        }
-        else
-        {
-            return buildImageUrl( "default/user" );
-        }
-    }
-
-    private String buildImageUrl( final String path )
-    {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().path( "admin/rest/binary/account/image/" ).path(
-            path ).build().toString();
     }
 }
