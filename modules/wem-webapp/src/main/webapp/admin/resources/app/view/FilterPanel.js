@@ -16,6 +16,7 @@ Ext.define('Admin.view.FilterPanel', {
 
     includeSearch: true,
     includeFacets: undefined,
+    excludeFacets: [],
     includeEmptyFacets: 'all', // all, last, none
 
     statics: {
@@ -173,12 +174,13 @@ Ext.define('Admin.view.FilterPanel', {
                         if (me.includeEmptyFacets === 'all' ||
                             (me.includeEmptyFacets === 'last' && me.lastFacetName === facet.name) ||
                             termCount > 0) {
-
-                            facetItems.push({
-                                name: facet.name,
-                                boxLabel: field + "<span class='count'>(" + facet.terms[field] + ")</span>",
-                                inputValue: field
-                            });
+                            if (!Ext.Array.contains(me.excludeFacets, facet.name)) {
+                                facetItems.push({
+                                    name: facet.name,
+                                    boxLabel: field + "<span class='count'>(" + facet.terms[field] + ")</span>",
+                                    inputValue: field
+                                });
+                            }
                         }
                     }
                 }

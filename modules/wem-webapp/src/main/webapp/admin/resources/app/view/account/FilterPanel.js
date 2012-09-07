@@ -3,6 +3,7 @@ Ext.define('Admin.view.account.FilterPanel', {
     alias: 'widget.accountFilter',
 
     includeSearch: true,
-    includeEmptyFacets: 'last'
+    includeEmptyFacets: 'last',
+    excludeFacets: ['organization']
 
 });
