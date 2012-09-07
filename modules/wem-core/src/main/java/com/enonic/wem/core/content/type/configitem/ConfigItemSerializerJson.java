@@ -12,7 +12,7 @@ import com.enonic.wem.core.content.type.configitem.fieldtype.FieldType;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeConfigSerializerJson;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeSerializerJson;
 
-import static com.enonic.wem.core.content.type.configitem.FieldSet.newFieldSet;
+import static com.enonic.wem.core.content.type.configitem.FormItemSet.newFieldSet;
 import static com.enonic.wem.core.content.type.configitem.TemplateReference.newTemplateReference;
 import static com.enonic.wem.core.content.type.configitem.VisualFieldSet.newVisualFieldSet;
 
@@ -38,9 +38,9 @@ public class ConfigItemSerializerJson
     public void generate( FormItem formItem, JsonGenerator g )
         throws IOException
     {
-        if ( formItem instanceof FieldSet )
+        if ( formItem instanceof FormItemSet )
         {
-            generateFieldSet( (FieldSet) formItem, g );
+            generateFieldSet( (FormItemSet) formItem, g );
         }
         else if ( formItem instanceof VisualFieldSet )
         {
@@ -81,20 +81,20 @@ public class ConfigItemSerializerJson
         g.writeEndObject();
     }
 
-    private void generateFieldSet( final FieldSet fieldSet, JsonGenerator g )
+    private void generateFieldSet( final FormItemSet formItemSet, JsonGenerator g )
         throws IOException
     {
         g.writeStartObject();
-        g.writeStringField( "configItemType", fieldSet.getConfigItemType().toString() );
-        g.writeStringField( "path", fieldSet.getPath().toString() );
-        g.writeStringField( "name", fieldSet.getName() );
-        g.writeStringField( "label", fieldSet.getLabel() );
-        g.writeBooleanField( "required", fieldSet.isRequired() );
-        g.writeBooleanField( "immutable", fieldSet.isImmutable() );
-        OccurrencesSerializerJson.generate( fieldSet.getOccurrences(), g );
-        g.writeStringField( "customText", fieldSet.getCustomText() );
-        g.writeStringField( "helpText", fieldSet.getHelpText() );
-        configItemsSerializerJson.generate( fieldSet.getConfigItems(), g );
+        g.writeStringField( "configItemType", formItemSet.getConfigItemType().toString() );
+        g.writeStringField( "path", formItemSet.getPath().toString() );
+        g.writeStringField( "name", formItemSet.getName() );
+        g.writeStringField( "label", formItemSet.getLabel() );
+        g.writeBooleanField( "required", formItemSet.isRequired() );
+        g.writeBooleanField( "immutable", formItemSet.isImmutable() );
+        OccurrencesSerializerJson.generate( formItemSet.getOccurrences(), g );
+        g.writeStringField( "customText", formItemSet.getCustomText() );
+        g.writeStringField( "helpText", formItemSet.getHelpText() );
+        configItemsSerializerJson.generate( formItemSet.getConfigItems(), g );
 
         g.writeEndObject();
     }
@@ -183,7 +183,7 @@ public class ConfigItemSerializerJson
 
     private DirectAccessibleFormItem parseFieldSet( final JsonNode configItemNode )
     {
-        final FieldSet.Builder builder = newFieldSet();
+        final FormItemSet.Builder builder = newFieldSet();
         builder.name( JsonParserUtil.getStringValue( "name", configItemNode ) );
         builder.label( JsonParserUtil.getStringValue( "label", configItemNode, null ) );
         builder.immutable( JsonParserUtil.getBooleanValue( "immutable", configItemNode ) );
@@ -238,7 +238,7 @@ public class ConfigItemSerializerJson
         }
     }
 
-    private void parseOccurrences( final FieldSet.Builder builder, final JsonNode occurrencesNode )
+    private void parseOccurrences( final FormItemSet.Builder builder, final JsonNode occurrencesNode )
     {
         if ( occurrencesNode != null )
         {

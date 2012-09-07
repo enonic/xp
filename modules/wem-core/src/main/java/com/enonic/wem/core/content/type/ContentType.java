@@ -6,8 +6,8 @@ import org.elasticsearch.common.base.Preconditions;
 import com.enonic.wem.core.content.type.configitem.Component;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
-import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.FormItem;
+import com.enonic.wem.core.content.type.configitem.FormItemSet;
 import com.enonic.wem.core.content.type.configitem.TemplateFetcher;
 import com.enonic.wem.core.module.Module;
 
@@ -130,13 +130,13 @@ public class ContentType
         return getField( new ConfigItemPath( path ) );
     }
 
-    public FieldSet getFieldSet( final String path )
+    public FormItemSet getFieldSet( final String path )
     {
         final ConfigItemPath configItemPath = new ConfigItemPath( path );
-        final FieldSet fieldSet = configItems.getFieldSet( configItemPath );
-        Preconditions.checkState( fieldSet.getPath().equals( configItemPath ),
-                                  "Found FieldSet at path [%s] have unexpected path: " + fieldSet.getPath(), configItemPath );
-        return fieldSet;
+        final FormItemSet formItemSet = configItems.getFieldSet( configItemPath );
+        Preconditions.checkState( formItemSet.getPath().equals( configItemPath ),
+                                  "Found FieldSet at path [%s] have unexpected path: " + formItemSet.getPath(), configItemPath );
+        return formItemSet;
     }
 
     public void templateReferencesToConfigItems( final TemplateFetcher templateFetcher )

@@ -20,9 +20,9 @@ public class BreaksRequiredContractException
         super( buildMessage( missingComponent ) );
     }
 
-    public BreaksRequiredContractException( final FieldSet missingFieldSet )
+    public BreaksRequiredContractException( final FormItemSet missingFormItemSet )
     {
-        super( buildMessage( missingFieldSet ) );
+        super( buildMessage( missingFormItemSet ) );
     }
 
     public Data getValue()
@@ -40,8 +40,8 @@ public class BreaksRequiredContractException
         return "Required contract is broken, data missing for Field: " + component.getPath().toString();
     }
 
-    private static String buildMessage( final FieldSet fieldSet )
+    private static String buildMessage( final FormItemSet formItemSet )
     {
-        return "Required contract is broken, data missing for FieldSet: " + fieldSet.getPath().toString();
+        return "Required contract is broken, data missing for FieldSet: " + formItemSet.getPath().toString();
     }
 }

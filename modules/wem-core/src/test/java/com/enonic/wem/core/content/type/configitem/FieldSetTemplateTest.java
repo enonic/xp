@@ -24,11 +24,11 @@ public class FieldSetTemplateTest
             newFieldTemplate().module( module ).field( newField().name( "age" ).type( FieldTypes.TEXT_LINE ).build() ).build();
 
         FieldSetTemplate personTemplate = newFieldSetTemplate().module( module ).fieldSet(
-            FieldSet.newFieldSet().name( "person" ).add( newField().name( "name" ).type( FieldTypes.TEXT_LINE ).build() ).add(
+            FormItemSet.newFieldSet().name( "person" ).add( newField().name( "name" ).type( FieldTypes.TEXT_LINE ).build() ).add(
                 newTemplateReference( ageTemplate ).name( "age" ).build() ).build() ).build();
 
         FieldSetTemplate addressTemplate = newFieldSetTemplate().module( module ).fieldSet(
-            FieldSet.newFieldSet().name( "address" ).add( newField().type( FieldTypes.TEXT_LINE ).name( "street" ).build() ).add(
+            FormItemSet.newFieldSet().name( "address" ).add( newField().type( FieldTypes.TEXT_LINE ).name( "street" ).build() ).add(
                 newField().type( FieldTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(
                 newField().type( FieldTypes.TEXT_LINE ).name( "postalPlace" ).build() ).build() ).build();
 

@@ -6,7 +6,7 @@ import org.junit.Test;
 import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.configitem.Component;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
-import com.enonic.wem.core.content.type.configitem.FieldSet;
+import com.enonic.wem.core.content.type.configitem.FormItemSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 
 import static org.junit.Assert.*;
@@ -17,9 +17,9 @@ public class DataSetTest
     public void setValue_when_given_path_does_not_exists()
     {
         ConfigItems configItems = new ConfigItems();
-        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).multiple( true ).build();
-        fieldSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        configItems.addConfigItem( fieldSet );
+        FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).multiple( true ).build();
+        formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        configItems.addConfigItem( formItemSet );
 
         DataSet dataSet = new DataSet( new EntryPath() );
 
@@ -37,11 +37,11 @@ public class DataSetTest
     @Test
     public void getValue_when_having_sub_type()
     {
-        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).multiple( false ).build();
-        fieldSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        fieldSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).multiple( false ).build();
+        formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
         ConfigItems configItems = new ConfigItems();
-        configItems.addConfigItem( fieldSet );
+        configItems.addConfigItem( formItemSet );
 
         DataSet dataSet = new DataSet( new EntryPath() );
         dataSet.setData( new EntryPath( "personalia.eyeColour" ), "Brown", DataTypes.STRING );
@@ -54,8 +54,8 @@ public class DataSetTest
     @Test
     public void getValue_when_having_multiple_sub_type_in_single_sub_type()
     {
-        FieldSet personalia = FieldSet.newBuilder().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
-        FieldSet crimes = FieldSet.newBuilder().name( "crimes" ).multiple( true ).build();
+        FormItemSet personalia = FormItemSet.newBuilder().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
+        FormItemSet crimes = FormItemSet.newBuilder().name( "crimes" ).multiple( true ).build();
         crimes.addField( Component.newBuilder().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
         crimes.addField( Component.newBuilder().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
         personalia.addFieldSet( crimes );
@@ -78,10 +78,10 @@ public class DataSetTest
     public void getValue_when_having_multiple_sub_type()
     {
         ConfigItems configItems = new ConfigItems();
-        FieldSet fieldSet = FieldSet.newBuilder().name( "persons" ).multiple( true ).build();
-        fieldSet.addField( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
-        fieldSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        configItems.addConfigItem( fieldSet );
+        FormItemSet formItemSet = FormItemSet.newBuilder().name( "persons" ).multiple( true ).build();
+        formItemSet.addField( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        configItems.addConfigItem( formItemSet );
 
         DataSet dataSet = new DataSet( new EntryPath() );
         dataSet.setData( new EntryPath( "persons[0].name" ), "Arn", DataTypes.STRING );

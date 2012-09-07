@@ -3,8 +3,8 @@ package com.enonic.wem.core.content.type;
 
 import org.junit.Test;
 
-import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
+import com.enonic.wem.core.content.type.configitem.FormItemSet;
 import com.enonic.wem.core.content.type.configitem.MockTemplateFetcher;
 import com.enonic.wem.core.content.type.configitem.TemplateReference;
 import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
@@ -12,8 +12,8 @@ import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.configitem.Component.newField;
-import static com.enonic.wem.core.content.type.configitem.FieldSet.newFieldSet;
 import static com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder.newFieldSetTemplate;
+import static com.enonic.wem.core.content.type.configitem.FormItemSet.newFieldSet;
 import static com.enonic.wem.core.content.type.configitem.TemplateReference.newTemplateReference;
 import static com.enonic.wem.core.content.type.configitem.VisualFieldSet.newVisualFieldSet;
 import static com.enonic.wem.core.module.Module.newModule;
@@ -40,8 +40,8 @@ public class ContentTypeTest
         contentType.setName( "test" );
         VisualFieldSet visualFieldSet = newVisualFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newField().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() ).build();
-        FieldSet myFieldSet = newFieldSet().name( "myFieldSet" ).add( visualFieldSet ).build();
-        contentType.addConfigItem( myFieldSet );
+        FormItemSet myFormItemSet = newFieldSet().name( "myFieldSet" ).add( visualFieldSet ).build();
+        contentType.addConfigItem( myFormItemSet );
 
         assertEquals( "myFieldSet.eyeColour", contentType.getField( "myFieldSet.eyeColour" ).getPath().toString() );
     }
@@ -49,15 +49,15 @@ public class ContentTypeTest
     @Test
     public void address()
     {
-        FieldSet fieldSet = newFieldSet().name( "address" ).build();
-        fieldSet.addField( newField().name( "label" ).label( "Label" ).type( FieldTypes.TEXT_LINE ).build() );
-        fieldSet.addField( newField().name( "street" ).label( "Street" ).type( FieldTypes.TEXT_LINE ).build() );
-        fieldSet.addField( newField().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.TEXT_LINE ).build() );
-        fieldSet.addField( newField().name( "country" ).label( "Country" ).type( FieldTypes.TEXT_LINE ).build() );
+        FormItemSet formItemSet = newFieldSet().name( "address" ).build();
+        formItemSet.addField( newField().name( "label" ).label( "Label" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addField( newField().name( "street" ).label( "Street" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addField( newField().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addField( newField().name( "country" ).label( "Country" ).type( FieldTypes.TEXT_LINE ).build() );
 
         ContentType contentType = new ContentType();
         contentType.addConfigItem( newField().name( "title" ).type( FieldTypes.TEXT_LINE ).build() );
-        contentType.addConfigItem( fieldSet );
+        contentType.addConfigItem( formItemSet );
 
         assertEquals( "title", contentType.getField( "title" ).getPath().toString() );
         assertEquals( "address.label", contentType.getField( "address.label" ).getPath().toString() );
@@ -156,11 +156,11 @@ public class ContentTypeTest
     {
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
-        FieldSet fieldSet =
+        FormItemSet formItemSet =
             newFieldSet().name( "top-fieldSet" ).add( newField().name( "myField" ).type( FieldTypes.TEXT_LINE ).build() ).add(
                 newFieldSet().name( "inner-fieldSet" ).add(
                     newField().name( "myInnerField" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).build();
-        contentType.addConfigItem( fieldSet );
+        contentType.addConfigItem( formItemSet );
 
         assertEquals( "top-fieldSet", contentType.getFieldSet( "top-fieldSet" ).getPath().toString() );
         assertEquals( "top-fieldSet.myField", contentType.getField( "top-fieldSet.myField" ).getPath().toString() );

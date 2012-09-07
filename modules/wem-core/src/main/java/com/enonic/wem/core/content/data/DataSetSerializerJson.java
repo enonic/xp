@@ -11,8 +11,8 @@ import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.type.configitem.Component;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
-import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.FormItem;
+import com.enonic.wem.core.content.type.configitem.FormItemSet;
 
 public class DataSetSerializerJson
 {
@@ -87,10 +87,10 @@ public class DataSetSerializerJson
                     final Entry entry = dataSerializer.parse( entryNode );
                     dataSet.add( entry );
                 }
-                else if ( item instanceof FieldSet )
+                else if ( item instanceof FormItemSet )
                 {
-                    final FieldSet fieldSet = (FieldSet) item;
-                    final DataSet childDataSet = parse( entryNode, fieldSet.getConfigItems() );
+                    final FormItemSet formItemSet = (FormItemSet) item;
+                    final DataSet childDataSet = parse( entryNode, formItemSet.getConfigItems() );
                     final DataSet entry = new DataSet( path, childDataSet );
                     dataSet.add( entry );
                 }

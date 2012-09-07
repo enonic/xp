@@ -13,10 +13,10 @@ public class ConfigItemsTest
     public void getConfig()
     {
         ConfigItems configItems = new ConfigItems();
-        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).build();
-        configItems.addConfigItem( fieldSet );
-        fieldSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        fieldSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).build();
+        configItems.addConfigItem( formItemSet );
+        formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise & verify
         DirectAccessibleFormItem personaliaConfig =
@@ -28,13 +28,13 @@ public class ConfigItemsTest
     public void getConfig2()
     {
         ConfigItems configItems = new ConfigItems();
-        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).label( "Personalia" ).build();
-        configItems.addConfigItem( fieldSet );
-        fieldSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        fieldSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).label( "Personalia" ).build();
+        configItems.addConfigItem( formItemSet );
+        formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise & verify
-        DirectAccessibleFormItem personaliaEyeColourConfig = fieldSet.getConfigItems().getDirectAccessibleConfigItem( "eyeColour" );
+        DirectAccessibleFormItem personaliaEyeColourConfig = formItemSet.getConfigItems().getDirectAccessibleConfigItem( "eyeColour" );
         assertEquals( "personalia.eyeColour", personaliaEyeColourConfig.getPath().toString() );
     }
 

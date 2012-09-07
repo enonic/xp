@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-public class FieldSet
+public class FormItemSet
     extends DirectAccessibleFormItem
 {
     private String label;
@@ -21,7 +21,7 @@ public class FieldSet
 
     private String helpText;
 
-    protected FieldSet()
+    protected FormItemSet()
     {
         super( ConfigItemType.FIELD_SET );
     }
@@ -46,12 +46,12 @@ public class FieldSet
         this.configItems.addConfigItem( component );
     }
 
-    public void addFieldSet( final FieldSet fieldSet )
+    public void addFieldSet( final FormItemSet formItemSet )
     {
         Preconditions.checkState( getPath() != null, "Cannot add FieldSet before this FieldSet is added" );
 
-        fieldSet.setPath( new ConfigItemPath( getPath(), fieldSet.getName() ) );
-        this.configItems.addConfigItem( fieldSet );
+        formItemSet.setPath( new ConfigItemPath( getPath(), formItemSet.getName() ) );
+        this.configItems.addConfigItem( formItemSet );
     }
 
     public String getLabel()
@@ -126,9 +126,9 @@ public class FieldSet
     }
 
     @Override
-    public FieldSet copy()
+    public FormItemSet copy()
     {
-        FieldSet copy = (FieldSet) super.copy();
+        FormItemSet copy = (FormItemSet) super.copy();
         copy.label = label;
         copy.immutable = immutable;
         copy.occurrences.setMinOccurences( occurrences.getMinimum() );
@@ -249,24 +249,24 @@ public class FieldSet
             return this;
         }
 
-        public FieldSet build()
+        public FormItemSet build()
         {
-            FieldSet fieldSet = new FieldSet();
-            fieldSet.setName( name );
-            fieldSet.label = label;
-            fieldSet.immutable = immutable;
-            fieldSet.occurrences.setMinOccurences( occurrences.getMinimum() );
-            fieldSet.occurrences.setMaxOccurences( occurrences.getMaximum() );
-            fieldSet.customText = customText;
-            fieldSet.helpText = helpText;
+            FormItemSet formItemSet = new FormItemSet();
+            formItemSet.setName( name );
+            formItemSet.label = label;
+            formItemSet.immutable = immutable;
+            formItemSet.occurrences.setMinOccurences( occurrences.getMinimum() );
+            formItemSet.occurrences.setMaxOccurences( occurrences.getMaximum() );
+            formItemSet.customText = customText;
+            formItemSet.helpText = helpText;
             for ( FormItem formItem : formItems )
             {
-                fieldSet.addConfigItem( formItem );
+                formItemSet.addConfigItem( formItem );
             }
 
-            Preconditions.checkNotNull( fieldSet.getName(), "a name for the FieldSet is required" );
-            fieldSet.setPath( new ConfigItemPath( fieldSet.getName() ) );
-            return fieldSet;
+            Preconditions.checkNotNull( formItemSet.getName(), "a name for the FieldSet is required" );
+            formItemSet.setPath( new ConfigItemPath( formItemSet.getName() ) );
+            return formItemSet;
         }
     }
 }

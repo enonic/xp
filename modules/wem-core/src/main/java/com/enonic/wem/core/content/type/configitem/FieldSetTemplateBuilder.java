@@ -7,7 +7,7 @@ public class FieldSetTemplateBuilder
 {
     private Module module;
 
-    private FieldSet fieldSet;
+    private FormItemSet formItemSet;
 
     public FieldSetTemplateBuilder module( Module value )
     {
@@ -15,9 +15,9 @@ public class FieldSetTemplateBuilder
         return this;
     }
 
-    public FieldSetTemplateBuilder fieldSet( FieldSet value )
+    public FieldSetTemplateBuilder fieldSet( FormItemSet value )
     {
-        this.fieldSet = value;
+        this.formItemSet = value;
         return this;
     }
 
@@ -25,7 +25,7 @@ public class FieldSetTemplateBuilder
     {
         FieldSetTemplate fieldSetTemplate = new FieldSetTemplate();
         fieldSetTemplate.setModule( module );
-        fieldSetTemplate.setFieldSet( fieldSet );
+        fieldSetTemplate.setFormItemSet( formItemSet );
 
         return fieldSetTemplate;
     }

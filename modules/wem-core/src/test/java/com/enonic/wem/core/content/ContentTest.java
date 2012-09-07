@@ -8,9 +8,9 @@ import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.configitem.Component;
-import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
 import com.enonic.wem.core.content.type.configitem.FieldTemplate;
+import com.enonic.wem.core.content.type.configitem.FormItemSet;
 import com.enonic.wem.core.content.type.configitem.MockTemplateFetcher;
 import com.enonic.wem.core.content.type.configitem.TemplateReference;
 import com.enonic.wem.core.content.type.configitem.TemplateType;
@@ -21,9 +21,9 @@ import com.enonic.wem.core.content.type.configitem.fieldtype.RadioButtonsConfig;
 import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.configitem.Component.newField;
-import static com.enonic.wem.core.content.type.configitem.FieldSet.newFieldSet;
 import static com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder.newFieldSetTemplate;
 import static com.enonic.wem.core.content.type.configitem.FieldTemplateBuilder.newFieldTemplate;
+import static com.enonic.wem.core.content.type.configitem.FormItemSet.newFieldSet;
 import static com.enonic.wem.core.content.type.configitem.TemplateReference.newTemplateReference;
 import static com.enonic.wem.core.content.type.configitem.VisualFieldSet.newVisualFieldSet;
 import static com.enonic.wem.core.module.Module.newModule;
@@ -139,10 +139,10 @@ public class ContentTest
         ContentType contentType = new ContentType();
         contentType.addConfigItem( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
 
-        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).build();
-        contentType.addConfigItem( fieldSet );
-        fieldSet.addField( newField().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        fieldSet.addField( newField().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).build();
+        contentType.addConfigItem( formItemSet );
+        formItemSet.addField( newField().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addField( newField().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -162,11 +162,11 @@ public class ContentTest
         Component nameComponent = Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).required( true ).build();
         contentType.addConfigItem( nameComponent );
 
-        FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).multiple( true ).build();
-        contentType.addConfigItem( fieldSet );
-        fieldSet.addField( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
-        fieldSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        fieldSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).multiple( true ).build();
+        contentType.addConfigItem( formItemSet );
+        formItemSet.addField( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        formItemSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -242,10 +242,10 @@ public class ContentTest
     @Test
     public void structured_getEntries()
     {
-        FieldSet child = FieldSet.newBuilder().name( "child" ).multiple( true ).build();
+        FormItemSet child = FormItemSet.newBuilder().name( "child" ).multiple( true ).build();
         child.addField( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
         child.addField( Component.newBuilder().name( "age" ).type( FieldTypes.TEXT_LINE ).build() );
-        FieldSet features = FieldSet.newBuilder().name( "features" ).multiple( false ).build();
+        FormItemSet features = FormItemSet.newBuilder().name( "features" ).multiple( false ).build();
         features.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
         features.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
         child.addFieldSet( features );
@@ -308,11 +308,11 @@ public class ContentTest
         // exercise
         ContentType contentType = new ContentType();
         contentType.addConfigItem( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
-        contentType.addConfigItem( FieldSet.newBuilder().name( "personalia" ).multiple( false ).build() );
+        contentType.addConfigItem( FormItemSet.newBuilder().name( "personalia" ).multiple( false ).build() );
         contentType.getFieldSet( "personalia" ).addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
         contentType.getFieldSet( "personalia" ).addField(
             Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        contentType.addConfigItem( FieldSet.newBuilder().name( "crimes" ).multiple( true ).build() );
+        contentType.addConfigItem( FormItemSet.newBuilder().name( "crimes" ).multiple( true ).build() );
         contentType.getFieldSet( "crimes" ).addField( Component.newBuilder().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
         contentType.getFieldSet( "crimes" ).addField( Component.newBuilder().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
         content.setType( contentType );
@@ -638,15 +638,15 @@ public class ContentTest
         ContentType contentType = new ContentType();
         contentType.addConfigItem( newField().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
 
-        FieldSet personaliaFieldSet = newFieldSet().name( "personalia" ).multiple( false ).required( true ).build();
-        personaliaFieldSet.addField( newField().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        personaliaFieldSet.addField( newField().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        contentType.addConfigItem( personaliaFieldSet );
+        FormItemSet personaliaFormItemSet = newFieldSet().name( "personalia" ).multiple( false ).required( true ).build();
+        personaliaFormItemSet.addField( newField().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        personaliaFormItemSet.addField( newField().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.addConfigItem( personaliaFormItemSet );
 
-        FieldSet crimesFieldSet = newFieldSet().name( "crimes" ).multiple( true ).build();
-        contentType.addConfigItem( crimesFieldSet );
-        crimesFieldSet.addField( newField().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
-        crimesFieldSet.addField( newField().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
+        FormItemSet crimesFormItemSet = newFieldSet().name( "crimes" ).multiple( true ).build();
+        contentType.addConfigItem( crimesFormItemSet );
+        crimesFormItemSet.addField( newField().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
+        crimesFormItemSet.addField( newField().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );

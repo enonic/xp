@@ -75,8 +75,8 @@ public class ConfigItems
                                          "ConfigItem at path [%s] expected to be of type FieldSet: " + foundConfig.getConfigItemType(),
                                          path );
             //noinspection ConstantConditions
-            FieldSet fieldSet = (FieldSet) foundConfig;
-            return fieldSet.getConfigItem( path.asNewWithoutFirstPathElement() );
+            FormItemSet formItemSet = (FormItemSet) foundConfig;
+            return formItemSet.getConfigItem( path.asNewWithoutFirstPathElement() );
         }
         else
         {
@@ -110,7 +110,7 @@ public class ConfigItems
         return (DirectAccessibleFormItem) formItem;
     }
 
-    public FieldSet getFieldSet( final String name )
+    public FormItemSet getFieldSet( final String name )
     {
         final DirectAccessibleFormItem configItem = getDirectAccessibleConfigItem( name );
         if ( configItem == null )
@@ -122,10 +122,10 @@ public class ConfigItems
                                      "ConfigItem at path [%s] is not a FieldSet: " + configItem.getConfigItemType(), configItem.getPath() );
 
         //noinspection ConstantConditions
-        return (FieldSet) configItem;
+        return (FormItemSet) configItem;
     }
 
-    public FieldSet getFieldSet( final ConfigItemPath path )
+    public FormItemSet getFieldSet( final ConfigItemPath path )
     {
         final DirectAccessibleFormItem configItem = getConfigItem( path );
         if ( configItem == null )
@@ -137,7 +137,7 @@ public class ConfigItems
                                      "ConfigItem at path [%s] is not a FieldSet: " + configItem.getConfigItemType(), configItem.getPath() );
 
         //noinspection ConstantConditions
-        return (FieldSet) configItem;
+        return (FormItemSet) configItem;
     }
 
     public Component getField( final String name )
@@ -249,10 +249,10 @@ public class ConfigItems
                                                  templateReference.getTemplateType() );
 
                     final DirectAccessibleFormItem configItemCreatedFromTemplate = template.create( templateReference );
-                    if ( configItemCreatedFromTemplate instanceof FieldSet )
+                    if ( configItemCreatedFromTemplate instanceof FormItemSet )
                     {
-                        FieldSet fieldSet = (FieldSet) configItemCreatedFromTemplate;
-                        fieldSet.getConfigItems().templateReferencesToConfigItems( templateFetcher );
+                        FormItemSet formItemSet = (FormItemSet) configItemCreatedFromTemplate;
+                        formItemSet.getConfigItems().templateReferencesToConfigItems( templateFetcher );
                     }
 
                     items.put( formItem.getName(), configItemCreatedFromTemplate );

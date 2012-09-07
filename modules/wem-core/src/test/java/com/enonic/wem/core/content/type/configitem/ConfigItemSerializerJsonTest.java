@@ -156,7 +156,7 @@ public class ConfigItemSerializerJsonTest
         throws IOException
     {
         // setup
-        FieldSet.Builder builder = FieldSet.newBuilder();
+        FormItemSet.Builder builder = FormItemSet.newBuilder();
         builder.name( "mySubType" );
         builder.label( "My sub type" );
         builder.immutable( true );
@@ -164,27 +164,27 @@ public class ConfigItemSerializerJsonTest
         builder.occurrences( 1, 100 );
         builder.customText( "Custom text" );
         builder.helpText( "Help text" );
-        FieldSet fieldSet = builder.build();
+        FormItemSet formItemSet = builder.build();
 
-        String json = fieldSetToJson( fieldSet );
+        String json = fieldSetToJson( formItemSet );
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
         FormItem formItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
-        assertTrue( formItem instanceof FieldSet );
+        assertTrue( formItem instanceof FormItemSet );
         assertEquals( "mySubType", formItem.getName() );
-        FieldSet parsedFieldSet = (FieldSet) formItem;
-        assertEquals( "My sub type", parsedFieldSet.getLabel() );
-        assertEquals( true, parsedFieldSet.isRequired() );
-        assertEquals( true, parsedFieldSet.isImmutable() );
+        FormItemSet parsedFormItemSet = (FormItemSet) formItem;
+        assertEquals( "My sub type", parsedFormItemSet.getLabel() );
+        assertEquals( true, parsedFormItemSet.isRequired() );
+        assertEquals( true, parsedFormItemSet.isImmutable() );
     }
 
-    private String fieldSetToJson( FieldSet field )
+    private String fieldSetToJson( FormItemSet formItemSet )
         throws IOException
     {
-        new ConfigItemSerializerJson().generate( field, g );
+        new ConfigItemSerializerJson().generate( formItemSet, g );
         g.close();
         return sw.toString();
     }

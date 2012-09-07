@@ -5,7 +5,7 @@ import org.elasticsearch.common.base.Preconditions;
 public class FieldSetTemplate
     extends Template
 {
-    private FieldSet fieldSet = new FieldSet();
+    private FormItemSet formItemSet = new FormItemSet();
 
     FieldSetTemplate()
     {
@@ -13,12 +13,12 @@ public class FieldSetTemplate
 
     public String getName()
     {
-        return fieldSet.getName();
+        return formItemSet.getName();
     }
 
-    void setFieldSet( final FieldSet fieldSet )
+    void setFormItemSet( final FormItemSet formItemSet )
     {
-        this.fieldSet = fieldSet;
+        this.formItemSet = formItemSet;
     }
 
     @Override
@@ -36,14 +36,14 @@ public class FieldSetTemplate
                                          "A template cannot reference other templates unless it is of type %s: " +
                                              templateReference.getTemplateType(), TemplateType.FIELD );
         }
-        fieldSet.addConfigItem( configItem );
+        formItemSet.addConfigItem( configItem );
     }
 
     public DirectAccessibleFormItem create( final TemplateReference templateReference )
     {
-        FieldSet fieldSet = this.fieldSet.copy();
-        fieldSet.setName( templateReference.getName() );
-        fieldSet.setPath( templateReference.getPath() );
-        return fieldSet;
+        FormItemSet formItemSet = this.formItemSet.copy();
+        formItemSet.setName( templateReference.getName() );
+        formItemSet.setPath( templateReference.getPath() );
+        return formItemSet;
     }
 }

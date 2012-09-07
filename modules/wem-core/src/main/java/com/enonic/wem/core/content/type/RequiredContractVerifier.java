@@ -8,8 +8,8 @@ import com.enonic.wem.core.content.data.EntryPath;
 import com.enonic.wem.core.content.data.EntrySelector;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.configitem.Component;
-import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.FormItem;
+import com.enonic.wem.core.content.type.configitem.FormItemSet;
 import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
 
 public class RequiredContractVerifier
@@ -35,9 +35,9 @@ public class RequiredContractVerifier
             {
                 processField( (Component) formItem, entrySelector );
             }
-            else if ( formItem instanceof FieldSet )
+            else if ( formItem instanceof FormItemSet )
             {
-                processFieldSet( (FieldSet) formItem, entrySelector );
+                processFieldSet( (FormItemSet) formItem, entrySelector );
             }
             else if ( formItem instanceof VisualFieldSet )
             {
@@ -55,21 +55,21 @@ public class RequiredContractVerifier
         }
     }
 
-    private void processFieldSet( final FieldSet fieldSet, final EntrySelector entrySelector )
+    private void processFieldSet( final FormItemSet formItemSet, final EntrySelector entrySelector )
     {
-        DataSet dataSet = entrySelector != null ? entrySelector.getDataSet( new EntryPath( fieldSet.getPath().toString() ) ) : null;
-        if ( fieldSet.isRequired() )
+        DataSet dataSet = entrySelector != null ? entrySelector.getDataSet( new EntryPath( formItemSet.getPath().toString() ) ) : null;
+        if ( formItemSet.isRequired() )
         {
-            verifyRequiredFieldSet( fieldSet, dataSet );
+            verifyRequiredFieldSet( formItemSet, dataSet );
         }
 
         if ( dataSet != null )
         {
-            processConfigItems( fieldSet.getConfigItems().iterable(), dataSet );
+            processConfigItems( formItemSet.getConfigItems().iterable(), dataSet );
         }
         else
         {
-            processConfigItems( fieldSet.getConfigItems().iterable(), null );
+            processConfigItems( formItemSet.getConfigItems().iterable(), null );
         }
     }
 
@@ -86,11 +86,11 @@ public class RequiredContractVerifier
         }
     }
 
-    private void verifyRequiredFieldSet( final FieldSet fieldSet, final DataSet dataSet )
+    private void verifyRequiredFieldSet( final FormItemSet formItemSet, final DataSet dataSet )
     {
         if ( dataSet == null )
         {
-            throw new BreaksRequiredContractException( fieldSet );
+            throw new BreaksRequiredContractException( formItemSet );
         }
     }
 
