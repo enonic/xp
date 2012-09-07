@@ -126,9 +126,9 @@ public class EntryPath
             return false;
         }
 
-        final EntryPath fieldEntryPath = (EntryPath) o;
+        final EntryPath entryPath = (EntryPath) o;
 
-        return elements.equals( fieldEntryPath.elements );
+        return elements.equals( entryPath.elements );
     }
 
     @Override
@@ -195,14 +195,14 @@ public class EntryPath
                 }
                 else
                 {
-                    throw new IllegalArgumentException( "Invalid FieldEntryPath element: " + element );
+                    throw new IllegalArgumentException( "Invalid EntryPath element: " + element );
                 }
             }
             else
             {
                 if ( indexStop >= 0 )
                 {
-                    throw new IllegalArgumentException( "Invalid FieldEntryPath element: " + element );
+                    throw new IllegalArgumentException( "Invalid EntryPath element: " + element );
                 }
 
                 this.name = element;

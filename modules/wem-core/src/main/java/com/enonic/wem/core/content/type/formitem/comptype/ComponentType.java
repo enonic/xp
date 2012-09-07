@@ -6,7 +6,7 @@ import com.enonic.wem.core.content.datatype.DataType;
 import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException;
 
 /**
- * Common interface for all kinds of field types.
+ * Common interface for all kinds of Component types.
  */
 public interface ComponentType
 {

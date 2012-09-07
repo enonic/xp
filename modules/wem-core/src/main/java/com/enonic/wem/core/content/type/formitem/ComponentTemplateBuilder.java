@@ -25,7 +25,7 @@ public class ComponentTemplateBuilder
 
     public ComponentTemplate build()
     {
-        Preconditions.checkNotNull( component, "field is required" );
+        Preconditions.checkNotNull( component, "component is required" );
 
         ComponentTemplate componentTemplate = new ComponentTemplate();
         componentTemplate.setComponent( component );

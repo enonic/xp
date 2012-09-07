@@ -88,7 +88,7 @@ public class TemplateReference
             return this;
         }
 
-        public Builder typeField()
+        public Builder typeComponent()
         {
             this.templateType = TemplateType.COMPONENT;
             return this;

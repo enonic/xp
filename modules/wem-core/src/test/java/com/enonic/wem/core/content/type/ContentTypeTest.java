@@ -30,7 +30,7 @@ public class ContentTypeTest
             newComponent().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() ).build();
         contentType.addFormItem( visualFieldSet );
 
-        assertEquals( "eyeColour", contentType.getField( "eyeColour" ).getPath().toString() );
+        assertEquals( "eyeColour", contentType.getComponent( "eyeColour" ).getPath().toString() );
     }
 
     @Test
@@ -43,7 +43,7 @@ public class ContentTypeTest
         FormItemSet myFormItemSet = newFormItemTest().name( "myFieldSet" ).add( visualFieldSet ).build();
         contentType.addFormItem( myFormItemSet );
 
-        assertEquals( "myFieldSet.eyeColour", contentType.getField( "myFieldSet.eyeColour" ).getPath().toString() );
+        assertEquals( "myFieldSet.eyeColour", contentType.getComponent( "myFieldSet.eyeColour" ).getPath().toString() );
     }
 
     @Test
@@ -59,11 +59,11 @@ public class ContentTypeTest
         contentType.addFormItem( newComponent().name( "title" ).type( ComponentTypes.TEXT_LINE ).build() );
         contentType.addFormItem( formItemSet );
 
-        assertEquals( "title", contentType.getField( "title" ).getPath().toString() );
-        assertEquals( "address.label", contentType.getField( "address.label" ).getPath().toString() );
-        assertEquals( "address.street", contentType.getField( "address.street" ).getPath().toString() );
-        assertEquals( "address.postalNo", contentType.getField( "address.postalNo" ).getPath().toString() );
-        assertEquals( "address.country", contentType.getField( "address.country" ).getPath().toString() );
+        assertEquals( "title", contentType.getComponent( "title" ).getPath().toString() );
+        assertEquals( "address.label", contentType.getComponent( "address.label" ).getPath().toString() );
+        assertEquals( "address.street", contentType.getComponent( "address.street" ).getPath().toString() );
+        assertEquals( "address.postalNo", contentType.getComponent( "address.postalNo" ).getPath().toString() );
+        assertEquals( "address.country", contentType.getComponent( "address.country" ).getPath().toString() );
     }
 
     @Test
@@ -89,8 +89,8 @@ public class ContentTypeTest
         cty.templateReferencesToFormItems( templateReferenceFetcher );
 
         // verify:
-        assertEquals( "home.street", cty.getField( "home.street" ).getPath().toString() );
-        assertEquals( "cabin.street", cty.getField( "cabin.street" ).getPath().toString() );
+        assertEquals( "home.street", cty.getComponent( "home.street" ).getPath().toString() );
+        assertEquals( "cabin.street", cty.getComponent( "cabin.street" ).getPath().toString() );
     }
 
     @Test
@@ -117,8 +117,8 @@ public class ContentTypeTest
         contentType.templateReferencesToFormItems( templateReferenceFetcher );
 
         // verify:
-        assertEquals( "home.street", contentType.getField( "home.street" ).getPath().toString() );
-        assertEquals( "home.myFieldInVFS", contentType.getField( "home.myFieldInVFS" ).getPath().toString() );
+        assertEquals( "home.street", contentType.getComponent( "home.street" ).getPath().toString() );
+        assertEquals( "home.myFieldInVFS", contentType.getComponent( "home.myFieldInVFS" ).getPath().toString() );
     }
 
 
@@ -135,7 +135,7 @@ public class ContentTypeTest
 
         ContentType cty = new ContentType();
         cty.addFormItem(
-            TemplateReference.newBuilder().name( "home" ).typeField().template( formItemSetTemplate.getQualifiedName() ).build() );
+            TemplateReference.newBuilder().name( "home" ).typeComponent().template( formItemSetTemplate.getQualifiedName() ).build() );
 
         MockTemplateFetcher templateReferenceFetcher = new MockTemplateFetcher();
         templateReferenceFetcher.add( formItemSetTemplate );
@@ -164,9 +164,9 @@ public class ContentTypeTest
         contentType.addFormItem( formItemSet );
 
         assertEquals( "top-fieldSet", contentType.getFormItemSet( "top-fieldSet" ).getPath().toString() );
-        assertEquals( "top-fieldSet.myField", contentType.getField( "top-fieldSet.myField" ).getPath().toString() );
+        assertEquals( "top-fieldSet.myField", contentType.getComponent( "top-fieldSet.myField" ).getPath().toString() );
         assertEquals( "top-fieldSet.inner-fieldSet", contentType.getFormItemSet( "top-fieldSet.inner-fieldSet" ).getPath().toString() );
         assertEquals( "top-fieldSet.inner-fieldSet.myInnerField",
-                      contentType.getField( "top-fieldSet.inner-fieldSet.myInnerField" ).getPath().toString() );
+                      contentType.getComponent( "top-fieldSet.inner-fieldSet.myInnerField" ).getPath().toString() );
     }
 }

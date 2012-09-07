@@ -59,13 +59,13 @@ public class ContentTypeSerializerJsonTest
         ContentType parsedContentType = serializer.parse( json );
 
         // verify
-        Component parsedMyDate = parsedContentType.getField( "myDate" );
+        Component parsedMyDate = parsedContentType.getComponent( "myDate" );
         assertEquals( "myDate", parsedMyDate.getPath().toString() );
         assertEquals( "myDate", parsedMyDate.getName() );
-        assertEquals( "com.enonic.wem.core.content.type.formitem.fieldtype.Date", parsedMyDate.getComponentType().getClassName() );
+        assertEquals( "com.enonic.wem.core.content.type.formitem.comptype.Date", parsedMyDate.getComponentType().getClassName() );
         assertEquals( "date", parsedMyDate.getComponentType().getName() );
 
-        Component parsedMyDropdown = parsedContentType.getField( "myDropdown" );
+        Component parsedMyDropdown = parsedContentType.getComponent( "myDropdown" );
         assertEquals( "myDropdown", parsedMyDropdown.getPath().toString() );
         assertEquals( "My Option 1", ( (DropdownConfig) parsedMyDropdown.getComponentTypeConfig() ).getOptions().get( 0 ).getLabel() );
         assertEquals( "My Option 2", ( (DropdownConfig) parsedMyDropdown.getComponentTypeConfig() ).getOptions().get( 1 ).getLabel() );
@@ -187,11 +187,11 @@ public class ContentTypeSerializerJsonTest
 
         ContentType parsedContentType = new ContentTypeSerializerJson().parse( json );
         assertEquals( "top-fieldSet", parsedContentType.getFormItemSet( "top-fieldSet" ).getPath().toString() );
-        assertEquals( "top-fieldSet.myField", parsedContentType.getField( "top-fieldSet.myField" ).getPath().toString() );
+        assertEquals( "top-fieldSet.myField", parsedContentType.getComponent( "top-fieldSet.myField" ).getPath().toString() );
         assertEquals( "top-fieldSet.inner-fieldSet",
                       parsedContentType.getFormItemSet( "top-fieldSet.inner-fieldSet" ).getPath().toString() );
         assertEquals( "top-fieldSet.inner-fieldSet.myInnerField",
-                      parsedContentType.getField( "top-fieldSet.inner-fieldSet.myInnerField" ).getPath().toString() );
+                      parsedContentType.getComponent( "top-fieldSet.inner-fieldSet.myInnerField" ).getPath().toString() );
     }
 
     @Test
@@ -207,8 +207,8 @@ public class ContentTypeSerializerJsonTest
         String json = new ContentTypeSerializerJson().toJson( contentType );
 
         ContentType parsedContentType = new ContentTypeSerializerJson().parse( json );
-        assertEquals( "eyeColour", parsedContentType.getField( "eyeColour" ).getPath().toString() );
-        assertEquals( "hairColour", parsedContentType.getField( "hairColour" ).getPath().toString() );
+        assertEquals( "eyeColour", parsedContentType.getComponent( "eyeColour" ).getPath().toString() );
+        assertEquals( "hairColour", parsedContentType.getComponent( "hairColour" ).getPath().toString() );
 
         assertNotNull( parsedContentType.getFormItems().getFormItem( "personalia" ) );
     }

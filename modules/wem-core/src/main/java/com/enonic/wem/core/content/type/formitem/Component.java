@@ -271,13 +271,13 @@ public class Component
             if ( component.getComponentType().requiresConfig() )
             {
                 Preconditions.checkArgument( component.getComponentTypeConfig() != null,
-                                             "Field [name='%s', type=%s] is missing required ComponentTypeConfig: %s", component.getName(),
-                                             component.getComponentType().getName(),
+                                             "Component [name='%s', type=%s] is missing required ComponentTypeConfig: %s",
+                                             component.getName(), component.getComponentType().getName(),
                                              component.getComponentType().requiredConfigClass().getName() );
 
                 Preconditions.checkArgument(
                     component.getComponentType().requiredConfigClass().isInstance( component.getComponentTypeConfig() ),
-                    "Field [name='%s', type=%s] expects ComponentTypeConfig of type [%s] but was: %s", component.getName(),
+                    "Component [name='%s', type=%s] expects ComponentTypeConfig of type [%s] but was: %s", component.getName(),
                     component.getComponentType().getName(), component.getComponentType().requiredConfigClass().getName(),
                     component.getComponentTypeConfig().getClass().getName() );
             }

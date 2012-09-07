@@ -50,7 +50,7 @@ public class Virtual
     public void checkBreaksRequiredContract( final Data data )
         throws BreaksRequiredContractException
     {
-        // never - the referred fields are checked instead
+        // never - the referred component are checked instead
     }
 
     @Override

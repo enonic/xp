@@ -112,22 +112,22 @@ public class ContentType
         this.formItems.addFormItem( formItem );
     }
 
-    Component getField( final FormItemPath path )
+    Component getComponent( final FormItemPath path )
     {
-        final Component component = formItems.getField( path );
+        final Component component = formItems.getComponent( path );
         if ( component == null )
         {
             return null;
         }
 
         Preconditions.checkState( component.getPath().equals( path ),
-                                  "Found Field at path [%s] have unexpected path: " + component.getPath(), path );
+                                  "Found Component at path [%s] have unexpected path: " + component.getPath(), path );
         return component;
     }
 
-    public Component getField( final String path )
+    public Component getComponent( final String path )
     {
-        return getField( new FormItemPath( path ) );
+        return getComponent( new FormItemPath( path ) );
     }
 
     public FormItemSet getFormItemSet( final String path )

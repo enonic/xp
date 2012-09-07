@@ -51,7 +51,7 @@ public class RequiredContractVerifier
         Data data = entrySelector != null ? entrySelector.getData( new EntryPath( component.getPath().toString() ) ) : null;
         if ( component.isRequired() )
         {
-            verifyRequiredField( component, data );
+            verifyRequiredComponent( component, data );
         }
     }
 
@@ -74,7 +74,7 @@ public class RequiredContractVerifier
     }
 
 
-    private void verifyRequiredField( final Component component, final Data data )
+    private void verifyRequiredComponent( final Component component, final Data data )
     {
         if ( data == null )
         {

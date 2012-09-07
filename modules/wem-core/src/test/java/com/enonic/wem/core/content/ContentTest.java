@@ -419,7 +419,8 @@ public class ContentTest
     {
         ContentType contentType = new ContentType();
         contentType.addFormItem( newComponent().type( ComponentTypes.TEXT_LINE ).name( "name" ).build() );
-        contentType.addFormItem( newTemplateReference().name( "address" ).typeField().template( "myModule:myAddressTemplate" ).build() );
+        contentType.addFormItem(
+            newTemplateReference().name( "address" ).typeComponent().template( "myModule:myAddressTemplate" ).build() );
 
         contentType.templateReferencesToFormItems( new MockTemplateFetcher() );
 

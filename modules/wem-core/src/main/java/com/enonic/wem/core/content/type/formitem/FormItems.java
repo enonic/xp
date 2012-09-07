@@ -140,7 +140,7 @@ public class FormItems
         return (FormItemSet) formItem;
     }
 
-    public Component getField( final String name )
+    public Component getComponent( final String name )
     {
         final DirectAccessibleFormItem formItem = getDirectAccessibleFormItem( name );
         if ( formItem == null )
@@ -155,7 +155,7 @@ public class FormItems
         return (Component) formItem;
     }
 
-    public Component getField( final FormItemPath path )
+    public Component getComponent( final FormItemPath path )
     {
         final DirectAccessibleFormItem formItem = getFormItem( path );
         if ( formItem == null )
@@ -163,7 +163,7 @@ public class FormItems
             return null;
         }
         Preconditions.checkArgument( ( formItem instanceof Component ),
-                                     "FormItem at path [%s] is not a Field: " + formItem.getFormItemType(), formItem.getPath() );
+                                     "FormItem at path [%s] is not a Component: " + formItem.getFormItemType(), formItem.getPath() );
 
         //noinspection ConstantConditions
         return (Component) formItem;

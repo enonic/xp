@@ -10,7 +10,7 @@ import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentType;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeConfigSerializerJson;
-import com.enonic.wem.core.content.type.formitem.comptype.FieldTypeSerializerJson;
+import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeSerializerJson;
 
 import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemTest;
 import static com.enonic.wem.core.content.type.formitem.TemplateReference.newTemplateReference;
@@ -18,7 +18,7 @@ import static com.enonic.wem.core.content.type.formitem.VisualFieldSet.newVisual
 
 public class FormItemSerializerJson
 {
-    private FieldTypeSerializerJson componentTypeSerializer = new FieldTypeSerializerJson();
+    private ComponentTypeSerializerJson componentTypeSerializer = new ComponentTypeSerializerJson();
 
     private ComponentTypeConfigSerializerJson componentTypeConfigSerializer = new ComponentTypeConfigSerializerJson();
 

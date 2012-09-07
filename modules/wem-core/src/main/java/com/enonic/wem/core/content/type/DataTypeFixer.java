@@ -22,7 +22,7 @@ public class DataTypeFixer
             if ( entry instanceof Data )
             {
                 Data data = (Data) entry;
-                Component component = contentType.getField( data.getPath().resolveFormItemPath() );
+                Component component = contentType.getComponent( data.getPath().resolveFormItemPath() );
                 component.getComponentType().ensureType( data );
             }
         }

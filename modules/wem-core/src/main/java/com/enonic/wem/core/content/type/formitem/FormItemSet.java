@@ -40,7 +40,7 @@ public class FormItemSet
 
     public void addItem( final Component component )
     {
-        Preconditions.checkState( getPath() != null, "Cannot add Field before this FormItemSet is added" );
+        Preconditions.checkState( getPath() != null, "Cannot add Component before this FormItemSet is added" );
 
         component.setPath( new FormItemPath( getPath(), component.getName() ) );
         this.formItems.addFormItem( component );

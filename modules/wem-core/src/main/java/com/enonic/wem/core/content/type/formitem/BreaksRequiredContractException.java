@@ -38,7 +38,7 @@ public class BreaksRequiredContractException
 
     private static String buildMessage( final Component component )
     {
-        return "Required contract is broken, data missing for Field: " + component.getPath().toString();
+        return "Required contract is broken, data missing for Component: " + component.getPath().toString();
     }
 
     private static String buildMessage( final FormItemSet formItemSet )

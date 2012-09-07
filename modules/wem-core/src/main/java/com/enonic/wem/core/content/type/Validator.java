@@ -34,7 +34,7 @@ public class Validator
     {
         data.checkValidity();
 
-        Component component = contentType.getField( data.getPath().resolveFormItemPath() );
+        Component component = contentType.getComponent( data.getPath().resolveFormItemPath() );
         component.checkValidity( data );
     }
 
