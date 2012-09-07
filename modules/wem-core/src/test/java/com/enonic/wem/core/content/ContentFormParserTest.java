@@ -13,7 +13,7 @@ import com.enonic.wem.core.content.data.EntryPath;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 
-import static com.enonic.wem.core.content.type.configitem.Field.newField;
+import static com.enonic.wem.core.content.type.configitem.Component.newField;
 import static org.junit.Assert.*;
 
 public class ContentFormParserTest

@@ -9,23 +9,23 @@ import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 
 import static org.junit.Assert.*;
 
-public class FieldTest
+public class ComponentTest
 {
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_throws_exception_when_broken()
     {
-        Field field = Field.newBuilder().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).required( true ).build();
-        field.checkBreaksRequiredContract( Data.newData().type( DataTypes.STRING ).value( null ).build() );
+        Component component = Component.newBuilder().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).required( true ).build();
+        component.checkBreaksRequiredContract( Data.newData().type( DataTypes.STRING ).value( null ).build() );
     }
 
     @Test
     public void copy()
     {
         // setup
-        Field original = Field.newBuilder().name( "myField" ).type( FieldTypes.TEXT_LINE ).build();
+        Component original = Component.newBuilder().name( "myField" ).type( FieldTypes.TEXT_LINE ).build();
 
         // exercise
-        Field copy = original.copy();
+        Component copy = original.copy();
 
         // verify
         assertNotSame( original, copy );

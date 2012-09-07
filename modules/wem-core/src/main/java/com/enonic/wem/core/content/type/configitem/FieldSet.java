@@ -38,12 +38,12 @@ public class FieldSet
         this.configItems.addConfigItem( configItem );
     }
 
-    public void addField( final Field field )
+    public void addField( final Component component )
     {
         Preconditions.checkState( getPath() != null, "Cannot add Field before this FieldSet is added" );
 
-        field.setPath( new ConfigItemPath( getPath(), field.getName() ) );
-        this.configItems.addConfigItem( field );
+        component.setPath( new ConfigItemPath( getPath(), component.getName() ) );
+        this.configItems.addConfigItem( component );
     }
 
     public void addFieldSet( final FieldSet fieldSet )

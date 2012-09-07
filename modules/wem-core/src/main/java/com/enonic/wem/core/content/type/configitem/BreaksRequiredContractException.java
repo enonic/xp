@@ -15,9 +15,9 @@ public class BreaksRequiredContractException
         this.data = data;
     }
 
-    public BreaksRequiredContractException( final Field missingField )
+    public BreaksRequiredContractException( final Component missingComponent )
     {
-        super( buildMessage( missingField ) );
+        super( buildMessage( missingComponent ) );
     }
 
     public BreaksRequiredContractException( final FieldSet missingFieldSet )
@@ -35,9 +35,9 @@ public class BreaksRequiredContractException
         return "Required contract for Data [" + data.getPath() + "] is broken of type " + fieldType + " , value was: " + data.getValue();
     }
 
-    private static String buildMessage( final Field field )
+    private static String buildMessage( final Component component )
     {
-        return "Required contract is broken, data missing for Field: " + field.getPath().toString();
+        return "Required contract is broken, data missing for Field: " + component.getPath().toString();
     }
 
     private static String buildMessage( final FieldSet fieldSet )

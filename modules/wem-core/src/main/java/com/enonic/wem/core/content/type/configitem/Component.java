@@ -9,7 +9,7 @@ import com.enonic.wem.core.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldType;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypeConfig;
 
-public class Field
+public class Component
     extends DirectAccessibleConfigItem
 {
     private FieldType type;
@@ -30,7 +30,7 @@ public class Field
 
     private FieldTypeConfig fieldTypeConfig;
 
-    protected Field()
+    protected Component()
     {
         super( ConfigItemType.FIELD );
     }
@@ -134,9 +134,9 @@ public class Field
 
 
     @Override
-    public Field copy()
+    public Component copy()
     {
-        final Field copy = (Field) super.copy();
+        final Component copy = (Component) super.copy();
         copy.type = type;
         copy.label = label;
         copy.immutable = immutable;
@@ -162,60 +162,60 @@ public class Field
 
     public static class Builder
     {
-        private Field field;
+        private Component component;
 
         private Builder()
         {
-            field = new Field();
+            component = new Component();
         }
 
         public Builder name( String value )
         {
-            field.setName( value );
+            component.setName( value );
             return this;
         }
 
         public Builder type( FieldType value )
         {
-            field.type = value;
+            component.type = value;
             return this;
         }
 
         public Builder label( String value )
         {
-            field.label = value;
+            component.label = value;
             return this;
         }
 
         public Builder immutable( boolean value )
         {
-            field.immutable = value;
+            component.immutable = value;
             return this;
         }
 
         public Builder occurrences( Occurrences occurrences )
         {
-            field.occurrences.setMinOccurences( occurrences.getMinimum() );
-            field.occurrences.setMaxOccurences( occurrences.getMaximum() );
+            component.occurrences.setMinOccurences( occurrences.getMinimum() );
+            component.occurrences.setMaxOccurences( occurrences.getMaximum() );
             return this;
         }
 
         public Builder occurrences( int minOccurrences, int maxOccurrences )
         {
-            field.occurrences.setMinOccurences( minOccurrences );
-            field.occurrences.setMaxOccurences( maxOccurrences );
+            component.occurrences.setMinOccurences( minOccurrences );
+            component.occurrences.setMaxOccurences( maxOccurrences );
             return this;
         }
 
         public Builder required( boolean value )
         {
-            if ( value && !field.occurrences.impliesRequired() )
+            if ( value && !component.occurrences.impliesRequired() )
             {
-                field.occurrences.setMinOccurences( 1 );
+                component.occurrences.setMinOccurences( 1 );
             }
-            else if ( !value && field.occurrences.impliesRequired() )
+            else if ( !value && component.occurrences.impliesRequired() )
             {
-                field.occurrences.setMinOccurences( 0 );
+                component.occurrences.setMinOccurences( 0 );
             }
             return this;
         }
@@ -224,64 +224,65 @@ public class Field
         {
             if ( value )
             {
-                field.occurrences.setMaxOccurences( 0 );
+                component.occurrences.setMaxOccurences( 0 );
             }
             else
             {
-                field.occurrences.setMaxOccurences( 1 );
+                component.occurrences.setMaxOccurences( 1 );
             }
             return this;
         }
 
         public Builder indexed( boolean value )
         {
-            field.indexed = value;
+            component.indexed = value;
             return this;
         }
 
         public Builder customText( String value )
         {
-            field.customText = value;
+            component.customText = value;
             return this;
         }
 
         public Builder validationRegexp( String value )
         {
-            field.validationRegexp = value;
+            component.validationRegexp = value;
             return this;
         }
 
         public Builder helpText( String value )
         {
-            field.helpText = value;
+            component.helpText = value;
             return this;
         }
 
         public Builder fieldTypeConfig( FieldTypeConfig value )
         {
-            field.fieldTypeConfig = value;
+            component.fieldTypeConfig = value;
             return this;
         }
 
-        public Field build()
+        public Component build()
         {
-            Preconditions.checkNotNull( field.getName(), "name cannot be null" );
-            Preconditions.checkNotNull( field.getFieldType(), "type cannot be null" );
+            Preconditions.checkNotNull( component.getName(), "name cannot be null" );
+            Preconditions.checkNotNull( component.getFieldType(), "type cannot be null" );
 
-            if ( field.getFieldType().requiresConfig() )
+            if ( component.getFieldType().requiresConfig() )
             {
-                Preconditions.checkArgument( field.getFieldTypeConfig() != null,
-                                             "Field [name='%s', type=%s] is missing required FieldTypeConfig: %s", field.getName(),
-                                             field.getFieldType().getName(), field.getFieldType().requiredConfigClass().getName() );
+                Preconditions.checkArgument( component.getFieldTypeConfig() != null,
+                                             "Field [name='%s', type=%s] is missing required FieldTypeConfig: %s", component.getName(),
+                                             component.getFieldType().getName(), component.getFieldType().requiredConfigClass().getName() );
 
-                Preconditions.checkArgument( field.getFieldType().requiredConfigClass().isInstance( field.getFieldTypeConfig() ),
-                                             "Field [name='%s', type=%s] expects FieldTypeConfig of type [%s] but was: %s", field.getName(),
-                                             field.getFieldType().getName(), field.getFieldType().requiredConfigClass().getName(),
-                                             field.getFieldTypeConfig().getClass().getName() );
+                Preconditions.checkArgument( component.getFieldType().requiredConfigClass().isInstance( component.getFieldTypeConfig() ),
+                                             "Field [name='%s', type=%s] expects FieldTypeConfig of type [%s] but was: %s",
+                                             component.getName(), component.getFieldType().getName(),
+                                             component.getFieldType().requiredConfigClass().getName(),
+                                             component.getFieldTypeConfig().getClass().getName() );
             }
 
-            field.setPath( new ConfigItemPath( field.getName() ) );
-            return field;
+            component.setPath( new ConfigItemPath( component.getName() ) );
+            return component;
         }
     }
 }

@@ -7,7 +7,7 @@ import com.enonic.wem.core.content.data.DataSet;
 import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
-import com.enonic.wem.core.content.type.configitem.Field;
+import com.enonic.wem.core.content.type.configitem.Component;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
 import com.enonic.wem.core.content.type.configitem.FieldTemplate;
@@ -20,7 +20,7 @@ import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.content.type.configitem.fieldtype.RadioButtonsConfig;
 import com.enonic.wem.core.module.Module;
 
-import static com.enonic.wem.core.content.type.configitem.Field.newField;
+import static com.enonic.wem.core.content.type.configitem.Component.newField;
 import static com.enonic.wem.core.content.type.configitem.FieldSet.newFieldSet;
 import static com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder.newFieldSetTemplate;
 import static com.enonic.wem.core.content.type.configitem.FieldTemplateBuilder.newFieldTemplate;
@@ -37,7 +37,8 @@ public class ContentTest
     {
         ContentType contentType = new ContentType();
         DropdownConfig dropdownConfig = DropdownConfig.newBuilder().addOption( "Option 1", "o1" ).addOption( "Option 2", "o2" ).build();
-        Field myDropdown = Field.newBuilder().name( "myDropdown" ).type( FieldTypes.DROPDOWN ).fieldTypeConfig( dropdownConfig ).build();
+        Component myDropdown =
+            Component.newBuilder().name( "myDropdown" ).type( FieldTypes.DROPDOWN ).fieldTypeConfig( dropdownConfig ).build();
         contentType.addConfigItem( myDropdown );
 
         Content content = new Content();
@@ -53,8 +54,8 @@ public class ContentTest
         ContentType contentType = new ContentType();
         RadioButtonsConfig myRadioButtonsConfig =
             RadioButtonsConfig.newBuilder().addOption( "myFirstChoice", "c1" ).addOption( "mySecondChoice", "c2" ).build();
-        contentType.addConfigItem(
-            Field.newBuilder().name( "myRadioButtons" ).type( FieldTypes.RADIO_BUTTONS ).fieldTypeConfig( myRadioButtonsConfig ).build() );
+        contentType.addConfigItem( Component.newBuilder().name( "myRadioButtons" ).type( FieldTypes.RADIO_BUTTONS ).fieldTypeConfig(
+            myRadioButtonsConfig ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -67,8 +68,9 @@ public class ContentTest
     public void multiple_textlines()
     {
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( Field.newBuilder().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).build() );
-        contentType.addConfigItem( Field.newBuilder().name( "myMultipleTextLine" ).type( FieldTypes.TEXT_LINE ).multiple( true ).build() );
+        contentType.addConfigItem( Component.newBuilder().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.addConfigItem(
+            Component.newBuilder().name( "myMultipleTextLine" ).type( FieldTypes.TEXT_LINE ).multiple( true ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -85,7 +87,7 @@ public class ContentTest
     public void tags()
     {
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( Field.newBuilder().name( "myTags" ).type( FieldTypes.TAGS ).build() );
+        contentType.addConfigItem( Component.newBuilder().name( "myTags" ).type( FieldTypes.TAGS ).build() );
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
         Content content = new Content();
@@ -99,8 +101,8 @@ public class ContentTest
     public void tags_using_fieldTemplate()
     {
         Module module = newModule().name( "system" ).build();
-        Field field = newField().name( "tags" ).label( "Tags" ).type( FieldTypes.TEXT_LINE ).multiple( true ).build();
-        FieldTemplate fieldTemplate = newFieldTemplate().module( module ).field( field ).build();
+        Component component = newField().name( "tags" ).label( "Tags" ).type( FieldTypes.TEXT_LINE ).multiple( true ).build();
+        FieldTemplate fieldTemplate = newFieldTemplate().module( module ).field( component ).build();
         MockTemplateFetcher templateFetcher = new MockTemplateFetcher();
         templateFetcher.add( fieldTemplate );
 
@@ -122,7 +124,7 @@ public class ContentTest
     public void phone()
     {
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( Field.newBuilder().name( "myPhone" ).type( FieldTypes.PHONE ).required( true ).build() );
+        contentType.addConfigItem( Component.newBuilder().name( "myPhone" ).type( FieldTypes.PHONE ).required( true ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -135,7 +137,7 @@ public class ContentTest
     public void groupedFieldSet()
     {
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addConfigItem( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
 
         FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).build();
         contentType.addConfigItem( fieldSet );
@@ -157,14 +159,14 @@ public class ContentTest
     public void multiple_subtype()
     {
         ContentType contentType = new ContentType();
-        Field nameField = Field.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).required( true ).build();
-        contentType.addConfigItem( nameField );
+        Component nameComponent = Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).required( true ).build();
+        contentType.addConfigItem( nameComponent );
 
         FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).multiple( true ).build();
         contentType.addConfigItem( fieldSet );
-        fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
-        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -241,11 +243,11 @@ public class ContentTest
     public void structured_getEntries()
     {
         FieldSet child = FieldSet.newBuilder().name( "child" ).multiple( true ).build();
-        child.addField( Field.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
-        child.addField( Field.newBuilder().name( "age" ).type( FieldTypes.TEXT_LINE ).build() );
+        child.addField( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+        child.addField( Component.newBuilder().name( "age" ).type( FieldTypes.TEXT_LINE ).build() );
         FieldSet features = FieldSet.newBuilder().name( "features" ).multiple( false ).build();
-        features.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        features.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        features.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        features.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
         child.addFieldSet( features );
         ContentType contentType = new ContentType();
         contentType.addConfigItem( child );
@@ -305,13 +307,14 @@ public class ContentTest
 
         // exercise
         ContentType contentType = new ContentType();
-        contentType.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.addConfigItem( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
         contentType.addConfigItem( FieldSet.newBuilder().name( "personalia" ).multiple( false ).build() );
-        contentType.getFieldSet( "personalia" ).addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        contentType.getFieldSet( "personalia" ).addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.getFieldSet( "personalia" ).addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.getFieldSet( "personalia" ).addField(
+            Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
         contentType.addConfigItem( FieldSet.newBuilder().name( "crimes" ).multiple( true ).build() );
-        contentType.getFieldSet( "crimes" ).addField( Field.newBuilder().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
-        contentType.getFieldSet( "crimes" ).addField( Field.newBuilder().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.getFieldSet( "crimes" ).addField( Component.newBuilder().name( "description" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.getFieldSet( "crimes" ).addField( Component.newBuilder().name( "year" ).type( FieldTypes.TEXT_LINE ).build() );
         content.setType( contentType );
 
         assertEquals( DataTypes.STRING, content.getData( "personalia.eyeColour" ).getDataType() );
@@ -324,10 +327,10 @@ public class ContentTest
     {
         Module module = newModule().name( "myModule" ).build();
 
-        FieldTemplate postalCodeTemplate =
-            newFieldTemplate().module( module ).field( Field.newField().name( "postalCode" ).type( FieldTypes.TEXT_LINE ).build() ).build();
+        FieldTemplate postalCodeTemplate = newFieldTemplate().module( module ).field(
+            Component.newField().name( "postalCode" ).type( FieldTypes.TEXT_LINE ).build() ).build();
         FieldTemplate countryTemplate = newFieldTemplate().module( module ).field(
-            Field.newField().name( "country" ).type( FieldTypes.DROPDOWN ).fieldTypeConfig(
+            Component.newField().name( "country" ).type( FieldTypes.DROPDOWN ).fieldTypeConfig(
                 DropdownConfig.newBuilder().addOption( "Norway", "NO" ).build() ).build() ).build();
 
         FieldSetTemplate addressTemplate = newFieldSetTemplate().module( module ).fieldSet(

@@ -46,9 +46,9 @@ public class ConfigItemSerializerJson
         {
             generateVisualFieldSet( (VisualFieldSet) configItem, g );
         }
-        else if ( configItem instanceof Field )
+        else if ( configItem instanceof Component )
         {
-            generateField( (Field) configItem, g );
+            generateField( (Component) configItem, g );
         }
         else if ( configItem instanceof TemplateReference )
         {
@@ -56,26 +56,26 @@ public class ConfigItemSerializerJson
         }
     }
 
-    private void generateField( final Field field, final JsonGenerator g )
+    private void generateField( final Component component, final JsonGenerator g )
         throws IOException
     {
         g.writeStartObject();
-        g.writeStringField( "configItemType", field.getConfigItemType().toString() );
-        g.writeStringField( "path", field.getPath().toString() );
-        g.writeStringField( "name", field.getName() );
-        fieldTypeSerializer.generate( field.getFieldType(), g );
-        g.writeStringField( "label", field.getLabel() );
-        g.writeBooleanField( "required", field.isRequired() );
-        g.writeBooleanField( "immutable", field.isImmutable() );
-        OccurrencesSerializerJson.generate( field.getOccurrences(), g );
-        g.writeBooleanField( "indexed", field.isIndexed() );
-        g.writeStringField( "customText", field.getCustomText() );
-        g.writeStringField( "validationRegexp", field.getValidationRegexp() );
-        g.writeStringField( "helpText", field.getHelpText() );
-        if ( field.getFieldType().requiresConfig() && field.getFieldTypeConfig() != null )
+        g.writeStringField( "configItemType", component.getConfigItemType().toString() );
+        g.writeStringField( "path", component.getPath().toString() );
+        g.writeStringField( "name", component.getName() );
+        fieldTypeSerializer.generate( component.getFieldType(), g );
+        g.writeStringField( "label", component.getLabel() );
+        g.writeBooleanField( "required", component.isRequired() );
+        g.writeBooleanField( "immutable", component.isImmutable() );
+        OccurrencesSerializerJson.generate( component.getOccurrences(), g );
+        g.writeBooleanField( "indexed", component.isIndexed() );
+        g.writeStringField( "customText", component.getCustomText() );
+        g.writeStringField( "validationRegexp", component.getValidationRegexp() );
+        g.writeStringField( "helpText", component.getHelpText() );
+        if ( component.getFieldType().requiresConfig() && component.getFieldTypeConfig() != null )
         {
             g.writeFieldName( "fieldTypeConfig" );
-            field.getFieldType().getFieldTypeConfigJsonGenerator().generate( field.getFieldTypeConfig(), g );
+            component.getFieldType().getFieldTypeConfigJsonGenerator().generate( component.getFieldTypeConfig(), g );
         }
 
         g.writeEndObject();
@@ -167,7 +167,7 @@ public class ConfigItemSerializerJson
 
     private DirectAccessibleConfigItem parseField( final JsonNode configItemNode )
     {
-        final Field.Builder builder = Field.newBuilder();
+        final Component.Builder builder = Component.newBuilder();
         builder.name( JsonParserUtil.getStringValue( "name", configItemNode ) );
         builder.label( JsonParserUtil.getStringValue( "label", configItemNode, null ) );
         builder.immutable( JsonParserUtil.getBooleanValue( "immutable", configItemNode ) );
@@ -226,7 +226,7 @@ public class ConfigItemSerializerJson
         return builder.build();
     }
 
-    private void parseOccurrences( final Field.Builder builder, final JsonNode occurrencesNode )
+    private void parseOccurrences( final Component.Builder builder, final JsonNode occurrencesNode )
     {
         if ( occurrencesNode != null )
         {
@@ -250,7 +250,7 @@ public class ConfigItemSerializerJson
         }
     }
 
-    private void parseFieldTypeConfig( final Field.Builder builder, final JsonNode fieldTypeConfigNode )
+    private void parseFieldTypeConfig( final Component.Builder builder, final JsonNode fieldTypeConfigNode )
     {
         if ( fieldTypeConfigNode != null )
         {
@@ -258,7 +258,7 @@ public class ConfigItemSerializerJson
         }
     }
 
-    private void parseFieldType( final Field.Builder builder, final JsonNode fieldTypeNode )
+    private void parseFieldType( final Component.Builder builder, final JsonNode fieldTypeNode )
     {
         if ( fieldTypeNode != null )
         {

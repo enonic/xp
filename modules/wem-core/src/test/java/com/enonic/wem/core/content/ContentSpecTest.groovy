@@ -6,7 +6,7 @@ import com.enonic.wem.core.content.type.configitem.FieldSet
 import com.enonic.wem.core.content.type.configitem.VisualFieldSet
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes
 
-import static com.enonic.wem.core.content.type.configitem.Field.newField
+import static com.enonic.wem.core.content.type.configitem.Component.newField
 
 class ContentSpecTest extends spock.lang.Specification
 {

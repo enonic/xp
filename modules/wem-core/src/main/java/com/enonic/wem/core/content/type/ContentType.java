@@ -3,10 +3,10 @@ package com.enonic.wem.core.content.type;
 
 import org.elasticsearch.common.base.Preconditions;
 
+import com.enonic.wem.core.content.type.configitem.Component;
 import com.enonic.wem.core.content.type.configitem.ConfigItem;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
-import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.TemplateFetcher;
 import com.enonic.wem.core.module.Module;
@@ -112,20 +112,20 @@ public class ContentType
         this.configItems.addConfigItem( configItem );
     }
 
-    Field getField( final ConfigItemPath path )
+    Component getField( final ConfigItemPath path )
     {
-        final Field field = configItems.getField( path );
-        if ( field == null )
+        final Component component = configItems.getField( path );
+        if ( component == null )
         {
             return null;
         }
 
-        Preconditions.checkState( field.getPath().equals( path ), "Found Field at path [%s] have unexpected path: " + field.getPath(),
-                                  path );
-        return field;
+        Preconditions.checkState( component.getPath().equals( path ),
+                                  "Found Field at path [%s] have unexpected path: " + component.getPath(), path );
+        return component;
     }
 
-    public Field getField( final String path )
+    public Component getField( final String path )
     {
         return getField( new ConfigItemPath( path ) );
     }

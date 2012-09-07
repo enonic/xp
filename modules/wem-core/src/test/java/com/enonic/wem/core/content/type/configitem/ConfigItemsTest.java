@@ -15,8 +15,8 @@ public class ConfigItemsTest
         ConfigItems configItems = new ConfigItems();
         FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).build();
         configItems.addConfigItem( fieldSet );
-        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise & verify
         DirectAccessibleConfigItem personaliaConfig =
@@ -30,8 +30,8 @@ public class ConfigItemsTest
         ConfigItems configItems = new ConfigItems();
         FieldSet fieldSet = FieldSet.newBuilder().name( "personalia" ).label( "Personalia" ).build();
         configItems.addConfigItem( fieldSet );
-        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise & verify
         DirectAccessibleConfigItem personaliaEyeColourConfig = fieldSet.getConfigItems().getDirectAccessibleConfigItem( "eyeColour" );
@@ -42,8 +42,8 @@ public class ConfigItemsTest
     public void toString_with_two_fields()
     {
         ConfigItems configItems = new ConfigItems();
-        configItems.addConfigItem( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        configItems.addConfigItem( Field.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        configItems.addConfigItem( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        configItems.addConfigItem( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         // exercise & verify
         assertEquals( "eyeColour, hairColour", configItems.toString() );
@@ -53,10 +53,10 @@ public class ConfigItemsTest
     public void toString_with_visualFieldSet()
     {
         ConfigItems configItems = new ConfigItems();
-        configItems.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+        configItems.addConfigItem( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
         configItems.addConfigItem( VisualFieldSet.newVisualFieldSet().label( "Visual" ).name( "visual" ).add(
-            Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() ).add(
-            Field.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() ).build() );
+            Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() ).add(
+            Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() ).build() );
 
         // exercise & verify
         assertEquals( "name, visual{eyeColour, hairColour}", configItems.toString() );

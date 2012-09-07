@@ -11,9 +11,9 @@ import cucumber.annotation.en.When;
 import cucumber.table.DataTable;
 import gherkin.formatter.model.DataTableRow;
 
+import com.enonic.wem.core.content.type.configitem.Component;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItemType;
-import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldTemplate;
 import com.enonic.wem.core.content.type.configitem.FieldTemplateBuilder;
 import com.enonic.wem.core.content.type.configitem.MockTemplateFetcher;
@@ -33,7 +33,7 @@ public class ContentTypeStepDefs
 
     public final Map<String, ContentType> contentTypeByName = new HashMap<String, ContentType>();
 
-    public final Map<String, Field> fieldByName = new HashMap<String, Field>();
+    public final Map<String, Component> fieldByName = new HashMap<String, Component>();
 
     public final Map<TemplateQualifiedName, FieldTemplate> fieldTemplateByTemplateQualifiedName =
         new HashMap<TemplateQualifiedName, FieldTemplate>();
@@ -51,8 +51,8 @@ public class ContentTypeStepDefs
     public void a_field_named_name_of_type_type( String fieldName, String fieldTypeName )
         throws Throwable
     {
-        Field field = Field.newBuilder().name( fieldName ).type( FieldTypes.parse( fieldTypeName ) ).build();
-        fieldByName.put( fieldName, field );
+        Component component = Component.newBuilder().name( fieldName ).type( FieldTypes.parse( fieldTypeName ) ).build();
+        fieldByName.put( fieldName, component );
     }
 
     @Given("^a FieldTemplate named (.+) in module (.+) with field (.+)$")

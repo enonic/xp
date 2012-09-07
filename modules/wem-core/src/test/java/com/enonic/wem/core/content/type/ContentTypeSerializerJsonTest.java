@@ -2,10 +2,10 @@ package com.enonic.wem.core.content.type;
 
 import org.junit.Test;
 
+import com.enonic.wem.core.content.type.configitem.Component;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItemType;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
-import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
 import com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder;
@@ -16,8 +16,8 @@ import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.content.type.configitem.fieldtype.RadioButtonsConfig;
 import com.enonic.wem.core.module.Module;
 
-import static com.enonic.wem.core.content.type.configitem.Field.newBuilder;
-import static com.enonic.wem.core.content.type.configitem.Field.newField;
+import static com.enonic.wem.core.content.type.configitem.Component.newBuilder;
+import static com.enonic.wem.core.content.type.configitem.Component.newField;
 import static com.enonic.wem.core.content.type.configitem.FieldSet.newFieldSet;
 import static com.enonic.wem.core.content.type.configitem.TemplateReference.newTemplateReference;
 import static com.enonic.wem.core.content.type.configitem.VisualFieldSet.newVisualFieldSet;
@@ -58,13 +58,13 @@ public class ContentTypeSerializerJsonTest
         ContentType parsedContentType = serializer.parse( json );
 
         // verify
-        Field parsedMyDate = parsedContentType.getField( "myDate" );
+        Component parsedMyDate = parsedContentType.getField( "myDate" );
         assertEquals( "myDate", parsedMyDate.getPath().toString() );
         assertEquals( "myDate", parsedMyDate.getName() );
         assertEquals( "com.enonic.wem.core.content.type.configitem.fieldtype.Date", parsedMyDate.getFieldType().getClassName() );
         assertEquals( "date", parsedMyDate.getFieldType().getName() );
 
-        Field parsedMyDropdown = parsedContentType.getField( "myDropdown" );
+        Component parsedMyDropdown = parsedContentType.getField( "myDropdown" );
         assertEquals( "myDropdown", parsedMyDropdown.getPath().toString() );
         assertEquals( "My Option 1", ( (DropdownConfig) parsedMyDropdown.getFieldTypeConfig() ).getOptions().get( 0 ).getLabel() );
         assertEquals( "My Option 2", ( (DropdownConfig) parsedMyDropdown.getFieldTypeConfig() ).getOptions().get( 1 ).getLabel() );

@@ -140,7 +140,7 @@ public class ConfigItems
         return (FieldSet) configItem;
     }
 
-    public Field getField( final String name )
+    public Component getField( final String name )
     {
         final DirectAccessibleConfigItem configItem = getDirectAccessibleConfigItem( name );
         if ( configItem == null )
@@ -148,25 +148,25 @@ public class ConfigItems
             return null;
         }
 
-        Preconditions.checkArgument( ( configItem instanceof Field ),
+        Preconditions.checkArgument( ( configItem instanceof Component ),
                                      "ConfigItem at path [%s] is not a Field: " + configItem.getConfigItemType(), configItem.getPath() );
 
         //noinspection ConstantConditions
-        return (Field) configItem;
+        return (Component) configItem;
     }
 
-    public Field getField( final ConfigItemPath path )
+    public Component getField( final ConfigItemPath path )
     {
         final DirectAccessibleConfigItem configItem = getConfigItem( path );
         if ( configItem == null )
         {
             return null;
         }
-        Preconditions.checkArgument( ( configItem instanceof Field ),
+        Preconditions.checkArgument( ( configItem instanceof Component ),
                                      "ConfigItem at path [%s] is not a Field: " + configItem.getConfigItemType(), configItem.getPath() );
 
         //noinspection ConstantConditions
-        return (Field) configItem;
+        return (Component) configItem;
     }
 
     public Iterator<ConfigItem> iterator()

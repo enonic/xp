@@ -8,10 +8,10 @@ import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
 import com.enonic.wem.core.content.JsonParserUtil;
+import com.enonic.wem.core.content.type.configitem.Component;
 import com.enonic.wem.core.content.type.configitem.ConfigItem;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
-import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 
 public class DataSetSerializerJson
@@ -82,7 +82,7 @@ public class DataSetSerializerJson
                 {
                     //
                 }
-                else if ( item instanceof Field )
+                else if ( item instanceof Component )
                 {
                     final Entry entry = dataSerializer.parse( entryNode );
                     dataSet.add( entry );

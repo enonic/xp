@@ -4,7 +4,7 @@ package com.enonic.wem.core.content.type;
 import com.enonic.wem.core.content.data.ContentData;
 import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.data.Entry;
-import com.enonic.wem.core.content.type.configitem.Field;
+import com.enonic.wem.core.content.type.configitem.Component;
 
 public class DataTypeFixer
 {
@@ -22,8 +22,8 @@ public class DataTypeFixer
             if ( entry instanceof Data )
             {
                 Data data = (Data) entry;
-                Field field = contentType.getField( data.getPath().resolveConfigItemPath() );
-                field.getFieldType().ensureType( data );
+                Component component = contentType.getField( data.getPath().resolveConfigItemPath() );
+                component.getFieldType().ensureType( data );
             }
         }
     }

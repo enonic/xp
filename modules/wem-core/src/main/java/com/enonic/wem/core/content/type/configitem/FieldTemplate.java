@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.type.configitem;
 public class FieldTemplate
     extends Template
 {
-    private Field field;
+    private Component component;
 
     FieldTemplate()
     {
@@ -11,7 +11,7 @@ public class FieldTemplate
 
     public String getName()
     {
-        return field.getName();
+        return component.getName();
     }
 
     @Override
@@ -20,21 +20,21 @@ public class FieldTemplate
         return TemplateType.FIELD;
     }
 
-    public Field getField()
+    public Component getComponent()
     {
-        return field;
+        return component;
     }
 
-    void setField( final Field value )
+    void setComponent( final Component value )
     {
-        this.field = value;
+        this.component = value;
     }
 
     public DirectAccessibleConfigItem create( final TemplateReference templateReference )
     {
-        Field field = this.field.copy();
-        field.setName( templateReference.getName() );
-        field.setPath( templateReference.getPath() );
-        return field;
+        Component component = this.component.copy();
+        component.setName( templateReference.getName() );
+        component.setPath( templateReference.getPath() );
+        return component;
     }
 }

@@ -6,14 +6,14 @@ import org.junit.Test;
 import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.MockContentTypeFetcher;
-import com.enonic.wem.core.content.type.configitem.Field;
+import com.enonic.wem.core.content.type.configitem.Component;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.content.type.configitem.fieldtype.RadioButtonsConfig;
 import com.enonic.wem.core.module.Module;
 
-import static com.enonic.wem.core.content.type.configitem.Field.newField;
+import static com.enonic.wem.core.content.type.configitem.Component.newField;
 import static com.enonic.wem.core.content.type.configitem.FieldSet.newBuilder;
 import static com.enonic.wem.core.content.type.configitem.FieldSet.newFieldSet;
 import static com.enonic.wem.core.content.type.configitem.VisualFieldSet.newVisualFieldSet;
@@ -33,8 +33,8 @@ public class ContentSerializerJsonTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addConfigItem( Field.newBuilder().name( "myTextArea" ).type( FieldTypes.TEXT_AREA ).required( true ).build() );
-        contentType.addConfigItem( Field.newBuilder().name( "myPhone" ).type( FieldTypes.PHONE ).build() );
+        contentType.addConfigItem( Component.newBuilder().name( "myTextArea" ).type( FieldTypes.TEXT_AREA ).required( true ).build() );
+        contentType.addConfigItem( Component.newBuilder().name( "myPhone" ).type( FieldTypes.PHONE ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -64,7 +64,7 @@ public class ContentSerializerJsonTest
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
         contentType.addConfigItem(
-            Field.newBuilder().name( "myRadiobuttons" ).type( FieldTypes.RADIO_BUTTONS ).required( true ).fieldTypeConfig(
+            Component.newBuilder().name( "myRadiobuttons" ).type( FieldTypes.RADIO_BUTTONS ).required( true ).fieldTypeConfig(
                 radioButtonsConfig ).build() );
         contentTypeFetcher.add( contentType );
 
@@ -87,9 +87,9 @@ public class ContentSerializerJsonTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addConfigItem( Field.newBuilder().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).build() );
+        contentType.addConfigItem( Component.newBuilder().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).build() );
         contentType.addConfigItem(
-            Field.newBuilder().name( "myMultipleTextLine" ).type( FieldTypes.TEXT_LINE ).required( false ).multiple( true ).build() );
+            Component.newBuilder().name( "myMultipleTextLine" ).type( FieldTypes.TEXT_LINE ).required( false ).multiple( true ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -112,12 +112,12 @@ public class ContentSerializerJsonTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addConfigItem( Field.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addConfigItem( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
 
         FieldSet fieldSet = newBuilder().name( "personalia" ).build();
         contentType.addConfigItem( fieldSet );
-        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -142,15 +142,15 @@ public class ContentSerializerJsonTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        Field nameField = Field.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).required( true ).build();
-        contentType.addConfigItem( nameField );
+        Component nameComponent = Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).required( true ).build();
+        contentType.addConfigItem( nameComponent );
         contentTypeFetcher.add( contentType );
 
         FieldSet fieldSet = newFieldSet().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
         contentType.addConfigItem( fieldSet );
-        fieldSet.addField( Field.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
-        fieldSet.addField( Field.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
-        fieldSet.addField( Field.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Component.newBuilder().name( "name" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Component.newBuilder().name( "eyeColour" ).type( FieldTypes.TEXT_LINE ).build() );
+        fieldSet.addField( Component.newBuilder().name( "hairColour" ).type( FieldTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );

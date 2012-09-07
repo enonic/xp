@@ -7,8 +7,8 @@ import com.enonic.wem.core.content.data.DataSet;
 import com.enonic.wem.core.content.data.EntryPath;
 import com.enonic.wem.core.content.data.EntrySelector;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
+import com.enonic.wem.core.content.type.configitem.Component;
 import com.enonic.wem.core.content.type.configitem.ConfigItem;
-import com.enonic.wem.core.content.type.configitem.Field;
 import com.enonic.wem.core.content.type.configitem.FieldSet;
 import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
 
@@ -31,9 +31,9 @@ public class RequiredContractVerifier
         // check missing required entries
         for ( ConfigItem configItem : configItems )
         {
-            if ( configItem instanceof Field )
+            if ( configItem instanceof Component )
             {
-                processField( (Field) configItem, entrySelector );
+                processField( (Component) configItem, entrySelector );
             }
             else if ( configItem instanceof FieldSet )
             {
@@ -46,12 +46,12 @@ public class RequiredContractVerifier
         }
     }
 
-    private void processField( final Field field, final EntrySelector entrySelector )
+    private void processField( final Component component, final EntrySelector entrySelector )
     {
-        Data data = entrySelector != null ? entrySelector.getData( new EntryPath( field.getPath().toString() ) ) : null;
-        if ( field.isRequired() )
+        Data data = entrySelector != null ? entrySelector.getData( new EntryPath( component.getPath().toString() ) ) : null;
+        if ( component.isRequired() )
         {
-            verifyRequiredField( field, data );
+            verifyRequiredField( component, data );
         }
     }
 
@@ -74,15 +74,15 @@ public class RequiredContractVerifier
     }
 
 
-    private void verifyRequiredField( final Field field, final Data data )
+    private void verifyRequiredField( final Component component, final Data data )
     {
         if ( data == null )
         {
-            throw new BreaksRequiredContractException( field );
+            throw new BreaksRequiredContractException( component );
         }
         else
         {
-            field.checkBreaksRequiredContract( data );
+            component.checkBreaksRequiredContract( data );
         }
     }
 

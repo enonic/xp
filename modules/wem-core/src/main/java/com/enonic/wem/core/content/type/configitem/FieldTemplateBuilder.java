@@ -7,13 +7,13 @@ import com.enonic.wem.core.module.Module;
 
 public class FieldTemplateBuilder
 {
-    private Field field;
+    private Component component;
 
     private Module module;
 
-    public FieldTemplateBuilder field( Field value )
+    public FieldTemplateBuilder field( Component value )
     {
-        this.field = value;
+        this.component = value;
         return this;
     }
 
@@ -25,10 +25,10 @@ public class FieldTemplateBuilder
 
     public FieldTemplate build()
     {
-        Preconditions.checkNotNull( field, "field is required" );
+        Preconditions.checkNotNull( component, "field is required" );
 
         FieldTemplate fieldTemplate = new FieldTemplate();
-        fieldTemplate.setField( field );
+        fieldTemplate.setComponent( component );
         fieldTemplate.setModule( module );
         return fieldTemplate;
     }

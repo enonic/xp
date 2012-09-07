@@ -6,7 +6,7 @@ import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.data.DataSet;
 import com.enonic.wem.core.content.data.Entry;
 import com.enonic.wem.core.content.data.InvalidDataException;
-import com.enonic.wem.core.content.type.configitem.Field;
+import com.enonic.wem.core.content.type.configitem.Component;
 
 public class Validator
 {
@@ -34,8 +34,8 @@ public class Validator
     {
         data.checkValidity();
 
-        Field field = contentType.getField( data.getPath().resolveConfigItemPath() );
-        field.checkValidity( data );
+        Component component = contentType.getField( data.getPath().resolveConfigItemPath() );
+        component.checkValidity( data );
     }
 
     private void doValidate( Iterable<Entry> entries )

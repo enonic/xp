@@ -42,7 +42,7 @@ public class ConfigItemSerializerJsonTest
         throws IOException
     {
         // setup
-        Field.Builder builder = Field.newBuilder();
+        Component.Builder builder = Component.newBuilder();
         builder.type( FieldTypes.TEXT_LINE );
         builder.name( "myTextLine" );
         builder.required( true );
@@ -51,9 +51,9 @@ public class ConfigItemSerializerJsonTest
         builder.helpText( null );
         builder.customText( "Custom text" );
         builder.occurrences( 1, 100 );
-        Field field = builder.build();
+        Component component = builder.build();
 
-        String json = fieldToJson( field );
+        String json = fieldToJson( component );
         System.out.println( json );
         JsonParser jp = jsonFactory.createJsonParser( json );
 
@@ -61,18 +61,18 @@ public class ConfigItemSerializerJsonTest
         ConfigItem configItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
-        assertTrue( configItem instanceof Field );
+        assertTrue( configItem instanceof Component );
         assertEquals( "myTextLine", configItem.getName() );
-        Field parsedField = (Field) configItem;
-        assertEquals( true, parsedField.isRequired() );
-        assertEquals( false, parsedField.isIndexed() );
-        assertEquals( true, parsedField.isImmutable() );
-        assertEquals( null, parsedField.getLabel() );
-        assertEquals( null, parsedField.getHelpText() );
-        assertEquals( "Custom text", parsedField.getCustomText() );
-        assertEquals( new Occurrences( 1, 100 ), parsedField.getOccurrences() );
-        assertEquals( FieldTypes.TEXT_LINE, parsedField.getFieldType() );
-        assertNull( parsedField.getFieldTypeConfig() );
+        Component parsedComponent = (Component) configItem;
+        assertEquals( true, parsedComponent.isRequired() );
+        assertEquals( false, parsedComponent.isIndexed() );
+        assertEquals( true, parsedComponent.isImmutable() );
+        assertEquals( null, parsedComponent.getLabel() );
+        assertEquals( null, parsedComponent.getHelpText() );
+        assertEquals( "Custom text", parsedComponent.getCustomText() );
+        assertEquals( new Occurrences( 1, 100 ), parsedComponent.getOccurrences() );
+        assertEquals( FieldTypes.TEXT_LINE, parsedComponent.getFieldType() );
+        assertNull( parsedComponent.getFieldTypeConfig() );
     }
 
     @Test
@@ -80,29 +80,29 @@ public class ConfigItemSerializerJsonTest
         throws IOException
     {
         // setup
-        Field.Builder builder = Field.newBuilder();
+        Component.Builder builder = Component.newBuilder();
         builder.type( FieldTypes.DROPDOWN );
         builder.name( "myDropdown" );
         builder.label( "My Dropdown" );
         builder.fieldTypeConfig( DropdownConfig.newBuilder().addOption( "Option 1", "o1" ).addOption( "Option 2", "o2" ).build() );
-        Field field = builder.build();
+        Component component = builder.build();
 
-        String json = fieldToJson( field );
+        String json = fieldToJson( component );
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
         ConfigItem configItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
-        assertTrue( configItem instanceof Field );
+        assertTrue( configItem instanceof Component );
         assertEquals( "myDropdown", configItem.getName() );
-        Field parsedField = (Field) configItem;
-        assertEquals( "My Dropdown", parsedField.getLabel() );
-        assertEquals( false, parsedField.isRequired() );
-        assertEquals( false, parsedField.isIndexed() );
-        assertEquals( false, parsedField.isImmutable() );
-        assertEquals( FieldTypes.DROPDOWN, parsedField.getFieldType() );
-        FieldTypeConfig fieldTypeConfig = parsedField.getFieldTypeConfig();
+        Component parsedComponent = (Component) configItem;
+        assertEquals( "My Dropdown", parsedComponent.getLabel() );
+        assertEquals( false, parsedComponent.isRequired() );
+        assertEquals( false, parsedComponent.isIndexed() );
+        assertEquals( false, parsedComponent.isImmutable() );
+        assertEquals( FieldTypes.DROPDOWN, parsedComponent.getFieldType() );
+        FieldTypeConfig fieldTypeConfig = parsedComponent.getFieldTypeConfig();
         assertNotNull( fieldTypeConfig );
         assertTrue( fieldTypeConfig instanceof DropdownConfig );
         DropdownConfig dropdownConfig = (DropdownConfig) fieldTypeConfig;
@@ -118,29 +118,29 @@ public class ConfigItemSerializerJsonTest
         throws IOException
     {
         // setup
-        Field.Builder builder = Field.newBuilder();
+        Component.Builder builder = Component.newBuilder();
         builder.type( FieldTypes.RADIO_BUTTONS );
         builder.name( "myRadioButtons" );
         builder.label( "My Radio buttons" );
         builder.fieldTypeConfig( RadioButtonsConfig.newBuilder().addOption( "Option 1", "o1" ).addOption( "Option 2", "o2" ).build() );
-        Field field = builder.build();
+        Component component = builder.build();
 
-        String json = fieldToJson( field );
+        String json = fieldToJson( component );
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
         ConfigItem configItem = new ConfigItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
-        assertTrue( configItem instanceof Field );
+        assertTrue( configItem instanceof Component );
         assertEquals( "myRadioButtons", configItem.getName() );
-        Field parsedField = (Field) configItem;
-        assertEquals( "My Radio buttons", parsedField.getLabel() );
-        assertEquals( false, parsedField.isRequired() );
-        assertEquals( false, parsedField.isIndexed() );
-        assertEquals( false, parsedField.isImmutable() );
-        assertEquals( FieldTypes.RADIO_BUTTONS, parsedField.getFieldType() );
-        FieldTypeConfig fieldTypeConfig = parsedField.getFieldTypeConfig();
+        Component parsedComponent = (Component) configItem;
+        assertEquals( "My Radio buttons", parsedComponent.getLabel() );
+        assertEquals( false, parsedComponent.isRequired() );
+        assertEquals( false, parsedComponent.isIndexed() );
+        assertEquals( false, parsedComponent.isImmutable() );
+        assertEquals( FieldTypes.RADIO_BUTTONS, parsedComponent.getFieldType() );
+        FieldTypeConfig fieldTypeConfig = parsedComponent.getFieldTypeConfig();
         assertNotNull( fieldTypeConfig );
         assertTrue( fieldTypeConfig instanceof RadioButtonsConfig );
         RadioButtonsConfig radioButtonsConfig = (RadioButtonsConfig) fieldTypeConfig;
@@ -189,10 +189,10 @@ public class ConfigItemSerializerJsonTest
         return sw.toString();
     }
 
-    private String fieldToJson( Field field )
+    private String fieldToJson( Component component )
         throws IOException
     {
-        new ConfigItemSerializerJson().generate( field, g );
+        new ConfigItemSerializerJson().generate( component, g );
         g.close();
         return sw.toString();
     }
