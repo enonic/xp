@@ -2,8 +2,12 @@ package com.enonic.wem.api.account.editor;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
+
 import org.mockito.Mockito;
 
+import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.UserAccount;
 
 public class CompositeEditorTest
@@ -20,6 +24,7 @@ public class CompositeEditorTest
     {
         this.account = UserAccount.create( "other:dummy" );
         this.editor1 = Mockito.mock( AccountEditor.class );
+        Mockito.when( this.editor1.edit( Mockito.any( Account.class ) ) ).thenReturn( true );
         this.editor2 = Mockito.mock( AccountEditor.class );
     }
 
@@ -28,7 +33,7 @@ public class CompositeEditorTest
         throws Exception
     {
         final CompositeEditor editor = new CompositeEditor();
-        editor.edit( this.account );
+        assertFalse( editor.edit( this.account ) );
     }
 
     @Test
@@ -36,7 +41,7 @@ public class CompositeEditorTest
         throws Exception
     {
         final CompositeEditor editor = new CompositeEditor( this.editor1 );
-        editor.edit( this.account );
+        assertTrue( editor.edit( this.account ) );
         Mockito.verify( this.editor1, Mockito.times( 1 ) ).edit( this.account );
     }
 
@@ -45,7 +50,7 @@ public class CompositeEditorTest
         throws Exception
     {
         final CompositeEditor editor = new CompositeEditor( this.editor1, this.editor2 );
-        editor.edit( this.account );
+        assertTrue( editor.edit( this.account ) );
         Mockito.verify( this.editor1, Mockito.times( 1 ) ).edit( this.account );
         Mockito.verify( this.editor2, Mockito.times( 1 ) ).edit( this.account );
     }

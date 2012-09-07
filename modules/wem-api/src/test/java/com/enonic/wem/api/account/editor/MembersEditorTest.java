@@ -59,7 +59,7 @@ public class MembersEditorTest
     {
         final AccountKeys keys = AccountKeys.from( "user:other:dummy" );
         final MembersEditor editor = new MembersEditor( operation, keys );
-        editor.edit( account );
+        assertFalse( editor.edit( account ) );
     }
 
     private void testSetMembers( final NonUserAccount account )
@@ -70,7 +70,7 @@ public class MembersEditorTest
         final AccountKeys keys = AccountKeys.from( "user:other:dummy" );
         final MembersEditor editor = new MembersEditor( MembersEditor.Operation.SET, keys );
 
-        editor.edit( account );
+        assertTrue( editor.edit( account ) );
 
         assertEquals( keys, account.getMembers() );
     }
@@ -84,7 +84,7 @@ public class MembersEditorTest
         final AccountKeys set2 = AccountKeys.from( "role:other:admin" );
         final MembersEditor editor = new MembersEditor( MembersEditor.Operation.ADD, set2 );
 
-        editor.edit( account );
+        assertTrue( editor.edit( account ) );
 
         final AccountKeys set3 = set1.add( set2 );
         assertEquals( set3, account.getMembers() );
@@ -99,7 +99,7 @@ public class MembersEditorTest
         final AccountKeys set2 = AccountKeys.from( "role:other:admin" );
         final MembersEditor editor = new MembersEditor( MembersEditor.Operation.REMOVE, set2 );
 
-        editor.edit( account );
+        assertTrue( editor.edit( account ) );
 
         final AccountKeys set3 = set1.remove( set2 );
         assertEquals( set3, account.getMembers() );
