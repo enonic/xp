@@ -8,7 +8,7 @@ import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException;
 
 public class Dropdown
-    extends BaseFieldType
+    extends BaseComponentType
 {
     Dropdown()
     {
@@ -25,7 +25,7 @@ public class Dropdown
         return DropdownConfig.class;
     }
 
-    public AbstractFieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator()
+    public AbstractComponentTypeConfigSerializerJson getComponentTypeConfigJsonGenerator()
     {
         return DropdownConfigSerializerJson.DEFAULT;
     }

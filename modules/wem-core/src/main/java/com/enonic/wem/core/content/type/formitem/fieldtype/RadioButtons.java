@@ -8,7 +8,7 @@ import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException;
 
 public class RadioButtons
-    extends BaseFieldType
+    extends BaseComponentType
 {
     RadioButtons()
     {
@@ -25,7 +25,7 @@ public class RadioButtons
         return RadioButtonsConfig.class;
     }
 
-    public AbstractFieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator()
+    public AbstractComponentTypeConfigSerializerJson getComponentTypeConfigJsonGenerator()
     {
         return RadioButtonsConfigSerializerJson.DEFAULT;
     }

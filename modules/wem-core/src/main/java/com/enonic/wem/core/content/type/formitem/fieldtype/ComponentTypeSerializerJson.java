@@ -8,16 +8,16 @@ import org.codehaus.jackson.JsonNode;
 
 import com.enonic.wem.core.content.JsonParserUtil;
 
-public class FieldTypeSerializerJson
+public class ComponentTypeSerializerJson
 {
     public void generate( final ComponentType componentType, final JsonGenerator g )
         throws IOException
     {
-        BaseComponentType baseFieldType = (BaseComponentType) componentType;
+        BaseComponentType baseComponentType = (BaseComponentType) componentType;
 
         g.writeFieldName( "componentType" );
         g.writeStartObject();
-        g.writeStringField( "className", baseFieldType.getClassName() );
+        g.writeStringField( "className", baseComponentType.getClassName() );
         g.writeEndObject();
     }
 

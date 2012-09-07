@@ -10,11 +10,11 @@ import org.codehaus.jackson.JsonNode;
 import com.enonic.wem.core.content.JsonParserUtil;
 
 public class DropdownConfigSerializerJson
-    extends AbstractFieldTypeConfigSerializerJson
+    extends AbstractComponentTypeConfigSerializerJson
 {
     public static final DropdownConfigSerializerJson DEFAULT = new DropdownConfigSerializerJson();
 
-    public void generateConfig( FieldTypeConfig config, JsonGenerator g )
+    public void generateConfig( ComponentTypeConfig config, JsonGenerator g )
         throws IOException
     {
         DropdownConfig dropdownConfig = (DropdownConfig) config;
@@ -32,10 +32,10 @@ public class DropdownConfigSerializerJson
     }
 
     @Override
-    public FieldTypeConfig parseConfig( final JsonNode fieldTypeConfigNode )
+    public ComponentTypeConfig parseConfig( final JsonNode componentTypeConfigNode )
     {
         final DropdownConfig.Builder builder = DropdownConfig.newBuilder();
-        final JsonNode optionsNode = fieldTypeConfigNode.get( "options" );
+        final JsonNode optionsNode = componentTypeConfigNode.get( "options" );
         final Iterator<JsonNode> optionIterator = optionsNode.getElements();
         while ( optionIterator.hasNext() )
         {

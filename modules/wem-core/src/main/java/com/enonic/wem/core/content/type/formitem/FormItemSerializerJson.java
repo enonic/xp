@@ -8,8 +8,8 @@ import org.codehaus.jackson.JsonNode;
 
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.type.formitem.fieldtype.FieldType;
-import com.enonic.wem.core.content.type.formitem.fieldtype.FieldTypeConfigSerializerJson;
+import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentType;
+import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentTypeConfigSerializerJson;
 import com.enonic.wem.core.content.type.formitem.fieldtype.FieldTypeSerializerJson;
 
 import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemTest;
@@ -18,9 +18,9 @@ import static com.enonic.wem.core.content.type.formitem.VisualFieldSet.newVisual
 
 public class FormItemSerializerJson
 {
-    private FieldTypeSerializerJson fieldTypeSerializer = new FieldTypeSerializerJson();
+    private FieldTypeSerializerJson componentTypeSerializer = new FieldTypeSerializerJson();
 
-    private FieldTypeConfigSerializerJson fieldTypeConfigSerializer = new FieldTypeConfigSerializerJson();
+    private ComponentTypeConfigSerializerJson componentTypeConfigSerializer = new ComponentTypeConfigSerializerJson();
 
     private final FormItemsSerializerJson formItemsSerializerJson;
 
@@ -63,7 +63,7 @@ public class FormItemSerializerJson
         g.writeStringField( "formItemType", component.getFormItemType().toString() );
         g.writeStringField( "path", component.getPath().toString() );
         g.writeStringField( "name", component.getName() );
-        fieldTypeSerializer.generate( component.getFieldType(), g );
+        componentTypeSerializer.generate( component.getComponentType(), g );
         g.writeStringField( "label", component.getLabel() );
         g.writeBooleanField( "required", component.isRequired() );
         g.writeBooleanField( "immutable", component.isImmutable() );
@@ -72,10 +72,10 @@ public class FormItemSerializerJson
         g.writeStringField( "customText", component.getCustomText() );
         g.writeStringField( "validationRegexp", component.getValidationRegexp() );
         g.writeStringField( "helpText", component.getHelpText() );
-        if ( component.getFieldType().requiresConfig() && component.getFieldTypeConfig() != null )
+        if ( component.getComponentType().requiresConfig() && component.getComponentTypeConfig() != null )
         {
-            g.writeFieldName( "fieldTypeConfig" );
-            component.getFieldType().getFieldTypeConfigJsonGenerator().generate( component.getFieldTypeConfig(), g );
+            g.writeFieldName( "componentTypeConfig" );
+            component.getComponentType().getComponentTypeConfigJsonGenerator().generate( component.getComponentTypeConfig(), g );
         }
 
         g.writeEndObject();
@@ -175,8 +175,8 @@ public class FormItemSerializerJson
         builder.customText( JsonParserUtil.getStringValue( "customText", formItemNode ) );
 
         parseOccurrences( builder, formItemNode.get( "occurrences" ) );
-        parseFieldType( builder, formItemNode.get( "fieldType" ) );
-        parseFieldTypeConfig( builder, formItemNode.get( "fieldTypeConfig" ) );
+        parseComponentType( builder, formItemNode.get( "componentType" ) );
+        parseComponentTypeConfig( builder, formItemNode.get( "componentTypeConfig" ) );
 
         return builder.build();
     }
@@ -250,20 +250,20 @@ public class FormItemSerializerJson
         }
     }
 
-    private void parseFieldTypeConfig( final Component.Builder builder, final JsonNode fieldTypeConfigNode )
+    private void parseComponentTypeConfig( final Component.Builder builder, final JsonNode componentTypeConfigNode )
     {
-        if ( fieldTypeConfigNode != null )
+        if ( componentTypeConfigNode != null )
         {
-            builder.fieldTypeConfig( fieldTypeConfigSerializer.parse( fieldTypeConfigNode ) );
+            builder.componentTypeConfig( componentTypeConfigSerializer.parse( componentTypeConfigNode ) );
         }
     }
 
-    private void parseFieldType( final Component.Builder builder, final JsonNode fieldTypeNode )
+    private void parseComponentType( final Component.Builder builder, final JsonNode componentTypeNode )
     {
-        if ( fieldTypeNode != null )
+        if ( componentTypeNode != null )
         {
-            FieldType fieldType = fieldTypeSerializer.parse( fieldTypeNode );
-            builder.type( fieldType );
+            ComponentType componentType = componentTypeSerializer.parse( componentTypeNode );
+            builder.type( componentType );
         }
     }
 }

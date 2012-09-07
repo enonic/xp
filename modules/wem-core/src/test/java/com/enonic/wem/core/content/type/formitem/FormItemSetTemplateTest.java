@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.type.formitem;
 
 import org.junit.Test;
 
-import com.enonic.wem.core.content.type.formitem.fieldtype.FieldTypes;
+import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentTypes;
 import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.formitem.Component.newComponent;
@@ -20,17 +20,19 @@ public class FormItemSetTemplateTest
     {
         Module module = newModule().name( "myModule" ).build();
 
-        ComponentTemplate ageTemplate =
-            newComponentTemplate().module( module ).component( newComponent().name( "age" ).type( FieldTypes.TEXT_LINE ).build() ).build();
+        ComponentTemplate ageTemplate = newComponentTemplate().module( module ).component(
+            newComponent().name( "age" ).type( ComponentTypes.TEXT_LINE ).build() ).build();
 
         FormItemSetTemplate personTemplate = newFormItemSetTemplate().module( module ).formItemSet(
-            FormItemSet.newFormItemTest().name( "person" ).add( newComponent().name( "name" ).type( FieldTypes.TEXT_LINE ).build() ).add(
+            FormItemSet.newFormItemTest().name( "person" ).add(
+                newComponent().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
                 newTemplateReference( ageTemplate ).name( "age" ).build() ).build() ).build();
 
         FormItemSetTemplate addressTemplate = newFormItemSetTemplate().module( module ).formItemSet(
-            FormItemSet.newFormItemTest().name( "address" ).add( newComponent().type( FieldTypes.TEXT_LINE ).name( "street" ).build() ).add(
-                newComponent().type( FieldTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(
-                newComponent().type( FieldTypes.TEXT_LINE ).name( "postalPlace" ).build() ).build() ).build();
+            FormItemSet.newFormItemTest().name( "address" ).add(
+                newComponent().type( ComponentTypes.TEXT_LINE ).name( "street" ).build() ).add(
+                newComponent().type( ComponentTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(
+                newComponent().type( ComponentTypes.TEXT_LINE ).name( "postalPlace" ).build() ).build() ).build();
 
         try
         {

@@ -7,7 +7,7 @@ import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException;
 
 public class Xml
-    extends BaseFieldType
+    extends BaseComponentType
 {
     Xml()
     {

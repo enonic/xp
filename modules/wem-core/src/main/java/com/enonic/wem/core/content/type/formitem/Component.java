@@ -6,13 +6,13 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.data.InvalidDataException;
 import com.enonic.wem.core.content.datatype.InvalidValueTypeException;
-import com.enonic.wem.core.content.type.formitem.fieldtype.FieldType;
-import com.enonic.wem.core.content.type.formitem.fieldtype.FieldTypeConfig;
+import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentType;
+import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentTypeConfig;
 
 public class Component
     extends DirectAccessibleFormItem
 {
-    private FieldType type;
+    private ComponentType type;
 
     private String label;
 
@@ -28,14 +28,14 @@ public class Component
 
     private String helpText;
 
-    private FieldTypeConfig fieldTypeConfig;
+    private ComponentTypeConfig componentTypeConfig;
 
     protected Component()
     {
         super( FormItemType.COMPONENT );
     }
 
-    public FieldType getFieldType()
+    public ComponentType getComponentType()
     {
         return type;
     }
@@ -85,9 +85,9 @@ public class Component
         return helpText;
     }
 
-    public FieldTypeConfig getFieldTypeConfig()
+    public ComponentTypeConfig getComponentTypeConfig()
     {
-        return fieldTypeConfig;
+        return componentTypeConfig;
     }
 
     public void checkBreaksRequiredContract( final Data data )
@@ -101,12 +101,12 @@ public class Component
         }
     }
 
-    public void checkValidityAccordingToFieldTypeConfig( final Data data )
+    public void checkValidityAccordingToComponentTypeConfig( final Data data )
         throws InvalidValueException
     {
-        if ( fieldTypeConfig != null )
+        if ( componentTypeConfig != null )
         {
-            fieldTypeConfig.checkValidity( data );
+            componentTypeConfig.checkValidity( data );
         }
     }
 
@@ -123,7 +123,7 @@ public class Component
 
             if ( data != null )
             {
-                checkValidityAccordingToFieldTypeConfig( data );
+                checkValidityAccordingToComponentTypeConfig( data );
             }
         }
         catch ( InvalidValueTypeException e )
@@ -146,7 +146,7 @@ public class Component
         copy.customText = customText;
         copy.validationRegexp = validationRegexp;
         copy.helpText = helpText;
-        copy.fieldTypeConfig = fieldTypeConfig;
+        copy.componentTypeConfig = componentTypeConfig;
         return copy;
     }
 
@@ -175,7 +175,7 @@ public class Component
             return this;
         }
 
-        public Builder type( FieldType value )
+        public Builder type( ComponentType value )
         {
             component.type = value;
             return this;
@@ -257,28 +257,29 @@ public class Component
             return this;
         }
 
-        public Builder fieldTypeConfig( FieldTypeConfig value )
+        public Builder componentTypeConfig( ComponentTypeConfig value )
         {
-            component.fieldTypeConfig = value;
+            component.componentTypeConfig = value;
             return this;
         }
 
         public Component build()
         {
             Preconditions.checkNotNull( component.getName(), "name cannot be null" );
-            Preconditions.checkNotNull( component.getFieldType(), "type cannot be null" );
+            Preconditions.checkNotNull( component.getComponentType(), "type cannot be null" );
 
-            if ( component.getFieldType().requiresConfig() )
+            if ( component.getComponentType().requiresConfig() )
             {
-                Preconditions.checkArgument( component.getFieldTypeConfig() != null,
-                                             "Field [name='%s', type=%s] is missing required FieldTypeConfig: %s", component.getName(),
-                                             component.getFieldType().getName(), component.getFieldType().requiredConfigClass().getName() );
+                Preconditions.checkArgument( component.getComponentTypeConfig() != null,
+                                             "Field [name='%s', type=%s] is missing required ComponentTypeConfig: %s", component.getName(),
+                                             component.getComponentType().getName(),
+                                             component.getComponentType().requiredConfigClass().getName() );
 
-                Preconditions.checkArgument( component.getFieldType().requiredConfigClass().isInstance( component.getFieldTypeConfig() ),
-                                             "Field [name='%s', type=%s] expects FieldTypeConfig of type [%s] but was: %s",
-                                             component.getName(), component.getFieldType().getName(),
-                                             component.getFieldType().requiredConfigClass().getName(),
-                                             component.getFieldTypeConfig().getClass().getName() );
+                Preconditions.checkArgument(
+                    component.getComponentType().requiredConfigClass().isInstance( component.getComponentTypeConfig() ),
+                    "Field [name='%s', type=%s] expects ComponentTypeConfig of type [%s] but was: %s", component.getName(),
+                    component.getComponentType().getName(), component.getComponentType().requiredConfigClass().getName(),
+                    component.getComponentTypeConfig().getClass().getName() );
             }
 
             component.setPath( new FormItemPath( component.getName() ) );

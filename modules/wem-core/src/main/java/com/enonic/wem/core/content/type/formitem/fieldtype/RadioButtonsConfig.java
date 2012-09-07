@@ -8,7 +8,7 @@ import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.type.formitem.InvalidValueException;
 
 public class RadioButtonsConfig
-    implements FieldTypeConfig
+    implements ComponentTypeConfig
 {
     private List<Option> options = new ArrayList<Option>();
 

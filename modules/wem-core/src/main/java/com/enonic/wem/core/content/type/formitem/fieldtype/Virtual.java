@@ -7,7 +7,7 @@ import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException;
 
 public class Virtual
-    implements FieldType
+    implements ComponentType
 {
     private String className;
 
@@ -41,7 +41,7 @@ public class Virtual
         return null;
     }
 
-    public AbstractFieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator()
+    public AbstractComponentTypeConfigSerializerJson getComponentTypeConfigJsonGenerator()
     {
         return null;
     }

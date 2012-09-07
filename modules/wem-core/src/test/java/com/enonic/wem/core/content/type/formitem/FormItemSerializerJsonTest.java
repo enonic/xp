@@ -12,9 +12,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.core.content.JsonFactoryHolder;
+import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentTypeConfig;
+import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentTypes;
 import com.enonic.wem.core.content.type.formitem.fieldtype.DropdownConfig;
-import com.enonic.wem.core.content.type.formitem.fieldtype.FieldTypeConfig;
-import com.enonic.wem.core.content.type.formitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.content.type.formitem.fieldtype.RadioButtonsConfig;
 
 import static org.junit.Assert.*;
@@ -43,7 +43,7 @@ public class FormItemSerializerJsonTest
     {
         // setup
         Component.Builder builder = Component.newBuilder();
-        builder.type( FieldTypes.TEXT_LINE );
+        builder.type( ComponentTypes.TEXT_LINE );
         builder.name( "myTextLine" );
         builder.required( true );
         builder.immutable( true );
@@ -71,8 +71,8 @@ public class FormItemSerializerJsonTest
         assertEquals( null, parsedComponent.getHelpText() );
         assertEquals( "Custom text", parsedComponent.getCustomText() );
         assertEquals( new Occurrences( 1, 100 ), parsedComponent.getOccurrences() );
-        assertEquals( FieldTypes.TEXT_LINE, parsedComponent.getFieldType() );
-        assertNull( parsedComponent.getFieldTypeConfig() );
+        assertEquals( ComponentTypes.TEXT_LINE, parsedComponent.getComponentType() );
+        assertNull( parsedComponent.getComponentTypeConfig() );
     }
 
     @Test
@@ -81,10 +81,10 @@ public class FormItemSerializerJsonTest
     {
         // setup
         Component.Builder builder = Component.newBuilder();
-        builder.type( FieldTypes.DROPDOWN );
+        builder.type( ComponentTypes.DROPDOWN );
         builder.name( "myDropdown" );
         builder.label( "My Dropdown" );
-        builder.fieldTypeConfig( DropdownConfig.newBuilder().addOption( "Option 1", "o1" ).addOption( "Option 2", "o2" ).build() );
+        builder.componentTypeConfig( DropdownConfig.newBuilder().addOption( "Option 1", "o1" ).addOption( "Option 2", "o2" ).build() );
         Component component = builder.build();
 
         String json = fieldToJson( component );
@@ -101,11 +101,11 @@ public class FormItemSerializerJsonTest
         assertEquals( false, parsedComponent.isRequired() );
         assertEquals( false, parsedComponent.isIndexed() );
         assertEquals( false, parsedComponent.isImmutable() );
-        assertEquals( FieldTypes.DROPDOWN, parsedComponent.getFieldType() );
-        FieldTypeConfig fieldTypeConfig = parsedComponent.getFieldTypeConfig();
-        assertNotNull( fieldTypeConfig );
-        assertTrue( fieldTypeConfig instanceof DropdownConfig );
-        DropdownConfig dropdownConfig = (DropdownConfig) fieldTypeConfig;
+        assertEquals( ComponentTypes.DROPDOWN, parsedComponent.getComponentType() );
+        ComponentTypeConfig componentTypeConfig = parsedComponent.getComponentTypeConfig();
+        assertNotNull( componentTypeConfig );
+        assertTrue( componentTypeConfig instanceof DropdownConfig );
+        DropdownConfig dropdownConfig = (DropdownConfig) componentTypeConfig;
         assertEquals( 2, dropdownConfig.getOptions().size() );
         assertEquals( "o1", dropdownConfig.getOptions().get( 0 ).getValue() );
         assertEquals( "Option 1", dropdownConfig.getOptions().get( 0 ).getLabel() );
@@ -119,10 +119,10 @@ public class FormItemSerializerJsonTest
     {
         // setup
         Component.Builder builder = Component.newBuilder();
-        builder.type( FieldTypes.RADIO_BUTTONS );
+        builder.type( ComponentTypes.RADIO_BUTTONS );
         builder.name( "myRadioButtons" );
         builder.label( "My Radio buttons" );
-        builder.fieldTypeConfig( RadioButtonsConfig.newBuilder().addOption( "Option 1", "o1" ).addOption( "Option 2", "o2" ).build() );
+        builder.componentTypeConfig( RadioButtonsConfig.newBuilder().addOption( "Option 1", "o1" ).addOption( "Option 2", "o2" ).build() );
         Component component = builder.build();
 
         String json = fieldToJson( component );
@@ -139,11 +139,11 @@ public class FormItemSerializerJsonTest
         assertEquals( false, parsedComponent.isRequired() );
         assertEquals( false, parsedComponent.isIndexed() );
         assertEquals( false, parsedComponent.isImmutable() );
-        assertEquals( FieldTypes.RADIO_BUTTONS, parsedComponent.getFieldType() );
-        FieldTypeConfig fieldTypeConfig = parsedComponent.getFieldTypeConfig();
-        assertNotNull( fieldTypeConfig );
-        assertTrue( fieldTypeConfig instanceof RadioButtonsConfig );
-        RadioButtonsConfig radioButtonsConfig = (RadioButtonsConfig) fieldTypeConfig;
+        assertEquals( ComponentTypes.RADIO_BUTTONS, parsedComponent.getComponentType() );
+        ComponentTypeConfig componentTypeConfig = parsedComponent.getComponentTypeConfig();
+        assertNotNull( componentTypeConfig );
+        assertTrue( componentTypeConfig instanceof RadioButtonsConfig );
+        RadioButtonsConfig radioButtonsConfig = (RadioButtonsConfig) componentTypeConfig;
         assertEquals( 2, radioButtonsConfig.getOptions().size() );
         assertEquals( "o1", radioButtonsConfig.getOptions().get( 0 ).getValue() );
         assertEquals( "Option 1", radioButtonsConfig.getOptions().get( 0 ).getLabel() );

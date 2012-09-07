@@ -23,7 +23,7 @@ public class DataTypeFixer
             {
                 Data data = (Data) entry;
                 Component component = contentType.getField( data.getPath().resolveFormItemPath() );
-                component.getFieldType().ensureType( data );
+                component.getComponentType().ensureType( data );
             }
         }
     }

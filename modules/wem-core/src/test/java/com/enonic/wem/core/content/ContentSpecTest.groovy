@@ -4,7 +4,7 @@ import com.enonic.wem.core.content.type.ContentType
 import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException
 import com.enonic.wem.core.content.type.formitem.FormItemSet
 import com.enonic.wem.core.content.type.formitem.VisualFieldSet
-import com.enonic.wem.core.content.type.formitem.fieldtype.FieldTypes
+import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentTypes
 
 import static com.enonic.wem.core.content.type.formitem.Component.newComponent
 
@@ -14,7 +14,7 @@ class ContentSpecTest extends spock.lang.Specification
     {
         given:
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newComponent().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() );
         Content content = new Content();
         content.setType( contentType );
 
@@ -30,7 +30,7 @@ class ContentSpecTest extends spock.lang.Specification
         given:
         ContentType contentType = new ContentType();
         FormItemSet fieldSet = FormItemSet.newFormItemTest().name( "myFieldSet" ).required( true ).build();
-        fieldSet.addItem( newComponent().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( false ).build() )
+        fieldSet.addItem( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( false ).build() )
         contentType.addFormItem( fieldSet );
         Content content = new Content();
         content.setType( contentType );
@@ -47,7 +47,7 @@ class ContentSpecTest extends spock.lang.Specification
         given:
         ContentType contentType = new ContentType();
         FormItemSet fieldSet = FormItemSet.newFormItemTest().name( "myFieldSet" ).required( true ).build();
-        fieldSet.addItem( newComponent().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() )
+        fieldSet.addItem( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() )
         contentType.addFormItem( fieldSet );
         Content content = new Content();
         content.setType( contentType );
@@ -65,7 +65,7 @@ class ContentSpecTest extends spock.lang.Specification
         given:
         ContentType contentType = new ContentType();
         FormItemSet fieldSet = FormItemSet.newFormItemTest().name( "myFieldSet" ).required( false ).build();
-        fieldSet.addItem( newComponent().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() )
+        fieldSet.addItem( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() )
         contentType.addFormItem( fieldSet );
         Content content = new Content();
         content.setType( contentType );
@@ -83,7 +83,7 @@ class ContentSpecTest extends spock.lang.Specification
         given:
         ContentType contentType = new ContentType();
         FormItemSet fieldSet = FormItemSet.newFormItemTest().name( "myFieldSet" ).required( false ).build();
-        fieldSet.addItem( newComponent().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() )
+        fieldSet.addItem( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() )
         contentType.addFormItem( fieldSet );
         Content content = new Content();
         content.setType( contentType );
@@ -100,7 +100,7 @@ class ContentSpecTest extends spock.lang.Specification
         given:
         ContentType contentType = new ContentType();
         VisualFieldSet visualFieldSet = VisualFieldSet.newVisualFieldSet().name( "myVisualFieldSet" ).label( "My VisualFieldSet" ).build();
-        visualFieldSet.addFormItem( newComponent().name( "myField" ).type( FieldTypes.TEXT_LINE ).required( true ).build() )
+        visualFieldSet.addFormItem( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() )
         contentType.addFormItem( visualFieldSet );
         Content content = new Content();
         content.setType( contentType );

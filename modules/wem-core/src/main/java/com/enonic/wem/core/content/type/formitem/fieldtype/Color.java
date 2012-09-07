@@ -7,7 +7,7 @@ import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException;
 
 public class Color
-    extends BaseFieldType
+    extends BaseComponentType
 {
     Color()
     {

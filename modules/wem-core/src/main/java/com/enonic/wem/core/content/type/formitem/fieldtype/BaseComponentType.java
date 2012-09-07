@@ -4,8 +4,8 @@ package com.enonic.wem.core.content.type.formitem.fieldtype;
 import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.datatype.DataType;
 
-public abstract class BaseFieldType
-    implements FieldType
+public abstract class BaseComponentType
+    implements ComponentType
 {
     private String className;
 
@@ -13,7 +13,7 @@ public abstract class BaseFieldType
 
     private DataType dataType;
 
-    BaseFieldType( final String name, final DataType dataType )
+    BaseComponentType( final String name, final DataType dataType )
     {
         this.name = name;
         this.dataType = dataType;
@@ -35,7 +35,7 @@ public abstract class BaseFieldType
         return dataType;
     }
 
-    public AbstractFieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator()
+    public AbstractComponentTypeConfigSerializerJson getComponentTypeConfigJsonGenerator()
     {
         return null;
     }
@@ -63,12 +63,12 @@ public abstract class BaseFieldType
         {
             return true;
         }
-        if ( !( o instanceof BaseFieldType ) )
+        if ( !( o instanceof BaseComponentType ) )
         {
             return false;
         }
 
-        final BaseFieldType that = (BaseFieldType) o;
+        final BaseComponentType that = (BaseComponentType) o;
 
         if ( !className.equals( that.className ) )
         {

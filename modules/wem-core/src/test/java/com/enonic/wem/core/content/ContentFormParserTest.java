@@ -11,7 +11,7 @@ import com.enonic.wem.core.content.data.ContentData;
 import com.enonic.wem.core.content.data.ContentFormParser;
 import com.enonic.wem.core.content.data.EntryPath;
 import com.enonic.wem.core.content.type.ContentType;
-import com.enonic.wem.core.content.type.formitem.fieldtype.FieldTypes;
+import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentTypes;
 
 import static com.enonic.wem.core.content.type.formitem.Component.newComponent;
 import static org.junit.Assert.*;
@@ -22,13 +22,13 @@ public class ContentFormParserTest
     public void parse()
     {
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newComponent().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).build() );
-        contentType.addFormItem( newComponent().name( "myTextArea" ).type( FieldTypes.TEXT_AREA ).build() );
-        contentType.addFormItem( newComponent().name( "myXml" ).type( FieldTypes.XML ).build() );
-        contentType.addFormItem( newComponent().name( "myDate" ).type( FieldTypes.DATE ).build() );
-        contentType.addFormItem( newComponent().name( "myWholeNumber" ).type( FieldTypes.WHOLE_NUMBER ).build() );
-        contentType.addFormItem( newComponent().name( "myDecimalNumber" ).type( FieldTypes.DECIMAL_NUMBER ).build() );
-        contentType.addFormItem( newComponent().name( "myGeoLocation" ).type( FieldTypes.GEO_LOCATION ).build() );
+        contentType.addFormItem( newComponent().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newComponent().name( "myTextArea" ).type( ComponentTypes.TEXT_AREA ).build() );
+        contentType.addFormItem( newComponent().name( "myXml" ).type( ComponentTypes.XML ).build() );
+        contentType.addFormItem( newComponent().name( "myDate" ).type( ComponentTypes.DATE ).build() );
+        contentType.addFormItem( newComponent().name( "myWholeNumber" ).type( ComponentTypes.WHOLE_NUMBER ).build() );
+        contentType.addFormItem( newComponent().name( "myDecimalNumber" ).type( ComponentTypes.DECIMAL_NUMBER ).build() );
+        contentType.addFormItem( newComponent().name( "myGeoLocation" ).type( ComponentTypes.GEO_LOCATION ).build() );
 
         Map<String, String> submittedValues = new LinkedHashMap<String, String>();
         submittedValues.put( "myTextLine", "Text line" );

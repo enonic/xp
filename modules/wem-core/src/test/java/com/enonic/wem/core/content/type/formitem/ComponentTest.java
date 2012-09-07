@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.datatype.DataTypes;
-import com.enonic.wem.core.content.type.formitem.fieldtype.FieldTypes;
+import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentTypes;
 
 import static org.junit.Assert.*;
 
@@ -14,7 +14,7 @@ public class ComponentTest
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_throws_exception_when_broken()
     {
-        Component component = Component.newBuilder().name( "myTextLine" ).type( FieldTypes.TEXT_LINE ).required( true ).build();
+        Component component = Component.newBuilder().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).required( true ).build();
         component.checkBreaksRequiredContract( Data.newData().type( DataTypes.STRING ).value( null ).build() );
     }
 
@@ -22,7 +22,7 @@ public class ComponentTest
     public void copy()
     {
         // setup
-        Component original = Component.newBuilder().name( "myField" ).type( FieldTypes.TEXT_LINE ).build();
+        Component original = Component.newBuilder().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build();
 
         // exercise
         Component copy = original.copy();
@@ -33,6 +33,6 @@ public class ComponentTest
         assertSame( original.getName(), copy.getName() );
         assertSame( original.getLabel(), copy.getLabel() );
         assertSame( original.getCustomText(), copy.getCustomText() );
-        assertSame( original.getFieldType(), copy.getFieldType() );
+        assertSame( original.getComponentType(), copy.getComponentType() );
     }
 }

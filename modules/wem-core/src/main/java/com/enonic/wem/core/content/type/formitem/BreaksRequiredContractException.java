@@ -2,16 +2,16 @@ package com.enonic.wem.core.content.type.formitem;
 
 
 import com.enonic.wem.core.content.data.Data;
-import com.enonic.wem.core.content.type.formitem.fieldtype.FieldType;
+import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentType;
 
 public class BreaksRequiredContractException
     extends RuntimeException
 {
     private Data data;
 
-    public BreaksRequiredContractException( final Data data, final FieldType fieldType )
+    public BreaksRequiredContractException( final Data data, final ComponentType componentType )
     {
-        super( buildMessage( data, fieldType ) );
+        super( buildMessage( data, componentType ) );
         this.data = data;
     }
 
@@ -30,9 +30,10 @@ public class BreaksRequiredContractException
         return data;
     }
 
-    private static String buildMessage( final Data data, final FieldType fieldType )
+    private static String buildMessage( final Data data, final ComponentType componentType )
     {
-        return "Required contract for Data [" + data.getPath() + "] is broken of type " + fieldType + " , value was: " + data.getValue();
+        return "Required contract for Data [" + data.getPath() + "] is broken of type " + componentType + " , value was: " +
+            data.getValue();
     }
 
     private static String buildMessage( final Component component )

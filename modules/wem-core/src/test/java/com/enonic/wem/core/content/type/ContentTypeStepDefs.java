@@ -18,7 +18,7 @@ import com.enonic.wem.core.content.type.formitem.FormItemPath;
 import com.enonic.wem.core.content.type.formitem.FormItemType;
 import com.enonic.wem.core.content.type.formitem.MockTemplateFetcher;
 import com.enonic.wem.core.content.type.formitem.TemplateQualifiedName;
-import com.enonic.wem.core.content.type.formitem.fieldtype.FieldTypes;
+import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentTypes;
 import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.formitem.TemplateReference.newTemplateReference;
@@ -48,10 +48,10 @@ public class ContentTypeStepDefs
     }
 
     @Given("^a Field named (.+) of type (.+)$")
-    public void a_field_named_name_of_type_type( String fieldName, String fieldTypeName )
+    public void a_field_named_name_of_type_type( String fieldName, String componentTypeName )
         throws Throwable
     {
-        Component component = Component.newBuilder().name( fieldName ).type( FieldTypes.parse( fieldTypeName ) ).build();
+        Component component = Component.newBuilder().name( fieldName ).type( ComponentTypes.parse( componentTypeName ) ).build();
         fieldByName.put( fieldName, component );
     }
 

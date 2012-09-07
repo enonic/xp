@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.type.formitem;
 
 import org.junit.Test;
 
-import com.enonic.wem.core.content.type.formitem.fieldtype.FieldTypes;
+import com.enonic.wem.core.content.type.formitem.fieldtype.ComponentTypes;
 import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.formitem.Component.newComponent;
@@ -18,7 +18,7 @@ public class ComponentTemplateTest
     @Test
     public void tags()
     {
-        Component component = newComponent().name( "tags" ).label( "Tags" ).type( FieldTypes.TEXT_LINE ).multiple( true ).build();
+        Component component = newComponent().name( "tags" ).label( "Tags" ).type( ComponentTypes.TEXT_LINE ).multiple( true ).build();
         ComponentTemplate componentTemplate = newComponentTemplate().module( module ).component( component ).build();
     }
 }

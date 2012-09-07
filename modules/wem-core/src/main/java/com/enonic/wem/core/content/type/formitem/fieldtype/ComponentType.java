@@ -8,7 +8,7 @@ import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException
 /**
  * Common interface for all kinds of field types.
  */
-public interface FieldType
+public interface ComponentType
 {
     String getName();
 
@@ -20,7 +20,7 @@ public interface FieldType
 
     Class requiredConfigClass();
 
-    AbstractFieldTypeConfigSerializerJson getFieldTypeConfigJsonGenerator();
+    AbstractComponentTypeConfigSerializerJson getComponentTypeConfigJsonGenerator();
 
     void checkBreaksRequiredContract( Data data )
         throws BreaksRequiredContractException;

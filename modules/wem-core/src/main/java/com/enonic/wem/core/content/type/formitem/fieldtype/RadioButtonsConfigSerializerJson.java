@@ -10,11 +10,11 @@ import org.codehaus.jackson.JsonNode;
 import com.enonic.wem.core.content.JsonParserUtil;
 
 public class RadioButtonsConfigSerializerJson
-    extends AbstractFieldTypeConfigSerializerJson
+    extends AbstractComponentTypeConfigSerializerJson
 {
     public static final RadioButtonsConfigSerializerJson DEFAULT = new RadioButtonsConfigSerializerJson();
 
-    public void generateConfig( FieldTypeConfig config, JsonGenerator g )
+    public void generateConfig( ComponentTypeConfig config, JsonGenerator g )
         throws IOException
     {
         RadioButtonsConfig radioButtonsConfig = (RadioButtonsConfig) config;
@@ -32,10 +32,10 @@ public class RadioButtonsConfigSerializerJson
     }
 
     @Override
-    public FieldTypeConfig parseConfig( final JsonNode fieldTypeConfigNode )
+    public ComponentTypeConfig parseConfig( final JsonNode componentTypeConfigNode )
     {
         final RadioButtonsConfig.Builder builder = RadioButtonsConfig.newBuilder();
-        final JsonNode optionsNode = fieldTypeConfigNode.get( "options" );
+        final JsonNode optionsNode = componentTypeConfigNode.get( "options" );
         final Iterator<JsonNode> optionIterator = optionsNode.getElements();
         while ( optionIterator.hasNext() )
         {

@@ -8,7 +8,7 @@ import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.type.formitem.InvalidValueException;
 
 public class DropdownConfig
-    implements FieldTypeConfig
+    implements ComponentTypeConfig
 {
     private List<Option> optionsAsList = new ArrayList<Option>();
 
