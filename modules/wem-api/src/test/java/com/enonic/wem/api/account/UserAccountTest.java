@@ -3,6 +3,8 @@ package com.enonic.wem.api.account;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
+import com.enonic.wem.api.account.profile.UserProfile;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -72,5 +74,18 @@ public class UserAccountTest
         account.setLastLoginTime( now );
         assertEquals( now, account.getLastLoginTime() );
         assertFalse( account.isDirty() );
+    }
+
+    @Test
+    public void testProfile()
+    {
+        final UserAccount account = create( "other:dummy" );
+        assertFalse( account.isDirty() );
+        assertNull( account.getProfile() );
+
+        final UserProfile profile = new UserProfile();
+        account.setProfile( profile );
+        assertSame( profile, account.getProfile() );
+        assertTrue( account.isDirty() );
     }
 }

@@ -4,6 +4,8 @@ import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.account.profile.UserProfile;
+
 public final class UserAccount
     extends Account
 {
@@ -12,6 +14,8 @@ public final class UserAccount
     private byte[] image;
 
     private DateTime lastLoginTime;
+
+    private UserProfile profile;
 
     private UserAccount( final AccountKey key )
     {
@@ -33,6 +37,11 @@ public final class UserAccount
         return this.lastLoginTime;
     }
 
+    public UserProfile getProfile()
+    {
+        return this.profile;
+    }
+
     public void setEmail( final String value )
     {
         this.email = value;
@@ -48,6 +57,12 @@ public final class UserAccount
     public void setLastLoginTime( final DateTime value )
     {
         this.lastLoginTime = value;
+    }
+
+    public void setProfile( final UserProfile profile )
+    {
+        this.profile = profile;
+        setDirtyFlag();
     }
 
     public static UserAccount create( final String qName )
