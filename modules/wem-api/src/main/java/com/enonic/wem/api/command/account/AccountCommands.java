@@ -2,6 +2,11 @@ package com.enonic.wem.api.command.account;
 
 public final class AccountCommands
 {
+    public GetAccounts get()
+    {
+        return new GetAccounts();
+    }
+
     public FindAccounts find()
     {
         return new FindAccounts();
