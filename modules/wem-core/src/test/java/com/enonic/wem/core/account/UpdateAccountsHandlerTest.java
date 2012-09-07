@@ -16,12 +16,11 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.editor.AccountEditor;
-import com.enonic.wem.api.account.selector.AccountSelectors;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.core.client.StandardClient;
 import com.enonic.wem.core.command.CommandInvokerImpl;
@@ -93,19 +92,18 @@ public class UpdateAccountsHandlerTest
         createUser( "enonic", "user1" );
 
         // exercise
-        final AccountKeySet accounts = AccountKeySet.from( "group:enonic:group1", "role:enonic:contributors", "user:enonic:user1" );
+        final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "role:enonic:contributors", "user:enonic:user1" );
 
         final Set<AccountKey> keysEdited = Sets.newHashSet();
-        final Integer totalUpdated =
-            client.execute( Commands.account().update().selector( AccountSelectors.keys( accounts ) ).editor( new AccountEditor()
+        final Integer totalUpdated = client.execute( Commands.account().update().keys( accounts ).editor( new AccountEditor()
+        {
+            @Override
+            public void edit( final Account account )
+                throws Exception
             {
-                @Override
-                public void edit( final Account account )
-                    throws Exception
-                {
-                    keysEdited.add( account.getKey() );
-                }
-            } ) );
+                keysEdited.add( account.getKey() );
+            }
+        } ) );
 
         // verify
         assertNotNull( totalUpdated );
@@ -132,29 +130,29 @@ public class UpdateAccountsHandlerTest
         createUser( "enonic", "user3" );
 
         // exercise
-        final AccountKeySet accounts = AccountKeySet.from( "group:enonic:group1", "role:enonic:contributors" );
+        final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "role:enonic:contributors" );
 
         final Set<AccountKey> keysEdited = Sets.newHashSet();
-        final Integer totalUpdated =
-            client.execute( Commands.account().update().selector( AccountSelectors.keys( accounts ) ).editor( new AccountEditor()
+        final Integer totalUpdated = client.execute( Commands.account().update().keys( accounts ).editor( new AccountEditor()
+        {
+            @Override
+            public void edit( final Account account )
+                throws Exception
             {
-                @Override
-                public void edit( final Account account )
-                    throws Exception
+                account.setDisplayName( account.getDisplayName() + "_updated" );
+                if ( account.getKey().isGroup() )
                 {
-                    account.setDisplayName( account.getDisplayName() + "_updated" );
-                    if ( account.getKey().isGroup() )
-                    {
-                        ( (GroupAccount) account ).setMembers( AccountKeySet.from( "user:enonic:user1", "user:enonic:user2", "group:enonic:groupA" ) );
-                    }
-                    else if ( account.getKey().isRole() )
-                    {
-                        ( (RoleAccount) account ).setMembers( AccountKeySet.from( "user:enonic:user3" ) );
-                    }
-
-                    keysEdited.add( account.getKey() );
+                    ( (GroupAccount) account ).setMembers(
+                        AccountKeys.from( "user:enonic:user1", "user:enonic:user2", "group:enonic:groupA" ) );
                 }
-            } ) );
+                else if ( account.getKey().isRole() )
+                {
+                    ( (RoleAccount) account ).setMembers( AccountKeys.from( "user:enonic:user3" ) );
+                }
+
+                keysEdited.add( account.getKey() );
+            }
+        } ) );
 
         // verify
         assertNotNull( totalUpdated );
@@ -174,24 +172,23 @@ public class UpdateAccountsHandlerTest
         createUser( "enonic", "user3" );
 
         // exercise
-        final AccountKeySet accounts = AccountKeySet.from( "user:enonic:user1", "user:enonic:user2", "user:enonic:user3" );
+        final AccountKeys accounts = AccountKeys.from( "user:enonic:user1", "user:enonic:user2", "user:enonic:user3" );
 
         final Set<AccountKey> keysEdited = Sets.newHashSet();
-        final Integer totalUpdated =
-            client.execute( Commands.account().update().selector( AccountSelectors.keys( accounts ) ).editor( new AccountEditor()
+        final Integer totalUpdated = client.execute( Commands.account().update().keys( accounts ).editor( new AccountEditor()
+        {
+            @Override
+            public void edit( final Account account )
+                throws Exception
             {
-                @Override
-                public void edit( final Account account )
-                    throws Exception
-                {
-                    account.setDisplayName( account.getDisplayName() + "_updated" );
-                    final UserAccount user = (UserAccount) account;
-                    user.setEmail( user.getKey().getLocalName() + "enonic.com" );
-                    user.setImage( getRandomPhoto() );
+                account.setDisplayName( account.getDisplayName() + "_updated" );
+                final UserAccount user = (UserAccount) account;
+                user.setEmail( user.getKey().getLocalName() + "enonic.com" );
+                user.setImage( getRandomPhoto() );
 
-                    keysEdited.add( account.getKey() );
-                }
-            } ) );
+                keysEdited.add( account.getKey() );
+            }
+        } ) );
 
         // verify
         assertNotNull( totalUpdated );
@@ -207,20 +204,19 @@ public class UpdateAccountsHandlerTest
         logInAdminUser();
 
         // exercise
-        final AccountKeySet accounts = AccountKeySet.from( "group:enonic:group1", "role:enonic:contributors", "user:enonic:user1" );
+        final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "role:enonic:contributors", "user:enonic:user1" );
 
         final Set<AccountKey> keysEdited = Sets.newHashSet();
-        final Integer totalUpdated =
-            client.execute( Commands.account().update().selector( AccountSelectors.keys( accounts ) ).editor( new AccountEditor()
+        final Integer totalUpdated = client.execute( Commands.account().update().keys( accounts ).editor( new AccountEditor()
+        {
+            @Override
+            public void edit( final Account account )
+                throws Exception
             {
-                @Override
-                public void edit( final Account account )
-                    throws Exception
-                {
-                    account.setDisplayName( account.getDisplayName() + "_updated" );
-                    keysEdited.add( account.getKey() );
-                }
-            } ) );
+                account.setDisplayName( account.getDisplayName() + "_updated" );
+                keysEdited.add( account.getKey() );
+            }
+        } ) );
 
         // verify
         assertNotNull( totalUpdated );

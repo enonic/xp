@@ -14,7 +14,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.exception.AccountNotFoundException;
 import com.enonic.wem.core.client.StandardClient;
@@ -84,7 +84,7 @@ public class FindMembershipsHandlerTest
         user.getUserGroup().setMemberships( memberships );
 
         // exercise
-        final AccountKeySet members = client.execute( Commands.account().findMemberships().key( account ) );
+        final AccountKeys members = client.execute( Commands.account().findMemberships().key( account ) );
 
         // verify
         assertNotNull( members );
@@ -111,7 +111,7 @@ public class FindMembershipsHandlerTest
         group.setMemberships( memberships );
 
         // exercise
-        final AccountKeySet members = client.execute( Commands.account().findMemberships().key( account ) );
+        final AccountKeys members = client.execute( Commands.account().findMemberships().key( account ) );
 
         // verify
         assertNotNull( members );
@@ -141,7 +141,7 @@ public class FindMembershipsHandlerTest
         user.getUserGroup().setMemberships( memberships );
 
         // exercise
-        final AccountKeySet members = client.execute( Commands.account().findMemberships().key( account ).includeTransitive() );
+        final AccountKeys members = client.execute( Commands.account().findMemberships().key( account ).includeTransitive() );
 
         // verify
         assertNotNull( members );

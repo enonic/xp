@@ -14,7 +14,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.selector.AccountSelectors;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
@@ -43,8 +43,8 @@ public class GetAccountGraphJsonResultTest
     {
         AccountKey userKey = AccountKey.from( "user:enonic:aro" );
         AccountKey groupKey = AccountKey.from( "group:enonic:Togservice" );
-        Mockito.when( client.execute( Commands.account().findMemberships().key( userKey ) ) ).thenReturn( AccountKeySet.from( groupKey ) );
-        Mockito.when( client.execute( Commands.account().findMemberships().key( groupKey ) ) ).thenReturn( AccountKeySet.empty() );
+        Mockito.when( client.execute( Commands.account().findMemberships().key( userKey ) ) ).thenReturn( AccountKeys.from( groupKey ) );
+        Mockito.when( client.execute( Commands.account().findMemberships().key( groupKey ) ) ).thenReturn( AccountKeys.empty() );
         Mockito.when( client.execute( Commands.account().find().selector( AccountSelectors.keys( userKey, groupKey ) ) ) ).thenReturn(
             createAccountResult( 1, createUser( "enonic:aro" ), createGroup( "enonic:Togservice" ) ) );
         testGraphSuccess( "getUserGraph_param.json", "getUserGraph_result.json" );
@@ -57,7 +57,7 @@ public class GetAccountGraphJsonResultTest
     {
         AccountKey userKey = AccountKey.from( "user:enonic:aro" );
         AccountKey groupKey = AccountKey.from( "group:enonic:Togservice" );
-        Mockito.when( client.execute( Commands.account().findMembers().key( groupKey ) ) ).thenReturn( AccountKeySet.from( userKey ) );
+        Mockito.when( client.execute( Commands.account().findMembers().key( groupKey ) ) ).thenReturn( AccountKeys.from( userKey ) );
         Mockito.when( client.execute( Commands.account().find().selector( AccountSelectors.keys( userKey, groupKey ) ) ) ).thenReturn(
             createAccountResult( 1, createUser( "enonic:aro" ), createGroup( "enonic:Togservice" ) ) );
         testGraphSuccess( "getGroupGraph_param.json", "getGroupGraph_result.json" );
@@ -71,8 +71,8 @@ public class GetAccountGraphJsonResultTest
         AccountKey groupKey = AccountKey.from( "group:enonic:Togservice" );
         AccountKey roleKey = AccountKey.from( "role:enonic:admin" );
         Mockito.when( client.execute( Commands.account().findMembers().key( roleKey ) ) ).thenReturn(
-            AccountKeySet.from( userKey, groupKey ) );
-        Mockito.when( client.execute( Commands.account().findMembers().key( groupKey ) ) ).thenReturn( AccountKeySet.empty() );
+            AccountKeys.from( userKey, groupKey ) );
+        Mockito.when( client.execute( Commands.account().findMembers().key( groupKey ) ) ).thenReturn( AccountKeys.empty() );
         Mockito.when(
             client.execute( Commands.account().find().selector( AccountSelectors.keys( userKey, groupKey, roleKey ) ) ) ).thenReturn(
             createAccountResult( 1, createRole( "enonic:admin" ), createUser( "enonic:aro" ), createGroup( "enonic:Togservice" ) ) );

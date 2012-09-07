@@ -7,11 +7,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeySet;
-import com.enonic.wem.api.account.selector.AccountKeySelector;
-import com.enonic.wem.api.account.selector.AccountSelector;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.account.DeleteAccounts;
-import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 
@@ -50,7 +47,7 @@ public class DeleteAccountsHandler
     public void handle( final CommandContext context, final DeleteAccounts command )
         throws Exception
     {
-        final AccountKeySet accountKeys = evaluateSelector( command.getSelector() );
+        final AccountKeys accountKeys = command.getKeys();
 
         int accountsDeleted = 0;
         for ( AccountKey accountKey : accountKeys )
@@ -119,19 +116,6 @@ public class DeleteAccountsHandler
         userStoreService.deleteGroup( deleteGroupCommand );
 
         return true;
-    }
-
-    private AccountKeySet evaluateSelector( final AccountSelector accountSelector )
-    {
-        if ( accountSelector instanceof AccountKeySelector )
-        {
-            final AccountKeySelector accountKeySelector = (AccountKeySelector) accountSelector;
-            return accountKeySelector.getKeys();
-        }
-        else
-        {
-            throw new SystemException( "Account selector of type {0} is not supported", accountSelector.getClass().getName() );
-        }
     }
 
     @Autowired

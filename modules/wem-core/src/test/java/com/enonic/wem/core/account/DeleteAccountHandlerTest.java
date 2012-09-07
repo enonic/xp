@@ -14,10 +14,8 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.selector.AccountSelector;
-import com.enonic.wem.api.account.selector.AccountSelectors;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.client.StandardClient;
 import com.enonic.wem.core.command.CommandInvokerImpl;
 
@@ -48,9 +46,6 @@ public class DeleteAccountHandlerTest
 
     private UserStoreDao userStoreDao;
 
-    private UserStoreService userStoreService;
-
-
     @Before
     public void setUp()
         throws Exception
@@ -58,7 +53,7 @@ public class DeleteAccountHandlerTest
         userDao = Mockito.mock( UserDao.class );
         groupDao = Mockito.mock( GroupDao.class );
         userStoreDao = Mockito.mock( UserStoreDao.class );
-        userStoreService = Mockito.mock( UserStoreService.class );
+        UserStoreService userStoreService = Mockito.mock( UserStoreService.class );
 
         final DeleteAccountsHandler deleteAccountsHandler = new DeleteAccountsHandler();
         deleteAccountsHandler.setUserDao( userDao );
@@ -86,13 +81,19 @@ public class DeleteAccountHandlerTest
         Mockito.when( userDao.findBuiltInEnterpriseAdminUser() ).thenReturn( admin );
 
         final UserEntity user = createUser( "ASDD8F", account1.getUserStore(), account1.getLocalName() );
+        assertNotNull( user );
+
         final GroupEntity group1 = createGroup( "10001", account2.getUserStore(), account2.getLocalName() );
+        assertNotNull( group1 );
+
         final GroupEntity role1 = createGroup( "10004", account3.getUserStore(), account3.getLocalName() );
+        assertNotNull( role1 );
+
         Mockito.when( role1.isBuiltIn() ).thenReturn( true );
 
         // exercise
         final Integer deletedCount =
-            client.execute( Commands.account().delete().selector( AccountSelectors.keys( account1, account2, account3 ) ) );
+            client.execute( Commands.account().delete().keys( AccountKeys.from( account1, account2, account3 ) ) );
 
         // verify
         assertNotNull( deletedCount );
@@ -111,7 +112,7 @@ public class DeleteAccountHandlerTest
 
         // exercise
         final Integer deletedCount =
-            client.execute( Commands.account().delete().selector( AccountSelectors.keys( account1, account2, account3 ) ) );
+            client.execute( Commands.account().delete().keys( AccountKeys.from( account1, account2, account3 ) ) );
 
         // verify
         assertNotNull( deletedCount );
@@ -127,22 +128,11 @@ public class DeleteAccountHandlerTest
         final AccountKey account3 = AccountKey.role( "enonic:admin" );
         // exercise
         final Integer deletedCount =
-            client.execute( Commands.account().delete().selector( AccountSelectors.keys( account1, account2, account3 ) ) );
+            client.execute( Commands.account().delete().keys( AccountKeys.from( account1, account2, account3 ) ) );
 
         // verify
         assertNotNull( deletedCount );
         assertEquals( 0, deletedCount.longValue() );
-    }
-
-    @Test(expected = SystemException.class)
-    public void deleteUnsupportedAccountSelector()
-        throws Exception
-    {
-        // exercise
-        final AccountSelector customAccountSelector = new AccountSelector()
-        {
-        };
-        client.execute( Commands.account().delete().selector( customAccountSelector ) );
     }
 
     private void mockAddUserToDaoByQualifiedName( final UserEntity user )

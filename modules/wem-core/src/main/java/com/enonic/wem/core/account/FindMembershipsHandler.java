@@ -10,7 +10,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.api.command.account.FindMemberships;
 import com.enonic.wem.api.exception.AccountNotFoundException;
@@ -73,7 +73,7 @@ public final class FindMembershipsHandler
 
         final Set<AccountKey> members = membershipsToAccountKeys( groupMemberships, command.isIncludeTransitive() );
 
-        command.setResult( AccountKeySet.from( members ) );
+        command.setResult( AccountKeys.from( members ) );
     }
 
     private GroupEntity findUserGroup( final UserStoreEntity userStore, final String accountName )

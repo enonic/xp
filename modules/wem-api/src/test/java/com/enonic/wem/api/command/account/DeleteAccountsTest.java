@@ -2,8 +2,7 @@ package com.enonic.wem.api.command.account;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.account.selector.AccountSelector;
-import com.enonic.wem.api.account.selector.AccountSelectors;
+import com.enonic.wem.api.account.AccountKeys;
 
 import static org.junit.Assert.*;
 
@@ -14,22 +13,21 @@ public class DeleteAccountsTest
     {
         final DeleteAccounts command = new DeleteAccounts();
 
-        assertNull( command.getSelector() );
+        assertNull( command.getKeys() );
 
-        final AccountSelector selector = AccountSelectors.keys( "user:other:dummy" );
-        command.selector( selector );
-        assertSame( selector, command.getSelector() );
+        final AccountKeys keys = AccountKeys.from( "user:other:dummy" );
+        command.keys( keys );
+        assertSame( keys, command.getKeys() );
 
         command.validate();
     }
 
     @Test(expected = NullPointerException.class)
-    public void testNotValid_nullSelector()
+    public void testNotValid_nullKeys()
     {
         final DeleteAccounts command = new DeleteAccounts();
-        command.selector( null );
+        command.keys( null );
 
         command.validate();
     }
 }
-

@@ -3,11 +3,11 @@ package com.enonic.wem.api.command.account;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Command;
 
 public final class FindMemberships
-    extends Command<AccountKeySet>
+    extends Command<AccountKeys>
 {
     private AccountKey key;
 

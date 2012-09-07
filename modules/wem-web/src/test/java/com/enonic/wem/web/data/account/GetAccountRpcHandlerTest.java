@@ -12,7 +12,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.account.FindAccounts;
 import com.enonic.wem.api.command.account.FindMembers;
 import com.enonic.wem.api.command.account.FindMemberships;
@@ -127,9 +127,9 @@ public class GetAccountRpcHandlerTest
         return params;
     }
 
-    private AccountKeySet createAccountKeySet( String... keys )
+    private AccountKeys createAccountKeySet( String... keys )
     {
-        return AccountKeySet.from( keys );
+        return AccountKeys.from( keys );
     }
 
     private void mockCurrentContextHttpRequest()

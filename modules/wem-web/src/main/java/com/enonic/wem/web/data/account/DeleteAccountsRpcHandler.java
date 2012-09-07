@@ -2,8 +2,7 @@ package com.enonic.wem.web.data.account;
 
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.account.selector.AccountKeySelector;
-import com.enonic.wem.api.account.selector.AccountSelectors;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
 import com.enonic.wem.web.jsonrpc.JsonRpcContext;
@@ -22,10 +21,9 @@ public final class DeleteAccountsRpcHandler
         throws Exception
     {
         final String[] keys = context.param( "key" ).required().asStringArray();
-        final AccountKeySelector selector = AccountSelectors.keys( keys );
+        final AccountKeys accountKeys = AccountKeys.from( keys );
 
-        final int accountsDeleted = this.client.execute( Commands.account().delete().selector( selector ) );
+        final int accountsDeleted = this.client.execute( Commands.account().delete().keys( accountKeys ) );
         context.setResult( new DeleteAccountsJsonResult(  accountsDeleted ));
     }
-
 }

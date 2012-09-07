@@ -3,7 +3,7 @@ package com.enonic.wem.web.data.account;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.result.AccountResult;
 import com.enonic.wem.api.account.selector.AccountSelector;
 import com.enonic.wem.api.account.selector.AccountSelectors;
@@ -36,14 +36,14 @@ public final class GetAccountRpcHandler
             {
                 if ( accountKey.isUser() )
                 {
-                    AccountKeySet membershipKeys = this.client.execute( Commands.account().findMemberships().key( accountKey ) );
+                    AccountKeys membershipKeys = this.client.execute( Commands.account().findMemberships().key( accountKey ) );
                     AccountResult memberships =
                         this.client.execute( Commands.account().find().selector( AccountSelectors.keys( membershipKeys ) ) );
                     context.setResult( new GetAccountJsonResult( account.first(), null, memberships.getAll() ) );
                 }
                 else
                 {
-                    AccountKeySet memberKeys = this.client.execute( Commands.account().findMembers().key( accountKey ) );
+                    AccountKeys memberKeys = this.client.execute( Commands.account().findMembers().key( accountKey ) );
                     AccountResult members =
                         this.client.execute( Commands.account().find().selector( AccountSelectors.keys( memberKeys ) ) );
                     context.setResult( new GetAccountJsonResult( account.first(), members.getAll(), null ) );

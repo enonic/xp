@@ -12,7 +12,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.exception.AccountNotFoundException;
 import com.enonic.wem.core.client.StandardClient;
@@ -87,7 +87,7 @@ public class FindMembersHandlerTest
             createGroup( "12345", groupAccount.getUserStore(), groupAccount.getLocalName(), groupMember1, groupMember2, groupMemberRole );
 
         // exercise
-        final AccountKeySet members = client.execute( Commands.account().findMembers().key( groupAccount ) );
+        final AccountKeys members = client.execute( Commands.account().findMembers().key( groupAccount ) );
 
         // verify
         assertNotNull( members );
@@ -121,7 +121,7 @@ public class FindMembersHandlerTest
         createGroup( "12345", groupAccount.getUserStore(), groupAccount.getLocalName(), groupMember1, groupMember2, groupMemberRole );
 
         // exercise
-        final AccountKeySet members = client.execute( Commands.account().findMembers().key( groupAccount ).includeTransitive() );
+        final AccountKeys members = client.execute( Commands.account().findMembers().key( groupAccount ).includeTransitive() );
 
         // verify
         assertNotNull( members );

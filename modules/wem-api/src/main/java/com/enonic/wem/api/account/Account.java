@@ -89,7 +89,7 @@ public abstract class Account
         this.dirty = false;
     }
 
-    protected final void setDirtyFlag()
+    public final void setDirtyFlag()
     {
         this.dirty = true;
     }

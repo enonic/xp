@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.command.account.CreateAccount;
@@ -129,7 +129,7 @@ public final class CreateAccountHandler
         storeNewGroupCommand.setType( GroupType.USERSTORE_GROUP );
         storeNewGroupCommand.setRespondWithException( false );
 
-        final AccountKeySet members = group.getMembers();
+        final AccountKeys members = group.getMembers();
         if ( members != null )
         {
             for ( AccountKey member : members )

@@ -1,18 +1,18 @@
 package com.enonic.wem.api.account.selector;
 
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 
 public final class AccountKeySelector
     implements AccountSelector
 {
-    private final AccountKeySet keys;
+    private final AccountKeys keys;
 
-    public AccountKeySelector( final AccountKeySet keys )
+    public AccountKeySelector( final AccountKeys keys )
     {
         this.keys = keys;
     }
 
-    public AccountKeySet getKeys()
+    public AccountKeys getKeys()
     {
         return this.keys;
     }
