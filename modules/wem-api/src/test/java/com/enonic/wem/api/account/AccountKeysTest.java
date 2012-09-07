@@ -197,4 +197,15 @@ public class AccountKeysTest
         assertTrue( set2.equals( set1 ) );
         assertFalse( set3.equals( set1 ) );
     }
+
+    @Test
+    public void testGetFirst()
+    {
+        final AccountKeys set1 = AccountKeys.empty();
+        assertNull( set1.getFirst() );
+
+        final AccountKey key = AccountKey.anonymous();
+        final AccountKeys set2 = AccountKeys.from( key );
+        assertEquals( key, set2.getFirst() );
+    }
 }

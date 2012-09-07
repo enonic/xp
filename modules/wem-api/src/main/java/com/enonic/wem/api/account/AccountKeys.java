@@ -32,6 +32,11 @@ public final class AccountKeys
         return this.set.isEmpty();
     }
 
+    public AccountKey getFirst()
+    {
+        return this.set.isEmpty() ? null : this.set.iterator().next();
+    }
+
     public AccountKeys onlyUsers()
     {
         return filterTypes( AccountType.USER );
