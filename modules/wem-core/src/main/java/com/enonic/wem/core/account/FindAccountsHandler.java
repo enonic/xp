@@ -12,7 +12,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.NonUserAccount;
@@ -102,7 +102,7 @@ public final class FindAccountsHandler
     private AccountResult findByKeySelector( final AccountKeySelector accountKeySelector, final boolean includeMembers,
                                              final boolean includePhoto )
     {
-        final AccountKeySet keys = accountKeySelector.getKeys();
+        final AccountKeys keys = accountKeySelector.getKeys();
         final List<Account> accounts = fetchAccounts( keys, includeMembers, includePhoto );
         return new AccountResult( accounts.size(), accounts );
     }
@@ -210,17 +210,17 @@ public final class FindAccountsHandler
 
         if ( includeMembers )
         {
-            final AccountKeySet accountMembers = buildAccountMembers( groupEntity );
+            final AccountKeys accountMembers = buildAccountMembers( groupEntity );
             nonUser.setMembers( accountMembers );
         }
     }
 
-    private AccountKeySet buildAccountMembers( final GroupEntity groupEntity )
+    private AccountKeys buildAccountMembers( final GroupEntity groupEntity )
     {
         final Set<GroupEntity> members = groupEntity.getMembers( false );
         if ( ( members == null ) || members.isEmpty() )
         {
-            return AccountKeySet.empty();
+            return AccountKeys.empty();
         }
 
         final Set<AccountKey> keys = Sets.newHashSet();
@@ -228,7 +228,7 @@ public final class FindAccountsHandler
         {
             keys.add( memberToAccountKey( member ) );
         }
-        return AccountKeySet.from( keys );
+        return AccountKeys.from( keys );
     }
 
     private AccountKey memberToAccountKey( final GroupEntity groupEntity )
@@ -257,7 +257,7 @@ public final class FindAccountsHandler
         return qName;
     }
 
-    private List<Account> fetchAccounts( final AccountKeySet keys, final boolean includeMembers, final boolean includePhoto )
+    private List<Account> fetchAccounts( final AccountKeys keys, final boolean includeMembers, final boolean includePhoto )
     {
         final List<Account> accounts = new ArrayList<Account>();
         for ( AccountKey key : keys )

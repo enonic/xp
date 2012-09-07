@@ -11,16 +11,13 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.NonUserAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.editor.AccountEditor;
-import com.enonic.wem.api.account.selector.AccountKeySelector;
-import com.enonic.wem.api.account.selector.AccountSelector;
 import com.enonic.wem.api.command.account.UpdateAccounts;
-import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 
@@ -32,7 +29,6 @@ import com.enonic.cms.core.security.group.GroupType;
 import com.enonic.cms.core.security.group.UpdateGroupCommand;
 import com.enonic.cms.core.security.user.QualifiedUsername;
 import com.enonic.cms.core.security.user.UpdateUserCommand;
-import com.enonic.cms.core.security.user.User;
 import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.core.security.user.UserSpecification;
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
@@ -65,8 +61,7 @@ public final class UpdateAccountsHandler
     public void handle( final CommandContext context, final UpdateAccounts command )
         throws Exception
     {
-        final AccountKeySet accountKeys = evaluateSelector( command.getSelector() );
-
+        final AccountKeys accountKeys = command.getKeys();
         final AccountEditor editor = command.getEditor();
 
         int accountsUpdated = 0;
@@ -88,19 +83,6 @@ public final class UpdateAccountsHandler
         }
 
         command.setResult( accountsUpdated );
-    }
-
-    private AccountKeySet evaluateSelector( final AccountSelector accountSelector )
-    {
-        if ( accountSelector instanceof AccountKeySelector )
-        {
-            final AccountKeySelector accountKeySelector = (AccountKeySelector) accountSelector;
-            return accountKeySelector.getKeys();
-        }
-        else
-        {
-            throw new SystemException( "Account selector of type {0} is not supported", accountSelector.getClass().getName() );
-        }
     }
 
     private Account retrieveAccount( final AccountKey account )
@@ -173,16 +155,16 @@ public final class UpdateAccountsHandler
         nonUser.setDeleted( groupEntity.isDeleted() );
         nonUser.setEditable( true ); // TODO evaluate if account is editable in the current context
 
-        final AccountKeySet accountMembers = buildAccountMembers( groupEntity );
+        final AccountKeys accountMembers = buildAccountMembers( groupEntity );
         nonUser.setMembers( accountMembers );
     }
 
-    private AccountKeySet buildAccountMembers( final GroupEntity groupEntity )
+    private AccountKeys buildAccountMembers( final GroupEntity groupEntity )
     {
         final Set<GroupEntity> members = groupEntity.getMembers( false );
         if ( ( members == null ) || members.isEmpty() )
         {
-            return AccountKeySet.empty();
+            return AccountKeys.empty();
         }
 
         final Set<AccountKey> keys = Sets.newHashSet();
@@ -190,7 +172,7 @@ public final class UpdateAccountsHandler
         {
             keys.add( memberToAccountKey( member ) );
         }
-        return AccountKeySet.from( keys );
+        return AccountKeys.from( keys );
     }
 
     private AccountKey memberToAccountKey( final GroupEntity groupEntity )

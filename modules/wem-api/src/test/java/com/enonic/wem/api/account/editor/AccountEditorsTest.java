@@ -3,7 +3,7 @@ package com.enonic.wem.api.account.editor;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.UserAccount;
 
 import static org.junit.Assert.*;
@@ -14,7 +14,7 @@ public class AccountEditorsTest
     public void testSetMembers()
         throws Exception
     {
-        final AccountKeySet set = AccountKeySet.empty();
+        final AccountKeys set = AccountKeys.empty();
         final AccountEditor editor = AccountEditors.setMembers( set );
 
         verifyMembersEditor( editor, set, MembersEditor.Operation.SET );
@@ -24,7 +24,7 @@ public class AccountEditorsTest
     public void testAddMembers()
         throws Exception
     {
-        final AccountKeySet set = AccountKeySet.empty();
+        final AccountKeys set = AccountKeys.empty();
         final AccountEditor editor = AccountEditors.addMembers( set );
 
         verifyMembersEditor( editor, set, MembersEditor.Operation.ADD );
@@ -34,13 +34,13 @@ public class AccountEditorsTest
     public void testRemoveMembers()
         throws Exception
     {
-        final AccountKeySet set = AccountKeySet.empty();
+        final AccountKeys set = AccountKeys.empty();
         final AccountEditor editor = AccountEditors.removeMembers( set );
 
         verifyMembersEditor( editor, set, MembersEditor.Operation.REMOVE );
     }
 
-    private void verifyMembersEditor( final AccountEditor editor, final AccountKeySet set, final MembersEditor.Operation operation )
+    private void verifyMembersEditor( final AccountEditor editor, final AccountKeys set, final MembersEditor.Operation operation )
         throws Exception
     {
         assertTrue( editor instanceof MembersEditor );

@@ -13,7 +13,7 @@ import org.mockito.Mockito;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.api.account.result.AccountFacet;
 import com.enonic.wem.api.account.result.AccountResult;
@@ -93,7 +93,7 @@ public class FindAccountsHandlerTest
         createUser( "enonic", "user1" );
 
         // exercise
-        final AccountKeySet accounts = AccountKeySet.from( "group:enonic:group1", "role:enonic:contributors", "user:enonic:user1" );
+        final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "role:enonic:contributors", "user:enonic:user1" );
 
         AccountResult accountResult =
             client.execute( Commands.account().find().selector( AccountSelectors.keys( accounts ) ).includeMembers().includeImage() );

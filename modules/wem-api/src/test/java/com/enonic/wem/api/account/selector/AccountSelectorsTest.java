@@ -3,7 +3,7 @@ package com.enonic.wem.api.account.selector;
 import org.junit.Test;
 
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 
 import static org.junit.Assert.*;
 
@@ -30,7 +30,7 @@ public class AccountSelectorsTest
     @Test
     public void testKeys3()
     {
-        final AccountKeySet set = AccountKeySet.from( "user:other:dummy" );
+        final AccountKeys set = AccountKeys.from( "user:other:dummy" );
         final AccountKeySelector selector = AccountSelectors.keys( set );
         assertNotNull( selector );
         assertNotNull( selector.getKeys() );
@@ -41,7 +41,7 @@ public class AccountSelectorsTest
     @Test
     public void testKeys4()
     {
-        final AccountKeySet set = AccountKeySet.from( "user:other:dummy" );
+        final AccountKeys set = AccountKeys.from( "user:other:dummy" );
         final AccountKeySelector selector = AccountSelectors.keys( set.getSet() );
         assertNotNull( selector );
         assertNotNull( selector.getKeys() );

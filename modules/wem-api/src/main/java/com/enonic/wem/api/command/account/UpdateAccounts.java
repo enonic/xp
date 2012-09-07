@@ -2,20 +2,20 @@ package com.enonic.wem.api.command.account;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.editor.AccountEditor;
-import com.enonic.wem.api.account.selector.AccountSelector;
 import com.enonic.wem.api.command.Command;
 
 public final class UpdateAccounts
     extends Command<Integer>
 {
-    private AccountSelector selector;
+    private AccountKeys keys;
 
     private AccountEditor editor;
 
-    public AccountSelector getSelector()
+    public AccountKeys getKeys()
     {
-        return this.selector;
+        return this.keys;
     }
 
     public AccountEditor getEditor()
@@ -23,9 +23,9 @@ public final class UpdateAccounts
         return this.editor;
     }
 
-    public UpdateAccounts selector( final AccountSelector selector )
+    public UpdateAccounts keys( final AccountKeys keys )
     {
-        this.selector = selector;
+        this.keys = keys;
         return this;
     }
 
@@ -38,7 +38,7 @@ public final class UpdateAccounts
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.selector, "Account selector cannot be null" );
+        Preconditions.checkNotNull( this.keys, "Account keys cannot be null" );
         Preconditions.checkNotNull( this.editor, "Editor cannot be null" );
     }
 }

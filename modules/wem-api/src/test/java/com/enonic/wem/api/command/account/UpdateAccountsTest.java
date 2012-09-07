@@ -3,9 +3,8 @@ package com.enonic.wem.api.command.account;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.editor.AccountEditor;
-import com.enonic.wem.api.account.selector.AccountSelector;
-import com.enonic.wem.api.account.selector.AccountSelectors;
 
 import static org.junit.Assert.*;
 
@@ -16,25 +15,25 @@ public class UpdateAccountsTest
     {
         final UpdateAccounts command = new UpdateAccounts();
 
-        assertNull( command.getSelector() );
+        assertNull( command.getKeys() );
         assertNull( command.getEditor() );
 
         final AccountEditor editor = Mockito.mock( AccountEditor.class );
-        final AccountSelector selector = AccountSelectors.keys( "user:other:dummy" );
+        final AccountKeys keys = AccountKeys.from( "user:other:dummy" );
 
-        command.selector( selector );
+        command.keys( keys );
         command.editor( editor );
-        assertSame( selector, command.getSelector() );
+        assertSame( keys, command.getKeys() );
         assertSame( editor, command.getEditor() );
 
         command.validate();
     }
 
     @Test(expected = NullPointerException.class)
-    public void testNotValid_nullSelector()
+    public void testNotValid_nullKeys()
     {
         final UpdateAccounts command = new UpdateAccounts();
-        command.selector( null );
+        command.keys( null );
 
         final AccountEditor editor = Mockito.mock( AccountEditor.class );
         command.editor( editor );
@@ -48,8 +47,8 @@ public class UpdateAccountsTest
         final UpdateAccounts command = new UpdateAccounts();
         command.editor( null );
 
-        final AccountSelector selector = AccountSelectors.keys( "user:other:dummy" );
-        command.selector( selector );
+        final AccountKeys keys = AccountKeys.from( "user:other:dummy" );
+        command.keys( keys );
 
         command.validate();
     }

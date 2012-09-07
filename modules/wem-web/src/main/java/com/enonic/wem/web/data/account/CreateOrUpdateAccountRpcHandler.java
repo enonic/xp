@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.NonUserAccount;
 import com.enonic.wem.api.account.RoleAccount;
@@ -17,7 +17,6 @@ import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.editor.AccountEditor;
 import com.enonic.wem.api.account.editor.AccountEditors;
 import com.enonic.wem.api.account.result.AccountResult;
-import com.enonic.wem.api.account.selector.AccountKeySelector;
 import com.enonic.wem.api.account.selector.AccountSelectors;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
@@ -68,9 +67,9 @@ public final class CreateOrUpdateAccountRpcHandler
     private void updateAccount( final Account account )
         throws Exception
     {
-        final AccountKeySelector fromKey = AccountSelectors.keys( account.getKey() );
+        final AccountKeys fromKey = AccountKeys.from( account.getKey() );
         final AccountEditor setAccount = AccountEditors.setAccount( account );
-        this.client.execute( Commands.account().update().selector( fromKey ).editor( setAccount ) );
+        this.client.execute( Commands.account().update().keys( fromKey ).editor( setAccount ) );
     }
 
     private Account getAccountFromRequest( final JsonRpcContext context )
@@ -103,7 +102,7 @@ public final class CreateOrUpdateAccountRpcHandler
                 nonUserAccount = RoleAccount.create( accountKey );
             }
             final String[] members = context.param( "members" ).asStringArray();
-            nonUserAccount.setMembers( AccountKeySet.from( members ) );
+            nonUserAccount.setMembers( AccountKeys.from( members ) );
             account = nonUserAccount;
         }
         account.setDisplayName( context.param( "displayName" ).required().asString() );

@@ -12,12 +12,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-public final class AccountKeySet
+public final class AccountKeys
     implements Iterable<AccountKey>
 {
     private final ImmutableSet<AccountKey> set;
 
-    private AccountKeySet( final ImmutableSet<AccountKey> set )
+    private AccountKeys( final ImmutableSet<AccountKey> set )
     {
         this.set = set;
     }
@@ -32,26 +32,26 @@ public final class AccountKeySet
         return this.set.isEmpty();
     }
 
-    public AccountKeySet onlyUsers()
+    public AccountKeys onlyUsers()
     {
         return filterTypes( AccountType.USER );
     }
 
-    public AccountKeySet onlyGroups()
+    public AccountKeys onlyGroups()
     {
         return filterTypes( AccountType.GROUP );
     }
 
-    public AccountKeySet onlyRoles()
+    public AccountKeys onlyRoles()
     {
         return filterTypes( AccountType.ROLE );
     }
 
-    public AccountKeySet filterTypes( final AccountType... types )
+    public AccountKeys filterTypes( final AccountType... types )
     {
         final Collection<AccountKey> list = Collections2.filter( this.set, new TypePredicate( types ) );
         final ImmutableSet<AccountKey> set = ImmutableSet.copyOf( list );
-        return new AccountKeySet( set );
+        return new AccountKeys( set );
     }
 
     public boolean contains( final AccountKey ref )
@@ -70,24 +70,24 @@ public final class AccountKeySet
         return this.set.iterator();
     }
 
-    public AccountKeySet add( final AccountKeySet set )
+    public AccountKeys add( final AccountKeys set )
     {
         final HashSet<AccountKey> tmp = Sets.newHashSet();
         tmp.addAll( this.set );
         tmp.addAll( set.getSet() );
 
         final ImmutableSet<AccountKey> result = ImmutableSet.copyOf( tmp );
-        return new AccountKeySet( result );
+        return new AccountKeys( result );
     }
 
-    public AccountKeySet remove( final AccountKeySet set )
+    public AccountKeys remove( final AccountKeys set )
     {
         final HashSet<AccountKey> tmp = Sets.newHashSet();
         tmp.addAll( this.set );
         tmp.removeAll( set.getSet() );
 
         final ImmutableSet<AccountKey> result = ImmutableSet.copyOf( tmp );
-        return new AccountKeySet( result );
+        return new AccountKeys( result );
     }
 
     public int hashCode()
@@ -97,7 +97,7 @@ public final class AccountKeySet
 
     public boolean equals( final Object o )
     {
-        return ( o instanceof AccountKeySet ) && this.set.equals( ( (AccountKeySet) o ).set );
+        return ( o instanceof AccountKeys ) && this.set.equals( ( (AccountKeys) o ).set );
     }
 
     public String toString()
@@ -105,30 +105,30 @@ public final class AccountKeySet
         return this.set.toString();
     }
 
-    public static AccountKeySet empty()
+    public static AccountKeys empty()
     {
         final ImmutableSet<AccountKey> set = ImmutableSet.of();
-        return new AccountKeySet( set );
+        return new AccountKeys( set );
     }
 
-    public static AccountKeySet from( final String... keys )
+    public static AccountKeys from( final String... keys )
     {
         final Collection<String> list = Lists.newArrayList( keys );
         final Collection<AccountKey> keyList = Collections2.transform( list, new ParseFunction() );
         final ImmutableSet<AccountKey> set = ImmutableSet.copyOf( keyList );
-        return new AccountKeySet( set );
+        return new AccountKeys( set );
     }
 
-    public static AccountKeySet from( final AccountKey... keys )
+    public static AccountKeys from( final AccountKey... keys )
     {
         final ImmutableSet<AccountKey> set = ImmutableSet.copyOf( keys );
-        return new AccountKeySet( set );
+        return new AccountKeys( set );
     }
 
-    public static AccountKeySet from( final Iterable<AccountKey> keys )
+    public static AccountKeys from( final Iterable<AccountKey> keys )
     {
         final ImmutableSet<AccountKey> set = ImmutableSet.copyOf( keys );
-        return new AccountKeySet( set );
+        return new AccountKeys( set );
     }
 
     private final class TypePredicate

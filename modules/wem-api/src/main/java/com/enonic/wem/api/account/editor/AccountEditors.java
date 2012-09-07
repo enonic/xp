@@ -1,21 +1,21 @@
 package com.enonic.wem.api.account.editor;
 
 import com.enonic.wem.api.account.Account;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 
 public abstract class AccountEditors
 {
-    public static AccountEditor addMembers( final AccountKeySet keys )
+    public static AccountEditor addMembers( final AccountKeys keys )
     {
         return new MembersEditor( MembersEditor.Operation.ADD, keys );
     }
 
-    public static AccountEditor removeMembers( final AccountKeySet keys )
+    public static AccountEditor removeMembers( final AccountKeys keys )
     {
         return new MembersEditor( MembersEditor.Operation.REMOVE, keys );
     }
 
-    public static AccountEditor setMembers( final AccountKeySet keys )
+    public static AccountEditor setMembers( final AccountKeys keys )
     {
         return new MembersEditor( MembersEditor.Operation.SET, keys );
     }

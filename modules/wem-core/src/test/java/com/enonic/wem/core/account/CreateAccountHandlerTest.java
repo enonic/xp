@@ -14,7 +14,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.command.Commands;
@@ -134,7 +134,7 @@ public class CreateAccountHandlerTest
         createUser( "enonic", "user1" );
         createGroup( "enonic", "group2" );
 
-        final AccountKeySet members = AccountKeySet.from( "user:enonic:user1", "group:enonic:group2" );
+        final AccountKeys members = AccountKeys.from( "user:enonic:user1", "group:enonic:group2" );
         final GroupAccount group = GroupAccount.create( "enonic:group1" );
         group.setDisplayName( "The User #1" );
         group.setMembers( members );

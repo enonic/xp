@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.NonUserAccount;
 import com.enonic.wem.api.account.RoleAccount;
@@ -57,7 +57,7 @@ public class MembersEditorTest
     private void testNoOperation( final UserAccount account, final MembersEditor.Operation operation )
         throws Exception
     {
-        final AccountKeySet keys = AccountKeySet.from( "user:other:dummy" );
+        final AccountKeys keys = AccountKeys.from( "user:other:dummy" );
         final MembersEditor editor = new MembersEditor( operation, keys );
         editor.edit( account );
     }
@@ -65,9 +65,9 @@ public class MembersEditorTest
     private void testSetMembers( final NonUserAccount account )
         throws Exception
     {
-        account.setMembers( AccountKeySet.empty() );
+        account.setMembers( AccountKeys.empty() );
 
-        final AccountKeySet keys = AccountKeySet.from( "user:other:dummy" );
+        final AccountKeys keys = AccountKeys.from( "user:other:dummy" );
         final MembersEditor editor = new MembersEditor( MembersEditor.Operation.SET, keys );
 
         editor.edit( account );
@@ -78,30 +78,30 @@ public class MembersEditorTest
     private void testAddMembers( final NonUserAccount account )
         throws Exception
     {
-        final AccountKeySet set1 = AccountKeySet.from( "user:other:dummy" );
+        final AccountKeys set1 = AccountKeys.from( "user:other:dummy" );
         account.setMembers( set1 );
 
-        final AccountKeySet set2 = AccountKeySet.from( "role:other:admin" );
+        final AccountKeys set2 = AccountKeys.from( "role:other:admin" );
         final MembersEditor editor = new MembersEditor( MembersEditor.Operation.ADD, set2 );
 
         editor.edit( account );
 
-        final AccountKeySet set3 = set1.add( set2 );
+        final AccountKeys set3 = set1.add( set2 );
         assertEquals( set3, account.getMembers() );
     }
 
     private void testRemoveMembers( final NonUserAccount account )
         throws Exception
     {
-        final AccountKeySet set1 = AccountKeySet.from( "user:other:dummy", "role:other:admin" );
+        final AccountKeys set1 = AccountKeys.from( "user:other:dummy", "role:other:admin" );
         account.setMembers( set1 );
 
-        final AccountKeySet set2 = AccountKeySet.from( "role:other:admin" );
+        final AccountKeys set2 = AccountKeys.from( "role:other:admin" );
         final MembersEditor editor = new MembersEditor( MembersEditor.Operation.REMOVE, set2 );
 
         editor.edit( account );
 
-        final AccountKeySet set3 = set1.remove( set2 );
+        final AccountKeys set3 = set1.remove( set2 );
         assertEquals( set3, account.getMembers() );
     }
 }

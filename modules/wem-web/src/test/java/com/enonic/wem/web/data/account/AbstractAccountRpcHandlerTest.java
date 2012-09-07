@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
@@ -51,7 +51,7 @@ public abstract class AbstractAccountRpcHandlerTest
         group.setDisplayName( accountKey.getLocalName().toUpperCase() );
         group.setCreatedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
         group.setModifiedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
-        group.setMembers( AccountKeySet.from( members ) );
+        group.setMembers( AccountKeys.from( members ) );
         return group;
     }
 
@@ -62,7 +62,7 @@ public abstract class AbstractAccountRpcHandlerTest
         group.setDisplayName( accountKey.getLocalName().toUpperCase() );
         group.setCreatedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
         group.setModifiedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
-        group.setMembers( AccountKeySet.from( members ) );
+        group.setMembers( AccountKeys.from( members ) );
         return group;
     }
 }

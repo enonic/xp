@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.selector.AccountSelectors;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
@@ -39,7 +39,7 @@ public final class GetAccountGraphRpcHandler
 
     private Map<Account, List<Account>> generateAccountGraph( AccountKey accountKey )
     {
-        Map<AccountKey, AccountKeySet> nodeMap = new HashMap<AccountKey, AccountKeySet>();
+        Map<AccountKey, AccountKeys> nodeMap = new HashMap<AccountKey, AccountKeys>();
         // We build full graph currently, this will be changed in future
         if ( accountKey.isUser() )
         {
@@ -52,7 +52,7 @@ public final class GetAccountGraphRpcHandler
         List<Account> accounts =
             this.client.execute( Commands.account().find().selector( AccountSelectors.keys( nodeMap.keySet() ) ) ).getAll();
         Map<Account, List<Account>> result = new HashMap<Account, List<Account>>();
-        for ( Map.Entry<AccountKey, AccountKeySet> entry : nodeMap.entrySet() )
+        for ( Map.Entry<AccountKey, AccountKeys> entry : nodeMap.entrySet() )
         {
             Account key = findAccount( entry.getKey(), accounts );
             List<Account> value = findAccounts( entry.getValue().getSet(), accounts );
@@ -86,19 +86,19 @@ public final class GetAccountGraphRpcHandler
         return null;
     }
 
-    private void generateMembersGraph( AccountKey accountKey, int level, Map<AccountKey, AccountKeySet> graph )
+    private void generateMembersGraph( AccountKey accountKey, int level, Map<AccountKey, AccountKeys> graph )
     {
         if ( graph == null )
         {
-            graph = new HashMap<AccountKey, AccountKeySet>();
+            graph = new HashMap<AccountKey, AccountKeys>();
         }
 
         if ( !graph.containsKey( accountKey ) )
         {
-            AccountKeySet accountMembers;
+            AccountKeys accountMembers;
             if ( accountKey.isUser() )
             {
-                accountMembers = AccountKeySet.empty();
+                accountMembers = AccountKeys.empty();
             }
             else
             {
@@ -115,13 +115,13 @@ public final class GetAccountGraphRpcHandler
         }
     }
 
-    private void generateMembershipsGraph( AccountKey accountKey, int level, Map<AccountKey, AccountKeySet> graph )
+    private void generateMembershipsGraph( AccountKey accountKey, int level, Map<AccountKey, AccountKeys> graph )
     {
         if ( graph == null )
         {
-            graph = new HashMap<AccountKey, AccountKeySet>();
+            graph = new HashMap<AccountKey, AccountKeys>();
         }
-        AccountKeySet accountMemberships = this.client.execute( Commands.account().findMemberships().key( accountKey ) );
+        AccountKeys accountMemberships = this.client.execute( Commands.account().findMemberships().key( accountKey ) );
         if ( !graph.containsKey( accountKey ) )
         {
             graph.put( accountKey, accountMemberships );

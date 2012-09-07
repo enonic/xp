@@ -2,11 +2,10 @@ package com.enonic.wem.api.account.editor;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
 
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
@@ -27,7 +26,7 @@ public class SetAccountEditorTest
 
     private byte[] photo;
 
-    private AccountKeySet members;
+    private AccountKeys members;
 
     @Before
     public void setUp()
@@ -40,7 +39,7 @@ public class SetAccountEditorTest
         this.editableRole = RoleAccount.create( "other:dummy" );
 
         this.photo = new byte[10];
-        this.members = AccountKeySet.from( "role:other:admin" );
+        this.members = AccountKeys.from( "role:other:admin" );
 
         this.user.setEmail( "dummy@other.com" );
         this.user.setDisplayName( "Dummy User" );

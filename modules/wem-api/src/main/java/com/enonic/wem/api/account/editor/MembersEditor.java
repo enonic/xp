@@ -1,7 +1,7 @@
 package com.enonic.wem.api.account.editor;
 
 import com.enonic.wem.api.account.Account;
-import com.enonic.wem.api.account.AccountKeySet;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.NonUserAccount;
 
 final class MembersEditor
@@ -16,9 +16,9 @@ final class MembersEditor
 
     protected final Operation operation;
 
-    protected final AccountKeySet keys;
+    protected final AccountKeys keys;
 
-    public MembersEditor( final Operation operation, final AccountKeySet keys )
+    public MembersEditor( final Operation operation, final AccountKeys keys )
     {
         this.operation = operation;
         this.keys = keys;
@@ -37,7 +37,7 @@ final class MembersEditor
     private void editNonUser( final NonUserAccount account )
         throws Exception
     {
-        final AccountKeySet original = account.getMembers();
+        final AccountKeys original = account.getMembers();
 
         if ( this.operation == Operation.SET )
         {

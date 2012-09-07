@@ -20,7 +20,7 @@ public abstract class NonUserAccountTest<T extends NonUserAccount>
         assertFalse( account.isDirty() );
         assertNull( account.getMembers() );
 
-        final AccountKeySet members = AccountKeySet.empty();
+        final AccountKeys members = AccountKeys.empty();
         account.setMembers( members );
         assertSame( members, account.getMembers() );
         assertTrue( account.isDirty() );
