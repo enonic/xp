@@ -61,7 +61,7 @@ public class ContentTypeSerializerJsonTest
         Component parsedMyDate = parsedContentType.getField( "myDate" );
         assertEquals( "myDate", parsedMyDate.getPath().toString() );
         assertEquals( "myDate", parsedMyDate.getName() );
-        assertEquals( "com.enonic.wem.core.content.type.configitem.fieldtype.Date", parsedMyDate.getFieldType().getClassName() );
+        assertEquals( "com.enonic.wem.core.content.type.formitem.fieldtype.Date", parsedMyDate.getFieldType().getClassName() );
         assertEquals( "date", parsedMyDate.getFieldType().getName() );
 
         Component parsedMyDropdown = parsedContentType.getField( "myDropdown" );
