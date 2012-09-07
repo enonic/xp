@@ -1,12 +1,7 @@
 package com.enonic.wem.web.data.account;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
@@ -89,13 +84,6 @@ public class FindAccountsRpcHandlerTest
     private void setResult( final AccountResult result )
     {
         Mockito.when( client.execute( Mockito.any( FindAccounts.class ) ) ).thenReturn( result );
-    }
-
-    private void mockCurrentContextHttpRequest()
-    {
-        final HttpServletRequest req = new MockHttpServletRequest();
-        final ServletRequestAttributes attrs = new ServletRequestAttributes( req );
-        RequestContextHolder.setRequestAttributes( attrs );
     }
 
 }

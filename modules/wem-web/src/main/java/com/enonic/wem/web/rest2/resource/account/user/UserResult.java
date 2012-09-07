@@ -7,10 +7,10 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.core.search.UserInfoHelper;
 import com.enonic.wem.web.rest2.common.JsonResult;
 import com.enonic.wem.web.rest2.resource.account.AccountUriHelper;
+import com.enonic.wem.web.rest2.resource.account.NewAccountKeyHelper;
 
 import com.enonic.cms.api.client.model.user.Address;
 import com.enonic.cms.api.client.model.user.UserInfo;
@@ -59,6 +59,7 @@ public final class UserResult
 
         json.put( "key", key );
         json.put( "type", TYPE_USER );
+        json.put( "new_key", NewAccountKeyHelper.composeNewKey( user ) );
         json.put( "name", user.getName() );
         json.put( "email", user.getEmail() );
         json.put( "userStore", userstore != null ? userstore.getName() : "null" );

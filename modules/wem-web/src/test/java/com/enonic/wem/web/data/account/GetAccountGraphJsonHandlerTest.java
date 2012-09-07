@@ -21,7 +21,7 @@ import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
 
 import static org.junit.Assert.*;
 
-public class GetAccountGraphJsonResultTest
+public class GetAccountGraphJsonHandlerTest
     extends AbstractAccountRpcHandlerTest
 {
 
@@ -41,11 +41,13 @@ public class GetAccountGraphJsonResultTest
     public void testGetUserGraph()
         throws Exception
     {
+        mockCurrentContextHttpRequest();
         AccountKey userKey = AccountKey.from( "user:enonic:aro" );
         AccountKey groupKey = AccountKey.from( "group:enonic:Togservice" );
         Mockito.when( client.execute( Commands.account().findMemberships().key( userKey ) ) ).thenReturn( AccountKeys.from( groupKey ) );
         Mockito.when( client.execute( Commands.account().findMemberships().key( groupKey ) ) ).thenReturn( AccountKeys.empty() );
-        Mockito.when( client.execute( Commands.account().find().selector( AccountSelectors.keys( userKey, groupKey ) ) ) ).thenReturn(
+        Mockito.when(
+            client.execute( Commands.account().find().selector( AccountSelectors.keys( userKey, groupKey ) ).includeImage() ) ).thenReturn(
             createAccountResult( 1, createUser( "enonic:aro" ), createGroup( "enonic:Togservice" ) ) );
         testGraphSuccess( "getUserGraph_param.json", "getUserGraph_result.json" );
     }
@@ -55,10 +57,12 @@ public class GetAccountGraphJsonResultTest
     public void testGetGroupGraph()
         throws Exception
     {
+        mockCurrentContextHttpRequest();
         AccountKey userKey = AccountKey.from( "user:enonic:aro" );
         AccountKey groupKey = AccountKey.from( "group:enonic:Togservice" );
         Mockito.when( client.execute( Commands.account().findMembers().key( groupKey ) ) ).thenReturn( AccountKeys.from( userKey ) );
-        Mockito.when( client.execute( Commands.account().find().selector( AccountSelectors.keys( userKey, groupKey ) ) ) ).thenReturn(
+        Mockito.when(
+            client.execute( Commands.account().find().selector( AccountSelectors.keys( userKey, groupKey ) ).includeImage() ) ).thenReturn(
             createAccountResult( 1, createUser( "enonic:aro" ), createGroup( "enonic:Togservice" ) ) );
         testGraphSuccess( "getGroupGraph_param.json", "getGroupGraph_result.json" );
     }
@@ -67,14 +71,15 @@ public class GetAccountGraphJsonResultTest
     public void testGetRoleGraph()
         throws Exception
     {
+        mockCurrentContextHttpRequest();
         AccountKey userKey = AccountKey.from( "user:enonic:aro" );
         AccountKey groupKey = AccountKey.from( "group:enonic:Togservice" );
         AccountKey roleKey = AccountKey.from( "role:enonic:admin" );
         Mockito.when( client.execute( Commands.account().findMembers().key( roleKey ) ) ).thenReturn(
             AccountKeys.from( userKey, groupKey ) );
         Mockito.when( client.execute( Commands.account().findMembers().key( groupKey ) ) ).thenReturn( AccountKeys.empty() );
-        Mockito.when(
-            client.execute( Commands.account().find().selector( AccountSelectors.keys( userKey, groupKey, roleKey ) ) ) ).thenReturn(
+        Mockito.when( client.execute(
+            Commands.account().find().selector( AccountSelectors.keys( userKey, groupKey, roleKey ) ).includeImage() ) ).thenReturn(
             createAccountResult( 1, createRole( "enonic:admin" ), createUser( "enonic:aro" ), createGroup( "enonic:Togservice" ) ) );
         testGraphSuccess( "getRoleGraph_param.json", "getRoleGraph_result.json" );
     }
@@ -105,6 +110,7 @@ public class GetAccountGraphJsonResultTest
             assertTrue( "Required field type in data is missing", dataNode.has( "type" ) );
             assertTrue( "Required field key in data is missing", dataNode.has( "key" ) );
             assertTrue( "Required field name in data is missing", dataNode.has( "name" ) );
+            assertTrue( "Required field image_uri in data is missing", dataNode.has( "image_uri" ) );
             // Test adjacencies node
             ArrayNode adjacenciesNode = (ArrayNode) graphNode.get( "adjacencies" );
             Iterator<JsonNode> adjacenciesIterator = adjacenciesNode.iterator();

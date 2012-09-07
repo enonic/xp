@@ -50,7 +50,7 @@ public final class GetAccountGraphRpcHandler
             generateMembersGraph( accountKey, -1, nodeMap );
         }
         List<Account> accounts =
-            this.client.execute( Commands.account().find().selector( AccountSelectors.keys( nodeMap.keySet() ) ) ).getAll();
+            this.client.execute( Commands.account().find().selector( AccountSelectors.keys( nodeMap.keySet() ) ).includeImage() ).getAll();
         Map<Account, List<Account>> result = new HashMap<Account, List<Account>>();
         for ( Map.Entry<AccountKey, AccountKeys> entry : nodeMap.entrySet() )
         {
