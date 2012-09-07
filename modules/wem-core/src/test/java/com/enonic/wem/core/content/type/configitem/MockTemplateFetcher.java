@@ -14,12 +14,12 @@ public class MockTemplateFetcher
         return templateMap.get( qualifiedName );
     }
 
-    public void add( final FieldSetTemplate fieldSetTemplate )
+    public void add( final FormItemSetTemplate formItemSetTemplate )
     {
-        templateMap.put( fieldSetTemplate.getQualifiedName(), fieldSetTemplate );
+        templateMap.put( formItemSetTemplate.getQualifiedName(), formItemSetTemplate );
     }
 
-    public void add( final FieldTemplate fieldtemplate )
+    public void add( final ComponentTemplate fieldtemplate )
     {
         templateMap.put( fieldtemplate.getQualifiedName(), fieldtemplate );
     }

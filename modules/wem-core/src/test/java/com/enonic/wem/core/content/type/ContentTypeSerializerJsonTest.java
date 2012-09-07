@@ -6,9 +6,9 @@ import com.enonic.wem.core.content.type.configitem.Component;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItemType;
 import com.enonic.wem.core.content.type.configitem.ConfigItems;
-import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
-import com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder;
 import com.enonic.wem.core.content.type.configitem.FormItemSet;
+import com.enonic.wem.core.content.type.configitem.FormItemSetTemplate;
+import com.enonic.wem.core.content.type.configitem.FormItemSetTemplateBuilder;
 import com.enonic.wem.core.content.type.configitem.MockTemplateFetcher;
 import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.configitem.fieldtype.DropdownConfig;
@@ -143,7 +143,7 @@ public class ContentTypeSerializerJsonTest
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        FieldSetTemplate template = FieldSetTemplateBuilder.newFieldSetTemplate().module( module ).fieldSet(
+        FormItemSetTemplate template = FormItemSetTemplateBuilder.newFieldSetTemplate().module( module ).fieldSet(
             newFieldSet().name( "address" ).add( newBuilder().name( "label" ).label( "Label" ).type( FieldTypes.TEXT_LINE ).build() ).add(
                 newBuilder().name( "street" ).label( "Street" ).type( FieldTypes.TEXT_LINE ).build() ).add(
                 newBuilder().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.TEXT_LINE ).build() ).add(

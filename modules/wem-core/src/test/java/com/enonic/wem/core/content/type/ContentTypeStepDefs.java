@@ -12,9 +12,9 @@ import cucumber.table.DataTable;
 import gherkin.formatter.model.DataTableRow;
 
 import com.enonic.wem.core.content.type.configitem.Component;
+import com.enonic.wem.core.content.type.configitem.ComponentTemplate;
 import com.enonic.wem.core.content.type.configitem.ConfigItemPath;
 import com.enonic.wem.core.content.type.configitem.ConfigItemType;
-import com.enonic.wem.core.content.type.configitem.FieldTemplate;
 import com.enonic.wem.core.content.type.configitem.FieldTemplateBuilder;
 import com.enonic.wem.core.content.type.configitem.MockTemplateFetcher;
 import com.enonic.wem.core.content.type.configitem.TemplateQualifiedName;
@@ -35,8 +35,8 @@ public class ContentTypeStepDefs
 
     public final Map<String, Component> fieldByName = new HashMap<String, Component>();
 
-    public final Map<TemplateQualifiedName, FieldTemplate> fieldTemplateByTemplateQualifiedName =
-        new HashMap<TemplateQualifiedName, FieldTemplate>();
+    public final Map<TemplateQualifiedName, ComponentTemplate> fieldTemplateByTemplateQualifiedName =
+        new HashMap<TemplateQualifiedName, ComponentTemplate>();
 
 
     @Given("^a Module named (.+)$")
@@ -59,9 +59,9 @@ public class ContentTypeStepDefs
     public void a_fieldTemplate_named_name_in_module_module_having_field( String fieldTemplateName, String moduleName, String fieldName )
         throws Throwable
     {
-        FieldTemplate fieldTemplate =
+        ComponentTemplate componentTemplate =
             FieldTemplateBuilder.newFieldTemplate().module( moduleByName.get( moduleName ) ).field( fieldByName.get( fieldName ) ).build();
-        fieldTemplateByTemplateQualifiedName.put( new TemplateQualifiedName( moduleName, fieldTemplateName ), fieldTemplate );
+        fieldTemplateByTemplateQualifiedName.put( new TemplateQualifiedName( moduleName, fieldTemplateName ), componentTemplate );
     }
 
     @Given("^a ContentType named (.+)")
@@ -79,11 +79,12 @@ public class ContentTypeStepDefs
         throws Throwable
     {
 
-        FieldTemplate fieldTemplate = fieldTemplateByTemplateQualifiedName.get( new TemplateQualifiedName( templateQualifiedName ) );
+        ComponentTemplate componentTemplate =
+            fieldTemplateByTemplateQualifiedName.get( new TemplateQualifiedName( templateQualifiedName ) );
         ContentType contentType = contentTypeByName.get( contentTypeName );
-        contentType.addConfigItem( newTemplateReference( fieldTemplate ).name( templateReferenceName ).build() );
+        contentType.addConfigItem( newTemplateReference( componentTemplate ).name( templateReferenceName ).build() );
 
-        mockTemplateReferenceFetcher.add( fieldTemplate );
+        mockTemplateReferenceFetcher.add( componentTemplate );
         contentType.templateReferencesToConfigItems( mockTemplateReferenceFetcher );
     }
 

@@ -11,7 +11,7 @@ import static com.enonic.wem.core.content.type.configitem.FieldTemplateBuilder.n
 import static com.enonic.wem.core.module.Module.newModule;
 
 
-public class FieldTemplateTest
+public class ComponentTemplateTest
 {
     private Module module = newModule().name( "MyModule" ).build();
 
@@ -19,6 +19,6 @@ public class FieldTemplateTest
     public void tags()
     {
         Component component = newField().name( "tags" ).label( "Tags" ).type( FieldTypes.TEXT_LINE ).multiple( true ).build();
-        FieldTemplate fieldTemplate = newFieldTemplate().module( module ).field( component ).build();
+        ComponentTemplate componentTemplate = newFieldTemplate().module( module ).field( component ).build();
     }
 }

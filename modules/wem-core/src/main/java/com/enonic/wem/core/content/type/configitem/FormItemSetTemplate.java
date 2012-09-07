@@ -2,12 +2,12 @@ package com.enonic.wem.core.content.type.configitem;
 
 import org.elasticsearch.common.base.Preconditions;
 
-public class FieldSetTemplate
+public class FormItemSetTemplate
     extends Template
 {
     private FormItemSet formItemSet = new FormItemSet();
 
-    FieldSetTemplate()
+    FormItemSetTemplate()
     {
     }
 

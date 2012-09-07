@@ -23,14 +23,14 @@ public class FieldTemplateBuilder
         return this;
     }
 
-    public FieldTemplate build()
+    public ComponentTemplate build()
     {
         Preconditions.checkNotNull( component, "field is required" );
 
-        FieldTemplate fieldTemplate = new FieldTemplate();
-        fieldTemplate.setComponent( component );
-        fieldTemplate.setModule( module );
-        return fieldTemplate;
+        ComponentTemplate componentTemplate = new ComponentTemplate();
+        componentTemplate.setComponent( component );
+        componentTemplate.setModule( module );
+        return componentTemplate;
     }
 
     public static FieldTemplateBuilder newFieldTemplate()

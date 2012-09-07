@@ -1,11 +1,11 @@
 package com.enonic.wem.core.content.type.configitem;
 
-public class FieldTemplate
+public class ComponentTemplate
     extends Template
 {
     private Component component;
 
-    FieldTemplate()
+    ComponentTemplate()
     {
     }
 

@@ -3,8 +3,8 @@ package com.enonic.wem.core.content.type;
 
 import org.junit.Test;
 
-import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
 import com.enonic.wem.core.content.type.configitem.FormItemSet;
+import com.enonic.wem.core.content.type.configitem.FormItemSetTemplate;
 import com.enonic.wem.core.content.type.configitem.MockTemplateFetcher;
 import com.enonic.wem.core.content.type.configitem.TemplateReference;
 import com.enonic.wem.core.content.type.configitem.VisualFieldSet;
@@ -12,8 +12,8 @@ import com.enonic.wem.core.content.type.configitem.fieldtype.FieldTypes;
 import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.configitem.Component.newField;
-import static com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder.newFieldSetTemplate;
 import static com.enonic.wem.core.content.type.configitem.FormItemSet.newFieldSet;
+import static com.enonic.wem.core.content.type.configitem.FormItemSetTemplateBuilder.newFieldSetTemplate;
 import static com.enonic.wem.core.content.type.configitem.TemplateReference.newTemplateReference;
 import static com.enonic.wem.core.content.type.configitem.VisualFieldSet.newVisualFieldSet;
 import static com.enonic.wem.core.module.Module.newModule;
@@ -72,7 +72,7 @@ public class ContentTypeTest
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        FieldSetTemplate template = newFieldSetTemplate().module( module ).fieldSet(
+        FormItemSetTemplate template = newFieldSetTemplate().module( module ).fieldSet(
             newFieldSet().name( "address" ).add( newField().name( "label" ).label( "Label" ).type( FieldTypes.TEXT_LINE ).build() ).add(
                 newField().name( "street" ).label( "Street" ).type( FieldTypes.TEXT_LINE ).build() ).add(
                 newField().name( "postalNo" ).label( "Postal No" ).type( FieldTypes.TEXT_LINE ).build() ).add(
@@ -99,7 +99,7 @@ public class ContentTypeTest
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        FieldSetTemplate template = newFieldSetTemplate().module( module ).fieldSet( newFieldSet().name( "address" ).add(
+        FormItemSetTemplate template = newFieldSetTemplate().module( module ).fieldSet( newFieldSet().name( "address" ).add(
             newVisualFieldSet().label( "My Visual Field Set" ).name( "vfs" ).add(
                 newField().name( "myFieldInVFS" ).label( "MyFieldInVFS" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).add(
             newField().name( "label" ).label( "Label" ).type( FieldTypes.TEXT_LINE ).build() ).add(
@@ -128,16 +128,16 @@ public class ContentTypeTest
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        FieldSetTemplate fieldSetTemplate = newFieldSetTemplate().module( module ).fieldSet(
+        FormItemSetTemplate formItemSetTemplate = newFieldSetTemplate().module( module ).fieldSet(
             newFieldSet().name( "address" ).add( newField().name( "label" ).label( "Label" ).type( FieldTypes.TEXT_LINE ).build() ).add(
                 newField().name( "street" ).label( "Street" ).type( FieldTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
         cty.addConfigItem(
-            TemplateReference.newBuilder().name( "home" ).typeField().template( fieldSetTemplate.getQualifiedName() ).build() );
+            TemplateReference.newBuilder().name( "home" ).typeField().template( formItemSetTemplate.getQualifiedName() ).build() );
 
         MockTemplateFetcher templateReferenceFetcher = new MockTemplateFetcher();
-        templateReferenceFetcher.add( fieldSetTemplate );
+        templateReferenceFetcher.add( formItemSetTemplate );
 
         // exercise
         try

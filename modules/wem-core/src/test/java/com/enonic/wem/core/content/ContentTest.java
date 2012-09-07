@@ -8,9 +8,9 @@ import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.configitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.configitem.Component;
-import com.enonic.wem.core.content.type.configitem.FieldSetTemplate;
-import com.enonic.wem.core.content.type.configitem.FieldTemplate;
+import com.enonic.wem.core.content.type.configitem.ComponentTemplate;
 import com.enonic.wem.core.content.type.configitem.FormItemSet;
+import com.enonic.wem.core.content.type.configitem.FormItemSetTemplate;
 import com.enonic.wem.core.content.type.configitem.MockTemplateFetcher;
 import com.enonic.wem.core.content.type.configitem.TemplateReference;
 import com.enonic.wem.core.content.type.configitem.TemplateType;
@@ -21,9 +21,9 @@ import com.enonic.wem.core.content.type.configitem.fieldtype.RadioButtonsConfig;
 import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.configitem.Component.newField;
-import static com.enonic.wem.core.content.type.configitem.FieldSetTemplateBuilder.newFieldSetTemplate;
 import static com.enonic.wem.core.content.type.configitem.FieldTemplateBuilder.newFieldTemplate;
 import static com.enonic.wem.core.content.type.configitem.FormItemSet.newFieldSet;
+import static com.enonic.wem.core.content.type.configitem.FormItemSetTemplateBuilder.newFieldSetTemplate;
 import static com.enonic.wem.core.content.type.configitem.TemplateReference.newTemplateReference;
 import static com.enonic.wem.core.content.type.configitem.VisualFieldSet.newVisualFieldSet;
 import static com.enonic.wem.core.module.Module.newModule;
@@ -102,9 +102,9 @@ public class ContentTest
     {
         Module module = newModule().name( "system" ).build();
         Component component = newField().name( "tags" ).label( "Tags" ).type( FieldTypes.TEXT_LINE ).multiple( true ).build();
-        FieldTemplate fieldTemplate = newFieldTemplate().module( module ).field( component ).build();
+        ComponentTemplate componentTemplate = newFieldTemplate().module( module ).field( component ).build();
         MockTemplateFetcher templateFetcher = new MockTemplateFetcher();
-        templateFetcher.add( fieldTemplate );
+        templateFetcher.add( componentTemplate );
 
         ContentType contentType = new ContentType();
         contentType.addConfigItem(
@@ -327,13 +327,13 @@ public class ContentTest
     {
         Module module = newModule().name( "myModule" ).build();
 
-        FieldTemplate postalCodeTemplate = newFieldTemplate().module( module ).field(
+        ComponentTemplate postalCodeTemplate = newFieldTemplate().module( module ).field(
             Component.newField().name( "postalCode" ).type( FieldTypes.TEXT_LINE ).build() ).build();
-        FieldTemplate countryTemplate = newFieldTemplate().module( module ).field(
+        ComponentTemplate countryTemplate = newFieldTemplate().module( module ).field(
             Component.newField().name( "country" ).type( FieldTypes.DROPDOWN ).fieldTypeConfig(
                 DropdownConfig.newBuilder().addOption( "Norway", "NO" ).build() ).build() ).build();
 
-        FieldSetTemplate addressTemplate = newFieldSetTemplate().module( module ).fieldSet(
+        FormItemSetTemplate addressTemplate = newFieldSetTemplate().module( module ).fieldSet(
             newFieldSet().name( "address" ).add( newField().name( "street" ).type( FieldTypes.TEXT_LINE ).build() ).add(
                 newTemplateReference( postalCodeTemplate ).name( "postalCode" ).build() ).add(
                 newField().name( "postalPlace" ).type( FieldTypes.TEXT_LINE ).build() ).add(
@@ -370,7 +370,7 @@ public class ContentTest
     {
         Module module = newModule().name( "myModule" ).build();
 
-        FieldSetTemplate addressTemplate = newFieldSetTemplate().module( module ).fieldSet(
+        FormItemSetTemplate addressTemplate = newFieldSetTemplate().module( module ).fieldSet(
             newFieldSet().name( "address" ).multiple( true ).add( newField().type( FieldTypes.TEXT_LINE ).name( "label" ).build() ).add(
                 newField().type( FieldTypes.TEXT_LINE ).name( "street" ).build() ).add(
                 newField().type( FieldTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(
