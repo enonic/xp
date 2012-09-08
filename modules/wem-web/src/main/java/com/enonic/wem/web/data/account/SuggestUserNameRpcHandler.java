@@ -8,7 +8,7 @@ import com.enonic.wem.api.account.Accounts;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
 import com.enonic.wem.web.jsonrpc.JsonRpcContext;
-import com.enonic.wem.web.rest.account.UserIdGenerator;
+import com.enonic.wem.web.rest2.service.account.UserIdGenerator;
 
 @Component
 public final class SuggestUserNameRpcHandler

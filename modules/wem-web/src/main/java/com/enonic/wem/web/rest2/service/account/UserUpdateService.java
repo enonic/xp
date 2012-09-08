@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.service.account.user;
+package com.enonic.wem.web.rest2.service.account;
 
 import java.io.File;
 

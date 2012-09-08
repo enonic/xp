@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest.account;
+package com.enonic.wem.web.rest2.service.account;
 
 public final class UserIdGenerator
 {
