@@ -8,7 +8,7 @@ import com.enonic.wem.web.filter.bundle.BundleModel;
 import com.enonic.wem.web.filter.bundle.BundleRequest;
 import com.enonic.wem.web.filter.bundle.compressor.ScriptCompressor;
 import com.enonic.wem.web.filter.bundle.generator.ScriptGenerator;
-import com.enonic.wem.web.rest2.provider.ObjectMapperFactory;
+import com.enonic.wem.web.json.ObjectMapperHelper;
 
 @Component
 public final class BundleProcessorImpl
@@ -25,7 +25,7 @@ public final class BundleProcessorImpl
     public BundleProcessorImpl()
     {
         this.cache = new BundleCache();
-        this.mapper = ObjectMapperFactory.create();
+        this.mapper = ObjectMapperHelper.create();
     }
 
     @Override

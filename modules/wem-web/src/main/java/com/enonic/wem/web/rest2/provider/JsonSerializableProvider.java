@@ -9,6 +9,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.web.json.JsonSerializable;
+import com.enonic.wem.web.json.ObjectMapperHelper;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,7 +31,7 @@ public final class JsonSerializableProvider
 
     public JsonSerializableProvider()
     {
-        this.mapper = ObjectMapperFactory.create();
+        this.mapper = ObjectMapperHelper.create();
     }
 
     @Override

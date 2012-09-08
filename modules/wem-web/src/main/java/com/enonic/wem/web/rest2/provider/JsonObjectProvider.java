@@ -5,6 +5,8 @@ import javax.ws.rs.ext.Provider;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.web.json.ObjectMapperHelper;
+
 @Component
 @Provider
 public final class JsonObjectProvider
@@ -12,6 +14,6 @@ public final class JsonObjectProvider
 {
     public JsonObjectProvider()
     {
-        setMapper( ObjectMapperFactory.create() );
+        setMapper( ObjectMapperHelper.create() );
     }
 }

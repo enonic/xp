@@ -15,7 +15,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.web.rest2.provider.ObjectMapperFactory;
+import com.enonic.wem.web.json.ObjectMapperHelper;
 import com.enonic.wem.web.jsonrpc.JsonRpcError;
 import com.enonic.wem.web.jsonrpc.JsonRpcException;
 import com.enonic.wem.web.jsonrpc.processor.JsonRpcRequest;
@@ -29,7 +29,7 @@ final class JsonRpcMessageHelper
 
     public JsonRpcMessageHelper()
     {
-        this.mapper = ObjectMapperFactory.create();
+        this.mapper = ObjectMapperHelper.create();
         this.counter = new AtomicLong( 0L );
     }
 

@@ -9,11 +9,11 @@ import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Before;
 
+import com.enonic.wem.web.json.ObjectMapperHelper;
 import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.web.jsonrpc.processor.JsonRpcProcessorImpl;
 import com.enonic.wem.web.jsonrpc.processor.JsonRpcRequest;
 import com.enonic.wem.web.jsonrpc.processor.JsonRpcResponse;
-import com.enonic.wem.web.rest2.provider.ObjectMapperFactory;
 
 import static org.junit.Assert.*;
 
@@ -144,7 +144,7 @@ public abstract class AbstractRpcHandlerTest
             return JsonNodeFactory.instance.objectNode();
         }
 
-        final ObjectMapper mapper = ObjectMapperFactory.create();
+        final ObjectMapper mapper = ObjectMapperHelper.create();
         final JsonFactory factory = mapper.getJsonFactory();
         final JsonParser parser = factory.createJsonParser( getClass().getResource( fileName ) );
         return parser.readValueAsTree();
@@ -153,7 +153,7 @@ public abstract class AbstractRpcHandlerTest
     private String toJson( final Object value )
         throws Exception
     {
-        final ObjectMapper mapper = ObjectMapperFactory.create();
+        final ObjectMapper mapper = ObjectMapperHelper.create();
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString( value );
     }
 
