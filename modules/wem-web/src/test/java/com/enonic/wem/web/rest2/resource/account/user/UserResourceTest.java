@@ -1,13 +1,9 @@
 package com.enonic.wem.web.rest2.resource.account.user;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import javax.imageio.ImageIO;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +12,6 @@ import org.mockito.Mockito;
 import com.google.common.io.ByteStreams;
 
 import com.enonic.wem.web.rest2.resource.AbstractResourceTest;
-import com.enonic.wem.web.rest2.resource.account.AccountGenericResult;
 
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.group.GroupKey;
@@ -26,9 +21,6 @@ import com.enonic.cms.core.security.user.UserKey;
 import com.enonic.cms.core.security.user.UserType;
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
 import com.enonic.cms.store.dao.UserDao;
-
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
 
 public class UserResourceTest
     extends AbstractResourceTest
@@ -58,35 +50,6 @@ public class UserResourceTest
 
         assertJsonResult( "user_detail.json", info );
 
-    }
-
-    @Test
-    public void testChangePassword_validPassword()
-        throws Exception
-    {
-        AccountGenericResult result = userResource.changePassword( "AF7AF7S9F79SDF7S98DF7S9DF87", "vAl1dPa55W0rD" );
-        assertTrue( result.isSuccess() );
-    }
-
-    @Test
-    public void testChangePassword_invalidPassword()
-        throws Exception
-    {
-        AccountGenericResult shortPasswordResult = userResource.changePassword( "DF7SD6F87SD6FA7F68A", "123" );
-        assertFalse( shortPasswordResult.isSuccess() );
-        StringBuilder longPassword = new StringBuilder( "123456789" );
-        while ( longPassword.length() <= 64 )
-        {
-            longPassword.append( "123456789" );
-        }
-        AccountGenericResult longPasswordResult = userResource.changePassword( "SDF7SDF7S8D7F9S8D7FS89", longPassword.toString() );
-        assertFalse( longPasswordResult.isSuccess() );
-    }
-
-    private BufferedImage readPhoto()
-        throws IOException
-    {
-        return ImageIO.read( getClass().getResource( "x-user.png" ) );
     }
 
     private UserEntity createUser( final String key )

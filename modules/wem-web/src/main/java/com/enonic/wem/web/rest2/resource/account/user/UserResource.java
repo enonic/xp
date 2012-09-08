@@ -29,7 +29,6 @@ public final class UserResource
 
     private UserUpdateService userUpdateService;
 
-
     @GET
     @Path("{key}")
     public UserResult getInfo( @PathParam("key") final String key )
@@ -45,37 +44,10 @@ public final class UserResource
         }
     }
 
-    @GET
-    @Path("/suggest-name")
-    public NameSuggestionResult suggestUsername( @QueryParam("firstname") @DefaultValue("") final String firstName,
-                                                 @QueryParam("lastname") @DefaultValue("") final String lastName,
-                                                 @QueryParam("userstore") @DefaultValue("") final String userStoreName )
-    {
-        return new NameSuggestionResult( "TO-BE-REMOVED" );
-    }
-
-    @POST
-    @Path("{key}/change-password")
-    public AccountGenericResult changePassword( @PathParam("key") final String userKey, @FormParam("newPassword") final String newPassword )
-    {
-
-        AccountGenericResult result;
-        if ( newPassword.length() <= 64 && newPassword.length() >= 8 )
-        {
-            result = new AccountGenericResult( true );
-        }
-        else
-        {
-            result = new AccountGenericResult( false, "Password is out of possible length" );
-        }
-        return result;
-    }
-
     @POST
     @Path("{key}/update")
     public UserUpdateResult updateUser( @PathParam("key") String userKey, UserModel user )
     {
-
         return userUpdateService.updateUser( userKey, user );
     }
 

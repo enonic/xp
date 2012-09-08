@@ -4,7 +4,6 @@ import javax.ws.rs.core.UriBuilder;
 
 import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.web.data.binary.AccountImageController;
-import com.enonic.wem.web.rest2.resource.account.graph.GraphResource;
 import com.enonic.wem.web.rest2.resource.account.group.GroupResource;
 import com.enonic.wem.web.rest2.resource.account.role.RoleResource;
 import com.enonic.wem.web.rest2.resource.account.user.UserResource;
@@ -75,6 +74,6 @@ public class AccountUriHelper
 
     public static String getAccountGraphUri( final String accountKey )
     {
-        return UriBuilder.fromResource( GraphResource.class ).path( accountKey ).build().toString();
+        return UriBuilder.fromPath( "account/graph" ).path( accountKey ).build().toString();
     }
 }
