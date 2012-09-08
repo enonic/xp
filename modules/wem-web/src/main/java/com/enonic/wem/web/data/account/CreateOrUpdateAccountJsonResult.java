@@ -2,10 +2,10 @@ package com.enonic.wem.web.data.account;
 
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.web.json.result.JsonSuccessResult;
+import com.enonic.wem.web.json.JsonResult;
 
 final class CreateOrUpdateAccountJsonResult
-    extends JsonSuccessResult
+    extends JsonResult
 {
     private final boolean created;
 

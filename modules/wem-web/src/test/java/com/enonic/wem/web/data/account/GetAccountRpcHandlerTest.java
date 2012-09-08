@@ -1,7 +1,6 @@
 package com.enonic.wem.web.data.account;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -89,19 +88,14 @@ public class GetAccountRpcHandlerTest
     }
 
 
-    private JsonNode createResult( boolean success, String... errors )
+    private JsonNode createResult( boolean success, String error )
     {
         ObjectNode result = objectNode();
         result.put( "success", success );
-        ArrayNode errorsJson = result.putArray( "errors" );
-        for ( int i = 0; i < errors.length; i++ )
-        {
-            ObjectNode errorJson = errorsJson.addObject();
-            errorJson.put( "id", String.valueOf( i + 1 ) );
-            errorJson.put( "msg", errors[i] );
-            errorJson.putArray( "data" );
-        }
-        return result;
+
+        if (error != null) {
+            result.put( "error", error );
+        }        return result;
     }
 
     private JsonNode createParams( final String key )

@@ -7,7 +7,7 @@ import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.Accounts;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
-import com.enonic.wem.web.json.result.JsonErrorResult;
+import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.jsonrpc.JsonRpcContext;
 
 @Component
@@ -47,15 +47,13 @@ public final class GetAccountRpcHandler
             }
             else
             {
-                JsonErrorResult result = new JsonErrorResult();
-                result.error( "1", "No account(s) were found for key [" + key + "]" );
+                JsonErrorResult result = new JsonErrorResult( "No account(s) were found for key [" + key + "]" );
                 context.setResult( result );
             }
         }
         catch ( IllegalArgumentException e )
         {
-            JsonErrorResult result = new JsonErrorResult();
-            result.error( "1", e.getMessage() );
+            JsonErrorResult result = new JsonErrorResult( e.getMessage() );
             context.setResult( result );
         }
     }

@@ -3,7 +3,7 @@ package com.enonic.wem.web.rest.account;
 import java.util.HashMap;
 import java.util.Map;
 
-class AsciiLettersTextFilter
+final class AsciiLettersTextFilter
 {
 
     private static final char CAPITAL_LETTER_A_GRAVE = '\u00C0';

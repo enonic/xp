@@ -9,7 +9,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.web.data.binary.AccountImageUriResolver;
-import com.enonic.wem.web.json.result.JsonResult;
+import com.enonic.wem.web.json.JsonResult;
 
 final class GetAccountGraphJsonResult
     extends JsonResult

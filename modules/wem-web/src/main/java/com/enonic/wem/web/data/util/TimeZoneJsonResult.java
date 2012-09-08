@@ -8,10 +8,10 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Period;
 
-import com.enonic.wem.web.json.result.JsonSuccessResult;
+import com.enonic.wem.web.json.JsonResult;
 
 final class TimeZoneJsonResult
-    extends JsonSuccessResult
+    extends JsonResult
 {
     private final List<DateTimeZone> list;
 

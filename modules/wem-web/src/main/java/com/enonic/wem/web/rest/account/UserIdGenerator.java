@@ -1,6 +1,6 @@
 package com.enonic.wem.web.rest.account;
 
-public class UserIdGenerator
+public final class UserIdGenerator
 {
     private final static int MAXIMUM_LENGTH = 8;
 

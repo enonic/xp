@@ -6,13 +6,13 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.web.json.result.JsonSuccessResult;
+import com.enonic.wem.web.json.JsonResult;
 
 import com.enonic.cms.core.country.Country;
 import com.enonic.cms.core.country.Region;
 
 final class CountryJsonResult
-    extends JsonSuccessResult
+    extends JsonResult
 {
     private final Collection<Country> list;
 

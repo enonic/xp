@@ -5,10 +5,10 @@ import java.util.Locale;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.web.json.result.JsonSuccessResult;
+import com.enonic.wem.web.json.JsonResult;
 
 final class LocaleJsonResult
-    extends JsonSuccessResult
+    extends JsonResult
 {
     private final Locale[] list;
 
