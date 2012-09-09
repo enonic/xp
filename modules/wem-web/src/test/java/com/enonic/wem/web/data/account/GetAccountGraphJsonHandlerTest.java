@@ -16,7 +16,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
+import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 
 import static org.junit.Assert.*;
 

@@ -1,11 +1,11 @@
-package com.enonic.wem.web.jsonrpc.processor;
+package com.enonic.wem.web.json.rpc.processor;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.web.jsonrpc.JsonRpcContext;
-import com.enonic.wem.web.jsonrpc.JsonRpcException;
-import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
+import com.enonic.wem.web.json.rpc.JsonRpcContext;
+import com.enonic.wem.web.json.rpc.JsonRpcException;
+import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 
 import static org.junit.Assert.*;
 

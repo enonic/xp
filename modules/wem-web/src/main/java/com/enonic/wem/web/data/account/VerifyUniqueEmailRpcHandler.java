@@ -6,7 +6,7 @@ import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.account.query.AccountQuery;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
-import com.enonic.wem.web.jsonrpc.JsonRpcContext;
+import com.enonic.wem.web.json.rpc.JsonRpcContext;
 
 @Component
 public final class VerifyUniqueEmailRpcHandler

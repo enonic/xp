@@ -10,10 +10,10 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Before;
 
 import com.enonic.wem.web.json.ObjectMapperHelper;
-import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
-import com.enonic.wem.web.jsonrpc.processor.JsonRpcProcessorImpl;
-import com.enonic.wem.web.jsonrpc.processor.JsonRpcRequest;
-import com.enonic.wem.web.jsonrpc.processor.JsonRpcResponse;
+import com.enonic.wem.web.json.rpc.JsonRpcHandler;
+import com.enonic.wem.web.json.rpc.processor.JsonRpcProcessorImpl;
+import com.enonic.wem.web.json.rpc.processor.JsonRpcRequest;
+import com.enonic.wem.web.json.rpc.processor.JsonRpcResponse;
 
 import static org.junit.Assert.*;
 

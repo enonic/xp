@@ -12,7 +12,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.account.ChangePassword;
 import com.enonic.wem.web.data.AbstractRpcHandlerTest;
-import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
+import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 
 public class ChangePasswordRpcHandlerTest
     extends AbstractRpcHandlerTest

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.web.data.AbstractDataRpcHandler;
-import com.enonic.wem.web.jsonrpc.JsonRpcContext;
+import com.enonic.wem.web.json.rpc.JsonRpcContext;
 
 import com.enonic.cms.core.country.CountryService;
 

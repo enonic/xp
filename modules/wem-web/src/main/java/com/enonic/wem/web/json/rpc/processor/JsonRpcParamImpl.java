@@ -1,4 +1,4 @@
-package com.enonic.wem.web.jsonrpc.processor;
+package com.enonic.wem.web.json.rpc.processor;
 
 import java.lang.reflect.Array;
 
@@ -9,9 +9,9 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.web.jsonrpc.JsonRpcError;
-import com.enonic.wem.web.jsonrpc.JsonRpcException;
-import com.enonic.wem.web.jsonrpc.JsonRpcParam;
+import com.enonic.wem.web.json.rpc.JsonRpcException;
+import com.enonic.wem.web.json.rpc.JsonRpcError;
+import com.enonic.wem.web.json.rpc.JsonRpcParam;
 
 final class JsonRpcParamImpl
     implements JsonRpcParam

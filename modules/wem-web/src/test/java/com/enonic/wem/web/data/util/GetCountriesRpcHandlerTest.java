@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.web.data.AbstractRpcHandlerTest;
-import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
+import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 
 import com.enonic.cms.core.country.Country;
 import com.enonic.cms.core.country.CountryCode;

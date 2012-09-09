@@ -10,7 +10,7 @@ import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.account.FindMembers;
 import com.enonic.wem.api.command.account.FindMemberships;
 import com.enonic.wem.api.command.account.GetAccounts;
-import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
+import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 
 public class GetAccountRpcHandlerTest
     extends AbstractAccountRpcHandlerTest

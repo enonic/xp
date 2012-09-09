@@ -1,4 +1,4 @@
-package com.enonic.wem.web.jsonrpc.processor;
+package com.enonic.wem.web.json.rpc.processor;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -10,8 +10,8 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.web.json.JsonSerializable;
-import com.enonic.wem.web.jsonrpc.JsonRpcContext;
-import com.enonic.wem.web.jsonrpc.JsonRpcParam;
+import com.enonic.wem.web.json.rpc.JsonRpcContext;
+import com.enonic.wem.web.json.rpc.JsonRpcParam;
 
 final class JsonRpcContextImpl
     implements JsonRpcContext

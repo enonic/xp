@@ -1,10 +1,10 @@
-package com.enonic.wem.web.jsonrpc.processor;
+package com.enonic.wem.web.json.rpc.processor;
 
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.wem.web.jsonrpc.JsonRpcError;
-import com.enonic.wem.web.jsonrpc.JsonRpcException;
-import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
+import com.enonic.wem.web.json.rpc.JsonRpcError;
+import com.enonic.wem.web.json.rpc.JsonRpcException;
+import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 
 final class JsonRpcHandlerMap
 {

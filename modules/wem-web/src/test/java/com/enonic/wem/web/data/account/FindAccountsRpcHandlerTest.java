@@ -14,7 +14,7 @@ import com.enonic.wem.api.account.query.AccountFacetEntry;
 import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.command.account.FindAccounts;
 import com.enonic.wem.api.command.account.GetAccounts;
-import com.enonic.wem.web.jsonrpc.JsonRpcHandler;
+import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 
 public class FindAccountsRpcHandlerTest
     extends AbstractAccountRpcHandlerTest
