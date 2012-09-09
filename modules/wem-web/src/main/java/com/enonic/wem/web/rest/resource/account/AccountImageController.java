@@ -1,4 +1,4 @@
-package com.enonic.wem.web.data.binary;
+package com.enonic.wem.web.rest.resource.account;
 
 import java.awt.image.BufferedImage;
 
@@ -18,7 +18,7 @@ import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
 
 @Component
-@Path("binary/account/image")
+@Path("account/image")
 @Produces("image/png")
 public final class AccountImageController
 {

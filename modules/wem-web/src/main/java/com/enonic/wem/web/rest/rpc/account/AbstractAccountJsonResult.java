@@ -4,7 +4,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.UserAccount;
-import com.enonic.wem.web.data.binary.AccountImageUriResolver;
+import com.enonic.wem.web.rest.resource.account.AccountImageUriResolver;
 import com.enonic.wem.web.json.JsonResult;
 
 abstract class AbstractAccountJsonResult

@@ -13,7 +13,7 @@ import com.sun.jersey.spi.container.WebApplication;
 import com.sun.jersey.spi.container.servlet.WebConfig;
 import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
 
-import com.enonic.wem.web.rest2.filter.AllowOriginFilter;
+import com.enonic.wem.web.rest.filter.AllowOriginFilter;
 
 public final class JaxRsServlet
     extends SpringServlet

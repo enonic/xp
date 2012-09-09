@@ -11,7 +11,7 @@
     "createdTime": "2012-01-01T10:01:10.101+01:00",
     "editable": false,
     "deleted": false,
-    "image_url": "http://localhost/admin/rest/binary/account/image/default/role",
+    "image_url": "http://localhost/admin/rest/account/image/default/role",
     "members": [
         {
             "key": "user:enonic:2",
@@ -25,7 +25,7 @@
             "createdTime": "2012-01-01T10:01:10.101+01:00",
             "editable": false,
             "deleted": false,
-            "image_url": "http://localhost/admin/rest/binary/account/image/user:enonic:2",
+            "image_url": "http://localhost/admin/rest/account/image/user:enonic:2",
             "email": "2@enonic.com"
         }
     ]

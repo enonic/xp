@@ -11,7 +11,7 @@
     "createdTime": "2012-01-01T10:01:10.101+01:00",
     "editable": false,
     "deleted": false,
-    "image_url": "http://localhost/admin/rest/binary/account/image/user:enonic:1",
+    "image_url": "http://localhost/admin/rest/account/image/user:enonic:1",
     "email": "1@enonic.com",
     "memberships": [
         {
@@ -26,7 +26,7 @@
             "createdTime": "2012-01-01T10:01:10.101+01:00",
             "editable": false,
             "deleted": false,
-            "image_url": "http://localhost/admin/rest/binary/account/image/default/group"
+            "image_url": "http://localhost/admin/rest/account/image/default/group"
         },
         {
             "key": "role:enonic:3",
@@ -40,7 +40,7 @@
             "createdTime": "2012-01-01T10:01:10.101+01:00",
             "editable": false,
             "deleted": false,
-            "image_url": "http://localhost/admin/rest/binary/account/image/default/role"
+            "image_url": "http://localhost/admin/rest/account/image/default/role"
         }
     ]
 }

@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.provider;
+package com.enonic.wem.web.rest.provider;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;

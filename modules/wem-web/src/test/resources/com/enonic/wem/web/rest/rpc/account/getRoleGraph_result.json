@@ -8,7 +8,7 @@
                 "type": "user",
                 "key": "user:enonic:aro",
                 "name": "aro",
-                "image_uri": "http://localhost/admin/rest/binary/account/image/user:enonic:aro"
+                "image_uri": "http://localhost/admin/rest/account/image/user:enonic:aro"
             },
             "adjacencies": []
         },
@@ -19,7 +19,7 @@
                 "type": "group",
                 "key": "group:enonic:Togservice",
                 "name": "Togservice",
-                "image_uri": "http://localhost/admin/rest/binary/account/image/default/group"
+                "image_uri": "http://localhost/admin/rest/account/image/default/group"
             },
             "adjacencies": []
         },
@@ -30,7 +30,7 @@
                 "type": "role",
                 "key": "role:enonic:admin",
                 "name": "admin",
-                "image_uri": "http://localhost/admin/rest/binary/account/image/default/role"
+                "image_uri": "http://localhost/admin/rest/account/image/default/role"
             },
             "adjacencies": [
                 {

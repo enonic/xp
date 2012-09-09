@@ -1,4 +1,4 @@
-package com.enonic.wem.web.data.binary;
+package com.enonic.wem.web.rest.resource.account;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -17,6 +17,7 @@ import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.command.account.GetAccounts;
+import com.enonic.wem.web.rest.resource.account.AccountImageController;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.filter;
+package com.enonic.wem.web.rest.filter;
 
 import org.springframework.stereotype.Component;
 

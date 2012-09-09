@@ -1,4 +1,4 @@
-package com.enonic.wem.web.data.binary;
+package com.enonic.wem.web.rest.resource.account;
 
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -47,7 +47,7 @@ public final class AccountImageUriResolver
 
     private static String buildImageUrl( final String path )
     {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().path( "admin/rest/binary/account/image/" ).path(
+        return ServletUriComponentsBuilder.fromCurrentContextPath().path( "admin/rest/account/image/" ).path(
             path ).build().toString();
     }
 }

@@ -3,7 +3,7 @@ package com.enonic.wem.web.rest2.resource.account;
 import javax.ws.rs.core.UriBuilder;
 
 import com.enonic.wem.api.account.AccountType;
-import com.enonic.wem.web.data.binary.AccountImageController;
+import com.enonic.wem.web.rest.resource.account.AccountImageController;
 import com.enonic.wem.web.rest2.resource.account.group.GroupResource;
 import com.enonic.wem.web.rest2.resource.account.role.RoleResource;
 import com.enonic.wem.web.rest2.resource.account.user.UserResource;

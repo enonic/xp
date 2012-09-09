@@ -1,4 +1,4 @@
-package com.enonic.wem.web.data.binary;
+package com.enonic.wem.web.rest.resource.account;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;

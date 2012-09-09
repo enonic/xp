@@ -13,7 +13,7 @@
         "createdTime" : "2012-01-01T10:01:10.101+01:00",
         "editable" : false,
         "deleted" : false,
-        "image_url" : "http://localhost/admin/rest/binary/account/image/user:enonic:user1",
+        "image_url" : "http://localhost/admin/rest/account/image/user:enonic:user1",
         "email" : "user1@enonic.com"
     }, {
         "key" : "group:enonic:group1",
@@ -27,7 +27,7 @@
         "createdTime" : "2012-01-01T10:01:10.101+01:00",
         "editable" : false,
         "deleted" : false,
-        "image_url" : "http://localhost/admin/rest/binary/account/image/default/group"
+        "image_url" : "http://localhost/admin/rest/account/image/default/group"
     }, {
         "key" : "role:system:contributors",
         "type" : "role",
@@ -40,7 +40,7 @@
         "createdTime" : "2012-01-01T10:01:10.101+01:00",
         "editable" : false,
         "deleted" : false,
-        "image_url" : "http://localhost/admin/rest/binary/account/image/default/role"
+        "image_url" : "http://localhost/admin/rest/account/image/default/role"
     }, {
         "key" : "user:system:admin",
         "type" : "user",
@@ -53,7 +53,7 @@
         "createdTime" : "2012-01-01T10:01:10.101+01:00",
         "editable" : false,
         "deleted" : false,
-        "image_url" : "http://localhost/admin/rest/binary/account/image/default/admin",
+        "image_url" : "http://localhost/admin/rest/account/image/default/admin",
         "email" : "admin@system.com"
     }, {
         "key" : "user:system:anonymous",
@@ -67,7 +67,7 @@
         "createdTime" : "2012-01-01T10:01:10.101+01:00",
         "editable" : false,
         "deleted" : false,
-        "image_url" : "http://localhost/admin/rest/binary/account/image/default/anonymous",
+        "image_url" : "http://localhost/admin/rest/account/image/default/anonymous",
         "email" : "anonymous@system.com"
     } ],
     "facets" : [ ]
