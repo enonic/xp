@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest.account;
+package com.enonic.wem.web.rest2.resource.old;
 
 import com.enonic.cms.api.client.model.user.Address;
 import com.enonic.cms.api.client.model.user.Gender;

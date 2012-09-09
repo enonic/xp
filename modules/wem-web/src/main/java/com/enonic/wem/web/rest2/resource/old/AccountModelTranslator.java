@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest.account;
+package com.enonic.wem.web.rest2.resource.old;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

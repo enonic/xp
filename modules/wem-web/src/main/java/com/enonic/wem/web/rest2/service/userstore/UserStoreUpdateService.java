@@ -11,7 +11,7 @@ import com.enonic.wem.core.search.account.AccountIndexData;
 import com.enonic.wem.core.search.account.AccountKey;
 import com.enonic.wem.core.search.account.AccountSearchService;
 import com.enonic.wem.core.search.account.Group;
-import com.enonic.wem.web.rest.account.AccountModelTranslator;
+import com.enonic.wem.web.rest2.resource.old.AccountModelTranslator;
 
 import com.enonic.cms.framework.xml.XMLDocumentFactory;
 

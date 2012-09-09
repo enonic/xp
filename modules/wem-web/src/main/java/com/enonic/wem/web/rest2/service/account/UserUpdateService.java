@@ -10,8 +10,8 @@ import com.enonic.wem.core.search.UserInfoHelper;
 import com.enonic.wem.core.search.account.AccountIndexData;
 import com.enonic.wem.core.search.account.AccountKey;
 import com.enonic.wem.core.search.account.AccountSearchService;
-import com.enonic.wem.web.rest.account.AccountModelTranslator;
-import com.enonic.wem.web.rest.account.UserModel;
+import com.enonic.wem.web.rest2.resource.old.AccountModelTranslator;
+import com.enonic.wem.web.rest2.resource.old.UserModel;
 import com.enonic.wem.web.rest2.resource.account.user.UserUpdateResult;
 
 import com.enonic.cms.core.security.user.StoreNewUserCommand;

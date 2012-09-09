@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest.account;
+package com.enonic.wem.web.rest2.resource.old;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonCreator;
