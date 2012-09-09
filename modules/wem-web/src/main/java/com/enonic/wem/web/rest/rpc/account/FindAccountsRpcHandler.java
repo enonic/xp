@@ -1,4 +1,4 @@
-package com.enonic.wem.web.data.account;
+package com.enonic.wem.web.rest.rpc.account;
 
 import java.util.Set;
 

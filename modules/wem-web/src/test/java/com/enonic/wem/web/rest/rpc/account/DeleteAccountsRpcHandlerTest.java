@@ -1,4 +1,4 @@
-package com.enonic.wem.web.data.account;
+package com.enonic.wem.web.rest.rpc.account;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -7,6 +7,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.account.DeleteAccounts;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
+import com.enonic.wem.web.rest.rpc.account.DeleteAccountsRpcHandler;
 
 public class DeleteAccountsRpcHandlerTest
     extends AbstractRpcHandlerTest

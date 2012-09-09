@@ -1,4 +1,4 @@
-package com.enonic.wem.web.data.account;
+package com.enonic.wem.web.rest.rpc.account;
 
 import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Test;
@@ -11,6 +11,7 @@ import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.command.account.FindAccounts;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
+import com.enonic.wem.web.rest.rpc.account.VerifyUniqueEmailRpcHandler;
 
 public class VerifyUniqueEmailRpcHandlerTest
     extends AbstractRpcHandlerTest

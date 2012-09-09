@@ -1,4 +1,4 @@
-package com.enonic.wem.web.data.account;
+package com.enonic.wem.web.rest.rpc.account;
 
 import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Test;
@@ -12,6 +12,7 @@ import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.command.account.GetAccounts;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
+import com.enonic.wem.web.rest.rpc.account.SuggestUserNameRpcHandler;
 
 public class SuggestUserNameRpcHandlerTest
     extends AbstractRpcHandlerTest

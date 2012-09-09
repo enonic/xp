@@ -1,4 +1,4 @@
-package com.enonic.wem.web.data.account;
+package com.enonic.wem.web.rest.rpc.account;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,6 +13,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.account.ChangePassword;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
+import com.enonic.wem.web.rest.rpc.account.ChangePasswordRpcHandler;
 
 public class ChangePasswordRpcHandlerTest
     extends AbstractRpcHandlerTest
