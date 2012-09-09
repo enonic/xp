@@ -18,7 +18,7 @@ import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.command.account.CreateAccount;
 import com.enonic.wem.api.command.account.GetAccounts;
 import com.enonic.wem.api.command.account.UpdateAccounts;
-import com.enonic.wem.web.data.AbstractRpcHandlerTest;
+import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest2.service.upload.UploadItem;
 import com.enonic.wem.web.rest2.service.upload.UploadService;

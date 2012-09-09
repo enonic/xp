@@ -5,7 +5,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.account.DeleteAccounts;
-import com.enonic.wem.web.data.AbstractRpcHandlerTest;
+import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 
 public class DeleteAccountsRpcHandlerTest

@@ -11,7 +11,7 @@ import com.enonic.wem.api.account.Accounts;
 import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.account.query.AccountQuery;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.web.data.AbstractDataRpcHandler;
+import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 
 @Component

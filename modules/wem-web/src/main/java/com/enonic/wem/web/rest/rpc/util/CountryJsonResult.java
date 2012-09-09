@@ -1,4 +1,4 @@
-package com.enonic.wem.web.data.util;
+package com.enonic.wem.web.rest.rpc.util;
 
 import java.util.Collection;
 

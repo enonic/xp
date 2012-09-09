@@ -1,4 +1,4 @@
-package com.enonic.wem.web.data;
+package com.enonic.wem.web.rest.rpc;
 
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;

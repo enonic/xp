@@ -1,4 +1,4 @@
-package com.enonic.wem.web.data.util;
+package com.enonic.wem.web.rest.rpc.util;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.web.data.AbstractRpcHandlerTest;
+import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 
 import com.enonic.cms.core.country.Country;

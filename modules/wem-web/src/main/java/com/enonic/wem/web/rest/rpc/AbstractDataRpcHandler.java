@@ -1,4 +1,4 @@
-package com.enonic.wem.web.data;
+package com.enonic.wem.web.rest.rpc;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

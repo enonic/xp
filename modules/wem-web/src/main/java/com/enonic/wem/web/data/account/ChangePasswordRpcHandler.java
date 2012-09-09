@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.account.ChangePassword;
-import com.enonic.wem.web.data.AbstractDataRpcHandler;
+import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 
 @Component

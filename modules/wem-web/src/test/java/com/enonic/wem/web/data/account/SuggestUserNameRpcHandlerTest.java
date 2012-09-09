@@ -10,7 +10,7 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.Accounts;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.command.account.GetAccounts;
-import com.enonic.wem.web.data.AbstractRpcHandlerTest;
+import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 
 public class SuggestUserNameRpcHandlerTest

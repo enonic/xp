@@ -16,7 +16,7 @@ import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.query.AccountFacets;
 import com.enonic.wem.api.account.query.AccountQueryHits;
-import com.enonic.wem.web.data.AbstractRpcHandlerTest;
+import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
 public abstract class AbstractAccountRpcHandlerTest
     extends AbstractRpcHandlerTest

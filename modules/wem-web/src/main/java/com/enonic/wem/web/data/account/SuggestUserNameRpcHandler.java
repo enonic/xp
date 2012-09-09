@@ -6,7 +6,7 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.Accounts;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.web.data.AbstractDataRpcHandler;
+import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest2.service.account.UserIdGenerator;
 
