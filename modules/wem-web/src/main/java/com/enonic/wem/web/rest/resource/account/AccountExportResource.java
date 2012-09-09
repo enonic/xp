@@ -17,11 +17,9 @@ public class AccountExportResource
 {
     @GET
     @Path("query")
-    public Response byQuery( @QueryParam("sort") @DefaultValue("") String sort, @QueryParam("dir") @DefaultValue("ASC") String sortDir,
-                             @QueryParam("query") @DefaultValue("") String query,
+    public Response byQuery( @QueryParam("query") @DefaultValue("") String query,
                              @QueryParam("type") @DefaultValue("users,groups,roles") String types,
-                             @QueryParam("userstores") @DefaultValue("") String userStores,
-                             @QueryParam("organizations") @DefaultValue("") String organizations,
+                             @QueryParam("userStores") @DefaultValue("") String userStores,
                              @QueryParam("encoding") @DefaultValue("ISO-8859-1") String characterEncoding,
                              @QueryParam("separator") @DefaultValue("\t") String separator )
     {
