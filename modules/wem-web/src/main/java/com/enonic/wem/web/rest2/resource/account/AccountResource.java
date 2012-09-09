@@ -25,7 +25,7 @@ import com.enonic.wem.core.search.account.AccountSearchQuery;
 import com.enonic.wem.core.search.account.AccountSearchResults;
 import com.enonic.wem.core.search.account.AccountSearchService;
 import com.enonic.wem.core.search.account.AccountType;
-import com.enonic.wem.web.rest2.service.account.AccountCsvExportService;
+import com.enonic.wem.web.rest.service.account.AccountCsvExportService;
 
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.group.GroupKey;

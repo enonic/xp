@@ -17,21 +17,20 @@ import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.command.account.GetAccounts;
-import com.enonic.wem.web.rest.resource.account.AccountImageController;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class AccountImageControllerTest
+public class AccountImageResourceTest
 {
-    private AccountImageController controller;
+    private AccountImageResource controller;
 
     @Before
     public void setUp()
         throws Exception
     {
-        this.controller = new AccountImageController();
+        this.controller = new AccountImageResource();
     }
 
     private void setupAccount( final Account account )

@@ -20,9 +20,8 @@ import com.enonic.wem.api.command.account.GetAccounts;
 import com.enonic.wem.api.command.account.UpdateAccounts;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
-import com.enonic.wem.web.rest.rpc.account.CreateOrUpdateAccountRpcHandler;
-import com.enonic.wem.web.rest2.service.upload.UploadItem;
-import com.enonic.wem.web.rest2.service.upload.UploadService;
+import com.enonic.wem.web.rest.service.upload.UploadItem;
+import com.enonic.wem.web.rest.service.upload.UploadService;
 
 public class CreateOrUpdateAccountRpcHandlerTest
     extends AbstractRpcHandlerTest

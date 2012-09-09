@@ -20,8 +20,8 @@ import com.enonic.wem.api.account.editor.AccountEditors;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
-import com.enonic.wem.web.rest2.service.upload.UploadItem;
-import com.enonic.wem.web.rest2.service.upload.UploadService;
+import com.enonic.wem.web.rest.service.upload.UploadItem;
+import com.enonic.wem.web.rest.service.upload.UploadService;
 
 @Component
 public final class CreateOrUpdateAccountRpcHandler

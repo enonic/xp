@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.service.upload;
+package com.enonic.wem.web.rest.service.upload;
 
 import java.io.IOException;
 import java.io.InputStream;

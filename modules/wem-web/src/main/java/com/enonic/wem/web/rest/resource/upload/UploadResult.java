@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.resource.upload;
+package com.enonic.wem.web.rest.resource.upload;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.web.rest2.common.JsonResult;
-import com.enonic.wem.web.rest2.service.upload.UploadItem;
+import com.enonic.wem.web.rest.service.upload.UploadItem;
 
 public final class UploadResult
     extends JsonResult

@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2;
+package com.enonic.wem.web.rest;
 
 import java.util.List;
 import java.util.Map;

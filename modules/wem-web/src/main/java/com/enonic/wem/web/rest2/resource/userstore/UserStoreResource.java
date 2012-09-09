@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
 
-import com.enonic.wem.web.rest2.service.userstore.UserStoreUpdateService;
+import com.enonic.wem.web.rest.service.userstore.UserStoreUpdateService;
 
 import com.enonic.cms.core.security.SecurityService;
 import com.enonic.cms.core.security.group.GroupEntity;

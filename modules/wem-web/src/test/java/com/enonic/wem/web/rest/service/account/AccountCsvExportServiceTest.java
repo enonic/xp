@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.service.account;
+package com.enonic.wem.web.rest.service.account;
 
 
 import org.joda.time.DateTime;
@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.core.search.account.AccountKey;
 import com.enonic.wem.core.search.account.AccountSearchResults;
 import com.enonic.wem.core.search.account.AccountType;
+import com.enonic.wem.web.rest.service.account.AccountCsvExportService;
 
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.group.GroupKey;

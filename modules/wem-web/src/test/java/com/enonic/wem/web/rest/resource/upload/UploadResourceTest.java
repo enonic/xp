@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.resource.upload;
+package com.enonic.wem.web.rest.resource.upload;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -13,9 +13,9 @@ import org.mockito.Mockito;
 import com.google.common.collect.Lists;
 import com.sun.jersey.multipart.file.StreamDataBodyPart;
 
-import com.enonic.wem.web.rest2.resource.AbstractResourceTest;
-import com.enonic.wem.web.rest2.service.upload.UploadItem;
-import com.enonic.wem.web.rest2.service.upload.UploadService;
+import com.enonic.wem.web.rest.resource.AbstractResourceTest;
+import com.enonic.wem.web.rest.service.upload.UploadItem;
+import com.enonic.wem.web.rest.service.upload.UploadService;
 
 public class UploadResourceTest
     extends AbstractResourceTest

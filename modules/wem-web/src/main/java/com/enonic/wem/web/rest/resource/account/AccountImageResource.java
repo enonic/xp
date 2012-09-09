@@ -20,13 +20,13 @@ import com.enonic.wem.api.command.Commands;
 @Component
 @Path("account/image")
 @Produces("image/png")
-public final class AccountImageController
+public final class AccountImageResource
 {
     private final AccountImageHelper helper;
 
     private Client client;
 
-    public AccountImageController()
+    public AccountImageResource()
         throws Exception
     {
         this.helper = new AccountImageHelper();

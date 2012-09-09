@@ -3,7 +3,7 @@ package com.enonic.wem.web.rest2.resource.account;
 import javax.ws.rs.core.UriBuilder;
 
 import com.enonic.wem.api.account.AccountType;
-import com.enonic.wem.web.rest.resource.account.AccountImageController;
+import com.enonic.wem.web.rest.resource.account.AccountImageResource;
 import com.enonic.wem.web.rest2.resource.account.group.GroupResource;
 import com.enonic.wem.web.rest2.resource.account.role.RoleResource;
 import com.enonic.wem.web.rest2.resource.account.user.UserResource;
@@ -15,7 +15,7 @@ public class AccountUriHelper
 {
     private static String getImageUri( final String name )
     {
-        return UriBuilder.fromResource( AccountImageController.class ).path( "default" ).path( name ).build().toString();
+        return UriBuilder.fromResource( AccountImageResource.class ).path( "default" ).path( name ).build().toString();
     }
 
     public static String getAccountInfoUri( final AccountType type, final String accountKey )
@@ -50,7 +50,7 @@ public class AccountUriHelper
         }
         if ( userAccount.hasPhoto() )
         {
-            return UriBuilder.fromResource( AccountImageController.class ).path(
+            return UriBuilder.fromResource( AccountImageResource.class ).path(
                 NewAccountKeyHelper.composeNewKey( userAccount ) ).build().toString();
         }
         else

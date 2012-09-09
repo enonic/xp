@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.web.rest2.resource.old.UserModel;
-import com.enonic.wem.web.rest2.service.account.UserUpdateService;
+import com.enonic.wem.web.rest.service.account.UserUpdateService;
 
 import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.store.dao.UserDao;
