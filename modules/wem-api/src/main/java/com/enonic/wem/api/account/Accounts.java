@@ -38,24 +38,6 @@ public final class Accounts
         return this.list;
     }
 
-    public Accounts add( final Account... accounts )
-    {
-        return add( ImmutableList.copyOf( accounts ) );
-    }
-
-    public Accounts add( final Iterable<? extends Account> accounts )
-    {
-        return add( ImmutableList.copyOf( accounts ) );
-    }
-
-    private Accounts add( final ImmutableList<Account> accounts )
-    {
-        final ImmutableList.Builder<Account> builder = ImmutableList.builder();
-        builder.addAll( this.list );
-        builder.addAll( accounts );
-        return new Accounts( builder.build() );
-    }
-
     public AccountKeys getKeys()
     {
         final Collection<AccountKey> keys = Collections2.transform( this.list, new ToKeyFunction() );

@@ -4,6 +4,8 @@ Ext.define('Admin.lib.RemoteService', {
 
     singleton: true,
 
+    handlerCache: {},
+
     init: function () {
         var config = {
             "url": Admin.lib.UriHelper.getAbsoluteUri("admin/rest/jsonrpc"),
@@ -15,7 +17,7 @@ Ext.define('Admin.lib.RemoteService', {
             ]
         };
 
-        Ext.Direct.addProvider(config);
+        this.provider = Ext.Direct.addProvider(config);
         Ext.direct.RemotingProvider.enableBuffer = 20;
     },
 
@@ -61,6 +63,24 @@ Ext.define('Admin.lib.RemoteService', {
 
     util_getTimeZones: function (params, callback) {
         console.log(params, callback);
+    },
+
+    getMethod: function (name) {
+        var handler = this.handlerCache[name];
+
+        if (handler) {
+            return handler;
+        }
+
+        var method = new Ext.direct.RemotingMethod({name: name, len: 1});
+        handler = this.provider.createHandler(null, method);
+        this.handlerCache[name] = handler;
+        return handler;
+    },
+
+    call: function (name, params, callback) {
+        var method = this.getMethod(name);
+        return method(params, callback);
     }
 
 }, function () {

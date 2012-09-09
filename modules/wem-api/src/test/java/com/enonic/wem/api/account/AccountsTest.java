@@ -121,26 +121,6 @@ public final class AccountsTest
     }
 
     @Test
-    public void testAdd_accounts()
-    {
-        final Accounts original = Accounts.from( this.account1 );
-        final Accounts total = original.add( this.account2 );
-
-        assertEquals( 1, original.getSize() );
-        assertEquals( 2, total.getSize() );
-    }
-
-    @Test
-    public void testAdd_iterator()
-    {
-        final Accounts original = Accounts.from( this.account1 );
-        final Accounts total = original.add( Lists.newArrayList( this.account2 ) );
-
-        assertEquals( 1, original.getSize() );
-        assertEquals( 2, total.getSize() );
-    }
-
-    @Test
     public void testGetKeys()
     {
         final Accounts list = Accounts.from( this.account1, this.account2 );
