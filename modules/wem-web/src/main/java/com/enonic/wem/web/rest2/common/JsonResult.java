@@ -6,6 +6,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.web.json.JsonSerializable;
 
+@Deprecated
 public abstract class JsonResult
     implements JsonSerializable
 {
