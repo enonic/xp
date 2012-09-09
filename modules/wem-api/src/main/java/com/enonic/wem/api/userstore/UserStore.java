@@ -1,5 +1,6 @@
 package com.enonic.wem.api.userstore;
 
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.userstore.config.UserStoreConfig;
 import com.enonic.wem.api.userstore.connector.UserStoreConnector;
 import com.enonic.wem.api.userstore.statistics.UserStoreStatistics;
@@ -15,6 +16,8 @@ public final class UserStore
     private UserStoreConfig config;
 
     private UserStoreStatistics statistics;
+
+    private AccountKeys administrators;
 
     public UserStore( final UserStoreName name )
     {
@@ -64,5 +67,15 @@ public final class UserStore
     public void setStatistics( final UserStoreStatistics statistics )
     {
         this.statistics = statistics;
+    }
+
+    public AccountKeys getAdministrators()
+    {
+        return administrators;
+    }
+
+    public void setAdministrators( final AccountKeys administrators )
+    {
+        this.administrators = administrators;
     }
 }
