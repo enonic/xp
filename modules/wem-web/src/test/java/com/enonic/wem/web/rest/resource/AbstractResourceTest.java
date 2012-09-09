@@ -5,8 +5,8 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.enonic.wem.web.json.JsonResult;
 import com.enonic.wem.web.json.ObjectMapperHelper;
-import com.enonic.wem.web.rest2.common.JsonResult;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

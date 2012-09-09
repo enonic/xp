@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 import com.google.common.collect.Lists;
 import com.sun.jersey.multipart.file.StreamDataBodyPart;
 
+import com.enonic.wem.web.json.JsonResult;
 import com.enonic.wem.web.rest.resource.AbstractResourceTest;
 import com.enonic.wem.web.rest.service.upload.UploadItem;
 import com.enonic.wem.web.rest.service.upload.UploadService;
@@ -40,7 +41,7 @@ public class UploadResourceTest
     public void testUpload_noParts()
         throws Exception
     {
-        final UploadResult result = this.resource.upload( this.parts );
+        final JsonResult result = this.resource.upload( this.parts );
         assertJsonResult( "upload_empty.json", result );
     }
 
@@ -49,7 +50,7 @@ public class UploadResourceTest
         throws Exception
     {
         addFile( "1", "text.txt", new byte[10], "text/plain" );
-        final UploadResult result = this.resource.upload( this.parts );
+        final JsonResult result = this.resource.upload( this.parts );
         assertJsonResult( "upload_one_part.json", result );
     }
 
@@ -59,7 +60,7 @@ public class UploadResourceTest
     {
         addFile( "1", "text.txt", new byte[10], "text/plain" );
         addFile( "2", "image.png", new byte[20], "image/png" );
-        final UploadResult result = this.resource.upload( this.parts );
+        final JsonResult result = this.resource.upload( this.parts );
         assertJsonResult( "upload_two_parts.json", result );
     }
 

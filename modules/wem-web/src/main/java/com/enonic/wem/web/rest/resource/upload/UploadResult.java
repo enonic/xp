@@ -2,14 +2,13 @@ package com.enonic.wem.web.rest.resource.upload;
 
 import java.util.List;
 
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.web.rest2.common.JsonResult;
+import com.enonic.wem.web.json.JsonResult;
 import com.enonic.wem.web.rest.service.upload.UploadItem;
 
-public final class UploadResult
+final class UploadResult
     extends JsonResult
 {
     private final List<UploadItem> items;
@@ -20,17 +19,13 @@ public final class UploadResult
     }
 
     @Override
-    public JsonNode toJson()
+    protected void serialize( final ObjectNode json )
     {
-        final ObjectNode json = objectNode();
         final ArrayNode array = json.putArray( "items" );
-
         for ( final UploadItem item : this.items )
         {
             array.add( toJson( item ) );
         }
-
-        return json;
     }
 
     private ObjectNode toJson( final UploadItem item )

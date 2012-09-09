@@ -16,6 +16,8 @@ import com.google.common.collect.Lists;
 import com.sun.jersey.multipart.FormDataParam;
 import com.sun.jersey.multipart.file.StreamDataBodyPart;
 
+import com.enonic.wem.web.json.JsonResult;
+import com.enonic.wem.web.json.JsonSerializable;
 import com.enonic.wem.web.rest.service.upload.UploadItem;
 import com.enonic.wem.web.rest.service.upload.UploadService;
 
@@ -28,7 +30,7 @@ public final class UploadResource
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public UploadResult upload( final @FormDataParam("file") List<StreamDataBodyPart> parts )
+    public JsonResult upload( final @FormDataParam("file") List<StreamDataBodyPart> parts )
         throws Exception
     {
         final List<UploadItem> items = Lists.newArrayList();
