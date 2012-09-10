@@ -49,7 +49,7 @@ public final class FindMembershipsHandler
 
         final String accountName = account.getLocalName();
         final UserStoreEntity userStore = userStoreDao.findByName( account.getUserStore() );
-        if ( userStore == null )
+        if ( ( userStore == null ) && ( !"system".equals( account.getUserStore() ) ) )
         {
             throw new AccountNotFoundException( account );
         }
@@ -78,6 +78,12 @@ public final class FindMembershipsHandler
 
     private GroupEntity findUserGroup( final UserStoreEntity userStore, final String accountName )
     {
+        if ( userStore == null )
+        {
+            final UserEntity globalUser = userDao.findBuiltInGlobalByName( accountName );
+            return globalUser == null ? null : globalUser.getUserGroup();
+        }
+
         final UserEntity user = userDao.findByQualifiedUsername( new QualifiedUsername( userStore.getName(), accountName ) );
         if ( user == null )
         {
@@ -88,6 +94,11 @@ public final class FindMembershipsHandler
 
     private GroupEntity findGroupOrRole( final UserStoreEntity userStore, final String groupName )
     {
+        if ( userStore == null )
+        {
+            return this.groupDao.findGlobalGroupByName( groupName, false );
+        }
+
         final List<GroupEntity> groups = groupDao.findByUserStoreKeyAndGroupname( userStore.getKey(), groupName, false );
         if ( ( groups == null ) || groups.isEmpty() )
         {
