@@ -12,7 +12,7 @@ public class Phone
 {
     Phone()
     {
-        super( "phone", DataTypes.STRING );
+        super( "phone", DataTypes.TEXT );
     }
 
     public boolean requiresConfig()

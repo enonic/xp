@@ -2,44 +2,39 @@ package com.enonic.wem.core.content.data;
 
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
-import com.enonic.wem.core.content.type.ContentType;
-
 public class ContentDataSerializerJson
 {
-    private DataSetSerializerJson dataSetSerializer = new DataSetSerializerJson();
-
-    public ContentDataSerializerJson()
-    {
-
-    }
+    private DataSerializerJson dataSerializer = new DataSerializerJson();
 
     public void generate( ContentData contentData, JsonGenerator g )
         throws IOException
     {
-        g.writeObjectFieldStart( "data" );
-        dataSetSerializer.generate( contentData.getDataSet(), g, false );
-        g.writeEndObject();
+        g.writeArrayFieldStart( "data" );
+        for ( final Data data : contentData )
+        {
+            dataSerializer.generate( data, g );
+        }
+        g.writeEndArray();
     }
 
-    public ContentData parse( final JsonNode contentNode, final ContentType contentType )
+    public ContentData parse( final JsonNode contentNode )
     {
         final JsonNode contentDataNode = contentNode.get( "data" );
 
-        ContentData contentData;
-        if ( contentType == null )
+        ContentData contentData = new ContentData();
+        DataSet dataSet = new DataSet( new EntryPath( "" ) );
+        final Iterator<JsonNode> dataIt = contentDataNode.getElements();
+        while ( dataIt.hasNext() )
         {
-            contentData = new ContentData();
-            contentData.setDataSet( dataSetSerializer.parse( contentDataNode, null ) );
+            final JsonNode eNode = dataIt.next();
+            dataSet.add( dataSerializer.parse( eNode ) );
         }
-        else
-        {
-            contentData = new ContentData();
-            contentData.setDataSet( dataSetSerializer.parse( contentDataNode, contentType.getFormItems() ) );
-        }
+        contentData.setDataSet( dataSet );
 
         return contentData;
     }

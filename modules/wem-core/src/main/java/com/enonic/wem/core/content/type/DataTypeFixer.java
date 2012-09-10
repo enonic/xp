@@ -3,7 +3,6 @@ package com.enonic.wem.core.content.type;
 
 import com.enonic.wem.core.content.data.ContentData;
 import com.enonic.wem.core.content.data.Data;
-import com.enonic.wem.core.content.data.Entry;
 import com.enonic.wem.core.content.type.formitem.Component;
 
 public class DataTypeFixer
@@ -17,12 +16,11 @@ public class DataTypeFixer
 
     public void fix( ContentData contentData )
     {
-        for ( Entry entry : contentData )
+        for ( Data data : contentData )
         {
-            if ( entry instanceof Data )
+            Component component = contentType.getComponent( data.getPath().resolveFormItemPath() );
+            if ( component != null )
             {
-                Data data = (Data) entry;
-                Component component = contentType.getComponent( data.getPath().resolveFormItemPath() );
                 component.getComponentType().ensureType( data );
             }
         }

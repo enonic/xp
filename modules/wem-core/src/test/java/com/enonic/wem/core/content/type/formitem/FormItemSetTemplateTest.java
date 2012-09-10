@@ -24,12 +24,11 @@ public class FormItemSetTemplateTest
             newComponent().name( "age" ).type( ComponentTypes.TEXT_LINE ).build() ).build();
 
         FormItemSetTemplate personTemplate = newFormItemSetTemplate().module( module ).formItemSet(
-            FormItemSet.newFormItemTest().name( "person" ).add(
-                newComponent().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
+            FormItemSet.newFormItemSet().name( "person" ).add( newComponent().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
                 newTemplateReference( ageTemplate ).name( "age" ).build() ).build() ).build();
 
         FormItemSetTemplate addressTemplate = newFormItemSetTemplate().module( module ).formItemSet(
-            FormItemSet.newFormItemTest().name( "address" ).add(
+            FormItemSet.newFormItemSet().name( "address" ).add(
                 newComponent().type( ComponentTypes.TEXT_LINE ).name( "street" ).build() ).add(
                 newComponent().type( ComponentTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(
                 newComponent().type( ComponentTypes.TEXT_LINE ).name( "postalPlace" ).build() ).build() ).build();

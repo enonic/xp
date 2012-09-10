@@ -1,17 +1,17 @@
 package com.enonic.wem.core.content.data;
 
-import org.elasticsearch.common.base.Preconditions;
 import org.joda.time.DateMidnight;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.datatype.DataType;
+import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.datatype.JavaType;
 import com.enonic.wem.core.content.type.formitem.InvalidValueException;
 
 
 public class Data
-    extends Entry
 {
     private EntryPath path;
 
@@ -24,7 +24,6 @@ public class Data
         // protection
     }
 
-    @Override
     public EntryPath getPath()
     {
         return path;
@@ -66,6 +65,31 @@ public class Data
         type.checkValidity( value );
     }
 
+    public void setData( final EntryPath path, final Object value, final DataType dataType )
+    {
+        Preconditions.checkArgument( type == DataTypes.DATA_SET, "TODO" );
+        DataSet dataSet = (DataSet) this.value;
+        dataSet.setData( path, value, dataType );
+    }
+
+    public DataSet getDataSet( final EntryPath path )
+    {
+        Preconditions.checkArgument( getDataType().equals( DataTypes.DATA_SET ) );
+
+        final DataSet dataSet = (DataSet) getValue();
+        return dataSet.getDataSet( path );
+    }
+
+    public boolean isDataSet()
+    {
+        return type.equals( DataTypes.DATA_SET );
+    }
+
+    public DataSet getDataSet()
+    {
+        return (DataSet) value;
+    }
+
     @Override
     public String toString()
     {
@@ -74,11 +98,6 @@ public class Data
         s.add( "type", type.getName() );
         s.add( "value", value );
         return s.toString();
-    }
-
-    public static Builder newBuilder()
-    {
-        return new Builder();
     }
 
     public static Builder newData()

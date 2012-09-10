@@ -96,21 +96,14 @@ public class ContentSerializerJson
         content.setName( JsonParserUtil.getStringValue( "name", contentNode ) );
 
         final String typeAsString = JsonParserUtil.getStringValue( "type", contentNode, null );
-
         if ( typeAsString != null )
         {
             final ContentTypeQualifiedName contentTypeQualifiedName = new ContentTypeQualifiedName( typeAsString );
             final ContentType contentType = contentTypeFetcher.getContentType( contentTypeQualifiedName );
-            if ( contentType != null )
-            {
-                content.setType( contentType );
-            }
-            content.setData( contentDataSerializer.parse( contentNode, contentType ) );
+            content.setType( contentType );
         }
-        else
-        {
-            content.setData( contentDataSerializer.parse( contentNode, null ) );
-        }
+
+        content.setData( contentDataSerializer.parse( contentNode ) );
 
         return content;
     }

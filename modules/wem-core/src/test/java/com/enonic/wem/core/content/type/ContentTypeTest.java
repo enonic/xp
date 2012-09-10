@@ -12,7 +12,7 @@ import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.formitem.Component.newComponent;
-import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemTest;
+import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemSet;
 import static com.enonic.wem.core.content.type.formitem.FormItemSetTemplateBuilder.newFormItemSetTemplate;
 import static com.enonic.wem.core.content.type.formitem.TemplateReference.newTemplateReference;
 import static com.enonic.wem.core.content.type.formitem.VisualFieldSet.newVisualFieldSet;
@@ -40,7 +40,7 @@ public class ContentTypeTest
         contentType.setName( "test" );
         VisualFieldSet visualFieldSet = newVisualFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newComponent().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() ).build();
-        FormItemSet myFormItemSet = newFormItemTest().name( "myFieldSet" ).add( visualFieldSet ).build();
+        FormItemSet myFormItemSet = newFormItemSet().name( "myFieldSet" ).add( visualFieldSet ).build();
         contentType.addFormItem( myFormItemSet );
 
         assertEquals( "myFieldSet.eyeColour", contentType.getComponent( "myFieldSet.eyeColour" ).getPath().toString() );
@@ -49,7 +49,7 @@ public class ContentTypeTest
     @Test
     public void address()
     {
-        FormItemSet formItemSet = newFormItemTest().name( "address" ).build();
+        FormItemSet formItemSet = newFormItemSet().name( "address" ).build();
         formItemSet.addItem( newComponent().name( "label" ).label( "Label" ).type( ComponentTypes.TEXT_LINE ).build() );
         formItemSet.addItem( newComponent().name( "street" ).label( "Street" ).type( ComponentTypes.TEXT_LINE ).build() );
         formItemSet.addItem( newComponent().name( "postalNo" ).label( "Postal No" ).type( ComponentTypes.TEXT_LINE ).build() );
@@ -72,7 +72,7 @@ public class ContentTypeTest
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        FormItemSetTemplate template = newFormItemSetTemplate().module( module ).formItemSet( newFormItemTest().name( "address" ).add(
+        FormItemSetTemplate template = newFormItemSetTemplate().module( module ).formItemSet( newFormItemSet().name( "address" ).add(
             newComponent().name( "label" ).label( "Label" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
             newComponent().name( "street" ).label( "Street" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
             newComponent().name( "postalNo" ).label( "Postal No" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
@@ -99,7 +99,7 @@ public class ContentTypeTest
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        FormItemSetTemplate template = newFormItemSetTemplate().module( module ).formItemSet( newFormItemTest().name( "address" ).add(
+        FormItemSetTemplate template = newFormItemSetTemplate().module( module ).formItemSet( newFormItemSet().name( "address" ).add(
             newVisualFieldSet().label( "My Visual Field Set" ).name( "vfs" ).add(
                 newComponent().name( "myFieldInVFS" ).label( "MyFieldInVFS" ).type( ComponentTypes.TEXT_LINE ).build() ).build() ).add(
             newComponent().name( "label" ).label( "Label" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
@@ -129,7 +129,7 @@ public class ContentTypeTest
         Module module = newModule().name( "myModule" ).build();
 
         FormItemSetTemplate formItemSetTemplate = newFormItemSetTemplate().module( module ).formItemSet(
-            newFormItemTest().name( "address" ).add(
+            newFormItemSet().name( "address" ).add(
                 newComponent().name( "label" ).label( "Label" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
                 newComponent().name( "street" ).label( "Street" ).type( ComponentTypes.TEXT_LINE ).build() ).build() ).build();
 
@@ -158,8 +158,8 @@ public class ContentTypeTest
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
         FormItemSet formItemSet =
-            newFormItemTest().name( "top-fieldSet" ).add( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
-                newFormItemTest().name( "inner-fieldSet" ).add(
+            newFormItemSet().name( "top-fieldSet" ).add( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
+                newFormItemSet().name( "inner-fieldSet" ).add(
                     newComponent().name( "myInnerField" ).type( ComponentTypes.TEXT_LINE ).build() ).build() ).build();
         contentType.addFormItem( formItemSet );
 

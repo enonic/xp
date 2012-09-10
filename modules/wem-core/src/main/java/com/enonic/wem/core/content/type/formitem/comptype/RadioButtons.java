@@ -12,7 +12,7 @@ public class RadioButtons
 {
     RadioButtons()
     {
-        super( "radioButtons", DataTypes.STRING );
+        super( "radioButtons", DataTypes.TEXT );
     }
 
     public boolean requiresConfig()

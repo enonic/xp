@@ -14,19 +14,19 @@ public class TextLineTest
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_null_throws_exception()
     {
-        new TextLine().checkBreaksRequiredContract( Data.newData().value( null ).type( DataTypes.STRING ).build() );
+        new TextLine().checkBreaksRequiredContract( Data.newData().value( null ).type( DataTypes.TEXT ).build() );
     }
 
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_empty_throws_exception()
     {
-        new TextLine().checkBreaksRequiredContract( Data.newData().type( DataTypes.STRING ).value( "" ).build() );
+        new TextLine().checkBreaksRequiredContract( Data.newData().type( DataTypes.TEXT ).value( "" ).build() );
     }
 
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_blank_throws_exception()
     {
-        new TextLine().checkBreaksRequiredContract( Data.newData().type( DataTypes.STRING ).value( " " ).build() );
+        new TextLine().checkBreaksRequiredContract( Data.newData().type( DataTypes.TEXT ).value( " " ).build() );
     }
 
     @Test
@@ -34,7 +34,7 @@ public class TextLineTest
     {
         try
         {
-            new TextLine().checkBreaksRequiredContract( Data.newData().type( DataTypes.STRING ).value( "something" ).build() );
+            new TextLine().checkBreaksRequiredContract( Data.newData().type( DataTypes.TEXT ).value( "something" ).build() );
         }
         catch ( Exception e )
         {

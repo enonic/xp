@@ -29,7 +29,7 @@ class ContentSpecTest extends spock.lang.Specification
     {
         given:
         ContentType contentType = new ContentType();
-        FormItemSet fieldSet = FormItemSet.newFormItemTest().name( "myFieldSet" ).required( true ).build();
+        FormItemSet fieldSet = FormItemSet.newFormItemSet().name( "myFieldSet" ).required( true ).build();
         fieldSet.addItem( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( false ).build() )
         contentType.addFormItem( fieldSet );
         Content content = new Content();
@@ -46,7 +46,7 @@ class ContentSpecTest extends spock.lang.Specification
     {
         given:
         ContentType contentType = new ContentType();
-        FormItemSet fieldSet = FormItemSet.newFormItemTest().name( "myFieldSet" ).required( true ).build();
+        FormItemSet fieldSet = FormItemSet.newFormItemSet().name( "myFieldSet" ).required( true ).build();
         fieldSet.addItem( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() )
         contentType.addFormItem( fieldSet );
         Content content = new Content();
@@ -64,7 +64,7 @@ class ContentSpecTest extends spock.lang.Specification
     {
         given:
         ContentType contentType = new ContentType();
-        FormItemSet fieldSet = FormItemSet.newFormItemTest().name( "myFieldSet" ).required( false ).build();
+        FormItemSet fieldSet = FormItemSet.newFormItemSet().name( "myFieldSet" ).required( false ).build();
         fieldSet.addItem( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() )
         contentType.addFormItem( fieldSet );
         Content content = new Content();
@@ -82,7 +82,7 @@ class ContentSpecTest extends spock.lang.Specification
     {
         given:
         ContentType contentType = new ContentType();
-        FormItemSet fieldSet = FormItemSet.newFormItemTest().name( "myFieldSet" ).required( false ).build();
+        FormItemSet fieldSet = FormItemSet.newFormItemSet().name( "myFieldSet" ).required( false ).build();
         fieldSet.addItem( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() )
         contentType.addFormItem( fieldSet );
         Content content = new Content();

@@ -2,10 +2,12 @@ package com.enonic.wem.core.content;
 
 import org.joda.time.DateMidnight;
 
+import com.enonic.wem.core.content.data.BlobToKeyReplacer;
 import com.enonic.wem.core.content.data.ContentData;
 import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.data.DataSet;
 import com.enonic.wem.core.content.data.EntryPath;
+import com.enonic.wem.core.content.data.MockBlobKeyResolver;
 import com.enonic.wem.core.content.datatype.DataType;
 import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.ContentType;
@@ -54,7 +56,7 @@ public class Content
 
     public void setData( final String path, final String value )
     {
-        this.data.setData( new EntryPath( path ), value, DataTypes.STRING );
+        this.data.setData( new EntryPath( path ), value, DataTypes.TEXT );
     }
 
     public void setData( final String path, final DateMidnight value )
@@ -107,5 +109,10 @@ public class Content
     {
         // TODO
         return null;
+    }
+
+    public void replaceBlobsWithKeys( final MockBlobKeyResolver blobToKeyResolver )
+    {
+        new BlobToKeyReplacer( blobToKeyResolver ).replace( data );
     }
 }

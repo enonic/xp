@@ -59,7 +59,7 @@ public class ComponentTypes
         register( DECIMAL_NUMBER );
 
         registerDefaultComponentType( DataTypes.DATE, DATE );
-        registerDefaultComponentType( DataTypes.STRING, TEXT_AREA );
+        registerDefaultComponentType( DataTypes.TEXT, TEXT_AREA );
         registerDefaultComponentType( DataTypes.XML, XML );
         registerDefaultComponentType( DataTypes.WHOLE_NUMBER, WHOLE_NUMBER );
         registerDefaultComponentType( DataTypes.DECIMAL_NUMBER, DECIMAL_NUMBER );

@@ -3,6 +3,7 @@ package com.enonic.wem.core.content;
 
 import org.junit.Test;
 
+import com.enonic.wem.core.content.data.MockBlobKeyResolver;
 import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.MockContentTypeFetcher;
@@ -13,9 +14,11 @@ import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.core.content.type.formitem.comptype.RadioButtonsConfig;
 import com.enonic.wem.core.module.Module;
 
+import com.enonic.cms.framework.blob.BlobKeyCreator;
+
 import static com.enonic.wem.core.content.type.formitem.Component.newComponent;
 import static com.enonic.wem.core.content.type.formitem.FormItemSet.newBuilder;
-import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemTest;
+import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemSet;
 import static com.enonic.wem.core.content.type.formitem.VisualFieldSet.newVisualFieldSet;
 import static org.junit.Assert.*;
 
@@ -147,7 +150,7 @@ public class ContentSerializerJsonTest
         contentType.addFormItem( nameComponent );
         contentTypeFetcher.add( contentType );
 
-        FormItemSet formItemSet = newFormItemTest().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
+        FormItemSet formItemSet = newFormItemSet().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
         contentType.addFormItem( formItemSet );
         formItemSet.addItem( Component.newBuilder().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() );
         formItemSet.addItem( Component.newBuilder().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
@@ -227,7 +230,7 @@ public class ContentSerializerJsonTest
 
         // verify
         assertEquals( "Thomas", parsedContent.getData( "names[0]" ).getValue() );
-        assertEquals( DataTypes.STRING, parsedContent.getData( "names[0]" ).getDataType() );
+        assertEquals( DataTypes.TEXT, parsedContent.getData( "names[0]" ).getDataType() );
         assertEquals( "Sten Roger", parsedContent.getData( "names[1]" ).getValue() );
         assertEquals( "Alex", parsedContent.getData( "names[2]" ).getValue() );
     }
@@ -278,6 +281,30 @@ public class ContentSerializerJsonTest
         assertEquals( "myValue", parsedContent.getValueAsString( "myField" ) );
         assertEquals( "Blue", parsedContent.getValueAsString( "eyeColour" ) );
         assertEquals( "Blonde", parsedContent.getValueAsString( "hairColour" ) );
+    }
+
+
+    @Test
+    public void xxx()
+    {
+        byte[] bytes = new byte[]{1, 2, 3};
+        Content content = new Content();
+        content.setName( "My content" );
+        content.setData( "name", "Arn", DataTypes.TEXT );
+        content.setData( "image.bytes", bytes, DataTypes.BLOB );
+        content.setData( "image.caption", "Caption", DataTypes.TEXT );
+
+        MockBlobKeyResolver blobToKeyReplacer = new MockBlobKeyResolver();
+        content.replaceBlobsWithKeys( blobToKeyReplacer );
+
+        String json = serializer.toJson( content );
+        System.out.println( json );
+        Content parsedContent = serializer.parse( json );
+
+        //System.out.println(json);
+        assertEquals( "Arn", parsedContent.getData( "name" ).getValue() );
+        assertEquals( "Caption", parsedContent.getData( "image.caption" ).getValue() );
+        assertEquals( BlobKeyCreator.createKey( bytes ), parsedContent.getData( "image.bytes" ).getValue() );
     }
 
 }

@@ -1,10 +1,10 @@
 package com.enonic.wem.core.content.datatype;
 
 
-public class MultiLinedString
+public class Text
     extends AbstractDataType
 {
-    MultiLinedString( int key )
+    Text( int key )
     {
         super( key, JavaType.STRING );
     }
@@ -25,7 +25,7 @@ public class MultiLinedString
     {
         if ( hasCorrectType( value ) )
         {
-            return (String) value;
+            return (java.lang.String) value;
         }
         else
         {

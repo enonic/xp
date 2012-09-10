@@ -18,7 +18,7 @@ import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.formitem.Component.newBuilder;
 import static com.enonic.wem.core.content.type.formitem.Component.newComponent;
-import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemTest;
+import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemSet;
 import static com.enonic.wem.core.content.type.formitem.TemplateReference.newTemplateReference;
 import static com.enonic.wem.core.content.type.formitem.VisualFieldSet.newVisualFieldSet;
 import static com.enonic.wem.core.module.Module.newModule;
@@ -47,7 +47,7 @@ public class ContentTypeSerializerJsonTest
         contentType.addFormItem( newComponent().name( "myPhone" ).type( ComponentTypes.PHONE ).build() );
         contentType.addFormItem( newComponent().name( "myXml" ).type( ComponentTypes.XML ).build() );
 
-        FormItemSet formItemSet = newFormItemTest().name( "personalia" ).build();
+        FormItemSet formItemSet = newFormItemSet().name( "personalia" ).build();
         formItemSet.addItem( newComponent().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
         formItemSet.addItem( newComponent().name( "hairColour" ).occurrences( 1, 3 ).type( ComponentTypes.TEXT_LINE ).build() );
         contentType.addFormItem( formItemSet );
@@ -145,7 +145,7 @@ public class ContentTypeSerializerJsonTest
         Module module = newModule().name( "myModule" ).build();
 
         FormItemSetTemplate template = FormItemSetTemplateBuilder.newFormItemSetTemplate().module( module ).formItemSet(
-            newFormItemTest().name( "address" ).add(
+            newFormItemSet().name( "address" ).add(
                 newBuilder().name( "label" ).label( "Label" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
                 newBuilder().name( "street" ).label( "Street" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
                 newBuilder().name( "postalNo" ).label( "Postal No" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
@@ -178,8 +178,8 @@ public class ContentTypeSerializerJsonTest
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
         FormItemSet formItemSet =
-            newFormItemTest().name( "top-fieldSet" ).add( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
-                newFormItemTest().name( "inner-fieldSet" ).add(
+            newFormItemSet().name( "top-fieldSet" ).add( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
+                newFormItemSet().name( "inner-fieldSet" ).add(
                     newComponent().name( "myInnerField" ).type( ComponentTypes.TEXT_LINE ).build() ).build() ).build();
         contentType.addFormItem( formItemSet );
 

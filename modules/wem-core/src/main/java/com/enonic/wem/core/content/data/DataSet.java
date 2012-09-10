@@ -7,15 +7,14 @@ import java.util.LinkedHashMap;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.datatype.DataType;
-import com.enonic.wem.core.content.type.formitem.FormItemPath;
+import com.enonic.wem.core.content.datatype.DataTypes;
 
 public class DataSet
-    extends Entry
-    implements Iterable<Entry>, EntrySelector
+    implements Iterable<Data>, EntrySelector
 {
     private EntryPath path;
 
-    private LinkedHashMap<EntryPath.Element, Entry> entries = new LinkedHashMap<EntryPath.Element, Entry>();
+    private LinkedHashMap<EntryPath.Element, Data> entries = new LinkedHashMap<EntryPath.Element, Data>();
 
     public DataSet( final EntryPath path )
     {
@@ -24,23 +23,14 @@ public class DataSet
         this.path = path;
     }
 
-    DataSet( final EntryPath path, final DataSet dataSet )
-    {
-        Preconditions.checkNotNull( path, "path cannot be null" );
-        Preconditions.checkNotNull( dataSet, "entries cannot be null" );
-
-        this.path = path;
-        this.entries = dataSet.entries;
-    }
-
     public EntryPath getPath()
     {
         return path;
     }
 
-    void add( Entry entry )
+    void add( Data data )
     {
-        entries.put( entry.getPath().getLastElement(), entry );
+        entries.put( data.getPath().getLastElement(), data );
     }
 
     void setData( final EntryPath path, final Object value, final DataType dataType )
@@ -56,24 +46,26 @@ public class DataSet
         {
             final EntryPath newEntryPath = new EntryPath( this.path, path.getFirstElement() );
             final Data newData = Data.newData().path( newEntryPath ).type( dataType ).value( value ).build();
-            doSetEntry( path.getFirstElement(), newData );
+            doSetData( path.getFirstElement(), newData );
         }
     }
 
     private void forwardSetDataToDataSet( final EntryPath path, final Object value, final DataType dataType )
     {
-        DataSet existingDataSet = (DataSet) this.entries.get( path.getFirstElement() );
-        if ( existingDataSet == null )
+        Data existingDataWithDataSetValue = this.entries.get( path.getFirstElement() );
+        if ( existingDataWithDataSetValue == null )
         {
-            existingDataSet = new DataSet( new EntryPath( this.path, path.getFirstElement() ) );
-            doSetEntry( path.getFirstElement(), existingDataSet );
+            final EntryPath newEntryPath = new EntryPath( this.path, path.getFirstElement() );
+            existingDataWithDataSetValue =
+                Data.newData().path( newEntryPath ).type( DataTypes.DATA_SET ).value( new DataSet( newEntryPath ) ).build();
+            doSetData( path.getFirstElement(), existingDataWithDataSetValue );
         }
-        existingDataSet.setData( path.asNewWithoutFirstPathElement(), value, dataType );
+        existingDataWithDataSetValue.setData( path.asNewWithoutFirstPathElement(), value, dataType );
     }
 
-    private void doSetEntry( EntryPath.Element element, Entry entry )
+    private void doSetData( EntryPath.Element element, Data data )
     {
-        entries.put( element, entry );
+        entries.put( element, data );
     }
 
     public Data getData( final String path )
@@ -81,76 +73,82 @@ public class DataSet
         return getData( new EntryPath( path ) );
     }
 
-
     public Data getData( final EntryPath path )
-    {
-        final Entry entry = getEntry( path );
-        if ( entry == null )
-        {
-            return null;
-        }
-        Preconditions.checkArgument( ( entry instanceof Data ), "Entry at path [%s] is not a Data: " + entry, path );
-        //noinspection ConstantConditions
-        return (Data) entry;
-    }
-
-    public DataSet getDataSet( final EntryPath path )
-    {
-        final Entry entry = getEntry( path );
-        if ( entry == null )
-        {
-            return null;
-        }
-        Preconditions.checkArgument( ( entry instanceof DataSet ), "Entry at path [%s] is not a DataSet: " + entry, path );
-        //noinspection ConstantConditions
-        return (DataSet) entry;
-    }
-
-    Entry getEntry( final EntryPath path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
 
         if ( path.elementCount() > 1 )
         {
-            return forwardGetEntryToDataSet( path );
+            return forwardGetDataToDataSet( path );
         }
         else
         {
-            return doGetEntry( path );
+            return doGetData( path );
         }
     }
 
-    private Entry forwardGetEntryToDataSet( final EntryPath path )
+    public DataSet getDataSet( final EntryPath path )
     {
-        final Entry foundEntry = entries.get( path.getFirstElement() );
-        if ( foundEntry == null )
+        Preconditions.checkArgument( path.elementCount() > 0, "path must be something: " + path );
+
+        if ( path.elementCount() == 1 )
+        {
+            final Data data = entries.get( path.getLastElement() );
+            if ( data == null )
+            {
+                return null;
+            }
+            if ( !( data.getDataType().equals( DataTypes.DATA_SET ) ) )
+            {
+                throw new IllegalArgumentException( "Data at path [%s] is not of type DataSet: " + data.getDataType() );
+            }
+            return (DataSet) data.getValue();
+        }
+        else
+        {
+            final Data data = entries.get( path.getFirstElement() );
+            if ( !( data.getDataType().equals( DataTypes.DATA_SET ) ) )
+            {
+                throw new IllegalArgumentException( "Data at path [%s] is not of type DataSet: " + data.getDataType() );
+            }
+            return data.getDataSet( path.asNewWithoutFirstPathElement() );
+        }
+    }
+
+
+    private Data forwardGetDataToDataSet( final EntryPath path )
+    {
+        final Data foundData = entries.get( path.getFirstElement() );
+        if ( foundData == null )
         {
             return null;
         }
 
-        Preconditions.checkArgument( foundEntry instanceof DataSet,
-                                     "Entry [%s] in DataSet [%s] expected to be a DataSet: " + foundEntry.getClass().getName(),
-                                     foundEntry.getName(), this.getPath() );
+        if ( !( foundData.getValue() instanceof DataSet ) )
+        {
+            throw new IllegalArgumentException(
+                "Data at path [" + this.getPath() + "] expected to have a value of type DataSet: " + foundData.getDataType().getName() );
+        }
 
-        //noinspection ConstantConditions
-        return ( (DataSet) foundEntry ).getEntry( path.asNewWithoutFirstPathElement() );
+        final DataSet dataSet = (DataSet) foundData.getValue();
+        return dataSet.getData( path.asNewWithoutFirstPathElement() );
     }
 
-    private Entry doGetEntry( final EntryPath path )
+    private Data doGetData( final EntryPath path )
     {
         Preconditions.checkArgument( path.elementCount() == 1, "path expected to contain only one element: " + path );
 
-        final Entry foundEntry = entries.get( path.getLastElement() );
-        if ( foundEntry == null )
+        final Data data = entries.get( path.getLastElement() );
+        if ( data == null )
         {
             return null;
         }
 
-        return foundEntry;
+        return data;
     }
 
-    public Iterator<Entry> iterator()
+    public Iterator<Data> iterator()
     {
         return entries.values().iterator();
     }
@@ -168,9 +166,9 @@ public class DataSet
         s.append( ": " );
         int index = 0;
         final int size = entries.size();
-        for ( Entry entry : entries.values() )
+        for ( Data data : entries.values() )
         {
-            s.append( entry.getPath().getLastElement() );
+            s.append( data.getPath().getLastElement() );
             if ( index < size - 1 )
             {
                 s.append( ", " );
@@ -178,22 +176,5 @@ public class DataSet
             index++;
         }
         return s.toString();
-    }
-
-
-    public boolean hasDataAtPath( FormItemPath path )
-    {
-        for ( Entry entry : entries.values() )
-        {
-            if ( entry instanceof Data )
-            {
-                Data data = (Data) entry;
-                if ( data.getPath().resolveFormItemPath().equals( path ) )
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }

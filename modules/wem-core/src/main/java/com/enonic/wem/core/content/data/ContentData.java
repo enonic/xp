@@ -9,7 +9,7 @@ import com.enonic.wem.core.content.datatype.DataType;
 import com.enonic.wem.core.content.datatype.DataTypes;
 
 public class ContentData
-    implements EntrySelector, Iterable<Entry>
+    implements EntrySelector, Iterable<Data>
 {
     private DataSet dataSet;
 
@@ -30,7 +30,7 @@ public class ContentData
 
     public void setData( final EntryPath path, final String value )
     {
-        dataSet.setData( path, value, DataTypes.STRING );
+        dataSet.setData( path, value, DataTypes.TEXT );
     }
 
     public String getValueAsString( final EntryPath path )
@@ -54,14 +54,8 @@ public class ContentData
         return dataSet.getDataSet( path );
     }
 
-    DataSet getDataSet()
-    {
-        return dataSet;
-    }
-
-
     @Override
-    public Iterator<Entry> iterator()
+    public Iterator<Data> iterator()
     {
         return dataSet.iterator();
     }

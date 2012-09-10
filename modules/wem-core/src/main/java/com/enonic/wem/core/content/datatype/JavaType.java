@@ -7,12 +7,16 @@ import com.google.common.base.Objects;
 
 import com.enonic.wem.core.content.data.Data;
 
+import com.enonic.cms.framework.blob.BlobKey;
+
 public enum JavaType
 {
     STRING( String.class ),
+    BLOB( BlobKey[].class ),
     LONG( Long.class ),
     DOUBLE( Double.class ),
-    DATE( DateMidnight.class );
+    DATE( DateMidnight.class ),
+    DATA_SET( com.enonic.wem.core.content.data.DataSet.class );
 
     private Class value;
 

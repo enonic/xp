@@ -17,7 +17,7 @@ public abstract class AbstractDataType
     public AbstractDataType( int key, JavaType javaType )
     {
         this.key = key;
-        this.name = this.getClass().getName();
+        this.name = this.getClass().getSimpleName();
         this.javaType = javaType;
     }
 

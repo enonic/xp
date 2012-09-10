@@ -22,7 +22,7 @@ import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.formitem.Component.newComponent;
 import static com.enonic.wem.core.content.type.formitem.ComponentTemplateBuilder.newComponentTemplate;
-import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemTest;
+import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemSet;
 import static com.enonic.wem.core.content.type.formitem.FormItemSetTemplateBuilder.newFormItemSetTemplate;
 import static com.enonic.wem.core.content.type.formitem.TemplateReference.newTemplateReference;
 import static com.enonic.wem.core.content.type.formitem.VisualFieldSet.newVisualFieldSet;
@@ -191,7 +191,7 @@ public class ContentTest
     public void unstructured()
     {
         Content content = new Content();
-        content.setData( "firstName", "Thomas", DataTypes.STRING );
+        content.setData( "firstName", "Thomas", DataTypes.TEXT );
         content.setData( "description", "Grew up in Noetteveien", DataTypes.HTML_PART );
         content.setData( "child[0].name", "Joachim" );
         content.setData( "child[0].age", "9" );
@@ -203,7 +203,7 @@ public class ContentTest
         content.setData( "child[1].features.hairColour", "Black" );
 
         assertEquals( "Thomas", content.getData( "firstName" ).getValue() );
-        assertEquals( DataTypes.STRING, content.getData( "firstName" ).getDataType() );
+        assertEquals( DataTypes.TEXT, content.getData( "firstName" ).getDataType() );
         assertEquals( DataTypes.HTML_PART, content.getData( "description" ).getDataType() );
         assertEquals( "Joachim", content.getData( "child[0].name" ).getValue() );
         assertEquals( "9", content.getData( "child[0].age" ).getValue() );
@@ -280,10 +280,10 @@ public class ContentTest
         // setup
         Content content = new Content();
         content.setData( "name", "Thomas" );
-        content.setData( "personalia.eyeColour", "Blue", DataTypes.STRING );
+        content.setData( "personalia.eyeColour", "Blue", DataTypes.TEXT );
         content.setData( "personalia.hairColour", "Blonde" );
 
-        assertEquals( DataTypes.STRING, content.getData( "personalia.eyeColour" ).getDataType() );
+        assertEquals( DataTypes.TEXT, content.getData( "personalia.eyeColour" ).getDataType() );
         assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getValue() );
         assertEquals( "personalia.eyeColour", content.getData( "personalia.eyeColour" ).getPath().toString() );
     }
@@ -301,7 +301,7 @@ public class ContentTest
         content.setData( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
         content.setData( "crimes[1].year", "1990" );
 
-        assertEquals( DataTypes.STRING, content.getData( "personalia.eyeColour" ).getDataType() );
+        assertEquals( DataTypes.TEXT, content.getData( "personalia.eyeColour" ).getDataType() );
         assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getValue() );
         assertEquals( "personalia.eyeColour", content.getData( "personalia.eyeColour" ).getPath().toString() );
 
@@ -319,7 +319,7 @@ public class ContentTest
         contentType.getFormItemSet( "crimes" ).addItem( Component.newBuilder().name( "year" ).type( ComponentTypes.TEXT_LINE ).build() );
         content.setType( contentType );
 
-        assertEquals( DataTypes.STRING, content.getData( "personalia.eyeColour" ).getDataType() );
+        assertEquals( DataTypes.TEXT, content.getData( "personalia.eyeColour" ).getDataType() );
         assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getValue() );
         content.checkValidity();
     }
@@ -336,7 +336,7 @@ public class ContentTest
                 DropdownConfig.newBuilder().addOption( "Norway", "NO" ).build() ).build() ).build();
 
         FormItemSetTemplate addressTemplate = newFormItemSetTemplate().module( module ).formItemSet(
-            newFormItemTest().name( "address" ).add( newComponent().name( "street" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
+            newFormItemSet().name( "address" ).add( newComponent().name( "street" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
                 newTemplateReference( postalCodeTemplate ).name( "postalCode" ).build() ).add(
                 newComponent().name( "postalPlace" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
                 newTemplateReference( countryTemplate ).name( "country" ).build() ).build() ).build();
@@ -373,7 +373,7 @@ public class ContentTest
         Module module = newModule().name( "myModule" ).build();
 
         FormItemSetTemplate addressTemplate = newFormItemSetTemplate().module( module ).formItemSet(
-            newFormItemTest().name( "address" ).multiple( true ).add(
+            newFormItemSet().name( "address" ).multiple( true ).add(
                 newComponent().type( ComponentTypes.TEXT_LINE ).name( "label" ).build() ).add(
                 newComponent().type( ComponentTypes.TEXT_LINE ).name( "street" ).build() ).add(
                 newComponent().type( ComponentTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(
@@ -541,7 +541,7 @@ public class ContentTest
     {
         ContentType contentType = new ContentType();
         contentType.addFormItem( newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
-            newFormItemTest().name( "myFieldSet" ).required( true ).add(
+            newFormItemSet().name( "myFieldSet" ).required( true ).add(
                 newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
@@ -556,7 +556,7 @@ public class ContentTest
     {
 
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newFormItemTest().name( "myFieldSet" ).required( true ).add(
+        contentType.addFormItem( newFormItemSet().name( "myFieldSet" ).required( true ).add(
             newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
@@ -571,7 +571,7 @@ public class ContentTest
     {
 
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newFormItemTest().name( "myFieldSet" ).required( true ).add(
+        contentType.addFormItem( newFormItemSet().name( "myFieldSet" ).required( true ).add(
             newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSEt" ).add(
                 newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
         Content content = new Content();
@@ -587,7 +587,7 @@ public class ContentTest
     {
 
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newFormItemTest().name( "myFieldSet" ).required( true ).add(
+        contentType.addFormItem( newFormItemSet().name( "myFieldSet" ).required( true ).add(
             newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
@@ -611,7 +611,7 @@ public class ContentTest
     {
 
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newFormItemTest().name( "myFieldSet" ).required( true ).add(
+        contentType.addFormItem( newFormItemSet().name( "myFieldSet" ).required( true ).add(
             newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
@@ -626,7 +626,7 @@ public class ContentTest
 
         ContentType contentType = new ContentType();
         contentType.addFormItem( newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
-            newFormItemTest().name( "myFieldSet" ).required( true ).add(
+            newFormItemSet().name( "myFieldSet" ).required( true ).add(
                 newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
@@ -642,12 +642,12 @@ public class ContentTest
         ContentType contentType = new ContentType();
         contentType.addFormItem( newComponent().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() );
 
-        FormItemSet personaliaFormItemSet = newFormItemTest().name( "personalia" ).multiple( false ).required( true ).build();
+        FormItemSet personaliaFormItemSet = newFormItemSet().name( "personalia" ).multiple( false ).required( true ).build();
         personaliaFormItemSet.addItem( newComponent().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
         personaliaFormItemSet.addItem( newComponent().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() );
         contentType.addFormItem( personaliaFormItemSet );
 
-        FormItemSet crimesFormItemSet = newFormItemTest().name( "crimes" ).multiple( true ).build();
+        FormItemSet crimesFormItemSet = newFormItemSet().name( "crimes" ).multiple( true ).build();
         contentType.addFormItem( crimesFormItemSet );
         crimesFormItemSet.addItem( newComponent().name( "description" ).type( ComponentTypes.TEXT_LINE ).build() );
         crimesFormItemSet.addItem( newComponent().name( "year" ).type( ComponentTypes.TEXT_LINE ).build() );

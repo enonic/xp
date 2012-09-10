@@ -4,10 +4,13 @@ package com.enonic.wem.core.content.type;
 import com.enonic.wem.core.content.data.ContentData;
 import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.data.DataSet;
-import com.enonic.wem.core.content.data.Entry;
 import com.enonic.wem.core.content.data.InvalidDataException;
 import com.enonic.wem.core.content.type.formitem.Component;
 
+/**
+ * Validates that given data is valid, meaning it is of valid:
+ * type, format, value.
+ */
 public class Validator
 {
     private ContentType contentType;
@@ -32,24 +35,24 @@ public class Validator
     public void validate( Data data )
         throws InvalidDataException
     {
-        data.checkValidity();
-
-        Component component = contentType.getComponent( data.getPath().resolveFormItemPath() );
-        component.checkValidity( data );
+        if ( !data.isDataSet() )
+        {
+            data.checkValidity();
+            Component component = contentType.getComponent( data.getPath().resolveFormItemPath() );
+            component.checkValidity( data );
+        }
+        else
+        {
+            final DataSet dataSet = (DataSet) data.getValue();
+            doValidate( dataSet );
+        }
     }
 
-    private void doValidate( Iterable<Entry> entries )
+    private void doValidate( Iterable<Data> entries )
     {
-        for ( Entry entry : entries )
+        for ( Data data : entries )
         {
-            if ( entry instanceof Data )
-            {
-                validate( (Data) entry );
-            }
-            else if ( entry instanceof DataSet )
-            {
-                doValidate( (DataSet) entry );
-            }
+            validate( data );
         }
     }
 }

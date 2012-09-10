@@ -12,7 +12,7 @@ import com.enonic.wem.core.content.type.formitem.comptype.ComponentType;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeConfigSerializerJson;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeSerializerJson;
 
-import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemTest;
+import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemSet;
 import static com.enonic.wem.core.content.type.formitem.TemplateReference.newTemplateReference;
 import static com.enonic.wem.core.content.type.formitem.VisualFieldSet.newVisualFieldSet;
 
@@ -183,7 +183,7 @@ public class FormItemSerializerJson
 
     private DirectAccessibleFormItem parseFormItemSet( final JsonNode formItemNode )
     {
-        final FormItemSet.Builder builder = newFormItemTest();
+        final FormItemSet.Builder builder = newFormItemSet();
         builder.name( JsonParserUtil.getStringValue( "name", formItemNode ) );
         builder.label( JsonParserUtil.getStringValue( "label", formItemNode, null ) );
         builder.immutable( JsonParserUtil.getBooleanValue( "immutable", formItemNode ) );

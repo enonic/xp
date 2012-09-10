@@ -12,7 +12,7 @@ public class Dropdown
 {
     Dropdown()
     {
-        super( "dropdown", DataTypes.STRING );
+        super( "dropdown", DataTypes.TEXT );
     }
 
     public boolean requiresConfig()

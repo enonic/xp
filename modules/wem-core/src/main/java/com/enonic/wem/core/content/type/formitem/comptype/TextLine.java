@@ -11,7 +11,7 @@ public class TextLine
 {
     TextLine()
     {
-        super( "textLine", DataTypes.STRING );
+        super( "textLine", DataTypes.TEXT );
     }
 
     public boolean requiresConfig()

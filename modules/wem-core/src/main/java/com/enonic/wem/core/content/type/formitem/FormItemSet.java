@@ -144,7 +144,7 @@ public class FormItemSet
         return new Builder();
     }
 
-    public static Builder newFormItemTest()
+    public static Builder newFormItemSet()
     {
         return new Builder();
     }

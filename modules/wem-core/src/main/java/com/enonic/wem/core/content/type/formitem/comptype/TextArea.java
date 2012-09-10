@@ -11,7 +11,7 @@ public class TextArea
 {
     TextArea()
     {
-        super( "textArea", DataTypes.STRING );
+        super( "textArea", DataTypes.TEXT );
     }
 
     public boolean requiresConfig()

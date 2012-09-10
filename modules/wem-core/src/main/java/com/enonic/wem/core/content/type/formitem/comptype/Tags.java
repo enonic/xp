@@ -11,7 +11,7 @@ public class Tags
 {
     Tags()
     {
-        super( "tags", DataTypes.STRING );
+        super( "tags", DataTypes.TEXT );
     }
 
     public boolean requiresConfig()

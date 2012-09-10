@@ -12,18 +12,18 @@ public class TextAreaTest
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_null_throws_exception()
     {
-        new TextArea().checkBreaksRequiredContract( Data.newData().type( DataTypes.STRING ).value( null ).build() );
+        new TextArea().checkBreaksRequiredContract( Data.newData().type( DataTypes.TEXT ).value( null ).build() );
     }
 
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_empty_throws_exception()
     {
-        new TextArea().checkBreaksRequiredContract( Data.newData().type( DataTypes.STRING ).value( "" ).build() );
+        new TextArea().checkBreaksRequiredContract( Data.newData().type( DataTypes.TEXT ).value( "" ).build() );
     }
 
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_blank_throws_exception()
     {
-        new TextArea().checkBreaksRequiredContract( Data.newData().type( DataTypes.STRING ).value( " " ).build() );
+        new TextArea().checkBreaksRequiredContract( Data.newData().type( DataTypes.TEXT ).value( " " ).build() );
     }
 }
