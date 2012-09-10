@@ -44,13 +44,32 @@ public final class FindMembersHandler
 
         final String groupName = account.getLocalName();
         final UserStoreEntity userStore = userStoreDao.findByName( account.getUserStore() );
-        final List<GroupEntity> groups = groupDao.findByUserStoreKeyAndGroupname( userStore.getKey(), groupName, false );
-        if ( ( groups == null ) || groups.isEmpty() )
+        final GroupEntity group;
+        if ( userStore == null )
         {
-            throw new AccountNotFoundException( account );
+            if ( "system".equals( account.getUserStore() ) )
+            {
+                group = groupDao.findGlobalGroupByName( account.getLocalName(), false );
+                if ( group == null )
+                {
+                    throw new AccountNotFoundException( account );
+                }
+            }
+            else
+            {
+                throw new AccountNotFoundException( account );
+            }
+        }
+        else
+        {
+            final List<GroupEntity> groups = groupDao.findByUserStoreKeyAndGroupname( userStore.getKey(), groupName, false );
+            if ( ( groups == null ) || groups.isEmpty() )
+            {
+                throw new AccountNotFoundException( account );
+            }
+            group = groups.get( 0 );
         }
 
-        final GroupEntity group = groups.get( 0 );
         final Set<GroupEntity> groupMembers = group.getMembers( false );
 
         final Set<AccountKey> members = membersToAccountKeys( groupMembers, command.isIncludeTransitive() );
