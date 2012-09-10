@@ -127,7 +127,7 @@ Ext.define('Admin.controller.account.Controller', {
     /*      Private     */
 
     openPreviewAccountTabs: function (selection, callback) {
-        var me = this, tabPane = me.getCmsTabPanel(), i = 0, requestConfig, tabItem, index, createUserTabFn = function (response) {
+        var me = this, tabPane = me.getCmsTabPanel(), i = 0, selectedAccount, createUserTabFn = function (response) {
                 if (Ext.isFunction(callback)) {
                     callback();
                 }
@@ -145,13 +145,10 @@ Ext.define('Admin.controller.account.Controller', {
                     data: response,
                     group: response
                 };
-            };
-        for ( i = 0; i < selection.length; i++ ) {
-            var selected = selection[i].data || selection[i];
-            if (selected.type === 'user') {
-                requestConfig = {
+            }, openPreviewUserTab = function(selectedUser) {
+                var requestConfig = {
                     doTabRequest: function(handleRpcResponse) {
-                        Admin.lib.RemoteService.account_get({ key: selected.new_key }, function (rpcResp) {
+                        Admin.lib.RemoteService.account_get({ key: selectedUser.new_key }, function (rpcResp) {
                             if (rpcResp.success) {
                                 handleRpcResponse(rpcResp);
                             }
@@ -159,22 +156,22 @@ Ext.define('Admin.controller.account.Controller', {
                     },
                     createTabFromResponse: createUserTabFn
                 };
-                tabItem = {
-                    title: selected.displayName + ' (' + selected.qualifiedName + ')',
-                    id: 'tab-preview-user-' + selected.key,
+                var tabItem = {
+                    title: selectedUser.displayName + ' (' + selectedUser.qualifiedName + ')',
+                    id: 'tab-preview-user-' + selectedUser.new_key,
                     closable: true,
                     layout: 'fit'
                 };
                 //check if preview tab is open and close it
-                index = tabPane.items.indexOfKey('tab-edit-user-' + selected.key);
+                var index = tabPane.items.indexOfKey('tab-edit-user-' + selectedUser.new_key);
                 if (index >= 0) {
                     tabPane.remove(index);
                 }
                 tabPane.addTab(tabItem, index >= 0 ? index : undefined, requestConfig);
-            } else {
-                requestConfig = {
+            }, openPreviewGroupTab = function(selectedGroup) {
+                var requestConfig = {
                     doTabRequest: function(handleRpcResponse) {
-                        Admin.lib.RemoteService.account_get({ key: selected.new_key }, function (rpcResp) {
+                        Admin.lib.RemoteService.account_get({ key: selectedGroup.new_key }, function (rpcResp) {
                             if (rpcResp.success) {
                                 handleRpcResponse(rpcResp);
                             }
@@ -182,24 +179,32 @@ Ext.define('Admin.controller.account.Controller', {
                     },
                     createTabFromResponse: createGroupTabFn
                 };
-                tabItem = {
-                    title: selected.displayName,
-                    id: 'tab-preview-group-' + selected.key,
+                var tabItem = {
+                    title: selectedGroup.displayName,
+                    id: 'tab-preview-group-' + selectedGroup.new_key,
                     closable: true,
                     layout: 'fit'
                 };
                 //check if preview tab is open and close it
-                index = tabPane.items.indexOfKey('tab-edit-group-' + selected.key);
+                var index = tabPane.items.indexOfKey('tab-edit-group-' + selectedGroup.new_key);
                 if (index >= 0) {
                     tabPane.remove(index);
                 }
                 tabPane.addTab(tabItem, index >= 0 ? index : undefined, requestConfig);
+            };
+
+        for (i = 0; i < selection.length; i++) {
+            selectedAccount = selection[i].data || selection[i];
+            if (selectedAccount.type === 'user') {
+                openPreviewUserTab(selectedAccount);
+            } else {
+                openPreviewGroupTab(selectedAccount);
             }
         }
     },
 
     openEditAccountTabs: function (selection, callback) {
-        var tabPane = this.getCmsTabPanel(), me = this, i, requestConfig, tabItem, index, createUserWizardFn = function (response) {
+        var tabPane = this.getCmsTabPanel(), me = this, i, selectedAccount,createUserWizardFn = function (response) {
                 var tab = {
                     xtype: 'userWizardPanel',
                     userstore: response.userStore,
@@ -228,64 +233,69 @@ Ext.define('Admin.controller.account.Controller', {
                     callback();
                 }
                 return tab;
-            };
-        // Make sure it is array
-        selection = [].concat(selection);
-        for ( i = 0; i < selection.length; i++ ) {
-            var selected = selection[i].data || selection[i];
-            if (selected.editable) {
-                if (selected.type === 'user') {
-                    requestConfig = {
-                        doTabRequest: function(handleRpcResponse) {
-                            Admin.lib.RemoteService.account_get({ key: selected.new_key }, function (rpcResp) {
+            }, openEditUserTab = function(selectedUser) {
+                var requestConfig = {
+                    doTabRequest: function(handleRpcResponse) {
+                        Admin.lib.RemoteService.account_get({ key: selectedUser.new_key }, function (rpcResp) {
+                            if (rpcResp.success) {
+                                handleRpcResponse(rpcResp);
+                            }
+                        })
+                    },
+                    createTabFromResponse: createUserWizardFn
+                };
+                var tabItem = {
+                    id: 'tab-edit-user-' + selectedUser.new_key,
+                    title: selectedUser.displayName + ' (' + selectedUser.qualifiedName + ')',
+                    iconCls: 'icon-user',
+                    closable: true,
+                    layout: 'fit'
+                };
+                //check if preview tab is open and close it
+                var index = tabPane.items.indexOfKey('tab-preview-user-' + selectedUser.new_key);
+                if (index >= 0) {
+                    tabPane.remove(index);
+                }
+                tabPane.addTab(tabItem, index >= 0 ? index : undefined, requestConfig);
+            }, openEditGroupTab = function(selectedGroup) {
+                var requestConfig = {
+                    doTabRequest: function(handleRpcResponse) {
+                        Admin.lib.RemoteService.account_get({ key: selectedGroup.new_key }, function (rpcResp) {
+                            if (rpcResp.success) {
                                 if (rpcResp.success) {
                                     handleRpcResponse(rpcResp);
                                 }
-                            })
-                        },
-                        createTabFromResponse: createUserWizardFn
-                    };
-                    tabItem = {
-                        id: 'tab-edit-user-' + selected.key,
-                        title: selected.displayName + ' (' + selected.qualifiedName + ')',
-                        iconCls: 'icon-user',
-                        closable: true,
-                        layout: 'fit'
-                    };
-                    //check if preview tab is open and close it
-                    index = tabPane.items.indexOfKey('tab-preview-user-' + selected.key);
-                    if (index >= 0) {
-                        tabPane.remove(index);
-                    }
-                    tabPane.addTab(tabItem, index >= 0 ? index : undefined, requestConfig);
-                } else {
-                    requestConfig = {
-                        doTabRequest: function(handleRpcResponse) {
-                            Admin.lib.RemoteService.account_get({ key: selected.new_key }, function (rpcResp) {
-                                if (rpcResp.success) {
-                                    if (rpcResp.success) {
-                                        handleRpcResponse(rpcResp);
-                                    }
-                                }
-                            })
-                        },
-                        createTabFromResponse: createGroupWizardFn
-                    };
+                            }
+                        })
+                    },
+                    createTabFromResponse: createGroupWizardFn
+                };
 
-                    var tabIconCls = selected.type === 'group' ? 'icon-group' : 'icon-role';
-                    tabItem = {
-                        id: 'tab-edit-group-' + selected.key,
-                        title: selected.displayName,
-                        iconCls: tabIconCls,
-                        closable: true,
-                        layout: 'fit'
-                    };
-                    //check if preview tab is open and close it
-                    index = tabPane.items.indexOfKey('tab-preview-group-' + selected.key);
-                    if (index >= 0) {
-                        tabPane.remove(index);
-                    }
-                    tabPane.addTab(tabItem, index >= 0 ? index : undefined, requestConfig);
+                var tabIconCls = selectedGroup.type === 'group' ? 'icon-group' : 'icon-role';
+                var tabItem = {
+                    id: 'tab-edit-group-' + selectedGroup.new_key,
+                    title: selectedGroup.displayName,
+                    iconCls: tabIconCls,
+                    closable: true,
+                    layout: 'fit'
+                };
+                //check if preview tab is open and close it
+                var index = tabPane.items.indexOfKey('tab-preview-group-' + selectedGroup.new_key);
+                if (index >= 0) {
+                    tabPane.remove(index);
+                }
+                tabPane.addTab(tabItem, index >= 0 ? index : undefined, requestConfig);
+            };
+
+        // Make sure it is array
+        selection = [].concat(selection);
+        for ( i = 0; i < selection.length; i++ ) {
+            selectedAccount = selection[i].data || selection[i];
+            if (selectedAccount.editable) {
+                if (selectedAccount.type === 'user') {
+                    openEditUserTab(selectedAccount);
+                } else {
+                    openEditGroupTab(selectedAccount);
                 }
             }
         }
