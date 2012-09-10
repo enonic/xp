@@ -50,7 +50,7 @@ Ext.define('Admin.view.account.DeleteAccountWindow', {
 
     setDeleteKeys: function (accounts) {
         this.keys = Ext.Array.map(accounts, function (item) {
-            return item.data.new_key;
+            return item.data.key;
         });
     },
 

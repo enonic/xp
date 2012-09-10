@@ -19,7 +19,7 @@ Ext.define('Admin.view.account.ChangePasswordWindow', {
             handler: function () {
                 var parentApp = parent.mainApp;
                 var form = Ext.getCmp('userChangePasswordForm').getForm();
-                var accountKey = me.modelData.new_key;
+                var accountKey = me.modelData.key;
                 var pwdValue = form.items[0].getValue();
                 if (form.isValid()) {
                     Admin.lib.RemoteService.account_changePassword({ key: accountKey, password: pwdValue }, function (response) {

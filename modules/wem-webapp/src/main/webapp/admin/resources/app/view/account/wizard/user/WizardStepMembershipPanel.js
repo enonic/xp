@@ -89,7 +89,7 @@ Ext.define('Admin.view.account.wizard.user.WizardStepMembershipPanel', {
         var values = selectBox.valueModels;
         var groupsSelected = [];
         Ext.Array.each(values, function (group) {
-            var groupMap = group.raw.new_key;
+            var groupMap = group.raw.key;
             groupsSelected.push(groupMap);
         });
         var userData = { groups: groupsSelected };

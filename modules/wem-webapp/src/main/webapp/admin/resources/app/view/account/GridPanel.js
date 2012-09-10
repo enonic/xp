@@ -90,7 +90,7 @@ Ext.define('Admin.view.account.GridPanel', {
 
     nameRenderer: function (value, p, record) {
         var account = record.data;
-        var photoUrl = Admin.lib.UriHelper.getAccountIconUri(account, 32);
+        var photoUrl = account.image_url;
 
         return Ext.String.format(Templates.account.gridPanelNameRenderer, photoUrl, value, account.name, account.userStore);
     },

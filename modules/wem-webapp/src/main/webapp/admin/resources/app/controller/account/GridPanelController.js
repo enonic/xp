@@ -80,7 +80,7 @@ Ext.define('Admin.controller.account.GridPanelController', {
             var mask = new Ext.LoadMask(detailPanel, {msg: "Please wait..."});
             mask.show();
             var accountData = persistentSelection[0].raw;
-            Admin.lib.RemoteService.account_get({ key: accountData.new_key }, function (response) {
+            Admin.lib.RemoteService.account_get({ key: accountData.key }, function (response) {
                     if (response.success) {
                         detailPanel.setCurrentAccount(response);
                         detailPanel.showAccountPreview(response);

@@ -148,7 +148,7 @@ Ext.define('Admin.controller.account.Controller', {
             }, openPreviewUserTab = function(selectedUser) {
                 var requestConfig = {
                     doTabRequest: function(handleRpcResponse) {
-                        Admin.lib.RemoteService.account_get({ key: selectedUser.new_key }, function (rpcResp) {
+                        Admin.lib.RemoteService.account_get({ key: selectedUser.key }, function (rpcResp) {
                             if (rpcResp.success) {
                                 handleRpcResponse(rpcResp);
                             }
@@ -158,12 +158,12 @@ Ext.define('Admin.controller.account.Controller', {
                 };
                 var tabItem = {
                     title: selectedUser.displayName + ' (' + selectedUser.qualifiedName + ')',
-                    id: 'tab-preview-user-' + selectedUser.new_key,
+                    id: 'tab-preview-user-' + selectedUser.key,
                     closable: true,
                     layout: 'fit'
                 };
                 //check if preview tab is open and close it
-                var index = tabPane.items.indexOfKey('tab-edit-user-' + selectedUser.new_key);
+                var index = tabPane.items.indexOfKey('tab-edit-user-' + selectedUser.key);
                 if (index >= 0) {
                     tabPane.remove(index);
                 }
@@ -171,7 +171,7 @@ Ext.define('Admin.controller.account.Controller', {
             }, openPreviewGroupTab = function(selectedGroup) {
                 var requestConfig = {
                     doTabRequest: function(handleRpcResponse) {
-                        Admin.lib.RemoteService.account_get({ key: selectedGroup.new_key }, function (rpcResp) {
+                        Admin.lib.RemoteService.account_get({ key: selectedGroup.key }, function (rpcResp) {
                             if (rpcResp.success) {
                                 handleRpcResponse(rpcResp);
                             }
@@ -181,12 +181,12 @@ Ext.define('Admin.controller.account.Controller', {
                 };
                 var tabItem = {
                     title: selectedGroup.displayName,
-                    id: 'tab-preview-group-' + selectedGroup.new_key,
+                    id: 'tab-preview-group-' + selectedGroup.key,
                     closable: true,
                     layout: 'fit'
                 };
                 //check if preview tab is open and close it
-                var index = tabPane.items.indexOfKey('tab-edit-group-' + selectedGroup.new_key);
+                var index = tabPane.items.indexOfKey('tab-edit-group-' + selectedGroup.key);
                 if (index >= 0) {
                     tabPane.remove(index);
                 }
@@ -236,7 +236,7 @@ Ext.define('Admin.controller.account.Controller', {
             }, openEditUserTab = function(selectedUser) {
                 var requestConfig = {
                     doTabRequest: function(handleRpcResponse) {
-                        Admin.lib.RemoteService.account_get({ key: selectedUser.new_key }, function (rpcResp) {
+                        Admin.lib.RemoteService.account_get({ key: selectedUser.key }, function (rpcResp) {
                             if (rpcResp.success) {
                                 handleRpcResponse(rpcResp);
                             }
@@ -245,14 +245,14 @@ Ext.define('Admin.controller.account.Controller', {
                     createTabFromResponse: createUserWizardFn
                 };
                 var tabItem = {
-                    id: 'tab-edit-user-' + selectedUser.new_key,
+                    id: 'tab-edit-user-' + selectedUser.key,
                     title: selectedUser.displayName + ' (' + selectedUser.qualifiedName + ')',
                     iconCls: 'icon-user',
                     closable: true,
                     layout: 'fit'
                 };
                 //check if preview tab is open and close it
-                var index = tabPane.items.indexOfKey('tab-preview-user-' + selectedUser.new_key);
+                var index = tabPane.items.indexOfKey('tab-preview-user-' + selectedUser.key);
                 if (index >= 0) {
                     tabPane.remove(index);
                 }
@@ -260,7 +260,7 @@ Ext.define('Admin.controller.account.Controller', {
             }, openEditGroupTab = function(selectedGroup) {
                 var requestConfig = {
                     doTabRequest: function(handleRpcResponse) {
-                        Admin.lib.RemoteService.account_get({ key: selectedGroup.new_key }, function (rpcResp) {
+                        Admin.lib.RemoteService.account_get({ key: selectedGroup.key }, function (rpcResp) {
                             if (rpcResp.success) {
                                 if (rpcResp.success) {
                                     handleRpcResponse(rpcResp);
@@ -273,14 +273,14 @@ Ext.define('Admin.controller.account.Controller', {
 
                 var tabIconCls = selectedGroup.type === 'group' ? 'icon-group' : 'icon-role';
                 var tabItem = {
-                    id: 'tab-edit-group-' + selectedGroup.new_key,
+                    id: 'tab-edit-group-' + selectedGroup.key,
                     title: selectedGroup.displayName,
                     iconCls: tabIconCls,
                     closable: true,
                     layout: 'fit'
                 };
                 //check if preview tab is open and close it
-                var index = tabPane.items.indexOfKey('tab-preview-group-' + selectedGroup.new_key);
+                var index = tabPane.items.indexOfKey('tab-preview-group-' + selectedGroup.key);
                 if (index >= 0) {
                     tabPane.remove(index);
                 }
