@@ -121,9 +121,7 @@ public class UserStoreDetailsResult
         json.put( "created", "2011-08-09 08:23:07" );           //TODO
         json.put( "builtIn", user.isBuiltIn() );
         json.put( "editable", !( isAnonym || isAdmin ) );
-        json.put( "info_uri", AccountUriHelper.getAccountInfoUri( AccountType.USER, key ) );
         json.put( "image_uri", AccountUriHelper.getAccountImageUri( user ) );
-        json.put( "graph_uri", AccountUriHelper.getAccountGraphUri( key ) );
         return json;
     }
 
@@ -149,8 +147,6 @@ public class UserStoreDetailsResult
 
         final AccountType accountType = builtIn ? AccountType.ROLE : AccountType.GROUP;
         json.put( "image_uri", AccountUriHelper.getAccountImageUri( group ) );
-        json.put( "info_uri", AccountUriHelper.getAccountInfoUri( accountType, key ) );
-        json.put( "graph_uri", AccountUriHelper.getAccountGraphUri( key ) );
 
         return json;
     }

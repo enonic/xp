@@ -1,7 +1,6 @@
 package com.enonic.wem.web.rest2.resource.account;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import javax.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.core.search.Facets;
 import com.enonic.wem.core.search.SearchSortOrder;
 import com.enonic.wem.core.search.account.AccountIndexField;
 import com.enonic.wem.core.search.account.AccountKey;
@@ -27,11 +25,6 @@ import com.enonic.wem.core.search.account.AccountSearchService;
 import com.enonic.wem.core.search.account.AccountType;
 import com.enonic.wem.web.rest.service.account.AccountCsvExportService;
 
-import com.enonic.cms.core.security.group.GroupEntity;
-import com.enonic.cms.core.security.group.GroupKey;
-import com.enonic.cms.core.security.user.UserEntity;
-import com.enonic.cms.core.security.user.UserKey;
-import com.enonic.cms.store.dao.GroupDao;
 import com.enonic.cms.store.dao.UserDao;
 
 @Path("account")
@@ -39,30 +32,11 @@ import com.enonic.cms.store.dao.UserDao;
 @Component
 public final class AccountResource
 {
-
     private UserDao userDao;
-
-    private GroupDao groupDao;
 
     private AccountSearchService accountSearchService;
 
     private AccountCsvExportService accountCsvExportService;
-
-    @GET
-    public AccountsResult search( @QueryParam("start") @DefaultValue("0") int start, @QueryParam("limit") @DefaultValue("10") int limit,
-                                  @QueryParam("sort") @DefaultValue("") String sort, @QueryParam("dir") @DefaultValue("ASC") String sortDir,
-                                  @QueryParam("query") @DefaultValue("") String query,
-                                  @QueryParam("types") @DefaultValue("user,group,role") String types,
-                                  @QueryParam("userstores") @DefaultValue("") String userStores,
-                                  @QueryParam("organizations") @DefaultValue("") String organizations )
-    {
-        final AccountSearchQuery searchQuery = buildSearchQuery( query, types, userStores, organizations, start, limit, sort, sortDir );
-        final AccountSearchResults searchResults = accountSearchService.search( searchQuery );
-        List list = populateSearchResults( searchResults );
-        Facets facets = searchResults != null ? searchResults.getFacets() : new Facets();
-        int total = searchResults != null ? searchResults.getTotal() : 0;
-        return new AccountsResult( list, facets, total );
-    }
 
     @GET
     @Path("export-query")
@@ -149,47 +123,10 @@ public final class AccountResource
 
     }
 
-    List populateSearchResults( AccountSearchResults results )
-    {
-        final List list = new ArrayList();
-        if ( results != null )
-        {
-            for ( AccountSearchHit hit : results )
-            {
-                switch ( hit.getAccountType() )
-                {
-                    case ROLE:
-                    case GROUP:
-                        GroupEntity groupEntity = this.groupDao.findByKey( new GroupKey( hit.getKey().toString() ) );
-                        if ( groupEntity != null )
-                        {
-                            list.add( groupEntity );
-                        }
-                        break;
-
-                    case USER:
-                        UserEntity userEntity = this.userDao.findByKey( new UserKey( hit.getKey().toString() ) );
-                        if ( userEntity != null )
-                        {
-                            list.add( userEntity );
-                        }
-                        break;
-                }
-            }
-        }
-        return list;
-    }
-
     @Autowired
     public void setUserDao( final UserDao userDao )
     {
         this.userDao = userDao;
-    }
-
-    @Autowired
-    public void setGroupDao( final GroupDao groupDao )
-    {
-        this.groupDao = groupDao;
     }
 
     @Autowired
