@@ -79,6 +79,7 @@ public final class GroupResult
                 json.put( "displayName", user.getDisplayName() );
                 json.put( "type", TYPE_USER );
                 json.put( "key", user.getKey().toString() );
+                json.put( "new_key", NewAccountKeyHelper.composeNewKey( user ) );
             }
             else
             {
@@ -89,6 +90,7 @@ public final class GroupResult
                 json.put( "displayName", group.getName() );
                 json.put( "type", type );
                 json.put( "key", group.getGroupKey().toString() );
+                json.put( "new_key", NewAccountKeyHelper.composeNewKey( group ) );
             }
 
             jsonArray.add( json );
