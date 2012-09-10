@@ -32,7 +32,7 @@ Ext.define('Admin.view.TabPanel', {
                 var mask = new Ext.LoadMask(tab, {msg: "Please wait..."});
                 mask.show();
                 var createTabFromResponse = requestConfig.createTabFromResponse;
-                requestConfig.success = function successCallback(response) {
+                var onRequestConfigSuccess = function successCallback(response) {
                     var tabContent = createTabFromResponse(response);
                     tab.add(tabContent);
                     mask.hide();
@@ -42,7 +42,7 @@ Ext.define('Admin.view.TabPanel', {
                         this.doLayout();
                     }, tab, {single: true});
                 };
-                Ext.Ajax.request(requestConfig);
+                requestConfig.doTabRequest(onRequestConfigSuccess);
             }
             if (tab.closable) {
                 tab.on({

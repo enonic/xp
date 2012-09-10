@@ -85,7 +85,8 @@ public final class FindMembersHandler
         {
             final AccountType type = getAccountType( member );
             final String name = getAccountName( member );
-            final AccountKey memberAccount = createAccountKey( type, member.getUserStore().getName(), name );
+            final String userStore = member.getUserStore() == null ? "system" : member.getUserStore().getName();
+            final AccountKey memberAccount = createAccountKey( type, userStore, name );
             accountSet.add( memberAccount );
             if ( includeTransitive )
             {

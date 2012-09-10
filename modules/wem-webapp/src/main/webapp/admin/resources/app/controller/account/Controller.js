@@ -152,8 +152,11 @@ Ext.define('Admin.controller.account.Controller', {
             var selected = selection[i].data || selection[i];
             if (selected.type === 'user') {
                 requestConfig = {
-                    url: Admin.lib.UriHelper.getAccountInfoUri(selected),
-                    method: 'GET',
+                    doTabRequest: function(handleRpcResponse) {
+                        Admin.lib.RemoteService.account_get({ key: selected.new_key }, function (rpcResp) {
+                            handleRpcResponse(rpcResp);
+                        })
+                    },
                     createTabFromResponse: createUserTabFn
                 };
                 tabItem = {
@@ -170,8 +173,11 @@ Ext.define('Admin.controller.account.Controller', {
                 tabPane.addTab(tabItem, index >= 0 ? index : undefined, requestConfig);
             } else {
                 requestConfig = {
-                    url: Admin.lib.UriHelper.getAccountInfoUri(selected),
-                    method: 'GET',
+                    doTabRequest: function(handleRpcResponse) {
+                        Admin.lib.RemoteService.account_get({ key: selected.new_key }, function (rpcResp) {
+                            handleRpcResponse(rpcResp);
+                        })
+                    },
                     createTabFromResponse: createGroupTabFn
                 };
                 tabItem = {
@@ -192,30 +198,28 @@ Ext.define('Admin.controller.account.Controller', {
 
     openEditAccountTabs: function (selection, callback) {
         var tabPane = this.getCmsTabPanel(), me = this, i, requestConfig, tabItem, index, createUserWizardFn = function (response) {
-                var jsonObj = Ext.JSON.decode(response.responseText);
                 var tab = {
                     xtype: 'userWizardPanel',
-                    userstore: jsonObj.userStore,
-                    qUserName: jsonObj.name,
-                    userFields: jsonObj,
+                    userstore: response.userStore,
+                    qUserName: response.name,
+                    userFields: response,
                     autoScroll: true
                 };
                 var tabCmp = Ext.widget(tab.xtype, tab);
                 var wizardPanel = tabCmp.down('wizardPanel');
 
-                var data = me.userInfoToWizardData(jsonObj);
+                var data = me.userInfoToWizardData(response);
                 wizardPanel.addData(data);
-                tabCmp.updateHeader({value: jsonObj.displayName, edited: true});
+                tabCmp.updateHeader({value: response.displayName, edited: true});
                 if (Ext.isFunction(callback)) {
                     callback();
                 }
                 return tabCmp;
             }, createGroupWizardFn = function (response) {
-                var jsonObj = Ext.JSON.decode(response.responseText);
                 var tab = {
                     xtype: 'groupWizardPanel',
-                    modelData: jsonObj,
-                    userstore: jsonObj.userStore,
+                    modelData: response,
+                    userstore: response.userStore,
                     autoScroll: true
                 };
                 if (Ext.isFunction(callback)) {
@@ -230,8 +234,11 @@ Ext.define('Admin.controller.account.Controller', {
             if (selected.editable) {
                 if (selected.type === 'user') {
                     requestConfig = {
-                        url: Admin.lib.UriHelper.getAccountInfoUri(selected),
-                        method: 'GET',
+                        doTabRequest: function(handleRpcResponse) {
+                            Admin.lib.RemoteService.account_get({ key: selected.new_key }, function (rpcResp) {
+                                handleRpcResponse(rpcResp);
+                            })
+                        },
                         createTabFromResponse: createUserWizardFn
                     };
                     tabItem = {
@@ -249,8 +256,11 @@ Ext.define('Admin.controller.account.Controller', {
                     tabPane.addTab(tabItem, index >= 0 ? index : undefined, requestConfig);
                 } else {
                     requestConfig = {
-                        url: Admin.lib.UriHelper.getAccountInfoUri(selected),
-                        method: 'GET',
+                        doTabRequest: function(handleRpcResponse) {
+                            Admin.lib.RemoteService.account_get({ key: selected.new_key }, function (rpcResp) {
+                                handleRpcResponse(rpcResp);
+                            })
+                        },
                         createTabFromResponse: createGroupWizardFn
                     };
 

@@ -1,4 +1,4 @@
-// This file was auto-generated on 2012-09-07 15:05:16 CEST
+// This file was auto-generated on 2012-09-10 11:41:06 CEST
 
 if ( !Templates ) {
     var Templates = {};
@@ -239,7 +239,7 @@ Templates.account = {
     userPreviewPhoto:
 		'<div class="admin-user-photo west admin-left">' + 
 		    '<div class="photo-placeholder">' + 
-		        '<img src="{[Admin.lib.UriHelper.getAccountIconUri(values)]}" alt="{name}"/>' + 
+		        '<img src="{[values.image_url]}" alt="{name}"/>' + 
 		    '</div>' + 
 		'</div>',
 
@@ -384,7 +384,7 @@ Templates.common = {
 		    '<div class="admin-user-info clearfix">' + 
 		        '<div class="admin-user-photo west admin-left">' + 
 		            '<div class="photo-placeholder">' + 
-		                '<img src="{[Admin.lib.UriHelper.getAccountIconUri(values)]}" alt="{name}"/>' + 
+		                '<img src="{[values.image_url]}" alt="{name}"/>' + 
 		            '</div>' + 
 		        '</div>' + 
 		        '<div class="admin-left">' + 
