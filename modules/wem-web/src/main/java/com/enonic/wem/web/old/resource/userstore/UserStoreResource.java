@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.resource.userstore;
+package com.enonic.wem.web.old.resource.userstore;
 
 import java.util.Collection;
 import java.util.List;

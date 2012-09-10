@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.resource.userstore;
+package com.enonic.wem.web.old.resource.userstore;
 
 import java.util.Collection;
 
@@ -6,7 +6,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.web.rest2.common.JsonResult;
+import com.enonic.wem.web.old.common.JsonResult;
 
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
 

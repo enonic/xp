@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.resource.account;
+package com.enonic.wem.web.old.resource.account;
 
 import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.core.security.userstore.UserStoreEntity;

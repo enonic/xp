@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest2.common;
+package com.enonic.wem.web.old.common;
 
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
