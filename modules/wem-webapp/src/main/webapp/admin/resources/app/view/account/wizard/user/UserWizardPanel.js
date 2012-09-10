@@ -280,6 +280,9 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
 
     getData: function () {
         var wizardData = this.getWizardPanel().getData();
+        if (this.userFields) {
+            wizardData.key = this.userFields.key;
+        }
         var displayNameField = this.el.select('input.admin-display-name').item(0);
         if (displayNameField) {
             var data = {displayName: displayNameField.getValue() };
