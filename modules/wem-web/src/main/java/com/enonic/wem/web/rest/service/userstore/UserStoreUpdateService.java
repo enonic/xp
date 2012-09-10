@@ -11,7 +11,6 @@ import com.enonic.wem.core.search.account.AccountIndexData;
 import com.enonic.wem.core.search.account.AccountKey;
 import com.enonic.wem.core.search.account.AccountSearchService;
 import com.enonic.wem.core.search.account.Group;
-import com.enonic.wem.web.rest2.resource.old.AccountModelTranslator;
 
 import com.enonic.cms.framework.xml.XMLDocumentFactory;
 
@@ -22,6 +21,8 @@ import com.enonic.cms.core.security.group.GroupSpecification;
 import com.enonic.cms.core.security.group.GroupType;
 import com.enonic.cms.core.security.group.UpdateGroupCommand;
 import com.enonic.cms.core.security.user.User;
+import com.enonic.cms.core.security.user.UserEntity;
+import com.enonic.cms.core.security.user.UserKey;
 import com.enonic.cms.core.security.userstore.StoreNewUserStoreCommand;
 import com.enonic.cms.core.security.userstore.UpdateUserStoreCommand;
 import com.enonic.cms.core.security.userstore.UserStoreKey;
@@ -39,9 +40,6 @@ public class UserStoreUpdateService
 
     @Autowired
     private SecurityService securityService;
-
-    @Autowired
-    private AccountModelTranslator accountModelTranslator;
 
     @Autowired
     private UserStoreService userStoreService;
@@ -128,7 +126,7 @@ public class UserStoreUpdateService
             command.setName( adminGroup.getName() );
             for ( String administratorKey : administrators )
             {
-                final GroupKey groupKey = accountModelTranslator.getGroupModelTranslator().getMemberGroupKey( administratorKey );
+                final GroupKey groupKey = getMemberGroupKey( administratorKey );
                 final GroupEntity groupMember = securityService.getGroup( groupKey );
                 command.addMember( groupMember );
             }
@@ -178,5 +176,15 @@ public class UserStoreUpdateService
         final AccountIndexData accountIndexData = new AccountIndexData( group );
 
         searchService.index( accountIndexData );
+    }
+
+    private GroupKey getMemberGroupKey(final String memberKey) {
+        final UserKey userKey = new UserKey(memberKey);
+        final UserEntity user = securityService.getUser(userKey);
+        if (user != null) {
+            return user.getUserGroupKey();
+        } else {
+            return new GroupKey(memberKey);
+        }
     }
 }

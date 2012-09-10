@@ -10,7 +10,6 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.web.rest2.common.JsonResult;
 import com.enonic.wem.web.rest2.resource.account.AccountUriHelper;
 
@@ -144,8 +143,6 @@ public class UserStoreDetailsResult
         json.put( "created", "2012-07-24 16:18:35" );           //TODO
         json.put( "builtIn", builtIn );
         json.put( "editable", !( isAuth || isAnonym ) );
-
-        final AccountType accountType = builtIn ? AccountType.ROLE : AccountType.GROUP;
         json.put( "image_uri", AccountUriHelper.getAccountImageUri( group ) );
 
         return json;

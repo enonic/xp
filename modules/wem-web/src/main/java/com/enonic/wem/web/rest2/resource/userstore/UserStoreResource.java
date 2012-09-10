@@ -121,40 +121,4 @@ public class UserStoreResource
 
         return new ConnectorResults( connectors );
     }
-
-
-    public UserStoreDao getUserStoreDao()
-    {
-        return userStoreDao;
-    }
-
-    public void setUserStoreDao( final UserStoreDao userStoreDao )
-    {
-        this.userStoreDao = userStoreDao;
-    }
-
-    public void setSecurityService( final SecurityService securityService )
-    {
-        this.securityService = securityService;
-    }
-
-    public void setUserStoreUpdateService( final UserStoreUpdateService userStoreUpdateService )
-    {
-        this.userStoreUpdateService = userStoreUpdateService;
-    }
-
-    public UserStoreConnectorManager getConnectorManager()
-    {
-        return connectorManager;
-    }
-
-    public void setConnectorManager( final UserStoreConnectorManager connectorManager )
-    {
-        this.connectorManager = connectorManager;
-    }
-
-    public void setUserStoreService( final UserStoreService userStoreService )
-    {
-        this.userStoreService = userStoreService;
-    }
 }
