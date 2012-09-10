@@ -128,24 +128,22 @@ Ext.define('Admin.controller.account.Controller', {
 
     openPreviewAccountTabs: function (selection, callback) {
         var me = this, tabPane = me.getCmsTabPanel(), i = 0, requestConfig, tabItem, index, createUserTabFn = function (response) {
-                var jsonObj = Ext.JSON.decode(response.responseText);
                 if (Ext.isFunction(callback)) {
                     callback();
                 }
                 return {
                     xtype: 'userPreviewPanel',
-                    data: jsonObj,
-                    user: jsonObj
+                    data: response,
+                    user: response
                 };
             }, createGroupTabFn = function (response) {
-                var jsonObj = Ext.JSON.decode(response.responseText);
                 if (Ext.isFunction(callback)) {
                     callback();
                 }
                 return {
                     xtype: 'groupPreviewPanel',
-                    data: jsonObj,
-                    group: jsonObj
+                    data: response,
+                    group: response
                 };
             };
         for ( i = 0; i < selection.length; i++ ) {
@@ -154,7 +152,9 @@ Ext.define('Admin.controller.account.Controller', {
                 requestConfig = {
                     doTabRequest: function(handleRpcResponse) {
                         Admin.lib.RemoteService.account_get({ key: selected.new_key }, function (rpcResp) {
-                            handleRpcResponse(rpcResp);
+                            if (rpcResp.success) {
+                                handleRpcResponse(rpcResp);
+                            }
                         })
                     },
                     createTabFromResponse: createUserTabFn
@@ -175,7 +175,9 @@ Ext.define('Admin.controller.account.Controller', {
                 requestConfig = {
                     doTabRequest: function(handleRpcResponse) {
                         Admin.lib.RemoteService.account_get({ key: selected.new_key }, function (rpcResp) {
-                            handleRpcResponse(rpcResp);
+                            if (rpcResp.success) {
+                                handleRpcResponse(rpcResp);
+                            }
                         })
                     },
                     createTabFromResponse: createGroupTabFn
@@ -236,7 +238,9 @@ Ext.define('Admin.controller.account.Controller', {
                     requestConfig = {
                         doTabRequest: function(handleRpcResponse) {
                             Admin.lib.RemoteService.account_get({ key: selected.new_key }, function (rpcResp) {
-                                handleRpcResponse(rpcResp);
+                                if (rpcResp.success) {
+                                    handleRpcResponse(rpcResp);
+                                }
                             })
                         },
                         createTabFromResponse: createUserWizardFn
@@ -258,7 +262,11 @@ Ext.define('Admin.controller.account.Controller', {
                     requestConfig = {
                         doTabRequest: function(handleRpcResponse) {
                             Admin.lib.RemoteService.account_get({ key: selected.new_key }, function (rpcResp) {
-                                handleRpcResponse(rpcResp);
+                                if (rpcResp.success) {
+                                    if (rpcResp.success) {
+                                        handleRpcResponse(rpcResp);
+                                    }
+                                }
                             })
                         },
                         createTabFromResponse: createGroupWizardFn
