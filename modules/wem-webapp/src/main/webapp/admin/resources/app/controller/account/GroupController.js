@@ -15,23 +15,12 @@ Ext.define('Admin.controller.account.GroupController', {
 
     saveGroupToDB: function (group, callback) {
         var me = this;
-        Ext.Ajax.request({
-            url: 'data/group/update',
-            method: 'POST',
-            jsonData: group,
-            success: function (response, opts) {
-                var serverResponse = Ext.JSON.decode(response.responseText);
-                if (!serverResponse.success) {
-                    Ext.Msg.alert('Error', serverResponse.error);
-                } else {
-                    callback(serverResponse.groupkey);
-                }
-                var current = me.getAccountGridPanel().store.currentPage;
-                me.getAccountGridPanel().store.loadPage(current);
-            },
-            failure: function (response, opts) {
-                Ext.Msg.alert('Error', 'Unable to update group');
+        Admin.lib.RemoteService.account_createOrUpdate(group, function (r) {
+            if (r && r.success) {
+                callback(group.key);
             }
+            var current = me.getAccountGridPanel().store.currentPage;
+            me.getAccountGridPanel().store.loadPage(current);
         });
     },
 
