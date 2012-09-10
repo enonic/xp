@@ -8,11 +8,11 @@ Ext.define('Admin.store.userstore.UserstoreConfigStore', {
 
     proxy: {
         type: 'ajax',
-        url: 'data/userstore/list',
+        url: 'rest/userstore',
         simpleSortMode: true,
         reader: {
             type: 'json',
-            root: 'userStoreConfigs'
+            root: 'userStores'
         },
         extraParams: {
             includeFields: false,
