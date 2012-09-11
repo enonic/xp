@@ -73,12 +73,20 @@ Ext.define('Admin.plugin.SlidingPagerPlugin', {
         pbar.on({
             change: function (paging, pageData) {
                 // TODO: Configuration for internationalization.
-                if (pageData.total) {
-                    total.setText(pageData.total + ' Accounts Total');
-                    displayInfo.setText('Displaying ' + pageData.fromRecord + '-' + pageData.toRecord);
+                if (pageData) {
+                    if (pageData.total) {
+                        total.setText(pageData.total + ' Accounts Total');
+                        displayInfo.setText('Displaying ' + pageData.fromRecord + '-' + pageData.toRecord);
+                    }
+                    slider.setMaxValue(pageData.pageCount);
+                    slider.setValue(pageData.currentPage);
+                } else {
+                    total.setText('0 Accounts Total');
+                    displayInfo.setText('Displaying 0-0');
+                    slider.setMaxValue(0);
+                    slider.setValue(0);
+
                 }
-                slider.setMaxValue(pageData.pageCount);
-                slider.setValue(pageData.currentPage);
             }
 
         });
