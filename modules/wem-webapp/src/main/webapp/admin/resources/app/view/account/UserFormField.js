@@ -24,7 +24,7 @@ Ext.define('Admin.view.account.UserFormField', {
     validationTask: undefined,
 
     fieldWidth: {
-        'username': 200,
+        'name': 200,
         'email': 200,
         'initials': 150,
         'birthday': 300,
@@ -136,7 +136,7 @@ Ext.define('Admin.view.account.UserFormField', {
             listeners: {
                 'validitychange': me.validityChanged,
                 'change': me.delayValidation ?
-                          me.callValidationTask : function () {
+                    me.callValidationTask : function () {
                 },
                 'keyup': function (field, event) {
                     if (me.delayValidation && (!event.isSpecialKey() ||
@@ -267,7 +267,7 @@ Ext.define('Admin.view.account.UserFormField', {
             enableKeyEvents: true,
             bubbleEvents: ['keyup']
         };
-        if (me.fieldname === 'username') {
+        if (me.fieldname === 'name') {
             textConfig.validator = me.validateUserName;
             textConfig.validValue = true;
         } else if (me.fieldname === 'email') {
@@ -307,7 +307,7 @@ Ext.define('Admin.view.account.UserFormField', {
                 method: 'GET',
                 params: {
                     'userstore': parentField.validationData.userStore,
-                    'username': value
+                    'name': value
                 },
                 success: function (response) {
                     var respObj = Ext.decode(response.responseText, true);
@@ -349,18 +349,19 @@ Ext.define('Admin.view.account.UserFormField', {
                 validationStatus.update({type: 'info', text: 'Valid e-mail'});
             }
 
-            Admin.lib.RemoteService.account_verifyUniqueEmail( { userStore: parentField.validationData.userStore, email: value }, function(response) {
-                if (response.success) {
-                    if (response.emailInUse) {
-                        validationStatus.update({type: 'error', text: 'Not available'});
-                        me.validValue = (response.key === parentField.validationData.userKey);
-                    } else {
-                        validationStatus.update({type: 'info', text: 'Available'});
-                        me.validValue = true;
+            Admin.lib.RemoteService.account_verifyUniqueEmail({ userStore: parentField.validationData.userStore, email: value },
+                function (response) {
+                    if (response.success) {
+                        if (response.emailInUse) {
+                            validationStatus.update({type: 'error', text: 'Not available'});
+                            me.validValue = (response.key === parentField.validationData.userKey);
+                        } else {
+                            validationStatus.update({type: 'info', text: 'Available'});
+                            me.validValue = true;
+                        }
+                        parentField.validate();
                     }
-                    parentField.validate();
-                }
-            } );
+                });
         }
         if (value === '' || value === me.currentEmail) {
             validationStatus.update({type: 'info', text: ''});

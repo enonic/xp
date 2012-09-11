@@ -139,7 +139,7 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
                                 itemId: "userPanel",
                                 xtype: 'editUserFormPanel',
                                 userFields: me.userFields,
-                                includedFields: ['username', 'email', 'password', 'repeatPassword', 'photo',
+                                includedFields: ['name', 'email', 'password', 'repeatPassword', 'photo',
                                     'country', 'locale', 'timezone', 'globalPosition'],
                                 enableToolbar: false
                             },

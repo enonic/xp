@@ -13,7 +13,7 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
 
     statics: {
         fieldLabels: {
-            'username': 'User Name',
+            'name': 'User Name',
             'email': 'E-mail',
             'password': 'Password',
             'repeatPassword': 'Repeat Password',
@@ -47,7 +47,7 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
         staticFields: [
             {
                 label: 'Username',
-                type: 'username',
+                type: 'name',
                 required: true,
                 remote: false,
                 readOnly: false
@@ -125,7 +125,7 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
             this.staticFields = [].concat(Admin.view.account.EditUserFormPanel.staticFields);
         }
         if (!this.excludedFields) {
-            this.excludedFields = ["username", "email", "country", "globalPosition", "locale",
+            this.excludedFields = ["name", "email", "country", "globalPosition", "locale",
                 "address", "photo", "password", "repeatPassword", "timezone"];
         }
 
@@ -162,7 +162,7 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
             ];
         }
         this.userFieldSet = {
-            'username': this.createTextField,
+            'name': this.createTextField,
             'email': this.createTextField
         };
         this.securityFieldSet = {
@@ -370,7 +370,7 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
         var validationResultType = 'none';
         var delayValidation = false;
         var validationData = {};
-        if (field.get('type') === 'username' || field.get('type') === 'email') {
+        if (field.get('type') === 'name' || field.get('type') === 'email') {
             validationResultType = 'detail';
             delayValidation = true;
             validationData.userStore = this.currentUser ? this.currentUser.userStore : this.defaultUserStoreName;
@@ -493,7 +493,7 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
                     fieldname: item.get('type'),
                     required: item.get('required') || false,
                     remote: item.get('remote') || false,
-                    readonly: item.get('readOnly') || false || (item.get('type') === 'username' && me.userFields),
+                    readonly: item.get('readOnly') || false || (item.get('type') === 'name' && me.userFields),
                     // what is that field?
                     vtype: item.get('vtype'),
                     fieldValue: fieldValue,
@@ -579,8 +579,8 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
             userData = {
                 info: formValues
             };
-            if (formValues.username) {
-                userData.username = formValues.username;
+            if (formValues.name) {
+                userData.name = formValues.name;
             }
             if (formValues.email) {
                 userData.email = formValues.email;
