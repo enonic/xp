@@ -45,10 +45,10 @@ Ext.define('Admin.controller.account.FilterPanelController', {
             query: values.query
         };
         if (!Ext.isEmpty(values.type)) {
-            query.types = Ext.isArray(values.type) ? values.type.join(',') : values.type;
+            query.types = values.type;
         }
         if (!Ext.isEmpty(values.userstore)) {
-            query.userstores = Ext.isArray(values.userstore) ? values.userstore.join(',') : values.userstore;
+            query.userstores = values.userstore;
         }
         return query;
     }
