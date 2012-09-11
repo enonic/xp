@@ -15,6 +15,7 @@ Ext.define('Admin.controller.account.UserController', {
 
     saveUserToDB: function (user, callback) {
         var me = this;
+        user.key = user.key || ['user', user.userStore, user.username].join(':');
         Admin.lib.RemoteService.account_createOrUpdate(user, function (r) {
             if (r && r.success) {
                 callback(user.key);

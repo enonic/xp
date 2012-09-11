@@ -15,6 +15,7 @@ Ext.define('Admin.controller.account.GroupController', {
 
     saveGroupToDB: function (group, callback) {
         var me = this;
+        group.key = group.key || ['group', group.userStore, group.name].join(':');
         Admin.lib.RemoteService.account_createOrUpdate(group, function (r) {
             if (r && r.success) {
                 callback(group.key);
