@@ -12,8 +12,7 @@ public class FormItems
 
     private LinkedHashMap<String, FormItem> items = new LinkedHashMap<String, FormItem>();
 
-    private LinkedHashMap<String, DirectAccessibleFormItem> directAccessibleFormItems =
-        new LinkedHashMap<String, DirectAccessibleFormItem>();
+    private LinkedHashMap<String, HierarchicalFormItem> directAccessibleFormItems = new LinkedHashMap<String, HierarchicalFormItem>();
 
     private LinkedHashMap<String, VisualFieldSet> visualFieldSets = new LinkedHashMap<String, VisualFieldSet>();
 
@@ -29,9 +28,9 @@ public class FormItems
 
     public void addFormItem( final FormItem item )
     {
-        if ( item instanceof DirectAccessibleFormItem )
+        if ( item instanceof HierarchicalFormItem )
         {
-            ( (DirectAccessibleFormItem) item ).setPath( new FormItemPath( path, item.getName() ) );
+            ( (HierarchicalFormItem) item ).setPath( new FormItemPath( path, item.getName() ) );
         }
 
         Object previous = items.put( item.getName(), item );
@@ -41,9 +40,9 @@ public class FormItems
         {
             visualFieldSets.put( item.getName(), (VisualFieldSet) item );
         }
-        else if ( item instanceof DirectAccessibleFormItem )
+        else if ( item instanceof HierarchicalFormItem )
         {
-            directAccessibleFormItems.put( item.getName(), (DirectAccessibleFormItem) item );
+            directAccessibleFormItems.put( item.getName(), (HierarchicalFormItem) item );
         }
     }
 
@@ -52,9 +51,9 @@ public class FormItems
         this.path = path;
         for ( final FormItem formItem : items.values() )
         {
-            if ( formItem instanceof DirectAccessibleFormItem )
+            if ( formItem instanceof HierarchicalFormItem )
             {
-                ( (DirectAccessibleFormItem) formItem ).setParentPath( path );
+                ( (HierarchicalFormItem) formItem ).setParentPath( path );
             }
             else if ( formItem instanceof VisualFieldSet )
             {
@@ -63,14 +62,14 @@ public class FormItems
         }
     }
 
-    public DirectAccessibleFormItem getFormItem( final FormItemPath path )
+    public HierarchicalFormItem getFormItem( final FormItemPath path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
 
         if ( path.elementCount() > 1 )
         {
-            DirectAccessibleFormItem foundConfig = getDirectAccessibleFormItem( path.getFirstElement() );
+            HierarchicalFormItem foundConfig = getDirectAccessibleFormItem( path.getFirstElement() );
             Preconditions.checkArgument( foundConfig.getFormItemType() == FormItemType.FORM_ITEM_SET,
                                          "FormItem at path [%s] expected to be of type FormItemSet: " + foundConfig.getFormItemType(),
                                          path );
@@ -94,7 +93,7 @@ public class FormItems
         return foundFormItem;
     }
 
-    public DirectAccessibleFormItem getDirectAccessibleFormItem( final String name )
+    public HierarchicalFormItem getDirectAccessibleFormItem( final String name )
     {
         FormItem formItem = getFormItem( name );
         if ( formItem == null )
@@ -102,17 +101,17 @@ public class FormItems
             return null;
         }
 
-        Preconditions.checkArgument( formItem instanceof DirectAccessibleFormItem,
+        Preconditions.checkArgument( formItem instanceof HierarchicalFormItem,
                                      "FormItem [%s] in [%s] is not of type DirectAccessibleFormItem: " + formItem.getClass().getName(),
                                      this.getPath(), formItem.getName() );
 
         //noinspection ConstantConditions
-        return (DirectAccessibleFormItem) formItem;
+        return (HierarchicalFormItem) formItem;
     }
 
     public FormItemSet getFormItemSet( final String name )
     {
-        final DirectAccessibleFormItem formItem = getDirectAccessibleFormItem( name );
+        final HierarchicalFormItem formItem = getDirectAccessibleFormItem( name );
         if ( formItem == null )
         {
             return null;
@@ -127,7 +126,7 @@ public class FormItems
 
     public FormItemSet getFormItemSet( final FormItemPath path )
     {
-        final DirectAccessibleFormItem formItem = getFormItem( path );
+        final HierarchicalFormItem formItem = getFormItem( path );
         if ( formItem == null )
         {
             return null;
@@ -142,7 +141,7 @@ public class FormItems
 
     public Component getComponent( final String name )
     {
-        final DirectAccessibleFormItem formItem = getDirectAccessibleFormItem( name );
+        final HierarchicalFormItem formItem = getDirectAccessibleFormItem( name );
         if ( formItem == null )
         {
             return null;
@@ -157,7 +156,7 @@ public class FormItems
 
     public Component getComponent( final FormItemPath path )
     {
-        final DirectAccessibleFormItem formItem = getFormItem( path );
+        final HierarchicalFormItem formItem = getFormItem( path );
         if ( formItem == null )
         {
             return null;
@@ -179,7 +178,7 @@ public class FormItems
         return items.values();
     }
 
-    public Iterable<DirectAccessibleFormItem> iterableForDirectAccessFormItems()
+    public Iterable<HierarchicalFormItem> iterableForDirectAccessFormItems()
     {
         return directAccessibleFormItems.values();
     }
@@ -197,7 +196,7 @@ public class FormItems
         final int size = items.size();
         for ( FormItem entry : items.values() )
         {
-            if ( entry instanceof DirectAccessibleFormItem )
+            if ( entry instanceof HierarchicalFormItem )
             {
                 s.append( entry.getName() );
                 if ( index < size - 1 )
@@ -248,7 +247,7 @@ public class FormItems
                                                  "Template expected to be of type %s: " + template.getType(),
                                                  templateReference.getTemplateType() );
 
-                    final DirectAccessibleFormItem formItemCreatedFromTemplate = template.create( templateReference );
+                    final HierarchicalFormItem formItemCreatedFromTemplate = template.create( templateReference );
                     if ( formItemCreatedFromTemplate instanceof FormItemSet )
                     {
                         FormItemSet formItemSet = (FormItemSet) formItemCreatedFromTemplate;

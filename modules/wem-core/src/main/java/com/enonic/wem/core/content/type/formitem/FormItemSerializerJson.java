@@ -150,14 +150,14 @@ public class FormItemSerializerJson
             throw new JsonParsingException( "Unknown FormItemType: " + formItemType );
         }
 
-        if ( formItem instanceof DirectAccessibleFormItem )
+        if ( formItem instanceof HierarchicalFormItem )
         {
-            applyPath( formItemNode, (DirectAccessibleFormItem) formItem );
+            applyPath( formItemNode, (HierarchicalFormItem) formItem );
         }
         return formItem;
     }
 
-    private void applyPath( final JsonNode formItemNode, final DirectAccessibleFormItem formItem )
+    private void applyPath( final JsonNode formItemNode, final HierarchicalFormItem formItem )
     {
         if ( formItem.getFormItemType() != FormItemType.VISUAL_FIELD_SET )
         {
@@ -165,7 +165,7 @@ public class FormItemSerializerJson
         }
     }
 
-    private DirectAccessibleFormItem parseField( final JsonNode formItemNode )
+    private HierarchicalFormItem parseField( final JsonNode formItemNode )
     {
         final Component.Builder builder = Component.newBuilder();
         builder.name( JsonParserUtil.getStringValue( "name", formItemNode ) );
@@ -181,7 +181,7 @@ public class FormItemSerializerJson
         return builder.build();
     }
 
-    private DirectAccessibleFormItem parseFormItemSet( final JsonNode formItemNode )
+    private HierarchicalFormItem parseFormItemSet( final JsonNode formItemNode )
     {
         final FormItemSet.Builder builder = newFormItemSet();
         builder.name( JsonParserUtil.getStringValue( "name", formItemNode ) );
@@ -217,7 +217,7 @@ public class FormItemSerializerJson
         return builder.build();
     }
 
-    private DirectAccessibleFormItem parseTemplateReference( final JsonNode formItemNode )
+    private HierarchicalFormItem parseTemplateReference( final JsonNode formItemNode )
     {
         final TemplateReference.Builder builder = newTemplateReference();
         builder.name( JsonParserUtil.getStringValue( "name", formItemNode ) );

@@ -2,12 +2,12 @@ package com.enonic.wem.core.content.type.formitem;
 
 import org.elasticsearch.common.base.Preconditions;
 
-public abstract class DirectAccessibleFormItem
+public abstract class HierarchicalFormItem
     extends FormItem
 {
     private FormItemPath path;
 
-    protected DirectAccessibleFormItem( final FormItemType type )
+    protected HierarchicalFormItem( final FormItemType type )
     {
         super( type );
     }
@@ -37,9 +37,9 @@ public abstract class DirectAccessibleFormItem
         return path;
     }
 
-    public DirectAccessibleFormItem copy()
+    public HierarchicalFormItem copy()
     {
-        final DirectAccessibleFormItem formItem = (DirectAccessibleFormItem) super.copy();
+        final HierarchicalFormItem formItem = (HierarchicalFormItem) super.copy();
         formItem.path = path;
         return formItem;
     }

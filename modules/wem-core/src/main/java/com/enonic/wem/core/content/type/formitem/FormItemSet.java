@@ -7,7 +7,7 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 
 public class FormItemSet
-    extends DirectAccessibleFormItem
+    extends HierarchicalFormItem
 {
     private String label;
 
@@ -98,7 +98,7 @@ public class FormItemSet
     void setParentPath( final FormItemPath parentPath )
     {
         super.setParentPath( parentPath );
-        for ( DirectAccessibleFormItem formItem : formItems.iterableForDirectAccessFormItems() )
+        for ( HierarchicalFormItem formItem : formItems.iterableForDirectAccessFormItems() )
         {
             formItem.setParentPath( this.getPath() );
         }
@@ -149,7 +149,7 @@ public class FormItemSet
         return new Builder();
     }
 
-    public DirectAccessibleFormItem getFormItem( final FormItemPath formItemPath )
+    public HierarchicalFormItem getFormItem( final FormItemPath formItemPath )
     {
         return formItems.getFormItem( formItemPath );
     }

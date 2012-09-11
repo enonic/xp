@@ -7,7 +7,7 @@ import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
 
 import static org.junit.Assert.*;
 
-public class DirectAccessibleFormItemTest
+public class HierarchicalFormItemTest
 {
     @Test
     public void setParentPath()

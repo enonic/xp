@@ -4,7 +4,7 @@ package com.enonic.wem.core.content.type.formitem;
 import org.elasticsearch.common.base.Preconditions;
 
 public class TemplateReference
-    extends DirectAccessibleFormItem
+    extends HierarchicalFormItem
 {
     private TemplateQualifiedName templateQualifiedName;
 

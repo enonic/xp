@@ -36,7 +36,7 @@ public class FormItemSetTest
         formItemSet.addItem( Component.newBuilder().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() );
 
         // exercise
-        DirectAccessibleFormItem field = formItemSet.getFormItem( new FormItemPath( "myField" ) );
+        HierarchicalFormItem field = formItemSet.getFormItem( new FormItemPath( "myField" ) );
 
         // verify
         assertEquals( "myFieldSet.myField", field.getPath().toString() );

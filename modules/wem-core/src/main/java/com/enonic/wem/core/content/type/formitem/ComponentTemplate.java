@@ -30,7 +30,7 @@ public class ComponentTemplate
         this.component = value;
     }
 
-    public DirectAccessibleFormItem create( final TemplateReference templateReference )
+    public HierarchicalFormItem create( final TemplateReference templateReference )
     {
         Component component = this.component.copy();
         component.setName( templateReference.getName() );

@@ -31,5 +31,5 @@ public abstract class Template
 
     public abstract TemplateType getType();
 
-    public abstract DirectAccessibleFormItem create( final TemplateReference templateReference );
+    public abstract HierarchicalFormItem create( final TemplateReference templateReference );
 }

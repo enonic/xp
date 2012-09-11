@@ -10,7 +10,7 @@ import com.enonic.wem.core.content.type.formitem.comptype.ComponentType;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeConfig;
 
 public class Component
-    extends DirectAccessibleFormItem
+    extends HierarchicalFormItem
 {
     private ComponentType type;
 

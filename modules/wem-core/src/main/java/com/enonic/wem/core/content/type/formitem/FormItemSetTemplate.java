@@ -27,7 +27,7 @@ public class FormItemSetTemplate
         return TemplateType.FORM_ITEM_SET;
     }
 
-    public void addFormItem( final DirectAccessibleFormItem formItem )
+    public void addFormItem( final HierarchicalFormItem formItem )
     {
         if ( formItem instanceof TemplateReference )
         {
@@ -39,7 +39,7 @@ public class FormItemSetTemplate
         formItemSet.addFormItem( formItem );
     }
 
-    public DirectAccessibleFormItem create( final TemplateReference templateReference )
+    public HierarchicalFormItem create( final TemplateReference templateReference )
     {
         FormItemSet formItemSet = this.formItemSet.copy();
         formItemSet.setName( templateReference.getName() );
