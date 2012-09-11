@@ -104,12 +104,12 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
                                         title: "Memberships",
                                         itemId: 'membershipsTab',
                                         listeners: {
-                                            show: function () {
+                                            afterlayout: function () {
                                                 if (!me.graphData) {
                                                     var mask = new Ext.LoadMask(this, {msg: "Please wait..."});
                                                     mask.show();
                                                     Admin.lib.RemoteService.account_getGraph({key: me.data.key}, function (r) {
-                                                        if (r.success) {
+                                                        if (r && r.success) {
                                                             me.graphData = r.graph;
                                                             me.down('membershipsGraphPanel').setGraphData(me.graphData);
                                                         }

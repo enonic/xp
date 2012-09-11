@@ -63,12 +63,12 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
                                         title: "Members",
                                         itemId: 'membershipsTab',
                                         listeners: {
-                                            afterrender: function () {
-                                                if (me.data) {
+                                            afterlayout: function () {
+                                                if (me.data && !me.graphData) {
                                                     var mask = new Ext.LoadMask(this, {msg: "Please wait..."});
                                                     mask.show();
                                                     Admin.lib.RemoteService.account_getGraph({key: me.data.key}, function (r) {
-                                                        if (r.success) {
+                                                        if (r && r.success) {
                                                             me.graphData = r.graph;
                                                             me.down('membershipsGraphPanel').setGraphData(me.graphData);
                                                         }
@@ -130,13 +130,10 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewPanel', {
             previewInfo.update(data);
 
             var membershipsTab = this.down('#membershipsTab');
-            var graph = this.down('membershipsGraphPanel');
-
+            delete me.graphData;
             if (membershipsTab.rendered) {
-                //membershipsTab.down('membershipsGraphPanel').setGraphData(data.graph);
                 // Graph panel for some reason does not repaint itself
-                //graph.setGraphData(data.graph);
-                membershipsTab.fireEvent('afterrender');
+                membershipsTab.fireEvent('show');
                 this.doLayout();
             }
         }
