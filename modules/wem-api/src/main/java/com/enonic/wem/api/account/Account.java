@@ -2,6 +2,8 @@ package com.enonic.wem.api.account;
 
 import org.joda.time.DateTime;
 
+import com.google.common.base.Strings;
+
 public abstract class Account
 {
     private final AccountKey key;
@@ -28,7 +30,7 @@ public abstract class Account
 
     public final String getDisplayName()
     {
-        return this.displayName != null ? this.displayName : this.key.getQualifiedName();
+        return this.displayName != null ? this.displayName : this.key.getLocalName();
     }
 
     public final DateTime getCreatedTime()
@@ -53,7 +55,7 @@ public abstract class Account
 
     public final void setDisplayName( final String value )
     {
-        this.displayName = value;
+        this.displayName = Strings.emptyToNull( value );
     }
 
     public final void setCreatedTime( final DateTime value )

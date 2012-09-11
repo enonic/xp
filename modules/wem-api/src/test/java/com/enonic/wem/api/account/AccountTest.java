@@ -46,13 +46,13 @@ public abstract class AccountTest<T extends Account>
     public void testDisplayName()
     {
         final T account = create( "other:dummy" );
-        assertEquals( "other:dummy", account.getDisplayName() );
+        assertEquals( "dummy", account.getDisplayName() );
 
         account.setDisplayName( "Test" );
         assertEquals( "Test", account.getDisplayName() );
 
         account.setDisplayName( null );
-        assertEquals( "other:dummy", account.getDisplayName() );
+        assertEquals( "dummy", account.getDisplayName() );
     }
 
     @Test
