@@ -260,6 +260,7 @@ public final class UpdateAccountsHandler
                     }
                 }
             }
+            command.syncMembers();
         }
         else
         {
@@ -280,6 +281,10 @@ public final class UpdateAccountsHandler
         final UserStoreKey userStoreKey = getUserStoreEntityKey( accountKey.getUserStore() );
         if ( userStoreKey == null )
         {
+            if ( "system".equals( accountKey.getUserStore() ) )
+            {
+                return groupDao.findGlobalGroupByName( accountKey.getLocalName(), false );
+            }
             return null;
         }
         final List<GroupEntity> memberAsGroup = groupDao.findByUserStoreKeyAndGroupname( userStoreKey, accountKey.getLocalName(), false );

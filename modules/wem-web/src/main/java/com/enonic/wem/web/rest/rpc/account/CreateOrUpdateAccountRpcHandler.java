@@ -49,6 +49,38 @@ public final class CreateOrUpdateAccountRpcHandler
             createAccount( account );
             context.setResult( CreateOrUpdateAccountJsonResult.created() );
         }
+
+        if ( account.getKey().isUser() && !context.param( "groups" ).isNull() )
+        {
+            setUserMemberships( account, context );
+        }
+    }
+
+    private void setUserMemberships( final Account user, final JsonRpcContext context )
+    {
+        // get current memberships for the user
+        final AccountKeys currentMemberships = this.client.execute( Commands.account().findMemberships().key( user.getKey() ) );
+        final String[] groupKeys = context.param( "groups" ).asStringArray();
+        final AccountKeys newMemberships = AccountKeys.from( groupKeys );
+        final AccountKeys userMember = AccountKeys.from( user.getKey() );
+
+        // remove user from groups that are not specified in the request
+        for ( final AccountKey groupKey : currentMemberships )
+        {
+            if ( !newMemberships.contains( groupKey ) )
+            {
+                final AccountKeys groupToRemove = AccountKeys.from( groupKey );
+                this.client.execute(
+                    Commands.account().update().keys( groupToRemove ).editor( AccountEditors.removeMembers( userMember ) ) );
+            }
+        }
+
+        // add user as member of specified groups
+        for ( final AccountKey groupKey : newMemberships )
+        {
+            final AccountKeys groupToAdd = AccountKeys.from( groupKey );
+            this.client.execute( Commands.account().update().keys( groupToAdd ).editor( AccountEditors.addMembers( userMember ) ) );
+        }
     }
 
     private boolean accountExists( final AccountKey accountKey )
