@@ -7,7 +7,7 @@ import com.enonic.cms.core.security.user.QualifiedUsername;
 /**
  * Argument matcher for simulating QualifiedUsername.equals in mocked objects.
  */
-class IsQualifiedUsername
+public class IsQualifiedUsername
     extends ArgumentMatcher<QualifiedUsername>
 {
     private final QualifiedUsername qualifiedName;
