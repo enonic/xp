@@ -52,11 +52,13 @@ public final class UserStoreConnectors
         return this.list.iterator();
     }
 
+    @Override
     public int hashCode()
     {
         return this.list.hashCode();
     }
 
+    @Override
     public boolean equals( final Object o )
     {
         return ( o instanceof UserStoreConnectors ) && this.list.equals( ( (UserStoreConnectors) o ).list );
