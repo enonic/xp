@@ -20,6 +20,8 @@ import com.enonic.wem.api.account.editor.AccountEditor;
 import com.enonic.wem.api.command.account.UpdateAccounts;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
+import com.enonic.wem.core.search.account.AccountIndexDataImpl;
+import com.enonic.wem.core.search.account.AccountSearchService;
 
 import com.enonic.cms.core.security.QualifiedName;
 import com.enonic.cms.core.security.SecurityService;
@@ -51,6 +53,8 @@ public final class UpdateAccountsHandler
     private GroupDao groupDao;
 
     private UserDao userDao;
+
+    private AccountSearchService searchService;
 
     public UpdateAccountsHandler()
     {
@@ -198,6 +202,8 @@ public final class UpdateAccountsHandler
         {
             updateGroupOrRole( (NonUserAccount) account );
         }
+
+        this.searchService.index( new AccountIndexDataImpl( account ) );
     }
 
     private void updateUser( UserAccount user )
@@ -339,5 +345,11 @@ public final class UpdateAccountsHandler
     public void setUserDao( final UserDao userDao )
     {
         this.userDao = userDao;
+    }
+
+    @Autowired
+    public void setSearchService( final AccountSearchService searchService )
+    {
+        this.searchService = searchService;
     }
 }

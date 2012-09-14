@@ -14,6 +14,8 @@ import com.enonic.wem.api.command.account.CreateAccount;
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
+import com.enonic.wem.core.search.account.AccountIndexDataImpl;
+import com.enonic.wem.core.search.account.AccountSearchService;
 
 import com.enonic.cms.core.security.SecurityService;
 import com.enonic.cms.core.security.group.GroupEntity;
@@ -47,6 +49,8 @@ public final class CreateAccountHandler
 
     private UserDao userDao;
 
+    private AccountSearchService searchService;
+
     public CreateAccountHandler()
     {
         super( CreateAccount.class );
@@ -67,6 +71,7 @@ public final class CreateAccountHandler
 
             createGroup( (GroupAccount) account );
         }
+        this.searchService.index( new AccountIndexDataImpl( account ) );
 
         command.setResult( key );
     }
@@ -211,5 +216,11 @@ public final class CreateAccountHandler
     public void setUserDao( final UserDao userDao )
     {
         this.userDao = userDao;
+    }
+
+    @Autowired
+    public void setSearchService( final AccountSearchService searchService )
+    {
+        this.searchService = searchService;
     }
 }

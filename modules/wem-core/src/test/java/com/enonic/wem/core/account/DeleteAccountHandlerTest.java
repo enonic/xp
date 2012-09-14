@@ -18,6 +18,7 @@ import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.core.client.StandardClient;
 import com.enonic.wem.core.command.CommandInvokerImpl;
+import com.enonic.wem.core.search.account.AccountSearchService;
 
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.group.GroupKey;
@@ -54,12 +55,14 @@ public class DeleteAccountHandlerTest
         groupDao = Mockito.mock( GroupDao.class );
         userStoreDao = Mockito.mock( UserStoreDao.class );
         UserStoreService userStoreService = Mockito.mock( UserStoreService.class );
+        final AccountSearchService accountSearchService = Mockito.mock( AccountSearchService.class );
 
         final DeleteAccountsHandler deleteAccountsHandler = new DeleteAccountsHandler();
         deleteAccountsHandler.setUserDao( userDao );
         deleteAccountsHandler.setGroupDao( groupDao );
         deleteAccountsHandler.setUserStoreDao( userStoreDao );
         deleteAccountsHandler.setUserStoreService( userStoreService );
+        deleteAccountsHandler.setSearchService( accountSearchService );
 
         final StandardClient standardClient = new StandardClient();
         final CommandInvokerImpl commandInvoker = new CommandInvokerImpl();

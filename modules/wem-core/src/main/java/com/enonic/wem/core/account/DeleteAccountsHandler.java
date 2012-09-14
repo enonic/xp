@@ -11,6 +11,7 @@ import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.account.DeleteAccounts;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
+import com.enonic.wem.core.search.account.AccountSearchService;
 
 import com.enonic.cms.core.security.group.DeleteGroupCommand;
 import com.enonic.cms.core.security.group.GroupEntity;
@@ -37,6 +38,8 @@ public class DeleteAccountsHandler
 
     private UserStoreService userStoreService;
 
+    private AccountSearchService searchService;
+
     public DeleteAccountsHandler()
     {
         super( DeleteAccounts.class );
@@ -54,6 +57,7 @@ public class DeleteAccountsHandler
         {
             if ( deleteAccount( accountKey ) )
             {
+                this.searchService.deleteIndex( accountKey.toString() );
                 accountsDeleted++;
             }
         }
@@ -140,5 +144,11 @@ public class DeleteAccountsHandler
     public void setUserStoreService( final UserStoreService userStoreService )
     {
         this.userStoreService = userStoreService;
+    }
+
+    @Autowired
+    public void setSearchService( final AccountSearchService searchService )
+    {
+        this.searchService = searchService;
     }
 }

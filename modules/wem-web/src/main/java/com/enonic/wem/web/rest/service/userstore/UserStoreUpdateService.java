@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.search.account.AccountIndexData;
+import com.enonic.wem.core.search.account.AccountIndexDataEntity;
 import com.enonic.wem.core.search.account.AccountKey;
 import com.enonic.wem.core.search.account.AccountSearchService;
 import com.enonic.wem.core.search.account.Group;
@@ -173,7 +174,7 @@ public class UserStoreUpdateService
         // group.setLastModified( lastModified );
         group.setLastModified( null );
 
-        final AccountIndexData accountIndexData = new AccountIndexData( group );
+        final AccountIndexData accountIndexData = new AccountIndexDataEntity( group );
 
         searchService.index( accountIndexData );
     }

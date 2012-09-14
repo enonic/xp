@@ -24,6 +24,7 @@ import com.enonic.wem.api.account.editor.AccountEditor;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.core.client.StandardClient;
 import com.enonic.wem.core.command.CommandInvokerImpl;
+import com.enonic.wem.core.search.account.AccountSearchService;
 
 import com.enonic.cms.core.security.SecurityService;
 import com.enonic.cms.core.security.group.GroupEntity;
@@ -65,6 +66,7 @@ public class UpdateAccountsHandlerTest
         userStoreDao = Mockito.mock( UserStoreDao.class );
         securityService = Mockito.mock( SecurityService.class );
         final UserStoreService userStoreService = Mockito.mock( UserStoreService.class );
+        final AccountSearchService accountSearchService = Mockito.mock( AccountSearchService.class );
 
         final UpdateAccountsHandler updateAccountsHandler = new UpdateAccountsHandler();
         updateAccountsHandler.setUserDao( userDao );
@@ -72,6 +74,7 @@ public class UpdateAccountsHandlerTest
         updateAccountsHandler.setSecurityService( securityService );
         updateAccountsHandler.setUserStoreService( userStoreService );
         updateAccountsHandler.setUserStoreDao( userStoreDao );
+        updateAccountsHandler.setSearchService( accountSearchService );
 
         final StandardClient standardClient = new StandardClient();
         final CommandInvokerImpl commandInvoker = new CommandInvokerImpl();

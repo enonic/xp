@@ -15,12 +15,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.search.account.Account;
 import com.enonic.wem.core.search.account.AccountIndexData;
+import com.enonic.wem.core.search.account.AccountIndexDataEntity;
 import com.enonic.wem.core.search.account.AccountSearchService;
 import com.enonic.wem.core.search.account.Group;
 import com.enonic.wem.core.search.account.User;
@@ -172,7 +171,7 @@ public class AccountIndexing
                 logIndexedAccount( group, count, total );
                 progressCount.incrementAndGet();
 
-                AccountIndexData accountIndexData = new AccountIndexData( group );
+                AccountIndexData accountIndexData = new AccountIndexDataEntity( group );
                 accountSearchService.index( accountIndexData );
             }
         }
@@ -196,7 +195,7 @@ public class AccountIndexing
                 logIndexedAccount( user, count, total );
                 progressCount.incrementAndGet();
 
-                AccountIndexData accountIndexData = new AccountIndexData( user );
+                AccountIndexData accountIndexData = new AccountIndexDataEntity( user );
                 accountSearchService.index( accountIndexData );
             }
         }
