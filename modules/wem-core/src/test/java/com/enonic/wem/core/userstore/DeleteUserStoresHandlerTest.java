@@ -146,7 +146,7 @@ public class DeleteUserStoresHandlerTest
         group.setDeleted( false );
         group.setMemberships( Sets.<GroupEntity>newHashSet() );
 
-        final Set<GroupEntity> memberSet = new HashSet<>();
+        final Set<GroupEntity> memberSet = new HashSet<GroupEntity>();
         memberSet.addAll( Arrays.asList( members ) );
         group.setMembers( memberSet );
 
@@ -156,7 +156,7 @@ public class DeleteUserStoresHandlerTest
 
     private void mockAddGroupToUserStore( final UserStoreEntity userStore, final GroupEntity group )
     {
-        final List<GroupEntity> userStoreResults = new ArrayList<>();
+        final List<GroupEntity> userStoreResults = new ArrayList<GroupEntity>();
         userStoreResults.add( group );
         Mockito.when( groupDao.findByUserStoreKeyAndGroupname( userStore.getKey(), group.getName(), false ) ).thenReturn(
             userStoreResults );
