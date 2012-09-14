@@ -32,8 +32,8 @@ public class GetUserStoreConnectorsHandler
     public void handle( final CommandContext context, final GetUserStoreConnectors command )
         throws Exception
     {
-        Map<String, UserStoreConnectorConfig> connectorsConfig = userStoreConnectorManager.getUserStoreConnectorConfigs();
-        List<UserStoreConnector> connectors = new ArrayList<>();
+        final Map<String, UserStoreConnectorConfig> connectorsConfig = userStoreConnectorManager.getUserStoreConnectorConfigs();
+        final List<UserStoreConnector> connectors = new ArrayList<UserStoreConnector>();
         for ( UserStoreConnectorConfig connectorConfig : connectorsConfig.values() )
         {
             connectors.add( buildUserStoreConnector( connectorConfig ) );
@@ -44,7 +44,7 @@ public class GetUserStoreConnectorsHandler
 
     private UserStoreConnector buildUserStoreConnector( UserStoreConnectorConfig connectorConfig )
     {
-        UserStoreConnector connector = new UserStoreConnector( connectorConfig.getName() );
+        final  UserStoreConnector connector = new UserStoreConnector( connectorConfig.getName() );
         connector.setCreateGroup( connectorConfig.canCreateGroup() );
         connector.setCreateUser( connectorConfig.canCreateUser() );
         connector.setDeleteGroup( connectorConfig.canDeleteGroup() );

@@ -46,7 +46,7 @@ public class GetUserStoreConnectorsHandlerTest
     @Test
     public void testGetUserStoreConnectors()
     {
-        Map<String, UserStoreConnectorConfig> userStoreConnectorConfigs = new HashMap<>();
+        Map<String, UserStoreConnectorConfig> userStoreConnectorConfigs = new HashMap<String, UserStoreConnectorConfig>();
         userStoreConnectorConfigs.put( "ad", createUserStoreConnectorConfig( "ad" ) );
         userStoreConnectorConfigs.put( "enonic", createUserStoreConnectorConfig( "enonic" ) );
         UserStoreConnectors expectedResult =
