@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<config>
+
+  <!-- Name -->
+  <prefix/>
+  <first-name/>
+  <middle-name/>
+  <last-name/>
+  <suffix/>
+  <initials/>
+  <nick-name/>
+
+  <!-- Photo -->
+  <photo/>
+
+  <!-- Personal info -->
+  <personal-id/>
+  <member-id/>
+  <organization/>
+  <birthday/>
+  <gender/>
+  <title/>
+  <description/>
+  <html-email/>
+  <home-page/>
+  <time-zone/>
+  <locale/>
+  <country/>
+  <global-position/>
+  <phone/>
+  <mobile/>
+  <fax/>
+  <address/>
+
+</config>
