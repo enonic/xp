@@ -16,13 +16,6 @@ import com.enonic.cms.core.security.userstore.UserStoreService;
 import com.enonic.cms.store.dao.UserDao;
 import com.enonic.cms.store.dao.UserStoreDao;
 
-/**
- * Created with IntelliJ IDEA.
- * User: davion
- * Date: 9/12/12
- * Time: 3:48 PM
- * To change this template use File | Settings | File Templates.
- */
 @Component
 public class DeleteUserStoresHandler
     extends CommandHandler<DeleteUserStores>
@@ -42,7 +35,7 @@ public class DeleteUserStoresHandler
     public void handle( final CommandContext context, final DeleteUserStores command )
         throws Exception
     {
-        UserStoreNames userStoreNames = command.getNames();
+        final UserStoreNames userStoreNames = command.getNames();
         int userStoresDeleted = 0;
         for ( UserStoreName userStoreName : userStoreNames )
         {
@@ -57,13 +50,13 @@ public class DeleteUserStoresHandler
 
     private boolean deleteUserStore( UserStoreName userStoreName )
     {
-        UserStoreEntity userStoreEntity = userStoreDao.findByName( userStoreName.toString() );
+        final UserStoreEntity userStoreEntity = userStoreDao.findByName( userStoreName.toString() );
         if ( userStoreEntity == null )
         {
             return false;
         }
-        UserEntity deleter = userDao.findBuiltInEnterpriseAdminUser(); //TODO get logged in user
-        DeleteUserStoreCommand deleteUserStoreCommand = new DeleteUserStoreCommand();
+        final UserEntity deleter = userDao.findBuiltInEnterpriseAdminUser(); //TODO get logged in user
+        final DeleteUserStoreCommand deleteUserStoreCommand = new DeleteUserStoreCommand();
         deleteUserStoreCommand.setDeleter( deleter.getKey() );
         deleteUserStoreCommand.setKey( userStoreEntity.getKey() );
         userStoreService.deleteUserStore( deleteUserStoreCommand );

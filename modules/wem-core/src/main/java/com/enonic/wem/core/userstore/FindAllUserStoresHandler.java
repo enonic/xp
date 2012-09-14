@@ -30,8 +30,8 @@ public class FindAllUserStoresHandler
     public void handle( final CommandContext context, final FindAllUserStores command )
         throws Exception
     {
-        List<UserStoreEntity> userStores = userStoreDao.findAll();
-        List<UserStoreName> userStoreNames = new ArrayList<>();
+        final List<UserStoreEntity> userStores = userStoreDao.findAll();
+        final List<UserStoreName> userStoreNames = new ArrayList<UserStoreName>();
         for ( UserStoreEntity userStore : userStores )
         {
             userStoreNames.add( UserStoreName.from( userStore.getName() ) );
