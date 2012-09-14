@@ -3,8 +3,10 @@ package com.enonic.wem.core.account;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.elasticsearch.common.collect.Maps;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -17,10 +19,13 @@ import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.Accounts;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.RoleAccount;
+import com.enonic.wem.api.account.UserAccount;
+import com.enonic.wem.api.account.profile.UserProfile;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.core.client.StandardClient;
 import com.enonic.wem.core.command.CommandInvokerImpl;
 
+import com.enonic.cms.api.client.model.user.Gender;
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.group.GroupKey;
 import com.enonic.cms.core.security.group.GroupType;
@@ -30,6 +35,7 @@ import com.enonic.cms.core.security.user.UserKey;
 import com.enonic.cms.core.security.user.UserType;
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
 import com.enonic.cms.core.security.userstore.UserStoreKey;
+import com.enonic.cms.core.user.field.UserFieldType;
 import com.enonic.cms.store.dao.GroupDao;
 import com.enonic.cms.store.dao.UserDao;
 import com.enonic.cms.store.dao.UserStoreDao;
@@ -134,6 +140,65 @@ public class GetAccountsHandlerTest
         assertTrue( roleAccount.getMembers().contains( AccountKey.user( "enonic:user3" ) ) );
         assertTrue( roleAccount.getMembers().contains( AccountKey.group( "enonic:group1" ) ) );
         assertTrue( roleAccount.getMembers().contains( AccountKey.role( "enonic:administrators" ) ) );
+    }
+
+    @Test
+    public void testGetUserAccountWithProfile()
+        throws Exception
+    {
+        // setup
+        final UserEntity user = createUser( "enonic", "user1" );
+        final Map<String, String> userFields = Maps.newHashMap();
+        userFields.put( UserFieldType.BIRTHDAY.getName(), "2012-01-01T10:01:10.101+01:00" );
+        userFields.put( UserFieldType.COUNTRY.getName(), "Norway" );
+        userFields.put( UserFieldType.DESCRIPTION.getName(), "Description" );
+        userFields.put( UserFieldType.FAX.getName(), "12345678" );
+        userFields.put( UserFieldType.FIRST_NAME.getName(), "John" );
+        userFields.put( UserFieldType.GENDER.getName(), Gender.MALE.name() );
+        userFields.put( UserFieldType.GLOBAL_POSITION.getName(), "71 Degrees North" );
+        userFields.put( UserFieldType.HOME_PAGE.getName(), "http://acme.org" );
+        userFields.put( UserFieldType.HTML_EMAIL.getName(), "true" );
+        userFields.put( UserFieldType.INITIALS.getName(), "J. S." );
+        userFields.put( UserFieldType.LAST_NAME.getName(), "Smith" );
+        userFields.put( UserFieldType.LOCALE.getName(), "NO" );
+        userFields.put( UserFieldType.MEMBER_ID.getName(), "1234509876" );
+        userFields.put( UserFieldType.MIDDLE_NAME.getName(), "William" );
+        userFields.put( UserFieldType.MOBILE.getName(), "99999999" );
+        userFields.put( UserFieldType.NICK_NAME.getName(), "JS" );
+        userFields.put( UserFieldType.ORGANIZATION.getName(), "ACME" );
+        userFields.put( UserFieldType.PERSONAL_ID.getName(), "1234509876A" );
+        userFields.put( UserFieldType.PHONE.getName(), "66666666" );
+        userFields.put( UserFieldType.PHOTO.getName(), "img" );
+        userFields.put( UserFieldType.PREFIX.getName(), "Pre" );
+        userFields.put( UserFieldType.SUFFIX.getName(), "Suff" );
+        userFields.put( UserFieldType.TIME_ZONE.getName(), "GMT" );
+        userFields.put( UserFieldType.TITLE.getName(), "Mr." );
+        userFields.put( UserFieldType.ADDRESS.getName()+"[0].country", "Norway" );
+        userFields.put( UserFieldType.ADDRESS.getName()+"[0].iso-country", "NO" );
+        userFields.put( UserFieldType.ADDRESS.getName()+"[0].region", "AK" );
+        userFields.put( UserFieldType.ADDRESS.getName()+"[0].iso-region", "03" );
+        userFields.put( UserFieldType.ADDRESS.getName()+"[0].label", "Home" );
+        userFields.put( UserFieldType.ADDRESS.getName()+"[0].street", "Street" );
+        userFields.put( UserFieldType.ADDRESS.getName()+"[0].postal-code", "1234" );
+        userFields.put( UserFieldType.ADDRESS.getName()+"[0].postal-address", "1" );
+
+        doReturn( userFields ).when( user ).getFieldMap();
+
+        // exercise
+        final AccountKeys accounts = AccountKeys.from( "user:enonic:user1" );
+
+        Accounts accountResult = client.execute( Commands.account().get().keys( accounts ).includeProfile() );
+
+        // verify
+        assertNotNull( accountResult );
+        assertEquals( 1, accountResult.getSize() );
+        assertEquals( "user:enonic:user1", accountResult.getFirst().getKey().toString() );
+        final UserProfile profile = ( (UserAccount) accountResult.getFirst() ).getProfile();
+        assertNotNull( profile );
+        assertEquals( "John", profile.getFirstName() );
+        assertEquals( "Smith", profile.getLastName() );
+        assertNotNull( profile.getAddresses().getPrimary() );
+        assertEquals( "Home", profile.getAddresses().getPrimary().getLabel() );
     }
 
     private void addMembers( final GroupEntity group, final GroupEntity... members )

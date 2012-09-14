@@ -43,9 +43,12 @@ public final class GetAccountsHandler
 
     private UserDao userDao;
 
+    private UserProfileTransformer userProfileTransformer;
+
     public GetAccountsHandler()
     {
         super( GetAccounts.class );
+        userProfileTransformer = new UserProfileTransformer();
     }
 
     @Override
@@ -54,14 +57,15 @@ public final class GetAccountsHandler
     {
         final boolean includeMembers = command.isIncludeMembers();
         final boolean includePhoto = command.isIncludeImage();
-        // TODO handle command.isIncludeProfile()
+        final boolean includeProfile = command.isIncludeProfile();
 
-        final Accounts accounts = fetchAccounts( command.getKeys(), includeMembers, includePhoto );
+        final Accounts accounts = fetchAccounts( command.getKeys(), includeMembers, includePhoto, includeProfile );
 
         command.setResult( accounts );
     }
 
-    private Accounts fetchAccounts( final AccountKeys keys, final boolean includeMembers, final boolean includePhoto )
+    private Accounts fetchAccounts( final AccountKeys keys, final boolean includeMembers, final boolean includePhoto,
+                                    final boolean includeProfile )
     {
         final List<Account> accountList = new ArrayList<Account>();
         for ( AccountKey key : keys )
@@ -72,7 +76,7 @@ public final class GetAccountsHandler
                     final UserEntity user = findUserEntity( key );
                     if ( user != null )
                     {
-                        accountList.add( buildUserAccount( user, includePhoto ) );
+                        accountList.add( buildUserAccount( user, includePhoto, includeProfile ) );
                     }
                     break;
 
@@ -97,7 +101,7 @@ public final class GetAccountsHandler
         return Accounts.from( accountList );
     }
 
-    private UserAccount buildUserAccount( final UserEntity user, final boolean includePhoto )
+    private UserAccount buildUserAccount( final UserEntity user, final boolean includePhoto, final boolean includeProfile )
     {
         final UserAccount userAccount = UserAccount.create( qualifiedName( user.getQualifiedName() ) );
         userAccount.setDisplayName( user.getDisplayName() );
@@ -110,6 +114,10 @@ public final class GetAccountsHandler
         if ( includePhoto )
         {
             userAccount.setImage( user.getPhoto() );
+        }
+        if ( includeProfile )
+        {
+            userAccount.setProfile( userProfileTransformer.userEntityToUserProfile( user ) );
         }
         return userAccount;
     }
