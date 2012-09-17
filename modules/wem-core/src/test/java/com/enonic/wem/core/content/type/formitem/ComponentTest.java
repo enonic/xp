@@ -15,7 +15,8 @@ public class ComponentTest
     public void breaksRequiredContract_throws_exception_when_broken()
     {
         Component component = Component.newBuilder().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).required( true ).build();
-        component.checkBreaksRequiredContract( Data.newData().type( DataTypes.TEXT ).value( null ).build() );
+        Data data = Data.newData().type( DataTypes.TEXT ).value( null ).build();
+        component.checkBreaksRequiredContract( data );
     }
 
     @Test

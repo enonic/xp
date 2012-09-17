@@ -45,4 +45,14 @@ public class JsonParserUtil
         }
         return subNode.getBooleanValue();
     }
+
+    public static Boolean getBooleanValue( String fieldName, JsonNode node, Boolean defaultValue )
+    {
+        JsonNode subNode = node.get( fieldName );
+        if ( subNode == null )
+        {
+            return defaultValue;
+        }
+        return subNode.getBooleanValue();
+    }
 }

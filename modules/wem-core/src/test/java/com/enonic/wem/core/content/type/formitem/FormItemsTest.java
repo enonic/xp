@@ -19,7 +19,7 @@ public class FormItemsTest
         formItemSet.addItem( Component.newBuilder().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() );
 
         // exercise & verify
-        HierarchicalFormItem personaliaConfig = formItems.getDirectAccessibleFormItem( new FormItemPath( "personalia" ).getLastElement() );
+        HierarchicalFormItem personaliaConfig = formItems.getHierarchicalFormItem( new FormItemPath( "personalia" ).getLastElement() );
         assertEquals( "personalia", personaliaConfig.getPath().toString() );
     }
 
@@ -33,7 +33,7 @@ public class FormItemsTest
         formItemSet.addItem( Component.newBuilder().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() );
 
         // exercise & verify
-        HierarchicalFormItem personaliaEyeColourConfig = formItemSet.getFormItems().getDirectAccessibleFormItem( "eyeColour" );
+        HierarchicalFormItem personaliaEyeColourConfig = formItemSet.getFormItems().getHierarchicalFormItem( "eyeColour" );
         assertEquals( "personalia.eyeColour", personaliaEyeColourConfig.getPath().toString() );
     }
 

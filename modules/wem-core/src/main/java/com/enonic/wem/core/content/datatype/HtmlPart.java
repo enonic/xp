@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.datatype;
 
 
 public class HtmlPart
-    extends AbstractDataType
+    extends BaseDataType
     implements DataType
 {
     HtmlPart( int key )

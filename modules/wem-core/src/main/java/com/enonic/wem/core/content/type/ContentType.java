@@ -120,9 +120,12 @@ public class ContentType
             return null;
         }
 
-        Preconditions.checkState( component.getPath().equals( path ),
-                                  "Found Component at path [%s] have unexpected path: " + component.getPath(), path );
         return component;
+    }
+
+    public FormItem getFormItem( final String path )
+    {
+        return formItems.getFormItem( new FormItemPath( path ) );
     }
 
     public Component getComponent( final String path )

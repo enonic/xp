@@ -27,7 +27,7 @@ public class RadioButtonsConfig
     @Override
     public void checkValidity( final Data data )
     {
-        final String valueAsString = String.valueOf( data.getValue() );
+        final String valueAsString = data.getString();
         if ( !optionsAsMap.containsKey( valueAsString ) )
         {
             throw new InvalidValueException( "Value can only be of one the following strings: " + optionValuesAsCommaSeparatedString() );
@@ -74,6 +74,11 @@ public class RadioButtonsConfig
     }
 
     public static Builder newBuilder()
+    {
+        return new Builder();
+    }
+
+    public static Builder newRadioButtonsConfig()
     {
         return new Builder();
     }

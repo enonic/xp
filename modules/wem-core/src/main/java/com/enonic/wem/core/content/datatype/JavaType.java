@@ -30,11 +30,42 @@ public enum JavaType
         return value;
     }
 
+    public boolean isInstance( final Object value )
+    {
+        return this.value.isInstance( value );
+    }
+
+    public boolean isConvertibleTo( final JavaType type )
+    {
+        if ( this == STRING )
+        {
+            return type == STRING || type == LONG || type == DOUBLE || type == DATE;
+        }
+        else if ( this == BLOB )
+        {
+            return type == BLOB;
+        }
+        else if ( this == LONG )
+        {
+            return type == LONG || type == STRING || type == DOUBLE || type == DATE;
+        }
+        else if ( this == DOUBLE )
+        {
+            return type == DOUBLE || type == STRING || type == LONG;
+        }
+        else if ( this == DATE )
+        {
+            return type == DATE || type == STRING || type == LONG;
+        }
+        return false;
+    }
+
     public String toString( Data data )
     {
-        if ( data.getDataType().isConvertibleTo( STRING ) )
+        final BaseDataType dataType = (BaseDataType) data.getDataType();
+        if ( dataType.isConvertibleTo( STRING ) )
         {
-            return data.getDataType().convertToString( data.getValue() );
+            return dataType.convertToString( data.getValue() );
         }
 
         return null;
@@ -42,17 +73,23 @@ public enum JavaType
 
     public DateMidnight toDate( final Data data )
     {
-        if ( data.getDataType().isConvertibleTo( DATE ) )
+        final BaseDataType dataType = (BaseDataType) data.getDataType();
+        if ( dataType.isConvertibleTo( DATE ) )
         {
-            data.getDataType().convertToString( data.getValue() );
+            dataType.convertToString( data.getValue() );
         }
         return null;
     }
 
 
-    public boolean isInstance( final Object value )
+    public Double toDouble( final Data data )
     {
-        return this.value.isInstance( value );
+        final BaseDataType dataType = (BaseDataType) data.getDataType();
+        if ( dataType.isConvertibleTo( DOUBLE ) )
+        {
+            return dataType.convertToDouble( data.getValue() );
+        }
+        return null;
     }
 
     public static JavaType resolveType( Object o )
@@ -74,4 +111,5 @@ public enum JavaType
         s.add( "value", value );
         return s.toString();
     }
+
 }

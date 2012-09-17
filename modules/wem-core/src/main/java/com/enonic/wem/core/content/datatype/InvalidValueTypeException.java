@@ -1,16 +1,18 @@
 package com.enonic.wem.core.content.datatype;
 
 
+import com.enonic.wem.core.content.data.Data;
+
 public class InvalidValueTypeException
     extends RuntimeException
 {
-    public InvalidValueTypeException( final JavaType javaType, final Object value )
+    public InvalidValueTypeException( final JavaType javaType, final Data data )
     {
-        super( buildMessage( javaType, value ) );
+        super( buildMessage( javaType, data ) );
     }
 
-    private static String buildMessage( final JavaType javaType, final Object value )
+    private static String buildMessage( final JavaType javaType, final Data data )
     {
-        return "Invalid value type " + value.getClass() + ", expected  " + javaType.getValue();
+        return "Invalid value type at path [" + data.getPath() + "] " + data.getValue().getClass() + ", expected " + javaType.getValue();
     }
 }

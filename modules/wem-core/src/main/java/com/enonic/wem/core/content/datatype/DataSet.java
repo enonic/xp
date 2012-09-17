@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.datatype;
 
 
 public class DataSet
-    extends AbstractDataType
+    extends BaseDataType
 {
     DataSet( int key )
     {

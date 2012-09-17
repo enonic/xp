@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.datatype;
 
 
 public class Text
-    extends AbstractDataType
+    extends BaseDataType
 {
     Text( int key )
     {
@@ -13,6 +13,24 @@ public class Text
     public String getIndexableString( final Object value )
     {
         return value.toString();
+    }
+
+    @Override
+    public boolean isConvertibleTo( final JavaType type )
+    {
+        return type == JavaType.STRING;
+    }
+
+    @Override
+    public String convertToString( final Object value )
+    {
+        return (String) value;
+    }
+
+    @Override
+    public Double convertToDouble( final Object value )
+    {
+        return new Double( (String) value );
     }
 
     @Override

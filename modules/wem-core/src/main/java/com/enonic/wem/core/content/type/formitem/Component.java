@@ -6,13 +6,14 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.data.InvalidDataException;
 import com.enonic.wem.core.content.datatype.InvalidValueTypeException;
+import com.enonic.wem.core.content.type.formitem.comptype.BaseComponentType;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentType;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeConfig;
 
 public class Component
     extends HierarchicalFormItem
 {
-    private ComponentType type;
+    private BaseComponentType type;
 
     private String label;
 
@@ -111,7 +112,7 @@ public class Component
     }
 
     public void checkValidity( final Data data )
-        throws InvalidValueTypeException, InvalidDataException, InvalidValueException
+        throws InvalidDataException
     {
         try
 
@@ -121,10 +122,9 @@ public class Component
                 return;
             }
 
-            if ( data != null )
-            {
-                checkValidityAccordingToComponentTypeConfig( data );
-            }
+            checkValidityAccordingToComponentTypeConfig( data );
+            type.checkValidity( data );
+
         }
         catch ( InvalidValueTypeException e )
         {
@@ -162,60 +162,78 @@ public class Component
 
     public static class Builder
     {
-        private Component component;
+        private String name;
+
+        private BaseComponentType componentType;
+
+        private String label;
+
+        private boolean immutable;
+
+        private Occurrences occurrences = new Occurrences( 0, 1 );
+
+        private boolean indexed;
+
+        private String customText;
+
+        private String validationRegexp;
+
+        private String helpText;
+
+        private ComponentTypeConfig componentTypeConfig;
 
         private Builder()
         {
-            component = new Component();
+            // protection
         }
 
         public Builder name( String value )
         {
-            component.setName( value );
+            name = value;
             return this;
         }
 
-        public Builder type( ComponentType value )
+        public Builder type( BaseComponentType value )
         {
-            component.type = value;
+            componentType = value;
             return this;
         }
 
         public Builder label( String value )
         {
-            component.label = value;
+            label = value;
             return this;
         }
 
         public Builder immutable( boolean value )
         {
-            component.immutable = value;
+            immutable = value;
             return this;
         }
 
-        public Builder occurrences( Occurrences occurrences )
+        public Builder occurrences( Occurrences value )
         {
-            component.occurrences.setMinOccurences( occurrences.getMinimum() );
-            component.occurrences.setMaxOccurences( occurrences.getMaximum() );
+            occurrences.setMinOccurences( value.getMinimum() );
+            occurrences.setMaxOccurences( value.getMaximum() );
             return this;
         }
 
         public Builder occurrences( int minOccurrences, int maxOccurrences )
         {
-            component.occurrences.setMinOccurences( minOccurrences );
-            component.occurrences.setMaxOccurences( maxOccurrences );
+            occurrences.setMinOccurences( minOccurrences );
+            occurrences.setMaxOccurences( maxOccurrences );
             return this;
         }
 
         public Builder required( boolean value )
         {
-            if ( value && !component.occurrences.impliesRequired() )
+            if ( value && !occurrences.impliesRequired() )
             {
-                component.occurrences.setMinOccurences( 1 );
+                occurrences.setMinOccurences( 1 );
             }
-            else if ( !value && component.occurrences.impliesRequired() )
+            else if ( !value && occurrences.impliesRequired() )
             {
-                component.occurrences.setMinOccurences( 0 );
+                occurrences.setMinOccurences( 0 );
             }
             return this;
         }
@@ -224,64 +242,75 @@ public class Component
         {
             if ( value )
             {
-                component.occurrences.setMaxOccurences( 0 );
+                occurrences.setMaxOccurences( 0 );
             }
             else
             {
-                component.occurrences.setMaxOccurences( 1 );
+                occurrences.setMaxOccurences( 1 );
             }
             return this;
         }
 
         public Builder indexed( boolean value )
         {
-            component.indexed = value;
+            indexed = value;
             return this;
         }
 
         public Builder customText( String value )
         {
-            component.customText = value;
+            customText = value;
             return this;
         }
 
         public Builder validationRegexp( String value )
         {
-            component.validationRegexp = value;
+            validationRegexp = value;
             return this;
         }
 
         public Builder helpText( String value )
         {
-            component.helpText = value;
+            helpText = value;
             return this;
         }
 
         public Builder componentTypeConfig( ComponentTypeConfig value )
         {
-            component.componentTypeConfig = value;
+            componentTypeConfig = value;
             return this;
         }
 
         public Component build()
         {
-            Preconditions.checkNotNull( component.getName(), "name cannot be null" );
-            Preconditions.checkNotNull( component.getComponentType(), "type cannot be null" );
+            Preconditions.checkNotNull( name, "name cannot be null" );
+            Preconditions.checkNotNull( componentType, "componentType cannot be null" );
 
-            if ( component.getComponentType().requiresConfig() )
+            if ( componentType.requiresConfig() )
             {
-                Preconditions.checkArgument( component.getComponentTypeConfig() != null,
-                                             "Component [name='%s', type=%s] is missing required ComponentTypeConfig: %s",
-                                             component.getName(), component.getComponentType().getName(),
-                                             component.getComponentType().requiredConfigClass().getName() );
+                Preconditions.checkArgument( componentTypeConfig != null,
+                                             "Component [name='%s', type=%s] is missing required ComponentTypeConfig: %s", name,
+                                             componentType.getName(), componentType.requiredConfigClass().getName() );
 
-                Preconditions.checkArgument(
-                    component.getComponentType().requiredConfigClass().isInstance( component.getComponentTypeConfig() ),
-                    "Component [name='%s', type=%s] expects ComponentTypeConfig of type [%s] but was: %s", component.getName(),
-                    component.getComponentType().getName(), component.getComponentType().requiredConfigClass().getName(),
-                    component.getComponentTypeConfig().getClass().getName() );
+                //noinspection ConstantConditions
+                Preconditions.checkArgument( componentType.requiredConfigClass().isInstance( componentTypeConfig ),
+                                             "Component [name='%s', type=%s] expects ComponentTypeConfig of type [%s] but was: %s", name,
+                                             componentType.getName(), componentType.requiredConfigClass().getName(),
+                                             componentTypeConfig.getClass().getName() );
             }
 
+            Component component = new Component();
+            component.setName( name );
+            component.type = componentType;
+            component.label = label;
+            component.immutable = immutable;
+            component.occurrences.setMinOccurences( occurrences.getMinimum() );
+            component.occurrences.setMaxOccurences( occurrences.getMaximum() );
+            component.indexed = indexed;
+            component.customText = customText;
+            component.validationRegexp = validationRegexp;
+            component.helpText = helpText;
+            component.componentTypeConfig = componentTypeConfig;
             component.setPath( new FormItemPath( component.getName() ) );
             return component;
         }

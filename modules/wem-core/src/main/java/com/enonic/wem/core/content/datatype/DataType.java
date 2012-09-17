@@ -19,16 +19,9 @@ public interface DataType
 
     String getIndexableString( Object value );
 
-    String convertToString( Object value );
-
     boolean isConvertibleTo( JavaType date );
 
-    void checkValidity( Object value )
+    void checkValidity( Data data )
         throws InvalidValueException;
 
-    Object ensureType( Object value )
-        throws InconvertibleException;
-
-    void ensureType( Data data )
-        throws InconvertibleException;
 }

@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.datatype;
 
 public class DecimalNumber
-    extends AbstractDataType
+    extends BaseDataType
 {
     DecimalNumber( int key )
     {
@@ -16,6 +16,18 @@ public class DecimalNumber
 
     @Override
     public Object ensureType( final Object value )
+    {
+        return toDecimalNumber( value );
+    }
+
+    @Override
+    public boolean isConvertibleTo( final JavaType type )
+    {
+        return type == JavaType.DOUBLE || type == JavaType.STRING;
+    }
+
+    @Override
+    public Double convertToDouble( final Object value )
     {
         return toDecimalNumber( value );
     }

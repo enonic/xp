@@ -9,7 +9,7 @@ import org.codehaus.jackson.JsonNode;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.JsonParserUtil;
-import com.enonic.wem.core.content.datatype.DataType;
+import com.enonic.wem.core.content.datatype.BaseDataType;
 import com.enonic.wem.core.content.datatype.DataTypes;
 
 import com.enonic.cms.framework.blob.BlobKey;
@@ -62,7 +62,7 @@ public class DataSerializerJson
 
         final EntryPath entryPath = new EntryPath( JsonParserUtil.getStringValue( "path", dataNode ) );
         builder.path( entryPath );
-        final DataType type = DataTypes.parseByName( JsonParserUtil.getStringValue( "type", dataNode, null ) );
+        final BaseDataType type = (BaseDataType) DataTypes.parseByName( JsonParserUtil.getStringValue( "type", dataNode, null ) );
         Preconditions.checkNotNull( type, "type was null" );
         builder.type( type );
         if ( type.equals( DataTypes.DATA_SET ) )

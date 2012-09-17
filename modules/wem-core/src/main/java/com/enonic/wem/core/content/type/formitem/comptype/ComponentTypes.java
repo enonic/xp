@@ -10,37 +10,37 @@ import com.enonic.wem.core.content.datatype.DataTypes;
 
 public class ComponentTypes
 {
-    public static final ComponentType COLOR = new Color();
+    public static final BaseComponentType COLOR = new Color();
 
-    public static final ComponentType DATE = new Date();
+    public static final BaseComponentType DATE = new Date();
 
-    public static final ComponentType DECIMAL_NUMBER = new DecimalNumber();
+    public static final BaseComponentType DECIMAL_NUMBER = new DecimalNumber();
 
-    public static final ComponentType DROPDOWN = new Dropdown();
+    public static final BaseComponentType DROPDOWN = new Dropdown();
 
-    public static final ComponentType GEO_LOCATION = new GeoLocation();
+    public static final BaseComponentType GEO_LOCATION = new GeoLocation();
 
-    public static final ComponentType HTML_AREA = new HtmlArea();
+    public static final BaseComponentType HTML_AREA = new HtmlArea();
 
-    public static final ComponentType PHONE = new Phone();
+    public static final BaseComponentType PHONE = new Phone();
 
-    public static final ComponentType RADIO_BUTTONS = new RadioButtons();
+    public static final BaseComponentType RADIO_BUTTONS = new RadioButtons();
 
-    public static final ComponentType TAGS = new Tags();
+    public static final BaseComponentType TAGS = new Tags();
 
-    public static final ComponentType TEXT_LINE = new TextLine();
+    public static final BaseComponentType TEXT_LINE = new TextLine();
 
-    public static final ComponentType TEXT_AREA = new TextArea();
+    public static final BaseComponentType TEXT_AREA = new TextArea();
 
-    public static final ComponentType VIRTUAL = new Virtual();
+    public static final BaseComponentType VIRTUAL = new Virtual();
 
-    public static final ComponentType WHOLE_NUMBER = new WholeNumber();
+    public static final BaseComponentType WHOLE_NUMBER = new WholeNumber();
 
-    public static final ComponentType XML = new Xml();
+    public static final BaseComponentType XML = new Xml();
 
-    private static LinkedHashMap<String, ComponentType> componentTypeByName = new LinkedHashMap<String, ComponentType>();
+    private static LinkedHashMap<String, BaseComponentType> componentTypeByName = new LinkedHashMap<String, BaseComponentType>();
 
-    private static LinkedHashMap<Integer, ComponentType> componentTypeByDataTypeKey = new LinkedHashMap<Integer, ComponentType>();
+    private static LinkedHashMap<Integer, BaseComponentType> componentTypeByDataTypeKey = new LinkedHashMap<Integer, BaseComponentType>();
 
     static
     {
@@ -65,21 +65,21 @@ public class ComponentTypes
         registerDefaultComponentType( DataTypes.DECIMAL_NUMBER, DECIMAL_NUMBER );
     }
 
-    private static void register( ComponentType componentType )
+    private static void register( BaseComponentType baseComponentType )
     {
-        Object previous = componentTypeByName.put( componentType.getName(), componentType );
-        Preconditions.checkState( previous == null, "ComponentType already registered: " + componentType.getName() );
+        Object previous = componentTypeByName.put( baseComponentType.getName(), baseComponentType );
+        Preconditions.checkState( previous == null, "ComponentType already registered: " + baseComponentType.getName() );
     }
 
-    private static void registerDefaultComponentType( DataType dataType, ComponentType componentType )
+    private static void registerDefaultComponentType( DataType dataType, BaseComponentType componentType )
     {
         Object previousDataType = componentTypeByDataTypeKey.put( dataType.getKey(), componentType );
         Preconditions.checkState( previousDataType == null, "Default ComponentType already registered for DataType: " + dataType );
     }
 
-    public static ComponentType parse( final String componentTypeName )
+    public static BaseComponentType parse( final String componentTypeName )
     {
-        for ( ComponentType componentType : componentTypeByName.values() )
+        for ( BaseComponentType componentType : componentTypeByName.values() )
         {
             if ( componentType.getName().equals( componentTypeName ) )
             {

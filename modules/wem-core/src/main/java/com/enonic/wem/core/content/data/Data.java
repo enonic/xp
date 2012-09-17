@@ -5,6 +5,7 @@ import org.joda.time.DateMidnight;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.core.content.datatype.BaseDataType;
 import com.enonic.wem.core.content.datatype.DataType;
 import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.datatype.JavaType;
@@ -17,7 +18,7 @@ public class Data
 
     private Object value;
 
-    private DataType type;
+    private BaseDataType type;
 
     private Data()
     {
@@ -62,10 +63,10 @@ public class Data
     public void checkValidity()
         throws InvalidValueException
     {
-        type.checkValidity( value );
+        type.checkValidity( this );
     }
 
-    public void setData( final EntryPath path, final Object value, final DataType dataType )
+    public void setData( final EntryPath path, final Object value, final BaseDataType dataType )
     {
         Preconditions.checkArgument( type == DataTypes.DATA_SET, "TODO" );
         DataSet dataSet = (DataSet) this.value;
@@ -111,7 +112,7 @@ public class Data
 
         private Object value;
 
-        private DataType type;
+        private BaseDataType type;
 
 
         public Builder()
@@ -127,7 +128,7 @@ public class Data
 
         public Builder type( DataType value )
         {
-            this.type = value;
+            this.type = (BaseDataType) value;
             return this;
         }
 
@@ -144,9 +145,8 @@ public class Data
             final Data data = new Data();
             data.path = this.path;
             data.type = this.type;
-            data.value = this.value != null
-                ? data.type.ensureType( this.value )
-                : null; // TODO: Research, is null values needed? If not should not be allowed...
+            data.value = this.value;
+            data.type.ensureType( data );
 
             return data;
         }

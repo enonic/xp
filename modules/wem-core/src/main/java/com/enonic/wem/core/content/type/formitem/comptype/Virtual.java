@@ -7,12 +7,13 @@ import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException;
 
 public class Virtual
-    implements ComponentType
+    extends BaseComponentType
 {
     private String className;
 
     Virtual()
     {
+        super( "virtual", DataTypes.COMPUTED );
         this.className = this.getClass().getName();
     }
 

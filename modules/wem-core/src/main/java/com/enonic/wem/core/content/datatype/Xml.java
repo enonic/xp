@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.datatype;
 
 
 public class Xml
-    extends AbstractDataType
+    extends BaseDataType
 {
     Xml( int key )
     {

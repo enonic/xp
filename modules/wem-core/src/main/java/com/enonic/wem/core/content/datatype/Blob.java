@@ -4,7 +4,7 @@ package com.enonic.wem.core.content.datatype;
 import com.enonic.cms.framework.blob.BlobKey;
 
 public class Blob
-    extends AbstractDataType
+    extends BaseDataType
 {
     Blob( int key )
     {

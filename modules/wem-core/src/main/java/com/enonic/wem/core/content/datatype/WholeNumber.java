@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.datatype;
 
 
 public class WholeNumber
-    extends AbstractDataType
+    extends BaseDataType
 {
     WholeNumber( int key )
     {
@@ -29,7 +29,14 @@ public class WholeNumber
         }
         else if ( value instanceof String )
         {
-            return new Long( (String) value );
+            try
+            {
+                return new Long( (String) value );
+            }
+            catch ( NumberFormatException e )
+            {
+                throw new InconvertibleException( value, this, e );
+            }
         }
         else if ( value instanceof Integer )
         {

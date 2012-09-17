@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.core.content.datatype.BaseDataType;
 import com.enonic.wem.core.content.datatype.DataType;
 import com.enonic.wem.core.content.datatype.DataTypes;
 
@@ -25,7 +26,7 @@ public class ContentData
 
     public void setData( final EntryPath path, final Object value, final DataType dataType )
     {
-        dataSet.setData( path, value, dataType );
+        dataSet.setData( path, value, (BaseDataType) dataType );
     }
 
     public void setData( final EntryPath path, final String value )

@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.core.content.datatype.DataType;
+import com.enonic.wem.core.content.datatype.BaseDataType;
 import com.enonic.wem.core.content.datatype.DataTypes;
 
 public class DataSet
@@ -33,7 +33,7 @@ public class DataSet
         entries.put( data.getPath().getLastElement(), data );
     }
 
-    void setData( final EntryPath path, final Object value, final DataType dataType )
+    void setData( final EntryPath path, final Object value, final BaseDataType dataType )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
@@ -50,7 +50,7 @@ public class DataSet
         }
     }
 
-    private void forwardSetDataToDataSet( final EntryPath path, final Object value, final DataType dataType )
+    private void forwardSetDataToDataSet( final EntryPath path, final Object value, final BaseDataType dataType )
     {
         Data existingDataWithDataSetValue = this.entries.get( path.getFirstElement() );
         if ( existingDataWithDataSetValue == null )

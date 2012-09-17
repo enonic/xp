@@ -21,20 +21,20 @@ public class ComponentTypeSerializerJson
         g.writeEndObject();
     }
 
-    public ComponentType parse( final JsonNode node )
+    public BaseComponentType parse( final JsonNode node )
     {
         String className = JsonParserUtil.getStringValue( "className", node );
 
         return instantiate( className );
     }
 
-    private static ComponentType instantiate( final String className )
+    private static BaseComponentType instantiate( final String className )
     {
         Class clazz;
         try
         {
             clazz = Class.forName( className );
-            return (ComponentType) clazz.newInstance();
+            return (BaseComponentType) clazz.newInstance();
         }
         catch ( ClassNotFoundException e )
         {

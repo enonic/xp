@@ -1,8 +1,16 @@
 package com.enonic.wem.core.content.type.formitem.comptype;
 
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.core.content.data.Data;
+import com.enonic.wem.core.content.data.DataSet;
+import com.enonic.wem.core.content.datatype.BaseDataType;
 import com.enonic.wem.core.content.datatype.DataType;
+import com.enonic.wem.core.content.datatype.DataTypes;
 
 public abstract class BaseComponentType
     implements ComponentType
@@ -11,13 +19,33 @@ public abstract class BaseComponentType
 
     private String name;
 
-    private DataType dataType;
+    private BaseDataType dataType;
 
-    BaseComponentType( final String name, final DataType dataType )
+    /**
+     * Only used when dataType is DataSet.
+     */
+    private Map<String, TypedPath> typedPaths;
+
+    BaseComponentType( final String name, final BaseDataType dataType, final TypedPath... typedPaths )
     {
         this.name = name;
         this.dataType = dataType;
         this.className = this.getClass().getName();
+
+        if ( typedPaths != null && typedPaths.length > 0 )
+        {
+            Preconditions.checkArgument( this.dataType.equals( DataTypes.DATA_SET ),
+                                         "Specifying DataTypes for paths is only needed when dataType is DataSet: " + this.dataType );
+        }
+
+        if ( this.dataType.equals( DataTypes.DATA_SET ) && typedPaths != null )
+        {
+            this.typedPaths = new LinkedHashMap<String, TypedPath>();
+            for ( TypedPath tp : typedPaths )
+            {
+                this.typedPaths.put( tp.getPath(), tp );
+            }
+        }
     }
 
     public String getName()
@@ -43,11 +71,51 @@ public abstract class BaseComponentType
     @Override
     public void ensureType( final Data data )
     {
-        if ( data.getDataType().equals( dataType ) )
+        if ( !dataType.equals( DataTypes.DATA_SET ) && data.getDataType().equals( dataType ) )
         {
             return;
         }
-        dataType.ensureType( data );
+
+        if ( !dataType.equals( DataTypes.DATA_SET ) )
+        {
+            dataType.ensureType( data );
+        }
+        else if ( dataType.equals( DataTypes.DATA_SET ) )
+        {
+            final DataSet dataSet = data.getDataSet();
+
+            for ( TypedPath typedPath : typedPaths.values() )
+            {
+                final Data dataAtPath = dataSet.getData( typedPath.getPath() );
+                if ( dataAtPath == null )
+                {
+                    throw new IllegalArgumentException(
+                        "Missing data at path [" + data.getPath().toString() + "." + typedPath.getPath() + "]" );
+                }
+                else
+                {
+                    typedPath.getDataType().ensureType( dataAtPath );
+                }
+            }
+        }
+    }
+
+    public void checkValidity( Data data )
+    {
+        dataType.checkValidity( data );
+
+        if ( typedPaths != null && data.isDataSet() )
+        {
+            DataSet dataSet = data.getDataSet();
+            for ( TypedPath typedPath : typedPaths.values() )
+            {
+                Data subData = dataSet.getData( typedPath.getPath() );
+                if ( subData != null )
+                {
+                    typedPath.getDataType().checkValidity( subData );
+                }
+            }
+        }
     }
 
     @Override

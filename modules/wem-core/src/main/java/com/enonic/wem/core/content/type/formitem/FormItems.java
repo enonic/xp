@@ -12,7 +12,7 @@ public class FormItems
 
     private LinkedHashMap<String, FormItem> items = new LinkedHashMap<String, FormItem>();
 
-    private LinkedHashMap<String, HierarchicalFormItem> directAccessibleFormItems = new LinkedHashMap<String, HierarchicalFormItem>();
+    private LinkedHashMap<String, HierarchicalFormItem> hierarchicalFormItems = new LinkedHashMap<String, HierarchicalFormItem>();
 
     private LinkedHashMap<String, VisualFieldSet> visualFieldSets = new LinkedHashMap<String, VisualFieldSet>();
 
@@ -42,7 +42,7 @@ public class FormItems
         }
         else if ( item instanceof HierarchicalFormItem )
         {
-            directAccessibleFormItems.put( item.getName(), (HierarchicalFormItem) item );
+            hierarchicalFormItems.put( item.getName(), (HierarchicalFormItem) item );
         }
     }
 
@@ -67,19 +67,28 @@ public class FormItems
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
 
+        final String firstPathElement = path.getFirstElement();
         if ( path.elementCount() > 1 )
         {
-            HierarchicalFormItem foundConfig = getDirectAccessibleFormItem( path.getFirstElement() );
-            Preconditions.checkArgument( foundConfig.getFormItemType() == FormItemType.FORM_ITEM_SET,
-                                         "FormItem at path [%s] expected to be of type FormItemSet: " + foundConfig.getFormItemType(),
-                                         path );
-            //noinspection ConstantConditions
-            FormItemSet formItemSet = (FormItemSet) foundConfig;
-            return formItemSet.getFormItem( path.asNewWithoutFirstPathElement() );
+            HierarchicalFormItem foundConfig = getHierarchicalFormItem( firstPathElement );
+            if ( foundConfig == null )
+            {
+                return null;
+            }
+
+            if ( foundConfig instanceof FormItemSet )
+            {
+                FormItemSet formItemSet = (FormItemSet) foundConfig;
+                return formItemSet.getFormItem( path.asNewWithoutFirstPathElement() );
+            }
+            else
+            {
+                return foundConfig;
+            }
         }
         else
         {
-            return getDirectAccessibleFormItem( path.getFirstElement() );
+            return getHierarchicalFormItem( firstPathElement );
         }
     }
 
@@ -93,7 +102,7 @@ public class FormItems
         return foundFormItem;
     }
 
-    public HierarchicalFormItem getDirectAccessibleFormItem( final String name )
+    public HierarchicalFormItem getHierarchicalFormItem( final String name )
     {
         FormItem formItem = getFormItem( name );
         if ( formItem == null )
@@ -102,7 +111,7 @@ public class FormItems
         }
 
         Preconditions.checkArgument( formItem instanceof HierarchicalFormItem,
-                                     "FormItem [%s] in [%s] is not of type DirectAccessibleFormItem: " + formItem.getClass().getName(),
+                                     "FormItem [%s] in [%s] is not of type HierarchicalFormItem: " + formItem.getClass().getName(),
                                      this.getPath(), formItem.getName() );
 
         //noinspection ConstantConditions
@@ -111,7 +120,7 @@ public class FormItems
 
     public FormItemSet getFormItemSet( final String name )
     {
-        final HierarchicalFormItem formItem = getDirectAccessibleFormItem( name );
+        final HierarchicalFormItem formItem = getHierarchicalFormItem( name );
         if ( formItem == null )
         {
             return null;
@@ -141,7 +150,7 @@ public class FormItems
 
     public Component getComponent( final String name )
     {
-        final HierarchicalFormItem formItem = getDirectAccessibleFormItem( name );
+        final HierarchicalFormItem formItem = getHierarchicalFormItem( name );
         if ( formItem == null )
         {
             return null;
@@ -161,7 +170,7 @@ public class FormItems
         {
             return null;
         }
-        Preconditions.checkArgument( ( formItem instanceof Component ),
+        Preconditions.checkArgument( formItem instanceof Component,
                                      "FormItem at path [%s] is not a Component: " + formItem.getFormItemType(), formItem.getPath() );
 
         //noinspection ConstantConditions
@@ -180,7 +189,7 @@ public class FormItems
 
     public Iterable<HierarchicalFormItem> iterableForDirectAccessFormItems()
     {
-        return directAccessibleFormItems.values();
+        return hierarchicalFormItems.values();
     }
 
     public int size()

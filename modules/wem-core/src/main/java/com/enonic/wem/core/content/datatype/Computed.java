@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.datatype;
 
 
 public class Computed
-    extends AbstractDataType
+    extends BaseDataType
 {
     Computed( int key )
     {

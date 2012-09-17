@@ -6,7 +6,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 
 public class Date
-    extends AbstractDataType
+    extends BaseDataType
 {
     private final static DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder().
         appendYear( 4, 4 ).appendLiteral( "-" ).appendMonthOfYear( 2 ).appendLiteral( "-" ).appendDayOfMonth( 2 ).toFormatter();
