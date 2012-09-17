@@ -1,7 +1,7 @@
 /**
  * TODO: As ComponentTip has changed look'n feel this object may be obsolete and we may use ToolTip instead.
  */
-(function () {
+(function ($) {
     'use strict';
 
     // Class definition (constructor function)
@@ -26,9 +26,8 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.bindEvents = function () {
-        $liveedit(window).on('component:select', $liveedit.proxy(this.show, this));
-
-        $liveedit(window).on('component:deselect', $liveedit.proxy(this.hide, this));
+        $(window).on('component:select', $.proxy(this.show, this));
+        $(window).on('component:deselect', $.proxy(this.hide, this));
     };
 
 
@@ -41,7 +40,7 @@
                    '</div>';
 
         self.createElement(html);
-        self.appendTo($liveedit('body'));
+        self.appendTo($('body'));
 
         // Make sure component is not deselected when the conponentTip element is clicked.
         self.getEl().on('click', function (event) {
@@ -87,4 +86,4 @@
         });
     };
 
-}());
+}($liveedit));

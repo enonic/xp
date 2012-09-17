@@ -1,8 +1,8 @@
-(function () {
+(function ($) {
     'use strict';
 
-    $liveedit(window).load(function () {
-        $liveedit('.live-edit-loader-splash-container').remove();
+    $(window).load(function () {
+        $('.live-edit-loader-splash-container').remove();
         var selection           = new AdminLiveEdit.Selection();
         var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
         var page                = new AdminLiveEdit.model.component.Page();
@@ -20,22 +20,22 @@
         AdminLiveEdit.DragDrop.init();
     });
 
-    $liveedit(document).ready(function () {
+    $(document).ready(function () {
 
         // *******************************************************************************************************************************//
         // Experiment: Simple replace all A href's on page in order to not navigate if a link is clicked.
-        $liveedit('a').attr('href', '#');
+        $('a').attr('href', '#');
         // *******************************************************************************************************************************//
         // Experiment: Move all scripts without @src to the body element in order to prevent script elements to be dragged.
         // TODO: Update CSS selector to only include page components.
-        var $scripts = $liveedit('script:not([src])');
+        var $scripts = $('script:not([src])');
         $scripts.each(function () {
             var script = this;
-            var $body = $liveedit('body')[0];
+            var $body = $('body')[0];
             // Use standard DOM appendChild as jQuery append is buggy regarding script elements.
             $body.appendChild(script);
         });
 
     });
 
-}());
+}($liveedit));

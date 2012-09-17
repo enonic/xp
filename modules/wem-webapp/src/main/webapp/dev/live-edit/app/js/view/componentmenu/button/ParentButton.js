@@ -30,7 +30,7 @@
                 event.stopPropagation();
                 var $parent = self.componentMenu.$currentComponent.parents('[data-live-edit-type]');
                 if ($parent && $parent.length > 0) {
-                    $liveedit(window).trigger('component:select', [$liveedit($parent[0])]);
+                    $(window).trigger('component:select', [$($parent[0])]);
                 }
             }
         });

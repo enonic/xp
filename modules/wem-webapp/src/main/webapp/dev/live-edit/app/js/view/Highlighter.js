@@ -1,4 +1,4 @@
-(function () {
+(function ($) {
     'use strict';
 
     // Class definition (constructor function)
@@ -23,11 +23,9 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.bindEvents = function () {
-        $liveedit(window).on('component:mouseover', $liveedit.proxy(this.highlight, this));
-
-        $liveedit(window).on('component:select', $liveedit.proxy(this.hide, this));
-
-        $liveedit(window).on('component:drag:start', $liveedit.proxy(this.hide, this));
+        $(window).on('component:mouseover', $.proxy(this.highlight, this));
+        $(window).on('component:select', $.proxy(this.hide, this));
+        $(window).on('component:drag:start', $.proxy(this.hide, this));
     };
 
 
@@ -36,7 +34,7 @@
                    '    <rect width="150" height="150"/>' +
                    '</svg>';
         this.createElement(html);
-        this.appendTo($liveedit('body'));
+        this.appendTo($('body'));
     };
 
 
@@ -103,4 +101,4 @@
         return color;
     };
 
-}());
+}($liveedit));

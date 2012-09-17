@@ -1,4 +1,4 @@
-(function () {
+(function ($) {
     'use strict';
 
     // Namespaces
@@ -17,7 +17,7 @@
             'paragraph': ['parent', 'edit']
         };
 
-        self.$currentComponent = $liveedit([]);
+        self.$currentComponent = $([]);
         self.create();
         self.bindEvents();
     };
@@ -39,13 +39,13 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.bindEvents = function () {
-        $liveedit(window).on('component:select', $liveedit.proxy(this.show, this));
+        $(window).on('component:select', $.proxy(this.show, this));
 
-        $liveedit(window).on('component:mouseover', $liveedit.proxy(this.show, this));
+        $(window).on('component:mouseover', $.proxy(this.show, this));
 
-        $liveedit(window).on('component:deselect', $liveedit.proxy(this.hide, this));
+        $(window).on('component:deselect', $.proxy(this.hide, this));
 
-        $liveedit(window).on('component:drag:start', $liveedit.proxy(this.fadeOutAndHide, this));
+        $(window).on('component:drag:start', $.proxy(this.fadeOutAndHide, this));
     };
 
 
@@ -55,7 +55,7 @@
         self.createElement('<div class="live-edit-component-menu" style="top:-5000px; left:-5000px;">' +
                            '    <div class="live-edit-component-menu-inner"></div>' +
                            '</div>');
-        self.appendTo($liveedit('body'));
+        self.appendTo($('body'));
         self.addButtons();
     };
 
@@ -80,7 +80,7 @@
 
     p.fadeOutAndHide = function () {
         this.getEl().fadeOut(500, function () {
-            $liveedit(window).trigger('component:deselect');
+            $(window).trigger('component:deselect');
         });
     };
 
@@ -152,4 +152,4 @@
         }
     };
 
-}());
+}($liveedit));

@@ -1,4 +1,4 @@
-(function () {
+(function ($) {
     'use strict';
 
     // Class definition (constructor function)
@@ -24,7 +24,7 @@
     p.replaceElementsWithPlaceholders = function () {
         var self = this;
         self.getElements().each(function () {
-            self.replace($liveedit(this));
+            self.replace($(this));
         });
     };
 
@@ -42,12 +42,12 @@
 
     p.createPlaceholder = function ($element) {
         var self = this;
-        var $placeholder = $liveedit('<div></div>');
+        var $placeholder = $('<div></div>');
         $placeholder.addClass('live-edit-html-element-placeholder');
         $placeholder.width(self.getElementWidth($element));
         $placeholder.height(self.getElementHeight($element));
 
-        var $icon = $liveedit('<div/>');
+        var $icon = $('<div/>');
         $icon.addClass(self.resolveIconCssClass($element));
         $icon.append('<div>' + $element[0].tagName.toLowerCase() + '</div>');
         $placeholder.append($icon);
@@ -57,7 +57,7 @@
 
 
     p.getElements = function () {
-        return $liveedit('[data-live-edit-type=window] > ' + this.elements.toString());
+        return $('[data-live-edit-type=window] > ' + this.elements.toString());
     };
 
 
@@ -104,4 +104,4 @@
         return clsName;
     };
 
-}());
+}($liveedit));

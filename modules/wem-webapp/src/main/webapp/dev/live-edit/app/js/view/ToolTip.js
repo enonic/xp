@@ -1,4 +1,4 @@
-(function () {
+(function ($) {
     'use strict';
 
     // Class definition (constructor function)
@@ -25,7 +25,7 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.bindEvents = function () {
-        $liveedit(window).on('component:select', $liveedit.proxy(this.hide, this));
+        $(window).on('component:select', $.proxy(this.hide, this));
     };
 
 
@@ -37,7 +37,7 @@
                    '</div>';
 
         self.createElement(html);
-        self.appendTo($liveedit('body'));
+        self.appendTo($('body'));
         self.attachEventListeners();
     };
 
@@ -52,18 +52,18 @@
     p.attachEventListeners = function () {
         var self = this;
 
-        $liveedit(document).on('mousemove', '[data-live-edit-type]', function (event) {
-            var targetIsUiComponent = $liveedit(event.target).is('[id*=live-edit-ui-cmp]') ||
-                                      $liveedit(event.target).parents('[id*=live-edit-ui-cmp]').length > 0;
+        $(document).on('mousemove', '[data-live-edit-type]', function (event) {
+            var targetIsUiComponent = $(event.target).is('[id*=live-edit-ui-cmp]') ||
+                                      $(event.target).parents('[id*=live-edit-ui-cmp]').length > 0;
 
             // TODO: Use PubSub instead of calling DragDrop object.
-            var pageHasComponentSelected = $liveedit('.live-edit-selected-component').length > 0;
+            var pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
             if (targetIsUiComponent || pageHasComponentSelected || AdminLiveEdit.DragDrop.isDragging()) {
                 self.hide();
                 return;
             }
 
-            var $component = $liveedit(event.target).closest('[data-live-edit-type]');
+            var $component = $(event.target).closest('[data-live-edit-type]');
             var componentInfo = util.getComponentInfo($component);
             var pos = self.resolvePosition(event);
 
@@ -75,13 +75,13 @@
             self.setText(componentInfo.type, componentInfo.name);
         });
 
-        $liveedit(document).on('hover', '[data-live-edit-type]', function (event) {
+        $(document).on('hover', '[data-live-edit-type]', function (event) {
             if (event.type === 'mouseenter') {
                 self.getEl().hide().fadeIn(300);
             }
         });
 
-        $liveedit(document).on('mouseout', function () {
+        $(document).on('mouseout', function () {
             self.hide.call(self);
         });
     };
@@ -119,4 +119,4 @@
         });
     };
 
-}());
+}($liveedit));

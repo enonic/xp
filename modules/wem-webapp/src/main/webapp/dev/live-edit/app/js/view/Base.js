@@ -1,4 +1,4 @@
-(function () {
+(function ($) {
     'use strict';
 
     // Namespace
@@ -7,7 +7,7 @@
 
     // Class definition (constructor function)
     AdminLiveEdit.view.Base = function () {
-        this.$element = $liveedit([]);
+        this.$element = $([]);
     };
 
 
@@ -18,7 +18,7 @@
 
         createElement: function (htmlString) {
             var id = AdminLiveEdit.view.Base.prototype.counter++;
-            var $element = $liveedit(htmlString);
+            var $element = $(htmlString);
             $element.attr('id', 'live-edit-ui-cmp-' + id);
             this.$element = $element;
 
@@ -46,7 +46,6 @@
                 this.getEl().css('position', 'absolute');
             }
         }
-
     };
 
-}());
+}($liveedit));

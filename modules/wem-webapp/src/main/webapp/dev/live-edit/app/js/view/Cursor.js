@@ -1,4 +1,4 @@
-(function () {
+(function ($) {
     'use strict';
 
     // Class definition (constructor function)
@@ -12,15 +12,15 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.bindEvents = function () {
-        $liveedit(window).on('component:mouseover', $liveedit.proxy(this.updateCursor, this));
+        $(window).on('component:mouseover', $.proxy(this.updateCursor, this));
 
-        $liveedit(window).on('component:select', $liveedit.proxy(this.updateCursor, this));
+        $(window).on('component:select', $.proxy(this.updateCursor, this));
     };
 
 
     p.updateCursor = function (event, $component) {
         var componentType = AdminLiveEdit.Util.getComponentType($component);
-        var $body = $liveedit('body');
+        var $body = $('body');
         var cursor = 'default';
         switch (componentType) {
         case 'region':
@@ -38,4 +38,4 @@
         $body.css('cursor', cursor);
     };
 
-}());
+}($liveedit));
