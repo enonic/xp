@@ -17,6 +17,7 @@ import com.enonic.wem.api.account.NonUserAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.editor.AccountEditor;
+import com.enonic.wem.api.account.profile.UserProfile;
 import com.enonic.wem.api.command.account.UpdateAccounts;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
@@ -56,9 +57,12 @@ public final class UpdateAccountsHandler
 
     private AccountSearchService searchService;
 
+    private final UserProfileTransformer userProfileTransformer;
+
     public UpdateAccountsHandler()
     {
         super( UpdateAccounts.class );
+        userProfileTransformer = new UserProfileTransformer();
     }
 
     @Override
@@ -221,6 +225,12 @@ public final class UpdateAccountsHandler
         command.setAllowUpdateSelf( true );
         command.setEmail( user.getEmail() );
         command.setDisplayName( user.getDisplayName() );
+
+        final UserProfile profile = user.getProfile();
+        if ( profile != null )
+        {
+            command.setUserFields( userProfileTransformer.userProfileToUserFields( profile ) );
+        }
 
         userStoreService.updateUser( command );
     }

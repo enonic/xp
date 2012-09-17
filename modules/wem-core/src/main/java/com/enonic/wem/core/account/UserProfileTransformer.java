@@ -17,6 +17,7 @@ import com.enonic.wem.api.account.profile.UserProfile;
 
 import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.core.user.field.UserFieldType;
+import com.enonic.cms.core.user.field.UserFields;
 
 class UserProfileTransformer
 {
@@ -52,7 +53,7 @@ class UserProfileTransformer
             final String value = userFields.get( fieldName );
             if ( field == null )
             {
-                throw new IllegalArgumentException("Unexpected field type in user profile: " + fieldName);
+                throw new IllegalArgumentException( "Unexpected field type in user profile: " + fieldName );
             }
             switch ( field )
             {
@@ -145,6 +146,72 @@ class UserProfileTransformer
 
         profile.setAddresses( addresses.isEmpty() ? Addresses.empty() : Addresses.from( addresses ) );
         return profile;
+    }
+
+    public UserFields userProfileToUserFields( final UserProfile profile )
+    {
+        final UserFields userFields = new UserFields();
+        userFields.setFirstName( profile.getFirstName() );
+        userFields.setLastName( profile.getLastName() );
+        userFields.setMiddleName( profile.getMiddleName() );
+        userFields.setNickName( profile.getNickName() );
+        if ( profile.getBirthday() != null )
+        {
+            userFields.setBirthday( profile.getBirthday().toDate() );
+        }
+        userFields.setCountry( profile.getCountry() );
+        userFields.setDescription( profile.getDescription() );
+        userFields.setInitials( profile.getInitials() );
+        userFields.setGlobalPosition( profile.getGlobalPosition() );
+        userFields.setHtmlEmail( profile.getHtmlEmail() );
+        userFields.setLocale( profile.getLocale() );
+        userFields.setPersonalId( profile.getPersonalId() );
+        userFields.setMemberId( profile.getMemberId() );
+        userFields.setOrganization( profile.getOrganization() );
+        userFields.setPhone( profile.getPhone() );
+        userFields.setFax( profile.getFax() );
+        userFields.setMobile( profile.getMobile() );
+        userFields.setPrefix( profile.getPrefix() );
+        userFields.setSuffix( profile.getSuffix() );
+        userFields.setTitle( profile.getTitle() );
+        userFields.setTimezone( profile.getTimeZone() );
+        userFields.setHomePage( profile.getHomePage() );
+        if ( profile.getGender() != null )
+        {
+            userFields.setGender( com.enonic.cms.api.client.model.user.Gender.valueOf( profile.getGender().name() ) );
+        }
+
+        if ( profile.getAddresses() != null )
+        {
+            userFields.setAddresses( profileAddressesToEntityAddresses( profile.getAddresses() ) );
+        }
+        return userFields;
+    }
+
+    private com.enonic.cms.api.client.model.user.Address[] profileAddressesToEntityAddresses( final Addresses addresses )
+    {
+        final com.enonic.cms.api.client.model.user.Address[] userAddresses =
+            new com.enonic.cms.api.client.model.user.Address[addresses.getSize()];
+        final List<Address> addressList = addresses.getList();
+        for ( int i = 0; i < userAddresses.length; i++ )
+        {
+            userAddresses[i] = profileAddressToEntityAddress( addressList.get( i ) );
+        }
+        return userAddresses;
+    }
+
+    private com.enonic.cms.api.client.model.user.Address profileAddressToEntityAddress( final Address address )
+    {
+        final com.enonic.cms.api.client.model.user.Address userAddress = new com.enonic.cms.api.client.model.user.Address();
+        userAddress.setLabel( address.getLabel() );
+        userAddress.setCountry( address.getCountry() );
+        userAddress.setIsoCountry( address.getIsoCountry() );
+        userAddress.setRegion( address.getRegion() );
+        userAddress.setIsoRegion( address.getIsoRegion() );
+        userAddress.setPostalCode( address.getPostalCode() );
+        userAddress.setPostalAddress( address.getPostalAddress() );
+        userAddress.setStreet( address.getStreet() );
+        return userAddress;
     }
 
     private void setAddressField( final Address address, final String addressField, final String value )

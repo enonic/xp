@@ -43,7 +43,7 @@ public final class GetAccountsHandler
 
     private UserDao userDao;
 
-    private UserProfileTransformer userProfileTransformer;
+    private final UserProfileTransformer userProfileTransformer;
 
     public GetAccountsHandler()
     {
