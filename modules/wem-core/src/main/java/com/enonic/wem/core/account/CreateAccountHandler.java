@@ -10,6 +10,7 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.UserAccount;
+import com.enonic.wem.api.account.profile.UserProfile;
 import com.enonic.wem.api.command.account.CreateAccount;
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.command.CommandContext;
@@ -51,9 +52,12 @@ public final class CreateAccountHandler
 
     private AccountSearchService searchService;
 
+    private final UserProfileTransformer userProfileTransformer;
+
     public CreateAccountHandler()
     {
         super( CreateAccount.class );
+        userProfileTransformer = new UserProfileTransformer();
     }
 
     @Override
@@ -108,6 +112,11 @@ public final class CreateAccountHandler
         storeNewUserCommand.setUserStoreKey( userStore.getKey() );
         storeNewUserCommand.setStorer( storer.getKey() );
         storeNewUserCommand.setAllowAnyUserAccess( false );
+        final UserProfile profile = user.getProfile();
+        if ( profile != null )
+        {
+            storeNewUserCommand.setUserFields( userProfileTransformer.userProfileToUserFields( profile ) );
+        }
 
         userStoreService.storeNewUser( storeNewUserCommand );
     }
