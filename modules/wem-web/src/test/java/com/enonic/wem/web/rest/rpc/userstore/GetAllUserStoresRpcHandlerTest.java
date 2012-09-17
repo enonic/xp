@@ -24,7 +24,7 @@ public class GetAllUserStoresRpcHandlerTest
         throws Exception
     {
         client = Mockito.mock( Client.class );
-        final GetAllUserStoreRpcHandler handler = new GetAllUserStoreRpcHandler();
+        final GetAllUserStoresRpcHandler handler = new GetAllUserStoresRpcHandler();
         handler.setClient( client );
         return handler;
     }
