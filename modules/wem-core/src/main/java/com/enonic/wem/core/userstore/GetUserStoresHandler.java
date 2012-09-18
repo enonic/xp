@@ -83,6 +83,8 @@ public class GetUserStoresHandler
 
         final UserStore userStore = new UserStore( name );
         userStore.setConnectorName( userStoreEntity.getConnectorName() );
+        userStore.setDefaultStore( userStoreEntity.isDefaultUserStore() );
+
         if ( includeConnector && userStoreEntity.isRemote() )
         {
             userStore.setConnector( getUserStoreConnector( userStoreEntity ) );

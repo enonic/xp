@@ -11,6 +11,8 @@ public final class UserStore
 
     private String connectorName;
 
+    private boolean defaultStore;
+
     private UserStoreConnector connector;
 
     private UserStoreConfig config;
@@ -77,5 +79,15 @@ public final class UserStore
     public void setAdministrators( final AccountKeys administrators )
     {
         this.administrators = administrators;
+    }
+
+    public boolean isDefaultStore()
+    {
+        return defaultStore;
+    }
+
+    public void setDefaultStore( final boolean defaultStore )
+    {
+        this.defaultStore = defaultStore;
     }
 }

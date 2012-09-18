@@ -2,12 +2,10 @@
     "success" : true,
     "total" : 2,
     "userStores" : [ {
-        "key" : "enonic",
         "name" : "enonic",
-        "default" : false,
+        "default" : true,
         "connector" : "ldap"
     }, {
-        "key" : "system",
         "name" : "system",
         "default" : false,
         "connector" : "ad"

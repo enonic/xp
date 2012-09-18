@@ -32,9 +32,8 @@ class GetAllUserStoresJsonResult
         for ( UserStore userStore : userStores )
         {
             final ObjectNode jsonUserStore = objectNode();
-            jsonUserStore.put( "key", userStore.getName().toString() );
             jsonUserStore.put( "name", userStore.getName().toString() );
-            jsonUserStore.put( "default", false ); // TODO missing default property in UserStore?
+            jsonUserStore.put( "default", userStore.isDefaultStore() );
             jsonUserStore.put( "connector", userStore.getConnectorName() );
             jsonUserStores.add( jsonUserStore );
         }

@@ -40,6 +40,7 @@ public class GetAllUserStoresRpcHandlerTest
 
         final UserStore userStore1 = new UserStore( userStoreName1 );
         userStore1.setConnectorName( "ldap" );
+        userStore1.setDefaultStore( true );
         final UserStore userStore2 = new UserStore( userStoreName2 );
         userStore2.setConnectorName( "ad" );
         final UserStores userStores = UserStores.from( userStore1, userStore2 );
