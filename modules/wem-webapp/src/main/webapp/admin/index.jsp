@@ -6,7 +6,7 @@
   <style type="text/css">
     body {
       font: 85% Arial;
-      padding: .5em 1em;
+      padding: .5em;
     }
 
     hr {
@@ -34,14 +34,30 @@
       vertical-align: top;
     }
   </style>
+
+  <!-- ExtJS -->
+  <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/ext-all-scoped.css">
+  <script>
+    Ext = {
+      buildSettings:{
+        'scopeResetCSS': true
+      }
+    };
+  </script>
+  <script type="text/javascript" src="resources/lib/ext/ext-all.js"></script>
+
   <script type="text/javascript" src="../dev/live-edit/app/lib/jquery-1.8.0.min.js"></script>
   <script type="text/javascript" src="resources/lib/jquery/github.commits.widget-min.js"></script>
 </head>
 <body>
 <h1>Enonic WEM - Admin Console</h1>
 
+<p id="search-container">
+
+</p>
+
 <h2>Tools</h2>
-<ul>
+<ul class="links">
   <li>
     <a href="../tests/">Tests</a>
   </li>
@@ -53,7 +69,7 @@
 <hr/>
 
 <h2>Apps</h2>
-<ul>
+<ul class="links">
   <li>
     <a href="main.jsp">Main</a>
   </li>
@@ -84,16 +100,11 @@
 <hr/>
 
 <h2>R&amp;D</h2>
-<ul>
-  <li>
-    <span>Live Edit Test Page</span>
-    <ul>
-      <li><a href="../dev/live-edit/page/page.jsp">All component types</a> (page component is &lt;body&gt;)</li>
-      <li><a href="../dev/live-edit/page/page2.jsp">All component types</a> (page component is a descendant of &lt;body&gt;)</li>
-      <li><a href="../dev/live-edit/page/plug-ins.jsp">With draggables containing plugins</a></li>
-      <li><a href="../dev/live-edit/page/blank.jsp">Blank page</a> (with no windows components)</li>
-    </ul>
-  </li>
+<ul class="links">
+  <li><a href="../dev/live-edit/page/page.jsp">Live Edit: page component is &lt;body&gt;</a></li>
+  <li><a href="../dev/live-edit/page/page2.jsp">Live Edit: page component is a descendant of &lt;body&gt;</a></li>
+  <li><a href="../dev/live-edit/page/plug-ins.jsp">Live Edit: with draggables containing plugins</a></li>
+  <li><a href="../dev/live-edit/page/blank.jsp">Live Edit: Blank page</a></li>
   <li>
     <a href="../dev/filter/index.html">Facet checkboxes with Ext Data View</a>
   </li>
@@ -132,6 +143,76 @@
         { user: 'enonic', repo: 'wem-ce', branch: 'master', last: 10, limitMessageTo: 50 });
   });
 </script>
+
+<script>
+  Ext.onReady(function () {
+
+    Ext.define('PageLinks', {
+      extend: 'Ext.data.Model',
+      fields: [
+        {name: 'text', type: 'string'},
+        {name: 'url', type: 'string'}
+      ]
+    });
+
+    var pageLinksStore = Ext.create('Ext.data.Store', {
+      model: 'PageLinks',
+      data: []
+    });
+
+    function addLinks() {
+      var domQuery = Ext.dom.Query,
+          links = domQuery.select('ul.links li'),
+          aElement, text, href;
+
+      Ext.Array.each(links, function (li, index, all) {
+        aElement = Ext.fly(domQuery.selectNode('a', li));
+        pageLinksStore.add({text: aElement.getHTML(), url: aElement.getAttribute('href')});
+      });
+    }
+
+    addLinks();
+
+    var commandLinePanel = Ext.create('Ext.panel.Panel', {
+      renderTo: 'search-container',
+      title: 'Command Line',
+      width: '100%',
+      bodyPadding: 10,
+      layout: 'anchor',
+      items: [
+        {
+          xtype: 'combo',
+          store: pageLinksStore,
+          displayField: 'text',
+          valueField: 'url',
+          queryMode: 'local',
+          typeAhead: false,
+          hideLabel: true,
+          hideTrigger: true,
+          anchor: '100%',
+          minChars: 1,
+          listeners: {
+            select: function (combo, selection) {
+              var link = selection[0];
+              if (link) {
+                window.location = link.get('url');
+              }
+            },
+            render: function(combo) {
+              combo.focus();
+            }
+          }
+        }, {
+          xtype: 'component',
+          style: 'margin-top:10px',
+          html: 'Type any app name and press enter'
+        }
+      ]
+    });
+
+  });
+</script>
+
 
 </body>
 </html>
