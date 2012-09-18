@@ -177,7 +177,7 @@
       renderTo: 'search-container',
       title: 'Command Line',
       width: '100%',
-      bodyPadding: 10,
+      bodyPadding: 15,
       layout: 'anchor',
       items: [
         {
