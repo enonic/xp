@@ -26,7 +26,8 @@ public class DropdownConfig
         final String valueAsString = data.getString();
         if ( !optionsAsMap.containsKey( valueAsString ) )
         {
-            throw new InvalidValueException( "Value can only be of one the following strings: " + optionValuesAsCommaSeparatedString() );
+            throw new InvalidValueException( data,
+                                             "Value can only be of one the following strings: " + optionValuesAsCommaSeparatedString() );
         }
     }
 

@@ -26,11 +26,13 @@ public class RadioButtonsConfig
 
     @Override
     public void checkValidity( final Data data )
+        throws InvalidValueException
     {
         final String valueAsString = data.getString();
         if ( !optionsAsMap.containsKey( valueAsString ) )
         {
-            throw new InvalidValueException( "Value can only be of one the following strings: " + optionValuesAsCommaSeparatedString() );
+            throw new InvalidValueException( data,
+                                             "Value can only be of one the following strings: " + optionValuesAsCommaSeparatedString() );
         }
     }
 

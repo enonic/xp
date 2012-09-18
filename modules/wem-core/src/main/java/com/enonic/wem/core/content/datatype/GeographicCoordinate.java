@@ -27,7 +27,7 @@ public class GeographicCoordinate
 
     @Override
     public void checkValidity( final Data data )
-        throws InvalidValueTypeException
+        throws InvalidValueTypeException, InvalidValueException
     {
         super.checkValidity( data );
 
@@ -38,7 +38,7 @@ public class GeographicCoordinate
             Double latitudeAsDouble = (Double) latitude.getValue();
             if ( latitudeAsDouble < -90 || latitudeAsDouble > 90 )
             {
-                throw new InvalidValueException( "A latitude is ranging from -90 to +90: " + latitudeAsDouble );
+                throw new InvalidValueException( latitude, "A latitude is ranging from -90 to +90: " + latitudeAsDouble );
             }
         }
 
@@ -48,7 +48,7 @@ public class GeographicCoordinate
             Double longitudeAsDouble = (Double) longitude.getValue();
             if ( longitudeAsDouble < -180 || longitudeAsDouble > 180 )
             {
-                throw new InvalidValueException( "A longitude is ranging from -180 to +180: " + longitudeAsDouble );
+                throw new InvalidValueException( longitude, "A longitude is ranging from -180 to +180: " + longitudeAsDouble );
             }
         }
     }

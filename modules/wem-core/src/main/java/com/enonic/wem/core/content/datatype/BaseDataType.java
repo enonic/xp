@@ -8,6 +8,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.data.Data;
+import com.enonic.wem.core.content.type.formitem.InvalidValueException;
 import com.enonic.wem.core.content.type.formitem.comptype.TypedPath;
 
 public abstract class BaseDataType
@@ -97,13 +98,11 @@ public abstract class BaseDataType
      */
     @Override
     public void checkValidity( final Data data )
-        throws InvalidValueTypeException
+        throws InvalidValueTypeException, InvalidValueException
     {
         checkCorrectType( data );
     }
 
-
-    //@Override
     public final void ensureType( final Data data )
         throws InconvertibleException
     {
@@ -185,6 +184,7 @@ public abstract class BaseDataType
     }
 
     private void checkCorrectType( Data data )
+        throws InvalidValueTypeException
     {
         if ( this.javaType == JavaType.DATA_SET && typedPaths.size() > 0 )
         {
@@ -198,7 +198,7 @@ public abstract class BaseDataType
                 }
             }
         }
-        else if ( !javaType.isInstance( data.getValue() ) )
+        else if ( !hasCorrectType( ( data.getValue() ) ) )
         {
             throw new InvalidValueTypeException( javaType, data );
         }

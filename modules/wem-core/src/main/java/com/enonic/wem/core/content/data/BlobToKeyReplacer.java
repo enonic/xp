@@ -32,7 +32,7 @@ public class BlobToKeyReplacer
                 }
 
             }
-            else if ( data.isDataSet() )
+            else if ( data.hasDataSetAsValue() )
             {
                 doReplace( data.getDataSet() );
             }

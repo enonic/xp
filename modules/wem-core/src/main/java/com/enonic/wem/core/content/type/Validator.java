@@ -1,13 +1,18 @@
 package com.enonic.wem.core.content.type;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.core.content.data.ContentData;
 import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.data.DataSet;
-import com.enonic.wem.core.content.data.InvalidDataException;
 import com.enonic.wem.core.content.type.formitem.Component;
 import com.enonic.wem.core.content.type.formitem.FormItem;
 import com.enonic.wem.core.content.type.formitem.FormItemSet;
+import com.enonic.wem.core.content.type.formitem.InvalidDataException;
 
 /**
  * Validates that given data is valid, meaning it is of valid:
@@ -17,51 +22,61 @@ public class Validator
 {
     private ContentType contentType;
 
-    public Validator( final ContentType contentType )
+    private boolean recordExceptions = false;
+
+    private boolean checkValidationRegexp;
+
+    private final List<InvalidDataException> invalidDataExceptions = new ArrayList<InvalidDataException>();
+
+    private Validator()
     {
-        this.contentType = contentType;
+        // Protection
     }
 
-    public void validate( ContentData contentData )
+    public void validate( final ContentData contentData )
         throws InvalidDataException
     {
-        doValidate( contentData );
+        doValidateEntries( contentData );
     }
 
-    public void validate( DataSet dataSet )
+    public void validate( final DataSet dataSet )
         throws InvalidDataException
     {
-        doValidate( dataSet );
+        doValidateEntries( dataSet );
     }
 
-    private void doValidate( Iterable<Data> entries )
+    public List<InvalidDataException> getInvalidDataExceptions()
+    {
+        return invalidDataExceptions;
+    }
+
+    private void doValidateEntries( final Iterable<Data> entries )
     {
         for ( Data data : entries )
         {
-            doValidate( data );
+            doValidateData( data );
         }
     }
 
-    private void doValidate( final Data data )
+    private void doValidateData( final Data data )
         throws InvalidDataException
     {
-        if ( !data.isDataSet() )
+        if ( data.hasDataSetAsValue() )
         {
-            data.checkValidity();
+            doValidateDataWithDataSet( data );
+        }
+        else
+        {
+            checkDataTypeValidity( data );
 
             final FormItem formItem = contentType.getFormItem( data.getPath().resolveFormItemPath().toString() );
             if ( formItem != null )
             {
                 if ( formItem instanceof Component )
                 {
-                    final Component component = (Component) formItem;
-                    component.checkValidity( data );
+                    checkComponentValidity( data, (Component) formItem );
                 }
             }
-        }
-        else
-        {
-            doValidateDataWithDataSet( data );
         }
     }
 
@@ -73,28 +88,105 @@ public class Validator
         {
             if ( formItem instanceof FormItemSet )
             {
-                final FormItemSet formItemSet = (FormItemSet) formItem;
                 for ( Data subData : dataSet )
                 {
-                    final FormItem subFormItem = formItemSet.getFormItem( subData.getPath().resolveFormItemPath() );
+                    final FormItem subFormItem = contentType.getFormItem( subData.getPath().resolveFormItemPath().toString() );
                     if ( subFormItem instanceof Component )
                     {
-                        final Component component = (Component) subFormItem;
-                        component.checkValidity( subData );
+                        checkComponentValidity( subData, (Component) subFormItem );
                     }
                 }
             }
             else if ( formItem instanceof Component )
             {
-                final Component component = (Component) formItem;
-                component.checkValidity( dataWithDataSet );
+                checkComponentValidity( dataWithDataSet, (Component) formItem );
             }
         }
         else
         {
-            doValidate( dataSet );
+            doValidateEntries( dataSet );
         }
     }
 
+    private void checkDataTypeValidity( final Data data )
+    {
+        try
+        {
+            data.checkDataTypeValidity();
+        }
+        catch ( InvalidDataException e )
+        {
+            registerInvalidDataException( e );
+        }
+    }
+
+    private void checkComponentValidity( final Data data, final Component component )
+    {
+        try
+        {
+            component.checkValidity( data );
+        }
+        catch ( InvalidDataException e )
+        {
+            registerInvalidDataException( e );
+        }
+
+        if ( checkValidationRegexp )
+        {
+            try
+            {
+                component.checkValidationRegexp( data );
+            }
+            catch ( InvalidDataException e )
+            {
+                registerInvalidDataException( e );
+            }
+        }
+    }
+
+    private void registerInvalidDataException( final InvalidDataException invalidDataException )
+    {
+        if ( !recordExceptions )
+        {
+            throw invalidDataException;
+        }
+
+        invalidDataExceptions.add( invalidDataException );
+    }
+
+    public static Builder newValidator()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private Validator validator = new Validator();
+
+        public Builder contentType( ContentType contentType )
+        {
+            validator.contentType = contentType;
+            return this;
+        }
+
+        public Builder recordExceptions( boolean value )
+        {
+            validator.recordExceptions = value;
+            return this;
+        }
+
+        public Builder checkValidationRegexp( boolean value )
+        {
+            validator.checkValidationRegexp = value;
+            return this;
+        }
+
+        public Validator build()
+        {
+            Preconditions.checkNotNull( validator.contentType, "contenType is required" );
+            return validator;
+        }
+
+    }
 
 }

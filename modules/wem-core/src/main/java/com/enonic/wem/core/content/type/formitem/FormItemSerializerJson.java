@@ -70,7 +70,8 @@ public class FormItemSerializerJson
         OccurrencesSerializerJson.generate( component.getOccurrences(), g );
         g.writeBooleanField( "indexed", component.isIndexed() );
         g.writeStringField( "customText", component.getCustomText() );
-        g.writeStringField( "validationRegexp", component.getValidationRegexp() );
+        g.writeStringField( "validationRegexp",
+                            component.getValidationRegexp() != null ? component.getValidationRegexp().toString() : null );
         g.writeStringField( "helpText", component.getHelpText() );
         if ( component.getComponentType().requiresConfig() && component.getComponentTypeConfig() != null )
         {
@@ -173,6 +174,7 @@ public class FormItemSerializerJson
         builder.immutable( JsonParserUtil.getBooleanValue( "immutable", formItemNode ) );
         builder.helpText( JsonParserUtil.getStringValue( "helpText", formItemNode ) );
         builder.customText( JsonParserUtil.getStringValue( "customText", formItemNode ) );
+        builder.validationRegexp( JsonParserUtil.getStringValue( "validationRegexp", formItemNode ) );
 
         parseOccurrences( builder, formItemNode.get( "occurrences" ) );
         parseComponentType( builder, formItemNode.get( "componentType" ) );

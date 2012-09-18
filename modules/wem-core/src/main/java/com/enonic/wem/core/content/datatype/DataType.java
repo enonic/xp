@@ -22,6 +22,6 @@ public interface DataType
     boolean isConvertibleTo( JavaType date );
 
     void checkValidity( Data data )
-        throws InvalidValueException;
+        throws InvalidValueException, InvalidValueTypeException;
 
 }

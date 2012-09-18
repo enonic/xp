@@ -5,7 +5,9 @@ import org.junit.Test;
 
 import com.enonic.wem.core.content.Content;
 import com.enonic.wem.core.content.data.Data;
-import com.enonic.wem.core.content.data.InvalidDataException;
+import com.enonic.wem.core.content.datatype.InvalidValueTypeException;
+import com.enonic.wem.core.content.type.formitem.InvalidDataException;
+import com.enonic.wem.core.content.type.formitem.InvalidValueException;
 
 import static org.junit.Assert.*;
 
@@ -19,6 +21,7 @@ public class ColorTest
 
     @Test
     public void given_data_that_validates_checkValidity_throws_nothing()
+        throws InvalidValueTypeException, InvalidValueException
     {
         Content content = new Content();
         content.setData( "myColor.red", 40l );

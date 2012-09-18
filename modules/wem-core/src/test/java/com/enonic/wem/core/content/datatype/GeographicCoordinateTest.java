@@ -45,7 +45,9 @@ public class GeographicCoordinateTest
         catch ( Exception e )
         {
             assertTrue( "Expected InvalidValueException", e instanceof InvalidValueException );
-            assertEquals( "A latitude is ranging from -90 to +90: 91.0", e.getMessage() );
+            assertEquals(
+                "Invalid value in [Data{path=myGeographicCoordinate.latitude, type=DecimalNumber, value=91.0}]. A latitude is ranging from -90 to +90: 91.0: 91.0",
+                e.getMessage() );
         }
     }
 }
