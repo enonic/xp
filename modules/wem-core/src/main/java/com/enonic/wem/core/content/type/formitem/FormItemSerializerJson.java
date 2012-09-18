@@ -174,7 +174,7 @@ public class FormItemSerializerJson
         builder.immutable( JsonParserUtil.getBooleanValue( "immutable", formItemNode ) );
         builder.helpText( JsonParserUtil.getStringValue( "helpText", formItemNode ) );
         builder.customText( JsonParserUtil.getStringValue( "customText", formItemNode ) );
-        builder.validationRegexp( JsonParserUtil.getStringValue( "validationRegexp", formItemNode ) );
+        parseValidationRegexp( builder, formItemNode );
 
         parseOccurrences( builder, formItemNode.get( "occurrences" ) );
         parseComponentType( builder, formItemNode.get( "componentType" ) );
@@ -226,6 +226,15 @@ public class FormItemSerializerJson
         builder.template( new TemplateQualifiedName( JsonParserUtil.getStringValue( "reference", formItemNode ) ) );
         builder.type( TemplateType.valueOf( JsonParserUtil.getStringValue( "templateType", formItemNode ) ) );
         return builder.build();
+    }
+
+    private void parseValidationRegexp( final Component.Builder builder, final JsonNode componentNode )
+    {
+        String validationRegexp = JsonParserUtil.getStringValue( "validationRegexp", componentNode, null );
+        if ( validationRegexp != null )
+        {
+            builder.validationRegexp( validationRegexp );
+        }
     }
 
     private void parseOccurrences( final Component.Builder builder, final JsonNode occurrencesNode )

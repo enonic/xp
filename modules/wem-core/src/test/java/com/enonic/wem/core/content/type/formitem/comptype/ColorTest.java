@@ -71,8 +71,8 @@ public class ColorTest
         }
         catch ( Exception e )
         {
-            assertTrue( e instanceof InvalidDataException );
-            assertEquals( "Invalid data [Data{path=myColor.red, type=WholeNumber, value=256}]: [myColor.red] must be between 0 and 255",
+            assertTrue( e instanceof InvalidValueException );
+            assertEquals( "Invalid value in [Data{path=myColor.red, type=WholeNumber, value=256}]. red must be between 0 and 255: 256",
                           e.getMessage() );
         }
     }
