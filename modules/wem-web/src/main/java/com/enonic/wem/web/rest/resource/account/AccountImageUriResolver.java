@@ -47,7 +47,7 @@ public final class AccountImageUriResolver
 
     private static String buildImageUrl( final String path )
     {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().path( "admin/rest/account/image/" ).path(
+        return ServletUriComponentsBuilder.fromCurrentContextPath().path( "/admin/rest/account/image/" ).path(
             path ).build().toString();
     }
 }
