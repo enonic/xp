@@ -37,7 +37,7 @@ class GetAccountJsonResult
             final UserProfile profile = ( (UserAccount) account ).getProfile();
             if ( profile != null )
             {
-                json.put( "info", serializeUserProfile( profile ) );
+                json.put( "profile", serializeUserProfile( profile ) );
             }
 
             json.put( "memberships", serialize( memberships ) );

@@ -250,7 +250,7 @@ function testEditUserFormPanelGetData(t, userstoreStore, callback) {
         function (next) {
             var formData = eufp.getData();
             t.ok(formData, 'Form data is valid');
-            var info = formData.info;
+            var info = formData.profile;
             t.ok(info, 'User info section presents');
             t.is(new Date(info.birthday).toDateString(), new Date(testData.birthday).toDateString(),
                 'Birthday value is right');

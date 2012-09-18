@@ -1,4 +1,4 @@
-// This file was auto-generated on 2012-09-10 11:41:06 CEST
+// This file was auto-generated on 2012-09-18 14:50:19 CEST
 
 if ( !Templates ) {
     var Templates = {};
@@ -247,12 +247,12 @@ Templates.account = {
 		'<tpl if="userInfo == null || userInfo.addresses == null || userInfo.addresses.length == 0">' + 
 		    '<h2 class="message">No data</h2>' + 
 		'</tpl>' + 
-		'<tpl if="info != null && info.addresses != null && info.addresses.length &gt; 0">' + 
+		'<tpl if="profile != null && profile.addresses != null && profile.addresses.length &gt; 0">' + 
 		    '<fieldset class="x-fieldset x-fieldset-default admin-addresses-container">' + 
 		        '<legend class="x-fieldset-header x-fieldset-header-default">' + 
 		            '<div class="x-component x-fieldset-header-text x-component-default">Addresses</div>' + 
 		        '</legend>' + 
-		        '<tpl for="info.addresses">' + 
+		        '<tpl for="profile.addresses">' + 
 		            '<div class="address">' + 
 		                '<tpl if="label != null">' + 
 		                    '<h3 class="x-fieldset-header-text">{label}</h3>' + 

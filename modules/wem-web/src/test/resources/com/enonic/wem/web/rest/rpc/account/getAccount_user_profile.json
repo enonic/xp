@@ -13,7 +13,7 @@
     "deleted" : false,
     "image_url" : "http://localhost/admin/rest/account/image/user:enonic:1",
     "email" : "1@enonic.com",
-    "info" : {
+    "profile" : {
         "firstName" : "first-name",
         "lastName" : "last-name",
         "middleName" : "middle-name",

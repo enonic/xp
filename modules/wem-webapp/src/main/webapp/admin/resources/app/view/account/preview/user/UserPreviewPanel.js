@@ -161,7 +161,7 @@ Ext.define('Admin.view.account.preview.user.UserPreviewPanel', {
                 var fieldSetData = { title: fieldSet.title};
                 fieldSetData.fields = [];
                 Ext.Array.each(fieldSet.fields, function (field) {
-                    var value = userData[field] || (userData.info ? userData.info[field] : undefined);
+                    var value = userData[field] || (userData.profile ? userData.profile[field] : undefined);
                     var title = Admin.view.account.EditUserFormPanel.fieldLabels[field] || field;
                     if (value) {
                         Ext.Array.include(fieldSetData.fields, {title: title, value: value});
