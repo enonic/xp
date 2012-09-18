@@ -4,9 +4,11 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.data.DataSet;
-import com.enonic.wem.core.content.data.InvalidDataException;
 import com.enonic.wem.core.content.datatype.DataTypes;
+import com.enonic.wem.core.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException;
+import com.enonic.wem.core.content.type.formitem.InvalidDataException;
+import com.enonic.wem.core.content.type.formitem.InvalidValueException;
 
 public class Color
     extends BaseComponentType
@@ -40,6 +42,7 @@ public class Color
 
     @Override
     public void checkValidity( final Data data )
+        throws InvalidValueTypeException, InvalidValueException
     {
         super.checkValidity( data );
 
@@ -54,6 +57,7 @@ public class Color
     }
 
     private void verify( final Data data, final String path )
+        throws InvalidValueException
     {
         if ( data == null || data.getValue() == null )
         {
@@ -62,7 +66,8 @@ public class Color
         final Long value = (Long) data.getValue();
         if ( value < 0 || value > 255 )
         {
-            throw new InvalidDataException( data, "[" + data.getPath() + "] must be between 0 and 255" );
+            final String message = path + " must be between 0 and 255";
+            throw new InvalidValueException( data, message );
         }
     }
 }

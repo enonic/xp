@@ -4,7 +4,6 @@ package com.enonic.wem.core.content.type.formitem;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.data.Data;
-import com.enonic.wem.core.content.data.InvalidDataException;
 import com.enonic.wem.core.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.core.content.type.formitem.comptype.BaseComponentType;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentType;
@@ -25,7 +24,7 @@ public class Component
 
     private String customText;
 
-    private String validationRegexp;
+    private ValidationRegex validationRegexp;
 
     private String helpText;
 
@@ -76,7 +75,7 @@ public class Component
         return customText;
     }
 
-    public String getValidationRegexp()
+    public ValidationRegex getValidationRegexp()
     {
         return validationRegexp;
     }
@@ -111,11 +110,23 @@ public class Component
         }
     }
 
+    public void checkValidationRegexp( final Data data )
+        throws InvalidDataException
+    {
+        try
+        {
+            validationRegexp.checkValidity( data );
+        }
+        catch ( BreaksRegexValidationException e )
+        {
+            throw new InvalidDataException( data, e );
+        }
+    }
+
     public void checkValidity( final Data data )
         throws InvalidDataException
     {
         try
-
         {
             if ( data == null )
             {
@@ -124,7 +135,10 @@ public class Component
 
             checkValidityAccordingToComponentTypeConfig( data );
             type.checkValidity( data );
-
+        }
+        catch ( InvalidValueException e )
+        {
+            throw new InvalidDataException( data, e );
         }
         catch ( InvalidValueTypeException e )
         {
@@ -176,7 +190,7 @@ public class Component
 
         private String customText;
 
-        private String validationRegexp;
+        private ValidationRegex validationRegexp;
 
         private String helpText;
 
@@ -265,7 +279,7 @@ public class Component
 
         public Builder validationRegexp( String value )
         {
-            validationRegexp = value;
+            validationRegexp = new ValidationRegex( value );
             return this;
         }
 

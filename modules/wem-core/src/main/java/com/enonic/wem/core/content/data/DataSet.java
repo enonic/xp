@@ -1,13 +1,21 @@
 package com.enonic.wem.core.content.data;
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.content.datatype.BaseDataType;
+import com.enonic.wem.core.content.datatype.DataType;
 import com.enonic.wem.core.content.datatype.DataTypes;
+import com.enonic.wem.core.content.datatype.InvalidValueTypeException;
+import com.enonic.wem.core.content.type.formitem.InvalidDataException;
+import com.enonic.wem.core.content.type.formitem.InvalidValueException;
+
+import static com.enonic.wem.core.content.data.Data.newData;
 
 public class DataSet
     implements Iterable<Data>, EntrySelector
@@ -34,6 +42,7 @@ public class DataSet
     }
 
     void setData( final EntryPath path, final Object value, final BaseDataType dataType )
+        throws InvalidDataException
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
@@ -45,8 +54,21 @@ public class DataSet
         else
         {
             final EntryPath newEntryPath = new EntryPath( this.path, path.getFirstElement() );
-            final Data newData = Data.newData().path( newEntryPath ).type( dataType ).value( value ).build();
+            final Data newData = newData().path( newEntryPath ).type( dataType ).value( value ).build();
             doSetData( path.getFirstElement(), newData );
+
+            try
+            {
+                dataType.checkValidity( newData );
+            }
+            catch ( InvalidValueTypeException e )
+            {
+                throw new InvalidDataException( newData, e );
+            }
+            catch ( InvalidValueException e )
+            {
+                throw new InvalidDataException( newData, e );
+            }
         }
     }
 
@@ -57,7 +79,7 @@ public class DataSet
         {
             final EntryPath newEntryPath = new EntryPath( this.path, path.getFirstElement() );
             existingDataWithDataSetValue =
-                Data.newData().path( newEntryPath ).type( DataTypes.DATA_SET ).value( new DataSet( newEntryPath ) ).build();
+                newData().path( newEntryPath ).type( DataTypes.DATA_SET ).value( new DataSet( newEntryPath ) ).build();
             doSetData( path.getFirstElement(), existingDataWithDataSetValue );
         }
         existingDataWithDataSetValue.setData( path.asNewWithoutFirstPathElement(), value, dataType );
@@ -176,5 +198,33 @@ public class DataSet
             index++;
         }
         return s.toString();
+    }
+
+    public static Builder newDataSet()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private List<Data> dataList = new ArrayList<Data>();
+
+        public Builder set( String path, Object value, DataType dataType )
+        {
+            dataList.add( newData().path( new EntryPath( path ) ).value( value ).type( dataType ).build() );
+            return this;
+        }
+
+        public DataSet build()
+        {
+            DataSet dataSet = new DataSet( new EntryPath() );
+
+            for ( Data data : dataList )
+            {
+                dataSet.add( data );
+            }
+
+            return dataSet;
+        }
     }
 }

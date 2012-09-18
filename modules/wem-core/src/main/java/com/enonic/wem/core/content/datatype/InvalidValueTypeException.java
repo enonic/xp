@@ -4,7 +4,7 @@ package com.enonic.wem.core.content.datatype;
 import com.enonic.wem.core.content.data.Data;
 
 public class InvalidValueTypeException
-    extends RuntimeException
+    extends Exception
 {
     public InvalidValueTypeException( final JavaType javaType, final Data data )
     {

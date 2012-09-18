@@ -8,7 +8,9 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.core.content.datatype.BaseDataType;
 import com.enonic.wem.core.content.datatype.DataType;
 import com.enonic.wem.core.content.datatype.DataTypes;
+import com.enonic.wem.core.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.core.content.datatype.JavaType;
+import com.enonic.wem.core.content.type.formitem.InvalidDataException;
 import com.enonic.wem.core.content.type.formitem.InvalidValueException;
 
 
@@ -60,10 +62,21 @@ public class Data
         return type;
     }
 
-    public void checkValidity()
-        throws InvalidValueException
+    public void checkDataTypeValidity()
+        throws InvalidDataException
     {
-        type.checkValidity( this );
+        try
+        {
+            type.checkValidity( this );
+        }
+        catch ( InvalidValueTypeException e )
+        {
+            throw new InvalidDataException( this, e );
+        }
+        catch ( InvalidValueException e )
+        {
+            throw new InvalidDataException( this, e );
+        }
     }
 
     public void setData( final EntryPath path, final Object value, final BaseDataType dataType )
@@ -81,7 +94,7 @@ public class Data
         return dataSet.getDataSet( path );
     }
 
-    public boolean isDataSet()
+    public boolean hasDataSetAsValue()
     {
         return type.equals( DataTypes.DATA_SET );
     }

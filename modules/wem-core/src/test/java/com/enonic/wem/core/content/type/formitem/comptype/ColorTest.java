@@ -5,7 +5,9 @@ import org.junit.Test;
 
 import com.enonic.wem.core.content.Content;
 import com.enonic.wem.core.content.data.Data;
-import com.enonic.wem.core.content.data.InvalidDataException;
+import com.enonic.wem.core.content.datatype.InvalidValueTypeException;
+import com.enonic.wem.core.content.type.formitem.InvalidDataException;
+import com.enonic.wem.core.content.type.formitem.InvalidValueException;
 
 import static org.junit.Assert.*;
 
@@ -19,6 +21,7 @@ public class ColorTest
 
     @Test
     public void given_data_that_validates_checkValidity_throws_nothing()
+        throws InvalidValueTypeException, InvalidValueException
     {
         Content content = new Content();
         content.setData( "myColor.red", 40l );
@@ -68,8 +71,8 @@ public class ColorTest
         }
         catch ( Exception e )
         {
-            assertTrue( e instanceof InvalidDataException );
-            assertEquals( "Invalid data [Data{path=myColor.red, type=WholeNumber, value=256}]: [myColor.red] must be between 0 and 255",
+            assertTrue( e instanceof InvalidValueException );
+            assertEquals( "Invalid value in [Data{path=myColor.red, type=WholeNumber, value=256}]. red must be between 0 and 255: 256",
                           e.getMessage() );
         }
     }

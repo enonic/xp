@@ -212,4 +212,16 @@ public class ContentTypeSerializerJsonTest
 
         assertNotNull( parsedContentType.getFormItems().getFormItem( "personalia" ) );
     }
+
+    @Test
+    public void validationRegex()
+    {
+        ContentType contentType = new ContentType();
+        contentType.setName( "test" );
+        contentType.addFormItem( newComponent().name( "myText" ).type( ComponentTypes.TEXT_LINE ).validationRegexp( "a*c" ).build() );
+
+        String json = new ContentTypeSerializerJson().toJson( contentType );
+        ContentType parsedContentType = new ContentTypeSerializerJson().parse( json );
+        assertEquals( "a*c", parsedContentType.getComponent( "myText" ).getValidationRegexp().toString() );
+    }
 }

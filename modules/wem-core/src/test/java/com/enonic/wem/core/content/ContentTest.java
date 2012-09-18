@@ -1,11 +1,9 @@
 package com.enonic.wem.core.content;
 
 
-import org.joda.time.DateMidnight;
 import org.junit.Test;
 
 import com.enonic.wem.core.content.data.DataSet;
-import com.enonic.wem.core.content.data.InvalidDataException;
 import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException;
@@ -13,13 +11,13 @@ import com.enonic.wem.core.content.type.formitem.Component;
 import com.enonic.wem.core.content.type.formitem.ComponentTemplate;
 import com.enonic.wem.core.content.type.formitem.FormItemSet;
 import com.enonic.wem.core.content.type.formitem.FormItemSetTemplate;
+import com.enonic.wem.core.content.type.formitem.InvalidDataException;
 import com.enonic.wem.core.content.type.formitem.MockTemplateFetcher;
 import com.enonic.wem.core.content.type.formitem.TemplateReference;
 import com.enonic.wem.core.content.type.formitem.TemplateType;
 import com.enonic.wem.core.content.type.formitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.core.content.type.formitem.comptype.DropdownConfig;
-import com.enonic.wem.core.content.type.formitem.comptype.HtmlAreaConfig;
 import com.enonic.wem.core.content.type.formitem.comptype.RadioButtonsConfig;
 import com.enonic.wem.core.module.Module;
 
@@ -29,9 +27,6 @@ import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemS
 import static com.enonic.wem.core.content.type.formitem.FormItemSetTemplateBuilder.newFormItemSetTemplate;
 import static com.enonic.wem.core.content.type.formitem.TemplateReference.newTemplateReference;
 import static com.enonic.wem.core.content.type.formitem.VisualFieldSet.newVisualFieldSet;
-import static com.enonic.wem.core.content.type.formitem.comptype.DropdownConfig.newDropdownConfig;
-import static com.enonic.wem.core.content.type.formitem.comptype.HtmlAreaConfig.newHtmlAreaConfig;
-import static com.enonic.wem.core.content.type.formitem.comptype.RadioButtonsConfig.newRadioButtonsConfig;
 import static com.enonic.wem.core.module.Module.newModule;
 import static org.junit.Assert.*;
 
@@ -221,6 +216,15 @@ public class ContentTest
         assertEquals( "Black", content.getData( "child[1].features.hairColour" ).getValue() );
     }
 
+    @Test(expected = InvalidDataException.class)
+    public void setData_given_invalid_value_when_dataType_is_geographical_coordinate_then_exception()
+    {
+        Content content = new Content();
+        DataSet value = DataSet.newDataSet().set( "latitude", 0.0, DataTypes.DECIMAL_NUMBER ).set( "longitude", 181.0,
+                                                                                                   DataTypes.DECIMAL_NUMBER ).build();
+        content.setData( "myGeoLocation", value, DataTypes.GEOGRAPHIC_COORDINATE );
+    }
+
     @Test
     public void unstructured_getEntries()
     {
@@ -293,99 +297,6 @@ public class ContentTest
         assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getValue() );
         assertEquals( "personalia.eyeColour", content.getData( "personalia.eyeColour" ).getPath().toString() );
     }
-
-    @Test
-    public void given_unstructured_content_when_setting_type_that_fits_then_everything_is_ok()
-    {
-        // setup
-        Content content = new Content();
-        content.setData( "name", "Thomas" );
-        content.setData( "personalia.eyeColour", "Blue" );
-        content.setData( "personalia.hairColour", "Blonde" );
-        content.setData( "crimes[0].description", "Stole tomatoes from neighbour" );
-        content.setData( "crimes[0].year", "1989" );
-        content.setData( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
-        content.setData( "crimes[1].year", "1990" );
-
-        assertEquals( DataTypes.TEXT, content.getData( "personalia.eyeColour" ).getDataType() );
-        assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getValue() );
-        assertEquals( "personalia.eyeColour", content.getData( "personalia.eyeColour" ).getPath().toString() );
-
-        // exercise
-        ContentType contentType = new ContentType();
-        contentType.addFormItem( newComponent().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() );
-        FormItemSet personalia = newFormItemSet().name( "personalia" ).multiple( false ).build();
-        contentType.addFormItem( personalia );
-        personalia.addFormItem( newComponent().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
-        personalia.addFormItem( newComponent().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() );
-        FormItemSet crimes = newFormItemSet().name( "crimes" ).multiple( true ).build();
-        contentType.addFormItem( crimes );
-        crimes.addItem( newComponent().name( "description" ).type( ComponentTypes.TEXT_LINE ).build() );
-        crimes.addItem( newComponent().name( "year" ).type( ComponentTypes.TEXT_LINE ).build() );
-        content.setType( contentType );
-
-        assertEquals( DataTypes.TEXT, content.getData( "personalia.eyeColour" ).getDataType() );
-        assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getValue() );
-        content.checkValidity();
-    }
-
-    @Test
-    public void checkValidity()
-    {
-        // setup
-        DropdownConfig dropdownConfig = newDropdownConfig().addOption( "Option 1", "o1" ).build();
-        RadioButtonsConfig radioButtonsConfig = newRadioButtonsConfig().addOption( "Option 1", "o1" ).build();
-        HtmlAreaConfig htmlAreaConfig = newHtmlAreaConfig().build();
-
-        ContentType contentType = new ContentType();
-        contentType.addFormItem( newComponent().name( "myColor" ).type( ComponentTypes.COLOR ).build() );
-        contentType.addFormItem( newComponent().name( "myDate" ).type( ComponentTypes.DATE ).build() );
-        contentType.addFormItem( newComponent().name( "myDecimalNumber" ).type( ComponentTypes.DECIMAL_NUMBER ).build() );
-        contentType.addFormItem(
-            newComponent().name( "myDropdown" ).type( ComponentTypes.DROPDOWN ).componentTypeConfig( dropdownConfig ).build() );
-        contentType.addFormItem( newComponent().name( "myGeoLocation" ).type( ComponentTypes.GEO_LOCATION ).build() );
-        contentType.addFormItem(
-            newComponent().name( "myHtmlArea" ).type( ComponentTypes.HTML_AREA ).componentTypeConfig( htmlAreaConfig ).build() );
-        contentType.addFormItem( newComponent().name( "myPhone" ).type( ComponentTypes.PHONE ).build() );
-        contentType.addFormItem( newComponent().name( "myRadioButtons" ).type( ComponentTypes.RADIO_BUTTONS ).componentTypeConfig(
-            radioButtonsConfig ).build() );
-        contentType.addFormItem( newComponent().name( "myTextArea" ).type( ComponentTypes.TEXT_AREA ).build() );
-        contentType.addFormItem( newComponent().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).build() );
-        contentType.addFormItem( newComponent().name( "myWholeNumber" ).type( ComponentTypes.WHOLE_NUMBER ).build() );
-        contentType.addFormItem( newComponent().name( "myXml" ).type( ComponentTypes.XML ).build() );
-
-        Content content = new Content();
-        content.setType( contentType );
-        content.setData( "myColor.red", 50l );
-        content.setData( "myColor.blue", 50l );
-        content.setData( "myColor.green", 50l );
-        content.setData( "myDate", new DateMidnight( 2012, 9, 11 ) );
-        content.setData( "myDecimalNumber", 12.34 );
-        content.setData( "myDropdown", "o1" );
-        content.setData( "myGeoLocation.latitude", 40.446195 );
-        content.setData( "myGeoLocation.longitude", -79.948862 );
-        content.setData( "myHtmlArea", "<h1>Hello world</h1>" );
-
-        // exercise
-        content.checkValidity();
-    }
-
-    @Test(expected = InvalidDataException.class)
-    public void given_illegal_type_for_longitude_when_checkValidity_then_InvalidValueTypeException_is_thrown()
-    {
-        // setup
-        ContentType contentType = new ContentType();
-        contentType.addFormItem( newComponent().name( "myGeoLocation" ).type( ComponentTypes.GEO_LOCATION ).build() );
-
-        Content content = new Content();
-        content.setType( contentType );
-        content.setData( "myGeoLocation.latitude", 40.446195 );
-        content.setData( "myGeoLocation.longitude", "-79.948862" );
-
-        // exercise
-        content.checkValidity();
-    }
-
 
     @Test
     public void templates()

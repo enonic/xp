@@ -11,6 +11,8 @@ import com.enonic.wem.core.content.data.DataSet;
 import com.enonic.wem.core.content.datatype.BaseDataType;
 import com.enonic.wem.core.content.datatype.DataType;
 import com.enonic.wem.core.content.datatype.DataTypes;
+import com.enonic.wem.core.content.datatype.InvalidValueTypeException;
+import com.enonic.wem.core.content.type.formitem.InvalidValueException;
 
 public abstract class BaseComponentType
     implements ComponentType
@@ -101,10 +103,11 @@ public abstract class BaseComponentType
     }
 
     public void checkValidity( Data data )
+        throws InvalidValueTypeException, InvalidValueException
     {
         dataType.checkValidity( data );
 
-        if ( typedPaths != null && data.isDataSet() )
+        if ( typedPaths != null && data.hasDataSetAsValue() )
         {
             DataSet dataSet = data.getDataSet();
             for ( TypedPath typedPath : typedPaths.values() )
