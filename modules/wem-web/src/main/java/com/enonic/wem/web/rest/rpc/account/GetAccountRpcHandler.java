@@ -28,7 +28,7 @@ public final class GetAccountRpcHandler
         {
             AccountKey accountKey = AccountKey.from( key );
             AccountKeys accountKeys = AccountKeys.from( accountKey );
-            final Accounts account = this.client.execute( Commands.account().get().keys( accountKeys ).includeImage() );
+            final Accounts account = this.client.execute( Commands.account().get().keys( accountKeys ).includeImage().includeProfile() );
 
             if ( !account.isEmpty() )
             {

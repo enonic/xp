@@ -1,12 +1,21 @@
 package com.enonic.wem.web.rest.rpc.account;
 
+import java.util.Locale;
+import java.util.TimeZone;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKeys;
+import com.enonic.wem.api.account.UserAccount;
+import com.enonic.wem.api.account.profile.Address;
+import com.enonic.wem.api.account.profile.Addresses;
+import com.enonic.wem.api.account.profile.Gender;
+import com.enonic.wem.api.account.profile.UserProfile;
 import com.enonic.wem.api.command.account.FindMembers;
 import com.enonic.wem.api.command.account.FindMemberships;
 import com.enonic.wem.api.command.account.GetAccounts;
@@ -87,15 +96,66 @@ public class GetAccountRpcHandlerTest
         testSuccess( createParams( "user:enonic:1" ), "getAccount_user.json" );
     }
 
+    @Test
+    public void testGetAccountUserWithProfile()
+        throws Exception
+    {
+        mockCurrentContextHttpRequest();
+
+        final UserAccount user1 = createUser( "enonic:1" );
+        final UserProfile profile = new UserProfile();
+        profile.setFax( "fax" );
+        profile.setBirthday( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
+        profile.setCountry( "country" );
+        profile.setDescription( "description" );
+        profile.setFirstName( "first-name" );
+        profile.setGender( Gender.FEMALE );
+        profile.setGlobalPosition( "global-position" );
+        profile.setHomePage( "home-page" );
+        profile.setHtmlEmail( true );
+        profile.setInitials( "initials" );
+        profile.setLastName( "last-name" );
+        profile.setLocale( Locale.ENGLISH );
+        profile.setMemberId( "member-id" );
+        profile.setMiddleName( "middle-name" );
+        profile.setMobile( "mobile" );
+        profile.setNickName( "nick-name" );
+        profile.setOrganization( "organization" );
+        profile.setPersonalId( "personal-id" );
+        profile.setPhone( "phone" );
+        profile.setPrefix( "prefix" );
+        profile.setSuffix( "suffix" );
+        profile.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
+        profile.setTitle( "title" );
+        final Address address = new Address();
+        address.setLabel( "label" );
+        address.setCountry( "country" );
+        address.setIsoCountry( "iso-country" );
+        address.setRegion( "region" );
+        address.setIsoRegion( "iso-region" );
+        address.setPostalAddress( "postal-address" );
+        address.setPostalCode( "postal-code" );
+        address.setStreet( "street" );
+        profile.setAddresses( Addresses.from( address ) );
+        user1.setProfile( profile );
+        Mockito.when( client.execute( Mockito.isA( GetAccounts.class ) ) ).thenReturn( createAccountsObject( user1 ) ).thenReturn(
+            createAccountsObject( createGroup( "enonic:2" ) ) );
+
+        Mockito.when( client.execute( Mockito.isA( FindMemberships.class ) ) ).thenReturn( createAccountKeySet( "user:enonic:2" ) );
+
+        testSuccess( createParams( "user:enonic:1" ), "getAccount_user_profile.json" );
+    }
 
     private JsonNode createResult( boolean success, String error )
     {
         ObjectNode result = objectNode();
         result.put( "success", success );
 
-        if (error != null) {
+        if ( error != null )
+        {
             result.put( "error", error );
-        }        return result;
+        }
+        return result;
     }
 
     private JsonNode createParams( final String key )
