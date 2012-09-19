@@ -1,8 +1,10 @@
-package com.enonic.wem.core.content.data;
+package com.enonic.wem.core.content;
 
 
 import java.util.Map;
 
+import com.enonic.wem.core.content.data.ContentData;
+import com.enonic.wem.core.content.data.EntryPath;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.DataTypeFixer;
 

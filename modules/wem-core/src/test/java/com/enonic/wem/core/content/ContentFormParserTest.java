@@ -8,7 +8,6 @@ import org.joda.time.DateMidnight;
 import org.junit.Test;
 
 import com.enonic.wem.core.content.data.ContentData;
-import com.enonic.wem.core.content.data.ContentFormParser;
 import com.enonic.wem.core.content.data.EntryPath;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
