@@ -11,7 +11,6 @@ import com.enonic.wem.core.content.type.formitem.Component;
 import com.enonic.wem.core.content.type.formitem.FormItemSet;
 import com.enonic.wem.core.content.type.formitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
-import com.enonic.wem.core.content.type.formitem.comptype.RadioButtonsConfig;
 import com.enonic.wem.core.module.Module;
 
 import com.enonic.cms.framework.blob.BlobKeyCreator;
@@ -31,141 +30,113 @@ public class ContentSerializerJsonTest
     private ContentSerializerJson serializer = new ContentSerializerJson( contentTypeFetcher );
 
     @Test
-    public void text()
+    public void given_content_with_name_when_parsed_then_name_is_as_expected()
     {
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem( Component.newBuilder().name( "myTextArea" ).type( ComponentTypes.TEXT_AREA ).required( true ).build() );
-        contentType.addFormItem( Component.newBuilder().name( "myPhone" ).type( ComponentTypes.PHONE ).build() );
+        contentType.addFormItem( Component.newBuilder().name( "component" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
         content.setName( "myContent" );
-        content.setType( contentType );
-        content.setData( "myTextArea", "My test\n text." );
-        content.setData( "myPhone", "+4712123123" );
+        content.setData( "component", "A value" );
 
         String json = serializer.toJson( content );
-        System.out.println( json );
         // exercise
         Content parsedContent = serializer.parse( json );
 
         // verify
         assertEquals( "myContent", parsedContent.getName() );
-        assertEquals( "My test\n" + " text.", parsedContent.getData( "myTextArea" ).getValue() );
-        assertEquals( "+4712123123", parsedContent.getData( "myPhone" ).getValue() );
     }
 
     @Test
-    public void radiobuttons()
+    public void given_content_with_name_and_a_component_when_parsed_then_path_and_value_are_as_expected()
     {
-        RadioButtonsConfig radioButtonsConfig =
-            RadioButtonsConfig.newBuilder().addOption( "Norway", "NO" ).addOption( "South Africa", "ZA" ).build();
-
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem(
-            Component.newBuilder().name( "myRadiobuttons" ).type( ComponentTypes.RADIO_BUTTONS ).required( true ).componentTypeConfig(
-                radioButtonsConfig ).build() );
+        contentType.addFormItem( Component.newBuilder().name( "component" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
-        content.setType( contentType );
-        content.setData( "myRadiobuttons", "NO" );
+        content.setData( "component", "A value" );
 
         String json = serializer.toJson( content );
-
-        /// exercise
+        // exercise
         Content parsedContent = serializer.parse( json );
 
         // verify
-        assertEquals( "NO", parsedContent.getData( "myRadiobuttons" ).getValue() );
+        assertEquals( "A value", parsedContent.getData( "component" ).getValue() );
     }
 
     @Test
-    public void multiple_textlines()
+    public void given_array_of_component_when_parsed_then_paths_and_values_are_as_expected()
     {
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem( Component.newBuilder().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).build() );
         contentType.addFormItem(
-            Component.newBuilder().name( "myMultipleTextLine" ).type( ComponentTypes.TEXT_LINE ).required( false ).multiple(
-                true ).build() );
+            Component.newBuilder().name( "component" ).type( ComponentTypes.TEXT_LINE ).required( false ).multiple( true ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
         content.setType( contentType );
-        content.setData( "myTextLine", "A single line" );
-        content.setData( "myMultipleTextLine[0]", "First line" );
-        content.setData( "myMultipleTextLine[1]", "Second line" );
+        content.setData( "component[0]", "Value 1" );
+        content.setData( "component[1]", "Value 2" );
 
         String json = serializer.toJson( content );
         Content parsedContent = serializer.parse( json );
 
-        assertEquals( "A single line", parsedContent.getData( "myTextLine" ).getValue() );
-        assertEquals( "First line", parsedContent.getData( "myMultipleTextLine[0]" ).getValue() );
-        assertEquals( "Second line", parsedContent.getData( "myMultipleTextLine[1]" ).getValue() );
+        assertEquals( "Value 1", parsedContent.getData( "component[0]" ).getValue() );
+        assertEquals( "Value 2", parsedContent.getData( "component[1]" ).getValue() );
     }
 
     @Test
-    public void groupedFieldSet()
+    public void given_component_and_formItemSet_when_parsed_then_paths_and_values_are_as_expected()
     {
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem( Component.newBuilder().name( "name" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( Component.newBuilder().name( "component" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() );
 
-        FormItemSet formItemSet = newBuilder().name( "personalia" ).build();
+        FormItemSet formItemSet = newBuilder().name( "formItemSet" ).build();
         contentType.addFormItem( formItemSet );
-        formItemSet.addItem( Component.newBuilder().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( Component.newBuilder().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "component" ).type( ComponentTypes.TEXT_LINE ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
         content.setType( contentType );
-        content.setData( "name", "Ola Nordmann" );
-        content.setData( "personalia.eyeColour", "Blue" );
-        content.setData( "personalia.hairColour", "Blonde" );
+        content.setData( "component", "A value" );
+        content.setData( "formItemSet.component", "A another value" );
 
         String json = serializer.toJson( content );
         // exercise
         Content actualContent = serializer.parse( json );
 
         // verify
-        assertEquals( "personalia.eyeColour", actualContent.getData( "personalia.eyeColour" ).getPath().toString() );
-        assertEquals( "Blue", actualContent.getData( "personalia.eyeColour" ).getValue() );
-        assertEquals( "personalia.hairColour", actualContent.getData( "personalia.hairColour" ).getPath().toString() );
-        assertEquals( "Blonde", actualContent.getData( "personalia.hairColour" ).getValue() );
+        assertEquals( "component", actualContent.getData( "component" ).getPath().toString() );
+        assertEquals( "formItemSet.component", actualContent.getData( "formItemSet.component" ).getPath().toString() );
+        assertEquals( "A value", actualContent.getData( "component" ).getValue() );
+        assertEquals( "A another value", actualContent.getData( "formItemSet.component" ).getValue() );
     }
 
     @Test
-    public void multiple_subtype()
+    public void given_array_of_formItemSet_when_parsed_then_paths_and_values_are_as_expected()
     {
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        Component nameComponent = Component.newBuilder().name( "name" ).type( ComponentTypes.TEXT_LINE ).required( true ).build();
-        contentType.addFormItem( nameComponent );
         contentTypeFetcher.add( contentType );
 
-        FormItemSet formItemSet = newFormItemSet().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
+        FormItemSet formItemSet = newFormItemSet().name( "formItemSet" ).label( "FormItemSet" ).multiple( true ).build();
         contentType.addFormItem( formItemSet );
-        formItemSet.addItem( Component.newBuilder().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( Component.newBuilder().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( Component.newBuilder().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( Component.newBuilder().name( "component" ).type( ComponentTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );
-        content.setData( "name", "Norske" );
-        content.setData( "personalia[0].name", "Ola Nordmann" );
-        content.setData( "personalia[0].eyeColour", "Blue" );
-        content.setData( "personalia[0].hairColour", "Blonde" );
-        content.setData( "personalia[1].name", "Kari Trestakk" );
-        content.setData( "personalia[1].eyeColour", "Green" );
-        content.setData( "personalia[1].hairColour", "Brown" );
+        content.setData( "formItemSet[0].component", "Value 1" );
+        content.setData( "formItemSet[1].component", "Value 2" );
 
         String json = serializer.toJson( content );
 
@@ -175,15 +146,37 @@ public class ContentSerializerJsonTest
         Content parsedContent = serializer.parse( json );
 
         // verify
-        assertEquals( "Norske", parsedContent.getData( "name" ).getValue() );
-        assertEquals( "Ola Nordmann", parsedContent.getData( "personalia[0].name" ).getValue() );
-        assertEquals( "Blue", parsedContent.getData( "personalia[0].eyeColour" ).getValue() );
-        assertEquals( "Blonde", parsedContent.getData( "personalia[0].hairColour" ).getValue() );
-        assertEquals( "Kari Trestakk", parsedContent.getData( "personalia[1].name" ).getValue() );
-        assertEquals( "Green", parsedContent.getData( "personalia[1].eyeColour" ).getValue() );
-        assertEquals( "Brown", parsedContent.getData( "personalia[1].hairColour" ).getValue() );
+        assertEquals( "formItemSet[0].component", parsedContent.getData( "formItemSet[0].component" ).getPath().toString() );
+        assertEquals( "formItemSet[1].component", parsedContent.getData( "formItemSet[1].component" ).getPath().toString() );
+        assertEquals( "Value 1", parsedContent.getData( "formItemSet[0].component" ).getValue() );
+        assertEquals( "Value 2", parsedContent.getData( "formItemSet[1].component" ).getValue() );
     }
 
+
+    @Test
+    public void given_component_inside_visualFieldSet_when_parse_then_component_path_is_affected_by_name_of_visualFieldSet()
+    {
+        ContentType contentType = new ContentType();
+        contentType.setModule( myModule );
+        contentType.setName( "MyContentType" );
+        contentType.addFormItem( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() );
+        VisualFieldSet visualFieldSet = newVisualFieldSet().label( "Label" ).name( "visualFieldSet" ).add(
+            newComponent().name( "component" ).type( ComponentTypes.TEXT_LINE ).build() ).build();
+        contentType.addFormItem( visualFieldSet );
+
+        Content content = new Content();
+        content.setType( contentType );
+        content.setData( "component", "A value" );
+
+        String json = serializer.toJson( content );
+
+        // exercise
+        Content parsedContent = serializer.parse( json );
+
+        // verify
+        assertEquals( "A value", parsedContent.getValueAsString( "component" ) );
+        assertEquals( "component", parsedContent.getData( "component" ).getPath().toString() );
+    }
 
     @Test
     public void unstructured_with_subTypes()
@@ -254,36 +247,6 @@ public class ContentSerializerJsonTest
         assertEquals( "Sten Roger", parsedContent.getData( "company.names[1]" ).getValue() );
         assertEquals( "Alex", parsedContent.getData( "company.names[2]" ).getValue() );
     }
-
-    @Test
-    public void visualFieldSet()
-    {
-        ContentType contentType = new ContentType();
-        contentType.setModule( myModule );
-        contentType.setName( "MyContentType" );
-        contentType.addFormItem( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() );
-        VisualFieldSet visualFieldSet = newVisualFieldSet().label( "Personalia" ).name( "personalia" ).add(
-            newComponent().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
-            newComponent().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() ).build();
-        contentType.addFormItem( visualFieldSet );
-
-        Content content = new Content();
-        content.setType( contentType );
-        content.setData( "myField", "myValue" );
-        content.setData( "eyeColour", "Blue" );
-        content.setData( "hairColour", "Blonde" );
-
-        String json = serializer.toJson( content );
-
-        // exercise
-        Content parsedContent = serializer.parse( json );
-
-        // verify
-        assertEquals( "myValue", parsedContent.getValueAsString( "myField" ) );
-        assertEquals( "Blue", parsedContent.getValueAsString( "eyeColour" ) );
-        assertEquals( "Blonde", parsedContent.getValueAsString( "hairColour" ) );
-    }
-
 
     @Test
     public void xxx()

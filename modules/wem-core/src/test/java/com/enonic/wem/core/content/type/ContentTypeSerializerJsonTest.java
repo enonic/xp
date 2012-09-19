@@ -191,6 +191,7 @@ public class ContentTypeSerializerJsonTest
         assertEquals( "hairColour", parsedContentType.getComponent( "hairColour" ).getPath().toString() );
 
         assertNotNull( parsedContentType.getFormItems().getFormItem( "personalia" ) );
+        assertEquals( FormItemType.VISUAL_FIELD_SET, parsedContentType.getFormItems().getFormItem( "personalia" ).getFormItemType() );
     }
 
     @Test
