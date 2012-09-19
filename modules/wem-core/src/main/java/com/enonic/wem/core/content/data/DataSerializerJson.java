@@ -20,7 +20,7 @@ public class DataSerializerJson
         throws IOException
     {
         g.writeStartObject();
-        g.writeStringField( "path", data.getPath().toString() );
+        g.writeStringField( "name", data.getPath().getLastElement().toString() );
         if ( data.getDataType() != null )
         {
             g.writeStringField( "type", data.getDataType().getName() );
@@ -56,11 +56,11 @@ public class DataSerializerJson
         g.writeEndObject();
     }
 
-    public Data parse( final JsonNode dataNode )
+    public Data parse( final EntryPath parentPath, final JsonNode dataNode )
     {
         final Data.Builder builder = Data.newData();
 
-        final EntryPath entryPath = new EntryPath( JsonParserUtil.getStringValue( "path", dataNode ) );
+        final EntryPath entryPath = new EntryPath( parentPath, JsonParserUtil.getStringValue( "name", dataNode ) );
         builder.path( entryPath );
         final BaseDataType type = (BaseDataType) DataTypes.parseByName( JsonParserUtil.getStringValue( "type", dataNode, null ) );
         Preconditions.checkNotNull( type, "type was null" );
@@ -74,7 +74,7 @@ public class DataSerializerJson
             while ( dataIt.hasNext() )
             {
                 final JsonNode eNode = dataIt.next();
-                dataSet.add( parse( eNode ) );
+                dataSet.add( parse( entryPath, eNode ) );
             }
         }
         else

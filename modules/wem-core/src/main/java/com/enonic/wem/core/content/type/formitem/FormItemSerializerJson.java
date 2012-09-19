@@ -61,7 +61,7 @@ public class FormItemSerializerJson
     {
         g.writeStartObject();
         g.writeStringField( "formItemType", component.getFormItemType().toString() );
-        g.writeStringField( "path", component.getPath().toString() );
+        //g.writeStringField( "path", component.getPath().toString() );
         g.writeStringField( "name", component.getName() );
         componentTypeSerializer.generate( component.getComponentType(), g );
         g.writeStringField( "label", component.getLabel() );
@@ -87,7 +87,7 @@ public class FormItemSerializerJson
     {
         g.writeStartObject();
         g.writeStringField( "formItemType", formItemSet.getFormItemType().toString() );
-        g.writeStringField( "path", formItemSet.getPath().toString() );
+        //g.writeStringField( "path", formItemSet.getPath().toString() );
         g.writeStringField( "name", formItemSet.getName() );
         g.writeStringField( "label", formItemSet.getLabel() );
         g.writeBooleanField( "required", formItemSet.isRequired() );
@@ -117,7 +117,7 @@ public class FormItemSerializerJson
     {
         g.writeStartObject();
         g.writeStringField( "formItemType", templateReference.getFormItemType().toString() );
-        g.writeStringField( "path", templateReference.getPath().toString() );
+        //g.writeStringField( "path", templateReference.getPath().toString() );
         g.writeStringField( "name", templateReference.getName() );
         g.writeStringField( "reference", templateReference.getTemplateQualifiedName().toString() );
         g.writeStringField( "templateType", templateReference.getTemplateType().toString() );
@@ -162,7 +162,7 @@ public class FormItemSerializerJson
     {
         if ( formItem.getFormItemType() != FormItemType.VISUAL_FIELD_SET )
         {
-            formItem.setPath( new FormItemPath( JsonParserUtil.getStringValue( "path", formItemNode ) ) );
+            //formItem.setPath( new FormItemPath( JsonParserUtil.getStringValue( "path", formItemNode ) ) );
         }
     }
 

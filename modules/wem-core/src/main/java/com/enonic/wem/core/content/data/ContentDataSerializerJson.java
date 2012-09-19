@@ -32,7 +32,7 @@ public class ContentDataSerializerJson
         while ( dataIt.hasNext() )
         {
             final JsonNode eNode = dataIt.next();
-            dataSet.add( dataSerializer.parse( eNode ) );
+            dataSet.add( dataSerializer.parse( new EntryPath(), eNode ) );
         }
         contentData.setDataSet( dataSet );
 

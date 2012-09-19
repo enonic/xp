@@ -131,12 +131,13 @@ public class ContentSerializerJsonTest
         content.setData( "personalia.hairColour", "Blonde" );
 
         String json = serializer.toJson( content );
-
         // exercise
         Content actualContent = serializer.parse( json );
 
         // verify
+        assertEquals( "personalia.eyeColour", actualContent.getData( "personalia.eyeColour" ).getPath().toString() );
         assertEquals( "Blue", actualContent.getData( "personalia.eyeColour" ).getValue() );
+        assertEquals( "personalia.hairColour", actualContent.getData( "personalia.hairColour" ).getPath().toString() );
         assertEquals( "Blonde", actualContent.getData( "personalia.hairColour" ).getValue() );
     }
 

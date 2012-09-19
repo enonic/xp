@@ -72,25 +72,6 @@ public class ContentTypeSerializerJsonTest
     }
 
     @Test
-    public void generate_subtype()
-    {
-        FormItems formItems = new FormItems();
-
-        formItems.addFormItem( newBuilder().name( "name" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() );
-
-        FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).label( "Personalia" ).build();
-        formItems.addFormItem( formItemSet );
-        formItemSet.addItem( newBuilder().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( newBuilder().name( "hairColour" ).occurrences( 1, 3 ).type( ComponentTypes.TEXT_LINE ).build() );
-
-        ContentType contentType = new ContentType();
-        contentType.setFormItems( formItems );
-
-        ContentTypeSerializerJson generator = new ContentTypeSerializerJson();
-        String json = generator.toJson( contentType );
-    }
-
-    @Test
     public void parse_all_types()
     {
         DropdownConfig dropdownConfig = DropdownConfig.newBuilder().addOption( "myOption 1", "o1" ).addOption( "myOption 2", "o2" ).build();
@@ -135,7 +116,6 @@ public class ContentTypeSerializerJsonTest
         assertNotNull( actualFormItems.getFormItem( new FormItemPath( "myPhone" ).getLastElement() ) );
         assertNotNull( actualFormItems.getFormItem( new FormItemPath( "myXml" ).getLastElement() ) );
         assertNotNull( actualFormItems.getFormItem( new FormItemPath( "personalia" ).getLastElement() ) );
-
     }
 
     @Test
@@ -173,25 +153,24 @@ public class ContentTypeSerializerJsonTest
     }
 
     @Test
-    public void parseFieldSet_in_FieldSet()
+    public void given_content_type_with_set_inside_set_and_component_in_both_when_parse_then_paths_are_correct()
     {
         ContentType contentType = new ContentType();
-        contentType.setName( "test" );
-        FormItemSet formItemSet =
-            newFormItemSet().name( "top-fieldSet" ).add( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
-                newFormItemSet().name( "inner-fieldSet" ).add(
-                    newComponent().name( "myInnerField" ).type( ComponentTypes.TEXT_LINE ).build() ).build() ).build();
-        contentType.addFormItem( formItemSet );
+        Component myInnerComponent = newComponent().name( "my-inner-component" ).type( ComponentTypes.TEXT_LINE ).build();
+        FormItemSet myInnerSet = newFormItemSet().name( "my-inner-set" ).add( myInnerComponent ).build();
+        Component myOuterComponent = newComponent().name( "my-outer-component" ).type( ComponentTypes.TEXT_LINE ).build();
+        FormItemSet myOuterSet = newFormItemSet().name( "my-outer-set" ).add( myOuterComponent ).add( myInnerSet ).build();
+        contentType.addFormItem( myOuterSet );
 
         String json = new ContentTypeSerializerJson().toJson( contentType );
 
         ContentType parsedContentType = new ContentTypeSerializerJson().parse( json );
-        assertEquals( "top-fieldSet", parsedContentType.getFormItemSet( "top-fieldSet" ).getPath().toString() );
-        assertEquals( "top-fieldSet.myField", parsedContentType.getComponent( "top-fieldSet.myField" ).getPath().toString() );
-        assertEquals( "top-fieldSet.inner-fieldSet",
-                      parsedContentType.getFormItemSet( "top-fieldSet.inner-fieldSet" ).getPath().toString() );
-        assertEquals( "top-fieldSet.inner-fieldSet.myInnerField",
-                      parsedContentType.getComponent( "top-fieldSet.inner-fieldSet.myInnerField" ).getPath().toString() );
+        assertEquals( "my-outer-set", parsedContentType.getFormItemSet( "my-outer-set" ).getPath().toString() );
+        assertEquals( "my-outer-set.my-outer-component",
+                      parsedContentType.getComponent( "my-outer-set.my-outer-component" ).getPath().toString() );
+        assertEquals( "my-outer-set.my-inner-set", parsedContentType.getFormItemSet( "my-outer-set.my-inner-set" ).getPath().toString() );
+        assertEquals( "my-outer-set.my-inner-set.my-inner-component",
+                      parsedContentType.getComponent( "my-outer-set.my-inner-set.my-inner-component" ).getPath().toString() );
     }
 
     @Test
@@ -205,6 +184,7 @@ public class ContentTypeSerializerJsonTest
         contentType.addFormItem( visualFieldSet );
 
         String json = new ContentTypeSerializerJson().toJson( contentType );
+        System.out.println( json );
 
         ContentType parsedContentType = new ContentTypeSerializerJson().parse( json );
         assertEquals( "eyeColour", parsedContentType.getComponent( "eyeColour" ).getPath().toString() );
