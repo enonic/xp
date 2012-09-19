@@ -11,6 +11,7 @@ import com.enonic.wem.core.content.type.formitem.BreaksRegexValidationException;
 import com.enonic.wem.core.content.type.formitem.FormItemSet;
 import com.enonic.wem.core.content.type.formitem.InvalidDataException;
 import com.enonic.wem.core.content.type.formitem.InvalidValueException;
+import com.enonic.wem.core.content.type.formitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.core.content.type.formitem.comptype.DropdownConfig;
 import com.enonic.wem.core.content.type.formitem.comptype.HtmlAreaConfig;
@@ -19,6 +20,7 @@ import com.enonic.wem.core.content.type.formitem.comptype.RadioButtonsConfig;
 import static com.enonic.wem.core.content.type.Validator.newValidator;
 import static com.enonic.wem.core.content.type.formitem.Component.newComponent;
 import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemSet;
+import static com.enonic.wem.core.content.type.formitem.VisualFieldSet.newVisualFieldSet;
 import static com.enonic.wem.core.content.type.formitem.comptype.DropdownConfig.newDropdownConfig;
 import static com.enonic.wem.core.content.type.formitem.comptype.HtmlAreaConfig.newHtmlAreaConfig;
 import static com.enonic.wem.core.content.type.formitem.comptype.RadioButtonsConfig.newRadioButtonsConfig;
@@ -127,7 +129,6 @@ public class ValidatorTest
         validator.validate( content.getData() );
     }
 
-
     @Test
     public void given_invalid_data_according_to_components_validationRegex_when_validate_then_exception()
     {
@@ -163,6 +164,27 @@ public class ValidatorTest
         Validator validator = newValidator().contentType( contentType ).build();
         validateAndAssertInvalidDataException( validator, content, InvalidValueException.class,
                                                content.getData( "myFormItemSet.myColor" ) );
+
+    }
+
+    @Test
+    public void given_content_with_invalid_dataSet_according_to_component_inside_a_visualFieldSet_when_validate_then_exception_is_thrown()
+    {
+        // setup
+        ContentType contentType = new ContentType();
+        VisualFieldSet visualFieldSet = newVisualFieldSet().name( "myVisualFieldSet" ).label( "Label" ).build();
+        contentType.addFormItem( visualFieldSet );
+        visualFieldSet.addFormItem( newComponent().name( "myColor" ).type( ComponentTypes.COLOR ).build() );
+
+        Content content = new Content();
+        content.setType( contentType );
+        content.setData( "myColor.red", 0l );
+        content.setData( "myColor.green", 0l );
+        content.setData( "myColor.blue", -1l );
+
+        // exercise
+        Validator validator = newValidator().contentType( contentType ).build();
+        validateAndAssertInvalidDataException( validator, content, InvalidValueException.class, content.getData( "myColor" ) );
 
     }
 
