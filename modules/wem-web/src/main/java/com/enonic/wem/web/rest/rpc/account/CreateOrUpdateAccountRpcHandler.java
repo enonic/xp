@@ -2,10 +2,19 @@ package com.enonic.wem.web.rest.rpc.account;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import org.apache.commons.io.FileUtils;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ObjectNode;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
@@ -17,9 +26,13 @@ import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.editor.AccountEditor;
 import com.enonic.wem.api.account.editor.AccountEditors;
+import com.enonic.wem.api.account.profile.Address;
+import com.enonic.wem.api.account.profile.Addresses;
+import com.enonic.wem.api.account.profile.Gender;
+import com.enonic.wem.api.account.profile.UserProfile;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
+import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.rest.service.upload.UploadItem;
 import com.enonic.wem.web.rest.service.upload.UploadService;
 
@@ -119,6 +132,11 @@ public final class CreateOrUpdateAccountRpcHandler
                 final byte[] image = getImageContent( context.param( "imageRef" ).asString() );
                 user.setImage( image );
             }
+
+            if ( !context.param( "profile" ).isNull() )
+            {
+                user.setProfile( getProfileFromRequest( context ) );
+            }
             account = user;
         }
         else
@@ -139,6 +157,89 @@ public final class CreateOrUpdateAccountRpcHandler
         account.setDisplayName( context.param( "displayName" ).required().asString() );
 
         return account;
+    }
+
+    private UserProfile getProfileFromRequest( final JsonRpcContext context )
+    {
+        final UserProfile profile = new UserProfile();
+        final ObjectNode profileJson = context.param( "profile" ).asObject();
+
+        profile.setCountry( jsonFieldAsString( profileJson, "country" ) );
+        profile.setFax( jsonFieldAsString( profileJson, "fax" ) );
+        profile.setDescription( jsonFieldAsString( profileJson, "description" ) );
+        profile.setFirstName( jsonFieldAsString( profileJson, "firstName" ) );
+        profile.setGlobalPosition( jsonFieldAsString( profileJson, "globalPosition" ) );
+        profile.setHomePage( jsonFieldAsString( profileJson, "homePage" ) );
+        profile.setInitials( jsonFieldAsString( profileJson, "initials" ) );
+        profile.setLastName( jsonFieldAsString( profileJson, "lastName" ) );
+        profile.setMemberId( jsonFieldAsString( profileJson, "memberId" ) );
+        profile.setMiddleName( jsonFieldAsString( profileJson, "middleName" ) );
+        profile.setMobile( jsonFieldAsString( profileJson, "mobile" ) );
+        profile.setNickName( jsonFieldAsString( profileJson, "nickName" ) );
+        profile.setOrganization( jsonFieldAsString( profileJson, "organization" ) );
+        profile.setPersonalId( jsonFieldAsString( profileJson, "personalId" ) );
+        profile.setPhone( jsonFieldAsString( profileJson, "phone" ) );
+        profile.setPrefix( jsonFieldAsString( profileJson, "prefix" ) );
+        profile.setSuffix( jsonFieldAsString( profileJson, "suffix" ) );
+        profile.setTitle( jsonFieldAsString( profileJson, "title" ) );
+
+        profile.setBirthday( jsonFieldAsDate( profileJson, "birthday" ) );
+        if ( profileJson.has( "gender" ) )
+        {
+            profile.setGender( Gender.valueOf( jsonFieldAsString( profileJson, "gender" ).toUpperCase() ) );
+        }
+        if ( profileJson.has( "htmlEmail" ) )
+        {
+            profile.setHtmlEmail( true );
+        }
+        if ( profileJson.has( "locale" ) )
+        {
+            profile.setLocale( new Locale( jsonFieldAsString( profileJson, "locale" ) ) );
+        }
+        if ( profileJson.has( "timezone" ) )
+        {
+            profile.setTimeZone( TimeZone.getTimeZone( jsonFieldAsString( profileJson, "timezone" ) ) );
+        }
+
+        if ( profileJson.has( "addresses" ) )
+        {
+            final Iterator<JsonNode> addressesJson = profileJson.get( "addresses" ).getElements();
+            final List<Address> addressList = Lists.newArrayList();
+            while ( addressesJson.hasNext() )
+            {
+                final ObjectNode addressJson = (ObjectNode) addressesJson.next();
+                final Address address = new Address();
+                address.setLabel( jsonFieldAsString( addressJson, "label" ) );
+                address.setCountry( jsonFieldAsString( addressJson, "country" ) );
+                address.setIsoCountry( jsonFieldAsString( addressJson, "isoCountry" ) );
+                address.setRegion( jsonFieldAsString( addressJson, "region" ) );
+                address.setIsoRegion( jsonFieldAsString( addressJson, "isoRegion" ) );
+                address.setPostalAddress( jsonFieldAsString( addressJson, "postalAddress" ) );
+                address.setPostalCode( jsonFieldAsString( addressJson, "postalCode" ) );
+                address.setStreet( jsonFieldAsString( addressJson, "street" ) );
+                addressList.add( address );
+            }
+            profile.setAddresses( Addresses.from( addressList ) );
+        }
+        return profile;
+    }
+
+    private String jsonFieldAsString( final ObjectNode jsonObject, final String fieldName )
+    {
+        return jsonObject.has( fieldName ) ? jsonObject.get( fieldName ).asText() : null;
+    }
+
+    private DateTime jsonFieldAsDate( final ObjectNode jsonObject, final String fieldName )
+    {
+        final String value = jsonObject.get( fieldName ).asText();
+        try
+        {
+            return value == null ? null : DateTime.parse( value );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            return null;
+        }
     }
 
     private byte[] getImageContent( final String imageId )

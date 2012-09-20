@@ -100,13 +100,13 @@ class GetAccountJsonResult
         {
             final ObjectNode jsonAddress = objectNode();
             jsonAddress.put( "country", address.getCountry() );
-            jsonAddress.put( "iso-country", address.getIsoCountry() );
+            jsonAddress.put( "isoCountry", address.getIsoCountry() );
             jsonAddress.put( "region", address.getRegion() );
-            jsonAddress.put( "iso-region", address.getIsoRegion() );
+            jsonAddress.put( "isoRegion", address.getIsoRegion() );
             jsonAddress.put( "label", address.getLabel() );
             jsonAddress.put( "street", address.getStreet() );
-            jsonAddress.put( "postal-code", address.getPostalCode() );
-            jsonAddress.put( "postal-address", address.getPostalAddress() );
+            jsonAddress.put( "postalCode", address.getPostalCode() );
+            jsonAddress.put( "postalAddress", address.getPostalAddress() );
             json.add( jsonAddress );
         }
         return json;

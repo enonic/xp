@@ -3,9 +3,46 @@
     "email": "user1@enonic.com",
     "displayName": "User One",
     "imageRef": "01d0cc1d-ac2a-4952-a423-295cc9756bba",
-    "members": [
+    "groups": [
         "user:enonic:user5",
         "group:enonic:group2",
         "role:enonic:contributors"
-    ]
+    ],
+    "profile": {
+        "firstName": "first-name",
+        "lastName": "last-name",
+        "middleName": "middle-name",
+        "birthday": "2012-01-01",
+        "country": "country",
+        "description": "description",
+        "initials": "initials",
+        "globalPosition": "global-position",
+        "htmlEmail": true,
+        "locale": "en",
+        "nickName": "nick-name",
+        "personalId": "personal-id",
+        "memberId": "member-id",
+        "organization": "organization",
+        "prefix": "prefix",
+        "suffix": "suffix",
+        "title": "title",
+        "homePage": "home-page",
+        "mobile": "mobile",
+        "phone": "phone",
+        "fax": "fax",
+        "gender": "FEMALE",
+        "timezone": "UTC",
+        "addresses": [
+            {
+                "country": "country",
+                "isoCountry": "isoCountry",
+                "region": "region",
+                "isoRegion": "isoRegion",
+                "label": "label",
+                "street": "street",
+                "postalCode": "postalCode",
+                "postalAddress": "postalAddress"
+            }
+        ]
+    }
 }

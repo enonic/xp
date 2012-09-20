@@ -39,13 +39,13 @@
         "timezone" : "UTC",
         "addresses" : [ {
             "country" : "country",
-            "iso-country" : "iso-country",
+            "isoCountry" : "iso-country",
             "region" : "region",
-            "iso-region" : "iso-region",
+            "isoRegion" : "iso-region",
             "label" : "label",
             "street" : "street",
-            "postal-code" : "postal-code",
-            "postal-address" : "postal-address"
+            "postalCode" : "postal-code",
+            "postalAddress" : "postal-address"
         } ]
     },
     "memberships" : [ {
