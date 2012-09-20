@@ -1,0 +1,6 @@
+Type,Display Name,Local Name,User Store,Last Modified,Email,First Name,Middle Name,Last Name,Initials,Title,Prefix,Suffix,Nickname,Gender,Birthdate,Organization,Country,Global Position,Home Page,Locale,Member Id,Personal Id,Phone,Mobile,Fax,Time Zone,Address Label,Address Street,Address Postal Address,Address Postal Code,Address Region,Address ISO Region,Address Country,Address ISO Country
+User,USER1,user1,enonic,2012-01-01 10:01 +01:00,user1@enonic.com,first-name,middle-name,last-name,initials,title,prefix,suffix,nick-name,FEMALE,2012-01-01,organization,country,global-position,home-page,en,member-id,personal-id,phone,mobile,fax,Coordinated Universal Time,label,street,postal-address,postal-code,region,iso-region,country,iso-country
+Group,GROUP1,group1,enonic,2012-01-01 10:01 +01:00
+Role,CONTRIBUTORS,contributors,system,2012-01-01 10:01 +01:00
+User,ADMIN,admin,system,2012-01-01 10:01 +01:00,admin@system.com
+User,ANONYMOUS,anonymous,system,2012-01-01 10:01 +01:00,anonymous@system.com
