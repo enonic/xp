@@ -1,20 +1,21 @@
 package com.enonic.wem.core.content.type.formitem.comptype;
 
+
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException;
 
-/**
- * TODO: An array of strings
- */
-public class Tags
+import static com.enonic.wem.core.content.type.formitem.comptype.TypedPath.newTypedPath;
+
+public class Money
     extends BaseComponentType
 {
-    Tags()
+    Money()
     {
-        super( "tags", DataTypes.DATA_SET );
+        super( "money", DataTypes.DATA_SET, newTypedPath( "amount", DataTypes.DECIMAL_NUMBER ),
+               newTypedPath( "currency", DataTypes.TEXT ) );
     }
 
     public boolean requiresConfig()
@@ -29,7 +30,6 @@ public class Tags
 
     @Override
     public void checkBreaksRequiredContract( final Data data )
-        throws BreaksRequiredContractException
     {
         final String stringValue = (String) data.getValue();
         if ( StringUtils.isBlank( stringValue ) )
