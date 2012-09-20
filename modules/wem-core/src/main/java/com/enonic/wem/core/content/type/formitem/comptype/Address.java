@@ -5,12 +5,14 @@ import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException;
 
-public class Date
+public class Address
     extends BaseComponentType
 {
-    Date()
+    Address()
     {
-        super( "date", DataTypes.DATE );
+        super( "address", DataTypes.DATA_SET, TypedPath.newTypedPath( "street", DataTypes.TEXT ),
+               TypedPath.newTypedPath( "postalCode", DataTypes.TEXT ), TypedPath.newTypedPath( "postalPlace", DataTypes.TEXT ),
+               TypedPath.newTypedPath( "region", DataTypes.TEXT ), TypedPath.newTypedPath( "country", DataTypes.TEXT ) );
     }
 
     public boolean requiresConfig()

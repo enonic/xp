@@ -5,12 +5,12 @@ import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException;
 
-public class Date
+public class Attachment
     extends BaseComponentType
 {
-    Date()
+    Attachment()
     {
-        super( "date", DataTypes.DATE );
+        super( "attachment", DataTypes.BLOB );
     }
 
     public boolean requiresConfig()

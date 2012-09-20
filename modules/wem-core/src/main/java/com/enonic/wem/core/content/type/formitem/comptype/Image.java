@@ -5,12 +5,13 @@ import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException;
 
-public class Date
+public class Image
     extends BaseComponentType
 {
-    Date()
+    Image()
     {
-        super( "date", DataTypes.DATE );
+        super( "image", DataTypes.DATA_SET, TypedPath.newTypedPath( "binary", DataTypes.BLOB ),
+               TypedPath.newTypedPath( "caption", DataTypes.TEXT ) );
     }
 
     public boolean requiresConfig()

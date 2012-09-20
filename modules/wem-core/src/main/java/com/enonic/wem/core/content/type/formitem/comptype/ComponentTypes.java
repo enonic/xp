@@ -8,7 +8,7 @@ import org.elasticsearch.common.base.Preconditions;
 import com.enonic.wem.core.content.datatype.DataType;
 import com.enonic.wem.core.content.datatype.DataTypes;
 
-public class ComponentTypes
+public final class ComponentTypes
 {
     public static final BaseComponentType COLOR = new Color();
 
