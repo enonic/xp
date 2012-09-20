@@ -3,6 +3,8 @@ package com.enonic.wem.core.module;
 
 public class Module
 {
+    public static final Module SYSTEM = newModule().name( "System" ).build();
+
     private String name;
 
     void setName( final String name )

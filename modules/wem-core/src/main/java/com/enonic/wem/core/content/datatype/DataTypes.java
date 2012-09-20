@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.elasticsearch.common.base.Preconditions;
 
-public class DataTypes
+public final class DataTypes
 {
     public static final DataSet DATA_SET = new DataSet( 0 );
 

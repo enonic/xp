@@ -55,6 +55,11 @@ public class Data
         this.value = value;
     }
 
+    public boolean hasValue()
+    {
+        return this.value != null;
+    }
+
     public String getString()
     {
         if ( type.isConvertibleTo( JavaType.STRING ) )
