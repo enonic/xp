@@ -6,14 +6,20 @@ import java.util.List;
 
 import com.google.common.collect.LinkedListMultimap;
 
+import com.enonic.wem.core.content.datatype.DataType;
+
 class DataEntries
     implements Iterable<Data>
 {
     private LinkedListMultimap<String, Data> entries = LinkedListMultimap.create();
 
-    void add( Data data )
+    void add( final Data data )
     {
-        List<Data> list = entries.get( resolveKey( data.getPath().getLastElement() ) );
+        final String key = resolveKey( data.getPath().getLastElement() );
+        final List<Data> list = entries.get( key );
+
+        checkNewEntryAreOfSameTypeAsRest( data, list );
+
         if ( list.size() == 1 )
         {
             list.get( 0 ).setEntryPathIndex( data.getPath(), 0 );
@@ -22,11 +28,16 @@ class DataEntries
         {
             data.setEntryPathIndex( data.getPath(), list.size() );
         }
+
         list.add( data );
+        //entries.put( key, data );
     }
 
-    void setData( EntryPath.Element element, Data data )
+    void setData( final EntryPath.Element element, final Data data )
     {
+        final List<Data> list = entries.get( resolveKey( data.getPath().getLastElement() ) );
+        //Preconditions.checkPositionIndex( data.getL )
+        checkNewEntryAreOfSameTypeAsRest( data, list );
         entries.put( resolveKey( element ), data );
     }
 
@@ -50,13 +61,29 @@ class DataEntries
         return entries.size();
     }
 
+    public Iterator<Data> iterator()
+    {
+        return entries.values().iterator();
+    }
+
     private String resolveKey( EntryPath.Element element )
     {
         return element.getName();
     }
 
-    public Iterator<Data> iterator()
+    private void checkNewEntryAreOfSameTypeAsRest( final Data newEntry, final List<Data> list )
     {
-        return entries.values().iterator();
+        if ( list.size() > 0 )
+        {
+            Data previousData = list.get( list.size() - 1 );
+            DataType dataTypeOfNewEntry = newEntry.getDataType();
+            DataType dataTypeOfPreviousEntry = previousData.getDataType();
+            if ( !dataTypeOfNewEntry.equals( dataTypeOfPreviousEntry ) )
+            {
+                throw new IllegalArgumentException(
+                    "Array [" + previousData.getPath() + "] is of type [" + dataTypeOfPreviousEntry.getName() +
+                        "] got: " + dataTypeOfNewEntry.getName() );
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content;
 
 
+import org.joda.time.DateMidnight;
 import org.junit.Test;
 
 import com.enonic.wem.core.content.data.DataSet;
@@ -646,5 +647,16 @@ public class ContentTest
             assertTrue( e instanceof BreaksRequiredContractException );
             assertEquals( "Required contract is broken, data missing for FormItemSet: personalia", e.getMessage() );
         }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void given_array_when_setting_data_of_another_type_to_array_then_exception_is_thrown()
+    {
+        // setup
+        Content content = new Content();
+        content.setData( "myData", "Value 1", DataTypes.TEXT );
+
+        // exercise
+        content.setData( "myData[1]", new DateMidnight( 2000, 1, 1 ), DataTypes.DATE );
     }
 }
