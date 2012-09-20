@@ -3,7 +3,6 @@ package com.enonic.wem.core.content.data;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
@@ -22,7 +21,7 @@ public class DataSet
 {
     private EntryPath path;
 
-    private LinkedHashMap<EntryPath.Element, Data> entries = new LinkedHashMap<EntryPath.Element, Data>();
+    private DataEntries entries = new DataEntries();
 
     public DataSet( final EntryPath path )
     {
@@ -31,14 +30,23 @@ public class DataSet
         this.path = path;
     }
 
+    void setEntryPathIndex( final EntryPath path, final int index )
+    {
+        this.path = this.path.asNewWithIndexAtPath( index, path );
+        for ( Data data : entries )
+        {
+            data.setEntryPathIndex( path, index );
+        }
+    }
+
     public EntryPath getPath()
     {
         return path;
     }
 
-    void add( Data data )
+    void add( final Data data )
     {
-        entries.put( data.getPath().getLastElement(), data );
+        entries.add( data );
     }
 
     void setData( final EntryPath path, final Object value, final BaseDataType dataType )
@@ -55,7 +63,7 @@ public class DataSet
         {
             final EntryPath newEntryPath = new EntryPath( this.path, path.getFirstElement() );
             final Data newData = newData().path( newEntryPath ).type( dataType ).value( value ).build();
-            doSetData( path.getFirstElement(), newData );
+            entries.setData( path.getFirstElement(), newData );
 
             try
             {
@@ -80,14 +88,9 @@ public class DataSet
             final EntryPath newEntryPath = new EntryPath( this.path, path.getFirstElement() );
             existingDataWithDataSetValue =
                 newData().path( newEntryPath ).type( DataTypes.DATA_SET ).value( new DataSet( newEntryPath ) ).build();
-            doSetData( path.getFirstElement(), existingDataWithDataSetValue );
+            entries.setData( path.getFirstElement(), existingDataWithDataSetValue );
         }
         existingDataWithDataSetValue.setData( path.asNewWithoutFirstPathElement(), value, dataType );
-    }
-
-    private void doSetData( EntryPath.Element element, Data data )
-    {
-        entries.put( element, data );
     }
 
     public Data getData( final String path )
@@ -138,7 +141,6 @@ public class DataSet
         }
     }
 
-
     private Data forwardGetDataToDataSet( final EntryPath path )
     {
         final Data foundData = entries.get( path.getFirstElement() );
@@ -172,7 +174,7 @@ public class DataSet
 
     public Iterator<Data> iterator()
     {
-        return entries.values().iterator();
+        return entries.iterator();
     }
 
     public int size()
@@ -188,7 +190,7 @@ public class DataSet
         s.append( ": " );
         int index = 0;
         final int size = entries.size();
-        for ( Data data : entries.values() )
+        for ( Data data : entries )
         {
             s.append( data.getPath().getLastElement() );
             if ( index < size - 1 )

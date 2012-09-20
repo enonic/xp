@@ -50,6 +50,16 @@ public class EntryPath
         elements = splitPathIntoElements( path );
     }
 
+    public EntryPath( final EntryPath parentPath, final Element element, final int index )
+    {
+        Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
+        Preconditions.checkNotNull( element, "element cannot be null" );
+
+        elements = new ArrayList<Element>();
+        elements.addAll( parentPath.elements );
+        elements.add( new Element( element.getName() + "[" + index + "]" ) );
+    }
+
     public Element getFirstElement()
     {
         return elements.get( 0 );
@@ -100,6 +110,22 @@ public class EntryPath
             {
                 pathElements.add( elements.get( i ) );
             }
+        }
+        return new EntryPath( pathElements );
+    }
+
+    public EntryPath asNewWithIndexAtPath( final int index, final EntryPath path )
+    {
+        List<Element> pathElements = Lists.newArrayList();
+        for ( int i = 0; i < elements.size(); i++ )
+        {
+            pathElements.add( elements.get( i ) );
+            if ( path.equals( new EntryPath( pathElements ) ) )
+            {
+                pathElements.remove( i );
+                pathElements.add( new Element( elements.get( i ).getName() + "[" + index + "]" ) );
+            }
+
         }
         return new EntryPath( pathElements );
     }
@@ -165,33 +191,32 @@ public class EntryPath
         return elements;
     }
 
-
     public static class Element
     {
-        private final static String POSITION_START_MARKER = "[";
+        private final static String INDEX_START_MARKER = "[";
 
-        private final static String POSITION_STOP_MARKER = "]";
+        private final static String INDEX_STOP_MARKER = "]";
 
         private String name;
 
-        private boolean hasPosition = false;
+        private boolean hasIndex = false;
 
-        private int position = 0;
+        private int index = 0;
 
         public Element( String element )
         {
             Preconditions.checkNotNull( element, "element cannot be null" );
 
-            int indexStart = element.indexOf( POSITION_START_MARKER );
-            int indexStop = element.indexOf( POSITION_STOP_MARKER );
+            int indexStart = element.indexOf( INDEX_START_MARKER );
+            int indexStop = element.indexOf( INDEX_STOP_MARKER );
 
             if ( indexStart >= 0 )
             {
                 if ( indexStop > indexStart + 1 )
                 {
-                    this.hasPosition = true;
+                    this.hasIndex = true;
                     this.name = element.substring( 0, indexStart );
-                    this.position = Integer.parseInt( element.substring( indexStart + 1, indexStop ) );
+                    this.index = Integer.parseInt( element.substring( indexStart + 1, indexStop ) );
                 }
                 else
                 {
@@ -206,7 +231,7 @@ public class EntryPath
                 }
 
                 this.name = element;
-                this.hasPosition = false;
+                this.hasIndex = false;
             }
         }
 
@@ -215,14 +240,14 @@ public class EntryPath
             return name;
         }
 
-        public boolean hasPosition()
+        public boolean hasIndex()
         {
-            return hasPosition;
+            return hasIndex;
         }
 
-        public int getPosition()
+        public int getIndex()
         {
-            return position;
+            return index;
         }
 
         @Override
@@ -239,14 +264,14 @@ public class EntryPath
 
             final Element element = (Element) o;
 
-            return position == element.position && name.equals( element.name );
+            return index == element.index && name.equals( element.name );
         }
 
         @Override
         public int hashCode()
         {
             int result = name.hashCode();
-            result = 31 * result + position;
+            result = 31 * result + index;
             return result;
         }
 
@@ -255,9 +280,9 @@ public class EntryPath
         {
             StringBuilder s = new StringBuilder();
             s.append( name );
-            if ( hasPosition )
+            if ( hasIndex )
             {
-                s.append( POSITION_START_MARKER ).append( position ).append( POSITION_STOP_MARKER );
+                s.append( INDEX_START_MARKER ).append( index ).append( INDEX_STOP_MARKER );
             }
             return s.toString();
         }

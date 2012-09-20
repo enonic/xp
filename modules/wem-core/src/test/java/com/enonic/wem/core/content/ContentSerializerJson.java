@@ -16,6 +16,7 @@ import com.enonic.wem.core.content.type.ContentTypeFetcher;
 import com.enonic.wem.core.content.type.ContentTypeQualifiedName;
 
 public class ContentSerializerJson
+    implements ContentSerializer
 {
     private ContentTypeFetcher contentTypeFetcher;
 
@@ -27,7 +28,7 @@ public class ContentSerializerJson
         this.contentTypeFetcher = contentTypeFetcher;
     }
 
-    public String toJson( Content content )
+    public String toString( Content content )
     {
         try
         {
@@ -64,7 +65,7 @@ public class ContentSerializerJson
         g.writeEndObject();
     }
 
-    public Content parse( final String json )
+    public Content toContent( final String json )
     {
         try
         {

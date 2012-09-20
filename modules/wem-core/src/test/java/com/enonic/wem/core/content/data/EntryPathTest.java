@@ -25,11 +25,11 @@ public class EntryPathTest
     public void element_getPosition()
     {
         EntryPath.Element element = new EntryPath( "car[1]" ).iterator().next();
-        assertEquals( 1, element.getPosition() );
+        assertEquals( 1, element.getIndex() );
         assertEquals( "car[1]", element.toString() );
 
         element = new EntryPath( "car" ).iterator().next();
-        assertEquals( 0, element.getPosition() );
+        assertEquals( 0, element.getIndex() );
         assertEquals( "car", element.toString() );
     }
 
@@ -52,5 +52,23 @@ public class EntryPathTest
         assertFalse( new EntryPath( "car[0].model" ).startsWith( new EntryPath( "bicycle[0].model" ) ) );
         assertFalse( new EntryPath( "car[0]" ).startsWith( new EntryPath( "car[0].model" ) ) );
         assertFalse( new EntryPath( "car[0].model" ).startsWith( new EntryPath( "car[0].year" ) ) );
+    }
+
+    @Test
+    public void asNewWithIndexAtPath()
+    {
+        assertEquals( "formItemSet", new EntryPath( "formItemSet" ).asNewWithIndexAtPath( 0, new EntryPath( "nonExisting" ) ).toString() );
+
+        assertEquals( "formItemSet[0]",
+                      new EntryPath( "formItemSet" ).asNewWithIndexAtPath( 0, new EntryPath( "formItemSet" ) ).toString() );
+        assertEquals( "formItemSet[0].component",
+                      new EntryPath( "formItemSet.component" ).asNewWithIndexAtPath( 0, new EntryPath( "formItemSet" ) ).toString() );
+        assertEquals( "anotherSet.formItemSet[0].component", new EntryPath( "anotherSet.formItemSet.component" ).asNewWithIndexAtPath( 0,
+                                                                                                                                       new EntryPath(
+                                                                                                                                           "anotherSet.formItemSet" ) ).toString() );
+        assertEquals( "anotherSet.formItemSet.component[0]", new EntryPath( "anotherSet.formItemSet.component" ).asNewWithIndexAtPath( 0,
+                                                                                                                                       new EntryPath(
+                                                                                                                                           "anotherSet.formItemSet.component" ) ).toString() );
+
     }
 }

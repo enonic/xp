@@ -27,6 +27,19 @@ public class Data
         // protection
     }
 
+    /**
+     * Sets the given index on this Data's path if it matches with the given.
+     * If this Data's has a DataSet as value the same will be issued to the entries there.
+     */
+    void setEntryPathIndex( final EntryPath path, final int index )
+    {
+        this.path = this.path.asNewWithIndexAtPath( index, path );
+        if ( type == DataTypes.DATA_SET )
+        {
+            getDataSet().setEntryPathIndex( path, index );
+        }
+    }
+
     public EntryPath getPath()
     {
         return path;
