@@ -1,14 +1,18 @@
 package com.enonic.wem.core.userstore;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.userstore.config.UserStoreConfig;
 import com.enonic.wem.api.userstore.config.UserStoreFieldConfig;
+import com.enonic.wem.api.userstore.connector.UserStoreConnector;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.search.account.AccountIndexData;
 import com.enonic.wem.core.search.account.AccountIndexDataEntity;
@@ -22,10 +26,12 @@ import com.enonic.cms.core.security.group.GroupSpecification;
 import com.enonic.cms.core.security.group.GroupType;
 import com.enonic.cms.core.security.group.UpdateGroupCommand;
 import com.enonic.cms.core.security.user.UserEntity;
+import com.enonic.cms.core.security.userstore.UserStoreConnectorManager;
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
 import com.enonic.cms.core.security.userstore.UserStoreKey;
 import com.enonic.cms.core.security.userstore.UserStoreService;
 import com.enonic.cms.core.security.userstore.config.UserStoreUserFieldConfig;
+import com.enonic.cms.core.security.userstore.connector.config.UserStoreConnectorConfig;
 import com.enonic.cms.core.user.field.UserFieldType;
 import com.enonic.cms.store.dao.GroupDao;
 import com.enonic.cms.store.dao.UserDao;
@@ -46,6 +52,8 @@ public abstract class UserStoreHandler<T extends Command>
     protected AccountSearchService searchService;
 
     protected GroupDao groupDao;
+
+    protected UserStoreConnectorManager userStoreConnectorManager;
 
 
     public UserStoreHandler( final Class<T> type )
@@ -153,6 +161,59 @@ public abstract class UserStoreHandler<T extends Command>
         searchService.index( accountIndexData );
     }
 
+    protected UserStoreConfig getUserStoreConfig(
+        final com.enonic.cms.core.security.userstore.config.UserStoreConfig userStoreEntityConfig )
+    {
+        final UserStoreConfig userStoreConfig = new UserStoreConfig();
+        for ( UserStoreUserFieldConfig userFieldConfig : userStoreEntityConfig.getUserFieldConfigs() )
+        {
+            final UserStoreFieldConfig field = new UserStoreFieldConfig( userFieldConfig.getType().getName() );
+            field.setIso( userFieldConfig.useIso() );
+            field.setReadOnly( userFieldConfig.isReadOnly() );
+            field.setRemote( userFieldConfig.isRemote() );
+            field.setRequired( userFieldConfig.isRequired() );
+            userStoreConfig.addField( field );
+        }
+        return userStoreConfig;
+    }
+
+    protected UserStoreConnector getUserStoreConnector( final UserStoreEntity userStoreEntity )
+    {
+        final UserStoreConnectorConfig connectorConfig = userStoreConnectorManager.getUserStoreConnectorConfig( userStoreEntity.getKey() );
+        final UserStoreConnector connector = new UserStoreConnector( connectorConfig.getName() );
+        connector.setCreateGroup( connectorConfig.canCreateGroup() );
+        connector.setCreateUser( connectorConfig.canCreateUser() );
+        connector.setDeleteGroup( connectorConfig.canDeleteGroup() );
+        connector.setDeleteUser( connectorConfig.canDeleteUser() );
+        connector.setGroupsStoredRemote( connectorConfig.groupsStoredRemote() );
+        connector.setPluginClass( connectorConfig.getPluginType() );
+        connector.setReadGroup( connectorConfig.canReadGroup() );
+        connector.setResurrectDeletedGroups( connectorConfig.resurrectDeletedGroups() );
+        connector.setResurrectDeletedUsers( connectorConfig.resurrectDeletedUsers() );
+        connector.setUpdateGroup( connectorConfig.canUpdateGroup() );
+        connector.setUpdatePassword( connectorConfig.canUpdateUserPassword() );
+        connector.setUpdateUser( connectorConfig.canUpdateUser() );
+        return connector;
+    }
+
+    protected AccountKeys getUserStoreAdministrators( final UserStoreEntity userStoreEntity )
+    {
+        final GroupEntity builtInUserStoreAdministrator = groupDao.findBuiltInUserStoreAdministrator( userStoreEntity.getKey() );
+        final Set<GroupEntity> userStoreAdmins = builtInUserStoreAdministrator.getMembers( false );
+
+        final List<AccountKey> adminAccounts = Lists.newArrayList();
+        final String userStoreName = userStoreEntity.getName();
+        for ( GroupEntity groupEntity : userStoreAdmins )
+        {
+            if ( groupEntity.getUser() != null )
+            {
+                adminAccounts.add( AccountKey.user( userStoreName + ":" + groupEntity.getUser().getName() ) );
+            }
+        }
+
+        return AccountKeys.from( adminAccounts );
+    }
+
     @Autowired
     public void setUserDao( final UserDao userDao )
     {
@@ -189,4 +250,9 @@ public abstract class UserStoreHandler<T extends Command>
         this.groupDao = groupDao;
     }
 
+    @Autowired
+    public void setUserStoreConnectorManager( final UserStoreConnectorManager userStoreConnectorManager )
+    {
+        this.userStoreConnectorManager = userStoreConnectorManager;
+    }
 }
