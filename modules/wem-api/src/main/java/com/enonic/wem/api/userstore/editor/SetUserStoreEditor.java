@@ -22,6 +22,10 @@ final class SetUserStoreEditor
     private static boolean edit( final UserStore source, final UserStore target )
         throws Exception
     {
+        target.setConnectorName( source.getConnectorName() );
+        target.setConfig( source.getConfig() );
+        target.setDefaultStore( source.isDefaultStore() );
+        target.setAdministrators( source.getAdministrators() );
         return true;
     }
 }
