@@ -7,16 +7,13 @@ Ext.define('Admin.store.userstore.UserstoreConfigStore', {
     remoteSort: true,
 
     proxy: {
-        type: 'ajax',
-        url: 'rest/userstore',
+        type: 'direct',
+        directFn: Admin.lib.RemoteService.userstore_getAll,
         simpleSortMode: true,
         reader: {
             type: 'json',
-            root: 'userStores'
-        },
-        extraParams: {
-            includeFields: false,
-            includeConfig: true
+            root: 'userStores',
+            totalProperty: 'total'
         }
     }
 });

@@ -1,13 +1,13 @@
 Ext.define('Admin.model.userstore.UserstoreConfigModel', {
     extend: 'Ext.data.Model',
 
-    idProperty: 'id',
+    idProperty: 'name',
 
     fields: [
-        'key',
         'name',
         {name: 'defaultStore', type: 'boolean', defaultValue: false },
         'connectorName',
-        'configXML', 'lastModified'
+        'configXML',
+        { name: 'lastModified', type: 'date', defaultValue: new Date() }
     ]
 });

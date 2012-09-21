@@ -22,7 +22,7 @@ public final class GetAllUserStoresRpcHandler
         throws Exception
     {
         final UserStoreNames userStoreNames = this.client.execute( Commands.userStore().findAll() );
-        final UserStores userStores = this.client.execute( Commands.userStore().get().names( userStoreNames ) );
+        final UserStores userStores = this.client.execute( Commands.userStore().get().names( userStoreNames ).includeConfig().includeConnector().includeStatistics() );
         context.setResult( new GetAllUserStoresJsonResult( userStores ) );
     }
 }

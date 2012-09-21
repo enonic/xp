@@ -5,10 +5,9 @@ Ext.define('Admin.model.account.UserstoreConfigModel', {
         'Admin.model.account.UserFieldModel'
     ],
 
-    idProperty: 'id',
+    idProperty: 'name',
 
     fields: [
-        'key',
         'name',
         { name: 'defaultStore', type: 'boolean', defaultValue: false },
         'connectorName',

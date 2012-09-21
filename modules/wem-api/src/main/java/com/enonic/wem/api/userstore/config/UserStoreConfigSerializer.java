@@ -16,7 +16,6 @@ public final class UserStoreConfigSerializer
     }
 
     public Document toXml( final UserStoreConfig config )
-        throws Exception
     {
         Element configEl = new Element( "config" );
         Element userFields = new Element( "user-fields" );
@@ -31,7 +30,6 @@ public final class UserStoreConfigSerializer
     }
 
     public String toXmlString( final UserStoreConfig config )
-        throws Exception
     {
         final Document doc = toXml( config );
         return this.out.outputString( doc );

@@ -3,11 +3,39 @@
     "total" : 2,
     "userStores" : [ {
         "name" : "enonic",
-        "default" : true,
-        "connector" : "ldap"
+        "defaultStore" : true,
+        "connectorName" : "ldap",
+        "configXML" : "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<config><user-fields><organization required=\"true\" remote=\"false\" /><phone readonly=\"true\" /><firstName /></user-fields></config>\r\n",
+        "userFields" : [ {
+            "type" : "organization",
+            "readOnly" : false,
+            "remote" : false,
+            "required" : true,
+            "iso" : false
+        }, {
+            "type" : "phone",
+            "readOnly" : true,
+            "remote" : false,
+            "required" : false,
+            "iso" : false
+        }, {
+            "type" : "firstName",
+            "readOnly" : false,
+            "remote" : true,
+            "required" : false,
+            "iso" : false
+        } ],
+        "userCount" : 57,
+        "groupCount" : 38,
+        "administrators" : [ "user:enonic:admin1" ]
     }, {
         "name" : "system",
-        "default" : false,
-        "connector" : "ad"
+        "defaultStore" : false,
+        "connectorName" : "ad",
+        "configXML" : "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<config><user-fields /></config>\r\n",
+        "userFields" : [ ],
+        "userCount" : 0,
+        "groupCount" : 0,
+        "administrators" : [ ]
     } ]
 }
