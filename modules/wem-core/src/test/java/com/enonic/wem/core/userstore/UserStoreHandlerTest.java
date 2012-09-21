@@ -95,6 +95,14 @@ public abstract class UserStoreHandlerTest
         Mockito.when( getUserDao().findByUserStoreKeyAndUsername( user.getUserStoreKey(), user.getName() ) ).thenReturn( user );
     }
 
+    protected UserEntity loggedInUser()
+        throws Exception
+    {
+        UserEntity admin = createUser( "7687578955", "default", "admin" );
+        Mockito.when( getUserDao().findBuiltInEnterpriseAdminUser() ).thenReturn( admin );
+        return admin;
+    }
+
     abstract public UserDao getUserDao();
 
     abstract public UserStoreDao getUserStoreDao();
