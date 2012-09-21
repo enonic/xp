@@ -2,8 +2,8 @@ package com.enonic.wem.core.content
 
 import com.enonic.wem.core.content.type.ContentType
 import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException
+import com.enonic.wem.core.content.type.formitem.FieldSet
 import com.enonic.wem.core.content.type.formitem.FormItemSet
-import com.enonic.wem.core.content.type.formitem.VisualFieldSet
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes
 
 import static com.enonic.wem.core.content.type.formitem.Component.newComponent
@@ -99,7 +99,7 @@ class ContentSpecTest extends spock.lang.Specification
     {
         given:
         ContentType contentType = new ContentType();
-        VisualFieldSet visualFieldSet = VisualFieldSet.newVisualFieldSet().name( "myVisualFieldSet" ).label( "My VisualFieldSet" ).build();
+        FieldSet visualFieldSet = FieldSet.newFieldSet().name( "myVisualFieldSet" ).label( "My VisualFieldSet" ).build();
         visualFieldSet.addFormItem( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() )
         contentType.addFormItem( visualFieldSet );
         Content content = new Content();

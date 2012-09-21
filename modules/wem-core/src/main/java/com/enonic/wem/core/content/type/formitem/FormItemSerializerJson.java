@@ -12,9 +12,9 @@ import com.enonic.wem.core.content.type.formitem.comptype.BaseComponentType;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeConfigSerializerJson;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeSerializerJson;
 
+import static com.enonic.wem.core.content.type.formitem.FieldSet.newFieldSet;
 import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemSet;
 import static com.enonic.wem.core.content.type.formitem.TemplateReference.newTemplateReference;
-import static com.enonic.wem.core.content.type.formitem.VisualFieldSet.newVisualFieldSet;
 
 public class FormItemSerializerJson
 {
@@ -42,13 +42,13 @@ public class FormItemSerializerJson
         {
             generateFormItemSet( (FormItemSet) formItem, g );
         }
-        else if ( formItem instanceof VisualFieldSet )
+        else if ( formItem instanceof Layout )
         {
-            generateVisualFieldSet( (VisualFieldSet) formItem, g );
+            generateLayout( (Layout) formItem, g );
         }
         else if ( formItem instanceof Component )
         {
-            generateField( (Component) formItem, g );
+            generateComponent( (Component) formItem, g );
         }
         else if ( formItem instanceof TemplateReference )
         {
@@ -56,12 +56,11 @@ public class FormItemSerializerJson
         }
     }
 
-    private void generateField( final Component component, final JsonGenerator g )
+    private void generateComponent( final Component component, final JsonGenerator g )
         throws IOException
     {
         g.writeStartObject();
-        g.writeStringField( "formItemType", component.getFormItemType().toString() );
-        //g.writeStringField( "path", component.getPath().toString() );
+        g.writeStringField( "formItemType", Component.class.getSimpleName() );
         g.writeStringField( "name", component.getName() );
         componentTypeSerializer.generate( component.getComponentType(), g );
         g.writeStringField( "label", component.getLabel() );
@@ -86,8 +85,7 @@ public class FormItemSerializerJson
         throws IOException
     {
         g.writeStartObject();
-        g.writeStringField( "formItemType", formItemSet.getFormItemType().toString() );
-        //g.writeStringField( "path", formItemSet.getPath().toString() );
+        g.writeStringField( "formItemType", FormItemSet.class.getSimpleName() );
         g.writeStringField( "name", formItemSet.getName() );
         g.writeStringField( "label", formItemSet.getLabel() );
         g.writeBooleanField( "required", formItemSet.isRequired() );
@@ -100,24 +98,34 @@ public class FormItemSerializerJson
         g.writeEndObject();
     }
 
-    private void generateVisualFieldSet( final VisualFieldSet visualFieldSet, JsonGenerator g )
+    private void generateLayout( final Layout layout, JsonGenerator g )
         throws IOException
     {
         g.writeStartObject();
-        g.writeStringField( "formItemType", visualFieldSet.getFormItemType().toString() );
-        g.writeStringField( "label", visualFieldSet.getLabel() );
-        g.writeStringField( "name", visualFieldSet.getName() );
-        formItemsSerializerJson.generate( visualFieldSet.getFormItems(), g );
+        g.writeStringField( "formItemType", Layout.class.getSimpleName() );
+
+        if ( layout instanceof FieldSet )
+        {
+            generateFieldSet( (FieldSet) layout, g );
+        }
 
         g.writeEndObject();
+    }
+
+    private void generateFieldSet( final FieldSet fieldSet, JsonGenerator g )
+        throws IOException
+    {
+        g.writeStringField( "layoutType", FieldSet.class.getSimpleName() );
+        g.writeStringField( "label", fieldSet.getLabel() );
+        g.writeStringField( "name", fieldSet.getName() );
+        formItemsSerializerJson.generate( fieldSet.getFormItems(), g );
     }
 
     private void generateReference( final TemplateReference templateReference, final JsonGenerator g )
         throws IOException
     {
         g.writeStartObject();
-        g.writeStringField( "formItemType", templateReference.getFormItemType().toString() );
-        //g.writeStringField( "path", templateReference.getPath().toString() );
+        g.writeStringField( "formItemType", TemplateReference.class.getSimpleName() );
         g.writeStringField( "name", templateReference.getName() );
         g.writeStringField( "reference", templateReference.getTemplateQualifiedName().toString() );
         g.writeStringField( "templateType", templateReference.getTemplateType().toString() );
@@ -126,23 +134,23 @@ public class FormItemSerializerJson
 
     public FormItem parse( final JsonNode formItemNode )
     {
-        FormItemType formItemType = FormItemType.valueOf( JsonParserUtil.getStringValue( "formItemType", formItemNode ) );
+        String formItemType = JsonParserUtil.getStringValue( "formItemType", formItemNode );
 
         FormItem formItem;
 
-        if ( formItemType == FormItemType.COMPONENT )
+        if ( formItemType.equals( Component.class.getSimpleName() ) )
         {
             formItem = parseComponent( formItemNode );
         }
-        else if ( formItemType == FormItemType.FORM_ITEM_SET )
+        else if ( formItemType.equals( FormItemSet.class.getSimpleName() ) )
         {
             formItem = parseFormItemSet( formItemNode );
         }
-        else if ( formItemType == FormItemType.VISUAL_FIELD_SET )
+        else if ( formItemType.equals( Layout.class.getSimpleName() ) )
         {
-            formItem = parseVisualFieldSet( formItemNode );
+            formItem = parseLayout( formItemNode );
         }
-        else if ( formItemType == FormItemType.REFERENCE )
+        else if ( formItemType.equals( TemplateReference.class.getSimpleName() ) )
         {
             formItem = parseTemplateReference( formItemNode );
         }
@@ -151,19 +159,7 @@ public class FormItemSerializerJson
             throw new JsonParsingException( "Unknown FormItemType: " + formItemType );
         }
 
-        if ( formItem instanceof HierarchicalFormItem )
-        {
-            applyPath( formItemNode, (HierarchicalFormItem) formItem );
-        }
         return formItem;
-    }
-
-    private void applyPath( final JsonNode formItemNode, final HierarchicalFormItem formItem )
-    {
-        if ( formItem.getFormItemType() != FormItemType.VISUAL_FIELD_SET )
-        {
-            //formItem.setPath( new FormItemPath( JsonParserUtil.getStringValue( "path", formItemNode ) ) );
-        }
     }
 
     private HierarchicalFormItem parseComponent( final JsonNode formItemNode )
@@ -204,9 +200,22 @@ public class FormItemSerializerJson
         return builder.build();
     }
 
-    private FormItem parseVisualFieldSet( final JsonNode formItemNode )
+    private FormItem parseLayout( final JsonNode formItemNode )
     {
-        final VisualFieldSet.Builder builder = newVisualFieldSet();
+        String layoutType = JsonParserUtil.getStringValue( "layoutType", formItemNode );
+        if ( layoutType.equals( FieldSet.class.getSimpleName() ) )
+        {
+            return parseFieldSet( formItemNode );
+        }
+        else
+        {
+            throw new JsonParsingException( "Unknown layoutType: " + layoutType );
+        }
+    }
+
+    private FormItem parseFieldSet( final JsonNode formItemNode )
+    {
+        final FieldSet.Builder builder = newFieldSet();
         builder.label( JsonParserUtil.getStringValue( "label", formItemNode, null ) );
         builder.name( JsonParserUtil.getStringValue( "name", formItemNode, null ) );
 

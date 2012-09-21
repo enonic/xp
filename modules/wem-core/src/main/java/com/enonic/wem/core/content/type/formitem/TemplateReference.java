@@ -16,7 +16,7 @@ public class TemplateReference
 
     protected TemplateReference()
     {
-        super( FormItemType.REFERENCE );
+        super();
     }
 
     public TemplateQualifiedName getTemplateQualifiedName()

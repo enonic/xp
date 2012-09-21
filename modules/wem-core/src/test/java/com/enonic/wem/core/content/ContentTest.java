@@ -10,13 +10,13 @@ import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.formitem.Component;
 import com.enonic.wem.core.content.type.formitem.ComponentTemplate;
+import com.enonic.wem.core.content.type.formitem.FieldSet;
 import com.enonic.wem.core.content.type.formitem.FormItemSet;
 import com.enonic.wem.core.content.type.formitem.FormItemSetTemplate;
 import com.enonic.wem.core.content.type.formitem.InvalidDataException;
 import com.enonic.wem.core.content.type.formitem.MockTemplateFetcher;
 import com.enonic.wem.core.content.type.formitem.TemplateReference;
 import com.enonic.wem.core.content.type.formitem.TemplateType;
-import com.enonic.wem.core.content.type.formitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.core.content.type.formitem.comptype.DropdownConfig;
 import com.enonic.wem.core.content.type.formitem.comptype.RadioButtonsConfig;
@@ -24,10 +24,10 @@ import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.formitem.Component.newComponent;
 import static com.enonic.wem.core.content.type.formitem.ComponentTemplateBuilder.newComponentTemplate;
+import static com.enonic.wem.core.content.type.formitem.FieldSet.newFieldSet;
 import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemSet;
 import static com.enonic.wem.core.content.type.formitem.FormItemSetTemplateBuilder.newFormItemSetTemplate;
 import static com.enonic.wem.core.content.type.formitem.TemplateReference.newTemplateReference;
-import static com.enonic.wem.core.content.type.formitem.VisualFieldSet.newVisualFieldSet;
 import static com.enonic.wem.core.module.Module.newModule;
 import static org.junit.Assert.*;
 
@@ -414,16 +414,16 @@ public class ContentTest
     }
 
     @Test
-    public void visualFieldSet()
+    public void layout()
     {
         // setup
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
         contentType.addFormItem( newComponent().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() );
-        VisualFieldSet personalia = newVisualFieldSet().label( "Personalia" ).name( "personalia" ).add(
+        FieldSet personalia = newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newComponent().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
             newComponent().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() ).build();
-        VisualFieldSet tatoos = newVisualFieldSet().label( "Characteristics" ).name( "characteristics" ).add(
+        FieldSet tatoos = newFieldSet().label( "Characteristics" ).name( "characteristics" ).add(
             newComponent().name( "tattoo" ).type( ComponentTypes.TEXT_LINE ).multiple( true ).build() ).add(
             newComponent().name( "scar" ).type( ComponentTypes.TEXT_LINE ).multiple( true ).build() ).build();
         personalia.addFormItem( tatoos );
@@ -483,11 +483,11 @@ public class ContentTest
     }
 
     @Test(expected = BreaksRequiredContractException.class)
-    public void given_required_field_with_no_data_within_visualFieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    public void given_required_field_with_no_data_within_layout_when_checkBreaksRequiredContract_then_exception_is_thrown()
     {
 
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
+        contentType.addFormItem( newFieldSet().label( "Label" ).name( "myLayout" ).add(
             newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
@@ -497,12 +497,12 @@ public class ContentTest
     }
 
     @Test(expected = BreaksRequiredContractException.class)
-    public void given_required_field_with_no_data_within_visualFieldSet_within_visualFieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    public void given_required_field_with_no_data_within_layout_within_layout_when_checkBreaksRequiredContract_then_exception_is_thrown()
     {
 
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newVisualFieldSet().label( "My outer visual field set" ).name( "myOuterVisualFieldSet" ).add(
-            newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
+        contentType.addFormItem( newFieldSet().label( "My outer layout" ).name( "myOuterlayout" ).add(
+            newFieldSet().label( "My Layout" ).name( "myLayout" ).add(
                 newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
@@ -512,10 +512,10 @@ public class ContentTest
     }
 
     @Test(expected = BreaksRequiredContractException.class)
-    public void given_required_field_with_no_data_within_fieldSet_within_visualFieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    public void given_required_field_with_no_data_within_fieldSet_within_layout_when_checkBreaksRequiredContract_then_exception_is_thrown()
     {
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
+        contentType.addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
             newFormItemSet().name( "myFieldSet" ).required( true ).add(
                 newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
         Content content = new Content();
@@ -542,12 +542,12 @@ public class ContentTest
     }
 
     @Test(expected = BreaksRequiredContractException.class)
-    public void given_required_field_with_no_data_within_visualFieldSet_within_a_fieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    public void given_required_field_with_no_data_within_layout_within_a_fieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
     {
 
         ContentType contentType = new ContentType();
         contentType.addFormItem( newFormItemSet().name( "myFieldSet" ).required( true ).add(
-            newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSEt" ).add(
+            newFieldSet().label( "My FieldSet" ).name( "myFieldSet" ).add(
                 newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
@@ -596,11 +596,11 @@ public class ContentTest
     }
 
     @Test(expected = BreaksRequiredContractException.class)
-    public void given_required_fieldSet_with_no_data_within_visualFieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    public void given_required_fieldSet_with_no_data_within_layout_when_checkBreaksRequiredContract_then_exception_is_thrown()
     {
 
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newVisualFieldSet().label( "My Visual FieldSet" ).name( "myVisualFieldSet" ).add(
+        contentType.addFormItem( newFieldSet().label( "My FieldSet" ).name( "myFieldSet" ).add(
             newFormItemSet().name( "myFieldSet" ).required( true ).add(
                 newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() ).build() ).build() );
         Content content = new Content();

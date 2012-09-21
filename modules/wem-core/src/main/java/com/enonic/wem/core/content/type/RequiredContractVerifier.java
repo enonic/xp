@@ -8,9 +8,9 @@ import com.enonic.wem.core.content.data.EntryPath;
 import com.enonic.wem.core.content.data.EntrySelector;
 import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException;
 import com.enonic.wem.core.content.type.formitem.Component;
+import com.enonic.wem.core.content.type.formitem.FieldSet;
 import com.enonic.wem.core.content.type.formitem.FormItem;
 import com.enonic.wem.core.content.type.formitem.FormItemSet;
-import com.enonic.wem.core.content.type.formitem.VisualFieldSet;
 
 public class RequiredContractVerifier
 {
@@ -39,9 +39,9 @@ public class RequiredContractVerifier
             {
                 processFormItemSet( (FormItemSet) formItem, entrySelector );
             }
-            else if ( formItem instanceof VisualFieldSet )
+            else if ( formItem instanceof FieldSet )
             {
-                processFormItems( ( (VisualFieldSet) formItem ).getFormItemsIterable(), entrySelector );
+                processFormItems( ( (FieldSet) formItem ).getFormItemsIterable(), entrySelector );
             }
         }
     }

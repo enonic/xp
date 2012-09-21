@@ -7,16 +7,8 @@ public abstract class FormItem
 {
     private String name;
 
-    private FormItemType itemType;
-
-    FormItem( final FormItemType itemType )
+    FormItem()
     {
-        this.itemType = itemType;
-    }
-
-    public FormItemType getFormItemType()
-    {
-        return itemType;
     }
 
     void setName( final String name )
@@ -36,7 +28,6 @@ public abstract class FormItem
         {
             FormItem formItem = this.getClass().newInstance();
             formItem.name = name;
-            formItem.itemType = itemType;
             return formItem;
         }
         catch ( InstantiationException e )

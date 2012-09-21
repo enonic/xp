@@ -7,9 +7,8 @@ public abstract class HierarchicalFormItem
 {
     private FormItemPath path;
 
-    protected HierarchicalFormItem( final FormItemType type )
+    protected HierarchicalFormItem()
     {
-        super( type );
     }
 
     void setPath( final FormItemPath path )

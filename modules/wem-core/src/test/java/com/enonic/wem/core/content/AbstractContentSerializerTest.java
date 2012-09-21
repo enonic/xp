@@ -9,17 +9,17 @@ import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.type.ContentType;
 import com.enonic.wem.core.content.type.MockContentTypeFetcher;
 import com.enonic.wem.core.content.type.formitem.Component;
+import com.enonic.wem.core.content.type.formitem.FieldSet;
 import com.enonic.wem.core.content.type.formitem.FormItemSet;
-import com.enonic.wem.core.content.type.formitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.core.module.Module;
 
 import com.enonic.cms.framework.blob.BlobKeyCreator;
 
 import static com.enonic.wem.core.content.type.formitem.Component.newComponent;
+import static com.enonic.wem.core.content.type.formitem.FieldSet.newFieldSet;
 import static com.enonic.wem.core.content.type.formitem.FormItemSet.newBuilder;
 import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemSet;
-import static com.enonic.wem.core.content.type.formitem.VisualFieldSet.newVisualFieldSet;
 import static org.junit.Assert.*;
 
 public abstract class AbstractContentSerializerTest
@@ -165,15 +165,15 @@ public abstract class AbstractContentSerializerTest
     }
 
     @Test
-    public void given_component_inside_visualFieldSet_when_parse_then_component_path_is_affected_by_name_of_visualFieldSet()
+    public void given_component_inside_layout_when_parse_then_component_path_is_affected_by_name_of_layout()
     {
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
         contentType.addFormItem( newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() );
-        VisualFieldSet visualFieldSet = newVisualFieldSet().label( "Label" ).name( "visualFieldSet" ).add(
+        FieldSet layout = newFieldSet().label( "Label" ).name( "fieldSet" ).add(
             newComponent().name( "component" ).type( ComponentTypes.TEXT_LINE ).build() ).build();
-        contentType.addFormItem( visualFieldSet );
+        contentType.addFormItem( layout );
 
         Content content = new Content();
         content.setType( contentType );

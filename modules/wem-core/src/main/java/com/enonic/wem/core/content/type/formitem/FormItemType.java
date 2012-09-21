@@ -5,6 +5,6 @@ public enum FormItemType
 {
     COMPONENT,
     FORM_ITEM_SET,
-    VISUAL_FIELD_SET,
+    LAYOUT,
     REFERENCE
 }

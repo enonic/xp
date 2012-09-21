@@ -32,7 +32,6 @@ public class Component
 
     protected Component()
     {
-        super( FormItemType.COMPONENT );
     }
 
     public ComponentType getComponentType()

@@ -3,44 +3,44 @@ package com.enonic.wem.core.content.type;
 
 import org.junit.Test;
 
+import com.enonic.wem.core.content.type.formitem.FieldSet;
 import com.enonic.wem.core.content.type.formitem.FormItemSet;
 import com.enonic.wem.core.content.type.formitem.FormItemSetTemplate;
 import com.enonic.wem.core.content.type.formitem.MockTemplateFetcher;
 import com.enonic.wem.core.content.type.formitem.TemplateReference;
-import com.enonic.wem.core.content.type.formitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.formitem.Component.newComponent;
+import static com.enonic.wem.core.content.type.formitem.FieldSet.newFieldSet;
 import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemSet;
 import static com.enonic.wem.core.content.type.formitem.FormItemSetTemplateBuilder.newFormItemSetTemplate;
 import static com.enonic.wem.core.content.type.formitem.TemplateReference.newTemplateReference;
-import static com.enonic.wem.core.content.type.formitem.VisualFieldSet.newVisualFieldSet;
 import static com.enonic.wem.core.module.Module.newModule;
 import static org.junit.Assert.*;
 
 public class ContentTypeTest
 {
     @Test
-    public void visualFieldSet()
+    public void layout()
     {
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
-        VisualFieldSet visualFieldSet = newVisualFieldSet().label( "Personalia" ).name( "personalia" ).add(
+        FieldSet layout = newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newComponent().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() ).build();
-        contentType.addFormItem( visualFieldSet );
+        contentType.addFormItem( layout );
 
         assertEquals( "eyeColour", contentType.getComponent( "eyeColour" ).getPath().toString() );
     }
 
     @Test
-    public void visualFieldSet_inside_fieldSet()
+    public void layout_inside_formItemSet()
     {
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
-        VisualFieldSet visualFieldSet = newVisualFieldSet().label( "Personalia" ).name( "personalia" ).add(
+        FieldSet layout = newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newComponent().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() ).build();
-        FormItemSet myFormItemSet = newFormItemSet().name( "myFieldSet" ).add( visualFieldSet ).build();
+        FormItemSet myFormItemSet = newFormItemSet().name( "myFieldSet" ).add( layout ).build();
         contentType.addFormItem( myFormItemSet );
 
         assertEquals( "myFieldSet.eyeColour", contentType.getComponent( "myFieldSet.eyeColour" ).getPath().toString() );
@@ -94,14 +94,15 @@ public class ContentTypeTest
     }
 
     @Test
-    public void templateReferencesToFormItems_visual_field_set()
+    public void templateReferencesToFormItems_layout()
     {
         // setup
         Module module = newModule().name( "myModule" ).build();
 
         FormItemSetTemplate template = newFormItemSetTemplate().module( module ).formItemSet( newFormItemSet().name( "address" ).add(
-            newVisualFieldSet().label( "My Visual Field Set" ).name( "vfs" ).add(
-                newComponent().name( "myFieldInVFS" ).label( "MyFieldInVFS" ).type( ComponentTypes.TEXT_LINE ).build() ).build() ).add(
+            newFieldSet().label( "My Field Set" ).name( "fieldSet" ).add(
+                newComponent().name( "myFieldInLayout" ).label( "MyFieldInLayout" ).type(
+                    ComponentTypes.TEXT_LINE ).build() ).build() ).add(
             newComponent().name( "label" ).label( "Label" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
             newComponent().name( "street" ).label( "Street" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
             newComponent().name( "postalNo" ).label( "Postal No" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
@@ -118,7 +119,7 @@ public class ContentTypeTest
 
         // verify:
         assertEquals( "home.street", contentType.getComponent( "home.street" ).getPath().toString() );
-        assertEquals( "home.myFieldInVFS", contentType.getComponent( "home.myFieldInVFS" ).getPath().toString() );
+        assertEquals( "home.myFieldInLayout", contentType.getComponent( "home.myFieldInLayout" ).getPath().toString() );
     }
 
 

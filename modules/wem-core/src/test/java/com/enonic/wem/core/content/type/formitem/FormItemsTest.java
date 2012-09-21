@@ -49,15 +49,15 @@ public class FormItemsTest
     }
 
     @Test
-    public void toString_with_visualFieldSet()
+    public void toString_with_layout()
     {
         FormItems formItems = new FormItems();
         formItems.addFormItem( Component.newBuilder().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() );
-        formItems.addFormItem( VisualFieldSet.newVisualFieldSet().label( "Visual" ).name( "visual" ).add(
+        formItems.addFormItem( FieldSet.newFieldSet().label( "Layout" ).name( "layout" ).add(
             Component.newBuilder().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
             Component.newBuilder().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() ).build() );
 
         // exercise & verify
-        assertEquals( "name, visual{eyeColour, hairColour}", formItems.toString() );
+        assertEquals( "name, layout{eyeColour, hairColour}", formItems.toString() );
     }
 }

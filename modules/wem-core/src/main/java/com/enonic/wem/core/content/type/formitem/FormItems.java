@@ -14,7 +14,7 @@ public class FormItems
 
     private LinkedHashMap<String, HierarchicalFormItem> hierarchicalFormItems = new LinkedHashMap<String, HierarchicalFormItem>();
 
-    private LinkedHashMap<String, VisualFieldSet> visualFieldSets = new LinkedHashMap<String, VisualFieldSet>();
+    private LinkedHashMap<String, Layout> layouts = new LinkedHashMap<String, Layout>();
 
     public FormItems()
     {
@@ -36,9 +36,9 @@ public class FormItems
         Object previous = items.put( item.getName(), item );
         Preconditions.checkArgument( previous == null, "FormItem already added: " + item );
 
-        if ( item instanceof VisualFieldSet )
+        if ( item instanceof Layout )
         {
-            visualFieldSets.put( item.getName(), (VisualFieldSet) item );
+            layouts.put( item.getName(), (Layout) item );
         }
         else if ( item instanceof HierarchicalFormItem )
         {
@@ -55,9 +55,9 @@ public class FormItems
             {
                 ( (HierarchicalFormItem) formItem ).setParentPath( path );
             }
-            else if ( formItem instanceof VisualFieldSet )
+            else if ( formItem instanceof FieldSet )
             {
-                ( (VisualFieldSet) formItem ).forwardSetPath( path );
+                ( (FieldSet) formItem ).forwardSetPath( path );
             }
         }
     }
@@ -97,7 +97,7 @@ public class FormItems
         FormItem foundFormItem = items.get( name );
         if ( foundFormItem == null )
         {
-            foundFormItem = searchFormItemInVisualFieldSets( name );
+            foundFormItem = searchFormItemInLayouts( name );
         }
         return foundFormItem;
     }
@@ -126,8 +126,9 @@ public class FormItems
             return null;
         }
 
-        Preconditions.checkArgument( ( formItem.getFormItemType() == FormItemType.FORM_ITEM_SET ),
-                                     "FormItem at path [%s] is not a FormItemSet: " + formItem.getFormItemType(), formItem.getPath() );
+        Preconditions.checkArgument( ( formItem instanceof FormItemSet ),
+                                     "FormItem at path [%s] is not a FormItemSet: " + formItem.getClass().getSimpleName(),
+                                     formItem.getPath() );
 
         //noinspection ConstantConditions
         return (FormItemSet) formItem;
@@ -141,8 +142,9 @@ public class FormItems
             return null;
         }
 
-        Preconditions.checkArgument( ( formItem.getFormItemType() == FormItemType.FORM_ITEM_SET ),
-                                     "FormItem at path [%s] is not a FormItemSet: " + formItem.getFormItemType(), formItem.getPath() );
+        Preconditions.checkArgument( ( formItem instanceof FormItemSet ),
+                                     "FormItem at path [%s] is not a FormItemSet: " + formItem.getClass().getSimpleName(),
+                                     formItem.getPath() );
 
         //noinspection ConstantConditions
         return (FormItemSet) formItem;
@@ -157,7 +159,8 @@ public class FormItems
         }
 
         Preconditions.checkArgument( ( formItem instanceof Component ),
-                                     "FormItem at path [%s] is not a Component: " + formItem.getFormItemType(), formItem.getPath() );
+                                     "FormItem at path [%s] is not a Component: " + formItem.getClass().getSimpleName(),
+                                     formItem.getPath() );
 
         //noinspection ConstantConditions
         return (Component) formItem;
@@ -171,7 +174,8 @@ public class FormItems
             return null;
         }
         Preconditions.checkArgument( formItem instanceof Component,
-                                     "FormItem at path [%s] is not a Component: " + formItem.getFormItemType(), formItem.getPath() );
+                                     "FormItem at path [%s] is not a Component: " + formItem.getClass().getSimpleName(),
+                                     formItem.getPath() );
 
         //noinspection ConstantConditions
         return (Component) formItem;
@@ -214,11 +218,11 @@ public class FormItems
                 }
                 index++;
             }
-            else if ( entry instanceof VisualFieldSet )
+            else if ( entry instanceof FieldSet )
             {
-                VisualFieldSet visualFieldSet = (VisualFieldSet) entry;
-                s.append( visualFieldSet.getName() ).append( "{" );
-                s.append( visualFieldSet.getFormItems().toString() );
+                FieldSet fieldSet = (FieldSet) entry;
+                s.append( fieldSet.getName() ).append( "{" );
+                s.append( fieldSet.getFormItems().toString() );
                 s.append( "}" );
             }
         }
@@ -234,9 +238,9 @@ public class FormItems
             FormItem copyOfCi = ci.copy();
             copy.items.put( copyOfCi.getName(), copyOfCi );
 
-            if ( copyOfCi instanceof VisualFieldSet )
+            if ( copyOfCi instanceof FieldSet )
             {
-                copy.visualFieldSets.put( copyOfCi.getName(), (VisualFieldSet) copyOfCi );
+                copy.layouts.put( copyOfCi.getName(), (FieldSet) copyOfCi );
             }
         }
         return copy;
@@ -269,13 +273,13 @@ public class FormItems
         }
     }
 
-    private FormItem searchFormItemInVisualFieldSets( final String name )
+    private FormItem searchFormItemInLayouts( final String name )
     {
         FormItem foundFormItem = null;
 
-        for ( final VisualFieldSet visualFieldSet : visualFieldSets.values() )
+        for ( final Layout layout : layouts.values() )
         {
-            foundFormItem = visualFieldSet.getFormItem( name );
+            foundFormItem = layout.getFormItem( name );
             if ( foundFormItem != null )
             {
                 break;

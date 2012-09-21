@@ -3,14 +3,14 @@ package com.enonic.wem.core.content.type;
 import org.junit.Test;
 
 import com.enonic.wem.core.content.type.formitem.Component;
+import com.enonic.wem.core.content.type.formitem.FieldSet;
 import com.enonic.wem.core.content.type.formitem.FormItemPath;
 import com.enonic.wem.core.content.type.formitem.FormItemSet;
 import com.enonic.wem.core.content.type.formitem.FormItemSetTemplate;
 import com.enonic.wem.core.content.type.formitem.FormItemSetTemplateBuilder;
-import com.enonic.wem.core.content.type.formitem.FormItemType;
 import com.enonic.wem.core.content.type.formitem.FormItems;
 import com.enonic.wem.core.content.type.formitem.MockTemplateFetcher;
-import com.enonic.wem.core.content.type.formitem.VisualFieldSet;
+import com.enonic.wem.core.content.type.formitem.TemplateReference;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.core.content.type.formitem.comptype.DropdownConfig;
 import com.enonic.wem.core.content.type.formitem.comptype.RadioButtonsConfig;
@@ -18,9 +18,9 @@ import com.enonic.wem.core.module.Module;
 
 import static com.enonic.wem.core.content.type.formitem.Component.newBuilder;
 import static com.enonic.wem.core.content.type.formitem.Component.newComponent;
+import static com.enonic.wem.core.content.type.formitem.FieldSet.newFieldSet;
 import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemSet;
 import static com.enonic.wem.core.content.type.formitem.TemplateReference.newTemplateReference;
-import static com.enonic.wem.core.content.type.formitem.VisualFieldSet.newVisualFieldSet;
 import static com.enonic.wem.core.module.Module.newModule;
 import static org.junit.Assert.*;
 
@@ -145,8 +145,8 @@ public class ContentTypeSerializerJsonTest
         ContentType parsedContentType = new ContentTypeSerializerJson().parse( json );
 
         // verify references
-        assertEquals( FormItemType.REFERENCE, parsedContentType.getFormItems().getFormItem( "home" ).getFormItemType() );
-        assertEquals( FormItemType.REFERENCE, parsedContentType.getFormItems().getFormItem( "cabin" ).getFormItemType() );
+        assertEquals( TemplateReference.class, parsedContentType.getFormItems().getFormItem( "home" ).getClass() );
+        assertEquals( TemplateReference.class, parsedContentType.getFormItems().getFormItem( "cabin" ).getClass() );
 
         // verify items past the reference is null
         assertEquals( null, parsedContentType.getFormItems().getFormItem( "home.street" ) );
@@ -174,14 +174,14 @@ public class ContentTypeSerializerJsonTest
     }
 
     @Test
-    public void visualFieldSet()
+    public void layout()
     {
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
-        VisualFieldSet visualFieldSet = newVisualFieldSet().label( "Personalia" ).name( "personalia" ).add(
+        FieldSet layout = newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newComponent().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
             newComponent().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() ).build();
-        contentType.addFormItem( visualFieldSet );
+        contentType.addFormItem( layout );
 
         String json = new ContentTypeSerializerJson().toJson( contentType );
         System.out.println( json );
@@ -191,7 +191,7 @@ public class ContentTypeSerializerJsonTest
         assertEquals( "hairColour", parsedContentType.getComponent( "hairColour" ).getPath().toString() );
 
         assertNotNull( parsedContentType.getFormItems().getFormItem( "personalia" ) );
-        assertEquals( FormItemType.VISUAL_FIELD_SET, parsedContentType.getFormItems().getFormItem( "personalia" ).getFormItemType() );
+        assertEquals( FieldSet.class, parsedContentType.getFormItems().getFormItem( "personalia" ).getClass() );
     }
 
     @Test

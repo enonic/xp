@@ -8,10 +8,10 @@ import com.enonic.wem.core.content.data.Data;
 import com.enonic.wem.core.content.datatype.DataTypes;
 import com.enonic.wem.core.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.core.content.type.formitem.BreaksRegexValidationException;
+import com.enonic.wem.core.content.type.formitem.FieldSet;
 import com.enonic.wem.core.content.type.formitem.FormItemSet;
 import com.enonic.wem.core.content.type.formitem.InvalidDataException;
 import com.enonic.wem.core.content.type.formitem.InvalidValueException;
-import com.enonic.wem.core.content.type.formitem.VisualFieldSet;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.core.content.type.formitem.comptype.DropdownConfig;
 import com.enonic.wem.core.content.type.formitem.comptype.HtmlAreaConfig;
@@ -19,8 +19,8 @@ import com.enonic.wem.core.content.type.formitem.comptype.RadioButtonsConfig;
 
 import static com.enonic.wem.core.content.type.Validator.newValidator;
 import static com.enonic.wem.core.content.type.formitem.Component.newComponent;
+import static com.enonic.wem.core.content.type.formitem.FieldSet.newFieldSet;
 import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemSet;
-import static com.enonic.wem.core.content.type.formitem.VisualFieldSet.newVisualFieldSet;
 import static com.enonic.wem.core.content.type.formitem.comptype.DropdownConfig.newDropdownConfig;
 import static com.enonic.wem.core.content.type.formitem.comptype.HtmlAreaConfig.newHtmlAreaConfig;
 import static com.enonic.wem.core.content.type.formitem.comptype.RadioButtonsConfig.newRadioButtonsConfig;
@@ -168,13 +168,13 @@ public class ValidatorTest
     }
 
     @Test
-    public void given_content_with_invalid_dataSet_according_to_component_inside_a_visualFieldSet_when_validate_then_exception_is_thrown()
+    public void given_content_with_invalid_dataSet_according_to_component_inside_a_layout_when_validate_then_exception_is_thrown()
     {
         // setup
         ContentType contentType = new ContentType();
-        VisualFieldSet visualFieldSet = newVisualFieldSet().name( "myVisualFieldSet" ).label( "Label" ).build();
-        contentType.addFormItem( visualFieldSet );
-        visualFieldSet.addFormItem( newComponent().name( "myColor" ).type( ComponentTypes.COLOR ).build() );
+        FieldSet layout = newFieldSet().name( "myFieldSet" ).label( "Label" ).build();
+        contentType.addFormItem( layout );
+        layout.addFormItem( newComponent().name( "myColor" ).type( ComponentTypes.COLOR ).build() );
 
         Content content = new Content();
         content.setType( contentType );

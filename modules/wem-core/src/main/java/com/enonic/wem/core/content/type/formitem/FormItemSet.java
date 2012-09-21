@@ -23,7 +23,6 @@ public class FormItemSet
 
     protected FormItemSet()
     {
-        super( FormItemType.FORM_ITEM_SET );
     }
 
     @Override
