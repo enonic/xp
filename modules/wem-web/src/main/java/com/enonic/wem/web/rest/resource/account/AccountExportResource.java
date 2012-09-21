@@ -95,6 +95,10 @@ public class AccountExportResource
 
     private AccountType[] parseTypes( final String types )
     {
+        if ( types.trim().isEmpty() )
+        {
+            return new AccountType[]{AccountType.GROUP, AccountType.ROLE, AccountType.USER};
+        }
         final Set<String> accountTypeSet = Sets.newHashSet( types.split( "," ) );
         return Iterables.toArray( Collections2.transform( accountTypeSet, new ParseAccountTypeFunction() ), AccountType.class );
     }

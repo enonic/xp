@@ -29,7 +29,7 @@ public class UpdateUserStoresHandler
     {
         UserStoreNames names = command.getNames();
         UserStoreEditor editor = command.getEditor();
-        Integer userStoresUpdated = 0;
+        int userStoresUpdated = 0;
 
         for ( UserStoreName name : names )
         {
