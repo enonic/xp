@@ -6,7 +6,7 @@
   <style type="text/css">
     body {
       font: 85% Arial;
-      padding: .5em;
+      padding: 0 .2em;
     }
 
     hr {
@@ -175,18 +175,24 @@
 
     var commandLinePanel = Ext.create('Ext.panel.Panel', {
       renderTo: 'search-container',
-      title: 'Command Line',
+      frame: true,
+      // title: 'Command Line',
       width: '100%',
-      bodyPadding: 15,
+      padding: 10,
       layout: 'anchor',
       items: [
+        {
+          xtype: 'component',
+          style: 'margin-bottom:10px',
+          html: 'Type any app name and press enter'
+        },
         {
           xtype: 'combo',
           store: pageLinksStore,
           displayField: 'text',
           valueField: 'url',
           queryMode: 'local',
-          typeAhead: false,
+          typeAhead: true,
           hideLabel: true,
           hideTrigger: true,
           anchor: '100%',
@@ -202,10 +208,6 @@
               combo.focus();
             }
           }
-        }, {
-          xtype: 'component',
-          style: 'margin-top:10px',
-          html: 'Type any app name and press enter'
         }
       ]
     });
