@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import com.enonic.wem.core.jcr.accounts.AccountJcrDao;
-import com.enonic.wem.core.jcr.accounts.JcrGroup;
+import com.enonic.wem.core.jcr.old.accounts.AccountJcrDao;
+import com.enonic.wem.core.jcr.old.accounts.JcrGroup;
 import com.enonic.wem.core.search.account.AccountKey;
 import com.enonic.wem.core.search.account.Group;
 

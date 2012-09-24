@@ -14,14 +14,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.core.jcr.JcrDaoSupport;
-import com.enonic.wem.core.jcr.accounts.AccountJcrDao;
-import com.enonic.wem.core.jcr.accounts.JcrAddress;
-import com.enonic.wem.core.jcr.accounts.JcrGroup;
-import com.enonic.wem.core.jcr.accounts.JcrRole;
-import com.enonic.wem.core.jcr.accounts.JcrUser;
-import com.enonic.wem.core.jcr.accounts.JcrUserInfo;
-import com.enonic.wem.core.jcr.accounts.JcrUserStore;
+import com.enonic.wem.core.jcr.old.JcrDaoSupport;
+import com.enonic.wem.core.jcr.old.accounts.AccountJcrDao;
+import com.enonic.wem.core.jcr.old.accounts.JcrAddress;
+import com.enonic.wem.core.jcr.old.accounts.JcrGroup;
+import com.enonic.wem.core.jcr.old.accounts.JcrRole;
+import com.enonic.wem.core.jcr.old.accounts.JcrUser;
+import com.enonic.wem.core.jcr.old.accounts.JcrUserInfo;
+import com.enonic.wem.core.jcr.old.accounts.JcrUserStore;
 
 import com.enonic.cms.api.client.model.user.Address;
 import com.enonic.cms.api.client.model.user.Gender;
@@ -395,7 +395,7 @@ public class JcrAccountsImporter
         Gender gender = userInfo.getGender();
         if ( gender != null )
         {
-            jcrUserInfo.setGender( com.enonic.wem.core.jcr.accounts.Gender.fromName( gender.toString() ) );
+            jcrUserInfo.setGender( com.enonic.wem.core.jcr.old.accounts.Gender.fromName( gender.toString() ) );
         }
         jcrUserInfo.setOrganization( userInfo.getOrganization() );
 

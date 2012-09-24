@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.core.jcr.JcrCallback;
-import com.enonic.wem.core.jcr.JcrInitializer;
-import com.enonic.wem.core.jcr.JcrSession;
-import com.enonic.wem.core.jcr.JcrTemplate;
+import com.enonic.wem.core.jcr.old.JcrCallback;
+import com.enonic.wem.core.jcr.old.JcrInitializer;
+import com.enonic.wem.core.jcr.old.JcrSession;
+import com.enonic.wem.core.jcr.old.JcrTemplate;
 import com.enonic.wem.migrate.MigrateTask;
 
 @Component
@@ -57,7 +57,7 @@ public class JcrMigrateTask implements MigrateTask
         session.save();
     }
 
-    @Value("classpath:com/enonic/wem/core/jcr/cmstypes.cnd")
+    @Value("classpath:com/enonic/wem/core/jcr/old/cmstypes.cnd")
     public void setCompactNodeDefinitionFile( Resource compactNodeDefinitionFile )
     {
         this.compactNodeDefinitionFile = compactNodeDefinitionFile;
