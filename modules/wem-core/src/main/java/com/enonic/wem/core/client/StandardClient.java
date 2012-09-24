@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.core.command.CommandInvoker;
-import com.enonic.wem.core.jcr.SessionFactory;
+import com.enonic.wem.core.jcr.old.SessionFactory;
 
 @Component
 public final class StandardClient

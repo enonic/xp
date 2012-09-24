@@ -2,7 +2,7 @@ package com.enonic.wem.core.client;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.core.command.CommandContext;
-import com.enonic.wem.core.jcr.JcrSession;
+import com.enonic.wem.core.jcr.old.JcrSession;
 
 final class CommandContextImpl
     implements CommandContext
