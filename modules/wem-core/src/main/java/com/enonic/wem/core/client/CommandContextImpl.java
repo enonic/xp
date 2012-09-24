@@ -35,6 +35,9 @@ final class CommandContextImpl
 
     public void dispose()
     {
-        this.jcrSession.logout();
+        if ( this.jcrSession != null )
+        {
+            this.jcrSession.logout();
+        }
     }
 }

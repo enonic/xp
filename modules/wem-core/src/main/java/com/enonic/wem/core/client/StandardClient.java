@@ -54,7 +54,7 @@ public final class StandardClient
     {
         final CommandContextImpl context = new CommandContextImpl();
         context.setClient( this );
-        context.setJcrSession( this.sessionFactory.getSession() );
+//        context.setJcrSession( this.sessionFactory.getSession() );
         return context;
     }
 }
