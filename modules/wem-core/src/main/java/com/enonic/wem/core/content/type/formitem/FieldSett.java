@@ -7,7 +7,7 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 
 
-public class FieldSet
+public class FieldSett
     extends Layout
     implements Iterable<FormItem>
 {
@@ -15,7 +15,7 @@ public class FieldSet
 
     private FormItems formItems = new FormItems();
 
-    protected FieldSet()
+    protected FieldSett()
     {
     }
 
@@ -31,9 +31,9 @@ public class FieldSet
     }
 
     @Override
-    public FieldSet copy()
+    public FieldSett copy()
     {
-        final FieldSet copy = (FieldSet) super.copy();
+        final FieldSett copy = (FieldSett) super.copy();
         copy.label = label;
         copy.formItems = formItems.copy();
         return copy;
@@ -95,12 +95,12 @@ public class FieldSet
             return this;
         }
 
-        public FieldSet build()
+        public FieldSett build()
         {
             Preconditions.checkNotNull( this.label, "label is required" );
             Preconditions.checkNotNull( this.name, "name is required" );
 
-            FieldSet fieldSet = new FieldSet();
+            FieldSett fieldSet = new FieldSett();
             fieldSet.label = this.label;
             fieldSet.setName( this.name );
             for ( FormItem formItem : formItems )
