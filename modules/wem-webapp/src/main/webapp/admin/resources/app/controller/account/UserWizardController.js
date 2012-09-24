@@ -162,7 +162,7 @@ Ext.define('Admin.controller.account.UserWizardController', {
             var lastName = formPanel.down('#lastName');
             var lastNameValue = lastName ? Ext.String.trim(lastName.getValue()) : '';
             var userStoreName = wizard.getData().userStore;
-            var usernameField = wizard.down('#username');
+            var usernameField = wizard.down('#name');
             if (firstNameValue || lastNameValue) {
                 this.autoSuggestUsername(firstNameValue, lastNameValue, userStoreName, usernameField);
             }
@@ -277,7 +277,7 @@ Ext.define('Admin.controller.account.UserWizardController', {
         var fields = [];
         var firstStep = wizard.getSteps().get(0).itemId;
         if (firstStep === 'userPanel') {
-            fields = wizard.query('#username');
+            fields = wizard.query('#name');
         } else if (firstStep === 'profilePanel') {
             fields = wizard.query('#prefix , #firstName , #middleName , #lastName , #suffix');
         }
