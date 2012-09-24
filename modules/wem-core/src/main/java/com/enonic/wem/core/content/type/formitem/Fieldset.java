@@ -7,7 +7,7 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 
 
-public class FieldSet
+public class Fieldset
     extends Layout
     implements Iterable<FormItem>
 {
