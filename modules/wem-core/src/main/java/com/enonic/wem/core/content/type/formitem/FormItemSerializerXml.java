@@ -3,13 +3,22 @@ package com.enonic.wem.core.content.type.formitem;
 
 import org.jdom.Element;
 
+import com.enonic.wem.api.content.type.formitem.Component;
+import com.enonic.wem.api.content.type.formitem.FieldSet;
+import com.enonic.wem.api.content.type.formitem.FormItem;
+import com.enonic.wem.api.content.type.formitem.FormItemSet;
+import com.enonic.wem.api.content.type.formitem.FormItems;
+import com.enonic.wem.api.content.type.formitem.HierarchicalFormItem;
+import com.enonic.wem.api.content.type.formitem.Layout;
+import com.enonic.wem.api.content.type.formitem.TemplateQualifiedName;
+import com.enonic.wem.api.content.type.formitem.TemplateReference;
 import com.enonic.wem.core.content.JsonParsingException;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeConfigSerializerXml;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeSerializerXml;
 
-import static com.enonic.wem.core.content.type.formitem.FieldSet.newFieldSet;
-import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemSet;
-import static com.enonic.wem.core.content.type.formitem.TemplateReference.newTemplateReference;
+import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
+import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.type.formitem.TemplateReference.newTemplateReference;
 
 public class FormItemSerializerXml
 {

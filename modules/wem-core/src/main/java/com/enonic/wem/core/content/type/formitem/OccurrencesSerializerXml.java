@@ -4,6 +4,8 @@ package com.enonic.wem.core.content.type.formitem;
 import org.jdom.Attribute;
 import org.jdom.Element;
 
+import com.enonic.wem.api.content.type.formitem.Occurrences;
+
 public class OccurrencesSerializerXml
 {
     public static Element generate( final Occurrences occurrences )

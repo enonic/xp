@@ -2,17 +2,17 @@ package com.enonic.wem.core.content;
 
 import org.joda.time.DateMidnight;
 
-import com.enonic.wem.core.content.data.BlobToKeyReplacer;
-import com.enonic.wem.core.content.data.ContentData;
-import com.enonic.wem.core.content.data.Data;
-import com.enonic.wem.core.content.data.DataSet;
-import com.enonic.wem.core.content.data.EntryPath;
-import com.enonic.wem.core.content.data.MockBlobKeyResolver;
-import com.enonic.wem.core.content.datatype.DataType;
-import com.enonic.wem.core.content.datatype.DataTypes;
-import com.enonic.wem.core.content.type.ContentType;
-import com.enonic.wem.core.content.type.RequiredContractVerifier;
-import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException;
+import com.enonic.wem.api.content.data.BlobToKeyReplacer;
+import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.MockBlobKeyResolver;
+import com.enonic.wem.api.content.datatype.DataType;
+import com.enonic.wem.api.content.datatype.DataTypes;
+import com.enonic.wem.api.content.type.ContentType;
+import com.enonic.wem.api.content.type.RequiredContractVerifier;
+import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 
 public class Content
 {

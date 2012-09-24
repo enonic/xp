@@ -6,6 +6,8 @@ import java.io.IOException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
+import com.enonic.wem.api.content.type.formitem.comptype.BaseComponentType;
+import com.enonic.wem.api.content.type.formitem.comptype.ComponentType;
 import com.enonic.wem.core.content.JsonParserUtil;
 
 public class ComponentTypeSerializerJson

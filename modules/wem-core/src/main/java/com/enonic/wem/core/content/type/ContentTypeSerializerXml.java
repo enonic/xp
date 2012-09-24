@@ -7,6 +7,8 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 
+import com.enonic.wem.api.content.type.ContentType;
+import com.enonic.wem.api.content.type.ContentTypeSerializer;
 import com.enonic.wem.core.content.JsonParsingException;
 import com.enonic.wem.core.content.type.formitem.FormItemsSerializerXml;
 

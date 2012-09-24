@@ -11,11 +11,15 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.wem.api.content.type.formitem.Component;
+import com.enonic.wem.api.content.type.formitem.FormItem;
+import com.enonic.wem.api.content.type.formitem.FormItemSet;
+import com.enonic.wem.api.content.type.formitem.Occurrences;
+import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypeConfig;
+import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
+import com.enonic.wem.api.content.type.formitem.comptype.DropdownConfig;
+import com.enonic.wem.api.content.type.formitem.comptype.RadioButtonsConfig;
 import com.enonic.wem.core.content.JsonFactoryHolder;
-import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeConfig;
-import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
-import com.enonic.wem.core.content.type.formitem.comptype.DropdownConfig;
-import com.enonic.wem.core.content.type.formitem.comptype.RadioButtonsConfig;
 
 import static org.junit.Assert.*;
 

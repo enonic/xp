@@ -5,6 +5,8 @@ import java.util.Iterator;
 
 import org.jdom.Element;
 
+import com.enonic.wem.api.content.type.formitem.FormItem;
+import com.enonic.wem.api.content.type.formitem.FormItems;
 import com.enonic.wem.core.content.JsonParsingException;
 
 import com.enonic.cms.framework.util.JDOMUtil;

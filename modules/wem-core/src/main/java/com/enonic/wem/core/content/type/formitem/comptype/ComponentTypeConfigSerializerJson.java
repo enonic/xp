@@ -5,6 +5,9 @@ import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 
+import com.enonic.wem.api.content.type.formitem.comptype.AbstractComponentTypeConfigSerializerJson;
+import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypeConfig;
+
 public class ComponentTypeConfigSerializerJson
 {
     public ComponentTypeConfig parse( final JsonNode componentTypeConfigNode )

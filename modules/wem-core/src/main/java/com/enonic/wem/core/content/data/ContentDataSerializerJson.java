@@ -7,6 +7,11 @@ import java.util.Iterator;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
+import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.EntryPath;
+
 public class ContentDataSerializerJson
 {
     private DataSerializerJson dataSerializer = new DataSerializerJson();

@@ -10,10 +10,10 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.enonic.wem.api.content.type.ContentType;
+import com.enonic.wem.api.content.type.ContentTypeFetcher;
+import com.enonic.wem.api.content.type.ContentTypeQualifiedName;
 import com.enonic.wem.core.content.data.ContentDataSerializerJson;
-import com.enonic.wem.core.content.type.ContentType;
-import com.enonic.wem.core.content.type.ContentTypeFetcher;
-import com.enonic.wem.core.content.type.ContentTypeQualifiedName;
 
 public class ContentSerializerJson
     implements ContentSerializer

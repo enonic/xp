@@ -7,10 +7,10 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 
+import com.enonic.wem.api.content.type.ContentType;
+import com.enonic.wem.api.content.type.ContentTypeFetcher;
+import com.enonic.wem.api.content.type.ContentTypeQualifiedName;
 import com.enonic.wem.core.content.data.ContentDataSerializerXml;
-import com.enonic.wem.core.content.type.ContentType;
-import com.enonic.wem.core.content.type.ContentTypeFetcher;
-import com.enonic.wem.core.content.type.ContentTypeQualifiedName;
 
 import com.enonic.cms.framework.util.JDOMUtil;
 

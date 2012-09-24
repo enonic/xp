@@ -6,6 +6,8 @@ import java.io.IOException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
+import com.enonic.wem.api.content.type.formitem.Occurrences;
+
 public class OccurrencesSerializerJson
 {
     public static void generate( final Occurrences occurrences, final JsonGenerator g )

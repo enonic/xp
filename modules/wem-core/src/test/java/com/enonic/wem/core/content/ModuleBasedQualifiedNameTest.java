@@ -3,6 +3,8 @@ package com.enonic.wem.core.content;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.content.ModuleBasedQualifiedName;
+
 import static org.junit.Assert.*;
 
 public class ModuleBasedQualifiedNameTest

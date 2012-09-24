@@ -5,6 +5,11 @@ import java.util.Iterator;
 
 import org.jdom.Element;
 
+import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.EntryPath;
+
 public class ContentDataSerializerXml
 {
     private DataSerializerXml dataSerializer = new DataSerializerXml();

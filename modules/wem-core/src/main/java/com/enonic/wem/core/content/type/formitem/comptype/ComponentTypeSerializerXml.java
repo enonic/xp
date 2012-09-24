@@ -3,6 +3,9 @@ package com.enonic.wem.core.content.type.formitem.comptype;
 
 import org.jdom.Element;
 
+import com.enonic.wem.api.content.type.formitem.comptype.BaseComponentType;
+import com.enonic.wem.api.content.type.formitem.comptype.ComponentType;
+
 public class ComponentTypeSerializerXml
 {
     public Element generate( final ComponentType componentType )

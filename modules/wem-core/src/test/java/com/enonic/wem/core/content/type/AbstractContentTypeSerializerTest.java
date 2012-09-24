@@ -3,32 +3,34 @@ package com.enonic.wem.core.content.type;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.core.content.type.formitem.Component;
-import com.enonic.wem.core.content.type.formitem.FieldSet;
-import com.enonic.wem.core.content.type.formitem.FormItemPath;
-import com.enonic.wem.core.content.type.formitem.FormItemSet;
-import com.enonic.wem.core.content.type.formitem.FormItemSetTemplate;
-import com.enonic.wem.core.content.type.formitem.FormItemSetTemplateBuilder;
-import com.enonic.wem.core.content.type.formitem.FormItems;
-import com.enonic.wem.core.content.type.formitem.MockTemplateFetcher;
-import com.enonic.wem.core.content.type.formitem.TemplateReference;
-import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
-import com.enonic.wem.core.content.type.formitem.comptype.DropdownConfig;
-import com.enonic.wem.core.content.type.formitem.comptype.RadioButtonsConfig;
-import com.enonic.wem.core.module.Module;
+import com.enonic.wem.api.content.type.ContentType;
+import com.enonic.wem.api.content.type.ContentTypeSerializer;
+import com.enonic.wem.api.content.type.formitem.Component;
+import com.enonic.wem.api.content.type.formitem.FieldSet;
+import com.enonic.wem.api.content.type.formitem.FormItemPath;
+import com.enonic.wem.api.content.type.formitem.FormItemSet;
+import com.enonic.wem.api.content.type.formitem.FormItemSetTemplate;
+import com.enonic.wem.api.content.type.formitem.FormItemSetTemplateBuilder;
+import com.enonic.wem.api.content.type.formitem.FormItems;
+import com.enonic.wem.api.content.type.formitem.MockTemplateFetcher;
+import com.enonic.wem.api.content.type.formitem.TemplateReference;
+import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
+import com.enonic.wem.api.content.type.formitem.comptype.DropdownConfig;
+import com.enonic.wem.api.content.type.formitem.comptype.RadioButtonsConfig;
+import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.core.content.type.formitem.Component.newBuilder;
-import static com.enonic.wem.core.content.type.formitem.Component.newComponent;
-import static com.enonic.wem.core.content.type.formitem.FieldSet.newFieldSet;
-import static com.enonic.wem.core.content.type.formitem.FormItemSet.newFormItemSet;
-import static com.enonic.wem.core.content.type.formitem.TemplateReference.newTemplateReference;
-import static com.enonic.wem.core.module.Module.newModule;
+import static com.enonic.wem.api.content.type.formitem.Component.newBuilder;
+import static com.enonic.wem.api.content.type.formitem.Component.newComponent;
+import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
+import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.type.formitem.TemplateReference.newTemplateReference;
+import static com.enonic.wem.api.module.Module.newModule;
 import static org.junit.Assert.*;
 
 
 public abstract class AbstractContentTypeSerializerTest
 {
-    private static final Module myModule = Module.newModule().name( "myModule" ).build();
+    private static final Module myModule = newModule().name( "myModule" ).build();
 
     private ContentTypeSerializer serializer;
 

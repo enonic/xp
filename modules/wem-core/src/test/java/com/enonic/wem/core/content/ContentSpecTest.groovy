@@ -1,12 +1,12 @@
 package com.enonic.wem.core.content
 
-import com.enonic.wem.core.content.type.ContentType
-import com.enonic.wem.core.content.type.formitem.BreaksRequiredContractException
-import com.enonic.wem.core.content.type.formitem.FieldSet
-import com.enonic.wem.core.content.type.formitem.FormItemSet
-import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes
+import com.enonic.wem.api.content.type.ContentType
+import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException
+import com.enonic.wem.api.content.type.formitem.FieldSet
+import com.enonic.wem.api.content.type.formitem.FormItemSet
+import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes
 
-import static com.enonic.wem.core.content.type.formitem.Component.newComponent
+import static com.enonic.wem.api.content.type.formitem.Component.newComponent
 
 class ContentSpecTest extends spock.lang.Specification
 {

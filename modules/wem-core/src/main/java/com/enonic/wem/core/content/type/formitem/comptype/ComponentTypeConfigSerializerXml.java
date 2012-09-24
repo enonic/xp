@@ -3,6 +3,9 @@ package com.enonic.wem.core.content.type.formitem.comptype;
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 
+import com.enonic.wem.api.content.type.formitem.comptype.AbstractComponentTypeConfigSerializerXml;
+import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypeConfig;
+
 public class ComponentTypeConfigSerializerXml
 {
     public ComponentTypeConfig parse( final Element componentEl )

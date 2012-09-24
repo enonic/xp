@@ -8,7 +8,7 @@ import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
 
-import com.enonic.wem.core.content.type.ContentTypeStepDefs;
+import com.enonic.wem.api.content.type.ContentTypeStepDefs;
 
 import static org.junit.Assert.*;
 
