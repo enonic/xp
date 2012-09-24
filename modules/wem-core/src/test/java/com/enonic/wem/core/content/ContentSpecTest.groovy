@@ -1,5 +1,6 @@
 package com.enonic.wem.core.content
 
+import com.enonic.wem.api.content.Content
 import com.enonic.wem.api.content.type.ContentType
 import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException
 import com.enonic.wem.api.content.type.formitem.FieldSet

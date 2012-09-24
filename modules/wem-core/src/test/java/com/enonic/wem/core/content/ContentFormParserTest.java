@@ -13,6 +13,7 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
 
 import static com.enonic.wem.api.content.type.formitem.Component.newComponent;
+import static org.junit.Assert.*;
 
 public class ContentFormParserTest
 {

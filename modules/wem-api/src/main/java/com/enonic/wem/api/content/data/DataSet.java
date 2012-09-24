@@ -44,7 +44,7 @@ public class DataSet
         return path;
     }
 
-    void add( final Data data )
+    public void add( final Data data )
     {
         entries.add( data );
     }

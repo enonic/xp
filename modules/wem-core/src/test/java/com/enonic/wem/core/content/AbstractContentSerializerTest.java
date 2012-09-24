@@ -4,6 +4,7 @@ package com.enonic.wem.core.content;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.MockBlobKeyResolver;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;

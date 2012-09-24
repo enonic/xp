@@ -4,6 +4,7 @@ package com.enonic.wem.core.content;
 import org.joda.time.DateMidnight;
 import org.junit.Test;
 
+import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;
@@ -13,13 +14,13 @@ import com.enonic.wem.api.content.type.formitem.ComponentTemplate;
 import com.enonic.wem.api.content.type.formitem.FieldSet;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
 import com.enonic.wem.api.content.type.formitem.FormItemSetTemplate;
+import com.enonic.wem.api.content.type.formitem.InvalidDataException;
 import com.enonic.wem.api.content.type.formitem.MockTemplateFetcher;
 import com.enonic.wem.api.content.type.formitem.TemplateReference;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.api.content.type.formitem.comptype.DropdownConfig;
 import com.enonic.wem.api.content.type.formitem.comptype.RadioButtonsConfig;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.core.content.type.formitem.InvalidDataException;
 
 import static com.enonic.wem.api.content.type.formitem.Component.newComponent;
 import static com.enonic.wem.api.content.type.formitem.ComponentTemplateBuilder.newComponentTemplate;

@@ -43,7 +43,7 @@ public class Content
         this.name = name;
     }
 
-    void setData( final ContentData value )
+    public void setData( final ContentData value )
     {
         this.data = value;
     }

@@ -19,7 +19,7 @@ public class ContentData
         this.dataSet = new DataSet( new EntryPath() );
     }
 
-    void setDataSet( final DataSet dataSet )
+    public void setDataSet( final DataSet dataSet )
     {
         this.dataSet = dataSet;
     }

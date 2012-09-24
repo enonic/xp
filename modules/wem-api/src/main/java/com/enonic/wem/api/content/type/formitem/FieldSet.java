@@ -49,7 +49,7 @@ public class FieldSet
         this.formItems.addFormItem( formItem );
     }
 
-    FormItems getFormItems()
+    public FormItems getFormItems()
     {
         return formItems;
     }
