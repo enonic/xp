@@ -5,12 +5,13 @@ Ext.define('Admin.store.userstore.UserstoreConnectorStore', {
     autoLoad: true,
 
     proxy: {
-        type: 'ajax',
-        url: 'data/userstore/connectors',
+        type: 'direct',
+        directFn: Admin.lib.RemoteService.userstore_getConnectors,
         simpleSortMode: true,
         reader: {
             type: 'json',
-            root: 'userStoreConnectors'
+            root: 'userStoreConnectors',
+            totalProperty: 'total'
         }
     }
 });
