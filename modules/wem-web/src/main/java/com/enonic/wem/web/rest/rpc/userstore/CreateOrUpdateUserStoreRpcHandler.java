@@ -3,8 +3,10 @@ package com.enonic.wem.web.rest.rpc.userstore;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.userstore.UserStore;
+import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.UserStoreNames;
 import com.enonic.wem.api.userstore.UserStores;
+import com.enonic.wem.api.userstore.config.UserStoreConfig;
 import com.enonic.wem.api.userstore.config.UserStoreConfigParser;
 import com.enonic.wem.api.userstore.connector.UserStoreConnector;
 import com.enonic.wem.api.userstore.editor.UserStoreEditor;
@@ -27,7 +29,7 @@ public class CreateOrUpdateUserStoreRpcHandler
         final UserStoreNames userStoreNames = UserStoreNames.from( context.param( "name" ).required().asStringArray() );
         UserStores userStores = client.execute( Commands.userStore().get().names( userStoreNames ) );
 
-        final UserStore userStore = getUserStoreFromRequest( context, userStores, userStoreNames );
+        final UserStore userStore = getUserStoreFromRequest( context, userStores, userStoreNames.getFirst() );
 
         if ( !userStores.isEmpty() )
         {
@@ -44,7 +46,7 @@ public class CreateOrUpdateUserStoreRpcHandler
 
 
     private UserStore getUserStoreFromRequest( final JsonRpcContext context, final UserStores userStores,
-                                               final UserStoreNames userStoreNames )
+                                               final UserStoreName userStoreName )
         throws Exception
     {
         UserStore userStore;
@@ -54,21 +56,21 @@ public class CreateOrUpdateUserStoreRpcHandler
         }
         else
         {
-            userStore = new UserStore( userStoreNames.getFirst() );
+            userStore = new UserStore( userStoreName );
         }
 
         userStore.setDefaultStore( context.param( "defaultUserstore" ).asBoolean( false ) );
 
-        String config;
+        UserStoreConfig config;
         if ( context.param( "config" ).isNull() )
         {
-            config = "<config><user-fields></user-fields></config>";
+            config = new UserStoreConfig();
         }
         else
         {
-            config = context.param( "config" ).asString();
+            config = new UserStoreConfigParser().parseXml( context.param( "config" ).asString() );
         }
-        userStore.setConfig( new UserStoreConfigParser().parseXml( config ) );
+        userStore.setConfig( config );
 
         String connectorName = context.param( "connector" ).required().asString();
         userStore.setConnectorName( connectorName );
