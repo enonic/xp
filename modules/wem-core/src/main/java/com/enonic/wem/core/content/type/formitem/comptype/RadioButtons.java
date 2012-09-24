@@ -31,6 +31,12 @@ public class RadioButtons
     }
 
     @Override
+    public AbstractComponentTypeConfigSerializerXml getComponentTypeConfigXmlGenerator()
+    {
+        return RadioButtonsConfigSerializerXml.DEFAULT;
+    }
+
+    @Override
     public void checkBreaksRequiredContract( final Data data )
         throws BreaksRequiredContractException
     {

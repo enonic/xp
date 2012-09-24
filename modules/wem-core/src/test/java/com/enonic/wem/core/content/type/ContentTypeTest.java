@@ -149,7 +149,7 @@ public class ContentTypeTest
         catch ( Exception e )
         {
             assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "Template expected to be of type COMPONENT: FORM_ITEM_SET", e.getMessage() );
+            assertEquals( "Template expected to be of type ComponentTemplate: FormItemSetTemplate", e.getMessage() );
         }
     }
 

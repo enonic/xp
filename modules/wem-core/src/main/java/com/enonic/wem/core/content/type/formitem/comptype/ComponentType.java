@@ -22,6 +22,8 @@ public interface ComponentType
 
     AbstractComponentTypeConfigSerializerJson getComponentTypeConfigJsonGenerator();
 
+    AbstractComponentTypeConfigSerializerXml getComponentTypeConfigXmlGenerator();
+
     void checkBreaksRequiredContract( Data data )
         throws BreaksRequiredContractException;
 

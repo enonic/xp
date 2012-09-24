@@ -71,6 +71,12 @@ public abstract class BaseComponentType
     }
 
     @Override
+    public AbstractComponentTypeConfigSerializerXml getComponentTypeConfigXmlGenerator()
+    {
+        return null;
+    }
+
+    @Override
     public void ensureType( final Data data )
     {
         if ( !dataType.equals( DataTypes.DATA_SET ) && data.getDataType().equals( dataType ) )

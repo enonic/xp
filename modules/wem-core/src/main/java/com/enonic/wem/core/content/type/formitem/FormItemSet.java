@@ -97,7 +97,7 @@ public class FormItemSet
     void setParentPath( final FormItemPath parentPath )
     {
         super.setParentPath( parentPath );
-        for ( HierarchicalFormItem formItem : formItems.iterableForDirectAccessFormItems() )
+        for ( HierarchicalFormItem formItem : formItems.iterableForHierarchicalFormItems() )
         {
             formItem.setParentPath( this.getPath() );
         }
@@ -148,9 +148,9 @@ public class FormItemSet
         return new Builder();
     }
 
-    public HierarchicalFormItem getFormItem( final FormItemPath formItemPath )
+    public HierarchicalFormItem getHierarchicalFormItem( final FormItemPath formItemPath )
     {
-        return formItems.getFormItem( formItemPath );
+        return formItems.getHierarchicalFormItem( formItemPath );
     }
 
     public static class Builder

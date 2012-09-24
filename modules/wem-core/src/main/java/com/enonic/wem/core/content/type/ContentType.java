@@ -125,7 +125,7 @@ public class ContentType
 
     public FormItem getFormItem( final String path )
     {
-        return formItems.getFormItem( new FormItemPath( path ) );
+        return formItems.getHierarchicalFormItem( new FormItemPath( path ) );
     }
 
     public Component getComponent( final String path )

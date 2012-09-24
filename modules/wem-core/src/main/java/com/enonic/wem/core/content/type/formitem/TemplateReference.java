@@ -8,7 +8,7 @@ public class TemplateReference
 {
     private TemplateQualifiedName templateQualifiedName;
 
-    private TemplateType templateType;
+    private Class templateType;
 
     private Occurrences occurrences;
 
@@ -24,7 +24,7 @@ public class TemplateReference
         return templateQualifiedName;
     }
 
-    public TemplateType getTemplateType()
+    public Class getTemplateType()
     {
         return templateType;
     }
@@ -51,7 +51,7 @@ public class TemplateReference
     public static Builder newTemplateReference( final Template template )
     {
         Builder builder = new Builder();
-        builder.templateType = template.getType();
+        builder.templateType = template.getType().getSimpleName();
         builder.templateQualifiedName = template.getQualifiedName();
         return builder;
     }
@@ -62,7 +62,7 @@ public class TemplateReference
 
         private String name;
 
-        private TemplateType templateType;
+        private String templateType;
 
         public Builder name( String value )
         {
@@ -82,21 +82,27 @@ public class TemplateReference
             return this;
         }
 
-        public Builder type( TemplateType value )
+        public Builder type( String value )
         {
             this.templateType = value;
             return this;
         }
 
+        public Builder type( Class value )
+        {
+            this.templateType = value.getSimpleName();
+            return this;
+        }
+
         public Builder typeComponent()
         {
-            this.templateType = TemplateType.COMPONENT;
+            this.templateType = ComponentTemplate.class.getSimpleName();
             return this;
         }
 
         public Builder typeFormItemSet()
         {
-            this.templateType = TemplateType.FORM_ITEM_SET;
+            this.templateType = FormItemSetTemplate.class.getSimpleName();
             return this;
         }
 
@@ -109,7 +115,16 @@ public class TemplateReference
             final TemplateReference templateReference = new TemplateReference();
             templateReference.setName( name );
             templateReference.templateQualifiedName = templateQualifiedName;
-            templateReference.templateType = templateType;
+            try
+
+            {
+                final String packageName = this.getClass().getPackage().getName();
+                templateReference.templateType = Class.forName( packageName + "." + templateType );
+            }
+            catch ( ClassNotFoundException e )
+            {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
             return templateReference;
         }
     }

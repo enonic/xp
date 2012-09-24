@@ -113,7 +113,7 @@ public class ContentTypeStepDefs
             FormItemType formItemType = FormItemType.valueOf( row.getCells().get( 2 ) );
             ContentType contentType = contentTypeByName.get( contentTypeName );
             assertNotNull( "formItem not found at path: " + formItemPath,
-                           contentType.getFormItems().getFormItem( new FormItemPath( formItemPath ) ) );
+                           contentType.getFormItems().getHierarchicalFormItem( new FormItemPath( formItemPath ) ) );
             assertEquals( FormItemType.COMPONENT, formItemType );
         }
     }

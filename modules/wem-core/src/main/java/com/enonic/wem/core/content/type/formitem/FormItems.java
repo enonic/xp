@@ -62,7 +62,7 @@ public class FormItems
         }
     }
 
-    public HierarchicalFormItem getFormItem( final FormItemPath path )
+    public HierarchicalFormItem getHierarchicalFormItem( final FormItemPath path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
@@ -79,7 +79,7 @@ public class FormItems
             if ( foundConfig instanceof FormItemSet )
             {
                 FormItemSet formItemSet = (FormItemSet) foundConfig;
-                return formItemSet.getFormItem( path.asNewWithoutFirstPathElement() );
+                return formItemSet.getHierarchicalFormItem( path.asNewWithoutFirstPathElement() );
             }
             else
             {
@@ -136,7 +136,7 @@ public class FormItems
 
     public FormItemSet getFormItemSet( final FormItemPath path )
     {
-        final HierarchicalFormItem formItem = getFormItem( path );
+        final HierarchicalFormItem formItem = getHierarchicalFormItem( path );
         if ( formItem == null )
         {
             return null;
@@ -168,7 +168,7 @@ public class FormItems
 
     public Component getComponent( final FormItemPath path )
     {
-        final HierarchicalFormItem formItem = getFormItem( path );
+        final HierarchicalFormItem formItem = getHierarchicalFormItem( path );
         if ( formItem == null )
         {
             return null;
@@ -191,7 +191,7 @@ public class FormItems
         return items.values();
     }
 
-    public Iterable<HierarchicalFormItem> iterableForDirectAccessFormItems()
+    public Iterable<HierarchicalFormItem> iterableForHierarchicalFormItems()
     {
         return hierarchicalFormItems.values();
     }
@@ -257,8 +257,8 @@ public class FormItems
                 if ( template != null )
                 {
                     Preconditions.checkArgument( templateReference.getTemplateType() == template.getType(),
-                                                 "Template expected to be of type %s: " + template.getType(),
-                                                 templateReference.getTemplateType() );
+                                                 "Template expected to be of type %s: " + template.getType().getSimpleName(),
+                                                 templateReference.getTemplateType().getSimpleName() );
 
                     final HierarchicalFormItem formItemCreatedFromTemplate = template.create( templateReference );
                     if ( formItemCreatedFromTemplate instanceof FormItemSet )

@@ -29,7 +29,7 @@ public abstract class Template
         return new TemplateQualifiedName( module.getName(), getName() );
     }
 
-    public abstract TemplateType getType();
+    public abstract Class getType();
 
     public abstract HierarchicalFormItem create( final TemplateReference templateReference );
 }

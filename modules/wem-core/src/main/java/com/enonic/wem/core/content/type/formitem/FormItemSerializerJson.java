@@ -128,15 +128,15 @@ public class FormItemSerializerJson
         g.writeStringField( "formItemType", TemplateReference.class.getSimpleName() );
         g.writeStringField( "name", templateReference.getName() );
         g.writeStringField( "reference", templateReference.getTemplateQualifiedName().toString() );
-        g.writeStringField( "templateType", templateReference.getTemplateType().toString() );
+        g.writeStringField( "templateType", templateReference.getTemplateType().getSimpleName() );
         g.writeEndObject();
     }
 
     public FormItem parse( final JsonNode formItemNode )
     {
-        String formItemType = JsonParserUtil.getStringValue( "formItemType", formItemNode );
+        final String formItemType = JsonParserUtil.getStringValue( "formItemType", formItemNode );
 
-        FormItem formItem;
+        final FormItem formItem;
 
         if ( formItemType.equals( Component.class.getSimpleName() ) )
         {
@@ -184,7 +184,7 @@ public class FormItemSerializerJson
         final FormItemSet.Builder builder = newFormItemSet();
         builder.name( JsonParserUtil.getStringValue( "name", formItemNode ) );
         builder.label( JsonParserUtil.getStringValue( "label", formItemNode, null ) );
-        builder.immutable( JsonParserUtil.getBooleanValue( "immutable", formItemNode ) );
+        builder.required( JsonParserUtil.getBooleanValue( "required", formItemNode ) );
         builder.immutable( JsonParserUtil.getBooleanValue( "immutable", formItemNode ) );
         builder.helpText( JsonParserUtil.getStringValue( "helpText", formItemNode ) );
         builder.customText( JsonParserUtil.getStringValue( "customText", formItemNode ) );
@@ -202,7 +202,7 @@ public class FormItemSerializerJson
 
     private FormItem parseLayout( final JsonNode formItemNode )
     {
-        String layoutType = JsonParserUtil.getStringValue( "layoutType", formItemNode );
+        final String layoutType = JsonParserUtil.getStringValue( "layoutType", formItemNode );
         if ( layoutType.equals( FieldSet.class.getSimpleName() ) )
         {
             return parseFieldSet( formItemNode );
@@ -233,13 +233,13 @@ public class FormItemSerializerJson
         final TemplateReference.Builder builder = newTemplateReference();
         builder.name( JsonParserUtil.getStringValue( "name", formItemNode ) );
         builder.template( new TemplateQualifiedName( JsonParserUtil.getStringValue( "reference", formItemNode ) ) );
-        builder.type( TemplateType.valueOf( JsonParserUtil.getStringValue( "templateType", formItemNode ) ) );
+        builder.type( JsonParserUtil.getStringValue( "templateType", formItemNode ) );
         return builder.build();
     }
 
     private void parseValidationRegexp( final Component.Builder builder, final JsonNode componentNode )
     {
-        String validationRegexp = JsonParserUtil.getStringValue( "validationRegexp", componentNode, null );
+        final String validationRegexp = JsonParserUtil.getStringValue( "validationRegexp", componentNode, null );
         if ( validationRegexp != null )
         {
             builder.validationRegexp( validationRegexp );

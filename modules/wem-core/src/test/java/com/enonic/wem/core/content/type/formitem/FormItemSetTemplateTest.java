@@ -40,7 +40,8 @@ public class FormItemSetTemplateTest
         catch ( Exception e )
         {
             assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "A template cannot reference other templates unless it is of type COMPONENT: FORM_ITEM_SET", e.getMessage() );
+            assertEquals( "A template cannot reference other templates unless it is of type ComponentTemplate: FormItemSetTemplate",
+                          e.getMessage() );
         }
     }
 

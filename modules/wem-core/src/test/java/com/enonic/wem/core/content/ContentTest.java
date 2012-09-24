@@ -16,7 +16,6 @@ import com.enonic.wem.core.content.type.formitem.FormItemSetTemplate;
 import com.enonic.wem.core.content.type.formitem.InvalidDataException;
 import com.enonic.wem.core.content.type.formitem.MockTemplateFetcher;
 import com.enonic.wem.core.content.type.formitem.TemplateReference;
-import com.enonic.wem.core.content.type.formitem.TemplateType;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.core.content.type.formitem.comptype.DropdownConfig;
 import com.enonic.wem.core.content.type.formitem.comptype.RadioButtonsConfig;
@@ -110,7 +109,7 @@ public class ContentTest
 
         ContentType contentType = new ContentType();
         contentType.addFormItem(
-            TemplateReference.newTemplateReference().name( "myTags" ).template( "system:tags" ).type( TemplateType.COMPONENT ).build() );
+            TemplateReference.newTemplateReference().name( "myTags" ).template( "system:tags" ).type( ComponentTemplate.class ).build() );
         contentType.templateReferencesToFormItems( templateFetcher );
 
         Content content = new Content();

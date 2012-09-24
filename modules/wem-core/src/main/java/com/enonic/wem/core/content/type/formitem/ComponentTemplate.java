@@ -15,9 +15,9 @@ public class ComponentTemplate
     }
 
     @Override
-    public TemplateType getType()
+    public Class getType()
     {
-        return TemplateType.COMPONENT;
+        return this.getClass();
     }
 
     public Component getComponent()

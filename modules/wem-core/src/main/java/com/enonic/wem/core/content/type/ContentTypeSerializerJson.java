@@ -16,10 +16,11 @@ import com.enonic.wem.core.content.JsonParsingException;
 import com.enonic.wem.core.content.type.formitem.FormItemsSerializerJson;
 
 public class ContentTypeSerializerJson
+    implements ContentTypeSerializer
 {
-    private FormItemsSerializerJson formItemsSerializerJson = new FormItemsSerializerJson();
+    private FormItemsSerializerJson formItemsSerializer = new FormItemsSerializerJson();
 
-    public String toJson( ContentType contentType )
+    public String toString( ContentType contentType )
     {
         try
         {
@@ -28,15 +29,9 @@ public class ContentTypeSerializerJson
             g.useDefaultPrettyPrinter();
             g.writeStartObject();
             g.writeStringField( "name", contentType.getName() );
-            if ( contentType.getModule() != null )
-            {
-                g.writeStringField( "module", contentType.getModule().getName() );
-            }
-            else
-            {
-                g.writeNullField( "module" );
-            }
-            formItemsSerializerJson.generate( contentType.getFormItems(), g );
+            g.writeStringField( "module", contentType.getModule().getName() );
+
+            formItemsSerializer.generate( contentType.getFormItems(), g );
             g.writeEndObject();
             g.close();
             sw.close();
@@ -48,7 +43,7 @@ public class ContentTypeSerializerJson
         }
     }
 
-    public ContentType parse( String json )
+    public ContentType toContentType( String json )
     {
         try
         {
@@ -75,7 +70,6 @@ public class ContentTypeSerializerJson
     private ContentType parse( final JsonNode contentTypeNode )
         throws IOException
     {
-        final FormItemsSerializerJson formItemsSerializer = new FormItemsSerializerJson();
         final ContentType contentType = new ContentType();
         contentType.setName( JsonParserUtil.getStringValue( "name", contentTypeNode ) );
 

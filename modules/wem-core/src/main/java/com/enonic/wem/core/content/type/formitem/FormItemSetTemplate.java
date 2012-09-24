@@ -22,9 +22,9 @@ public class FormItemSetTemplate
     }
 
     @Override
-    public TemplateType getType()
+    public Class getType()
     {
-        return TemplateType.FORM_ITEM_SET;
+        return this.getClass();
     }
 
     public void addFormItem( final HierarchicalFormItem formItem )
@@ -32,9 +32,9 @@ public class FormItemSetTemplate
         if ( formItem instanceof TemplateReference )
         {
             TemplateReference templateReference = (TemplateReference) formItem;
-            Preconditions.checkArgument( templateReference.getTemplateType() == TemplateType.COMPONENT,
+            Preconditions.checkArgument( templateReference.getTemplateType().equals( ComponentTemplate.class ),
                                          "A template cannot reference other templates unless it is of type %s: " +
-                                             templateReference.getTemplateType(), TemplateType.COMPONENT );
+                                             templateReference.getTemplateType().getSimpleName(), ComponentTemplate.class.getSimpleName() );
         }
         formItemSet.addFormItem( formItem );
     }

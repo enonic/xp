@@ -31,6 +31,12 @@ public class Dropdown
     }
 
     @Override
+    public AbstractComponentTypeConfigSerializerXml getComponentTypeConfigXmlGenerator()
+    {
+        return DropdownConfigSerializerXml.DEFAULT;
+    }
+
+    @Override
     public void checkBreaksRequiredContract( final Data data )
         throws BreaksRequiredContractException
     {
