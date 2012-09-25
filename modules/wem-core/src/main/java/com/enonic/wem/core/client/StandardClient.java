@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandInvoker;
 import com.enonic.wem.core.jcr.old.SessionFactory;
 
@@ -26,7 +27,7 @@ public final class StandardClient
 
     private void doInvoke( final Command command )
     {
-        final CommandContextImpl context = createContext();
+        final CommandContext context = createContext();
 
         try
         {
@@ -50,9 +51,9 @@ public final class StandardClient
         this.sessionFactory = sessionFactory;
     }
 
-    private CommandContextImpl createContext()
+    private CommandContext createContext()
     {
-        final CommandContextImpl context = new CommandContextImpl();
+        final CommandContext context = new CommandContext();
         context.setClient( this );
 //        context.setJcrSession( this.sessionFactory.getSession() );
         return context;
