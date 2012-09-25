@@ -8,11 +8,10 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.userstore.FindAllUserStores;
 import com.enonic.wem.api.userstore.UserStoreNames;
-import com.enonic.wem.core.client.StandardClient;
-import com.enonic.wem.core.command.CommandInvokerImpl;
+import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
 import com.enonic.cms.core.security.userstore.UserStoreKey;
@@ -21,28 +20,27 @@ import com.enonic.cms.store.dao.UserStoreDao;
 import static org.junit.Assert.*;
 
 public class FindAllUserStoresHandlerTest
+    extends AbstractCommandHandlerTest
 {
-    private Client client;
-
     private UserStoreDao userStoreDao;
+
+    private FindAllUserStoresHandler handler;
 
     @Before
     public void setUp()
+        throws Exception
     {
+        super.initialize();
+
         userStoreDao = Mockito.mock( UserStoreDao.class );
 
-        final FindAllUserStoresHandler handler = new FindAllUserStoresHandler();
+        handler = new FindAllUserStoresHandler();
         handler.setUserStoreDao( userStoreDao );
-
-        final StandardClient standardClient = new StandardClient();
-        final CommandInvokerImpl commandInvoker = new CommandInvokerImpl();
-        commandInvoker.setHandlers( handler );
-        standardClient.setInvoker( commandInvoker );
-        client = standardClient;
     }
 
     @Test
     public void testFindAllUserStores()
+        throws Exception
     {
         UserStoreEntity defaultUserstore = createUserStore( "default" );
         UserStoreEntity enonicUserstore = createUserStore( "enonic" );
@@ -50,7 +48,9 @@ public class FindAllUserStoresHandlerTest
 
         Mockito.when( userStoreDao.findAll() ).thenReturn( userStores );
 
-        UserStoreNames userStoreNames = client.execute( Commands.userStore().findAll() );
+        final FindAllUserStores command = Commands.userStore().findAll();
+        this.handler.handle( this.context, command );
+        UserStoreNames userStoreNames = command.getResult();
 
         assertEquals( UserStoreNames.from( "default", "enonic" ), userStoreNames );
     }

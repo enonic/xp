@@ -16,7 +16,6 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
@@ -29,8 +28,8 @@ import com.enonic.wem.api.account.profile.Addresses;
 import com.enonic.wem.api.account.profile.Gender;
 import com.enonic.wem.api.account.profile.UserProfile;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.core.client.StandardClient;
-import com.enonic.wem.core.command.CommandInvokerImpl;
+import com.enonic.wem.api.command.account.UpdateAccounts;
+import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.search.account.AccountSearchService;
 
 import com.enonic.cms.core.security.SecurityService;
@@ -53,9 +52,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 
 public class UpdateAccountsHandlerTest
+    extends AbstractCommandHandlerTest
 {
-    private Client client;
-
     private UserDao userDao;
 
     private GroupDao groupDao;
@@ -64,10 +62,14 @@ public class UpdateAccountsHandlerTest
 
     private SecurityService securityService;
 
+    private UpdateAccountsHandler handler;
+
     @Before
     public void setUp()
         throws Exception
     {
+        super.initialize();
+
         userDao = Mockito.mock( UserDao.class );
         groupDao = Mockito.mock( GroupDao.class );
         userStoreDao = Mockito.mock( UserStoreDao.class );
@@ -75,19 +77,13 @@ public class UpdateAccountsHandlerTest
         final UserStoreService userStoreService = Mockito.mock( UserStoreService.class );
         final AccountSearchService accountSearchService = Mockito.mock( AccountSearchService.class );
 
-        final UpdateAccountsHandler updateAccountsHandler = new UpdateAccountsHandler();
-        updateAccountsHandler.setUserDao( userDao );
-        updateAccountsHandler.setGroupDao( groupDao );
-        updateAccountsHandler.setSecurityService( securityService );
-        updateAccountsHandler.setUserStoreService( userStoreService );
-        updateAccountsHandler.setUserStoreDao( userStoreDao );
-        updateAccountsHandler.setSearchService( accountSearchService );
-
-        final StandardClient standardClient = new StandardClient();
-        final CommandInvokerImpl commandInvoker = new CommandInvokerImpl();
-        commandInvoker.setHandlers( updateAccountsHandler );
-        standardClient.setInvoker( commandInvoker );
-        client = standardClient;
+        handler = new UpdateAccountsHandler();
+        handler.setUserDao( userDao );
+        handler.setGroupDao( groupDao );
+        handler.setSecurityService( securityService );
+        handler.setUserStoreService( userStoreService );
+        handler.setUserStoreDao( userStoreDao );
+        handler.setSearchService( accountSearchService );
     }
 
     @Test
@@ -105,7 +101,7 @@ public class UpdateAccountsHandlerTest
         final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "role:enonic:contributors", "user:enonic:user1" );
 
         final Set<AccountKey> keysEdited = Sets.newHashSet();
-        final Integer totalUpdated = client.execute( Commands.account().update().keys( accounts ).editor( new AccountEditor()
+        final UpdateAccounts command = Commands.account().update().keys( accounts ).editor( new AccountEditor()
         {
             @Override
             public boolean edit( final Account account )
@@ -114,7 +110,9 @@ public class UpdateAccountsHandlerTest
                 keysEdited.add( account.getKey() );
                 return false;
             }
-        } ) );
+        } );
+        this.handler.handle( this.context, command );
+        final Integer totalUpdated = command.getResult();
 
         // verify
         assertNotNull( totalUpdated );
@@ -144,7 +142,7 @@ public class UpdateAccountsHandlerTest
         final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "role:enonic:contributors" );
 
         final Set<AccountKey> keysEdited = Sets.newHashSet();
-        final Integer totalUpdated = client.execute( Commands.account().update().keys( accounts ).editor( new AccountEditor()
+        final UpdateAccounts command = Commands.account().update().keys( accounts ).editor( new AccountEditor()
         {
             @Override
             public boolean edit( final Account account )
@@ -164,7 +162,9 @@ public class UpdateAccountsHandlerTest
                 keysEdited.add( account.getKey() );
                 return true;
             }
-        } ) );
+        } );
+        this.handler.handle( this.context, command );
+        final Integer totalUpdated = command.getResult();
 
         // verify
         assertNotNull( totalUpdated );
@@ -187,7 +187,7 @@ public class UpdateAccountsHandlerTest
         final AccountKeys accounts = AccountKeys.from( "user:enonic:user1", "user:enonic:user2", "user:enonic:user3" );
 
         final Set<AccountKey> keysEdited = Sets.newHashSet();
-        final Integer totalUpdated = client.execute( Commands.account().update().keys( accounts ).editor( new AccountEditor()
+        final UpdateAccounts command = Commands.account().update().keys( accounts ).editor( new AccountEditor()
         {
             @Override
             public boolean edit( final Account account )
@@ -236,7 +236,9 @@ public class UpdateAccountsHandlerTest
                 keysEdited.add( account.getKey() );
                 return true;
             }
-        } ) );
+        } );
+        this.handler.handle( this.context, command );
+        final Integer totalUpdated = command.getResult();
 
         // verify
         assertNotNull( totalUpdated );
@@ -255,7 +257,7 @@ public class UpdateAccountsHandlerTest
         final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "role:enonic:contributors", "user:enonic:user1" );
 
         final Set<AccountKey> keysEdited = Sets.newHashSet();
-        final Integer totalUpdated = client.execute( Commands.account().update().keys( accounts ).editor( new AccountEditor()
+        final UpdateAccounts command = Commands.account().update().keys( accounts ).editor( new AccountEditor()
         {
             @Override
             public boolean edit( final Account account )
@@ -265,7 +267,9 @@ public class UpdateAccountsHandlerTest
                 keysEdited.add( account.getKey() );
                 return true;
             }
-        } ) );
+        } );
+        this.handler.handle( this.context, command );
+        final Integer totalUpdated = command.getResult();
 
         // verify
         assertNotNull( totalUpdated );

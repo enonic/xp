@@ -8,14 +8,12 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.userstore.UpdateUserStores;
 import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.UserStoreNames;
 import com.enonic.wem.api.userstore.editor.UserStoreEditor;
-import com.enonic.wem.core.client.StandardClient;
-import com.enonic.wem.core.command.CommandInvokerImpl;
 import com.enonic.wem.core.search.account.AccountSearchService;
 
 import com.enonic.cms.core.security.SecurityService;
@@ -47,13 +45,16 @@ public class UpdateUserStoresHandlerTest
 
     private GroupDao groupDao;
 
-    private Client client;
-
     private UserStoreConnectorManager userStoreConnectorManager;
+
+    private UpdateUserStoresHandler handler;
 
     @Before
     public void setUp()
+        throws Exception
     {
+        super.initialize();
+
         userStoreService = Mockito.mock( UserStoreService.class );
         userDao = Mockito.mock( UserDao.class );
         userStoreDao = Mockito.mock( UserStoreDao.class );
@@ -62,7 +63,7 @@ public class UpdateUserStoresHandlerTest
         groupDao = Mockito.mock( GroupDao.class );
         userStoreConnectorManager = Mockito.mock( UserStoreConnectorManager.class );
 
-        UpdateUserStoresHandler handler = new UpdateUserStoresHandler();
+        handler = new UpdateUserStoresHandler();
         handler.setUserDao( userDao );
         handler.setUserStoreService( userStoreService );
         handler.setUserStoreDao( userStoreDao );
@@ -70,14 +71,6 @@ public class UpdateUserStoresHandlerTest
         handler.setSearchService( searchService );
         handler.setGroupDao( groupDao );
         handler.setUserStoreConnectorManager( userStoreConnectorManager );
-
-        StandardClient standardClient = new StandardClient();
-        CommandInvokerImpl commandInvoker = new CommandInvokerImpl();
-        commandInvoker.setHandlers( handler );
-        standardClient.setInvoker( commandInvoker );
-
-        client = standardClient;
-
     }
 
     @Test
@@ -101,8 +94,8 @@ public class UpdateUserStoresHandlerTest
 
         final List<UserStoreName> names = Lists.newArrayList();
         UserStoreNames userStores = UserStoreNames.from( "default", "enonic" );
-        Integer result =
-            client.execute( Commands.userStore().update().names( UserStoreNames.from( "default", "enonic" ) ).editor( new UserStoreEditor()
+        final UpdateUserStores command =
+            Commands.userStore().update().names( UserStoreNames.from( "default", "enonic" ) ).editor( new UserStoreEditor()
             {
                 @Override
                 public boolean edit( final UserStore userStore )
@@ -111,7 +104,9 @@ public class UpdateUserStoresHandlerTest
                     names.add( userStore.getName() );
                     return true;
                 }
-            } ) );
+            } );
+        this.handler.handle( this.context, command );
+        Integer result = command.getResult();
         assertNotNull( result );
         assertEquals( 2l, result.longValue() );
         assertEquals( userStores, UserStoreNames.from( names ) );

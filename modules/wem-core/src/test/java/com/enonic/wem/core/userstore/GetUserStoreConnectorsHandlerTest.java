@@ -8,12 +8,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.userstore.GetUserStoreConnectors;
 import com.enonic.wem.api.userstore.connector.UserStoreConnector;
 import com.enonic.wem.api.userstore.connector.UserStoreConnectors;
-import com.enonic.wem.core.client.StandardClient;
-import com.enonic.wem.core.command.CommandInvokerImpl;
+import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
 import com.enonic.cms.core.security.userstore.UserStoreConnectorManager;
 import com.enonic.cms.core.security.userstore.connector.config.GroupPolicyConfig;
@@ -21,30 +20,27 @@ import com.enonic.cms.core.security.userstore.connector.config.UserPolicyConfig;
 import com.enonic.cms.core.security.userstore.connector.config.UserStoreConnectorConfig;
 
 public class GetUserStoreConnectorsHandlerTest
+    extends AbstractCommandHandlerTest
 {
-
-    private Client client;
-
     private UserStoreConnectorManager userStoreConnectorManager;
+
+    private GetUserStoreConnectorsHandler handler;
 
     @Before
     public void setUp()
+        throws Exception
     {
+        super.initialize();
+
         userStoreConnectorManager = Mockito.mock( UserStoreConnectorManager.class );
 
-        final GetUserStoreConnectorsHandler handler = new GetUserStoreConnectorsHandler();
+        handler = new GetUserStoreConnectorsHandler();
         handler.setUserStoreConnectorManager( userStoreConnectorManager );
-
-        final StandardClient standardClient = new StandardClient();
-        final CommandInvokerImpl commandInvoker = new CommandInvokerImpl();
-        commandInvoker.setHandlers( handler );
-        standardClient.setInvoker( commandInvoker );
-
-        client = standardClient;
     }
 
     @Test
     public void testGetUserStoreConnectors()
+        throws Exception
     {
         Map<String, UserStoreConnectorConfig> userStoreConnectorConfigs = new HashMap<String, UserStoreConnectorConfig>();
         userStoreConnectorConfigs.put( "ad", createUserStoreConnectorConfig( "ad" ) );
@@ -52,7 +48,9 @@ public class GetUserStoreConnectorsHandlerTest
         UserStoreConnectors expectedResult =
             UserStoreConnectors.from( Arrays.asList( createUserStoreConnector( "ad" ), createUserStoreConnector( "enonic" ) ) );
         Mockito.when( userStoreConnectorManager.getUserStoreConnectorConfigs() ).thenReturn( userStoreConnectorConfigs );
-        UserStoreConnectors actualResult = client.execute( Commands.userStore().getConnectors() );
+        final GetUserStoreConnectors command = Commands.userStore().getConnectors();
+        this.handler.handle( this.context, command );
+        UserStoreConnectors actualResult = command.getResult();
 
         assert ( expectedResult.getList().containsAll( actualResult.getList() ) );
 

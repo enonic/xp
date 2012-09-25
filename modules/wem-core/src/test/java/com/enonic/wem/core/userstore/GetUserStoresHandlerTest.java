@@ -12,14 +12,13 @@ import org.mockito.Mockito;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.userstore.GetUserStores;
 import com.enonic.wem.api.exception.UserStoreNotFoundException;
 import com.enonic.wem.api.userstore.UserStoreNames;
 import com.enonic.wem.api.userstore.UserStores;
-import com.enonic.wem.core.client.StandardClient;
-import com.enonic.wem.core.command.CommandInvokerImpl;
+import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.group.GroupKey;
@@ -44,9 +43,8 @@ import com.enonic.cms.store.dao.UserStoreDao;
 import static org.junit.Assert.*;
 
 public class GetUserStoresHandlerTest
+    extends AbstractCommandHandlerTest
 {
-    private Client client;
-
     private UserStoreDao userStoreDao;
 
     private GroupDao groupDao;
@@ -55,29 +53,29 @@ public class GetUserStoresHandlerTest
 
     private UserStoreConnectorManager userStoreConnectorManager;
 
+    private GetUserStoresHandler handler;
+
     @Before
     public void setUp()
+        throws Exception
     {
+        super.initialize();
+
         userStoreDao = Mockito.mock( UserStoreDao.class );
         groupDao = Mockito.mock( GroupDao.class );
         userStoreService = Mockito.mock( UserStoreService.class );
         userStoreConnectorManager = Mockito.mock( UserStoreConnectorManager.class );
 
-        final GetUserStoresHandler handler = new GetUserStoresHandler();
+        handler = new GetUserStoresHandler();
         handler.setUserStoreDao( userStoreDao );
         handler.setGroupDao( groupDao );
         handler.setUserStoreService( userStoreService );
         handler.setUserStoreConnectorManager( userStoreConnectorManager );
-
-        final StandardClient standardClient = new StandardClient();
-        final CommandInvokerImpl commandInvoker = new CommandInvokerImpl();
-        commandInvoker.setHandlers( handler );
-        standardClient.setInvoker( commandInvoker );
-        client = standardClient;
     }
 
     @Test
     public void testGetUserStores()
+        throws Exception
     {
         // setup
         final UserStoreEntity defaultUserstore = createUserStore( "default" );
@@ -101,8 +99,10 @@ public class GetUserStoresHandlerTest
         Mockito.when( userStoreConnectorManager.getUserStoreConnectorConfig( enonicUserstore.getKey() ) ).thenReturn( connectorConfig );
 
         // exercise
-        final UserStores userStores = client.execute( Commands.userStore().get().names(
-            UserStoreNames.from( "enonic", "default" ) ).includeConfig().includeConnector().includeStatistics() );
+        final GetUserStores command = Commands.userStore().get().names(
+            UserStoreNames.from( "enonic", "default" ) ).includeConfig().includeConnector().includeStatistics();
+        this.handler.handle( this.context, command );
+        final UserStores userStores = command.getResult();
 
         //verify
         assertNotNull( userStores );
@@ -126,8 +126,10 @@ public class GetUserStoresHandlerTest
 
     @Test(expected = UserStoreNotFoundException.class)
     public void testGetUserStoresNotFound()
+        throws Exception
     {
-        client.execute( Commands.userStore().get().names( UserStoreNames.from( "enonic" ) ) );
+        final GetUserStores command = Commands.userStore().get().names( UserStoreNames.from( "enonic" ) );
+        this.handler.handle( this.context, command );
     }
 
     private UserStoreConfig createUserStoreConfig()

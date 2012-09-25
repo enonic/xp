@@ -12,12 +12,11 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.core.client.StandardClient;
-import com.enonic.wem.core.command.CommandInvokerImpl;
+import com.enonic.wem.api.command.account.DeleteAccounts;
+import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.search.account.AccountSearchService;
 
 import com.enonic.cms.core.security.group.GroupEntity;
@@ -36,10 +35,9 @@ import com.enonic.cms.store.dao.UserStoreDao;
 import static org.junit.Assert.*;
 
 public class DeleteAccountHandlerTest
+    extends AbstractCommandHandlerTest
 {
     private static final String USERSTORE_KEY = "12345";
-
-    private Client client;
 
     private UserDao userDao;
 
@@ -47,28 +45,26 @@ public class DeleteAccountHandlerTest
 
     private UserStoreDao userStoreDao;
 
+    private DeleteAccountsHandler handler;
+
     @Before
     public void setUp()
         throws Exception
     {
+        super.initialize();
+
         userDao = Mockito.mock( UserDao.class );
         groupDao = Mockito.mock( GroupDao.class );
         userStoreDao = Mockito.mock( UserStoreDao.class );
         UserStoreService userStoreService = Mockito.mock( UserStoreService.class );
         final AccountSearchService accountSearchService = Mockito.mock( AccountSearchService.class );
 
-        final DeleteAccountsHandler deleteAccountsHandler = new DeleteAccountsHandler();
-        deleteAccountsHandler.setUserDao( userDao );
-        deleteAccountsHandler.setGroupDao( groupDao );
-        deleteAccountsHandler.setUserStoreDao( userStoreDao );
-        deleteAccountsHandler.setUserStoreService( userStoreService );
-        deleteAccountsHandler.setSearchService( accountSearchService );
-
-        final StandardClient standardClient = new StandardClient();
-        final CommandInvokerImpl commandInvoker = new CommandInvokerImpl();
-        commandInvoker.setHandlers( deleteAccountsHandler );
-        standardClient.setInvoker( commandInvoker );
-        client = standardClient;
+        handler = new DeleteAccountsHandler();
+        handler.setUserDao( userDao );
+        handler.setGroupDao( groupDao );
+        handler.setUserStoreDao( userStoreDao );
+        handler.setUserStoreService( userStoreService );
+        handler.setSearchService( accountSearchService );
     }
 
     @Test
@@ -95,8 +91,9 @@ public class DeleteAccountHandlerTest
         Mockito.when( role1.isBuiltIn() ).thenReturn( true );
 
         // exercise
-        final Integer deletedCount =
-            client.execute( Commands.account().delete().keys( AccountKeys.from( account1, account2, account3 ) ) );
+        final DeleteAccounts command = Commands.account().delete().keys( AccountKeys.from( account1, account2, account3 ) );
+        this.handler.handle( this.context, command );
+        final Integer deletedCount = command.getResult();
 
         // verify
         assertNotNull( deletedCount );
@@ -114,8 +111,9 @@ public class DeleteAccountHandlerTest
         createUserStore( account1.getUserStore(), USERSTORE_KEY );
 
         // exercise
-        final Integer deletedCount =
-            client.execute( Commands.account().delete().keys( AccountKeys.from( account1, account2, account3 ) ) );
+        final DeleteAccounts command = Commands.account().delete().keys( AccountKeys.from( account1, account2, account3 ) );
+        this.handler.handle( this.context, command );
+        final Integer deletedCount = command.getResult();
 
         // verify
         assertNotNull( deletedCount );
@@ -129,9 +127,11 @@ public class DeleteAccountHandlerTest
         final AccountKey account1 = AccountKey.user( "enonic:joe" );
         final AccountKey account2 = AccountKey.group( "enonic:people" );
         final AccountKey account3 = AccountKey.role( "enonic:admin" );
+
         // exercise
-        final Integer deletedCount =
-            client.execute( Commands.account().delete().keys( AccountKeys.from( account1, account2, account3 ) ) );
+        final DeleteAccounts command = Commands.account().delete().keys( AccountKeys.from( account1, account2, account3 ) );
+        this.handler.handle( this.context, command );
+        final Integer deletedCount = command.getResult();
 
         // verify
         assertNotNull( deletedCount );

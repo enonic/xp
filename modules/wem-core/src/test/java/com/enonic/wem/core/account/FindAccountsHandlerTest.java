@@ -12,14 +12,13 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.api.account.query.AccountFacet;
-import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.account.query.AccountQuery;
+import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.core.client.StandardClient;
-import com.enonic.wem.core.command.CommandInvokerImpl;
+import com.enonic.wem.api.command.account.FindAccounts;
+import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.search.Facet;
 import com.enonic.wem.core.search.FacetEntry;
 import com.enonic.wem.core.search.account.AccountKey;
@@ -41,13 +40,11 @@ import com.enonic.cms.store.dao.UserDao;
 import com.enonic.cms.store.dao.UserStoreDao;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
 public class FindAccountsHandlerTest
+    extends AbstractCommandHandlerTest
 {
-    private Client client;
-
     private UserDao userDao;
 
     private GroupDao groupDao;
@@ -56,26 +53,24 @@ public class FindAccountsHandlerTest
 
     private AccountSearchService accountSearchService;
 
+    private FindAccountsHandler handler;
+
 
     @Before
     public void setUp()
         throws Exception
     {
+        super.initialize();
+
         userDao = Mockito.mock( UserDao.class );
         groupDao = Mockito.mock( GroupDao.class );
         userStoreDao = Mockito.mock( UserStoreDao.class );
         accountSearchService = Mockito.mock( AccountSearchService.class );
 
-        final FindAccountsHandler findAccountsHandler = new FindAccountsHandler();
-        findAccountsHandler.setUserDao( userDao );
-        findAccountsHandler.setGroupDao( groupDao );
-        findAccountsHandler.setAccountSearchService( accountSearchService );
-
-        final StandardClient standardClient = new StandardClient();
-        final CommandInvokerImpl commandInvoker = new CommandInvokerImpl();
-        commandInvoker.setHandlers( findAccountsHandler );
-        standardClient.setInvoker( commandInvoker );
-        client = standardClient;
+        handler = new FindAccountsHandler();
+        handler.setUserDao( userDao );
+        handler.setGroupDao( groupDao );
+        handler.setAccountSearchService( accountSearchService );
     }
 
     @Test
@@ -101,7 +96,9 @@ public class FindAccountsHandlerTest
         // exercise
         final AccountQuery query = new AccountQuery().offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.USER );
 
-        AccountQueryHits accountResult = client.execute( Commands.account().find().query( query ) );
+        final FindAccounts command = Commands.account().find().query( query );
+        this.handler.handle( this.context, command );
+        AccountQueryHits accountResult = command.getResult();
 
         // verify
         assertNotNull( accountResult );
@@ -139,7 +136,9 @@ public class FindAccountsHandlerTest
         final AccountQuery query =
             new AccountQuery().offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.GROUP, AccountType.ROLE );
 
-        AccountQueryHits accountResult = client.execute( Commands.account().find().query( query ) );
+        final FindAccounts command = Commands.account().find().query( query );
+        this.handler.handle( this.context, command );
+        AccountQueryHits accountResult = command.getResult();
 
         // verify
         assertNotNull( accountResult );
@@ -182,7 +181,9 @@ public class FindAccountsHandlerTest
         final AccountQuery query =
             new AccountQuery().offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.GROUP, AccountType.ROLE );
 
-        AccountQueryHits accountResult = client.execute( Commands.account().find().query( query ) );
+        final FindAccounts command = Commands.account().find().query( query );
+        this.handler.handle( this.context, command );
+        AccountQueryHits accountResult = command.getResult();
 
         // verify
         assertNotNull( accountResult );
@@ -193,8 +194,8 @@ public class FindAccountsHandlerTest
         AccountFacet facetInResults = accountResult.getFacets().getFacet( "organization" );
         assertNotNull( facetInResults );
         assertEquals( 3, facetInResults.getEntries().size() );
-        assertEquals( "organization",facetInResults.getName());
-        assertEquals( 3, facetInResults.getEntries().size());
+        assertEquals( "organization", facetInResults.getName() );
+        assertEquals( 3, facetInResults.getEntries().size() );
     }
 
     private void addMembers( final GroupEntity group, final GroupEntity... members )

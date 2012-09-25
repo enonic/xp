@@ -4,11 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.userstore.DeleteUserStores;
 import com.enonic.wem.api.userstore.UserStoreNames;
-import com.enonic.wem.core.client.StandardClient;
-import com.enonic.wem.core.command.CommandInvokerImpl;
 
 import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.core.security.userstore.UserStoreService;
@@ -21,13 +19,13 @@ import static org.junit.Assert.*;
 public class DeleteUserStoresHandlerTest
     extends AbstractUserStoreHandlerTest
 {
-    private Client client;
-
     private UserDao userDao;
 
     private UserStoreDao userStoreDao;
 
     private GroupDao groupDao;
+
+    private DeleteUserStoresHandler handler;
 
     @Before
     public void setUp()
@@ -37,17 +35,10 @@ public class DeleteUserStoresHandlerTest
         groupDao = Mockito.mock( GroupDao.class );
         UserStoreService userStoreService = Mockito.mock( UserStoreService.class );
 
-        final DeleteUserStoresHandler handler = new DeleteUserStoresHandler();
+        handler = new DeleteUserStoresHandler();
         handler.setUserDao( userDao );
         handler.setUserStoreDao( userStoreDao );
         handler.setUserStoreService( userStoreService );
-
-        final StandardClient standardClient = new StandardClient();
-        final CommandInvokerImpl commandInvoker = new CommandInvokerImpl();
-        commandInvoker.setHandlers( handler );
-        standardClient.setInvoker( commandInvoker );
-
-        client = standardClient;
     }
 
     @Test
@@ -60,7 +51,9 @@ public class DeleteUserStoresHandlerTest
         createUserStore( "default", "1" );
         createUserStore( "enonic", "2" );
 
-        final Integer deletedCount = client.execute( Commands.userStore().delete().names( UserStoreNames.from( "default", "enonic" ) ) );
+        final DeleteUserStores command = Commands.userStore().delete().names( UserStoreNames.from( "default", "enonic" ) );
+        this.handler.handle( this.context, command );
+        final Integer deletedCount = command.getResult();
 
         assertNotNull( deletedCount );
         assertEquals( 2, deletedCount.intValue() );
@@ -74,7 +67,9 @@ public class DeleteUserStoresHandlerTest
         final UserEntity admin = createUser( "10000", "system", "admin" );
         Mockito.when( userDao.findBuiltInEnterpriseAdminUser() ).thenReturn( admin );
 
-        final Integer deletedCount = client.execute( Commands.userStore().delete().names( UserStoreNames.from( "default", "enonic" ) ) );
+        final DeleteUserStores command = Commands.userStore().delete().names( UserStoreNames.from( "default", "enonic" ) );
+        this.handler.handle( this.context, command );
+        final Integer deletedCount = command.getResult();
 
         assertNotNull( deletedCount );
         assertEquals( 0, deletedCount.intValue() );
@@ -89,7 +84,9 @@ public class DeleteUserStoresHandlerTest
         Mockito.when( userDao.findBuiltInEnterpriseAdminUser() ).thenReturn( admin );
         createUserStore( "enonic", "2" );
 
-        final Integer deletedCount = client.execute( Commands.userStore().delete().names( UserStoreNames.from( "default", "enonic" ) ) );
+        final DeleteUserStores command = Commands.userStore().delete().names( UserStoreNames.from( "default", "enonic" ) );
+        this.handler.handle( this.context, command );
+        final Integer deletedCount = command.getResult();
 
         assertNotNull( deletedCount );
         assertEquals( 1, deletedCount.intValue() );

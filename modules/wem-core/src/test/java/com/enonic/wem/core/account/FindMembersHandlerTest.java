@@ -10,13 +10,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.account.FindMembers;
 import com.enonic.wem.api.exception.AccountNotFoundException;
-import com.enonic.wem.core.client.StandardClient;
-import com.enonic.wem.core.command.CommandInvokerImpl;
+import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.group.GroupKey;
@@ -34,10 +33,9 @@ import com.enonic.cms.store.dao.UserStoreDao;
 import static org.junit.Assert.*;
 
 public class FindMembersHandlerTest
+    extends AbstractCommandHandlerTest
 {
     private static final String USERSTORE_KEY = "12345";
-
-    private Client client;
 
     private UserDao userDao;
 
@@ -45,23 +43,21 @@ public class FindMembersHandlerTest
 
     private UserStoreDao userStoreDao;
 
+    private FindMembersHandler handler;
+
     @Before
     public void setUp()
         throws Exception
     {
+        super.initialize();
+
         userDao = Mockito.mock( UserDao.class );
         groupDao = Mockito.mock( GroupDao.class );
         userStoreDao = Mockito.mock( UserStoreDao.class );
 
-        final FindMembersHandler findMembersHandler = new FindMembersHandler();
-        findMembersHandler.setGroupDao( groupDao );
-        findMembersHandler.setUserStoreDao( userStoreDao );
-
-        final StandardClient standardClient = new StandardClient();
-        final CommandInvokerImpl commandInvoker = new CommandInvokerImpl();
-        commandInvoker.setHandlers( findMembersHandler );
-        standardClient.setInvoker( commandInvoker );
-        client = standardClient;
+        handler = new FindMembersHandler();
+        handler.setGroupDao( groupDao );
+        handler.setUserStoreDao( userStoreDao );
     }
 
     @Test
@@ -87,7 +83,9 @@ public class FindMembersHandlerTest
             createGroup( "12345", groupAccount.getUserStore(), groupAccount.getLocalName(), groupMember1, groupMember2, groupMemberRole );
 
         // exercise
-        final AccountKeys members = client.execute( Commands.account().findMembers().key( groupAccount ) );
+        final FindMembers command = Commands.account().findMembers().key( groupAccount );
+        this.handler.handle( this.context, command );
+        final AccountKeys members = command.getResult();
 
         // verify
         assertNotNull( members );
@@ -121,7 +119,9 @@ public class FindMembersHandlerTest
         createGroup( "12345", groupAccount.getUserStore(), groupAccount.getLocalName(), groupMember1, groupMember2, groupMemberRole );
 
         // exercise
-        final AccountKeys members = client.execute( Commands.account().findMembers().key( groupAccount ).includeTransitive() );
+        final FindMembers command = Commands.account().findMembers().key( groupAccount ).includeTransitive();
+        this.handler.handle( this.context, command );
+        final AccountKeys members = command.getResult();
 
         // verify
         assertNotNull( members );
@@ -139,15 +139,17 @@ public class FindMembersHandlerTest
         final AccountKey groupAccount = AccountKey.group( "enonic:group1" );
         createUserStore( groupAccount.getUserStore(), USERSTORE_KEY );
 
-        client.execute( Commands.account().findMembers().key( groupAccount ) );
+        final FindMembers command = Commands.account().findMembers().key( groupAccount );
+        this.handler.handle( this.context, command );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = AccountNotFoundException.class)
     public void testFindMembersUserAccount()
         throws Exception
     {
-        final AccountKey groupAccount = AccountKey.user( "enonic:user1" );
-        client.execute( Commands.account().findMembers().key( groupAccount ) );
+        final AccountKey userAccount = AccountKey.user( "enonic:user1" );
+        final FindMembers command = Commands.account().findMembers().key( userAccount );
+        this.handler.handle( this.context, command );
     }
 
     private GroupEntity createGroup( final String key, final String userStore, final String name, final GroupEntity... members )

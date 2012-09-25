@@ -12,13 +12,12 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.account.FindMemberships;
 import com.enonic.wem.api.exception.AccountNotFoundException;
-import com.enonic.wem.core.client.StandardClient;
-import com.enonic.wem.core.command.CommandInvokerImpl;
+import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.group.GroupKey;
@@ -36,10 +35,9 @@ import com.enonic.cms.store.dao.UserStoreDao;
 import static org.junit.Assert.*;
 
 public class FindMembershipsHandlerTest
+    extends AbstractCommandHandlerTest
 {
     private static final String USERSTORE_KEY = "12345";
-
-    private Client client;
 
     private UserDao userDao;
 
@@ -47,24 +45,22 @@ public class FindMembershipsHandlerTest
 
     private UserStoreDao userStoreDao;
 
+    private FindMembershipsHandler handler;
+
     @Before
     public void setUp()
         throws Exception
     {
+        super.initialize();
+
         userDao = Mockito.mock( UserDao.class );
         groupDao = Mockito.mock( GroupDao.class );
         userStoreDao = Mockito.mock( UserStoreDao.class );
 
-        final FindMembershipsHandler findMembershipsHandler = new FindMembershipsHandler();
-        findMembershipsHandler.setGroupDao( groupDao );
-        findMembershipsHandler.setUserDao( userDao );
-        findMembershipsHandler.setUserStoreDao( userStoreDao );
-
-        final StandardClient standardClient = new StandardClient();
-        final CommandInvokerImpl commandInvoker = new CommandInvokerImpl();
-        commandInvoker.setHandlers( findMembershipsHandler );
-        standardClient.setInvoker( commandInvoker );
-        client = standardClient;
+        handler = new FindMembershipsHandler();
+        handler.setGroupDao( groupDao );
+        handler.setUserDao( userDao );
+        handler.setUserStoreDao( userStoreDao );
     }
 
     @Test
@@ -84,7 +80,9 @@ public class FindMembershipsHandlerTest
         user.getUserGroup().setMemberships( memberships );
 
         // exercise
-        final AccountKeys members = client.execute( Commands.account().findMemberships().key( account ) );
+        final FindMemberships command = Commands.account().findMemberships().key( account );
+        this.handler.handle( this.context, command );
+        final AccountKeys members = command.getResult();
 
         // verify
         assertNotNull( members );
@@ -111,7 +109,9 @@ public class FindMembershipsHandlerTest
         group.setMemberships( memberships );
 
         // exercise
-        final AccountKeys members = client.execute( Commands.account().findMemberships().key( account ) );
+        final FindMemberships command = Commands.account().findMemberships().key( account );
+        this.handler.handle( this.context, command );
+        final AccountKeys members = command.getResult();
 
         // verify
         assertNotNull( members );
@@ -141,7 +141,9 @@ public class FindMembershipsHandlerTest
         user.getUserGroup().setMemberships( memberships );
 
         // exercise
-        final AccountKeys members = client.execute( Commands.account().findMemberships().key( account ).includeTransitive() );
+        final FindMemberships command = Commands.account().findMemberships().key( account ).includeTransitive();
+        this.handler.handle( this.context, command );
+        final AccountKeys members = command.getResult();
 
         // verify
         assertNotNull( members );
@@ -158,15 +160,17 @@ public class FindMembershipsHandlerTest
         final AccountKey groupAccount = AccountKey.group( "enonic:group1" );
         createUserStore( groupAccount.getUserStore(), USERSTORE_KEY );
 
-        client.execute( Commands.account().findMemberships().key( groupAccount ) );
+        final FindMemberships command = Commands.account().findMemberships().key( groupAccount );
+        this.handler.handle( this.context, command );
     }
 
     @Test(expected = AccountNotFoundException.class)
     public void testFindMembershipsMissingUserstore()
         throws Exception
     {
-        final AccountKey groupAccount = AccountKey.user( "enonic:user1" );
-        client.execute( Commands.account().findMemberships().key( groupAccount ) );
+        final AccountKey userAccount = AccountKey.user( "enonic:user1" );
+        final FindMemberships command = Commands.account().findMemberships().key( userAccount );
+        this.handler.handle( this.context, command );
     }
 
     private GroupEntity createGroup( final String key, final String userStore, final String name, final GroupEntity... members )

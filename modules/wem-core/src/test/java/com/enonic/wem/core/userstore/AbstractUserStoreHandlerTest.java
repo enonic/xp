@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.core.account.IsQualifiedUsername;
+import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.group.GroupKey;
@@ -25,6 +26,7 @@ import com.enonic.cms.store.dao.UserDao;
 import com.enonic.cms.store.dao.UserStoreDao;
 
 public abstract class AbstractUserStoreHandlerTest
+    extends AbstractCommandHandlerTest
 {
     private static final String USERSTORE_KEY = "123";
 

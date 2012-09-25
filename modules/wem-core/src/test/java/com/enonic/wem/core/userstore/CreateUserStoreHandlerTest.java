@@ -6,15 +6,13 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.userstore.CreateUserStore;
 import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.config.UserStoreConfig;
 import com.enonic.wem.api.userstore.config.UserStoreFieldConfig;
-import com.enonic.wem.core.client.StandardClient;
-import com.enonic.wem.core.command.CommandInvokerImpl;
 import com.enonic.wem.core.search.account.AccountSearchService;
 
 import com.enonic.cms.core.security.SecurityService;
@@ -45,11 +43,14 @@ public class CreateUserStoreHandlerTest
 
     private GroupDao groupDao;
 
-    private Client client;
+    private CreateUserStoreHandler handler;
 
     @Before
     public void setUp()
+        throws Exception
     {
+        super.initialize();
+
         userStoreService = Mockito.mock( UserStoreService.class );
         userDao = Mockito.mock( UserDao.class );
         userStoreDao = Mockito.mock( UserStoreDao.class );
@@ -57,21 +58,13 @@ public class CreateUserStoreHandlerTest
         searchService = Mockito.mock( AccountSearchService.class );
         groupDao = Mockito.mock( GroupDao.class );
 
-        CreateUserStoreHandler handler = new CreateUserStoreHandler();
+        handler = new CreateUserStoreHandler();
         handler.setUserDao( userDao );
         handler.setUserStoreService( userStoreService );
         handler.setUserStoreDao( userStoreDao );
         handler.setSecurityService( securityService );
         handler.setSearchService( searchService );
         handler.setGroupDao( groupDao );
-
-        StandardClient standardClient = new StandardClient();
-        CommandInvokerImpl commandInvoker = new CommandInvokerImpl();
-        commandInvoker.setHandlers( handler );
-        standardClient.setInvoker( commandInvoker );
-
-        client = standardClient;
-
     }
 
     @Test
@@ -86,7 +79,9 @@ public class CreateUserStoreHandlerTest
         GroupEntity enonicAdmin = createGroup( "HJGJHG534534HGJH", "enonic", "admin" );
         Mockito.when( userStoreService.getGroups( Mockito.any( GroupSpecification.class ) ) ).thenReturn(
             Lists.newArrayList( enonicAdmin ) );
-        UserStoreName userStoreName = client.execute( Commands.userStore().create().userStore( createUserStore() ) );
+        final CreateUserStore command = Commands.userStore().create().userStore( createUserStore() );
+        this.handler.handle( this.context, command );
+        UserStoreName userStoreName = command.getResult();
         assertEquals( UserStoreName.from( "enonic" ), userStoreName );
     }
 

@@ -15,7 +15,6 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.GroupAccount;
@@ -25,8 +24,8 @@ import com.enonic.wem.api.account.profile.Addresses;
 import com.enonic.wem.api.account.profile.Gender;
 import com.enonic.wem.api.account.profile.UserProfile;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.core.client.StandardClient;
-import com.enonic.wem.core.command.CommandInvokerImpl;
+import com.enonic.wem.api.command.account.CreateAccount;
+import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.search.account.AccountSearchService;
 
 import com.enonic.cms.core.security.SecurityService;
@@ -51,9 +50,8 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
 public class CreateAccountHandlerTest
+    extends AbstractCommandHandlerTest
 {
-    private Client client;
-
     private UserDao userDao;
 
     private GroupDao groupDao;
@@ -64,11 +62,15 @@ public class CreateAccountHandlerTest
 
     private UserStoreService userStoreService;
 
+    private CreateAccountHandler handler;
+
 
     @Before
     public void setUp()
         throws Exception
     {
+        super.initialize();
+
         userDao = Mockito.mock( UserDao.class );
         groupDao = Mockito.mock( GroupDao.class );
         userStoreDao = Mockito.mock( UserStoreDao.class );
@@ -76,19 +78,13 @@ public class CreateAccountHandlerTest
         userStoreService = Mockito.mock( UserStoreService.class );
         final AccountSearchService accountSearchService = Mockito.mock( AccountSearchService.class );
 
-        final CreateAccountHandler createAccountHandler = new CreateAccountHandler();
-        createAccountHandler.setUserDao( userDao );
-        createAccountHandler.setGroupDao( groupDao );
-        createAccountHandler.setSecurityService( securityService );
-        createAccountHandler.setUserStoreService( userStoreService );
-        createAccountHandler.setUserStoreDao( userStoreDao );
-        createAccountHandler.setSearchService( accountSearchService );
-
-        final StandardClient standardClient = new StandardClient();
-        final CommandInvokerImpl commandInvoker = new CommandInvokerImpl();
-        commandInvoker.setHandlers( createAccountHandler );
-        standardClient.setInvoker( commandInvoker );
-        client = standardClient;
+        handler = new CreateAccountHandler();
+        handler.setUserDao( userDao );
+        handler.setGroupDao( groupDao );
+        handler.setSecurityService( securityService );
+        handler.setUserStoreService( userStoreService );
+        handler.setUserStoreDao( userStoreDao );
+        handler.setSearchService( accountSearchService );
     }
 
 
@@ -140,7 +136,9 @@ public class CreateAccountHandlerTest
         user.setProfile( profile );
 
         // exercise
-        final AccountKey createdUserKey = client.execute( Commands.account().create().account( user ) );
+        CreateAccount command = Commands.account().create().account( user );
+        this.handler.handle( this.context, command );
+        final AccountKey createdUserKey = command.getResult();
 
         // verify
         verify( userStoreService, atLeastOnce() ).storeNewUser( Matchers.<StoreNewUserCommand>any() );
@@ -161,7 +159,9 @@ public class CreateAccountHandlerTest
         group.setDisplayName( "The User #1" );
 
         // exercise
-        final AccountKey createdGroupKey = client.execute( Commands.account().create().account( group ) );
+        CreateAccount command = Commands.account().create().account( group );
+        this.handler.handle( this.context, command );
+        final AccountKey createdGroupKey = command.getResult();
 
         // verify
         verify( userStoreService, atLeastOnce() ).storeNewGroup( Matchers.<StoreNewGroupCommand>any() );
@@ -185,7 +185,9 @@ public class CreateAccountHandlerTest
         group.setMembers( members );
 
         // exercise
-        final AccountKey createdGroupKey = client.execute( Commands.account().create().account( group ) );
+        CreateAccount command = Commands.account().create().account( group );
+        this.handler.handle( this.context, command );
+        final AccountKey createdGroupKey = command.getResult();
 
         // verify
         verify( userStoreService, atLeastOnce() ).storeNewGroup( Matchers.<StoreNewGroupCommand>any() );

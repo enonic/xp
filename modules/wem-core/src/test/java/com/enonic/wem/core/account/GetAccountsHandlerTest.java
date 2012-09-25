@@ -13,7 +13,6 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.Accounts;
@@ -22,8 +21,8 @@ import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.profile.UserProfile;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.core.client.StandardClient;
-import com.enonic.wem.core.command.CommandInvokerImpl;
+import com.enonic.wem.api.command.account.GetAccounts;
+import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
 import com.enonic.cms.api.client.model.user.Gender;
 import com.enonic.cms.core.security.group.GroupEntity;
@@ -44,34 +43,31 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 
 public class GetAccountsHandlerTest
+    extends AbstractCommandHandlerTest
 {
-    private Client client;
-
     private UserDao userDao;
 
     private GroupDao groupDao;
 
     private UserStoreDao userStoreDao;
 
+    private GetAccountsHandler handler;
+
 
     @Before
     public void setUp()
         throws Exception
     {
+        super.initialize();
+
         userDao = Mockito.mock( UserDao.class );
         groupDao = Mockito.mock( GroupDao.class );
         userStoreDao = Mockito.mock( UserStoreDao.class );
 
-        final GetAccountsHandler getAccountsHandler = new GetAccountsHandler();
-        getAccountsHandler.setUserDao( userDao );
-        getAccountsHandler.setGroupDao( groupDao );
-        getAccountsHandler.setUserStoreDao( userStoreDao );
-
-        final StandardClient standardClient = new StandardClient();
-        final CommandInvokerImpl commandInvoker = new CommandInvokerImpl();
-        commandInvoker.setHandlers( getAccountsHandler );
-        standardClient.setInvoker( commandInvoker );
-        client = standardClient;
+        handler = new GetAccountsHandler();
+        handler.setUserDao( userDao );
+        handler.setGroupDao( groupDao );
+        handler.setUserStoreDao( userStoreDao );
     }
 
     @Test
@@ -86,7 +82,9 @@ public class GetAccountsHandlerTest
         // exercise
         final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "role:enonic:contributors", "user:enonic:user1" );
 
-        Accounts accountResult = client.execute( Commands.account().get().keys( accounts ).includeImage() );
+        final GetAccounts command = Commands.account().get().keys( accounts ).includeImage();
+        this.handler.handle( this.context, command );
+        Accounts accountResult = command.getResult();
 
         // verify
         assertNotNull( accountResult );
@@ -116,7 +114,9 @@ public class GetAccountsHandlerTest
         // exercise
         final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "group:enonic:group2", "role:enonic:contributors" );
 
-        Accounts accountResult = client.execute( Commands.account().get().keys( accounts ).includeMembers().includeImage() );
+        final GetAccounts command = Commands.account().get().keys( accounts ).includeMembers().includeImage();
+        this.handler.handle( this.context, command );
+        Accounts accountResult = command.getResult();
 
         // verify
         assertNotNull( accountResult );
@@ -173,21 +173,23 @@ public class GetAccountsHandlerTest
         userFields.put( UserFieldType.SUFFIX.getName(), "Suff" );
         userFields.put( UserFieldType.TIME_ZONE.getName(), "GMT" );
         userFields.put( UserFieldType.TITLE.getName(), "Mr." );
-        userFields.put( UserFieldType.ADDRESS.getName()+"[0].country", "Norway" );
-        userFields.put( UserFieldType.ADDRESS.getName()+"[0].iso-country", "NO" );
-        userFields.put( UserFieldType.ADDRESS.getName()+"[0].region", "AK" );
-        userFields.put( UserFieldType.ADDRESS.getName()+"[0].iso-region", "03" );
-        userFields.put( UserFieldType.ADDRESS.getName()+"[0].label", "Home" );
-        userFields.put( UserFieldType.ADDRESS.getName()+"[0].street", "Street" );
-        userFields.put( UserFieldType.ADDRESS.getName()+"[0].postal-code", "1234" );
-        userFields.put( UserFieldType.ADDRESS.getName()+"[0].postal-address", "1" );
+        userFields.put( UserFieldType.ADDRESS.getName() + "[0].country", "Norway" );
+        userFields.put( UserFieldType.ADDRESS.getName() + "[0].iso-country", "NO" );
+        userFields.put( UserFieldType.ADDRESS.getName() + "[0].region", "AK" );
+        userFields.put( UserFieldType.ADDRESS.getName() + "[0].iso-region", "03" );
+        userFields.put( UserFieldType.ADDRESS.getName() + "[0].label", "Home" );
+        userFields.put( UserFieldType.ADDRESS.getName() + "[0].street", "Street" );
+        userFields.put( UserFieldType.ADDRESS.getName() + "[0].postal-code", "1234" );
+        userFields.put( UserFieldType.ADDRESS.getName() + "[0].postal-address", "1" );
 
         doReturn( userFields ).when( user ).getFieldMap();
 
         // exercise
         final AccountKeys accounts = AccountKeys.from( "user:enonic:user1" );
 
-        Accounts accountResult = client.execute( Commands.account().get().keys( accounts ).includeProfile() );
+        final GetAccounts command = Commands.account().get().keys( accounts ).includeProfile();
+        this.handler.handle( this.context, command );
+        Accounts accountResult = command.getResult();
 
         // verify
         assertNotNull( accountResult );
