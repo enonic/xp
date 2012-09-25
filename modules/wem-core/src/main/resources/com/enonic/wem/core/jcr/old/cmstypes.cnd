@@ -8,17 +8,17 @@
 
 // user
 [wem:user] > wem:account, mix:referenceable, nt:unstructured
++ profile (nt:unstructured) mandatory
 
 // group
 [wem:group] > wem:account, mix:referenceable, nt:unstructured
-- wem:members (reference) multiple
+- wem:members (reference) multiple mandatory
 
 // role
 [wem:role] > wem:group
 
 // user store
 [wem:userStore] > wem:base, nt:unstructured
-- wem:key (string)
 + roles (wem:roles)
 + groups (wem:groups) mandatory
 + users (wem:users) mandatory
