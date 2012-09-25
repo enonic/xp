@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.core.command.CommandContext;
+import com.enonic.wem.core.command.CommandContextFactory;
 import com.enonic.wem.core.command.CommandInvoker;
-import com.enonic.wem.core.jcr.old.SessionFactory;
 
 @Component
 public final class StandardClient
@@ -15,7 +15,7 @@ public final class StandardClient
 {
     private CommandInvoker invoker;
 
-    private SessionFactory sessionFactory;
+    private CommandContextFactory commandContextFactory;
 
     @Override
     public <R, C extends Command<R>> R execute( final C command )
@@ -35,7 +35,10 @@ public final class StandardClient
         }
         finally
         {
-            context.dispose();
+            if ( context != null )
+            {
+                context.dispose();
+            }
         }
     }
 
@@ -46,16 +49,18 @@ public final class StandardClient
     }
 
     @Autowired
-    public void setSessionFactory( final SessionFactory sessionFactory )
+    public void setCommandContextFactory( final CommandContextFactory commandContextFactory )
     {
-        this.sessionFactory = sessionFactory;
+        this.commandContextFactory = commandContextFactory;
     }
 
     private CommandContext createContext()
     {
-        final CommandContext context = new CommandContext();
-        context.setClient( this );
-//        context.setJcrSession( this.sessionFactory.getSession() );
-        return context;
+        if ( this.commandContextFactory != null )
+        {
+            return this.commandContextFactory.create();
+        }
+
+        return null;
     }
 }

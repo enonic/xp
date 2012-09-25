@@ -1,4 +1,4 @@
-package com.enonic.wem.core.jcr.old;
+package com.enonic.wem.core.jcr.repository;
 
 import java.io.File;
 import java.net.URI;
@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public final class RepositoryFactory
+public final class JcrRepositoryFactory
     implements FactoryBean<Repository>
 {
     private final static String REPOSITORY_CONFIG = "/META-INF/jcr/repository.xml";
@@ -67,16 +67,17 @@ public final class RepositoryFactory
     private RepositoryConfig createConfig()
         throws Exception
     {
-        if (this.homeDir.exists()) {
+        if ( this.homeDir.exists() )
+        {
             FileUtils.deleteQuietly( this.homeDir );
         }
 
-        final URI configUri = getClass().getResource(REPOSITORY_CONFIG).toURI();
-        return RepositoryConfig.create(configUri, this.homeDir.getCanonicalPath());
+        final URI configUri = getClass().getResource( REPOSITORY_CONFIG ).toURI();
+        return RepositoryConfig.create( configUri, this.homeDir.getCanonicalPath() );
     }
 
     @Value("${cms.home}/jackrabbit")
-    public void setHomeDir(final File homeDir)
+    public void setHomeDir( final File homeDir )
     {
         this.homeDir = homeDir;
     }
