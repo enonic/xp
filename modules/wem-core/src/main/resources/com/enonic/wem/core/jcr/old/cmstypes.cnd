@@ -1,40 +1,38 @@
-<cms = 'http://www.enonic.com/cms'>
-[cms:base] > nt:base
+<wem = 'http://www.enonic.com/wem'>
+[wem:base] > nt:base
 
 // Accounts node type definitions:
 
-[cms:account] > cms:base abstract
-- cms:displayname (string)
-- cms:key (string)
+[wem:account] > wem:base abstract
+- wem:displayName (string)
 
 // user
-[cms:user] > cms:account, mix:referenceable, nt:unstructured
+[wem:user] > wem:account, mix:referenceable, nt:unstructured
 
 // group
-[cms:group] > cms:account, mix:referenceable, nt:unstructured
-+ members (cms:users) multiple
+[wem:group] > wem:account, mix:referenceable, nt:unstructured
+- wem:members (reference) multiple
 
 // role
-[cms:role] > cms:group
+[wem:role] > wem:group
 
-// userstore
-[cms:userstore] > cms:base, nt:unstructured
-- cms:key (string)
-+ roles (cms:roles)
-+ groups (cms:groups) mandatory
-+ users (cms:users) mandatory
+// user store
+[wem:userStore] > wem:base, nt:unstructured
+- wem:key (string)
++ roles (wem:roles)
++ groups (wem:groups) mandatory
++ users (wem:users) mandatory
 
 
-[cms:userstores] > cms:base
-+ system (cms:userstore)
-+ * (cms:userstore)
+[wem:userStores] > wem:base
++ system (wem:userStore)
++ * (wem:userStore)
 
-[cms:users] > cms:base
-+ * (cms:user)
+[wem:users] > wem:base
++ * (wem:user)
 
-[cms:groups] > cms:base
-+ * (cms:group)
+[wem:groups] > wem:base
++ * (wem:group)
 
-[cms:roles] > cms:base
-+ * (cms:role)
-
+[wem:roles] > wem:base
++ * (wem:role)
