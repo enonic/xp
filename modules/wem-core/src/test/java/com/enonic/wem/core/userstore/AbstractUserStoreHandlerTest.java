@@ -24,7 +24,7 @@ import com.enonic.cms.store.dao.GroupDao;
 import com.enonic.cms.store.dao.UserDao;
 import com.enonic.cms.store.dao.UserStoreDao;
 
-public abstract class UserStoreHandlerTest
+public abstract class AbstractUserStoreHandlerTest
 {
     private static final String USERSTORE_KEY = "123";
 

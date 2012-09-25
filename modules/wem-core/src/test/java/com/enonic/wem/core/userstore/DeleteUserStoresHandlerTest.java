@@ -19,7 +19,7 @@ import com.enonic.cms.store.dao.UserStoreDao;
 import static org.junit.Assert.*;
 
 public class DeleteUserStoresHandlerTest
-    extends UserStoreHandlerTest
+    extends AbstractUserStoreHandlerTest
 {
     private Client client;
 

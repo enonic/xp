@@ -33,7 +33,7 @@ import com.enonic.cms.store.dao.UserStoreDao;
 import static org.junit.Assert.*;
 
 public class UpdateUserStoresHandlerTest
-    extends UserStoreHandlerTest
+    extends AbstractUserStoreHandlerTest
 {
     private UserDao userDao;
 
