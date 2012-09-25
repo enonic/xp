@@ -6,13 +6,16 @@
 [wem:account] > wem:base abstract
 - wem:displayName (string)
 
+// user profile
+[wem:profile] > wem:base, nt:unstructured
+
 // user
 [wem:user] > wem:account, mix:referenceable, nt:unstructured
-+ profile (nt:unstructured) mandatory
++ profile (wem:profile) = wem:profile mandatory autocreated
 
 // group
 [wem:group] > wem:account, mix:referenceable, nt:unstructured
-- wem:members (reference) multiple mandatory
+- wem:members (reference) multiple mandatory < 'wem:account'
 
 // role
 [wem:role] > wem:group
