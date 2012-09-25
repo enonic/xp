@@ -8,7 +8,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 public class Image
     extends BaseComponentType
 {
-    Image()
+    public Image()
     {
         super( "image", DataTypes.DATA_SET, TypedPath.newTypedPath( "binary", DataTypes.BLOB ),
                TypedPath.newTypedPath( "caption", DataTypes.TEXT ) );

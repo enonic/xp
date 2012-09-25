@@ -11,7 +11,7 @@ public class Virtual
 {
     private String className;
 
-    Virtual()
+    public Virtual()
     {
         super( "virtual", DataTypes.COMPUTED );
         this.className = this.getClass().getName();

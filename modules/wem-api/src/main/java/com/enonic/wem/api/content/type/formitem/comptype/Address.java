@@ -8,7 +8,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 public class Address
     extends BaseComponentType
 {
-    Address()
+    public Address()
     {
         super( "address", DataTypes.DATA_SET, TypedPath.newTypedPath( "street", DataTypes.TEXT ),
                TypedPath.newTypedPath( "postalCode", DataTypes.TEXT ), TypedPath.newTypedPath( "postalPlace", DataTypes.TEXT ),

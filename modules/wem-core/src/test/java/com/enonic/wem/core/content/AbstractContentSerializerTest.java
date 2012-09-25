@@ -4,6 +4,7 @@ package com.enonic.wem.core.content;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.wem.api.blob.BlobKeyCreator;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.MockBlobKeyResolver;
 import com.enonic.wem.api.content.datatype.DataTypes;
@@ -14,8 +15,6 @@ import com.enonic.wem.api.content.type.formitem.FieldSet;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.api.module.Module;
-
-import com.enonic.cms.framework.blob.BlobKeyCreator;
 
 import static com.enonic.wem.api.content.type.formitem.Component.newComponent;
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;

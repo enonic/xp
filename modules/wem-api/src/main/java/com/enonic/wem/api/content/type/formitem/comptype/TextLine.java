@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 public class TextLine
     extends BaseComponentType
 {
-    TextLine()
+    public TextLine()
     {
         super( "textLine", DataTypes.TEXT );
     }

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content;
+package com.enonic.wem.api.content;
 
 
 import java.util.HashMap;
@@ -8,7 +8,6 @@ import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
 
-import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.type.ContentTypeStepDefs;
 
 import static org.junit.Assert.*;

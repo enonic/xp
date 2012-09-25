@@ -73,7 +73,7 @@ public abstract class AbstractContentTypeSerializerTest
         Component parsedMyDate = parsedContentType.getComponent( "myDate" );
         assertEquals( "myDate", parsedMyDate.getPath().toString() );
         assertEquals( "myDate", parsedMyDate.getName() );
-        assertEquals( "com.enonic.wem.core.content.type.formitem.comptype.Date", parsedMyDate.getComponentType().getClassName() );
+        assertEquals( "com.enonic.wem.api.content.type.formitem.comptype.Date", parsedMyDate.getComponentType().getClassName() );
         assertEquals( "date", parsedMyDate.getComponentType().getName() );
 
         Component parsedMyDropdown = parsedContentType.getComponent( "myDropdown" );

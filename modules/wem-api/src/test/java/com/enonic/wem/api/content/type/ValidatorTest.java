@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.type;
+package com.enonic.wem.api.content.type;
 
 import org.joda.time.DateMidnight;
 import org.junit.Assert;
@@ -8,8 +8,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
-import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.Validator;
 import com.enonic.wem.api.content.type.formitem.BreaksRegexValidationException;
 import com.enonic.wem.api.content.type.formitem.Component;
 import com.enonic.wem.api.content.type.formitem.FieldSet;

@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 public class Money
     extends BaseComponentType
 {
-    Money()
+    public Money()
     {
         super( "money", DataTypes.DATA_SET, TypedPath.newTypedPath( "amount", DataTypes.DECIMAL_NUMBER ),
                TypedPath.newTypedPath( "currency", DataTypes.TEXT ) );

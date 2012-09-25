@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 public class TextArea
     extends BaseComponentType
 {
-    TextArea()
+    public TextArea()
     {
         super( "textArea", DataTypes.TEXT );
     }

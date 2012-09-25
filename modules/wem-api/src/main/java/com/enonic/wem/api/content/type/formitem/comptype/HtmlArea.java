@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 public class HtmlArea
     extends BaseComponentType
 {
-    HtmlArea()
+    public HtmlArea()
     {
         super( "htmlArea", DataTypes.HTML_PART );
     }

@@ -8,6 +8,7 @@ import org.codehaus.jackson.JsonNode;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
@@ -15,7 +16,6 @@ import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.core.content.JsonParserUtil;
 
-import com.enonic.cms.framework.blob.BlobKey;
 
 public class DataSerializerJson
 {

@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 public class Tags
     extends BaseComponentType
 {
-    Tags()
+    public Tags()
     {
         super( "tags", DataTypes.DATA_SET );
     }

@@ -8,7 +8,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 public class Date
     extends BaseComponentType
 {
-    Date()
+    public Date()
     {
         super( "date", DataTypes.DATE );
     }

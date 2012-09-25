@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 public class DecimalNumber
     extends BaseComponentType
 {
-    DecimalNumber()
+    public DecimalNumber()
     {
         super( "decimalNumber", DataTypes.DECIMAL_NUMBER );
     }

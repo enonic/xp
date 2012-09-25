@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 public class Dropdown
     extends BaseComponentType
 {
-    Dropdown()
+    public Dropdown()
     {
         super( "dropdown", DataTypes.TEXT );
     }

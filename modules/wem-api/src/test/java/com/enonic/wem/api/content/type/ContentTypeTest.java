@@ -1,9 +1,8 @@
-package com.enonic.wem.core.content.type;
+package com.enonic.wem.api.content.type;
 
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.formitem.Component;
 import com.enonic.wem.api.content.type.formitem.FieldSet;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;

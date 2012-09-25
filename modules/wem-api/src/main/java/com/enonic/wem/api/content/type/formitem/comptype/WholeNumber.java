@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 public class WholeNumber
     extends BaseComponentType
 {
-    WholeNumber()
+    public WholeNumber()
     {
         super( "wholeNumber", DataTypes.WHOLE_NUMBER );
     }

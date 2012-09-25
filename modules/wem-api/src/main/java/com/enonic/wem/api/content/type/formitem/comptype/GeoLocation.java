@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 public class GeoLocation
     extends BaseComponentType
 {
-    GeoLocation()
+    public GeoLocation()
     {
         super( "geoLocation", DataTypes.GEOGRAPHIC_COORDINATE );
     }

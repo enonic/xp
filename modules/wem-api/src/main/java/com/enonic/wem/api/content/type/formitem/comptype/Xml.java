@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 public class Xml
     extends BaseComponentType
 {
-    Xml()
+    public Xml()
     {
         super( "xml", DataTypes.XML );
     }

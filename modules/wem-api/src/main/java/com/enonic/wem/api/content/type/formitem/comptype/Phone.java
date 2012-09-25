@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 public class Phone
     extends BaseComponentType
 {
-    Phone()
+    public Phone()
     {
         super( "phone", DataTypes.TEXT );
     }

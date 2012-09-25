@@ -13,7 +13,7 @@ import com.enonic.wem.api.content.type.formitem.InvalidValueException;
 public class Color
     extends BaseComponentType
 {
-    Color()
+    public Color()
     {
         super( "color", DataTypes.DATA_SET, TypedPath.newTypedPath( "red", DataTypes.WHOLE_NUMBER ),
                TypedPath.newTypedPath( "green", DataTypes.WHOLE_NUMBER ), TypedPath.newTypedPath( "blue", DataTypes.WHOLE_NUMBER ) );

@@ -1,10 +1,9 @@
-package com.enonic.wem.core.content.type;
+package com.enonic.wem.api.content.type;
 
 
 import org.junit.Test;
 
 import com.enonic.wem.api.content.AbstractEqualsTest;
-import com.enonic.wem.api.content.type.ContentTypeQualifiedName;
 
 public class ContentTypeQualifiedNameTest
 {

@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 public class RadioButtons
     extends BaseComponentType
 {
-    RadioButtons()
+    public RadioButtons()
     {
         super( "radioButtons", DataTypes.TEXT );
     }
