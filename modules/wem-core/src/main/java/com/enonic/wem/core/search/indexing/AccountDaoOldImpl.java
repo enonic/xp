@@ -21,7 +21,7 @@ import com.enonic.cms.store.dao.UserEntityDao;
 import com.enonic.cms.store.support.EntityPageList;
 
 @Component
-class AccountDaoImpl
+class AccountDaoOldImpl
     implements InitializingBean, AccountDao
 {
     private HibernateTemplate hibernateTemplate;
