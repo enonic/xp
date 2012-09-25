@@ -35,7 +35,7 @@ public class ChangePasswordHandlerTest
     public void setUp()
         throws Exception
     {
-        super.setup();
+        super.initialize();
 
         userDao = Mockito.mock( UserDao.class );
         securityService = Mockito.mock( SecurityService.class );

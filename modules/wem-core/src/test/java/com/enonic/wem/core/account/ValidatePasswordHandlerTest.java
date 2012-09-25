@@ -4,12 +4,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.account.ValidatePassword;
 import com.enonic.wem.api.exception.AccountNotFoundException;
-import com.enonic.wem.core.client.StandardClient;
-import com.enonic.wem.core.command.CommandInvokerImpl;
+import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
 import com.enonic.cms.core.security.InvalidCredentialsException;
 import com.enonic.cms.core.security.SecurityService;
@@ -26,31 +25,27 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
 
 public class ValidatePasswordHandlerTest
+    extends AbstractCommandHandlerTest
 {
-    private Client client;
-
     private UserDao userDao;
 
     private SecurityService securityService;
+
+    private ValidatePasswordHandler handler;
 
     @Before
     public void setUp()
         throws Exception
     {
+        super.initialize();
+
         userDao = Mockito.mock( UserDao.class );
         securityService = Mockito.mock( SecurityService.class );
 
-        final ValidatePasswordHandler validatePasswordHandler = new ValidatePasswordHandler();
-        validatePasswordHandler.setUserDao( userDao );
-        validatePasswordHandler.setSecurityService( securityService );
-
-        final StandardClient standardClient = new StandardClient();
-        final CommandInvokerImpl commandInvoker = new CommandInvokerImpl();
-        commandInvoker.setHandlers( validatePasswordHandler );
-        standardClient.setInvoker( commandInvoker );
-        client = standardClient;
+        this.handler = new ValidatePasswordHandler();
+        this.handler.setUserDao( userDao );
+        this.handler.setSecurityService( securityService );
     }
-
 
     @Test
     public void testValidatePasswordExistingUserCorrectPassword()
@@ -69,7 +64,10 @@ public class ValidatePasswordHandlerTest
                                                                            not( eq( userPassword ) ) );
 
         // exercise
-        final Boolean validPassword = client.execute( Commands.account().validatePassword().key( account ).password( userPassword ) );
+        final ValidatePassword command = Commands.account().validatePassword().key( account ).password( userPassword );
+        command.validate();
+        this.handler.handle( this.context, command );
+        final Boolean validPassword = command.getResult();
 
         // verify
         assertNotNull( validPassword );
@@ -93,7 +91,10 @@ public class ValidatePasswordHandlerTest
                                                                            not( eq( userPassword ) ) );
 
         // exercise
-        final Boolean validPassword = client.execute( Commands.account().validatePassword().key( account ).password( "forgotPassword" ) );
+        final ValidatePassword command = Commands.account().validatePassword().key( account ).password( "forgotPassword" );
+        command.validate();
+        this.handler.handle( this.context, command );
+        final Boolean validPassword = command.getResult();
 
         // verify
         assertNotNull( validPassword );
@@ -107,7 +108,9 @@ public class ValidatePasswordHandlerTest
         final String userPassword = "passw0rd";
         final AccountKey account = AccountKey.user( "enonic:johndoe" );
 
-        client.execute( Commands.account().validatePassword().key( account ).password( userPassword ) );
+        final ValidatePassword command = Commands.account().validatePassword().key( account ).password( userPassword );
+        command.validate();
+        this.handler.handle( this.context, command );
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -118,7 +121,8 @@ public class ValidatePasswordHandlerTest
         final AccountKey account = AccountKey.group( "enonic:devs" );
 
         // validation fails before attempting to execute command (cannot validate password of a group)
-        client.execute( Commands.account().validatePassword().key( account ).password( userPassword ) );
+        final ValidatePassword command = Commands.account().validatePassword().key( account ).password( userPassword );
+        command.validate();
     }
 
     private void mockAddUserToDaoByQualifiedName( final UserEntity user )
