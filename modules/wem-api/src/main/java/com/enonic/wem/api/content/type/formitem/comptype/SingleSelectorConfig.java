@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.type.formitem.InvalidValueException;
 
-public class DropdownConfig
+public class SingleSelectorConfig
     implements ComponentTypeConfig
 {
+    private SelectorType type;
+
     private List<Option> optionsAsList = new ArrayList<Option>();
 
     private HashMap<String, Option> optionsAsMap = new HashMap<String, Option>();
@@ -17,6 +21,11 @@ public class DropdownConfig
     public List<Option> getOptions()
     {
         return optionsAsList;
+    }
+
+    public SelectorType getType()
+    {
+        return type;
     }
 
     @Override
@@ -68,23 +77,36 @@ public class DropdownConfig
         }
     }
 
-    public static Builder newBuilder()
-    {
-        return new Builder();
-    }
-
-    public static Builder newDropdownConfig()
+    public static Builder newSingleSelectorConfig()
     {
         return new Builder();
     }
 
     public static class Builder
     {
-        private DropdownConfig config = new DropdownConfig();
+        private SingleSelectorConfig config = new SingleSelectorConfig();
 
         Builder()
         {
             // protection
+        }
+
+        public Builder typeDropdown()
+        {
+            this.config.type = SelectorType.DROPDOWN;
+            return this;
+        }
+
+        public Builder typeRadio()
+        {
+            this.config.type = SelectorType.RADIO;
+            return this;
+        }
+
+        public Builder type( SelectorType value )
+        {
+            this.config.type = value;
+            return this;
         }
 
         public Builder addOption( String label, String value )
@@ -94,9 +116,16 @@ public class DropdownConfig
             return this;
         }
 
-        public DropdownConfig build()
+        public SingleSelectorConfig build()
         {
+            Preconditions.checkNotNull( config.type, "type for SingleSelectorConfig cannot be null" );
+            Preconditions.checkArgument( config.optionsAsList.size() > 0, "No options given" );
             return config;
         }
+    }
+
+    public enum SelectorType
+    {
+        DROPDOWN, RADIO;
     }
 }

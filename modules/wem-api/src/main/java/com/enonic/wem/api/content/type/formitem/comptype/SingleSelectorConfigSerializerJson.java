@@ -8,18 +8,19 @@ import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
 
-public class RadioButtonsConfigSerializerJson
+public class SingleSelectorConfigSerializerJson
     extends AbstractComponentTypeConfigSerializerJson
 {
-    public static final RadioButtonsConfigSerializerJson DEFAULT = new RadioButtonsConfigSerializerJson();
+    public static final SingleSelectorConfigSerializerJson DEFAULT = new SingleSelectorConfigSerializerJson();
 
     public void generateConfig( ComponentTypeConfig config, JsonGenerator g )
         throws IOException
     {
-        RadioButtonsConfig radioButtonsConfig = (RadioButtonsConfig) config;
+        SingleSelectorConfig singleSelectorConfig = (SingleSelectorConfig) config;
         g.writeStartObject();
+        g.writeStringField( "selectorType", singleSelectorConfig.getType().toString() );
         g.writeArrayFieldStart( "options" );
-        for ( RadioButtonsConfig.Option option : radioButtonsConfig.getOptions() )
+        for ( SingleSelectorConfig.Option option : singleSelectorConfig.getOptions() )
         {
             g.writeStartObject();
             g.writeStringField( "label", option.getLabel() );
@@ -33,7 +34,10 @@ public class RadioButtonsConfigSerializerJson
     @Override
     public ComponentTypeConfig parseConfig( final JsonNode componentTypeConfigNode )
     {
-        final RadioButtonsConfig.Builder builder = RadioButtonsConfig.newBuilder();
+        final SingleSelectorConfig.Builder builder = SingleSelectorConfig.newSingleSelectorConfig();
+        final SingleSelectorConfig.SelectorType selectorType =
+            SingleSelectorConfig.SelectorType.valueOf( getStringValue( "selectorType", componentTypeConfigNode ) );
+        builder.type( selectorType );
         final JsonNode optionsNode = componentTypeConfigNode.get( "options" );
         final Iterator<JsonNode> optionIterator = optionsNode.getElements();
         while ( optionIterator.hasNext() )

@@ -18,8 +18,7 @@ import com.enonic.wem.api.content.type.formitem.InvalidDataException;
 import com.enonic.wem.api.content.type.formitem.MockTemplateFetcher;
 import com.enonic.wem.api.content.type.formitem.TemplateReference;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
-import com.enonic.wem.api.content.type.formitem.comptype.DropdownConfig;
-import com.enonic.wem.api.content.type.formitem.comptype.RadioButtonsConfig;
+import com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.type.formitem.Component.newComponent;
@@ -28,6 +27,7 @@ import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.formitem.FormItemSetTemplateBuilder.newFormItemSetTemplate;
 import static com.enonic.wem.api.content.type.formitem.TemplateReference.newTemplateReference;
+import static com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig.newSingleSelectorConfig;
 import static com.enonic.wem.api.module.Module.newModule;
 import static org.junit.Assert.*;
 
@@ -35,44 +35,29 @@ public class ContentTest
 {
 
     @Test
-    public void dropdown()
+    public void singleSelector()
     {
         ContentType contentType = new ContentType();
-        DropdownConfig dropdownConfig = DropdownConfig.newBuilder().addOption( "Option 1", "o1" ).addOption( "Option 2", "o2" ).build();
-        Component myDropdown =
-            Component.newBuilder().name( "myDropdown" ).type( ComponentTypes.DROPDOWN ).componentTypeConfig( dropdownConfig ).build();
-        contentType.addFormItem( myDropdown );
+        SingleSelectorConfig singleSelectorConfig =
+            newSingleSelectorConfig().type( SingleSelectorConfig.SelectorType.DROPDOWN ).addOption( "Option 1", "o1" ).addOption(
+                "Option 2", "o2" ).build();
+        Component mySingleSelector = newComponent().name( "mySingleSelector" ).type( ComponentTypes.SINGLE_SELECTOR ).componentTypeConfig(
+            singleSelectorConfig ).build();
+        contentType.addFormItem( mySingleSelector );
 
         Content content = new Content();
         content.setType( contentType );
-        content.setData( "myDropdown", "o1" );
+        content.setData( "mySingleSelector", "o1" );
 
-        assertEquals( "o1", content.getData( "myDropdown" ).getValue() );
-    }
-
-    @Test
-    public void radioButtons()
-    {
-        ContentType contentType = new ContentType();
-        RadioButtonsConfig myRadioButtonsConfig =
-            RadioButtonsConfig.newBuilder().addOption( "myFirstChoice", "c1" ).addOption( "mySecondChoice", "c2" ).build();
-        contentType.addFormItem( Component.newBuilder().name( "myRadioButtons" ).type( ComponentTypes.RADIO_BUTTONS ).componentTypeConfig(
-            myRadioButtonsConfig ).build() );
-
-        Content content = new Content();
-        content.setType( contentType );
-        content.setData( "myRadioButtons", "c1" );
-
-        assertEquals( "c1", content.getData( "myRadioButtons" ).getValue() );
+        assertEquals( "o1", content.getData( "mySingleSelector" ).getValue() );
     }
 
     @Test
     public void multiple_textlines()
     {
         ContentType contentType = new ContentType();
-        contentType.addFormItem( Component.newBuilder().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).build() );
-        contentType.addFormItem(
-            Component.newBuilder().name( "myMultipleTextLine" ).type( ComponentTypes.TEXT_LINE ).multiple( true ).build() );
+        contentType.addFormItem( newComponent().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newComponent().name( "myMultipleTextLine" ).type( ComponentTypes.TEXT_LINE ).multiple( true ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -89,7 +74,7 @@ public class ContentTest
     public void tags()
     {
         ContentType contentType = new ContentType();
-        contentType.addFormItem( Component.newBuilder().name( "myTags" ).type( ComponentTypes.TAGS ).build() );
+        contentType.addFormItem( newComponent().name( "myTags" ).type( ComponentTypes.TAGS ).build() );
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
         Content content = new Content();
@@ -126,7 +111,7 @@ public class ContentTest
     public void phone()
     {
         ContentType contentType = new ContentType();
-        contentType.addFormItem( Component.newBuilder().name( "myPhone" ).type( ComponentTypes.PHONE ).required( true ).build() );
+        contentType.addFormItem( newComponent().name( "myPhone" ).type( ComponentTypes.PHONE ).required( true ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -139,9 +124,9 @@ public class ContentTest
     public void formItemSet()
     {
         ContentType contentType = new ContentType();
-        contentType.addFormItem( Component.newBuilder().name( "name" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( newComponent().name( "name" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() );
 
-        FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).build();
+        FormItemSet formItemSet = FormItemSet.newFormItemSet().name( "personalia" ).build();
         contentType.addFormItem( formItemSet );
         formItemSet.addItem( newComponent().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
         formItemSet.addItem( newComponent().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() );
@@ -161,14 +146,14 @@ public class ContentTest
     public void multiple_subtype()
     {
         ContentType contentType = new ContentType();
-        Component nameComponent = Component.newBuilder().name( "name" ).type( ComponentTypes.TEXT_LINE ).required( true ).build();
+        Component nameComponent = newComponent().name( "name" ).type( ComponentTypes.TEXT_LINE ).required( true ).build();
         contentType.addFormItem( nameComponent );
 
-        FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).multiple( true ).build();
+        FormItemSet formItemSet = newFormItemSet().name( "personalia" ).multiple( true ).build();
         contentType.addFormItem( formItemSet );
-        formItemSet.addItem( Component.newBuilder().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( Component.newBuilder().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( Component.newBuilder().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newComponent().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newComponent().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newComponent().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -253,12 +238,12 @@ public class ContentTest
     @Test
     public void structured_getEntries()
     {
-        FormItemSet child = FormItemSet.newBuilder().name( "child" ).multiple( true ).build();
-        child.addItem( Component.newBuilder().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() );
-        child.addItem( Component.newBuilder().name( "age" ).type( ComponentTypes.TEXT_LINE ).build() );
-        FormItemSet features = FormItemSet.newBuilder().name( "features" ).multiple( false ).build();
-        features.addItem( Component.newBuilder().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
-        features.addItem( Component.newBuilder().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() );
+        FormItemSet child = FormItemSet.newFormItemSet().name( "child" ).multiple( true ).build();
+        child.addItem( newComponent().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() );
+        child.addItem( newComponent().name( "age" ).type( ComponentTypes.TEXT_LINE ).build() );
+        FormItemSet features = FormItemSet.newFormItemSet().name( "features" ).multiple( false ).build();
+        features.addItem( newComponent().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
+        features.addItem( newComponent().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() );
         child.addFormItemSet( features );
         ContentType contentType = new ContentType();
         contentType.addFormItem( child );
@@ -305,10 +290,10 @@ public class ContentTest
         Module module = newModule().name( "myModule" ).build();
 
         ComponentTemplate postalCodeTemplate = newComponentTemplate().module( module ).component(
-            Component.newComponent().name( "postalCode" ).type( ComponentTypes.TEXT_LINE ).build() ).build();
+            newComponent().name( "postalCode" ).type( ComponentTypes.TEXT_LINE ).build() ).build();
         ComponentTemplate countryTemplate = newComponentTemplate().module( module ).component(
-            Component.newComponent().name( "country" ).type( ComponentTypes.DROPDOWN ).componentTypeConfig(
-                DropdownConfig.newBuilder().addOption( "Norway", "NO" ).build() ).build() ).build();
+            newComponent().name( "country" ).type( ComponentTypes.SINGLE_SELECTOR ).componentTypeConfig(
+                newSingleSelectorConfig().typeDropdown().addOption( "Norway", "NO" ).build() ).build() ).build();
 
         FormItemSetTemplate addressTemplate = newFormItemSetTemplate().module( module ).formItemSet(
             newFormItemSet().name( "address" ).add( newComponent().name( "street" ).type( ComponentTypes.TEXT_LINE ).build() ).add(

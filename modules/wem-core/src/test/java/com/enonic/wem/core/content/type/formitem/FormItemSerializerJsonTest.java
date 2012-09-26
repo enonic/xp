@@ -17,10 +17,10 @@ import com.enonic.wem.api.content.type.formitem.FormItemSet;
 import com.enonic.wem.api.content.type.formitem.Occurrences;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypeConfig;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
-import com.enonic.wem.api.content.type.formitem.comptype.DropdownConfig;
-import com.enonic.wem.api.content.type.formitem.comptype.RadioButtonsConfig;
+import com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig;
 import com.enonic.wem.core.content.JsonFactoryHolder;
 
+import static com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig.newSingleSelectorConfig;
 import static org.junit.Assert.*;
 
 public class FormItemSerializerJsonTest
@@ -80,15 +80,16 @@ public class FormItemSerializerJsonTest
     }
 
     @Test
-    public void dropdown()
+    public void singleSelector()
         throws IOException
     {
         // setup
         Component.Builder builder = Component.newBuilder();
-        builder.type( ComponentTypes.DROPDOWN );
-        builder.name( "myDropdown" );
-        builder.label( "My Dropdown" );
-        builder.componentTypeConfig( DropdownConfig.newBuilder().addOption( "Option 1", "o1" ).addOption( "Option 2", "o2" ).build() );
+        builder.type( ComponentTypes.SINGLE_SELECTOR );
+        builder.name( "mySingleSelector" );
+        builder.label( "My SingleSelector" );
+        builder.componentTypeConfig(
+            newSingleSelectorConfig().typeDropdown().addOption( "Option 1", "o1" ).addOption( "Option 2", "o2" ).build() );
         Component component = builder.build();
 
         String json = fieldToJson( component );
@@ -99,60 +100,22 @@ public class FormItemSerializerJsonTest
 
         // verify
         assertTrue( formItem instanceof Component );
-        assertEquals( "myDropdown", formItem.getName() );
+        assertEquals( "mySingleSelector", formItem.getName() );
         Component parsedComponent = (Component) formItem;
-        assertEquals( "My Dropdown", parsedComponent.getLabel() );
+        assertEquals( "My SingleSelector", parsedComponent.getLabel() );
         assertEquals( false, parsedComponent.isRequired() );
         assertEquals( false, parsedComponent.isIndexed() );
         assertEquals( false, parsedComponent.isImmutable() );
-        assertEquals( ComponentTypes.DROPDOWN, parsedComponent.getComponentType() );
+        assertEquals( ComponentTypes.SINGLE_SELECTOR, parsedComponent.getComponentType() );
         ComponentTypeConfig componentTypeConfig = parsedComponent.getComponentTypeConfig();
         assertNotNull( componentTypeConfig );
-        assertTrue( componentTypeConfig instanceof DropdownConfig );
-        DropdownConfig dropdownConfig = (DropdownConfig) componentTypeConfig;
-        assertEquals( 2, dropdownConfig.getOptions().size() );
-        assertEquals( "o1", dropdownConfig.getOptions().get( 0 ).getValue() );
-        assertEquals( "Option 1", dropdownConfig.getOptions().get( 0 ).getLabel() );
-        assertEquals( "o2", dropdownConfig.getOptions().get( 1 ).getValue() );
-        assertEquals( "Option 2", dropdownConfig.getOptions().get( 1 ).getLabel() );
-    }
-
-    @Test
-    public void radioButtons()
-        throws IOException
-    {
-        // setup
-        Component.Builder builder = Component.newBuilder();
-        builder.type( ComponentTypes.RADIO_BUTTONS );
-        builder.name( "myRadioButtons" );
-        builder.label( "My Radio buttons" );
-        builder.componentTypeConfig( RadioButtonsConfig.newBuilder().addOption( "Option 1", "o1" ).addOption( "Option 2", "o2" ).build() );
-        Component component = builder.build();
-
-        String json = fieldToJson( component );
-        JsonParser jp = jsonFactory.createJsonParser( json );
-
-        // exercise
-        FormItem formItem = new FormItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
-
-        // verify
-        assertTrue( formItem instanceof Component );
-        assertEquals( "myRadioButtons", formItem.getName() );
-        Component parsedComponent = (Component) formItem;
-        assertEquals( "My Radio buttons", parsedComponent.getLabel() );
-        assertEquals( false, parsedComponent.isRequired() );
-        assertEquals( false, parsedComponent.isIndexed() );
-        assertEquals( false, parsedComponent.isImmutable() );
-        assertEquals( ComponentTypes.RADIO_BUTTONS, parsedComponent.getComponentType() );
-        ComponentTypeConfig componentTypeConfig = parsedComponent.getComponentTypeConfig();
-        assertNotNull( componentTypeConfig );
-        assertTrue( componentTypeConfig instanceof RadioButtonsConfig );
-        RadioButtonsConfig radioButtonsConfig = (RadioButtonsConfig) componentTypeConfig;
-        assertEquals( 2, radioButtonsConfig.getOptions().size() );
-        assertEquals( "o1", radioButtonsConfig.getOptions().get( 0 ).getValue() );
-        assertEquals( "Option 1", radioButtonsConfig.getOptions().get( 0 ).getLabel() );
-        assertEquals( "o2", radioButtonsConfig.getOptions().get( 1 ).getValue() );
-        assertEquals( "Option 2", radioButtonsConfig.getOptions().get( 1 ).getLabel() );
+        assertTrue( componentTypeConfig instanceof SingleSelectorConfig );
+        SingleSelectorConfig singleSelectorConfig = (SingleSelectorConfig) componentTypeConfig;
+        assertEquals( 2, singleSelectorConfig.getOptions().size() );
+        assertEquals( "o1", singleSelectorConfig.getOptions().get( 0 ).getValue() );
+        assertEquals( "Option 1", singleSelectorConfig.getOptions().get( 0 ).getLabel() );
+        assertEquals( "o2", singleSelectorConfig.getOptions().get( 1 ).getValue() );
+        assertEquals( "Option 2", singleSelectorConfig.getOptions().get( 1 ).getLabel() );
     }
 
     @Test

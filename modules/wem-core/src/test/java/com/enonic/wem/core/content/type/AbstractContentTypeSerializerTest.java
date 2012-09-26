@@ -15,15 +15,14 @@ import com.enonic.wem.api.content.type.formitem.FormItems;
 import com.enonic.wem.api.content.type.formitem.MockTemplateFetcher;
 import com.enonic.wem.api.content.type.formitem.TemplateReference;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
-import com.enonic.wem.api.content.type.formitem.comptype.DropdownConfig;
-import com.enonic.wem.api.content.type.formitem.comptype.RadioButtonsConfig;
+import com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.formitem.Component.newBuilder;
 import static com.enonic.wem.api.content.type.formitem.Component.newComponent;
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.formitem.TemplateReference.newTemplateReference;
+import static com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig.newSingleSelectorConfig;
 import static com.enonic.wem.api.module.Module.newModule;
 import static org.junit.Assert.*;
 
@@ -46,21 +45,17 @@ public abstract class AbstractContentTypeSerializerTest
     public void generate_all_types()
     {
         // setup
-        DropdownConfig dropdownConfig =
-            DropdownConfig.newBuilder().addOption( "My Option 1", "o1" ).addOption( "My Option 2", "o2" ).build();
-        RadioButtonsConfig myRadioButtonsConfig =
-            RadioButtonsConfig.newBuilder().addOption( "myFirstChoice", "c1" ).addOption( "mySecondChoice", "c2" ).build();
+        SingleSelectorConfig singleSelectorConfig =
+            newSingleSelectorConfig().typeRadio().addOption( "My Option 1", "o1" ).addOption( "My Option 2", "o2" ).build();
 
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
 
         contentType.addFormItem( newComponent().name( "myDate" ).type( ComponentTypes.DATE ).build() );
-        contentType.addFormItem(
-            newComponent().name( "myDropdown" ).type( ComponentTypes.DROPDOWN ).componentTypeConfig( dropdownConfig ).build() );
-        contentType.addFormItem( newBuilder().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).build() );
-        contentType.addFormItem( newBuilder().name( "myTextArea" ).type( ComponentTypes.TEXT_AREA ).build() );
-        contentType.addFormItem( newComponent().name( "myRadiobuttons" ).type( ComponentTypes.RADIO_BUTTONS ).componentTypeConfig(
-            myRadioButtonsConfig ).build() );
+        contentType.addFormItem( newComponent().name( "mySingleSelector" ).type( ComponentTypes.SINGLE_SELECTOR ).componentTypeConfig(
+            singleSelectorConfig ).build() );
+        contentType.addFormItem( newComponent().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newComponent().name( "myTextArea" ).type( ComponentTypes.TEXT_AREA ).build() );
         contentType.addFormItem( newComponent().name( "myPhone" ).type( ComponentTypes.PHONE ).build() );
         contentType.addFormItem( newComponent().name( "myXml" ).type( ComponentTypes.XML ).build() );
 
@@ -76,37 +71,37 @@ public abstract class AbstractContentTypeSerializerTest
         assertEquals( "com.enonic.wem.api.content.type.formitem.comptype.Date", parsedMyDate.getComponentType().getClassName() );
         assertEquals( "date", parsedMyDate.getComponentType().getName() );
 
-        Component parsedMyDropdown = parsedContentType.getComponent( "myDropdown" );
-        assertEquals( "myDropdown", parsedMyDropdown.getPath().toString() );
-        assertEquals( "My Option 1", ( (DropdownConfig) parsedMyDropdown.getComponentTypeConfig() ).getOptions().get( 0 ).getLabel() );
-        assertEquals( "My Option 2", ( (DropdownConfig) parsedMyDropdown.getComponentTypeConfig() ).getOptions().get( 1 ).getLabel() );
+        Component parsedMySingleSelector = parsedContentType.getComponent( "mySingleSelector" );
+        assertEquals( "mySingleSelector", parsedMySingleSelector.getPath().toString() );
+        assertEquals( "My Option 1",
+                      ( (SingleSelectorConfig) parsedMySingleSelector.getComponentTypeConfig() ).getOptions().get( 0 ).getLabel() );
+        assertEquals( "My Option 2",
+                      ( (SingleSelectorConfig) parsedMySingleSelector.getComponentTypeConfig() ).getOptions().get( 1 ).getLabel() );
     }
 
     @Test
     public void parse_all_types()
     {
-        DropdownConfig dropdownConfig = DropdownConfig.newBuilder().addOption( "myOption 1", "o1" ).addOption( "myOption 2", "o2" ).build();
-        RadioButtonsConfig myRadioButtonsConfig =
-            RadioButtonsConfig.newBuilder().addOption( "myFirstChoice", "c1" ).addOption( "mySecondChoice", "c2" ).build();
+        SingleSelectorConfig singleSelectorConfig =
+            SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "myOption 1", "o1" ).addOption( "myOption 2",
+                                                                                                                     "o2" ).build();
 
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         FormItems formItems = new FormItems();
         contentType.setFormItems( formItems );
-        formItems.addFormItem( newBuilder().name( "myDate" ).type( ComponentTypes.DATE ).build() );
-        formItems.addFormItem(
-            newBuilder().name( "myDropdown" ).type( ComponentTypes.DROPDOWN ).componentTypeConfig( dropdownConfig ).build() );
-        formItems.addFormItem( newBuilder().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).build() );
-        formItems.addFormItem( newBuilder().name( "myTextArea" ).type( ComponentTypes.TEXT_AREA ).build() );
-        formItems.addFormItem( newBuilder().name( "myRadioButtons" ).type( ComponentTypes.RADIO_BUTTONS ).componentTypeConfig(
-            myRadioButtonsConfig ).build() );
-        formItems.addFormItem( newBuilder().name( "myPhone" ).type( ComponentTypes.PHONE ).build() );
-        formItems.addFormItem( newBuilder().name( "myXml" ).type( ComponentTypes.XML ).build() );
+        formItems.addFormItem( newComponent().name( "myDate" ).type( ComponentTypes.DATE ).build() );
+        formItems.addFormItem( newComponent().name( "mySingleSelector" ).type( ComponentTypes.SINGLE_SELECTOR ).componentTypeConfig(
+            singleSelectorConfig ).build() );
+        formItems.addFormItem( newComponent().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItems.addFormItem( newComponent().name( "myTextArea" ).type( ComponentTypes.TEXT_AREA ).build() );
+        formItems.addFormItem( newComponent().name( "myPhone" ).type( ComponentTypes.PHONE ).build() );
+        formItems.addFormItem( newComponent().name( "myXml" ).type( ComponentTypes.XML ).build() );
 
         FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).label( "Personalia" ).build();
         formItems.addFormItem( formItemSet );
-        formItemSet.addItem( newBuilder().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( newBuilder().name( "hairColour" ).occurrences( 1, 3 ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newComponent().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newComponent().name( "hairColour" ).occurrences( 1, 3 ).type( ComponentTypes.TEXT_LINE ).build() );
 
         String serialized = toString( contentType );
 
@@ -118,13 +113,12 @@ public abstract class AbstractContentTypeSerializerTest
         FormItems actualFormItems = actualContentType.getFormItems();
 
         assertNotNull( actualFormItems );
-        assertEquals( 8, actualFormItems.size() );
+        assertEquals( 7, actualFormItems.size() );
 
         assertNotNull( actualFormItems.getFormItem( new FormItemPath( "myDate" ).getLastElement() ) );
-        assertNotNull( actualFormItems.getFormItem( new FormItemPath( "myDropdown" ).getLastElement() ) );
+        assertNotNull( actualFormItems.getFormItem( new FormItemPath( "mySingleSelector" ).getLastElement() ) );
         assertNotNull( actualFormItems.getFormItem( new FormItemPath( "myTextLine" ).getLastElement() ) );
         assertNotNull( actualFormItems.getFormItem( new FormItemPath( "myTextArea" ).getLastElement() ) );
-        assertNotNull( actualFormItems.getFormItem( new FormItemPath( "myRadioButtons" ).getLastElement() ) );
         assertNotNull( actualFormItems.getFormItem( new FormItemPath( "myPhone" ).getLastElement() ) );
         assertNotNull( actualFormItems.getFormItem( new FormItemPath( "myXml" ).getLastElement() ) );
         assertNotNull( actualFormItems.getFormItem( new FormItemPath( "personalia" ).getLastElement() ) );
@@ -138,14 +132,14 @@ public abstract class AbstractContentTypeSerializerTest
 
         FormItemSetTemplate template = FormItemSetTemplateBuilder.newFormItemSetTemplate().module( module ).formItemSet(
             newFormItemSet().name( "address" ).add(
-                newBuilder().name( "label" ).label( "Label" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
-                newBuilder().name( "street" ).label( "Street" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
-                newBuilder().name( "postalNo" ).label( "Postal No" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
-                newBuilder().name( "country" ).label( "Country" ).type( ComponentTypes.TEXT_LINE ).build() ).build() ).build();
+                newComponent().name( "label" ).label( "Label" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
+                newComponent().name( "street" ).label( "Street" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
+                newComponent().name( "postalNo" ).label( "Postal No" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
+                newComponent().name( "country" ).label( "Country" ).type( ComponentTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
         cty.setModule( myModule );
-        cty.addFormItem( newBuilder().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).build() );
+        cty.addFormItem( newComponent().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).build() );
         cty.addFormItem( newTemplateReference( template ).name( "home" ).build() );
         cty.addFormItem( newTemplateReference( template ).name( "cabin" ).build() );
 

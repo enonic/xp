@@ -7,12 +7,12 @@ import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 
-public class Dropdown
+public class SingleSelector
     extends BaseComponentType
 {
-    public Dropdown()
+    public SingleSelector()
     {
-        super( "dropdown", DataTypes.TEXT );
+        super( "singleSelector", DataTypes.TEXT );
     }
 
     public boolean requiresConfig()
@@ -22,18 +22,18 @@ public class Dropdown
 
     public Class requiredConfigClass()
     {
-        return DropdownConfig.class;
+        return SingleSelectorConfig.class;
     }
 
     public AbstractComponentTypeConfigSerializerJson getComponentTypeConfigJsonGenerator()
     {
-        return DropdownConfigSerializerJson.DEFAULT;
+        return SingleSelectorConfigSerializerJson.DEFAULT;
     }
 
     @Override
     public AbstractComponentTypeConfigSerializerXml getComponentTypeConfigXmlGenerator()
     {
-        return DropdownConfigSerializerXml.DEFAULT;
+        return SingleSelectorConfigSerializerXml.DEFAULT;
     }
 
     @Override
@@ -47,4 +47,3 @@ public class Dropdown
         }
     }
 }
-

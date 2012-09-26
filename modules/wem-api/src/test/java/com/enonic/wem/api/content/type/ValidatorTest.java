@@ -15,9 +15,8 @@ import com.enonic.wem.api.content.type.formitem.FormItemSet;
 import com.enonic.wem.api.content.type.formitem.InvalidDataException;
 import com.enonic.wem.api.content.type.formitem.InvalidValueException;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
-import com.enonic.wem.api.content.type.formitem.comptype.DropdownConfig;
 import com.enonic.wem.api.content.type.formitem.comptype.HtmlAreaConfig;
-import com.enonic.wem.api.content.type.formitem.comptype.RadioButtonsConfig;
+import com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig;
 
 import static com.enonic.wem.api.content.type.Validator.newValidator;
 import static org.junit.Assert.*;
@@ -30,15 +29,16 @@ public class ValidatorTest
     public void given_invalid_content_and_validator_that_recordExceptions_when_validate_then_no_exception_is_thrown()
     {
         // setup
-        RadioButtonsConfig radioButtonsConfig = RadioButtonsConfig.newRadioButtonsConfig().addOption( "Option 1", "o1" ).build();
+        SingleSelectorConfig singleSelectorConfig = SingleSelectorConfig.newSingleSelectorConfig().addOption( "Option 1", "o1" ).build();
 
         ContentType contentType = new ContentType();
-        contentType.addFormItem( Component.newComponent().name( "myRadioButtons" ).type( ComponentTypes.RADIO_BUTTONS ).componentTypeConfig(
-            radioButtonsConfig ).build() );
+        contentType.addFormItem(
+            Component.newComponent().name( "mySingleSelector" ).type( ComponentTypes.SINGLE_SELECTOR ).componentTypeConfig(
+                singleSelectorConfig ).build() );
 
         Content content = new Content();
         content.setType( contentType );
-        content.setData( "myRadioButtons", "nonExistingOption" );
+        content.setData( "mySingleSelector", "nonExistingOption" );
 
         // exercise & verify
         Validator validator = newValidator().contentType( contentType ).recordExceptions( true ).build();
@@ -56,20 +56,20 @@ public class ValidatorTest
     public void given_invalid_content_and_validator_that_recordExceptions_when_validate_then_getInvalidDataExceptions_returns_exceptions()
     {
         // setup
-        RadioButtonsConfig radioButtonsConfig = RadioButtonsConfig.newRadioButtonsConfig().addOption( "Option 1", "o1" ).build();
+        SingleSelectorConfig singleSelectorConfig = SingleSelectorConfig.newSingleSelectorConfig().addOption( "Option 1", "o1" ).build();
 
         ContentType contentType = new ContentType();
         contentType.addFormItem(
-            Component.newComponent().name( "myRadioButtons1" ).type( ComponentTypes.RADIO_BUTTONS ).componentTypeConfig(
-                radioButtonsConfig ).build() );
+            Component.newComponent().name( "mySingleSelector1" ).type( ComponentTypes.SINGLE_SELECTOR ).componentTypeConfig(
+                singleSelectorConfig ).build() );
         contentType.addFormItem(
-            Component.newComponent().name( "myRadioButtons2" ).type( ComponentTypes.RADIO_BUTTONS ).componentTypeConfig(
-                radioButtonsConfig ).build() );
+            Component.newComponent().name( "mySingleSelector2" ).type( ComponentTypes.SINGLE_SELECTOR ).componentTypeConfig(
+                singleSelectorConfig ).build() );
 
         Content content = new Content();
         content.setType( contentType );
-        content.setData( "myRadioButtons1", "nonExistingOption" );
-        content.setData( "myRadioButtons2", "nonExistingOption" );
+        content.setData( "mySingleSelector1", "nonExistingOption" );
+        content.setData( "mySingleSelector2", "nonExistingOption" );
 
         // exercise & verify
         Validator validator = newValidator().contentType( contentType ).recordExceptions( true ).build();
@@ -88,8 +88,7 @@ public class ValidatorTest
     public void given_valid_content_with_all_components_when_validate_then_no_exception_is_thrown()
     {
         // setup
-        DropdownConfig dropdownConfig = DropdownConfig.newDropdownConfig().addOption( "Option 1", "o1" ).build();
-        RadioButtonsConfig radioButtonsConfig = RadioButtonsConfig.newRadioButtonsConfig().addOption( "Radio 1", "r1" ).build();
+        SingleSelectorConfig singleSelectorConfig = SingleSelectorConfig.newSingleSelectorConfig().addOption( "Option 1", "o1" ).build();
         HtmlAreaConfig htmlAreaConfig = HtmlAreaConfig.newHtmlAreaConfig().build();
 
         ContentType contentType = new ContentType();
@@ -97,13 +96,12 @@ public class ValidatorTest
         contentType.addFormItem( Component.newComponent().name( "myDate" ).type( ComponentTypes.DATE ).build() );
         contentType.addFormItem( Component.newComponent().name( "myDecimalNumber" ).type( ComponentTypes.DECIMAL_NUMBER ).build() );
         contentType.addFormItem(
-            Component.newComponent().name( "myDropdown" ).type( ComponentTypes.DROPDOWN ).componentTypeConfig( dropdownConfig ).build() );
+            Component.newComponent().name( "mySingleSelector" ).type( ComponentTypes.SINGLE_SELECTOR ).componentTypeConfig(
+                singleSelectorConfig ).build() );
         contentType.addFormItem( Component.newComponent().name( "myGeoLocation" ).type( ComponentTypes.GEO_LOCATION ).build() );
         contentType.addFormItem(
             Component.newComponent().name( "myHtmlArea" ).type( ComponentTypes.HTML_AREA ).componentTypeConfig( htmlAreaConfig ).build() );
         contentType.addFormItem( Component.newComponent().name( "myPhone" ).type( ComponentTypes.PHONE ).build() );
-        contentType.addFormItem( Component.newComponent().name( "myRadioButtons" ).type( ComponentTypes.RADIO_BUTTONS ).componentTypeConfig(
-            radioButtonsConfig ).build() );
         contentType.addFormItem( Component.newComponent().name( "myTextArea" ).type( ComponentTypes.TEXT_AREA ).build() );
         contentType.addFormItem( Component.newComponent().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).build() );
         contentType.addFormItem( Component.newComponent().name( "myWholeNumber" ).type( ComponentTypes.WHOLE_NUMBER ).build() );
@@ -116,11 +114,10 @@ public class ValidatorTest
         content.setData( "myColor.green", 0l );
         content.setData( "myDate", new DateMidnight( 2012, 9, 11 ) );
         content.setData( "myDecimalNumber", 12.34 );
-        content.setData( "myDropdown", "o1" );
+        content.setData( "mySingleSelector", "o1" );
         content.setData( "myGeoLocation.latitude", 0.0 );
         content.setData( "myGeoLocation.longitude", 0.0 );
         content.setData( "myHtmlArea", "<h1>Hello world</h1>" );
-        content.setData( "myRadioButtons", "r1" );
 
         // exercise
         Validator validator = newValidator().contentType( contentType ).build();
@@ -230,20 +227,21 @@ public class ValidatorTest
     public void given_nonExistingValue_for_radio_button_when_checkValidity_then_InvalidDataException_is_thrown()
     {
         // setup
-        RadioButtonsConfig radioButtonsConfig = RadioButtonsConfig.newRadioButtonsConfig().addOption( "Option 1", "o1" ).build();
+        SingleSelectorConfig singleSelectorConfig = SingleSelectorConfig.newSingleSelectorConfig().addOption( "Option 1", "o1" ).build();
 
         ContentType contentType = new ContentType();
 
-        contentType.addFormItem( Component.newComponent().name( "myRadioButtons" ).type( ComponentTypes.RADIO_BUTTONS ).componentTypeConfig(
-            radioButtonsConfig ).build() );
+        contentType.addFormItem(
+            Component.newComponent().name( "mySingleSelector" ).type( ComponentTypes.SINGLE_SELECTOR ).componentTypeConfig(
+                singleSelectorConfig ).build() );
 
         Content content = new Content();
         content.setType( contentType );
-        content.setData( "myRadioButtons", "nonExistingOption" );
+        content.setData( "mySingleSelector", "nonExistingOption" );
 
         // exercise
         Validator validator = newValidator().contentType( contentType ).build();
-        validateAndAssertInvalidDataException( validator, content, InvalidValueException.class, content.getData( "myRadioButtons" ) );
+        validateAndAssertInvalidDataException( validator, content, InvalidValueException.class, content.getData( "mySingleSelector" ) );
     }
 
     @Test

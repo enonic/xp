@@ -16,15 +16,13 @@ public final class ComponentTypes
 
     public static final BaseComponentType DECIMAL_NUMBER = new DecimalNumber();
 
-    public static final BaseComponentType DROPDOWN = new Dropdown();
-
     public static final BaseComponentType GEO_LOCATION = new GeoLocation();
 
     public static final BaseComponentType HTML_AREA = new HtmlArea();
 
     public static final BaseComponentType PHONE = new Phone();
 
-    public static final BaseComponentType RADIO_BUTTONS = new RadioButtons();
+    public static final BaseComponentType SINGLE_SELECTOR = new SingleSelector();
 
     public static final BaseComponentType TAGS = new Tags();
 
@@ -46,10 +44,9 @@ public final class ComponentTypes
     {
         register( COLOR );
         register( DATE );
-        register( DROPDOWN );
         register( GEO_LOCATION );
         register( PHONE );
-        register( RADIO_BUTTONS );
+        register( SINGLE_SELECTOR );
         register( TAGS );
         register( TEXT_LINE );
         register( TEXT_AREA );
