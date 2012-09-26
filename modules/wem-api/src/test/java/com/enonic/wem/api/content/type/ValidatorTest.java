@@ -29,7 +29,8 @@ public class ValidatorTest
     public void given_invalid_content_and_validator_that_recordExceptions_when_validate_then_no_exception_is_thrown()
     {
         // setup
-        SingleSelectorConfig singleSelectorConfig = SingleSelectorConfig.newSingleSelectorConfig().addOption( "Option 1", "o1" ).build();
+        SingleSelectorConfig singleSelectorConfig =
+            SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "Option 1", "o1" ).build();
 
         ContentType contentType = new ContentType();
         contentType.addFormItem(
@@ -56,7 +57,8 @@ public class ValidatorTest
     public void given_invalid_content_and_validator_that_recordExceptions_when_validate_then_getInvalidDataExceptions_returns_exceptions()
     {
         // setup
-        SingleSelectorConfig singleSelectorConfig = SingleSelectorConfig.newSingleSelectorConfig().addOption( "Option 1", "o1" ).build();
+        SingleSelectorConfig singleSelectorConfig =
+            SingleSelectorConfig.newSingleSelectorConfig().typeRadio().addOption( "Option 1", "o1" ).build();
 
         ContentType contentType = new ContentType();
         contentType.addFormItem(
@@ -88,7 +90,8 @@ public class ValidatorTest
     public void given_valid_content_with_all_components_when_validate_then_no_exception_is_thrown()
     {
         // setup
-        SingleSelectorConfig singleSelectorConfig = SingleSelectorConfig.newSingleSelectorConfig().addOption( "Option 1", "o1" ).build();
+        SingleSelectorConfig singleSelectorConfig =
+            SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "Option 1", "o1" ).build();
         HtmlAreaConfig htmlAreaConfig = HtmlAreaConfig.newHtmlAreaConfig().build();
 
         ContentType contentType = new ContentType();
@@ -227,7 +230,8 @@ public class ValidatorTest
     public void given_nonExistingValue_for_radio_button_when_checkValidity_then_InvalidDataException_is_thrown()
     {
         // setup
-        SingleSelectorConfig singleSelectorConfig = SingleSelectorConfig.newSingleSelectorConfig().addOption( "Option 1", "o1" ).build();
+        SingleSelectorConfig singleSelectorConfig =
+            SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "Option 1", "o1" ).build();
 
         ContentType contentType = new ContentType();
 
