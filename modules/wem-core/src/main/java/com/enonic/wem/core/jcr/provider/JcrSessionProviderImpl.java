@@ -17,6 +17,13 @@ public final class JcrSessionProviderImpl
     public Session login()
         throws Exception
     {
+        return loginAdmin();
+    }
+
+    @Override
+    public Session loginAdmin()
+        throws Exception
+    {
         return this.repository.login( new SimpleCredentials( "admin", "admin".toCharArray() ) );
     }
 

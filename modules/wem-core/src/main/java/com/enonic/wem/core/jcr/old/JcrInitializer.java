@@ -1,6 +1,7 @@
 package com.enonic.wem.core.jcr.old;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Arrays;
@@ -13,30 +14,19 @@ import javax.jcr.Session;
 import javax.jcr.Workspace;
 import javax.jcr.nodetype.NodeType;
 
-import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.commons.cnd.CndImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
 
-import static com.enonic.wem.core.jcr.old.JcrWemConstants.ENONIC_CMS_NAMESPACE;
-import static com.enonic.wem.core.jcr.old.JcrWemConstants.ENONIC_CMS_NAMESPACE_PREFIX;
-import static com.enonic.wem.core.jcr.old.JcrWemConstants.ROOT_NODE;
-import static com.enonic.wem.core.jcr.old.JcrWemConstants.USERSTORES_NODE;
-import static com.enonic.wem.core.jcr.old.JcrWemConstants.USERSTORES_NODE_TYPE;
+import com.enonic.wem.core.jcr.JcrConstants;
 
 public class JcrInitializer
+    implements JcrConstants
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( JcrInitializer.class );
 
-    private Resource compactNodeDefinitionFile;
-
     private JcrTemplate jcrTemplate;
-
-    public JcrInitializer()
-    {
-    }
 
     public void initializeJcrRepository()
     {
@@ -72,14 +62,15 @@ public class JcrInitializer
         }
         final JcrNode enonic = root.addNode( ROOT_NODE, JcrConstants.NT_UNSTRUCTURED );
         LOG.info( "Jcr node created: " + enonic.getPath() );
-        final JcrNode userstores = enonic.addNode( USERSTORES_NODE, USERSTORES_NODE_TYPE );
+        final JcrNode userstores = enonic.addNode( USER_STORES_NODE, USER_STORES_TYPE );
         LOG.info( "Jcr node created: " + userstores.getPath() );
     }
 
     private void registerCustomNodeTypes( Session session )
         throws IOException
     {
-        final Reader fileReader = new InputStreamReader( compactNodeDefinitionFile.getInputStream() );
+        final InputStream in = getClass().getResourceAsStream( "/META-INF/jcr/node_types.cnd" );
+        final Reader fileReader = new InputStreamReader( in );
         try
         {
             final NodeType[] nodeTypes = CndImporter.registerNodeTypes( fileReader, session, true );
@@ -103,7 +94,7 @@ public class JcrInitializer
         final String[] prefixes = reg.getPrefixes();
         final Set<String> registeredPrefixes = new HashSet<String>( Arrays.<String>asList( prefixes ) );
 
-        registerNamespace( reg, registeredPrefixes, ENONIC_CMS_NAMESPACE_PREFIX, ENONIC_CMS_NAMESPACE );
+        registerNamespace( reg, registeredPrefixes, WEM_NS_PREFIX, WEM_NS );
     }
 
     private void registerNamespace( NamespaceRegistry reg, Set<String> registeredPrefixes, String prefix, String uri )
@@ -123,11 +114,6 @@ public class JcrInitializer
                     "Namespace prefix is already registered with a different URI: " + prefix + ":" + registeredUri );
             }
         }
-    }
-
-    public void setCompactNodeDefinitionFile( Resource compactNodeDefinitionFile )
-    {
-        this.compactNodeDefinitionFile = compactNodeDefinitionFile;
     }
 
     public void setJcrTemplate( JcrTemplate jcrTemplate )

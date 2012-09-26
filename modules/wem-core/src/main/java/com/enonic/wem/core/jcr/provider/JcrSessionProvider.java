@@ -6,4 +6,7 @@ public interface JcrSessionProvider
 {
     public Session login()
         throws Exception;
+
+    public Session loginAdmin()
+        throws Exception;
 }

@@ -36,7 +36,6 @@ public class AccountDaoTest
     {
         final JcrInitializer jcrInitializer = new JcrInitializer();
         jcrInitializer.setJcrTemplate( jcrTemplate );
-        jcrInitializer.setCompactNodeDefinitionFile( new ClassPathResource( "com/enonic/wem/core/jcr/old/cmstypes.cnd" ) );
         jcrInitializer.initializeJcrRepository();
     }
 

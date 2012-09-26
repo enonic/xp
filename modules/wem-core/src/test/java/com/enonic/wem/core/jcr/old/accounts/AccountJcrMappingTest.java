@@ -5,14 +5,14 @@ import java.util.Arrays;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
+import com.enonic.wem.core.jcr.JcrConstants;
 import com.enonic.wem.core.jcr.old.JcrNode;
-import com.enonic.wem.core.jcr.old.JcrWemConstants;
 import com.enonic.wem.core.jcr.old.MockJcrNode;
 
-import static com.enonic.wem.core.jcr.old.JcrWemConstants.GROUPS_NODE;
-import static com.enonic.wem.core.jcr.old.JcrWemConstants.ROLES_NODE;
-import static com.enonic.wem.core.jcr.old.JcrWemConstants.USERSTORES_PATH;
-import static com.enonic.wem.core.jcr.old.JcrWemConstants.USERS_NODE;
+import static com.enonic.wem.core.jcr.JcrConstants.GROUPS_NODE;
+import static com.enonic.wem.core.jcr.JcrConstants.ROLES_NODE;
+import static com.enonic.wem.core.jcr.JcrConstants.USER_STORES_PATH;
+import static com.enonic.wem.core.jcr.JcrConstants.USERS_NODE;
 import static com.enonic.wem.core.jcr.old.accounts.AccountJcrMapping.ADDRESS;
 import static com.enonic.wem.core.jcr.old.accounts.AccountJcrMapping.ADDRESSES;
 import static org.junit.Assert.*;
@@ -22,8 +22,8 @@ public class AccountJcrMappingTest
 
     private MockJcrNode createUserstoreNode( final String userStoreName )
     {
-        final MockJcrNode rootNode = new MockJcrNode( JcrWemConstants.ROOT_NODE );
-        final MockJcrNode userstoresNode = new MockJcrNode( USERSTORES_PATH );
+        final MockJcrNode rootNode = new MockJcrNode( JcrConstants.ROOT_NODE );
+        final MockJcrNode userstoresNode = new MockJcrNode( USER_STORES_PATH );
         final MockJcrNode userstoreNode = new MockJcrNode( userStoreName );
         rootNode.addNode( userstoresNode );
         userstoresNode.addNode( userstoreNode );

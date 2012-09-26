@@ -17,7 +17,8 @@ import com.enonic.wem.core.jcr.old.JcrTemplate;
 import com.enonic.wem.migrate.MigrateTask;
 
 @Component
-public class JcrMigrateTask implements MigrateTask
+public class JcrMigrateTask
+    implements MigrateTask
 {
     private Resource compactNodeDefinitionFile;
 
@@ -31,10 +32,9 @@ public class JcrMigrateTask implements MigrateTask
 
     @Override
     public void migrate()
-            throws Exception
+        throws Exception
     {
         final JcrInitializer jcrInitializer = new JcrInitializer();
-        jcrInitializer.setCompactNodeDefinitionFile( this.compactNodeDefinitionFile );
         jcrInitializer.setJcrTemplate( this.jcrTemplate );
         jcrInitializer.initializeJcrRepository();
 
@@ -42,7 +42,7 @@ public class JcrMigrateTask implements MigrateTask
         {
             @Override
             public Object doInJcr( JcrSession session )
-                    throws IOException, RepositoryException
+                throws IOException, RepositoryException
             {
                 migrateToJcr( session.getRealSession() );
                 return null;
@@ -51,7 +51,7 @@ public class JcrMigrateTask implements MigrateTask
     }
 
     private void migrateToJcr( final Session session )
-            throws RepositoryException, IOException
+        throws RepositoryException, IOException
     {
         jcrAccountsImporter.importAccounts();
         session.save();
