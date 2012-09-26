@@ -41,7 +41,7 @@ public class CreateOrUpdateUserStoresRpcHandlerTest
         Mockito.when( client.execute( Mockito.isA( GetUserStores.class ) ) ).thenReturn( UserStores.empty() );
         Mockito.when( client.execute( Mockito.isA( CreateUserStore.class ) ) ).thenReturn( UserStoreName.from( "store1" ) );
 
-        testSuccess( createParams( false, null, "Connector v1.23", "store1" ), createResult( true, false, 1 ) );
+        testSuccess( createParams( false, null, "Connector v1.23", "store1" ), createResult( true, false ) );
     }
 
     @Test
@@ -51,7 +51,7 @@ public class CreateOrUpdateUserStoresRpcHandlerTest
         Mockito.when( client.execute( Mockito.isA( GetUserStores.class ) ) ).thenReturn( UserStores.empty() );
         Mockito.when( client.execute( Mockito.isA( CreateUserStore.class ) ) ).thenReturn( UserStoreName.from( "store1" ) );
 
-        testSuccess( createParams( "store1" ), createResult( true, false, 1 ) );
+        testSuccess( createParams( "store1" ), createResult( true, false ) );
     }
 
     @Test
@@ -61,7 +61,7 @@ public class CreateOrUpdateUserStoresRpcHandlerTest
         Mockito.when( client.execute( Mockito.isA( GetUserStores.class ) ) ).thenReturn( createUserStores( "store1" ) );
         Mockito.when( client.execute( Mockito.isA( UpdateUserStores.class ) ) ).thenReturn( 1 );
 
-        testSuccess( createParams( "store1" ), createResult( false, true, 1 ) );
+        testSuccess( createParams( "store1" ), createResult( false, true ) );
     }
 
 
@@ -72,7 +72,7 @@ public class CreateOrUpdateUserStoresRpcHandlerTest
         Mockito.when( client.execute( Mockito.isA( GetUserStores.class ) ) ).thenReturn( createUserStores( "store1", "store2", "store3" ) );
         Mockito.when( client.execute( Mockito.isA( UpdateUserStores.class ) ) ).thenReturn( 3 );
 
-        testSuccess( createParams( "store1", "store2", "store3" ), createResult( false, true, 3 ) );
+        testSuccess( createParams( "store1", "store2", "store3" ), createResult( false, true ) );
     }
 
 
@@ -112,13 +112,12 @@ public class CreateOrUpdateUserStoresRpcHandlerTest
         return createParams( false, "<config><user-fields></user-fields></config>", "Connector v1.23", name );
     }
 
-    private ObjectNode createResult( final boolean created, final boolean updated, final int count )
+    private ObjectNode createResult( final boolean created, final boolean updated )
     {
         final ObjectNode result = objectNode();
         result.put( "success", true );
         result.put( "created", created );
         result.put( "updated", updated );
-        result.put( "count", count );
 
         return result;
     }

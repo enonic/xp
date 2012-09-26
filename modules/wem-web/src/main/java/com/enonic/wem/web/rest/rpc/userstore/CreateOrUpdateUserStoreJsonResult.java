@@ -9,22 +9,19 @@ final class CreateOrUpdateUserStoreJsonResult
 {
     private final boolean created;
 
-    private final int count;
-
-    private CreateOrUpdateUserStoreJsonResult( final boolean created, final int count )
+    private CreateOrUpdateUserStoreJsonResult( final boolean created )
     {
         this.created = created;
-        this.count = count;
     }
 
     public static CreateOrUpdateUserStoreJsonResult created()
     {
-        return new CreateOrUpdateUserStoreJsonResult( true, 1 );
+        return new CreateOrUpdateUserStoreJsonResult( true );
     }
 
-    public static CreateOrUpdateUserStoreJsonResult updated( final int count )
+    public static CreateOrUpdateUserStoreJsonResult updated()
     {
-        return new CreateOrUpdateUserStoreJsonResult( false, count );
+        return new CreateOrUpdateUserStoreJsonResult( false );
     }
 
     @Override
@@ -32,7 +29,6 @@ final class CreateOrUpdateUserStoreJsonResult
     {
         json.put( "created", created );
         json.put( "updated", !created );
-        json.put( "count", count );
     }
 
 }
