@@ -37,7 +37,7 @@ import com.enonic.cms.store.dao.GroupDao;
 import com.enonic.cms.store.dao.UserDao;
 import com.enonic.cms.store.dao.UserStoreDao;
 
-public abstract class UserStoreHandler<T extends Command>
+public abstract class AbstractUserStoreHandler<T extends Command>
     extends CommandHandler<T>
 {
 
@@ -56,7 +56,7 @@ public abstract class UserStoreHandler<T extends Command>
     protected UserStoreConnectorManager userStoreConnectorManager;
 
 
-    public UserStoreHandler( final Class<T> type )
+    public AbstractUserStoreHandler( final Class<T> type )
     {
         super( type );
     }

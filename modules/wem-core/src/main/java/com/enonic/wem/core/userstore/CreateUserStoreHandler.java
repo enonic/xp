@@ -12,7 +12,7 @@ import com.enonic.cms.core.security.userstore.UserStoreKey;
 
 @Component
 public class CreateUserStoreHandler
-    extends UserStoreHandler<CreateUserStore>
+    extends AbstractUserStoreHandler<CreateUserStore>
 {
 
     public CreateUserStoreHandler()

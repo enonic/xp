@@ -16,7 +16,7 @@ import com.enonic.cms.core.security.userstore.UserStoreKey;
 
 @Component
 public class UpdateUserStoresHandler
-    extends UserStoreHandler<UpdateUserStores>
+    extends AbstractUserStoreHandler<UpdateUserStores>
 {
     public UpdateUserStoresHandler()
     {

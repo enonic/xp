@@ -22,7 +22,7 @@ import com.enonic.cms.core.security.userstore.UserStoreEntity;
 
 @Component
 public class GetUserStoresHandler
-    extends UserStoreHandler<GetUserStores>
+    extends AbstractUserStoreHandler<GetUserStores>
 {
 
     public GetUserStoresHandler()
