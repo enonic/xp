@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<node name="wem" xmlns="http://www.jcp.org/jcr/sv/1.0" xmlns:wem="http://www.enonic.com/wem"
+      xmlns:nt="http://www.jcp.org/jcr/nt/1.0">
+
+  <property name="jcr:primaryType" type="Name">
+    <value>nt:unstructured</value>
+  </property>
+
+  <node name="userStores">
+    <property name="jcr:primaryType" type="Name">
+      <value>wem:userStores</value>
+    </property>
+  </node>
+
+</node>
