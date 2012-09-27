@@ -208,14 +208,14 @@ Ext.define('Admin.view.SummaryTreePanel', {
 
     getShortenDiff: function () {
         if (!this.shortenDiff && this.changedData && this.initialData) {
-            this.shortenDiff = Admin.lib.Diff.compare(this.dataType, this.initialData, this.changedData, true);
+            this.shortenDiff = Admin.lib.Diff.compare(this.dataType, this.changedData, this.initialData, true);
         }
         return Ext.clone(this.shortenDiff || {});
     },
 
     getFullDiff: function () {
         if (!this.fullDiff && this.changedData && this.initialData) {
-            this.fullDiff = Admin.plugin.Diff.compare(this.dataType, this.initialData, this.changedData);
+            this.fullDiff = Admin.lib.Diff.compare(this.dataType, this.changedData, this.initialData);
         }
         return Ext.clone(this.fullDiff || {});
     }

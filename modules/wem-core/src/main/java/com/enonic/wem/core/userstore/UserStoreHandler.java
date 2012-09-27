@@ -198,19 +198,22 @@ public abstract class UserStoreHandler<T extends Command>
 
     protected AccountKeys getUserStoreAdministrators( final UserStoreEntity userStoreEntity )
     {
-        final GroupEntity builtInUserStoreAdministrator = groupDao.findBuiltInUserStoreAdministrator( userStoreEntity.getKey() );
-        final Set<GroupEntity> userStoreAdmins = builtInUserStoreAdministrator.getMembers( false );
-
         final List<AccountKey> adminAccounts = Lists.newArrayList();
-        final String userStoreName = userStoreEntity.getName();
-        for ( GroupEntity groupEntity : userStoreAdmins )
+
+        final GroupEntity builtInUserStoreAdministrator = groupDao.findBuiltInUserStoreAdministrator( userStoreEntity.getKey() );
+        if ( builtInUserStoreAdministrator != null )
         {
-            if ( groupEntity.getUser() != null )
+            final Set<GroupEntity> userStoreAdmins = builtInUserStoreAdministrator.getMembers( false );
+
+            final String userStoreName = userStoreEntity.getName();
+            for ( GroupEntity groupEntity : userStoreAdmins )
             {
-                adminAccounts.add( AccountKey.user( userStoreName + ":" + groupEntity.getUser().getName() ) );
+                if ( groupEntity.getUser() != null )
+                {
+                    adminAccounts.add( AccountKey.user( userStoreName + ":" + groupEntity.getUser().getName() ) );
+                }
             }
         }
-
         return AccountKeys.from( adminAccounts );
     }
 

@@ -107,8 +107,7 @@ Ext.define('Admin.controller.userstore.UserstoreWizardController', {
             var treePanel = newStep;
             // Can not re-use data object each time the rootnode is set
             // This somewhat confuses the store. Clone for now.
-            treePanel.setDiffData(userstoreWizard.getData(),
-                userstoreWizard.modelData);
+            treePanel.setDiffData(userstoreWizard.modelData, userstoreWizard.getData());
         }
     },
 

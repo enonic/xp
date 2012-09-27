@@ -573,11 +573,11 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
         var isPlacesForm = formValues.label;
         if (isPlacesForm) {
             userData = {
-                info: {addresses: this.getAddresses(formValues) }
+                profile: {addresses: this.getAddresses(formValues) }
             };
         } else {
             userData = {
-                info: formValues
+                profile: formValues
             };
             if (formValues.name) {
                 userData.name = formValues.name;
