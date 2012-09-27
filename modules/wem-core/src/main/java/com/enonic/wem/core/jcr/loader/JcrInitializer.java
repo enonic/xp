@@ -1,16 +1,16 @@
-package com.enonic.wem.core.jcr;
+package com.enonic.wem.core.jcr.loader;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
 
 import org.apache.jackrabbit.commons.cnd.CndImporter;
 
+import com.enonic.wem.core.jcr.JcrConstants;
 import com.enonic.wem.core.jcr.provider.JcrSessionProvider;
 
 public final class JcrInitializer
@@ -74,6 +74,6 @@ public final class JcrInitializer
         throws Exception
     {
         final InputStream in = getClass().getResourceAsStream( resource );
-        session.getWorkspace().importXML( "/", in, ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING );
+        new JcrXmlLoader( session ).importContent( in );
     }
 }
