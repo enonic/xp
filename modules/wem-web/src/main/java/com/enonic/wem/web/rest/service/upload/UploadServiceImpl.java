@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.jackrabbit.nodep.commons.io.FileUtils;
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Maps;

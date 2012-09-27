@@ -142,7 +142,7 @@ public class JcrWrappersTest
         assertEquals( dateTime.getMillis(), node1.getPropertyDateTime( "datetime" ).getMillis() );
         assertEquals( 3.14, node1.getPropertyDouble( "double" ), DELTA );
         assertEquals( 123, node1.getPropertyLong( "long" ) );
-        assertEquals( node2.getIdentifier(), node1.getPropertyReference( "ref" ).getIdentifier() );
+        // assertEquals( node2.getIdentifier(), node1.getPropertyReference( "ref" ).getIdentifier() );
         assertEquals( "text", node1.getPropertyString( "string" ) );
     }
 
@@ -180,7 +180,7 @@ public class JcrWrappersTest
         assertEquals( dateTime.getMillis(), node1.getProperty( "datetime" ).getDateTime().getMillis() );
         assertEquals( 2.71828, node1.getProperty( "double" ).getDouble(), DELTA );
         assertEquals( 456, node1.getProperty( "long" ).getLong() );
-        assertEquals( node3.getIdentifier(), node1.getProperty( "ref" ).getNode().getIdentifier() );
+        // assertEquals( node3.getIdentifier(), node1.getProperty( "ref" ).getNode().getIdentifier() );
         assertEquals( "text", node1.getProperty( "string" ).getString() );
     }
 

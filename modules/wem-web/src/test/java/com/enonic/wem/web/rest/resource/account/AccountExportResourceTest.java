@@ -6,7 +6,7 @@ import java.util.TimeZone;
 
 import javax.ws.rs.core.Response;
 
-import org.apache.jackrabbit.nodep.commons.io.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
