@@ -1,12 +1,15 @@
 package com.enonic.wem.web.rest.rpc.content;
 
 
+import org.codehaus.jackson.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.rest.service.upload.UploadService;
 
+@Component
 public final class CreateOrUpdateContentRpcHandler
     extends AbstractDataRpcHandler
 {
@@ -22,7 +25,10 @@ public final class CreateOrUpdateContentRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
+        final ObjectNode data = context.param( "content" ).asObject();
+        System.out.println( data.toString() );
 
+        context.setResult( CreateOrUpdateContentJsonResult.created() );
     }
 
     @Autowired
