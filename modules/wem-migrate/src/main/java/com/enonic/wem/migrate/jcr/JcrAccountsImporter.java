@@ -196,7 +196,7 @@ public class JcrAccountsImporter
         final DateTime lastModified = new DateTime();
 
         final NonUserAccount nonUserAccount;
-        if ( groupType.isBuiltIn() )
+        if ( groupType.isBuiltIn() && ( userStoreName.equals( UserStoreName.system().toString() ) ) )
         {
             nonUserAccount = RoleAccount.create( userStoreName + ":" + groupName );
         }
@@ -321,6 +321,7 @@ public class JcrAccountsImporter
         final UserInfo userInfo = transformer.toUserInfo( userFields );
 
         final Address[] addresses = userFieldsToAddresses( userInfoFields );
+
         userInfo.setAddresses( addresses );
 
         userInfoFieldsToUserProfile( userInfo, user );

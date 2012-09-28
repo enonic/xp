@@ -49,7 +49,10 @@ public final class AccountDaoImpl
         userStoreJcrMapping.userStoreToJcr( userStore, userStoreNode );
         userStoreNode.addNode( JcrConstants.GROUPS_NODE, JcrConstants.GROUPS_TYPE );
         userStoreNode.addNode( JcrConstants.USERS_NODE, JcrConstants.USERS_TYPE );
-        userStoreNode.addNode( JcrConstants.ROLES_NODE, JcrConstants.ROLES_TYPE );
+        if ( userStore.getName().isSystem() )
+        {
+            userStoreNode.addNode( JcrConstants.ROLES_NODE, JcrConstants.ROLES_TYPE );
+        }
     }
 
     @Override

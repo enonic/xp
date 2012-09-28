@@ -18,7 +18,7 @@ public interface AccountDao
     public void createUserStore( Session session, UserStore userStore )
         throws Exception;
 
-    public void createUser( final Session session, final UserAccount user )
+    public void createUser( Session session, UserAccount user )
         throws Exception;
 
     public void createGroup( Session session, GroupAccount group )
