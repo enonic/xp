@@ -15,7 +15,8 @@
 
 // group
 [wem:group] > wem:account, mix:referenceable, nt:unstructured
-- wem:members (reference) multiple mandatory < 'wem:account'
+- members (string) multiple mandatory
+// - members (reference) multiple mandatory < 'wem:account' TODO: reference in properties not supported yet in Jackrabbit OAK
 
 // role
 [wem:role] > wem:group

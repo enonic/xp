@@ -13,16 +13,16 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class JdbcAccountsRetriever
+public class DatabaseAccountsLoader
 {
-    private static final Logger LOG = LoggerFactory.getLogger( JdbcAccountsRetriever.class );
+    private static final Logger LOG = LoggerFactory.getLogger( DatabaseAccountsLoader.class );
 
     static final String USER_INFO_FIELDS_MAP = "FIELDSMAP";
 
     private JdbcTemplate jdbcTemplate;
 
 
-    public void fetchUserStores( ImportDataCallbackHandler handler )
+    public void loadUserStores( ImportDataCallbackHandler handler )
     {
         final String sql =
                 "SELECT DOM_LKEY, DOM_BISDELETED, DOM_SNAME, DOM_BDEFAULTSTORE, DOM_SCONFIGNAME, DOM_XMLDATA " +
@@ -37,7 +37,7 @@ public class JdbcAccountsRetriever
         }
     }
 
-    public void fetchUsers( ImportDataCallbackHandler handler )
+    public void loadUsers( ImportDataCallbackHandler handler )
     {
         final String sql = "SELECT USR_HKEY, USR_SUID, USR_SFULLNAME, USR_DTETIMESTAMP, USR_UT_LKEY, " +
                 "USR_DOM_LKEY, USR_SSYNCVALUE, USR_SEMAIL, USR_SPASSWORD, USR_GRP_HKEY, USR_PHOTO, USR_BISDELETED FROM TUSER WHERE USR_BISDELETED = 0";
@@ -54,7 +54,7 @@ public class JdbcAccountsRetriever
         }
     }
 
-    public void fetchGroups( ImportDataCallbackHandler handler )
+    public void loadGroups( ImportDataCallbackHandler handler )
     {
         final String sql = "SELECT GRP_HKEY, GRP_SDESCRIPTION, GRP_SNAME, GRP_BRESTRICTED, GRP_SSYNCVALUE, " +
                 "GRP_LTYPE, GRP_DOM_LKEY, GRP_BISDELETED FROM TGROUP WHERE GRP_BISDELETED = 0";
@@ -68,7 +68,7 @@ public class JdbcAccountsRetriever
         }
     }
 
-    public void fetchMemberships( ImportDataCallbackHandler handler )
+    public void loadMemberships( ImportDataCallbackHandler handler )
     {
         final String sql = "SELECT GGM_MBR_GRP_HKEY, GGM_GRP_HKEY FROM TGRPGRPMEMBERSHIP";
 

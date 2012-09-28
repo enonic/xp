@@ -23,6 +23,8 @@ public interface JcrConstants
 
     public static final String MEMBERS_NODE = "members";
 
+    public static final String MEMBERS_PROPERTY = "members";
+
     public static final String MEMBER_NODE = "member";
 
     public static final String USERS_NODE = "users";
@@ -30,6 +32,10 @@ public interface JcrConstants
     public static final String USERS_TYPE = "wem:users";
 
     public static final String USER_TYPE = "wem:user";
+
+    public static final String USER_PROFILE_TYPE = "wem:profile";
+
+    public static final String USER_PROFILE_NODE = "profile";
 
     public static final String ROLES_NODE = "roles";
 

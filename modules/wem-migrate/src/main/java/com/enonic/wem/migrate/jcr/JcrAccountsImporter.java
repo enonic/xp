@@ -1,11 +1,12 @@
 package com.enonic.wem.migrate.jcr;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+
+import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
@@ -14,14 +15,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.core.jcr.old.JcrDaoSupport;
-import com.enonic.wem.core.jcr.old.accounts.AccountJcrDao;
-import com.enonic.wem.core.jcr.old.accounts.JcrAddress;
-import com.enonic.wem.core.jcr.old.accounts.JcrGroup;
-import com.enonic.wem.core.jcr.old.accounts.JcrRole;
-import com.enonic.wem.core.jcr.old.accounts.JcrUser;
-import com.enonic.wem.core.jcr.old.accounts.JcrUserInfo;
-import com.enonic.wem.core.jcr.old.accounts.JcrUserStore;
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+
+import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.AccountKeys;
+import com.enonic.wem.api.account.GroupAccount;
+import com.enonic.wem.api.account.NonUserAccount;
+import com.enonic.wem.api.account.RoleAccount;
+import com.enonic.wem.api.account.UserAccount;
+import com.enonic.wem.api.account.profile.Addresses;
+import com.enonic.wem.api.account.profile.UserProfile;
+import com.enonic.wem.api.userstore.UserStore;
+import com.enonic.wem.api.userstore.UserStoreName;
+import com.enonic.wem.api.userstore.config.UserStoreConfig;
+import com.enonic.wem.api.userstore.config.UserStoreConfigParser;
+import com.enonic.wem.core.account.dao.AccountDao;
 
 import com.enonic.cms.api.client.model.user.Address;
 import com.enonic.cms.api.client.model.user.Gender;
@@ -36,80 +45,61 @@ import com.enonic.cms.core.user.field.UserInfoTransformer;
 
 @Component
 public class JcrAccountsImporter
-        extends JcrDaoSupport
 {
     private static final Logger LOG = LoggerFactory.getLogger( JcrAccountsImporter.class );
 
-    private final static String F_COUNTRY = "country";
+    private DatabaseAccountsLoader dbAccountsLoader;
 
-    private final static String F_ISO_COUNTRY = "iso-country";
-
-    private final static String F_REGION = "region";
-
-    private final static String F_ISO_REGION = "iso-region";
-
-    private final static String F_LABEL = "label";
-
-    private final static String F_STREET = "street";
-
-    private final static String F_POSTAL_CODE = "postal-code";
-
-    private final static String F_POSTAL_ADDRESS = "postal-address";
-
-    private static final int SYSTEM_USERSTORE_KEY = 0;
-
-    private JdbcAccountsRetriever jdbcAccountsRetriever;
-
-    private AccountJcrDao accountDao;
+    private AccountDao accountDao;
 
     private final Map<Integer, String> userStoreKeyName;
 
-    private final Map<String, String> accountKeyToJcrUIDMapping;
+    private final Map<String, String> entityKeyToAccountKeyMapping;
 
     public JcrAccountsImporter()
     {
         userStoreKeyName = new HashMap<Integer, String>();
-        accountKeyToJcrUIDMapping = new HashMap<String, String>();
+        entityKeyToAccountKeyMapping = new HashMap<String, String>();
     }
 
-    public void importAccounts()
+    public void importAccounts( final Session session )
     {
-        importUserStores();
+        importUserStores( session );
 
-        importUsers();
+        importUsers( session );
 
-        importGroups();
+        importGroups( session );
 
         releaseResources();
     }
 
-    private void importUserStores()
+    private void importUserStores( final Session session )
     {
-        jdbcAccountsRetriever.fetchUserStores( new ImportDataCallbackHandler()
+        dbAccountsLoader.loadUserStores( new ImportDataCallbackHandler()
         {
-            public void processDataEntry( Map<String, Object> userstoreFields )
+            public void processDataEntry( Map<String, Object> userStoreFields )
             {
                 try
                 {
-                    importUserStore( userstoreFields );
+                    importUserStore( session, userStoreFields );
                 }
                 catch ( Exception e )
                 {
-                    LOG.error( "Unable to import userstore", e );
+                    LOG.error( "Unable to import user store", e );
                 }
             }
         } );
     }
 
-    private void importUsers()
+    private void importUsers( final Session session )
     {
-        jdbcAccountsRetriever.fetchUsers( new ImportDataCallbackHandler()
+        dbAccountsLoader.loadUsers( new ImportDataCallbackHandler()
         {
             public void processDataEntry( Map<String, Object> data )
             {
                 try
                 {
-                    storeUser( data );
+                    storeUser( session, data );
                 }
                 catch ( Exception e )
                 {
@@ -119,15 +109,15 @@ public class JcrAccountsImporter
         } );
     }
 
-    private void importGroups()
+    private void importGroups( final Session session )
     {
-        jdbcAccountsRetriever.fetchGroups( new ImportDataCallbackHandler()
+        dbAccountsLoader.loadGroups( new ImportDataCallbackHandler()
         {
             public void processDataEntry( Map<String, Object> data )
             {
                 try
                 {
-                    storeGroup( data );
+                    storeGroup( session, data );
                 }
                 catch ( Exception e )
                 {
@@ -136,43 +126,59 @@ public class JcrAccountsImporter
             }
         } );
 
-        jdbcAccountsRetriever.fetchMemberships( new ImportDataCallbackHandler()
+        final Map<AccountKey, AccountKeys> membershipsTable = Maps.newHashMap();
+        dbAccountsLoader.loadMemberships( new ImportDataCallbackHandler()
         {
             public void processDataEntry( Map<String, Object> data )
             {
-                try
+                final String memberKey = (String) data.get( "GGM_MBR_GRP_HKEY" );
+                final String accountKey = (String) data.get( "GGM_GRP_HKEY" );
+
+                final String group = entityKeyToAccountKeyMapping.get( accountKey );
+                final String member = entityKeyToAccountKeyMapping.get( memberKey );
+                if ( member == null || group == null )
                 {
-                    final String memberKey = (String) data.get( "GGM_MBR_GRP_HKEY" );
-                    final String accountKey = (String) data.get( "GGM_GRP_HKEY" );
-                    addMembership( accountKey, memberKey );
+                    return;
                 }
-                catch ( Exception e )
+
+                final AccountKey groupAccountKey = AccountKey.from( group );
+                AccountKeys groupMembers = membershipsTable.get( groupAccountKey );
+                if ( groupMembers == null )
                 {
-                    LOG.error( "Unable to import membership: " + data.get( "GGM_MBR_GRP_HKEY" ), e );
+                    groupMembers = AccountKeys.empty();
                 }
+                groupMembers = groupMembers.add( member );
+                membershipsTable.put( groupAccountKey, groupMembers );
             }
         } );
+        for ( AccountKey accountKey : membershipsTable.keySet() )
+        {
+            try
+            {
+                setMembers( session, accountKey, membershipsTable.get( accountKey ) );
+            }
+            catch ( Exception e )
+            {
+                LOG.error( "Unable to set members for: " + accountKey.toString(), e );
+            }
+        }
     }
 
-    private void addMembership( final String groupKey, final String memberKey )
+    private void setMembers( final Session session, final AccountKey nonUserAccount, final AccountKeys members )
+        throws Exception
     {
-        final String groupId = accountKeyToJcrUIDMapping.get( groupKey );
-        final String memberId = accountKeyToJcrUIDMapping.get( memberKey );
-        if ( ( memberId == null ) || ( groupId == null ) )
-        {
-            return;
-        }
-        accountDao.addMemberships( groupId, memberId );
-        LOG.info( "Added account " + memberKey + " as member of " + groupKey );
+        accountDao.setMembers( session, nonUserAccount, members );
+        LOG.info( "Set account members for " + nonUserAccount.toString() + ": " + members.toString() );
     }
 
     private void releaseResources()
     {
         userStoreKeyName.clear();
-        accountKeyToJcrUIDMapping.clear();
+        entityKeyToAccountKeyMapping.clear();
     }
 
-    private void storeGroup( final Map<String, Object> groupFields )
+    private void storeGroup( final Session session, final Map<String, Object> groupFields )
+        throws Exception
     {
         final String groupName = (String) groupFields.get( "GRP_SNAME" );
         final GroupType groupType = GroupType.get( (Integer) groupFields.get( "GRP_LTYPE" ) );
@@ -182,106 +188,122 @@ public class JcrAccountsImporter
             return;
         }
         Integer userStoreKey = (Integer) groupFields.get( "GRP_DOM_LKEY" );
-        String userstoreName = userStoreKeyName.get( userStoreKey );
-        if ( userstoreName == null )
+        String userStoreName = userStoreKeyName.get( userStoreKey );
+        if ( userStoreName == null )
         {
-            userStoreKey = SYSTEM_USERSTORE_KEY;
-            userstoreName = userStoreKeyName.get( userStoreKey );
+            userStoreName = UserStoreName.system().toString();
         }
-        final JcrGroup group = groupType.isBuiltIn() ? new JcrRole() : new JcrGroup();
-        final String description = (String) groupFields.get( "GRP_SDESCRIPTION" );
         final DateTime lastModified = new DateTime();
-        final String syncValue = (String) groupFields.get( "GRP_SSYNCVALUE" );
 
-        group.setName( groupName );
-        group.setDisplayName( groupName );
-        group.setDescription( description );
-        group.setLastModified(lastModified );
-        group.setSyncValue(  syncValue );
-        group.setUserStore( userstoreName );
+        final NonUserAccount nonUserAccount;
+        if ( groupType.isBuiltIn() )
+        {
+            nonUserAccount = RoleAccount.create( userStoreName + ":" + groupName );
+        }
+        else
+        {
+            nonUserAccount = GroupAccount.create( userStoreName + ":" + groupName );
+        }
 
-        accountDao.saveAccount( group );
+        nonUserAccount.setDisplayName( groupName );
+        nonUserAccount.setModifiedTime( lastModified );
 
-        final String groupId = group.getId();
+        if ( nonUserAccount instanceof GroupAccount )
+        {
+            accountDao.createGroup( session, (GroupAccount) nonUserAccount );
+        }
+        else
+        {
+            accountDao.createRole( session, (RoleAccount) nonUserAccount );
+        }
+
+        final String groupId = nonUserAccount.getKey().toString();
         final String groupKey = (String) groupFields.get( "GRP_HKEY" );
-        accountKeyToJcrUIDMapping.put( groupKey, groupId );
+        entityKeyToAccountKeyMapping.put( groupKey, groupId );
         LOG.info( "Group '" + groupName + "' imported with id " + groupId );
     }
 
-    private void storeUser( final Map<String, Object> userFields )
+    private void storeUser( final Session session, final Map<String, Object> userFields )
+        throws Exception
     {
-        final JcrUser user = importUser( userFields );
+        final UserAccount user = importUser( session, userFields );
         if ( user != null )
         {
-            final String userId = user.getId();
+            final String userId = user.getKey().toString();
             final String userKey = (String) userFields.get( "USR_GRP_HKEY" );
-            accountKeyToJcrUIDMapping.put( userKey, userId );
+            entityKeyToAccountKeyMapping.put( userKey, userId );
             final String userName = (String) userFields.get( "USR_SUID" );
             LOG.info( "User '" + userName + "' imported with id " + userId );
         }
     }
 
-    private void importUserStore( final Map<String, Object> userstoreFields )
-        throws UnsupportedEncodingException
+    private void importUserStore( final Session session, final Map<String, Object> userStoreFields )
+        throws Exception
     {
-        final String userstoreName = (String) userstoreFields.get( "DOM_SNAME" );
-        final Integer key = (Integer) userstoreFields.get( "DOM_LKEY" );
-        final boolean defaultUserstore = ( (Integer) userstoreFields.get( "DOM_BDEFAULTSTORE" ) == 1 );
-        final String connectorName = (String) userstoreFields.get( "DOM_SCONFIGNAME" );
-        final byte[] xmlBytes = (byte[]) userstoreFields.get( "DOM_XMLDATA" );
+        final String userStoreName = (String) userStoreFields.get( "DOM_SNAME" );
+        if ( userStoreName.equals( UserStoreName.system().toString() ) )
+        {
+            LOG.info( "Skipping import of system user store" );
+            return;
+        }
+        final Integer key = (Integer) userStoreFields.get( "DOM_LKEY" );
+        final boolean defaultUserstore = ( (Integer) userStoreFields.get( "DOM_BDEFAULTSTORE" ) == 1 );
+        final String connectorName = (String) userStoreFields.get( "DOM_SCONFIGNAME" );
+        final byte[] xmlBytes = (byte[]) userStoreFields.get( "DOM_XMLDATA" );
         final String userStoreXmlConfig = new String( xmlBytes, "UTF-8" );
 
-        final JcrUserStore userStore = new JcrUserStore();
-        userStore.setName( userstoreName );
-        userStore.setId( key.toString() );
+        final UserStore userStore = new UserStore( UserStoreName.from( userStoreName ) );
         userStore.setDefaultStore( defaultUserstore );
-        userStore.setXmlConfig( userStoreXmlConfig );
+        final UserStoreConfig config;
+        if ( Strings.isNullOrEmpty( userStoreXmlConfig ) )
+        {
+            config = new UserStoreConfig();
+        }
+        else
+        {
+            config = new UserStoreConfigParser().parseXml( userStoreXmlConfig );
+        }
+        userStore.setConfig( config );
         userStore.setConnectorName( connectorName );
-        accountDao.createUserStore( userStore );
+        accountDao.createUserStore( session, userStore );
 
-        userStoreKeyName.put( key, userstoreName );
-        LOG.info( "Userstore imported: " + userstoreName );
+        userStoreKeyName.put( key, userStoreName );
+        LOG.info( "User store imported: " + userStoreName );
     }
 
-    private JcrUser importUser( Map<String, Object> userFields )
+    private UserAccount importUser( final Session session, Map<String, Object> userFields )
+        throws Exception
     {
-        final String userName = (String) userFields.get( "USR_SUID" );
         Integer userStoreKey = (Integer) userFields.get( "USR_DOM_LKEY" );
-        String userstoreNodeName = userStoreKeyName.get( userStoreKey );
-        if ( userstoreNodeName == null )
+        String userStoreName = userStoreKeyName.get( userStoreKey );
+        if ( userStoreName == null )
         {
-            userStoreKey = SYSTEM_USERSTORE_KEY;
-            userstoreNodeName = userStoreKeyName.get( userStoreKey );
+            userStoreName = UserStoreName.system().toString();
         }
-
-        final String qualifiedName = (String) userFields.get( "USR_SUID" );
+        final String userName = (String) userFields.get( "USR_SUID" );
         final String displayName = (String) userFields.get( "USR_SFULLNAME" );
         final String email = (String) userFields.get( "USR_SEMAIL" );
-        final String key = (String) userFields.get( "USR_HKEY" );
         final Date lastModified = (Date) userFields.get( "USR_DTETIMESTAMP" );
-        final String syncValue = (String) userFields.get( "USR_SSYNCVALUE" );
         final byte[] photo = (byte[]) userFields.get( "USR_PHOTO" );
+        final String key = (String) userFields.get( "USR_HKEY" );
+        final String syncValue = (String) userFields.get( "USR_SSYNCVALUE" );
         final UserType userType = UserType.getByKey( (Integer) userFields.get( "USR_UT_LKEY" ) );
 
-        final JcrUser user = new JcrUser();
-        user.setName( userName );
+        final UserAccount user = UserAccount.create( userStoreName + ":" + userName );
         user.setDisplayName( displayName );
         user.setEmail( email );
-        user.setLastModified( new DateTime( lastModified ) );
-        user.setSyncValue( syncValue );
-        user.setPhoto( photo );
-        user.setBuiltIn( userType.isBuiltIn() );
-        user.setUserStore( userstoreNodeName );
+        user.setModifiedTime( new DateTime( lastModified ) );
+        user.setImage( photo );
 
         // user info fields
-        final Map<String, Object> userInfoFields = (Map<String, Object>) userFields.get( JdbcAccountsRetriever.USER_INFO_FIELDS_MAP );
+        final Map<String, Object> userInfoFields = (Map<String, Object>) userFields.get( DatabaseAccountsLoader.USER_INFO_FIELDS_MAP );
         addUserInfoFields( user, userInfoFields );
 
-        accountDao.saveAccount( user );
+        accountDao.createUser( session, user );
         return user;
     }
 
-    private void addUserInfoFields( JcrUser user, Map<String, Object> userInfoFields )
+    private void addUserInfoFields( final UserAccount user, final Map<String, Object> userInfoFields )
     {
         final UserFieldHelper userFieldHelper = new UserFieldHelper();
         final UserFields userFields = new UserFields( true );
@@ -301,10 +323,10 @@ public class JcrAccountsImporter
         final Address[] addresses = userFieldsToAddresses( userInfoFields );
         userInfo.setAddresses( addresses );
 
-        userInfoFieldsToNode( userInfo, user );
+        userInfoFieldsToUserProfile( userInfo, user );
     }
 
-    private Address[] userFieldsToAddresses( Map<String, Object> userFields )
+    private Address[] userFieldsToAddresses( final Map<String, Object> userFields )
     {
         final Map<String, Address> addresses = new HashMap<String, Address>();
         for ( String fieldName : userFields.keySet() )
@@ -320,35 +342,35 @@ public class JcrAccountsImporter
                 }
                 final String fieldId = StringUtils.substringAfter( fieldName, "." );
                 final String value = (String) userFields.get( fieldName );
-                if ( F_LABEL.equals( fieldId ) )
+                if ( "label".equals( fieldId ) )
                 {
                     address.setLabel( value );
                 }
-                else if ( F_COUNTRY.equals( fieldId ) )
+                else if ( "country".equals( fieldId ) )
                 {
                     address.setCountry( value );
                 }
-                else if ( F_ISO_COUNTRY.equals( fieldId ) )
+                else if ( "iso-country".equals( fieldId ) )
                 {
                     address.setIsoCountry( value );
                 }
-                else if ( F_REGION.equals( fieldId ) )
+                else if ( "region".equals( fieldId ) )
                 {
                     address.setRegion( value );
                 }
-                else if ( F_ISO_REGION.equals( fieldId ) )
+                else if ( "iso-region".equals( fieldId ) )
                 {
                     address.setIsoRegion( value );
                 }
-                else if ( F_STREET.equals( fieldId ) )
+                else if ( "street".equals( fieldId ) )
                 {
                     address.setStreet( value );
                 }
-                else if ( F_POSTAL_CODE.equals( fieldId ) )
+                else if ( "postal-code".equals( fieldId ) )
                 {
                     address.setPostalCode( value );
                 }
-                else if ( F_POSTAL_ADDRESS.equals( fieldId ) )
+                else if ( "postal-address".equals( fieldId ) )
                 {
                     address.setPostalAddress( value );
                 }
@@ -357,78 +379,85 @@ public class JcrAccountsImporter
         return addresses.values().toArray( new Address[addresses.size()] );
     }
 
-    private void userInfoFieldsToNode( UserInfo userInfo, JcrUser user )
+    private void userInfoFieldsToUserProfile( final UserInfo userInfo, final UserAccount user )
     {
-        JcrUserInfo jcrUserInfo = user.getUserInfo();
+        final UserProfile userProfile = new UserProfile();
         if ( userInfo.getBirthday() != null )
         {
-            jcrUserInfo.setBirthday( new DateTime( userInfo.getBirthday() ) );
+            userProfile.setBirthday( new DateTime( userInfo.getBirthday() ) );
         }
-        jcrUserInfo.setCountry( userInfo.getCountry() );
-        jcrUserInfo.setDescription( userInfo.getDescription() );
-        jcrUserInfo.setFax( userInfo.getFax() );
-        jcrUserInfo.setFirstName( userInfo.getFirstName() );
-        jcrUserInfo.setGlobalPosition( userInfo.getGlobalPosition() );
-        jcrUserInfo.setHomePage( userInfo.getHomePage() );
-        jcrUserInfo.setHtmlEmail( userInfo.getHtmlEmail() );
-        jcrUserInfo.setInitials( userInfo.getInitials() );
-        jcrUserInfo.setLastName( userInfo.getLastName() );
-        Locale locale = userInfo.getLocale();
+        userProfile.setCountry( userInfo.getCountry() );
+        userProfile.setDescription( userInfo.getDescription() );
+        userProfile.setFax( userInfo.getFax() );
+        userProfile.setFirstName( userInfo.getFirstName() );
+        userProfile.setGlobalPosition( userInfo.getGlobalPosition() );
+        userProfile.setHomePage( userInfo.getHomePage() );
+        userProfile.setHtmlEmail( userInfo.getHtmlEmail() );
+        userProfile.setInitials( userInfo.getInitials() );
+        userProfile.setLastName( userInfo.getLastName() );
+        final Locale locale = userInfo.getLocale();
         if ( locale != null )
         {
-            jcrUserInfo.setLocale( locale.getISO3Language() );
+            userProfile.setLocale( locale );
         }
-        jcrUserInfo.setMemberId( userInfo.getMemberId() );
-        jcrUserInfo.setMiddleName( userInfo.getMiddleName() );
-        jcrUserInfo.setMobile( userInfo.getMobile() );
-        jcrUserInfo.setOrganization( userInfo.getOrganization() );
-        jcrUserInfo.setPersonalId( userInfo.getPersonalId() );
-        jcrUserInfo.setPhone( userInfo.getPhone() );
-        jcrUserInfo.setPrefix( userInfo.getPrefix() );
-        jcrUserInfo.setSuffix( userInfo.getSuffix() );
-        TimeZone timezone = userInfo.getTimeZone();
+        userProfile.setMemberId( userInfo.getMemberId() );
+        userProfile.setMiddleName( userInfo.getMiddleName() );
+        userProfile.setMobile( userInfo.getMobile() );
+        userProfile.setOrganization( userInfo.getOrganization() );
+        userProfile.setPersonalId( userInfo.getPersonalId() );
+        userProfile.setPhone( userInfo.getPhone() );
+        userProfile.setPrefix( userInfo.getPrefix() );
+        userProfile.setSuffix( userInfo.getSuffix() );
+        final TimeZone timezone = userInfo.getTimeZone();
         if ( timezone != null )
         {
-            jcrUserInfo.setTimeZone( timezone.getID() );
+            userProfile.setTimeZone( timezone );
         }
-        jcrUserInfo.setTitle( userInfo.getTitle() );
-        Gender gender = userInfo.getGender();
+        userProfile.setTitle( userInfo.getTitle() );
+        final Gender gender = userInfo.getGender();
         if ( gender != null )
         {
-            jcrUserInfo.setGender( com.enonic.wem.core.jcr.old.accounts.Gender.fromName( gender.toString() ) );
+            userProfile.setGender( com.enonic.wem.api.account.profile.Gender.valueOf( gender.toString() ) );
         }
-        jcrUserInfo.setOrganization( userInfo.getOrganization() );
+        userProfile.setOrganization( userInfo.getOrganization() );
 
         final Address[] addresses = userInfo.getAddresses();
         for ( Address address : addresses )
         {
-            addAddressNode( address, jcrUserInfo );
+            addProfileAddress( address, userProfile );
         }
+        user.setProfile( userProfile );
     }
 
-    private void addAddressNode( Address address, JcrUserInfo jcrUserInfo )
+    private void addProfileAddress( final Address address, final UserProfile profile )
     {
-        final JcrAddress jcrAddress = new JcrAddress();
-        jcrAddress.setCountry( address.getCountry() );
-        jcrAddress.setIsoCountry( address.getIsoCountry() );
-        jcrAddress.setIsoRegion( address.getIsoRegion() );
-        jcrAddress.setLabel( address.getLabel() );
-        jcrAddress.setPostalAddress( address.getPostalAddress() );
-        jcrAddress.setPostalCode( address.getPostalCode() );
-        jcrAddress.setRegion( address.getRegion() );
-        jcrAddress.setStreet( address.getStreet() );
+        final com.enonic.wem.api.account.profile.Address profileAddress = new com.enonic.wem.api.account.profile.Address();
+        profileAddress.setCountry( address.getCountry() );
+        profileAddress.setIsoCountry( address.getIsoCountry() );
+        profileAddress.setIsoRegion( address.getIsoRegion() );
+        profileAddress.setLabel( address.getLabel() );
+        profileAddress.setPostalAddress( address.getPostalAddress() );
+        profileAddress.setPostalCode( address.getPostalCode() );
+        profileAddress.setRegion( address.getRegion() );
+        profileAddress.setStreet( address.getStreet() );
 
-        jcrUserInfo.addAddress( jcrAddress );
+        Addresses addresses = profile.getAddresses();
+        if ( addresses == null )
+        {
+            addresses = Addresses.empty();
+            profile.setAddresses( addresses );
+        }
+        addresses.add( profileAddress );
     }
 
     @Autowired
-    public void setJdbcAccountsRetriever( final JdbcAccountsRetriever jdbcAccountsRetriever )
+    public void setDbAccountsLoader( final DatabaseAccountsLoader dbAccountsLoader )
     {
-        this.jdbcAccountsRetriever = jdbcAccountsRetriever;
+        this.dbAccountsLoader = dbAccountsLoader;
     }
 
     @Autowired
-    public void setAccountDao( final AccountJcrDao accountDao )
+    public void setAccountDao( final AccountDao accountDao )
     {
         this.accountDao = accountDao;
     }

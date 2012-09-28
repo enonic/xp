@@ -5,11 +5,11 @@ import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import com.enonic.wem.core.jcr.old.RepositoryRuntimeException;
 import com.enonic.wem.migrate.MigrateTask;
 
-//@Component
+@Component
 public class JcrBootstrap
 {
     private static final Logger LOG = LoggerFactory.getLogger( JcrBootstrap.class );
@@ -18,17 +18,10 @@ public class JcrBootstrap
 
     @PostConstruct
     private void initializeJcr()
+        throws Exception
     {
         LOG.info( "Initializing JCR repository..." );
-        try
-        {
-            migrateTask.migrate();
-        }
-        catch ( Exception e )
-        {
-            throw new RepositoryRuntimeException( "Error while initializing JCR repository", e );
-        }
-
+        migrateTask.migrate();
         LOG.info( "JCR repository initialized" );
     }
 

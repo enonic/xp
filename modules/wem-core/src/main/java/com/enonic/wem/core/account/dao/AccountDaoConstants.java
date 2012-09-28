@@ -2,7 +2,7 @@ package com.enonic.wem.core.account.dao;
 
 public interface AccountDaoConstants
 {
-    public final static String ROOT_NODE = "enonic/userStores";
+    public final static String ROOT_NODE = "wem/userStores";
 
     public final static String GROUPS_NODE = "groups";
 
