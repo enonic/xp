@@ -33,4 +33,7 @@ public interface AccountDao
 
     void setUserStoreAdministrators( Session session, UserStoreName userStoreName, AccountKeys administrators )
         throws Exception;
+
+    public boolean accountExists( Session session, AccountKey accountKey )
+        throws Exception;
 }

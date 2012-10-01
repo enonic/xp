@@ -193,6 +193,16 @@ public final class AccountDaoImpl
         return true;
     }
 
+    @Override
+    public boolean accountExists( final Session session, final AccountKey accountKey )
+        throws Exception
+    {
+        final String path = getNodePath( accountKey );
+        final Node rootNode = session.getRootNode();
+        final Node accountNode = JcrHelper.getNodeOrNull( rootNode, path );
+        return accountNode != null;
+    }
+
     private String getNodePath( final UserStoreName userStoreName )
     {
         final StringBuilder str = new StringBuilder();

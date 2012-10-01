@@ -6,21 +6,15 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.account.ChangePassword;
 import com.enonic.wem.api.exception.AccountNotFoundException;
+import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-
-import com.enonic.cms.core.security.SecurityService;
-import com.enonic.cms.core.security.user.QualifiedUsername;
-import com.enonic.cms.core.security.user.UserEntity;
-import com.enonic.cms.store.dao.UserDao;
 
 @Component
 public final class ChangePasswordHandler
     extends CommandHandler<ChangePassword>
 {
-    private UserDao userDao;
-
-    private SecurityService securityService;
+    private AccountDao accountDao;
 
     public ChangePasswordHandler()
     {
@@ -32,28 +26,20 @@ public final class ChangePasswordHandler
         throws Exception
     {
         final AccountKey user = command.getKey();
-        final QualifiedUsername userQualifiedName = QualifiedUsername.parse( user.getQualifiedName() );
-        final UserEntity userEntity = userDao.findByQualifiedUsername( userQualifiedName );
-        if ( userEntity == null )
+        final boolean userExists = accountDao.accountExists( context.getJcrSession(), user );
+        if ( !userExists )
         {
             throw new AccountNotFoundException( user );
         }
+        // TODO implement the actual password change (cannot use SecurityService.changePassword since it does not use JCR)
 
-        securityService.changePassword( userQualifiedName, command.getPassword() );
         // TODO return false if password could not be changed, due to password policy for example.
         command.setResult( true );
     }
 
     @Autowired
-    public void setUserDao( final UserDao userDao )
+    public void setAccountDao( final AccountDao accountDao )
     {
-        this.userDao = userDao;
+        this.accountDao = accountDao;
     }
-
-    @Autowired
-    public void setSecurityService( final SecurityService securityService )
-    {
-        this.securityService = securityService;
-    }
-
 }
