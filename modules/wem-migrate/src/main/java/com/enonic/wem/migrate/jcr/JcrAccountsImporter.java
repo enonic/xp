@@ -232,6 +232,7 @@ public class JcrAccountsImporter
 
         nonUserAccount.setDisplayName( groupName );
         nonUserAccount.setModifiedTime( lastModified );
+        nonUserAccount.setCreatedTime( lastModified );
 
         if ( nonUserAccount instanceof GroupAccount )
         {
@@ -324,6 +325,7 @@ public class JcrAccountsImporter
         user.setDisplayName( displayName );
         user.setEmail( email );
         user.setModifiedTime( new DateTime( lastModified ) );
+        user.setCreatedTime( new DateTime( lastModified ) );
         user.setImage( photo );
 
         // user info fields

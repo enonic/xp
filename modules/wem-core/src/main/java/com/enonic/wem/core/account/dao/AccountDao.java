@@ -2,6 +2,7 @@ package com.enonic.wem.core.account.dao;
 
 import javax.jcr.Session;
 
+import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.GroupAccount;
@@ -35,5 +36,17 @@ public interface AccountDao
         throws Exception;
 
     public boolean accountExists( Session session, AccountKey accountKey )
+        throws Exception;
+
+    public UserAccount findUser( Session session, AccountKey accountKey, boolean includeProfile, boolean includePhoto )
+        throws Exception;
+
+    public GroupAccount findGroup( Session session, AccountKey accountKey, boolean includeMembers )
+        throws Exception;
+
+    public RoleAccount findRole( Session session, AccountKey accountKey, boolean includeMembers )
+        throws Exception;
+
+    public Account findAccount( Session session, AccountKey accountKey )
         throws Exception;
 }

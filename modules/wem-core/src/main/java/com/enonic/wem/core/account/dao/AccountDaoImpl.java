@@ -1,17 +1,22 @@
 package com.enonic.wem.core.account.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.elasticsearch.common.collect.Sets;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
+import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
@@ -201,6 +206,119 @@ public final class AccountDaoImpl
         final Node rootNode = session.getRootNode();
         final Node accountNode = JcrHelper.getNodeOrNull( rootNode, path );
         return accountNode != null;
+    }
+
+    @Override
+    public UserAccount findUser( final Session session, final AccountKey accountKey, final boolean includeProfile,
+                                 final boolean includePhoto )
+        throws Exception
+    {
+        final String path = getNodePath( accountKey );
+        final Node rootNode = session.getRootNode();
+        final Node accountNode = JcrHelper.getNodeOrNull( rootNode, path );
+        if ( accountNode == null )
+        {
+            return null;
+        }
+
+        final UserAccount user = UserAccount.create( accountKey );
+        accountJcrMapping.toUser( accountNode, user, includeProfile, includePhoto );
+        return user;
+    }
+
+    @Override
+    public GroupAccount findGroup( final Session session, final AccountKey accountKey, final boolean includeMembers )
+        throws Exception
+    {
+        final String path = getNodePath( accountKey );
+        final Node rootNode = session.getRootNode();
+        final Node accountNode = JcrHelper.getNodeOrNull( rootNode, path );
+        if ( accountNode == null )
+        {
+            return null;
+        }
+
+        final GroupAccount group = GroupAccount.create( accountKey );
+        if ( includeMembers )
+        {
+            group.setMembers( getMembers( session, accountKey ) );
+        }
+        accountJcrMapping.toGroup( accountNode, group );
+        return group;
+    }
+
+    @Override
+    public RoleAccount findRole( final Session session, final AccountKey accountKey, final boolean includeMembers )
+        throws Exception
+    {
+        final String path = getNodePath( accountKey );
+        final Node rootNode = session.getRootNode();
+        final Node accountNode = JcrHelper.getNodeOrNull( rootNode, path );
+        if ( accountNode == null )
+        {
+            return null;
+        }
+
+        final RoleAccount role = RoleAccount.create( accountKey );
+        if ( includeMembers )
+        {
+            role.setMembers( getMembers( session, accountKey ) );
+        }
+        accountJcrMapping.toRole( accountNode, role );
+        return role;
+    }
+
+    @Override
+    public Account findAccount( final Session session, final AccountKey accountKey )
+        throws Exception
+    {
+        switch ( accountKey.getType() )
+        {
+            case USER:
+                return findUser( session, accountKey, false, false );
+            case GROUP:
+                return findGroup( session, accountKey, false );
+            case ROLE:
+                return findRole( session, accountKey, false );
+            default:
+                return null;
+        }
+    }
+
+    private AccountKeys getMembers( final Session session, final AccountKey nonUserAccount )
+        throws Exception
+    {
+        final String path = getNodePath( nonUserAccount );
+        final Node rootNode = session.getRootNode();
+        final Node accountNode = JcrHelper.getNodeOrNull( rootNode, path );
+        if ( accountNode == null )
+        {
+            throw new AccountNotFoundException( nonUserAccount );
+        }
+        final Node[] memberNodes = JcrHelper.getPropertyReferences( accountNode, JcrConstants.MEMBERS_PROPERTY );
+        final Set<AccountKey> members = Sets.newHashSet();
+        for ( Node memberNode : memberNodes )
+        {
+            members.add( accountKeyFromAccountNode( memberNode ) );
+        }
+        return AccountKeys.from( members );
+    }
+
+    private AccountKey accountKeyFromAccountNode( final Node accountNode )
+        throws RepositoryException
+    {
+        final String name = accountNode.getName();
+        final AccountType type = AccountType.valueOf( JcrHelper.getPropertyString( accountNode, "type" ) );
+        final String userStore = accountNode.getParent().getParent().getName();
+        switch ( type )
+        {
+            case USER:
+                return AccountKey.user( userStore + ":" + name );
+            case GROUP:
+                return AccountKey.group( userStore + ":" + name );
+            default:
+                return AccountKey.role( userStore + ":" + name );
+        }
     }
 
     private String getNodePath( final UserStoreName userStoreName )

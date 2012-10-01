@@ -2,13 +2,15 @@ package com.enonic.wem.web.rest.rpc.account;
 
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.Accounts;
+import com.enonic.wem.api.account.NonUserAccount;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
+import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
 @Component
 public final class GetAccountRpcHandler
@@ -28,21 +30,23 @@ public final class GetAccountRpcHandler
         {
             AccountKey accountKey = AccountKey.from( key );
             AccountKeys accountKeys = AccountKeys.from( accountKey );
-            final Accounts account = this.client.execute( Commands.account().get().keys( accountKeys ).includeImage().includeProfile() );
+            final Accounts accounts =
+                this.client.execute( Commands.account().get().keys( accountKeys ).includeImage().includeProfile().includeMembers() );
 
-            if ( !account.isEmpty() )
+            if ( !accounts.isEmpty() )
             {
+                final Account account = accounts.getFirst();
                 if ( accountKey.isUser() )
                 {
                     AccountKeys membershipKeys = this.client.execute( Commands.account().findMemberships().key( accountKey ) );
                     Accounts memberships = this.client.execute( Commands.account().get().keys( membershipKeys ) );
-                    context.setResult( new GetAccountJsonResult( account.getFirst(), null, memberships.getList() ) );
+                    context.setResult( new GetAccountJsonResult( account, null, memberships.getList() ) );
                 }
                 else
                 {
-                    AccountKeys memberKeys = this.client.execute( Commands.account().findMembers().key( accountKey ) );
+                    final AccountKeys memberKeys = ( (NonUserAccount) account ).getMembers();
                     Accounts members = this.client.execute( Commands.account().get().keys( memberKeys ) );
-                    context.setResult( new GetAccountJsonResult( account.getFirst(), members.getList(), null ) );
+                    context.setResult( new GetAccountJsonResult( account, members.getList(), null ) );
                 }
             }
             else

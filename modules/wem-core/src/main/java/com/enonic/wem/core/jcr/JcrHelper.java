@@ -2,18 +2,22 @@ package com.enonic.wem.core.jcr;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.value.*;
 import org.joda.time.DateTime;
+
+import com.google.common.collect.Lists;
 
 public abstract class JcrHelper
 {
@@ -71,6 +75,25 @@ public abstract class JcrHelper
             values[i] = new StringValue( referencedNodes[i].getPath() );
         }
         node.setProperty( propertyName, values );
+    }
+
+    public static Node[] getPropertyReferences( final Node node, final String propertyName )
+        throws RepositoryException
+    {
+        final Property property = node.getProperty( propertyName );
+        if ( property == null )
+        {
+            return new Node[0];
+        }
+
+        final Session session = node.getSession();
+        final List<Node> nodeList = Lists.newArrayList();
+        for ( Value value : property.getValues() )
+        {
+            final String path = value.toString();
+            nodeList.add( session.getNode( path ) );
+        }
+        return nodeList.toArray( new Node[nodeList.size()] );
     }
 
     public static String getPropertyString( final Node node, final String propertyName )

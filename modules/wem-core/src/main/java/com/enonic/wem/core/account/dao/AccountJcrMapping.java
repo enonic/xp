@@ -105,27 +105,30 @@ public class AccountJcrMapping
 
     private static final String STREET = "street";
 
-    public UserAccount toUser( final Node userNode )
+    public void toUser( final Node userNode, final UserAccount user, final boolean includeProfile, final boolean includePhoto )
         throws RepositoryException, IOException
     {
-        final String userName = userNode.getName();
-        final String userStoreName = userNode.getParent().getParent().getName();
-        final UserAccount user = UserAccount.create( userStoreName + ":" + userName );
         user.setDisplayName( JcrHelper.getPropertyString( userNode, DISPLAY_NAME ) );
         user.setCreatedTime( JcrHelper.getPropertyDateTime( userNode, CREATED ) );
         user.setEmail( userNode.getProperty( EMAIL ).getString() );
         user.setModifiedTime( JcrHelper.getPropertyDateTime( userNode, LAST_MODIFIED ) );
         user.setLastLoginTime( JcrHelper.getPropertyDateTime( userNode, LAST_LOGGED ) );
 
-        if ( userNode.hasProperty( PHOTO ) )
+        final Node profileNode = userNode.getNode( JcrConstants.USER_PROFILE_NODE );
+        if ( includeProfile )
         {
-            user.setImage( JcrHelper.getPropertyBinary( userNode, PHOTO ) );
+            final UserProfile profile = toUserProfile( profileNode );
+            final List<Address> addresses = nodePropertiesToAddresses( profileNode );
+            profile.setAddresses( Addresses.from( addresses ) );
+            user.setProfile( profile );
         }
-        final UserProfile profile = toUserProfile( userNode );
-        final List<Address> addresses = nodePropertiesToAddresses( userNode );
-        profile.setAddresses( Addresses.from( addresses ) );
-        user.setProfile( profile );
-        return user;
+        if ( includePhoto )
+        {
+            if ( profileNode.hasProperty( PHOTO ) )
+            {
+                user.setImage( JcrHelper.getPropertyBinary( profileNode, PHOTO ) );
+            }
+        }
     }
 
     public void userToJcr( final UserAccount user, final Node node )
@@ -137,24 +140,22 @@ public class AccountJcrMapping
         node.setProperty( EMAIL, user.getEmail() );
         JcrHelper.setPropertyDateTime( node, LAST_MODIFIED, user.getModifiedTime() );
         JcrHelper.setPropertyDateTime( node, LAST_LOGGED, user.getLastLoginTime() );
+        node.setProperty( TYPE, AccountType.USER.name() );
+
+        final Node profileNode = node.getNode( JcrConstants.USER_PROFILE_NODE );
+        userProfileToJcr( user.getProfile(), profileNode );
         if ( user.getImage() != null )
         {
-            JcrHelper.setPropertyBinary( node, PHOTO, user.getImage() );
+            JcrHelper.setPropertyBinary( profileNode, PHOTO, user.getImage() );
         }
-        node.setProperty( TYPE, AccountType.USER.name() );
-        userProfileToJcr( user.getProfile(), node.getNode( JcrConstants.USER_PROFILE_NODE ) );
     }
 
-    public RoleAccount toRole( final Node roleNode )
+    public void toRole( final Node roleNode, final RoleAccount role )
         throws RepositoryException
     {
-        final String roleName = roleNode.getName();
-        final String userStoreName = roleNode.getParent().getParent().getName();
-        final RoleAccount role = RoleAccount.create( userStoreName + ":" + roleName );
         role.setDisplayName( JcrHelper.getPropertyString( roleNode, DISPLAY_NAME ) );
         role.setCreatedTime( JcrHelper.getPropertyDateTime( roleNode, CREATED ) );
         role.setModifiedTime( JcrHelper.getPropertyDateTime( roleNode, LAST_MODIFIED ) );
-        return role;
     }
 
     public void roleToJcr( final RoleAccount role, final Node node )
@@ -164,16 +165,12 @@ public class AccountJcrMapping
         node.setProperty( TYPE, AccountType.ROLE.name() );
     }
 
-    public GroupAccount toGroup( final Node groupNode )
+    public void toGroup( final Node groupNode, final GroupAccount group )
         throws RepositoryException
     {
-        final String groupName = groupNode.getName();
-        final String userStoreName = groupNode.getParent().getParent().getName();
-        final GroupAccount group = GroupAccount.create( userStoreName + ":" + groupName );
         group.setDisplayName( JcrHelper.getPropertyString( groupNode, DISPLAY_NAME ) );
         group.setCreatedTime( JcrHelper.getPropertyDateTime( groupNode, CREATED ) );
         group.setModifiedTime( JcrHelper.getPropertyDateTime( groupNode, LAST_MODIFIED ) );
-        return group;
     }
 
     public void groupToJcr( final GroupAccount group, final Node node )
@@ -252,58 +249,61 @@ public class AccountJcrMapping
         addressNode.setProperty( STREET, address.getStreet() );
     }
 
-    private UserProfile toUserProfile( final Node userNode )
+    private UserProfile toUserProfile( final Node profileNode )
         throws RepositoryException
     {
         final UserProfile profile = new UserProfile();
-        profile.setBirthday( JcrHelper.getPropertyDateTime( userNode, BIRTHDAY ) );
-        profile.setCountry( JcrHelper.getPropertyString( userNode, COUNTRY ) );
-        profile.setDescription( JcrHelper.getPropertyString( userNode, DESCRIPTION ) );
-        profile.setFax( JcrHelper.getPropertyString( userNode, FAX ) );
-        profile.setFirstName( JcrHelper.getPropertyString( userNode, FIRST_NAME ) );
-        profile.setGlobalPosition( JcrHelper.getPropertyString( userNode, GLOBAL_POSITION ) );
-        profile.setHomePage( JcrHelper.getPropertyString( userNode, HOME_PAGE ) );
-        profile.setHtmlEmail( JcrHelper.getPropertyBoolean( userNode, HTML_EMAIL ) );
-        profile.setInitials( JcrHelper.getPropertyString( userNode, INITIALS ) );
-        profile.setLastName( JcrHelper.getPropertyString( userNode, LAST_NAME ) );
-        final String localeId = JcrHelper.getPropertyString( userNode, LOCALE );
+        profile.setBirthday( JcrHelper.getPropertyDateTime( profileNode, BIRTHDAY ) );
+        profile.setCountry( JcrHelper.getPropertyString( profileNode, COUNTRY ) );
+        profile.setDescription( JcrHelper.getPropertyString( profileNode, DESCRIPTION ) );
+        profile.setFax( JcrHelper.getPropertyString( profileNode, FAX ) );
+        profile.setFirstName( JcrHelper.getPropertyString( profileNode, FIRST_NAME ) );
+        profile.setGlobalPosition( JcrHelper.getPropertyString( profileNode, GLOBAL_POSITION ) );
+        profile.setHomePage( JcrHelper.getPropertyString( profileNode, HOME_PAGE ) );
+        profile.setHtmlEmail( JcrHelper.getPropertyBoolean( profileNode, HTML_EMAIL ) );
+        profile.setInitials( JcrHelper.getPropertyString( profileNode, INITIALS ) );
+        profile.setLastName( JcrHelper.getPropertyString( profileNode, LAST_NAME ) );
+        final String localeId = JcrHelper.getPropertyString( profileNode, LOCALE );
         profile.setLocale( localeId == null ? null : new Locale( localeId ) );
-        profile.setMemberId( JcrHelper.getPropertyString( userNode, MEMBER_ID ) );
-        profile.setMiddleName( JcrHelper.getPropertyString( userNode, MIDDLE_NAME ) );
-        profile.setMobile( JcrHelper.getPropertyString( userNode, MOBILE ) );
-        profile.setNickName( JcrHelper.getPropertyString( userNode, NICK_NAME ) );
-        profile.setOrganization( JcrHelper.getPropertyString( userNode, ORGANIZATION ) );
-        profile.setPersonalId( JcrHelper.getPropertyString( userNode, PERSONAL_ID ) );
-        profile.setPhone( JcrHelper.getPropertyString( userNode, PHONE ) );
-        profile.setPrefix( JcrHelper.getPropertyString( userNode, PREFIX ) );
-        profile.setSuffix( JcrHelper.getPropertyString( userNode, SUFFIX ) );
-        final String timeZoneId = JcrHelper.getPropertyString( userNode, TIMEZONE );
+        profile.setMemberId( JcrHelper.getPropertyString( profileNode, MEMBER_ID ) );
+        profile.setMiddleName( JcrHelper.getPropertyString( profileNode, MIDDLE_NAME ) );
+        profile.setMobile( JcrHelper.getPropertyString( profileNode, MOBILE ) );
+        profile.setNickName( JcrHelper.getPropertyString( profileNode, NICK_NAME ) );
+        profile.setOrganization( JcrHelper.getPropertyString( profileNode, ORGANIZATION ) );
+        profile.setPersonalId( JcrHelper.getPropertyString( profileNode, PERSONAL_ID ) );
+        profile.setPhone( JcrHelper.getPropertyString( profileNode, PHONE ) );
+        profile.setPrefix( JcrHelper.getPropertyString( profileNode, PREFIX ) );
+        profile.setSuffix( JcrHelper.getPropertyString( profileNode, SUFFIX ) );
+        final String timeZoneId = JcrHelper.getPropertyString( profileNode, TIMEZONE );
         profile.setTimeZone( timeZoneId == null ? null : TimeZone.getTimeZone( timeZoneId ) );
-        profile.setTitle( JcrHelper.getPropertyString( userNode, TITLE ) );
-        final String genderStr = JcrHelper.getPropertyString( userNode, GENDER );
+        profile.setTitle( JcrHelper.getPropertyString( profileNode, TITLE ) );
+        final String genderStr = JcrHelper.getPropertyString( profileNode, GENDER );
         profile.setGender( genderStr == null ? null : Gender.valueOf( genderStr ) );
         return profile;
     }
 
-    private List<Address> nodePropertiesToAddresses( final Node userNode )
+    private List<Address> nodePropertiesToAddresses( final Node profileNode )
         throws RepositoryException
     {
         final List<Address> addressList = Lists.newArrayList();
-        final Node addresses = userNode.getNode( ADDRESSES );
-        final NodeIterator addressNodeIt = addresses.getNodes( ADDRESS );
-        while ( addressNodeIt.hasNext() )
+        final Node addresses = JcrHelper.getNodeOrNull( profileNode, ADDRESSES );
+        if ( addresses != null )
         {
-            Node addressNode = addressNodeIt.nextNode();
-            final Address address = new Address();
-            address.setLabel( JcrHelper.getPropertyString( addressNode, LABEL ) );
-            address.setStreet( JcrHelper.getPropertyString( addressNode, STREET ) );
-            address.setPostalAddress( JcrHelper.getPropertyString( addressNode, POSTAL_ADDRESS ) );
-            address.setPostalCode( JcrHelper.getPropertyString( addressNode, POSTAL_CODE ) );
-            address.setRegion( JcrHelper.getPropertyString( addressNode, REGION ) );
-            address.setCountry( JcrHelper.getPropertyString( addressNode, COUNTRY ) );
-            address.setIsoRegion( JcrHelper.getPropertyString( addressNode, ISO_REGION ) );
-            address.setIsoCountry( JcrHelper.getPropertyString( addressNode, ISO_COUNTRY ) );
-            addressList.add( address );
+            final NodeIterator addressNodeIt = addresses.getNodes( ADDRESS );
+            while ( addressNodeIt.hasNext() )
+            {
+                Node addressNode = addressNodeIt.nextNode();
+                final Address address = new Address();
+                address.setLabel( JcrHelper.getPropertyString( addressNode, LABEL ) );
+                address.setStreet( JcrHelper.getPropertyString( addressNode, STREET ) );
+                address.setPostalAddress( JcrHelper.getPropertyString( addressNode, POSTAL_ADDRESS ) );
+                address.setPostalCode( JcrHelper.getPropertyString( addressNode, POSTAL_CODE ) );
+                address.setRegion( JcrHelper.getPropertyString( addressNode, REGION ) );
+                address.setCountry( JcrHelper.getPropertyString( addressNode, COUNTRY ) );
+                address.setIsoRegion( JcrHelper.getPropertyString( addressNode, ISO_REGION ) );
+                address.setIsoCountry( JcrHelper.getPropertyString( addressNode, ISO_COUNTRY ) );
+                addressList.add( address );
+            }
         }
         return addressList;
     }
