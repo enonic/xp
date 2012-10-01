@@ -6,22 +6,15 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.account.ValidatePassword;
 import com.enonic.wem.api.exception.AccountNotFoundException;
+import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-
-import com.enonic.cms.core.security.InvalidCredentialsException;
-import com.enonic.cms.core.security.SecurityService;
-import com.enonic.cms.core.security.user.QualifiedUsername;
-import com.enonic.cms.core.security.user.UserEntity;
-import com.enonic.cms.store.dao.UserDao;
 
 @Component
 public final class ValidatePasswordHandler
     extends CommandHandler<ValidatePassword>
 {
-    private UserDao userDao;
-
-    private SecurityService securityService;
+    private AccountDao accountDao;
 
     public ValidatePasswordHandler()
     {
@@ -33,34 +26,19 @@ public final class ValidatePasswordHandler
         throws Exception
     {
         final AccountKey user = command.getKey();
-        final QualifiedUsername userQualifiedName = QualifiedUsername.parse( user.getQualifiedName() );
-        final UserEntity userEntity = userDao.findByQualifiedUsername( userQualifiedName );
-        if ( userEntity == null )
+        final boolean userExists = accountDao.accountExists( context.getJcrSession(), user );
+        if ( !userExists )
         {
             throw new AccountNotFoundException( user );
         }
 
-        try
-        {
-            securityService.loginPortalUser( userQualifiedName, command.getPassword() );
-            command.setResult( true );
-        }
-        catch ( InvalidCredentialsException e )
-        {
-            command.setResult( false );
-        }
+        // TODO implement the actual password validation (cannot use SecurityService.loginPortalUser since it does not use JCR)
+        command.setResult( true );
     }
 
     @Autowired
-    public void setUserDao( final UserDao userDao )
+    public void setAccountDao( final AccountDao accountDao )
     {
-        this.userDao = userDao;
+        this.accountDao = accountDao;
     }
-
-    @Autowired
-    public void setSecurityService( final SecurityService securityService )
-    {
-        this.securityService = securityService;
-    }
-
 }
