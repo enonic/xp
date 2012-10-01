@@ -1,18 +1,13 @@
 package com.enonic.wem.core.account;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Locale;
+import java.util.TimeZone;
 
-import org.elasticsearch.common.collect.Maps;
+import org.joda.time.DateTime;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
@@ -20,38 +15,21 @@ import com.enonic.wem.api.account.Accounts;
 import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
+import com.enonic.wem.api.account.profile.Address;
+import com.enonic.wem.api.account.profile.Addresses;
+import com.enonic.wem.api.account.profile.Gender;
 import com.enonic.wem.api.account.profile.UserProfile;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.account.GetAccounts;
+import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
-import com.enonic.cms.api.client.model.user.Gender;
-import com.enonic.cms.core.security.group.GroupEntity;
-import com.enonic.cms.core.security.group.GroupKey;
-import com.enonic.cms.core.security.group.GroupType;
-import com.enonic.cms.core.security.user.QualifiedUsername;
-import com.enonic.cms.core.security.user.UserEntity;
-import com.enonic.cms.core.security.user.UserKey;
-import com.enonic.cms.core.security.user.UserType;
-import com.enonic.cms.core.security.userstore.UserStoreEntity;
-import com.enonic.cms.core.security.userstore.UserStoreKey;
-import com.enonic.cms.core.user.field.UserFieldType;
-import com.enonic.cms.store.dao.GroupDao;
-import com.enonic.cms.store.dao.UserDao;
-import com.enonic.cms.store.dao.UserStoreDao;
-
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.doReturn;
 
-@Ignore
 public class GetAccountsHandlerTest
     extends AbstractCommandHandlerTest
 {
-    private UserDao userDao;
-
-    private GroupDao groupDao;
-
-    private UserStoreDao userStoreDao;
+    private AccountDao accountDao;
 
     private GetAccountsHandler handler;
 
@@ -62,14 +40,10 @@ public class GetAccountsHandlerTest
     {
         super.initialize();
 
-        userDao = Mockito.mock( UserDao.class );
-        groupDao = Mockito.mock( GroupDao.class );
-        userStoreDao = Mockito.mock( UserStoreDao.class );
+        accountDao = Mockito.mock( AccountDao.class );
 
         handler = new GetAccountsHandler();
-//        handler.setUserDao( userDao );
-//        handler.setGroupDao( groupDao );
-//        handler.setUserStoreDao( userStoreDao );
+        handler.setAccountDao( accountDao );
     }
 
     @Test
@@ -101,17 +75,17 @@ public class GetAccountsHandlerTest
         throws Exception
     {
         // setup
-        final UserEntity user1 = createUser( "enonic", "user1" );
-        final UserEntity user2 = createUser( "enonic", "user2" );
-        final UserEntity user3 = createUser( "enonic", "user3" );
-        final GroupEntity group1 = createGroup( "enonic", "group1" );
-        final GroupEntity group2 = createGroup( "enonic", "group2" );
-        final GroupEntity group3 = createGroup( "enonic", "group3" );
-        final GroupEntity role1 = createRole( "enonic", "contributors" );
-        final GroupEntity role2 = createRole( "enonic", "administrators" );
-        addMembers( group1, user1.getUserGroup(), user2.getUserGroup() );
-        addMembers( group2, user3.getUserGroup() );
-        addMembers( role1, user3.getUserGroup(), group1, role2 );
+        final UserAccount user1 = createUser( "enonic", "user1" );
+        final UserAccount user2 = createUser( "enonic", "user2" );
+        final UserAccount user3 = createUser( "enonic", "user3" );
+        final GroupAccount group1 = createGroup( "enonic", "group1" );
+        final GroupAccount group2 = createGroup( "enonic", "group2" );
+        final GroupAccount group3 = createGroup( "enonic", "group3" );
+        final RoleAccount role1 = createRole( "enonic", "contributors" );
+        final RoleAccount role2 = createRole( "enonic", "administrators" );
+        group1.setMembers( AccountKeys.from( user1.getKey(), user2.getKey() ) );
+        group2.setMembers( AccountKeys.from( user3.getKey() ) );
+        role1.setMembers( AccountKeys.from( user3.getKey(), group1.getKey(), role2.getKey() ) );
 
         // exercise
         final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "group:enonic:group2", "role:enonic:contributors" );
@@ -149,42 +123,43 @@ public class GetAccountsHandlerTest
         throws Exception
     {
         // setup
-        final UserEntity user = createUser( "enonic", "user1" );
-        final Map<String, String> userFields = Maps.newHashMap();
-        userFields.put( UserFieldType.BIRTHDAY.getName(), "2012-01-01T10:01:10.101+01:00" );
-        userFields.put( UserFieldType.COUNTRY.getName(), "Norway" );
-        userFields.put( UserFieldType.DESCRIPTION.getName(), "Description" );
-        userFields.put( UserFieldType.FAX.getName(), "12345678" );
-        userFields.put( UserFieldType.FIRST_NAME.getName(), "John" );
-        userFields.put( UserFieldType.GENDER.getName(), Gender.MALE.name() );
-        userFields.put( UserFieldType.GLOBAL_POSITION.getName(), "71 Degrees North" );
-        userFields.put( UserFieldType.HOME_PAGE.getName(), "http://acme.org" );
-        userFields.put( UserFieldType.HTML_EMAIL.getName(), "true" );
-        userFields.put( UserFieldType.INITIALS.getName(), "J. S." );
-        userFields.put( UserFieldType.LAST_NAME.getName(), "Smith" );
-        userFields.put( UserFieldType.LOCALE.getName(), "NO" );
-        userFields.put( UserFieldType.MEMBER_ID.getName(), "1234509876" );
-        userFields.put( UserFieldType.MIDDLE_NAME.getName(), "William" );
-        userFields.put( UserFieldType.MOBILE.getName(), "99999999" );
-        userFields.put( UserFieldType.NICK_NAME.getName(), "JS" );
-        userFields.put( UserFieldType.ORGANIZATION.getName(), "ACME" );
-        userFields.put( UserFieldType.PERSONAL_ID.getName(), "1234509876A" );
-        userFields.put( UserFieldType.PHONE.getName(), "66666666" );
-        userFields.put( UserFieldType.PHOTO.getName(), "img" );
-        userFields.put( UserFieldType.PREFIX.getName(), "Pre" );
-        userFields.put( UserFieldType.SUFFIX.getName(), "Suff" );
-        userFields.put( UserFieldType.TIME_ZONE.getName(), "GMT" );
-        userFields.put( UserFieldType.TITLE.getName(), "Mr." );
-        userFields.put( UserFieldType.ADDRESS.getName() + "[0].country", "Norway" );
-        userFields.put( UserFieldType.ADDRESS.getName() + "[0].iso-country", "NO" );
-        userFields.put( UserFieldType.ADDRESS.getName() + "[0].region", "AK" );
-        userFields.put( UserFieldType.ADDRESS.getName() + "[0].iso-region", "03" );
-        userFields.put( UserFieldType.ADDRESS.getName() + "[0].label", "Home" );
-        userFields.put( UserFieldType.ADDRESS.getName() + "[0].street", "Street" );
-        userFields.put( UserFieldType.ADDRESS.getName() + "[0].postal-code", "1234" );
-        userFields.put( UserFieldType.ADDRESS.getName() + "[0].postal-address", "1" );
-
-        doReturn( userFields ).when( user ).getFieldMap();
+        final UserAccount user = createUser( "enonic", "user1" );
+        user.setImage( "img".getBytes() );
+        final UserProfile profile = new UserProfile();
+        profile.setBirthday( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
+        profile.setCountry( "Norway" );
+        profile.setDescription( "Description" );
+        profile.setFax( "12345678" );
+        profile.setFirstName( "John" );
+        profile.setGender( Gender.MALE );
+        profile.setGlobalPosition( "71 Degrees North" );
+        profile.setHomePage( "http://acme.org" );
+        profile.setHtmlEmail( true );
+        profile.setInitials( "JS." );
+        profile.setLastName( "Smith" );
+        profile.setLocale( new Locale( "NO" ) );
+        profile.setMemberId( "1234509876" );
+        profile.setMiddleName( "William" );
+        profile.setMobile( "99999999" );
+        profile.setNickName( "JS" );
+        profile.setOrganization( "ACME" );
+        profile.setPersonalId( "1234509876A" );
+        profile.setPhone( "66666666" );
+        profile.setPrefix( "Pre" );
+        profile.setSuffix( "Suff" );
+        profile.setTimeZone( TimeZone.getTimeZone( "GMT" ) );
+        profile.setTitle( "Mr." );
+        Address address = new Address();
+        address.setCountry( "Norway" );
+        address.setIsoCountry( "NO" );
+        address.setRegion( "AK" );
+        address.setIsoRegion( "03" );
+        address.setLabel( "Home" );
+        address.setStreet( "Street" );
+        address.setPostalCode( "1234" );
+        address.setPostalAddress( "1" );
+        profile.setAddresses( Addresses.from( address ) );
+        user.setProfile( profile );
 
         // exercise
         final AccountKeys accounts = AccountKeys.from( "user:enonic:user1" );
@@ -197,102 +172,52 @@ public class GetAccountsHandlerTest
         assertNotNull( accountResult );
         assertEquals( 1, accountResult.getSize() );
         assertEquals( "user:enonic:user1", accountResult.getFirst().getKey().toString() );
-        final UserProfile profile = ( (UserAccount) accountResult.getFirst() ).getProfile();
-        assertNotNull( profile );
-        assertEquals( "John", profile.getFirstName() );
-        assertEquals( "Smith", profile.getLastName() );
-        assertNotNull( profile.getAddresses().getPrimary() );
-        assertEquals( "Home", profile.getAddresses().getPrimary().getLabel() );
+        final UserProfile prof = ( (UserAccount) accountResult.getFirst() ).getProfile();
+        assertNotNull( prof );
+        assertEquals( "John", prof.getFirstName() );
+        assertEquals( "Smith", prof.getLastName() );
+        assertNotNull( prof.getAddresses().getPrimary() );
+        assertEquals( "Home", prof.getAddresses().getPrimary().getLabel() );
     }
 
-    private void addMembers( final GroupEntity group, final GroupEntity... members )
-    {
-        final Set<GroupEntity> memberSet = Sets.newHashSet();
-        Collections.addAll( memberSet, members );
-        Mockito.when( group.getMembers( false ) ).thenReturn( memberSet );
-    }
-
-    private GroupEntity createRole( final String userStore, final String name )
+    private RoleAccount createRole( final String userStore, final String name )
         throws Exception
     {
-        return createGroupOrRole( userStore, name, true );
+        final RoleAccount role = RoleAccount.create( userStore + ":" + name );
+        role.setDisplayName( "Role " + name );
+        role.setDeleted( false );
+        role.setMembers( AccountKeys.empty() );
+
+        final AccountKey accountKey = role.getKey();
+        Mockito.when( accountDao.findRole( Matchers.eq( session ), Matchers.eq( accountKey ), Matchers.anyBoolean() ) ).thenReturn( role );
+        return role;
     }
 
-    private GroupEntity createGroup( final String userStore, final String name )
+    private GroupAccount createGroup( final String userStore, final String name )
         throws Exception
     {
-        return createGroupOrRole( userStore, name, false );
-    }
-
-    private GroupEntity createGroupOrRole( final String userStore, final String name, final boolean isRole )
-        throws Exception
-    {
-        final UserStoreEntity userStoreEntity = createUserStore( userStore );
-        final GroupEntity group = Mockito.mock( GroupEntity.class, Mockito.CALLS_REAL_METHODS );
-        final GroupKey key = new GroupKey( Integer.toString( Math.abs( name.hashCode() ) ) );
-
-        group.setKey( key );
-        group.setType( isRole ? GroupType.USERSTORE_ADMINS : GroupType.USERSTORE_GROUP );
-        group.setUserStore( userStoreEntity );
-        group.setName( name );
-        group.setDescription( "Group " + name );
+        final GroupAccount group = GroupAccount.create( userStore + ":" + name );
+        group.setDisplayName( "Group " + name );
         group.setDeleted( false );
-        group.setMemberships( Sets.<GroupEntity>newHashSet() );
+        group.setMembers( AccountKeys.empty() );
 
-        final Set<GroupEntity> memberSet = Sets.newHashSet();
-        group.setMembers( memberSet );
-
-        mockAddGroupToUserStore( userStoreEntity, group );
-        Mockito.when( groupDao.findByKey( key ) ).thenReturn( group );
-
+        final AccountKey accountKey = group.getKey();
+        Mockito.when( accountDao.findGroup( Matchers.eq( session ), Matchers.eq( accountKey ), Matchers.anyBoolean() ) ).thenReturn(
+            group );
         return group;
     }
 
-    private void mockAddGroupToUserStore( final UserStoreEntity userStore, final GroupEntity group )
-    {
-        final List<GroupEntity> userStoreResults = new ArrayList<GroupEntity>();
-        userStoreResults.add( group );
-        Mockito.when( groupDao.findByUserStoreKeyAndGroupname( userStore.getKey(), group.getName(), false ) ).thenReturn(
-            userStoreResults );
-    }
-
-    private UserEntity createUser( final String userStore, final String name )
+    private UserAccount createUser( final String userStore, final String name )
         throws Exception
     {
-        final UserEntity user = Mockito.mock( UserEntity.class, Mockito.CALLS_REAL_METHODS );
-        final UserKey key = new UserKey( Integer.toString( Math.abs( name.hashCode() ) ) );
-
-        user.setKey( key );
-        user.setType( UserType.NORMAL );
+        final UserAccount user = UserAccount.create( userStore + ":" + name );
         user.setEmail( "user@email.com" );
-        user.setUserStore( createUserStore( userStore ) );
-        user.setName( name );
         user.setDisplayName( "User " + name );
         user.setDeleted( false );
-
-        final QualifiedUsername qualifiedName = user.getQualifiedName();
-        Mockito.when( user.getQualifiedName() ).thenReturn( qualifiedName );
-        Mockito.when( userDao.findByQualifiedUsername( Mockito.argThat( new IsQualifiedUsername( qualifiedName ) ) ) ).thenReturn( user );
-        Mockito.when( userDao.findByKey( key.toString() ) ).thenReturn( user );
-
-        final GroupEntity userGroup = createGroup( userStore, "G" + user.getKey().toString() );
-        userGroup.setType( GroupType.USER );
-        Mockito.when( user.getUserGroup() ).thenReturn( userGroup );
-        doReturn( user ).when( userGroup ).getUser();
-
+        final AccountKey accountKey = user.getKey();
+        Mockito.when( accountDao.findUser( Matchers.eq( session ), Matchers.eq( accountKey ), Matchers.anyBoolean(),
+                                           Matchers.anyBoolean() ) ).thenReturn( user );
         return user;
     }
 
-    private UserStoreEntity createUserStore( final String name )
-    {
-        final UserStoreEntity userStore = Mockito.mock( UserStoreEntity.class, Mockito.CALLS_REAL_METHODS );
-        userStore.setName( name );
-        final UserStoreKey userStoreKey = new UserStoreKey( Math.abs( name.hashCode() ) );
-        userStore.setKey( userStoreKey );
-
-        Mockito.when( userStoreDao.findByKey( userStoreKey ) ).thenReturn( userStore );
-        Mockito.when( userStoreDao.findByName( name ) ).thenReturn( userStore );
-
-        return userStore;
-    }
 }
