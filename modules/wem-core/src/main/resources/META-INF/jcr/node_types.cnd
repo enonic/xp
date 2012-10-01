@@ -23,6 +23,7 @@
 
 // user store
 [wem:userStore] > wem:base, nt:unstructured
+- administrators (string) multiple mandatory
 + roles (wem:roles)
 + groups (wem:groups) mandatory
 + users (wem:users) mandatory

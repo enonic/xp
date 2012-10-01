@@ -8,6 +8,7 @@ import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.userstore.UserStore;
+import com.enonic.wem.api.userstore.UserStoreName;
 
 public interface AccountDao
     extends AccountDaoConstants
@@ -28,5 +29,8 @@ public interface AccountDao
         throws Exception;
 
     public void setMembers( Session session, AccountKey nonUserAccount, AccountKeys members )
+        throws Exception;
+
+    void setUserStoreAdministrators( Session session, UserStoreName userStoreName, AccountKeys administrators )
         throws Exception;
 }

@@ -1,5 +1,6 @@
 package com.enonic.wem.migrate.jcr;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -16,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
@@ -54,12 +57,15 @@ public class JcrAccountsImporter
 
     private final Map<Integer, String> userStoreKeyName;
 
+    private final Multimap<String, AccountKey> userStoreAdministrators;
+
     private final Map<String, String> entityKeyToAccountKeyMapping;
 
     public JcrAccountsImporter()
     {
         userStoreKeyName = new HashMap<Integer, String>();
         entityKeyToAccountKeyMapping = new HashMap<String, String>();
+        userStoreAdministrators = ArrayListMultimap.create();
     }
 
     public void importAccounts( final Session session )
@@ -70,7 +76,25 @@ public class JcrAccountsImporter
 
         importGroups( session );
 
+        setUserStoreAdministrators( session );
+
         releaseResources();
+    }
+
+    private void setUserStoreAdministrators( final Session session )
+    {
+        for ( String userStoreName : userStoreAdministrators.keys() )
+        {
+            final Collection<AccountKey> administrators = userStoreAdministrators.get( userStoreName );
+            try
+            {
+                accountDao.setUserStoreAdministrators( session, UserStoreName.from( userStoreName ), AccountKeys.from( administrators ) );
+            }
+            catch ( Exception e )
+            {
+                LOG.error( "Unable to set administrators for user store " + userStoreName, e );
+            }
+        }
     }
 
     private void importUserStores( final Session session )
@@ -175,6 +199,7 @@ public class JcrAccountsImporter
     {
         userStoreKeyName.clear();
         entityKeyToAccountKeyMapping.clear();
+        userStoreAdministrators.clear();
     }
 
     private void storeGroup( final Session session, final Map<String, Object> groupFields )
@@ -187,7 +212,7 @@ public class JcrAccountsImporter
             LOG.debug( "Skipping group of type User: " + groupName );
             return;
         }
-        Integer userStoreKey = (Integer) groupFields.get( "GRP_DOM_LKEY" );
+        final Integer userStoreKey = (Integer) groupFields.get( "GRP_DOM_LKEY" );
         String userStoreName = userStoreKeyName.get( userStoreKey );
         if ( userStoreName == null )
         {
@@ -220,6 +245,12 @@ public class JcrAccountsImporter
         final String groupId = nonUserAccount.getKey().toString();
         final String groupKey = (String) groupFields.get( "GRP_HKEY" );
         entityKeyToAccountKeyMapping.put( groupKey, groupId );
+
+        if ( groupType == GroupType.USERSTORE_ADMINS )
+        {
+            userStoreAdministrators.put( userStoreName, nonUserAccount.getKey() );
+        }
+
         LOG.info( "Group '" + groupName + "' imported with id " + groupId );
     }
 
@@ -448,7 +479,7 @@ public class JcrAccountsImporter
             addresses = Addresses.empty();
             profile.setAddresses( addresses );
         }
-        addresses.add( profileAddress );
+        profile.setAddresses( addresses.add( profileAddress ) );
     }
 
     @Autowired

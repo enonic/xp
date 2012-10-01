@@ -16,7 +16,9 @@ import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.exception.AccountNotFoundException;
+import com.enonic.wem.api.exception.UserStoreNotFoundException;
 import com.enonic.wem.api.userstore.UserStore;
+import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.core.jcr.JcrConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
 
@@ -38,7 +40,8 @@ public final class AccountDaoImpl
     public void createUserStore( final Session session, final UserStore userStore )
         throws Exception
     {
-        Node userStoresNode = session.getRootNode().getNode( JcrConstants.USER_STORES_PATH );
+        final Node root = session.getRootNode();
+        final Node userStoresNode = root.getNode( JcrConstants.USER_STORES_PATH );
         final String userStoreName = userStore.getName().toString();
         if ( ( userStoreName == null ) || userStoresNode.hasNode( userStoreName ) )
         {
@@ -53,6 +56,35 @@ public final class AccountDaoImpl
         {
             userStoreNode.addNode( JcrConstants.ROLES_NODE, JcrConstants.ROLES_TYPE );
         }
+
+        final AccountKeys administrators = userStore.getAdministrators() == null ? AccountKeys.empty() : userStore.getAdministrators();
+        setUserStoreAdministrators( session, userStore.getName(), administrators );
+    }
+
+    @Override
+    public void setUserStoreAdministrators( final Session session, final UserStoreName userStoreName, final AccountKeys administrators )
+        throws Exception
+    {
+        final Node root = session.getRootNode();
+        final Node userStoreNode = root.getNode( getNodePath( userStoreName ) );
+        if ( userStoreNode == null )
+        {
+            throw new UserStoreNotFoundException( userStoreName );
+        }
+
+        final List<Node> adminsNodeList = Lists.newArrayList();
+        for ( AccountKey administrator : administrators )
+        {
+            final Node accountNode = JcrHelper.getNodeOrNull( root, getNodePath( administrator ) );
+            if ( accountNode == null )
+            {
+                throw new AccountNotFoundException( administrator );
+            }
+            adminsNodeList.add( accountNode );
+        }
+
+        final Node[] memberNodes = adminsNodeList.toArray( new Node[adminsNodeList.size()] );
+        JcrHelper.setPropertyReference( userStoreNode, JcrConstants.USER_STORE_ADMINISTRATORS_PROPERTY, memberNodes );
     }
 
     @Override
@@ -159,6 +191,13 @@ public final class AccountDaoImpl
 
         accountNode.remove();
         return true;
+    }
+
+    private String getNodePath( final UserStoreName userStoreName )
+    {
+        final StringBuilder str = new StringBuilder();
+        str.append( JcrConstants.USER_STORES_PATH ).append( userStoreName.toString() );
+        return str.toString();
     }
 
     private String getNodePath( final AccountKey key )

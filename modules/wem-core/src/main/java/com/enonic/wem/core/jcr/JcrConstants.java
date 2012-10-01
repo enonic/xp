@@ -15,6 +15,8 @@ public interface JcrConstants
 
     public static final String USER_STORE_TYPE = "wem:userStore";
 
+    public static final String USER_STORE_ADMINISTRATORS_PROPERTY = "administrators";
+
     public static final String GROUPS_NODE = "groups";
 
     public static final String GROUPS_TYPE = "wem:groups";
