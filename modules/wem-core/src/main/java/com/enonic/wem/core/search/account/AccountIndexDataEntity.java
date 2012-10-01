@@ -67,7 +67,7 @@ public class AccountIndexDataEntity
     {
         final XContentBuilder result = XContentFactory.jsonBuilder();
         result.startObject();
-        addField( result, AccountIndexField.KEY_FIELD.id(), account.getKey().toString() );
+        addField( result, AccountIndexField.KEY_FIELD.id(), key.toString() );
 
         addField( result, AccountIndexField.TYPE_FIELD.id(), account.getType().name() );
         addField( result, AccountIndexField.NAME_FIELD.id(), account.getName() );
