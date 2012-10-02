@@ -6,10 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.core.search.account.AccountKey;
+import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.core.search.account.AccountSearchResults;
-import com.enonic.wem.core.search.account.AccountType;
-import com.enonic.wem.web.rest.service.account.AccountCsvExportService;
 
 import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.group.GroupKey;
@@ -61,11 +59,11 @@ public class AccountCsvExportServiceTest
     private AccountSearchResults createSearchResults()
     {
         AccountSearchResults results = new AccountSearchResults( 0, 5 );
-        results.add( new AccountKey( "856A22BB46C76B4D8A7787C504E227D2F391D5F0" ), AccountType.USER, 1f );
-        results.add( new AccountKey( "BE9891A338852C102F398CBA65E92626ABD893AC" ), AccountType.USER, 1f );
-        results.add( new AccountKey( "98D9DCC6E25B94DF499FB233AFD1A2665BE4997C" ), AccountType.GROUP, 1f );
-        results.add( new AccountKey( "0E91A6F5CCCF8464C39CB4D06AA1715B7750B4E6" ), AccountType.GROUP, 1f );
-        results.add( new AccountKey( "A2F5AA36DFE832EDCE705507D537D5083A309666" ), AccountType.GROUP, 1f );
+        results.add( AccountKey.user( "enonic:tuser1" ), 1f );
+        results.add( AccountKey.user( "enonic:tuser2" ), 1f );
+        results.add( AccountKey.group( "enonic:Test group 1" ), 1f );
+        results.add( AccountKey.group( "enonic:Test group 2" ), 1f );
+        results.add( AccountKey.group( "enonic:Test group 3" ), 1f );
         return results;
     }
 

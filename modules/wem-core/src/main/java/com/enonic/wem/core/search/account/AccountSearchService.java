@@ -29,6 +29,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.api.account.Account;
+import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.core.search.FacetEntry;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
@@ -167,6 +169,11 @@ public class AccountSearchService
                         .endObject()
                     .endObject()
                 .endObject()
+            .field( AccountIndexField.MEMBERS_FIELD.id() )
+                .startObject()
+                    .field( "type", "string" )
+                    .field( "index", "not_analyzed" )
+                .endObject()
             .endObject()
         .endObject()
         .endObject();
@@ -175,10 +182,11 @@ public class AccountSearchService
         return mapping;
     }
 
-    public void index( AccountIndexData account )
+    public void index( final Account account )
     {
-        final XContentBuilder data = account.getData();
-        final String id  = account.getKey().toString();
+        final AccountIndexData accountIndexData = new AccountIndexData( account );
+        final XContentBuilder data = accountIndexData.getData();
+        final String id = account.getKey().toString();
 
         final IndexRequest req = Requests.indexRequest()
                 .id( id )
@@ -254,9 +262,7 @@ public class AccountSearchService
         {
             final SearchHit hit = hits.getAt( i );
             final String key = (String) hit.sourceAsMap().get( "key" );
-            final String accountTypeValue = ( (String) hit.sourceAsMap().get( "type" ) ).toUpperCase();
-            final AccountType accountType = AccountType.valueOf( accountTypeValue );
-            searchResult.add( new AccountKey( key ), accountType, hit.score() );
+            searchResult.add( AccountKey.from( key ), hit.score() );
         }
     }
 

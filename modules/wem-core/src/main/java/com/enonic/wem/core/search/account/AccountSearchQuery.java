@@ -2,6 +2,8 @@ package com.enonic.wem.core.search.account;
 
 import java.util.Arrays;
 
+import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.core.search.SearchSortOrder;
 
 public final class AccountSearchQuery
@@ -32,6 +34,8 @@ public final class AccountSearchQuery
 
     private String email;
 
+    private AccountKeys membershipsAccounts;
+
     public AccountSearchQuery()
     {
         this.query = "";
@@ -52,7 +56,7 @@ public final class AccountSearchQuery
         return this.groups;
     }
 
-    public AccountSearchQuery setGroups( boolean selectGroups )
+    public AccountSearchQuery groups( boolean selectGroups )
     {
         this.groups = selectGroups;
         return this;
@@ -63,7 +67,7 @@ public final class AccountSearchQuery
         return this.users;
     }
 
-    public AccountSearchQuery setUsers( boolean selectUsers )
+    public AccountSearchQuery users( boolean selectUsers )
     {
         this.users = selectUsers;
         return this;
@@ -74,7 +78,7 @@ public final class AccountSearchQuery
         return this.query != null ? this.query : "";
     }
 
-    public AccountSearchQuery setQuery( String value )
+    public AccountSearchQuery query( String value )
     {
         this.query = value;
         return this;
@@ -85,7 +89,7 @@ public final class AccountSearchQuery
         return this.from;
     }
 
-    public AccountSearchQuery setFrom( int from )
+    public AccountSearchQuery from( int from )
     {
         this.from = from;
         return this;
@@ -96,7 +100,7 @@ public final class AccountSearchQuery
         return this.count;
     }
 
-    public AccountSearchQuery setCount( int count )
+    public AccountSearchQuery count( int count )
     {
         this.count = count;
         return this;
@@ -107,7 +111,7 @@ public final class AccountSearchQuery
         return userStore;
     }
 
-    public AccountSearchQuery setUserStores( String... userStore )
+    public AccountSearchQuery userStores( String... userStore )
     {
         if ( userStore == null || userStore.length == 0 || userStore.length == 1 && userStore[0].equals( "" ) )
         {
@@ -125,7 +129,7 @@ public final class AccountSearchQuery
         return organization;
     }
 
-    public AccountSearchQuery setOrganizations( String... organizations )
+    public AccountSearchQuery organizations( String... organizations )
     {
         if ( organizations == null || organizations.length == 0 || organizations.length == 1 && organizations[0].equals( "" ) )
         {
@@ -143,7 +147,7 @@ public final class AccountSearchQuery
         return sortOrder;
     }
 
-    public AccountSearchQuery setSortOrder( SearchSortOrder sortOrder )
+    public AccountSearchQuery sortOrder( SearchSortOrder sortOrder )
     {
         this.sortOrder = sortOrder;
         return this;
@@ -154,7 +158,7 @@ public final class AccountSearchQuery
         return sortField;
     }
 
-    public AccountSearchQuery setSortField( AccountIndexField sortField )
+    public AccountSearchQuery sortField( AccountIndexField sortField )
     {
         this.sortField = sortField;
         return this;
@@ -165,7 +169,7 @@ public final class AccountSearchQuery
         return includeResults;
     }
 
-    public AccountSearchQuery setIncludeResults( boolean includeResults )
+    public AccountSearchQuery includeResults( boolean includeResults )
     {
         this.includeResults = includeResults;
         return this;
@@ -176,7 +180,7 @@ public final class AccountSearchQuery
         return includeFacets;
     }
 
-    public AccountSearchQuery setIncludeFacets( boolean includeFacets )
+    public AccountSearchQuery includeFacets( boolean includeFacets )
     {
         this.includeFacets = includeFacets;
         return this;
@@ -187,7 +191,7 @@ public final class AccountSearchQuery
         return roles;
     }
 
-    public AccountSearchQuery setRoles( boolean roles )
+    public AccountSearchQuery roles( boolean roles )
     {
         this.roles = roles;
         return this;
@@ -198,10 +202,27 @@ public final class AccountSearchQuery
         return email;
     }
 
-    public AccountSearchQuery setEmail( final String email )
+    public AccountSearchQuery email( final String email )
     {
         this.email = email;
         return this;
+    }
+
+    public AccountSearchQuery membershipsFor( final AccountKeys accounts )
+    {
+        this.membershipsAccounts = accounts;
+        return this;
+    }
+
+    public AccountSearchQuery membershipsFor( final AccountKey account )
+    {
+        this.membershipsAccounts = AccountKeys.from( account );
+        return this;
+    }
+
+    public AccountKeys getMembershipsFor()
+    {
+        return this.membershipsAccounts;
     }
 
     @Override
@@ -270,6 +291,10 @@ public final class AccountSearchQuery
         {
             return false;
         }
+        if ( membershipsAccounts != null ? !membershipsAccounts.equals( that.membershipsAccounts ) : that.membershipsAccounts != null )
+        {
+            return false;
+        }
 
         return true;
     }
@@ -290,6 +315,7 @@ public final class AccountSearchQuery
         result = 31 * result + ( includeFacets ? 1 : 0 );
         result = 31 * result + ( organization != null ? Arrays.hashCode( organization ) : 0 );
         result = 31 * result + ( email != null ? email.hashCode() : 0 );
+        result = 31 * result + ( membershipsAccounts != null ? membershipsAccounts.hashCode() : 0 );
         return result;
     }
 }

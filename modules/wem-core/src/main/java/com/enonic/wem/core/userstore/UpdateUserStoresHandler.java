@@ -70,7 +70,7 @@ public class UpdateUserStoresHandler
         command.setUpdater( updater.getKey() );
         userStoreService.updateUserStore( command );
         UserStoreKey usKey = userStoreDao.findByName( userStore.getName().toString() ).getKey();
-        updateUserstoreAdministrators( updater, usKey, userStore.getAdministrators() );
+//        updateUserstoreAdministrators( updater, usKey, userStore.getAdministrators() );
     }
 
 }

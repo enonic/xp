@@ -57,12 +57,9 @@ public class FindAccountsHandlerTest
         final AccountKey user3 = createUser( "enonic:user3" );
 
         final AccountSearchResults searchResults = new AccountSearchResults( 0, 10 );
-        searchResults.add( new com.enonic.wem.core.search.account.AccountKey( user1.toString() ),
-                           com.enonic.wem.core.search.account.AccountType.USER, 1 );
-        searchResults.add( new com.enonic.wem.core.search.account.AccountKey( user2.toString() ),
-                           com.enonic.wem.core.search.account.AccountType.USER, 1 );
-        searchResults.add( new com.enonic.wem.core.search.account.AccountKey( user3.toString() ),
-                           com.enonic.wem.core.search.account.AccountType.USER, 1 );
+        searchResults.add( user1, 1 );
+        searchResults.add( user2, 1 );
+        searchResults.add( user3, 1 );
         doReturn( searchResults ).when( accountSearchService ).search( Matchers.<AccountSearchQuery>any() );
 
         // exercise
@@ -93,16 +90,11 @@ public class FindAccountsHandlerTest
         final AccountKey role2 = createRole( "enonic:administrators" );
 
         final AccountSearchResults searchResults = new AccountSearchResults( 0, 7 );
-        searchResults.add( new com.enonic.wem.core.search.account.AccountKey( group1.toString() ),
-                           com.enonic.wem.core.search.account.AccountType.GROUP, 1 );
-        searchResults.add( new com.enonic.wem.core.search.account.AccountKey( group2.toString() ),
-                           com.enonic.wem.core.search.account.AccountType.GROUP, 1 );
-        searchResults.add( new com.enonic.wem.core.search.account.AccountKey( group3.toString() ),
-                           com.enonic.wem.core.search.account.AccountType.GROUP, 1 );
-        searchResults.add( new com.enonic.wem.core.search.account.AccountKey( role1.toString() ),
-                           com.enonic.wem.core.search.account.AccountType.ROLE, 1 );
-        searchResults.add( new com.enonic.wem.core.search.account.AccountKey( role2.toString() ),
-                           com.enonic.wem.core.search.account.AccountType.ROLE, 1 );
+        searchResults.add( group1, 1 );
+        searchResults.add( group2, 1 );
+        searchResults.add( group3, 1 );
+        searchResults.add( role1, 1 );
+        searchResults.add( role2, 1 );
         doReturn( searchResults ).when( accountSearchService ).search( Matchers.<AccountSearchQuery>any() );
 
         // exercise
@@ -134,16 +126,11 @@ public class FindAccountsHandlerTest
         final AccountKey role2 = createRole( "enonic:administrators" );
 
         final AccountSearchResults searchResults = new AccountSearchResults( 0, 7 );
-        searchResults.add( new com.enonic.wem.core.search.account.AccountKey( group1.toString() ),
-                           com.enonic.wem.core.search.account.AccountType.GROUP, 1 );
-        searchResults.add( new com.enonic.wem.core.search.account.AccountKey( group2.toString() ),
-                           com.enonic.wem.core.search.account.AccountType.GROUP, 1 );
-        searchResults.add( new com.enonic.wem.core.search.account.AccountKey( group3.toString() ),
-                           com.enonic.wem.core.search.account.AccountType.GROUP, 1 );
-        searchResults.add( new com.enonic.wem.core.search.account.AccountKey( role1.toString() ),
-                           com.enonic.wem.core.search.account.AccountType.ROLE, 1 );
-        searchResults.add( new com.enonic.wem.core.search.account.AccountKey( role2.toString() ),
-                           com.enonic.wem.core.search.account.AccountType.ROLE, 1 );
+        searchResults.add( group1, 1 );
+        searchResults.add( group2, 1 );
+        searchResults.add( group3, 1 );
+        searchResults.add( role1, 1 );
+        searchResults.add( role2, 1 );
         final Facet facet = new Facet( "organization" );
         facet.addEntry( new FacetEntry( "Enonic", 2 ) );
         facet.addEntry( new FacetEntry( "Acme, inc.", 3 ) );

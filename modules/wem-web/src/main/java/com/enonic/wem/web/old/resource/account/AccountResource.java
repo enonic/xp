@@ -15,25 +15,20 @@ import javax.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.core.search.SearchSortOrder;
 import com.enonic.wem.core.search.account.AccountIndexField;
-import com.enonic.wem.core.search.account.AccountKey;
 import com.enonic.wem.core.search.account.AccountSearchHit;
 import com.enonic.wem.core.search.account.AccountSearchQuery;
 import com.enonic.wem.core.search.account.AccountSearchResults;
 import com.enonic.wem.core.search.account.AccountSearchService;
-import com.enonic.wem.core.search.account.AccountType;
 import com.enonic.wem.web.rest.service.account.AccountCsvExportService;
-
-import com.enonic.cms.store.dao.UserDao;
 
 @Path("account")
 @Produces(MediaType.APPLICATION_JSON)
 @Component
 public final class AccountResource
 {
-    private UserDao userDao;
-
     private AccountSearchService accountSearchService;
 
     private AccountCsvExportService accountCsvExportService;
@@ -81,20 +76,13 @@ public final class AccountResource
 
     AccountSearchResults getAccountListForKeys( final List<String> keys )
     {
-        // TODO: refactor this when accounts API and model classes are in place
         final AccountSearchResults accounts = new AccountSearchResults( 0, keys.size() );
         for ( final String key : keys )
         {
-            final AccountType type = findAccountType( key );
-            final AccountSearchHit account = new AccountSearchHit( new AccountKey( key ), type, 0 );
+            final AccountSearchHit account = new AccountSearchHit( AccountKey.from( key ), 0 );
             accounts.add( account );
         }
         return accounts;
-    }
-
-    private AccountType findAccountType( final String accountKey )
-    {
-        return userDao.findByKey( accountKey ) == null ? AccountType.GROUP : AccountType.USER;
     }
 
     AccountSearchQuery buildSearchQuery( String query, String types, String userstores, String organizations, int start, int limit,
@@ -117,16 +105,9 @@ public final class AccountResource
             sortOrder = SearchSortOrder.ASC;
         }
 
-        return new AccountSearchQuery().setIncludeResults( true ).setIncludeFacets( true ).setQuery( query ).setUsers(
-            isSelectUsers ).setGroups( isSelectGroups ).setRoles( isSelectRoles ).setUserStores( userstoreList ).setOrganizations(
-            organizationList ).setCount( limit ).setFrom( start ).setSortField( sortField ).setSortOrder( sortOrder );
-
-    }
-
-    @Autowired
-    public void setUserDao( final UserDao userDao )
-    {
-        this.userDao = userDao;
+        return new AccountSearchQuery().includeResults( true ).includeFacets( true ).query( query ).users( isSelectUsers ).groups(
+            isSelectGroups ).roles( isSelectRoles ).userStores( userstoreList ).organizations( organizationList ).count( limit ).from(
+            start ).sortField( sortField ).sortOrder( sortOrder );
     }
 
     @Autowired

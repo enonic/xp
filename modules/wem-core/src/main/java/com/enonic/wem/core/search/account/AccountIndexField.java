@@ -10,7 +10,9 @@ public enum AccountIndexField
     FIRST_NAME_FIELD( "first-name" ),
     KEY_FIELD( "key" ),
     EMAIL_FIELD( "email" ),
-    ORGANIZATION_FIELD( "organization" ),;
+    ORGANIZATION_FIELD( "organization" ),
+    MEMBERS_FIELD( "members" )
+    ;
 
     private final String id;
 

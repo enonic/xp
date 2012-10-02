@@ -7,11 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.core.search.account.AccountIndexData;
-import com.enonic.wem.core.search.account.AccountIndexDataEntity;
-import com.enonic.wem.core.search.account.AccountKey;
 import com.enonic.wem.core.search.account.AccountSearchService;
-import com.enonic.wem.core.search.account.Group;
 
 import com.enonic.cms.framework.xml.XMLDocumentFactory;
 
@@ -148,35 +144,35 @@ public class UserStoreUpdateService
 
     private void indexGroup( final GroupKey groupKey )
     {
-        final GroupEntity groupEntity = securityService.getGroup( groupKey );
-        if ( groupEntity == null )
-        {
-            searchService.deleteIndex( String.valueOf( groupKey ) );
-            return;
-        }
-
-        final Group group = new Group();
-        group.setKey( new AccountKey( groupEntity.getGroupKey().toString() ) );
-        group.setName( groupEntity.getName() );
-
-        // TODO: DisplayName does not exist on GroupEntity. Using description for now.
-        // group.setDisplayName( groupEntity.getDisplayName() );
-        group.setDisplayName( groupEntity.getDescription() );
-
-        group.setGroupType( groupEntity.getType() );
-        if ( groupEntity.getUserStore() != null )
-        {
-            group.setUserStoreName( groupEntity.getUserStore().getName() );
-        }
-
-        // TODO: LastModified does not exist on GroupEntity. Using "null" for now.
-        // final DateTime lastModified = ( groupEntity.getLastModified() == null ) ? null : new DateTime( groupEntity.getLastModified() );
-        // group.setLastModified( lastModified );
-        group.setLastModified( null );
-
-        final AccountIndexData accountIndexData = new AccountIndexDataEntity( group );
-
-        searchService.index( accountIndexData );
+//        final GroupEntity groupEntity = securityService.getGroup( groupKey );
+//        if ( groupEntity == null )
+//        {
+//            searchService.deleteIndex( String.valueOf( groupKey ) );
+//            return;
+//        }
+//
+//        final Group group = new Group();
+//        group.setKey( new AccountKey( groupEntity.getGroupKey().toString() ) );
+//        group.setName( groupEntity.getName() );
+//
+//        // TODO: DisplayName does not exist on GroupEntity. Using description for now.
+//        // group.setDisplayName( groupEntity.getDisplayName() );
+//        group.setDisplayName( groupEntity.getDescription() );
+//
+//        group.setGroupType( groupEntity.getType() );
+//        if ( groupEntity.getUserStore() != null )
+//        {
+//            group.setUserStoreName( groupEntity.getUserStore().getName() );
+//        }
+//
+//        // TODO: LastModified does not exist on GroupEntity. Using "null" for now.
+//        // final DateTime lastModified = ( groupEntity.getLastModified() == null ) ? null : new DateTime( groupEntity.getLastModified() );
+//        // group.setLastModified( lastModified );
+//        group.setLastModified( null );
+//
+//        final AccountIndexData accountIndexData = new AccountIndexDataEntity( group );
+//
+//        searchService.index( accountIndexData );
     }
 
     private GroupKey getMemberGroupKey(final String memberKey) {

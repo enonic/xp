@@ -61,17 +61,17 @@ public final class FindAccountsHandler
         throws Exception
     {
         final AccountSearchQuery searchQuery = new AccountSearchQuery();
-        searchQuery.setFrom( accountQuery.getOffset() );
-        searchQuery.setCount( accountQuery.getLimit() );
-        searchQuery.setQuery( accountQuery.getQuery() );
-        searchQuery.setUserStores( accountQuery.getUserStores().toArray( new String[accountQuery.getUserStores().size()] ) );
+        searchQuery.from( accountQuery.getOffset() );
+        searchQuery.count( accountQuery.getLimit() );
+        searchQuery.query( accountQuery.getQuery() );
+        searchQuery.userStores( accountQuery.getUserStores().toArray( new String[accountQuery.getUserStores().size()] ) );
         final Set<AccountType> accountTypes = accountQuery.getTypes();
-        searchQuery.setUsers( accountTypes.contains( AccountType.USER ) );
-        searchQuery.setGroups( accountTypes.contains( AccountType.GROUP ) );
-        searchQuery.setRoles( accountTypes.contains( AccountType.ROLE ) );
-        searchQuery.setSortField( AccountIndexField.parse( accountQuery.getSortField() ) );
-        searchQuery.setSortOrder( accountQuery.getSortDirection() == Direction.ASC ? SearchSortOrder.ASC : SearchSortOrder.DESC );
-        searchQuery.setEmail( accountQuery.getEmail() );
+        searchQuery.users( accountTypes.contains( AccountType.USER ) );
+        searchQuery.groups( accountTypes.contains( AccountType.GROUP ) );
+        searchQuery.roles( accountTypes.contains( AccountType.ROLE ) );
+        searchQuery.sortField( AccountIndexField.parse( accountQuery.getSortField() ) );
+        searchQuery.sortOrder( accountQuery.getSortDirection() == Direction.ASC ? SearchSortOrder.ASC : SearchSortOrder.DESC );
+        searchQuery.email( accountQuery.getEmail() );
 
         final AccountSearchResults searchResults = accountSearchService.search( searchQuery );
         final List<AccountKey> accounts = getSearchResults( session, searchResults );

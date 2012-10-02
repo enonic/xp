@@ -110,7 +110,7 @@ public class AccountJcrMapping
     {
         user.setDisplayName( JcrHelper.getPropertyString( userNode, DISPLAY_NAME ) );
         user.setCreatedTime( JcrHelper.getPropertyDateTime( userNode, CREATED ) );
-        user.setEmail( userNode.getProperty( EMAIL ).getString() );
+        user.setEmail( JcrHelper.getPropertyString( userNode, EMAIL ) );
         user.setModifiedTime( JcrHelper.getPropertyDateTime( userNode, LAST_MODIFIED ) );
         user.setLastLoginTime( JcrHelper.getPropertyDateTime( userNode, LAST_LOGGED ) );
 

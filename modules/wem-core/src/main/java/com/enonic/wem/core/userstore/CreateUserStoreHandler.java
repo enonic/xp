@@ -33,7 +33,7 @@ public class CreateUserStoreHandler
         storeCommand.setConfig( convertToOldConfig( userStore.getConfig() ) );
         storeCommand.setStorer( storer.getKey() );
         UserStoreKey newUserStore = userStoreService.storeNewUserStore( storeCommand );
-        updateUserstoreAdministrators( storer, newUserStore, userStore.getAdministrators() );
+//        updateUserstoreAdministrators( storer, newUserStore, userStore.getAdministrators() );
         command.setResult( userStore.getName() );
     }
 

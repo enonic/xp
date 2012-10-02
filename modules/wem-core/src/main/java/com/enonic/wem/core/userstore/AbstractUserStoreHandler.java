@@ -14,21 +14,13 @@ import com.enonic.wem.api.userstore.config.UserStoreConfig;
 import com.enonic.wem.api.userstore.config.UserStoreFieldConfig;
 import com.enonic.wem.api.userstore.connector.UserStoreConnector;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.search.account.AccountIndexData;
-import com.enonic.wem.core.search.account.AccountIndexDataEntity;
 import com.enonic.wem.core.search.account.AccountSearchService;
-import com.enonic.wem.core.search.account.Group;
 
 import com.enonic.cms.core.security.SecurityService;
 import com.enonic.cms.core.security.group.GroupEntity;
-import com.enonic.cms.core.security.group.GroupKey;
-import com.enonic.cms.core.security.group.GroupSpecification;
-import com.enonic.cms.core.security.group.GroupType;
-import com.enonic.cms.core.security.group.UpdateGroupCommand;
 import com.enonic.cms.core.security.user.UserEntity;
 import com.enonic.cms.core.security.userstore.UserStoreConnectorManager;
 import com.enonic.cms.core.security.userstore.UserStoreEntity;
-import com.enonic.cms.core.security.userstore.UserStoreKey;
 import com.enonic.cms.core.security.userstore.UserStoreService;
 import com.enonic.cms.core.security.userstore.config.UserStoreUserFieldConfig;
 import com.enonic.cms.core.security.userstore.connector.config.UserStoreConnectorConfig;
@@ -100,65 +92,6 @@ public abstract class AbstractUserStoreHandler<T extends Command>
             return user.getUserGroup();
         }
         return null;
-    }
-
-    protected void updateUserstoreAdministrators( UserEntity user, UserStoreKey userStoreKey, AccountKeys administrators )
-    {
-        GroupSpecification spec = new GroupSpecification();
-        spec.setType( GroupType.USERSTORE_ADMINS );
-        spec.setDeletedState( GroupSpecification.DeletedState.NOT_DELETED );
-        spec.setUserStoreKey( userStoreKey );
-        List<GroupEntity> adminGroups = userStoreService.getGroups( spec );
-        if ( adminGroups.size() == 1 )
-        {
-            GroupEntity adminGroup = adminGroups.get( 0 );
-            UpdateGroupCommand command = new UpdateGroupCommand( user.getKey(), adminGroup.getGroupKey() );
-            command.setName( adminGroup.getName() );
-            for ( AccountKey administratorKey : administrators )
-            {
-                final GroupEntity groupMember = getGroupEntity( administratorKey );
-                command.addMember( groupMember );
-            }
-            userStoreService.updateGroup( command );
-
-            indexGroup( adminGroup.getGroupKey() );
-        }
-
-        spec.setType( GroupType.AUTHENTICATED_USERS );
-        spec.setDeletedState( GroupSpecification.DeletedState.NOT_DELETED );
-        adminGroups = userStoreService.getGroups( spec );
-        if ( adminGroups.size() == 1 )
-        {
-            indexGroup( adminGroups.get( 0 ).getGroupKey() );
-        }
-    }
-
-    protected void indexGroup( final GroupKey groupKey )
-    {
-        final GroupEntity groupEntity = securityService.getGroup( groupKey );
-        if ( groupEntity == null )
-        {
-            searchService.deleteIndex( String.valueOf( groupKey ) );
-            return;
-        }
-
-        final Group group = new Group();
-        group.setKey( new com.enonic.wem.core.search.account.AccountKey( groupEntity.getGroupKey().toString() ) );
-        group.setName( groupEntity.getName() );
-
-        group.setDisplayName( groupEntity.getDescription() );
-
-        group.setGroupType( groupEntity.getType() );
-        if ( groupEntity.getUserStore() != null )
-        {
-            group.setUserStoreName( groupEntity.getUserStore().getName() );
-        }
-
-        group.setLastModified( null );
-
-        final AccountIndexData accountIndexData = new AccountIndexDataEntity( group );
-
-        searchService.index( accountIndexData );
     }
 
     protected UserStoreConfig getUserStoreConfig(

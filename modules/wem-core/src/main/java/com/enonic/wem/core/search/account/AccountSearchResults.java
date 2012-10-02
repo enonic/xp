@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.core.search.Facets;
 
 
@@ -49,9 +50,9 @@ public final class AccountSearchResults
         }
     }
 
-    public void add( AccountKey key, AccountType accountType, float score )
+    public void add( AccountKey key, float score )
     {
-        add( new AccountSearchHit( key, accountType, score ) );
+        add( new AccountSearchHit( key, score ) );
     }
 
     public Iterator<AccountSearchHit> iterator()

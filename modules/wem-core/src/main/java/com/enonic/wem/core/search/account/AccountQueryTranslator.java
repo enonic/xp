@@ -18,6 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.AccountKeys;
+import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.core.search.SearchSortOrder;
 
 import static org.elasticsearch.index.query.FilterBuilders.matchAllFilter;
@@ -224,6 +227,17 @@ public final class AccountQueryTranslator
         if ( !query.getRoles() )
         {
             qb.mustNot( termQuery( AccountIndexField.TYPE_FIELD.id(), AccountType.ROLE.name().toLowerCase() ) );
+        }
+        final AccountKeys membershipForAccounts = query.getMembershipsFor();
+        if ( membershipForAccounts != null )
+        {
+            final String[] accounts = new String[membershipForAccounts.getSize()];
+            int i = 0;
+            for ( AccountKey account : membershipForAccounts )
+            {
+                accounts[i++] = account.toString();
+            }
+            qb.must( termsQuery( AccountIndexField.MEMBERS_FIELD.id(), accounts ) );
         }
         if ( qb.hasClauses() )
         {

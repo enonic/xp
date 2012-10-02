@@ -21,6 +21,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
+import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.GroupAccount;
@@ -34,6 +35,7 @@ import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.config.UserStoreConfig;
 import com.enonic.wem.api.userstore.config.UserStoreConfigParser;
 import com.enonic.wem.core.account.dao.AccountDao;
+import com.enonic.wem.core.search.account.AccountSearchService;
 
 import com.enonic.cms.api.client.model.user.Address;
 import com.enonic.cms.api.client.model.user.Gender;
@@ -55,17 +57,22 @@ public class JcrAccountsImporter
 
     private AccountDao accountDao;
 
+    private AccountSearchService accountSearchService;
+
     private final Map<Integer, String> userStoreKeyName;
 
     private final Multimap<String, AccountKey> userStoreAdministrators;
 
     private final Map<String, String> entityKeyToAccountKeyMapping;
 
+    private final Map<AccountKey, Account> accountsImported;
+
     public JcrAccountsImporter()
     {
         userStoreKeyName = new HashMap<Integer, String>();
         entityKeyToAccountKeyMapping = new HashMap<String, String>();
         userStoreAdministrators = ArrayListMultimap.create();
+        accountsImported = Maps.newHashMap();
     }
 
     public void importAccounts( final Session session )
@@ -77,6 +84,8 @@ public class JcrAccountsImporter
         importGroups( session );
 
         setUserStoreAdministrators( session );
+
+        indexAccounts();
 
         releaseResources();
     }
@@ -123,7 +132,7 @@ public class JcrAccountsImporter
             {
                 try
                 {
-                    storeUser( session, data );
+                    importUser( session, data );
                 }
                 catch ( Exception e )
                 {
@@ -141,7 +150,7 @@ public class JcrAccountsImporter
             {
                 try
                 {
-                    storeGroup( session, data );
+                    importGroup( session, data );
                 }
                 catch ( Exception e )
                 {
@@ -188,11 +197,21 @@ public class JcrAccountsImporter
         }
     }
 
-    private void setMembers( final Session session, final AccountKey nonUserAccount, final AccountKeys members )
+    private void indexAccounts()
+    {
+        for ( Account account : accountsImported.values() )
+        {
+            accountSearchService.index( account );
+        }
+    }
+
+    private void setMembers( final Session session, final AccountKey nonUserAccountKey, final AccountKeys members )
         throws Exception
     {
-        accountDao.setMembers( session, nonUserAccount, members );
-        LOG.info( "Set account members for " + nonUserAccount.toString() + ": " + members.toString() );
+        accountDao.setMembers( session, nonUserAccountKey, members );
+        final NonUserAccount nonUserAccount = (NonUserAccount) accountsImported.get( nonUserAccountKey );
+        nonUserAccount.setMembers( members );
+        LOG.info( "Set account members for " + nonUserAccountKey.toString() + ": " + members.toString() );
     }
 
     private void releaseResources()
@@ -200,9 +219,10 @@ public class JcrAccountsImporter
         userStoreKeyName.clear();
         entityKeyToAccountKeyMapping.clear();
         userStoreAdministrators.clear();
+        accountsImported.clear();
     }
 
-    private void storeGroup( final Session session, final Map<String, Object> groupFields )
+    private void importGroup( final Session session, final Map<String, Object> groupFields )
         throws Exception
     {
         final String groupName = (String) groupFields.get( "GRP_SNAME" );
@@ -243,6 +263,8 @@ public class JcrAccountsImporter
             accountDao.createRole( session, (RoleAccount) nonUserAccount );
         }
 
+        accountsImported.put( nonUserAccount.getKey(), nonUserAccount );
+
         final String groupId = nonUserAccount.getKey().toString();
         final String groupKey = (String) groupFields.get( "GRP_HKEY" );
         entityKeyToAccountKeyMapping.put( groupKey, groupId );
@@ -255,55 +277,7 @@ public class JcrAccountsImporter
         LOG.info( "Group '" + groupName + "' imported with id " + groupId );
     }
 
-    private void storeUser( final Session session, final Map<String, Object> userFields )
-        throws Exception
-    {
-        final UserAccount user = importUser( session, userFields );
-        if ( user != null )
-        {
-            final String userId = user.getKey().toString();
-            final String userKey = (String) userFields.get( "USR_GRP_HKEY" );
-            entityKeyToAccountKeyMapping.put( userKey, userId );
-            final String userName = (String) userFields.get( "USR_SUID" );
-            LOG.info( "User '" + userName + "' imported with id " + userId );
-        }
-    }
-
-    private void importUserStore( final Session session, final Map<String, Object> userStoreFields )
-        throws Exception
-    {
-        final String userStoreName = (String) userStoreFields.get( "DOM_SNAME" );
-        if ( userStoreName.equals( UserStoreName.system().toString() ) )
-        {
-            LOG.info( "Skipping import of system user store" );
-            return;
-        }
-        final Integer key = (Integer) userStoreFields.get( "DOM_LKEY" );
-        final boolean defaultUserstore = ( (Integer) userStoreFields.get( "DOM_BDEFAULTSTORE" ) == 1 );
-        final String connectorName = (String) userStoreFields.get( "DOM_SCONFIGNAME" );
-        final byte[] xmlBytes = (byte[]) userStoreFields.get( "DOM_XMLDATA" );
-        final String userStoreXmlConfig = new String( xmlBytes, "UTF-8" );
-
-        final UserStore userStore = new UserStore( UserStoreName.from( userStoreName ) );
-        userStore.setDefaultStore( defaultUserstore );
-        final UserStoreConfig config;
-        if ( Strings.isNullOrEmpty( userStoreXmlConfig ) )
-        {
-            config = new UserStoreConfig();
-        }
-        else
-        {
-            config = new UserStoreConfigParser().parseXml( userStoreXmlConfig );
-        }
-        userStore.setConfig( config );
-        userStore.setConnectorName( connectorName );
-        accountDao.createUserStore( session, userStore );
-
-        userStoreKeyName.put( key, userStoreName );
-        LOG.info( "User store imported: " + userStoreName );
-    }
-
-    private UserAccount importUser( final Session session, Map<String, Object> userFields )
+    private void importUser( final Session session, final Map<String, Object> userFields )
         throws Exception
     {
         Integer userStoreKey = (Integer) userFields.get( "USR_DOM_LKEY" );
@@ -333,7 +307,47 @@ public class JcrAccountsImporter
         addUserInfoFields( user, userInfoFields );
 
         accountDao.createUser( session, user );
-        return user;
+
+        accountsImported.put( user.getKey(), user );
+
+        final String userId = user.getKey().toString();
+        final String userKey = (String) userFields.get( "USR_GRP_HKEY" );
+        entityKeyToAccountKeyMapping.put( userKey, userId );
+        LOG.info( "User '" + userName + "' imported with id " + userId );
+    }
+
+    private void importUserStore( final Session session, final Map<String, Object> userStoreFields )
+        throws Exception
+    {
+        final String userStoreName = (String) userStoreFields.get( "DOM_SNAME" );
+        if ( userStoreName.equals( UserStoreName.system().toString() ) )
+        {
+            LOG.info( "Skipping import of system user store" );
+            return;
+        }
+        final Integer key = (Integer) userStoreFields.get( "DOM_LKEY" );
+        final boolean defaultUserStore = ( (Integer) userStoreFields.get( "DOM_BDEFAULTSTORE" ) == 1 );
+        final String connectorName = (String) userStoreFields.get( "DOM_SCONFIGNAME" );
+        final byte[] xmlBytes = (byte[]) userStoreFields.get( "DOM_XMLDATA" );
+        final String userStoreXmlConfig = new String( xmlBytes, "UTF-8" );
+
+        final UserStore userStore = new UserStore( UserStoreName.from( userStoreName ) );
+        userStore.setDefaultStore( defaultUserStore );
+        final UserStoreConfig config;
+        if ( Strings.isNullOrEmpty( userStoreXmlConfig ) )
+        {
+            config = new UserStoreConfig();
+        }
+        else
+        {
+            config = new UserStoreConfigParser().parseXml( userStoreXmlConfig );
+        }
+        userStore.setConfig( config );
+        userStore.setConnectorName( connectorName );
+        accountDao.createUserStore( session, userStore );
+
+        userStoreKeyName.put( key, userStoreName );
+        LOG.info( "User store imported: " + userStoreName );
     }
 
     private void addUserInfoFields( final UserAccount user, final Map<String, Object> userInfoFields )
@@ -494,5 +508,11 @@ public class JcrAccountsImporter
     public void setAccountDao( final AccountDao accountDao )
     {
         this.accountDao = accountDao;
+    }
+
+    @Autowired
+    public void setAccountSearchService( final AccountSearchService accountSearchService )
+    {
+        this.accountSearchService = accountSearchService;
     }
 }

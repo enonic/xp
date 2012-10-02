@@ -15,7 +15,6 @@ import com.enonic.wem.api.command.account.CreateAccount;
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.search.account.AccountIndexDataImpl;
 import com.enonic.wem.core.search.account.AccountSearchService;
 
 import com.enonic.cms.core.security.SecurityService;
@@ -75,7 +74,7 @@ public final class CreateAccountHandler
 
             createGroup( (GroupAccount) account );
         }
-        this.searchService.index( new AccountIndexDataImpl( account ) );
+        this.searchService.index( account );
 
         command.setResult( key );
     }

@@ -21,7 +21,6 @@ import com.enonic.wem.api.account.profile.UserProfile;
 import com.enonic.wem.api.command.account.UpdateAccounts;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.search.account.AccountIndexDataImpl;
 import com.enonic.wem.core.search.account.AccountSearchService;
 
 import com.enonic.cms.core.security.QualifiedName;
@@ -207,7 +206,7 @@ public final class UpdateAccountsHandler
             updateGroupOrRole( (NonUserAccount) account );
         }
 
-        this.searchService.index( new AccountIndexDataImpl( account ) );
+        this.searchService.index( account );
     }
 
     private void updateUser( UserAccount user )
