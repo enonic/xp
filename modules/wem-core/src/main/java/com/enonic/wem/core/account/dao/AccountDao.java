@@ -29,6 +29,15 @@ public interface AccountDao
     public void createRole( Session session, RoleAccount role )
         throws Exception;
 
+    public void updateUser( Session session, UserAccount user )
+        throws Exception;
+
+    public void updateGroup( Session session, GroupAccount group )
+        throws Exception;
+
+    public void updateRole( Session session, RoleAccount role )
+        throws Exception;
+
     public void setMembers( Session session, AccountKey nonUserAccount, AccountKeys members )
         throws Exception;
 

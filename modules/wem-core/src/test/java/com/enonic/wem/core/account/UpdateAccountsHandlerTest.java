@@ -1,12 +1,8 @@
 package com.enonic.wem.core.account;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.UUID;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -29,38 +25,16 @@ import com.enonic.wem.api.account.profile.Gender;
 import com.enonic.wem.api.account.profile.UserProfile;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.account.UpdateAccounts;
+import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.search.account.AccountSearchService;
 
-import com.enonic.cms.core.security.SecurityService;
-import com.enonic.cms.core.security.group.GroupEntity;
-import com.enonic.cms.core.security.group.GroupKey;
-import com.enonic.cms.core.security.group.GroupType;
-import com.enonic.cms.core.security.user.QualifiedUsername;
-import com.enonic.cms.core.security.user.User;
-import com.enonic.cms.core.security.user.UserEntity;
-import com.enonic.cms.core.security.user.UserKey;
-import com.enonic.cms.core.security.user.UserType;
-import com.enonic.cms.core.security.userstore.UserStoreEntity;
-import com.enonic.cms.core.security.userstore.UserStoreKey;
-import com.enonic.cms.core.security.userstore.UserStoreService;
-import com.enonic.cms.store.dao.GroupDao;
-import com.enonic.cms.store.dao.UserDao;
-import com.enonic.cms.store.dao.UserStoreDao;
-
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.doReturn;
 
 public class UpdateAccountsHandlerTest
     extends AbstractCommandHandlerTest
 {
-    private UserDao userDao;
-
-    private GroupDao groupDao;
-
-    private UserStoreDao userStoreDao;
-
-    private SecurityService securityService;
+    private AccountDao accountDao;
 
     private UpdateAccountsHandler handler;
 
@@ -70,19 +44,11 @@ public class UpdateAccountsHandlerTest
     {
         super.initialize();
 
-        userDao = Mockito.mock( UserDao.class );
-        groupDao = Mockito.mock( GroupDao.class );
-        userStoreDao = Mockito.mock( UserStoreDao.class );
-        securityService = Mockito.mock( SecurityService.class );
-        final UserStoreService userStoreService = Mockito.mock( UserStoreService.class );
+        accountDao = Mockito.mock( AccountDao.class );
         final AccountSearchService accountSearchService = Mockito.mock( AccountSearchService.class );
 
         handler = new UpdateAccountsHandler();
-        handler.setUserDao( userDao );
-        handler.setGroupDao( groupDao );
-        handler.setSecurityService( securityService );
-        handler.setUserStoreService( userStoreService );
-        handler.setUserStoreDao( userStoreDao );
+        handler.setAccountDao( accountDao );
         handler.setSearchService( accountSearchService );
     }
 
@@ -91,8 +57,6 @@ public class UpdateAccountsHandlerTest
         throws Exception
     {
         // setup
-        logInAdminUser();
-
         createGroup( "enonic", "group1" );
         createRole( "enonic", "contributors" );
         createUser( "enonic", "user1" );
@@ -125,14 +89,13 @@ public class UpdateAccountsHandlerTest
         throws Exception
     {
         // setup
-        logInAdminUser();
+        final GroupAccount group1 = createGroup( "enonic", "group1" );
+        final RoleAccount role1 = createRole( "enonic", "contributors" );
+        final UserAccount existingMember1 = createUser( "enonic", "member1" );
+        final GroupAccount existingMember2 = createGroup( "enonic", "groupA" );
 
-        final GroupEntity group1 = createGroup( "enonic", "group1" );
-        final GroupEntity role1 = createRole( "enonic", "contributors" );
-        final UserEntity existingMember1 = createUser( "enonic", "member1" );
-        final GroupEntity existingMember2 = createGroup( "enonic", "groupA" );
-        addMembers( group1, existingMember1.getUserGroup() );
-        addMembers( role1, existingMember1.getUserGroup(), existingMember2 );
+        group1.setMembers( AccountKeys.from( existingMember1.getKey() ) );
+        role1.setMembers( AccountKeys.from( existingMember1.getKey(), existingMember2.getKey() ) );
 
         createUser( "enonic", "user1" );
         createUser( "enonic", "user2" );
@@ -177,8 +140,6 @@ public class UpdateAccountsHandlerTest
         throws Exception
     {
         // setup
-        logInAdminUser();
-
         createUser( "enonic", "user1" );
         createUser( "enonic", "user2" );
         createUser( "enonic", "user3" );
@@ -196,7 +157,7 @@ public class UpdateAccountsHandlerTest
                 account.setDisplayName( account.getDisplayName() + "_updated" );
                 final UserAccount user = (UserAccount) account;
                 user.setEmail( user.getKey().getLocalName() + "enonic.com" );
-                user.setImage( getRandomPhoto() );
+                user.setImage( "photo_data".getBytes() );
                 final UserProfile profile = new UserProfile();
                 profile.setFax( "fax" );
                 profile.setBirthday( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
@@ -251,12 +212,10 @@ public class UpdateAccountsHandlerTest
         throws Exception
     {
         // setup
-        logInAdminUser();
+        final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "role:enonic:contributors", "user:enonic:user1" );
+        final Set<AccountKey> keysEdited = Sets.newHashSet();
 
         // exercise
-        final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "role:enonic:contributors", "user:enonic:user1" );
-
-        final Set<AccountKey> keysEdited = Sets.newHashSet();
         final UpdateAccounts command = Commands.account().update().keys( accounts ).editor( new AccountEditor()
         {
             @Override
@@ -277,105 +236,43 @@ public class UpdateAccountsHandlerTest
         assertTrue( keysEdited.isEmpty() );
     }
 
-    private void logInAdminUser()
+    private RoleAccount createRole( final String userStore, final String name )
         throws Exception
     {
-        final UserEntity loggedInUser = createUser( "enonic", "admin" );
-        Mockito.when( securityService.getImpersonatedPortalUser() ).thenReturn( loggedInUser );
-        Mockito.when( userDao.findBuiltInEnterpriseAdminUser() ).thenReturn( loggedInUser );
-        Mockito.when( securityService.getUser( Matchers.<User>any() ) ).thenReturn( loggedInUser );
+        final RoleAccount role = RoleAccount.create( userStore + ":" + name );
+        role.setDisplayName( "Role " + name );
+        role.setDeleted( false );
+        role.setMembers( AccountKeys.empty() );
+
+        final AccountKey accountKey = role.getKey();
+        Mockito.when( accountDao.findRole( Matchers.eq( session ), Matchers.eq( accountKey ), Matchers.anyBoolean() ) ).thenReturn( role );
+        return role;
     }
 
-    private void addMembers( final GroupEntity group, final GroupEntity... members )
-    {
-        final Set<GroupEntity> memberSet = Sets.newHashSet();
-        Collections.addAll( memberSet, members );
-        Mockito.when( group.getMembers( false ) ).thenReturn( memberSet );
-    }
-
-    private byte[] getRandomPhoto()
-    {
-        return UUID.randomUUID().toString().getBytes();
-    }
-
-    private GroupEntity createRole( final String userStore, final String name )
+    private GroupAccount createGroup( final String userStore, final String name )
         throws Exception
     {
-        return createGroupOrRole( userStore, name, true );
-    }
-
-    private GroupEntity createGroup( final String userStore, final String name )
-        throws Exception
-    {
-        return createGroupOrRole( userStore, name, false );
-    }
-
-    private GroupEntity createGroupOrRole( final String userStore, final String name, final boolean isRole )
-        throws Exception
-    {
-        final UserStoreEntity userStoreEntity = createUserStore( userStore );
-        final GroupEntity group = Mockito.mock( GroupEntity.class, Mockito.CALLS_REAL_METHODS );
-        final GroupKey key = new GroupKey( Integer.toString( Math.abs( name.hashCode() ) ) );
-
-        group.setKey( key );
-        group.setType( isRole ? GroupType.USERSTORE_ADMINS : GroupType.USERSTORE_GROUP );
-        group.setUserStore( userStoreEntity );
-        group.setName( name );
-        group.setDescription( "Group " + name );
+        final GroupAccount group = GroupAccount.create( userStore + ":" + name );
+        group.setDisplayName( "Group " + name );
         group.setDeleted( false );
-        group.setMemberships( Sets.<GroupEntity>newHashSet() );
+        group.setMembers( AccountKeys.empty() );
 
-        final Set<GroupEntity> memberSet = Sets.newHashSet();
-        group.setMembers( memberSet );
-
-        mockAddGroupToUserStore( userStoreEntity, group );
+        final AccountKey accountKey = group.getKey();
+        Mockito.when( accountDao.findGroup( Matchers.eq( session ), Matchers.eq( accountKey ), Matchers.anyBoolean() ) ).thenReturn(
+            group );
         return group;
     }
 
-    private void mockAddGroupToUserStore( final UserStoreEntity userStore, final GroupEntity group )
-    {
-        final List<GroupEntity> userStoreResults = new ArrayList<GroupEntity>();
-        userStoreResults.add( group );
-        Mockito.when( groupDao.findByUserStoreKeyAndGroupname( userStore.getKey(), group.getName(), false ) ).thenReturn(
-            userStoreResults );
-    }
-
-    private UserEntity createUser( final String userStore, final String name )
+    private UserAccount createUser( final String userStore, final String name )
         throws Exception
     {
-        final UserEntity user = Mockito.mock( UserEntity.class, Mockito.CALLS_REAL_METHODS );
-        final UserKey key = new UserKey( Integer.toString( Math.abs( name.hashCode() ) ) );
-
-        user.setKey( key );
-        user.setType( UserType.NORMAL );
+        final UserAccount user = UserAccount.create( userStore + ":" + name );
         user.setEmail( "user@email.com" );
-        user.setUserStore( createUserStore( userStore ) );
-        user.setName( name );
         user.setDisplayName( "User " + name );
         user.setDeleted( false );
-
-        final QualifiedUsername qualifiedName = user.getQualifiedName();
-        Mockito.when( user.getQualifiedName() ).thenReturn( qualifiedName );
-        Mockito.when( userDao.findByQualifiedUsername( Mockito.argThat( new IsQualifiedUsername( qualifiedName ) ) ) ).thenReturn( user );
-
-        final GroupEntity userGroup = createGroup( userStore, "G" + user.getKey().toString() );
-        userGroup.setType( GroupType.USER );
-        Mockito.when( user.getUserGroup() ).thenReturn( userGroup );
-        doReturn( user ).when( userGroup ).getUser();
-
+        final AccountKey accountKey = user.getKey();
+        Mockito.when( accountDao.findUser( Matchers.eq( session ), Matchers.eq( accountKey ), Matchers.anyBoolean(),
+                                           Matchers.anyBoolean() ) ).thenReturn( user );
         return user;
-    }
-
-    private UserStoreEntity createUserStore( final String name )
-    {
-        final UserStoreEntity userStore = Mockito.mock( UserStoreEntity.class, Mockito.CALLS_REAL_METHODS );
-        userStore.setName( name );
-        final UserStoreKey userStoreKey = new UserStoreKey( Math.abs( name.hashCode() ) );
-        userStore.setKey( userStoreKey );
-
-        Mockito.when( userStoreDao.findByKey( userStoreKey ) ).thenReturn( userStore );
-        Mockito.when( userStoreDao.findByName( name ) ).thenReturn( userStore );
-
-        return userStore;
     }
 }

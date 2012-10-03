@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -43,6 +44,15 @@ public abstract class JcrHelper
         else
         {
             return null;
+        }
+    }
+
+    public static void removeNodes( final NodeIterator nodes )
+        throws RepositoryException
+    {
+        while ( nodes.hasNext() )
+        {
+            nodes.nextNode().remove();
         }
     }
 

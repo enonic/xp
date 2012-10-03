@@ -225,9 +225,10 @@ public class AccountJcrMapping
         userNode.setProperty( ORGANIZATION, profile.getOrganization() );
 
         final Addresses addresses = profile.getAddresses();
+        final Node addressesNode = JcrHelper.getOrAddNode( userNode, ADDRESSES );
+        JcrHelper.removeNodes( addressesNode.getNodes() );
         if ( addresses != null )
         {
-            final Node addressesNode = userNode.hasNode( ADDRESSES ) ? userNode.getNode( ADDRESSES ) : userNode.addNode( ADDRESSES );
             for ( Address address : addresses )
             {
                 addAddressNode( address, addressesNode );

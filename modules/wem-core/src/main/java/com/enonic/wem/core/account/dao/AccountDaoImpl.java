@@ -156,16 +156,14 @@ public final class AccountDaoImpl
     public void setMembers( final Session session, final AccountKey nonUserAccount, final AccountKeys members )
         throws Exception
     {
-        final String path = getNodePath( nonUserAccount );
-        final Node rootNode = session.getRootNode();
-        final Node accountNode = JcrHelper.getNodeOrNull( rootNode, path );
-
+        final Node accountNode = getAccountNode( session, nonUserAccount );
         if ( accountNode == null )
         {
             throw new AccountNotFoundException( nonUserAccount );
         }
 
         final List<Node> memberNodeList = Lists.newArrayList();
+        final Node rootNode = session.getRootNode();
         for ( AccountKey member : members )
         {
             final String memberPath = getNodePath( member );
@@ -185,10 +183,7 @@ public final class AccountDaoImpl
     public boolean delete( final Session session, final AccountKey key )
         throws Exception
     {
-        final String path = getNodePath( key );
-        final Node rootNode = session.getRootNode();
-        final Node accountNode = JcrHelper.getNodeOrNull( rootNode, path );
-
+        final Node accountNode = getAccountNode( session, key );
         if ( accountNode == null )
         {
             return false;
@@ -202,9 +197,7 @@ public final class AccountDaoImpl
     public boolean accountExists( final Session session, final AccountKey accountKey )
         throws Exception
     {
-        final String path = getNodePath( accountKey );
-        final Node rootNode = session.getRootNode();
-        final Node accountNode = JcrHelper.getNodeOrNull( rootNode, path );
+        final Node accountNode = getAccountNode( session, accountKey );
         return accountNode != null;
     }
 
@@ -213,9 +206,7 @@ public final class AccountDaoImpl
                                  final boolean includePhoto )
         throws Exception
     {
-        final String path = getNodePath( accountKey );
-        final Node rootNode = session.getRootNode();
-        final Node accountNode = JcrHelper.getNodeOrNull( rootNode, path );
+        final Node accountNode = getAccountNode( session, accountKey );
         if ( accountNode == null )
         {
             return null;
@@ -223,6 +214,7 @@ public final class AccountDaoImpl
 
         final UserAccount user = UserAccount.create( accountKey );
         accountJcrMapping.toUser( accountNode, user, includeProfile, includePhoto );
+        user.setEditable( true );
         return user;
     }
 
@@ -230,9 +222,7 @@ public final class AccountDaoImpl
     public GroupAccount findGroup( final Session session, final AccountKey accountKey, final boolean includeMembers )
         throws Exception
     {
-        final String path = getNodePath( accountKey );
-        final Node rootNode = session.getRootNode();
-        final Node accountNode = JcrHelper.getNodeOrNull( rootNode, path );
+        final Node accountNode = getAccountNode( session, accountKey );
         if ( accountNode == null )
         {
             return null;
@@ -244,6 +234,7 @@ public final class AccountDaoImpl
             group.setMembers( getMembers( session, accountKey ) );
         }
         accountJcrMapping.toGroup( accountNode, group );
+        group.setEditable( true );
         return group;
     }
 
@@ -251,9 +242,7 @@ public final class AccountDaoImpl
     public RoleAccount findRole( final Session session, final AccountKey accountKey, final boolean includeMembers )
         throws Exception
     {
-        final String path = getNodePath( accountKey );
-        final Node rootNode = session.getRootNode();
-        final Node accountNode = JcrHelper.getNodeOrNull( rootNode, path );
+        final Node accountNode = getAccountNode( session, accountKey );
         if ( accountNode == null )
         {
             return null;
@@ -265,6 +254,7 @@ public final class AccountDaoImpl
             role.setMembers( getMembers( session, accountKey ) );
         }
         accountJcrMapping.toRole( accountNode, role );
+        role.setEditable( true );
         return role;
     }
 
@@ -285,12 +275,60 @@ public final class AccountDaoImpl
         }
     }
 
+    @Override
+    public void updateUser( final Session session, final UserAccount user )
+        throws Exception
+    {
+        final AccountKey accountKey = user.getKey();
+        final Node userNode = getAccountNode( session, accountKey );
+        if ( userNode == null )
+        {
+            throw new AccountNotFoundException( accountKey );
+        }
+
+        accountJcrMapping.userToJcr( user, userNode );
+    }
+
+    @Override
+    public void updateGroup( final Session session, final GroupAccount group )
+        throws Exception
+    {
+        final AccountKey accountKey = group.getKey();
+        final Node groupNode = getAccountNode( session, accountKey );
+        if ( groupNode == null )
+        {
+            throw new AccountNotFoundException( accountKey );
+        }
+
+        accountJcrMapping.groupToJcr( group, groupNode );
+        if ( group.getMembers() != null )
+        {
+            setMembers( session, accountKey, group.getMembers() );
+        }
+    }
+
+    @Override
+    public void updateRole( final Session session, final RoleAccount role )
+        throws Exception
+    {
+        final AccountKey accountKey = role.getKey();
+        final Node roleNode = getAccountNode( session, accountKey );
+        if ( roleNode == null )
+        {
+            throw new AccountNotFoundException( accountKey );
+        }
+
+        accountJcrMapping.roleToJcr( role, roleNode );
+        if ( role.getMembers() != null )
+        {
+            setMembers( session, accountKey, role.getMembers() );
+        }
+    }
+
     private AccountKeys getMembers( final Session session, final AccountKey nonUserAccount )
         throws Exception
     {
-        final String path = getNodePath( nonUserAccount );
-        final Node rootNode = session.getRootNode();
-        final Node accountNode = JcrHelper.getNodeOrNull( rootNode, path );
+        final Node accountNode = getAccountNode( session, nonUserAccount );
         if ( accountNode == null )
         {
             throw new AccountNotFoundException( nonUserAccount );
@@ -319,6 +357,14 @@ public final class AccountDaoImpl
             default:
                 return AccountKey.role( userStore + ":" + name );
         }
+    }
+
+    private Node getAccountNode( final Session session, final AccountKey key )
+        throws RepositoryException
+    {
+        final String path = getNodePath( key );
+        final Node rootNode = session.getRootNode();
+        return JcrHelper.getNodeOrNull( rootNode, path );
     }
 
     private String getNodePath( final UserStoreName userStoreName )

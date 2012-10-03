@@ -50,6 +50,7 @@ final class SetAccountEditor
         target.setDisplayName( source.getDisplayName() );
         target.setEmail( source.getEmail() );
         target.setImage( source.getImage() );
+        target.setProfile( source.getProfile() );
         return true;
     }
 
