@@ -58,4 +58,7 @@ public interface AccountDao
 
     public Account findAccount( Session session, AccountKey accountKey )
         throws Exception;
+
+    public AccountKeys getMembers( Session session, final AccountKey accountKey )
+        throws Exception;
 }
