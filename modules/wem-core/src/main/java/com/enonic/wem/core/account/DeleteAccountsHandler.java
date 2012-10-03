@@ -1,8 +1,9 @@
 package com.enonic.wem.core.account;
 
+import javax.jcr.Session;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
@@ -27,13 +28,13 @@ public class DeleteAccountsHandler
     }
 
     @Override
-    @Transactional
     public void handle( final CommandContext context, final DeleteAccounts command )
         throws Exception
     {
         final AccountKeys accountKeys = command.getKeys();
 
         int accountsDeleted = 0;
+        final Session session = context.getJcrSession();
         for ( AccountKey accountKey : accountKeys )
         {
             if ( this.accountDao.delete( context.getJcrSession(), accountKey ) )
@@ -42,6 +43,8 @@ public class DeleteAccountsHandler
                 accountsDeleted++;
             }
         }
+        session.save();
+
         command.setResult( accountsDeleted );
     }
 
