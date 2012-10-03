@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -24,6 +25,7 @@ import com.enonic.wem.api.exception.AccountNotFoundException;
 import com.enonic.wem.api.exception.UserStoreNotFoundException;
 import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
+import com.enonic.wem.api.userstore.UserStoreNames;
 import com.enonic.wem.core.jcr.JcrConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
 
@@ -323,6 +325,22 @@ public final class AccountDaoImpl
         {
             setMembers( session, accountKey, role.getMembers() );
         }
+    }
+
+    @Override
+    public UserStoreNames getUserStoreNames( final Session session )
+        throws Exception
+    {
+        final Node root = session.getRootNode();
+        final Node userStoresNode = root.getNode( JcrConstants.USER_STORES_PATH );
+
+        final NodeIterator userStoreNodeIte = userStoresNode.getNodes();
+        final Set<UserStoreName> userStoreNames = Sets.newHashSet();
+        while ( userStoreNodeIte.hasNext() )
+        {
+            userStoreNames.add( UserStoreName.from( userStoreNodeIte.nextNode().getName() ) );
+        }
+        return UserStoreNames.from( userStoreNames );
     }
 
     @Override

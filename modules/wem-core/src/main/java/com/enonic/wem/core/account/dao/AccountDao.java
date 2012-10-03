@@ -10,6 +10,7 @@ import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
+import com.enonic.wem.api.userstore.UserStoreNames;
 
 public interface AccountDao
     extends AccountDaoConstants
@@ -57,6 +58,9 @@ public interface AccountDao
         throws Exception;
 
     public Account findAccount( Session session, AccountKey accountKey )
+        throws Exception;
+
+    public UserStoreNames getUserStoreNames( Session session )
         throws Exception;
 
     public AccountKeys getMembers( Session session, final AccountKey accountKey )
