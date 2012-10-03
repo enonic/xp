@@ -325,21 +325,29 @@ public final class AccountDaoImpl
         }
     }
 
-    private AccountKeys getMembers( final Session session, final AccountKey nonUserAccount )
+    @Override
+    public AccountKeys getMembers( final Session session, final AccountKey accountKey )
         throws Exception
     {
-        final Node accountNode = getAccountNode( session, nonUserAccount );
+        final Node accountNode = getAccountNode( session, accountKey );
         if ( accountNode == null )
         {
-            throw new AccountNotFoundException( nonUserAccount );
+            throw new AccountNotFoundException( accountKey );
         }
-        final Node[] memberNodes = JcrHelper.getPropertyReferences( accountNode, JcrConstants.MEMBERS_PROPERTY );
-        final Set<AccountKey> members = Sets.newHashSet();
-        for ( Node memberNode : memberNodes )
+        if ( accountKey.isUser() )
         {
-            members.add( accountKeyFromAccountNode( memberNode ) );
+            return AccountKeys.empty();
         }
-        return AccountKeys.from( members );
+        else
+        {
+            final Node[] memberNodes = JcrHelper.getPropertyReferences( accountNode, JcrConstants.MEMBERS_PROPERTY );
+            final Set<AccountKey> members = Sets.newHashSet();
+            for ( Node memberNode : memberNodes )
+            {
+                members.add( accountKeyFromAccountNode( memberNode ) );
+            }
+            return AccountKeys.from( members );
+        }
     }
 
     private AccountKey accountKeyFromAccountNode( final Node accountNode )
