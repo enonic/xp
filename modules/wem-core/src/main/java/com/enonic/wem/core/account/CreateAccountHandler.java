@@ -32,27 +32,21 @@ public final class CreateAccountHandler
     {
         final Account account = command.getAccount();
         final AccountKey key = account.getKey();
-        boolean created = false;
 
         if ( key.isUser() )
         {
             accountDao.createUser( context.getJcrSession(), (UserAccount) account );
-            created = true;
         }
         else if ( key.isGroup() )
         {
             accountDao.createGroup( context.getJcrSession(), (GroupAccount) account );
-            created = true;
         }
         else if ( key.isRole() )
         {
             throw new IllegalArgumentException( "Roles are built-in and can't be created manually." );
         }
 
-        if ( created )
-        {
-            this.searchService.index( account );
-        }
+        this.searchService.index( account );
         command.setResult( key );
     }
 
