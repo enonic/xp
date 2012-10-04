@@ -13,6 +13,7 @@ import org.elasticsearch.common.collect.Sets;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Ints;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
@@ -26,6 +27,7 @@ import com.enonic.wem.api.exception.UserStoreNotFoundException;
 import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.UserStoreNames;
+import com.enonic.wem.api.userstore.statistics.UserStoreStatistics;
 import com.enonic.wem.core.jcr.JcrConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
 
@@ -92,6 +94,26 @@ public final class AccountDaoImpl
 
         final Node[] memberNodes = adminsNodeList.toArray( new Node[adminsNodeList.size()] );
         JcrHelper.setPropertyReference( userStoreNode, JcrConstants.USER_STORE_ADMINISTRATORS_PROPERTY, memberNodes );
+    }
+
+    @Override
+    public AccountKeys getUserStoreAdministrators( final Session session, final UserStoreName userStoreName )
+        throws Exception
+    {
+        final Node root = session.getRootNode();
+        final Node userStoreNode = root.getNode( getNodePath( userStoreName ) );
+        if ( userStoreNode == null )
+        {
+            throw new UserStoreNotFoundException( userStoreName );
+        }
+
+        final Node[] adminNodes = JcrHelper.getPropertyReferences( userStoreNode, JcrConstants.USER_STORE_ADMINISTRATORS_PROPERTY );
+        final Set<AccountKey> administrators = Sets.newHashSet();
+        for ( Node adminNode : adminNodes )
+        {
+            administrators.add( accountKeyFromAccountNode( adminNode ) );
+        }
+        return AccountKeys.from( administrators );
     }
 
     @Override
@@ -366,6 +388,33 @@ public final class AccountDaoImpl
             }
             return AccountKeys.from( members );
         }
+    }
+
+    @Override
+    public UserStore getUserStore( final Session session, final UserStoreName userStoreName, final boolean includeConfig,
+                                   boolean includeStatistics )
+        throws Exception
+    {
+        final Node root = session.getRootNode();
+        final Node userStoreNode = root.getNode( getNodePath( userStoreName ) );
+        if ( userStoreNode == null )
+        {
+            throw new UserStoreNotFoundException( userStoreName );
+        }
+
+        final UserStore userStore = userStoreJcrMapping.toUserStore( userStoreNode, includeConfig );
+        if ( includeStatistics )
+        {
+            final UserStoreStatistics statistics = new UserStoreStatistics();
+            statistics.setNumUsers( Ints.checkedCast( userStoreNode.getNode( USERS_NODE ).getNodes().getSize() ) );
+            statistics.setNumGroups( Ints.checkedCast( userStoreNode.getNode( GROUPS_NODE ).getNodes().getSize() ) );
+            if ( userStoreName.isSystem() )
+            {
+                statistics.setNumRoles( Ints.checkedCast( userStoreNode.getNode( ROLES_NODE ).getNodes().getSize() ) );
+            }
+            userStore.setStatistics( statistics );
+        }
+        return userStore;
     }
 
     private AccountKey accountKeyFromAccountNode( final Node accountNode )

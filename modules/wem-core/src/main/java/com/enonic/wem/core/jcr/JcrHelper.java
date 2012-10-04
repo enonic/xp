@@ -113,11 +113,17 @@ public abstract class JcrHelper
         return property == null ? null : property.getString();
     }
 
-    public static Boolean getPropertyBoolean( final Node node, final String propertyName )
+    public static Boolean getPropertyBoolean( final Node node, final String propertyName, final Boolean defaultValue )
         throws RepositoryException
     {
         Property property = getInternalProperty( node, propertyName );
-        return property == null ? null : property.getBoolean();
+        return property == null ? defaultValue : property.getBoolean();
+    }
+
+    public static Boolean getPropertyBoolean( final Node node, final String propertyName )
+        throws RepositoryException
+    {
+        return getPropertyBoolean( node, propertyName, null );
     }
 
     public static DateTime getPropertyDateTime( final Node node, final String propertyName )

@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.config.UserStoreConfig;
 import com.enonic.wem.api.userstore.config.UserStoreFieldConfig;
 import com.enonic.wem.api.userstore.connector.UserStoreConnector;
@@ -108,6 +109,16 @@ public abstract class AbstractUserStoreHandler<T extends Command>
             userStoreConfig.addField( field );
         }
         return userStoreConfig;
+    }
+
+    protected UserStoreConnector getUserStoreConnector( final UserStoreName userStoreName )
+    {
+        final UserStoreEntity userStoreEntity = userStoreDao.findByName( userStoreName.toString() );
+        if ( ( userStoreEntity == null ) || userStoreEntity.isLocal() )
+        {
+            return null;
+        }
+        return getUserStoreConnector( userStoreEntity );
     }
 
     protected UserStoreConnector getUserStoreConnector( final UserStoreEntity userStoreEntity )

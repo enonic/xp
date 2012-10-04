@@ -39,7 +39,13 @@ public interface AccountDao
     public void updateRole( Session session, RoleAccount role )
         throws Exception;
 
+    public AccountKeys getMembers( Session session, AccountKey accountKey )
+        throws Exception;
+
     public void setMembers( Session session, AccountKey nonUserAccount, AccountKeys members )
+        throws Exception;
+
+    public AccountKeys getUserStoreAdministrators( Session session, UserStoreName userStoreName )
         throws Exception;
 
     void setUserStoreAdministrators( Session session, UserStoreName userStoreName, AccountKeys administrators )
@@ -63,6 +69,6 @@ public interface AccountDao
     public UserStoreNames getUserStoreNames( Session session )
         throws Exception;
 
-    public AccountKeys getMembers( Session session, final AccountKey accountKey )
+    public UserStore getUserStore( Session session, UserStoreName userStoreName, boolean includeConfig, boolean includeStatistics )
         throws Exception;
 }

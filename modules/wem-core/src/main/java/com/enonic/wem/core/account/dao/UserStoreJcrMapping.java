@@ -10,6 +10,7 @@ import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.config.UserStoreConfig;
 import com.enonic.wem.api.userstore.config.UserStoreConfigParser;
 import com.enonic.wem.api.userstore.config.UserStoreConfigSerializer;
+import com.enonic.wem.core.jcr.JcrHelper;
 
 class UserStoreJcrMapping
 {
@@ -29,24 +30,28 @@ class UserStoreJcrMapping
         userStoreConfigParser = new UserStoreConfigParser();
     }
 
-    public UserStore toUserStore( final Node node )
+    public UserStore toUserStore( final Node node, final boolean includeConfig )
         throws Exception
     {
         final String name = node.getName();
         final UserStore userStore = new UserStore( UserStoreName.from( name ) );
-        userStore.setDefaultStore( node.getProperty( DEFAULT ).getBoolean() );
-        userStore.setConnectorName( node.getProperty( CONNECTOR ).getString() );
-        final String xmlConfig = node.getProperty( XML_CONFIG ).getString();
-        final UserStoreConfig config;
-        if ( Strings.isNullOrEmpty( xmlConfig ) )
+        userStore.setDefaultStore( JcrHelper.getPropertyBoolean( node, DEFAULT, false ) );
+        userStore.setConnectorName( JcrHelper.getPropertyString( node, CONNECTOR ) );
+
+        if ( includeConfig )
         {
-            config = new UserStoreConfig();
+            final String xmlConfig = JcrHelper.getPropertyString( node, XML_CONFIG );
+            final UserStoreConfig config;
+            if ( Strings.isNullOrEmpty( xmlConfig ) )
+            {
+                config = new UserStoreConfig();
+            }
+            else
+            {
+                config = userStoreConfigParser.parseXml( xmlConfig );
+            }
+            userStore.setConfig( config );
         }
-        else
-        {
-            config = userStoreConfigParser.parseXml( xmlConfig );
-        }
-        userStore.setConfig( config );
         return userStore;
     }
 

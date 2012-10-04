@@ -61,8 +61,13 @@ class GetAllUserStoresJsonResult
             if ( connectorStats != null )
             {
                 jsonUserStore.put( "userCount", connectorStats.getNumUsers() );
-                jsonUserStore.put( "groupCount", connectorStats.getNumGroups() + connectorStats.getNumRoles() );
-                jsonUserStore.put( "administrators", getAdministrators( userStore.getAdministrators() ) );
+                jsonUserStore.put( "groupCount", connectorStats.getNumGroups() );
+                jsonUserStore.put( "roleCount", connectorStats.getNumRoles() );
+            }
+            final AccountKeys administrators = userStore.getAdministrators();
+            if ( administrators != null )
+            {
+                jsonUserStore.put( "administrators", getAdministrators( administrators ) );
             }
 
             jsonUserStores.add( jsonUserStore );
