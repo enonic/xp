@@ -26,7 +26,8 @@
             "iso" : false
         } ],
         "userCount" : 57,
-        "groupCount" : 38,
+        "groupCount" : 33,
+        "roleCount" : 5,
         "administrators" : [ "user:enonic:admin1" ]
     }, {
         "name" : "system",
@@ -36,6 +37,7 @@
         "userFields" : [ ],
         "userCount" : 0,
         "groupCount" : 0,
+        "roleCount" : 0,
         "administrators" : [ ]
     } ]
 }
