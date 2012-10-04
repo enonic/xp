@@ -201,7 +201,7 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public boolean delete( final Session session, final AccountKey key )
+    public boolean deleteAccount( final Session session, final AccountKey key )
         throws Exception
     {
         final Node accountNode = getAccountNode( session, key );
@@ -211,6 +211,19 @@ public final class AccountDaoImpl
         }
 
         accountNode.remove();
+        return true;
+    }
+
+    @Override
+    public boolean deleteUserStore( final Session session, final UserStoreName name )
+        throws Exception
+    {
+        final Node userStoreNode = getUserStoreNode( session, name );
+        if ( userStoreNode == null )
+        {
+            return false;
+        }
+        userStoreNode.remove();
         return true;
     }
 
@@ -435,6 +448,14 @@ public final class AccountDaoImpl
         throws RepositoryException
     {
         final String path = getNodePath( key );
+        final Node rootNode = session.getRootNode();
+        return JcrHelper.getNodeOrNull( rootNode, path );
+    }
+
+    private Node getUserStoreNode( final Session session, final UserStoreName name )
+        throws RepositoryException
+    {
+        final String path = getNodePath( name );
         final Node rootNode = session.getRootNode();
         return JcrHelper.getNodeOrNull( rootNode, path );
     }

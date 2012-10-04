@@ -44,7 +44,7 @@ public class DeleteAccountHandlerTest
         final AccountKey account1 = AccountKey.user( "enonic:joe" );
         final AccountKey account2 = AccountKey.group( "enonic:people" );
         final AccountKey account3 = AccountKey.role( "enonic:admin" );
-        Mockito.when( accountDao.delete( Mockito.any( Session.class ), Mockito.any( AccountKey.class ) ) ).thenReturn( true );
+        Mockito.when( accountDao.deleteAccount( Mockito.any( Session.class ), Mockito.any( AccountKey.class ) ) ).thenReturn( true );
 
         // exercise
         final DeleteAccounts command = Commands.account().delete().keys( AccountKeys.from( account1, account2, account3 ) );
@@ -63,7 +63,7 @@ public class DeleteAccountHandlerTest
         final AccountKey account1 = AccountKey.user( "enonic:joe" );
         final AccountKey account2 = AccountKey.group( "enonic:people" );
         final AccountKey account3 = AccountKey.role( "enonic:admin" );
-        Mockito.when( accountDao.delete( Mockito.any( Session.class ), Mockito.eq( account1 ) ) ).thenReturn( true );
+        Mockito.when( accountDao.deleteAccount( Mockito.any( Session.class ), Mockito.eq( account1 ) ) ).thenReturn( true );
 
         // exercise
         final DeleteAccounts command = Commands.account().delete().keys( AccountKeys.from( account1, account2, account3 ) );
