@@ -65,9 +65,6 @@ public final class AccountDaoImpl
         {
             userStoreNode.addNode( JcrConstants.ROLES_NODE, JcrConstants.ROLES_TYPE );
         }
-
-        final AccountKeys administrators = userStore.getAdministrators() == null ? AccountKeys.empty() : userStore.getAdministrators();
-        setUserStoreAdministrators( session, userStore.getName(), administrators );
     }
 
     @Override

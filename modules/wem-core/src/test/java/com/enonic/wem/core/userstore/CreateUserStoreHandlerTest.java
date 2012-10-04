@@ -1,10 +1,10 @@
 package com.enonic.wem.core.userstore;
 
+import javax.jcr.Session;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
@@ -13,35 +13,20 @@ import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.config.UserStoreConfig;
 import com.enonic.wem.api.userstore.config.UserStoreFieldConfig;
-import com.enonic.wem.core.search.account.AccountSearchService;
-
-import com.enonic.cms.core.security.SecurityService;
-import com.enonic.cms.core.security.group.GroupEntity;
-import com.enonic.cms.core.security.group.GroupSpecification;
-import com.enonic.cms.core.security.userstore.StoreNewUserStoreCommand;
-import com.enonic.cms.core.security.userstore.UserStoreKey;
-import com.enonic.cms.core.security.userstore.UserStoreService;
-import com.enonic.cms.store.dao.GroupDao;
-import com.enonic.cms.store.dao.UserDao;
-import com.enonic.cms.store.dao.UserStoreDao;
+import com.enonic.wem.core.account.dao.AccountDao;
+import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
 
 public class CreateUserStoreHandlerTest
-    extends AbstractUserStoreHandlerTest
+    extends AbstractCommandHandlerTest
 {
 
-    private UserDao userDao;
-
-    private UserStoreDao userStoreDao;
-
-    private UserStoreService userStoreService;
-
-    private SecurityService securityService;
-
-    private AccountSearchService searchService;
-
-    private GroupDao groupDao;
+    private AccountDao accountDao;
 
     private CreateUserStoreHandler handler;
 
@@ -51,37 +36,24 @@ public class CreateUserStoreHandlerTest
     {
         super.initialize();
 
-        userStoreService = Mockito.mock( UserStoreService.class );
-        userDao = Mockito.mock( UserDao.class );
-        userStoreDao = Mockito.mock( UserStoreDao.class );
-        securityService = Mockito.mock( SecurityService.class );
-        searchService = Mockito.mock( AccountSearchService.class );
-        groupDao = Mockito.mock( GroupDao.class );
+        accountDao = Mockito.mock( AccountDao.class );
 
         handler = new CreateUserStoreHandler();
-        handler.setUserDao( userDao );
-        handler.setUserStoreService( userStoreService );
-        handler.setUserStoreDao( userStoreDao );
-        handler.setSecurityService( securityService );
-        handler.setSearchService( searchService );
-        handler.setGroupDao( groupDao );
+        handler.setAccountDao( accountDao );
     }
 
     @Test
     public void testCreateUserStore()
         throws Exception
     {
-        loggedInUser();
-        createGroup( "AAAAAAAAAA", "default", "developers" );
-        createUser( "BBBBBBBBBBB", "default", "aro" );
-        Mockito.when( userStoreService.storeNewUserStore( Mockito.any( StoreNewUserStoreCommand.class ) ) ).thenReturn(
-            new UserStoreKey( "666" ) );
-        GroupEntity enonicAdmin = createGroup( "HJGJHG534534HGJH", "enonic", "admin" );
-        Mockito.when( userStoreService.getGroups( Mockito.any( GroupSpecification.class ) ) ).thenReturn(
-            Lists.newArrayList( enonicAdmin ) );
-        final CreateUserStore command = Commands.userStore().create().userStore( createUserStore() );
+        final UserStore userStore = createUserStore();
+        final CreateUserStore command = Commands.userStore().create().userStore( userStore );
         this.handler.handle( this.context, command );
         UserStoreName userStoreName = command.getResult();
+
+        verify( accountDao, atLeastOnce() ).createUserStore( any( Session.class ), eq( userStore ) );
+        verify( accountDao, atLeastOnce() ).setUserStoreAdministrators( any( Session.class ), eq( userStore.getName() ),
+                                                                        eq( userStore.getAdministrators() ) );
         assertEquals( UserStoreName.from( "enonic" ), userStoreName );
     }
 
@@ -102,18 +74,4 @@ public class CreateUserStoreHandlerTest
         return userStoreConfig;
     }
 
-    public UserDao getUserDao()
-    {
-        return userDao;
-    }
-
-    public UserStoreDao getUserStoreDao()
-    {
-        return userStoreDao;
-    }
-
-    public GroupDao getGroupDao()
-    {
-        return groupDao;
-    }
 }

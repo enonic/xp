@@ -1,19 +1,22 @@
 package com.enonic.wem.core.userstore;
 
+import javax.jcr.Session;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.userstore.CreateUserStore;
 import com.enonic.wem.api.userstore.UserStore;
+import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandContext;
-
-import com.enonic.cms.core.security.user.UserEntity;
-import com.enonic.cms.core.security.userstore.StoreNewUserStoreCommand;
-import com.enonic.cms.core.security.userstore.UserStoreKey;
+import com.enonic.wem.core.command.CommandHandler;
 
 @Component
 public class CreateUserStoreHandler
-    extends AbstractUserStoreHandler<CreateUserStore>
+    extends CommandHandler<CreateUserStore>
 {
+    private AccountDao accountDao;
 
     public CreateUserStoreHandler()
     {
@@ -24,17 +27,19 @@ public class CreateUserStoreHandler
     public void handle( final CommandContext context, final CreateUserStore command )
         throws Exception
     {
-        UserStore userStore = command.getUserStore();
-        UserEntity storer = userDao.findBuiltInEnterpriseAdminUser(); // TODO get logged in user
-        StoreNewUserStoreCommand storeCommand = new StoreNewUserStoreCommand();
-        storeCommand.setConnectorName( userStore.getConnectorName() );
-        storeCommand.setName( userStore.getName().toString() );
-        storeCommand.setDefaultStore( userStore.isDefaultStore() );
-        storeCommand.setConfig( convertToOldConfig( userStore.getConfig() ) );
-        storeCommand.setStorer( storer.getKey() );
-        UserStoreKey newUserStore = userStoreService.storeNewUserStore( storeCommand );
-//        updateUserstoreAdministrators( storer, newUserStore, userStore.getAdministrators() );
+        final UserStore userStore = command.getUserStore();
+        final Session session = context.getJcrSession();
+        accountDao.createUserStore( session, userStore );
+
+        final AccountKeys administrators = userStore.getAdministrators() == null ? AccountKeys.empty() : userStore.getAdministrators();
+        accountDao.setUserStoreAdministrators( session, userStore.getName(), administrators );
+
         command.setResult( userStore.getName() );
     }
 
+    @Autowired
+    public void setAccountDao( final AccountDao accountDao )
+    {
+        this.accountDao = accountDao;
+    }
 }
