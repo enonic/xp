@@ -117,7 +117,7 @@ public abstract class JcrHelper
         throws RepositoryException
     {
         Property property = getInternalProperty( node, propertyName );
-        return property == null ? defaultValue : property.getBoolean();
+        return property == null ? defaultValue : Boolean.valueOf( property.getBoolean() );
     }
 
     public static Boolean getPropertyBoolean( final Node node, final String propertyName )
