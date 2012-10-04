@@ -15,7 +15,10 @@ import com.enonic.wem.api.userstore.UserStoreNames;
 public interface AccountDao
     extends AccountDaoConstants
 {
-    public boolean delete( Session session, AccountKey key )
+    public boolean deleteAccount( Session session, AccountKey key )
+        throws Exception;
+
+    public boolean deleteUserStore( Session session, UserStoreName name )
         throws Exception;
 
     public void createUserStore( Session session, UserStore userStore )
