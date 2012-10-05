@@ -10,6 +10,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Before;
 
 import com.enonic.wem.web.json.ObjectMapperHelper;
+import com.enonic.wem.web.json.rpc.JsonRpcError;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.json.rpc.processor.JsonRpcProcessorImpl;
 import com.enonic.wem.web.json.rpc.processor.JsonRpcRequest;
@@ -94,6 +95,25 @@ public abstract class AbstractRpcHandlerTest
         assertNotNull( paramsJson );
         assertTrue( paramsJson instanceof ObjectNode );
         testJson( paramsJson, resultJson );
+    }
+
+    protected final void testError( final JsonNode paramsJson, String message )
+    {
+        final JsonRpcRequest req = new JsonRpcRequest();
+        req.setId( "1" );
+        req.setMethod( this.handler.getName() );
+        if ( paramsJson != null )
+        {
+            req.setParams( (ObjectNode) paramsJson );
+        }
+
+        final JsonRpcResponse res = this.processor.process( req );
+        assertNotNull( res );
+        assertTrue( res.hasError() );
+
+        final JsonRpcError error = res.getError();
+        assertNotNull( error );
+        assertEquals( error.getMessage(), message );
     }
 
 

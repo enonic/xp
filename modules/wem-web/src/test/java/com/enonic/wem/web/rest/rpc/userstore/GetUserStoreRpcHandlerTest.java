@@ -48,7 +48,7 @@ public class GetUserStoreRpcHandlerTest
         Mockito.when( client.execute( Mockito.isA( GetUserStores.class ) ) ).thenThrow(
             new UserStoreNotFoundException( UserStoreName.from( "default" ) ) );
 
-        testSuccess( createParams( "default" ), createNegativeResult( "No userstore(s) were found for name [default]" ) );
+        testError( createParams( "default" ), "Internal Error: Userstore [default] was not found" );
     }
 
     private ObjectNode createParams( String name )
@@ -57,13 +57,4 @@ public class GetUserStoreRpcHandlerTest
         params.put( "name", name );
         return params;
     }
-
-    private ObjectNode createNegativeResult( String error )
-    {
-        ObjectNode results = objectNode();
-        results.put( "success", false );
-        results.put( "error", error );
-        return results;
-    }
-
 }
