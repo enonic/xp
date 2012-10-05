@@ -1,23 +1,25 @@
 package com.enonic.wem.core.userstore;
 
+import javax.jcr.Session;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.userstore.UpdateUserStores;
 import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.UserStoreNames;
 import com.enonic.wem.api.userstore.editor.UserStoreEditor;
+import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandContext;
-
-import com.enonic.cms.core.security.user.UserEntity;
-import com.enonic.cms.core.security.userstore.UpdateUserStoreCommand;
-import com.enonic.cms.core.security.userstore.UserStoreEntity;
-import com.enonic.cms.core.security.userstore.UserStoreKey;
 
 @Component
 public class UpdateUserStoresHandler
     extends AbstractUserStoreHandler<UpdateUserStores>
 {
+    private AccountDao accountDao;
+
     public UpdateUserStoresHandler()
     {
         super( UpdateUserStores.class );
@@ -27,19 +29,21 @@ public class UpdateUserStoresHandler
     public void handle( final CommandContext context, final UpdateUserStores command )
         throws Exception
     {
-        UserStoreNames names = command.getNames();
-        UserStoreEditor editor = command.getEditor();
+        final UserStoreNames names = command.getNames();
+        final UserStoreEditor editor = command.getEditor();
         int userStoresUpdated = 0;
 
         for ( UserStoreName name : names )
         {
-            UserStore userStore = retrieveUserStore( name );
+            final Session session = context.getJcrSession();
+            final UserStore userStore = retrieveUserStore( session, name );
+
             if ( userStore != null )
             {
                 final boolean flag = editor.edit( userStore );
                 if ( flag )
                 {
-                    updateUserStore( userStore );
+                    updateUserStore( session, userStore );
                     userStoresUpdated++;
                 }
             }
@@ -48,29 +52,27 @@ public class UpdateUserStoresHandler
         command.setResult( userStoresUpdated );
     }
 
-    private UserStore retrieveUserStore( UserStoreName name )
+    private UserStore retrieveUserStore( final Session session, final UserStoreName userStoreName )
+        throws Exception
     {
-        UserStoreEntity userStoreEntity = userStoreDao.findByName( name.toString() );
-        UserStore userStore = new UserStore( name );
-        userStore.setConnector( getUserStoreConnector( userStoreEntity ) );
-        userStore.setDefaultStore( userStoreEntity.isDefaultUserStore() );
-        userStore.setConfig( getUserStoreConfig( userStoreEntity.getConfig() ) );
-        userStore.setConnectorName( userStoreEntity.getConnectorName() );
-        userStore.setAdministrators( getUserStoreAdministrators( userStoreEntity ) );
+        final UserStore userStore = accountDao.getUserStore( session, userStoreName, true, false );
+        userStore.setConnector( getUserStoreConnector( userStoreName ) );
+        final AccountKeys administrators = accountDao.getUserStoreAdministrators( session, userStoreName );
+        userStore.setAdministrators( administrators );
         return userStore;
     }
 
-    private void updateUserStore( UserStore userStore )
+    private void updateUserStore( final Session session, final UserStore userStore )
+        throws Exception
     {
-        UpdateUserStoreCommand command = new UpdateUserStoreCommand();
-        command.setConnectorName( userStore.getConnectorName() );
-        command.setName( userStore.getName().toString() );
-        command.setConfig( convertToOldConfig( userStore.getConfig() ) );
-        UserEntity updater = userDao.findBuiltInEnterpriseAdminUser(); //TODO get login user
-        command.setUpdater( updater.getKey() );
-        userStoreService.updateUserStore( command );
-        UserStoreKey usKey = userStoreDao.findByName( userStore.getName().toString() ).getKey();
-//        updateUserstoreAdministrators( updater, usKey, userStore.getAdministrators() );
+        accountDao.updateUserStore( session, userStore );
+        final AccountKeys administrators = userStore.getAdministrators() == null ? AccountKeys.empty() : userStore.getAdministrators();
+        accountDao.setUserStoreAdministrators( session, userStore.getName(), administrators );
     }
 
+    @Autowired
+    public void setAccountDao( final AccountDao accountDao )
+    {
+        this.accountDao = accountDao;
+    }
 }

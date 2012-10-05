@@ -2,50 +2,49 @@ package com.enonic.wem.core.userstore;
 
 import java.util.List;
 
+import javax.jcr.Session;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.userstore.UpdateUserStores;
 import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.UserStoreNames;
+import com.enonic.wem.api.userstore.config.UserStoreConfig;
+import com.enonic.wem.api.userstore.config.UserStoreFieldConfig;
+import com.enonic.wem.api.userstore.connector.UserStoreConnector;
 import com.enonic.wem.api.userstore.editor.UserStoreEditor;
-import com.enonic.wem.core.search.account.AccountSearchService;
+import com.enonic.wem.core.account.dao.AccountDao;
+import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
-import com.enonic.cms.core.security.SecurityService;
-import com.enonic.cms.core.security.group.GroupEntity;
 import com.enonic.cms.core.security.userstore.UserStoreConnectorManager;
+import com.enonic.cms.core.security.userstore.UserStoreEntity;
 import com.enonic.cms.core.security.userstore.UserStoreKey;
-import com.enonic.cms.core.security.userstore.UserStoreService;
 import com.enonic.cms.core.security.userstore.connector.config.GroupPolicyConfig;
 import com.enonic.cms.core.security.userstore.connector.config.UserPolicyConfig;
 import com.enonic.cms.core.security.userstore.connector.config.UserStoreConnectorConfig;
-import com.enonic.cms.store.dao.GroupDao;
-import com.enonic.cms.store.dao.UserDao;
+import com.enonic.cms.core.security.userstore.connector.remote.RemoteUserStoreConnector;
 import com.enonic.cms.store.dao.UserStoreDao;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.eq;
 
 public class UpdateUserStoresHandlerTest
-    extends AbstractUserStoreHandlerTest
+    extends AbstractCommandHandlerTest
 {
-    private UserDao userDao;
-
-    private UserStoreDao userStoreDao;
-
-    private UserStoreService userStoreService;
-
-    private SecurityService securityService;
-
-    private AccountSearchService searchService;
-
-    private GroupDao groupDao;
+    private AccountDao accountDao;
 
     private UserStoreConnectorManager userStoreConnectorManager;
+
+    private UserStoreDao userStoreDao;
 
     private UpdateUserStoresHandler handler;
 
@@ -55,43 +54,37 @@ public class UpdateUserStoresHandlerTest
     {
         super.initialize();
 
-        userStoreService = Mockito.mock( UserStoreService.class );
-        userDao = Mockito.mock( UserDao.class );
+        accountDao = Mockito.mock( AccountDao.class );
         userStoreDao = Mockito.mock( UserStoreDao.class );
-        securityService = Mockito.mock( SecurityService.class );
-        searchService = Mockito.mock( AccountSearchService.class );
-        groupDao = Mockito.mock( GroupDao.class );
         userStoreConnectorManager = Mockito.mock( UserStoreConnectorManager.class );
 
         handler = new UpdateUserStoresHandler();
-        handler.setUserDao( userDao );
-        handler.setUserStoreService( userStoreService );
-        handler.setUserStoreDao( userStoreDao );
-        handler.setSecurityService( securityService );
-        handler.setSearchService( searchService );
-        handler.setGroupDao( groupDao );
+        handler.setAccountDao( accountDao );
         handler.setUserStoreConnectorManager( userStoreConnectorManager );
+        handler.setUserStoreDao( userStoreDao );
     }
 
     @Test
     public void testUpdateUserStore()
         throws Exception
     {
-        loggedInUser();
+        // setup
+        final UserStore defaultUserStore = createUserStore( "default", "ldap" );
+        final UserStore someUserStore = createUserStore( "enonic", "ldap" );
 
-        //stub user store config
+        final AccountKeys administrators = AccountKeys.from( "group:default:admin" );
+        Mockito.when( accountDao.getUserStoreAdministrators( session, someUserStore.getName() ) ).thenReturn( administrators );
+        Mockito.when( accountDao.getUserStoreAdministrators( eq( session ), any( UserStoreName.class ) ) ).thenReturn(
+            AccountKeys.empty() );
+
+        defaultUserStore.setConfig( new UserStoreConfig() );
+        someUserStore.setConfig( createUserStoreConfig() );
+
         final UserStoreConnectorConfig connectorConfig =
             new UserStoreConnectorConfig( "ldap1", "Ldap", UserPolicyConfig.ALL_FALSE, GroupPolicyConfig.ALL_FALSE, false, false );
-        Mockito.when( userStoreConnectorManager.getUserStoreConnectorConfig( Mockito.any( UserStoreKey.class ) ) ).thenReturn(
-            connectorConfig );
+        Mockito.when( userStoreConnectorManager.getUserStoreConnectorConfig( any( UserStoreKey.class ) ) ).thenReturn( connectorConfig );
 
-        createUserStore( "default", "1" );
-        createUserStore( "enonic", "2" );
-
-        //stub user store administrator group
-        GroupEntity usAdmin = createGroup( "2323232", "default", "usAdmin" );
-        Mockito.when( groupDao.findBuiltInUserStoreAdministrator( Mockito.any( UserStoreKey.class ) ) ).thenReturn( usAdmin );
-
+        // exercise
         final List<UserStoreName> names = Lists.newArrayList();
         UserStoreNames userStores = UserStoreNames.from( "default", "enonic" );
         final UpdateUserStores command =
@@ -106,27 +99,40 @@ public class UpdateUserStoresHandlerTest
                 }
             } );
         this.handler.handle( this.context, command );
+
+        //verify
         Integer result = command.getResult();
         assertNotNull( result );
         assertEquals( 2l, result.longValue() );
         assertEquals( userStores, UserStoreNames.from( names ) );
     }
 
-    @Override
-    public UserDao getUserDao()
+    private UserStore createUserStore( final String name, final String connectorName )
+        throws Exception
     {
-        return userDao;
+        final UserStoreName userStoreName = UserStoreName.from( name );
+        final UserStore userStore = new UserStore( userStoreName );
+        userStore.setConnector( new UserStoreConnector( connectorName ) );
+
+        Mockito.when( accountDao.getUserStore( any( Session.class ), eq( userStoreName ), anyBoolean(), anyBoolean() ) ).thenReturn(
+            userStore );
+
+        final RemoteUserStoreConnector userStoreConnector = new RemoteUserStoreConnector( new UserStoreKey( 0 ), name, connectorName );
+        Mockito.when( this.userStoreConnectorManager.getUserStoreConnector( any( UserStoreKey.class ) ) ).thenReturn( userStoreConnector );
+
+        final UserStoreEntity userStoreEntity = new UserStoreEntity();
+        userStoreEntity.setName( name );
+        userStoreEntity.setConnectorName( connectorName );
+        Mockito.when( userStoreDao.findByName( name ) ).thenReturn( userStoreEntity );
+
+        return userStore;
     }
 
-    @Override
-    public UserStoreDao getUserStoreDao()
+    private UserStoreConfig createUserStoreConfig()
     {
-        return userStoreDao;
-    }
-
-    @Override
-    public GroupDao getGroupDao()
-    {
-        return groupDao;
+        UserStoreConfig userStoreConfig = new UserStoreConfig();
+        userStoreConfig.addField( new UserStoreFieldConfig( "first-name" ) );
+        userStoreConfig.addField( new UserStoreFieldConfig( "last-name" ) );
+        return userStoreConfig;
     }
 }

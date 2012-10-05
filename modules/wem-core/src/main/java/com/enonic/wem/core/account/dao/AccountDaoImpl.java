@@ -427,6 +427,20 @@ public final class AccountDaoImpl
         return userStore;
     }
 
+    @Override
+    public void updateUserStore( final Session session, final UserStore userStore )
+        throws Exception
+    {
+        final UserStoreName userStoreName = userStore.getName();
+        final Node userStoreNode = getUserStoreNode( session, userStoreName );
+        if ( userStoreNode == null )
+        {
+            throw new UserStoreNotFoundException( userStoreName );
+        }
+
+        userStoreJcrMapping.userStoreToJcr( userStore, userStoreNode );
+    }
+
     private AccountKey accountKeyFromAccountNode( final Node accountNode )
         throws RepositoryException
     {

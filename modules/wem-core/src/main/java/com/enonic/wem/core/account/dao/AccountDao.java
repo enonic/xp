@@ -74,4 +74,7 @@ public interface AccountDao
 
     public UserStore getUserStore( Session session, UserStoreName userStoreName, boolean includeConfig, boolean includeStatistics )
         throws Exception;
+
+    public void updateUserStore( Session session, UserStore userStore )
+        throws Exception;
 }
