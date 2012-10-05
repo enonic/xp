@@ -82,7 +82,7 @@ Ext.define('Admin.controller.userstore.Controller', {
                                 modelData: response
                             });
                         } else {
-                            Ext.Msg.alert("Error", response.error);
+                            Ext.Msg.alert("Error", (response.error && response.error.message) ? response.error.message : "Unknown error");
                         }
                     });
             } else {
