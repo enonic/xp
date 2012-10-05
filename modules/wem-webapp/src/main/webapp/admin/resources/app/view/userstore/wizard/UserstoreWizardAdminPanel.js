@@ -7,12 +7,7 @@ Ext.define('Admin.view.userstore.wizard.UserstoreWizardAdminPanel', {
 
     initComponent: function () {
         var me = this;
-        var memberKeys = [];
-        if (this.modelData && this.modelData.administrators) {
-            Ext.Array.each(this.modelData.administrators, function (member) {
-                Ext.Array.include(memberKeys, member.key);
-            });
-        }
+        var memberKeys = (this.modelData && this.modelData.administrators) ? this.modelData.administrators : [];
         var membersList = {
             allowBlank: true,
             minChars: 1,

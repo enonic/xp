@@ -97,8 +97,7 @@ public final class AccountDaoImpl
     public AccountKeys getUserStoreAdministrators( final Session session, final UserStoreName userStoreName )
         throws Exception
     {
-        final Node root = session.getRootNode();
-        final Node userStoreNode = root.getNode( getNodePath( userStoreName ) );
+        final Node userStoreNode = getUserStoreNode( session, userStoreName );
         if ( userStoreNode == null )
         {
             throw new UserStoreNotFoundException( userStoreName );
@@ -405,8 +404,7 @@ public final class AccountDaoImpl
                                    boolean includeStatistics )
         throws Exception
     {
-        final Node root = session.getRootNode();
-        final Node userStoreNode = root.getNode( getNodePath( userStoreName ) );
+        final Node userStoreNode = getUserStoreNode( session, userStoreName );
         if ( userStoreNode == null )
         {
             throw new UserStoreNotFoundException( userStoreName );
