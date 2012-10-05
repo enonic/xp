@@ -71,32 +71,20 @@ Ext.define('Admin.controller.userstore.Controller', {
 
                 showPanel.el.mask("Loading...");
 
-                Ext.Ajax.request({
-                    url: 'data/userstore/config',
-                    method: 'GET',
-                    params: {
-                        name: userstore.name
-                    },
-                    success: function (response) {
-                        var obj = Ext.decode(response.responseText, true);
-                        // add missing fields for now
-                        Ext.apply(obj, {
-                            userCount: 231,
-                            userPolicy: 'User Policy',
-                            groupCount: 12,
-                            groupPolicy: 'Group Policy',
-                            lastModified: '2001-07-04 12:08:56',
-                            plugin: 'Plugin Name'
-                        });
+                Admin.lib.RemoteService.userstore_get({name: userstore.name},
+                    function (response) {
                         showPanel.el.unmask();
-                        tabs.addTab({
-                            xtype: 'userstoreWizardPanel',
-                            id: 'tab-userstore-' + userstore.key,
-                            title: userstore.name,
-                            modelData: obj
-                        });
-                    }
-                });
+                        if (response.success) {
+                            tabs.addTab({
+                                xtype: 'userstoreWizardPanel',
+                                id: 'tab-userstore-' + userstore.key,
+                                title: userstore.name,
+                                modelData: response
+                            });
+                        } else {
+                            Ext.Msg.alert("Error", (response.error && response.error.message) ? response.error.message : "Unknown error");
+                        }
+                    });
             } else {
                 tabs.addTab({
                     xtype: 'userstoreWizardPanel',
