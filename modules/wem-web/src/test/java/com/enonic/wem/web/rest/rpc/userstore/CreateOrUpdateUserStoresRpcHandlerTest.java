@@ -12,6 +12,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.userstore.CreateUserStore;
 import com.enonic.wem.api.command.userstore.GetUserStores;
 import com.enonic.wem.api.command.userstore.UpdateUserStores;
+import com.enonic.wem.api.exception.UserStoreNotFoundException;
 import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.UserStores;
@@ -38,8 +39,9 @@ public class CreateOrUpdateUserStoresRpcHandlerTest
     public void createUserStoreNoConfig()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.isA( GetUserStores.class ) ) ).thenReturn( UserStores.empty() );
-        Mockito.when( client.execute( Mockito.isA( CreateUserStore.class ) ) ).thenReturn( UserStoreName.from( "store1" ) );
+        UserStoreName storeName = UserStoreName.from( "store1" );
+        Mockito.when( client.execute( Mockito.isA( GetUserStores.class ) ) ).thenThrow( new UserStoreNotFoundException( storeName ) );
+        Mockito.when( client.execute( Mockito.isA( CreateUserStore.class ) ) ).thenReturn( storeName );
 
         testSuccess( createParams( false, null, "Connector v1.23", "store1" ), createResult( true, false ) );
     }
@@ -48,8 +50,9 @@ public class CreateOrUpdateUserStoresRpcHandlerTest
     public void createUserStore()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.isA( GetUserStores.class ) ) ).thenReturn( UserStores.empty() );
-        Mockito.when( client.execute( Mockito.isA( CreateUserStore.class ) ) ).thenReturn( UserStoreName.from( "store1" ) );
+        UserStoreName storeName = UserStoreName.from( "store1" );
+        Mockito.when( client.execute( Mockito.isA( GetUserStores.class ) ) ).thenThrow( new UserStoreNotFoundException( storeName ) );
+        Mockito.when( client.execute( Mockito.isA( CreateUserStore.class ) ) ).thenReturn( storeName );
 
         testSuccess( createParams( "store1" ), createResult( true, false ) );
     }
@@ -100,7 +103,7 @@ public class CreateOrUpdateUserStoresRpcHandlerTest
         }
         if ( connector != null )
         {
-            params.put( "connector", connector );
+            params.put( "connectorName", connector );
         }
         params.putArray( "administrators" );
 

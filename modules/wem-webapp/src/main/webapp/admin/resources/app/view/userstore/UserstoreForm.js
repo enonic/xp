@@ -99,11 +99,6 @@ Ext.define('Admin.view.userstore.UserstoreForm', {
 
     initComponent: function () {
 
-        Ext.apply(this.initialConfig, {
-            method: "POST",
-            url: '/admin/data/userstore/config'
-        });
-
         if (!this.userstore) {
             this.userstore = { data: {
                 name: 'Userstore',

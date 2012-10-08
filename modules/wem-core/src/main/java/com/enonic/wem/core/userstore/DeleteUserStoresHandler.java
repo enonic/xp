@@ -1,5 +1,7 @@
 package com.enonic.wem.core.userstore;
 
+import javax.jcr.Session;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,14 +27,19 @@ public class DeleteUserStoresHandler
     public void handle( final CommandContext context, final DeleteUserStores command )
         throws Exception
     {
+        final Session session = context.getJcrSession();
         final UserStoreNames userStoreNames = command.getNames();
         int userStoresDeleted = 0;
         for ( UserStoreName userStoreName : userStoreNames )
         {
-            if ( accountDao.deleteUserStore( context.getJcrSession(), userStoreName ) )
+            if ( accountDao.deleteUserStore( session, userStoreName ) )
             {
                 userStoresDeleted++;
             }
+        }
+        if ( userStoresDeleted > 0 )
+        {
+            session.save();
         }
         command.setResult( userStoresDeleted );
     }

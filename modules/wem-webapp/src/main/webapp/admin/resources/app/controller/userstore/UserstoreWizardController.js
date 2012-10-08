@@ -158,37 +158,47 @@ Ext.define('Admin.controller.userstore.UserstoreWizardController', {
             Ext.merge(data, step.getData());
         }
 
-        var onUpdateGroupSuccess = function (key) {
-            wizardPanel.addData({
-                'key': key
-            });
-            if (closeWizard) {
-                me.getUserstoreWizardTab().close();
+        var onUpdateGroupSuccess = function (name) {
+            if (name) {
+                wizardPanel.addData({
+                    'name': name
+                });
+                if (closeWizard) {
+                    me.getUserstoreWizardTab().close();
+                }
+                me.getUserstoreGridPanel().getStore().load();
+                var parentApp = parent.mainApp;
+                if (parentApp) {
+                    parentApp.fireEvent('notifier.show', 'Userstore is saved',
+                        'Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.',
+                        true);
+                }
             }
-            var current = me.getUserstoreGridPanel().store.currentPage;
-            me.getUserstoreGridPanel().store.loadPage(current);
         };
         me.saveUserstoreToDB(data, onUpdateGroupSuccess);
-        var parentApp = parent.mainApp;
-        if (parentApp) {
-            parentApp.fireEvent('notifier.show', 'Userstore is saved',
-                'Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.',
-                true);
-        }
     },
 
     deleteUserstore: function (el, e) {
+        var me = this;
         var window = el.up('deleteUserstoreWindow');
-        var editTab = this.getCmsTabPanel().down('#tab-userstore-' + window.modelData.key);
-        if (editTab) {
-            editTab.close();
-        }
-        window.close();
-        var parentApp = parent.mainApp;
-        if (parentApp) {
-            parentApp.fireEvent('notifier.show', 'Userstore was deleted',
-                'Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.',
-                true);
+        var name = (window && window.modelData) ? window.modelData.name : undefined;
+        if (name) {
+            this.deleteUserstoreFromDB(name, function (success) {
+                if (success) {
+                    window.close();
+                    var editTab = me.getCmsTabPanel().down('#tab-userstore-' + name);
+                    if (editTab) {
+                        editTab.close();
+                    }
+                    var parentApp = parent.mainApp;
+                    if (parentApp) {
+                        parentApp.fireEvent('notifier.show', 'Userstore was deleted',
+                            'Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.',
+                            true);
+                    }
+                    me.getUserstoreGridPanel().getStore().load();
+                }
+            });
         }
     },
 

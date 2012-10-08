@@ -58,7 +58,7 @@ Ext.define('Admin.controller.userstore.Controller', {
             accounts = [].concat(accounts);
         }
         if (accounts && accounts.length > 0) {
-            this.getDeleteAccountWindow().doShow(accounts);
+            this.getDeleteUserstoreWindow().doShow(accounts);
         }
     },
 
@@ -77,7 +77,7 @@ Ext.define('Admin.controller.userstore.Controller', {
                         if (response.success) {
                             tabs.addTab({
                                 xtype: 'userstoreWizardPanel',
-                                id: 'tab-userstore-' + userstore.key,
+                                id: 'tab-userstore-' + userstore.name,
                                 title: userstore.name,
                                 modelData: response
                             });
@@ -117,7 +117,7 @@ Ext.define('Admin.controller.userstore.Controller', {
     },
 
 
-    getDeleteAccountWindow: function () {
+    getDeleteUserstoreWindow: function () {
         var win = Ext.ComponentQuery.query('deleteUserstoreWindow')[0];
         if (!win) {
             win = Ext.create('widget.deleteUserstoreWindow');
