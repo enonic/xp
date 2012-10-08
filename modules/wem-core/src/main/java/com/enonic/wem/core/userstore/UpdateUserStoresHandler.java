@@ -29,13 +29,13 @@ public class UpdateUserStoresHandler
     public void handle( final CommandContext context, final UpdateUserStores command )
         throws Exception
     {
+        final Session session = context.getJcrSession();
         final UserStoreNames names = command.getNames();
         final UserStoreEditor editor = command.getEditor();
         int userStoresUpdated = 0;
 
         for ( UserStoreName name : names )
         {
-            final Session session = context.getJcrSession();
             final UserStore userStore = retrieveUserStore( session, name );
 
             if ( userStore != null )
@@ -49,6 +49,10 @@ public class UpdateUserStoresHandler
             }
         }
 
+        if ( userStoresUpdated > 0 )
+        {
+            session.save();
+        }
         command.setResult( userStoresUpdated );
     }
 

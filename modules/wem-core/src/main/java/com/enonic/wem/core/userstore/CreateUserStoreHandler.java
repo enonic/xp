@@ -34,6 +34,7 @@ public class CreateUserStoreHandler
         final AccountKeys administrators = userStore.getAdministrators() == null ? AccountKeys.empty() : userStore.getAdministrators();
         accountDao.setUserStoreAdministrators( session, userStore.getName(), administrators );
 
+        session.save();
         command.setResult( userStore.getName() );
     }
 

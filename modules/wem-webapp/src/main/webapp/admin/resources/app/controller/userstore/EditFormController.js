@@ -1,5 +1,5 @@
 Ext.define('Admin.controller.userstore.EditFormController', {
-    extend: 'Admin.controller.userstore.Controller',
+    extend: 'Admin.controller.userstore.UserstoreController',
 
     stores: [
         'Admin.store.userstore.UserstoreConfigStore',
@@ -67,19 +67,8 @@ Ext.define('Admin.controller.userstore.EditFormController', {
     saveUserstore: function () {
         var form = this.getUserstoreForm().getForm();
         if (form.isValid()) {
-            form.submit({
-                success: function (form, action) {
-                    Ext.Msg.alert('Success', action.result.msg || 'Userstore has been saved.');
-                },
-                failure: function (form, action) {
-                    Ext.Msg.alert('Error', action.result.msg || 'Userstore has not been saved.');
-                }
-            });
+            this.saveUserstoreToDB(form.getValues());
         }
-    },
-
-    notImplementedAction: function (btn, evt, opts) {
-        Ext.Msg.alert("Not implemented", btn.action + " is not implemented yet.");
     },
 
     getUserstoreForm: function () {
