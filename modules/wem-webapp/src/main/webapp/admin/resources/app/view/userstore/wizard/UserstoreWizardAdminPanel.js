@@ -65,8 +65,7 @@ Ext.define('Admin.view.userstore.wizard.UserstoreWizardAdminPanel', {
         var values = selectBox.valueModels;
         var groupsSelected = [];
         Ext.Array.each(values, function (group) {
-            var group = {key: group.data.key, name: group.data.name, userStore: group.data.userStore};
-            groupsSelected.push(group);
+            groupsSelected.push(group.data.key);
         });
         var userData = { administrators: groupsSelected };
         return userData;

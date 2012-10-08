@@ -166,8 +166,7 @@ Ext.define('Admin.controller.userstore.UserstoreWizardController', {
                 if (closeWizard) {
                     me.getUserstoreWizardTab().close();
                 }
-                var current = me.getUserstoreGridPanel().store.currentPage;
-                me.getUserstoreGridPanel().store.loadPage(current);
+                me.getUserstoreGridPanel().getStore().load();
                 var parentApp = parent.mainApp;
                 if (parentApp) {
                     parentApp.fireEvent('notifier.show', 'Userstore is saved',

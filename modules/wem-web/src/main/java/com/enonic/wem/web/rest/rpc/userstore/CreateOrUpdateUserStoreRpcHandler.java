@@ -74,13 +74,13 @@ public class CreateOrUpdateUserStoreRpcHandler
         userStore.setDefaultStore( context.param( "defaultUserstore" ).asBoolean( false ) );
 
         UserStoreConfig config;
-        if ( context.param( "config" ).isNull() )
+        if ( context.param( "configXML" ).isNull() )
         {
             config = new UserStoreConfig();
         }
         else
         {
-            config = new UserStoreConfigParser().parseXml( context.param( "config" ).asString() );
+            config = new UserStoreConfigParser().parseXml( context.param( "configXML" ).asString() );
         }
         userStore.setConfig( config );
 
