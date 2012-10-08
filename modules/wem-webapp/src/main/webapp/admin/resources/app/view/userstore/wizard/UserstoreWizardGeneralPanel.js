@@ -5,6 +5,7 @@ Ext.define('Admin.view.userstore.wizard.UserstoreWizardGeneralPanel', {
 
     initComponent: function () {
         var me = this;
+        var isNew = Ext.isEmpty(me.modelData);
         me.items = [
             {
                 xtype: 'fieldset',
@@ -15,11 +16,6 @@ Ext.define('Admin.view.userstore.wizard.UserstoreWizardGeneralPanel', {
                 },
                 items: [
                     {
-                        xtype: 'hiddenfield',
-                        name: 'key',
-                        value: me.modelData ? me.modelData.key : ''
-                    },
-                    {
                         xtype: 'textfield',
                         fieldLabel: 'Name <span style="color: red;">*</span>',
                         allowBlank: false,
@@ -29,7 +25,8 @@ Ext.define('Admin.view.userstore.wizard.UserstoreWizardGeneralPanel', {
                         name: 'displayName',
                         itemId: 'displayName',
                         enableKeyEvents: true,
-                        emptyText: 'Display Name'
+                        emptyText: 'Display Name',
+                        readOnly: !isNew
                     },
                     {
                         xtype: 'combo',
@@ -60,11 +57,9 @@ Ext.define('Admin.view.userstore.wizard.UserstoreWizardGeneralPanel', {
         var form = this.getForm();
         var displayName = form.findField('displayName').getValue();
         var connectorName = form.findField('connectorName').getValue();
-        var key = form.findField('key').getValue();
         var data = {
             'name': displayName,
-            'connectorName': connectorName,
-            'key': key
+            'connectorName': connectorName
         };
         return data;
     }
