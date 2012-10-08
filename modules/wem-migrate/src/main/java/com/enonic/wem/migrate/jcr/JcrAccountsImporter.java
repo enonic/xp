@@ -320,11 +320,6 @@ public class JcrAccountsImporter
         throws Exception
     {
         final String userStoreName = (String) userStoreFields.get( "DOM_SNAME" );
-        if ( userStoreName.equals( UserStoreName.system().toString() ) )
-        {
-            LOG.info( "Skipping import of system user store" );
-            return;
-        }
         final Integer key = (Integer) userStoreFields.get( "DOM_LKEY" );
         final boolean defaultUserStore = ( (Integer) userStoreFields.get( "DOM_BDEFAULTSTORE" ) == 1 );
         final String connectorName = (String) userStoreFields.get( "DOM_SCONFIGNAME" );
@@ -344,7 +339,14 @@ public class JcrAccountsImporter
         }
         userStore.setConfig( config );
         userStore.setConnectorName( connectorName );
-        accountDao.createUserStore( session, userStore );
+        if ( userStore.getName().isSystem() )
+        {
+            accountDao.updateUserStore( session, userStore );
+        }
+        else
+        {
+            accountDao.createUserStore( session, userStore );
+        }
 
         userStoreKeyName.put( key, userStoreName );
         LOG.info( "User store imported: " + userStoreName );
