@@ -1,5 +1,7 @@
 package com.enonic.wem.core.account;
 
+import javax.jcr.Session;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,14 +34,17 @@ public final class CreateAccountHandler
     {
         final Account account = command.getAccount();
         final AccountKey key = account.getKey();
+        final Session session = context.getJcrSession();
 
         if ( key.isUser() )
         {
-            accountDao.createUser( context.getJcrSession(), (UserAccount) account );
+            accountDao.createUser( session, (UserAccount) account );
+            session.save();
         }
         else if ( key.isGroup() )
         {
-            accountDao.createGroup( context.getJcrSession(), (GroupAccount) account );
+            accountDao.createGroup( session, (GroupAccount) account );
+            session.save();
         }
         else if ( key.isRole() )
         {
