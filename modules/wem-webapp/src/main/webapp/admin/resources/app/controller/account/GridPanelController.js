@@ -84,8 +84,10 @@ Ext.define('Admin.controller.account.GridPanelController', {
                     if (response.success) {
                         detailPanel.setCurrentAccount(response);
                         detailPanel.showAccountPreview(response);
-                        mask.hide();
+                    } else {
+                        detailPanel.showNoneSelection();
                     }
+                    mask.hide();
                 }
             );
         } else {

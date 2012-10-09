@@ -568,7 +568,7 @@ Ext.define('Admin.view.account.EditUserFormPanel', {
     },
 
     getData: function () {
-        var formValues = this.getForm().getFieldValues();
+        var formValues = this.getForm().getValues();
         var userData;
         var isPlacesForm = formValues.label;
         if (isPlacesForm) {

@@ -302,25 +302,27 @@ Ext.define('Admin.view.account.UserFormField', {
                 validationStatus.update({type: 'error', text: 'Invalid characters'});
                 return "Invalid characters";
             }
-            Ext.Ajax.request({
-                url: parentField.validationUrl,
-                method: 'GET',
-                params: {
-                    'userstore': parentField.validationData.userStore,
-                    'name': value
-                },
-                success: function (response) {
-                    var respObj = Ext.decode(response.responseText, true);
-                    if (respObj.userkey !== null) {
-                        me.validValue = false;
-                        validationStatus.update({type: 'error', text: 'Not available'});
-                    } else {
-                        me.validValue = true;
-                        validationStatus.update({type: 'info', text: 'Available'});
+            if (parentField.validationUrl) {
+                Ext.Ajax.request({
+                    url: parentField.validationUrl,
+                    method: 'GET',
+                    params: {
+                        'userstore': parentField.validationData.userStore,
+                        'name': value
+                    },
+                    success: function (response) {
+                        var respObj = Ext.decode(response.responseText, true);
+                        if (respObj.userkey !== null) {
+                            me.validValue = false;
+                            validationStatus.update({type: 'error', text: 'Not available'});
+                        } else {
+                            me.validValue = true;
+                            validationStatus.update({type: 'info', text: 'Available'});
+                        }
+                        parentField.validate();
                     }
-                    parentField.validate();
-                }
-            });
+                });
+            }
         }
         if (value === '') {
             validationStatus.update({type: 'info', text: ''});
