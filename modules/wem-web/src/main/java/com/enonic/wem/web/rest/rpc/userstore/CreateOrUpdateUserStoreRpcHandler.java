@@ -1,7 +1,10 @@
 package com.enonic.wem.web.rest.rpc.userstore;
 
+import org.springframework.stereotype.Component;
+
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.exception.UserStoreNotFoundException;
 import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.UserStoreNames;
@@ -14,6 +17,7 @@ import com.enonic.wem.api.userstore.editor.UserStoreEditors;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
+@Component
 public class CreateOrUpdateUserStoreRpcHandler
     extends AbstractDataRpcHandler
 {
@@ -27,7 +31,15 @@ public class CreateOrUpdateUserStoreRpcHandler
         throws Exception
     {
         final UserStoreNames userStoreNames = UserStoreNames.from( context.param( "name" ).required().asStringArray() );
-        UserStores userStores = client.execute( Commands.userStore().get().names( userStoreNames ) );
+        UserStores userStores;
+        try
+        {
+            userStores = client.execute( Commands.userStore().get().names( userStoreNames ) );
+        }
+        catch ( UserStoreNotFoundException e )
+        {
+            userStores = UserStores.empty();
+        }
 
         final UserStore userStore = getUserStoreFromRequest( context, userStores, userStoreNames.getFirst() );
 
@@ -62,17 +74,17 @@ public class CreateOrUpdateUserStoreRpcHandler
         userStore.setDefaultStore( context.param( "defaultUserstore" ).asBoolean( false ) );
 
         UserStoreConfig config;
-        if ( context.param( "config" ).isNull() )
+        if ( context.param( "configXML" ).isNull() )
         {
             config = new UserStoreConfig();
         }
         else
         {
-            config = new UserStoreConfigParser().parseXml( context.param( "config" ).asString() );
+            config = new UserStoreConfigParser().parseXml( context.param( "configXML" ).asString() );
         }
         userStore.setConfig( config );
 
-        String connectorName = context.param( "connector" ).required().asString();
+        String connectorName = context.param( "connectorName" ).required().asString();
         userStore.setConnectorName( connectorName );
         userStore.setConnector( new UserStoreConnector( connectorName ) );
 
