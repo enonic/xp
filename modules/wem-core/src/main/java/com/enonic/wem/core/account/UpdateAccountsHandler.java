@@ -2,6 +2,7 @@ package com.enonic.wem.core.account;
 
 import javax.jcr.Session;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -76,6 +77,7 @@ public final class UpdateAccountsHandler
     private void updateAccount( final Session session, final Account account )
         throws Exception
     {
+        account.setModifiedTime( DateTime.now() );
         switch ( account.getKey().getType() )
         {
             case USER:

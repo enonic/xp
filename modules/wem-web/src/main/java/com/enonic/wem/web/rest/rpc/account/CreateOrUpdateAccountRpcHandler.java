@@ -105,7 +105,6 @@ public final class CreateOrUpdateAccountRpcHandler
     private void createAccount( final Account account )
         throws Exception
     {
-        account.setCreatedTime( DateTime.now() );
         this.client.execute( Commands.account().create().account( account ) );
     }
 
@@ -156,7 +155,6 @@ public final class CreateOrUpdateAccountRpcHandler
             account = nonUserAccount;
         }
         account.setDisplayName( context.param( "displayName" ).required().asString() );
-        account.setModifiedTime( DateTime.now() );
         return account;
     }
 
