@@ -155,7 +155,6 @@ public final class CreateOrUpdateAccountRpcHandler
             account = nonUserAccount;
         }
         account.setDisplayName( context.param( "displayName" ).required().asString() );
-
         return account;
     }
 
@@ -231,6 +230,10 @@ public final class CreateOrUpdateAccountRpcHandler
 
     private DateTime jsonFieldAsDate( final ObjectNode jsonObject, final String fieldName )
     {
+        if ( !jsonObject.has( fieldName ) )
+        {
+            return null;
+        }
         final String value = jsonObject.get( fieldName ).asText();
         try
         {
