@@ -2,9 +2,11 @@ package com.enonic.wem.web.rest.rpc.account;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.springframework.stereotype.Component;
 
@@ -12,9 +14,9 @@ import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.json.JsonSerializable;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
+import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
 @Component
 public final class GetAccountGraphRpcHandler
@@ -50,7 +52,7 @@ public final class GetAccountGraphRpcHandler
         }
         List<Account> accounts =
             this.client.execute( Commands.account().get().keys( AccountKeys.from( nodeMap.keySet() ) ).includeImage() ).getList();
-        Map<Account, List<Account>> result = new HashMap<Account, List<Account>>();
+        Map<Account, List<Account>> result = new TreeMap<Account, List<Account>>( new GraphComparator( accountKey ) );
         for ( Map.Entry<AccountKey, AccountKeys> entry : nodeMap.entrySet() )
         {
             Account key = findAccount( entry.getKey(), accounts );
@@ -130,6 +132,40 @@ public final class GetAccountGraphRpcHandler
                 {
                     generateMembershipsGraph( membershipKey, level - 1, graph );
                 }
+            }
+        }
+
+    }
+
+
+    private class GraphComparator
+        implements Comparator<Account>
+    {
+        private final AccountKey requestedKey;
+
+        private GraphComparator( final AccountKey requestedKey )
+        {
+            this.requestedKey = requestedKey;
+        }
+
+        @Override
+        public int compare( final Account one, final Account two )
+        {
+            if ( one == null && two == null )
+            {
+                return 0;
+            }
+            else if ( one == null || ( two != null && requestedKey.equals( two.getKey() ) ) )
+            {
+                return 1;
+            }
+            else if ( two == null || requestedKey.equals( one.getKey() ) )
+            {
+                return -1;
+            }
+            else
+            {
+                return one.getKey().toString().compareTo( two.getKey().toString() );
             }
         }
 
