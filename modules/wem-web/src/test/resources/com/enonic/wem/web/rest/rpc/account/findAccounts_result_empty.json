@@ -1,6 +1,6 @@
 {
-    "success" : true,
-    "total" : 0,
-    "accounts" : [ ],
-    "facets" : [ ]
+    "success": true,
+    "accounts": [ ],
+    "total": 0,
+    "facets": [ ]
 }
