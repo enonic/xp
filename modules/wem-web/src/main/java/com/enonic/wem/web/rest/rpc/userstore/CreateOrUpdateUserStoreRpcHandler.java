@@ -2,6 +2,8 @@ package com.enonic.wem.web.rest.rpc.userstore;
 
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Strings;
+
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.exception.UserStoreNotFoundException;
@@ -74,13 +76,21 @@ public class CreateOrUpdateUserStoreRpcHandler
         userStore.setDefaultStore( context.param( "defaultUserstore" ).asBoolean( false ) );
 
         UserStoreConfig config;
-        if ( context.param( "configXML" ).isNull() )
+        String configParam = context.param( "configXML" ).asString();
+        if ( Strings.isNullOrEmpty( configParam ) )
         {
             config = new UserStoreConfig();
         }
         else
         {
-            config = new UserStoreConfigParser().parseXml( context.param( "configXML" ).asString() );
+            try
+            {
+                config = new UserStoreConfigParser().parseXml( configParam );
+            }
+            catch ( Exception e )
+            {
+                config = new UserStoreConfig();
+            }
         }
         userStore.setConfig( config );
 
