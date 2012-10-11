@@ -22,21 +22,33 @@ final class FindAccountsJsonResult
         this.accounts = accounts;
     }
 
+    public FindAccountsJsonResult( final Accounts accounts )
+    {
+        this.hits = null;
+        this.accounts = accounts;
+    }
+
     @Override
     protected void serialize( final ObjectNode json )
     {
-        json.put( "total", this.hits.getTotalSize() );
-
         final ArrayNode accounts = json.putArray( "accounts" );
         for ( final Account account : this.accounts )
         {
             serializeAccount( accounts.addObject(), account );
         }
 
-        final ArrayNode facets = json.putArray( "facets" );
-        for ( final AccountFacet facet : this.hits.getFacets() )
+        if ( this.hits != null )
         {
-            serializeFacet( facets.addObject(), facet );
+            json.put( "total", this.hits.getTotalSize() );
+            final ArrayNode facets = json.putArray( "facets" );
+            for ( final AccountFacet facet : this.hits.getFacets() )
+            {
+                serializeFacet( facets.addObject(), facet );
+            }
+        }
+        else
+        {
+            json.put( "total", this.accounts.getSize() );
         }
     }
 

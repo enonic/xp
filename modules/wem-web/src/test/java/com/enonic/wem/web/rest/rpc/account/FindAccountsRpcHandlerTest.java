@@ -87,9 +87,31 @@ public class FindAccountsRpcHandlerTest
         testSuccess( "findAccounts_param.json", "findAccounts_result_with_facets.json" );
     }
 
+    @Test
+    public void testRequestWithKeys()
+        throws Exception
+    {
+        mockCurrentContextHttpRequest();
+
+        final UserAccount user1 = createUser( "enonic:user1" );
+        final GroupAccount group1 = createGroup( "enonic:group1", user1.getKey() );
+        final RoleAccount role1 = createRole( "system:contributors", user1.getKey() );
+
+        final Accounts accounts = createAccountsObject( user1, group1, role1 );
+
+        setResult( accounts );
+
+        testSuccess( "findAccountsByKey_param.json", "findAccountsByKey_result.json" );
+    }
+
     private void setResult( final AccountQueryHits hits, final Accounts accounts )
     {
         Mockito.when( client.execute( Mockito.isA( FindAccounts.class ) ) ).thenReturn( hits );
+        Mockito.when( client.execute( Mockito.isA( GetAccounts.class ) ) ).thenReturn( accounts );
+    }
+
+    private void setResult( final Accounts accounts )
+    {
         Mockito.when( client.execute( Mockito.isA( GetAccounts.class ) ) ).thenReturn( accounts );
     }
 }

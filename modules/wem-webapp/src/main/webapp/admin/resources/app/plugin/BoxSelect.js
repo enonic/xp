@@ -941,7 +941,7 @@ Ext.define('Admin.plugin.BoxSelect', {
 
         if ((skipLoad !== true) && (unknownValues.length > 0) && (me.queryMode === 'remote')) {
             var params = {};
-            params[me.valueField] = unknownValues.join(me.delimiter);
+            params[me.valueField] = unknownValues;
             me.store.load({
                 params: params,
                 callback: function () {
