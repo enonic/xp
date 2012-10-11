@@ -125,7 +125,7 @@ public class CreateAccountHandlerTest
         assertEquals( group.getKey(), createdGroupKey );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCreateRole()
         throws Exception
     {
@@ -136,5 +136,12 @@ public class CreateAccountHandlerTest
         // exercise
         CreateAccount command = Commands.account().create().account( role );
         this.handler.handle( this.context, command );
+        final AccountKey createdRoleKey = command.getResult();
+
+            // verify
+        verify( accountDao, atLeastOnce() ).createRole( Mockito.any( Session.class ), Mockito.eq( role ) );
+        assertNotNull( createdRoleKey );
+        assertTrue( createdRoleKey.isRole() );
+        assertEquals( role.getKey(), createdRoleKey );
     }
 }

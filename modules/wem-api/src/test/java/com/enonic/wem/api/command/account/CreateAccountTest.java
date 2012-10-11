@@ -2,17 +2,42 @@ package com.enonic.wem.api.command.account;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
+import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
+
+import static org.junit.Assert.*;
 
 public class CreateAccountTest
 {
     @Test
-    public void testValid()
+    public void testValidUser()
     {
         final UserAccount account = UserAccount.create( "enonic:user1" );
+        final CreateAccount command = new CreateAccount();
+
+        command.account( account );
+        assertSame( account, command.getAccount() );
+
+        command.validate();
+    }
+
+    @Test
+    public void testValidGroup()
+    {
+        final GroupAccount account = GroupAccount.create( "enonic:group1" );
+        final CreateAccount command = new CreateAccount();
+
+        command.account( account );
+        assertSame( account, command.getAccount() );
+
+        command.validate();
+    }
+
+    @Test
+    public void testValidRole()
+    {
+        final RoleAccount account = RoleAccount.create( "system:contributors" );
         final CreateAccount command = new CreateAccount();
 
         command.account( account );
@@ -30,13 +55,4 @@ public class CreateAccountTest
         command.validate();
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testNotValid_roleAccount()
-    {
-        final RoleAccount account = RoleAccount.create( "enonic:myrole" );
-        final CreateAccount command = new CreateAccount();
-        command.account( account );
-
-        command.validate();
-    }
 }

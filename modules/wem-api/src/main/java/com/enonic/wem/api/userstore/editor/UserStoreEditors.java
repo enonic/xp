@@ -1,5 +1,6 @@
 package com.enonic.wem.api.userstore.editor;
 
+import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.userstore.UserStore;
 
 public abstract class UserStoreEditors
@@ -12,5 +13,10 @@ public abstract class UserStoreEditors
     public static UserStoreEditor setUserStore( final UserStore userStore )
     {
         return new SetUserStoreEditor( userStore );
+    }
+
+    public static UserStoreEditor setAdministrators( final AccountKeys administrators )
+    {
+        return new SetUserStoreAdministratorsEditor( administrators );
     }
 }

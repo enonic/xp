@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.GroupAccount;
+import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.command.account.CreateAccount;
 import com.enonic.wem.core.account.dao.AccountDao;
@@ -41,17 +42,16 @@ public final class CreateAccountHandler
         if ( key.isUser() )
         {
             accountDao.createUser( session, (UserAccount) account );
-            session.save();
         }
         else if ( key.isGroup() )
         {
             accountDao.createGroup( session, (GroupAccount) account );
-            session.save();
         }
         else if ( key.isRole() )
         {
-            throw new IllegalArgumentException( "Roles are built-in and can't be created manually." );
+            accountDao.createRole( context.getJcrSession(), (RoleAccount) account );
         }
+        session.save();
 
         this.searchService.index( account );
         command.setResult( key );

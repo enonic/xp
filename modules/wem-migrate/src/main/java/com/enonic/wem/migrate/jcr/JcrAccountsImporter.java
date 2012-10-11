@@ -7,8 +7,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
-import javax.jcr.Session;
-
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -21,6 +19,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
+import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
@@ -28,14 +27,14 @@ import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.NonUserAccount;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
+import com.enonic.wem.api.account.editor.AccountEditors;
 import com.enonic.wem.api.account.profile.Addresses;
 import com.enonic.wem.api.account.profile.UserProfile;
 import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
+import com.enonic.wem.api.userstore.UserStoreNames;
 import com.enonic.wem.api.userstore.config.UserStoreConfig;
 import com.enonic.wem.api.userstore.config.UserStoreConfigParser;
-import com.enonic.wem.core.account.dao.AccountDao;
-import com.enonic.wem.core.search.account.AccountSearchService;
 
 import com.enonic.cms.api.client.model.user.Address;
 import com.enonic.cms.api.client.model.user.Gender;
@@ -48,6 +47,11 @@ import com.enonic.cms.core.user.field.UserFieldType;
 import com.enonic.cms.core.user.field.UserFields;
 import com.enonic.cms.core.user.field.UserInfoTransformer;
 
+import static com.enonic.wem.api.command.Commands.account;
+import static com.enonic.wem.api.command.Commands.userStore;
+import static com.enonic.wem.api.userstore.editor.UserStoreEditors.setAdministrators;
+import static com.enonic.wem.api.userstore.editor.UserStoreEditors.setUserStore;
+
 @Component
 public class JcrAccountsImporter
 {
@@ -55,9 +59,7 @@ public class JcrAccountsImporter
 
     private DatabaseAccountsLoader dbAccountsLoader;
 
-    private AccountDao accountDao;
-
-    private AccountSearchService accountSearchService;
+    private Client client;
 
     private final Map<Integer, String> userStoreKeyName;
 
@@ -75,29 +77,29 @@ public class JcrAccountsImporter
         accountsImported = Maps.newHashMap();
     }
 
-    public void importAccounts( final Session session )
+    public void importAccounts()
     {
-        importUserStores( session );
+        importUserStores();
 
-        importUsers( session );
+        importUsers();
 
-        importGroups( session );
+        importGroups();
 
-        setUserStoreAdministrators( session );
-
-        indexAccounts();
+        setUserStoreAdministrators();
 
         releaseResources();
     }
 
-    private void setUserStoreAdministrators( final Session session )
+    private void setUserStoreAdministrators()
     {
         for ( String userStoreName : userStoreAdministrators.keys() )
         {
-            final Collection<AccountKey> administrators = userStoreAdministrators.get( userStoreName );
+            final Collection<AccountKey> adminKeys = userStoreAdministrators.get( userStoreName );
             try
             {
-                accountDao.setUserStoreAdministrators( session, UserStoreName.from( userStoreName ), AccountKeys.from( administrators ) );
+                final AccountKeys administrators = AccountKeys.from( adminKeys );
+                final UserStoreNames userStoreNames = UserStoreNames.from( userStoreName );
+                client.execute( userStore().update().names( userStoreNames ).editor( setAdministrators( administrators ) ) );
             }
             catch ( Exception e )
             {
@@ -106,7 +108,7 @@ public class JcrAccountsImporter
         }
     }
 
-    private void importUserStores( final Session session )
+    private void importUserStores()
     {
         dbAccountsLoader.loadUserStores( new ImportDataCallbackHandler()
         {
@@ -114,7 +116,7 @@ public class JcrAccountsImporter
             {
                 try
                 {
-                    importUserStore( session, userStoreFields );
+                    importUserStore( userStoreFields );
                 }
                 catch ( Exception e )
                 {
@@ -124,7 +126,7 @@ public class JcrAccountsImporter
         } );
     }
 
-    private void importUsers( final Session session )
+    private void importUsers()
     {
         dbAccountsLoader.loadUsers( new ImportDataCallbackHandler()
         {
@@ -132,7 +134,7 @@ public class JcrAccountsImporter
             {
                 try
                 {
-                    importUser( session, data );
+                    importUser( data );
                 }
                 catch ( Exception e )
                 {
@@ -142,7 +144,7 @@ public class JcrAccountsImporter
         } );
     }
 
-    private void importGroups( final Session session )
+    private void importGroups()
     {
         dbAccountsLoader.loadGroups( new ImportDataCallbackHandler()
         {
@@ -150,7 +152,7 @@ public class JcrAccountsImporter
             {
                 try
                 {
-                    importGroup( session, data );
+                    importGroup( data );
                 }
                 catch ( Exception e )
                 {
@@ -188,7 +190,7 @@ public class JcrAccountsImporter
         {
             try
             {
-                setMembers( session, accountKey, membershipsTable.get( accountKey ) );
+                setMembers( accountKey, membershipsTable.get( accountKey ) );
             }
             catch ( Exception e )
             {
@@ -197,18 +199,10 @@ public class JcrAccountsImporter
         }
     }
 
-    private void indexAccounts()
-    {
-        for ( Account account : accountsImported.values() )
-        {
-            accountSearchService.index( account );
-        }
-    }
-
-    private void setMembers( final Session session, final AccountKey nonUserAccountKey, final AccountKeys members )
+    private void setMembers( final AccountKey nonUserAccountKey, final AccountKeys members )
         throws Exception
     {
-        accountDao.setMembers( session, nonUserAccountKey, members );
+        client.execute( account().update().keys( AccountKeys.from( nonUserAccountKey ) ).editor( AccountEditors.setMembers( members ) ) );
         final NonUserAccount nonUserAccount = (NonUserAccount) accountsImported.get( nonUserAccountKey );
         nonUserAccount.setMembers( members );
         LOG.info( "Set account members for " + nonUserAccountKey.toString() + ": " + members.toString() );
@@ -222,7 +216,7 @@ public class JcrAccountsImporter
         accountsImported.clear();
     }
 
-    private void importGroup( final Session session, final Map<String, Object> groupFields )
+    private void importGroup( final Map<String, Object> groupFields )
         throws Exception
     {
         final String groupName = (String) groupFields.get( "GRP_SNAME" );
@@ -254,14 +248,7 @@ public class JcrAccountsImporter
         nonUserAccount.setModifiedTime( lastModified );
         nonUserAccount.setCreatedTime( lastModified );
 
-        if ( nonUserAccount instanceof GroupAccount )
-        {
-            accountDao.createGroup( session, (GroupAccount) nonUserAccount );
-        }
-        else
-        {
-            accountDao.createRole( session, (RoleAccount) nonUserAccount );
-        }
+        client.execute( account().create().account( nonUserAccount ) );
 
         accountsImported.put( nonUserAccount.getKey(), nonUserAccount );
 
@@ -277,7 +264,7 @@ public class JcrAccountsImporter
         LOG.info( "Group '" + groupName + "' imported with id " + groupId );
     }
 
-    private void importUser( final Session session, final Map<String, Object> userFields )
+    private void importUser( final Map<String, Object> userFields )
         throws Exception
     {
         Integer userStoreKey = (Integer) userFields.get( "USR_DOM_LKEY" );
@@ -306,7 +293,7 @@ public class JcrAccountsImporter
         final Map<String, Object> userInfoFields = (Map<String, Object>) userFields.get( DatabaseAccountsLoader.USER_INFO_FIELDS_MAP );
         addUserInfoFields( user, userInfoFields );
 
-        accountDao.createUser( session, user );
+        client.execute( account().create().account( user ) );
 
         accountsImported.put( user.getKey(), user );
 
@@ -316,7 +303,7 @@ public class JcrAccountsImporter
         LOG.info( "User '" + userName + "' imported with id " + userId );
     }
 
-    private void importUserStore( final Session session, final Map<String, Object> userStoreFields )
+    private void importUserStore( final Map<String, Object> userStoreFields )
         throws Exception
     {
         final String userStoreName = (String) userStoreFields.get( "DOM_SNAME" );
@@ -341,11 +328,11 @@ public class JcrAccountsImporter
         userStore.setConnectorName( connectorName );
         if ( userStore.getName().isSystem() )
         {
-            accountDao.updateUserStore( session, userStore );
+            client.execute( userStore().update().editor( setUserStore( userStore ) ).names( UserStoreNames.from( userStore.getName() ) ) );
         }
         else
         {
-            accountDao.createUserStore( session, userStore );
+            client.execute( userStore().create().userStore( userStore ) );
         }
 
         userStoreKeyName.put( key, userStoreName );
@@ -507,14 +494,8 @@ public class JcrAccountsImporter
     }
 
     @Autowired
-    public void setAccountDao( final AccountDao accountDao )
+    public void setClient( final Client client )
     {
-        this.accountDao = accountDao;
-    }
-
-    @Autowired
-    public void setAccountSearchService( final AccountSearchService accountSearchService )
-    {
-        this.accountSearchService = accountSearchService;
+        this.client = client;
     }
 }

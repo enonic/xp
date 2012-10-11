@@ -26,6 +26,5 @@ public final class CreateAccount
     public void validate()
     {
         Preconditions.checkNotNull( this.account, "Account cannot be null" );
-        Preconditions.checkState( !this.account.getKey().isRole(), "Account cannot be a role" );
     }
 }
