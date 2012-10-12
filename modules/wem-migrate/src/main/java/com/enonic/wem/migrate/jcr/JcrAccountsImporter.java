@@ -311,7 +311,7 @@ public class JcrAccountsImporter
         final boolean defaultUserStore = ( (Integer) userStoreFields.get( "DOM_BDEFAULTSTORE" ) == 1 );
         final String connectorName = (String) userStoreFields.get( "DOM_SCONFIGNAME" );
         final byte[] xmlBytes = (byte[]) userStoreFields.get( "DOM_XMLDATA" );
-        final String userStoreXmlConfig = new String( xmlBytes, "UTF-8" );
+        final String userStoreXmlConfig = xmlBytes == null ? null : new String( xmlBytes, "UTF-8" );
 
         final UserStore userStore = new UserStore( UserStoreName.from( userStoreName ) );
         userStore.setDefaultStore( defaultUserStore );
