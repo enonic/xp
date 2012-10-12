@@ -290,7 +290,7 @@ public class JcrAccountsImporter
         user.setImage( photo );
 
         // user info fields
-        final Map<String, Object> userInfoFields = (Map<String, Object>) userFields.get( DatabaseAccountsLoader.USER_INFO_FIELDS_MAP );
+        final Map<String, Object> userInfoFields = (Map<String, Object>) userFields.get( DatabaseAccountsLoaderImpl.USER_INFO_FIELDS_MAP );
         addUserInfoFields( user, userInfoFields );
 
         client.execute( account().create().account( user ) );
