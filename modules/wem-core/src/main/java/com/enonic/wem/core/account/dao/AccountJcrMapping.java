@@ -239,7 +239,8 @@ public class AccountJcrMapping
     private void addAddressNode( final Address address, final Node addressesNode )
         throws RepositoryException
     {
-        final Node addressNode = addressesNode.addNode( ADDRESS );
+        long size = addressesNode.getNodes().getSize();
+        final Node addressNode = addressesNode.addNode( ADDRESS + size );
         addressNode.setProperty( COUNTRY, address.getCountry() );
         addressNode.setProperty( ISO_COUNTRY, address.getIsoCountry() );
         addressNode.setProperty( ISO_REGION, address.getIsoRegion() );
@@ -290,7 +291,7 @@ public class AccountJcrMapping
         final Node addresses = JcrHelper.getNodeOrNull( profileNode, ADDRESSES );
         if ( addresses != null )
         {
-            final NodeIterator addressNodeIt = addresses.getNodes( ADDRESS );
+            final NodeIterator addressNodeIt = addresses.getNodes();
             while ( addressNodeIt.hasNext() )
             {
                 Node addressNode = addressNodeIt.nextNode();
