@@ -496,8 +496,17 @@ Ext.define('Admin.controller.account.Controller', {
             if (!response.success) {
                 Ext.Msg.alert("Error", response.error);
             } else {
-                var current = me.getAccountGridPanel().store.currentPage;
-                me.getAccountGridPanel().store.loadPage(current);
+                var grid = me.getAccountGridPanel();
+                var selModel = grid.getSelectionModel();
+                var store = grid.getStore();
+                var i;
+                for (i = 0; i < keys.length; i++) {
+                    var account = grid.getStore().getById(keys[i]);
+                    if (account) {
+                        selModel.deselect(account);
+                        store.remove(account);
+                    }
+                }
             }
         });
     },
