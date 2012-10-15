@@ -292,8 +292,9 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
     },
 
     photoUploaded: function (photoUploadButton, response) {
-        var wizard = this.down('wizardPanel');
-        wizard.addData({photo: response.photoRef});
+        var wizard = this.down('wizardPanel'),
+            photoRef = response.items && response.items.length > 0 && response.items[0].id;
+        wizard.addData({imageRef: photoRef});
     },
 
     getSteps: function () {
