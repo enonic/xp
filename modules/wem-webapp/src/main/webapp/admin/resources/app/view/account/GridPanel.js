@@ -61,7 +61,7 @@ Ext.define('Admin.view.account.GridPanel', {
             },
             {
                 text: 'Last Modified',
-                dataIndex: 'lastModified',
+                dataIndex: 'modifiedTime',
                 renderer: this.prettyDateRenderer,
                 sortable: true
             }

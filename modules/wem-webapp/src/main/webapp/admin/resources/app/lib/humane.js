@@ -11,7 +11,7 @@
  * Licensed under the MIT license.
  */
 
-function humane_date(date_str) {
+function humane_date(date) {
     var time_formats = [
         [60, 'Just Now'],
         [90, '1 Minute'],
@@ -41,9 +41,8 @@ function humane_date(date_str) {
         [4730400000, '1 Century'] // 60*60*24*365*100*1.5
     ];
 
-    var time = ('' + date_str).replace(/-/g, "/").replace(/[TZ]/g, " "),
-        dt = new Date,
-        seconds = ((dt - new Date(time) + (dt.getTimezoneOffset() * 60000)) / 1000),
+    var dt = new Date(),
+        seconds = ((dt - date) / 1000),
         token = ' Ago',
         i = 0,
         format;
@@ -68,9 +67,13 @@ function humane_date(date_str) {
         return Math.round(seconds / 4730400000) + ' Centuries' + token;
     }
 
-    return date_str;
+    return date;
 }
-;
+
+function humane_string(date_str) {
+    var time = ('' + date_str).replace(/-/g, "/").replace(/[TZ]/g, " ");
+    return humane_date(new Date(time));
+}
 
 if (typeof jQuery !== 'undefined') {
     jQuery.fn.humane_dates = function () {
