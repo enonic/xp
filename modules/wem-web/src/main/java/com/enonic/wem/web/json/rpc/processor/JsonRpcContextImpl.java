@@ -67,9 +67,16 @@ final class JsonRpcContextImpl
     }
 
     @Override
+    public Iterable<JsonRpcParam> params()
+    {
+        return this.params.values();
+    }
+
+    @Override
     public void setResult( final String value )
     {
-        if (value != null) {
+        if ( value != null )
+        {
             setResult( JsonNodeFactory.instance.textNode( value ) );
         }
     }
@@ -83,7 +90,8 @@ final class JsonRpcContextImpl
     @Override
     public void setResult( final JsonSerializable value )
     {
-        if (value != null) {
+        if ( value != null )
+        {
             setResult( value.toJson() );
         }
     }

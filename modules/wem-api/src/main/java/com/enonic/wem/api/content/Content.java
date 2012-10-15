@@ -16,11 +16,21 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 
 public class Content
 {
+    private ContentPath path = new ContentPath();
+
     private ContentType type;
 
-    private String name;
-
     private ContentData data = new ContentData();
+
+    public void setPath( final ContentPath path )
+    {
+        this.path = path;
+    }
+
+    public ContentPath getPath()
+    {
+        return path;
+    }
 
     public ContentType getType()
     {
@@ -30,17 +40,23 @@ public class Content
     public void setType( final ContentType type )
     {
         this.type = type;
-        //this.data.setContentType( type );
     }
 
     public String getName()
     {
-        return name;
+        if ( path.hasName() )
+        {
+            return path.getName();
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public void setName( final String name )
     {
-        this.name = name;
+        this.path = this.path.withName( name );
     }
 
     public void setData( final ContentData value )
@@ -109,4 +125,6 @@ public class Content
     {
         new BlobToKeyReplacer( blobToKeyResolver ).replace( data );
     }
+
+
 }

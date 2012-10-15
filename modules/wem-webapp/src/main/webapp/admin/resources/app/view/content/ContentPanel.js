@@ -1,70 +1,98 @@
-Ext.define('Admin.view.content.ContentPanel', {
-    extend: 'Ext.form.Panel',
-    alias: 'widget.createContentPanel',
+Ext.define( 'Admin.view.content.ContentPanel', {
+    extend:'Ext.form.Panel',
+    alias:'widget.createContentPanel',
 
-    initComponent: function () {
+    initComponent:function ()
+    {
         var me = this;
         me.items = [
             {
-                xtype: 'fieldset',
-                title: 'Content form test',
-                padding: '10px 15px',
-                defaults: {
-                    width: 600
+                xtype:'fieldset',
+                title:'Content form test',
+                padding:'10px 15px',
+                defaults:{
+                    width:600
                 },
-                items: [
+                items:[
                     {
-                        xtype: 'textfield',
-                        fieldLabel: 'Content field1',
-                        value: '',
-                        name: 'contentField1'
+                        xtype:'textfield',
+                        fieldLabel:'My textline 1',
+                        value:'',
+                        name:'myTextLine1'
                     },
                     {
-                        xtype: 'textfield',
-                        fieldLabel: 'Content field1',
-                        value: '',
-                        name: 'contentField2'
+                        xtype:'textfield',
+                        fieldLabel:'My textline 2',
+                        value:'',
+                        name:'myTextLine2'
                     },
                     {
-                        xtype: 'button',
-                        itemId: 'sendButton',
-                        text: 'Send data',
-                        width: 100,
-                        listeners: {
-                            click: {
-                                fn: me.onSendClick,
-                                scope: me
+                        xtype:'fieldset',
+                        title:'My formItemSet',
+                        value:'',
+                        items:[
+                            {
+                                xtype:'textfield',
+                                fieldLabel:'My textline 1',
+                                name:'myFormItemSet.myTextLine1'
+                            }
+                        ]
+                    },
+                    {
+                        xtype:'button',
+                        itemId:'sendButton',
+                        text:'Send data',
+                        width:100,
+                        listeners:{
+                            click:{
+                                fn:me.onSendClick,
+                                scope:me
                             }
                         }
                     }
                 ]
             }
         ];
-        me.callParent(arguments);
+        me.callParent( arguments );
     },
 
-    getData: function () {
+    getData:function ()
+    {
         var form = this.getForm();
-        var field1Value = form.findField('contentField1').getValue();
-        var field2Value = form.findField('contentField2').getValue();
         var data = {
-            'contentField1': field1Value,
-            'contentField2': field2Value
+            'myTextLine1':form.findField( 'myTextLine1' ).getValue(),
+            'myTextLine2':form.findField( 'myTextLine2' ).getValue(),
+            'myFormItemSet.myTextLine1':form.findField( 'myFormItemSet.myTextLine1' ).getValue()
         };
         return data;
     },
 
-    onSendClick: function () {
-        var data = this.getData();
-        console.dir(data);
+    getQualifiedContentTypeName:function ()
+    {
+        return "myModule:myContentType";
+    },
 
-        Admin.lib.RemoteService.content_createOrUpdate({ "content": data }, function (rpcResp) {
-            if (rpcResp.success) {
-                if (rpcResp.success) {
-                    handleRpcResponse(rpcResp);
-                }
-            }
-        });
+    getContentPath:function ()
+    {
+        return "/myArchive/myContent";
+    },
+
+    onSendClick:function ()
+    {
+        var json = {
+            "contentData":this.getData(),
+            "qualifiedContentTypeName":this.getQualifiedContentTypeName(),
+            "contentPath":this.getContentPath()
+        };
+        console.dir( json );
+
+        Admin.lib.RemoteService.content_createOrUpdate( json, function ( rpcResp )
+        {
+            //if ( rpcResp.success )
+            //{
+            //    handleRpcResponse( rpcResp );
+            //}
+        } );
     }
 
-});
+} );

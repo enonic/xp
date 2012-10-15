@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.AbstractEqualsTest;
 
-public class ContentTypeQualifiedNameTest
+public class QualifiedContentTypeNameTest
 {
     @Test
     public void equals()
@@ -15,26 +15,26 @@ public class ContentTypeQualifiedNameTest
             @Override
             public Object getObjectX()
             {
-                return new ContentTypeQualifiedName( "myModule:myContentType" );
+                return new QualifiedContentTypeName( "myModule:myContentType" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{new ContentTypeQualifiedName( "myModule:myOtherContentType" ),
-                    new ContentTypeQualifiedName( "myOtherModule:myContentType" )};
+                return new Object[]{new QualifiedContentTypeName( "myModule:myOtherContentType" ),
+                    new QualifiedContentTypeName( "myOtherModule:myContentType" )};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return new ContentTypeQualifiedName( "myModule:myContentType" );
+                return new QualifiedContentTypeName( "myModule:myContentType" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return new ContentTypeQualifiedName( "myModule:myContentType" );
+                return new QualifiedContentTypeName( "myModule:myContentType" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();

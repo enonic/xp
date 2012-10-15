@@ -7,6 +7,8 @@ import com.enonic.wem.web.json.JsonSerializable;
 public interface JsonRpcContext
     extends Iterable<JsonRpcParam>
 {
+    public Iterable<JsonRpcParam> params();
+
     public JsonNode getResult();
 
     public JsonRpcParam param( final String name );

@@ -3,15 +3,15 @@ package com.enonic.wem.api.content.type;
 
 import com.enonic.wem.api.content.ModuleBasedQualifiedName;
 
-public class ContentTypeQualifiedName
+public class QualifiedContentTypeName
     extends ModuleBasedQualifiedName
 {
-    public ContentTypeQualifiedName( final String qualifiedName )
+    public QualifiedContentTypeName( final String qualifiedName )
     {
         super( qualifiedName );
     }
 
-    public ContentTypeQualifiedName( final String moduleName, final String contentTypeName )
+    public QualifiedContentTypeName( final String moduleName, final String contentTypeName )
     {
         super( moduleName, contentTypeName );
     }

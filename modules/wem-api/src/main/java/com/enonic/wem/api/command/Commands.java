@@ -1,6 +1,7 @@
 package com.enonic.wem.api.command;
 
 import com.enonic.wem.api.command.account.AccountCommands;
+import com.enonic.wem.api.command.content.ContentCommands;
 import com.enonic.wem.api.command.userstore.UserStoreCommands;
 
 public abstract class Commands
@@ -13,5 +14,10 @@ public abstract class Commands
     public static UserStoreCommands userStore()
     {
         return new UserStoreCommands();
+    }
+
+    public static ContentCommands content()
+    {
+        return new ContentCommands();
     }
 }

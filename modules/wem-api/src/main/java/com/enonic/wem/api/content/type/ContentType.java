@@ -15,6 +15,8 @@ public class ContentType
 {
     private String name;
 
+    private String displayName;
+
     private ContentType superType;
 
     private ContentHandler contentHandler;
@@ -42,9 +44,19 @@ public class ContentType
         this.name = name;
     }
 
-    public ContentTypeQualifiedName getQualifiedName()
+    public String getDisplayName()
     {
-        return new ContentTypeQualifiedName( module.getName(), name );
+        return displayName;
+    }
+
+    public void setDisplayName( final String displayName )
+    {
+        this.displayName = displayName;
+    }
+
+    public QualifiedContentTypeName getQualifiedName()
+    {
+        return new QualifiedContentTypeName( module.getName(), name );
     }
 
     public ContentType getSuperType()
@@ -126,6 +138,11 @@ public class ContentType
     public FormItem getFormItem( final String path )
     {
         return formItems.getHierarchicalFormItem( new FormItemPath( path ) );
+    }
+
+    public FormItem getFormItem( final FormItemPath path )
+    {
+        return formItems.getHierarchicalFormItem( path );
     }
 
     public Component getComponent( final String path )

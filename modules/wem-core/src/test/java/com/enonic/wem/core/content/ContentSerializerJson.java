@@ -4,6 +4,7 @@ package com.enonic.wem.core.content;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
@@ -13,7 +14,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypeFetcher;
-import com.enonic.wem.api.content.type.ContentTypeQualifiedName;
+import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.core.content.data.ContentDataSerializerJson;
 
 public class ContentSerializerJson
@@ -95,13 +96,17 @@ public class ContentSerializerJson
     public Content parse( final JsonNode contentNode )
     {
         final Content content = new Content();
-        content.setName( JsonParserUtil.getStringValue( "name", contentNode ) );
+        final String name = JsonParserUtil.getStringValue( "name", contentNode );
+        if ( !StringUtils.isBlank( name ) )
+        {
+            content.setName( name );
+        }
 
         final String typeAsString = JsonParserUtil.getStringValue( "type", contentNode, null );
         if ( typeAsString != null )
         {
-            final ContentTypeQualifiedName contentTypeQualifiedName = new ContentTypeQualifiedName( typeAsString );
-            final ContentType contentType = contentTypeFetcher.getContentType( contentTypeQualifiedName );
+            final QualifiedContentTypeName qualifiedContentTypeName = new QualifiedContentTypeName( typeAsString );
+            final ContentType contentType = contentTypeFetcher.getContentType( qualifiedContentTypeName );
             content.setType( contentType );
         }
 
