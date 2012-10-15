@@ -21,7 +21,16 @@ Ext.define('Admin.lib.Diff', {
     },
 
     fieldLabels: {
-        membership: 'Member of'
+        membership: 'Member of',
+        'public': 'Public group',
+        region: 'Region',
+        isoRegion: 'ISO Region',
+        country: 'Country',
+        isoCountry: 'ISO Country',
+        street: 'Street',
+        label: 'Label',
+        postalCode: 'Postal Code',
+        postalAddress: 'Postal Address'
     },
 
     hideFields: [ 'repeatPassword' ],
@@ -649,7 +658,7 @@ Ext.define('Admin.lib.Diff', {
         if (!label) {
             label = (Admin && Admin.view && Admin.view.account && Admin.view.account.EditUserFormPanel &&
                      Admin.view.account.EditUserFormPanel.fieldLabels && Admin.view.account.EditUserFormPanel.fieldLabels[name]) ?
-                    Admin.view.account.EditUserFormPanel.fieldLabels[name] : name;
+                Admin.view.account.EditUserFormPanel.fieldLabels[name] : name;
         }
         return label;
     },
@@ -700,7 +709,7 @@ Ext.define('Admin.lib.Diff', {
             }
         }
         for (p in b) {
-            if (b.hasOwnProperty(p) && !this.isPropertyHidden(p) && typeof (a[p]) === 'undefined') {
+            if (b.hasOwnProperty(p) && !this.isPropertyHidden(p) && typeof (a[p]) === 'undefined' && b[p] !== null) {
                 return false;
             }
         }
