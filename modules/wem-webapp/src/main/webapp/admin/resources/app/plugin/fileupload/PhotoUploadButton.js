@@ -3,7 +3,7 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
     alias: 'widget.photoUploadButton',
     width: 132,
     height: 132,
-    uploadUrl: 'data/user/photo',
+    uploadUrl: 'rest/upload',
     progressBarHeight: 8,
 
     // TODO: Move markup to template file
@@ -85,10 +85,12 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
         });
 
         uploader.bind('FileUploaded', function (up, file, response) {
-            var responseObj;
+            var responseObj, uploadedResUrl;
             if (response && response.status === 200) {
                 responseObj = Ext.decode(response.response);
-                uploadButton.updateImage(responseObj.src);
+                uploadedResUrl = (responseObj.items && responseObj.items.length > 0) ? 'rest/upload/' + responseObj.items[0].id
+                    : 'resources/images/x-user-photo.png';
+                uploadButton.updateImage(uploadedResUrl);
             }
             uploadButton.hideProgressBar();
 
@@ -105,7 +107,7 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
     },
 
     updateImage: function (src) {
-        this.getImageElement().src = src || 'resources/images/x-user.png';
+        this.getImageElement().src = src;
     },
 
     showProgressBar: function () {
