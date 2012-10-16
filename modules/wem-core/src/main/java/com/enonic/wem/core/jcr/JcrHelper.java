@@ -15,7 +15,9 @@ import javax.jcr.Value;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.commons.JcrUtils;
-import org.apache.jackrabbit.value.*;
+import org.apache.jackrabbit.value.BinaryValue;
+import org.apache.jackrabbit.value.StringValue;
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
@@ -57,6 +59,19 @@ public abstract class JcrHelper
     }
 
     public static void setPropertyDateTime( final Node node, final String propertyName, final DateTime value )
+        throws RepositoryException
+    {
+        if ( value == null )
+        {
+            node.setProperty( propertyName, (Calendar) null );
+        }
+        else
+        {
+            node.setProperty( propertyName, value.toGregorianCalendar() );
+        }
+    }
+
+    public static void setPropertyDateMidnight( final Node node, final String propertyName, final DateMidnight value )
         throws RepositoryException
     {
         if ( value == null )
@@ -131,6 +146,13 @@ public abstract class JcrHelper
     {
         Property property = getInternalProperty( node, propertyName );
         return property == null ? null : new DateTime( property.getDate() );
+    }
+
+    public static DateMidnight getPropertyDateMidnight( final Node node, final String propertyName )
+        throws RepositoryException
+    {
+        Property property = getInternalProperty( node, propertyName );
+        return property == null ? null : new DateMidnight( property.getDate() );
     }
 
     public static byte[] getPropertyBinary( final Node node, final String propertyName )

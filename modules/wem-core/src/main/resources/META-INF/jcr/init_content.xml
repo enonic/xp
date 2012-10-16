@@ -12,4 +12,6 @@
 
   </node>
 
+  <node name="contents" type="nt:unstructured"/>
+
 </node>

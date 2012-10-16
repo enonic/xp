@@ -127,4 +127,10 @@ public class Content
     }
 
 
+    public static Content create( final ContentPath contentPath )
+    {
+        Content content = new Content();
+        content.setPath( contentPath );
+        return content;
+    }
 }
