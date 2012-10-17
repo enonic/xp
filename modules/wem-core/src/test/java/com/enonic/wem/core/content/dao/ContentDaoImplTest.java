@@ -5,6 +5,7 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -39,6 +40,7 @@ public class ContentDaoImplTest
     }
 
     @Test
+    @Ignore
     public void createContent_one_data_at_root()
         throws Exception
     {
@@ -66,6 +68,7 @@ public class ContentDaoImplTest
     }
 
     @Test
+    @Ignore
     public void createContent_one_data_at_root_and_one_in_a_set()
         throws Exception
     {
