@@ -10,6 +10,8 @@
 
   <context:component-scan base-package="com.enonic.wem.itest"/>
   <context:component-scan base-package="com.enonic.wem.core.jcr"/>
+
+  <context:component-scan base-package="com.enonic.wem.core.account.dao"/>
   <context:component-scan base-package="com.enonic.wem.core.content.dao"/>
 
 </beans>
