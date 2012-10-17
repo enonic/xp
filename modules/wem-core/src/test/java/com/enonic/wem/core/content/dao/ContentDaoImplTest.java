@@ -95,6 +95,7 @@ public class ContentDaoImplTest
     }
 
     @Test
+    @Ignore
     public void findContent()
         throws Exception
     {
