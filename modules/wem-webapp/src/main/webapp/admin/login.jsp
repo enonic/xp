@@ -70,20 +70,36 @@
       width: 100%;
     }
 
-    #login_form .select {
-      border: 0 none;
-      float: left;
-    }
-
-    #login_form .submit {
-      padding: 6px 20px;
-    }
-
-    #login_form #userstore_ctr {
+    #login_form #select_ctr {
       position: absolute;
       width: 200px;
       right: -220px;
       top: 5px;
+    }
+
+    #login_form select.select {
+      border: 0 none;
+      font-weight: bold;
+      margin: 0;
+      z-index: 10;
+      float: left;
+      position: relative;
+    }
+
+      /* dynamically created SPAN, placed below the SELECT */
+    #login_form span.select {
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 0 18px 0 0;
+      background: url(resources/images/select_trigger.png) no-repeat top right;
+      cursor: default;
+      z-index: 1;
+      text-align: left;
+    }
+
+    #login_form .submit {
+      padding: 6px 20px;
     }
 
     #login_form input[type=submit] {
@@ -124,10 +140,11 @@
     <div class="wrapper">
       <input type="text" class="input" value="name">
 
-      <div id="userstore_ctr">
+      <div id="select_ctr">
         <select class="select">
           <option value="1">LDAP</option>
           <option value="1">local</option>
+          <option value="1">Some very long value</option>
         </select>
       </div>
     </div>
@@ -153,6 +170,7 @@
 
   $(document).ready(function () {
     $('#login_form .input, #login_form .select').focus(onFocus).blur(onBlur);
+    transformSelect();
   });
 
   function onFocus(event) {
@@ -161,6 +179,24 @@
 
   function onBlur(event) {
     $(event.target).parents('.row').removeClass('active');
+  }
+
+  function transformSelect() {
+
+    $('select.select').each(function () {
+      var select = $(this);
+      var title = select.attr('title');
+      if ($('option:selected', this).val() != '') {
+        title = $('option:selected', this).text();
+      }
+      select.css({'z-index': 10, 'opacity': 0, '-khtml-appearance': 'none'})
+          .after('<span class="select">: ' + title + '</span>')
+          .change(function () {
+            val = $('option:selected', this).text();
+            $(this).next().text(": " + val);
+          })
+    });
+
   }
 
 </script>
