@@ -1,0 +1,269 @@
+body {
+    margin: 0;
+}
+
+.content {
+    display: inline-block;
+    padding: 5px;
+    width: 100%;
+    background: black; /* for non-css3 browsers */
+
+    filter: progid:DXImageTransform.Microsoft.gradient(gradientType = 1, startColorstr = '#000000', endColorstr = '#363639'); /* for IE */
+    background: -webkit-gradient(linear, left top, right top, from(#000), to(#363639)); /* for webkit browsers */
+    background: -moz-linear-gradient(left, #000, #363639); /* for firefox 3.6+ */
+}
+
+.top {
+    position: relative;
+    margin: 5px 5px 25px;
+    clear: left;
+    height: 25px;
+}
+
+.top > img {
+    float: left;
+    margin-right: 390px;
+}
+
+.top div {
+    display: inline-block;
+}
+
+.top .search {
+    float: left;
+    top: 5px;
+    width: 650px;
+    margin-bottom: 5px;
+}
+
+.search > input {
+    width: inherit;
+    height: 25px;
+    line-height: 100%;
+    border: 1px;
+}
+
+.top .logout {
+    float: right;
+    line-height: 100%;
+    height: inherit;
+    background: black;
+    padding-left: 2px;
+    padding-right: 20px;
+    margin-right: -10px;
+}
+
+.logout img {
+    width: 35px;
+    height: 25px;
+}
+
+.logout span {
+    position: relative;
+    font-weight: bold;
+    color: white;
+    top: -8px;
+}
+
+.menu {
+    display: inline-block;
+    clear: left;
+}
+
+.menu > div {
+    float: left;
+}
+
+.menu > div {
+    display: block;
+    position: relative;
+    float: left;
+    width: 120px;
+    height: 100px;
+    margin: 5px;
+    padding: 5px;
+    border-color: #002c40;
+    text-align: left;
+    vertical-align: bottom;
+    font-weight: bold;
+    color: white;
+    font-size: 16px;
+}
+
+.start-row {
+    clear: left;
+}
+
+.menu > div:hover {
+    /* IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+
+    /* IE 5-7 */
+    filter: alpha(opacity = 50);
+
+    /* Netscape */
+    -moz-opacity: 0.5;
+
+    /* Safari 1.x */
+    -khtml-opacity: 0.5;
+
+    /* Good browsers */
+    opacity: 0.5;
+
+    background-color: grey;
+    cursor: pointer;
+}
+
+.menu > div > img {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    left: 35px;
+    top: 20px;
+}
+
+.menu-span {
+    width: 260px !important;
+}
+
+.menu-span > img {
+    left: 105px !important;
+}
+
+.menu-title {
+    position: absolute;
+    bottom: 0;
+}
+
+.controls-container {
+    position: relative;
+    clear: left;
+    display: block;
+    height: 50px;
+    text-align: center;
+}
+
+.controls {
+    position: relative;
+    top: 50%;
+    height: 24px;
+    margin: -12px auto 0;
+    width: 96px;
+}
+
+.checked {
+    background: url("../images/checked.png");
+    width: 18px;
+    height: 18px;
+    margin: 2px;
+    float: left;
+}
+
+.unchecked {
+    background: url("../images/unchecked.png");
+    width: 18px;
+    height: 18px;
+    margin: 2px;
+    float: left;
+}
+
+.tabs {
+    display: block;
+    float: right;
+}
+
+.tabs > div {
+    float: left;
+    margin-left: 20px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    margin-right: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    color: white;
+}
+
+.content-manager {
+    background-color: #0056D6;
+}
+
+.userstores {
+    background-color: #06419F;
+}
+
+.accounts {
+    background-color: #9929BD
+}
+
+.administrators {
+    background-color: #E32400;
+}
+
+.content-studio {
+    background-color: #AE1D00;
+}
+
+.schedule {
+    background-color: #0251CA;
+}
+
+.cluster {
+    background-color: #060606;
+}
+
+.activity {
+    background-color: #67A13A;
+}
+
+.live-trace {
+    background-color: #060606;
+}
+
+div.live-trace img {
+    position: absolute;
+    bottom: 0;
+    left: 0 !important;
+    width: 270px;
+    height: 90px;
+}
+
+.live-trace > span.menu-title {
+    top: 0;
+}
+
+div.profile img {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 130px;
+    height: 90px;
+}
+
+.profile > span.menu-title {
+    top: 0;
+}
+
+.activity > span.menu-title {
+    top: 0;
+    right: 0;
+    font-size: 14px;
+}
+
+div.activity > div {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 270px;
+    height: 90px;
+}
+
+.activity > div > img {
+    width: 65px;
+    height: 45px;
+    float: left;
+}
+
+div.dashboard, div.dashboard:hover {
+    background: url('../images/dashboard.jpg');
+    background-size: 260px 100px;
+}
