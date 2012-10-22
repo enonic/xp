@@ -138,10 +138,10 @@
   </div>
   <div class="row">
     <div class="wrapper">
-      <input type="text" class="input" value="name">
+      <input name="username" type="text" class="input" value="name" tabindex="2">
 
       <div id="select_ctr">
-        <select class="select">
+        <select name="userstore" class="select" tabindex="1">
           <option value="1">LDAP</option>
           <option value="1">local</option>
           <option value="1">Some very long value</option>
@@ -151,7 +151,7 @@
   </div>
   <div class="row">
     <div class="wrapper">
-      <input type="password" class="input" value="password">
+      <input name="password" type="password" class="input" value="password" tabindex="3">
     </div>
   </div>
   <div class="row">
@@ -171,6 +171,7 @@
   $(document).ready(function () {
     $('#login_form .input, #login_form .select').focus(onFocus).blur(onBlur);
     transformSelect();
+    $('#login_form input[name=username]').focus();
   });
 
   function onFocus(event) {
