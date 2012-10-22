@@ -138,7 +138,7 @@
   </div>
   <div class="row">
     <div class="wrapper">
-      <input name="username" type="text" class="input" value="name" tabindex="2">
+      <input name="username" type="text" class="input" title="name" tabindex="2">
 
       <div id="select_ctr">
         <select name="userstore" class="select" tabindex="1">
@@ -151,7 +151,7 @@
   </div>
   <div class="row">
     <div class="wrapper">
-      <input name="password" type="password" class="input" value="password" tabindex="3">
+      <input name="password" type="password" class="input" title="password" tabindex="3">
     </div>
   </div>
   <div class="row">
@@ -169,8 +169,9 @@
 <script type="text/javascript">
 
   $(document).ready(function () {
-    $('#login_form .input, #login_form .select').focus(onFocus).blur(onBlur);
     transformSelect();
+    transformInput();
+    $('#login_form .input, #login_form .select').focus(onFocus).blur(onBlur);
     $('#login_form input[name=username]').focus();
   });
 
@@ -184,7 +185,7 @@
 
   function transformSelect() {
 
-    $('select.select').each(function () {
+    $('#login_form select.select').each(function () {
       var select = $(this);
       var title = select.attr('title');
       if ($('option:selected', this).val() != '') {
@@ -199,6 +200,37 @@
     });
 
   }
+
+  function transformInput() {
+
+    $('#login_form input[title]').each(function () {
+
+      var $input = jQuery(this),
+          title = $input.attr('title'),
+          $form = jQuery(this.form),
+          $win = jQuery(window),
+          blurClass = 'blur';
+
+      function remove() {
+        if ($input.val() === title && $input.hasClass(blurClass)) {
+          $input.val('').removeClass(blurClass);
+        }
+      }
+
+      if (title) {
+        $input.blur(function () {
+          if (this.value === '') {
+            $input.val(title).addClass(blurClass);
+          }
+        }).focus(remove).blur();
+
+        // clear the pre-defined text when form is submitted
+        $form.submit(remove);
+        $win.unload(remove); // handles Firefox's autocomplete
+      }
+    })
+  }
+
 
 </script>
 
