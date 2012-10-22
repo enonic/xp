@@ -31,7 +31,7 @@ import com.enonic.wem.api.userstore.statistics.UserStoreStatistics;
 import com.enonic.wem.core.jcr.JcrConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
 
-@Component
+@Component("accountDao")
 public final class AccountDaoImpl
     implements AccountDao
 {

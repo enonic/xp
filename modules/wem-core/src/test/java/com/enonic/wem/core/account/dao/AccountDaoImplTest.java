@@ -3,12 +3,7 @@ package com.enonic.wem.core.account.dao;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
-import org.apache.jackrabbit.oak.jcr.RepositoryImpl;
 import org.joda.time.DateTime;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.account.AccountKey;
@@ -26,12 +21,12 @@ import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.UserStoreNames;
 import com.enonic.wem.api.userstore.config.UserStoreConfig;
 import com.enonic.wem.api.userstore.config.UserStoreFieldConfig;
-import com.enonic.wem.core.jcr.loader.JcrInitializer;
-import com.enonic.wem.core.jcr.provider.JcrSessionProviderImpl;
+import com.enonic.wem.itest.AbstractJcrTest;
 
 import static org.junit.Assert.*;
 
 public class AccountDaoImplTest
+    extends AbstractJcrTest
 {
     private static final String userStoreName = "enonic";
 
@@ -39,25 +34,11 @@ public class AccountDaoImplTest
 
     private AccountDao accountDao;
 
-    private Session session;
-
     private UserStore userStore;
 
-
-    @Before
-    public void setup()
+    public void setupDao()
         throws Exception
     {
-        final RepositoryImpl repo = new RepositoryImpl();
-
-        final JcrSessionProviderImpl sessionProvider = new JcrSessionProviderImpl();
-        sessionProvider.setRepository( repo );
-
-        final JcrInitializer initializer = new JcrInitializer( sessionProvider );
-        initializer.initialize();
-
-        session = sessionProvider.loginAdmin();
-
         accountDao = new AccountDaoImpl();
     }
 
@@ -67,12 +48,6 @@ public class AccountDaoImplTest
     {
         createUserstore( userStoreNameAsObject );
         commit();
-    }
-
-    private void commit()
-        throws RepositoryException
-    {
-        session.save();
     }
 
     @Test(expected = IllegalArgumentException.class)
