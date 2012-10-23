@@ -1,0 +1,193 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Enonic WEM Admin - Top Bar</title>
+    <link rel="stylesheet" type="text/css" href="../../admin/resources/lib/ext/resources/css/ext-all.css">
+    <script type="text/javascript" src="../../admin/resources/app/view/XTemplates.js"></script>
+    <script type="text/javascript" src="../../admin/resources/lib/ext/ext-all-debug.js"></script>
+    <style type="text/css">
+        .x-body {
+            font: 16px Arial, sans-serif;
+        }
+
+        .admin-topbar-panel {
+            background: #000;
+            color: #FFF;
+            padding: 6px;
+        }
+
+        .admin-topbar-panel .icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 6px;
+        }
+
+        .admin-topbar-panel .x-toolbar-text,
+        .admin-topbar-panel .x-btn-default-toolbar-small .x-btn-inner {
+            color: #FFF;
+            font-size: 16px;
+        }
+
+        .admin-topbar-panel .x-btn-default-toolbar-small {
+            -moz-border-radius: 0;
+            -webkit-border-radius: 0;
+            -o-border-radius: 0;
+            -ms-border-radius: 0;
+            -khtml-border-radius: 0;
+            border-radius: 0;
+            padding: 6px 16px;
+            border: 0 none;
+            background-color: transparent;
+        }
+
+        .admin-topbar-panel .x-btn-default-toolbar-small.white {
+            background: #444;
+            padding: 6px;
+        }
+
+        .admin-topbar-panel .x-btn-over.white {
+            background: #666;
+        }
+
+        .admin-topbar-panel .x-btn-arrow {
+            background-image: url("../../admin/resources/images/select_trigger.png");
+        }
+
+        .admin-topbar-panel .x-btn-arrow-right {
+            padding-right: 20px;
+        }
+
+        .admin-topbar-panel .x-btn-default-toolbar-small.red {
+            background: #CC3300;
+        }
+
+        .admin-topbar-panel .x-btn-over.red {
+            background: #ee5522;
+        }
+
+        .admin-topbar-panel .x-btn-default-toolbar-small.blue {
+            background: #0066cc;
+        }
+
+        .admin-topbar-panel .x-btn-over.blue {
+            background: #2288ee;
+        }
+
+        .admin-topbar-menu {
+            background: #FFF !important;
+            padding: 10px;
+            border: 0 none;
+        }
+
+        .admin-topbar-menu .title {
+            border-bottom: 1px solid #ccc;
+            font-size: 11px;
+            color: #0066cc;
+            text-align: center;
+            overflow: visible;
+            margin-bottom: 6px;
+        }
+
+        .admin-topbar-menu .title span {
+            position: relative;
+            bottom: -3px;
+            padding: 0 4px;
+            background: #FFF;
+        }
+
+        .admin-topbar-menu .info {
+            text-align: center;
+            font-size: 16px;
+            color: #aaa;
+            padding: 10px 0;
+        }
+
+        .admin-topbar-menu .tools {
+            margin-top: 6px;
+            font-size: 11px;
+        }
+
+        .admin-topbar-menu .tools a {
+            color: #0066cc;
+        }
+
+        .admin-topbar-menu .tools a:visited {
+            color: #0066cc;
+        }
+
+        .admin-topbar-menu .tools .close {
+            float: left;
+        }
+
+        .admin-topbar-menu .tools .close-all {
+            float: right;
+        }
+
+        .icon-data-white {
+            width: 24px;
+            height: 24px;
+            background: url("images/data_white.png") center no-repeat;
+        }
+
+        .icon-data-blue {
+            width: 24px;
+            height: 24px;
+            background: url("images/data_blue.png") center no-repeat;
+        }
+
+        .admin-topbar-menu-item {
+            padding: 6px;
+            font-size: 13px;
+        }
+
+        .admin-topbar-menu-item.active {
+            background: #EEE;
+        }
+
+        .admin-topbar-menu-item .x-form-cb-wrap {
+            padding: 0;
+        }
+
+        .admin-topbar-menu-item em {
+            position: relative;
+            top: -2px;
+            font-size: 11px;
+            font-style: normal;
+        }
+
+    </style>
+</head>
+<body>
+</body>
+<script type="text/javascript">
+
+    Ext.Loader.setConfig({
+        enabled: true,
+        paths: {
+            'Admin': 'app'
+        },
+        disableCaching: false
+    });
+
+    Ext.application({
+        name: 'App',
+        appFolder: 'app',
+        requires: ['Admin.view.TopBarPanel'],
+
+        launch: function () {
+            Ext.create('Ext.container.Viewport', {
+                layout: 'border',
+                padding: 0,
+                items: [
+                    {
+                        region: 'north',
+                        xtype: 'topBarPanel'
+                    }
+                ]
+            });
+        }
+    });
+
+</script>
+
+</html>

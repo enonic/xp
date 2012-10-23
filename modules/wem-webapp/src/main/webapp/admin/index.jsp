@@ -39,7 +39,7 @@
   <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/ext-all-scoped.css">
   <script>
     Ext = {
-      buildSettings:{
+      buildSettings: {
         'scopeResetCSS': true
       }
     };
@@ -126,6 +126,12 @@
   <li>
     <a href="../dev/html-templates/wizard-navigation2.html">Wizard Navigation (rev 2)</a>
   </li>
+  <li>
+    <a href="../dev/html-templates/tilebased-start-menu.html">Tile Based Start Menu</a>
+  </li>
+  <li>
+    <a href="../dev/examples/topbar.html">Top Bar</a>
+  </li>
 </ul>
 
 <hr/>
@@ -204,7 +210,7 @@
                 window.location = link.get('url');
               }
             },
-            render: function(combo) {
+            render: function (combo) {
               combo.focus();
             }
           }
