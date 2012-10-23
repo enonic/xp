@@ -21,6 +21,7 @@ public class ContentData
 
     public void setDataSet( final DataSet dataSet )
     {
+        Preconditions.checkArgument( dataSet.getPath().elementCount() == 0, "Expected dataSet without path: " + dataSet.getPath() );
         this.dataSet = dataSet;
     }
 
