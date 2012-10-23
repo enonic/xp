@@ -2,17 +2,20 @@ package com.enonic.wem.api.content.type.formitem.comptype;
 
 
 import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.datatype.DataTypes;
+import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
+import com.enonic.wem.api.content.type.formitem.InvalidValueException;
+
+import static com.enonic.wem.api.content.datatype.DataTool.checkDataType;
 
 public class Address
     extends BaseComponentType
 {
     public Address()
     {
-        super( "address", DataTypes.DATA_SET, TypedPath.newTypedPath( "street", DataTypes.TEXT ),
-               TypedPath.newTypedPath( "postalCode", DataTypes.TEXT ), TypedPath.newTypedPath( "postalPlace", DataTypes.TEXT ),
-               TypedPath.newTypedPath( "region", DataTypes.TEXT ), TypedPath.newTypedPath( "country", DataTypes.TEXT ) );
+        super( "address" );
     }
 
     public boolean requiresConfig()
@@ -23,6 +26,28 @@ public class Address
     public Class requiredConfigClass()
     {
         return null;
+    }
+
+    @Override
+    public void checkValidity( final Data data )
+        throws InvalidValueTypeException, InvalidValueException
+    {
+        checkDataType( data, "street", DataTypes.TEXT );
+        checkDataType( data, "postalCode", DataTypes.TEXT );
+        checkDataType( data, "postalPlace", DataTypes.TEXT );
+        checkDataType( data, "region", DataTypes.TEXT );
+        checkDataType( data, "country", DataTypes.TEXT );
+    }
+
+    @Override
+    public void ensureType( final Data data )
+    {
+        DataSet datSet = data.getDataSet();
+        DataTypes.TEXT.ensureType( datSet.getData( "street" ) );
+        DataTypes.TEXT.ensureType( datSet.getData( "postalCode" ) );
+        DataTypes.TEXT.ensureType( datSet.getData( "postalPlace" ) );
+        DataTypes.TEXT.ensureType( datSet.getData( "region" ) );
+        DataTypes.TEXT.ensureType( datSet.getData( "country" ) );
     }
 
     @Override

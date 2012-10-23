@@ -12,7 +12,7 @@ public class Blob
     }
 
     @Override
-    public Object ensureType( final Object value )
+    public Object ensureTypeOfValue( final Object value )
     {
         if ( hasCorrectType( value ) )
         {
@@ -24,7 +24,7 @@ public class Blob
         }
         else
         {
-            throw new InconvertibleException( value, this );
+            throw new InconvertibleValueException( value, this );
         }
     }
 

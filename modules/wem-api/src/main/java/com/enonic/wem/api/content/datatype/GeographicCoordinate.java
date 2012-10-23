@@ -8,7 +8,6 @@ import com.enonic.wem.api.content.type.formitem.comptype.TypedPath;
 public class GeographicCoordinate
     extends BaseDataType
 {
-
     private static final String LATITUDE = "latitude";
 
     private static final String LONGITUDE = "longitude";
@@ -31,25 +30,7 @@ public class GeographicCoordinate
     {
         super.checkValidity( data );
 
-        com.enonic.wem.api.content.data.DataSet dataSet = data.getDataSet();
-        Data latitude = dataSet.getData( LATITUDE );
-        if ( latitude != null )
-        {
-            Double latitudeAsDouble = (Double) latitude.getValue();
-            if ( latitudeAsDouble < -90 || latitudeAsDouble > 90 )
-            {
-                throw new InvalidValueException( latitude, "A latitude is ranging from -90 to +90: " + latitudeAsDouble );
-            }
-        }
-
-        Data longitude = dataSet.getData( LONGITUDE );
-        if ( longitude != null )
-        {
-            Double longitudeAsDouble = (Double) longitude.getValue();
-            if ( longitudeAsDouble < -180 || longitudeAsDouble > 180 )
-            {
-                throw new InvalidValueException( longitude, "A longitude is ranging from -180 to +180: " + longitudeAsDouble );
-            }
-        }
+        DataTool.newDataChecker().pathRequired( LATITUDE ).range( -90, 90 ).type( DataTypes.DECIMAL_NUMBER ).check( data );
+        DataTool.newDataChecker().pathRequired( LONGITUDE ).range( -180, 180 ).type( DataTypes.DECIMAL_NUMBER ).check( data );
     }
 }

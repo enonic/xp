@@ -21,13 +21,11 @@ public final class DataTypes
 
     public static final Date DATE = new Date( 5 );
 
-    public static final Computed COMPUTED = new Computed( 6 );
+    public static final WholeNumber WHOLE_NUMBER = new WholeNumber( 6 );
 
-    public static final WholeNumber WHOLE_NUMBER = new WholeNumber( 7 );
+    public static final DecimalNumber DECIMAL_NUMBER = new DecimalNumber( 7 );
 
-    public static final DecimalNumber DECIMAL_NUMBER = new DecimalNumber( 8 );
-
-    public static final GeographicCoordinate GEOGRAPHIC_COORDINATE = new GeographicCoordinate( 9 );
+    public static final GeographicCoordinate GEOGRAPHIC_COORDINATE = new GeographicCoordinate( 8 );
 
     private static final Map<Integer, DataType> typesByKey = new HashMap<Integer, DataType>();
 
@@ -41,7 +39,6 @@ public final class DataTypes
         register( HTML_PART );
         register( XML );
         register( DATE );
-        register( COMPUTED );
         register( WHOLE_NUMBER );
         register( DECIMAL_NUMBER );
         register( GEOGRAPHIC_COORDINATE );

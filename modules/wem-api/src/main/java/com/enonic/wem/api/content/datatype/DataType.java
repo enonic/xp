@@ -15,11 +15,9 @@ public interface DataType
 
     String getName();
 
-    JavaType getJavaType();
+    JavaType.BaseType getJavaType();
 
     String getIndexableString( Object value );
-
-    boolean isConvertibleTo( JavaType date );
 
     void checkValidity( Data data )
         throws InvalidValueException, InvalidValueTypeException;

@@ -8,6 +8,7 @@ import com.enonic.wem.api.content.type.formitem.FormItem;
 import com.enonic.wem.api.content.type.formitem.FormItemPath;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
 import com.enonic.wem.api.content.type.formitem.FormItems;
+import com.enonic.wem.api.content.type.formitem.HierarchicalFormItem;
 import com.enonic.wem.api.content.type.formitem.TemplateFetcher;
 import com.enonic.wem.api.module.Module;
 
@@ -135,12 +136,12 @@ public class ContentType
         return component;
     }
 
-    public FormItem getFormItem( final String path )
+    public HierarchicalFormItem getFormItem( final String path )
     {
         return formItems.getHierarchicalFormItem( new FormItemPath( path ) );
     }
 
-    public FormItem getFormItem( final FormItemPath path )
+    public HierarchicalFormItem getFormItem( final FormItemPath path )
     {
         return formItems.getHierarchicalFormItem( path );
     }

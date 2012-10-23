@@ -32,7 +32,8 @@ public class GeographicCoordinateTest
     {
         // setup
         Content content = new Content();
-        content.setData( "myGeographicCoordinate.latitude", 91.0 );
+        content.setData( "myGeographicCoordinate.latitude", 90.0 );
+        content.setData( "myGeographicCoordinate.longitude", 180.2 );
         GeographicCoordinate geographicCoordinate = DataTypes.GEOGRAPHIC_COORDINATE;
         Data data = content.getData( "myGeographicCoordinate" );
 
@@ -40,14 +41,16 @@ public class GeographicCoordinateTest
         try
         {
             geographicCoordinate.checkValidity( data );
-            fail( "Expected InvalidValueException" );
+            fail( "Expected Exception" );
         }
         catch ( Exception e )
         {
-            assertTrue( "Expected InvalidValueException", e instanceof InvalidValueException );
+            assertTrue( "Expected InvalidValueException, got: " + e.getClass().getSimpleName(), e instanceof InvalidValueException );
             assertEquals(
-                "Invalid value in [Data{path=myGeographicCoordinate.latitude, type=DecimalNumber, value=91.0}]. A latitude is ranging from -90 to +90: 91.0: 91.0",
+                "Invalid value in [Data{path=myGeographicCoordinate.longitude, type=DecimalNumber, value=180.2}]: Value not within range from -180 to 180: 180.2",
                 e.getMessage() );
         }
     }
+
+
 }

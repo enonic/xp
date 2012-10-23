@@ -1,102 +1,47 @@
 package com.enonic.wem.api.content.datatype;
 
 
-import org.joda.time.DateMidnight;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import com.google.common.base.Objects;
+import org.joda.time.DateMidnight;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
 
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.content.data.Data;
 
 
-public enum JavaType
+public final class JavaType
 {
-    STRING( String.class ),
-    BLOB( BlobKey[].class ),
-    LONG( Long.class ),
-    DOUBLE( Double.class ),
-    DATE( DateMidnight.class ),
-    DATA_SET( com.enonic.wem.api.content.data.DataSet.class );
+    public static final String STRING = new String();
 
-    private Class value;
+    public static final Double DOUBLE = new Double();
 
-    private JavaType( final Class value )
+    public static final Long LONG = new Long();
+
+    public static final Date DATE = new Date();
+
+    public static final DataSet BLOB = new DataSet();
+
+    public static final DataSet DATA_SET = new DataSet();
+
+    public static final Map<java.lang.Class, BaseType> INSTANCES = new LinkedHashMap<Class, BaseType>();
+
+    static
     {
-        this.value = value;
+        INSTANCES.put( DATA_SET.getType(), DATA_SET );
+        INSTANCES.put( BLOB.getType(), BLOB );
+        INSTANCES.put( STRING.getType(), STRING );
+        INSTANCES.put( DOUBLE.getType(), DOUBLE );
+        INSTANCES.put( LONG.getType(), LONG );
+        INSTANCES.put( DATE.getType(), DATE );
     }
 
-    public Class getValue()
+    public static BaseType resolveType( Object o )
     {
-        return value;
-    }
-
-    public boolean isInstance( final Object value )
-    {
-        return this.value.isInstance( value );
-    }
-
-    public boolean isConvertibleTo( final JavaType type )
-    {
-        if ( this == STRING )
+        for ( BaseType type : INSTANCES.values() )
         {
-            return type == STRING || type == LONG || type == DOUBLE || type == DATE;
-        }
-        else if ( this == BLOB )
-        {
-            return type == BLOB;
-        }
-        else if ( this == LONG )
-        {
-            return type == LONG || type == STRING || type == DOUBLE || type == DATE;
-        }
-        else if ( this == DOUBLE )
-        {
-            return type == DOUBLE || type == STRING || type == LONG;
-        }
-        else if ( this == DATE )
-        {
-            return type == DATE || type == STRING || type == LONG;
-        }
-        return false;
-    }
-
-    public String toString( Data data )
-    {
-        final BaseDataType dataType = (BaseDataType) data.getDataType();
-        if ( dataType.isConvertibleTo( STRING ) )
-        {
-            return dataType.convertToString( data.getValue() );
-        }
-
-        return null;
-    }
-
-    public DateMidnight toDate( final Data data )
-    {
-        final BaseDataType dataType = (BaseDataType) data.getDataType();
-        if ( dataType.isConvertibleTo( DATE ) )
-        {
-            dataType.convertToString( data.getValue() );
-        }
-        return null;
-    }
-
-
-    public Double toDouble( final Data data )
-    {
-        final BaseDataType dataType = (BaseDataType) data.getDataType();
-        if ( dataType.isConvertibleTo( DOUBLE ) )
-        {
-            return dataType.convertToDouble( data.getValue() );
-        }
-        return null;
-    }
-
-    public static JavaType resolveType( Object o )
-    {
-        for ( JavaType type : values() )
-        {
-            if ( type.getValue().isInstance( o ) )
+            if ( type.getType().isInstance( o ) )
             {
                 return type;
             }
@@ -104,12 +49,188 @@ public enum JavaType
         return null;
     }
 
-    @Override
-    public String toString()
+    static class BaseType
     {
-        final Objects.ToStringHelper s = Objects.toStringHelper( this );
-        s.add( "value", value );
-        return s.toString();
+        Class type;
+
+        BaseType( final Class type )
+        {
+            this.type = type;
+        }
+
+        public Class getType()
+        {
+            return type;
+        }
+
+        public boolean isInstance( final Object value )
+        {
+            return type.isInstance( value );
+        }
+
+        @Override
+        public java.lang.String toString()
+        {
+            return type.getSimpleName();
+        }
     }
 
+    public final static class String
+        extends BaseType
+    {
+        String()
+        {
+            super( java.lang.String.class );
+        }
+
+        public java.lang.String convertFrom( Object value )
+        {
+            if ( value instanceof java.lang.String )
+            {
+                return (java.lang.String) value;
+            }
+            else if ( value instanceof java.lang.Long )
+            {
+                return value.toString();
+            }
+            else if ( value instanceof java.lang.Double )
+            {
+                return value.toString();
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+
+    public final static class Long
+        extends BaseType
+    {
+        Long()
+        {
+            super( java.lang.Long.class );
+        }
+
+        public java.lang.Long convertFrom( Object value )
+        {
+            if ( value instanceof java.lang.Long )
+            {
+                return (java.lang.Long) value;
+            }
+            else if ( value instanceof java.lang.String )
+            {
+                return new java.lang.Long( (java.lang.String) value );
+            }
+            else if ( value instanceof java.lang.Double )
+            {
+                return ( (java.lang.Double) value ).longValue();
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+
+    public final static class Double
+        extends BaseType
+    {
+        Double()
+        {
+            super( java.lang.Double.class );
+        }
+
+        public java.lang.Double convertFrom( Object value )
+        {
+            if ( value instanceof java.lang.Double )
+            {
+                return (java.lang.Double) value;
+            }
+            else if ( value instanceof java.lang.String )
+            {
+                return new java.lang.Double( (java.lang.String) value );
+            }
+            else if ( value instanceof java.lang.Long )
+            {
+                return ( (java.lang.Long) value ).doubleValue();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+    }
+
+    public final static class Date
+        extends BaseType
+    {
+        private final static DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder().
+            appendYear( 4, 4 ).appendLiteral( "-" ).appendMonthOfYear( 2 ).appendLiteral( "-" ).appendDayOfMonth( 2 ).toFormatter();
+
+        Date()
+        {
+            super( DateMidnight.class );
+        }
+
+        public DateMidnight convertFrom( Object value )
+        {
+            if ( value instanceof java.lang.String )
+            {
+                return FORMATTER.parseDateTime( (java.lang.String) value ).toDateMidnight();
+            }
+            else if ( value instanceof java.lang.Long )
+            {
+                return new DateMidnight( value );
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+
+    public final static class Blob
+        extends BaseType
+    {
+        Blob()
+        {
+            super( BlobKey.class );
+        }
+
+        public BlobKey convertFrom( Object value )
+        {
+            if ( value instanceof BlobKey )
+            {
+                return (BlobKey) value;
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+
+
+    public final static class DataSet
+        extends BaseType
+    {
+        DataSet()
+        {
+            super( com.enonic.wem.api.content.data.DataSet.class );
+        }
+
+        public com.enonic.wem.api.content.data.DataSet convertFrom( Object value )
+        {
+            if ( value instanceof com.enonic.wem.api.content.data.DataSet )
+            {
+                return (com.enonic.wem.api.content.data.DataSet) value;
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
 }

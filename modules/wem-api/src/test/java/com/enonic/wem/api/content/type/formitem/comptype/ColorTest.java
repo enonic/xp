@@ -49,8 +49,11 @@ public class ColorTest
         }
         catch ( Exception e )
         {
+            e.printStackTrace();
             assertTrue( e instanceof InvalidDataException );
-            assertEquals( "Invalid data [null]: Not a Color without red", e.getMessage() );
+            assertEquals(
+                "Invalid data [Data{path=myColor, type=DataSet, value=myColor: green, blue}]: data required to have sub data at path: red",
+                e.getMessage() );
         }
     }
 
@@ -72,8 +75,9 @@ public class ColorTest
         catch ( Exception e )
         {
             assertTrue( e instanceof InvalidValueException );
-            assertEquals( "Invalid value in [Data{path=myColor.red, type=WholeNumber, value=256}]. red must be between 0 and 255: 256",
-                          e.getMessage() );
+            assertEquals(
+                "Invalid value in [Data{path=myColor.red, type=WholeNumber, value=256}]: Value not within range from 0 to 255: 256",
+                e.getMessage() );
         }
     }
 }

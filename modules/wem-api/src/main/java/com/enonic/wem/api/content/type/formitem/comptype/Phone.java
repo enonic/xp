@@ -5,14 +5,16 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.datatype.DataTypes;
+import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
+import com.enonic.wem.api.content.type.formitem.InvalidValueException;
 
 public class Phone
     extends BaseComponentType
 {
     public Phone()
     {
-        super( "phone", DataTypes.TEXT );
+        super( "phone" );
     }
 
     public boolean requiresConfig()
@@ -23,6 +25,19 @@ public class Phone
     public Class requiredConfigClass()
     {
         return null;
+    }
+
+    @Override
+    public void checkValidity( final Data data )
+        throws InvalidValueTypeException, InvalidValueException
+    {
+        DataTypes.TEXT.checkValidity( data );
+    }
+
+    @Override
+    public void ensureType( final Data data )
+    {
+        DataTypes.TEXT.ensureType( data );
     }
 
     @Override

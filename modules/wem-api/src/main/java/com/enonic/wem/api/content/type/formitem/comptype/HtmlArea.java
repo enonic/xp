@@ -5,14 +5,16 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.datatype.DataTypes;
+import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
+import com.enonic.wem.api.content.type.formitem.InvalidValueException;
 
 public class HtmlArea
     extends BaseComponentType
 {
     public HtmlArea()
     {
-        super( "htmlArea", DataTypes.HTML_PART );
+        super( "htmlArea" );
     }
 
     @Override
@@ -25,6 +27,19 @@ public class HtmlArea
     public Class requiredConfigClass()
     {
         return HtmlAreaConfig.class;
+    }
+
+    @Override
+    public void checkValidity( final Data data )
+        throws InvalidValueTypeException, InvalidValueException
+    {
+        DataTypes.TEXT.checkValidity( data );
+    }
+
+    @Override
+    public void ensureType( final Data data )
+    {
+        DataTypes.TEXT.ensureType( data );
     }
 
     @Override

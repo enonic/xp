@@ -16,7 +16,7 @@ public class WholeNumber
     }
 
     @Override
-    public Object ensureType( final Object value )
+    public Object ensureTypeOfValue( final Object value )
     {
         return toWholeNumber( value );
     }
@@ -35,7 +35,7 @@ public class WholeNumber
             }
             catch ( NumberFormatException e )
             {
-                throw new InconvertibleException( value, this, e );
+                throw new InconvertibleValueException( value, this, e );
             }
         }
         else if ( value instanceof Integer )
@@ -52,7 +52,7 @@ public class WholeNumber
         }
         else
         {
-            throw new InconvertibleException( value, this );
+            throw new InconvertibleValueException( value, this );
         }
     }
 }

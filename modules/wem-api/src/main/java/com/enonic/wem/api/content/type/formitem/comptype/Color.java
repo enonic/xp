@@ -7,16 +7,16 @@ import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
-import com.enonic.wem.api.content.type.formitem.InvalidDataException;
 import com.enonic.wem.api.content.type.formitem.InvalidValueException;
+
+import static com.enonic.wem.api.content.datatype.DataTool.newDataChecker;
 
 public class Color
     extends BaseComponentType
 {
     public Color()
     {
-        super( "color", DataTypes.DATA_SET, TypedPath.newTypedPath( "red", DataTypes.WHOLE_NUMBER ),
-               TypedPath.newTypedPath( "green", DataTypes.WHOLE_NUMBER ), TypedPath.newTypedPath( "blue", DataTypes.WHOLE_NUMBER ) );
+        super( "color" );
     }
 
     public boolean requiresConfig()
@@ -41,33 +41,20 @@ public class Color
     }
 
     @Override
+    public void ensureType( final Data data )
+    {
+        final DataSet dataSet = data.getDataSet();
+        DataTypes.WHOLE_NUMBER.ensureType( dataSet.getData( "red" ) );
+        DataTypes.WHOLE_NUMBER.ensureType( dataSet.getData( "green" ) );
+        DataTypes.WHOLE_NUMBER.ensureType( dataSet.getData( "blue" ) );
+    }
+
+    @Override
     public void checkValidity( final Data data )
         throws InvalidValueTypeException, InvalidValueException
     {
-        super.checkValidity( data );
-
-        DataSet dataSet = data.getDataSet();
-        Data red = dataSet.getData( "red" );
-        Data green = dataSet.getData( "green" );
-        Data blue = dataSet.getData( "blue" );
-
-        verify( red, "red" );
-        verify( green, "green" );
-        verify( blue, "blue" );
-    }
-
-    private void verify( final Data data, final String path )
-        throws InvalidValueException
-    {
-        if ( data == null || data.getValue() == null )
-        {
-            throw new InvalidDataException( data, "Not a Color without " + path );
-        }
-        final Long value = (Long) data.getValue();
-        if ( value < 0 || value > 255 )
-        {
-            final String message = path + " must be between 0 and 255";
-            throw new InvalidValueException( data, message );
-        }
+        newDataChecker().pathRequired( "red" ).type( DataTypes.WHOLE_NUMBER ).range( 0, 255 ).check( data );
+        newDataChecker().pathRequired( "green" ).type( DataTypes.WHOLE_NUMBER ).range( 0, 255 ).check( data );
+        newDataChecker().pathRequired( "blue" ).type( DataTypes.WHOLE_NUMBER ).range( 0, 255 ).check( data );
     }
 }

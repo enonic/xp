@@ -16,25 +16,7 @@ public class Text
     }
 
     @Override
-    public boolean isConvertibleTo( final JavaType type )
-    {
-        return type == JavaType.STRING;
-    }
-
-    @Override
-    public String convertToString( final Object value )
-    {
-        return (String) value;
-    }
-
-    @Override
-    public Double convertToDouble( final Object value )
-    {
-        return new Double( (String) value );
-    }
-
-    @Override
-    public Object ensureType( final Object value )
+    public Object ensureTypeOfValue( final Object value )
     {
         return toString( value );
     }
@@ -47,7 +29,7 @@ public class Text
         }
         else
         {
-            throw new InconvertibleException( value, this );
+            throw new InconvertibleValueException( value, this );
         }
     }
 }

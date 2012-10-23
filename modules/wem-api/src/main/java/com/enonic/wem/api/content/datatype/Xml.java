@@ -16,7 +16,7 @@ public class Xml
     }
 
     @Override
-    public Object ensureType( final Object value )
+    public Object ensureTypeOfValue( final Object value )
     {
         return toXml( value );
     }
@@ -29,7 +29,7 @@ public class Xml
         }
         else
         {
-            throw new InconvertibleException( value, this );
+            throw new InconvertibleValueException( value, this );
         }
     }
 }

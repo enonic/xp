@@ -4,14 +4,16 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.datatype.DataTypes;
+import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
+import com.enonic.wem.api.content.type.formitem.InvalidValueException;
 
 public class DecimalNumber
     extends BaseComponentType
 {
     public DecimalNumber()
     {
-        super( "decimalNumber", DataTypes.DECIMAL_NUMBER );
+        super( "decimalNumber" );
     }
 
     public boolean requiresConfig()
@@ -22,6 +24,19 @@ public class DecimalNumber
     public Class requiredConfigClass()
     {
         return null;
+    }
+
+    @Override
+    public void checkValidity( final Data data )
+        throws InvalidValueTypeException, InvalidValueException
+    {
+        DataTypes.DECIMAL_NUMBER.checkValidity( data );
+    }
+
+    @Override
+    public void ensureType( final Data data )
+    {
+        DataTypes.DECIMAL_NUMBER.ensureType( data );
     }
 
     @Override

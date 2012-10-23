@@ -23,20 +23,7 @@ public class Date
     }
 
     @Override
-    public String convertToString( final Object value )
-    {
-        DateMidnight date = (DateMidnight) value;
-        return FORMATTER.print( date );
-    }
-
-    @Override
-    public boolean isConvertibleTo( final JavaType type )
-    {
-        return type == JavaType.DATE || type == JavaType.STRING;
-    }
-
-    @Override
-    public Object ensureType( final Object value )
+    public Object ensureTypeOfValue( final Object value )
     {
         return toDate( value );
     }
@@ -55,7 +42,7 @@ public class Date
             }
             catch ( Exception e )
             {
-                throw new InconvertibleException( value, this, e );
+                throw new InconvertibleValueException( value, this, e );
             }
         }
         else if ( value instanceof Long )
@@ -64,7 +51,7 @@ public class Date
         }
         else
         {
-            throw new InconvertibleException( value, this );
+            throw new InconvertibleValueException( value, this );
         }
     }
 }

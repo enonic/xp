@@ -20,6 +20,8 @@ public final class ComponentTypes
 
     public static final BaseComponentType HTML_AREA = new HtmlArea();
 
+    public static final BaseComponentType MONEY = new Money();
+
     public static final BaseComponentType PHONE = new Phone();
 
     public static final BaseComponentType SINGLE_SELECTOR = new SingleSelector();
@@ -29,8 +31,6 @@ public final class ComponentTypes
     public static final BaseComponentType TEXT_LINE = new TextLine();
 
     public static final BaseComponentType TEXT_AREA = new TextArea();
-
-    public static final BaseComponentType VIRTUAL = new Virtual();
 
     public static final BaseComponentType WHOLE_NUMBER = new WholeNumber();
 
@@ -45,12 +45,12 @@ public final class ComponentTypes
         register( COLOR );
         register( DATE );
         register( GEO_LOCATION );
+        register( MONEY );
         register( PHONE );
         register( SINGLE_SELECTOR );
         register( TAGS );
         register( TEXT_LINE );
         register( TEXT_AREA );
-        register( VIRTUAL );
         register( XML );
         register( WHOLE_NUMBER );
         register( DECIMAL_NUMBER );

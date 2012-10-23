@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.datatype.DataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
+import com.enonic.wem.api.content.datatype.InconvertibleValueException;
 import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.datatype.JavaType;
 import com.enonic.wem.api.content.type.formitem.InvalidDataException;
@@ -45,9 +46,9 @@ public class Data
         return path;
     }
 
-    public Object getValue()
+    public DataType getDataType()
     {
-        return value;
+        return type;
     }
 
     public void setValue( Object value )
@@ -60,24 +61,69 @@ public class Data
         return this.value != null;
     }
 
-    public String getString()
+    public boolean hasDataSetAsValue()
     {
-        if ( type.isConvertibleTo( JavaType.STRING ) )
+        return type.equals( DataTypes.DATA_SET );
+    }
+
+    public Object getValue()
+    {
+        return value;
+    }
+
+    public String getString()
+        throws InconvertibleValueException
+    {
+        final String converted = JavaType.STRING.convertFrom( value );
+        if ( value != null && converted == null )
         {
-            return type.convertToString( value );
+            throw new InconvertibleValueException( value, JavaType.STRING );
         }
-        return null;
+        return converted;
+    }
+
+    public Long getLong()
+        throws InconvertibleValueException
+    {
+        final Long converted = JavaType.LONG.convertFrom( value );
+        if ( value != null && converted == null )
+        {
+            throw new InconvertibleValueException( value, JavaType.LONG );
+        }
+        return converted;
+    }
+
+    public Double getDouble()
+        throws InconvertibleValueException
+    {
+        final Double converted = JavaType.DOUBLE.convertFrom( value );
+        if ( value != null && converted == null )
+        {
+            throw new InconvertibleValueException( value, JavaType.DOUBLE );
+        }
+        return converted;
     }
 
     public DateMidnight getDate()
+        throws InconvertibleValueException
     {
-        //return DataTypes.DATE.toDate( this );
-        return JavaType.DATE.toDate( this );
+        final DateMidnight converted = JavaType.DATE.convertFrom( value );
+        if ( value != null && converted == null )
+        {
+            throw new InconvertibleValueException( value, JavaType.DATE );
+        }
+        return converted;
     }
 
-    public DataType getDataType()
+    public DataSet getDataSet()
+        throws InconvertibleValueException
     {
-        return type;
+        final DataSet converted = JavaType.DATA_SET.convertFrom( value );
+        if ( value != null && converted == null )
+        {
+            throw new InconvertibleValueException( value, JavaType.DATA_SET );
+        }
+        return converted;
     }
 
     public void checkDataTypeValidity()
@@ -110,16 +156,6 @@ public class Data
 
         final DataSet dataSet = (DataSet) getValue();
         return dataSet.getDataSet( path );
-    }
-
-    public boolean hasDataSetAsValue()
-    {
-        return type.equals( DataTypes.DATA_SET );
-    }
-
-    public DataSet getDataSet()
-    {
-        return (DataSet) value;
     }
 
     @Override

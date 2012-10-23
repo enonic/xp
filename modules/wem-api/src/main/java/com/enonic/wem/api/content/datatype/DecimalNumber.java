@@ -15,19 +15,7 @@ public class DecimalNumber
     }
 
     @Override
-    public Object ensureType( final Object value )
-    {
-        return toDecimalNumber( value );
-    }
-
-    @Override
-    public boolean isConvertibleTo( final JavaType type )
-    {
-        return type == JavaType.DOUBLE || type == JavaType.STRING;
-    }
-
-    @Override
-    public Double convertToDouble( final Object value )
+    public Object ensureTypeOfValue( final Object value )
     {
         return toDecimalNumber( value );
     }
@@ -46,7 +34,7 @@ public class DecimalNumber
             }
             catch ( NumberFormatException e )
             {
-                throw new InconvertibleException( value, this, e );
+                throw new InconvertibleValueException( value, this, e );
             }
         }
         else if ( value instanceof Integer )
@@ -63,7 +51,7 @@ public class DecimalNumber
         }
         else
         {
-            throw new InconvertibleException( value, this );
+            throw new InconvertibleValueException( value, this );
         }
     }
 }

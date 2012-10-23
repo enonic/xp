@@ -19,14 +19,14 @@ public abstract class BaseDataType
 
     private final String name;
 
-    private JavaType javaType;
+    private JavaType.BaseType javaType;
 
     /**
      * Only used when javaType is DataSet.
      */
     private Map<String, TypedPath> typedPaths;
 
-    public BaseDataType( int key, JavaType javaType, final TypedPath... typedPaths )
+    public BaseDataType( int key, JavaType.BaseType javaType, final TypedPath... typedPaths )
     {
         this.key = key;
         this.name = this.getClass().getSimpleName();
@@ -62,7 +62,7 @@ public abstract class BaseDataType
     }
 
     @Override
-    public JavaType getJavaType()
+    public JavaType.BaseType getJavaType()
     {
         return this.javaType;
     }
@@ -72,23 +72,6 @@ public abstract class BaseDataType
     {
         throw new RuntimeException( "Not implemented method getIndexableString for " + this );
     }
-
-    @Override
-    public boolean isConvertibleTo( final JavaType type )
-    {
-        return javaType.isConvertibleTo( type );
-    }
-
-    public String convertToString( final Object value )
-    {
-        throw new RuntimeException( "Not implemented method convertToString for " + this );
-    }
-
-    public Double convertToDouble( final Object value )
-    {
-        throw new RuntimeException( "Not implemented method convertToString for " + this );
-    }
-
 
     /**
      * Checks by default if given data's value is of correct Java class.
@@ -105,8 +88,13 @@ public abstract class BaseDataType
     }
 
     public final void ensureType( final Data data )
-        throws InconvertibleException
+        throws InconvertibleValueException
     {
+        if ( data == null )
+        {
+            return;
+        }
+
         if ( data.getValue() != null )
         {
             Object value = data.getValue();
@@ -124,14 +112,13 @@ public abstract class BaseDataType
                             throw new IllegalArgumentException(
                                 "Missing data at path [" + valueAsDataSet.getPath().toString() + "." + typedPath.getPath() + "]" );
                         }
-                        subData.setValue( typedPath.getDataType().ensureType( subData.getValue() ) );
+                        subData.setValue( typedPath.getDataType().ensureTypeOfValue( subData.getValue() ) );
                     }
                 }
-
             }
             else
             {
-                data.setValue( ensureType( data.getValue() ) );
+                data.setValue( ensureTypeOfValue( data.getValue() ) );
             }
         }
     }
@@ -142,7 +129,7 @@ public abstract class BaseDataType
      * This method will not try to convert the given value, but throw an InconvertibleException
      * when given value is not this type.
      */
-    public Object ensureType( final Object value )
+    public Object ensureTypeOfValue( final Object value )
     {
         return value;
     }
@@ -181,12 +168,18 @@ public abstract class BaseDataType
 
     boolean hasCorrectType( Object value )
     {
+        Preconditions.checkNotNull( value, "Cannot check the type of a value that is null" );
         return javaType.isInstance( value );
     }
 
     private void checkCorrectType( Data data )
         throws InvalidValueTypeException
     {
+        if ( !data.hasValue() )
+        {
+            return;
+        }
+
         if ( this.javaType == JavaType.DATA_SET && typedPaths.size() > 0 )
         {
             final DataSet dataSet = data.getDataSet();
