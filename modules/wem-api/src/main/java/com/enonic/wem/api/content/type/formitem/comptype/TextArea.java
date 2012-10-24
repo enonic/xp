@@ -16,16 +16,6 @@ public class TextArea
         super( "textArea" );
     }
 
-    public boolean requiresConfig()
-    {
-        return false;
-    }
-
-    public Class requiredConfigClass()
-    {
-        return null;
-    }
-
     @Override
     public void checkValidity( final Data data )
         throws InvalidValueTypeException, InvalidValueException

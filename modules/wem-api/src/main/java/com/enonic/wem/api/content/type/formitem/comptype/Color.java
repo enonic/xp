@@ -19,16 +19,6 @@ public class Color
         super( "color" );
     }
 
-    public boolean requiresConfig()
-    {
-        return false;
-    }
-
-    public Class requiredConfigClass()
-    {
-        return null;
-    }
-
     @Override
     public void checkBreaksRequiredContract( final Data data )
         throws BreaksRequiredContractException

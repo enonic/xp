@@ -8,9 +8,11 @@ import com.enonic.wem.api.content.type.formitem.InvalidValueException;
 public abstract class BaseComponentType
     implements ComponentType
 {
-    private String className;
+    private final String className;
 
-    private String name;
+    private final String name;
+
+    private Class configClass;
 
     BaseComponentType( final String name )
     {
@@ -19,14 +21,35 @@ public abstract class BaseComponentType
 
     }
 
-    public String getName()
+    BaseComponentType( final String name, final Class configClass )
+    {
+        this.name = name;
+        this.className = this.getClass().getName();
+        this.configClass = configClass;
+    }
+
+    @Override
+    public final String getName()
     {
         return name;
     }
 
-    public String getClassName()
+    @Override
+    public final String getClassName()
     {
         return className;
+    }
+
+    @Override
+    public final boolean requiresConfig()
+    {
+        return configClass != null;
+    }
+
+    @Override
+    public final Class requiredConfigClass()
+    {
+        return configClass;
     }
 
     public AbstractComponentTypeConfigSerializerJson getComponentTypeConfigJsonGenerator()

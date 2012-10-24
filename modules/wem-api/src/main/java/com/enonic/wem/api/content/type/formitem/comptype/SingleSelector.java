@@ -14,17 +14,7 @@ public class SingleSelector
 {
     public SingleSelector()
     {
-        super( "singleSelector" );
-    }
-
-    public boolean requiresConfig()
-    {
-        return true;
-    }
-
-    public Class requiredConfigClass()
-    {
-        return SingleSelectorConfig.class;
+        super( "singleSelector", SingleSelectorConfig.class );
     }
 
     public AbstractComponentTypeConfigSerializerJson getComponentTypeConfigJsonGenerator()

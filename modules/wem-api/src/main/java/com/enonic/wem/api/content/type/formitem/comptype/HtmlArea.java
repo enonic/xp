@@ -18,18 +18,6 @@ public class HtmlArea
     }
 
     @Override
-    public boolean requiresConfig()
-    {
-        return true;
-    }
-
-    @Override
-    public Class requiredConfigClass()
-    {
-        return HtmlAreaConfig.class;
-    }
-
-    @Override
     public void checkValidity( final Data data )
         throws InvalidValueTypeException, InvalidValueException
     {
