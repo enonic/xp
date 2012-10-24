@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8"/>
   <title>Enonic WEM - JCR Browser</title>
-  <link rel="stylesheet" type="text/css" href="resources/lib/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="../dev/jcr-tree/lib/bootstrap/css/bootstrap.min.css">
   <style type="text/css">
     .treepanel {
       background: none repeat scroll 0 0 white;
       float: left;
-      margin: 0;
+      margin: 10px 0 0 0;
       overflow: auto;
       width: 400px;
       height: 600px;
@@ -41,10 +41,14 @@
     }
   </style>
   <script type="text/javascript" src="../dev/live-edit/app/lib/jquery-1.8.0.min.js"></script>
-  <script type="text/javascript" src="resources/lib/bootstrap/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="resources/lib/jstree/jquery.jstree.js"></script>
+  <script type="text/javascript" src="../dev/jcr-tree/lib/jquery.hotkeys.js"></script>
+  <script type="text/javascript" src="../dev/jcr-tree/lib/bootstrap/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../dev/jcr-tree/lib/jstree/jquery.jstree.js"></script>
   <script>
     var allNodesPath = [];
+    var allNodesPathSet = {};
+    var lazyLoadingDepth = 1;
+
     var pathToNodeId = function pathToNodeId(path) {
       return 'node' + (path.join('_') || '_').
           replace(':','_', 'gi').
@@ -53,7 +57,8 @@
           replace(' ','_', 'gi');
     };
     var jcrNodesToJstree = function jcrNodesToJstree(node, openLevel, currLevel, path) {
-      var dataNode = {data: {}, attr: {}, children: []};
+      var dataNode = {data: {}, attr: {}, children: []},
+          pathStr;
       openLevel = openLevel || 0;
       currLevel = currLevel || 0;
       path = path ? path.slice(0) : [];
@@ -69,7 +74,11 @@
       };
       dataNode.metadata = node.properties;
       dataNode.state = (currLevel <= openLevel) || (node.nodes && node.nodes.length === 0) ? 'open' : 'closed';
-      allNodesPath.push(path.join('/'));
+      pathStr = path.join('/');
+      if (!allNodesPathSet[pathStr]) {
+        allNodesPathSet[pathStr] = true;
+        allNodesPath.push(pathStr);
+      }
 
       if (node.nodes) {
         $.each(node.nodes, function (i, val) {
@@ -127,7 +136,8 @@
       }
     };
 
-    $(document).ready(function () {
+    var loadTree = function loadTree() {
+      lazyLoadingDepth = 1;
       $.getJSON('rest/jsonrpc/jcr_get', function (data) {
         var nodeRoot = data.result.nodes[0];
         nodeRoot = jcrNodesToJstree(nodeRoot, 2);
@@ -142,7 +152,7 @@
                 callback([nodeRoot]); // root node
               } else {
                 var path = JSON.parse(node.attr("path"));
-                $.getJSON('rest/jsonrpc/jcr_get', {'path': path.join('/'), 'depth': 1}, function (data) {
+                $.getJSON('rest/jsonrpc/jcr_get', {'path': path.join('/'), 'depth': lazyLoadingDepth}, function (data) {
                   var node = data.result.nodes[0];
                   path.pop();
                   node = jcrNodesToJstree(node, 0, 0, path);
@@ -157,7 +167,7 @@
             "dots": true,
             "icons": true
           },
-          "plugins": [ "themes", "json_data", "ui" ]
+          "plugins": [ "themes", "json_data", "ui", "hotkeys" ]
         }).bind("select_node.jstree", function (e, data) {
               var properties = JSON.parse(data.rslt.obj.attr("properties")),
                   name = data.rslt.obj.attr("name"),
@@ -166,9 +176,26 @@
             });
 
       }); // getJson
+    };
 
+    var expandNode = function expandNode() {
+      var selected=$("#jcrtree").jstree('get_selected');
+      lazyLoadingDepth = 20;
+      $("#jcrtree").jstree('open_all', selected);
+    };
+    var collapseNode = function expandNode() {
+      var selected=$("#jcrtree").jstree('get_selected');
+      $("#jcrtree").jstree('close_all', selected);
+    };
+
+    $(document).ready(function () {
+      loadTree();
       $('#pathSelector').typeahead({source: allNodesPath});
       $('#pathSelector').on('change', pathSelectorChange);
+
+      $('#reloadButton').on('click', loadTree);
+      $('#expandButton').on('click', expandNode);
+      $('#collapseButton').on('click', collapseNode);
     }); // doc ready
   </script>
 </head>
@@ -184,6 +211,9 @@
   <div class="row-fluid span11">
 
     <div class="span4">
+      <button id="reloadButton" class="btn btn-mini btn-primary" type="button">Reload</button>
+      <button id="expandButton" class="btn btn-mini btn-info" type="button">Expand All</button>
+      <button id="collapseButton" class="btn btn-mini btn-info" type="button">Collapse All</button>
       <div id="jcrtree" class="treepanel"></div>
     </div>
 
