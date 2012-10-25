@@ -130,6 +130,9 @@
     <a href="../dev/html-templates/tilebased-start-menu.html">Tile Based Start Menu</a>
   </li>
   <li>
+    <a href="../dev/examples/start-menu.html">Tile Based Start Menu ( sliding/pluggable tiles )</a>
+  </li>
+  <li>
     <a href="../dev/examples/topbar.html">Top Bar</a>
   </li>
   <li>
