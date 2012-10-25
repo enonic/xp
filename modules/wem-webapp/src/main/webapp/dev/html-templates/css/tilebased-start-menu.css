@@ -2,12 +2,17 @@ body {
     margin: 0;
 }
 
-.content {
-    display: inline-block;
-    padding: 5px;
-    width: 100%;
-    background: black; /* for non-css3 browsers */
+ul {
+    margin: 0;
+    list-style: none;
+    padding: 0;
+}
 
+.menu {
+    padding: 5px;
+    background: black; /* for non-css3 browsers */
+    font: 13px normal Arial, sans-serif;
+    color: white;
     filter: progid:DXImageTransform.Microsoft.gradient(gradientType = 1, startColorstr = '#000000', endColorstr = '#363639'); /* for IE */
     background: -webkit-gradient(linear, left top, right top, from(#000), to(#363639)); /* for webkit browsers */
     background: -moz-linear-gradient(left, #000, #363639); /* for firefox 3.6+ */
@@ -15,25 +20,21 @@ body {
 
 .top {
     position: relative;
-    margin: 5px 5px 25px;
+    padding: 5px 125px 5px 5px;
     clear: left;
-    height: 25px;
 }
 
 .top > img {
     float: left;
     margin-right: 390px;
-}
-
-.top div {
-    display: inline-block;
+    margin-bottom: 10px;
 }
 
 .top .search {
     float: left;
     top: 5px;
-    width: 650px;
-    margin-bottom: 5px;
+    width: 550px;
+    margin-bottom: 10px;
 }
 
 .search > input {
@@ -44,114 +45,170 @@ body {
 }
 
 .top .logout {
-    float: right;
-    line-height: 100%;
+    line-height: 25px;
     height: inherit;
     background: black;
-    padding-left: 2px;
     padding-right: 20px;
-    margin-right: -10px;
+    position: absolute;
+    right: -5px;
+    top: 5px;
 }
 
-.logout img {
+.logout > img {
     width: 35px;
     height: 25px;
-}
-
-.logout span {
-    position: relative;
-    font-weight: bold;
-    color: white;
-    top: -8px;
-}
-
-.menu {
-    display: inline-block;
-    clear: left;
-}
-
-.menu > div {
+    margin-right: 10px;
     float: left;
 }
 
-.menu > div {
+.logout > a {
+    font-weight: bold;
+    color: white;
+}
+
+/*  Tile    */
+
+.center .tile {
     display: block;
     position: relative;
     float: left;
-    width: 120px;
-    height: 100px;
+    width: 130px;
+    height: 110px;
     margin: 5px;
-    padding: 5px;
-    border-color: #002c40;
-    text-align: left;
-    vertical-align: bottom;
-    font-weight: bold;
-    color: white;
     font-size: 16px;
+    background-size: 48px 48px;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    /* IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+    /* IE 5-7 */
+    filter: alpha(opacity = 80);
+    /* Netscape */
+    -moz-opacity: 0.8;
+    /* Safari 1.x */
+    -khtml-opacity: 0.8;
+    /* Good browsers */
+    opacity: 0.8;
 }
 
-.start-row {
+.tile.start-row {
     clear: left;
 }
 
-.menu > div:hover {
-    /* IE 8 */
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+.tile.span2 {
+    width: 270px !important;
+}
 
-    /* IE 5-7 */
-    filter: alpha(opacity = 50);
-
-    /* Netscape */
-    -moz-opacity: 0.5;
-
-    /* Safari 1.x */
-    -khtml-opacity: 0.5;
-
-    /* Good browsers */
-    opacity: 0.5;
-
-    background-color: grey;
+.tile:hover {
     cursor: pointer;
+
+    /* IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+    /* IE 5-7 */
+    filter: alpha(opacity = 100);
+    /* Netscape */
+    -moz-opacity: 1;
+    /* Safari 1.x */
+    -khtml-opacity: 1;
+    /* Good browsers */
+    opacity: 1;
 }
 
-.menu > div > img {
+/*  Tile title & content  */
+
+.tile .title {
     position: absolute;
-    width: 50px;
-    height: 50px;
-    left: 35px;
-    top: 20px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 25px;
+    line-height: 25px;
+    padding: 0 5px;
 }
 
-.menu-span {
-    width: 260px !important;
-}
-
-.menu-span > img {
-    left: 105px !important;
-}
-
-.menu-title {
+.tile .content {
     position: absolute;
+    bottom: 25px;
+    left: 0;
+    right: 0;
+    top: 0;
+    overflow: hidden;
+    padding: 5px;
+}
+
+.tile .content img {
+    width: 100%;
+    height: 100%;
+}
+
+.tile .content .item {
+    clear: left;
+}
+
+.tile .content .item img {
+    float: left;
+    margin: 0 5px 5px 0;
+    width: 24px;
+    height: 24px;
+}
+
+.tile .content .item p {
+    margin: 0 0 5px;
+    font-size: 11px;
+}
+
+.tile.title-top .title {
+    top: 0;
+    bottom: auto;
+}
+
+.tile.title-top .content {
+    top: 25px;
     bottom: 0;
 }
 
+.tile.title-bottom .title {
+    top: auto;
+    bottom: 0;
+}
+
+.tile.title-bottom .content {
+    bottom: 25px;
+    top: 0;
+}
+
+.tile.title-left .title {
+    text-align: left;
+}
+
+.tile.title-right .title {
+    text-align: right;
+}
+
+.tile.title-mask .title {
+    background: url("../../../admin/resources/images/bg_black.png") repeat;
+}
+
+.tile.title-mask .content {
+    bottom: 0;
+    top: 0;
+    padding: 0;
+}
+
+/*  Controls  */
+
 .controls-container {
-    position: relative;
-    clear: left;
-    display: block;
-    height: 50px;
     text-align: center;
+    padding: 10px 5px;
 }
 
-.controls {
-    position: relative;
-    top: 50%;
-    height: 24px;
-    margin: -12px auto 0;
-    width: 96px;
+ul.controls {
+    margin: 0 auto;
+    display: inline-block;
 }
 
-.checked {
+ul.controls li.checked {
     background: url("../images/checked.png");
     width: 18px;
     height: 18px;
@@ -159,7 +216,7 @@ body {
     float: left;
 }
 
-.unchecked {
+ul.controls li {
     background: url("../images/unchecked.png");
     width: 18px;
     height: 18px;
@@ -167,103 +224,94 @@ body {
     float: left;
 }
 
-.tabs {
-    display: block;
-    float: right;
+ul.bottom {
+    padding: 5px;
 }
 
-.tabs > div {
-    float: left;
+ul.bottom li {
+    float: right;
     margin-left: 20px;
-    margin-bottom: 5px;
-    margin-top: 5px;
-    margin-right: 10px;
+}
+
+ul.bottom li a {
     font-weight: bold;
-    font-size: 16px;
     color: white;
 }
 
-.content-manager {
+/*  Individual tiles configs    */
+
+.tile.dashboard {
+    background-image: url('../images/dashboard.jpg');
+    background-size: 100% 100%;
+}
+
+.tile.content-manager {
     background-color: #0056D6;
+    background-image: url("../images/data.png");
 }
 
-.userstores {
+.tile.userstores {
     background-color: #06419F;
+    background-image: url("../images/user_earth.png");
 }
 
-.accounts {
-    background-color: #9929BD
+.tile.accounts {
+    background-color: #9929BD;
+    background-image: url("../images/users2.png");
 }
 
-.administrators {
+.tile.administrators {
     background-color: #E32400;
+    background-image: url("../images/earth.png");
 }
 
-.content-studio {
+.tile.content-studio {
     background-color: #AE1D00;
+    background-image: url("../images/cube_molecule.png");
 }
 
-.schedule {
+.tile.schedule {
     background-color: #0251CA;
+    background-image: url("../images/clock.png");
 }
 
-.cluster {
+.tile.cluster {
     background-color: #060606;
+    background-image: url("../images/virus.png");
 }
 
-.activity {
+.tile.activity {
     background-color: #67A13A;
 }
 
-.live-trace {
+.tile.live-trace {
     background-color: #060606;
+    background-image: url("../images/linechart.jpg");
+    background-size: 100% 100%;
 }
 
-div.live-trace img {
-    position: absolute;
-    bottom: 0;
-    left: 0 !important;
-    width: 270px;
-    height: 90px;
+/* http://css-tricks.com/snippets/css/clear-fix/ */
+
+.clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
 }
 
-.live-trace > span.menu-title {
-    top: 0;
+.clearfix {
+    display: inline-block;
 }
 
-div.profile img {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 130px;
-    height: 90px;
+/* start commented backslash hack \*/
+* html .clearfix {
+    height: 1%;
 }
 
-.profile > span.menu-title {
-    top: 0;
+.clearfix {
+    display: block;
 }
 
-.activity > span.menu-title {
-    top: 0;
-    right: 0;
-    font-size: 14px;
-}
-
-div.activity > div {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 270px;
-    height: 90px;
-}
-
-.activity > div > img {
-    width: 65px;
-    height: 45px;
-    float: left;
-}
-
-div.dashboard, div.dashboard:hover {
-    background: url('../images/dashboard.jpg');
-    background-size: 260px 100px;
-}
+/* close commented backslash hack */

@@ -6,78 +6,87 @@
     <link rel="stylesheet" type="text/css" href="css/tilebased-start-menu.css">
 </head>
 <body>
-<div class="content">
-    <div class="top">
+<div class="menu">
+    <div class="top clearfix">
+        <div class="logout">
+            <img src="images/profile-image.png"/>
+            <a href="#">Log out</a>
+        </div>
+
         <img src="images/enonic-logo.png"/>
 
         <div class="search"><input type="text"></div>
-        <div class="logout">
-            <img src="images/profile-image.png"/>
-            <span>Log out</span>
-        </div>
     </div>
-    <div class="menu">
-        <div class="menu-span start-row content-manager">
-            <img src="images/data.png"/>
-            <span class="menu-title">Content Manager</span>
+    <div class="center clearfix">
+        <div class="tile span2 start-row content-manager">
+            <div class="content"></div>
+            <span class="title">Content Manager</span>
         </div>
-        <div class="menu-span dashboard">
-            <span class="menu-title">Dashboard</span>
+        <div class="tile span2 dashboard">
+            <span class="title">Dashboard</span>
         </div>
-        <div class="profile">
-            <img src="images/profile-image.png"/>
-            <span class="menu-title">Profile</span>
-        </div>
-        <div class="menu-span activity">
-            <div>
-                <img src="images/profile-image.png"/>
+        <div class="tile profile title-top title-mask">
+            <div class="content">
+                <img src="images/profile-image.png" alt=""/>
             </div>
-            <span class="menu-title">Activity Stream</span>
+            <span class="title">Profile</span>
         </div>
-        <div class="cluster">
-            <img src="images/virus.png"/>
-            <span class="menu-title">Cluster</span>
+        <div class="tile span2 activity title-top title-right">
+            <div class="content">
+                <div class="item">
+                    <img src="images/profile-image.png"/>
+
+                    <p>Hello there !</p>
+                </div>
+                <div class="item">
+                    <img src="images/profile-image.png"/>
+
+                    <p>What do you think about this new tile based start menu ?</p>
+                </div>
+                <div class="item">
+                    <img src="images/profile-image.png"/>
+
+                    <p>Huh ?</p>
+                </div>
+            </div>
+            <span class="title">Activity Stream</span>
         </div>
-        <div class="start-row userstores">
-            <img src="images/user_earth.png"/>
-            <span class="menu-title">Userstores</span>
+        <div class="tile cluster">
+            <div class="content"></div>
+            <span class="title">Cluster</span>
         </div>
-        <div class="accounts">
-            <img src="images/users2.png"/>
-            <span class="menu-title">Accounts</span>
+        <div class="tile start-row userstores">
+            <span class="title">Userstores</span>
         </div>
-        <div class="menu-span administrators">
-            <img src="images/earth.png"/>
-            <span class="menu-title">Site Administrator</span>
+        <div class="tile accounts">
+            <span class="title">Accounts</span>
         </div>
-        <div class="content-studio">
-            <img src="images/cube_molecule.png"/>
-            <span class="menu-title">Content Studio</span>
+        <div class="tile span2 administrators">
+            <span class="title">Site Administrator</span>
         </div>
-        <div class="menu-span live-trace">
-            <img src="images/linechart.jpg"/>
-            <span class="menu-title">Live Trace</span>
+        <div class="tile content-studio">
+            <span class="title">Content Studio</span>
         </div>
-        <div class="schedule">
-            <img src="images/clock.png"/>
-            <span class="menu-title">Schedule</span>
+        <div class="tile span2 live-trace title-top title-mask">
+            <span class="title">Live Trace</span>
+        </div>
+        <div class="tile schedule">
+            <span class="title">Schedule</span>
         </div>
     </div>
-    <div class="controls-container">
-        <div class="controls">
-            <div class="checked"></div>
-            <div class="unchecked"></div>
-            <div class="unchecked"></div>
-            <div class="unchecked"></div>
-        </div>
+    <div class="controls-container clearfix">
+        <ul class="controls">
+            <li class="checked"></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
     </div>
-    <div class="tabs-container">
-        <div class="tabs">
-            <div>Documentation</div>
-            <div>Community</div>
-            <div>About</div>
-        </div>
-    </div>
+    <ul class="bottom clearfix">
+        <li><a href="#">Documentation</a></li>
+        <li><a href="#">Community</a></li>
+        <li><a href="#">About</a></li>
+    </ul>
 </div>
 </body>
 </html>
