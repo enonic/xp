@@ -51,4 +51,13 @@ public class ContentPathTest
         assertEquals( "one/two/three", path.toString() );
 
     }
+
+    @Test
+    public void getParentPath()
+        throws Exception
+    {
+        assertEquals( null, new ContentPath( "first" ).getParentPath() );
+        assertEquals( new ContentPath( "first" ), new ContentPath( "first", "second" ).getParentPath() );
+        assertEquals( new ContentPath( "first", "second" ), new ContentPath( "first", "second", "third" ).getParentPath() );
+    }
 }

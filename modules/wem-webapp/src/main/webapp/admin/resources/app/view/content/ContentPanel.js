@@ -74,7 +74,7 @@ Ext.define( 'Admin.view.content.ContentPanel', {
 
     getContentPath:function ()
     {
-        return "/myArchive/myContent";
+        return "/myContent";
     },
 
     onSendClick:function ()

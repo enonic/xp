@@ -9,8 +9,14 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentPaths;
+import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.core.jcr.JcrHelper;
 
+
+/**
+ * TODO: Figure out how to handle the thrown RepositoryException from JCR.
+ */
 @Component
 public class ContentDaoImpl
     implements ContentDao
@@ -26,24 +32,21 @@ public class ContentDaoImpl
             root = session.getRootNode();
 
             final Node contentsNode = root.getNode( CONTENTS_PATH );
-
-            ContentPath path = content.getPath();
-            String name = path.getElement( path.numberOfElements() - 1 );
+            final ContentPath path = content.getPath();
 
             if ( path.numberOfElements() == 1 )
             {
-                if ( contentsNode.hasNode( name ) )
+                if ( contentsNode.hasNode( path.getName() ) )
                 {
                     throw new IllegalArgumentException( "Content already exists: " + path );
                 }
-                final Node contentNode = contentsNode.addNode( name );
-                contentJcrMapper.toJcr( content, contentNode );
+                addContentToJcr( content, contentsNode );
             }
             else
             {
-                // TODO
+                final Node parentContentNode = getContentNode( session, path.getParentPath() );
+                addContentToJcr( content, parentContentNode );
             }
-
         }
         catch ( RepositoryException e )
         {
@@ -54,10 +57,29 @@ public class ContentDaoImpl
     @Override
     public Content findContent( final Session session, final ContentPath contentPath )
     {
-        final Node contentNode;
+        return doFindContent( contentPath, session );
+    }
+
+    @Override
+    public Contents findContent( final Session session, final ContentPaths contentPaths )
+    {
+        final Contents.Builder contentsBuilder = Contents.builder();
+        for ( ContentPath contentPath : contentPaths )
+        {
+            Content content = doFindContent( contentPath, session );
+            if ( content != null )
+            {
+                contentsBuilder.add( content );
+            }
+        }
+        return contentsBuilder.build();
+    }
+
+    private Content doFindContent( final ContentPath contentPath, final Session session )
+    {
         try
         {
-            contentNode = getContentNode( session, contentPath );
+            final Node contentNode = getContentNode( session, contentPath );
 
             if ( contentNode == null )
             {
@@ -85,5 +107,12 @@ public class ContentDaoImpl
     private String getNodePath( final ContentPath contentPath )
     {
         return CONTENTS_PATH + contentPath.toString();
+    }
+
+    private void addContentToJcr( final Content content, final Node parentContentNode )
+        throws RepositoryException
+    {
+        final Node newContentNode = parentContentNode.addNode( content.getName() );
+        contentJcrMapper.toJcr( content, newContentNode );
     }
 }

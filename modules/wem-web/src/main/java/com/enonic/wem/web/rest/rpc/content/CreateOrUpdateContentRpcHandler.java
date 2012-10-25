@@ -79,7 +79,7 @@ public final class CreateOrUpdateContentRpcHandler
     private boolean contentExists( final ContentPath contentPath )
     {
         final Contents contents = client.execute( Commands.content().get().paths( ContentPaths.from( contentPath ) ) );
-        return !contents.isEmpty();
+        return contents.isNotEmpty();
     }
 
 

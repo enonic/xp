@@ -28,6 +28,11 @@ public final class Contents
         return this.list.isEmpty();
     }
 
+    public boolean isNotEmpty()
+    {
+        return !this.list.isEmpty();
+    }
+
     public Content getFirst()
     {
         return this.list.isEmpty() ? null : this.list.get( 0 );
@@ -88,6 +93,27 @@ public final class Contents
         public ContentPath apply( final Content value )
         {
             return value.getPath();
+        }
+    }
+
+    public static Builder builder()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private ImmutableList.Builder<Content> builder = ImmutableList.builder();
+
+        public Builder add( Content content )
+        {
+            builder.add( content );
+            return this;
+        }
+
+        public Contents build()
+        {
+            return new Contents( builder.build() );
         }
     }
 }

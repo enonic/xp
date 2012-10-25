@@ -49,8 +49,12 @@ public class ContentPath
 
     public ContentPath getParentPath()
     {
+        if ( this.elements.size() < 2 )
+        {
+            return null;
+        }
+
         final LinkedList<String> parentElements = newListOfParentElements();
-        parentElements.removeLast();
         return new ContentPath( parentElements );
     }
 

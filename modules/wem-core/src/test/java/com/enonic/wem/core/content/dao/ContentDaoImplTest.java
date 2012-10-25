@@ -53,6 +53,33 @@ public class ContentDaoImplTest
     }
 
     @Test
+    public void createContent_one_data_at_root_and_one_below()
+        throws Exception
+    {
+        // setup
+        Content rootContent = new Content();
+        rootContent.setPath( ContentPath.from( "rootContent" ) );
+        rootContent.setData( "myData", "myValue" );
+
+        Content belowRootContent = new Content();
+        belowRootContent.setPath( ContentPath.from( "rootContent/belowRootContent" ) );
+        belowRootContent.setData( "myData", "myValue" );
+
+        // exercise
+        contentDao.createContent( session, rootContent );
+        commit();
+        contentDao.createContent( session, belowRootContent );
+        commit();
+
+        // verify
+        Node rootContentNode = session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH + "rootContent" );
+        assertNotNull( rootContentNode );
+
+        Node belowRootContentNode = session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH + "rootContent/belowRootContent" );
+        assertNotNull( belowRootContentNode );
+    }
+
+    @Test
     public void createContent_one_data_at_root_and_one_in_a_set()
         throws Exception
     {
