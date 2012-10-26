@@ -24,7 +24,7 @@ ul {
     clear: left;
 }
 
-.top > img {
+.top .logo {
     float: left;
     margin-right: 390px;
     margin-bottom: 10px;
@@ -37,14 +37,14 @@ ul {
     margin-bottom: 10px;
 }
 
-.search > input {
+.top .search input {
     width: inherit;
     height: 25px;
     line-height: 100%;
     border: 1px;
 }
 
-.top .logout {
+.top .user {
     line-height: 25px;
     height: inherit;
     background: black;
@@ -54,16 +54,16 @@ ul {
     top: 15px;
 }
 
-.logout > img {
+.top .user img {
     width: 35px;
     height: 25px;
-    margin-right: 10px;
     float: left;
 }
 
-.logout > a {
+.top .user a {
     font-weight: bold;
     color: white;
+    margin-left: 10px;
 }
 
 /*  Tile    */
@@ -196,32 +196,34 @@ ul {
     padding: 0;
 }
 
-/*  Controls  */
+/*  Pager  */
 
-.controls-container {
+.pager-container {
     text-align: center;
     padding: 10px 5px;
 }
 
-ul.controls {
+ul.pager {
     margin: 0 auto;
     display: inline-block;
 }
 
-ul.controls li.checked {
-    background: url("../images/checked.png");
-    width: 18px;
-    height: 18px;
-    margin: 2px;
-    float: left;
-}
-
-ul.controls li {
+ul.pager li {
     background: url("../images/unchecked.png");
     width: 18px;
     height: 18px;
     margin: 2px;
     float: left;
+    cursor: pointer;
+}
+
+ul.pager li.current {
+    background: url("../images/checked.png");
+    width: 18px;
+    height: 18px;
+    margin: 2px;
+    float: left;
+    cursor: default;
 }
 
 ul.bottom {

@@ -53,6 +53,21 @@
 
             var startMenu = Ext.create('Admin.view.StartMenu', {
                 xtype: 'startMenu',
+                listeners: {
+                    login: function (cmp) {
+                        console.log('login');
+                        cmp.loggedUser = {
+                            img: '../html-templates/images/profile-image.png'
+                        };
+                    },
+                    logout: function (cmp) {
+                        console.log('logout');
+                        delete cmp.loggedUser;
+                    },
+                    pagechange: function (cmp, num) {
+                        console.log('page ' + num);
+                    }
+                },
                 items: [
                     {
                         title: 'Content Manager',
