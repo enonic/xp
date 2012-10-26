@@ -24,7 +24,7 @@ public final class UpdateContents
         return this.editor;
     }
 
-    public UpdateContents keys( final ContentPaths paths )
+    public UpdateContents paths( final ContentPaths paths )
     {
         this.paths = paths;
         return this;
@@ -39,7 +39,7 @@ public final class UpdateContents
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.paths, "Content keys cannot be null" );
+        Preconditions.checkNotNull( this.paths, "Content paths cannot be null" );
         Preconditions.checkNotNull( this.editor, "Editor cannot be null" );
     }
 }

@@ -30,9 +30,7 @@ public class CreateContentHandler
         final Content content = new Content();
         content.setPath( command.getContentPath() );
         content.setData( contentData );
-        contentDao.createContent( context.getJcrSession(), content );
+        contentDao.createContent( content, context.getJcrSession() );
         context.getJcrSession().save();
-        System.out.println( "Content created" );
     }
-
 }

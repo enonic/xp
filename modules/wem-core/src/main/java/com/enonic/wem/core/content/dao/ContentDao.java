@@ -11,9 +11,13 @@ import com.enonic.wem.api.content.Contents;
 public interface ContentDao
     extends ContentDaoConstants
 {
-    public void createContent( Session session, Content content );
+    public void createContent( Content content, Session session );
 
-    public Content findContent( Session session, ContentPath contentPath );
+    public void updateContent( Content content, Session session );
 
-    public Contents findContent( Session session, ContentPaths contentPaths );
+    public void renameContent( ContentPath content, String newName, Session session );
+
+    public Content findContent( ContentPath contentPath, Session session );
+
+    public Contents findContent( ContentPaths contentPaths, Session session );
 }

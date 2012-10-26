@@ -20,7 +20,7 @@ final class SetContentDataEditor
         return edit( this.source, content );
     }
 
-    private static boolean edit( final ContentData source, final Content target )
+    private boolean edit( final ContentData source, final Content target )
         throws Exception
     {
         target.setData( source );

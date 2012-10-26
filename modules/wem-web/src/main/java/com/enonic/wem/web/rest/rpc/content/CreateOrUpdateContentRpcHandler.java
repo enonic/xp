@@ -5,7 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.UpdateContent;
+import com.enonic.wem.api.command.content.CreateContent;
+import com.enonic.wem.api.command.content.UpdateContents;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
@@ -63,15 +64,19 @@ public final class CreateOrUpdateContentRpcHandler
 
         if ( !contentExists( contentPath ) )
         {
-            client.execute(
-                Commands.content().create().contentPath( contentPath ).contentType( qualifiedContentTypeName ).contentData( contentData ) );
+            final CreateContent createContent = Commands.content().create();
+            createContent.contentPath( contentPath );
+            createContent.contentType( qualifiedContentTypeName );
+            createContent.contentData( contentData );
+            client.execute( createContent );
             context.setResult( CreateOrUpdateContentJsonResult.created() );
         }
         else
         {
-            final UpdateContent updateContent = Commands.content().update().contentPath( contentPath );
-            updateContent.editor( ContentEditors.setContentData( contentData ) );
-            client.execute( updateContent );
+            final UpdateContents updateContents = Commands.content().update();
+            updateContents.paths( ContentPaths.from( contentPath ) );
+            updateContents.editor( ContentEditors.setContentData( contentData ) );
+            client.execute( updateContents );
             context.setResult( CreateOrUpdateContentJsonResult.updated() );
         }
     }
@@ -81,7 +86,6 @@ public final class CreateOrUpdateContentRpcHandler
         final Contents contents = client.execute( Commands.content().get().paths( ContentPaths.from( contentPath ) ) );
         return contents.isNotEmpty();
     }
-
 
     @Autowired
     public void setUploadService( final UploadService uploadService )

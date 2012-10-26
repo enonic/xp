@@ -32,8 +32,7 @@ class ContentJcrMapper
         }
 
         final Node contentDataNode = JcrHelper.getOrAddNode( contentNode, DATA );
-        final ContentData contentData = content.getData();
-        dataMapper.fromDataSetToJcr( contentData, contentDataNode );
+        dataMapper.fromDataSetToJcr( content.getData(), contentDataNode );
     }
 
     void toContent( final Node contentNode, final Content content )

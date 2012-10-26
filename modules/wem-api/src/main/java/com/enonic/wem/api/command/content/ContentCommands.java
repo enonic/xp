@@ -8,9 +8,9 @@ public final class ContentCommands
         return new CreateContent();
     }
 
-    public UpdateContent update()
+    public UpdateContents update()
     {
-        return new UpdateContent();
+        return new UpdateContents();
     }
 
     public GetContents get()

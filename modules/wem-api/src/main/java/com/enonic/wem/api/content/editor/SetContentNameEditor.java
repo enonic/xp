@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.editor;
 
 import com.enonic.wem.api.content.Content;
 
-public class SetContentNameEditor
+final class SetContentNameEditor
     implements ContentEditor
 {
     private String source;

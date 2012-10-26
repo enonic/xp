@@ -34,7 +34,7 @@ public class ContentDaoImplTest
         content.setData( "myData", "myValue" );
 
         // exercise
-        contentDao.createContent( session, content );
+        contentDao.createContent( content, session );
         commit();
 
         // verify
@@ -66,9 +66,9 @@ public class ContentDaoImplTest
         belowRootContent.setData( "myData", "myValue" );
 
         // exercise
-        contentDao.createContent( session, rootContent );
+        contentDao.createContent( rootContent, session );
         commit();
-        contentDao.createContent( session, belowRootContent );
+        contentDao.createContent( belowRootContent, session );
         commit();
 
         // verify
@@ -91,7 +91,7 @@ public class ContentDaoImplTest
         content.setData( "mySet.myOtherData", "3" );
 
         // exercise
-        contentDao.createContent( session, content );
+        contentDao.createContent( content, session );
         commit();
 
         // verify
@@ -107,6 +107,32 @@ public class ContentDaoImplTest
     }
 
     @Test
+    public void updateContent_one_data_at_root()
+        throws Exception
+    {
+        // setup
+        Content newContent = new Content();
+        newContent.setPath( ContentPath.from( "myContent" ) );
+        newContent.setData( "myData", "initial value" );
+
+        // setup: create content to update
+        contentDao.createContent( newContent, session );
+        commit();
+
+        Content updateContent = new Content();
+        updateContent.setPath( ContentPath.from( "myContent" ) );
+        updateContent.setData( "myData", "changed value" );
+
+        // exercise
+        contentDao.updateContent( updateContent, session );
+
+        // verify
+        Node contentNode = session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH + "myContent" );
+        Node myDataNode = contentNode.getNode( "data" ).getNode( "myData" );
+        assertEquals( "changed value", myDataNode.getProperty( "value" ).getString() );
+    }
+
+    @Test
     public void findContent()
         throws Exception
     {
@@ -115,11 +141,11 @@ public class ContentDaoImplTest
         content.setPath( ContentPath.from( "myContent" ) );
         content.setData( "myData", "myValue" );
         content.setData( "mySet.myData", "myOtherValue" );
-        contentDao.createContent( session, content );
+        contentDao.createContent( content, session );
         commit();
 
         // exercise
-        Content actualContent = contentDao.findContent( session, ContentPath.from( "myContent" ) );
+        Content actualContent = contentDao.findContent( ContentPath.from( "myContent" ), session );
 
         // verify
         assertNotNull( actualContent );

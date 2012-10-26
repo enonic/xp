@@ -32,6 +32,6 @@ public class GetContentsHandler
 
     private Contents doGetContents( final ContentPaths paths, final CommandContext context )
     {
-        return contentDao.findContent( context.getJcrSession(), paths );
+        return contentDao.findContent( paths, context.getJcrSession() );
     }
 }
