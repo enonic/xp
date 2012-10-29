@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.itest.AbstractJcrTest;
@@ -143,6 +144,37 @@ public class ContentDaoImplTest
         ContentData contentData = actualContent.getData();
         assertEquals( "myValue", contentData.getData( new EntryPath( "myData" ) ).getString() );
         assertEquals( "myOtherValue", contentData.getData( new EntryPath( "mySet.myData" ) ).getString() );
+    }
+
+    @Test
+    public void findChildContent()
+        throws Exception
+    {
+        // setup
+        contentDao.createContent( createContent( "myParentContent" ), session );
+        commit();
+        contentDao.createContent( createContent( "myParentContent2" ), session );
+        commit();
+        contentDao.createContent( createContent( "myParentContent/myChildContent1" ), session );
+        commit();
+        contentDao.createContent( createContent( "myParentContent/myChildContent2" ), session );
+        commit();
+
+        // exercise
+        assertTrue( contentDao.findContent( ContentPath.from( "myParentContent" ), session ) != null );
+        Contents childContent = contentDao.findChildContent( ContentPath.from( "myParentContent" ), session );
+        assertTrue( childContent.isNotEmpty() );
+        assertEquals( ContentPath.from( "myParentContent/myChildContent2" ), childContent.getList().get( 0 ).getPath() );
+        assertEquals( ContentPath.from( "myParentContent/myChildContent1" ), childContent.getList().get( 1 ).getPath() );
+
+        // verify
+    }
+
+    private Content createContent( String path )
+    {
+        Content content = new Content();
+        content.setPath( ContentPath.from( path ) );
+        return content;
     }
 
 }
