@@ -20,4 +20,6 @@ public interface ContentDao
     public Content findContent( ContentPath contentPath, Session session );
 
     public Contents findContent( ContentPaths contentPaths, Session session );
+
+    public Contents findChildContent( ContentPath parentPath, Session session );
 }

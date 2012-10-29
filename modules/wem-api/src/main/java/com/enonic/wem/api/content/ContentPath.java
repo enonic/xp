@@ -115,7 +115,7 @@ public class ContentPath
         return newElements;
     }
 
-    public static ContentPath from( String path )
+    public static ContentPath from( final String path )
     {
         LinkedList<String> elements = new LinkedList<String>();
 
@@ -127,5 +127,10 @@ public class ContentPath
         }
 
         return new ContentPath( elements );
+    }
+
+    public static ContentPath from( final ContentPath parent, final String name )
+    {
+        return new ContentPath( parent.elements, name );
     }
 }

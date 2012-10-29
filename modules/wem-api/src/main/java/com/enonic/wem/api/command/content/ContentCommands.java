@@ -17,4 +17,9 @@ public final class ContentCommands
     {
         return new GetContents();
     }
+
+    public GetChildContent getChildren()
+    {
+        return new GetChildContent();
+    }
 }

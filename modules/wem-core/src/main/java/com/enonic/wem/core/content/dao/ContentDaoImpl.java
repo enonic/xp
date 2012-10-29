@@ -84,4 +84,17 @@ public class ContentDaoImpl
             throw new RuntimeException( e );
         }
     }
+
+    @Override
+    public Contents findChildContent( final ContentPath parentPath, final Session session )
+    {
+        try
+        {
+            return new FindChildContentDaoHandler( session ).handle( parentPath );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
 }
