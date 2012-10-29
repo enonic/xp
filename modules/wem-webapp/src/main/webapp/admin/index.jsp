@@ -132,6 +132,9 @@
   <li>
     <a href="../dev/examples/topbar.html">Top Bar</a>
   </li>
+  <li>
+    <a href="content-test.jsp">Content form, static</a>
+  </li>
 </ul>
 
 <hr/>
