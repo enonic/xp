@@ -132,6 +132,9 @@
   <li>
     <a href="content-test.jsp">Content form, static</a>
   </li>
+  <li>
+    <a href="jcr.jsp">JCR browse</a>
+  </li>
 </ul>
 
 <hr/>
