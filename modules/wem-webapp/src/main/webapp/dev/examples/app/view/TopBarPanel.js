@@ -2,7 +2,10 @@ Ext.define('Admin.view.TopBarPanel', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.topBarPanel',
 
-    requires: ['Admin.view.TopBarMenu'],
+    requires: [
+        'Admin.view.TopBarMenu',
+        'Admin.view.StartMenu'
+    ],
 
     buttonAlign: 'center',
     border: false,
@@ -54,12 +57,104 @@ Ext.define('Admin.view.TopBarPanel', {
             }
         });
 
+        var startMenu = Ext.create('Admin.view.StartMenu', {
+            xtype: 'startMenu',
+            renderTo: Ext.getBody(),
+            listeners: {
+                login: function (cmp) {
+                    console.log('login');
+                    cmp.loggedUser = {
+                        img: '../html-templates/images/profile-image.png'
+                    };
+                },
+                logout: function (cmp) {
+                    console.log('logout');
+                    delete cmp.loggedUser;
+                },
+                pagechange: function (cmp, num) {
+                    console.log('page ' + num);
+                }
+            },
+            items: [
+                {
+                    title: 'Content Manager',
+                    cls: 'span2 start-row content-manager'
+                },
+                {
+                    title: 'Dashboard',
+                    cls: 'span2 dashboard'
+                },
+                {
+                    title: 'Profile',
+                    cls: 'profile title-top title-mask',
+                    img: '../html-templates/images/profile-image.png',
+                    contentTpl: new Ext.XTemplate('<img src="{img}" alt=""/>')
+                },
+                {
+                    title: 'Activity Stream',
+                    cls: 'span2 activity title-top title-right',
+                    posts: [
+                        {
+                            img: '../html-templates/images/profile-image.png',
+                            text: 'Hello there !'
+                        },
+                        {
+                            img: '../html-templates/images/profile-image.png',
+                            text: 'What do you think about this new tile based start menu ?'
+                        },
+                        {
+                            img: '../html-templates/images/profile-image.png',
+                            text: 'Huh ?'
+                        }
+                    ],
+                    contentTpl: new Ext.XTemplate('<tpl for="posts">' +
+                                                  '<div class="item">' +
+                                                  '<img src="{img}"/>' +
+                                                  '<p>{text}</p>' +
+                                                  '</div>' +
+                                                  '</tpl>')
+                },
+                {
+                    title: 'Cluster',
+                    cls: 'cluster'
+                },
+                {
+                    title: 'Userstores',
+                    cls: 'userstores'
+                },
+                {
+                    title: 'Accounts',
+                    cls: 'accounts'
+                },
+                {
+                    title: 'Site Administrator',
+                    cls: 'span2 administrators'
+                },
+                {
+                    title: 'Content Studio',
+                    cls: 'content-studio'
+                },
+                {
+                    title: 'Live Trace',
+                    cls: 'span2 live-trace title-top title-mask'
+                },
+                {
+                    title: 'Schedule',
+                    cls: 'schedule'
+                }
+            ]
+        });
+
         this.items = [
             {
-                xtype: 'image',
-                cls: 'icon-data-white'
+                xtype: 'button',
+                cls: 'start-button',
+                iconCls: 'icon-data-white',
+                text: 'Content Manager',
+                handler: function (btn, evt) {
+                    startMenu.slideToggle();
+                }
             },
-            'Content Manager',
             {
                 text: 4,
                 cls: 'white',

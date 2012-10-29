@@ -5,9 +5,11 @@ Ext.define('Admin.view.StartMenu', {
     border: false,
     cls: 'menu',
 
+    autoRender: true,
+    renderTo: Ext.getBody(),
+
     floating: true,
     hidden: true,
-    hideMode: 'display',
     shadow: false,
     width: '100%',
 
@@ -109,6 +111,25 @@ Ext.define('Admin.view.StartMenu', {
                 });
             }
         });
+    },
+
+    slideToggle: function () {
+        if (this.el.isVisible()) {
+            this.slideOut();
+        } else {
+            this.slideIn();
+        }
+    },
+
+    slideIn: function () {
+        if (this.isHidden()) {
+            this.showAt(0, 40);
+        }
+        this.el.slideIn();
+    },
+
+    slideOut: function () {
+        this.el.slideOut();
     }
 
 });

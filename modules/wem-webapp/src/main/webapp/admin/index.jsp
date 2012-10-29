@@ -127,13 +127,7 @@
     <a href="../dev/html-templates/wizard-navigation2.html">Wizard Navigation (rev 2)</a>
   </li>
   <li>
-    <a href="../dev/html-templates/tilebased-start-menu.html">Tile Based Start Menu</a>
-  </li>
-  <li>
-    <a href="../dev/examples/start-menu.html">Tile Based Start Menu ( sliding/pluggable tiles )</a>
-  </li>
-  <li>
-    <a href="../dev/examples/topbar.html">Top Bar</a>
+    <a href="../dev/examples/topbar.html">Top Bar ( with tiled start menu )</a>
   </li>
   <li>
     <a href="content-test.jsp">Content form, static</a>

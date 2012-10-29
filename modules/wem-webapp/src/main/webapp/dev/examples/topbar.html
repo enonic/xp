@@ -5,6 +5,9 @@
     <link rel="stylesheet" type="text/css" href="../../admin/resources/lib/ext/resources/css/ext-all.css">
     <script type="text/javascript" src="../../admin/resources/app/view/XTemplates.js"></script>
     <script type="text/javascript" src="../../admin/resources/lib/ext/ext-all-debug.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../html-templates/css/tilebased-start-menu.css">
+
     <style type="text/css">
         .x-body {
             font: 16px Arial, sans-serif;
@@ -16,10 +19,22 @@
             padding: 6px;
         }
 
-        .admin-topbar-panel .icon {
+        .admin-topbar-panel .start-button button {
+            overflow: visible;
+        }
+
+        .admin-topbar-panel .start-button .x-btn-icon {
             width: 24px;
             height: 24px;
-            margin-right: 6px;
+            top: -4px;
+        }
+
+        .admin-topbar-panel .start-button .x-btn-inner {
+            padding-left: 30px;
+        }
+
+        .admin-topbar-panel .start-button.x-btn-over {
+            background: #444;
         }
 
         .admin-topbar-panel .x-toolbar-text,
