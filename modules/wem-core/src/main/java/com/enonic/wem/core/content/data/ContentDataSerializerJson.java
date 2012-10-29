@@ -11,12 +11,14 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.core.content.AbstractSerializerJson;
 
 public class ContentDataSerializerJson
+    extends AbstractSerializerJson<ContentData>
 {
     private DataSerializerJson dataSerializer = new DataSerializerJson();
 
-    public void generate( ContentData contentData, JsonGenerator g )
+    public void generate( final ContentData contentData, final JsonGenerator g )
         throws IOException
     {
         g.writeArrayFieldStart( "data" );

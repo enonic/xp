@@ -40,16 +40,6 @@ public class ContentDaoImplTest
         // verify
         Node contentNode = session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH + "myContent" );
         assertNotNull( contentNode );
-
-        assertFalse( contentNode.hasNode( "type" ) );
-
-        Node contentDataNode = contentNode.getNode( "data" );
-        assertNotNull( contentDataNode );
-
-        Node myDataNode = contentDataNode.getNode( "myData" );
-        assertNotNull( myDataNode );
-
-        assertEquals( "myValue", myDataNode.getProperty( "value" ).getString() );
     }
 
     @Test
@@ -95,15 +85,13 @@ public class ContentDaoImplTest
         commit();
 
         // verify
-        Node contentNode = session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH + "myContent" );
+        assertNotNull( session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH + "myContent" ) );
 
-        assertFalse( contentNode.hasNode( "type" ) );
+        Content storedContent = contentDao.findContent( ContentPath.from( "myContent" ), session );
 
-        Node contentDataNode = contentNode.getNode( "data" );
-
-        assertEquals( "1", contentDataNode.getNode( "myData" ).getProperty( "value" ).getString() );
-        assertEquals( "2", contentDataNode.getNode( "mySet/value/myData" ).getProperty( "value" ).getString() );
-        assertEquals( "3", contentDataNode.getNode( "mySet/value/myOtherData" ).getProperty( "value" ).getString() );
+        assertEquals( "1", storedContent.getData( "myData" ).getString() );
+        assertEquals( "2", storedContent.getData( "mySet.myData" ).getString() );
+        assertEquals( "3", storedContent.getData( "mySet.myOtherData" ).getString() );
     }
 
     @Test
@@ -127,9 +115,10 @@ public class ContentDaoImplTest
         contentDao.updateContent( updateContent, session );
 
         // verify
-        Node contentNode = session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH + "myContent" );
-        Node myDataNode = contentNode.getNode( "data" ).getNode( "myData" );
-        assertEquals( "changed value", myDataNode.getProperty( "value" ).getString() );
+        assertNotNull( session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH + "myContent" ) );
+
+        Content storedContent = contentDao.findContent( ContentPath.from( "myContent" ), session );
+        assertEquals( "changed value", storedContent.getData( "myData" ).getString() );
     }
 
     @Test

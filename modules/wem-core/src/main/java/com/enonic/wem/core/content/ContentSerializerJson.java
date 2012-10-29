@@ -2,7 +2,6 @@ package com.enonic.wem.core.content;
 
 
 import java.io.IOException;
-import java.io.StringWriter;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonFactory;
@@ -18,6 +17,7 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.core.content.data.ContentDataSerializerJson;
 
 public class ContentSerializerJson
+    extends AbstractSerializerJson<Content>
     implements ContentSerializer
 {
     private ContentTypeFetcher contentTypeFetcher;
@@ -30,30 +30,10 @@ public class ContentSerializerJson
         this.contentTypeFetcher = contentTypeFetcher;
     }
 
-    public String toString( Content content )
-    {
-        try
-        {
-            StringWriter sw = new StringWriter();
-            JsonGenerator g = JsonFactoryHolder.DEFAULT_FACTORY.createJsonGenerator( sw );
-            g.useDefaultPrettyPrinter();
-
-            generate( content, g );
-
-            g.close();
-            sw.close();
-            return sw.toString();
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( "Failed to generate json", e );
-        }
-    }
-
     public void generate( Content content, JsonGenerator g )
         throws IOException
     {
-        g.writeStartObject();
+
         g.writeStringField( "name", content.getName() );
         if ( content.getType() != null )
         {
@@ -64,7 +44,6 @@ public class ContentSerializerJson
             g.writeNullField( "type" );
         }
         contentDataSerializer.generate( content.getData(), g );
-        g.writeEndObject();
     }
 
     public Content toContent( final String json )
