@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.type.ContentType
 import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException
 import com.enonic.wem.api.content.type.formitem.FieldSet
 import com.enonic.wem.api.content.type.formitem.FormItemSet
-import com.enonic.wem.api.content.type.formitem.comptype.InputTypes
+import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes
 
 import static com.enonic.wem.api.content.type.formitem.Input.newInput
 

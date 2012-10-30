@@ -15,13 +15,13 @@ import com.enonic.wem.api.content.type.formitem.FormItem;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
 import com.enonic.wem.api.content.type.formitem.Input;
 import com.enonic.wem.api.content.type.formitem.Occurrences;
-import com.enonic.wem.api.content.type.formitem.comptype.InputTypeConfig;
-import com.enonic.wem.api.content.type.formitem.comptype.InputTypes;
-import com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig;
+import com.enonic.wem.api.content.type.formitem.inputtype.InputTypeConfig;
+import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.formitem.inputtype.SingleSelectorConfig;
 import com.enonic.wem.core.content.JsonFactoryHolder;
 
 import static com.enonic.wem.api.content.type.formitem.Input.newInput;
-import static com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig.newSingleSelectorConfig;
+import static com.enonic.wem.api.content.type.formitem.inputtype.SingleSelectorConfig.newSingleSelectorConfig;
 import static org.junit.Assert.*;
 
 public class FormItemSerializerJsonTest

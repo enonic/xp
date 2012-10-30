@@ -2,7 +2,7 @@ package com.enonic.wem.api.content.type.formitem;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.type.formitem.comptype.InputTypes;
+import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.type.formitem.FormItemSetSubTypeBuilder.newFormItemSetSubType;

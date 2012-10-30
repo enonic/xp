@@ -13,9 +13,9 @@ import com.enonic.wem.api.content.type.formitem.FieldSet;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
 import com.enonic.wem.api.content.type.formitem.InvalidDataException;
 import com.enonic.wem.api.content.type.formitem.InvalidValueException;
-import com.enonic.wem.api.content.type.formitem.comptype.HtmlAreaConfig;
-import com.enonic.wem.api.content.type.formitem.comptype.InputTypes;
-import com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig;
+import com.enonic.wem.api.content.type.formitem.inputtype.HtmlAreaConfig;
+import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.formitem.inputtype.SingleSelectorConfig;
 
 import static com.enonic.wem.api.content.type.Validator.newValidator;
 import static com.enonic.wem.api.content.type.formitem.Input.newInput;

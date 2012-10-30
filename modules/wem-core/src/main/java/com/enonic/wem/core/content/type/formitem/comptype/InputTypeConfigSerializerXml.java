@@ -3,8 +3,8 @@ package com.enonic.wem.core.content.type.formitem.comptype;
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 
-import com.enonic.wem.api.content.type.formitem.comptype.AbstractInputTypeConfigSerializerXml;
-import com.enonic.wem.api.content.type.formitem.comptype.InputTypeConfig;
+import com.enonic.wem.api.content.type.formitem.inputtype.AbstractInputTypeConfigSerializerXml;
+import com.enonic.wem.api.content.type.formitem.inputtype.InputTypeConfig;
 
 public class InputTypeConfigSerializerXml
 {

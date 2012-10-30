@@ -13,7 +13,7 @@ import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
-import com.enonic.wem.api.content.type.formitem.comptype.InputTypes;
+import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.web.json.ObjectMapperHelper;
 

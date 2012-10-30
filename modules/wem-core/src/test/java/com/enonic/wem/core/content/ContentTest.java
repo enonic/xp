@@ -17,8 +17,8 @@ import com.enonic.wem.api.content.type.formitem.InputSubType;
 import com.enonic.wem.api.content.type.formitem.InvalidDataException;
 import com.enonic.wem.api.content.type.formitem.MockSubTypeFetcher;
 import com.enonic.wem.api.content.type.formitem.SubTypeReference;
-import com.enonic.wem.api.content.type.formitem.comptype.InputTypes;
-import com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig;
+import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.formitem.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
@@ -27,7 +27,7 @@ import static com.enonic.wem.api.content.type.formitem.FormItemSetSubTypeBuilder
 import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 import static com.enonic.wem.api.content.type.formitem.InputSubType.newInputSubType;
 import static com.enonic.wem.api.content.type.formitem.SubTypeReference.newSubTypeReference;
-import static com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig.newSingleSelectorConfig;
+import static com.enonic.wem.api.content.type.formitem.inputtype.SingleSelectorConfig.newSingleSelectorConfig;
 import static com.enonic.wem.api.module.Module.newModule;
 import static org.junit.Assert.*;
 

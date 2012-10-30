@@ -14,8 +14,8 @@ import com.enonic.wem.api.content.type.formitem.FormItems;
 import com.enonic.wem.api.content.type.formitem.Input;
 import com.enonic.wem.api.content.type.formitem.MockSubTypeFetcher;
 import com.enonic.wem.api.content.type.formitem.SubTypeReference;
-import com.enonic.wem.api.content.type.formitem.comptype.InputTypes;
-import com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig;
+import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.formitem.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;

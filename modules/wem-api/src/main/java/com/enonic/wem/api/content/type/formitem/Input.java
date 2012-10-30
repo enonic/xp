@@ -5,9 +5,9 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
-import com.enonic.wem.api.content.type.formitem.comptype.BaseInputType;
-import com.enonic.wem.api.content.type.formitem.comptype.InputType;
-import com.enonic.wem.api.content.type.formitem.comptype.InputTypeConfig;
+import com.enonic.wem.api.content.type.formitem.inputtype.BaseInputType;
+import com.enonic.wem.api.content.type.formitem.inputtype.InputType;
+import com.enonic.wem.api.content.type.formitem.inputtype.InputTypeConfig;
 
 public class Input
     extends HierarchicalFormItem

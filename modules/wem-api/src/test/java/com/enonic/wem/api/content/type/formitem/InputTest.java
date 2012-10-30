@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.datatype.DataTypes;
-import com.enonic.wem.api.content.type.formitem.comptype.InputTypes;
+import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
 
 import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 import static org.junit.Assert.*;

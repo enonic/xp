@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.type.formitem.FormItemSetSubType;
 import com.enonic.wem.api.content.type.formitem.FormItemSetSubTypeBuilder;
 import com.enonic.wem.api.content.type.formitem.MockSubTypeFetcher;
 import com.enonic.wem.api.content.type.formitem.SubTypeReference;
-import com.enonic.wem.api.content.type.formitem.comptype.InputTypes;
+import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.type.formitem.Input.newInput;

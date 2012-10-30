@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.MockContentTypeFetcher;
 import com.enonic.wem.api.content.type.formitem.FieldSet;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
-import com.enonic.wem.api.content.type.formitem.comptype.InputTypes;
+import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
