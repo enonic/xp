@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.type.formitem;
 
 public enum FormItemType
 {
-    COMPONENT,
+    INPUT,
     FORM_ITEM_SET,
     LAYOUT,
     REFERENCE

@@ -11,15 +11,16 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.type.formitem.Component;
 import com.enonic.wem.api.content.type.formitem.FormItem;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
+import com.enonic.wem.api.content.type.formitem.Input;
 import com.enonic.wem.api.content.type.formitem.Occurrences;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypeConfig;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig;
 import com.enonic.wem.core.content.JsonFactoryHolder;
 
+import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 import static com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig.newSingleSelectorConfig;
 import static org.junit.Assert.*;
 
@@ -46,7 +47,7 @@ public class FormItemSerializerJsonTest
         throws IOException
     {
         // setup
-        Component.Builder builder = Component.newBuilder();
+        Input.Builder builder = newInput();
         builder.type( ComponentTypes.TEXT_LINE );
         builder.name( "myTextLine" );
         builder.required( true );
@@ -55,9 +56,9 @@ public class FormItemSerializerJsonTest
         builder.helpText( null );
         builder.customText( "Custom text" );
         builder.occurrences( 1, 100 );
-        Component component = builder.build();
+        Input input = builder.build();
 
-        String json = fieldToJson( component );
+        String json = fieldToJson( input );
         System.out.println( json );
         JsonParser jp = jsonFactory.createJsonParser( json );
 
@@ -65,18 +66,18 @@ public class FormItemSerializerJsonTest
         FormItem formItem = new FormItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
-        assertTrue( formItem instanceof Component );
+        assertTrue( formItem instanceof Input );
         assertEquals( "myTextLine", formItem.getName() );
-        Component parsedComponent = (Component) formItem;
-        assertEquals( true, parsedComponent.isRequired() );
-        assertEquals( false, parsedComponent.isIndexed() );
-        assertEquals( true, parsedComponent.isImmutable() );
-        assertEquals( null, parsedComponent.getLabel() );
-        assertEquals( null, parsedComponent.getHelpText() );
-        assertEquals( "Custom text", parsedComponent.getCustomText() );
-        assertEquals( new Occurrences( 1, 100 ), parsedComponent.getOccurrences() );
-        assertEquals( ComponentTypes.TEXT_LINE, parsedComponent.getComponentType() );
-        assertNull( parsedComponent.getComponentTypeConfig() );
+        Input parsedInput = (Input) formItem;
+        assertEquals( true, parsedInput.isRequired() );
+        assertEquals( false, parsedInput.isIndexed() );
+        assertEquals( true, parsedInput.isImmutable() );
+        assertEquals( null, parsedInput.getLabel() );
+        assertEquals( null, parsedInput.getHelpText() );
+        assertEquals( "Custom text", parsedInput.getCustomText() );
+        assertEquals( new Occurrences( 1, 100 ), parsedInput.getOccurrences() );
+        assertEquals( ComponentTypes.TEXT_LINE, parsedInput.getComponentType() );
+        assertNull( parsedInput.getComponentTypeConfig() );
     }
 
     @Test
@@ -84,30 +85,30 @@ public class FormItemSerializerJsonTest
         throws IOException
     {
         // setup
-        Component.Builder builder = Component.newBuilder();
+        Input.Builder builder = newInput();
         builder.type( ComponentTypes.SINGLE_SELECTOR );
         builder.name( "mySingleSelector" );
         builder.label( "My SingleSelector" );
         builder.componentTypeConfig(
             newSingleSelectorConfig().typeDropdown().addOption( "Option 1", "o1" ).addOption( "Option 2", "o2" ).build() );
-        Component component = builder.build();
+        Input input = builder.build();
 
-        String json = fieldToJson( component );
+        String json = fieldToJson( input );
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
         FormItem formItem = new FormItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
-        assertTrue( formItem instanceof Component );
+        assertTrue( formItem instanceof Input );
         assertEquals( "mySingleSelector", formItem.getName() );
-        Component parsedComponent = (Component) formItem;
-        assertEquals( "My SingleSelector", parsedComponent.getLabel() );
-        assertEquals( false, parsedComponent.isRequired() );
-        assertEquals( false, parsedComponent.isIndexed() );
-        assertEquals( false, parsedComponent.isImmutable() );
-        assertEquals( ComponentTypes.SINGLE_SELECTOR, parsedComponent.getComponentType() );
-        ComponentTypeConfig componentTypeConfig = parsedComponent.getComponentTypeConfig();
+        Input parsedInput = (Input) formItem;
+        assertEquals( "My SingleSelector", parsedInput.getLabel() );
+        assertEquals( false, parsedInput.isRequired() );
+        assertEquals( false, parsedInput.isIndexed() );
+        assertEquals( false, parsedInput.isImmutable() );
+        assertEquals( ComponentTypes.SINGLE_SELECTOR, parsedInput.getComponentType() );
+        ComponentTypeConfig componentTypeConfig = parsedInput.getComponentTypeConfig();
         assertNotNull( componentTypeConfig );
         assertTrue( componentTypeConfig instanceof SingleSelectorConfig );
         SingleSelectorConfig singleSelectorConfig = (SingleSelectorConfig) componentTypeConfig;
@@ -156,10 +157,10 @@ public class FormItemSerializerJsonTest
         return sw.toString();
     }
 
-    private String fieldToJson( Component component )
+    private String fieldToJson( Input input )
         throws IOException
     {
-        new FormItemSerializerJson().generate( component, g );
+        new FormItemSerializerJson().generate( input, g );
         g.close();
         return sw.toString();
     }

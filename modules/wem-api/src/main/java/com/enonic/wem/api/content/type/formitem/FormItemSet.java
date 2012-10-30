@@ -37,12 +37,12 @@ public class FormItemSet
         this.formItems.addFormItem( formItem );
     }
 
-    public void addItem( final Component component )
+    public void addItem( final Input input )
     {
-        Preconditions.checkState( getPath() != null, "Cannot add Component before this FormItemSet is added" );
+        Preconditions.checkState( getPath() != null, "Cannot add Input before this FormItemSet is added" );
 
-        component.setPath( new FormItemPath( getPath(), component.getName() ) );
-        this.formItems.addFormItem( component );
+        input.setPath( new FormItemPath( getPath(), input.getName() ) );
+        this.formItems.addFormItem( input );
     }
 
     public void addFormItemSet( final FormItemSet formItemSet )

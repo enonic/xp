@@ -23,8 +23,8 @@ import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.rest.service.upload.UploadService;
 
-import static com.enonic.wem.api.content.type.formitem.Component.newComponent;
 import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 
 @Component
 public final class CreateOrUpdateContentRpcHandler
@@ -42,10 +42,10 @@ public final class CreateOrUpdateContentRpcHandler
         ContentType myContentType = new ContentType();
         myContentType.setModule( Module.newModule().name( "myModule" ).build() );
         myContentType.setName( "myContentType" );
-        myContentType.addFormItem( newComponent().name( "myTextLine1" ).type( ComponentTypes.TEXT_LINE ).build() );
-        myContentType.addFormItem( newComponent().name( "myTextLine2" ).type( ComponentTypes.TEXT_LINE ).build() );
+        myContentType.addFormItem( newInput().name( "myTextLine1" ).type( ComponentTypes.TEXT_LINE ).build() );
+        myContentType.addFormItem( newInput().name( "myTextLine2" ).type( ComponentTypes.TEXT_LINE ).build() );
         FormItemSet formItemSet = newFormItemSet().name( "myFormItemSet" ).build();
-        formItemSet.addFormItem( newComponent().name( "myTextLine1" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addFormItem( newInput().name( "myTextLine1" ).type( ComponentTypes.TEXT_LINE ).build() );
         myContentType.addFormItem( formItemSet );
         mockContentTypeFetcher.add( myContentType );
         this.contentTypeFetcher = mockContentTypeFetcher;

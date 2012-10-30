@@ -7,26 +7,27 @@ import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
 
+import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 import static org.junit.Assert.*;
 
-public class ComponentTest
+public class InputTest
 {
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_throws_exception_when_broken()
     {
-        Component component = Component.newBuilder().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).required( true ).build();
+        Input input = newInput().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).required( true ).build();
         Data data = Data.newData().type( DataTypes.TEXT ).value( null ).build();
-        component.checkBreaksRequiredContract( data );
+        input.checkBreaksRequiredContract( data );
     }
 
     @Test
     public void copy()
     {
         // setup
-        Component original = Component.newBuilder().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build();
+        Input original = newInput().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build();
 
         // exercise
-        Component copy = original.copy();
+        Input copy = original.copy();
 
         // verify
         assertNotSame( original, copy );

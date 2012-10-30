@@ -15,9 +15,9 @@ public class BreaksRequiredContractException
         this.data = data;
     }
 
-    public BreaksRequiredContractException( final Component missingComponent )
+    public BreaksRequiredContractException( final Input missingInput )
     {
-        super( buildMessage( missingComponent ) );
+        super( buildMessage( missingInput ) );
     }
 
     public BreaksRequiredContractException( final FormItemSet missingFormItemSet )
@@ -36,9 +36,9 @@ public class BreaksRequiredContractException
             data.getValue();
     }
 
-    private static String buildMessage( final Component component )
+    private static String buildMessage( final Input input )
     {
-        return "Required contract is broken, data missing for Component: " + component.getPath().toString();
+        return "Required contract is broken, data missing for Input: " + input.getPath().toString();
     }
 
     private static String buildMessage( final FormItemSet formItemSet )

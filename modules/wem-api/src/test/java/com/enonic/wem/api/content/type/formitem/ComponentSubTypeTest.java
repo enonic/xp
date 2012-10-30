@@ -6,8 +6,8 @@ import org.junit.Test;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.formitem.Component.newComponent;
 import static com.enonic.wem.api.content.type.formitem.ComponentSubTypeBuilder.newComponentSubType;
+import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 
 
 public class ComponentSubTypeTest
@@ -17,7 +17,7 @@ public class ComponentSubTypeTest
     @Test
     public void tags()
     {
-        Component component = newComponent().name( "tags" ).label( "Tags" ).type( ComponentTypes.TEXT_LINE ).multiple( true ).build();
-        ComponentSubType componentSubType = newComponentSubType().module( module ).component( component ).build();
+        Input input = newInput().name( "tags" ).label( "Tags" ).type( ComponentTypes.TEXT_LINE ).multiple( true ).build();
+        ComponentSubType componentSubType = newComponentSubType().module( module ).input( input ).build();
     }
 }

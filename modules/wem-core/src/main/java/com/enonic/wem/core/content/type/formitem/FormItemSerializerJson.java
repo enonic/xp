@@ -6,12 +6,12 @@ import java.io.IOException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
-import com.enonic.wem.api.content.type.formitem.Component;
 import com.enonic.wem.api.content.type.formitem.FieldSet;
 import com.enonic.wem.api.content.type.formitem.FormItem;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
 import com.enonic.wem.api.content.type.formitem.FormItems;
 import com.enonic.wem.api.content.type.formitem.HierarchicalFormItem;
+import com.enonic.wem.api.content.type.formitem.Input;
 import com.enonic.wem.api.content.type.formitem.Layout;
 import com.enonic.wem.api.content.type.formitem.SubTypeQualifiedName;
 import com.enonic.wem.api.content.type.formitem.SubTypeReference;
@@ -23,6 +23,7 @@ import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeSerialize
 
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 
 public class FormItemSerializerJson
 {
@@ -54,9 +55,9 @@ public class FormItemSerializerJson
         {
             generateLayout( (Layout) formItem, g );
         }
-        else if ( formItem instanceof Component )
+        else if ( formItem instanceof Input )
         {
-            generateComponent( (Component) formItem, g );
+            generateComponent( (Input) formItem, g );
         }
         else if ( formItem instanceof SubTypeReference )
         {
@@ -64,26 +65,25 @@ public class FormItemSerializerJson
         }
     }
 
-    private void generateComponent( final Component component, final JsonGenerator g )
+    private void generateComponent( final Input input, final JsonGenerator g )
         throws IOException
     {
         g.writeStartObject();
-        g.writeStringField( "formItemType", Component.class.getSimpleName() );
-        g.writeStringField( "name", component.getName() );
-        componentTypeSerializer.generate( component.getComponentType(), g );
-        g.writeStringField( "label", component.getLabel() );
-        g.writeBooleanField( "required", component.isRequired() );
-        g.writeBooleanField( "immutable", component.isImmutable() );
-        OccurrencesSerializerJson.generate( component.getOccurrences(), g );
-        g.writeBooleanField( "indexed", component.isIndexed() );
-        g.writeStringField( "customText", component.getCustomText() );
-        g.writeStringField( "validationRegexp",
-                            component.getValidationRegexp() != null ? component.getValidationRegexp().toString() : null );
-        g.writeStringField( "helpText", component.getHelpText() );
-        if ( component.getComponentType().requiresConfig() && component.getComponentTypeConfig() != null )
+        g.writeStringField( "formItemType", Input.class.getSimpleName() );
+        g.writeStringField( "name", input.getName() );
+        componentTypeSerializer.generate( input.getComponentType(), g );
+        g.writeStringField( "label", input.getLabel() );
+        g.writeBooleanField( "required", input.isRequired() );
+        g.writeBooleanField( "immutable", input.isImmutable() );
+        OccurrencesSerializerJson.generate( input.getOccurrences(), g );
+        g.writeBooleanField( "indexed", input.isIndexed() );
+        g.writeStringField( "customText", input.getCustomText() );
+        g.writeStringField( "validationRegexp", input.getValidationRegexp() != null ? input.getValidationRegexp().toString() : null );
+        g.writeStringField( "helpText", input.getHelpText() );
+        if ( input.getComponentType().requiresConfig() && input.getComponentTypeConfig() != null )
         {
             g.writeFieldName( "componentTypeConfig" );
-            component.getComponentType().getComponentTypeConfigJsonGenerator().generate( component.getComponentTypeConfig(), g );
+            input.getComponentType().getComponentTypeConfigJsonGenerator().generate( input.getComponentTypeConfig(), g );
         }
 
         g.writeEndObject();
@@ -146,7 +146,7 @@ public class FormItemSerializerJson
 
         final FormItem formItem;
 
-        if ( formItemType.equals( Component.class.getSimpleName() ) )
+        if ( formItemType.equals( Input.class.getSimpleName() ) )
         {
             formItem = parseComponent( formItemNode );
         }
@@ -172,7 +172,7 @@ public class FormItemSerializerJson
 
     private HierarchicalFormItem parseComponent( final JsonNode formItemNode )
     {
-        final Component.Builder builder = Component.newComponent();
+        final Input.Builder builder = newInput();
         builder.name( JsonParserUtil.getStringValue( "name", formItemNode ) );
         builder.label( JsonParserUtil.getStringValue( "label", formItemNode, null ) );
         builder.immutable( JsonParserUtil.getBooleanValue( "immutable", formItemNode ) );
@@ -245,7 +245,7 @@ public class FormItemSerializerJson
         return builder.build();
     }
 
-    private void parseValidationRegexp( final Component.Builder builder, final JsonNode componentNode )
+    private void parseValidationRegexp( final Input.Builder builder, final JsonNode componentNode )
     {
         final String validationRegexp = JsonParserUtil.getStringValue( "validationRegexp", componentNode, null );
         if ( validationRegexp != null )
@@ -254,7 +254,7 @@ public class FormItemSerializerJson
         }
     }
 
-    private void parseOccurrences( final Component.Builder builder, final JsonNode occurrencesNode )
+    private void parseOccurrences( final Input.Builder builder, final JsonNode occurrencesNode )
     {
         if ( occurrencesNode != null )
         {
@@ -278,7 +278,7 @@ public class FormItemSerializerJson
         }
     }
 
-    private void parseComponentTypeConfig( final Component.Builder builder, final JsonNode componentTypeConfigNode )
+    private void parseComponentTypeConfig( final Input.Builder builder, final JsonNode componentTypeConfigNode )
     {
         if ( componentTypeConfigNode != null )
         {
@@ -286,7 +286,7 @@ public class FormItemSerializerJson
         }
     }
 
-    private void parseComponentType( final Component.Builder builder, final JsonNode componentTypeNode )
+    private void parseComponentType( final Input.Builder builder, final JsonNode componentTypeNode )
     {
         if ( componentTypeNode != null )
         {

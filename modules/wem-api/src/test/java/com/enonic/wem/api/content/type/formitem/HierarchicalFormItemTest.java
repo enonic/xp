@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
 
+import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 import static org.junit.Assert.*;
 
 public class HierarchicalFormItemTest
@@ -12,22 +13,22 @@ public class HierarchicalFormItemTest
     @Test
     public void setParentPath()
     {
-        Component component = Component.newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build();
-        component.setParentPath( new FormItemPath( "myParent" ) );
-        assertEquals( "myParent.myField", component.getPath().toString() );
+        Input input = newInput().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build();
+        input.setParentPath( new FormItemPath( "myParent" ) );
+        assertEquals( "myParent.myField", input.getPath().toString() );
 
-        component = Component.newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build();
-        component.setPath( new FormItemPath( "myParent.myField" ) );
-        component.setParentPath( new FormItemPath( "myNewParent" ) );
-        assertEquals( "myNewParent.myField", component.getPath().toString() );
+        input = newInput().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build();
+        input.setPath( new FormItemPath( "myParent.myField" ) );
+        input.setParentPath( new FormItemPath( "myNewParent" ) );
+        assertEquals( "myNewParent.myField", input.getPath().toString() );
 
-        component = Component.newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build();
-        component.setParentPath( new FormItemPath( "myGrandParent.myParent" ) );
-        assertEquals( "myGrandParent.myParent.myField", component.getPath().toString() );
+        input = newInput().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build();
+        input.setParentPath( new FormItemPath( "myGrandParent.myParent" ) );
+        assertEquals( "myGrandParent.myParent.myField", input.getPath().toString() );
 
-        component = Component.newComponent().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build();
-        component.setPath( new FormItemPath( "myParent.myField" ) );
-        component.setParentPath( new FormItemPath( "myNewGrandParent.myNewParent" ) );
-        assertEquals( "myNewGrandParent.myNewParent.myField", component.getPath().toString() );
+        input = newInput().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build();
+        input.setPath( new FormItemPath( "myParent.myField" ) );
+        input.setParentPath( new FormItemPath( "myNewGrandParent.myNewParent" ) );
+        assertEquals( "myNewGrandParent.myNewParent.myField", input.getPath().toString() );
     }
 }

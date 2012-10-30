@@ -7,10 +7,10 @@ import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.EntrySelector;
 import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
-import com.enonic.wem.api.content.type.formitem.Component;
 import com.enonic.wem.api.content.type.formitem.FieldSet;
 import com.enonic.wem.api.content.type.formitem.FormItem;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
+import com.enonic.wem.api.content.type.formitem.Input;
 
 public class RequiredContractVerifier
 {
@@ -31,9 +31,9 @@ public class RequiredContractVerifier
         // check missing required entries
         for ( FormItem formItem : formItems )
         {
-            if ( formItem instanceof Component )
+            if ( formItem instanceof Input )
             {
-                processComponent( (Component) formItem, entrySelector );
+                processInput( (Input) formItem, entrySelector );
             }
             else if ( formItem instanceof FormItemSet )
             {
@@ -46,12 +46,12 @@ public class RequiredContractVerifier
         }
     }
 
-    private void processComponent( final Component component, final EntrySelector entrySelector )
+    private void processInput( final Input input, final EntrySelector entrySelector )
     {
-        Data data = entrySelector != null ? entrySelector.getData( new EntryPath( component.getPath().toString() ) ) : null;
-        if ( component.isRequired() )
+        Data data = entrySelector != null ? entrySelector.getData( new EntryPath( input.getPath().toString() ) ) : null;
+        if ( input.isRequired() )
         {
-            verifyRequiredComponent( component, data );
+            verifyRequiredInput( input, data );
         }
     }
 
@@ -74,15 +74,15 @@ public class RequiredContractVerifier
     }
 
 
-    private void verifyRequiredComponent( final Component component, final Data data )
+    private void verifyRequiredInput( final Input input, final Data data )
     {
         if ( data == null )
         {
-            throw new BreaksRequiredContractException( component );
+            throw new BreaksRequiredContractException( input );
         }
         else
         {
-            component.checkBreaksRequiredContract( data );
+            input.checkBreaksRequiredContract( data );
         }
     }
 

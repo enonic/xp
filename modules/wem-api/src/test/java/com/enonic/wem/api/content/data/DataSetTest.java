@@ -5,11 +5,11 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.datatype.DataTypes;
-import com.enonic.wem.api.content.type.formitem.Component;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
 import com.enonic.wem.api.content.type.formitem.FormItems;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
 
+import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 import static org.junit.Assert.*;
 
 public class DataSetTest
@@ -19,7 +19,7 @@ public class DataSetTest
     {
         FormItems formItems = new FormItems();
         FormItemSet formItemSet = FormItemSet.newFormItemSet().name( "personalia" ).multiple( true ).build();
-        formItemSet.addItem( Component.newComponent().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newInput().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
         formItems.addFormItem( formItemSet );
 
         DataSet dataSet = new DataSet( new EntryPath() );
@@ -39,8 +39,8 @@ public class DataSetTest
     public void getValue_when_having_sub_type()
     {
         FormItemSet formItemSet = FormItemSet.newFormItemSet().name( "personalia" ).multiple( false ).build();
-        formItemSet.addItem( Component.newComponent().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( Component.newComponent().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newInput().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newInput().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() );
         FormItems formItems = new FormItems();
         formItems.addFormItem( formItemSet );
 
@@ -57,8 +57,8 @@ public class DataSetTest
     {
         FormItemSet personalia = FormItemSet.newFormItemSet().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
         FormItemSet crimes = FormItemSet.newFormItemSet().name( "crimes" ).multiple( true ).build();
-        crimes.addItem( Component.newComponent().name( "description" ).type( ComponentTypes.TEXT_LINE ).build() );
-        crimes.addItem( Component.newComponent().name( "year" ).type( ComponentTypes.TEXT_LINE ).build() );
+        crimes.addItem( newInput().name( "description" ).type( ComponentTypes.TEXT_LINE ).build() );
+        crimes.addItem( newInput().name( "year" ).type( ComponentTypes.TEXT_LINE ).build() );
         personalia.addFormItemSet( crimes );
         FormItems formItems = new FormItems();
         formItems.addFormItem( personalia );
@@ -80,8 +80,8 @@ public class DataSetTest
     {
         FormItems formItems = new FormItems();
         FormItemSet formItemSet = FormItemSet.newFormItemSet().name( "persons" ).multiple( true ).build();
-        formItemSet.addItem( Component.newComponent().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( Component.newComponent().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newInput().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newInput().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
         formItems.addFormItem( formItemSet );
 
         DataSet dataSet = new DataSet( new EntryPath() );

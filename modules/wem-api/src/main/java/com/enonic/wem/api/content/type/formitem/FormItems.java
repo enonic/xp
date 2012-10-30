@@ -150,7 +150,7 @@ public class FormItems
         return (FormItemSet) formItem;
     }
 
-    public Component getComponent( final String name )
+    public Input getInput( final String name )
     {
         final HierarchicalFormItem formItem = getHierarchicalFormItem( name );
         if ( formItem == null )
@@ -158,27 +158,25 @@ public class FormItems
             return null;
         }
 
-        Preconditions.checkArgument( ( formItem instanceof Component ),
-                                     "FormItem at path [%s] is not a Component: " + formItem.getClass().getSimpleName(),
-                                     formItem.getPath() );
+        Preconditions.checkArgument( ( formItem instanceof Input ),
+                                     "FormItem at path [%s] is not a Input: " + formItem.getClass().getSimpleName(), formItem.getPath() );
 
         //noinspection ConstantConditions
-        return (Component) formItem;
+        return (Input) formItem;
     }
 
-    public Component getComponent( final FormItemPath path )
+    public Input getInput( final FormItemPath path )
     {
         final HierarchicalFormItem formItem = getHierarchicalFormItem( path );
         if ( formItem == null )
         {
             return null;
         }
-        Preconditions.checkArgument( formItem instanceof Component,
-                                     "FormItem at path [%s] is not a Component: " + formItem.getClass().getSimpleName(),
-                                     formItem.getPath() );
+        Preconditions.checkArgument( formItem instanceof Input,
+                                     "FormItem at path [%s] is not a Input: " + formItem.getClass().getSimpleName(), formItem.getPath() );
 
         //noinspection ConstantConditions
-        return (Component) formItem;
+        return (Input) formItem;
     }
 
     public Iterator<FormItem> iterator()

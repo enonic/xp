@@ -3,12 +3,12 @@ package com.enonic.wem.api.content.type;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.type.formitem.Component;
 import com.enonic.wem.api.content.type.formitem.FormItem;
 import com.enonic.wem.api.content.type.formitem.FormItemPath;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
 import com.enonic.wem.api.content.type.formitem.FormItems;
 import com.enonic.wem.api.content.type.formitem.HierarchicalFormItem;
+import com.enonic.wem.api.content.type.formitem.Input;
 import com.enonic.wem.api.content.type.formitem.SubTypeFetcher;
 import com.enonic.wem.api.module.Module;
 
@@ -125,15 +125,15 @@ public class ContentType
         this.formItems.addFormItem( formItem );
     }
 
-    Component getComponent( final FormItemPath path )
+    Input getInput( final FormItemPath path )
     {
-        final Component component = formItems.getComponent( path );
-        if ( component == null )
+        final Input input = formItems.getInput( path );
+        if ( input == null )
         {
             return null;
         }
 
-        return component;
+        return input;
     }
 
     public HierarchicalFormItem getFormItem( final String path )
@@ -146,9 +146,9 @@ public class ContentType
         return formItems.getHierarchicalFormItem( path );
     }
 
-    public Component getComponent( final String path )
+    public Input getInput( final String path )
     {
-        return getComponent( new FormItemPath( path ) );
+        return getInput( new FormItemPath( path ) );
     }
 
     public FormItemSet getFormItemSet( final String path )

@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
 
+import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 import static org.junit.Assert.*;
 
 public class FormItemSetTest
@@ -14,7 +15,7 @@ public class FormItemSetTest
     {
         // setup
         FormItemSet original = FormItemSet.newBuilder().name( "name" ).label( "Label" ).multiple( true ).build();
-        original.addItem( Component.newBuilder().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() );
+        original.addItem( newInput().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() );
 
         // exercise
         FormItemSet copy = original.copy();
@@ -34,7 +35,7 @@ public class FormItemSetTest
     {
         // setup
         FormItemSet formItemSet = FormItemSet.newBuilder().name( "myFieldSet" ).label( "Label" ).multiple( true ).build();
-        formItemSet.addItem( Component.newBuilder().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newInput().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() );
 
         // exercise
         HierarchicalFormItem field = formItemSet.getHierarchicalFormItem( new FormItemPath( "myField" ) );
@@ -47,10 +48,10 @@ public class FormItemSetTest
     public void setPath()
     {
         FormItemSet formItemSet = FormItemSet.newBuilder().name( "address" ).label( "Address" ).build();
-        formItemSet.addItem( Component.newBuilder().name( "street" ).type( ComponentTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( Component.newBuilder().name( "postalCode" ).type( ComponentTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( Component.newBuilder().name( "postalPlace" ).type( ComponentTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( Component.newBuilder().name( "country" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newInput().name( "street" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newInput().name( "postalCode" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newInput().name( "postalPlace" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newInput().name( "country" ).type( ComponentTypes.TEXT_LINE ).build() );
 
         // exercise & verify
         formItemSet.setName( "homeAddress" );

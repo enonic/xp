@@ -7,13 +7,13 @@ import com.enonic.wem.api.module.Module;
 
 public class ComponentSubTypeBuilder
 {
-    private Component component;
+    private Input input;
 
     private Module module;
 
-    public ComponentSubTypeBuilder component( Component value )
+    public ComponentSubTypeBuilder input( Input value )
     {
-        this.component = value;
+        this.input = value;
         return this;
     }
 
@@ -25,10 +25,10 @@ public class ComponentSubTypeBuilder
 
     public ComponentSubType build()
     {
-        Preconditions.checkNotNull( component, "component is required" );
+        Preconditions.checkNotNull( input, "input is required" );
 
         ComponentSubType subType = new ComponentSubType();
-        subType.setComponent( component );
+        subType.setInput( input );
         subType.setModule( module );
         return subType;
     }

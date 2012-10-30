@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.type.formitem;
 public class ComponentSubType
     extends SubType
 {
-    private Component component;
+    private Input input;
 
     ComponentSubType()
     {
@@ -11,7 +11,7 @@ public class ComponentSubType
 
     public String getName()
     {
-        return component.getName();
+        return input.getName();
     }
 
     @Override
@@ -20,21 +20,21 @@ public class ComponentSubType
         return this.getClass();
     }
 
-    public Component getComponent()
+    public Input getInput()
     {
-        return component;
+        return input;
     }
 
-    void setComponent( final Component value )
+    void setInput( final Input value )
     {
-        this.component = value;
+        this.input = value;
     }
 
     public HierarchicalFormItem create( final SubTypeReference subTypeReference )
     {
-        Component component = this.component.copy();
-        component.setName( subTypeReference.getName() );
-        component.setPath( subTypeReference.getPath() );
-        return component;
+        Input input = this.input.copy();
+        input.setName( subTypeReference.getName() );
+        input.setPath( subTypeReference.getPath() );
+        return input;
     }
 }

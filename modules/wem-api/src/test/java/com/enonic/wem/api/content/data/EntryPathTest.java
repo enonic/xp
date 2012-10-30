@@ -62,14 +62,14 @@ public class EntryPathTest
 
         assertEquals( "formItemSet[0]",
                       new EntryPath( "formItemSet" ).asNewWithIndexAtPath( 0, new EntryPath( "formItemSet" ) ).toString() );
-        assertEquals( "formItemSet[0].component",
-                      new EntryPath( "formItemSet.component" ).asNewWithIndexAtPath( 0, new EntryPath( "formItemSet" ) ).toString() );
-        assertEquals( "anotherSet.formItemSet[0].component", new EntryPath( "anotherSet.formItemSet.component" ).asNewWithIndexAtPath( 0,
-                                                                                                                                       new EntryPath(
-                                                                                                                                           "anotherSet.formItemSet" ) ).toString() );
-        assertEquals( "anotherSet.formItemSet.component[0]", new EntryPath( "anotherSet.formItemSet.component" ).asNewWithIndexAtPath( 0,
-                                                                                                                                       new EntryPath(
-                                                                                                                                           "anotherSet.formItemSet.component" ) ).toString() );
+        assertEquals( "formItemSet[0].input",
+                      new EntryPath( "formItemSet.input" ).asNewWithIndexAtPath( 0, new EntryPath( "formItemSet" ) ).toString() );
+        assertEquals( "anotherSet.formItemSet[0].input", new EntryPath( "anotherSet.formItemSet.input" ).asNewWithIndexAtPath( 0,
+                                                                                                                               new EntryPath(
+                                                                                                                                   "anotherSet.formItemSet" ) ).toString() );
+        assertEquals( "anotherSet.formItemSet.input[0]", new EntryPath( "anotherSet.formItemSet.input" ).asNewWithIndexAtPath( 0,
+                                                                                                                               new EntryPath(
+                                                                                                                                   "anotherSet.formItemSet.input" ) ).toString() );
 
     }
 }

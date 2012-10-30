@@ -9,9 +9,9 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.type.formitem.Component;
 import com.enonic.wem.api.content.type.formitem.FormItem;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
+import com.enonic.wem.api.content.type.formitem.Input;
 import com.enonic.wem.api.content.type.formitem.InvalidDataException;
 
 /**
@@ -72,9 +72,9 @@ public class Validator
             final FormItem formItem = contentType.getFormItem( data.getPath().resolveFormItemPath().toString() );
             if ( formItem != null )
             {
-                if ( formItem instanceof Component )
+                if ( formItem instanceof Input )
                 {
-                    checkComponentValidity( data, (Component) formItem );
+                    checkInputValidity( data, (Input) formItem );
                 }
             }
         }
@@ -91,15 +91,15 @@ public class Validator
                 for ( Data subData : dataSet )
                 {
                     final FormItem subFormItem = contentType.getFormItem( subData.getPath().resolveFormItemPath().toString() );
-                    if ( subFormItem instanceof Component )
+                    if ( subFormItem instanceof Input )
                     {
-                        checkComponentValidity( subData, (Component) subFormItem );
+                        checkInputValidity( subData, (Input) subFormItem );
                     }
                 }
             }
-            else if ( formItem instanceof Component )
+            else if ( formItem instanceof Input )
             {
-                checkComponentValidity( dataWithDataSet, (Component) formItem );
+                checkInputValidity( dataWithDataSet, (Input) formItem );
             }
         }
         else
@@ -120,11 +120,11 @@ public class Validator
         }
     }
 
-    private void checkComponentValidity( final Data data, final Component component )
+    private void checkInputValidity( final Data data, final Input input )
     {
         try
         {
-            component.checkValidity( data );
+            input.checkValidity( data );
         }
         catch ( InvalidDataException e )
         {
@@ -135,7 +135,7 @@ public class Validator
         {
             try
             {
-                component.checkValidationRegexp( data );
+                input.checkValidationRegexp( data );
             }
             catch ( InvalidDataException e )
             {

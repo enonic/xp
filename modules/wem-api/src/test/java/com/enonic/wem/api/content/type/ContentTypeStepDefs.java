@@ -13,16 +13,18 @@ import cucumber.annotation.en.When;
 import cucumber.table.DataTable;
 import gherkin.formatter.model.DataTableRow;
 
-import com.enonic.wem.api.content.type.formitem.Component;
 import com.enonic.wem.api.content.type.formitem.ComponentSubType;
 import com.enonic.wem.api.content.type.formitem.ComponentSubTypeBuilder;
 import com.enonic.wem.api.content.type.formitem.FormItemPath;
 import com.enonic.wem.api.content.type.formitem.FormItemType;
+import com.enonic.wem.api.content.type.formitem.Input;
 import com.enonic.wem.api.content.type.formitem.MockSubTypeFetcher;
 import com.enonic.wem.api.content.type.formitem.SubTypeQualifiedName;
 import com.enonic.wem.api.content.type.formitem.SubTypeReference;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.api.module.Module;
+
+import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 
 public class ContentTypeStepDefs
 {
@@ -32,7 +34,7 @@ public class ContentTypeStepDefs
 
     public final Map<String, ContentType> contentTypeByName = new HashMap<String, ContentType>();
 
-    public final Map<String, Component> componentByName = new HashMap<String, Component>();
+    public final Map<String, Input> inputByName = new HashMap<String, Input>();
 
     public final Map<SubTypeQualifiedName, ComponentSubType> componentSubTypeByQualifiedName =
         new HashMap<SubTypeQualifiedName, ComponentSubType>();
@@ -46,22 +48,20 @@ public class ContentTypeStepDefs
         moduleByName.put( name, module );
     }
 
-    @Given("^a Component named (.+) of type (.+)$")
-    public void a_component_named_name_of_type_type( String componentName, String componentTypeName )
+    @Given("^a Input named (.+) of type (.+)$")
+    public void a_input_named_name_of_type_type( String componentName, String componentTypeName )
         throws Throwable
     {
-        Component component = Component.newBuilder().name( componentName ).type( ComponentTypes.parse( componentTypeName ) ).build();
-        componentByName.put( componentName, component );
+        Input input = newInput().name( componentName ).type( ComponentTypes.parse( componentTypeName ) ).build();
+        inputByName.put( componentName, input );
     }
 
-    @Given("^a ComponentSubType named (.+) in module (.+) with component (.+)$")
-    public void a_componentSubType_named_name_in_module_module_having_component( String subTypeName, String moduleName,
-                                                                                 String componentName )
+    @Given("^a ComponentSubType named (.+) in module (.+) with input (.+)$")
+    public void a_componentSubType_named_name_in_module_module_having_input( String subTypeName, String moduleName, String inputName )
         throws Throwable
     {
-        ComponentSubType componentSubType =
-            ComponentSubTypeBuilder.newComponentSubType().module( moduleByName.get( moduleName ) ).component(
-                componentByName.get( componentName ) ).build();
+        ComponentSubType componentSubType = ComponentSubTypeBuilder.newComponentSubType().module( moduleByName.get( moduleName ) ).input(
+            inputByName.get( inputName ) ).build();
         componentSubTypeByQualifiedName.put( new SubTypeQualifiedName( moduleName, subTypeName ), componentSubType );
     }
 
@@ -112,7 +112,7 @@ public class ContentTypeStepDefs
             ContentType contentType = contentTypeByName.get( contentTypeName );
             Assert.assertNotNull( "formItem not found at path: " + formItemPath,
                                   contentType.getFormItems().getHierarchicalFormItem( new FormItemPath( formItemPath ) ) );
-            Assert.assertEquals( FormItemType.COMPONENT, formItemType );
+            Assert.assertEquals( FormItemType.INPUT, formItemType );
         }
     }
 

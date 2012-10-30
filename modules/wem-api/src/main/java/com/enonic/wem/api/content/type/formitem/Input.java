@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.type.formitem.comptype.BaseComponentType;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentType;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypeConfig;
 
-public class Component
+public class Input
     extends HierarchicalFormItem
 {
     private BaseComponentType type;
@@ -30,7 +30,7 @@ public class Component
 
     private ComponentTypeConfig componentTypeConfig;
 
-    protected Component()
+    protected Input()
     {
     }
 
@@ -147,9 +147,9 @@ public class Component
 
 
     @Override
-    public Component copy()
+    public Input copy()
     {
-        final Component copy = (Component) super.copy();
+        final Input copy = (Input) super.copy();
         copy.type = type;
         copy.label = label;
         copy.immutable = immutable;
@@ -163,12 +163,7 @@ public class Component
         return copy;
     }
 
-    public static Builder newComponent()
-    {
-        return new Builder();
-    }
-
-    public static Builder newBuilder()
+    public static Builder newInput()
     {
         return new Builder();
     }
@@ -294,7 +289,7 @@ public class Component
             return this;
         }
 
-        public Component build()
+        public Input build()
         {
             Preconditions.checkNotNull( name, "name cannot be null" );
             Preconditions.checkNotNull( componentType, "componentType cannot be null" );
@@ -312,20 +307,20 @@ public class Component
                                              componentTypeConfig.getClass().getName() );
             }
 
-            Component component = new Component();
-            component.setName( name );
-            component.type = componentType;
-            component.label = label;
-            component.immutable = immutable;
-            component.occurrences.setMinOccurences( occurrences.getMinimum() );
-            component.occurrences.setMaxOccurences( occurrences.getMaximum() );
-            component.indexed = indexed;
-            component.customText = customText;
-            component.validationRegexp = validationRegexp;
-            component.helpText = helpText;
-            component.componentTypeConfig = componentTypeConfig;
-            component.setPath( new FormItemPath( component.getName() ) );
-            return component;
+            Input input = new Input();
+            input.setName( name );
+            input.type = componentType;
+            input.label = label;
+            input.immutable = immutable;
+            input.occurrences.setMinOccurences( occurrences.getMinimum() );
+            input.occurrences.setMaxOccurences( occurrences.getMaximum() );
+            input.indexed = indexed;
+            input.customText = customText;
+            input.validationRegexp = validationRegexp;
+            input.helpText = helpText;
+            input.componentTypeConfig = componentTypeConfig;
+            input.setPath( new FormItemPath( input.getName() ) );
+            return input;
         }
     }
 }

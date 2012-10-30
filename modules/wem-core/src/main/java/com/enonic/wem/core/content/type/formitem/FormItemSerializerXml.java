@@ -3,12 +3,12 @@ package com.enonic.wem.core.content.type.formitem;
 
 import org.jdom.Element;
 
-import com.enonic.wem.api.content.type.formitem.Component;
 import com.enonic.wem.api.content.type.formitem.FieldSet;
 import com.enonic.wem.api.content.type.formitem.FormItem;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
 import com.enonic.wem.api.content.type.formitem.FormItems;
 import com.enonic.wem.api.content.type.formitem.HierarchicalFormItem;
+import com.enonic.wem.api.content.type.formitem.Input;
 import com.enonic.wem.api.content.type.formitem.Layout;
 import com.enonic.wem.api.content.type.formitem.SubTypeQualifiedName;
 import com.enonic.wem.api.content.type.formitem.SubTypeReference;
@@ -18,6 +18,7 @@ import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeSerialize
 
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 
 public class FormItemSerializerXml
 {
@@ -47,9 +48,9 @@ public class FormItemSerializerXml
         {
             return generateLayout( (Layout) formItem );
         }
-        else if ( formItem instanceof Component )
+        else if ( formItem instanceof Input )
         {
-            return generateComponent( (Component) formItem );
+            return generateComponent( (Input) formItem );
         }
         else if ( formItem instanceof SubTypeReference )
         {
@@ -58,32 +59,32 @@ public class FormItemSerializerXml
         return null;
     }
 
-    private Element generateComponent( final Component component )
+    private Element generateComponent( final Input input )
     {
-        Element componentEl = new Element( component.getName() );
-        componentEl.setAttribute( "form-item-type", Component.class.getSimpleName() );
+        Element componentEl = new Element( input.getName() );
+        componentEl.setAttribute( "form-item-type", Input.class.getSimpleName() );
 
-        componentEl.addContent( componentTypeSerializer.generate( component.getComponentType() ) );
+        componentEl.addContent( componentTypeSerializer.generate( input.getComponentType() ) );
 
-        componentEl.addContent( new Element( "label" ).setText( component.getLabel() ) );
-        componentEl.addContent( new Element( "required" ).setText( String.valueOf( component.isRequired() ) ) );
-        componentEl.addContent( new Element( "immutable" ).setText( String.valueOf( component.isImmutable() ) ) );
-        componentEl.addContent( new Element( "indexed" ).setText( String.valueOf( component.isIndexed() ) ) );
-        componentEl.addContent( new Element( "customText" ).setText( component.getCustomText() ) );
-        componentEl.addContent( new Element( "helpText" ).setText( component.getHelpText() ) );
+        componentEl.addContent( new Element( "label" ).setText( input.getLabel() ) );
+        componentEl.addContent( new Element( "required" ).setText( String.valueOf( input.isRequired() ) ) );
+        componentEl.addContent( new Element( "immutable" ).setText( String.valueOf( input.isImmutable() ) ) );
+        componentEl.addContent( new Element( "indexed" ).setText( String.valueOf( input.isIndexed() ) ) );
+        componentEl.addContent( new Element( "customText" ).setText( input.getCustomText() ) );
+        componentEl.addContent( new Element( "helpText" ).setText( input.getHelpText() ) );
 
-        componentEl.addContent( OccurrencesSerializerXml.generate( component.getOccurrences() ) );
-        generateValidationRegex( component, componentEl );
-        generateComponentTypeConfig( component, componentEl );
+        componentEl.addContent( OccurrencesSerializerXml.generate( input.getOccurrences() ) );
+        generateValidationRegex( input, componentEl );
+        generateComponentTypeConfig( input, componentEl );
         return componentEl;
     }
 
-    private void generateComponentTypeConfig( final Component component, final Element componentEl )
+    private void generateComponentTypeConfig( final Input input, final Element componentEl )
     {
-        if ( component.getComponentType().requiresConfig() && component.getComponentTypeConfig() != null )
+        if ( input.getComponentType().requiresConfig() && input.getComponentTypeConfig() != null )
         {
             componentEl.addContent(
-                component.getComponentType().getComponentTypeConfigXmlGenerator().generate( component.getComponentTypeConfig() ) );
+                input.getComponentType().getComponentTypeConfigXmlGenerator().generate( input.getComponentTypeConfig() ) );
         }
     }
 
@@ -132,11 +133,11 @@ public class FormItemSerializerXml
         return referenceEl;
     }
 
-    private void generateValidationRegex( final Component component, final Element componentEl )
+    private void generateValidationRegex( final Input input, final Element componentEl )
     {
-        if ( component.getValidationRegexp() != null )
+        if ( input.getValidationRegexp() != null )
         {
-            componentEl.addContent( new Element( "validationRegex" ).setText( component.getValidationRegexp().toString() ) );
+            componentEl.addContent( new Element( "validationRegex" ).setText( input.getValidationRegexp().toString() ) );
         }
     }
 
@@ -145,7 +146,7 @@ public class FormItemSerializerXml
         final String formItemType = formItemEl.getAttributeValue( "form-item-type" );
 
         final FormItem formItem;
-        if ( formItemType.equals( Component.class.getSimpleName() ) )
+        if ( formItemType.equals( Input.class.getSimpleName() ) )
         {
             formItem = parseComponent( formItemEl );
         }
@@ -171,7 +172,7 @@ public class FormItemSerializerXml
 
     private FormItem parseComponent( final Element formItemEl )
     {
-        final Component.Builder builder = Component.newComponent();
+        final Input.Builder builder = newInput();
         builder.name( formItemEl.getName() );
         builder.label( formItemEl.getChildText( "label" ) );
         builder.immutable( Boolean.valueOf( formItemEl.getChildText( "immutable" ) ) );
@@ -244,7 +245,7 @@ public class FormItemSerializerXml
         return builder.build();
     }
 
-    private void parseValidationRegexp( final Component.Builder builder, final Element formItemEl )
+    private void parseValidationRegexp( final Input.Builder builder, final Element formItemEl )
     {
         String validationRegexp = formItemEl.getChildText( "validationRegex" );
         if ( validationRegexp != null )
@@ -253,12 +254,12 @@ public class FormItemSerializerXml
         }
     }
 
-    private void parseComponentTypeConfig( final Component.Builder builder, final Element formItemEl )
+    private void parseComponentTypeConfig( final Input.Builder builder, final Element formItemEl )
     {
         builder.componentTypeConfig( componentTypeConfigSerializer.parse( formItemEl ) );
     }
 
-    private void parseComponentType( final Component.Builder builder, final Element formItemEl )
+    private void parseComponentType( final Input.Builder builder, final Element formItemEl )
     {
         builder.type( componentTypeSerializer.parse( formItemEl ) );
     }
