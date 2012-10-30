@@ -246,28 +246,28 @@ public class FormItems
         return copy;
     }
 
-    public void templateReferencesToFormItems( final TemplateFetcher templateFetcher )
+    public void subTypeReferencesToFormItems( final SubTypeFetcher subTypeFetcher )
     {
         for ( final FormItem formItem : items.values() )
         {
-            if ( formItem instanceof TemplateReference )
+            if ( formItem instanceof SubTypeReference )
             {
-                final TemplateReference templateReference = (TemplateReference) formItem;
-                final Template template = templateFetcher.getTemplate( templateReference.getTemplateQualifiedName() );
-                if ( template != null )
+                final SubTypeReference subTypeReference = (SubTypeReference) formItem;
+                final SubType subType = subTypeFetcher.getSubType( subTypeReference.getSubTypeQualifiedName() );
+                if ( subType != null )
                 {
-                    Preconditions.checkArgument( templateReference.getTemplateType() == template.getType(),
-                                                 "Template expected to be of type %s: " + template.getType().getSimpleName(),
-                                                 templateReference.getTemplateType().getSimpleName() );
+                    Preconditions.checkArgument( subTypeReference.getSubTypeClass() == subType.getType(),
+                                                 "SubType expected to be of type %s: " + subType.getType().getSimpleName(),
+                                                 subTypeReference.getSubTypeClass().getSimpleName() );
 
-                    final HierarchicalFormItem formItemCreatedFromTemplate = template.create( templateReference );
-                    if ( formItemCreatedFromTemplate instanceof FormItemSet )
+                    final HierarchicalFormItem formItemCreatedFromSubType = subType.create( subTypeReference );
+                    if ( formItemCreatedFromSubType instanceof FormItemSet )
                     {
-                        FormItemSet formItemSet = (FormItemSet) formItemCreatedFromTemplate;
-                        formItemSet.getFormItems().templateReferencesToFormItems( templateFetcher );
+                        FormItemSet formItemSet = (FormItemSet) formItemCreatedFromSubType;
+                        formItemSet.getFormItems().subTypeReferencesToFormItems( subTypeFetcher );
                     }
 
-                    items.put( formItem.getName(), formItemCreatedFromTemplate );
+                    items.put( formItem.getName(), formItemCreatedFromSubType );
                 }
             }
         }

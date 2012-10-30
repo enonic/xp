@@ -3,11 +3,11 @@ package com.enonic.wem.api.content.type.formitem;
 
 import com.enonic.wem.api.module.Module;
 
-public abstract class Template
+public abstract class SubType
 {
     private Module module;
 
-    Template()
+    SubType()
     {
 
     }
@@ -24,12 +24,12 @@ public abstract class Template
         this.module = module;
     }
 
-    public TemplateQualifiedName getQualifiedName()
+    public SubTypeQualifiedName getQualifiedName()
     {
-        return new TemplateQualifiedName( module.getName(), getName() );
+        return new SubTypeQualifiedName( module.getName(), getName() );
     }
 
     public abstract Class getType();
 
-    public abstract HierarchicalFormItem create( final TemplateReference templateReference );
+    public abstract HierarchicalFormItem create( final SubTypeReference subTypeReference );
 }

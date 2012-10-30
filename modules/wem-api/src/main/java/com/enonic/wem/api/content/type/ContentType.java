@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.type.formitem.FormItemPath;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
 import com.enonic.wem.api.content.type.formitem.FormItems;
 import com.enonic.wem.api.content.type.formitem.HierarchicalFormItem;
-import com.enonic.wem.api.content.type.formitem.TemplateFetcher;
+import com.enonic.wem.api.content.type.formitem.SubTypeFetcher;
 import com.enonic.wem.api.module.Module;
 
 public class ContentType
@@ -160,9 +160,9 @@ public class ContentType
         return formItemSet;
     }
 
-    public void templateReferencesToFormItems( final TemplateFetcher templateFetcher )
+    public void subTypeReferencesToFormItems( final SubTypeFetcher subTypeFetcher )
     {
-        formItems.templateReferencesToFormItems( templateFetcher );
+        formItems.subTypeReferencesToFormItems( subTypeFetcher );
     }
 
 }

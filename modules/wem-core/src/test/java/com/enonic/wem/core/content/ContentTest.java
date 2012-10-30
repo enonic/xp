@@ -10,23 +10,23 @@ import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 import com.enonic.wem.api.content.type.formitem.Component;
-import com.enonic.wem.api.content.type.formitem.ComponentTemplate;
+import com.enonic.wem.api.content.type.formitem.ComponentSubType;
 import com.enonic.wem.api.content.type.formitem.FieldSet;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
-import com.enonic.wem.api.content.type.formitem.FormItemSetTemplate;
+import com.enonic.wem.api.content.type.formitem.FormItemSetSubType;
 import com.enonic.wem.api.content.type.formitem.InvalidDataException;
-import com.enonic.wem.api.content.type.formitem.MockTemplateFetcher;
-import com.enonic.wem.api.content.type.formitem.TemplateReference;
+import com.enonic.wem.api.content.type.formitem.MockSubTypeFetcher;
+import com.enonic.wem.api.content.type.formitem.SubTypeReference;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.type.formitem.Component.newComponent;
-import static com.enonic.wem.api.content.type.formitem.ComponentTemplateBuilder.newComponentTemplate;
+import static com.enonic.wem.api.content.type.formitem.ComponentSubTypeBuilder.newComponentSubType;
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.content.type.formitem.FormItemSetTemplateBuilder.newFormItemSetTemplate;
-import static com.enonic.wem.api.content.type.formitem.TemplateReference.newTemplateReference;
+import static com.enonic.wem.api.content.type.formitem.FormItemSetSubTypeBuilder.newFormItemSetSubType;
+import static com.enonic.wem.api.content.type.formitem.SubTypeReference.newSubTypeReference;
 import static com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig.newSingleSelectorConfig;
 import static com.enonic.wem.api.module.Module.newModule;
 import static org.junit.Assert.*;
@@ -85,18 +85,18 @@ public class ContentTest
     }
 
     @Test
-    public void tags_using_fieldTemplate()
+    public void tags_using_subType()
     {
         Module module = newModule().name( "system" ).build();
         Component component = newComponent().name( "tags" ).label( "Tags" ).type( ComponentTypes.TEXT_LINE ).multiple( true ).build();
-        ComponentTemplate componentTemplate = newComponentTemplate().module( module ).component( component ).build();
-        MockTemplateFetcher templateFetcher = new MockTemplateFetcher();
-        templateFetcher.add( componentTemplate );
+        ComponentSubType componentSubType = newComponentSubType().module( module ).component( component ).build();
+        MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
+        subTypeFetcher.add( componentSubType );
 
         ContentType contentType = new ContentType();
         contentType.addFormItem(
-            TemplateReference.newTemplateReference().name( "myTags" ).template( "system:tags" ).type( ComponentTemplate.class ).build() );
-        contentType.templateReferencesToFormItems( templateFetcher );
+            SubTypeReference.newSubTypeReference().name( "myTags" ).subType( "system:tags" ).type( ComponentSubType.class ).build() );
+        contentType.subTypeReferencesToFormItems( subTypeFetcher );
 
         Content content = new Content();
         content.setType( contentType );
@@ -285,32 +285,32 @@ public class ContentTest
     }
 
     @Test
-    public void templates()
+    public void subTypes()
     {
         Module module = newModule().name( "myModule" ).build();
 
-        ComponentTemplate postalCodeTemplate = newComponentTemplate().module( module ).component(
+        ComponentSubType postalCodeSubType = newComponentSubType().module( module ).component(
             newComponent().name( "postalCode" ).type( ComponentTypes.TEXT_LINE ).build() ).build();
-        ComponentTemplate countryTemplate = newComponentTemplate().module( module ).component(
+        ComponentSubType countrySubType = newComponentSubType().module( module ).component(
             newComponent().name( "country" ).type( ComponentTypes.SINGLE_SELECTOR ).componentTypeConfig(
                 newSingleSelectorConfig().typeDropdown().addOption( "Norway", "NO" ).build() ).build() ).build();
 
-        FormItemSetTemplate addressTemplate = newFormItemSetTemplate().module( module ).formItemSet(
+        FormItemSetSubType addressSubType = newFormItemSetSubType().module( module ).formItemSet(
             newFormItemSet().name( "address" ).add( newComponent().name( "street" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
-                newTemplateReference( postalCodeTemplate ).name( "postalCode" ).build() ).add(
+                newSubTypeReference( postalCodeSubType ).name( "postalCode" ).build() ).add(
                 newComponent().name( "postalPlace" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
-                newTemplateReference( countryTemplate ).name( "country" ).build() ).build() ).build();
+                newSubTypeReference( countrySubType ).name( "country" ).build() ).build() ).build();
 
         ContentType contentType = new ContentType();
         contentType.setName( "person" );
         contentType.addFormItem( newComponent().type( ComponentTypes.TEXT_LINE ).name( "name" ).build() );
-        contentType.addFormItem( newTemplateReference( addressTemplate ).name( "address" ).build() );
+        contentType.addFormItem( newSubTypeReference( addressSubType ).name( "address" ).build() );
 
-        MockTemplateFetcher templateReferenceFetcher = new MockTemplateFetcher();
-        templateReferenceFetcher.add( postalCodeTemplate );
-        templateReferenceFetcher.add( countryTemplate );
-        templateReferenceFetcher.add( addressTemplate );
-        contentType.templateReferencesToFormItems( templateReferenceFetcher );
+        MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
+        subTypeFetcher.add( postalCodeSubType );
+        subTypeFetcher.add( countrySubType );
+        subTypeFetcher.add( addressSubType );
+        contentType.subTypeReferencesToFormItems( subTypeFetcher );
 
         Content content = new Content();
         content.setType( contentType );
@@ -328,11 +328,11 @@ public class ContentTest
     }
 
     @Test
-    public void templates_multiple()
+    public void subTypes_multiple()
     {
         Module module = newModule().name( "myModule" ).build();
 
-        FormItemSetTemplate addressTemplate = newFormItemSetTemplate().module( module ).formItemSet(
+        FormItemSetSubType addressSubType = newFormItemSetSubType().module( module ).formItemSet(
             newFormItemSet().name( "address" ).multiple( true ).add(
                 newComponent().type( ComponentTypes.TEXT_LINE ).name( "label" ).build() ).add(
                 newComponent().type( ComponentTypes.TEXT_LINE ).name( "street" ).build() ).add(
@@ -342,11 +342,11 @@ public class ContentTest
 
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
-        contentType.addFormItem( newTemplateReference( addressTemplate ).name( "address" ).build() );
+        contentType.addFormItem( newSubTypeReference( addressSubType ).name( "address" ).build() );
 
-        MockTemplateFetcher templateReferenceFetcher = new MockTemplateFetcher();
-        templateReferenceFetcher.add( addressTemplate );
-        contentType.templateReferencesToFormItems( templateReferenceFetcher );
+        MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
+        subTypeFetcher.add( addressSubType );
+        contentType.subTypeReferencesToFormItems( subTypeFetcher );
 
         Content content = new Content();
         content.setType( contentType );
@@ -375,14 +375,14 @@ public class ContentTest
     }
 
     @Test
-    public void trying_to_set_data_to_a_fieldSetTemplate_when_template_is_missing()
+    public void trying_to_set_data_to_a_fieldSetSubType_when_subType_is_missing()
     {
         ContentType contentType = new ContentType();
         contentType.addFormItem( newComponent().type( ComponentTypes.TEXT_LINE ).name( "name" ).build() );
         contentType.addFormItem(
-            newTemplateReference().name( "address" ).typeComponent().template( "myModule:myAddressTemplate" ).build() );
+            SubTypeReference.newSubTypeReference().name( "address" ).typeComponent().subType( "myModule:myAddressSubType" ).build() );
 
-        contentType.templateReferencesToFormItems( new MockTemplateFetcher() );
+        contentType.subTypeReferencesToFormItems( new MockSubTypeFetcher() );
 
         Content content = new Content();
         content.setType( contentType );

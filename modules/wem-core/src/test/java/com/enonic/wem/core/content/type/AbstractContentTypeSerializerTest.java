@@ -9,11 +9,11 @@ import com.enonic.wem.api.content.type.formitem.Component;
 import com.enonic.wem.api.content.type.formitem.FieldSet;
 import com.enonic.wem.api.content.type.formitem.FormItemPath;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
-import com.enonic.wem.api.content.type.formitem.FormItemSetTemplate;
-import com.enonic.wem.api.content.type.formitem.FormItemSetTemplateBuilder;
+import com.enonic.wem.api.content.type.formitem.FormItemSetSubType;
+import com.enonic.wem.api.content.type.formitem.FormItemSetSubTypeBuilder;
 import com.enonic.wem.api.content.type.formitem.FormItems;
-import com.enonic.wem.api.content.type.formitem.MockTemplateFetcher;
-import com.enonic.wem.api.content.type.formitem.TemplateReference;
+import com.enonic.wem.api.content.type.formitem.MockSubTypeFetcher;
+import com.enonic.wem.api.content.type.formitem.SubTypeReference;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
@@ -21,7 +21,7 @@ import com.enonic.wem.api.module.Module;
 import static com.enonic.wem.api.content.type.formitem.Component.newComponent;
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.content.type.formitem.TemplateReference.newTemplateReference;
+import static com.enonic.wem.api.content.type.formitem.SubTypeReference.newSubTypeReference;
 import static com.enonic.wem.api.module.Module.newModule;
 import static org.junit.Assert.*;
 
@@ -89,12 +89,12 @@ public abstract class AbstractContentTypeSerializerTest
     }
 
     @Test
-    public void parse_template()
+    public void parse_subType()
     {
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        FormItemSetTemplate template = FormItemSetTemplateBuilder.newFormItemSetTemplate().module( module ).formItemSet(
+        FormItemSetSubType subType = FormItemSetSubTypeBuilder.newFormItemSetSubType().module( module ).formItemSet(
             newFormItemSet().name( "address" ).add(
                 newComponent().name( "label" ).label( "Label" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
                 newComponent().name( "street" ).label( "Street" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
@@ -104,11 +104,11 @@ public abstract class AbstractContentTypeSerializerTest
         ContentType cty = new ContentType();
         cty.setModule( myModule );
         cty.addFormItem( newComponent().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).build() );
-        cty.addFormItem( newTemplateReference( template ).name( "home" ).build() );
-        cty.addFormItem( newTemplateReference( template ).name( "cabin" ).build() );
+        cty.addFormItem( newSubTypeReference( subType ).name( "home" ).build() );
+        cty.addFormItem( newSubTypeReference( subType ).name( "cabin" ).build() );
 
-        MockTemplateFetcher templateReferenceFetcher = new MockTemplateFetcher();
-        templateReferenceFetcher.add( template );
+        MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
+        subTypeFetcher.add( subType );
 
         String serialized = toString( cty );
 
@@ -116,8 +116,8 @@ public abstract class AbstractContentTypeSerializerTest
         ContentType parsedContentType = toContentType( serialized );
 
         // verify references
-        assertEquals( TemplateReference.class, parsedContentType.getFormItems().getFormItem( "home" ).getClass() );
-        assertEquals( TemplateReference.class, parsedContentType.getFormItems().getFormItem( "cabin" ).getClass() );
+        assertEquals( SubTypeReference.class, parsedContentType.getFormItems().getFormItem( "home" ).getClass() );
+        assertEquals( SubTypeReference.class, parsedContentType.getFormItems().getFormItem( "cabin" ).getClass() );
 
         // verify items past the reference is null
         assertEquals( null, parsedContentType.getFormItems().getFormItem( "home.street" ) );

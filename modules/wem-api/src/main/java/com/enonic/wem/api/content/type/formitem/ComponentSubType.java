@@ -1,11 +1,11 @@
 package com.enonic.wem.api.content.type.formitem;
 
-public class ComponentTemplate
-    extends Template
+public class ComponentSubType
+    extends SubType
 {
     private Component component;
 
-    ComponentTemplate()
+    ComponentSubType()
     {
     }
 
@@ -30,11 +30,11 @@ public class ComponentTemplate
         this.component = value;
     }
 
-    public HierarchicalFormItem create( final TemplateReference templateReference )
+    public HierarchicalFormItem create( final SubTypeReference subTypeReference )
     {
         Component component = this.component.copy();
-        component.setName( templateReference.getName() );
-        component.setPath( templateReference.getPath() );
+        component.setName( subTypeReference.getName() );
+        component.setPath( subTypeReference.getPath() );
         return component;
     }
 }

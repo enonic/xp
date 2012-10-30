@@ -10,15 +10,14 @@ import com.enonic.wem.api.content.type.formitem.FormItemSet;
 import com.enonic.wem.api.content.type.formitem.FormItems;
 import com.enonic.wem.api.content.type.formitem.HierarchicalFormItem;
 import com.enonic.wem.api.content.type.formitem.Layout;
-import com.enonic.wem.api.content.type.formitem.TemplateQualifiedName;
-import com.enonic.wem.api.content.type.formitem.TemplateReference;
+import com.enonic.wem.api.content.type.formitem.SubTypeQualifiedName;
+import com.enonic.wem.api.content.type.formitem.SubTypeReference;
 import com.enonic.wem.core.content.JsonParsingException;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeConfigSerializerXml;
 import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeSerializerXml;
 
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.content.type.formitem.TemplateReference.newTemplateReference;
 
 public class FormItemSerializerXml
 {
@@ -52,9 +51,9 @@ public class FormItemSerializerXml
         {
             return generateComponent( (Component) formItem );
         }
-        else if ( formItem instanceof TemplateReference )
+        else if ( formItem instanceof SubTypeReference )
         {
-            return generateReference( (TemplateReference) formItem );
+            return generateReference( (SubTypeReference) formItem );
         }
         return null;
     }
@@ -124,12 +123,12 @@ public class FormItemSerializerXml
         layoutEl.addContent( formItemsSerializer.generate( fieldSet.getFormItems() ) );
     }
 
-    private Element generateReference( final TemplateReference templateReference )
+    private Element generateReference( final SubTypeReference subTypeReference )
     {
-        Element referenceEl = new Element( templateReference.getName() );
-        referenceEl.setAttribute( "form-item-type", TemplateReference.class.getSimpleName() );
-        referenceEl.addContent( new Element( "reference" ).setText( templateReference.getTemplateQualifiedName().toString() ) );
-        referenceEl.addContent( new Element( "templateType" ).setText( templateReference.getTemplateType().getSimpleName() ) );
+        Element referenceEl = new Element( subTypeReference.getName() );
+        referenceEl.setAttribute( "form-item-type", SubTypeReference.class.getSimpleName() );
+        referenceEl.addContent( new Element( "reference" ).setText( subTypeReference.getSubTypeQualifiedName().toString() ) );
+        referenceEl.addContent( new Element( "subTypeClass" ).setText( subTypeReference.getSubTypeClass().getSimpleName() ) );
         return referenceEl;
     }
 
@@ -158,9 +157,9 @@ public class FormItemSerializerXml
         {
             formItem = parseLayout( formItemEl );
         }
-        else if ( formItemType.equals( TemplateReference.class.getSimpleName() ) )
+        else if ( formItemType.equals( SubTypeReference.class.getSimpleName() ) )
         {
-            formItem = parseTemplateReference( formItemEl );
+            formItem = parseSubTypeReference( formItemEl );
         }
         else
         {
@@ -236,12 +235,12 @@ public class FormItemSerializerXml
         return builder.build();
     }
 
-    private HierarchicalFormItem parseTemplateReference( final Element formItemEl )
+    private HierarchicalFormItem parseSubTypeReference( final Element formItemEl )
     {
-        final TemplateReference.Builder builder = newTemplateReference();
+        final SubTypeReference.Builder builder = SubTypeReference.newSubTypeReference();
         builder.name( formItemEl.getName() );
-        builder.template( new TemplateQualifiedName( formItemEl.getChildText( "reference" ) ) );
-        builder.type( formItemEl.getChildText( "templateType" ) );
+        builder.subType( new SubTypeQualifiedName( formItemEl.getChildText( "reference" ) ) );
+        builder.type( formItemEl.getChildText( "subTypeClass" ) );
         return builder.build();
     }
 

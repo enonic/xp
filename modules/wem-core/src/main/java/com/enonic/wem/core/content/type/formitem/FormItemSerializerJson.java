@@ -13,8 +13,8 @@ import com.enonic.wem.api.content.type.formitem.FormItemSet;
 import com.enonic.wem.api.content.type.formitem.FormItems;
 import com.enonic.wem.api.content.type.formitem.HierarchicalFormItem;
 import com.enonic.wem.api.content.type.formitem.Layout;
-import com.enonic.wem.api.content.type.formitem.TemplateQualifiedName;
-import com.enonic.wem.api.content.type.formitem.TemplateReference;
+import com.enonic.wem.api.content.type.formitem.SubTypeQualifiedName;
+import com.enonic.wem.api.content.type.formitem.SubTypeReference;
 import com.enonic.wem.api.content.type.formitem.comptype.BaseComponentType;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
@@ -23,7 +23,6 @@ import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeSerialize
 
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.content.type.formitem.TemplateReference.newTemplateReference;
 
 public class FormItemSerializerJson
 {
@@ -59,9 +58,9 @@ public class FormItemSerializerJson
         {
             generateComponent( (Component) formItem, g );
         }
-        else if ( formItem instanceof TemplateReference )
+        else if ( formItem instanceof SubTypeReference )
         {
-            generateReference( (TemplateReference) formItem, g );
+            generateReference( (SubTypeReference) formItem, g );
         }
     }
 
@@ -130,14 +129,14 @@ public class FormItemSerializerJson
         formItemsSerializerJson.generate( fieldSet.getFormItems(), g );
     }
 
-    private void generateReference( final TemplateReference templateReference, final JsonGenerator g )
+    private void generateReference( final SubTypeReference subTypeReference, final JsonGenerator g )
         throws IOException
     {
         g.writeStartObject();
-        g.writeStringField( "formItemType", TemplateReference.class.getSimpleName() );
-        g.writeStringField( "name", templateReference.getName() );
-        g.writeStringField( "reference", templateReference.getTemplateQualifiedName().toString() );
-        g.writeStringField( "templateType", templateReference.getTemplateType().getSimpleName() );
+        g.writeStringField( "formItemType", SubTypeReference.class.getSimpleName() );
+        g.writeStringField( "name", subTypeReference.getName() );
+        g.writeStringField( "reference", subTypeReference.getSubTypeQualifiedName().toString() );
+        g.writeStringField( "subTypeClass", subTypeReference.getSubTypeClass().getSimpleName() );
         g.writeEndObject();
     }
 
@@ -159,9 +158,9 @@ public class FormItemSerializerJson
         {
             formItem = parseLayout( formItemNode );
         }
-        else if ( formItemType.equals( TemplateReference.class.getSimpleName() ) )
+        else if ( formItemType.equals( SubTypeReference.class.getSimpleName() ) )
         {
-            formItem = parseTemplateReference( formItemNode );
+            formItem = parseSubTypeReference( formItemNode );
         }
         else
         {
@@ -237,12 +236,12 @@ public class FormItemSerializerJson
         return builder.build();
     }
 
-    private HierarchicalFormItem parseTemplateReference( final JsonNode formItemNode )
+    private HierarchicalFormItem parseSubTypeReference( final JsonNode formItemNode )
     {
-        final TemplateReference.Builder builder = newTemplateReference();
+        final SubTypeReference.Builder builder = SubTypeReference.newSubTypeReference();
         builder.name( JsonParserUtil.getStringValue( "name", formItemNode ) );
-        builder.template( new TemplateQualifiedName( JsonParserUtil.getStringValue( "reference", formItemNode ) ) );
-        builder.type( JsonParserUtil.getStringValue( "templateType", formItemNode ) );
+        builder.subType( new SubTypeQualifiedName( JsonParserUtil.getStringValue( "reference", formItemNode ) ) );
+        builder.type( JsonParserUtil.getStringValue( "subTypeClass", formItemNode ) );
         return builder.build();
     }
 

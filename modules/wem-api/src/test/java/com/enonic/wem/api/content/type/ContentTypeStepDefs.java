@@ -14,19 +14,19 @@ import cucumber.table.DataTable;
 import gherkin.formatter.model.DataTableRow;
 
 import com.enonic.wem.api.content.type.formitem.Component;
-import com.enonic.wem.api.content.type.formitem.ComponentTemplate;
-import com.enonic.wem.api.content.type.formitem.ComponentTemplateBuilder;
+import com.enonic.wem.api.content.type.formitem.ComponentSubType;
+import com.enonic.wem.api.content.type.formitem.ComponentSubTypeBuilder;
 import com.enonic.wem.api.content.type.formitem.FormItemPath;
 import com.enonic.wem.api.content.type.formitem.FormItemType;
-import com.enonic.wem.api.content.type.formitem.MockTemplateFetcher;
-import com.enonic.wem.api.content.type.formitem.TemplateQualifiedName;
-import com.enonic.wem.api.content.type.formitem.TemplateReference;
+import com.enonic.wem.api.content.type.formitem.MockSubTypeFetcher;
+import com.enonic.wem.api.content.type.formitem.SubTypeQualifiedName;
+import com.enonic.wem.api.content.type.formitem.SubTypeReference;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.api.module.Module;
 
 public class ContentTypeStepDefs
 {
-    public final MockTemplateFetcher mockTemplateReferenceFetcher = new MockTemplateFetcher();
+    public final MockSubTypeFetcher mockSubTypeFetcher = new MockSubTypeFetcher();
 
     public final Map<String, Module> moduleByName = new HashMap<String, Module>();
 
@@ -34,8 +34,8 @@ public class ContentTypeStepDefs
 
     public final Map<String, Component> fieldByName = new HashMap<String, Component>();
 
-    public final Map<TemplateQualifiedName, ComponentTemplate> fieldTemplateByTemplateQualifiedName =
-        new HashMap<TemplateQualifiedName, ComponentTemplate>();
+    public final Map<SubTypeQualifiedName, ComponentSubType> componentSubTypeByQualifiedName =
+        new HashMap<SubTypeQualifiedName, ComponentSubType>();
 
 
     @Given("^a Module named (.+)$")
@@ -58,10 +58,10 @@ public class ContentTypeStepDefs
     public void a_fieldTemplate_named_name_in_module_module_having_field( String fieldTemplateName, String moduleName, String fieldName )
         throws Throwable
     {
-        ComponentTemplate componentTemplate =
-            ComponentTemplateBuilder.newComponentTemplate().module( moduleByName.get( moduleName ) ).component(
+        ComponentSubType componentTemplate =
+            ComponentSubTypeBuilder.newComponentSubType().module( moduleByName.get( moduleName ) ).component(
                 fieldByName.get( fieldName ) ).build();
-        fieldTemplateByTemplateQualifiedName.put( new TemplateQualifiedName( moduleName, fieldTemplateName ), componentTemplate );
+        componentSubTypeByQualifiedName.put( new SubTypeQualifiedName( moduleName, fieldTemplateName ), componentTemplate );
     }
 
     @Given("^a ContentType named (.+)")
@@ -79,13 +79,12 @@ public class ContentTypeStepDefs
         throws Throwable
     {
 
-        ComponentTemplate componentTemplate =
-            fieldTemplateByTemplateQualifiedName.get( new TemplateQualifiedName( templateQualifiedName ) );
+        ComponentSubType componentTemplate = componentSubTypeByQualifiedName.get( new SubTypeQualifiedName( templateQualifiedName ) );
         ContentType contentType = contentTypeByName.get( contentTypeName );
-        contentType.addFormItem( TemplateReference.newTemplateReference( componentTemplate ).name( templateReferenceName ).build() );
+        contentType.addFormItem( SubTypeReference.newSubTypeReference( componentTemplate ).name( templateReferenceName ).build() );
 
-        mockTemplateReferenceFetcher.add( componentTemplate );
-        contentType.templateReferencesToFormItems( mockTemplateReferenceFetcher );
+        mockSubTypeFetcher.add( componentTemplate );
+        contentType.subTypeReferencesToFormItems( mockSubTypeFetcher );
     }
 
     @When("^translating template references to formItems for all content types$")
@@ -95,7 +94,7 @@ public class ContentTypeStepDefs
 
         for ( ContentType contentType : contentTypeByName.values() )
         {
-            contentType.templateReferencesToFormItems( mockTemplateReferenceFetcher );
+            contentType.subTypeReferencesToFormItems( mockSubTypeFetcher );
         }
     }
 

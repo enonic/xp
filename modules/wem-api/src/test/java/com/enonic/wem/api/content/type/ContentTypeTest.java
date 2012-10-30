@@ -6,10 +6,10 @@ import org.junit.Test;
 import com.enonic.wem.api.content.type.formitem.Component;
 import com.enonic.wem.api.content.type.formitem.FieldSet;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
-import com.enonic.wem.api.content.type.formitem.FormItemSetTemplate;
-import com.enonic.wem.api.content.type.formitem.FormItemSetTemplateBuilder;
-import com.enonic.wem.api.content.type.formitem.MockTemplateFetcher;
-import com.enonic.wem.api.content.type.formitem.TemplateReference;
+import com.enonic.wem.api.content.type.formitem.FormItemSetSubType;
+import com.enonic.wem.api.content.type.formitem.FormItemSetSubTypeBuilder;
+import com.enonic.wem.api.content.type.formitem.MockSubTypeFetcher;
+import com.enonic.wem.api.content.type.formitem.SubTypeReference;
 import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.api.module.Module;
 
@@ -63,12 +63,12 @@ public class ContentTypeTest
     }
 
     @Test
-    public void templateReferencesToFormItems()
+    public void subTypeReferencesToFormItems()
     {
         // setup
         Module module = Module.newModule().name( "myModule" ).build();
 
-        FormItemSetTemplate template = FormItemSetTemplateBuilder.newFormItemSetTemplate().module( module ).formItemSet(
+        FormItemSetSubType subType = FormItemSetSubTypeBuilder.newFormItemSetSubType().module( module ).formItemSet(
             FormItemSet.newFormItemSet().name( "address" ).add(
                 Component.newComponent().name( "label" ).label( "Label" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
                 Component.newComponent().name( "street" ).label( "Street" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
@@ -76,14 +76,14 @@ public class ContentTypeTest
                 Component.newComponent().name( "country" ).label( "Country" ).type( ComponentTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
-        cty.addFormItem( TemplateReference.newTemplateReference( template ).name( "home" ).build() );
-        cty.addFormItem( TemplateReference.newTemplateReference( template ).name( "cabin" ).build() );
+        cty.addFormItem( SubTypeReference.newSubTypeReference( subType ).name( "home" ).build() );
+        cty.addFormItem( SubTypeReference.newSubTypeReference( subType ).name( "cabin" ).build() );
 
-        MockTemplateFetcher templateReferenceFetcher = new MockTemplateFetcher();
-        templateReferenceFetcher.add( template );
+        MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
+        subTypeFetcher.add( subType );
 
         // exercise
-        cty.templateReferencesToFormItems( templateReferenceFetcher );
+        cty.subTypeReferencesToFormItems( subTypeFetcher );
 
         // verify:
         assertEquals( "home.street", cty.getComponent( "home.street" ).getPath().toString() );
@@ -91,12 +91,12 @@ public class ContentTypeTest
     }
 
     @Test
-    public void templateReferencesToFormItems_layout()
+    public void subTypeReferencesToFormItems_layout()
     {
         // setup
         Module module = Module.newModule().name( "myModule" ).build();
 
-        FormItemSetTemplate template = FormItemSetTemplateBuilder.newFormItemSetTemplate().module( module ).formItemSet(
+        FormItemSetSubType subType = FormItemSetSubTypeBuilder.newFormItemSetSubType().module( module ).formItemSet(
             FormItemSet.newFormItemSet().name( "address" ).add( FieldSet.newFieldSet().label( "My Field Set" ).name( "fieldSet" ).add(
                 Component.newComponent().name( "myFieldInLayout" ).label( "MyFieldInLayout" ).type(
                     ComponentTypes.TEXT_LINE ).build() ).build() ).add(
@@ -106,13 +106,13 @@ public class ContentTypeTest
                 Component.newComponent().name( "country" ).label( "Country" ).type( ComponentTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType contentType = new ContentType();
-        contentType.addFormItem( TemplateReference.newTemplateReference( template ).name( "home" ).build() );
+        contentType.addFormItem( SubTypeReference.newSubTypeReference( subType ).name( "home" ).build() );
 
-        MockTemplateFetcher templateReferenceFetcher = new MockTemplateFetcher();
-        templateReferenceFetcher.add( template );
+        MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
+        subTypeFetcher.add( subType );
 
         // exercise
-        contentType.templateReferencesToFormItems( templateReferenceFetcher );
+        contentType.subTypeReferencesToFormItems( subTypeFetcher );
 
         // verify:
         assertEquals( "home.street", contentType.getComponent( "home.street" ).getPath().toString() );
@@ -121,32 +121,31 @@ public class ContentTypeTest
 
 
     @Test
-    public void templateReferencesToFormItems_throws_exception_when_template_is_not_of_expected_type()
+    public void subTypeReferencesToFormItems_throws_exception_when_subType_is_not_of_expected_type()
     {
         // setup
         Module module = Module.newModule().name( "myModule" ).build();
 
-        FormItemSetTemplate formItemSetTemplate = FormItemSetTemplateBuilder.newFormItemSetTemplate().module( module ).formItemSet(
+        FormItemSetSubType subType = FormItemSetSubTypeBuilder.newFormItemSetSubType().module( module ).formItemSet(
             FormItemSet.newFormItemSet().name( "address" ).add(
                 Component.newComponent().name( "label" ).label( "Label" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
                 Component.newComponent().name( "street" ).label( "Street" ).type( ComponentTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
-        cty.addFormItem(
-            TemplateReference.newBuilder().name( "home" ).typeComponent().template( formItemSetTemplate.getQualifiedName() ).build() );
+        cty.addFormItem( SubTypeReference.newBuilder().name( "home" ).typeComponent().subType( subType.getQualifiedName() ).build() );
 
-        MockTemplateFetcher templateReferenceFetcher = new MockTemplateFetcher();
-        templateReferenceFetcher.add( formItemSetTemplate );
+        MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
+        subTypeFetcher.add( subType );
 
         // exercise
         try
         {
-            cty.templateReferencesToFormItems( templateReferenceFetcher );
+            cty.subTypeReferencesToFormItems( subTypeFetcher );
         }
         catch ( Exception e )
         {
             assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "Template expected to be of type ComponentTemplate: FormItemSetTemplate", e.getMessage() );
+            assertEquals( "SubType expected to be of type ComponentSubType: FormItemSetSubType", e.getMessage() );
         }
     }
 
