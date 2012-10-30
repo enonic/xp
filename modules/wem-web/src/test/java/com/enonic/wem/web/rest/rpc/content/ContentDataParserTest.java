@@ -9,6 +9,7 @@ import org.joda.time.DateMidnight;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
@@ -35,6 +36,9 @@ public class ContentDataParserTest
         contentType.addFormItem( newComponent().name( "myDecimalNumber" ).type( ComponentTypes.DECIMAL_NUMBER ).build() );
         contentType.addFormItem( newComponent().name( "myGeoLocation" ).type( ComponentTypes.GEO_LOCATION ).build() );
         contentType.addFormItem( newComponent().name( "myColor" ).type( ComponentTypes.COLOR ).build() );
+        FormItemSet mySet = newFormItemSet().name( "mySet" ).build();
+        mySet.addFormItem( newComponent().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( mySet );
 
         StringBuilder json = new StringBuilder();
         json.append( "{" ).append( "\n" );
@@ -44,10 +48,12 @@ public class ContentDataParserTest
         json.append( "\"myDate\": \"2012-08-31\"," ).append( "\n" );
         json.append( "\"myWholeNumber\": \"1\"," ).append( "\n" );
         json.append( "\"myDecimalNumber\": \"1.1\"," ).append( "\n" );
-        json.append( "\"myGeoLocation\": {" ).append( "\n" );
-        json.append( "  \"latitude\": \"90\"," ).append( "\n" );
-        json.append( "  \"longitude\": \"180\"" ).append( "\n" );
-        json.append( "  }" ).append( "\n" );
+        json.append( "\"myGeoLocation.latitude\": \"90\"," ).append( "\n" );
+        json.append( "\"myGeoLocation.longitude\": \"180\"," ).append( "\n" );
+        json.append( "\"myColor.red\": \"40\"," ).append( "\n" );
+        json.append( "\"myColor.green\": \"60\"," ).append( "\n" );
+        json.append( "\"myColor.blue\": \"80\"," ).append( "\n" );
+        json.append( "\"mySet.myTextLine\": \"Inner line\"" ).append( "\n" );
         json.append( "}" );
 
         ObjectMapper objectMapper = ObjectMapperHelper.create();
@@ -64,6 +70,16 @@ public class ContentDataParserTest
         assertEquals( "<root>XML</root>", parsedContentData.getData( new EntryPath( "myXml" ) ).getValue() );
         assertEquals( 1L, parsedContentData.getData( new EntryPath( "myWholeNumber" ) ).getValue() );
         assertEquals( 1.1, parsedContentData.getData( new EntryPath( "myDecimalNumber" ) ).getValue() );
+        assertEquals( 90.0, parsedContentData.getData( new EntryPath( "myGeoLocation.latitude" ) ).getValue() );
+        assertEquals( 180.0, parsedContentData.getData( new EntryPath( "myGeoLocation.longitude" ) ).getValue() );
+        assertEquals( 40l, parsedContentData.getData( new EntryPath( "myColor.red" ) ).getValue() );
+        assertEquals( 60l, parsedContentData.getData( new EntryPath( "myColor.green" ) ).getValue() );
+        assertEquals( 80l, parsedContentData.getData( new EntryPath( "myColor.blue" ) ).getValue() );
+        assertEquals( "Inner line", parsedContentData.getData( new EntryPath( "mySet.myTextLine" ) ).getValue() );
+
+        Data myColor = parsedContentData.getData( new EntryPath( "myColor" ) );
+        Data myColorBlue = myColor.getDataSet().getData( "blue" );
+        assertEquals( 80l, myColorBlue.getValue() );
     }
 
     @Test

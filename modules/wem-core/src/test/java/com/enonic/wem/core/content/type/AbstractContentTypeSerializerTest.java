@@ -22,7 +22,6 @@ import static com.enonic.wem.api.content.type.formitem.Component.newComponent;
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.formitem.TemplateReference.newTemplateReference;
-import static com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig.newSingleSelectorConfig;
 import static com.enonic.wem.api.module.Module.newModule;
 import static org.junit.Assert.*;
 
@@ -42,44 +41,6 @@ public abstract class AbstractContentTypeSerializerTest
     }
 
     @Test
-    public void generate_all_types()
-    {
-        // setup
-        SingleSelectorConfig singleSelectorConfig =
-            newSingleSelectorConfig().typeRadio().addOption( "My Option 1", "o1" ).addOption( "My Option 2", "o2" ).build();
-
-        ContentType contentType = new ContentType();
-        contentType.setModule( myModule );
-
-        contentType.addFormItem( newComponent().name( "myDate" ).type( ComponentTypes.DATE ).build() );
-        contentType.addFormItem( newComponent().name( "mySingleSelector" ).type( ComponentTypes.SINGLE_SELECTOR ).componentTypeConfig(
-            singleSelectorConfig ).build() );
-        contentType.addFormItem( newComponent().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).build() );
-        contentType.addFormItem( newComponent().name( "myTextArea" ).type( ComponentTypes.TEXT_AREA ).build() );
-        contentType.addFormItem( newComponent().name( "myPhone" ).type( ComponentTypes.PHONE ).build() );
-        contentType.addFormItem( newComponent().name( "myXml" ).type( ComponentTypes.XML ).build() );
-
-        String serialized = toString( contentType );
-
-        // exercise
-        ContentType parsedContentType = toContentType( serialized );
-
-        // verify
-        Component parsedMyDate = parsedContentType.getComponent( "myDate" );
-        assertEquals( "myDate", parsedMyDate.getPath().toString() );
-        assertEquals( "myDate", parsedMyDate.getName() );
-        assertEquals( "com.enonic.wem.api.content.type.formitem.comptype.Date", parsedMyDate.getComponentType().getClassName() );
-        assertEquals( "date", parsedMyDate.getComponentType().getName() );
-
-        Component parsedMySingleSelector = parsedContentType.getComponent( "mySingleSelector" );
-        assertEquals( "mySingleSelector", parsedMySingleSelector.getPath().toString() );
-        assertEquals( "My Option 1",
-                      ( (SingleSelectorConfig) parsedMySingleSelector.getComponentTypeConfig() ).getOptions().get( 0 ).getLabel() );
-        assertEquals( "My Option 2",
-                      ( (SingleSelectorConfig) parsedMySingleSelector.getComponentTypeConfig() ).getOptions().get( 1 ).getLabel() );
-    }
-
-    @Test
     public void parse_all_types()
     {
         SingleSelectorConfig singleSelectorConfig =
@@ -87,6 +48,7 @@ public abstract class AbstractContentTypeSerializerTest
                                                                                                                      "o2" ).build();
 
         ContentType contentType = new ContentType();
+        contentType.setName( "MyContentType" );
         contentType.setModule( myModule );
         FormItems formItems = new FormItems();
         contentType.setFormItems( formItems );
@@ -98,10 +60,10 @@ public abstract class AbstractContentTypeSerializerTest
         formItems.addFormItem( newComponent().name( "myPhone" ).type( ComponentTypes.PHONE ).build() );
         formItems.addFormItem( newComponent().name( "myXml" ).type( ComponentTypes.XML ).build() );
 
-        FormItemSet formItemSet = FormItemSet.newBuilder().name( "personalia" ).label( "Personalia" ).build();
+        FormItemSet formItemSet = FormItemSet.newBuilder().name( "mySet" ).label( "My set" ).build();
         formItems.addFormItem( formItemSet );
-        formItemSet.addItem( newComponent().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( newComponent().name( "hairColour" ).occurrences( 1, 3 ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newComponent().name( "myText1" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newComponent().name( "myText2" ).occurrences( 1, 3 ).type( ComponentTypes.TEXT_LINE ).build() );
 
         String serialized = toString( contentType );
 
@@ -121,7 +83,9 @@ public abstract class AbstractContentTypeSerializerTest
         assertNotNull( actualFormItems.getFormItem( new FormItemPath( "myTextArea" ).getLastElement() ) );
         assertNotNull( actualFormItems.getFormItem( new FormItemPath( "myPhone" ).getLastElement() ) );
         assertNotNull( actualFormItems.getFormItem( new FormItemPath( "myXml" ).getLastElement() ) );
-        assertNotNull( actualFormItems.getFormItem( new FormItemPath( "personalia" ).getLastElement() ) );
+        assertNotNull( actualFormItems.getFormItem( new FormItemPath( "mySet" ).getLastElement() ) );
+        assertNotNull( actualFormItems.getComponent( new FormItemPath( "mySet.myText1" ) ) );
+        assertNotNull( actualFormItems.getComponent( new FormItemPath( "mySet.myText2" ) ) );
     }
 
     @Test
