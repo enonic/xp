@@ -38,7 +38,7 @@ public class GetTimeZonesRpcHandlerTest
     {
         this.timeZoneList.add( DateTimeZone.UTC );
         this.timeZoneList.add( DateTimeZone.forID( "EST" ) );
-        this.timeZoneList.add( DateTimeZone.forID( "EET" ) );
+        this.timeZoneList.add( DateTimeZone.forID( "Asia/Tokyo" ) );
         this.timeZoneList.add( DateTimeZone.forID( "America/Caracas" ) );
 
         testSuccess( "getTimeZones_result.json" );

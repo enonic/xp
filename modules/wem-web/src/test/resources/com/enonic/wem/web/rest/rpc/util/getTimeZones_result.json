@@ -17,11 +17,11 @@
             "offset": "-05:00"
         },
         {
-            "id": "EET",
-            "humanizedId": "EET",
-            "shortName": "EEST",
-            "name": "Eastern European Summer Time",
-            "offset": "+03:00"
+            "id": "Asia/Tokyo",
+            "humanizedId": "Asia/Tokyo",
+            "shortName": "JST",
+            "name": "Japan Standard Time",
+            "offset": "+09:00"
         },
         {
             "id": "America/Caracas",
