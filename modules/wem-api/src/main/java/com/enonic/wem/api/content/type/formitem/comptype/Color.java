@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.type.formitem.InvalidValueException;
 import static com.enonic.wem.api.content.datatype.DataTool.newDataChecker;
 
 public class Color
-    extends BaseComponentType
+    extends BaseInputType
 {
     public Color()
     {

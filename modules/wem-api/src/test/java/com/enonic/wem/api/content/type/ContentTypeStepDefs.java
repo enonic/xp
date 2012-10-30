@@ -13,18 +13,18 @@ import cucumber.annotation.en.When;
 import cucumber.table.DataTable;
 import gherkin.formatter.model.DataTableRow;
 
-import com.enonic.wem.api.content.type.formitem.ComponentSubType;
-import com.enonic.wem.api.content.type.formitem.ComponentSubTypeBuilder;
 import com.enonic.wem.api.content.type.formitem.FormItemPath;
 import com.enonic.wem.api.content.type.formitem.FormItemType;
 import com.enonic.wem.api.content.type.formitem.Input;
+import com.enonic.wem.api.content.type.formitem.InputSubType;
 import com.enonic.wem.api.content.type.formitem.MockSubTypeFetcher;
 import com.enonic.wem.api.content.type.formitem.SubTypeQualifiedName;
 import com.enonic.wem.api.content.type.formitem.SubTypeReference;
-import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
+import com.enonic.wem.api.content.type.formitem.comptype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.type.formitem.Input.newInput;
+import static com.enonic.wem.api.content.type.formitem.InputSubType.newInputSubType;
 
 public class ContentTypeStepDefs
 {
@@ -36,8 +36,7 @@ public class ContentTypeStepDefs
 
     public final Map<String, Input> inputByName = new HashMap<String, Input>();
 
-    public final Map<SubTypeQualifiedName, ComponentSubType> componentSubTypeByQualifiedName =
-        new HashMap<SubTypeQualifiedName, ComponentSubType>();
+    public final Map<SubTypeQualifiedName, InputSubType> inputSubTypeByQualifiedName = new HashMap<SubTypeQualifiedName, InputSubType>();
 
 
     @Given("^a Module named (.+)$")
@@ -49,20 +48,20 @@ public class ContentTypeStepDefs
     }
 
     @Given("^a Input named (.+) of type (.+)$")
-    public void a_input_named_name_of_type_type( String componentName, String componentTypeName )
+    public void a_input_named_name_of_type_type( String inputName, String inputTypeName )
         throws Throwable
     {
-        Input input = newInput().name( componentName ).type( ComponentTypes.parse( componentTypeName ) ).build();
-        inputByName.put( componentName, input );
+        Input input = newInput().name( inputName ).type( InputTypes.parse( inputTypeName ) ).build();
+        inputByName.put( inputName, input );
     }
 
-    @Given("^a ComponentSubType named (.+) in module (.+) with input (.+)$")
-    public void a_componentSubType_named_name_in_module_module_having_input( String subTypeName, String moduleName, String inputName )
+    @Given("^a InputSubType named (.+) in module (.+) with input (.+)$")
+    public void a_inputSubType_named_name_in_module_module_having_input( String subTypeName, String moduleName, String inputName )
         throws Throwable
     {
-        ComponentSubType componentSubType = ComponentSubTypeBuilder.newComponentSubType().module( moduleByName.get( moduleName ) ).input(
-            inputByName.get( inputName ) ).build();
-        componentSubTypeByQualifiedName.put( new SubTypeQualifiedName( moduleName, subTypeName ), componentSubType );
+        InputSubType inputSubType =
+            newInputSubType().module( moduleByName.get( moduleName ) ).input( inputByName.get( inputName ) ).build();
+        inputSubTypeByQualifiedName.put( new SubTypeQualifiedName( moduleName, subTypeName ), inputSubType );
     }
 
     @Given("^a ContentType named (.+)")
@@ -74,17 +73,18 @@ public class ContentTypeStepDefs
         contentTypeByName.put( contentTypeName, contentType );
     }
 
-    @Given("^adding SubTypeReference named (.+) referencing ComponentSubType (.+) to ContentType (.+)$")
-    public void adding_SubTypeReference_named_name_referencing_ComponentSubType_name_to_ContentType_myContentType(
-        String subTypeReferenceName, String subTypeQualifiedName, String contentTypeName )
+    @Given("^adding SubTypeReference named (.+) referencing InputSubType (.+) to ContentType (.+)$")
+    public void adding_SubTypeReference_named_name_referencing_InputSubType_name_to_ContentType_myContentType( String subTypeReferenceName,
+                                                                                                               String subTypeQualifiedName,
+                                                                                                               String contentTypeName )
         throws Throwable
     {
 
-        ComponentSubType componentSubType = componentSubTypeByQualifiedName.get( new SubTypeQualifiedName( subTypeQualifiedName ) );
+        InputSubType inputSubType = inputSubTypeByQualifiedName.get( new SubTypeQualifiedName( subTypeQualifiedName ) );
         ContentType contentType = contentTypeByName.get( contentTypeName );
-        contentType.addFormItem( SubTypeReference.newSubTypeReference( componentSubType ).name( subTypeReferenceName ).build() );
+        contentType.addFormItem( SubTypeReference.newSubTypeReference( inputSubType ).name( subTypeReferenceName ).build() );
 
-        mockSubTypeFetcher.add( componentSubType );
+        mockSubTypeFetcher.add( inputSubType );
         contentType.subTypeReferencesToFormItems( mockSubTypeFetcher );
     }
 

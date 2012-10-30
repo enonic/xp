@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 import com.enonic.wem.api.content.type.formitem.InvalidValueException;
 
 public class Phone
-    extends BaseComponentType
+    extends BaseInputType
 {
     public Phone()
     {

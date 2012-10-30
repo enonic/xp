@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 import com.enonic.wem.api.content.type.formitem.InvalidValueException;
 
 public class GeoLocation
-    extends BaseComponentType
+    extends BaseInputType
 {
     public GeoLocation()
     {

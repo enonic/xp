@@ -9,11 +9,11 @@ import org.codehaus.jackson.JsonNode;
 
 
 public class SingleSelectorConfigSerializerJson
-    extends AbstractComponentTypeConfigSerializerJson
+    extends AbstractInputTypeConfigSerializerJson
 {
     public static final SingleSelectorConfigSerializerJson DEFAULT = new SingleSelectorConfigSerializerJson();
 
-    public void generateConfig( ComponentTypeConfig config, JsonGenerator g )
+    public void generateConfig( InputTypeConfig config, JsonGenerator g )
         throws IOException
     {
         SingleSelectorConfig singleSelectorConfig = (SingleSelectorConfig) config;
@@ -32,13 +32,13 @@ public class SingleSelectorConfigSerializerJson
     }
 
     @Override
-    public ComponentTypeConfig parseConfig( final JsonNode componentTypeConfigNode )
+    public InputTypeConfig parseConfig( final JsonNode inputTypeConfigNode )
     {
         final SingleSelectorConfig.Builder builder = SingleSelectorConfig.newSingleSelectorConfig();
         final SingleSelectorConfig.SelectorType selectorType =
-            SingleSelectorConfig.SelectorType.valueOf( getStringValue( "selectorType", componentTypeConfigNode ) );
+            SingleSelectorConfig.SelectorType.valueOf( getStringValue( "selectorType", inputTypeConfigNode ) );
         builder.type( selectorType );
-        final JsonNode optionsNode = componentTypeConfigNode.get( "options" );
+        final JsonNode optionsNode = inputTypeConfigNode.get( "options" );
         final Iterator<JsonNode> optionIterator = optionsNode.getElements();
         while ( optionIterator.hasNext() )
         {

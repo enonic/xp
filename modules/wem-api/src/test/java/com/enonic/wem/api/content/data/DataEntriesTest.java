@@ -16,8 +16,8 @@ public class DataEntriesTest
     {
         // setup
         DataEntries dataEntries = new DataEntries();
-        dataEntries.add( Data.newData().path( new EntryPath( "myComponent" ) ).type( DataTypes.TEXT ).value( "Value 1" ).build() );
-        dataEntries.add( Data.newData().path( new EntryPath( "myComponent" ) ).type( DataTypes.TEXT ).value( "Value 2" ).build() );
+        dataEntries.add( Data.newData().path( new EntryPath( "myInput" ) ).type( DataTypes.TEXT ).value( "Value 1" ).build() );
+        dataEntries.add( Data.newData().path( new EntryPath( "myInput" ) ).type( DataTypes.TEXT ).value( "Value 2" ).build() );
 
         // exercise and verify
         assertEquals( 2, dataEntries.size() );
@@ -28,11 +28,11 @@ public class DataEntriesTest
     {
         // setup
         DataEntries dataEntries = new DataEntries();
-        dataEntries.add( Data.newData().path( new EntryPath( "myComponent" ) ).type( DataTypes.TEXT ).value( "Value 1" ).build() );
-        dataEntries.add( Data.newData().path( new EntryPath( "myComponent" ) ).type( DataTypes.TEXT ).value( "Value 2" ).build() );
+        dataEntries.add( Data.newData().path( new EntryPath( "myInput" ) ).type( DataTypes.TEXT ).value( "Value 1" ).build() );
+        dataEntries.add( Data.newData().path( new EntryPath( "myInput" ) ).type( DataTypes.TEXT ).value( "Value 2" ).build() );
 
         // exercise and verify
-        assertEquals( "Value 1", dataEntries.get( new EntryPath( "myComponent[0]" ).getLastElement() ).getValue() );
+        assertEquals( "Value 1", dataEntries.get( new EntryPath( "myInput[0]" ).getLastElement() ).getValue() );
     }
 
     @Test
@@ -40,13 +40,13 @@ public class DataEntriesTest
     {
         // setup
         DataEntries dataEntries = new DataEntries();
-        dataEntries.add( Data.newData().path( new EntryPath( "myComponent" ) ).type( DataTypes.TEXT ).value( "Value 1" ).build() );
-        dataEntries.add( Data.newData().path( new EntryPath( "myComponent" ) ).type( DataTypes.TEXT ).value( "Value 2" ).build() );
+        dataEntries.add( Data.newData().path( new EntryPath( "myInput" ) ).type( DataTypes.TEXT ).value( "Value 1" ).build() );
+        dataEntries.add( Data.newData().path( new EntryPath( "myInput" ) ).type( DataTypes.TEXT ).value( "Value 2" ).build() );
 
         // exercise and verify
-        assertEquals( "Value 2", dataEntries.get( new EntryPath( "myComponent[1]" ).getLastElement() ).getValue() );
-        assertEquals( 0, dataEntries.get( new EntryPath( "myComponent[0]" ).getLastElement() ).getPath().getLastElement().getIndex() );
-        assertEquals( 1, dataEntries.get( new EntryPath( "myComponent[1]" ).getLastElement() ).getPath().getLastElement().getIndex() );
+        assertEquals( "Value 2", dataEntries.get( new EntryPath( "myInput[1]" ).getLastElement() ).getValue() );
+        assertEquals( 0, dataEntries.get( new EntryPath( "myInput[0]" ).getLastElement() ).getPath().getLastElement().getIndex() );
+        assertEquals( 1, dataEntries.get( new EntryPath( "myInput[1]" ).getLastElement() ).getPath().getLastElement().getIndex() );
     }
 
     @Test
@@ -54,11 +54,11 @@ public class DataEntriesTest
     {
         // setup
         DataEntries dataEntries = new DataEntries();
-        dataEntries.add( Data.newData().path( new EntryPath( "myComponent" ) ).type( DataTypes.TEXT ).value( "Value 1" ).build() );
-        dataEntries.add( Data.newData().path( new EntryPath( "myComponent" ) ).type( DataTypes.TEXT ).value( "Value 2" ).build() );
+        dataEntries.add( Data.newData().path( new EntryPath( "myInput" ) ).type( DataTypes.TEXT ).value( "Value 1" ).build() );
+        dataEntries.add( Data.newData().path( new EntryPath( "myInput" ) ).type( DataTypes.TEXT ).value( "Value 2" ).build() );
 
         // exercise and verify
-        Assert.assertNull( dataEntries.get( new EntryPath( "myComponent[2]" ).getLastElement() ) );
+        Assert.assertNull( dataEntries.get( new EntryPath( "myInput[2]" ).getLastElement() ) );
     }
 
     @Test
@@ -66,22 +66,22 @@ public class DataEntriesTest
     {
         // setup
         DataEntries dataEntries = new DataEntries();
-        dataEntries.add( Data.newData().path( new EntryPath( "myComponent" ) ).type( DataTypes.TEXT ).value( "Value 1" ).build() );
-        assertEquals( "myComponent", dataEntries.get( new EntryPath( "myComponent" ).getLastElement() ).getPath().toString() );
-        assertEquals( "Value 1", dataEntries.get( new EntryPath( "myComponent" ).getLastElement() ).getValue() );
+        dataEntries.add( Data.newData().path( new EntryPath( "myInput" ) ).type( DataTypes.TEXT ).value( "Value 1" ).build() );
+        assertEquals( "myInput", dataEntries.get( new EntryPath( "myInput" ).getLastElement() ).getPath().toString() );
+        assertEquals( "Value 1", dataEntries.get( new EntryPath( "myInput" ).getLastElement() ).getValue() );
 
         // exercise
-        dataEntries.add( Data.newData().path( new EntryPath( "myComponent" ) ).type( DataTypes.TEXT ).value( "Value 2" ).build() );
+        dataEntries.add( Data.newData().path( new EntryPath( "myInput" ) ).type( DataTypes.TEXT ).value( "Value 2" ).build() );
 
         // verify
-        assertEquals( "myComponent[0]", dataEntries.get( new EntryPath( "myComponent" ).getLastElement() ).getPath().toString() );
-        assertEquals( "Value 1", dataEntries.get( new EntryPath( "myComponent" ).getLastElement() ).getValue() );
+        assertEquals( "myInput[0]", dataEntries.get( new EntryPath( "myInput" ).getLastElement() ).getPath().toString() );
+        assertEquals( "Value 1", dataEntries.get( new EntryPath( "myInput" ).getLastElement() ).getValue() );
 
-        assertEquals( "myComponent[1]", dataEntries.get( new EntryPath( "myComponent[1]" ).getLastElement() ).getPath().toString() );
-        assertEquals( "Value 2", dataEntries.get( new EntryPath( "myComponent[1]" ).getLastElement() ).getValue() );
+        assertEquals( "myInput[1]", dataEntries.get( new EntryPath( "myInput[1]" ).getLastElement() ).getPath().toString() );
+        assertEquals( "Value 2", dataEntries.get( new EntryPath( "myInput[1]" ).getLastElement() ).getValue() );
 
-        assertEquals( "myComponent[0]", dataEntries.get( new EntryPath( "myComponent[0]" ).getLastElement() ).getPath().toString() );
-        assertEquals( "Value 1", dataEntries.get( new EntryPath( "myComponent[0]" ).getLastElement() ).getValue() );
+        assertEquals( "myInput[0]", dataEntries.get( new EntryPath( "myInput[0]" ).getLastElement() ).getPath().toString() );
+        assertEquals( "Value 1", dataEntries.get( new EntryPath( "myInput[0]" ).getLastElement() ).getValue() );
     }
 
     @Test(expected = IllegalArgumentException.class)

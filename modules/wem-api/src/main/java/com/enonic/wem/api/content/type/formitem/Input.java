@@ -5,14 +5,14 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
-import com.enonic.wem.api.content.type.formitem.comptype.BaseComponentType;
-import com.enonic.wem.api.content.type.formitem.comptype.ComponentType;
-import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypeConfig;
+import com.enonic.wem.api.content.type.formitem.comptype.BaseInputType;
+import com.enonic.wem.api.content.type.formitem.comptype.InputType;
+import com.enonic.wem.api.content.type.formitem.comptype.InputTypeConfig;
 
 public class Input
     extends HierarchicalFormItem
 {
-    private BaseComponentType type;
+    private BaseInputType type;
 
     private String label;
 
@@ -28,13 +28,13 @@ public class Input
 
     private String helpText;
 
-    private ComponentTypeConfig componentTypeConfig;
+    private InputTypeConfig inputTypeConfig;
 
     protected Input()
     {
     }
 
-    public ComponentType getComponentType()
+    public InputType getInputType()
     {
         return type;
     }
@@ -84,9 +84,9 @@ public class Input
         return helpText;
     }
 
-    public ComponentTypeConfig getComponentTypeConfig()
+    public InputTypeConfig getInputTypeConfig()
     {
-        return componentTypeConfig;
+        return inputTypeConfig;
     }
 
     public void checkBreaksRequiredContract( final Data data )
@@ -100,12 +100,12 @@ public class Input
         }
     }
 
-    public void checkValidityAccordingToComponentTypeConfig( final Data data )
+    public void checkValidityAccordingToInputTypeConfig( final Data data )
         throws InvalidValueException
     {
-        if ( componentTypeConfig != null )
+        if ( inputTypeConfig != null )
         {
-            componentTypeConfig.checkValidity( data );
+            inputTypeConfig.checkValidity( data );
         }
     }
 
@@ -132,7 +132,7 @@ public class Input
                 return;
             }
 
-            checkValidityAccordingToComponentTypeConfig( data );
+            checkValidityAccordingToInputTypeConfig( data );
             type.checkValidity( data );
         }
         catch ( InvalidValueException e )
@@ -159,7 +159,7 @@ public class Input
         copy.customText = customText;
         copy.validationRegexp = validationRegexp;
         copy.helpText = helpText;
-        copy.componentTypeConfig = componentTypeConfig;
+        copy.inputTypeConfig = inputTypeConfig;
         return copy;
     }
 
@@ -172,7 +172,7 @@ public class Input
     {
         private String name;
 
-        private BaseComponentType componentType;
+        private BaseInputType inputType;
 
         private String label;
 
@@ -188,7 +188,7 @@ public class Input
 
         private String helpText;
 
-        private ComponentTypeConfig componentTypeConfig;
+        private InputTypeConfig inputTypeConfig;
 
         private Builder()
         {
@@ -201,9 +201,9 @@ public class Input
             return this;
         }
 
-        public Builder type( BaseComponentType value )
+        public Builder type( BaseInputType value )
         {
-            componentType = value;
+            inputType = value;
             return this;
         }
 
@@ -283,33 +283,32 @@ public class Input
             return this;
         }
 
-        public Builder componentTypeConfig( ComponentTypeConfig value )
+        public Builder inputTypeConfig( InputTypeConfig value )
         {
-            componentTypeConfig = value;
+            inputTypeConfig = value;
             return this;
         }
 
         public Input build()
         {
             Preconditions.checkNotNull( name, "name cannot be null" );
-            Preconditions.checkNotNull( componentType, "componentType cannot be null" );
+            Preconditions.checkNotNull( inputType, "inputType cannot be null" );
 
-            if ( componentType.requiresConfig() )
+            if ( inputType.requiresConfig() )
             {
-                Preconditions.checkArgument( componentTypeConfig != null,
-                                             "Component [name='%s', type=%s] is missing required ComponentTypeConfig: %s", name,
-                                             componentType.getName(), componentType.requiredConfigClass().getName() );
+                Preconditions.checkArgument( inputTypeConfig != null, "Input [name='%s', type=%s] is missing required InputTypeConfig: %s",
+                                             name, inputType.getName(), inputType.requiredConfigClass().getName() );
 
                 //noinspection ConstantConditions
-                Preconditions.checkArgument( componentType.requiredConfigClass().isInstance( componentTypeConfig ),
-                                             "Component [name='%s', type=%s] expects ComponentTypeConfig of type [%s] but was: %s", name,
-                                             componentType.getName(), componentType.requiredConfigClass().getName(),
-                                             componentTypeConfig.getClass().getName() );
+                Preconditions.checkArgument( inputType.requiredConfigClass().isInstance( inputTypeConfig ),
+                                             "Input [name='%s', type=%s] expects InputTypeConfig of type [%s] but was: %s", name,
+                                             inputType.getName(), inputType.requiredConfigClass().getName(),
+                                             inputTypeConfig.getClass().getName() );
             }
 
             Input input = new Input();
             input.setName( name );
-            input.type = componentType;
+            input.type = inputType;
             input.label = label;
             input.immutable = immutable;
             input.occurrences.setMinOccurences( occurrences.getMinimum() );
@@ -318,7 +317,7 @@ public class Input
             input.customText = customText;
             input.validationRegexp = validationRegexp;
             input.helpText = helpText;
-            input.componentTypeConfig = componentTypeConfig;
+            input.inputTypeConfig = inputTypeConfig;
             input.setPath( new FormItemPath( input.getName() ) );
             return input;
         }

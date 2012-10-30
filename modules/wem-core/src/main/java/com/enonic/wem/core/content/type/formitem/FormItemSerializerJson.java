@@ -15,11 +15,10 @@ import com.enonic.wem.api.content.type.formitem.Input;
 import com.enonic.wem.api.content.type.formitem.Layout;
 import com.enonic.wem.api.content.type.formitem.SubTypeQualifiedName;
 import com.enonic.wem.api.content.type.formitem.SubTypeReference;
-import com.enonic.wem.api.content.type.formitem.comptype.BaseComponentType;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeConfigSerializerJson;
-import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeSerializerJson;
+import com.enonic.wem.core.content.type.formitem.comptype.InputTypeConfigSerializerJson;
+import com.enonic.wem.core.content.type.formitem.comptype.InputTypeSerializerJson;
 
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
@@ -27,9 +26,9 @@ import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 
 public class FormItemSerializerJson
 {
-    private ComponentTypeSerializerJson componentTypeSerializer = new ComponentTypeSerializerJson();
+    private InputTypeSerializerJson inputTypeSerializer = new InputTypeSerializerJson();
 
-    private ComponentTypeConfigSerializerJson componentTypeConfigSerializer = new ComponentTypeConfigSerializerJson();
+    private InputTypeConfigSerializerJson inputTypeConfigSerializer = new InputTypeConfigSerializerJson();
 
     private final FormItemsSerializerJson formItemsSerializerJson;
 
@@ -57,7 +56,7 @@ public class FormItemSerializerJson
         }
         else if ( formItem instanceof Input )
         {
-            generateComponent( (Input) formItem, g );
+            generateInput( (Input) formItem, g );
         }
         else if ( formItem instanceof SubTypeReference )
         {
@@ -65,13 +64,13 @@ public class FormItemSerializerJson
         }
     }
 
-    private void generateComponent( final Input input, final JsonGenerator g )
+    private void generateInput( final Input input, final JsonGenerator g )
         throws IOException
     {
         g.writeStartObject();
         g.writeStringField( "formItemType", Input.class.getSimpleName() );
         g.writeStringField( "name", input.getName() );
-        componentTypeSerializer.generate( input.getComponentType(), g );
+        inputTypeSerializer.generate( input.getInputType(), g );
         g.writeStringField( "label", input.getLabel() );
         g.writeBooleanField( "required", input.isRequired() );
         g.writeBooleanField( "immutable", input.isImmutable() );
@@ -80,10 +79,10 @@ public class FormItemSerializerJson
         g.writeStringField( "customText", input.getCustomText() );
         g.writeStringField( "validationRegexp", input.getValidationRegexp() != null ? input.getValidationRegexp().toString() : null );
         g.writeStringField( "helpText", input.getHelpText() );
-        if ( input.getComponentType().requiresConfig() && input.getComponentTypeConfig() != null )
+        if ( input.getInputType().requiresConfig() && input.getInputTypeConfig() != null )
         {
-            g.writeFieldName( "componentTypeConfig" );
-            input.getComponentType().getComponentTypeConfigJsonGenerator().generate( input.getComponentTypeConfig(), g );
+            g.writeFieldName( "inputTypeConfig" );
+            input.getInputType().getInputTypeConfigJsonGenerator().generate( input.getInputTypeConfig(), g );
         }
 
         g.writeEndObject();
@@ -148,7 +147,7 @@ public class FormItemSerializerJson
 
         if ( formItemType.equals( Input.class.getSimpleName() ) )
         {
-            formItem = parseComponent( formItemNode );
+            formItem = parseInput( formItemNode );
         }
         else if ( formItemType.equals( FormItemSet.class.getSimpleName() ) )
         {
@@ -170,7 +169,7 @@ public class FormItemSerializerJson
         return formItem;
     }
 
-    private HierarchicalFormItem parseComponent( final JsonNode formItemNode )
+    private HierarchicalFormItem parseInput( final JsonNode formItemNode )
     {
         final Input.Builder builder = newInput();
         builder.name( JsonParserUtil.getStringValue( "name", formItemNode ) );
@@ -181,8 +180,8 @@ public class FormItemSerializerJson
         parseValidationRegexp( builder, formItemNode );
 
         parseOccurrences( builder, formItemNode.get( "occurrences" ) );
-        parseComponentType( builder, formItemNode.get( "componentType" ) );
-        parseComponentTypeConfig( builder, formItemNode.get( "componentTypeConfig" ) );
+        parseInputType( builder, formItemNode.get( "inputType" ) );
+        parseInputTypeConfig( builder, formItemNode.get( "inputTypeConfig" ) );
 
         return builder.build();
     }
@@ -245,9 +244,9 @@ public class FormItemSerializerJson
         return builder.build();
     }
 
-    private void parseValidationRegexp( final Input.Builder builder, final JsonNode componentNode )
+    private void parseValidationRegexp( final Input.Builder builder, final JsonNode inputNode )
     {
-        final String validationRegexp = JsonParserUtil.getStringValue( "validationRegexp", componentNode, null );
+        final String validationRegexp = JsonParserUtil.getStringValue( "validationRegexp", inputNode, null );
         if ( validationRegexp != null )
         {
             builder.validationRegexp( validationRegexp );
@@ -278,20 +277,19 @@ public class FormItemSerializerJson
         }
     }
 
-    private void parseComponentTypeConfig( final Input.Builder builder, final JsonNode componentTypeConfigNode )
+    private void parseInputTypeConfig( final Input.Builder builder, final JsonNode inputTypeConfigNode )
     {
-        if ( componentTypeConfigNode != null )
+        if ( inputTypeConfigNode != null )
         {
-            builder.componentTypeConfig( componentTypeConfigSerializer.parse( componentTypeConfigNode ) );
+            builder.inputTypeConfig( inputTypeConfigSerializer.parse( inputTypeConfigNode ) );
         }
     }
 
-    private void parseComponentType( final Input.Builder builder, final JsonNode componentTypeNode )
+    private void parseInputType( final Input.Builder builder, final JsonNode inputTypeNode )
     {
-        if ( componentTypeNode != null )
+        if ( inputTypeNode != null )
         {
-            BaseComponentType componentType = componentTypeSerializer.parse( componentTypeNode );
-            builder.type( componentType );
+            builder.type( inputTypeSerializer.parse( inputTypeNode ) );
         }
     }
 }

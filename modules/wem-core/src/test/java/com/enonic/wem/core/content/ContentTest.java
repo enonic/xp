@@ -9,23 +9,23 @@ import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
-import com.enonic.wem.api.content.type.formitem.ComponentSubType;
 import com.enonic.wem.api.content.type.formitem.FieldSet;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
 import com.enonic.wem.api.content.type.formitem.FormItemSetSubType;
 import com.enonic.wem.api.content.type.formitem.Input;
+import com.enonic.wem.api.content.type.formitem.InputSubType;
 import com.enonic.wem.api.content.type.formitem.InvalidDataException;
 import com.enonic.wem.api.content.type.formitem.MockSubTypeFetcher;
 import com.enonic.wem.api.content.type.formitem.SubTypeReference;
-import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
+import com.enonic.wem.api.content.type.formitem.comptype.InputTypes;
 import com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.formitem.ComponentSubTypeBuilder.newComponentSubType;
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.formitem.FormItemSetSubTypeBuilder.newFormItemSetSubType;
 import static com.enonic.wem.api.content.type.formitem.Input.newInput;
+import static com.enonic.wem.api.content.type.formitem.InputSubType.newInputSubType;
 import static com.enonic.wem.api.content.type.formitem.SubTypeReference.newSubTypeReference;
 import static com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig.newSingleSelectorConfig;
 import static com.enonic.wem.api.module.Module.newModule;
@@ -41,8 +41,8 @@ public class ContentTest
         SingleSelectorConfig singleSelectorConfig =
             newSingleSelectorConfig().type( SingleSelectorConfig.SelectorType.DROPDOWN ).addOption( "Option 1", "o1" ).addOption(
                 "Option 2", "o2" ).build();
-        Input mySingleSelector = newInput().name( "mySingleSelector" ).type( ComponentTypes.SINGLE_SELECTOR ).componentTypeConfig(
-            singleSelectorConfig ).build();
+        Input mySingleSelector =
+            newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build();
         contentType.addFormItem( mySingleSelector );
 
         Content content = new Content();
@@ -56,8 +56,8 @@ public class ContentTest
     public void multiple_textlines()
     {
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).build() );
-        contentType.addFormItem( newInput().name( "myMultipleTextLine" ).type( ComponentTypes.TEXT_LINE ).multiple( true ).build() );
+        contentType.addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newInput().name( "myMultipleTextLine" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -74,7 +74,7 @@ public class ContentTest
     public void tags()
     {
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().name( "myTags" ).type( ComponentTypes.TAGS ).build() );
+        contentType.addFormItem( newInput().name( "myTags" ).type( InputTypes.TAGS ).build() );
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
         Content content = new Content();
@@ -88,14 +88,14 @@ public class ContentTest
     public void tags_using_subType()
     {
         Module module = newModule().name( "system" ).build();
-        Input input = newInput().name( "tags" ).label( "Tags" ).type( ComponentTypes.TEXT_LINE ).multiple( true ).build();
-        ComponentSubType componentSubType = newComponentSubType().module( module ).input( input ).build();
+        Input input = newInput().name( "tags" ).label( "Tags" ).type( InputTypes.TEXT_LINE ).multiple( true ).build();
+        InputSubType inputSubType = newInputSubType().module( module ).input( input ).build();
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
-        subTypeFetcher.add( componentSubType );
+        subTypeFetcher.add( inputSubType );
 
         ContentType contentType = new ContentType();
         contentType.addFormItem(
-            SubTypeReference.newSubTypeReference().name( "myTags" ).subType( "system:tags" ).type( ComponentSubType.class ).build() );
+            SubTypeReference.newSubTypeReference().name( "myTags" ).subType( "system:tags" ).type( InputSubType.class ).build() );
         contentType.subTypeReferencesToFormItems( subTypeFetcher );
 
         Content content = new Content();
@@ -111,7 +111,7 @@ public class ContentTest
     public void phone()
     {
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().name( "myPhone" ).type( ComponentTypes.PHONE ).required( true ).build() );
+        contentType.addFormItem( newInput().name( "myPhone" ).type( InputTypes.PHONE ).required( true ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -124,12 +124,12 @@ public class ContentTest
     public void formItemSet()
     {
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().name( "name" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
 
         FormItemSet formItemSet = FormItemSet.newFormItemSet().name( "personalia" ).build();
         contentType.addFormItem( formItemSet );
-        formItemSet.addItem( newInput().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( newInput().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -146,14 +146,14 @@ public class ContentTest
     public void multiple_subtype()
     {
         ContentType contentType = new ContentType();
-        Input nameInput = newInput().name( "name" ).type( ComponentTypes.TEXT_LINE ).required( true ).build();
+        Input nameInput = newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build();
         contentType.addFormItem( nameInput );
 
         FormItemSet formItemSet = newFormItemSet().name( "personalia" ).multiple( true ).build();
         contentType.addFormItem( formItemSet );
-        formItemSet.addItem( newInput().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( newInput().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( newInput().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -239,11 +239,11 @@ public class ContentTest
     public void structured_getEntries()
     {
         FormItemSet child = FormItemSet.newFormItemSet().name( "child" ).multiple( true ).build();
-        child.addItem( newInput().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() );
-        child.addItem( newInput().name( "age" ).type( ComponentTypes.TEXT_LINE ).build() );
+        child.addItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
+        child.addItem( newInput().name( "age" ).type( InputTypes.TEXT_LINE ).build() );
         FormItemSet features = FormItemSet.newFormItemSet().name( "features" ).multiple( false ).build();
-        features.addItem( newInput().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
-        features.addItem( newInput().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() );
+        features.addItem( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        features.addItem( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
         child.addFormItemSet( features );
         ContentType contentType = new ContentType();
         contentType.addFormItem( child );
@@ -289,21 +289,21 @@ public class ContentTest
     {
         Module module = newModule().name( "myModule" ).build();
 
-        ComponentSubType postalCodeSubType = newComponentSubType().module( module ).input(
-            newInput().name( "postalCode" ).type( ComponentTypes.TEXT_LINE ).build() ).build();
-        ComponentSubType countrySubType = newComponentSubType().module( module ).input(
-            newInput().name( "country" ).type( ComponentTypes.SINGLE_SELECTOR ).componentTypeConfig(
+        InputSubType postalCodeSubType =
+            newInputSubType().module( module ).input( newInput().name( "postalCode" ).type( InputTypes.TEXT_LINE ).build() ).build();
+        InputSubType countrySubType = newInputSubType().module( module ).input(
+            newInput().name( "country" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig(
                 newSingleSelectorConfig().typeDropdown().addOption( "Norway", "NO" ).build() ).build() ).build();
 
         FormItemSetSubType addressSubType = newFormItemSetSubType().module( module ).formItemSet(
-            newFormItemSet().name( "address" ).add( newInput().name( "street" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
+            newFormItemSet().name( "address" ).add( newInput().name( "street" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newSubTypeReference( postalCodeSubType ).name( "postalCode" ).build() ).add(
-                newInput().name( "postalPlace" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
+                newInput().name( "postalPlace" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newSubTypeReference( countrySubType ).name( "country" ).build() ).build() ).build();
 
         ContentType contentType = new ContentType();
         contentType.setName( "person" );
-        contentType.addFormItem( newInput().type( ComponentTypes.TEXT_LINE ).name( "name" ).build() );
+        contentType.addFormItem( newInput().type( InputTypes.TEXT_LINE ).name( "name" ).build() );
         contentType.addFormItem( newSubTypeReference( addressSubType ).name( "address" ).build() );
 
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
@@ -333,12 +333,11 @@ public class ContentTest
         Module module = newModule().name( "myModule" ).build();
 
         FormItemSetSubType addressSubType = newFormItemSetSubType().module( module ).formItemSet(
-            newFormItemSet().name( "address" ).multiple( true ).add(
-                newInput().type( ComponentTypes.TEXT_LINE ).name( "label" ).build() ).add(
-                newInput().type( ComponentTypes.TEXT_LINE ).name( "street" ).build() ).add(
-                newInput().type( ComponentTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(
-                newInput().type( ComponentTypes.TEXT_LINE ).name( "postalPlace" ).build() ).add(
-                newInput().type( ComponentTypes.TEXT_LINE ).name( "country" ).build() ).build() ).build();
+            newFormItemSet().name( "address" ).multiple( true ).add( newInput().type( InputTypes.TEXT_LINE ).name( "label" ).build() ).add(
+                newInput().type( InputTypes.TEXT_LINE ).name( "street" ).build() ).add(
+                newInput().type( InputTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(
+                newInput().type( InputTypes.TEXT_LINE ).name( "postalPlace" ).build() ).add(
+                newInput().type( InputTypes.TEXT_LINE ).name( "country" ).build() ).build() ).build();
 
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
@@ -378,9 +377,9 @@ public class ContentTest
     public void trying_to_set_data_to_a_fieldSetSubType_when_subType_is_missing()
     {
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().type( ComponentTypes.TEXT_LINE ).name( "name" ).build() );
+        contentType.addFormItem( newInput().type( InputTypes.TEXT_LINE ).name( "name" ).build() );
         contentType.addFormItem(
-            SubTypeReference.newSubTypeReference().name( "address" ).typeComponent().subType( "myModule:myAddressSubType" ).build() );
+            SubTypeReference.newSubTypeReference().name( "address" ).typeInput().subType( "myModule:myAddressSubType" ).build() );
 
         contentType.subTypeReferencesToFormItems( new MockSubTypeFetcher() );
 
@@ -404,13 +403,13 @@ public class ContentTest
         // setup
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
-        contentType.addFormItem( newInput().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
         FieldSet personalia = newFieldSet().label( "Personalia" ).name( "personalia" ).add(
-            newInput().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() ).add(
-            newInput().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() ).build();
+            newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).add(
+            newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
         FieldSet tatoos = newFieldSet().label( "Characteristics" ).name( "characteristics" ).add(
-            newInput().name( "tattoo" ).type( ComponentTypes.TEXT_LINE ).multiple( true ).build() ).add(
-            newInput().name( "scar" ).type( ComponentTypes.TEXT_LINE ).multiple( true ).build() ).build();
+            newInput().name( "tattoo" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() ).add(
+            newInput().name( "scar" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() ).build();
         personalia.addFormItem( tatoos );
         contentType.addFormItem( personalia );
 
@@ -438,7 +437,7 @@ public class ContentTest
     public void given_required_field_with_data_when_checkBreaksRequiredContract_then_exception_is_not_thrown()
     {
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
         Content content = new Content();
         content.setType( contentType );
         content.setData( "myField", "value" );
@@ -459,7 +458,7 @@ public class ContentTest
     {
 
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
         Content content = new Content();
         content.setType( contentType );
 
@@ -473,7 +472,7 @@ public class ContentTest
 
         ContentType contentType = new ContentType();
         contentType.addFormItem( newFieldSet().label( "Label" ).name( "myLayout" ).add(
-            newInput().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() ).build() );
+            newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
 
@@ -488,7 +487,7 @@ public class ContentTest
         ContentType contentType = new ContentType();
         contentType.addFormItem( newFieldSet().label( "My outer layout" ).name( "myOuterlayout" ).add(
             newFieldSet().label( "My Layout" ).name( "myLayout" ).add(
-                newInput().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
+                newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
 
@@ -502,7 +501,7 @@ public class ContentTest
         ContentType contentType = new ContentType();
         contentType.addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
             newFormItemSet().name( "myFieldSet" ).required( true ).add(
-                newInput().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
+                newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
         content.setData( "myFieldSet.myField", "" );
@@ -517,7 +516,7 @@ public class ContentTest
 
         ContentType contentType = new ContentType();
         contentType.addFormItem( newFormItemSet().name( "myFieldSet" ).required( true ).add(
-            newInput().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() ).build() );
+            newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
         content.setData( "myFieldSet.myField", "" );
@@ -533,7 +532,7 @@ public class ContentTest
         ContentType contentType = new ContentType();
         contentType.addFormItem( newFormItemSet().name( "myFieldSet" ).required( true ).add(
             newFieldSet().label( "My FieldSet" ).name( "myFieldSet" ).add(
-                newInput().name( "myField" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
+                newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
         content.setData( "myFieldSet.myField", "" );
@@ -548,7 +547,7 @@ public class ContentTest
 
         ContentType contentType = new ContentType();
         contentType.addFormItem( newFormItemSet().name( "myFieldSet" ).required( true ).add(
-            newInput().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() ).build() );
+            newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
         content.setData( "myFieldSet.myField", "value" );
@@ -572,7 +571,7 @@ public class ContentTest
 
         ContentType contentType = new ContentType();
         contentType.addFormItem( newFormItemSet().name( "myFieldSet" ).required( true ).add(
-            newInput().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() ).build() );
+            newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
 
@@ -587,7 +586,7 @@ public class ContentTest
         ContentType contentType = new ContentType();
         contentType.addFormItem( newFieldSet().label( "My FieldSet" ).name( "myFieldSet" ).add(
             newFormItemSet().name( "myFieldSet" ).required( true ).add(
-                newInput().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() ).build() ).build() );
+                newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build() );
         Content content = new Content();
         content.setType( contentType );
 
@@ -600,17 +599,17 @@ public class ContentTest
     {
         // setup
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
 
         FormItemSet personaliaFormItemSet = newFormItemSet().name( "personalia" ).multiple( false ).required( true ).build();
-        personaliaFormItemSet.addItem( newInput().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
-        personaliaFormItemSet.addItem( newInput().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() );
+        personaliaFormItemSet.addItem( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        personaliaFormItemSet.addItem( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
         contentType.addFormItem( personaliaFormItemSet );
 
         FormItemSet crimesFormItemSet = newFormItemSet().name( "crimes" ).multiple( true ).build();
         contentType.addFormItem( crimesFormItemSet );
-        crimesFormItemSet.addItem( newInput().name( "description" ).type( ComponentTypes.TEXT_LINE ).build() );
-        crimesFormItemSet.addItem( newInput().name( "year" ).type( ComponentTypes.TEXT_LINE ).build() );
+        crimesFormItemSet.addItem( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
+        crimesFormItemSet.addItem( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );

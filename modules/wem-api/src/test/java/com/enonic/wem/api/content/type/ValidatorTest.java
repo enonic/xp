@@ -13,8 +13,8 @@ import com.enonic.wem.api.content.type.formitem.FieldSet;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
 import com.enonic.wem.api.content.type.formitem.InvalidDataException;
 import com.enonic.wem.api.content.type.formitem.InvalidValueException;
-import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
 import com.enonic.wem.api.content.type.formitem.comptype.HtmlAreaConfig;
+import com.enonic.wem.api.content.type.formitem.comptype.InputTypes;
 import com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig;
 
 import static com.enonic.wem.api.content.type.Validator.newValidator;
@@ -33,8 +33,8 @@ public class ValidatorTest
             SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "Option 1", "o1" ).build();
 
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().name( "mySingleSelector" ).type( ComponentTypes.SINGLE_SELECTOR ).componentTypeConfig(
-            singleSelectorConfig ).build() );
+        contentType.addFormItem(
+            newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -60,10 +60,10 @@ public class ValidatorTest
             SingleSelectorConfig.newSingleSelectorConfig().typeRadio().addOption( "Option 1", "o1" ).build();
 
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().name( "mySingleSelector1" ).type( ComponentTypes.SINGLE_SELECTOR ).componentTypeConfig(
-            singleSelectorConfig ).build() );
-        contentType.addFormItem( newInput().name( "mySingleSelector2" ).type( ComponentTypes.SINGLE_SELECTOR ).componentTypeConfig(
-            singleSelectorConfig ).build() );
+        contentType.addFormItem(
+            newInput().name( "mySingleSelector1" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
+        contentType.addFormItem(
+            newInput().name( "mySingleSelector2" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -84,7 +84,7 @@ public class ValidatorTest
     }
 
     @Test
-    public void given_valid_content_with_all_components_when_validate_then_no_exception_is_thrown()
+    public void given_valid_content_with_all_inputs_when_validate_then_no_exception_is_thrown()
     {
         // setup
         SingleSelectorConfig singleSelectorConfig =
@@ -92,19 +92,18 @@ public class ValidatorTest
         HtmlAreaConfig htmlAreaConfig = HtmlAreaConfig.newHtmlAreaConfig().build();
 
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().name( "myColor" ).type( ComponentTypes.COLOR ).build() );
-        contentType.addFormItem( newInput().name( "myDate" ).type( ComponentTypes.DATE ).build() );
-        contentType.addFormItem( newInput().name( "myDecimalNumber" ).type( ComponentTypes.DECIMAL_NUMBER ).build() );
-        contentType.addFormItem( newInput().name( "mySingleSelector" ).type( ComponentTypes.SINGLE_SELECTOR ).componentTypeConfig(
-            singleSelectorConfig ).build() );
-        contentType.addFormItem( newInput().name( "myGeoLocation" ).type( ComponentTypes.GEO_LOCATION ).build() );
+        contentType.addFormItem( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
+        contentType.addFormItem( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
+        contentType.addFormItem( newInput().name( "myDecimalNumber" ).type( InputTypes.DECIMAL_NUMBER ).build() );
         contentType.addFormItem(
-            newInput().name( "myHtmlArea" ).type( ComponentTypes.HTML_AREA ).componentTypeConfig( htmlAreaConfig ).build() );
-        contentType.addFormItem( newInput().name( "myPhone" ).type( ComponentTypes.PHONE ).build() );
-        contentType.addFormItem( newInput().name( "myTextArea" ).type( ComponentTypes.TEXT_AREA ).build() );
-        contentType.addFormItem( newInput().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).build() );
-        contentType.addFormItem( newInput().name( "myWholeNumber" ).type( ComponentTypes.WHOLE_NUMBER ).build() );
-        contentType.addFormItem( newInput().name( "myXml" ).type( ComponentTypes.XML ).build() );
+            newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
+        contentType.addFormItem( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
+        contentType.addFormItem( newInput().name( "myHtmlArea" ).type( InputTypes.HTML_AREA ).inputTypeConfig( htmlAreaConfig ).build() );
+        contentType.addFormItem( newInput().name( "myPhone" ).type( InputTypes.PHONE ).build() );
+        contentType.addFormItem( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() );
+        contentType.addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
+        contentType.addFormItem( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -124,11 +123,11 @@ public class ValidatorTest
     }
 
     @Test
-    public void given_invalid_data_according_to_components_validationRegex_when_validate_then_exception()
+    public void given_invalid_data_according_to_inputs_validationRegex_when_validate_then_exception()
     {
         // setup
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().name( "myTextLine" ).type( ComponentTypes.TEXT_LINE ).validationRegexp( "a*c" ).build() );
+        contentType.addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).validationRegexp( "a*c" ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -140,13 +139,13 @@ public class ValidatorTest
     }
 
     @Test
-    public void given_content_with_invalid_dataSet_according_to_component_inside_a_formItemSet_when_validate_then_exception_is_thrown()
+    public void given_content_with_invalid_dataSet_according_to_input_inside_a_formItemSet_when_validate_then_exception_is_thrown()
     {
         // setup
         ContentType contentType = new ContentType();
         FormItemSet formItemSet = FormItemSet.newFormItemSet().name( "myFormItemSet" ).build();
         contentType.addFormItem( formItemSet );
-        formItemSet.addFormItem( newInput().name( "myColor" ).type( ComponentTypes.COLOR ).build() );
+        formItemSet.addFormItem( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -162,13 +161,13 @@ public class ValidatorTest
     }
 
     @Test
-    public void given_content_with_invalid_dataSet_according_to_component_inside_a_layout_when_validate_then_exception_is_thrown()
+    public void given_content_with_invalid_dataSet_according_to_input_inside_a_layout_when_validate_then_exception_is_thrown()
     {
         // setup
         ContentType contentType = new ContentType();
         FieldSet layout = FieldSet.newFieldSet().name( "myFieldSet" ).label( "Label" ).build();
         contentType.addFormItem( layout );
-        layout.addFormItem( newInput().name( "myColor" ).type( ComponentTypes.COLOR ).build() );
+        layout.addFormItem( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -189,7 +188,7 @@ public class ValidatorTest
         ContentType contentType = new ContentType();
         FormItemSet formItemSet = FormItemSet.newFormItemSet().name( "myFormItemSet" ).build();
         contentType.addFormItem( formItemSet );
-        formItemSet.addFormItem( newInput().name( "myGeoLocation" ).type( ComponentTypes.GEO_LOCATION ).build() );
+        formItemSet.addFormItem( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -209,7 +208,7 @@ public class ValidatorTest
         ContentType contentType = new ContentType();
         FormItemSet formItemSet = FormItemSet.newFormItemSet().name( "myFormItemSet" ).build();
         contentType.addFormItem( formItemSet );
-        formItemSet.addFormItem( newInput().name( "myDate" ).type( ComponentTypes.DATE ).build() );
+        formItemSet.addFormItem( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -230,8 +229,8 @@ public class ValidatorTest
 
         ContentType contentType = new ContentType();
 
-        contentType.addFormItem( newInput().name( "mySingleSelector" ).type( ComponentTypes.SINGLE_SELECTOR ).componentTypeConfig(
-            singleSelectorConfig ).build() );
+        contentType.addFormItem(
+            newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -247,7 +246,7 @@ public class ValidatorTest
     {
         // setup
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().name( "myGeoLocation" ).type( ComponentTypes.GEO_LOCATION ).build() );
+        contentType.addFormItem( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -264,7 +263,7 @@ public class ValidatorTest
     {
         // setup:
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().name( "myGeoLocation" ).type( ComponentTypes.GEO_LOCATION ).build() );
+        contentType.addFormItem( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -295,15 +294,15 @@ public class ValidatorTest
 
         // exercise
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().name( "name" ).type( ComponentTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
         FormItemSet personalia = FormItemSet.newFormItemSet().name( "personalia" ).multiple( false ).build();
         contentType.addFormItem( personalia );
-        personalia.addFormItem( newInput().name( "eyeColour" ).type( ComponentTypes.TEXT_LINE ).build() );
-        personalia.addFormItem( newInput().name( "hairColour" ).type( ComponentTypes.TEXT_LINE ).build() );
+        personalia.addFormItem( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        personalia.addFormItem( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
         FormItemSet crimes = FormItemSet.newFormItemSet().name( "crimes" ).multiple( true ).build();
         contentType.addFormItem( crimes );
-        crimes.addItem( newInput().name( "description" ).type( ComponentTypes.TEXT_LINE ).build() );
-        crimes.addItem( newInput().name( "year" ).type( ComponentTypes.TEXT_LINE ).build() );
+        crimes.addItem( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
+        crimes.addItem( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
         content.setType( contentType );
 
         assertEquals( DataTypes.TEXT, content.getData( "personalia.eyeColour" ).getDataType() );

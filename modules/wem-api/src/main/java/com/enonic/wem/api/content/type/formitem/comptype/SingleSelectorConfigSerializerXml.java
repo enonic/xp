@@ -8,17 +8,17 @@ import org.jdom.Element;
 import static com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig.newSingleSelectorConfig;
 
 public class SingleSelectorConfigSerializerXml
-    extends AbstractComponentTypeConfigSerializerXml
+    extends AbstractInputTypeConfigSerializerXml
 {
     public static final SingleSelectorConfigSerializerXml DEFAULT = new SingleSelectorConfigSerializerXml();
 
-    public void generateConfig( final ComponentTypeConfig config, final Element componentTypeConfigEl )
+    public void generateConfig( final InputTypeConfig config, final Element inputTypeConfigEl )
     {
         final Element optionsEl = new Element( "options" );
-        componentTypeConfigEl.addContent( optionsEl );
+        inputTypeConfigEl.addContent( optionsEl );
 
         final SingleSelectorConfig singleSelectorConfig = (SingleSelectorConfig) config;
-        componentTypeConfigEl.addContent( new Element( "selector-type" ).setText( singleSelectorConfig.getType().toString() ) );
+        inputTypeConfigEl.addContent( new Element( "selector-type" ).setText( singleSelectorConfig.getType().toString() ) );
         for ( SingleSelectorConfig.Option option : singleSelectorConfig.getOptions() )
         {
             final Element optionEl = new Element( "option" );
@@ -29,12 +29,12 @@ public class SingleSelectorConfigSerializerXml
     }
 
     @Override
-    public ComponentTypeConfig parseConfig( final Element componentTypeConfigEl )
+    public InputTypeConfig parseConfig( final Element inputTypeConfigEl )
     {
         final SingleSelectorConfig.Builder builder = newSingleSelectorConfig();
-        final Element selectorTypeEl = componentTypeConfigEl.getChild( "selector-type" );
+        final Element selectorTypeEl = inputTypeConfigEl.getChild( "selector-type" );
         builder.type( SingleSelectorConfig.SelectorType.valueOf( selectorTypeEl.getText() ) );
-        final Element optionsEl = componentTypeConfigEl.getChild( "options" );
+        final Element optionsEl = inputTypeConfigEl.getChild( "options" );
         final Iterator optionIterator = optionsEl.getChildren( "option" ).iterator();
         while ( optionIterator.hasNext() )
         {

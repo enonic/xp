@@ -15,8 +15,8 @@ import com.enonic.wem.api.content.type.formitem.FormItem;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
 import com.enonic.wem.api.content.type.formitem.Input;
 import com.enonic.wem.api.content.type.formitem.Occurrences;
-import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypeConfig;
-import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
+import com.enonic.wem.api.content.type.formitem.comptype.InputTypeConfig;
+import com.enonic.wem.api.content.type.formitem.comptype.InputTypes;
 import com.enonic.wem.api.content.type.formitem.comptype.SingleSelectorConfig;
 import com.enonic.wem.core.content.JsonFactoryHolder;
 
@@ -48,7 +48,7 @@ public class FormItemSerializerJsonTest
     {
         // setup
         Input.Builder builder = newInput();
-        builder.type( ComponentTypes.TEXT_LINE );
+        builder.type( InputTypes.TEXT_LINE );
         builder.name( "myTextLine" );
         builder.required( true );
         builder.immutable( true );
@@ -76,8 +76,8 @@ public class FormItemSerializerJsonTest
         assertEquals( null, parsedInput.getHelpText() );
         assertEquals( "Custom text", parsedInput.getCustomText() );
         assertEquals( new Occurrences( 1, 100 ), parsedInput.getOccurrences() );
-        assertEquals( ComponentTypes.TEXT_LINE, parsedInput.getComponentType() );
-        assertNull( parsedInput.getComponentTypeConfig() );
+        assertEquals( InputTypes.TEXT_LINE, parsedInput.getInputType() );
+        assertNull( parsedInput.getInputTypeConfig() );
     }
 
     @Test
@@ -86,10 +86,10 @@ public class FormItemSerializerJsonTest
     {
         // setup
         Input.Builder builder = newInput();
-        builder.type( ComponentTypes.SINGLE_SELECTOR );
+        builder.type( InputTypes.SINGLE_SELECTOR );
         builder.name( "mySingleSelector" );
         builder.label( "My SingleSelector" );
-        builder.componentTypeConfig(
+        builder.inputTypeConfig(
             newSingleSelectorConfig().typeDropdown().addOption( "Option 1", "o1" ).addOption( "Option 2", "o2" ).build() );
         Input input = builder.build();
 
@@ -107,11 +107,11 @@ public class FormItemSerializerJsonTest
         assertEquals( false, parsedInput.isRequired() );
         assertEquals( false, parsedInput.isIndexed() );
         assertEquals( false, parsedInput.isImmutable() );
-        assertEquals( ComponentTypes.SINGLE_SELECTOR, parsedInput.getComponentType() );
-        ComponentTypeConfig componentTypeConfig = parsedInput.getComponentTypeConfig();
-        assertNotNull( componentTypeConfig );
-        assertTrue( componentTypeConfig instanceof SingleSelectorConfig );
-        SingleSelectorConfig singleSelectorConfig = (SingleSelectorConfig) componentTypeConfig;
+        assertEquals( InputTypes.SINGLE_SELECTOR, parsedInput.getInputType() );
+        InputTypeConfig inputTypeConfig = parsedInput.getInputTypeConfig();
+        assertNotNull( inputTypeConfig );
+        assertTrue( inputTypeConfig instanceof SingleSelectorConfig );
+        SingleSelectorConfig singleSelectorConfig = (SingleSelectorConfig) inputTypeConfig;
         assertEquals( 2, singleSelectorConfig.getOptions().size() );
         assertEquals( "o1", singleSelectorConfig.getOptions().get( 0 ).getValue() );
         assertEquals( "Option 1", singleSelectorConfig.getOptions().get( 0 ).getLabel() );

@@ -6,7 +6,7 @@ import com.enonic.wem.api.content.data.Data;
  * TODO
  */
 public class HtmlAreaConfig
-    implements ComponentTypeConfig
+    implements InputTypeConfig
 {
 
     @Override

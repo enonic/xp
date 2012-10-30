@@ -30,7 +30,7 @@ public class ColorTest
 
         Data myColor = content.getData( "myColor" );
 
-        ComponentTypes.COLOR.checkValidity( myColor );
+        InputTypes.COLOR.checkValidity( myColor );
     }
 
     @Test
@@ -44,7 +44,7 @@ public class ColorTest
 
         try
         {
-            ComponentTypes.COLOR.checkValidity( myColor );
+            InputTypes.COLOR.checkValidity( myColor );
             fail( "Excpected exception" );
         }
         catch ( Exception e )
@@ -69,7 +69,7 @@ public class ColorTest
 
         try
         {
-            ComponentTypes.COLOR.checkValidity( myColor );
+            InputTypes.COLOR.checkValidity( myColor );
             fail( "Excpected exception" );
         }
         catch ( Exception e )

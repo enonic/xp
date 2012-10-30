@@ -13,8 +13,8 @@ import com.enonic.wem.api.content.type.formitem.Layout;
 import com.enonic.wem.api.content.type.formitem.SubTypeQualifiedName;
 import com.enonic.wem.api.content.type.formitem.SubTypeReference;
 import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeConfigSerializerXml;
-import com.enonic.wem.core.content.type.formitem.comptype.ComponentTypeSerializerXml;
+import com.enonic.wem.core.content.type.formitem.comptype.InputTypeConfigSerializerXml;
+import com.enonic.wem.core.content.type.formitem.comptype.InputTypeSerializerXml;
 
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
@@ -22,9 +22,9 @@ import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 
 public class FormItemSerializerXml
 {
-    private ComponentTypeSerializerXml componentTypeSerializer = new ComponentTypeSerializerXml();
+    private InputTypeSerializerXml inputTypeSerializer = new InputTypeSerializerXml();
 
-    private ComponentTypeConfigSerializerXml componentTypeConfigSerializer = new ComponentTypeConfigSerializerXml();
+    private InputTypeConfigSerializerXml inputTypeConfigSerializer = new InputTypeConfigSerializerXml();
 
     private final FormItemsSerializerXml formItemsSerializer;
 
@@ -50,7 +50,7 @@ public class FormItemSerializerXml
         }
         else if ( formItem instanceof Input )
         {
-            return generateComponent( (Input) formItem );
+            return generateInput( (Input) formItem );
         }
         else if ( formItem instanceof SubTypeReference )
         {
@@ -59,32 +59,31 @@ public class FormItemSerializerXml
         return null;
     }
 
-    private Element generateComponent( final Input input )
+    private Element generateInput( final Input input )
     {
-        Element componentEl = new Element( input.getName() );
-        componentEl.setAttribute( "form-item-type", Input.class.getSimpleName() );
+        Element inputEl = new Element( input.getName() );
+        inputEl.setAttribute( "form-item-type", Input.class.getSimpleName() );
 
-        componentEl.addContent( componentTypeSerializer.generate( input.getComponentType() ) );
+        inputEl.addContent( inputTypeSerializer.generate( input.getInputType() ) );
 
-        componentEl.addContent( new Element( "label" ).setText( input.getLabel() ) );
-        componentEl.addContent( new Element( "required" ).setText( String.valueOf( input.isRequired() ) ) );
-        componentEl.addContent( new Element( "immutable" ).setText( String.valueOf( input.isImmutable() ) ) );
-        componentEl.addContent( new Element( "indexed" ).setText( String.valueOf( input.isIndexed() ) ) );
-        componentEl.addContent( new Element( "customText" ).setText( input.getCustomText() ) );
-        componentEl.addContent( new Element( "helpText" ).setText( input.getHelpText() ) );
+        inputEl.addContent( new Element( "label" ).setText( input.getLabel() ) );
+        inputEl.addContent( new Element( "required" ).setText( String.valueOf( input.isRequired() ) ) );
+        inputEl.addContent( new Element( "immutable" ).setText( String.valueOf( input.isImmutable() ) ) );
+        inputEl.addContent( new Element( "indexed" ).setText( String.valueOf( input.isIndexed() ) ) );
+        inputEl.addContent( new Element( "customText" ).setText( input.getCustomText() ) );
+        inputEl.addContent( new Element( "helpText" ).setText( input.getHelpText() ) );
 
-        componentEl.addContent( OccurrencesSerializerXml.generate( input.getOccurrences() ) );
-        generateValidationRegex( input, componentEl );
-        generateComponentTypeConfig( input, componentEl );
-        return componentEl;
+        inputEl.addContent( OccurrencesSerializerXml.generate( input.getOccurrences() ) );
+        generateValidationRegex( input, inputEl );
+        generateInputTypeConfig( input, inputEl );
+        return inputEl;
     }
 
-    private void generateComponentTypeConfig( final Input input, final Element componentEl )
+    private void generateInputTypeConfig( final Input input, final Element inputEl )
     {
-        if ( input.getComponentType().requiresConfig() && input.getComponentTypeConfig() != null )
+        if ( input.getInputType().requiresConfig() && input.getInputTypeConfig() != null )
         {
-            componentEl.addContent(
-                input.getComponentType().getComponentTypeConfigXmlGenerator().generate( input.getComponentTypeConfig() ) );
+            inputEl.addContent( input.getInputType().getInputTypeConfigXmlGenerator().generate( input.getInputTypeConfig() ) );
         }
     }
 
@@ -133,11 +132,11 @@ public class FormItemSerializerXml
         return referenceEl;
     }
 
-    private void generateValidationRegex( final Input input, final Element componentEl )
+    private void generateValidationRegex( final Input input, final Element inputEl )
     {
         if ( input.getValidationRegexp() != null )
         {
-            componentEl.addContent( new Element( "validationRegex" ).setText( input.getValidationRegexp().toString() ) );
+            inputEl.addContent( new Element( "validationRegex" ).setText( input.getValidationRegexp().toString() ) );
         }
     }
 
@@ -148,7 +147,7 @@ public class FormItemSerializerXml
         final FormItem formItem;
         if ( formItemType.equals( Input.class.getSimpleName() ) )
         {
-            formItem = parseComponent( formItemEl );
+            formItem = parseInput( formItemEl );
         }
         else if ( formItemType.equals( FormItemSet.class.getSimpleName() ) )
         {
@@ -170,7 +169,7 @@ public class FormItemSerializerXml
         return formItem;
     }
 
-    private FormItem parseComponent( final Element formItemEl )
+    private FormItem parseInput( final Element formItemEl )
     {
         final Input.Builder builder = newInput();
         builder.name( formItemEl.getName() );
@@ -181,8 +180,8 @@ public class FormItemSerializerXml
         parseValidationRegexp( builder, formItemEl );
 
         builder.occurrences( OccurrencesSerializerXml.parse( formItemEl ) );
-        parseComponentType( builder, formItemEl );
-        parseComponentTypeConfig( builder, formItemEl );
+        parseInputType( builder, formItemEl );
+        parseInputTypeConfig( builder, formItemEl );
 
         return builder.build();
     }
@@ -254,13 +253,13 @@ public class FormItemSerializerXml
         }
     }
 
-    private void parseComponentTypeConfig( final Input.Builder builder, final Element formItemEl )
+    private void parseInputTypeConfig( final Input.Builder builder, final Element formItemEl )
     {
-        builder.componentTypeConfig( componentTypeConfigSerializer.parse( formItemEl ) );
+        builder.inputTypeConfig( inputTypeConfigSerializer.parse( formItemEl ) );
     }
 
-    private void parseComponentType( final Input.Builder builder, final Element formItemEl )
+    private void parseInputType( final Input.Builder builder, final Element formItemEl )
     {
-        builder.type( componentTypeSerializer.parse( formItemEl ) );
+        builder.type( inputTypeSerializer.parse( formItemEl ) );
     }
 }

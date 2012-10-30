@@ -94,9 +94,9 @@ public class SubTypeReference
             return this;
         }
 
-        public Builder typeComponent()
+        public Builder typeInput()
         {
-            this.subTypeClass = ComponentSubType.class.getSimpleName();
+            this.subTypeClass = InputSubType.class.getSimpleName();
             return this;
         }
 

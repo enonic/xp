@@ -11,7 +11,7 @@ import com.enonic.wem.api.content.type.formitem.InvalidValueException;
  * TODO: An array of strings
  */
 public class Tags
-    extends BaseComponentType
+    extends BaseInputType
 {
     public Tags()
     {

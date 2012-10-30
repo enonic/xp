@@ -6,37 +6,37 @@ import java.io.IOException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
-import com.enonic.wem.api.content.type.formitem.comptype.BaseComponentType;
-import com.enonic.wem.api.content.type.formitem.comptype.ComponentType;
+import com.enonic.wem.api.content.type.formitem.comptype.BaseInputType;
+import com.enonic.wem.api.content.type.formitem.comptype.InputType;
 import com.enonic.wem.core.content.JsonParserUtil;
 
-public class ComponentTypeSerializerJson
+public class InputTypeSerializerJson
 {
-    public void generate( final ComponentType componentType, final JsonGenerator g )
+    public void generate( final InputType inputType, final JsonGenerator g )
         throws IOException
     {
-        BaseComponentType baseComponentType = (BaseComponentType) componentType;
+        BaseInputType baseInputType = (BaseInputType) inputType;
 
-        g.writeFieldName( "componentType" );
+        g.writeFieldName( "inputType" );
         g.writeStartObject();
-        g.writeStringField( "className", baseComponentType.getClassName() );
+        g.writeStringField( "className", baseInputType.getClassName() );
         g.writeEndObject();
     }
 
-    public BaseComponentType parse( final JsonNode node )
+    public BaseInputType parse( final JsonNode node )
     {
         String className = JsonParserUtil.getStringValue( "className", node );
 
         return instantiate( className );
     }
 
-    private static BaseComponentType instantiate( final String className )
+    private static BaseInputType instantiate( final String className )
     {
         Class clazz;
         try
         {
             clazz = Class.forName( className );
-            return (BaseComponentType) clazz.newInstance();
+            return (BaseInputType) clazz.newInstance();
         }
         catch ( ClassNotFoundException e )
         {

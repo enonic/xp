@@ -19,7 +19,7 @@ public class MockSubTypeFetcher
         subTypeMap.put( subType.getQualifiedName(), subType );
     }
 
-    public void add( final ComponentSubType subType )
+    public void add( final InputSubType subType )
     {
         subTypeMap.put( subType.getQualifiedName(), subType );
     }

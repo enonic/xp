@@ -5,9 +5,9 @@ import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 
 /**
- * Common interface for all kinds of Component types.
+ * Common interface for all kinds of input types.
  */
-public interface ComponentType
+public interface InputType
 {
     String getName();
 
@@ -17,9 +17,9 @@ public interface ComponentType
 
     Class requiredConfigClass();
 
-    AbstractComponentTypeConfigSerializerJson getComponentTypeConfigJsonGenerator();
+    AbstractInputTypeConfigSerializerJson getInputTypeConfigJsonGenerator();
 
-    AbstractComponentTypeConfigSerializerXml getComponentTypeConfigXmlGenerator();
+    AbstractInputTypeConfigSerializerXml getInputTypeConfigXmlGenerator();
 
     void checkBreaksRequiredContract( Data data )
         throws BreaksRequiredContractException;

@@ -10,20 +10,20 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 import com.enonic.wem.api.content.type.formitem.InvalidValueException;
 
 public class SingleSelector
-    extends BaseComponentType
+    extends BaseInputType
 {
     public SingleSelector()
     {
         super( "singleSelector", SingleSelectorConfig.class );
     }
 
-    public AbstractComponentTypeConfigSerializerJson getComponentTypeConfigJsonGenerator()
+    public AbstractInputTypeConfigSerializerJson getInputTypeConfigJsonGenerator()
     {
         return SingleSelectorConfigSerializerJson.DEFAULT;
     }
 
     @Override
-    public AbstractComponentTypeConfigSerializerXml getComponentTypeConfigXmlGenerator()
+    public AbstractInputTypeConfigSerializerXml getInputTypeConfigXmlGenerator()
     {
         return SingleSelectorConfigSerializerXml.DEFAULT;
     }

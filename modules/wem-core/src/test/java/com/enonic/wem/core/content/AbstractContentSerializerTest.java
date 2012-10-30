@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.MockContentTypeFetcher;
 import com.enonic.wem.api.content.type.formitem.FieldSet;
 import com.enonic.wem.api.content.type.formitem.FormItemSet;
-import com.enonic.wem.api.content.type.formitem.comptype.ComponentTypes;
+import com.enonic.wem.api.content.type.formitem.comptype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
@@ -43,7 +43,7 @@ public abstract class AbstractContentSerializerTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem( newInput().name( "myComponent" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( newInput().name( "myComponent" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -65,7 +65,7 @@ public abstract class AbstractContentSerializerTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem( newInput().name( "myComponent" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( newInput().name( "myComponent" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -86,8 +86,7 @@ public abstract class AbstractContentSerializerTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem(
-            newInput().name( "myComponent" ).type( ComponentTypes.TEXT_LINE ).required( false ).multiple( true ).build() );
+        contentType.addFormItem( newInput().name( "myComponent" ).type( InputTypes.TEXT_LINE ).required( false ).multiple( true ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -110,11 +109,11 @@ public abstract class AbstractContentSerializerTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem( newInput().name( "myText" ).type( ComponentTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
 
         FormItemSet formItemSet = newBuilder().name( "formItemSet" ).build();
         contentType.addFormItem( formItemSet );
-        formItemSet.addItem( newInput().name( "myText" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -144,7 +143,7 @@ public abstract class AbstractContentSerializerTest
 
         FormItemSet formItemSet = newFormItemSet().name( "formItemSet" ).label( "FormItemSet" ).multiple( true ).build();
         contentType.addFormItem( formItemSet );
-        formItemSet.addItem( newInput().name( "myText" ).type( ComponentTypes.TEXT_LINE ).build() );
+        formItemSet.addItem( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -169,9 +168,9 @@ public abstract class AbstractContentSerializerTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem( newInput().name( "myField" ).type( ComponentTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() );
         FieldSet layout = newFieldSet().label( "Label" ).name( "fieldSet" ).add(
-            newInput().name( "myText" ).type( ComponentTypes.TEXT_LINE ).build() ).build();
+            newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() ).build();
         contentType.addFormItem( layout );
 
         Content content = new Content();

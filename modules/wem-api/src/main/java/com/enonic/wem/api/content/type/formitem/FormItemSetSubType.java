@@ -33,9 +33,9 @@ public class FormItemSetSubType
         if ( formItem instanceof SubTypeReference )
         {
             SubTypeReference subTypeReference = (SubTypeReference) formItem;
-            Preconditions.checkArgument( subTypeReference.getSubTypeClass().equals( ComponentSubType.class ),
+            Preconditions.checkArgument( subTypeReference.getSubTypeClass().equals( InputSubType.class ),
                                          "A SubType cannot reference other SubTypes unless it is of type %s: " +
-                                             subTypeReference.getSubTypeClass().getSimpleName(), ComponentSubType.class.getSimpleName() );
+                                             subTypeReference.getSubTypeClass().getSimpleName(), InputSubType.class.getSimpleName() );
         }
         formItemSet.addFormItem( formItem );
     }

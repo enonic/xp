@@ -6,9 +6,9 @@ import java.io.IOException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
-public abstract class AbstractComponentTypeConfigSerializerJson
+public abstract class AbstractInputTypeConfigSerializerJson
 {
-    public void generate( ComponentTypeConfig config, JsonGenerator g )
+    public void generate( InputTypeConfig config, JsonGenerator g )
         throws IOException
     {
         g.writeStartObject();
@@ -17,9 +17,9 @@ public abstract class AbstractComponentTypeConfigSerializerJson
         g.writeEndObject();
     }
 
-    public abstract void generateConfig( ComponentTypeConfig config, JsonGenerator g )
+    public abstract void generateConfig( InputTypeConfig config, JsonGenerator g )
         throws IOException;
 
 
-    public abstract ComponentTypeConfig parseConfig( final JsonNode componentTypeConfigNode );
+    public abstract InputTypeConfig parseConfig( final JsonNode inputTypeConfigNode );
 }

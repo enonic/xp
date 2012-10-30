@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 import com.enonic.wem.api.content.type.formitem.InvalidValueException;
 
 public class Money
-    extends BaseComponentType
+    extends BaseInputType
 {
     public Money()
     {

@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.type.formitem.InvalidValueException;
 
 public class SingleSelectorConfig
-    implements ComponentTypeConfig
+    implements InputTypeConfig
 {
     private SelectorType type;
 

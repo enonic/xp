@@ -5,8 +5,8 @@ import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.type.formitem.InvalidValueException;
 
-public abstract class BaseComponentType
-    implements ComponentType
+public abstract class BaseInputType
+    implements InputType
 {
     private final String className;
 
@@ -14,14 +14,14 @@ public abstract class BaseComponentType
 
     private Class configClass;
 
-    BaseComponentType( final String name )
+    BaseInputType( final String name )
     {
         this.name = name;
         this.className = this.getClass().getName();
 
     }
 
-    BaseComponentType( final String name, final Class configClass )
+    BaseInputType( final String name, final Class configClass )
     {
         this.name = name;
         this.className = this.getClass().getName();
@@ -52,13 +52,13 @@ public abstract class BaseComponentType
         return configClass;
     }
 
-    public AbstractComponentTypeConfigSerializerJson getComponentTypeConfigJsonGenerator()
+    public AbstractInputTypeConfigSerializerJson getInputTypeConfigJsonGenerator()
     {
         return null;
     }
 
     @Override
-    public AbstractComponentTypeConfigSerializerXml getComponentTypeConfigXmlGenerator()
+    public AbstractInputTypeConfigSerializerXml getInputTypeConfigXmlGenerator()
     {
         return null;
     }
@@ -79,12 +79,12 @@ public abstract class BaseComponentType
         {
             return true;
         }
-        if ( !( o instanceof BaseComponentType ) )
+        if ( !( o instanceof BaseInputType ) )
         {
             return false;
         }
 
-        final BaseComponentType that = (BaseComponentType) o;
+        final BaseInputType that = (BaseInputType) o;
 
         if ( !className.equals( that.className ) )
         {

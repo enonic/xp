@@ -31,7 +31,7 @@ public class DataTypeFixer
                     if ( formItem instanceof Input )
                     {
                         final Input input = (Input) formItem;
-                        input.getComponentType().ensureType( data );
+                        input.getInputType().ensureType( data );
                     }
                 }
             }

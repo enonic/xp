@@ -11,7 +11,7 @@ import com.enonic.wem.api.content.type.formitem.InvalidValueException;
 import static com.enonic.wem.api.content.datatype.DataTool.checkDataType;
 
 public class Address
-    extends BaseComponentType
+    extends BaseInputType
 {
     public Address()
     {

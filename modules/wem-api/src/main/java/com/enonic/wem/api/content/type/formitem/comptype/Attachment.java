@@ -8,7 +8,7 @@ import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
 import com.enonic.wem.api.content.type.formitem.InvalidValueException;
 
 public class Attachment
-    extends BaseComponentType
+    extends BaseInputType
 {
     Attachment()
     {
