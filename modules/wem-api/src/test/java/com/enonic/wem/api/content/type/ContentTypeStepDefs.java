@@ -32,7 +32,7 @@ public class ContentTypeStepDefs
 
     public final Map<String, ContentType> contentTypeByName = new HashMap<String, ContentType>();
 
-    public final Map<String, Component> fieldByName = new HashMap<String, Component>();
+    public final Map<String, Component> componentByName = new HashMap<String, Component>();
 
     public final Map<SubTypeQualifiedName, ComponentSubType> componentSubTypeByQualifiedName =
         new HashMap<SubTypeQualifiedName, ComponentSubType>();
@@ -46,22 +46,23 @@ public class ContentTypeStepDefs
         moduleByName.put( name, module );
     }
 
-    @Given("^a Field named (.+) of type (.+)$")
-    public void a_field_named_name_of_type_type( String fieldName, String componentTypeName )
+    @Given("^a Component named (.+) of type (.+)$")
+    public void a_component_named_name_of_type_type( String componentName, String componentTypeName )
         throws Throwable
     {
-        Component component = Component.newBuilder().name( fieldName ).type( ComponentTypes.parse( componentTypeName ) ).build();
-        fieldByName.put( fieldName, component );
+        Component component = Component.newBuilder().name( componentName ).type( ComponentTypes.parse( componentTypeName ) ).build();
+        componentByName.put( componentName, component );
     }
 
-    @Given("^a FieldTemplate named (.+) in module (.+) with field (.+)$")
-    public void a_fieldTemplate_named_name_in_module_module_having_field( String fieldTemplateName, String moduleName, String fieldName )
+    @Given("^a ComponentSubType named (.+) in module (.+) with component (.+)$")
+    public void a_componentSubType_named_name_in_module_module_having_component( String subTypeName, String moduleName,
+                                                                                 String componentName )
         throws Throwable
     {
-        ComponentSubType componentTemplate =
+        ComponentSubType componentSubType =
             ComponentSubTypeBuilder.newComponentSubType().module( moduleByName.get( moduleName ) ).component(
-                fieldByName.get( fieldName ) ).build();
-        componentSubTypeByQualifiedName.put( new SubTypeQualifiedName( moduleName, fieldTemplateName ), componentTemplate );
+                componentByName.get( componentName ) ).build();
+        componentSubTypeByQualifiedName.put( new SubTypeQualifiedName( moduleName, subTypeName ), componentSubType );
     }
 
     @Given("^a ContentType named (.+)")
@@ -73,25 +74,24 @@ public class ContentTypeStepDefs
         contentTypeByName.put( contentTypeName, contentType );
     }
 
-    @Given("^adding TemplateReference named (.+) referencing FieldTemplate (.+) to ContentType (.+)$")
-    public void adding_TemplateReference_named_name_referencing_FieldTemplate_name_to_ContentType_myContentType(
-        String templateReferenceName, String templateQualifiedName, String contentTypeName )
+    @Given("^adding SubTypeReference named (.+) referencing ComponentSubType (.+) to ContentType (.+)$")
+    public void adding_SubTypeReference_named_name_referencing_ComponentSubType_name_to_ContentType_myContentType(
+        String subTypeReferenceName, String subTypeQualifiedName, String contentTypeName )
         throws Throwable
     {
 
-        ComponentSubType componentTemplate = componentSubTypeByQualifiedName.get( new SubTypeQualifiedName( templateQualifiedName ) );
+        ComponentSubType componentSubType = componentSubTypeByQualifiedName.get( new SubTypeQualifiedName( subTypeQualifiedName ) );
         ContentType contentType = contentTypeByName.get( contentTypeName );
-        contentType.addFormItem( SubTypeReference.newSubTypeReference( componentTemplate ).name( templateReferenceName ).build() );
+        contentType.addFormItem( SubTypeReference.newSubTypeReference( componentSubType ).name( subTypeReferenceName ).build() );
 
-        mockSubTypeFetcher.add( componentTemplate );
+        mockSubTypeFetcher.add( componentSubType );
         contentType.subTypeReferencesToFormItems( mockSubTypeFetcher );
     }
 
-    @When("^translating template references to formItems for all content types$")
-    public void translating_template_references_to_formItems_for_all_content_types()
+    @When("^translating subType references to formItems for all content types$")
+    public void translating_subType_references_to_formItems_for_all_content_types()
         throws Throwable
     {
-
         for ( ContentType contentType : contentTypeByName.values() )
         {
             contentType.subTypeReferencesToFormItems( mockSubTypeFetcher );
