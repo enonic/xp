@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.type.formitem.comptype;
+package com.enonic.wem.core.content.type.component.comptype;
 
 import java.util.Iterator;
 import java.util.Map;

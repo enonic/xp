@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.type.formitem;
+package com.enonic.wem.core.content.type.component;
 
 
 import org.jdom.Attribute;

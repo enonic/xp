@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.type.formitem;
+package com.enonic.wem.core.content.type.component;
 
 
 import org.jdom.Element;
@@ -13,8 +13,8 @@ import com.enonic.wem.api.content.type.component.Layout;
 import com.enonic.wem.api.content.type.component.SubTypeQualifiedName;
 import com.enonic.wem.api.content.type.component.SubTypeReference;
 import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.type.formitem.comptype.InputTypeConfigSerializerXml;
-import com.enonic.wem.core.content.type.formitem.comptype.InputTypeSerializerXml;
+import com.enonic.wem.core.content.type.component.comptype.InputTypeConfigSerializerXml;
+import com.enonic.wem.core.content.type.component.comptype.InputTypeSerializerXml;
 
 import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.component.FieldSet.newFieldSet;

@@ -15,7 +15,7 @@ import com.enonic.wem.api.content.type.ContentTypeSerializer;
 import com.enonic.wem.core.content.JsonFactoryHolder;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.type.formitem.ComponentsSerializerJson;
+import com.enonic.wem.core.content.type.component.ComponentsSerializerJson;
 
 public class ContentTypeSerializerJson
     implements ContentTypeSerializer

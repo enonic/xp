@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.type.formitem;
+package com.enonic.wem.core.content.type.component;
 
 
 import java.io.IOException;
@@ -17,8 +17,8 @@ import com.enonic.wem.api.content.type.component.SubTypeQualifiedName;
 import com.enonic.wem.api.content.type.component.SubTypeReference;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.type.formitem.comptype.InputTypeConfigSerializerJson;
-import com.enonic.wem.core.content.type.formitem.comptype.InputTypeSerializerJson;
+import com.enonic.wem.core.content.type.component.comptype.InputTypeConfigSerializerJson;
+import com.enonic.wem.core.content.type.component.comptype.InputTypeSerializerJson;
 
 import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.component.FieldSet.newFieldSet;
