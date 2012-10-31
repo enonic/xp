@@ -118,22 +118,6 @@ public class Components
         return (HierarchicalComponent) component;
     }
 
-    public ComponentSet getComponentSet( final String name )
-    {
-        final HierarchicalComponent component = getHierarchicalComponent( name );
-        if ( component == null )
-        {
-            return null;
-        }
-
-        Preconditions.checkArgument( ( component instanceof ComponentSet ),
-                                     "Component at path [%s] is not a ComponentSet: " + component.getClass().getSimpleName(),
-                                     component.getPath() );
-
-        //noinspection ConstantConditions
-        return (ComponentSet) component;
-    }
-
     public ComponentSet getComponentSet( final ComponentPath path )
     {
         final HierarchicalComponent component = getHierarchicalComponent( path );
@@ -148,22 +132,6 @@ public class Components
 
         //noinspection ConstantConditions
         return (ComponentSet) component;
-    }
-
-    public Input getInput( final String name )
-    {
-        final HierarchicalComponent component = getHierarchicalComponent( name );
-        if ( component == null )
-        {
-            return null;
-        }
-
-        Preconditions.checkArgument( ( component instanceof Input ),
-                                     "Component at path [%s] is not a Input: " + component.getClass().getSimpleName(),
-                                     component.getPath() );
-
-        //noinspection ConstantConditions
-        return (Input) component;
     }
 
     public Input getInput( final ComponentPath path )
