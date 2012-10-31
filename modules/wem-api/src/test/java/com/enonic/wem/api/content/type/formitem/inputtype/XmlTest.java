@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.type.formitem.comptype;
+package com.enonic.wem.api.content.type.formitem.inputtype;
 
 
 import org.junit.Test;
