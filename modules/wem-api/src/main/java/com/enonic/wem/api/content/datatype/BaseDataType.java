@@ -9,8 +9,8 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.type.formitem.InvalidValueException;
-import com.enonic.wem.api.content.type.formitem.inputtype.TypedPath;
+import com.enonic.wem.api.content.type.component.InvalidValueException;
+import com.enonic.wem.api.content.type.component.inputtype.TypedPath;
 
 public abstract class BaseDataType
     implements DataType

@@ -5,23 +5,23 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypeSerializer;
-import com.enonic.wem.api.content.type.formitem.ComponentPath;
-import com.enonic.wem.api.content.type.formitem.ComponentSet;
-import com.enonic.wem.api.content.type.formitem.ComponentSetSubType;
-import com.enonic.wem.api.content.type.formitem.ComponentSetSubTypeBuilder;
-import com.enonic.wem.api.content.type.formitem.Components;
-import com.enonic.wem.api.content.type.formitem.FieldSet;
-import com.enonic.wem.api.content.type.formitem.Input;
-import com.enonic.wem.api.content.type.formitem.MockSubTypeFetcher;
-import com.enonic.wem.api.content.type.formitem.SubTypeReference;
-import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
-import com.enonic.wem.api.content.type.formitem.inputtype.SingleSelectorConfig;
+import com.enonic.wem.api.content.type.component.ComponentPath;
+import com.enonic.wem.api.content.type.component.ComponentSet;
+import com.enonic.wem.api.content.type.component.ComponentSetSubType;
+import com.enonic.wem.api.content.type.component.ComponentSetSubTypeBuilder;
+import com.enonic.wem.api.content.type.component.Components;
+import com.enonic.wem.api.content.type.component.FieldSet;
+import com.enonic.wem.api.content.type.component.Input;
+import com.enonic.wem.api.content.type.component.MockSubTypeFetcher;
+import com.enonic.wem.api.content.type.component.SubTypeReference;
+import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.component.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.formitem.ComponentSet.newComponentSet;
-import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
-import static com.enonic.wem.api.content.type.formitem.Input.newInput;
-import static com.enonic.wem.api.content.type.formitem.SubTypeReference.newSubTypeReference;
+import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
+import static com.enonic.wem.api.content.type.component.FieldSet.newFieldSet;
+import static com.enonic.wem.api.content.type.component.Input.newInput;
+import static com.enonic.wem.api.content.type.component.SubTypeReference.newSubTypeReference;
 import static com.enonic.wem.api.module.Module.newModule;
 import static org.junit.Assert.*;
 

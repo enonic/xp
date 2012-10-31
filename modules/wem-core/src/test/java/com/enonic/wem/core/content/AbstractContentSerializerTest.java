@@ -10,15 +10,15 @@ import com.enonic.wem.api.content.data.MockBlobKeyResolver;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.MockContentTypeFetcher;
-import com.enonic.wem.api.content.type.formitem.ComponentSet;
-import com.enonic.wem.api.content.type.formitem.FieldSet;
-import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.component.ComponentSet;
+import com.enonic.wem.api.content.type.component.FieldSet;
+import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.formitem.ComponentSet.newBuilder;
-import static com.enonic.wem.api.content.type.formitem.ComponentSet.newComponentSet;
-import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
-import static com.enonic.wem.api.content.type.formitem.Input.newInput;
+import static com.enonic.wem.api.content.type.component.ComponentSet.newBuilder;
+import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
+import static com.enonic.wem.api.content.type.component.FieldSet.newFieldSet;
+import static com.enonic.wem.api.content.type.component.Input.newInput;
 import static org.junit.Assert.*;
 
 public abstract class AbstractContentSerializerTest

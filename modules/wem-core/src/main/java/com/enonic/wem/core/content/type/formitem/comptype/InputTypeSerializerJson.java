@@ -6,8 +6,8 @@ import java.io.IOException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
-import com.enonic.wem.api.content.type.formitem.inputtype.BaseInputType;
-import com.enonic.wem.api.content.type.formitem.inputtype.InputType;
+import com.enonic.wem.api.content.type.component.inputtype.BaseInputType;
+import com.enonic.wem.api.content.type.component.inputtype.InputType;
 import com.enonic.wem.core.content.JsonParserUtil;
 
 public class InputTypeSerializerJson

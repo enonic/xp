@@ -7,8 +7,8 @@ import java.util.Iterator;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
-import com.enonic.wem.api.content.type.formitem.Component;
-import com.enonic.wem.api.content.type.formitem.Components;
+import com.enonic.wem.api.content.type.component.Component;
+import com.enonic.wem.api.content.type.component.Components;
 import com.enonic.wem.core.content.JsonParsingException;
 
 public class ComponentsSerializerJson

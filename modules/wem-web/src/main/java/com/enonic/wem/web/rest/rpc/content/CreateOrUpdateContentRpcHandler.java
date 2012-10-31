@@ -16,15 +16,15 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypeFetcher;
 import com.enonic.wem.api.content.type.MockContentTypeFetcher;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
-import com.enonic.wem.api.content.type.formitem.ComponentSet;
-import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.component.ComponentSet;
+import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.rest.service.upload.UploadService;
 
-import static com.enonic.wem.api.content.type.formitem.ComponentSet.newComponentSet;
-import static com.enonic.wem.api.content.type.formitem.Input.newInput;
+import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
+import static com.enonic.wem.api.content.type.component.Input.newInput;
 
 @Component
 public final class CreateOrUpdateContentRpcHandler

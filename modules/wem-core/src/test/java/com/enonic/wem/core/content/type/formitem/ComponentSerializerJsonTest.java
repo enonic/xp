@@ -11,17 +11,17 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.type.formitem.Component;
-import com.enonic.wem.api.content.type.formitem.ComponentSet;
-import com.enonic.wem.api.content.type.formitem.Input;
-import com.enonic.wem.api.content.type.formitem.Occurrences;
-import com.enonic.wem.api.content.type.formitem.inputtype.InputTypeConfig;
-import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
-import com.enonic.wem.api.content.type.formitem.inputtype.SingleSelectorConfig;
+import com.enonic.wem.api.content.type.component.Component;
+import com.enonic.wem.api.content.type.component.ComponentSet;
+import com.enonic.wem.api.content.type.component.Input;
+import com.enonic.wem.api.content.type.component.Occurrences;
+import com.enonic.wem.api.content.type.component.inputtype.InputTypeConfig;
+import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.component.inputtype.SingleSelectorConfig;
 import com.enonic.wem.core.content.JsonFactoryHolder;
 
-import static com.enonic.wem.api.content.type.formitem.Input.newInput;
-import static com.enonic.wem.api.content.type.formitem.inputtype.SingleSelectorConfig.newSingleSelectorConfig;
+import static com.enonic.wem.api.content.type.component.Input.newInput;
+import static com.enonic.wem.api.content.type.component.inputtype.SingleSelectorConfig.newSingleSelectorConfig;
 import static org.junit.Assert.*;
 
 public class ComponentSerializerJsonTest

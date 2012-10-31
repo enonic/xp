@@ -4,7 +4,7 @@ package com.enonic.wem.core.content.type.formitem;
 import org.jdom.Attribute;
 import org.jdom.Element;
 
-import com.enonic.wem.api.content.type.formitem.Occurrences;
+import com.enonic.wem.api.content.type.component.Occurrences;
 
 public class OccurrencesSerializerXml
 {

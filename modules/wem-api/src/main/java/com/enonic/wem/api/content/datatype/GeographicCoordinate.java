@@ -2,8 +2,8 @@ package com.enonic.wem.api.content.datatype;
 
 
 import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.type.formitem.InvalidValueException;
-import com.enonic.wem.api.content.type.formitem.inputtype.TypedPath;
+import com.enonic.wem.api.content.type.component.InvalidValueException;
+import com.enonic.wem.api.content.type.component.inputtype.TypedPath;
 
 public class GeographicCoordinate
     extends BaseDataType

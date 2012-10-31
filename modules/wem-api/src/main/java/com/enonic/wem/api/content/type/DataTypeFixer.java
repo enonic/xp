@@ -4,9 +4,9 @@ package com.enonic.wem.api.content.type;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataVisitor;
-import com.enonic.wem.api.content.type.formitem.ComponentPath;
-import com.enonic.wem.api.content.type.formitem.HierarchicalComponent;
-import com.enonic.wem.api.content.type.formitem.Input;
+import com.enonic.wem.api.content.type.component.ComponentPath;
+import com.enonic.wem.api.content.type.component.HierarchicalComponent;
+import com.enonic.wem.api.content.type.component.Input;
 
 public class DataTypeFixer
 {

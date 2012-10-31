@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 
-import com.enonic.wem.api.content.type.formitem.inputtype.AbstractInputTypeConfigSerializerJson;
-import com.enonic.wem.api.content.type.formitem.inputtype.InputTypeConfig;
+import com.enonic.wem.api.content.type.component.inputtype.AbstractInputTypeConfigSerializerJson;
+import com.enonic.wem.api.content.type.component.inputtype.InputTypeConfig;
 
 public class InputTypeConfigSerializerJson
 {

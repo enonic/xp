@@ -11,8 +11,8 @@ import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.datatype.DataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
-import com.enonic.wem.api.content.type.formitem.InvalidDataException;
-import com.enonic.wem.api.content.type.formitem.InvalidValueException;
+import com.enonic.wem.api.content.type.component.InvalidDataException;
+import com.enonic.wem.api.content.type.component.InvalidValueException;
 
 import static com.enonic.wem.api.content.data.Data.newData;
 

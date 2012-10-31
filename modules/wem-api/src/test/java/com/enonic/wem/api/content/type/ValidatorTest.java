@@ -8,17 +8,17 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
-import com.enonic.wem.api.content.type.formitem.BreaksRegexValidationException;
-import com.enonic.wem.api.content.type.formitem.ComponentSet;
-import com.enonic.wem.api.content.type.formitem.FieldSet;
-import com.enonic.wem.api.content.type.formitem.InvalidDataException;
-import com.enonic.wem.api.content.type.formitem.InvalidValueException;
-import com.enonic.wem.api.content.type.formitem.inputtype.HtmlAreaConfig;
-import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
-import com.enonic.wem.api.content.type.formitem.inputtype.SingleSelectorConfig;
+import com.enonic.wem.api.content.type.component.BreaksRegexValidationException;
+import com.enonic.wem.api.content.type.component.ComponentSet;
+import com.enonic.wem.api.content.type.component.FieldSet;
+import com.enonic.wem.api.content.type.component.InvalidDataException;
+import com.enonic.wem.api.content.type.component.InvalidValueException;
+import com.enonic.wem.api.content.type.component.inputtype.HtmlAreaConfig;
+import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.component.inputtype.SingleSelectorConfig;
 
 import static com.enonic.wem.api.content.type.Validator.newValidator;
-import static com.enonic.wem.api.content.type.formitem.Input.newInput;
+import static com.enonic.wem.api.content.type.component.Input.newInput;
 import static org.junit.Assert.*;
 
 

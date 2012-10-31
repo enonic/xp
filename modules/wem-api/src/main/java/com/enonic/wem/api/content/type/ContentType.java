@@ -3,13 +3,13 @@ package com.enonic.wem.api.content.type;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.type.formitem.Component;
-import com.enonic.wem.api.content.type.formitem.ComponentPath;
-import com.enonic.wem.api.content.type.formitem.ComponentSet;
-import com.enonic.wem.api.content.type.formitem.Components;
-import com.enonic.wem.api.content.type.formitem.HierarchicalComponent;
-import com.enonic.wem.api.content.type.formitem.Input;
-import com.enonic.wem.api.content.type.formitem.SubTypeFetcher;
+import com.enonic.wem.api.content.type.component.Component;
+import com.enonic.wem.api.content.type.component.ComponentPath;
+import com.enonic.wem.api.content.type.component.ComponentSet;
+import com.enonic.wem.api.content.type.component.Components;
+import com.enonic.wem.api.content.type.component.HierarchicalComponent;
+import com.enonic.wem.api.content.type.component.Input;
+import com.enonic.wem.api.content.type.component.SubTypeFetcher;
 import com.enonic.wem.api.module.Module;
 
 public class ContentType

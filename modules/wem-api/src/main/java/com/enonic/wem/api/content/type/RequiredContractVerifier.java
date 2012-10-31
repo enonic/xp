@@ -6,11 +6,11 @@ import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.EntrySelector;
-import com.enonic.wem.api.content.type.formitem.BreaksRequiredContractException;
-import com.enonic.wem.api.content.type.formitem.Component;
-import com.enonic.wem.api.content.type.formitem.ComponentSet;
-import com.enonic.wem.api.content.type.formitem.FieldSet;
-import com.enonic.wem.api.content.type.formitem.Input;
+import com.enonic.wem.api.content.type.component.BreaksRequiredContractException;
+import com.enonic.wem.api.content.type.component.Component;
+import com.enonic.wem.api.content.type.component.ComponentSet;
+import com.enonic.wem.api.content.type.component.FieldSet;
+import com.enonic.wem.api.content.type.component.Input;
 
 public class RequiredContractVerifier
 {

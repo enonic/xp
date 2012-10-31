@@ -6,23 +6,23 @@ import java.io.IOException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
-import com.enonic.wem.api.content.type.formitem.Component;
-import com.enonic.wem.api.content.type.formitem.ComponentSet;
-import com.enonic.wem.api.content.type.formitem.Components;
-import com.enonic.wem.api.content.type.formitem.FieldSet;
-import com.enonic.wem.api.content.type.formitem.HierarchicalComponent;
-import com.enonic.wem.api.content.type.formitem.Input;
-import com.enonic.wem.api.content.type.formitem.Layout;
-import com.enonic.wem.api.content.type.formitem.SubTypeQualifiedName;
-import com.enonic.wem.api.content.type.formitem.SubTypeReference;
+import com.enonic.wem.api.content.type.component.Component;
+import com.enonic.wem.api.content.type.component.ComponentSet;
+import com.enonic.wem.api.content.type.component.Components;
+import com.enonic.wem.api.content.type.component.FieldSet;
+import com.enonic.wem.api.content.type.component.HierarchicalComponent;
+import com.enonic.wem.api.content.type.component.Input;
+import com.enonic.wem.api.content.type.component.Layout;
+import com.enonic.wem.api.content.type.component.SubTypeQualifiedName;
+import com.enonic.wem.api.content.type.component.SubTypeReference;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
 import com.enonic.wem.core.content.type.formitem.comptype.InputTypeConfigSerializerJson;
 import com.enonic.wem.core.content.type.formitem.comptype.InputTypeSerializerJson;
 
-import static com.enonic.wem.api.content.type.formitem.ComponentSet.newComponentSet;
-import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
-import static com.enonic.wem.api.content.type.formitem.Input.newInput;
+import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
+import static com.enonic.wem.api.content.type.component.FieldSet.newFieldSet;
+import static com.enonic.wem.api.content.type.component.Input.newInput;
 
 public class ComponentSerializerJson
 {

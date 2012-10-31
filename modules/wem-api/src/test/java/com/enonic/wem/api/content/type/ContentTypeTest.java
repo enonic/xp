@@ -3,16 +3,16 @@ package com.enonic.wem.api.content.type;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.type.formitem.ComponentSet;
-import com.enonic.wem.api.content.type.formitem.ComponentSetSubType;
-import com.enonic.wem.api.content.type.formitem.ComponentSetSubTypeBuilder;
-import com.enonic.wem.api.content.type.formitem.FieldSet;
-import com.enonic.wem.api.content.type.formitem.MockSubTypeFetcher;
-import com.enonic.wem.api.content.type.formitem.SubTypeReference;
-import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.component.ComponentSet;
+import com.enonic.wem.api.content.type.component.ComponentSetSubType;
+import com.enonic.wem.api.content.type.component.ComponentSetSubTypeBuilder;
+import com.enonic.wem.api.content.type.component.FieldSet;
+import com.enonic.wem.api.content.type.component.MockSubTypeFetcher;
+import com.enonic.wem.api.content.type.component.SubTypeReference;
+import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.formitem.Input.newInput;
+import static com.enonic.wem.api.content.type.component.Input.newInput;
 import static org.junit.Assert.*;
 
 public class ContentTypeTest
