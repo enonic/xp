@@ -258,8 +258,8 @@ public class ComponentSerializerXml
         builder.inputTypeConfig( inputTypeConfigSerializer.parse( componentEl ) );
     }
 
-    private void parseInputType( final Input.Builder builder, final Element formItemEl )
+    private void parseInputType( final Input.Builder builder, final Element componentEl )
     {
-        builder.type( inputTypeSerializer.parse( formItemEl ) );
+        builder.type( inputTypeSerializer.parse( componentEl ) );
     }
 }
