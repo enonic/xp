@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.type.component.comptype;
+package com.enonic.wem.core.content.type.component.inputtype;
 
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
