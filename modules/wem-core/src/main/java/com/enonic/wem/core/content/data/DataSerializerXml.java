@@ -18,7 +18,7 @@ public class DataSerializerXml
 {
     public Element generate( final Data data )
     {
-        final String name = data.getPath().resolveFormItemPath().getLastElement();
+        final String name = data.getPath().resolveComponentPath().getLastElement();
         Element el = new Element( "data" );
         el.setAttribute( "name", name );
         if ( data.getDataType() != null )

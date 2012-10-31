@@ -5,12 +5,12 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypeSerializer;
+import com.enonic.wem.api.content.type.formitem.ComponentPath;
+import com.enonic.wem.api.content.type.formitem.ComponentSet;
+import com.enonic.wem.api.content.type.formitem.ComponentSetSubType;
+import com.enonic.wem.api.content.type.formitem.ComponentSetSubTypeBuilder;
+import com.enonic.wem.api.content.type.formitem.Components;
 import com.enonic.wem.api.content.type.formitem.FieldSet;
-import com.enonic.wem.api.content.type.formitem.FormItemPath;
-import com.enonic.wem.api.content.type.formitem.FormItemSet;
-import com.enonic.wem.api.content.type.formitem.FormItemSetSubType;
-import com.enonic.wem.api.content.type.formitem.FormItemSetSubTypeBuilder;
-import com.enonic.wem.api.content.type.formitem.FormItems;
 import com.enonic.wem.api.content.type.formitem.Input;
 import com.enonic.wem.api.content.type.formitem.MockSubTypeFetcher;
 import com.enonic.wem.api.content.type.formitem.SubTypeReference;
@@ -18,8 +18,8 @@ import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
 import com.enonic.wem.api.content.type.formitem.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
 
+import static com.enonic.wem.api.content.type.formitem.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
-import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 import static com.enonic.wem.api.content.type.formitem.SubTypeReference.newSubTypeReference;
 import static com.enonic.wem.api.module.Module.newModule;
@@ -50,20 +50,20 @@ public abstract class AbstractContentTypeSerializerTest
         ContentType contentType = new ContentType();
         contentType.setName( "MyContentType" );
         contentType.setModule( myModule );
-        FormItems formItems = new FormItems();
-        contentType.setFormItems( formItems );
-        formItems.addFormItem( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
-        formItems.addFormItem(
+        Components components = new Components();
+        contentType.setComponents( components );
+        components.add( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
+        components.add(
             newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
-        formItems.addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        formItems.addFormItem( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() );
-        formItems.addFormItem( newInput().name( "myPhone" ).type( InputTypes.PHONE ).build() );
-        formItems.addFormItem( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
+        components.add( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
+        components.add( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() );
+        components.add( newInput().name( "myPhone" ).type( InputTypes.PHONE ).build() );
+        components.add( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
 
-        FormItemSet formItemSet = FormItemSet.newBuilder().name( "mySet" ).label( "My set" ).build();
-        formItems.addFormItem( formItemSet );
-        formItemSet.addItem( newInput().name( "myText1" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( newInput().name( "myText2" ).occurrences( 1, 3 ).type( InputTypes.TEXT_LINE ).build() );
+        ComponentSet componentSet = ComponentSet.newBuilder().name( "mySet" ).label( "My set" ).build();
+        components.add( componentSet );
+        componentSet.addInput( newInput().name( "myText1" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.addInput( newInput().name( "myText2" ).occurrences( 1, 3 ).type( InputTypes.TEXT_LINE ).build() );
 
         String serialized = toString( contentType );
 
@@ -72,20 +72,20 @@ public abstract class AbstractContentTypeSerializerTest
 
         // verify
         assertNotNull( actualContentType );
-        FormItems actualFormItems = actualContentType.getFormItems();
+        Components actualComponents = actualContentType.getComponents();
 
-        assertNotNull( actualFormItems );
-        assertEquals( 7, actualFormItems.size() );
+        assertNotNull( actualComponents );
+        assertEquals( 7, actualComponents.size() );
 
-        assertNotNull( actualFormItems.getFormItem( new FormItemPath( "myDate" ).getLastElement() ) );
-        assertNotNull( actualFormItems.getFormItem( new FormItemPath( "mySingleSelector" ).getLastElement() ) );
-        assertNotNull( actualFormItems.getFormItem( new FormItemPath( "myTextLine" ).getLastElement() ) );
-        assertNotNull( actualFormItems.getFormItem( new FormItemPath( "myTextArea" ).getLastElement() ) );
-        assertNotNull( actualFormItems.getFormItem( new FormItemPath( "myPhone" ).getLastElement() ) );
-        assertNotNull( actualFormItems.getFormItem( new FormItemPath( "myXml" ).getLastElement() ) );
-        assertNotNull( actualFormItems.getFormItem( new FormItemPath( "mySet" ).getLastElement() ) );
-        assertNotNull( actualFormItems.getInput( new FormItemPath( "mySet.myText1" ) ) );
-        assertNotNull( actualFormItems.getInput( new FormItemPath( "mySet.myText2" ) ) );
+        assertNotNull( actualComponents.getComponent( new ComponentPath( "myDate" ).getLastElement() ) );
+        assertNotNull( actualComponents.getComponent( new ComponentPath( "mySingleSelector" ).getLastElement() ) );
+        assertNotNull( actualComponents.getComponent( new ComponentPath( "myTextLine" ).getLastElement() ) );
+        assertNotNull( actualComponents.getComponent( new ComponentPath( "myTextArea" ).getLastElement() ) );
+        assertNotNull( actualComponents.getComponent( new ComponentPath( "myPhone" ).getLastElement() ) );
+        assertNotNull( actualComponents.getComponent( new ComponentPath( "myXml" ).getLastElement() ) );
+        assertNotNull( actualComponents.getComponent( new ComponentPath( "mySet" ).getLastElement() ) );
+        assertNotNull( actualComponents.getInput( new ComponentPath( "mySet.myText1" ) ) );
+        assertNotNull( actualComponents.getInput( new ComponentPath( "mySet.myText2" ) ) );
     }
 
     @Test
@@ -94,17 +94,17 @@ public abstract class AbstractContentTypeSerializerTest
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        FormItemSetSubType subType = FormItemSetSubTypeBuilder.newFormItemSetSubType().module( module ).formItemSet(
-            newFormItemSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
+        ComponentSetSubType subType = ComponentSetSubTypeBuilder.newComponentSetSubType().module( module ).componentSet(
+            newComponentSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
         cty.setModule( myModule );
-        cty.addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        cty.addFormItem( newSubTypeReference( subType ).name( "home" ).build() );
-        cty.addFormItem( newSubTypeReference( subType ).name( "cabin" ).build() );
+        cty.addComponent( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
+        cty.addComponent( newSubTypeReference( subType ).name( "home" ).build() );
+        cty.addComponent( newSubTypeReference( subType ).name( "cabin" ).build() );
 
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( subType );
@@ -115,24 +115,24 @@ public abstract class AbstractContentTypeSerializerTest
         ContentType parsedContentType = toContentType( serialized );
 
         // verify references
-        assertEquals( SubTypeReference.class, parsedContentType.getFormItems().getFormItem( "home" ).getClass() );
-        assertEquals( SubTypeReference.class, parsedContentType.getFormItems().getFormItem( "cabin" ).getClass() );
+        assertEquals( SubTypeReference.class, parsedContentType.getComponents().getComponent( "home" ).getClass() );
+        assertEquals( SubTypeReference.class, parsedContentType.getComponents().getComponent( "cabin" ).getClass() );
 
         // verify items past the reference is null
-        assertEquals( null, parsedContentType.getFormItems().getFormItem( "home.street" ) );
+        assertEquals( null, parsedContentType.getComponents().getComponent( "home.street" ) );
     }
 
     @Test
-    public void given_content_type_with_formItemSet_inside_formItemSet_and_component_in_both_when_parse_then_paths_are_correct()
+    public void given_content_type_with_componentSet_inside_formItemSet_and_component_in_both_when_parse_then_paths_are_correct()
     {
         // setup
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         Input myInnerInput = newInput().name( "my-inner-input" ).type( InputTypes.TEXT_LINE ).build();
-        FormItemSet myInnerSet = newFormItemSet().name( "my-inner-set" ).add( myInnerInput ).build();
+        ComponentSet myInnerSet = newComponentSet().name( "my-inner-set" ).add( myInnerInput ).build();
         Input myOuterInput = newInput().name( "my-outer-input" ).type( InputTypes.TEXT_LINE ).build();
-        FormItemSet myOuterSet = newFormItemSet().name( "my-outer-set" ).add( myOuterInput ).add( myInnerSet ).build();
-        contentType.addFormItem( myOuterSet );
+        ComponentSet myOuterSet = newComponentSet().name( "my-outer-set" ).add( myOuterInput ).add( myInnerSet ).build();
+        contentType.addComponent( myOuterSet );
 
         String serialized = toString( contentType );
 
@@ -140,9 +140,9 @@ public abstract class AbstractContentTypeSerializerTest
         ContentType parsedContentType = toContentType( serialized );
 
         // verify
-        assertEquals( "my-outer-set", parsedContentType.getFormItemSet( "my-outer-set" ).getPath().toString() );
+        assertEquals( "my-outer-set", parsedContentType.getComponentSet( "my-outer-set" ).getPath().toString() );
         assertEquals( "my-outer-set.my-outer-input", parsedContentType.getInput( "my-outer-set.my-outer-input" ).getPath().toString() );
-        assertEquals( "my-outer-set.my-inner-set", parsedContentType.getFormItemSet( "my-outer-set.my-inner-set" ).getPath().toString() );
+        assertEquals( "my-outer-set.my-inner-set", parsedContentType.getComponentSet( "my-outer-set.my-inner-set" ).getPath().toString() );
         assertEquals( "my-outer-set.my-inner-set.my-inner-input",
                       parsedContentType.getInput( "my-outer-set.my-inner-set.my-inner-input" ).getPath().toString() );
     }
@@ -156,7 +156,7 @@ public abstract class AbstractContentTypeSerializerTest
         contentType.setName( "test" );
         FieldSet layout = newFieldSet().label( "Label" ).name( "fieldSet" ).add(
             newInput().name( "myComponent" ).type( InputTypes.TEXT_LINE ).build() ).build();
-        contentType.addFormItem( layout );
+        contentType.addComponent( layout );
 
         String serialized = toString( contentType );
 
@@ -165,8 +165,8 @@ public abstract class AbstractContentTypeSerializerTest
 
         // verify
         assertEquals( "myComponent", parsedContentType.getInput( "myComponent" ).getPath().toString() );
-        assertNotNull( parsedContentType.getFormItems().getFormItem( "fieldSet" ) );
-        assertEquals( FieldSet.class, parsedContentType.getFormItems().getFormItem( "fieldSet" ).getClass() );
+        assertNotNull( parsedContentType.getComponents().getComponent( "fieldSet" ) );
+        assertEquals( FieldSet.class, parsedContentType.getComponents().getComponent( "fieldSet" ).getClass() );
     }
 
     @Test
@@ -176,7 +176,7 @@ public abstract class AbstractContentTypeSerializerTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "test" );
-        contentType.addFormItem( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).validationRegexp( "a*c" ).build() );
+        contentType.addComponent( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).validationRegexp( "a*c" ).build() );
         String serialized = toString( contentType );
 
         // exercise

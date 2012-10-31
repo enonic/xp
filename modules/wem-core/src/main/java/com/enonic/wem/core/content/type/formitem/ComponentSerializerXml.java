@@ -3,11 +3,11 @@ package com.enonic.wem.core.content.type.formitem;
 
 import org.jdom.Element;
 
+import com.enonic.wem.api.content.type.formitem.Component;
+import com.enonic.wem.api.content.type.formitem.ComponentSet;
+import com.enonic.wem.api.content.type.formitem.Components;
 import com.enonic.wem.api.content.type.formitem.FieldSet;
-import com.enonic.wem.api.content.type.formitem.FormItem;
-import com.enonic.wem.api.content.type.formitem.FormItemSet;
-import com.enonic.wem.api.content.type.formitem.FormItems;
-import com.enonic.wem.api.content.type.formitem.HierarchicalFormItem;
+import com.enonic.wem.api.content.type.formitem.HierarchicalComponent;
 import com.enonic.wem.api.content.type.formitem.Input;
 import com.enonic.wem.api.content.type.formitem.Layout;
 import com.enonic.wem.api.content.type.formitem.SubTypeQualifiedName;
@@ -16,45 +16,45 @@ import com.enonic.wem.core.content.JsonParsingException;
 import com.enonic.wem.core.content.type.formitem.comptype.InputTypeConfigSerializerXml;
 import com.enonic.wem.core.content.type.formitem.comptype.InputTypeSerializerXml;
 
+import static com.enonic.wem.api.content.type.formitem.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
-import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 
-public class FormItemSerializerXml
+public class ComponentSerializerXml
 {
     private InputTypeSerializerXml inputTypeSerializer = new InputTypeSerializerXml();
 
     private InputTypeConfigSerializerXml inputTypeConfigSerializer = new InputTypeConfigSerializerXml();
 
-    private final FormItemsSerializerXml formItemsSerializer;
+    private final ComponentsSerializerXml componentsSerializer;
 
-    public FormItemSerializerXml()
+    public ComponentSerializerXml()
     {
-        this.formItemsSerializer = new FormItemsSerializerXml();
+        this.componentsSerializer = new ComponentsSerializerXml();
     }
 
-    public FormItemSerializerXml( final FormItemsSerializerXml formItemsSerializer )
+    public ComponentSerializerXml( final ComponentsSerializerXml componentsSerializer )
     {
-        this.formItemsSerializer = formItemsSerializer;
+        this.componentsSerializer = componentsSerializer;
     }
 
-    public Element generate( FormItem formItem )
+    public Element generate( Component component )
     {
-        if ( formItem instanceof FormItemSet )
+        if ( component instanceof ComponentSet )
         {
-            return generateFormItemSet( (FormItemSet) formItem );
+            return generateComponentSet( (ComponentSet) component );
         }
-        else if ( formItem instanceof Layout )
+        else if ( component instanceof Layout )
         {
-            return generateLayout( (Layout) formItem );
+            return generateLayout( (Layout) component );
         }
-        else if ( formItem instanceof Input )
+        else if ( component instanceof Input )
         {
-            return generateInput( (Input) formItem );
+            return generateInput( (Input) component );
         }
-        else if ( formItem instanceof SubTypeReference )
+        else if ( component instanceof SubTypeReference )
         {
-            return generateReference( (SubTypeReference) formItem );
+            return generateReference( (SubTypeReference) component );
         }
         return null;
     }
@@ -62,7 +62,7 @@ public class FormItemSerializerXml
     private Element generateInput( final Input input )
     {
         Element inputEl = new Element( input.getName() );
-        inputEl.setAttribute( "form-item-type", Input.class.getSimpleName() );
+        inputEl.setAttribute( "component-type", Input.class.getSimpleName() );
 
         inputEl.addContent( inputTypeSerializer.generate( input.getInputType() ) );
 
@@ -87,26 +87,26 @@ public class FormItemSerializerXml
         }
     }
 
-    private Element generateFormItemSet( final FormItemSet formItemSet )
+    private Element generateComponentSet( final ComponentSet componentSet )
     {
-        Element formItemSetEl = new Element( formItemSet.getName() );
-        formItemSetEl.setAttribute( "form-item-type", FormItemSet.class.getSimpleName() );
+        Element componentSetEl = new Element( componentSet.getName() );
+        componentSetEl.setAttribute( "component-type", ComponentSet.class.getSimpleName() );
 
-        formItemSetEl.addContent( new Element( "label" ).setText( formItemSet.getLabel() ) );
-        formItemSetEl.addContent( new Element( "required" ).setText( String.valueOf( formItemSet.isRequired() ) ) );
-        formItemSetEl.addContent( new Element( "immutable" ).setText( String.valueOf( formItemSet.isImmutable() ) ) );
-        formItemSetEl.addContent( new Element( "customText" ).setText( formItemSet.getCustomText() ) );
-        formItemSetEl.addContent( new Element( "helpText" ).setText( formItemSet.getCustomText() ) );
+        componentSetEl.addContent( new Element( "label" ).setText( componentSet.getLabel() ) );
+        componentSetEl.addContent( new Element( "required" ).setText( String.valueOf( componentSet.isRequired() ) ) );
+        componentSetEl.addContent( new Element( "immutable" ).setText( String.valueOf( componentSet.isImmutable() ) ) );
+        componentSetEl.addContent( new Element( "customText" ).setText( componentSet.getCustomText() ) );
+        componentSetEl.addContent( new Element( "helpText" ).setText( componentSet.getCustomText() ) );
 
-        formItemSetEl.addContent( OccurrencesSerializerXml.generate( formItemSet.getOccurrences() ) );
-        formItemSetEl.addContent( formItemsSerializer.generate( formItemSet.getFormItems() ) );
-        return formItemSetEl;
+        componentSetEl.addContent( OccurrencesSerializerXml.generate( componentSet.getOccurrences() ) );
+        componentSetEl.addContent( componentsSerializer.generate( componentSet.getComponents() ) );
+        return componentSetEl;
     }
 
     private Element generateLayout( final Layout layout )
     {
         Element layoutEl = new Element( layout.getName() );
-        layoutEl.setAttribute( "form-item-type", Layout.class.getSimpleName() );
+        layoutEl.setAttribute( "component-type", Layout.class.getSimpleName() );
 
         if ( layout instanceof FieldSet )
         {
@@ -120,13 +120,13 @@ public class FormItemSerializerXml
     {
         layoutEl.setAttribute( "layout-type", FieldSet.class.getSimpleName() );
         layoutEl.addContent( new Element( "label" ).setText( fieldSet.getLabel() ) );
-        layoutEl.addContent( formItemsSerializer.generate( fieldSet.getFormItems() ) );
+        layoutEl.addContent( componentsSerializer.generate( fieldSet.getComponents() ) );
     }
 
     private Element generateReference( final SubTypeReference subTypeReference )
     {
         Element referenceEl = new Element( subTypeReference.getName() );
-        referenceEl.setAttribute( "form-item-type", SubTypeReference.class.getSimpleName() );
+        referenceEl.setAttribute( "component-type", SubTypeReference.class.getSimpleName() );
         referenceEl.addContent( new Element( "reference" ).setText( subTypeReference.getSubTypeQualifiedName().toString() ) );
         referenceEl.addContent( new Element( "subTypeClass" ).setText( subTypeReference.getSubTypeClass().getSimpleName() ) );
         return referenceEl;
@@ -140,36 +140,36 @@ public class FormItemSerializerXml
         }
     }
 
-    public FormItem parse( final Element formItemEl )
+    public Component parse( final Element componentEl )
     {
-        final String formItemType = formItemEl.getAttributeValue( "form-item-type" );
+        final String formItemType = componentEl.getAttributeValue( "component-type" );
 
-        final FormItem formItem;
+        final Component component;
         if ( formItemType.equals( Input.class.getSimpleName() ) )
         {
-            formItem = parseInput( formItemEl );
+            component = parseInput( componentEl );
         }
-        else if ( formItemType.equals( FormItemSet.class.getSimpleName() ) )
+        else if ( formItemType.equals( ComponentSet.class.getSimpleName() ) )
         {
-            formItem = parseFormItemSet( formItemEl );
+            component = parseFormItemSet( componentEl );
         }
         else if ( formItemType.equals( Layout.class.getSimpleName() ) )
         {
-            formItem = parseLayout( formItemEl );
+            component = parseLayout( componentEl );
         }
         else if ( formItemType.equals( SubTypeReference.class.getSimpleName() ) )
         {
-            formItem = parseSubTypeReference( formItemEl );
+            component = parseSubTypeReference( componentEl );
         }
         else
         {
-            throw new JsonParsingException( "Unknown FormItemType: " + formItemType );
+            throw new JsonParsingException( "Unknown ComponentType: " + formItemType );
         }
 
-        return formItem;
+        return component;
     }
 
-    private FormItem parseInput( final Element formItemEl )
+    private Component parseInput( final Element formItemEl )
     {
         final Input.Builder builder = newInput();
         builder.name( formItemEl.getName() );
@@ -186,9 +186,9 @@ public class FormItemSerializerXml
         return builder.build();
     }
 
-    private HierarchicalFormItem parseFormItemSet( final Element formItemEl )
+    private HierarchicalComponent parseFormItemSet( final Element formItemEl )
     {
-        final FormItemSet.Builder builder = newFormItemSet();
+        final ComponentSet.Builder builder = newComponentSet();
         builder.name( formItemEl.getName() );
         builder.label( formItemEl.getChildText( "label" ) );
         builder.required( Boolean.valueOf( formItemEl.getChildText( "required" ) ) );
@@ -198,16 +198,16 @@ public class FormItemSerializerXml
 
         builder.occurrences( OccurrencesSerializerXml.parse( formItemEl ) );
 
-        final FormItems formItems = formItemsSerializer.parse( formItemEl );
-        for ( FormItem formItem : formItems.iterable() )
+        final Components components = componentsSerializer.parse( formItemEl );
+        for ( Component component : components.iterable() )
         {
-            builder.add( formItem );
+            builder.add( component );
         }
 
         return builder.build();
     }
 
-    private FormItem parseLayout( final Element formItemEl )
+    private Component parseLayout( final Element formItemEl )
     {
         String layoutType = formItemEl.getAttributeValue( "layout-type" );
         if ( layoutType.equals( FieldSet.class.getSimpleName() ) )
@@ -220,22 +220,22 @@ public class FormItemSerializerXml
         }
     }
 
-    private FormItem parseFieldSet( final Element formItemEl )
+    private Component parseFieldSet( final Element formItemEl )
     {
         final FieldSet.Builder builder = newFieldSet();
         builder.name( formItemEl.getName() );
         builder.label( formItemEl.getChildText( "label" ) );
 
-        final FormItems formItems = formItemsSerializer.parse( formItemEl );
-        for ( FormItem formItem : formItems.iterable() )
+        final Components components = componentsSerializer.parse( formItemEl );
+        for ( Component component : components.iterable() )
         {
-            builder.add( formItem );
+            builder.add( component );
         }
 
         return builder.build();
     }
 
-    private HierarchicalFormItem parseSubTypeReference( final Element formItemEl )
+    private HierarchicalComponent parseSubTypeReference( final Element formItemEl )
     {
         final SubTypeReference.Builder builder = SubTypeReference.newSubTypeReference();
         builder.name( formItemEl.getName() );

@@ -1,6 +1,6 @@
 Feature: Horizontal Inheritance, used by a ContentType
   So web developers can be able to reuse field definitons across content types,
-  they can create input and formItemSet subTypes
+  they can create input and componentSet subTypes
   that can be used by any content type.
 
   Scenario: Two ContentTypes using same subType

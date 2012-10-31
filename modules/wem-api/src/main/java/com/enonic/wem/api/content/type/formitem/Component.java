@@ -3,11 +3,11 @@ package com.enonic.wem.api.content.type.formitem;
 
 import com.google.common.base.Preconditions;
 
-public abstract class FormItem
+public abstract class Component
 {
     private String name;
 
-    FormItem()
+    Component()
     {
     }
 
@@ -22,21 +22,21 @@ public abstract class FormItem
         return name;
     }
 
-    public FormItem copy()
+    public Component copy()
     {
         try
         {
-            FormItem formItem = this.getClass().newInstance();
-            formItem.name = name;
-            return formItem;
+            Component component = this.getClass().newInstance();
+            component.name = name;
+            return component;
         }
         catch ( InstantiationException e )
         {
-            throw new RuntimeException( "Failed to copy FormItem", e );
+            throw new RuntimeException( "Failed to copy Component", e );
         }
         catch ( IllegalAccessException e )
         {
-            throw new RuntimeException( "Failed to copy FormItem", e );
+            throw new RuntimeException( "Failed to copy Component", e );
         }
     }
 

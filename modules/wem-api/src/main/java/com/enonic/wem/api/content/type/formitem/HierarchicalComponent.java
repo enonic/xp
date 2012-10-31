@@ -3,16 +3,16 @@ package com.enonic.wem.api.content.type.formitem;
 
 import com.google.common.base.Preconditions;
 
-public abstract class HierarchicalFormItem
-    extends FormItem
+public abstract class HierarchicalComponent
+    extends Component
 {
-    private FormItemPath path;
+    private ComponentPath path;
 
-    protected HierarchicalFormItem()
+    protected HierarchicalComponent()
     {
     }
 
-    void setPath( final FormItemPath path )
+    void setPath( final ComponentPath path )
     {
         Preconditions.checkNotNull( path, "Given path is null" );
         Preconditions.checkArgument( getName().equals( path.getLastElement() ),
@@ -20,7 +20,7 @@ public abstract class HierarchicalFormItem
         this.path = path;
     }
 
-    void setParentPath( final FormItemPath parentPath )
+    void setParentPath( final ComponentPath parentPath )
     {
         Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
 
@@ -29,28 +29,28 @@ public abstract class HierarchicalFormItem
             throw new IllegalStateException( "Cannot set parent path unless there is already an existing path" );
         }
 
-        this.path = new FormItemPath( parentPath, this.path.getLastElement() );
+        this.path = new ComponentPath( parentPath, this.path.getLastElement() );
     }
 
-    public final FormItemPath getPath()
+    public final ComponentPath getPath()
     {
         return path;
     }
 
-    public HierarchicalFormItem copy()
+    public HierarchicalComponent copy()
     {
-        final HierarchicalFormItem formItem = (HierarchicalFormItem) super.copy();
-        formItem.path = path;
-        return formItem;
+        final HierarchicalComponent copy = (HierarchicalComponent) super.copy();
+        copy.path = path;
+        return copy;
     }
 
     @Override
     public String toString()
     {
-        FormItemPath formItemPath = getPath();
-        if ( formItemPath != null )
+        final ComponentPath componentPath = getPath();
+        if ( componentPath != null )
         {
-            return formItemPath.toString();
+            return componentPath.toString();
         }
         else
         {

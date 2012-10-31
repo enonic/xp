@@ -20,9 +20,9 @@ public class BreaksRequiredContractException
         super( buildMessage( missingInput ) );
     }
 
-    public BreaksRequiredContractException( final FormItemSet missingFormItemSet )
+    public BreaksRequiredContractException( final ComponentSet missingComponentSet )
     {
-        super( buildMessage( missingFormItemSet ) );
+        super( buildMessage( missingComponentSet ) );
     }
 
     public Data getValue()
@@ -41,8 +41,8 @@ public class BreaksRequiredContractException
         return "Required contract is broken, data missing for Input: " + input.getPath().toString();
     }
 
-    private static String buildMessage( final FormItemSet formItemSet )
+    private static String buildMessage( final ComponentSet componentSet )
     {
-        return "Required contract is broken, data missing for FormItemSet: " + formItemSet.getPath().toString();
+        return "Required contract is broken, data missing for ComponentSet: " + componentSet.getPath().toString();
     }
 }

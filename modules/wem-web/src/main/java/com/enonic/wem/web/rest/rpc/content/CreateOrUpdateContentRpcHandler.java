@@ -16,14 +16,14 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypeFetcher;
 import com.enonic.wem.api.content.type.MockContentTypeFetcher;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
-import com.enonic.wem.api.content.type.formitem.FormItemSet;
+import com.enonic.wem.api.content.type.formitem.ComponentSet;
 import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.rest.service.upload.UploadService;
 
-import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.type.formitem.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 
 @Component
@@ -42,11 +42,11 @@ public final class CreateOrUpdateContentRpcHandler
         ContentType myContentType = new ContentType();
         myContentType.setModule( Module.newModule().name( "myModule" ).build() );
         myContentType.setName( "myContentType" );
-        myContentType.addFormItem( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() );
-        myContentType.addFormItem( newInput().name( "myTextLine2" ).type( InputTypes.TEXT_LINE ).build() );
-        FormItemSet formItemSet = newFormItemSet().name( "myFormItemSet" ).build();
-        formItemSet.addFormItem( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() );
-        myContentType.addFormItem( formItemSet );
+        myContentType.addComponent( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() );
+        myContentType.addComponent( newInput().name( "myTextLine2" ).type( InputTypes.TEXT_LINE ).build() );
+        ComponentSet formItemSet = newComponentSet().name( "myFormItemSet" ).build();
+        formItemSet.add( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() );
+        myContentType.addComponent( formItemSet );
         mockContentTypeFetcher.add( myContentType );
         this.contentTypeFetcher = mockContentTypeFetcher;
     }

@@ -13,8 +13,8 @@ import cucumber.annotation.en.When;
 import cucumber.table.DataTable;
 import gherkin.formatter.model.DataTableRow;
 
-import com.enonic.wem.api.content.type.formitem.FormItemPath;
-import com.enonic.wem.api.content.type.formitem.FormItemType;
+import com.enonic.wem.api.content.type.formitem.ComponentPath;
+import com.enonic.wem.api.content.type.formitem.ComponentType;
 import com.enonic.wem.api.content.type.formitem.Input;
 import com.enonic.wem.api.content.type.formitem.InputSubType;
 import com.enonic.wem.api.content.type.formitem.MockSubTypeFetcher;
@@ -82,24 +82,24 @@ public class ContentTypeStepDefs
 
         InputSubType inputSubType = inputSubTypeByQualifiedName.get( new SubTypeQualifiedName( subTypeQualifiedName ) );
         ContentType contentType = contentTypeByName.get( contentTypeName );
-        contentType.addFormItem( SubTypeReference.newSubTypeReference( inputSubType ).name( subTypeReferenceName ).build() );
+        contentType.addComponent( SubTypeReference.newSubTypeReference( inputSubType ).name( subTypeReferenceName ).build() );
 
         mockSubTypeFetcher.add( inputSubType );
-        contentType.subTypeReferencesToFormItems( mockSubTypeFetcher );
+        contentType.subTypeReferencesToComponents( mockSubTypeFetcher );
     }
 
-    @When("^translating subType references to formItems for all content types$")
-    public void translating_subType_references_to_formItems_for_all_content_types()
+    @When("^translating subType references to components for all content types$")
+    public void translating_subType_references_to_components_for_all_content_types()
         throws Throwable
     {
         for ( ContentType contentType : contentTypeByName.values() )
         {
-            contentType.subTypeReferencesToFormItems( mockSubTypeFetcher );
+            contentType.subTypeReferencesToComponents( mockSubTypeFetcher );
         }
     }
 
-    @Then("^the following FormItems should exist in the following ContentTypes:$")
-    public void the_following_FormItems_should_exist_in_the_following_ContentTypes( DataTable dataTable )
+    @Then("^the following Components should exist in the following ContentTypes:$")
+    public void the_following_Components_should_exist_in_the_following_ContentTypes( DataTable dataTable )
         throws Throwable
     {
 
@@ -107,12 +107,12 @@ public class ContentTypeStepDefs
         for ( DataTableRow row : list )
         {
             String contentTypeName = row.getCells().get( 0 );
-            String formItemPath = row.getCells().get( 1 );
-            FormItemType formItemType = FormItemType.valueOf( row.getCells().get( 2 ) );
+            String componentPath = row.getCells().get( 1 );
+            ComponentType componentType = ComponentType.valueOf( row.getCells().get( 2 ) );
             ContentType contentType = contentTypeByName.get( contentTypeName );
-            Assert.assertNotNull( "formItem not found at path: " + formItemPath,
-                                  contentType.getFormItems().getHierarchicalFormItem( new FormItemPath( formItemPath ) ) );
-            Assert.assertEquals( FormItemType.INPUT, formItemType );
+            Assert.assertNotNull( "component not found at path: " + componentPath,
+                                  contentType.getComponents().getHierarchicalComponent( new ComponentPath( componentPath ) ) );
+            Assert.assertEquals( ComponentType.INPUT, componentType );
         }
     }
 

@@ -34,7 +34,7 @@ public class InputSubType
         this.input = value;
     }
 
-    public HierarchicalFormItem create( final SubTypeReference subTypeReference )
+    public HierarchicalComponent create( final SubTypeReference subTypeReference )
     {
         Input input = this.input.copy();
         input.setName( subTypeReference.getName() );

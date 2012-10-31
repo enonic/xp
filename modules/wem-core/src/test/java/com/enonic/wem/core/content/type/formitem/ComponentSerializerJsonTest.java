@@ -11,8 +11,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.type.formitem.FormItem;
-import com.enonic.wem.api.content.type.formitem.FormItemSet;
+import com.enonic.wem.api.content.type.formitem.Component;
+import com.enonic.wem.api.content.type.formitem.ComponentSet;
 import com.enonic.wem.api.content.type.formitem.Input;
 import com.enonic.wem.api.content.type.formitem.Occurrences;
 import com.enonic.wem.api.content.type.formitem.inputtype.InputTypeConfig;
@@ -24,7 +24,7 @@ import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 import static com.enonic.wem.api.content.type.formitem.inputtype.SingleSelectorConfig.newSingleSelectorConfig;
 import static org.junit.Assert.*;
 
-public class FormItemSerializerJsonTest
+public class ComponentSerializerJsonTest
 {
     private final JsonFactory jsonFactory = JsonFactoryHolder.DEFAULT_FACTORY;
 
@@ -63,12 +63,12 @@ public class FormItemSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        FormItem formItem = new FormItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
+        Component component = new ComponentSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
-        assertTrue( formItem instanceof Input );
-        assertEquals( "myTextLine", formItem.getName() );
-        Input parsedInput = (Input) formItem;
+        assertTrue( component instanceof Input );
+        assertEquals( "myTextLine", component.getName() );
+        Input parsedInput = (Input) component;
         assertEquals( true, parsedInput.isRequired() );
         assertEquals( false, parsedInput.isIndexed() );
         assertEquals( true, parsedInput.isImmutable() );
@@ -97,12 +97,12 @@ public class FormItemSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        FormItem formItem = new FormItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
+        Component component = new ComponentSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
-        assertTrue( formItem instanceof Input );
-        assertEquals( "mySingleSelector", formItem.getName() );
-        Input parsedInput = (Input) formItem;
+        assertTrue( component instanceof Input );
+        assertEquals( "mySingleSelector", component.getName() );
+        Input parsedInput = (Input) component;
         assertEquals( "My SingleSelector", parsedInput.getLabel() );
         assertEquals( false, parsedInput.isRequired() );
         assertEquals( false, parsedInput.isIndexed() );
@@ -124,7 +124,7 @@ public class FormItemSerializerJsonTest
         throws IOException
     {
         // setup
-        FormItemSet.Builder builder = FormItemSet.newBuilder();
+        ComponentSet.Builder builder = ComponentSet.newBuilder();
         builder.name( "mySubType" );
         builder.label( "My sub type" );
         builder.immutable( true );
@@ -132,27 +132,27 @@ public class FormItemSerializerJsonTest
         builder.occurrences( 1, 100 );
         builder.customText( "Custom text" );
         builder.helpText( "Help text" );
-        FormItemSet formItemSet = builder.build();
+        ComponentSet componentSet = builder.build();
 
-        String json = fieldSetToJson( formItemSet );
+        String json = fieldSetToJson( componentSet );
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        FormItem formItem = new FormItemSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
+        Component component = new ComponentSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
-        assertTrue( formItem instanceof FormItemSet );
-        assertEquals( "mySubType", formItem.getName() );
-        FormItemSet parsedFormItemSet = (FormItemSet) formItem;
-        assertEquals( "My sub type", parsedFormItemSet.getLabel() );
-        assertEquals( true, parsedFormItemSet.isRequired() );
-        assertEquals( true, parsedFormItemSet.isImmutable() );
+        assertTrue( component instanceof ComponentSet );
+        assertEquals( "mySubType", component.getName() );
+        ComponentSet parsedComponentSet = (ComponentSet) component;
+        assertEquals( "My sub type", parsedComponentSet.getLabel() );
+        assertEquals( true, parsedComponentSet.isRequired() );
+        assertEquals( true, parsedComponentSet.isImmutable() );
     }
 
-    private String fieldSetToJson( FormItemSet formItemSet )
+    private String fieldSetToJson( ComponentSet componentSet )
         throws IOException
     {
-        new FormItemSerializerJson().generate( formItemSet, g );
+        new ComponentSerializerJson().generate( componentSet, g );
         g.close();
         return sw.toString();
     }
@@ -160,7 +160,7 @@ public class FormItemSerializerJsonTest
     private String fieldToJson( Input input )
         throws IOException
     {
-        new FormItemSerializerJson().generate( input, g );
+        new ComponentSerializerJson().generate( input, g );
         g.close();
         return sw.toString();
     }

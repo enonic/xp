@@ -17,7 +17,7 @@ public class EntryPathTest
     }
 
     @Test
-    public void new_given_existing_formItemPath_and_name()
+    public void new_given_existing_componentPath_and_name()
     {
         assertEquals( "car[0].model", new EntryPath( new EntryPath( "car[0]" ), "model" ).toString() );
     }
@@ -35,10 +35,10 @@ public class EntryPathTest
     }
 
     @Test
-    public void resolveFormItemPath()
+    public void resolveComponentPath()
     {
-        assertEquals( "car", new EntryPath( "car[0]" ).resolveFormItemPath().toString() );
-        assertEquals( "car.model", new EntryPath( "car[0].model" ).resolveFormItemPath().toString() );
+        assertEquals( "car", new EntryPath( "car[0]" ).resolveComponentPath().toString() );
+        assertEquals( "car.model", new EntryPath( "car[0].model" ).resolveComponentPath().toString() );
     }
 
     @Test
@@ -58,18 +58,19 @@ public class EntryPathTest
     @Test
     public void asNewWithIndexAtPath()
     {
-        assertEquals( "formItemSet", new EntryPath( "formItemSet" ).asNewWithIndexAtPath( 0, new EntryPath( "nonExisting" ) ).toString() );
+        assertEquals( "componentSet",
+                      new EntryPath( "componentSet" ).asNewWithIndexAtPath( 0, new EntryPath( "nonExisting" ) ).toString() );
 
-        assertEquals( "formItemSet[0]",
-                      new EntryPath( "formItemSet" ).asNewWithIndexAtPath( 0, new EntryPath( "formItemSet" ) ).toString() );
-        assertEquals( "formItemSet[0].input",
-                      new EntryPath( "formItemSet.input" ).asNewWithIndexAtPath( 0, new EntryPath( "formItemSet" ) ).toString() );
-        assertEquals( "anotherSet.formItemSet[0].input", new EntryPath( "anotherSet.formItemSet.input" ).asNewWithIndexAtPath( 0,
-                                                                                                                               new EntryPath(
-                                                                                                                                   "anotherSet.formItemSet" ) ).toString() );
-        assertEquals( "anotherSet.formItemSet.input[0]", new EntryPath( "anotherSet.formItemSet.input" ).asNewWithIndexAtPath( 0,
-                                                                                                                               new EntryPath(
-                                                                                                                                   "anotherSet.formItemSet.input" ) ).toString() );
+        assertEquals( "componentSet[0]",
+                      new EntryPath( "componentSet" ).asNewWithIndexAtPath( 0, new EntryPath( "componentSet" ) ).toString() );
+        assertEquals( "componentSet[0].input",
+                      new EntryPath( "componentSet.input" ).asNewWithIndexAtPath( 0, new EntryPath( "componentSet" ) ).toString() );
+        assertEquals( "anotherSet.componentSet[0].input", new EntryPath( "anotherSet.componentSet.input" ).asNewWithIndexAtPath( 0,
+                                                                                                                                 new EntryPath(
+                                                                                                                                     "anotherSet.componentSet" ) ).toString() );
+        assertEquals( "anotherSet.componentSet.input[0]", new EntryPath( "anotherSet.componentSet.input" ).asNewWithIndexAtPath( 0,
+                                                                                                                                 new EntryPath(
+                                                                                                                                     "anotherSet.componentSet.input" ) ).toString() );
 
     }
 }

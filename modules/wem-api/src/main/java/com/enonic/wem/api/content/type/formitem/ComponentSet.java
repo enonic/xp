@@ -6,12 +6,12 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-public class FormItemSet
-    extends HierarchicalFormItem
+public class ComponentSet
+    extends HierarchicalComponent
 {
     private String label;
 
-    private FormItems formItems = new FormItems();
+    private Components components = new Components();
 
     private boolean immutable;
 
@@ -21,36 +21,36 @@ public class FormItemSet
 
     private String helpText;
 
-    protected FormItemSet()
+    protected ComponentSet()
     {
     }
 
     @Override
-    void setPath( final FormItemPath formItemPath )
+    void setPath( final ComponentPath componentPath )
     {
-        super.setPath( formItemPath );
-        formItems.setPath( formItemPath );
+        super.setPath( componentPath );
+        components.setPath( componentPath );
     }
 
-    public void addFormItem( final FormItem formItem )
+    public void add( final Component component )
     {
-        this.formItems.addFormItem( formItem );
+        this.components.add( component );
     }
 
-    public void addItem( final Input input )
+    public void addInput( final Input input )
     {
-        Preconditions.checkState( getPath() != null, "Cannot add Input before this FormItemSet is added" );
+        Preconditions.checkState( getPath() != null, "Cannot add Input before this ComponentSet is added" );
 
-        input.setPath( new FormItemPath( getPath(), input.getName() ) );
-        this.formItems.addFormItem( input );
+        input.setPath( new ComponentPath( getPath(), input.getName() ) );
+        this.components.add( input );
     }
 
-    public void addFormItemSet( final FormItemSet formItemSet )
+    public void addComponentSet( final ComponentSet componentSet )
     {
-        Preconditions.checkState( getPath() != null, "Cannot add FormItemSet before this FormItemSet is added" );
+        Preconditions.checkState( getPath() != null, "Cannot add ComponentSet before this ComponentSet is added" );
 
-        formItemSet.setPath( new FormItemPath( getPath(), formItemSet.getName() ) );
-        this.formItems.addFormItem( formItemSet );
+        componentSet.setPath( new ComponentPath( getPath(), componentSet.getName() ) );
+        this.components.add( componentSet );
     }
 
     public String getLabel()
@@ -88,18 +88,18 @@ public class FormItemSet
         return helpText;
     }
 
-    public FormItems getFormItems()
+    public Components getComponents()
     {
-        return formItems;
+        return components;
     }
 
     @Override
-    void setParentPath( final FormItemPath parentPath )
+    void setParentPath( final ComponentPath parentPath )
     {
         super.setParentPath( parentPath );
-        for ( HierarchicalFormItem formItem : formItems.iterableForHierarchicalFormItems() )
+        for ( HierarchicalComponent component : components.iterableForHierarchicalComponents() )
         {
-            formItem.setParentPath( this.getPath() );
+            component.setParentPath( this.getPath() );
         }
     }
 
@@ -107,10 +107,10 @@ public class FormItemSet
     public String toString()
     {
         StringBuilder s = new StringBuilder();
-        FormItemPath formItemPath = getPath();
-        if ( formItemPath != null )
+        ComponentPath componentPath = getPath();
+        if ( componentPath != null )
         {
-            s.append( formItemPath.toString() );
+            s.append( componentPath.toString() );
         }
         else
         {
@@ -125,32 +125,38 @@ public class FormItemSet
     }
 
     @Override
-    public FormItemSet copy()
+    public ComponentSet copy()
     {
-        FormItemSet copy = (FormItemSet) super.copy();
+        ComponentSet copy = (ComponentSet) super.copy();
         copy.label = label;
         copy.immutable = immutable;
         copy.occurrences.setMinOccurences( occurrences.getMinimum() );
         copy.occurrences.setMaxOccurences( occurrences.getMaximum() );
         copy.customText = customText;
         copy.helpText = helpText;
-        copy.formItems = formItems.copy();
+        copy.components = components.copy();
         return copy;
     }
 
+
+    /**
+     * TODO: Remove: replace usage with newComponentSet().
+     *
+     * @return
+     */
     public static Builder newBuilder()
     {
         return new Builder();
     }
 
-    public static Builder newFormItemSet()
+    public static Builder newComponentSet()
     {
         return new Builder();
     }
 
-    public HierarchicalFormItem getHierarchicalFormItem( final FormItemPath formItemPath )
+    public HierarchicalComponent getHierarchicalComponent( final ComponentPath componentPath )
     {
-        return formItems.getHierarchicalFormItem( formItemPath );
+        return components.getHierarchicalComponent( componentPath );
     }
 
     public static class Builder
@@ -167,7 +173,7 @@ public class FormItemSet
 
         private String helpText;
 
-        private List<FormItem> formItems = new ArrayList<FormItem>();
+        private List<Component> components = new ArrayList<Component>();
 
         private Builder()
         {
@@ -242,30 +248,30 @@ public class FormItemSet
             return this;
         }
 
-        public Builder add( FormItem value )
+        public Builder add( Component value )
         {
-            formItems.add( value );
+            components.add( value );
             return this;
         }
 
-        public FormItemSet build()
+        public ComponentSet build()
         {
-            FormItemSet formItemSet = new FormItemSet();
-            formItemSet.setName( name );
-            formItemSet.label = label;
-            formItemSet.immutable = immutable;
-            formItemSet.occurrences.setMinOccurences( occurrences.getMinimum() );
-            formItemSet.occurrences.setMaxOccurences( occurrences.getMaximum() );
-            formItemSet.customText = customText;
-            formItemSet.helpText = helpText;
-            for ( FormItem formItem : formItems )
+            ComponentSet componentSet = new ComponentSet();
+            componentSet.setName( name );
+            componentSet.label = label;
+            componentSet.immutable = immutable;
+            componentSet.occurrences.setMinOccurences( occurrences.getMinimum() );
+            componentSet.occurrences.setMaxOccurences( occurrences.getMaximum() );
+            componentSet.customText = customText;
+            componentSet.helpText = helpText;
+            for ( Component component : components )
             {
-                formItemSet.addFormItem( formItem );
+                componentSet.add( component );
             }
 
-            Preconditions.checkNotNull( formItemSet.getName(), "a name for the FormItemSet is required" );
-            formItemSet.setPath( new FormItemPath( formItemSet.getName() ) );
-            return formItemSet;
+            Preconditions.checkNotNull( componentSet.getName(), "a name for the ComponentSet is required" );
+            componentSet.setPath( new ComponentPath( componentSet.getName() ) );
+            return componentSet;
         }
     }
 }

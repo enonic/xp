@@ -5,8 +5,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.datatype.DataTypes;
-import com.enonic.wem.api.content.type.formitem.FormItemSet;
-import com.enonic.wem.api.content.type.formitem.FormItems;
+import com.enonic.wem.api.content.type.formitem.ComponentSet;
+import com.enonic.wem.api.content.type.formitem.Components;
 import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
 
 import static com.enonic.wem.api.content.type.formitem.Input.newInput;
@@ -17,10 +17,10 @@ public class DataSetTest
     @Test
     public void setValue_when_given_path_does_not_exists()
     {
-        FormItems formItems = new FormItems();
-        FormItemSet formItemSet = FormItemSet.newFormItemSet().name( "personalia" ).multiple( true ).build();
-        formItemSet.addItem( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        formItems.addFormItem( formItemSet );
+        Components components = new Components();
+        ComponentSet componentSet = ComponentSet.newComponentSet().name( "personalia" ).multiple( true ).build();
+        componentSet.addInput( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        components.add( componentSet );
 
         DataSet dataSet = new DataSet( new EntryPath() );
 
@@ -31,18 +31,18 @@ public class DataSetTest
         catch ( Exception e )
         {
             Assert.assertTrue( e instanceof IllegalArgumentException );
-            Assert.assertTrue( e.getMessage().startsWith( "No FormItem found at: unknown.eyeColour" ) );
+            Assert.assertTrue( e.getMessage().startsWith( "No Component found at: unknown.eyeColour" ) );
         }
     }
 
     @Test
     public void getValue_when_having_sub_type()
     {
-        FormItemSet formItemSet = FormItemSet.newFormItemSet().name( "personalia" ).multiple( false ).build();
-        formItemSet.addItem( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
-        FormItems formItems = new FormItems();
-        formItems.addFormItem( formItemSet );
+        ComponentSet componentSet = ComponentSet.newComponentSet().name( "personalia" ).multiple( false ).build();
+        componentSet.addInput( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.addInput( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        Components components = new Components();
+        components.add( componentSet );
 
         DataSet dataSet = new DataSet( new EntryPath() );
         dataSet.setData( new EntryPath( "personalia.eyeColour" ), "Brown", DataTypes.TEXT );
@@ -55,13 +55,13 @@ public class DataSetTest
     @Test
     public void getValue_when_having_multiple_sub_type_in_single_sub_type()
     {
-        FormItemSet personalia = FormItemSet.newFormItemSet().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
-        FormItemSet crimes = FormItemSet.newFormItemSet().name( "crimes" ).multiple( true ).build();
-        crimes.addItem( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
-        crimes.addItem( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
-        personalia.addFormItemSet( crimes );
-        FormItems formItems = new FormItems();
-        formItems.addFormItem( personalia );
+        ComponentSet personalia = ComponentSet.newComponentSet().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
+        ComponentSet crimes = ComponentSet.newComponentSet().name( "crimes" ).multiple( true ).build();
+        crimes.addInput( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
+        crimes.addInput( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
+        personalia.addComponentSet( crimes );
+        Components components = new Components();
+        components.add( personalia );
 
         DataSet dataSet = new DataSet( new EntryPath() );
         dataSet.setData( new EntryPath( "personalia.crimes[0].description" ), "Stole purse from old lady.", DataTypes.TEXT );
@@ -78,11 +78,11 @@ public class DataSetTest
     @Test
     public void getValue_when_having_multiple_sub_type()
     {
-        FormItems formItems = new FormItems();
-        FormItemSet formItemSet = FormItemSet.newFormItemSet().name( "persons" ).multiple( true ).build();
-        formItemSet.addItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.addItem( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        formItems.addFormItem( formItemSet );
+        Components components = new Components();
+        ComponentSet componentSet = ComponentSet.newComponentSet().name( "persons" ).multiple( true ).build();
+        componentSet.addInput( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.addInput( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        components.add( componentSet );
 
         DataSet dataSet = new DataSet( new EntryPath() );
         dataSet.setData( new EntryPath( "persons[0].name" ), "Arn", DataTypes.TEXT );

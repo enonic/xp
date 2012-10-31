@@ -10,38 +10,38 @@ import com.google.common.collect.Lists;
 /**
  * Immutable.
  */
-public class FormItemPath
+public class ComponentPath
 {
     private final static String ELEMENT_DIVIDER = ".";
 
     private List<String> elements;
 
-    public FormItemPath()
+    public ComponentPath()
     {
         elements = new ArrayList<String>();
     }
 
-    public FormItemPath( List<String> pathElements )
+    public ComponentPath( List<String> pathElements )
     {
         Preconditions.checkNotNull( pathElements );
         elements = pathElements;
     }
 
-    public FormItemPath( FormItemPath parentPath, String name )
+    public ComponentPath( ComponentPath parentPath, String name )
     {
         elements = new ArrayList<String>();
         elements.addAll( parentPath.elements );
         elements.add( name );
     }
 
-    public FormItemPath( final FormItemPath parentPath, final FormItemPath childPath )
+    public ComponentPath( final ComponentPath parentPath, final ComponentPath childPath )
     {
         elements = new ArrayList<String>();
         elements.addAll( parentPath.elements );
         elements.addAll( childPath.elements );
     }
 
-    public FormItemPath( String path )
+    public ComponentPath( String path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
 
@@ -63,7 +63,7 @@ public class FormItemPath
         return elements.size();
     }
 
-    public FormItemPath asNewWithoutFirstPathElement()
+    public ComponentPath asNewWithoutFirstPathElement()
     {
         List<String> pathElements = Lists.newArrayList();
         for ( int i = 0; i < elements.size(); i++ )
@@ -73,7 +73,7 @@ public class FormItemPath
                 pathElements.add( elements.get( i ) );
             }
         }
-        return new FormItemPath( pathElements );
+        return new ComponentPath( pathElements );
     }
 
     @Override
@@ -88,9 +88,9 @@ public class FormItemPath
             return false;
         }
 
-        final FormItemPath formItemPath = (FormItemPath) o;
+        final ComponentPath componentPath = (ComponentPath) o;
 
-        return elements.equals( formItemPath.elements );
+        return elements.equals( componentPath.elements );
     }
 
     @Override

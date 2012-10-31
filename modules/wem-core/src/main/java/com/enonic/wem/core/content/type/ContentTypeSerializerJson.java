@@ -15,12 +15,12 @@ import com.enonic.wem.api.content.type.ContentTypeSerializer;
 import com.enonic.wem.core.content.JsonFactoryHolder;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.type.formitem.FormItemsSerializerJson;
+import com.enonic.wem.core.content.type.formitem.ComponentsSerializerJson;
 
 public class ContentTypeSerializerJson
     implements ContentTypeSerializer
 {
-    private FormItemsSerializerJson formItemsSerializer = new FormItemsSerializerJson();
+    private ComponentsSerializerJson componentsSerializer = new ComponentsSerializerJson();
 
     public String toString( ContentType contentType )
     {
@@ -33,7 +33,7 @@ public class ContentTypeSerializerJson
             g.writeStringField( "name", contentType.getName() );
             g.writeStringField( "module", contentType.getModule().getName() );
 
-            formItemsSerializer.generate( contentType.getFormItems(), g );
+            componentsSerializer.generate( contentType.getComponents(), g );
             g.writeEndObject();
             g.close();
             sw.close();
@@ -77,7 +77,7 @@ public class ContentTypeSerializerJson
 
         try
         {
-            contentType.setFormItems( formItemsSerializer.parse( contentTypeNode.get( "items" ) ) );
+            contentType.setComponents( componentsSerializer.parse( contentTypeNode.get( "items" ) ) );
         }
         catch ( Exception e )
         {

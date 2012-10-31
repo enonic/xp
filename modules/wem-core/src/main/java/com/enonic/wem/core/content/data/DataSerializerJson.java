@@ -23,7 +23,7 @@ public class DataSerializerJson
         throws IOException
     {
         g.writeStartObject();
-        final String name = data.getPath().resolveFormItemPath().getLastElement();
+        final String name = data.getPath().resolveComponentPath().getLastElement();
         g.writeStringField( "name", name );
         if ( data.getDataType() != null )
         {

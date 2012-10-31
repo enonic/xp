@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.type.formitem.inputtype.InputType;
 import com.enonic.wem.api.content.type.formitem.inputtype.InputTypeConfig;
 
 public class Input
-    extends HierarchicalFormItem
+    extends HierarchicalComponent
 {
     private BaseInputType type;
 
@@ -318,7 +318,7 @@ public class Input
             input.validationRegexp = validationRegexp;
             input.helpText = helpText;
             input.inputTypeConfig = inputTypeConfig;
-            input.setPath( new FormItemPath( input.getName() ) );
+            input.setPath( new ComponentPath( input.getName() ) );
             return input;
         }
     }

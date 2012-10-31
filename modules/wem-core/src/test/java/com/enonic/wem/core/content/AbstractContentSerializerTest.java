@@ -10,14 +10,14 @@ import com.enonic.wem.api.content.data.MockBlobKeyResolver;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.MockContentTypeFetcher;
+import com.enonic.wem.api.content.type.formitem.ComponentSet;
 import com.enonic.wem.api.content.type.formitem.FieldSet;
-import com.enonic.wem.api.content.type.formitem.FormItemSet;
 import com.enonic.wem.api.content.type.formitem.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
+import static com.enonic.wem.api.content.type.formitem.ComponentSet.newBuilder;
+import static com.enonic.wem.api.content.type.formitem.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.formitem.FieldSet.newFieldSet;
-import static com.enonic.wem.api.content.type.formitem.FormItemSet.newBuilder;
-import static com.enonic.wem.api.content.type.formitem.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.formitem.Input.newInput;
 import static org.junit.Assert.*;
 
@@ -43,7 +43,7 @@ public abstract class AbstractContentSerializerTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem( newInput().name( "myComponent" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addComponent( newInput().name( "myComponent" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -65,7 +65,7 @@ public abstract class AbstractContentSerializerTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem( newInput().name( "myComponent" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addComponent( newInput().name( "myComponent" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -86,7 +86,8 @@ public abstract class AbstractContentSerializerTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem( newInput().name( "myComponent" ).type( InputTypes.TEXT_LINE ).required( false ).multiple( true ).build() );
+        contentType.addComponent(
+            newInput().name( "myComponent" ).type( InputTypes.TEXT_LINE ).required( false ).multiple( true ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -104,16 +105,16 @@ public abstract class AbstractContentSerializerTest
     }
 
     @Test
-    public void given_component_and_formItemSet_when_parsed_then_paths_and_values_are_as_expected()
+    public void given_component_and_componentSet_when_parsed_then_paths_and_values_are_as_expected()
     {
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addComponent( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
 
-        FormItemSet formItemSet = newBuilder().name( "formItemSet" ).build();
-        contentType.addFormItem( formItemSet );
-        formItemSet.addItem( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
+        ComponentSet formItemSet = newBuilder().name( "formItemSet" ).build();
+        contentType.addComponent( formItemSet );
+        formItemSet.addInput( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -134,16 +135,16 @@ public abstract class AbstractContentSerializerTest
     }
 
     @Test
-    public void given_array_of_formItemSet_when_parsed_then_paths_and_values_are_as_expected()
+    public void given_array_of_componentSet_when_parsed_then_paths_and_values_are_as_expected()
     {
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
         contentTypeFetcher.add( contentType );
 
-        FormItemSet formItemSet = newFormItemSet().name( "formItemSet" ).label( "FormItemSet" ).multiple( true ).build();
-        contentType.addFormItem( formItemSet );
-        formItemSet.addItem( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
+        ComponentSet componentSet = newComponentSet().name( "formItemSet" ).label( "ComponentSet" ).multiple( true ).build();
+        contentType.addComponent( componentSet );
+        componentSet.addInput( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -168,10 +169,10 @@ public abstract class AbstractContentSerializerTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.addComponent( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() );
         FieldSet layout = newFieldSet().label( "Label" ).name( "fieldSet" ).add(
             newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() ).build();
-        contentType.addFormItem( layout );
+        contentType.addComponent( layout );
 
         Content content = new Content();
         content.setType( contentType );

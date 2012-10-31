@@ -3,11 +3,11 @@ package com.enonic.wem.api.content.type;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.type.formitem.FormItem;
-import com.enonic.wem.api.content.type.formitem.FormItemPath;
-import com.enonic.wem.api.content.type.formitem.FormItemSet;
-import com.enonic.wem.api.content.type.formitem.FormItems;
-import com.enonic.wem.api.content.type.formitem.HierarchicalFormItem;
+import com.enonic.wem.api.content.type.formitem.Component;
+import com.enonic.wem.api.content.type.formitem.ComponentPath;
+import com.enonic.wem.api.content.type.formitem.ComponentSet;
+import com.enonic.wem.api.content.type.formitem.Components;
+import com.enonic.wem.api.content.type.formitem.HierarchicalComponent;
 import com.enonic.wem.api.content.type.formitem.Input;
 import com.enonic.wem.api.content.type.formitem.SubTypeFetcher;
 import com.enonic.wem.api.module.Module;
@@ -28,11 +28,11 @@ public class ContentType
 
     private ComputedDisplayName computedDisplayName;
 
-    private FormItems formItems = new FormItems();
+    private Components components = new Components();
 
     public ContentType()
     {
-        formItems = new FormItems();
+        components = new Components();
     }
 
     public String getName()
@@ -110,24 +110,24 @@ public class ContentType
         this.computedDisplayName = computedDisplayName;
     }
 
-    public void setFormItems( final FormItems formItems )
+    public void setComponents( final Components components )
     {
-        this.formItems = formItems;
+        this.components = components;
     }
 
-    public FormItems getFormItems()
+    public Components getComponents()
     {
-        return formItems;
+        return components;
     }
 
-    public void addFormItem( final FormItem formItem )
+    public void addComponent( final Component component )
     {
-        this.formItems.addFormItem( formItem );
+        this.components.add( component );
     }
 
-    Input getInput( final FormItemPath path )
+    Input getInput( final ComponentPath path )
     {
-        final Input input = formItems.getInput( path );
+        final Input input = components.getInput( path );
         if ( input == null )
         {
             return null;
@@ -136,33 +136,33 @@ public class ContentType
         return input;
     }
 
-    public HierarchicalFormItem getFormItem( final String path )
+    public HierarchicalComponent getComponent( final String path )
     {
-        return formItems.getHierarchicalFormItem( new FormItemPath( path ) );
+        return components.getHierarchicalComponent( new ComponentPath( path ) );
     }
 
-    public HierarchicalFormItem getFormItem( final FormItemPath path )
+    public HierarchicalComponent getComponent( final ComponentPath path )
     {
-        return formItems.getHierarchicalFormItem( path );
+        return components.getHierarchicalComponent( path );
     }
 
     public Input getInput( final String path )
     {
-        return getInput( new FormItemPath( path ) );
+        return getInput( new ComponentPath( path ) );
     }
 
-    public FormItemSet getFormItemSet( final String path )
+    public ComponentSet getComponentSet( final String path )
     {
-        final FormItemPath formItemPath = new FormItemPath( path );
-        final FormItemSet formItemSet = formItems.getFormItemSet( formItemPath );
-        Preconditions.checkState( formItemSet.getPath().equals( formItemPath ),
-                                  "Found FormItemSet at path [%s] have unexpected path: " + formItemSet.getPath(), formItemPath );
-        return formItemSet;
+        final ComponentPath componentPath = new ComponentPath( path );
+        final ComponentSet componentSet = components.getComponentSet( componentPath );
+        Preconditions.checkState( componentSet.getPath().equals( componentPath ),
+                                  "Found ComponentSet at path [%s] have unexpected path: " + componentSet.getPath(), componentPath );
+        return componentSet;
     }
 
-    public void subTypeReferencesToFormItems( final SubTypeFetcher subTypeFetcher )
+    public void subTypeReferencesToComponents( final SubTypeFetcher subTypeFetcher )
     {
-        formItems.subTypeReferencesToFormItems( subTypeFetcher );
+        components.subTypeReferencesToComponents( subTypeFetcher );
     }
 
 }

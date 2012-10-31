@@ -9,8 +9,8 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.type.formitem.FormItem;
-import com.enonic.wem.api.content.type.formitem.FormItemSet;
+import com.enonic.wem.api.content.type.formitem.Component;
+import com.enonic.wem.api.content.type.formitem.ComponentSet;
 import com.enonic.wem.api.content.type.formitem.Input;
 import com.enonic.wem.api.content.type.formitem.InvalidDataException;
 
@@ -69,12 +69,12 @@ public class Validator
         {
             checkDataTypeValidity( data );
 
-            final FormItem formItem = contentType.getFormItem( data.getPath().resolveFormItemPath().toString() );
-            if ( formItem != null )
+            final Component component = contentType.getComponent( data.getPath().resolveComponentPath().toString() );
+            if ( component != null )
             {
-                if ( formItem instanceof Input )
+                if ( component instanceof Input )
                 {
-                    checkInputValidity( data, (Input) formItem );
+                    checkInputValidity( data, (Input) component );
                 }
             }
         }
@@ -83,23 +83,23 @@ public class Validator
     private void doValidateDataWithDataSet( final Data dataWithDataSet )
     {
         final DataSet dataSet = dataWithDataSet.getDataSet();
-        final FormItem formItem = contentType.getFormItem( dataSet.getPath().resolveFormItemPath().toString() );
-        if ( formItem != null )
+        final Component component = contentType.getComponent( dataSet.getPath().resolveComponentPath().toString() );
+        if ( component != null )
         {
-            if ( formItem instanceof FormItemSet )
+            if ( component instanceof ComponentSet )
             {
                 for ( Data subData : dataSet )
                 {
-                    final FormItem subFormItem = contentType.getFormItem( subData.getPath().resolveFormItemPath().toString() );
-                    if ( subFormItem instanceof Input )
+                    final Component subComponent = contentType.getComponent( subData.getPath().resolveComponentPath().toString() );
+                    if ( subComponent instanceof Input )
                     {
-                        checkInputValidity( subData, (Input) subFormItem );
+                        checkInputValidity( subData, (Input) subComponent );
                     }
                 }
             }
-            else if ( formItem instanceof Input )
+            else if ( component instanceof Input )
             {
-                checkInputValidity( dataWithDataSet, (Input) formItem );
+                checkInputValidity( dataWithDataSet, (Input) component );
             }
         }
         else

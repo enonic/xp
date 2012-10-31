@@ -10,14 +10,14 @@ import org.jdom.JDOMException;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypeSerializer;
 import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.type.formitem.FormItemsSerializerXml;
+import com.enonic.wem.core.content.type.formitem.ComponentsSerializerXml;
 
 import com.enonic.cms.framework.util.JDOMUtil;
 
 public class ContentTypeSerializerXml
     implements ContentTypeSerializer
 {
-    private FormItemsSerializerXml formItemsSerializer = new FormItemsSerializerXml();
+    private ComponentsSerializerXml componentsSerializer = new ComponentsSerializerXml();
 
     private boolean prettyPrint = false;
 
@@ -51,7 +51,7 @@ public class ContentTypeSerializerXml
     {
         typeEl.addContent( new Element( "name" ).setText( type.getName() ) );
         typeEl.addContent( new Element( "module" ).setText( type.getModule().getName() ) );
-        typeEl.addContent( formItemsSerializer.generate( type.getFormItems() ) );
+        typeEl.addContent( componentsSerializer.generate( type.getComponents() ) );
     }
 
     public ContentType toContentType( String xml )
@@ -80,7 +80,7 @@ public class ContentTypeSerializerXml
 
         try
         {
-            contentType.setFormItems( formItemsSerializer.parse( contentTypeEl ) );
+            contentType.setComponents( componentsSerializer.parse( contentTypeEl ) );
         }
         catch ( Exception e )
         {
