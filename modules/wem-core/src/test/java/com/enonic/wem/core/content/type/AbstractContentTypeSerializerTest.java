@@ -8,7 +8,6 @@ import com.enonic.wem.api.content.type.ContentTypeSerializer;
 import com.enonic.wem.api.content.type.component.ComponentPath;
 import com.enonic.wem.api.content.type.component.ComponentSet;
 import com.enonic.wem.api.content.type.component.ComponentSetSubType;
-import com.enonic.wem.api.content.type.component.ComponentSetSubTypeBuilder;
 import com.enonic.wem.api.content.type.component.Components;
 import com.enonic.wem.api.content.type.component.FieldSet;
 import com.enonic.wem.api.content.type.component.Input;
@@ -19,6 +18,7 @@ import com.enonic.wem.api.content.type.component.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
+import static com.enonic.wem.api.content.type.component.ComponentSetSubType.newComponentSetSubType;
 import static com.enonic.wem.api.content.type.component.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.component.Input.newInput;
 import static com.enonic.wem.api.content.type.component.SubTypeReference.newSubTypeReference;
@@ -94,7 +94,7 @@ public abstract class AbstractContentTypeSerializerTest
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        ComponentSetSubType subType = ComponentSetSubTypeBuilder.newComponentSetSubType().module( module ).componentSet(
+        ComponentSetSubType subType = newComponentSetSubType().module( module ).componentSet(
             newComponentSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(

@@ -3,23 +3,21 @@ package com.enonic.wem.api.content.type.component;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.module.Module;
+
 public class ComponentSetSubType
     extends SubType
 {
     private ComponentSet componentSet = new ComponentSet();
 
-    ComponentSetSubType()
+    ComponentSetSubType( final Module module )
     {
+        super( module );
     }
 
     public String getName()
     {
         return componentSet.getName();
-    }
-
-    void setComponentSet( final ComponentSet componentSet )
-    {
-        this.componentSet = componentSet;
     }
 
     @Override
@@ -46,5 +44,36 @@ public class ComponentSetSubType
         newComponentSet.setName( subTypeReference.getName() );
         newComponentSet.setPath( subTypeReference.getPath() );
         return newComponentSet;
+    }
+
+    public static Builder newComponentSetSubType()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private Module module;
+
+        private ComponentSet componentSet;
+
+        public Builder module( Module value )
+        {
+            this.module = value;
+            return this;
+        }
+
+        public Builder componentSet( ComponentSet value )
+        {
+            this.componentSet = value;
+            return this;
+        }
+
+        public ComponentSetSubType build()
+        {
+            ComponentSetSubType subType = new ComponentSetSubType( module );
+            subType.componentSet = componentSet;
+            return subType;
+        }
     }
 }

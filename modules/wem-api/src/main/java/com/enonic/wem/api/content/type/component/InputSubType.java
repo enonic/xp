@@ -9,8 +9,9 @@ public class InputSubType
 {
     private Input input;
 
-    InputSubType()
+    InputSubType( final Module module )
     {
+        super( module );
     }
 
     public String getName()
@@ -27,11 +28,6 @@ public class InputSubType
     public Input getInput()
     {
         return input;
-    }
-
-    void setInput( final Input value )
-    {
-        this.input = value;
     }
 
     public HierarchicalComponent create( final SubTypeReference subTypeReference )
@@ -69,9 +65,8 @@ public class InputSubType
         {
             Preconditions.checkNotNull( input, "input is required" );
 
-            InputSubType subType = new InputSubType();
-            subType.setInput( input );
-            subType.setModule( module );
+            InputSubType subType = new InputSubType( module );
+            subType.input = input;
             return subType;
         }
     }

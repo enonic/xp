@@ -22,7 +22,7 @@ import com.enonic.wem.api.content.type.component.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
-import static com.enonic.wem.api.content.type.component.ComponentSetSubTypeBuilder.newComponentSetSubType;
+import static com.enonic.wem.api.content.type.component.ComponentSetSubType.newComponentSetSubType;
 import static com.enonic.wem.api.content.type.component.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.component.Input.newInput;
 import static com.enonic.wem.api.content.type.component.InputSubType.newInputSubType;
@@ -126,7 +126,7 @@ public class ContentTest
         ContentType contentType = new ContentType();
         contentType.addComponent( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
 
-        ComponentSet componentSet = ComponentSet.newComponentSet().name( "personalia" ).build();
+        ComponentSet componentSet = newComponentSet().name( "personalia" ).build();
         contentType.addComponent( componentSet );
         componentSet.addInput( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
         componentSet.addInput( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
@@ -238,10 +238,10 @@ public class ContentTest
     @Test
     public void structured_getEntries()
     {
-        ComponentSet child = ComponentSet.newComponentSet().name( "child" ).multiple( true ).build();
+        ComponentSet child = newComponentSet().name( "child" ).multiple( true ).build();
         child.addInput( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
         child.addInput( newInput().name( "age" ).type( InputTypes.TEXT_LINE ).build() );
-        ComponentSet features = ComponentSet.newComponentSet().name( "features" ).multiple( false ).build();
+        ComponentSet features = newComponentSet().name( "features" ).multiple( false ).build();
         features.addInput( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
         features.addInput( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
         child.addComponentSet( features );

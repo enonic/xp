@@ -7,9 +7,9 @@ public abstract class SubType
 {
     private Module module;
 
-    SubType()
+    SubType( final Module module )
     {
-
+        this.module = module;
     }
 
     public abstract String getName();
@@ -17,11 +17,6 @@ public abstract class SubType
     public Module getModule()
     {
         return module;
-    }
-
-    public void setModule( final Module module )
-    {
-        this.module = module;
     }
 
     public SubTypeQualifiedName getQualifiedName()

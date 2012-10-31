@@ -5,7 +5,7 @@ import org.junit.Test;
 import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.component.ComponentSetSubTypeBuilder.newComponentSetSubType;
+import static com.enonic.wem.api.content.type.component.ComponentSetSubType.newComponentSetSubType;
 import static com.enonic.wem.api.content.type.component.Input.newInput;
 import static com.enonic.wem.api.content.type.component.InputSubType.newInputSubType;
 import static com.enonic.wem.api.content.type.component.SubTypeReference.newSubTypeReference;
