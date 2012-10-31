@@ -149,11 +149,11 @@ public class ContentTest
         Input nameInput = newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build();
         contentType.addComponent( nameInput );
 
-        ComponentSet formItemSet = newComponentSet().name( "personalia" ).multiple( true ).build();
-        contentType.addComponent( formItemSet );
-        formItemSet.addInput( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.addInput( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        formItemSet.addInput( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        ComponentSet componentSet = newComponentSet().name( "personalia" ).multiple( true ).build();
+        contentType.addComponent( componentSet );
+        componentSet.addInput( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.addInput( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.addInput( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );

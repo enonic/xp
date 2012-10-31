@@ -44,9 +44,9 @@ public final class CreateOrUpdateContentRpcHandler
         myContentType.setName( "myContentType" );
         myContentType.addComponent( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() );
         myContentType.addComponent( newInput().name( "myTextLine2" ).type( InputTypes.TEXT_LINE ).build() );
-        ComponentSet formItemSet = newComponentSet().name( "myFormItemSet" ).build();
-        formItemSet.add( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() );
-        myContentType.addComponent( formItemSet );
+        ComponentSet componentSet = newComponentSet().name( "myComponentSet" ).build();
+        componentSet.add( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() );
+        myContentType.addComponent( componentSet );
         mockContentTypeFetcher.add( myContentType );
         this.contentTypeFetcher = mockContentTypeFetcher;
     }

@@ -29,18 +29,18 @@ public class ComponentsSerializerXml
     {
         final Components components = new Components();
         final Element itemsEl = parentEl.getChild( "items" );
-        final Iterator formItemIt = itemsEl.getChildren().iterator();
-        while ( formItemIt.hasNext() )
+        final Iterator componentIt = itemsEl.getChildren().iterator();
+        while ( componentIt.hasNext() )
         {
-            final Element formItemEl = (Element) formItemIt.next();
+            final Element componentEl = (Element) componentIt.next();
 
             try
             {
-                components.add( componentSerializer.parse( formItemEl ) );
+                components.add( componentSerializer.parse( componentEl ) );
             }
             catch ( Exception e )
             {
-                throw new JsonParsingException( "Failed to parse Component: " + JDOMUtil.printElement( formItemEl ), e );
+                throw new JsonParsingException( "Failed to parse Component: " + JDOMUtil.printElement( componentEl ), e );
             }
         }
 

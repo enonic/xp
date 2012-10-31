@@ -28,13 +28,13 @@ Ext.define( 'Admin.view.content.ContentPanel', {
                     },
                     {
                         xtype:'fieldset',
-                        title:'My formItemSet',
+                        title:'My componentSet',
                         value:'',
                         items:[
                             {
                                 xtype:'textfield',
                                 fieldLabel:'My textline 1',
-                                name:'myFormItemSet.myTextLine1'
+                                name:'myComponentSet.myTextLine1'
                             }
                         ]
                     },
@@ -62,7 +62,7 @@ Ext.define( 'Admin.view.content.ContentPanel', {
         var data = {
             'myTextLine1':form.findField( 'myTextLine1' ).getValue(),
             'myTextLine2':form.findField( 'myTextLine2' ).getValue(),
-            'myFormItemSet.myTextLine1':form.findField( 'myFormItemSet.myTextLine1' ).getValue()
+            'myComponentSet.myTextLine1':form.findField( 'myComponentSet.myTextLine1' ).getValue()
         };
         return data;
     },

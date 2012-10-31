@@ -17,9 +17,9 @@ public class InputTypeSerializerXml
         return inputTypeEl;
     }
 
-    public BaseInputType parse( final Element formItemEl )
+    public BaseInputType parse( final Element componentEl )
     {
-        Element inputTypeEl = formItemEl.getChild( "input-type" );
+        Element inputTypeEl = componentEl.getChild( "input-type" );
         return instantiate( inputTypeEl.getAttributeValue( "class-name" ) );
     }
 

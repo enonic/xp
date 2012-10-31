@@ -26,20 +26,20 @@ public class ComponentsSerializerJson
         g.writeEndArray();
     }
 
-    public Components parse( final JsonNode formItemsNode )
+    public Components parse( final JsonNode componentsNode )
     {
         final Components components = new Components();
-        final Iterator<JsonNode> formItemIt = formItemsNode.getElements();
-        while ( formItemIt.hasNext() )
+        final Iterator<JsonNode> componentIt = componentsNode.getElements();
+        while ( componentIt.hasNext() )
         {
             try
             {
-                final JsonNode formItemNode = formItemIt.next();
-                components.add( componentSerializer.parse( formItemNode ) );
+                final JsonNode componentNode = componentIt.next();
+                components.add( componentSerializer.parse( componentNode ) );
             }
             catch ( Exception e )
             {
-                throw new JsonParsingException( "Failed to parse Component: " + formItemsNode.toString(), e );
+                throw new JsonParsingException( "Failed to parse Component: " + componentsNode.toString(), e );
             }
         }
 

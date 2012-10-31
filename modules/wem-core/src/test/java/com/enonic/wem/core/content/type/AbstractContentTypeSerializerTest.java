@@ -123,7 +123,7 @@ public abstract class AbstractContentTypeSerializerTest
     }
 
     @Test
-    public void given_content_type_with_componentSet_inside_formItemSet_and_component_in_both_when_parse_then_paths_are_correct()
+    public void given_content_type_with_componentSet_inside_componentSet_and_component_in_both_when_parse_then_paths_are_correct()
     {
         // setup
         ContentType contentType = new ContentType();

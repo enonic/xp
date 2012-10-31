@@ -112,15 +112,15 @@ public abstract class AbstractContentSerializerTest
         contentType.setName( "MyContentType" );
         contentType.addComponent( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
 
-        ComponentSet formItemSet = newBuilder().name( "formItemSet" ).build();
-        contentType.addComponent( formItemSet );
-        formItemSet.addInput( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
+        ComponentSet componentSet = newBuilder().name( "componentSet" ).build();
+        contentType.addComponent( componentSet );
+        componentSet.addInput( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
         content.setType( contentType );
         content.setData( "myText", "A value" );
-        content.setData( "formItemSet.myText", "A another value" );
+        content.setData( "componentSet.myText", "A another value" );
 
         String serialized = toString( content );
 
@@ -129,9 +129,9 @@ public abstract class AbstractContentSerializerTest
 
         // verify
         assertEquals( "myText", actualContent.getData( "myText" ).getPath().toString() );
-        assertEquals( "formItemSet.myText", actualContent.getData( "formItemSet.myText" ).getPath().toString() );
+        assertEquals( "componentSet.myText", actualContent.getData( "componentSet.myText" ).getPath().toString() );
         assertEquals( "A value", actualContent.getData( "myText" ).getValue() );
-        assertEquals( "A another value", actualContent.getData( "formItemSet.myText" ).getValue() );
+        assertEquals( "A another value", actualContent.getData( "componentSet.myText" ).getValue() );
     }
 
     @Test
@@ -142,14 +142,14 @@ public abstract class AbstractContentSerializerTest
         contentType.setName( "MyContentType" );
         contentTypeFetcher.add( contentType );
 
-        ComponentSet componentSet = newComponentSet().name( "formItemSet" ).label( "ComponentSet" ).multiple( true ).build();
+        ComponentSet componentSet = newComponentSet().name( "componentSet" ).label( "ComponentSet" ).multiple( true ).build();
         contentType.addComponent( componentSet );
         componentSet.addInput( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );
-        content.setData( "formItemSet[0].myText", "Value 1" );
-        content.setData( "formItemSet[1].myText", "Value 2" );
+        content.setData( "componentSet[0].myText", "Value 1" );
+        content.setData( "componentSet[1].myText", "Value 2" );
 
         String serialized = toString( content );
 
@@ -157,10 +157,10 @@ public abstract class AbstractContentSerializerTest
         Content parsedContent = toContent( serialized );
 
         // verify
-        assertEquals( "formItemSet[0].myText", parsedContent.getData( "formItemSet[0].myText" ).getPath().toString() );
-        assertEquals( "formItemSet[1].myText", parsedContent.getData( "formItemSet[1].myText" ).getPath().toString() );
-        assertEquals( "Value 1", parsedContent.getData( "formItemSet[0].myText" ).getValue() );
-        assertEquals( "Value 2", parsedContent.getData( "formItemSet[1].myText" ).getValue() );
+        assertEquals( "componentSet[0].myText", parsedContent.getData( "componentSet[0].myText" ).getPath().toString() );
+        assertEquals( "componentSet[1].myText", parsedContent.getData( "componentSet[1].myText" ).getPath().toString() );
+        assertEquals( "Value 1", parsedContent.getData( "componentSet[0].myText" ).getValue() );
+        assertEquals( "Value 2", parsedContent.getData( "componentSet[1].myText" ).getValue() );
     }
 
     @Test
