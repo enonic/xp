@@ -73,6 +73,9 @@ Ext.define('Admin.view.TopBarPanel', {
                 },
                 pagechange: function (cmp, num) {
                     console.log('page ' + num);
+                },
+                tileclick: function (cmp, config) {
+                    alert('tile click ' + config.title);
                 }
             },
             items: [
@@ -107,12 +110,8 @@ Ext.define('Admin.view.TopBarPanel', {
                             text: 'Huh ?'
                         }
                     ],
-                    contentTpl: new Ext.XTemplate('<tpl for="posts">' +
-                                                  '<div class="item">' +
-                                                  '<img src="{img}"/>' +
-                                                  '<p>{text}</p>' +
-                                                  '</div>' +
-                                                  '</tpl>')
+                    contentTpl: new Ext.XTemplate('<tpl for="posts"><div class="item">' +
+                                                  '<img src="{img}"/><p>{text}</p></div></tpl>')
                 },
                 {
                     title: 'Cluster',
@@ -120,7 +119,7 @@ Ext.define('Admin.view.TopBarPanel', {
                 },
                 {
                     title: 'Userstores',
-                    cls: 'userstores'
+                    cls: 'userstores start-row'
                 },
                 {
                     title: 'Accounts',

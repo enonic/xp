@@ -8,8 +8,8 @@ ul {
     padding: 0;
 }
 
-.menu {
-    padding: 5px;
+.admin-start-menu {
+    padding: 10px;
     font: 13px normal Arial, sans-serif;
     color: white;
     background: black; /* for non-css3 browsers */
@@ -20,7 +20,7 @@ ul {
 
 .top {
     position: relative;
-    padding: 15px 125px 5px 5px;
+    padding: 10px 120px 10px 0;
     clear: left;
 }
 
@@ -32,7 +32,7 @@ ul {
 
 .top .search {
     float: left;
-    top: 5px;
+    top: 0;
     width: 550px;
     margin-bottom: 10px;
 }
@@ -50,8 +50,8 @@ ul {
     background: black;
     padding-right: 20px;
     position: absolute;
-    right: -5px;
-    top: 15px;
+    right: -10px;
+    top: 10px;
 }
 
 .top .user img {
@@ -67,6 +67,17 @@ ul {
 }
 
 /*  Tile    */
+.center {
+    overflow-x: auto;
+}
+
+.center .scroller {
+    width: 2000px;
+}
+
+.center .scroller .wrapper {
+    float: left;
+}
 
 .center .tile {
     display: block;
@@ -94,6 +105,7 @@ ul {
 
 .tile.start-row {
     clear: left;
+    margin-left: 0;
 }
 
 .tile.span2 {
@@ -200,7 +212,7 @@ ul {
 
 .pager-container {
     text-align: center;
-    padding: 10px 5px;
+    padding: 10px 0 0;
 }
 
 ul.pager {
@@ -209,7 +221,7 @@ ul.pager {
 }
 
 ul.pager li {
-    background: url("../images/unchecked.png");
+    background: url("../../html-templates/images/unchecked.png");
     width: 18px;
     height: 18px;
     margin: 2px;
@@ -218,7 +230,7 @@ ul.pager li {
 }
 
 ul.pager li.current {
-    background: url("../images/checked.png");
+    background: url("../../html-templates/images/checked.png");
     width: 18px;
     height: 18px;
     margin: 2px;
@@ -227,7 +239,7 @@ ul.pager li.current {
 }
 
 ul.bottom {
-    padding: 5px;
+    padding: 10px 0 0;
 }
 
 ul.bottom li {
@@ -243,43 +255,43 @@ ul.bottom li a {
 /*  Individual tiles configs    */
 
 .tile.dashboard {
-    background-image: url('../images/dashboard.jpg');
+    background-image: url('../../html-templates/images/dashboard.jpg');
     background-size: 100% 100%;
 }
 
 .tile.content-manager {
     background-color: #0056D6;
-    background-image: url("../images/data.png");
+    background-image: url("../../html-templates/images/data.png");
 }
 
 .tile.userstores {
     background-color: #06419F;
-    background-image: url("../images/user_earth.png");
+    background-image: url("../../html-templates/images/user_earth.png");
 }
 
 .tile.accounts {
     background-color: #9929BD;
-    background-image: url("../images/users2.png");
+    background-image: url("../../html-templates/images/users2.png");
 }
 
 .tile.administrators {
     background-color: #E32400;
-    background-image: url("../images/earth.png");
+    background-image: url("../../html-templates/images/earth.png");
 }
 
 .tile.content-studio {
     background-color: #AE1D00;
-    background-image: url("../images/cube_molecule.png");
+    background-image: url("../../html-templates/images/cube_molecule.png");
 }
 
 .tile.schedule {
     background-color: #0251CA;
-    background-image: url("../images/clock.png");
+    background-image: url("../../html-templates/images/clock.png");
 }
 
 .tile.cluster {
     background-color: #060606;
-    background-image: url("../images/virus.png");
+    background-image: url("../../html-templates/images/virus.png");
 }
 
 .tile.activity {
@@ -288,7 +300,7 @@ ul.bottom li a {
 
 .tile.live-trace {
     background-color: #060606;
-    background-image: url("../images/linechart.jpg");
+    background-image: url("../../html-templates/images/linechart.jpg");
     background-size: 100% 100%;
 }
 
