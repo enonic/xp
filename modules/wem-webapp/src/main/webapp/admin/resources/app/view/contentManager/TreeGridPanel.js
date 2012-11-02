@@ -4,10 +4,9 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
     store: 'Admin.store.contentManager.ContentStore',
     treeStore: 'Admin.store.contentManager.ContentTreeStore',
 
-
-    nodeIconClasses: {
-        site: 'icon-site-32',
-        contentType: 'icon-content-32'
+    iconClasses: {
+        "myModule:mySite": 'icon-site-32',
+        "myModule:myType": 'icon-content-32'
     },
 
     gridConf: {
@@ -20,7 +19,7 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
         this.columns = [
             {
                 text: 'Display Name',
-                dataIndex: 'name',
+                dataIndex: 'displayName',
                 sortable: true,
                 renderer: this.nameRenderer,
                 flex: 1
@@ -36,8 +35,8 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
                 sortable: true
             },
             {
-                text: 'Last Modified',
-                dataIndex: 'lastModified',
+                text: 'Modified',
+                dataIndex: 'modifiedTime',
                 renderer: this.prettyDateRenderer,
                 sortable: true
             }
@@ -48,21 +47,9 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
 
     nameRenderer: function (value, p, record) {
         var account = record.data;
-        var photoUrl = this.up('contentTreeGridPanel').resolvePhotoUrl(account);
+        var iconCls = this.up('contentTreeGridPanel').resolveIconClass(record);
 
-        return Ext.String.format(Templates.contentManager.gridPanelNameRenderer, photoUrl, value, account.name, account.userStore);
-    },
-
-    resolvePhotoUrl: function (account) {
-        var url;
-        var isSite = account.type === 'site';
-        if (isSite) {
-            url = 'resources/images/icons/32x32/earth2.png';
-        } else {
-            url = 'resources/images/icons/32x32/cubes_blue.png';
-        }
-
-        return url;
+        return Ext.String.format(Templates.contentManager.gridPanelNameRenderer, iconCls, value, account.name, account.userStore);
     },
 
     prettyDateRenderer: function (value, p, record) {

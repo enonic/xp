@@ -8,7 +8,7 @@
   <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/ext-all.css">
   <link rel="stylesheet" type="text/css" href="resources/css/main.css">
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
-  <link rel="stylesheet" type="text/css" href="resources/css/cms-preview-panel.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/admin-preview-panel.css">
   <link rel="stylesheet" type="text/css" href="resources/css/BoxSelect.css">
 
   <!-- Ext JS -->

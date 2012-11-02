@@ -1,9 +1,8 @@
 <tpl for=".">
     <div id="selected-item-box-{data.key}" class="admin-selected-item-box large x-btn-default-large clearfix">
         <div class="left">
-            <tpl if="data.type==='contentType'"><img src="resources/images/icons/24x24/cubes_blue.png"
-                                                     alt="{data.name}"/></tpl>
-            <tpl if="data.type==='site'"><img src="resources/images/icons/24x24/earth2.png" alt="{data.name}"/></tpl>
+            <img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" class="{data.iconCls}"
+                 alt="{data.name}"/>
         </div>
         <div class="center">
             <h2>{data.name}</h2>

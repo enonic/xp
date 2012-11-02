@@ -1,47 +1,34 @@
 {
-    "results": {
-        "content": [
+    "jsonrpc": "2.0",
+    "id": "1",
+    "result": {
+        "success": true,
+        "total": 2,
+        "contents": [
             {
-                "key": 1,
-                "name": "Travel",
-                "type": "site",
-                "owner": "system",
-                "url": "/dev/live-edit/page/page.jsp",
-                "lastModified": "2010-10-10 10:10:00"
+                "path": "mySet.myContent",
+                "name": "mySite",
+                "type": "myModule:mySite",
+                "displayName": "My site",
+                "owner": "user:enonic:aro",
+                "modifier": "user:enonic:aro",
+                "modifiedTime": "2012-10-01T10:37:02.055+01:00",
+                "createdTime": "2012-10-01T10:37:02.055+01:00",
+                "editable": true,
+                "deletable": true
             },
             {
-                "key": 2,
-                "name": "News",
-                "type": "contentType",
-                "owner": "system",
-                "url": "/dev/live-edit/page/page.jsp",
-                "lastModified": "2010-10-10 10:10:00"
-            },
-            {
-                "key": 3,
-                "name": "Blueman",
-                "type": "site",
-                "owner": "system",
-                "url": "/dev/live-edit/page/plug-ins.jsp",
-                "lastModified": "2010-10-10 10:10:00"
-            },
-            {
-                "key": 4,
-                "name": "Cityscape",
-                "type": "site",
-                "owner": "system",
-                "url": "/dev/live-edit/page/page.jsp",
-                "lastModified": "2010-10-10 10:10:00"
-            },
-            {
-                "key": 5,
-                "name": "Article",
-                "type": "contentType",
-                "url": "/dev/live-edit/page/page.jsp",
-                "owner": "system",
-                "lastModified": "2010-10-10 10:10:00"
+                "path": "mySet.mySecondContent",
+                "name": "mySecondContent",
+                "type": "myModule:myType",
+                "displayName": "My second type",
+                "owner": "user:enonic:aro",
+                "modifier": "user:enonic:aro",
+                "modifiedTime": "2012-10-01T10:37:02.055+01:00",
+                "createdTime": "2012-10-01T10:37:02.055+01:00",
+                "editable": true,
+                "deletable": true
             }
-        ],
-        "total": 5
+        ]
     }
 }
