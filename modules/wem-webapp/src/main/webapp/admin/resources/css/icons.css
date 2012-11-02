@@ -246,6 +246,14 @@
 
 /*---- 128 px icons ----*/
 
+.icon-content-128 {
+    background: transparent url("../images/icons/128x128/cubes_blue.png") 0 0 no-repeat;
+}
+
+.icon-site-128 {
+    background: transparent url("../images/icons/128x128/earth2.png") 0 0 no-repeat;
+}
+
 .icon-group-128 {
     background: transparent url("../images/icons/128x128/group.png") 0 0 no-repeat;
 }

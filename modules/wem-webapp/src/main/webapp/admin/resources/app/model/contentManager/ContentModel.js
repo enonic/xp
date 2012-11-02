@@ -2,9 +2,12 @@ Ext.define('Admin.model.contentManager.ContentModel', {
     extend: 'Ext.data.Model',
 
     fields: [
-        'key', 'name', 'type', 'owner', 'url',
-        { name: 'lastModified', type: 'date', defaultValue: new Date() }
+        'path', 'name', 'type', 'displayName', 'owner', 'modifier',
+        { name: 'modifiedTime', type: 'date', defaultValue: new Date() },
+        { name: 'createdTime', type: 'date', defaultValue: new Date() },
+        { name: 'editable', type: 'boolean' },
+        { name: 'deletable', type: 'boolean' }
     ],
 
-    idProperty: 'key'
+    idProperty: 'path'
 });

@@ -10,13 +10,12 @@ Ext.define('Admin.view.datadesigner.TreeGridPanel', {
         }
     ],
 
-    nodeIconClasses: {
+    iconClasses: {
         form: 'icon-form-32',
         folder: 'icon-folder-32',
         media: 'icon-media-32',
         shortcut: 'icon-shortcut-32',
-        struct: 'icon-struct-32',
-        shortcut: 'icon-shortcut-32'
+        struct: 'icon-struct-32'
     },
 
     initComponent: function () {
