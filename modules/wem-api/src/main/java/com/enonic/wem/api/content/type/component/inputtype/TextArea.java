@@ -13,7 +13,6 @@ public class TextArea
 {
     public TextArea()
     {
-        super( "textArea" );
     }
 
     @Override

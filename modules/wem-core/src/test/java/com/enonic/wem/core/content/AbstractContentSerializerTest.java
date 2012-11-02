@@ -15,7 +15,6 @@ import com.enonic.wem.api.content.type.component.FieldSet;
 import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.component.ComponentSet.newBuilder;
 import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.component.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.component.Input.newInput;
@@ -112,9 +111,9 @@ public abstract class AbstractContentSerializerTest
         contentType.setName( "MyContentType" );
         contentType.addComponent( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
 
-        ComponentSet componentSet = newBuilder().name( "componentSet" ).build();
+        ComponentSet componentSet = newComponentSet().name( "componentSet" ).build();
         contentType.addComponent( componentSet );
-        componentSet.addInput( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -144,7 +143,7 @@ public abstract class AbstractContentSerializerTest
 
         ComponentSet componentSet = newComponentSet().name( "componentSet" ).label( "ComponentSet" ).multiple( true ).build();
         contentType.addComponent( componentSet );
-        componentSet.addInput( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );

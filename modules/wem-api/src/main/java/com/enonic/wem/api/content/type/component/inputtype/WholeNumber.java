@@ -13,7 +13,6 @@ public class WholeNumber
 {
     public WholeNumber()
     {
-        super( "wholeNumber" );
     }
 
     @Override

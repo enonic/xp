@@ -13,7 +13,6 @@ public class DecimalNumber
 {
     public DecimalNumber()
     {
-        super( "decimalNumber" );
     }
 
     @Override

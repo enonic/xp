@@ -7,6 +7,7 @@ import com.enonic.wem.api.content.type.component.ComponentSet
 import com.enonic.wem.api.content.type.component.FieldSet
 import com.enonic.wem.api.content.type.component.inputtype.InputTypes
 
+import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet
 import static com.enonic.wem.api.content.type.component.Input.newInput
 
 class ContentSpecTest extends spock.lang.Specification
@@ -30,8 +31,8 @@ class ContentSpecTest extends spock.lang.Specification
     {
         given:
         ContentType contentType = new ContentType();
-        ComponentSet fieldSet = ComponentSet.newComponentSet().name( "myFieldSet" ).required( true ).build();
-        fieldSet.addInput( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( false ).build() )
+        ComponentSet fieldSet = newComponentSet().name( "myFieldSet" ).required( true ).build();
+        fieldSet.add( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( false ).build() )
         contentType.addComponent( fieldSet );
         Content content = new Content();
         content.setType( contentType );
@@ -47,8 +48,8 @@ class ContentSpecTest extends spock.lang.Specification
     {
         given:
         ContentType contentType = new ContentType();
-        ComponentSet fieldSet = ComponentSet.newComponentSet().name( "myFieldSet" ).required( true ).build();
-        fieldSet.addInput( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() )
+        ComponentSet fieldSet = newComponentSet().name( "myFieldSet" ).required( true ).build();
+        fieldSet.add( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() )
         contentType.addComponent( fieldSet );
         Content content = new Content();
         content.setType( contentType );
@@ -65,8 +66,8 @@ class ContentSpecTest extends spock.lang.Specification
     {
         given:
         ContentType contentType = new ContentType();
-        ComponentSet fieldSet = ComponentSet.newComponentSet().name( "myFieldSet" ).required( false ).build();
-        fieldSet.addInput( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() )
+        ComponentSet fieldSet = newComponentSet().name( "myFieldSet" ).required( false ).build();
+        fieldSet.add( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() )
         contentType.addComponent( fieldSet );
         Content content = new Content();
         content.setType( contentType );
@@ -83,8 +84,8 @@ class ContentSpecTest extends spock.lang.Specification
     {
         given:
         ContentType contentType = new ContentType();
-        ComponentSet fieldSet = ComponentSet.newComponentSet().name( "myFieldSet" ).required( false ).build();
-        fieldSet.addInput( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() )
+        ComponentSet fieldSet = newComponentSet().name( "myFieldSet" ).required( false ).build();
+        fieldSet.add( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() )
         contentType.addComponent( fieldSet );
         Content content = new Content();
         content.setType( contentType );

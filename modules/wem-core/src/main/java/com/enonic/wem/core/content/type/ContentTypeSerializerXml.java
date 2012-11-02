@@ -8,7 +8,8 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.ContentTypeSerializer;
+import com.enonic.wem.api.content.type.component.Component;
+import com.enonic.wem.api.content.type.component.Components;
 import com.enonic.wem.core.content.JsonParsingException;
 import com.enonic.wem.core.content.type.component.ComponentsSerializerXml;
 
@@ -51,7 +52,7 @@ public class ContentTypeSerializerXml
     {
         typeEl.addContent( new Element( "name" ).setText( type.getName() ) );
         typeEl.addContent( new Element( "module" ).setText( type.getModule().getName() ) );
-        typeEl.addContent( componentsSerializer.generate( type.getComponents() ) );
+        typeEl.addContent( componentsSerializer.generate( type.componentIterable() ) );
     }
 
     public ContentType toContentType( String xml )
@@ -80,7 +81,11 @@ public class ContentTypeSerializerXml
 
         try
         {
-            contentType.setComponents( componentsSerializer.parse( contentTypeEl ) );
+            final Components components = componentsSerializer.parse( contentTypeEl );
+            for ( Component component : components )
+            {
+                contentType.addComponent( component );
+            }
         }
         catch ( Exception e )
         {

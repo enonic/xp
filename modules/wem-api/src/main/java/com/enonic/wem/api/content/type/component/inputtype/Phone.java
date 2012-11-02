@@ -14,7 +14,7 @@ public class Phone
 {
     public Phone()
     {
-        super( "phone" );
+
     }
 
     @Override

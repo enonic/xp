@@ -34,23 +34,14 @@ public class ComponentSet
 
     public void add( final Component component )
     {
+        if ( component instanceof HierarchicalComponent )
+        {
+            Preconditions.checkState( getPath() != null, "Cannot add HierarchicalComponent before this ComponentSet have a path" );
+            final HierarchicalComponent hierarchicalComponent = (HierarchicalComponent) component;
+            hierarchicalComponent.setPath( new ComponentPath( getPath(), component.getName() ) );
+        }
+
         this.components.add( component );
-    }
-
-    public void addInput( final Input input )
-    {
-        Preconditions.checkState( getPath() != null, "Cannot add Input before this ComponentSet is added" );
-
-        input.setPath( new ComponentPath( getPath(), input.getName() ) );
-        this.components.add( input );
-    }
-
-    public void addComponentSet( final ComponentSet componentSet )
-    {
-        Preconditions.checkState( getPath() != null, "Cannot add ComponentSet before this ComponentSet is added" );
-
-        componentSet.setPath( new ComponentPath( getPath(), componentSet.getName() ) );
-        this.components.add( componentSet );
     }
 
     public String getLabel()
@@ -138,25 +129,49 @@ public class ComponentSet
         return copy;
     }
 
-
-    /**
-     * TODO: Remove: replace usage with newComponentSet().
-     *
-     * @return
-     */
-    public static Builder newBuilder()
-    {
-        return new Builder();
-    }
-
     public static Builder newComponentSet()
     {
         return new Builder();
     }
 
-    public HierarchicalComponent getHierarchicalComponent( final ComponentPath componentPath )
+    HierarchicalComponent getHierarchicalComponent( final ComponentPath componentPath )
     {
         return components.getHierarchicalComponent( componentPath );
+    }
+
+    public Input getInput( final String name )
+    {
+        return components.getInput( name );
+    }
+
+    public Input getInput( final ComponentPath componentPath )
+    {
+        return components.getInput( componentPath );
+    }
+
+    public ComponentSet getComponentSet( final String name )
+    {
+        return components.getComponentSet( name );
+    }
+
+    public ComponentSet getComponentSet( final ComponentPath componentPath )
+    {
+        return components.getComponentSet( componentPath );
+    }
+
+    public SubTypeReference getSubTypeReference( final ComponentPath componentPath )
+    {
+        return components.getSubTypeReference( componentPath );
+    }
+
+    public SubTypeReference getSubTypeReference( final String name )
+    {
+        return components.getSubTypeReference( name );
+    }
+
+    public Layout getLayout( final String name )
+    {
+        return components.getLayout( name );
     }
 
     public static class Builder
@@ -264,13 +279,14 @@ public class ComponentSet
             componentSet.occurrences.setMaxOccurences( occurrences.getMaximum() );
             componentSet.customText = customText;
             componentSet.helpText = helpText;
+
+            Preconditions.checkNotNull( componentSet.getName(), "a name for the ComponentSet is required" );
+            componentSet.setPath( new ComponentPath( componentSet.getName() ) );
+
             for ( Component component : components )
             {
                 componentSet.add( component );
             }
-
-            Preconditions.checkNotNull( componentSet.getName(), "a name for the ComponentSet is required" );
-            componentSet.setPath( new ComponentPath( componentSet.getName() ) );
             return componentSet;
         }
     }

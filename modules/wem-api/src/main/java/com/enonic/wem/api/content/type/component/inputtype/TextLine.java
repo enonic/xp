@@ -13,7 +13,6 @@ public class TextLine
 {
     public TextLine()
     {
-        super( "textLine" );
     }
 
     @Override

@@ -4,11 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.ContentTypeSerializer;
-import com.enonic.wem.api.content.type.component.ComponentPath;
 import com.enonic.wem.api.content.type.component.ComponentSet;
 import com.enonic.wem.api.content.type.component.ComponentSetSubType;
-import com.enonic.wem.api.content.type.component.Components;
 import com.enonic.wem.api.content.type.component.FieldSet;
 import com.enonic.wem.api.content.type.component.Input;
 import com.enonic.wem.api.content.type.component.MockSubTypeFetcher;
@@ -34,58 +31,111 @@ public abstract class AbstractContentTypeSerializerTest
 
     abstract ContentTypeSerializer getSerializer();
 
+    private ContentType contentTypeWithAllComponentTypes;
+
     @Before
     public void before()
     {
         this.serializer = getSerializer();
+        contentTypeWithAllComponentTypes = createContentTypeWithAllInputComponentTypes();
     }
 
-    @Test
-    public void parse_all_types()
+    private ContentType createContentTypeWithAllInputComponentTypes()
     {
         SingleSelectorConfig singleSelectorConfig =
             SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "myOption 1", "o1" ).addOption( "myOption 2",
                                                                                                                      "o2" ).build();
 
-        ContentType contentType = new ContentType();
-        contentType.setName( "MyContentType" );
-        contentType.setModule( myModule );
-        Components components = new Components();
-        contentType.setComponents( components );
-        components.add( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
-        components.add(
+        ContentType.Builder contentTypeBuilder = ContentType.newComponentType().name( "AllTypes" ).module( myModule );
+
+        contentTypeBuilder.add( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
+        contentTypeBuilder.add( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
+        contentTypeBuilder.add( newInput().name( "myDecimalNumber" ).type( InputTypes.DECIMAL_NUMBER ).build() );
+        contentTypeBuilder.add( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
+        contentTypeBuilder.add( newInput().name( "myHtmlArea" ).type( InputTypes.HTML_AREA ).build() );
+        contentTypeBuilder.add( newInput().name( "myMoney" ).type( InputTypes.MONEY ).build() );
+        contentTypeBuilder.add( newInput().name( "myPhone" ).type( InputTypes.PHONE ).build() );
+        contentTypeBuilder.add(
             newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
-        components.add( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        components.add( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() );
-        components.add( newInput().name( "myPhone" ).type( InputTypes.PHONE ).build() );
-        components.add( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
+        contentTypeBuilder.add( newInput().name( "myTags" ).type( InputTypes.TAGS ).build() );
+        contentTypeBuilder.add( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
+        contentTypeBuilder.add( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() );
+        contentTypeBuilder.add( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
+        contentTypeBuilder.add( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
 
-        ComponentSet componentSet = ComponentSet.newBuilder().name( "mySet" ).label( "My set" ).build();
-        components.add( componentSet );
-        componentSet.addInput( newInput().name( "myText1" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.addInput( newInput().name( "myText2" ).occurrences( 1, 3 ).type( InputTypes.TEXT_LINE ).build() );
+        return contentTypeBuilder.build();
+    }
 
-        String serialized = toString( contentType );
+    @Test
+    public void toString_all_input_types()
+    {
+        String serialized = toString( contentTypeWithAllComponentTypes );
+
+        // exercise
+        ContentType actualContentType = toContentType( serialized );
+
+        // verify:
+        assertNotNull( actualContentType );
+
+        assertNotNull( actualContentType.getComponent( "myColor" ) );
+        assertNotNull( actualContentType.getComponent( "myDate" ) );
+        assertNotNull( actualContentType.getComponent( "myDecimalNumber" ) );
+        assertNotNull( actualContentType.getComponent( "myGeoLocation" ) );
+        assertNotNull( actualContentType.getComponent( "myHtmlArea" ) );
+        assertNotNull( actualContentType.getComponent( "myMoney" ) );
+        assertNotNull( actualContentType.getComponent( "myPhone" ) );
+        assertNotNull( actualContentType.getComponent( "mySingleSelector" ) );
+        assertNotNull( actualContentType.getComponent( "myTags" ) );
+        assertNotNull( actualContentType.getComponent( "myTextLine" ) );
+        assertNotNull( actualContentType.getComponent( "myTextArea" ) );
+        assertNotNull( actualContentType.getComponent( "myWholeNumber" ) );
+        assertNotNull( actualContentType.getComponent( "myXml" ) );
+    }
+
+    @Test
+    public void given_all_input_types_when_parsed_then_paths_are_as_expected()
+    {
+        String serialized = toString( contentTypeWithAllComponentTypes );
 
         // exercise
         ContentType actualContentType = toContentType( serialized );
 
         // verify
         assertNotNull( actualContentType );
-        Components actualComponents = actualContentType.getComponents();
 
-        assertNotNull( actualComponents );
-        assertEquals( 7, actualComponents.size() );
+        assertEquals( "myColor", actualContentType.getComponent( "myColor" ).getPath().toString() );
+        assertEquals( "myDate", actualContentType.getComponent( "myDate" ).getPath().toString() );
+        assertEquals( "myDecimalNumber", actualContentType.getComponent( "myDecimalNumber" ).getPath().toString() );
+        assertEquals( "myGeoLocation", actualContentType.getComponent( "myGeoLocation" ).getPath().toString() );
+        assertEquals( "myHtmlArea", actualContentType.getComponent( "myHtmlArea" ).getPath().toString() );
+        assertEquals( "myMoney", actualContentType.getComponent( "myMoney" ).getPath().toString() );
+        assertEquals( "myPhone", actualContentType.getComponent( "myPhone" ).getPath().toString() );
+        assertEquals( "mySingleSelector", actualContentType.getComponent( "mySingleSelector" ).getPath().toString() );
+        assertEquals( "myTags", actualContentType.getComponent( "myTags" ).getPath().toString() );
+        assertEquals( "myTextLine", actualContentType.getComponent( "myTextLine" ).getPath().toString() );
+        assertEquals( "myTextArea", actualContentType.getComponent( "myTextArea" ).getPath().toString() );
+        assertEquals( "myWholeNumber", actualContentType.getComponent( "myWholeNumber" ).getPath().toString() );
+        assertEquals( "myXml", actualContentType.getComponent( "myXml" ).getPath().toString() );
+    }
 
-        assertNotNull( actualComponents.getComponent( new ComponentPath( "myDate" ).getLastElement() ) );
-        assertNotNull( actualComponents.getComponent( new ComponentPath( "mySingleSelector" ).getLastElement() ) );
-        assertNotNull( actualComponents.getComponent( new ComponentPath( "myTextLine" ).getLastElement() ) );
-        assertNotNull( actualComponents.getComponent( new ComponentPath( "myTextArea" ).getLastElement() ) );
-        assertNotNull( actualComponents.getComponent( new ComponentPath( "myPhone" ).getLastElement() ) );
-        assertNotNull( actualComponents.getComponent( new ComponentPath( "myXml" ).getLastElement() ) );
-        assertNotNull( actualComponents.getComponent( new ComponentPath( "mySet" ).getLastElement() ) );
-        assertNotNull( actualComponents.getInput( new ComponentPath( "mySet.myText1" ) ) );
-        assertNotNull( actualComponents.getInput( new ComponentPath( "mySet.myText2" ) ) );
+    @Test
+    public void given_input_in_a_set_when_parsed_then_paths_are_as_expected()
+    {
+        ComponentSet set = newComponentSet().name( "mySet" ).build();
+        set.add( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
+
+        ContentType.Builder contentTypeBuilder = ContentType.newComponentType().name( "TypeWithSet" ).module( myModule );
+        contentTypeBuilder.add( set );
+        ContentType contentType = contentTypeBuilder.build();
+
+        String serialized = toString( contentType );
+
+        // exercise
+        ContentType actualContentType = toContentType( serialized );
+        assertNotNull( actualContentType.getComponent( "mySet" ) );
+        assertEquals( "mySet", actualContentType.getComponent( "mySet" ).getPath().toString() );
+        assertNotNull( actualContentType.getComponent( "mySet.myTextLine" ) );
+        assertEquals( "mySet.myTextLine", actualContentType.getComponent( "mySet.myTextLine" ).getPath().toString() );
     }
 
     @Test
@@ -100,26 +150,22 @@ public abstract class AbstractContentTypeSerializerTest
                 newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
-        ContentType cty = new ContentType();
-        cty.setModule( myModule );
-        cty.addComponent( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        cty.addComponent( newSubTypeReference( subType ).name( "home" ).build() );
-        cty.addComponent( newSubTypeReference( subType ).name( "cabin" ).build() );
+        ContentType.Builder contentTypeBuilder = ContentType.newComponentType().name( "test" ).module( myModule );
+        contentTypeBuilder.add( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
+        contentTypeBuilder.add( newSubTypeReference( subType ).name( "home" ).build() );
+        contentTypeBuilder.add( newSubTypeReference( subType ).name( "cabin" ).build() );
 
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( subType );
 
-        String serialized = toString( cty );
+        String serialized = toString( contentTypeBuilder.build() );
 
         // exercise
         ContentType parsedContentType = toContentType( serialized );
 
         // verify references
-        assertEquals( SubTypeReference.class, parsedContentType.getComponents().getComponent( "home" ).getClass() );
-        assertEquals( SubTypeReference.class, parsedContentType.getComponents().getComponent( "cabin" ).getClass() );
-
-        // verify items past the reference is null
-        assertEquals( null, parsedContentType.getComponents().getComponent( "home.street" ) );
+        assertEquals( SubTypeReference.class, parsedContentType.getComponent( "home" ).getClass() );
+        assertEquals( SubTypeReference.class, parsedContentType.getComponent( "cabin" ).getClass() );
     }
 
     @Test
@@ -151,33 +197,31 @@ public abstract class AbstractContentTypeSerializerTest
     public void given_layout_with_component_inside_when_parsed_it_exists()
     {
         // setup
-        ContentType contentType = new ContentType();
-        contentType.setModule( myModule );
-        contentType.setName( "test" );
-        FieldSet layout = newFieldSet().label( "Label" ).name( "fieldSet" ).add(
-            newInput().name( "myComponent" ).type( InputTypes.TEXT_LINE ).build() ).build();
-        contentType.addComponent( layout );
+        FieldSet.Builder fieldSetBuilder = newFieldSet().label( "Label" ).name( "myFieldSet" );
+        fieldSetBuilder.add( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() );
+        FieldSet layout = fieldSetBuilder.build();
 
-        String serialized = toString( contentType );
+        ContentType.Builder contentTypeBuilder = ContentType.newComponentType().name( "test" ).module( myModule );
+        contentTypeBuilder.add( layout );
+
+        String serialized = toString( contentTypeBuilder.build() );
 
         // exercise
         ContentType parsedContentType = toContentType( serialized );
 
         // verify
-        assertEquals( "myComponent", parsedContentType.getInput( "myComponent" ).getPath().toString() );
-        assertNotNull( parsedContentType.getComponents().getComponent( "fieldSet" ) );
-        assertEquals( FieldSet.class, parsedContentType.getComponents().getComponent( "fieldSet" ).getClass() );
+        assertEquals( "myInput", parsedContentType.getInput( "myInput" ).getPath().toString() );
+        FieldSet fieldSet = (FieldSet) parsedContentType.componentIterable().iterator().next();
+        assertEquals( "myInput", fieldSet.getInput( "myInput" ).getPath().toString() );
     }
 
     @Test
     public void given_component_with_validationRegex_when_parsed_then_it_exists()
     {
         // setup
-        ContentType contentType = new ContentType();
-        contentType.setModule( myModule );
-        contentType.setName( "test" );
-        contentType.addComponent( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).validationRegexp( "a*c" ).build() );
-        String serialized = toString( contentType );
+        ContentType.Builder contentTypeBuilder = ContentType.newComponentType().name( "test" ).module( myModule );
+        contentTypeBuilder.add( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).validationRegexp( "a*c" ).build() );
+        String serialized = toString( contentTypeBuilder.build() );
 
         // exercise
         ContentType parsedContentType = toContentType( serialized );
@@ -194,6 +238,7 @@ public abstract class AbstractContentTypeSerializerTest
     private String toString( final ContentType type )
     {
         String serialized = getSerializer().toString( type );
+        System.out.println( "Content Type:" );
         System.out.println( serialized );
         return serialized;
     }

@@ -128,8 +128,8 @@ public class ContentTest
 
         ComponentSet componentSet = newComponentSet().name( "personalia" ).build();
         contentType.addComponent( componentSet );
-        componentSet.addInput( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.addInput( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -151,9 +151,9 @@ public class ContentTest
 
         ComponentSet componentSet = newComponentSet().name( "personalia" ).multiple( true ).build();
         contentType.addComponent( componentSet );
-        componentSet.addInput( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.addInput( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.addInput( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );
@@ -239,12 +239,12 @@ public class ContentTest
     public void structured_getEntries()
     {
         ComponentSet child = newComponentSet().name( "child" ).multiple( true ).build();
-        child.addInput( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
-        child.addInput( newInput().name( "age" ).type( InputTypes.TEXT_LINE ).build() );
+        child.add( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
+        child.add( newInput().name( "age" ).type( InputTypes.TEXT_LINE ).build() );
         ComponentSet features = newComponentSet().name( "features" ).multiple( false ).build();
-        features.addInput( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        features.addInput( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
-        child.addComponentSet( features );
+        features.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        features.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        child.add( features );
         ContentType contentType = new ContentType();
         contentType.addComponent( child );
 
@@ -602,14 +602,14 @@ public class ContentTest
         contentType.addComponent( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
 
         ComponentSet personaliaComponentSet = newComponentSet().name( "personalia" ).multiple( false ).required( true ).build();
-        personaliaComponentSet.addInput( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        personaliaComponentSet.addInput( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        personaliaComponentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        personaliaComponentSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
         contentType.addComponent( personaliaComponentSet );
 
         ComponentSet crimesComponentSet = newComponentSet().name( "crimes" ).multiple( true ).build();
         contentType.addComponent( crimesComponentSet );
-        crimesComponentSet.addInput( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
-        crimesComponentSet.addInput( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
+        crimesComponentSet.add( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
+        crimesComponentSet.add( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType );

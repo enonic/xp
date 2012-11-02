@@ -18,6 +18,7 @@ import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
 import com.enonic.wem.api.content.type.component.inputtype.SingleSelectorConfig;
 
 import static com.enonic.wem.api.content.type.Validator.newValidator;
+import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.component.Input.newInput;
 import static org.junit.Assert.*;
 
@@ -143,7 +144,7 @@ public class ValidatorTest
     {
         // setup
         ContentType contentType = new ContentType();
-        ComponentSet componentSet = ComponentSet.newComponentSet().name( "myComponentSet" ).build();
+        ComponentSet componentSet = newComponentSet().name( "myComponentSet" ).build();
         contentType.addComponent( componentSet );
         componentSet.add( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
 
@@ -186,7 +187,7 @@ public class ValidatorTest
     {
         // setup
         ContentType contentType = new ContentType();
-        ComponentSet componentSet = ComponentSet.newComponentSet().name( "myComponentSet" ).build();
+        ComponentSet componentSet = newComponentSet().name( "myComponentSet" ).build();
         contentType.addComponent( componentSet );
         componentSet.add( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
 
@@ -206,7 +207,7 @@ public class ValidatorTest
     {
         // setup
         ContentType contentType = new ContentType();
-        ComponentSet componentSet = ComponentSet.newComponentSet().name( "myComponentSet" ).build();
+        ComponentSet componentSet = newComponentSet().name( "myComponentSet" ).build();
         contentType.addComponent( componentSet );
         componentSet.add( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
 
@@ -295,14 +296,14 @@ public class ValidatorTest
         // exercise
         ContentType contentType = new ContentType();
         contentType.addComponent( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
-        ComponentSet personalia = ComponentSet.newComponentSet().name( "personalia" ).multiple( false ).build();
+        ComponentSet personalia = newComponentSet().name( "personalia" ).multiple( false ).build();
         contentType.addComponent( personalia );
         personalia.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
         personalia.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
-        ComponentSet crimes = ComponentSet.newComponentSet().name( "crimes" ).multiple( true ).build();
+        ComponentSet crimes = newComponentSet().name( "crimes" ).multiple( true ).build();
         contentType.addComponent( crimes );
-        crimes.addInput( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
-        crimes.addInput( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
+        crimes.add( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
+        crimes.add( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
         content.setType( contentType );
 
         assertEquals( DataTypes.TEXT, content.getData( "personalia.eyeColour" ).getDataType() );

@@ -13,35 +13,16 @@ public class InputTypeSerializerXml
         final BaseInputType baseInputType = (BaseInputType) inputType;
 
         final Element inputTypeEl = new Element( "input-type" );
-        inputTypeEl.setAttribute( "class-name", baseInputType.getClassName() );
+        inputTypeEl.setAttribute( "name", baseInputType.getName() );
+        inputTypeEl.setAttribute( "built-in", String.valueOf( baseInputType.isBuiltIn() ) );
         return inputTypeEl;
     }
 
     public BaseInputType parse( final Element componentEl )
     {
-        Element inputTypeEl = componentEl.getChild( "input-type" );
-        return instantiate( inputTypeEl.getAttributeValue( "class-name" ) );
-    }
-
-    private static BaseInputType instantiate( final String className )
-    {
-        Class clazz;
-        try
-        {
-            clazz = Class.forName( className );
-            return (BaseInputType) clazz.newInstance();
-        }
-        catch ( ClassNotFoundException e )
-        {
-            throw new RuntimeException( e );
-        }
-        catch ( InstantiationException e )
-        {
-            throw new RuntimeException( e );
-        }
-        catch ( IllegalAccessException e )
-        {
-            throw new RuntimeException( e );
-        }
+        final Element inputTypeEl = componentEl.getChild( "input-type" );
+        final String name = inputTypeEl.getAttributeValue( "name" );
+        final boolean builtIn = Boolean.valueOf( inputTypeEl.getAttributeValue( "built-in" ) );
+        return InputTypeFactory.instantiate( name, builtIn );
     }
 }

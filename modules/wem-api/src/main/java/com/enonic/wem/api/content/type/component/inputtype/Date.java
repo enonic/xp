@@ -12,7 +12,6 @@ public class Date
 {
     public Date()
     {
-        super( "date" );
     }
 
     @Override

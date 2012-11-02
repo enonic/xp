@@ -15,7 +15,6 @@ public class Tags
 {
     public Tags()
     {
-        super( "tags" );
     }
 
     @Override

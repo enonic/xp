@@ -12,7 +12,6 @@ public class Attachment
 {
     Attachment()
     {
-        super( "attachment" );
     }
 
     @Override

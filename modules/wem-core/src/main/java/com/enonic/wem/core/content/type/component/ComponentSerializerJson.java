@@ -26,6 +26,24 @@ import static com.enonic.wem.api.content.type.component.Input.newInput;
 
 public class ComponentSerializerJson
 {
+    private static final String TYPE = "type";
+
+    private static final String NAME = "name";
+
+    public static final String LABEL = "label";
+
+    public static final String IMMUTABLE = "immutable";
+
+    public static final String CUSTOM_TEXT = "customText";
+
+    public static final String HELP_TEXT = "helpText";
+
+    public static final String REQUIRED = "required";
+
+    public static final String INDEXED = "indexed";
+
+    public static final String VALIDATION_REGEXP = "validationRegexp";
+
     private InputTypeSerializerJson inputTypeSerializer = new InputTypeSerializerJson();
 
     private InputTypeConfigSerializerJson inputTypeConfigSerializer = new InputTypeConfigSerializerJson();
@@ -68,17 +86,17 @@ public class ComponentSerializerJson
         throws IOException
     {
         g.writeStartObject();
-        g.writeStringField( "componentType", Input.class.getSimpleName() );
-        g.writeStringField( "name", input.getName() );
-        inputTypeSerializer.generate( input.getInputType(), g );
-        g.writeStringField( "label", input.getLabel() );
-        g.writeBooleanField( "required", input.isRequired() );
-        g.writeBooleanField( "immutable", input.isImmutable() );
+        g.writeStringField( TYPE, Input.class.getSimpleName() );
+        g.writeStringField( NAME, input.getName() );
+        g.writeStringField( LABEL, input.getLabel() );
+        g.writeBooleanField( REQUIRED, input.isRequired() );
+        g.writeBooleanField( IMMUTABLE, input.isImmutable() );
         OccurrencesSerializerJson.generate( input.getOccurrences(), g );
-        g.writeBooleanField( "indexed", input.isIndexed() );
-        g.writeStringField( "customText", input.getCustomText() );
-        g.writeStringField( "validationRegexp", input.getValidationRegexp() != null ? input.getValidationRegexp().toString() : null );
-        g.writeStringField( "helpText", input.getHelpText() );
+        g.writeBooleanField( INDEXED, input.isIndexed() );
+        g.writeStringField( CUSTOM_TEXT, input.getCustomText() );
+        g.writeStringField( VALIDATION_REGEXP, input.getValidationRegexp() != null ? input.getValidationRegexp().toString() : null );
+        g.writeStringField( HELP_TEXT, input.getHelpText() );
+        inputTypeSerializer.generate( input.getInputType(), g );
         if ( input.getInputType().requiresConfig() && input.getInputTypeConfig() != null )
         {
             g.writeFieldName( "inputTypeConfig" );
@@ -92,14 +110,14 @@ public class ComponentSerializerJson
         throws IOException
     {
         g.writeStartObject();
-        g.writeStringField( "componentType", ComponentSet.class.getSimpleName() );
-        g.writeStringField( "name", componentSet.getName() );
-        g.writeStringField( "label", componentSet.getLabel() );
-        g.writeBooleanField( "required", componentSet.isRequired() );
-        g.writeBooleanField( "immutable", componentSet.isImmutable() );
+        g.writeStringField( TYPE, ComponentSet.class.getSimpleName() );
+        g.writeStringField( NAME, componentSet.getName() );
+        g.writeStringField( LABEL, componentSet.getLabel() );
+        g.writeBooleanField( REQUIRED, componentSet.isRequired() );
+        g.writeBooleanField( IMMUTABLE, componentSet.isImmutable() );
         OccurrencesSerializerJson.generate( componentSet.getOccurrences(), g );
-        g.writeStringField( "customText", componentSet.getCustomText() );
-        g.writeStringField( "helpText", componentSet.getHelpText() );
+        g.writeStringField( CUSTOM_TEXT, componentSet.getCustomText() );
+        g.writeStringField( HELP_TEXT, componentSet.getHelpText() );
         componentsSerializerJson.generate( componentSet.getComponents(), g );
 
         g.writeEndObject();
@@ -109,7 +127,8 @@ public class ComponentSerializerJson
         throws IOException
     {
         g.writeStartObject();
-        g.writeStringField( "componentType", Layout.class.getSimpleName() );
+        g.writeStringField( TYPE, Layout.class.getSimpleName() );
+        g.writeStringField( "layoutType", FieldSet.class.getSimpleName() );
 
         if ( layout instanceof FieldSet )
         {
@@ -122,9 +141,8 @@ public class ComponentSerializerJson
     private void generateFieldSet( final FieldSet fieldSet, JsonGenerator g )
         throws IOException
     {
-        g.writeStringField( "layoutType", FieldSet.class.getSimpleName() );
-        g.writeStringField( "label", fieldSet.getLabel() );
-        g.writeStringField( "name", fieldSet.getName() );
+        g.writeStringField( LABEL, fieldSet.getLabel() );
+        g.writeStringField( NAME, fieldSet.getName() );
         componentsSerializerJson.generate( fieldSet.getComponents(), g );
     }
 
@@ -132,8 +150,8 @@ public class ComponentSerializerJson
         throws IOException
     {
         g.writeStartObject();
-        g.writeStringField( "componentType", SubTypeReference.class.getSimpleName() );
-        g.writeStringField( "name", subTypeReference.getName() );
+        g.writeStringField( TYPE, SubTypeReference.class.getSimpleName() );
+        g.writeStringField( NAME, subTypeReference.getName() );
         g.writeStringField( "reference", subTypeReference.getSubTypeQualifiedName().toString() );
         g.writeStringField( "subTypeClass", subTypeReference.getSubTypeClass().getSimpleName() );
         g.writeEndObject();
@@ -141,7 +159,7 @@ public class ComponentSerializerJson
 
     public Component parse( final JsonNode componentNode )
     {
-        final String componentType = JsonParserUtil.getStringValue( "componentType", componentNode );
+        final String componentType = JsonParserUtil.getStringValue( TYPE, componentNode );
 
         final Component component;
 
@@ -172,11 +190,11 @@ public class ComponentSerializerJson
     private HierarchicalComponent parseInput( final JsonNode componentNode )
     {
         final Input.Builder builder = newInput();
-        builder.name( JsonParserUtil.getStringValue( "name", componentNode ) );
-        builder.label( JsonParserUtil.getStringValue( "label", componentNode, null ) );
-        builder.immutable( JsonParserUtil.getBooleanValue( "immutable", componentNode ) );
-        builder.helpText( JsonParserUtil.getStringValue( "helpText", componentNode ) );
-        builder.customText( JsonParserUtil.getStringValue( "customText", componentNode ) );
+        builder.name( JsonParserUtil.getStringValue( NAME, componentNode ) );
+        builder.label( JsonParserUtil.getStringValue( LABEL, componentNode, null ) );
+        builder.immutable( JsonParserUtil.getBooleanValue( IMMUTABLE, componentNode ) );
+        builder.helpText( JsonParserUtil.getStringValue( HELP_TEXT, componentNode ) );
+        builder.customText( JsonParserUtil.getStringValue( CUSTOM_TEXT, componentNode ) );
         parseValidationRegexp( builder, componentNode );
 
         parseOccurrences( builder, componentNode.get( "occurrences" ) );
@@ -189,12 +207,12 @@ public class ComponentSerializerJson
     private HierarchicalComponent parseComponentSet( final JsonNode componentNode )
     {
         final ComponentSet.Builder builder = newComponentSet();
-        builder.name( JsonParserUtil.getStringValue( "name", componentNode ) );
-        builder.label( JsonParserUtil.getStringValue( "label", componentNode, null ) );
-        builder.required( JsonParserUtil.getBooleanValue( "required", componentNode ) );
-        builder.immutable( JsonParserUtil.getBooleanValue( "immutable", componentNode ) );
-        builder.helpText( JsonParserUtil.getStringValue( "helpText", componentNode ) );
-        builder.customText( JsonParserUtil.getStringValue( "customText", componentNode ) );
+        builder.name( JsonParserUtil.getStringValue( NAME, componentNode ) );
+        builder.label( JsonParserUtil.getStringValue( LABEL, componentNode, null ) );
+        builder.required( JsonParserUtil.getBooleanValue( REQUIRED, componentNode ) );
+        builder.immutable( JsonParserUtil.getBooleanValue( IMMUTABLE, componentNode ) );
+        builder.helpText( JsonParserUtil.getStringValue( HELP_TEXT, componentNode ) );
+        builder.customText( JsonParserUtil.getStringValue( CUSTOM_TEXT, componentNode ) );
 
         parseOccurrences( builder, componentNode.get( "occurrences" ) );
 
@@ -223,8 +241,8 @@ public class ComponentSerializerJson
     private Component parseFieldSet( final JsonNode componentNode )
     {
         final FieldSet.Builder builder = newFieldSet();
-        builder.label( JsonParserUtil.getStringValue( "label", componentNode, null ) );
-        builder.name( JsonParserUtil.getStringValue( "name", componentNode, null ) );
+        builder.label( JsonParserUtil.getStringValue( LABEL, componentNode, null ) );
+        builder.name( JsonParserUtil.getStringValue( NAME, componentNode, null ) );
 
         final Components components = componentsSerializerJson.parse( componentNode.get( "items" ) );
         for ( Component component : components.iterable() )
@@ -238,7 +256,7 @@ public class ComponentSerializerJson
     private HierarchicalComponent parseSubTypeReference( final JsonNode componentNode )
     {
         final SubTypeReference.Builder builder = SubTypeReference.newSubTypeReference();
-        builder.name( JsonParserUtil.getStringValue( "name", componentNode ) );
+        builder.name( JsonParserUtil.getStringValue( NAME, componentNode ) );
         builder.subType( new SubTypeQualifiedName( JsonParserUtil.getStringValue( "reference", componentNode ) ) );
         builder.type( JsonParserUtil.getStringValue( "subTypeClass", componentNode ) );
         return builder.build();
@@ -246,7 +264,7 @@ public class ComponentSerializerJson
 
     private void parseValidationRegexp( final Input.Builder builder, final JsonNode inputNode )
     {
-        final String validationRegexp = JsonParserUtil.getStringValue( "validationRegexp", inputNode, null );
+        final String validationRegexp = JsonParserUtil.getStringValue( VALIDATION_REGEXP, inputNode, null );
         if ( validationRegexp != null )
         {
             builder.validationRegexp( validationRegexp );

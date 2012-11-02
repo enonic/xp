@@ -1,4 +1,6 @@
-package com.enonic.wem.api.content.type;
+package com.enonic.wem.core.content.type;
+
+import com.enonic.wem.api.content.type.ContentType;
 
 public interface ContentTypeSerializer
 {

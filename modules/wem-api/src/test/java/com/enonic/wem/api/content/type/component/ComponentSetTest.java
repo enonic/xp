@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
 
+import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.component.Input.newInput;
 import static org.junit.Assert.*;
 
@@ -14,8 +15,8 @@ public class ComponentSetTest
     public void copy()
     {
         // setup
-        ComponentSet original = ComponentSet.newBuilder().name( "name" ).label( "Label" ).multiple( true ).build();
-        original.addInput( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() );
+        ComponentSet original = newComponentSet().name( "name" ).label( "Label" ).multiple( true ).build();
+        original.add( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() );
 
         // exercise
         ComponentSet copy = original.copy();
@@ -26,19 +27,18 @@ public class ComponentSetTest
         assertSame( original.getName(), copy.getName() );
         assertSame( original.getLabel(), copy.getLabel() );
         assertNotSame( original.getComponents(), copy.getComponents() );
-        assertNotSame( original.getHierarchicalComponent( new ComponentPath( "myField" ) ),
-                       copy.getHierarchicalComponent( new ComponentPath( "myField" ) ) );
+        assertNotSame( original.getInput( new ComponentPath( "myField" ) ), copy.getInput( new ComponentPath( "myField" ) ) );
     }
 
     @Test
     public void getConfig()
     {
         // setup
-        ComponentSet componentSet = ComponentSet.newBuilder().name( "myFieldSet" ).label( "Label" ).multiple( true ).build();
-        componentSet.addInput( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() );
+        ComponentSet componentSet = newComponentSet().name( "myFieldSet" ).label( "Label" ).multiple( true ).build();
+        componentSet.add( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() );
 
         // exercise
-        HierarchicalComponent field = componentSet.getHierarchicalComponent( new ComponentPath( "myField" ) );
+        HierarchicalComponent field = componentSet.getInput( new ComponentPath( "myField" ) );
 
         // verify
         assertEquals( "myFieldSet.myField", field.getPath().toString() );
@@ -47,22 +47,20 @@ public class ComponentSetTest
     @Test
     public void setPath()
     {
-        ComponentSet componentSet = ComponentSet.newBuilder().name( "address" ).label( "Address" ).build();
-        componentSet.addInput( newInput().name( "street" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.addInput( newInput().name( "postalCode" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.addInput( newInput().name( "postalPlace" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.addInput( newInput().name( "country" ).type( InputTypes.TEXT_LINE ).build() );
+        ComponentSet componentSet = newComponentSet().name( "address" ).label( "Address" ).build();
+        componentSet.add( newInput().name( "street" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "postalCode" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "postalPlace" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "country" ).type( InputTypes.TEXT_LINE ).build() );
 
         // exercise & verify
         componentSet.setName( "homeAddress" );
         componentSet.setPath( new ComponentPath( "homeAddress" ) );
 
         // verify
-        assertEquals( "homeAddress.street", componentSet.getHierarchicalComponent( new ComponentPath( "street" ) ).getPath().toString() );
-        assertEquals( "homeAddress.postalCode",
-                      componentSet.getHierarchicalComponent( new ComponentPath( "postalCode" ) ).getPath().toString() );
-        assertEquals( "homeAddress.postalPlace",
-                      componentSet.getHierarchicalComponent( new ComponentPath( "postalPlace" ) ).getPath().toString() );
-        assertEquals( "homeAddress.country", componentSet.getHierarchicalComponent( new ComponentPath( "country" ) ).getPath().toString() );
+        assertEquals( "homeAddress.street", componentSet.getInput( new ComponentPath( "street" ) ).getPath().toString() );
+        assertEquals( "homeAddress.postalCode", componentSet.getInput( new ComponentPath( "postalCode" ) ).getPath().toString() );
+        assertEquals( "homeAddress.postalPlace", componentSet.getInput( new ComponentPath( "postalPlace" ) ).getPath().toString() );
+        assertEquals( "homeAddress.country", componentSet.getInput( new ComponentPath( "country" ) ).getPath().toString() );
     }
 }

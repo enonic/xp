@@ -7,14 +7,15 @@ import java.util.LinkedHashMap;
 import com.google.common.base.Preconditions;
 
 public class Components
+    implements Iterable<Component>
 {
     private ComponentPath path;
 
-    private LinkedHashMap<String, Component> items = new LinkedHashMap<String, Component>();
+    private LinkedHashMap<String, Component> componentByName = new LinkedHashMap<String, Component>();
 
-    private LinkedHashMap<String, HierarchicalComponent> hierarchicalComponents = new LinkedHashMap<String, HierarchicalComponent>();
+    private LinkedHashMap<String, HierarchicalComponent> hierarchicalComponentByName = new LinkedHashMap<String, HierarchicalComponent>();
 
-    private LinkedHashMap<String, Layout> layouts = new LinkedHashMap<String, Layout>();
+    private LinkedHashMap<String, Layout> layoutByName = new LinkedHashMap<String, Layout>();
 
     public Components()
     {
@@ -33,23 +34,23 @@ public class Components
             ( (HierarchicalComponent) component ).setPath( new ComponentPath( path, component.getName() ) );
         }
 
-        Object previous = items.put( component.getName(), component );
+        Object previous = componentByName.put( component.getName(), component );
         Preconditions.checkArgument( previous == null, "Component already added: " + component );
 
         if ( component instanceof Layout )
         {
-            layouts.put( component.getName(), (Layout) component );
+            layoutByName.put( component.getName(), (Layout) component );
         }
         else if ( component instanceof HierarchicalComponent )
         {
-            hierarchicalComponents.put( component.getName(), (HierarchicalComponent) component );
+            hierarchicalComponentByName.put( component.getName(), (HierarchicalComponent) component );
         }
     }
 
     public void setPath( final ComponentPath path )
     {
         this.path = path;
-        for ( final Component component : items.values() )
+        for ( final Component component : componentByName.values() )
         {
             if ( component instanceof HierarchicalComponent )
             {
@@ -70,7 +71,7 @@ public class Components
         final String firstPathElement = path.getFirstElement();
         if ( path.elementCount() > 1 )
         {
-            HierarchicalComponent foundConfig = getHierarchicalComponent( firstPathElement );
+            HierarchicalComponent foundConfig = doGetHierarchicalComponent( firstPathElement );
             if ( foundConfig == null )
             {
                 return null;
@@ -81,6 +82,12 @@ public class Components
                 ComponentSet componentSet = (ComponentSet) foundConfig;
                 return componentSet.getHierarchicalComponent( path.asNewWithoutFirstPathElement() );
             }
+            else if ( foundConfig instanceof SubTypeReference )
+            {
+                throw new IllegalArgumentException(
+                    "Cannot get component [" + path + "] because it's past a SubTypeReference [" + foundConfig +
+                        "], resolve the SubTypeReference first." );
+            }
             else
             {
                 return foundConfig;
@@ -88,13 +95,20 @@ public class Components
         }
         else
         {
-            return getHierarchicalComponent( firstPathElement );
+            return doGetHierarchicalComponent( firstPathElement );
         }
     }
 
-    public Component getComponent( final String name )
+    private HierarchicalComponent doGetHierarchicalComponent( final String name )
     {
-        Component foundComponent = items.get( name );
+        return typeCast( doGetComponent( name ), HierarchicalComponent.class );
+    }
+
+    public Component doGetComponent( final String name )
+    {
+        Preconditions.checkArgument( ComponentPath.hasNotPathElementDivider( name ), "name cannot be a path: %s", name );
+
+        Component foundComponent = componentByName.get( name );
         if ( foundComponent == null )
         {
             foundComponent = searchComponentInLayouts( name );
@@ -102,71 +116,69 @@ public class Components
         return foundComponent;
     }
 
-    public HierarchicalComponent getHierarchicalComponent( final String name )
+    public Component getComponent( final String name )
     {
-        Component component = getComponent( name );
-        if ( component == null )
-        {
-            return null;
-        }
-
-        Preconditions.checkArgument( component instanceof HierarchicalComponent,
-                                     "Component [%s] in [%s] is not of type HierarchicalComponent: " + component.getClass().getName(),
-                                     this.getPath(), component.getName() );
-
-        //noinspection ConstantConditions
-        return (HierarchicalComponent) component;
+        return doGetComponent( name );
     }
 
-    public ComponentSet getComponentSet( final ComponentPath path )
+    public HierarchicalComponent getComponent( final ComponentPath path )
     {
-        final HierarchicalComponent component = getHierarchicalComponent( path );
-        if ( component == null )
-        {
-            return null;
-        }
+        return getHierarchicalComponent( path );
+    }
 
-        Preconditions.checkArgument( ( component instanceof ComponentSet ),
-                                     "Component at path [%s] is not a ComponentSet: " + component.getClass().getSimpleName(),
-                                     component.getPath() );
-
-        //noinspection ConstantConditions
-        return (ComponentSet) component;
+    public Input getInput( final String name )
+    {
+        return typeCast( doGetComponent( name ), Input.class );
     }
 
     public Input getInput( final ComponentPath path )
     {
-        final HierarchicalComponent component = getHierarchicalComponent( path );
-        if ( component == null )
-        {
-            return null;
-        }
-        Preconditions.checkArgument( component instanceof Input,
-                                     "Component at path [%s] is not a Input: " + component.getClass().getSimpleName(),
-                                     component.getPath() );
+        return typeCast( getHierarchicalComponent( path ), Input.class );
+    }
 
-        //noinspection ConstantConditions
-        return (Input) component;
+    public ComponentSet getComponentSet( final String name )
+    {
+        return typeCast( doGetComponent( name ), ComponentSet.class );
+    }
+
+    public ComponentSet getComponentSet( final ComponentPath path )
+    {
+        return typeCast( getHierarchicalComponent( path ), ComponentSet.class );
+    }
+
+    public SubTypeReference getSubTypeReference( final String name )
+    {
+        return typeCast( doGetComponent( name ), SubTypeReference.class );
+    }
+
+    public SubTypeReference getSubTypeReference( final ComponentPath path )
+    {
+        return typeCast( getHierarchicalComponent( path ), SubTypeReference.class );
+    }
+
+    public Layout getLayout( final String name )
+    {
+        return typeCast( doGetComponent( name ), Layout.class );
     }
 
     public Iterator<Component> iterator()
     {
-        return items.values().iterator();
+        return componentByName.values().iterator();
     }
 
     public Iterable<Component> iterable()
     {
-        return items.values();
+        return componentByName.values();
     }
 
     public Iterable<HierarchicalComponent> iterableForHierarchicalComponents()
     {
-        return hierarchicalComponents.values();
+        return hierarchicalComponentByName.values();
     }
 
     public int size()
     {
-        return items.size();
+        return componentByName.size();
     }
 
     @Override
@@ -174,8 +186,8 @@ public class Components
     {
         final StringBuilder s = new StringBuilder();
         int index = 0;
-        final int size = items.size();
-        for ( Component entry : items.values() )
+        final int size = componentByName.size();
+        for ( Component entry : componentByName.values() )
         {
             if ( entry instanceof HierarchicalComponent )
             {
@@ -201,22 +213,23 @@ public class Components
     {
         Components copy = new Components();
         copy.path = path;
-        for ( Component ci : this.items.values() )
+        for ( Component ci : this.componentByName.values() )
         {
             Component copyOfCi = ci.copy();
-            copy.items.put( copyOfCi.getName(), copyOfCi );
+            copy.componentByName.put( copyOfCi.getName(), copyOfCi );
 
             if ( copyOfCi instanceof FieldSet )
             {
-                copy.layouts.put( copyOfCi.getName(), (FieldSet) copyOfCi );
+                copy.layoutByName.put( copyOfCi.getName(), (FieldSet) copyOfCi );
             }
         }
         return copy;
     }
 
+    // TODO: Move method out of here and into it's own class SubTypeResolver?
     public void subTypeReferencesToComponents( final SubTypeFetcher subTypeFetcher )
     {
-        for ( final Component component : items.values() )
+        for ( final Component component : componentByName.values() )
         {
             if ( component instanceof SubTypeReference )
             {
@@ -231,11 +244,11 @@ public class Components
                     final HierarchicalComponent componentCreatedFromSubType = subType.create( subTypeReference );
                     if ( componentCreatedFromSubType instanceof ComponentSet )
                     {
-                        ComponentSet componentSet = (ComponentSet) componentCreatedFromSubType;
+                        final ComponentSet componentSet = (ComponentSet) componentCreatedFromSubType;
                         componentSet.getComponents().subTypeReferencesToComponents( subTypeFetcher );
                     }
 
-                    items.put( component.getName(), componentCreatedFromSubType );
+                    componentByName.put( component.getName(), componentCreatedFromSubType );
                 }
             }
         }
@@ -245,7 +258,7 @@ public class Components
     {
         Component foundComponent = null;
 
-        for ( final Layout layout : layouts.values() )
+        for ( final Layout layout : layoutByName.values() )
         {
             foundComponent = layout.getComponent( name );
             if ( foundComponent != null )
@@ -256,8 +269,17 @@ public class Components
         return foundComponent;
     }
 
-    public Iterable<Component> getIterable()
+    private <T extends Component> T typeCast( final Component component, final Class<T> type )
     {
-        return items.values();
+        checkComponentType( type, component );
+        //noinspection unchecked
+        return (T) component;
+    }
+
+    private <T extends Component> void checkComponentType( final Class<T> type, final Component component )
+    {
+        Preconditions.checkArgument( type.isInstance( component ),
+                                     "Component [%s] in [%s] is not of type %s: " + component.getClass().getName(), this.getPath(),
+                                     component.getName(), type.getSimpleName() );
     }
 }

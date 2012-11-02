@@ -14,7 +14,6 @@ public class HtmlArea
 {
     public HtmlArea()
     {
-        super( "htmlArea" );
     }
 
     @Override

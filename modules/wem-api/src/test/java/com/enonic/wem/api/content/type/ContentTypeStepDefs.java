@@ -68,9 +68,7 @@ public class ContentTypeStepDefs
     public void a_ContentType_named_name( String contentTypeName )
         throws Throwable
     {
-        ContentType contentType = new ContentType();
-        contentType.setName( contentTypeName );
-        contentTypeByName.put( contentTypeName, contentType );
+        contentTypeByName.put( contentTypeName, ContentType.newComponentType().name( contentTypeName ).build() );
     }
 
     @Given("^adding SubTypeReference named (.+) referencing InputSubType (.+) to ContentType (.+)$")
@@ -111,7 +109,8 @@ public class ContentTypeStepDefs
             ComponentType componentType = ComponentType.valueOf( row.getCells().get( 2 ) );
             ContentType contentType = contentTypeByName.get( contentTypeName );
             Assert.assertNotNull( "component not found at path: " + componentPath,
-                                  contentType.getComponents().getHierarchicalComponent( new ComponentPath( componentPath ) ) );
+                                  contentType.getComponent( new ComponentPath( componentPath ) ) );
+
             Assert.assertEquals( ComponentType.INPUT, componentType );
         }
     }

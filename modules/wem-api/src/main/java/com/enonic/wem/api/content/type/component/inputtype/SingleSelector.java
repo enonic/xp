@@ -14,7 +14,7 @@ public class SingleSelector
 {
     public SingleSelector()
     {
-        super( "singleSelector", SingleSelectorConfig.class );
+        super( SingleSelectorConfig.class );
     }
 
     public AbstractInputTypeConfigSerializerJson getInputTypeConfigJsonGenerator()

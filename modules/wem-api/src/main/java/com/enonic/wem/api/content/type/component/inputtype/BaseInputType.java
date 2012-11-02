@@ -1,6 +1,8 @@
 package com.enonic.wem.api.content.type.component.inputtype;
 
 
+import com.google.common.base.Objects;
+
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.type.component.InvalidValueException;
@@ -8,23 +10,22 @@ import com.enonic.wem.api.content.type.component.InvalidValueException;
 public abstract class BaseInputType
     implements InputType
 {
-    private final String className;
-
     private final String name;
 
     private Class configClass;
 
-    BaseInputType( final String name )
-    {
-        this.name = name;
-        this.className = this.getClass().getName();
+    private boolean builtIn;
 
+    BaseInputType()
+    {
+        this.name = resolveName();
+        this.builtIn = resolveBuiltIn();
     }
 
-    BaseInputType( final String name, final Class configClass )
+    BaseInputType( final Class configClass )
     {
-        this.name = name;
-        this.className = this.getClass().getName();
+        this.name = resolveName();
+        this.builtIn = resolveBuiltIn();
         this.configClass = configClass;
     }
 
@@ -35,9 +36,9 @@ public abstract class BaseInputType
     }
 
     @Override
-    public final String getClassName()
+    public boolean isBuiltIn()
     {
-        return className;
+        return builtIn;
     }
 
     @Override
@@ -86,18 +87,22 @@ public abstract class BaseInputType
 
         final BaseInputType that = (BaseInputType) o;
 
-        if ( !className.equals( that.className ) )
-        {
-            return false;
-        }
-        return name.equals( that.name );
+        return Objects.equal( this.getClass(), that.getClass() );
     }
 
     @Override
     public int hashCode()
     {
-        int result = className.hashCode();
-        result = 31 * result + name.hashCode();
-        return result;
+        return Objects.hashCode( this.getClass() );
+    }
+
+    private String resolveName()
+    {
+        return this.getClass().getSimpleName();
+    }
+
+    private boolean resolveBuiltIn()
+    {
+        return this.getClass().getPackage().equals( BaseInputType.class.getPackage() );
     }
 }

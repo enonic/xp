@@ -4,8 +4,12 @@ package com.enonic.wem.api.content.type.component;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
+import com.enonic.wem.api.module.Module;
 
+import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
+import static com.enonic.wem.api.content.type.component.ComponentSetSubType.newComponentSetSubType;
 import static com.enonic.wem.api.content.type.component.Input.newInput;
+import static com.enonic.wem.api.content.type.component.SubTypeReference.newSubTypeReference;
 import static org.junit.Assert.*;
 
 public class ComponentsTest
@@ -14,13 +18,13 @@ public class ComponentsTest
     public void getConfig()
     {
         Components components = new Components();
-        ComponentSet componentSet = ComponentSet.newBuilder().name( "personalia" ).build();
+        ComponentSet componentSet = newComponentSet().name( "personalia" ).build();
         components.add( componentSet );
-        componentSet.addInput( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.addInput( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
         // exercise & verify
-        HierarchicalComponent personaliaConfig = components.getHierarchicalComponent( new ComponentPath( "personalia" ).getLastElement() );
+        HierarchicalComponent personaliaConfig = components.getComponentSet( new ComponentPath( "personalia" ) );
         assertEquals( "personalia", personaliaConfig.getPath().toString() );
     }
 
@@ -28,13 +32,13 @@ public class ComponentsTest
     public void getConfig2()
     {
         Components components = new Components();
-        ComponentSet componentSet = ComponentSet.newBuilder().name( "personalia" ).label( "Personalia" ).build();
+        ComponentSet componentSet = newComponentSet().name( "personalia" ).label( "Personalia" ).build();
         components.add( componentSet );
-        componentSet.addInput( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.addInput( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
         // exercise & verify
-        HierarchicalComponent personaliaEyeColourConfig = componentSet.getComponents().getHierarchicalComponent( "eyeColour" );
+        HierarchicalComponent personaliaEyeColourConfig = componentSet.getInput( "eyeColour" );
         assertEquals( "personalia.eyeColour", personaliaEyeColourConfig.getPath().toString() );
     }
 
@@ -60,5 +64,32 @@ public class ComponentsTest
 
         // exercise & verify
         assertEquals( "name, layout{eyeColour, hairColour}", components.toString() );
+    }
+
+    @Test
+    public void given_sub_type_with_a_input_inside_a_set_when_getComponent_with_path_to_input_then_exception_is_thrown()
+    {
+        // setup
+        Module module = Module.newModule().name( "myModule" ).build();
+
+        Input myInput = newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build();
+        ComponentSet mySet = newComponentSet().name( "mySet" ).add( myInput ).build();
+        ComponentSetSubType mySubType = newComponentSetSubType().module( module ).componentSet( mySet ).build();
+
+        Components components = new Components();
+        components.add( newSubTypeReference().name( "mySet" ).typeInput().subType( mySubType.getQualifiedName() ).build() );
+
+        // exercise & verify
+        try
+        {
+            components.getComponent( new ComponentPath( "mySet.myInput" ) );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( "Expected IllegalArgumentException", e instanceof IllegalArgumentException );
+            assertEquals(
+                "Cannot get component [mySet.myInput] because it's past a SubTypeReference [mySet], resolve the SubTypeReference first.",
+                e.getMessage() );
+        }
     }
 }

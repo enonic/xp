@@ -14,7 +14,6 @@ public class Money
 {
     public Money()
     {
-        super( "money" );
     }
 
     @Override

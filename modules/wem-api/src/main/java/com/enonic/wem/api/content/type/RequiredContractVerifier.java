@@ -23,7 +23,7 @@ public class RequiredContractVerifier
 
     public void verify( final ContentData contentData )
     {
-        processComponents( contentType.getComponents().getIterable(), contentData );
+        processComponents( contentType.componentIterable(), contentData );
     }
 
     private void processComponents( final Iterable<Component> components, final EntrySelector entrySelector )
@@ -41,7 +41,7 @@ public class RequiredContractVerifier
             }
             else if ( component instanceof FieldSet )
             {
-                processComponents( ( (FieldSet) component ).getComponentsIterable(), entrySelector );
+                processComponents( ( (FieldSet) component ).componentIterable(), entrySelector );
             }
         }
     }

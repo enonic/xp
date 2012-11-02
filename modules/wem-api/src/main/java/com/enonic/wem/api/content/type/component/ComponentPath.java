@@ -126,4 +126,9 @@ public class ComponentPath
         }
         return elements;
     }
+
+    public static boolean hasNotPathElementDivider( final String s )
+    {
+        return !s.contains( ELEMENT_DIVIDER );
+    }
 }

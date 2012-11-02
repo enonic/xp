@@ -47,10 +47,10 @@ public class ContentTypeTest
     public void address()
     {
         ComponentSet componentSet = newComponentSet().name( "address" ).build();
-        componentSet.addInput( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.addInput( newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.addInput( newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.addInput( newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() );
 
         ContentType contentType = new ContentType();
         contentType.addComponent( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() );

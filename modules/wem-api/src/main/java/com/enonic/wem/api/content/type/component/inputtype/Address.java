@@ -15,7 +15,6 @@ public class Address
 {
     public Address()
     {
-        super( "address" );
     }
 
     @Override

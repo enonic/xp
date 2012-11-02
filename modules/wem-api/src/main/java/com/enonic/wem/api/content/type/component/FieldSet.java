@@ -59,12 +59,17 @@ public class FieldSet
         return components.getComponent( name );
     }
 
+    public Input getInput( final String name )
+    {
+        return components.getInput( name );
+    }
+
     void forwardSetPath( ComponentPath path )
     {
         components.setPath( path );
     }
 
-    public Iterable<Component> getComponentsIterable()
+    public Iterable<Component> componentIterable()
     {
         return components.iterable();
     }

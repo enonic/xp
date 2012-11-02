@@ -11,7 +11,8 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.ContentTypeSerializer;
+import com.enonic.wem.api.content.type.component.Component;
+import com.enonic.wem.api.content.type.component.Components;
 import com.enonic.wem.core.content.JsonFactoryHolder;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
@@ -33,7 +34,7 @@ public class ContentTypeSerializerJson
             g.writeStringField( "name", contentType.getName() );
             g.writeStringField( "module", contentType.getModule().getName() );
 
-            componentsSerializer.generate( contentType.getComponents(), g );
+            componentsSerializer.generate( contentType.componentIterable(), g );
             g.writeEndObject();
             g.close();
             sw.close();
@@ -77,7 +78,12 @@ public class ContentTypeSerializerJson
 
         try
         {
-            contentType.setComponents( componentsSerializer.parse( contentTypeNode.get( "items" ) ) );
+            final Components components = componentsSerializer.parse( contentTypeNode.get( "items" ) );
+            for ( Component component : components )
+            {
+                contentType.addComponent( component );
+            }
+
         }
         catch ( Exception e )
         {

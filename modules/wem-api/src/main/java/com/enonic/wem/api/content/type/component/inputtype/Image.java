@@ -14,7 +14,6 @@ public class Image
 {
     public Image()
     {
-        super( "image" );
     }
 
     @Override

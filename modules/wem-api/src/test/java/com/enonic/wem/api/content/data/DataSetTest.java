@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.type.component.ComponentSet;
 import com.enonic.wem.api.content.type.component.Components;
 import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
 
+import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.component.Input.newInput;
 import static org.junit.Assert.*;
 
@@ -18,8 +19,8 @@ public class DataSetTest
     public void setValue_when_given_path_does_not_exists()
     {
         Components components = new Components();
-        ComponentSet componentSet = ComponentSet.newComponentSet().name( "personalia" ).multiple( true ).build();
-        componentSet.addInput( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        ComponentSet componentSet = newComponentSet().name( "personalia" ).multiple( true ).build();
+        componentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
         components.add( componentSet );
 
         DataSet dataSet = new DataSet( new EntryPath() );
@@ -38,9 +39,9 @@ public class DataSetTest
     @Test
     public void getValue_when_having_sub_type()
     {
-        ComponentSet componentSet = ComponentSet.newComponentSet().name( "personalia" ).multiple( false ).build();
-        componentSet.addInput( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.addInput( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        ComponentSet componentSet = newComponentSet().name( "personalia" ).multiple( false ).build();
+        componentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
         Components components = new Components();
         components.add( componentSet );
 
@@ -55,11 +56,11 @@ public class DataSetTest
     @Test
     public void getValue_when_having_multiple_sub_type_in_single_sub_type()
     {
-        ComponentSet personalia = ComponentSet.newComponentSet().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
-        ComponentSet crimes = ComponentSet.newComponentSet().name( "crimes" ).multiple( true ).build();
-        crimes.addInput( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
-        crimes.addInput( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
-        personalia.addComponentSet( crimes );
+        ComponentSet personalia = newComponentSet().name( "personalia" ).label( "Personalia" ).multiple( true ).build();
+        ComponentSet crimes = newComponentSet().name( "crimes" ).multiple( true ).build();
+        crimes.add( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
+        crimes.add( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
+        personalia.add( crimes );
         Components components = new Components();
         components.add( personalia );
 
@@ -79,9 +80,9 @@ public class DataSetTest
     public void getValue_when_having_multiple_sub_type()
     {
         Components components = new Components();
-        ComponentSet componentSet = ComponentSet.newComponentSet().name( "persons" ).multiple( true ).build();
-        componentSet.addInput( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.addInput( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        ComponentSet componentSet = newComponentSet().name( "persons" ).multiple( true ).build();
+        componentSet.add( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
+        componentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
         components.add( componentSet );
 
         DataSet dataSet = new DataSet( new EntryPath() );

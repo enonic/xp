@@ -16,7 +16,6 @@ public class Color
 {
     public Color()
     {
-        super( "color" );
     }
 
     @Override

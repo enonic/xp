@@ -44,16 +44,17 @@ public final class InputTypes
     {
         register( COLOR );
         register( DATE );
+        register( DECIMAL_NUMBER );
         register( GEO_LOCATION );
+        register( HTML_AREA );
         register( MONEY );
         register( PHONE );
         register( SINGLE_SELECTOR );
         register( TAGS );
         register( TEXT_LINE );
         register( TEXT_AREA );
-        register( XML );
         register( WHOLE_NUMBER );
-        register( DECIMAL_NUMBER );
+        register( XML );
 
         registerDefaultInputType( DataTypes.DATE, DATE );
         registerDefaultInputType( DataTypes.TEXT, TEXT_AREA );
@@ -72,6 +73,11 @@ public final class InputTypes
     {
         Object previousDataType = inputTypeByDataTypeKey.put( dataType.getKey(), inputType );
         Preconditions.checkState( previousDataType == null, "Default InputType already registered for DataType: " + dataType );
+    }
+
+    public static int size()
+    {
+        return inputTypeByName.size();
     }
 
     public static BaseInputType parse( final String inputTypeName )

@@ -15,40 +15,19 @@ public class InputTypeSerializerJson
     public void generate( final InputType inputType, final JsonGenerator g )
         throws IOException
     {
-        BaseInputType baseInputType = (BaseInputType) inputType;
+        final BaseInputType baseInputType = (BaseInputType) inputType;
 
         g.writeFieldName( "inputType" );
         g.writeStartObject();
-        g.writeStringField( "className", baseInputType.getClassName() );
+        g.writeStringField( "name", baseInputType.getName() );
+        g.writeBooleanField( "builtIn", baseInputType.isBuiltIn() );
         g.writeEndObject();
     }
 
     public BaseInputType parse( final JsonNode node )
     {
-        String className = JsonParserUtil.getStringValue( "className", node );
-
-        return instantiate( className );
-    }
-
-    private static BaseInputType instantiate( final String className )
-    {
-        Class clazz;
-        try
-        {
-            clazz = Class.forName( className );
-            return (BaseInputType) clazz.newInstance();
-        }
-        catch ( ClassNotFoundException e )
-        {
-            throw new RuntimeException( e );
-        }
-        catch ( InstantiationException e )
-        {
-            throw new RuntimeException( e );
-        }
-        catch ( IllegalAccessException e )
-        {
-            throw new RuntimeException( e );
-        }
+        final String className = JsonParserUtil.getStringValue( "name", node );
+        final boolean builtIn = JsonParserUtil.getBooleanValue( "builtIn", node );
+        return InputTypeFactory.instantiate( className, builtIn );
     }
 }

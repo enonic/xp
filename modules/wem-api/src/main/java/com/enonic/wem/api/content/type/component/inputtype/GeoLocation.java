@@ -13,7 +13,6 @@ public class GeoLocation
 {
     public GeoLocation()
     {
-        super( "geoLocation" );
     }
 
     @Override

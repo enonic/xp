@@ -11,15 +11,15 @@ import com.enonic.wem.api.content.type.component.Component;
 import com.enonic.wem.api.content.type.component.Components;
 import com.enonic.wem.core.content.JsonParsingException;
 
-public class ComponentsSerializerJson
+public final class ComponentsSerializerJson
 {
     private ComponentSerializerJson componentSerializer = new ComponentSerializerJson( this );
 
-    public void generate( Components components, JsonGenerator g )
+    public void generate( final Iterable<Component> components, JsonGenerator g )
         throws IOException
     {
         g.writeArrayFieldStart( "items" );
-        for ( Component component : components.iterable() )
+        for ( Component component : components )
         {
             componentSerializer.generate( component, g );
         }

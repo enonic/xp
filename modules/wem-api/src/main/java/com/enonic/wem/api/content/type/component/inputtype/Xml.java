@@ -13,7 +13,6 @@ public class Xml
 {
     public Xml()
     {
-        super( "xml" );
     }
 
     @Override

@@ -11,14 +11,14 @@ import com.enonic.wem.core.content.JsonParsingException;
 
 import com.enonic.cms.framework.util.JDOMUtil;
 
-public class ComponentsSerializerXml
+public final class ComponentsSerializerXml
 {
     private ComponentSerializerXml componentSerializer = new ComponentSerializerXml( this );
 
-    public Element generate( Components components )
+    public Element generate( final Iterable<Component> components )
     {
         Element itemsEl = new Element( "items" );
-        for ( Component component : components.iterable() )
+        for ( Component component : components )
         {
             itemsEl.addContent( componentSerializer.generate( component ) );
         }

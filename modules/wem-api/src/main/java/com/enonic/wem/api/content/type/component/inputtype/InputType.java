@@ -11,7 +11,7 @@ public interface InputType
 {
     String getName();
 
-    String getClassName();
+    boolean isBuiltIn();
 
     boolean requiresConfig();
 

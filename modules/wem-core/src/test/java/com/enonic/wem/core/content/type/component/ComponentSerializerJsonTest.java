@@ -20,6 +20,7 @@ import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
 import com.enonic.wem.api.content.type.component.inputtype.SingleSelectorConfig;
 import com.enonic.wem.core.content.JsonFactoryHolder;
 
+import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.component.Input.newInput;
 import static com.enonic.wem.api.content.type.component.inputtype.SingleSelectorConfig.newSingleSelectorConfig;
 import static org.junit.Assert.*;
@@ -40,6 +41,7 @@ public class ComponentSerializerJsonTest
     {
         sw = new StringWriter();
         g = JsonFactoryHolder.DEFAULT_FACTORY.createJsonGenerator( sw );
+        g.useDefaultPrettyPrinter();
     }
 
     @Test
@@ -124,7 +126,7 @@ public class ComponentSerializerJsonTest
         throws IOException
     {
         // setup
-        ComponentSet.Builder builder = ComponentSet.newBuilder();
+        ComponentSet.Builder builder = newComponentSet();
         builder.name( "mySubType" );
         builder.label( "My sub type" );
         builder.immutable( true );

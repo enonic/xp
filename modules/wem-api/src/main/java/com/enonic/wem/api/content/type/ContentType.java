@@ -1,7 +1,8 @@
 package com.enonic.wem.api.content.type;
 
 
-import com.google.common.base.Preconditions;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.enonic.wem.api.content.type.component.Component;
 import com.enonic.wem.api.content.type.component.ComponentPath;
@@ -10,6 +11,7 @@ import com.enonic.wem.api.content.type.component.Components;
 import com.enonic.wem.api.content.type.component.HierarchicalComponent;
 import com.enonic.wem.api.content.type.component.Input;
 import com.enonic.wem.api.content.type.component.SubTypeFetcher;
+import com.enonic.wem.api.content.type.component.SubTypeReference;
 import com.enonic.wem.api.module.Module;
 
 public class ContentType
@@ -28,12 +30,7 @@ public class ContentType
 
     private ComputedDisplayName computedDisplayName;
 
-    private Components components = new Components();
-
-    public ContentType()
-    {
-        components = new Components();
-    }
+    private final Components components = new Components();
 
     public String getName()
     {
@@ -110,59 +107,109 @@ public class ContentType
         this.computedDisplayName = computedDisplayName;
     }
 
-    public void setComponents( final Components components )
-    {
-        this.components = components;
-    }
-
-    public Components getComponents()
-    {
-        return components;
-    }
-
     public void addComponent( final Component component )
     {
         this.components.add( component );
     }
 
-    Input getInput( final ComponentPath path )
+    public Iterable<Component> componentIterable()
     {
-        final Input input = components.getInput( path );
-        if ( input == null )
-        {
-            return null;
-        }
-
-        return input;
+        return components;
     }
 
     public HierarchicalComponent getComponent( final String path )
     {
-        return components.getHierarchicalComponent( new ComponentPath( path ) );
+        return components.getComponent( new ComponentPath( path ) );
     }
 
     public HierarchicalComponent getComponent( final ComponentPath path )
     {
-        return components.getHierarchicalComponent( path );
+        return components.getComponent( path );
+    }
+
+    public Input getInput( final ComponentPath path )
+    {
+        return components.getInput( path );
     }
 
     public Input getInput( final String path )
     {
-        return getInput( new ComponentPath( path ) );
+        return ComponentPath.hasNotPathElementDivider( path )
+            ? components.getInput( path )
+            : components.getInput( new ComponentPath( path ) );
+    }
+
+    public ComponentSet getComponentSet( final ComponentPath path )
+    {
+        return components.getComponentSet( path );
     }
 
     public ComponentSet getComponentSet( final String path )
     {
-        final ComponentPath componentPath = new ComponentPath( path );
-        final ComponentSet componentSet = components.getComponentSet( componentPath );
-        Preconditions.checkState( componentSet.getPath().equals( componentPath ),
-                                  "Found ComponentSet at path [%s] have unexpected path: " + componentSet.getPath(), componentPath );
-        return componentSet;
+        return ComponentPath.hasNotPathElementDivider( path )
+            ? components.getComponentSet( path )
+            : components.getComponentSet( new ComponentPath( path ) );
+    }
+
+    public SubTypeReference getSubTypeReference( final ComponentPath path )
+    {
+        return components.getSubTypeReference( path );
+    }
+
+    public SubTypeReference getSubTypeReference( final String path )
+    {
+        return ComponentPath.hasNotPathElementDivider( path )
+            ? components.getSubTypeReference( path )
+            : components.getSubTypeReference( new ComponentPath( path ) );
     }
 
     public void subTypeReferencesToComponents( final SubTypeFetcher subTypeFetcher )
     {
         components.subTypeReferencesToComponents( subTypeFetcher );
+    }
+
+    public static Builder newComponentType()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private String name;
+
+        private Module module;
+
+        private List<Component> componentList = new ArrayList<Component>();
+
+        public Builder name( String name )
+        {
+            this.name = name;
+            return this;
+        }
+
+        public Builder module( Module module )
+        {
+            this.module = module;
+            return this;
+        }
+
+        public Builder add( Component component )
+        {
+            this.componentList.add( component );
+            return this;
+        }
+
+        public ContentType build()
+        {
+            ContentType type = new ContentType();
+            type.setName( name );
+            type.setModule( module );
+            for ( Component component : componentList )
+            {
+                type.addComponent( component );
+            }
+            return type;
+        }
     }
 
 }
