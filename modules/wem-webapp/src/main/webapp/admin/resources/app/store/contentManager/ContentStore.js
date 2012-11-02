@@ -11,8 +11,8 @@ Ext.define('Admin.store.contentManager.ContentStore', {
         simpleSortMode: true,
         reader: {
             type: 'json',
-            root: 'results.content',
-            totalProperty: 'results.total'
+            root: 'result.contents',
+            totalProperty: 'result.total'
         }
     }
 });

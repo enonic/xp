@@ -70,16 +70,21 @@ Ext.define('Admin.view.TreeGridPanel', {
         this.callParent(arguments);
         var treeStore = this.down('#tree').store;
         me.mon(treeStore, 'beforeappend', function (parentNode, node, opts) {
-            var iconCls;
-            if (me.nodeIconClasses && node && Ext.isEmpty(node.get('iconCls'))) {
-                if (node.get('type')) {
-                    iconCls = me.nodeIconClasses[node.get('type')];
-                    if (iconCls) {
-                        node.set('iconCls', iconCls);
-                    }
-                }
+            var iconCls = me.resolveIconClass(node);
+            if (iconCls) {
+                node.set('iconCls', iconCls);
             }
         });
+    },
+
+    resolveIconClass: function (node) {
+        var me = this;
+        var iconCls = node.get('iconCls');
+        var nodeType = node.get('type');
+        if (Ext.isEmpty(iconCls) && me.iconClasses && me.iconClasses[nodeType]) {
+            iconCls += " " + me.iconClasses[nodeType];
+        }
+        return iconCls;
     },
 
     // possible values : 0,1,tree,grid
