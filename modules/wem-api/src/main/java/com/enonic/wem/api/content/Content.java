@@ -1,9 +1,7 @@
 package com.enonic.wem.api.content;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
 
-import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.data.BlobToKeyReplacer;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
@@ -24,14 +22,15 @@ public final class Content
 
     private ContentData data = new ContentData();
 
-    private AccountKey owner;
-
-    private AccountKey modifier;
+    private String displayName;
 
     private DateTime createdTime;
 
     private DateTime modifiedTime;
 
+    private AccountKey modifier;
+
+    private AccountKey owner;
 
     public void setPath( final ContentPath path )
     {
