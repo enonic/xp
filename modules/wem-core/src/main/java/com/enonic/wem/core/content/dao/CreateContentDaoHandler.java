@@ -7,6 +7,7 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.exception.PathNotFoundException;
 
 
 class CreateContentDaoHandler
@@ -34,10 +35,10 @@ class CreateContentDaoHandler
         }
         else
         {
-            final Node parentContentNode = doGetContentNode( session, path.getParentPath() );
+            final Node parentContentNode = getContentNode( session, path.getParentPath() );
             if ( parentContentNode == null )
             {
-                throw new IllegalArgumentException( "Parent content does not exist: " + path.getParentPath() );
+                throw new PathNotFoundException( path.getParentPath() );
             }
             addContentToJcr( content, parentContentNode );
         }

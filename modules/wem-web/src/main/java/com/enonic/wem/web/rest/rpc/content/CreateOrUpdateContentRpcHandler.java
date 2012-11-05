@@ -18,7 +18,9 @@ import com.enonic.wem.api.content.type.MockContentTypeFetcher;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.component.ComponentSet;
 import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
+import com.enonic.wem.api.exception.PathNotFoundException;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
@@ -66,8 +68,16 @@ public final class CreateOrUpdateContentRpcHandler
             createContent.contentType( qualifiedContentTypeName );
             createContent.contentData( contentData );
             createContent.owner( AccountKey.anonymous() );
-            client.execute( createContent );
-            context.setResult( CreateOrUpdateContentJsonResult.created() );
+            try
+            {
+                client.execute( createContent );
+                context.setResult( CreateOrUpdateContentJsonResult.created() );
+            }
+            catch ( PathNotFoundException e )
+            {
+                context.setResult(
+                    new JsonErrorResult( "Unable to create content. Path [{0}] does not exist", contentPath.getParentPath().toString() ) );
+            }
         }
         else
         {
