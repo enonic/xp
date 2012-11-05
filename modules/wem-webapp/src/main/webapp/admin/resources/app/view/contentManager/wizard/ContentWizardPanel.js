@@ -3,7 +3,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     alias: 'widget.contentWizardPanel',
     requires: [
         'Admin.view.WizardPanel',
-        'Admin.view.contentManager.wizard.ContentWizardToolbar'
+        'Admin.view.contentManager.wizard.ContentWizardToolbar',
+        'Admin.view.contentManager.wizard.ContentDataPanel'
     ],
 
     layout: {
@@ -24,13 +25,14 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     initComponent: function () {
         var me = this;
         me.headerData = {
-            displayName: 'New Content'
+            displayName: me.data ? me.data.name : 'New Content'
         };
         var contentWizardHeader = Ext.create('Ext.container.Container', {
             itemId: 'wizardHeader',
             styleHtmlContent: true,
             autoHeight: true,
             cls: 'admin-wizard-header-container',
+            labelCls: 'label',
             listeners: {
                 afterrender: {
                     fn: function () {
@@ -126,7 +128,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     getSteps: function () {
         var dataStep = {
             stepTitle: "Data",
-            xtype: 'panel'
+            xtype: 'contentDataPanel',
+            contentItems: this.data ? this.data.items : []
         };
         var treeStep = {
             stepTitle: "Tree",
