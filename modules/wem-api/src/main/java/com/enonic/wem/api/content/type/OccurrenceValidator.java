@@ -48,7 +48,7 @@ public final class OccurrenceValidator
 
     private void processInput( final Input input, final EntrySelector entrySelector )
     {
-        final Data data = entrySelector != null ? entrySelector.getData( new EntryPath( input.getPath().toString() ) ) : null;
+        final Data data = getData( input, entrySelector );
         if ( input.isRequired() )
         {
             verifyRequiredInput( input, data );
@@ -57,7 +57,7 @@ public final class OccurrenceValidator
 
     private void processComponentSet( final ComponentSet componentSet, final EntrySelector entrySelector )
     {
-        DataSet dataSet = entrySelector != null ? entrySelector.getDataSet( new EntryPath( componentSet.getPath().toString() ) ) : null;
+        final DataSet dataSet = getDataSet( componentSet, entrySelector );
         if ( componentSet.isRequired() )
         {
             verifyRequiredComponentSet( componentSet, dataSet );
@@ -72,7 +72,6 @@ public final class OccurrenceValidator
             processComponents( componentSet.getComponents().iterable(), null );
         }
     }
-
 
     private void verifyRequiredInput( final Input input, final Data data )
     {
@@ -92,6 +91,16 @@ public final class OccurrenceValidator
         {
             throw new BreaksRequiredContractException( componentSet );
         }
+    }
+
+    private static Data getData( final Input input, final EntrySelector entrySelector )
+    {
+        return entrySelector != null ? entrySelector.getData( new EntryPath( input.getPath().toString() ) ) : null;
+    }
+
+    private DataSet getDataSet( final ComponentSet componentSet, final EntrySelector entrySelector )
+    {
+        return entrySelector != null ? entrySelector.getDataSet( new EntryPath( componentSet.getPath().toString() ) ) : null;
     }
 
 }
