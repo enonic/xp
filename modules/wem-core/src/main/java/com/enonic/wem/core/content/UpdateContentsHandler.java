@@ -1,7 +1,6 @@
 package com.enonic.wem.core.content;
 
 
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,12 +12,15 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 
+import com.enonic.cms.core.time.TimeService;
+
 @Component
 public class UpdateContentsHandler
     extends CommandHandler<UpdateContents>
 {
-    @Autowired
     private ContentDao contentDao;
+
+    private TimeService timeService;
 
     private MockContentTypeDao contentTypeDao = MockContentTypeDao.get();
 
@@ -37,11 +39,23 @@ public class UpdateContentsHandler
             ContentEditor contentEditor = command.getEditor();
             if ( contentEditor.edit( contentToUpdate ) )
             {
-                contentToUpdate.setModifiedTime( DateTime.now() );
+                contentToUpdate.setModifiedTime( timeService.getNowAsDateTime() );
                 contentToUpdate.setModifier( command.getModifier() );
                 contentDao.updateContent( contentToUpdate, context.getJcrSession() );
                 context.getJcrSession().save();
             }
         }
+    }
+
+    @Autowired
+    public void setContentDao( final ContentDao contentDao )
+    {
+        this.contentDao = contentDao;
+    }
+
+    @Autowired
+    public void setTimeService( final TimeService timeService )
+    {
+        this.timeService = timeService;
     }
 }
