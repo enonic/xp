@@ -16,8 +16,6 @@ import com.enonic.wem.api.content.data.MockBlobKeyResolver;
 import com.enonic.wem.api.content.datatype.DataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.RequiredContractVerifier;
-import com.enonic.wem.api.content.type.component.BreaksRequiredContractException;
 
 public final class Content
 {
@@ -172,12 +170,6 @@ public final class Content
     public DataSet getDataSet( String path )
     {
         return this.data.getDataSet( new EntryPath( path ) );
-    }
-
-    public void checkBreaksRequiredContract()
-        throws BreaksRequiredContractException
-    {
-        new RequiredContractVerifier( type ).verify( data );
     }
 
     public Object getIndexableValues()

@@ -12,11 +12,11 @@ import com.enonic.wem.api.content.type.component.ComponentSet;
 import com.enonic.wem.api.content.type.component.FieldSet;
 import com.enonic.wem.api.content.type.component.Input;
 
-public class RequiredContractVerifier
+public final class OccurrenceValidator
 {
-    private ContentType contentType;
+    private final ContentType contentType;
 
-    public RequiredContractVerifier( final ContentType contentType )
+    public OccurrenceValidator( final ContentType contentType )
     {
         this.contentType = contentType;
     }
@@ -48,7 +48,7 @@ public class RequiredContractVerifier
 
     private void processInput( final Input input, final EntrySelector entrySelector )
     {
-        Data data = entrySelector != null ? entrySelector.getData( new EntryPath( input.getPath().toString() ) ) : null;
+        final Data data = entrySelector != null ? entrySelector.getData( new EntryPath( input.getPath().toString() ) ) : null;
         if ( input.isRequired() )
         {
             verifyRequiredInput( input, data );
