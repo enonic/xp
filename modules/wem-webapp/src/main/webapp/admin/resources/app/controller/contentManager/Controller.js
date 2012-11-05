@@ -49,31 +49,78 @@ Ext.define('Admin.controller.contentManager.Controller', {
         } else {
             content = [].concat(content);
         }
-
         var tabs = this.getCmsTabPanel();
+        var createContentTabFn = function (response) {
+            if (Ext.isFunction(callback)) {
+                callback();
+            }
+            var contentData = response.contentType;
+            return {
+                xtype: 'contentWizardPanel',
+                title: 'New Content',
+                data: contentData
+            };
+        };
+        var createSiteTabFn = function (response) {
+            if (Ext.isFunction(callback)) {
+                callback();
+            }
+            return {
+                xtype: 'panel',
+                title: 'New Site',
+                html: 'Site wizard will be here',
+                data: response
+            };
+        };
+        var openEditContentTabFn = function (selectedContent) {
+            var requestConfig = {
+                doTabRequest: function (handleRpcResponse) {
+                    Admin.lib.RemoteService.contentType_get({contentType: 'News:Article'}, function (rpcResponse) {
+                        if (rpcResponse.success) {
+                            handleRpcResponse(rpcResponse);
+                        }
+                    });
+                },
+                createTabFromResponse: createContentTabFn
+            };
+            var tabItem = {
+                itemId: 'edit-content-tab-' + selectedContent.get('path'),
+                title: selectedContent.get('displayName'),
+                closable: true,
+                layout: 'fit'
+            };
+            tabs.addTab(tabItem, undefined, requestConfig);
+        };
+        var openEditSiteTabFn = function (selectedContent) {
+            var requestConfig = {
+                doTabRequest: function (handleRpcResponse) {
+                    // data call here
+                },
+                createTabFromResponse: createSiteTabFn
+            };
+            var tabItem = {
+                itemId: 'edit-site-tab-' + selectedContent.get('path'),
+                title: selectedContent.get('displayName'),
+                closable: true,
+                layout: 'fit'
+            };
+            tabs.addTab(tabItem, undefined, requestConfig);
+        };
+
         var i;
         if (tabs) {
             var tab;
             for (i = 0; i < content.length; i += 1) {
                 var data = content[i];
+                //TODO: implement when content specification will be developed
                 switch (data.get('type')) {
-                case 'contentType':
-                    tab = {
-                        xtype: 'contentWizardPanel',
-                        title: 'New Content',
-                        data: data
-                    };
+                case 'myModule:myType':
+                    openEditContentTabFn(data);
                     break;
-                case 'site':
-                    tab = {
-                        xtype: 'panel',
-                        title: 'New Site',
-                        html: 'Site wizard will be here',
-                        data: data
-                    };
+                case 'myModule:mySite':
+                    openEditSiteTabFn(data);
                     break;
                 }
-                tabs.addTab(tab);
             }
         }
     },
@@ -84,10 +131,35 @@ Ext.define('Admin.controller.contentManager.Controller', {
             var tab;
             switch (type) {
             case 'contentType':
-                tab = {
-                    xtype: 'contentWizardPanel',
-                    title: 'New Content'
+                //This is stub, logic for new content creation will be added later
+                var createContentTabFn = function (response) {
+                    var contentData = response.contentType;
+                    return {
+                        xtype: 'contentWizardPanel',
+                        title: 'New Content',
+                        data: contentData
+                    };
                 };
+                var openEditContentTabFn = function (selectedContent) {
+                    var requestConfig = {
+                        doTabRequest: function (handleRpcResponse) {
+                            Admin.lib.RemoteService.contentType_get({contentType: 'News:Article'}, function (rpcResponse) {
+                                if (rpcResponse.success) {
+                                    handleRpcResponse(rpcResponse);
+                                }
+                            });
+                        },
+                        createTabFromResponse: createContentTabFn
+                    };
+                    var tabItem = {
+                        itemId: 'new-content-tab',
+                        title: 'New Content',
+                        closable: true,
+                        layout: 'fit'
+                    };
+                    tabs.addTab(tabItem, undefined, requestConfig);
+                };
+                openEditContentTabFn();
                 break;
             case 'site':
                 tab = {
@@ -95,9 +167,10 @@ Ext.define('Admin.controller.contentManager.Controller', {
                     html: 'New site wizard here',
                     title: 'New Site'
                 };
+                tabs.addTab(tab);
                 break;
             }
-            tabs.addTab(tab);
+
         }
     },
 
@@ -160,5 +233,6 @@ Ext.define('Admin.controller.contentManager.Controller', {
         }
         return win;
     }
+
 
 });

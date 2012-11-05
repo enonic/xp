@@ -1299,3 +1299,15 @@ li.admin-user-item:hover {
 .admin-memberships-graph {
     border-bottom: 1px solid #F0F0F0 !important;
 }
+
+.span-1 .x-form-item-body {
+    width: 200px !important;
+}
+
+.span-2 .x-form-item-body {
+    width: 400px !important;
+}
+
+.span-3 .x-form-item-body {
+    width: 600px !important;
+}

@@ -15,7 +15,7 @@ Ext.define('Admin.lib.RemoteService', {
                 "account_find", "account_getGraph", "account_changePassword", "account_verifyUniqueEmail", "account_suggestUserName",
                 "account_createOrUpdate", "account_delete", "account_get", "util_getCountries", "util_getLocales", "util_getTimeZones",
                 "userstore_getAll", "userstore_get", "userstore_getConnectors", "userstore_createOrUpdate", "userstore_delete",
-                "content_createOrUpdate"
+                "content_createOrUpdate", "contentType_get"
             ]
         };
 
@@ -88,6 +88,10 @@ Ext.define('Admin.lib.RemoteService', {
     },
 
     content_createOrUpdate: function (params, callback) {
+        console.log(params, callback);
+    },
+
+    contentType_get: function (params, callback) {
         console.log(params, callback);
     },
 
