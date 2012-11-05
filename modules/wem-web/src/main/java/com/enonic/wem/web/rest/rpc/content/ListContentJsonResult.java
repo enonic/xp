@@ -12,12 +12,12 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.web.json.JsonResult;
 
-class FindContentJsonResult
+class ListContentJsonResult
     extends JsonResult
 {
     private Contents contents;
 
-    FindContentJsonResult( final Contents contents )
+    ListContentJsonResult( final Contents contents )
     {
         this.contents = contents;
     }

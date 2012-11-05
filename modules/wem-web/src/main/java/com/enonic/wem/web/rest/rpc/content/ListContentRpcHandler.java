@@ -11,12 +11,12 @@ import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
 @Component
-public final class FindContentRpcHandler
+public final class ListContentRpcHandler
     extends AbstractDataRpcHandler
 {
-    public FindContentRpcHandler()
+    public ListContentRpcHandler()
     {
-        super( "content_find" );
+        super( "content_list" );
     }
 
     @Override
@@ -29,6 +29,6 @@ public final class FindContentRpcHandler
         getChildContent.parentPath( parentPath );
 
         final Contents contents = client.execute( getChildContent );
-        context.setResult( new FindContentJsonResult( contents ) );
+        context.setResult( new ListContentJsonResult( contents ) );
     }
 }
