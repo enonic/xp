@@ -152,7 +152,7 @@ Ext.define('Admin.controller.account.Controller', {
                         if (rpcResp.success) {
                             handleRpcResponse(rpcResp);
                         }
-                    })
+                    });
                 },
                 createTabFromResponse: createUserTabFn
             };
@@ -175,7 +175,7 @@ Ext.define('Admin.controller.account.Controller', {
                         if (rpcResp.success) {
                             handleRpcResponse(rpcResp);
                         }
-                    })
+                    });
                 },
                 createTabFromResponse: createGroupTabFn
             };
@@ -240,7 +240,7 @@ Ext.define('Admin.controller.account.Controller', {
                         if (rpcResp.success) {
                             handleRpcResponse(rpcResp);
                         }
-                    })
+                    });
                 },
                 createTabFromResponse: createUserWizardFn
             };
