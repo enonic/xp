@@ -61,7 +61,7 @@ public class GetContentTypeRpcHandlerTest
             client.execute( Commands.contentType().get().names( new QualifiedContentTypeName( "myModule:myCtype" ) ) ) ).thenReturn(
             contentTypes );
 
-        testSuccess( "getContentTypes_param.json", "getContentTypes_result.json" );
+        testSuccess( "getContentType_param.json", "getContentType_result.json" );
     }
 
     @Test
@@ -73,6 +73,6 @@ public class GetContentTypeRpcHandlerTest
         final ObjectNode resultJson = objectNode();
         resultJson.put( "success", false );
         resultJson.put( "error", "Content type [myModule:myCtype] was not found" );
-        testSuccess( "getContentTypes_param.json", resultJson );
+        testSuccess( "getContentType_param.json", resultJson );
     }
 }
