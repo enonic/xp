@@ -22,4 +22,9 @@ public final class ContentCommands
     {
         return new GetChildContent();
     }
+
+    public GetContentTree getTree()
+    {
+        return new GetContentTree();
+    }
 }

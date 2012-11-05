@@ -7,7 +7,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-public final class AccountKey
+public class AccountKey
 {
     private final static AccountKey ANON_USER = new AccountKey( AccountType.USER, "system", "anonymous" );
 
@@ -27,7 +27,7 @@ public final class AccountKey
 
     private final String qualifiedName;
 
-    private AccountKey( final AccountType type, final String userStore, final String localName )
+    AccountKey( final AccountType type, final String userStore, final String localName )
     {
         this.type = type;
         this.userStore = userStore;

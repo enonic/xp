@@ -24,7 +24,7 @@ class CreateContentDaoHandler
         final Node contentsNode = root.getNode( ContentDaoConstants.CONTENTS_PATH );
         final ContentPath path = content.getPath();
 
-        if ( path.length() == 1 )
+        if ( path.elementCount() == 1 )
         {
             if ( contentsNode.hasNode( path.getName() ) )
             {
@@ -34,7 +34,11 @@ class CreateContentDaoHandler
         }
         else
         {
-            final Node parentContentNode = getContentNode( session, path.getParentPath() );
+            final Node parentContentNode = doGetContentNode( session, path.getParentPath() );
+            if ( parentContentNode == null )
+            {
+                throw new IllegalArgumentException( "Parent content does not exist: " + path.getParentPath() );
+            }
             addContentToJcr( content, parentContentNode );
         }
     }

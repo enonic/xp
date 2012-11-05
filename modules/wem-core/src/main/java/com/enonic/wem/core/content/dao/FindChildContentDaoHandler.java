@@ -22,7 +22,7 @@ class FindChildContentDaoHandler
         throws RepositoryException
     {
         final Contents.Builder contentsBuilder = Contents.builder();
-        final Node parentContentNode = getContentNode( session, parentPath );
+        final Node parentContentNode = doGetContentNode( session, parentPath );
         final NodeIterator nodeIterator = parentContentNode.getNodes();
         while ( nodeIterator.hasNext() )
         {

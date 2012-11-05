@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentTree;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.EntryPath;
@@ -161,11 +162,31 @@ public class ContentDaoImplTest
         commit();
 
         // exercise
-        assertTrue( contentDao.findContent( ContentPath.from( "myParentContent" ), session ) != null );
         Contents childContent = contentDao.findChildContent( ContentPath.from( "myParentContent" ), session );
+
+        // verify
         assertTrue( childContent.isNotEmpty() );
         assertEquals( ContentPath.from( "myParentContent/myChildContent2" ), childContent.getList().get( 0 ).getPath() );
         assertEquals( ContentPath.from( "myParentContent/myChildContent1" ), childContent.getList().get( 1 ).getPath() );
+    }
+
+    @Test
+    public void getContentTree()
+        throws Exception
+    {
+        // setup
+        contentDao.createContent( createContent( "branch-A" ), session );
+        contentDao.createContent( createContent( "branch-A/branch-A-A" ), session );
+        contentDao.createContent( createContent( "branch-B" ), session );
+        contentDao.createContent( createContent( "branch-B/branch-B-A" ), session );
+        contentDao.createContent( createContent( "branch-B/branch-B-A/branch-B-A-A" ), session );
+        contentDao.createContent( createContent( "branch-B/branch-B-B" ), session );
+        contentDao.createContent( createContent( "branch-B/branch-B-B/branch-B-B-A" ), session );
+        commit();
+
+        // exercise
+        ContentTree tree = contentDao.getContentTree( session );
+        System.out.println( tree );
 
         // verify
     }

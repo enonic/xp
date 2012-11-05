@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
+import com.enonic.wem.api.content.ContentTree;
 import com.enonic.wem.api.content.Contents;
 
 
@@ -91,6 +92,19 @@ public class ContentDaoImpl
         try
         {
             return new FindChildContentDaoHandler( session ).handle( parentPath );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    @Override
+    public ContentTree getContentTree( final Session session )
+    {
+        try
+        {
+            return new GetContentTreeContentDaoHandler( session ).handle();
         }
         catch ( RepositoryException e )
         {

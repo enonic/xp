@@ -1,7 +1,12 @@
 package com.enonic.wem.api.content;
 
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 
+import com.google.common.base.Preconditions;
+
+import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.BlobToKeyReplacer;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
@@ -24,13 +29,13 @@ public final class Content
 
     private String displayName;
 
+    private UserKey owner;
+
     private DateTime createdTime;
 
     private DateTime modifiedTime;
 
-    private AccountKey modifier;
-
-    private AccountKey owner;
+    private UserKey modifier;
 
     public void setPath( final ContentPath path )
     {
@@ -72,6 +77,56 @@ public final class Content
     public void setData( final ContentData value )
     {
         this.data = value;
+    }
+
+    public String getDisplayName()
+    {
+        return displayName;
+    }
+
+    public void setDisplayName( final String displayName )
+    {
+        this.displayName = displayName;
+    }
+
+    public DateTime getCreatedTime()
+    {
+        return createdTime;
+    }
+
+    public void setCreatedTime( final DateTime createdTime )
+    {
+        this.createdTime = createdTime;
+    }
+
+    public DateTime getModifiedTime()
+    {
+        return modifiedTime;
+    }
+
+    public void setModifiedTime( final DateTime modifiedTime )
+    {
+        this.modifiedTime = modifiedTime;
+    }
+
+    public AccountKey getModifier()
+    {
+        return modifier;
+    }
+
+    public void setModifier( final AccountKey modifier )
+    {
+        this.modifier = UserKey.from( modifier );
+    }
+
+    public AccountKey getOwner()
+    {
+        return owner;
+    }
+
+    public void setOwner( final AccountKey owner )
+    {
+        this.owner = UserKey.from( owner );
     }
 
     public ContentData getData()
@@ -125,51 +180,11 @@ public final class Content
         new RequiredContractVerifier( type ).verify( data );
     }
 
-    public AccountKey getOwner()
+    public Object getIndexableValues()
     {
-        return owner;
+        // TODO
+        return null;
     }
-
-    public void setOwner( final AccountKey owner )
-    {
-        this.owner = owner;
-    }
-
-    public AccountKey getModifier()
-    {
-        return modifier;
-    }
-
-    public void setModifier( final AccountKey modifier )
-    {
-        this.modifier = modifier;
-    }
-
-    public DateTime getCreatedTime()
-    {
-        return createdTime;
-    }
-
-    public void setCreatedTime( final DateTime createdTime )
-    {
-        this.createdTime = createdTime;
-    }
-
-    public DateTime getModifiedTime()
-    {
-        return modifiedTime;
-    }
-
-    public void setModifiedTime( final DateTime modifiedTime )
-    {
-        this.modifiedTime = modifiedTime;
-    }
-
-//    public Object getIndexableValues()
-//    {
-//        // TODO
-//        return null;
-//    }
 
     public void replaceBlobsWithKeys( final MockBlobKeyResolver blobToKeyResolver )
     {
@@ -182,5 +197,95 @@ public final class Content
         Content content = new Content();
         content.setPath( contentPath );
         return content;
+    }
+
+    public static Builder newContent()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private ContentPath path = new ContentPath();
+
+        private ContentType type;
+
+        private ContentData data = new ContentData();
+
+        private String displayName;
+
+        private UserKey owner;
+
+        private DateTime createdTime;
+
+        private DateTime modifiedTime;
+
+        private UserKey modifier;
+
+        public Builder path( ContentPath path )
+        {
+            this.path = path;
+            return this;
+        }
+
+        public Builder type( ContentType type )
+        {
+            this.type = type;
+            return this;
+        }
+
+        public Builder data( ContentData data )
+        {
+            this.data = data;
+            return this;
+        }
+
+        public Builder displayName( String displayName )
+        {
+            this.displayName = displayName;
+            return this;
+        }
+
+        public Builder owner( UserKey owner )
+        {
+            this.owner = owner;
+            return this;
+        }
+
+        public Builder modifier( UserKey modifier )
+        {
+            this.modifier = modifier;
+            return this;
+        }
+
+        public Builder createdTime( DateTime createdTime )
+        {
+            this.createdTime = createdTime;
+            return this;
+        }
+
+        public Builder modifiedTime( DateTime modifiedTime )
+        {
+            this.modifiedTime = modifiedTime;
+            return this;
+        }
+
+        public Content build()
+        {
+            Preconditions.checkNotNull( path, "path is mandatory for a content" );
+            Preconditions.checkNotNull( createdTime, "createdTime is mandatory for a content" );
+            Preconditions.checkNotNull( owner, "owner is mandatory for a content" );
+
+            Content content = new Content();
+            content.path = path;
+            content.type = type;
+            content.data = data;
+            content.displayName = displayName;
+            content.owner = owner;
+            content.createdTime = createdTime;
+            content.modifiedTime = modifiedTime;
+            content.modifier = modifier;
+            return content;
+        }
     }
 }

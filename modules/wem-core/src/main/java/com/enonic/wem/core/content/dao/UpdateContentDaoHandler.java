@@ -18,7 +18,7 @@ class UpdateContentDaoHandler
     void handle( Content content )
         throws RepositoryException
     {
-        final Node contentNode = getContentNode( session, content.getPath() );
+        final Node contentNode = doGetContentNode( session, content.getPath() );
         if ( contentNode == null )
         {
             // TODO: Replace with better exception

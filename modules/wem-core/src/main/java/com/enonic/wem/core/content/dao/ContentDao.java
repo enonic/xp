@@ -6,6 +6,7 @@ import javax.jcr.Session;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
+import com.enonic.wem.api.content.ContentTree;
 import com.enonic.wem.api.content.Contents;
 
 public interface ContentDao
@@ -22,4 +23,6 @@ public interface ContentDao
     public Contents findContent( ContentPaths contentPaths, Session session );
 
     public Contents findChildContent( ContentPath parentPath, Session session );
+
+    public ContentTree getContentTree( final Session session );
 }
