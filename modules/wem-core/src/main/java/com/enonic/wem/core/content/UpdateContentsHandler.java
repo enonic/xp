@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content;
 
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,9 +35,13 @@ public class UpdateContentsHandler
         for ( Content contentToUpdate : contents )
         {
             ContentEditor contentEditor = command.getEditor();
-            contentEditor.edit( contentToUpdate );
-            contentDao.updateContent( contentToUpdate, context.getJcrSession() );
-            context.getJcrSession().save();
+            if ( contentEditor.edit( contentToUpdate ) )
+            {
+                contentToUpdate.setModifiedTime( DateTime.now() );
+                contentToUpdate.setModifier( command.getModifier() );
+                contentDao.updateContent( contentToUpdate, context.getJcrSession() );
+                context.getJcrSession().save();
+            }
         }
     }
 }

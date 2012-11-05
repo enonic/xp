@@ -39,10 +39,16 @@ Ext.define( 'Admin.view.content.ContentPanel', {
                         ]
                     },
                     {
-                        xtype:'button',
-                        itemId:'sendButton',
-                        text:'Send data',
-                        width:100,
+                        xtype: 'textfield',
+                        fieldLabel: 'Path',
+                        value: '/myContent',
+                        name: 'contentPath'
+                    },
+                    {
+                        xtype: 'button',
+                        itemId: 'sendButton',
+                        text: 'Send data',
+                        width: 100,
                         listeners:{
                             click:{
                                 fn:me.onSendClick,
@@ -74,7 +80,8 @@ Ext.define( 'Admin.view.content.ContentPanel', {
 
     getContentPath:function ()
     {
-        return "/myContent";
+        var form = this.getForm();
+        return form.findField( 'contentPath' ).getValue();
     },
 
     onSendClick:function ()

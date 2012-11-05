@@ -3,6 +3,7 @@ package com.enonic.wem.api.command.content;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
@@ -16,6 +17,8 @@ public final class CreateContent
     private ContentData contentData;
 
     private QualifiedContentTypeName contentType;
+
+    private AccountKey owner;
 
     public CreateContent contentPath( ContentPath value )
     {
@@ -32,6 +35,12 @@ public final class CreateContent
     public CreateContent contentData( ContentData value )
     {
         this.contentData = value;
+        return this;
+    }
+
+    public CreateContent owner( final AccountKey owner )
+    {
+        this.owner = owner;
         return this;
     }
 
@@ -55,5 +64,10 @@ public final class CreateContent
     public ContentData getContentData()
     {
         return contentData;
+    }
+
+    public AccountKey getOwner()
+    {
+        return owner;
     }
 }

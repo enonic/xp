@@ -24,7 +24,7 @@ class CreateContentDaoHandler
         final Node contentsNode = root.getNode( ContentDaoConstants.CONTENTS_PATH );
         final ContentPath path = content.getPath();
 
-        if ( path.numberOfElements() == 1 )
+        if ( path.length() == 1 )
         {
             if ( contentsNode.hasNode( path.getName() ) )
             {

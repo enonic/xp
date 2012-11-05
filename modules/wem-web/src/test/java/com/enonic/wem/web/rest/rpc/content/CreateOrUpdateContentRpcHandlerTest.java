@@ -25,7 +25,6 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.web.rest.service.upload.UploadItem;
-import com.enonic.wem.web.rest.service.upload.UploadService;
 
 public class CreateOrUpdateContentRpcHandlerTest
     extends AbstractRpcHandlerTest
@@ -33,16 +32,12 @@ public class CreateOrUpdateContentRpcHandlerTest
 
     private Client client;
 
-    private UploadService uploadService;
-
     @Override
     protected JsonRpcHandler createHandler()
         throws Exception
     {
         final CreateOrUpdateContentRpcHandler handler = new CreateOrUpdateContentRpcHandler();
 
-        uploadService = Mockito.mock( UploadService.class );
-        handler.setUploadService( uploadService );
         client = Mockito.mock( Client.class );
         handler.setClient( client );
 
@@ -120,7 +115,6 @@ public class CreateOrUpdateContentRpcHandlerTest
         Mockito.when( item.getName() ).thenReturn( name );
         Mockito.when( item.getSize() ).thenReturn( (long) data.length );
         Mockito.when( item.getFile() ).thenReturn( file );
-        Mockito.when( this.uploadService.getItem( Mockito.<String>any() ) ).thenReturn( item );
     }
 
     private File createTempFile( final byte[] data )

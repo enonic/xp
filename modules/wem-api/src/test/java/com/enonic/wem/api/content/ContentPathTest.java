@@ -44,7 +44,7 @@ public class ContentPathTest
         throws Exception
     {
         ContentPath path = ContentPath.from( "one/two/three" );
-        assertEquals( 3, path.numberOfElements() );
+        assertEquals( 3, path.length() );
         assertEquals( "one", path.getElement( 0 ) );
         assertEquals( "two", path.getElement( 1 ) );
         assertEquals( "three", path.getElement( 2 ) );

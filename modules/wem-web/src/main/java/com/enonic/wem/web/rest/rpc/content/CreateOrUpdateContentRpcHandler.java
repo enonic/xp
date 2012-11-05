@@ -1,9 +1,9 @@
 package com.enonic.wem.web.rest.rpc.content;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.UpdateContents;
@@ -21,7 +21,6 @@ import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
-import com.enonic.wem.web.rest.service.upload.UploadService;
 
 import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.component.Input.newInput;
@@ -30,8 +29,6 @@ import static com.enonic.wem.api.content.type.component.Input.newInput;
 public final class CreateOrUpdateContentRpcHandler
     extends AbstractDataRpcHandler
 {
-    private UploadService uploadService;
-
     private ContentTypeFetcher contentTypeFetcher;
 
     public CreateOrUpdateContentRpcHandler()
@@ -68,6 +65,7 @@ public final class CreateOrUpdateContentRpcHandler
             createContent.contentPath( contentPath );
             createContent.contentType( qualifiedContentTypeName );
             createContent.contentData( contentData );
+            createContent.owner( AccountKey.anonymous() );
             client.execute( createContent );
             context.setResult( CreateOrUpdateContentJsonResult.created() );
         }
@@ -76,6 +74,8 @@ public final class CreateOrUpdateContentRpcHandler
             final UpdateContents updateContents = Commands.content().update();
             updateContents.paths( ContentPaths.from( contentPath ) );
             updateContents.editor( ContentEditors.setContentData( contentData ) );
+            updateContents.modifier( AccountKey.anonymous() );
+
             client.execute( updateContents );
             context.setResult( CreateOrUpdateContentJsonResult.updated() );
         }
@@ -85,11 +85,5 @@ public final class CreateOrUpdateContentRpcHandler
     {
         final Contents contents = client.execute( Commands.content().get().paths( ContentPaths.from( contentPath ) ) );
         return contents.isNotEmpty();
-    }
-
-    @Autowired
-    public void setUploadService( final UploadService uploadService )
-    {
-        this.uploadService = uploadService;
     }
 }

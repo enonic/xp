@@ -1,5 +1,6 @@
 package com.enonic.wem.core.content;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,10 @@ public class CreateContentHandler
         final Content content = new Content();
         content.setPath( command.getContentPath() );
         content.setData( contentData );
+        content.setCreatedTime( DateTime.now() );
+        content.setModifiedTime( DateTime.now() );
+        content.setOwner( command.getOwner() );
+        content.setModifier( command.getOwner() );
         contentDao.createContent( content, context.getJcrSession() );
         context.getJcrSession().save();
     }

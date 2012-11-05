@@ -1,7 +1,9 @@
 package com.enonic.wem.api.content;
 
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 
+import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.data.BlobToKeyReplacer;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
@@ -14,13 +16,22 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.RequiredContractVerifier;
 import com.enonic.wem.api.content.type.component.BreaksRequiredContractException;
 
-public class Content
+public final class Content
 {
     private ContentPath path = new ContentPath();
 
     private ContentType type;
 
     private ContentData data = new ContentData();
+
+    private AccountKey owner;
+
+    private AccountKey modifier;
+
+    private DateTime createdTime;
+
+    private DateTime modifiedTime;
+
 
     public void setPath( final ContentPath path )
     {
@@ -115,11 +126,51 @@ public class Content
         new RequiredContractVerifier( type ).verify( data );
     }
 
-    public Object getIndexableValues()
+    public AccountKey getOwner()
     {
-        // TODO
-        return null;
+        return owner;
     }
+
+    public void setOwner( final AccountKey owner )
+    {
+        this.owner = owner;
+    }
+
+    public AccountKey getModifier()
+    {
+        return modifier;
+    }
+
+    public void setModifier( final AccountKey modifier )
+    {
+        this.modifier = modifier;
+    }
+
+    public DateTime getCreatedTime()
+    {
+        return createdTime;
+    }
+
+    public void setCreatedTime( final DateTime createdTime )
+    {
+        this.createdTime = createdTime;
+    }
+
+    public DateTime getModifiedTime()
+    {
+        return modifiedTime;
+    }
+
+    public void setModifiedTime( final DateTime modifiedTime )
+    {
+        this.modifiedTime = modifiedTime;
+    }
+
+//    public Object getIndexableValues()
+//    {
+//        // TODO
+//        return null;
+//    }
 
     public void replaceBlobsWithKeys( final MockBlobKeyResolver blobToKeyResolver )
     {
