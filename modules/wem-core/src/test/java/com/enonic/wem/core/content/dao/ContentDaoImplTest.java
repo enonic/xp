@@ -232,7 +232,7 @@ public class ContentDaoImplTest
     }
 
     @Test
-    public void getContentTree()
+    public void getContentTree_given_persisted_tree_of_nine_content_then_a_tree_of_size_9_is_returned()
         throws Exception
     {
         // setup
@@ -241,6 +241,8 @@ public class ContentDaoImplTest
         contentDao.createContent( createContent( "branch-B" ), session );
         contentDao.createContent( createContent( "branch-B/branch-B-A" ), session );
         contentDao.createContent( createContent( "branch-B/branch-B-A/branch-B-A-A" ), session );
+        contentDao.createContent( createContent( "branch-B/branch-B-A/branch-B-A-B" ), session );
+        contentDao.createContent( createContent( "branch-B/branch-B-A/branch-B-A-C" ), session );
         contentDao.createContent( createContent( "branch-B/branch-B-B" ), session );
         contentDao.createContent( createContent( "branch-B/branch-B-B/branch-B-B-A" ), session );
         commit();
@@ -249,6 +251,7 @@ public class ContentDaoImplTest
         ContentTree tree = contentDao.getContentTree( session );
 
         // verify
+        assertEquals( 9, tree.deepSize() );
     }
 
     private Content createContent( String path )
