@@ -8,8 +8,6 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.ContentTypeFetcher;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.core.content.data.ContentDataSerializerXml;
 
@@ -18,15 +16,12 @@ import com.enonic.cms.framework.util.JDOMUtil;
 public class ContentSerializerXml
     implements ContentSerializer
 {
-    private ContentTypeFetcher contentTypeFetcher;
-
     private ContentDataSerializerXml contentDataSerializer = new ContentDataSerializerXml();
 
     private boolean prettyPrint = false;
 
-    public ContentSerializerXml( final ContentTypeFetcher contentTypeFetcher )
+    public ContentSerializerXml()
     {
-        this.contentTypeFetcher = contentTypeFetcher;
     }
 
     public ContentSerializerXml prettyPrint( boolean value )
@@ -60,7 +55,7 @@ public class ContentSerializerXml
 
         if ( content.getType() != null )
         {
-            contentEl.addContent( new Element( "type" ).setText( content.getType().getQualifiedName().toString() ) );
+            contentEl.addContent( new Element( "type" ).setText( content.getType().toString() ) );
         }
         else
         {
@@ -96,8 +91,7 @@ public class ContentSerializerXml
         if ( typeAsString != null )
         {
             final QualifiedContentTypeName qualifiedContentTypeName = new QualifiedContentTypeName( typeAsString );
-            final ContentType contentType = contentTypeFetcher.getContentType( qualifiedContentTypeName );
-            content.setType( contentType );
+            content.setType( qualifiedContentTypeName );
         }
 
         content.setData( contentDataSerializer.parse( contentEl.getChild( "data" ) ) );

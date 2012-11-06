@@ -15,13 +15,13 @@ import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.MockBlobKeyResolver;
 import com.enonic.wem.api.content.datatype.DataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
-import com.enonic.wem.api.content.type.ContentType;
+import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 
 public final class Content
 {
     private ContentPath path = new ContentPath();
 
-    private ContentType type;
+    private QualifiedContentTypeName type;
 
     private ContentData data = new ContentData();
 
@@ -45,12 +45,12 @@ public final class Content
         return path;
     }
 
-    public ContentType getType()
+    public QualifiedContentTypeName getType()
     {
         return type;
     }
 
-    public void setType( final ContentType type )
+    public void setType( final QualifiedContentTypeName type )
     {
         this.type = type;
     }
@@ -200,7 +200,7 @@ public final class Content
     {
         private ContentPath path = new ContentPath();
 
-        private ContentType type;
+        private QualifiedContentTypeName type;
 
         private ContentData data = new ContentData();
 
@@ -220,7 +220,7 @@ public final class Content
             return this;
         }
 
-        public Builder type( ContentType type )
+        public Builder type( QualifiedContentTypeName type )
         {
             this.type = type;
             return this;

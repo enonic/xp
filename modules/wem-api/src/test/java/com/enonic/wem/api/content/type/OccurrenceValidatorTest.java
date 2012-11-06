@@ -1,12 +1,14 @@
 package com.enonic.wem.api.content.type;
 
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.type.component.BreaksRequiredContractException;
 import com.enonic.wem.api.content.type.component.ComponentSet;
 import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
+import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.component.FieldSet.newFieldSet;
@@ -15,13 +17,21 @@ import static org.junit.Assert.*;
 
 public class OccurrenceValidatorTest
 {
-    @Test()
-    public void given_required_field_with_data_when_checkBreaksRequiredContract_then_exception_is_not_thrown()
+    private ContentType contentType = new ContentType();
+
+    @Before
+    public void before()
     {
-        ContentType contentType = new ContentType();
+        contentType.setModule( Module.SYSTEM );
+        contentType.setName( "MyType" );
+    }
+
+    @Test()
+    public void given_required_field_with_data_when_verify_then_exception_is_not_thrown()
+    {
         contentType.addComponent( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "myField", "value" );
 
         // exercise
@@ -36,56 +46,50 @@ public class OccurrenceValidatorTest
     }
 
     @Test(expected = BreaksRequiredContractException.class)
-    public void given_required_field_with_no_data_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    public void given_required_field_with_no_data_when_verify_then_exception_is_thrown()
     {
 
-        ContentType contentType = new ContentType();
         contentType.addComponent( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
 
         // exercise
         new OccurrenceValidator( contentType ).verify( content.getData() );
     }
 
     @Test(expected = BreaksRequiredContractException.class)
-    public void given_required_field_with_no_data_within_layout_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    public void given_required_field_with_no_data_within_layout_when_verify_then_exception_is_thrown()
     {
 
-        ContentType contentType = new ContentType();
         contentType.addComponent( newFieldSet().label( "Label" ).name( "myLayout" ).add(
             newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() );
         Content content = new Content();
-        content.setType( contentType );
 
         // exercise
         new OccurrenceValidator( contentType ).verify( content.getData() );
     }
 
     @Test(expected = BreaksRequiredContractException.class)
-    public void given_required_field_with_no_data_within_layout_within_layout_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    public void given_required_field_with_no_data_within_layout_within_layout_when_verify_then_exception_is_thrown()
     {
 
-        ContentType contentType = new ContentType();
         contentType.addComponent( newFieldSet().label( "My outer layout" ).name( "myOuterlayout" ).add(
             newFieldSet().label( "My Layout" ).name( "myLayout" ).add(
                 newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
 
         // exercise
         new OccurrenceValidator( contentType ).verify( content.getData() );
     }
 
     @Test(expected = BreaksRequiredContractException.class)
-    public void given_required_field_with_no_data_within_fieldSet_within_layout_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    public void given_required_field_with_no_data_within_fieldSet_within_layout_when_verify_then_exception_is_thrown()
     {
-        ContentType contentType = new ContentType();
         contentType.addComponent( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
             newComponentSet().name( "myFieldSet" ).required( true ).add(
                 newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
         Content content = new Content();
-        content.setType( contentType );
         content.setData( "myFieldSet.myField", "" );
 
         // exercise
@@ -93,14 +97,12 @@ public class OccurrenceValidatorTest
     }
 
     @Test(expected = BreaksRequiredContractException.class)
-    public void given_required_field_with_no_data_within_fieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    public void given_required_field_with_no_data_within_fieldSet_when_verify_then_exception_is_thrown()
     {
-
-        ContentType contentType = new ContentType();
         contentType.addComponent( newComponentSet().name( "myFieldSet" ).required( true ).add(
             newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() );
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "myFieldSet.myField", "" );
 
         // exercise
@@ -108,15 +110,12 @@ public class OccurrenceValidatorTest
     }
 
     @Test(expected = BreaksRequiredContractException.class)
-    public void given_required_field_with_no_data_within_layout_within_a_fieldSet_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    public void given_required_field_with_no_data_within_layout_within_a_fieldSet_when_verify_then_exception_is_thrown()
     {
-
-        ContentType contentType = new ContentType();
         contentType.addComponent( newComponentSet().name( "myFieldSet" ).required( true ).add(
             newFieldSet().label( "My FieldSet" ).name( "myFieldSet" ).add(
                 newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
         Content content = new Content();
-        content.setType( contentType );
         content.setData( "myFieldSet.myField", "" );
 
         // exercise
@@ -124,14 +123,12 @@ public class OccurrenceValidatorTest
     }
 
     @Test()
-    public void given_required_fieldSet_with_data_when_checkBreaksRequiredContract_then_exception_is_not_thrown()
+    public void given_required_fieldSet_with_data_when_verify_then_exception_is_not_thrown()
     {
-
-        ContentType contentType = new ContentType();
         contentType.addComponent( newComponentSet().name( "myFieldSet" ).required( true ).add(
             newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() ).build() );
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "myFieldSet.myField", "value" );
 
         // exercise
@@ -148,39 +145,34 @@ public class OccurrenceValidatorTest
     }
 
     @Test(expected = BreaksRequiredContractException.class)
-    public void given_required_fieldSet_with_no_data_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    public void given_required_fieldSet_with_no_data_when_verify_then_exception_is_thrown()
     {
-
-        ContentType contentType = new ContentType();
         contentType.addComponent( newComponentSet().name( "myFieldSet" ).required( true ).add(
             newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() ).build() );
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
 
         // exercise
         new OccurrenceValidator( contentType ).verify( content.getData() );
     }
 
     @Test(expected = BreaksRequiredContractException.class)
-    public void given_required_fieldSet_with_no_data_within_layout_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    public void given_required_fieldSet_with_no_data_within_layout_when_verify_then_exception_is_thrown()
     {
-
-        ContentType contentType = new ContentType();
         contentType.addComponent( newFieldSet().label( "My FieldSet" ).name( "myFieldSet" ).add(
             newComponentSet().name( "myFieldSet" ).required( true ).add(
                 newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build() );
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
 
         // exercise
         new OccurrenceValidator( contentType ).verify( content.getData() );
     }
 
     @Test
-    public void given_required_fieldSet_with_no_data_and_other_fields_with_data_when_checkBreaksRequiredContract_then_exception_is_thrown()
+    public void given_required_set_with_no_data_and_other_set_with_data_when_verify_then_exception_is_thrown()
     {
         // setup
-        ContentType contentType = new ContentType();
         contentType.addComponent( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
 
         ComponentSet personaliaComponentSet = newComponentSet().name( "personalia" ).multiple( false ).required( true ).build();
@@ -194,7 +186,7 @@ public class OccurrenceValidatorTest
         crimesComponentSet.add( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
 
         content.setData( "name", "Thomas" );
         content.setData( "crimes[0].description", "Stole tomatoes from neighbour" );

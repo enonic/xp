@@ -7,6 +7,6 @@ public class ContentSerializerXmlTest
     @Override
     ContentSerializer getSerializer()
     {
-        return new ContentSerializerXml( contentTypeFetcher ).prettyPrint( true );
+        return new ContentSerializerXml().prettyPrint( true );
     }
 }

@@ -9,7 +9,6 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.web.json.JsonResult;
 
 class ListContentJsonResult
@@ -47,8 +46,7 @@ class ListContentJsonResult
         final ObjectNode node = objectNode();
         node.put( "path", content.getPath().toString() );
         node.put( "name", content.getName() );
-        final ContentType contentType = content.getType();
-        node.put( "contentType", contentType != null ? contentType.getQualifiedName().toString() : null );
+        node.put( "type", content.getType() != null ? content.getType().toString() : null );
         node.put( "displayName", content.getName() );
         node.put( "owner", content.getOwner() != null ? content.getOwner().toString() : null );
         node.put( "modifier", content.getModifier() != null ? content.getModifier().toString() : null );

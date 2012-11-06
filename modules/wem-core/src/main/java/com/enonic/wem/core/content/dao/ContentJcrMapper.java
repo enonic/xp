@@ -34,7 +34,7 @@ class ContentJcrMapper
     {
         if ( content.getType() != null )
         {
-            contentNode.setProperty( TYPE, content.getType().getQualifiedName().toString() );
+            contentNode.setProperty( TYPE, content.getType().toString() );
         }
         else
         {

@@ -11,8 +11,6 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.ContentTypeFetcher;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.core.content.data.ContentDataSerializerJson;
 
@@ -20,14 +18,11 @@ public class ContentSerializerJson
     extends AbstractSerializerJson<Content>
     implements ContentSerializer
 {
-    private ContentTypeFetcher contentTypeFetcher;
-
     private ContentDataSerializerJson contentDataSerializer = new ContentDataSerializerJson();
 
 
-    public ContentSerializerJson( final ContentTypeFetcher contentTypeFetcher )
+    public ContentSerializerJson()
     {
-        this.contentTypeFetcher = contentTypeFetcher;
     }
 
     public void generate( Content content, JsonGenerator g )
@@ -37,7 +32,7 @@ public class ContentSerializerJson
         g.writeStringField( "name", content.getName() );
         if ( content.getType() != null )
         {
-            g.writeStringField( "type", content.getType().getQualifiedName().toString() );
+            g.writeStringField( "type", content.getType().toString() );
         }
         else
         {
@@ -85,8 +80,7 @@ public class ContentSerializerJson
         if ( typeAsString != null )
         {
             final QualifiedContentTypeName qualifiedContentTypeName = new QualifiedContentTypeName( typeAsString );
-            final ContentType contentType = contentTypeFetcher.getContentType( qualifiedContentTypeName );
-            content.setType( contentType );
+            content.setType( qualifiedContentTypeName );
         }
 
         content.setData( contentDataSerializer.parse( contentNode ) );

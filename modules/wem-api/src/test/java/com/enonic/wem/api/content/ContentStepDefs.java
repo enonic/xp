@@ -9,6 +9,7 @@ import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
 
 import com.enonic.wem.api.content.type.ContentTypeStepDefs;
+import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 
 import static org.junit.Assert.*;
 
@@ -32,7 +33,7 @@ public class ContentStepDefs
 
         Content content = new Content();
         content.setName( contentName );
-        content.setType( contentTypeStepDefs.contentTypeByName.get( contentTypeName ) );
+        content.setType( new QualifiedContentTypeName( contentTypeName ) );
         contentByName.put( contentName, content );
     }
 

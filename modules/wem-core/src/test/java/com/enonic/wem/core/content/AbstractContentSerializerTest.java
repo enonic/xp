@@ -90,7 +90,7 @@ public abstract class AbstractContentSerializerTest
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "myComponent[0]", "Value 1" );
         content.setData( "myComponent[1]", "Value 2" );
 
@@ -117,7 +117,7 @@ public abstract class AbstractContentSerializerTest
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "myText", "A value" );
         content.setData( "componentSet.myText", "A another value" );
 
@@ -146,7 +146,7 @@ public abstract class AbstractContentSerializerTest
         componentSet.add( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "componentSet[0].myText", "Value 1" );
         content.setData( "componentSet[1].myText", "Value 2" );
 
@@ -174,7 +174,7 @@ public abstract class AbstractContentSerializerTest
         contentType.addComponent( layout );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "myText", "A value" );
 
         String serialized = toString( content );

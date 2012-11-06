@@ -63,7 +63,7 @@ class ContentTreeJsonResult
     {
         contentNode.put( "path", content.getPath().toString() );
         contentNode.put( "name", content.getName() );
-        contentNode.put( "type", content.getType() != null ? content.getType().getQualifiedName().toString() : null );
+        contentNode.put( "type", content.getType() != null ? content.getType().toString() : null );
         contentNode.put( "displayName", content.getDisplayName() );
         contentNode.put( "owner", content.getOwner() != null ? content.getOwner().toString() : null );
         contentNode.put( "createdTime", content.getCreatedTime().toString() );

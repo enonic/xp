@@ -45,7 +45,7 @@ public class ContentTest
         contentType.addComponent( mySingleSelector );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "mySingleSelector", "o1" );
 
         assertEquals( "o1", content.getData( "mySingleSelector" ).getValue() );
@@ -59,7 +59,7 @@ public class ContentTest
         contentType.addComponent( newInput().name( "myMultipleTextLine" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "myTextLine", "A single line" );
         content.setData( "myMultipleTextLine[0]", "First line" );
         content.setData( "myMultipleTextLine[1]", "Second line" );
@@ -77,7 +77,7 @@ public class ContentTest
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "myTags", "A line of text" );
 
         assertEquals( "A line of text", content.getData( "myTags" ).getValue() );
@@ -98,7 +98,7 @@ public class ContentTest
         contentType.subTypeReferencesToComponents( subTypeFetcher );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "myTags[0]", "Java" );
         content.setData( "myTags[1]", "XML" );
         content.setData( "myTags[2]", "JSON" );
@@ -113,7 +113,7 @@ public class ContentTest
         contentType.addComponent( newInput().name( "myPhone" ).type( InputTypes.PHONE ).required( true ).build() );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "myPhone", "98327891" );
 
         assertEquals( "98327891", content.getData( "myPhone" ).getValue() );
@@ -131,7 +131,7 @@ public class ContentTest
         componentSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "name", "Ola Nordmann" );
         content.setData( "personalia.eyeColour", "Blue" );
         content.setData( "personalia.hairColour", "Blonde" );
@@ -155,7 +155,7 @@ public class ContentTest
         componentSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "name", "Norske" );
         content.setData( "personalia[0].name", "Ola Nordmann" );
         content.setData( "personalia[0].eyeColour", "Blue" );
@@ -248,7 +248,7 @@ public class ContentTest
         contentType.addComponent( child );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "child[0].name", "Joachim" );
         content.setData( "child[0].age", "9" );
         content.setData( "child[0].features.eyeColour", "Blue" );
@@ -312,7 +312,7 @@ public class ContentTest
         contentType.subTypeReferencesToComponents( subTypeFetcher );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "name", "Ola Normann" );
         content.setData( "address.street", "Bakkebygrenda 1" );
         content.setData( "address.postalCode", "2676" );
@@ -347,7 +347,7 @@ public class ContentTest
         contentType.subTypeReferencesToComponents( subTypeFetcher );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "address[0].label", "Home" );
         content.setData( "address[0].street", "Bakkebygrenda 1" );
         content.setData( "address[0].postalCode", "2676" );
@@ -383,7 +383,7 @@ public class ContentTest
         contentType.subTypeReferencesToComponents( new MockSubTypeFetcher() );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "name", "Ola Normann" );
         try
         {
@@ -413,7 +413,7 @@ public class ContentTest
         contentType.addComponent( personalia );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
 
         // exercise
         content.setData( "name", "Ola Norman" );

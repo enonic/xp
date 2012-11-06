@@ -7,7 +7,7 @@ public class ContentSerializerJsonTest
     @Override
     ContentSerializer getSerializer()
     {
-        ContentSerializerJson serializerJson = new ContentSerializerJson( contentTypeFetcher );
+        ContentSerializerJson serializerJson = new ContentSerializerJson();
         serializerJson.prettyPrint();
         return serializerJson;
     }

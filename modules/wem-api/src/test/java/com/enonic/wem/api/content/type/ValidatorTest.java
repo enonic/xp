@@ -2,6 +2,7 @@ package com.enonic.wem.api.content.type;
 
 import org.joda.time.DateMidnight;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
@@ -16,6 +17,7 @@ import com.enonic.wem.api.content.type.component.InvalidValueException;
 import com.enonic.wem.api.content.type.component.inputtype.HtmlAreaConfig;
 import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
 import com.enonic.wem.api.content.type.component.inputtype.SingleSelectorConfig;
+import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.type.Validator.newValidator;
 import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
@@ -25,6 +27,14 @@ import static org.junit.Assert.*;
 
 public class ValidatorTest
 {
+    private ContentType contentType = new ContentType();
+
+    @Before
+    public void before()
+    {
+        contentType.setModule( Module.SYSTEM );
+        contentType.setName( "MyType" );
+    }
 
     @Test
     public void given_invalid_content_and_validator_that_recordExceptions_when_validate_then_no_exception_is_thrown()
@@ -33,12 +43,11 @@ public class ValidatorTest
         SingleSelectorConfig singleSelectorConfig =
             SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "Option 1", "o1" ).build();
 
-        ContentType contentType = new ContentType();
         contentType.addComponent(
             newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "mySingleSelector", "nonExistingOption" );
 
         // exercise & verify
@@ -60,14 +69,13 @@ public class ValidatorTest
         SingleSelectorConfig singleSelectorConfig =
             SingleSelectorConfig.newSingleSelectorConfig().typeRadio().addOption( "Option 1", "o1" ).build();
 
-        ContentType contentType = new ContentType();
         contentType.addComponent(
             newInput().name( "mySingleSelector1" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
         contentType.addComponent(
             newInput().name( "mySingleSelector2" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "mySingleSelector1", "nonExistingOption" );
         content.setData( "mySingleSelector2", "nonExistingOption" );
 
@@ -92,7 +100,6 @@ public class ValidatorTest
             SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "Option 1", "o1" ).build();
         HtmlAreaConfig htmlAreaConfig = HtmlAreaConfig.newHtmlAreaConfig().build();
 
-        ContentType contentType = new ContentType();
         contentType.addComponent( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
         contentType.addComponent( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
         contentType.addComponent( newInput().name( "myDecimalNumber" ).type( InputTypes.DECIMAL_NUMBER ).build() );
@@ -107,7 +114,7 @@ public class ValidatorTest
         contentType.addComponent( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "myColor.red", 0l );
         content.setData( "myColor.blue", 0l );
         content.setData( "myColor.green", 0l );
@@ -127,11 +134,10 @@ public class ValidatorTest
     public void given_invalid_data_according_to_inputs_validationRegex_when_validate_then_exception()
     {
         // setup
-        ContentType contentType = new ContentType();
         contentType.addComponent( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).validationRegexp( "a*c" ).build() );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "myTextLine", "aax" );
 
         // exercise
@@ -143,13 +149,12 @@ public class ValidatorTest
     public void given_content_with_invalid_dataSet_according_to_input_inside_a_componentSet_when_validate_then_exception_is_thrown()
     {
         // setup
-        ContentType contentType = new ContentType();
         ComponentSet componentSet = newComponentSet().name( "myComponentSet" ).build();
         contentType.addComponent( componentSet );
         componentSet.add( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "myComponentSet.myColor.red", 0l );
         content.setData( "myComponentSet.myColor.green", 0l );
         content.setData( "myComponentSet.myColor.blue", -1l );
@@ -165,13 +170,12 @@ public class ValidatorTest
     public void given_content_with_invalid_dataSet_according_to_input_inside_a_layout_when_validate_then_exception_is_thrown()
     {
         // setup
-        ContentType contentType = new ContentType();
         FieldSet layout = FieldSet.newFieldSet().name( "myComponentSet" ).label( "Label" ).build();
         contentType.addComponent( layout );
         layout.addComponent( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "myColor.red", 0l );
         content.setData( "myColor.green", 0l );
         content.setData( "myColor.blue", -1l );
@@ -186,13 +190,12 @@ public class ValidatorTest
     public void given_content_with_invalid_dataSet_according_to_dataType_inside_a_componentSet_when_validate_then_exception_is_thrown()
     {
         // setup
-        ContentType contentType = new ContentType();
         ComponentSet componentSet = newComponentSet().name( "myComponentSet" ).build();
         contentType.addComponent( componentSet );
         componentSet.add( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "myComponentSet.myGeoLocation.latitude", 0.0 );
         content.setData( "myComponentSet.myGeoLocation.longitude", -181.00 );
 
@@ -206,13 +209,12 @@ public class ValidatorTest
     public void given_content_with_invalid_data_according_to_dataType_inside_a_componentSet_when_validate_then_exception_is_thrown()
     {
         // setup
-        ContentType contentType = new ContentType();
         ComponentSet componentSet = newComponentSet().name( "myComponentSet" ).build();
         contentType.addComponent( componentSet );
         componentSet.add( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "myComponentSet.myDate", "2000-01-01" );
 
         // exercise
@@ -228,13 +230,11 @@ public class ValidatorTest
         SingleSelectorConfig singleSelectorConfig =
             SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "Option 1", "o1" ).build();
 
-        ContentType contentType = new ContentType();
-
         contentType.addComponent(
             newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "mySingleSelector", "nonExistingOption" );
 
         // exercise
@@ -246,11 +246,10 @@ public class ValidatorTest
     public void given_illegal_type_for_longitude_when_checkValidity_then_InvalidDataException_is_thrown()
     {
         // setup
-        ContentType contentType = new ContentType();
         contentType.addComponent( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "myGeoLocation.latitude", 0.0 );
         content.setData( "myGeoLocation.longitude", "0.0" );
 
@@ -263,11 +262,10 @@ public class ValidatorTest
     public void given_illegal_value_for_a_dataSet_defined_by_a_dataType_when_checkValidity_then_InvalidDataException_is_thrown()
     {
         // setup:
-        ContentType contentType = new ContentType();
         contentType.addComponent( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
 
         Content content = new Content();
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
         content.setData( "myGeoLocation.latitude", 0.0 );
         content.setData( "myGeoLocation.longitude", -181.00 );
 
@@ -294,7 +292,6 @@ public class ValidatorTest
         Assert.assertEquals( "personalia.eyeColour", content.getData( "personalia.eyeColour" ).getPath().toString() );
 
         // exercise
-        ContentType contentType = new ContentType();
         contentType.addComponent( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
         ComponentSet personalia = newComponentSet().name( "personalia" ).multiple( false ).build();
         contentType.addComponent( personalia );
@@ -304,7 +301,7 @@ public class ValidatorTest
         contentType.addComponent( crimes );
         crimes.add( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
         crimes.add( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
-        content.setType( contentType );
+        content.setType( contentType.getQualifiedName() );
 
         assertEquals( DataTypes.TEXT, content.getData( "personalia.eyeColour" ).getDataType() );
         Assert.assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getValue() );
