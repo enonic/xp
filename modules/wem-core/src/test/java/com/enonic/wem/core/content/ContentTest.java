@@ -2,6 +2,7 @@ package com.enonic.wem.core.content;
 
 
 import org.joda.time.DateMidnight;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
@@ -33,10 +34,18 @@ import static org.junit.Assert.*;
 public class ContentTest
 {
 
+    private ContentType contentType = new ContentType();
+
+    @Before
+    public void before()
+    {
+        contentType.setModule( Module.SYSTEM );
+        contentType.setName( "MyType" );
+    }
+
     @Test
     public void singleSelector()
     {
-        ContentType contentType = new ContentType();
         SingleSelectorConfig singleSelectorConfig =
             newSingleSelectorConfig().type( SingleSelectorConfig.SelectorType.DROPDOWN ).addOption( "Option 1", "o1" ).addOption(
                 "Option 2", "o2" ).build();
@@ -54,7 +63,6 @@ public class ContentTest
     @Test
     public void multiple_textlines()
     {
-        ContentType contentType = new ContentType();
         contentType.addComponent( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
         contentType.addComponent( newInput().name( "myMultipleTextLine" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() );
 
@@ -72,7 +80,6 @@ public class ContentTest
     @Test
     public void tags()
     {
-        ContentType contentType = new ContentType();
         contentType.addComponent( newInput().name( "myTags" ).type( InputTypes.TAGS ).build() );
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
@@ -92,7 +99,6 @@ public class ContentTest
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( inputSubType );
 
-        ContentType contentType = new ContentType();
         contentType.addComponent(
             SubTypeReference.newSubTypeReference().name( "myTags" ).subType( "system:tags" ).type( InputSubType.class ).build() );
         contentType.subTypeReferencesToComponents( subTypeFetcher );
@@ -109,7 +115,6 @@ public class ContentTest
     @Test
     public void phone()
     {
-        ContentType contentType = new ContentType();
         contentType.addComponent( newInput().name( "myPhone" ).type( InputTypes.PHONE ).required( true ).build() );
 
         Content content = new Content();
@@ -122,7 +127,6 @@ public class ContentTest
     @Test
     public void componentSet()
     {
-        ContentType contentType = new ContentType();
         contentType.addComponent( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
 
         ComponentSet componentSet = newComponentSet().name( "personalia" ).build();
@@ -144,7 +148,6 @@ public class ContentTest
     @Test
     public void multiple_subtype()
     {
-        ContentType contentType = new ContentType();
         Input nameInput = newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build();
         contentType.addComponent( nameInput );
 
@@ -244,7 +247,6 @@ public class ContentTest
         features.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
         features.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
         child.add( features );
-        ContentType contentType = new ContentType();
         contentType.addComponent( child );
 
         Content content = new Content();
@@ -300,8 +302,6 @@ public class ContentTest
                 newInput().name( "postalPlace" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newSubTypeReference( countrySubType ).name( "country" ).build() ).build() ).build();
 
-        ContentType contentType = new ContentType();
-        contentType.setName( "person" );
         contentType.addComponent( newInput().type( InputTypes.TEXT_LINE ).name( "name" ).build() );
         contentType.addComponent( newSubTypeReference( addressSubType ).name( "address" ).build() );
 
@@ -338,8 +338,6 @@ public class ContentTest
                 newInput().type( InputTypes.TEXT_LINE ).name( "postalPlace" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "country" ).build() ).build() ).build();
 
-        ContentType contentType = new ContentType();
-        contentType.setName( "test" );
         contentType.addComponent( newSubTypeReference( addressSubType ).name( "address" ).build() );
 
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
@@ -375,7 +373,6 @@ public class ContentTest
     @Test
     public void trying_to_set_data_to_a_fieldSetSubType_when_subType_is_missing()
     {
-        ContentType contentType = new ContentType();
         contentType.addComponent( newInput().type( InputTypes.TEXT_LINE ).name( "name" ).build() );
         contentType.addComponent(
             SubTypeReference.newSubTypeReference().name( "address" ).typeInput().subType( "myModule:myAddressSubType" ).build() );
@@ -400,8 +397,6 @@ public class ContentTest
     public void layout()
     {
         // setup
-        ContentType contentType = new ContentType();
-        contentType.setName( "test" );
         contentType.addComponent( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
         FieldSet personalia = newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).add(
