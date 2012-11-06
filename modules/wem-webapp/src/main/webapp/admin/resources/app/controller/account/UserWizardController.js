@@ -101,6 +101,8 @@ Ext.define('Admin.controller.account.UserWizardController', {
                     "Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.",
                     false);
             }
+            var current = me.getAccountGridPanel().store.currentPage;
+            me.getAccountGridPanel().store.loadPage(current);
         };
         this.saveUserToDB(data, onUpdateUserSuccess);
     },

@@ -164,5 +164,15 @@ Ext.define('Admin.view.TreeGridPanel', {
                 }
             }
         }
+    },
+
+    refresh: function () {
+        var activeList = this.getActiveList();
+        var currentStore = activeList.store;
+        if (activeList.xtype === 'treepanel') {
+            currentStore.load();
+        } else if (activeList.xtype === 'grid') {
+            currentStore.loadPage(currentStore.currentPage);
+        }
     }
 });

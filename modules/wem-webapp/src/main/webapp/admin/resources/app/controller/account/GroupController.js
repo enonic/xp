@@ -20,8 +20,6 @@ Ext.define('Admin.controller.account.GroupController', {
             if (r && r.success) {
                 callback(group.key);
             }
-            var current = me.getAccountGridPanel().store.currentPage;
-            me.getAccountGridPanel().store.loadPage(current);
         });
     },
 
