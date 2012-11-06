@@ -7,11 +7,11 @@ import com.google.common.base.Preconditions;
 
 public abstract class ModuleBasedQualifiedName
 {
-    private String moduleName;
+    private final String moduleName;
 
-    private String localName;
+    private final String localName;
 
-    private String qualifiedName;
+    private final String qualifiedName;
 
 
     public ModuleBasedQualifiedName( final String qualifiedName )
@@ -22,7 +22,7 @@ public abstract class ModuleBasedQualifiedName
         int colonPos = qualifiedName.indexOf( ":" );
         Preconditions.checkArgument( colonPos >= 0, "QualifiedName is missing colon: " + qualifiedName );
         Preconditions.checkArgument( colonPos > 0, "QualifiedName is missing module name: " + qualifiedName );
-        Preconditions.checkArgument( colonPos < qualifiedName.length() - 1, "QualifiedName is missing locale name: " + qualifiedName );
+        Preconditions.checkArgument( colonPos < qualifiedName.length() - 1, "QualifiedName is missing local name: " + qualifiedName );
 
         this.moduleName = qualifiedName.substring( 0, colonPos );
         this.localName = qualifiedName.substring( colonPos + 1, qualifiedName.length() );

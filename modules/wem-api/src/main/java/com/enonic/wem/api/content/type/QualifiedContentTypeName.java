@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.type;
 
 import com.enonic.wem.api.content.ModuleBasedQualifiedName;
 
-public class QualifiedContentTypeName
+public final class QualifiedContentTypeName
     extends ModuleBasedQualifiedName
 {
     public QualifiedContentTypeName( final String qualifiedName )

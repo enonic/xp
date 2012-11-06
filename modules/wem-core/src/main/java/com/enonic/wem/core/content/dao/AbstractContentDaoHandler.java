@@ -12,18 +12,18 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.core.jcr.JcrHelper;
 
-class AbstractContentDaoHandler
+abstract class AbstractContentDaoHandler
 {
-    final Session session;
+    protected final Session session;
 
-    final ContentJcrMapper contentJcrMapper = new ContentJcrMapper();
+    protected final ContentJcrMapper contentJcrMapper = new ContentJcrMapper();
 
     AbstractContentDaoHandler( final Session session )
     {
         this.session = session;
     }
 
-    final List<ContentAndNode> doContentNodesToContentAndNodes( final NodeIterator nodeIterator )
+    protected final List<ContentAndNode> doContentNodesToContentAndNodes( final NodeIterator nodeIterator )
         throws RepositoryException
     {
         List<ContentAndNode> contentList = new ArrayList<ContentAndNode>();
@@ -37,7 +37,7 @@ class AbstractContentDaoHandler
         return contentList;
     }
 
-    final NodeIterator doGetTopContentNodes( final Session session )
+    protected final NodeIterator doGetTopContentNodes( final Session session )
         throws RepositoryException
     {
         final Node rootNode = session.getRootNode();
@@ -45,13 +45,13 @@ class AbstractContentDaoHandler
         return contentsNode.getNodes();
     }
 
-    final NodeIterator doGetChildContentNodes( final Node contentParentNode )
+    protected final NodeIterator doGetChildContentNodes( final Node contentParentNode )
         throws RepositoryException
     {
         return contentParentNode.getNodes();
     }
 
-    final Node doGetContentNode( final Session session, final ContentPath contentPath )
+    protected final Node doGetContentNode( final Session session, final ContentPath contentPath )
         throws RepositoryException
     {
         final String path = getNodePath( contentPath );
@@ -59,7 +59,7 @@ class AbstractContentDaoHandler
         return JcrHelper.getNodeOrNull( rootNode, path );
     }
 
-    final Content doFindContent( final ContentPath contentPath, final Session session )
+    protected final Content doFindContent( final ContentPath contentPath, final Session session )
         throws RepositoryException
     {
         final Node contentNode = doGetContentNode( session, contentPath );

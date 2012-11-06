@@ -5,9 +5,9 @@ public class Module
 {
     public static final Module SYSTEM = newModule().name( "System" ).build();
 
-    private String name;
+    private final String name;
 
-    void setName( final String name )
+    public Module( final String name )
     {
         this.name = name;
     }
@@ -34,8 +34,7 @@ public class Module
 
         public Module build()
         {
-            Module module = new Module();
-            module.setName( name );
+            Module module = new Module( name );
             return module;
         }
     }
