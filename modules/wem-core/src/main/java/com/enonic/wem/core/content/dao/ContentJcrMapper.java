@@ -13,7 +13,7 @@ import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyString;
 import static com.enonic.wem.core.jcr.JcrHelper.setPropertyDateTime;
 
-class ContentJcrMapper
+final class ContentJcrMapper
 {
     private static final String TYPE = "type";
 

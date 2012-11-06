@@ -48,6 +48,19 @@ public class ContentDaoImpl
     }
 
     @Override
+    public void deleteContent( final ContentPath content, final Session session )
+    {
+        try
+        {
+            new DeleteContentDaoHandler( session ).handle( content );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    @Override
     public void renameContent( final ContentPath content, final String newName, final Session session )
     {
         try

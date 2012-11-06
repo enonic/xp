@@ -124,6 +124,67 @@ public class ContentDaoImplTest
     }
 
     @Test
+    public void delete_content_at_root()
+        throws Exception
+    {
+        // setup
+        Content content = new Content();
+        content.setPath( ContentPath.from( "myContent" ) );
+        content.setData( "myData", "myValue" );
+
+        contentDao.createContent( content, session );
+        commit();
+
+        // exercise
+        contentDao.deleteContent( ContentPath.from( "myContent" ), session );
+        commit();
+
+        // verify
+        Node contentsNode = session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH );
+        assertFalse( contentsNode.hasNode( "myContent" ) );
+    }
+
+    @Test
+    public void delete_content_below_other_content()
+        throws Exception
+    {
+        // setup
+        contentDao.createContent( createContent( "parentContent" ), session );
+        contentDao.createContent( createContent( "parentContent/contentToDelete" ), session );
+        commit();
+
+        // exercise
+        contentDao.deleteContent( ContentPath.from( "parentContent/contentToDelete" ), session );
+        commit();
+
+        // verify
+        Node parentContentNode = session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH + "parentContent" );
+        assertFalse( parentContentNode.hasNode( "contentToDelete" ) );
+    }
+
+    @Test
+    public void delete_content_which_have_subcontent_throws_exception()
+        throws Exception
+    {
+        // setup
+        contentDao.createContent( createContent( "parentContent" ), session );
+        contentDao.createContent( createContent( "parentContent/contentToDelete" ), session );
+        commit();
+
+        // exercise
+        try
+        {
+            contentDao.deleteContent( ContentPath.from( "parentContent" ), session );
+            fail( "Expected excetion" );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( e instanceof IllegalArgumentException );
+            assertEquals( "Content with sub content cannot be deleted: parentContent", e.getMessage() );
+        }
+    }
+
+    @Test
     public void findContent()
         throws Exception
     {
@@ -186,7 +247,6 @@ public class ContentDaoImplTest
 
         // exercise
         ContentTree tree = contentDao.getContentTree( session );
-        System.out.println( tree );
 
         // verify
     }

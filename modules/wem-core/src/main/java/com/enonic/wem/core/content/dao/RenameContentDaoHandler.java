@@ -6,6 +6,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.exception.ContentNotFoundException;
 
 class RenameContentDaoHandler
     extends AbstractContentDaoHandler
@@ -21,8 +22,7 @@ class RenameContentDaoHandler
         final Node contentNode = doGetContentNode( session, content );
         if ( contentNode == null )
         {
-            // TODO: Replace with better exception
-            throw new RuntimeException( "Content to rename does not exist: " + content.toString() );
+            throw new ContentNotFoundException( content );
         }
         session.move( contentNode.getPath(), contentNode.getParent().getPath() + "/" + newName );
     }

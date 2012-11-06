@@ -16,6 +16,8 @@ public interface ContentDao
 
     public void updateContent( Content content, Session session );
 
+    public void deleteContent( ContentPath content, Session session );
+
     public void renameContent( ContentPath content, String newName, Session session );
 
     public Content findContent( ContentPath contentPath, Session session );

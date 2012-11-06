@@ -7,10 +7,11 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.exception.PathNotFoundException;
+import com.enonic.wem.api.exception.ContentAlreadyExistException;
+import com.enonic.wem.api.exception.ContentNotFoundException;
 
 
-class CreateContentDaoHandler
+final class CreateContentDaoHandler
     extends AbstractContentDaoHandler
 {
     CreateContentDaoHandler( final Session session )
@@ -29,7 +30,7 @@ class CreateContentDaoHandler
         {
             if ( contentsNode.hasNode( path.getName() ) )
             {
-                throw new IllegalArgumentException( "Content already exists: " + path );
+                throw new ContentAlreadyExistException( path );
             }
             addContentToJcr( content, contentsNode );
         }
@@ -38,16 +39,16 @@ class CreateContentDaoHandler
             final Node parentContentNode = doGetContentNode( session, path.getParentPath() );
             if ( parentContentNode == null )
             {
-                throw new PathNotFoundException( path.getParentPath() );
+                throw new ContentNotFoundException( path.getParentPath() );
             }
             addContentToJcr( content, parentContentNode );
         }
     }
 
-    void addContentToJcr( final Content content, final Node parentContentNode )
+    void addContentToJcr( final Content content, final Node parentNode )
         throws RepositoryException
     {
-        final Node newContentNode = parentContentNode.addNode( content.getName() );
+        final Node newContentNode = parentNode.addNode( content.getName() );
         contentJcrMapper.toJcr( content, newContentNode );
     }
 }

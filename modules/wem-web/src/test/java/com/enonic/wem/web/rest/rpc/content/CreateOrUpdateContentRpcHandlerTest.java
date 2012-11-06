@@ -13,7 +13,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.exception.PathNotFoundException;
+import com.enonic.wem.api.exception.ContentNotFoundException;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
@@ -73,7 +73,7 @@ public class CreateOrUpdateContentRpcHandlerTest
         throws Exception
     {
         final ContentPath contentPath = ContentPath.from( "/myContent/childContent" );
-        Mockito.when( client.execute( isA( CreateContent.class ) )).thenThrow( new PathNotFoundException( contentPath ) );
+        Mockito.when( client.execute( isA( CreateContent.class ) ) ).thenThrow( new ContentNotFoundException( contentPath ) );
         GetContents getContents = Commands.content().get().paths( ContentPaths.from( contentPath ) );
         Mockito.when( client.execute( getContents ) ).thenReturn( Contents.empty() );
 

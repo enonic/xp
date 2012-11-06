@@ -9,7 +9,7 @@ import javax.jcr.Session;
 import com.enonic.wem.api.content.ContentBranch;
 import com.enonic.wem.api.content.ContentTree;
 
-class GetContentTreeContentDaoHandler
+final class GetContentTreeContentDaoHandler
     extends AbstractContentDaoHandler
 {
     GetContentTreeContentDaoHandler( final Session session )

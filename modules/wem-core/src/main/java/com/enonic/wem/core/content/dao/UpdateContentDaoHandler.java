@@ -6,8 +6,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.exception.ContentNotFoundException;
 
-class UpdateContentDaoHandler
+final class UpdateContentDaoHandler
     extends AbstractContentDaoHandler
 {
     UpdateContentDaoHandler( final Session session )
@@ -21,8 +22,7 @@ class UpdateContentDaoHandler
         final Node contentNode = doGetContentNode( session, content.getPath() );
         if ( contentNode == null )
         {
-            // TODO: Replace with better exception
-            throw new RuntimeException( "Content to update does not exist: " + content.getPath() );
+            throw new ContentNotFoundException( content.getPath() );
         }
         contentJcrMapper.toJcr( content, contentNode );
     }
