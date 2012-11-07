@@ -6,14 +6,15 @@
   <link rel="stylesheet" type="text/css" href="../dev/jcr-tree/lib/bootstrap/css/bootstrap.min.css">
   <style type="text/css">
     .treepanel {
-      background: none repeat scroll 0 0 white;
+      background: #FFFFFF none repeat scroll 0 0;
       float: left;
       margin: 10px 0 0 0;
       overflow: auto;
       width: 400px;
       height: 600px;
-      overflow:auto; -ms-overflow-x:hidden; overflow-x:hidden;
-      background-color: #FFFFFF;
+      overflow: auto;
+      -ms-overflow-x: hidden;
+      overflow-x: hidden;
       border: 1px solid #DDDDDD;
       border-radius: 4px 4px 4px 4px;
     }
@@ -31,6 +32,7 @@
       position: absolute;
       top: -1px;
     }
+
     .bs-docs-example {
       background-color: #FFFFFF;
       border: 1px solid #DDDDDD;
@@ -50,11 +52,11 @@
     var lazyLoadingDepth = 1;
 
     var pathToNodeId = function pathToNodeId(path) {
-      return 'node' + (path.join('_') || '_').
-          replace(':','_', 'gi').
-          replace('(','_', 'gi').
-          replace(')','_', 'gi').
-          replace(' ','_', 'gi');
+      return 'node' + (path.join('_') || '_').
+          replace(':', '_', 'gi').
+          replace('(', '_', 'gi').
+          replace(')', '_', 'gi').
+          replace(' ', '_', 'gi');
     };
     var jcrNodesToJstree = function jcrNodesToJstree(node, openLevel, currLevel, path) {
       var dataNode = {data: {}, attr: {}, children: []},
@@ -113,10 +115,10 @@
       $.each(path, function (i, val) {
         if (i < pathLength - 1) {
           partialPath.push(val);
-          var pathPart = $('<li><a href="#'+partialPath.join('/')+'">' + val + '</a> <span class="divider">/</span></li>');
+          var pathPart = $('<li><a href="#' + partialPath.join('/') + '">' + val + '</a> <span class="divider">/</span></li>');
           pathPart.on('click', {'path': partialPath.slice(0)}, function (e) {
             $("#jcrtree").jstree("deselect_node");
-            $("#jcrtree").jstree("select_node",'#'+pathToNodeId(e.data.path));
+            $("#jcrtree").jstree("select_node", '#' + pathToNodeId(e.data.path));
           });
           breadcrumb.append(pathPart);
         } else {
@@ -179,12 +181,12 @@
     };
 
     var expandNode = function expandNode() {
-      var selected=$("#jcrtree").jstree('get_selected');
+      var selected = $("#jcrtree").jstree('get_selected');
       lazyLoadingDepth = 20;
       $("#jcrtree").jstree('open_all', selected);
     };
     var collapseNode = function expandNode() {
-      var selected=$("#jcrtree").jstree('get_selected');
+      var selected = $("#jcrtree").jstree('get_selected');
       $("#jcrtree").jstree('close_all', selected);
     };
 
@@ -226,7 +228,9 @@
         <table class="table table-striped" id="nodeProperties">
           <thead>
           <tr>
-            <th width="20%"><nobr>Property Name</nobr></th>
+            <th width="20%">
+              <nobr>Property Name</nobr>
+            </th>
             <th>Value</th>
           </tr>
           </thead>
