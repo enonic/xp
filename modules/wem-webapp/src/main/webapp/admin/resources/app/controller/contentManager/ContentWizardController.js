@@ -98,7 +98,7 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
                           [ contentWizard.data.module, contentWizard.data.name].join(':');
         }
 
-        var content = {
+        var contentParams = {
             contentData: contentData,
             qualifiedContentTypeName: contentType,
             contentPath: "/" + this.getDisplayNameValue(contentWizard)
@@ -118,7 +118,7 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
                 me.getContentTreeGridPanel().refresh();
             }
         };
-        this.saveContentToDB(content, onUpdateContentSuccess);
+        this.saveContentToDB(contentParams, onUpdateContentSuccess);
     },
 
     getDisplayNameValue: function (contentWizard) {

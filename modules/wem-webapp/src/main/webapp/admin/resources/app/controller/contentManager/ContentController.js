@@ -13,8 +13,8 @@ Ext.define('Admin.controller.contentManager.ContentController', {
 
     /*   Public, only CRUD model methods here please     */
 
-    saveContentToDB: function (content, callback) {
-        Admin.lib.RemoteService.content_createOrUpdate(content, function (r) {
+    saveContentToDB: function (contentParams, callback) {
+        Admin.lib.RemoteService.content_createOrUpdate(contentParams, function (r) {
             if (r && r.success) {
                 callback(r.created, r.updated);
             }

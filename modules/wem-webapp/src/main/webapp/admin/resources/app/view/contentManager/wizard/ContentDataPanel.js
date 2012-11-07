@@ -7,6 +7,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
         TextArea: "textarea"
     },
 
+    contentItems: [],
+
     initComponent: function () {
         var me = this;
         var fieldSet = {
