@@ -11,11 +11,23 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
     views: [],
 
 
+    EMPTY_DISPLAY_NAME_TEXT: 'Display Name',
+
     init: function () {
         var me = this;
         me.control({
             'contentWizardPanel *[action=closeWizard]': {
                 click: me.closeWizard
+            },
+            'contentWizardPanel *[action=saveContent]': {
+                click: function (el, e) {
+                    me.saveContent(el.up('contentWizardPanel'), false);
+                }
+            },
+            'contentWizardPanel wizardPanel': {
+                finished: function (wizard, data) {
+                    me.saveContent(wizard.up('contentWizardPanel'), true);
+                }
             },
             'contentWizardToolbar *[action=duplicateContent]': {
                 click: function (el, e) {
@@ -73,6 +85,45 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
         } else {
             tab.close();
         }
+    },
+
+    saveContent: function (contentWizard, closeWizard) {
+
+        var me = this;
+        var contentData = contentWizard.getData();
+
+        var contentType;
+        if (contentWizard.data) {
+            contentType = contentWizard.data.qualifiedContentTypeName ||
+                          [ contentWizard.data.module, contentWizard.data.name].join(':');
+        }
+
+        var contentParams = {
+            contentData: contentData,
+            qualifiedContentTypeName: contentType,
+            contentPath: "/" + this.getDisplayNameValue(contentWizard)
+        };
+
+        var parentApp = parent.mainApp;
+        var onUpdateContentSuccess = function (created, updated) {
+            if (created || updated) {
+                if (closeWizard) {
+                    me.getContentWizardTab().close();
+                }
+                if (parentApp) {
+                    parentApp.fireEvent('notifier.show', "Content was saved",
+                        "Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.",
+                        false);
+                }
+                me.getContentTreeGridPanel().refresh();
+            }
+        };
+        this.saveContentToDB(contentParams, onUpdateContentSuccess);
+    },
+
+    getDisplayNameValue: function (contentWizard) {
+        var displayNameField = contentWizard.el.down('input.admin-display-name', true);
+        return (displayNameField === null || displayNameField.value === this.EMPTY_DISPLAY_NAME_TEXT) ? '' : displayNameField.value;
     },
 
 
