@@ -6,4 +6,19 @@ public final class ContentTypeCommands
     {
         return new GetContentTypes();
     }
+
+    public CreateContentType create()
+    {
+        return new CreateContentType();
+    }
+
+    public UpdateContentTypes update()
+    {
+        return new UpdateContentTypes();
+    }
+
+    public DeleteContentTypes delete()
+    {
+        return new DeleteContentTypes();
+    }
 }

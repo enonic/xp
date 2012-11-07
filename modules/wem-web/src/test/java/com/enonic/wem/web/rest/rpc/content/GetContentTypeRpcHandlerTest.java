@@ -8,6 +8,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.GetContentTypes;
 import com.enonic.wem.api.content.type.ContentType;
+import com.enonic.wem.api.content.type.ContentTypeNames;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.component.Input;
@@ -57,9 +58,8 @@ public class GetContentTypeRpcHandlerTest
         contentType.addComponent( textArea1 );
 
         final ContentTypes contentTypes = ContentTypes.from( contentType );
-        Mockito.when(
-            client.execute( Commands.contentType().get().names( new QualifiedContentTypeName( "myModule:myCtype" ) ) ) ).thenReturn(
-            contentTypes );
+        final ContentTypeNames names = ContentTypeNames.from( new QualifiedContentTypeName( "myModule:myCtype" ) );
+        Mockito.when( client.execute( Commands.contentType().get().names( names ) ) ).thenReturn( contentTypes );
 
         testSuccess( "getContentType_param.json", "getContentType_result.json" );
     }

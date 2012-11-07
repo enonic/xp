@@ -5,10 +5,9 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.type.ContentTypeNames;
-import com.enonic.wem.api.content.type.ContentTypes;
 
-public final class GetContentTypes
-    extends Command<ContentTypes>
+public final class DeleteContentTypes
+    extends Command<Integer>
 {
     private ContentTypeNames contentTypeNames;
 
@@ -17,7 +16,7 @@ public final class GetContentTypes
         return this.contentTypeNames;
     }
 
-    public GetContentTypes names( final ContentTypeNames contentTypeNames )
+    public DeleteContentTypes names( final ContentTypeNames contentTypeNames )
     {
         this.contentTypeNames = contentTypeNames;
         return this;
@@ -31,12 +30,12 @@ public final class GetContentTypes
             return true;
         }
 
-        if ( !( o instanceof GetContentTypes ) )
+        if ( !( o instanceof DeleteContentTypes ) )
         {
             return false;
         }
 
-        final GetContentTypes that = (GetContentTypes) o;
+        final DeleteContentTypes that = (DeleteContentTypes) o;
         return Objects.equal( this.contentTypeNames, that.contentTypeNames );
     }
 
@@ -49,6 +48,6 @@ public final class GetContentTypes
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.contentTypeNames, "Content type cannot be null" );
+        Preconditions.checkNotNull( this.contentTypeNames, "Content type names cannot be null" );
     }
 }

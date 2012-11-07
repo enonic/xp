@@ -2,6 +2,9 @@ package com.enonic.wem.core.content;
 
 import java.util.List;
 
+import javax.jcr.Session;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -9,6 +12,7 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.command.content.GetContentTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypeFetcher;
+import com.enonic.wem.api.content.type.ContentTypeNames;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.MockContentTypeFetcher;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
@@ -17,6 +21,7 @@ import com.enonic.wem.api.content.type.component.Input;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
+import com.enonic.wem.core.content.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.component.Input.newInput;
@@ -29,6 +34,8 @@ public final class GetContentTypesHandler
 {
     private ContentTypeFetcher contentTypeFetcher;
 
+    private ContentTypeDao contentTypeDao;
+
     public GetContentTypesHandler()
     {
         super( GetContentTypes.class );
@@ -39,7 +46,24 @@ public final class GetContentTypesHandler
     public void handle( final CommandContext context, final GetContentTypes command )
         throws Exception
     {
-        final List<QualifiedContentTypeName> contentTypeNames = command.getNames();
+        final ContentTypeNames contentTypeNames = command.getNames();
+        final ContentTypes contentTypes = getContentTypes( context.getJcrSession(), contentTypeNames );
+        command.setResult( contentTypes );
+    }
+
+    private ContentTypes getContentTypes( final Session session, final ContentTypeNames contentTypeNames )
+    {
+        ContentTypes contentTypes = contentTypeDao.retrieveContentTypes( session, contentTypeNames );
+        if ( !contentTypes.isEmpty() )
+        {
+            return contentTypes;
+        }
+        // TODO remove this, returning mock values for now
+        return getMockContentTypes( contentTypeNames );
+    }
+
+    private ContentTypes getMockContentTypes( final ContentTypeNames contentTypeNames )
+    {
         final List<ContentType> contentTypeList = Lists.newArrayList();
         for ( QualifiedContentTypeName name : contentTypeNames )
         {
@@ -49,8 +73,7 @@ public final class GetContentTypesHandler
                 contentTypeList.add( contentType );
             }
         }
-        final ContentTypes contentTypes = ContentTypes.from( contentTypeList );
-        command.setResult( contentTypes );
+        return ContentTypes.from( contentTypeList );
     }
 
     private ContentTypeFetcher createMockContentTypeFetcher()
@@ -83,5 +106,11 @@ public final class GetContentTypesHandler
         mockContentTypeFetcher.add( article2ContentType );
 
         return mockContentTypeFetcher;
+    }
+
+    @Autowired
+    public void setContentTypeDao( final ContentTypeDao contentTypeDao )
+    {
+        this.contentTypeDao = contentTypeDao;
     }
 }
