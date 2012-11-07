@@ -13,6 +13,11 @@ public final class ContentCommands
         return new UpdateContents();
     }
 
+    public DeleteContents delete()
+    {
+        return new DeleteContents();
+    }
+
     public GetContents get()
     {
         return new GetContents();
