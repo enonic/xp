@@ -38,7 +38,8 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
                 items: [
                     {
                         text: 'Publish',
-                        iconCls: 'icon-publish-24'
+                        iconCls: 'icon-publish-24',
+                        action: 'publishContent'
                     }
                 ]
             },
@@ -71,7 +72,8 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
                     },
                     {
                         text: 'Move',
-                        iconCls: 'icon-move-24'
+                        iconCls: 'icon-move-24',
+                        action: 'moveContent'
                     }
                 ]
             },
@@ -82,11 +84,13 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
                 items: [
                     {
                         text: 'Relations',
-                        iconCls: 'icon-relation-24'
+                        iconCls: 'icon-relation-24',
+                        action: 'contentRelations'
                     },
                     {
                         text: 'History',
-                        iconCls: 'icon-history-24'
+                        iconCls: 'icon-history-24',
+                        action: 'contentHistory'
                     }
                 ]
             },
@@ -109,7 +113,8 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
                 items: [
                     {
                         text: 'Export',
-                        iconCls: 'icon-export-24'
+                        iconCls: 'icon-export-24',
+                        action: 'exportContent'
                     }
                 ]
             }

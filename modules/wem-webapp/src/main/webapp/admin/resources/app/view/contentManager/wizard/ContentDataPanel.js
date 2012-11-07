@@ -1,11 +1,13 @@
 Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
-    extend: 'Ext.panel.Panel',
+    extend: 'Ext.form.Panel',
     alias: 'widget.contentDataPanel',
 
     typeMapping: {
         TextLine: "textfield",
         TextArea: "textarea"
     },
+
+    contentItems: [],
 
     initComponent: function () {
         var me = this;
@@ -41,6 +43,10 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
 
     parseItemType: function (contentItem) {
         return this.typeMapping[contentItem.inputType.name];
+    },
+
+    getData: function () {
+        return this.getForm().getFieldValues();
     }
 
 });

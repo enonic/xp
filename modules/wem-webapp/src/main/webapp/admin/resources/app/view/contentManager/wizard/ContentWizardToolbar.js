@@ -22,12 +22,14 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
                     {
                         text: 'Save',
                         itemId: 'save',
-                        iconCls: 'icon-save-24'
+                        iconCls: 'icon-save-24',
+                        action: 'saveContent'
                     },
                     {
                         text: 'Publish',
                         itemId: 'publish',
-                        iconCls: 'icon-publish-24'
+                        iconCls: 'icon-publish-24',
+                        action: 'publishContent'
                     }
                 ]
             },
@@ -51,14 +53,15 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
                 items: [
                     {
                         text: 'Duplicate',
-                        itemId: 'duplicateContent',
+                        itemId: 'duplicate',
                         action: 'duplicateContent',
                         iconCls: 'icon-copy-24'
                     },
                     {
                         text: 'Move',
                         itemId: 'move',
-                        iconCls: 'icon-move-24'
+                        iconCls: 'icon-move-24',
+                        action: 'moveContent'
                     }
                 ]
             },
@@ -70,12 +73,14 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
                     {
                         text: 'Relations',
                         itemId: 'relations',
-                        iconCls: 'icon-relation-24'
+                        iconCls: 'icon-relation-24',
+                        action: 'contentRelations'
                     },
                     {
                         text: 'History',
                         itemId: 'history',
-                        iconCls: 'icon-history-24'
+                        iconCls: 'icon-history-24',
+                        action: 'contentHistory'
                     }
                 ]
             },
@@ -87,7 +92,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
                     {
                         text: 'Export',
                         itemId: 'export',
-                        iconCls: 'icon-export-24'
+                        iconCls: 'icon-export-24',
+                        action: 'exportContent'
                     }
                 ]
             },

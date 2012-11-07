@@ -20,8 +20,6 @@ Ext.define('Admin.controller.account.UserController', {
             if (r && r.success) {
                 callback(user.key);
             }
-            var current = me.getAccountGridPanel().store.currentPage;
-            me.getAccountGridPanel().store.loadPage(current);
         });
     },
 
