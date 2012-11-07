@@ -90,38 +90,35 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
     saveContent: function (contentWizard, closeWizard) {
 
         var me = this;
-
-        var wizardPanel = contentWizard.getWizardPanel();
         var contentData = contentWizard.getData();
 
-        var contentName;
+        var contentType;
         if (contentWizard.data) {
-            contentName = contentWizard.data.qualifiedContentTypeName ||
+            contentType = contentWizard.data.qualifiedContentTypeName ||
                           [ contentWizard.data.module, contentWizard.data.name].join(':');
         }
 
-        var data = {
+        var content = {
             contentData: contentData,
-            qualifiedContentTypeName: contentName,
+            qualifiedContentTypeName: contentType,
             contentPath: "/" + this.getDisplayNameValue(contentWizard)
         };
 
         var parentApp = parent.mainApp;
-        var onUpdateContentSuccess = function (key) {
-            wizardPanel.addData({
-                'key': key
-            });
-            if (closeWizard) {
-                me.getContentWizardTab().close();
+        var onUpdateContentSuccess = function (created, updated) {
+            if (created || updated) {
+                if (closeWizard) {
+                    me.getContentWizardTab().close();
+                }
+                if (parentApp) {
+                    parentApp.fireEvent('notifier.show', "Content was saved",
+                        "Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.",
+                        false);
+                }
+                me.getContentTreeGridPanel().refresh();
             }
-            if (parentApp) {
-                parentApp.fireEvent('notifier.show', "Content was saved",
-                    "Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.",
-                    false);
-            }
-            me.getContentTreeGridPanel().refresh();
         };
-        this.saveContentToDB(data, onUpdateContentSuccess);
+        this.saveContentToDB(content, onUpdateContentSuccess);
     },
 
     getDisplayNameValue: function (contentWizard) {

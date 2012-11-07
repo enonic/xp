@@ -16,7 +16,7 @@ Ext.define('Admin.controller.contentManager.ContentController', {
     saveContentToDB: function (content, callback) {
         Admin.lib.RemoteService.content_createOrUpdate(content, function (r) {
             if (r && r.success) {
-                callback(content.key);
+                callback(r.created, r.updated);
             }
         });
     },
