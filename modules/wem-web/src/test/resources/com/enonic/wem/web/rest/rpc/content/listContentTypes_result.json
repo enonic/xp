@@ -1,0 +1,95 @@
+{
+    "success": true,
+    "contentTypes": [
+        {
+            "name": "myCtype",
+            "module": "myModule",
+            "qualifiedName": "myModule:myCtype",
+            "items": [
+                {
+                    "type": "Input",
+                    "name": "inputText1",
+                    "label": "Line Text 1",
+                    "required": true,
+                    "immutable": false,
+                    "occurrences": {
+                        "minimum": 1,
+                        "maximum": 1
+                    },
+                    "indexed": false,
+                    "customText": null,
+                    "validationRegexp": null,
+                    "helpText": "Help text line 1",
+                    "inputType": {
+                        "name": "TextLine",
+                        "builtIn": true
+                    }
+                },
+                {
+                    "type": "Input",
+                    "name": "inputText2",
+                    "label": "Line Text 2",
+                    "required": false,
+                    "immutable": true,
+                    "occurrences": {
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "indexed": false,
+                    "customText": null,
+                    "validationRegexp": null,
+                    "helpText": "Help text line 2",
+                    "inputType": {
+                        "name": "TextLine",
+                        "builtIn": true
+                    }
+                },
+                {
+                    "type": "Input",
+                    "name": "textArea1",
+                    "label": "Text Area",
+                    "required": true,
+                    "immutable": false,
+                    "occurrences": {
+                        "minimum": 1,
+                        "maximum": 1
+                    },
+                    "indexed": false,
+                    "customText": null,
+                    "validationRegexp": null,
+                    "helpText": "Help text area",
+                    "inputType": {
+                        "name": "TextArea",
+                        "builtIn": true
+                    }
+                }
+            ]
+        },
+        {
+            "name": "theContentType",
+            "module": "otherModule",
+            "qualifiedName": "otherModule:theContentType",
+            "items": [
+                {
+                    "type": "Input",
+                    "name": "inputText_1",
+                    "label": "Line Text 1",
+                    "required": true,
+                    "immutable": false,
+                    "occurrences": {
+                        "minimum": 1,
+                        "maximum": 1
+                    },
+                    "indexed": false,
+                    "customText": null,
+                    "validationRegexp": null,
+                    "helpText": "Help text line 1",
+                    "inputType": {
+                        "name": "TextLine",
+                        "builtIn": true
+                    }
+                }
+            ]
+        }
+    ]
+}
