@@ -4,19 +4,19 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.type.ContentTypeNames;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 
 public final class DeleteContentTypes
     extends Command<Integer>
 {
-    private ContentTypeNames contentTypeNames;
+    private QualifiedContentTypeNames contentTypeNames;
 
-    public ContentTypeNames getNames()
+    public QualifiedContentTypeNames getNames()
     {
         return this.contentTypeNames;
     }
 
-    public DeleteContentTypes names( final ContentTypeNames contentTypeNames )
+    public DeleteContentTypes names( final QualifiedContentTypeNames contentTypeNames )
     {
         this.contentTypeNames = contentTypeNames;
         return this;

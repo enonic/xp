@@ -11,12 +11,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-public final class ContentTypeNames
+public final class QualifiedContentTypeNames
     implements Iterable<QualifiedContentTypeName>
 {
     private final ImmutableSet<QualifiedContentTypeName> set;
 
-    private ContentTypeNames( final ImmutableSet<QualifiedContentTypeName> set )
+    private QualifiedContentTypeNames( final ImmutableSet<QualifiedContentTypeName> set )
     {
         this.set = set;
     }
@@ -52,50 +52,50 @@ public final class ContentTypeNames
         return this.set.iterator();
     }
 
-    public ContentTypeNames add( final String... contentTypeNames )
+    public QualifiedContentTypeNames add( final String... contentTypeNames )
     {
         return add( parseQualifiedNames( contentTypeNames ) );
     }
 
-    public ContentTypeNames add( final QualifiedContentTypeName... contentTypeNames )
+    public QualifiedContentTypeNames add( final QualifiedContentTypeName... contentTypeNames )
     {
         return add( ImmutableSet.copyOf( contentTypeNames ) );
     }
 
-    public ContentTypeNames add( final Iterable<QualifiedContentTypeName> contentTypeNames )
+    public QualifiedContentTypeNames add( final Iterable<QualifiedContentTypeName> contentTypeNames )
     {
         return add( ImmutableSet.copyOf( contentTypeNames ) );
     }
 
-    private ContentTypeNames add( final ImmutableSet<QualifiedContentTypeName> contentTypeNames )
+    private QualifiedContentTypeNames add( final ImmutableSet<QualifiedContentTypeName> contentTypeNames )
     {
         final HashSet<QualifiedContentTypeName> tmp = Sets.newHashSet();
         tmp.addAll( this.set );
         tmp.addAll( contentTypeNames );
-        return new ContentTypeNames( ImmutableSet.copyOf( tmp ) );
+        return new QualifiedContentTypeNames( ImmutableSet.copyOf( tmp ) );
     }
 
-    public ContentTypeNames remove( final String... contentTypeNames )
+    public QualifiedContentTypeNames remove( final String... contentTypeNames )
     {
         return remove( parseQualifiedNames( contentTypeNames ) );
     }
 
-    public ContentTypeNames remove( final QualifiedContentTypeName... contentTypeNames )
+    public QualifiedContentTypeNames remove( final QualifiedContentTypeName... contentTypeNames )
     {
         return remove( ImmutableSet.copyOf( contentTypeNames ) );
     }
 
-    public ContentTypeNames remove( final Iterable<QualifiedContentTypeName> contentTypeNames )
+    public QualifiedContentTypeNames remove( final Iterable<QualifiedContentTypeName> contentTypeNames )
     {
         return remove( ImmutableSet.copyOf( contentTypeNames ) );
     }
 
-    private ContentTypeNames remove( final ImmutableSet<QualifiedContentTypeName> contentTypeNames )
+    private QualifiedContentTypeNames remove( final ImmutableSet<QualifiedContentTypeName> contentTypeNames )
     {
         final HashSet<QualifiedContentTypeName> tmp = Sets.newHashSet();
         tmp.addAll( this.set );
         tmp.removeAll( contentTypeNames );
-        return new ContentTypeNames( ImmutableSet.copyOf( tmp ) );
+        return new QualifiedContentTypeNames( ImmutableSet.copyOf( tmp ) );
     }
 
     public int hashCode()
@@ -105,7 +105,7 @@ public final class ContentTypeNames
 
     public boolean equals( final Object o )
     {
-        return ( o instanceof ContentTypeNames ) && this.set.equals( ( (ContentTypeNames) o ).set );
+        return ( o instanceof QualifiedContentTypeNames ) && this.set.equals( ( (QualifiedContentTypeNames) o ).set );
     }
 
     public String toString()
@@ -113,25 +113,25 @@ public final class ContentTypeNames
         return this.set.toString();
     }
 
-    public static ContentTypeNames empty()
+    public static QualifiedContentTypeNames empty()
     {
         final ImmutableSet<QualifiedContentTypeName> set = ImmutableSet.of();
-        return new ContentTypeNames( set );
+        return new QualifiedContentTypeNames( set );
     }
 
-    public static ContentTypeNames from( final String... contentTypeNames )
+    public static QualifiedContentTypeNames from( final String... contentTypeNames )
     {
-        return new ContentTypeNames( parseQualifiedNames( contentTypeNames ) );
+        return new QualifiedContentTypeNames( parseQualifiedNames( contentTypeNames ) );
     }
 
-    public static ContentTypeNames from( final QualifiedContentTypeName... contentTypeNames )
+    public static QualifiedContentTypeNames from( final QualifiedContentTypeName... contentTypeNames )
     {
-        return new ContentTypeNames( ImmutableSet.copyOf( contentTypeNames ) );
+        return new QualifiedContentTypeNames( ImmutableSet.copyOf( contentTypeNames ) );
     }
 
-    public static ContentTypeNames from( final Iterable<QualifiedContentTypeName> contentTypeNames )
+    public static QualifiedContentTypeNames from( final Iterable<QualifiedContentTypeName> contentTypeNames )
     {
-        return new ContentTypeNames( ImmutableSet.copyOf( contentTypeNames ) );
+        return new QualifiedContentTypeNames( ImmutableSet.copyOf( contentTypeNames ) );
     }
 
     private static ImmutableSet<QualifiedContentTypeName> parseQualifiedNames( final String... contentTypeNames )

@@ -4,15 +4,17 @@ package com.enonic.wem.core.content.dao;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.ContentTypeNames;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.core.jcr.JcrHelper;
 
 
 final class RetrieveContentTypeDaoHandler
@@ -23,7 +25,7 @@ final class RetrieveContentTypeDaoHandler
         super( session );
     }
 
-    ContentTypes retrieve( final ContentTypeNames contentTypeNames )
+    ContentTypes retrieve( final QualifiedContentTypeNames contentTypeNames )
         throws RepositoryException
     {
         final List<ContentType> contentTypeList = Lists.newArrayList();
@@ -50,5 +52,30 @@ final class RetrieveContentTypeDaoHandler
         final ContentType contentType = new ContentType();
         this.contentTypeJcrMapper.toContentType( contentTypeNode, contentType );
         return contentType;
+    }
+
+    public ContentTypes retrieveAll()
+        throws RepositoryException
+    {
+        final Node rootNode = session.getRootNode();
+        final Node contentTypesNode = JcrHelper.getNodeOrNull( rootNode, ContentDaoConstants.CONTENT_TYPES_PATH );
+
+        final List<ContentType> contentTypeList = Lists.newArrayList();
+        final NodeIterator contentTypeModuleNodes = contentTypesNode.getNodes();
+        while ( contentTypeModuleNodes.hasNext() )
+        {
+            final Node contentTypeModuleNode = contentTypeModuleNodes.nextNode();
+
+            final NodeIterator contentTypeNodes = contentTypeModuleNode.getNodes();
+            while ( contentTypeNodes.hasNext() )
+            {
+                final Node contentTypeNode = contentTypeNodes.nextNode();
+                final ContentType contentType = new ContentType();
+                this.contentTypeJcrMapper.toContentType( contentTypeNode, contentType );
+                contentTypeList.add( contentType );
+            }
+        }
+
+        return ContentTypes.from( contentTypeList );
     }
 }

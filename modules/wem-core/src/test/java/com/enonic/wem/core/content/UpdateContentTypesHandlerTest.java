@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.UpdateContentTypes;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.ContentTypeNames;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.editor.ContentTypeEditor;
 import com.enonic.wem.api.module.Module;
@@ -51,11 +51,11 @@ public class UpdateContentTypesHandlerTest
         contentType.setDisplayName( "My content type" );
         contentType.setAbstract( false );
         final ContentTypes contentTypes = ContentTypes.from( contentType );
-        Mockito.when( contentTypeDao.retrieveContentTypes( any( Session.class ), isA( ContentTypeNames.class ) ) ).thenReturn(
+        Mockito.when( contentTypeDao.retrieveContentTypes( any( Session.class ), isA( QualifiedContentTypeNames.class ) ) ).thenReturn(
             contentTypes );
 
         // exercise
-        final ContentTypeNames names = ContentTypeNames.from( "myModule:myContentType" );
+        final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( "myModule:myContentType" );
         final UpdateContentTypes command = Commands.contentType().update().names( names ).editor( new ContentTypeEditor()
         {
             @Override

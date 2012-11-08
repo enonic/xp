@@ -4,18 +4,18 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.type.ContentTypeNames;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.editor.ContentTypeEditor;
 
 public final class UpdateContentTypes
     extends Command<Integer>
 {
-    private ContentTypeNames contentTypeNames;
+    private QualifiedContentTypeNames contentTypeNames;
 
     private ContentTypeEditor editor;
 
 
-    public UpdateContentTypes names( final ContentTypeNames contentTypeNames )
+    public UpdateContentTypes names( final QualifiedContentTypeNames contentTypeNames )
     {
         this.contentTypeNames = contentTypeNames;
         return this;
@@ -27,7 +27,7 @@ public final class UpdateContentTypes
         return this;
     }
 
-    public ContentTypeNames getNames()
+    public QualifiedContentTypeNames getNames()
     {
         return contentTypeNames;
     }

@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.command.content.GetContentTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypeFetcher;
-import com.enonic.wem.api.content.type.ContentTypeNames;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.MockContentTypeFetcher;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
@@ -46,14 +46,35 @@ public final class GetContentTypesHandler
     public void handle( final CommandContext context, final GetContentTypes command )
         throws Exception
     {
-        final ContentTypeNames contentTypeNames = command.getNames();
-        final ContentTypes contentTypes = getContentTypes( context.getJcrSession(), contentTypeNames );
+        final Session session = context.getJcrSession();
+        final ContentTypes contentTypes;
+        if ( command.isGetAll() )
+        {
+            contentTypes = getAllContentTypes( session );
+        }
+        else
+        {
+            final QualifiedContentTypeNames contentTypeNames = command.getNames();
+            contentTypes = getContentTypes( session, contentTypeNames );
+        }
         command.setResult( contentTypes );
     }
 
-    private ContentTypes getContentTypes( final Session session, final ContentTypeNames contentTypeNames )
+    private ContentTypes getAllContentTypes( final Session session )
     {
-        ContentTypes contentTypes = contentTypeDao.retrieveContentTypes( session, contentTypeNames );
+        final ContentTypes contentTypes = contentTypeDao.retrieveAllContentTypes( session );
+        if ( !contentTypes.isEmpty() )
+        {
+            return contentTypes;
+        }
+        // TODO remove this, returning mock values for now
+        return getMockContentTypes( QualifiedContentTypeNames.from( "News:Article", "News:Article2" ) );
+
+    }
+
+    private ContentTypes getContentTypes( final Session session, final QualifiedContentTypeNames contentTypeNames )
+    {
+        final ContentTypes contentTypes = contentTypeDao.retrieveContentTypes( session, contentTypeNames );
         if ( !contentTypes.isEmpty() )
         {
             return contentTypes;
@@ -62,7 +83,7 @@ public final class GetContentTypesHandler
         return getMockContentTypes( contentTypeNames );
     }
 
-    private ContentTypes getMockContentTypes( final ContentTypeNames contentTypeNames )
+    private ContentTypes getMockContentTypes( final QualifiedContentTypeNames contentTypeNames )
     {
         final List<ContentType> contentTypeList = Lists.newArrayList();
         for ( QualifiedContentTypeName name : contentTypeNames )

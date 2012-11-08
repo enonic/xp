@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.ContentTypeNames;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.web.json.JsonErrorResult;
@@ -42,7 +42,7 @@ public final class GetContentTypeRpcHandler
 
     private ContentType fetchContentType( final QualifiedContentTypeName contentTypeName )
     {
-        final ContentTypeNames names = ContentTypeNames.from( contentTypeName );
+        final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( contentTypeName );
         final ContentTypes contentTypeResult = client.execute( Commands.contentType().get().names( names ) );
         return contentTypeResult.isEmpty() ? null : contentTypeResult.getFirst();
     }

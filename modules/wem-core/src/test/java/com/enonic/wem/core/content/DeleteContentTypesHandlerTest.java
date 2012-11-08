@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.DeleteContentTypes;
-import com.enonic.wem.api.content.type.ContentTypeNames;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentTypeDao;
 
@@ -41,15 +41,15 @@ public class DeleteContentTypesHandlerTest
         throws Exception
     {
         // setup
-        Mockito.when( contentTypeDao.deleteContentType( any( Session.class ), isA( ContentTypeNames.class ) ) ).thenReturn( 1 );
+        Mockito.when( contentTypeDao.deleteContentType( any( Session.class ), isA( QualifiedContentTypeNames.class ) ) ).thenReturn( 1 );
 
         // exercise
-        final ContentTypeNames names = ContentTypeNames.from( "myModule:myContentType" );
+        final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( "myModule:myContentType" );
         final DeleteContentTypes command = Commands.contentType().delete().names( names );
         this.handler.handle( this.context, command );
 
         // verify
-        verify( contentTypeDao, atLeastOnce() ).deleteContentType( Mockito.any( Session.class ), Mockito.isA( ContentTypeNames.class ) );
+        verify( contentTypeDao, atLeastOnce() ).deleteContentType( Mockito.any( Session.class ), Mockito.isA( QualifiedContentTypeNames.class ) );
         assertEquals( (Integer) 1, command.getResult() );
     }
 

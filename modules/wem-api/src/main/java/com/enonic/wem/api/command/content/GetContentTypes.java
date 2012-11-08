@@ -4,22 +4,35 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.type.ContentTypeNames;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.ContentTypes;
 
 public final class GetContentTypes
     extends Command<ContentTypes>
 {
-    private ContentTypeNames contentTypeNames;
+    private QualifiedContentTypeNames contentTypeNames;
 
-    public ContentTypeNames getNames()
+    private boolean getAllContentTypes = false;
+
+    public QualifiedContentTypeNames getNames()
     {
         return this.contentTypeNames;
     }
 
-    public GetContentTypes names( final ContentTypeNames contentTypeNames )
+    public GetContentTypes names( final QualifiedContentTypeNames contentTypeNames )
     {
         this.contentTypeNames = contentTypeNames;
+        return this;
+    }
+
+    public boolean isGetAll()
+    {
+        return getAllContentTypes;
+    }
+
+    public GetContentTypes all()
+    {
+        getAllContentTypes = true;
         return this;
     }
 
@@ -37,18 +50,26 @@ public final class GetContentTypes
         }
 
         final GetContentTypes that = (GetContentTypes) o;
-        return Objects.equal( this.contentTypeNames, that.contentTypeNames );
+        return Objects.equal( this.contentTypeNames, that.contentTypeNames ) && ( this.getAllContentTypes == that.getAllContentTypes );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.contentTypeNames );
+        return Objects.hashCode( this.contentTypeNames, this.getAllContentTypes );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.contentTypeNames, "Content type cannot be null" );
+        if ( getAllContentTypes )
+        {
+            Preconditions.checkArgument( this.contentTypeNames == null, "Cannot specify both get all and get content type names" );
+        }
+        else
+        {
+            Preconditions.checkNotNull( this.contentTypeNames, "Content type cannot be null" );
+        }
     }
+
 }

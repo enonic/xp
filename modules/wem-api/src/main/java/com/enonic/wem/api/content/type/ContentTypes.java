@@ -8,16 +8,21 @@ import java.util.Set;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 public final class ContentTypes
     implements Iterable<ContentType>
 {
     private final ImmutableList<ContentType> list;
 
+    private final ImmutableMap<QualifiedContentTypeName, ContentType> map;
+
     private ContentTypes( final ImmutableList<ContentType> list )
     {
         this.list = list;
+        this.map = Maps.uniqueIndex( list, new ToNameFunction() );
     }
 
     public int getSize()
@@ -44,6 +49,11 @@ public final class ContentTypes
     {
         final Collection<QualifiedContentTypeName> names = Collections2.transform( this.list, new ToNameFunction() );
         return ImmutableSet.copyOf( names );
+    }
+
+    public ContentType getContentType( final QualifiedContentTypeName contentTypeName )
+    {
+        return map.get( contentTypeName );
     }
 
     @Override

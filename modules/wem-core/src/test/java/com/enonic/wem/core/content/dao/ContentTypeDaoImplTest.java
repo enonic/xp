@@ -6,8 +6,9 @@ import javax.jcr.Node;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.ContentTypeNames;
 import com.enonic.wem.api.content.type.ContentTypes;
+import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.itest.AbstractJcrTest;
 
@@ -57,7 +58,8 @@ public class ContentTypeDaoImplTest
         contentTypeDao.createContentType( session, contentType );
 
         // exercise
-        final ContentTypes contentTypes = contentTypeDao.retrieveContentTypes( session, ContentTypeNames.from( "myModule:myContentType" ) );
+        final ContentTypes contentTypes = contentTypeDao.retrieveContentTypes( session, QualifiedContentTypeNames.from(
+            "myModule:myContentType" ) );
         commit();
 
         // verify
@@ -68,6 +70,46 @@ public class ContentTypeDaoImplTest
         assertEquals( "myModule", contentType1.getModule().getName() );
         assertEquals( true, contentType1.isAbstract() );
         assertEquals( "My content type", contentType1.getDisplayName() );
+    }
+
+    @Test
+    public void retrieveAllContentTypes()
+        throws Exception
+    {
+        // setup
+        final ContentType contentTypeCreated1 = new ContentType();
+        contentTypeCreated1.setModule( new Module( "myModule" ) );
+        contentTypeCreated1.setName( "myContentType" );
+        contentTypeCreated1.setAbstract( true );
+        contentTypeCreated1.setDisplayName( "My content type" );
+        contentTypeDao.createContentType( session, contentTypeCreated1 );
+
+        final ContentType contentTypeCreated2 = new ContentType();
+        contentTypeCreated2.setModule( new Module( "otherModule" ) );
+        contentTypeCreated2.setName( "someContentType" );
+        contentTypeCreated2.setAbstract( false );
+        contentTypeCreated2.setDisplayName( "Another content type" );
+        contentTypeDao.createContentType( session, contentTypeCreated2 );
+
+        // exercise
+        final ContentTypes contentTypes = contentTypeDao.retrieveAllContentTypes( session );
+        commit();
+
+        // verify
+        assertNotNull( contentTypes );
+        assertEquals( 2, contentTypes.getSize() );
+        final ContentType contentType1 = contentTypes.getContentType( new QualifiedContentTypeName( "myModule:myContentType" ) );
+        final ContentType contentType2 = contentTypes.getContentType( new QualifiedContentTypeName( "otherModule:someContentType" ) );
+
+        assertEquals( "myContentType", contentType1.getName() );
+        assertEquals( "myModule", contentType1.getModule().getName() );
+        assertEquals( true, contentType1.isAbstract() );
+        assertEquals( "My content type", contentType1.getDisplayName() );
+
+        assertEquals( "someContentType", contentType2.getName() );
+        assertEquals( "otherModule", contentType2.getModule().getName() );
+        assertEquals( false, contentType2.isAbstract() );
+        assertEquals( "Another content type", contentType2.getDisplayName() );
     }
 
     @Test
@@ -84,7 +126,7 @@ public class ContentTypeDaoImplTest
 
         // exercise
         final ContentTypes contentTypesAfterCreate =
-            contentTypeDao.retrieveContentTypes( session, ContentTypeNames.from( "myModule:myContentType" ) );
+            contentTypeDao.retrieveContentTypes( session, QualifiedContentTypeNames.from( "myModule:myContentType" ) );
         assertNotNull( contentTypesAfterCreate );
         assertEquals( 1, contentTypesAfterCreate.getSize() );
 
@@ -95,7 +137,7 @@ public class ContentTypeDaoImplTest
 
         // verify
         final ContentTypes contentTypesAfterUpdate =
-            contentTypeDao.retrieveContentTypes( session, ContentTypeNames.from( "myModule:myContentType" ) );
+            contentTypeDao.retrieveContentTypes( session, QualifiedContentTypeNames.from( "myModule:myContentType" ) );
         assertNotNull( contentTypesAfterUpdate );
         assertEquals( 1, contentTypesAfterUpdate.getSize() );
         final ContentType contentType1 = contentTypesAfterUpdate.getFirst();
@@ -119,17 +161,17 @@ public class ContentTypeDaoImplTest
 
         // exercise
         final ContentTypes contentTypesAfterCreate =
-            contentTypeDao.retrieveContentTypes( session, ContentTypeNames.from( "myModule:myContentType" ) );
+            contentTypeDao.retrieveContentTypes( session, QualifiedContentTypeNames.from( "myModule:myContentType" ) );
         assertNotNull( contentTypesAfterCreate );
         assertEquals( 1, contentTypesAfterCreate.getSize() );
 
-        int deleted = contentTypeDao.deleteContentType( session, ContentTypeNames.from( contentType.getQualifiedName() ) );
+        int deleted = contentTypeDao.deleteContentType( session, QualifiedContentTypeNames.from( contentType.getQualifiedName() ) );
         commit();
 
         // verify
         assertEquals( 1, deleted );
         final ContentTypes contentTypesAfterDelete =
-            contentTypeDao.retrieveContentTypes( session, ContentTypeNames.from( "myModule:myContentType" ) );
+            contentTypeDao.retrieveContentTypes( session, QualifiedContentTypeNames.from( "myModule:myContentType" ) );
         assertNotNull( contentTypesAfterDelete );
         assertTrue( contentTypesAfterDelete.isEmpty() );
     }

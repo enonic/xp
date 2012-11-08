@@ -7,7 +7,7 @@ import javax.jcr.Session;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.ContentTypeNames;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.exception.SystemException;
 
@@ -31,7 +31,7 @@ public final class ContentTypeDaoImpl
     }
 
     @Override
-    public ContentTypes retrieveContentTypes( final Session session, final ContentTypeNames contentTypeNames )
+    public ContentTypes retrieveContentTypes( final Session session, final QualifiedContentTypeNames contentTypeNames )
     {
         try
         {
@@ -57,7 +57,7 @@ public final class ContentTypeDaoImpl
     }
 
     @Override
-    public int deleteContentType( final Session session, final ContentTypeNames contentTypeNames )
+    public int deleteContentType( final Session session, final QualifiedContentTypeNames contentTypeNames )
     {
         try
         {
@@ -66,6 +66,19 @@ public final class ContentTypeDaoImpl
         catch ( RepositoryException e )
         {
             throw new SystemException( e, "Unable to delete content types [{0}]", contentTypeNames );
+        }
+    }
+
+    @Override
+    public ContentTypes retrieveAllContentTypes( final Session session )
+    {
+        try
+        {
+            return new RetrieveContentTypeDaoHandler( session ).retrieveAll();
+        }
+        catch ( RepositoryException e )
+        {
+            throw new SystemException( e, "Unable to retrieve content types"  );
         }
     }
 }

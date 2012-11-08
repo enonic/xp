@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.DeleteContentTypes;
-import com.enonic.wem.api.content.type.ContentTypeNames;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentTypeDao;
@@ -26,7 +26,7 @@ public final class DeleteContentTypesHandler
     public void handle( final CommandContext context, final DeleteContentTypes command )
         throws Exception
     {
-        final ContentTypeNames contentTypeNames = command.getNames();
+        final QualifiedContentTypeNames contentTypeNames = command.getNames();
         final Session session = context.getJcrSession();
         final int deleted = contentTypeDao.deleteContentType( session, contentTypeNames );
 

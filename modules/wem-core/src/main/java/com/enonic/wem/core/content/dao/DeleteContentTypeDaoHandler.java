@@ -5,7 +5,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.content.type.ContentTypeNames;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 
 
@@ -17,7 +17,7 @@ final class DeleteContentTypeDaoHandler
         super( session );
     }
 
-    int delete( final ContentTypeNames contentTypeNames )
+    int delete( final QualifiedContentTypeNames contentTypeNames )
         throws RepositoryException
     {
         int deletedCount = 0;
