@@ -3,6 +3,7 @@
     "contentType":{
         "name":"myCtype",
         "module":"myModule",
+        "qualifiedName" : "myModule:myCtype",
         "items":[
             {
                 "type":"Input",
