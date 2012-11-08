@@ -33,6 +33,7 @@ public class ContentTypeSerializerJson
             g.writeStartObject();
             g.writeStringField( "name", contentType.getName() );
             g.writeStringField( "module", contentType.getModule().getName() );
+            g.writeStringField( "qualifiedName", contentType.getQualifiedName().toString() );
 
             componentsSerializer.generate( contentType.componentIterable(), g );
             g.writeEndObject();

@@ -91,16 +91,11 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
 
         var me = this;
         var contentData = contentWizard.getData();
-
-        var contentType;
-        if (contentWizard.data) {
-            contentType = contentWizard.data.qualifiedContentTypeName ||
-                          [ contentWizard.data.module, contentWizard.data.name].join(':');
-        }
+        var contentType = contentWizard.data;
 
         var contentParams = {
             contentData: contentData,
-            qualifiedContentTypeName: contentType,
+            qualifiedContentTypeName: contentType.qualifiedName,
             contentPath: "/" + this.getDisplayNameValue(contentWizard)
         };
 
