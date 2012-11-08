@@ -17,7 +17,11 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
         if (!window.plupload) {
             alert('ImageUploadButton requires Plupload!');
         }
-        this.addEvents("fileuploaded");
+        var me = this;
+        this.addEvents("fileuploaded", "dirtychange");
+        this.addListener("fileuploaded", function () {
+            me.fireEvent('dirtychange', me, true);
+        });
     },
 
     onRender: function () {
