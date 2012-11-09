@@ -5,7 +5,6 @@ import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.BlobToKeyReplacer;
 import com.enonic.wem.api.content.data.ContentData;
@@ -107,24 +106,24 @@ public final class Content
         this.modifiedTime = modifiedTime;
     }
 
-    public AccountKey getModifier()
+    public UserKey getModifier()
     {
         return modifier;
     }
 
-    public void setModifier( final AccountKey modifier )
+    public void setModifier( final UserKey modifier )
     {
-        this.modifier = UserKey.from( modifier );
+        this.modifier = modifier;
     }
 
-    public AccountKey getOwner()
+    public UserKey getOwner()
     {
         return owner;
     }
 
-    public void setOwner( final AccountKey owner )
+    public void setOwner( final UserKey owner )
     {
-        this.owner = UserKey.from( owner );
+        this.owner = owner;
     }
 
     public ContentData getData()

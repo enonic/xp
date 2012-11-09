@@ -60,11 +60,11 @@ final class ContentJcrMapper
         content.setModifiedTime( getPropertyDateTime( contentNode, MODIFIED_TIME ) );
         if ( contentNode.hasProperty( MODIFIER ) )
         {
-            content.setModifier( AccountKey.from( getPropertyString( contentNode, MODIFIER ) ) );
+            content.setModifier( AccountKey.from( getPropertyString( contentNode, MODIFIER ) ).asUser() );
         }
         if ( contentNode.hasProperty( OWNER ) )
         {
-            content.setOwner( AccountKey.from( getPropertyString( contentNode, OWNER ) ) );
+            content.setOwner( AccountKey.from( getPropertyString( contentNode, OWNER ) ).asUser() );
         }
         content.setModifiedTime( getPropertyDateTime( contentNode, MODIFIED_TIME ) );
 

@@ -4,7 +4,7 @@ package com.enonic.wem.api.content;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.account.AccountKey;
 
 import static com.enonic.wem.api.content.ContentBranch.newContentBranch;
 import static junit.framework.Assert.assertEquals;
@@ -35,6 +35,6 @@ public class ContentBranchTest
     private Content createContent( String path )
     {
         return Content.newContent().path( ContentPath.from( path ) ).createdTime( DateTime.now() ).owner(
-            UserKey.from( "myStore:me" ) ).build();
+            AccountKey.user( "myStore:me" ) ).build();
     }
 }
