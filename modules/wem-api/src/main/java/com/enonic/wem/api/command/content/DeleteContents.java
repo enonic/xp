@@ -5,10 +5,11 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.content.ContentDeletionResult;
 import com.enonic.wem.api.content.ContentPaths;
 
 public final class DeleteContents
-    extends Command
+    extends Command<ContentDeletionResult>
 {
     private ContentPaths paths;
 

@@ -1,0 +1,9 @@
+{
+    "success":true,
+    "successes":[
+        {
+            "path":"parent/childToDelete"
+        }
+    ],
+    "failures":[ ]
+}

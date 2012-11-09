@@ -40,7 +40,7 @@ public class GetContentTreeRpcHandlerTest
     }
 
     @Test
-    public void testRequestGetContentType_existing()
+    public void get()
         throws Exception
     {
         Content c1 = createContent( "c1" );
