@@ -1,4 +1,4 @@
-(function () {
+(function ($) {
     'use strict';
 
     var regions =  AdminLiveEdit.model.component.Regions = function () {
@@ -24,9 +24,9 @@
 
 
     p.bindEvents = function () {
-        $liveedit(window).on('component:drag:update', $liveedit.proxy(this.renderEmptyPlaceholders, this));
+        $(window).on('component:drag:update', $.proxy(this.renderEmptyPlaceholders, this));
 
-        $liveedit(window).on('component:drag:over', $liveedit.proxy(this.renderEmptyPlaceholders, this));
+        $(window).on('component:drag:over', $.proxy(this.renderEmptyPlaceholders, this));
     };
 
 
@@ -35,7 +35,7 @@
         self.removeAllRegionPlaceholders();
         var $regions = self.getAll();
         $regions.each(function (index) {
-            var $region = $liveedit(this);
+            var $region = $(this);
             var regionIsEmpty = self.isRegionEmpty.call(self, $region);
             if (regionIsEmpty) {
                 self.appendEmptyPlaceholder.call(self, $region);
@@ -45,7 +45,7 @@
 
 
     p.appendEmptyPlaceholder = function ($region) {
-        var $placeholder = $liveedit('<div/>', {
+        var $placeholder = $('<div/>', {
             'class': 'live-edit-empty-region-placeholder',
             'html': 'Drag components here'
         });
@@ -61,7 +61,7 @@
 
 
     p.removeAllRegionPlaceholders = function () {
-        $liveedit('.live-edit-empty-region-placeholder').remove();
+        $('.live-edit-empty-region-placeholder').remove();
     };
 
-}());
+}($liveedit));

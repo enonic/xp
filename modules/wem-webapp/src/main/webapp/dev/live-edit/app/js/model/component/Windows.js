@@ -1,4 +1,4 @@
-(function () {
+(function ($) {
     'use strict';
 
     var windows =  AdminLiveEdit.model.component.Windows = function () {
@@ -20,7 +20,7 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.appendEmptyPlaceholder = function ($window) {
-        var $placeholder = $liveedit('<div/>', {
+        var $placeholder = $('<div/>', {
             'class': 'live-edit-empty-window-placeholder',
             'html': 'Empty Window'
         });
@@ -29,14 +29,14 @@
 
 
     p.isWindowEmpty = function ($window) {
-        return $liveedit($window).children().length === 0;
+        return $($window).children().length === 0;
     };
 
 
     p.renderEmptyPlaceholders = function () {
         var t = this;
         this.getAll().each(function (index) {
-            var $window = $liveedit(this);
+            var $window = $(this);
             var windowIsEmpty = t.isWindowEmpty($window);
             if (windowIsEmpty) {
                 t.appendEmptyPlaceholder($window);
@@ -44,4 +44,4 @@
         });
     };
 
-}());
+}($liveedit));
