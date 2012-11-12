@@ -20,6 +20,7 @@ public class AccountKeyTest
     {
         assertNotNull( key );
         assertEquals( AccountType.USER, key.getType() );
+        assertTrue( key instanceof UserKey );
         assertEquals( "other", key.getUserStore() );
         assertEquals( "dummy", key.getLocalName() );
         assertEquals( "other:dummy", key.getQualifiedName() );
@@ -46,6 +47,7 @@ public class AccountKeyTest
     {
         assertNotNull( key );
         assertEquals( AccountType.GROUP, key.getType() );
+        assertTrue( key instanceof GroupKey );
         assertEquals( "other", key.getUserStore() );
         assertEquals( "dummy", key.getLocalName() );
         assertEquals( "other:dummy", key.getQualifiedName() );
@@ -72,6 +74,7 @@ public class AccountKeyTest
     {
         assertNotNull( key );
         assertEquals( AccountType.ROLE, key.getType() );
+        assertTrue( key instanceof RoleKey );
         assertEquals( "other", key.getUserStore() );
         assertEquals( "dummy", key.getLocalName() );
         assertEquals( "other:dummy", key.getQualifiedName() );
@@ -90,6 +93,7 @@ public class AccountKeyTest
         final AccountKey ref = AccountKey.superUser();
         assertNotNull( ref );
         assertEquals( AccountType.USER, ref.getType() );
+        assertTrue( ref instanceof UserKey );
         assertEquals( "system", ref.getUserStore() );
         assertEquals( "admin", ref.getLocalName() );
         assertEquals( "system:admin", ref.getQualifiedName() );
@@ -108,6 +112,7 @@ public class AccountKeyTest
         final AccountKey ref = AccountKey.anonymous();
         assertNotNull( ref );
         assertEquals( AccountType.USER, ref.getType() );
+        assertTrue( ref instanceof UserKey );
         assertEquals( "system", ref.getUserStore() );
         assertEquals( "anonymous", ref.getLocalName() );
         assertEquals( "system:anonymous", ref.getQualifiedName() );

@@ -3,7 +3,7 @@ package com.enonic.wem.api.command.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.editor.ContentEditor;
@@ -15,7 +15,7 @@ public final class UpdateContents
 
     private ContentEditor editor;
 
-    private AccountKey modifier;
+    private UserKey modifier;
 
     public ContentPaths getPaths()
     {
@@ -27,7 +27,7 @@ public final class UpdateContents
         return this.editor;
     }
 
-    public AccountKey getModifier()
+    public UserKey getModifier()
     {
         return modifier;
     }
@@ -44,7 +44,7 @@ public final class UpdateContents
         return this;
     }
 
-    public UpdateContents modifier( final AccountKey modifier )
+    public UpdateContents modifier( final UserKey modifier )
     {
         this.modifier = modifier;
         return this;
