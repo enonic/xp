@@ -178,17 +178,11 @@ Ext.define('Admin.view.WizardPanel', {
         for (i = 0; i < cmp.validateItems.length; i++) {
             var validateItem = cmp.validateItems[i];
             if (validateItem) {
-                var validateItemForm = Ext.isFunction(validateItem.getForm) ? validateItem.getForm() : undefined;
-                if (validateItemForm) {
-                    // replace component with its form for convenience
-                    Ext.Array.replace(this.validateItems, i, 1, [validateItemForm]);
-                    validateItemForm.on({
-                        'validitychange': cmp.handleValidityChange,
-                        'dirtychange': cmp.handleDirtyChange,
-                        scope: cmp
-                    }, this);
-                    validateItemForm.checkValidity();
-                }
+                validateItem.on({
+                    'validitychange': cmp.handleValidityChange,
+                    'dirtychange': cmp.handleDirtyChange,
+                    scope: cmp
+                }, this);
             }
         }
         var checkValidityFn = function (panel) {

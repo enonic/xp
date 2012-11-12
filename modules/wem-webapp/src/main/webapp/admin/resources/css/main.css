@@ -848,25 +848,32 @@ div.admin-wizard-navigation-container-sticky {
     position: relative;
 }
 
-.admin-wizard-header-container .admin-display-name {
+.admin-display-name {
     width: 100%;
+}
+
+.admin-display-name-dirty input {
+    color: #000 !important;
+}
+
+.admin-display-name input {
     border: 1px solid transparent;
     color: #555555;
     font-size: 26px;
-    line-height: 36px;
-    height: 36px;
+    line-height: 36px !important;
+    height: 36px !important;
     font-weight: normal;
     margin: 0;
     border-radius: 2px;
     background: white none;
 }
 
-.admin-wizard-header-container input.admin-display-name:hover {
+.admin-display-name input:hover {
     border: 1px solid #98c9f2;
     box-shadow: 0 0 3px #98c9f2;
 }
 
-.admin-wizard-header-container input.admin-display-name:focus {
+.admin-display-name input:focus {
     color: #000 !important;
     border: 1px solid #99BCE8 !important;
 }
@@ -879,10 +886,6 @@ div.admin-wizard-navigation-container-sticky {
     border-color: #C30;
 }
 
-.admin-wizard-header-container .admin-wizard-userstore {
-    padding-left: 3px;
-}
-
 .admin-edited-field {
     color: #000 !important;
 }
@@ -890,8 +893,6 @@ div.admin-wizard-navigation-container-sticky {
 .admin-remote-field {
     background: url('../images/icon_remote_10px.gif') 4px 6px no-repeat;
 }
-
-;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Image Upload Button

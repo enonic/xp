@@ -7,17 +7,17 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
     progressBarHeight: 8,
 
     // TODO: Move markup to template file
-    tpl: new Ext.XTemplate('<div id="{id}" title="{title}" class="admin-image-upload-button-container" style="width:{width - 9}px;height:{height - 9}px; margin: 0">' +
-                           '<img src="{photoUrl}" class="admin-image-upload-button-image" style="width:{width - 11}px;height:{height - 11}px"/>' +
-                           '<div class="admin-image-upload-button-progress-bar-container" style="width:{width - 12}px">' +
-                           '<div class="admin-image-upload-button-progress-bar" style="height:{progressBarHeight}px"><!-- --></div>' +
-                           '</div>' + '</div>'),
+    tpl: new Ext.XTemplate(Templates.common.photoUploadButton),
 
     initComponent: function () {
         if (!window.plupload) {
             alert('ImageUploadButton requires Plupload!');
         }
-        this.addEvents("fileuploaded");
+        var me = this;
+        this.addEvents("fileuploaded", "dirtychange");
+        this.addListener("fileuploaded", function () {
+            me.fireEvent('dirtychange', me, true);
+        });
     },
 
     onRender: function () {
