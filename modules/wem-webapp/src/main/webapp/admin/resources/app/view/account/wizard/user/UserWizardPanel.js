@@ -48,33 +48,43 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
             xtype: 'userWizardToolbar',
             isNewUser: isNew
         };
+        var photoUploadButton = Ext.create({
+            xclass: 'widget.photoUploadButton',
+            width: 111,
+            height: 111,
+            style: {
+                position: 'fixed',
+                top: '96px'
+            },
+            photoUrl: photoUrl,
+            title: "User",
+            progressBarHeight: 6,
+            listeners: {
+                mouseenter: function () {
+                    var imageToolTip = me.down('#imageToolTip');
+                    imageToolTip.show();
+                },
+                mouseleave: function () {
+                    var imageToolTip = me.down('#imageToolTip');
+                    imageToolTip.hide();
+                }
+            }
+        });
+        var displayNameField = Ext.create({
+            xclass: 'widget.textfield',
+            itemId: 'displayName',
+            value: me.headerData ? me.headerData.displayName : undefined,
+            emptyText: 'Display Name',
+            enableKeyEvents: true,
+            cls: 'admin-display-name',
+            dirtyCls: 'admin-display-name-dirty'
+        });
         me.items = [
             {
                 width: 121,
                 padding: 5,
                 items: [
-                    {
-                        xtype: 'photoUploadButton',
-                        width: 111,
-                        height: 111,
-                        style: {
-                            position: 'fixed',
-                            top: '96px'
-                        },
-                        photoUrl: photoUrl,
-                        title: "User",
-                        progressBarHeight: 6,
-                        listeners: {
-                            mouseenter: function () {
-                                var imageToolTip = me.down('#imageToolTip');
-                                imageToolTip.show();
-                            },
-                            mouseleave: function () {
-                                var imageToolTip = me.down('#imageToolTip');
-                                imageToolTip.hide();
-                            }
-                        }
-                    },
+                    photoUploadButton,
                     {
                         styleHtmlContent: true,
                         height: 50,
@@ -103,28 +113,25 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
                 },
                 items: [
                     {
-                        xtype: 'container',
-                        itemId: 'wizardHeader',
-                        styleHtmlContent: true,
-                        autoHeight: true,
+                        xtype: 'panel',
                         cls: 'admin-wizard-header-container',
-                        listeners: {
-                            afterrender: {
-                                fn: function () {
-                                    var me = this;
-                                    me.getEl().addListener('click', function (event, target, eOpts) {
-                                        me.toggleDisplayNameField(event, target);
-                                    });
-                                },
-                                scope: this
+                        items: [
+                            displayNameField,
+                            {
+                                xtype: 'container',
+                                itemId: 'wizardHeader',
+                                styleHtmlContent: true,
+                                autoHeight: true,
+                                cls: 'admin-wizard-header-container',
+                                tpl: new Ext.XTemplate(Templates.account.userWizardHeader),
+                                data: me.headerData
                             }
-                        },
-                        tpl: new Ext.XTemplate(Templates.account.userWizardHeader),
-                        data: me.headerData
+                        ]
                     },
                     {
                         xtype: 'wizardPanel',
                         showControls: true,
+                        validateItems: [photoUploadButton, displayNameField],
                         isNew: isNew,
                         items: [
                             {
@@ -229,23 +236,6 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
         }, wizardPanel);
     },
 
-    toggleDisplayNameField: function (event, target) {
-        var clickedElement = Ext.fly(target);
-        var parentToClickedElementIsHeader = clickedElement.findParent('.admin-wizard-header');
-        var displayNameFieldElement = this.getEl().select('.admin-display-name').item(0);
-
-        if (parentToClickedElementIsHeader) {
-            displayNameFieldElement.dom.removeAttribute('readonly');
-            displayNameFieldElement.addCls('admin-edited-field');
-        } else {
-            displayNameFieldElement.set({readonly: true});
-            var value = Ext.String.trim(displayNameFieldElement.getValue());
-            if (value === '' || value === 'Display Name') {
-                displayNameFieldElement.removeCls('admin-edited-field');
-            }
-        }
-    },
-
     resizeFileUpload: function (file) {
         file.el.down('input[type=file]').setStyle({
             width: file.getWidth(),
@@ -283,7 +273,7 @@ Ext.define('Admin.view.account.wizard.user.UserWizardPanel', {
         if (this.userFields) {
             wizardData.key = this.userFields.key;
         }
-        var displayNameField = this.el.select('input.admin-display-name').item(0);
+        var displayNameField = this.down('#displayName');
         if (displayNameField) {
             var data = {displayName: displayNameField.getValue() };
             Ext.merge(wizardData, data);
