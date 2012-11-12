@@ -1,10 +1,11 @@
 package com.enonic.wem.core.content.data;
 
-import java.io.IOException;
 import java.util.Iterator;
 
-import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
 
 import com.google.common.base.Preconditions;
 
@@ -20,37 +21,34 @@ import com.enonic.wem.core.content.JsonParserUtil;
 
 public class DataSerializerJson
 {
-    public void generate( final Data data, final JsonGenerator g )
-        throws IOException
+    public JsonNode generate( final Data data, final ObjectMapper objectMapper )
     {
-        g.writeStartObject();
+        final ObjectNode jsonData = objectMapper.createObjectNode();
         final String name = data.getPath().resolveComponentPath().getLastElement();
-        g.writeStringField( "name", name );
+        jsonData.put( "name", name );
         if ( data.getDataType() != null )
         {
-            g.writeStringField( "type", data.getDataType().getName() );
+            jsonData.put( "type", data.getDataType().getName() );
         }
         if ( data.getValue() != null )
         {
             if ( data.getDataType().equals( DataTypes.DATA_SET ) )
             {
                 final DataSet dataSet = data.getDataSet();
-                g.writeArrayFieldStart( "value" );
+                final ArrayNode jsonDataValue = jsonData.putArray( "value" );
                 for ( final Data e : dataSet )
                 {
-                    generate( e, g );
+                    jsonDataValue.add( generate( e, objectMapper ) );
                 }
-                g.writeEndArray();
             }
             else if ( data.getDataType().equals( DataTypes.DATA_ARRAY ) )
             {
                 final DataArray dataArray = data.getDataArray();
-                g.writeArrayFieldStart( "value" );
+                final ArrayNode jsonDataValue = jsonData.putArray( "value" );
                 for ( final Data e : dataArray )
                 {
-                    generate( e, g );
+                    jsonDataValue.add( generate( e, objectMapper ) );
                 }
-                g.writeEndArray();
             }
             else
             {
@@ -60,15 +58,15 @@ public class DataSerializerJson
                                                  "Data at path [%s] of type BLOB needs to have a BlobKey as value before it is serialized: " +
                                                      data.getValue().getClass(), data.getPath() );
                 }
-                g.writeStringField( "value", String.valueOf( data.getValue() ) );
+                jsonData.put( "value", String.valueOf( data.getValue() ) );
             }
         }
         else
         {
-            g.writeNullField( "value " );
+            jsonData.putNull( "value" );
         }
 
-        g.writeEndObject();
+        return jsonData;
     }
 
     public Data parse( final EntryPath parentPath, final JsonNode dataNode )

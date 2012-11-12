@@ -1,11 +1,12 @@
 package com.enonic.wem.api.content.type.component.inputtype;
 
 
-import java.io.IOException;
 import java.util.Iterator;
 
-import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
 
 
 public class SingleSelectorConfigSerializerJson
@@ -13,22 +14,21 @@ public class SingleSelectorConfigSerializerJson
 {
     public static final SingleSelectorConfigSerializerJson DEFAULT = new SingleSelectorConfigSerializerJson();
 
-    public void generateConfig( InputTypeConfig config, JsonGenerator g )
-        throws IOException
+    @Override
+    public JsonNode generateConfig( final InputTypeConfig config, final ObjectMapper objectMapper )
     {
-        SingleSelectorConfig singleSelectorConfig = (SingleSelectorConfig) config;
-        g.writeStartObject();
-        g.writeStringField( "selectorType", singleSelectorConfig.getType().toString() );
-        g.writeArrayFieldStart( "options" );
+        final SingleSelectorConfig singleSelectorConfig = (SingleSelectorConfig) config;
+        final ObjectNode jsonConfig = objectMapper.createObjectNode();
+
+        jsonConfig.put( "selectorType", singleSelectorConfig.getType().toString() );
+        final ArrayNode jsonArray = jsonConfig.putArray( "options" );
         for ( SingleSelectorConfig.Option option : singleSelectorConfig.getOptions() )
         {
-            g.writeStartObject();
-            g.writeStringField( "label", option.getLabel() );
-            g.writeStringField( "value", option.getValue() );
-            g.writeEndObject();
+            final ObjectNode jsonOption = jsonArray.addObject();
+            jsonOption.put( "label", option.getLabel() );
+            jsonOption.put( "value", option.getValue() );
         }
-        g.writeEndArray();
-        g.writeEndObject();
+        return jsonConfig;
     }
 
     @Override

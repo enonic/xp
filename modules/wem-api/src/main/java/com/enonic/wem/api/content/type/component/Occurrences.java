@@ -21,12 +21,12 @@ public class Occurrences
         this.maximum = maximum;
     }
 
-    public void setMinOccurences( final int value )
+    public void setMinOccurrences( final int value )
     {
         this.minimum = value;
     }
 
-    public void setMaxOccurences( final int value )
+    public void setMaxOccurrences( final int value )
     {
         this.maximum = value;
     }

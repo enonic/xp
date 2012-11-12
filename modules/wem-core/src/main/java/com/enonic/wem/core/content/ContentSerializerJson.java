@@ -5,10 +5,10 @@ import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
@@ -25,20 +25,22 @@ public class ContentSerializerJson
     {
     }
 
-    public void generate( Content content, JsonGenerator g )
-        throws IOException
+    @Override
+    protected JsonNode serialize( final Content content, final ObjectMapper objectMapper )
     {
+        final ObjectNode jsonContent = objectMapper.createObjectNode();
 
-        g.writeStringField( "name", content.getName() );
+        jsonContent.put( "name", content.getName() );
         if ( content.getType() != null )
         {
-            g.writeStringField( "type", content.getType().toString() );
+            jsonContent.put( "type", content.getType().toString() );
         }
         else
         {
-            g.writeNullField( "type" );
+            jsonContent.putNull( "type" );
         }
-        contentDataSerializer.generate( content.getData(), g );
+        jsonContent.put( "data", contentDataSerializer.serialize( content.getData(), objectMapper ) );
+        return jsonContent;
     }
 
     public Content toContent( final String json )
@@ -83,7 +85,7 @@ public class ContentSerializerJson
             content.setType( qualifiedContentTypeName );
         }
 
-        content.setData( contentDataSerializer.parse( contentNode ) );
+        content.setData( contentDataSerializer.parse( contentNode.get( "data" ) ) );
 
         return content;
     }

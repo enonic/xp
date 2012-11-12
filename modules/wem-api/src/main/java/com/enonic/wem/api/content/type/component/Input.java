@@ -153,8 +153,8 @@ public class Input
         copy.type = type;
         copy.label = label;
         copy.immutable = immutable;
-        copy.occurrences.setMinOccurences( occurrences.getMinimum() );
-        copy.occurrences.setMaxOccurences( occurrences.getMaximum() );
+        copy.occurrences.setMinOccurrences( occurrences.getMinimum() );
+        copy.occurrences.setMaxOccurrences( occurrences.getMaximum() );
         copy.indexed = indexed;
         copy.customText = customText;
         copy.validationRegexp = validationRegexp;
@@ -221,15 +221,15 @@ public class Input
 
         public Builder occurrences( Occurrences value )
         {
-            occurrences.setMinOccurences( value.getMinimum() );
-            occurrences.setMaxOccurences( value.getMaximum() );
+            occurrences.setMinOccurrences( value.getMinimum() );
+            occurrences.setMaxOccurrences( value.getMaximum() );
             return this;
         }
 
         public Builder occurrences( int minOccurrences, int maxOccurrences )
         {
-            occurrences.setMinOccurences( minOccurrences );
-            occurrences.setMaxOccurences( maxOccurrences );
+            occurrences.setMinOccurrences( minOccurrences );
+            occurrences.setMaxOccurrences( maxOccurrences );
             return this;
         }
 
@@ -237,11 +237,11 @@ public class Input
         {
             if ( value && !occurrences.impliesRequired() )
             {
-                occurrences.setMinOccurences( 1 );
+                occurrences.setMinOccurrences( 1 );
             }
             else if ( !value && occurrences.impliesRequired() )
             {
-                occurrences.setMinOccurences( 0 );
+                occurrences.setMinOccurrences( 0 );
             }
             return this;
         }
@@ -250,11 +250,11 @@ public class Input
         {
             if ( value )
             {
-                occurrences.setMaxOccurences( 0 );
+                occurrences.setMaxOccurrences( 0 );
             }
             else
             {
-                occurrences.setMaxOccurences( 1 );
+                occurrences.setMaxOccurrences( 1 );
             }
             return this;
         }
@@ -311,8 +311,8 @@ public class Input
             input.type = inputType;
             input.label = label;
             input.immutable = immutable;
-            input.occurrences.setMinOccurences( occurrences.getMinimum() );
-            input.occurrences.setMaxOccurences( occurrences.getMaximum() );
+            input.occurrences.setMinOccurrences( occurrences.getMinimum() );
+            input.occurrences.setMaxOccurrences( occurrences.getMaximum() );
             input.indexed = indexed;
             input.customText = customText;
             input.validationRegexp = validationRegexp;

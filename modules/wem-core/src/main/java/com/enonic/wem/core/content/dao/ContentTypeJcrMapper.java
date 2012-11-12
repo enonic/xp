@@ -5,9 +5,12 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import com.enonic.wem.api.content.type.ContentType;
+import com.enonic.wem.api.content.type.component.Components;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.core.content.type.ContentTypeSerializerJson;
+import com.enonic.wem.core.content.type.component.ComponentsSerializerJson;
 
+import static com.enonic.wem.api.content.type.ContentType.Builder;
+import static com.enonic.wem.api.content.type.ContentType.newComponentType;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyBoolean;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyString;
 
@@ -21,10 +24,10 @@ class ContentTypeJcrMapper
 
     private static final String IS_ABSTRACT = "isAbstract";
 
-    private static final String DATA = "data";
+    private static final String COMPONENTS = "components";
 
 
-    private ContentTypeSerializerJson contentTypeSerializer = new ContentTypeSerializerJson();
+    private ComponentsSerializerJson componentsSerializer = new ComponentsSerializerJson();
 
 
     void toJcr( final ContentType contentType, final Node contentTypeNode )
@@ -35,22 +38,24 @@ class ContentTypeJcrMapper
         contentTypeNode.setProperty( MODULE_NAME, contentType.getModule().getName() );
         contentTypeNode.setProperty( IS_ABSTRACT, contentType.isAbstract() );
 
-        // TODO serialize content type as json
-//        final String contentTypeJson = contentTypeSerializer.toString( contentType);
-//        contentTypeNode.setProperty( DATA, contentTypeJson );
+        final String componentsJson = componentsSerializer.toString( contentType.getComponents() );
+        contentTypeNode.setProperty( COMPONENTS, componentsJson );
     }
 
-    void toContentType( final Node contentTypeNode, final ContentType contentType )
+    ContentType toContentType( final Node contentTypeNode )
         throws RepositoryException
     {
-        contentType.setName( getPropertyString( contentTypeNode, NAME ) );
-        contentType.setDisplayName( getPropertyString( contentTypeNode, DISPLAY_NAME ) );
-        contentType.setModule( new Module( getPropertyString( contentTypeNode, MODULE_NAME ) ) );
-        contentType.setAbstract( getPropertyBoolean( contentTypeNode, IS_ABSTRACT ) );
+        final Builder builder = newComponentType();
+        builder.name( getPropertyString( contentTypeNode, NAME ) );
+        builder.module( new Module( getPropertyString( contentTypeNode, MODULE_NAME ) ) );
+        builder.setAbstract( getPropertyBoolean( contentTypeNode, IS_ABSTRACT ) );
+        builder.displayName( getPropertyString( contentTypeNode, DISPLAY_NAME ) );
 
-        // TODO deserialize content type from json
-//        final String contentTypeJson = contentTypeNode.getProperty( "data" ).getString();
-//        final ContentType contentType1 = contentTypeSerializer.toContentType( contentTypeJson );
+        final String componentsJson = contentTypeNode.getProperty( COMPONENTS ).getString();
+        final Components components = componentsSerializer.toObject( componentsJson );
+        builder.components( components );
+
+        return builder.build();
     }
 
 }

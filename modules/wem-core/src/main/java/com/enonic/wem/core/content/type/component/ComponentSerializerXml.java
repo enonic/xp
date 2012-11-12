@@ -36,16 +36,13 @@ public class ComponentSerializerXml
 
     public static final String HELP_TEXT = "helpText";
 
-    private InputTypeSerializerXml inputTypeSerializer = new InputTypeSerializerXml();
+    private final InputTypeSerializerXml inputTypeSerializer = new InputTypeSerializerXml();
 
-    private InputTypeConfigSerializerXml inputTypeConfigSerializer = new InputTypeConfigSerializerXml();
+    private final InputTypeConfigSerializerXml inputTypeConfigSerializer = new InputTypeConfigSerializerXml();
+
+    private final OccurrencesSerializerXml occurrencesSerializerXml = new OccurrencesSerializerXml();
 
     private final ComponentsSerializerXml componentsSerializer;
-
-    public ComponentSerializerXml()
-    {
-        this.componentsSerializer = new ComponentsSerializerXml();
-    }
 
     public ComponentSerializerXml( final ComponentsSerializerXml componentsSerializer )
     {
@@ -84,7 +81,7 @@ public class ComponentSerializerXml
         inputEl.addContent( new Element( INDEXED ).setText( String.valueOf( input.isIndexed() ) ) );
         inputEl.addContent( new Element( CUSTOM_TEXT ).setText( input.getCustomText() ) );
         inputEl.addContent( new Element( HELP_TEXT ).setText( input.getHelpText() ) );
-        inputEl.addContent( OccurrencesSerializerXml.generate( input.getOccurrences() ) );
+        inputEl.addContent( occurrencesSerializerXml.generate( input.getOccurrences() ) );
         generateValidationRegex( input, inputEl );
         inputEl.addContent( inputTypeSerializer.generate( input.getInputType() ) );
         generateInputTypeConfig( input, inputEl );
@@ -110,7 +107,7 @@ public class ComponentSerializerXml
         componentSetEl.addContent( new Element( CUSTOM_TEXT ).setText( componentSet.getCustomText() ) );
         componentSetEl.addContent( new Element( HELP_TEXT ).setText( componentSet.getCustomText() ) );
 
-        componentSetEl.addContent( OccurrencesSerializerXml.generate( componentSet.getOccurrences() ) );
+        componentSetEl.addContent( occurrencesSerializerXml.generate( componentSet.getOccurrences() ) );
         componentSetEl.addContent( componentsSerializer.generate( componentSet.getComponents() ) );
         return componentSetEl;
     }
@@ -191,7 +188,7 @@ public class ComponentSerializerXml
         builder.customText( componentEl.getChildText( CUSTOM_TEXT ) );
         parseValidationRegexp( builder, componentEl );
 
-        builder.occurrences( OccurrencesSerializerXml.parse( componentEl ) );
+        builder.occurrences( occurrencesSerializerXml.parse( componentEl ) );
         parseInputType( builder, componentEl );
         parseInputTypeConfig( builder, componentEl );
 
@@ -208,7 +205,7 @@ public class ComponentSerializerXml
         builder.helpText( componentEl.getChildText( HELP_TEXT ) );
         builder.customText( componentEl.getChildText( CUSTOM_TEXT ) );
 
-        builder.occurrences( OccurrencesSerializerXml.parse( componentEl ) );
+        builder.occurrences( occurrencesSerializerXml.parse( componentEl ) );
 
         final Components components = componentsSerializer.parse( componentEl );
         for ( Component component : components.iterable() )

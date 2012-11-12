@@ -1,10 +1,10 @@
 package com.enonic.wem.core.content.type.component;
 
 
-import java.io.IOException;
-
-import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.NullNode;
+import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.type.component.Component;
 import com.enonic.wem.api.content.type.component.ComponentSet;
@@ -15,6 +15,7 @@ import com.enonic.wem.api.content.type.component.Input;
 import com.enonic.wem.api.content.type.component.Layout;
 import com.enonic.wem.api.content.type.component.SubTypeQualifiedName;
 import com.enonic.wem.api.content.type.component.SubTypeReference;
+import com.enonic.wem.core.content.AbstractSerializerJson;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
 import com.enonic.wem.core.content.type.component.inputtype.InputTypeConfigSerializerJson;
@@ -25,6 +26,8 @@ import static com.enonic.wem.api.content.type.component.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.component.Input.newInput;
 
 public class ComponentSerializerJson
+    extends AbstractSerializerJson<Component>
+
 {
     private static final String TYPE = "type";
 
@@ -44,117 +47,107 @@ public class ComponentSerializerJson
 
     public static final String VALIDATION_REGEXP = "validationRegexp";
 
-    private InputTypeSerializerJson inputTypeSerializer = new InputTypeSerializerJson();
+    private final InputTypeSerializerJson inputTypeSerializer = new InputTypeSerializerJson();
 
-    private InputTypeConfigSerializerJson inputTypeConfigSerializer = new InputTypeConfigSerializerJson();
+    private final InputTypeConfigSerializerJson inputTypeConfigSerializer = new InputTypeConfigSerializerJson();
+
+    private final OccurrencesSerializerJson occurrencesSerializerJson = new OccurrencesSerializerJson();
 
     private final ComponentsSerializerJson componentsSerializerJson;
-
-
-    public ComponentSerializerJson()
-    {
-        this.componentsSerializerJson = new ComponentsSerializerJson();
-    }
 
     public ComponentSerializerJson( final ComponentsSerializerJson componentsSerializerJson )
     {
         this.componentsSerializerJson = componentsSerializerJson;
     }
 
-    public void generate( Component component, JsonGenerator g )
-        throws IOException
+    @Override
+    protected JsonNode serialize( final Component component, final ObjectMapper objectMapper )
     {
         if ( component instanceof ComponentSet )
         {
-            generateComponentSet( (ComponentSet) component, g );
+            return generateComponentSet( (ComponentSet) component, objectMapper );
         }
         else if ( component instanceof Layout )
         {
-            generateLayout( (Layout) component, g );
+            return generateLayout( (Layout) component, objectMapper );
         }
         else if ( component instanceof Input )
         {
-            generateInput( (Input) component, g );
+            return generateInput( (Input) component, objectMapper );
         }
         else if ( component instanceof SubTypeReference )
         {
-            generateReference( (SubTypeReference) component, g );
+            return generateReference( (SubTypeReference) component, objectMapper );
         }
+        return NullNode.getInstance();
     }
 
-    private void generateInput( final Input input, final JsonGenerator g )
-        throws IOException
+    private JsonNode generateInput( final Input input, final ObjectMapper objectMapper )
     {
-        g.writeStartObject();
-        g.writeStringField( TYPE, Input.class.getSimpleName() );
-        g.writeStringField( NAME, input.getName() );
-        g.writeStringField( LABEL, input.getLabel() );
-        g.writeBooleanField( REQUIRED, input.isRequired() );
-        g.writeBooleanField( IMMUTABLE, input.isImmutable() );
-        OccurrencesSerializerJson.generate( input.getOccurrences(), g );
-        g.writeBooleanField( INDEXED, input.isIndexed() );
-        g.writeStringField( CUSTOM_TEXT, input.getCustomText() );
-        g.writeStringField( VALIDATION_REGEXP, input.getValidationRegexp() != null ? input.getValidationRegexp().toString() : null );
-        g.writeStringField( HELP_TEXT, input.getHelpText() );
-        inputTypeSerializer.generate( input.getInputType(), g );
+        final ObjectNode jsonObject = objectMapper.createObjectNode();
+        jsonObject.put( TYPE, Input.class.getSimpleName() );
+        jsonObject.put( NAME, input.getName() );
+        jsonObject.put( LABEL, input.getLabel() );
+        jsonObject.put( REQUIRED, input.isRequired() );
+        jsonObject.put( IMMUTABLE, input.isImmutable() );
+        jsonObject.put( "occurrences", occurrencesSerializerJson.generate( input.getOccurrences(), objectMapper ) );
+        jsonObject.put( INDEXED, input.isIndexed() );
+        jsonObject.put( CUSTOM_TEXT, input.getCustomText() );
+        jsonObject.put( VALIDATION_REGEXP, input.getValidationRegexp() != null ? input.getValidationRegexp().toString() : null );
+        jsonObject.put( HELP_TEXT, input.getHelpText() );
+        jsonObject.put( "inputType", inputTypeSerializer.generate( input.getInputType(), objectMapper ) );
         if ( input.getInputType().requiresConfig() && input.getInputTypeConfig() != null )
         {
-            g.writeFieldName( "inputTypeConfig" );
-            input.getInputType().getInputTypeConfigJsonGenerator().generate( input.getInputTypeConfig(), g );
+            final JsonNode inputTypeNode =
+                input.getInputType().getInputTypeConfigJsonGenerator().generate( input.getInputTypeConfig(), objectMapper );
+            jsonObject.put( "inputTypeConfig", inputTypeNode );
         }
-
-        g.writeEndObject();
+        return jsonObject;
     }
 
-    private void generateComponentSet( final ComponentSet componentSet, JsonGenerator g )
-        throws IOException
+    private JsonNode generateComponentSet( final ComponentSet componentSet, final ObjectMapper objectMapper )
     {
-        g.writeStartObject();
-        g.writeStringField( TYPE, ComponentSet.class.getSimpleName() );
-        g.writeStringField( NAME, componentSet.getName() );
-        g.writeStringField( LABEL, componentSet.getLabel() );
-        g.writeBooleanField( REQUIRED, componentSet.isRequired() );
-        g.writeBooleanField( IMMUTABLE, componentSet.isImmutable() );
-        OccurrencesSerializerJson.generate( componentSet.getOccurrences(), g );
-        g.writeStringField( CUSTOM_TEXT, componentSet.getCustomText() );
-        g.writeStringField( HELP_TEXT, componentSet.getHelpText() );
-        componentsSerializerJson.generate( componentSet.getComponents(), g );
-
-        g.writeEndObject();
+        final ObjectNode jsonObject = objectMapper.createObjectNode();
+        jsonObject.put( TYPE, ComponentSet.class.getSimpleName() );
+        jsonObject.put( NAME, componentSet.getName() );
+        jsonObject.put( LABEL, componentSet.getLabel() );
+        jsonObject.put( REQUIRED, componentSet.isRequired() );
+        jsonObject.put( IMMUTABLE, componentSet.isImmutable() );
+        jsonObject.put( "occurrences", occurrencesSerializerJson.generate( componentSet.getOccurrences(), objectMapper ) );
+        jsonObject.put( CUSTOM_TEXT, componentSet.getCustomText() );
+        jsonObject.put( HELP_TEXT, componentSet.getHelpText() );
+        jsonObject.put( "items", componentsSerializerJson.serialize( componentSet.getComponents(), objectMapper ) );
+        return jsonObject;
     }
 
-    private void generateLayout( final Layout layout, JsonGenerator g )
-        throws IOException
+    private JsonNode generateLayout( final Layout layout, final ObjectMapper objectMapper )
     {
-        g.writeStartObject();
-        g.writeStringField( TYPE, Layout.class.getSimpleName() );
-        g.writeStringField( "layoutType", FieldSet.class.getSimpleName() );
+        final ObjectNode jsonObject = objectMapper.createObjectNode();
+        jsonObject.put( TYPE, Layout.class.getSimpleName() );
+        jsonObject.put( "layoutType", FieldSet.class.getSimpleName() );
 
         if ( layout instanceof FieldSet )
         {
-            generateFieldSet( (FieldSet) layout, g );
+            generateFieldSet( (FieldSet) layout, jsonObject, objectMapper );
         }
-
-        g.writeEndObject();
+        return jsonObject;
     }
 
-    private void generateFieldSet( final FieldSet fieldSet, JsonGenerator g )
-        throws IOException
+    private void generateFieldSet( final FieldSet fieldSet, final ObjectNode jsonObject, final ObjectMapper objectMapper )
     {
-        g.writeStringField( LABEL, fieldSet.getLabel() );
-        g.writeStringField( NAME, fieldSet.getName() );
-        componentsSerializerJson.generate( fieldSet.getComponents(), g );
+        jsonObject.put( LABEL, fieldSet.getLabel() );
+        jsonObject.put( NAME, fieldSet.getName() );
+        jsonObject.put( "items", componentsSerializerJson.serialize( fieldSet.getComponents(), objectMapper ) );
     }
 
-    private void generateReference( final SubTypeReference subTypeReference, final JsonGenerator g )
-        throws IOException
+    private JsonNode generateReference( final SubTypeReference subTypeReference, final ObjectMapper objectMapper )
     {
-        g.writeStartObject();
-        g.writeStringField( TYPE, SubTypeReference.class.getSimpleName() );
-        g.writeStringField( NAME, subTypeReference.getName() );
-        g.writeStringField( "reference", subTypeReference.getSubTypeQualifiedName().toString() );
-        g.writeStringField( "subTypeClass", subTypeReference.getSubTypeClass().getSimpleName() );
-        g.writeEndObject();
+        final ObjectNode jsonObject = objectMapper.createObjectNode();
+        jsonObject.put( TYPE, SubTypeReference.class.getSimpleName() );
+        jsonObject.put( NAME, subTypeReference.getName() );
+        jsonObject.put( "reference", subTypeReference.getSubTypeQualifiedName().toString() );
+        jsonObject.put( "subTypeClass", subTypeReference.getSubTypeClass().getSimpleName() );
+        return jsonObject;
     }
 
     public Component parse( final JsonNode componentNode )
@@ -275,7 +268,7 @@ public class ComponentSerializerJson
     {
         if ( occurrencesNode != null )
         {
-            builder.occurrences( OccurrencesSerializerJson.parse( occurrencesNode ) );
+            builder.occurrences( occurrencesSerializerJson.parse( occurrencesNode ) );
         }
         else
         {
@@ -287,7 +280,7 @@ public class ComponentSerializerJson
     {
         if ( occurrencesNode != null )
         {
-            builder.occurrences( OccurrencesSerializerJson.parse( occurrencesNode ) );
+            builder.occurrences( occurrencesSerializerJson.parse( occurrencesNode ) );
         }
         else
         {

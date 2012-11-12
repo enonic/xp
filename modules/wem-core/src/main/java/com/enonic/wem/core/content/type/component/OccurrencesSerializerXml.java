@@ -6,9 +6,9 @@ import org.jdom.Element;
 
 import com.enonic.wem.api.content.type.component.Occurrences;
 
-public class OccurrencesSerializerXml
+class OccurrencesSerializerXml
 {
-    public static Element generate( final Occurrences occurrences )
+    public Element generate( final Occurrences occurrences )
     {
         Element occurrencesEl = new Element( "occurrences" );
         if ( null != occurrences )
@@ -19,7 +19,7 @@ public class OccurrencesSerializerXml
         return occurrencesEl;
     }
 
-    public static Occurrences parse( final Element parentEl )
+    public Occurrences parse( final Element parentEl )
     {
         Element occurrencesEl = parentEl.getChild( "occurrences" );
         if ( occurrencesEl == null )
