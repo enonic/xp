@@ -10,6 +10,7 @@ import com.enonic.wem.api.content.data.MockBlobKeyResolver;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.MockContentTypeFetcher;
+import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.component.ComponentSet;
 import com.enonic.wem.api.content.type.component.FieldSet;
 import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
@@ -80,27 +81,75 @@ public abstract class AbstractContentSerializerTest
     }
 
     @Test
-    public void given_array_of_component_when_parsed_then_paths_and_values_are_as_expected()
+    public void array()
     {
-        ContentType contentType = new ContentType();
-        contentType.setModule( myModule );
-        contentType.setName( "MyContentType" );
-        contentType.addComponent(
-            newInput().name( "myComponent" ).type( InputTypes.TEXT_LINE ).required( false ).multiple( true ).build() );
-        contentTypeFetcher.add( contentType );
-
         Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
-        content.setData( "myComponent[0]", "Value 1" );
-        content.setData( "myComponent[1]", "Value 2" );
+        content.setType( new QualifiedContentTypeName( "myModule:myType" ) );
+        content.setData( "myArray[0]", "1" );
+        content.setData( "myArray[1]", "2" );
 
         String serialized = toString( content );
 
         // exercise
         Content parsedContent = toContent( serialized );
 
-        assertEquals( "Value 1", parsedContent.getData( "myComponent[0]" ).getValue() );
-        assertEquals( "Value 2", parsedContent.getData( "myComponent[1]" ).getValue() );
+        assertEquals( "1", parsedContent.getData( "myArray[0]" ).getValue() );
+        assertEquals( "2", parsedContent.getData( "myArray[1]" ).getValue() );
+    }
+
+    @Test
+    public void array_within_set()
+    {
+        Content content = new Content();
+        content.setType( new QualifiedContentTypeName( "myModule:myType" ) );
+        content.setData( "mySet.myArray[0]", "1" );
+        content.setData( "mySet.myArray[1]", "2" );
+
+        String serialized = toString( content );
+
+        // exercise
+        Content parsedContent = toContent( serialized );
+
+        assertEquals( "1", parsedContent.getData( "mySet.myArray[0]" ).getValue() );
+        assertEquals( "2", parsedContent.getData( "mySet.myArray[1]" ).getValue() );
+    }
+
+    @Test
+    public void set_within_array()
+    {
+        Content content = new Content();
+        content.setType( new QualifiedContentTypeName( "myModule:myType" ) );
+        content.setData( "mySet[0].myInput", "1" );
+        content.setData( "mySet[1].myInput", "2" );
+
+        String serialized = toString( content );
+
+        // exercise
+        Content parsedContent = toContent( serialized );
+
+        assertEquals( "1", parsedContent.getData( "mySet[0].myInput" ).getValue() );
+        assertEquals( "2", parsedContent.getData( "mySet[1].myInput" ).getValue() );
+    }
+
+    @Test
+    public void array_within_array()
+    {
+        Content content = new Content();
+        content.setType( new QualifiedContentTypeName( "myModule:myType" ) );
+        content.setData( "mySet[0].myArray[0]", "1" );
+        content.setData( "mySet[0].myArray[1]", "2" );
+        content.setData( "mySet[1].myArray[0]", "3" );
+        content.setData( "mySet[1].myArray[1]", "4" );
+
+        String serialized = toString( content );
+
+        // exercise
+        Content parsedContent = toContent( serialized );
+
+        assertEquals( "1", parsedContent.getData( "mySet[0].myArray[0]" ).getValue() );
+        assertEquals( "2", parsedContent.getData( "mySet[0].myArray[1]" ).getValue() );
+        assertEquals( "3", parsedContent.getData( "mySet[1].myArray[0]" ).getValue() );
+        assertEquals( "4", parsedContent.getData( "mySet[1].myArray[1]" ).getValue() );
     }
 
     @Test
