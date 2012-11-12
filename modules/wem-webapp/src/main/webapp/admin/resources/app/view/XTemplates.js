@@ -1,4 +1,4 @@
-// This file was auto-generated on 2012-11-08 18:09:25 FET
+// This file was auto-generated on 2012-11-12 15:14:25 FET
 
 if (!Templates) {
     var Templates = {};
@@ -450,6 +450,13 @@ Templates.common = {
                       '</tpl>' +
                       '</ul>' +
                       '</div>',
+
+    photoUploadButton: '<div id="{id}" title="{title}" class="admin-image-upload-button-container" style="width:{width - 9}px;height:{height - 9}px; margin: 0">' +
+                       '<img src="{photoUrl}" class="admin-image-upload-button-image" style="width:{width - 11}px;height:{height - 11}px"/>' +
+                       '<div class="admin-image-upload-button-progress-bar-container" style="width:{width - 12}px">' +
+                       '<div class="admin-image-upload-button-progress-bar" style="height:{progressBarHeight}px"><!-- --></div>' +
+                       '</div>' +
+                       '</div>',
 
     groupList: '<div class="clearfix">' +
                '<div class="admin-left">' +
