@@ -21,8 +21,7 @@ public class DataSerializerXml
     {
         // TODO: instead of resolveComponentPath, make new method which returns element without index
         final String name = data.getPath().resolveComponentPath().getLastElement();
-        Element el = new Element( "data" );
-        el.setAttribute( "name", name );
+        Element el = new Element( name );
         if ( data.getDataType() != null )
         {
             el.setAttribute( "type", data.getDataType().getName() );
@@ -70,7 +69,7 @@ public class DataSerializerXml
     {
         final Data.Builder builder = Data.newData();
 
-        final EntryPath entryPath = new EntryPath( parentPath, dataEl.getAttributeValue( "name" ) );
+        final EntryPath entryPath = new EntryPath( parentPath, dataEl.getName() );
         builder.path( entryPath );
         final BaseDataType type = (BaseDataType) DataTypes.parseByName( dataEl.getAttributeValue( "type" ) );
         Preconditions.checkNotNull( type, "type was null" );
