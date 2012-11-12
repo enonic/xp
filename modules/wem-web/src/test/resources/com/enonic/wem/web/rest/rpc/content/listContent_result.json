@@ -1,0 +1,58 @@
+{
+    "success": true,
+    "total": 4,
+    "contents": [
+        {
+            "path": "a1/c1",
+            "name": "c1",
+            "type": null,
+            "displayName": "c1",
+            "owner": "user:enonic:user1",
+            "modifier": "user:system:admin",
+            "modifiedTime": "2000-01-01T12:00:00.000+01:00",
+            "createdTime": "2000-01-01T12:00:00.000+01:00",
+            "status": "Online",
+            "editable": true,
+            "deletable": true
+        },
+        {
+            "path": "a1/c2",
+            "name": "c2",
+            "type": null,
+            "displayName": "c2",
+            "owner": "user:enonic:user1",
+            "modifier": "user:system:admin",
+            "modifiedTime": "2000-01-01T12:00:00.000+01:00",
+            "createdTime": "2000-01-01T12:00:00.000+01:00",
+            "status": "Online",
+            "editable": true,
+            "deletable": true
+        },
+        {
+            "path": "a1/c3",
+            "name": "c3",
+            "type": null,
+            "displayName": "c3",
+            "owner": "user:enonic:user1",
+            "modifier": "user:system:admin",
+            "modifiedTime": "2000-01-01T12:00:00.000+01:00",
+            "createdTime": "2000-01-01T12:00:00.000+01:00",
+            "status": "Online",
+            "editable": true,
+            "deletable": true
+        },
+        {
+            "path": "a1/c4",
+            "name": "c4",
+            "type": null,
+            "displayName": "c4",
+            "owner": "user:enonic:user1",
+            "modifier": "user:system:admin",
+            "modifiedTime": "2000-01-01T12:00:00.000+01:00",
+            "createdTime": "2000-01-01T12:00:00.000+01:00",
+            "status": "Online",
+            "editable": true,
+            "deletable": true
+        }
+    ]
+}
