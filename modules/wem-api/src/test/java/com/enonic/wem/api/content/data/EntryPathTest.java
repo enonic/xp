@@ -53,6 +53,11 @@ public class EntryPathTest
         Assert.assertFalse( new EntryPath( "car[0].model" ).startsWith( new EntryPath( "bicycle[0].model" ) ) );
         Assert.assertFalse( new EntryPath( "car[0]" ).startsWith( new EntryPath( "car[0].model" ) ) );
         Assert.assertFalse( new EntryPath( "car[0].model" ).startsWith( new EntryPath( "car[0].year" ) ) );
+
+        Assert.assertTrue( new EntryPath( "car[0].model" ).startsWith( new EntryPath( "car" ) ) );
+        Assert.assertTrue( new EntryPath( "car[1].model" ).startsWith( new EntryPath( "car" ) ) );
+
+        Assert.assertFalse( new EntryPath( "car[1].model" ).startsWith( new EntryPath( "car[0]" ) ) );
     }
 
     @Test
@@ -72,5 +77,20 @@ public class EntryPathTest
                                                                                                                                  new EntryPath(
                                                                                                                                      "anotherSet.componentSet.input" ) ).toString() );
 
+    }
+
+    @Test
+    public void asNewWithoutIndexAtPath()
+    {
+        assertEquals( new EntryPath( "myPath" ), new EntryPath( "myPath[0]" ).asNewWithoutIndexAtPath( new EntryPath( "myPath" ) ) );
+        assertEquals( new EntryPath( "parent.child" ),
+                      new EntryPath( "parent.child[0]" ).asNewWithoutIndexAtPath( new EntryPath( "parent.child" ) ) );
+        assertEquals( new EntryPath( "parent.child" ),
+                      new EntryPath( "parent[0].child" ).asNewWithoutIndexAtPath( new EntryPath( "parent" ) ) );
+
+        assertEquals( new EntryPath( "myPath[0]" ),
+                      new EntryPath( "myPath[0]" ).asNewWithoutIndexAtPath( new EntryPath( "nonExistingPath" ) ) );
+        assertEquals( new EntryPath( "parent.child[0]" ),
+                      new EntryPath( "parent.child[0]" ).asNewWithoutIndexAtPath( new EntryPath( "nonExistingPath" ) ) );
     }
 }

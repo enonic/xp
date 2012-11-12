@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.DataArray;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.datatype.BaseDataType;
@@ -18,6 +19,7 @@ public class DataSerializerXml
 {
     public Element generate( final Data data )
     {
+        // TODO: instead of resolveComponentPath, make new method which returns element without index
         final String name = data.getPath().resolveComponentPath().getLastElement();
         Element el = new Element( "data" );
         el.setAttribute( "name", name );
@@ -30,10 +32,18 @@ public class DataSerializerXml
             Element valueEl = new Element( "value" );
             if ( data.getDataType().equals( DataTypes.DATA_SET ) )
             {
-                final DataSet dataSet = (DataSet) data.getValue();
-                for ( final Data subData : dataSet )
+                final DataSet set = (DataSet) data.getValue();
+                for ( final Data subData : set )
                 {
                     valueEl.addContent( generate( subData ) );
+                }
+            }
+            else if ( data.getDataType().equals( DataTypes.DATA_ARRAY ) )
+            {
+                final DataArray array = (DataArray) data.getValue();
+                for ( final Data element : array )
+                {
+                    valueEl.addContent( generate( element ) );
                 }
             }
             else
@@ -75,6 +85,18 @@ public class DataSerializerXml
             {
                 final Element el = dataIt.next();
                 dataSet.add( parse( entryPath, el ) );
+            }
+        }
+        else if ( type.equals( DataTypes.DATA_ARRAY ) )
+        {
+            final DataArray array = new DataArray( entryPath );
+            builder.value( array );
+            final Element valueEl = dataEl.getChild( "value" );
+            final Iterator<Element> dataIt = valueEl.getChildren().iterator();
+            while ( dataIt.hasNext() )
+            {
+                final Element el = dataIt.next();
+                array.add( parse( parentPath, el ) );
             }
         }
         else

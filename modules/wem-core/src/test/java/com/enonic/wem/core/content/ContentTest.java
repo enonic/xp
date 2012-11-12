@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;
@@ -73,8 +74,92 @@ public class ContentTest
         content.setData( "myMultipleTextLine[1]", "Second line" );
 
         assertEquals( "A single line", content.getData( "myTextLine" ).getValue() );
-        assertEquals( "First line", content.getData( "myMultipleTextLine[0]" ).getValue() );
-        assertEquals( "Second line", content.getData( "myMultipleTextLine[1]" ).getValue() );
+        assertEquals( "First line", content.getData( "myMultipleTextLine" ).getDataArray().getData( 0 ).getValue() );
+        assertEquals( "Second line", content.getData( "myMultipleTextLine" ).getDataArray().getData( 1 ).getValue() );
+    }
+
+    @Test
+    public void multiple_textlines2()
+    {
+        Content content = new Content();
+        content.setData( "myArray", "First" );
+        content.setData( "myArray[1]", "Second" );
+
+        assertEquals( "First", content.getData( "myArray[0]" ).getValue() );
+        assertEquals( "Second", content.getData( "myArray[1]" ).getValue() );
+        assertEquals( "myArray[0]", content.getData( "myArray[0]" ).getPath().toString() );
+        assertEquals( "myArray[1]", content.getData( "myArray[1]" ).getPath().toString() );
+        assertEquals( "myArray", content.getData( "myArray" ).getPath().toString() );
+    }
+
+    @Test
+    public void multiple_textlines3()
+    {
+        Content content = new Content();
+        content.setData( "set.myArray[0]", "First" );
+        content.setData( "set.myArray[1]", "Second" );
+
+        assertEquals( "First", content.getData( "set.myArray[0]" ).getValue() );
+        assertEquals( "Second", content.getData( "set.myArray[1]" ).getValue() );
+        assertEquals( "set.myArray[0]", content.getData( "set.myArray[0]" ).getPath().toString() );
+        assertEquals( "set.myArray[1]", content.getData( "set.myArray[1]" ).getPath().toString() );
+        assertEquals( "set.myArray", content.getData( "set.myArray" ).getPath().toString() );
+        assertEquals( "set.myArray[0]", content.getData( "set.myArray" ).getDataArray().getData( 0 ).getPath().toString() );
+        assertEquals( "set.myArray[1]", content.getData( "set.myArray" ).getDataArray().getData( 1 ).getPath().toString() );
+        assertEquals( "First", content.getData( "set.myArray" ).getDataArray().getData( 0 ).getString() );
+        assertEquals( "Second", content.getData( "set.myArray" ).getDataArray().getData( 1 ).getString() );
+    }
+
+    @Test
+    public void multiple_textlines4()
+    {
+        Content content = new Content();
+        content.setData( "set.myArray[0].input", "First" );
+        content.setData( "set.myArray[1].input", "Second" );
+
+        assertEquals( "First", content.getData( "set.myArray[0].input" ).getValue() );
+        assertEquals( "Second", content.getData( "set.myArray[1].input" ).getValue() );
+        assertEquals( "Second", content.getData( "set" ).getDataSet().getData( "myArray" ).getDataArray().getData( 1 ).getDataSet().getData(
+            "input" ).getString() );
+        assertEquals( "Second", content.getData( "set" ).getDataSet().getData( "myArray[1]" ).getDataSet().getData( "input" ).getString() );
+    }
+
+    @Test
+    public void array_set()
+    {
+        Content content = new Content();
+        content.setData( "set[0].myText", "First" );
+        content.setData( "set[1].myText", "Second" );
+
+        assertEquals( "First", content.getData( "set[0].myText" ).getValue() );
+        assertEquals( "Second", content.getData( "set[1].myText" ).getValue() );
+        assertEquals( "set[0].myText", content.getData( "set[0].myText" ).getPath().toString() );
+        assertEquals( "set[1].myText", content.getData( "set[1].myText" ).getPath().toString() );
+        assertEquals( "set[0]", content.getData( "set[0]" ).getPath().toString() );
+        assertEquals( "set[1]", content.getData( "set[1]" ).getPath().toString() );
+        assertEquals( "First", content.getData( "set[0]" ).getDataSet().getData( "myText" ).getString() );
+        assertEquals( "Second", content.getData( "set[1]" ).getDataSet().getData( "myText" ).getString() );
+    }
+
+    @Test
+    public void array_set2()
+    {
+        Content content = new Content();
+        content.setData( "set[0].myText", "First" );
+        content.setData( "set[0].myOther", "First other" );
+        content.setData( "set[1].myText", "Second" );
+        content.setData( "set[1].myOther", "Second other" );
+
+        assertEquals( "First", content.getData( "set[0].myText" ).getValue() );
+        assertEquals( "First other", content.getData( "set[0].myOther" ).getValue() );
+        assertEquals( "Second", content.getData( "set[1].myText" ).getValue() );
+        assertEquals( "Second other", content.getData( "set[1].myOther" ).getValue() );
+        assertEquals( "set[0].myText", content.getData( "set[0].myText" ).getPath().toString() );
+        assertEquals( "set[1].myText", content.getData( "set[1].myText" ).getPath().toString() );
+        assertEquals( "set[0]", content.getData( "set[0]" ).getPath().toString() );
+        assertEquals( "set[1]", content.getData( "set[1]" ).getPath().toString() );
+        assertEquals( "First", content.getData( "set[0]" ).getDataSet().getData( "myText" ).getString() );
+        assertEquals( "Second", content.getData( "set[1]" ).getDataSet().getData( "myText" ).getString() );
     }
 
     @Test
@@ -109,7 +194,10 @@ public class ContentTest
         content.setData( "myTags[1]", "XML" );
         content.setData( "myTags[2]", "JSON" );
 
-        assertEquals( "Java", content.getData( "myTags" ).getValue() );
+        Data myTags = content.getData( "myTags" );
+        assertEquals( "Java", myTags.getDataArray().getData( 0 ).getString() );
+        assertEquals( "XML", myTags.getDataArray().getData( 1 ).getString() );
+        assertEquals( "JSON", myTags.getDataArray().getData( 2 ).getString() );
     }
 
     @Test
@@ -226,12 +314,12 @@ public class ContentTest
         content.setData( "child[1].features.eyeColour", "Brown" );
         content.setData( "child[1].features.hairColour", "Black" );
 
-        DataSet child0 = content.getDataSet( "child[0]" );
+        DataSet child0 = content.getData( "child[0]" ).getDataSet();
         assertEquals( "Joachim", child0.getData( "name" ).getValue() );
         assertEquals( "9", child0.getData( "age" ).getValue() );
         assertEquals( "Blue", child0.getData( "features.eyeColour" ).getValue() );
 
-        DataSet child1 = content.getDataSet( "child[1]" );
+        DataSet child1 = content.getData( "child[1]" ).getDataSet();
         assertEquals( "Madeleine", child1.getData( "name" ).getValue() );
         assertEquals( "7", child1.getData( "age" ).getValue() );
         assertEquals( "Brown", child1.getData( "features.eyeColour" ).getValue() );
@@ -260,12 +348,12 @@ public class ContentTest
         content.setData( "child[1].features.eyeColour", "Brown" );
         content.setData( "child[1].features.hairColour", "Black" );
 
-        DataSet child0 = content.getDataSet( "child[0]" );
+        DataSet child0 = content.getData( "child[0]" ).getDataSet();
         assertEquals( "Joachim", child0.getData( "name" ).getValue() );
         assertEquals( "9", child0.getData( "age" ).getValue() );
         assertEquals( "Blue", child0.getData( "features.eyeColour" ).getValue() );
 
-        DataSet child1 = content.getDataSet( "child[1]" );
+        DataSet child1 = content.getData( "child[1]" ).getDataSet();
         assertEquals( "Madeleine", child1.getData( "name" ).getValue() );
         assertEquals( "7", child1.getData( "age" ).getValue() );
         assertEquals( "Brown", child1.getData( "features.eyeColour" ).getValue() );

@@ -2,88 +2,126 @@ package com.enonic.wem.api.content.data;
 
 
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedHashMap;
 
-import com.google.common.collect.LinkedListMultimap;
+import com.enonic.wem.api.content.datatype.BaseDataType;
+import com.enonic.wem.api.content.datatype.DataTypes;
 
-import com.enonic.wem.api.content.datatype.DataType;
+import static com.enonic.wem.api.content.data.Data.newData;
 
-class DataEntries
+final class DataEntries
     implements Iterable<Data>
 {
-    private LinkedListMultimap<String, Data> entries = LinkedListMultimap.create();
+    private LinkedHashMap<String, Data> dataByName = new LinkedHashMap<String, Data>();
+
+    DataEntries()
+    {
+
+    }
 
     void add( final Data data )
     {
-        final String key = resolveKey( data.getPath().getLastElement() );
-        final List<Data> list = entries.get( key );
+        final EntryPath.Element lastElement = data.getPath().getLastElement();
+        final String key = resolveKey( lastElement );
 
-        checkNewEntryAreOfSameTypeAsRest( data, list );
-
-        if ( list.size() == 1 )
+        Data exData = dataByName.get( key );
+        if ( exData == null )
         {
-            list.get( 0 ).setEntryPathIndex( data.getPath(), 0 );
+            dataByName.put( key, data );
         }
-        if ( list.size() > 0 )
+        else if ( data.getDataType() == DataTypes.DATA_ARRAY )
         {
-            data.setEntryPathIndex( data.getPath(), list.size() );
+            DataArray array = data.getDataArray();
+            array.setData( data );
         }
+        else
+        {
+            final DataArray array = new DataArray( data.getPath() );
+            array.add( newData().path( exData.getPath() ).type( exData.getDataType() ).value( exData.getValue() ).build() );
+            array.add( newData().path( data.getPath() ).type( data.getDataType() ).value( data.getValue() ).build() );
+            final Data newDataWithArray = newData().path( data.getPath() ).type( DataTypes.DATA_ARRAY ).value( array ).build();
 
-        list.add( data );
-        //entries.put( key, data );
+            dataByName.put( key, newDataWithArray );
+        }
     }
 
-    void setData( final EntryPath.Element element, final Data data )
+    void setData( final EntryPath path, final Object value, final BaseDataType type )
     {
-        final List<Data> list = entries.get( resolveKey( data.getPath().getLastElement() ) );
-        //Preconditions.checkPositionIndex( data.getL )
-        checkNewEntryAreOfSameTypeAsRest( data, list );
-        entries.put( resolveKey( element ), data );
+        final String key = resolveKey( path.getLastElement() );
+        Data exData = dataByName.get( key );
+        final EntryPath pathWithoutIndexAtLastElement = path.asNewWithoutIndexAtPath( path );
+        final Data createdData;
+        if ( exData == null )
+        {
+            if ( path.getLastElement().hasIndex() )
+            {
+                final DataArray dataArray = new DataArray( pathWithoutIndexAtLastElement );
+                createdData = newData().path( path ).type( type ).value( value ).build();
+                dataArray.add( createdData );
+                final Data newDataWithArray =
+                    newData().path( pathWithoutIndexAtLastElement ).type( DataTypes.DATA_ARRAY ).value( dataArray ).build();
+                dataByName.put( key, newDataWithArray );
+            }
+            else
+            {
+                createdData = newData().path( path ).type( type ).value( value ).build();
+                dataByName.put( key, createdData );
+            }
+        }
+        else if ( exData.getDataType() == DataTypes.DATA_ARRAY )
+        {
+            DataArray dataArray = exData.getDataArray();
+            createdData = newData().path( path ).type( type ).value( value ).build();
+            dataArray.add( createdData );
+        }
+        else
+        {
+            final DataArray array = new DataArray( pathWithoutIndexAtLastElement );
+            EntryPath exDataPathWithIndex = exData.getPath().asNewWithIndexAtPath( 0, exData.getPath() );
+            array.add( newData().path( exDataPathWithIndex ).type( exData.getDataType() ).value( exData.getValue() ).build() );
+            array.set( path, value, type );
+            final Data newDataWithArray =
+                newData().path( pathWithoutIndexAtLastElement ).type( DataTypes.DATA_ARRAY ).value( array ).build();
+
+            dataByName.put( key, newDataWithArray );
+        }
     }
 
-    Data get( EntryPath.Element element )
+    Data get( final EntryPath.Element element )
     {
-        List<Data> list = entries.get( resolveKey( element ) );
-        if ( list.isEmpty() )
-        {
-            return null;
-        }
-        int index = element.hasIndex() ? element.getIndex() : 0;
-        if ( list.size() - 1 < index )
-        {
-            return null;
-        }
-        return list.get( index );
+        return dataByName.get( resolveKey( element ) );
     }
 
     int size()
     {
-        return entries.size();
+        return dataByName.size();
     }
 
     public Iterator<Data> iterator()
     {
-        return entries.values().iterator();
+        return dataByName.values().iterator();
+    }
+
+    @Override
+    public String toString()
+    {
+        final StringBuilder s = new StringBuilder();
+        for ( Data data : this )
+        {
+            if ( data.getDataType() == DataTypes.DATA_ARRAY )
+            {
+
+            }
+            else
+            {
+                s.append( data.getPath() ).append( " = " ).append( data.getString() ).append( "\n" );
+            }
+        }
+        return s.toString();
     }
 
     private String resolveKey( EntryPath.Element element )
     {
         return element.getName();
-    }
-
-    private void checkNewEntryAreOfSameTypeAsRest( final Data newEntry, final List<Data> list )
-    {
-        if ( list.size() > 0 )
-        {
-            Data previousData = list.get( list.size() - 1 );
-            DataType dataTypeOfNewEntry = newEntry.getDataType();
-            DataType dataTypeOfPreviousEntry = previousData.getDataType();
-            if ( !dataTypeOfNewEntry.equals( dataTypeOfPreviousEntry ) )
-            {
-                throw new IllegalArgumentException(
-                    "Array [" + previousData.getPath() + "] is of type [" + dataTypeOfPreviousEntry.getName() +
-                        "] got: " + dataTypeOfNewEntry.getName() );
-            }
-        }
     }
 }

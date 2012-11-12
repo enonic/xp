@@ -15,7 +15,7 @@ import com.enonic.wem.api.content.type.component.InvalidDataException;
 import com.enonic.wem.api.content.type.component.InvalidValueException;
 
 
-public class Data
+public final class Data
 {
     private EntryPath path;
 
@@ -126,6 +126,17 @@ public class Data
         return converted;
     }
 
+    public DataArray getDataArray()
+        throws InconvertibleValueException
+    {
+        final DataArray converted = JavaType.DATA_ARRAY.convertFrom( value );
+        if ( value != null && converted == null )
+        {
+            throw new InconvertibleValueException( value, JavaType.DATA_ARRAY );
+        }
+        return converted;
+    }
+
     public void checkDataTypeValidity()
         throws InvalidDataException
     {
@@ -141,13 +152,6 @@ public class Data
         {
             throw new InvalidDataException( this, e );
         }
-    }
-
-    public void setData( final EntryPath path, final Object value, final BaseDataType dataType )
-    {
-        Preconditions.checkArgument( type == DataTypes.DATA_SET, "TODO" );
-        DataSet dataSet = (DataSet) this.value;
-        dataSet.setData( path, value, dataType );
     }
 
     public DataSet getDataSet( final EntryPath path )
@@ -214,6 +218,19 @@ public class Data
             data.type = this.type;
             data.value = this.value;
             data.type.ensureType( data );
+
+            try
+            {
+                data.type.checkValidity( data );
+            }
+            catch ( InvalidValueTypeException e )
+            {
+                throw new InvalidDataException( data, e );
+            }
+            catch ( InvalidValueException e )
+            {
+                throw new InvalidDataException( data, e );
+            }
 
             return data;
         }

@@ -11,21 +11,23 @@ public final class DataTypes
 {
     public static final DataSet DATA_SET = new DataSet( 0 );
 
-    public static final Text TEXT = new Text( 1 );
+    public static final DataArray DATA_ARRAY = new DataArray( 1 );
 
-    public static final Blob BLOB = new Blob( 2 );
+    public static final Text TEXT = new Text( 2 );
 
-    public static final HtmlPart HTML_PART = new HtmlPart( 3 );
+    public static final Blob BLOB = new Blob( 3 );
 
-    public static final Xml XML = new Xml( 4 );
+    public static final HtmlPart HTML_PART = new HtmlPart( 4 );
 
-    public static final Date DATE = new Date( 5 );
+    public static final Xml XML = new Xml( 5 );
 
-    public static final WholeNumber WHOLE_NUMBER = new WholeNumber( 6 );
+    public static final Date DATE = new Date( 6 );
 
-    public static final DecimalNumber DECIMAL_NUMBER = new DecimalNumber( 7 );
+    public static final WholeNumber WHOLE_NUMBER = new WholeNumber( 7 );
 
-    public static final GeographicCoordinate GEOGRAPHIC_COORDINATE = new GeographicCoordinate( 8 );
+    public static final DecimalNumber DECIMAL_NUMBER = new DecimalNumber( 8 );
+
+    public static final GeographicCoordinate GEOGRAPHIC_COORDINATE = new GeographicCoordinate( 9 );
 
     private static final Map<Integer, DataType> typesByKey = new HashMap<Integer, DataType>();
 
@@ -34,6 +36,7 @@ public final class DataTypes
     static
     {
         register( DATA_SET );
+        register( DATA_ARRAY );
         register( TEXT );
         register( BLOB );
         register( HTML_PART );
