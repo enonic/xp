@@ -6,7 +6,6 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
     uploadUrl: 'rest/upload',
     progressBarHeight: 8,
 
-    // TODO: Move markup to template file
     tpl: new Ext.XTemplate(Templates.common.photoUploadButton),
 
     initComponent: function () {
