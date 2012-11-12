@@ -7,11 +7,11 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-public class AccountKey
+public abstract class AccountKey
 {
-    private final static AccountKey ANON_USER = new AccountKey( AccountType.USER, "system", "anonymous" );
+    private final static UserKey ANON_USER = new UserKey( "system", "anonymous" );
 
-    private final static AccountKey SUPER_USER = new AccountKey( AccountType.USER, "system", "admin" );
+    private final static UserKey SUPER_USER = new UserKey( "system", "admin" );
 
     private final static char SEPARATOR = ':';
 
@@ -27,7 +27,7 @@ public class AccountKey
 
     private final String qualifiedName;
 
-    AccountKey( final AccountType type, final String userStore, final String localName )
+    protected AccountKey( final AccountType type, final String userStore, final String localName )
     {
         this.type = type;
         this.userStore = userStore;
@@ -54,6 +54,21 @@ public class AccountKey
     public boolean isRole()
     {
         return this.type == AccountType.ROLE;
+    }
+
+    public UserKey asUser()
+    {
+        return (UserKey) this;
+    }
+
+    public GroupKey asGroup()
+    {
+        return (GroupKey) this;
+    }
+
+    public RoleKey asRole()
+    {
+        return (RoleKey) this;
     }
 
     public String getUserStore()
@@ -101,12 +116,12 @@ public class AccountKey
         return this.refString;
     }
 
-    public static AccountKey anonymous()
+    public static UserKey anonymous()
     {
         return ANON_USER;
     }
 
-    public static AccountKey superUser()
+    public static UserKey superUser()
     {
         return SUPER_USER;
     }
@@ -125,7 +140,15 @@ public class AccountKey
         final String userStore = matcher.group( 2 );
         final String localName = matcher.group( 3 );
 
-        return new AccountKey( type, userStore, localName );
+        switch ( type )
+        {
+            case USER:
+                return new UserKey( userStore, localName );
+            case GROUP:
+                return new GroupKey( userStore, localName );
+            default: // ROLE
+                return new RoleKey( userStore, localName );
+        }
     }
 
     private static AccountKey from( final AccountType type, final String qName )
@@ -134,18 +157,18 @@ public class AccountKey
         return from( type.toString().toLowerCase() + ":" + qName );
     }
 
-    public static AccountKey user( final String qName )
+    public static UserKey user( final String qName )
     {
-        return from( AccountType.USER, qName );
+        return from( AccountType.USER, qName ).asUser();
     }
 
-    public static AccountKey group( final String qName )
+    public static GroupKey group( final String qName )
     {
-        return from( AccountType.GROUP, qName );
+        return from( AccountType.GROUP, qName ).asGroup();
     }
 
-    public static AccountKey role( final String qName )
+    public static RoleKey role( final String qName )
     {
-        return from( AccountType.ROLE, qName );
+        return from( AccountType.ROLE, qName ).asRole();
     }
 }
