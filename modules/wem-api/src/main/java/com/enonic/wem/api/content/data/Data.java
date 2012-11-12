@@ -66,6 +66,11 @@ public final class Data
         return type.equals( DataTypes.DATA_SET );
     }
 
+    public boolean hasArrayAsValue()
+    {
+        return type.equals( DataTypes.DATA_ARRAY );
+    }
+
     public Object getValue()
     {
         return value;

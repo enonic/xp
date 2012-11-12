@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 
 public class InputTest
 {
-    @Test(expected = BreaksRequiredContractException.class)
+    @Test(expected = MinimumOccurrencesException.class)
     public void breaksRequiredContract_throws_exception_when_broken()
     {
         Input input = newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).required( true ).build();

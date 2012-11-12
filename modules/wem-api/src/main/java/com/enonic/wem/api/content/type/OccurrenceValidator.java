@@ -11,6 +11,7 @@ import com.enonic.wem.api.content.type.component.Component;
 import com.enonic.wem.api.content.type.component.ComponentSet;
 import com.enonic.wem.api.content.type.component.FieldSet;
 import com.enonic.wem.api.content.type.component.Input;
+import com.enonic.wem.api.content.type.component.MinimumOccurrencesException;
 
 public final class OccurrenceValidator
 {
@@ -77,7 +78,7 @@ public final class OccurrenceValidator
     {
         if ( data == null )
         {
-            throw new BreaksRequiredContractException( input );
+            throw new MinimumOccurrencesException( input, 0 );
         }
         else
         {

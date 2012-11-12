@@ -4,6 +4,7 @@ package com.enonic.wem.api.content.type.component;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.DataArray;
 import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.type.component.inputtype.BaseInputType;
 import com.enonic.wem.api.content.type.component.inputtype.InputType;
@@ -96,7 +97,45 @@ public class Input
 
         if ( isRequired() )
         {
-            type.checkBreaksRequiredContract( data );
+
+            if ( data.hasArrayAsValue() )
+            {
+                final DataArray dataArray = data.getDataArray();
+                try
+                {
+
+                    if ( dataArray.size() < occurrences.getMinimum() )
+                    {
+                        throw new MinimumOccurrencesException( this, dataArray.size() );
+                    }
+                    int max = Math.min( dataArray.size(), occurrences.getMinimum() );
+                    for ( int i = 0; i < max; i++ )
+                    {
+                        type.checkBreaksRequiredContract( dataArray.getData( i ) );
+                    }
+                }
+                catch ( BreaksRequiredContractException e )
+                {
+                    throw new MinimumOccurrencesException( this, e, dataArray.size() );
+                }
+            }
+            else
+            {
+                try
+                {
+                    type.checkBreaksRequiredContract( data );
+
+                    if ( occurrences.getMinimum() > 1 )
+                    {
+                        throw new MinimumOccurrencesException( this, 1 );
+                    }
+                }
+                catch ( BreaksRequiredContractException e )
+                {
+                    throw new MinimumOccurrencesException( this, e, 1 );
+                }
+            }
+
         }
     }
 
@@ -230,6 +269,18 @@ public class Input
         {
             occurrences.setMinOccurrences( minOccurrences );
             occurrences.setMaxOccurrences( maxOccurrences );
+            return this;
+        }
+
+        public Builder minimumOccurrences( int value )
+        {
+            occurrences.setMinOccurrences( value );
+            return this;
+        }
+
+        public Builder maximumOccurrences( int value )
+        {
+            occurrences.setMaxOccurrences( value );
             return this;
         }
 
