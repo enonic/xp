@@ -21,20 +21,19 @@ public class DataSerializerXml
     {
         // TODO: instead of resolveComponentPath, make new method which returns element without index
         final String name = data.getPath().resolveComponentPath().getLastElement();
-        Element el = new Element( name );
+        Element dataEl = new Element( name );
         if ( data.getDataType() != null )
         {
-            el.setAttribute( "type", data.getDataType().getName() );
+            dataEl.setAttribute( "type", data.getDataType().getName() );
         }
         if ( data.getValue() != null )
         {
-            Element valueEl = new Element( "value" );
             if ( data.getDataType().equals( DataTypes.DATA_SET ) )
             {
                 final DataSet set = (DataSet) data.getValue();
                 for ( final Data subData : set )
                 {
-                    valueEl.addContent( generate( subData ) );
+                    dataEl.addContent( generate( subData ) );
                 }
             }
             else if ( data.getDataType().equals( DataTypes.DATA_ARRAY ) )
@@ -42,7 +41,7 @@ public class DataSerializerXml
                 final DataArray array = (DataArray) data.getValue();
                 for ( final Data element : array )
                 {
-                    valueEl.addContent( generate( element ) );
+                    dataEl.addContent( generate( element ) );
                 }
             }
             else
@@ -53,16 +52,15 @@ public class DataSerializerXml
                                                  "Data at path [%s] of type BLOB needs to have a BlobKey as value before it is serialized: " +
                                                      data.getValue().getClass(), data.getPath() );
                 }
-                valueEl.addContent( String.valueOf( data.getValue() ) );
+                dataEl.addContent( String.valueOf( data.getValue() ) );
             }
-            el.addContent( valueEl );
         }
         else
         {
             // no element if no value...?
         }
 
-        return el;
+        return dataEl;
     }
 
     public Data parse( final EntryPath parentPath, final Element dataEl )
@@ -78,8 +76,7 @@ public class DataSerializerXml
         {
             final DataSet dataSet = new DataSet( entryPath );
             builder.value( dataSet );
-            final Element valueEl = dataEl.getChild( "value" );
-            final Iterator<Element> dataIt = valueEl.getChildren().iterator();
+            final Iterator<Element> dataIt = dataEl.getChildren().iterator();
             while ( dataIt.hasNext() )
             {
                 final Element el = dataIt.next();
@@ -90,8 +87,7 @@ public class DataSerializerXml
         {
             final DataArray array = new DataArray( entryPath );
             builder.value( array );
-            final Element valueEl = dataEl.getChild( "value" );
-            final Iterator<Element> dataIt = valueEl.getChildren().iterator();
+            final Iterator<Element> dataIt = dataEl.getChildren().iterator();
             while ( dataIt.hasNext() )
             {
                 final Element el = dataIt.next();
@@ -100,7 +96,7 @@ public class DataSerializerXml
         }
         else
         {
-            final String valueAsString = dataEl.getChildText( "value" );
+            final String valueAsString = dataEl.getText();
             builder.value( valueAsString );
         }
 
