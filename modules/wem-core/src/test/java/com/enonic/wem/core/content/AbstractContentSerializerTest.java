@@ -65,11 +65,11 @@ public abstract class AbstractContentSerializerTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addComponent( newInput().name( "myComponent" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addComponent( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
-        content.setData( "myComponent", "A value" );
+        content.setData( "myInput", "A value" );
 
         String serialized = toString( content );
 
@@ -77,7 +77,7 @@ public abstract class AbstractContentSerializerTest
         Content parsedContent = toContent( serialized );
 
         // verify
-        assertEquals( "A value", parsedContent.getData( "myComponent" ).getValue() );
+        assertEquals( "A value", parsedContent.getData( "myInput" ).getValue() );
     }
 
     @Test
@@ -120,7 +120,9 @@ public abstract class AbstractContentSerializerTest
         Content content = new Content();
         content.setType( new QualifiedContentTypeName( "myModule:myType" ) );
         content.setData( "mySet[0].myInput", "1" );
+        content.setData( "mySet[0].myOtherInput", "a" );
         content.setData( "mySet[1].myInput", "2" );
+        content.setData( "mySet[1].myOtherInput", "b" );
 
         String serialized = toString( content );
 

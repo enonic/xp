@@ -22,6 +22,11 @@ public final class EntryPath
         elements = new ArrayList<Element>();
     }
 
+    public EntryPath( Element... pathElements )
+    {
+        elements = Lists.newArrayList( pathElements );
+    }
+
     public EntryPath( List<Element> pathElements )
     {
         Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
@@ -124,6 +129,19 @@ public final class EntryPath
         return new ComponentPath( componentPathElements );
     }
 
+    public EntryPath getParent()
+    {
+        List<Element> pathElements = Lists.newArrayList();
+        for ( int i = 0; i < elements.size(); i++ )
+        {
+            if ( i < elements.size() - 1 )
+            {
+                pathElements.add( elements.get( i ) );
+            }
+        }
+        return new EntryPath( pathElements );
+    }
+
     public EntryPath asNewWithoutFirstPathElement()
     {
         List<Element> pathElements = Lists.newArrayList();
@@ -154,20 +172,20 @@ public final class EntryPath
         return new EntryPath( pathElements );
     }
 
-
-    public EntryPath asNewWithoutIndexAtPath( final EntryPath path )
+    public EntryPath asNewWithoutIndexAtLastPathElement()
     {
-        List<Element> pathElements = Lists.newArrayList();
+        final List<Element> pathElements = Lists.newArrayList();
         for ( int i = 0; i < elements.size(); i++ )
         {
-            pathElements.add( new Element( elements.get( i ).getName() ) );
-            EntryPath possiblyMatchingPath = new EntryPath( pathElements );
-            if ( path.equals( possiblyMatchingPath ) )
+            final boolean last = i == elements.size() - 1;
+            if ( last )
             {
-                pathElements.remove( i );
-                pathElements.add( new EntryPath.Element( elements.get( i ).getName() ) );
+                pathElements.add( new Element( elements.get( i ).getName() ) );
             }
-
+            else
+            {
+                pathElements.add( elements.get( i ) );
+            }
         }
         return new EntryPath( pathElements );
     }
@@ -233,17 +251,20 @@ public final class EntryPath
         return elements;
     }
 
+    /**
+     * Immutable.
+     */
     public static class Element
     {
         private final static String INDEX_START_MARKER = "[";
 
         private final static String INDEX_STOP_MARKER = "]";
 
-        private String name;
+        private final String name;
 
-        private boolean hasIndex = false;
+        private final boolean hasIndex;
 
-        private int index = 0;
+        private final int index;
 
         public Element( String element )
         {
@@ -274,6 +295,7 @@ public final class EntryPath
 
                 this.name = element;
                 this.hasIndex = false;
+                this.index = -1;
             }
         }
 
@@ -314,9 +336,9 @@ public final class EntryPath
                 return false;
             }
 
-            final Element element = (Element) o;
+            final Element other = (Element) o;
 
-            return index == element.index && name.equals( element.name );
+            return index == other.index && name.equals( other.name ) && hasIndex() == other.hasIndex();
         }
 
         @Override

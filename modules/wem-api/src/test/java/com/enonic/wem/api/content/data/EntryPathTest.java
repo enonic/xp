@@ -4,10 +4,78 @@ package com.enonic.wem.api.content.data;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.enonic.wem.api.content.AbstractEqualsTest;
+
 import static org.junit.Assert.*;
 
 public class EntryPathTest
 {
+
+    @Test
+    public void equals()
+    {
+        AbstractEqualsTest equalsTest = new AbstractEqualsTest()
+        {
+            @Override
+            public Object getObjectX()
+            {
+                return new EntryPath( "mySet.myInput" );
+            }
+
+            @Override
+            public Object[] getObjectsThatNotEqualsX()
+            {
+                return new Object[]{new EntryPath( "mySet" ), new EntryPath( "myInput" ), new EntryPath( "mySet.myOther" ),
+                    new EntryPath( "myOther.myInput" ), new EntryPath( "mySet.myInput[0]" ), new EntryPath( "mySet[0].myInput" )};
+            }
+
+            @Override
+            public Object getObjectThatEqualsXButNotTheSame()
+            {
+                return new EntryPath( "mySet.myInput" );
+            }
+
+            @Override
+            public Object getObjectThatEqualsXButNotTheSame2()
+            {
+                return new EntryPath( "mySet.myInput" );
+            }
+        };
+        equalsTest.assertEqualsAndHashCodeContract();
+    }
+
+    @Test
+    public void equals_of_element()
+    {
+        AbstractEqualsTest equalsTest = new AbstractEqualsTest()
+        {
+            @Override
+            public Object getObjectX()
+            {
+                return new EntryPath.Element( "element" );
+            }
+
+            @Override
+            public Object[] getObjectsThatNotEqualsX()
+            {
+                return new Object[]{new EntryPath.Element( "element[0]" )};
+            }
+
+            @Override
+            public Object getObjectThatEqualsXButNotTheSame()
+            {
+                return new EntryPath.Element( "element" );
+            }
+
+            @Override
+            public Object getObjectThatEqualsXButNotTheSame2()
+            {
+                return new EntryPath.Element( "element" );
+            }
+        };
+        equalsTest.assertEqualsAndHashCodeContract();
+    }
+
 
     @Test
     public void tostring()
@@ -30,7 +98,7 @@ public class EntryPathTest
         assertEquals( "car[1]", element.toString() );
 
         element = new EntryPath( "car" ).iterator().next();
-        assertEquals( 0, element.getIndex() );
+        assertEquals( false, element.hasIndex() );
         assertEquals( "car", element.toString() );
     }
 
@@ -80,17 +148,16 @@ public class EntryPathTest
     }
 
     @Test
-    public void asNewWithoutIndexAtPath()
+    public void asNewWithoutIndexAtLastPathElement()
     {
-        assertEquals( new EntryPath( "myPath" ), new EntryPath( "myPath[0]" ).asNewWithoutIndexAtPath( new EntryPath( "myPath" ) ) );
-        assertEquals( new EntryPath( "parent.child" ),
-                      new EntryPath( "parent.child[0]" ).asNewWithoutIndexAtPath( new EntryPath( "parent.child" ) ) );
-        assertEquals( new EntryPath( "parent.child" ),
-                      new EntryPath( "parent[0].child" ).asNewWithoutIndexAtPath( new EntryPath( "parent" ) ) );
+        assertEquals( new EntryPath( "parent.child" ), new EntryPath( "parent.child[1]" ).asNewWithoutIndexAtLastPathElement() );
+        assertEquals( new EntryPath( "element" ), new EntryPath( "element[1]" ).asNewWithoutIndexAtLastPathElement() );
+    }
 
-        assertEquals( new EntryPath( "myPath[0]" ),
-                      new EntryPath( "myPath[0]" ).asNewWithoutIndexAtPath( new EntryPath( "nonExistingPath" ) ) );
-        assertEquals( new EntryPath( "parent.child[0]" ),
-                      new EntryPath( "parent.child[0]" ).asNewWithoutIndexAtPath( new EntryPath( "nonExistingPath" ) ) );
+    @Test
+    public void getParent()
+    {
+        assertEquals( new EntryPath( "parent" ), new EntryPath( "parent.child" ).getParent() );
+        assertEquals( new EntryPath( "parent[0]" ), new EntryPath( "parent[0].child" ).getParent() );
     }
 }

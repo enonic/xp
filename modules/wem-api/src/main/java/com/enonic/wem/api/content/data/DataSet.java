@@ -66,27 +66,8 @@ public final class DataSet
 
     private void forwardSetDataToDataSet( final EntryPath path, final Object value, final BaseDataType dataType )
     {
-        Data exData = this.entries.get( path.getFirstElement() );
-        if ( exData == null )
-        {
-            // create new set
-            final EntryPath pathToDataSet = new EntryPath( this.path, path.getFirstElement() );
-            DataSet dataSet = new DataSet( pathToDataSet );
-            entries.setData( pathToDataSet, dataSet, DataTypes.DATA_SET );
-
-            dataSet.setData( path.asNewWithoutFirstPathElement(), value, dataType );
-        }
-        else
-        {
-            if ( exData.getDataType() == DataTypes.DATA_ARRAY )
-            {
-                exData.getDataArray().set( path, value, dataType );
-            }
-            else
-            {
-                exData.getDataSet().setData( path.asNewWithoutFirstPathElement(), value, dataType );
-            }
-        }
+        final DataSet dataSet = findOrCreateDataSet( path.getFirstElement() );
+        dataSet.setData( path.asNewWithoutFirstPathElement(), value, dataType );
     }
 
     public Data getData( final String path )
@@ -137,6 +118,42 @@ public final class DataSet
         }
     }
 
+    private DataSet findOrCreateDataSet( final EntryPath.Element firstElement )
+    {
+        final DataSet dataSet;
+        Data exData = this.entries.get( firstElement );
+        if ( exData == null )
+        {
+            // create new set
+            final EntryPath pathToDataSet = new EntryPath( this.path, firstElement );
+            dataSet = new DataSet( pathToDataSet );
+            entries.setData( pathToDataSet, dataSet, DataTypes.DATA_SET );
+        }
+        else
+        {
+            if ( exData.getDataType() == DataTypes.DATA_ARRAY )
+            {
+                final DataArray dataArray = exData.getDataArray();
+                final Data data = dataArray.getData( firstElement.getIndex() );
+                if ( data == null )
+                {
+                    final EntryPath newPath = new EntryPath( exData.getPath(), firstElement.getIndex() );
+                    dataSet = new DataSet( newPath );
+                    dataArray.set( firstElement.getIndex(), dataSet, DataTypes.DATA_SET );
+                }
+                else
+                {
+                    dataSet = data.getDataSet();
+                }
+            }
+            else
+            {
+                dataSet = exData.getDataSet();
+            }
+        }
+        return dataSet;
+    }
+
     private Data forwardGetDataToDataSet( final EntryPath path )
     {
         Data data = entries.get( path.getFirstElement() );
@@ -157,14 +174,13 @@ public final class DataSet
             }
         }
 
-        if ( !( data.getValue() instanceof DataSet ) )
+        if ( !data.hasDataSetAsValue() )
         {
             throw new IllegalArgumentException(
                 "Data at path [" + this.getPath() + "] expected to have a value of type DataSet: " + data.getDataType().getName() );
         }
 
-        final DataSet dataSet = data.getDataSet();
-        return dataSet.getData( path.asNewWithoutFirstPathElement() );
+        return data.getDataSet().getData( path.asNewWithoutFirstPathElement() );
     }
 
     private Data doGetData( final EntryPath.Element element )
@@ -175,6 +191,7 @@ public final class DataSet
             return null;
         }
 
+        // TODO: Try move this logic into entries.get....
         if ( element.hasIndex() )
         {
             final DataType dataType = data.getDataType();

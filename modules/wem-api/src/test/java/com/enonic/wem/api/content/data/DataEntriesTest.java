@@ -4,7 +4,6 @@ package com.enonic.wem.api.content.data;
 import java.util.Iterator;
 
 import org.joda.time.DateMidnight;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -69,19 +68,6 @@ public class DataEntriesTest
         Data myInput = dataEntries.get( new EntryPath.Element( "myInput" ) );
 
         assertEquals( "Value 2", myInput.getDataArray().getData( 1 ).getValue() );
-    }
-
-    @Test(expected = IndexOutOfBoundsException.class)
-    //@Ignore
-    public void given_existing_entries_at_path_when_getting_entry_at_index_out_of_bounds_then_IndexOutOfBoundsException_is_thrown()
-    {
-        // setup
-        DataEntries dataEntries = new DataEntries();
-        dataEntries.add( newData().path( new EntryPath( "myInput" ) ).type( DataTypes.TEXT ).value( "Value 1" ).build() );
-        dataEntries.add( newData().path( new EntryPath( "myInput" ) ).type( DataTypes.TEXT ).value( "Value 2" ).build() );
-
-        // exercise and verify
-        Assert.assertNull( dataEntries.get( new EntryPath.Element( "myInput[2]" ) ).getDataArray().getData( 2 ) );
     }
 
     @Test

@@ -17,6 +17,9 @@ public final class DataArray
 
     private ArrayList<Data> list = new ArrayList<Data>();
 
+    /**
+     * TODO: Type should to be initialized in constructor.
+     */
     private DataType type;
 
     public DataArray( final EntryPath path )
@@ -37,9 +40,28 @@ public final class DataArray
         return list.iterator();
     }
 
+    public Data getData( final int i )
+    {
+        if ( i > list.size() - 1 )
+        {
+            return null;
+        }
+        return list.get( i );
+    }
+
     public void add( final Data data )
     {
-        data.setEntryPathIndex( data.getPath(), list.size() );
+        final EntryPath dataPath = data.getPath();
+        Preconditions.checkArgument( new EntryPath( dataPath.getParent(), dataPath.getLastElement().getName() ).equals( path ),
+                                     "Data added to array [%s] does not have same path: %s", this.path, data.getPath() );
+
+        if ( dataPath.getLastElement().hasIndex() )
+        {
+            final int index = dataPath.getLastElement().getIndex();
+            checkIndexIsSuccessive( index, data.getValue() );
+        }
+
+        data.setEntryPathIndex( dataPath, list.size() );
         list.add( data );
         registerType();
         checkType( data );
@@ -47,20 +69,33 @@ public final class DataArray
 
     public void setData( final Data data )
     {
+        Preconditions.checkArgument( data.getPath().getLastElement().hasIndex(),
+                                     "Cannot set data in array[" + path + "] without index: " + data.getPath() );
         list.add( data );
         registerType();
         checkType( data );
     }
 
-    public Data getData( final int i )
+    public Data set( final int index, final Object value, final BaseDataType dataType )
     {
-        return list.get( i );
+        Data newData = Data.newData().path( new EntryPath( path, index ) ).value( value ).type( dataType ).build();
+
+        if ( overwritesExisting( index ) )
+        {
+            list.set( index, newData );
+        }
+        else
+        {
+            checkIndexIsSuccessive( index, value );
+            list.add( newData );
+        }
+
+        return newData;
     }
 
     public void set( final EntryPath path, final Object value, final BaseDataType dataType )
     {
-        boolean overwriteExisting = path.getFirstElement().getIndex() < list.size();
-        if ( overwriteExisting )
+        if ( overwritesExisting( path.getFirstElement().getIndex() ) )
         {
             final Data data = list.get( path.getFirstElement().getIndex() );
             if ( path.elementCount() > 1 )
@@ -74,22 +109,11 @@ public final class DataArray
         }
         else
         {
-            Preconditions.checkPositionIndex( path.getFirstElement().getIndex(), list.size() );
-            if ( path.elementCount() > 1 )
-            {
-                EntryPath newDataSetPath = new EntryPath( this.path, path.getFirstElement().getIndex() );
-                DataSet newDataSet = new DataSet( newDataSetPath );
-                Data newDataWithSet = Data.newData().type( DataTypes.DATA_SET ).path( newDataSetPath ).value( newDataSet ).build();
-                checkType( newDataWithSet );
-                list.add( newDataWithSet );
-                newDataWithSet.getDataSet().setData( path.asNewWithoutFirstPathElement(), value, dataType );
-            }
-            else
-            {
-                final Data data = Data.newData().path( path ).value( value ).type( dataType ).build();
-                checkType( data );
-                list.add( data );
-            }
+            checkIndexIsSuccessive( path.getFirstElement().getIndex(), value );
+
+            final Data data = Data.newData().path( path ).value( value ).type( dataType ).build();
+            checkType( data );
+            list.add( data );
         }
 
         registerType();
@@ -100,6 +124,7 @@ public final class DataArray
         if ( list.size() == 1 )
         {
             this.type = list.get( 0 ).getDataType();
+            Preconditions.checkArgument( !this.type.equals( DataTypes.DATA_ARRAY ), "Multidimensional arrays are not supported" );
         }
     }
 
@@ -131,4 +156,18 @@ public final class DataArray
         s.append( " ]" );
         return s.toString();
     }
+
+    private void checkIndexIsSuccessive( final int index, final Object value )
+    {
+        Preconditions.checkArgument( index == list.size(),
+                                     "Data [value=%s] not added successively to array [%s] with size %s. Data had unexpected index: %s",
+                                     value, path, list.size(), index );
+    }
+
+    private boolean overwritesExisting( int index )
+    {
+        return index < list.size();
+    }
+
+
 }

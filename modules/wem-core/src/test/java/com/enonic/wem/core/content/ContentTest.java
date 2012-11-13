@@ -90,6 +90,19 @@ public class ContentTest
     }
 
     @Test
+    public void setData_assigning_same_array_element_a_second_time_ovewrites_the_first_value()
+    {
+        Content content = new Content();
+        content.setData( "array[0]", "First" );
+        content.setData( "array[1]", "Second" );
+        content.setData( "array[1]", "Second again" );
+
+        assertEquals( "First", content.getData( "array[0]" ).getValue() );
+        assertEquals( "Second again", content.getData( "array[1]" ).getValue() );
+        assertNull( content.getData( "array[2]" ) );
+    }
+
+    @Test
     public void multiple_textlines2()
     {
         Content content = new Content();

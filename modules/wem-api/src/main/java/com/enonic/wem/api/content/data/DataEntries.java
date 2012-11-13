@@ -49,7 +49,7 @@ final class DataEntries
     {
         final String key = resolveKey( path.getLastElement() );
         Data exData = dataByName.get( key );
-        final EntryPath pathWithoutIndexAtLastElement = path.asNewWithoutIndexAtPath( path );
+        final EntryPath pathWithoutIndexAtLastElement = path.asNewWithoutIndexAtLastPathElement();
         final Data createdData;
         if ( exData == null )
         {
@@ -68,11 +68,9 @@ final class DataEntries
                 dataByName.put( key, createdData );
             }
         }
-        else if ( exData.getDataType() == DataTypes.DATA_ARRAY )
+        else if ( exData.getDataType().equals( DataTypes.DATA_ARRAY ) )
         {
-            DataArray dataArray = exData.getDataArray();
-            createdData = newData().path( path ).type( type ).value( value ).build();
-            dataArray.add( createdData );
+            exData.getDataArray().set( path.getLastElement().getIndex(), value, type );
         }
         else if ( path.getLastElement().hasIndex() )
         {
