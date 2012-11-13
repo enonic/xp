@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.type.component.Occurrences;
 
 class OccurrencesSerializerJson
 {
-    public JsonNode generate( final Occurrences occurrences, final ObjectMapper objectMapper )
+    public JsonNode serialize( final Occurrences occurrences, final ObjectMapper objectMapper )
     {
         if ( occurrences != null )
         {

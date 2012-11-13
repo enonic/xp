@@ -7,14 +7,14 @@ import org.codehaus.jackson.node.ObjectNode;
 
 public abstract class AbstractInputTypeConfigSerializerJson
 {
-    public JsonNode generate( final InputTypeConfig config, final ObjectMapper objectMapper )
+    public JsonNode serialize( final InputTypeConfig config, final ObjectMapper objectMapper )
     {
         final ObjectNode jsonObject = objectMapper.createObjectNode();
-        jsonObject.put( config.getClass().getName(), generateConfig( config, objectMapper ) );
+        jsonObject.put( config.getClass().getName(), serializeConfig( config, objectMapper ) );
         return jsonObject;
     }
 
-    public abstract JsonNode generateConfig( final InputTypeConfig config, final ObjectMapper objectMapper );
+    public abstract JsonNode serializeConfig( final InputTypeConfig config, final ObjectMapper objectMapper );
 
     public abstract InputTypeConfig parseConfig( final JsonNode inputTypeConfigNode );
 }

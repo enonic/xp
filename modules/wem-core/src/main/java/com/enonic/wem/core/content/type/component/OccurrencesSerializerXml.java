@@ -8,7 +8,7 @@ import com.enonic.wem.api.content.type.component.Occurrences;
 
 class OccurrencesSerializerXml
 {
-    public Element generate( final Occurrences occurrences )
+    public Element serialize( final Occurrences occurrences )
     {
         Element occurrencesEl = new Element( "occurrences" );
         if ( null != occurrences )

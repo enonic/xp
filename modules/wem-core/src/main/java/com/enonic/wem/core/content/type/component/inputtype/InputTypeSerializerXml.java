@@ -8,7 +8,7 @@ import com.enonic.wem.api.content.type.component.inputtype.InputType;
 
 public class InputTypeSerializerXml
 {
-    public Element generate( final InputType inputType )
+    public Element serialize( final InputType inputType )
     {
         final BaseInputType baseInputType = (BaseInputType) inputType;
 

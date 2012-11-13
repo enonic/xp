@@ -15,7 +15,7 @@ public class SingleSelectorConfigSerializerJson
     public static final SingleSelectorConfigSerializerJson DEFAULT = new SingleSelectorConfigSerializerJson();
 
     @Override
-    public JsonNode generateConfig( final InputTypeConfig config, final ObjectMapper objectMapper )
+    public JsonNode serializeConfig( final InputTypeConfig config, final ObjectMapper objectMapper )
     {
         final SingleSelectorConfig singleSelectorConfig = (SingleSelectorConfig) config;
         final ObjectNode jsonConfig = objectMapper.createObjectNode();

@@ -20,7 +20,7 @@ import static com.enonic.wem.api.content.type.component.ComponentSet.newComponen
 import static com.enonic.wem.api.content.type.component.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.component.Input.newInput;
 
-public class ComponentSerializerXml
+class ComponentSerializerXml
 {
     public static final String TYPE = "type";
 
@@ -49,28 +49,28 @@ public class ComponentSerializerXml
         this.componentsSerializer = componentsSerializer;
     }
 
-    public Element generate( Component component )
+    public Element serialize( Component component )
     {
         if ( component instanceof ComponentSet )
         {
-            return generateComponentSet( (ComponentSet) component );
+            return serializeComponentSet( (ComponentSet) component );
         }
         else if ( component instanceof Layout )
         {
-            return generateLayout( (Layout) component );
+            return serializeLayout( (Layout) component );
         }
         else if ( component instanceof Input )
         {
-            return generateInput( (Input) component );
+            return serializeInput( (Input) component );
         }
         else if ( component instanceof SubTypeReference )
         {
-            return generateReference( (SubTypeReference) component );
+            return serializeReference( (SubTypeReference) component );
         }
         return null;
     }
 
-    private Element generateInput( final Input input )
+    private Element serializeInput( final Input input )
     {
         Element inputEl = new Element( input.getName() );
         inputEl.setAttribute( TYPE, Input.class.getSimpleName() );
@@ -81,9 +81,9 @@ public class ComponentSerializerXml
         inputEl.addContent( new Element( INDEXED ).setText( String.valueOf( input.isIndexed() ) ) );
         inputEl.addContent( new Element( CUSTOM_TEXT ).setText( input.getCustomText() ) );
         inputEl.addContent( new Element( HELP_TEXT ).setText( input.getHelpText() ) );
-        inputEl.addContent( occurrencesSerializerXml.generate( input.getOccurrences() ) );
+        inputEl.addContent( occurrencesSerializerXml.serialize( input.getOccurrences() ) );
         generateValidationRegex( input, inputEl );
-        inputEl.addContent( inputTypeSerializer.generate( input.getInputType() ) );
+        inputEl.addContent( inputTypeSerializer.serialize( input.getInputType() ) );
         generateInputTypeConfig( input, inputEl );
         return inputEl;
     }
@@ -96,7 +96,7 @@ public class ComponentSerializerXml
         }
     }
 
-    private Element generateComponentSet( final ComponentSet componentSet )
+    private Element serializeComponentSet( final ComponentSet componentSet )
     {
         Element componentSetEl = new Element( componentSet.getName() );
         componentSetEl.setAttribute( TYPE, ComponentSet.class.getSimpleName() );
@@ -107,12 +107,12 @@ public class ComponentSerializerXml
         componentSetEl.addContent( new Element( CUSTOM_TEXT ).setText( componentSet.getCustomText() ) );
         componentSetEl.addContent( new Element( HELP_TEXT ).setText( componentSet.getCustomText() ) );
 
-        componentSetEl.addContent( occurrencesSerializerXml.generate( componentSet.getOccurrences() ) );
-        componentSetEl.addContent( componentsSerializer.generate( componentSet.getComponents() ) );
+        componentSetEl.addContent( occurrencesSerializerXml.serialize( componentSet.getOccurrences() ) );
+        componentSetEl.addContent( componentsSerializer.serialize( componentSet.getComponents() ) );
         return componentSetEl;
     }
 
-    private Element generateLayout( final Layout layout )
+    private Element serializeLayout( final Layout layout )
     {
         Element layoutEl = new Element( layout.getName() );
         layoutEl.setAttribute( TYPE, Layout.class.getSimpleName() );
@@ -129,10 +129,10 @@ public class ComponentSerializerXml
     {
         layoutEl.setAttribute( "layout-type", FieldSet.class.getSimpleName() );
         layoutEl.addContent( new Element( LABEL ).setText( fieldSet.getLabel() ) );
-        layoutEl.addContent( componentsSerializer.generate( fieldSet.getComponents() ) );
+        layoutEl.addContent( componentsSerializer.serialize( fieldSet.getComponents() ) );
     }
 
-    private Element generateReference( final SubTypeReference subTypeReference )
+    private Element serializeReference( final SubTypeReference subTypeReference )
     {
         Element referenceEl = new Element( subTypeReference.getName() );
         referenceEl.setAttribute( TYPE, SubTypeReference.class.getSimpleName() );
