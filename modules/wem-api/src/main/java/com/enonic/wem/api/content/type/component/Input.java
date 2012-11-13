@@ -103,7 +103,6 @@ public class Input
                 final DataArray dataArray = data.getDataArray();
                 try
                 {
-
                     if ( dataArray.size() < occurrences.getMinimum() )
                     {
                         throw new MinimumOccurrencesException( this, dataArray.size() );

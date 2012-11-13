@@ -7,6 +7,7 @@ import org.junit.Test;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.type.component.BreaksRequiredContractException;
 import com.enonic.wem.api.content.type.component.ComponentSet;
+import com.enonic.wem.api.content.type.component.MaximumOccurrencesException;
 import com.enonic.wem.api.content.type.component.MinimumOccurrencesException;
 import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
@@ -27,7 +28,52 @@ public class OccurrenceValidatorTest
         contentType.setName( "MyType" );
     }
 
-    @Test()
+    @Test
+    public void given_input_with_maxOccur1_with_two_data_when_verify_then_exception_is_thrown()
+    {
+        contentType.addComponent( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).maximumOccurrences( 1 ).build() );
+        Content content = new Content();
+        content.setType( contentType.getQualifiedName() );
+        content.setData( "myInput[0]", "1" );
+        content.setData( "myInput[1]", "2" );
+
+        // exercise
+        try
+        {
+            new OccurrenceValidator( contentType ).verify( content.getData() );
+            fail( "Expected exception" );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( e instanceof MaximumOccurrencesException );
+            assertEquals( "Input [myInput] allows maximum 1 occurrence: 2", e.getMessage() );
+        }
+    }
+
+    @Test
+    public void given_input_with_maxOccur2_with_three_data_when_verify_then_exception_is_thrown()
+    {
+        contentType.addComponent( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).maximumOccurrences( 2 ).build() );
+        Content content = new Content();
+        content.setType( contentType.getQualifiedName() );
+        content.setData( "myInput[0]", "1" );
+        content.setData( "myInput[1]", "2" );
+        content.setData( "myInput[2]", "3" );
+
+        // exercise
+        try
+        {
+            new OccurrenceValidator( contentType ).verify( content.getData() );
+            fail( "Expected exception" );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( e instanceof MaximumOccurrencesException );
+            assertEquals( "Input [myInput] allows maximum 2 occurrences: 3", e.getMessage() );
+        }
+    }
+
+    @Test
     public void given_required_input_with_data_when_verify_then_exception_is_not_thrown()
     {
         contentType.addComponent( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
@@ -74,7 +120,6 @@ public class OccurrenceValidatorTest
         }
         catch ( Exception e )
         {
-            e.printStackTrace();
             assertTrue( e instanceof MinimumOccurrencesException );
             assertEquals(
                 "Input [myInput] requires minimum 1 occurrences. It had 1, but: Required contract for Data [myInput] is broken of type TextLine , value was: ",
@@ -98,7 +143,6 @@ public class OccurrenceValidatorTest
         }
         catch ( Exception e )
         {
-            e.printStackTrace();
             assertTrue( e instanceof MinimumOccurrencesException );
             assertEquals( "Input [myInput] requires minimum 2 occurrences: 1", e.getMessage() );
         }
@@ -184,7 +228,6 @@ public class OccurrenceValidatorTest
         }
         catch ( Exception e )
         {
-            e.printStackTrace();
             fail( "No exception expected: " + e );
         }
 
