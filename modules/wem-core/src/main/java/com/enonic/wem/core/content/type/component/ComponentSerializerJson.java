@@ -33,6 +33,8 @@ class ComponentSerializerJson
 
     private static final String NAME = "name";
 
+    private static final String REFERENCE = "reference";
+
     public static final String LABEL = "label";
 
     public static final String IMMUTABLE = "immutable";
@@ -41,11 +43,21 @@ class ComponentSerializerJson
 
     public static final String HELP_TEXT = "helpText";
 
-    public static final String REQUIRED = "required";
+    public static final String OCCURRENCES = "occurrences";
 
     public static final String INDEXED = "indexed";
 
     public static final String VALIDATION_REGEXP = "validationRegexp";
+
+    public static final String INPUT_TYPE_CONFIG = "inputTypeConfig";
+
+    public static final String INPUT_TYPE = "inputType";
+
+    public static final String LAYOUT_TYPE = "layoutType";
+
+    public static final String ITEMS = "items";
+
+    public static final String SUB_TYPE_CLASS = "subTypeClass";
 
     private final InputTypeSerializerJson inputTypeSerializer = new InputTypeSerializerJson();
 
@@ -88,19 +100,18 @@ class ComponentSerializerJson
         jsonObject.put( TYPE, Input.class.getSimpleName() );
         jsonObject.put( NAME, input.getName() );
         jsonObject.put( LABEL, input.getLabel() );
-        jsonObject.put( REQUIRED, input.isRequired() );
         jsonObject.put( IMMUTABLE, input.isImmutable() );
-        jsonObject.put( "occurrences", occurrencesSerializerJson.serialize( input.getOccurrences(), objectMapper ) );
+        jsonObject.put( OCCURRENCES, occurrencesSerializerJson.serialize( input.getOccurrences(), objectMapper ) );
         jsonObject.put( INDEXED, input.isIndexed() );
         jsonObject.put( CUSTOM_TEXT, input.getCustomText() );
         jsonObject.put( VALIDATION_REGEXP, input.getValidationRegexp() != null ? input.getValidationRegexp().toString() : null );
         jsonObject.put( HELP_TEXT, input.getHelpText() );
-        jsonObject.put( "inputType", inputTypeSerializer.serialize( (BaseInputType) input.getInputType(), objectMapper ) );
+        jsonObject.put( INPUT_TYPE, inputTypeSerializer.serialize( (BaseInputType) input.getInputType(), objectMapper ) );
         if ( input.getInputType().requiresConfig() && input.getInputTypeConfig() != null )
         {
             final JsonNode inputTypeNode =
                 input.getInputType().getInputTypeConfigJsonGenerator().serialize( input.getInputTypeConfig(), objectMapper );
-            jsonObject.put( "inputTypeConfig", inputTypeNode );
+            jsonObject.put( INPUT_TYPE_CONFIG, inputTypeNode );
         }
         return jsonObject;
     }
@@ -111,12 +122,11 @@ class ComponentSerializerJson
         jsonObject.put( TYPE, ComponentSet.class.getSimpleName() );
         jsonObject.put( NAME, componentSet.getName() );
         jsonObject.put( LABEL, componentSet.getLabel() );
-        jsonObject.put( REQUIRED, componentSet.isRequired() );
         jsonObject.put( IMMUTABLE, componentSet.isImmutable() );
-        jsonObject.put( "occurrences", occurrencesSerializerJson.serialize( componentSet.getOccurrences(), objectMapper ) );
+        jsonObject.put( OCCURRENCES, occurrencesSerializerJson.serialize( componentSet.getOccurrences(), objectMapper ) );
         jsonObject.put( CUSTOM_TEXT, componentSet.getCustomText() );
         jsonObject.put( HELP_TEXT, componentSet.getHelpText() );
-        jsonObject.put( "items", componentsSerializerJson.serialize( componentSet.getComponents(), objectMapper ) );
+        jsonObject.put( ITEMS, componentsSerializerJson.serialize( componentSet.getComponents(), objectMapper ) );
         return jsonObject;
     }
 
@@ -124,7 +134,7 @@ class ComponentSerializerJson
     {
         final ObjectNode jsonObject = objectMapper.createObjectNode();
         jsonObject.put( TYPE, Layout.class.getSimpleName() );
-        jsonObject.put( "layoutType", FieldSet.class.getSimpleName() );
+        jsonObject.put( LAYOUT_TYPE, FieldSet.class.getSimpleName() );
 
         if ( layout instanceof FieldSet )
         {
@@ -137,7 +147,7 @@ class ComponentSerializerJson
     {
         jsonObject.put( LABEL, fieldSet.getLabel() );
         jsonObject.put( NAME, fieldSet.getName() );
-        jsonObject.put( "items", componentsSerializerJson.serialize( fieldSet.getComponents(), objectMapper ) );
+        jsonObject.put( ITEMS, componentsSerializerJson.serialize( fieldSet.getComponents(), objectMapper ) );
     }
 
     private JsonNode serializeReference( final SubTypeReference subTypeReference, final ObjectMapper objectMapper )
@@ -145,8 +155,8 @@ class ComponentSerializerJson
         final ObjectNode jsonObject = objectMapper.createObjectNode();
         jsonObject.put( TYPE, SubTypeReference.class.getSimpleName() );
         jsonObject.put( NAME, subTypeReference.getName() );
-        jsonObject.put( "reference", subTypeReference.getSubTypeQualifiedName().toString() );
-        jsonObject.put( "subTypeClass", subTypeReference.getSubTypeClass().getSimpleName() );
+        jsonObject.put( REFERENCE, subTypeReference.getSubTypeQualifiedName().toString() );
+        jsonObject.put( SUB_TYPE_CLASS, subTypeReference.getSubTypeClass().getSimpleName() );
         return jsonObject;
     }
 
@@ -190,9 +200,9 @@ class ComponentSerializerJson
         builder.customText( JsonParserUtil.getStringValue( CUSTOM_TEXT, componentNode ) );
         parseValidationRegexp( builder, componentNode );
 
-        parseOccurrences( builder, componentNode.get( "occurrences" ) );
-        parseInputType( builder, componentNode.get( "inputType" ) );
-        parseInputTypeConfig( builder, componentNode.get( "inputTypeConfig" ) );
+        parseOccurrences( builder, componentNode.get( OCCURRENCES ) );
+        parseInputType( builder, componentNode.get( INPUT_TYPE ) );
+        parseInputTypeConfig( builder, componentNode.get( INPUT_TYPE_CONFIG ) );
 
         return builder.build();
     }
@@ -202,14 +212,13 @@ class ComponentSerializerJson
         final ComponentSet.Builder builder = newComponentSet();
         builder.name( JsonParserUtil.getStringValue( NAME, componentNode ) );
         builder.label( JsonParserUtil.getStringValue( LABEL, componentNode, null ) );
-        builder.required( JsonParserUtil.getBooleanValue( REQUIRED, componentNode ) );
         builder.immutable( JsonParserUtil.getBooleanValue( IMMUTABLE, componentNode ) );
         builder.helpText( JsonParserUtil.getStringValue( HELP_TEXT, componentNode ) );
         builder.customText( JsonParserUtil.getStringValue( CUSTOM_TEXT, componentNode ) );
 
-        parseOccurrences( builder, componentNode.get( "occurrences" ) );
+        parseOccurrences( builder, componentNode.get( OCCURRENCES ) );
 
-        final Components components = componentsSerializerJson.parse( componentNode.get( "items" ) );
+        final Components components = componentsSerializerJson.parse( componentNode.get( ITEMS ) );
         for ( Component component : components.iterable() )
         {
             builder.add( component );
@@ -220,7 +229,7 @@ class ComponentSerializerJson
 
     private Component parseLayout( final JsonNode componentNode )
     {
-        final String layoutType = JsonParserUtil.getStringValue( "layoutType", componentNode );
+        final String layoutType = JsonParserUtil.getStringValue( LAYOUT_TYPE, componentNode );
         if ( layoutType.equals( FieldSet.class.getSimpleName() ) )
         {
             return parseFieldSet( componentNode );
@@ -237,7 +246,7 @@ class ComponentSerializerJson
         builder.label( JsonParserUtil.getStringValue( LABEL, componentNode, null ) );
         builder.name( JsonParserUtil.getStringValue( NAME, componentNode, null ) );
 
-        final Components components = componentsSerializerJson.parse( componentNode.get( "items" ) );
+        final Components components = componentsSerializerJson.parse( componentNode.get( ITEMS ) );
         for ( Component component : components.iterable() )
         {
             builder.add( component );
@@ -250,8 +259,8 @@ class ComponentSerializerJson
     {
         final SubTypeReference.Builder builder = SubTypeReference.newSubTypeReference();
         builder.name( JsonParserUtil.getStringValue( NAME, componentNode ) );
-        builder.subType( new SubTypeQualifiedName( JsonParserUtil.getStringValue( "reference", componentNode ) ) );
-        builder.type( JsonParserUtil.getStringValue( "subTypeClass", componentNode ) );
+        builder.subType( new SubTypeQualifiedName( JsonParserUtil.getStringValue( REFERENCE, componentNode ) ) );
+        builder.type( JsonParserUtil.getStringValue( SUB_TYPE_CLASS, componentNode ) );
         return builder.build();
     }
 
