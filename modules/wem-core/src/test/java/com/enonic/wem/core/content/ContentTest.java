@@ -79,6 +79,17 @@ public class ContentTest
     }
 
     @Test
+    public void overwriting_does_not_create_array()
+    {
+        Content content = new Content();
+        content.setData( "noArray", "First" );
+        content.setData( "noArray", "Second" );
+        content.setData( "noArray", "Third" );
+
+        assertEquals( "Third", content.getData( "noArray" ).getValue() );
+    }
+
+    @Test
     public void multiple_textlines2()
     {
         Content content = new Content();

@@ -74,7 +74,7 @@ final class DataEntries
             createdData = newData().path( path ).type( type ).value( value ).build();
             dataArray.add( createdData );
         }
-        else
+        else if ( path.getLastElement().hasIndex() )
         {
             final DataArray array = new DataArray( pathWithoutIndexAtLastElement );
             EntryPath exDataPathWithIndex = exData.getPath().asNewWithIndexAtPath( 0, exData.getPath() );
@@ -84,6 +84,11 @@ final class DataEntries
                 newData().path( pathWithoutIndexAtLastElement ).type( DataTypes.DATA_ARRAY ).value( array ).build();
 
             dataByName.put( key, newDataWithArray );
+        }
+        else
+        {
+            createdData = newData().path( path ).type( type ).value( value ).build();
+            dataByName.put( key, createdData );
         }
     }
 
