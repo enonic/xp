@@ -3,9 +3,9 @@ package com.enonic.wem.core.content.type.component.inputtype;
 
 import com.enonic.wem.api.content.type.component.inputtype.BaseInputType;
 
-class InputTypeFactory
+public class InputTypeFactory
 {
-    static BaseInputType instantiate( final String simpleClassName, final boolean builtIn )
+    public static BaseInputType instantiate( final String simpleClassName, final boolean builtIn )
     {
         Class clazz;
         try

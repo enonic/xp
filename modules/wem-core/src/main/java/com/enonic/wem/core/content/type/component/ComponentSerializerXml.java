@@ -14,7 +14,7 @@ import com.enonic.wem.api.content.type.component.SubTypeQualifiedName;
 import com.enonic.wem.api.content.type.component.SubTypeReference;
 import com.enonic.wem.core.content.JsonParsingException;
 import com.enonic.wem.core.content.type.component.inputtype.InputTypeConfigSerializerXml;
-import com.enonic.wem.core.content.type.component.inputtype.InputTypeSerializerXml;
+import com.enonic.wem.core.content.type.component.inputtype.InputTypeFactory;
 
 import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.component.FieldSet.newFieldSet;
@@ -22,7 +22,11 @@ import static com.enonic.wem.api.content.type.component.Input.newInput;
 
 class ComponentSerializerXml
 {
+    public static final String NAME = "name";
+
     public static final String TYPE = "type";
+
+    public static final String BUILT_IN = "builtIn";
 
     public static final String LABEL = "label";
 
@@ -41,8 +45,6 @@ class ComponentSerializerXml
     public static final String SUB_TYPE_CLASS = "subTypeClass";
 
     public static final String LAYOUT_TYPE = "layout-type";
-
-    private final InputTypeSerializerXml inputTypeSerializer = new InputTypeSerializerXml();
 
     private final InputTypeConfigSerializerXml inputTypeConfigSerializer = new InputTypeConfigSerializerXml();
 
@@ -78,9 +80,12 @@ class ComponentSerializerXml
 
     private Element serializeInput( final Input input )
     {
-        Element inputEl = new Element( input.getName() );
+        final String elementName = input.getInputType().getName();
+        Element inputEl = new Element( elementName );
         inputEl.setAttribute( TYPE, Input.class.getSimpleName() );
+        inputEl.setAttribute( BUILT_IN, String.valueOf( input.getInputType().isBuiltIn() ) );
 
+        inputEl.addContent( new Element( NAME ).setText( input.getName() ) );
         inputEl.addContent( new Element( LABEL ).setText( input.getLabel() ) );
         inputEl.addContent( new Element( IMMUTABLE ).setText( String.valueOf( input.isImmutable() ) ) );
         inputEl.addContent( new Element( INDEXED ).setText( String.valueOf( input.isIndexed() ) ) );
@@ -88,7 +93,6 @@ class ComponentSerializerXml
         inputEl.addContent( new Element( HELP_TEXT ).setText( input.getHelpText() ) );
         inputEl.addContent( occurrencesSerializerXml.serialize( input.getOccurrences() ) );
         generateValidationRegex( input, inputEl );
-        inputEl.addContent( inputTypeSerializer.serialize( input.getInputType() ) );
         generateInputTypeConfig( input, inputEl );
         return inputEl;
     }
@@ -185,7 +189,7 @@ class ComponentSerializerXml
     private Component parseInput( final Element componentEl )
     {
         final Input.Builder builder = newInput();
-        builder.name( componentEl.getName() );
+        builder.name( componentEl.getChildText( NAME ) );
         builder.label( componentEl.getChildText( LABEL ) );
         builder.immutable( Boolean.valueOf( componentEl.getChildText( IMMUTABLE ) ) );
         builder.helpText( componentEl.getChildText( HELP_TEXT ) );
@@ -272,6 +276,8 @@ class ComponentSerializerXml
 
     private void parseInputType( final Input.Builder builder, final Element componentEl )
     {
-        builder.type( inputTypeSerializer.parse( componentEl ) );
+        final String inputTypeName = componentEl.getName();
+        final boolean builtIn = Boolean.valueOf( componentEl.getAttributeValue( BUILT_IN ) );
+        builder.type( InputTypeFactory.instantiate( inputTypeName, builtIn ) );
     }
 }
