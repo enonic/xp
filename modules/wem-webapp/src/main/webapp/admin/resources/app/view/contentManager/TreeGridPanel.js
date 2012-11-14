@@ -6,7 +6,9 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
 
     iconClasses: {
         "myModule:mySite": 'icon-site-32',
-        "myModule:myType": 'icon-content-32'
+        "myModule:myType": 'icon-content-32',
+        "News:Article": 'icon-content-32',
+        "News:Article2": 'icon-content-32'
     },
 
     gridConf: {

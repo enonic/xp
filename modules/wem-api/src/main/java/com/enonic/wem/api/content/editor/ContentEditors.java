@@ -18,4 +18,9 @@ public abstract class ContentEditors
     {
         return new SetContentNameEditor( name );
     }
+
+    public static ContentEditor setContentDisplayName( final String displayName )
+    {
+        return new SetContentDisplayNameEditor( displayName );
+    }
 }

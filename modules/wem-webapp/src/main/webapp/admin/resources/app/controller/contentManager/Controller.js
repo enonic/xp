@@ -76,7 +76,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
             var requestConfig = {
                 doTabRequest: function (handleRpcResponse) {
                     Admin.lib.RemoteService.contentType_get({contentType: 'News:Article'}, function (rpcResponse) {
-                        if (rpcResponse.success) {
+                        if (rpcResponse && rpcResponse.success) {
                             handleRpcResponse(rpcResponse);
                         }
                     });
@@ -114,12 +114,14 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 var data = content[i];
                 //TODO: implement when content specification will be developed
                 switch (data.get('type')) {
-                case 'myModule:myType':
-                    openEditContentTabFn(data);
-                    break;
-                case 'myModule:mySite':
-                    openEditSiteTabFn(data);
-                    break;
+                    case 'myModule:myType':
+                    case 'News:Article':
+                    case 'News:Article2':
+                        openEditContentTabFn(data);
+                        break;
+                    case 'myModule:mySite':
+                        openEditSiteTabFn(data);
+                        break;
                 }
             }
         }

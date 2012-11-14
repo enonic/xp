@@ -20,6 +20,8 @@ public final class CreateContent
 
     private UserKey owner;
 
+    private String displayName;
+
     public CreateContent contentPath( ContentPath value )
     {
         this.contentPath = value;
@@ -41,6 +43,12 @@ public final class CreateContent
     public CreateContent owner( final UserKey owner )
     {
         this.owner = owner;
+        return this;
+    }
+
+    public CreateContent displayName( final String displayName )
+    {
+        this.displayName = displayName;
         return this;
     }
 
@@ -69,5 +77,10 @@ public final class CreateContent
     public UserKey getOwner()
     {
         return owner;
+    }
+
+    public String getDisplayName()
+    {
+        return displayName;
     }
 }

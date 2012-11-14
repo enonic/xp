@@ -6,10 +6,12 @@ Ext.define('Admin.store.contentManager.ContentTreeStore', {
     folderSort: true,
 
     proxy: {
-        type: 'ajax',
-        url: Admin.lib.UriHelper.getContentManagerSearchTreeUri(),
+        type: 'direct',
+        directFn: Admin.lib.RemoteService.content_tree,
+        simpleSortMode: true,
         reader: {
             type: 'json',
+            root: 'contents',
             totalProperty: 'total'
         }
     }

@@ -27,7 +27,7 @@ class ContentTreeJsonResult
     protected void serialize( final ObjectNode json )
     {
         json.put( "total", contentTree.deepSize() );
-        json.put( "contentTree", serialize( contentTree ) );
+        json.put( "contents", serialize( contentTree ) );
     }
 
     private JsonNode serialize( final ContentTree tree )
@@ -50,7 +50,7 @@ class ContentTreeJsonResult
 
         final ArrayNode childArrayNode = contentNode.arrayNode();
         contentNode.put( "hasChildren", branch.hasChildren() );
-        contentNode.put( "children", childArrayNode );
+        contentNode.put( "contents", childArrayNode );
 
         for ( ContentBranch child : branch.getChildren() )
         {

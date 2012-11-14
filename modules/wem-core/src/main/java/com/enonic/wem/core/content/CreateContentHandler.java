@@ -33,6 +33,8 @@ public class CreateContentHandler
         final Content content = new Content();
         content.setPath( command.getContentPath() );
         content.setData( contentData );
+        content.setType( command.getContentType() );
+        content.setDisplayName( command.getDisplayName() );
         content.setCreatedTime( timeService.getNowAsDateTime() );
         content.setModifiedTime( timeService.getNowAsDateTime() );
         content.setOwner( command.getOwner() );
