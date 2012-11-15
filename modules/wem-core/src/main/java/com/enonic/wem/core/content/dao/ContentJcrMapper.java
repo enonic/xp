@@ -7,6 +7,7 @@ import javax.jcr.RepositoryException;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.core.content.data.ContentDataSerializerJson;
 
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
@@ -26,6 +27,8 @@ final class ContentJcrMapper
     private static final String MODIFIER = "modifier";
 
     private static final String OWNER = "owner";
+
+    private static final String DISPLAY_NAME = "displayName";
 
     private ContentDataSerializerJson contentDataSerializerJson = new ContentDataSerializerJson();
 
@@ -47,12 +50,13 @@ final class ContentJcrMapper
         setPropertyDateTime( contentNode, MODIFIED_TIME, content.getModifiedTime() );
         contentNode.setProperty( MODIFIER, content.getModifier() == null ? null : content.getModifier().toString() );
         contentNode.setProperty( OWNER, content.getOwner() == null ? null : content.getOwner().toString() );
+        contentNode.setProperty( DISPLAY_NAME, content.getDisplayName() );
     }
 
     void toContent( final Node contentNode, final Content content )
         throws RepositoryException
     {
-        String dataAsJson = contentNode.getProperty( "data" ).getString();
+        final String dataAsJson = contentNode.getProperty( DATA ).getString();
         final ContentData contentData = contentDataSerializerJson.toObject( dataAsJson );
         content.setData( contentData );
 
@@ -60,13 +64,18 @@ final class ContentJcrMapper
         content.setModifiedTime( getPropertyDateTime( contentNode, MODIFIED_TIME ) );
         if ( contentNode.hasProperty( MODIFIER ) )
         {
-            content.setModifier( AccountKey.from( getPropertyString( contentNode, MODIFIER ) ) );
+            content.setModifier( AccountKey.from( getPropertyString( contentNode, MODIFIER ) ).asUser() );
         }
         if ( contentNode.hasProperty( OWNER ) )
         {
-            content.setOwner( AccountKey.from( getPropertyString( contentNode, OWNER ) ) );
+            content.setOwner( AccountKey.from( getPropertyString( contentNode, OWNER ) ).asUser() );
         }
         content.setModifiedTime( getPropertyDateTime( contentNode, MODIFIED_TIME ) );
-
+        content.setDisplayName( getPropertyString( contentNode, DISPLAY_NAME ) );
+        final String contentType = getPropertyString( contentNode, TYPE );
+        if ( contentType != null )
+        {
+            content.setType( new QualifiedContentTypeName( contentType ) );
+        }
     }
 }

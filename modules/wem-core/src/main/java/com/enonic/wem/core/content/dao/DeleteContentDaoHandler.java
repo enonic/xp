@@ -7,6 +7,7 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.exception.ContentNotFoundException;
+import com.enonic.wem.api.exception.UnableToDeleteContentException;
 
 final class DeleteContentDaoHandler
     extends AbstractContentDaoHandler
@@ -27,7 +28,7 @@ final class DeleteContentDaoHandler
 
         if ( contentNode.hasNodes() )
         {
-            throw new IllegalArgumentException( "Content with sub content cannot be deleted: " + pathToContent );
+            throw new UnableToDeleteContentException( pathToContent, "Content has child content." );
         }
 
         contentNode.remove();

@@ -11,6 +11,7 @@ import com.enonic.wem.api.content.ContentTree;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.exception.UnableToDeleteContentException;
 import com.enonic.wem.itest.AbstractJcrTest;
 
 import static org.junit.Assert.*;
@@ -179,8 +180,8 @@ public class ContentDaoImplTest
         }
         catch ( Exception e )
         {
-            assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "Content with sub content cannot be deleted: parentContent", e.getMessage() );
+            assertTrue( e instanceof UnableToDeleteContentException );
+            assertEquals( "Not able to delete content [parentContent]: Content has child content.", e.getMessage() );
         }
     }
 

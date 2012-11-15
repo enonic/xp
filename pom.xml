@@ -12,6 +12,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<old.version>4.7.0-M4</old.version>
   </properties>
 
   <modules>

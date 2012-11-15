@@ -14,19 +14,21 @@ import com.enonic.wem.api.content.type.component.SubTypeQualifiedName;
 import com.enonic.wem.api.content.type.component.SubTypeReference;
 import com.enonic.wem.core.content.JsonParsingException;
 import com.enonic.wem.core.content.type.component.inputtype.InputTypeConfigSerializerXml;
-import com.enonic.wem.core.content.type.component.inputtype.InputTypeSerializerXml;
+import com.enonic.wem.core.content.type.component.inputtype.InputTypeFactory;
 
 import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.component.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.component.Input.newInput;
 
-public class ComponentSerializerXml
+class ComponentSerializerXml
 {
+    public static final String NAME = "name";
+
     public static final String TYPE = "type";
 
-    public static final String LABEL = "label";
+    public static final String BUILT_IN = "builtIn";
 
-    public static final String REQUIRED = "required";
+    public static final String LABEL = "label";
 
     public static final String IMMUTABLE = "immutable";
 
@@ -36,57 +38,61 @@ public class ComponentSerializerXml
 
     public static final String HELP_TEXT = "helpText";
 
-    private InputTypeSerializerXml inputTypeSerializer = new InputTypeSerializerXml();
+    public static final String REFERENCE = "reference";
 
-    private InputTypeConfigSerializerXml inputTypeConfigSerializer = new InputTypeConfigSerializerXml();
+    public static final String VALIDATION_REGEX = "validationRegex";
+
+    public static final String SUB_TYPE_CLASS = "subTypeClass";
+
+    public static final String LAYOUT_TYPE = "layout-type";
+
+    private final InputTypeConfigSerializerXml inputTypeConfigSerializer = new InputTypeConfigSerializerXml();
+
+    private final OccurrencesSerializerXml occurrencesSerializerXml = new OccurrencesSerializerXml();
 
     private final ComponentsSerializerXml componentsSerializer;
-
-    public ComponentSerializerXml()
-    {
-        this.componentsSerializer = new ComponentsSerializerXml();
-    }
 
     public ComponentSerializerXml( final ComponentsSerializerXml componentsSerializer )
     {
         this.componentsSerializer = componentsSerializer;
     }
 
-    public Element generate( Component component )
+    public Element serialize( Component component )
     {
         if ( component instanceof ComponentSet )
         {
-            return generateComponentSet( (ComponentSet) component );
+            return serializeComponentSet( (ComponentSet) component );
         }
         else if ( component instanceof Layout )
         {
-            return generateLayout( (Layout) component );
+            return serializeLayout( (Layout) component );
         }
         else if ( component instanceof Input )
         {
-            return generateInput( (Input) component );
+            return serializeInput( (Input) component );
         }
         else if ( component instanceof SubTypeReference )
         {
-            return generateReference( (SubTypeReference) component );
+            return serializeReference( (SubTypeReference) component );
         }
         return null;
     }
 
-    private Element generateInput( final Input input )
+    private Element serializeInput( final Input input )
     {
-        Element inputEl = new Element( input.getName() );
+        final String elementName = input.getInputType().getName();
+        Element inputEl = new Element( elementName );
         inputEl.setAttribute( TYPE, Input.class.getSimpleName() );
+        inputEl.setAttribute( BUILT_IN, String.valueOf( input.getInputType().isBuiltIn() ) );
 
+        inputEl.addContent( new Element( NAME ).setText( input.getName() ) );
         inputEl.addContent( new Element( LABEL ).setText( input.getLabel() ) );
-        inputEl.addContent( new Element( REQUIRED ).setText( String.valueOf( input.isRequired() ) ) );
         inputEl.addContent( new Element( IMMUTABLE ).setText( String.valueOf( input.isImmutable() ) ) );
         inputEl.addContent( new Element( INDEXED ).setText( String.valueOf( input.isIndexed() ) ) );
         inputEl.addContent( new Element( CUSTOM_TEXT ).setText( input.getCustomText() ) );
         inputEl.addContent( new Element( HELP_TEXT ).setText( input.getHelpText() ) );
-        inputEl.addContent( OccurrencesSerializerXml.generate( input.getOccurrences() ) );
+        inputEl.addContent( occurrencesSerializerXml.serialize( input.getOccurrences() ) );
         generateValidationRegex( input, inputEl );
-        inputEl.addContent( inputTypeSerializer.generate( input.getInputType() ) );
         generateInputTypeConfig( input, inputEl );
         return inputEl;
     }
@@ -99,23 +105,22 @@ public class ComponentSerializerXml
         }
     }
 
-    private Element generateComponentSet( final ComponentSet componentSet )
+    private Element serializeComponentSet( final ComponentSet componentSet )
     {
         Element componentSetEl = new Element( componentSet.getName() );
         componentSetEl.setAttribute( TYPE, ComponentSet.class.getSimpleName() );
 
         componentSetEl.addContent( new Element( LABEL ).setText( componentSet.getLabel() ) );
-        componentSetEl.addContent( new Element( REQUIRED ).setText( String.valueOf( componentSet.isRequired() ) ) );
         componentSetEl.addContent( new Element( IMMUTABLE ).setText( String.valueOf( componentSet.isImmutable() ) ) );
         componentSetEl.addContent( new Element( CUSTOM_TEXT ).setText( componentSet.getCustomText() ) );
         componentSetEl.addContent( new Element( HELP_TEXT ).setText( componentSet.getCustomText() ) );
 
-        componentSetEl.addContent( OccurrencesSerializerXml.generate( componentSet.getOccurrences() ) );
-        componentSetEl.addContent( componentsSerializer.generate( componentSet.getComponents() ) );
+        componentSetEl.addContent( occurrencesSerializerXml.serialize( componentSet.getOccurrences() ) );
+        componentSetEl.addContent( componentsSerializer.serialize( componentSet.getComponents() ) );
         return componentSetEl;
     }
 
-    private Element generateLayout( final Layout layout )
+    private Element serializeLayout( final Layout layout )
     {
         Element layoutEl = new Element( layout.getName() );
         layoutEl.setAttribute( TYPE, Layout.class.getSimpleName() );
@@ -130,17 +135,17 @@ public class ComponentSerializerXml
 
     private void generateFieldSet( final FieldSet fieldSet, final Element layoutEl )
     {
-        layoutEl.setAttribute( "layout-type", FieldSet.class.getSimpleName() );
+        layoutEl.setAttribute( LAYOUT_TYPE, FieldSet.class.getSimpleName() );
         layoutEl.addContent( new Element( LABEL ).setText( fieldSet.getLabel() ) );
-        layoutEl.addContent( componentsSerializer.generate( fieldSet.getComponents() ) );
+        layoutEl.addContent( componentsSerializer.serialize( fieldSet.getComponents() ) );
     }
 
-    private Element generateReference( final SubTypeReference subTypeReference )
+    private Element serializeReference( final SubTypeReference subTypeReference )
     {
         Element referenceEl = new Element( subTypeReference.getName() );
         referenceEl.setAttribute( TYPE, SubTypeReference.class.getSimpleName() );
-        referenceEl.addContent( new Element( "reference" ).setText( subTypeReference.getSubTypeQualifiedName().toString() ) );
-        referenceEl.addContent( new Element( "subTypeClass" ).setText( subTypeReference.getSubTypeClass().getSimpleName() ) );
+        referenceEl.addContent( new Element( REFERENCE ).setText( subTypeReference.getSubTypeQualifiedName().toString() ) );
+        referenceEl.addContent( new Element( SUB_TYPE_CLASS ).setText( subTypeReference.getSubTypeClass().getSimpleName() ) );
         return referenceEl;
     }
 
@@ -148,7 +153,7 @@ public class ComponentSerializerXml
     {
         if ( input.getValidationRegexp() != null )
         {
-            inputEl.addContent( new Element( "validationRegex" ).setText( input.getValidationRegexp().toString() ) );
+            inputEl.addContent( new Element( VALIDATION_REGEX ).setText( input.getValidationRegexp().toString() ) );
         }
     }
 
@@ -184,14 +189,14 @@ public class ComponentSerializerXml
     private Component parseInput( final Element componentEl )
     {
         final Input.Builder builder = newInput();
-        builder.name( componentEl.getName() );
+        builder.name( componentEl.getChildText( NAME ) );
         builder.label( componentEl.getChildText( LABEL ) );
         builder.immutable( Boolean.valueOf( componentEl.getChildText( IMMUTABLE ) ) );
         builder.helpText( componentEl.getChildText( HELP_TEXT ) );
         builder.customText( componentEl.getChildText( CUSTOM_TEXT ) );
         parseValidationRegexp( builder, componentEl );
 
-        builder.occurrences( OccurrencesSerializerXml.parse( componentEl ) );
+        builder.occurrences( occurrencesSerializerXml.parse( componentEl ) );
         parseInputType( builder, componentEl );
         parseInputTypeConfig( builder, componentEl );
 
@@ -203,12 +208,11 @@ public class ComponentSerializerXml
         final ComponentSet.Builder builder = newComponentSet();
         builder.name( componentEl.getName() );
         builder.label( componentEl.getChildText( LABEL ) );
-        builder.required( Boolean.valueOf( componentEl.getChildText( REQUIRED ) ) );
         builder.immutable( Boolean.valueOf( componentEl.getChildText( IMMUTABLE ) ) );
         builder.helpText( componentEl.getChildText( HELP_TEXT ) );
         builder.customText( componentEl.getChildText( CUSTOM_TEXT ) );
 
-        builder.occurrences( OccurrencesSerializerXml.parse( componentEl ) );
+        builder.occurrences( occurrencesSerializerXml.parse( componentEl ) );
 
         final Components components = componentsSerializer.parse( componentEl );
         for ( Component component : components.iterable() )
@@ -221,7 +225,7 @@ public class ComponentSerializerXml
 
     private Component parseLayout( final Element componentEl )
     {
-        String layoutType = componentEl.getAttributeValue( "layout-type" );
+        String layoutType = componentEl.getAttributeValue( LAYOUT_TYPE );
         if ( layoutType.equals( FieldSet.class.getSimpleName() ) )
         {
             return parseFieldSet( componentEl );
@@ -251,14 +255,14 @@ public class ComponentSerializerXml
     {
         final SubTypeReference.Builder builder = SubTypeReference.newSubTypeReference();
         builder.name( componentEl.getName() );
-        builder.subType( new SubTypeQualifiedName( componentEl.getChildText( "reference" ) ) );
-        builder.type( componentEl.getChildText( "subTypeClass" ) );
+        builder.subType( new SubTypeQualifiedName( componentEl.getChildText( REFERENCE ) ) );
+        builder.type( componentEl.getChildText( SUB_TYPE_CLASS ) );
         return builder.build();
     }
 
     private void parseValidationRegexp( final Input.Builder builder, final Element componentEl )
     {
-        String validationRegexp = componentEl.getChildText( "validationRegex" );
+        String validationRegexp = componentEl.getChildText( VALIDATION_REGEX );
         if ( validationRegexp != null )
         {
             builder.validationRegexp( validationRegexp );
@@ -272,6 +276,8 @@ public class ComponentSerializerXml
 
     private void parseInputType( final Input.Builder builder, final Element componentEl )
     {
-        builder.type( inputTypeSerializer.parse( componentEl ) );
+        final String inputTypeName = componentEl.getName();
+        final boolean builtIn = Boolean.valueOf( componentEl.getAttributeValue( BUILT_IN ) );
+        builder.type( InputTypeFactory.instantiate( inputTypeName, builtIn ) );
     }
 }

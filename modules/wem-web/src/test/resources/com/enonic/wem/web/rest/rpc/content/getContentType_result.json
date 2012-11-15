@@ -3,13 +3,12 @@
     "contentType":{
         "name":"myCtype",
         "module":"myModule",
-        "qualifiedName" : "myModule:myCtype",
+        "qualifiedName":"myModule:myCtype",
         "items":[
             {
                 "type":"Input",
                 "name":"inputText1",
                 "label":"Line Text 1",
-                "required":true,
                 "immutable":false,
                 "occurrences":{
                     "minimum":1,
@@ -28,7 +27,6 @@
                 "type":"Input",
                 "name":"inputText2",
                 "label":"Line Text 2",
-                "required":false,
                 "immutable":true,
                 "occurrences":{
                     "minimum":0,
@@ -47,7 +45,6 @@
                 "type":"Input",
                 "name":"textArea1",
                 "label":"Text Area",
-                "required":true,
                 "immutable":false,
                 "occurrences":{
                     "minimum":1,

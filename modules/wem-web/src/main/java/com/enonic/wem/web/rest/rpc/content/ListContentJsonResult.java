@@ -47,7 +47,7 @@ class ListContentJsonResult
         node.put( "path", content.getPath().toString() );
         node.put( "name", content.getName() );
         node.put( "type", content.getType() != null ? content.getType().toString() : null );
-        node.put( "displayName", content.getName() );
+        node.put( "displayName", content.getDisplayName() );
         node.put( "owner", content.getOwner() != null ? content.getOwner().toString() : null );
         node.put( "modifier", content.getModifier() != null ? content.getModifier().toString() : null );
         node.put( "modifiedTime", content.getModifiedTime() != null ? content.getModifiedTime().toString() : null );

@@ -52,7 +52,7 @@ public class ContentTypeSerializerXml
     {
         typeEl.addContent( new Element( "name" ).setText( type.getName() ) );
         typeEl.addContent( new Element( "module" ).setText( type.getModule().getName() ) );
-        typeEl.addContent( componentsSerializer.generate( type.componentIterable() ) );
+        typeEl.addContent( componentsSerializer.serialize( type.componentIterable() ) );
     }
 
     public ContentType toContentType( String xml )

@@ -1,81 +1,49 @@
 package com.enonic.wem.core.content.type;
 
 
-import java.io.IOException;
-import java.io.StringWriter;
-
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.component.Component;
 import com.enonic.wem.api.content.type.component.Components;
-import com.enonic.wem.core.content.JsonFactoryHolder;
+import com.enonic.wem.api.module.Module;
+import com.enonic.wem.core.content.AbstractSerializerJson;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
 import com.enonic.wem.core.content.type.component.ComponentsSerializerJson;
 
 public class ContentTypeSerializerJson
+    extends AbstractSerializerJson<ContentType>
     implements ContentTypeSerializer
 {
     private ComponentsSerializerJson componentsSerializer = new ComponentsSerializerJson();
 
-    public String toString( ContentType contentType )
+    @Override
+    protected JsonNode serialize( final ContentType contentType, final ObjectMapper objectMapper )
     {
-        try
-        {
-            StringWriter sw = new StringWriter();
-            JsonGenerator g = JsonFactoryHolder.DEFAULT_FACTORY.createJsonGenerator( sw );
-            g.useDefaultPrettyPrinter();
-            g.writeStartObject();
-            g.writeStringField( "name", contentType.getName() );
-            g.writeStringField( "module", contentType.getModule().getName() );
-            g.writeStringField( "qualifiedName", contentType.getQualifiedName().toString() );
-
-            componentsSerializer.generate( contentType.componentIterable(), g );
-            g.writeEndObject();
-            g.close();
-            sw.close();
-            return sw.toString();
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( "Failed to generate json", e );
-        }
+        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectNode objectNode = mapper.createObjectNode();
+        objectNode.put( "name", contentType.getName() );
+        objectNode.put( "module", contentType.getModule().getName() );
+        objectNode.put( "qualifiedName", contentType.getQualifiedName().toString() );
+        objectNode.put( "items", componentsSerializer.serialize( contentType.getComponents(), mapper ) );
+        return objectNode;
     }
 
+    @Override
     public ContentType toContentType( String json )
     {
-        try
-        {
-            final JsonFactory f = JsonFactoryHolder.DEFAULT_FACTORY;
-            final JsonParser jp = f.createJsonParser( json );
-            try
-            {
-
-                ObjectMapper mapper = new ObjectMapper();
-                final JsonNode contentTypeNode = mapper.readValue( jp, JsonNode.class );
-                return parse( contentTypeNode );
-            }
-            finally
-            {
-                jp.close();
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( "Failed to read json", e );
-        }
+        return toObject( json );
     }
 
-    private ContentType parse( final JsonNode contentTypeNode )
-        throws IOException
+    @Override
+    protected ContentType parse( final JsonNode contentTypeNode )
     {
         final ContentType contentType = new ContentType();
         contentType.setName( JsonParserUtil.getStringValue( "name", contentTypeNode ) );
+        contentType.setModule( new Module( JsonParserUtil.getStringValue( "module", contentTypeNode ) ) );
 
         try
         {

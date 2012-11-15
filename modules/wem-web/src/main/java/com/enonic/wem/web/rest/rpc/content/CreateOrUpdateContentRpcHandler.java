@@ -11,7 +11,6 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.editor.ContentEditors;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypeFetcher;
 import com.enonic.wem.api.content.type.MockContentTypeFetcher;
@@ -24,6 +23,9 @@ import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
+import static com.enonic.wem.api.content.editor.ContentEditors.composite;
+import static com.enonic.wem.api.content.editor.ContentEditors.setContentData;
+import static com.enonic.wem.api.content.editor.ContentEditors.setContentDisplayName;
 import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.component.Input.newInput;
 
@@ -57,6 +59,7 @@ public final class CreateOrUpdateContentRpcHandler
         final QualifiedContentTypeName qualifiedContentTypeName =
             new QualifiedContentTypeName( context.param( "qualifiedContentTypeName" ).required().asString() );
         final ContentPath contentPath = ContentPath.from( context.param( "contentPath" ).required().asString() );
+        final String displayName = context.param( "displayName" ).asString();
 
         final ContentType contentType = contentTypeFetcher.getContentType( qualifiedContentTypeName );
         final ContentData contentData = new ContentDataParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
@@ -67,6 +70,7 @@ public final class CreateOrUpdateContentRpcHandler
             createContent.contentPath( contentPath );
             createContent.contentType( qualifiedContentTypeName );
             createContent.contentData( contentData );
+            createContent.displayName( displayName );
             createContent.owner( AccountKey.anonymous() );
             try
             {
@@ -83,7 +87,7 @@ public final class CreateOrUpdateContentRpcHandler
         {
             final UpdateContents updateContents = Commands.content().update();
             updateContents.paths( ContentPaths.from( contentPath ) );
-            updateContents.editor( ContentEditors.setContentData( contentData ) );
+            updateContents.editor( composite( setContentData( contentData ), setContentDisplayName( displayName ) ) );
             updateContents.modifier( AccountKey.anonymous() );
 
             client.execute( updateContents );

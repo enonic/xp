@@ -1,7 +1,7 @@
 {
     "success":true,
     "total":4,
-    "contentTree":[
+    "contents":[
         {
             "path":"c1",
             "name":"c1",
@@ -14,7 +14,7 @@
             "editable":true,
             "deletable":true,
             "hasChildren":true,
-            "children":[
+            "contents":[
                 {
                     "path":"c1/c2",
                     "name":"c2",
@@ -27,7 +27,7 @@
                     "editable":true,
                     "deletable":true,
                     "hasChildren":true,
-                    "children":[
+                    "contents":[
                         {
                             "path":"c1/c2/c3",
                             "name":"c3",
@@ -40,7 +40,7 @@
                             "editable":true,
                             "deletable":true,
                             "hasChildren":false,
-                            "children":[ ]
+                            "contents":[ ]
                         }
                     ]
                 },
@@ -56,7 +56,7 @@
                     "editable":true,
                     "deletable":true,
                     "hasChildren":false,
-                    "children":[ ]
+                    "contents":[ ]
                 }
             ]
         }

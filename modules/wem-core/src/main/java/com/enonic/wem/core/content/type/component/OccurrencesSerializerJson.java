@@ -1,33 +1,31 @@
 package com.enonic.wem.core.content.type.component;
 
 
-import java.io.IOException;
-
-import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.NullNode;
+import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.type.component.Occurrences;
 
-public class OccurrencesSerializerJson
+class OccurrencesSerializerJson
 {
-    public static void generate( final Occurrences occurrences, final JsonGenerator g )
-        throws IOException
+    public JsonNode serialize( final Occurrences occurrences, final ObjectMapper objectMapper )
     {
-        g.writeFieldName( "occurrences" );
-        if ( occurrences == null )
+        if ( occurrences != null )
         {
-            g.writeNull();
+            final ObjectNode jsonObject = objectMapper.createObjectNode();
+            jsonObject.put( "minimum", occurrences.getMinimum() );
+            jsonObject.put( "maximum", occurrences.getMaximum() );
+            return jsonObject;
         }
         else
         {
-            g.writeStartObject();
-            g.writeNumberField( "minimum", occurrences.getMinimum() );
-            g.writeNumberField( "maximum", occurrences.getMaximum() );
-            g.writeEndObject();
+            return NullNode.getInstance();
         }
     }
 
-    public static Occurrences parse( final JsonNode node )
+    public Occurrences parse( final JsonNode node )
     {
         int minEntries = 0;
         int maxEntries = 0;

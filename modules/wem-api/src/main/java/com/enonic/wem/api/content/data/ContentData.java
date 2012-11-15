@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.datatype.DataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
 
-public class ContentData
+public final class ContentData
     implements EntrySelector, Iterable<Data>
 {
     private DataSet dataSet;

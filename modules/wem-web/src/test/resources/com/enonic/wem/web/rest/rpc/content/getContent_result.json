@@ -1,0 +1,28 @@
+{
+    "success": true,
+    "content": {
+        "path": "MySite/MyContent",
+        "name": "MyContent",
+        "type": null,
+        "displayName": "My Content",
+        "owner": "user:myStore:me",
+        "modifier": "user:system:admin",
+        "modifiedTime": "2000-01-01T12:00:00.000+01:00",
+        "createdTime": "2000-01-01T12:00:00.000+01:00",
+        "status": "Online",
+        "editable": true,
+        "deletable": true,
+        "data": [
+            {
+                "name": "field1",
+                "type": "Text",
+                "value": "value1"
+            },
+            {
+                "name": "field2",
+                "type": "Text",
+                "value": "value2"
+            }
+        ]
+    }
+}

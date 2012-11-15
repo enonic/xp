@@ -127,6 +127,11 @@ public class ContentType
         return components.getComponent( path );
     }
 
+    public Components getComponents()
+    {
+        return components;
+    }
+
     public Input getInput( final ComponentPath path )
     {
         return components.getInput( path );
@@ -179,6 +184,11 @@ public class ContentType
 
         private Module module;
 
+        private String displayName;
+
+        private boolean isAbstract;
+
+
         private List<Component> componentList = new ArrayList<Component>();
 
         public Builder name( String name )
@@ -193,9 +203,30 @@ public class ContentType
             return this;
         }
 
+        public Builder displayName( final String displayName )
+        {
+            this.displayName = displayName;
+            return this;
+        }
+
+        public Builder setAbstract( final boolean value )
+        {
+            isAbstract = value;
+            return this;
+        }
+
         public Builder add( Component component )
         {
             this.componentList.add( component );
+            return this;
+        }
+
+        public Builder components( final Components components )
+        {
+            for ( Component component : components )
+            {
+                this.add( component );
+            }
             return this;
         }
 
@@ -204,6 +235,9 @@ public class ContentType
             ContentType type = new ContentType();
             type.setName( name );
             type.setModule( module );
+            type.setDisplayName( displayName );
+            type.setAbstract( isAbstract );
+
             for ( Component component : componentList )
             {
                 type.addComponent( component );

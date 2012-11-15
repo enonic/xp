@@ -4,7 +4,6 @@ package com.enonic.wem.api.content.datatype;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.Data;
@@ -159,11 +158,7 @@ public abstract class BaseDataType
     @Override
     public String toString()
     {
-        final Objects.ToStringHelper s = Objects.toStringHelper( this );
-        s.add( "key", key );
-        s.add( "name", name );
-        s.add( "javaType", javaType );
-        return s.toString();
+        return name;
     }
 
     boolean hasCorrectType( Object value )

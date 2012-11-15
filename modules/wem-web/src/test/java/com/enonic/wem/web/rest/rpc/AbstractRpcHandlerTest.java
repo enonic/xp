@@ -149,7 +149,10 @@ public abstract class AbstractRpcHandlerTest
 
         final JsonRpcResponse res = this.processor.process( req );
         assertNotNull( res );
-        assertFalse( res.hasError() );
+        if ( res.hasError() )
+        {
+            fail( "Json has error: " + res.getError().getMessage() );
+        }
 
         final JsonNode result = res.getResult();
         assertNotNull( result );

@@ -96,7 +96,8 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
         var contentParams = {
             contentData: contentData,
             qualifiedContentTypeName: contentType.qualifiedName,
-            contentPath: "/" + this.getDisplayNameValue(contentWizard)
+            contentPath: "/" + this.getDisplayNameValue(contentWizard),
+            displayName: this.getDisplayNameValue(contentWizard)
         };
 
         var parentApp = parent.mainApp;

@@ -1,11 +1,9 @@
 package com.enonic.wem.core.content.data;
 
 
-import java.io.IOException;
-import java.util.Iterator;
-
-import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
 
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
@@ -18,27 +16,25 @@ public class ContentDataSerializerJson
 {
     private DataSerializerJson dataSerializer = new DataSerializerJson();
 
-    public void generate( final ContentData contentData, final JsonGenerator g )
-        throws IOException
+    @Override
+    public JsonNode serialize( final ContentData contentData, final ObjectMapper objectMapper )
     {
-        g.writeArrayFieldStart( "data" );
+        final ArrayNode jsonContents = objectMapper.createArrayNode();
         for ( final Data data : contentData )
         {
-            dataSerializer.generate( data, g );
+            jsonContents.add( dataSerializer.serialize( data, objectMapper ) );
         }
-        g.writeEndArray();
+        return jsonContents;
     }
 
-    public ContentData parse( final JsonNode contentNode )
+    public ContentData parse( final JsonNode jsonNode )
     {
-        final JsonNode contentDataNode = contentNode.get( "data" );
+        final ArrayNode contentDataNode = (ArrayNode) jsonNode;
 
         ContentData contentData = new ContentData();
         DataSet dataSet = new DataSet( new EntryPath( "" ) );
-        final Iterator<JsonNode> dataIt = contentDataNode.getElements();
-        while ( dataIt.hasNext() )
+        for ( JsonNode eNode : contentDataNode )
         {
-            final JsonNode eNode = dataIt.next();
             dataSet.add( dataSerializer.parse( new EntryPath(), eNode ) );
         }
         contentData.setDataSet( dataSet );

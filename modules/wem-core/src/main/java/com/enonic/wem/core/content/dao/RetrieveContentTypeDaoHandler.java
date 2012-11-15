@@ -11,9 +11,9 @@ import javax.jcr.Session;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 
@@ -49,9 +49,7 @@ final class RetrieveContentTypeDaoHandler
             return null;
         }
 
-        final ContentType contentType = new ContentType();
-        this.contentTypeJcrMapper.toContentType( contentTypeNode, contentType );
-        return contentType;
+        return this.contentTypeJcrMapper.toContentType( contentTypeNode );
     }
 
     public ContentTypes retrieveAll()
@@ -70,8 +68,7 @@ final class RetrieveContentTypeDaoHandler
             while ( contentTypeNodes.hasNext() )
             {
                 final Node contentTypeNode = contentTypeNodes.nextNode();
-                final ContentType contentType = new ContentType();
-                this.contentTypeJcrMapper.toContentType( contentTypeNode, contentType );
+                final ContentType contentType = this.contentTypeJcrMapper.toContentType( contentTypeNode );
                 contentTypeList.add( contentType );
             }
         }

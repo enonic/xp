@@ -121,8 +121,8 @@ public class ComponentSet
         ComponentSet copy = (ComponentSet) super.copy();
         copy.label = label;
         copy.immutable = immutable;
-        copy.occurrences.setMinOccurences( occurrences.getMinimum() );
-        copy.occurrences.setMaxOccurences( occurrences.getMaximum() );
+        copy.occurrences.setMinOccurrences( occurrences.getMinimum() );
+        copy.occurrences.setMaxOccurrences( occurrences.getMaximum() );
         copy.customText = customText;
         copy.helpText = helpText;
         copy.components = components.copy();
@@ -229,11 +229,11 @@ public class ComponentSet
         {
             if ( value && !occurrences.impliesRequired() )
             {
-                occurrences.setMinOccurences( 1 );
+                occurrences.setMinOccurrences( 1 );
             }
             else if ( !value && occurrences.impliesRequired() )
             {
-                occurrences.setMinOccurences( 0 );
+                occurrences.setMinOccurrences( 0 );
             }
             return this;
         }
@@ -242,11 +242,11 @@ public class ComponentSet
         {
             if ( value )
             {
-                occurrences.setMaxOccurences( 0 );
+                occurrences.setMaxOccurrences( 0 );
             }
             else
             {
-                occurrences.setMaxOccurences( 1 );
+                occurrences.setMaxOccurrences( 1 );
             }
             return this;
         }
@@ -275,8 +275,8 @@ public class ComponentSet
             componentSet.setName( name );
             componentSet.label = label;
             componentSet.immutable = immutable;
-            componentSet.occurrences.setMinOccurences( occurrences.getMinimum() );
-            componentSet.occurrences.setMaxOccurences( occurrences.getMaximum() );
+            componentSet.occurrences.setMinOccurrences( occurrences.getMinimum() );
+            componentSet.occurrences.setMaxOccurrences( occurrences.getMaximum() );
             componentSet.customText = customText;
             componentSet.helpText = helpText;
 

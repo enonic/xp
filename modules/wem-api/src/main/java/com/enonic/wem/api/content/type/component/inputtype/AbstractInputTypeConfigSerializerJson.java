@@ -1,25 +1,20 @@
 package com.enonic.wem.api.content.type.component.inputtype;
 
 
-import java.io.IOException;
-
-import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 
 public abstract class AbstractInputTypeConfigSerializerJson
 {
-    public void generate( InputTypeConfig config, JsonGenerator g )
-        throws IOException
+    public JsonNode serialize( final InputTypeConfig config, final ObjectMapper objectMapper )
     {
-        g.writeStartObject();
-        g.writeFieldName( config.getClass().getName() );
-        generateConfig( config, g );
-        g.writeEndObject();
+        final ObjectNode jsonObject = objectMapper.createObjectNode();
+        jsonObject.put( config.getClass().getName(), serializeConfig( config, objectMapper ) );
+        return jsonObject;
     }
 
-    public abstract void generateConfig( InputTypeConfig config, JsonGenerator g )
-        throws IOException;
-
+    public abstract JsonNode serializeConfig( final InputTypeConfig config, final ObjectMapper objectMapper );
 
     public abstract InputTypeConfig parseConfig( final JsonNode inputTypeConfigNode );
 }

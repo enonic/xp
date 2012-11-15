@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.type.component.ComponentPath;
 
-public class EntryPath
+public final class EntryPath
     implements Iterable<EntryPath.Element>
 {
     private final static String ELEMENT_DIVIDER = ".";
@@ -20,6 +20,11 @@ public class EntryPath
     public EntryPath()
     {
         elements = new ArrayList<Element>();
+    }
+
+    public EntryPath( Element... pathElements )
+    {
+        elements = Lists.newArrayList( pathElements );
     }
 
     public EntryPath( List<Element> pathElements )
@@ -41,6 +46,24 @@ public class EntryPath
         elements = new ArrayList<Element>();
         elements.addAll( parentPath.elements );
         elements.add( element );
+    }
+
+    public EntryPath( EntryPath path, int index )
+    {
+        elements = new ArrayList<Element>();
+        for ( int i = 0; i < path.elements.size(); i++ )
+        {
+            final Element el = path.elements.get( i );
+            boolean last = i == path.elements.size() - 1;
+            if ( last )
+            {
+                elements.add( new Element( el.getName(), index ) );
+            }
+            else
+            {
+                elements.add( el );
+            }
+        }
     }
 
     public EntryPath( String path )
@@ -82,7 +105,12 @@ public class EntryPath
         {
             final Element thisElement = elements.get( i );
             final Element otherElement = path.elements.get( i );
-            if ( !otherElement.equals( thisElement ) )
+            boolean last = i == path.elements.size() - 1;
+            if ( last && !otherElement.hasIndex() && !otherElement.getName().equals( thisElement.getName() ) )
+            {
+                return false;
+            }
+            else if ( ( !last || otherElement.hasIndex() ) && !otherElement.equals( thisElement ) )
             {
                 return false;
             }
@@ -99,6 +127,19 @@ public class EntryPath
             componentPathElements.add( element.getName() );
         }
         return new ComponentPath( componentPathElements );
+    }
+
+    public EntryPath getParent()
+    {
+        List<Element> pathElements = Lists.newArrayList();
+        for ( int i = 0; i < elements.size(); i++ )
+        {
+            if ( i < elements.size() - 1 )
+            {
+                pathElements.add( elements.get( i ) );
+            }
+        }
+        return new EntryPath( pathElements );
     }
 
     public EntryPath asNewWithoutFirstPathElement()
@@ -120,12 +161,31 @@ public class EntryPath
         for ( int i = 0; i < elements.size(); i++ )
         {
             pathElements.add( elements.get( i ) );
-            if ( path.equals( new EntryPath( pathElements ) ) )
+            EntryPath possiblyMatchingPath = new EntryPath( pathElements );
+            if ( path.equals( possiblyMatchingPath ) )
             {
                 pathElements.remove( i );
                 pathElements.add( new Element( elements.get( i ).getName() + "[" + index + "]" ) );
             }
 
+        }
+        return new EntryPath( pathElements );
+    }
+
+    public EntryPath asNewWithoutIndexAtLastPathElement()
+    {
+        final List<Element> pathElements = Lists.newArrayList();
+        for ( int i = 0; i < elements.size(); i++ )
+        {
+            final boolean last = i == elements.size() - 1;
+            if ( last )
+            {
+                pathElements.add( new Element( elements.get( i ).getName() ) );
+            }
+            else
+            {
+                pathElements.add( elements.get( i ) );
+            }
         }
         return new EntryPath( pathElements );
     }
@@ -191,17 +251,20 @@ public class EntryPath
         return elements;
     }
 
+    /**
+     * Immutable.
+     */
     public static class Element
     {
         private final static String INDEX_START_MARKER = "[";
 
         private final static String INDEX_STOP_MARKER = "]";
 
-        private String name;
+        private final String name;
 
-        private boolean hasIndex = false;
+        private final boolean hasIndex;
 
-        private int index = 0;
+        private final int index;
 
         public Element( String element )
         {
@@ -232,7 +295,18 @@ public class EntryPath
 
                 this.name = element;
                 this.hasIndex = false;
+                this.index = -1;
             }
+        }
+
+        private Element( String element, int index )
+        {
+            Preconditions.checkNotNull( element, "element cannot be null" );
+            Preconditions.checkArgument( index >= 0, "an index cannot be less than zero" );
+
+            this.name = element;
+            this.index = index;
+            this.hasIndex = true;
         }
 
         public String getName()
@@ -262,9 +336,9 @@ public class EntryPath
                 return false;
             }
 
-            final Element element = (Element) o;
+            final Element other = (Element) o;
 
-            return index == element.index && name.equals( element.name );
+            return index == other.index && name.equals( other.name ) && hasIndex() == other.hasIndex();
         }
 
         @Override

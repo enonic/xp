@@ -1,31 +1,35 @@
 package com.enonic.wem.core.content.type.component;
 
 
-import java.io.IOException;
 import java.util.Iterator;
 
-import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
 
 import com.enonic.wem.api.content.type.component.Component;
 import com.enonic.wem.api.content.type.component.Components;
+import com.enonic.wem.core.content.AbstractSerializerJson;
 import com.enonic.wem.core.content.JsonParsingException;
 
 public final class ComponentsSerializerJson
+    extends AbstractSerializerJson<Components>
 {
     private ComponentSerializerJson componentSerializer = new ComponentSerializerJson( this );
 
-    public void generate( final Iterable<Component> components, JsonGenerator g )
-        throws IOException
+    @Override
+    public JsonNode serialize( final Components components, final ObjectMapper objectMapper )
     {
-        g.writeArrayFieldStart( "items" );
+        final ArrayNode jsonComponents = objectMapper.createArrayNode();
         for ( Component component : components )
         {
-            componentSerializer.generate( component, g );
+            final JsonNode jsonComponent = componentSerializer.serialize( component, objectMapper );
+            jsonComponents.add( jsonComponent );
         }
-        g.writeEndArray();
+        return jsonComponents;
     }
 
+    @Override
     public Components parse( final JsonNode componentsNode )
     {
         final Components components = new Components();

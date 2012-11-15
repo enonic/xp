@@ -35,6 +35,8 @@ public class ComponentSerializerJsonTest
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    private ComponentsSerializerJson componentsSerializerJson = new ComponentsSerializerJson();
+
     @Before
     public void before()
         throws IOException
@@ -65,7 +67,7 @@ public class ComponentSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        Component component = new ComponentSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
+        Component component = new ComponentSerializerJson( componentsSerializerJson ).parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
         assertTrue( component instanceof Input );
@@ -99,7 +101,7 @@ public class ComponentSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        Component component = new ComponentSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
+        Component component = new ComponentSerializerJson( componentsSerializerJson ).parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
         assertTrue( component instanceof Input );
@@ -140,7 +142,7 @@ public class ComponentSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        Component component = new ComponentSerializerJson().parse( objectMapper.readValue( jp, JsonNode.class ) );
+        Component component = new ComponentSerializerJson( componentsSerializerJson ).parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
         assertTrue( component instanceof ComponentSet );
@@ -154,16 +156,14 @@ public class ComponentSerializerJsonTest
     private String fieldSetToJson( ComponentSet componentSet )
         throws IOException
     {
-        new ComponentSerializerJson().generate( componentSet, g );
-        g.close();
-        return sw.toString();
+        final ObjectMapper mapper = new ObjectMapper();
+        return new ComponentSerializerJson( componentsSerializerJson ).serialize( componentSet, mapper ).toString();
     }
 
     private String fieldToJson( Input input )
         throws IOException
     {
-        new ComponentSerializerJson().generate( input, g );
-        g.close();
-        return sw.toString();
+        final ObjectMapper mapper = new ObjectMapper();
+        return new ComponentSerializerJson( componentsSerializerJson ).serialize( input, mapper ).toString();
     }
 }

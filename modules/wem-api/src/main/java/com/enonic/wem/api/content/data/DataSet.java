@@ -10,24 +10,22 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.datatype.DataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
-import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.type.component.InvalidDataException;
-import com.enonic.wem.api.content.type.component.InvalidValueException;
 
 import static com.enonic.wem.api.content.data.Data.newData;
 
-public class DataSet
+public final class DataSet
     implements Iterable<Data>, EntrySelector
 {
     private EntryPath path;
 
-    private DataEntries entries = new DataEntries();
+    private DataEntries entries;
 
     public DataSet( final EntryPath path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
-
         this.path = path;
+        entries = new DataEntries();
     }
 
     void setEntryPathIndex( final EntryPath path, final int index )
@@ -62,35 +60,14 @@ public class DataSet
         else
         {
             final EntryPath newEntryPath = new EntryPath( this.path, path.getFirstElement() );
-            final Data newData = newData().path( newEntryPath ).type( dataType ).value( value ).build();
-            entries.setData( path.getFirstElement(), newData );
-
-            try
-            {
-                dataType.checkValidity( newData );
-            }
-            catch ( InvalidValueTypeException e )
-            {
-                throw new InvalidDataException( newData, e );
-            }
-            catch ( InvalidValueException e )
-            {
-                throw new InvalidDataException( newData, e );
-            }
+            entries.setData( newEntryPath, value, dataType );
         }
     }
 
     private void forwardSetDataToDataSet( final EntryPath path, final Object value, final BaseDataType dataType )
     {
-        Data existingDataWithDataSetValue = this.entries.get( path.getFirstElement() );
-        if ( existingDataWithDataSetValue == null )
-        {
-            final EntryPath newEntryPath = new EntryPath( this.path, path.getFirstElement() );
-            existingDataWithDataSetValue =
-                newData().path( newEntryPath ).type( DataTypes.DATA_SET ).value( new DataSet( newEntryPath ) ).build();
-            entries.setData( path.getFirstElement(), existingDataWithDataSetValue );
-        }
-        existingDataWithDataSetValue.setData( path.asNewWithoutFirstPathElement(), value, dataType );
+        final DataSet dataSet = findOrCreateDataSet( path.getFirstElement() );
+        dataSet.setData( path.asNewWithoutFirstPathElement(), value, dataType );
     }
 
     public Data getData( final String path )
@@ -109,7 +86,7 @@ public class DataSet
         }
         else
         {
-            return doGetData( path );
+            return doGetData( path.getLastElement() );
         }
     }
 
@@ -126,7 +103,7 @@ public class DataSet
             }
             if ( !( data.getDataType().equals( DataTypes.DATA_SET ) ) )
             {
-                throw new IllegalArgumentException( "Data at path [%s] is not of type DataSet: " + data.getDataType() );
+                throw new IllegalArgumentException( "Data at path [" + data.getPath() + "] is not of type DataSet: " + data.getDataType() );
             }
             return (DataSet) data.getValue();
         }
@@ -141,32 +118,102 @@ public class DataSet
         }
     }
 
-    private Data forwardGetDataToDataSet( final EntryPath path )
+    private DataSet findOrCreateDataSet( final EntryPath.Element firstElement )
     {
-        final Data foundData = entries.get( path.getFirstElement() );
-        if ( foundData == null )
+        final DataSet dataSet;
+        Data exData = this.entries.get( firstElement );
+        if ( exData == null )
         {
-            return null;
+            // create new set
+            final EntryPath pathToDataSet = new EntryPath( this.path, firstElement );
+            dataSet = new DataSet( pathToDataSet );
+            entries.setData( pathToDataSet, dataSet, DataTypes.DATA_SET );
         }
-
-        if ( !( foundData.getValue() instanceof DataSet ) )
+        else
         {
-            throw new IllegalArgumentException(
-                "Data at path [" + this.getPath() + "] expected to have a value of type DataSet: " + foundData.getDataType().getName() );
+            if ( exData.getDataType() == DataTypes.DATA_ARRAY )
+            {
+                final DataArray dataArray = exData.getDataArray();
+                final Data data = dataArray.getData( firstElement.getIndex() );
+                if ( data == null )
+                {
+                    final EntryPath newPath = new EntryPath( exData.getPath(), firstElement.getIndex() );
+                    dataSet = new DataSet( newPath );
+                    dataArray.set( firstElement.getIndex(), dataSet, DataTypes.DATA_SET );
+                }
+                else
+                {
+                    dataSet = data.getDataSet();
+                }
+            }
+            else
+            {
+                dataSet = exData.getDataSet();
+            }
         }
-
-        final DataSet dataSet = (DataSet) foundData.getValue();
-        return dataSet.getData( path.asNewWithoutFirstPathElement() );
+        return dataSet;
     }
 
-    private Data doGetData( final EntryPath path )
+    private Data forwardGetDataToDataSet( final EntryPath path )
     {
-        Preconditions.checkArgument( path.elementCount() == 1, "path expected to contain only one element: " + path );
-
-        final Data data = entries.get( path.getLastElement() );
+        Data data = entries.get( path.getFirstElement() );
         if ( data == null )
         {
             return null;
+        }
+
+        if ( data.getDataType().equals( DataTypes.DATA_ARRAY ) )
+        {
+            if ( path.getFirstElement().hasIndex() )
+            {
+                data = data.getDataArray().getData( path.getFirstElement().getIndex() );
+            }
+            else
+            {
+                data = data.getDataArray().getData( 0 );
+            }
+        }
+
+        if ( !data.hasDataSetAsValue() )
+        {
+            throw new IllegalArgumentException(
+                "Data at path [" + this.getPath() + "] expected to have a value of type DataSet: " + data.getDataType().getName() );
+        }
+
+        return data.getDataSet().getData( path.asNewWithoutFirstPathElement() );
+    }
+
+    private Data doGetData( final EntryPath.Element element )
+    {
+        final Data data = entries.get( element );
+        if ( data == null )
+        {
+            return null;
+        }
+
+        // TODO: Try move this logic into entries.get....
+        if ( element.hasIndex() )
+        {
+            final DataType dataType = data.getDataType();
+            if ( dataType == DataTypes.DATA_ARRAY )
+            {
+                DataArray array = data.getDataArray();
+                return array.getData( element.getIndex() );
+            }
+            else if ( dataType == DataTypes.DATA_ARRAY )
+            {
+                // allow returning of single data, if first element of an array was requested
+                if ( element.getIndex() == 0 )
+                {
+                    return data;
+                }
+                else
+                {
+                    throw new IllegalArgumentException(
+                        "Data at path [" + new EntryPath( path, element.getName() ) + "] is not an array: " +
+                            new EntryPath( path, element ) );
+                }
+            }
         }
 
         return data;
@@ -187,7 +234,7 @@ public class DataSet
     {
         final StringBuilder s = new StringBuilder();
         s.append( path.toString() );
-        s.append( ": " );
+        s.append( " { " );
         int index = 0;
         final int size = entries.size();
         for ( Data data : entries )
@@ -199,6 +246,7 @@ public class DataSet
             }
             index++;
         }
+        s.append( " }" );
         return s.toString();
     }
 

@@ -2,10 +2,8 @@ package com.enonic.wem.core.content;
 
 
 import java.io.IOException;
-import java.io.StringWriter;
 
 import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -21,26 +19,22 @@ public abstract class AbstractSerializerJson<T>
 
     public String toString( T obj )
     {
-        try
+        final ObjectMapper mapper = new ObjectMapper();
+        final JsonNode jsonNode = serialize( obj, mapper );
+        if ( prettyPrint )
         {
-            StringWriter sw = new StringWriter();
-            JsonGenerator g = JsonFactoryHolder.DEFAULT_FACTORY.createJsonGenerator( sw );
-            if ( prettyPrint )
+            try
             {
-                g.useDefaultPrettyPrinter();
+                return mapper.defaultPrettyPrintingWriter().writeValueAsString( jsonNode );
             }
-
-            g.writeStartObject();
-            generate( obj, g );
-            g.writeEndObject();
-
-            g.close();
-            sw.close();
-            return sw.toString();
+            catch ( IOException e )
+            {
+                throw new RuntimeException( e );
+            }
         }
-        catch ( Exception e )
+        else
         {
-            throw new RuntimeException( "Failed to generate json", e );
+            return jsonNode.toString();
         }
     }
 
@@ -70,11 +64,8 @@ public abstract class AbstractSerializerJson<T>
         }
     }
 
-    public abstract void generate( final T obj, final JsonGenerator g )
-        throws IOException;
+    protected abstract JsonNode serialize( final T obj, final ObjectMapper objectMapper );
 
-    public abstract T parse( final JsonNode node )
-        throws IOException;
-
+    protected abstract T parse( final JsonNode node );
 
 }

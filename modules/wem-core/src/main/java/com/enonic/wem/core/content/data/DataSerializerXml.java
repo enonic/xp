@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.DataArray;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.datatype.BaseDataType;
@@ -18,22 +19,29 @@ public class DataSerializerXml
 {
     public Element generate( final Data data )
     {
+        // TODO: instead of resolveComponentPath, make new method which returns element without index
         final String name = data.getPath().resolveComponentPath().getLastElement();
-        Element el = new Element( "data" );
-        el.setAttribute( "name", name );
+        Element dataEl = new Element( name );
         if ( data.getDataType() != null )
         {
-            el.setAttribute( "type", data.getDataType().getName() );
+            dataEl.setAttribute( "type", data.getDataType().getName() );
         }
         if ( data.getValue() != null )
         {
-            Element valueEl = new Element( "value" );
             if ( data.getDataType().equals( DataTypes.DATA_SET ) )
             {
-                final DataSet dataSet = (DataSet) data.getValue();
-                for ( final Data subData : dataSet )
+                final DataSet set = (DataSet) data.getValue();
+                for ( final Data subData : set )
                 {
-                    valueEl.addContent( generate( subData ) );
+                    dataEl.addContent( generate( subData ) );
+                }
+            }
+            else if ( data.getDataType().equals( DataTypes.DATA_ARRAY ) )
+            {
+                final DataArray array = (DataArray) data.getValue();
+                for ( final Data element : array )
+                {
+                    dataEl.addContent( generate( element ) );
                 }
             }
             else
@@ -44,23 +52,22 @@ public class DataSerializerXml
                                                  "Data at path [%s] of type BLOB needs to have a BlobKey as value before it is serialized: " +
                                                      data.getValue().getClass(), data.getPath() );
                 }
-                valueEl.addContent( String.valueOf( data.getValue() ) );
+                dataEl.addContent( String.valueOf( data.getValue() ) );
             }
-            el.addContent( valueEl );
         }
         else
         {
             // no element if no value...?
         }
 
-        return el;
+        return dataEl;
     }
 
     public Data parse( final EntryPath parentPath, final Element dataEl )
     {
         final Data.Builder builder = Data.newData();
 
-        final EntryPath entryPath = new EntryPath( parentPath, dataEl.getAttributeValue( "name" ) );
+        final EntryPath entryPath = new EntryPath( parentPath, dataEl.getName() );
         builder.path( entryPath );
         final BaseDataType type = (BaseDataType) DataTypes.parseByName( dataEl.getAttributeValue( "type" ) );
         Preconditions.checkNotNull( type, "type was null" );
@@ -69,17 +76,27 @@ public class DataSerializerXml
         {
             final DataSet dataSet = new DataSet( entryPath );
             builder.value( dataSet );
-            final Element valueEl = dataEl.getChild( "value" );
-            final Iterator<Element> dataIt = valueEl.getChildren().iterator();
+            final Iterator<Element> dataIt = dataEl.getChildren().iterator();
             while ( dataIt.hasNext() )
             {
                 final Element el = dataIt.next();
                 dataSet.add( parse( entryPath, el ) );
             }
         }
+        else if ( type.equals( DataTypes.DATA_ARRAY ) )
+        {
+            final DataArray array = new DataArray( entryPath );
+            builder.value( array );
+            final Iterator<Element> dataIt = dataEl.getChildren().iterator();
+            while ( dataIt.hasNext() )
+            {
+                final Element el = dataIt.next();
+                array.add( parse( parentPath, el ) );
+            }
+        }
         else
         {
-            final String valueAsString = dataEl.getChildText( "value" );
+            final String valueAsString = dataEl.getText();
             builder.value( valueAsString );
         }
 

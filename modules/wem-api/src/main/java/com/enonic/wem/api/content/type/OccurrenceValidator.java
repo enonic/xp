@@ -11,6 +11,8 @@ import com.enonic.wem.api.content.type.component.Component;
 import com.enonic.wem.api.content.type.component.ComponentSet;
 import com.enonic.wem.api.content.type.component.FieldSet;
 import com.enonic.wem.api.content.type.component.Input;
+import com.enonic.wem.api.content.type.component.MaximumOccurrencesException;
+import com.enonic.wem.api.content.type.component.MinimumOccurrencesException;
 
 public final class OccurrenceValidator
 {
@@ -24,6 +26,38 @@ public final class OccurrenceValidator
     public void verify( final ContentData contentData )
     {
         processComponents( contentType.componentIterable(), contentData );
+        processData( contentData );
+    }
+
+    private void processData( final Iterable<Data> datas )
+    {
+        for ( final Data data : datas )
+        {
+            final Component component = contentType.getComponent( data.getPath().resolveComponentPath() );
+
+            if ( component instanceof Input )
+            {
+                final Input input = (Input) component;
+                if ( input.getOccurrences().getMaximum() > 0 && data.hasArrayAsValue() )
+                {
+                    if ( data.getDataArray().size() > input.getOccurrences().getMaximum() )
+                    {
+                        throw new MaximumOccurrencesException( input, data.getDataArray().size() );
+                    }
+                }
+            }
+            else if ( component instanceof ComponentSet )
+            {
+                final ComponentSet set = (ComponentSet) component;
+                if ( set.getOccurrences().getMaximum() > 0 && data.hasArrayAsValue() )
+                {
+                    if ( data.getDataArray().size() > set.getOccurrences().getMaximum() )
+                    {
+                        throw new MaximumOccurrencesException( set, data.getDataArray().size() );
+                    }
+                }
+            }
+        }
     }
 
     private void processComponents( final Iterable<Component> components, final EntrySelector entrySelector )
@@ -77,7 +111,7 @@ public final class OccurrenceValidator
     {
         if ( data == null )
         {
-            throw new BreaksRequiredContractException( input );
+            throw new MinimumOccurrencesException( input, 0 );
         }
         else
         {
