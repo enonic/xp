@@ -141,10 +141,14 @@ Ext.define('Admin.view.FilterPanel', {
                             (me.includeEmptyFacets === 'last' && me.lastFacetName === facet.name) ||
                             termCount > 0) {
                             if (!Ext.Array.contains(me.excludeFacets, facet.name)) {
+                                var titleAttr = 'title="' + field + '"';
                                 facetItems.push({
                                     name: facet.name,
-                                    boxLabel: field + "<span class='count'>(" + facet.terms[field] + ")</span>",
-                                    inputValue: field
+                                    boxLabel: Ext.String.ellipsis(field, 17, false) +
+                                              "<span class='count'>(" + facet.terms[field] + ")</span>",
+                                    inputValue: field,
+                                    inputAttrTpl: titleAttr,
+                                    boxLabelAttrTpl: titleAttr
                                 });
                             }
                         }

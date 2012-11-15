@@ -1,4 +1,4 @@
-// This file was auto-generated on 2012-11-14 09:40:58 VET
+// This file was auto-generated on 2012-11-15 10:01:04 VET
 
 if (!Templates) {
     var Templates = {};
@@ -11,10 +11,10 @@ Templates.account = {
                      '<div class="admin-left" style="margin-top:5px">Are you sure you want to delete the selected {selectionLength} items?</div>' +
                      '</div>',
 
-    gridPanelNameRenderer: '<div style="float:left;padding-top: 3px"><img src="{0}" alt="" class="admin-grid-thumbnail"></div>' +
-                           '<div style="float:left; padding: 3px 0 0 5px">' +
-                           '<div class="admin-grid-title">{1}</div>' +
-                           '<div class="admin-grid-description">{3}\\{2}</div>' +
+    gridPanelNameRenderer: '<img src="{0}" alt="{1}" class="admin-grid-thumbnail"/>' +
+                           '<div class="admin-grid-description">' +
+                           '<h6>{1}</h6>' +
+                           '<div>{3}\\{2}</div>' +
                            '</div>',
 
     groupPreviewCommonInfo: '<tpl if="type===\'role\'">' +
@@ -296,22 +296,17 @@ Templates.account = {
                         '</tpl>' +
                         '</div>',
 
-    userstoreRadioButton: '<tpl for=".">' +
-                          '<div class="admin-userstore clearfix">' +
-                          '<div class="admin-left" style="margin: 24px 5px 0 0">' +
-                          '<input type="radio" name="userstore" value="{key}">' +
-                          '</div>' +
-                          '<div class="admin-userstore-block admin-left">' +
-                          '<div class="admin-left" style="padding-right: 15px;">' +
-                          '<img width="48" height="48" src="resources/images/icons/48x48/userstore.png"/>' +
-                          '</div>' +
-                          '<div class="admin-left">' +
-                          '<h2>{name}</h2>' +
-                          '<p>(usersstores\\\\{name})</p>' +
-                          '</div>' +
-                          '</div>' +
-                          '</div>' +
-                          '</tpl>',
+    userstoreListItem: '<tpl for=".">' +
+                       '<div class="admin-data-view">' +
+                       '<div class="admin-data-view-cell">' +
+                       '<img src="{[values.icon || \'resources/images/icons/32x32/server_id_card.png\']}"/>' +
+                       '</div>' +
+                       '<div class="admin-data-view-cell">' +
+                       '<h6>{name}</h6>' +
+                       '<div>userstores\\\\{name}</div>' +
+                       '</div>' +
+                       '</div>' +
+                       '</tpl>',
 
     userWizardHeader: '<div class="admin-wizard-userstore">' +
                       '<label>{[ values.isNewUser ? "New User" : "User" ]}: </label>' +

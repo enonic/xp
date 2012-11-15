@@ -443,11 +443,6 @@ Ext.define('Admin.controller.account.Controller', {
             }
         }
 
-        selectedUserStoreElement.addCls('admin-userstore-active');
-
-        var radioButton = selectedUserStoreElement.down('input');
-        radioButton.dom.checked = true;
-
         var userStoreName = record.get('name');
         var itemType = view.caller;
         var tab;
@@ -482,7 +477,7 @@ Ext.define('Admin.controller.account.Controller', {
         }
         var tabItem = this.getCmsTabPanel().addTab(tab);
         tabItem.down('wizardPanel').addData({'userStore': userStoreName});
-        var window = view.up('window');
+        var window = view.up('selectUserStoreWindow');
         window.close();
     },
 
