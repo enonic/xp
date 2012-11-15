@@ -7,7 +7,7 @@ import javax.jcr.RepositoryException;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.component.Components;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.core.content.type.component.ComponentsSerializerJson;
+import com.enonic.wem.core.content.type.component.ComponentsJsonSerializer;
 
 import static com.enonic.wem.api.content.type.ContentType.Builder;
 import static com.enonic.wem.api.content.type.ContentType.newComponentType;
@@ -27,7 +27,7 @@ class ContentTypeJcrMapper
     private static final String COMPONENTS = "components";
 
 
-    private ComponentsSerializerJson componentsSerializer = new ComponentsSerializerJson();
+    private ComponentsJsonSerializer componentsSerializer = new ComponentsJsonSerializer();
 
 
     void toJcr( final ContentType contentType, final Node contentTypeNode )

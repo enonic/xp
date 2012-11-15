@@ -10,9 +10,9 @@ import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
 
-public class ContentDataSerializerXml
+public class ContentDataXmlSerializer
 {
-    private DataSerializerXml dataSerializer = new DataSerializerXml();
+    private DataXmlSerializer dataSerializer = new DataXmlSerializer();
 
     public Element generate( ContentData contentData )
     {

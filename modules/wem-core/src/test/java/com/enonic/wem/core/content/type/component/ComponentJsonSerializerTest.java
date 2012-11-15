@@ -25,7 +25,7 @@ import static com.enonic.wem.api.content.type.component.Input.newInput;
 import static com.enonic.wem.api.content.type.component.inputtype.SingleSelectorConfig.newSingleSelectorConfig;
 import static org.junit.Assert.*;
 
-public class ComponentSerializerJsonTest
+public class ComponentJsonSerializerTest
 {
     private final JsonFactory jsonFactory = JsonFactoryHolder.DEFAULT_FACTORY;
 
@@ -35,7 +35,7 @@ public class ComponentSerializerJsonTest
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    private ComponentsSerializerJson componentsSerializerJson = new ComponentsSerializerJson();
+    private ComponentsJsonSerializer componentsJsonSerializer = new ComponentsJsonSerializer();
 
     @Before
     public void before()
@@ -67,7 +67,7 @@ public class ComponentSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        Component component = new ComponentSerializerJson( componentsSerializerJson ).parse( objectMapper.readValue( jp, JsonNode.class ) );
+        Component component = new ComponentJsonSerializer( componentsJsonSerializer ).parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
         assertTrue( component instanceof Input );
@@ -101,7 +101,7 @@ public class ComponentSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        Component component = new ComponentSerializerJson( componentsSerializerJson ).parse( objectMapper.readValue( jp, JsonNode.class ) );
+        Component component = new ComponentJsonSerializer( componentsJsonSerializer ).parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
         assertTrue( component instanceof Input );
@@ -142,7 +142,7 @@ public class ComponentSerializerJsonTest
         JsonParser jp = jsonFactory.createJsonParser( json );
 
         // exercise
-        Component component = new ComponentSerializerJson( componentsSerializerJson ).parse( objectMapper.readValue( jp, JsonNode.class ) );
+        Component component = new ComponentJsonSerializer( componentsJsonSerializer ).parse( objectMapper.readValue( jp, JsonNode.class ) );
 
         // verify
         assertTrue( component instanceof ComponentSet );
@@ -157,13 +157,13 @@ public class ComponentSerializerJsonTest
         throws IOException
     {
         final ObjectMapper mapper = new ObjectMapper();
-        return new ComponentSerializerJson( componentsSerializerJson ).serialize( componentSet, mapper ).toString();
+        return new ComponentJsonSerializer( componentsJsonSerializer ).serialize( componentSet, mapper ).toString();
     }
 
     private String fieldToJson( Input input )
         throws IOException
     {
         final ObjectMapper mapper = new ObjectMapper();
-        return new ComponentSerializerJson( componentsSerializerJson ).serialize( input, mapper ).toString();
+        return new ComponentJsonSerializer( componentsJsonSerializer ).serialize( input, mapper ).toString();
     }
 }

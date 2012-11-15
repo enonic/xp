@@ -1,13 +1,13 @@
 package com.enonic.wem.core.content;
 
 
-public class ContentSerializerJsonTest
+public class ContentJsonSerializerTest
     extends AbstractContentSerializerTest
 {
     @Override
     ContentSerializer getSerializer()
     {
-        ContentSerializerJson serializerJson = new ContentSerializerJson();
+        ContentJsonSerializer serializerJson = new ContentJsonSerializer();
         serializerJson.prettyPrint();
         return serializerJson;
     }

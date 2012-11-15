@@ -10,13 +10,13 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypes;
-import com.enonic.wem.core.content.type.ContentTypeSerializerJson;
+import com.enonic.wem.core.content.type.ContentTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
 
 final class ListContentTypesRpcJsonResult
     extends JsonResult
 {
-    private final ContentTypeSerializerJson contentTypeSerializer = new ContentTypeSerializerJson();
+    private final ContentTypeJsonSerializer contentTypeSerializer = new ContentTypeJsonSerializer();
 
     private final ContentTypes contentTypes;
 

@@ -15,7 +15,7 @@ import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
 
 
-public class DataSerializerXml
+public class DataXmlSerializer
 {
     public Element generate( final Data data )
     {

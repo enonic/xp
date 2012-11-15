@@ -8,7 +8,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 
-public abstract class AbstractSerializerJson<T>
+public abstract class AbstractJsonSerializer<T>
 {
     private boolean prettyPrint = false;
 

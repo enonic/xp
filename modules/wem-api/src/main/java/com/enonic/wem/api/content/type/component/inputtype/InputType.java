@@ -17,9 +17,9 @@ public interface InputType
 
     Class requiredConfigClass();
 
-    AbstractInputTypeConfigSerializerJson getInputTypeConfigJsonGenerator();
+    AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonGenerator();
 
-    AbstractInputTypeConfigSerializerXml getInputTypeConfigXmlGenerator();
+    AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlGenerator();
 
     void checkBreaksRequiredContract( Data data )
         throws BreaksRequiredContractException;

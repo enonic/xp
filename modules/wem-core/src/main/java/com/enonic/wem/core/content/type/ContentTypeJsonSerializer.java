@@ -9,16 +9,16 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.component.Component;
 import com.enonic.wem.api.content.type.component.Components;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.core.content.AbstractSerializerJson;
+import com.enonic.wem.core.content.AbstractJsonSerializer;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.type.component.ComponentsSerializerJson;
+import com.enonic.wem.core.content.type.component.ComponentsJsonSerializer;
 
-public class ContentTypeSerializerJson
-    extends AbstractSerializerJson<ContentType>
+public class ContentTypeJsonSerializer
+    extends AbstractJsonSerializer<ContentType>
     implements ContentTypeSerializer
 {
-    private ComponentsSerializerJson componentsSerializer = new ComponentsSerializerJson();
+    private ComponentsJsonSerializer componentsSerializer = new ComponentsJsonSerializer();
 
     @Override
     protected JsonNode serialize( final ContentType contentType, final ObjectMapper objectMapper )

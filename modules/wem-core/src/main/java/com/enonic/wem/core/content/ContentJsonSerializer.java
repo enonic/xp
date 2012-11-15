@@ -16,18 +16,18 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
-import com.enonic.wem.core.content.data.ContentDataSerializerJson;
+import com.enonic.wem.core.content.data.ContentDataJsonSerializer;
 
 import static com.enonic.wem.core.content.JsonParserUtil.getStringValue;
 
-public class ContentSerializerJson
-    extends AbstractSerializerJson<Content>
+public class ContentJsonSerializer
+    extends AbstractJsonSerializer<Content>
     implements ContentSerializer
 {
-    private ContentDataSerializerJson contentDataSerializer = new ContentDataSerializerJson();
+    private ContentDataJsonSerializer contentDataSerializer = new ContentDataJsonSerializer();
 
 
-    public ContentSerializerJson()
+    public ContentJsonSerializer()
     {
     }
 

@@ -9,10 +9,10 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 
-public class SingleSelectorConfigSerializerJson
-    extends AbstractInputTypeConfigSerializerJson
+public class SingleSelectorConfigJsonSerializer
+    extends AbstractInputTypeConfigJsonSerializer
 {
-    public static final SingleSelectorConfigSerializerJson DEFAULT = new SingleSelectorConfigSerializerJson();
+    public static final SingleSelectorConfigJsonSerializer DEFAULT = new SingleSelectorConfigJsonSerializer();
 
     @Override
     public JsonNode serializeConfig( final InputTypeConfig config, final ObjectMapper objectMapper )

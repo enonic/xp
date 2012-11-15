@@ -5,29 +5,29 @@ import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 
-import com.enonic.wem.api.content.type.component.inputtype.AbstractInputTypeConfigSerializerJson;
+import com.enonic.wem.api.content.type.component.inputtype.AbstractInputTypeConfigJsonSerializer;
 import com.enonic.wem.api.content.type.component.inputtype.InputTypeConfig;
 
-public class InputTypeConfigSerializerJson
+public class InputTypeConfigJsonSerializer
 {
     public InputTypeConfig parse( final JsonNode inputTypeConfigNode )
     {
         final Iterator<Map.Entry<String, JsonNode>> it = inputTypeConfigNode.getFields();
         final Map.Entry<String, JsonNode> inputTypeConfigNodeEntry = it.next();
         final String className = inputTypeConfigNodeEntry.getKey();
-        final String serializerClassName = className + "SerializerJson";
+        final String serializerClassName = className + "JsonSerializer";
 
-        AbstractInputTypeConfigSerializerJson parser = instantiateInputTypeConfigJsonParser( serializerClassName );
+        AbstractInputTypeConfigJsonSerializer parser = instantiateInputTypeConfigJsonParser( serializerClassName );
         return parser.parseConfig( inputTypeConfigNodeEntry.getValue() );
     }
 
-    private AbstractInputTypeConfigSerializerJson instantiateInputTypeConfigJsonParser( String className )
+    private AbstractInputTypeConfigJsonSerializer instantiateInputTypeConfigJsonParser( String className )
     {
         try
         {
             Class cls = Class.forName( className );
 
-            return (AbstractInputTypeConfigSerializerJson) cls.newInstance();
+            return (AbstractInputTypeConfigJsonSerializer) cls.newInstance();
         }
         catch ( ClassNotFoundException e )
         {

@@ -7,10 +7,10 @@ import org.jdom.Element;
 
 import static com.enonic.wem.api.content.type.component.inputtype.SingleSelectorConfig.newSingleSelectorConfig;
 
-public class SingleSelectorConfigSerializerXml
-    extends AbstractInputTypeConfigSerializerXml
+public class SingleSelectorConfigXmlSerializer
+    extends AbstractInputTypeConfigXmlSerializer
 {
-    public static final SingleSelectorConfigSerializerXml DEFAULT = new SingleSelectorConfigSerializerXml();
+    public static final SingleSelectorConfigXmlSerializer DEFAULT = new SingleSelectorConfigXmlSerializer();
 
     public void generateConfig( final InputTypeConfig config, final Element inputTypeConfigEl )
     {

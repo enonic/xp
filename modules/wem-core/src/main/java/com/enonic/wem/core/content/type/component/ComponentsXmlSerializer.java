@@ -11,9 +11,9 @@ import com.enonic.wem.core.content.JsonParsingException;
 
 import com.enonic.cms.framework.util.JDOMUtil;
 
-public final class ComponentsSerializerXml
+public final class ComponentsXmlSerializer
 {
-    private ComponentSerializerXml componentSerializer = new ComponentSerializerXml( this );
+    private ComponentXmlSerializer componentSerializer = new ComponentXmlSerializer( this );
 
     public Element serialize( final Iterable<Component> components )
     {

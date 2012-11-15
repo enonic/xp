@@ -19,7 +19,7 @@ import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.core.content.JsonParserUtil;
 
 
-public class DataSerializerJson
+public class DataJsonSerializer
 {
 
     private static final String DATA_VALUE = "value";

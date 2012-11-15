@@ -8,7 +8,7 @@ import org.codehaus.jackson.node.NullNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.core.content.type.ContentTypeSerializerJson;
+import com.enonic.wem.core.content.type.ContentTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
 
 final class GetContentTypeRpcJsonResult
@@ -26,9 +26,9 @@ final class GetContentTypeRpcJsonResult
     {
         // TODO for the moment we use the same serialization format as is used for persistence (in JCR)
 
-        final ContentTypeSerializerJson contentTypeSerializer = new ContentTypeSerializerJson();
+        final ContentTypeJsonSerializer contentTypeSerializer = new ContentTypeJsonSerializer();
         final String contentTypeSerialized = contentTypeSerializer.toString( contentType );
-        json.put( "contentType", parseJson( contentTypeSerialized ));
+        json.put( "contentType", parseJson( contentTypeSerialized ) );
     }
 
     private JsonNode parseJson( final String serializedJson )

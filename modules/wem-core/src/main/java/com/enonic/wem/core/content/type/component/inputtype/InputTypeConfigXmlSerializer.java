@@ -3,10 +3,10 @@ package com.enonic.wem.core.content.type.component.inputtype;
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 
-import com.enonic.wem.api.content.type.component.inputtype.AbstractInputTypeConfigSerializerXml;
+import com.enonic.wem.api.content.type.component.inputtype.AbstractInputTypeConfigXmlSerializer;
 import com.enonic.wem.api.content.type.component.inputtype.InputTypeConfig;
 
-public class InputTypeConfigSerializerXml
+public class InputTypeConfigXmlSerializer
 {
     public InputTypeConfig parse( final Element inputEl )
     {
@@ -21,19 +21,19 @@ public class InputTypeConfigSerializerXml
             return null;
         }
 
-        final String serializerClassName = className + "SerializerXml";
+        final String serializerClassName = className + "XmlSerializer";
 
-        AbstractInputTypeConfigSerializerXml parser = instantiateInputTypeConfigXmlParser( serializerClassName );
+        AbstractInputTypeConfigXmlSerializer parser = instantiateInputTypeConfigXmlParser( serializerClassName );
         return parser.parseConfig( inputTypeConfigEl );
     }
 
-    private AbstractInputTypeConfigSerializerXml instantiateInputTypeConfigXmlParser( String className )
+    private AbstractInputTypeConfigXmlSerializer instantiateInputTypeConfigXmlParser( String className )
     {
         try
         {
             Class cls = Class.forName( className );
 
-            return (AbstractInputTypeConfigSerializerXml) cls.newInstance();
+            return (AbstractInputTypeConfigXmlSerializer) cls.newInstance();
         }
         catch ( ClassNotFoundException e )
         {

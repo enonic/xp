@@ -9,22 +9,22 @@ import org.jdom.JDOMException;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
-import com.enonic.wem.core.content.data.ContentDataSerializerXml;
+import com.enonic.wem.core.content.data.ContentDataXmlSerializer;
 
 import com.enonic.cms.framework.util.JDOMUtil;
 
-public class ContentSerializerXml
+public class ContentXmlSerializer
     implements ContentSerializer
 {
-    private ContentDataSerializerXml contentDataSerializer = new ContentDataSerializerXml();
+    private ContentDataXmlSerializer contentDataSerializer = new ContentDataXmlSerializer();
 
     private boolean prettyPrint = false;
 
-    public ContentSerializerXml()
+    public ContentXmlSerializer()
     {
     }
 
-    public ContentSerializerXml prettyPrint( boolean value )
+    public ContentXmlSerializer prettyPrint( boolean value )
     {
         this.prettyPrint = value;
         return this;

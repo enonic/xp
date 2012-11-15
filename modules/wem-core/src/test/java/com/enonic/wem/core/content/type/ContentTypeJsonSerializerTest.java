@@ -1,11 +1,11 @@
 package com.enonic.wem.core.content.type;
 
-public class ContentTypeSerializerXmlTest
+public class ContentTypeJsonSerializerTest
     extends AbstractContentTypeSerializerTest
 {
     @Override
     ContentTypeSerializer getSerializer()
     {
-        return new ContentTypeSerializerXml().prettyPrint( true );
+        return new ContentTypeJsonSerializer();
     }
 }

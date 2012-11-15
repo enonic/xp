@@ -16,18 +16,18 @@ import com.enonic.wem.api.content.type.component.Layout;
 import com.enonic.wem.api.content.type.component.SubTypeQualifiedName;
 import com.enonic.wem.api.content.type.component.SubTypeReference;
 import com.enonic.wem.api.content.type.component.inputtype.BaseInputType;
-import com.enonic.wem.core.content.AbstractSerializerJson;
+import com.enonic.wem.core.content.AbstractJsonSerializer;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.type.component.inputtype.InputTypeConfigSerializerJson;
-import com.enonic.wem.core.content.type.component.inputtype.InputTypeSerializerJson;
+import com.enonic.wem.core.content.type.component.inputtype.InputTypeConfigJsonSerializer;
+import com.enonic.wem.core.content.type.component.inputtype.InputTypeJsonSerializer;
 
 import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.component.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.component.Input.newInput;
 
-class ComponentSerializerJson
-    extends AbstractSerializerJson<Component>
+class ComponentJsonSerializer
+    extends AbstractJsonSerializer<Component>
 {
     private static final String TYPE = "type";
 
@@ -59,17 +59,17 @@ class ComponentSerializerJson
 
     public static final String SUB_TYPE_CLASS = "subTypeClass";
 
-    private final InputTypeSerializerJson inputTypeSerializer = new InputTypeSerializerJson();
+    private final InputTypeJsonSerializer inputTypeSerializer = new InputTypeJsonSerializer();
 
-    private final InputTypeConfigSerializerJson inputTypeConfigSerializer = new InputTypeConfigSerializerJson();
+    private final InputTypeConfigJsonSerializer inputTypeConfigSerializer = new InputTypeConfigJsonSerializer();
 
-    private final OccurrencesSerializerJson occurrencesSerializerJson = new OccurrencesSerializerJson();
+    private final OccurrencesJsonSerializer occurrencesJsonSerializer = new OccurrencesJsonSerializer();
 
-    private final ComponentsSerializerJson componentsSerializerJson;
+    private final ComponentsJsonSerializer componentsJsonSerializer;
 
-    public ComponentSerializerJson( final ComponentsSerializerJson componentsSerializerJson )
+    public ComponentJsonSerializer( final ComponentsJsonSerializer componentsJsonSerializer )
     {
-        this.componentsSerializerJson = componentsSerializerJson;
+        this.componentsJsonSerializer = componentsJsonSerializer;
     }
 
     @Override
@@ -101,7 +101,7 @@ class ComponentSerializerJson
         jsonObject.put( NAME, input.getName() );
         jsonObject.put( LABEL, input.getLabel() );
         jsonObject.put( IMMUTABLE, input.isImmutable() );
-        jsonObject.put( OCCURRENCES, occurrencesSerializerJson.serialize( input.getOccurrences(), objectMapper ) );
+        jsonObject.put( OCCURRENCES, occurrencesJsonSerializer.serialize( input.getOccurrences(), objectMapper ) );
         jsonObject.put( INDEXED, input.isIndexed() );
         jsonObject.put( CUSTOM_TEXT, input.getCustomText() );
         jsonObject.put( VALIDATION_REGEXP, input.getValidationRegexp() != null ? input.getValidationRegexp().toString() : null );
@@ -123,10 +123,10 @@ class ComponentSerializerJson
         jsonObject.put( NAME, componentSet.getName() );
         jsonObject.put( LABEL, componentSet.getLabel() );
         jsonObject.put( IMMUTABLE, componentSet.isImmutable() );
-        jsonObject.put( OCCURRENCES, occurrencesSerializerJson.serialize( componentSet.getOccurrences(), objectMapper ) );
+        jsonObject.put( OCCURRENCES, occurrencesJsonSerializer.serialize( componentSet.getOccurrences(), objectMapper ) );
         jsonObject.put( CUSTOM_TEXT, componentSet.getCustomText() );
         jsonObject.put( HELP_TEXT, componentSet.getHelpText() );
-        jsonObject.put( ITEMS, componentsSerializerJson.serialize( componentSet.getComponents(), objectMapper ) );
+        jsonObject.put( ITEMS, componentsJsonSerializer.serialize( componentSet.getComponents(), objectMapper ) );
         return jsonObject;
     }
 
@@ -147,7 +147,7 @@ class ComponentSerializerJson
     {
         jsonObject.put( LABEL, fieldSet.getLabel() );
         jsonObject.put( NAME, fieldSet.getName() );
-        jsonObject.put( ITEMS, componentsSerializerJson.serialize( fieldSet.getComponents(), objectMapper ) );
+        jsonObject.put( ITEMS, componentsJsonSerializer.serialize( fieldSet.getComponents(), objectMapper ) );
     }
 
     private JsonNode serializeReference( final SubTypeReference subTypeReference, final ObjectMapper objectMapper )
@@ -218,7 +218,7 @@ class ComponentSerializerJson
 
         parseOccurrences( builder, componentNode.get( OCCURRENCES ) );
 
-        final Components components = componentsSerializerJson.parse( componentNode.get( ITEMS ) );
+        final Components components = componentsJsonSerializer.parse( componentNode.get( ITEMS ) );
         for ( Component component : components.iterable() )
         {
             builder.add( component );
@@ -246,7 +246,7 @@ class ComponentSerializerJson
         builder.label( JsonParserUtil.getStringValue( LABEL, componentNode, null ) );
         builder.name( JsonParserUtil.getStringValue( NAME, componentNode, null ) );
 
-        final Components components = componentsSerializerJson.parse( componentNode.get( ITEMS ) );
+        final Components components = componentsJsonSerializer.parse( componentNode.get( ITEMS ) );
         for ( Component component : components.iterable() )
         {
             builder.add( component );
@@ -277,7 +277,7 @@ class ComponentSerializerJson
     {
         if ( occurrencesNode != null )
         {
-            builder.occurrences( occurrencesSerializerJson.parse( occurrencesNode ) );
+            builder.occurrences( occurrencesJsonSerializer.parse( occurrencesNode ) );
         }
         else
         {
@@ -289,7 +289,7 @@ class ComponentSerializerJson
     {
         if ( occurrencesNode != null )
         {
-            builder.occurrences( occurrencesSerializerJson.parse( occurrencesNode ) );
+            builder.occurrences( occurrencesJsonSerializer.parse( occurrencesNode ) );
         }
         else
         {

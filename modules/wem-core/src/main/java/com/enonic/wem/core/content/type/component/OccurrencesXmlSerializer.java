@@ -6,7 +6,7 @@ import org.jdom.Element;
 
 import com.enonic.wem.api.content.type.component.Occurrences;
 
-class OccurrencesSerializerXml
+class OccurrencesXmlSerializer
 {
     public Element serialize( final Occurrences occurrences )
     {

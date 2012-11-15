@@ -17,15 +17,15 @@ public class SingleSelector
         super( SingleSelectorConfig.class );
     }
 
-    public AbstractInputTypeConfigSerializerJson getInputTypeConfigJsonGenerator()
+    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonGenerator()
     {
-        return SingleSelectorConfigSerializerJson.DEFAULT;
+        return SingleSelectorConfigJsonSerializer.DEFAULT;
     }
 
     @Override
-    public AbstractInputTypeConfigSerializerXml getInputTypeConfigXmlGenerator()
+    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlGenerator()
     {
-        return SingleSelectorConfigSerializerXml.DEFAULT;
+        return SingleSelectorConfigXmlSerializer.DEFAULT;
     }
 
     @Override

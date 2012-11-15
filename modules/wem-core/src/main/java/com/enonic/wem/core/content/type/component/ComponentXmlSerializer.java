@@ -13,14 +13,14 @@ import com.enonic.wem.api.content.type.component.Layout;
 import com.enonic.wem.api.content.type.component.SubTypeQualifiedName;
 import com.enonic.wem.api.content.type.component.SubTypeReference;
 import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.type.component.inputtype.InputTypeConfigSerializerXml;
+import com.enonic.wem.core.content.type.component.inputtype.InputTypeConfigXmlSerializer;
 import com.enonic.wem.core.content.type.component.inputtype.InputTypeFactory;
 
 import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.component.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.component.Input.newInput;
 
-class ComponentSerializerXml
+class ComponentXmlSerializer
 {
     public static final String NAME = "name";
 
@@ -46,13 +46,13 @@ class ComponentSerializerXml
 
     public static final String LAYOUT_TYPE = "layout-type";
 
-    private final InputTypeConfigSerializerXml inputTypeConfigSerializer = new InputTypeConfigSerializerXml();
+    private final InputTypeConfigXmlSerializer inputTypeConfigSerializer = new InputTypeConfigXmlSerializer();
 
-    private final OccurrencesSerializerXml occurrencesSerializerXml = new OccurrencesSerializerXml();
+    private final OccurrencesXmlSerializer occurrencesXmlSerializer = new OccurrencesXmlSerializer();
 
-    private final ComponentsSerializerXml componentsSerializer;
+    private final ComponentsXmlSerializer componentsSerializer;
 
-    public ComponentSerializerXml( final ComponentsSerializerXml componentsSerializer )
+    public ComponentXmlSerializer( final ComponentsXmlSerializer componentsSerializer )
     {
         this.componentsSerializer = componentsSerializer;
     }
@@ -90,7 +90,7 @@ class ComponentSerializerXml
         inputEl.addContent( new Element( INDEXED ).setText( String.valueOf( input.isIndexed() ) ) );
         inputEl.addContent( new Element( CUSTOM_TEXT ).setText( input.getCustomText() ) );
         inputEl.addContent( new Element( HELP_TEXT ).setText( input.getHelpText() ) );
-        inputEl.addContent( occurrencesSerializerXml.serialize( input.getOccurrences() ) );
+        inputEl.addContent( occurrencesXmlSerializer.serialize( input.getOccurrences() ) );
         generateValidationRegex( input, inputEl );
         generateInputTypeConfig( input, inputEl );
         return inputEl;
@@ -113,7 +113,7 @@ class ComponentSerializerXml
         componentSetEl.addContent( new Element( CUSTOM_TEXT ).setText( componentSet.getCustomText() ) );
         componentSetEl.addContent( new Element( HELP_TEXT ).setText( componentSet.getCustomText() ) );
 
-        componentSetEl.addContent( occurrencesSerializerXml.serialize( componentSet.getOccurrences() ) );
+        componentSetEl.addContent( occurrencesXmlSerializer.serialize( componentSet.getOccurrences() ) );
         componentSetEl.addContent( componentsSerializer.serialize( componentSet.getComponents() ) );
         return componentSetEl;
     }
@@ -194,7 +194,7 @@ class ComponentSerializerXml
         builder.customText( componentEl.getChildText( CUSTOM_TEXT ) );
         parseValidationRegexp( builder, componentEl );
 
-        builder.occurrences( occurrencesSerializerXml.parse( componentEl ) );
+        builder.occurrences( occurrencesXmlSerializer.parse( componentEl ) );
         parseInputType( builder, componentEl );
         parseInputTypeConfig( builder, componentEl );
 
@@ -210,7 +210,7 @@ class ComponentSerializerXml
         builder.helpText( componentEl.getChildText( HELP_TEXT ) );
         builder.customText( componentEl.getChildText( CUSTOM_TEXT ) );
 
-        builder.occurrences( occurrencesSerializerXml.parse( componentEl ) );
+        builder.occurrences( occurrencesXmlSerializer.parse( componentEl ) );
 
         final Components components = componentsSerializer.parse( componentEl );
         for ( Component component : components.iterable() )

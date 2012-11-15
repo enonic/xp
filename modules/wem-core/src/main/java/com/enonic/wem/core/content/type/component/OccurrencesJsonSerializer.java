@@ -8,7 +8,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.type.component.Occurrences;
 
-class OccurrencesSerializerJson
+class OccurrencesJsonSerializer
 {
     public JsonNode serialize( final Occurrences occurrences, final ObjectMapper objectMapper )
     {

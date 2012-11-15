@@ -6,14 +6,14 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.core.content.ContentSerializerJson;
+import com.enonic.wem.core.content.ContentJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
 
 class GetContentJsonResult
     extends JsonResult
 {
 
-    private final static ContentSerializerJson contentSerializerJson = new ContentSerializerJson();
+    private final static ContentJsonSerializer contentSerializerJson = new ContentJsonSerializer();
 
     private final static ObjectMapper objectMapper = new ObjectMapper();
 

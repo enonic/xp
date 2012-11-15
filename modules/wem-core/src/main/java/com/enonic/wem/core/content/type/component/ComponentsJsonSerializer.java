@@ -9,13 +9,13 @@ import org.codehaus.jackson.node.ArrayNode;
 
 import com.enonic.wem.api.content.type.component.Component;
 import com.enonic.wem.api.content.type.component.Components;
-import com.enonic.wem.core.content.AbstractSerializerJson;
+import com.enonic.wem.core.content.AbstractJsonSerializer;
 import com.enonic.wem.core.content.JsonParsingException;
 
-public final class ComponentsSerializerJson
-    extends AbstractSerializerJson<Components>
+public final class ComponentsJsonSerializer
+    extends AbstractJsonSerializer<Components>
 {
-    private ComponentSerializerJson componentSerializer = new ComponentSerializerJson( this );
+    private ComponentJsonSerializer componentSerializer = new ComponentJsonSerializer( this );
 
     @Override
     public JsonNode serialize( final Components components, final ObjectMapper objectMapper )

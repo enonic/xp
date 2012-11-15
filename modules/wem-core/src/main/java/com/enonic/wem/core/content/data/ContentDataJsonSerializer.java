@@ -9,12 +9,12 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
-import com.enonic.wem.core.content.AbstractSerializerJson;
+import com.enonic.wem.core.content.AbstractJsonSerializer;
 
-public class ContentDataSerializerJson
-    extends AbstractSerializerJson<ContentData>
+public class ContentDataJsonSerializer
+    extends AbstractJsonSerializer<ContentData>
 {
-    private DataSerializerJson dataSerializer = new DataSerializerJson();
+    private DataJsonSerializer dataSerializer = new DataJsonSerializer();
 
     @Override
     public JsonNode serialize( final ContentData contentData, final ObjectMapper objectMapper )

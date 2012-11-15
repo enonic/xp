@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.type.component.inputtype;
 
 import org.jdom.Element;
 
-public abstract class AbstractInputTypeConfigSerializerXml
+public abstract class AbstractInputTypeConfigXmlSerializer
 {
     public final Element generate( final InputTypeConfig config )
     {

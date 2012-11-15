@@ -11,18 +11,18 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.component.Component;
 import com.enonic.wem.api.content.type.component.Components;
 import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.type.component.ComponentsSerializerXml;
+import com.enonic.wem.core.content.type.component.ComponentsXmlSerializer;
 
 import com.enonic.cms.framework.util.JDOMUtil;
 
-public class ContentTypeSerializerXml
+public class ContentTypeXmlSerializer
     implements ContentTypeSerializer
 {
-    private ComponentsSerializerXml componentsSerializer = new ComponentsSerializerXml();
+    private ComponentsXmlSerializer componentsSerializer = new ComponentsXmlSerializer();
 
     private boolean prettyPrint = false;
 
-    public ContentTypeSerializerXml prettyPrint( boolean value )
+    public ContentTypeXmlSerializer prettyPrint( boolean value )
     {
         this.prettyPrint = value;
         return this;

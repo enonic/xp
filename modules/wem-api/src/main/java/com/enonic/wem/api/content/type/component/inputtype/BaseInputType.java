@@ -53,13 +53,13 @@ public abstract class BaseInputType
         return configClass;
     }
 
-    public AbstractInputTypeConfigSerializerJson getInputTypeConfigJsonGenerator()
+    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonGenerator()
     {
         return null;
     }
 
     @Override
-    public AbstractInputTypeConfigSerializerXml getInputTypeConfigXmlGenerator()
+    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlGenerator()
     {
         return null;
     }
