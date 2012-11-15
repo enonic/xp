@@ -1,11 +1,14 @@
 package com.enonic.wem.core.content;
 
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.blob.BlobKeyCreator;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.MockBlobKeyResolver;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;
@@ -328,6 +331,33 @@ public abstract class AbstractContentSerializerTest
         assertEquals( "Arn", parsedContent.getData( "name" ).getValue() );
         assertEquals( "Caption", parsedContent.getData( "image.caption" ).getValue() );
         assertEquals( BlobKeyCreator.createKey( bytes ), parsedContent.getData( "image.bytes" ).getValue() );
+    }
+
+    @Test
+    public void content_serialize_parse_serialize_roundTrip()
+    {
+        final DateTime time = DateTime.now();
+        final Content content = new Content();
+        content.setType( new QualifiedContentTypeName( "myModule:myType" ) );
+        content.setCreatedTime( time );
+        content.setModifiedTime( time );
+        content.setOwner( AccountKey.superUser() );
+        content.setModifier( AccountKey.superUser() );
+        content.setDisplayName( "My content" );
+        content.setPath( ContentPath.from( "site1/mycontent" ) );
+        content.setData( "mySet[0].myArray[0]", "1" );
+        content.setData( "mySet[0].myArray[1]", "2" );
+        content.setData( "mySet[1].myArray[0]", "3" );
+        content.setData( "mySet[1].myArray[1]", "4" );
+
+        final String serialized = toString( content );
+
+        // exercise
+        final Content parsedContent = toContent( serialized );
+        final String serializedAfterParsing = toString( parsedContent );
+
+        // verify
+        assertEquals( serialized, serializedAfterParsing );
     }
 
     private Content toContent( final String serialized )

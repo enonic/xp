@@ -4,16 +4,22 @@ package com.enonic.wem.web.rest.rpc.content;
 import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.core.content.ContentSerializerJson;
 import com.enonic.wem.web.json.JsonResult;
 
 class ListContentJsonResult
     extends JsonResult
 {
+    private final static ContentSerializerJson contentSerializerJson = new ContentSerializerJson();
+
+    private final static ObjectMapper objectMapper = new ObjectMapper();
+
     private Contents contents;
 
     ListContentJsonResult( final Contents contents )
@@ -32,31 +38,12 @@ class ListContentJsonResult
     private JsonNode serialize( final List<Content> list )
     {
         final ArrayNode contentsNode = arrayNode();
-
         for ( Content content : list )
         {
-            contentsNode.add( serializeContent( content ) );
+            final JsonNode contentJson = contentSerializerJson.serialize( content, objectMapper );
+            contentsNode.add( contentJson );
         }
-
         return contentsNode;
-    }
-
-    private ObjectNode serializeContent( final Content content )
-    {
-        final ObjectNode node = objectNode();
-        node.put( "path", content.getPath().toString() );
-        node.put( "name", content.getName() );
-        node.put( "type", content.getType() != null ? content.getType().toString() : null );
-        node.put( "displayName", content.getDisplayName() );
-        node.put( "owner", content.getOwner() != null ? content.getOwner().toString() : null );
-        node.put( "modifier", content.getModifier() != null ? content.getModifier().toString() : null );
-        node.put( "modifiedTime", content.getModifiedTime() != null ? content.getModifiedTime().toString() : null );
-        node.put( "createdTime", content.getCreatedTime() != null ? content.getCreatedTime().toString() : null );
-        node.put( "status", "Online" );
-        node.put( "editable", true );
-        node.put( "deletable", true );
-
-        return node;
     }
 
 }
