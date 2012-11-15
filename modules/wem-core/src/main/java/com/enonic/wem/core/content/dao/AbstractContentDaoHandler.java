@@ -8,6 +8,8 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.core.jcr.JcrHelper;
@@ -54,6 +56,10 @@ abstract class AbstractContentDaoHandler
     protected final Node doGetContentNode( final Session session, final ContentPath contentPath )
         throws RepositoryException
     {
+        if ( contentPath.isRoot() )
+        {
+            return null;
+        }
         final String path = getNodePath( contentPath );
         final Node rootNode = session.getRootNode();
         return JcrHelper.getNodeOrNull( rootNode, path );
@@ -76,7 +82,8 @@ abstract class AbstractContentDaoHandler
 
     private String getNodePath( final ContentPath contentPath )
     {
-        return ContentDaoConstants.CONTENTS_PATH + contentPath.toString();
+        final String relativePathToContent = StringUtils.removeStart( contentPath.toString(), "/" );
+        return ContentDaoConstants.CONTENTS_PATH + relativePathToContent;
     }
 
     class ContentAndNode

@@ -21,33 +21,40 @@ import com.enonic.wem.core.content.JsonParserUtil;
 
 public class DataSerializerJson
 {
-    public JsonNode generate( final Data data, final ObjectMapper objectMapper )
+
+    private static final String DATA_VALUE = "value";
+
+    private static final String DATA_NAME = "name";
+
+    private static final String DATA_TYPE = "type";
+
+    public JsonNode serialize( final Data data, final ObjectMapper objectMapper )
     {
         final ObjectNode jsonData = objectMapper.createObjectNode();
         final String name = data.getPath().resolveComponentPath().getLastElement();
-        jsonData.put( "name", name );
+        jsonData.put( DATA_NAME, name );
         if ( data.getDataType() != null )
         {
-            jsonData.put( "type", data.getDataType().getName() );
+            jsonData.put( DATA_TYPE, data.getDataType().getName() );
         }
         if ( data.getValue() != null )
         {
             if ( data.getDataType().equals( DataTypes.DATA_SET ) )
             {
                 final DataSet dataSet = data.getDataSet();
-                final ArrayNode jsonDataValue = jsonData.putArray( "value" );
+                final ArrayNode jsonDataValue = jsonData.putArray( DATA_VALUE );
                 for ( final Data e : dataSet )
                 {
-                    jsonDataValue.add( generate( e, objectMapper ) );
+                    jsonDataValue.add( serialize( e, objectMapper ) );
                 }
             }
             else if ( data.getDataType().equals( DataTypes.DATA_ARRAY ) )
             {
                 final DataArray dataArray = data.getDataArray();
-                final ArrayNode jsonDataValue = jsonData.putArray( "value" );
+                final ArrayNode jsonDataValue = jsonData.putArray( DATA_VALUE );
                 for ( final Data e : dataArray )
                 {
-                    jsonDataValue.add( generate( e, objectMapper ) );
+                    jsonDataValue.add( serialize( e, objectMapper ) );
                 }
             }
             else
@@ -58,12 +65,12 @@ public class DataSerializerJson
                                                  "Data at path [%s] of type BLOB needs to have a BlobKey as value before it is serialized: " +
                                                      data.getValue().getClass(), data.getPath() );
                 }
-                jsonData.put( "value", String.valueOf( data.getValue() ) );
+                jsonData.put( DATA_VALUE, String.valueOf( data.getValue() ) );
             }
         }
         else
         {
-            jsonData.putNull( "value" );
+            jsonData.putNull( DATA_VALUE );
         }
 
         return jsonData;
@@ -73,16 +80,16 @@ public class DataSerializerJson
     {
         final Data.Builder builder = Data.newData();
 
-        final EntryPath entryPath = new EntryPath( parentPath, JsonParserUtil.getStringValue( "name", dataNode ) );
+        final EntryPath entryPath = new EntryPath( parentPath, JsonParserUtil.getStringValue( DATA_NAME, dataNode ) );
         builder.path( entryPath );
-        final BaseDataType type = (BaseDataType) DataTypes.parseByName( JsonParserUtil.getStringValue( "type", dataNode, null ) );
+        final BaseDataType type = (BaseDataType) DataTypes.parseByName( JsonParserUtil.getStringValue( DATA_TYPE, dataNode, null ) );
         Preconditions.checkNotNull( type, "type was null" );
         builder.type( type );
         if ( type.equals( DataTypes.DATA_SET ) )
         {
             final DataSet dataSet = new DataSet( entryPath );
             builder.value( dataSet );
-            final JsonNode valueNode = dataNode.get( "value" );
+            final JsonNode valueNode = dataNode.get( DATA_VALUE );
             final Iterator<JsonNode> dataIt = valueNode.getElements();
             while ( dataIt.hasNext() )
             {
@@ -94,7 +101,7 @@ public class DataSerializerJson
         {
             final DataArray array = new DataArray( entryPath );
             builder.value( array );
-            final JsonNode valueNode = dataNode.get( "value" );
+            final JsonNode valueNode = dataNode.get( DATA_VALUE );
             final Iterator<JsonNode> dataIt = valueNode.getElements();
             while ( dataIt.hasNext() )
             {
@@ -104,7 +111,7 @@ public class DataSerializerJson
         }
         else
         {
-            final String valueAsString = JsonParserUtil.getStringValue( "value", dataNode );
+            final String valueAsString = JsonParserUtil.getStringValue( DATA_VALUE, dataNode );
             builder.value( valueAsString );
         }
 

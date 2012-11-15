@@ -1,5 +1,6 @@
 package com.enonic.wem.web.rest.rpc.content;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -58,7 +59,8 @@ public class ListContentRpcHandlerTest
     {
         final UserKey owner = AccountKey.user( "enonic:user1" );
         final DateTime now = timeService.getNowAsDateTime();
+        final String displayName = StringUtils.substringAfterLast( path, "/" ).toUpperCase();
         return Content.newContent().path( ContentPath.from( path ) ).createdTime( now ).owner( owner ).modifier(
-            UserKey.superUser() ).modifiedTime( now ).build();
+            UserKey.superUser() ).modifiedTime( now ).displayName( displayName ).build();
     }
 }

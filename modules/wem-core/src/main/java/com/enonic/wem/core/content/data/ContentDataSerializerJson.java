@@ -22,7 +22,7 @@ public class ContentDataSerializerJson
         final ArrayNode jsonContents = objectMapper.createArrayNode();
         for ( final Data data : contentData )
         {
-            jsonContents.add( dataSerializer.generate( data, objectMapper ) );
+            jsonContents.add( dataSerializer.serialize( data, objectMapper ) );
         }
         return jsonContents;
     }
