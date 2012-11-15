@@ -2,7 +2,7 @@ package com.enonic.wem.core.content;
 
 
 public class JsonParsingException
-    extends RuntimeException
+    extends ParsingException
 {
     public JsonParsingException( final String message, final Exception e )
     {

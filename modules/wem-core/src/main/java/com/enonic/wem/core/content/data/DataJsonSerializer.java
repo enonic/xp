@@ -19,7 +19,7 @@ import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.core.content.JsonParserUtil;
 
 
-public class DataJsonSerializer
+final class DataJsonSerializer
 {
 
     private static final String DATA_VALUE = "value";
@@ -28,7 +28,7 @@ public class DataJsonSerializer
 
     private static final String DATA_TYPE = "type";
 
-    public JsonNode serialize( final Data data, final ObjectMapper objectMapper )
+    final JsonNode serialize( final Data data, final ObjectMapper objectMapper )
     {
         final ObjectNode jsonData = objectMapper.createObjectNode();
         final String name = data.getPath().resolveComponentPath().getLastElement();
@@ -76,7 +76,7 @@ public class DataJsonSerializer
         return jsonData;
     }
 
-    public Data parse( final EntryPath parentPath, final JsonNode dataNode )
+    final Data parse( final EntryPath parentPath, final JsonNode dataNode )
     {
         final Data.Builder builder = Data.newData();
 

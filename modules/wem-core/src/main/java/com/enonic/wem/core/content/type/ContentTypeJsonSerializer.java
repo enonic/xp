@@ -34,6 +34,7 @@ public class ContentTypeJsonSerializer
 
     @Override
     public ContentType toContentType( String json )
+        throws JsonParsingException
     {
         return toObject( json );
     }

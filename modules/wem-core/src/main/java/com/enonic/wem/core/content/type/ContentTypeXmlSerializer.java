@@ -10,7 +10,7 @@ import org.jdom.JDOMException;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.component.Component;
 import com.enonic.wem.api.content.type.component.Components;
-import com.enonic.wem.core.content.JsonParsingException;
+import com.enonic.wem.core.content.XmlParsingException;
 import com.enonic.wem.core.content.type.component.ComponentsXmlSerializer;
 
 import com.enonic.cms.framework.util.JDOMUtil;
@@ -56,6 +56,7 @@ public class ContentTypeXmlSerializer
     }
 
     public ContentType toContentType( String xml )
+        throws XmlParsingException
     {
         try
         {
@@ -65,11 +66,11 @@ public class ContentTypeXmlSerializer
         }
         catch ( JDOMException e )
         {
-            throw new RuntimeException( "Failed to read XML", e );
+            throw new XmlParsingException( "Failed to read XML", e );
         }
         catch ( IOException e )
         {
-            throw new RuntimeException( "Failed to read XML", e );
+            throw new XmlParsingException( "Failed to read XML", e );
         }
     }
 
@@ -89,7 +90,7 @@ public class ContentTypeXmlSerializer
         }
         catch ( Exception e )
         {
-            throw new JsonParsingException( "Failed to parse content type: " + JDOMUtil.printElement( contentTypeEl ), e );
+            throw new XmlParsingException( "Failed to parse content type: " + JDOMUtil.printElement( contentTypeEl ), e );
         }
 
         return contentType;

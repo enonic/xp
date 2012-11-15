@@ -18,6 +18,7 @@ public abstract class AbstractJsonSerializer<T>
     }
 
     public String toString( T obj )
+        throws JsonSerializingException
     {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode jsonNode = serialize( obj, mapper );

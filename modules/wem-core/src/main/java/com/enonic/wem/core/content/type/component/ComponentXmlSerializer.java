@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.type.component.Input;
 import com.enonic.wem.api.content.type.component.Layout;
 import com.enonic.wem.api.content.type.component.SubTypeQualifiedName;
 import com.enonic.wem.api.content.type.component.SubTypeReference;
-import com.enonic.wem.core.content.JsonParsingException;
+import com.enonic.wem.core.content.XmlParsingException;
 import com.enonic.wem.core.content.type.component.inputtype.InputTypeConfigXmlSerializer;
 import com.enonic.wem.core.content.type.component.inputtype.InputTypeFactory;
 
@@ -178,7 +178,7 @@ class ComponentXmlSerializer
         }
         else
         {
-            throw new JsonParsingException( "Unknown ComponentType: " + componentType );
+            throw new XmlParsingException( "Unknown ComponentType: " + componentType );
         }
 
         return component;
@@ -230,7 +230,7 @@ class ComponentXmlSerializer
         }
         else
         {
-            throw new JsonParsingException( "Unknown layoutType: " + layoutType );
+            throw new XmlParsingException( "Unknown layoutType: " + layoutType );
         }
     }
 

@@ -15,9 +15,9 @@ import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
 
 
-public class DataXmlSerializer
+final class DataXmlSerializer
 {
-    public Element generate( final Data data )
+    final Element generate( final Data data )
     {
         // TODO: instead of resolveComponentPath, make new method which returns element without index
         final String name = data.getPath().resolveComponentPath().getLastElement();
@@ -63,7 +63,7 @@ public class DataXmlSerializer
         return dataEl;
     }
 
-    public Data parse( final EntryPath parentPath, final Element dataEl )
+    final Data parse( final EntryPath parentPath, final Element dataEl )
     {
         final Data.Builder builder = Data.newData();
 

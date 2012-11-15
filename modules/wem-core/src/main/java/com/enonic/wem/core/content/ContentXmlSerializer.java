@@ -31,6 +31,7 @@ public class ContentXmlSerializer
     }
 
     public String toString( Content content )
+        throws XmlSerializingException
     {
         if ( prettyPrint )
         {

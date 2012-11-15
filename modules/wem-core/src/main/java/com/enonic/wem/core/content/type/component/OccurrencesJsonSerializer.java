@@ -7,8 +7,10 @@ import org.codehaus.jackson.node.NullNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.type.component.Occurrences;
+import com.enonic.wem.core.content.AbstractJsonSerializer;
 
 class OccurrencesJsonSerializer
+    extends AbstractJsonSerializer<Occurrences>
 {
     public JsonNode serialize( final Occurrences occurrences, final ObjectMapper objectMapper )
     {

@@ -7,7 +7,7 @@ import org.jdom.Element;
 
 import com.enonic.wem.api.content.type.component.Component;
 import com.enonic.wem.api.content.type.component.Components;
-import com.enonic.wem.core.content.JsonParsingException;
+import com.enonic.wem.core.content.XmlParsingException;
 
 import com.enonic.cms.framework.util.JDOMUtil;
 
@@ -40,7 +40,7 @@ public final class ComponentsXmlSerializer
             }
             catch ( Exception e )
             {
-                throw new JsonParsingException( "Failed to parse Component: " + JDOMUtil.printElement( componentEl ), e );
+                throw new XmlParsingException( "Failed to parse Component: " + JDOMUtil.printElement( componentEl ), e );
             }
         }
 
