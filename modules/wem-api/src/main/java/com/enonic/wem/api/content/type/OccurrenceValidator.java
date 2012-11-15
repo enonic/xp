@@ -1,6 +1,12 @@
 package com.enonic.wem.api.content.type;
 
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
@@ -18,15 +24,26 @@ public final class OccurrenceValidator
 {
     private final ContentType contentType;
 
-    public OccurrenceValidator( final ContentType contentType )
+    private boolean recordExceptions = false;
+
+    private List<RuntimeException> recordedExceptions;
+
+    private OccurrenceValidator( final ContentType contentType )
     {
         this.contentType = contentType;
     }
 
-    public void verify( final ContentData contentData )
+    public void validate( final ContentData contentData )
     {
+        recordedExceptions = new ArrayList<RuntimeException>();
+
         processComponents( contentType.componentIterable(), contentData );
         processData( contentData );
+    }
+
+    public Iterator<RuntimeException> getRecordedExceptions()
+    {
+        return recordedExceptions.iterator();
     }
 
     private void processData( final Iterable<Data> datas )
@@ -37,25 +54,49 @@ public final class OccurrenceValidator
 
             if ( component instanceof Input )
             {
-                final Input input = (Input) component;
-                if ( input.getOccurrences().getMaximum() > 0 && data.hasArrayAsValue() )
+                try
                 {
-                    if ( data.getDataArray().size() > input.getOccurrences().getMaximum() )
-                    {
-                        throw new MaximumOccurrencesException( input, data.getDataArray().size() );
-                    }
+                    processData( data, (Input) component );
+                }
+                catch ( MaximumOccurrencesException e )
+                {
+                    handleException( e );
                 }
             }
             else if ( component instanceof ComponentSet )
             {
-                final ComponentSet set = (ComponentSet) component;
-                if ( set.getOccurrences().getMaximum() > 0 && data.hasArrayAsValue() )
+                try
                 {
-                    if ( data.getDataArray().size() > set.getOccurrences().getMaximum() )
-                    {
-                        throw new MaximumOccurrencesException( set, data.getDataArray().size() );
-                    }
+                    processComponentSet( data, (ComponentSet) component );
                 }
+                catch ( MaximumOccurrencesException e )
+                {
+                    handleException( e );
+                }
+            }
+        }
+    }
+
+    private void processComponentSet( final Data data, final ComponentSet set )
+        throws MaximumOccurrencesException
+    {
+        if ( set.getOccurrences().getMaximum() > 0 && data.hasArrayAsValue() )
+        {
+            if ( data.getDataArray().size() > set.getOccurrences().getMaximum() )
+            {
+                throw new MaximumOccurrencesException( set, data.getDataArray().size() );
+            }
+        }
+    }
+
+    private void processData( final Data data, final Input input )
+        throws MaximumOccurrencesException
+    {
+        if ( input.getOccurrences().getMaximum() > 0 && data.hasArrayAsValue() )
+        {
+            if ( data.getDataArray().size() > input.getOccurrences().getMaximum() )
+            {
+                throw new MaximumOccurrencesException( input, data.getDataArray().size() );
             }
         }
     }
@@ -85,7 +126,14 @@ public final class OccurrenceValidator
         final Data data = getData( input, entrySelector );
         if ( input.isRequired() )
         {
-            verifyRequiredInput( input, data );
+            try
+            {
+                verifyRequiredInput( input, data );
+            }
+            catch ( MinimumOccurrencesException e )
+            {
+                handleException( e );
+            }
         }
     }
 
@@ -94,7 +142,14 @@ public final class OccurrenceValidator
         final DataSet dataSet = getDataSet( componentSet, entrySelector );
         if ( componentSet.isRequired() )
         {
-            verifyRequiredComponentSet( componentSet, dataSet );
+            try
+            {
+                verifyRequiredComponentSet( componentSet, dataSet );
+            }
+            catch ( MinimumOccurrencesException e )
+            {
+                handleException( e );
+            }
         }
 
         if ( dataSet != null )
@@ -115,7 +170,7 @@ public final class OccurrenceValidator
         }
         else
         {
-            input.checkBreaksRequiredContract( data );
+            input.checkBreaksMinimumOccurrencesContract( data );
         }
     }
 
@@ -135,6 +190,51 @@ public final class OccurrenceValidator
     private DataSet getDataSet( final ComponentSet componentSet, final EntrySelector entrySelector )
     {
         return entrySelector != null ? entrySelector.getDataSet( new EntryPath( componentSet.getPath().toString() ) ) : null;
+    }
+
+    private void handleException( final RuntimeException e )
+    {
+        if ( recordExceptions )
+        {
+            recordedExceptions.add( e );
+        }
+        else
+        {
+            throw e;
+        }
+    }
+
+    public static Builder newOccurrenceValidator()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private ContentType contentType;
+
+        private boolean recordExceptions;
+
+        public Builder contentType( ContentType contentType )
+        {
+            this.contentType = contentType;
+            return this;
+        }
+
+        public Builder recordExceptions( boolean value )
+        {
+            this.recordExceptions = value;
+            return this;
+        }
+
+        public OccurrenceValidator build()
+        {
+            Preconditions.checkNotNull( this.contentType, "contenType is required" );
+            OccurrenceValidator validator = new OccurrenceValidator( this.contentType );
+            validator.recordExceptions = this.recordExceptions;
+            return validator;
+        }
+
     }
 
 }

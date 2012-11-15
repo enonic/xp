@@ -8,6 +8,8 @@ import com.enonic.wem.api.content.type.component.ComponentSet;
 import com.enonic.wem.api.content.type.component.ComponentSetSubType;
 import com.enonic.wem.api.content.type.component.FieldSet;
 import com.enonic.wem.api.content.type.component.Input;
+import com.enonic.wem.api.content.type.component.InputSubType;
+import com.enonic.wem.api.content.type.component.Layout;
 import com.enonic.wem.api.content.type.component.MockSubTypeFetcher;
 import com.enonic.wem.api.content.type.component.SubTypeReference;
 import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
@@ -116,6 +118,33 @@ public abstract class AbstractContentTypeSerializerTest
         assertEquals( "myTextArea", actualContentType.getComponent( "myTextArea" ).getPath().toString() );
         assertEquals( "myWholeNumber", actualContentType.getComponent( "myWholeNumber" ).getPath().toString() );
         assertEquals( "myXml", actualContentType.getComponent( "myXml" ).getPath().toString() );
+    }
+
+    @Test
+    public void given_all_base_types_when_parsed_then_paths_are_as_expected()
+    {
+        InputSubType inputSubType =
+            InputSubType.newInputSubType().input( Input.newInput().name( "mySharedInput" ).type( InputTypes.TEXT_LINE ).build() ).module(
+                Module.SYSTEM ).build();
+        ComponentSet set = newComponentSet().name( "mySet" ).build();
+        Layout layout = FieldSet.newFieldSet().label( "My field set" ).name( "myFieldSet" ).add(
+            newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() ).build();
+        set.add( layout );
+        set.add( newSubTypeReference().name( "myCommonInput" ).subType( inputSubType ).build() );
+
+        ContentType.Builder contentTypeBuilder = ContentType.newComponentType().name( "AllBaseTypes" ).module( myModule );
+        contentTypeBuilder.add( set );
+        ContentType contentType = contentTypeBuilder.build();
+
+        String serialized = toString( contentType );
+
+        // exercise
+        ContentType actualContentType = toContentType( serialized );
+        assertNotNull( actualContentType.getComponent( "mySet" ) );
+        assertEquals( "mySet", actualContentType.getComponent( "mySet" ).getPath().toString() );
+        assertNotNull( actualContentType.getComponent( "mySet.myTextLine" ) );
+        assertEquals( "mySet.myTextLine", actualContentType.getComponent( "mySet.myTextLine" ).getPath().toString() );
+        assertEquals( "mySet.myCommonInput", actualContentType.getComponent( "mySet.myCommonInput" ).getPath().toString() );
     }
 
     @Test

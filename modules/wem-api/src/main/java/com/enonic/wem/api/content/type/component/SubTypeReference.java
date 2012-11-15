@@ -29,11 +29,6 @@ public class SubTypeReference
         return subTypeClass;
     }
 
-    public static Builder newBuilder()
-    {
-        return new Builder();
-    }
-
     public static Builder newSubTypeReference()
     {
         return new Builder();
@@ -67,6 +62,13 @@ public class SubTypeReference
         public Builder name( String value )
         {
             this.name = value;
+            return this;
+        }
+
+        public Builder subType( final SubType subType )
+        {
+            this.subTypeQualifiedName = subType.getQualifiedName();
+            this.subTypeClass = subType.getType().getSimpleName();
             return this;
         }
 

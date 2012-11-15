@@ -271,6 +271,10 @@ public class Components
 
     private <T extends Component> T typeCast( final Component component, final Class<T> type )
     {
+        if ( component == null )
+        {
+            return null;
+        }
         checkComponentType( type, component );
         //noinspection unchecked
         return (T) component;

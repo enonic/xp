@@ -271,6 +271,8 @@ public class ComponentSet
 
         public ComponentSet build()
         {
+            Preconditions.checkNotNull( name, "a name for the ComponentSet is required" );
+
             ComponentSet componentSet = new ComponentSet();
             componentSet.setName( name );
             componentSet.label = label;
@@ -280,7 +282,6 @@ public class ComponentSet
             componentSet.customText = customText;
             componentSet.helpText = helpText;
 
-            Preconditions.checkNotNull( componentSet.getName(), "a name for the ComponentSet is required" );
             componentSet.setPath( new ComponentPath( componentSet.getName() ) );
 
             for ( Component component : components )

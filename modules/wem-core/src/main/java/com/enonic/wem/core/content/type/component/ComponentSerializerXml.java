@@ -80,9 +80,8 @@ class ComponentSerializerXml
 
     private Element serializeInput( final Input input )
     {
-        final String elementName = input.getInputType().getName();
-        Element inputEl = new Element( elementName );
-        inputEl.setAttribute( TYPE, Input.class.getSimpleName() );
+        Element inputEl = new Element( classNameToXmlElementName( Input.class.getSimpleName() ) );
+        inputEl.setAttribute( TYPE, input.getInputType().getClass().getSimpleName() );
         inputEl.setAttribute( BUILT_IN, String.valueOf( input.getInputType().isBuiltIn() ) );
 
         inputEl.addContent( new Element( NAME ).setText( input.getName() ) );
@@ -107,9 +106,8 @@ class ComponentSerializerXml
 
     private Element serializeComponentSet( final ComponentSet componentSet )
     {
-        Element componentSetEl = new Element( componentSet.getName() );
-        componentSetEl.setAttribute( TYPE, ComponentSet.class.getSimpleName() );
-
+        final Element componentSetEl = new Element( classNameToXmlElementName( ComponentSet.class.getSimpleName() ) );
+        componentSetEl.addContent( new Element( NAME ).setText( componentSet.getName() ) );
         componentSetEl.addContent( new Element( LABEL ).setText( componentSet.getLabel() ) );
         componentSetEl.addContent( new Element( IMMUTABLE ).setText( String.valueOf( componentSet.isImmutable() ) ) );
         componentSetEl.addContent( new Element( CUSTOM_TEXT ).setText( componentSet.getCustomText() ) );
@@ -122,8 +120,8 @@ class ComponentSerializerXml
 
     private Element serializeLayout( final Layout layout )
     {
-        Element layoutEl = new Element( layout.getName() );
-        layoutEl.setAttribute( TYPE, Layout.class.getSimpleName() );
+        final Element layoutEl = new Element( classNameToXmlElementName( Layout.class.getSimpleName() ) );
+        layoutEl.addContent( new Element( NAME ).setText( layout.getName() ) );
 
         if ( layout instanceof FieldSet )
         {
@@ -142,8 +140,8 @@ class ComponentSerializerXml
 
     private Element serializeReference( final SubTypeReference subTypeReference )
     {
-        Element referenceEl = new Element( subTypeReference.getName() );
-        referenceEl.setAttribute( TYPE, SubTypeReference.class.getSimpleName() );
+        final Element referenceEl = new Element( classNameToXmlElementName( SubTypeReference.class.getSimpleName() ) );
+        referenceEl.addContent( new Element( NAME ).setText( subTypeReference.getName() ) );
         referenceEl.addContent( new Element( REFERENCE ).setText( subTypeReference.getSubTypeQualifiedName().toString() ) );
         referenceEl.addContent( new Element( SUB_TYPE_CLASS ).setText( subTypeReference.getSubTypeClass().getSimpleName() ) );
         return referenceEl;
@@ -159,7 +157,7 @@ class ComponentSerializerXml
 
     public Component parse( final Element componentEl )
     {
-        final String componentType = componentEl.getAttributeValue( TYPE );
+        final String componentType = xmlElementNameToClassName( componentEl.getName() );
 
         final Component component;
         if ( componentType.equals( Input.class.getSimpleName() ) )
@@ -206,7 +204,7 @@ class ComponentSerializerXml
     private HierarchicalComponent parseComponentSet( final Element componentEl )
     {
         final ComponentSet.Builder builder = newComponentSet();
-        builder.name( componentEl.getName() );
+        builder.name( componentEl.getChildText( NAME ) );
         builder.label( componentEl.getChildText( LABEL ) );
         builder.immutable( Boolean.valueOf( componentEl.getChildText( IMMUTABLE ) ) );
         builder.helpText( componentEl.getChildText( HELP_TEXT ) );
@@ -225,7 +223,7 @@ class ComponentSerializerXml
 
     private Component parseLayout( final Element componentEl )
     {
-        String layoutType = componentEl.getAttributeValue( LAYOUT_TYPE );
+        final String layoutType = componentEl.getAttributeValue( LAYOUT_TYPE );
         if ( layoutType.equals( FieldSet.class.getSimpleName() ) )
         {
             return parseFieldSet( componentEl );
@@ -239,7 +237,7 @@ class ComponentSerializerXml
     private Component parseFieldSet( final Element componentEl )
     {
         final FieldSet.Builder builder = newFieldSet();
-        builder.name( componentEl.getName() );
+        builder.name( componentEl.getChildText( NAME ) );
         builder.label( componentEl.getChildText( LABEL ) );
 
         final Components components = componentsSerializer.parse( componentEl );
@@ -254,7 +252,7 @@ class ComponentSerializerXml
     private HierarchicalComponent parseSubTypeReference( final Element componentEl )
     {
         final SubTypeReference.Builder builder = SubTypeReference.newSubTypeReference();
-        builder.name( componentEl.getName() );
+        builder.name( componentEl.getChildText( NAME ) );
         builder.subType( new SubTypeQualifiedName( componentEl.getChildText( REFERENCE ) ) );
         builder.type( componentEl.getChildText( SUB_TYPE_CLASS ) );
         return builder.build();
@@ -276,8 +274,61 @@ class ComponentSerializerXml
 
     private void parseInputType( final Input.Builder builder, final Element componentEl )
     {
-        final String inputTypeName = componentEl.getName();
+        final String inputTypeName = componentEl.getAttributeValue( TYPE );
         final boolean builtIn = Boolean.valueOf( componentEl.getAttributeValue( BUILT_IN ) );
         builder.type( InputTypeFactory.instantiate( inputTypeName, builtIn ) );
     }
+
+    private String classNameToXmlElementName( final String s )
+    {
+        final StringBuilder newS = new StringBuilder( s.length() );
+        for ( int i = 0; i < s.length(); i++ )
+        {
+            char c = s.charAt( i );
+            if ( Character.isUpperCase( c ) && i == 0 )
+            {
+                newS.append( Character.toLowerCase( c ) );
+            }
+            else if ( Character.isUpperCase( c ) )
+            {
+                newS.append( "-" ).append( Character.toLowerCase( c ) );
+            }
+            else
+            {
+                newS.append( c );
+            }
+        }
+        return newS.toString();
+    }
+
+    private String xmlElementNameToClassName( final String s )
+    {
+        final StringBuilder newS = new StringBuilder( s.length() );
+        for ( int i = 0; i < s.length(); i++ )
+        {
+            char c = s.charAt( i );
+
+            Character nextC = i < s.length() - 1 ? s.charAt( i + 1 ) : null;
+
+            if ( nextC == null )
+            {
+                newS.append( c );
+            }
+            else if ( i == 0 )
+            {
+                newS.append( Character.toUpperCase( c ) );
+            }
+            else if ( c == '-' )
+            {
+                newS.append( Character.toUpperCase( nextC ) );
+                i++;
+            }
+            else
+            {
+                newS.append( c );
+            }
+        }
+        return newS.toString();
+    }
+
 }

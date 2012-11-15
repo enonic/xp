@@ -17,7 +17,7 @@ public class InputTest
     {
         Input input = newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).required( true ).build();
         Data data = Data.newData().type( DataTypes.TEXT ).value( null ).build();
-        input.checkBreaksRequiredContract( data );
+        input.checkBreaksMinimumOccurrencesContract( data );
     }
 
     @Test

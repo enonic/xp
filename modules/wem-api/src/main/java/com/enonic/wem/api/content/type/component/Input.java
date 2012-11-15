@@ -90,8 +90,8 @@ public class Input
         return inputTypeConfig;
     }
 
-    public void checkBreaksRequiredContract( final Data data )
-        throws BreaksRequiredContractException
+    public void checkBreaksMinimumOccurrencesContract( final Data data )
+        throws MinimumOccurrencesException
     {
         Preconditions.checkNotNull( data, "Given data is null" );
 
