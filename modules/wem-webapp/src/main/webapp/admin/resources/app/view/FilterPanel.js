@@ -2,31 +2,18 @@ Ext.define('Admin.view.FilterPanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.filterPanel',
 
-    title: 'Filter',
-    cls: 'facet-navigation',
+    cls: 'admin-filter',
+    header: false,
     layout: {
         type: 'vbox',
         align: 'stretch'
     },
-    bodyPadding: 10,
-    split: true,
-    collapsible: true,
-    border: true,
     autoScroll: true,
 
     includeSearch: true,
     includeFacets: undefined,
     excludeFacets: [],
     includeEmptyFacets: 'all', // all, last, none
-
-    statics: {
-        facetDefaults: {
-            cls: 'facet-single-select-item',
-            checkedCls: 'x-form-cb-checked facet-selected',
-            overCls: 'admin-cursor-clickable',
-            checked: false
-        }
-    },
 
     initComponent: function () {
         var me = this;
@@ -41,43 +28,22 @@ Ext.define('Admin.view.FilterPanel', {
 
         if (this.includeSearch) {
             this.items.unshift({
-                xtype: 'fieldcontainer',
-                layout: 'hbox',
-                cls: 'search-box',
-
-                items: [
-                    {
-                        xtype: 'textfield',
-                        enableKeyEvents: true,
-                        bubbleEvents: ['specialkey'],
-                        itemId: 'filterText',
-                        name: 'query',
-                        flex: 1,
-                        listeners: {
-                            specialkey: {
-                                fn: me.onKeyPressed,
-                                scope: me
-                            },
-                            keypress: {
-                                fn: me.onKeyPressed,
-                                scope: me
-                            }
-                        }
+                xtype: 'textfield',
+                enableKeyEvents: true,
+                bubbleEvents: ['specialkey'],
+                itemId: 'filterText',
+                margin: '0 0 20 0',
+                name: 'query',
+                listeners: {
+                    specialkey: {
+                        fn: me.onKeyPressed,
+                        scope: me
                     },
-                    {
-                        xtype: 'button',
-                        itemId: 'filterButton',
-                        iconCls: 'icon-find',
-                        action: 'search',
-                        margins: '0 0 0 5',
-                        listeners: {
-                            click: {
-                                fn: me.onFacetChanged,
-                                scope: me
-                            }
-                        }
+                    keypress: {
+                        fn: me.onKeyPressed,
+                        scope: me
                     }
-                ]
+                }
             });
         }
 
@@ -123,22 +89,22 @@ Ext.define('Admin.view.FilterPanel', {
     },
 
     updateTitle: function () {
-        if (!this.getForm().isDirty()) {
-            this.setTitle(this.originalTitle);
-        } else {
+        if (this.header) {
+            if (!this.getForm().isDirty()) {
+                this.setTitle(this.originalTitle);
+            } else {
+                var title = this.originalTitle + " (<a href='javascript:;' class='clearSelection'>Clear filter</a>)";
+                this.setTitle(title);
 
-            var title = this.originalTitle + " (<a href='javascript:;' class='clearSelection'>Clear filter</a>)";
-            this.setTitle(title);
-
-            var clearSel = this.header.el.down('a.clearSelection');
-            if (clearSel) {
-                clearSel.on("click", function () {
-                    // stop events to prevent firing change events by every field
-                    this.resetValues();
-                    this.fireEvent('search', this.getValues());
-                }, this);
+                var clearSel = this.header.el.down('a.clearSelection');
+                if (clearSel) {
+                    clearSel.on("click", function () {
+                        // stop events to prevent firing change events by every field
+                        this.resetValues();
+                        this.fireEvent('search', this.getValues());
+                    }, this);
+                }
             }
-
         }
     },
 
@@ -146,7 +112,7 @@ Ext.define('Admin.view.FilterPanel', {
     removeFacets: function () {
         var me = this;
         this.items.each(function (item) {
-            var isFacet = item && item.cls && item.cls.indexOf('facet') >= 0;
+            var isFacet = item && item.xtype === 'fieldset';
             if (isFacet) {
                 if (!me.rendered) {
                     me.items.remove(item);
@@ -189,28 +155,25 @@ Ext.define('Admin.view.FilterPanel', {
             }
 
             if (facetItems.length > 0) {
-                var facetConfig = [
-                    {
-                        xtype: 'label',
-                        text: facet.title || facet.name,
-                        cls: 'facet-header'
-                    },
-                    {
-                        xtype: facet.xtype || 'checkboxgroup',
-                        name: facet.name,
-                        columns: 1,
-                        vertical: true,
-                        cls: 'facet-box',
-                        defaults: Admin.view.FilterPanel.facetDefaults,
-                        items: facetItems,
-                        listeners: {
-                            change: {
-                                fn: me.onFacetChanged,
-                                scope: me
+                var facetConfig = {
+                    xtype: 'fieldset',
+                    title: facet.title || facet.name,
+                    items: [
+                        {
+                            xtype: facet.xtype || 'checkboxgroup',
+                            name: facet.name,
+                            columns: 1,
+                            vertical: true,
+                            items: facetItems,
+                            listeners: {
+                                change: {
+                                    fn: me.onFacetChanged,
+                                    scope: me
+                                }
                             }
                         }
-                    }
-                ];
+                    ]
+                };
                 if (!this.rendered) {
                     this.items = this.items.concat(facetConfig);
                 } else {
