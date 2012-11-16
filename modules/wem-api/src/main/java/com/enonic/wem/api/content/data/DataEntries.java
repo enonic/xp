@@ -29,10 +29,10 @@ final class DataEntries
         {
             dataByName.put( key, data );
         }
-        else if ( data.getDataType() == DataTypes.ARRAY )
+        else if ( exData.getDataType() == DataTypes.ARRAY )
         {
-            DataArray array = data.getDataArray();
-            array.setData( data );
+            DataArray array = exData.getDataArray();
+            array.add( data );
         }
         else
         {

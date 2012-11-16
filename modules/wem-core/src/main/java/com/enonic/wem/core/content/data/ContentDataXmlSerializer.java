@@ -19,7 +19,7 @@ public class ContentDataXmlSerializer
         Element dataEl = new Element( "data" );
         for ( final Data data : contentData )
         {
-            dataEl.addContent( dataSerializer.generate( data ) );
+            dataSerializer.generate( dataEl, data );
         }
         return dataEl;
     }
@@ -28,7 +28,7 @@ public class ContentDataXmlSerializer
     {
 
         ContentData contentData = new ContentData();
-        DataSet dataSet = new DataSet( new EntryPath( "" ) );
+        DataSet dataSet = new DataSet( new EntryPath() );
         final Iterator<Element> dataIt = contentDataEl.getChildren().iterator();
         while ( dataIt.hasNext() )
         {

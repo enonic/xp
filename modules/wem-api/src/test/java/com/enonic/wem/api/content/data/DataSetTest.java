@@ -93,6 +93,19 @@ public class DataSetTest
         assertEquals( "Brown", dataSet.getData( "persons[0].eyeColour" ).getValue() );
     }
 
+    @Test
+    public void array()
+    {
+        DataSet dataSet = new DataSet( new EntryPath() );
+        dataSet.add( Data.newData().path( new EntryPath( "myArray" ) ).value( "1" ).type( DataTypes.TEXT ).build() );
+        dataSet.add( Data.newData().path( new EntryPath( "myArray" ) ).value( "2" ).type( DataTypes.TEXT ).build() );
+        dataSet.add( Data.newData().path( new EntryPath( "myArray" ) ).value( "3" ).type( DataTypes.TEXT ).build() );
+
+        assertEquals( "1", dataSet.getData( "myArray[0]" ).getValue() );
+        assertEquals( "2", dataSet.getData( "myArray[1]" ).getValue() );
+        assertEquals( "3", dataSet.getData( "myArray[2]" ).getValue() );
+    }
+
 
 }
 

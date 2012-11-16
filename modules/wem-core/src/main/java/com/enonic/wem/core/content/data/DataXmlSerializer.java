@@ -17,50 +17,67 @@ import com.enonic.wem.api.content.datatype.DataTypes;
 
 final class DataXmlSerializer
 {
-    final Element generate( final Data data )
+    final void generate( final Element parentDataEl, final Data data )
     {
         // TODO: instead of resolveComponentPath, make new method which returns element without index
-        final String name = data.getPath().resolveComponentPath().getLastElement();
-        Element dataEl = new Element( name );
-        if ( data.getDataType() != null )
+
+        if ( data.getDataType().equals( DataTypes.SET ) )
         {
-            dataEl.setAttribute( "type", data.getDataType().getName() );
+            generateSet( parentDataEl, data );
         }
-        if ( data.getValue() != null )
+        else if ( data.getDataType().equals( DataTypes.ARRAY ) )
         {
-            if ( data.getDataType().equals( DataTypes.SET ) )
-            {
-                final DataSet set = (DataSet) data.getValue();
-                for ( final Data subData : set )
-                {
-                    dataEl.addContent( generate( subData ) );
-                }
-            }
-            else if ( data.getDataType().equals( DataTypes.ARRAY ) )
-            {
-                final DataArray array = (DataArray) data.getValue();
-                for ( final Data element : array )
-                {
-                    dataEl.addContent( generate( element ) );
-                }
-            }
-            else
-            {
-                if ( data.getDataType().equals( DataTypes.BLOB ) )
-                {
-                    Preconditions.checkArgument( data.getValue() instanceof BlobKey,
-                                                 "Data at path [%s] of type BLOB needs to have a BlobKey as value before it is serialized: " +
-                                                     data.getValue().getClass(), data.getPath() );
-                }
-                dataEl.addContent( String.valueOf( data.getValue() ) );
-            }
+            generateArray( parentDataEl, data );
         }
         else
         {
-            // no element if no value...?
+            generateValue( parentDataEl, data );
         }
+    }
 
-        return dataEl;
+    private void generateSet( final Element parentDataEl, final Data data )
+    {
+        final String name = data.getPath().resolveComponentPath().getLastElement();
+        final Element dataEl = new Element( name ).setAttribute( "type", data.getDataType().getName() );
+        parentDataEl.addContent( dataEl );
+        final DataSet set = (DataSet) data.getValue();
+        for ( final Data subData : set )
+        {
+            generate( dataEl, subData );
+        }
+    }
+
+    private void generateArray( final Element parentDataEl, final Data data )
+    {
+        final String name = data.getPath().resolveComponentPath().getLastElement();
+        final DataArray array = (DataArray) data.getValue();
+        for ( final Data element : array )
+        {
+            final Element dataEl = new Element( name ).setAttribute( "type", element.getDataType().getName() );
+            if ( element.hasDataSetAsValue() )
+            {
+                generateSet( parentDataEl, element );
+            }
+            else
+            {
+                dataEl.setText( element.getString() );
+                parentDataEl.addContent( dataEl );
+            }
+        }
+    }
+
+    private void generateValue( final Element parentDataEl, final Data data )
+    {
+        final String name = data.getPath().resolveComponentPath().getLastElement();
+        final Element dataEl = new Element( name ).setAttribute( "type", data.getDataType().getName() );
+        parentDataEl.addContent( dataEl );
+        if ( data.getDataType().equals( DataTypes.BLOB ) )
+        {
+            Preconditions.checkArgument( data.getValue() instanceof BlobKey,
+                                         "Data at path [%s] of type BLOB needs to have a BlobKey as value before it is serialized: " +
+                                             data.getValue().getClass(), data.getPath() );
+        }
+        dataEl.addContent( data.getString() );
     }
 
     final Data parse( final EntryPath parentPath, final Element dataEl )
@@ -81,17 +98,6 @@ final class DataXmlSerializer
             {
                 final Element el = dataIt.next();
                 dataSet.add( parse( entryPath, el ) );
-            }
-        }
-        else if ( type.equals( DataTypes.ARRAY ) )
-        {
-            final DataArray array = new DataArray( entryPath );
-            builder.value( array );
-            final Iterator<Element> dataIt = dataEl.getChildren().iterator();
-            while ( dataIt.hasNext() )
-            {
-                final Element el = dataIt.next();
-                array.add( parse( parentPath, el ) );
             }
         }
         else

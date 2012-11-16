@@ -99,6 +99,10 @@ public final class JavaType
             {
                 return value.toString();
             }
+            else if ( value instanceof BlobKey )
+            {
+                return value.toString();
+            }
             else
             {
                 return null;
