@@ -16,6 +16,6 @@ public class ContentTypeJsonSerializerTest
     @Override
     void assertSerializedResult( final String fileNameForExpected, final String actualSerialization )
     {
-        assertEquals( getJsonAsString( "contentType-allBaseTypes.json" ), actualSerialization );
+        assertEquals( getJsonAsString( fileNameForExpected + ".json" ), actualSerialization );
     }
 }

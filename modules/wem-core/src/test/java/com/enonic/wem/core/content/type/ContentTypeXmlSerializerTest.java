@@ -18,7 +18,7 @@ public class ContentTypeXmlSerializerTest
     @Override
     void assertSerializedResult( final String fileNameForExpected, final String actualSerialization )
     {
-        assertEquals( getXmlAsString( "contentType-allBaseTypes.xml" ), actualSerialization );
+        assertEquals( getXmlAsString( fileNameForExpected + ".xml" ), actualSerialization );
     }
 
     protected String getXmlAsString( String fileName )

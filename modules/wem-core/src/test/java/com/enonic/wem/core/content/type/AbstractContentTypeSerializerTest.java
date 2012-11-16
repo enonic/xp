@@ -73,8 +73,8 @@ public abstract class AbstractContentTypeSerializerTest
         // exercise
         ContentType actualContentType = toContentType( actualSerialization );
 
-        // verify actual string
-        assertSerializedResult( "contentType-allBaseTypes.json", actualSerialization );
+        // verify serialization
+        assertSerializedResult( "contentType-allBaseTypes", actualSerialization );
 
         // verify
         assertNotNull( actualContentType.getComponent( "mySet" ) );
@@ -84,42 +84,19 @@ public abstract class AbstractContentTypeSerializerTest
         assertEquals( "mySet.myCommonInput", actualContentType.getComponent( "mySet.myCommonInput" ).getPath().toString() );
     }
 
-    private ContentType createContentTypeWithAllInputComponentTypes()
-    {
-        SingleSelectorConfig singleSelectorConfig =
-            SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "myOption 1", "o1" ).addOption( "myOption 2",
-                                                                                                                     "o2" ).build();
-
-        ContentType.Builder contentTypeBuilder = ContentType.newComponentType().name( "AllTypes" ).module( myModule );
-
-        contentTypeBuilder.add( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
-        contentTypeBuilder.add( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
-        contentTypeBuilder.add( newInput().name( "myDecimalNumber" ).type( InputTypes.DECIMAL_NUMBER ).build() );
-        contentTypeBuilder.add( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
-        contentTypeBuilder.add( newInput().name( "myHtmlArea" ).type( InputTypes.HTML_AREA ).build() );
-        contentTypeBuilder.add( newInput().name( "myMoney" ).type( InputTypes.MONEY ).build() );
-        contentTypeBuilder.add( newInput().name( "myPhone" ).type( InputTypes.PHONE ).build() );
-        contentTypeBuilder.add(
-            newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
-        contentTypeBuilder.add( newInput().name( "myTags" ).type( InputTypes.TAGS ).build() );
-        contentTypeBuilder.add( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        contentTypeBuilder.add( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() );
-        contentTypeBuilder.add( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
-        contentTypeBuilder.add( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
-
-        return contentTypeBuilder.build();
-    }
-
     @Test
     public void toString_all_input_types()
     {
-        String serialized = toString( contentTypeWithAllComponentTypes );
+        String actualSerialization = toString( contentTypeWithAllComponentTypes );
 
         // exercise
-        ContentType actualContentType = toContentType( serialized );
+        ContentType actualContentType = toContentType( actualSerialization );
 
         // verify:
         assertNotNull( actualContentType );
+
+        // verify serialization
+        assertSerializedResult( "contentType-allInputTypes", actualSerialization );
 
         assertNotNull( actualContentType.getComponent( "myColor" ) );
         assertNotNull( actualContentType.getComponent( "myDate" ) );
@@ -327,6 +304,32 @@ public abstract class AbstractContentTypeSerializerTest
         final ObjectMapper mapper = new ObjectMapper();
         mapper.setDateFormat( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ) );
         return mapper;
+    }
+
+    private ContentType createContentTypeWithAllInputComponentTypes()
+    {
+        SingleSelectorConfig singleSelectorConfig =
+            SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "myOption 1", "o1" ).addOption( "myOption 2",
+                                                                                                                     "o2" ).build();
+
+        ContentType.Builder contentTypeBuilder = ContentType.newComponentType().name( "AllTypes" ).module( myModule );
+
+        contentTypeBuilder.add( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
+        contentTypeBuilder.add( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
+        contentTypeBuilder.add( newInput().name( "myDecimalNumber" ).type( InputTypes.DECIMAL_NUMBER ).build() );
+        contentTypeBuilder.add( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
+        contentTypeBuilder.add( newInput().name( "myHtmlArea" ).type( InputTypes.HTML_AREA ).build() );
+        contentTypeBuilder.add( newInput().name( "myMoney" ).type( InputTypes.MONEY ).build() );
+        contentTypeBuilder.add( newInput().name( "myPhone" ).type( InputTypes.PHONE ).build() );
+        contentTypeBuilder.add(
+            newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
+        contentTypeBuilder.add( newInput().name( "myTags" ).type( InputTypes.TAGS ).build() );
+        contentTypeBuilder.add( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
+        contentTypeBuilder.add( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() );
+        contentTypeBuilder.add( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
+        contentTypeBuilder.add( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
+
+        return contentTypeBuilder.build();
     }
 
 }
