@@ -3,7 +3,7 @@
   <name>AllTypes</name>
   <module>myModule</module>
   <items>
-    <input type="Color" builtIn="true">
+    <input type="Color" built-in="true">
       <name>myColor</name>
       <label />
       <immutable>false</immutable>
@@ -12,7 +12,7 @@
       <helpText />
       <occurrences minimum="0" maximum="1" />
     </input>
-    <input type="Date" builtIn="true">
+    <input type="Date" built-in="true">
       <name>myDate</name>
       <label />
       <immutable>false</immutable>
@@ -21,7 +21,7 @@
       <helpText />
       <occurrences minimum="0" maximum="1" />
     </input>
-    <input type="DecimalNumber" builtIn="true">
+    <input type="DecimalNumber" built-in="true">
       <name>myDecimalNumber</name>
       <label />
       <immutable>false</immutable>
@@ -30,7 +30,7 @@
       <helpText />
       <occurrences minimum="0" maximum="1" />
     </input>
-    <input type="GeoLocation" builtIn="true">
+    <input type="GeoLocation" built-in="true">
       <name>myGeoLocation</name>
       <label />
       <immutable>false</immutable>
@@ -39,7 +39,7 @@
       <helpText />
       <occurrences minimum="0" maximum="1" />
     </input>
-    <input type="HtmlArea" builtIn="true">
+    <input type="HtmlArea" built-in="true">
       <name>myHtmlArea</name>
       <label />
       <immutable>false</immutable>
@@ -48,7 +48,7 @@
       <helpText />
       <occurrences minimum="0" maximum="1" />
     </input>
-    <input type="Money" builtIn="true">
+    <input type="Money" built-in="true">
       <name>myMoney</name>
       <label />
       <immutable>false</immutable>
@@ -57,7 +57,7 @@
       <helpText />
       <occurrences minimum="0" maximum="1" />
     </input>
-    <input type="Phone" builtIn="true">
+    <input type="Phone" built-in="true">
       <name>myPhone</name>
       <label />
       <immutable>false</immutable>
@@ -66,7 +66,7 @@
       <helpText />
       <occurrences minimum="0" maximum="1" />
     </input>
-    <input type="SingleSelector" builtIn="true">
+    <input type="SingleSelector" built-in="true">
       <name>mySingleSelector</name>
       <label />
       <immutable>false</immutable>
@@ -88,7 +88,7 @@
         <selector-type>DROPDOWN</selector-type>
       </input-type-config>
     </input>
-    <input type="Tags" builtIn="true">
+    <input type="Tags" built-in="true">
       <name>myTags</name>
       <label />
       <immutable>false</immutable>
@@ -97,7 +97,7 @@
       <helpText />
       <occurrences minimum="0" maximum="1" />
     </input>
-    <input type="TextLine" builtIn="true">
+    <input type="TextLine" built-in="true">
       <name>myTextLine</name>
       <label />
       <immutable>false</immutable>
@@ -106,7 +106,7 @@
       <helpText />
       <occurrences minimum="0" maximum="1" />
     </input>
-    <input type="TextArea" builtIn="true">
+    <input type="TextArea" built-in="true">
       <name>myTextArea</name>
       <label />
       <immutable>false</immutable>
@@ -115,7 +115,7 @@
       <helpText />
       <occurrences minimum="0" maximum="1" />
     </input>
-    <input type="WholeNumber" builtIn="true">
+    <input type="WholeNumber" built-in="true">
       <name>myWholeNumber</name>
       <label />
       <immutable>false</immutable>
@@ -124,7 +124,7 @@
       <helpText />
       <occurrences minimum="0" maximum="1" />
     </input>
-    <input type="Xml" builtIn="true">
+    <input type="Xml" built-in="true">
       <name>myXml</name>
       <label />
       <immutable>false</immutable>

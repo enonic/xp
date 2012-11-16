@@ -26,7 +26,7 @@ class ComponentXmlSerializer
 
     public static final String TYPE = "type";
 
-    public static final String BUILT_IN = "builtIn";
+    public static final String BUILT_IN = "built-in";
 
     public static final String LABEL = "label";
 
@@ -42,7 +42,7 @@ class ComponentXmlSerializer
 
     public static final String VALIDATION_REGEX = "validationRegex";
 
-    public static final String SUB_TYPE_CLASS = "subTypeClass";
+    public static final String SUB_TYPE_CLASS = "sub-type-class";
 
     public static final String LAYOUT_TYPE = "layout-type";
 

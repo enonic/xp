@@ -15,7 +15,7 @@
           <name>myFieldSet</name>
           <label>My field set</label>
           <items>
-            <input type="TextLine" builtIn="true">
+            <input type="TextLine" built-in="true">
               <name>myTextLine</name>
               <label />
               <immutable>false</immutable>
@@ -29,7 +29,7 @@
         <sub-type-reference>
           <name>myCommonInput</name>
           <reference>System:mySharedInput</reference>
-          <subTypeClass>InputSubType</subTypeClass>
+          <sub-type-class>InputSubType</sub-type-class>
         </sub-type-reference>
       </items>
     </component-set>
