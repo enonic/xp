@@ -44,8 +44,6 @@ class ComponentXmlSerializer
 
     public static final String SUB_TYPE_CLASS = "sub-type-class";
 
-    public static final String LAYOUT_TYPE = "layout-type";
-
     private final InputTypeConfigXmlSerializer inputTypeConfigSerializer = new InputTypeConfigXmlSerializer();
 
     private final OccurrencesXmlSerializer occurrencesXmlSerializer = new OccurrencesXmlSerializer();
@@ -133,7 +131,7 @@ class ComponentXmlSerializer
 
     private void generateFieldSet( final FieldSet fieldSet, final Element layoutEl )
     {
-        layoutEl.setAttribute( LAYOUT_TYPE, FieldSet.class.getSimpleName() );
+        layoutEl.setAttribute( TYPE, FieldSet.class.getSimpleName() );
         layoutEl.addContent( new Element( LABEL ).setText( fieldSet.getLabel() ) );
         layoutEl.addContent( componentsSerializer.serialize( fieldSet.getComponents() ) );
     }
@@ -223,7 +221,7 @@ class ComponentXmlSerializer
 
     private Component parseLayout( final Element componentEl )
     {
-        final String layoutType = componentEl.getAttributeValue( LAYOUT_TYPE );
+        final String layoutType = componentEl.getAttributeValue( TYPE );
         if ( layoutType.equals( FieldSet.class.getSimpleName() ) )
         {
             return parseFieldSet( componentEl );

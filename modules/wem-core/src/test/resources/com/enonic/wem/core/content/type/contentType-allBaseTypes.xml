@@ -5,24 +5,24 @@
   <items>
     <component-set>
       <name>mySet</name>
-      <label />
+      <label/>
       <immutable>false</immutable>
-      <customText />
-      <helpText />
-      <occurrences minimum="0" maximum="1" />
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
       <items>
-        <layout layout-type="FieldSet">
+        <layout type="FieldSet">
           <name>myFieldSet</name>
           <label>My field set</label>
           <items>
             <input type="TextLine" built-in="true">
               <name>myTextLine</name>
-              <label />
+              <label/>
               <immutable>false</immutable>
               <indexed>false</indexed>
-              <customText />
-              <helpText />
-              <occurrences minimum="0" maximum="1" />
+              <customText/>
+              <helpText/>
+              <occurrences minimum="0" maximum="1"/>
             </input>
           </items>
         </layout>
