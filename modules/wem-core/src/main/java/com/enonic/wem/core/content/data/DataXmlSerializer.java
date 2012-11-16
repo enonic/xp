@@ -28,7 +28,7 @@ final class DataXmlSerializer
         }
         if ( data.getValue() != null )
         {
-            if ( data.getDataType().equals( DataTypes.DATA_SET ) )
+            if ( data.getDataType().equals( DataTypes.SET ) )
             {
                 final DataSet set = (DataSet) data.getValue();
                 for ( final Data subData : set )
@@ -36,7 +36,7 @@ final class DataXmlSerializer
                     dataEl.addContent( generate( subData ) );
                 }
             }
-            else if ( data.getDataType().equals( DataTypes.DATA_ARRAY ) )
+            else if ( data.getDataType().equals( DataTypes.ARRAY ) )
             {
                 final DataArray array = (DataArray) data.getValue();
                 for ( final Data element : array )
@@ -72,7 +72,7 @@ final class DataXmlSerializer
         final BaseDataType type = (BaseDataType) DataTypes.parseByName( dataEl.getAttributeValue( "type" ) );
         Preconditions.checkNotNull( type, "type was null" );
         builder.type( type );
-        if ( type.equals( DataTypes.DATA_SET ) )
+        if ( type.equals( DataTypes.SET ) )
         {
             final DataSet dataSet = new DataSet( entryPath );
             builder.value( dataSet );
@@ -83,7 +83,7 @@ final class DataXmlSerializer
                 dataSet.add( parse( entryPath, el ) );
             }
         }
-        else if ( type.equals( DataTypes.DATA_ARRAY ) )
+        else if ( type.equals( DataTypes.ARRAY ) )
         {
             final DataArray array = new DataArray( entryPath );
             builder.value( array );

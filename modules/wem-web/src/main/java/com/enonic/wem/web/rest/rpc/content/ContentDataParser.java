@@ -40,7 +40,7 @@ final class ContentDataParser
             final JsonNode valueNode = data.get( fieldName );
             if ( valueNode.isObject() )
             {
-                contentData.setData( entryPath, parseDataSet( entryPath, valueNode ), DataTypes.DATA_SET );
+                contentData.setData( entryPath, parseDataSet( entryPath, valueNode ), DataTypes.SET );
             }
             else if ( valueNode.isValueNode() )
             {

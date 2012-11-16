@@ -1,10 +1,10 @@
 package com.enonic.wem.api.content.datatype;
 
 
-public class DataSet
+public class Set
     extends BaseDataType
 {
-    DataSet( int key )
+    Set( int key )
     {
         super( key, JavaType.DATA_SET );
     }

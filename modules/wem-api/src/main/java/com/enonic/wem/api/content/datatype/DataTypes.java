@@ -9,9 +9,9 @@ import com.google.common.base.Preconditions;
 
 public final class DataTypes
 {
-    public static final DataSet DATA_SET = new DataSet( 0 );
+    public static final Set SET = new Set( 0 );
 
-    public static final DataArray DATA_ARRAY = new DataArray( 1 );
+    public static final DataArray ARRAY = new DataArray( 1 );
 
     public static final Text TEXT = new Text( 2 );
 
@@ -35,8 +35,8 @@ public final class DataTypes
 
     static
     {
-        register( DATA_SET );
-        register( DATA_ARRAY );
+        register( SET );
+        register( ARRAY );
         register( TEXT );
         register( BLOB );
         register( HTML_PART );

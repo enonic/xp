@@ -52,7 +52,7 @@ public class ColorTest
             e.printStackTrace();
             assertTrue( e instanceof InvalidDataException );
             assertEquals(
-                "Invalid data [Data{path=myColor, type=DataSet, value=myColor { green, blue }}]: data required to have sub data at path: red",
+                "Invalid data [Data{path=myColor, type=Set, value=myColor { green, blue }}]: data required to have sub data at path: red",
                 e.getMessage() );
         }
     }

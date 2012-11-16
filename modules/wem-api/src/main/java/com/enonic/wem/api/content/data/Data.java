@@ -35,7 +35,7 @@ public final class Data
     void setEntryPathIndex( final EntryPath path, final int index )
     {
         this.path = this.path.asNewWithIndexAtPath( index, path );
-        if ( type == DataTypes.DATA_SET )
+        if ( type == DataTypes.SET )
         {
             getDataSet().setEntryPathIndex( path, index );
         }
@@ -63,12 +63,12 @@ public final class Data
 
     public boolean hasDataSetAsValue()
     {
-        return type.equals( DataTypes.DATA_SET );
+        return type.equals( DataTypes.SET );
     }
 
     public boolean hasArrayAsValue()
     {
-        return type.equals( DataTypes.DATA_ARRAY );
+        return type.equals( DataTypes.ARRAY );
     }
 
     public Object getValue()
@@ -161,7 +161,7 @@ public final class Data
 
     public DataSet getDataSet( final EntryPath path )
     {
-        Preconditions.checkArgument( getDataType().equals( DataTypes.DATA_SET ) );
+        Preconditions.checkArgument( getDataType().equals( DataTypes.SET ) );
 
         final DataSet dataSet = (DataSet) getValue();
         return dataSet.getDataSet( path );

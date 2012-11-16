@@ -39,7 +39,7 @@ final class DataJsonSerializer
         }
         if ( data.getValue() != null )
         {
-            if ( data.getDataType().equals( DataTypes.DATA_SET ) )
+            if ( data.getDataType().equals( DataTypes.SET ) )
             {
                 final DataSet dataSet = data.getDataSet();
                 final ArrayNode jsonDataValue = jsonData.putArray( DATA_VALUE );
@@ -48,7 +48,7 @@ final class DataJsonSerializer
                     jsonDataValue.add( serialize( e, objectMapper ) );
                 }
             }
-            else if ( data.getDataType().equals( DataTypes.DATA_ARRAY ) )
+            else if ( data.getDataType().equals( DataTypes.ARRAY ) )
             {
                 final DataArray dataArray = data.getDataArray();
                 final ArrayNode jsonDataValue = jsonData.putArray( DATA_VALUE );
@@ -85,7 +85,7 @@ final class DataJsonSerializer
         final BaseDataType type = (BaseDataType) DataTypes.parseByName( JsonParserUtil.getStringValue( DATA_TYPE, dataNode, null ) );
         Preconditions.checkNotNull( type, "type was null" );
         builder.type( type );
-        if ( type.equals( DataTypes.DATA_SET ) )
+        if ( type.equals( DataTypes.SET ) )
         {
             final DataSet dataSet = new DataSet( entryPath );
             builder.value( dataSet );
@@ -97,7 +97,7 @@ final class DataJsonSerializer
                 dataSet.add( parse( entryPath, eNode ) );
             }
         }
-        else if ( type.equals( DataTypes.DATA_ARRAY ) )
+        else if ( type.equals( DataTypes.ARRAY ) )
         {
             final DataArray array = new DataArray( entryPath );
             builder.value( array );
