@@ -43,8 +43,8 @@ Ext.define('Admin.view.BaseDialogWindow', {
 
         var me = this;
 
-        if (!me.dockedItems) {
-            me.dockedItems = [];
+        if (!this.dockedItems) {
+            this.dockedItems = [];
         }
         Ext.Array.insert(this.dockedItems, 0, [
             {
@@ -69,37 +69,46 @@ Ext.define('Admin.view.BaseDialogWindow', {
             }
         ]);
 
-        if (!me.items) {
-            me.items = [];
+        if (!this.items) {
+            this.items = [];
         }
 
-        if (me.dialogTitle) {
-            me.setDialogHeader(me.dialogTitle);
+        if (this.dialogTitle) {
+            this.setDialogHeader(this.dialogTitle);
         }
-        if (me.dialogSubTitle) {
-            me.setDialogSubHeader(this.dialogSubTitle);
+        if (this.dialogSubTitle) {
+            this.setDialogSubHeader(this.dialogSubTitle);
         }
-        if (me.dialogInfoTpl) {
-            me.setDialogInfo(me.dialogInfoTpl);
+        if (this.dialogInfoTpl) {
+            this.setDialogInfo(this.dialogInfoTpl);
         }
 
         this.callParent(arguments);
     },
 
 
+    filterItem: function (id) {
+        return Ext.Array.filter(this.items, function (item) {
+            return item.itemId !== id;
+        });
+    },
+
     setDialogHeader: function (title) {
-        var me = this;
+
         var headerItems = [];
 
-        headerItems.push(me.createTitle(title));
-        Ext.Array.each(me.buttons, function (b, i) {
-            headerItems.push(me.buttons[i]);
+        headerItems.push(this.createTitle(title));
+        Ext.Array.each(this.buttons, function (b, i) {
+            headerItems.push(this.buttons[i]);
         });
-        headerItems.push(me.createCloseButton());
+        headerItems.push(this.createCloseButton());
 
-        Ext.Array.insert(me.items, 0, [
+        this.items = this.filterItem('dialogTitle');
+
+        Ext.Array.insert(this.items, 0, [
             {
                 xtype: 'container',
+                itemId: 'dialogTitle',
                 cls: 'admin-window-header',
                 padding: '5 0 5 5',
                 layout: {
@@ -112,14 +121,18 @@ Ext.define('Admin.view.BaseDialogWindow', {
                 items: headerItems
             }
         ]);
-        me.doLayout();
+        this.doLayout();
     },
 
     setDialogSubHeader: function (title) {
         var i = this.dialogTitle ? 1 : 0;
+
+        this.items = this.filterItem('dialogSubTitle');
+
         Ext.Array.insert(this.items, i, [
             {
                 xtype: 'component',
+                itemId: 'dialogSubTitle',
                 cls: 'admin-window-subheader',
                 html: title
             }
@@ -135,6 +148,9 @@ Ext.define('Admin.view.BaseDialogWindow', {
         if (this.dialogSubTitle) {
             i++;
         }
+
+        this.items = this.filterItem('dialogInfo');
+
         Ext.Array.insert(this.items, i, [
             {
                 itemId: 'dialogInfo',
@@ -184,11 +200,11 @@ Ext.define('Admin.view.BaseDialogWindow', {
     },
 
     createTitle: function (title) {
-        var me = this;
+
         return {
             xtype: 'component',
             flex: 1,
-            cls: me.iconCls,
+            cls: this.iconCls,
             autoEl: {
                 tag: 'h1',
                 html: title
