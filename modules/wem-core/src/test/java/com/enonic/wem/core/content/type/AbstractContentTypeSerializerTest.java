@@ -1,5 +1,12 @@
 package com.enonic.wem.core.content.type;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,6 +47,41 @@ public abstract class AbstractContentTypeSerializerTest
     {
         this.serializer = getSerializer();
         contentTypeWithAllComponentTypes = createContentTypeWithAllInputComponentTypes();
+    }
+
+    abstract void assertSerializedResult( String fileNameForExpected, String actualSerialization );
+
+    @Test
+    public void given_all_base_types_when_parsed_then_paths_are_as_expected()
+        throws Exception
+    {
+        InputSubType inputSubType =
+            InputSubType.newInputSubType().input( Input.newInput().name( "mySharedInput" ).type( InputTypes.TEXT_LINE ).build() ).module(
+                Module.SYSTEM ).build();
+        ComponentSet set = newComponentSet().name( "mySet" ).build();
+        Layout layout = FieldSet.newFieldSet().label( "My field set" ).name( "myFieldSet" ).add(
+            newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() ).build();
+        set.add( layout );
+        set.add( newSubTypeReference().name( "myCommonInput" ).subType( inputSubType ).build() );
+
+        ContentType.Builder contentTypeBuilder = ContentType.newComponentType().name( "AllBaseTypes" ).module( myModule );
+        contentTypeBuilder.add( set );
+        ContentType contentType = contentTypeBuilder.build();
+
+        String actualSerialization = toString( contentType );
+
+        // exercise
+        ContentType actualContentType = toContentType( actualSerialization );
+
+        // verify actual string
+        assertSerializedResult( "contentType-allBaseTypes.json", actualSerialization );
+
+        // verify
+        assertNotNull( actualContentType.getComponent( "mySet" ) );
+        assertEquals( "mySet", actualContentType.getComponent( "mySet" ).getPath().toString() );
+        assertNotNull( actualContentType.getComponent( "mySet.myTextLine" ) );
+        assertEquals( "mySet.myTextLine", actualContentType.getComponent( "mySet.myTextLine" ).getPath().toString() );
+        assertEquals( "mySet.myCommonInput", actualContentType.getComponent( "mySet.myCommonInput" ).getPath().toString() );
     }
 
     private ContentType createContentTypeWithAllInputComponentTypes()
@@ -120,32 +162,6 @@ public abstract class AbstractContentTypeSerializerTest
         assertEquals( "myXml", actualContentType.getComponent( "myXml" ).getPath().toString() );
     }
 
-    @Test
-    public void given_all_base_types_when_parsed_then_paths_are_as_expected()
-    {
-        InputSubType inputSubType =
-            InputSubType.newInputSubType().input( Input.newInput().name( "mySharedInput" ).type( InputTypes.TEXT_LINE ).build() ).module(
-                Module.SYSTEM ).build();
-        ComponentSet set = newComponentSet().name( "mySet" ).build();
-        Layout layout = FieldSet.newFieldSet().label( "My field set" ).name( "myFieldSet" ).add(
-            newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() ).build();
-        set.add( layout );
-        set.add( newSubTypeReference().name( "myCommonInput" ).subType( inputSubType ).build() );
-
-        ContentType.Builder contentTypeBuilder = ContentType.newComponentType().name( "AllBaseTypes" ).module( myModule );
-        contentTypeBuilder.add( set );
-        ContentType contentType = contentTypeBuilder.build();
-
-        String serialized = toString( contentType );
-
-        // exercise
-        ContentType actualContentType = toContentType( serialized );
-        assertNotNull( actualContentType.getComponent( "mySet" ) );
-        assertEquals( "mySet", actualContentType.getComponent( "mySet" ).getPath().toString() );
-        assertNotNull( actualContentType.getComponent( "mySet.myTextLine" ) );
-        assertEquals( "mySet.myTextLine", actualContentType.getComponent( "mySet.myTextLine" ).getPath().toString() );
-        assertEquals( "mySet.myCommonInput", actualContentType.getComponent( "mySet.myCommonInput" ).getPath().toString() );
-    }
 
     @Test
     public void given_input_in_a_set_when_parsed_then_paths_are_as_expected()
@@ -271,4 +287,46 @@ public abstract class AbstractContentTypeSerializerTest
         System.out.println( serialized );
         return serialized;
     }
+
+    protected String getJsonAsString( String fileName )
+    {
+        try
+        {
+            return toJsonString( getJson( fileName ) );
+        }
+        catch ( Exception e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    private JsonNode getJson( String fileName )
+    {
+        try
+        {
+            final ObjectMapper mapper = createObjectMapper();
+            final JsonFactory factory = mapper.getJsonFactory();
+            final JsonParser parser = factory.createJsonParser( getClass().getResource( fileName ) );
+            return parser.readValueAsTree();
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    private String toJsonString( final JsonNode value )
+        throws Exception
+    {
+        final ObjectMapper mapper = createObjectMapper();
+        return mapper.defaultPrettyPrintingWriter().writeValueAsString( value );
+    }
+
+    private static ObjectMapper createObjectMapper()
+    {
+        final ObjectMapper mapper = new ObjectMapper();
+        mapper.setDateFormat( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ) );
+        return mapper;
+    }
+
 }

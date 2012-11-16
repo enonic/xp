@@ -8,4 +8,10 @@ public class ContentTypeXmlSerializerTest
     {
         return new ContentTypeXmlSerializer().prettyPrint( true );
     }
+
+    @Override
+    void assertSerializedResult( final String fileNameForExpected, final String actualSerialization )
+    {
+        // TODO
+    }
 }
