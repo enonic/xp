@@ -91,7 +91,7 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
 
         var me = this;
         var contentData = contentWizard.getData();
-        var contentType = contentWizard.data;
+        var contentType = contentWizard.data.contentType;
 
         var contentParams = {
             contentData: contentData,

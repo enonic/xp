@@ -54,11 +54,10 @@ Ext.define('Admin.controller.contentManager.Controller', {
             if (Ext.isFunction(callback)) {
                 callback();
             }
-            var contentData = response.contentType;
             return {
                 xtype: 'contentWizardPanel',
                 title: 'New Content',
-                data: contentData
+                data: {contentType: response.contentType, content: response.content}
             };
         };
         var createSiteTabFn = function (response) {
@@ -75,9 +74,22 @@ Ext.define('Admin.controller.contentManager.Controller', {
         var openEditContentTabFn = function (selectedContent) {
             var requestConfig = {
                 doTabRequest: function (handleRpcResponse) {
-                    Admin.lib.RemoteService.contentType_get({contentType: 'News:Article'}, function (rpcResponse) {
-                        if (rpcResponse && rpcResponse.success) {
-                            handleRpcResponse(rpcResponse);
+                    var getContentTypeResponse, getContentResponse;
+                    // request content type and content to be edited, in parallel
+                    Admin.lib.RemoteService.contentType_get({contentType: selectedContent.get('type')}, function (rpcResponse) {
+                        getContentTypeResponse = rpcResponse;
+                        if (getContentTypeResponse && getContentTypeResponse.success && getContentResponse && getContentResponse.success) {
+                            // both responses received, combine responses and pass them to callback
+                            getContentTypeResponse.content = getContentResponse.content;
+                            handleRpcResponse(getContentTypeResponse);
+                        }
+                    });
+                    Admin.lib.RemoteService.content_get({path: selectedContent.get('path')}, function (rpcResponse) {
+                        getContentResponse = rpcResponse;
+                        if (getContentResponse && getContentResponse.success && getContentTypeResponse && getContentTypeResponse.success) {
+                            // both responses received, combine responses and pass them to callback
+                            getContentTypeResponse.content = getContentResponse.content;
+                            handleRpcResponse(getContentTypeResponse);
                         }
                     });
                 },
@@ -135,7 +147,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
             case 'contentType':
                 //This is stub, logic for new content creation will be added later
                 var createContentTabFn = function (response) {
-                    var contentData = response.contentType;
+                    var contentData = {contentType: response.contentType};
                     return {
                         xtype: 'contentWizardPanel',
                         title: 'New Content',

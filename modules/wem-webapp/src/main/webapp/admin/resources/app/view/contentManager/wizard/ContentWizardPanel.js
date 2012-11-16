@@ -25,7 +25,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     initComponent: function () {
         var me = this;
         me.headerData = {
-            displayName: me.data ? me.data.name : 'New Content'
+            displayName: me.data && me.data.content? me.data.content.name : 'New Content'
         };
         var contentWizardHeader = Ext.create('Ext.container.Container', {
             itemId: 'wizardHeader',
@@ -129,7 +129,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         var dataStep = {
             stepTitle: "Data",
             xtype: 'contentDataPanel',
-            contentItems: this.data ? this.data.items : []
+            contentTypeItems: this.data ? this.data.contentType.items : [],
+            content: this.data ? this.data.content : null
         };
         var treeStep = {
             stepTitle: "Tree",

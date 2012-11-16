@@ -14,6 +14,8 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.core.jcr.JcrHelper;
 
+import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENTS_PATH;
+
 abstract class AbstractContentDaoHandler
 {
     protected final Session session;
@@ -31,8 +33,10 @@ abstract class AbstractContentDaoHandler
         List<ContentAndNode> contentList = new ArrayList<ContentAndNode>();
         while ( nodeIterator.hasNext() )
         {
-            Node contentNode = nodeIterator.nextNode();
-            final Content content = Content.create( ContentPath.from( contentNode.getPath() ) );
+            final Node contentNode = nodeIterator.nextNode();
+            final String jcrNodePath = contentNode.getPath();
+            final String contentPath = StringUtils.substringAfter( jcrNodePath, CONTENTS_PATH );
+            final Content content = Content.create( ContentPath.from( contentPath ) );
             contentJcrMapper.toContent( contentNode, content );
             contentList.add( new ContentAndNode( content, contentNode ) );
         }
@@ -43,7 +47,7 @@ abstract class AbstractContentDaoHandler
         throws RepositoryException
     {
         final Node rootNode = session.getRootNode();
-        final Node contentsNode = JcrHelper.getNodeOrNull( rootNode, ContentDaoConstants.CONTENTS_PATH );
+        final Node contentsNode = JcrHelper.getNodeOrNull( rootNode, CONTENTS_PATH );
         return contentsNode.getNodes();
     }
 
@@ -83,7 +87,7 @@ abstract class AbstractContentDaoHandler
     private String getNodePath( final ContentPath contentPath )
     {
         final String relativePathToContent = StringUtils.removeStart( contentPath.toString(), "/" );
-        return ContentDaoConstants.CONTENTS_PATH + relativePathToContent;
+        return CONTENTS_PATH + relativePathToContent;
     }
 
     class ContentAndNode
