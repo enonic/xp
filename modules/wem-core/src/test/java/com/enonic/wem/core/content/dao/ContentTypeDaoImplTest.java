@@ -9,14 +9,14 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
-import com.enonic.wem.api.content.type.form.ComponentSet;
+import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 import com.enonic.wem.core.content.type.dao.ContentTypeDaoImpl;
 import com.enonic.wem.itest.AbstractJcrTest;
 
-import static com.enonic.wem.api.content.type.form.ComponentSet.newComponentSet;
+import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static org.junit.Assert.*;
 
@@ -190,12 +190,12 @@ public class ContentTypeDaoImplTest
 
     private void setContentTypeComponents( final ContentType contentType )
     {
-        ComponentSet componentSet = newComponentSet().name( "address" ).build();
+        FormItemSet componentSet = newFormItemSet().name( "address" ).build();
         componentSet.add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() );
         componentSet.add( newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() );
         componentSet.add( newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() );
         componentSet.add( newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.addComponent( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.addComponent( componentSet );
+        contentType.addFormItem( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( componentSet );
     }
 }

@@ -6,11 +6,11 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.NullNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.content.type.form.Component;
-import com.enonic.wem.api.content.type.form.ComponentSet;
-import com.enonic.wem.api.content.type.form.Components;
 import com.enonic.wem.api.content.type.form.FieldSet;
-import com.enonic.wem.api.content.type.form.HierarchicalComponent;
+import com.enonic.wem.api.content.type.form.FormItem;
+import com.enonic.wem.api.content.type.form.FormItemSet;
+import com.enonic.wem.api.content.type.form.FormItems;
+import com.enonic.wem.api.content.type.form.HierarchicalFormItem;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.content.type.form.Layout;
 import com.enonic.wem.api.content.type.form.SubTypeQualifiedName;
@@ -22,12 +22,12 @@ import com.enonic.wem.core.content.JsonParsingException;
 import com.enonic.wem.core.content.type.form.inputtype.InputTypeConfigJsonSerializer;
 import com.enonic.wem.core.content.type.form.inputtype.InputTypeJsonSerializer;
 
-import static com.enonic.wem.api.content.type.form.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
+import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 
 class ComponentJsonSerializer
-    extends AbstractJsonSerializer<Component>
+    extends AbstractJsonSerializer<FormItem>
 {
     private static final String TYPE = "type";
 
@@ -73,23 +73,23 @@ class ComponentJsonSerializer
     }
 
     @Override
-    protected JsonNode serialize( final Component component, final ObjectMapper objectMapper )
+    protected JsonNode serialize( final FormItem formItem, final ObjectMapper objectMapper )
     {
-        if ( component instanceof ComponentSet )
+        if ( formItem instanceof FormItemSet )
         {
-            return serializeComponentSet( (ComponentSet) component, objectMapper );
+            return serializeComponentSet( (FormItemSet) formItem, objectMapper );
         }
-        else if ( component instanceof Layout )
+        else if ( formItem instanceof Layout )
         {
-            return serializeLayout( (Layout) component, objectMapper );
+            return serializeLayout( (Layout) formItem, objectMapper );
         }
-        else if ( component instanceof Input )
+        else if ( formItem instanceof Input )
         {
-            return serializeInput( (Input) component, objectMapper );
+            return serializeInput( (Input) formItem, objectMapper );
         }
-        else if ( component instanceof SubTypeReference )
+        else if ( formItem instanceof SubTypeReference )
         {
-            return serializeReference( (SubTypeReference) component, objectMapper );
+            return serializeReference( (SubTypeReference) formItem, objectMapper );
         }
         return NullNode.getInstance();
     }
@@ -116,17 +116,17 @@ class ComponentJsonSerializer
         return jsonObject;
     }
 
-    private JsonNode serializeComponentSet( final ComponentSet componentSet, final ObjectMapper objectMapper )
+    private JsonNode serializeComponentSet( final FormItemSet componentSet, final ObjectMapper objectMapper )
     {
         final ObjectNode jsonObject = objectMapper.createObjectNode();
-        jsonObject.put( TYPE, ComponentSet.class.getSimpleName() );
+        jsonObject.put( TYPE, FormItemSet.class.getSimpleName() );
         jsonObject.put( NAME, componentSet.getName() );
         jsonObject.put( LABEL, componentSet.getLabel() );
         jsonObject.put( IMMUTABLE, componentSet.isImmutable() );
         jsonObject.put( OCCURRENCES, occurrencesJsonSerializer.serialize( componentSet.getOccurrences(), objectMapper ) );
         jsonObject.put( CUSTOM_TEXT, componentSet.getCustomText() );
         jsonObject.put( HELP_TEXT, componentSet.getHelpText() );
-        jsonObject.put( ITEMS, componentsJsonSerializer.serialize( componentSet.getComponents(), objectMapper ) );
+        jsonObject.put( ITEMS, componentsJsonSerializer.serialize( componentSet.getFormItems(), objectMapper ) );
         return jsonObject;
     }
 
@@ -147,7 +147,7 @@ class ComponentJsonSerializer
     {
         jsonObject.put( LABEL, fieldSet.getLabel() );
         jsonObject.put( NAME, fieldSet.getName() );
-        jsonObject.put( ITEMS, componentsJsonSerializer.serialize( fieldSet.getComponents(), objectMapper ) );
+        jsonObject.put( ITEMS, componentsJsonSerializer.serialize( fieldSet.getFormItems(), objectMapper ) );
     }
 
     private JsonNode serializeReference( final SubTypeReference subTypeReference, final ObjectMapper objectMapper )
@@ -160,37 +160,37 @@ class ComponentJsonSerializer
         return jsonObject;
     }
 
-    public Component parse( final JsonNode componentNode )
+    public FormItem parse( final JsonNode componentNode )
     {
         final String componentType = JsonParserUtil.getStringValue( TYPE, componentNode );
 
-        final Component component;
+        final FormItem formItem;
 
         if ( componentType.equals( Input.class.getSimpleName() ) )
         {
-            component = parseInput( componentNode );
+            formItem = parseInput( componentNode );
         }
-        else if ( componentType.equals( ComponentSet.class.getSimpleName() ) )
+        else if ( componentType.equals( FormItemSet.class.getSimpleName() ) )
         {
-            component = parseComponentSet( componentNode );
+            formItem = parseComponentSet( componentNode );
         }
         else if ( componentType.equals( Layout.class.getSimpleName() ) )
         {
-            component = parseLayout( componentNode );
+            formItem = parseLayout( componentNode );
         }
         else if ( componentType.equals( SubTypeReference.class.getSimpleName() ) )
         {
-            component = parseSubTypeReference( componentNode );
+            formItem = parseSubTypeReference( componentNode );
         }
         else
         {
-            throw new JsonParsingException( "Unknown ComponentType: " + componentType );
+            throw new JsonParsingException( "Unknown FormItemType: " + componentType );
         }
 
-        return component;
+        return formItem;
     }
 
-    private HierarchicalComponent parseInput( final JsonNode componentNode )
+    private HierarchicalFormItem parseInput( final JsonNode componentNode )
     {
         final Input.Builder builder = newInput();
         builder.name( JsonParserUtil.getStringValue( NAME, componentNode ) );
@@ -207,9 +207,9 @@ class ComponentJsonSerializer
         return builder.build();
     }
 
-    private HierarchicalComponent parseComponentSet( final JsonNode componentNode )
+    private HierarchicalFormItem parseComponentSet( final JsonNode componentNode )
     {
-        final ComponentSet.Builder builder = newComponentSet();
+        final FormItemSet.Builder builder = newFormItemSet();
         builder.name( JsonParserUtil.getStringValue( NAME, componentNode ) );
         builder.label( JsonParserUtil.getStringValue( LABEL, componentNode, null ) );
         builder.immutable( JsonParserUtil.getBooleanValue( IMMUTABLE, componentNode ) );
@@ -218,16 +218,16 @@ class ComponentJsonSerializer
 
         parseOccurrences( builder, componentNode.get( OCCURRENCES ) );
 
-        final Components components = componentsJsonSerializer.parse( componentNode.get( ITEMS ) );
-        for ( Component component : components.iterable() )
+        final FormItems formItems = componentsJsonSerializer.parse( componentNode.get( ITEMS ) );
+        for ( FormItem formItem : formItems.iterable() )
         {
-            builder.add( component );
+            builder.add( formItem );
         }
 
         return builder.build();
     }
 
-    private Component parseLayout( final JsonNode componentNode )
+    private FormItem parseLayout( final JsonNode componentNode )
     {
         final String layoutType = JsonParserUtil.getStringValue( LAYOUT_TYPE, componentNode );
         if ( layoutType.equals( FieldSet.class.getSimpleName() ) )
@@ -240,22 +240,22 @@ class ComponentJsonSerializer
         }
     }
 
-    private Component parseFieldSet( final JsonNode componentNode )
+    private FormItem parseFieldSet( final JsonNode componentNode )
     {
         final FieldSet.Builder builder = newFieldSet();
         builder.label( JsonParserUtil.getStringValue( LABEL, componentNode, null ) );
         builder.name( JsonParserUtil.getStringValue( NAME, componentNode, null ) );
 
-        final Components components = componentsJsonSerializer.parse( componentNode.get( ITEMS ) );
-        for ( Component component : components.iterable() )
+        final FormItems formItems = componentsJsonSerializer.parse( componentNode.get( ITEMS ) );
+        for ( FormItem formItem : formItems.iterable() )
         {
-            builder.add( component );
+            builder.add( formItem );
         }
 
         return builder.build();
     }
 
-    private HierarchicalComponent parseSubTypeReference( final JsonNode componentNode )
+    private HierarchicalFormItem parseSubTypeReference( final JsonNode componentNode )
     {
         final SubTypeReference.Builder builder = SubTypeReference.newSubTypeReference();
         builder.name( JsonParserUtil.getStringValue( NAME, componentNode ) );
@@ -285,7 +285,7 @@ class ComponentJsonSerializer
         }
     }
 
-    private void parseOccurrences( final ComponentSet.Builder builder, final JsonNode occurrencesNode )
+    private void parseOccurrences( final FormItemSet.Builder builder, final JsonNode occurrencesNode )
     {
         if ( occurrencesNode != null )
         {

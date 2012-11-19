@@ -1,10 +1,10 @@
 package com.enonic.wem.api.content.type.form;
 
 
-public enum ComponentType
+public enum FormItemType
 {
     INPUT,
-    COMPONENT_SET,
+    FORM_ITEM_SET,
     LAYOUT,
     REFERENCE
 }

@@ -5,12 +5,12 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.form.Components;
+import com.enonic.wem.api.content.type.form.FormItems;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.content.type.form.ComponentsJsonSerializer;
 
 import static com.enonic.wem.api.content.type.ContentType.Builder;
-import static com.enonic.wem.api.content.type.ContentType.newComponentType;
+import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyBoolean;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyString;
 
@@ -38,22 +38,22 @@ class ContentTypeJcrMapper
         contentTypeNode.setProperty( MODULE_NAME, contentType.getModule().getName() );
         contentTypeNode.setProperty( IS_ABSTRACT, contentType.isAbstract() );
 
-        final String componentsJson = componentsSerializer.toString( contentType.getComponents() );
+        final String componentsJson = componentsSerializer.toString( contentType.getFormItems() );
         contentTypeNode.setProperty( COMPONENTS, componentsJson );
     }
 
     ContentType toContentType( final Node contentTypeNode )
         throws RepositoryException
     {
-        final Builder builder = newComponentType();
+        final Builder builder = newContentType();
         builder.name( getPropertyString( contentTypeNode, NAME ) );
         builder.module( new Module( getPropertyString( contentTypeNode, MODULE_NAME ) ) );
         builder.setAbstract( getPropertyBoolean( contentTypeNode, IS_ABSTRACT ) );
         builder.displayName( getPropertyString( contentTypeNode, DISPLAY_NAME ) );
 
         final String componentsJson = contentTypeNode.getProperty( COMPONENTS ).getString();
-        final Components components = componentsSerializer.toObject( componentsJson );
-        builder.components( components );
+        final FormItems formItems = componentsSerializer.toObject( componentsJson );
+        builder.formItems( formItems );
 
         return builder.build();
     }

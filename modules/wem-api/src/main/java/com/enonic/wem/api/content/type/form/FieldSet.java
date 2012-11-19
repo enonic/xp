@@ -9,11 +9,11 @@ import com.google.common.base.Preconditions;
 
 public class FieldSet
     extends Layout
-    implements Iterable<Component>
+    implements Iterable<FormItem>
 {
     private String label;
 
-    private Components components = new Components();
+    private FormItems formItems = new FormItems();
 
     protected FieldSet()
     {
@@ -25,9 +25,9 @@ public class FieldSet
     }
 
     @Override
-    public Iterator<Component> iterator()
+    public Iterator<FormItem> iterator()
     {
-        return components.iterator();
+        return formItems.iterator();
     }
 
     @Override
@@ -35,7 +35,7 @@ public class FieldSet
     {
         final FieldSet copy = (FieldSet) super.copy();
         copy.label = label;
-        copy.components = components.copy();
+        copy.formItems = formItems.copy();
         return copy;
     }
 
@@ -44,34 +44,34 @@ public class FieldSet
         return new Builder();
     }
 
-    public void addComponent( final Component component )
+    public void addFormItem( final FormItem formItem )
     {
-        this.components.add( component );
+        this.formItems.add( formItem );
     }
 
-    public Components getComponents()
+    public FormItems getFormItems()
     {
-        return components;
+        return formItems;
     }
 
-    public Component getComponent( final String name )
+    public FormItem getFormItem( final String name )
     {
-        return components.getComponent( name );
+        return formItems.getFormItem( name );
     }
 
     public Input getInput( final String name )
     {
-        return components.getInput( name );
+        return formItems.getInput( name );
     }
 
-    void forwardSetPath( ComponentPath path )
+    void forwardSetPath( FormItemPath path )
     {
-        components.setPath( path );
+        formItems.setPath( path );
     }
 
-    public Iterable<Component> componentIterable()
+    public Iterable<FormItem> formItemIterable()
     {
-        return components.iterable();
+        return formItems.iterable();
     }
 
     public static class Builder
@@ -80,7 +80,7 @@ public class FieldSet
 
         private String name;
 
-        private List<Component> components = new ArrayList<Component>();
+        private List<FormItem> formItems = new ArrayList<FormItem>();
 
         public Builder label( String value )
         {
@@ -94,9 +94,9 @@ public class FieldSet
             return this;
         }
 
-        public Builder add( Component component )
+        public Builder add( FormItem formItem )
         {
-            this.components.add( component );
+            this.formItems.add( formItem );
             return this;
         }
 
@@ -108,9 +108,9 @@ public class FieldSet
             FieldSet fieldSet = new FieldSet();
             fieldSet.label = this.label;
             fieldSet.setName( this.name );
-            for ( Component component : components )
+            for ( FormItem formItem : formItems )
             {
-                fieldSet.addComponent( component );
+                fieldSet.addFormItem( formItem );
             }
             return fieldSet;
         }

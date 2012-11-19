@@ -4,7 +4,7 @@
     "qualifiedName":"myModule:AllBaseTypes",
     "items":[
         {
-            "type":"ComponentSet",
+            "type":"FormItemSet",
             "name":"mySet",
             "label":null,
             "immutable":false,

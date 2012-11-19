@@ -2,11 +2,11 @@ package com.enonic.wem.api.content.type.form;
 
 
 public abstract class Layout
-    extends Component
+    extends FormItem
 {
     Layout()
     {
     }
 
-    public abstract Component getComponent( final String name );
+    public abstract FormItem getFormItem( final String name );
 }

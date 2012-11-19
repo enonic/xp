@@ -8,7 +8,7 @@ import java.util.StringTokenizer;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.type.form.ComponentPath;
+import com.enonic.wem.api.content.type.form.FormItemPath;
 
 public final class EntryPath
     implements Iterable<EntryPath.Element>
@@ -119,14 +119,14 @@ public final class EntryPath
         return true;
     }
 
-    public ComponentPath resolveComponentPath()
+    public FormItemPath resolveFormItemPath()
     {
-        List<String> componentPathElements = new ArrayList<String>();
+        final List<String> pathElements = new ArrayList<String>();
         for ( Element element : elements )
         {
-            componentPathElements.add( element.getName() );
+            pathElements.add( element.getName() );
         }
-        return new ComponentPath( componentPathElements );
+        return new FormItemPath( pathElements );
     }
 
     public EntryPath getParent()

@@ -26,5 +26,5 @@ public abstract class SubType
 
     public abstract Class getType();
 
-    public abstract HierarchicalComponent create( final SubTypeReference subTypeReference );
+    public abstract HierarchicalFormItem create( final SubTypeReference subTypeReference );
 }

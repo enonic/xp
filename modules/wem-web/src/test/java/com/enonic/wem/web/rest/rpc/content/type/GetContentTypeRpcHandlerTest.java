@@ -53,9 +53,9 @@ public class GetContentTypeRpcHandlerTest
         final Input textArea1 =
             newInput().name( "textArea1" ).type( TEXT_AREA ).label( "Text Area" ).required( true ).helpText( "Help text area" ).required(
                 true ).build();
-        contentType.addComponent( inputText1 );
-        contentType.addComponent( inputText2 );
-        contentType.addComponent( textArea1 );
+        contentType.addFormItem( inputText1 );
+        contentType.addFormItem( inputText2 );
+        contentType.addFormItem( textArea1 );
 
         final ContentTypes contentTypes = ContentTypes.from( contentType );
         final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( new QualifiedContentTypeName( "myModule:myCtype" ) );

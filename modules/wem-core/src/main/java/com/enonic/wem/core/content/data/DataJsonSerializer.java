@@ -31,7 +31,7 @@ final class DataJsonSerializer
     final JsonNode serialize( final Data data, final ObjectMapper objectMapper )
     {
         final ObjectNode jsonData = objectMapper.createObjectNode();
-        final String name = data.getPath().resolveComponentPath().getLastElement();
+        final String name = data.getPath().resolveFormItemPath().getLastElement();
         jsonData.put( DATA_NAME, name );
         if ( data.getDataType() != null )
         {

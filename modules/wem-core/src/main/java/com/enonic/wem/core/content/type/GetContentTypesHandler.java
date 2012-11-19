@@ -16,14 +16,14 @@ import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.MockContentTypeFetcher;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
-import com.enonic.wem.api.content.type.form.ComponentSet;
+import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 
-import static com.enonic.wem.api.content.type.form.ComponentSet.newComponentSet;
+import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static com.enonic.wem.api.content.type.form.inputtype.InputTypes.TEXT_AREA;
 import static com.enonic.wem.api.content.type.form.inputtype.InputTypes.TEXT_LINE;
@@ -109,21 +109,21 @@ public final class GetContentTypesHandler
             newInput().name( "preface" ).type( TEXT_LINE ).label( "Preface" ).helpText( "Preface of the article" ).build();
         final Input body =
             newInput().name( "body" ).type( TEXT_AREA ).label( "Body" ).required( true ).helpText( "Body of the article" ).build();
-        articleContentType.addComponent( title );
-        articleContentType.addComponent( category );
-        articleContentType.addComponent( body );
+        articleContentType.addFormItem( title );
+        articleContentType.addFormItem( category );
+        articleContentType.addFormItem( body );
         mockContentTypeFetcher.add( articleContentType );
 
         final ContentType article2ContentType = new ContentType();
         article2ContentType.setModule( Module.newModule().name( "News" ).build() );
         article2ContentType.setName( "Article2" );
-        article2ContentType.addComponent( title.copy() );
-        article2ContentType.addComponent( category.copy() );
-        article2ContentType.addComponent( body.copy() );
-        ComponentSet componentSet = newComponentSet().name( "related" ).build();
+        article2ContentType.addFormItem( title.copy() );
+        article2ContentType.addFormItem( category.copy() );
+        article2ContentType.addFormItem( body.copy() );
+        FormItemSet componentSet = newFormItemSet().name( "related" ).build();
         componentSet.add( newInput().name( "author" ).label( "Author" ).type( TEXT_LINE ).build() );
         componentSet.add( newInput().name( "category" ).label( "Category" ).type( TEXT_LINE ).build() );
-        article2ContentType.addComponent( componentSet );
+        article2ContentType.addFormItem( componentSet );
         mockContentTypeFetcher.add( article2ContentType );
 
         return mockContentTypeFetcher;

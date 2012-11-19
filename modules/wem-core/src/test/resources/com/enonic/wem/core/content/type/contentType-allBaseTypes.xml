@@ -3,7 +3,7 @@
   <name>AllBaseTypes</name>
   <module>myModule</module>
   <items>
-    <component-set>
+    <form-item-set>
       <name>mySet</name>
       <label/>
       <immutable>false</immutable>
@@ -32,6 +32,7 @@
           <sub-type-class>InputSubType</sub-type-class>
         </sub-type-reference>
       </items>
-    </component-set>
+    </form-item-set>
   </items>
 </type>
+

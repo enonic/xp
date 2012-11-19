@@ -105,8 +105,8 @@ public class EntryPathTest
     @Test
     public void resolveComponentPath()
     {
-        assertEquals( "car", new EntryPath( "car[0]" ).resolveComponentPath().toString() );
-        assertEquals( "car.model", new EntryPath( "car[0].model" ).resolveComponentPath().toString() );
+        assertEquals( "car", new EntryPath( "car[0]" ).resolveFormItemPath().toString() );
+        assertEquals( "car.model", new EntryPath( "car[0].model" ).resolveFormItemPath().toString() );
     }
 
     @Test

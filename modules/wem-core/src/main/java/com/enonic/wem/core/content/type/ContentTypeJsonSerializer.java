@@ -6,8 +6,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.form.Component;
-import com.enonic.wem.api.content.type.form.Components;
+import com.enonic.wem.api.content.type.form.FormItem;
+import com.enonic.wem.api.content.type.form.FormItems;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
 import com.enonic.wem.core.content.JsonParserUtil;
@@ -28,7 +28,7 @@ public class ContentTypeJsonSerializer
         objectNode.put( "name", contentType.getName() );
         objectNode.put( "module", contentType.getModule().getName() );
         objectNode.put( "qualifiedName", contentType.getQualifiedName().toString() );
-        objectNode.put( "items", componentsSerializer.serialize( contentType.getComponents(), mapper ) );
+        objectNode.put( "items", componentsSerializer.serialize( contentType.getFormItems(), mapper ) );
         return objectNode;
     }
 
@@ -48,10 +48,10 @@ public class ContentTypeJsonSerializer
 
         try
         {
-            final Components components = componentsSerializer.parse( contentTypeNode.get( "items" ) );
-            for ( Component component : components )
+            final FormItems formItems = componentsSerializer.parse( contentTypeNode.get( "items" ) );
+            for ( FormItem formItem : formItems )
             {
-                contentType.addComponent( component );
+                contentType.addFormItem( formItem );
             }
 
         }

@@ -37,7 +37,7 @@ final class DataXmlSerializer
 
     private void generateSet( final Element parentDataEl, final Data data )
     {
-        final String name = data.getPath().resolveComponentPath().getLastElement();
+        final String name = data.getPath().resolveFormItemPath().getLastElement();
         final Element dataEl = new Element( name ).setAttribute( "type", data.getDataType().getName() );
         parentDataEl.addContent( dataEl );
         final DataSet set = (DataSet) data.getValue();
@@ -49,7 +49,7 @@ final class DataXmlSerializer
 
     private void generateArray( final Element parentDataEl, final Data data )
     {
-        final String name = data.getPath().resolveComponentPath().getLastElement();
+        final String name = data.getPath().resolveFormItemPath().getLastElement();
         final DataArray array = (DataArray) data.getValue();
         for ( final Data element : array )
         {
@@ -68,7 +68,7 @@ final class DataXmlSerializer
 
     private void generateValue( final Element parentDataEl, final Data data )
     {
-        final String name = data.getPath().resolveComponentPath().getLastElement();
+        final String name = data.getPath().resolveFormItemPath().getLastElement();
         final Element dataEl = new Element( name ).setAttribute( "type", data.getDataType().getName() );
         parentDataEl.addContent( dataEl );
         if ( data.getDataType().equals( DataTypes.BLOB ) )

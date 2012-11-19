@@ -5,8 +5,8 @@ import org.junit.Test;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.form.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.form.ComponentSetSubType.newComponentSetSubType;
+import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static com.enonic.wem.api.content.type.form.InputSubType.newInputSubType;
 import static com.enonic.wem.api.content.type.form.SubTypeReference.newSubTypeReference;
@@ -24,11 +24,11 @@ public class ComponentSetSubTypeTest
             newInputSubType().module( module ).input( newInput().name( "age" ).type( InputTypes.TEXT_LINE ).build() ).build();
 
         ComponentSetSubType personSubType = newComponentSetSubType().module( module ).componentSet(
-            newComponentSet().name( "person" ).add( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() ).add(
+            newFormItemSet().name( "person" ).add( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newSubTypeReference( ageSubType ).name( "age" ).build() ).build() ).build();
 
         ComponentSetSubType addressSubType = newComponentSetSubType().module( module ).componentSet(
-            newComponentSet().name( "address" ).add( newInput().type( InputTypes.TEXT_LINE ).name( "street" ).build() ).add(
+            newFormItemSet().name( "address" ).add( newInput().type( InputTypes.TEXT_LINE ).name( "street" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "postalPlace" ).build() ).build() ).build();
 

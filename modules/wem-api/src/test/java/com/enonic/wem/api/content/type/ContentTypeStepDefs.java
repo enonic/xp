@@ -13,8 +13,8 @@ import cucumber.annotation.en.When;
 import cucumber.table.DataTable;
 import gherkin.formatter.model.DataTableRow;
 
-import com.enonic.wem.api.content.type.form.ComponentPath;
-import com.enonic.wem.api.content.type.form.ComponentType;
+import com.enonic.wem.api.content.type.form.FormItemPath;
+import com.enonic.wem.api.content.type.form.FormItemType;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.content.type.form.InputSubType;
 import com.enonic.wem.api.content.type.form.MockSubTypeFetcher;
@@ -68,7 +68,7 @@ public class ContentTypeStepDefs
     public void a_ContentType_named_name( String contentTypeName )
         throws Throwable
     {
-        contentTypeByName.put( contentTypeName, ContentType.newComponentType().name( contentTypeName ).build() );
+        contentTypeByName.put( contentTypeName, ContentType.newContentType().name( contentTypeName ).build() );
     }
 
     @Given("^adding SubTypeReference named (.+) referencing InputSubType (.+) to ContentType (.+)$")
@@ -80,10 +80,10 @@ public class ContentTypeStepDefs
 
         InputSubType inputSubType = inputSubTypeByQualifiedName.get( new SubTypeQualifiedName( subTypeQualifiedName ) );
         ContentType contentType = contentTypeByName.get( contentTypeName );
-        contentType.addComponent( SubTypeReference.newSubTypeReference( inputSubType ).name( subTypeReferenceName ).build() );
+        contentType.addFormItem( SubTypeReference.newSubTypeReference( inputSubType ).name( subTypeReferenceName ).build() );
 
         mockSubTypeFetcher.add( inputSubType );
-        contentType.subTypeReferencesToComponents( mockSubTypeFetcher );
+        contentType.subTypeReferencesToFormItems( mockSubTypeFetcher );
     }
 
     @When("^translating subType references to components for all content types$")
@@ -92,12 +92,12 @@ public class ContentTypeStepDefs
     {
         for ( ContentType contentType : contentTypeByName.values() )
         {
-            contentType.subTypeReferencesToComponents( mockSubTypeFetcher );
+            contentType.subTypeReferencesToFormItems( mockSubTypeFetcher );
         }
     }
 
-    @Then("^the following Components should exist in the following ContentTypes:$")
-    public void the_following_Components_should_exist_in_the_following_ContentTypes( DataTable dataTable )
+    @Then("^the following FormItems should exist in the following ContentTypes:$")
+    public void the_following_FormItems_should_exist_in_the_following_ContentTypes( DataTable dataTable )
         throws Throwable
     {
 
@@ -106,12 +106,12 @@ public class ContentTypeStepDefs
         {
             String contentTypeName = row.getCells().get( 0 );
             String componentPath = row.getCells().get( 1 );
-            ComponentType componentType = ComponentType.valueOf( row.getCells().get( 2 ) );
+            FormItemType formItemType = FormItemType.valueOf( row.getCells().get( 2 ) );
             ContentType contentType = contentTypeByName.get( contentTypeName );
             Assert.assertNotNull( "component not found at path: " + componentPath,
-                                  contentType.getComponent( new ComponentPath( componentPath ) ) );
+                                  contentType.getFormItem( new FormItemPath( componentPath ) ) );
 
-            Assert.assertEquals( ComponentType.INPUT, componentType );
+            Assert.assertEquals( FormItemType.INPUT, formItemType );
         }
     }
 

@@ -8,7 +8,7 @@ public final class MaximumOccurrencesException
         super( buildMessage( input, size ) );
     }
 
-    public MaximumOccurrencesException( final ComponentSet set, final int size )
+    public MaximumOccurrencesException( final FormItemSet set, final int size )
     {
         super( buildMessage( set, size ) );
     }
@@ -29,10 +29,10 @@ public final class MaximumOccurrencesException
         }
     }
 
-    private static String buildMessage( final ComponentSet set, final int size )
+    private static String buildMessage( final FormItemSet set, final int size )
     {
 
-        String message = "ComponentSet [" + set + "] allows maximum " + set.getOccurrences().getMaximum();
+        String message = "FormItemSet [" + set + "] allows maximum " + set.getOccurrences().getMaximum();
         if ( set.getOccurrences().getMaximum() < 2 )
         {
             return message +

@@ -4,7 +4,7 @@ package com.enonic.wem.api.content.type.form;
 import com.google.common.base.Preconditions;
 
 public class SubTypeReference
-    extends HierarchicalComponent
+    extends HierarchicalFormItem
 {
     private SubTypeQualifiedName subTypeQualifiedName;
 
@@ -102,7 +102,7 @@ public class SubTypeReference
             return this;
         }
 
-        public Builder typeComponentSet()
+        public Builder typeFormItemSet()
         {
             this.subTypeClass = ComponentSetSubType.class.getSimpleName();
             return this;

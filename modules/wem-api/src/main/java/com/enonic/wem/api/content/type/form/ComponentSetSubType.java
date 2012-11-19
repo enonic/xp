@@ -8,7 +8,7 @@ import com.enonic.wem.api.module.Module;
 public class ComponentSetSubType
     extends SubType
 {
-    private ComponentSet componentSet = new ComponentSet();
+    private FormItemSet componentSet = new FormItemSet();
 
     ComponentSetSubType( final Module module )
     {
@@ -26,7 +26,7 @@ public class ComponentSetSubType
         return this.getClass();
     }
 
-    public void addComponent( final HierarchicalComponent component )
+    public void addComponent( final HierarchicalFormItem component )
     {
         if ( component instanceof SubTypeReference )
         {
@@ -38,9 +38,9 @@ public class ComponentSetSubType
         componentSet.add( component );
     }
 
-    public HierarchicalComponent create( final SubTypeReference subTypeReference )
+    public HierarchicalFormItem create( final SubTypeReference subTypeReference )
     {
-        final ComponentSet newComponentSet = this.componentSet.copy();
+        final FormItemSet newComponentSet = this.componentSet.copy();
         newComponentSet.setName( subTypeReference.getName() );
         newComponentSet.setPath( subTypeReference.getPath() );
         return newComponentSet;
@@ -55,7 +55,7 @@ public class ComponentSetSubType
     {
         private Module module;
 
-        private ComponentSet componentSet;
+        private FormItemSet componentSet;
 
         public Builder module( Module value )
         {
@@ -63,7 +63,7 @@ public class ComponentSetSubType
             return this;
         }
 
-        public Builder componentSet( ComponentSet value )
+        public Builder componentSet( FormItemSet value )
         {
             this.componentSet = value;
             return this;

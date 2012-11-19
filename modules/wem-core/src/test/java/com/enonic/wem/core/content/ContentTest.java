@@ -10,9 +10,9 @@ import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.form.ComponentSet;
 import com.enonic.wem.api.content.type.form.ComponentSetSubType;
 import com.enonic.wem.api.content.type.form.FieldSet;
+import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.content.type.form.InputSubType;
 import com.enonic.wem.api.content.type.form.InvalidDataException;
@@ -22,9 +22,9 @@ import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.content.type.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.form.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.form.ComponentSetSubType.newComponentSetSubType;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
+import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static com.enonic.wem.api.content.type.form.InputSubType.newInputSubType;
 import static com.enonic.wem.api.content.type.form.SubTypeReference.newSubTypeReference;
@@ -52,7 +52,7 @@ public class ContentTest
                 "Option 2", "o2" ).build();
         Input mySingleSelector =
             newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build();
-        contentType.addComponent( mySingleSelector );
+        contentType.addFormItem( mySingleSelector );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -64,8 +64,8 @@ public class ContentTest
     @Test
     public void multiple_textlines()
     {
-        contentType.addComponent( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.addComponent( newInput().name( "myMultipleTextLine" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() );
+        contentType.addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newInput().name( "myMultipleTextLine" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -189,7 +189,7 @@ public class ContentTest
     @Test
     public void tags()
     {
-        contentType.addComponent( newInput().name( "myTags" ).type( InputTypes.TAGS ).build() );
+        contentType.addFormItem( newInput().name( "myTags" ).type( InputTypes.TAGS ).build() );
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
         Content content = new Content();
@@ -208,9 +208,9 @@ public class ContentTest
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( inputSubType );
 
-        contentType.addComponent(
+        contentType.addFormItem(
             SubTypeReference.newSubTypeReference().name( "myTags" ).subType( "system:tags" ).type( InputSubType.class ).build() );
-        contentType.subTypeReferencesToComponents( subTypeFetcher );
+        contentType.subTypeReferencesToFormItems( subTypeFetcher );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -227,7 +227,7 @@ public class ContentTest
     @Test
     public void phone()
     {
-        contentType.addComponent( newInput().name( "myPhone" ).type( InputTypes.PHONE ).required( true ).build() );
+        contentType.addFormItem( newInput().name( "myPhone" ).type( InputTypes.PHONE ).required( true ).build() );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -239,10 +239,10 @@ public class ContentTest
     @Test
     public void componentSet()
     {
-        contentType.addComponent( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
 
-        ComponentSet componentSet = newComponentSet().name( "personalia" ).build();
-        contentType.addComponent( componentSet );
+        FormItemSet componentSet = newFormItemSet().name( "personalia" ).build();
+        contentType.addFormItem( componentSet );
         componentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
         componentSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
@@ -261,10 +261,10 @@ public class ContentTest
     public void multiple_subtype()
     {
         Input nameInput = newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build();
-        contentType.addComponent( nameInput );
+        contentType.addFormItem( nameInput );
 
-        ComponentSet componentSet = newComponentSet().name( "personalia" ).multiple( true ).build();
-        contentType.addComponent( componentSet );
+        FormItemSet componentSet = newFormItemSet().name( "personalia" ).multiple( true ).build();
+        contentType.addFormItem( componentSet );
         componentSet.add( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
         componentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
         componentSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
@@ -352,14 +352,14 @@ public class ContentTest
     @Test
     public void structured_getEntries()
     {
-        ComponentSet child = newComponentSet().name( "child" ).multiple( true ).build();
+        FormItemSet child = newFormItemSet().name( "child" ).multiple( true ).build();
         child.add( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
         child.add( newInput().name( "age" ).type( InputTypes.TEXT_LINE ).build() );
-        ComponentSet features = newComponentSet().name( "features" ).multiple( false ).build();
+        FormItemSet features = newFormItemSet().name( "features" ).multiple( false ).build();
         features.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
         features.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
         child.add( features );
-        contentType.addComponent( child );
+        contentType.addFormItem( child );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -409,19 +409,19 @@ public class ContentTest
                 newSingleSelectorConfig().typeDropdown().addOption( "Norway", "NO" ).build() ).build() ).build();
 
         ComponentSetSubType addressSubType = newComponentSetSubType().module( module ).componentSet(
-            newComponentSet().name( "address" ).add( newInput().name( "street" ).type( InputTypes.TEXT_LINE ).build() ).add(
+            newFormItemSet().name( "address" ).add( newInput().name( "street" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newSubTypeReference( postalCodeSubType ).name( "postalCode" ).build() ).add(
                 newInput().name( "postalPlace" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newSubTypeReference( countrySubType ).name( "country" ).build() ).build() ).build();
 
-        contentType.addComponent( newInput().type( InputTypes.TEXT_LINE ).name( "name" ).build() );
-        contentType.addComponent( newSubTypeReference( addressSubType ).name( "address" ).build() );
+        contentType.addFormItem( newInput().type( InputTypes.TEXT_LINE ).name( "name" ).build() );
+        contentType.addFormItem( newSubTypeReference( addressSubType ).name( "address" ).build() );
 
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( postalCodeSubType );
         subTypeFetcher.add( countrySubType );
         subTypeFetcher.add( addressSubType );
-        contentType.subTypeReferencesToComponents( subTypeFetcher );
+        contentType.subTypeReferencesToFormItems( subTypeFetcher );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -444,17 +444,17 @@ public class ContentTest
         Module module = newModule().name( "myModule" ).build();
 
         ComponentSetSubType addressSubType = newComponentSetSubType().module( module ).componentSet(
-            newComponentSet().name( "address" ).multiple( true ).add( newInput().type( InputTypes.TEXT_LINE ).name( "label" ).build() ).add(
+            newFormItemSet().name( "address" ).multiple( true ).add( newInput().type( InputTypes.TEXT_LINE ).name( "label" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "street" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "postalPlace" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "country" ).build() ).build() ).build();
 
-        contentType.addComponent( newSubTypeReference( addressSubType ).name( "address" ).build() );
+        contentType.addFormItem( newSubTypeReference( addressSubType ).name( "address" ).build() );
 
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( addressSubType );
-        contentType.subTypeReferencesToComponents( subTypeFetcher );
+        contentType.subTypeReferencesToFormItems( subTypeFetcher );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -485,11 +485,11 @@ public class ContentTest
     @Test
     public void trying_to_set_data_to_a_fieldSetSubType_when_subType_is_missing()
     {
-        contentType.addComponent( newInput().type( InputTypes.TEXT_LINE ).name( "name" ).build() );
-        contentType.addComponent(
+        contentType.addFormItem( newInput().type( InputTypes.TEXT_LINE ).name( "name" ).build() );
+        contentType.addFormItem(
             SubTypeReference.newSubTypeReference().name( "address" ).typeInput().subType( "myModule:myAddressSubType" ).build() );
 
-        contentType.subTypeReferencesToComponents( new MockSubTypeFetcher() );
+        contentType.subTypeReferencesToFormItems( new MockSubTypeFetcher() );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -501,7 +501,7 @@ public class ContentTest
         catch ( Exception e )
         {
             assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "Component at path [address.street] expected to be of type FieldSet: REFERENCE", e.getMessage() );
+            assertEquals( "FormItem at path [address.street] expected to be of type FieldSet: REFERENCE", e.getMessage() );
         }
     }
 
@@ -509,15 +509,15 @@ public class ContentTest
     public void layout()
     {
         // setup
-        contentType.addComponent( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
         FieldSet personalia = newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).add(
             newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
         FieldSet tatoos = newFieldSet().label( "Characteristics" ).name( "characteristics" ).add(
             newInput().name( "tattoo" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() ).add(
             newInput().name( "scar" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() ).build();
-        personalia.addComponent( tatoos );
-        contentType.addComponent( personalia );
+        personalia.addFormItem( tatoos );
+        contentType.addFormItem( personalia );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );

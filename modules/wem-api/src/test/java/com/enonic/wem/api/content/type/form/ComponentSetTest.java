@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 
-import static com.enonic.wem.api.content.type.form.ComponentSet.newComponentSet;
+import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static org.junit.Assert.*;
 
@@ -15,30 +15,30 @@ public class ComponentSetTest
     public void copy()
     {
         // setup
-        ComponentSet original = newComponentSet().name( "name" ).label( "Label" ).multiple( true ).build();
+        FormItemSet original = newFormItemSet().name( "name" ).label( "Label" ).multiple( true ).build();
         original.add( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() );
 
         // exercise
-        ComponentSet copy = original.copy();
+        FormItemSet copy = original.copy();
 
         // verify
         assertNotSame( original, copy );
         assertEquals( "name", copy.getName() );
         assertSame( original.getName(), copy.getName() );
         assertSame( original.getLabel(), copy.getLabel() );
-        assertNotSame( original.getComponents(), copy.getComponents() );
-        assertNotSame( original.getInput( new ComponentPath( "myField" ) ), copy.getInput( new ComponentPath( "myField" ) ) );
+        assertNotSame( original.getFormItems(), copy.getFormItems() );
+        assertNotSame( original.getInput( new FormItemPath( "myField" ) ), copy.getInput( new FormItemPath( "myField" ) ) );
     }
 
     @Test
     public void getConfig()
     {
         // setup
-        ComponentSet componentSet = newComponentSet().name( "myFieldSet" ).label( "Label" ).multiple( true ).build();
+        FormItemSet componentSet = newFormItemSet().name( "myFieldSet" ).label( "Label" ).multiple( true ).build();
         componentSet.add( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() );
 
         // exercise
-        HierarchicalComponent field = componentSet.getInput( new ComponentPath( "myField" ) );
+        HierarchicalFormItem field = componentSet.getInput( new FormItemPath( "myField" ) );
 
         // verify
         assertEquals( "myFieldSet.myField", field.getPath().toString() );
@@ -47,7 +47,7 @@ public class ComponentSetTest
     @Test
     public void setPath()
     {
-        ComponentSet componentSet = newComponentSet().name( "address" ).label( "Address" ).build();
+        FormItemSet componentSet = newFormItemSet().name( "address" ).label( "Address" ).build();
         componentSet.add( newInput().name( "street" ).type( InputTypes.TEXT_LINE ).build() );
         componentSet.add( newInput().name( "postalCode" ).type( InputTypes.TEXT_LINE ).build() );
         componentSet.add( newInput().name( "postalPlace" ).type( InputTypes.TEXT_LINE ).build() );
@@ -55,12 +55,12 @@ public class ComponentSetTest
 
         // exercise & verify
         componentSet.setName( "homeAddress" );
-        componentSet.setPath( new ComponentPath( "homeAddress" ) );
+        componentSet.setPath( new FormItemPath( "homeAddress" ) );
 
         // verify
-        assertEquals( "homeAddress.street", componentSet.getInput( new ComponentPath( "street" ) ).getPath().toString() );
-        assertEquals( "homeAddress.postalCode", componentSet.getInput( new ComponentPath( "postalCode" ) ).getPath().toString() );
-        assertEquals( "homeAddress.postalPlace", componentSet.getInput( new ComponentPath( "postalPlace" ) ).getPath().toString() );
-        assertEquals( "homeAddress.country", componentSet.getInput( new ComponentPath( "country" ) ).getPath().toString() );
+        assertEquals( "homeAddress.street", componentSet.getInput( new FormItemPath( "street" ) ).getPath().toString() );
+        assertEquals( "homeAddress.postalCode", componentSet.getInput( new FormItemPath( "postalCode" ) ).getPath().toString() );
+        assertEquals( "homeAddress.postalPlace", componentSet.getInput( new FormItemPath( "postalPlace" ) ).getPath().toString() );
+        assertEquals( "homeAddress.country", componentSet.getInput( new FormItemPath( "country" ) ).getPath().toString() );
     }
 }

@@ -8,15 +8,15 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.type.form.BreaksRequiredContractException;
-import com.enonic.wem.api.content.type.form.ComponentSet;
+import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.MaximumOccurrencesException;
 import com.enonic.wem.api.content.type.form.MinimumOccurrencesException;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.type.OccurrenceValidator.newOccurrenceValidator;
-import static com.enonic.wem.api.content.type.form.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
+import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static org.junit.Assert.*;
 
@@ -34,7 +34,7 @@ public class OccurrenceValidatorTest
     @Test
     public void given_input_with_maxOccur1_with_two_data_when_validate_then_exception_is_thrown()
     {
-        contentType.addComponent( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).maximumOccurrences( 1 ).build() );
+        contentType.addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).maximumOccurrences( 1 ).build() );
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
         content.setData( "myInput[0]", "1" );
@@ -56,7 +56,7 @@ public class OccurrenceValidatorTest
     @Test
     public void given_input_with_maxOccur2_with_three_data_when_validate_then_exception_is_thrown()
     {
-        contentType.addComponent( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).maximumOccurrences( 2 ).build() );
+        contentType.addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).maximumOccurrences( 2 ).build() );
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
         content.setData( "myInput[0]", "1" );
@@ -79,7 +79,7 @@ public class OccurrenceValidatorTest
     @Test
     public void given_required_input_with_data_when_validate_then_exception_is_not_thrown()
     {
-        contentType.addComponent( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
         content.setData( "myInput", "value" );
@@ -98,7 +98,7 @@ public class OccurrenceValidatorTest
     @Test(expected = MinimumOccurrencesException.class)
     public void given_required_input_with_no_data_when_validate_then_exception_is_thrown()
     {
-        contentType.addComponent( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
 
@@ -109,7 +109,7 @@ public class OccurrenceValidatorTest
     @Test
     public void given_input_with_minOccur1_with_one_data_with_blank_value_when_validate_then_exception_is_thrown()
     {
-        contentType.addComponent( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).minimumOccurrences( 1 ).build() );
+        contentType.addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).minimumOccurrences( 1 ).build() );
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
         content.setData( "myInput", "" );
@@ -132,7 +132,7 @@ public class OccurrenceValidatorTest
     @Test
     public void given_input_with_minOccur2_with_one_data_when_validate_then_exception_is_thrown()
     {
-        contentType.addComponent( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).minimumOccurrences( 2 ).build() );
+        contentType.addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).minimumOccurrences( 2 ).build() );
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
         content.setData( "myInput", "value" );
@@ -154,7 +154,7 @@ public class OccurrenceValidatorTest
     public void given_required_field_with_no_data_within_layout_when_validate_then_exception_is_thrown()
     {
 
-        contentType.addComponent( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
+        contentType.addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
             newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() );
         Content content = new Content();
 
@@ -165,7 +165,7 @@ public class OccurrenceValidatorTest
     @Test(expected = MinimumOccurrencesException.class)
     public void given_required_input_with_no_data_within_layout_within_layout_when_validate_then_exception_is_thrown()
     {
-        contentType.addComponent( newFieldSet().label( "My outer layout" ).name( "myOuterlayout" ).add(
+        contentType.addFormItem( newFieldSet().label( "My outer layout" ).name( "myOuterlayout" ).add(
             newFieldSet().label( "My Layout" ).name( "myLayout" ).add(
                 newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
         Content content = new Content();
@@ -178,8 +178,8 @@ public class OccurrenceValidatorTest
     @Test(expected = MinimumOccurrencesException.class)
     public void given_required_field_with_no_data_within_set_within_layout_when_validate_then_exception_is_thrown()
     {
-        contentType.addComponent( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
-            newComponentSet().name( "mySet" ).required( true ).add(
+        contentType.addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
+            newFormItemSet().name( "mySet" ).required( true ).add(
                 newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
         Content content = new Content();
         content.setData( "mySet.myInput", "" );
@@ -191,7 +191,7 @@ public class OccurrenceValidatorTest
     @Test(expected = MinimumOccurrencesException.class)
     public void given_required_input_with_no_data_within_set_when_validate_then_exception_is_thrown()
     {
-        contentType.addComponent( newComponentSet().name( "mySet" ).required( true ).add(
+        contentType.addFormItem( newFormItemSet().name( "mySet" ).required( true ).add(
             newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() );
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -204,7 +204,7 @@ public class OccurrenceValidatorTest
     @Test(expected = MinimumOccurrencesException.class)
     public void given_required_field_with_no_data_within_layout_within_a_set_when_validate_then_exception_is_thrown()
     {
-        contentType.addComponent( newComponentSet().name( "mySet" ).required( true ).add(
+        contentType.addFormItem( newFormItemSet().name( "mySet" ).required( true ).add(
             newFieldSet().label( "My layout" ).name( "myLayout" ).add(
                 newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
         Content content = new Content();
@@ -217,7 +217,7 @@ public class OccurrenceValidatorTest
     @Test()
     public void given_required_set_with_data_when_validate_then_exception_is_not_thrown()
     {
-        contentType.addComponent( newComponentSet().name( "mySet" ).required( true ).add(
+        contentType.addFormItem( newFormItemSet().name( "mySet" ).required( true ).add(
             newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() );
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -237,7 +237,7 @@ public class OccurrenceValidatorTest
     @Test(expected = BreaksRequiredContractException.class)
     public void given_required_set_with_no_data_when_validate_then_exception_is_thrown()
     {
-        contentType.addComponent( newComponentSet().name( "mySet" ).required( true ).add(
+        contentType.addFormItem( newFormItemSet().name( "mySet" ).required( true ).add(
             newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() );
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -249,8 +249,8 @@ public class OccurrenceValidatorTest
     @Test(expected = BreaksRequiredContractException.class)
     public void given_required_set_with_no_data_within_layout_when_validate_then_exception_is_thrown()
     {
-        contentType.addComponent( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
-            newComponentSet().name( "mySet" ).required( true ).add(
+        contentType.addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
+            newFormItemSet().name( "mySet" ).required( true ).add(
                 newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build() );
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -263,15 +263,15 @@ public class OccurrenceValidatorTest
     public void given_required_set_with_no_data_and_other_set_with_data_when_validate_then_exception_is_thrown()
     {
         // setup
-        contentType.addComponent( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
 
-        ComponentSet personaliaComponentSet = newComponentSet().name( "personalia" ).multiple( false ).required( true ).build();
+        FormItemSet personaliaComponentSet = newFormItemSet().name( "personalia" ).multiple( false ).required( true ).build();
         personaliaComponentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
         personaliaComponentSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.addComponent( personaliaComponentSet );
+        contentType.addFormItem( personaliaComponentSet );
 
-        ComponentSet crimesComponentSet = newComponentSet().name( "crimes" ).multiple( true ).build();
-        contentType.addComponent( crimesComponentSet );
+        FormItemSet crimesComponentSet = newFormItemSet().name( "crimes" ).multiple( true ).build();
+        contentType.addFormItem( crimesComponentSet );
         crimesComponentSet.add( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
         crimesComponentSet.add( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
 
@@ -293,15 +293,15 @@ public class OccurrenceValidatorTest
         catch ( Exception e )
         {
             assertTrue( e instanceof BreaksRequiredContractException );
-            assertEquals( "Required contract is broken, data missing for ComponentSet: personalia", e.getMessage() );
+            assertEquals( "Required contract is broken, data missing for FormItemSet: personalia", e.getMessage() );
         }
     }
 
     @Test
     public void given_recordExceptions_is_true_and_invalid_data_when_validate_then_exception_is_recorded()
     {
-        contentType.addComponent( newInput().minimumOccurrences( 1 ).name( "minimumOne" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.addComponent( newInput().maximumOccurrences( 2 ).name( "maximumTwo" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newInput().minimumOccurrences( 1 ).name( "minimumOne" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newInput().maximumOccurrences( 2 ).name( "maximumTwo" ).type( InputTypes.TEXT_LINE ).build() );
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
         content.setData( "maximumTwo[0]", "1" );

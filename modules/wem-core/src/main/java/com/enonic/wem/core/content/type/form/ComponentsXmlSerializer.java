@@ -5,8 +5,8 @@ import java.util.Iterator;
 
 import org.jdom.Element;
 
-import com.enonic.wem.api.content.type.form.Component;
-import com.enonic.wem.api.content.type.form.Components;
+import com.enonic.wem.api.content.type.form.FormItem;
+import com.enonic.wem.api.content.type.form.FormItems;
 import com.enonic.wem.core.content.XmlParsingException;
 
 import com.enonic.cms.framework.util.JDOMUtil;
@@ -15,19 +15,19 @@ public final class ComponentsXmlSerializer
 {
     private ComponentXmlSerializer componentSerializer = new ComponentXmlSerializer( this );
 
-    public Element serialize( final Iterable<Component> components )
+    public Element serialize( final Iterable<FormItem> components )
     {
         Element itemsEl = new Element( "items" );
-        for ( Component component : components )
+        for ( FormItem formItem : components )
         {
-            itemsEl.addContent( componentSerializer.serialize( component ) );
+            itemsEl.addContent( componentSerializer.serialize( formItem ) );
         }
         return itemsEl;
     }
 
-    public Components parse( final Element parentEl )
+    public FormItems parse( final Element parentEl )
     {
-        final Components components = new Components();
+        final FormItems formItems = new FormItems();
         final Element itemsEl = parentEl.getChild( "items" );
         final Iterator componentIt = itemsEl.getChildren().iterator();
         while ( componentIt.hasNext() )
@@ -36,14 +36,14 @@ public final class ComponentsXmlSerializer
 
             try
             {
-                components.add( componentSerializer.parse( componentEl ) );
+                formItems.add( componentSerializer.parse( componentEl ) );
             }
             catch ( Exception e )
             {
-                throw new XmlParsingException( "Failed to parse Component: " + JDOMUtil.printElement( componentEl ), e );
+                throw new XmlParsingException( "Failed to parse FormItem: " + JDOMUtil.printElement( componentEl ), e );
             }
         }
 
-        return components;
+        return formItems;
     }
 }

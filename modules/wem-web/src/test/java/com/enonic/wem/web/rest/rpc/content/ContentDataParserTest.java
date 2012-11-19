@@ -12,12 +12,12 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.form.ComponentSet;
+import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.web.json.ObjectMapperHelper;
 
-import static com.enonic.wem.api.content.type.form.ComponentSet.newComponentSet;
+import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static org.junit.Assert.*;
 
@@ -28,17 +28,17 @@ public class ContentDataParserTest
         throws IOException
     {
         ContentType contentType = new ContentType();
-        contentType.addComponent( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.addComponent( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() );
-        contentType.addComponent( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
-        contentType.addComponent( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
-        contentType.addComponent( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
-        contentType.addComponent( newInput().name( "myDecimalNumber" ).type( InputTypes.DECIMAL_NUMBER ).build() );
-        contentType.addComponent( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
-        contentType.addComponent( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
-        ComponentSet mySet = newComponentSet().name( "mySet" ).build();
+        contentType.addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() );
+        contentType.addFormItem( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
+        contentType.addFormItem( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
+        contentType.addFormItem( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
+        contentType.addFormItem( newInput().name( "myDecimalNumber" ).type( InputTypes.DECIMAL_NUMBER ).build() );
+        contentType.addFormItem( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
+        contentType.addFormItem( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
+        FormItemSet mySet = newFormItemSet().name( "mySet" ).build();
         mySet.add( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.addComponent( mySet );
+        contentType.addFormItem( mySet );
 
         StringBuilder json = new StringBuilder();
         json.append( "{" ).append( "\n" );
@@ -89,9 +89,9 @@ public class ContentDataParserTest
         ContentType myContentType = new ContentType();
         myContentType.setModule( Module.newModule().name( "myModule" ).build() );
         myContentType.setName( "myContentType" );
-        ComponentSet componentSet = newComponentSet().name( "myComponentSet" ).build();
+        FormItemSet componentSet = newFormItemSet().name( "myComponentSet" ).build();
         componentSet.add( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
-        myContentType.addComponent( componentSet );
+        myContentType.addFormItem( componentSet );
 
         StringBuilder json = new StringBuilder();
         json.append( "{" );
@@ -113,7 +113,7 @@ public class ContentDataParserTest
         throws IOException
     {
         ContentType contentType = new ContentType();
-        contentType.addComponent( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
+        contentType.addFormItem( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
 
         StringBuilder json = new StringBuilder();
         json.append( "{" ).append( "\n" );
@@ -140,7 +140,7 @@ public class ContentDataParserTest
         throws IOException
     {
         ContentType contentType = new ContentType();
-        contentType.addComponent( newInput().name( "myColor" ).type( InputTypes.COLOR ).required( true ).build() );
+        contentType.addFormItem( newInput().name( "myColor" ).type( InputTypes.COLOR ).required( true ).build() );
 
         StringBuilder json = new StringBuilder();
         json.append( "{" ).append( "\n" );
@@ -168,8 +168,8 @@ public class ContentDataParserTest
         throws IOException
     {
         ContentType contentType = new ContentType();
-        ComponentSet componentSet = newComponentSet().name( "myComponentSet" ).build();
-        contentType.addComponent( componentSet );
+        FormItemSet componentSet = newFormItemSet().name( "myComponentSet" ).build();
+        contentType.addFormItem( componentSet );
         componentSet.add( newInput().name( "myColor" ).type( InputTypes.COLOR ).required( true ).build() );
 
         StringBuilder json = new StringBuilder();
