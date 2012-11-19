@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest.rpc.content;
+package com.enonic.wem.web.rest.rpc.content.type;
 
 import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Test;
@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.GetContentTypes;
+import com.enonic.wem.api.command.content.type.GetContentTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.ContentTypes;

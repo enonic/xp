@@ -1,15 +1,15 @@
-package com.enonic.wem.core.content;
+package com.enonic.wem.core.content.type;
 
 import javax.jcr.Session;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.command.content.DeleteContentTypes;
+import com.enonic.wem.api.command.content.type.DeleteContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.content.dao.ContentTypeDao;
+import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 
 @Component
 public final class DeleteContentTypesHandler

@@ -1,10 +1,11 @@
-package com.enonic.wem.core.content.dao;
+package com.enonic.wem.core.content.type.dao;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.core.content.dao.ContentDaoConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 abstract class AbstractContentTypeDaoHandler

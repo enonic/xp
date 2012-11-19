@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.dao;
+package com.enonic.wem.core.content.type.dao;
 
 
 import javax.jcr.Node;

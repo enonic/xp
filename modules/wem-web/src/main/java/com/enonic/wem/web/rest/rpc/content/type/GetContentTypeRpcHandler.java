@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest.rpc.content;
+package com.enonic.wem.web.rest.rpc.content.type;
 
 import org.springframework.stereotype.Component;
 

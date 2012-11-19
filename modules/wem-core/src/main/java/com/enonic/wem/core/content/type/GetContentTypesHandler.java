@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content;
+package com.enonic.wem.core.content.type;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.command.content.GetContentTypes;
+import com.enonic.wem.api.command.content.type.GetContentTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypeFetcher;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
@@ -21,7 +21,7 @@ import com.enonic.wem.api.content.type.component.Input;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.content.dao.ContentTypeDao;
+import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
 import static com.enonic.wem.api.content.type.component.Input.newInput;

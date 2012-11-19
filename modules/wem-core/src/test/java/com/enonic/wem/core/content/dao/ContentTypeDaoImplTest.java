@@ -12,6 +12,8 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.component.ComponentSet;
 import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.core.content.type.dao.ContentTypeDao;
+import com.enonic.wem.core.content.type.dao.ContentTypeDaoImpl;
 import com.enonic.wem.itest.AbstractJcrTest;
 
 import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;

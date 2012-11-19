@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.content;
+package com.enonic.wem.api.command.content.type;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;

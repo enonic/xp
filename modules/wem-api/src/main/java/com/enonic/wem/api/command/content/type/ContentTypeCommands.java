@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.content;
+package com.enonic.wem.api.command.content.type;
 
 public final class ContentTypeCommands
 {

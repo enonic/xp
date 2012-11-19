@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content;
+package com.enonic.wem.core.content.type;
 
 import javax.jcr.Session;
 
@@ -7,10 +7,10 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.DeleteContentTypes;
+import com.enonic.wem.api.command.content.type.DeleteContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.content.dao.ContentTypeDao;
+import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
