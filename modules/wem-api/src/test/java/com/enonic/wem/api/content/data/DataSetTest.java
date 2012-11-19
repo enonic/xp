@@ -5,12 +5,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.datatype.DataTypes;
-import com.enonic.wem.api.content.type.component.ComponentSet;
-import com.enonic.wem.api.content.type.component.Components;
-import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.form.ComponentSet;
+import com.enonic.wem.api.content.type.form.Components;
+import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 
-import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
-import static com.enonic.wem.api.content.type.component.Input.newInput;
+import static com.enonic.wem.api.content.type.form.ComponentSet.newComponentSet;
+import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public class DataSetTest

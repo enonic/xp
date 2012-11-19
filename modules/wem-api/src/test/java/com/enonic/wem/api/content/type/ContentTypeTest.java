@@ -3,17 +3,17 @@ package com.enonic.wem.api.content.type;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.type.component.ComponentSet;
-import com.enonic.wem.api.content.type.component.ComponentSetSubType;
-import com.enonic.wem.api.content.type.component.FieldSet;
-import com.enonic.wem.api.content.type.component.MockSubTypeFetcher;
-import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.form.ComponentSet;
+import com.enonic.wem.api.content.type.form.ComponentSetSubType;
+import com.enonic.wem.api.content.type.form.FieldSet;
+import com.enonic.wem.api.content.type.form.MockSubTypeFetcher;
+import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
-import static com.enonic.wem.api.content.type.component.ComponentSetSubType.newComponentSetSubType;
-import static com.enonic.wem.api.content.type.component.Input.newInput;
-import static com.enonic.wem.api.content.type.component.SubTypeReference.newSubTypeReference;
+import static com.enonic.wem.api.content.type.form.ComponentSet.newComponentSet;
+import static com.enonic.wem.api.content.type.form.ComponentSetSubType.newComponentSetSubType;
+import static com.enonic.wem.api.content.type.form.Input.newInput;
+import static com.enonic.wem.api.content.type.form.SubTypeReference.newSubTypeReference;
 import static org.junit.Assert.*;
 
 public class ContentTypeTest

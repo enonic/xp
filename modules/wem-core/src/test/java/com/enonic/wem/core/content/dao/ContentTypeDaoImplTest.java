@@ -9,15 +9,15 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
-import com.enonic.wem.api.content.type.component.ComponentSet;
-import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.form.ComponentSet;
+import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 import com.enonic.wem.core.content.type.dao.ContentTypeDaoImpl;
 import com.enonic.wem.itest.AbstractJcrTest;
 
-import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
-import static com.enonic.wem.api.content.type.component.Input.newInput;
+import static com.enonic.wem.api.content.type.form.ComponentSet.newComponentSet;
+import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public class ContentTypeDaoImplTest

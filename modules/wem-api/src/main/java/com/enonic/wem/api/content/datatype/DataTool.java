@@ -5,8 +5,8 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
-import com.enonic.wem.api.content.type.component.InvalidDataException;
-import com.enonic.wem.api.content.type.component.InvalidValueException;
+import com.enonic.wem.api.content.type.form.InvalidDataException;
+import com.enonic.wem.api.content.type.form.InvalidValueException;
 
 public class DataTool
 {

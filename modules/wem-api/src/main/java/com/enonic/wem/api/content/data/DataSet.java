@@ -10,7 +10,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.datatype.DataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
-import com.enonic.wem.api.content.type.component.InvalidDataException;
+import com.enonic.wem.api.content.type.form.InvalidDataException;
 
 import static com.enonic.wem.api.content.data.Data.newData;
 

@@ -9,10 +9,10 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.type.component.Component;
-import com.enonic.wem.api.content.type.component.ComponentSet;
-import com.enonic.wem.api.content.type.component.Input;
-import com.enonic.wem.api.content.type.component.InvalidDataException;
+import com.enonic.wem.api.content.type.form.Component;
+import com.enonic.wem.api.content.type.form.ComponentSet;
+import com.enonic.wem.api.content.type.form.Input;
+import com.enonic.wem.api.content.type.form.InvalidDataException;
 
 /**
  * Validates that given data is valid, meaning it is of valid:

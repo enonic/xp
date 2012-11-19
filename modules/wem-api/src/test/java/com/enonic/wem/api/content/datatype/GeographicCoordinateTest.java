@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.type.component.InvalidValueException;
+import com.enonic.wem.api.content.type.form.InvalidValueException;
 
 import static org.junit.Assert.*;
 

@@ -13,18 +13,18 @@ import cucumber.annotation.en.When;
 import cucumber.table.DataTable;
 import gherkin.formatter.model.DataTableRow;
 
-import com.enonic.wem.api.content.type.component.ComponentPath;
-import com.enonic.wem.api.content.type.component.ComponentType;
-import com.enonic.wem.api.content.type.component.Input;
-import com.enonic.wem.api.content.type.component.InputSubType;
-import com.enonic.wem.api.content.type.component.MockSubTypeFetcher;
-import com.enonic.wem.api.content.type.component.SubTypeQualifiedName;
-import com.enonic.wem.api.content.type.component.SubTypeReference;
-import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.form.ComponentPath;
+import com.enonic.wem.api.content.type.form.ComponentType;
+import com.enonic.wem.api.content.type.form.Input;
+import com.enonic.wem.api.content.type.form.InputSubType;
+import com.enonic.wem.api.content.type.form.MockSubTypeFetcher;
+import com.enonic.wem.api.content.type.form.SubTypeQualifiedName;
+import com.enonic.wem.api.content.type.form.SubTypeReference;
+import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.component.Input.newInput;
-import static com.enonic.wem.api.content.type.component.InputSubType.newInputSubType;
+import static com.enonic.wem.api.content.type.form.Input.newInput;
+import static com.enonic.wem.api.content.type.form.InputSubType.newInputSubType;
 
 public class ContentTypeStepDefs
 {

@@ -15,8 +15,8 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypeFetcher;
 import com.enonic.wem.api.content.type.MockContentTypeFetcher;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
-import com.enonic.wem.api.content.type.component.ComponentSet;
-import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.form.ComponentSet;
+import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.exception.ContentNotFoundException;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.web.json.JsonErrorResult;
@@ -26,8 +26,8 @@ import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import static com.enonic.wem.api.content.editor.ContentEditors.composite;
 import static com.enonic.wem.api.content.editor.ContentEditors.setContentData;
 import static com.enonic.wem.api.content.editor.ContentEditors.setContentDisplayName;
-import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
-import static com.enonic.wem.api.content.type.component.Input.newInput;
+import static com.enonic.wem.api.content.type.form.ComponentSet.newComponentSet;
+import static com.enonic.wem.api.content.type.form.Input.newInput;
 
 @Component
 public final class CreateOrUpdateContentRpcHandler

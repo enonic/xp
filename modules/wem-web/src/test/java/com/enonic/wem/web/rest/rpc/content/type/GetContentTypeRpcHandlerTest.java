@@ -8,17 +8,17 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.type.GetContentTypes;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
-import com.enonic.wem.api.content.type.component.Input;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
+import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
-import static com.enonic.wem.api.content.type.component.Input.newInput;
-import static com.enonic.wem.api.content.type.component.inputtype.InputTypes.TEXT_AREA;
-import static com.enonic.wem.api.content.type.component.inputtype.InputTypes.TEXT_LINE;
+import static com.enonic.wem.api.content.type.form.Input.newInput;
+import static com.enonic.wem.api.content.type.form.inputtype.InputTypes.TEXT_AREA;
+import static com.enonic.wem.api.content.type.form.inputtype.InputTypes.TEXT_LINE;
 
 public class GetContentTypeRpcHandlerTest
     extends AbstractRpcHandlerTest

@@ -4,14 +4,14 @@ package com.enonic.wem.api.content.type;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.wem.api.content.type.component.Component;
-import com.enonic.wem.api.content.type.component.ComponentPath;
-import com.enonic.wem.api.content.type.component.ComponentSet;
-import com.enonic.wem.api.content.type.component.Components;
-import com.enonic.wem.api.content.type.component.HierarchicalComponent;
-import com.enonic.wem.api.content.type.component.Input;
-import com.enonic.wem.api.content.type.component.SubTypeFetcher;
-import com.enonic.wem.api.content.type.component.SubTypeReference;
+import com.enonic.wem.api.content.type.form.Component;
+import com.enonic.wem.api.content.type.form.ComponentPath;
+import com.enonic.wem.api.content.type.form.ComponentSet;
+import com.enonic.wem.api.content.type.form.Components;
+import com.enonic.wem.api.content.type.form.HierarchicalComponent;
+import com.enonic.wem.api.content.type.form.Input;
+import com.enonic.wem.api.content.type.form.SubTypeFetcher;
+import com.enonic.wem.api.content.type.form.SubTypeReference;
 import com.enonic.wem.api.module.Module;
 
 public class ContentType

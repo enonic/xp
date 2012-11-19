@@ -5,76 +5,76 @@
   <items>
     <input type="Color" built-in="true">
       <name>myColor</name>
-      <label />
+      <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText />
-      <helpText />
-      <occurrences minimum="0" maximum="1" />
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="Date" built-in="true">
       <name>myDate</name>
-      <label />
+      <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText />
-      <helpText />
-      <occurrences minimum="0" maximum="1" />
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="DecimalNumber" built-in="true">
       <name>myDecimalNumber</name>
-      <label />
+      <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText />
-      <helpText />
-      <occurrences minimum="0" maximum="1" />
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="GeoLocation" built-in="true">
       <name>myGeoLocation</name>
-      <label />
+      <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText />
-      <helpText />
-      <occurrences minimum="0" maximum="1" />
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="HtmlArea" built-in="true">
       <name>myHtmlArea</name>
-      <label />
+      <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText />
-      <helpText />
-      <occurrences minimum="0" maximum="1" />
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="Money" built-in="true">
       <name>myMoney</name>
-      <label />
+      <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText />
-      <helpText />
-      <occurrences minimum="0" maximum="1" />
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="Phone" built-in="true">
       <name>myPhone</name>
-      <label />
+      <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText />
-      <helpText />
-      <occurrences minimum="0" maximum="1" />
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="SingleSelector" built-in="true">
       <name>mySingleSelector</name>
-      <label />
+      <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText />
-      <helpText />
-      <occurrences minimum="0" maximum="1" />
-      <input-type-config name="com.enonic.wem.api.content.type.component.inputtype.SingleSelectorConfig">
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
+      <input-type-config name="com.enonic.wem.api.content.type.form.inputtype.SingleSelectorConfig">
         <options>
           <option>
             <label>myOption 1</label>
@@ -90,48 +90,48 @@
     </input>
     <input type="Tags" built-in="true">
       <name>myTags</name>
-      <label />
+      <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText />
-      <helpText />
-      <occurrences minimum="0" maximum="1" />
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="TextLine" built-in="true">
       <name>myTextLine</name>
-      <label />
+      <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText />
-      <helpText />
-      <occurrences minimum="0" maximum="1" />
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="TextArea" built-in="true">
       <name>myTextArea</name>
-      <label />
+      <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText />
-      <helpText />
-      <occurrences minimum="0" maximum="1" />
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="WholeNumber" built-in="true">
       <name>myWholeNumber</name>
-      <label />
+      <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText />
-      <helpText />
-      <occurrences minimum="0" maximum="1" />
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="Xml" built-in="true">
       <name>myXml</name>
-      <label />
+      <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
-      <customText />
-      <helpText />
-      <occurrences minimum="0" maximum="1" />
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
     </input>
   </items>
 </type>

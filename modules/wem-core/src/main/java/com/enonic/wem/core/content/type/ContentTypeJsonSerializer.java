@@ -6,13 +6,13 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.component.Component;
-import com.enonic.wem.api.content.type.component.Components;
+import com.enonic.wem.api.content.type.form.Component;
+import com.enonic.wem.api.content.type.form.Components;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.type.component.ComponentsJsonSerializer;
+import com.enonic.wem.core.content.type.form.ComponentsJsonSerializer;
 
 public class ContentTypeJsonSerializer
     extends AbstractJsonSerializer<ContentType>

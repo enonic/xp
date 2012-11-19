@@ -12,13 +12,13 @@ import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.EntrySelector;
-import com.enonic.wem.api.content.type.component.BreaksRequiredContractException;
-import com.enonic.wem.api.content.type.component.Component;
-import com.enonic.wem.api.content.type.component.ComponentSet;
-import com.enonic.wem.api.content.type.component.FieldSet;
-import com.enonic.wem.api.content.type.component.Input;
-import com.enonic.wem.api.content.type.component.MaximumOccurrencesException;
-import com.enonic.wem.api.content.type.component.MinimumOccurrencesException;
+import com.enonic.wem.api.content.type.form.BreaksRequiredContractException;
+import com.enonic.wem.api.content.type.form.Component;
+import com.enonic.wem.api.content.type.form.ComponentSet;
+import com.enonic.wem.api.content.type.form.FieldSet;
+import com.enonic.wem.api.content.type.form.Input;
+import com.enonic.wem.api.content.type.form.MaximumOccurrencesException;
+import com.enonic.wem.api.content.type.form.MinimumOccurrencesException;
 
 public final class OccurrenceValidator
 {

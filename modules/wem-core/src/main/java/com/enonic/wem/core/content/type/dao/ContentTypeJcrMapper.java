@@ -5,9 +5,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.component.Components;
+import com.enonic.wem.api.content.type.form.Components;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.core.content.type.component.ComponentsJsonSerializer;
+import com.enonic.wem.core.content.type.form.ComponentsJsonSerializer;
 
 import static com.enonic.wem.api.content.type.ContentType.Builder;
 import static com.enonic.wem.api.content.type.ContentType.newComponentType;

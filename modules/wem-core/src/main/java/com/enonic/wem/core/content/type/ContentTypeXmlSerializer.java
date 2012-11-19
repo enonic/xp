@@ -8,10 +8,10 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.component.Component;
-import com.enonic.wem.api.content.type.component.Components;
+import com.enonic.wem.api.content.type.form.Component;
+import com.enonic.wem.api.content.type.form.Components;
 import com.enonic.wem.core.content.XmlParsingException;
-import com.enonic.wem.core.content.type.component.ComponentsXmlSerializer;
+import com.enonic.wem.core.content.type.form.ComponentsXmlSerializer;
 
 import com.enonic.cms.framework.util.JDOMUtil;
 

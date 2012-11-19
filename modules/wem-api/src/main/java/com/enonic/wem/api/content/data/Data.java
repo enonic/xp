@@ -11,8 +11,8 @@ import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.datatype.InconvertibleValueException;
 import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.datatype.JavaType;
-import com.enonic.wem.api.content.type.component.InvalidDataException;
-import com.enonic.wem.api.content.type.component.InvalidValueException;
+import com.enonic.wem.api.content.type.form.InvalidDataException;
+import com.enonic.wem.api.content.type.form.InvalidValueException;
 
 
 public final class Data

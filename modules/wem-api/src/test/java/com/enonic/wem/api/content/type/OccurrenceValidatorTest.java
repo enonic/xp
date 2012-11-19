@@ -7,17 +7,17 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.type.component.BreaksRequiredContractException;
-import com.enonic.wem.api.content.type.component.ComponentSet;
-import com.enonic.wem.api.content.type.component.MaximumOccurrencesException;
-import com.enonic.wem.api.content.type.component.MinimumOccurrencesException;
-import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.form.BreaksRequiredContractException;
+import com.enonic.wem.api.content.type.form.ComponentSet;
+import com.enonic.wem.api.content.type.form.MaximumOccurrencesException;
+import com.enonic.wem.api.content.type.form.MinimumOccurrencesException;
+import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.type.OccurrenceValidator.newOccurrenceValidator;
-import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
-import static com.enonic.wem.api.content.type.component.FieldSet.newFieldSet;
-import static com.enonic.wem.api.content.type.component.Input.newInput;
+import static com.enonic.wem.api.content.type.form.ComponentSet.newComponentSet;
+import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
+import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public class OccurrenceValidatorTest

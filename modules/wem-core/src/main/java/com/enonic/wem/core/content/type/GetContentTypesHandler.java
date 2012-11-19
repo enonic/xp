@@ -12,21 +12,21 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.command.content.type.GetContentTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypeFetcher;
-import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.MockContentTypeFetcher;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
-import com.enonic.wem.api.content.type.component.ComponentSet;
-import com.enonic.wem.api.content.type.component.Input;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
+import com.enonic.wem.api.content.type.form.ComponentSet;
+import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 
-import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
-import static com.enonic.wem.api.content.type.component.Input.newInput;
-import static com.enonic.wem.api.content.type.component.inputtype.InputTypes.TEXT_AREA;
-import static com.enonic.wem.api.content.type.component.inputtype.InputTypes.TEXT_LINE;
+import static com.enonic.wem.api.content.type.form.ComponentSet.newComponentSet;
+import static com.enonic.wem.api.content.type.form.Input.newInput;
+import static com.enonic.wem.api.content.type.form.inputtype.InputTypes.TEXT_AREA;
+import static com.enonic.wem.api.content.type.form.inputtype.InputTypes.TEXT_LINE;
 
 @Component
 public final class GetContentTypesHandler
