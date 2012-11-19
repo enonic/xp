@@ -19,7 +19,7 @@ final class DataXmlSerializer
 {
     final void generate( final Element parentDataEl, final Data data )
     {
-        // TODO: instead of resolveComponentPath, make new method which returns element without index
+        // TODO: instead of resolveFormItemPath, make new method which returns element without index
 
         if ( data.getDataType().equals( DataTypes.SET ) )
         {

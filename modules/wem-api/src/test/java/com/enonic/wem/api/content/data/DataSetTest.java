@@ -19,9 +19,9 @@ public class DataSetTest
     public void setValue_when_given_path_does_not_exists()
     {
         FormItems formItems = new FormItems();
-        FormItemSet componentSet = newFormItemSet().name( "personalia" ).multiple( true ).build();
-        componentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        formItems.add( componentSet );
+        FormItemSet formItemSet = newFormItemSet().name( "personalia" ).multiple( true ).build();
+        formItemSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        formItems.add( formItemSet );
 
         DataSet dataSet = new DataSet( new EntryPath() );
 
@@ -39,11 +39,11 @@ public class DataSetTest
     @Test
     public void getValue_when_having_sub_type()
     {
-        FormItemSet componentSet = newFormItemSet().name( "personalia" ).multiple( false ).build();
-        componentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        FormItemSet formItemSet = newFormItemSet().name( "personalia" ).multiple( false ).build();
+        formItemSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
         FormItems formItems = new FormItems();
-        formItems.add( componentSet );
+        formItems.add( formItemSet );
 
         DataSet dataSet = new DataSet( new EntryPath() );
         dataSet.setData( new EntryPath( "personalia.eyeColour" ), "Brown", DataTypes.TEXT );
@@ -80,10 +80,10 @@ public class DataSetTest
     public void getValue_when_having_multiple_sub_type()
     {
         FormItems formItems = new FormItems();
-        FormItemSet componentSet = newFormItemSet().name( "persons" ).multiple( true ).build();
-        componentSet.add( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        formItems.add( componentSet );
+        FormItemSet formItemSet = newFormItemSet().name( "persons" ).multiple( true ).build();
+        formItemSet.add( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        formItems.add( formItemSet );
 
         DataSet dataSet = new DataSet( new EntryPath() );
         dataSet.setData( new EntryPath( "persons[0].name" ), "Arn", DataTypes.TEXT );

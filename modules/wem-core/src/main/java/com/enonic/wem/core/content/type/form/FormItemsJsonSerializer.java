@@ -12,38 +12,38 @@ import com.enonic.wem.api.content.type.form.FormItems;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
 import com.enonic.wem.core.content.JsonParsingException;
 
-public final class ComponentsJsonSerializer
+public final class FormItemsJsonSerializer
     extends AbstractJsonSerializer<FormItems>
 {
-    private ComponentJsonSerializer componentSerializer = new ComponentJsonSerializer( this );
+    private FormItemJsonSerializer formItemSerializer = new FormItemJsonSerializer( this );
 
     @Override
     public JsonNode serialize( final FormItems formItems, final ObjectMapper objectMapper )
     {
-        final ArrayNode jsonComponents = objectMapper.createArrayNode();
+        final ArrayNode formItemsArray = objectMapper.createArrayNode();
         for ( FormItem formItem : formItems )
         {
-            final JsonNode jsonComponent = componentSerializer.serialize( formItem, objectMapper );
-            jsonComponents.add( jsonComponent );
+            final JsonNode formItemNode = formItemSerializer.serialize( formItem, objectMapper );
+            formItemsArray.add( formItemNode );
         }
-        return jsonComponents;
+        return formItemsArray;
     }
 
     @Override
-    public FormItems parse( final JsonNode componentsNode )
+    public FormItems parse( final JsonNode formItemsNode )
     {
         final FormItems formItems = new FormItems();
-        final Iterator<JsonNode> componentIt = componentsNode.getElements();
-        while ( componentIt.hasNext() )
+        final Iterator<JsonNode> formItemIt = formItemsNode.getElements();
+        while ( formItemIt.hasNext() )
         {
             try
             {
-                final JsonNode componentNode = componentIt.next();
-                formItems.add( componentSerializer.parse( componentNode ) );
+                final JsonNode formItemNode = formItemIt.next();
+                formItems.add( formItemSerializer.parse( formItemNode ) );
             }
             catch ( Exception e )
             {
-                throw new JsonParsingException( "Failed to parse FormItem: " + componentsNode.toString(), e );
+                throw new JsonParsingException( "Failed to parse FormItem: " + formItemsNode.toString(), e );
             }
         }
 

@@ -104,7 +104,7 @@ public class SubTypeReference
 
         public Builder typeFormItemSet()
         {
-            this.subTypeClass = ComponentSetSubType.class.getSimpleName();
+            this.subTypeClass = FormItemSetSubType.class.getSimpleName();
             return this;
         }
 

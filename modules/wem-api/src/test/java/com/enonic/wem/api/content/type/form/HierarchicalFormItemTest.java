@@ -8,7 +8,7 @@ import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static org.junit.Assert.*;
 
-public class HierarchicalComponentTest
+public class HierarchicalFormItemTest
 {
     @Test
     public void setParentPath()

@@ -41,7 +41,7 @@ public class ContentTypeDaoImplTest
         contentType.setName( "myContentType" );
         contentType.setAbstract( false );
         contentType.setDisplayName( "My content type" );
-        setContentTypeComponents( contentType );
+        setContentTypeFormItems( contentType );
 
         // exercise
         contentTypeDao.createContentType( session, contentType );
@@ -62,7 +62,7 @@ public class ContentTypeDaoImplTest
         contentType.setName( "myContentType" );
         contentType.setAbstract( true );
         contentType.setDisplayName( "My content type" );
-        setContentTypeComponents( contentType );
+        setContentTypeFormItems( contentType );
         contentTypeDao.createContentType( session, contentType );
 
         // exercise
@@ -90,7 +90,7 @@ public class ContentTypeDaoImplTest
         contentTypeCreated1.setName( "myContentType" );
         contentTypeCreated1.setAbstract( true );
         contentTypeCreated1.setDisplayName( "My content type" );
-        setContentTypeComponents( contentTypeCreated1 );
+        setContentTypeFormItems( contentTypeCreated1 );
         contentTypeDao.createContentType( session, contentTypeCreated1 );
 
         final ContentType contentTypeCreated2 = new ContentType();
@@ -98,7 +98,7 @@ public class ContentTypeDaoImplTest
         contentTypeCreated2.setName( "someContentType" );
         contentTypeCreated2.setAbstract( false );
         contentTypeCreated2.setDisplayName( "Another content type" );
-        setContentTypeComponents( contentTypeCreated2 );
+        setContentTypeFormItems( contentTypeCreated2 );
         contentTypeDao.createContentType( session, contentTypeCreated2 );
 
         // exercise
@@ -132,7 +132,7 @@ public class ContentTypeDaoImplTest
         contentType.setName( "myContentType" );
         contentType.setAbstract( true );
         contentType.setDisplayName( "My content type" );
-        setContentTypeComponents( contentType );
+        setContentTypeFormItems( contentType );
         contentTypeDao.createContentType( session, contentType );
 
         // exercise
@@ -168,7 +168,7 @@ public class ContentTypeDaoImplTest
         contentType.setName( "myContentType" );
         contentType.setAbstract( true );
         contentType.setDisplayName( "My content type" );
-        setContentTypeComponents( contentType );
+        setContentTypeFormItems( contentType );
         contentTypeDao.createContentType( session, contentType );
 
         // exercise
@@ -188,14 +188,14 @@ public class ContentTypeDaoImplTest
         assertTrue( contentTypesAfterDelete.isEmpty() );
     }
 
-    private void setContentTypeComponents( final ContentType contentType )
+    private void setContentTypeFormItems( final ContentType contentType )
     {
-        FormItemSet componentSet = newFormItemSet().name( "address" ).build();
-        componentSet.add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.add( newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.add( newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.add( newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() );
+        FormItemSet formItemSet = newFormItemSet().name( "address" ).build();
+        formItemSet.add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() );
         contentType.addFormItem( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.addFormItem( componentSet );
+        contentType.addFormItem( formItemSet );
     }
 }

@@ -86,8 +86,8 @@ public class ContentTypeStepDefs
         contentType.subTypeReferencesToFormItems( mockSubTypeFetcher );
     }
 
-    @When("^translating subType references to components for all content types$")
-    public void translating_subType_references_to_components_for_all_content_types()
+    @When("^translating subType references to formItems for all content types$")
+    public void translating_subType_references_to_formItems_for_all_content_types()
         throws Throwable
     {
         for ( ContentType contentType : contentTypeByName.values() )
@@ -105,11 +105,11 @@ public class ContentTypeStepDefs
         for ( DataTableRow row : list )
         {
             String contentTypeName = row.getCells().get( 0 );
-            String componentPath = row.getCells().get( 1 );
+            String formItemPath = row.getCells().get( 1 );
             FormItemType formItemType = FormItemType.valueOf( row.getCells().get( 2 ) );
             ContentType contentType = contentTypeByName.get( contentTypeName );
-            Assert.assertNotNull( "component not found at path: " + componentPath,
-                                  contentType.getFormItem( new FormItemPath( componentPath ) ) );
+            Assert.assertNotNull( "formItem not found at path: " + formItemPath,
+                                  contentType.getFormItem( new FormItemPath( formItemPath ) ) );
 
             Assert.assertEquals( FormItemType.INPUT, formItemType );
         }

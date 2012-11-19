@@ -7,7 +7,7 @@ import javax.jcr.RepositoryException;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.form.FormItems;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.core.content.type.form.ComponentsJsonSerializer;
+import com.enonic.wem.core.content.type.form.FormItemsJsonSerializer;
 
 import static com.enonic.wem.api.content.type.ContentType.Builder;
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
@@ -24,11 +24,9 @@ class ContentTypeJcrMapper
 
     private static final String IS_ABSTRACT = "isAbstract";
 
-    private static final String COMPONENTS = "components";
+    private static final String FORM_ITEMS = "formItems";
 
-
-    private ComponentsJsonSerializer componentsSerializer = new ComponentsJsonSerializer();
-
+    private FormItemsJsonSerializer formItemsSerializer = new FormItemsJsonSerializer();
 
     void toJcr( final ContentType contentType, final Node contentTypeNode )
         throws RepositoryException
@@ -38,8 +36,8 @@ class ContentTypeJcrMapper
         contentTypeNode.setProperty( MODULE_NAME, contentType.getModule().getName() );
         contentTypeNode.setProperty( IS_ABSTRACT, contentType.isAbstract() );
 
-        final String componentsJson = componentsSerializer.toString( contentType.getFormItems() );
-        contentTypeNode.setProperty( COMPONENTS, componentsJson );
+        final String formItemsJson = formItemsSerializer.toString( contentType.getFormItems() );
+        contentTypeNode.setProperty( FORM_ITEMS, formItemsJson );
     }
 
     ContentType toContentType( final Node contentTypeNode )
@@ -51,8 +49,8 @@ class ContentTypeJcrMapper
         builder.setAbstract( getPropertyBoolean( contentTypeNode, IS_ABSTRACT ) );
         builder.displayName( getPropertyString( contentTypeNode, DISPLAY_NAME ) );
 
-        final String componentsJson = contentTypeNode.getProperty( COMPONENTS ).getString();
-        final FormItems formItems = componentsSerializer.toObject( componentsJson );
+        final String formItemsJson = contentTypeNode.getProperty( FORM_ITEMS ).getString();
+        final FormItems formItems = formItemsSerializer.toObject( formItemsJson );
         builder.formItems( formItems );
 
         return builder.build();

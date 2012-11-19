@@ -1,9 +1,9 @@
 {
-    "contentData": {
-        "myTextLine1": "value1",
-        "myTextLine2": "value2",
-        "myComponentSet.myTextLine1": "value3"
+    "contentData":{
+        "myTextLine1":"value1",
+        "myTextLine2":"value2",
+        "myFormItemSet.myTextLine1":"value3"
     },
-    "qualifiedContentTypeName": "myModule:myContentType",
-    "contentPath": "/myContent/childContent"
+    "qualifiedContentTypeName":"myModule:myContentType",
+    "contentPath":"/myContent/childContent"
 }

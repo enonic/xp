@@ -146,23 +146,22 @@ public class ValidatorTest
     }
 
     @Test
-    public void given_content_with_invalid_dataSet_according_to_input_inside_a_componentSet_when_validate_then_exception_is_thrown()
+    public void given_content_with_invalid_dataSet_according_to_input_inside_a_formItemSet_when_validate_then_exception_is_thrown()
     {
         // setup
-        FormItemSet componentSet = newFormItemSet().name( "myComponentSet" ).build();
-        contentType.addFormItem( componentSet );
-        componentSet.add( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
+        FormItemSet formItemSet = newFormItemSet().name( "mySet" ).build();
+        contentType.addFormItem( formItemSet );
+        formItemSet.add( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
-        content.setData( "myComponentSet.myColor.red", 0l );
-        content.setData( "myComponentSet.myColor.green", 0l );
-        content.setData( "myComponentSet.myColor.blue", -1l );
+        content.setData( "mySet.myColor.red", 0l );
+        content.setData( "mySet.myColor.green", 0l );
+        content.setData( "mySet.myColor.blue", -1l );
 
         // exercise
         Validator validator = newValidator().contentType( contentType ).build();
-        validateAndAssertInvalidDataException( validator, content, InvalidValueException.class,
-                                               content.getData( "myComponentSet.myColor" ) );
+        validateAndAssertInvalidDataException( validator, content, InvalidValueException.class, content.getData( "mySet.myColor" ) );
 
     }
 
@@ -170,7 +169,7 @@ public class ValidatorTest
     public void given_content_with_invalid_dataSet_according_to_input_inside_a_layout_when_validate_then_exception_is_thrown()
     {
         // setup
-        FieldSet layout = FieldSet.newFieldSet().name( "myComponentSet" ).label( "Label" ).build();
+        FieldSet layout = FieldSet.newFieldSet().name( "mySet" ).label( "Label" ).build();
         contentType.addFormItem( layout );
         layout.addFormItem( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
 
@@ -187,40 +186,38 @@ public class ValidatorTest
     }
 
     @Test
-    public void given_content_with_invalid_dataSet_according_to_dataType_inside_a_componentSet_when_validate_then_exception_is_thrown()
+    public void given_content_with_invalid_dataSet_according_to_dataType_inside_a_formItemSet_when_validate_then_exception_is_thrown()
     {
         // setup
-        FormItemSet componentSet = newFormItemSet().name( "myComponentSet" ).build();
-        contentType.addFormItem( componentSet );
-        componentSet.add( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
+        FormItemSet formItemSet = newFormItemSet().name( "mySet" ).build();
+        contentType.addFormItem( formItemSet );
+        formItemSet.add( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
-        content.setData( "myComponentSet.myGeoLocation.latitude", 0.0 );
-        content.setData( "myComponentSet.myGeoLocation.longitude", -181.00 );
+        content.setData( "mySet.myGeoLocation.latitude", 0.0 );
+        content.setData( "mySet.myGeoLocation.longitude", -181.00 );
 
         // exercise
         Validator validator = newValidator().contentType( contentType ).build();
-        validateAndAssertInvalidDataException( validator, content, InvalidValueException.class,
-                                               content.getData( "myComponentSet.myGeoLocation" ) );
+        validateAndAssertInvalidDataException( validator, content, InvalidValueException.class, content.getData( "mySet.myGeoLocation" ) );
     }
 
     @Test
-    public void given_content_with_invalid_data_according_to_dataType_inside_a_componentSet_when_validate_then_exception_is_thrown()
+    public void given_content_with_invalid_data_according_to_dataType_inside_a_formItemSet_when_validate_then_exception_is_thrown()
     {
         // setup
-        FormItemSet componentSet = newFormItemSet().name( "myComponentSet" ).build();
-        contentType.addFormItem( componentSet );
-        componentSet.add( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
+        FormItemSet formItemSet = newFormItemSet().name( "mySet" ).build();
+        contentType.addFormItem( formItemSet );
+        formItemSet.add( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
-        content.setData( "myComponentSet.myDate", "2000-01-01" );
+        content.setData( "mySet.myDate", "2000-01-01" );
 
         // exercise
         Validator validator = newValidator().contentType( contentType ).build();
-        validateAndAssertInvalidDataException( validator, content, InvalidValueTypeException.class,
-                                               content.getData( "myComponentSet.myDate" ) );
+        validateAndAssertInvalidDataException( validator, content, InvalidValueTypeException.class, content.getData( "mySet.myDate" ) );
     }
 
     @Test

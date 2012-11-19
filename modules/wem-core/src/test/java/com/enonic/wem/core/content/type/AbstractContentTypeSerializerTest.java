@@ -11,9 +11,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.form.ComponentSetSubType;
 import com.enonic.wem.api.content.type.form.FieldSet;
 import com.enonic.wem.api.content.type.form.FormItemSet;
+import com.enonic.wem.api.content.type.form.FormItemSetSubType;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.content.type.form.InputSubType;
 import com.enonic.wem.api.content.type.form.Layout;
@@ -23,9 +23,9 @@ import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.content.type.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.form.ComponentSetSubType.newComponentSetSubType;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.type.form.FormItemSetSubType.newFormItemSetSubType;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static com.enonic.wem.api.content.type.form.SubTypeReference.newSubTypeReference;
 import static com.enonic.wem.api.module.Module.newModule;
@@ -40,13 +40,13 @@ public abstract class AbstractContentTypeSerializerTest
 
     abstract ContentTypeSerializer getSerializer();
 
-    private ContentType contentTypeWithAllComponentTypes;
+    private ContentType contentTypeWithAllFormItemTypes;
 
     @Before
     public void before()
     {
         this.serializer = getSerializer();
-        contentTypeWithAllComponentTypes = createContentTypeWithAllInputComponentTypes();
+        contentTypeWithAllFormItemTypes = createContentTypeWithAllInputFormItemTypes();
     }
 
     abstract void assertSerializedResult( String fileNameForExpected, String actualSerialization );
@@ -87,7 +87,7 @@ public abstract class AbstractContentTypeSerializerTest
     @Test
     public void toString_all_input_types()
     {
-        String actualSerialization = toString( contentTypeWithAllComponentTypes );
+        String actualSerialization = toString( contentTypeWithAllFormItemTypes );
 
         // exercise
         ContentType actualContentType = toContentType( actualSerialization );
@@ -116,7 +116,7 @@ public abstract class AbstractContentTypeSerializerTest
     @Test
     public void given_all_input_types_when_parsed_then_paths_are_as_expected()
     {
-        String serialized = toString( contentTypeWithAllComponentTypes );
+        String serialized = toString( contentTypeWithAllFormItemTypes );
 
         // exercise
         ContentType actualContentType = toContentType( serialized );
@@ -166,7 +166,7 @@ public abstract class AbstractContentTypeSerializerTest
         // setup
         Module module = newModule().name( "myModule" ).build();
 
-        ComponentSetSubType subType = newComponentSetSubType().module( module ).componentSet(
+        FormItemSetSubType subType = newFormItemSetSubType().module( module ).formItemSet(
             newFormItemSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
@@ -191,7 +191,7 @@ public abstract class AbstractContentTypeSerializerTest
     }
 
     @Test
-    public void given_content_type_with_componentSet_inside_componentSet_and_component_in_both_when_parse_then_paths_are_correct()
+    public void given_content_type_with_formItemSet_inside_formItemSet_and_formItem_in_both_when_parse_then_paths_are_correct()
     {
         // setup
         ContentType contentType = new ContentType();
@@ -216,7 +216,7 @@ public abstract class AbstractContentTypeSerializerTest
     }
 
     @Test
-    public void given_layout_with_component_inside_when_parsed_it_exists()
+    public void given_layout_with_formItem_inside_when_parsed_it_exists()
     {
         // setup
         FieldSet.Builder fieldSetBuilder = newFieldSet().label( "Label" ).name( "myFieldSet" );
@@ -238,7 +238,7 @@ public abstract class AbstractContentTypeSerializerTest
     }
 
     @Test
-    public void given_component_with_validationRegex_when_parsed_then_it_exists()
+    public void given_formItem_with_validationRegex_when_parsed_then_it_exists()
     {
         // setup
         ContentType.Builder contentTypeBuilder = ContentType.newContentType().name( "test" ).module( myModule );
@@ -306,7 +306,7 @@ public abstract class AbstractContentTypeSerializerTest
         return mapper;
     }
 
-    private ContentType createContentTypeWithAllInputComponentTypes()
+    private ContentType createContentTypeWithAllInputFormItemTypes()
     {
         SingleSelectorConfig singleSelectorConfig =
             SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "myOption 1", "o1" ).addOption( "myOption 2",

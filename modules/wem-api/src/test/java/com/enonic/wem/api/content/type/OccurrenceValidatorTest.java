@@ -265,15 +265,15 @@ public class OccurrenceValidatorTest
         // setup
         contentType.addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
 
-        FormItemSet personaliaComponentSet = newFormItemSet().name( "personalia" ).multiple( false ).required( true ).build();
-        personaliaComponentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        personaliaComponentSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.addFormItem( personaliaComponentSet );
+        FormItemSet personalia = newFormItemSet().name( "personalia" ).multiple( false ).required( true ).build();
+        personalia.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        personalia.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( personalia );
 
-        FormItemSet crimesComponentSet = newFormItemSet().name( "crimes" ).multiple( true ).build();
-        contentType.addFormItem( crimesComponentSet );
-        crimesComponentSet.add( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
-        crimesComponentSet.add( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
+        FormItemSet crimes = newFormItemSet().name( "crimes" ).multiple( true ).build();
+        contentType.addFormItem( crimes );
+        crimes.add( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
+        crimes.add( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );

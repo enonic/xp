@@ -5,19 +5,19 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.module.Module;
 
-public class ComponentSetSubType
+public class FormItemSetSubType
     extends SubType
 {
-    private FormItemSet componentSet = new FormItemSet();
+    private FormItemSet formItemSet = new FormItemSet();
 
-    ComponentSetSubType( final Module module )
+    FormItemSetSubType( final Module module )
     {
         super( module );
     }
 
     public String getName()
     {
-        return componentSet.getName();
+        return formItemSet.getName();
     }
 
     @Override
@@ -26,27 +26,27 @@ public class ComponentSetSubType
         return this.getClass();
     }
 
-    public void addComponent( final HierarchicalFormItem component )
+    public void addFormItem( final HierarchicalFormItem formItem )
     {
-        if ( component instanceof SubTypeReference )
+        if ( formItem instanceof SubTypeReference )
         {
-            final SubTypeReference subTypeReference = (SubTypeReference) component;
+            final SubTypeReference subTypeReference = (SubTypeReference) formItem;
             Preconditions.checkArgument( subTypeReference.getSubTypeClass().equals( InputSubType.class ),
                                          "A SubType cannot reference other SubTypes unless it is of type %s: " +
                                              subTypeReference.getSubTypeClass().getSimpleName(), InputSubType.class.getSimpleName() );
         }
-        componentSet.add( component );
+        formItemSet.add( formItem );
     }
 
     public HierarchicalFormItem create( final SubTypeReference subTypeReference )
     {
-        final FormItemSet newComponentSet = this.componentSet.copy();
-        newComponentSet.setName( subTypeReference.getName() );
-        newComponentSet.setPath( subTypeReference.getPath() );
-        return newComponentSet;
+        final FormItemSet newSet = this.formItemSet.copy();
+        newSet.setName( subTypeReference.getName() );
+        newSet.setPath( subTypeReference.getPath() );
+        return newSet;
     }
 
-    public static Builder newComponentSetSubType()
+    public static Builder newFormItemSetSubType()
     {
         return new Builder();
     }
@@ -55,7 +55,7 @@ public class ComponentSetSubType
     {
         private Module module;
 
-        private FormItemSet componentSet;
+        private FormItemSet formItemSet;
 
         public Builder module( Module value )
         {
@@ -63,16 +63,16 @@ public class ComponentSetSubType
             return this;
         }
 
-        public Builder componentSet( FormItemSet value )
+        public Builder formItemSet( FormItemSet value )
         {
-            this.componentSet = value;
+            this.formItemSet = value;
             return this;
         }
 
-        public ComponentSetSubType build()
+        public FormItemSetSubType build()
         {
-            ComponentSetSubType subType = new ComponentSetSubType( module );
-            subType.componentSet = componentSet;
+            FormItemSetSubType subType = new FormItemSetSubType( module );
+            subType.formItemSet = formItemSet;
             return subType;
         }
     }

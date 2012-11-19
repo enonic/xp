@@ -26,7 +26,7 @@ import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 
-class ComponentJsonSerializer
+class FormItemJsonSerializer
     extends AbstractJsonSerializer<FormItem>
 {
     private static final String TYPE = "type";
@@ -65,11 +65,11 @@ class ComponentJsonSerializer
 
     private final OccurrencesJsonSerializer occurrencesJsonSerializer = new OccurrencesJsonSerializer();
 
-    private final ComponentsJsonSerializer componentsJsonSerializer;
+    private final FormItemsJsonSerializer formItemsJsonSerializer;
 
-    public ComponentJsonSerializer( final ComponentsJsonSerializer componentsJsonSerializer )
+    public FormItemJsonSerializer( final FormItemsJsonSerializer formItemsJsonSerializer )
     {
-        this.componentsJsonSerializer = componentsJsonSerializer;
+        this.formItemsJsonSerializer = formItemsJsonSerializer;
     }
 
     @Override
@@ -77,7 +77,7 @@ class ComponentJsonSerializer
     {
         if ( formItem instanceof FormItemSet )
         {
-            return serializeComponentSet( (FormItemSet) formItem, objectMapper );
+            return serializeFormItemSet( (FormItemSet) formItem, objectMapper );
         }
         else if ( formItem instanceof Layout )
         {
@@ -116,17 +116,17 @@ class ComponentJsonSerializer
         return jsonObject;
     }
 
-    private JsonNode serializeComponentSet( final FormItemSet componentSet, final ObjectMapper objectMapper )
+    private JsonNode serializeFormItemSet( final FormItemSet set, final ObjectMapper objectMapper )
     {
         final ObjectNode jsonObject = objectMapper.createObjectNode();
         jsonObject.put( TYPE, FormItemSet.class.getSimpleName() );
-        jsonObject.put( NAME, componentSet.getName() );
-        jsonObject.put( LABEL, componentSet.getLabel() );
-        jsonObject.put( IMMUTABLE, componentSet.isImmutable() );
-        jsonObject.put( OCCURRENCES, occurrencesJsonSerializer.serialize( componentSet.getOccurrences(), objectMapper ) );
-        jsonObject.put( CUSTOM_TEXT, componentSet.getCustomText() );
-        jsonObject.put( HELP_TEXT, componentSet.getHelpText() );
-        jsonObject.put( ITEMS, componentsJsonSerializer.serialize( componentSet.getFormItems(), objectMapper ) );
+        jsonObject.put( NAME, set.getName() );
+        jsonObject.put( LABEL, set.getLabel() );
+        jsonObject.put( IMMUTABLE, set.isImmutable() );
+        jsonObject.put( OCCURRENCES, occurrencesJsonSerializer.serialize( set.getOccurrences(), objectMapper ) );
+        jsonObject.put( CUSTOM_TEXT, set.getCustomText() );
+        jsonObject.put( HELP_TEXT, set.getHelpText() );
+        jsonObject.put( ITEMS, formItemsJsonSerializer.serialize( set.getFormItems(), objectMapper ) );
         return jsonObject;
     }
 
@@ -147,7 +147,7 @@ class ComponentJsonSerializer
     {
         jsonObject.put( LABEL, fieldSet.getLabel() );
         jsonObject.put( NAME, fieldSet.getName() );
-        jsonObject.put( ITEMS, componentsJsonSerializer.serialize( fieldSet.getFormItems(), objectMapper ) );
+        jsonObject.put( ITEMS, formItemsJsonSerializer.serialize( fieldSet.getFormItems(), objectMapper ) );
     }
 
     private JsonNode serializeReference( final SubTypeReference subTypeReference, final ObjectMapper objectMapper )
@@ -160,65 +160,65 @@ class ComponentJsonSerializer
         return jsonObject;
     }
 
-    public FormItem parse( final JsonNode componentNode )
+    public FormItem parse( final JsonNode formItemNode )
     {
-        final String componentType = JsonParserUtil.getStringValue( TYPE, componentNode );
+        final String type = JsonParserUtil.getStringValue( TYPE, formItemNode );
 
         final FormItem formItem;
 
-        if ( componentType.equals( Input.class.getSimpleName() ) )
+        if ( type.equals( Input.class.getSimpleName() ) )
         {
-            formItem = parseInput( componentNode );
+            formItem = parseInput( formItemNode );
         }
-        else if ( componentType.equals( FormItemSet.class.getSimpleName() ) )
+        else if ( type.equals( FormItemSet.class.getSimpleName() ) )
         {
-            formItem = parseComponentSet( componentNode );
+            formItem = parseFormItemSet( formItemNode );
         }
-        else if ( componentType.equals( Layout.class.getSimpleName() ) )
+        else if ( type.equals( Layout.class.getSimpleName() ) )
         {
-            formItem = parseLayout( componentNode );
+            formItem = parseLayout( formItemNode );
         }
-        else if ( componentType.equals( SubTypeReference.class.getSimpleName() ) )
+        else if ( type.equals( SubTypeReference.class.getSimpleName() ) )
         {
-            formItem = parseSubTypeReference( componentNode );
+            formItem = parseSubTypeReference( formItemNode );
         }
         else
         {
-            throw new JsonParsingException( "Unknown FormItemType: " + componentType );
+            throw new JsonParsingException( "Unknown FormItemType: " + type );
         }
 
         return formItem;
     }
 
-    private HierarchicalFormItem parseInput( final JsonNode componentNode )
+    private HierarchicalFormItem parseInput( final JsonNode formItemNode )
     {
         final Input.Builder builder = newInput();
-        builder.name( JsonParserUtil.getStringValue( NAME, componentNode ) );
-        builder.label( JsonParserUtil.getStringValue( LABEL, componentNode, null ) );
-        builder.immutable( JsonParserUtil.getBooleanValue( IMMUTABLE, componentNode ) );
-        builder.helpText( JsonParserUtil.getStringValue( HELP_TEXT, componentNode ) );
-        builder.customText( JsonParserUtil.getStringValue( CUSTOM_TEXT, componentNode ) );
-        parseValidationRegexp( builder, componentNode );
+        builder.name( JsonParserUtil.getStringValue( NAME, formItemNode ) );
+        builder.label( JsonParserUtil.getStringValue( LABEL, formItemNode, null ) );
+        builder.immutable( JsonParserUtil.getBooleanValue( IMMUTABLE, formItemNode ) );
+        builder.helpText( JsonParserUtil.getStringValue( HELP_TEXT, formItemNode ) );
+        builder.customText( JsonParserUtil.getStringValue( CUSTOM_TEXT, formItemNode ) );
+        parseValidationRegexp( builder, formItemNode );
 
-        parseOccurrences( builder, componentNode.get( OCCURRENCES ) );
-        parseInputType( builder, componentNode.get( INPUT_TYPE ) );
-        parseInputTypeConfig( builder, componentNode.get( INPUT_TYPE_CONFIG ) );
+        parseOccurrences( builder, formItemNode.get( OCCURRENCES ) );
+        parseInputType( builder, formItemNode.get( INPUT_TYPE ) );
+        parseInputTypeConfig( builder, formItemNode.get( INPUT_TYPE_CONFIG ) );
 
         return builder.build();
     }
 
-    private HierarchicalFormItem parseComponentSet( final JsonNode componentNode )
+    private HierarchicalFormItem parseFormItemSet( final JsonNode formItemNode )
     {
         final FormItemSet.Builder builder = newFormItemSet();
-        builder.name( JsonParserUtil.getStringValue( NAME, componentNode ) );
-        builder.label( JsonParserUtil.getStringValue( LABEL, componentNode, null ) );
-        builder.immutable( JsonParserUtil.getBooleanValue( IMMUTABLE, componentNode ) );
-        builder.helpText( JsonParserUtil.getStringValue( HELP_TEXT, componentNode ) );
-        builder.customText( JsonParserUtil.getStringValue( CUSTOM_TEXT, componentNode ) );
+        builder.name( JsonParserUtil.getStringValue( NAME, formItemNode ) );
+        builder.label( JsonParserUtil.getStringValue( LABEL, formItemNode, null ) );
+        builder.immutable( JsonParserUtil.getBooleanValue( IMMUTABLE, formItemNode ) );
+        builder.helpText( JsonParserUtil.getStringValue( HELP_TEXT, formItemNode ) );
+        builder.customText( JsonParserUtil.getStringValue( CUSTOM_TEXT, formItemNode ) );
 
-        parseOccurrences( builder, componentNode.get( OCCURRENCES ) );
+        parseOccurrences( builder, formItemNode.get( OCCURRENCES ) );
 
-        final FormItems formItems = componentsJsonSerializer.parse( componentNode.get( ITEMS ) );
+        final FormItems formItems = formItemsJsonSerializer.parse( formItemNode.get( ITEMS ) );
         for ( FormItem formItem : formItems.iterable() )
         {
             builder.add( formItem );
@@ -227,12 +227,12 @@ class ComponentJsonSerializer
         return builder.build();
     }
 
-    private FormItem parseLayout( final JsonNode componentNode )
+    private FormItem parseLayout( final JsonNode formItemNode )
     {
-        final String layoutType = JsonParserUtil.getStringValue( LAYOUT_TYPE, componentNode );
+        final String layoutType = JsonParserUtil.getStringValue( LAYOUT_TYPE, formItemNode );
         if ( layoutType.equals( FieldSet.class.getSimpleName() ) )
         {
-            return parseFieldSet( componentNode );
+            return parseFieldSet( formItemNode );
         }
         else
         {
@@ -240,13 +240,13 @@ class ComponentJsonSerializer
         }
     }
 
-    private FormItem parseFieldSet( final JsonNode componentNode )
+    private FormItem parseFieldSet( final JsonNode formItemNode )
     {
         final FieldSet.Builder builder = newFieldSet();
-        builder.label( JsonParserUtil.getStringValue( LABEL, componentNode, null ) );
-        builder.name( JsonParserUtil.getStringValue( NAME, componentNode, null ) );
+        builder.label( JsonParserUtil.getStringValue( LABEL, formItemNode, null ) );
+        builder.name( JsonParserUtil.getStringValue( NAME, formItemNode, null ) );
 
-        final FormItems formItems = componentsJsonSerializer.parse( componentNode.get( ITEMS ) );
+        final FormItems formItems = formItemsJsonSerializer.parse( formItemNode.get( ITEMS ) );
         for ( FormItem formItem : formItems.iterable() )
         {
             builder.add( formItem );
@@ -255,12 +255,12 @@ class ComponentJsonSerializer
         return builder.build();
     }
 
-    private HierarchicalFormItem parseSubTypeReference( final JsonNode componentNode )
+    private HierarchicalFormItem parseSubTypeReference( final JsonNode formItemNode )
     {
         final SubTypeReference.Builder builder = SubTypeReference.newSubTypeReference();
-        builder.name( JsonParserUtil.getStringValue( NAME, componentNode ) );
-        builder.subType( new SubTypeQualifiedName( JsonParserUtil.getStringValue( REFERENCE, componentNode ) ) );
-        builder.type( JsonParserUtil.getStringValue( SUB_TYPE_CLASS, componentNode ) );
+        builder.name( JsonParserUtil.getStringValue( NAME, formItemNode ) );
+        builder.subType( new SubTypeQualifiedName( JsonParserUtil.getStringValue( REFERENCE, formItemNode ) ) );
+        builder.type( JsonParserUtil.getStringValue( SUB_TYPE_CLASS, formItemNode ) );
         return builder.build();
     }
 

@@ -6,8 +6,8 @@ import org.junit.Test;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.form.ComponentSetSubType.newComponentSetSubType;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.type.form.FormItemSetSubType.newFormItemSetSubType;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static com.enonic.wem.api.content.type.form.SubTypeReference.newSubTypeReference;
 import static org.junit.Assert.*;
@@ -18,10 +18,10 @@ public class FormItemsTest
     public void getConfig()
     {
         FormItems formItems = new FormItems();
-        FormItemSet componentSet = newFormItemSet().name( "personalia" ).build();
-        formItems.add( componentSet );
-        componentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        FormItemSet formItemSet = newFormItemSet().name( "personalia" ).build();
+        formItems.add( formItemSet );
+        formItemSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
         // exercise & verify
         HierarchicalFormItem personaliaConfig = formItems.getFormItemSet( new FormItemPath( "personalia" ) );
@@ -32,13 +32,13 @@ public class FormItemsTest
     public void getConfig2()
     {
         FormItems formItems = new FormItems();
-        FormItemSet componentSet = newFormItemSet().name( "personalia" ).label( "Personalia" ).build();
-        formItems.add( componentSet );
-        componentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        FormItemSet formItemSet = newFormItemSet().name( "personalia" ).label( "Personalia" ).build();
+        formItems.add( formItemSet );
+        formItemSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
         // exercise & verify
-        HierarchicalFormItem personaliaEyeColourConfig = componentSet.getInput( "eyeColour" );
+        HierarchicalFormItem personaliaEyeColourConfig = formItemSet.getInput( "eyeColour" );
         assertEquals( "personalia.eyeColour", personaliaEyeColourConfig.getPath().toString() );
     }
 
@@ -67,14 +67,14 @@ public class FormItemsTest
     }
 
     @Test
-    public void given_sub_type_with_a_input_inside_a_set_when_getComponent_with_path_to_input_then_exception_is_thrown()
+    public void given_sub_type_with_a_input_inside_a_set_when_getFormItem_with_path_to_input_then_exception_is_thrown()
     {
         // setup
         Module module = Module.newModule().name( "myModule" ).build();
 
         Input myInput = newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build();
         FormItemSet mySet = newFormItemSet().name( "mySet" ).add( myInput ).build();
-        ComponentSetSubType mySubType = newComponentSetSubType().module( module ).componentSet( mySet ).build();
+        FormItemSetSubType mySubType = newFormItemSetSubType().module( module ).formItemSet( mySet ).build();
 
         FormItems formItems = new FormItems();
         formItems.add( newSubTypeReference().name( "mySet" ).typeInput().subType( mySubType.getQualifiedName() ).build() );

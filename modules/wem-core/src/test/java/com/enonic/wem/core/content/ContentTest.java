@@ -10,9 +10,9 @@ import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.form.ComponentSetSubType;
 import com.enonic.wem.api.content.type.form.FieldSet;
 import com.enonic.wem.api.content.type.form.FormItemSet;
+import com.enonic.wem.api.content.type.form.FormItemSetSubType;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.content.type.form.InputSubType;
 import com.enonic.wem.api.content.type.form.InvalidDataException;
@@ -22,9 +22,9 @@ import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.content.type.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.form.ComponentSetSubType.newComponentSetSubType;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.type.form.FormItemSetSubType.newFormItemSetSubType;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static com.enonic.wem.api.content.type.form.InputSubType.newInputSubType;
 import static com.enonic.wem.api.content.type.form.SubTypeReference.newSubTypeReference;
@@ -237,14 +237,14 @@ public class ContentTest
     }
 
     @Test
-    public void componentSet()
+    public void formItemSet()
     {
         contentType.addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
 
-        FormItemSet componentSet = newFormItemSet().name( "personalia" ).build();
-        contentType.addFormItem( componentSet );
-        componentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        FormItemSet formItemSet = newFormItemSet().name( "personalia" ).build();
+        contentType.addFormItem( formItemSet );
+        formItemSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -263,11 +263,11 @@ public class ContentTest
         Input nameInput = newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build();
         contentType.addFormItem( nameInput );
 
-        FormItemSet componentSet = newFormItemSet().name( "personalia" ).multiple( true ).build();
-        contentType.addFormItem( componentSet );
-        componentSet.add( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
+        FormItemSet formItemSet = newFormItemSet().name( "personalia" ).multiple( true ).build();
+        contentType.addFormItem( formItemSet );
+        formItemSet.add( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -408,7 +408,7 @@ public class ContentTest
             newInput().name( "country" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig(
                 newSingleSelectorConfig().typeDropdown().addOption( "Norway", "NO" ).build() ).build() ).build();
 
-        ComponentSetSubType addressSubType = newComponentSetSubType().module( module ).componentSet(
+        FormItemSetSubType addressSubType = newFormItemSetSubType().module( module ).formItemSet(
             newFormItemSet().name( "address" ).add( newInput().name( "street" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newSubTypeReference( postalCodeSubType ).name( "postalCode" ).build() ).add(
                 newInput().name( "postalPlace" ).type( InputTypes.TEXT_LINE ).build() ).add(
@@ -443,7 +443,7 @@ public class ContentTest
     {
         Module module = newModule().name( "myModule" ).build();
 
-        ComponentSetSubType addressSubType = newComponentSetSubType().module( module ).componentSet(
+        FormItemSetSubType addressSubType = newFormItemSetSubType().module( module ).formItemSet(
             newFormItemSet().name( "address" ).multiple( true ).add( newInput().type( InputTypes.TEXT_LINE ).name( "label" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "street" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(

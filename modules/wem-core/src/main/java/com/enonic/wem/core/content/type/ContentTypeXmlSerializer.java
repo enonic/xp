@@ -11,14 +11,14 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItems;
 import com.enonic.wem.core.content.XmlParsingException;
-import com.enonic.wem.core.content.type.form.ComponentsXmlSerializer;
+import com.enonic.wem.core.content.type.form.FormItemsXmlSerializer;
 
 import com.enonic.cms.framework.util.JDOMUtil;
 
 public class ContentTypeXmlSerializer
     implements ContentTypeSerializer
 {
-    private ComponentsXmlSerializer componentsSerializer = new ComponentsXmlSerializer();
+    private FormItemsXmlSerializer formItemsSerializer = new FormItemsXmlSerializer();
 
     private boolean prettyPrint = false;
 
@@ -52,7 +52,7 @@ public class ContentTypeXmlSerializer
     {
         typeEl.addContent( new Element( "name" ).setText( type.getName() ) );
         typeEl.addContent( new Element( "module" ).setText( type.getModule().getName() ) );
-        typeEl.addContent( componentsSerializer.serialize( type.formItemIterable() ) );
+        typeEl.addContent( formItemsSerializer.serialize( type.formItemIterable() ) );
     }
 
     public ContentType toContentType( String xml )
@@ -82,7 +82,7 @@ public class ContentTypeXmlSerializer
 
         try
         {
-            final FormItems formItems = componentsSerializer.parse( contentTypeEl );
+            final FormItems formItems = formItemsSerializer.parse( contentTypeEl );
             for ( FormItem formItem : formItems )
             {
                 contentType.addFormItem( formItem );

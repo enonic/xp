@@ -11,16 +11,16 @@ import com.enonic.wem.core.content.XmlParsingException;
 
 import com.enonic.cms.framework.util.JDOMUtil;
 
-public final class ComponentsXmlSerializer
+public final class FormItemsXmlSerializer
 {
-    private ComponentXmlSerializer componentSerializer = new ComponentXmlSerializer( this );
+    private FormItemXmlSerializer formItemSerializer = new FormItemXmlSerializer( this );
 
-    public Element serialize( final Iterable<FormItem> components )
+    public Element serialize( final Iterable<FormItem> formItems )
     {
         Element itemsEl = new Element( "items" );
-        for ( FormItem formItem : components )
+        for ( FormItem formItem : formItems )
         {
-            itemsEl.addContent( componentSerializer.serialize( formItem ) );
+            itemsEl.addContent( formItemSerializer.serialize( formItem ) );
         }
         return itemsEl;
     }
@@ -29,18 +29,18 @@ public final class ComponentsXmlSerializer
     {
         final FormItems formItems = new FormItems();
         final Element itemsEl = parentEl.getChild( "items" );
-        final Iterator componentIt = itemsEl.getChildren().iterator();
-        while ( componentIt.hasNext() )
+        final Iterator formItemIt = itemsEl.getChildren().iterator();
+        while ( formItemIt.hasNext() )
         {
-            final Element componentEl = (Element) componentIt.next();
+            final Element formItemEl = (Element) formItemIt.next();
 
             try
             {
-                formItems.add( componentSerializer.parse( componentEl ) );
+                formItems.add( formItemSerializer.parse( formItemEl ) );
             }
             catch ( Exception e )
             {
-                throw new XmlParsingException( "Failed to parse FormItem: " + JDOMUtil.printElement( componentEl ), e );
+                throw new XmlParsingException( "Failed to parse FormItem: " + JDOMUtil.printElement( formItemEl ), e );
             }
         }
 

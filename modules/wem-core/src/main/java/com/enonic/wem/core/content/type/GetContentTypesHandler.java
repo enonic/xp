@@ -120,10 +120,10 @@ public final class GetContentTypesHandler
         article2ContentType.addFormItem( title.copy() );
         article2ContentType.addFormItem( category.copy() );
         article2ContentType.addFormItem( body.copy() );
-        FormItemSet componentSet = newFormItemSet().name( "related" ).build();
-        componentSet.add( newInput().name( "author" ).label( "Author" ).type( TEXT_LINE ).build() );
-        componentSet.add( newInput().name( "category" ).label( "Category" ).type( TEXT_LINE ).build() );
-        article2ContentType.addFormItem( componentSet );
+        FormItemSet formItemSet = newFormItemSet().name( "related" ).build();
+        formItemSet.add( newInput().name( "author" ).label( "Author" ).type( TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "category" ).label( "Category" ).type( TEXT_LINE ).build() );
+        article2ContentType.addFormItem( formItemSet );
         mockContentTypeFetcher.add( article2ContentType );
 
         return mockContentTypeFetcher;

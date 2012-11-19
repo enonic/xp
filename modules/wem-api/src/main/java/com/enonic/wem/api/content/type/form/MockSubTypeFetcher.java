@@ -14,7 +14,7 @@ public class MockSubTypeFetcher
         return subTypeMap.get( qualifiedName );
     }
 
-    public void add( final ComponentSetSubType subType )
+    public void add( final FormItemSetSubType subType )
     {
         subTypeMap.put( subType.getQualifiedName(), subType );
     }

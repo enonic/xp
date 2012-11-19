@@ -12,13 +12,13 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.type.form.ComponentsJsonSerializer;
+import com.enonic.wem.core.content.type.form.FormItemsJsonSerializer;
 
 public class ContentTypeJsonSerializer
     extends AbstractJsonSerializer<ContentType>
     implements ContentTypeSerializer
 {
-    private ComponentsJsonSerializer componentsSerializer = new ComponentsJsonSerializer();
+    private FormItemsJsonSerializer formItemsSerializer = new FormItemsJsonSerializer();
 
     @Override
     protected JsonNode serialize( final ContentType contentType, final ObjectMapper objectMapper )
@@ -28,7 +28,7 @@ public class ContentTypeJsonSerializer
         objectNode.put( "name", contentType.getName() );
         objectNode.put( "module", contentType.getModule().getName() );
         objectNode.put( "qualifiedName", contentType.getQualifiedName().toString() );
-        objectNode.put( "items", componentsSerializer.serialize( contentType.getFormItems(), mapper ) );
+        objectNode.put( "items", formItemsSerializer.serialize( contentType.getFormItems(), mapper ) );
         return objectNode;
     }
 
@@ -48,7 +48,7 @@ public class ContentTypeJsonSerializer
 
         try
         {
-            final FormItems formItems = componentsSerializer.parse( contentTypeNode.get( "items" ) );
+            final FormItems formItems = formItemsSerializer.parse( contentTypeNode.get( "items" ) );
             for ( FormItem formItem : formItems )
             {
                 contentType.addFormItem( formItem );

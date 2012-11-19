@@ -20,7 +20,7 @@ import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 
-class ComponentXmlSerializer
+class FormItemXmlSerializer
 {
     public static final String NAME = "name";
 
@@ -48,18 +48,18 @@ class ComponentXmlSerializer
 
     private final OccurrencesXmlSerializer occurrencesXmlSerializer = new OccurrencesXmlSerializer();
 
-    private final ComponentsXmlSerializer componentsSerializer;
+    private final FormItemsXmlSerializer formItemsSerializer;
 
-    public ComponentXmlSerializer( final ComponentsXmlSerializer componentsSerializer )
+    public FormItemXmlSerializer( final FormItemsXmlSerializer formItemsSerializer )
     {
-        this.componentsSerializer = componentsSerializer;
+        this.formItemsSerializer = formItemsSerializer;
     }
 
     public Element serialize( FormItem formItem )
     {
         if ( formItem instanceof FormItemSet )
         {
-            return serializeComponentSet( (FormItemSet) formItem );
+            return serializeFormItemSet( (FormItemSet) formItem );
         }
         else if ( formItem instanceof Layout )
         {
@@ -102,18 +102,18 @@ class ComponentXmlSerializer
         }
     }
 
-    private Element serializeComponentSet( final FormItemSet componentSet )
+    private Element serializeFormItemSet( final FormItemSet set )
     {
-        final Element componentSetEl = new Element( classNameToXmlElementName( FormItemSet.class.getSimpleName() ) );
-        componentSetEl.addContent( new Element( NAME ).setText( componentSet.getName() ) );
-        componentSetEl.addContent( new Element( LABEL ).setText( componentSet.getLabel() ) );
-        componentSetEl.addContent( new Element( IMMUTABLE ).setText( String.valueOf( componentSet.isImmutable() ) ) );
-        componentSetEl.addContent( new Element( CUSTOM_TEXT ).setText( componentSet.getCustomText() ) );
-        componentSetEl.addContent( new Element( HELP_TEXT ).setText( componentSet.getCustomText() ) );
+        final Element formItemSetEl = new Element( classNameToXmlElementName( FormItemSet.class.getSimpleName() ) );
+        formItemSetEl.addContent( new Element( NAME ).setText( set.getName() ) );
+        formItemSetEl.addContent( new Element( LABEL ).setText( set.getLabel() ) );
+        formItemSetEl.addContent( new Element( IMMUTABLE ).setText( String.valueOf( set.isImmutable() ) ) );
+        formItemSetEl.addContent( new Element( CUSTOM_TEXT ).setText( set.getCustomText() ) );
+        formItemSetEl.addContent( new Element( HELP_TEXT ).setText( set.getCustomText() ) );
 
-        componentSetEl.addContent( occurrencesXmlSerializer.serialize( componentSet.getOccurrences() ) );
-        componentSetEl.addContent( componentsSerializer.serialize( componentSet.getFormItems() ) );
-        return componentSetEl;
+        formItemSetEl.addContent( occurrencesXmlSerializer.serialize( set.getOccurrences() ) );
+        formItemSetEl.addContent( formItemsSerializer.serialize( set.getFormItems() ) );
+        return formItemSetEl;
     }
 
     private Element serializeLayout( final Layout layout )
@@ -133,7 +133,7 @@ class ComponentXmlSerializer
     {
         layoutEl.setAttribute( TYPE, FieldSet.class.getSimpleName() );
         layoutEl.addContent( new Element( LABEL ).setText( fieldSet.getLabel() ) );
-        layoutEl.addContent( componentsSerializer.serialize( fieldSet.getFormItems() ) );
+        layoutEl.addContent( formItemsSerializer.serialize( fieldSet.getFormItems() ) );
     }
 
     private Element serializeReference( final SubTypeReference subTypeReference )
@@ -153,64 +153,64 @@ class ComponentXmlSerializer
         }
     }
 
-    public FormItem parse( final Element componentEl )
+    public FormItem parse( final Element formItemEl )
     {
-        final String componentType = xmlElementNameToClassName( componentEl.getName() );
+        final String formItemType = xmlElementNameToClassName( formItemEl.getName() );
 
         final FormItem formItem;
-        if ( componentType.equals( Input.class.getSimpleName() ) )
+        if ( formItemType.equals( Input.class.getSimpleName() ) )
         {
-            formItem = parseInput( componentEl );
+            formItem = parseInput( formItemEl );
         }
-        else if ( componentType.equals( FormItemSet.class.getSimpleName() ) )
+        else if ( formItemType.equals( FormItemSet.class.getSimpleName() ) )
         {
-            formItem = parseComponentSet( componentEl );
+            formItem = parseFormItemSet( formItemEl );
         }
-        else if ( componentType.equals( Layout.class.getSimpleName() ) )
+        else if ( formItemType.equals( Layout.class.getSimpleName() ) )
         {
-            formItem = parseLayout( componentEl );
+            formItem = parseLayout( formItemEl );
         }
-        else if ( componentType.equals( SubTypeReference.class.getSimpleName() ) )
+        else if ( formItemType.equals( SubTypeReference.class.getSimpleName() ) )
         {
-            formItem = parseSubTypeReference( componentEl );
+            formItem = parseSubTypeReference( formItemEl );
         }
         else
         {
-            throw new XmlParsingException( "Unknown FormItemType: " + componentType );
+            throw new XmlParsingException( "Unknown FormItemType: " + formItemType );
         }
 
         return formItem;
     }
 
-    private FormItem parseInput( final Element componentEl )
+    private FormItem parseInput( final Element formItemEl )
     {
         final Input.Builder builder = newInput();
-        builder.name( componentEl.getChildText( NAME ) );
-        builder.label( componentEl.getChildText( LABEL ) );
-        builder.immutable( Boolean.valueOf( componentEl.getChildText( IMMUTABLE ) ) );
-        builder.helpText( componentEl.getChildText( HELP_TEXT ) );
-        builder.customText( componentEl.getChildText( CUSTOM_TEXT ) );
-        parseValidationRegexp( builder, componentEl );
+        builder.name( formItemEl.getChildText( NAME ) );
+        builder.label( formItemEl.getChildText( LABEL ) );
+        builder.immutable( Boolean.valueOf( formItemEl.getChildText( IMMUTABLE ) ) );
+        builder.helpText( formItemEl.getChildText( HELP_TEXT ) );
+        builder.customText( formItemEl.getChildText( CUSTOM_TEXT ) );
+        parseValidationRegexp( builder, formItemEl );
 
-        builder.occurrences( occurrencesXmlSerializer.parse( componentEl ) );
-        parseInputType( builder, componentEl );
-        parseInputTypeConfig( builder, componentEl );
+        builder.occurrences( occurrencesXmlSerializer.parse( formItemEl ) );
+        parseInputType( builder, formItemEl );
+        parseInputTypeConfig( builder, formItemEl );
 
         return builder.build();
     }
 
-    private HierarchicalFormItem parseComponentSet( final Element componentEl )
+    private HierarchicalFormItem parseFormItemSet( final Element formItemEl )
     {
         final FormItemSet.Builder builder = newFormItemSet();
-        builder.name( componentEl.getChildText( NAME ) );
-        builder.label( componentEl.getChildText( LABEL ) );
-        builder.immutable( Boolean.valueOf( componentEl.getChildText( IMMUTABLE ) ) );
-        builder.helpText( componentEl.getChildText( HELP_TEXT ) );
-        builder.customText( componentEl.getChildText( CUSTOM_TEXT ) );
+        builder.name( formItemEl.getChildText( NAME ) );
+        builder.label( formItemEl.getChildText( LABEL ) );
+        builder.immutable( Boolean.valueOf( formItemEl.getChildText( IMMUTABLE ) ) );
+        builder.helpText( formItemEl.getChildText( HELP_TEXT ) );
+        builder.customText( formItemEl.getChildText( CUSTOM_TEXT ) );
 
-        builder.occurrences( occurrencesXmlSerializer.parse( componentEl ) );
+        builder.occurrences( occurrencesXmlSerializer.parse( formItemEl ) );
 
-        final FormItems formItems = componentsSerializer.parse( componentEl );
+        final FormItems formItems = formItemsSerializer.parse( formItemEl );
         for ( FormItem formItem : formItems.iterable() )
         {
             builder.add( formItem );
@@ -219,12 +219,12 @@ class ComponentXmlSerializer
         return builder.build();
     }
 
-    private FormItem parseLayout( final Element componentEl )
+    private FormItem parseLayout( final Element formItemEl )
     {
-        final String layoutType = componentEl.getAttributeValue( TYPE );
+        final String layoutType = formItemEl.getAttributeValue( TYPE );
         if ( layoutType.equals( FieldSet.class.getSimpleName() ) )
         {
-            return parseFieldSet( componentEl );
+            return parseFieldSet( formItemEl );
         }
         else
         {
@@ -232,13 +232,13 @@ class ComponentXmlSerializer
         }
     }
 
-    private FormItem parseFieldSet( final Element componentEl )
+    private FormItem parseFieldSet( final Element formItemEl )
     {
         final FieldSet.Builder builder = newFieldSet();
-        builder.name( componentEl.getChildText( NAME ) );
-        builder.label( componentEl.getChildText( LABEL ) );
+        builder.name( formItemEl.getChildText( NAME ) );
+        builder.label( formItemEl.getChildText( LABEL ) );
 
-        final FormItems formItems = componentsSerializer.parse( componentEl );
+        final FormItems formItems = formItemsSerializer.parse( formItemEl );
         for ( FormItem formItem : formItems.iterable() )
         {
             builder.add( formItem );
@@ -247,33 +247,33 @@ class ComponentXmlSerializer
         return builder.build();
     }
 
-    private HierarchicalFormItem parseSubTypeReference( final Element componentEl )
+    private HierarchicalFormItem parseSubTypeReference( final Element formItemEl )
     {
         final SubTypeReference.Builder builder = SubTypeReference.newSubTypeReference();
-        builder.name( componentEl.getChildText( NAME ) );
-        builder.subType( new SubTypeQualifiedName( componentEl.getChildText( REFERENCE ) ) );
-        builder.type( componentEl.getChildText( SUB_TYPE_CLASS ) );
+        builder.name( formItemEl.getChildText( NAME ) );
+        builder.subType( new SubTypeQualifiedName( formItemEl.getChildText( REFERENCE ) ) );
+        builder.type( formItemEl.getChildText( SUB_TYPE_CLASS ) );
         return builder.build();
     }
 
-    private void parseValidationRegexp( final Input.Builder builder, final Element componentEl )
+    private void parseValidationRegexp( final Input.Builder builder, final Element formItemEl )
     {
-        String validationRegexp = componentEl.getChildText( VALIDATION_REGEX );
+        String validationRegexp = formItemEl.getChildText( VALIDATION_REGEX );
         if ( validationRegexp != null )
         {
             builder.validationRegexp( validationRegexp );
         }
     }
 
-    private void parseInputTypeConfig( final Input.Builder builder, final Element componentEl )
+    private void parseInputTypeConfig( final Input.Builder builder, final Element formItemEl )
     {
-        builder.inputTypeConfig( inputTypeConfigSerializer.parse( componentEl ) );
+        builder.inputTypeConfig( inputTypeConfigSerializer.parse( formItemEl ) );
     }
 
-    private void parseInputType( final Input.Builder builder, final Element componentEl )
+    private void parseInputType( final Input.Builder builder, final Element formItemEl )
     {
-        final String inputTypeName = componentEl.getAttributeValue( TYPE );
-        final boolean builtIn = Boolean.valueOf( componentEl.getAttributeValue( BUILT_IN ) );
+        final String inputTypeName = formItemEl.getAttributeValue( TYPE );
+        final boolean builtIn = Boolean.valueOf( formItemEl.getAttributeValue( BUILT_IN ) );
         builder.type( InputTypeFactory.instantiate( inputTypeName, builtIn ) );
     }
 

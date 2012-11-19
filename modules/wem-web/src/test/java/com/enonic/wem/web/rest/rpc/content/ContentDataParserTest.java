@@ -83,19 +83,19 @@ public class ContentDataParserTest
     }
 
     @Test
-    public void wholeNumber_within_componentSet()
+    public void wholeNumber_within_formItemSet()
         throws IOException
     {
         ContentType myContentType = new ContentType();
         myContentType.setModule( Module.newModule().name( "myModule" ).build() );
         myContentType.setName( "myContentType" );
-        FormItemSet componentSet = newFormItemSet().name( "myComponentSet" ).build();
-        componentSet.add( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
-        myContentType.addFormItem( componentSet );
+        FormItemSet formItemSet = newFormItemSet().name( "myFormItemSet" ).build();
+        formItemSet.add( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
+        myContentType.addFormItem( formItemSet );
 
         StringBuilder json = new StringBuilder();
         json.append( "{" );
-        json.append( "\"myComponentSet.myWholeNumber\": \"1\"" );
+        json.append( "\"myFormItemSet.myWholeNumber\": \"1\"" );
         json.append( "}" );
         ObjectMapper objectMapper = ObjectMapperHelper.create();
         ObjectNode objectNode = objectMapper.readValue( json.toString(), ObjectNode.class );
@@ -105,7 +105,7 @@ public class ContentDataParserTest
         ContentData parsedContentData = contentDataParser.parse( objectNode );
 
         // verify
-        assertEquals( 1l, parsedContentData.getData( new EntryPath( "myComponentSet.myWholeNumber" ) ).getValue() );
+        assertEquals( 1l, parsedContentData.getData( new EntryPath( "myFormItemSet.myWholeNumber" ) ).getValue() );
     }
 
     @Test
@@ -164,17 +164,17 @@ public class ContentDataParserTest
     }
 
     @Test
-    public void parse_color_within_componentSet()
+    public void parse_color_within_formItemSet()
         throws IOException
     {
         ContentType contentType = new ContentType();
-        FormItemSet componentSet = newFormItemSet().name( "myComponentSet" ).build();
-        contentType.addFormItem( componentSet );
-        componentSet.add( newInput().name( "myColor" ).type( InputTypes.COLOR ).required( true ).build() );
+        FormItemSet formItemSet = newFormItemSet().name( "myFormItemSet" ).build();
+        contentType.addFormItem( formItemSet );
+        formItemSet.add( newInput().name( "myColor" ).type( InputTypes.COLOR ).required( true ).build() );
 
         StringBuilder json = new StringBuilder();
         json.append( "{" ).append( "\n" );
-        json.append( "\"myComponentSet.myColor\": {" ).append( "\n" );
+        json.append( "\"myFormItemSet.myColor\": {" ).append( "\n" );
         json.append( "  \"red\": \"40\"," ).append( "\n" );
         json.append( "  \"green\": \"60\"," ).append( "\n" );
         json.append( "  \"blue\": \"80\"" ).append( "\n" );
@@ -188,8 +188,8 @@ public class ContentDataParserTest
         ContentData parsedContentData = contentDataParser.parse( objectNode );
 
         // verify
-        assertEquals( 40l, parsedContentData.getData( new EntryPath( "myComponentSet.myColor.red" ) ).getValue() );
-        assertEquals( 60l, parsedContentData.getData( new EntryPath( "myComponentSet.myColor.green" ) ).getValue() );
-        assertEquals( 80l, parsedContentData.getData( new EntryPath( "myComponentSet.myColor.blue" ) ).getValue() );
+        assertEquals( 40l, parsedContentData.getData( new EntryPath( "myFormItemSet.myColor.red" ) ).getValue() );
+        assertEquals( 60l, parsedContentData.getData( new EntryPath( "myFormItemSet.myColor.green" ) ).getValue() );
+        assertEquals( 80l, parsedContentData.getData( new EntryPath( "myFormItemSet.myColor.blue" ) ).getValue() );
     }
 }
