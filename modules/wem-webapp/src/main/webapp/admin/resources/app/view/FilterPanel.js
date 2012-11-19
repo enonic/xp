@@ -28,12 +28,14 @@ Ext.define('Admin.view.FilterPanel', {
 
         if (this.includeSearch) {
             this.items.unshift({
-                xtype: 'textfield',
+                xtype: 'trigger',
+                cls: 'admin-search-trigger',
                 enableKeyEvents: true,
                 bubbleEvents: ['specialkey'],
                 itemId: 'filterText',
                 margin: '0 0 20 0',
                 name: 'query',
+                emptyText: 'Search',
                 listeners: {
                     specialkey: {
                         fn: me.onKeyPressed,

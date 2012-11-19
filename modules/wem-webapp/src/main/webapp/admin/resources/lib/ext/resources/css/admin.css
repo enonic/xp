@@ -116,7 +116,7 @@ h5 {
 /* line 36, ../sass/admin/css/_core.scss */
 h6 {
     font-size: 14px !important;
-    line-height: 20px;
+    line-height: 16px;
 }
 
 /* line 41, ../sass/admin/css/_core.scss */
@@ -176,30 +176,29 @@ p {
 .admin-filter .x-fieldset {
     border: none !important;
     padding: 0 !important;
-    margin-bottom: 10px !important;
+    margin-bottom: 15px !important;
 }
 
 /* line 26, ../sass/admin/css/_panel.scss */
 .admin-filter .x-fieldset-header {
     color: #000000 !important;
     font-size: 15px !important;
-    padding: 0 0 0 0 !important;
-    margin-bottom: 5px !important;
+    padding: 0 !important;
     text-transform: capitalize;
 }
 
-/* line 33, ../sass/admin/css/_panel.scss */
+/* line 32, ../sass/admin/css/_panel.scss */
 .admin-filter .x-fieldset-header .x-fieldset-header-text {
     border: none !important;
     padding: 0 0 !important;
 }
 
-/* line 39, ../sass/admin/css/_panel.scss */
+/* line 38, ../sass/admin/css/_panel.scss */
 .admin-filter .x-fieldset-body {
     padding-left: 10px;
 }
 
-/* line 47, ../sass/admin/css/_panel.scss */
+/* line 46, ../sass/admin/css/_panel.scss */
 .admin-detail .x-panel-body {
     border: none !important;
 }
@@ -232,21 +231,23 @@ p {
 /* line 4, ../sass/admin/css/_grid.scss */
 .x-grid-row .x-grid-cell {
     font-size: 11px !important;
+    color: #000 !important;
     vertical-align: middle !important;
+    border: none !important;
 }
 
-/* line 10, ../sass/admin/css/_grid.scss */
+/* line 12, ../sass/admin/css/_grid.scss */
 .x-grid-row-selected .x-grid-cell,
 .x-grid-row-selected .x-grid-cell-special {
     color: white !important;
 }
 
-/* line 16, ../sass/admin/css/_grid.scss */
+/* line 18, ../sass/admin/css/_grid.scss */
 .x-grid-row-over .x-grid-cell-special {
     background-color: #eeeeee;
 }
 
-/* line 21, ../sass/admin/css/_grid.scss */
+/* line 23, ../sass/admin/css/_grid.scss */
 .x-grid-row .x-grid-cell-special,
 .x-grid-row-alt .x-grid-cell-special {
     background-color: white !important;
@@ -254,48 +255,48 @@ p {
     border-right: none !important;
 }
 
-/* line 27, ../sass/admin/css/_grid.scss */
+/* line 29, ../sass/admin/css/_grid.scss */
 .x-grid-row-alt .x-grid-cell-special {
-    /*background-color: $grid-row-cell-alt-background !important;*/
+    background-color: #fafafa !important;
 }
 
-/* line 31, ../sass/admin/css/_grid.scss */
+/* line 33, ../sass/admin/css/_grid.scss */
 .x-grid-cell-row-checker .x-grid-cell-inner {
     padding-left: 15px !important;
     padding-right: 15px !important;
 }
 
-/* line 36, ../sass/admin/css/_grid.scss */
+/* line 38, ../sass/admin/css/_grid.scss */
 .x-grid-row-checker, .x-column-header-checkbox .x-column-header-text {
     background-image: url("../themes/images/default/grid/admin-unchecked.gif") !important;
 }
 
-/* line 40, ../sass/admin/css/_grid.scss */
+/* line 42, ../sass/admin/css/_grid.scss */
 .x-grid-row-selected .x-grid-row-checker, .x-grid-row-checked .x-grid-row-checker {
     background-image: url("../themes/images/default/grid/admin-checked.gif") !important;
 }
 
-/* line 44, ../sass/admin/css/_grid.scss */
+/* line 46, ../sass/admin/css/_grid.scss */
 .x-grid-row-over .x-grid-cell-special {
     background-color: #efefef !important;
 }
 
-/* line 48, ../sass/admin/css/_grid.scss */
+/* line 50, ../sass/admin/css/_grid.scss */
 .x-grid-row-selected .x-grid-cell-special {
     background-color: #4294de !important;
 }
 
-/* line 55, ../sass/admin/css/_grid.scss */
+/* line 57, ../sass/admin/css/_grid.scss */
 .admin-grid .x-panel-body {
     border: none !important;
 }
 
-/* line 59, ../sass/admin/css/_grid.scss */
+/* line 61, ../sass/admin/css/_grid.scss */
 .admin-grid .admin-white-toolbar {
     border-bottom-style: none !important;
 }
 
-/* line 63, ../sass/admin/css/_grid.scss */
+/* line 65, ../sass/admin/css/_grid.scss */
 .admin-grid .admin-grid-thumbnail {
     width: 32px;
     height: 32px;
@@ -304,9 +305,19 @@ p {
     margin-right: 10px;
 }
 
-/* line 71, ../sass/admin/css/_grid.scss */
+/* line 73, ../sass/admin/css/_grid.scss */
 .admin-grid .admin-grid-description {
     float: left;
+}
+
+/* line 77, ../sass/admin/css/_grid.scss */
+.admin-grid .admin-grid-description div {
+    color: #565656;
+}
+
+/* line 81, ../sass/admin/css/_grid.scss */
+.admin-grid .x-grid-row-selected .admin-grid-description div {
+    color: #fff !important;
 }
 
 /* line 1, ../sass/admin/css/_toolbar.scss */
@@ -439,7 +450,17 @@ p {
     border-left: none !important;
 }
 
-/* line 49, ../sass/admin/css/_form.scss */
+/* line 47, ../sass/admin/css/_form.scss */
+.admin-search-trigger .x-form-trigger {
+    background-image: url("../themes/images/default/form/admin-search-trigger.gif") !important;
+    background-repeat: no-repeat;
+    border-width: 1px 1px 1px medium !important;
+    border-style: solid solid solid none !important;
+    border-color: #aaaaaa #aaaaaa #aaaaaa !important;
+    border-left: none !important;
+}
+
+/* line 58, ../sass/admin/css/_form.scss */
 .x-form-trigger-wrap .x-form-spinner-up,
 .x-form-trigger-wrap .x-form-spinner-down {
     background-image: url("../themes/images/default/form/admin-spinner.gif") !important;
@@ -449,39 +470,39 @@ p {
     border-left: none !important;
 }
 
-/* line 57, ../sass/admin/css/_form.scss */
+/* line 66, ../sass/admin/css/_form.scss */
 .x-form-trigger-wrap .x-form-spinner-up {
     border-top: 1px solid #aaaaaa !important;
 }
 
-/* line 61, ../sass/admin/css/_form.scss */
+/* line 70, ../sass/admin/css/_form.scss */
 .x-form-trigger-wrap .x-form-spinner-down {
     border-bottom: 1px solid #aaaaaa !important;
 }
 
-/* line 66, ../sass/admin/css/_form.scss */
+/* line 75, ../sass/admin/css/_form.scss */
 .x-item-disabled .x-form-arrow-trigger {
     opacity: .3;
 }
 
-/* line 71, ../sass/admin/css/_form.scss */
+/* line 80, ../sass/admin/css/_form.scss */
 .x-form-trigger-wrap-focus .x-form-trigger {
     border-width: 1px 1px 1px medium !important;
     border-style: solid solid solid none !important;
     border-color: #141414 #141414 #141414 !important;
 }
 
-/* line 77, ../sass/admin/css/_form.scss */
+/* line 86, ../sass/admin/css/_form.scss */
 .x-form-trigger-wrap-focus .x-form-spinner-up {
     border-bottom: none !important;
 }
 
-/* line 81, ../sass/admin/css/_form.scss */
+/* line 90, ../sass/admin/css/_form.scss */
 .x-form-trigger-wrap-focus .x-form-spinner-down {
     border-top: none !important;
 }
 
-/* line 88, ../sass/admin/css/_form.scss */
+/* line 97, ../sass/admin/css/_form.scss */
 .x-form-invalid .x-form-arrow-trigger,
 .x-form-invalid .x-form-date-trigger,
 .x-form-invalid .x-form-time-trigger {
@@ -490,7 +511,7 @@ p {
     border-color: #cc3300 #cc3300 #cc3300 !important;
 }
 
-/* line 94, ../sass/admin/css/_form.scss */
+/* line 103, ../sass/admin/css/_form.scss */
 .x-form-invalid-field, textarea.x-form-invalid-field {
     background-image: none !important;
 }
@@ -499,13 +520,13 @@ p {
  * Date picker
  * Currently it is not possible to override anything in the datepicker object.
  */
-/* line 102, ../sass/admin/css/_form.scss */
+/* line 111, ../sass/admin/css/_form.scss */
 .x-datepicker-header {
     background-color: #fff !important;
     background-image: none !important;
 }
 
-/* line 107, ../sass/admin/css/_form.scss */
+/* line 116, ../sass/admin/css/_form.scss */
 .x-datepicker-month button .x-btn-inner {
     color: #141414 !important;
 }
@@ -513,9 +534,9 @@ p {
 /*
  *  Inputs
  */
-/* line 114, ../sass/admin/css/_form.scss */
+/* line 123, ../sass/admin/css/_form.scss */
 .x-form-text, textarea.x-form-field {
-    background: none #FFF !important;
+    background: none #fff !important;
 }
 
 /* line 1, ../sass/admin/css/_feedback-panel.scss */
@@ -638,7 +659,7 @@ p {
 /* line 57, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.large .center p {
     margin: 0;
-    color: #888;
+    color: #565656;
 }
 
 /* line 62, ../sass/admin/css/_selected-grid-item.scss */
