@@ -27,8 +27,13 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
         }
         me.items = [fieldSet];
         Ext.each(this.contentTypeItems, function (contentTypeItem) {
+            var widgetItemType = me.parseItemType(contentTypeItem);
+            if (!widgetItemType) {
+                console.log('Unsupported input type', contentTypeItem);
+                return;
+            }
             var item = Ext.create({
-                xclass: "widget." + me.parseItemType(contentTypeItem),
+                xclass: "widget." + widgetItemType,
                 fieldLabel: contentTypeItem.label,
                 name: contentTypeItem.name,
                 itemId: contentTypeItem.name,
@@ -51,6 +56,9 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     },
 
     parseItemType: function (contentItem) {
+        if (!contentItem.inputType) {
+            return null;
+        }
         return this.typeMapping[contentItem.inputType.name];
     },
 

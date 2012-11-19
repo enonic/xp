@@ -26,7 +26,8 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
                         menu: Ext.create('Admin.view.MegaMenu', {
                             recentCount: 4,
                             cookieKey: 'admin.contentmanager.megamenu',
-                            url: 'resources/data/contentManagerMenu.json'
+                            url: 'resources/data/contentManagerMenu.json',
+                            loadMenuItems: this.generateContentTypesMenu
                         })
                     }
                 ]
@@ -121,6 +122,48 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
         ];
 
         this.callParent(arguments);
+    },
+
+    generateContentTypesMenu: function() {
+        var menu = this;
+        Admin.lib.RemoteService.contentType_list({}, function (rpcResponse) {
+            var menuItems = [], contentTypes, menuSection;
+            if (!rpcResponse || !rpcResponse.success) {
+                return;
+            }
+            contentTypes = rpcResponse.contentTypes;
+
+            var i;
+            var sectionItems = [];
+            for (i = 0; i < contentTypes.length; i++) {
+                var contentType = contentTypes[i];
+                sectionItems.push(menu.createMenuItem({
+                    "text": contentType.name,
+                    "action": "newContent",
+                    "iconCls": "icon-content-24",
+                    "qualifiedContentType": contentType.qualifiedName
+                }));
+            }
+            menuSection = menu.createMenuSection('Content Types', sectionItems);
+            menuSection.minWidth = 160;
+            menuItems.push(menuSection);
+
+            menu.add({
+                xtype: 'container',
+                itemId: 'itemSection',
+                layout: {
+                    type: 'table',
+                    columns: 4,
+                    tdAttrs: {
+                        style: {
+                            'vertical-align': 'top'
+                        }
+                    }
+                },
+                items: menuItems
+            });
+            menu.doLayout();
+        });
     }
 
 });

@@ -139,7 +139,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
         }
     },
 
-    createContent: function (type) {
+    createContent: function (type, qualifiedContentType) {
         var tabs = this.getCmsTabPanel();
         if (tabs) {
             var tab;
@@ -157,7 +157,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 var openEditContentTabFn = function (selectedContent) {
                     var requestConfig = {
                         doTabRequest: function (handleRpcResponse) {
-                            Admin.lib.RemoteService.contentType_get({contentType: 'News:Article'}, function (rpcResponse) {
+                            Admin.lib.RemoteService.contentType_get({contentType: qualifiedContentType}, function (rpcResponse) {
                                 if (rpcResponse.success) {
                                     handleRpcResponse(rpcResponse);
                                 }
