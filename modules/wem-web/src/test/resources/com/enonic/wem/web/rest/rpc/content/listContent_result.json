@@ -11,9 +11,7 @@
             "modifier": "user:system:admin",
             "modifiedTime": "2000-01-01T12:00:00.000+01:00",
             "createdTime": "2000-01-01T12:00:00.000+01:00",
-            "status": "Online",
-            "editable": true,
-            "deletable": true
+            "data": [ ]
         },
         {
             "path": "a1/c2",
@@ -24,9 +22,7 @@
             "modifier": "user:system:admin",
             "modifiedTime": "2000-01-01T12:00:00.000+01:00",
             "createdTime": "2000-01-01T12:00:00.000+01:00",
-            "status": "Online",
-            "editable": true,
-            "deletable": true
+            "data": [ ]
         },
         {
             "path": "a1/c3",
@@ -37,9 +33,7 @@
             "modifier": "user:system:admin",
             "modifiedTime": "2000-01-01T12:00:00.000+01:00",
             "createdTime": "2000-01-01T12:00:00.000+01:00",
-            "status": "Online",
-            "editable": true,
-            "deletable": true
+            "data": [ ]
         },
         {
             "path": "a1/c4",
@@ -50,9 +44,7 @@
             "modifier": "user:system:admin",
             "modifiedTime": "2000-01-01T12:00:00.000+01:00",
             "createdTime": "2000-01-01T12:00:00.000+01:00",
-            "status": "Online",
-            "editable": true,
-            "deletable": true
+            "data": [ ]
         }
     ]
 }

@@ -7,7 +7,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
         TextArea: "textarea"
     },
 
-    contentItems: [],
+    contentTypeItems: [],
+    content: null, // content to be edited
 
     initComponent: function () {
         var me = this;
@@ -17,22 +18,35 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
             padding: '10px 15px',
             items: []
         };
+        // set values in fields if editing existing content
+        var editedContentValues = {};
+        if (this.content && this.content.data) {
+            Ext.each(this.content.data, function (dataItem) {
+                editedContentValues[dataItem.name] = dataItem.value;
+            });
+        }
         me.items = [fieldSet];
-        Ext.each(this.contentItems, function (contentItem) {
+        Ext.each(this.contentTypeItems, function (contentTypeItem) {
+            var widgetItemType = me.parseItemType(contentTypeItem);
+            if (!widgetItemType) {
+                console.log('Unsupported input type', contentTypeItem);
+                return;
+            }
             var item = Ext.create({
-                xclass: "widget." + me.parseItemType(contentItem),
-                fieldLabel: contentItem.label,
-                name: contentItem.name,
-                itemId: contentItem.name,
+                xclass: "widget." + widgetItemType,
+                fieldLabel: contentTypeItem.label,
+                name: contentTypeItem.name,
+                itemId: contentTypeItem.name,
                 cls: 'span-3',
                 listeners: {
                     render: function (cmp) {
                         Ext.tip.QuickTipManager.register({
                             target: cmp.el,
-                            text: contentItem.helpText
+                            text: contentTypeItem.helpText
                         });
                     }
-                }
+                },
+                value: editedContentValues[contentTypeItem.name]
             });
 
             fieldSet.items.push(item);
@@ -42,6 +56,9 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     },
 
     parseItemType: function (contentItem) {
+        if (!contentItem.inputType) {
+            return null;
+        }
         return this.typeMapping[contentItem.inputType.name];
     },
 

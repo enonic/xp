@@ -8,7 +8,7 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
-import com.enonic.wem.core.content.data.ContentDataSerializerJson;
+import com.enonic.wem.core.content.data.ContentDataJsonSerializer;
 
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyString;
@@ -30,7 +30,7 @@ final class ContentJcrMapper
 
     private static final String DISPLAY_NAME = "displayName";
 
-    private ContentDataSerializerJson contentDataSerializerJson = new ContentDataSerializerJson();
+    private ContentDataJsonSerializer contentDataSerializerJson = new ContentDataJsonSerializer();
 
     void toJcr( final Content content, final Node contentNode )
         throws RepositoryException

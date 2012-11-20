@@ -1,24 +1,27 @@
 package com.enonic.wem.core.content;
 
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.blob.BlobKeyCreator;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.MockBlobKeyResolver;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.MockContentTypeFetcher;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
-import com.enonic.wem.api.content.type.component.ComponentSet;
-import com.enonic.wem.api.content.type.component.FieldSet;
-import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.form.FieldSet;
+import com.enonic.wem.api.content.type.form.FormItemSet;
+import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
-import static com.enonic.wem.api.content.type.component.FieldSet.newFieldSet;
-import static com.enonic.wem.api.content.type.component.Input.newInput;
+import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
+import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public abstract class AbstractContentSerializerTest
@@ -43,12 +46,12 @@ public abstract class AbstractContentSerializerTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addComponent( newInput().name( "myComponent" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( newInput().name( "myFormItem" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
         content.setName( "myContent" );
-        content.setData( "myComponent", "A value" );
+        content.setData( "myFormItem", "A value" );
 
         String serialized = toString( content );
 
@@ -60,12 +63,12 @@ public abstract class AbstractContentSerializerTest
     }
 
     @Test
-    public void given_content_with_name_and_a_component_when_parsed_then_path_and_value_are_as_expected()
+    public void given_content_with_name_and_a_formItem_when_parsed_then_path_and_value_are_as_expected()
     {
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addComponent( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -155,22 +158,22 @@ public abstract class AbstractContentSerializerTest
     }
 
     @Test
-    public void given_component_and_componentSet_when_parsed_then_paths_and_values_are_as_expected()
+    public void given_formItem_and_formItemSet_when_parsed_then_paths_and_values_are_as_expected()
     {
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addComponent( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
+        contentType.addFormItem( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
 
-        ComponentSet componentSet = newComponentSet().name( "componentSet" ).build();
-        contentType.addComponent( componentSet );
-        componentSet.add( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
+        FormItemSet formItemSet = newFormItemSet().name( "formItemSet" ).build();
+        contentType.addFormItem( formItemSet );
+        formItemSet.add( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
         content.setData( "myText", "A value" );
-        content.setData( "componentSet.myText", "A another value" );
+        content.setData( "formItemSet.myText", "A another value" );
 
         String serialized = toString( content );
 
@@ -179,27 +182,27 @@ public abstract class AbstractContentSerializerTest
 
         // verify
         assertEquals( "myText", actualContent.getData( "myText" ).getPath().toString() );
-        assertEquals( "componentSet.myText", actualContent.getData( "componentSet.myText" ).getPath().toString() );
+        assertEquals( "formItemSet.myText", actualContent.getData( "formItemSet.myText" ).getPath().toString() );
         assertEquals( "A value", actualContent.getData( "myText" ).getValue() );
-        assertEquals( "A another value", actualContent.getData( "componentSet.myText" ).getValue() );
+        assertEquals( "A another value", actualContent.getData( "formItemSet.myText" ).getValue() );
     }
 
     @Test
-    public void given_array_of_componentSet_when_parsed_then_paths_and_values_are_as_expected()
+    public void given_array_of_formItemSet_when_parsed_then_paths_and_values_are_as_expected()
     {
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
         contentTypeFetcher.add( contentType );
 
-        ComponentSet componentSet = newComponentSet().name( "componentSet" ).label( "ComponentSet" ).multiple( true ).build();
-        contentType.addComponent( componentSet );
-        componentSet.add( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
+        FormItemSet formItemSet = newFormItemSet().name( "formItemSet" ).label( "FormItemSet" ).multiple( true ).build();
+        contentType.addFormItem( formItemSet );
+        formItemSet.add( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
-        content.setData( "componentSet[0].myText", "Value 1" );
-        content.setData( "componentSet[1].myText", "Value 2" );
+        content.setData( "formItemSet[0].myText", "Value 1" );
+        content.setData( "formItemSet[1].myText", "Value 2" );
 
         String serialized = toString( content );
 
@@ -207,22 +210,22 @@ public abstract class AbstractContentSerializerTest
         Content parsedContent = toContent( serialized );
 
         // verify
-        assertEquals( "componentSet[0].myText", parsedContent.getData( "componentSet[0].myText" ).getPath().toString() );
-        assertEquals( "componentSet[1].myText", parsedContent.getData( "componentSet[1].myText" ).getPath().toString() );
-        assertEquals( "Value 1", parsedContent.getData( "componentSet[0].myText" ).getValue() );
-        assertEquals( "Value 2", parsedContent.getData( "componentSet[1].myText" ).getValue() );
+        assertEquals( "formItemSet[0].myText", parsedContent.getData( "formItemSet[0].myText" ).getPath().toString() );
+        assertEquals( "formItemSet[1].myText", parsedContent.getData( "formItemSet[1].myText" ).getPath().toString() );
+        assertEquals( "Value 1", parsedContent.getData( "formItemSet[0].myText" ).getValue() );
+        assertEquals( "Value 2", parsedContent.getData( "formItemSet[1].myText" ).getValue() );
     }
 
     @Test
-    public void given_component_inside_layout_when_parse_then_component_path_is_affected_by_name_of_layout()
+    public void given_formItem_inside_layout_when_parse_then_formItem_path_is_affected_by_name_of_layout()
     {
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addComponent( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() );
         FieldSet layout = newFieldSet().label( "Label" ).name( "fieldSet" ).add(
             newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() ).build();
-        contentType.addComponent( layout );
+        contentType.addFormItem( layout );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -328,6 +331,33 @@ public abstract class AbstractContentSerializerTest
         assertEquals( "Arn", parsedContent.getData( "name" ).getValue() );
         assertEquals( "Caption", parsedContent.getData( "image.caption" ).getValue() );
         assertEquals( BlobKeyCreator.createKey( bytes ), parsedContent.getData( "image.bytes" ).getValue() );
+    }
+
+    @Test
+    public void content_serialize_parse_serialize_roundTrip()
+    {
+        final DateTime time = DateTime.now();
+        final Content content = new Content();
+        content.setType( new QualifiedContentTypeName( "myModule:myType" ) );
+        content.setCreatedTime( time );
+        content.setModifiedTime( time );
+        content.setOwner( AccountKey.superUser() );
+        content.setModifier( AccountKey.superUser() );
+        content.setDisplayName( "My content" );
+        content.setPath( ContentPath.from( "site1/mycontent" ) );
+        content.setData( "mySet[0].myArray[0]", "1" );
+        content.setData( "mySet[0].myArray[1]", "2" );
+        content.setData( "mySet[1].myArray[0]", "3" );
+        content.setData( "mySet[1].myArray[1]", "4" );
+
+        final String serialized = toString( content );
+
+        // exercise
+        final Content parsedContent = toContent( serialized );
+        final String serializedAfterParsing = toString( parsedContent );
+
+        // verify
+        assertEquals( serialized, serializedAfterParsing );
     }
 
     private Content toContent( final String serialized )

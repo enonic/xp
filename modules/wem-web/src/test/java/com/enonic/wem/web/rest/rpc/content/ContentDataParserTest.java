@@ -12,13 +12,13 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.component.ComponentSet;
-import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.form.FormItemSet;
+import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.web.json.ObjectMapperHelper;
 
-import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
-import static com.enonic.wem.api.content.type.component.Input.newInput;
+import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public class ContentDataParserTest
@@ -28,17 +28,17 @@ public class ContentDataParserTest
         throws IOException
     {
         ContentType contentType = new ContentType();
-        contentType.addComponent( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.addComponent( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() );
-        contentType.addComponent( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
-        contentType.addComponent( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
-        contentType.addComponent( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
-        contentType.addComponent( newInput().name( "myDecimalNumber" ).type( InputTypes.DECIMAL_NUMBER ).build() );
-        contentType.addComponent( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
-        contentType.addComponent( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
-        ComponentSet mySet = newComponentSet().name( "mySet" ).build();
+        contentType.addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() );
+        contentType.addFormItem( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
+        contentType.addFormItem( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
+        contentType.addFormItem( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
+        contentType.addFormItem( newInput().name( "myDecimalNumber" ).type( InputTypes.DECIMAL_NUMBER ).build() );
+        contentType.addFormItem( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
+        contentType.addFormItem( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
+        FormItemSet mySet = newFormItemSet().name( "mySet" ).build();
         mySet.add( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.addComponent( mySet );
+        contentType.addFormItem( mySet );
 
         StringBuilder json = new StringBuilder();
         json.append( "{" ).append( "\n" );
@@ -83,19 +83,19 @@ public class ContentDataParserTest
     }
 
     @Test
-    public void wholeNumber_within_componentSet()
+    public void wholeNumber_within_formItemSet()
         throws IOException
     {
         ContentType myContentType = new ContentType();
         myContentType.setModule( Module.newModule().name( "myModule" ).build() );
         myContentType.setName( "myContentType" );
-        ComponentSet componentSet = newComponentSet().name( "myComponentSet" ).build();
-        componentSet.add( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
-        myContentType.addComponent( componentSet );
+        FormItemSet formItemSet = newFormItemSet().name( "myFormItemSet" ).build();
+        formItemSet.add( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
+        myContentType.addFormItem( formItemSet );
 
         StringBuilder json = new StringBuilder();
         json.append( "{" );
-        json.append( "\"myComponentSet.myWholeNumber\": \"1\"" );
+        json.append( "\"myFormItemSet.myWholeNumber\": \"1\"" );
         json.append( "}" );
         ObjectMapper objectMapper = ObjectMapperHelper.create();
         ObjectNode objectNode = objectMapper.readValue( json.toString(), ObjectNode.class );
@@ -105,7 +105,7 @@ public class ContentDataParserTest
         ContentData parsedContentData = contentDataParser.parse( objectNode );
 
         // verify
-        assertEquals( 1l, parsedContentData.getData( new EntryPath( "myComponentSet.myWholeNumber" ) ).getValue() );
+        assertEquals( 1l, parsedContentData.getData( new EntryPath( "myFormItemSet.myWholeNumber" ) ).getValue() );
     }
 
     @Test
@@ -113,7 +113,7 @@ public class ContentDataParserTest
         throws IOException
     {
         ContentType contentType = new ContentType();
-        contentType.addComponent( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
+        contentType.addFormItem( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
 
         StringBuilder json = new StringBuilder();
         json.append( "{" ).append( "\n" );
@@ -140,7 +140,7 @@ public class ContentDataParserTest
         throws IOException
     {
         ContentType contentType = new ContentType();
-        contentType.addComponent( newInput().name( "myColor" ).type( InputTypes.COLOR ).required( true ).build() );
+        contentType.addFormItem( newInput().name( "myColor" ).type( InputTypes.COLOR ).required( true ).build() );
 
         StringBuilder json = new StringBuilder();
         json.append( "{" ).append( "\n" );
@@ -164,17 +164,17 @@ public class ContentDataParserTest
     }
 
     @Test
-    public void parse_color_within_componentSet()
+    public void parse_color_within_formItemSet()
         throws IOException
     {
         ContentType contentType = new ContentType();
-        ComponentSet componentSet = newComponentSet().name( "myComponentSet" ).build();
-        contentType.addComponent( componentSet );
-        componentSet.add( newInput().name( "myColor" ).type( InputTypes.COLOR ).required( true ).build() );
+        FormItemSet formItemSet = newFormItemSet().name( "myFormItemSet" ).build();
+        contentType.addFormItem( formItemSet );
+        formItemSet.add( newInput().name( "myColor" ).type( InputTypes.COLOR ).required( true ).build() );
 
         StringBuilder json = new StringBuilder();
         json.append( "{" ).append( "\n" );
-        json.append( "\"myComponentSet.myColor\": {" ).append( "\n" );
+        json.append( "\"myFormItemSet.myColor\": {" ).append( "\n" );
         json.append( "  \"red\": \"40\"," ).append( "\n" );
         json.append( "  \"green\": \"60\"," ).append( "\n" );
         json.append( "  \"blue\": \"80\"" ).append( "\n" );
@@ -188,8 +188,8 @@ public class ContentDataParserTest
         ContentData parsedContentData = contentDataParser.parse( objectNode );
 
         // verify
-        assertEquals( 40l, parsedContentData.getData( new EntryPath( "myComponentSet.myColor.red" ) ).getValue() );
-        assertEquals( 60l, parsedContentData.getData( new EntryPath( "myComponentSet.myColor.green" ) ).getValue() );
-        assertEquals( 80l, parsedContentData.getData( new EntryPath( "myComponentSet.myColor.blue" ) ).getValue() );
+        assertEquals( 40l, parsedContentData.getData( new EntryPath( "myFormItemSet.myColor.red" ) ).getValue() );
+        assertEquals( 60l, parsedContentData.getData( new EntryPath( "myFormItemSet.myColor.green" ) ).getValue() );
+        assertEquals( 80l, parsedContentData.getData( new EntryPath( "myFormItemSet.myColor.blue" ) ).getValue() );
     }
 }

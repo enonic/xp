@@ -1,4 +1,4 @@
-(function () {
+(function ($) {
     'use strict';
 
     // Class definition (constructor function)
@@ -21,7 +21,6 @@
 
     p.init = function () {
         var self = this;
-
         var $button = self.createButton({
             id: 'live-edit-button-parent',
             text: 'Parent',
@@ -39,4 +38,4 @@
         self.componentMenu.buttons.push(self);
     };
 
-}());
+}($liveedit));

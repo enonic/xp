@@ -1,0 +1,332 @@
+package com.enonic.wem.core.content.type.form;
+
+
+import org.jdom.Element;
+
+import com.enonic.wem.api.content.type.form.FieldSet;
+import com.enonic.wem.api.content.type.form.FormItem;
+import com.enonic.wem.api.content.type.form.FormItemSet;
+import com.enonic.wem.api.content.type.form.FormItems;
+import com.enonic.wem.api.content.type.form.HierarchicalFormItem;
+import com.enonic.wem.api.content.type.form.Input;
+import com.enonic.wem.api.content.type.form.Layout;
+import com.enonic.wem.api.content.type.form.SubTypeQualifiedName;
+import com.enonic.wem.api.content.type.form.SubTypeReference;
+import com.enonic.wem.core.content.XmlParsingException;
+import com.enonic.wem.core.content.type.form.inputtype.InputTypeConfigXmlSerializer;
+import com.enonic.wem.core.content.type.form.inputtype.InputTypeFactory;
+
+import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
+import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.type.form.Input.newInput;
+
+class FormItemXmlSerializer
+{
+    public static final String NAME = "name";
+
+    public static final String TYPE = "type";
+
+    public static final String BUILT_IN = "built-in";
+
+    public static final String LABEL = "label";
+
+    public static final String IMMUTABLE = "immutable";
+
+    public static final String INDEXED = "indexed";
+
+    public static final String CUSTOM_TEXT = "customText";
+
+    public static final String HELP_TEXT = "helpText";
+
+    public static final String REFERENCE = "reference";
+
+    public static final String VALIDATION_REGEX = "validationRegex";
+
+    public static final String SUB_TYPE_CLASS = "sub-type-class";
+
+    private final InputTypeConfigXmlSerializer inputTypeConfigSerializer = new InputTypeConfigXmlSerializer();
+
+    private final OccurrencesXmlSerializer occurrencesXmlSerializer = new OccurrencesXmlSerializer();
+
+    private final FormItemsXmlSerializer formItemsSerializer;
+
+    public FormItemXmlSerializer( final FormItemsXmlSerializer formItemsSerializer )
+    {
+        this.formItemsSerializer = formItemsSerializer;
+    }
+
+    public Element serialize( FormItem formItem )
+    {
+        if ( formItem instanceof FormItemSet )
+        {
+            return serializeFormItemSet( (FormItemSet) formItem );
+        }
+        else if ( formItem instanceof Layout )
+        {
+            return serializeLayout( (Layout) formItem );
+        }
+        else if ( formItem instanceof Input )
+        {
+            return serializeInput( (Input) formItem );
+        }
+        else if ( formItem instanceof SubTypeReference )
+        {
+            return serializeReference( (SubTypeReference) formItem );
+        }
+        return null;
+    }
+
+    private Element serializeInput( final Input input )
+    {
+        Element inputEl = new Element( classNameToXmlElementName( Input.class.getSimpleName() ) );
+        inputEl.setAttribute( TYPE, input.getInputType().getClass().getSimpleName() );
+        inputEl.setAttribute( BUILT_IN, String.valueOf( input.getInputType().isBuiltIn() ) );
+
+        inputEl.addContent( new Element( NAME ).setText( input.getName() ) );
+        inputEl.addContent( new Element( LABEL ).setText( input.getLabel() ) );
+        inputEl.addContent( new Element( IMMUTABLE ).setText( String.valueOf( input.isImmutable() ) ) );
+        inputEl.addContent( new Element( INDEXED ).setText( String.valueOf( input.isIndexed() ) ) );
+        inputEl.addContent( new Element( CUSTOM_TEXT ).setText( input.getCustomText() ) );
+        inputEl.addContent( new Element( HELP_TEXT ).setText( input.getHelpText() ) );
+        inputEl.addContent( occurrencesXmlSerializer.serialize( input.getOccurrences() ) );
+        generateValidationRegex( input, inputEl );
+        generateInputTypeConfig( input, inputEl );
+        return inputEl;
+    }
+
+    private void generateInputTypeConfig( final Input input, final Element inputEl )
+    {
+        if ( input.getInputType().requiresConfig() && input.getInputTypeConfig() != null )
+        {
+            inputEl.addContent( input.getInputType().getInputTypeConfigXmlGenerator().generate( input.getInputTypeConfig() ) );
+        }
+    }
+
+    private Element serializeFormItemSet( final FormItemSet set )
+    {
+        final Element formItemSetEl = new Element( classNameToXmlElementName( FormItemSet.class.getSimpleName() ) );
+        formItemSetEl.addContent( new Element( NAME ).setText( set.getName() ) );
+        formItemSetEl.addContent( new Element( LABEL ).setText( set.getLabel() ) );
+        formItemSetEl.addContent( new Element( IMMUTABLE ).setText( String.valueOf( set.isImmutable() ) ) );
+        formItemSetEl.addContent( new Element( CUSTOM_TEXT ).setText( set.getCustomText() ) );
+        formItemSetEl.addContent( new Element( HELP_TEXT ).setText( set.getCustomText() ) );
+
+        formItemSetEl.addContent( occurrencesXmlSerializer.serialize( set.getOccurrences() ) );
+        formItemSetEl.addContent( formItemsSerializer.serialize( set.getFormItems() ) );
+        return formItemSetEl;
+    }
+
+    private Element serializeLayout( final Layout layout )
+    {
+        final Element layoutEl = new Element( classNameToXmlElementName( Layout.class.getSimpleName() ) );
+        layoutEl.addContent( new Element( NAME ).setText( layout.getName() ) );
+
+        if ( layout instanceof FieldSet )
+        {
+            generateFieldSet( (FieldSet) layout, layoutEl );
+        }
+
+        return layoutEl;
+    }
+
+    private void generateFieldSet( final FieldSet fieldSet, final Element layoutEl )
+    {
+        layoutEl.setAttribute( TYPE, FieldSet.class.getSimpleName() );
+        layoutEl.addContent( new Element( LABEL ).setText( fieldSet.getLabel() ) );
+        layoutEl.addContent( formItemsSerializer.serialize( fieldSet.getFormItems() ) );
+    }
+
+    private Element serializeReference( final SubTypeReference subTypeReference )
+    {
+        final Element referenceEl = new Element( classNameToXmlElementName( SubTypeReference.class.getSimpleName() ) );
+        referenceEl.addContent( new Element( NAME ).setText( subTypeReference.getName() ) );
+        referenceEl.addContent( new Element( REFERENCE ).setText( subTypeReference.getSubTypeQualifiedName().toString() ) );
+        referenceEl.addContent( new Element( SUB_TYPE_CLASS ).setText( subTypeReference.getSubTypeClass().getSimpleName() ) );
+        return referenceEl;
+    }
+
+    private void generateValidationRegex( final Input input, final Element inputEl )
+    {
+        if ( input.getValidationRegexp() != null )
+        {
+            inputEl.addContent( new Element( VALIDATION_REGEX ).setText( input.getValidationRegexp().toString() ) );
+        }
+    }
+
+    public FormItem parse( final Element formItemEl )
+    {
+        final String formItemType = xmlElementNameToClassName( formItemEl.getName() );
+
+        final FormItem formItem;
+        if ( formItemType.equals( Input.class.getSimpleName() ) )
+        {
+            formItem = parseInput( formItemEl );
+        }
+        else if ( formItemType.equals( FormItemSet.class.getSimpleName() ) )
+        {
+            formItem = parseFormItemSet( formItemEl );
+        }
+        else if ( formItemType.equals( Layout.class.getSimpleName() ) )
+        {
+            formItem = parseLayout( formItemEl );
+        }
+        else if ( formItemType.equals( SubTypeReference.class.getSimpleName() ) )
+        {
+            formItem = parseSubTypeReference( formItemEl );
+        }
+        else
+        {
+            throw new XmlParsingException( "Unknown FormItemType: " + formItemType );
+        }
+
+        return formItem;
+    }
+
+    private FormItem parseInput( final Element formItemEl )
+    {
+        final Input.Builder builder = newInput();
+        builder.name( formItemEl.getChildText( NAME ) );
+        builder.label( formItemEl.getChildText( LABEL ) );
+        builder.immutable( Boolean.valueOf( formItemEl.getChildText( IMMUTABLE ) ) );
+        builder.helpText( formItemEl.getChildText( HELP_TEXT ) );
+        builder.customText( formItemEl.getChildText( CUSTOM_TEXT ) );
+        parseValidationRegexp( builder, formItemEl );
+
+        builder.occurrences( occurrencesXmlSerializer.parse( formItemEl ) );
+        parseInputType( builder, formItemEl );
+        parseInputTypeConfig( builder, formItemEl );
+
+        return builder.build();
+    }
+
+    private HierarchicalFormItem parseFormItemSet( final Element formItemEl )
+    {
+        final FormItemSet.Builder builder = newFormItemSet();
+        builder.name( formItemEl.getChildText( NAME ) );
+        builder.label( formItemEl.getChildText( LABEL ) );
+        builder.immutable( Boolean.valueOf( formItemEl.getChildText( IMMUTABLE ) ) );
+        builder.helpText( formItemEl.getChildText( HELP_TEXT ) );
+        builder.customText( formItemEl.getChildText( CUSTOM_TEXT ) );
+
+        builder.occurrences( occurrencesXmlSerializer.parse( formItemEl ) );
+
+        final FormItems formItems = formItemsSerializer.parse( formItemEl );
+        for ( FormItem formItem : formItems.iterable() )
+        {
+            builder.add( formItem );
+        }
+
+        return builder.build();
+    }
+
+    private FormItem parseLayout( final Element formItemEl )
+    {
+        final String layoutType = formItemEl.getAttributeValue( TYPE );
+        if ( layoutType.equals( FieldSet.class.getSimpleName() ) )
+        {
+            return parseFieldSet( formItemEl );
+        }
+        else
+        {
+            throw new XmlParsingException( "Unknown layoutType: " + layoutType );
+        }
+    }
+
+    private FormItem parseFieldSet( final Element formItemEl )
+    {
+        final FieldSet.Builder builder = newFieldSet();
+        builder.name( formItemEl.getChildText( NAME ) );
+        builder.label( formItemEl.getChildText( LABEL ) );
+
+        final FormItems formItems = formItemsSerializer.parse( formItemEl );
+        for ( FormItem formItem : formItems.iterable() )
+        {
+            builder.add( formItem );
+        }
+
+        return builder.build();
+    }
+
+    private HierarchicalFormItem parseSubTypeReference( final Element formItemEl )
+    {
+        final SubTypeReference.Builder builder = SubTypeReference.newSubTypeReference();
+        builder.name( formItemEl.getChildText( NAME ) );
+        builder.subType( new SubTypeQualifiedName( formItemEl.getChildText( REFERENCE ) ) );
+        builder.type( formItemEl.getChildText( SUB_TYPE_CLASS ) );
+        return builder.build();
+    }
+
+    private void parseValidationRegexp( final Input.Builder builder, final Element formItemEl )
+    {
+        String validationRegexp = formItemEl.getChildText( VALIDATION_REGEX );
+        if ( validationRegexp != null )
+        {
+            builder.validationRegexp( validationRegexp );
+        }
+    }
+
+    private void parseInputTypeConfig( final Input.Builder builder, final Element formItemEl )
+    {
+        builder.inputTypeConfig( inputTypeConfigSerializer.parse( formItemEl ) );
+    }
+
+    private void parseInputType( final Input.Builder builder, final Element formItemEl )
+    {
+        final String inputTypeName = formItemEl.getAttributeValue( TYPE );
+        final boolean builtIn = Boolean.valueOf( formItemEl.getAttributeValue( BUILT_IN ) );
+        builder.type( InputTypeFactory.instantiate( inputTypeName, builtIn ) );
+    }
+
+    private String classNameToXmlElementName( final String s )
+    {
+        final StringBuilder newS = new StringBuilder( s.length() );
+        for ( int i = 0; i < s.length(); i++ )
+        {
+            char c = s.charAt( i );
+            if ( Character.isUpperCase( c ) && i == 0 )
+            {
+                newS.append( Character.toLowerCase( c ) );
+            }
+            else if ( Character.isUpperCase( c ) )
+            {
+                newS.append( "-" ).append( Character.toLowerCase( c ) );
+            }
+            else
+            {
+                newS.append( c );
+            }
+        }
+        return newS.toString();
+    }
+
+    private String xmlElementNameToClassName( final String s )
+    {
+        final StringBuilder newS = new StringBuilder( s.length() );
+        for ( int i = 0; i < s.length(); i++ )
+        {
+            char c = s.charAt( i );
+
+            Character nextC = i < s.length() - 1 ? s.charAt( i + 1 ) : null;
+
+            if ( nextC == null )
+            {
+                newS.append( c );
+            }
+            else if ( i == 0 )
+            {
+                newS.append( Character.toUpperCase( c ) );
+            }
+            else if ( c == '-' )
+            {
+                newS.append( Character.toUpperCase( nextC ) );
+                i++;
+            }
+            else
+            {
+                newS.append( c );
+            }
+        }
+        return newS.toString();
+    }
+
+}

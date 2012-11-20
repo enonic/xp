@@ -4,9 +4,9 @@ package com.enonic.wem.api.content.type;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataVisitor;
-import com.enonic.wem.api.content.type.component.ComponentPath;
-import com.enonic.wem.api.content.type.component.HierarchicalComponent;
-import com.enonic.wem.api.content.type.component.Input;
+import com.enonic.wem.api.content.type.form.FormItemPath;
+import com.enonic.wem.api.content.type.form.HierarchicalFormItem;
+import com.enonic.wem.api.content.type.form.Input;
 
 public class DataTypeFixer
 {
@@ -24,13 +24,13 @@ public class DataTypeFixer
             @Override
             public void visit( final Data data )
             {
-                final ComponentPath path = data.getPath().resolveComponentPath();
-                final HierarchicalComponent component = contentType.getComponent( path );
-                if ( component != null && component.getPath().equals( path ) )
+                final FormItemPath path = data.getPath().resolveFormItemPath();
+                final HierarchicalFormItem formItem = contentType.getFormItem( path );
+                if ( formItem != null && formItem.getPath().equals( path ) )
                 {
-                    if ( component instanceof Input )
+                    if ( formItem instanceof Input )
                     {
-                        final Input input = (Input) component;
+                        final Input input = (Input) formItem;
                         input.getInputType().ensureType( data );
                     }
                 }

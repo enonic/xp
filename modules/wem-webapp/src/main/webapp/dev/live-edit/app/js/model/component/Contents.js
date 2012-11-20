@@ -8,7 +8,7 @@
         this.attachClickEvent();
     };
     // Inherit from Base prototype
-    contents.prototype = new  AdminLiveEdit.model.component.Base();
+    contents.prototype = new AdminLiveEdit.model.component.Base();
 
     // Fix constructor as it now is Base
     contents.constructor = contents;

@@ -1,4 +1,4 @@
-(function () {
+(function ($) {
     'use strict';
 
     // Class definition (constructor function)
@@ -61,4 +61,4 @@
         this.componentMenu.buttons.push(this);
     };
 
-}());
+}($liveedit));

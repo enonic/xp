@@ -3,17 +3,17 @@ package com.enonic.wem.api.content.type;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.type.component.ComponentSet;
-import com.enonic.wem.api.content.type.component.ComponentSetSubType;
-import com.enonic.wem.api.content.type.component.FieldSet;
-import com.enonic.wem.api.content.type.component.MockSubTypeFetcher;
-import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.form.FieldSet;
+import com.enonic.wem.api.content.type.form.FormItemSet;
+import com.enonic.wem.api.content.type.form.FormItemSetSubType;
+import com.enonic.wem.api.content.type.form.MockSubTypeFetcher;
+import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.component.ComponentSet.newComponentSet;
-import static com.enonic.wem.api.content.type.component.ComponentSetSubType.newComponentSetSubType;
-import static com.enonic.wem.api.content.type.component.Input.newInput;
-import static com.enonic.wem.api.content.type.component.SubTypeReference.newSubTypeReference;
+import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.type.form.FormItemSetSubType.newFormItemSetSubType;
+import static com.enonic.wem.api.content.type.form.Input.newInput;
+import static com.enonic.wem.api.content.type.form.SubTypeReference.newSubTypeReference;
 import static org.junit.Assert.*;
 
 public class ContentTypeTest
@@ -25,36 +25,36 @@ public class ContentTypeTest
         contentType.setName( "test" );
         FieldSet layout = FieldSet.newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
-        contentType.addComponent( layout );
+        contentType.addFormItem( layout );
 
         assertEquals( "eyeColour", contentType.getInput( "eyeColour" ).getPath().toString() );
     }
 
     @Test
-    public void layout_inside_componentSet()
+    public void layout_inside_formItemSet()
     {
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
         FieldSet layout = FieldSet.newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
-        ComponentSet myComponentSet = newComponentSet().name( "myFieldSet" ).add( layout ).build();
-        contentType.addComponent( myComponentSet );
+        FormItemSet myFormItemSet = newFormItemSet().name( "mySet" ).add( layout ).build();
+        contentType.addFormItem( myFormItemSet );
 
-        assertEquals( "myFieldSet.eyeColour", contentType.getInput( "myFieldSet.eyeColour" ).getPath().toString() );
+        assertEquals( "mySet.eyeColour", contentType.getInput( "mySet.eyeColour" ).getPath().toString() );
     }
 
     @Test
     public void address()
     {
-        ComponentSet componentSet = newComponentSet().name( "address" ).build();
-        componentSet.add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.add( newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.add( newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() );
-        componentSet.add( newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() );
+        FormItemSet formItemSet = newFormItemSet().name( "address" ).build();
+        formItemSet.add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() );
 
         ContentType contentType = new ContentType();
-        contentType.addComponent( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.addComponent( componentSet );
+        contentType.addFormItem( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.addFormItem( formItemSet );
 
         assertEquals( "title", contentType.getInput( "title" ).getPath().toString() );
         assertEquals( "address.label", contentType.getInput( "address.label" ).getPath().toString() );
@@ -64,26 +64,26 @@ public class ContentTypeTest
     }
 
     @Test
-    public void subTypeReferencesToComponents()
+    public void subTypeReferencesToFormItems()
     {
         // setup
         Module module = Module.newModule().name( "myModule" ).build();
 
-        ComponentSetSubType subType = newComponentSetSubType().module( module ).componentSet(
-            newComponentSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
+        FormItemSetSubType subType = newFormItemSetSubType().module( module ).formItemSet(
+            newFormItemSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
-        cty.addComponent( newSubTypeReference( subType ).name( "home" ).build() );
-        cty.addComponent( newSubTypeReference( subType ).name( "cabin" ).build() );
+        cty.addFormItem( newSubTypeReference( subType ).name( "home" ).build() );
+        cty.addFormItem( newSubTypeReference( subType ).name( "cabin" ).build() );
 
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( subType );
 
         // exercise
-        cty.subTypeReferencesToComponents( subTypeFetcher );
+        cty.subTypeReferencesToFormItems( subTypeFetcher );
 
         // verify:
         assertEquals( "home.street", cty.getInput( "home.street" ).getPath().toString() );
@@ -91,12 +91,12 @@ public class ContentTypeTest
     }
 
     @Test
-    public void subTypeReferencesToComponents_layout()
+    public void subTypeReferencesToFormItems_layout()
     {
         // setup
         Module module = Module.newModule().name( "myModule" ).build();
 
-        ComponentSetSubType subType = newComponentSetSubType().module( module ).componentSet( newComponentSet().name( "address" ).add(
+        FormItemSetSubType subType = newFormItemSetSubType().module( module ).formItemSet( newFormItemSet().name( "address" ).add(
             FieldSet.newFieldSet().label( "My Field Set" ).name( "fieldSet" ).add(
                 newInput().name( "myFieldInLayout" ).label( "MyFieldInLayout" ).type( InputTypes.TEXT_LINE ).build() ).build() ).add(
             newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
@@ -105,13 +105,13 @@ public class ContentTypeTest
             newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType contentType = new ContentType();
-        contentType.addComponent( newSubTypeReference( subType ).name( "home" ).build() );
+        contentType.addFormItem( newSubTypeReference( subType ).name( "home" ).build() );
 
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( subType );
 
         // exercise
-        contentType.subTypeReferencesToComponents( subTypeFetcher );
+        contentType.subTypeReferencesToFormItems( subTypeFetcher );
 
         // verify:
         assertEquals( "home.street", contentType.getInput( "home.street" ).getPath().toString() );
@@ -120,17 +120,17 @@ public class ContentTypeTest
 
 
     @Test
-    public void subTypeReferencesToComponents_throws_exception_when_subType_is_not_of_expected_type()
+    public void subTypeReferencesToFormItems_throws_exception_when_subType_is_not_of_expected_type()
     {
         // setup
         Module module = Module.newModule().name( "myModule" ).build();
 
-        ComponentSetSubType subType = newComponentSetSubType().module( module ).componentSet(
-            newComponentSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
+        FormItemSetSubType subType = newFormItemSetSubType().module( module ).formItemSet(
+            newFormItemSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
-        cty.addComponent( newSubTypeReference().name( "home" ).typeInput().subType( subType.getQualifiedName() ).build() );
+        cty.addFormItem( newSubTypeReference().name( "home" ).typeInput().subType( subType.getQualifiedName() ).build() );
 
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( subType );
@@ -138,30 +138,29 @@ public class ContentTypeTest
         // exercise
         try
         {
-            cty.subTypeReferencesToComponents( subTypeFetcher );
+            cty.subTypeReferencesToFormItems( subTypeFetcher );
         }
         catch ( Exception e )
         {
             assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "SubType expected to be of type InputSubType: ComponentSetSubType", e.getMessage() );
+            assertEquals( "SubType expected to be of type InputSubType: FormItemSetSubType", e.getMessage() );
         }
     }
 
     @Test
-    public void fieldSet_in_FieldSet()
+    public void formItemSet_in_formItemSet()
     {
         ContentType contentType = new ContentType();
         contentType.setName( "test" );
-        ComponentSet componentSet =
-            newComponentSet().name( "top-fieldSet" ).add( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() ).add(
-                newComponentSet().name( "inner-fieldSet" ).add(
-                    newInput().name( "myInnerField" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
-        contentType.addComponent( componentSet );
+        FormItemSet formItemSet =
+            newFormItemSet().name( "top-set" ).add( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).add(
+                newFormItemSet().name( "inner-set" ).add(
+                    newInput().name( "myInnerInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
+        contentType.addFormItem( formItemSet );
 
-        assertEquals( "top-fieldSet", contentType.getComponentSet( "top-fieldSet" ).getPath().toString() );
-        assertEquals( "top-fieldSet.myField", contentType.getInput( "top-fieldSet.myField" ).getPath().toString() );
-        assertEquals( "top-fieldSet.inner-fieldSet", contentType.getComponentSet( "top-fieldSet.inner-fieldSet" ).getPath().toString() );
-        assertEquals( "top-fieldSet.inner-fieldSet.myInnerField",
-                      contentType.getInput( "top-fieldSet.inner-fieldSet.myInnerField" ).getPath().toString() );
+        assertEquals( "top-set", contentType.getFormItemSet( "top-set" ).getPath().toString() );
+        assertEquals( "top-set.myInput", contentType.getInput( "top-set.myInput" ).getPath().toString() );
+        assertEquals( "top-set.inner-set", contentType.getFormItemSet( "top-set.inner-set" ).getPath().toString() );
+        assertEquals( "top-set.inner-set.myInnerInput", contentType.getInput( "top-set.inner-set.myInnerInput" ).getPath().toString() );
     }
 }

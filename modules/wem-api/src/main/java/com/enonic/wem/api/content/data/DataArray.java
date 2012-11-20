@@ -124,7 +124,7 @@ public final class DataArray
         if ( list.size() == 1 )
         {
             this.type = list.get( 0 ).getDataType();
-            Preconditions.checkArgument( !this.type.equals( DataTypes.DATA_ARRAY ), "Multidimensional arrays are not supported" );
+            Preconditions.checkArgument( !this.type.equals( DataTypes.ARRAY ), "Multidimensional arrays are not supported" );
         }
     }
 

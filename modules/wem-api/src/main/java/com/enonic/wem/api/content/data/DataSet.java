@@ -10,7 +10,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.datatype.DataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
-import com.enonic.wem.api.content.type.component.InvalidDataException;
+import com.enonic.wem.api.content.type.form.InvalidDataException;
 
 import static com.enonic.wem.api.content.data.Data.newData;
 
@@ -101,18 +101,18 @@ public final class DataSet
             {
                 return null;
             }
-            if ( !( data.getDataType().equals( DataTypes.DATA_SET ) ) )
+            if ( !( data.getDataType().equals( DataTypes.SET ) ) )
             {
-                throw new IllegalArgumentException( "Data at path [" + data.getPath() + "] is not of type DataSet: " + data.getDataType() );
+                throw new IllegalArgumentException( "Data at path [" + data.getPath() + "] is not of type Set: " + data.getDataType() );
             }
             return (DataSet) data.getValue();
         }
         else
         {
             final Data data = entries.get( path.getFirstElement() );
-            if ( !( data.getDataType().equals( DataTypes.DATA_SET ) ) )
+            if ( !( data.getDataType().equals( DataTypes.SET ) ) )
             {
-                throw new IllegalArgumentException( "Data at path [%s] is not of type DataSet: " + data.getDataType() );
+                throw new IllegalArgumentException( "Data at path [%s] is not of type Set: " + data.getDataType() );
             }
             return data.getDataSet( path.asNewWithoutFirstPathElement() );
         }
@@ -127,11 +127,11 @@ public final class DataSet
             // create new set
             final EntryPath pathToDataSet = new EntryPath( this.path, firstElement );
             dataSet = new DataSet( pathToDataSet );
-            entries.setData( pathToDataSet, dataSet, DataTypes.DATA_SET );
+            entries.setData( pathToDataSet, dataSet, DataTypes.SET );
         }
         else
         {
-            if ( exData.getDataType() == DataTypes.DATA_ARRAY )
+            if ( exData.getDataType() == DataTypes.ARRAY )
             {
                 final DataArray dataArray = exData.getDataArray();
                 final Data data = dataArray.getData( firstElement.getIndex() );
@@ -139,7 +139,7 @@ public final class DataSet
                 {
                     final EntryPath newPath = new EntryPath( exData.getPath(), firstElement.getIndex() );
                     dataSet = new DataSet( newPath );
-                    dataArray.set( firstElement.getIndex(), dataSet, DataTypes.DATA_SET );
+                    dataArray.set( firstElement.getIndex(), dataSet, DataTypes.SET );
                 }
                 else
                 {
@@ -162,7 +162,7 @@ public final class DataSet
             return null;
         }
 
-        if ( data.getDataType().equals( DataTypes.DATA_ARRAY ) )
+        if ( data.getDataType().equals( DataTypes.ARRAY ) )
         {
             if ( path.getFirstElement().hasIndex() )
             {
@@ -177,7 +177,7 @@ public final class DataSet
         if ( !data.hasDataSetAsValue() )
         {
             throw new IllegalArgumentException(
-                "Data at path [" + this.getPath() + "] expected to have a value of type DataSet: " + data.getDataType().getName() );
+                "Data at path [" + this.getPath() + "] expected to have a value of type Set: " + data.getDataType().getName() );
         }
 
         return data.getDataSet().getData( path.asNewWithoutFirstPathElement() );
@@ -195,12 +195,12 @@ public final class DataSet
         if ( element.hasIndex() )
         {
             final DataType dataType = data.getDataType();
-            if ( dataType == DataTypes.DATA_ARRAY )
+            if ( dataType == DataTypes.ARRAY )
             {
                 DataArray array = data.getDataArray();
                 return array.getData( element.getIndex() );
             }
-            else if ( dataType == DataTypes.DATA_ARRAY )
+            else if ( dataType == DataTypes.ARRAY )
             {
                 // allow returning of single data, if first element of an array was requested
                 if ( element.getIndex() == 0 )

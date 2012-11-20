@@ -5,7 +5,8 @@ import com.enonic.wem.api.content.Content;
 
 public interface ContentSerializer
 {
-    public String toString( Content content );
+    public String toString( Content content )
+        throws SerializingException;
 
     public Content toContent( String xml );
 }

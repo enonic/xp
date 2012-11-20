@@ -1,81 +1,122 @@
 package com.enonic.wem.api.content.type;
 
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.EntrySelector;
-import com.enonic.wem.api.content.type.component.BreaksRequiredContractException;
-import com.enonic.wem.api.content.type.component.Component;
-import com.enonic.wem.api.content.type.component.ComponentSet;
-import com.enonic.wem.api.content.type.component.FieldSet;
-import com.enonic.wem.api.content.type.component.Input;
-import com.enonic.wem.api.content.type.component.MaximumOccurrencesException;
-import com.enonic.wem.api.content.type.component.MinimumOccurrencesException;
+import com.enonic.wem.api.content.type.form.BreaksRequiredContractException;
+import com.enonic.wem.api.content.type.form.FieldSet;
+import com.enonic.wem.api.content.type.form.FormItem;
+import com.enonic.wem.api.content.type.form.FormItemSet;
+import com.enonic.wem.api.content.type.form.Input;
+import com.enonic.wem.api.content.type.form.MaximumOccurrencesException;
+import com.enonic.wem.api.content.type.form.MinimumOccurrencesException;
 
 public final class OccurrenceValidator
 {
     private final ContentType contentType;
 
-    public OccurrenceValidator( final ContentType contentType )
+    private boolean recordExceptions = false;
+
+    private List<RuntimeException> recordedExceptions;
+
+    private OccurrenceValidator( final ContentType contentType )
     {
         this.contentType = contentType;
     }
 
-    public void verify( final ContentData contentData )
+    public void validate( final ContentData contentData )
     {
-        processComponents( contentType.componentIterable(), contentData );
+        recordedExceptions = new ArrayList<RuntimeException>();
+
+        processFormItems( contentType.formItemIterable(), contentData );
         processData( contentData );
+    }
+
+    public Iterator<RuntimeException> getRecordedExceptions()
+    {
+        return recordedExceptions.iterator();
     }
 
     private void processData( final Iterable<Data> datas )
     {
         for ( final Data data : datas )
         {
-            final Component component = contentType.getComponent( data.getPath().resolveComponentPath() );
+            final FormItem formItem = contentType.getFormItem( data.getPath().resolveFormItemPath() );
 
-            if ( component instanceof Input )
+            if ( formItem instanceof Input )
             {
-                final Input input = (Input) component;
-                if ( input.getOccurrences().getMaximum() > 0 && data.hasArrayAsValue() )
+                try
                 {
-                    if ( data.getDataArray().size() > input.getOccurrences().getMaximum() )
-                    {
-                        throw new MaximumOccurrencesException( input, data.getDataArray().size() );
-                    }
+                    processData( data, (Input) formItem );
+                }
+                catch ( MaximumOccurrencesException e )
+                {
+                    handleException( e );
                 }
             }
-            else if ( component instanceof ComponentSet )
+            else if ( formItem instanceof FormItemSet )
             {
-                final ComponentSet set = (ComponentSet) component;
-                if ( set.getOccurrences().getMaximum() > 0 && data.hasArrayAsValue() )
+                try
                 {
-                    if ( data.getDataArray().size() > set.getOccurrences().getMaximum() )
-                    {
-                        throw new MaximumOccurrencesException( set, data.getDataArray().size() );
-                    }
+                    processSet( data, (FormItemSet) formItem );
+                }
+                catch ( MaximumOccurrencesException e )
+                {
+                    handleException( e );
                 }
             }
         }
     }
 
-    private void processComponents( final Iterable<Component> components, final EntrySelector entrySelector )
+    private void processSet( final Data data, final FormItemSet set )
+        throws MaximumOccurrencesException
+    {
+        if ( set.getOccurrences().getMaximum() > 0 && data.hasArrayAsValue() )
+        {
+            if ( data.getDataArray().size() > set.getOccurrences().getMaximum() )
+            {
+                throw new MaximumOccurrencesException( set, data.getDataArray().size() );
+            }
+        }
+    }
+
+    private void processData( final Data data, final Input input )
+        throws MaximumOccurrencesException
+    {
+        if ( input.getOccurrences().getMaximum() > 0 && data.hasArrayAsValue() )
+        {
+            if ( data.getDataArray().size() > input.getOccurrences().getMaximum() )
+            {
+                throw new MaximumOccurrencesException( input, data.getDataArray().size() );
+            }
+        }
+    }
+
+    private void processFormItems( final Iterable<FormItem> formItems, final EntrySelector entrySelector )
     {
         // check missing required entries
-        for ( Component component : components )
+        for ( FormItem formItem : formItems )
         {
-            if ( component instanceof Input )
+            if ( formItem instanceof Input )
             {
-                processInput( (Input) component, entrySelector );
+                processInput( (Input) formItem, entrySelector );
             }
-            else if ( component instanceof ComponentSet )
+            else if ( formItem instanceof FormItemSet )
             {
-                processComponentSet( (ComponentSet) component, entrySelector );
+                processSet( (FormItemSet) formItem, entrySelector );
             }
-            else if ( component instanceof FieldSet )
+            else if ( formItem instanceof FieldSet )
             {
-                processComponents( ( (FieldSet) component ).componentIterable(), entrySelector );
+                processFormItems( ( (FieldSet) formItem ).formItemIterable(), entrySelector );
             }
         }
     }
@@ -85,25 +126,39 @@ public final class OccurrenceValidator
         final Data data = getData( input, entrySelector );
         if ( input.isRequired() )
         {
-            verifyRequiredInput( input, data );
+            try
+            {
+                verifyRequiredInput( input, data );
+            }
+            catch ( MinimumOccurrencesException e )
+            {
+                handleException( e );
+            }
         }
     }
 
-    private void processComponentSet( final ComponentSet componentSet, final EntrySelector entrySelector )
+    private void processSet( final FormItemSet formItemSet, final EntrySelector entrySelector )
     {
-        final DataSet dataSet = getDataSet( componentSet, entrySelector );
-        if ( componentSet.isRequired() )
+        final DataSet dataSet = getDataSet( formItemSet, entrySelector );
+        if ( formItemSet.isRequired() )
         {
-            verifyRequiredComponentSet( componentSet, dataSet );
+            try
+            {
+                verifyRequiredFormItemSet( formItemSet, dataSet );
+            }
+            catch ( MinimumOccurrencesException e )
+            {
+                handleException( e );
+            }
         }
 
         if ( dataSet != null )
         {
-            processComponents( componentSet.getComponents().iterable(), dataSet );
+            processFormItems( formItemSet.getFormItems().iterable(), dataSet );
         }
         else
         {
-            processComponents( componentSet.getComponents().iterable(), null );
+            processFormItems( formItemSet.getFormItems().iterable(), null );
         }
     }
 
@@ -115,15 +170,15 @@ public final class OccurrenceValidator
         }
         else
         {
-            input.checkBreaksRequiredContract( data );
+            input.checkBreaksMinimumOccurrencesContract( data );
         }
     }
 
-    private void verifyRequiredComponentSet( final ComponentSet componentSet, final DataSet dataSet )
+    private void verifyRequiredFormItemSet( final FormItemSet formItemSet, final DataSet dataSet )
     {
         if ( dataSet == null )
         {
-            throw new BreaksRequiredContractException( componentSet );
+            throw new BreaksRequiredContractException( formItemSet );
         }
     }
 
@@ -132,9 +187,54 @@ public final class OccurrenceValidator
         return entrySelector != null ? entrySelector.getData( new EntryPath( input.getPath().toString() ) ) : null;
     }
 
-    private DataSet getDataSet( final ComponentSet componentSet, final EntrySelector entrySelector )
+    private DataSet getDataSet( final FormItemSet formItemSet, final EntrySelector entrySelector )
     {
-        return entrySelector != null ? entrySelector.getDataSet( new EntryPath( componentSet.getPath().toString() ) ) : null;
+        return entrySelector != null ? entrySelector.getDataSet( new EntryPath( formItemSet.getPath().toString() ) ) : null;
+    }
+
+    private void handleException( final RuntimeException e )
+    {
+        if ( recordExceptions )
+        {
+            recordedExceptions.add( e );
+        }
+        else
+        {
+            throw e;
+        }
+    }
+
+    public static Builder newOccurrenceValidator()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private ContentType contentType;
+
+        private boolean recordExceptions;
+
+        public Builder contentType( ContentType contentType )
+        {
+            this.contentType = contentType;
+            return this;
+        }
+
+        public Builder recordExceptions( boolean value )
+        {
+            this.recordExceptions = value;
+            return this;
+        }
+
+        public OccurrenceValidator build()
+        {
+            Preconditions.checkNotNull( this.contentType, "contenType is required" );
+            OccurrenceValidator validator = new OccurrenceValidator( this.contentType );
+            validator.recordExceptions = this.recordExceptions;
+            return validator;
+        }
+
     }
 
 }

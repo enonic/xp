@@ -29,17 +29,17 @@ final class DataEntries
         {
             dataByName.put( key, data );
         }
-        else if ( data.getDataType() == DataTypes.DATA_ARRAY )
+        else if ( exData.getDataType() == DataTypes.ARRAY )
         {
-            DataArray array = data.getDataArray();
-            array.setData( data );
+            DataArray array = exData.getDataArray();
+            array.add( data );
         }
         else
         {
             final DataArray array = new DataArray( data.getPath() );
             array.add( newData().path( exData.getPath() ).type( exData.getDataType() ).value( exData.getValue() ).build() );
             array.add( newData().path( data.getPath() ).type( data.getDataType() ).value( data.getValue() ).build() );
-            final Data newDataWithArray = newData().path( data.getPath() ).type( DataTypes.DATA_ARRAY ).value( array ).build();
+            final Data newDataWithArray = newData().path( data.getPath() ).type( DataTypes.ARRAY ).value( array ).build();
 
             dataByName.put( key, newDataWithArray );
         }
@@ -59,7 +59,7 @@ final class DataEntries
                 createdData = newData().path( path ).type( type ).value( value ).build();
                 dataArray.add( createdData );
                 final Data newDataWithArray =
-                    newData().path( pathWithoutIndexAtLastElement ).type( DataTypes.DATA_ARRAY ).value( dataArray ).build();
+                    newData().path( pathWithoutIndexAtLastElement ).type( DataTypes.ARRAY ).value( dataArray ).build();
                 dataByName.put( key, newDataWithArray );
             }
             else
@@ -68,7 +68,7 @@ final class DataEntries
                 dataByName.put( key, createdData );
             }
         }
-        else if ( exData.getDataType().equals( DataTypes.DATA_ARRAY ) )
+        else if ( exData.getDataType().equals( DataTypes.ARRAY ) )
         {
             exData.getDataArray().set( path.getLastElement().getIndex(), value, type );
         }
@@ -78,8 +78,7 @@ final class DataEntries
             EntryPath exDataPathWithIndex = exData.getPath().asNewWithIndexAtPath( 0, exData.getPath() );
             array.add( newData().path( exDataPathWithIndex ).type( exData.getDataType() ).value( exData.getValue() ).build() );
             array.set( path, value, type );
-            final Data newDataWithArray =
-                newData().path( pathWithoutIndexAtLastElement ).type( DataTypes.DATA_ARRAY ).value( array ).build();
+            final Data newDataWithArray = newData().path( pathWithoutIndexAtLastElement ).type( DataTypes.ARRAY ).value( array ).build();
 
             dataByName.put( key, newDataWithArray );
         }
@@ -111,7 +110,7 @@ final class DataEntries
         final StringBuilder s = new StringBuilder();
         for ( Data data : this )
         {
-            if ( data.getDataType() == DataTypes.DATA_ARRAY )
+            if ( data.getDataType() == DataTypes.ARRAY )
             {
 
             }

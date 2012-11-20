@@ -13,18 +13,18 @@ import cucumber.annotation.en.When;
 import cucumber.table.DataTable;
 import gherkin.formatter.model.DataTableRow;
 
-import com.enonic.wem.api.content.type.component.ComponentPath;
-import com.enonic.wem.api.content.type.component.ComponentType;
-import com.enonic.wem.api.content.type.component.Input;
-import com.enonic.wem.api.content.type.component.InputSubType;
-import com.enonic.wem.api.content.type.component.MockSubTypeFetcher;
-import com.enonic.wem.api.content.type.component.SubTypeQualifiedName;
-import com.enonic.wem.api.content.type.component.SubTypeReference;
-import com.enonic.wem.api.content.type.component.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.form.FormItemPath;
+import com.enonic.wem.api.content.type.form.FormItemType;
+import com.enonic.wem.api.content.type.form.Input;
+import com.enonic.wem.api.content.type.form.InputSubType;
+import com.enonic.wem.api.content.type.form.MockSubTypeFetcher;
+import com.enonic.wem.api.content.type.form.SubTypeQualifiedName;
+import com.enonic.wem.api.content.type.form.SubTypeReference;
+import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.component.Input.newInput;
-import static com.enonic.wem.api.content.type.component.InputSubType.newInputSubType;
+import static com.enonic.wem.api.content.type.form.Input.newInput;
+import static com.enonic.wem.api.content.type.form.InputSubType.newInputSubType;
 
 public class ContentTypeStepDefs
 {
@@ -68,7 +68,7 @@ public class ContentTypeStepDefs
     public void a_ContentType_named_name( String contentTypeName )
         throws Throwable
     {
-        contentTypeByName.put( contentTypeName, ContentType.newComponentType().name( contentTypeName ).build() );
+        contentTypeByName.put( contentTypeName, ContentType.newContentType().name( contentTypeName ).build() );
     }
 
     @Given("^adding SubTypeReference named (.+) referencing InputSubType (.+) to ContentType (.+)$")
@@ -80,24 +80,24 @@ public class ContentTypeStepDefs
 
         InputSubType inputSubType = inputSubTypeByQualifiedName.get( new SubTypeQualifiedName( subTypeQualifiedName ) );
         ContentType contentType = contentTypeByName.get( contentTypeName );
-        contentType.addComponent( SubTypeReference.newSubTypeReference( inputSubType ).name( subTypeReferenceName ).build() );
+        contentType.addFormItem( SubTypeReference.newSubTypeReference( inputSubType ).name( subTypeReferenceName ).build() );
 
         mockSubTypeFetcher.add( inputSubType );
-        contentType.subTypeReferencesToComponents( mockSubTypeFetcher );
+        contentType.subTypeReferencesToFormItems( mockSubTypeFetcher );
     }
 
-    @When("^translating subType references to components for all content types$")
-    public void translating_subType_references_to_components_for_all_content_types()
+    @When("^translating subType references to formItems for all content types$")
+    public void translating_subType_references_to_formItems_for_all_content_types()
         throws Throwable
     {
         for ( ContentType contentType : contentTypeByName.values() )
         {
-            contentType.subTypeReferencesToComponents( mockSubTypeFetcher );
+            contentType.subTypeReferencesToFormItems( mockSubTypeFetcher );
         }
     }
 
-    @Then("^the following Components should exist in the following ContentTypes:$")
-    public void the_following_Components_should_exist_in_the_following_ContentTypes( DataTable dataTable )
+    @Then("^the following FormItems should exist in the following ContentTypes:$")
+    public void the_following_FormItems_should_exist_in_the_following_ContentTypes( DataTable dataTable )
         throws Throwable
     {
 
@@ -105,13 +105,13 @@ public class ContentTypeStepDefs
         for ( DataTableRow row : list )
         {
             String contentTypeName = row.getCells().get( 0 );
-            String componentPath = row.getCells().get( 1 );
-            ComponentType componentType = ComponentType.valueOf( row.getCells().get( 2 ) );
+            String formItemPath = row.getCells().get( 1 );
+            FormItemType formItemType = FormItemType.valueOf( row.getCells().get( 2 ) );
             ContentType contentType = contentTypeByName.get( contentTypeName );
-            Assert.assertNotNull( "component not found at path: " + componentPath,
-                                  contentType.getComponent( new ComponentPath( componentPath ) ) );
+            Assert.assertNotNull( "formItem not found at path: " + formItemPath,
+                                  contentType.getFormItem( new FormItemPath( formItemPath ) ) );
 
-            Assert.assertEquals( ComponentType.INPUT, componentType );
+            Assert.assertEquals( FormItemType.INPUT, formItemType );
         }
     }
 

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<type>
+  <name>AllBaseTypes</name>
+  <module>myModule</module>
+  <items>
+    <form-item-set>
+      <name>mySet</name>
+      <label/>
+      <immutable>false</immutable>
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
+      <items>
+        <layout type="FieldSet">
+          <name>myFieldSet</name>
+          <label>My field set</label>
+          <items>
+            <input type="TextLine" built-in="true">
+              <name>myTextLine</name>
+              <label/>
+              <immutable>false</immutable>
+              <indexed>false</indexed>
+              <customText/>
+              <helpText/>
+              <occurrences minimum="0" maximum="1"/>
+            </input>
+          </items>
+        </layout>
+        <sub-type-reference>
+          <name>myCommonInput</name>
+          <reference>System:mySharedInput</reference>
+          <sub-type-class>InputSubType</sub-type-class>
+        </sub-type-reference>
+      </items>
+    </form-item-set>
+  </items>
+</type>
+

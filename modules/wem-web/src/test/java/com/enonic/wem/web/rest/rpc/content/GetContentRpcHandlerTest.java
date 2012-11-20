@@ -13,6 +13,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
@@ -42,10 +43,15 @@ public class GetContentRpcHandlerTest
     public void get()
         throws Exception
     {
-        final Content content1 =
-            Content.newContent().path( ContentPath.from( "/MySite/MyContent" ) ).createdTime( timeService.getNowAsDateTime() ).owner(
-                AccountKey.user( "myStore:me" ) ).displayName( "My Content" ).modifiedTime( timeService.getNowAsDateTime() ).modifier(
-                UserKey.superUser() ).build();
+        final Content content1 = Content.newContent().
+            path( ContentPath.from( "/MySite/MyContent" ) ).
+            createdTime( timeService.getNowAsDateTime() ).
+            owner( AccountKey.user( "myStore:me" ) ).
+            displayName( "My Content" ).
+            modifiedTime( timeService.getNowAsDateTime() ).
+            modifier( UserKey.superUser() ).
+            type( new QualifiedContentTypeName( "myModule:myType" ) ).
+            build();
         final ContentData contentData = new ContentData();
         contentData.setData( new EntryPath( "field1" ), "value1" );
         contentData.setData( new EntryPath( "field2" ), "value2" );

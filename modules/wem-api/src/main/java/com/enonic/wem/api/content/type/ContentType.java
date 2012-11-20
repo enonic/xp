@@ -4,14 +4,14 @@ package com.enonic.wem.api.content.type;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.wem.api.content.type.component.Component;
-import com.enonic.wem.api.content.type.component.ComponentPath;
-import com.enonic.wem.api.content.type.component.ComponentSet;
-import com.enonic.wem.api.content.type.component.Components;
-import com.enonic.wem.api.content.type.component.HierarchicalComponent;
-import com.enonic.wem.api.content.type.component.Input;
-import com.enonic.wem.api.content.type.component.SubTypeFetcher;
-import com.enonic.wem.api.content.type.component.SubTypeReference;
+import com.enonic.wem.api.content.type.form.FormItem;
+import com.enonic.wem.api.content.type.form.FormItemPath;
+import com.enonic.wem.api.content.type.form.FormItemSet;
+import com.enonic.wem.api.content.type.form.FormItems;
+import com.enonic.wem.api.content.type.form.HierarchicalFormItem;
+import com.enonic.wem.api.content.type.form.Input;
+import com.enonic.wem.api.content.type.form.SubTypeFetcher;
+import com.enonic.wem.api.content.type.form.SubTypeReference;
 import com.enonic.wem.api.module.Module;
 
 public class ContentType
@@ -30,7 +30,7 @@ public class ContentType
 
     private ComputedDisplayName computedDisplayName;
 
-    private final Components components = new Components();
+    private final FormItems formItems = new FormItems();
 
     public String getName()
     {
@@ -107,73 +107,71 @@ public class ContentType
         this.computedDisplayName = computedDisplayName;
     }
 
-    public void addComponent( final Component component )
+    public void addFormItem( final FormItem formItem )
     {
-        this.components.add( component );
+        this.formItems.add( formItem );
     }
 
-    public Iterable<Component> componentIterable()
+    public Iterable<FormItem> formItemIterable()
     {
-        return components;
+        return formItems;
     }
 
-    public HierarchicalComponent getComponent( final String path )
+    public HierarchicalFormItem getFormItem( final String path )
     {
-        return components.getComponent( new ComponentPath( path ) );
+        return formItems.getFormItem( new FormItemPath( path ) );
     }
 
-    public HierarchicalComponent getComponent( final ComponentPath path )
+    public HierarchicalFormItem getFormItem( final FormItemPath path )
     {
-        return components.getComponent( path );
+        return formItems.getFormItem( path );
     }
 
-    public Components getComponents()
+    public FormItems getFormItems()
     {
-        return components;
+        return formItems;
     }
 
-    public Input getInput( final ComponentPath path )
+    public Input getInput( final FormItemPath path )
     {
-        return components.getInput( path );
+        return formItems.getInput( path );
     }
 
     public Input getInput( final String path )
     {
-        return ComponentPath.hasNotPathElementDivider( path )
-            ? components.getInput( path )
-            : components.getInput( new ComponentPath( path ) );
+        return FormItemPath.hasNotPathElementDivider( path ) ? formItems.getInput( path ) : formItems.getInput( new FormItemPath( path ) );
     }
 
-    public ComponentSet getComponentSet( final ComponentPath path )
+    public FormItemSet getFormItemSet( final FormItemPath path )
     {
-        return components.getComponentSet( path );
+        return formItems.getFormItemSet( path );
     }
 
-    public ComponentSet getComponentSet( final String path )
+    public FormItemSet getFormItemSet( final String path )
     {
-        return ComponentPath.hasNotPathElementDivider( path )
-            ? components.getComponentSet( path )
-            : components.getComponentSet( new ComponentPath( path ) );
+        return FormItemPath.hasNotPathElementDivider( path )
+            ? formItems.getFormItemSet( path )
+            : formItems.getFormItemSet( new FormItemPath( path ) );
     }
 
-    public SubTypeReference getSubTypeReference( final ComponentPath path )
+    public SubTypeReference getSubTypeReference( final FormItemPath path )
     {
-        return components.getSubTypeReference( path );
+        return formItems.getSubTypeReference( path );
     }
 
     public SubTypeReference getSubTypeReference( final String path )
     {
-        return ComponentPath.hasNotPathElementDivider( path )
-            ? components.getSubTypeReference( path )
-            : components.getSubTypeReference( new ComponentPath( path ) );
+        return FormItemPath.hasNotPathElementDivider( path )
+            ? formItems.getSubTypeReference( path )
+            : formItems.getSubTypeReference( new FormItemPath( path ) );
     }
 
-    public void subTypeReferencesToComponents( final SubTypeFetcher subTypeFetcher )
+    public void subTypeReferencesToFormItems( final SubTypeFetcher subTypeFetcher )
     {
-        components.subTypeReferencesToComponents( subTypeFetcher );
+        formItems.subTypeReferencesToFormItems( subTypeFetcher );
     }
 
-    public static Builder newComponentType()
+    public static Builder newContentType()
     {
         return new Builder();
     }
@@ -189,7 +187,7 @@ public class ContentType
         private boolean isAbstract;
 
 
-        private List<Component> componentList = new ArrayList<Component>();
+        private List<FormItem> formItemList = new ArrayList<FormItem>();
 
         public Builder name( String name )
         {
@@ -215,17 +213,17 @@ public class ContentType
             return this;
         }
 
-        public Builder add( Component component )
+        public Builder add( FormItem formItem )
         {
-            this.componentList.add( component );
+            this.formItemList.add( formItem );
             return this;
         }
 
-        public Builder components( final Components components )
+        public Builder formItems( final FormItems formItems )
         {
-            for ( Component component : components )
+            for ( FormItem formItem : formItems )
             {
-                this.add( component );
+                this.add( formItem );
             }
             return this;
         }
@@ -238,9 +236,9 @@ public class ContentType
             type.setDisplayName( displayName );
             type.setAbstract( isAbstract );
 
-            for ( Component component : componentList )
+            for ( FormItem formItem : formItemList )
             {
-                type.addComponent( component );
+                type.addFormItem( formItem );
             }
             return type;
         }

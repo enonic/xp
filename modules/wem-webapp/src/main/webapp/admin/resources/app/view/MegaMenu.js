@@ -23,6 +23,7 @@ Ext.define('Admin.view.MegaMenu', {
     recentCount: 6,
     cookieKey: 'admin.main.megamenu',
     cookieSeparator: '|',
+    loadMenuItems: null,
 
     loader: {
         autoLoad: true,
@@ -60,6 +61,9 @@ Ext.define('Admin.view.MegaMenu', {
 
     afterRender: function (ct) {
         var me = this;
+        if (this.loadMenuItems) {
+            this.on('afterrender', this.loadMenuItems, this);
+        }
         this.callParent(arguments);
         if (this.keyNav) {
             this.keyNav.destroy();
