@@ -39,10 +39,18 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
 
         if (me.toolbar.store) {
             me.toolbar.store.on('load', function (store) {
-                me.updateResultCount(me.toolbar.store.getCount());
+                me.updateResultCount(store.getCount());
             });
 
             // TODO: Listen for other store changes
+        }
+
+        if (me.toolbar.gridPanel) {
+            me.toolbar.gridPanel.getSelectionModel().on('selectionchange', function (model, selected, eOpts) {
+                me.updateSelectAll(selected);
+            });
+
+            // TODO: Listen for other grid changes
         }
     },
 
@@ -58,14 +66,12 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
             listeners: {
                 render: function (cmp) {
                     cmp.el.on('click', function () {
+                        // don't update text here, it will be done on selectionchange
                         if (cmp.el.hasCls('admin-grid-toolbar-btn-none-selected')) {
                             me.toolbar.gridPanel.getSelectionModel().selectAll();
-                            cmp.el.setHTML('Deselect all');
                         } else {
                             me.toolbar.gridPanel.getSelectionModel().deselectAll();
-                            cmp.el.setHTML('Select all');
                         }
-                        cmp.el.toggleCls('admin-grid-toolbar-btn-none-selected');
                     });
                 }
             }
@@ -120,6 +126,20 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
 
     updateResultCount: function (count) {
         this.resultTextItem.setText(count + ' results - ');
+    },
+
+    updateSelectAll: function (selected) {
+        var btn = this.selectAllButton;
+        var isSelectMode = btn.el.hasCls('admin-grid-toolbar-btn-none-selected');
+        var areAllRecordsSelected = !Ext.isEmpty(selected) && this.toolbar.store.getCount() == selected.length;
+        // switch from select all to deselect all in case we selected all records, and vice versa otherwise
+        if (areAllRecordsSelected && isSelectMode) {
+            btn.el.setHTML('Deselect all');
+            btn.el.removeCls('admin-grid-toolbar-btn-none-selected');
+        } else if (!areAllRecordsSelected && !isSelectMode) {
+            btn.el.setHTML('Select all');
+            btn.el.addCls('admin-grid-toolbar-btn-none-selected');
+        }
     }
 
 });
