@@ -28,7 +28,7 @@ Ext.define('Admin.view.datadesigner.TreeGridPanel', {
             },
             {
                 header: 'Last Modified',
-                dataIndex: 'lastModified',
+                dataIndex: 'modifiedTime',
                 renderer: this.prettyDateRenderer
             }
         ];
@@ -38,7 +38,7 @@ Ext.define('Admin.view.datadesigner.TreeGridPanel', {
     nameRenderer: function (value, p, record) {
         var contentType = record.data;
         var icon = contentType.icon === '' ? 'resources/images/icons/32x32/cubes.png' : contentType.icon;
-        return Ext.String.format(Templates.datadesigner.gridPanelRenderer, icon, contentType.displayName, contentType['extends']);
+        return Ext.String.format(Templates.datadesigner.gridPanelRenderer, icon, contentType.name, contentType.qualifiedName);
     },
 
     prettyDateRenderer: function (value, p, record) {
