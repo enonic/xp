@@ -2,129 +2,55 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.browseToolbar',
 
-    border: false,
+    cls: 'admin-toolbar',
+    border: true,
+
+    defaults: {
+        scale: 'medium',
+        iconAlign: 'top',
+        minWidth: 64
+    },
 
     initComponent: function () {
-        var buttonDefaults = {
-            scale: 'medium',
-            iconAlign: 'top',
-            minWidth: 64
-        };
-
         this.items = [
             {
-                xtype: 'buttongroup',
-                columns: 1,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        xtype: 'splitbutton',
-                        text: ' New',
-                        action: 'newContent',
-                        iconCls: 'icon-content-add-24',
-                        cls: 'x-btn-as-arrow',
-                        menu: Ext.create('Admin.view.MegaMenu', {
-                            recentCount: 4,
-                            cookieKey: 'admin.contentmanager.megamenu',
-                            url: 'resources/data/contentManagerMenu.json',
-                            loadMenuItems: this.generateContentTypesMenu
-                        })
-                    }
-                ]
+                xtype: 'splitbutton',
+                text: ' New',
+                action: 'newContent',
+                cls: 'x-btn-as-arrow',
+                menu: Ext.create('Admin.view.MegaMenu', {
+                    recentCount: 4,
+                    cookieKey: 'admin.contentmanager.megamenu',
+                    url: 'resources/data/contentManagerMenu.json',
+                    loadMenuItems: this.generateContentTypesMenu
+                })
             },
             {
-                xtype: 'buttongroup',
-                columns: 1,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        text: 'Publish',
-                        iconCls: 'icon-publish-24',
-                        action: 'publishContent'
-                    }
-                ]
+                text: 'Edit',
+                action: 'editContent'
             },
             {
-                xtype: 'buttongroup',
-                columns: 2,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        text: 'Edit',
-                        action: 'editContent',
-                        iconCls: 'icon-edit-generic'
-                    },
-                    {
-                        text: 'Delete',
-                        action: 'deleteContent',
-                        iconCls: 'icon-delete-24'
-                    }
-                ]
+                text: 'Open',
+                action: 'viewContent'
             },
             {
-                xtype: 'buttongroup',
-                columns: 2,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        text: 'Duplicate',
-                        action: 'duplicateContent',
-                        iconCls: 'icon-copy-24'
-                    },
-                    {
-                        text: 'Move',
-                        iconCls: 'icon-move-24',
-                        action: 'moveContent'
-                    }
-                ]
+                text: 'Delete',
+                action: 'deleteContent'
             },
             {
-                xtype: 'buttongroup',
-                columns: 2,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        text: 'Relations',
-                        iconCls: 'icon-relation-24',
-                        action: 'contentRelations'
-                    },
-                    {
-                        text: 'History',
-                        iconCls: 'icon-history-24',
-                        action: 'contentHistory'
-                    }
-                ]
+                text: 'Duplicate',
+                action: 'duplicateContent'
             },
             {
-                xtype: 'buttongroup',
-                columns: 1,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        text: 'View',
-                        action: 'viewContent',
-                        iconCls: 'icon-view-24'
-                    }
-                ]
-            },
-            {
-                xtype: 'buttongroup',
-                columns: 1,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        text: 'Export',
-                        iconCls: 'icon-export-24',
-                        action: 'exportContent'
-                    }
-                ]
+                text: 'Move',
+                action: 'moveContent'
             }
         ];
 
         this.callParent(arguments);
     },
 
-    generateContentTypesMenu: function() {
+    generateContentTypesMenu: function () {
         var menu = this;
         Admin.lib.RemoteService.contentType_list({}, function (rpcResponse) {
             var menuItems = [], contentTypes, menuSection;

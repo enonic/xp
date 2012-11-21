@@ -6,7 +6,7 @@ Ext.define('Admin.view.TreeGridPanel', {
 
     requires: [
         'Admin.plugin.PersistentGridSelectionPlugin',
-        'Admin.plugin.SlidingPagerPlugin'
+        'Admin.plugin.GridToolbarPlugin'
     ],
 
     treeConf: {},
@@ -26,15 +26,17 @@ Ext.define('Admin.view.TreeGridPanel', {
         treeColumns[0].xtype = 'treecolumn';
         // We don't need renderer for tree column
         delete treeColumns[0].renderer;
-
         var treePanel = {
             xtype: 'treepanel',
             cls: 'admin-tree-panel',
+            hideHeaders: true,
             itemId: 'tree',
             useArrows: true,
+            border: false,
             rootVisible: false,
 
             viewConfig: {
+                trackOver: true,
                 stripeRows: true,
                 loadMask: {
                     store: me.treeStore
@@ -48,12 +50,10 @@ Ext.define('Admin.view.TreeGridPanel', {
         var gridPanel = {
             xtype: 'grid',
             itemId: 'grid',
+            cls: 'admin-grid',
+            border: false,
+            hideHeaders: true,
             plugins: [],
-            tbar: {
-                xtype: 'pagingtoolbar',
-                store: this.store,
-                plugins: ['slidingPagerPlugin']
-            },
             viewConfig: {
                 trackOver: true,
                 stripeRows: true,
@@ -75,6 +75,24 @@ Ext.define('Admin.view.TreeGridPanel', {
                 node.set('iconCls', iconCls);
             }
         });
+        var grid = this.down('#grid');
+        grid.addDocked({
+            xtype: 'toolbar',
+            cls: 'admin-white-toolbar',
+            dock: 'top',
+            store: this.store,
+            gridPanel: grid,
+            plugins: ['gridToolbarPlugin']
+        });
+        var tree = this.down('#tree');
+        tree.addDocked({
+            xtype: 'toolbar',
+            cls: 'admin-white-toolbar',
+            dock: 'top',
+            store: this.treeStore,
+            gridPanel: tree,
+            plugins: ['gridToolbarPlugin']
+        });
     },
 
     resolveIconClass: function (node) {
@@ -84,6 +102,7 @@ Ext.define('Admin.view.TreeGridPanel', {
         if (Ext.isEmpty(iconCls) && me.iconClasses && me.iconClasses[nodeType]) {
             iconCls += " " + me.iconClasses[nodeType];
         }
+        console.log(iconCls);
         return iconCls;
     },
 
