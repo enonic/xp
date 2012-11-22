@@ -13,7 +13,7 @@ Ext.define('Admin.controller.account.GroupController', {
 
     /*   Public, only CRUD model methods here please     */
 
-    saveGroupToDB: function (group, callback) {
+    remoteCreateOrUpdateGroup: function (group, callback) {
         var me = this;
         group.key = group.key || ['group', group.userStore, group.name].join(':');
         Admin.lib.RemoteService.account_createOrUpdate(group, function (r) {
@@ -23,7 +23,7 @@ Ext.define('Admin.controller.account.GroupController', {
         });
     },
 
-    deleteGroupFromDB: function (group, callback) {
+    remoteDeleteGroup: function (group, callback) {
         //TODO
     }
 

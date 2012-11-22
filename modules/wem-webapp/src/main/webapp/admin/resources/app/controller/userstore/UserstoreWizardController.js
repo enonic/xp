@@ -175,7 +175,7 @@ Ext.define('Admin.controller.userstore.UserstoreWizardController', {
                 }
             }
         };
-        me.saveUserstoreToDB(data, onUpdateGroupSuccess);
+        me.remoteCreateOrUpdateUserstore(data, onUpdateGroupSuccess);
     },
 
     deleteUserstore: function (el, e) {
@@ -183,7 +183,7 @@ Ext.define('Admin.controller.userstore.UserstoreWizardController', {
         var window = el.up('deleteUserstoreWindow');
         var name = (window && window.modelData) ? window.modelData.name : undefined;
         if (name) {
-            this.deleteUserstoreFromDB(name, function (success) {
+            this.remoteDeleteUserstore(name, function (success) {
                 if (success) {
                     window.close();
                     var editTab = me.getCmsTabPanel().down('#tab-userstore-' + name);
