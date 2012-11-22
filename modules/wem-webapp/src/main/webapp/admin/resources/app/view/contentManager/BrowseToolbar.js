@@ -26,8 +26,7 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
                         menu: Ext.create('Admin.view.MegaMenu', {
                             recentCount: 4,
                             cookieKey: 'admin.contentmanager.megamenu',
-                            url: 'resources/data/contentManagerMenu.json',
-                            loadMenuItems: this.generateContentTypesMenu
+                            url: this.loadContentTypesMenu
                         })
                     }
                 ]
@@ -124,7 +123,7 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
         this.callParent(arguments);
     },
 
-    generateContentTypesMenu: function() {
+    loadContentTypesMenu: function () {
         var menu = this;
         Admin.lib.RemoteService.contentType_list({}, function (rpcResponse) {
             var menuItems = [], contentTypes, menuSection;
@@ -148,21 +147,12 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
             menuSection.minWidth = 160;
             menuItems.push(menuSection);
 
-            menu.add({
-                xtype: 'container',
-                itemId: 'itemSection',
-                layout: {
-                    type: 'table',
-                    columns: 4,
-                    tdAttrs: {
-                        style: {
-                            'vertical-align': 'top'
-                        }
-                    }
-                },
-                items: menuItems
-            });
-            menu.doLayout();
+            var itemSection = menu.down('#itemSection');
+            if (menuItems.length > 0 && itemSection) {
+                itemSection.layout.columns = 1;
+                itemSection.removeAll(true);
+                itemSection.add(menuItems);
+            }
         });
     }
 

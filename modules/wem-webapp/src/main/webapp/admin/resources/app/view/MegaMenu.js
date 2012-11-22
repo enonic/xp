@@ -23,32 +23,34 @@ Ext.define('Admin.view.MegaMenu', {
     recentCount: 6,
     cookieKey: 'admin.main.megamenu',
     cookieSeparator: '|',
-    loadMenuItems: null,
-
-    loader: {
-        autoLoad: true,
-        renderer: function (loader, response, active) {
-            var menu = loader.getTarget();
-            var menuItems = [];
-
-            if (menu.recentCount > 0) {
-                var recentContainer = menu.createRecentContainer();
-                menuItems.push(recentContainer);
-            }
-
-            var responseItems = menu.createItemsFromResponse(Ext.decode(response.responseText));
-            menuItems.push(responseItems);
-
-            menu.add(menuItems);
-            return true;
-        }
-    },
 
 
     initComponent: function () {
-        Ext.apply(this.loader, {
-            url: this.url
-        });
+
+        this.items = [];
+
+        if (this.recentCount > 0) {
+            this.items.push(this.createRecentContainer());
+            this.layout.columns = 2;
+        }
+        this.items.push(this.createItemContainer());
+
+        if (Ext.isString(this.url)) {
+
+            this.loader = {
+                url: this.url,
+                autoLoad: true,
+                renderer: function (loader, response, active) {
+
+                    var menu = loader.getTarget();
+                    menu.updateItemsFromResponse(Ext.decode(response.responseText));
+                    return true;
+                }
+            };
+
+        } else if (Ext.isFunction(this.url)) {
+            this.url.call(this);
+        }
 
         this.callParent(arguments);
 
@@ -61,9 +63,6 @@ Ext.define('Admin.view.MegaMenu', {
 
     afterRender: function (ct) {
         var me = this;
-        if (this.loadMenuItems) {
-            this.on('afterrender', this.loadMenuItems, this);
-        }
         this.callParent(arguments);
         if (this.keyNav) {
             this.keyNav.destroy();
@@ -92,6 +91,25 @@ Ext.define('Admin.view.MegaMenu', {
     },
 
 
+    createRecentContainer: function () {
+
+        var recentSection = this.createMenuSection('Recent', [this.createPlaceholder("Recent items will<br/> be shown here")]);
+
+        return Ext.apply(recentSection, {
+            itemId: 'recentSection',
+            layout: {
+                type: 'table',
+                columns: 1,
+                tdAttrs: {
+                    style: {
+                        'vertical-align': 'top'
+                    }
+                }
+            },
+            cls: recentSection.cls + ' recent'
+        });
+    },
+
     updateRecentItems: function () {
         var me = this;
 
@@ -115,38 +133,38 @@ Ext.define('Admin.view.MegaMenu', {
             });
 
             if (recentItems.length === 0) {
-                recentItems.push({
-                    xtype: 'component',
-                    styleHtmlContent: true,
-                    html: '<p class="nodata">Recent items will<br/> be shown here</p>'
-                });
+                recentItems.push(this.createPlaceholder("Recent items will<br/> be shown here"));
             }
 
             var recentSection = this.down('#recentSection');
             if (recentSection) {
                 recentSection.removeAll(true);
                 recentSection.add(recentItems);
-                this.doLayout();
             }
         }
     },
 
-    createRecentContainer: function () {
+    createItemContainer: function () {
+        var itemSection = this.createMenuSection(null, [this.createPlaceholder("Loading...")]);
 
-        var recentSection = this.createMenuSection('Recent', []);
-
-        return Ext.apply(recentSection, {
-            itemId: 'recentSection',
+        return Ext.apply(itemSection, {
+            itemId: 'itemSection',
+            cls: '',
             layout: {
                 type: 'table',
-                columns: 1
-            },
-            cls: recentSection.cls + ' recent'
+                columns: 1,
+                tdAttrs: {
+                    style: {
+                        'vertical-align': 'top'
+                    }
+                }
+            }
         });
     },
 
-    createItemsFromResponse: function (data) {
+    updateItemsFromResponse: function (data) {
         var menuItems = [];
+        var columns = 0;
 
         if (data && data.menu) {
             var i;
@@ -161,24 +179,33 @@ Ext.define('Admin.view.MegaMenu', {
                         sectionItems.push(this.createMenuItem(section.menu.items[j]));
                     }
                     menuItems.push(this.createMenuSection(section.text, sectionItems));
+                    if (!Ext.isEmpty(section.text)) {
+                        columns++;
+                    }
                 }
             }
         }
+
+        if (menuItems.length === 0) {
+            menuItems.push(this.createPlaceholder("No items"));
+        }
+
+        var itemSection = this.down('#itemSection');
+        if (menuItems.length > 0 && itemSection) {
+            itemSection.layout.columns = columns;
+            itemSection.removeAll(true);
+            itemSection.add(menuItems);
+        }
+    },
+
+    createPlaceholder: function (text) {
         return {
-            xtype: 'container',
-            itemId: 'itemSection',
-            layout: {
-                type: 'table',
-                columns: 4,
-                tdAttrs: {
-                    style: {
-                        'vertical-align': 'top'
-                    }
-                }
-            },
-            items: menuItems
+            xtype: 'component',
+            styleHtmlContent: true,
+            html: '<p class="nodata">' + text + '</p>'
         };
     },
+
 
     createMenuItem: function (item) {
         return Ext.apply({
@@ -188,7 +215,7 @@ Ext.define('Admin.view.MegaMenu', {
     },
 
     createMenuSection: function (header, items) {
-        var hasHeader = Ext.isDefined(header);
+        var hasHeader = !Ext.isEmpty(header);
         return {
             xtype: 'panel',
             title: hasHeader ? '<h2>' + header + '</h2>' : undefined,
@@ -197,11 +224,13 @@ Ext.define('Admin.view.MegaMenu', {
             plain: true,
             colspan: hasHeader ? 1 : 4,
             layout: {
-                type: 'vbox'
+                type: 'vbox',
+                align: 'stretch'
             },
             items: items
         };
     },
+
 
     createItemMap: function () {
         var result = [];
