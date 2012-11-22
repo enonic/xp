@@ -35,6 +35,7 @@ public class DeleteContentsHandler
             {
                 contentDao.deleteContent( contentPath, context.getJcrSession() );
                 contentDeletionResult.success( contentPath );
+                context.getJcrSession().save();
             }
             catch ( ContentNotFoundException e )
             {

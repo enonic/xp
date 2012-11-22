@@ -67,7 +67,7 @@ Ext.define('Admin.controller.userstore.EditFormController', {
     saveUserstore: function () {
         var form = this.getUserstoreForm().getForm();
         if (form.isValid()) {
-            this.saveUserstoreToDB(form.getValues());
+            this.remoteCreateOrUpdateUserstore(form.getValues());
         }
     },
 

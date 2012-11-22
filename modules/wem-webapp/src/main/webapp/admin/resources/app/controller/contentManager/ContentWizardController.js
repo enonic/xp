@@ -108,13 +108,12 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
                 }
                 if (parentApp) {
                     parentApp.fireEvent('notifier.show', "Content was saved",
-                        "Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.",
-                        false);
+                        "Content with path: " + contentParams.contentPath + " was saved", false);
                 }
                 me.getContentTreeGridPanel().refresh();
             }
         };
-        this.saveContentToDB(contentParams, onUpdateContentSuccess);
+        this.remoteCreateOrUpdateContent(contentParams, onUpdateContentSuccess);
     },
 
     getDisplayNameValue: function (contentWizard) {

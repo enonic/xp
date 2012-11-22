@@ -89,7 +89,7 @@ Ext.define('Admin.controller.account.GroupWizardController', {
             var current = me.getAccountGridPanel().store.currentPage;
             me.getAccountGridPanel().store.loadPage(current);
         };
-        this.saveGroupToDB(data, onUpdateGroupSuccess);
+        this.remoteCreateOrUpdateGroup(data, onUpdateGroupSuccess);
     },
 
     deleteGroup: function (el, evt) {
