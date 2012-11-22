@@ -4,61 +4,68 @@
     "children": [
         {
             "name": "Form",
-            "type": "form",
+            "module": "form",
             "icon": "resources/images/icons/128x128/form_blue.png",
-            "key": 1,
-            "lastModified": "2010-10-10 10:10:00",
+            "qualifiedName": 1,
+            "modifiedTime": "2011-11-11 11:11:11",
+            "createdTime": "2010-10-10 10:10:10",
             "children": [
 
             ]
         },
         {
             "name": "Folder",
-            "key": 2,
-            "type": "folder",
+            "qualifiedName": 2,
+            "module": "folder",
             "icon": "resources/images/icons/128x128/folder_blue.png",
-            "lastModified": "2010-10-10 10:10:00",
+            "modifiedTime": "2011-11-11 11:11:11",
+            "createdTime": "2010-10-10 10:10:10",
             "children": [
                 {
                     "name": "News",
-                    "type": "folder",
+                    "module": "folder",
                     "icon": "resources/images/icons/128x128/folder_blue.png",
-                    "lastModified": "2010-10-10 10:10:00",
-                    "key": 3,
+                    "modifiedTime": "2011-11-11 11:11:11",
+                    "createdTime": "2010-10-10 10:10:10",
+                    "qualifiedName": 3,
                     "children": []
                 },
                 {
                     "name": "Persons",
-                    "type": "folder",
+                    "module": "folder",
                     "icon": "resources/images/icons/128x128/folder_blue.png",
-                    "lastModified": "2010-10-10 10:10:00",
-                    "key": 5,
+                    "modifiedTime": "2011-11-11 11:11:11",
+                    "createdTime": "2010-10-10 10:10:10",
+                    "qualifiedName": 5,
                     "children": []
                 }
             ]
         },
         {
             "name": "Media",
-            "key": 6,
-            "type": "media",
-            "lastModified": "2010-10-10 10:10:00",
+            "qualifiedName": 6,
+            "module": "media",
+            "modifiedTime": "2011-11-11 11:11:11",
+            "createdTime": "2010-10-10 10:10:10",
             "icon": "resources/images/icons/128x128/film.png",
             "children": [
                 {
                     "name": "Audio",
-                    "key": 7,
-                    "type": "media",
+                    "qualifiedName": 7,
+                    "module": "media",
                     "icon": "resources/images/icons/128x128/film.png",
-                    "lastModified": "2010-10-10 10:10:00",
+                    "modifiedTime": "2011-11-11 11:11:11",
+                    "createdTime": "2010-10-10 10:10:10",
                     "children": [
 
                     ]
                 },
                 {
                     "name": "Image",
-                    "key": 8,
-                    "lastModified": "2010-10-10 10:10:00",
-                    "type": "media",
+                    "qualifiedName": 8,
+                    "modifiedTime": "2011-11-11 11:11:11",
+                    "createdTime": "2010-10-10 10:10:10",
+                    "module": "media",
                     "icon": "resources/images/icons/128x128/film.png",
                     "children": [
 
@@ -66,9 +73,10 @@
                 },
                 {
                     "name": "Video",
-                    "key": 9,
-                    "lastModified": "2010-10-10 10:10:00",
-                    "type": "media",
+                    "qualifiedName": 9,
+                    "modifiedTime": "2011-11-11 11:11:11",
+                    "createdTime": "2010-10-10 10:10:10",
+                    "module": "media",
                     "icon": "resources/images/icons/128x128/film.png",
                     "children": [
 
@@ -76,10 +84,11 @@
                 },
                 {
                     "name": "Document",
-                    "key": 10,
-                    "type": "media",
+                    "qualifiedName": 10,
+                    "module": "media",
                     "icon": "resources/images/icons/128x128/film.png",
-                    "lastModified": "2010-10-10 10:10:00",
+                    "modifiedTime": "2011-11-11 11:11:11",
+                    "createdTime": "2010-10-10 10:10:10",
                     "children": [
 
                     ]
@@ -88,35 +97,39 @@
         },
         {
             "name": "Shortcut",
-            "type": "shortcut",
+            "module": "shortcut",
             "icon": "resources/images/icons/128x128/link.png",
-            "key": 21,
-            "lastModified": "2010-10-10 10:10:00",
+            "qualifiedName": 21,
+            "modifiedTime": "2011-11-11 11:11:11",
+            "createdTime": "2010-10-10 10:10:10",
             "children": [
 
             ]
         },
         {
             "name": "Structured",
-            "key": 11,
-            "type": "struct",
+            "qualifiedName": 11,
+            "module": "struct",
             "icon": "resources/images/icons/128x128/books_blue.png",
-            "lastModified": "2010-10-10 10:10:00",
+            "modifiedTime": "2011-11-11 11:11:11",
+            "createdTime": "2010-10-10 10:10:10",
             "children": [
                 {
                     "name": "Fruit",
-                    "key": 12,
-                    "type": "struct",
+                    "qualifiedName": 12,
+                    "module": "struct",
                     "icon": "resources/images/icons/128x128/books_blue.png",
-                    "lastModified": "2010-10-10 10:10:00",
+                    "modifiedTime": "2011-11-11 11:11:11",
+                    "createdTime": "2010-10-10 10:10:10",
                     "leaf": true
                 },
                 {
                     "name": "Person",
-                    "lastModified": "2010-10-10 10:10:00",
-                    "type": "struct",
+                    "modifiedTime": "2011-11-11 11:11:11",
+                    "createdTime": "2010-10-10 10:10:10",
+                    "module": "struct",
                     "icon": "resources/images/icons/128x128/books_blue.png",
-                    "key": 13,
+                    "qualifiedName": 13,
                     "leaf": true
                 }
             ]
