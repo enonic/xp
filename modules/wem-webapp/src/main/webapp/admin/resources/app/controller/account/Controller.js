@@ -389,10 +389,12 @@ Ext.define('Admin.controller.account.Controller', {
 
     updateLauncherToolbarItems: function () {
         var tabPanel = this.getCmsTabPanel();
-        var tabMenu = this.getLauncherToolbar().getTabMenu();
-
-        // used by tabMenu to track tabs
-        tabMenu.setActiveTabPanel(tabPanel);
+        var launcherToolbar = this.getLauncherToolbar();
+        if (launcherToolbar) {
+            var tabMenu = launcherToolbar.getTabMenu();
+            // used by tabMenu to track tabs
+            tabMenu.setActiveTabPanel(tabPanel);
+        }
     },
 
     initKeyMap: function () {
