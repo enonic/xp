@@ -17,7 +17,10 @@ Ext.define('Admin.controller.account.Controller', {
                 afterrender: this.initKeyMap
             },
             'cmsTabPanel': {
-                afterrender: this.updateActionItems
+                afterrender: function () {
+                    this.updateActionItems();
+                    this.updateLauncherToolbarItems();
+                }
             },
             'userStoreListPanel': {
                 itemclick: this.openNewAccountTab
@@ -48,6 +51,7 @@ Ext.define('Admin.controller.account.Controller', {
         });
 
     },
+
 
     /*      Public, should operate with accounts only      */
 
@@ -124,10 +128,16 @@ Ext.define('Admin.controller.account.Controller', {
         window.show();
     },
 
+
     /*      Private     */
 
     openPreviewAccountTabs: function (selection, callback) {
-        var me = this, tabPane = me.getCmsTabPanel(), i = 0, selectedAccount, createUserTabFn = function (response) {
+        var me = this,
+            tabPane = me.getCmsTabPanel(),
+            i = 0,
+            selectedAccount;
+
+        var createUserTabFn = function (response) {
             if (Ext.isFunction(callback)) {
                 callback();
             }
@@ -136,7 +146,8 @@ Ext.define('Admin.controller.account.Controller', {
                 data: response,
                 user: response
             };
-        }, createGroupTabFn = function (response) {
+        };
+        var createGroupTabFn = function (response) {
             if (Ext.isFunction(callback)) {
                 callback();
             }
@@ -145,7 +156,8 @@ Ext.define('Admin.controller.account.Controller', {
                 data: response,
                 group: response
             };
-        }, openPreviewUserTab = function (selectedUser) {
+        };
+        var openPreviewUserTab = function (selectedUser) {
             var requestConfig = {
                 doTabRequest: function (handleRpcResponse) {
                     Admin.lib.RemoteService.account_get({ key: selectedUser.key }, function (rpcResp) {
@@ -168,7 +180,8 @@ Ext.define('Admin.controller.account.Controller', {
                 tabPane.remove(index);
             }
             tabPane.addTab(tabItem, index >= 0 ? index : undefined, requestConfig);
-        }, openPreviewGroupTab = function (selectedGroup) {
+        };
+        var openPreviewGroupTab = function (selectedGroup) {
             var requestConfig = {
                 doTabRequest: function (handleRpcResponse) {
                     Admin.lib.RemoteService.account_get({ key: selectedGroup.key }, function (rpcResp) {
@@ -204,7 +217,12 @@ Ext.define('Admin.controller.account.Controller', {
     },
 
     openEditAccountTabs: function (selection, callback) {
-        var tabPane = this.getCmsTabPanel(), me = this, i, selectedAccount, createUserWizardFn = function (response) {
+        var tabPane = this.getCmsTabPanel(),
+            me = this,
+            i = 0,
+            selectedAccount;
+
+        var createUserWizardFn = function (response) {
             var tab = {
                 xtype: 'userWizardPanel',
                 userstore: response.userStore,
@@ -222,7 +240,8 @@ Ext.define('Admin.controller.account.Controller', {
                 callback();
             }
             return tabCmp;
-        }, createGroupWizardFn = function (response) {
+        };
+        var createGroupWizardFn = function (response) {
             var tab = {
                 xtype: 'groupWizardPanel',
                 modelData: response,
@@ -233,7 +252,8 @@ Ext.define('Admin.controller.account.Controller', {
                 callback();
             }
             return tab;
-        }, openEditUserTab = function (selectedUser) {
+        };
+        var openEditUserTab = function (selectedUser) {
             var requestConfig = {
                 doTabRequest: function (handleRpcResponse) {
                     Admin.lib.RemoteService.account_get({ key: selectedUser.key }, function (rpcResp) {
@@ -249,6 +269,7 @@ Ext.define('Admin.controller.account.Controller', {
                 title: selectedUser.displayName + ' (' + selectedUser.qualifiedName + ')',
                 iconCls: 'icon-user',
                 closable: true,
+                editing: true,
                 layout: 'fit'
             };
             //check if preview tab is open and close it
@@ -257,7 +278,8 @@ Ext.define('Admin.controller.account.Controller', {
                 tabPane.remove(index);
             }
             tabPane.addTab(tabItem, index >= 0 ? index : undefined, requestConfig);
-        }, openEditGroupTab = function (selectedGroup) {
+        };
+        var openEditGroupTab = function (selectedGroup) {
             var requestConfig = {
                 doTabRequest: function (handleRpcResponse) {
                     Admin.lib.RemoteService.account_get({ key: selectedGroup.key }, function (rpcResp) {
@@ -266,7 +288,7 @@ Ext.define('Admin.controller.account.Controller', {
                                 handleRpcResponse(rpcResp);
                             }
                         }
-                    })
+                    });
                 },
                 createTabFromResponse: createGroupWizardFn
             };
@@ -277,6 +299,7 @@ Ext.define('Admin.controller.account.Controller', {
                 title: selectedGroup.displayName,
                 iconCls: tabIconCls,
                 closable: true,
+                editing: true,
                 layout: 'fit'
             };
             //check if preview tab is open and close it
@@ -361,6 +384,16 @@ Ext.define('Admin.controller.account.Controller', {
             for (k = 0; k < deleteButtons.length; k++) {
                 deleteButtons[k].setDisabled(isRole || !isEditable);
             }
+        }
+    },
+
+    updateLauncherToolbarItems: function () {
+        var tabPanel = this.getCmsTabPanel();
+        var launcherToolbar = this.getLauncherToolbar();
+        if (launcherToolbar) {
+            var tabMenu = launcherToolbar.getTabMenu();
+            // used by tabMenu to track tabs
+            tabMenu.setActiveTabPanel(tabPanel);
         }
     },
 
@@ -451,6 +484,7 @@ Ext.define('Admin.controller.account.Controller', {
                 id: Ext.id(null, 'new-group-'),
                 title: 'New Group',
                 iconCls: 'icon-group',
+                editing: true,
                 closable: true,
                 layout: 'fit',
                 items: [
@@ -465,6 +499,7 @@ Ext.define('Admin.controller.account.Controller', {
                 id: Ext.id(null, 'new-user-'),
                 title: 'New User',
                 iconCls: 'icon-user',
+                editing: true,
                 closable: true,
                 layout: 'fit',
                 items: [
@@ -477,8 +512,8 @@ Ext.define('Admin.controller.account.Controller', {
         }
         var tabItem = this.getCmsTabPanel().addTab(tab);
         tabItem.down('wizardPanel').addData({'userStore': userStoreName});
-        var window = view.up('selectUserStoreWindow');
-        window.close();
+
+        view.up('selectUserStoreWindow').close();
     },
 
     deleteAccounts: function (item) {
@@ -505,6 +540,7 @@ Ext.define('Admin.controller.account.Controller', {
             }
         });
     },
+
 
     /*      Getters     */
 
