@@ -29,7 +29,7 @@ public class Blob
     }
 
     @Override
-    boolean hasCorrectType( final Object value )
+    public boolean hasCorrectType( final Object value )
     {
         return byte[].class.isInstance( value ) || BlobKey.class.isInstance( value ) || super.hasCorrectType( value );
     }

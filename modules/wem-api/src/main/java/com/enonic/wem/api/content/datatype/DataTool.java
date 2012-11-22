@@ -21,12 +21,24 @@ public class DataTool
         throws InvalidDataException
     {
         final DataSet dataSet = dataContainingSet.getDataSet();
+        checkDataType( dataSet, path, dataType );
+    }
+
+    public static void checkDataType( final DataSet dataSet, final String path, final DataType dataType )
+        throws InvalidDataException
+    {
         final Data data = dataSet.getData( new EntryPath( path ) );
         if ( data == null )
         {
             return;
         }
 
+        checkDataType( data, dataType );
+    }
+
+    public static void checkDataType( final Data data, final DataType dataType )
+        throws InvalidDataException
+    {
         if ( !data.getDataType().equals( dataType ) )
         {
             throw new InvalidDataTypeException( data, dataType );
@@ -55,6 +67,16 @@ public class DataTool
         {
             throw new InvalidValueException( data, "Value not within range from " + rangeStart + " to " + rangeStop );
         }
+    }
+
+    public static void ensureType( final DataType dataType, final Data data )
+    {
+        if ( data.getDataType().equals( dataType ) )
+        {
+            return;
+        }
+
+        dataType.ensureType( data );
     }
 
     public static Checker newDataChecker()

@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataArray;
+import com.enonic.wem.api.content.datatype.InvalidDataTypeException;
 import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.type.form.inputtype.BaseInputType;
 import com.enonic.wem.api.content.type.form.inputtype.InputType;
@@ -174,6 +175,10 @@ public class Input
             type.checkValidity( data );
         }
         catch ( InvalidValueException e )
+        {
+            throw new InvalidDataException( data, e );
+        }
+        catch ( InvalidDataTypeException e )
         {
             throw new InvalidDataException( data, e );
         }

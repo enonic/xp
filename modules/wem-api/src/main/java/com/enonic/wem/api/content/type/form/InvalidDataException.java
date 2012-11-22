@@ -2,12 +2,19 @@ package com.enonic.wem.api.content.type.form;
 
 
 import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.datatype.InvalidDataTypeException;
 import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
 
 public class InvalidDataException
     extends RuntimeException
 {
     private Data data;
+
+    public InvalidDataException( final Data data, final InvalidDataTypeException e )
+    {
+        super( buildMessage( data ), e );
+        this.data = data;
+    }
 
     public InvalidDataException( final Data data, final InvalidValueTypeException e )
     {

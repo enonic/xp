@@ -36,7 +36,7 @@ final class DataEntries
         }
         else
         {
-            final DataArray array = new DataArray( data.getPath() );
+            final DataArray array = new DataArray( exData.getPath() );
             array.add( newData().path( exData.getPath() ).type( exData.getDataType() ).value( exData.getValue() ).build() );
             array.add( newData().path( data.getPath() ).type( data.getDataType() ).value( data.getValue() ).build() );
             final Data newDataWithArray = newData().path( data.getPath() ).type( DataTypes.ARRAY ).value( array ).build();

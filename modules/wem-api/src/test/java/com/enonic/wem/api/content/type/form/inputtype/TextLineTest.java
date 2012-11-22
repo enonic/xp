@@ -11,11 +11,6 @@ import static org.junit.Assert.*;
 
 public class TextLineTest
 {
-    @Test(expected = BreaksRequiredContractException.class)
-    public void breaksRequiredContract_textLine_which_is_null_throws_exception()
-    {
-        new TextLine().checkBreaksRequiredContract( Data.newData().value( null ).type( DataTypes.TEXT ).build() );
-    }
 
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_empty_throws_exception()

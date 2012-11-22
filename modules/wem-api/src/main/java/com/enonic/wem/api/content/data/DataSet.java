@@ -44,6 +44,8 @@ public final class DataSet
 
     public void add( final Data data )
     {
+        Preconditions.checkArgument( data.getPath().getParent().equals( this.getPath() ),
+                                     "This DataSet [%s] is not the parent of the Data to be added: %s", this.getPath(), data );
         entries.add( data );
     }
 
@@ -177,7 +179,7 @@ public final class DataSet
         if ( !data.hasDataSetAsValue() )
         {
             throw new IllegalArgumentException(
-                "Data at path [" + this.getPath() + "] expected to have a value of type Set: " + data.getDataType().getName() );
+                "Data at path [" + this.getPath() + "] expected to have a value of type DataSet: " + data.getDataType().getName() );
         }
 
         return data.getDataSet().getData( path.asNewWithoutFirstPathElement() );

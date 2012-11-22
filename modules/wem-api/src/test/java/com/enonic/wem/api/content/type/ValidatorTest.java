@@ -8,6 +8,7 @@ import org.junit.Test;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.datatype.DataTypes;
+import com.enonic.wem.api.content.datatype.InvalidDataTypeException;
 import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.type.form.BreaksRegexValidationException;
 import com.enonic.wem.api.content.type.form.FieldSet;
@@ -252,7 +253,7 @@ public class ValidatorTest
 
         // exercise
         Validator validator = newValidator().contentType( contentType ).build();
-        validateAndAssertInvalidDataException( validator, content, InvalidValueTypeException.class, content.getData( "myGeoLocation" ) );
+        validateAndAssertInvalidDataException( validator, content, InvalidDataTypeException.class, content.getData( "myGeoLocation" ) );
     }
 
     @Test
@@ -317,8 +318,8 @@ public class ValidatorTest
         }
         catch ( Exception e )
         {
-            assertTrue( "Expected exception" + InvalidDataException.class.getSimpleName(), InvalidDataException.class.isInstance( e ) );
-            assertTrue( "Expected cause" + cause.getSimpleName(), cause.isInstance( e.getCause() ) );
+            assertTrue( "Expected exception " + InvalidDataException.class.getSimpleName(), InvalidDataException.class.isInstance( e ) );
+            assertTrue( "Expected cause " + cause.getSimpleName(), cause.isInstance( e.getCause() ) );
             InvalidDataException invalidDataException = (InvalidDataException) e;
             assertEquals( data.getPath(), invalidDataException.getData().getPath() );
         }
