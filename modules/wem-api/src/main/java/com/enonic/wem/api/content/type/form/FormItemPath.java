@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.annotation.concurrent.Immutable;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-/**
- * Immutable.
- */
+@Immutable
 public class FormItemPath
 {
     private final static String ELEMENT_DIVIDER = ".";
 
-    private List<String> elements;
+    private final List<String> elements;
 
     public FormItemPath()
     {

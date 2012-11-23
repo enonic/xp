@@ -32,4 +32,9 @@ public final class ContentCommands
     {
         return new GetContentTree();
     }
+
+    public ValidateContentData validate()
+    {
+        return new ValidateContentData();
+    }
 }

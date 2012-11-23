@@ -1,20 +1,14 @@
 package com.enonic.wem.api.content.type;
 
 
-import java.util.Iterator;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.type.form.BreaksRequiredContractException;
 import com.enonic.wem.api.content.type.form.FormItemSet;
-import com.enonic.wem.api.content.type.form.MaximumOccurrencesException;
-import com.enonic.wem.api.content.type.form.MinimumOccurrencesException;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
-import static com.enonic.wem.api.content.type.OccurrenceValidator.newOccurrenceValidator;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
@@ -41,16 +35,10 @@ public class OccurrenceValidatorTest
         content.setData( "myInput[1]", "2" );
 
         // exercise
-        try
-        {
-            newOccurrenceValidator().contentType( contentType ).build().validate( content.getData() );
-            fail( "Expected exception" );
-        }
-        catch ( Exception e )
-        {
-            assertTrue( e instanceof MaximumOccurrencesException );
-            assertEquals( "Input [myInput] allows maximum 1 occurrence: 2", e.getMessage() );
-        }
+        final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
+        assertTrue( validationResults.hasErrors() );
+        assertTrue( validationResults.getFirst() instanceof MaximumOccurrencesValidationError );
+        assertEquals( "Input [myInput] allows maximum 1 occurrence: 2", validationResults.getFirst().getErrorMessage() );
     }
 
     @Test
@@ -64,16 +52,10 @@ public class OccurrenceValidatorTest
         content.setData( "myInput[2]", "3" );
 
         // exercise
-        try
-        {
-            newOccurrenceValidator().contentType( contentType ).build().validate( content.getData() );
-            fail( "Expected exception" );
-        }
-        catch ( Exception e )
-        {
-            assertTrue( e instanceof MaximumOccurrencesException );
-            assertEquals( "Input [myInput] allows maximum 2 occurrences: 3", e.getMessage() );
-        }
+        final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
+        assertTrue( validationResults.hasErrors() );
+        assertTrue( validationResults.getFirst() instanceof MaximumOccurrencesValidationError );
+        assertEquals( "Input [myInput] allows maximum 2 occurrences: 3", validationResults.getFirst().getErrorMessage() );
     }
 
     @Test
@@ -85,17 +67,11 @@ public class OccurrenceValidatorTest
         content.setData( "myInput", "value" );
 
         // exercise
-        try
-        {
-            newOccurrenceValidator().contentType( contentType ).build().validate( content.getData() );
-        }
-        catch ( Exception e )
-        {
-            fail( "No exception expected" );
-        }
+        final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
+        assertFalse( validationResults.hasErrors() );
     }
 
-    @Test(expected = MinimumOccurrencesException.class)
+    @Test
     public void given_required_input_with_no_data_when_validate_then_exception_is_thrown()
     {
         contentType.addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
@@ -103,7 +79,8 @@ public class OccurrenceValidatorTest
         content.setType( contentType.getQualifiedName() );
 
         // exercise
-        newOccurrenceValidator().contentType( contentType ).build().validate( content.getData() );
+        final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
+        assertTrue( validationResults.hasErrors() );
     }
 
     @Test
@@ -115,18 +92,9 @@ public class OccurrenceValidatorTest
         content.setData( "myInput", "" );
 
         // exercise
-        try
-        {
-            newOccurrenceValidator().contentType( contentType ).build().validate( content.getData() );
-            fail( "Expected exception" );
-        }
-        catch ( Exception e )
-        {
-            assertTrue( e instanceof MinimumOccurrencesException );
-            assertEquals(
-                "Input [myInput] requires minimum 1 occurrences. It had 1, but: Required contract for Data [myInput] is broken of type TextLine , value was: ",
-                e.getMessage() );
-        }
+        final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
+        assertTrue( validationResults.hasErrors() );
+        assertEquals( "Missing required value in input [myInput] of type [TextLine]: ", validationResults.getFirst().getErrorMessage() );
     }
 
     @Test
@@ -138,19 +106,13 @@ public class OccurrenceValidatorTest
         content.setData( "myInput", "value" );
 
         // exercise
-        try
-        {
-            newOccurrenceValidator().contentType( contentType ).build().validate( content.getData() );
-            fail( "Expected exception" );
-        }
-        catch ( Exception e )
-        {
-            assertTrue( e instanceof MinimumOccurrencesException );
-            assertEquals( "Input [myInput] requires minimum 2 occurrences: 1", e.getMessage() );
-        }
+        final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
+        assertTrue( validationResults.hasErrors() );
+        assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
+        assertEquals( "Input [myInput] requires minimum 2 occurrences: 1", validationResults.getFirst().getErrorMessage() );
     }
 
-    @Test(expected = MinimumOccurrencesException.class)
+    @Test
     public void given_required_field_with_no_data_within_layout_when_validate_then_exception_is_thrown()
     {
 
@@ -159,10 +121,12 @@ public class OccurrenceValidatorTest
         Content content = new Content();
 
         // exercise
-        newOccurrenceValidator().contentType( contentType ).build().validate( content.getData() );
+        final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
+        assertTrue( validationResults.hasErrors() );
+        assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
     }
 
-    @Test(expected = MinimumOccurrencesException.class)
+    @Test
     public void given_required_input_with_no_data_within_layout_within_layout_when_validate_then_exception_is_thrown()
     {
         contentType.addFormItem( newFieldSet().label( "My outer layout" ).name( "myOuterlayout" ).add(
@@ -172,10 +136,12 @@ public class OccurrenceValidatorTest
         content.setType( contentType.getQualifiedName() );
 
         // exercise
-        newOccurrenceValidator().contentType( contentType ).build().validate( content.getData() );
+        final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
+        assertTrue( validationResults.hasErrors() );
+        assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
     }
 
-    @Test(expected = MinimumOccurrencesException.class)
+    @Test
     public void given_required_field_with_no_data_within_set_within_layout_when_validate_then_exception_is_thrown()
     {
         contentType.addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
@@ -185,10 +151,12 @@ public class OccurrenceValidatorTest
         content.setData( "mySet.myInput", "" );
 
         // exercise
-        newOccurrenceValidator().contentType( contentType ).build().validate( content.getData() );
+        final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
+        assertTrue( validationResults.hasErrors() );
+        assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
     }
 
-    @Test(expected = MinimumOccurrencesException.class)
+    @Test
     public void given_required_input_with_no_data_within_set_when_validate_then_exception_is_thrown()
     {
         contentType.addFormItem( newFormItemSet().name( "mySet" ).required( true ).add(
@@ -198,10 +166,12 @@ public class OccurrenceValidatorTest
         content.setData( "mySet.myInput", "" );
 
         // exercise
-        newOccurrenceValidator().contentType( contentType ).build().validate( content.getData() );
+        final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
+        assertTrue( validationResults.hasErrors() );
+        assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
     }
 
-    @Test(expected = MinimumOccurrencesException.class)
+    @Test
     public void given_required_field_with_no_data_within_layout_within_a_set_when_validate_then_exception_is_thrown()
     {
         contentType.addFormItem( newFormItemSet().name( "mySet" ).required( true ).add(
@@ -211,7 +181,9 @@ public class OccurrenceValidatorTest
         content.setData( "mySet.myInput", "" );
 
         // exercise
-        newOccurrenceValidator().contentType( contentType ).build().validate( content.getData() );
+        final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
+        assertTrue( validationResults.hasErrors() );
+        assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
     }
 
     @Test()
@@ -224,17 +196,11 @@ public class OccurrenceValidatorTest
         content.setData( "mySet.myInput", "value" );
 
         // exercise
-        try
-        {
-            newOccurrenceValidator().contentType( contentType ).build().validate( content.getData() );
-        }
-        catch ( Exception e )
-        {
-            fail( "No exception expected: " + e );
-        }
+        final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
+        assertFalse( validationResults.hasErrors() );
     }
 
-    @Test(expected = BreaksRequiredContractException.class)
+    @Test
     public void given_required_set_with_no_data_when_validate_then_exception_is_thrown()
     {
         contentType.addFormItem( newFormItemSet().name( "mySet" ).required( true ).add(
@@ -243,10 +209,12 @@ public class OccurrenceValidatorTest
         content.setType( contentType.getQualifiedName() );
 
         // exercise
-        newOccurrenceValidator().contentType( contentType ).build().validate( content.getData() );
+        final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
+        assertTrue( validationResults.hasErrors() );
+        assertTrue( validationResults.getFirst() instanceof MissingRequiredValueValidationError );
     }
 
-    @Test(expected = BreaksRequiredContractException.class)
+    @Test
     public void given_required_set_with_no_data_within_layout_when_validate_then_exception_is_thrown()
     {
         contentType.addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
@@ -256,7 +224,9 @@ public class OccurrenceValidatorTest
         content.setType( contentType.getQualifiedName() );
 
         // exercise
-        newOccurrenceValidator().contentType( contentType ).build().validate( content.getData() );
+        final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
+        assertTrue( validationResults.hasErrors() );
+        assertTrue( validationResults.getFirst() instanceof MissingRequiredValueValidationError );
     }
 
     @Test
@@ -285,16 +255,11 @@ public class OccurrenceValidatorTest
         content.setData( "crimes[1].year", "1990" );
 
         // exercise
-        try
-        {
-            newOccurrenceValidator().contentType( contentType ).build().validate( content.getData() );
-            fail( "Expected exception" );
-        }
-        catch ( Exception e )
-        {
-            assertTrue( e instanceof BreaksRequiredContractException );
-            assertEquals( "Required contract is broken, data missing for FormItemSet: personalia", e.getMessage() );
-        }
+        final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
+        assertTrue( validationResults.hasErrors() );
+        assertTrue( validationResults.getFirst() instanceof MissingRequiredValueValidationError );
+        assertEquals( "Missing required value in FormItemSet [personalia]",
+                      validationResults.getFirst().getErrorMessage() );
     }
 
     @Test
@@ -309,15 +274,11 @@ public class OccurrenceValidatorTest
         content.setData( "maximumTwo[2]", "3" );
 
         // exercise
-        OccurrenceValidator occurrenceValidator = newOccurrenceValidator().contentType( contentType ).recordExceptions( true ).build();
-        occurrenceValidator.validate( content.getData() );
+        final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
 
         // verify
-        Iterator<RuntimeException> recordedExceptions = occurrenceValidator.getRecordedExceptions();
-        assertTrue( "No exceptions recorded", recordedExceptions.hasNext() );
-        //noinspection ThrowableResultOfMethodCallIgnored
-        recordedExceptions.next();
-        assertTrue( "Two exceptions expected", recordedExceptions.hasNext() );
+        assertTrue( "No exceptions recorded", validationResults.hasErrors() );
+        assertEquals( "Two exceptions expected", 2, validationResults.getSize() );
     }
 
 }
