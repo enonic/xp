@@ -18,11 +18,19 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         me.orderByButton = me.createOrderByButton();
         me.orderByDirectionButton = me.createOrderByDirectionButton();
 
+        if (Ext.isFunction(me.toolbar.store.getCount)) {
+            me.updateResultCount(me.toolbar.store.getCount());
+        } else if (Ext.isString(me.toolbar.store)) {
+            me.toolbar.store = Ext.StoreManager.lookup(me.toolbar.store);
+        }
+
         me.toolbar.insert(0, me.resultTextItem);
         me.toolbar.insert(1, me.selectAllButton);
-        me.toolbar.insert(2, me.tbFill);
-        me.toolbar.insert(3, me.orderByButton);
-        me.toolbar.insert(4, me.orderByDirectionButton);
+        if (!(me.toolbar.store instanceof Ext.data.TreeStore)) {
+            me.toolbar.insert(2, me.tbFill);
+            me.toolbar.insert(3, me.orderByButton);
+            me.toolbar.insert(4, me.orderByDirectionButton);
+        }
 
         me.orderByButton.addListener('change', function () {
             me.doSort();
@@ -30,12 +38,6 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         me.orderByDirectionButton.addListener('change', function () {
             me.doSort();
         });
-
-        if (Ext.isFunction(me.toolbar.store.getCount)) {
-            me.updateResultCount(me.toolbar.store.getCount());
-        } else if (Ext.isString(me.toolbar.store)) {
-            me.toolbar.store = Ext.StoreManager.lookup(me.toolbar.store);
-        }
 
         if (me.toolbar.store) {
             me.toolbar.store.on('load', function (store) {

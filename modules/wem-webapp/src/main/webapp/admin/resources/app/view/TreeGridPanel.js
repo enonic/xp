@@ -28,7 +28,7 @@ Ext.define('Admin.view.TreeGridPanel', {
         delete treeColumns[0].renderer;
         var treePanel = {
             xtype: 'treepanel',
-            cls: 'admin-tree-panel',
+            cls: 'admin-tree',
             hideHeaders: true,
             itemId: 'tree',
             useArrows: true,
@@ -75,6 +75,7 @@ Ext.define('Admin.view.TreeGridPanel', {
                 node.set('iconCls', iconCls);
             }
         });
+
         var grid = this.down('#grid');
         grid.addDocked({
             xtype: 'toolbar',
@@ -84,6 +85,7 @@ Ext.define('Admin.view.TreeGridPanel', {
             gridPanel: grid,
             plugins: ['gridToolbarPlugin']
         });
+
         var tree = this.down('#tree');
         tree.addDocked({
             xtype: 'toolbar',
