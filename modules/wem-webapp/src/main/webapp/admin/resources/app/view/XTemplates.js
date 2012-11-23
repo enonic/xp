@@ -1,4 +1,4 @@
-// This file was auto-generated on 2012-11-21 08:57:04 VET
+// This file was auto-generated on 2012-11-23 09:16:29 VET
 
 if (!Templates) {
     var Templates = {};
@@ -394,8 +394,7 @@ Templates.contentManager = {
                          '<input type="text" value="{displayName}" readonly="true" class="admin-display-name"/>' +
                          '</div>' +
                          '<div class="admin-wizard-userstore">' +
-                         '<label>{[ values.isNewContent ? "New Content" : "Content" ]}: </label>' +
-                         '<span>/some/content/path</span>' +
+                         '<span>{qualifiedContentTypeName}</span>' +
                          '</div>',
 
     deleteMultiple: '<div class="admin-delete-user-confirmation-message">' +
@@ -545,7 +544,8 @@ Templates.datadesigner = {
                        '</table>' +
                        '</div>',
 
-    previewHeader: '<h1>{name}</h1><div>{qualifiedName}</div>',
+    previewHeader: '<h1>{name}</h1>' +
+                   '<div>{qualifiedName}</div>',
 
     previewIcon: '<img src="{[values.icon !=="" ? values.icon : "resources/images/icons/128x128/cubes.png"]}" alt="{name}" title="{name}"/>',
 
@@ -615,7 +615,7 @@ Templates.main = {
                         '<table border="0">' +
                         '<tr>' +
                         '<td style="width: 42px" valign="top">' +
-                        '<img src="app/main/images/feedback-ok.png" style="width:32px; height:32px"/>' +
+                        '<img src="_app/main/images/feedback-ok.png" style="width:32px; height:32px"/>' +
                         '</td>' +
                         '<td valign="top">' +
                         '<h1>{messageTitle}</h1>' +
