@@ -1,24 +1,36 @@
 package com.enonic.wem.core.jcr.repository;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.jcr.Repository;
 
+import org.apache.jackrabbit.mk.api.MicroKernel;
+import org.apache.jackrabbit.oak.Oak;
 import org.apache.jackrabbit.oak.jcr.RepositoryImpl;
+import org.apache.jackrabbit.oak.plugins.commit.AnnotatingConflictHandler;
+import org.apache.jackrabbit.oak.plugins.commit.ConflictValidatorProvider;
+import org.apache.jackrabbit.oak.plugins.index.CompositeIndexHookProvider;
+import org.apache.jackrabbit.oak.plugins.index.IndexHookManager;
+import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexHookProvider;
+import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexProvider;
+import org.apache.jackrabbit.oak.plugins.index.property.PropertyIndexHookProvider;
+import org.apache.jackrabbit.oak.plugins.index.property.PropertyIndexProvider;
+import org.apache.jackrabbit.oak.plugins.name.NameValidatorProvider;
+import org.apache.jackrabbit.oak.plugins.name.NamespaceValidatorProvider;
+import org.apache.jackrabbit.oak.plugins.nodetype.DefaultTypeEditor;
+import org.apache.jackrabbit.oak.plugins.nodetype.InitialContent;
+import org.apache.jackrabbit.oak.plugins.nodetype.RegistrationValidatorProvider;
+import org.apache.jackrabbit.oak.plugins.nodetype.TypeValidatorProvider;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public final class JcrRepositoryFactory
     implements FactoryBean<Repository>
 {
-    // private final static String REPOSITORY_CONFIG = "/META-INF/jcr/repository.xml";
+    private MicroKernel microKernel;
 
-    // private File homeDir;
-
-    // private JackrabbitRepository repository;
-
-    private RepositoryImpl repository;
+    private Repository repository;
 
     @Override
     public Repository getObject()
@@ -39,41 +51,27 @@ public final class JcrRepositoryFactory
     }
 
     @PostConstruct
-    public void start()
-        throws Exception
+    public void init()
     {
-        this.repository = new RepositoryImpl();
+        final Oak oak = new Oak( this.microKernel );
+        oak.with( new InitialContent() );
+        oak.with( new DefaultTypeEditor() );
+        oak.with( new NameValidatorProvider() );
+        oak.with( new NamespaceValidatorProvider() );
+        oak.with( new TypeValidatorProvider() );
+        oak.with( new RegistrationValidatorProvider() );
+        oak.with( new ConflictValidatorProvider() );
+        oak.with( new AnnotatingConflictHandler() );
+        oak.with( new PropertyIndexProvider() );
+        oak.with( new LuceneIndexProvider() );
+        oak.with(
+            new IndexHookManager( new CompositeIndexHookProvider( new PropertyIndexHookProvider(), new LuceneIndexHookProvider() ) ) );
+        this.repository = new RepositoryImpl( oak.createContentRepository(), null, null );
     }
 
-    @PreDestroy
-    public void stop()
+    @Autowired
+    public void setMicroKernel( final MicroKernel microKernel )
     {
-        // this.repository.shutdown();
+        this.microKernel = microKernel;
     }
-
-    /*
-    private JackrabbitRepository createRepository()
-        throws Exception
-    {
-        final RepositoryConfig config = createConfig();
-        return RepositoryImpl.create( config );
-    }
-
-    private RepositoryConfig createConfig()
-        throws Exception
-    {
-        if ( this.homeDir.exists() )
-        {
-            FileUtils.deleteQuietly( this.homeDir );
-        }
-
-        final URI configUri = getClass().getResource( REPOSITORY_CONFIG ).toURI();
-        return RepositoryConfig.create( configUri, this.homeDir.getCanonicalPath() );
-    }
-
-    @Value("${cms.home}/jackrabbit")
-    public void setHomeDir( final File homeDir )
-    {
-        this.homeDir = homeDir;
-    }*/
 }

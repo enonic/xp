@@ -1,14 +1,17 @@
 package com.enonic.wem.itest;
 
 
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.jackrabbit.oak.jcr.RepositoryImpl;
+import org.junit.After;
 import org.junit.Before;
 
 import com.enonic.wem.core.jcr.loader.JcrInitializer;
 import com.enonic.wem.core.jcr.provider.JcrSessionProviderImpl;
+import com.enonic.wem.core.jcr.repository.JcrMicroKernelFactory;
+import com.enonic.wem.core.jcr.repository.JcrRepositoryFactory;
 
 public abstract class AbstractJcrTest
     extends AbstractSpringTest
@@ -16,11 +19,20 @@ public abstract class AbstractJcrTest
 
     protected Session session;
 
+    private JcrMicroKernelFactory jcrMicroKernelFactory;
+
     @Before
     public final void before()
         throws Exception
     {
-        final RepositoryImpl repo = new RepositoryImpl();
+        jcrMicroKernelFactory = new JcrMicroKernelFactory();
+        jcrMicroKernelFactory.setInMemoryRepository( true );
+        jcrMicroKernelFactory.init();
+
+        final JcrRepositoryFactory jcrRepositoryFactory = new JcrRepositoryFactory();
+        jcrRepositoryFactory.setMicroKernel( jcrMicroKernelFactory.getObject() );
+        jcrRepositoryFactory.init();
+        final Repository repo = jcrRepositoryFactory.getObject();
 
         final JcrSessionProviderImpl sessionProvider = new JcrSessionProviderImpl();
         sessionProvider.setRepository( repo );
@@ -31,6 +43,12 @@ public abstract class AbstractJcrTest
         session = sessionProvider.loginAdmin();
 
         setupDao();
+    }
+
+    @After
+    public final void after()
+    {
+        jcrMicroKernelFactory.dispose();
     }
 
     protected abstract void setupDao()
