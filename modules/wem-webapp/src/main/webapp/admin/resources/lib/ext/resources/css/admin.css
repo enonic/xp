@@ -159,27 +159,28 @@ p {
     background-repeat: no-repeat;
 }
 
-/* line 3, ../sass/admin/css/_panel.scss */
-.admin-panel .x-panel-body, .admin-filter .x-panel-body {
+/* line 1, ../sass/admin/css/_panel.scss */
+.admin-panel {
     padding: 20px;
 }
 
-/* line 13, ../sass/admin/css/_panel.scss */
+/* line 8, ../sass/admin/css/_panel.scss */
 .admin-filter .x-panel-body {
+    padding: 20px 0 0 20px;
     background-color: #efefef !important;
     border-top-style: none;
     border-left-style: none;
     border-bottom-style: none;
 }
 
-/* line 20, ../sass/admin/css/_panel.scss */
+/* line 16, ../sass/admin/css/_panel.scss */
 .admin-filter .x-fieldset {
     border: none !important;
     padding: 0 !important;
     margin-bottom: 15px !important;
 }
 
-/* line 26, ../sass/admin/css/_panel.scss */
+/* line 22, ../sass/admin/css/_panel.scss */
 .admin-filter .x-fieldset-header {
     color: #000000 !important;
     font-size: 15px !important;
@@ -187,18 +188,18 @@ p {
     text-transform: capitalize;
 }
 
-/* line 32, ../sass/admin/css/_panel.scss */
+/* line 28, ../sass/admin/css/_panel.scss */
 .admin-filter .x-fieldset-header .x-fieldset-header-text {
     border: none !important;
     padding: 0 0 !important;
 }
 
-/* line 38, ../sass/admin/css/_panel.scss */
+/* line 34, ../sass/admin/css/_panel.scss */
 .admin-filter .x-fieldset-body {
     padding-left: 10px;
 }
 
-/* line 46, ../sass/admin/css/_panel.scss */
+/* line 42, ../sass/admin/css/_panel.scss */
 .admin-detail .x-panel-body {
     border: none !important;
 }
@@ -311,13 +312,71 @@ p {
 }
 
 /* line 77, ../sass/admin/css/_grid.scss */
-.admin-grid .admin-grid-description div {
-    color: #565656;
+.admin-grid .admin-grid-description h6 {
+    margin-bottom: 1px !important;
 }
 
 /* line 81, ../sass/admin/css/_grid.scss */
-.admin-grid .x-grid-row-selected .admin-grid-description div {
+.admin-grid .admin-grid-description p {
+    margin: 0 !important;
+    color: #565656;
+}
+
+/* line 86, ../sass/admin/css/_grid.scss */
+.admin-grid .x-grid-row-selected .admin-grid-description p {
     color: #fff !important;
+}
+
+/**
+ * @var {color} $base-color
+ * The base color to be used throughout the theme.
+ */
+/**
+ * Admin Colors
+ */
+/*1B58B8*/
+/**
+ * Admin Font Sizes
+ */
+/**
+ * @var {string} $font-family 
+ * The default font-family to be used throughout the theme.
+ */
+/* line 5, ../sass/admin/css/_tree.scss */
+.admin-tree .x-grid-cell .x-grid-cell-inner {
+    line-height: 32px;
+}
+
+/* line 9, ../sass/admin/css/_tree.scss */
+.admin-tree .x-grid-cell .x-grid-cell-inner .x-tree-icon {
+    height: 32px;
+    width: 32px;
+}
+
+/* line 14, ../sass/admin/css/_tree.scss */
+.admin-tree .x-grid-cell-first .x-grid-cell-inner {
+    font-weight: bold;
+}
+
+/* line 23, ../sass/admin/css/_tree.scss */
+.admin-tree .x-tree-elbow,
+.admin-tree .x-tree-elbow-end,
+.admin-tree .x-tree-elbow-plus,
+.admin-tree .x-tree-elbow-end-plus,
+.admin-tree .x-tree-elbow-empty,
+.admin-tree .x-tree-elbow-line {
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+/* line 28, ../sass/admin/css/_tree.scss */
+.admin-tree .admin-white-toolbar {
+    border-bottom-style: none !important;
+}
+
+/* line 32, ../sass/admin/css/_tree.scss */
+.admin-tree .x-panel-body {
+    border: none !important;
 }
 
 /* line 1, ../sass/admin/css/_toolbar.scss */
@@ -539,19 +598,14 @@ p {
     background: none #fff !important;
 }
 
-/* line 1, ../sass/admin/css/_feedback-panel.scss */
-.admin-feedback-panel {
+/* line 1, ../sass/admin/css/_confirmation-dialog.scss */
+.admin-confirmation-dialog {
     border: none !important;
 }
 
-/* line 5, ../sass/admin/css/_feedback-panel.scss */
-.admin-feedback-panel-white {
+/* line 5, ../sass/admin/css/_confirmation-dialog.scss */
+.admin-confirmation-dialog-white {
     background-color: #ffffff;
-}
-
-/* line 9, ../sass/admin/css/_feedback-panel.scss */
-.admin-feedback-dock {
-    border-top: 0 !important;
 }
 
 /**
@@ -603,71 +657,65 @@ p {
 }
 
 /* line 9, ../sass/admin/css/_selected-grid-item.scss */
-.admin-selected-item-box h6 {
-    margin: 0 !important;
-    font-weight: normal !important;
-}
-
-/* line 14, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box p {
     font-size: 11px;
     margin: 0 !important;
 }
 
-/* line 20, ../sass/admin/css/_selected-grid-item.scss */
+/* line 15, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.large .right a:hover,
 .admin-selected-item-box.small .right a:hover {
     border: 1px solid #d1d1d1;
 }
 
-/* line 24, ../sass/admin/css/_selected-grid-item.scss */
+/* line 19, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box .left {
     float: left;
 }
 
-/* line 28, ../sass/admin/css/_selected-grid-item.scss */
+/* line 23, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box .center {
     float: left;
     border: 0 none !important;
     border-right: 1px solid #F0F0F0 !important;
 }
 
-/* line 34, ../sass/admin/css/_selected-grid-item.scss */
+/* line 29, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box .right {
     float: left;
 }
 
 /* Large */
-/* line 39, ../sass/admin/css/_selected-grid-item.scss */
+/* line 34, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.large {
-    padding: 10px;
-    margin: 0 12px 12px 0;
+    padding: 8px;
+    margin: 0 10px 10px 0;
 }
 
-/* line 47, ../sass/admin/css/_selected-grid-item.scss */
+/* line 42, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.large .left img {
     width: 32px;
     height: 32px;
 }
 
-/* line 52, ../sass/admin/css/_selected-grid-item.scss */
+/* line 47, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.large .center {
     margin-right: 10px;
     padding: 0 11px;
 }
 
-/* line 57, ../sass/admin/css/_selected-grid-item.scss */
+/* line 52, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.large .center p {
     margin: 0;
     color: #565656;
 }
 
-/* line 62, ../sass/admin/css/_selected-grid-item.scss */
+/* line 57, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.large .right {
-    margin: 6px 6px 0 0;
+    margin-top: 5px;
 }
 
-/* line 66, ../sass/admin/css/_selected-grid-item.scss */
+/* line 61, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.large .right a {
     width: 24px;
     height: 24px;
@@ -677,35 +725,35 @@ p {
 }
 
 /* Small */
-/* line 75, ../sass/admin/css/_selected-grid-item.scss */
+/* line 70, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.small {
     margin: 0 7px 7px 0;
     padding: 5px;
 }
 
-/* line 83, ../sass/admin/css/_selected-grid-item.scss */
+/* line 78, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.small .left img {
     width: 20px;
     height: 20px;
 }
 
-/* line 88, ../sass/admin/css/_selected-grid-item.scss */
+/* line 83, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.small .center {
     margin-right: 5px;
     padding: 1px 6px;
 }
 
-/* line 93, ../sass/admin/css/_selected-grid-item.scss */
+/* line 88, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.small .center p {
     margin: 0;
 }
 
-/* line 97, ../sass/admin/css/_selected-grid-item.scss */
+/* line 92, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.small .right {
     margin: 2px 3px 0 0;
 }
 
-/* line 101, ../sass/admin/css/_selected-grid-item.scss */
+/* line 96, ../sass/admin/css/_selected-grid-item.scss */
 .admin-selected-item-box.small .right a {
     width: 16px;
     height: 16px;
@@ -12067,14 +12115,14 @@ table.x-datepicker-inner .x-datepicker-disabled a {
     overflow: hidden;
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
-    padding: 5px 10px 5px;
+    padding: 8px 10px 8px;
     white-space: nowrap;
 }
 
 /* line 287, ../themes/stylesheets/ext4/default/widgets/_grid.scss */
 .x-grid-with-row-lines .x-grid-cell-inner {
     line-height: 13px;
-    padding-bottom: 6px;
+    padding-bottom: 9px;
 }
 
 /* line 293, ../themes/stylesheets/ext4/default/widgets/_grid.scss */
@@ -12989,8 +13037,8 @@ textarea.x-form-invalid-field {
 /* line 2, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
 .x-fieldset {
     border: none;
-    padding: 0 10px;
-    margin-bottom: 0 10px;
+    padding: 0 5px;
+    margin-bottom: 0 5px;
     display: block;
     /* preserve margins in IE */
     position: relative;
@@ -13003,7 +13051,7 @@ textarea.x-form-invalid-field {
 
 /* line 16, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
 .x-ie .x-fieldset .x-fieldset-body {
-    padding-top: 0 10px;
+    padding-top: 0 5px;
 }
 
 /* line 21, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
@@ -13014,7 +13062,7 @@ textarea.x-form-invalid-field {
 /* line 25, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
 .x-fieldset-header {
     font: 15px/14px bold Tahoma, Geneva, Verdana;
-    color: #616161;
+    color: #444444;
     padding: 0 0 9px 0;
     overflow: hidden;
 }

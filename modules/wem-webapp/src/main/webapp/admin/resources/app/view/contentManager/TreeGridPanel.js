@@ -31,9 +31,9 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
                 flex: 1
             },
             {
-                text: 'Type',
-                dataIndex: 'type',
-                sortable: true
+                text: 'Status',
+                //dataIndex: 'type',
+                renderer: this.statusRenderer
             },
             {
                 text: 'Owner',
@@ -56,6 +56,10 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
         var iconCls = this.up('contentTreeGridPanel').resolveIconClass(record);
 
         return Ext.String.format(Templates.contentManager.gridPanelNameRenderer, iconCls, value, account.name, account.userStore);
+    },
+
+    statusRenderer: function () {
+        return "Online";
     },
 
     prettyDateRenderer: function (value, p, record) {
