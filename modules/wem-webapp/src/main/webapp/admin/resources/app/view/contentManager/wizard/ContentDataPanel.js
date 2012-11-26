@@ -7,11 +7,12 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
         TextArea: "textarea"
     },
 
-    contentTypeItems: [],
+    contentType: undefined,
     content: null, // content to be edited
 
     initComponent: function () {
         var me = this;
+
         var fieldSet = {
             xtype: 'fieldset',
             title: 'A Separator',
@@ -25,8 +26,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
                 editedContentValues[dataItem.name] = dataItem.value;
             });
         }
-        me.items = [fieldSet];
-        Ext.each(this.contentTypeItems, function (contentTypeItem) {
+
+        Ext.each(this.contentType.items, function (contentTypeItem) {
             var widgetItemType = me.parseItemType(contentTypeItem);
             if (!widgetItemType) {
                 console.log('Unsupported input type', contentTypeItem);
@@ -52,7 +53,9 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
             fieldSet.items.push(item);
         });
 
-        me.callParent(arguments);
+        this.items = [fieldSet];
+
+        this.callParent(arguments);
     },
 
     parseItemType: function (contentItem) {

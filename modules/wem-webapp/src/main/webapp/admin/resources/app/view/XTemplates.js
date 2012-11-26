@@ -1,4 +1,4 @@
-// This file was auto-generated on 2012-11-21 08:57:04 VET
+// This file was auto-generated on 2012-11-26 08:50:01 VET
 
 if (!Templates) {
     var Templates = {};
@@ -394,8 +394,7 @@ Templates.contentManager = {
                          '<input type="text" value="{displayName}" readonly="true" class="admin-display-name"/>' +
                          '</div>' +
                          '<div class="admin-wizard-userstore">' +
-                         '<label>{[ values.isNewContent ? "New Content" : "Content" ]}: </label>' +
-                         '<span>/some/content/path</span>' +
+                         '<span>{contentType}</span>' +
                          '</div>',
 
     deleteMultiple: '<div class="admin-delete-user-confirmation-message">' +
@@ -422,11 +421,12 @@ Templates.contentManager = {
                   '</div>' +
                   '</div>',
 
-    gridPanelNameRenderer: '<div style="float:left;">' +
+    gridPanelNameRenderer: '<div style="float:left;padding-top: 3px">' +
                            '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" class="admin-grid-thumbnail {0}">' +
                            '</div>' +
-                           '<div style="float:left; padding: 0 0 0 5px;">' +
-                           '<div class="admin-grid-title" style="line-height: 32px">{1}</div>' +
+                           '<div style="float:left; padding: 3px 0 0 5px">' +
+                           '<div class="admin-grid-title">{1}</div>' +
+                           '<div class="admin-grid-description">{2}</div>' +
                            '</div>',
 
     previewCommonInfo: '<div class="container">' +
@@ -449,7 +449,7 @@ Templates.contentManager = {
                        '</table>' +
                        '</div>',
 
-    previewHeader: '<h1>{name}</h1><span>{type}</span>',
+    previewHeader: '<h1>{displayName}</h1><span>{type}</span>',
 
     previewPhoto: '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="{name}" class="{iconCls}"/>',
 
@@ -545,7 +545,8 @@ Templates.datadesigner = {
                        '</table>' +
                        '</div>',
 
-    previewHeader: '<h1>{name}</h1><div>{qualifiedName}</div>',
+    previewHeader: '<h1>{name}</h1>' +
+                   '<div>{qualifiedName}</div>',
 
     previewIcon: '<img src="{[values.icon !=="" ? values.icon : "resources/images/icons/128x128/cubes.png"]}" alt="{name}" title="{name}"/>',
 
@@ -615,7 +616,7 @@ Templates.main = {
                         '<table border="0">' +
                         '<tr>' +
                         '<td style="width: 42px" valign="top">' +
-                        '<img src="app/main/images/feedback-ok.png" style="width:32px; height:32px"/>' +
+                        '<img src="_app/main/images/feedback-ok.png" style="width:32px; height:32px"/>' +
                         '</td>' +
                         '<td valign="top">' +
                         '<h1>{messageTitle}</h1>' +
