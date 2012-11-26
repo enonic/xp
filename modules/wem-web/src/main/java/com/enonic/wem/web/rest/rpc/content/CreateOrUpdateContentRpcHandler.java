@@ -17,6 +17,7 @@ import com.enonic.wem.api.content.type.MockContentTypeFetcher;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
+import com.enonic.wem.api.exception.ContentAlreadyExistException;
 import com.enonic.wem.api.exception.ContentNotFoundException;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.content.ContentPathNameGenerator;
@@ -90,6 +91,10 @@ public final class CreateOrUpdateContentRpcHandler
             {
                 context.setResult(
                     new JsonErrorResult( "Unable to create content. Path [{0}] does not exist", contentPath.getParentPath().toString() ) );
+            }
+            catch ( ContentAlreadyExistException e )
+            {
+                context.setResult( new JsonErrorResult( "Content with path [{0}] already exists.", contentPath.toString() ) );
             }
         }
         else

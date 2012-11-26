@@ -1,4 +1,4 @@
-// This file was auto-generated on 2012-11-23 09:16:29 VET
+// This file was auto-generated on 2012-11-26 06:09:13 VET
 
 if (!Templates) {
     var Templates = {};
@@ -394,7 +394,7 @@ Templates.contentManager = {
                          '<input type="text" value="{displayName}" readonly="true" class="admin-display-name"/>' +
                          '</div>' +
                          '<div class="admin-wizard-userstore">' +
-                         '<span>{qualifiedContentTypeName}</span>' +
+                         '<span>{contentType}</span>' +
                          '</div>',
 
     deleteMultiple: '<div class="admin-delete-user-confirmation-message">' +
@@ -448,7 +448,7 @@ Templates.contentManager = {
                        '</table>' +
                        '</div>',
 
-    previewHeader: '<h1>{name}</h1><span>{type}</span>',
+    previewHeader: '<h1>{displayName}</h1><span>{type}</span>',
 
     previewPhoto: '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="{name}" class="{iconCls}"/>',
 

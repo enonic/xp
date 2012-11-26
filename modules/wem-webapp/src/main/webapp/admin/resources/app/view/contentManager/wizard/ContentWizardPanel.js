@@ -26,8 +26,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         var me = this;
 
         this.headerData = {
-            displayName: this.data && this.data.content ? this.data.content.name : 'New Content',
-            qualifiedContentTypeName: this.data.contentType.qualifiedName
+            displayName: (this.data && this.data.content) ? this.data.content.displayName : 'New Content',
+            contentType: (this.data && this.data.contentType) ? this.data.contentType.qualifiedName : undefined
         };
         var contentWizardHeader = Ext.create('Ext.container.Container', {
             itemId: 'wizardHeader',
