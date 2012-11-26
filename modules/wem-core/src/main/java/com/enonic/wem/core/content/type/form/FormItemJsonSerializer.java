@@ -1,10 +1,12 @@
 package com.enonic.wem.core.content.type.form;
 
 
+import java.util.Iterator;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.NullNode;
 import org.codehaus.jackson.node.ObjectNode;
+import org.elasticsearch.common.base.Preconditions;
 
 import com.enonic.wem.api.content.type.form.FieldSet;
 import com.enonic.wem.api.content.type.form.FormItem;
@@ -75,23 +77,29 @@ class FormItemJsonSerializer
     @Override
     protected JsonNode serialize( final FormItem formItem, final ObjectMapper objectMapper )
     {
+        final ObjectNode formItemBaseTypeObject = objectMapper.createObjectNode();
         if ( formItem instanceof FormItemSet )
         {
-            return serializeFormItemSet( (FormItemSet) formItem, objectMapper );
+            formItemBaseTypeObject.put( FormItemSet.class.getSimpleName(), serializeFormItemSet( (FormItemSet) formItem, objectMapper ) );
         }
         else if ( formItem instanceof Layout )
         {
-            return serializeLayout( (Layout) formItem, objectMapper );
+            formItemBaseTypeObject.put( Layout.class.getSimpleName(), serializeLayout( (Layout) formItem, objectMapper ) );
         }
         else if ( formItem instanceof Input )
         {
-            return serializeInput( (Input) formItem, objectMapper );
+            formItemBaseTypeObject.put( Input.class.getSimpleName(), serializeInput( (Input) formItem, objectMapper ) );
         }
         else if ( formItem instanceof SubTypeReference )
         {
-            return serializeReference( (SubTypeReference) formItem, objectMapper );
+            formItemBaseTypeObject.put( SubTypeReference.class.getSimpleName(),
+                                        serializeReference( (SubTypeReference) formItem, objectMapper ) );
         }
-        return NullNode.getInstance();
+        else
+        {
+            throw new UnsupportedOperationException( "Unsupported FormItem: " + formItem.getClass().getSimpleName() );
+        }
+        return formItemBaseTypeObject;
     }
 
     private JsonNode serializeInput( final Input input, final ObjectMapper objectMapper )
@@ -119,7 +127,6 @@ class FormItemJsonSerializer
     private JsonNode serializeFormItemSet( final FormItemSet set, final ObjectMapper objectMapper )
     {
         final ObjectNode jsonObject = objectMapper.createObjectNode();
-        jsonObject.put( TYPE, FormItemSet.class.getSimpleName() );
         jsonObject.put( NAME, set.getName() );
         jsonObject.put( LABEL, set.getLabel() );
         jsonObject.put( IMMUTABLE, set.isImmutable() );
@@ -133,8 +140,7 @@ class FormItemJsonSerializer
     private JsonNode serializeLayout( final Layout layout, final ObjectMapper objectMapper )
     {
         final ObjectNode jsonObject = objectMapper.createObjectNode();
-        jsonObject.put( TYPE, Layout.class.getSimpleName() );
-        jsonObject.put( LAYOUT_TYPE, FieldSet.class.getSimpleName() );
+        jsonObject.put( TYPE, FieldSet.class.getSimpleName() );
 
         if ( layout instanceof FieldSet )
         {
@@ -153,7 +159,6 @@ class FormItemJsonSerializer
     private JsonNode serializeReference( final SubTypeReference subTypeReference, final ObjectMapper objectMapper )
     {
         final ObjectNode jsonObject = objectMapper.createObjectNode();
-        jsonObject.put( TYPE, SubTypeReference.class.getSimpleName() );
         jsonObject.put( NAME, subTypeReference.getName() );
         jsonObject.put( REFERENCE, subTypeReference.getSubTypeQualifiedName().toString() );
         jsonObject.put( SUB_TYPE_CLASS, subTypeReference.getSubTypeClass().getSimpleName() );
@@ -162,25 +167,28 @@ class FormItemJsonSerializer
 
     public FormItem parse( final JsonNode formItemNode )
     {
-        final String type = JsonParserUtil.getStringValue( TYPE, formItemNode );
+        final Iterator<String> fieldNamesIt = formItemNode.getFieldNames();
+        Preconditions.checkArgument( fieldNamesIt.hasNext(), "TODO" );
+        final String type = fieldNamesIt.next();
 
         final FormItem formItem;
 
+        final JsonNode concreteFormItemObj = formItemNode.get( type );
         if ( type.equals( Input.class.getSimpleName() ) )
         {
-            formItem = parseInput( formItemNode );
+            formItem = parseInput( concreteFormItemObj );
         }
         else if ( type.equals( FormItemSet.class.getSimpleName() ) )
         {
-            formItem = parseFormItemSet( formItemNode );
+            formItem = parseFormItemSet( concreteFormItemObj );
         }
         else if ( type.equals( Layout.class.getSimpleName() ) )
         {
-            formItem = parseLayout( formItemNode );
+            formItem = parseLayout( concreteFormItemObj );
         }
         else if ( type.equals( SubTypeReference.class.getSimpleName() ) )
         {
-            formItem = parseSubTypeReference( formItemNode );
+            formItem = parseSubTypeReference( concreteFormItemObj );
         }
         else
         {
@@ -229,7 +237,7 @@ class FormItemJsonSerializer
 
     private FormItem parseLayout( final JsonNode formItemNode )
     {
-        final String layoutType = JsonParserUtil.getStringValue( LAYOUT_TYPE, formItemNode );
+        final String layoutType = JsonParserUtil.getStringValue( TYPE, formItemNode );
         if ( layoutType.equals( FieldSet.class.getSimpleName() ) )
         {
             return parseFieldSet( formItemNode );
