@@ -133,6 +133,9 @@
     <a href="content-test.jsp">Content form, static</a>
   </li>
   <li>
+    <a href="../dev/content/form.jsp">Content form, dynamic</a>
+  </li>
+  <li>
     <a href="jcr.jsp">JCR browse</a>
   </li>
 </ul>

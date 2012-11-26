@@ -1,0 +1,9 @@
+{
+    "articles": [
+        { "key": "1001", "title": "Tutorial: Creating a reg ex parser with Scala" },
+        { "key": "1020", "title": "Consuming XML with Backbone.js" },
+        { "key": "1250", "title": "HTML5 video" },
+        { "key": "1400", "title": "How to diff various Enonic CMS installations" },
+        { "key": "1550", "title": "Microdata - semantic markup - schema.org" }
+    ]
+}
