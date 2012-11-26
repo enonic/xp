@@ -10,7 +10,7 @@ public class InputTypeConfigXmlSerializer
 {
     public InputTypeConfig parse( final Element inputEl )
     {
-        final Element inputTypeConfigEl = inputEl.getChild( "input-type-config" );
+        final Element inputTypeConfigEl = inputEl.getChild( "config" );
         if ( inputTypeConfigEl == null )
         {
             return null;
