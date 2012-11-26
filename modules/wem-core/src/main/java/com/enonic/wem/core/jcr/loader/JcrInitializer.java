@@ -23,14 +23,14 @@ public final class JcrInitializer
         this.jcrSessionProvider = jcrSessionProvider;
     }
 
-    public void initialize()
+    public boolean initialize()
         throws Exception
     {
         final Session session = this.jcrSessionProvider.loginAdmin();
 
         try
         {
-            initialize( session );
+            return initialize( session );
         }
         finally
         {
@@ -38,12 +38,17 @@ public final class JcrInitializer
         }
     }
 
-    private void initialize( final Session session )
+    private boolean initialize( final Session session )
         throws Exception
     {
+        if ( session.nodeExists( "/" + JcrConstants.ROOT_NODE ) )
+        {
+            return false;
+        }
         registerNamespaces( session );
         registerNodeTypes( session, "/META-INF/jcr/node_types.cnd" );
         importContent( session, "/META-INF/jcr/init_content.xml" );
+        return true;
     }
 
     private void registerNamespaces( final Session session )
