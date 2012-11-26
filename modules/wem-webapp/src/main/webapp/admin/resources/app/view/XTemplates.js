@@ -1,4 +1,4 @@
-// This file was auto-generated on 2012-11-26 06:09:13 VET
+// This file was auto-generated on 2012-11-26 08:50:01 VET
 
 if (!Templates) {
     var Templates = {};
@@ -421,11 +421,12 @@ Templates.contentManager = {
                   '</div>' +
                   '</div>',
 
-    gridPanelNameRenderer: '<div style="float:left;">' +
+    gridPanelNameRenderer: '<div style="float:left;padding-top: 3px">' +
                            '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" class="admin-grid-thumbnail {0}">' +
                            '</div>' +
-                           '<div style="float:left; padding: 0 0 0 5px;">' +
-                           '<div class="admin-grid-title" style="line-height: 32px">{1}</div>' +
+                           '<div style="float:left; padding: 3px 0 0 5px">' +
+                           '<div class="admin-grid-title">{1}</div>' +
+                           '<div class="admin-grid-description">{2}</div>' +
                            '</div>',
 
     previewCommonInfo: '<div class="container">' +
