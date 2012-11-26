@@ -16,7 +16,7 @@
                 "customText":null,
                 "validationRegexp":null,
                 "helpText":null,
-                "inputType":{
+                "type":{
                     "name":"Color",
                     "builtIn":true
                 }
@@ -35,7 +35,7 @@
                 "customText":null,
                 "validationRegexp":null,
                 "helpText":null,
-                "inputType":{
+                "type":{
                     "name":"Date",
                     "builtIn":true
                 }
@@ -54,7 +54,7 @@
                 "customText":null,
                 "validationRegexp":null,
                 "helpText":null,
-                "inputType":{
+                "type":{
                     "name":"DecimalNumber",
                     "builtIn":true
                 }
@@ -73,7 +73,7 @@
                 "customText":null,
                 "validationRegexp":null,
                 "helpText":null,
-                "inputType":{
+                "type":{
                     "name":"GeoLocation",
                     "builtIn":true
                 }
@@ -92,7 +92,7 @@
                 "customText":null,
                 "validationRegexp":null,
                 "helpText":null,
-                "inputType":{
+                "type":{
                     "name":"HtmlArea",
                     "builtIn":true
                 }
@@ -111,7 +111,7 @@
                 "customText":null,
                 "validationRegexp":null,
                 "helpText":null,
-                "inputType":{
+                "type":{
                     "name":"Money",
                     "builtIn":true
                 }
@@ -130,7 +130,7 @@
                 "customText":null,
                 "validationRegexp":null,
                 "helpText":null,
-                "inputType":{
+                "type":{
                     "name":"Phone",
                     "builtIn":true
                 }
@@ -149,11 +149,11 @@
                 "customText":null,
                 "validationRegexp":null,
                 "helpText":null,
-                "inputType":{
+                "type":{
                     "name":"SingleSelector",
                     "builtIn":true
                 },
-                "inputTypeConfig":{
+                "config":{
                     "com.enonic.wem.api.content.type.form.inputtype.SingleSelectorConfig":{
                         "selectorType":"DROPDOWN",
                         "options":[
@@ -183,7 +183,7 @@
                 "customText":null,
                 "validationRegexp":null,
                 "helpText":null,
-                "inputType":{
+                "type":{
                     "name":"Tags",
                     "builtIn":true
                 }
@@ -202,7 +202,7 @@
                 "customText":null,
                 "validationRegexp":null,
                 "helpText":null,
-                "inputType":{
+                "type":{
                     "name":"TextLine",
                     "builtIn":true
                 }
@@ -221,7 +221,7 @@
                 "customText":null,
                 "validationRegexp":null,
                 "helpText":null,
-                "inputType":{
+                "type":{
                     "name":"TextArea",
                     "builtIn":true
                 }
@@ -240,7 +240,7 @@
                 "customText":null,
                 "validationRegexp":null,
                 "helpText":null,
-                "inputType":{
+                "type":{
                     "name":"WholeNumber",
                     "builtIn":true
                 }
@@ -259,7 +259,7 @@
                 "customText":null,
                 "validationRegexp":null,
                 "helpText":null,
-                "inputType":{
+                "type":{
                     "name":"Xml",
                     "builtIn":true
                 }

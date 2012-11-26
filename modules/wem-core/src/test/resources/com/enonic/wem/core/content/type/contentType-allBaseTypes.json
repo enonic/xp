@@ -34,7 +34,7 @@
                                         "customText":null,
                                         "validationRegexp":null,
                                         "helpText":null,
-                                        "inputType":{
+                                        "type":{
                                             "name":"TextLine",
                                             "builtIn":true
                                         }

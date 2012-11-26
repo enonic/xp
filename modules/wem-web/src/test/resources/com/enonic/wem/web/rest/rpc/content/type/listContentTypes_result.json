@@ -8,7 +8,6 @@
             "items":[
                 {
                     "Input":{
-                        "type":"Input",
                         "name":"inputText1",
                         "label":"Line Text 1",
                         "immutable":false,
@@ -20,7 +19,7 @@
                         "customText":null,
                         "validationRegexp":null,
                         "helpText":"Help text line 1",
-                        "inputType":{
+                        "type":{
                             "name":"TextLine",
                             "builtIn":true
                         }
@@ -28,7 +27,6 @@
                 },
                 {
                     "Input":{
-                        "type":"Input",
                         "name":"inputText2",
                         "label":"Line Text 2",
                         "immutable":true,
@@ -40,7 +38,7 @@
                         "customText":null,
                         "validationRegexp":null,
                         "helpText":"Help text line 2",
-                        "inputType":{
+                        "type":{
                             "name":"TextLine",
                             "builtIn":true
                         }
@@ -48,7 +46,6 @@
                 },
                 {
                     "Input":{
-                        "type":"Input",
                         "name":"textArea1",
                         "label":"Text Area",
                         "immutable":false,
@@ -60,7 +57,7 @@
                         "customText":null,
                         "validationRegexp":null,
                         "helpText":"Help text area",
-                        "inputType":{
+                        "type":{
                             "name":"TextArea",
                             "builtIn":true
                         }
@@ -75,7 +72,6 @@
             "items":[
                 {
                     "Input":{
-                        "type":"Input",
                         "name":"inputText_1",
                         "label":"Line Text 1",
                         "immutable":false,
@@ -87,7 +83,7 @@
                         "customText":null,
                         "validationRegexp":null,
                         "helpText":"Help text line 1",
-                        "inputType":{
+                        "type":{
                             "name":"TextLine",
                             "builtIn":true
                         }
