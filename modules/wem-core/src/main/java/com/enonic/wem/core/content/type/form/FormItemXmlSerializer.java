@@ -42,8 +42,6 @@ class FormItemXmlSerializer
 
     public static final String VALIDATION_REGEX = "validationRegex";
 
-    public static final String SUB_TYPE_CLASS = "sub-type-class";
-
     private final InputTypeConfigXmlSerializer inputTypeConfigSerializer = new InputTypeConfigXmlSerializer();
 
     private final OccurrencesXmlSerializer occurrencesXmlSerializer = new OccurrencesXmlSerializer();
@@ -142,7 +140,7 @@ class FormItemXmlSerializer
         referenceEl.setAttribute( NAME, String.valueOf( subTypeReference.getName() ) );
         referenceEl.addContent( new Element( NAME ).setText( subTypeReference.getName() ) );
         referenceEl.addContent( new Element( REFERENCE ).setText( subTypeReference.getSubTypeQualifiedName().toString() ) );
-        referenceEl.addContent( new Element( SUB_TYPE_CLASS ).setText( subTypeReference.getSubTypeClass().getSimpleName() ) );
+        referenceEl.addContent( new Element( TYPE ).setText( subTypeReference.getSubTypeClass().getSimpleName() ) );
         return referenceEl;
     }
 
@@ -253,7 +251,7 @@ class FormItemXmlSerializer
         final SubTypeReference.Builder builder = SubTypeReference.newSubTypeReference();
         builder.name( formItemEl.getAttributeValue( NAME ) );
         builder.subType( new SubTypeQualifiedName( formItemEl.getChildText( REFERENCE ) ) );
-        builder.type( formItemEl.getChildText( SUB_TYPE_CLASS ) );
+        builder.type( formItemEl.getChildText( TYPE ) );
         return builder.build();
     }
 

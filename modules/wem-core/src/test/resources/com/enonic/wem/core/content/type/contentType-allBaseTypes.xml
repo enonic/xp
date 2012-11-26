@@ -26,7 +26,7 @@
         <sub-type-reference name="myCommonInput">
           <name>myCommonInput</name>
           <reference>System:mySharedInput</reference>
-          <sub-type-class>InputSubType</sub-type-class>
+          <type>InputSubType</type>
         </sub-type-reference>
       </items>
     </form-item-set>

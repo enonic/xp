@@ -47,7 +47,7 @@
                         "SubTypeReference":{
                             "name":"myCommonInput",
                             "reference":"System:mySharedInput",
-                            "subTypeClass":"InputSubType"
+                            "type":"InputSubType"
                         }
                     }
                 ]

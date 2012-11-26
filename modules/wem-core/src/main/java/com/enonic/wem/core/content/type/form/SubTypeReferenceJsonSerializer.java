@@ -17,7 +17,7 @@ class SubTypeReferenceJsonSerializer
 
     private static final String REFERENCE = "reference";
 
-    public static final String SUB_TYPE_CLASS = "subTypeClass";
+    public static final String TYPE = "type";
 
     @Override
     protected JsonNode serialize( final SubTypeReference subTypeReference, final ObjectMapper objectMapper )
@@ -25,7 +25,7 @@ class SubTypeReferenceJsonSerializer
         final ObjectNode jsonObject = objectMapper.createObjectNode();
         jsonObject.put( NAME, subTypeReference.getName() );
         jsonObject.put( REFERENCE, subTypeReference.getSubTypeQualifiedName().toString() );
-        jsonObject.put( SUB_TYPE_CLASS, subTypeReference.getSubTypeClass().getSimpleName() );
+        jsonObject.put( TYPE, subTypeReference.getSubTypeClass().getSimpleName() );
         return jsonObject;
     }
 
@@ -34,7 +34,7 @@ class SubTypeReferenceJsonSerializer
         final SubTypeReference.Builder builder = SubTypeReference.newSubTypeReference();
         builder.name( JsonParserUtil.getStringValue( NAME, subTypeReferenceObj ) );
         builder.subType( new SubTypeQualifiedName( JsonParserUtil.getStringValue( REFERENCE, subTypeReferenceObj ) ) );
-        builder.type( JsonParserUtil.getStringValue( SUB_TYPE_CLASS, subTypeReferenceObj ) );
+        builder.type( JsonParserUtil.getStringValue( TYPE, subTypeReferenceObj ) );
         return builder.build();
     }
 }
