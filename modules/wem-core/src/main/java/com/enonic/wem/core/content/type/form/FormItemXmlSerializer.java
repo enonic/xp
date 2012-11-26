@@ -81,8 +81,8 @@ class FormItemXmlSerializer
         Element inputEl = new Element( classNameToXmlElementName( Input.class.getSimpleName() ) );
         inputEl.setAttribute( TYPE, input.getInputType().getClass().getSimpleName() );
         inputEl.setAttribute( BUILT_IN, String.valueOf( input.getInputType().isBuiltIn() ) );
+        inputEl.setAttribute( NAME, String.valueOf( input.getName() ) );
 
-        inputEl.addContent( new Element( NAME ).setText( input.getName() ) );
         inputEl.addContent( new Element( LABEL ).setText( input.getLabel() ) );
         inputEl.addContent( new Element( IMMUTABLE ).setText( String.valueOf( input.isImmutable() ) ) );
         inputEl.addContent( new Element( INDEXED ).setText( String.valueOf( input.isIndexed() ) ) );
@@ -105,7 +105,7 @@ class FormItemXmlSerializer
     private Element serializeFormItemSet( final FormItemSet set )
     {
         final Element formItemSetEl = new Element( classNameToXmlElementName( FormItemSet.class.getSimpleName() ) );
-        formItemSetEl.addContent( new Element( NAME ).setText( set.getName() ) );
+        formItemSetEl.setAttribute( NAME, String.valueOf( set.getName() ) );
         formItemSetEl.addContent( new Element( LABEL ).setText( set.getLabel() ) );
         formItemSetEl.addContent( new Element( IMMUTABLE ).setText( String.valueOf( set.isImmutable() ) ) );
         formItemSetEl.addContent( new Element( CUSTOM_TEXT ).setText( set.getCustomText() ) );
@@ -119,7 +119,7 @@ class FormItemXmlSerializer
     private Element serializeLayout( final Layout layout )
     {
         final Element layoutEl = new Element( classNameToXmlElementName( Layout.class.getSimpleName() ) );
-        layoutEl.addContent( new Element( NAME ).setText( layout.getName() ) );
+        layoutEl.setAttribute( NAME, String.valueOf( layout.getName() ) );
 
         if ( layout instanceof FieldSet )
         {
@@ -139,6 +139,7 @@ class FormItemXmlSerializer
     private Element serializeReference( final SubTypeReference subTypeReference )
     {
         final Element referenceEl = new Element( classNameToXmlElementName( SubTypeReference.class.getSimpleName() ) );
+        referenceEl.setAttribute( NAME, String.valueOf( subTypeReference.getName() ) );
         referenceEl.addContent( new Element( NAME ).setText( subTypeReference.getName() ) );
         referenceEl.addContent( new Element( REFERENCE ).setText( subTypeReference.getSubTypeQualifiedName().toString() ) );
         referenceEl.addContent( new Element( SUB_TYPE_CLASS ).setText( subTypeReference.getSubTypeClass().getSimpleName() ) );
@@ -185,7 +186,7 @@ class FormItemXmlSerializer
     private FormItem parseInput( final Element formItemEl )
     {
         final Input.Builder builder = newInput();
-        builder.name( formItemEl.getChildText( NAME ) );
+        builder.name( formItemEl.getAttributeValue( NAME ) );
         builder.label( formItemEl.getChildText( LABEL ) );
         builder.immutable( Boolean.valueOf( formItemEl.getChildText( IMMUTABLE ) ) );
         builder.helpText( formItemEl.getChildText( HELP_TEXT ) );
@@ -202,7 +203,7 @@ class FormItemXmlSerializer
     private HierarchicalFormItem parseFormItemSet( final Element formItemEl )
     {
         final FormItemSet.Builder builder = newFormItemSet();
-        builder.name( formItemEl.getChildText( NAME ) );
+        builder.name( formItemEl.getAttributeValue( NAME ) );
         builder.label( formItemEl.getChildText( LABEL ) );
         builder.immutable( Boolean.valueOf( formItemEl.getChildText( IMMUTABLE ) ) );
         builder.helpText( formItemEl.getChildText( HELP_TEXT ) );
@@ -235,7 +236,7 @@ class FormItemXmlSerializer
     private FormItem parseFieldSet( final Element formItemEl )
     {
         final FieldSet.Builder builder = newFieldSet();
-        builder.name( formItemEl.getChildText( NAME ) );
+        builder.name( formItemEl.getAttributeValue( NAME ) );
         builder.label( formItemEl.getChildText( LABEL ) );
 
         final FormItems formItems = formItemsSerializer.parse( formItemEl );
@@ -250,7 +251,7 @@ class FormItemXmlSerializer
     private HierarchicalFormItem parseSubTypeReference( final Element formItemEl )
     {
         final SubTypeReference.Builder builder = SubTypeReference.newSubTypeReference();
-        builder.name( formItemEl.getChildText( NAME ) );
+        builder.name( formItemEl.getAttributeValue( NAME ) );
         builder.subType( new SubTypeQualifiedName( formItemEl.getChildText( REFERENCE ) ) );
         builder.type( formItemEl.getChildText( SUB_TYPE_CLASS ) );
         return builder.build();
