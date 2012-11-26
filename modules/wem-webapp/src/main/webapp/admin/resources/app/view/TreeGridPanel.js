@@ -24,8 +24,6 @@ Ext.define('Admin.view.TreeGridPanel', {
         }
 
         treeColumns[0].xtype = 'treecolumn';
-        // We don't need renderer for tree column
-        delete treeColumns[0].renderer;
 
         var treePanel = {
             xtype: 'treepanel',

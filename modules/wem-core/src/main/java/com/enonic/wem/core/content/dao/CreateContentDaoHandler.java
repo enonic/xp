@@ -41,6 +41,10 @@ final class CreateContentDaoHandler
             {
                 throw new ContentNotFoundException( path.getParentPath() );
             }
+            else if ( parentContentNode.hasNode( path.getName() ) )
+            {
+                throw new ContentAlreadyExistException( path );
+            }
             addContentToJcr( content, parentContentNode );
         }
     }

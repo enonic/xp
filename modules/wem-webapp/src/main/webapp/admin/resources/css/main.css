@@ -143,9 +143,12 @@ img.photo {
 */
 .admin-grid-title {
     font-weight: bold;
+    line-height: 16px;
 }
 
 .admin-grid-description {
+    line-height: 16px;
+    font-weight: normal;
 }
 
 .x-grid-cell img.admin-thumbnail {
