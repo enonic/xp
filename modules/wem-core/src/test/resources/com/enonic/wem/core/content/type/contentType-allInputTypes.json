@@ -5,7 +5,6 @@
     "items":[
         {
             "Input":{
-                "type":"Input",
                 "name":"myColor",
                 "label":null,
                 "immutable":false,
@@ -25,7 +24,6 @@
         },
         {
             "Input":{
-                "type":"Input",
                 "name":"myDate",
                 "label":null,
                 "immutable":false,
@@ -45,7 +43,6 @@
         },
         {
             "Input":{
-                "type":"Input",
                 "name":"myDecimalNumber",
                 "label":null,
                 "immutable":false,
@@ -65,7 +62,6 @@
         },
         {
             "Input":{
-                "type":"Input",
                 "name":"myGeoLocation",
                 "label":null,
                 "immutable":false,
@@ -85,7 +81,6 @@
         },
         {
             "Input":{
-                "type":"Input",
                 "name":"myHtmlArea",
                 "label":null,
                 "immutable":false,
@@ -105,7 +100,6 @@
         },
         {
             "Input":{
-                "type":"Input",
                 "name":"myMoney",
                 "label":null,
                 "immutable":false,
@@ -125,7 +119,6 @@
         },
         {
             "Input":{
-                "type":"Input",
                 "name":"myPhone",
                 "label":null,
                 "immutable":false,
@@ -145,7 +138,6 @@
         },
         {
             "Input":{
-                "type":"Input",
                 "name":"mySingleSelector",
                 "label":null,
                 "immutable":false,
@@ -180,7 +172,6 @@
         },
         {
             "Input":{
-                "type":"Input",
                 "name":"myTags",
                 "label":null,
                 "immutable":false,
@@ -200,7 +191,6 @@
         },
         {
             "Input":{
-                "type":"Input",
                 "name":"myTextLine",
                 "label":null,
                 "immutable":false,
@@ -220,7 +210,6 @@
         },
         {
             "Input":{
-                "type":"Input",
                 "name":"myTextArea",
                 "label":null,
                 "immutable":false,
@@ -240,7 +229,6 @@
         },
         {
             "Input":{
-                "type":"Input",
                 "name":"myWholeNumber",
                 "label":null,
                 "immutable":false,
@@ -260,7 +248,6 @@
         },
         {
             "Input":{
-                "type":"Input",
                 "name":"myXml",
                 "label":null,
                 "immutable":false,

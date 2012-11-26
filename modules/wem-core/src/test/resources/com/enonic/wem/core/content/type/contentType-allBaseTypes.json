@@ -23,7 +23,6 @@
                             "items":[
                                 {
                                     "Input":{
-                                        "type":"Input",
                                         "name":"myTextLine",
                                         "label":null,
                                         "immutable":false,

@@ -6,7 +6,6 @@ import java.util.Iterator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
-import org.elasticsearch.common.base.Preconditions;
 
 import com.enonic.wem.api.content.type.form.FieldSet;
 import com.enonic.wem.api.content.type.form.FormItem;
@@ -54,8 +53,6 @@ class FormItemJsonSerializer
     public static final String INPUT_TYPE_CONFIG = "inputTypeConfig";
 
     public static final String INPUT_TYPE = "inputType";
-
-    public static final String LAYOUT_TYPE = "layoutType";
 
     public static final String ITEMS = "items";
 
@@ -105,7 +102,6 @@ class FormItemJsonSerializer
     private JsonNode serializeInput( final Input input, final ObjectMapper objectMapper )
     {
         final ObjectNode jsonObject = objectMapper.createObjectNode();
-        jsonObject.put( TYPE, Input.class.getSimpleName() );
         jsonObject.put( NAME, input.getName() );
         jsonObject.put( LABEL, input.getLabel() );
         jsonObject.put( IMMUTABLE, input.isImmutable() );
@@ -168,7 +164,11 @@ class FormItemJsonSerializer
     public FormItem parse( final JsonNode formItemNode )
     {
         final Iterator<String> fieldNamesIt = formItemNode.getFieldNames();
-        Preconditions.checkArgument( fieldNamesIt.hasNext(), "TODO" );
+        if ( !fieldNamesIt.hasNext() )
+        {
+            throw new JsonParsingException( "Field describing what type of FormItem was not found: " + formItemNode.toString() );
+        }
+
         final String type = fieldNamesIt.next();
 
         final FormItem formItem;
