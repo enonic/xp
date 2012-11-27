@@ -1,13 +1,13 @@
 <tpl for=".">
-    <div id="selected-item-box-{data.key}" class="admin-selected-item-box small x-btn-default-small clearfix">
-        <div class="admin-selected-item-box left">
+    <div id="selected-item-box-{data.key}" class="admin-selected-item-box small clearfix">
+        <div class="left">
             <img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="{data.name}"
                  class="{data.iconCls}"/>
         </div>
-        <div class="admin-selected-item-box center">
-            <h2>{data.name}</h2>
+        <div class="center">
+            {data.name}
         </div>
-        <div class="admin-selected-item-box right">
+        <div class="right">
             <a id="remove-from-selection-button-{data.key}" class="remove-selection" href="javascript:;"></a>
         </div>
     </div>

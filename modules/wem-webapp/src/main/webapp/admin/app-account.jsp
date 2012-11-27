@@ -12,6 +12,10 @@
   <link rel="stylesheet" type="text/css" href="resources/css/user-preview-panel.css">
   <link rel="stylesheet" type="text/css" href="resources/css/BoxSelect.css">
 
+  <!-- WEM ExtJS theme -->
+
+  <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/admin.css">
+
   <!-- ExtJS -->
 
   <script type="text/javascript" src="resources/lib/ext/ext-all-debug.js"></script>
@@ -74,7 +78,6 @@
         Ext.create('Ext.container.Viewport', {
           layout: 'fit',
           cls: 'admin-viewport',
-          padding: 5,
 
           items: [
             {
@@ -84,6 +87,7 @@
                   id: 'tab-browse',
                   title: 'Browse',
                   closable: false,
+                  border: false,
                   xtype: 'panel',
                   layout: 'border',
                   items: [

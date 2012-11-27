@@ -1,6 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Override ext-all.css
 */
+/*
 body, td,
 .x-body,
 .x-panel-body,
@@ -19,6 +20,7 @@ body, td,
     color: #04408C !important;
     font-weight: bold;
 }
+*/
 
 .x-html h1 {
     font-size: 2.5em;

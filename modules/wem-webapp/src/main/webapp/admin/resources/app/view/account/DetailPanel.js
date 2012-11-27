@@ -1,20 +1,40 @@
 Ext.define('Admin.view.account.DetailPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.accountDetail',
+
+    cls: 'admin-detail',
+    border: false,
     split: true,
     autoScroll: true,
     layout: 'card',
-    collapsible: true,
 
     initComponent: function () {
+
+        this.tbar = {
+            xtype: 'toolbar',
+            cls: 'admin-white-toolbar',
+            items: [
+                {
+                    xtype: 'tbtext',
+                    text: 'No items selected - Choose from list above - <a href="javascript:;">Clear selection</a>'
+                }
+            ]
+        };
+
         var largeBoxesPanel = this.createLargeBoxSelection();
         var userPreviewPanel = this.createUserPreviewPanel();
         var groupPreviewPanel = this.createGroupPreviewPanel();
         var smallBoxesPanel = this.createSmallBoxSelection();
         var noneSelectedPanel = this.createNoneSelection();
 
-        this.items = [noneSelectedPanel, userPreviewPanel, groupPreviewPanel,
-            largeBoxesPanel, smallBoxesPanel];
+        this.items = [
+            noneSelectedPanel,
+            userPreviewPanel,
+            groupPreviewPanel,
+            largeBoxesPanel,
+            smallBoxesPanel
+        ];
+
         this.callParent(arguments);
     },
 
@@ -135,13 +155,13 @@ Ext.define('Admin.view.account.DetailPanel', {
     deselectItem: function (event, target) {
         var className = target.className;
         if (className && className === 'remove-selection') {
-            var key = target.attributes.getNamedItem('id').nodeValue.split('remove-from-selection-button-')[1];
-            var userGridSelModel = this.up('cmsTabPanel').down('accountGrid').getSelectionModel();
+            var key = target.attributes.getNamedItem('id').nodeValue.split('remove-from-selection-button:')[1];
+
             var persistentGridSelection = this.persistentGridSelection;
             var selection = persistentGridSelection.getSelection();
             Ext.each(selection, function (item) {
                 if (item.get('key') === key) {
-                    Ext.get('selected-item-box-' + key).remove();
+                    Ext.get('selected-item-box:' + key).remove();
                     persistentGridSelection.deselect(item);
                 }
             });
@@ -159,17 +179,27 @@ Ext.define('Admin.view.account.DetailPanel', {
     updateTitle: function (persistentGridSelection) {
         this.persistentGridSelection = persistentGridSelection;
         var count = persistentGridSelection.getSelectionCount();
-        var header = count + " Account(s) selected";
-        if (count > 0) {
-            header += " (<a href='javascript:;' class='clearSelection'>Clear selection</a>)";
+        var headerText;
+        if (count === 0) {
+            headerText = "No items selected - Choose from list above";
+        } else {
+            headerText = count + " Account(s) selected (<a href='javascript:;' class='clearSelection'>Clear selection</a>)";
         }
-        this.setTitle(header);
 
-        var clearSel = this.header.el.down('a.clearSelection');
-        if (clearSel) {
-            clearSel.on("click", function () {
-                persistentGridSelection.clearSelection();
-            }, this);
+        var tbar = this.dockedItems.get(0);
+        if (tbar) {
+            var tbtext = tbar.down('tbtext');
+            if (tbtext) {
+                tbtext.update(headerText);
+                if (count > 0) {
+                    var clearSel = tbtext.el.down('a.clearSelection');
+                    if (clearSel) {
+                        clearSel.on("click", function () {
+                            persistentGridSelection.clearSelection();
+                        }, this);
+                    }
+                }
+            }
         }
 
     }
