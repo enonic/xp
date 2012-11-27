@@ -6,10 +6,6 @@
   <meta charset="utf-8"/>
   <title>Enonic WEM Admin</title>
   <link rel="stylesheet" type="text/css" href="../../admin/resources/lib/ext/resources/css/ext-all.css">
-  <link rel="stylesheet" type="text/css" href="../../admin/resources/css/main.css">
-  <link rel="stylesheet" type="text/css" href="../../admin/resources/css/icons.css">
-  <link rel="stylesheet" type="text/css" href="../../admin/resources/css/admin-preview-panel.css">
-  <link rel="stylesheet" type="text/css" href="../../admin/resources/css/admin-tree-panel.css">
 
   <!-- ExtJS -->
 

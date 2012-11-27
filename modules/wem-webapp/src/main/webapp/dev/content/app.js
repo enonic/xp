@@ -13,7 +13,7 @@ Ext.application({
     ],
 
     launch: function () {
-        function loadContentType (file) {
+        function loadContentType(file) {
             Ext.Ajax.request({
                 url: file,
                 success: function (response) {
@@ -68,23 +68,23 @@ Ext.application({
                                     labelWidth: 100,
                                     store: Ext.create('Ext.data.Store', {
                                         fields: ['file', 'qualifiedName'],
-                                        data : [
-                                            {file:'mock-contenttype-htmlarea.json', qualifiedName: 'Demo:HtmlArea'},
-                                            {file:'mock-contenttype-relation.json', qualifiedName: 'Demo:Relation'},
-                                            {file:'mock-contenttype-article.json', qualifiedName: 'Demo:Article'},
-                                            {file:'mock-contenttype-set.json', qualifiedName: 'Demo:Set'}
+                                        data: [
+                                            {file: 'mock-contenttype-htmlarea.json', qualifiedName: 'Demo:HtmlArea'},
+                                            {file: 'mock-contenttype-relation.json', qualifiedName: 'Demo:Relation'},
+                                            {file: 'mock-contenttype-article.json', qualifiedName: 'Demo:Article'},
+                                            {file: 'mock-contenttype-set.json', qualifiedName: 'Demo:Set'}
                                         ]
                                     }),
                                     queryMode: 'local',
                                     valueField: 'file',
                                     displayField: 'qualifiedName',
-                                    listeners:{
-                                        select: function(combo) {
-                                            loadContentType(combo.getValue())
+                                    listeners: {
+                                        select: function (combo) {
+                                            loadContentType(combo.getValue());
                                         },
-                                        render: function(combo) {
+                                        render: function (combo) {
                                             combo.setValue('mock-contenttype-htmlarea.json');
-                                            loadContentType(combo.getValue())
+                                            loadContentType(combo.getValue());
                                         }
                                     }
                                 }
@@ -117,9 +117,7 @@ Ext.application({
                             ]
                         }
                     ]
-                },
-
-
+                }
             ]
         });
     }
