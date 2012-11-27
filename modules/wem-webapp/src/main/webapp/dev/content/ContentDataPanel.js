@@ -42,7 +42,14 @@ Ext.define('ContentDataPanel', {
         }
         me.items = [fieldSet];
 
-        Ext.each(this.contentTypeItems, function (contentTypeItem) {
+        me.addInputs(me.contentTypeItems, fieldSet);
+
+        me.callParent(arguments);
+    },
+
+    addInputs: function (contentTypeItems, parent) {
+        var me = this;
+        Ext.each(contentTypeItems, function (contentTypeItem) {
             var inputTypeName = contentTypeItem.inputType.name;
             var widgetAlias = 'widget.input.' + inputTypeName;
 
@@ -52,27 +59,31 @@ Ext.define('ContentDataPanel', {
                 return;
             }
 
-            var item = Ext.create({
-                xclass: widgetAlias,
-                fieldLabel: contentTypeItem.label,
-                name: contentTypeItem.name,
-                itemId: contentTypeItem.name,
-                cls: 'span-3',
-                listeners: {
-                    render: function (cmp) {
-                        Ext.tip.QuickTipManager.register({
-                            target: cmp.el,
-                            text: contentTypeItem.helpText
-                        });
-                    }
-                },
-                value: editedContentValues[contentTypeItem.name]
-            });
+            var item = me.createInput(contentTypeItem, widgetAlias);
 
-            fieldSet.items.push(item);
+            parent.items.push(item);
+        });
+    },
+
+    createInput: function (contentTypeItem, widgetAlias) {
+        var item = Ext.create({
+            xclass: widgetAlias,
+            fieldLabel: contentTypeItem.label,
+            name: contentTypeItem.name,
+            itemId: contentTypeItem.name,
+            cls: 'span-3',
+            listeners: {
+                render: function (cmp) {
+                    Ext.tip.QuickTipManager.register({
+                        target: cmp.el,
+                        text: contentTypeItem.helpText
+                    });
+                }
+            }
+            // value: editedContentValues[contentTypeItem.name]
         });
 
-        me.callParent(arguments);
+        return item;
     },
 
     inputIsSupported: function (alias) {

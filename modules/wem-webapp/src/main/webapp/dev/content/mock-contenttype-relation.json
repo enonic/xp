@@ -33,7 +33,24 @@
                 "indexed": false,
                 "customText": null,
                 "validationRegexp": null,
-                "helpText": "Articles links",
+                "helpText": "Related articles",
+                "inputType": {
+                    "name": "Relation",
+                    "builtIn": true
+                }
+            },
+            {
+                "type": "Input",
+                "name": "related_files",
+                "label": "Related Files",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": "Related files",
                 "inputType": {
                     "name": "Relation",
                     "builtIn": true

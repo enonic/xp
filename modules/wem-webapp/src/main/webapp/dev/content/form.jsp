@@ -6,6 +6,35 @@
   <meta charset="utf-8"/>
   <title>Enonic WEM Admin</title>
   <link rel="stylesheet" type="text/css" href="../../admin/resources/lib/ext/resources/css/ext-all.css">
+  <style type="text/css">
+
+    .admin-related-item {
+      display: table;
+      margin: 5px 0;
+      width: 100%;
+    }
+
+    .admin-related-item img {
+      display: table-cell;
+      float: left;
+      vertical-align: top;
+      padding-right: 10px;
+    }
+
+    .admin-related-item .center-column {
+      width: 320px;
+      display: table-cell;
+      vertical-align: top;
+      float: left;
+    }
+
+    .admin-related-item .right-column {
+      display: table-cell;
+      vertical-align: top;
+      float: left;
+    }
+
+  </style>
 
   <!-- ExtJS -->
 

@@ -36,7 +36,7 @@ Ext.application({
                     renderTimeStop = new Date().getTime();
                     var totalTime = renderTimeStop - renderTimeStart;
 
-                    Ext.getCmp('output').setValue('Total load and render time: ' + totalTime + 'ms\n\nInput:\n\n' + response.responseText);
+                    Ext.getCmp('output').setValue(json.contentType.qualifiedName + '\n\nTotal load and render time: ' + totalTime + 'ms\n\nJSON:\n\n' + response.responseText);
                 }
             });
         }
@@ -71,7 +71,7 @@ Ext.application({
                                         data: [
                                             {file: 'mock-contenttype-htmlarea.json', qualifiedName: 'Demo:HtmlArea'},
                                             {file: 'mock-contenttype-relation.json', qualifiedName: 'Demo:Relation'},
-                                            {file: 'mock-contenttype-article.json', qualifiedName: 'Demo:Article'},
+                                            {file: 'mock-contenttype-textarea.json', qualifiedName: 'Demo:Article'},
                                             {file: 'mock-contenttype-set.json', qualifiedName: 'Demo:Set'}
                                         ]
                                     }),
@@ -83,7 +83,7 @@ Ext.application({
                                             loadContentType(combo.getValue());
                                         },
                                         render: function (combo) {
-                                            combo.setValue('mock-contenttype-htmlarea.json');
+                                            combo.setValue('mock-contenttype-relation.json');
                                             loadContentType(combo.getValue());
                                         }
                                     }

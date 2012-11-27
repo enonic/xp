@@ -53,9 +53,9 @@
                 "indexed": false,
                 "customText": null,
                 "validationRegexp": null,
-                "helpText": "Html area",
+                "helpText": "Text area",
                 "inputType": {
-                    "name": "HtmlArea",
+                    "name": "TextArea",
                     "builtIn": true
                 }
 
