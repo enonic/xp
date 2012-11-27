@@ -12,6 +12,7 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
+import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static com.enonic.wem.api.content.type.form.inputtype.InputTypes.TEXT_AREA;
 import static com.enonic.wem.api.content.type.form.inputtype.InputTypes.TEXT_LINE;
@@ -39,9 +40,6 @@ public class ListContentTypesRpcHandlerTest
     public void testListContentTypes()
         throws Exception
     {
-        final ContentType contentType1 = new ContentType();
-        contentType1.setModule( Module.newModule().name( "myModule" ).build() );
-        contentType1.setName( "myCtype" );
         final Input inputText1 = newInput().name( "inputText1" ).type( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
             "Help text line 1" ).required( true ).build();
         final Input inputText2 =
@@ -50,17 +48,22 @@ public class ListContentTypesRpcHandlerTest
         final Input textArea1 =
             newInput().name( "textArea1" ).type( TEXT_AREA ).label( "Text Area" ).required( true ).helpText( "Help text area" ).required(
                 true ).build();
-        contentType1.form().addFormItem( inputText1 );
-        contentType1.form().addFormItem( inputText2 );
-        contentType1.form().addFormItem( textArea1 );
 
-        final ContentType contentType2 = new ContentType();
-        contentType2.setModule( Module.newModule().name( "otherModule" ).build() );
-        contentType2.setName( "theContentType" );
+        final ContentType contentType1 = newContentType().
+            module( Module.newModule().name( "myModule" ).build() ).
+            name( "myCtype" ).
+            addFormItem( inputText1 ).
+            addFormItem( inputText2 ).
+            addFormItem( textArea1 ).
+            build();
+
         final Input inputTextCty2 = newInput().name( "inputText_1" ).type( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
             "Help text line 1" ).required( true ).build();
-        contentType2.form().addFormItem( inputTextCty2 );
-
+        final ContentType contentType2 = newContentType().
+            module( Module.newModule().name( "otherModule" ).build() ).
+            name( "theContentType" ).
+            addFormItem( inputTextCty2 ).
+            build();
         final ContentTypes contentTypes = ContentTypes.from( contentType1, contentType2 );
         Mockito.when( client.execute( Commands.contentType().get().all() ) ).thenReturn( contentTypes );
 

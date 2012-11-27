@@ -9,6 +9,8 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.content.type.form.Occurrences;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
 
+import static com.enonic.wem.api.content.type.form.Occurrences.newOccurrences;
+
 class OccurrencesJsonSerializer
     extends AbstractJsonSerializer<Occurrences>
 {
@@ -43,6 +45,6 @@ class OccurrencesJsonSerializer
             maxEntries = maxEntriesNode.getIntValue();
         }
 
-        return new Occurrences( minEntries, maxEntries );
+        return newOccurrences().minimum( minEntries ).maximum( maxEntries ).build();
     }
 }

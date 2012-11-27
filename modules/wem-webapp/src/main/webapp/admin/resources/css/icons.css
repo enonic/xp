@@ -6,6 +6,10 @@
 
 /*---- 24 px icons -----*/
 
+.icon-group-24 {
+    background-image: url("../images/icons/24x24/group.png");
+}
+
 .icon-dashboard-24 {
     background: transparent url("../images/icons/24x24/gauge.png") 0 0 no-repeat;
 }
@@ -264,10 +268,6 @@
 
 .icon-userstore-128 {
     background: transparent url("../images/icons/128x128/userstore.png") 0 0 no-repeat;
-}
-
-.icon-content-128 {
-    background: transparent url("../images/icons/128x128/cubes_blue.png") 0 0 no-repeat;
 }
 
 .icon-data-designer-128 {

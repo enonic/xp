@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
+import static com.enonic.wem.api.content.type.form.Occurrences.newOccurrences;
+
 public class FormItemSet
     extends HierarchicalFormItem
 {
@@ -15,7 +17,7 @@ public class FormItemSet
 
     private boolean immutable;
 
-    private final Occurrences occurrences = new Occurrences( 0, 1 );
+    private Occurrences occurrences = newOccurrences().minimum( 0 ).maximum( 1 ).build();
 
     private String customText;
 
@@ -121,8 +123,7 @@ public class FormItemSet
         FormItemSet copy = (FormItemSet) super.copy();
         copy.label = label;
         copy.immutable = immutable;
-        copy.occurrences.setMinOccurrences( occurrences.getMinimum() );
-        copy.occurrences.setMaxOccurrences( occurrences.getMaximum() );
+        copy.occurrences = newOccurrences( occurrences ).build();
         copy.customText = customText;
         copy.helpText = helpText;
         copy.formItems = formItems.copy();
@@ -182,7 +183,7 @@ public class FormItemSet
 
         private boolean immutable;
 
-        private Occurrences occurrences = new Occurrences( 0, 1 );
+        private Occurrences occurrences = newOccurrences().minimum( 0 ).maximum( 1 ).build();
 
         private String customText;
 
@@ -221,7 +222,7 @@ public class FormItemSet
 
         public Builder occurrences( int minOccurrences, int maxOccurrences )
         {
-            occurrences = new Occurrences( minOccurrences, maxOccurrences );
+            occurrences = newOccurrences().minimum( minOccurrences ).maximum( maxOccurrences ).build();
             return this;
         }
 
@@ -229,11 +230,11 @@ public class FormItemSet
         {
             if ( value && !occurrences.impliesRequired() )
             {
-                occurrences.setMinOccurrences( 1 );
+                occurrences = newOccurrences( occurrences ).minimum( 1 ).build();
             }
             else if ( !value && occurrences.impliesRequired() )
             {
-                occurrences.setMinOccurrences( 0 );
+                occurrences = newOccurrences( occurrences ).minimum( 0 ).build();
             }
             return this;
         }
@@ -242,11 +243,11 @@ public class FormItemSet
         {
             if ( value )
             {
-                occurrences.setMaxOccurrences( 0 );
+                occurrences = newOccurrences( occurrences ).maximum( 0 ).build();
             }
             else
             {
-                occurrences.setMaxOccurrences( 1 );
+                occurrences = newOccurrences( occurrences ).maximum( 1 ).build();
             }
             return this;
         }
@@ -277,8 +278,7 @@ public class FormItemSet
             formItemSet.setName( name );
             formItemSet.label = label;
             formItemSet.immutable = immutable;
-            formItemSet.occurrences.setMinOccurrences( occurrences.getMinimum() );
-            formItemSet.occurrences.setMaxOccurrences( occurrences.getMaximum() );
+            formItemSet.occurrences = newOccurrences( occurrences ).build();
             formItemSet.customText = customText;
             formItemSet.helpText = helpText;
 

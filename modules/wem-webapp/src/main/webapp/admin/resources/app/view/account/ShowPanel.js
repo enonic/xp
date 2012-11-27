@@ -10,7 +10,6 @@ Ext.define('Admin.view.account.ShowPanel', {
 
     layout: 'border',
     border: false,
-    padding: 5,
 
     initComponent: function () {
         this.items = [

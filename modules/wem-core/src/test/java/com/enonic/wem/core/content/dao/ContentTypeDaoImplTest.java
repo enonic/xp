@@ -16,6 +16,7 @@ import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 import com.enonic.wem.core.content.type.dao.ContentTypeDaoImpl;
 import com.enonic.wem.itest.AbstractJcrTest;
 
+import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static org.junit.Assert.*;
@@ -36,12 +37,12 @@ public class ContentTypeDaoImplTest
         throws Exception
     {
         // setup
-        final ContentType contentType = new ContentType();
-        contentType.setModule( new Module( "myModule" ) );
-        contentType.setName( "myContentType" );
-        contentType.setAbstract( false );
-        contentType.setDisplayName( "My content type" );
-        setContentTypeFormItems( contentType );
+        final ContentType.Builder contentTypeBuilder = newContentType().
+            module( new Module( "myModule" ) ).
+            name( "myContentType" ).
+            setAbstract( false ).
+            displayName( "My content type" );
+        final ContentType contentType = addContentTypeFormItems( contentTypeBuilder );
 
         // exercise
         contentTypeDao.createContentType( session, contentType );
@@ -57,12 +58,12 @@ public class ContentTypeDaoImplTest
         throws Exception
     {
         // setup
-        final ContentType contentType = new ContentType();
-        contentType.setModule( new Module( "myModule" ) );
-        contentType.setName( "myContentType" );
-        contentType.setAbstract( true );
-        contentType.setDisplayName( "My content type" );
-        setContentTypeFormItems( contentType );
+        final ContentType.Builder contentTypeBuilder = newContentType().
+            module( new Module( "myModule" ) ).
+            name( "myContentType" ).
+            setAbstract( true ).
+            displayName( "My content type" );
+        final ContentType contentType = addContentTypeFormItems( contentTypeBuilder );
         contentTypeDao.createContentType( session, contentType );
 
         // exercise
@@ -85,20 +86,21 @@ public class ContentTypeDaoImplTest
         throws Exception
     {
         // setup
-        final ContentType contentTypeCreated1 = new ContentType();
-        contentTypeCreated1.setModule( new Module( "myModule" ) );
-        contentTypeCreated1.setName( "myContentType" );
-        contentTypeCreated1.setAbstract( true );
-        contentTypeCreated1.setDisplayName( "My content type" );
-        setContentTypeFormItems( contentTypeCreated1 );
+        final ContentType.Builder contentTypeBuilder = newContentType().
+            module( new Module( "myModule" ) ).
+            name( "myContentType" ).
+            setAbstract( true ).
+            displayName( "My content type" );
+        final ContentType contentTypeCreated1 = addContentTypeFormItems( contentTypeBuilder );
         contentTypeDao.createContentType( session, contentTypeCreated1 );
 
-        final ContentType contentTypeCreated2 = new ContentType();
-        contentTypeCreated2.setModule( new Module( "otherModule" ) );
-        contentTypeCreated2.setName( "someContentType" );
-        contentTypeCreated2.setAbstract( false );
-        contentTypeCreated2.setDisplayName( "Another content type" );
-        setContentTypeFormItems( contentTypeCreated2 );
+        final ContentType.Builder contentTypeBuilder2 = newContentType().
+            module( new Module( "otherModule" ) ).
+            name( "someContentType" ).
+            setAbstract( false ).
+            displayName( "Another content type" );
+        final ContentType contentTypeCreated2 = addContentTypeFormItems( contentTypeBuilder2 );
+
         contentTypeDao.createContentType( session, contentTypeCreated2 );
 
         // exercise
@@ -127,12 +129,12 @@ public class ContentTypeDaoImplTest
         throws Exception
     {
         // setup
-        final ContentType contentType = new ContentType();
-        contentType.setModule( new Module( "myModule" ) );
-        contentType.setName( "myContentType" );
-        contentType.setAbstract( true );
-        contentType.setDisplayName( "My content type" );
-        setContentTypeFormItems( contentType );
+        final ContentType.Builder contentTypeBuilder = newContentType().
+            module( new Module( "myModule" ) ).
+            name( "myContentType" ).
+            setAbstract( true ).
+            displayName( "My content type" );
+        final ContentType contentType = addContentTypeFormItems( contentTypeBuilder );
         contentTypeDao.createContentType( session, contentType );
 
         // exercise
@@ -141,9 +143,11 @@ public class ContentTypeDaoImplTest
         assertNotNull( contentTypesAfterCreate );
         assertEquals( 1, contentTypesAfterCreate.getSize() );
 
-        contentType.setAbstract( false );
-        contentType.setDisplayName( "My content type-UPDATED" );
-        contentTypeDao.updateContentType( session, contentType );
+        final ContentType contentTypeUpdate = newContentType( contentType ).
+            setAbstract( false ).
+            displayName( "My content type-UPDATED" ).
+            build();
+        contentTypeDao.updateContentType( session, contentTypeUpdate );
         commit();
 
         // verify
@@ -163,12 +167,12 @@ public class ContentTypeDaoImplTest
         throws Exception
     {
         // setup
-        final ContentType contentType = new ContentType();
-        contentType.setModule( new Module( "myModule" ) );
-        contentType.setName( "myContentType" );
-        contentType.setAbstract( true );
-        contentType.setDisplayName( "My content type" );
-        setContentTypeFormItems( contentType );
+        final ContentType.Builder contentTypeBuilder = newContentType().
+            module( new Module( "myModule" ) ).
+            name( "myContentType" ).
+            setAbstract( true ).
+            displayName( "My content type" );
+        final ContentType contentType = addContentTypeFormItems( contentTypeBuilder );
         contentTypeDao.createContentType( session, contentType );
 
         // exercise
@@ -188,14 +192,15 @@ public class ContentTypeDaoImplTest
         assertTrue( contentTypesAfterDelete.isEmpty() );
     }
 
-    private void setContentTypeFormItems( final ContentType contentType )
+    private ContentType addContentTypeFormItems( final ContentType.Builder contentTypeBuilder )
     {
-        FormItemSet formItemSet = newFormItemSet().name( "address" ).build();
+        final FormItemSet formItemSet = newFormItemSet().name( "address" ).build();
         formItemSet.add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() );
         formItemSet.add( newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() );
         formItemSet.add( newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() );
         formItemSet.add( newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.form().addFormItem( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.form().addFormItem( formItemSet );
+        contentTypeBuilder.addFormItem( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() );
+        contentTypeBuilder.addFormItem( formItemSet );
+        return contentTypeBuilder.build();
     }
 }

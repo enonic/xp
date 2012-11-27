@@ -19,6 +19,7 @@ import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
+import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
@@ -43,10 +44,11 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void given_content_with_name_when_parsed_then_name_is_as_expected()
     {
-        ContentType contentType = new ContentType();
-        contentType.setModule( myModule );
-        contentType.setName( "MyContentType" );
-        contentType.form().addFormItem( newInput().name( "myFormItem" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
+        final ContentType contentType = newContentType().
+            module( myModule ).
+            name( "MyContentType" ).
+            addFormItem( newInput().name( "myFormItem" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).
+            build();
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -65,10 +67,11 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void given_content_with_name_and_a_formItem_when_parsed_then_path_and_value_are_as_expected()
     {
-        ContentType contentType = new ContentType();
-        contentType.setModule( myModule );
-        contentType.setName( "MyContentType" );
-        contentType.form().addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
+        final ContentType contentType = newContentType().
+            module( myModule ).
+            name( "MyContentType" ).
+            addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).
+            build();
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -160,14 +163,14 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void given_formItem_and_formItemSet_when_parsed_then_paths_and_values_are_as_expected()
     {
-        ContentType contentType = new ContentType();
-        contentType.setModule( myModule );
-        contentType.setName( "MyContentType" );
-        contentType.form().addFormItem( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
-
-        FormItemSet formItemSet = newFormItemSet().name( "formItemSet" ).build();
-        contentType.form().addFormItem( formItemSet );
+        final FormItemSet formItemSet = newFormItemSet().name( "formItemSet" ).build();
         formItemSet.add( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
+        final ContentType contentType = newContentType().
+            module( myModule ).
+            name( "MyContentType" ).
+            addFormItem( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).
+            addFormItem( formItemSet ).
+            build();
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -190,14 +193,15 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void given_array_of_formItemSet_when_parsed_then_paths_and_values_are_as_expected()
     {
-        ContentType contentType = new ContentType();
-        contentType.setModule( myModule );
-        contentType.setName( "MyContentType" );
-        contentTypeFetcher.add( contentType );
-
-        FormItemSet formItemSet = newFormItemSet().name( "formItemSet" ).label( "FormItemSet" ).multiple( true ).build();
-        contentType.form().addFormItem( formItemSet );
+        final FormItemSet formItemSet = newFormItemSet().name( "formItemSet" ).label( "FormItemSet" ).multiple( true ).build();
         formItemSet.add( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
+
+        final ContentType contentType = newContentType().
+            module( myModule ).
+            name( "MyContentType" ).
+            addFormItem( formItemSet ).
+            build();
+        contentTypeFetcher.add( contentType );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -219,13 +223,15 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void given_formItem_inside_layout_when_parse_then_formItem_path_is_affected_by_name_of_layout()
     {
-        ContentType contentType = new ContentType();
-        contentType.setModule( myModule );
-        contentType.setName( "MyContentType" );
-        contentType.form().addFormItem( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() );
-        FieldSet layout = newFieldSet().label( "Label" ).name( "fieldSet" ).add(
+        final FieldSet layout = newFieldSet().label( "Label" ).name( "fieldSet" ).add(
             newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() ).build();
-        contentType.form().addFormItem( layout );
+
+        final ContentType contentType = newContentType().
+            module( myModule ).
+            name( "MyContentType" ).
+            addFormItem( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( layout ).
+            build();
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );

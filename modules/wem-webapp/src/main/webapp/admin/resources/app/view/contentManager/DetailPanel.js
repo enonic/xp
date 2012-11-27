@@ -9,23 +9,23 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     ],
 
     autoScroll: true,
+    border: false,
     layout: 'card',
-    cls: 'admin-preview-panel',
+    cls: 'admin-detail',
 
     iconClasses128: {
         "myModule:mySite": 'icon-site-128',
-        "myModule:myType": 'icon-content-128'
+        "News:Article": 'icon-content-128'
     },
     iconClasses32: {
         "myModule:mySite": 'icon-site-32',
-        "myModule:myType": 'icon-content-32'
+        "News:Article": 'icon-content-32'
     },
     iconClasses24: {
         "myModule:mySite": 'icon-site-24',
-        "myModule:myType": 'icon-content-24'
+        "News:Article": 'icon-content-24'
     },
 
-    collapsible: true,
     showToolbar: true,
     isLiveMode: false,
 
@@ -62,6 +62,17 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
         if (this.showToolbar) {
             this.tbar = Ext.createByAlias('widget.contentDetailToolbar');
+        } else {
+            this.tbar = {
+                xtype: 'toolbar',
+                cls: 'admin-white-toolbar',
+                items: [
+                    {
+                        xtype: 'tbtext',
+                        text: 'No items selected - Choose from list above - <a href="javascript:;">Clear selection</a>'
+                    }
+                ]
+            };
         }
 
         this.callParent(arguments);
@@ -70,6 +81,8 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
 
     resolveIconClass: function (data, size) {
+        console.log("details:");
+        console.log(this);
         var iconCls = "";
         var nodeType = data.type;
         var iconClasses;
@@ -97,10 +110,11 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             itemId: 'noSelection',
             xtype: 'panel',
             styleHtmlContent: true,
+            padding: 10,
             bodyStyle: {
                 border: 'none'
             },
-            html: '<h2 class="message">Nothing selected</h2>'
+            html: '<div>Nothing selected</div>'
         };
     },
 
@@ -318,7 +332,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                 singleData = this.data.data;
             }
             if (singleData) {
-                singleData.iconCls = this.resolveIconClass(singleData);
+                //singleData.iconCls = this.resolveIconClass(singleData);
             }
 
             if (this.isLiveMode) {
@@ -388,14 +402,21 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
         if (count > 0) {
             header += " (<a href='javascript:;' class='clearSelection'>Clear selection</a>)";
         }
-        this.setTitle(header);
 
-        var clearSel = this.header.el.down('a.clearSelection');
-
-        if (clearSel) {
-            clearSel.on("click", function () {
-                this.fireEvent('deselectrecord', -1);
-            }, this);
+        var tbar = this.dockedItems.get(0);
+        if (tbar) {
+            var tbtext = tbar.down('tbtext');
+            if (tbtext) {
+                tbtext.update(header);
+                if (count > 0) {
+                    var clearSel = tbtext.el.down('a.clearSelection');
+                    if (clearSel) {
+                        clearSel.on("click", function () {
+                            this.fireEvent('deselectrecord', -1);
+                        }, this);
+                    }
+                }
+            }
         }
 
     },

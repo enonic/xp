@@ -47,7 +47,7 @@ Ext.define('Admin.view.account.ExportAccountsWindow', {
                             iconCls: 'icon-cancel-24',
                             action: 'close',
                             handler: function () {
-                                this.up('window').close();
+                                this.up('exportAccountsWindow').close();
                             }
                         },
                         {
@@ -55,7 +55,7 @@ Ext.define('Admin.view.account.ExportAccountsWindow', {
                             formBind: true,
                             iconCls: 'icon-ok-24',
                             handler: function (btn, evt) {
-                                var win = btn.up('window'),
+                                var win = btn.up('exportAccountsWindow'),
                                     exportRestUrl, exportRestMethod,
                                     lastSearchQuery, query,
                                     type = win.down('#exportType');
@@ -85,7 +85,8 @@ Ext.define('Admin.view.account.ExportAccountsWindow', {
                                 }
 
                                 // Create a form in order to do a post request
-                                var frameData = "<form id='accountsExportForm' action='"+exportRestUrl+"' method='"+exportRestMethod+"'>";
+                                var frameData = "<form id='accountsExportForm' action='" + exportRestUrl + "' method='" + exportRestMethod +
+                                                "'>";
                                 Ext.iterate(query, function (param, value) {
                                     if (Ext.isArray(value)) {
                                         Ext.each(value, function (arrayValue) {

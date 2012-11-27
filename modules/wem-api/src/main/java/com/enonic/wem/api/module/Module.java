@@ -1,6 +1,8 @@
 package com.enonic.wem.api.module;
 
 
+import com.google.common.base.Objects;
+
 public class Module
 {
     public static final Module SYSTEM = newModule().name( "System" ).build();
@@ -39,4 +41,10 @@ public class Module
         }
     }
 
+    public String toString()
+    {
+        final Objects.ToStringHelper s = Objects.toStringHelper( this );
+        s.add( "name", name );
+        return s.toString();
+    }
 }

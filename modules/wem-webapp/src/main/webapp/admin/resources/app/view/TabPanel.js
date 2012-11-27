@@ -5,9 +5,12 @@ Ext.define('Admin.view.TabPanel', {
     extend: 'Ext.tab.Panel',
     // TODO: Refactor "cmsTabPanel" -> "adminTabPanel"
     alias: 'widget.cmsTabPanel',
+
     requires: ['Admin.plugin.TabCloseMenu'],
-    defaults: { closable: true },
     plugins: ['tabCloseMenu'],
+
+    border: false,
+    defaults: { closable: true },
 
     initComponent: function () {
         this.callParent(arguments);

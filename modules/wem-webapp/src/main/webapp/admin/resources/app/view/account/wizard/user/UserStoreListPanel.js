@@ -1,12 +1,18 @@
 Ext.define('Admin.view.account.wizard.user.UserStoreListPanel', {
     extend: 'Ext.view.View',
     alias: 'widget.userStoreListPanel',
+
     border: false,
+    loadMask: true,
     store: 'Admin.store.account.UserstoreConfigStore',
+    itemSelector: 'div.admin-data-view',
+    trackOver: true,
+    overItemCls: 'admin-data-view-over',
+    emptyText: 'No items available',
+    autoScroll: true,
+    tpl: Templates.account.userstoreListItem,
 
     initComponent: function () {
-        this.tpl = Templates.account.userstoreRadioButton;
-        this.itemSelector = 'div.admin-userstore';
         this.callParent(arguments);
     },
 

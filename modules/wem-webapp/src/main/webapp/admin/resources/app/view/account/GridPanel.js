@@ -4,13 +4,16 @@ Ext.define('Admin.view.account.GridPanel', {
 
     requires: [
         'Admin.plugin.PersistentGridSelectionPlugin',
-        'Admin.plugin.SlidingPagerPlugin'
+        'Admin.plugin.GridToolbarPlugin'
     ],
     plugins: ['persistentGridSelection'],
+
+    cls: 'admin-grid',
     layout: 'fit',
     multiSelect: true,
     columnLines: true,
-    frame: false,
+    hideHeaders: true,
+    border: false,
     store: 'Admin.store.account.AccountStore',
 
     initComponent: function () {
@@ -68,9 +71,11 @@ Ext.define('Admin.view.account.GridPanel', {
         ];
 
         me.tbar = {
-            xtype: 'pagingtoolbar',
+            xtype: 'toolbar',
+            cls: 'admin-white-toolbar',
             store: me.store,
-            plugins: ['slidingPagerPlugin']
+            gridPanel: me,
+            plugins: ['gridToolbarPlugin']
         };
 
         me.viewConfig = {
@@ -82,7 +87,7 @@ Ext.define('Admin.view.account.GridPanel', {
         };
 
         me.selModel = Ext.create('Ext.selection.CheckboxModel', {
-            //checkOnly: true
+            headerWidth: 36
         });
 
         me.callParent(arguments);

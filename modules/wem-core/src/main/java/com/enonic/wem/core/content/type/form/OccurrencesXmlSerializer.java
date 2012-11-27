@@ -6,6 +6,8 @@ import org.jdom.Element;
 
 import com.enonic.wem.api.content.type.form.Occurrences;
 
+import static com.enonic.wem.api.content.type.form.Occurrences.newOccurrences;
+
 class OccurrencesXmlSerializer
 {
     public Element serialize( final Occurrences occurrences )
@@ -48,6 +50,6 @@ class OccurrencesXmlSerializer
             return null;
         }
 
-        return new Occurrences( minimum, maximum );
+        return newOccurrences().minimum( minimum ).maximum( maximum ).build();
     }
 }

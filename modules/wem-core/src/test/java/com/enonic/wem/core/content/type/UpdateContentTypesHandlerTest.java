@@ -9,13 +9,14 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.type.UpdateContentTypes;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.ContentTypes;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.editor.ContentTypeEditor;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 
+import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isA;
@@ -45,11 +46,12 @@ public class UpdateContentTypesHandlerTest
         throws Exception
     {
         // setup
-        final ContentType contentType = new ContentType();
-        contentType.setName( "myContentType" );
-        contentType.setModule( new Module( "myModule" ) );
-        contentType.setDisplayName( "My content type" );
-        contentType.setAbstract( false );
+        final ContentType contentType = newContentType().
+            name( "myContentType" ).
+            module( new Module( "myModule" ) ).
+            displayName( "My content type" ).
+            setAbstract( false ).
+            build();
         final ContentTypes contentTypes = ContentTypes.from( contentType );
         Mockito.when( contentTypeDao.retrieveContentTypes( any( Session.class ), isA( QualifiedContentTypeNames.class ) ) ).thenReturn(
             contentTypes );
@@ -59,11 +61,12 @@ public class UpdateContentTypesHandlerTest
         final UpdateContentTypes command = Commands.contentType().update().names( names ).editor( new ContentTypeEditor()
         {
             @Override
-            public boolean edit( final ContentType contentType )
+            public ContentType edit( final ContentType contentType )
                 throws Exception
             {
-                contentType.setDisplayName( contentType.getDisplayName() + "-updated" );
-                return true;
+                return newContentType( contentType ).
+                    displayName( contentType.getDisplayName() + "-updated" ).
+                    build();
             }
         } );
         this.handler.handle( this.context, command );

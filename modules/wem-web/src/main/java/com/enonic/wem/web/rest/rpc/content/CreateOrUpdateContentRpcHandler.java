@@ -28,6 +28,7 @@ import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import static com.enonic.wem.api.content.editor.ContentEditors.composite;
 import static com.enonic.wem.api.content.editor.ContentEditors.setContentData;
 import static com.enonic.wem.api.content.editor.ContentEditors.setContentDisplayName;
+import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 
@@ -42,14 +43,16 @@ public final class CreateOrUpdateContentRpcHandler
         super( "content_createOrUpdate" );
 
         MockContentTypeFetcher mockContentTypeFetcher = new MockContentTypeFetcher();
-        ContentType myContentType = new ContentType();
-        myContentType.setModule( Module.newModule().name( "myModule" ).build() );
-        myContentType.setName( "myContentType" );
-        myContentType.form().addFormItem( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() );
-        myContentType.form().addFormItem( newInput().name( "myTextLine2" ).type( InputTypes.TEXT_LINE ).build() );
         FormItemSet componentSet = newFormItemSet().name( "myComponentSet" ).build();
         componentSet.add( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() );
-        myContentType.form().addFormItem( componentSet );
+
+        final ContentType myContentType = newContentType().
+            module( Module.newModule().name( "myModule" ).build() ).
+            name( "myContentType" ).
+            addFormItem( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( newInput().name( "myTextLine2" ).type( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( componentSet ).
+            build();
         mockContentTypeFetcher.add( myContentType );
         this.contentTypeFetcher = mockContentTypeFetcher;
     }
