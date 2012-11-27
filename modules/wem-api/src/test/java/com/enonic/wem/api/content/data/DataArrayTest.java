@@ -23,6 +23,33 @@ public class DataArrayTest
     }
 
     @Test
+    public void add_adding_two_data()
+    {
+        DataArray array = new DataArray( new EntryPath( "myArray" ) );
+
+        array.add( Data.newData().path( new EntryPath( "myArray" ) ).type( DataTypes.TEXT ).value( "1" ).build() );
+        array.add( Data.newData().path( new EntryPath( "myArray" ) ).type( DataTypes.TEXT ).value( "2" ).build() );
+
+        assertEquals( 2, array.size() );
+        assertEquals( new EntryPath( "myArray[0]" ), array.getData( 0 ).getPath() );
+        assertEquals( new EntryPath( "myArray[1]" ), array.getData( 1 ).getPath() );
+    }
+
+    @Test
+    public void add_adding_first_setting_second()
+    {
+        DataArray array = new DataArray( new EntryPath( "myArray" ) );
+
+        array.add( Data.newData().path( new EntryPath( "myArray" ) ).type( DataTypes.TEXT ).value( "1" ).build() );
+        array.set( 1, "2", DataTypes.TEXT );
+        array.set( new EntryPath( "myArray[1]" ), "2", DataTypes.TEXT );
+
+        assertEquals( 2, array.size() );
+        assertEquals( new EntryPath( "myArray[0]" ), array.getData( 0 ).getPath() );
+        assertEquals( new EntryPath( "myArray[1]" ), array.getData( 1 ).getPath() );
+    }
+
+    @Test
     public void add_adding_first_data_with_index_1_throws_exception()
     {
         DataArray array = new DataArray( new EntryPath( "myArray" ) );

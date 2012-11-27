@@ -80,10 +80,10 @@ public class ContentTypeStepDefs
 
         InputSubType inputSubType = inputSubTypeByQualifiedName.get( new SubTypeQualifiedName( subTypeQualifiedName ) );
         ContentType contentType = contentTypeByName.get( contentTypeName );
-        contentType.addFormItem( SubTypeReference.newSubTypeReference( inputSubType ).name( subTypeReferenceName ).build() );
+        contentType.form().addFormItem( SubTypeReference.newSubTypeReference( inputSubType ).name( subTypeReferenceName ).build() );
 
         mockSubTypeFetcher.add( inputSubType );
-        contentType.subTypeReferencesToFormItems( mockSubTypeFetcher );
+        contentType.form().subTypeReferencesToFormItems( mockSubTypeFetcher );
     }
 
     @When("^translating subType references to formItems for all content types$")
@@ -92,7 +92,7 @@ public class ContentTypeStepDefs
     {
         for ( ContentType contentType : contentTypeByName.values() )
         {
-            contentType.subTypeReferencesToFormItems( mockSubTypeFetcher );
+            contentType.form().subTypeReferencesToFormItems( mockSubTypeFetcher );
         }
     }
 
@@ -109,7 +109,7 @@ public class ContentTypeStepDefs
             FormItemType formItemType = FormItemType.valueOf( row.getCells().get( 2 ) );
             ContentType contentType = contentTypeByName.get( contentTypeName );
             Assert.assertNotNull( "formItem not found at path: " + formItemPath,
-                                  contentType.getFormItem( new FormItemPath( formItemPath ) ) );
+                                  contentType.form().getFormItem( new FormItemPath( formItemPath ) ) );
 
             Assert.assertEquals( FormItemType.INPUT, formItemType );
         }

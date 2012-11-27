@@ -1,22 +1,48 @@
 package com.enonic.wem.core.jcr.loader;
 
+import javax.jcr.Repository;
 import javax.jcr.Session;
 
-import org.apache.jackrabbit.oak.jcr.RepositoryImpl;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+
+import com.enonic.wem.core.jcr.provider.JcrSessionProviderImpl;
+import com.enonic.wem.core.jcr.repository.JcrMicroKernelFactory;
+import com.enonic.wem.core.jcr.repository.JcrRepositoryFactory;
 
 import static org.junit.Assert.*;
 
-import com.enonic.wem.core.jcr.provider.JcrSessionProviderImpl;
-
 public class JcrInitializerTest
 {
+    private JcrMicroKernelFactory jcrMicroKernelFactory;
+
+    private Repository repo;
+
+    @Before
+    public final void before()
+        throws Exception
+    {
+        jcrMicroKernelFactory = new JcrMicroKernelFactory();
+        jcrMicroKernelFactory.setInMemoryRepository( true );
+        jcrMicroKernelFactory.init();
+
+        final JcrRepositoryFactory jcrRepositoryFactory = new JcrRepositoryFactory();
+        jcrRepositoryFactory.setMicroKernel( jcrMicroKernelFactory.getObject() );
+        jcrRepositoryFactory.init();
+        repo = jcrRepositoryFactory.getObject();
+    }
+
+    @After
+    public final void after()
+    {
+        jcrMicroKernelFactory.dispose();
+    }
+
     @Test
     public void testInitialize()
         throws Exception
     {
-        final RepositoryImpl repo = new RepositoryImpl();
-
         final JcrSessionProviderImpl sessionProvider = new JcrSessionProviderImpl();
         sessionProvider.setRepository( repo );
 

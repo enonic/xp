@@ -126,14 +126,14 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 var data = content[i];
                 //TODO: implement when content specification will be developed
                 switch (data.get('type')) {
-                    case 'myModule:myType':
-                    case 'News:Article':
-                    case 'News:Article2':
-                        openEditContentTabFn(data);
-                        break;
-                    case 'myModule:mySite':
-                        openEditSiteTabFn(data);
-                        break;
+                case 'myModule:myType':
+                case 'News:Article':
+                case 'News:Article2':
+                    openEditContentTabFn(data);
+                    break;
+                case 'myModule:mySite':
+                    openEditSiteTabFn(data);
+                    break;
                 }
             }
         }
@@ -143,37 +143,41 @@ Ext.define('Admin.controller.contentManager.Controller', {
         var tabs = this.getCmsTabPanel();
         if (tabs) {
             var tab;
+            var treeGridSelection = this.getContentTreeGridPanel().getSelection();
+
             switch (type) {
             case 'contentType':
                 //This is stub, logic for new content creation will be added later
                 var createContentTabFn = function (response) {
-                    var contentData = {contentType: response.contentType};
+                    var contentData = {
+                        contentType: response.contentType,
+                        // use first selected record as parent for new content
+                        contentParent: treeGridSelection.length > 0 ? treeGridSelection[0].data : undefined
+                    };
                     return {
                         xtype: 'contentWizardPanel',
                         title: 'New Content',
                         data: contentData
                     };
                 };
-                var openEditContentTabFn = function (selectedContent) {
-                    var requestConfig = {
-                        doTabRequest: function (handleRpcResponse) {
-                            Admin.lib.RemoteService.contentType_get({contentType: qualifiedContentType}, function (rpcResponse) {
-                                if (rpcResponse.success) {
-                                    handleRpcResponse(rpcResponse);
-                                }
-                            });
-                        },
-                        createTabFromResponse: createContentTabFn
-                    };
-                    var tabItem = {
-                        itemId: 'new-content-tab',
-                        title: 'New Content',
-                        closable: true,
-                        layout: 'fit'
-                    };
-                    tabs.addTab(tabItem, undefined, requestConfig);
+                var requestConfig = {
+                    doTabRequest: function (handleRpcResponse) {
+                        Admin.lib.RemoteService.contentType_get({contentType: qualifiedContentType}, function (rpcResponse) {
+                            if (rpcResponse.success) {
+                                handleRpcResponse(rpcResponse);
+                            }
+                        });
+                    },
+                    createTabFromResponse: createContentTabFn
                 };
-                openEditContentTabFn();
+                var tabItem = {
+                    itemId: 'new-content-tab',
+                    title: 'New Content',
+                    closable: true,
+                    layout: 'fit'
+                };
+                tabs.addTab(tabItem, undefined, requestConfig);
+
                 break;
             case 'site':
                 tab = {

@@ -25,9 +25,9 @@ public class ContentTypeTest
         contentType.setName( "test" );
         FieldSet layout = FieldSet.newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
-        contentType.addFormItem( layout );
+        contentType.form().addFormItem( layout );
 
-        assertEquals( "eyeColour", contentType.getInput( "eyeColour" ).getPath().toString() );
+        assertEquals( "eyeColour", contentType.form().getInput( "eyeColour" ).getPath().toString() );
     }
 
     @Test
@@ -38,9 +38,9 @@ public class ContentTypeTest
         FieldSet layout = FieldSet.newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
         FormItemSet myFormItemSet = newFormItemSet().name( "mySet" ).add( layout ).build();
-        contentType.addFormItem( myFormItemSet );
+        contentType.form().addFormItem( myFormItemSet );
 
-        assertEquals( "mySet.eyeColour", contentType.getInput( "mySet.eyeColour" ).getPath().toString() );
+        assertEquals( "mySet.eyeColour", contentType.form().getInput( "mySet.eyeColour" ).getPath().toString() );
     }
 
     @Test
@@ -53,14 +53,14 @@ public class ContentTypeTest
         formItemSet.add( newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() );
 
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.addFormItem( formItemSet );
+        contentType.form().addFormItem( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.form().addFormItem( formItemSet );
 
-        assertEquals( "title", contentType.getInput( "title" ).getPath().toString() );
-        assertEquals( "address.label", contentType.getInput( "address.label" ).getPath().toString() );
-        assertEquals( "address.street", contentType.getInput( "address.street" ).getPath().toString() );
-        assertEquals( "address.postalNo", contentType.getInput( "address.postalNo" ).getPath().toString() );
-        assertEquals( "address.country", contentType.getInput( "address.country" ).getPath().toString() );
+        assertEquals( "title", contentType.form().getInput( "title" ).getPath().toString() );
+        assertEquals( "address.label", contentType.form().getInput( "address.label" ).getPath().toString() );
+        assertEquals( "address.street", contentType.form().getInput( "address.street" ).getPath().toString() );
+        assertEquals( "address.postalNo", contentType.form().getInput( "address.postalNo" ).getPath().toString() );
+        assertEquals( "address.country", contentType.form().getInput( "address.country" ).getPath().toString() );
     }
 
     @Test
@@ -76,18 +76,18 @@ public class ContentTypeTest
                 newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
-        cty.addFormItem( newSubTypeReference( subType ).name( "home" ).build() );
-        cty.addFormItem( newSubTypeReference( subType ).name( "cabin" ).build() );
+        cty.form().addFormItem( newSubTypeReference( subType ).name( "home" ).build() );
+        cty.form().addFormItem( newSubTypeReference( subType ).name( "cabin" ).build() );
 
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( subType );
 
         // exercise
-        cty.subTypeReferencesToFormItems( subTypeFetcher );
+        cty.form().subTypeReferencesToFormItems( subTypeFetcher );
 
         // verify:
-        assertEquals( "home.street", cty.getInput( "home.street" ).getPath().toString() );
-        assertEquals( "cabin.street", cty.getInput( "cabin.street" ).getPath().toString() );
+        assertEquals( "home.street", cty.form().getInput( "home.street" ).getPath().toString() );
+        assertEquals( "cabin.street", cty.form().getInput( "cabin.street" ).getPath().toString() );
     }
 
     @Test
@@ -105,17 +105,17 @@ public class ContentTypeTest
             newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newSubTypeReference( subType ).name( "home" ).build() );
+        contentType.form().addFormItem( newSubTypeReference( subType ).name( "home" ).build() );
 
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( subType );
 
         // exercise
-        contentType.subTypeReferencesToFormItems( subTypeFetcher );
+        contentType.form().subTypeReferencesToFormItems( subTypeFetcher );
 
         // verify:
-        assertEquals( "home.street", contentType.getInput( "home.street" ).getPath().toString() );
-        assertEquals( "home.myFieldInLayout", contentType.getInput( "home.myFieldInLayout" ).getPath().toString() );
+        assertEquals( "home.street", contentType.form().getInput( "home.street" ).getPath().toString() );
+        assertEquals( "home.myFieldInLayout", contentType.form().getInput( "home.myFieldInLayout" ).getPath().toString() );
     }
 
 
@@ -130,7 +130,7 @@ public class ContentTypeTest
                 newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType cty = new ContentType();
-        cty.addFormItem( newSubTypeReference().name( "home" ).typeInput().subType( subType.getQualifiedName() ).build() );
+        cty.form().addFormItem( newSubTypeReference().name( "home" ).typeInput().subType( subType.getQualifiedName() ).build() );
 
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( subType );
@@ -138,7 +138,7 @@ public class ContentTypeTest
         // exercise
         try
         {
-            cty.subTypeReferencesToFormItems( subTypeFetcher );
+            cty.form().subTypeReferencesToFormItems( subTypeFetcher );
         }
         catch ( Exception e )
         {
@@ -156,11 +156,12 @@ public class ContentTypeTest
             newFormItemSet().name( "top-set" ).add( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newFormItemSet().name( "inner-set" ).add(
                     newInput().name( "myInnerInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
-        contentType.addFormItem( formItemSet );
+        contentType.form().addFormItem( formItemSet );
 
-        assertEquals( "top-set", contentType.getFormItemSet( "top-set" ).getPath().toString() );
-        assertEquals( "top-set.myInput", contentType.getInput( "top-set.myInput" ).getPath().toString() );
-        assertEquals( "top-set.inner-set", contentType.getFormItemSet( "top-set.inner-set" ).getPath().toString() );
-        assertEquals( "top-set.inner-set.myInnerInput", contentType.getInput( "top-set.inner-set.myInnerInput" ).getPath().toString() );
+        assertEquals( "top-set", contentType.form().getFormItemSet( "top-set" ).getPath().toString() );
+        assertEquals( "top-set.myInput", contentType.form().getInput( "top-set.myInput" ).getPath().toString() );
+        assertEquals( "top-set.inner-set", contentType.form().getFormItemSet( "top-set.inner-set" ).getPath().toString() );
+        assertEquals( "top-set.inner-set.myInnerInput",
+                      contentType.form().getInput( "top-set.inner-set.myInnerInput" ).getPath().toString() );
     }
 }

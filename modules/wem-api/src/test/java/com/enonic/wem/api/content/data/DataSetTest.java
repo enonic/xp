@@ -94,18 +94,60 @@ public class DataSetTest
     }
 
     @Test
-    public void array()
+    public void given_two_data_added_with_same_path_then_array_is_created()
     {
         DataSet dataSet = new DataSet( new EntryPath() );
         dataSet.add( Data.newData().path( new EntryPath( "myArray" ) ).value( "1" ).type( DataTypes.TEXT ).build() );
         dataSet.add( Data.newData().path( new EntryPath( "myArray" ) ).value( "2" ).type( DataTypes.TEXT ).build() );
-        dataSet.add( Data.newData().path( new EntryPath( "myArray" ) ).value( "3" ).type( DataTypes.TEXT ).build() );
 
         assertEquals( "1", dataSet.getData( "myArray[0]" ).getValue() );
         assertEquals( "2", dataSet.getData( "myArray[1]" ).getValue() );
-        assertEquals( "3", dataSet.getData( "myArray[2]" ).getValue() );
+
+        assertEquals( "myArray[0]", dataSet.getData( "myArray[0]" ).getPath().toString() );
     }
 
+    @Test
+    public void given_second_data_with_same_path_but_indexed_then_array_is_created()
+    {
+        DataSet dataSet = new DataSet( new EntryPath() );
+        dataSet.add( Data.newData().path( new EntryPath( "myArray" ) ).value( "1" ).type( DataTypes.TEXT ).build() );
+        dataSet.add( Data.newData().path( new EntryPath( "myArray[1]" ) ).value( "2" ).type( DataTypes.TEXT ).build() );
 
+        assertEquals( "1", dataSet.getData( "myArray[0]" ).getValue() );
+        assertEquals( "2", dataSet.getData( "myArray[1]" ).getValue() );
+
+        assertEquals( "myArray[0]", dataSet.getData( "myArray[0]" ).getPath().toString() );
+    }
+
+    @Test
+    public void given_Data_not_parent_of_DataSet_when_adding_it_then_exception_is_thrown()
+    {
+        DataSet dataSet = new DataSet( new EntryPath( "parent" ) );
+        try
+        {
+            dataSet.add( Data.newData().path( new EntryPath( "otherParent.myArray" ) ).value( "1" ).type( DataTypes.TEXT ).build() );
+            fail( "Expected exception" );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( e instanceof IllegalArgumentException );
+            assertEquals(
+                "This DataSet [parent] is not the parent of the Data to be added: Data{path=otherParent.myArray, type=Text, value=1}",
+                e.getMessage() );
+        }
+    }
+
+    @Test
+    public void given_xxx2()
+    {
+        DataSet dataSet = new DataSet( new EntryPath() );
+        dataSet.add( Data.newData().path( new EntryPath( "myArray" ) ).value( "1" ).type( DataTypes.TEXT ).build() );
+        dataSet.setData( new EntryPath( "myArray[1]" ), "2", DataTypes.TEXT );
+
+        assertEquals( "1", dataSet.getData( "myArray[0]" ).getValue() );
+        assertEquals( "2", dataSet.getData( "myArray[1]" ).getValue() );
+
+        assertEquals( "myArray[0]", dataSet.getData( "myArray[0]" ).getPath().toString() );
+    }
 }
 

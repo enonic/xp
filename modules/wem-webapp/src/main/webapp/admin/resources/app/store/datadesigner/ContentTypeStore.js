@@ -3,23 +3,24 @@ Ext.define('Admin.store.datadesigner.ContentTypeStore', {
 
     model: 'Admin.model.datadesigner.ContentTypeModel',
 
+    pageSize: 50,
     remoteSort: true,
     sorters: [
         {
-            property: 'lastModified',
+            property: 'modifiedTime',
             direction: 'DESC'
         }
     ],
     autoLoad: true,
 
     proxy: {
-        type: 'ajax',
-        url: 'resources/data/mock_datadesignerGrid.json',
+        type: 'direct',
+        directFn: Admin.lib.RemoteService.contentType_list,
         simpleSortMode: true,
         reader: {
             type: 'json',
-            root: 'results.contentTypes',
-            totalProperty: 'results.total'
+            root: 'contentTypes',
+            totalProperty: 'total'
         }
     }
 });

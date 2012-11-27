@@ -103,7 +103,7 @@ Ext.define('Admin.controller.account.UserWizardController', {
             var current = me.getAccountGridPanel().store.currentPage;
             me.getAccountGridPanel().store.loadPage(current);
         };
-        this.saveUserToDB(data, onUpdateUserSuccess);
+        this.remoteCreateOrUpdateUser(data, onUpdateUserSuccess);
     },
 
     deleteUser: function (el, e) {

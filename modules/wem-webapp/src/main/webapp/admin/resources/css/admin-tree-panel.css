@@ -29,3 +29,33 @@
 .admin-tree .x-grid-tree-node-expanded .icon-struct-32, .admin-tree .icon-struct-32 {
     background: transparent url("../images/icons/32x32/link.png") 0 0 no-repeat;
 }
+
+//.admin-tree-panel .x-grid-cell .x-grid-cell-inner {
+//    line-height: 32px;
+//}
+
+//.admin-tree-panel .x-grid-cell .x-grid-cell-inner .x-tree-icon {
+//    height: 32px;
+//    width: 32px;
+//}
+
+//.admin-tree-panel .x-grid-cell-first .x-grid-cell-inner {
+//    font-weight: bold;
+//}
+
+/*.admin-tree-panel .x-tree-elbow,
+.admin-tree-panel .x-tree-elbow-end,
+.admin-tree-panel .x-tree-elbow-plus,
+.admin-tree-panel .x-tree-elbow-end-plus,
+.admin-tree-panel .x-tree-elbow-empty,
+.admin-tree-panel .x-tree-elbow-line {
+    margin-top: 6px;
+    margin-bottom: 6px;
+    /* float left to appear before name renderer output */
+    float: left;
+}
+
+.admin-tree-panel .x-grid-cell-inner .x-tree-icon {
+    /* name renderer is responsible for icon */
+    display: none;
+}*/

@@ -1,0 +1,45 @@
+{
+    "contentType": {
+        "name": "HtmlArea",
+        "module": "Demo",
+        "qualifiedName": "Demo:HtmlArea",
+        "items": [
+            {
+                "type": "Input",
+                "name": "title",
+                "label": "Title",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": "Article title",
+                "inputType": {
+                    "name": "TextLine",
+                    "builtIn": true
+                }
+            },
+            {
+                "type": "Input",
+                "name": "htmlarea_text",
+                "label": "HTML Area",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": "HTML Area",
+                "inputType": {
+                    "name": "HtmlArea",
+                    "builtIn": true
+                }
+            }
+        ]
+    }
+}

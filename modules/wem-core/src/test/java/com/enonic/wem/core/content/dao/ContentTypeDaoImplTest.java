@@ -195,7 +195,7 @@ public class ContentTypeDaoImplTest
         formItemSet.add( newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() );
         formItemSet.add( newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() );
         formItemSet.add( newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.addFormItem( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.addFormItem( formItemSet );
+        contentType.form().addFormItem( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.form().addFormItem( formItemSet );
     }
 }

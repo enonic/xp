@@ -13,20 +13,26 @@ Ext.define('Admin.controller.contentManager.ContentController', {
 
     /*   Public, only CRUD model methods here please     */
 
-    saveContentToDB: function (contentParams, callback) {
+    remoteCreateOrUpdateContent: function (contentParams, callback) {
         Admin.lib.RemoteService.content_createOrUpdate(contentParams, function (r) {
             if (r && r.success) {
                 callback(r.created, r.updated);
+            } else {
+                Ext.Msg.alert("Error", r ? r.error : "Internal error occured.");
             }
         });
     },
 
-    deleteContentFromDB: function (content, callback) {
+    remoteDeleteContent: function (content, callback) {
         //TODO
-        var success = true;
-        if (Ext.isFunction(callback)) {
-            callback.call(this, success);
-        }
+        var me = this;
+        Admin.lib.RemoteService.content_delete({"contentPaths": [content.path]}, function (r) {
+            if (r) {
+                callback.call(me, r.success, r.failures);
+            } else {
+                Ext.Msg.alert("Error", r ? r.error : "Internal error occured.");
+            }
+        });
     }
 
 });

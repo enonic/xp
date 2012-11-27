@@ -109,21 +109,21 @@ public final class GetContentTypesHandler
             newInput().name( "preface" ).type( TEXT_LINE ).label( "Preface" ).helpText( "Preface of the article" ).build();
         final Input body =
             newInput().name( "body" ).type( TEXT_AREA ).label( "Body" ).required( true ).helpText( "Body of the article" ).build();
-        articleContentType.addFormItem( title );
-        articleContentType.addFormItem( category );
-        articleContentType.addFormItem( body );
+        articleContentType.form().addFormItem( title );
+        articleContentType.form().addFormItem( category );
+        articleContentType.form().addFormItem( body );
         mockContentTypeFetcher.add( articleContentType );
 
         final ContentType article2ContentType = new ContentType();
         article2ContentType.setModule( Module.newModule().name( "News" ).build() );
         article2ContentType.setName( "Article2" );
-        article2ContentType.addFormItem( title.copy() );
-        article2ContentType.addFormItem( category.copy() );
-        article2ContentType.addFormItem( body.copy() );
+        article2ContentType.form().addFormItem( title.copy() );
+        article2ContentType.form().addFormItem( category.copy() );
+        article2ContentType.form().addFormItem( body.copy() );
         FormItemSet formItemSet = newFormItemSet().name( "related" ).build();
         formItemSet.add( newInput().name( "author" ).label( "Author" ).type( TEXT_LINE ).build() );
         formItemSet.add( newInput().name( "category" ).label( "Category" ).type( TEXT_LINE ).build() );
-        article2ContentType.addFormItem( formItemSet );
+        article2ContentType.form().addFormItem( formItemSet );
         mockContentTypeFetcher.add( article2ContentType );
 
         return mockContentTypeFetcher;

@@ -10,12 +10,6 @@ import com.enonic.wem.api.content.type.form.BreaksRequiredContractException;
 public class PhoneTest
 {
     @Test(expected = BreaksRequiredContractException.class)
-    public void breaksRequiredContract_textLine_which_is_null_throws_exception()
-    {
-        new Phone().checkBreaksRequiredContract( Data.newData().type( DataTypes.TEXT ).value( null ).build() );
-    }
-
-    @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_empty_throws_exception()
     {
         new Phone().checkBreaksRequiredContract( Data.newData().type( DataTypes.TEXT ).value( "" ).build() );

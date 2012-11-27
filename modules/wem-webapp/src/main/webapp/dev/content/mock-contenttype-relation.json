@@ -1,0 +1,44 @@
+{
+    "contentType": {
+        "name": "RelatedContent",
+        "module": "Demo",
+        "qualifiedName": "Demo:RelatedContent",
+        "items": [
+            {
+                "type": "Input",
+                "name": "title",
+                "label": "Title",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": "Article title",
+                "inputType": {
+                    "name": "TextLine",
+                    "builtIn": true
+                }
+            },
+            {
+                "type": "Input",
+                "name": "related_articles",
+                "label": "Related Articles",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": "Articles links",
+                "inputType": {
+                    "name": "Relation",
+                    "builtIn": true
+                }
+            }
+        ]
+    }
+}

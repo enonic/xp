@@ -92,12 +92,16 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
         var me = this;
         var contentData = contentWizard.getData();
         var contentType = contentWizard.data.contentType;
+        var content = contentWizard.data.content;
+        var contentParent = contentWizard.data.contentParent;
+
+        var displayName = this.getDisplayNameValue(contentWizard);
 
         var contentParams = {
             contentData: contentData,
             qualifiedContentTypeName: contentType.qualifiedName,
-            contentPath: "/" + this.getDisplayNameValue(contentWizard),
-            displayName: this.getDisplayNameValue(contentWizard)
+            contentPath: this.getContentPath(displayName, content, contentParent),
+            displayName: displayName
         };
 
         var parentApp = parent.mainApp;
@@ -108,18 +112,32 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
                 }
                 if (parentApp) {
                     parentApp.fireEvent('notifier.show', "Content was saved",
-                        "Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.",
-                        false);
+                        "Content with path: " + contentParams.contentPath + " was saved", false);
                 }
                 me.getContentTreeGridPanel().refresh();
             }
         };
-        this.saveContentToDB(contentParams, onUpdateContentSuccess);
+        this.remoteCreateOrUpdateContent(contentParams, onUpdateContentSuccess);
     },
 
     getDisplayNameValue: function (contentWizard) {
         var displayNameField = contentWizard.el.down('input.admin-display-name', true);
         return (displayNameField === null || displayNameField.value === this.EMPTY_DISPLAY_NAME_TEXT) ? '' : displayNameField.value;
+    },
+
+    getContentPath: function (displayName, content, contentParent) {
+        var contentPath = "/";
+        if (content) {
+            // editing content, leave path as is
+            contentPath += content.path;
+        } else {
+            // creating new content, prepend parent path if any
+            if (contentParent) {
+                contentPath += contentParent.path + "/";
+            }
+            contentPath += displayName;
+        }
+        return contentPath;
     },
 
 
@@ -130,7 +148,7 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
     },
 
     getContentWizardPanel: function () {
-        return this.getContentWizardTab();
+        return this.getContentWizardTab().down('contentWizardPanel');
     }
 
 });

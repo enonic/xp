@@ -14,16 +14,35 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
     initComponent: function () {
         this.items = [
             {
-                xtype: 'splitbutton',
-                text: ' New',
-                action: 'newContent',
-                cls: 'x-btn-as-arrow',
-                menu: Ext.create('Admin.view.MegaMenu', {
-                    recentCount: 4,
-                    cookieKey: 'admin.contentmanager.megamenu',
-                    url: 'resources/data/contentManagerMenu.json',
-                    loadMenuItems: this.generateContentTypesMenu
-                })
+                xtype: 'buttongroup',
+                columns: 1,
+                defaults: buttonDefaults,
+                items: [
+                    {
+                        xtype: 'splitbutton',
+                        text: ' New',
+                        action: 'newContent',
+                        iconCls: 'icon-content-add-24',
+                        cls: 'x-btn-as-arrow',
+                        menu: Ext.create('Admin.view.MegaMenu', {
+                            recentCount: 4,
+                            cookieKey: 'admin.contentmanager.megamenu',
+                            url: this.loadContentTypesMenu
+                        })
+                    }
+                ]
+            },
+            {
+                xtype: 'buttongroup',
+                columns: 1,
+                defaults: buttonDefaults,
+                items: [
+                    {
+                        text: 'Publish',
+                        iconCls: 'icon-publish-24',
+                        action: 'publishContent'
+                    }
+                ]
             },
             {
                 text: 'Edit',
@@ -50,7 +69,7 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
         this.callParent(arguments);
     },
 
-    generateContentTypesMenu: function () {
+    loadContentTypesMenu: function () {
         var menu = this;
         Admin.lib.RemoteService.contentType_list({}, function (rpcResponse) {
             var menuItems = [], contentTypes, menuSection;
@@ -74,21 +93,12 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
             menuSection.minWidth = 160;
             menuItems.push(menuSection);
 
-            menu.add({
-                xtype: 'container',
-                itemId: 'itemSection',
-                layout: {
-                    type: 'table',
-                    columns: 4,
-                    tdAttrs: {
-                        style: {
-                            'vertical-align': 'top'
-                        }
-                    }
-                },
-                items: menuItems
-            });
-            menu.doLayout();
+            var itemSection = menu.down('#itemSection');
+            if (menuItems.length > 0 && itemSection) {
+                itemSection.layout.columns = 1;
+                itemSection.removeAll(true);
+                itemSection.add(menuItems);
+            }
         });
     }
 

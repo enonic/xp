@@ -11,7 +11,7 @@
 
 // user
 [wem:user] > wem:account, mix:referenceable, nt:unstructured
-+ profile (wem:profile) = wem:profile mandatory autocreated
++ profile (wem:profile) = wem:profile mandatory
 
 // group
 [wem:group] > wem:account, mix:referenceable, nt:unstructured

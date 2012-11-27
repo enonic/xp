@@ -4,7 +4,7 @@ package com.enonic.wem.api.content.type.form;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.data.DataArray;
+import com.enonic.wem.api.content.datatype.InvalidDataTypeException;
 import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.type.form.inputtype.BaseInputType;
 import com.enonic.wem.api.content.type.form.inputtype.InputType;
@@ -90,54 +90,6 @@ public class Input
         return inputTypeConfig;
     }
 
-    public void checkBreaksMinimumOccurrencesContract( final Data data )
-        throws MinimumOccurrencesException
-    {
-        Preconditions.checkNotNull( data, "Given data is null" );
-
-        if ( isRequired() )
-        {
-
-            if ( data.hasArrayAsValue() )
-            {
-                final DataArray dataArray = data.getDataArray();
-                try
-                {
-                    if ( dataArray.size() < occurrences.getMinimum() )
-                    {
-                        throw new MinimumOccurrencesException( this, dataArray.size() );
-                    }
-                    int max = Math.min( dataArray.size(), occurrences.getMinimum() );
-                    for ( int i = 0; i < max; i++ )
-                    {
-                        type.checkBreaksRequiredContract( dataArray.getData( i ) );
-                    }
-                }
-                catch ( BreaksRequiredContractException e )
-                {
-                    throw new MinimumOccurrencesException( this, e, dataArray.size() );
-                }
-            }
-            else
-            {
-                try
-                {
-                    type.checkBreaksRequiredContract( data );
-
-                    if ( occurrences.getMinimum() > 1 )
-                    {
-                        throw new MinimumOccurrencesException( this, 1 );
-                    }
-                }
-                catch ( BreaksRequiredContractException e )
-                {
-                    throw new MinimumOccurrencesException( this, e, 1 );
-                }
-            }
-
-        }
-    }
-
     public void checkValidityAccordingToInputTypeConfig( final Data data )
         throws InvalidValueException
     {
@@ -174,6 +126,10 @@ public class Input
             type.checkValidity( data );
         }
         catch ( InvalidValueException e )
+        {
+            throw new InvalidDataException( data, e );
+        }
+        catch ( InvalidDataTypeException e )
         {
             throw new InvalidDataException( data, e );
         }

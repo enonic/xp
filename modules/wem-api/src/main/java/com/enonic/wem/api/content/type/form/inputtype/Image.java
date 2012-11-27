@@ -42,13 +42,6 @@ public class Image
         {
             throw new BreaksRequiredContractException( data, this );
         }
-
-        if ( !binary.hasValue() )
-        {
-            throw new BreaksRequiredContractException( data, this );
-        }
-
-
     }
 }
 

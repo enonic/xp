@@ -17,8 +17,10 @@ import com.enonic.wem.api.content.type.MockContentTypeFetcher;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
+import com.enonic.wem.api.exception.ContentAlreadyExistException;
 import com.enonic.wem.api.exception.ContentNotFoundException;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.core.content.ContentPathNameGenerator;
 import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
@@ -43,11 +45,11 @@ public final class CreateOrUpdateContentRpcHandler
         ContentType myContentType = new ContentType();
         myContentType.setModule( Module.newModule().name( "myModule" ).build() );
         myContentType.setName( "myContentType" );
-        myContentType.addFormItem( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() );
-        myContentType.addFormItem( newInput().name( "myTextLine2" ).type( InputTypes.TEXT_LINE ).build() );
+        myContentType.form().addFormItem( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() );
+        myContentType.form().addFormItem( newInput().name( "myTextLine2" ).type( InputTypes.TEXT_LINE ).build() );
         FormItemSet componentSet = newFormItemSet().name( "myComponentSet" ).build();
         componentSet.add( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() );
-        myContentType.addFormItem( componentSet );
+        myContentType.form().addFormItem( componentSet );
         mockContentTypeFetcher.add( myContentType );
         this.contentTypeFetcher = mockContentTypeFetcher;
     }
@@ -58,14 +60,22 @@ public final class CreateOrUpdateContentRpcHandler
     {
         final QualifiedContentTypeName qualifiedContentTypeName =
             new QualifiedContentTypeName( context.param( "qualifiedContentTypeName" ).required().asString() );
-        final ContentPath contentPath = ContentPath.from( context.param( "contentPath" ).required().asString() );
-        final String displayName = context.param( "displayName" ).asString();
+        ContentPath contentPath = ContentPath.from( context.param( "contentPath" ).required().asString() );
+        final String displayName = context.param( "displayName" ).required().asString();
 
         final ContentType contentType = contentTypeFetcher.getContentType( qualifiedContentTypeName );
         final ContentData contentData = new ContentDataParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
 
         if ( !contentExists( contentPath ) )
         {
+            ContentPathNameGenerator contentPathNameGenerator = new ContentPathNameGenerator();
+            ContentPath parentPath = contentPath.getParentPath();
+            if ( parentPath == null )
+            {
+                parentPath = ContentPath.ROOT;
+            }
+            contentPath = ContentPath.from( parentPath, contentPathNameGenerator.generatePathName( displayName ) );
+
             final CreateContent createContent = Commands.content().create();
             createContent.contentPath( contentPath );
             createContent.contentType( qualifiedContentTypeName );
@@ -81,6 +91,10 @@ public final class CreateOrUpdateContentRpcHandler
             {
                 context.setResult(
                     new JsonErrorResult( "Unable to create content. Path [{0}] does not exist", contentPath.getParentPath().toString() ) );
+            }
+            catch ( ContentAlreadyExistException e )
+            {
+                context.setResult( new JsonErrorResult( "Content with path [{0}] already exists.", contentPath.toString() ) );
             }
         }
         else

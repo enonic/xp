@@ -1,0 +1,10 @@
+{
+    "success": true,
+    "hasErrors": true,
+    "errors": [
+        {
+            "path": "myInput",
+            "message": "Input [myInput] requires minimum 1 occurrence: 0"
+        }
+    ]
+}

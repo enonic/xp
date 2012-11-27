@@ -5,7 +5,6 @@ import com.enonic.wem.api.content.data.Data;
 public class InvalidDataTypeException
     extends RuntimeException
 {
-
     public InvalidDataTypeException( final Data data, final DataType expectedType )
     {
         super( buildMessage( data, expectedType ) );

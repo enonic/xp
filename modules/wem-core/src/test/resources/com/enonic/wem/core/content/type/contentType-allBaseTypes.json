@@ -4,50 +4,54 @@
     "qualifiedName":"myModule:AllBaseTypes",
     "items":[
         {
-            "type":"FormItemSet",
-            "name":"mySet",
-            "label":null,
-            "immutable":false,
-            "occurrences":{
-                "minimum":0,
-                "maximum":1
-            },
-            "customText":null,
-            "helpText":null,
-            "items":[
-                {
-                    "type":"Layout",
-                    "layoutType":"FieldSet",
-                    "label":"My field set",
-                    "name":"myFieldSet",
-                    "items":[
-                        {
-                            "type":"Input",
-                            "name":"myTextLine",
-                            "label":null,
-                            "immutable":false,
-                            "occurrences":{
-                                "minimum":0,
-                                "maximum":1
-                            },
-                            "indexed":false,
-                            "customText":null,
-                            "validationRegexp":null,
-                            "helpText":null,
-                            "inputType":{
-                                "name":"TextLine",
-                                "builtIn":true
-                            }
-                        }
-                    ]
+            "FormItemSet":{
+                "name":"mySet",
+                "label":null,
+                "immutable":false,
+                "occurrences":{
+                    "minimum":0,
+                    "maximum":1
                 },
-                {
-                    "type":"SubTypeReference",
-                    "name":"myCommonInput",
-                    "reference":"System:mySharedInput",
-                    "subTypeClass":"InputSubType"
-                }
-            ]
+                "customText":null,
+                "helpText":null,
+                "items":[
+                    {
+                        "Layout":{
+                            "type":"FieldSet",
+                            "label":"My field set",
+                            "name":"myFieldSet",
+                            "items":[
+                                {
+                                    "Input":{
+                                        "name":"myTextLine",
+                                        "label":null,
+                                        "immutable":false,
+                                        "occurrences":{
+                                            "minimum":0,
+                                            "maximum":1
+                                        },
+                                        "indexed":false,
+                                        "customText":null,
+                                        "validationRegexp":null,
+                                        "helpText":null,
+                                        "type":{
+                                            "name":"TextLine",
+                                            "builtIn":true
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "SubTypeReference":{
+                            "name":"myCommonInput",
+                            "reference":"System:mySharedInput",
+                            "type":"InputSubType"
+                        }
+                    }
+                ]
+            }
         }
     ]
 }

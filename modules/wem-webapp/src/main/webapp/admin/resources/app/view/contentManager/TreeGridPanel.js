@@ -21,13 +21,14 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
     },
 
     initComponent: function () {
-
+        var me = this;
         this.columns = [
             {
                 text: 'Display Name',
                 dataIndex: 'displayName',
                 sortable: true,
                 renderer: this.nameRenderer,
+                scope: me,
                 flex: 1
             },
             {
@@ -44,6 +45,7 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
                 text: 'Modified',
                 dataIndex: 'modifiedTime',
                 renderer: this.prettyDateRenderer,
+                scope: me,
                 sortable: true
             }
         ];
@@ -51,18 +53,18 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
     },
 
 
-    nameRenderer: function (value, p, record) {
+    nameRenderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
         var account = record.data;
-        var iconCls = this.up('contentTreeGridPanel').resolveIconClass(record);
+        var iconCls = this.resolveIconClass(record);
 
-        return Ext.String.format(Templates.contentManager.gridPanelNameRenderer, iconCls, value, account.name, account.userStore);
+        return Ext.String.format(Templates.contentManager.gridPanelNameRenderer, iconCls, value, account.name);
     },
 
     statusRenderer: function () {
         return "Online";
     },
 
-    prettyDateRenderer: function (value, p, record) {
+    prettyDateRenderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
         try {
             if (parent && Ext.isFunction(parent.humane_date)) {
                 return parent.humane_date(value);

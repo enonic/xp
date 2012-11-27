@@ -77,11 +77,11 @@ public abstract class AbstractContentTypeSerializerTest
         assertSerializedResult( "contentType-allBaseTypes", actualSerialization );
 
         // verify
-        assertNotNull( actualContentType.getFormItem( "mySet" ) );
-        assertEquals( "mySet", actualContentType.getFormItem( "mySet" ).getPath().toString() );
-        assertNotNull( actualContentType.getFormItem( "mySet.myTextLine" ) );
-        assertEquals( "mySet.myTextLine", actualContentType.getFormItem( "mySet.myTextLine" ).getPath().toString() );
-        assertEquals( "mySet.myCommonInput", actualContentType.getFormItem( "mySet.myCommonInput" ).getPath().toString() );
+        assertNotNull( actualContentType.form().getFormItem( "mySet" ) );
+        assertEquals( "mySet", actualContentType.form().getFormItem( "mySet" ).getPath().toString() );
+        assertNotNull( actualContentType.form().getFormItem( "mySet.myTextLine" ) );
+        assertEquals( "mySet.myTextLine", actualContentType.form().getFormItem( "mySet.myTextLine" ).getPath().toString() );
+        assertEquals( "mySet.myCommonInput", actualContentType.form().getFormItem( "mySet.myCommonInput" ).getPath().toString() );
     }
 
     @Test
@@ -98,19 +98,19 @@ public abstract class AbstractContentTypeSerializerTest
         // verify serialization
         assertSerializedResult( "contentType-allInputTypes", actualSerialization );
 
-        assertNotNull( actualContentType.getFormItem( "myColor" ) );
-        assertNotNull( actualContentType.getFormItem( "myDate" ) );
-        assertNotNull( actualContentType.getFormItem( "myDecimalNumber" ) );
-        assertNotNull( actualContentType.getFormItem( "myGeoLocation" ) );
-        assertNotNull( actualContentType.getFormItem( "myHtmlArea" ) );
-        assertNotNull( actualContentType.getFormItem( "myMoney" ) );
-        assertNotNull( actualContentType.getFormItem( "myPhone" ) );
-        assertNotNull( actualContentType.getFormItem( "mySingleSelector" ) );
-        assertNotNull( actualContentType.getFormItem( "myTags" ) );
-        assertNotNull( actualContentType.getFormItem( "myTextLine" ) );
-        assertNotNull( actualContentType.getFormItem( "myTextArea" ) );
-        assertNotNull( actualContentType.getFormItem( "myWholeNumber" ) );
-        assertNotNull( actualContentType.getFormItem( "myXml" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myColor" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myDate" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myDecimalNumber" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myGeoLocation" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myHtmlArea" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myMoney" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myPhone" ) );
+        assertNotNull( actualContentType.form().getFormItem( "mySingleSelector" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myTags" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myTextLine" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myTextArea" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myWholeNumber" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myXml" ) );
     }
 
     @Test
@@ -124,19 +124,19 @@ public abstract class AbstractContentTypeSerializerTest
         // verify
         assertNotNull( actualContentType );
 
-        assertEquals( "myColor", actualContentType.getFormItem( "myColor" ).getPath().toString() );
-        assertEquals( "myDate", actualContentType.getFormItem( "myDate" ).getPath().toString() );
-        assertEquals( "myDecimalNumber", actualContentType.getFormItem( "myDecimalNumber" ).getPath().toString() );
-        assertEquals( "myGeoLocation", actualContentType.getFormItem( "myGeoLocation" ).getPath().toString() );
-        assertEquals( "myHtmlArea", actualContentType.getFormItem( "myHtmlArea" ).getPath().toString() );
-        assertEquals( "myMoney", actualContentType.getFormItem( "myMoney" ).getPath().toString() );
-        assertEquals( "myPhone", actualContentType.getFormItem( "myPhone" ).getPath().toString() );
-        assertEquals( "mySingleSelector", actualContentType.getFormItem( "mySingleSelector" ).getPath().toString() );
-        assertEquals( "myTags", actualContentType.getFormItem( "myTags" ).getPath().toString() );
-        assertEquals( "myTextLine", actualContentType.getFormItem( "myTextLine" ).getPath().toString() );
-        assertEquals( "myTextArea", actualContentType.getFormItem( "myTextArea" ).getPath().toString() );
-        assertEquals( "myWholeNumber", actualContentType.getFormItem( "myWholeNumber" ).getPath().toString() );
-        assertEquals( "myXml", actualContentType.getFormItem( "myXml" ).getPath().toString() );
+        assertEquals( "myColor", actualContentType.form().getFormItem( "myColor" ).getPath().toString() );
+        assertEquals( "myDate", actualContentType.form().getFormItem( "myDate" ).getPath().toString() );
+        assertEquals( "myDecimalNumber", actualContentType.form().getFormItem( "myDecimalNumber" ).getPath().toString() );
+        assertEquals( "myGeoLocation", actualContentType.form().getFormItem( "myGeoLocation" ).getPath().toString() );
+        assertEquals( "myHtmlArea", actualContentType.form().getFormItem( "myHtmlArea" ).getPath().toString() );
+        assertEquals( "myMoney", actualContentType.form().getFormItem( "myMoney" ).getPath().toString() );
+        assertEquals( "myPhone", actualContentType.form().getFormItem( "myPhone" ).getPath().toString() );
+        assertEquals( "mySingleSelector", actualContentType.form().getFormItem( "mySingleSelector" ).getPath().toString() );
+        assertEquals( "myTags", actualContentType.form().getFormItem( "myTags" ).getPath().toString() );
+        assertEquals( "myTextLine", actualContentType.form().getFormItem( "myTextLine" ).getPath().toString() );
+        assertEquals( "myTextArea", actualContentType.form().getFormItem( "myTextArea" ).getPath().toString() );
+        assertEquals( "myWholeNumber", actualContentType.form().getFormItem( "myWholeNumber" ).getPath().toString() );
+        assertEquals( "myXml", actualContentType.form().getFormItem( "myXml" ).getPath().toString() );
     }
 
 
@@ -154,10 +154,10 @@ public abstract class AbstractContentTypeSerializerTest
 
         // exercise
         ContentType actualContentType = toContentType( serialized );
-        assertNotNull( actualContentType.getFormItem( "mySet" ) );
-        assertEquals( "mySet", actualContentType.getFormItem( "mySet" ).getPath().toString() );
-        assertNotNull( actualContentType.getFormItem( "mySet.myTextLine" ) );
-        assertEquals( "mySet.myTextLine", actualContentType.getFormItem( "mySet.myTextLine" ).getPath().toString() );
+        assertNotNull( actualContentType.form().getFormItem( "mySet" ) );
+        assertEquals( "mySet", actualContentType.form().getFormItem( "mySet" ).getPath().toString() );
+        assertNotNull( actualContentType.form().getFormItem( "mySet.myTextLine" ) );
+        assertEquals( "mySet.myTextLine", actualContentType.form().getFormItem( "mySet.myTextLine" ).getPath().toString() );
     }
 
     @Test
@@ -186,8 +186,8 @@ public abstract class AbstractContentTypeSerializerTest
         ContentType parsedContentType = toContentType( serialized );
 
         // verify references
-        assertEquals( SubTypeReference.class, parsedContentType.getFormItem( "home" ).getClass() );
-        assertEquals( SubTypeReference.class, parsedContentType.getFormItem( "cabin" ).getClass() );
+        assertEquals( SubTypeReference.class, parsedContentType.form().getFormItem( "home" ).getClass() );
+        assertEquals( SubTypeReference.class, parsedContentType.form().getFormItem( "cabin" ).getClass() );
     }
 
     @Test
@@ -200,7 +200,7 @@ public abstract class AbstractContentTypeSerializerTest
         FormItemSet myInnerSet = newFormItemSet().name( "my-inner-set" ).add( myInnerInput ).build();
         Input myOuterInput = newInput().name( "my-outer-input" ).type( InputTypes.TEXT_LINE ).build();
         FormItemSet myOuterSet = newFormItemSet().name( "my-outer-set" ).add( myOuterInput ).add( myInnerSet ).build();
-        contentType.addFormItem( myOuterSet );
+        contentType.form().addFormItem( myOuterSet );
 
         String serialized = toString( contentType );
 
@@ -208,11 +208,13 @@ public abstract class AbstractContentTypeSerializerTest
         ContentType parsedContentType = toContentType( serialized );
 
         // verify
-        assertEquals( "my-outer-set", parsedContentType.getFormItemSet( "my-outer-set" ).getPath().toString() );
-        assertEquals( "my-outer-set.my-outer-input", parsedContentType.getInput( "my-outer-set.my-outer-input" ).getPath().toString() );
-        assertEquals( "my-outer-set.my-inner-set", parsedContentType.getFormItemSet( "my-outer-set.my-inner-set" ).getPath().toString() );
+        assertEquals( "my-outer-set", parsedContentType.form().getFormItemSet( "my-outer-set" ).getPath().toString() );
+        assertEquals( "my-outer-set.my-outer-input",
+                      parsedContentType.form().getInput( "my-outer-set.my-outer-input" ).getPath().toString() );
+        assertEquals( "my-outer-set.my-inner-set",
+                      parsedContentType.form().getFormItemSet( "my-outer-set.my-inner-set" ).getPath().toString() );
         assertEquals( "my-outer-set.my-inner-set.my-inner-input",
-                      parsedContentType.getInput( "my-outer-set.my-inner-set.my-inner-input" ).getPath().toString() );
+                      parsedContentType.form().getInput( "my-outer-set.my-inner-set.my-inner-input" ).getPath().toString() );
     }
 
     @Test
@@ -232,8 +234,8 @@ public abstract class AbstractContentTypeSerializerTest
         ContentType parsedContentType = toContentType( serialized );
 
         // verify
-        assertEquals( "myInput", parsedContentType.getInput( "myInput" ).getPath().toString() );
-        FieldSet fieldSet = (FieldSet) parsedContentType.formItemIterable().iterator().next();
+        assertEquals( "myInput", parsedContentType.form().getInput( "myInput" ).getPath().toString() );
+        FieldSet fieldSet = (FieldSet) parsedContentType.form().formItemIterable().iterator().next();
         assertEquals( "myInput", fieldSet.getInput( "myInput" ).getPath().toString() );
     }
 
@@ -249,7 +251,7 @@ public abstract class AbstractContentTypeSerializerTest
         ContentType parsedContentType = toContentType( serialized );
 
         // verify
-        assertEquals( "a*c", parsedContentType.getInput( "myText" ).getValidationRegexp().toString() );
+        assertEquals( "a*c", parsedContentType.form().getInput( "myText" ).getValidationRegexp().toString() );
     }
 
     private ContentType toContentType( final String serialized )

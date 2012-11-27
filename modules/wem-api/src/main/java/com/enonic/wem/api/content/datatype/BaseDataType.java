@@ -1,15 +1,10 @@
 package com.enonic.wem.api.content.datatype;
 
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.type.form.InvalidValueException;
-import com.enonic.wem.api.content.type.form.inputtype.TypedPath;
 
 public abstract class BaseDataType
     implements DataType
@@ -20,32 +15,11 @@ public abstract class BaseDataType
 
     private JavaType.BaseType javaType;
 
-    /**
-     * Only used when javaType is DataSet.
-     */
-    private Map<String, TypedPath> typedPaths;
-
-    public BaseDataType( int key, JavaType.BaseType javaType, final TypedPath... typedPaths )
+    public BaseDataType( int key, JavaType.BaseType javaType )
     {
         this.key = key;
         this.name = this.getClass().getSimpleName();
         this.javaType = javaType;
-
-        if ( typedPaths != null && typedPaths.length > 0 )
-        {
-            Preconditions.checkArgument( this.javaType.equals( JavaType.DATA_SET ),
-                                         "Specifying DataTypes for paths is only needed when javaType is " + JavaType.DATA_SET + ": " +
-                                             this.javaType );
-        }
-
-        if ( this.javaType.equals( JavaType.DATA_SET ) && typedPaths != null )
-        {
-            this.typedPaths = new LinkedHashMap<String, TypedPath>();
-            for ( TypedPath tp : typedPaths )
-            {
-                this.typedPaths.put( tp.getPath(), tp );
-            }
-        }
     }
 
     @Override
@@ -86,7 +60,7 @@ public abstract class BaseDataType
         checkCorrectType( data );
     }
 
-    public final void ensureType( final Data data )
+    public void ensureType( final Data data )
         throws InconvertibleValueException
     {
         if ( data == null )
@@ -94,32 +68,7 @@ public abstract class BaseDataType
             return;
         }
 
-        if ( data.getValue() != null )
-        {
-            Object value = data.getValue();
-
-            if ( javaType.isInstance( value ) )
-            {
-                if ( value instanceof com.enonic.wem.api.content.data.DataSet )
-                {
-                    final DataSet valueAsDataSet = (DataSet) value;
-                    for ( TypedPath typedPath : typedPaths.values() )
-                    {
-                        final Data subData = valueAsDataSet.getData( typedPath.getPath() );
-                        if ( subData == null )
-                        {
-                            throw new IllegalArgumentException(
-                                "Missing data at path [" + valueAsDataSet.getPath().toString() + "." + typedPath.getPath() + "]" );
-                        }
-                        subData.setValue( typedPath.getDataType().ensureTypeOfValue( subData.getValue() ) );
-                    }
-                }
-            }
-            else
-            {
-                data.setValue( ensureTypeOfValue( data.getValue() ) );
-            }
-        }
+        data.setValue( ensureTypeOfValue( data.getValue() ), this );
     }
 
     /**
@@ -161,7 +110,7 @@ public abstract class BaseDataType
         return name;
     }
 
-    boolean hasCorrectType( Object value )
+    public boolean hasCorrectType( Object value )
     {
         Preconditions.checkNotNull( value, "Cannot check the type of a value that is null" );
         return javaType.isInstance( value );
@@ -170,24 +119,7 @@ public abstract class BaseDataType
     private void checkCorrectType( Data data )
         throws InvalidValueTypeException
     {
-        if ( !data.hasValue() )
-        {
-            return;
-        }
-
-        if ( this.javaType == JavaType.DATA_SET && typedPaths.size() > 0 )
-        {
-            final DataSet dataSet = data.getDataSet();
-            for ( TypedPath typedPath : typedPaths.values() )
-            {
-                final Data subData = dataSet.getData( typedPath.getPath() );
-                if ( subData != null )
-                {
-                    typedPath.getDataType().checkCorrectType( subData );
-                }
-            }
-        }
-        else if ( !hasCorrectType( ( data.getValue() ) ) )
+        if ( !hasCorrectType( ( data.getValue() ) ) )
         {
             throw new InvalidValueTypeException( javaType, data );
         }

@@ -10,7 +10,7 @@ Ext.define('Admin.controller.userstore.UserstoreController', {
     init: function () {
     },
 
-    saveUserstoreToDB: function (userstore, callback) {
+    remoteCreateOrUpdateUserstore: function (userstore, callback) {
 
         Admin.lib.RemoteService.userstore_createOrUpdate(userstore,
             function (response) {
@@ -25,7 +25,7 @@ Ext.define('Admin.controller.userstore.UserstoreController', {
             });
     },
 
-    deleteUserstoreFromDB: function (name, callback) {
+    remoteDeleteUserstore: function (name, callback) {
 
         Admin.lib.RemoteService.userstore_delete({name: name},
             function (response) {

@@ -51,24 +51,28 @@ public final class Data
         return type;
     }
 
-    public void setValue( Object value )
+    public void setValue( final Object value )
     {
+        Preconditions.checkNotNull( value, "A Data cannot have a null value" );
+        Preconditions.checkArgument( type.hasCorrectType( value ), "Incorrect type of value for this Data [%s]: %s", this, value );
         this.value = value;
     }
 
-    public boolean hasValue()
+    public void setValue( final Object value, final BaseDataType dataType )
     {
-        return this.value != null;
+        Preconditions.checkNotNull( value, "A Data cannot have a null value" );
+        this.value = value;
+        this.type = dataType;
     }
 
     public boolean hasDataSetAsValue()
     {
-        return type.equals( DataTypes.SET );
+        return value instanceof DataSet;
     }
 
     public boolean hasArrayAsValue()
     {
-        return type.equals( DataTypes.ARRAY );
+        return value instanceof DataArray;
     }
 
     public Object getValue()
@@ -217,6 +221,7 @@ public final class Data
         public Data build()
         {
             Preconditions.checkNotNull( this.type, "type is required" );
+            Preconditions.checkNotNull( this.value, "value is required" );
 
             final Data data = new Data();
             data.path = this.path;

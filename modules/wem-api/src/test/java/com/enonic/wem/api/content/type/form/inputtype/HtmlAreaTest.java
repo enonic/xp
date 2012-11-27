@@ -10,12 +10,6 @@ import com.enonic.wem.api.content.type.form.BreaksRequiredContractException;
 public class HtmlAreaTest
 {
     @Test(expected = BreaksRequiredContractException.class)
-    public void breaksRequiredContract_textLine_which_is_null_throws_exception()
-    {
-        new HtmlArea().checkBreaksRequiredContract( Data.newData().type( DataTypes.HTML_PART ).value( null ).build() );
-    }
-
-    @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_empty_throws_exception()
     {
         new HtmlArea().checkBreaksRequiredContract( Data.newData().type( DataTypes.HTML_PART ).value( "" ).build() );

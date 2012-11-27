@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 
 public class GeographicCoordinateTest
 {
-    @Test(expected = InvalidValueTypeException.class)
+    @Test(expected = InvalidDataTypeException.class)
     public void given_data_with_value_as_text_then_checkValidity_throws_InvalidValueTypeException()
         throws Exception
     {

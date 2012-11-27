@@ -28,7 +28,7 @@ public class ContentTypeJsonSerializer
         objectNode.put( "name", contentType.getName() );
         objectNode.put( "module", contentType.getModule().getName() );
         objectNode.put( "qualifiedName", contentType.getQualifiedName().toString() );
-        objectNode.put( "items", formItemsSerializer.serialize( contentType.getFormItems(), mapper ) );
+        objectNode.put( "items", formItemsSerializer.serialize( contentType.form().getFormItems(), mapper ) );
         return objectNode;
     }
 
@@ -51,7 +51,7 @@ public class ContentTypeJsonSerializer
             final FormItems formItems = formItemsSerializer.parse( contentTypeNode.get( "items" ) );
             for ( FormItem formItem : formItems )
             {
-                contentType.addFormItem( formItem );
+                contentType.form().addFormItem( formItem );
             }
 
         }

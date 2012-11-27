@@ -43,10 +43,7 @@ public class Address
     public void checkBreaksRequiredContract( final Data data )
         throws BreaksRequiredContractException
     {
-        if ( !data.hasValue() )
-        {
-            throw new BreaksRequiredContractException( data, this );
-        }
+
     }
 }
 

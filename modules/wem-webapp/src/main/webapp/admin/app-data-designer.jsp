@@ -54,7 +54,8 @@
 
       requires: [
         'Admin.view.TabPanel',
-        'Admin.lib.UriHelper'
+        'Admin.lib.UriHelper',
+        'Admin.lib.RemoteService'
       ],
 
       launch: function () {

@@ -46,7 +46,7 @@ public abstract class AbstractContentSerializerTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem( newInput().name( "myFormItem" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
+        contentType.form().addFormItem( newInput().name( "myFormItem" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -68,7 +68,7 @@ public abstract class AbstractContentSerializerTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
+        contentType.form().addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
         contentTypeFetcher.add( contentType );
 
         Content content = new Content();
@@ -163,10 +163,10 @@ public abstract class AbstractContentSerializerTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
+        contentType.form().addFormItem( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
 
         FormItemSet formItemSet = newFormItemSet().name( "formItemSet" ).build();
-        contentType.addFormItem( formItemSet );
+        contentType.form().addFormItem( formItemSet );
         formItemSet.add( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
         contentTypeFetcher.add( contentType );
 
@@ -196,7 +196,7 @@ public abstract class AbstractContentSerializerTest
         contentTypeFetcher.add( contentType );
 
         FormItemSet formItemSet = newFormItemSet().name( "formItemSet" ).label( "FormItemSet" ).multiple( true ).build();
-        contentType.addFormItem( formItemSet );
+        contentType.form().addFormItem( formItemSet );
         formItemSet.add( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() );
 
         Content content = new Content();
@@ -222,10 +222,10 @@ public abstract class AbstractContentSerializerTest
         ContentType contentType = new ContentType();
         contentType.setModule( myModule );
         contentType.setName( "MyContentType" );
-        contentType.addFormItem( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.form().addFormItem( newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).build() );
         FieldSet layout = newFieldSet().label( "Label" ).name( "fieldSet" ).add(
             newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).build() ).build();
-        contentType.addFormItem( layout );
+        contentType.form().addFormItem( layout );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );

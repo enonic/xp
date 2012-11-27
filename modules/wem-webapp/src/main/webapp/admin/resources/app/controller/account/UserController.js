@@ -13,7 +13,7 @@ Ext.define('Admin.controller.account.UserController', {
 
     /*   Public, only CRUD model methods here please     */
 
-    saveUserToDB: function (user, callback) {
+    remoteCreateOrUpdateUser: function (user, callback) {
         var me = this;
         user.key = user.key || ['user', user.userStore, user.name].join(':');
         Admin.lib.RemoteService.account_createOrUpdate(user, function (r) {
@@ -23,11 +23,11 @@ Ext.define('Admin.controller.account.UserController', {
         });
     },
 
-    changePasswordInDB: function (user, callback) {
+    remoteChangePassword: function (user, callback) {
         //TODO
     },
 
-    deleteUserFromDB: function (user, callback) {
+    remoteDeleteUser: function (user, callback) {
         //TODO
     }
 
