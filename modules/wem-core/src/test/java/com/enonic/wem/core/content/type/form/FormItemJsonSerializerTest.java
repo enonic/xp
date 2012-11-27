@@ -14,7 +14,6 @@ import org.junit.Test;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.Input;
-import com.enonic.wem.api.content.type.form.Occurrences;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypeConfig;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.content.type.form.inputtype.SingleSelectorConfig;
@@ -22,6 +21,7 @@ import com.enonic.wem.core.content.JsonFactoryHolder;
 
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
+import static com.enonic.wem.api.content.type.form.Occurrences.newOccurrences;
 import static com.enonic.wem.api.content.type.form.inputtype.SingleSelectorConfig.newSingleSelectorConfig;
 import static org.junit.Assert.*;
 
@@ -79,7 +79,7 @@ public class FormItemJsonSerializerTest
         assertEquals( null, parsedInput.getLabel() );
         assertEquals( null, parsedInput.getHelpText() );
         assertEquals( "Custom text", parsedInput.getCustomText() );
-        assertEquals( new Occurrences( 1, 100 ), parsedInput.getOccurrences() );
+        assertEquals( newOccurrences().minimum( 1 ).maximum( 100 ).build(), parsedInput.getOccurrences() );
         assertEquals( InputTypes.TEXT_LINE, parsedInput.getInputType() );
         assertNull( parsedInput.getInputTypeConfig() );
     }

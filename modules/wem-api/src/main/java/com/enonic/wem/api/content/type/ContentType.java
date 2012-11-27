@@ -1,40 +1,53 @@
 package com.enonic.wem.api.content.type;
 
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.type.form.Form;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItems;
 import com.enonic.wem.api.module.Module;
 
-public class ContentType
+import static com.enonic.wem.api.content.type.form.Form.newForm;
+
+public final class ContentType
 {
-    private String name;
+    private final String name;
 
-    private String displayName;
+    private final String displayName;
 
-    private ContentType superType;
+    private final QualifiedContentTypeName superType;
 
-    private ContentHandler contentHandler;
+//    private final ContentHandler contentHandler;
 
-    private boolean isAbstract;
+    private final boolean isAbstract;
 
-    private Module module;
+    private final boolean isFinal;
 
-    private ComputedDisplayName computedDisplayName;
+    private final Module module;
 
-    private final Form form = new Form();
+//    private final ComputedDisplayName computedDisplayName;
+
+    private final Form form;
+
+    private ContentType( final String name, final String displayName, final QualifiedContentTypeName superType, final boolean isAbstract,
+                         final boolean isFinal, final Module module, final Form form )
+    {
+        this.name = name;
+        this.displayName = displayName;
+        this.superType = superType;
+        this.isAbstract = isAbstract;
+        this.isFinal = isFinal;
+        this.module = module;
+        this.form = form;
+    }
 
     public String getName()
     {
         return name;
-    }
-
-    public void setName( final String name )
-    {
-        this.name = name;
     }
 
     public String getDisplayName()
@@ -42,34 +55,14 @@ public class ContentType
         return displayName;
     }
 
-    public void setDisplayName( final String displayName )
-    {
-        this.displayName = displayName;
-    }
-
     public QualifiedContentTypeName getQualifiedName()
     {
         return new QualifiedContentTypeName( module.getName(), name );
     }
 
-    public ContentType getSuperType()
+    public QualifiedContentTypeName getSuperType()
     {
         return superType;
-    }
-
-    public void setSuperType( final ContentType superType )
-    {
-        this.superType = superType;
-    }
-
-    public ContentHandler getContentHandler()
-    {
-        return contentHandler;
-    }
-
-    public void setContentHandler( final ContentHandler contentHandler )
-    {
-        this.contentHandler = contentHandler;
     }
 
     public boolean isAbstract()
@@ -77,9 +70,9 @@ public class ContentType
         return isAbstract;
     }
 
-    public void setAbstract( final boolean anAbstract )
+    public boolean isFinal()
     {
-        isAbstract = anAbstract;
+        return isFinal;
     }
 
     public Module getModule()
@@ -87,29 +80,33 @@ public class ContentType
         return module;
     }
 
-    public void setModule( final Module module )
-    {
-        this.module = module;
-    }
-
-    public ComputedDisplayName getComputedDisplayName()
-    {
-        return computedDisplayName;
-    }
-
-    public void setComputedDisplayName( final ComputedDisplayName computedDisplayName )
-    {
-        this.computedDisplayName = computedDisplayName;
-    }
-
     public Form form()
     {
         return this.form;
     }
 
+    @Override
+    public String toString()
+    {
+        final Objects.ToStringHelper s = Objects.toStringHelper( this );
+        s.add( "name", name );
+        s.add( "displayName", displayName );
+        s.add( "module", module );
+        s.add( "superType", superType );
+        s.add( "isAbstract", isAbstract );
+        s.add( "isFinal", isFinal );
+        s.add( "form", form );
+        return s.toString();
+    }
+
     public static Builder newContentType()
     {
         return new Builder();
+    }
+
+    public static Builder newContentType( final ContentType contentType )
+    {
+        return new Builder( contentType );
     }
 
     public static class Builder
@@ -122,16 +119,35 @@ public class ContentType
 
         private boolean isAbstract;
 
+        private boolean isFinal;
 
-        private List<FormItem> formItemList = new ArrayList<FormItem>();
+        private final List<FormItem> formItemList;
 
-        public Builder name( String name )
+        private QualifiedContentTypeName superType;
+
+        private Builder()
+        {
+            formItemList = Lists.newArrayList();
+        }
+
+        private Builder( final ContentType contentType )
+        {
+            this.name = contentType.getName();
+            this.module = contentType.getModule();
+            this.displayName = contentType.getDisplayName();
+            this.isAbstract = contentType.isAbstract();
+            this.isFinal = contentType.isFinal();
+            this.formItemList = Lists.newArrayList( contentType.form().copy().formItemIterable() );
+            this.name = contentType.getName();
+        }
+
+        public Builder name( final String name )
         {
             this.name = name;
             return this;
         }
 
-        public Builder module( Module module )
+        public Builder module( final Module module )
         {
             this.module = module;
             return this;
@@ -149,7 +165,31 @@ public class ContentType
             return this;
         }
 
-        public Builder add( FormItem formItem )
+        public Builder setAbstract()
+        {
+            isAbstract = true;
+            return this;
+        }
+
+        public Builder setFinal( final boolean aFinal )
+        {
+            isFinal = aFinal;
+            return this;
+        }
+
+        public Builder setFinal()
+        {
+            isFinal = true;
+            return this;
+        }
+
+        public Builder superType( final QualifiedContentTypeName superType )
+        {
+            this.superType = superType;
+            return this;
+        }
+
+        public Builder addFormItem( final FormItem formItem )
         {
             this.formItemList.add( formItem );
             return this;
@@ -159,25 +199,20 @@ public class ContentType
         {
             for ( FormItem formItem : formItems )
             {
-                this.add( formItem );
+                this.addFormItem( formItem );
             }
             return this;
         }
 
         public ContentType build()
         {
-            ContentType type = new ContentType();
-            type.setName( name );
-            type.setModule( module );
-            type.setDisplayName( displayName );
-            type.setAbstract( isAbstract );
-
+            final Form.Builder formBuilder = newForm();
             for ( FormItem formItem : formItemList )
             {
-                type.form.addFormItem( formItem );
+                formBuilder.addFormItem( formItem );
             }
-            return type;
+
+            return new ContentType( name, displayName, superType, isAbstract, isFinal, module, formBuilder.build() );
         }
     }
-
 }

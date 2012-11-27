@@ -3,14 +3,14 @@ package com.enonic.wem.api.content.type.form;
 
 import com.google.common.base.Preconditions;
 
-public class Occurrences
+public final class Occurrences
 {
-    private int minimum;
+    private final int minimum;
 
     /**
      * Zero means unlimited;
      */
-    private int maximum;
+    private final int maximum;
 
     public Occurrences( final int minimum, final int maximum )
     {
@@ -19,16 +19,6 @@ public class Occurrences
 
         this.minimum = minimum;
         this.maximum = maximum;
-    }
-
-    public void setMinOccurrences( final int value )
-    {
-        this.minimum = value;
-    }
-
-    public void setMaxOccurrences( final int value )
-    {
-        this.maximum = value;
     }
 
     public int getMinimum()
@@ -97,4 +87,49 @@ public class Occurrences
         s.append( "min=" ).append( minimum ).append( ", max=" ).append( maximum );
         return s.toString();
     }
+
+    public static Builder newOccurrences()
+    {
+        return new Builder();
+    }
+
+    public static Builder newOccurrences( final Occurrences occurrences )
+    {
+        return new Builder( occurrences );
+    }
+
+    public static class Builder
+    {
+        private int minimum;
+
+        private int maximum;
+
+        private Builder()
+        {
+        }
+
+        private Builder( final Occurrences occurrences )
+        {
+            this.minimum = occurrences.getMinimum();
+            this.maximum = occurrences.getMaximum();
+        }
+
+        public Builder minimum( final int minimum )
+        {
+            this.minimum = minimum;
+            return this;
+        }
+
+        public Builder maximum( final int maximum )
+        {
+            this.maximum = maximum;
+            return this;
+        }
+
+        public Occurrences build()
+        {
+            return new Occurrences( minimum, maximum );
+        }
+    }
+
 }

@@ -17,6 +17,7 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
+import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
@@ -45,12 +46,12 @@ public class ValidateContentDataRpcHandlerTest
         throws Exception
     {
         // setup
-        final ContentType contentType = new ContentType();
-        contentType.setModule( Module.SYSTEM );
-        contentType.setName( "MyType" );
-        contentType.form().addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
-            newFormItemSet().name( "mySet" ).required( true ).add(
-                newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build() );
+        final ContentType contentType = newContentType().
+            module( Module.SYSTEM ).
+            name( "MyType" ).
+            addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add( newFormItemSet().name( "mySet" ).required( true ).add(
+                newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build() ).
+            build();
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         final DataValidationErrors noErrors = DataValidationErrors.empty();
@@ -65,11 +66,12 @@ public class ValidateContentDataRpcHandlerTest
         throws Exception
     {
         // setup
-        final ContentType contentType = new ContentType();
-        contentType.setModule( Module.SYSTEM );
-        contentType.setName( "MyType" );
         final Input myInput = newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).minimumOccurrences( 1 ).build();
-        contentType.form().addFormItem( myInput );
+        final ContentType contentType = newContentType().
+            module( Module.SYSTEM ).
+            name( "MyType" ).
+            addFormItem( myInput ).
+            build();
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         final DataValidationError error1 = new MinimumOccurrencesValidationError( myInput, 0 );

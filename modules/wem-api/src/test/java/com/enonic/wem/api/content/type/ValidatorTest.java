@@ -20,6 +20,7 @@ import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.content.type.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
 
+import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.Validator.newValidator;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
@@ -28,13 +29,15 @@ import static org.junit.Assert.*;
 
 public class ValidatorTest
 {
-    private ContentType contentType = new ContentType();
+    private ContentType contentType;
 
     @Before
     public void before()
     {
-        contentType.setModule( Module.SYSTEM );
-        contentType.setName( "MyType" );
+        contentType = newContentType().
+            module( Module.SYSTEM ).
+            name( "MyType" ).
+            build();
     }
 
     @Test

@@ -10,7 +10,9 @@ import com.enonic.wem.api.content.type.form.inputtype.BaseInputType;
 import com.enonic.wem.api.content.type.form.inputtype.InputType;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypeConfig;
 
-public class Input
+import static com.enonic.wem.api.content.type.form.Occurrences.newOccurrences;
+
+public final class Input
     extends HierarchicalFormItem
 {
     private BaseInputType type;
@@ -19,7 +21,7 @@ public class Input
 
     private boolean immutable;
 
-    private final Occurrences occurrences = new Occurrences( 0, 1 );
+    private Occurrences occurrences = newOccurrences().minimum( 0 ).maximum( 1 ).build();
 
     private boolean indexed;
 
@@ -147,8 +149,7 @@ public class Input
         copy.type = type;
         copy.label = label;
         copy.immutable = immutable;
-        copy.occurrences.setMinOccurrences( occurrences.getMinimum() );
-        copy.occurrences.setMaxOccurrences( occurrences.getMaximum() );
+        copy.occurrences = newOccurrences( occurrences).build();
         copy.indexed = indexed;
         copy.customText = customText;
         copy.validationRegexp = validationRegexp;
@@ -172,7 +173,7 @@ public class Input
 
         private boolean immutable;
 
-        private Occurrences occurrences = new Occurrences( 0, 1 );
+        private Occurrences occurrences = newOccurrences().minimum( 0 ).maximum( 1 ).build();
 
         private boolean indexed;
 
@@ -215,27 +216,25 @@ public class Input
 
         public Builder occurrences( Occurrences value )
         {
-            occurrences.setMinOccurrences( value.getMinimum() );
-            occurrences.setMaxOccurrences( value.getMaximum() );
+            occurrences = newOccurrences().minimum( value.getMinimum() ).maximum( value.getMaximum() ).build();
             return this;
         }
 
         public Builder occurrences( int minOccurrences, int maxOccurrences )
         {
-            occurrences.setMinOccurrences( minOccurrences );
-            occurrences.setMaxOccurrences( maxOccurrences );
+            occurrences = newOccurrences().minimum( minOccurrences ).maximum( maxOccurrences ).build();
             return this;
         }
 
         public Builder minimumOccurrences( int value )
         {
-            occurrences.setMinOccurrences( value );
+            occurrences = newOccurrences( occurrences ).minimum( value ).build();
             return this;
         }
 
         public Builder maximumOccurrences( int value )
         {
-            occurrences.setMaxOccurrences( value );
+            occurrences = newOccurrences( occurrences ).maximum( value ).build();
             return this;
         }
 
@@ -243,11 +242,11 @@ public class Input
         {
             if ( value && !occurrences.impliesRequired() )
             {
-                occurrences.setMinOccurrences( 1 );
+                occurrences = newOccurrences( occurrences ).minimum( 1 ).build();
             }
             else if ( !value && occurrences.impliesRequired() )
             {
-                occurrences.setMinOccurrences( 0 );
+                occurrences = newOccurrences( occurrences ).minimum( 0 ).build();
             }
             return this;
         }
@@ -256,11 +255,11 @@ public class Input
         {
             if ( value )
             {
-                occurrences.setMaxOccurrences( 0 );
+                occurrences = newOccurrences( occurrences ).maximum( 0 ).build();
             }
             else
             {
-                occurrences.setMaxOccurrences( 1 );
+                occurrences = newOccurrences( occurrences ).maximum( 1 ).build();
             }
             return this;
         }
@@ -317,8 +316,7 @@ public class Input
             input.type = inputType;
             input.label = label;
             input.immutable = immutable;
-            input.occurrences.setMinOccurrences( occurrences.getMinimum() );
-            input.occurrences.setMaxOccurrences( occurrences.getMaximum() );
+            input.occurrences = newOccurrences().minimum( occurrences.getMinimum() ).maximum( occurrences.getMaximum() ).build();
             input.indexed = indexed;
             input.customText = customText;
             input.validationRegexp = validationRegexp;

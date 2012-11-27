@@ -14,6 +14,8 @@ import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
 import com.enonic.wem.core.content.type.form.FormItemsJsonSerializer;
 
+import static com.enonic.wem.api.content.type.ContentType.newContentType;
+
 public class ContentTypeJsonSerializer
     extends AbstractJsonSerializer<ContentType>
     implements ContentTypeSerializer
@@ -42,16 +44,17 @@ public class ContentTypeJsonSerializer
     @Override
     protected ContentType parse( final JsonNode contentTypeNode )
     {
-        final ContentType contentType = new ContentType();
-        contentType.setName( JsonParserUtil.getStringValue( "name", contentTypeNode ) );
-        contentType.setModule( new Module( JsonParserUtil.getStringValue( "module", contentTypeNode ) ) );
+
+        final ContentType.Builder contentTypeBuilder = newContentType().
+            name( JsonParserUtil.getStringValue( "name", contentTypeNode ) ).
+            module( new Module( JsonParserUtil.getStringValue( "module", contentTypeNode ) ) );
 
         try
         {
             final FormItems formItems = formItemsSerializer.parse( contentTypeNode.get( "items" ) );
             for ( FormItem formItem : formItems )
             {
-                contentType.form().addFormItem( formItem );
+                contentTypeBuilder.addFormItem( formItem );
             }
 
         }
@@ -60,6 +63,6 @@ public class ContentTypeJsonSerializer
             throw new JsonParsingException( "Failed to parse content type: " + contentTypeNode.toString(), e );
         }
 
-        return contentType;
+        return contentTypeBuilder.build();
     }
 }

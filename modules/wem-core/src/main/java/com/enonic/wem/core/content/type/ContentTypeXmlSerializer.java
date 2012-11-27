@@ -15,6 +15,8 @@ import com.enonic.wem.core.content.type.form.FormItemsXmlSerializer;
 
 import com.enonic.cms.framework.util.JDOMUtil;
 
+import static com.enonic.wem.api.content.type.ContentType.newContentType;
+
 public class ContentTypeXmlSerializer
     implements ContentTypeSerializer
 {
@@ -77,15 +79,15 @@ public class ContentTypeXmlSerializer
     private ContentType parse( final Element contentTypeEl )
         throws IOException
     {
-        final ContentType contentType = new ContentType();
-        contentType.setName( contentTypeEl.getChildText( "name" ) );
+        final ContentType.Builder contentTypeBuilder = newContentType().
+            name( contentTypeEl.getChildText( "name" ) );
 
         try
         {
             final FormItems formItems = formItemsSerializer.parse( contentTypeEl );
             for ( FormItem formItem : formItems )
             {
-                contentType.form().addFormItem( formItem );
+                contentTypeBuilder.addFormItem( formItem );
             }
         }
         catch ( Exception e )
@@ -93,6 +95,6 @@ public class ContentTypeXmlSerializer
             throw new XmlParsingException( "Failed to parse content type: " + JDOMUtil.printElement( contentTypeEl ), e );
         }
 
-        return contentType;
+        return contentTypeBuilder.build();
     }
 }

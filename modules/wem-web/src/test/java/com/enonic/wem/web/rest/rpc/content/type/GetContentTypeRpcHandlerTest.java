@@ -16,6 +16,7 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
+import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static com.enonic.wem.api.content.type.form.inputtype.InputTypes.TEXT_AREA;
 import static com.enonic.wem.api.content.type.form.inputtype.InputTypes.TEXT_LINE;
@@ -42,9 +43,6 @@ public class GetContentTypeRpcHandlerTest
     public void testRequestGetContentType_existing()
         throws Exception
     {
-        final ContentType contentType = new ContentType();
-        contentType.setModule( Module.newModule().name( "myModule" ).build() );
-        contentType.setName( "myCtype" );
         final Input inputText1 = newInput().name( "inputText1" ).type( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
             "Help text line 1" ).required( true ).build();
         final Input inputText2 =
@@ -53,9 +51,14 @@ public class GetContentTypeRpcHandlerTest
         final Input textArea1 =
             newInput().name( "textArea1" ).type( TEXT_AREA ).label( "Text Area" ).required( true ).helpText( "Help text area" ).required(
                 true ).build();
-        contentType.form().addFormItem( inputText1 );
-        contentType.form().addFormItem( inputText2 );
-        contentType.form().addFormItem( textArea1 );
+
+        final ContentType contentType = newContentType().
+            module( Module.newModule().name( "myModule" ).build() ).
+            name( "myCtype" ).
+            addFormItem( inputText1 ).
+            addFormItem( inputText2 ).
+            addFormItem( textArea1 ).
+            build();
 
         final ContentTypes contentTypes = ContentTypes.from( contentType );
         final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( new QualifiedContentTypeName( "myModule:myCtype" ) );

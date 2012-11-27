@@ -65,7 +65,7 @@ public abstract class AbstractContentTypeSerializerTest
         set.add( newSubTypeReference().name( "myCommonInput" ).subType( inputSubType ).build() );
 
         ContentType.Builder contentTypeBuilder = ContentType.newContentType().name( "AllBaseTypes" ).module( myModule );
-        contentTypeBuilder.add( set );
+        contentTypeBuilder.addFormItem( set );
         ContentType contentType = contentTypeBuilder.build();
 
         String actualSerialization = toString( contentType );
@@ -147,7 +147,7 @@ public abstract class AbstractContentTypeSerializerTest
         set.add( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
 
         ContentType.Builder contentTypeBuilder = ContentType.newContentType().name( "TypeWithSet" ).module( myModule );
-        contentTypeBuilder.add( set );
+        contentTypeBuilder.addFormItem( set );
         ContentType contentType = contentTypeBuilder.build();
 
         String serialized = toString( contentType );
@@ -173,9 +173,9 @@ public abstract class AbstractContentTypeSerializerTest
                 newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType.Builder contentTypeBuilder = ContentType.newContentType().name( "test" ).module( myModule );
-        contentTypeBuilder.add( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        contentTypeBuilder.add( newSubTypeReference( subType ).name( "home" ).build() );
-        contentTypeBuilder.add( newSubTypeReference( subType ).name( "cabin" ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
+        contentTypeBuilder.addFormItem( newSubTypeReference( subType ).name( "home" ).build() );
+        contentTypeBuilder.addFormItem( newSubTypeReference( subType ).name( "cabin" ).build() );
 
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( subType );
@@ -194,13 +194,14 @@ public abstract class AbstractContentTypeSerializerTest
     public void given_content_type_with_formItemSet_inside_formItemSet_and_formItem_in_both_when_parse_then_paths_are_correct()
     {
         // setup
-        ContentType contentType = new ContentType();
-        contentType.setModule( myModule );
         Input myInnerInput = newInput().name( "my-inner-input" ).type( InputTypes.TEXT_LINE ).build();
         FormItemSet myInnerSet = newFormItemSet().name( "my-inner-set" ).add( myInnerInput ).build();
         Input myOuterInput = newInput().name( "my-outer-input" ).type( InputTypes.TEXT_LINE ).build();
         FormItemSet myOuterSet = newFormItemSet().name( "my-outer-set" ).add( myOuterInput ).add( myInnerSet ).build();
-        contentType.form().addFormItem( myOuterSet );
+        final ContentType contentType = ContentType.newContentType().
+            module( myModule ).
+            addFormItem( myOuterSet ).
+            build();
 
         String serialized = toString( contentType );
 
@@ -226,7 +227,7 @@ public abstract class AbstractContentTypeSerializerTest
         FieldSet layout = fieldSetBuilder.build();
 
         ContentType.Builder contentTypeBuilder = ContentType.newContentType().name( "test" ).module( myModule );
-        contentTypeBuilder.add( layout );
+        contentTypeBuilder.addFormItem( layout );
 
         String serialized = toString( contentTypeBuilder.build() );
 
@@ -244,7 +245,7 @@ public abstract class AbstractContentTypeSerializerTest
     {
         // setup
         ContentType.Builder contentTypeBuilder = ContentType.newContentType().name( "test" ).module( myModule );
-        contentTypeBuilder.add( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).validationRegexp( "a*c" ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).validationRegexp( "a*c" ).build() );
         String serialized = toString( contentTypeBuilder.build() );
 
         // exercise
@@ -316,20 +317,20 @@ public abstract class AbstractContentTypeSerializerTest
 
         ContentType.Builder contentTypeBuilder = ContentType.newContentType().name( "AllTypes" ).module( myModule );
 
-        contentTypeBuilder.add( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
-        contentTypeBuilder.add( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
-        contentTypeBuilder.add( newInput().name( "myDecimalNumber" ).type( InputTypes.DECIMAL_NUMBER ).build() );
-        contentTypeBuilder.add( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
-        contentTypeBuilder.add( newInput().name( "myHtmlArea" ).type( InputTypes.HTML_AREA ).build() );
-        contentTypeBuilder.add( newInput().name( "myMoney" ).type( InputTypes.MONEY ).build() );
-        contentTypeBuilder.add( newInput().name( "myPhone" ).type( InputTypes.PHONE ).build() );
-        contentTypeBuilder.add(
+        contentTypeBuilder.addFormItem( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myDecimalNumber" ).type( InputTypes.DECIMAL_NUMBER ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myHtmlArea" ).type( InputTypes.HTML_AREA ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myMoney" ).type( InputTypes.MONEY ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myPhone" ).type( InputTypes.PHONE ).build() );
+        contentTypeBuilder.addFormItem(
             newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
-        contentTypeBuilder.add( newInput().name( "myTags" ).type( InputTypes.TAGS ).build() );
-        contentTypeBuilder.add( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        contentTypeBuilder.add( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() );
-        contentTypeBuilder.add( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
-        contentTypeBuilder.add( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myTags" ).type( InputTypes.TAGS ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
 
         return contentTypeBuilder.build();
     }

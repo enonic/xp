@@ -13,17 +13,13 @@ final class SetContentTypeEditor
     }
 
     @Override
-    public boolean edit( final ContentType contentType )
+    public ContentType edit( final ContentType contentType )
         throws Exception
     {
-        return edit( this.source, contentType );
-    }
-
-    private static boolean edit( final ContentType source, final ContentType target )
-        throws Exception
-    {
-        target.setDisplayName( source.getDisplayName() );
-        // TODO ...
-        return true;
+        final ContentType updated = ContentType.newContentType( contentType ).
+            displayName( source.getDisplayName() )
+                // TODO update other fields
+            .build();
+        return updated;
     }
 }

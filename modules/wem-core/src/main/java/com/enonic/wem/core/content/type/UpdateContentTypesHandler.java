@@ -39,8 +39,8 @@ public final class UpdateContentTypesHandler
             final ContentType contentType = retrieveContentType( session, contentTypeName );
             if ( contentType != null )
             {
-                final boolean modified = editor.edit( contentType );
-                if ( modified )
+                final ContentType modifiedContentType = editor.edit( contentType );
+                if ( modifiedContentType != null )
                 {
                     updateContentType( session, contentType );
                     contentTypesUpdated++;

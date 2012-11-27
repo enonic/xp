@@ -10,6 +10,7 @@ import com.enonic.wem.api.content.type.form.MockSubTypeFetcher;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
+import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.FormItemSetSubType.newFormItemSetSubType;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
@@ -21,8 +22,7 @@ public class ContentTypeTest
     @Test
     public void layout()
     {
-        ContentType contentType = new ContentType();
-        contentType.setName( "test" );
+        final ContentType contentType = newContentType().name( "test" ).build();
         FieldSet layout = FieldSet.newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
         contentType.form().addFormItem( layout );
@@ -33,8 +33,7 @@ public class ContentTypeTest
     @Test
     public void layout_inside_formItemSet()
     {
-        ContentType contentType = new ContentType();
-        contentType.setName( "test" );
+        final ContentType contentType = newContentType().name( "test" ).build();
         FieldSet layout = FieldSet.newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
         FormItemSet myFormItemSet = newFormItemSet().name( "mySet" ).add( layout ).build();
@@ -52,9 +51,10 @@ public class ContentTypeTest
         formItemSet.add( newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() );
         formItemSet.add( newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() );
 
-        ContentType contentType = new ContentType();
-        contentType.form().addFormItem( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.form().addFormItem( formItemSet );
+        final ContentType contentType = newContentType().
+            addFormItem( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( formItemSet ).
+            build();
 
         assertEquals( "title", contentType.form().getInput( "title" ).getPath().toString() );
         assertEquals( "address.label", contentType.form().getInput( "address.label" ).getPath().toString() );
@@ -75,9 +75,10 @@ public class ContentTypeTest
                 newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
-        ContentType cty = new ContentType();
-        cty.form().addFormItem( newSubTypeReference( subType ).name( "home" ).build() );
-        cty.form().addFormItem( newSubTypeReference( subType ).name( "cabin" ).build() );
+        final ContentType cty = newContentType().
+            addFormItem( newSubTypeReference( subType ).name( "home" ).build() ).
+            addFormItem( newSubTypeReference( subType ).name( "cabin" ).build() ).
+            build();
 
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( subType );
@@ -104,8 +105,9 @@ public class ContentTypeTest
             newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
             newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
-        ContentType contentType = new ContentType();
-        contentType.form().addFormItem( newSubTypeReference( subType ).name( "home" ).build() );
+        final ContentType contentType = newContentType().
+            addFormItem( newSubTypeReference( subType ).name( "home" ).build() ).
+            build();
 
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( subType );
@@ -129,8 +131,9 @@ public class ContentTypeTest
             newFormItemSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
-        ContentType cty = new ContentType();
-        cty.form().addFormItem( newSubTypeReference().name( "home" ).typeInput().subType( subType.getQualifiedName() ).build() );
+        final ContentType cty = newContentType().
+            addFormItem( newSubTypeReference().name( "home" ).typeInput().subType( subType.getQualifiedName() ).build() ).
+            build();
 
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( subType );
@@ -150,13 +153,14 @@ public class ContentTypeTest
     @Test
     public void formItemSet_in_formItemSet()
     {
-        ContentType contentType = new ContentType();
-        contentType.setName( "test" );
         FormItemSet formItemSet =
             newFormItemSet().name( "top-set" ).add( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newFormItemSet().name( "inner-set" ).add(
                     newInput().name( "myInnerInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
-        contentType.form().addFormItem( formItemSet );
+        final ContentType contentType = newContentType().
+            name( "test" ).
+            addFormItem( formItemSet ).
+            build();
 
         assertEquals( "top-set", contentType.form().getFormItemSet( "top-set" ).getPath().toString() );
         assertEquals( "top-set.myInput", contentType.form().getInput( "top-set.myInput" ).getPath().toString() );
