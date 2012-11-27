@@ -12,8 +12,12 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
     },
 
     gridConf: {
-        selModel: Ext.create('Ext.selection.CheckboxModel', {}),
+        selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36}),
         plugins: [ 'persistentGridSelection' ]
+    },
+
+    treeConf: {
+        selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36})
     },
 
     initComponent: function () {
@@ -28,9 +32,9 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
                 flex: 1
             },
             {
-                text: 'Type',
-                dataIndex: 'type',
-                sortable: true
+                text: 'Status',
+                //dataIndex: 'type',
+                renderer: this.statusRenderer
             },
             {
                 text: 'Owner',
@@ -54,6 +58,10 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
         var iconCls = this.resolveIconClass(record);
 
         return Ext.String.format(Templates.contentManager.gridPanelNameRenderer, iconCls, value, account.name);
+    },
+
+    statusRenderer: function () {
+        return "Online";
     },
 
     prettyDateRenderer: function (value, metaData, record, rowIndex, colIndex, store, view) {

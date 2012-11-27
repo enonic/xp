@@ -10,7 +10,6 @@ Ext.define('Admin.view.contentManager.ShowPanel', {
 
     layout: 'border',
     border: false,
-    padding: 5,
 
     initComponent: function () {
 

@@ -203,7 +203,7 @@ Ext.define('Admin.plugin.PersistentGridSelectionPlugin', {
      * @private
      */
     notifySelectionModelAboutSelectionChange: function () {
-        this.grid.selModel.fireEvent("selectionchange", {});
+        this.grid.selModel.fireEvent("selectionchange", this.grid.selModel, this.selections);
     },
 
     /**

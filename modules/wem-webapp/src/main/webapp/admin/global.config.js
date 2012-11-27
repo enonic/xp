@@ -14,7 +14,6 @@
     });
 
 
-
     // TODO: Refactor
     function cms_getParentWindow() {
         return window.parent.parent || window.parent;
@@ -36,11 +35,11 @@
     function cms_hideMainMenusOnClick() {
         if (window.addEventListener) {
             window.addEventListener('click', function () {
-                cms_getParentWindow().App.LauncherToolbarHelper.hideLauncherMenus();
+                cms_getParentWindow().Admin.lib.LauncherToolbarHelper.hideLauncherMenus();
             }, false);
         } else if (window.attachEvent) { // IE
             window.attachEvent('onclick', function () {
-                cms_getParentWindow().App.LauncherToolbarHelper.hideLauncherMenus();
+                cms_getParentWindow().Admin.lib.LauncherToolbarHelper.hideLauncherMenus();
             });
 
         }

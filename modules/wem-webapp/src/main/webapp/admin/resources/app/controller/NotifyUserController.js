@@ -1,5 +1,5 @@
 Ext.define('Admin.controller.NotifyUserController', {
-    extend: 'Ext.app.Controller',
+    extend: 'Admin.controller.Controller',
 
     stores: [],
     models: [],

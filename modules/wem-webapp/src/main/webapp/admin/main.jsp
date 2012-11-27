@@ -8,6 +8,9 @@
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
   <link rel="stylesheet" type="text/css" href="_app/main/css/main.css">
 
+  <link rel="stylesheet" type="text/css" href="resources/css/admin-top-bar.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/admin-start-menu.css">
+
   <!-- Ext JS -->
 
   <script type="text/javascript" src="resources/lib/ext/ext-all-debug.js"></script>
@@ -38,7 +41,7 @@
   <!-- Application -->
 
   <script type="text/javascript">
-  Ext.require('Ext.app.Application');
+    Ext.require('Ext.app.Application');
     var mainApp;
 
     Ext.onReady(function () {
@@ -51,10 +54,12 @@
         ],
 
         controllers: [
-          'LauncherToolbarController',
+          'Admin.controller.Controller',
+          'Admin.controller.LauncherToolbarController',
+          'Admin.controller.NotifyUserController',
+          // old controllers from _app/main
           'NotificationWindowController',
-          'ActivityStreamController',
-          'Admin.controller.NotifyUserController'
+          'ActivityStreamController'
         ],
 
         launch: function () {
@@ -77,7 +82,7 @@
                     region: 'center',
                     bodyCls: 'main-viewport-center-body',
                     html: '<div id="app-frames" style="height: 100%; width: 100%;"><!-- --></div>'
-                  },
+                  }
                 ]
               },
               {
