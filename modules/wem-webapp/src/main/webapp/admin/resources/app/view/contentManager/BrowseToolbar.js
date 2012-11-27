@@ -13,36 +13,17 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
 
     initComponent: function () {
         this.items = [
+
             {
-                xtype: 'buttongroup',
-                columns: 1,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        xtype: 'splitbutton',
-                        text: ' New',
-                        action: 'newContent',
-                        iconCls: 'icon-content-add-24',
-                        cls: 'x-btn-as-arrow',
-                        menu: Ext.create('Admin.view.MegaMenu', {
-                            recentCount: 4,
-                            cookieKey: 'admin.contentmanager.megamenu',
-                            url: this.loadContentTypesMenu
-                        })
-                    }
-                ]
-            },
-            {
-                xtype: 'buttongroup',
-                columns: 1,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        text: 'Publish',
-                        iconCls: 'icon-publish-24',
-                        action: 'publishContent'
-                    }
-                ]
+                xtype: 'splitbutton',
+                text: ' New',
+                action: 'newContent',
+                cls: 'x-btn-as-arrow',
+                menu: Ext.create('Admin.view.MegaMenu', {
+                    recentCount: 4,
+                    cookieKey: 'admin.contentmanager.megamenu',
+                    url: this.loadContentTypesMenu
+                })
             },
             {
                 text: 'Edit',
