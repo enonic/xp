@@ -45,11 +45,11 @@ public final class CreateOrUpdateContentRpcHandler
         ContentType myContentType = new ContentType();
         myContentType.setModule( Module.newModule().name( "myModule" ).build() );
         myContentType.setName( "myContentType" );
-        myContentType.addFormItem( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() );
-        myContentType.addFormItem( newInput().name( "myTextLine2" ).type( InputTypes.TEXT_LINE ).build() );
+        myContentType.form().addFormItem( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() );
+        myContentType.form().addFormItem( newInput().name( "myTextLine2" ).type( InputTypes.TEXT_LINE ).build() );
         FormItemSet componentSet = newFormItemSet().name( "myComponentSet" ).build();
         componentSet.add( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() );
-        myContentType.addFormItem( componentSet );
+        myContentType.form().addFormItem( componentSet );
         mockContentTypeFetcher.add( myContentType );
         this.contentTypeFetcher = mockContentTypeFetcher;
     }

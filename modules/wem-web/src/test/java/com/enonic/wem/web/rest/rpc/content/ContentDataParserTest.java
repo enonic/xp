@@ -28,17 +28,17 @@ public class ContentDataParserTest
         throws IOException
     {
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.addFormItem( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() );
-        contentType.addFormItem( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
-        contentType.addFormItem( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
-        contentType.addFormItem( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
-        contentType.addFormItem( newInput().name( "myDecimalNumber" ).type( InputTypes.DECIMAL_NUMBER ).build() );
-        contentType.addFormItem( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
-        contentType.addFormItem( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
+        contentType.form().addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.form().addFormItem( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() );
+        contentType.form().addFormItem( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
+        contentType.form().addFormItem( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
+        contentType.form().addFormItem( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
+        contentType.form().addFormItem( newInput().name( "myDecimalNumber" ).type( InputTypes.DECIMAL_NUMBER ).build() );
+        contentType.form().addFormItem( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
+        contentType.form().addFormItem( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
         FormItemSet mySet = newFormItemSet().name( "mySet" ).build();
         mySet.add( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.addFormItem( mySet );
+        contentType.form().addFormItem( mySet );
 
         StringBuilder json = new StringBuilder();
         json.append( "{" ).append( "\n" );
@@ -91,7 +91,7 @@ public class ContentDataParserTest
         myContentType.setName( "myContentType" );
         FormItemSet formItemSet = newFormItemSet().name( "myFormItemSet" ).build();
         formItemSet.add( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
-        myContentType.addFormItem( formItemSet );
+        myContentType.form().addFormItem( formItemSet );
 
         StringBuilder json = new StringBuilder();
         json.append( "{" );
@@ -113,7 +113,7 @@ public class ContentDataParserTest
         throws IOException
     {
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
+        contentType.form().addFormItem( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
 
         StringBuilder json = new StringBuilder();
         json.append( "{" ).append( "\n" );
@@ -140,7 +140,7 @@ public class ContentDataParserTest
         throws IOException
     {
         ContentType contentType = new ContentType();
-        contentType.addFormItem( newInput().name( "myColor" ).type( InputTypes.COLOR ).required( true ).build() );
+        contentType.form().addFormItem( newInput().name( "myColor" ).type( InputTypes.COLOR ).required( true ).build() );
 
         StringBuilder json = new StringBuilder();
         json.append( "{" ).append( "\n" );
@@ -169,7 +169,7 @@ public class ContentDataParserTest
     {
         ContentType contentType = new ContentType();
         FormItemSet formItemSet = newFormItemSet().name( "myFormItemSet" ).build();
-        contentType.addFormItem( formItemSet );
+        contentType.form().addFormItem( formItemSet );
         formItemSet.add( newInput().name( "myColor" ).type( InputTypes.COLOR ).required( true ).build() );
 
         StringBuilder json = new StringBuilder();

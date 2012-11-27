@@ -39,7 +39,7 @@ public class ContentDataValidatorHandlerTest
         final ContentType contentType = new ContentType();
         contentType.setModule( Module.SYSTEM );
         contentType.setName( "MyType" );
-        contentType.addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
+        contentType.form().addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
             newFormItemSet().name( "mySet" ).required( true ).add(
                 newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build() );
 
@@ -64,7 +64,7 @@ public class ContentDataValidatorHandlerTest
         final ContentType contentType = new ContentType();
         contentType.setModule( Module.SYSTEM );
         contentType.setName( "MyType" );
-        contentType.addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
+        contentType.form().addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
             newFormItemSet().name( "mySet" ).required( true ).add(
                 newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build() );
 

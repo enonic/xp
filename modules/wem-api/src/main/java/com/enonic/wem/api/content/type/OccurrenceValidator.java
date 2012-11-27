@@ -30,7 +30,7 @@ public final class OccurrenceValidator
     {
         final List<DataValidationError> validationErrors = Lists.newArrayList();
 
-        validateFormItems( contentType.formItemIterable(), contentData, validationErrors );
+        validateFormItems( contentType.form().formItemIterable(), contentData, validationErrors );
         validateData( contentData, validationErrors );
 
         return DataValidationErrors.from( validationErrors );
@@ -40,7 +40,7 @@ public final class OccurrenceValidator
     {
         for ( final Data data : datas )
         {
-            final FormItem formItem = contentType.getFormItem( data.getPath().resolveFormItemPath() );
+            final FormItem formItem = contentType.form().getFormItem( data.getPath().resolveFormItemPath() );
 
             if ( formItem instanceof Input )
             {

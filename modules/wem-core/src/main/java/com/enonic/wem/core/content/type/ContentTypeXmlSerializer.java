@@ -52,7 +52,7 @@ public class ContentTypeXmlSerializer
     {
         typeEl.addContent( new Element( "name" ).setText( type.getName() ) );
         typeEl.addContent( new Element( "module" ).setText( type.getModule().getName() ) );
-        typeEl.addContent( formItemsSerializer.serialize( type.formItemIterable() ) );
+        typeEl.addContent( formItemsSerializer.serialize( type.form().formItemIterable() ) );
     }
 
     public ContentType toContentType( String xml )
@@ -85,7 +85,7 @@ public class ContentTypeXmlSerializer
             final FormItems formItems = formItemsSerializer.parse( contentTypeEl );
             for ( FormItem formItem : formItems )
             {
-                contentType.addFormItem( formItem );
+                contentType.form().addFormItem( formItem );
             }
         }
         catch ( Exception e )

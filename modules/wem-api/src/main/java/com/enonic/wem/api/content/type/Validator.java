@@ -69,7 +69,7 @@ public class Validator
         {
             checkDataTypeValidity( data );
 
-            final FormItem formItem = contentType.getFormItem( data.getPath().resolveFormItemPath().toString() );
+            final FormItem formItem = contentType.form().getFormItem( data.getPath().resolveFormItemPath().toString() );
             if ( formItem != null )
             {
                 if ( formItem instanceof Input )
@@ -83,14 +83,14 @@ public class Validator
     private void doValidateDataWithDataSet( final Data dataWithDataSet )
     {
         final DataSet dataSet = dataWithDataSet.getDataSet();
-        final FormItem formItem = contentType.getFormItem( dataSet.getPath().resolveFormItemPath().toString() );
+        final FormItem formItem = contentType.form().getFormItem( dataSet.getPath().resolveFormItemPath().toString() );
         if ( formItem != null )
         {
             if ( formItem instanceof FormItemSet )
             {
                 for ( Data subData : dataSet )
                 {
-                    final FormItem subFormItem = contentType.getFormItem( subData.getPath().resolveFormItemPath().toString() );
+                    final FormItem subFormItem = contentType.form().getFormItem( subData.getPath().resolveFormItemPath().toString() );
                     if ( subFormItem instanceof Input )
                     {
                         checkInputValidity( subData, (Input) subFormItem );

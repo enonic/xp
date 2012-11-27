@@ -52,7 +52,7 @@ public class ContentTest
                 "Option 2", "o2" ).build();
         Input mySingleSelector =
             newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build();
-        contentType.addFormItem( mySingleSelector );
+        contentType.form().addFormItem( mySingleSelector );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -64,8 +64,8 @@ public class ContentTest
     @Test
     public void multiple_textlines()
     {
-        contentType.addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.addFormItem( newInput().name( "myMultipleTextLine" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() );
+        contentType.form().addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.form().addFormItem( newInput().name( "myMultipleTextLine" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -189,7 +189,7 @@ public class ContentTest
     @Test
     public void tags()
     {
-        contentType.addFormItem( newInput().name( "myTags" ).type( InputTypes.TAGS ).build() );
+        contentType.form().addFormItem( newInput().name( "myTags" ).type( InputTypes.TAGS ).build() );
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
         Content content = new Content();
@@ -208,9 +208,9 @@ public class ContentTest
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( inputSubType );
 
-        contentType.addFormItem(
+        contentType.form().addFormItem(
             SubTypeReference.newSubTypeReference().name( "myTags" ).subType( "system:tags" ).type( InputSubType.class ).build() );
-        contentType.subTypeReferencesToFormItems( subTypeFetcher );
+        contentType.form().subTypeReferencesToFormItems( subTypeFetcher );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -227,7 +227,7 @@ public class ContentTest
     @Test
     public void phone()
     {
-        contentType.addFormItem( newInput().name( "myPhone" ).type( InputTypes.PHONE ).required( true ).build() );
+        contentType.form().addFormItem( newInput().name( "myPhone" ).type( InputTypes.PHONE ).required( true ).build() );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -239,10 +239,10 @@ public class ContentTest
     @Test
     public void formItemSet()
     {
-        contentType.addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
+        contentType.form().addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
 
         FormItemSet formItemSet = newFormItemSet().name( "personalia" ).build();
-        contentType.addFormItem( formItemSet );
+        contentType.form().addFormItem( formItemSet );
         formItemSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
         formItemSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
@@ -261,10 +261,10 @@ public class ContentTest
     public void multiple_subtype()
     {
         Input nameInput = newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build();
-        contentType.addFormItem( nameInput );
+        contentType.form().addFormItem( nameInput );
 
         FormItemSet formItemSet = newFormItemSet().name( "personalia" ).multiple( true ).build();
-        contentType.addFormItem( formItemSet );
+        contentType.form().addFormItem( formItemSet );
         formItemSet.add( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
         formItemSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
         formItemSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
@@ -359,7 +359,7 @@ public class ContentTest
         features.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
         features.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
         child.add( features );
-        contentType.addFormItem( child );
+        contentType.form().addFormItem( child );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -414,14 +414,14 @@ public class ContentTest
                 newInput().name( "postalPlace" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newSubTypeReference( countrySubType ).name( "country" ).build() ).build() ).build();
 
-        contentType.addFormItem( newInput().type( InputTypes.TEXT_LINE ).name( "name" ).build() );
-        contentType.addFormItem( newSubTypeReference( addressSubType ).name( "address" ).build() );
+        contentType.form().addFormItem( newInput().type( InputTypes.TEXT_LINE ).name( "name" ).build() );
+        contentType.form().addFormItem( newSubTypeReference( addressSubType ).name( "address" ).build() );
 
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( postalCodeSubType );
         subTypeFetcher.add( countrySubType );
         subTypeFetcher.add( addressSubType );
-        contentType.subTypeReferencesToFormItems( subTypeFetcher );
+        contentType.form().subTypeReferencesToFormItems( subTypeFetcher );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -450,11 +450,11 @@ public class ContentTest
                 newInput().type( InputTypes.TEXT_LINE ).name( "postalPlace" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "country" ).build() ).build() ).build();
 
-        contentType.addFormItem( newSubTypeReference( addressSubType ).name( "address" ).build() );
+        contentType.form().addFormItem( newSubTypeReference( addressSubType ).name( "address" ).build() );
 
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( addressSubType );
-        contentType.subTypeReferencesToFormItems( subTypeFetcher );
+        contentType.form().subTypeReferencesToFormItems( subTypeFetcher );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -485,11 +485,11 @@ public class ContentTest
     @Test
     public void trying_to_set_data_to_a_fieldSetSubType_when_subType_is_missing()
     {
-        contentType.addFormItem( newInput().type( InputTypes.TEXT_LINE ).name( "name" ).build() );
-        contentType.addFormItem(
+        contentType.form().addFormItem( newInput().type( InputTypes.TEXT_LINE ).name( "name" ).build() );
+        contentType.form().addFormItem(
             SubTypeReference.newSubTypeReference().name( "address" ).typeInput().subType( "myModule:myAddressSubType" ).build() );
 
-        contentType.subTypeReferencesToFormItems( new MockSubTypeFetcher() );
+        contentType.form().subTypeReferencesToFormItems( new MockSubTypeFetcher() );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );
@@ -509,7 +509,7 @@ public class ContentTest
     public void layout()
     {
         // setup
-        contentType.addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
+        contentType.form().addFormItem( newInput().name( "name" ).type( InputTypes.TEXT_LINE ).build() );
         FieldSet personalia = newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).add(
             newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
@@ -517,7 +517,7 @@ public class ContentTest
             newInput().name( "tattoo" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() ).add(
             newInput().name( "scar" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() ).build();
         personalia.addFormItem( tatoos );
-        contentType.addFormItem( personalia );
+        contentType.form().addFormItem( personalia );
 
         Content content = new Content();
         content.setType( contentType.getQualifiedName() );

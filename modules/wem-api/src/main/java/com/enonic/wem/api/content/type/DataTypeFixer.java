@@ -25,7 +25,7 @@ public class DataTypeFixer
             public void visit( final Data data )
             {
                 final FormItemPath path = data.getPath().resolveFormItemPath();
-                final HierarchicalFormItem formItem = contentType.getFormItem( path );
+                final HierarchicalFormItem formItem = contentType.form().getFormItem( path );
                 if ( formItem != null && formItem.getPath().equals( path ) )
                 {
                     if ( formItem instanceof Input )

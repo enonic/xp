@@ -36,7 +36,7 @@ class ContentTypeJcrMapper
         contentTypeNode.setProperty( MODULE_NAME, contentType.getModule().getName() );
         contentTypeNode.setProperty( IS_ABSTRACT, contentType.isAbstract() );
 
-        final String formItemsJson = formItemsSerializer.toString( contentType.getFormItems() );
+        final String formItemsJson = formItemsSerializer.toString( contentType.form().getFormItems() );
         contentTypeNode.setProperty( FORM_ITEMS, formItemsJson );
     }
 

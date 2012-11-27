@@ -48,7 +48,7 @@ public class ValidateContentDataRpcHandlerTest
         final ContentType contentType = new ContentType();
         contentType.setModule( Module.SYSTEM );
         contentType.setName( "MyType" );
-        contentType.addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
+        contentType.form().addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
             newFormItemSet().name( "mySet" ).required( true ).add(
                 newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build() );
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
@@ -69,7 +69,7 @@ public class ValidateContentDataRpcHandlerTest
         contentType.setModule( Module.SYSTEM );
         contentType.setName( "MyType" );
         final Input myInput = newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).minimumOccurrences( 1 ).build();
-        contentType.addFormItem( myInput );
+        contentType.form().addFormItem( myInput );
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         final DataValidationError error1 = new MinimumOccurrencesValidationError( myInput, 0 );
