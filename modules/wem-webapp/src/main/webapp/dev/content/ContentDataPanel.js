@@ -6,6 +6,9 @@ Ext.define('ContentDataPanel', {
         TextArea: "textarea"
     },
 
+    contentTypeItems: [],
+    content: null, // content to be edited
+
     buttons: [{
         text: 'Submit',
         formBind: true, //only enabled once the form is valid
@@ -14,80 +17,67 @@ Ext.define('ContentDataPanel', {
             var formPanel = this.up('form');
             var form = formPanel.getForm();
             if (form.isValid()) {
-                alert(JSON.stringify(formPanel.getData(), null, 4));
-                // TODO: Submit form
+                alert('Create form data and submit');
             }
         }
     }],
 
     buttonAlign: 'left',
 
-    contentTypeItems: [],
-    content: null, // content to be edited
-
     initComponent: function () {
         var me = this;
-        var fieldSet = {
-            xtype: 'fieldset',
-            title: 'A Separator',
-            padding: '10px 15px',
-            items: []
-        };
         // set values in fields if editing existing content
-        var editedContentValues = {};
-        if (this.content && this.content.data) {
-            Ext.each(this.content.data, function (dataItem) {
-                editedContentValues[dataItem.name] = dataItem.value;
-            });
-        }
-        me.items = [fieldSet];
+        /*
+         var editedContentValues = {};
+         if (this.content && this.content.data) {
+         Ext.each(this.content.data, function (dataItem) {
+         editedContentValues[dataItem.name] = dataItem.value;
+         });
+         }
+         */
+        me.items = [];
 
-        me.addInputs(me.contentTypeItems, fieldSet);
+        me.addFormFields(me.contentTypeItems, me);
 
         me.callParent(arguments);
     },
 
-    addInputs: function (contentTypeItems, parent) {
+    addFormFields: function (contentTypeItems, container) {
         var me = this;
         Ext.each(contentTypeItems, function (contentTypeItem) {
-            var inputTypeName = contentTypeItem.inputType.name;
-            var widgetAlias = 'widget.input.' + inputTypeName;
-
-            // TODO: Should we avoid this magic?
-            if (!me.inputIsSupported(widgetAlias)) {
+            var inputTypeName = contentTypeItem.Input.type.name;
+            var xtype = 'widget.input.' + inputTypeName;
+            if (!me.formFieldIsSupported(xtype)) {
                 console.error('Unsupported input type', contentTypeItem);
                 return;
             }
 
-            var item = me.createInput(contentTypeItem, widgetAlias);
-
-            parent.items.push(item);
+            var item = me.createFormField(contentTypeItem, xtype);
+            container.items.push(item);
         });
     },
 
-    createInput: function (contentTypeItem, widgetAlias) {
-        var item = Ext.create({
+    createFormField: function (contentTypeItem, widgetAlias) {
+        return Ext.create({
             xclass: widgetAlias,
-            fieldLabel: contentTypeItem.label,
-            name: contentTypeItem.name,
-            itemId: contentTypeItem.name,
+            fieldLabel: contentTypeItem.Input.label,
+            name: contentTypeItem.Input.name,
+            itemId: contentTypeItem.Input.name,
             cls: 'span-3',
             listeners: {
                 render: function (cmp) {
                     Ext.tip.QuickTipManager.register({
                         target: cmp.el,
-                        text: contentTypeItem.helpText
+                        text: contentTypeItem.Input.helpText
                     });
                 }
             }
             // value: editedContentValues[contentTypeItem.name]
         });
-
-        return item;
     },
 
-    inputIsSupported: function (alias) {
-        return Ext.ClassManager.getByAlias(alias);
+    formFieldIsSupported: function (xtype) {
+        return Ext.ClassManager.getByAlias(xtype);
     },
 
     getData: function () {

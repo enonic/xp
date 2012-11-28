@@ -71,7 +71,7 @@ Ext.application({
                                         data: [
                                             {file: 'mock-contenttype-htmlarea.json', qualifiedName: 'Demo:HtmlArea'},
                                             {file: 'mock-contenttype-relation.json', qualifiedName: 'Demo:Relation'},
-                                            {file: 'mock-contenttype-textarea.json', qualifiedName: 'Demo:Article'},
+                                            {file: 'mock-contenttype-textarea.json', qualifiedName: 'Demo:TextArea'},
                                             {file: 'mock-contenttype-set.json', qualifiedName: 'Demo:Set'}
                                         ]
                                     }),
