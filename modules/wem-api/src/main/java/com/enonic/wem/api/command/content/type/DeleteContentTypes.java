@@ -4,10 +4,11 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.content.type.ContentTypeDeletionResult;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 
 public final class DeleteContentTypes
-    extends Command<Integer>
+    extends Command<ContentTypeDeletionResult>
 {
     private QualifiedContentTypeNames contentTypeNames;
 
