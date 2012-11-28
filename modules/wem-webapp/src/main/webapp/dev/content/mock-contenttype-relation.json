@@ -5,55 +5,58 @@
         "qualifiedName": "Demo:RelatedContent",
         "items": [
             {
-                "type": "Input",
-                "name": "title",
-                "label": "Title",
-                "immutable": false,
-                "occurrences": {
-                    "minimum": 1,
-                    "maximum": 1
-                },
-                "indexed": false,
-                "customText": null,
-                "validationRegexp": null,
-                "helpText": "Article title",
-                "inputType": {
-                    "name": "TextLine",
-                    "builtIn": true
+                "Input": {
+                    "name": "title",
+                    "label": "Title",
+                    "immutable": false,
+                    "occurrences": {
+                        "minimum": 1,
+                        "maximum": 1
+                    },
+                    "indexed": false,
+                    "customText": null,
+                    "validationRegexp": null,
+                    "helpText": "Article title",
+                    "type": {
+                        "name": "TextLine",
+                        "builtIn": true
+                    }
                 }
             },
             {
-                "type": "Input",
-                "name": "related_articles",
-                "label": "Related Articles",
-                "immutable": false,
-                "occurrences": {
-                    "minimum": 0
-                },
-                "indexed": false,
-                "customText": null,
-                "validationRegexp": null,
-                "helpText": "Related articles",
-                "inputType": {
-                    "name": "Relation",
-                    "builtIn": true
+                "Input": {
+                    "name": "related_articles",
+                    "label": "Related Articles",
+                    "immutable": false,
+                    "occurrences": {
+                        "minimum": 0
+                    },
+                    "indexed": false,
+                    "customText": null,
+                    "validationRegexp": null,
+                    "helpText": "Related articles",
+                    "type": {
+                        "name": "Relation",
+                        "builtIn": true
+                    }
                 }
             },
             {
-                "type": "Input",
-                "name": "related_files",
-                "label": "Related Files",
-                "immutable": false,
-                "occurrences": {
-                    "minimum": 0
-                },
-                "indexed": false,
-                "customText": null,
-                "validationRegexp": null,
-                "helpText": "Related files",
-                "inputType": {
-                    "name": "Relation",
-                    "builtIn": true
+                "Input": {
+                    "name": "related_files",
+                    "label": "Related Files",
+                    "immutable": false,
+                    "occurrences": {
+                        "minimum": 0
+                    },
+                    "indexed": false,
+                    "customText": null,
+                    "validationRegexp": null,
+                    "helpText": "Related files",
+                    "type": {
+                        "name": "Relation",
+                        "builtIn": true
+                    }
                 }
             }
         ]

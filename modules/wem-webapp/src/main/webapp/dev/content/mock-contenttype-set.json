@@ -5,73 +5,77 @@
         "qualifiedName": "Demo:Set",
         "items": [
             {
-                "type": "Input",
-                "name": "title",
-                "label": "Title",
-                "immutable": false,
-                "occurrences": {
-                    "minimum": 1,
-                    "maximum": 1
-                },
-                "indexed": false,
-                "customText": null,
-                "validationRegexp": null,
-                "helpText": "Article title",
-                "inputType": {
-                    "name": "TextLine",
-                    "builtIn": true
+                "Input": {
+                    "name": "title",
+                    "label": "Title",
+                    "immutable": false,
+                    "occurrences": {
+                        "minimum": 1,
+                        "maximum": 1
+                    },
+                    "indexed": false,
+                    "customText": null,
+                    "validationRegexp": null,
+                    "helpText": "Article title",
+                    "type": {
+                        "name": "TextLine",
+                        "builtIn": true
+                    }
                 }
             },
             {
-                "type": "form-item-set",
-                "name": "images",
-                "label": "Images",
-                "immutable": false,
-                "occurrences": {
-                    "minimum": 0
-                },
-                "indexed": false,
-                "customText": null,
-                "validationRegexp": null,
-                "helpText": "Images with text",
-                "items": [
-                    {
-                        "type": "Input",
-                        "name": "image",
-                        "label": "Image",
-                        "immutable": false,
-                        "occurrences": {
-                            "minimum": 0,
-                            "maximum": 1
-                        },
-                        "indexed": false,
-                        "customText": null,
-                        "validationRegexp": null,
-                        "helpText": "Select image",
-                        "inputType": {
-                            "name": "Relation",
-                            "builtIn": true
-                        }
+                "FormItemSet": {
+                    "name": "mySet",
+                    "label": null,
+                    "immutable": false,
+                    "occurrences": {
+                        "minimum": 0,
+                        "maximum": 1
                     },
-                    {
-                        "type": "Input",
-                        "name": "text",
-                        "label": "Text",
-                        "immutable": false,
-                        "occurrences": {
-                            "minimum": 0,
-                            "maximum": 1
+                    "customText": null,
+                    "helpText": null,
+                    "items": [
+                        {
+                            "Input": {
+                                "name": "image",
+                                "label": "Image",
+                                "immutable": false,
+                                "occurrences": {
+                                    "minimum": 0,
+                                    "maximum": 1
+                                },
+                                "indexed": false,
+                                "customText": null,
+                                "validationRegexp": null,
+                                "helpText": "Select image",
+                                "type": {
+                                    "name": "Relation",
+                                    "builtIn": true
+                                }
+                            }
                         },
-                        "indexed": false,
-                        "customText": null,
-                        "validationRegexp": null,
-                        "helpText": "Image text",
-                        "inputType": {
-                            "name": "TextArea",
-                            "builtIn": true
+                        {
+                            "Input": {
+                                "name": "text",
+                                "label": "Text",
+                                "immutable": false,
+                                "occurrences": {
+                                    "minimum": 0,
+                                    "maximum": 1
+                                },
+                                "indexed": false,
+                                "customText": null,
+                                "validationRegexp": null,
+                                "helpText": "Image text",
+                                "type": {
+                                    "name": "TextArea",
+                                    "builtIn": true
+                                }
+                            }
                         }
-                    }
-                ]
+                    ]
+
+                }
             }
         ]
     }

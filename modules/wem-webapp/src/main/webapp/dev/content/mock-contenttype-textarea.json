@@ -3,63 +3,47 @@
         "name": "Article",
         "module": "Demo",
         "qualifiedName": "Demo:Article",
+
         "items": [
             {
-                "type": "Input",
-                "name": "title",
-                "label": "Title",
-                "immutable": false,
-                "occurrences": {
-                    "minimum": 1,
-                    "maximum": 1
-                },
-                "indexed": false,
-                "customText": null,
-                "validationRegexp": null,
-                "helpText": "Article title",
-                "inputType": {
-                    "name": "TextLine",
-                    "builtIn": true
+                "Input": {
+                    "name": "title",
+                    "label": "Title",
+                    "immutable": false,
+                    "occurrences": {
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "indexed": false,
+                    "customText": null,
+                    "validationRegexp": null,
+                    "helpText": "Article title",
+                    "type": {
+                        "name": "TextLine",
+                        "builtIn": true
+                    }
                 }
             },
             {
-                "type": "Input",
-                "name": "preface",
-                "label": "Preface",
-                "immutable": false,
-                "occurrences": {
-                    "minimum": 0,
-                    "maximum": 1
-                },
-                "indexed": false,
-                "customText": null,
-                "validationRegexp": null,
-                "helpText": "Preface of the article",
-                "inputType": {
-                    "name": "TextLine",
-                    "builtIn": true
+                "Input": {
+                    "name": "body",
+                    "label": "Body",
+                    "immutable": false,
+                    "occurrences": {
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "indexed": false,
+                    "customText": null,
+                    "validationRegexp": null,
+                    "helpText": "Article text",
+                    "type": {
+                        "name": "TextArea",
+                        "builtIn": true
+                    }
                 }
-            },
-            {
-
-                "type": "Input",
-                "name": "body",
-                "label": "Body",
-                "immutable": false,
-                "occurrences": {
-                    "minimum": 0,
-                    "maximum": 1
-                },
-                "indexed": false,
-                "customText": null,
-                "validationRegexp": null,
-                "helpText": "Text area",
-                "inputType": {
-                    "name": "TextArea",
-                    "builtIn": true
-                }
-
             }
+
         ]
     }
 }
