@@ -6,31 +6,21 @@ import java.util.Iterator;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.datatype.DataType;
-import com.enonic.wem.api.content.datatype.DataTypes;
 
 public final class DataArray
     implements Iterable<Data>
 {
     private EntryPath path;
 
-    private ArrayList<Data> list = new ArrayList<Data>();
+    private final ArrayList<Data> list = new ArrayList<Data>();
 
-    /**
-     * TODO: Type should to be initialized in constructor.
-     */
-    private DataType type;
+    private final DataType type;
 
-    public DataArray( final EntryPath path )
+    public DataArray( final EntryPath path, final DataType dataType )
     {
-        Preconditions.checkArgument( !path.getLastElement().hasIndex(),
-                                     "Last path element of a DataArray must not contain index: " + path );
-        this.path = path;
-    }
-
-    public DataArray( final EntryPath path, DataType dataType )
-    {
+        Preconditions.checkNotNull( path, "path cannot be null" );
+        Preconditions.checkNotNull( dataType, "dataType cannot be null" );
         Preconditions.checkArgument( !path.getLastElement().hasIndex(),
                                      "Last path element of a DataArray must not contain index: " + path );
         this.path = path;
@@ -76,22 +66,23 @@ public final class DataArray
         return list.get( i );
     }
 
-    public void add( final Object value )
+    public Data add( final Object value )
     {
-        Preconditions.checkNotNull( type, "Type must be set before adding values" );
-
         final int index = list.size();
-        final Data newData = Data.newData().path( new EntryPath( path, index ) ).value( value ).type( type ).build();
-        if ( newData.hasDataSetAsValue() )
+        final Data data = Data.newData().path( new EntryPath( path, index ) ).value( value ).type( type ).build();
+        checkType( data );
+        if ( data.hasDataSetAsValue() )
         {
-            newData.setEntryPathIndex( newData.getDataSet().getPath(), index );
+            data.setEntryPathIndex( data.getDataSet().getPath(), index );
         }
 
-        list.add( newData );
+        list.add( data );
+        return data;
     }
 
     public void add( final Data data )
     {
+        checkType( data );
         final EntryPath dataPath = data.getPath();
         Preconditions.checkArgument( new EntryPath( dataPath.getParent(), dataPath.getLastElement().getName() ).equals( path ),
                                      "Data added to array [%s] does not have same path: %s", this.path, data.getPath() );
@@ -104,22 +95,11 @@ public final class DataArray
 
         data.setEntryPathIndex( dataPath, list.size() );
         list.add( data );
-        registerType();
-        checkType( data );
     }
 
-    public void setData( final Data data )
+    public Data set( final int index, final Object value )
     {
-        Preconditions.checkArgument( data.getPath().getLastElement().hasIndex(),
-                                     "Cannot set data in array[" + path + "] without index: " + data.getPath() );
-        list.add( data );
-        registerType();
-        checkType( data );
-    }
-
-    public Data set( final int index, final Object value, final BaseDataType dataType )
-    {
-        Data newData = Data.newData().path( new EntryPath( path, index ) ).value( value ).type( dataType ).build();
+        Data newData = Data.newData().path( new EntryPath( path, index ) ).value( value ).type( type ).build();
 
         if ( overwritesExisting( index ) )
         {
@@ -134,14 +114,14 @@ public final class DataArray
         return newData;
     }
 
-    public void set( final EntryPath path, final Object value, final BaseDataType dataType )
+    public void set( final EntryPath path, final Object value )
     {
         if ( overwritesExisting( path.getFirstElement().getIndex() ) )
         {
             final Data data = list.get( path.getFirstElement().getIndex() );
             if ( path.elementCount() > 1 )
             {
-                data.getDataSet().setData( path.asNewWithoutFirstPathElement(), value, dataType );
+                data.getDataSet().setData( path.asNewWithoutFirstPathElement(), value, type );
             }
             else
             {
@@ -152,20 +132,9 @@ public final class DataArray
         {
             checkIndexIsSuccessive( path.getFirstElement().getIndex(), value );
 
-            final Data data = Data.newData().path( path ).value( value ).type( dataType ).build();
+            final Data data = Data.newData().path( path ).value( value ).type( type ).build();
             checkType( data );
             list.add( data );
-        }
-
-        registerType();
-    }
-
-    private void registerType()
-    {
-        if ( list.size() == 1 )
-        {
-            this.type = list.get( 0 ).getDataType();
-            Preconditions.checkArgument( !this.type.equals( DataTypes.ARRAY ), "Multidimensional arrays are not supported" );
         }
     }
 
@@ -174,8 +143,7 @@ public final class DataArray
         if ( !this.type.equals( data.getDataType() ) )
         {
             throw new IllegalArgumentException(
-                "Data [" + data.getPath() + "] with type [" + data.getDataType() + "] in array [" + this.path +
-                    "] is not of this array's type: " + this.type );
+                "DataArray [" + this.path + "] expects data of type [" + this.type + "]. Data was of type: " + data.getDataType() );
         }
     }
 

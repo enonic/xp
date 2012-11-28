@@ -50,7 +50,7 @@ public final class Data
         return path;
     }
 
-    public DataType getDataType()
+    public BaseDataType getDataType()
     {
         return type;
     }

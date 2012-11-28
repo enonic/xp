@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.datatype.DataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.form.InvalidDataException;
@@ -49,7 +48,7 @@ public final class DataSet
         entries.add( data );
     }
 
-    void setData( final EntryPath path, final Object value, final BaseDataType dataType )
+    void setData( final EntryPath path, final Object value, final DataType dataType )
         throws InvalidDataException
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
@@ -66,7 +65,7 @@ public final class DataSet
         }
     }
 
-    private void forwardSetDataToDataSet( final EntryPath path, final Object value, final BaseDataType dataType )
+    private void forwardSetDataToDataSet( final EntryPath path, final Object value, final DataType dataType )
     {
         final DataSet dataSet = findOrCreateDataSet( path.getFirstElement() );
         dataSet.setData( path.asNewWithoutFirstPathElement(), value, dataType );
@@ -141,7 +140,7 @@ public final class DataSet
                 {
                     final EntryPath newPath = new EntryPath( exData.getPath(), firstElement.getIndex() );
                     dataSet = new DataSet( newPath );
-                    dataArray.set( firstElement.getIndex(), dataSet, DataTypes.SET );
+                    dataArray.set( firstElement.getIndex(), dataSet );
                 }
                 else
                 {

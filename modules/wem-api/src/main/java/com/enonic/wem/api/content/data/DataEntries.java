@@ -4,7 +4,7 @@ package com.enonic.wem.api.content.data;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
-import com.enonic.wem.api.content.datatype.BaseDataType;
+import com.enonic.wem.api.content.datatype.DataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
 
 import static com.enonic.wem.api.content.data.Data.newData;
@@ -45,7 +45,7 @@ final class DataEntries
         }
     }
 
-    void setData( final EntryPath path, final Object value, final BaseDataType type )
+    void setData( final EntryPath path, final Object value, final DataType type )
     {
         final String key = resolveKey( path.getLastElement() );
         Data exData = dataByName.get( key );
@@ -55,7 +55,7 @@ final class DataEntries
         {
             if ( path.getLastElement().hasIndex() )
             {
-                final DataArray dataArray = new DataArray( pathWithoutIndexAtLastElement );
+                final DataArray dataArray = new DataArray( pathWithoutIndexAtLastElement, type );
                 createdData = newData().path( path ).type( type ).value( value ).build();
                 dataArray.add( createdData );
                 final Data newDataWithArray =
@@ -70,14 +70,14 @@ final class DataEntries
         }
         else if ( exData.getDataType().equals( DataTypes.ARRAY ) )
         {
-            exData.getDataArray().set( path.getLastElement().getIndex(), value, type );
+            exData.getDataArray().set( path.getLastElement().getIndex(), value );
         }
         else if ( path.getLastElement().hasIndex() )
         {
-            final DataArray array = new DataArray( pathWithoutIndexAtLastElement );
+            final DataArray array = new DataArray( pathWithoutIndexAtLastElement, exData.getDataType() );
             EntryPath exDataPathWithIndex = exData.getPath().asNewWithIndexAtPath( 0, exData.getPath() );
             array.add( newData().path( exDataPathWithIndex ).type( exData.getDataType() ).value( exData.getValue() ).build() );
-            array.set( path, value, type );
+            array.set( path, value );
             final Data newDataWithArray = newData().path( pathWithoutIndexAtLastElement ).type( DataTypes.ARRAY ).value( array ).build();
 
             dataByName.put( key, newDataWithArray );
