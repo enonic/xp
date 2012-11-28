@@ -53,6 +53,13 @@
 
   <repositories>
     <repository>
+      <id>apache.repo</id>
+      <url>https://repository.apache.org/content/groups/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
       <id>enonic.repo</id>
       <url>http://repo.enonic.com/maven</url>
     </repository>
