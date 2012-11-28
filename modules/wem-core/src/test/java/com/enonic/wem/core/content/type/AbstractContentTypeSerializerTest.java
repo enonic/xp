@@ -1,12 +1,5 @@
 package com.enonic.wem.core.content.type;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,6 +16,7 @@ import com.enonic.wem.api.content.type.form.SubTypeReference;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.content.type.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.core.AbstractSerializerTest;
 
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
@@ -35,6 +29,7 @@ import static org.junit.Assert.*;
 
 
 public abstract class AbstractContentTypeSerializerTest
+    extends AbstractSerializerTest
 {
     private static final Module myModule = newModule().name( "myModule" ).build();
 
@@ -273,47 +268,6 @@ public abstract class AbstractContentTypeSerializerTest
         System.out.println( "Content Type:" );
         System.out.println( serialized );
         return serialized;
-    }
-
-    protected String getJsonAsString( String fileName )
-    {
-        try
-        {
-            return toJsonString( getJson( fileName ) );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
-    }
-
-    private JsonNode getJson( String fileName )
-    {
-        try
-        {
-            final ObjectMapper mapper = createObjectMapper();
-            final JsonFactory factory = mapper.getJsonFactory();
-            final JsonParser parser = factory.createJsonParser( getClass().getResource( fileName ) );
-            return parser.readValueAsTree();
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( e );
-        }
-    }
-
-    private String toJsonString( final JsonNode value )
-        throws Exception
-    {
-        final ObjectMapper mapper = createObjectMapper();
-        return mapper.defaultPrettyPrintingWriter().writeValueAsString( value );
-    }
-
-    private static ObjectMapper createObjectMapper()
-    {
-        final ObjectMapper mapper = new ObjectMapper();
-        mapper.setDateFormat( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ) );
-        return mapper;
     }
 
     private ContentType createContentTypeWithAllInputFormItemTypes()

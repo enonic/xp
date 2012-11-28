@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content>
+  <name/>
+  <type>myModule:myType</type>
+  <data>
+    <mySet type="Set">
+      <myInput type="Text">1</myInput>
+      <myOtherInput type="Text">2</myOtherInput>
+    </mySet>
+  </data>
+</content>
+

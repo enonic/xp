@@ -1,6 +1,8 @@
 package com.enonic.wem.core.content;
 
 
+import static org.junit.Assert.*;
+
 public class ContentJsonSerializerTest
     extends AbstractContentSerializerTest
 {
@@ -10,6 +12,12 @@ public class ContentJsonSerializerTest
         ContentJsonSerializer serializerJson = new ContentJsonSerializer();
         serializerJson.prettyPrint();
         return serializerJson;
+    }
+
+    @Override
+    void assertSerializedResult( final String fileNameForExpected, final String actualSerialization )
+    {
+        assertEquals( getJsonAsString( fileNameForExpected + ".json" ), actualSerialization );
     }
 
 }

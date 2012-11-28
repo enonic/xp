@@ -21,6 +21,7 @@ import com.enonic.wem.api.content.type.form.FieldSet;
 import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.core.AbstractSerializerTest;
 
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
@@ -29,6 +30,7 @@ import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public abstract class AbstractContentSerializerTest
+    extends AbstractSerializerTest
 {
     private Module myModule = Module.newModule().name( "myModule" ).build();
 
@@ -43,6 +45,8 @@ public abstract class AbstractContentSerializerTest
     {
         this.serializer = getSerializer();
     }
+
+    abstract void assertSerializedResult( String fileNameForExpected, String actualSerialization );
 
     @Test
     public void given_content_with_name_when_parsed_then_name_is_as_expected()
@@ -99,8 +103,13 @@ public abstract class AbstractContentSerializerTest
 
         String serialized = toString( content );
 
+        // verify
+        assertSerializedResult( "content-set", serialized );
+
         // exercise
         Content parsedContent = toContent( serialized );
+
+        // verify
 
         assertEquals( "1", parsedContent.getData( "mySet.myInput" ).getValue() );
         assertEquals( "2", parsedContent.getData( "mySet.myOtherInput" ).getValue() );
@@ -119,9 +128,13 @@ public abstract class AbstractContentSerializerTest
 
         String serialized = toString( content );
 
+        // verify
+        assertSerializedResult( "content-array", serialized );
+
         // exercise
         Content parsedContent = toContent( serialized );
 
+        // verify
         assertEquals( "1", parsedContent.getData( "myArray[0]" ).getValue() );
         assertEquals( "2", parsedContent.getData( "myArray[1]" ).getValue() );
 
@@ -138,6 +151,9 @@ public abstract class AbstractContentSerializerTest
         content.setData( "mySet.myArray[1]", "2" );
 
         String serialized = toString( content );
+
+        // verify
+        assertSerializedResult( "content-array-within-set", serialized );
 
         // exercise
         Content parsedContent = toContent( serialized );
@@ -175,6 +191,9 @@ public abstract class AbstractContentSerializerTest
 
         String serialized = toString( content );
 
+        // verify
+        assertSerializedResult( "content-array-of-set", serialized );
+
         // exercise
         Content parsedContent = toContent( serialized );
 
@@ -201,6 +220,9 @@ public abstract class AbstractContentSerializerTest
         content.setData( "mySet[1].myArray[1]", "4" );
 
         String serialized = toString( content );
+
+        // verify
+        assertSerializedResult( "content-array-within-array", serialized );
 
         // exercise
         Content parsedContent = toContent( serialized );
