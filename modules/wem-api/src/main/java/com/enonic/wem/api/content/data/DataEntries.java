@@ -50,22 +50,19 @@ final class DataEntries
         final String key = resolveKey( path.getLastElement() );
         final Data exData = dataByName.get( key );
         final EntryPath pathWithoutIndexAtLastElement = path.asNewWithoutIndexAtLastPathElement();
-        final Data createdData;
         if ( exData == null )
         {
             if ( path.getLastElement().hasIndex() )
             {
                 final DataArray dataArray = new DataArray( pathWithoutIndexAtLastElement, type );
-                createdData = newData().path( path ).type( type ).value( value ).build();
-                dataArray.add( createdData );
+                dataArray.set( 0, value );
                 final Data newDataWithArray =
                     newData().path( pathWithoutIndexAtLastElement ).type( DataTypes.ARRAY ).value( dataArray ).build();
                 dataByName.put( key, newDataWithArray );
             }
             else
             {
-                createdData = newData().path( path ).type( type ).value( value ).build();
-                dataByName.put( key, createdData );
+                dataByName.put( key, newData().path( path ).type( type ).value( value ).build() );
             }
         }
         else if ( exData.getDataType().equals( DataTypes.ARRAY ) )
@@ -83,8 +80,7 @@ final class DataEntries
         }
         else
         {
-            createdData = newData().path( path ).type( type ).value( value ).build();
-            dataByName.put( key, createdData );
+            dataByName.put( key, newData().path( path ).type( type ).value( value ).build() );
         }
     }
 
