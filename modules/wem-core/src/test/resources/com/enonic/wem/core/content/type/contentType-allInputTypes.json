@@ -2,6 +2,10 @@
     "name":"AllTypes",
     "module":"myModule",
     "qualifiedName":"myModule:AllTypes",
+    "displayName" : "All the Types",
+    "superType" : "System:Content",
+    "isAbstract" : false,
+    "isFinal" : true,
     "items":[
         {
             "Input":{

@@ -6,10 +6,13 @@ import java.io.IOException;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
+import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 
 import com.enonic.wem.api.content.type.ContentType;
+import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItems;
+import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.content.XmlParsingException;
 import com.enonic.wem.core.content.type.form.FormItemsXmlSerializer;
 
@@ -54,6 +57,11 @@ public class ContentTypeXmlSerializer
     {
         typeEl.addContent( new Element( "name" ).setText( type.getName() ) );
         typeEl.addContent( new Element( "module" ).setText( type.getModule().getName() ) );
+        typeEl.addContent( new Element( "qualifiedName" ).setText( type.getQualifiedName().toString() ) );
+        typeEl.addContent( new Element( "displayName" ).setText( type.getDisplayName() ) );
+        typeEl.addContent( new Element( "superType" ).setText( type.getSuperType() != null ? type.getSuperType().toString() : null ) );
+        typeEl.addContent( new Element( "isAbstract" ).setText( Boolean.toString( type.isAbstract() ) ) );
+        typeEl.addContent( new Element( "isFinal" ).setText( Boolean.toString( type.isFinal() ) ) );
         typeEl.addContent( formItemsSerializer.serialize( type.form().formItemIterable() ) );
     }
 
@@ -79,8 +87,18 @@ public class ContentTypeXmlSerializer
     private ContentType parse( final Element contentTypeEl )
         throws IOException
     {
+        final String superTypeValue = StringUtils.trimToNull( contentTypeEl.getChildText( "superType" ) );
+        final QualifiedContentTypeName superType = superTypeValue != null ? new QualifiedContentTypeName( superTypeValue ) : null;
+        final boolean isAbstract = Boolean.parseBoolean( contentTypeEl.getChildText( "isAbstract" ) );
+        final boolean isFinal = Boolean.parseBoolean( contentTypeEl.getChildText( "isFinal" ) );
+
         final ContentType.Builder contentTypeBuilder = newContentType().
-            name( contentTypeEl.getChildText( "name" ) );
+            name( contentTypeEl.getChildText( "name" ) ).
+            module( new Module( contentTypeEl.getChildText( "module" ) ) ).
+            displayName( contentTypeEl.getChildText( "displayName" ) ).
+            superType( superType ).
+            setAbstract( isAbstract ).
+            setFinal( isFinal );
 
         try
         {
