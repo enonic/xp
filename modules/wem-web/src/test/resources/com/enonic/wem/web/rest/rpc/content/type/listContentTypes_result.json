@@ -5,6 +5,10 @@
             "name":"myCtype",
             "module":"myModule",
             "qualifiedName":"myModule:myCtype",
+            "displayName" : null,
+            "superType" : null,
+            "isAbstract" : false,
+            "isFinal" : false,
             "items":[
                 {
                     "Input":{
@@ -69,6 +73,10 @@
             "name":"theContentType",
             "module":"otherModule",
             "qualifiedName":"otherModule:theContentType",
+            "displayName" : null,
+            "superType" : null,
+            "isAbstract" : false,
+            "isFinal" : false,
             "items":[
                 {
                     "Input":{
