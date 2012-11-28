@@ -6,6 +6,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.type.ContentType;
+import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItems;
 import com.enonic.wem.api.module.Module;
@@ -30,6 +31,10 @@ public class ContentTypeJsonSerializer
         objectNode.put( "name", contentType.getName() );
         objectNode.put( "module", contentType.getModule().getName() );
         objectNode.put( "qualifiedName", contentType.getQualifiedName().toString() );
+        objectNode.put( "displayName", contentType.getDisplayName() );
+        objectNode.put( "superType", contentType.getSuperType() != null ? contentType.getSuperType().toString() : null );
+        objectNode.put( "isAbstract", contentType.isAbstract() );
+        objectNode.put( "isFinal", contentType.isFinal() );
         objectNode.put( "items", formItemsSerializer.serialize( contentType.form().getFormItems(), mapper ) );
         return objectNode;
     }
@@ -44,10 +49,16 @@ public class ContentTypeJsonSerializer
     @Override
     protected ContentType parse( final JsonNode contentTypeNode )
     {
+        final String superTypeValue = JsonParserUtil.getStringValue( "superType", contentTypeNode );
+        final QualifiedContentTypeName superType = superTypeValue != null ? new QualifiedContentTypeName( superTypeValue ) : null;
 
         final ContentType.Builder contentTypeBuilder = newContentType().
             name( JsonParserUtil.getStringValue( "name", contentTypeNode ) ).
-            module( new Module( JsonParserUtil.getStringValue( "module", contentTypeNode ) ) );
+            module( new Module( JsonParserUtil.getStringValue( "module", contentTypeNode ) ) ).
+            displayName( JsonParserUtil.getStringValue( "displayName", contentTypeNode ) ).
+            superType( superType ).
+            setAbstract( JsonParserUtil.getBooleanValue( "isAbstract", contentTypeNode ) ).
+            setFinal( JsonParserUtil.getBooleanValue( "isFinal", contentTypeNode ) );
 
         try
         {

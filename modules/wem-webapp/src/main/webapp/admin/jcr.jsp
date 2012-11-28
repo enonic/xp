@@ -91,17 +91,26 @@
     };
 
     var nodeSelected = function nodeSelected(name, properties, path) {
-      var addRow = function (id, val) {
+      var addRow = function (id, val, preFormatted) {
         var td1 = $('<td>').text(id);
-        var td2 = $('<td>').text(val);
+        var td2 = $('<td>');
         var tr = $('<tr>').append(td1).append(td2);
+        if (preFormatted) {
+          td2.append($('<pre>').text(val));
+        } else {
+          td2.text(val);
+        }
         $('#nodeProperties tbody').append(tr);
       };
 
       $('#nodeProperties tbody').empty();
       addRow('Name', name);
       $.each(properties, function (k, val) {
-        addRow(k, JSON.stringify(val));
+        if (typeof val === 'string' && val.charAt(0) === '{') {
+          addRow(k, JSON.stringify(JSON.parse(val), undefined, 2), true); // hack to avoid double string encoding of json
+        } else {
+          addRow(k, JSON.stringify(val));
+        }
       });
 
       $('#pathSelector').val(path.join('/'));

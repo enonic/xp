@@ -2,6 +2,11 @@
 <type>
   <name>AllBaseTypes</name>
   <module>myModule</module>
+  <qualifiedName>myModule:AllBaseTypes</qualifiedName>
+  <displayName>All the Base Types</displayName>
+  <superType>System:Content</superType>
+  <isAbstract>false</isAbstract>
+  <isFinal>true</isFinal>
   <items>
     <form-item-set name="mySet">
       <label/>
