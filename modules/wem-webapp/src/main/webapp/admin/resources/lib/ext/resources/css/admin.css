@@ -367,16 +367,24 @@ p {
 .admin-tree .x-tree-elbow-line {
     margin-top: 6px;
     margin-bottom: 6px;
+    /* float left to appear before name renderer output */
+    float: left;
 }
 
-/* line 28, ../sass/admin/css/_tree.scss */
+/* line 30, ../sass/admin/css/_tree.scss */
 .admin-tree .admin-white-toolbar {
     border-bottom-style: none !important;
 }
 
-/* line 32, ../sass/admin/css/_tree.scss */
+/* line 34, ../sass/admin/css/_tree.scss */
 .admin-tree .x-panel-body {
     border: none !important;
+}
+
+/* line 38, ../sass/admin/css/_tree.scss */
+.admin-tree .x-grid-cell-inner .x-tree-icon {
+    /* name renderer is responsible for icon */
+    display: none;
 }
 
 /* line 1, ../sass/admin/css/_toolbar.scss */
