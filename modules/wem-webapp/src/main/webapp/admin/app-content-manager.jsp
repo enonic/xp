@@ -10,7 +10,6 @@
   <link rel="stylesheet" type="text/css" href="resources/css/admin-tree-panel.css">
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
   <link rel="stylesheet" type="text/css" href="resources/css/admin-preview-panel.css">
-  <link rel="stylesheet" type="text/css" href="resources/css/admin-tree-panel.css">
   <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/admin.css"/>
   <!-- ExtJS -->
 

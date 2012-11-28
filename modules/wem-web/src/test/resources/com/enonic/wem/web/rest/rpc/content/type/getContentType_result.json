@@ -4,6 +4,10 @@
         "name":"myCtype",
         "module":"myModule",
         "qualifiedName":"myModule:myCtype",
+        "displayName" : null,
+        "superType" : null,
+        "isAbstract" : false,
+        "isFinal" : false,
         "items":[
             {
                 "Input":{

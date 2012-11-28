@@ -2,6 +2,10 @@
     "name":"AllBaseTypes",
     "module":"myModule",
     "qualifiedName":"myModule:AllBaseTypes",
+    "displayName" : "All the Base Types",
+    "superType" : "System:Content",
+    "isAbstract" : false,
+    "isFinal" : true,
     "items":[
         {
             "FormItemSet":{

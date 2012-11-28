@@ -2,6 +2,11 @@
 <type>
   <name>AllTypes</name>
   <module>myModule</module>
+  <qualifiedName>myModule:AllTypes</qualifiedName>
+  <displayName>All the Types</displayName>
+  <superType>System:Content</superType>
+  <isAbstract>false</isAbstract>
+  <isFinal>true</isFinal>
   <items>
     <input type="Color" built-in="true" name="myColor">
       <label/>
