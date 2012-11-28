@@ -42,7 +42,6 @@ public class DataArrayTest
 
         array.add( Data.newData().path( new EntryPath( "myArray" ) ).type( DataTypes.TEXT ).value( "1" ).build() );
         array.set( 1, "2" );
-        array.set( new EntryPath( "myArray[1]" ), "2" );
 
         assertEquals( 2, array.size() );
         assertEquals( new EntryPath( "myArray[0]" ), array.getData( 0 ).getPath() );
@@ -96,7 +95,7 @@ public class DataArrayTest
         catch ( Exception e )
         {
             assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "DataArray [myArray] expects data of type [Date]. Data was of type: Text", e.getMessage() );
+            assertEquals( "DataArray [myArray] expects data of type [Date]. Data [myArray] was of type: Text", e.getMessage() );
         }
     }
 

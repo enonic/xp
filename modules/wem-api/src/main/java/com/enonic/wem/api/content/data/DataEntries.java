@@ -48,7 +48,7 @@ final class DataEntries
     void setData( final EntryPath path, final Object value, final DataType type )
     {
         final String key = resolveKey( path.getLastElement() );
-        Data exData = dataByName.get( key );
+        final Data exData = dataByName.get( key );
         final EntryPath pathWithoutIndexAtLastElement = path.asNewWithoutIndexAtLastPathElement();
         final Data createdData;
         if ( exData == null )
@@ -76,7 +76,7 @@ final class DataEntries
         {
             final DataArray array = new DataArray( pathWithoutIndexAtLastElement, exData.getDataType() );
             array.add( exData.getValue() );
-            array.set( path, value );
+            array.set( path.getLastElement().getIndex(), value );
             final Data newDataWithArray = newData().path( pathWithoutIndexAtLastElement ).type( DataTypes.ARRAY ).value( array ).build();
 
             dataByName.put( key, newDataWithArray );

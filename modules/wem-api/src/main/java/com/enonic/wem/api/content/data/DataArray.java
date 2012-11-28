@@ -114,39 +114,6 @@ public final class DataArray
         return newData;
     }
 
-    public void set( final EntryPath path, final Object value )
-    {
-        if ( overwritesExisting( path.getFirstElement().getIndex() ) )
-        {
-            final Data data = list.get( path.getFirstElement().getIndex() );
-            if ( path.elementCount() > 1 )
-            {
-                data.getDataSet().setData( path.asNewWithoutFirstPathElement(), value, type );
-            }
-            else
-            {
-                data.setValue( value );
-            }
-        }
-        else
-        {
-            checkIndexIsSuccessive( path.getFirstElement().getIndex(), value );
-
-            final Data data = Data.newData().path( path ).value( value ).type( type ).build();
-            list.add( data );
-        }
-    }
-
-    private void checkType( Data data )
-    {
-        if ( !this.type.equals( data.getDataType() ) )
-        {
-            throw new IllegalArgumentException(
-                "DataArray [" + this.path + "] expects data of type [" + this.type + "]. Data [" + data + "] was of type: " +
-                    data.getDataType() );
-        }
-    }
-
     @Override
     public String toString()
     {
@@ -164,6 +131,16 @@ public final class DataArray
         }
         s.append( " ]" );
         return s.toString();
+    }
+
+    private void checkType( Data data )
+    {
+        if ( !this.type.equals( data.getDataType() ) )
+        {
+            throw new IllegalArgumentException(
+                "DataArray [" + this.path + "] expects data of type [" + this.type + "]. Data [" + data.getPath() + "] was of type: " +
+                    data.getDataType() );
+        }
     }
 
     private void checkIndexIsSuccessive( final int index, final Object value )
