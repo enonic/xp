@@ -9,8 +9,7 @@
   <link rel="stylesheet" type="text/css" href="resources/css/main.css">
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
   <link rel="stylesheet" type="text/css" href="resources/css/datadesigner-preview-panel.css">
-  <link rel="stylesheet" type="text/css" href="resources/css/admin-tree-panel.css">
-
+  <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/admin.css"/>
   <!-- ExtJS -->
 
   <script type="text/javascript" src="resources/lib/ext/ext-all-debug.js"></script>

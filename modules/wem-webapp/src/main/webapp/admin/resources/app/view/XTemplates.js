@@ -1,4 +1,4 @@
-// This file was auto-generated on 2012-11-27 14:54:32 FET
+// This file was auto-generated on 2012-11-28 14:07:21 FET
 
 if (!Templates) {
     var Templates = {};
@@ -97,7 +97,7 @@ Templates.contentManager = {
                          '<input type="text" value="{displayName}" readonly="true" class="admin-display-name"/>' +
                          '</div>' +
                          '<div class="admin-wizard-userstore">' +
-                         '<span>{contentType}</span>' +
+                         '<span>{contentType}: /{contentPath}</span>' +
                          '</div>'
 
 };
