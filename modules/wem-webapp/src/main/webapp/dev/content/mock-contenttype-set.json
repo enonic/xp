@@ -37,8 +37,8 @@
                     "items": [
                         {
                             "Input": {
-                                "name": "image",
-                                "label": "Image",
+                                "name": "street",
+                                "label": "Street",
                                 "immutable": false,
                                 "occurrences": {
                                     "minimum": 0,
@@ -47,17 +47,17 @@
                                 "indexed": false,
                                 "customText": null,
                                 "validationRegexp": null,
-                                "helpText": "Select image",
+                                "helpText": "Street",
                                 "type": {
-                                    "name": "Relation",
+                                    "name": "TextLine",
                                     "builtIn": true
                                 }
                             }
                         },
                         {
                             "Input": {
-                                "name": "text",
-                                "label": "Text",
+                                "name": "postal_code",
+                                "label": "Postal Code",
                                 "immutable": false,
                                 "occurrences": {
                                     "minimum": 0,
@@ -66,15 +66,33 @@
                                 "indexed": false,
                                 "customText": null,
                                 "validationRegexp": null,
-                                "helpText": "Image text",
+                                "helpText": "Postal Code",
                                 "type": {
-                                    "name": "TextArea",
+                                    "name": "TextLine",
+                                    "builtIn": true
+                                }
+                            }
+                        },
+                        {
+                            "Input": {
+                                "name": "postal_address",
+                                "label": "Postal Address ",
+                                "immutable": false,
+                                "occurrences": {
+                                    "minimum": 0,
+                                    "maximum": 1
+                                },
+                                "indexed": false,
+                                "customText": null,
+                                "validationRegexp": null,
+                                "helpText": "Postal Address",
+                                "type": {
+                                    "name": "TextLine",
                                     "builtIn": true
                                 }
                             }
                         }
                     ]
-
                 }
             }
         ]
