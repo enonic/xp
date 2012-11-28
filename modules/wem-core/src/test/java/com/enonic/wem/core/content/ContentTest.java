@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.datatype.DataTypes;
+import com.enonic.wem.api.content.datatype.InconvertibleValueException;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.form.FieldSet;
 import com.enonic.wem.api.content.type.form.FormItemSet;
@@ -542,7 +543,7 @@ public class ContentTest
         assertEquals( "Chin", content.getValueAsString( "scar[0]" ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = InconvertibleValueException.class)
     public void given_array_when_setting_data_of_another_type_to_array_then_exception_is_thrown()
     {
         // setup

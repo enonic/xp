@@ -133,7 +133,6 @@ public final class DataArray
             checkIndexIsSuccessive( path.getFirstElement().getIndex(), value );
 
             final Data data = Data.newData().path( path ).value( value ).type( type ).build();
-            checkType( data );
             list.add( data );
         }
     }
@@ -143,7 +142,8 @@ public final class DataArray
         if ( !this.type.equals( data.getDataType() ) )
         {
             throw new IllegalArgumentException(
-                "DataArray [" + this.path + "] expects data of type [" + this.type + "]. Data was of type: " + data.getDataType() );
+                "DataArray [" + this.path + "] expects data of type [" + this.type + "]. Data [" + data + "] was of type: " +
+                    data.getDataType() );
         }
     }
 

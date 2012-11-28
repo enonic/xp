@@ -38,7 +38,7 @@ final class DataEntries
         {
             final DataArray array = new DataArray( exData.getPath(), exData.getDataType() );
             array.add( exData.getValue() );
-            array.add( data.getValue() );
+            array.add( data );
             final Data newDataWithArray = newData().path( array.getPath() ).type( DataTypes.ARRAY ).value( array ).build();
 
             dataByName.put( key, newDataWithArray );
@@ -75,8 +75,7 @@ final class DataEntries
         else if ( path.getLastElement().hasIndex() )
         {
             final DataArray array = new DataArray( pathWithoutIndexAtLastElement, exData.getDataType() );
-            EntryPath exDataPathWithIndex = exData.getPath().asNewWithIndexAtPath( 0, exData.getPath() );
-            array.add( newData().path( exDataPathWithIndex ).type( exData.getDataType() ).value( exData.getValue() ).build() );
+            array.add( exData.getValue() );
             array.set( path, value );
             final Data newDataWithArray = newData().path( pathWithoutIndexAtLastElement ).type( DataTypes.ARRAY ).value( array ).build();
 
