@@ -12,6 +12,18 @@ public abstract class AbstractJsonSerializer<T>
 {
     private boolean prettyPrint = false;
 
+    private final ObjectMapper defaultMapper;
+
+    protected AbstractJsonSerializer()
+    {
+        defaultMapper = new ObjectMapper();
+    }
+
+    protected ObjectMapper objectMapper()
+    {
+        return defaultMapper;
+    }
+
     public void prettyPrint()
     {
         prettyPrint = true;
@@ -20,13 +32,12 @@ public abstract class AbstractJsonSerializer<T>
     public String toString( T obj )
         throws JsonSerializingException
     {
-        final ObjectMapper mapper = new ObjectMapper();
-        final JsonNode jsonNode = serialize( obj, mapper );
+        final JsonNode jsonNode = serialize( obj, objectMapper() );
         if ( prettyPrint )
         {
             try
             {
-                return mapper.defaultPrettyPrintingWriter().writeValueAsString( jsonNode );
+                return objectMapper().defaultPrettyPrintingWriter().writeValueAsString( jsonNode );
             }
             catch ( IOException e )
             {

@@ -80,32 +80,36 @@ final class DataXmlSerializer
         dataEl.addContent( data.getString() );
     }
 
-    final Data parse( final EntryPath parentPath, final Element dataEl )
+    final void parse( Element parentEl, final DataSet parentDataSet )
     {
-        final Data.Builder builder = Data.newData();
+        final Iterator<Element> dataIt = parentEl.getChildren().iterator();
+        while ( dataIt.hasNext() )
+        {
+            final Element dataEl = dataIt.next();
+            parse( parentDataSet, dataEl );
+        }
+    }
 
-        final EntryPath entryPath = new EntryPath( parentPath, dataEl.getName() );
-        builder.path( entryPath );
+    final void parse( final DataSet parentDataSet, final Element dataEl )
+    {
+        final EntryPath path = new EntryPath( parentDataSet.getPath(), dataEl.getName() );
         final BaseDataType type = (BaseDataType) DataTypes.parseByName( dataEl.getAttributeValue( "type" ) );
         Preconditions.checkNotNull( type, "type was null" );
-        builder.type( type );
+
         if ( type.equals( DataTypes.SET ) )
         {
-            final DataSet dataSet = new DataSet( entryPath );
-            builder.value( dataSet );
+            final DataSet dataSet = new DataSet( path );
+            parentDataSet.add( Data.newData().path( path ).type( type ).value( dataSet ).build() );
+
             final Iterator<Element> dataIt = dataEl.getChildren().iterator();
             while ( dataIt.hasNext() )
             {
-                final Element el = dataIt.next();
-                dataSet.add( parse( entryPath, el ) );
+                parse( dataSet, dataIt.next() );
             }
         }
         else
         {
-            final String valueAsString = dataEl.getText();
-            builder.value( valueAsString );
+            parentDataSet.add( Data.newData().path( path ).type( type ).value( dataEl.getText() ).build() );
         }
-
-        return builder.build();
     }
 }

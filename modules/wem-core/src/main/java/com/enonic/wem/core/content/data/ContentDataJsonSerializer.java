@@ -11,7 +11,7 @@ import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
 
-public class ContentDataJsonSerializer
+public final class ContentDataJsonSerializer
     extends AbstractJsonSerializer<ContentData>
 {
     private DataJsonSerializer dataSerializer = new DataJsonSerializer();
@@ -29,13 +29,13 @@ public class ContentDataJsonSerializer
 
     public ContentData parse( final JsonNode jsonNode )
     {
-        final ArrayNode contentDataNode = (ArrayNode) jsonNode;
+        final ArrayNode contentDataArrayNode = (ArrayNode) jsonNode;
 
         ContentData contentData = new ContentData();
         DataSet dataSet = new DataSet( new EntryPath( "" ) );
-        for ( JsonNode eNode : contentDataNode )
+        for ( JsonNode dataNode : contentDataArrayNode )
         {
-            dataSet.add( dataSerializer.parse( new EntryPath(), eNode ) );
+            dataSet.add( dataSerializer.parse( dataNode ) );
         }
         contentData.setDataSet( dataSet );
 

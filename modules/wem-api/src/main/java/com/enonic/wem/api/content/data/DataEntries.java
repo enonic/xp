@@ -36,10 +36,10 @@ final class DataEntries
         }
         else
         {
-            final DataArray array = new DataArray( exData.getPath() );
-            array.add( newData().path( exData.getPath() ).type( exData.getDataType() ).value( exData.getValue() ).build() );
-            array.add( newData().path( data.getPath() ).type( data.getDataType() ).value( data.getValue() ).build() );
-            final Data newDataWithArray = newData().path( data.getPath() ).type( DataTypes.ARRAY ).value( array ).build();
+            final DataArray array = new DataArray( exData.getPath(), exData.getDataType() );
+            array.add( exData.getValue() );
+            array.add( data.getValue() );
+            final Data newDataWithArray = newData().path( array.getPath() ).type( DataTypes.ARRAY ).value( array ).build();
 
             dataByName.put( key, newDataWithArray );
         }

@@ -158,7 +158,7 @@ public final class DataSet
 
     private Data forwardGetDataToDataSet( final EntryPath path )
     {
-        Data data = entries.get( path.getFirstElement() );
+        final Data data = entries.get( path.getFirstElement() );
         if ( data == null )
         {
             return null;
@@ -166,23 +166,28 @@ public final class DataSet
 
         if ( data.getDataType().equals( DataTypes.ARRAY ) )
         {
-            if ( path.getFirstElement().hasIndex() )
-            {
-                data = data.getDataArray().getData( path.getFirstElement().getIndex() );
-            }
-            else
-            {
-                data = data.getDataArray().getData( 0 );
-            }
-        }
+            final int index = path.getFirstElement().hasIndex() ? path.getFirstElement().getIndex() : 0;
+            final Data dataInArray = data.getDataArray().getData( index );
+            Preconditions.checkNotNull( dataInArray, "Data at index [%s] in array [%s] not found", index, data.getPath() );
 
-        if ( !data.hasDataSetAsValue() )
+            if ( !dataInArray.hasDataSetAsValue() )
+            {
+                throw new IllegalArgumentException( "Data at path [" + this.getPath() + "] expected to have a value of type DataSet: " +
+                                                        dataInArray.getDataType().getName() );
+            }
+
+            return dataInArray.getDataSet().getData( path.asNewWithoutFirstPathElement() );
+        }
+        else
         {
-            throw new IllegalArgumentException(
-                "Data at path [" + this.getPath() + "] expected to have a value of type DataSet: " + data.getDataType().getName() );
-        }
+            if ( !data.hasDataSetAsValue() )
+            {
+                throw new IllegalArgumentException(
+                    "Data at path [" + this.getPath() + "] expected to have a value of type DataSet: " + data.getDataType().getName() );
+            }
 
-        return data.getDataSet().getData( path.asNewWithoutFirstPathElement() );
+            return data.getDataSet().getData( path.asNewWithoutFirstPathElement() );
+        }
     }
 
     private Data doGetData( final EntryPath.Element element )

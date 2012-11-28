@@ -29,6 +29,33 @@ public final class DataArray
         this.path = path;
     }
 
+    public DataArray( final EntryPath path, DataType dataType )
+    {
+        Preconditions.checkArgument( !path.getLastElement().hasIndex(),
+                                     "Last path element of a DataArray must not contain index: " + path );
+        this.path = path;
+        this.type = dataType;
+    }
+
+    void setEntryPathIndex( final EntryPath path, final int index )
+    {
+        this.path = this.path.asNewWithIndexAtPath( index, path );
+        for ( Data data : list )
+        {
+            data.setEntryPathIndex( path, index );
+        }
+    }
+
+    public EntryPath getPath()
+    {
+        return path;
+    }
+
+    public DataType getType()
+    {
+        return type;
+    }
+
     public int size()
     {
         return list.size();
@@ -47,6 +74,20 @@ public final class DataArray
             return null;
         }
         return list.get( i );
+    }
+
+    public void add( final Object value )
+    {
+        Preconditions.checkNotNull( type, "Type must be set before adding values" );
+
+        final int index = list.size();
+        final Data newData = Data.newData().path( new EntryPath( path, index ) ).value( value ).type( type ).build();
+        if ( newData.hasDataSetAsValue() )
+        {
+            newData.setEntryPathIndex( newData.getDataSet().getPath(), index );
+        }
+
+        list.add( newData );
     }
 
     public void add( final Data data )
@@ -168,6 +209,5 @@ public final class DataArray
     {
         return index < list.size();
     }
-
 
 }
