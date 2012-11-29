@@ -19,10 +19,10 @@ import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static org.junit.Assert.*;
 
-public class ContentDataValidatorHandlerTest
+public class ValidateContentDataHandlerTest
     extends AbstractCommandHandlerTest
 {
-    private ContentDataValidatorHandler handler;
+    private ValidateContentDataHandler handlerValidate;
 
     @Before
     public void setUp()
@@ -30,7 +30,7 @@ public class ContentDataValidatorHandlerTest
     {
         super.initialize();
 
-        handler = new ContentDataValidatorHandler();
+        handlerValidate = new ValidateContentDataHandler();
     }
 
     @Test
@@ -50,7 +50,7 @@ public class ContentDataValidatorHandlerTest
 
         // exercise
         final ValidateContentData command = Commands.content().validate().contentData( content.getData() ).contentType( contentType );
-        this.handler.handle( this.context, command );
+        this.handlerValidate.handle( this.context, command );
 
         // test
         final DataValidationErrors result = command.getResult();
@@ -78,7 +78,7 @@ public class ContentDataValidatorHandlerTest
 
         // exercise
         final ValidateContentData command = Commands.content().validate().contentData( content.getData() ).contentType( contentType );
-        this.handler.handle( this.context, command );
+        this.handlerValidate.handle( this.context, command );
 
         // test
         final DataValidationErrors result = command.getResult();

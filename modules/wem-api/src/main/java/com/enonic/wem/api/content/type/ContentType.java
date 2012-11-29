@@ -21,15 +21,11 @@ public final class ContentType
 
     private final QualifiedContentTypeName superType;
 
-//    private final ContentHandler contentHandler;
-
     private final boolean isAbstract;
 
     private final boolean isFinal;
 
     private final ModuleName moduleName;
-
-//    private final ComputedDisplayName computedDisplayName;
 
     private final Form form;
 
