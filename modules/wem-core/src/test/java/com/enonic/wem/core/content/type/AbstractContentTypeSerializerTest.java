@@ -277,9 +277,9 @@ public abstract class AbstractContentTypeSerializerTest
                                                                                                                      "o2" ).build();
 
         ContentType.Builder contentTypeBuilder = newContentType().
-            name( "AllTypes" ).
+            name( "AllInputTypes" ).
             module( myModule ).
-            displayName( "All the Types" ).
+            displayName( "All the Input Types" ).
             superType( new QualifiedContentTypeName( "System:Content" ) ).
             setAbstract( false ).
             setFinal( true );

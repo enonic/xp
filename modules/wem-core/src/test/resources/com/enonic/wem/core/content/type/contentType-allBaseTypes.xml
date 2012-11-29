@@ -2,12 +2,12 @@
 <type>
   <name>AllBaseTypes</name>
   <module>myModule</module>
-  <qualifiedName>myModule:AllBaseTypes</qualifiedName>
-  <displayName>All the Base Types</displayName>
-  <superType>System:Content</superType>
-  <isAbstract>false</isAbstract>
-  <isFinal>true</isFinal>
-  <items>
+  <qualified-name>myModule:AllBaseTypes</qualified-name>
+  <display-name>All the Base Types</display-name>
+  <super-type>System:Content</super-type>
+  <is-abstract>false</is-abstract>
+  <is-final>true</is-final>
+  <form>
     <form-item-set name="mySet">
       <label/>
       <immutable>false</immutable>
@@ -35,6 +35,6 @@
         </sub-type-reference>
       </items>
     </form-item-set>
-  </items>
+  </form>
 </type>
 

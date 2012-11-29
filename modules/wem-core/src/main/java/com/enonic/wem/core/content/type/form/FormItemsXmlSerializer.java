@@ -15,6 +15,14 @@ public final class FormItemsXmlSerializer
 {
     private FormItemXmlSerializer formItemSerializer = new FormItemXmlSerializer( this );
 
+    public void serialize( final Iterable<FormItem> formItems, final Element parentEl )
+    {
+        for ( FormItem formItem : formItems )
+        {
+            parentEl.addContent( formItemSerializer.serialize( formItem ) );
+        }
+    }
+
     public Element serialize( final Iterable<FormItem> formItems )
     {
         Element itemsEl = new Element( "items" );
@@ -28,8 +36,7 @@ public final class FormItemsXmlSerializer
     public FormItems parse( final Element parentEl )
     {
         final FormItems formItems = new FormItems();
-        final Element itemsEl = parentEl.getChild( "items" );
-        final Iterator formItemIt = itemsEl.getChildren().iterator();
+        final Iterator formItemIt = parentEl.getChildren().iterator();
         while ( formItemIt.hasNext() )
         {
             final Element formItemEl = (Element) formItemIt.next();

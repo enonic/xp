@@ -35,7 +35,7 @@ public class ContentTypeJsonSerializer
         objectNode.put( "superType", contentType.getSuperType() != null ? contentType.getSuperType().toString() : null );
         objectNode.put( "isAbstract", contentType.isAbstract() );
         objectNode.put( "isFinal", contentType.isFinal() );
-        objectNode.put( "items", formItemsSerializer.serialize( contentType.form().getFormItems(), mapper ) );
+        objectNode.put( "form", formItemsSerializer.serialize( contentType.form().getFormItems(), mapper ) );
         return objectNode;
     }
 
@@ -62,7 +62,7 @@ public class ContentTypeJsonSerializer
 
         try
         {
-            final FormItems formItems = formItemsSerializer.parse( contentTypeNode.get( "items" ) );
+            final FormItems formItems = formItemsSerializer.parse( contentTypeNode.get( "form" ) );
             for ( FormItem formItem : formItems )
             {
                 contentTypeBuilder.addFormItem( formItem );

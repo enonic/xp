@@ -110,7 +110,9 @@ class FormItemXmlSerializer
         formItemSetEl.addContent( new Element( HELP_TEXT ).setText( set.getCustomText() ) );
 
         formItemSetEl.addContent( occurrencesXmlSerializer.serialize( set.getOccurrences() ) );
-        formItemSetEl.addContent( formItemsSerializer.serialize( set.getFormItems() ) );
+        final Element itemsEl = new Element( "items" );
+        formItemSetEl.addContent( itemsEl );
+        formItemsSerializer.serialize( set.getFormItems(), itemsEl );
         return formItemSetEl;
     }
 
@@ -131,7 +133,9 @@ class FormItemXmlSerializer
     {
         layoutEl.setAttribute( TYPE, FieldSet.class.getSimpleName() );
         layoutEl.addContent( new Element( LABEL ).setText( fieldSet.getLabel() ) );
-        layoutEl.addContent( formItemsSerializer.serialize( fieldSet.getFormItems() ) );
+        final Element itemsEl = new Element( "items" );
+        layoutEl.addContent( itemsEl );
+        formItemsSerializer.serialize( fieldSet.getFormItems(), itemsEl );
     }
 
     private Element serializeReference( final SubTypeReference subTypeReference )
@@ -209,7 +213,8 @@ class FormItemXmlSerializer
 
         builder.occurrences( occurrencesXmlSerializer.parse( formItemEl ) );
 
-        final FormItems formItems = formItemsSerializer.parse( formItemEl );
+        final Element itemsEl = formItemEl.getChild( "items" );
+        final FormItems formItems = formItemsSerializer.parse( itemsEl );
         for ( FormItem formItem : formItems.iterable() )
         {
             builder.add( formItem );
@@ -237,7 +242,8 @@ class FormItemXmlSerializer
         builder.name( formItemEl.getAttributeValue( NAME ) );
         builder.label( formItemEl.getChildText( LABEL ) );
 
-        final FormItems formItems = formItemsSerializer.parse( formItemEl );
+        final Element itemsEl = formItemEl.getChild( "items" );
+        final FormItems formItems = formItemsSerializer.parse( itemsEl );
         for ( FormItem formItem : formItems.iterable() )
         {
             builder.add( formItem );
