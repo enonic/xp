@@ -181,11 +181,10 @@ public class ContentTypeDaoImplTest
         assertNotNull( contentTypesAfterCreate );
         assertEquals( 1, contentTypesAfterCreate.getSize() );
 
-        int deleted = contentTypeDao.deleteContentType( session, QualifiedContentTypeNames.from( contentType.getQualifiedName() ) );
+        contentTypeDao.deleteContentType( session, contentType.getQualifiedName() );
         commit();
 
         // verify
-        assertEquals( 1, deleted );
         final ContentTypes contentTypesAfterDelete =
             contentTypeDao.retrieveContentTypes( session, QualifiedContentTypeNames.from( "myModule:myContentType" ) );
         assertNotNull( contentTypesAfterDelete );
