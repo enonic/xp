@@ -23,7 +23,7 @@ Ext.define('Admin.view.contentStudio.wizard.Toolbar', {
                     text: 'Save',
                     action: 'saveContentType',
                     itemId: 'save',
-                    disabled: true,
+                    disabled: false, //true, TODO disable by default, enable when modified
                     iconCls: 'icon-save-24'
                 }
             ]

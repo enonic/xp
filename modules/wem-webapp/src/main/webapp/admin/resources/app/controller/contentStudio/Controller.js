@@ -4,7 +4,10 @@ Ext.define('Admin.controller.contentStudio.Controller', {
     stores: [],
     models: [],
 
-    views: ['Admin.view.contentStudio.wizard.WizardPanel'],
+    views: [
+        'Admin.view.contentStudio.wizard.WizardPanel',
+        'Admin.view.contentStudio.DeleteContentTypeWindow'
+    ],
 
     init: function () {
         this.application.on({
@@ -66,7 +69,7 @@ Ext.define('Admin.controller.contentStudio.Controller', {
             contentType = [].concat(contentType);
         }
         if (contentType.length === 1) {
-            Ext.Msg.alert('Delete', 'Name: ' + contentType[0].raw.name + ', key: ' + contentType[0].raw.key);
+            this.getDeleteContentTypeWindow().doShow(contentType);
         }
     },
 
@@ -139,6 +142,14 @@ Ext.define('Admin.controller.contentStudio.Controller', {
 
     getDetailPanel: function () {
         return Ext.ComponentQuery.query('contentTypeDetailPanel')[0];
+    },
+
+    getDeleteContentTypeWindow: function () {
+        var win = Ext.ComponentQuery.query('deleteContentTypeWindow')[0];
+        if (!win) {
+            win = Ext.create('widget.deleteContentTypeWindow');
+        }
+        return win;
     }
 
 });

@@ -8,7 +8,9 @@ import com.enonic.wem.api.command.content.type.UpdateContentTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
+import com.enonic.wem.core.content.XmlParsingException;
 import com.enonic.wem.core.content.type.ContentTypeXmlSerializer;
+import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
@@ -32,7 +34,16 @@ public class CreateOrUpdateContentTypeRpcHandler
         throws Exception
     {
         final String contentTypeXml = context.param( "contentType" ).required().asString();
-        final ContentType contentType = contentTypeXmlSerializer.toContentType( contentTypeXml );
+        final ContentType contentType;
+        try
+        {
+            contentType = contentTypeXmlSerializer.toContentType( contentTypeXml );
+        }
+        catch ( XmlParsingException e )
+        {
+            context.setResult( new JsonErrorResult( "Invalid content type format" ) );
+            return;
+        }
 
         if ( !contentTypeExists( contentType.getQualifiedName() ) )
         {
@@ -42,7 +53,8 @@ public class CreateOrUpdateContentTypeRpcHandler
         }
         else
         {
-            final UpdateContentTypes updateContentType = contentType().update().editor( setContentType( contentType ) );
+            final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( contentType.getQualifiedName() );
+            final UpdateContentTypes updateContentType = contentType().update().names( names ).editor( setContentType( contentType ) );
             client.execute( updateContentType );
             context.setResult( CreateOrUpdateContentTypeJsonResult.updated() );
         }

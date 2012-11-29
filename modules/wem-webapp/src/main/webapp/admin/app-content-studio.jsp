@@ -10,7 +10,7 @@
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
   <link rel="stylesheet" type="text/css" href="resources/css/contentstudio-preview-panel.css">
   <link rel="stylesheet" type="text/css" href="resources/css/admin-tree-panel.css">
-
+  <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/admin.css"/>
   <!-- ExtJS -->
 
   <script type="text/javascript" src="resources/lib/ext/ext-all-debug.js"></script>
@@ -49,7 +49,9 @@
 
       controllers: [
         'Admin.controller.contentStudio.BrowseController',
-        'Admin.controller.contentStudio.FilterPanelController'
+        'Admin.controller.contentStudio.FilterPanelController',
+        'Admin.controller.contentStudio.ContentTypeWizardController',
+        'Admin.controller.contentStudio.DialogWindowController'
       ],
 
       requires: [
