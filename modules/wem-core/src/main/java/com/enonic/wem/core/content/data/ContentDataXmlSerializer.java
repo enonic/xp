@@ -1,8 +1,6 @@
 package com.enonic.wem.core.content.data;
 
 
-import java.util.Iterator;
-
 import org.jdom.Element;
 
 import com.enonic.wem.api.content.data.ContentData;
@@ -10,7 +8,7 @@ import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
 
-public class ContentDataXmlSerializer
+public final class ContentDataXmlSerializer
 {
     private DataXmlSerializer dataSerializer = new DataXmlSerializer();
 
@@ -26,15 +24,9 @@ public class ContentDataXmlSerializer
 
     public ContentData parse( final Element contentDataEl )
     {
-
-        ContentData contentData = new ContentData();
-        DataSet dataSet = new DataSet( new EntryPath() );
-        final Iterator<Element> dataIt = contentDataEl.getChildren().iterator();
-        while ( dataIt.hasNext() )
-        {
-            final Element dataEl = dataIt.next();
-            dataSet.add( dataSerializer.parse( new EntryPath(), dataEl ) );
-        }
+        final ContentData contentData = new ContentData();
+        final DataSet dataSet = new DataSet( new EntryPath() );
+        dataSerializer.parse( contentDataEl, dataSet );
         contentData.setDataSet( dataSet );
 
         return contentData;

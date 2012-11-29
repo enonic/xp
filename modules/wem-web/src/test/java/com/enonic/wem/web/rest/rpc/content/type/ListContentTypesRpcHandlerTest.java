@@ -8,7 +8,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.form.Input;
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
@@ -50,7 +50,7 @@ public class ListContentTypesRpcHandlerTest
                 true ).build();
 
         final ContentType contentType1 = newContentType().
-            module( Module.newModule().name( "myModule" ).build() ).
+            module( ModuleName.from( "myModule" ) ).
             name( "myCtype" ).
             addFormItem( inputText1 ).
             addFormItem( inputText2 ).
@@ -60,7 +60,7 @@ public class ListContentTypesRpcHandlerTest
         final Input inputTextCty2 = newInput().name( "inputText_1" ).type( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
             "Help text line 1" ).required( true ).build();
         final ContentType contentType2 = newContentType().
-            module( Module.newModule().name( "otherModule" ).build() ).
+            module( ModuleName.from( "otherModule" ) ).
             name( "theContentType" ).
             addFormItem( inputTextCty2 ).
             build();

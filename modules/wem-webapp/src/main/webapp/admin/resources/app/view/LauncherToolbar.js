@@ -107,8 +107,8 @@ Ext.define('Admin.view.LauncherToolbar', {
                 {
                     id: 'app-09',
                     title: 'Content Studio',
-                    appUrl: 'app-data-designer.jsp',
-                    iconCls: 'icon-data-designer-24',
+                    appUrl: 'app-content-studio.jsp',
+                    iconCls: 'icon-content-studio-24',
                     cls: 'content-studio'
                 },
                 {

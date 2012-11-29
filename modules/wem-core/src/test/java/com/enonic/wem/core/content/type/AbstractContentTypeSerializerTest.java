@@ -1,12 +1,5 @@
 package com.enonic.wem.core.content.type;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,6 +16,7 @@ import com.enonic.wem.api.content.type.form.SubTypeReference;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.content.type.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.core.AbstractSerializerTest;
 
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
@@ -35,6 +29,7 @@ import static org.junit.Assert.*;
 
 
 public abstract class AbstractContentTypeSerializerTest
+    extends AbstractSerializerTest
 {
     private static final Module myModule = newModule().name( "myModule" ).build();
 
@@ -66,7 +61,7 @@ public abstract class AbstractContentTypeSerializerTest
         set.add( layout );
         set.add( newSubTypeReference().name( "myCommonInput" ).subType( inputSubType ).build() );
 
-        ContentType.Builder contentTypeBuilder = newContentType().name( "AllBaseTypes" ).module( myModule );
+        ContentType.Builder contentTypeBuilder = newContentType().name( "AllBaseTypes" ).module( myModule.getName() );
         contentTypeBuilder.addFormItem( set );
         contentTypeBuilder.displayName( "All the Base Types" );
         contentTypeBuilder.superType( new QualifiedContentTypeName( "System:Content" ) );
@@ -153,7 +148,7 @@ public abstract class AbstractContentTypeSerializerTest
         FormItemSet set = newFormItemSet().name( "mySet" ).build();
         set.add( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
 
-        ContentType.Builder contentTypeBuilder = newContentType().name( "TypeWithSet" ).module( myModule );
+        ContentType.Builder contentTypeBuilder = newContentType().name( "TypeWithSet" ).module( myModule.getName() );
         contentTypeBuilder.addFormItem( set );
         ContentType contentType = contentTypeBuilder.build();
 
@@ -179,7 +174,7 @@ public abstract class AbstractContentTypeSerializerTest
                 newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
-        ContentType.Builder contentTypeBuilder = newContentType().name( "test" ).module( myModule );
+        ContentType.Builder contentTypeBuilder = newContentType().name( "test" ).module( myModule.getName() );
         contentTypeBuilder.addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
         contentTypeBuilder.addFormItem( newSubTypeReference( subType ).name( "home" ).build() );
         contentTypeBuilder.addFormItem( newSubTypeReference( subType ).name( "cabin" ).build() );
@@ -206,7 +201,7 @@ public abstract class AbstractContentTypeSerializerTest
         Input myOuterInput = newInput().name( "my-outer-input" ).type( InputTypes.TEXT_LINE ).build();
         FormItemSet myOuterSet = newFormItemSet().name( "my-outer-set" ).add( myOuterInput ).add( myInnerSet ).build();
         final ContentType contentType = newContentType().
-            module( myModule ).
+            module( myModule.getName() ).
             addFormItem( myOuterSet ).
             build();
 
@@ -233,7 +228,7 @@ public abstract class AbstractContentTypeSerializerTest
         fieldSetBuilder.add( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() );
         FieldSet layout = fieldSetBuilder.build();
 
-        ContentType.Builder contentTypeBuilder = newContentType().name( "test" ).module( myModule );
+        ContentType.Builder contentTypeBuilder = newContentType().name( "test" ).module( myModule.getName() );
         contentTypeBuilder.addFormItem( layout );
 
         String serialized = toString( contentTypeBuilder.build() );
@@ -251,7 +246,7 @@ public abstract class AbstractContentTypeSerializerTest
     public void given_formItem_with_validationRegex_when_parsed_then_it_exists()
     {
         // setup
-        ContentType.Builder contentTypeBuilder = newContentType().name( "test" ).module( myModule );
+        ContentType.Builder contentTypeBuilder = newContentType().name( "test" ).module( myModule.getName() );
         contentTypeBuilder.addFormItem( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).validationRegexp( "a*c" ).build() );
         String serialized = toString( contentTypeBuilder.build() );
 
@@ -275,47 +270,6 @@ public abstract class AbstractContentTypeSerializerTest
         return serialized;
     }
 
-    protected String getJsonAsString( String fileName )
-    {
-        try
-        {
-            return toJsonString( getJson( fileName ) );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
-    }
-
-    private JsonNode getJson( String fileName )
-    {
-        try
-        {
-            final ObjectMapper mapper = createObjectMapper();
-            final JsonFactory factory = mapper.getJsonFactory();
-            final JsonParser parser = factory.createJsonParser( getClass().getResource( fileName ) );
-            return parser.readValueAsTree();
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( e );
-        }
-    }
-
-    private String toJsonString( final JsonNode value )
-        throws Exception
-    {
-        final ObjectMapper mapper = createObjectMapper();
-        return mapper.defaultPrettyPrintingWriter().writeValueAsString( value );
-    }
-
-    private static ObjectMapper createObjectMapper()
-    {
-        final ObjectMapper mapper = new ObjectMapper();
-        mapper.setDateFormat( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ) );
-        return mapper;
-    }
-
     private ContentType createContentTypeWithAllInputFormItemTypes()
     {
         SingleSelectorConfig singleSelectorConfig =
@@ -323,9 +277,9 @@ public abstract class AbstractContentTypeSerializerTest
                                                                                                                      "o2" ).build();
 
         ContentType.Builder contentTypeBuilder = newContentType().
-            name( "AllTypes" ).
-            module( myModule ).
-            displayName( "All the Types" ).
+            name( "AllInputTypes" ).
+            module( myModule.getName() ).
+            displayName( "All the Input Types" ).
             superType( new QualifiedContentTypeName( "System:Content" ) ).
             setAbstract( false ).
             setFinal( true );

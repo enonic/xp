@@ -1,10 +1,6 @@
 package com.enonic.wem.core.content.type;
 
-import org.jdom.Document;
-
-import com.enonic.cms.framework.util.JDOMUtil;
-
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class ContentTypeXmlSerializerTest
     extends AbstractContentTypeSerializerTest
@@ -19,18 +15,5 @@ public class ContentTypeXmlSerializerTest
     void assertSerializedResult( final String fileNameForExpected, final String actualSerialization )
     {
         assertEquals( getXmlAsString( fileNameForExpected + ".xml" ), actualSerialization );
-    }
-
-    protected String getXmlAsString( String fileName )
-    {
-        try
-        {
-            Document document = JDOMUtil.parseDocument( getClass().getResource( fileName ).openStream() );
-            return JDOMUtil.prettyPrintDocument( document );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
     }
 }

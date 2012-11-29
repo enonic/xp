@@ -2,6 +2,7 @@ package com.enonic.wem.api.content.type;
 
 
 import com.enonic.wem.api.content.ModuleBasedQualifiedName;
+import com.enonic.wem.api.module.ModuleName;
 
 public final class QualifiedContentTypeName
     extends ModuleBasedQualifiedName
@@ -11,7 +12,7 @@ public final class QualifiedContentTypeName
         super( qualifiedName );
     }
 
-    public QualifiedContentTypeName( final String moduleName, final String contentTypeName )
+    public QualifiedContentTypeName( final ModuleName moduleName, final String contentTypeName )
     {
         super( moduleName, contentTypeName );
     }

@@ -4,7 +4,7 @@ package com.enonic.wem.api.content.data;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
-import com.enonic.wem.api.content.datatype.BaseDataType;
+import com.enonic.wem.api.content.datatype.DataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
 
 import static com.enonic.wem.api.content.data.Data.newData;
@@ -36,56 +36,51 @@ final class DataEntries
         }
         else
         {
-            final DataArray array = new DataArray( exData.getPath() );
-            array.add( newData().path( exData.getPath() ).type( exData.getDataType() ).value( exData.getValue() ).build() );
-            array.add( newData().path( data.getPath() ).type( data.getDataType() ).value( data.getValue() ).build() );
-            final Data newDataWithArray = newData().path( data.getPath() ).type( DataTypes.ARRAY ).value( array ).build();
+            final DataArray array = new DataArray( exData.getPath(), exData.getDataType() );
+            array.add( exData.getValue() );
+            array.add( data );
+            final Data newDataWithArray = newData().path( array.getPath() ).type( DataTypes.ARRAY ).value( array ).build();
 
             dataByName.put( key, newDataWithArray );
         }
     }
 
-    void setData( final EntryPath path, final Object value, final BaseDataType type )
+    void setData( final EntryPath path, final Object value, final DataType type )
     {
         final String key = resolveKey( path.getLastElement() );
-        Data exData = dataByName.get( key );
+        final Data exData = dataByName.get( key );
         final EntryPath pathWithoutIndexAtLastElement = path.asNewWithoutIndexAtLastPathElement();
-        final Data createdData;
         if ( exData == null )
         {
             if ( path.getLastElement().hasIndex() )
             {
-                final DataArray dataArray = new DataArray( pathWithoutIndexAtLastElement );
-                createdData = newData().path( path ).type( type ).value( value ).build();
-                dataArray.add( createdData );
+                final DataArray dataArray = new DataArray( pathWithoutIndexAtLastElement, type );
+                dataArray.set( 0, value );
                 final Data newDataWithArray =
                     newData().path( pathWithoutIndexAtLastElement ).type( DataTypes.ARRAY ).value( dataArray ).build();
                 dataByName.put( key, newDataWithArray );
             }
             else
             {
-                createdData = newData().path( path ).type( type ).value( value ).build();
-                dataByName.put( key, createdData );
+                dataByName.put( key, newData().path( path ).type( type ).value( value ).build() );
             }
         }
         else if ( exData.getDataType().equals( DataTypes.ARRAY ) )
         {
-            exData.getDataArray().set( path.getLastElement().getIndex(), value, type );
+            exData.getDataArray().set( path.getLastElement().getIndex(), value );
         }
         else if ( path.getLastElement().hasIndex() )
         {
-            final DataArray array = new DataArray( pathWithoutIndexAtLastElement );
-            EntryPath exDataPathWithIndex = exData.getPath().asNewWithIndexAtPath( 0, exData.getPath() );
-            array.add( newData().path( exDataPathWithIndex ).type( exData.getDataType() ).value( exData.getValue() ).build() );
-            array.set( path, value, type );
+            final DataArray array = new DataArray( pathWithoutIndexAtLastElement, exData.getDataType() );
+            array.add( exData.getValue() );
+            array.set( path.getLastElement().getIndex(), value );
             final Data newDataWithArray = newData().path( pathWithoutIndexAtLastElement ).type( DataTypes.ARRAY ).value( array ).build();
 
             dataByName.put( key, newDataWithArray );
         }
         else
         {
-            createdData = newData().path( path ).type( type ).value( value ).build();
-            dataByName.put( key, createdData );
+            dataByName.put( key, newData().path( path ).type( type ).value( value ).build() );
         }
     }
 

@@ -4,11 +4,11 @@
         "name":"myCtype",
         "module":"myModule",
         "qualifiedName":"myModule:myCtype",
-        "displayName" : null,
-        "superType" : null,
-        "isAbstract" : false,
-        "isFinal" : false,
-        "items":[
+        "displayName":null,
+        "superType":null,
+        "isAbstract":false,
+        "isFinal":false,
+        "form":[
             {
                 "Input":{
                     "name":"inputText1",

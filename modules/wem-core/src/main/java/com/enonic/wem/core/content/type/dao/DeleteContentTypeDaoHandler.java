@@ -5,8 +5,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.exception.ContentTypeNotFoundException;
 
 
 final class DeleteContentTypeDaoHandler
@@ -17,33 +17,17 @@ final class DeleteContentTypeDaoHandler
         super( session );
     }
 
-    int delete( final QualifiedContentTypeNames contentTypeNames )
+    void handle( final QualifiedContentTypeName qualifiedContentTypeName )
         throws RepositoryException
     {
-        int deletedCount = 0;
-        for ( QualifiedContentTypeName contentTypeName : contentTypeNames )
-        {
-            if ( deleteContentType( contentTypeName ) )
-            {
-                deletedCount++;
-            }
-        }
-        return deletedCount;
-    }
+        final Node contentTypeNode = getContentTypeNode( qualifiedContentTypeName );
 
-    private boolean deleteContentType( final QualifiedContentTypeName contentTypeName )
-        throws RepositoryException
-    {
-
-        final Node contentTypeNode = this.getContentTypeNode( contentTypeName );
         if ( contentTypeNode == null )
         {
-            return false;
+            throw new ContentTypeNotFoundException( qualifiedContentTypeName );
         }
-        else
-        {
-            contentTypeNode.remove();
-            return true;
-        }
+
+        contentTypeNode.remove();
     }
+
 }

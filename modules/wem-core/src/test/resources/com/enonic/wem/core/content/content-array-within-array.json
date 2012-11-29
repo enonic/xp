@@ -1,0 +1,32 @@
+{
+    "path":"",
+    "name":null,
+    "type":"myModule:myType",
+    "displayName":null,
+    "owner":null,
+    "modifier":null,
+    "modifiedTime":null,
+    "createdTime":null,
+    "data":[
+        {
+            "name":"mySet",
+            "type":"Set",
+            "value":[
+                [
+                    {
+                        "name":"myArray",
+                        "type":"Text",
+                        "value":[ "1", "2" ]
+                    }
+                ],
+                [
+                    {
+                        "name":"myArray",
+                        "type":"Text",
+                        "value":[ "3", "4" ]
+                    }
+                ]
+            ]
+        }
+    ]
+}

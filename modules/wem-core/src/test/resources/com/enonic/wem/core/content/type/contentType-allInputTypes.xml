@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <type>
-  <name>AllTypes</name>
+  <name>AllInputTypes</name>
   <module>myModule</module>
-  <qualifiedName>myModule:AllTypes</qualifiedName>
-  <displayName>All the Types</displayName>
-  <superType>System:Content</superType>
-  <isAbstract>false</isAbstract>
-  <isFinal>true</isFinal>
-  <items>
+  <qualified-name>myModule:AllInputTypes</qualified-name>
+  <display-name>All the Input Types</display-name>
+  <super-type>System:Content</super-type>
+  <is-abstract>false</is-abstract>
+  <is-final>true</is-final>
+  <form>
     <input type="Color" built-in="true" name="myColor">
       <label/>
       <immutable>false</immutable>
@@ -125,6 +125,6 @@
       <helpText/>
       <occurrences minimum="0" maximum="1"/>
     </input>
-  </items>
+  </form>
 </type>
 

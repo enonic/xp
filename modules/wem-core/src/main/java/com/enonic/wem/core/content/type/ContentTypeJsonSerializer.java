@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItems;
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
 import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
@@ -29,13 +29,13 @@ public class ContentTypeJsonSerializer
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectNode objectNode = mapper.createObjectNode();
         objectNode.put( "name", contentType.getName() );
-        objectNode.put( "module", contentType.getModule().getName() );
+        objectNode.put( "module", contentType.getModuleName().toString() );
         objectNode.put( "qualifiedName", contentType.getQualifiedName().toString() );
         objectNode.put( "displayName", contentType.getDisplayName() );
         objectNode.put( "superType", contentType.getSuperType() != null ? contentType.getSuperType().toString() : null );
         objectNode.put( "isAbstract", contentType.isAbstract() );
         objectNode.put( "isFinal", contentType.isFinal() );
-        objectNode.put( "items", formItemsSerializer.serialize( contentType.form().getFormItems(), mapper ) );
+        objectNode.put( "form", formItemsSerializer.serialize( contentType.form().getFormItems(), mapper ) );
         return objectNode;
     }
 
@@ -54,7 +54,7 @@ public class ContentTypeJsonSerializer
 
         final ContentType.Builder contentTypeBuilder = newContentType().
             name( JsonParserUtil.getStringValue( "name", contentTypeNode ) ).
-            module( new Module( JsonParserUtil.getStringValue( "module", contentTypeNode ) ) ).
+            module( ModuleName.from( JsonParserUtil.getStringValue( "module", contentTypeNode ) ) ).
             displayName( JsonParserUtil.getStringValue( "displayName", contentTypeNode ) ).
             superType( superType ).
             setAbstract( JsonParserUtil.getBooleanValue( "isAbstract", contentTypeNode ) ).
@@ -62,7 +62,7 @@ public class ContentTypeJsonSerializer
 
         try
         {
-            final FormItems formItems = formItemsSerializer.parse( contentTypeNode.get( "items" ) );
+            final FormItems formItems = formItemsSerializer.parse( contentTypeNode.get( "form" ) );
             for ( FormItem formItem : formItems )
             {
                 contentTypeBuilder.addFormItem( formItem );

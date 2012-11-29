@@ -1,12 +1,12 @@
 {
-    "name":"AllTypes",
+    "name":"AllInputTypes",
     "module":"myModule",
-    "qualifiedName":"myModule:AllTypes",
-    "displayName" : "All the Types",
-    "superType" : "System:Content",
-    "isAbstract" : false,
-    "isFinal" : true,
-    "items":[
+    "qualifiedName":"myModule:AllInputTypes",
+    "displayName":"All the Input Types",
+    "superType":"System:Content",
+    "isAbstract":false,
+    "isFinal":true,
+    "form":[
         {
             "Input":{
                 "name":"myColor",

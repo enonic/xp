@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.datatype.DataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.form.InvalidDataException;
@@ -49,7 +48,7 @@ public final class DataSet
         entries.add( data );
     }
 
-    void setData( final EntryPath path, final Object value, final BaseDataType dataType )
+    void setData( final EntryPath path, final Object value, final DataType dataType )
         throws InvalidDataException
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
@@ -66,7 +65,7 @@ public final class DataSet
         }
     }
 
-    private void forwardSetDataToDataSet( final EntryPath path, final Object value, final BaseDataType dataType )
+    private void forwardSetDataToDataSet( final EntryPath path, final Object value, final DataType dataType )
     {
         final DataSet dataSet = findOrCreateDataSet( path.getFirstElement() );
         dataSet.setData( path.asNewWithoutFirstPathElement(), value, dataType );
@@ -141,7 +140,7 @@ public final class DataSet
                 {
                     final EntryPath newPath = new EntryPath( exData.getPath(), firstElement.getIndex() );
                     dataSet = new DataSet( newPath );
-                    dataArray.set( firstElement.getIndex(), dataSet, DataTypes.SET );
+                    dataArray.set( firstElement.getIndex(), dataSet );
                 }
                 else
                 {
@@ -158,7 +157,7 @@ public final class DataSet
 
     private Data forwardGetDataToDataSet( final EntryPath path )
     {
-        Data data = entries.get( path.getFirstElement() );
+        final Data data = entries.get( path.getFirstElement() );
         if ( data == null )
         {
             return null;
@@ -166,23 +165,28 @@ public final class DataSet
 
         if ( data.getDataType().equals( DataTypes.ARRAY ) )
         {
-            if ( path.getFirstElement().hasIndex() )
-            {
-                data = data.getDataArray().getData( path.getFirstElement().getIndex() );
-            }
-            else
-            {
-                data = data.getDataArray().getData( 0 );
-            }
-        }
+            final int index = path.getFirstElement().hasIndex() ? path.getFirstElement().getIndex() : 0;
+            final Data dataInArray = data.getDataArray().getData( index );
+            Preconditions.checkNotNull( dataInArray, "Data at index [%s] in array [%s] not found", index, data.getPath() );
 
-        if ( !data.hasDataSetAsValue() )
+            if ( !dataInArray.hasDataSetAsValue() )
+            {
+                throw new IllegalArgumentException( "Data at path [" + this.getPath() + "] expected to have a value of type DataSet: " +
+                                                        dataInArray.getDataType().getName() );
+            }
+
+            return dataInArray.getDataSet().getData( path.asNewWithoutFirstPathElement() );
+        }
+        else
         {
-            throw new IllegalArgumentException(
-                "Data at path [" + this.getPath() + "] expected to have a value of type DataSet: " + data.getDataType().getName() );
-        }
+            if ( !data.hasDataSetAsValue() )
+            {
+                throw new IllegalArgumentException(
+                    "Data at path [" + this.getPath() + "] expected to have a value of type DataSet: " + data.getDataType().getName() );
+            }
 
-        return data.getDataSet().getData( path.asNewWithoutFirstPathElement() );
+            return data.getDataSet().getData( path.asNewWithoutFirstPathElement() );
+        }
     }
 
     private Data doGetData( final EntryPath.Element element )

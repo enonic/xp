@@ -47,7 +47,7 @@ public class ValidateContentDataRpcHandlerTest
     {
         // setup
         final ContentType contentType = newContentType().
-            module( Module.SYSTEM ).
+            module( Module.SYSTEM.getName() ).
             name( "MyType" ).
             addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add( newFormItemSet().name( "mySet" ).required( true ).add(
                 newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build() ).
@@ -68,7 +68,7 @@ public class ValidateContentDataRpcHandlerTest
         // setup
         final Input myInput = newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).minimumOccurrences( 1 ).build();
         final ContentType contentType = newContentType().
-            module( Module.SYSTEM ).
+            module( Module.SYSTEM.getName() ).
             name( "MyType" ).
             addFormItem( myInput ).
             build();

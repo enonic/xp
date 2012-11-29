@@ -11,6 +11,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentTree;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 
 
 /**
@@ -124,4 +125,18 @@ public class ContentDaoImpl
             throw new RuntimeException( e );
         }
     }
+
+    @Override
+    public int countContentTypeUsage( final QualifiedContentTypeName qualifiedContentTypeName, Session session )
+    {
+        try
+        {
+            return new CountContentTypeUsageDaoHandler( session ).handle( qualifiedContentTypeName );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
 }

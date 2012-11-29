@@ -16,7 +16,7 @@ public class ModuleBasedQualifiedNameTest
         {
 
         };
-        assertEquals( "myModule", tqn.getModuleName() );
+        assertEquals( "myModule", tqn.getModuleName().toString() );
         assertEquals( "myLocalName", tqn.getLocalName() );
     }
 

@@ -37,7 +37,7 @@ final class CreateContentTypeDaoHandler
     {
         final Node rootNode = session.getRootNode();
         final Node contentTypesNode = rootNode.getNode( ContentDaoConstants.CONTENT_TYPES_PATH );
-        final Node moduleNode = JcrHelper.getOrAddNode( contentTypesNode, contentTypeName.getModuleName() );
+        final Node moduleNode = JcrHelper.getOrAddNode( contentTypesNode, contentTypeName.getModuleName().toString() );
         return JcrHelper.getOrAddNode( moduleNode, contentTypeName.getLocalName() );
     }
 
