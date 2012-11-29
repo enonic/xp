@@ -14,7 +14,7 @@ function testContentTypeModel(t, model) {
 }
 
 StartTest(function (t) {
-    t.requireOk('Admin.model.datadesigner.ContentTypeModel', function () {
+    t.requireOk('Admin.model.contentStudio.ContentTypeModel', function () {
         var contentTypeModel = t.createContentTypeModel();
         testContentTypeModel(t, contentTypeModel);
     });

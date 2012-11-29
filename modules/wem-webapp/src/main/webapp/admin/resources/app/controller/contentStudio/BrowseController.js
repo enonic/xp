@@ -1,22 +1,22 @@
-Ext.define('Admin.controller.datadesigner.BrowseController', {
-    extend: 'Admin.controller.datadesigner.Controller',
+Ext.define('Admin.controller.contentStudio.BrowseController', {
+    extend: 'Admin.controller.contentStudio.Controller',
 
     stores: [
-        'Admin.store.datadesigner.ContentTypeStore',
-        'Admin.store.datadesigner.ContentTypeTreeStore'
+        'Admin.store.contentStudio.ContentTypeStore',
+        'Admin.store.contentStudio.ContentTypeTreeStore'
     ],
 
     models: [],
 
     views: [
-        'Admin.view.datadesigner.FilterPanel',
-        'Admin.view.datadesigner.TreeGridPanel',
-        'Admin.view.datadesigner.ContextMenu',
-        'Admin.view.datadesigner.DetailPanel'
+        'Admin.view.contentStudio.FilterPanel',
+        'Admin.view.contentStudio.TreeGridPanel',
+        'Admin.view.contentStudio.ContextMenu',
+        'Admin.view.contentStudio.DetailPanel'
     ],
 
     init: function () {
-        Ext.create('widget.datadesignerContextMenu');
+        Ext.create('widget.contentStudioContextMenu');
 
         this.control(
             {
@@ -95,7 +95,7 @@ Ext.define('Admin.controller.datadesigner.BrowseController', {
 
 
     filterStore: function () {
-        var store = this.getStore('Admin.store.datadesigner.ContentTypeStore');
+        var store = this.getStore('Admin.store.contentStudio.ContentTypeStore');
         var searchTextValue = this.getFilterPanel().getComponent('searchTextField').getValue();
         var baseTypesOnly = this.getFilterPanel().getComponent('showBaseTypesOnlyCheckbox').getValue();
         var treeGridPanel = this.getTreeGridPanel();
@@ -130,7 +130,7 @@ Ext.define('Admin.controller.datadesigner.BrowseController', {
 
 
     getContextMenu: function () {
-        return Ext.ComponentQuery.query('datadesignerContextMenu')[0];
+        return Ext.ComponentQuery.query('contentStudioContextMenu')[0];
     }
 
 });

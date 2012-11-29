@@ -8,7 +8,7 @@
   <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/ext-all.css">
   <link rel="stylesheet" type="text/css" href="resources/css/main.css">
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
-  <link rel="stylesheet" type="text/css" href="resources/css/datadesigner-preview-panel.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/contentstudio-preview-panel.css">
   <link rel="stylesheet" type="text/css" href="resources/css/admin-tree-panel.css">
 
   <!-- ExtJS -->
@@ -48,8 +48,8 @@
       name: 'App',
 
       controllers: [
-        'Admin.controller.datadesigner.BrowseController',
-        'Admin.controller.datadesigner.FilterPanelController'
+        'Admin.controller.contentStudio.BrowseController',
+        'Admin.controller.contentStudio.FilterPanelController'
       ],
 
       requires: [
@@ -78,7 +78,7 @@
                   items: [
                     {
                       region: 'west',
-                      xtype: 'datadesignerFilter',
+                      xtype: 'contentStudioFilter',
                       width: 182,
                       minSize: 100,
                       maxSize: 500,

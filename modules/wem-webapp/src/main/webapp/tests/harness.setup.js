@@ -67,9 +67,9 @@ Harness.start(
         ]
     },
     {
-        group: 'Data Designer',
+        group: 'Content Studio',
         items: [
-            'datadesigner/test_ContentTypeModel.js'
+            'contentStudio/test_ContentTypeModel.js'
         ]
     },
     {

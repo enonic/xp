@@ -1,12 +1,13 @@
-Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
+Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
     extend: 'Ext.panel.Panel',
-    alias: 'widget.dataDesignerWizardPanel',
+    alias: 'widget.contentStudioWizardPanel',
     requires: [
         'Admin.view.WizardPanel',
-        'Admin.view.datadesigner.wizard.ContentTypePanel',
-        'Admin.view.datadesigner.wizard.ConfigPanel',
+        'Admin.view.contentStudio.wizard.ContentTypePanel',
+        'Admin.view.contentStudio.wizard.ConfigPanel',
         'Admin.view.SummaryTreePanel',
-        'Admin.plugin.fileupload.PhotoUploadButton'
+        'Admin.plugin.fileupload.PhotoUploadButton',
+        'Admin.view.contentStudio.wizard.Toolbar'
     ],
     layout: 'column',
     border: 0,
@@ -30,6 +31,10 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
         me.headerData = {
             displayName: displayNameValue
         };
+
+        me.tbar = Ext.createByAlias( 'widget.contentStudioWizardToolbar', {
+            isNew: isNew
+        } );
 
         me.items = [
             {
@@ -100,12 +105,12 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
                                 me.bindDisplayNameEvents();
                             }
                         },
-                        tpl: new Ext.XTemplate(Templates.datadesigner.wizardHeader),
+                        tpl: new Ext.XTemplate(Templates.contentStudio.wizardHeader),
                         data: me.headerData
                     },
                     {
                         xtype: 'wizardPanel',
-                        showControls: true,
+                        showControls: false,
                         isNew: isNew,
                         items: steps
                     }
@@ -120,10 +125,10 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
     getSteps: function () {
         var me = this;
 
-        var chooseTypeStep = {
+        var configStep = {
             stepTitle: 'Content Type',
             modelData: me.modelData,
-            xtype: 'dataDesignerWizardContentTypePanel',
+            xtype: 'contentStudioWizardConfigPanel',
             listeners: {
                 afterrender: function (panel) {
                     me.panelRendered = true;
@@ -131,18 +136,8 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
                 }
             }
         };
-        var configStep = {
-            stepTitle: "Config",
-            modelData: me.modelData,
-            xtype: 'dataDesignerWizardConfigPanel'
-        };
-        var summaryStep = {
-            stepTitle: 'Summary',
-            modelData: me.modelData,
-            xtype: 'summaryTreePanel'
-        };
 
-        return [chooseTypeStep, configStep, summaryStep];
+        return [configStep];
     },
 
 
@@ -179,7 +174,7 @@ Ext.define('Admin.view.datadesigner.wizard.WizardPanel', {
                 displayName.on('blur', this.onDisplayNameBlur, this);
             }
 
-            var name = this.down('dataDesignerWizardContentTypePanel #name');
+            var name = this.down('contentStudioWizardContentTypePanel #name');
             if (name) {
                 name.on('change', this.onNameChanged, this);
             }

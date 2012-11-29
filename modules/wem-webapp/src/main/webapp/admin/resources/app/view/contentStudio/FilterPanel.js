@@ -1,6 +1,6 @@
-Ext.define('Admin.view.datadesigner.FilterPanel', {
+Ext.define('Admin.view.contentStudio.FilterPanel', {
     extend: 'Admin.view.FilterPanel',
-    alias: 'widget.datadesignerFilter',
+    alias: 'widget.contentStudioFilter',
 
     includeSearch: true,
     includeFacets: [

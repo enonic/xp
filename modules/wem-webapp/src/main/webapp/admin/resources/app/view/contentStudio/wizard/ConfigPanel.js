@@ -1,6 +1,6 @@
-Ext.define('Admin.view.datadesigner.wizard.ConfigPanel', {
+Ext.define('Admin.view.contentStudio.wizard.ConfigPanel', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.dataDesignerWizardConfigPanel',
+    alias: 'widget.contentStudioWizardConfigPanel',
 
     initComponent: function () {
         var me = this;

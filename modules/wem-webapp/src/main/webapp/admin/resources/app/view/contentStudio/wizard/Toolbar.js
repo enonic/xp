@@ -1,6 +1,6 @@
-Ext.define('Admin.view.datadesigner.wizard.Toolbar', {
+Ext.define('Admin.view.contentStudio.wizard.Toolbar', {
     extend: 'Ext.toolbar.Toolbar',
-    alias: 'widget.dataDesignerWizardToolbar',
+    alias: 'widget.contentStudioWizardToolbar',
 
     border: false,
 
@@ -21,7 +21,7 @@ Ext.define('Admin.view.datadesigner.wizard.Toolbar', {
             items: [
                 {
                     text: 'Save',
-                    action: 'saveUserstore',
+                    action: 'saveContentType',
                     itemId: 'save',
                     disabled: true,
                     iconCls: 'icon-save-24'
@@ -45,15 +45,9 @@ Ext.define('Admin.view.datadesigner.wizard.Toolbar', {
         if (!this.isNew) {
             leftGrp.items.push({
                 text: 'Delete',
-                action: 'deleteUserstore',
+                action: 'deleteContentType',
                 iconCls: 'icon-delete-user-24'
             });
-            leftGrp.items.push({
-                text: 'Synchronize',
-                iconCls: 'icon-refresh',
-                action: 'syncUserstore'
-            });
-
         }
 
         this.items = [ leftGrp, '->', rightGrp ];

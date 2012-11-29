@@ -1,17 +1,17 @@
-Ext.define('Admin.controller.datadesigner.FilterPanelController', {
-    extend: 'Admin.controller.datadesigner.Controller',
+Ext.define('Admin.controller.contentStudio.FilterPanelController', {
+    extend: 'Admin.controller.contentStudio.Controller',
 
     /*      Controller for handling filter panel UI events       */
 
     stores: [],
     models: [],
     views: [
-        'Admin.view.datadesigner.FilterPanel'
+        'Admin.view.contentStudio.FilterPanel'
     ],
 
     init: function () {
         this.control({
-            'datadesignerFilter': {
+            'contentStudioFilter': {
                 search: this.doSearch
             }
         });

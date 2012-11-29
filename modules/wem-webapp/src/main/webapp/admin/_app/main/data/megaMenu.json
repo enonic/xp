@@ -84,12 +84,12 @@
                 "menu": {
                     "items": [
                         {
-                            "text": "Data Designer",
+                            "text": "Content Studio",
                             "id": "app-300",
                             "cms": {
-                                "appUrl": "app-data-designer.jsp"
+                                "appUrl": "app-content-studio.jsp"
                             },
-                            "iconCls": "icon-data-designer-24"
+                            "iconCls": "icon-content-studio-24"
                         },
                         {
                             "text": "Modules",

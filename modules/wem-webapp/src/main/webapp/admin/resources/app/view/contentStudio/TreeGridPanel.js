@@ -1,12 +1,12 @@
-Ext.define('Admin.view.datadesigner.TreeGridPanel', {
+Ext.define('Admin.view.contentStudio.TreeGridPanel', {
     extend: 'Admin.view.TreeGridPanel',
     alias: 'widget.contentTypeTreeGridPanel',
-    store: 'Admin.store.datadesigner.ContentTypeStore',
-    treeStore: 'Admin.store.datadesigner.ContentTypeTreeStore',
-    requires: 'Admin.view.datadesigner.BrowseToolbar',
+    store: 'Admin.store.contentStudio.ContentTypeStore',
+    treeStore: 'Admin.store.contentStudio.ContentTypeTreeStore',
+    requires: 'Admin.view.contentStudio.BrowseToolbar',
     dockedItems: [
         {
-            xtype: 'datadesigner.browseToolbar'
+            xtype: 'contentStudio.browseToolbar'
         }
     ],
 
@@ -38,7 +38,7 @@ Ext.define('Admin.view.datadesigner.TreeGridPanel', {
     nameRenderer: function (value, p, record) {
         var contentType = record.data;
         var icon = contentType.icon === '' ? 'resources/images/icons/32x32/cubes.png' : contentType.icon;
-        return Ext.String.format(Templates.datadesigner.gridPanelRenderer, icon, contentType.name, contentType.qualifiedName);
+        return Ext.String.format(Templates.contentStudio.gridPanelRenderer, icon, contentType.name, contentType.qualifiedName);
     },
 
     prettyDateRenderer: function (value, p, record) {

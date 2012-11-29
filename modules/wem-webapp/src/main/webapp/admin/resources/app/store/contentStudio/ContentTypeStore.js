@@ -1,7 +1,7 @@
-Ext.define('Admin.store.datadesigner.ContentTypeStore', {
+Ext.define('Admin.store.contentStudio.ContentTypeStore', {
     extend: 'Ext.data.Store',
 
-    model: 'Admin.model.datadesigner.ContentTypeModel',
+    model: 'Admin.model.contentStudio.ContentTypeModel',
 
     pageSize: 50,
     remoteSort: true,

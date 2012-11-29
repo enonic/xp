@@ -1,6 +1,6 @@
-Ext.define('Admin.view.datadesigner.wizard.ContentTypePanel', {
+Ext.define('Admin.view.contentStudio.wizard.ContentTypePanel', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.dataDesignerWizardContentTypePanel',
+    alias: 'widget.contentStudioWizardContentTypePanel',
 
     initComponent: function () {
         var me = this;

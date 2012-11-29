@@ -10,31 +10,31 @@
                             "text": "Shortcut",
                             "id": "menu-item-10",
                             "action": "newContentType",
-                            "iconCls": "icon-data-designer-24"
+                            "iconCls": "icon-content-studio-24"
                         },
                         {
                             "text": "Folder",
                             "id": "menu-item-20",
                             "action": "newContentType",
-                            "iconCls": "icon-data-designer-24"
+                            "iconCls": "icon-content-studio-24"
                         },
                         {
                             "text": "Structured",
                             "id": "menu-item-30",
                             "action": "newContentType",
-                            "iconCls": "icon-data-designer-24"
+                            "iconCls": "icon-content-studio-24"
                         },
                         {
                             "text": "Media",
                             "id": "menu-item-40",
                             "action": "newContentType",
-                            "iconCls": "icon-data-designer-24"
+                            "iconCls": "icon-content-studio-24"
                         },
                         {
                             "text": "Form",
                             "id": "menu-item-50",
                             "action": "newContentType",
-                            "iconCls": "icon-data-designer-24"
+                            "iconCls": "icon-content-studio-24"
                         }
                     ]
                 }

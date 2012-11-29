@@ -1,6 +1,6 @@
-Ext.define('Admin.view.datadesigner.ContextMenu', {
+Ext.define('Admin.view.contentStudio.ContextMenu', {
     extend: 'Ext.menu.Menu',
-    alias: 'widget.datadesignerContextMenu',
+    alias: 'widget.contentStudioContextMenu',
 
     items: [
         {

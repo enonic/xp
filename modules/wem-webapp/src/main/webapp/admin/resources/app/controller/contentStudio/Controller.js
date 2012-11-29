@@ -1,10 +1,10 @@
-Ext.define('Admin.controller.datadesigner.Controller', {
+Ext.define('Admin.controller.contentStudio.Controller', {
     extend: 'Admin.controller.Controller',
 
     stores: [],
     models: [],
 
-    views: ['Admin.view.datadesigner.wizard.WizardPanel'],
+    views: ['Admin.view.contentStudio.wizard.WizardPanel'],
 
     init: function () {
         this.application.on({
@@ -79,7 +79,7 @@ Ext.define('Admin.controller.datadesigner.Controller', {
             /*tabPanel.el.mask("Loading...");
 
              Ext.Ajax.request({
-             url: 'resources/data/mock_dataDesignerContentType.json',
+             url: 'resources/data/mock_contentStudioContentType.json',
              method: 'GET',
              params: {
              key: contentType.raw.key
@@ -89,26 +89,26 @@ Ext.define('Admin.controller.datadesigner.Controller', {
              tabPanel.el.unmask();
 
              tabPanel.addTab({
-             xtype: 'dataDesignerWizardPanel',
+             xtype: 'contentStudioWizardPanel',
              id: 'tab-content-type-' + contentType.raw.key,
              title: contentType.raw.name,
-             iconCls: 'icon-data-designer-16',
+             iconCls: 'icon-content-studio-16',
              modelData: obj
              });
              }
              });*/
 
             tabPanel.addTab({
-                xtype: 'dataDesignerWizardPanel',
+                xtype: 'contentStudioWizardPanel',
                 id: 'tab-content-type-' + contentType.raw.key,
                 title: contentType.raw.name,
-                iconCls: 'icon-data-designer-16',
+                iconCls: 'icon-content-studio-16',
                 modelData: contentType.raw
             });
 
         } else {
             tabPanel.addTab({
-                xtype: 'dataDesignerWizardPanel',
+                xtype: 'contentStudioWizardPanel',
                 title: 'New Content Type'
             });
         }

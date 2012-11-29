@@ -93,7 +93,7 @@
     </ul>
   </li>
   <li>
-    <a href="app-data-designer.jsp">Data Designer</a>
+    <a href="app-content-studio.jsp">Content Studio</a>
   </li>
 </ul>
 

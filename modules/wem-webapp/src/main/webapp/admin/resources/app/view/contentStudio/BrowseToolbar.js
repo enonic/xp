@@ -1,6 +1,6 @@
-Ext.define('Admin.view.datadesigner.BrowseToolbar', {
+Ext.define('Admin.view.contentStudio.BrowseToolbar', {
     extend: 'Ext.toolbar.Toolbar',
-    alias: 'widget.datadesigner.browseToolbar',
+    alias: 'widget.contentStudio.browseToolbar',
 
     defaults: {
         scale: 'medium',
@@ -22,7 +22,7 @@ Ext.define('Admin.view.datadesigner.BrowseToolbar', {
                 items: [
                     {
                         text: 'New',
-                        iconCls: 'icon-data-designer-24',
+                        iconCls: 'icon-content-studio-24',
                         action: 'newContentType'
                     }
                 ]

@@ -1,4 +1,4 @@
-Ext.define('Admin.view.datadesigner.DetailPanel', {
+Ext.define('Admin.view.contentStudio.DetailPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.contentTypeDetailPanel',
     layout: 'card',
@@ -47,7 +47,7 @@ Ext.define('Admin.view.datadesigner.DetailPanel', {
                     width: 100,
                     cls: 'west',
                     itemId: 'previewIcon',
-                    tpl: Templates.datadesigner.previewIcon,
+                    tpl: Templates.contentStudio.previewIcon,
                     data: singleData,
                     margin: 5
                 },
@@ -64,7 +64,7 @@ Ext.define('Admin.view.datadesigner.DetailPanel', {
                             cls: 'north',
                             itemId: 'previewHeader',
                             padding: '5 5 15',
-                            tpl: Templates.datadesigner.previewHeader,
+                            tpl: Templates.contentStudio.previewHeader,
                             data: singleData
                         },
                         {
@@ -98,7 +98,7 @@ Ext.define('Admin.view.datadesigner.DetailPanel', {
                     margin: 5,
                     itemId: 'previewInfo',
                     cls: 'east',
-                    tpl: Templates.datadesigner.previewCommonInfo,
+                    tpl: Templates.contentStudio.previewCommonInfo,
                     data: singleData
                 }
             ]
@@ -106,7 +106,7 @@ Ext.define('Admin.view.datadesigner.DetailPanel', {
     },
 
     createNoSelection: function () {
-        var tpl = new Ext.XTemplate(Templates.datadesigner.noContentTypeSelected);
+        var tpl = new Ext.XTemplate(Templates.contentStudio.noContentTypeSelected);
 
         return {
             xtype: 'component',
