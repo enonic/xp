@@ -8,6 +8,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentTree;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 
 public interface ContentDao
     extends ContentDaoConstants
@@ -27,4 +28,6 @@ public interface ContentDao
     public Contents findChildContent( ContentPath parentPath, Session session );
 
     public ContentTree getContentTree( final Session session );
+
+    public int countContentTypeUsage( QualifiedContentTypeName qualifiedContentTypeName, Session session );
 }
