@@ -5,6 +5,10 @@ Ext.define('ContentDataPanel', {
     contentTypeItems: [],
     content: null, // content to be edited
 
+    autoDestroy: true,
+
+    // Temporary form submit button
+    buttonAlign: 'left',
     buttons: [{
         text: 'Submit',
         formBind: true, //only enabled once the form is valid
@@ -18,10 +22,6 @@ Ext.define('ContentDataPanel', {
         }
     }],
 
-    buttonAlign: 'left',
-
-    autoDestroy: true,
-
     initComponent: function () {
         var me = this;
 
@@ -31,6 +31,7 @@ Ext.define('ContentDataPanel', {
 
         me.callParent(arguments);
     },
+
 
     addFormFields: function (contentTypeItems, container) {
         var me = this;
@@ -59,6 +60,7 @@ Ext.define('ContentDataPanel', {
         });
     },
 
+
     createFormItemSet: function (formItemSetConfig) {
         var me = this;
         var formItemSet = Ext.create({
@@ -69,33 +71,64 @@ Ext.define('ContentDataPanel', {
 
         });
         if (formItemSetConfig.items) {
-            me.addFormItemSetBlock(formItemSetConfig.items, formItemSet);
+            me.insertFormItemSetBlock(formItemSet, 0);
         }
 
         return formItemSet;
     },
 
-    addFormItemSetBlock: function (formItemSetItemsConfig, formItemSet) {
+
+    insertFormItemSetBlock: function (formItemSet, position) {
         var me = this;
-        var container = new Ext.form.FieldContainer({
-            style: 'border-bottom: 1px solid #aaa;',
+
+        // May use regular container here
+        var block = new Ext.form.FieldContainer({
+            //style: 'border-bottom: 1px solid #aaa;',
             layout: 'anchor'
         });
 
-        me.addFormFields(formItemSetItemsConfig, container);
+        me.addFormFields(formItemSet.contentTypeItems, block);
 
-        container.add({
-            xtype: 'button',
-            text: '+',
-            handler: function (button) {
-                if (me.contentTypeItems) {
-                    me.addFormItemSetBlock(formItemSet.contentTypeItems, formItemSet);
+        // Add and remove buttons
+        block.add({
+            xtype: 'container',
+            margin: '10 0 5 0',
+            padding: '0 0 0 0',
+            style: 'text-align: right; border-top: 1px dotted #aaa',
+
+            defaults: {
+            },
+
+            items: [
+                {
+                    xtype: 'button',
+                    text: '+',
+                    margin: '0 5 0 0',
+                    handler: function (button) {
+                        if (me.contentTypeItems) {
+                            var pos = me.getPositionForFormItemSetBlock(formItemSet, block) + 1;
+                            me.insertFormItemSetBlock(formItemSet, pos);
+                        }
+                    }
+                },
+                {
+                    xtype: 'button',
+                    text: '-',
+                    handler: function (button) {
+                        block.destroy();
+                    }
                 }
-            }
+            ]
         });
 
-        formItemSet.add(container);
+        formItemSet.insert(position, block);
     },
+
+
+    getPositionForFormItemSetBlock: function (formItemSet, block) {
+        return formItemSet.items.indexOf(block)
+    },
+
 
     createInput: function (inputConfig) {
         var me = this;
@@ -108,9 +141,11 @@ Ext.define('ContentDataPanel', {
         });
     },
 
+
     formWidgetIsSupported: function (alias) {
         return Ext.ClassManager.getByAlias(alias);
     },
+
 
     getData: function () {
         return this.getForm().getFieldValues();

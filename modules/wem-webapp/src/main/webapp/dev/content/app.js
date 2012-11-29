@@ -55,6 +55,7 @@ Ext.application({
                             border: false,
                             xtype: 'toolbar',
                             height: 40,
+                            style: 'background: #000; color: #e1e1e1',
                             defaults: {
                                 margin: '0 5'
                             },

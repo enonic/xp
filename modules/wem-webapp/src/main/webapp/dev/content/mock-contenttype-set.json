@@ -6,8 +6,8 @@
         "items": [
             {
                 "Input": {
-                    "name": "title",
-                    "label": "Title",
+                    "name": "name",
+                    "label": "Full Name",
                     "immutable": false,
                     "occurrences": {
                         "minimum": 1,
@@ -26,7 +26,7 @@
             {
                 "FormItemSet": {
                     "name": "mySet",
-                    "label": 'Address',
+                    "label": "Address",
                     "immutable": false,
                     "occurrences": {
                         "minimum": 0,
@@ -35,6 +35,25 @@
                     "customText": null,
                     "helpText": null,
                     "items": [
+                        {
+                            "Input": {
+                                "name": "label",
+                                "label": "Label",
+                                "immutable": false,
+                                "occurrences": {
+                                    "minimum": 0,
+                                    "maximum": 1
+                                },
+                                "indexed": false,
+                                "customText": null,
+                                "validationRegexp": null,
+                                "helpText": "Give this address a label",
+                                "type": {
+                                    "name": "TextLine",
+                                    "builtIn": true
+                                }
+                            }
+                        },
                         {
                             "Input": {
                                 "name": "street",
@@ -94,7 +113,61 @@
                         }
                     ]
                 }
+            },
+            {
+                "FormItemSet": {
+                    "name": "collections",
+                    "label": "Set",
+                    "immutable": false,
+                    "occurrences": {
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "customText": null,
+                    "helpText": null,
+                    "items": [
+                        {
+                            "Input": {
+                                "name": "set_name",
+                                "label": "Name",
+                                "immutable": false,
+                                "occurrences": {
+                                    "minimum": 0,
+                                    "maximum": 1
+                                },
+                                "indexed": false,
+                                "customText": null,
+                                "validationRegexp": null,
+                                "helpText": "Name for the set",
+                                "type": {
+                                    "name": "TextLine",
+                                    "builtIn": true
+                                }
+                            }
+                        },
+                        {
+                            "Input": {
+                                "name": "set_items",
+                                "label": "Set",
+                                "immutable": false,
+                                "occurrences": {
+                                    "minimum": 0,
+                                    "maximum": 1
+                                },
+                                "indexed": false,
+                                "customText": null,
+                                "validationRegexp": null,
+                                "helpText": "Add items to the set",
+                                "type": {
+                                    "name": "Relation",
+                                    "builtIn": true
+                                }
+                            }
+                        }
+                    ]
+                }
             }
+
         ]
     }
 }
