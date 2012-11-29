@@ -1,6 +1,17 @@
 Ext.define('Admin.lib.inputtypes.TextArea', {
-    extend: 'Ext.form.field.TextArea',
+    extend: 'Admin.lib.inputtypes.Base',
     alias: 'widget.input.TextArea',
     label: 'Text Area',
-    width: 580
+    initComponent: function () {
+        var me = this;
+
+        me.items = [
+            {
+                xtype: 'textarea',
+                name: me.name
+            }
+        ];
+
+        me.callParent(arguments);
+    }
 });

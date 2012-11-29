@@ -1,6 +1,17 @@
 Ext.define('Admin.lib.inputtypes.TextLine', {
-    extend: 'Ext.form.field.Text',
-    label: 'Text Line',
+    extend: 'Admin.lib.inputtypes.Base',
     alias: 'widget.input.TextLine',
-    width: 580
+    label: 'Text Line',
+    initComponent: function () {
+        var me = this;
+
+        me.items = [
+            {
+                xtype: 'textfield',
+                name: me.name
+            }
+        ];
+
+        me.callParent(arguments);
+    }
 });
