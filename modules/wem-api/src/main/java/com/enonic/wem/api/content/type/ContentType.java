@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.content.type.form.Form;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItems;
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 
 import static com.enonic.wem.api.content.type.form.Form.newForm;
 
@@ -27,21 +27,21 @@ public final class ContentType
 
     private final boolean isFinal;
 
-    private final Module module;
+    private final ModuleName moduleName;
 
 //    private final ComputedDisplayName computedDisplayName;
 
     private final Form form;
 
     private ContentType( final String name, final String displayName, final QualifiedContentTypeName superType, final boolean isAbstract,
-                         final boolean isFinal, final Module module, final Form form )
+                         final boolean isFinal, final ModuleName moduleName, final Form form )
     {
         this.name = name;
         this.displayName = displayName;
         this.superType = superType;
         this.isAbstract = isAbstract;
         this.isFinal = isFinal;
-        this.module = module;
+        this.moduleName = moduleName;
         this.form = form;
     }
 
@@ -57,7 +57,7 @@ public final class ContentType
 
     public QualifiedContentTypeName getQualifiedName()
     {
-        return new QualifiedContentTypeName( module.getName(), name );
+        return new QualifiedContentTypeName( moduleName, name );
     }
 
     public QualifiedContentTypeName getSuperType()
@@ -75,9 +75,9 @@ public final class ContentType
         return isFinal;
     }
 
-    public Module getModule()
+    public ModuleName getModuleName()
     {
-        return module;
+        return moduleName;
     }
 
     public Form form()
@@ -91,7 +91,7 @@ public final class ContentType
         final Objects.ToStringHelper s = Objects.toStringHelper( this );
         s.add( "name", name );
         s.add( "displayName", displayName );
-        s.add( "module", module );
+        s.add( "module", moduleName.toString() );
         s.add( "superType", superType );
         s.add( "isAbstract", isAbstract );
         s.add( "isFinal", isFinal );
@@ -113,7 +113,7 @@ public final class ContentType
     {
         private String name;
 
-        private Module module;
+        private ModuleName moduleName;
 
         private String displayName;
 
@@ -133,7 +133,7 @@ public final class ContentType
         private Builder( final ContentType contentType )
         {
             this.name = contentType.getName();
-            this.module = contentType.getModule();
+            this.moduleName = contentType.getModuleName();
             this.displayName = contentType.getDisplayName();
             this.isAbstract = contentType.isAbstract();
             this.isFinal = contentType.isFinal();
@@ -147,9 +147,9 @@ public final class ContentType
             return this;
         }
 
-        public Builder module( final Module module )
+        public Builder module( final ModuleName moduleName )
         {
-            this.module = module;
+            this.moduleName = moduleName;
             return this;
         }
 
@@ -212,7 +212,7 @@ public final class ContentType
                 formBuilder.addFormItem( formItem );
             }
 
-            return new ContentType( name, displayName, superType, isAbstract, isFinal, module, formBuilder.build() );
+            return new ContentType( name, displayName, superType, isAbstract, isFinal, moduleName, formBuilder.build() );
         }
     }
 }

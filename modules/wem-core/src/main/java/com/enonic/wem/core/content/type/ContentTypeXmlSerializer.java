@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItems;
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.content.XmlParsingException;
 import com.enonic.wem.core.content.type.form.FormItemsXmlSerializer;
 
@@ -55,7 +55,7 @@ public class ContentTypeXmlSerializer
     private void generate( final ContentType type, final Element typeEl )
     {
         typeEl.addContent( new Element( "name" ).setText( type.getName() ) );
-        typeEl.addContent( new Element( "module" ).setText( type.getModule().getName() ) );
+        typeEl.addContent( new Element( "module" ).setText( type.getModuleName().toString() ) );
         typeEl.addContent( new Element( "qualified-name" ).setText( type.getQualifiedName().toString() ) );
         typeEl.addContent( new Element( "display-name" ).setText( type.getDisplayName() ) );
         typeEl.addContent( new Element( "super-type" ).setText( type.getSuperType() != null ? type.getSuperType().toString() : null ) );
@@ -89,15 +89,18 @@ public class ContentTypeXmlSerializer
     private ContentType parse( final Element contentTypeEl )
         throws IOException
     {
-        final String superTypeValue = StringUtils.trimToNull( contentTypeEl.getChildText( "super-type" ) );
-        final QualifiedContentTypeName superType = superTypeValue != null ? new QualifiedContentTypeName( superTypeValue ) : null;
+        final String module = contentTypeEl.getChildText( "module" );
+        final String name = contentTypeEl.getChildText( "name" );
+        final String displayName = contentTypeEl.getChildText( "display-name" );
+        final String superTypeString = StringUtils.trimToNull( contentTypeEl.getChildText( "super-type" ) );
+        final QualifiedContentTypeName superType = superTypeString != null ? new QualifiedContentTypeName( superTypeString ) : null;
         final boolean isAbstract = Boolean.parseBoolean( contentTypeEl.getChildText( "is-abstract" ) );
         final boolean isFinal = Boolean.parseBoolean( contentTypeEl.getChildText( "is-final" ) );
 
         final ContentType.Builder contentTypeBuilder = newContentType().
-            name( contentTypeEl.getChildText( "name" ) ).
-            module( new Module( contentTypeEl.getChildText( "module" ) ) ).
-            displayName( contentTypeEl.getChildText( "display-name" ) ).
+            name( name ).
+            module( ModuleName.from( module ) ).
+            displayName( displayName ).
             superType( superType ).
             setAbstract( isAbstract ).
             setFinal( isFinal );

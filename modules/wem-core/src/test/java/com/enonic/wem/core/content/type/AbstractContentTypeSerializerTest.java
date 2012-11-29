@@ -61,7 +61,7 @@ public abstract class AbstractContentTypeSerializerTest
         set.add( layout );
         set.add( newSubTypeReference().name( "myCommonInput" ).subType( inputSubType ).build() );
 
-        ContentType.Builder contentTypeBuilder = newContentType().name( "AllBaseTypes" ).module( myModule );
+        ContentType.Builder contentTypeBuilder = newContentType().name( "AllBaseTypes" ).module( myModule.getName() );
         contentTypeBuilder.addFormItem( set );
         contentTypeBuilder.displayName( "All the Base Types" );
         contentTypeBuilder.superType( new QualifiedContentTypeName( "System:Content" ) );
@@ -148,7 +148,7 @@ public abstract class AbstractContentTypeSerializerTest
         FormItemSet set = newFormItemSet().name( "mySet" ).build();
         set.add( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
 
-        ContentType.Builder contentTypeBuilder = newContentType().name( "TypeWithSet" ).module( myModule );
+        ContentType.Builder contentTypeBuilder = newContentType().name( "TypeWithSet" ).module( myModule.getName() );
         contentTypeBuilder.addFormItem( set );
         ContentType contentType = contentTypeBuilder.build();
 
@@ -174,7 +174,7 @@ public abstract class AbstractContentTypeSerializerTest
                 newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
-        ContentType.Builder contentTypeBuilder = newContentType().name( "test" ).module( myModule );
+        ContentType.Builder contentTypeBuilder = newContentType().name( "test" ).module( myModule.getName() );
         contentTypeBuilder.addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
         contentTypeBuilder.addFormItem( newSubTypeReference( subType ).name( "home" ).build() );
         contentTypeBuilder.addFormItem( newSubTypeReference( subType ).name( "cabin" ).build() );
@@ -201,7 +201,7 @@ public abstract class AbstractContentTypeSerializerTest
         Input myOuterInput = newInput().name( "my-outer-input" ).type( InputTypes.TEXT_LINE ).build();
         FormItemSet myOuterSet = newFormItemSet().name( "my-outer-set" ).add( myOuterInput ).add( myInnerSet ).build();
         final ContentType contentType = newContentType().
-            module( myModule ).
+            module( myModule.getName() ).
             addFormItem( myOuterSet ).
             build();
 
@@ -228,7 +228,7 @@ public abstract class AbstractContentTypeSerializerTest
         fieldSetBuilder.add( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() );
         FieldSet layout = fieldSetBuilder.build();
 
-        ContentType.Builder contentTypeBuilder = newContentType().name( "test" ).module( myModule );
+        ContentType.Builder contentTypeBuilder = newContentType().name( "test" ).module( myModule.getName() );
         contentTypeBuilder.addFormItem( layout );
 
         String serialized = toString( contentTypeBuilder.build() );
@@ -246,7 +246,7 @@ public abstract class AbstractContentTypeSerializerTest
     public void given_formItem_with_validationRegex_when_parsed_then_it_exists()
     {
         // setup
-        ContentType.Builder contentTypeBuilder = newContentType().name( "test" ).module( myModule );
+        ContentType.Builder contentTypeBuilder = newContentType().name( "test" ).module( myModule.getName() );
         contentTypeBuilder.addFormItem( newInput().name( "myText" ).type( InputTypes.TEXT_LINE ).validationRegexp( "a*c" ).build() );
         String serialized = toString( contentTypeBuilder.build() );
 
@@ -278,7 +278,7 @@ public abstract class AbstractContentTypeSerializerTest
 
         ContentType.Builder contentTypeBuilder = newContentType().
             name( "AllInputTypes" ).
-            module( myModule ).
+            module( myModule.getName() ).
             displayName( "All the Input Types" ).
             superType( new QualifiedContentTypeName( "System:Content" ) ).
             setAbstract( false ).

@@ -11,7 +11,7 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 import com.enonic.wem.core.content.type.dao.ContentTypeDaoImpl;
 import com.enonic.wem.itest.AbstractJcrTest;
@@ -38,7 +38,7 @@ public class ContentTypeDaoImplTest
     {
         // setup
         final ContentType.Builder contentTypeBuilder = newContentType().
-            module( new Module( "myModule" ) ).
+            module( ModuleName.from( "myModule" ) ).
             name( "myContentType" ).
             setAbstract( false ).
             displayName( "My content type" );
@@ -59,7 +59,7 @@ public class ContentTypeDaoImplTest
     {
         // setup
         final ContentType.Builder contentTypeBuilder = newContentType().
-            module( new Module( "myModule" ) ).
+            module( ModuleName.from( "myModule" ) ).
             name( "myContentType" ).
             setAbstract( true ).
             displayName( "My content type" );
@@ -76,7 +76,7 @@ public class ContentTypeDaoImplTest
         assertEquals( 1, contentTypes.getSize() );
         final ContentType contentType1 = contentTypes.getFirst();
         assertEquals( "myContentType", contentType1.getName() );
-        assertEquals( "myModule", contentType1.getModule().getName() );
+        assertEquals( "myModule", contentType1.getModuleName().toString() );
         assertEquals( true, contentType1.isAbstract() );
         assertEquals( "My content type", contentType1.getDisplayName() );
     }
@@ -87,7 +87,7 @@ public class ContentTypeDaoImplTest
     {
         // setup
         final ContentType.Builder contentTypeBuilder = newContentType().
-            module( new Module( "myModule" ) ).
+            module( ModuleName.from( "myModule" ) ).
             name( "myContentType" ).
             setAbstract( true ).
             displayName( "My content type" );
@@ -95,7 +95,7 @@ public class ContentTypeDaoImplTest
         contentTypeDao.createContentType( session, contentTypeCreated1 );
 
         final ContentType.Builder contentTypeBuilder2 = newContentType().
-            module( new Module( "otherModule" ) ).
+            module( ModuleName.from( "otherModule" ) ).
             name( "someContentType" ).
             setAbstract( false ).
             displayName( "Another content type" );
@@ -114,12 +114,12 @@ public class ContentTypeDaoImplTest
         final ContentType contentType2 = contentTypes.getContentType( new QualifiedContentTypeName( "otherModule:someContentType" ) );
 
         assertEquals( "myContentType", contentType1.getName() );
-        assertEquals( "myModule", contentType1.getModule().getName() );
+        assertEquals( "myModule", contentType1.getModuleName().toString() );
         assertEquals( true, contentType1.isAbstract() );
         assertEquals( "My content type", contentType1.getDisplayName() );
 
         assertEquals( "someContentType", contentType2.getName() );
-        assertEquals( "otherModule", contentType2.getModule().getName() );
+        assertEquals( "otherModule", contentType2.getModuleName().toString() );
         assertEquals( false, contentType2.isAbstract() );
         assertEquals( "Another content type", contentType2.getDisplayName() );
     }
@@ -130,7 +130,7 @@ public class ContentTypeDaoImplTest
     {
         // setup
         final ContentType.Builder contentTypeBuilder = newContentType().
-            module( new Module( "myModule" ) ).
+            module( ModuleName.from( "myModule" ) ).
             name( "myContentType" ).
             setAbstract( true ).
             displayName( "My content type" );
@@ -157,7 +157,7 @@ public class ContentTypeDaoImplTest
         assertEquals( 1, contentTypesAfterUpdate.getSize() );
         final ContentType contentType1 = contentTypesAfterUpdate.getFirst();
         assertEquals( "myContentType", contentType1.getName() );
-        assertEquals( "myModule", contentType1.getModule().getName() );
+        assertEquals( "myModule", contentType1.getModuleName().toString() );
         assertEquals( false, contentType1.isAbstract() );
         assertEquals( "My content type-UPDATED", contentType1.getDisplayName() );
     }
@@ -168,7 +168,7 @@ public class ContentTypeDaoImplTest
     {
         // setup
         final ContentType.Builder contentTypeBuilder = newContentType().
-            module( new Module( "myModule" ) ).
+            module( ModuleName.from( "myModule" ) ).
             name( "myContentType" ).
             setAbstract( true ).
             displayName( "My content type" );

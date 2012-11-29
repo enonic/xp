@@ -5,9 +5,11 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.module.ModuleName;
+
 public abstract class ModuleBasedQualifiedName
 {
-    private final String moduleName;
+    private final ModuleName moduleName;
 
     private final String localName;
 
@@ -24,19 +26,19 @@ public abstract class ModuleBasedQualifiedName
         Preconditions.checkArgument( colonPos > 0, "QualifiedName is missing module name: " + qualifiedName );
         Preconditions.checkArgument( colonPos < qualifiedName.length() - 1, "QualifiedName is missing local name: " + qualifiedName );
 
-        this.moduleName = qualifiedName.substring( 0, colonPos );
+        this.moduleName = new ModuleName( qualifiedName.substring( 0, colonPos ) );
         this.localName = qualifiedName.substring( colonPos + 1, qualifiedName.length() );
         this.qualifiedName = qualifiedName;
     }
 
-    public ModuleBasedQualifiedName( final String moduleName, final String localName )
+    public ModuleBasedQualifiedName( final ModuleName moduleName, final String localName )
     {
         this.moduleName = moduleName;
         this.localName = localName;
         this.qualifiedName = moduleName + ":" + localName;
     }
 
-    public String getModuleName()
+    public ModuleName getModuleName()
     {
         return moduleName;
     }
