@@ -117,7 +117,7 @@
             {
                 "FormItemSet": {
                     "name": "collections",
-                    "label": "Set",
+                    "label": "Photo Galleries",
                     "immutable": false,
                     "occurrences": {
                         "minimum": 0,
@@ -128,7 +128,7 @@
                     "items": [
                         {
                             "Input": {
-                                "name": "set_name",
+                                "name": "gallery_name",
                                 "label": "Name",
                                 "immutable": false,
                                 "occurrences": {
@@ -138,7 +138,7 @@
                                 "indexed": false,
                                 "customText": null,
                                 "validationRegexp": null,
-                                "helpText": "Name for the set",
+                                "helpText": "Name for this gallery",
                                 "type": {
                                     "name": "TextLine",
                                     "builtIn": true
@@ -147,8 +147,8 @@
                         },
                         {
                             "Input": {
-                                "name": "set_items",
-                                "label": "Set",
+                                "name": "gallery_photos",
+                                "label": "Photos",
                                 "immutable": false,
                                 "occurrences": {
                                     "minimum": 0,
@@ -157,7 +157,7 @@
                                 "indexed": false,
                                 "customText": null,
                                 "validationRegexp": null,
-                                "helpText": "Add items to the set",
+                                "helpText": "Add photos to this gallery",
                                 "type": {
                                     "name": "Relation",
                                     "builtIn": true
