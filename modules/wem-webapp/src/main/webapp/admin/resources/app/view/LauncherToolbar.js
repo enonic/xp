@@ -21,13 +21,11 @@ Ext.define('Admin.view.LauncherToolbar', {
             renderTo: Ext.getBody(),
             listeners: {
                 login: function (cmp) {
-                    console.log('login');
                     cmp.loggedUser = {
                         img: '../html-templates/images/profile-image.png'
                     };
                 },
                 logout: function (cmp) {
-                    console.log('logout');
                     delete cmp.loggedUser;
                 }
             },
