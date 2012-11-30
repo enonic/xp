@@ -92,6 +92,7 @@ Ext.application({
                             region: 'center',
                             xtype: 'container',
                             id: 'center',
+                            autoScroll: true,
                             flex: 2,
                             bodyStyle: 'background-color: #fff;',
                             defaults: {
@@ -110,7 +111,6 @@ Ext.application({
                             items: [
                                 {
                                     xtype: 'textarea',
-                                    fieldStyle: 'background: #f7f7f7;padding: 10px;',
                                     id: 'output'
                                 }
                             ]

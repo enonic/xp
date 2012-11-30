@@ -138,7 +138,7 @@
                                 "indexed": false,
                                 "customText": null,
                                 "validationRegexp": null,
-                                "helpText": "Name for this gallery",
+                                "helpText": "Name for the gallery",
                                 "type": {
                                     "name": "TextLine",
                                     "builtIn": true
@@ -148,7 +148,7 @@
                         {
                             "Input": {
                                 "name": "gallery_photos",
-                                "label": "Photos",
+                                "label": "Set",
                                 "immutable": false,
                                 "occurrences": {
                                     "minimum": 0,
