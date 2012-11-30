@@ -14,7 +14,7 @@ public class DataArrayTest
     @Test
     public void add_adding_one_data()
     {
-        DataArray array = new DataArray( new EntryPath( "myArray" ) );
+        DataArray array = new DataArray( new EntryPath( "myArray" ), DataTypes.TEXT );
 
         array.add( Data.newData().path( new EntryPath( "myArray" ) ).type( DataTypes.TEXT ).value( "1" ).build() );
 
@@ -25,7 +25,7 @@ public class DataArrayTest
     @Test
     public void add_adding_two_data()
     {
-        DataArray array = new DataArray( new EntryPath( "myArray" ) );
+        DataArray array = new DataArray( new EntryPath( "myArray" ), DataTypes.TEXT );
 
         array.add( Data.newData().path( new EntryPath( "myArray" ) ).type( DataTypes.TEXT ).value( "1" ).build() );
         array.add( Data.newData().path( new EntryPath( "myArray" ) ).type( DataTypes.TEXT ).value( "2" ).build() );
@@ -38,11 +38,10 @@ public class DataArrayTest
     @Test
     public void add_adding_first_setting_second()
     {
-        DataArray array = new DataArray( new EntryPath( "myArray" ) );
+        DataArray array = new DataArray( new EntryPath( "myArray" ), DataTypes.TEXT );
 
         array.add( Data.newData().path( new EntryPath( "myArray" ) ).type( DataTypes.TEXT ).value( "1" ).build() );
-        array.set( 1, "2", DataTypes.TEXT );
-        array.set( new EntryPath( "myArray[1]" ), "2", DataTypes.TEXT );
+        array.set( 1, "2" );
 
         assertEquals( 2, array.size() );
         assertEquals( new EntryPath( "myArray[0]" ), array.getData( 0 ).getPath() );
@@ -52,7 +51,7 @@ public class DataArrayTest
     @Test
     public void add_adding_first_data_with_index_1_throws_exception()
     {
-        DataArray array = new DataArray( new EntryPath( "myArray" ) );
+        DataArray array = new DataArray( new EntryPath( "myArray" ), DataTypes.TEXT );
         try
         {
             array.add( Data.newData().path( new EntryPath( "myArray[1]" ) ).type( DataTypes.TEXT ).value( "1" ).build() );
@@ -69,7 +68,7 @@ public class DataArrayTest
     @Test
     public void add_adding_second_data_with_index_2_throws_exception()
     {
-        DataArray array = new DataArray( new EntryPath( "myArray" ) );
+        DataArray array = new DataArray( new EntryPath( "myArray" ), DataTypes.TEXT );
         array.add( Data.newData().path( new EntryPath( "myArray" ) ).type( DataTypes.TEXT ).value( "1" ).build() );
         try
         {
@@ -85,9 +84,25 @@ public class DataArrayTest
     }
 
     @Test
+    public void add_adding_data_not_of_expected_type_throws_exception()
+    {
+        DataArray array = new DataArray( new EntryPath( "myArray" ), DataTypes.DATE );
+        try
+        {
+            array.add( Data.newData().path( new EntryPath( "myArray" ) ).type( DataTypes.TEXT ).value( "1" ).build() );
+            fail( "Expected exception" );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( e instanceof IllegalArgumentException );
+            assertEquals( "DataArray [myArray] expects data of type [Date]. Data [myArray] was of type: Text", e.getMessage() );
+        }
+    }
+
+    @Test
     public void add_adding_data_with_path_not_within_path_of_array_throws_exception()
     {
-        DataArray array = new DataArray( new EntryPath( "mySet[0].myArray" ) );
+        DataArray array = new DataArray( new EntryPath( "mySet[0].myArray" ), DataTypes.TEXT );
 
         // exercise & verify
         try

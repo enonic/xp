@@ -55,7 +55,7 @@ public class CreateOrUpdateContentTypeRpcHandlerTest
     public void testUpdateContentType()
         throws Exception
     {
-        final ContentType existingContentType = ContentType.newContentType().name( "aType" ).module( Module.SYSTEM ).build();
+        final ContentType existingContentType = ContentType.newContentType().name( "aType" ).module( Module.SYSTEM.getName() ).build();
         final ContentTypes contentTypes = ContentTypes.from( existingContentType );
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( contentTypes );
 

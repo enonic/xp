@@ -7,9 +7,10 @@ Ext.application({
     requires: [
         'ContentDataPanel',
         'Admin.lib.inputtypes.HtmlArea',
+        'Admin.lib.inputtypes.FormItemSet',
         'Admin.lib.inputtypes.Relation',
-        'Admin.lib.inputtypes.TextLine',
-        'Admin.lib.inputtypes.TextArea'
+        'Admin.lib.inputtypes.TextArea',
+        'Admin.lib.inputtypes.TextLine'
     ],
 
     launch: function () {
@@ -20,10 +21,9 @@ Ext.application({
                     var viewport = Ext.ComponentQuery.query('viewport')[0];
                     var center = Ext.getCmp('center');
 
-                    var renderTimeStart = new Date().getTime(),
-                        renderTimeStop;
-
-                    center.removeAll();
+                    if (center.down()) {
+                        center.remove(center.down());
+                    }
 
                     var json = Ext.JSON.decode(response.responseText, true);
                     var contentDataPanel = new ContentDataPanel({
@@ -33,10 +33,7 @@ Ext.application({
 
                     center.add(contentDataPanel);
 
-                    renderTimeStop = new Date().getTime();
-                    var totalTime = renderTimeStop - renderTimeStart;
-
-                    Ext.getCmp('output').setValue(json.contentType.qualifiedName + '\n\nTotal load and render time: ' + totalTime + 'ms\n\nJSON:\n\n' + response.responseText);
+                    Ext.getCmp('output').setValue(json.contentType.qualifiedName + '\n\nJSON:\n\n' + response.responseText);
                 }
             });
         }
@@ -58,6 +55,7 @@ Ext.application({
                             border: false,
                             xtype: 'toolbar',
                             height: 40,
+                            style: 'background: #000; color: #e1e1e1',
                             defaults: {
                                 margin: '0 5'
                             },
@@ -72,7 +70,7 @@ Ext.application({
                                             {file: 'mock-contenttype-htmlarea.json', qualifiedName: 'Demo:HtmlArea'},
                                             {file: 'mock-contenttype-relation.json', qualifiedName: 'Demo:Relation'},
                                             {file: 'mock-contenttype-textarea.json', qualifiedName: 'Demo:TextArea'},
-                                            {file: 'mock-contenttype-set.json', qualifiedName: 'Demo:Set'}
+                                            {file: 'mock-contenttype-set.json', qualifiedName: 'Demo:FormItemSet'}
                                         ]
                                     }),
                                     queryMode: 'local',
@@ -83,7 +81,7 @@ Ext.application({
                                             loadContentType(combo.getValue());
                                         },
                                         render: function (combo) {
-                                            combo.setValue('mock-contenttype-relation.json');
+                                            combo.setValue('mock-contenttype-set.json');
                                             loadContentType(combo.getValue());
                                         }
                                     }
@@ -105,6 +103,7 @@ Ext.application({
                             xtype: 'container',
                             flex: 1,
                             layout: 'fit',
+                            padding: 0,
                             defaults: {
                                 anchor: '100%'
                             },

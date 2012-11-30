@@ -19,7 +19,7 @@ import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.exception.ContentAlreadyExistException;
 import com.enonic.wem.api.exception.ContentNotFoundException;
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.content.ContentPathNameGenerator;
 import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
@@ -47,7 +47,7 @@ public final class CreateOrUpdateContentRpcHandler
         componentSet.add( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() );
 
         final ContentType myContentType = newContentType().
-            module( Module.newModule().name( "myModule" ).build() ).
+            module( ModuleName.from( "myModule" ) ).
             name( "myContentType" ).
             addFormItem( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() ).
             addFormItem( newInput().name( "myTextLine2" ).type( InputTypes.TEXT_LINE ).build() ).

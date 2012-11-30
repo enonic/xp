@@ -1,14 +1,14 @@
 Ext.define('ContentDataPanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.contentDataPanel',
-    typeMapping: {
-        TextLine: "textfield",
-        TextArea: "textarea"
-    },
 
     contentTypeItems: [],
     content: null, // content to be edited
 
+    autoDestroy: true,
+
+    // Temporary form submit button
+    buttonAlign: 'left',
     buttons: [{
         text: 'Submit',
         formBind: true, //only enabled once the form is valid
@@ -22,19 +22,9 @@ Ext.define('ContentDataPanel', {
         }
     }],
 
-    buttonAlign: 'left',
-
     initComponent: function () {
         var me = this;
-        // set values in fields if editing existing content
-        /*
-         var editedContentValues = {};
-         if (this.content && this.content.data) {
-         Ext.each(this.content.data, function (dataItem) {
-         editedContentValues[dataItem.name] = dataItem.value;
-         });
-         }
-         */
+
         me.items = [];
 
         me.addFormFields(me.contentTypeItems, me);
@@ -42,43 +32,120 @@ Ext.define('ContentDataPanel', {
         me.callParent(arguments);
     },
 
+
     addFormFields: function (contentTypeItems, container) {
         var me = this;
-        Ext.each(contentTypeItems, function (contentTypeItem) {
-            var inputTypeName = contentTypeItem.Input.type.name;
-            var xtype = 'widget.input.' + inputTypeName;
-            if (!me.formFieldIsSupported(xtype)) {
+        var formField;
+
+        Ext.each(contentTypeItems, function (item) {
+            /*
+            if (!me.formWidgetIsSupported(widgetName)) {
                 console.error('Unsupported input type', contentTypeItem);
                 return;
             }
+            */
 
-            var item = me.createFormField(contentTypeItem, xtype);
-            container.items.push(item);
-        });
-    },
-
-    createFormField: function (contentTypeItem, widgetAlias) {
-        return Ext.create({
-            xclass: widgetAlias,
-            fieldLabel: contentTypeItem.Input.label,
-            name: contentTypeItem.Input.name,
-            itemId: contentTypeItem.Input.name,
-            cls: 'span-3',
-            listeners: {
-                render: function (cmp) {
-                    Ext.tip.QuickTipManager.register({
-                        target: cmp.el,
-                        text: contentTypeItem.Input.helpText
-                    });
-                }
+            if (item.FormItemSet) {
+                formField = me.createFormItemSet(item.FormItemSet);
+            } else { // Input
+                formField = me.createInput(item.Input);
             }
-            // value: editedContentValues[contentTypeItem.name]
+
+            if (container.getXType() === 'input.FormItemSet' || container.getXType() === 'fieldcontainer') {
+                container.add(formField);
+            } else {
+                container.items.push(formField);
+            }
+
         });
     },
 
-    formFieldIsSupported: function (xtype) {
-        return Ext.ClassManager.getByAlias(xtype);
+
+    createFormItemSet: function (formItemSetConfig) {
+        var me = this;
+        var formItemSet = Ext.create({
+            xclass: 'widget.input.FormItemSet',
+            fieldLabel: formItemSetConfig.label,
+            name: formItemSetConfig.name,
+            contentTypeItems: formItemSetConfig.items || null
+
+        });
+        if (formItemSetConfig.items) {
+            me.insertFormItemSetBlock(formItemSet, 0);
+        }
+
+        return formItemSet;
     },
+
+
+    insertFormItemSetBlock: function (formItemSet, position) {
+        var me = this;
+
+        // May use regular container here
+        var block = new Ext.form.FieldContainer({
+            //style: 'border-bottom: 1px solid #aaa;',
+            layout: 'anchor'
+        });
+
+        me.addFormFields(formItemSet.contentTypeItems, block);
+
+        // Add and remove buttons
+        block.add({
+            xtype: 'container',
+            margin: '10 0 5 0',
+            padding: '0 0 0 0',
+            style: 'text-align: right; border-top: 1px dotted #aaa',
+
+            defaults: {
+            },
+
+            items: [
+                {
+                    xtype: 'button',
+                    text: '+',
+                    margin: '0 5 0 0',
+                    handler: function (button) {
+                        if (me.contentTypeItems) {
+                            var pos = me.getPositionForFormItemSetBlock(formItemSet, block) + 1;
+                            me.insertFormItemSetBlock(formItemSet, pos);
+                        }
+                    }
+                },
+                {
+                    xtype: 'button',
+                    text: '-',
+                    handler: function (button) {
+                        block.destroy();
+                    }
+                }
+            ]
+        });
+
+        formItemSet.insert(position, block);
+    },
+
+
+    getPositionForFormItemSetBlock: function (formItemSet, block) {
+        return formItemSet.items.indexOf(block)
+    },
+
+
+    createInput: function (inputConfig) {
+        var me = this;
+        var widget = 'widget.input.' + inputConfig.type.name;
+
+        return Ext.create({
+            xclass: widget,
+            fieldLabel: inputConfig.label,
+            name: inputConfig.name
+        });
+    },
+
+
+    formWidgetIsSupported: function (alias) {
+        return Ext.ClassManager.getByAlias(alias);
+    },
+
 
     getData: function () {
         return this.getForm().getFieldValues();

@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 
 import static com.enonic.wem.api.command.Commands.contentType;
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
@@ -59,7 +60,7 @@ public class ContentTypesInitializer
         final Input body =
             newInput().name( "body" ).type( TEXT_AREA ).label( "Body" ).required( true ).helpText( "Body of the article" ).build();
         final ContentType articleContentType = newContentType().
-            module( Module.newModule().name( "News" ).build() ).
+            module( ModuleName.from( "News" ) ).
             name( "Article" ).
             superType( CONTENT.getQualifiedName() ).
             addFormItem( title ).
@@ -72,7 +73,7 @@ public class ContentTypesInitializer
         formItemSet.add( newInput().name( "author" ).label( "Author" ).type( TEXT_LINE ).build() );
         formItemSet.add( newInput().name( "category" ).label( "Category" ).type( TEXT_LINE ).build() );
         final ContentType article2ContentType = newContentType().
-            module( Module.newModule().name( "News" ).build() ).
+            module( ModuleName.from( "News" ) ).
             name( "Article2" ).
             superType( CONTENT.getQualifiedName() ).
             addFormItem( title.copy() ).
@@ -96,14 +97,13 @@ public class ContentTypesInitializer
     private static ContentType createSystemType( final String displayName, final String name, final boolean isFinal,
                                                  final boolean isAbstract )
     {
-        final ContentType contentType = newContentType().
-            module( Module.SYSTEM ).
+        return newContentType().
+            module( Module.SYSTEM.getName() ).
             name( name ).
             displayName( displayName ).
             setFinal( isFinal ).
             setAbstract( isAbstract ).
             build();
-        return contentType;
     }
 
     @Autowired

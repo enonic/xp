@@ -14,7 +14,7 @@ import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.web.json.ObjectMapperHelper;
 
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
@@ -92,7 +92,7 @@ public class ContentDataParserTest
         final FormItemSet formItemSet = newFormItemSet().name( "myFormItemSet" ).build();
         formItemSet.add( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
         final ContentType myContentType = newContentType().
-            module( Module.newModule().name( "myModule" ).build() ).
+            module( ModuleName.from( "myModule" ) ).
             name( "myContentType" ).
             addFormItem( formItemSet ).
             build();

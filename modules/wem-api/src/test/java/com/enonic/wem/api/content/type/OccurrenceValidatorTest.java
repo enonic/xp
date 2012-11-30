@@ -23,7 +23,7 @@ public class OccurrenceValidatorTest
     public void before()
     {
         contentType = newContentType().
-            module( Module.SYSTEM ).
+            module( Module.SYSTEM.getName() ).
             name( "MyType" ).
             build();
     }

@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.editor.ContentTypeEditor;
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 
@@ -48,7 +48,7 @@ public class UpdateContentTypesHandlerTest
         // setup
         final ContentType contentType = newContentType().
             name( "myContentType" ).
-            module( new Module( "myModule" ) ).
+            module( ModuleName.from( "myModule" ) ).
             displayName( "My content type" ).
             setAbstract( false ).
             build();

@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.form.Input;
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
@@ -53,7 +53,7 @@ public class GetContentTypeRpcHandlerTest
                 true ).build();
 
         final ContentType contentType = newContentType().
-            module( Module.newModule().name( "myModule" ).build() ).
+            module( ModuleName.from( "myModule" ) ).
             name( "myCtype" ).
             addFormItem( inputText1 ).
             addFormItem( inputText2 ).

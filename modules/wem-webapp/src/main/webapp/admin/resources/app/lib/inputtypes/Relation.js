@@ -1,8 +1,7 @@
 Ext.define('Admin.lib.inputtypes.Relation', {
-    extend: 'Ext.form.FieldContainer',
+    extend: 'Admin.lib.inputtypes.Base',
     alias: 'widget.input.Relation',
     fieldLabel: 'Relation',
-    width: 580,
     initComponent: function () {
         var me = this;
 
@@ -35,7 +34,6 @@ Ext.define('Admin.lib.inputtypes.Relation', {
             submitValue: false,
             hideTrigger: true,
             forceSelection: true,
-            width: 350,
             minChars: 1,
             queryMode: 'remote',
             autoSelect: false,

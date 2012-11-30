@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItems;
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.content.XmlParsingException;
 import com.enonic.wem.core.content.type.form.FormItemsXmlSerializer;
 
@@ -52,17 +52,19 @@ public class ContentTypeXmlSerializer
         return new Document( typeEl );
     }
 
-
     private void generate( final ContentType type, final Element typeEl )
     {
         typeEl.addContent( new Element( "name" ).setText( type.getName() ) );
-        typeEl.addContent( new Element( "module" ).setText( type.getModule().getName() ) );
-        typeEl.addContent( new Element( "qualifiedName" ).setText( type.getQualifiedName().toString() ) );
-        typeEl.addContent( new Element( "displayName" ).setText( type.getDisplayName() ) );
-        typeEl.addContent( new Element( "superType" ).setText( type.getSuperType() != null ? type.getSuperType().toString() : null ) );
-        typeEl.addContent( new Element( "isAbstract" ).setText( Boolean.toString( type.isAbstract() ) ) );
-        typeEl.addContent( new Element( "isFinal" ).setText( Boolean.toString( type.isFinal() ) ) );
-        typeEl.addContent( formItemsSerializer.serialize( type.form().formItemIterable() ) );
+        typeEl.addContent( new Element( "module" ).setText( type.getModuleName().toString() ) );
+        typeEl.addContent( new Element( "qualified-name" ).setText( type.getQualifiedName().toString() ) );
+        typeEl.addContent( new Element( "display-name" ).setText( type.getDisplayName() ) );
+        typeEl.addContent( new Element( "super-type" ).setText( type.getSuperType() != null ? type.getSuperType().toString() : null ) );
+        typeEl.addContent( new Element( "is-abstract" ).setText( Boolean.toString( type.isAbstract() ) ) );
+        typeEl.addContent( new Element( "is-final" ).setText( Boolean.toString( type.isFinal() ) ) );
+
+        final Element formEl = new Element( "form" );
+        typeEl.addContent( formEl );
+        formItemsSerializer.serialize( type.form().formItemIterable(), formEl );
     }
 
     public ContentType toContentType( String xml )
@@ -87,22 +89,26 @@ public class ContentTypeXmlSerializer
     private ContentType parse( final Element contentTypeEl )
         throws IOException
     {
-        final String superTypeValue = StringUtils.trimToNull( contentTypeEl.getChildText( "superType" ) );
-        final QualifiedContentTypeName superType = superTypeValue != null ? new QualifiedContentTypeName( superTypeValue ) : null;
-        final boolean isAbstract = Boolean.parseBoolean( contentTypeEl.getChildText( "isAbstract" ) );
-        final boolean isFinal = Boolean.parseBoolean( contentTypeEl.getChildText( "isFinal" ) );
+        final String module = contentTypeEl.getChildText( "module" );
+        final String name = contentTypeEl.getChildText( "name" );
+        final String displayName = contentTypeEl.getChildText( "display-name" );
+        final String superTypeString = StringUtils.trimToNull( contentTypeEl.getChildText( "super-type" ) );
+        final QualifiedContentTypeName superType = superTypeString != null ? new QualifiedContentTypeName( superTypeString ) : null;
+        final boolean isAbstract = Boolean.parseBoolean( contentTypeEl.getChildText( "is-abstract" ) );
+        final boolean isFinal = Boolean.parseBoolean( contentTypeEl.getChildText( "is-final" ) );
 
         final ContentType.Builder contentTypeBuilder = newContentType().
-            name( contentTypeEl.getChildText( "name" ) ).
-            module( new Module( contentTypeEl.getChildText( "module" ) ) ).
-            displayName( contentTypeEl.getChildText( "displayName" ) ).
+            name( name ).
+            module( ModuleName.from( module ) ).
+            displayName( displayName ).
             superType( superType ).
             setAbstract( isAbstract ).
             setFinal( isFinal );
 
         try
         {
-            final FormItems formItems = formItemsSerializer.parse( contentTypeEl );
+            final Element formEl = contentTypeEl.getChild( "form" );
+            final FormItems formItems = formItemsSerializer.parse( formEl );
             for ( FormItem formItem : formItems )
             {
                 contentTypeBuilder.addFormItem( formItem );

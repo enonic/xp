@@ -6,8 +6,8 @@
         "items": [
             {
                 "Input": {
-                    "name": "title",
-                    "label": "Title",
+                    "name": "name",
+                    "label": "Full Name",
                     "immutable": false,
                     "occurrences": {
                         "minimum": 1,
@@ -26,7 +26,7 @@
             {
                 "FormItemSet": {
                     "name": "mySet",
-                    "label": null,
+                    "label": "Address",
                     "immutable": false,
                     "occurrences": {
                         "minimum": 0,
@@ -37,8 +37,8 @@
                     "items": [
                         {
                             "Input": {
-                                "name": "image",
-                                "label": "Image",
+                                "name": "label",
+                                "label": "Label",
                                 "immutable": false,
                                 "occurrences": {
                                     "minimum": 0,
@@ -47,17 +47,17 @@
                                 "indexed": false,
                                 "customText": null,
                                 "validationRegexp": null,
-                                "helpText": "Select image",
+                                "helpText": "Give this address a label",
                                 "type": {
-                                    "name": "Relation",
+                                    "name": "TextLine",
                                     "builtIn": true
                                 }
                             }
                         },
                         {
                             "Input": {
-                                "name": "text",
-                                "label": "Text",
+                                "name": "street",
+                                "label": "Street",
                                 "immutable": false,
                                 "occurrences": {
                                     "minimum": 0,
@@ -66,17 +66,108 @@
                                 "indexed": false,
                                 "customText": null,
                                 "validationRegexp": null,
-                                "helpText": "Image text",
+                                "helpText": "Street",
                                 "type": {
-                                    "name": "TextArea",
+                                    "name": "TextLine",
+                                    "builtIn": true
+                                }
+                            }
+                        },
+                        {
+                            "Input": {
+                                "name": "postal_code",
+                                "label": "Postal Code",
+                                "immutable": false,
+                                "occurrences": {
+                                    "minimum": 0,
+                                    "maximum": 1
+                                },
+                                "indexed": false,
+                                "customText": null,
+                                "validationRegexp": null,
+                                "helpText": "Postal Code",
+                                "type": {
+                                    "name": "TextLine",
+                                    "builtIn": true
+                                }
+                            }
+                        },
+                        {
+                            "Input": {
+                                "name": "postal_address",
+                                "label": "Postal Address ",
+                                "immutable": false,
+                                "occurrences": {
+                                    "minimum": 0,
+                                    "maximum": 1
+                                },
+                                "indexed": false,
+                                "customText": null,
+                                "validationRegexp": null,
+                                "helpText": "Postal Address",
+                                "type": {
+                                    "name": "TextLine",
                                     "builtIn": true
                                 }
                             }
                         }
                     ]
-
+                }
+            },
+            {
+                "FormItemSet": {
+                    "name": "collections",
+                    "label": "Set",
+                    "immutable": false,
+                    "occurrences": {
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "customText": null,
+                    "helpText": null,
+                    "items": [
+                        {
+                            "Input": {
+                                "name": "set_name",
+                                "label": "Name",
+                                "immutable": false,
+                                "occurrences": {
+                                    "minimum": 0,
+                                    "maximum": 1
+                                },
+                                "indexed": false,
+                                "customText": null,
+                                "validationRegexp": null,
+                                "helpText": "Name for the set",
+                                "type": {
+                                    "name": "TextLine",
+                                    "builtIn": true
+                                }
+                            }
+                        },
+                        {
+                            "Input": {
+                                "name": "set_items",
+                                "label": "Set",
+                                "immutable": false,
+                                "occurrences": {
+                                    "minimum": 0,
+                                    "maximum": 1
+                                },
+                                "indexed": false,
+                                "customText": null,
+                                "validationRegexp": null,
+                                "helpText": "Add items to the set",
+                                "type": {
+                                    "name": "Relation",
+                                    "builtIn": true
+                                }
+                            }
+                        }
+                    ]
                 }
             }
+
         ]
     }
 }

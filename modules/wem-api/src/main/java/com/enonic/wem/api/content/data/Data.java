@@ -39,6 +39,10 @@ public final class Data
         {
             getDataSet().setEntryPathIndex( path, index );
         }
+        else if ( type == DataTypes.ARRAY )
+        {
+            getDataArray().setEntryPathIndex( path, index );
+        }
     }
 
     public EntryPath getPath()
@@ -46,7 +50,7 @@ public final class Data
         return path;
     }
 
-    public DataType getDataType()
+    public BaseDataType getDataType()
     {
         return type;
     }

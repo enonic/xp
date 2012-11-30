@@ -1,0 +1,55 @@
+Ext.define('Admin.view.contentStudio.TreeGridPanel', {
+    extend: 'Admin.view.TreeGridPanel',
+    alias: 'widget.contentTypeTreeGridPanel',
+    store: 'Admin.store.contentStudio.ContentTypeStore',
+    treeStore: 'Admin.store.contentStudio.ContentTypeTreeStore',
+    requires: 'Admin.view.contentStudio.BrowseToolbar',
+    dockedItems: [
+        {
+            xtype: 'contentStudio.browseToolbar'
+        }
+    ],
+
+    iconClasses: {
+        form: 'icon-form-32',
+        folder: 'icon-folder-32',
+        media: 'icon-media-32',
+        shortcut: 'icon-shortcut-32',
+        struct: 'icon-struct-32'
+    },
+
+    initComponent: function () {
+        this.columns = [
+            {
+                header: 'Name',
+                dataIndex: 'name',
+                flex: 1,
+                renderer: this.nameRenderer
+            },
+            {
+                header: 'Last Modified',
+                dataIndex: 'modifiedTime',
+                renderer: this.prettyDateRenderer
+            }
+        ];
+        this.callParent(arguments);
+    },
+
+    nameRenderer: function (value, p, record) {
+        var contentType = record.data;
+        var icon = contentType.icon === '' ? 'resources/images/icons/32x32/cubes.png' : contentType.icon;
+        return Ext.String.format(Templates.contentStudio.gridPanelRenderer, icon, contentType.name, contentType.qualifiedName);
+    },
+
+    prettyDateRenderer: function (value, p, record) {
+        try {
+            if (parent && Ext.isFunction(parent.humane_date)) {
+                return parent.humane_date(value);
+            } else {
+                return value;
+            }
+        } catch (e) {
+            return value;
+        }
+    }
+});

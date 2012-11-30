@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content>
+  <name/>
+  <type>myModule:myType</type>
+  <data>
+    <mySet type="Set">
+      <myArray type="Text">1</myArray>
+      <myArray type="Text">2</myArray>
+    </mySet>
+  </data>
+</content>
+

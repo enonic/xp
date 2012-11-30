@@ -80,7 +80,7 @@ Class('AdminTestUtil', {
         createContentTypeModel: function () {
             var Ext = this.global.Ext;
 
-            return Ext.create('Admin.model.datadesigner.ContentTypeModel', {
+            return Ext.create('Admin.model.contentStudio.ContentTypeModel', {
                 'key': '89FDS79F87SD9F7SD89F798A7FA0',
                 'type': 'article',
                 'extends': 'base',
