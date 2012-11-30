@@ -4,70 +4,37 @@ Ext.define('Admin.view.account.wizard.user.UserWizardToolbar', {
 
     border: false,
 
+    cls: 'admin-toolbar',
+
     isNewUser: true,
 
     initComponent: function () {
 
-        var buttonDefaults = {
-            scale: 'medium',
-            iconAlign: 'top',
-            minWidth: 64
-        };
-
         var leftGrp = [
             {
-                xtype: 'buttongroup',
-                columns: 1,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        text: 'Save',
-                        action: 'saveUser',
-                        itemId: 'save',
-                        disabled: true,
-                        iconCls: 'icon-save-24'
-                    }
-                ]
+                text: 'Save',
+                action: 'saveUser',
+                itemId: 'save',
+                disabled: true
             }
         ];
 
         if (!this.isNewUser) {
-            leftGrp.push({
-                xtype: 'buttongroup',
-                columns: 1,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        text: 'Delete',
-                        action: 'deleteUser',
-                        iconCls: 'icon-delete-user-24'
-                    }
-                ]
-            }, {
-                xtype: 'buttongroup',
-                columns: 1,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        text: 'Change Password',
-                        action: 'changePassword',
-                        iconCls: 'icon-change-password-24'
-                    }
-                ]
-            });
+            leftGrp.push(
+                {
+                    text: 'Delete',
+                    action: 'deleteUser'
+                },
+                {
+                    text: 'Change Password',
+                    action: 'changePassword'
+                }
+            );
         }
 
         var rightGrp = {
-            xtype: 'buttongroup',
-            columns: 1,
-            defaults: buttonDefaults,
-            items: [
-                {
-                    text: 'Close',
-                    action: 'closeWizard',
-                    iconCls: 'icon-cancel-24'
-                }
-            ]
+            text: 'Close',
+            action: 'closeWizard'
         };
 
         this.items = leftGrp.concat([ '->', rightGrp ]);

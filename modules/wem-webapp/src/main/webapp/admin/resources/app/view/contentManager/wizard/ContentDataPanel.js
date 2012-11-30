@@ -59,10 +59,13 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     },
 
     parseItemType: function (contentItem) {
-        if (!contentItem.inputType) {
-            return null;
+        var baseType;
+        for (baseType in contentItem) {
+            if (contentItem.hasOwnProperty(baseType) && contentItem[baseType].type) {
+                return this.typeMapping[contentItem[baseType].type.name];
+            }
         }
-        return this.typeMapping[contentItem.inputType.name];
+        return null;
     },
 
     getData: function () {

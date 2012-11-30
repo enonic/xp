@@ -4,123 +4,68 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
 
     border: false,
 
+    cls: 'admin-toolbar',
+
     isNewGroup: true,
 
     initComponent: function () {
 
-        var buttonDefaults = {
-            scale: 'medium',
-            iconAlign: 'top',
-            minWidth: 64
-        };
         this.items = [
+
             {
-                xtype: 'buttongroup',
-                columns: 2,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        text: 'Save',
-                        itemId: 'save',
-                        iconCls: 'icon-save-24',
-                        action: 'saveContent'
-                    },
-                    {
-                        text: 'Publish',
-                        itemId: 'publish',
-                        iconCls: 'icon-publish-24',
-                        action: 'publishContent'
-                    }
-                ]
+                text: 'Save',
+                itemId: 'save',
+                action: 'saveContent'
             },
             {
-                xtype: 'buttongroup',
-                columns: 1,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        text: 'Delete',
-                        itemId: 'delete',
-                        action: 'deleteContent',
-                        iconCls: 'icon-delete-24'
-                    }
-                ]
+                text: 'Publish',
+                itemId: 'publish',
+                action: 'publishContent'
+            },
+
+            {
+                text: 'Delete',
+                itemId: 'delete',
+                action: 'deleteContent'
+            },
+
+            {
+                text: 'Duplicate',
+                itemId: 'duplicate',
+                action: 'duplicateContent'
             },
             {
-                xtype: 'buttongroup',
-                columns: 2,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        text: 'Duplicate',
-                        itemId: 'duplicate',
-                        action: 'duplicateContent',
-                        iconCls: 'icon-copy-24'
-                    },
-                    {
-                        text: 'Move',
-                        itemId: 'move',
-                        iconCls: 'icon-move-24',
-                        action: 'moveContent'
-                    }
-                ]
+                text: 'Move',
+                itemId: 'move',
+                action: 'moveContent'
+            },
+
+            {
+                text: 'Relations',
+                itemId: 'relations',
+                action: 'contentRelations'
             },
             {
-                xtype: 'buttongroup',
-                columns: 2,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        text: 'Relations',
-                        itemId: 'relations',
-                        iconCls: 'icon-relation-24',
-                        action: 'contentRelations'
-                    },
-                    {
-                        text: 'History',
-                        itemId: 'history',
-                        iconCls: 'icon-history-24',
-                        action: 'contentHistory'
-                    }
-                ]
+                text: 'History',
+                itemId: 'history',
+                action: 'contentHistory'
             },
+
             {
-                xtype: 'buttongroup',
-                columns: 1,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        text: 'Export',
-                        itemId: 'export',
-                        iconCls: 'icon-export-24',
-                        action: 'exportContent'
-                    }
-                ]
+                text: 'Export',
+                itemId: 'export',
+                action: 'exportContent'
             },
             '->',
+
             {
-                xtype: 'buttongroup',
-                columns: 1,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        text: 'Form View',
-                        action: 'cycleMode',
-                        iconCls: 'icon-keyboard-key-24'
-                    }
-                ]
+                text: 'Form View',
+                action: 'cycleMode'
             },
+
             {
-                xtype: 'buttongroup',
-                columns: 1,
-                defaults: buttonDefaults,
-                items: [
-                    {
-                        text: 'Close',
-                        action: 'closeWizard',
-                        iconCls: 'icon-cancel-24'
-                    }
-                ]
+                text: 'Close',
+                action: 'closeWizard'
             }
 
         ];
