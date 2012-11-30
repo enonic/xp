@@ -81,8 +81,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
 
     resolveIconClass: function (data, size) {
-        console.log("details:");
-        console.log(this);
         var iconCls = "";
         var nodeType = data.type;
         var iconClasses;

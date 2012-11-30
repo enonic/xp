@@ -17,7 +17,11 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
             {
                 xtype: 'splitbutton',
                 text: ' New',
-                action: 'newContent',
+                listeners: {
+                    click: function (button) {
+                        button.showMenu();
+                    }
+                },
                 cls: 'x-btn-as-arrow',
                 menu: Ext.create('Admin.view.MegaMenu', {
                     recentCount: 4,

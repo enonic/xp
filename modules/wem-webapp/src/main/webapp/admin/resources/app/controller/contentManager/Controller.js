@@ -96,7 +96,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 createTabFromResponse: createContentTabFn
             };
             var tabItem = {
-                itemId: 'edit-content-tab-' + selectedContent.get('path'),
+                id: 'edit-content-tab-' + selectedContent.get('path'),
                 title: selectedContent.get('displayName'),
                 closable: true,
                 layout: 'fit'
@@ -111,7 +111,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 createTabFromResponse: createSiteTabFn
             };
             var tabItem = {
-                itemId: 'edit-site-tab-' + selectedContent.get('path'),
+                id: 'edit-site-tab-' + selectedContent.get('path'),
                 title: selectedContent.get('displayName'),
                 closable: true,
                 layout: 'fit'
