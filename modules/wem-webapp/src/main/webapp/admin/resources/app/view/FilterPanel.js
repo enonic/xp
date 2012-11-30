@@ -10,6 +10,7 @@ Ext.define('Admin.view.FilterPanel', {
     },
     autoScroll: true,
 
+    split: true,
     includeSearch: true,
     includeFacets: undefined,
     excludeFacets: [],

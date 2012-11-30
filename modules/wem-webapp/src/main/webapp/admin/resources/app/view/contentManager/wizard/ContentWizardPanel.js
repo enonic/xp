@@ -12,6 +12,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         align: 'stretch'
     },
 
+    header: false,
+
     border: 0,
     autoScroll: true,
 

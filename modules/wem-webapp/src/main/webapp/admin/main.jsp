@@ -84,12 +84,12 @@
                     html: '<div id="app-frames" style="height: 100%; width: 100%;"><!-- --></div>'
                   }
                 ]
-              },
-              {
-                region: 'east',
-                xtype: 'activityStreamPanel',
-                collapsed: true
               }
+              //{
+              //  region: 'east',
+              //  xtype: 'activityStreamPanel',
+              //  collapsed: true
+              //}
             ]
           });
         }

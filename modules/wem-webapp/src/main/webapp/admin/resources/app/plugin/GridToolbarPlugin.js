@@ -19,7 +19,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         me.orderByDirectionButton = me.createOrderByDirectionButton();
 
         if (Ext.isFunction(me.toolbar.store.getCount)) {
-            me.updateResultCount(me.toolbar.store.getCount());
+            me.updateResultCount(me.getCount(me.toolbar.store));
         } else if (Ext.isString(me.toolbar.store)) {
             me.toolbar.store = Ext.StoreManager.lookup(me.toolbar.store);
         }
@@ -41,7 +41,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
 
         if (me.toolbar.store) {
             me.toolbar.store.on('load', function (store) {
-                me.updateResultCount(store.getCount());
+                me.updateResultCount(me.getCount(store));
             });
 
             // TODO: Listen for other store changes
@@ -133,7 +133,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
     updateSelectAll: function (selected) {
         var btn = this.selectAllButton;
         var isSelectMode = btn.el.hasCls('admin-grid-toolbar-btn-none-selected');
-        var areAllRecordsSelected = !Ext.isEmpty(selected) && this.toolbar.store.getCount() == selected.length;
+        var areAllRecordsSelected = !Ext.isEmpty(selected) && this.getCount(this.toolbar.store) == selected.length;
         // switch from select all to deselect all in case we selected all records, and vice versa otherwise
         if (areAllRecordsSelected && isSelectMode) {
             btn.el.setHTML('Deselect all');
@@ -141,6 +141,29 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         } else if (!areAllRecordsSelected && !isSelectMode) {
             btn.el.setHTML('Select all');
             btn.el.addCls('admin-grid-toolbar-btn-none-selected');
+        }
+    },
+
+    getCount: function (store) {
+        if (store instanceof Ext.data.Store) {
+            return store.getTotalCount();
+        } else if (store instanceof Ext.data.TreeStore) {
+            // We always have virtual root node, no need to count it
+            return this.countTreeNodes(store.getRootNode()) - 1;
+        } else {
+            return undefined;
+        }
+    },
+
+    countTreeNodes: function (node) {
+        if (Ext.isEmpty(node.childNodes)) {
+            return 1;
+        } else {
+            var count = 1;
+            node.eachChild(function (child) {
+                count += this.countTreeNodes(child);
+            }, this);
+            return count;
         }
     }
 
