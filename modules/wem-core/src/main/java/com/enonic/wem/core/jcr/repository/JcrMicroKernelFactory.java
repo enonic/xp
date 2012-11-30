@@ -19,7 +19,7 @@ public final class JcrMicroKernelFactory
 
     private File location;
 
-    private boolean inMemoryRepo = true;
+    private boolean inMemoryRepo = false;
 
     @Override
     public MicroKernel getObject()
