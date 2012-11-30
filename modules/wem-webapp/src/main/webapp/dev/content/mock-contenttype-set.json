@@ -6,8 +6,8 @@
         "items": [
             {
                 "Input": {
-                    "name": "name",
-                    "label": "Full Name",
+                    "name": "first_name",
+                    "label": "First Name",
                     "immutable": false,
                     "occurrences": {
                         "minimum": 1,
@@ -16,7 +16,26 @@
                     "indexed": false,
                     "customText": null,
                     "validationRegexp": null,
-                    "helpText": "Article title",
+                    "helpText": "First name",
+                    "type": {
+                        "name": "TextLine",
+                        "builtIn": true
+                    }
+                }
+            },
+            {
+                "Input": {
+                    "name": "last_name",
+                    "label": "Last Name",
+                    "immutable": false,
+                    "occurrences": {
+                        "minimum": 1,
+                        "maximum": 1
+                    },
+                    "indexed": false,
+                    "customText": null,
+                    "validationRegexp": null,
+                    "helpText": "Last name",
                     "type": {
                         "name": "TextLine",
                         "builtIn": true
@@ -138,7 +157,7 @@
                                 "indexed": false,
                                 "customText": null,
                                 "validationRegexp": null,
-                                "helpText": "Name for this gallery",
+                                "helpText": "Name for the gallery",
                                 "type": {
                                     "name": "TextLine",
                                     "builtIn": true
@@ -148,7 +167,7 @@
                         {
                             "Input": {
                                 "name": "gallery_photos",
-                                "label": "Photos",
+                                "label": "Set",
                                 "immutable": false,
                                 "occurrences": {
                                     "minimum": 0,

@@ -4,7 +4,7 @@
 <html>
 <head>
   <meta charset="utf-8"/>
-  <title>Enonic WEM Admin</title>
+  <title>Enonic WEM - Content Data Form</title>
   <link rel="stylesheet" type="text/css" href="../../admin/resources/lib/ext/resources/css/admin.css">
   <style type="text/css">
 
@@ -31,7 +31,7 @@
     .admin-related-item .right-column {
       display: table-cell;
       vertical-align: top;
-      float: left;
+      float: right;
     }
 
   </style>
