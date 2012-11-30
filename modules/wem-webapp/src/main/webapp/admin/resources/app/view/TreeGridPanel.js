@@ -105,7 +105,6 @@ Ext.define('Admin.view.TreeGridPanel', {
         if (Ext.isEmpty(iconCls) && me.iconClasses && me.iconClasses[nodeType]) {
             iconCls += " " + me.iconClasses[nodeType];
         }
-        console.log(iconCls);
         return iconCls;
     },
 

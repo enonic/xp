@@ -9,7 +9,6 @@ Ext.define('Admin.controller.Controller', {
     views: [],
 
     init: function () {
-        // console.log('Admin.controller.Controller: init');
     },
 
 
