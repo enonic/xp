@@ -5,24 +5,24 @@ Ext.define('Admin.lib.formitem.Relation', {
     initComponent: function () {
         var me = this;
 
-        me.listViewStore = me.createListViewStore();
+        me.selectedContentStore = me.createSelectedContentStore();
 
         me.items = [
-            me.createHiddenInput(),
+            me.createValueInput(),
             me.createComboBox(),
-            me.createItemListView()
+            me.createSelectedContentView()
         ];
 
         me.callParent(arguments);
     },
 
-    createHiddenInput: function () {
+    createValueInput: function () {
         var me = this;
         return {
             xtype: 'hiddenfield',
             name: me.name,
             itemId: me.name, // TODO: Is this unique enough?
-            value: '' // TODO: Populate
+            value: ''
         };
     },
 
@@ -55,7 +55,7 @@ Ext.define('Admin.lib.formitem.Relation', {
             }),
             listeners: {
                 select: function (combo, records) {
-                    me.listViewStore.add(records[0].raw);
+                    me.selectedContentStore.add(records[0].raw);
                     combo.setValue('');
                 }
             }
@@ -64,7 +64,7 @@ Ext.define('Admin.lib.formitem.Relation', {
         return combo;
     },
 
-    createListViewStore: function () {
+    createSelectedContentStore: function () {
         var me = this;
 
         return Ext.create('Ext.data.Store', {
@@ -78,7 +78,7 @@ Ext.define('Admin.lib.formitem.Relation', {
         });
     },
 
-    createItemListView: function () {
+    createSelectedContentView: function () {
         var me = this;
 
         var template = new Ext.XTemplate(
@@ -95,7 +95,7 @@ Ext.define('Admin.lib.formitem.Relation', {
         );
 
         return Ext.create('Ext.view.View', {
-            store: me.listViewStore,
+            store: me.selectedContentStore,
             tpl: template,
             itemSelector: 'div.admin-related-item',
             emptyText: 'No items selected',
@@ -104,7 +104,7 @@ Ext.define('Admin.lib.formitem.Relation', {
                 itemclick: function (view, record, item, index, e) {
                     var clickedElement = Ext.fly(e.target);
                     if (clickedElement.hasCls('remove-related-item-button')) {
-                        me.listViewStore.remove(record);
+                        me.selectedContentStore.remove(record);
                     }
                 }
             }
@@ -115,7 +115,7 @@ Ext.define('Admin.lib.formitem.Relation', {
         var me = this;
         var keys = [];
         if (me.items) {
-            Ext.Array.each(me.listViewStore.data.items, function (item) {
+            Ext.Array.each(me.selectedContentStore.data.items, function (item) {
                 keys.push(item.data.key);
             });
             me.getComponent(me.name).setValue(keys);
