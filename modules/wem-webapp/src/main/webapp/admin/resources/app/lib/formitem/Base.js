@@ -1,4 +1,4 @@
-Ext.define('Admin.lib.inputtypes.Base', {
+Ext.define('Admin.lib.formitem.Base', {
     extend: 'Ext.form.FieldContainer',
     label: 'Label',
     layout: 'anchor',

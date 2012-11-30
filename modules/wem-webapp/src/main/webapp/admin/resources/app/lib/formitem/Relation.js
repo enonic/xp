@@ -1,6 +1,6 @@
-Ext.define('Admin.lib.inputtypes.Relation', {
-    extend: 'Admin.lib.inputtypes.Base',
-    alias: 'widget.input.Relation',
+Ext.define('Admin.lib.formitem.Relation', {
+    extend: 'Admin.lib.formitem.Base',
+    alias: 'widget.Relation',
     fieldLabel: 'Relation',
     initComponent: function () {
         var me = this;

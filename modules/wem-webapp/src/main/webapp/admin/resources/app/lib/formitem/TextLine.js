@@ -1,6 +1,6 @@
-Ext.define('Admin.lib.inputtypes.TextLine', {
-    extend: 'Admin.lib.inputtypes.Base',
-    alias: 'widget.input.TextLine',
+Ext.define('Admin.lib.formitem.TextLine', {
+    extend: 'Admin.lib.formitem.Base',
+    alias: 'widget.TextLine',
     label: 'Text Line',
     initComponent: function () {
         var me = this;

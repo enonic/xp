@@ -1,17 +1,17 @@
-Ext.define('Admin.lib.inputtypes.TextArea', {
-    extend: 'Admin.lib.inputtypes.Base',
-    alias: 'widget.input.TextArea',
-    label: 'Text Area',
+Ext.define('Admin.lib.formitem.HtmlArea', {
+    extend: 'Admin.lib.formitem.Base',
+    alias: 'widget.HtmlArea',
     initComponent: function () {
         var me = this;
 
         me.items = [
             {
-                xtype: 'textarea',
+                xtype: 'htmleditor',
                 name: me.name
             }
         ];
 
         me.callParent(arguments);
     }
+
 });

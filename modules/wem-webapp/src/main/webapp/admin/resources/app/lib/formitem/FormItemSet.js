@@ -1,6 +1,6 @@
-Ext.define('Admin.lib.inputtypes.FormItemSet', {
+Ext.define('Admin.lib.formitem.FormItemSet', {
     extend: 'Ext.form.FieldSet',
-    alias: 'widget.input.FormItemSet',
+    alias: 'widget.FormItemSet',
 
     initComponent: function () {
         var me = this;

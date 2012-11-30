@@ -6,11 +6,11 @@ Ext.application({
 
     requires: [
         'ContentDataPanel',
-        'Admin.lib.inputtypes.HtmlArea',
-        'Admin.lib.inputtypes.FormItemSet',
-        'Admin.lib.inputtypes.Relation',
-        'Admin.lib.inputtypes.TextArea',
-        'Admin.lib.inputtypes.TextLine'
+        'Admin.lib.formitem.HtmlArea',
+        'Admin.lib.formitem.FormItemSet',
+        'Admin.lib.formitem.Relation',
+        'Admin.lib.formitem.TextArea',
+        'Admin.lib.formitem.TextLine'
     ],
 
     launch: function () {
