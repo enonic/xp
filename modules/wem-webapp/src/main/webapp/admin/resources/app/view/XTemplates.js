@@ -1,4 +1,4 @@
-// This file was auto-generated on 2012-11-30 15:52:58 FET
+// This file was auto-generated on 2012-12-01 13:34:00 FET
 
 if (!Templates) {
     var Templates = {};
@@ -22,11 +22,11 @@ Templates.contentManager = {
                            '</tpl>',
 
     gridPanelNameRenderer: '<div style="float:left;padding-top: 3px">' +
-                           '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" class="admin-grid-thumbnail {0}">' +
+                           '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" class="admin-tree-thumbnail {0}">' +
                            '</div>' +
                            '<div style="float:left; padding: 3px 0 0 5px">' +
-                           '<div class="admin-grid-title">{1}</div>' +
-                           '<div class="admin-grid-description">{2}</div>' +
+                           '<div class="admin-tree-title">{1}</div>' +
+                           '<div class="admin-tree-description">{2}</div>' +
                            '</div>',
 
     previewCommonInfo: '<div class="container">' +
@@ -120,10 +120,10 @@ Templates.contentStudio = {
 
     previewIcon: '<img src="{[values.icon !=="" ? values.icon : "resources/images/icons/128x128/cubes.png"]}" alt="{name}" title="{name}"/>',
 
-    gridPanelRenderer: '<div style="float:left;padding-top: 3px"><img src="{0}" alt="" class="admin-grid-thumbnail"/></div>' +
+    gridPanelRenderer: '<div style="float:left;padding-top: 3px"><img src="{0}" alt="" class="admin-tree-thumbnail"/></div>' +
                        '<div style="float:left; padding: 5px 0 0 5px">' +
-                       '<div class="admin-grid-title">{1}</div>' +
-                       '<div class="admin-grid-description">{2}</div>' +
+                       '<div class="admin-tree-title">{1}</div>' +
+                       '<div class="admin-tree-description">{2}</div>' +
                        '</div>',
 
     previewCommonInfo: '<div class="container">' +
