@@ -1,0 +1,18 @@
+{
+    "success": false,
+    "successes": [
+        {
+            "qualifiedContentTypeName": "my:existingContentType"
+        }
+    ],
+    "failures": [
+        {
+            "qualifiedContentTypeName": "my:notFoundContentType",
+            "reason": "Content type [my:notFoundContentType] was not found"
+        },
+        {
+            "qualifiedContentTypeName": "my:beingUsedContentType",
+            "reason": "Unable to delete content type [my:beingUsedContentType]: Content type is being used"
+        }
+    ]
+}
