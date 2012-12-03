@@ -1,33 +1,24 @@
 Ext.define('ContentDataPanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.contentDataPanel',
+    requires: [
+        'Admin.lib.formitem.HtmlArea',
+        'Admin.lib.formitem.FormItemSet',
+        'Admin.lib.formitem.Relation',
+        'Admin.lib.formitem.TextArea',
+        'Admin.lib.formitem.TextLine'
+    ],
 
-    contentTypeItems: [],
+    contentType: undefined,
     content: null, // content to be edited
 
     autoDestroy: true,
 
-    // Temporary form submit button
-    buttonAlign: 'left',
-    buttons: [{
-        text: 'Submit',
-        formBind: true, //only enabled once the form is valid
-        disabled: true,
-        handler: function() {
-            var formPanel = this.up('form');
-            var form = formPanel.getForm();
-            if (form.isValid()) {
-                alert('Create form data and submit');
-            }
-        }
-    }],
-
     initComponent: function () {
         var me = this;
-
         me.items = [];
 
-        me.addFormItems(me.contentTypeItems, me);
+        me.addFormItems(me.contentType.form, me);
 
         me.callParent(arguments);
     },
@@ -146,6 +137,23 @@ Ext.define('ContentDataPanel', {
 
     getData: function () {
         return this.getForm().getFieldValues();
-    }
+    },
+
+
+    /**  Temporary form submit button (for development only)**/
+
+    buttonAlign: 'left',
+    buttons: [{
+        text: 'Submit',
+        formBind: true, //only enabled once the form is valid
+        disabled: true,
+        handler: function() {
+            var formPanel = this.up('form');
+            var form = formPanel.getForm();
+            if (form.isValid()) {
+                alert('Create form data and submit');
+            }
+        }
+    }]
 
 });

@@ -1,192 +1,194 @@
 {
-    "contentType": {
-        "name": "Set",
-        "module": "Demo",
-        "qualifiedName": "Demo:Set",
-        "items": [
-            {
-                "Input": {
-                    "name": "first_name",
-                    "label": "First Name",
-                    "immutable": false,
-                    "occurrences": {
-                        "minimum": 1,
-                        "maximum": 1
-                    },
-                    "indexed": false,
-                    "customText": null,
-                    "validationRegexp": null,
-                    "helpText": "First name",
-                    "type": {
-                        "name": "TextLine",
-                        "builtIn": true
-                    }
-                }
-            },
-            {
-                "Input": {
-                    "name": "last_name",
-                    "label": "Last Name",
-                    "immutable": false,
-                    "occurrences": {
-                        "minimum": 1,
-                        "maximum": 1
-                    },
-                    "indexed": false,
-                    "customText": null,
-                    "validationRegexp": null,
-                    "helpText": "Last name",
-                    "type": {
-                        "name": "TextLine",
-                        "builtIn": true
-                    }
-                }
-            },
-            {
-                "FormItemSet": {
-                    "name": "mySet",
-                    "label": "Address",
-                    "immutable": false,
-                    "occurrences": {
-                        "minimum": 0,
-                        "maximum": 1
-                    },
-                    "customText": null,
-                    "helpText": null,
-                    "items": [
-                        {
-                            "Input": {
-                                "name": "label",
-                                "label": "Label",
-                                "immutable": false,
-                                "occurrences": {
-                                    "minimum": 0,
-                                    "maximum": 1
-                                },
-                                "indexed": false,
-                                "customText": null,
-                                "validationRegexp": null,
-                                "helpText": "Give this address a label",
-                                "type": {
-                                    "name": "TextLine",
-                                    "builtIn": true
-                                }
-                            }
-                        },
-                        {
-                            "Input": {
-                                "name": "street",
-                                "label": "Street",
-                                "immutable": false,
-                                "occurrences": {
-                                    "minimum": 0,
-                                    "maximum": 1
-                                },
-                                "indexed": false,
-                                "customText": null,
-                                "validationRegexp": null,
-                                "helpText": "Street",
-                                "type": {
-                                    "name": "TextLine",
-                                    "builtIn": true
-                                }
-                            }
-                        },
-                        {
-                            "Input": {
-                                "name": "postal_code",
-                                "label": "Postal Code",
-                                "immutable": false,
-                                "occurrences": {
-                                    "minimum": 0,
-                                    "maximum": 1
-                                },
-                                "indexed": false,
-                                "customText": null,
-                                "validationRegexp": null,
-                                "helpText": "Postal Code",
-                                "type": {
-                                    "name": "TextLine",
-                                    "builtIn": true
-                                }
-                            }
-                        },
-                        {
-                            "Input": {
-                                "name": "postal_address",
-                                "label": "Postal Address ",
-                                "immutable": false,
-                                "occurrences": {
-                                    "minimum": 0,
-                                    "maximum": 1
-                                },
-                                "indexed": false,
-                                "customText": null,
-                                "validationRegexp": null,
-                                "helpText": "Postal Address",
-                                "type": {
-                                    "name": "TextLine",
-                                    "builtIn": true
-                                }
-                            }
-                        }
-                    ]
-                }
-            },
-            {
-                "FormItemSet": {
-                    "name": "collections",
-                    "label": "Photo Galleries",
-                    "immutable": false,
-                    "occurrences": {
-                        "minimum": 0,
-                        "maximum": 1
-                    },
-                    "customText": null,
-                    "helpText": null,
-                    "items": [
-                        {
-                            "Input": {
-                                "name": "gallery_name",
-                                "label": "Name",
-                                "immutable": false,
-                                "occurrences": {
-                                    "minimum": 0,
-                                    "maximum": 1
-                                },
-                                "indexed": false,
-                                "customText": null,
-                                "validationRegexp": null,
-                                "helpText": "Name for the gallery",
-                                "type": {
-                                    "name": "TextLine",
-                                    "builtIn": true
-                                }
-                            }
-                        },
-                        {
-                            "Input": {
-                                "name": "gallery_photos",
-                                "label": "Set",
-                                "immutable": false,
-                                "occurrences": {
-                                    "minimum": 0,
-                                    "maximum": 1
-                                },
-                                "indexed": false,
-                                "customText": null,
-                                "validationRegexp": null,
-                                "helpText": "Add photos to this gallery",
-                                "type": {
-                                    "name": "Relation",
-                                    "builtIn": true
-                                }
-                            }
-                        }
-                    ]
+    "name": "Set",
+    "module": "Demo",
+    "qualifiedName": "Demo:Set",
+    "displayName": "Form Item Set Demo",
+    "superType": "System:Content",
+    "isAbstract": false,
+    "isFinal": true,
+    "form": [
+        {
+            "Input": {
+                "name": "first_name",
+                "label": "First Name",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": "First name",
+                "type": {
+                    "name": "TextLine",
+                    "builtIn": true
                 }
             }
+        },
+        {
+            "Input": {
+                "name": "last_name",
+                "label": "Last Name",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": "Last name",
+                "type": {
+                    "name": "TextLine",
+                    "builtIn": true
+                }
+            }
+        },
+        {
+            "FormItemSet": {
+                "name": "mySet",
+                "label": "Address",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "customText": null,
+                "helpText": null,
+                "items": [
+                    {
+                        "Input": {
+                            "name": "label",
+                            "label": "Label",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Give this address a label",
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "street",
+                            "label": "Street",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Street",
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "postal_code",
+                            "label": "Postal Code",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Postal Code",
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "postal_address",
+                            "label": "Postal Address ",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Postal Address",
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "FormItemSet": {
+                "name": "collections",
+                "label": "Photo Galleries",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "customText": null,
+                "helpText": null,
+                "items": [
+                    {
+                        "Input": {
+                            "name": "gallery_name",
+                            "label": "Name",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Name for the gallery",
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "gallery_photos",
+                            "label": "Set",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Add photos to this gallery",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    }
+                ]
+            }
+        }
 
-        ]
-    }
+    ]
 }
