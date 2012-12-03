@@ -27,27 +27,28 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
             });
         }
 
-        Ext.each(this.contentType.items, function (contentTypeItem) {
+        Ext.each(this.contentType.form, function (contentTypeItem) {
             var widgetItemType = me.parseItemType(contentTypeItem);
+            var contentTypeItemData = me.parseItemTypeData(contentTypeItem);
             if (!widgetItemType) {
                 console.log('Unsupported input type', contentTypeItem);
                 return;
             }
             var item = Ext.create({
                 xclass: "widget." + widgetItemType,
-                fieldLabel: contentTypeItem.label,
-                name: contentTypeItem.name,
-                itemId: contentTypeItem.name,
+                fieldLabel: contentTypeItemData.label,
+                name: contentTypeItemData.name,
+                itemId: contentTypeItemData.name,
                 cls: 'span-3',
                 listeners: {
                     render: function (cmp) {
                         Ext.tip.QuickTipManager.register({
                             target: cmp.el,
-                            text: contentTypeItem.helpText
+                            text: contentTypeItemData.helpText
                         });
                     }
                 },
-                value: editedContentValues[contentTypeItem.name]
+                value: editedContentValues[contentTypeItemData.name]
             });
 
             fieldSet.items.push(item);
@@ -59,10 +60,18 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     },
 
     parseItemType: function (contentItem) {
+        var contentItemData = this.parseItemTypeData(contentItem);
+        if (contentItemData.type) {
+            return this.typeMapping[contentItemData.type.name];
+        }
+        return null;
+    },
+
+    parseItemTypeData: function (contentItem) {
         var baseType;
         for (baseType in contentItem) {
-            if (contentItem.hasOwnProperty(baseType) && contentItem[baseType].type) {
-                return this.typeMapping[contentItem[baseType].type.name];
+            if (contentItem.hasOwnProperty(baseType)) {
+                return contentItem[baseType];
             }
         }
         return null;

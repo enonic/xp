@@ -372,16 +372,34 @@ p {
 }
 
 /* line 30, ../sass/admin/css/_tree.scss */
+.admin-tree .admin-tree-thumbnail {
+    height: 32px;
+    width: 32px;
+}
+
+/* line 35, ../sass/admin/css/_tree.scss */
+.admin-tree .admin-tree-title {
+    font-weight: bold;
+    line-height: 16px;
+}
+
+/* line 40, ../sass/admin/css/_tree.scss */
+.admin-tree .admin-tree-description {
+    line-height: 16px;
+    font-weight: normal;
+}
+
+/* line 45, ../sass/admin/css/_tree.scss */
 .admin-tree .admin-white-toolbar {
     border-bottom-style: none !important;
 }
 
-/* line 34, ../sass/admin/css/_tree.scss */
+/* line 49, ../sass/admin/css/_tree.scss */
 .admin-tree .x-panel-body {
     border: none !important;
 }
 
-/* line 38, ../sass/admin/css/_tree.scss */
+/* line 53, ../sass/admin/css/_tree.scss */
 .admin-tree .x-grid-cell-inner .x-tree-icon {
     /* name renderer is responsible for icon */
     display: none;
@@ -819,6 +837,277 @@ p {
 .admin-data-view.x-item-selected {
     background-color: #4294de;
     color: white;
+}
+
+/* line 2, ../sass/admin/css/_wizard.scss */
+.admin-wizard .navigation {
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: #ccc;
+    list-style: none;
+    overflow: hidden;
+    border: 1px solid #ccc;
+}
+
+/* line 11, ../sass/admin/css/_wizard.scss */
+.admin-wizard .navigation li {
+    float: left;
+}
+
+/* line 15, ../sass/admin/css/_wizard.scss */
+.admin-wizard .navigation li a {
+    color: #222;
+    text-decoration: none !important;
+    padding: 8px 0 8px 48px;
+    background-color: #eee;
+    position: relative;
+    display: block;
+    float: left;
+}
+
+/* line 25, ../sass/admin/css/_wizard.scss */
+.admin-wizard .navigation li a.first {
+    padding-left: 20px;
+}
+
+/* line 29, ../sass/admin/css/_wizard.scss */
+.admin-wizard .navigation li a:after {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 50px solid transparent;
+    /* Go big on the size, and let overflow hide */
+    border-bottom: 50px solid transparent;
+    border-left: 30px solid #eee;
+    position: absolute;
+    top: 50%;
+    margin-top: -50px;
+    left: 100%;
+    z-index: 2;
+}
+
+/* line 44, ../sass/admin/css/_wizard.scss */
+.admin-wizard .navigation li a:before {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 50px solid transparent;
+    /* Go big on the size, and let overflow hide */
+    border-bottom: 50px solid transparent;
+    border-left: 30px solid #ccc;
+    position: absolute;
+    top: 50%;
+    margin-top: -50px;
+    margin-left: 1px;
+    left: 100%;
+    z-index: 1;
+}
+
+/* line 60, ../sass/admin/css/_wizard.scss */
+.admin-wizard .navigation li a.previous {
+    font-weight: bold;
+}
+
+/* line 64, ../sass/admin/css/_wizard.scss */
+.admin-wizard .navigation li a.current {
+    background-color: #fff;
+    font-weight: bold;
+}
+
+/* line 69, ../sass/admin/css/_wizard.scss */
+.admin-wizard .navigation li a.current:after {
+    border-left: 30px solid #fff;
+}
+
+/* line 73, ../sass/admin/css/_wizard.scss */
+.admin-wizard .navigation li a.current:before {
+    border-left: 30px solid #fff;
+}
+
+/* line 77, ../sass/admin/css/_wizard.scss */
+.admin-wizard .navigation li a.next {
+    color: #acacac;
+}
+
+/* line 81, ../sass/admin/css/_wizard.scss */
+.admin-wizard .toolbar .x-mask {
+    display: none;
+}
+
+/* line 85, ../sass/admin/css/_wizard.scss */
+.admin-wizard .toolbar .x-item-disabled {
+    opacity: 1;
+    filter: none;
+}
+
+/* line 90, ../sass/admin/css/_wizard.scss */
+.admin-wizard div.navigation-container {
+    padding: 7px 12px 0 6px;
+    background-color: #fff;
+}
+
+/* line 94, ../sass/admin/css/_wizard.scss */
+.admin-wizard div.navigation-container-sticky {
+    position: fixed;
+    top: 89px;
+    width: 100%;
+}
+
+/* line 104, ../sass/admin/css/_wizard.scss */
+.admin-wizard-edit ul.navigation a.next,
+.admin-wizard-edit ul.navigation a.next.immediate,
+.admin-wizard-edit ul.navigation a.next.last {
+    color: #222;
+    cursor: pointer;
+}
+
+/* line 109, ../sass/admin/css/_wizard.scss */
+.admin-wizard-edit .toolbar-disabled ul.navigation a.next.last {
+    color: #acacac;
+    cursor: default;
+}
+
+/* line 116, ../sass/admin/css/_wizard.scss */
+.admin-wizard-new ul.navigation li a.next {
+    color: #acacac;
+    cursor: default;
+}
+
+/* line 121, ../sass/admin/css/_wizard.scss */
+.admin-wizard-new ul.navigation li a.next.immediate {
+    color: #222;
+    cursor: pointer;
+}
+
+/* line 128, ../sass/admin/css/_wizard.scss */
+.admin-wizard-new .toolbar-diabled ul.navigation a.next, .admin-wizard-new .toolbar-diabled ul.navigation a.next.immidiate, .admin-wizard-new .toolbar-diabled ul.navigation a.next.last {
+    color: #acacac;
+    cursor: default;
+}
+
+/* line 139, ../sass/admin/css/_wizard.scss */
+.admin-wizard > div > .x-panel-body,
+.admin-glowing-item .x-panel-body,
+.admin-validation-label div,
+.admin-wizard .x-panel-body {
+    border: 0 none;
+}
+
+/* line 143, ../sass/admin/css/_wizard.scss */
+.admin-display-name {
+    width: 100%;
+}
+
+/* line 146, ../sass/admin/css/_wizard.scss */
+.admin-display-name input {
+    border: 1px solid transparent;
+    color: #555555;
+    font-size: 26px;
+    line-height: 36px !important;
+    height: 36px !important;
+    font-weight: normal;
+    margin: 0;
+    border-radius: 2px;
+    background: white none;
+}
+
+/* line 158, ../sass/admin/css/_wizard.scss */
+.admin-display-name input:hover {
+    border: 1px solid #98c9f2;
+    box-shadow: 0 0 3px #98c9f2;
+}
+
+/* line 162, ../sass/admin/css/_wizard.scss */
+.admin-display-name input:focus {
+    color: #000 !important;
+    border: 1px solid #99BCE8 !important;
+}
+
+/* line 168, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container {
+    margin: 0 10px 3px 5px;
+    font-size: 12px;
+}
+
+/* line 172, ../sass/admin/css/_wizard.scss */
+.admin-wizard-header-container .admin-wizard-header {
+    position: relative;
+}
+
+/* line 1, ../sass/admin/css/_image-upload-button.scss */
+.admin-image-upload-button-container {
+    position: relative;
+    cursor: pointer;
+    padding: 1px;
+    border-left: 1px;
+    border-top: 1px;
+}
+
+/* line 8, ../sass/admin/css/_image-upload-button.scss */
+.admin-image-upload-button-container .admin-image-upload-button-progress-bar-container {
+    visibility: hidden;
+    position: absolute;
+    border: 1px solid #555;
+    background-color: #555;
+    bottom: 1px;
+    left: 1px;
+    right: 1px;
+    font-size: 1px;
+    border-radius: 4px;
+}
+
+/* line 20, ../sass/admin/css/_image-upload-button.scss */
+.admin-image-upload-button-container .admin-image-upload-button-progress-bar {
+    font-size: 1px;
+    background: #dbeeff;
+    background: -moz-linear-gradient(top, #dbeeff 0%, #99bce8 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dbeeff), color-stop(100%, #99bce8));
+    background: -webkit-linear-gradient(top, #dbeeff 0%, #99bce8 100%);
+    background: -o-linear-gradient(top, #dbeeff 0%, #99bce8 100%);
+    background: -ms-linear-gradient(top, #dbeeff 0%, #99bce8 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#dbeeff', endColorstr = '#99BCE8', GradientType = 0);
+    background: linear-gradient(top, #dbeeff 0%, #99bce8 100%);
+    border-radius: 3px;
+}
+
+/* line 34, ../sass/admin/css/_image-upload-button.scss */
+.admin-file-upload-drop-target {
+    border: 1px solid #98c9f2;
+    box-shadow: 0 0 3px #98c9f2;
+    padding: 0px;
+}
+
+/* line 40, ../sass/admin/css/_image-upload-button.scss */
+.admin-image-upload-button-image-tip {
+    position: fixed;
+    top: 135px;
+}
+
+/* line 44, ../sass/admin/css/_image-upload-button.scss */
+.admin-image-upload-button-image-tip .x-tip {
+    left: 0;
+    width: 102px;
+    height: 38px;
+}
+
+/* line 50, ../sass/admin/css/_image-upload-button.scss */
+.admin-image-upload-button-image-tip .x-tip-anchor {
+    z-index: 1;
+    left: 44px;
+    top: -10px;
+}
+
+/* line 56, ../sass/admin/css/_image-upload-button.scss */
+.admin-image-upload-button-image-tip .x-tip-body {
+    text-align: center;
+}
+
+/* line 62, ../sass/admin/css/_image-upload-button.scss */
+.admin-image-upload-button-image-tip,
+.admin-image-upload-button-image-tip > div {
+    overflow: visible;
 }
 
 /**

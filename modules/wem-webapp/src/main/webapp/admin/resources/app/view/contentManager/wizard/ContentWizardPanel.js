@@ -30,28 +30,9 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         this.headerData = {
             displayName: (this.data && this.data.content) ? this.data.content.displayName : 'New Content',
             contentType: (this.data && this.data.contentType) ? this.data.contentType.qualifiedName : undefined,
-            contentPath: (this.data && this.data.content) ? this.data.content.path : ''
+            contentPath: (this.data && this.data.content) ? this.data.content.path : this.data.contentParent ? this.data.contentParent.path
+                : ''
         };
-        var contentWizardHeader = Ext.create('Ext.container.Container', {
-            itemId: 'wizardHeader',
-            styleHtmlContent: true,
-            autoHeight: true,
-            cls: 'admin-wizard-header-container',
-            labelCls: 'label',
-            listeners: {
-                afterrender: {
-                    fn: function () {
-                        var me = this;
-                        me.getEl().addListener('click', function (event, target, eOpts) {
-                            me.toggleDisplayNameField(event, target);
-                        });
-                    },
-                    scope: this
-                }
-            },
-            tpl: new Ext.XTemplate(Templates.contentManager.contentWizardHeader),
-            data: me.headerData
-        });
 
         me.tbar = Ext.createByAlias('widget.contentWizardToolbar', {
             xtype: 'contentWizardToolbar'
@@ -99,7 +80,30 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
                         border: false
                     },
                     items: [
-                        contentWizardHeader,
+                        {
+                            xtype: 'container',
+                            cls: 'admin-wizard-header-container',
+                            items: [
+                                {
+                                    xtype: 'textfield',
+                                    itemId: 'displayName',
+                                    value: me.headerData ? me.headerData.displayName : undefined,
+                                    emptyText: 'Display Name',
+                                    enableKeyEvents: true,
+                                    cls: 'admin-display-name',
+                                    dirtyCls: 'admin-display-name-dirty'
+                                },
+                                {
+                                    xtype: 'container',
+                                    itemId: 'wizardHeader',
+                                    styleHtmlContent: true,
+                                    autoHeight: true,
+                                    cls: 'admin-wizard-header-container',
+                                    tpl: new Ext.XTemplate(Templates.contentManager.contentWizardHeader),
+                                    data: me.headerData
+                                }
+                            ]
+                        },
                         {
                             xtype: 'wizardPanel',
                             showControls: true,
@@ -167,25 +171,13 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     },
 
     getData: function () {
-        return this.getWizardPanel().getData();
-    },
-
-    toggleDisplayNameField: function (event, target) {
-        var clickedElement = new Ext.Element(target);
-        var parentToClickedElementIsHeader = clickedElement.findParent('.admin-wizard-header');
-        var displayNameField = Ext.DomQuery.select('input.admin-display-name', this.getEl().dom)[0];
-        var displayNameFieldElement = new Ext.Element(displayNameField);
-
-        if (parentToClickedElementIsHeader) {
-            displayNameFieldElement.dom.removeAttribute('readonly');
-            displayNameFieldElement.addCls('admin-edited-field');
-        } else {
-            displayNameFieldElement.set({readonly: true});
-            var value = Ext.String.trim(displayNameFieldElement.getValue());
-            if (value === '' || value === 'Display Name') {
-                displayNameFieldElement.removeCls('admin-edited-field');
-            }
+        var wizardData = this.getWizardPanel().getData();
+        var displayNameField = this.down('#displayName');
+        if (displayNameField) {
+            var data = {displayName: displayNameField.getValue() };
+            Ext.merge(wizardData, data);
         }
+        return wizardData;
     },
 
     cycleLiveEdit: function () {
