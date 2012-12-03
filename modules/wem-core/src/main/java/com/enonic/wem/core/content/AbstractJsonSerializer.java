@@ -76,6 +76,11 @@ public abstract class AbstractJsonSerializer<T>
         }
     }
 
+    public JsonNode toJson( T obj )
+    {
+        return serialize( obj, objectMapper() );
+    }
+
     protected abstract JsonNode serialize( final T obj, final ObjectMapper objectMapper );
 
     protected abstract T parse( final JsonNode node );

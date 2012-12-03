@@ -21,4 +21,9 @@ public final class ContentTypeCommands
     {
         return new DeleteContentTypes();
     }
+
+    public GetContentTypeTree getTree()
+    {
+        return new GetContentTypeTree();
+    }
 }
