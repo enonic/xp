@@ -2,17 +2,16 @@ Ext.define('Admin.lib.formitem.Relation', {
     extend: 'Admin.lib.formitem.Base',
     alias: 'widget.Relation',
     fieldLabel: 'Relation',
+
     initComponent: function () {
         var me = this;
 
-        console.log(me.occurrences);
-
-        me.selectedContentStore = me.createSelectedContentStore();
+        me.selectedContentStore = this.createSelectedContentStore();
 
         me.items = [
             me.createValueInput(),
             me.createComboBox(),
-            me.createSelectedContentView()
+            me.createViewForSelectedContent()
         ];
 
         me.callParent(arguments);
@@ -57,17 +56,20 @@ Ext.define('Admin.lib.formitem.Relation', {
             }),
             listeners: {
                 select: function (combo, records) {
-                    if (me.selectedContentStore.getCount() >= me.occurrences.maximum) {
-                        return;
-                    }
-
-                    me.selectedContentStore.add(records[0].raw);
                     combo.setValue('');
+                    me.onSelectContent(records);
                 }
             }
         };
 
         return combo;
+    },
+
+    onSelectContent: function (records) {
+        var contentIsAdded = this.selectedContentStore.findRecord('key', records[0].raw.key);
+        if (!contentIsAdded) {
+            this.selectedContentStore.add(records[0].raw);
+        }
     },
 
     createSelectedContentStore: function () {
@@ -78,13 +80,18 @@ Ext.define('Admin.lib.formitem.Relation', {
             data: [],
             listeners: {
                 datachanged: function (store) {
-                    me.updateValue();
+                    me.updateRelationValue();
+                    try {
+                        me.down('combobox').setDisabled(me.selectedContentStore.getCount() === me.occurrences.maximum);
+                    } catch (exception) {
+                        /**/
+                    }
                 }
             }
         });
     },
 
-    createSelectedContentView: function () {
+    createViewForSelectedContent: function () {
         var me = this;
 
         var template = new Ext.XTemplate(
@@ -117,7 +124,7 @@ Ext.define('Admin.lib.formitem.Relation', {
         });
     },
 
-    updateValue: function () {
+    updateRelationValue: function () {
         var me = this;
         var keys = [];
         if (me.items) {
