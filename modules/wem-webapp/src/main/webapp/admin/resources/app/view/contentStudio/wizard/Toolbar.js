@@ -10,26 +10,28 @@ Ext.define('Admin.view.contentStudio.wizard.Toolbar', {
 
     initComponent: function () {
 
-        var leftGrp = {
+        var saveBtn = {
             text: 'Save',
             action: 'saveContentType',
             itemId: 'save',
             disabled: false //true, TODO disable by default, enable when modified
         };
 
-        var rightGrp = {
+        var deleteBtn = {
+            text: 'Delete',
+            action: 'deleteContentType'
+        };
+
+        var closeBtn = {
             text: 'Close',
             action: 'closeWizard'
         };
 
         if (!this.isNew) {
-            leftGrp.items.push({
-                text: 'Delete',
-                action: 'deleteContentType'
-            });
+            this.items = [saveBtn, deleteBtn, '->', closeBtn];
+        } else {
+            this.items = [ saveBtn, '->', closeBtn ];
         }
-
-        this.items = [ leftGrp, '->', rightGrp ];
         this.callParent(arguments);
     }
 
