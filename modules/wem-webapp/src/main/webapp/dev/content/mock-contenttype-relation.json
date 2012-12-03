@@ -29,7 +29,8 @@
                     "label": "Related Articles",
                     "immutable": false,
                     "occurrences": {
-                        "minimum": 0
+                        "minimum": 1,
+                        "maximum": 3
                     },
                     "indexed": false,
                     "customText": null,
@@ -47,7 +48,8 @@
                     "label": "Related Files",
                     "immutable": false,
                     "occurrences": {
-                        "minimum": 0
+                        "minimum": 1,
+                        "maximum": 5
                     },
                     "indexed": false,
                     "customText": null,
