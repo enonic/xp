@@ -17,10 +17,7 @@ Ext.define('Admin.controller.account.Controller', {
                 afterrender: this.initKeyMap
             },
             'cmsTabPanel': {
-                afterrender: function () {
-                    this.updateActionItems();
-                    this.updateLauncherToolbarItems();
-                }
+                afterrender: this.updateActionItems
             },
             'userStoreListPanel': {
                 itemclick: this.openNewAccountTab
@@ -384,16 +381,6 @@ Ext.define('Admin.controller.account.Controller', {
             for (k = 0; k < deleteButtons.length; k++) {
                 deleteButtons[k].setDisabled(isRole || !isEditable);
             }
-        }
-    },
-
-    updateLauncherToolbarItems: function () {
-        var tabPanel = this.getCmsTabPanel();
-        var launcherToolbar = this.getLauncherToolbar();
-        if (launcherToolbar) {
-            var tabMenu = launcherToolbar.getTabMenu();
-            // used by tabMenu to track tabs
-            tabMenu.setActiveTabPanel(tabPanel);
         }
     },
 

@@ -11,6 +11,11 @@ Ext.define('Admin.view.TopBarMenu', {
 
     items: [
         {
+            xtype: 'container',
+            itemId: 'nonClosableItems',
+            defaultType: 'topBarMenuItem'
+        },
+        {
             xtype: 'component',
             cls: 'title',
             itemId: 'editTitle',
@@ -49,6 +54,7 @@ Ext.define('Admin.view.TopBarMenu', {
         }
     ],
 
+    tabPanel: undefined,
 
     initComponent: function () {
         this.callParent(arguments);
@@ -69,9 +75,9 @@ Ext.define('Admin.view.TopBarMenu', {
         item = (e.type === 'click') ? me.getItemFromEvent(e) : me.activeItem;
         if (item && item.isMenuItem && item.onClick(e) !== false) {
             if (me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
-                this.tabPanel.setActiveTab(item.id);
-                this.hide();
+                this.tabPanel.setActiveTab(item.card.id || item.card.itemId || item.card);
             }
+            this.hide();
         }
     },
 
@@ -91,14 +97,26 @@ Ext.define('Admin.view.TopBarMenu', {
         close.on('click', function (event, target, opts) {
             var items = me.getCheckedItems();
             if (me.fireEvent('close', items) !== false) {
-                me.removeItems(items);
+                // me.removeItems(items);
+                //tabPanel will also delete all tabs by calling tabBar.remove
+                Ext.Array.each(items, function (item) {
+                    if (item.closable) {
+                        me.tabPanel.remove(item.card);
+                    }
+                });
             }
             me.hide();
         });
         closeAll.on('click', function (event, target, opts) {
             var items = me.getAllItems();
             if (me.fireEvent('closeAll', items) !== false) {
-                me.removeAllItems();
+                // me.removeAllItems(false);
+                //tabPanel will also delete all tabs by calling tabBar.remove
+                Ext.Array.each(items, function (item) {
+                    if (item.closable) {
+                        me.tabPanel.remove(item.card);
+                    }
+                });
             }
             me.hide();
         });
@@ -128,45 +146,54 @@ Ext.define('Admin.view.TopBarMenu', {
         }
         var editItems = [];
         var viewItems = [];
+        var nonClosableItems = [];
         Ext.Array.each(items, function (item) {
-            if (item.editing) {
+            if (item.closable === false) {
+                nonClosableItems.push(item);
+            } else if (item.editing) {
                 editItems.push(item);
             } else {
                 viewItems.push(item);
             }
         });
+        var added = [];
+        if (nonClosableItems.length > 0) {
+            added = added.concat(this.down("#nonClosableItems").add(nonClosableItems));
+        }
         if (editItems.length > 0) {
-            this.down('#editItems').add(editItems);
+            added = added.concat(this.down('#editItems').add(editItems));
         }
         if (viewItems.length > 0) {
-            this.down('#viewItems').add(viewItems);
+            added = added.concat(this.down('#viewItems').add(viewItems));
         }
         this.updateTitles();
+        return added;
     },
 
-    removeAllItems: function () {
+    removeAllItems: function (includeNonClosable) {
         var editItems = this.down('#editItems');
         var viewItems = this.down('#viewItems');
-        var me = this;
-
+        var removed = [];
         Ext.Array.each(editItems.items.items, function (item) {
             if (item && item.closable !== false) {
-                editItems.remove(item);
-                if (me.tabPanel) {
-                    me.tabPanel.remove(item.id);
-                }
+                removed.push(editItems.remove(item));
             }
         });
         Ext.Array.each(viewItems.items.items, function (item) {
             if (item && item.closable !== false) {
-                viewItems.remove(item);
-                if (me.tabPanel) {
-                    me.tabPanel.remove(item.id);
-                }
+                removed.push(viewItems.remove(item));
             }
         });
-
+        if (includeNonClosable) {
+            var nonClosableItems = this.down('#nonClosableItems');
+            Ext.Array.each(nonClosableItems.items.items, function (item) {
+                if (item && item.closable !== false) {
+                    removed.push(nonClosableItems.remove(item));
+                }
+            });
+        }
         this.updateTitles();
+        return removed;
     },
 
     removeItems: function (items) {
@@ -175,77 +202,35 @@ Ext.define('Admin.view.TopBarMenu', {
         } else if (Ext.isObject(items)) {
             items = [].concat(items);
         }
+
         var editItems = this.down('#editItems');
         var viewItems = this.down('#viewItems');
-        var me = this;
+        var nonClosableItems = this.down('#nonClosableItems');
+        var removed = [];
 
         Ext.Array.each(items, function (item) {
             if (item && item.closable !== false) {
-                editItems.remove(item);
-                viewItems.remove(item);
-                if (me.tabPanel) {
-                    me.tabPanel.remove(item.id);
-                }
+                removed.push(editItems.remove(item));
+                removed.push(viewItems.remove(item));
+                removed.push(nonClosableItems.remove(item));
             }
         });
+
         this.updateTitles();
     },
 
     updateTitles: function () {
         var editCount = this.down('#editItems').items.getCount();
         var viewCount = this.down('#viewItems').items.getCount();
+        var nonClosableCount = this.down('#nonClosableItems').items.getCount();
         this.down('#editTitle')[editCount > 0 ? 'show' : 'hide']();
         this.down('#viewTitle')[viewCount > 0 ? 'show' : 'hide']();
-        this.down('#emptyTitle')[(viewCount > 0 || editCount) > 0 ? 'hide' : 'show']();
-        this.ownerButton.setText('' + (editCount + viewCount));
+        this.down('#emptyTitle')[(viewCount || editCount || nonClosableCount) > 0 ? 'hide' : 'show']();
     },
 
     // Need in case of resize while center positioned
     updatePosition: function (menu, width, height, oldWidth, oldHeight, opts) {
         this.el.move('r', ((oldWidth - width) / 2), false);
-    },
-
-    // use this to set active tab panel to be synced with
-    setActiveTabPanel: function (tabPanel) {
-        var me = this;
-        this.tabPanel = tabPanel;
-
-        if (tabPanel) {
-            this.tabPanel.on('add', function () {
-                me.syncWithTabPanel(tabPanel);
-            });
-            this.tabPanel.on('remove', function () {
-                me.syncWithTabPanel(tabPanel);
-            });
-            this.syncWithTabPanel(tabPanel);
-        }
-    },
-
-    syncWithTabPanel: function (tabPanel) {
-        var editItems = this.down('#editItems');
-        var viewItems = this.down('#viewItems');
-
-        editItems.removeAll();
-        viewItems.removeAll();
-
-        var menuItems = [];
-
-        if (tabPanel) {
-            Ext.Array.each(tabPanel.items.items, function (item) {
-                menuItems.push({
-                    id: item.id,
-                    closable: item.closable,
-                    iconCls: 'icon-data-blue',
-                    editing: item.editing || false,
-                    text1: item.title,
-                    text2: item.type
-                });
-            });
-        }
-
-        if (!Ext.isEmpty(menuItems)) {
-            this.addItems(menuItems);
-        }
     }
 
 });

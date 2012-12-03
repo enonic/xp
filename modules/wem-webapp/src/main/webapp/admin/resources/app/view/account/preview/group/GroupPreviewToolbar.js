@@ -6,7 +6,8 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewToolbar', {
 
         var leftGrp = {
             text: 'Edit',
-            action: 'editGroup'
+            action: 'editGroup',
+            items: []
         };
 
         if (!this.isRole) {
@@ -18,7 +19,8 @@ Ext.define('Admin.view.account.preview.group.GroupPreviewToolbar', {
 
         var rightGrp = {
             text: 'Close',
-            action: 'closePreview'
+            action: 'closePreview',
+            items: []
         };
 
         this.items = [ leftGrp, '->', rightGrp ];

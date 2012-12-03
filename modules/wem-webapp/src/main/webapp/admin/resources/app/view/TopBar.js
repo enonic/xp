@@ -1,6 +1,6 @@
-Ext.define('Admin.view.LauncherToolbar', {
+Ext.define('Admin.view.TopBar', {
     extend: 'Ext.toolbar.Toolbar',
-    alias: 'widget.launcherToolbar',
+    alias: 'widget.topBar',
 
     requires: [
         'Admin.view.TopBarMenu',
@@ -8,13 +8,34 @@ Ext.define('Admin.view.LauncherToolbar', {
     ],
 
     buttonAlign: 'center',
-    border: false,
     cls: 'admin-topbar-panel',
+
+    dock: 'top',
+    plain: true,
+    border: false,
 
     initComponent: function () {
         var me = this;
 
-        this.tabMenu = Ext.create('Admin.view.TopBarMenu');
+        this.tabMenu = Ext.create('Admin.view.TopBarMenu', {
+            tabPanel: me.tabPanel,
+            listeners: {
+                close: {
+                    fn: me.syncTabCount,
+                    scope: me
+                },
+                closeAll: {
+                    fn: me.syncTabCount,
+                    scope: me
+                }
+            }
+        });
+
+        this.tabButton = Ext.create('Ext.button.Button', {
+            cls: 'white',
+            menuAlign: 't-b?',
+            menu: me.tabMenu
+        });
 
         this.startMenu = Ext.create('Admin.view.StartMenu', {
             xtype: 'startMenu',
@@ -130,23 +151,20 @@ Ext.define('Admin.view.LauncherToolbar', {
             xtype: 'button',
             itemId: 'app-launcher-button',
             cls: 'start-button',
-            iconCls: 'icon-data-white',
-            text: 'Content Manager',
+            iconCls: me.appIconCls,
+            text: me.appName || '&lt; app name &gt;',
             handler: function (btn, evt) {
                 me.startMenu.slideToggle();
             }
         });
 
+        this.path = Ext.create('Ext.Component');
+
         this.items = [
             me.startButton,
-            {
-                text: '0',
-                cls: 'white',
-                menuAlign: 't-b?',
-                menu: me.tabMenu
-            },
+            me.tabButton,
             { xtype: 'tbspacer', flex: 5 },
-            'sitename/path/to/press-releases',
+            me.path,
             { xtype: 'tbspacer', flex: 5 },
             {
                 text: 'Log in',
@@ -160,6 +178,91 @@ Ext.define('Admin.view.LauncherToolbar', {
         ];
 
         this.callParent(arguments);
+
+        this.syncTabMenu();
+        this.syncTabCount();
+    },
+
+
+    /*  Methods for Admin.view.TabPanel integration */
+
+    insert: function (index, cfg) {
+        console.log('addTab at ' + index, cfg);
+        var added = this.tabMenu.addItems(cfg);
+        this.syncTabCount();
+        // TODO: return inserted tab!
+        return added.length === 1 ? added[0] : undefined;
+    },
+
+    setActiveTab: function (tab) {
+        console.log('set active', tab);
+        // no action needed
+    },
+
+    remove: function (tab) {
+        console.log('removeTab', tab);
+        var removed = this.tabMenu.removeItems(tab);
+        this.syncTabCount();
+        return removed;
+    },
+
+    findNextActivatable: function (tab) {
+        console.log('next activatable', tab);
+        // called in case active tab is closed
+        if (this.tabPanel) {
+            // set first browse tab active if we have tabPanel
+            return this.tabPanel.items.get(0);
+        }
+    },
+
+    createMenuItemFromTab: function (item) {
+        var me = this;
+        return {
+            tabBar: me,
+            card: item,
+            disabled: item.disabled,
+            closable: item.closable,
+            hidden: item.hidden && !item.hiddenByLayout, // only hide if it wasn't hidden by the layout itself
+            iconCls: item.iconCls || 'icon-data-blue',
+            editing: item.editing || false,
+            text1: item.title || 'first line',
+            text2: item.type || 'second line'
+        };
+    },
+
+    /*  Private */
+
+    syncTabCount: function () {
+        var count = this.tabMenu.getAllItems().length;
+        this.tabButton.setVisible(count > 0);
+        this.tabButton.setText('' + count);
+    },
+
+    syncTabMenu: function () {
+        var me = this;
+        var menuItems = [];
+
+        this.tabMenu.removeAllItems(true, false);
+
+        if (this.tabPanel) {
+            Ext.Array.each(this.tabPanel.items.items, function (item) {
+                menuItems.push(me.createMenuItemFromTab(item.initialConfig));
+            });
+        }
+
+        if (!Ext.isEmpty(menuItems)) {
+            this.tabMenu.addItems(menuItems);
+        }
+    },
+
+    /*  Public  */
+
+    getPath: function () {
+        return this.path.getBody().el.getHTML();
+    },
+
+    setPath: function (path) {
+        this.path.update(path);
     },
 
     getStartButton: function () {
@@ -168,6 +271,10 @@ Ext.define('Admin.view.LauncherToolbar', {
 
     getStartMenu: function () {
         return this.startMenu;
+    },
+
+    getTabButton: function () {
+        return this.tabButton;
     },
 
     getTabMenu: function () {

@@ -6,14 +6,29 @@ Ext.define('Admin.view.TabPanel', {
     // TODO: Refactor "cmsTabPanel" -> "adminTabPanel"
     alias: 'widget.cmsTabPanel',
 
-    requires: ['Admin.plugin.TabCloseMenu'],
+    requires: [
+        'Admin.plugin.TabCloseMenu',
+        'Admin.view.TopBar'
+    ],
     plugins: ['tabCloseMenu'],
 
     border: false,
     defaults: { closable: true },
 
     initComponent: function () {
+        var me = this;
+
         this.callParent(arguments);
+
+        // update default tab bar with our own
+        this.removeDocked(this.tabBar, true);
+
+        this.tabBar = Ext.create('Admin.view.TopBar', {
+            appName: me.appName,
+            appIconCls: me.appIconCls,
+            tabPanel: me
+        });
+        this.addDocked(this.tabBar);
     },
 
     /**
@@ -25,17 +40,18 @@ Ext.define('Admin.view.TabPanel', {
      */
 
     addTab: function (item, index, requestConfig) {
-        var tabPanel = this;
+        var me = this;
         var tab = this.getTabById(item.id);
         // Create a new tab if it has not been created
         if (!tab) {
             tab = this.insert(index || this.items.length, item);
             if (requestConfig) {
+                // activate to make changes to it
                 this.setActiveTab(tab);
                 var mask = new Ext.LoadMask(tab, {msg: "Please wait..."});
                 mask.show();
                 var createTabFromResponse = requestConfig.createTabFromResponse;
-                var onRequestConfigSuccess = function successCallback(response) {
+                var onRequestConfigSuccess = function (response) {
                     var tabContent = createTabFromResponse(response);
                     tab.add(tabContent);
                     mask.hide();
@@ -46,13 +62,6 @@ Ext.define('Admin.view.TabPanel', {
                     }, tab, {single: true});
                 };
                 requestConfig.doTabRequest(onRequestConfigSuccess);
-            }
-            if (tab.closable) {
-                tab.on({
-                    beforeclose: function (tab) {
-                        tabPanel.onBeforeCloseTab(tab);
-                    }
-                });
             }
         }
         // TODO: tab.hideMode: Ext.isIE ? 'offsets' : 'display'
@@ -93,26 +102,83 @@ Ext.define('Admin.view.TabPanel', {
         return this.items.items.length;
     },
 
-    /**
-     * Fired before a tab is closed.
-     * Resolves which tab to set active when the given tab is closed.
-     * If the tab to be closed is visible the previous tab is activated.
-     * @private
-     * @param {Ext.tab.Tab} tab The tab to close.
-     */
 
-    onBeforeCloseTab: function (tab) {
-        var tabToActivate = null;
+    onAdd: function (item, index) {
+        var me = this,
+            cfg = item.tabConfig || {},
+            defaultConfig = {
+                tabBar: me.tabBar,
+                card: item,
+                disabled: item.disabled,
+                closable: item.closable,
+                hidden: item.hidden && !item.hiddenByLayout, // only hide if it wasn't hidden by the layout itself
+                iconCls: item.iconCls || 'icon-data-blue',
+                editing: item.editing || false,
+                text1: item.title || 'first line',
+                text2: item.type || 'second line'
+            };
 
-        if (tab.isVisible()) {
-            var tabIndex = this.items.findIndex('id', tab.id);
-            tabToActivate = this.items.items[tabIndex - 1];
-        } else {
-            // Keep visible tab activated.
-            tabToActivate = this.getActiveTab();
+
+        cfg = Ext.applyIf(cfg, defaultConfig);
+
+        // Create the correspondiong tab in the tab bar
+        item.tab = me.tabBar.insert(index, cfg);
+
+        item.on({
+            scope: me,
+            enable: me.onItemEnable,
+            disable: me.onItemDisable,
+            beforeshow: me.onItemBeforeShow,
+            iconchange: me.onItemIconChange,
+            iconclschange: me.onItemIconClsChange,
+            titlechange: me.onItemTitleChange
+        });
+
+        if (item.isPanel) {
+            if (me.removePanelHeader) {
+                if (item.rendered) {
+                    if (item.header) {
+                        item.header.hide();
+                    }
+                } else {
+                    item.header = false;
+                }
+            }
+            if (item.isPanel && me.border) {
+                item.setBorder(false);
+            }
+        }
+    },
+
+    doRemove: function (item, autoDestroy) {
+        var me = this;
+
+        // Destroying, or removing the last item, nothing to activate
+        if (me.destroying || me.items.getCount() === 1) {
+            me.activeTab = null;
+        } else if (me.activeTab === item) {
+            var toActivate = me.tabBar.findNextActivatable(item.tab);
+            if (toActivate) {
+                me.setActiveTab(toActivate);
+            }
         }
 
-        this.setActiveTab(tabToActivate);
+        this.callParent(arguments);
+    },
+
+    onRemove: function (item, destroying) {
+        var me = this;
+
+        item.un({
+            scope: me,
+            enable: me.onItemEnable,
+            disable: me.onItemDisable,
+            beforeshow: me.onItemBeforeShow
+        });
+
+        if (!me.destroying) {
+            me.tabBar.remove(item.tab);
+        }
     }
 
 });

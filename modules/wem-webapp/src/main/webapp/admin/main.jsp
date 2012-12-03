@@ -8,9 +8,6 @@
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
   <link rel="stylesheet" type="text/css" href="_app/main/css/main.css">
 
-  <link rel="stylesheet" type="text/css" href="resources/css/admin-top-bar.css">
-  <link rel="stylesheet" type="text/css" href="resources/css/admin-start-menu.css">
-
   <!-- Ext JS -->
 
   <script type="text/javascript" src="resources/lib/ext/ext-all-debug.js"></script>
@@ -54,8 +51,7 @@
         ],
 
         controllers: [
-          'Admin.controller.Controller',
-          'Admin.controller.LauncherToolbarController',
+          'Admin.controller.TopBarController',
           'Admin.controller.NotifyUserController',
           // old controllers from _app/main
           'NotificationWindowController',
@@ -64,26 +60,15 @@
 
         launch: function () {
           Ext.create('Ext.container.Viewport', {
-            id: 'main-viewport',
+            id: 'mainViewport',
             layout: 'border',
             style: 'border: medium none',
             padding: 0,
             items: [
               {
                 region: 'center',
-                layout: 'border',
-                items: [
-                  {
-                    region: 'north',
-                    xtype: 'launcherToolbar'
-                  },
-                  {
-                    id: 'main-viewport-center',
-                    region: 'center',
-                    bodyCls: 'main-viewport-center-body',
-                    html: '<div id="app-frames" style="height: 100%; width: 100%;"><!-- --></div>'
-                  }
-                ]
+                bodyCls: 'main-viewport-center-body',
+                html: '<div id="appFrames" style="height: 100%; width: 100%;"><!-- --></div>'
               }
               //{
               //  region: 'east',
