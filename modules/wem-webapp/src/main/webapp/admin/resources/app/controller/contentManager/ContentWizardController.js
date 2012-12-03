@@ -95,7 +95,7 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
         var content = contentWizard.data.content;
         var contentParent = contentWizard.data.contentParent;
 
-        var displayName = this.getDisplayNameValue(contentWizard);
+        var displayName = contentData.displayName;
 
         var contentParams = {
             contentData: contentData,
@@ -118,11 +118,6 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
             }
         };
         this.remoteCreateOrUpdateContent(contentParams, onUpdateContentSuccess);
-    },
-
-    getDisplayNameValue: function (contentWizard) {
-        var displayNameField = contentWizard.el.down('input.admin-display-name', true);
-        return (displayNameField === null || displayNameField.value === this.EMPTY_DISPLAY_NAME_TEXT) ? '' : displayNameField.value;
     },
 
     getContentPath: function (displayName, content, contentParent) {
