@@ -81,7 +81,8 @@ Ext.define('ContentDataPanel', {
         return Ext.create({
             xclass: classAlias,
             fieldLabel: input.label,
-            name: input.name
+            name: input.name,
+            occurrences: input.occurrences
         });
     },
 
