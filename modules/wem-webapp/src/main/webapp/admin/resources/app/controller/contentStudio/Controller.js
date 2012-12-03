@@ -78,35 +78,22 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         var tabPanel = this.getCmsTabPanel();
 
         if (contentType && !forceNew) {
+            tabPanel.el.mask("Loading...");
+            Admin.lib.RemoteService.contentType_getConfig({"qualifiedContentTypeName": [contentType.get('qualifiedName')]}, function (r) {
+                tabPanel.el.unmask();
+                if (r) {
+                    contentType.raw.configXML = r.contentTypeXml;
 
-            /*tabPanel.el.mask("Loading...");
-
-             Ext.Ajax.request({
-             url: 'resources/data/mock_contentStudioContentType.json',
-             method: 'GET',
-             params: {
-             key: contentType.raw.key
-             },
-             success: function (response) {
-             var obj = Ext.decode(response.responseText, true);
-             tabPanel.el.unmask();
-
-             tabPanel.addTab({
-             xtype: 'contentStudioWizardPanel',
-             id: 'tab-content-type-' + contentType.raw.key,
-             title: contentType.raw.name,
-             iconCls: 'icon-content-studio-16',
-             modelData: obj
-             });
-             }
-             });*/
-
-            tabPanel.addTab({
-                xtype: 'contentStudioWizardPanel',
-                id: 'tab-content-type-' + contentType.raw.key,
-                title: contentType.raw.name,
-                iconCls: 'icon-content-studio-16',
-                modelData: contentType.raw
+                    tabPanel.addTab({
+                        xtype: 'contentStudioWizardPanel',
+                        id: 'tab-content-type-' + contentType.raw.key,
+                        title: contentType.raw.name,
+                        iconCls: 'icon-content-studio-16',
+                        modelData: contentType.raw
+                    });
+                } else {
+                    Ext.Msg.alert("Error", r ? r.error : "Unable to retrieve content type.");
+                }
             });
 
         } else {

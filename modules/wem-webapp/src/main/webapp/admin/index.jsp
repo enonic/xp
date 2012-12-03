@@ -36,15 +36,6 @@
   </style>
 
   <!-- ExtJS -->
-  <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/ext-all-scoped.css">
-  <script>
-    Ext = {
-      buildSettings: {
-        'scopeResetCSS': true
-      }
-    };
-  </script>
-  <script type="text/javascript" src="resources/lib/ext/ext-all.js"></script>
 
   <script type="text/javascript" src="../dev/live-edit/app/lib/jquery-1.8.0.min.js"></script>
   <script type="text/javascript" src="resources/lib/jquery/github.commits.widget-min.js"></script>
@@ -101,6 +92,7 @@
 
 <h2>R&amp;D</h2>
 <ul class="links">
+  <li><a href="http://enonic.github.com/projects/wem-extjs-theme/">WEM ExtJS Theme</a></li>
   <li><a href="../dev/live-edit/page/page.jsp">Live Edit: page component is &lt;body&gt;</a></li>
   <li><a href="../dev/live-edit/page/page2.jsp">Live Edit: page component is a descendant of &lt;body&gt;</a></li>
   <li><a href="../dev/live-edit/page/plug-ins.jsp">Live Edit: with draggables containing plugins</a></li>
@@ -153,77 +145,6 @@
   $(function () {
     $('#github-commits').githubInfoWidget(
         { user: 'enonic', repo: 'wem-ce', branch: 'master', last: 10, limitMessageTo: 50 });
-  });
-</script>
-
-<script>
-  Ext.onReady(function () {
-
-    Ext.define('PageLinks', {
-      extend: 'Ext.data.Model',
-      fields: [
-        {name: 'text', type: 'string'},
-        {name: 'url', type: 'string'}
-      ]
-    });
-
-    var pageLinksStore = Ext.create('Ext.data.Store', {
-      model: 'PageLinks',
-      data: []
-    });
-
-    function addLinks() {
-      var domQuery = Ext.dom.Query,
-          links = domQuery.select('ul.links li'),
-          aElement, text, href;
-
-      Ext.Array.each(links, function (li, index, all) {
-        aElement = Ext.fly(domQuery.selectNode('a', li));
-        pageLinksStore.add({text: aElement.getHTML(), url: aElement.getAttribute('href')});
-      });
-    }
-
-    addLinks();
-
-    var commandLinePanel = Ext.create('Ext.panel.Panel', {
-      renderTo: 'search-container',
-      frame: true,
-      // title: 'Command Line',
-      width: '100%',
-      padding: 10,
-      layout: 'anchor',
-      items: [
-        {
-          xtype: 'component',
-          style: 'margin-bottom:10px',
-          html: 'Type any app name and press enter'
-        },
-        {
-          xtype: 'combo',
-          store: pageLinksStore,
-          displayField: 'text',
-          valueField: 'url',
-          queryMode: 'local',
-          typeAhead: true,
-          hideLabel: true,
-          hideTrigger: true,
-          anchor: '100%',
-          minChars: 1,
-          listeners: {
-            select: function (combo, selection) {
-              var link = selection[0];
-              if (link) {
-                window.location = link.get('url');
-              }
-            },
-            render: function (combo) {
-              combo.focus();
-            }
-          }
-        }
-      ]
-    });
-
   });
 </script>
 

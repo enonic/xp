@@ -6,7 +6,8 @@ Ext.define('Admin.model.contentStudio.ContentTypeModel', {
         'name',
         'module',
         { name: 'createdTime', type: 'date', defaultValue: new Date() },
-        { name: 'modifiedTime', type: 'date', defaultValue: new Date() }
+        { name: 'modifiedTime', type: 'date', defaultValue: new Date() },
+        'configXML'
     ],
 
     idProperty: 'qualifiedName'

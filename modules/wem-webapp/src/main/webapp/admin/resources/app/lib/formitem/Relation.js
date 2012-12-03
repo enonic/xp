@@ -5,6 +5,8 @@ Ext.define('Admin.lib.formitem.Relation', {
     initComponent: function () {
         var me = this;
 
+        console.log(me.occurrences);
+
         me.selectedContentStore = me.createSelectedContentStore();
 
         me.items = [
@@ -55,6 +57,10 @@ Ext.define('Admin.lib.formitem.Relation', {
             }),
             listeners: {
                 select: function (combo, records) {
+                    if (me.selectedContentStore.getCount() >= me.occurrences.maximum) {
+                        return;
+                    }
+
                     me.selectedContentStore.add(records[0].raw);
                     combo.setValue('');
                 }

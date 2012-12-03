@@ -5,12 +5,7 @@ Ext.application({
     ],
 
     requires: [
-        'ContentDataPanel',
-        'Admin.lib.formitem.HtmlArea',
-        'Admin.lib.formitem.FormItemSet',
-        'Admin.lib.formitem.Relation',
-        'Admin.lib.formitem.TextArea',
-        'Admin.lib.formitem.TextLine'
+        'ContentDataPanel'
     ],
 
     launch: function () {
@@ -25,15 +20,15 @@ Ext.application({
                         center.remove(center.down());
                     }
 
-                    var json = Ext.JSON.decode(response.responseText, true);
+                    var contentTypeJson = Ext.JSON.decode(response.responseText, true);
+
                     var contentDataPanel = new ContentDataPanel({
                         border: false,
-                        contentTypeItems: json.contentType.items
+                        contentType: contentTypeJson
                     });
-
                     center.add(contentDataPanel);
 
-                    Ext.getCmp('output').setValue(json.contentType.qualifiedName + '\n\nJSON:\n\n' + response.responseText);
+                    Ext.getCmp('output').setValue(contentTypeJson.qualifiedName + '\n\nJSON:\n\n' + response.responseText);
                 }
             });
         }
@@ -81,7 +76,7 @@ Ext.application({
                                             loadContentType(combo.getValue());
                                         },
                                         render: function (combo) {
-                                            combo.setValue('mock-contenttype-set.json');
+                                            combo.setValue('mock-contenttype-relation.json');
                                             loadContentType(combo.getValue());
                                         }
                                     }

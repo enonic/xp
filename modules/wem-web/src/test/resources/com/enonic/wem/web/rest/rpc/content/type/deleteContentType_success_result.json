@@ -1,0 +1,9 @@
+{
+    "success": true,
+    "successes": [
+        {
+            "qualifiedContentTypeName": "my:existingContentType"
+        }
+    ],
+    "failures": [ ]
+}
