@@ -1,0 +1,102 @@
+{
+    "success": true,
+    "total": 3,
+    "contentTypes": [
+        {
+            "name": "Root",
+            "module": "System",
+            "qualifiedName": "System:Root",
+            "displayName": "Some root content type",
+            "superType": null,
+            "isAbstract": false,
+            "isFinal": false,
+            "form": [ ],
+            "contentTypes": [
+                {
+                    "name": "myType",
+                    "module": "myModule",
+                    "qualifiedName": "myModule:myType",
+                    "displayName": "My content type",
+                    "superType": "System:Root",
+                    "isAbstract": false,
+                    "isFinal": false,
+                    "form": [
+                        {
+                            "Input": {
+                                "name": "inputText1",
+                                "label": "Line Text 1",
+                                "immutable": false,
+                                "occurrences": {
+                                    "minimum": 1,
+                                    "maximum": 1
+                                },
+                                "indexed": false,
+                                "customText": null,
+                                "validationRegexp": null,
+                                "helpText": "Help text line 1",
+                                "type": {
+                                    "name": "TextLine",
+                                    "builtIn": true
+                                }
+                            }
+                        },
+                        {
+                            "Input": {
+                                "name": "inputText2",
+                                "label": "Line Text 2",
+                                "immutable": true,
+                                "occurrences": {
+                                    "minimum": 0,
+                                    "maximum": 1
+                                },
+                                "indexed": false,
+                                "customText": null,
+                                "validationRegexp": null,
+                                "helpText": "Help text line 2",
+                                "type": {
+                                    "name": "TextLine",
+                                    "builtIn": true
+                                }
+                            }
+                        },
+                        {
+                            "Input": {
+                                "name": "textArea1",
+                                "label": "Text Area",
+                                "immutable": false,
+                                "occurrences": {
+                                    "minimum": 1,
+                                    "maximum": 1
+                                },
+                                "indexed": false,
+                                "customText": null,
+                                "validationRegexp": null,
+                                "helpText": "Help text area",
+                                "type": {
+                                    "name": "TextArea",
+                                    "builtIn": true
+                                }
+                            }
+                        }
+                    ],
+                    "contentTypes": [
+                        {
+                            "name": "subType",
+                            "module": "myModule",
+                            "qualifiedName": "myModule:subType",
+                            "displayName": "My sub-content type",
+                            "superType": "myModule:myType",
+                            "isAbstract": false,
+                            "isFinal": false,
+                            "form": [ ],
+                            "contentTypes": [ ],
+                            "hasChildren": false
+                        }
+                    ],
+                    "hasChildren": true
+                }
+            ],
+            "hasChildren": true
+        }
+    ]
+}

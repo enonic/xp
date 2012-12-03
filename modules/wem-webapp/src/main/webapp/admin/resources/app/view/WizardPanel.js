@@ -95,8 +95,8 @@ Ext.define('Admin.view.WizardPanel', {
             {
                 xtype: 'panel',
                 dock: 'top',
-                cls: 'admin-wizard-toolbar',
-                disabledCls: 'admin-wizard-toolbar-disabled',
+                cls: 'toolbar',
+                disabledCls: 'toolbar-disabled',
                 itemId: 'progressBar',
                 listeners: {
                     click: {

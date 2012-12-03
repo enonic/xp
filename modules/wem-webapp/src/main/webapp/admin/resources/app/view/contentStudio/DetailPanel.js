@@ -3,6 +3,8 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
     alias: 'widget.contentTypeDetailPanel',
     layout: 'card',
 
+    header: false,
+
     cls: 'admin-preview-panel',
     overflowX: 'hidden',
     overflowY: 'auto',
