@@ -16,8 +16,6 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
         border: false
     },
 
-    EMPTY_DISPLAY_NAME_TEXT: 'Display Name',
-
     initComponent: function () {
         var me = this;
         var steps = me.getSteps();
@@ -32,9 +30,9 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
             displayName: displayNameValue
         };
 
-        me.tbar = Ext.createByAlias( 'widget.contentStudioWizardToolbar', {
+        me.tbar = Ext.createByAlias('widget.contentStudioWizardToolbar', {
             isNew: isNew
-        } );
+        });
 
         me.items = [
             {
@@ -95,18 +93,18 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
                 items: [
                     {
                         xtype: 'container',
-                        itemId: 'wizardHeader',
-                        styleHtmlContent: true,
-                        autoHeight: true,
                         cls: 'admin-wizard-header-container',
-                        listeners: {
-                            afterrender: function (header) {
-                                me.headerRendered = true;
-                                me.bindDisplayNameEvents();
+                        items: [
+                            {
+                                xtype: 'textfield',
+                                itemId: 'displayName',
+                                value: me.headerData ? me.headerData.displayName : undefined,
+                                emptyText: 'Display Name',
+                                enableKeyEvents: true,
+                                cls: 'admin-display-name',
+                                dirtyCls: 'admin-display-name-dirty'
                             }
-                        },
-                        tpl: new Ext.XTemplate(Templates.contentStudio.wizardHeader),
-                        data: me.headerData
+                        ]
                     },
                     {
                         xtype: 'wizardPanel',
@@ -132,7 +130,6 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
             listeners: {
                 afterrender: function (panel) {
                     me.panelRendered = true;
-                    me.bindDisplayNameEvents();
                 }
             }
         };
@@ -162,77 +159,6 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
 
     getData: function () {
         return this.getWizardPanel().getData();
-    },
-
-
-    bindDisplayNameEvents: function () {
-        if (this.headerRendered && this.panelRendered) {
-
-            var displayName = this.el.down('input.admin-display-name', false);
-            if (displayName) {
-                displayName.on('focus', this.onDisplayNameFocused, this);
-                displayName.on('blur', this.onDisplayNameBlur, this);
-            }
-
-            var name = this.down('contentStudioWizardContentTypePanel #name');
-            if (name) {
-                name.on('change', this.onNameChanged, this);
-            }
-
-            this.el.on('click', this.toggleDisplayNameField, this);
-        }
-    },
-
-    onNameChanged: function (field, newVal, oldVal, opts) {
-        if (!this.headerEdited) {
-            this.setDisplayName(newVal, false);
-        }
-    },
-
-    toggleDisplayNameField: function (event, target, opts) {
-        var clickedElement = new Ext.Element(target);
-        var displayName;
-        if (clickedElement.hasCls('admin-display-name')) {
-            displayName = clickedElement;
-            displayName.dom.removeAttribute('readonly');
-            displayName.addCls('admin-edited-field');
-        } else {
-            displayName = this.el.down('input.admin-display-name', false);
-            displayName.set({readonly: true});
-            var value = Ext.String.trim(displayName.getValue());
-            if (value === '' || value === this.EMPTY_DISPLAY_NAME_TEXT) {
-                displayName.removeCls('admin-edited-field');
-            }
-        }
-    },
-
-    onDisplayNameFocused: function (event, element) {
-        if (Ext.String.trim(element.value) === this.EMPTY_DISPLAY_NAME_TEXT) {
-            element.value = '';
-        }
-    },
-
-    onDisplayNameBlur: function (event, element, opts) {
-        this.setDisplayName(element.value, true);
-    },
-
-    setDisplayName: function (text, updateEdited) {
-        text = this.processDisplayName(text);
-        var displayName = this.el.down('input.admin-display-name', false);
-        if (Ext.isEmpty(text)) {
-            displayName.dom.value = this.EMPTY_DISPLAY_NAME_TEXT;
-            if (updateEdited) {
-                this.headerEdited = false;
-            }
-        } else {
-            displayName.dom.value = text;
-            Ext.apply(this.headerData, {
-                displayName: text
-            });
-            if (updateEdited) {
-                this.headerEdited = true;
-            }
-        }
     },
 
     processDisplayName: function (string) {

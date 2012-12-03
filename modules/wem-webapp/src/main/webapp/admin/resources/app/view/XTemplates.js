@@ -1,4 +1,4 @@
-// This file was auto-generated on 2012-11-30 15:52:58 FET
+// This file was auto-generated on 2012-12-03 11:25:38 FET
 
 if (!Templates) {
     var Templates = {};
@@ -93,11 +93,9 @@ Templates.contentManager = {
 
     previewPhoto: '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="{name}" class="{iconCls}"/>',
 
-    contentWizardHeader: '<div class="admin-wizard-header">' +
-                         '<input type="text" value="{displayName}" readonly="true" class="admin-display-name"/>' +
-                         '</div>' +
-                         '<div class="admin-wizard-userstore">' +
-                         '<span>{contentType}: /{contentPath}</span>' +
+    contentWizardHeader: '<div class="admin-wizard-userstore">' +
+                         '<label>{contentType}:</label>' +
+                         '<span>/{contentPath}</span>' +
                          '</div>'
 
 };
@@ -494,8 +492,8 @@ Templates.account = {
 
 Templates.common = {
 
-    wizardPanelSteps: '<div class="admin-wizard-navigation-container">' +
-                      '<ul class="admin-wizard-navigation clearfix">' +
+    wizardPanelSteps: '<div class="navigation-container">' +
+                      '<ul class="navigation clearfix">' +
                       '<tpl for=".">' +
                       '<li class="{[ this.resolveClsName( xindex, xcount ) ]}" wizardStep="{[xindex]}">' +
                       '<a href="javascript:;" class="step {[ this.resolveClsName( xindex, xcount ) ]}">{[xindex]}. {[' +
