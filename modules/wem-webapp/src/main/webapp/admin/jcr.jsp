@@ -106,7 +106,7 @@
       $('#nodeProperties tbody').empty();
       addRow('Name', name);
       $.each(properties, function (k, val) {
-        if (typeof val === 'string' && val.charAt(0) === '{') {
+        if (typeof val === 'string' && ((val.charAt(0) === '{') || (val.charAt(0) === '[')) )  {
           addRow(k, JSON.stringify(JSON.parse(val), undefined, 2), true); // hack to avoid double string encoding of json
         } else {
           addRow(k, JSON.stringify(val));
