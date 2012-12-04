@@ -155,7 +155,7 @@
                             "immutable": false,
                             "occurrences": {
                                 "minimum": 1,
-                                "maximum": 3
+                                "maximum": 5
                             },
                             "indexed": false,
                             "customText": null,
@@ -174,7 +174,7 @@
                             "immutable": false,
                             "occurrences": {
                                 "minimum": 1,
-                                "maximum": 2
+                                "maximum": 5
                             },
                             "indexed": false,
                             "customText": null,

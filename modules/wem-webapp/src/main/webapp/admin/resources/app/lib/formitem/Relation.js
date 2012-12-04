@@ -17,6 +17,7 @@ Ext.define('Admin.lib.formitem.Relation', {
         me.callParent(arguments);
     },
 
+
     createHiddenValueInput: function () {
         var me = this;
         return {
@@ -26,6 +27,7 @@ Ext.define('Admin.lib.formitem.Relation', {
             value: ''
         };
     },
+
 
     createComboBox: function () {
         var me = this;
@@ -65,6 +67,7 @@ Ext.define('Admin.lib.formitem.Relation', {
         return combo;
     },
 
+
     onSelectContent: function (records) {
         var isAlreadyAdded = this.selectedContentStore.findRecord('key', records[0].raw.key);
         if (isAlreadyAdded) {
@@ -73,6 +76,7 @@ Ext.define('Admin.lib.formitem.Relation', {
         }
         this.selectedContentStore.add(records[0].raw);
     },
+
 
     createSelectedContentStore: function () {
         var me = this;
@@ -84,7 +88,7 @@ Ext.define('Admin.lib.formitem.Relation', {
                 datachanged: function (store) {
                     me.updateRelationValue();
                     try {
-                        me.down('combobox').setDisabled(me.selectedContentStore.getCount() === me.occurrences.maximum);
+                        me.down('combobox').setDisabled(me.selectedContentStore.getCount() === me.inputConfig.occurrences.maximum);
                     } catch (exception) {
                         /**/
                     }
@@ -92,6 +96,7 @@ Ext.define('Admin.lib.formitem.Relation', {
             }
         });
     },
+
 
     createViewForSelectedContent: function () {
         var me = this;
@@ -126,10 +131,12 @@ Ext.define('Admin.lib.formitem.Relation', {
         });
     },
 
+
     alertContentIsAdded: function(records) {
         alert('Temporary alert! Can not have duplicates in Relation field\n"' + records[0].raw.title + '" has already been added');
         this.down('combobox').focus('');
     },
+
 
     updateRelationValue: function () {
         var me = this;

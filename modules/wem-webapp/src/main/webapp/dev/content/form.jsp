@@ -34,6 +34,24 @@
       float: right;
     }
 
+    .admin-formitemset-block {
+      border: 1px solid #aaa !important;
+    }
+
+
+    .admin-sortable-insert-helper-below {
+      border-bottom: 2px solid #ff4500 !important;
+    }
+
+    .admin-sortable-insert-helper-above {
+      border-top: 2px solid #ff4500 !important;
+    }
+
+    .admin-draghandle {
+      color: #59008c;
+      cursor: move;
+    }
+
   </style>
 
   <!-- ExtJS -->
