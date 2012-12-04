@@ -14,6 +14,7 @@ import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.exception.UnableToDeleteContentException;
 import com.enonic.wem.itest.AbstractJcrTest;
 
+import static com.enonic.wem.api.content.Content.newContent;
 import static org.junit.Assert.*;
 
 public class ContentDaoImplTest
@@ -32,8 +33,7 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        Content content = new Content();
-        content.setPath( ContentPath.from( "myContent" ) );
+        Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
         content.setData( "myData", "myValue" );
 
         // exercise
@@ -50,12 +50,10 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        Content rootContent = new Content();
-        rootContent.setPath( ContentPath.from( "rootContent" ) );
+        Content rootContent = newContent().path( ContentPath.from( "rootContent" ) ).build();
         rootContent.setData( "myData", "myValue" );
 
-        Content belowRootContent = new Content();
-        belowRootContent.setPath( ContentPath.from( "rootContent/belowRootContent" ) );
+        Content belowRootContent = newContent().path( ContentPath.from( "rootContent/belowRootContent" ) ).build();
         belowRootContent.setData( "myData", "myValue" );
 
         // exercise
@@ -77,8 +75,7 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        Content content = new Content();
-        content.setPath( ContentPath.from( "myContent" ) );
+        Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
         content.setData( "myData", "1" );
         content.setData( "mySet.myData", "2" );
         content.setData( "mySet.myOtherData", "3" );
@@ -102,16 +99,14 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        Content newContent = new Content();
-        newContent.setPath( ContentPath.from( "myContent" ) );
+        Content newContent = newContent().path( ContentPath.from( "myContent" ) ).build();
         newContent.setData( "myData", "initial value" );
 
         // setup: create content to update
         contentDao.createContent( newContent, session );
         commit();
 
-        Content updateContent = new Content();
-        updateContent.setPath( ContentPath.from( "myContent" ) );
+        Content updateContent = newContent().path( ContentPath.from( "myContent" ) ).build();
         updateContent.setData( "myData", "changed value" );
 
         // exercise
@@ -129,8 +124,7 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        Content content = new Content();
-        content.setPath( ContentPath.from( "myContent" ) );
+        Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
         content.setData( "myData", "myValue" );
 
         contentDao.createContent( content, session );
@@ -190,8 +184,7 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        Content content = new Content();
-        content.setPath( ContentPath.from( "myContent" ) );
+        Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
         content.setData( "myData", "myValue" );
         content.setData( "mySet.myData", "myOtherValue" );
         contentDao.createContent( content, session );
@@ -257,8 +250,7 @@ public class ContentDaoImplTest
 
     private Content createContent( String path )
     {
-        Content content = new Content();
-        content.setPath( ContentPath.from( path ) );
+        Content content = newContent().path( ContentPath.from( path ) ).build();
         return content;
     }
 

@@ -18,25 +18,33 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 
 public final class Content
 {
-    private ContentPath path = new ContentPath();
+    private final String displayName;
 
-    private QualifiedContentTypeName type;
+    private final QualifiedContentTypeName type;
 
-    private ContentData data = new ContentData();
+    private final ContentPath path;
 
-    private String displayName;
+    private final ContentData data;
 
-    private UserKey owner;
+    private final DateTime createdTime;
 
-    private DateTime createdTime;
+    private final DateTime modifiedTime;
 
-    private DateTime modifiedTime;
+    private final UserKey owner;
 
-    private UserKey modifier;
+    private final UserKey modifier;
 
-    public void setPath( final ContentPath path )
+    private Content( final String displayName, final QualifiedContentTypeName type, final ContentPath path, final ContentData data,
+                     final DateTime createdTime, final DateTime modifiedTime, final UserKey owner, final UserKey modifier )
     {
+        this.displayName = displayName;
+        this.type = type;
         this.path = path;
+        this.data = data;
+        this.createdTime = createdTime;
+        this.modifiedTime = modifiedTime;
+        this.owner = owner;
+        this.modifier = modifier;
     }
 
     public ContentPath getPath()
@@ -47,11 +55,6 @@ public final class Content
     public QualifiedContentTypeName getType()
     {
         return type;
-    }
-
-    public void setType( final QualifiedContentTypeName type )
-    {
-        this.type = type;
     }
 
     public String getName()
@@ -66,24 +69,9 @@ public final class Content
         }
     }
 
-    public void setName( final String name )
-    {
-        this.path = this.path.withName( name );
-    }
-
-    public void setData( final ContentData value )
-    {
-        this.data = value;
-    }
-
     public String getDisplayName()
     {
         return displayName;
-    }
-
-    public void setDisplayName( final String displayName )
-    {
-        this.displayName = displayName;
     }
 
     public DateTime getCreatedTime()
@@ -91,19 +79,9 @@ public final class Content
         return createdTime;
     }
 
-    public void setCreatedTime( final DateTime createdTime )
-    {
-        this.createdTime = createdTime;
-    }
-
     public DateTime getModifiedTime()
     {
         return modifiedTime;
-    }
-
-    public void setModifiedTime( final DateTime modifiedTime )
-    {
-        this.modifiedTime = modifiedTime;
     }
 
     public UserKey getModifier()
@@ -111,19 +89,9 @@ public final class Content
         return modifier;
     }
 
-    public void setModifier( final UserKey modifier )
-    {
-        this.modifier = modifier;
-    }
-
     public UserKey getOwner()
     {
         return owner;
-    }
-
-    public void setOwner( final UserKey owner )
-    {
-        this.owner = owner;
     }
 
     public ContentData getData()
@@ -182,17 +150,14 @@ public final class Content
         new BlobToKeyReplacer( blobToKeyResolver ).replace( data );
     }
 
-
-    public static Content create( final ContentPath contentPath )
-    {
-        Content content = new Content();
-        content.setPath( contentPath );
-        return content;
-    }
-
     public static Builder newContent()
     {
         return new Builder();
+    }
+
+    public static Builder newContent( final Content content )
+    {
+        return new Builder( content );
     }
 
     public static class Builder
@@ -213,9 +178,35 @@ public final class Content
 
         private UserKey modifier;
 
+        public Builder()
+        {
+        }
+
+        public Builder( final Content content )
+        {
+            path = content.path; // TODO make ContentPath immutable, or make copy
+            type = content.type;
+            data = content.data; // TODO make ContentData immutable, or make copy
+            displayName = content.displayName;
+            owner = content.owner;
+            createdTime = content.createdTime;
+            modifiedTime = content.modifiedTime;
+            modifier = content.modifier;
+        }
+
         public Builder path( ContentPath path )
         {
             this.path = path;
+            return this;
+        }
+
+        public Builder name( String name )
+        {
+            if ( this.path == null )
+            {
+                path = new ContentPath();
+            }
+            this.path = this.path.withName( name );
             return this;
         }
 
@@ -264,19 +255,11 @@ public final class Content
         public Content build()
         {
             Preconditions.checkNotNull( path, "path is mandatory for a content" );
-            Preconditions.checkNotNull( createdTime, "createdTime is mandatory for a content" );
-            Preconditions.checkNotNull( owner, "owner is mandatory for a content" );
-
-            Content content = new Content();
-            content.path = path;
-            content.type = type;
-            content.data = data;
-            content.displayName = displayName;
-            content.owner = owner;
-            content.createdTime = createdTime;
-            content.modifiedTime = modifiedTime;
-            content.modifier = modifier;
-            return content;
+            if ( type == null )
+            {
+                type = QualifiedContentTypeName.unstructured();
+            }
+            return new Content( displayName, type, path, data, createdTime, modifiedTime, owner, modifier );
         }
     }
 }

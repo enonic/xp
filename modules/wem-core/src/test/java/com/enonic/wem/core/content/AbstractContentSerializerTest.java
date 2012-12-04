@@ -23,6 +23,7 @@ import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.AbstractSerializerTest;
 
+import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
@@ -58,8 +59,7 @@ public abstract class AbstractContentSerializerTest
             build();
         contentTypeFetcher.add( contentType );
 
-        Content content = new Content();
-        content.setName( "myContent" );
+        Content content = newContent().name( "myContent" ).build();
         content.setData( "myFormItem", "A value" );
 
         String serialized = toString( content );
@@ -81,7 +81,7 @@ public abstract class AbstractContentSerializerTest
             build();
         contentTypeFetcher.add( contentType );
 
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "myInput", "A value" );
 
         String serialized = toString( content );
@@ -96,8 +96,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void set()
     {
-        Content content = new Content();
-        content.setType( new QualifiedContentTypeName( "myModule:myType" ) );
+        Content content = newContent().type( new QualifiedContentTypeName( "myModule:myType" ) ).build();
         content.setData( "mySet.myInput", "1" );
         content.setData( "mySet.myOtherInput", "2" );
 
@@ -121,8 +120,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_of_values()
     {
-        Content content = new Content();
-        content.setType( new QualifiedContentTypeName( "myModule:myType" ) );
+        Content content = newContent().type( new QualifiedContentTypeName( "myModule:myType" ) ).build();
         content.setData( "myArray[0]", "1" );
         content.setData( "myArray[1]", "2" );
 
@@ -145,8 +143,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_within_set()
     {
-        Content content = new Content();
-        content.setType( new QualifiedContentTypeName( "myModule:myType" ) );
+        Content content = newContent().type( new QualifiedContentTypeName( "myModule:myType" ) ).build();
         content.setData( "mySet.myArray[0]", "1" );
         content.setData( "mySet.myArray[1]", "2" );
 
@@ -182,8 +179,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_of_set()
     {
-        Content content = new Content();
-        content.setType( new QualifiedContentTypeName( "myModule:myType" ) );
+        Content content = newContent().type( new QualifiedContentTypeName( "myModule:myType" ) ).build();
         content.setData( "mySet[0].myInput", "1" );
         content.setData( "mySet[0].myOtherInput", "a" );
         content.setData( "mySet[1].myInput", "2" );
@@ -212,8 +208,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_within_array()
     {
-        Content content = new Content();
-        content.setType( new QualifiedContentTypeName( "myModule:myType" ) );
+        Content content = newContent().type( new QualifiedContentTypeName( "myModule:myType" ) ).build();
         content.setData( "mySet[0].myArray[0]", "1" );
         content.setData( "mySet[0].myArray[1]", "2" );
         content.setData( "mySet[1].myArray[0]", "3" );
@@ -293,8 +288,7 @@ public abstract class AbstractContentSerializerTest
             build();
         contentTypeFetcher.add( contentType );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myText", "A value" );
         content.setData( "formItemSet.myText", "A another value" );
 
@@ -323,8 +317,7 @@ public abstract class AbstractContentSerializerTest
             build();
         contentTypeFetcher.add( contentType );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "formItemSet[0].myText", "Value 1" );
         content.setData( "formItemSet[1].myText", "Value 2" );
 
@@ -353,8 +346,7 @@ public abstract class AbstractContentSerializerTest
             addFormItem( layout ).
             build();
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myText", "A value" );
 
         String serialized = toString( content );
@@ -371,7 +363,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void unstructured_with_subTypes()
     {
-        Content data = new Content();
+        Content data = newContent().build();
         data.setData( "name", "Thomas" );
         data.setData( "child[0].name", "Joachim" );
         data.setData( "child[0].age", "9" );
@@ -402,7 +394,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void unstructured_with_arrays()
     {
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "names[0]", "Thomas" );
         content.setData( "names[1]", "Sten Roger" );
         content.setData( "names[2]", "Alex" );
@@ -422,7 +414,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void unstructured_with_arrays_within_subType()
     {
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "company.names[0]", "Thomas" );
         content.setData( "company.names[1]", "Sten Roger" );
         content.setData( "company.names[2]", "Alex" );
@@ -442,8 +434,7 @@ public abstract class AbstractContentSerializerTest
     public void xxx()
     {
         byte[] bytes = new byte[]{1, 2, 3};
-        Content content = new Content();
-        content.setName( "My content" );
+        Content content = newContent().name( "My content" ).build();
         content.setData( "name", "Arn", DataTypes.TEXT );
         content.setData( "image.bytes", bytes, DataTypes.BLOB );
         content.setData( "image.caption", "Caption", DataTypes.TEXT );
@@ -463,14 +454,15 @@ public abstract class AbstractContentSerializerTest
     public void content_serialize_parse_serialize_roundTrip()
     {
         final DateTime time = DateTime.now();
-        final Content content = new Content();
-        content.setType( new QualifiedContentTypeName( "myModule:myType" ) );
-        content.setCreatedTime( time );
-        content.setModifiedTime( time );
-        content.setOwner( AccountKey.superUser() );
-        content.setModifier( AccountKey.superUser() );
-        content.setDisplayName( "My content" );
-        content.setPath( ContentPath.from( "site1/mycontent" ) );
+        final Content content = newContent().
+            type( new QualifiedContentTypeName( "myModule:myType" ) ).
+            createdTime( time ).
+            modifiedTime( time ).
+            owner( AccountKey.superUser() ).
+            modifier( AccountKey.superUser() ).
+            displayName( "My content" ).
+            path( ContentPath.from( "site1/mycontent" ) ).
+            build();
         content.setData( "mySet[0].myArray[0]", "1" );
         content.setData( "mySet[0].myArray[1]", "2" );
         content.setData( "mySet[1].myArray[0]", "3" );

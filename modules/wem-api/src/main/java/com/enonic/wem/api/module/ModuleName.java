@@ -16,6 +16,12 @@ public class ModuleName
         return name;
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        return ( o instanceof ModuleName ) && ( (ModuleName) o ).name.equals( this.name );
+    }
+
     public static ModuleName from( String value )
     {
         return new ModuleName( value );

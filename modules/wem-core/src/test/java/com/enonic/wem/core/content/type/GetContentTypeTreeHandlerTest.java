@@ -12,7 +12,6 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypeTree;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
-import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
@@ -49,15 +48,14 @@ public class GetContentTypeTreeHandlerTest
     {
         // setup
         final ContentType contentType1 = newContentType().
-            name( "Root" ).
-            module( Module.SYSTEM.getName() ).
+            qualifiedName( QualifiedContentTypeName.unstructured() ).
             displayName( "Some root content type" ).
             build();
         final ContentType contentType2 = newContentType().
             name( "myType" ).
             module( ModuleName.from( "myModule" ) ).
             displayName( "My content type" ).
-            superType( new QualifiedContentTypeName( "System:Root" ) ).
+            superType( contentType1.getQualifiedName() ).
             build();
         final ContentType contentType3 = newContentType().
             name( "subType" ).
@@ -77,7 +75,7 @@ public class GetContentTypeTreeHandlerTest
         final ContentTypeTree tree = command.getResult();
         assertEquals( 1, tree.size() );
         assertEquals( 3, tree.deepSize() );
-        assertEquals( "System:Root", tree.getFirstChild().getContentType().getQualifiedName().toString() );
+        assertEquals( "System:unstructured", tree.getFirstChild().getContentType().getQualifiedName().toString() );
         assertEquals( "myModule:myType", tree.getFirstChild().getFirstChild().getContentType().getQualifiedName().toString() );
         assertEquals( "myModule:subType",
                       tree.getFirstChild().getFirstChild().getFirstChild().getContentType().getQualifiedName().toString() );

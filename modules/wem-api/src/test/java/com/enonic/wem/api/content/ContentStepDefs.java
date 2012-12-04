@@ -11,6 +11,7 @@ import cucumber.annotation.en.When;
 import com.enonic.wem.api.content.type.ContentTypeStepDefs;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 
+import static com.enonic.wem.api.content.Content.newContent;
 import static org.junit.Assert.*;
 
 public class ContentStepDefs
@@ -31,9 +32,7 @@ public class ContentStepDefs
         throws Throwable
     {
 
-        Content content = new Content();
-        content.setName( contentName );
-        content.setType( new QualifiedContentTypeName( contentTypeName ) );
+        Content content = newContent().name(contentName).type( new QualifiedContentTypeName( contentTypeName ) ).build();
         contentByName.put( contentName, content );
     }
 

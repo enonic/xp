@@ -5,6 +5,9 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.AbstractEqualsTest;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 public class QualifiedContentTypeNameTest
 {
     @Test
@@ -40,4 +43,25 @@ public class QualifiedContentTypeNameTest
         equalsTest.assertEqualsAndHashCodeContract();
     }
 
+    @Test
+    public void testPredefinedTypes()
+    {
+        assertTrue( QualifiedContentTypeName.content().isContent() );
+        assertTrue( QualifiedContentTypeName.file().isFile() );
+        assertTrue( QualifiedContentTypeName.folder().isFolder() );
+        assertTrue( QualifiedContentTypeName.page().isPage() );
+        assertTrue( QualifiedContentTypeName.shortcut().isShortcut() );
+        assertTrue( QualifiedContentTypeName.space().isSpace() );
+        assertTrue( QualifiedContentTypeName.structured().isStructured() );
+        assertTrue( QualifiedContentTypeName.unstructured().isUnstructured() );
+
+        assertEquals( "content", QualifiedContentTypeName.content().getContentTypeName() );
+        assertEquals( "file", QualifiedContentTypeName.file().getContentTypeName() );
+        assertEquals( "folder", QualifiedContentTypeName.folder().getContentTypeName() );
+        assertEquals( "page", QualifiedContentTypeName.page().getContentTypeName() );
+        assertEquals( "shortcut", QualifiedContentTypeName.shortcut().getContentTypeName() );
+        assertEquals( "space", QualifiedContentTypeName.space().getContentTypeName() );
+        assertEquals( "structured", QualifiedContentTypeName.structured().getContentTypeName() );
+        assertEquals( "unstructured", QualifiedContentTypeName.unstructured().getContentTypeName() );
+    }
 }

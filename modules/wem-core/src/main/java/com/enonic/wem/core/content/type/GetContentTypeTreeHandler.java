@@ -45,7 +45,7 @@ public class GetContentTypeTreeHandler
 
         for ( ContentType contentType : contentTypes )
         {
-            if ( contentType.getSuperType() == null )
+            if ( contentType.getSuperType() == null || contentType.getQualifiedName().isUnstructured())
             {
                 rootTypes.add( contentType );
             }

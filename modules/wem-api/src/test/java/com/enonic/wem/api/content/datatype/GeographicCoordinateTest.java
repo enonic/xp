@@ -6,6 +6,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.type.form.InvalidValueException;
 
+import static com.enonic.wem.api.content.Content.newContent;
 import static org.junit.Assert.*;
 
 
@@ -16,7 +17,7 @@ public class GeographicCoordinateTest
         throws Exception
     {
         // setup
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "myGeographicCoordinate.latitude", "1.1" );
 
         GeographicCoordinate geographicCoordinate = DataTypes.GEOGRAPHIC_COORDINATE;
@@ -31,7 +32,7 @@ public class GeographicCoordinateTest
         throws Exception
     {
         // setup
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "myGeographicCoordinate.latitude", 90.0 );
         content.setData( "myGeographicCoordinate.longitude", 180.2 );
         GeographicCoordinate geographicCoordinate = DataTypes.GEOGRAPHIC_COORDINATE;

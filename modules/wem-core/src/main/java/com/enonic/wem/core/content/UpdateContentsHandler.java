@@ -14,6 +14,8 @@ import com.enonic.wem.core.content.dao.ContentDao;
 
 import com.enonic.cms.core.time.TimeService;
 
+import static com.enonic.wem.api.content.Content.newContent;
+
 @Component
 public class UpdateContentsHandler
     extends CommandHandler<UpdateContents>
@@ -37,10 +39,12 @@ public class UpdateContentsHandler
         for ( Content contentToUpdate : contents )
         {
             ContentEditor contentEditor = command.getEditor();
-            if ( contentEditor.edit( contentToUpdate ) )
+            final Content modifiedContent = contentEditor.edit( contentToUpdate );
+            if ( modifiedContent != null )
             {
-                contentToUpdate.setModifiedTime( timeService.getNowAsDateTime() );
-                contentToUpdate.setModifier( command.getModifier() );
+                contentToUpdate = newContent( modifiedContent ).
+                    modifiedTime( timeService.getNowAsDateTime() ).
+                    modifier( command.getModifier() ).build();
                 contentDao.updateContent( contentToUpdate, context.getJcrSession() );
                 context.getJcrSession().save();
             }

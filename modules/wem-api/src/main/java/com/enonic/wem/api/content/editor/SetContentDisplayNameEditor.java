@@ -3,6 +3,8 @@ package com.enonic.wem.api.content.editor;
 
 import com.enonic.wem.api.content.Content;
 
+import static com.enonic.wem.api.content.Content.newContent;
+
 final class SetContentDisplayNameEditor
     implements ContentEditor
 {
@@ -14,10 +16,13 @@ final class SetContentDisplayNameEditor
     }
 
     @Override
-    public boolean edit( final Content content )
+    public Content edit( final Content content )
         throws Exception
     {
-        content.setDisplayName( displayName );
-        return false;
+        final Content updated = newContent( content ).
+            displayName( displayName ).
+            build();
+        return updated;
     }
+
 }

@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
+import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
@@ -32,8 +33,7 @@ public class OccurrenceValidatorTest
     public void given_input_with_maxOccur1_with_two_data_when_validate_then_exception_is_thrown()
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).maximumOccurrences( 1 ).build() );
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myInput[0]", "1" );
         content.setData( "myInput[1]", "2" );
 
@@ -48,8 +48,7 @@ public class OccurrenceValidatorTest
     public void given_input_with_maxOccur2_with_three_data_when_validate_then_exception_is_thrown()
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).maximumOccurrences( 2 ).build() );
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myInput[0]", "1" );
         content.setData( "myInput[1]", "2" );
         content.setData( "myInput[2]", "3" );
@@ -65,8 +64,7 @@ public class OccurrenceValidatorTest
     public void given_required_input_with_data_when_validate_then_exception_is_not_thrown()
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myInput", "value" );
 
         // exercise
@@ -78,8 +76,7 @@ public class OccurrenceValidatorTest
     public void given_required_input_with_no_data_when_validate_then_exception_is_thrown()
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() );
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
 
         // exercise
         final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
@@ -90,8 +87,7 @@ public class OccurrenceValidatorTest
     public void given_input_with_minOccur1_with_one_data_with_blank_value_when_validate_then_exception_is_thrown()
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).minimumOccurrences( 1 ).build() );
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myInput", "" );
 
         // exercise
@@ -104,8 +100,7 @@ public class OccurrenceValidatorTest
     public void given_input_with_minOccur2_with_one_data_when_validate_then_exception_is_thrown()
     {
         contentType.form().addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).minimumOccurrences( 2 ).build() );
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myInput", "value" );
 
         // exercise
@@ -121,7 +116,7 @@ public class OccurrenceValidatorTest
 
         contentType.form().addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
             newInput().name( "myField" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() );
-        Content content = new Content();
+        Content content = newContent().build();
 
         // exercise
         final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
@@ -135,8 +130,7 @@ public class OccurrenceValidatorTest
         contentType.form().addFormItem( newFieldSet().label( "My outer layout" ).name( "myOuterlayout" ).add(
             newFieldSet().label( "My Layout" ).name( "myLayout" ).add(
                 newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
 
         // exercise
         final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
@@ -150,7 +144,7 @@ public class OccurrenceValidatorTest
         contentType.form().addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
             newFormItemSet().name( "mySet" ).required( true ).add(
                 newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "mySet.myInput", "" );
 
         // exercise
@@ -164,8 +158,7 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem( newFormItemSet().name( "mySet" ).required( true ).add(
             newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() );
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "mySet.myInput", "" );
 
         // exercise
@@ -180,7 +173,7 @@ public class OccurrenceValidatorTest
         contentType.form().addFormItem( newFormItemSet().name( "mySet" ).required( true ).add(
             newFieldSet().label( "My layout" ).name( "myLayout" ).add(
                 newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "mySet.myInput", "" );
 
         // exercise
@@ -194,8 +187,7 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem( newFormItemSet().name( "mySet" ).required( true ).add(
             newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() );
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "mySet.myInput", "value" );
 
         // exercise
@@ -208,8 +200,7 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem( newFormItemSet().name( "mySet" ).required( true ).add(
             newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() );
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
 
         // exercise
         final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
@@ -223,8 +214,7 @@ public class OccurrenceValidatorTest
         contentType.form().addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
             newFormItemSet().name( "mySet" ).required( true ).add(
                 newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build() );
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
 
         // exercise
         final DataValidationErrors validationResults = new OccurrenceValidator( contentType ).validate( content.getData() );
@@ -248,8 +238,7 @@ public class OccurrenceValidatorTest
         crimes.add( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
         crimes.add( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
 
         content.setData( "name", "Thomas" );
         content.setData( "crimes[0].description", "Stole tomatoes from neighbour" );
@@ -269,8 +258,7 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem( newInput().minimumOccurrences( 1 ).name( "minimumOne" ).type( InputTypes.TEXT_LINE ).build() );
         contentType.form().addFormItem( newInput().maximumOccurrences( 2 ).name( "maximumTwo" ).type( InputTypes.TEXT_LINE ).build() );
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "maximumTwo[0]", "1" );
         content.setData( "maximumTwo[1]", "2" );
         content.setData( "maximumTwo[2]", "3" );

@@ -14,6 +14,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.core.jcr.JcrHelper;
 
+import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENTS_PATH;
 
 abstract class AbstractContentDaoHandler
@@ -36,9 +37,9 @@ abstract class AbstractContentDaoHandler
             final Node contentNode = nodeIterator.nextNode();
             final String jcrNodePath = contentNode.getPath();
             final String contentPath = StringUtils.substringAfter( jcrNodePath, CONTENTS_PATH );
-            final Content content = Content.create( ContentPath.from( contentPath ) );
-            contentJcrMapper.toContent( contentNode, content );
-            contentList.add( new ContentAndNode( content, contentNode ) );
+            final Content.Builder contentBuilder = newContent().path( ContentPath.from( contentPath ) );
+            contentJcrMapper.toContent( contentNode, contentBuilder );
+            contentList.add( new ContentAndNode( contentBuilder.build(), contentNode ) );
         }
         return contentList;
     }
@@ -78,9 +79,9 @@ abstract class AbstractContentDaoHandler
             return null;
         }
 
-        final Content content = Content.create( contentPath );
-        contentJcrMapper.toContent( contentNode, content );
-        return content;
+        final Content.Builder contentBuilder = newContent().path( contentPath );
+        contentJcrMapper.toContent( contentNode, contentBuilder );
+        return contentBuilder.build();
 
     }
 

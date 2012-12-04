@@ -43,6 +43,10 @@ public class GetContentRpcHandlerTest
     public void get()
         throws Exception
     {
+        final ContentData contentData = new ContentData();
+        contentData.setData( new EntryPath( "field1" ), "value1" );
+        contentData.setData( new EntryPath( "field2" ), "value2" );
+
         final Content content1 = Content.newContent().
             path( ContentPath.from( "/MySite/MyContent" ) ).
             createdTime( timeService.getNowAsDateTime() ).
@@ -51,11 +55,8 @@ public class GetContentRpcHandlerTest
             modifiedTime( timeService.getNowAsDateTime() ).
             modifier( UserKey.superUser() ).
             type( new QualifiedContentTypeName( "myModule:myType" ) ).
+            data( contentData ).
             build();
-        final ContentData contentData = new ContentData();
-        contentData.setData( new EntryPath( "field1" ), "value1" );
-        contentData.setData( new EntryPath( "field2" ), "value2" );
-        content1.setData( contentData );
 
         Mockito.when( client.execute( Mockito.any( Commands.content().get().getClass() ) ) ).thenReturn( Contents.from( content1 ) );
 

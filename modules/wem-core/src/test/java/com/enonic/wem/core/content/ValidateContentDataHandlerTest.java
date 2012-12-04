@@ -13,6 +13,7 @@ import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
+import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
@@ -45,8 +46,7 @@ public class ValidateContentDataHandlerTest
                 newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build() ).
             build();
 
-        final Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        final Content content = newContent().type( contentType.getQualifiedName() ).build();
 
         // exercise
         final ValidateContentData command = Commands.content().validate().contentData( content.getData() ).contentType( contentType );
@@ -72,8 +72,7 @@ public class ValidateContentDataHandlerTest
             addFormItem( fieldSet ).
             build();
 
-        final Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        final Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "mySet.myInput", "thing" );
 
         // exercise

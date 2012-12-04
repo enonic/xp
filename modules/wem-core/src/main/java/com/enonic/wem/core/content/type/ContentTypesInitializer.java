@@ -1,10 +1,12 @@
 package com.enonic.wem.core.content.type;
 
+import org.apache.commons.lang.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.type.ContentType;
+import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.Input;
@@ -21,21 +23,21 @@ import static com.enonic.wem.api.content.type.form.inputtype.InputTypes.TEXT_LIN
 @Component
 public class ContentTypesInitializer
 {
-    private static final ContentType CONTENT = createSystemType( "Content", "content", false, true );
+    private static final ContentType CONTENT = createSystemType( QualifiedContentTypeName.content(), false, true );
 
-    private static final ContentType SPACE = createSystemType( "Space", "space", true, false );
+    private static final ContentType SPACE = createSystemType( QualifiedContentTypeName.space(), true, false );
 
-    private static final ContentType STRUCTURED = createSystemType( "Structured", "structured", false, true );
+    private static final ContentType STRUCTURED = createSystemType( QualifiedContentTypeName.structured(), false, true );
 
-    private static final ContentType UNSTRUCTURED = createSystemType( "Unstructured", "unstructured", false, false );
+    private static final ContentType UNSTRUCTURED = createSystemType( QualifiedContentTypeName.unstructured(), false, false );
 
-    private static final ContentType FOLDER = createSystemType( "Folder", "folder", false, false );
+    private static final ContentType FOLDER = createSystemType( QualifiedContentTypeName.folder(), false, false );
 
-    private static final ContentType PAGE = createSystemType( "Page", "page", true, false );
+    private static final ContentType PAGE = createSystemType( QualifiedContentTypeName.page(), true, false );
 
-    private static final ContentType SHORTCUT = createSystemType( "Shortcut", "shortcut", true, false );
+    private static final ContentType SHORTCUT = createSystemType( QualifiedContentTypeName.shortcut(), true, false );
 
-    private static final ContentType FILE = createSystemType( "File", "file", true, false );
+    private static final ContentType FILE = createSystemType( QualifiedContentTypeName.file(), true, false );
 
     private static final ContentType[] SYSTEM_TYPES = {CONTENT, SPACE, STRUCTURED, UNSTRUCTURED, FOLDER, PAGE, SHORTCUT, FILE};
 
@@ -94,12 +96,14 @@ public class ContentTypesInitializer
         }
     }
 
-    private static ContentType createSystemType( final String displayName, final String name, final boolean isFinal,
+    private static ContentType createSystemType( final QualifiedContentTypeName qualifiedName, final boolean isFinal,
                                                  final boolean isAbstract )
     {
+        final String displayName = WordUtils.capitalize( qualifiedName.getContentTypeName() );
+        final String contentTypeName = qualifiedName.getContentTypeName();
         return newContentType().
             module( Module.SYSTEM.getName() ).
-            name( name ).
+            name( contentTypeName ).
             displayName( displayName ).
             setFinal( isFinal ).
             setAbstract( isAbstract ).

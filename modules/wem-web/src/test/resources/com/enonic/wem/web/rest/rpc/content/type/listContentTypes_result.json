@@ -6,7 +6,7 @@
             "module":"myModule",
             "qualifiedName":"myModule:myCtype",
             "displayName":null,
-            "superType":null,
+            "superType":"System:unstructured",
             "isAbstract":false,
             "isFinal":false,
             "form":[
@@ -74,7 +74,7 @@
             "module":"otherModule",
             "qualifiedName":"otherModule:theContentType",
             "displayName":null,
-            "superType":null,
+            "superType":"System:unstructured",
             "isAbstract":false,
             "isFinal":false,
             "form":[

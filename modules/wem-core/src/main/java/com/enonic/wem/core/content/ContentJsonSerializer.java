@@ -77,30 +77,30 @@ public class ContentJsonSerializer
 
     public Content parse( final JsonNode contentNode )
     {
-        final Content content = new Content();
+        final Content.Builder contentBuilder = Content.newContent();
         final String name = getStringValue( "name", contentNode );
         if ( !StringUtils.isBlank( name ) )
         {
-            content.setName( name );
+            contentBuilder.name( name );
         }
 
         final String typeAsString = getStringValue( "type", contentNode, null );
         if ( typeAsString != null )
         {
             final QualifiedContentTypeName qualifiedContentTypeName = new QualifiedContentTypeName( typeAsString );
-            content.setType( qualifiedContentTypeName );
+            contentBuilder.type( qualifiedContentTypeName );
         }
 
-        content.setPath( ContentPath.from( getStringValue( "path", contentNode, null ) ) );
-        content.setDisplayName( getStringValue( "displayName", contentNode, null ) );
-        content.setOwner( getUserValue( contentNode, "owner" ) );
-        content.setModifier( getUserValue( contentNode, "modifier" ) );
-        content.setModifiedTime( getDateTimeValue( contentNode, "modifiedTime" ) );
-        content.setCreatedTime( getDateTimeValue( contentNode, "createdTime" ) );
+        contentBuilder.path( ContentPath.from( getStringValue( "path", contentNode, null ) ) );
+        contentBuilder.displayName( getStringValue( "displayName", contentNode, null ) );
+        contentBuilder.owner( getUserValue( contentNode, "owner" ) );
+        contentBuilder.modifier( getUserValue( contentNode, "modifier" ) );
+        contentBuilder.modifiedTime( getDateTimeValue( contentNode, "modifiedTime" ) );
+        contentBuilder.createdTime( getDateTimeValue( contentNode, "createdTime" ) );
 
-        content.setData( contentDataSerializer.parse( contentNode.get( "data" ) ) );
+        contentBuilder.data( contentDataSerializer.parse( contentNode.get( "data" ) ) );
 
-        return content;
+        return contentBuilder.build();
     }
 
     private UserKey getUserValue( final JsonNode node, final String propertyName )

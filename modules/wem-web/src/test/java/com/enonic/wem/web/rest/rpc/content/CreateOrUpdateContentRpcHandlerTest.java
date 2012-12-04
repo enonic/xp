@@ -17,6 +17,7 @@ import com.enonic.wem.api.exception.ContentNotFoundException;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
+import static com.enonic.wem.api.content.Content.newContent;
 import static org.mockito.Matchers.isA;
 
 public class CreateOrUpdateContentRpcHandlerTest
@@ -57,7 +58,7 @@ public class CreateOrUpdateContentRpcHandlerTest
         throws Exception
     {
         Mockito.when( client.execute( isA( UpdateContents.class ) ) ).thenReturn( 1 );
-        final Content content = new Content();
+        final Content content = newContent().build();
         final Contents contents = Contents.from( content );
         Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( contents );
 

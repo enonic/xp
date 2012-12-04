@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.content.type.form.Form;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItems;
+import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleName;
 
 import static com.enonic.wem.api.content.type.form.Form.newForm;
@@ -137,6 +138,13 @@ public final class ContentType
             this.name = contentType.getName();
         }
 
+        public Builder qualifiedName( final QualifiedContentTypeName qualifiedContentTypeName )
+        {
+            this.name = qualifiedContentTypeName.getContentTypeName();
+            this.moduleName = qualifiedContentTypeName.getModuleName();
+            return this;
+        }
+
         public Builder name( final String name )
         {
             this.name = name;
@@ -206,6 +214,10 @@ public final class ContentType
             for ( FormItem formItem : formItemList )
             {
                 formBuilder.addFormItem( formItem );
+            }
+            if ( superType == null && ( moduleName != null && !moduleName.equals( Module.SYSTEM.getName() ) ) )
+            {
+                superType = QualifiedContentTypeName.unstructured();
             }
 
             return new ContentType( name, displayName, superType, isAbstract, isFinal, moduleName, formBuilder.build() );

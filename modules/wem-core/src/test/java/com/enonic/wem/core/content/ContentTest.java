@@ -23,6 +23,7 @@ import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.content.type.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
 
+import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
@@ -58,8 +59,7 @@ public class ContentTest
             newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build();
         contentType.form().addFormItem( mySingleSelector );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "mySingleSelector", "o1" );
 
         assertEquals( "o1", content.getData( "mySingleSelector" ).getValue() );
@@ -71,8 +71,7 @@ public class ContentTest
         contentType.form().addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
         contentType.form().addFormItem( newInput().name( "myMultipleTextLine" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myTextLine", "A single line" );
         content.setData( "myMultipleTextLine[0]", "First line" );
         content.setData( "myMultipleTextLine[1]", "Second line" );
@@ -85,7 +84,7 @@ public class ContentTest
     @Test
     public void overwriting_does_not_create_array()
     {
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "noArray", "First" );
         content.setData( "noArray", "Second" );
         content.setData( "noArray", "Third" );
@@ -96,7 +95,7 @@ public class ContentTest
     @Test
     public void setData_assigning_same_array_element_a_second_time_ovewrites_the_first_value()
     {
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "array[0]", "First" );
         content.setData( "array[1]", "Second" );
         content.setData( "array[1]", "Second again" );
@@ -109,7 +108,7 @@ public class ContentTest
     @Test
     public void multiple_textlines2()
     {
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "myArray", "First" );
         content.setData( "myArray[1]", "Second" );
 
@@ -123,7 +122,7 @@ public class ContentTest
     @Test
     public void multiple_textlines3()
     {
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "set.myArray[0]", "First" );
         content.setData( "set.myArray[1]", "Second" );
 
@@ -141,7 +140,7 @@ public class ContentTest
     @Test
     public void multiple_textlines4()
     {
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "set.myArray[0].input", "First" );
         content.setData( "set.myArray[1].input", "Second" );
 
@@ -155,7 +154,7 @@ public class ContentTest
     @Test
     public void array_set()
     {
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "set[0].myText", "First" );
         content.setData( "set[1].myText", "Second" );
 
@@ -172,7 +171,7 @@ public class ContentTest
     @Test
     public void array_set2()
     {
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "set[0].myText", "First" );
         content.setData( "set[0].myOther", "First other" );
         content.setData( "set[1].myText", "Second" );
@@ -196,8 +195,7 @@ public class ContentTest
         contentType.form().addFormItem( newInput().name( "myTags" ).type( InputTypes.TAGS ).build() );
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myTags", "A line of text" );
 
         assertEquals( "A line of text", content.getData( "myTags" ).getValue() );
@@ -216,8 +214,7 @@ public class ContentTest
             SubTypeReference.newSubTypeReference().name( "myTags" ).subType( "system:tags" ).type( InputSubType.class ).build() );
         contentType.form().subTypeReferencesToFormItems( subTypeFetcher );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myTags[0]", "Java" );
         content.setData( "myTags[1]", "XML" );
         content.setData( "myTags[2]", "JSON" );
@@ -233,8 +230,7 @@ public class ContentTest
     {
         contentType.form().addFormItem( newInput().name( "myPhone" ).type( InputTypes.PHONE ).required( true ).build() );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myPhone", "98327891" );
 
         assertEquals( "98327891", content.getData( "myPhone" ).getValue() );
@@ -250,8 +246,7 @@ public class ContentTest
         formItemSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
         formItemSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "name", "Ola Nordmann" );
         content.setData( "personalia.eyeColour", "Blue" );
         content.setData( "personalia.hairColour", "Blonde" );
@@ -273,8 +268,7 @@ public class ContentTest
         formItemSet.add( newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() );
         formItemSet.add( newInput().name( "hairColour" ).type( InputTypes.TEXT_LINE ).build() );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "name", "Norske" );
         content.setData( "personalia[0].name", "Ola Nordmann" );
         content.setData( "personalia[0].eyeColour", "Blue" );
@@ -295,7 +289,7 @@ public class ContentTest
     @Test
     public void unstructured()
     {
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "firstName", "Thomas", DataTypes.TEXT );
         content.setData( "description", "Grew up in Noetteveien", DataTypes.HTML_PART );
         content.setData( "child[0].name", "Joachim" );
@@ -323,7 +317,7 @@ public class ContentTest
     @Test(expected = InvalidDataException.class)
     public void setData_given_invalid_value_when_dataType_is_geographical_coordinate_then_exception()
     {
-        Content content = new Content();
+        Content content = newContent().build();
         DataSet value = DataSet.newDataSet().set( "latitude", 0.0, DataTypes.DECIMAL_NUMBER ).set( "longitude", 181.0,
                                                                                                    DataTypes.DECIMAL_NUMBER ).build();
         content.setData( "myGeoLocation", value, DataTypes.GEOGRAPHIC_COORDINATE );
@@ -332,7 +326,7 @@ public class ContentTest
     @Test
     public void unstructured_getEntries()
     {
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "child[0].name", "Joachim" );
         content.setData( "child[0].age", "9" );
         content.setData( "child[0].features.eyeColour", "Blue" );
@@ -365,8 +359,7 @@ public class ContentTest
         child.add( features );
         contentType.form().addFormItem( child );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "child[0].name", "Joachim" );
         content.setData( "child[0].age", "9" );
         content.setData( "child[0].features.eyeColour", "Blue" );
@@ -391,7 +384,7 @@ public class ContentTest
     public void given_unstructured_content_when_getting_values_then_they_are_returned()
     {
         // setup
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "name", "Thomas" );
         content.setData( "personalia.eyeColour", "Blue", DataTypes.TEXT );
         content.setData( "personalia.hairColour", "Blonde" );
@@ -427,8 +420,7 @@ public class ContentTest
         subTypeFetcher.add( addressSubType );
         contentType.form().subTypeReferencesToFormItems( subTypeFetcher );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "name", "Ola Normann" );
         content.setData( "address.street", "Bakkebygrenda 1" );
         content.setData( "address.postalCode", "2676" );
@@ -460,8 +452,7 @@ public class ContentTest
         subTypeFetcher.add( addressSubType );
         contentType.form().subTypeReferencesToFormItems( subTypeFetcher );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "address[0].label", "Home" );
         content.setData( "address[0].street", "Bakkebygrenda 1" );
         content.setData( "address[0].postalCode", "2676" );
@@ -495,8 +486,7 @@ public class ContentTest
 
         contentType.form().subTypeReferencesToFormItems( new MockSubTypeFetcher() );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "name", "Ola Normann" );
         try
         {
@@ -523,8 +513,7 @@ public class ContentTest
         personalia.addFormItem( tatoos );
         contentType.form().addFormItem( personalia );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
 
         // exercise
         content.setData( "name", "Ola Norman" );
@@ -547,7 +536,7 @@ public class ContentTest
     public void given_array_when_setting_data_of_another_type_to_array_then_exception_is_thrown()
     {
         // setup
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "myData", "Value 1", DataTypes.TEXT );
 
         // exercise

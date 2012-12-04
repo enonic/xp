@@ -85,18 +85,18 @@ public class ContentXmlSerializer
 
     public Content parse( final Element contentEl )
     {
-        final Content content = new Content();
-        content.setName( contentEl.getChildText( "name" ) );
+        final Content.Builder contentBuilder = Content.newContent();
+        contentBuilder.name( contentEl.getChildText( "name" ) );
 
         final String typeAsString = contentEl.getChildText( "type" );
         if ( typeAsString != null )
         {
             final QualifiedContentTypeName qualifiedContentTypeName = new QualifiedContentTypeName( typeAsString );
-            content.setType( qualifiedContentTypeName );
+            contentBuilder.type( qualifiedContentTypeName );
         }
 
-        content.setData( contentDataSerializer.parse( contentEl.getChild( "data" ) ) );
+        contentBuilder.data( contentDataSerializer.parse( contentEl.getChild( "data" ) ) );
 
-        return content;
+        return contentBuilder.build();
     }
 }

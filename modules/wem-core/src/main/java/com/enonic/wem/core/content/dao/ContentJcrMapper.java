@@ -53,29 +53,29 @@ final class ContentJcrMapper
         contentNode.setProperty( DISPLAY_NAME, content.getDisplayName() );
     }
 
-    void toContent( final Node contentNode, final Content content )
+    void toContent( final Node contentNode, final Content.Builder contentBuilder )
         throws RepositoryException
     {
         final String dataAsJson = contentNode.getProperty( DATA ).getString();
         final ContentData contentData = contentDataSerializerJson.toObject( dataAsJson );
-        content.setData( contentData );
+        contentBuilder.data( contentData );
 
-        content.setCreatedTime( getPropertyDateTime( contentNode, CREATED_TIME ) );
-        content.setModifiedTime( getPropertyDateTime( contentNode, MODIFIED_TIME ) );
+        contentBuilder.createdTime( getPropertyDateTime( contentNode, CREATED_TIME ) );
+        contentBuilder.modifiedTime( getPropertyDateTime( contentNode, MODIFIED_TIME ) );
         if ( contentNode.hasProperty( MODIFIER ) )
         {
-            content.setModifier( AccountKey.from( getPropertyString( contentNode, MODIFIER ) ).asUser() );
+            contentBuilder.modifier( AccountKey.from( getPropertyString( contentNode, MODIFIER ) ).asUser() );
         }
         if ( contentNode.hasProperty( OWNER ) )
         {
-            content.setOwner( AccountKey.from( getPropertyString( contentNode, OWNER ) ).asUser() );
+            contentBuilder.owner( AccountKey.from( getPropertyString( contentNode, OWNER ) ).asUser() );
         }
-        content.setModifiedTime( getPropertyDateTime( contentNode, MODIFIED_TIME ) );
-        content.setDisplayName( getPropertyString( contentNode, DISPLAY_NAME ) );
+        contentBuilder.modifiedTime( getPropertyDateTime( contentNode, MODIFIED_TIME ) );
+        contentBuilder.displayName( getPropertyString( contentNode, DISPLAY_NAME ) );
         final String contentType = getPropertyString( contentNode, TYPE );
         if ( contentType != null )
         {
-            content.setType( new QualifiedContentTypeName( contentType ) );
+            contentBuilder.type( new QualifiedContentTypeName( contentType ) );
         }
     }
 }

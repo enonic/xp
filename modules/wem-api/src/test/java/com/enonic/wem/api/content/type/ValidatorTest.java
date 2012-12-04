@@ -20,6 +20,7 @@ import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.content.type.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
 
+import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.Validator.newValidator;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
@@ -50,8 +51,7 @@ public class ValidatorTest
         contentType.form().addFormItem(
             newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "mySingleSelector", "nonExistingOption" );
 
         // exercise & verify
@@ -78,8 +78,7 @@ public class ValidatorTest
         contentType.form().addFormItem(
             newInput().name( "mySingleSelector2" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "mySingleSelector1", "nonExistingOption" );
         content.setData( "mySingleSelector2", "nonExistingOption" );
 
@@ -118,8 +117,7 @@ public class ValidatorTest
         contentType.form().addFormItem( newInput().name( "myWholeNumber" ).type( InputTypes.WHOLE_NUMBER ).build() );
         contentType.form().addFormItem( newInput().name( "myXml" ).type( InputTypes.XML ).build() );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myColor.red", 0l );
         content.setData( "myColor.blue", 0l );
         content.setData( "myColor.green", 0l );
@@ -141,8 +139,7 @@ public class ValidatorTest
         // setup
         contentType.form().addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).validationRegexp( "a*c" ).build() );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myTextLine", "aax" );
 
         // exercise
@@ -158,8 +155,7 @@ public class ValidatorTest
         contentType.form().addFormItem( formItemSet );
         formItemSet.add( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "mySet.myColor.red", 0l );
         content.setData( "mySet.myColor.green", 0l );
         content.setData( "mySet.myColor.blue", -1l );
@@ -178,8 +174,7 @@ public class ValidatorTest
         contentType.form().addFormItem( layout );
         layout.addFormItem( newInput().name( "myColor" ).type( InputTypes.COLOR ).build() );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myColor.red", 0l );
         content.setData( "myColor.green", 0l );
         content.setData( "myColor.blue", -1l );
@@ -198,8 +193,7 @@ public class ValidatorTest
         contentType.form().addFormItem( formItemSet );
         formItemSet.add( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "mySet.myGeoLocation.latitude", 0.0 );
         content.setData( "mySet.myGeoLocation.longitude", -181.00 );
 
@@ -216,8 +210,7 @@ public class ValidatorTest
         contentType.form().addFormItem( formItemSet );
         formItemSet.add( newInput().name( "myDate" ).type( InputTypes.DATE ).build() );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "mySet.myDate", "2000-01-01" );
 
         // exercise
@@ -235,8 +228,7 @@ public class ValidatorTest
         contentType.form().addFormItem(
             newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "mySingleSelector", "nonExistingOption" );
 
         // exercise
@@ -250,8 +242,7 @@ public class ValidatorTest
         // setup
         contentType.form().addFormItem( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myGeoLocation.latitude", 0.0 );
         content.setData( "myGeoLocation.longitude", "0.0" );
 
@@ -266,8 +257,7 @@ public class ValidatorTest
         // setup:
         contentType.form().addFormItem( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() );
 
-        Content content = new Content();
-        content.setType( contentType.getQualifiedName() );
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myGeoLocation.latitude", 0.0 );
         content.setData( "myGeoLocation.longitude", -181.00 );
 
@@ -280,7 +270,7 @@ public class ValidatorTest
     public void given_untyped_content_when_setting_type_that_fits_then_everything_validates()
     {
         // setup
-        Content content = new Content();
+        Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "name", "Thomas" );
         content.setData( "personalia.eyeColour", "Blue" );
         content.setData( "personalia.hairColour", "Blonde" );
@@ -303,7 +293,6 @@ public class ValidatorTest
         contentType.form().addFormItem( crimes );
         crimes.add( newInput().name( "description" ).type( InputTypes.TEXT_LINE ).build() );
         crimes.add( newInput().name( "year" ).type( InputTypes.TEXT_LINE ).build() );
-        content.setType( contentType.getQualifiedName() );
 
         assertEquals( DataTypes.TEXT, content.getData( "personalia.eyeColour" ).getDataType() );
         Assert.assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getValue() );

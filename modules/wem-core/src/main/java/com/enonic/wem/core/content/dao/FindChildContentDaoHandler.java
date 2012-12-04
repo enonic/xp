@@ -28,9 +28,9 @@ final class FindChildContentDaoHandler
         {
             final Node contentNode = nodeIterator.nextNode();
             final ContentPath childPath = ContentPath.from( parentPath, contentNode.getName() );
-            final Content content = Content.create( childPath );
-            contentJcrMapper.toContent( contentNode, content );
-            contentsBuilder.add( content );
+            final Content.Builder contentBuilder = Content.newContent().path( childPath );
+            contentJcrMapper.toContent( contentNode, contentBuilder );
+            contentsBuilder.add( contentBuilder.build() );
         }
 
         return contentsBuilder.build();

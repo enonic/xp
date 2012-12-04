@@ -30,16 +30,16 @@ public class CreateContentHandler
         throws Exception
     {
         final ContentData contentData = command.getContentData();
-        final Content content = new Content();
-        content.setPath( command.getContentPath() );
-        content.setData( contentData );
-        content.setType( command.getContentType() );
-        content.setDisplayName( command.getDisplayName() );
-        content.setCreatedTime( timeService.getNowAsDateTime() );
-        content.setModifiedTime( timeService.getNowAsDateTime() );
-        content.setOwner( command.getOwner() );
-        content.setModifier( command.getOwner() );
-        contentDao.createContent( content, context.getJcrSession() );
+        final Content.Builder contentBuilder = Content.newContent();
+        contentBuilder.path( command.getContentPath() );
+        contentBuilder.data( contentData );
+        contentBuilder.type( command.getContentType() );
+        contentBuilder.displayName( command.getDisplayName() );
+        contentBuilder.createdTime( timeService.getNowAsDateTime() );
+        contentBuilder.modifiedTime( timeService.getNowAsDateTime() );
+        contentBuilder.owner( command.getOwner() );
+        contentBuilder.modifier( command.getOwner() );
+        contentDao.createContent( contentBuilder.build(), context.getJcrSession() );
         context.getJcrSession().save();
     }
 

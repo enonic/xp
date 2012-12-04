@@ -4,6 +4,10 @@ import com.enonic.wem.api.content.Content;
 
 public interface ContentEditor
 {
-    public boolean edit( Content content )
+    /**
+     * @param content to be edited
+     * @return updated content, null if it has not been updated.
+     */
+    public Content edit( Content content )
         throws Exception;
 }

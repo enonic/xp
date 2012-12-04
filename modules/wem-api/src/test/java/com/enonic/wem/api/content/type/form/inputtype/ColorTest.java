@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
 import com.enonic.wem.api.content.type.form.InvalidDataException;
 import com.enonic.wem.api.content.type.form.InvalidValueException;
 
+import static com.enonic.wem.api.content.Content.newContent;
 import static org.junit.Assert.*;
 
 public class ColorTest
@@ -23,7 +24,7 @@ public class ColorTest
     public void given_data_that_validates_checkValidity_throws_nothing()
         throws InvalidValueTypeException, InvalidValueException
     {
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "myColor.red", 40l );
         content.setData( "myColor.green", 40l );
         content.setData( "myColor.blue", 40l );
@@ -36,7 +37,7 @@ public class ColorTest
     @Test
     public void given_data_missing_red_checkValidity_throws_InvalidDataException()
     {
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "myColor.green", 40l );
         content.setData( "myColor.blue", 40l );
 
@@ -60,7 +61,7 @@ public class ColorTest
     @Test
     public void given_data_with_illegal_red_checkValidity_throws_InvalidDataException()
     {
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "myColor.red", 256l );
         content.setData( "myColor.green", 40l );
         content.setData( "myColor.blue", 40l );

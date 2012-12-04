@@ -7,6 +7,8 @@ import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.datatype.DataTypes;
 
+import static com.enonic.wem.api.content.Content.newContent;
+
 
 public class BlobToKeyReplacerTest
 {
@@ -15,7 +17,7 @@ public class BlobToKeyReplacerTest
     {
         MockBlobKeyResolver resolver = new MockBlobKeyResolver();
         BlobToKeyReplacer blobToKeyReplacer = new BlobToKeyReplacer( resolver );
-        Content content = new Content();
+        Content content = newContent().build();
         content.setData( "myBlob", new byte[]{1, 2, 3}, DataTypes.BLOB );
         blobToKeyReplacer.replace( content.getData() );
         Assert.assertTrue( content.getData( "myBlob" ).getValue() instanceof BlobKey );
