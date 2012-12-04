@@ -3,7 +3,7 @@
  * http://www.enonic.com/license
  */
 Ext.define('Admin.lib.Sortable', {
-    constructor: function(parentComponent, group, config) {
+    constructor: function (parentComponent, group, config) {
         var me = this;
 
         me.parentComponent = parentComponent;
@@ -11,9 +11,11 @@ Ext.define('Admin.lib.Sortable', {
 
         var dragZone = new Ext.dd.DragZone(parentComponent.getEl(), {
             ddGroup: group,
-            getDragData: function(e) {
+            getDragData: function (e) {
                 var sourceElement = e.getTarget('.admin-sortable');
-                if (!sourceElement) return;
+                if (!sourceElement) {
+                    return;
+                }
 
                 // If a handle is configured and anything else than the handle is pressed, return.
                 if (me.config.handle && Ext.fly(sourceElement).down(me.config.handle).dom !== e.getTarget()) {
@@ -27,23 +29,23 @@ Ext.define('Admin.lib.Sortable', {
                     ddel: dragProxyElement,
                     sourceElement: sourceElement,
                     repairXY: Ext.fly(sourceElement).getXY()
-                }
+                };
             },
 
-            getRepairXY: function() {
+            getRepairXY: function () {
                 return this.dragData.repairXY;
             }
         });
 
 
-        var dropZone =  new Ext.dd.DropZone(parentComponent.getEl(), {
+        var dropZone = new Ext.dd.DropZone(parentComponent.getEl(), {
             ddGroup: group,
 
-            getTargetFromEvent: function(e) {
+            getTargetFromEvent: function (e) {
                 return e.getTarget('.admin-sortable');
             },
 
-            onNodeOver: function(target, dd, e, data) {
+            onNodeOver: function (target, dd, e, data) {
                 var node = Ext.getCmp(target.id);
                 if (!node) {
                     return;
