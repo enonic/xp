@@ -74,7 +74,7 @@ Ext.application({
                                             loadContentType(combo.getValue());
                                         },
                                         render: function (combo) {
-                                            combo.setValue('mock-contenttype-relation.json');
+                                            combo.setValue('mock-contenttype-set.json');
                                             loadContentType(combo.getValue());
                                         }
                                     }

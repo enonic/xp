@@ -130,6 +130,9 @@
   <li>
     <a href="jcr.jsp">JCR browse</a>
   </li>
+  <li>
+    <a href="../dev/sortable/">Sortable</a>
+  </li>
 </ul>
 
 <hr/>

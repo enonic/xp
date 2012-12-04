@@ -2,6 +2,7 @@ Ext.define('ContentDataPanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.contentDataPanel',
     requires: [
+        'Admin.lib.Sortable',
         'Admin.lib.formitem.HtmlArea',
         'Admin.lib.formitem.FormItemSet',
         'Admin.lib.formitem.Relation',
