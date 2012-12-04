@@ -179,7 +179,6 @@ Ext.define('Admin.view.TopBar', {
 
         this.callParent(arguments);
 
-        this.syncTabMenu();
         this.syncTabCount();
     },
 
@@ -187,46 +186,52 @@ Ext.define('Admin.view.TopBar', {
     /*  Methods for Admin.view.TabPanel integration */
 
     insert: function (index, cfg) {
-        console.log('addTab at ' + index, cfg);
+
         var added = this.tabMenu.addItems(cfg);
         this.syncTabCount();
-        // TODO: return inserted tab!
+
         return added.length === 1 ? added[0] : undefined;
     },
 
     setActiveTab: function (tab) {
-        console.log('set active', tab);
-        // no action needed
+
+        var card = tab.card;
+        if (card.id !== 'tab-browse') {
+            this.setPath(card.data ? card.data.path || card.data.qualifiedName || card.data.displayName : card.title);
+        } else {
+            this.setPath('');
+        }
     },
 
     remove: function (tab) {
-        console.log('removeTab', tab);
+
         var removed = this.tabMenu.removeItems(tab);
         this.syncTabCount();
+
         return removed;
     },
 
     findNextActivatable: function (tab) {
-        console.log('next activatable', tab);
-        // called in case active tab is closed
+
         if (this.tabPanel) {
-            // set first browse tab active if we have tabPanel
+            // set first browse tab active
             return this.tabPanel.items.get(0);
         }
     },
 
     createMenuItemFromTab: function (item) {
         var me = this;
+        var cfg = item.initialConfig || item;
         return {
             tabBar: me,
             card: item,
-            disabled: item.disabled,
-            closable: item.closable,
-            hidden: item.hidden && !item.hiddenByLayout, // only hide if it wasn't hidden by the layout itself
-            iconCls: item.iconCls || 'icon-data-blue',
-            editing: item.editing || false,
-            text1: item.title || 'first line',
-            text2: item.type || 'second line'
+            disabled: cfg.disabled,
+            closable: cfg.closable,
+            hidden: cfg.hidden && !item.hiddenByLayout, // only hide if it wasn't hidden by the layout itself
+            iconCls: cfg.iconCls || 'icon-data-blue',
+            editing: cfg.editing || false,
+            text1: cfg.title || 'first line',
+            text2: cfg.type || 'second line'
         };
     },
 
@@ -234,25 +239,9 @@ Ext.define('Admin.view.TopBar', {
 
     syncTabCount: function () {
         var count = this.tabMenu.getAllItems().length;
-        this.tabButton.setVisible(count > 0);
+        // show counter when 2 or more tabs are open
+        this.tabButton.setVisible(count > 1);
         this.tabButton.setText('' + count);
-    },
-
-    syncTabMenu: function () {
-        var me = this;
-        var menuItems = [];
-
-        this.tabMenu.removeAllItems(true, false);
-
-        if (this.tabPanel) {
-            Ext.Array.each(this.tabPanel.items.items, function (item) {
-                menuItems.push(me.createMenuItemFromTab(item.initialConfig));
-            });
-        }
-
-        if (!Ext.isEmpty(menuItems)) {
-            this.tabMenu.addItems(menuItems);
-        }
     },
 
     /*  Public  */

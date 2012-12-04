@@ -16,19 +16,46 @@ Ext.define('Admin.view.TabPanel', {
     defaults: { closable: true },
 
     initComponent: function () {
-        var me = this;
 
-        this.callParent(arguments);
+        var me = this,
+            dockedItems = [].concat(me.dockedItems || []),
+            activeTab = me.activeTab || (me.activeTab = 0);
 
-        // update default tab bar with our own
-        this.removeDocked(this.tabBar, true);
+        // Configure the layout with our deferredRender, and with our activeTeb
+        me.layout = new Ext.layout.container.Card(Ext.apply({
+            owner: me,
+            deferredRender: me.deferredRender,
+            itemCls: me.itemCls,
+            activeItem: me.activeTab
+        }, me.layout));
 
-        this.tabBar = Ext.create('Admin.view.TopBar', {
+        // Custom tabBar is why we needed to override this
+        this.tabBar = Ext.create('Admin.view.TopBar', Ext.apply({
             appName: me.appName,
             appIconCls: me.appIconCls,
             tabPanel: me
-        });
-        this.addDocked(this.tabBar);
+        }, me.tabBar));
+
+        dockedItems.push(me.tabBar);
+        me.dockedItems = dockedItems;
+
+        me.addEvents('beforetabchange', 'tabchange');
+
+        // first super is TabPanel, which we want to bypass
+        me.superclass.superclass.initComponent.apply(me, arguments);
+
+        // We have to convert the numeric index/string ID config into its component reference
+        me.activeTab = me.getComponent(activeTab);
+
+        // Ensure that the active child's tab is rendered in the active UI state
+        if (me.activeTab) {
+            me.activeTab.tab.activate(true);
+
+            // So that it knows what to deactivate in subsequent tab changes
+            me.tabBar.activeTab = me.activeTab.tab;
+        }
+
+
     },
 
     /**
@@ -54,6 +81,8 @@ Ext.define('Admin.view.TabPanel', {
                 var onRequestConfigSuccess = function (response) {
                     var tabContent = createTabFromResponse(response);
                     tab.add(tabContent);
+                    // tab already has data referencing the source for the tab, so update data with response
+                    tab.data = response;
                     mask.hide();
                     // There is a need to call doLayout manually, since it isn't called for background tabs
                     // after content was added
@@ -105,21 +134,9 @@ Ext.define('Admin.view.TabPanel', {
 
     onAdd: function (item, index) {
         var me = this,
-            cfg = item.tabConfig || {},
-            defaultConfig = {
-                tabBar: me.tabBar,
-                card: item,
-                disabled: item.disabled,
-                closable: item.closable,
-                hidden: item.hidden && !item.hiddenByLayout, // only hide if it wasn't hidden by the layout itself
-                iconCls: item.iconCls || 'icon-data-blue',
-                editing: item.editing || false,
-                text1: item.title || 'first line',
-                text2: item.type || 'second line'
-            };
+            cfg = item.tabConfig || {};
 
-
-        cfg = Ext.applyIf(cfg, defaultConfig);
+        cfg = Ext.applyIf(cfg, me.tabBar.createMenuItemFromTab(item));
 
         // Create the correspondiong tab in the tab bar
         item.tab = me.tabBar.insert(index, cfg);
@@ -153,10 +170,11 @@ Ext.define('Admin.view.TabPanel', {
     doRemove: function (item, autoDestroy) {
         var me = this;
 
-        // Destroying, or removing the last item, nothing to activate
         if (me.destroying || me.items.getCount() === 1) {
+            // Destroying, or removing the last item, nothing to activate
             me.activeTab = null;
         } else if (me.activeTab === item) {
+            // Removing currently active item, find next to activate
             var toActivate = me.tabBar.findNextActivatable(item.tab);
             if (toActivate) {
                 me.setActiveTab(toActivate);

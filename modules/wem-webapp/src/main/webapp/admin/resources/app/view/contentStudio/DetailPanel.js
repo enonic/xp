@@ -30,7 +30,7 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
         if (Ext.isArray(data)) {
             singleData = !Ext.isEmpty(data[0]) ? data[0].data : undefined;
         } else if (Ext.isObject(data)) {
-            singleData = data.data;
+            singleData = data.raw || data;
         }
 
         return {

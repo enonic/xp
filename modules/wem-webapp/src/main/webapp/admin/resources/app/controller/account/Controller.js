@@ -168,6 +168,7 @@ Ext.define('Admin.controller.account.Controller', {
             var tabItem = {
                 title: selectedUser.displayName + ' (' + selectedUser.qualifiedName + ')',
                 id: 'tab-preview-user-' + selectedUser.key,
+                data: selectedUser,
                 closable: true,
                 layout: 'fit'
             };
@@ -192,6 +193,7 @@ Ext.define('Admin.controller.account.Controller', {
             var tabItem = {
                 title: selectedGroup.displayName,
                 id: 'tab-preview-group-' + selectedGroup.key,
+                data: selectedGroup,
                 closable: true,
                 layout: 'fit'
             };
@@ -265,6 +267,7 @@ Ext.define('Admin.controller.account.Controller', {
                 id: 'tab-edit-user-' + selectedUser.key,
                 title: selectedUser.displayName + ' (' + selectedUser.qualifiedName + ')',
                 iconCls: 'icon-user',
+                data: selectedUser,
                 closable: true,
                 editing: true,
                 layout: 'fit'
@@ -295,6 +298,7 @@ Ext.define('Admin.controller.account.Controller', {
                 id: 'tab-edit-group-' + selectedGroup.key,
                 title: selectedGroup.displayName,
                 iconCls: tabIconCls,
+                data: selectedGroup,
                 closable: true,
                 editing: true,
                 layout: 'fit'
