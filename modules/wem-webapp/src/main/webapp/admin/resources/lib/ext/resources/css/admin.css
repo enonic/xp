@@ -153,31 +153,29 @@ p {
 
 /* line 8, ../sass/admin/css/_panel.scss */
 .admin-filter .x-panel-body {
-  padding: 20px 0 0 20px;
+  padding: 20px;
   background-color: #efefef !important;
-  border-top-style: none;
-  border-left-style: none;
-  border-bottom-style: none; }
-/* line 16, ../sass/admin/css/_panel.scss */
+  border-style: none; }
+/* line 14, ../sass/admin/css/_panel.scss */
 .admin-filter .x-fieldset {
   border: none !important;
   padding: 0 !important;
   margin-bottom: 15px !important; }
-/* line 22, ../sass/admin/css/_panel.scss */
+/* line 20, ../sass/admin/css/_panel.scss */
 .admin-filter .x-fieldset-header {
   color: #000000 !important;
   font-size: 15px !important;
   padding: 0 !important;
   text-transform: capitalize; }
-  /* line 28, ../sass/admin/css/_panel.scss */
+  /* line 26, ../sass/admin/css/_panel.scss */
   .admin-filter .x-fieldset-header .x-fieldset-header-text {
     border: none !important;
     padding: 0 0 !important; }
-/* line 34, ../sass/admin/css/_panel.scss */
+/* line 32, ../sass/admin/css/_panel.scss */
 .admin-filter .x-fieldset-body {
   padding-left: 10px; }
 
-/* line 42, ../sass/admin/css/_panel.scss */
+/* line 40, ../sass/admin/css/_panel.scss */
 .admin-detail .x-panel-body {
   border: none !important; }
 
@@ -2665,12 +2663,10 @@ tr.x-container:before {
   padding: 5px 16px 5px 16px;
   border-width: 1px;
   border-style: solid;
-  background-image: none;
   background-color: #e36500; }
 
 /* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nlg .x-btn-red-small-mc {
-  background-image: url('../themes/images/default/btn/btn-red-small-bg.gif');
   background-color: #e36500; }
 
 /* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
@@ -2700,7 +2696,8 @@ tr.x-container:before {
 .x-nbr .x-btn-red-small-mr {
   zoom: 1;
   background-image: url('../themes/images/default/btn/btn-red-small-sides.gif');
-  background-position: 0 0; }
+  background-position: 0 0;
+  background-repeat: repeat-y; }
 /* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nbr .x-btn-red-small-mc {
   padding: 6px 17px 6px 17px; }
@@ -2840,12 +2837,7 @@ tr.x-container:before {
 /* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-red-small-disabled {
   background-image: none;
-  background-color: #e36500;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #e36500), color-stop(48%, #d76000), color-stop(52%, #a94b00), color-stop(100%, #b35000));
-  background-image: -webkit-linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000);
-  background-image: -moz-linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000);
-  background-image: -o-linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000);
-  background-image: linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000); }
+  background-color: #e36500; }
 
 /* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-small-over .x-frame-tl,
@@ -2861,8 +2853,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-small-over-sides.gif'); }
 /* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-small-over .x-frame-mc {
-  background-color: #ff7e17;
-  background-image: url('../themes/images/default/btn/btn-red-small-over-bg.gif'); }
+  background-color: #ff7e17; }
 /* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-small-focus .x-frame-tl,
 .x-nbr .x-btn-red-small-focus .x-frame-bl,
@@ -2877,8 +2868,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-small-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-small-focus .x-frame-mc {
-  background-color: #e36500;
-  background-image: url('../themes/images/default/btn/btn-red-small-focus-bg.gif'); }
+  background-color: #e36500; }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-small-menu-active .x-frame-tl,
 .x-nbr .x-btn-red-small-menu-active .x-frame-bl,
@@ -2902,8 +2892,7 @@ tr.x-container:before {
 /* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-small-menu-active .x-frame-mc,
 .x-nbr .x-btn-red-small-pressed .x-frame-mc {
-  background-color: #e36500;
-  background-image: url('../themes/images/default/btn/btn-red-small-pressed-bg.gif'); }
+  background-color: #e36500; }
 /* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-small-disabled .x-frame-tl,
 .x-nbr .x-btn-red-small-disabled .x-frame-bl,
@@ -2918,34 +2907,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-small-disabled-sides.gif'); }
 /* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-small-disabled .x-frame-mc {
-  background-color: #e36500;
-  background-image: url('../themes/images/default/btn/btn-red-small-disabled-bg.gif'); }
-
-/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-small {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-small-bg.gif'); }
-
-/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-small-over {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-small-over-bg.gif'); }
-
-/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-small-focus {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-small-focus-bg.gif'); }
-
-/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-small-menu-active,
-.x-nlg .x-btn-red-small-pressed {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-small-pressed-bg.gif'); }
-
-/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-small-disabled {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-small-disabled-bg.gif'); }
+  background-color: #e36500; }
 
 /* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-red-medium {
@@ -2961,12 +2923,10 @@ tr.x-container:before {
   padding: 5px 17px 5px 17px;
   border-width: 1px;
   border-style: solid;
-  background-image: none;
   background-color: #e36500; }
 
 /* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nlg .x-btn-red-medium-mc {
-  background-image: url('../themes/images/default/btn/btn-red-medium-bg.gif');
   background-color: #e36500; }
 
 /* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
@@ -2996,7 +2956,8 @@ tr.x-container:before {
 .x-nbr .x-btn-red-medium-mr {
   zoom: 1;
   background-image: url('../themes/images/default/btn/btn-red-medium-sides.gif');
-  background-position: 0 0; }
+  background-position: 0 0;
+  background-repeat: repeat-y; }
 /* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nbr .x-btn-red-medium-mc {
   padding: 6px 18px 6px 18px; }
@@ -3133,12 +3094,7 @@ tr.x-container:before {
 /* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-red-medium-disabled {
   background-image: none;
-  background-color: #e36500;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #e36500), color-stop(48%, #d76000), color-stop(52%, #a94b00), color-stop(100%, #b35000));
-  background-image: -webkit-linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000);
-  background-image: -moz-linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000);
-  background-image: -o-linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000);
-  background-image: linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000); }
+  background-color: #e36500; }
 
 /* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-medium-over .x-frame-tl,
@@ -3154,8 +3110,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-medium-over-sides.gif'); }
 /* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-medium-over .x-frame-mc {
-  background-color: #ff7e17;
-  background-image: url('../themes/images/default/btn/btn-red-medium-over-bg.gif'); }
+  background-color: #ff7e17; }
 /* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-medium-focus .x-frame-tl,
 .x-nbr .x-btn-red-medium-focus .x-frame-bl,
@@ -3170,8 +3125,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-medium-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-medium-focus .x-frame-mc {
-  background-color: #e36500;
-  background-image: url('../themes/images/default/btn/btn-red-medium-focus-bg.gif'); }
+  background-color: #e36500; }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-medium-menu-active .x-frame-tl,
 .x-nbr .x-btn-red-medium-menu-active .x-frame-bl,
@@ -3195,8 +3149,7 @@ tr.x-container:before {
 /* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-medium-menu-active .x-frame-mc,
 .x-nbr .x-btn-red-medium-pressed .x-frame-mc {
-  background-color: #e36500;
-  background-image: url('../themes/images/default/btn/btn-red-medium-pressed-bg.gif'); }
+  background-color: #e36500; }
 /* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-medium-disabled .x-frame-tl,
 .x-nbr .x-btn-red-medium-disabled .x-frame-bl,
@@ -3211,34 +3164,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-medium-disabled-sides.gif'); }
 /* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-medium-disabled .x-frame-mc {
-  background-color: #e36500;
-  background-image: url('../themes/images/default/btn/btn-red-medium-disabled-bg.gif'); }
-
-/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-medium {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-medium-bg.gif'); }
-
-/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-medium-over {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-medium-over-bg.gif'); }
-
-/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-medium-focus {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-medium-focus-bg.gif'); }
-
-/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-medium-menu-active,
-.x-nlg .x-btn-red-medium-pressed {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-medium-pressed-bg.gif'); }
-
-/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-medium-disabled {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-medium-disabled-bg.gif'); }
+  background-color: #e36500; }
 
 /* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-red-large {
@@ -3254,12 +3180,10 @@ tr.x-container:before {
   padding: 5px 20px 5px 20px;
   border-width: 1px;
   border-style: solid;
-  background-image: none;
   background-color: #e36500; }
 
 /* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nlg .x-btn-red-large-mc {
-  background-image: url('../themes/images/default/btn/btn-red-large-bg.gif');
   background-color: #e36500; }
 
 /* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
@@ -3289,7 +3213,8 @@ tr.x-container:before {
 .x-nbr .x-btn-red-large-mr {
   zoom: 1;
   background-image: url('../themes/images/default/btn/btn-red-large-sides.gif');
-  background-position: 0 0; }
+  background-position: 0 0;
+  background-repeat: repeat-y; }
 /* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nbr .x-btn-red-large-mc {
   padding: 6px 21px 6px 21px; }
@@ -3426,12 +3351,7 @@ tr.x-container:before {
 /* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-red-large-disabled {
   background-image: none;
-  background-color: #e36500;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #e36500), color-stop(48%, #d76000), color-stop(52%, #a94b00), color-stop(100%, #b35000));
-  background-image: -webkit-linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000);
-  background-image: -moz-linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000);
-  background-image: -o-linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000);
-  background-image: linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000); }
+  background-color: #e36500; }
 
 /* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-large-over .x-frame-tl,
@@ -3447,8 +3367,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-large-over-sides.gif'); }
 /* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-large-over .x-frame-mc {
-  background-color: #ff7e17;
-  background-image: url('../themes/images/default/btn/btn-red-large-over-bg.gif'); }
+  background-color: #ff7e17; }
 /* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-large-focus .x-frame-tl,
 .x-nbr .x-btn-red-large-focus .x-frame-bl,
@@ -3463,8 +3382,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-large-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-large-focus .x-frame-mc {
-  background-color: #e36500;
-  background-image: url('../themes/images/default/btn/btn-red-large-focus-bg.gif'); }
+  background-color: #e36500; }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-large-menu-active .x-frame-tl,
 .x-nbr .x-btn-red-large-menu-active .x-frame-bl,
@@ -3488,8 +3406,7 @@ tr.x-container:before {
 /* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-large-menu-active .x-frame-mc,
 .x-nbr .x-btn-red-large-pressed .x-frame-mc {
-  background-color: #e36500;
-  background-image: url('../themes/images/default/btn/btn-red-large-pressed-bg.gif'); }
+  background-color: #e36500; }
 /* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-large-disabled .x-frame-tl,
 .x-nbr .x-btn-red-large-disabled .x-frame-bl,
@@ -3504,34 +3421,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-large-disabled-sides.gif'); }
 /* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-large-disabled .x-frame-mc {
-  background-color: #e36500;
-  background-image: url('../themes/images/default/btn/btn-red-large-disabled-bg.gif'); }
-
-/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-large {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-large-bg.gif'); }
-
-/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-large-over {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-large-over-bg.gif'); }
-
-/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-large-focus {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-large-focus-bg.gif'); }
-
-/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-large-menu-active,
-.x-nlg .x-btn-red-large-pressed {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-large-pressed-bg.gif'); }
-
-/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-large-disabled {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-large-disabled-bg.gif'); }
+  background-color: #e36500; }
 
 /* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-grey-small {
@@ -3547,12 +3437,10 @@ tr.x-container:before {
   padding: 5px 16px 5px 16px;
   border-width: 1px;
   border-style: solid;
-  background-image: none;
   background-color: #cccccc; }
 
 /* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nlg .x-btn-grey-small-mc {
-  background-image: url('../themes/images/default/btn/btn-grey-small-bg.gif');
   background-color: #cccccc; }
 
 /* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
@@ -3582,7 +3470,8 @@ tr.x-container:before {
 .x-nbr .x-btn-grey-small-mr {
   zoom: 1;
   background-image: url('../themes/images/default/btn/btn-grey-small-sides.gif');
-  background-position: 0 0; }
+  background-position: 0 0;
+  background-repeat: repeat-y; }
 /* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nbr .x-btn-grey-small-mc {
   padding: 6px 17px 6px 17px; }
@@ -3719,12 +3608,7 @@ tr.x-container:before {
 /* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-grey-small-disabled {
   background-image: none;
-  background-color: #cccccc;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #cccccc), color-stop(48%, #c6c6c6), color-stop(52%, #afafaf), color-stop(100%, #b4b4b4));
-  background-image: -webkit-linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4);
-  background-image: -moz-linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4);
-  background-image: -o-linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4);
-  background-image: linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4); }
+  background-color: #cccccc; }
 
 /* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-small-over .x-frame-tl,
@@ -3740,8 +3624,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-small-over-sides.gif'); }
 /* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-small-over .x-frame-mc {
-  background-color: #e6e6e6;
-  background-image: url('../themes/images/default/btn/btn-grey-small-over-bg.gif'); }
+  background-color: #e6e6e6; }
 /* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-small-focus .x-frame-tl,
 .x-nbr .x-btn-grey-small-focus .x-frame-bl,
@@ -3756,8 +3639,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-small-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-small-focus .x-frame-mc {
-  background-color: #cccccc;
-  background-image: url('../themes/images/default/btn/btn-grey-small-focus-bg.gif'); }
+  background-color: #cccccc; }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-small-menu-active .x-frame-tl,
 .x-nbr .x-btn-grey-small-menu-active .x-frame-bl,
@@ -3781,8 +3663,7 @@ tr.x-container:before {
 /* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-small-menu-active .x-frame-mc,
 .x-nbr .x-btn-grey-small-pressed .x-frame-mc {
-  background-color: #cccccc;
-  background-image: url('../themes/images/default/btn/btn-grey-small-pressed-bg.gif'); }
+  background-color: #cccccc; }
 /* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-small-disabled .x-frame-tl,
 .x-nbr .x-btn-grey-small-disabled .x-frame-bl,
@@ -3797,34 +3678,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-small-disabled-sides.gif'); }
 /* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-small-disabled .x-frame-mc {
-  background-color: #cccccc;
-  background-image: url('../themes/images/default/btn/btn-grey-small-disabled-bg.gif'); }
-
-/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-small {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-small-bg.gif'); }
-
-/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-small-over {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-small-over-bg.gif'); }
-
-/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-small-focus {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-small-focus-bg.gif'); }
-
-/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-small-menu-active,
-.x-nlg .x-btn-grey-small-pressed {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-small-pressed-bg.gif'); }
-
-/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-small-disabled {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-small-disabled-bg.gif'); }
+  background-color: #cccccc; }
 
 /* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-grey-medium {
@@ -3840,12 +3694,10 @@ tr.x-container:before {
   padding: 5px 17px 5px 17px;
   border-width: 1px;
   border-style: solid;
-  background-image: none;
   background-color: #cccccc; }
 
 /* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nlg .x-btn-grey-medium-mc {
-  background-image: url('../themes/images/default/btn/btn-grey-medium-bg.gif');
   background-color: #cccccc; }
 
 /* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
@@ -3875,7 +3727,8 @@ tr.x-container:before {
 .x-nbr .x-btn-grey-medium-mr {
   zoom: 1;
   background-image: url('../themes/images/default/btn/btn-grey-medium-sides.gif');
-  background-position: 0 0; }
+  background-position: 0 0;
+  background-repeat: repeat-y; }
 /* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nbr .x-btn-grey-medium-mc {
   padding: 6px 18px 6px 18px; }
@@ -4012,12 +3865,7 @@ tr.x-container:before {
 /* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-grey-medium-disabled {
   background-image: none;
-  background-color: #cccccc;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #cccccc), color-stop(48%, #c6c6c6), color-stop(52%, #afafaf), color-stop(100%, #b4b4b4));
-  background-image: -webkit-linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4);
-  background-image: -moz-linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4);
-  background-image: -o-linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4);
-  background-image: linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4); }
+  background-color: #cccccc; }
 
 /* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-medium-over .x-frame-tl,
@@ -4033,8 +3881,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-medium-over-sides.gif'); }
 /* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-medium-over .x-frame-mc {
-  background-color: #e6e6e6;
-  background-image: url('../themes/images/default/btn/btn-grey-medium-over-bg.gif'); }
+  background-color: #e6e6e6; }
 /* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-medium-focus .x-frame-tl,
 .x-nbr .x-btn-grey-medium-focus .x-frame-bl,
@@ -4049,8 +3896,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-medium-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-medium-focus .x-frame-mc {
-  background-color: #cccccc;
-  background-image: url('../themes/images/default/btn/btn-grey-medium-focus-bg.gif'); }
+  background-color: #cccccc; }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-medium-menu-active .x-frame-tl,
 .x-nbr .x-btn-grey-medium-menu-active .x-frame-bl,
@@ -4074,8 +3920,7 @@ tr.x-container:before {
 /* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-medium-menu-active .x-frame-mc,
 .x-nbr .x-btn-grey-medium-pressed .x-frame-mc {
-  background-color: #cccccc;
-  background-image: url('../themes/images/default/btn/btn-grey-medium-pressed-bg.gif'); }
+  background-color: #cccccc; }
 /* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-medium-disabled .x-frame-tl,
 .x-nbr .x-btn-grey-medium-disabled .x-frame-bl,
@@ -4090,34 +3935,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-medium-disabled-sides.gif'); }
 /* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-medium-disabled .x-frame-mc {
-  background-color: #cccccc;
-  background-image: url('../themes/images/default/btn/btn-grey-medium-disabled-bg.gif'); }
-
-/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-medium {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-medium-bg.gif'); }
-
-/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-medium-over {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-medium-over-bg.gif'); }
-
-/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-medium-focus {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-medium-focus-bg.gif'); }
-
-/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-medium-menu-active,
-.x-nlg .x-btn-grey-medium-pressed {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-medium-pressed-bg.gif'); }
-
-/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-medium-disabled {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-medium-disabled-bg.gif'); }
+  background-color: #cccccc; }
 
 /* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-grey-large {
@@ -4133,12 +3951,10 @@ tr.x-container:before {
   padding: 5px 20px 5px 20px;
   border-width: 1px;
   border-style: solid;
-  background-image: none;
   background-color: #cccccc; }
 
 /* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nlg .x-btn-grey-large-mc {
-  background-image: url('../themes/images/default/btn/btn-grey-large-bg.gif');
   background-color: #cccccc; }
 
 /* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
@@ -4168,7 +3984,8 @@ tr.x-container:before {
 .x-nbr .x-btn-grey-large-mr {
   zoom: 1;
   background-image: url('../themes/images/default/btn/btn-grey-large-sides.gif');
-  background-position: 0 0; }
+  background-position: 0 0;
+  background-repeat: repeat-y; }
 /* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nbr .x-btn-grey-large-mc {
   padding: 6px 21px 6px 21px; }
@@ -4305,12 +4122,7 @@ tr.x-container:before {
 /* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-grey-large-disabled {
   background-image: none;
-  background-color: #cccccc;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #cccccc), color-stop(48%, #c6c6c6), color-stop(52%, #afafaf), color-stop(100%, #b4b4b4));
-  background-image: -webkit-linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4);
-  background-image: -moz-linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4);
-  background-image: -o-linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4);
-  background-image: linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4); }
+  background-color: #cccccc; }
 
 /* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-large-over .x-frame-tl,
@@ -4326,8 +4138,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-large-over-sides.gif'); }
 /* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-large-over .x-frame-mc {
-  background-color: #e6e6e6;
-  background-image: url('../themes/images/default/btn/btn-grey-large-over-bg.gif'); }
+  background-color: #e6e6e6; }
 /* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-large-focus .x-frame-tl,
 .x-nbr .x-btn-grey-large-focus .x-frame-bl,
@@ -4342,8 +4153,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-large-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-large-focus .x-frame-mc {
-  background-color: #cccccc;
-  background-image: url('../themes/images/default/btn/btn-grey-large-focus-bg.gif'); }
+  background-color: #cccccc; }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-large-menu-active .x-frame-tl,
 .x-nbr .x-btn-grey-large-menu-active .x-frame-bl,
@@ -4367,8 +4177,7 @@ tr.x-container:before {
 /* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-large-menu-active .x-frame-mc,
 .x-nbr .x-btn-grey-large-pressed .x-frame-mc {
-  background-color: #cccccc;
-  background-image: url('../themes/images/default/btn/btn-grey-large-pressed-bg.gif'); }
+  background-color: #cccccc; }
 /* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-large-disabled .x-frame-tl,
 .x-nbr .x-btn-grey-large-disabled .x-frame-bl,
@@ -4383,34 +4192,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-large-disabled-sides.gif'); }
 /* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-large-disabled .x-frame-mc {
-  background-color: #cccccc;
-  background-image: url('../themes/images/default/btn/btn-grey-large-disabled-bg.gif'); }
-
-/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-large {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-large-bg.gif'); }
-
-/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-large-over {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-large-over-bg.gif'); }
-
-/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-large-focus {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-large-focus-bg.gif'); }
-
-/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-large-menu-active,
-.x-nlg .x-btn-grey-large-pressed {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-large-pressed-bg.gif'); }
-
-/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-large-disabled {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-large-disabled-bg.gif'); }
+  background-color: #cccccc; }
 
 /* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-blue-toolbar-small {
@@ -4426,12 +4208,10 @@ tr.x-container:before {
   padding: 5px 16px 5px 16px;
   border-width: 1px;
   border-style: solid;
-  background-image: none;
   background-color: #2c76e9; }
 
 /* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nlg .x-btn-blue-toolbar-small-mc {
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-small-bg.gif');
   background-color: #2c76e9; }
 
 /* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
@@ -4461,7 +4241,8 @@ tr.x-container:before {
 .x-nbr .x-btn-blue-toolbar-small-mr {
   zoom: 1;
   background-image: url('../themes/images/default/btn/btn-blue-toolbar-small-sides.gif');
-  background-position: 0 0; }
+  background-position: 0 0;
+  background-repeat: repeat-y; }
 /* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nbr .x-btn-blue-toolbar-small-mc {
   padding: 6px 17px 6px 17px; }
@@ -4598,12 +4379,7 @@ tr.x-container:before {
 /* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-blue-toolbar-small-disabled {
   background-image: none;
-  background-color: #2c76e9;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #2c76e9), color-stop(48%, #216fe8), color-stop(52%, #155ac6), color-stop(100%, #165ecf));
-  background-image: -webkit-linear-gradient(top, #2c76e9, #216fe8 48%, #155ac6 52%, #165ecf);
-  background-image: -moz-linear-gradient(top, #2c76e9, #216fe8 48%, #155ac6 52%, #165ecf);
-  background-image: -o-linear-gradient(top, #2c76e9, #216fe8 48%, #155ac6 52%, #165ecf);
-  background-image: linear-gradient(top, #2c76e9, #216fe8 48%, #155ac6 52%, #165ecf); }
+  background-color: #2c76e9; }
 
 /* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-small-over .x-frame-tl,
@@ -4619,8 +4395,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-blue-toolbar-small-over-sides.gif'); }
 /* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-small-over .x-frame-mc {
-  background-color: #5a94ee;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-small-over-bg.gif'); }
+  background-color: #5a94ee; }
 /* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-small-focus .x-frame-tl,
 .x-nbr .x-btn-blue-toolbar-small-focus .x-frame-bl,
@@ -4635,8 +4410,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-blue-toolbar-small-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-small-focus .x-frame-mc {
-  background-color: #2c76e9;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-small-focus-bg.gif'); }
+  background-color: #2c76e9; }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-small-menu-active .x-frame-tl,
 .x-nbr .x-btn-blue-toolbar-small-menu-active .x-frame-bl,
@@ -4660,8 +4434,7 @@ tr.x-container:before {
 /* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-small-menu-active .x-frame-mc,
 .x-nbr .x-btn-blue-toolbar-small-pressed .x-frame-mc {
-  background-color: #2c76e9;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-small-pressed-bg.gif'); }
+  background-color: #2c76e9; }
 /* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-small-disabled .x-frame-tl,
 .x-nbr .x-btn-blue-toolbar-small-disabled .x-frame-bl,
@@ -4676,34 +4449,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-blue-toolbar-small-disabled-sides.gif'); }
 /* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-small-disabled .x-frame-mc {
-  background-color: #2c76e9;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-small-disabled-bg.gif'); }
-
-/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-blue-toolbar-small {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-small-bg.gif'); }
-
-/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-blue-toolbar-small-over {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-small-over-bg.gif'); }
-
-/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-blue-toolbar-small-focus {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-small-focus-bg.gif'); }
-
-/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-blue-toolbar-small-menu-active,
-.x-nlg .x-btn-blue-toolbar-small-pressed {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-small-pressed-bg.gif'); }
-
-/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-blue-toolbar-small-disabled {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-small-disabled-bg.gif'); }
+  background-color: #2c76e9; }
 
 /* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-blue-toolbar-medium {
@@ -4719,12 +4465,10 @@ tr.x-container:before {
   padding: 5px 17px 5px 17px;
   border-width: 1px;
   border-style: solid;
-  background-image: none;
   background-color: #2c76e9; }
 
 /* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nlg .x-btn-blue-toolbar-medium-mc {
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-medium-bg.gif');
   background-color: #2c76e9; }
 
 /* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
@@ -4754,7 +4498,8 @@ tr.x-container:before {
 .x-nbr .x-btn-blue-toolbar-medium-mr {
   zoom: 1;
   background-image: url('../themes/images/default/btn/btn-blue-toolbar-medium-sides.gif');
-  background-position: 0 0; }
+  background-position: 0 0;
+  background-repeat: repeat-y; }
 /* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nbr .x-btn-blue-toolbar-medium-mc {
   padding: 6px 18px 6px 18px; }
@@ -4891,12 +4636,7 @@ tr.x-container:before {
 /* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-blue-toolbar-medium-disabled {
   background-image: none;
-  background-color: #2c76e9;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #2c76e9), color-stop(48%, #216fe8), color-stop(52%, #155ac6), color-stop(100%, #165ecf));
-  background-image: -webkit-linear-gradient(top, #2c76e9, #216fe8 48%, #155ac6 52%, #165ecf);
-  background-image: -moz-linear-gradient(top, #2c76e9, #216fe8 48%, #155ac6 52%, #165ecf);
-  background-image: -o-linear-gradient(top, #2c76e9, #216fe8 48%, #155ac6 52%, #165ecf);
-  background-image: linear-gradient(top, #2c76e9, #216fe8 48%, #155ac6 52%, #165ecf); }
+  background-color: #2c76e9; }
 
 /* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-medium-over .x-frame-tl,
@@ -4912,8 +4652,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-blue-toolbar-medium-over-sides.gif'); }
 /* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-medium-over .x-frame-mc {
-  background-color: #5a94ee;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-medium-over-bg.gif'); }
+  background-color: #5a94ee; }
 /* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-medium-focus .x-frame-tl,
 .x-nbr .x-btn-blue-toolbar-medium-focus .x-frame-bl,
@@ -4928,8 +4667,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-blue-toolbar-medium-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-medium-focus .x-frame-mc {
-  background-color: #2c76e9;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-medium-focus-bg.gif'); }
+  background-color: #2c76e9; }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-medium-menu-active .x-frame-tl,
 .x-nbr .x-btn-blue-toolbar-medium-menu-active .x-frame-bl,
@@ -4953,8 +4691,7 @@ tr.x-container:before {
 /* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-medium-menu-active .x-frame-mc,
 .x-nbr .x-btn-blue-toolbar-medium-pressed .x-frame-mc {
-  background-color: #2c76e9;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-medium-pressed-bg.gif'); }
+  background-color: #2c76e9; }
 /* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-medium-disabled .x-frame-tl,
 .x-nbr .x-btn-blue-toolbar-medium-disabled .x-frame-bl,
@@ -4969,34 +4706,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-blue-toolbar-medium-disabled-sides.gif'); }
 /* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-medium-disabled .x-frame-mc {
-  background-color: #2c76e9;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-medium-disabled-bg.gif'); }
-
-/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-blue-toolbar-medium {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-medium-bg.gif'); }
-
-/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-blue-toolbar-medium-over {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-medium-over-bg.gif'); }
-
-/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-blue-toolbar-medium-focus {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-medium-focus-bg.gif'); }
-
-/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-blue-toolbar-medium-menu-active,
-.x-nlg .x-btn-blue-toolbar-medium-pressed {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-medium-pressed-bg.gif'); }
-
-/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-blue-toolbar-medium-disabled {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-medium-disabled-bg.gif'); }
+  background-color: #2c76e9; }
 
 /* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-blue-toolbar-large {
@@ -5012,12 +4722,10 @@ tr.x-container:before {
   padding: 5px 20px 5px 20px;
   border-width: 1px;
   border-style: solid;
-  background-image: none;
   background-color: #2c76e9; }
 
 /* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nlg .x-btn-blue-toolbar-large-mc {
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-large-bg.gif');
   background-color: #2c76e9; }
 
 /* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
@@ -5047,7 +4755,8 @@ tr.x-container:before {
 .x-nbr .x-btn-blue-toolbar-large-mr {
   zoom: 1;
   background-image: url('../themes/images/default/btn/btn-blue-toolbar-large-sides.gif');
-  background-position: 0 0; }
+  background-position: 0 0;
+  background-repeat: repeat-y; }
 /* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nbr .x-btn-blue-toolbar-large-mc {
   padding: 6px 21px 6px 21px; }
@@ -5184,12 +4893,7 @@ tr.x-container:before {
 /* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-blue-toolbar-large-disabled {
   background-image: none;
-  background-color: #2c76e9;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #2c76e9), color-stop(48%, #216fe8), color-stop(52%, #155ac6), color-stop(100%, #165ecf));
-  background-image: -webkit-linear-gradient(top, #2c76e9, #216fe8 48%, #155ac6 52%, #165ecf);
-  background-image: -moz-linear-gradient(top, #2c76e9, #216fe8 48%, #155ac6 52%, #165ecf);
-  background-image: -o-linear-gradient(top, #2c76e9, #216fe8 48%, #155ac6 52%, #165ecf);
-  background-image: linear-gradient(top, #2c76e9, #216fe8 48%, #155ac6 52%, #165ecf); }
+  background-color: #2c76e9; }
 
 /* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-large-over .x-frame-tl,
@@ -5205,8 +4909,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-blue-toolbar-large-over-sides.gif'); }
 /* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-large-over .x-frame-mc {
-  background-color: #5a94ee;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-large-over-bg.gif'); }
+  background-color: #5a94ee; }
 /* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-large-focus .x-frame-tl,
 .x-nbr .x-btn-blue-toolbar-large-focus .x-frame-bl,
@@ -5221,8 +4924,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-blue-toolbar-large-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-large-focus .x-frame-mc {
-  background-color: #2c76e9;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-large-focus-bg.gif'); }
+  background-color: #2c76e9; }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-large-menu-active .x-frame-tl,
 .x-nbr .x-btn-blue-toolbar-large-menu-active .x-frame-bl,
@@ -5246,8 +4948,7 @@ tr.x-container:before {
 /* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-large-menu-active .x-frame-mc,
 .x-nbr .x-btn-blue-toolbar-large-pressed .x-frame-mc {
-  background-color: #2c76e9;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-large-pressed-bg.gif'); }
+  background-color: #2c76e9; }
 /* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-large-disabled .x-frame-tl,
 .x-nbr .x-btn-blue-toolbar-large-disabled .x-frame-bl,
@@ -5262,34 +4963,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-blue-toolbar-large-disabled-sides.gif'); }
 /* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-blue-toolbar-large-disabled .x-frame-mc {
-  background-color: #2c76e9;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-large-disabled-bg.gif'); }
-
-/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-blue-toolbar-large {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-large-bg.gif'); }
-
-/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-blue-toolbar-large-over {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-large-over-bg.gif'); }
-
-/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-blue-toolbar-large-focus {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-large-focus-bg.gif'); }
-
-/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-blue-toolbar-large-menu-active,
-.x-nlg .x-btn-blue-toolbar-large-pressed {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-large-pressed-bg.gif'); }
-
-/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-blue-toolbar-large-disabled {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-blue-toolbar-large-disabled-bg.gif'); }
+  background-color: #2c76e9; }
 
 /* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-red-toolbar-small {
@@ -5305,12 +4979,10 @@ tr.x-container:before {
   padding: 5px 16px 5px 16px;
   border-width: 1px;
   border-style: solid;
-  background-image: none;
   background-color: #e36500; }
 
 /* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nlg .x-btn-red-toolbar-small-mc {
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-small-bg.gif');
   background-color: #e36500; }
 
 /* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
@@ -5340,7 +5012,8 @@ tr.x-container:before {
 .x-nbr .x-btn-red-toolbar-small-mr {
   zoom: 1;
   background-image: url('../themes/images/default/btn/btn-red-toolbar-small-sides.gif');
-  background-position: 0 0; }
+  background-position: 0 0;
+  background-repeat: repeat-y; }
 /* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nbr .x-btn-red-toolbar-small-mc {
   padding: 6px 17px 6px 17px; }
@@ -5477,12 +5150,7 @@ tr.x-container:before {
 /* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-red-toolbar-small-disabled {
   background-image: none;
-  background-color: #e36500;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #e36500), color-stop(48%, #d76000), color-stop(52%, #a94b00), color-stop(100%, #b35000));
-  background-image: -webkit-linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000);
-  background-image: -moz-linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000);
-  background-image: -o-linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000);
-  background-image: linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000); }
+  background-color: #e36500; }
 
 /* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-small-over .x-frame-tl,
@@ -5498,8 +5166,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-toolbar-small-over-sides.gif'); }
 /* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-small-over .x-frame-mc {
-  background-color: #ff7e17;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-small-over-bg.gif'); }
+  background-color: #ff7e17; }
 /* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-small-focus .x-frame-tl,
 .x-nbr .x-btn-red-toolbar-small-focus .x-frame-bl,
@@ -5514,8 +5181,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-toolbar-small-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-small-focus .x-frame-mc {
-  background-color: #e36500;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-small-focus-bg.gif'); }
+  background-color: #e36500; }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-small-menu-active .x-frame-tl,
 .x-nbr .x-btn-red-toolbar-small-menu-active .x-frame-bl,
@@ -5539,8 +5205,7 @@ tr.x-container:before {
 /* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-small-menu-active .x-frame-mc,
 .x-nbr .x-btn-red-toolbar-small-pressed .x-frame-mc {
-  background-color: #e36500;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-small-pressed-bg.gif'); }
+  background-color: #e36500; }
 /* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-small-disabled .x-frame-tl,
 .x-nbr .x-btn-red-toolbar-small-disabled .x-frame-bl,
@@ -5555,34 +5220,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-toolbar-small-disabled-sides.gif'); }
 /* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-small-disabled .x-frame-mc {
-  background-color: #e36500;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-small-disabled-bg.gif'); }
-
-/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-toolbar-small {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-small-bg.gif'); }
-
-/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-toolbar-small-over {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-small-over-bg.gif'); }
-
-/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-toolbar-small-focus {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-small-focus-bg.gif'); }
-
-/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-toolbar-small-menu-active,
-.x-nlg .x-btn-red-toolbar-small-pressed {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-small-pressed-bg.gif'); }
-
-/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-toolbar-small-disabled {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-small-disabled-bg.gif'); }
+  background-color: #e36500; }
 
 /* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-red-toolbar-medium {
@@ -5598,12 +5236,10 @@ tr.x-container:before {
   padding: 5px 17px 5px 17px;
   border-width: 1px;
   border-style: solid;
-  background-image: none;
   background-color: #e36500; }
 
 /* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nlg .x-btn-red-toolbar-medium-mc {
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-medium-bg.gif');
   background-color: #e36500; }
 
 /* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
@@ -5633,7 +5269,8 @@ tr.x-container:before {
 .x-nbr .x-btn-red-toolbar-medium-mr {
   zoom: 1;
   background-image: url('../themes/images/default/btn/btn-red-toolbar-medium-sides.gif');
-  background-position: 0 0; }
+  background-position: 0 0;
+  background-repeat: repeat-y; }
 /* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nbr .x-btn-red-toolbar-medium-mc {
   padding: 6px 18px 6px 18px; }
@@ -5770,12 +5407,7 @@ tr.x-container:before {
 /* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-red-toolbar-medium-disabled {
   background-image: none;
-  background-color: #e36500;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #e36500), color-stop(48%, #d76000), color-stop(52%, #a94b00), color-stop(100%, #b35000));
-  background-image: -webkit-linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000);
-  background-image: -moz-linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000);
-  background-image: -o-linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000);
-  background-image: linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000); }
+  background-color: #e36500; }
 
 /* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-medium-over .x-frame-tl,
@@ -5791,8 +5423,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-toolbar-medium-over-sides.gif'); }
 /* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-medium-over .x-frame-mc {
-  background-color: #ff7e17;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-medium-over-bg.gif'); }
+  background-color: #ff7e17; }
 /* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-medium-focus .x-frame-tl,
 .x-nbr .x-btn-red-toolbar-medium-focus .x-frame-bl,
@@ -5807,8 +5438,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-toolbar-medium-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-medium-focus .x-frame-mc {
-  background-color: #e36500;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-medium-focus-bg.gif'); }
+  background-color: #e36500; }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-medium-menu-active .x-frame-tl,
 .x-nbr .x-btn-red-toolbar-medium-menu-active .x-frame-bl,
@@ -5832,8 +5462,7 @@ tr.x-container:before {
 /* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-medium-menu-active .x-frame-mc,
 .x-nbr .x-btn-red-toolbar-medium-pressed .x-frame-mc {
-  background-color: #e36500;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-medium-pressed-bg.gif'); }
+  background-color: #e36500; }
 /* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-medium-disabled .x-frame-tl,
 .x-nbr .x-btn-red-toolbar-medium-disabled .x-frame-bl,
@@ -5848,34 +5477,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-toolbar-medium-disabled-sides.gif'); }
 /* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-medium-disabled .x-frame-mc {
-  background-color: #e36500;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-medium-disabled-bg.gif'); }
-
-/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-toolbar-medium {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-medium-bg.gif'); }
-
-/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-toolbar-medium-over {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-medium-over-bg.gif'); }
-
-/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-toolbar-medium-focus {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-medium-focus-bg.gif'); }
-
-/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-toolbar-medium-menu-active,
-.x-nlg .x-btn-red-toolbar-medium-pressed {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-medium-pressed-bg.gif'); }
-
-/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-toolbar-medium-disabled {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-medium-disabled-bg.gif'); }
+  background-color: #e36500; }
 
 /* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-red-toolbar-large {
@@ -5891,12 +5493,10 @@ tr.x-container:before {
   padding: 5px 20px 5px 20px;
   border-width: 1px;
   border-style: solid;
-  background-image: none;
   background-color: #e36500; }
 
 /* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nlg .x-btn-red-toolbar-large-mc {
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-large-bg.gif');
   background-color: #e36500; }
 
 /* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
@@ -5926,7 +5526,8 @@ tr.x-container:before {
 .x-nbr .x-btn-red-toolbar-large-mr {
   zoom: 1;
   background-image: url('../themes/images/default/btn/btn-red-toolbar-large-sides.gif');
-  background-position: 0 0; }
+  background-position: 0 0;
+  background-repeat: repeat-y; }
 /* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nbr .x-btn-red-toolbar-large-mc {
   padding: 6px 21px 6px 21px; }
@@ -6063,12 +5664,7 @@ tr.x-container:before {
 /* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-red-toolbar-large-disabled {
   background-image: none;
-  background-color: #e36500;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #e36500), color-stop(48%, #d76000), color-stop(52%, #a94b00), color-stop(100%, #b35000));
-  background-image: -webkit-linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000);
-  background-image: -moz-linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000);
-  background-image: -o-linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000);
-  background-image: linear-gradient(top, #e36500, #d76000 48%, #a94b00 52%, #b35000); }
+  background-color: #e36500; }
 
 /* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-large-over .x-frame-tl,
@@ -6084,8 +5680,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-toolbar-large-over-sides.gif'); }
 /* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-large-over .x-frame-mc {
-  background-color: #ff7e17;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-large-over-bg.gif'); }
+  background-color: #ff7e17; }
 /* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-large-focus .x-frame-tl,
 .x-nbr .x-btn-red-toolbar-large-focus .x-frame-bl,
@@ -6100,8 +5695,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-toolbar-large-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-large-focus .x-frame-mc {
-  background-color: #e36500;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-large-focus-bg.gif'); }
+  background-color: #e36500; }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-large-menu-active .x-frame-tl,
 .x-nbr .x-btn-red-toolbar-large-menu-active .x-frame-bl,
@@ -6125,8 +5719,7 @@ tr.x-container:before {
 /* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-large-menu-active .x-frame-mc,
 .x-nbr .x-btn-red-toolbar-large-pressed .x-frame-mc {
-  background-color: #e36500;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-large-pressed-bg.gif'); }
+  background-color: #e36500; }
 /* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-large-disabled .x-frame-tl,
 .x-nbr .x-btn-red-toolbar-large-disabled .x-frame-bl,
@@ -6141,34 +5734,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-toolbar-large-disabled-sides.gif'); }
 /* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-toolbar-large-disabled .x-frame-mc {
-  background-color: #e36500;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-large-disabled-bg.gif'); }
-
-/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-toolbar-large {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-large-bg.gif'); }
-
-/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-toolbar-large-over {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-large-over-bg.gif'); }
-
-/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-toolbar-large-focus {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-large-focus-bg.gif'); }
-
-/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-toolbar-large-menu-active,
-.x-nlg .x-btn-red-toolbar-large-pressed {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-large-pressed-bg.gif'); }
-
-/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-red-toolbar-large-disabled {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-red-toolbar-large-disabled-bg.gif'); }
+  background-color: #e36500; }
 
 /* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-grey-toolbar-small {
@@ -6184,12 +5750,10 @@ tr.x-container:before {
   padding: 5px 16px 5px 16px;
   border-width: 1px;
   border-style: solid;
-  background-image: none;
   background-color: #cccccc; }
 
 /* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nlg .x-btn-grey-toolbar-small-mc {
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-small-bg.gif');
   background-color: #cccccc; }
 
 /* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
@@ -6219,7 +5783,8 @@ tr.x-container:before {
 .x-nbr .x-btn-grey-toolbar-small-mr {
   zoom: 1;
   background-image: url('../themes/images/default/btn/btn-grey-toolbar-small-sides.gif');
-  background-position: 0 0; }
+  background-position: 0 0;
+  background-repeat: repeat-y; }
 /* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nbr .x-btn-grey-toolbar-small-mc {
   padding: 6px 17px 6px 17px; }
@@ -6356,12 +5921,7 @@ tr.x-container:before {
 /* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-grey-toolbar-small-disabled {
   background-image: none;
-  background-color: #cccccc;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #cccccc), color-stop(48%, #c6c6c6), color-stop(52%, #afafaf), color-stop(100%, #b4b4b4));
-  background-image: -webkit-linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4);
-  background-image: -moz-linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4);
-  background-image: -o-linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4);
-  background-image: linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4); }
+  background-color: #cccccc; }
 
 /* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-small-over .x-frame-tl,
@@ -6377,8 +5937,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-toolbar-small-over-sides.gif'); }
 /* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-small-over .x-frame-mc {
-  background-color: #e6e6e6;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-small-over-bg.gif'); }
+  background-color: #e6e6e6; }
 /* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-small-focus .x-frame-tl,
 .x-nbr .x-btn-grey-toolbar-small-focus .x-frame-bl,
@@ -6393,8 +5952,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-toolbar-small-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-small-focus .x-frame-mc {
-  background-color: #cccccc;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-small-focus-bg.gif'); }
+  background-color: #cccccc; }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-small-menu-active .x-frame-tl,
 .x-nbr .x-btn-grey-toolbar-small-menu-active .x-frame-bl,
@@ -6418,8 +5976,7 @@ tr.x-container:before {
 /* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-small-menu-active .x-frame-mc,
 .x-nbr .x-btn-grey-toolbar-small-pressed .x-frame-mc {
-  background-color: #cccccc;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-small-pressed-bg.gif'); }
+  background-color: #cccccc; }
 /* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-small-disabled .x-frame-tl,
 .x-nbr .x-btn-grey-toolbar-small-disabled .x-frame-bl,
@@ -6434,34 +5991,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-toolbar-small-disabled-sides.gif'); }
 /* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-small-disabled .x-frame-mc {
-  background-color: #cccccc;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-small-disabled-bg.gif'); }
-
-/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-toolbar-small {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-small-bg.gif'); }
-
-/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-toolbar-small-over {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-small-over-bg.gif'); }
-
-/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-toolbar-small-focus {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-small-focus-bg.gif'); }
-
-/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-toolbar-small-menu-active,
-.x-nlg .x-btn-grey-toolbar-small-pressed {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-small-pressed-bg.gif'); }
-
-/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-toolbar-small-disabled {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-small-disabled-bg.gif'); }
+  background-color: #cccccc; }
 
 /* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-grey-toolbar-medium {
@@ -6477,12 +6007,10 @@ tr.x-container:before {
   padding: 5px 17px 5px 17px;
   border-width: 1px;
   border-style: solid;
-  background-image: none;
   background-color: #cccccc; }
 
 /* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nlg .x-btn-grey-toolbar-medium-mc {
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-medium-bg.gif');
   background-color: #cccccc; }
 
 /* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
@@ -6512,7 +6040,8 @@ tr.x-container:before {
 .x-nbr .x-btn-grey-toolbar-medium-mr {
   zoom: 1;
   background-image: url('../themes/images/default/btn/btn-grey-toolbar-medium-sides.gif');
-  background-position: 0 0; }
+  background-position: 0 0;
+  background-repeat: repeat-y; }
 /* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nbr .x-btn-grey-toolbar-medium-mc {
   padding: 6px 18px 6px 18px; }
@@ -6649,12 +6178,7 @@ tr.x-container:before {
 /* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-grey-toolbar-medium-disabled {
   background-image: none;
-  background-color: #cccccc;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #cccccc), color-stop(48%, #c6c6c6), color-stop(52%, #afafaf), color-stop(100%, #b4b4b4));
-  background-image: -webkit-linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4);
-  background-image: -moz-linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4);
-  background-image: -o-linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4);
-  background-image: linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4); }
+  background-color: #cccccc; }
 
 /* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-medium-over .x-frame-tl,
@@ -6670,8 +6194,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-toolbar-medium-over-sides.gif'); }
 /* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-medium-over .x-frame-mc {
-  background-color: #e6e6e6;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-medium-over-bg.gif'); }
+  background-color: #e6e6e6; }
 /* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-medium-focus .x-frame-tl,
 .x-nbr .x-btn-grey-toolbar-medium-focus .x-frame-bl,
@@ -6686,8 +6209,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-toolbar-medium-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-medium-focus .x-frame-mc {
-  background-color: #cccccc;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-medium-focus-bg.gif'); }
+  background-color: #cccccc; }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-medium-menu-active .x-frame-tl,
 .x-nbr .x-btn-grey-toolbar-medium-menu-active .x-frame-bl,
@@ -6711,8 +6233,7 @@ tr.x-container:before {
 /* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-medium-menu-active .x-frame-mc,
 .x-nbr .x-btn-grey-toolbar-medium-pressed .x-frame-mc {
-  background-color: #cccccc;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-medium-pressed-bg.gif'); }
+  background-color: #cccccc; }
 /* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-medium-disabled .x-frame-tl,
 .x-nbr .x-btn-grey-toolbar-medium-disabled .x-frame-bl,
@@ -6727,34 +6248,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-toolbar-medium-disabled-sides.gif'); }
 /* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-medium-disabled .x-frame-mc {
-  background-color: #cccccc;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-medium-disabled-bg.gif'); }
-
-/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-toolbar-medium {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-medium-bg.gif'); }
-
-/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-toolbar-medium-over {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-medium-over-bg.gif'); }
-
-/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-toolbar-medium-focus {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-medium-focus-bg.gif'); }
-
-/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-toolbar-medium-menu-active,
-.x-nlg .x-btn-grey-toolbar-medium-pressed {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-medium-pressed-bg.gif'); }
-
-/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-toolbar-medium-disabled {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-medium-disabled-bg.gif'); }
+  background-color: #cccccc; }
 
 /* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-grey-toolbar-large {
@@ -6770,12 +6264,10 @@ tr.x-container:before {
   padding: 5px 20px 5px 20px;
   border-width: 1px;
   border-style: solid;
-  background-image: none;
   background-color: #cccccc; }
 
 /* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nlg .x-btn-grey-toolbar-large-mc {
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-large-bg.gif');
   background-color: #cccccc; }
 
 /* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
@@ -6805,7 +6297,8 @@ tr.x-container:before {
 .x-nbr .x-btn-grey-toolbar-large-mr {
   zoom: 1;
   background-image: url('../themes/images/default/btn/btn-grey-toolbar-large-sides.gif');
-  background-position: 0 0; }
+  background-position: 0 0;
+  background-repeat: repeat-y; }
 /* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nbr .x-btn-grey-toolbar-large-mc {
   padding: 6px 21px 6px 21px; }
@@ -6942,12 +6435,7 @@ tr.x-container:before {
 /* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-grey-toolbar-large-disabled {
   background-image: none;
-  background-color: #cccccc;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #cccccc), color-stop(48%, #c6c6c6), color-stop(52%, #afafaf), color-stop(100%, #b4b4b4));
-  background-image: -webkit-linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4);
-  background-image: -moz-linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4);
-  background-image: -o-linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4);
-  background-image: linear-gradient(top, #cccccc, #c6c6c6 48%, #afafaf 52%, #b4b4b4); }
+  background-color: #cccccc; }
 
 /* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-large-over .x-frame-tl,
@@ -6963,8 +6451,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-toolbar-large-over-sides.gif'); }
 /* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-large-over .x-frame-mc {
-  background-color: #e6e6e6;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-large-over-bg.gif'); }
+  background-color: #e6e6e6; }
 /* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-large-focus .x-frame-tl,
 .x-nbr .x-btn-grey-toolbar-large-focus .x-frame-bl,
@@ -6979,8 +6466,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-toolbar-large-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-large-focus .x-frame-mc {
-  background-color: #cccccc;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-large-focus-bg.gif'); }
+  background-color: #cccccc; }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-large-menu-active .x-frame-tl,
 .x-nbr .x-btn-grey-toolbar-large-menu-active .x-frame-bl,
@@ -7004,8 +6490,7 @@ tr.x-container:before {
 /* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-large-menu-active .x-frame-mc,
 .x-nbr .x-btn-grey-toolbar-large-pressed .x-frame-mc {
-  background-color: #cccccc;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-large-pressed-bg.gif'); }
+  background-color: #cccccc; }
 /* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-large-disabled .x-frame-tl,
 .x-nbr .x-btn-grey-toolbar-large-disabled .x-frame-bl,
@@ -7020,34 +6505,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-toolbar-large-disabled-sides.gif'); }
 /* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-toolbar-large-disabled .x-frame-mc {
-  background-color: #cccccc;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-large-disabled-bg.gif'); }
-
-/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-toolbar-large {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-large-bg.gif'); }
-
-/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-toolbar-large-over {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-large-over-bg.gif'); }
-
-/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-toolbar-large-focus {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-large-focus-bg.gif'); }
-
-/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-toolbar-large-menu-active,
-.x-nlg .x-btn-grey-toolbar-large-pressed {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-large-pressed-bg.gif'); }
-
-/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-grey-toolbar-large-disabled {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-grey-toolbar-large-disabled-bg.gif'); }
+  background-color: #cccccc; }
 
 /* line 2, ../themes/stylesheets/ext4/default/widgets/_boundlist.scss */
 .x-boundlist {
@@ -7316,12 +6774,10 @@ tr.x-container:before {
   padding: 5px 16px 5px 16px;
   border-width: 1px;
   border-style: solid;
-  background-image: none;
   background-color: #2c76e9; }
 
 /* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nlg .x-btn-default-small-mc {
-  background-image: url('../themes/images/default/btn/btn-default-small-bg.gif');
   background-color: #2c76e9; }
 
 /* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
@@ -7351,7 +6807,8 @@ tr.x-container:before {
 .x-nbr .x-btn-default-small-mr {
   zoom: 1;
   background-image: url('../themes/images/default/btn/btn-default-small-sides.gif');
-  background-position: 0 0; }
+  background-position: 0 0;
+  background-repeat: repeat-y; }
 /* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nbr .x-btn-default-small-mc {
   padding: 6px 17px 6px 17px; }
@@ -7487,14 +6944,9 @@ tr.x-container:before {
 
 /* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-default-small-disabled {
-  border-color: #e9e9e9;
+  border-color: #88b2f3;
   background-image: none;
-  background-color: white;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(48%, #f9f9f9), color-stop(52%, #e2e2e2), color-stop(100%, #e7e7e7));
-  background-image: -webkit-linear-gradient(top, #ffffff, #f9f9f9 48%, #e2e2e2 52%, #e7e7e7);
-  background-image: -moz-linear-gradient(top, #ffffff, #f9f9f9 48%, #e2e2e2 52%, #e7e7e7);
-  background-image: -o-linear-gradient(top, #ffffff, #f9f9f9 48%, #e2e2e2 52%, #e7e7e7);
-  background-image: linear-gradient(top, #ffffff, #f9f9f9 48%, #e2e2e2 52%, #e7e7e7); }
+  background-color: #5a94ee; }
 
 /* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-small-over .x-frame-tl,
@@ -7510,8 +6962,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-default-small-over-sides.gif'); }
 /* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-small-over .x-frame-mc {
-  background-color: #5a94ee;
-  background-image: url('../themes/images/default/btn/btn-default-small-over-bg.gif'); }
+  background-color: #5a94ee; }
 /* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-small-focus .x-frame-tl,
 .x-nbr .x-btn-default-small-focus .x-frame-bl,
@@ -7526,8 +6977,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-default-small-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-small-focus .x-frame-mc {
-  background-color: #5a94ee;
-  background-image: url('../themes/images/default/btn/btn-default-small-focus-bg.gif'); }
+  background-color: #5a94ee; }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-small-menu-active .x-frame-tl,
 .x-nbr .x-btn-default-small-menu-active .x-frame-bl,
@@ -7551,8 +7001,7 @@ tr.x-container:before {
 /* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-small-menu-active .x-frame-mc,
 .x-nbr .x-btn-default-small-pressed .x-frame-mc {
-  background-color: #5a94ee;
-  background-image: url('../themes/images/default/btn/btn-default-small-pressed-bg.gif'); }
+  background-color: #5a94ee; }
 /* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-small-disabled .x-frame-tl,
 .x-nbr .x-btn-default-small-disabled .x-frame-bl,
@@ -7567,34 +7016,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-default-small-disabled-sides.gif'); }
 /* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-small-disabled .x-frame-mc {
-  background-color: white;
-  background-image: url('../themes/images/default/btn/btn-default-small-disabled-bg.gif'); }
-
-/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-default-small {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-default-small-bg.gif'); }
-
-/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-default-small-over {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-default-small-over-bg.gif'); }
-
-/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-default-small-focus {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-default-small-focus-bg.gif'); }
-
-/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-default-small-menu-active,
-.x-nlg .x-btn-default-small-pressed {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-default-small-pressed-bg.gif'); }
-
-/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-default-small-disabled {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-default-small-disabled-bg.gif'); }
+  background-color: #5a94ee; }
 
 /* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-default-medium {
@@ -7610,12 +7032,10 @@ tr.x-container:before {
   padding: 5px 17px 5px 17px;
   border-width: 1px;
   border-style: solid;
-  background-image: none;
   background-color: #2c76e9; }
 
 /* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nlg .x-btn-default-medium-mc {
-  background-image: url('../themes/images/default/btn/btn-default-medium-bg.gif');
   background-color: #2c76e9; }
 
 /* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
@@ -7645,7 +7065,8 @@ tr.x-container:before {
 .x-nbr .x-btn-default-medium-mr {
   zoom: 1;
   background-image: url('../themes/images/default/btn/btn-default-medium-sides.gif');
-  background-position: 0 0; }
+  background-position: 0 0;
+  background-repeat: repeat-y; }
 /* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nbr .x-btn-default-medium-mc {
   padding: 6px 18px 6px 18px; }
@@ -7781,14 +7202,9 @@ tr.x-container:before {
 
 /* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-default-medium-disabled {
-  border-color: #e9e9e9;
+  border-color: #88b2f3;
   background-image: none;
-  background-color: white;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(48%, #f9f9f9), color-stop(52%, #e2e2e2), color-stop(100%, #e7e7e7));
-  background-image: -webkit-linear-gradient(top, #ffffff, #f9f9f9 48%, #e2e2e2 52%, #e7e7e7);
-  background-image: -moz-linear-gradient(top, #ffffff, #f9f9f9 48%, #e2e2e2 52%, #e7e7e7);
-  background-image: -o-linear-gradient(top, #ffffff, #f9f9f9 48%, #e2e2e2 52%, #e7e7e7);
-  background-image: linear-gradient(top, #ffffff, #f9f9f9 48%, #e2e2e2 52%, #e7e7e7); }
+  background-color: #5a94ee; }
 
 /* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-medium-over .x-frame-tl,
@@ -7804,8 +7220,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-default-medium-over-sides.gif'); }
 /* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-medium-over .x-frame-mc {
-  background-color: #5a94ee;
-  background-image: url('../themes/images/default/btn/btn-default-medium-over-bg.gif'); }
+  background-color: #5a94ee; }
 /* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-medium-focus .x-frame-tl,
 .x-nbr .x-btn-default-medium-focus .x-frame-bl,
@@ -7820,8 +7235,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-default-medium-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-medium-focus .x-frame-mc {
-  background-color: #5a94ee;
-  background-image: url('../themes/images/default/btn/btn-default-medium-focus-bg.gif'); }
+  background-color: #5a94ee; }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-medium-menu-active .x-frame-tl,
 .x-nbr .x-btn-default-medium-menu-active .x-frame-bl,
@@ -7845,8 +7259,7 @@ tr.x-container:before {
 /* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-medium-menu-active .x-frame-mc,
 .x-nbr .x-btn-default-medium-pressed .x-frame-mc {
-  background-color: #5a94ee;
-  background-image: url('../themes/images/default/btn/btn-default-medium-pressed-bg.gif'); }
+  background-color: #5a94ee; }
 /* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-medium-disabled .x-frame-tl,
 .x-nbr .x-btn-default-medium-disabled .x-frame-bl,
@@ -7861,34 +7274,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-default-medium-disabled-sides.gif'); }
 /* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-medium-disabled .x-frame-mc {
-  background-color: white;
-  background-image: url('../themes/images/default/btn/btn-default-medium-disabled-bg.gif'); }
-
-/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-default-medium {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-default-medium-bg.gif'); }
-
-/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-default-medium-over {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-default-medium-over-bg.gif'); }
-
-/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-default-medium-focus {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-default-medium-focus-bg.gif'); }
-
-/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-default-medium-menu-active,
-.x-nlg .x-btn-default-medium-pressed {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-default-medium-pressed-bg.gif'); }
-
-/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-default-medium-disabled {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-default-medium-disabled-bg.gif'); }
+  background-color: #5a94ee; }
 
 /* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-default-large {
@@ -7904,12 +7290,10 @@ tr.x-container:before {
   padding: 5px 20px 5px 20px;
   border-width: 1px;
   border-style: solid;
-  background-image: none;
   background-color: #2c76e9; }
 
 /* line 102, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nlg .x-btn-default-large-mc {
-  background-image: url('../themes/images/default/btn/btn-default-large-bg.gif');
   background-color: #2c76e9; }
 
 /* line 115, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
@@ -7939,7 +7323,8 @@ tr.x-container:before {
 .x-nbr .x-btn-default-large-mr {
   zoom: 1;
   background-image: url('../themes/images/default/btn/btn-default-large-sides.gif');
-  background-position: 0 0; }
+  background-position: 0 0;
+  background-repeat: repeat-y; }
 /* line 200, ../themes/stylesheets/ext4/default/mixins/_frame.scss */
 .x-nbr .x-btn-default-large-mc {
   padding: 6px 21px 6px 21px; }
@@ -8075,14 +7460,9 @@ tr.x-container:before {
 
 /* line 846, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-default-large-disabled {
-  border-color: #e9e9e9;
+  border-color: #88b2f3;
   background-image: none;
-  background-color: white;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(48%, #f9f9f9), color-stop(52%, #e2e2e2), color-stop(100%, #e7e7e7));
-  background-image: -webkit-linear-gradient(top, #ffffff, #f9f9f9 48%, #e2e2e2 52%, #e7e7e7);
-  background-image: -moz-linear-gradient(top, #ffffff, #f9f9f9 48%, #e2e2e2 52%, #e7e7e7);
-  background-image: -o-linear-gradient(top, #ffffff, #f9f9f9 48%, #e2e2e2 52%, #e7e7e7);
-  background-image: linear-gradient(top, #ffffff, #f9f9f9 48%, #e2e2e2 52%, #e7e7e7); }
+  background-color: #5a94ee; }
 
 /* line 894, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-large-over .x-frame-tl,
@@ -8098,8 +7478,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-default-large-over-sides.gif'); }
 /* line 901, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-large-over .x-frame-mc {
-  background-color: #5a94ee;
-  background-image: url('../themes/images/default/btn/btn-default-large-over-bg.gif'); }
+  background-color: #5a94ee; }
 /* line 915, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-large-focus .x-frame-tl,
 .x-nbr .x-btn-default-large-focus .x-frame-bl,
@@ -8114,8 +7493,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-default-large-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-large-focus .x-frame-mc {
-  background-color: #5a94ee;
-  background-image: url('../themes/images/default/btn/btn-default-large-focus-bg.gif'); }
+  background-color: #5a94ee; }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-large-menu-active .x-frame-tl,
 .x-nbr .x-btn-default-large-menu-active .x-frame-bl,
@@ -8139,8 +7517,7 @@ tr.x-container:before {
 /* line 944, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-large-menu-active .x-frame-mc,
 .x-nbr .x-btn-default-large-pressed .x-frame-mc {
-  background-color: #5a94ee;
-  background-image: url('../themes/images/default/btn/btn-default-large-pressed-bg.gif'); }
+  background-color: #5a94ee; }
 /* line 958, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-large-disabled .x-frame-tl,
 .x-nbr .x-btn-default-large-disabled .x-frame-bl,
@@ -8155,34 +7532,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-default-large-disabled-sides.gif'); }
 /* line 965, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-default-large-disabled .x-frame-mc {
-  background-color: white;
-  background-image: url('../themes/images/default/btn/btn-default-large-disabled-bg.gif'); }
-
-/* line 978, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-default-large {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-default-large-bg.gif'); }
-
-/* line 987, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-default-large-over {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-default-large-over-bg.gif'); }
-
-/* line 996, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-default-large-focus {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-default-large-focus-bg.gif'); }
-
-/* line 1006, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-default-large-menu-active,
-.x-nlg .x-btn-default-large-pressed {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-default-large-pressed-bg.gif'); }
-
-/* line 1015, ../themes/stylesheets/ext4/default/widgets/_button.scss */
-.x-nlg .x-btn-default-large-disabled {
-  background-repeat: repeat-x;
-  background-image: url('../themes/images/default/btn/btn-default-large-disabled-bg.gif'); }
+  background-color: #5a94ee; }
 
 /* line 633, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-default-toolbar-small {
