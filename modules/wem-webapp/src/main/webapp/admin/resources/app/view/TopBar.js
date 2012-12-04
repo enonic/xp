@@ -195,9 +195,8 @@ Ext.define('Admin.view.TopBar', {
 
     setActiveTab: function (tab) {
 
-        var card = tab.card;
-        if (card.id !== 'tab-browse') {
-            this.setPath(card.data ? card.data.path || card.data.qualifiedName || card.data.displayName : card.title);
+        if (tab.card.id !== 'tab-browse') {
+            this.setPath(this.getMenuItemDescription(tab.card));
         } else {
             this.setPath('');
         }
@@ -222,16 +221,18 @@ Ext.define('Admin.view.TopBar', {
     createMenuItemFromTab: function (item) {
         var me = this;
         var cfg = item.initialConfig || item;
+        var data = item.data || item;
         return {
             tabBar: me,
             card: item,
             disabled: cfg.disabled,
             closable: cfg.closable,
             hidden: cfg.hidden && !item.hiddenByLayout, // only hide if it wasn't hidden by the layout itself
-            iconCls: cfg.iconCls || 'icon-data-blue',
+            iconCls: cfg.iconCls,
+            iconSrc: data.image_url,
             editing: cfg.editing || false,
             text1: cfg.title || 'first line',
-            text2: cfg.type || 'second line'
+            text2: me.getMenuItemDescription(item)
         };
     },
 
@@ -242,6 +243,10 @@ Ext.define('Admin.view.TopBar', {
         // show counter when 2 or more tabs are open
         this.tabButton.setVisible(count > 1);
         this.tabButton.setText('' + count);
+    },
+
+    getMenuItemDescription: function (card) {
+        return card.data ? card.data.path || card.data.qualifiedName || card.data.displayName : card.title
     },
 
     /*  Public  */

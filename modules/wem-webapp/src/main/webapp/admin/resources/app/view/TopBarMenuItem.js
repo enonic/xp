@@ -27,6 +27,8 @@ Ext.define('Admin.view.TopBarMenuItem', {
             this.items.push({
                 xtype: 'image',
                 margin: '0 0 0 12px',
+                width: 32,
+                height: 32,
                 cls: this.iconCls,
                 src: this.iconSrc
             });
