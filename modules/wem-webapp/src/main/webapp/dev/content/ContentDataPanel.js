@@ -24,25 +24,6 @@ Ext.define('ContentDataPanel', {
     },
 
 
-    addFormItems: function (contentTypeItems, parentContainer) {
-        var me = this;
-        var formItem;
-        Ext.each(contentTypeItems, function (item) {
-            if (item.FormItemSet) {
-                formItem = me.createFormItemSet(item.FormItemSet);
-            } else { // Input
-                formItem = me.createItem(item.Input);
-            }
-
-            if (parentContainer.getXType() === 'FormItemSet' || parentContainer.getXType() === 'fieldcontainer') {
-                parentContainer.add(formItem);
-            } else {
-                parentContainer.items.push(formItem);
-            }
-        });
-    },
-
-
     createFormItemSet: function (formItemSet) {
         var me = this;
         var formItem = Ext.create({
@@ -78,34 +59,47 @@ Ext.define('ContentDataPanel', {
     },
 
 
+    addFormItems: function (contentTypeItems, parentContainer) {
+        var me = this;
+        var formItem;
+        Ext.each(contentTypeItems, function (item) {
+            if (item.FormItemSet) {
+                formItem = me.createFormItemSet(item.FormItemSet);
+            } else { // Input
+                formItem = me.createItem(item.Input);
+            }
+
+            if (parentContainer.getXType() === 'FormItemSet' || parentContainer.getXType() === 'fieldcontainer') {
+                parentContainer.add(formItem);
+            } else {
+                parentContainer.items.push(formItem);
+            }
+        });
+    },
+
+
     addFormItemSetBlock: function (formItemSet, position) {
         var me = this;
 
-        // May use regular container here
         var block = new Ext.form.FieldContainer({
-            //style: 'border-bottom: 1px solid #aaa;',
             layout: 'anchor'
         });
 
         me.addFormItems(formItemSet.contentTypeItems, block);
 
-        // Add and remove buttons
+        // Add new block button and remove block button
         block.add({
             xtype: 'container',
             margin: '10 0 5 0',
             padding: '0 0 0 0',
             style: 'text-align: right; border-top: 1px dotted #aaa',
-
-            defaults: {
-            },
-
             items: [
                 {
                     xtype: 'button',
                     text: '+',
                     margin: '0 5 0 0',
                     handler: function (button) {
-                        if (me.contentTypeItems) {
+                        if (formItemSet.contentTypeItems) {
                             var pos = me.getPositionForFormItemSetBlock(formItemSet, block) + 1;
                             me.addFormItemSetBlock(formItemSet, pos);
                         }

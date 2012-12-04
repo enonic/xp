@@ -9,7 +9,7 @@ Ext.define('Admin.lib.formitem.Relation', {
         me.selectedContentStore = this.createSelectedContentStore();
 
         me.items = [
-            me.createValueInput(),
+            me.createHiddenValueInput(),
             me.createComboBox(),
             me.createViewForSelectedContent()
         ];
@@ -17,7 +17,7 @@ Ext.define('Admin.lib.formitem.Relation', {
         me.callParent(arguments);
     },
 
-    createValueInput: function () {
+    createHiddenValueInput: function () {
         var me = this;
         return {
             xtype: 'hiddenfield',
@@ -66,10 +66,12 @@ Ext.define('Admin.lib.formitem.Relation', {
     },
 
     onSelectContent: function (records) {
-        var contentIsAdded = this.selectedContentStore.findRecord('key', records[0].raw.key);
-        if (!contentIsAdded) {
-            this.selectedContentStore.add(records[0].raw);
+        var isAlreadyAdded = this.selectedContentStore.findRecord('key', records[0].raw.key);
+        if (isAlreadyAdded) {
+            this.alertContentIsAdded(records);
+            return;
         }
+        this.selectedContentStore.add(records[0].raw);
     },
 
     createSelectedContentStore: function () {
@@ -122,6 +124,11 @@ Ext.define('Admin.lib.formitem.Relation', {
                 }
             }
         });
+    },
+
+    alertContentIsAdded: function(records) {
+        alert('Temporary alert! Can not have duplicates in Relation field\n"' + records[0].raw.title + '" has already been added');
+        this.down('combobox').focus('');
     },
 
     updateRelationValue: function () {

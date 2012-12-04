@@ -3,7 +3,7 @@ Ext.define('Admin.lib.formitem.Base', {
     label: 'Label',
     layout: 'anchor',
     width: 440,
-    //defaults: {anchor: '640'}
+    occurrences: null,
     initComponent: function () {
         var me = this;
         me.defaults = {

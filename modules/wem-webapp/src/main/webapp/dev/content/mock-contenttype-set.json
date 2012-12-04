@@ -154,8 +154,8 @@
                             "label": "Name",
                             "immutable": false,
                             "occurrences": {
-                                "minimum": 0,
-                                "maximum": 1
+                                "minimum": 1,
+                                "maximum": 3
                             },
                             "indexed": false,
                             "customText": null,
@@ -170,11 +170,11 @@
                     {
                         "Input": {
                             "name": "gallery_photos",
-                            "label": "Set",
+                            "label": "Photos",
                             "immutable": false,
                             "occurrences": {
-                                "minimum": 0,
-                                "maximum": 1
+                                "minimum": 1,
+                                "maximum": 2
                             },
                             "indexed": false,
                             "customText": null,
