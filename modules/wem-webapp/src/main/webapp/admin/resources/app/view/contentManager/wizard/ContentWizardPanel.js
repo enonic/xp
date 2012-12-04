@@ -141,10 +141,6 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             contentType: this.data ? this.data.contentType : undefined,
             content: this.data ? this.data.content : null
         };
-        var treeStep = {
-            stepTitle: "Tree",
-            xtype: 'panel'
-        };
         var pageStep = {
             stepTitle: 'Page',
             xtype: 'panel'
@@ -162,7 +158,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             xtype: 'panel'
         };
 
-        return [dataStep, treeStep, pageStep, metaStep, securityStep, summaryStep];
+        return [dataStep, pageStep, metaStep, securityStep, summaryStep];
 
     },
 
