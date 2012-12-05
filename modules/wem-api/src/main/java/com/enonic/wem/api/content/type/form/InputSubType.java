@@ -9,9 +9,9 @@ public class InputSubType
 {
     private final Input input;
 
-    InputSubType( final ModuleName moduleName, final Input input )
+    InputSubType( final String displayName, final ModuleName moduleName, final Input input )
     {
-        super( moduleName );
+        super( displayName, moduleName );
         Preconditions.checkNotNull( input, "input is required" );
         this.input = input;
     }
@@ -32,7 +32,7 @@ public class InputSubType
         return input;
     }
 
-    public FormItem create( final SubTypeReference subTypeReference )
+    public FormItem toFormItem( final SubTypeReference subTypeReference )
     {
         Input input = this.input.copy();
         input.setName( subTypeReference.getName() );
@@ -52,6 +52,8 @@ public class InputSubType
 
     public static class Builder
     {
+        private String displayName;
+
         private Input input;
 
         private ModuleName moduleName;
@@ -65,6 +67,12 @@ public class InputSubType
         {
             this.input = source.input;
             this.moduleName = source.getModuleName();
+        }
+
+        public Builder displayName( String value )
+        {
+            this.displayName = value;
+            return this;
         }
 
         public Builder input( Input value )
@@ -83,7 +91,7 @@ public class InputSubType
         {
             Preconditions.checkNotNull( input, "input is required" );
             Preconditions.checkNotNull( moduleName, "moduleName is required" );
-            return new InputSubType( moduleName, input );
+            return new InputSubType( displayName, moduleName, input );
         }
     }
 }

@@ -15,7 +15,7 @@ import com.enonic.wem.api.content.type.form.SubTypeReference;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
 import com.enonic.wem.core.content.JsonParsingException;
 
-class FormItemJsonSerializer
+public class FormItemJsonSerializer
     extends AbstractJsonSerializer<FormItem>
 {
     private final InputJsonSerializer inputJsonSerializer;
@@ -35,7 +35,7 @@ class FormItemJsonSerializer
     }
 
     @Override
-    protected JsonNode serialize( final FormItem formItem, final ObjectMapper objectMapper )
+    public JsonNode serialize( final FormItem formItem, final ObjectMapper objectMapper )
     {
         final ObjectNode formItemBaseTypeObject = objectMapper.createObjectNode();
         if ( formItem instanceof FormItemSet )

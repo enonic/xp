@@ -13,7 +13,7 @@ import com.enonic.wem.core.content.type.form.inputtype.InputTypeConfigJsonSerial
 
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 
-class InputJsonSerializer
+public class InputJsonSerializer
     extends AbstractJsonSerializer<Input>
 {
     private static final String TYPE = "type";

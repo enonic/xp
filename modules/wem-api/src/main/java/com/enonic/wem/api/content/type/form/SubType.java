@@ -9,9 +9,12 @@ public abstract class SubType
 {
     private final ModuleName moduleName;
 
-    SubType( final ModuleName moduleName )
+    private final String displayName;
+
+    SubType( final String displayName, final ModuleName moduleName )
     {
         Preconditions.checkNotNull( moduleName, "moduleName is required" );
+        this.displayName = displayName;
         this.moduleName = moduleName;
     }
 
@@ -22,6 +25,11 @@ public abstract class SubType
         return moduleName;
     }
 
+    public String getDisplayName()
+    {
+        return displayName;
+    }
+
     public QualifiedSubTypeName getQualifiedName()
     {
         return new QualifiedSubTypeName( moduleName, getName() );
@@ -29,5 +37,5 @@ public abstract class SubType
 
     public abstract Class getType();
 
-    public abstract FormItem create( final SubTypeReference subTypeReference );
+    public abstract FormItem toFormItem( final SubTypeReference subTypeReference );
 }

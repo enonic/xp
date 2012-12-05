@@ -11,11 +11,11 @@ public interface ContentTypeDao
 {
     public void createContentType( Session session, ContentType contentType );
 
-    public ContentTypes retrieveContentTypes( Session session, QualifiedContentTypeNames contentTypeNames );
+    public void updateContentType( Session session, ContentType contentType );
+
+    public void deleteContentType( Session session, QualifiedContentTypeName qualifiedContentTypeName );
 
     public ContentTypes retrieveAllContentTypes( Session session );
 
-    public void updateContentType( Session session, ContentType contentType );
-
-    public void deleteContentType( Session session, QualifiedContentTypeName contentTypeName );
+    public ContentTypes retrieveContentTypes( Session session, QualifiedContentTypeNames qualifiedContentTypeNames );
 }

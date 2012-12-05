@@ -264,7 +264,7 @@ public abstract class AbstractContentTypeSerializerTest
     private String toString( final ContentType type )
     {
         String serialized = getSerializer().toString( type );
-        System.out.println( "Content Type:" );
+        System.out.println( "ContentType:" );
         System.out.println( serialized );
         return serialized;
     }

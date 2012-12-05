@@ -10,9 +10,9 @@ public final class FormItemSetSubType
 {
     private final FormItemSet formItemSet;
 
-    FormItemSetSubType( final ModuleName moduleName, final FormItemSet formItemSet )
+    FormItemSetSubType( final String displayName, final ModuleName moduleName, final FormItemSet formItemSet )
     {
-        super( moduleName );
+        super( displayName, moduleName );
         Preconditions.checkNotNull( formItemSet, "formItemSet is required" );
         this.formItemSet = formItemSet;
     }
@@ -28,6 +28,11 @@ public final class FormItemSetSubType
         return this.getClass();
     }
 
+    public FormItemSet getFormItemSet()
+    {
+        return formItemSet;
+    }
+
     public void addFormItem( final HierarchicalFormItem formItem )
     {
         if ( formItem instanceof SubTypeReference )
@@ -40,7 +45,7 @@ public final class FormItemSetSubType
         formItemSet.add( formItem );
     }
 
-    public FormItem create( final SubTypeReference subTypeReference )
+    public FormItem toFormItem( final SubTypeReference subTypeReference )
     {
         final FormItemSet newSet = this.formItemSet.copy();
         newSet.setName( subTypeReference.getName() );
@@ -60,6 +65,8 @@ public final class FormItemSetSubType
 
     public static class Builder
     {
+        private String displayName;
+
         private ModuleName moduleName;
 
         private FormItemSet formItemSet;
@@ -70,8 +77,15 @@ public final class FormItemSetSubType
 
         public Builder( final FormItemSetSubType source )
         {
+            this.displayName = source.getDisplayName();
             this.moduleName = source.getModuleName();
             this.formItemSet = source.formItemSet;
+        }
+
+        public Builder displayName( String value )
+        {
+            this.displayName = value;
+            return this;
         }
 
         public Builder module( ModuleName value )
@@ -91,7 +105,7 @@ public final class FormItemSetSubType
             Preconditions.checkNotNull( formItemSet, "formItemSet is required" );
             Preconditions.checkNotNull( moduleName, "moduleName is required" );
 
-            return new FormItemSetSubType( moduleName, formItemSet );
+            return new FormItemSetSubType( displayName, moduleName, formItemSet );
         }
     }
 }

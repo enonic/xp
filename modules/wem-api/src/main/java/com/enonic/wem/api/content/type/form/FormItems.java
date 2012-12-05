@@ -241,7 +241,7 @@ public class FormItems
                                                  "SubType expected to be of type %s: " + subType.getType().getSimpleName(),
                                                  subTypeReference.getSubTypeClass().getSimpleName() );
 
-                    final FormItem formItemCreatedFromSubType = subType.create( subTypeReference );
+                    final FormItem formItemCreatedFromSubType = subType.toFormItem( subTypeReference );
                     if ( formItemCreatedFromSubType instanceof FormItemSet )
                     {
                         final FormItemSet set = (FormItemSet) formItemCreatedFromSubType;

@@ -226,6 +226,18 @@ public class FormItemSet
             return this;
         }
 
+        public Builder minimumOccurrences( int value )
+        {
+            occurrences = newOccurrences( occurrences ).minimum( value ).build();
+            return this;
+        }
+
+        public Builder maximumOccurrences( int value )
+        {
+            occurrences = newOccurrences( occurrences ).maximum( value ).build();
+            return this;
+        }
+
         public Builder required( boolean value )
         {
             if ( value && !occurrences.impliesRequired() )

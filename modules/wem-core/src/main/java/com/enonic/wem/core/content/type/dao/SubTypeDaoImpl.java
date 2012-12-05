@@ -1,9 +1,7 @@
 package com.enonic.wem.core.content.type.dao;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.springframework.stereotype.Component;
@@ -12,6 +10,7 @@ import com.enonic.wem.api.content.QualifiedSubTypeNames;
 import com.enonic.wem.api.content.type.SubTypes;
 import com.enonic.wem.api.content.type.form.QualifiedSubTypeName;
 import com.enonic.wem.api.content.type.form.SubType;
+import com.enonic.wem.api.exception.SystemException;
 
 @Component
 public class SubTypeDaoImpl
@@ -21,36 +20,65 @@ public class SubTypeDaoImpl
     @Override
     public void createSubType( final SubType subType, final Session session )
     {
-        // TODO
+        try
+        {
+            new CreateSubTypeDaoHandler( session ).create( subType );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new SystemException( e, "Unable to create sub type [{0}]", subType );
+        }
     }
 
     @Override
     public void updateSubType( final SubType subType, final Session session )
     {
-        // TODO
+        try
+        {
+            new UpdateSubTypeDaoHandler( session ).update( subType );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new SystemException( e, "Unable to update sub type [{0}]", subType );
+        }
     }
 
     @Override
-    public void deleteSubType( final QualifiedSubTypeName subTypeName, final Session session )
+    public void deleteSubType( final QualifiedSubTypeName qualifiedSubTypeName, final Session session )
     {
-        // TODO
+        try
+        {
+            new DeleteSubTypeDaoHandler( session ).handle( qualifiedSubTypeName );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new SystemException( e, "Unable to delete sub type [{0}]", qualifiedSubTypeName );
+        }
     }
 
     @Override
     public SubTypes retrieveAllSubTypes( final Session session )
     {
-        return null; // TODO
+        try
+        {
+            return new RetrieveSubTypeDaoHandler( session ).retrieveAll();
+        }
+        catch ( RepositoryException e )
+        {
+            throw new SystemException( e, "Unable to retrieve all sub types" );
+        }
     }
 
     @Override
     public SubTypes retrieveSubTypes( final QualifiedSubTypeNames qualifiedSubTypeNames, Session session )
     {
-        List<SubType> subTypeList = new ArrayList<SubType>();
-        for ( QualifiedSubTypeName qName : qualifiedSubTypeNames )
+        try
         {
-            // TODO:
+            return new RetrieveSubTypeDaoHandler( session ).retrieve( qualifiedSubTypeNames );
         }
-
-        return SubTypes.from( subTypeList );
+        catch ( RepositoryException e )
+        {
+            throw new SystemException( e, "Unable to retrieve sub types [{0}]", qualifiedSubTypeNames );
+        }
     }
 }
