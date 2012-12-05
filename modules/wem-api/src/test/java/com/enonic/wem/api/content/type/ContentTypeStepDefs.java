@@ -18,10 +18,11 @@ import com.enonic.wem.api.content.type.form.FormItemType;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.content.type.form.InputSubType;
 import com.enonic.wem.api.content.type.form.MockSubTypeFetcher;
-import com.enonic.wem.api.content.type.form.SubTypeQualifiedName;
+import com.enonic.wem.api.content.type.form.QualifiedSubTypeName;
 import com.enonic.wem.api.content.type.form.SubTypeReference;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static com.enonic.wem.api.content.type.form.InputSubType.newInputSubType;
@@ -36,7 +37,7 @@ public class ContentTypeStepDefs
 
     public final Map<String, Input> inputByName = new HashMap<String, Input>();
 
-    public final Map<SubTypeQualifiedName, InputSubType> inputSubTypeByQualifiedName = new HashMap<SubTypeQualifiedName, InputSubType>();
+    public final Map<QualifiedSubTypeName, InputSubType> inputSubTypeByQualifiedName = new HashMap<QualifiedSubTypeName, InputSubType>();
 
 
     @Given("^a Module named (.+)$")
@@ -59,9 +60,8 @@ public class ContentTypeStepDefs
     public void a_inputSubType_named_name_in_module_module_having_input( String subTypeName, String moduleName, String inputName )
         throws Throwable
     {
-        InputSubType inputSubType =
-            newInputSubType().module( moduleByName.get( moduleName ) ).input( inputByName.get( inputName ) ).build();
-        inputSubTypeByQualifiedName.put( new SubTypeQualifiedName( moduleName, subTypeName ), inputSubType );
+        InputSubType inputSubType = newInputSubType().module( ModuleName.from( moduleName ) ).input( inputByName.get( inputName ) ).build();
+        inputSubTypeByQualifiedName.put( new QualifiedSubTypeName( moduleName, subTypeName ), inputSubType );
     }
 
     @Given("^a ContentType named (.+)")
@@ -78,7 +78,7 @@ public class ContentTypeStepDefs
         throws Throwable
     {
 
-        InputSubType inputSubType = inputSubTypeByQualifiedName.get( new SubTypeQualifiedName( subTypeQualifiedName ) );
+        InputSubType inputSubType = inputSubTypeByQualifiedName.get( new QualifiedSubTypeName( subTypeQualifiedName ) );
         ContentType contentType = contentTypeByName.get( contentTypeName );
         contentType.form().addFormItem( SubTypeReference.newSubTypeReference( inputSubType ).name( subTypeReferenceName ).build() );
 

@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.AbstractEqualsTest;
 
-public class SubTypeQualifiedNameTest
+public class QualifiedSubTypeNameTest
 {
     @Test
     public void equals()
@@ -14,26 +14,26 @@ public class SubTypeQualifiedNameTest
             @Override
             public Object getObjectX()
             {
-                return new SubTypeQualifiedName( "myModule:mySubType" );
+                return new QualifiedSubTypeName( "myModule:mySubType" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{new SubTypeQualifiedName( "myModule:myOtherSubType" ),
-                    new SubTypeQualifiedName( "myOtherModule:mySubType" )};
+                return new Object[]{new QualifiedSubTypeName( "myModule:myOtherSubType" ),
+                    new QualifiedSubTypeName( "myOtherModule:mySubType" )};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return new SubTypeQualifiedName( "myModule:mySubType" );
+                return new QualifiedSubTypeName( "myModule:mySubType" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return new SubTypeQualifiedName( "myModule:mySubType" );
+                return new QualifiedSubTypeName( "myModule:mySubType" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();

@@ -4,14 +4,14 @@ package com.enonic.wem.api.content.type.form;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 
 
 public class InputSubTypeTest
 {
-    private Module module = Module.newModule().name( "MyModule" ).build();
+    private ModuleName module = ModuleName.from( "MyModule" );
 
     @Test
     public void tags()

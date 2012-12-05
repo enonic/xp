@@ -8,7 +8,7 @@ import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.FormItemSetSubType;
 import com.enonic.wem.api.content.type.form.MockSubTypeFetcher;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
@@ -67,9 +67,7 @@ public class ContentTypeTest
     public void subTypeReferencesToFormItems()
     {
         // setup
-        Module module = Module.newModule().name( "myModule" ).build();
-
-        FormItemSetSubType subType = newFormItemSetSubType().module( module ).formItemSet(
+        FormItemSetSubType subType = newFormItemSetSubType().module( ModuleName.from( "myModule" ) ).formItemSet(
             newFormItemSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
@@ -95,15 +93,13 @@ public class ContentTypeTest
     public void subTypeReferencesToFormItems_layout()
     {
         // setup
-        Module module = Module.newModule().name( "myModule" ).build();
-
-        FormItemSetSubType subType = newFormItemSetSubType().module( module ).formItemSet( newFormItemSet().name( "address" ).add(
-            FieldSet.newFieldSet().label( "My Field Set" ).name( "fieldSet" ).add(
+        FormItemSetSubType subType = newFormItemSetSubType().module( ModuleName.from( "myModule" ) ).formItemSet(
+            newFormItemSet().name( "address" ).add( FieldSet.newFieldSet().label( "My Field Set" ).name( "fieldSet" ).add(
                 newInput().name( "myFieldInLayout" ).label( "MyFieldInLayout" ).type( InputTypes.TEXT_LINE ).build() ).build() ).add(
-            newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
-            newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).add(
-            newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
-            newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
+                newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
+                newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).add(
+                newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
+                newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         final ContentType contentType = newContentType().
             addFormItem( newSubTypeReference( subType ).name( "home" ).build() ).
@@ -125,9 +121,7 @@ public class ContentTypeTest
     public void subTypeReferencesToFormItems_throws_exception_when_subType_is_not_of_expected_type()
     {
         // setup
-        Module module = Module.newModule().name( "myModule" ).build();
-
-        FormItemSetSubType subType = newFormItemSetSubType().module( module ).formItemSet(
+        FormItemSetSubType subType = newFormItemSetSubType().module( ModuleName.from( "myModule" ) ).formItemSet(
             newFormItemSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 

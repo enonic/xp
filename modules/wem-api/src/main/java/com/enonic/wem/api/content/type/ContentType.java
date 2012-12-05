@@ -127,15 +127,14 @@ public final class ContentType
             formItemList = Lists.newArrayList();
         }
 
-        private Builder( final ContentType contentType )
+        private Builder( final ContentType source )
         {
-            this.name = contentType.getName();
-            this.moduleName = contentType.getModuleName();
-            this.displayName = contentType.getDisplayName();
-            this.isAbstract = contentType.isAbstract();
-            this.isFinal = contentType.isFinal();
-            this.formItemList = Lists.newArrayList( contentType.form().copy().formItemIterable() );
-            this.name = contentType.getName();
+            this.name = source.getName();
+            this.moduleName = source.getModuleName();
+            this.displayName = source.getDisplayName();
+            this.isAbstract = source.isAbstract();
+            this.isFinal = source.isFinal();
+            this.formItemList = Lists.newArrayList( source.form().copy().formItemIterable() );
         }
 
         public Builder qualifiedName( final QualifiedContentTypeName qualifiedContentTypeName )

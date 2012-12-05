@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.dao;
+package com.enonic.wem.core.content.type.dao;
 
 
 import javax.jcr.Node;
@@ -12,8 +12,7 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.core.content.type.dao.ContentTypeDao;
-import com.enonic.wem.core.content.type.dao.ContentTypeDaoImpl;
+import com.enonic.wem.core.content.dao.ContentDaoConstants;
 import com.enonic.wem.itest.AbstractJcrTest;
 
 import static com.enonic.wem.api.content.type.ContentType.newContentType;

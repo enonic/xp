@@ -5,7 +5,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.content.type.form.SubTypeQualifiedName;
+import com.enonic.wem.api.content.type.form.QualifiedSubTypeName;
 import com.enonic.wem.api.content.type.form.SubTypeReference;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
 import com.enonic.wem.core.content.JsonParserUtil;
@@ -24,7 +24,7 @@ class SubTypeReferenceJsonSerializer
     {
         final ObjectNode jsonObject = objectMapper.createObjectNode();
         jsonObject.put( NAME, subTypeReference.getName() );
-        jsonObject.put( REFERENCE, subTypeReference.getSubTypeQualifiedName().toString() );
+        jsonObject.put( REFERENCE, subTypeReference.getQualifiedSubTypeName().toString() );
         jsonObject.put( TYPE, subTypeReference.getSubTypeClass().getSimpleName() );
         return jsonObject;
     }
@@ -33,7 +33,7 @@ class SubTypeReferenceJsonSerializer
     {
         final SubTypeReference.Builder builder = SubTypeReference.newSubTypeReference();
         builder.name( JsonParserUtil.getStringValue( NAME, subTypeReferenceObj ) );
-        builder.subType( new SubTypeQualifiedName( JsonParserUtil.getStringValue( REFERENCE, subTypeReferenceObj ) ) );
+        builder.subType( new QualifiedSubTypeName( JsonParserUtil.getStringValue( REFERENCE, subTypeReferenceObj ) ) );
         builder.type( JsonParserUtil.getStringValue( TYPE, subTypeReferenceObj ) );
         return builder.build();
     }

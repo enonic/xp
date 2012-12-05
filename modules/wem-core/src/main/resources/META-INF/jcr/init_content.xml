@@ -14,5 +14,6 @@
 
   <node name="contents" type="nt:unstructured"/>
   <node name="contentTypes" type="nt:unstructured"/>
+  <node name="subTypes" type="nt:unstructured"/>
 
 </node>

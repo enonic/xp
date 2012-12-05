@@ -16,6 +16,7 @@ import com.enonic.wem.api.content.type.form.SubTypeReference;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.content.type.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.AbstractSerializerTest;
 
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
@@ -54,7 +55,7 @@ public abstract class AbstractContentTypeSerializerTest
     {
         InputSubType inputSubType =
             InputSubType.newInputSubType().input( Input.newInput().name( "mySharedInput" ).type( InputTypes.TEXT_LINE ).build() ).module(
-                Module.SYSTEM ).build();
+                Module.SYSTEM.getName() ).build();
         FormItemSet set = newFormItemSet().name( "mySet" ).build();
         Layout layout = FieldSet.newFieldSet().label( "My field set" ).name( "myFieldSet" ).add(
             newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() ).build();
@@ -166,9 +167,7 @@ public abstract class AbstractContentTypeSerializerTest
     public void parse_subType()
     {
         // setup
-        Module module = newModule().name( "myModule" ).build();
-
-        FormItemSetSubType subType = newFormItemSetSubType().module( module ).formItemSet(
+        FormItemSetSubType subType = newFormItemSetSubType().module( ModuleName.from( "myModule" ) ).formItemSet(
             newFormItemSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
@@ -265,7 +264,7 @@ public abstract class AbstractContentTypeSerializerTest
     private String toString( final ContentType type )
     {
         String serialized = getSerializer().toString( type );
-        System.out.println( "Content Type:" );
+        System.out.println( "ContentType:" );
         System.out.println( serialized );
         return serialized;
     }
