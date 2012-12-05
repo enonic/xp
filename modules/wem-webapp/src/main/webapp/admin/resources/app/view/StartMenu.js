@@ -114,7 +114,7 @@ Ext.define('Admin.view.StartMenu', {
                     }
                 }
                 if (tile) {
-                    me.fireEvent('tileclick', me, tile);
+                    me.fireEvent('tileclick', tile);
                 }
             }
         });

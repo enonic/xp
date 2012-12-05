@@ -35,7 +35,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
             for (i = 0; i < content.length; i += 1) {
                 tabs.addTab({
                     xtype: 'contentDetail',
-                    data: content[i],
+                    data: content[i].raw,
                     title: 'View Content'
                 });
             }
@@ -98,6 +98,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
             var tabItem = {
                 id: 'edit-content-tab-' + selectedContent.get('path'),
                 title: selectedContent.get('displayName'),
+                data: selectedContent.raw,
                 closable: true,
                 layout: 'fit'
             };

@@ -8,7 +8,12 @@
   <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/ext-all.css">
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
   <link rel="stylesheet" type="text/css" href="resources/css/admin-preview-panel.css">
+
+  <link rel="stylesheet" type="text/css" href="resources/css/admin-top-bar.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/admin-start-menu.css">
+
   <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/admin.css"/>
+
   <!-- ExtJS -->
 
   <script type="text/javascript" src="resources/lib/ext/ext-all-debug.js"></script>
@@ -47,6 +52,8 @@
       name: 'App',
 
       controllers: [
+        'Admin.controller.Controller',
+        'Admin.controller.TopBarController',
         'Admin.controller.contentManager.GridPanelController',
         'Admin.controller.contentManager.DetailPanelController',
         'Admin.controller.contentManager.FilterPanelController',
@@ -57,9 +64,7 @@
       ],
 
       requires: [
-        'Admin.view.TabPanel',
-        'Admin.lib.UriHelper',
-        'Admin.lib.RemoteService'
+        'Admin.view.TabPanel'
       ],
 
       launch: function () {
@@ -67,11 +72,12 @@
         Ext.create('Ext.container.Viewport', {
           layout: 'fit',
           cls: 'admin-viewport',
-          padding: 5,
 
           items: [
             {
               xtype: 'cmsTabPanel',
+              appName: 'Content Manager',
+              appIconCls: 'icon-content-24',
               items: [
                 {
                   id: 'tab-browse',

@@ -8,6 +8,10 @@
   <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/ext-all.css">
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
   <link rel="stylesheet" type="text/css" href="resources/css/contentstudio-preview-panel.css">
+
+  <link rel="stylesheet" type="text/css" href="resources/css/admin-top-bar.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/admin-start-menu.css">
+
   <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/admin.css"/>
   <!-- ExtJS -->
 
@@ -27,7 +31,8 @@
         'Common': 'common/js',
         'Main': 'app/main/js',
         'Admin': 'resources/app'
-      }
+      },
+      disableCaching: false
     });
   </script>
 
@@ -46,6 +51,8 @@
       name: 'App',
 
       controllers: [
+        'Admin.controller.Controller',
+        'Admin.controller.TopBarController',
         'Admin.controller.contentStudio.BrowseController',
         'Admin.controller.contentStudio.FilterPanelController',
         'Admin.controller.contentStudio.ContentTypeWizardController',
@@ -53,9 +60,7 @@
       ],
 
       requires: [
-        'Admin.view.TabPanel',
-        'Admin.lib.UriHelper',
-        'Admin.lib.RemoteService'
+        'Admin.view.TabPanel'
       ],
 
       launch: function () {
@@ -68,9 +73,11 @@
             {
               region: 'center',
               xtype: 'cmsTabPanel',
-              bodyCls: 'admin-no-border',
+              appName: 'Content Studio',
+              appIconCls: 'icon-content-studio-24',
               items: [
                 {
+                  id: 'tab-browse',
                   title: 'Browse',
                   closable: false,
                   layout: 'border',

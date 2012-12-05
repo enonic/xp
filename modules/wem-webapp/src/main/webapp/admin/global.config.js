@@ -35,11 +35,11 @@
     function cms_hideMainMenusOnClick() {
         if (window.addEventListener) {
             window.addEventListener('click', function () {
-                cms_getParentWindow().Admin.lib.LauncherToolbarHelper.hideLauncherMenus();
+                //cms_getParentWindow().Admin.lib.LauncherToolbarHelper.hideLauncherMenus();
             }, false);
         } else if (window.attachEvent) { // IE
             window.attachEvent('onclick', function () {
-                cms_getParentWindow().Admin.lib.LauncherToolbarHelper.hideLauncherMenus();
+                //cms_getParentWindow().Admin.lib.LauncherToolbarHelper.hideLauncherMenus();
             });
 
         }
