@@ -35,6 +35,17 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
         var me = this;
         console.log('FormItemSet: insertBlockAt  ' + position);
 
+        var block = me.createBlock();
+
+        me.mixins.formHelper.addFormItems(me.formItemSetConfig.items, block);
+
+        me.insert(position, block);
+    },
+
+
+    createBlock: function () {
+        var me = this;
+
         var block = new Ext.form.FieldContainer({
             cls: 'admin-sortable admin-formitemset-block',
             style: 'border:none',
@@ -80,9 +91,7 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
             ]
         });
 
-        me.mixins.formHelper.addFormItems(me.formItemSetConfig.items, block);
-
-        me.insert(position, block);
+        return block;
     },
 
 
