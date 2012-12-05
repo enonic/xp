@@ -3,16 +3,18 @@ package com.enonic.wem.api.content.type.form;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 
-public class FormItemSetSubType
+public final class FormItemSetSubType
     extends SubType
 {
-    private FormItemSet formItemSet = new FormItemSet();
+    private final FormItemSet formItemSet;
 
-    FormItemSetSubType( final Module module )
+    FormItemSetSubType( final ModuleName moduleName, final FormItemSet formItemSet )
     {
-        super( module );
+        super( moduleName );
+        Preconditions.checkNotNull( formItemSet, "formItemSet is required" );
+        this.formItemSet = formItemSet;
     }
 
     public String getName()
@@ -38,7 +40,7 @@ public class FormItemSetSubType
         formItemSet.add( formItem );
     }
 
-    public HierarchicalFormItem create( final SubTypeReference subTypeReference )
+    public FormItem create( final SubTypeReference subTypeReference )
     {
         final FormItemSet newSet = this.formItemSet.copy();
         newSet.setName( subTypeReference.getName() );
@@ -51,15 +53,30 @@ public class FormItemSetSubType
         return new Builder();
     }
 
+    public static Builder newFormItemSetSubType( final FormItemSetSubType source )
+    {
+        return new Builder( source );
+    }
+
     public static class Builder
     {
-        private Module module;
+        private ModuleName moduleName;
 
         private FormItemSet formItemSet;
 
-        public Builder module( Module value )
+        public Builder()
         {
-            this.module = value;
+        }
+
+        public Builder( final FormItemSetSubType source )
+        {
+            this.moduleName = source.getModuleName();
+            this.formItemSet = source.formItemSet;
+        }
+
+        public Builder module( ModuleName value )
+        {
+            this.moduleName = value;
             return this;
         }
 
@@ -71,9 +88,10 @@ public class FormItemSetSubType
 
         public FormItemSetSubType build()
         {
-            FormItemSetSubType subType = new FormItemSetSubType( module );
-            subType.formItemSet = formItemSet;
-            return subType;
+            Preconditions.checkNotNull( formItemSet, "formItemSet is required" );
+            Preconditions.checkNotNull( moduleName, "moduleName is required" );
+
+            return new FormItemSetSubType( moduleName, formItemSet );
         }
     }
 }

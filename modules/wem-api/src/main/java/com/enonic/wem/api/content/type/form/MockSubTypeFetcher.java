@@ -6,10 +6,10 @@ import java.util.Map;
 public class MockSubTypeFetcher
     implements SubTypeFetcher
 {
-    private Map<SubTypeQualifiedName, SubType> subTypeMap = new HashMap<SubTypeQualifiedName, SubType>();
+    private Map<QualifiedSubTypeName, SubType> subTypeMap = new HashMap<QualifiedSubTypeName, SubType>();
 
     @Override
-    public SubType getSubType( final SubTypeQualifiedName qualifiedName )
+    public SubType getSubType( final QualifiedSubTypeName qualifiedName )
     {
         return subTypeMap.get( qualifiedName );
     }

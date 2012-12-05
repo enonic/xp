@@ -234,14 +234,14 @@ public class FormItems
             if ( formItem instanceof SubTypeReference )
             {
                 final SubTypeReference subTypeReference = (SubTypeReference) formItem;
-                final SubType subType = subTypeFetcher.getSubType( subTypeReference.getSubTypeQualifiedName() );
+                final SubType subType = subTypeFetcher.getSubType( subTypeReference.getQualifiedSubTypeName() );
                 if ( subType != null )
                 {
                     Preconditions.checkArgument( subTypeReference.getSubTypeClass() == subType.getType(),
                                                  "SubType expected to be of type %s: " + subType.getType().getSimpleName(),
                                                  subTypeReference.getSubTypeClass().getSimpleName() );
 
-                    final HierarchicalFormItem formItemCreatedFromSubType = subType.create( subTypeReference );
+                    final FormItem formItemCreatedFromSubType = subType.create( subTypeReference );
                     if ( formItemCreatedFromSubType instanceof FormItemSet )
                     {
                         final FormItemSet set = (FormItemSet) formItemCreatedFromSubType;

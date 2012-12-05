@@ -2,16 +2,18 @@ package com.enonic.wem.api.content.type.form;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 
 public class InputSubType
     extends SubType
 {
-    private Input input;
+    private final Input input;
 
-    InputSubType( final Module module )
+    InputSubType( final ModuleName moduleName, final Input input )
     {
-        super( module );
+        super( moduleName );
+        Preconditions.checkNotNull( input, "input is required" );
+        this.input = input;
     }
 
     public String getName()
@@ -30,7 +32,7 @@ public class InputSubType
         return input;
     }
 
-    public HierarchicalFormItem create( final SubTypeReference subTypeReference )
+    public FormItem create( final SubTypeReference subTypeReference )
     {
         Input input = this.input.copy();
         input.setName( subTypeReference.getName() );
@@ -43,11 +45,27 @@ public class InputSubType
         return new Builder();
     }
 
+    public static Builder newInputSubType( final InputSubType source )
+    {
+        return new Builder( source );
+    }
+
     public static class Builder
     {
         private Input input;
 
-        private Module module;
+        private ModuleName moduleName;
+
+        public Builder()
+        {
+
+        }
+
+        public Builder( final InputSubType source )
+        {
+            this.input = source.input;
+            this.moduleName = source.getModuleName();
+        }
 
         public Builder input( Input value )
         {
@@ -55,19 +73,17 @@ public class InputSubType
             return this;
         }
 
-        public Builder module( Module value )
+        public Builder module( ModuleName value )
         {
-            this.module = value;
+            this.moduleName = value;
             return this;
         }
 
         public InputSubType build()
         {
             Preconditions.checkNotNull( input, "input is required" );
-
-            InputSubType subType = new InputSubType( module );
-            subType.input = input;
-            return subType;
+            Preconditions.checkNotNull( moduleName, "moduleName is required" );
+            return new InputSubType( moduleName, input );
         }
     }
 }

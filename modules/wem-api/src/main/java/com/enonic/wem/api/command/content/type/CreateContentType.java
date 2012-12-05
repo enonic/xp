@@ -49,6 +49,6 @@ public final class CreateContentType
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.contentType, "Content type cannot be null" );
+        Preconditions.checkNotNull( this.contentType, "contentType cannot be null" );
     }
 }

@@ -2,12 +2,12 @@ package com.enonic.wem.api.content.type.editor;
 
 import com.enonic.wem.api.content.type.ContentType;
 
-final class CompositeEditor
+final class CompositeContentTypeEditor
     implements ContentTypeEditor
 {
     protected final ContentTypeEditor[] editors;
 
-    public CompositeEditor( final ContentTypeEditor... editors )
+    public CompositeContentTypeEditor( final ContentTypeEditor... editors )
     {
         this.editors = editors;
     }

@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.type.form;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.FormItemSetSubType.newFormItemSetSubType;
@@ -18,7 +18,7 @@ public class FormItemSetSubTypeTest
     @Test
     public void adding_a_fieldSetSubType_to_another_fieldSetSubType_throws_exception()
     {
-        Module module = Module.newModule().name( "myModule" ).build();
+        ModuleName module = ModuleName.from( "myModule" );
 
         InputSubType ageSubType =
             newInputSubType().module( module ).input( newInput().name( "age" ).type( InputTypes.TEXT_LINE ).build() ).build();
