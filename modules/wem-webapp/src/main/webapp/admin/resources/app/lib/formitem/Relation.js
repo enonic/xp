@@ -34,6 +34,7 @@ Ext.define('Admin.lib.formitem.Relation', {
 
         var combo = {
             xtype: 'combo',
+            name: '_system_relation_combo',
             submitValue: false,
             hideTrigger: true,
             forceSelection: true,
