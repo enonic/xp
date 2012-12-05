@@ -7,10 +7,14 @@
   <title>Enonic WEM Admin</title>
   <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/ext-all.css">
   <link rel="stylesheet" type="text/css" href="resources/css/main.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
+
+  <link rel="stylesheet" type="text/css" href="resources/css/admin-top-bar.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/admin-start-menu.css">
 
   <!-- Ext JS -->
 
-  <script type="text/javascript" src="resources/lib/ext/ext-all.js"></script>
+  <script type="text/javascript" src="resources/lib/ext/ext-all-debug.js"></script>
 
   <!-- Configuration -->
 
@@ -20,8 +24,10 @@
       enabled: true,
       paths: {
         'App': '_app/dashboard/js',
+        'Admin': 'resources/app',
         'Common': 'common/js'
-      }
+      },
+      disableCaching: false
     });
   </script>
 
@@ -33,6 +39,7 @@
       appFolder: '_app/dashboard/js',
 
       requires: [
+        // old views from _app/dashboard
         'App.view.DashboardPalette',
         'App.view.DashboardCanvas',
         'App.view.Dashlet',
@@ -40,16 +47,23 @@
         'App.view.GridDashlet'
       ],
 
+      controllers: [
+        'Admin.controller.TopBarController'
+      ],
+
       launch: function () {
         var me = this;
         Ext.create('Ext.container.Viewport', {
           cls: 'dashboard',
-          layout: {
-            type: 'border',
-            padding: '5'
-          },
+          layout: 'border',
 
           items: [
+            {
+              xtype: 'topBar',
+              region: 'north',
+              appName: 'Dashboard',
+              appIconCls: 'icon-dashboard-24'
+            },
             {
               xtype: 'dashboardPalette',
               region: 'west',

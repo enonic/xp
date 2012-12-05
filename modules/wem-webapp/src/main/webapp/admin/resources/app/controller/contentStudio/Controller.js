@@ -89,7 +89,8 @@ Ext.define('Admin.controller.contentStudio.Controller', {
                         id: 'tab-content-type-' + contentType.raw.key,
                         title: contentType.raw.name,
                         iconCls: 'icon-content-studio-16',
-                        modelData: contentType.raw
+                        modelData: contentType.raw,
+                        data: contentType.raw   /* needed for tab panel to show path */
                     });
                 } else {
                     Ext.Msg.alert("Error", r ? r.error : "Unable to retrieve content type.");
@@ -110,7 +111,7 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         if (contentType) {
             tabs.addTab({
                 xtype: 'contentTypeDetailPanel',
-                data: contentType,
+                data: contentType.raw,
                 title: 'View Content Type'
             });
         }

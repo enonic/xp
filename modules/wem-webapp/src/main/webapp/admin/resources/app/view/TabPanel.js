@@ -6,14 +6,56 @@ Ext.define('Admin.view.TabPanel', {
     // TODO: Refactor "cmsTabPanel" -> "adminTabPanel"
     alias: 'widget.cmsTabPanel',
 
-    requires: ['Admin.plugin.TabCloseMenu'],
+    requires: [
+        'Admin.plugin.TabCloseMenu',
+        'Admin.view.TopBar'
+    ],
     plugins: ['tabCloseMenu'],
 
     border: false,
     defaults: { closable: true },
 
     initComponent: function () {
-        this.callParent(arguments);
+
+        var me = this,
+            dockedItems = [].concat(me.dockedItems || []),
+            activeTab = me.activeTab || (me.activeTab = 0);
+
+        // Configure the layout with our deferredRender, and with our activeTeb
+        me.layout = new Ext.layout.container.Card(Ext.apply({
+            owner: me,
+            deferredRender: me.deferredRender,
+            itemCls: me.itemCls,
+            activeItem: me.activeTab
+        }, me.layout));
+
+        // Custom tabBar is why we needed to override this
+        this.tabBar = Ext.create('Admin.view.TopBar', Ext.apply({
+            appName: me.appName,
+            appIconCls: me.appIconCls,
+            tabPanel: me
+        }, me.tabBar));
+
+        dockedItems.push(me.tabBar);
+        me.dockedItems = dockedItems;
+
+        me.addEvents('beforetabchange', 'tabchange');
+
+        // first super is TabPanel, which we want to bypass
+        me.superclass.superclass.initComponent.apply(me, arguments);
+
+        // We have to convert the numeric index/string ID config into its component reference
+        me.activeTab = me.getComponent(activeTab);
+
+        // Ensure that the active child's tab is rendered in the active UI state
+        if (me.activeTab) {
+            me.activeTab.tab.activate(true);
+
+            // So that it knows what to deactivate in subsequent tab changes
+            me.tabBar.activeTab = me.activeTab.tab;
+        }
+
+
     },
 
     /**
@@ -25,19 +67,22 @@ Ext.define('Admin.view.TabPanel', {
      */
 
     addTab: function (item, index, requestConfig) {
-        var tabPanel = this;
+        var me = this;
         var tab = this.getTabById(item.id);
         // Create a new tab if it has not been created
         if (!tab) {
             tab = this.insert(index || this.items.length, item);
             if (requestConfig) {
+                // activate to make changes to it
                 this.setActiveTab(tab);
                 var mask = new Ext.LoadMask(tab, {msg: "Please wait..."});
                 mask.show();
                 var createTabFromResponse = requestConfig.createTabFromResponse;
-                var onRequestConfigSuccess = function successCallback(response) {
+                var onRequestConfigSuccess = function (response) {
                     var tabContent = createTabFromResponse(response);
                     tab.add(tabContent);
+                    // tab already has data referencing the source for the tab, so update data with response
+                    tab.data = response;
                     mask.hide();
                     // There is a need to call doLayout manually, since it isn't called for background tabs
                     // after content was added
@@ -46,13 +91,6 @@ Ext.define('Admin.view.TabPanel', {
                     }, tab, {single: true});
                 };
                 requestConfig.doTabRequest(onRequestConfigSuccess);
-            }
-            if (tab.closable) {
-                tab.on({
-                    beforeclose: function (tab) {
-                        tabPanel.onBeforeCloseTab(tab);
-                    }
-                });
             }
         }
         // TODO: tab.hideMode: Ext.isIE ? 'offsets' : 'display'
@@ -93,26 +131,72 @@ Ext.define('Admin.view.TabPanel', {
         return this.items.items.length;
     },
 
-    /**
-     * Fired before a tab is closed.
-     * Resolves which tab to set active when the given tab is closed.
-     * If the tab to be closed is visible the previous tab is activated.
-     * @private
-     * @param {Ext.tab.Tab} tab The tab to close.
-     */
 
-    onBeforeCloseTab: function (tab) {
-        var tabToActivate = null;
+    onAdd: function (item, index) {
+        var me = this,
+            cfg = item.tabConfig || {};
 
-        if (tab.isVisible()) {
-            var tabIndex = this.items.findIndex('id', tab.id);
-            tabToActivate = this.items.items[tabIndex - 1];
-        } else {
-            // Keep visible tab activated.
-            tabToActivate = this.getActiveTab();
+        cfg = Ext.applyIf(cfg, me.tabBar.createMenuItemFromTab(item));
+
+        // Create the correspondiong tab in the tab bar
+        item.tab = me.tabBar.insert(index, cfg);
+
+        item.on({
+            scope: me,
+            enable: me.onItemEnable,
+            disable: me.onItemDisable,
+            beforeshow: me.onItemBeforeShow,
+            iconchange: me.onItemIconChange,
+            iconclschange: me.onItemIconClsChange,
+            titlechange: me.onItemTitleChange
+        });
+
+        if (item.isPanel) {
+            if (me.removePanelHeader) {
+                if (item.rendered) {
+                    if (item.header) {
+                        item.header.hide();
+                    }
+                } else {
+                    item.header = false;
+                }
+            }
+            if (item.isPanel && me.border) {
+                item.setBorder(false);
+            }
+        }
+    },
+
+    doRemove: function (item, autoDestroy) {
+        var me = this;
+
+        if (me.destroying || me.items.getCount() === 1) {
+            // Destroying, or removing the last item, nothing to activate
+            me.activeTab = null;
+        } else if (me.activeTab === item) {
+            // Removing currently active item, find next to activate
+            var toActivate = me.tabBar.findNextActivatable(item.tab);
+            if (toActivate) {
+                me.setActiveTab(toActivate);
+            }
         }
 
-        this.setActiveTab(tabToActivate);
+        this.callParent(arguments);
+    },
+
+    onRemove: function (item, destroying) {
+        var me = this;
+
+        item.un({
+            scope: me,
+            enable: me.onItemEnable,
+            disable: me.onItemDisable,
+            beforeshow: me.onItemBeforeShow
+        });
+
+        if (!me.destroying) {
+            me.tabBar.remove(item.tab);
+        }
     }
 
 });

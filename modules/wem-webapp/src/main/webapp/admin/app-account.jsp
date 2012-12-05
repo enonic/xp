@@ -13,6 +13,9 @@
 
   <!-- WEM ExtJS theme -->
 
+  <link rel="stylesheet" type="text/css" href="resources/css/admin-top-bar.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/admin-start-menu.css">
+
   <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/admin.css">
 
   <!-- ExtJS -->
@@ -33,7 +36,8 @@
         'Common': 'common/js',
         'Main': 'app/main/js',
         'Admin': 'resources/app'
-      }
+      },
+      disableCaching: false
     });
 
   </script>
@@ -50,10 +54,15 @@
   <!-- Application -->
 
   <script type="text/javascript">
+
+
     Ext.application({
       name: 'App',
 
       controllers: [
+        'Admin.controller.Controller',
+        'Admin.controller.NotifyUserController',
+        'Admin.controller.TopBarController',
         'Admin.controller.account.Controller',
         'Admin.controller.account.GridPanelController',
         'Admin.controller.account.BrowseToolbarController',
@@ -63,14 +72,11 @@
         'Admin.controller.account.UserWizardController',
         'Admin.controller.account.GroupWizardController',
         'Admin.controller.account.UserPreviewController',
-        'Admin.controller.account.GroupPreviewController',
-        'Admin.controller.NotifyUserController'
+        'Admin.controller.account.GroupPreviewController'
       ],
 
       requires: [
-        'Admin.view.TabPanel',
-        'Admin.lib.UriHelper',
-        'Admin.lib.RemoteService'
+        'Admin.view.TabPanel'
       ],
 
       launch: function () {
@@ -81,6 +87,8 @@
           items: [
             {
               xtype: 'cmsTabPanel',
+              appName: 'Accounts',
+              appIconCls: 'icon-woman-24',
               items: [
                 {
                   id: 'tab-browse',

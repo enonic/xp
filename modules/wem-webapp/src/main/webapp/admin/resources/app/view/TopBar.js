@@ -1,6 +1,6 @@
-Ext.define('Admin.view.LauncherToolbar', {
+Ext.define('Admin.view.TopBar', {
     extend: 'Ext.toolbar.Toolbar',
-    alias: 'widget.launcherToolbar',
+    alias: 'widget.topBar',
 
     requires: [
         'Admin.view.TopBarMenu',
@@ -8,13 +8,34 @@ Ext.define('Admin.view.LauncherToolbar', {
     ],
 
     buttonAlign: 'center',
-    border: false,
     cls: 'admin-topbar-panel',
+
+    dock: 'top',
+    plain: true,
+    border: false,
 
     initComponent: function () {
         var me = this;
 
-        this.tabMenu = Ext.create('Admin.view.TopBarMenu');
+        this.tabMenu = Ext.create('Admin.view.TopBarMenu', {
+            tabPanel: me.tabPanel,
+            listeners: {
+                close: {
+                    fn: me.syncTabCount,
+                    scope: me
+                },
+                closeAll: {
+                    fn: me.syncTabCount,
+                    scope: me
+                }
+            }
+        });
+
+        this.tabButton = Ext.create('Ext.button.Button', {
+            cls: 'white',
+            menuAlign: 't-b?',
+            menu: me.tabMenu
+        });
 
         this.startMenu = Ext.create('Admin.view.StartMenu', {
             xtype: 'startMenu',
@@ -130,23 +151,20 @@ Ext.define('Admin.view.LauncherToolbar', {
             xtype: 'button',
             itemId: 'app-launcher-button',
             cls: 'start-button',
-            iconCls: 'icon-data-white',
-            text: 'Content Manager',
+            iconCls: me.appIconCls,
+            text: me.appName || '&lt; app name &gt;',
             handler: function (btn, evt) {
                 me.startMenu.slideToggle();
             }
         });
 
+        this.path = Ext.create('Ext.Component');
+
         this.items = [
             me.startButton,
-            {
-                text: '0',
-                cls: 'white',
-                menuAlign: 't-b?',
-                menu: me.tabMenu
-            },
+            me.tabButton,
             { xtype: 'tbspacer', flex: 5 },
-            'sitename/path/to/press-releases',
+            me.path,
             { xtype: 'tbspacer', flex: 5 },
             {
                 text: 'Log in',
@@ -160,6 +178,85 @@ Ext.define('Admin.view.LauncherToolbar', {
         ];
 
         this.callParent(arguments);
+
+        this.syncTabCount();
+    },
+
+
+    /*  Methods for Admin.view.TabPanel integration */
+
+    insert: function (index, cfg) {
+
+        var added = this.tabMenu.addItems(cfg);
+        this.syncTabCount();
+
+        return added.length === 1 ? added[0] : undefined;
+    },
+
+    setActiveTab: function (tab) {
+
+        if (tab.card.id !== 'tab-browse') {
+            this.setPath(this.getMenuItemDescription(tab.card));
+        } else {
+            this.setPath('');
+        }
+    },
+
+    remove: function (tab) {
+
+        var removed = this.tabMenu.removeItems(tab);
+        this.syncTabCount();
+
+        return removed;
+    },
+
+    findNextActivatable: function (tab) {
+
+        if (this.tabPanel) {
+            // set first browse tab active
+            return this.tabPanel.items.get(0);
+        }
+    },
+
+    createMenuItemFromTab: function (item) {
+        var me = this;
+        var cfg = item.initialConfig || item;
+        var data = item.data || item;
+        return {
+            tabBar: me,
+            card: item,
+            disabled: cfg.disabled,
+            closable: cfg.closable,
+            hidden: cfg.hidden && !item.hiddenByLayout, // only hide if it wasn't hidden by the layout itself
+            iconCls: cfg.iconCls,
+            iconSrc: data.image_url,
+            editing: cfg.editing || false,
+            text1: cfg.title || 'first line',
+            text2: me.getMenuItemDescription(item)
+        };
+    },
+
+    /*  Private */
+
+    syncTabCount: function () {
+        var count = this.tabMenu.getAllItems().length;
+        // show counter when 2 or more tabs are open
+        this.tabButton.setVisible(count > 1);
+        this.tabButton.setText('' + count);
+    },
+
+    getMenuItemDescription: function (card) {
+        return card.data ? card.data.path || card.data.qualifiedName || card.data.displayName : card.title
+    },
+
+    /*  Public  */
+
+    getPath: function () {
+        return this.path.getBody().el.getHTML();
+    },
+
+    setPath: function (path) {
+        this.path.update(path);
     },
 
     getStartButton: function () {
@@ -168,6 +265,10 @@ Ext.define('Admin.view.LauncherToolbar', {
 
     getStartMenu: function () {
         return this.startMenu;
+    },
+
+    getTabButton: function () {
+        return this.tabButton;
     },
 
     getTabMenu: function () {

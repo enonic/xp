@@ -8,6 +8,11 @@ Ext.define('Admin.controller.Controller', {
     models: [],
     views: [],
 
+    requires: [
+        'Admin.lib.UriHelper',
+        'Admin.lib.RemoteService'
+    ],
+
     init: function () {
     },
 
@@ -18,9 +23,12 @@ Ext.define('Admin.controller.Controller', {
         return Ext.ComponentQuery.query('cmsTabPanel')[0];
     },
 
-    getLauncherToolbar: function () {
-        var parent = window.parent.parent || window.parent;
-        return parent ? parent.Ext.ComponentQuery.query('launcherToolbar')[0] : Ext.ComponentQuery.query('launcherToolbar')[0];
+    getTopBar: function () {
+        return Ext.ComponentQuery.query('topBar')[0];
+    },
+
+    getStartMenu: function () {
+        return Ext.ComponentQuery.query('startMenu')[0];
     }
 
 });
