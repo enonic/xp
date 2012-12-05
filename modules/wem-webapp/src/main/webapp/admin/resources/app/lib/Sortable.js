@@ -32,6 +32,10 @@ Ext.define('Admin.lib.Sortable', {
                 };
             },
 
+            onMouseUp: function (e) {
+                Ext.fly(this.dragData.sourceElement).setStyle('opacity', '1');
+            },
+
             getRepairXY: function () {
                 return this.dragData.repairXY;
             }
