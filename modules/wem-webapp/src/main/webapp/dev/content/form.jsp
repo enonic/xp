@@ -47,6 +47,12 @@
       border-top: 2px solid #ff4500 !important;
     }
 
+    .admin-text-button {
+      color: #0070DE;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
     .admin-draghandle {
       color: #59008c;
       cursor: move;
