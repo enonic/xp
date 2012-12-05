@@ -11,6 +11,7 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
     },
 
     formItemSetConfig: undefined,
+    isCollapsed: false,
 
     fieldLabel: '',
     margin: '10 0 10 0',
@@ -32,13 +33,12 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
 
 
     insertBlockAt: function (position) {
-        var me = this;
+        var me = this,
+            block;
+
         console.log('FormItemSet: insertBlockAt  ' + position);
 
-        var block = me.createBlock();
-
-        me.mixins.formHelper.addFormItems(me.formItemSetConfig.items, block);
-
+        block = me.createBlock();
         me.insert(position, block);
     },
 
@@ -46,59 +46,71 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
     createBlock: function () {
         var me = this;
 
-        var block = new Ext.form.FieldContainer({
+        var block = new Ext.container.Container({
             cls: 'admin-sortable admin-formitemset-block',
-            style: 'border:none',
-            margin: '0 0 10 0',
+            margin: '5 0',
+            padding: '0 0 10 0',
             defaults: {
-                margin: 5
+                margin: '5 10'
             },
-            items: [
-                {
-                    xtype: 'container',
-                    layout: {
-                        type: 'table',
-                        columns: 3,
-                        tableAttrs: {
-                            style: 'width: 100%'
-                        }
-                    },
-                    items: [
-                        {
-                            tdAttrs: {
-                                style: 'width: 30px'
-                            },
-                            xtype: 'component',
-                            html: '<span class="admin-draghandle" style="display: inline-block">[dragger]</span>'
-                        },
-                        {
-                            xtype: 'component',
-                            html: '<h6>' + me.formItemSetConfig.label + '</h6>'
-                        },
-                        {
-                            tdAttrs: {
-                                align: 'right'
-                            },
-                            xtype: 'button',
-                            itemId: 'remove-button',
-                            text: 'x',
-                            handler: function () {
-                                block.destroy();
-                            }
-                        }
-                    ]
-                }
-            ]
+            items: me.createBlockHeader()
         });
+
+        me.mixins.formHelper.addFormItems(me.formItemSetConfig.items, block);
 
         return block;
     },
 
 
-    enableDisableRemoveBlockButton: function () {
+    createBlockHeader: function () {
         var me = this;
-        var disable = ((me.items.items.length - 1) === 1);
-        var button = Ext.ComponentQuery.query('#remove-button', me)[0];
+
+        return {
+            xtype: 'container',
+            margin: '0 0 15 0',
+            padding: 5,
+            cls: 'header',
+            layout: {
+                type: 'table',
+                columns: 3,
+                tableAttrs: {
+                    style: 'width: 100%'
+                }
+            },
+            items: [
+                {
+                    tdAttrs: {
+                        style: 'width: 30px'
+                    },
+                    xtype: 'component',
+                    html: '<span class="admin-drag-handle" style="display: inline-block">[#]</span>'
+                },
+                {
+                    xtype: 'component',
+                    html: '<h6>' + me.formItemSetConfig.label + ': </h6>'
+                },
+                {
+                    tdAttrs: {
+                        align: 'right'
+                    },
+                    xtype: 'button',
+                    ui: 'grey',
+                    itemId: 'remove-block-button',
+                    text: 'x',
+                    handler: function (btn) {
+                        btn.up().up().destroy();
+                    }
+                }
+            ]
+        }
+    },
+
+
+    enableDisableRemoveBlockButton: function () {
+        var me = this,
+            disable = ((me.items.items.length - 1) === 1),
+            button = Ext.ComponentQuery.query('#remove-block-button', me)[0];
+
         button.setDisabled(disable);
     },
 
@@ -111,7 +123,7 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
 
         var addBlockButton = {
             xtype: 'button',
-            text: '+',
+            text: 'Add',
             handler: function (button) {
                 if (me.formItemSetConfig.items) {
                     me.insertBlockAt((me.items.items.length - 1));
@@ -136,9 +148,23 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
                         valign: 'top'
                     },
                     xtype: 'component',
-                    html: '<span class="admin-text-button" href="javascript:;">Collapse all</span>'
+                    html: '<span class="admin-text-button admin-collapse-all-button" href="javascript:;">Collapse All</span>'
                 }
-            ]
+            ],
+            listeners: {
+                render: function (container) {
+                    var collapseAllButton = Ext.DomQuery.selectNode('.admin-collapse-all-button', container.getEl().dom);
+                    Ext.fly(collapseAllButton).on('click', function (event) {
+                        if (me.isCollapsed) {
+                            this.setHTML('Collapse All');
+                            me.isCollapsed = false;
+                        } else {
+                            this.setHTML('Expand All');
+                            me.isCollapsed = true;
+                        }
+                    });
+                }
+            }
         };
 
         me.add(actionsContainer);
@@ -147,7 +173,7 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
     initSortable: function () {
         new Admin.lib.Sortable(this, 'formItemSetDragGroup' + Ext.id(), {
             proxyHtml: '<div><img src="../../admin/resources/images/icons/128x128/form_blue.png"/></div>',
-            handle: '.admin-draghandle'
+            handle: '.admin-drag-handle'
         });
     }
 

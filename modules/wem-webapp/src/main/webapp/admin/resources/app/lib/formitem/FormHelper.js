@@ -10,7 +10,7 @@ Ext.define('Admin.lib.formitem.FormHelper', {
                 formItem = me.createItem(item.Input);
             }
 
-            if (parentContainer.getXType() === 'FormItemSet' || parentContainer.getXType() === 'fieldcontainer') {
+            if (parentContainer.getXType() === 'FormItemSet' || parentContainer.getXType() === 'fieldcontainer' || parentContainer.getXType() === 'container') {
                 parentContainer.add(formItem);
             } else {
                 parentContainer.items.push(formItem);

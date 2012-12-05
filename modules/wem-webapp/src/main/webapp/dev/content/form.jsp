@@ -22,7 +22,6 @@
     }
 
     .admin-related-item .center-column {
-      width: 320px;
       display: table-cell;
       vertical-align: top;
       float: left;
@@ -35,9 +34,11 @@
     }
 
     .admin-formitemset-block {
-      border: 1px solid #aaa !important;
+      border: 1px solid #ccc !important;
     }
-
+    .admin-formitemset-block .header {
+      border-bottom: 1px solid #ccc
+    }
 
     .admin-sortable-insert-helper-below {
       border-bottom: 2px solid #ff4500 !important;
@@ -53,7 +54,7 @@
       cursor: pointer;
     }
 
-    .admin-draghandle {
+    .admin-drag-handle {
       color: #59008c;
       cursor: move;
     }

@@ -47,10 +47,15 @@ Ext.define('ContentDataPanel', {
                 var formPanel = this.up('form');
                 var form = formPanel.getForm();
                 if (form.isValid()) {
-                    alert('Create form data and submit');
+                    console.log(formPanel.getData());
                 }
             }
         }
-    ]
+    ],
+
+    getData: function () {
+        return this.getForm().getFieldValues();
+    }
+
 
 });
