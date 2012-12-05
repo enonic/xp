@@ -86,6 +86,10 @@ Ext.define('Admin.lib.Sortable', {
                 var draggedCmp = Ext.getCmp(data.sourceElement.id);
                 var targetCmp = Ext.getCmp(target.id);
 
+                if (target === data.sourceElement) {
+                    return;
+                }
+
                 draggedCmp.getEl().setStyle('opacity', 1);
 
                 if (targetCmp) {
