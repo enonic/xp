@@ -90,12 +90,13 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
     saveContent: function (contentWizard, closeWizard) {
 
         var me = this;
-        var contentData = contentWizard.getData();
         var contentType = contentWizard.data.contentType;
         var content = contentWizard.data.content;
         var contentParent = contentWizard.data.contentParent;
 
-        var displayName = contentData.displayName;
+        var contentWizardData = contentWizard.getData();
+        var contentData = contentWizardData.contentData;
+        var displayName = contentWizardData.displayName;
 
         var contentParams = {
             contentData: contentData,

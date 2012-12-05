@@ -167,12 +167,13 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     },
 
     getData: function () {
-        var wizardData = this.getWizardPanel().getData();
+        var wizardData = {displayName: '', contentData: {}};
+        var contentData = this.getWizardPanel().getData();
         var displayNameField = this.down('#displayName');
         if (displayNameField) {
-            var data = {displayName: displayNameField.getValue() };
-            Ext.merge(wizardData, data);
+            wizardData.displayName = displayNameField.getValue();
         }
+        wizardData.contentData = contentData;
         return wizardData;
     },
 
