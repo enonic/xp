@@ -7,6 +7,12 @@ Ext.define('Admin.lib.formitem.FormHelper', {
             if (item.FormItemSet) {
                 formItem = me.createFormItemSet(item.FormItemSet);
             } else { // Input
+                var classAlias = 'widget.' + item.Input.type.name;
+                if (!me.formItemIsSupported(classAlias)) {
+                    console.error('Unsupported input type', item.Input);
+                    return;
+                }
+
                 formItem = me.createItem(item.Input);
             }
 
@@ -31,12 +37,6 @@ Ext.define('Admin.lib.formitem.FormHelper', {
     createItem: function (inputConfig) {
         var me = this;
         var classAlias = 'widget.' + inputConfig.type.name;
-
-        // TODO: Move to addFormItem
-        if (!me.formItemIsSupported(classAlias)) {
-            console.error('Unsupported input type', inputConfig);
-            return;
-        }
 
         return Ext.create({
             xclass: classAlias,
