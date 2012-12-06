@@ -10,6 +10,7 @@
     "data":[
         {
             "name":"myArray",
+            "path":"myArray",
             "type":"Text",
             "value":[ "1", "2" ]
         }

@@ -10,11 +10,13 @@
     "data":[
         {
             "name":"mySet",
+            "path":"mySet",
             "type":"Set",
             "value":[
                 [
                     {
                         "name":"myArray",
+                        "path":"mySet[0].myArray",
                         "type":"Text",
                         "value":[ "1", "2" ]
                     }
@@ -22,6 +24,7 @@
                 [
                     {
                         "name":"myArray",
+                        "path":"mySet[1].myArray",
                         "type":"Text",
                         "value":[ "3", "4" ]
                     }

@@ -29,11 +29,15 @@ final class DataJsonSerializer
 
     private static final String DATA_TYPE = "type";
 
+    private static final String DATA_PATH = "path";
+
     protected final JsonNode serialize( final Data data, final ObjectMapper objectMapper )
     {
         final ObjectNode dataObj = objectMapper.createObjectNode();
         final String name = data.getPath().resolveFormItemPath().getLastElement();
         dataObj.put( DATA_NAME, name );
+        final String path = data.getPath().toString();
+        dataObj.put( DATA_PATH, path );
 
         if ( data.getValue() != null )
         {
@@ -97,14 +101,9 @@ final class DataJsonSerializer
 
     protected final Data parse( final JsonNode dataNode )
     {
-        return parse( new EntryPath(), dataNode );
-    }
-
-    private Data parse( final EntryPath parentPath, final JsonNode dataNode )
-    {
         final Data.Builder dataBuilder = Data.newData();
 
-        final EntryPath path = new EntryPath( parentPath, JsonParserUtil.getStringValue( DATA_NAME, dataNode ) );
+        final EntryPath path = new EntryPath( JsonParserUtil.getStringValue( DATA_PATH, dataNode ) );
         dataBuilder.path( path );
 
         final BaseDataType dataType = (BaseDataType) DataTypes.parseByName( JsonParserUtil.getStringValue( DATA_TYPE, dataNode, null ) );
@@ -158,7 +157,7 @@ final class DataJsonSerializer
         while ( dataIt.hasNext() )
         {
             final JsonNode dataNode = dataIt.next();
-            dataSet.add( parse( dataSet.getPath(), dataNode ) );
+            dataSet.add( parse( dataNode ) );
         }
     }
 

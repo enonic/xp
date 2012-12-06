@@ -10,10 +10,12 @@
     "data":[
         {
             "name":"mySet",
+            "path":"mySet",
             "type":"Set",
             "value":[
                 {
                     "name":"myArray",
+                    "path":"mySet.myArray",
                     "type":"Text",
                     "value":[ "1", "2" ]
                 }

@@ -10,15 +10,18 @@
     "data":[
         {
             "name":"mySet",
+            "path":"mySet",
             "type":"Set",
             "value":[
                 {
                     "name":"myInput",
+                    "path":"mySet.myInput",
                     "type":"Text",
                     "value":"1"
                 },
                 {
                     "name":"myOtherInput",
+                    "path":"mySet.myOtherInput",
                     "type":"Text",
                     "value":"2"
                 }
