@@ -148,6 +148,11 @@ Ext.define('Admin.lib.formitem.Relation', {
             });
             me.getComponent(me.name).setValue(keys);
         }
+    },
+
+    getValue: function () {
+        var me = this;
+        return me.getComponent(me.name).getValue();
     }
 
 });

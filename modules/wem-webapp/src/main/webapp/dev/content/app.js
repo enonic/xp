@@ -63,7 +63,8 @@ Ext.application({
                                             {file: 'mock-contenttype-htmlarea.json', qualifiedName: 'Demo:HtmlArea'},
                                             {file: 'mock-contenttype-relation.json', qualifiedName: 'Demo:Relation'},
                                             {file: 'mock-contenttype-textarea.json', qualifiedName: 'Demo:TextArea'},
-                                            {file: 'mock-contenttype-set.json', qualifiedName: 'Demo:FormItemSet'}
+                                            {file: 'mock-contenttype-set.json', qualifiedName: 'Demo:FormItemSet'},
+                                            {file: 'mock-contenttype-performance.json', qualifiedName: 'Demo:Performance'}
                                         ]
                                     }),
                                     queryMode: 'local',

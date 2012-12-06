@@ -14,6 +14,7 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
     isCollapsed: false,
 
     fieldLabel: '',
+
     margin: '10 0 10 0',
 
     listeners: {
@@ -36,8 +37,6 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
         var me = this,
             block;
 
-        console.log('FormItemSet: insertBlockAt  ' + position);
-
         block = me.createBlock();
         me.insert(position, block);
     },
@@ -48,6 +47,7 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
 
         var block = new Ext.container.Container({
             cls: 'admin-sortable admin-formitemset-block',
+            formItemSetBlock: true,
             margin: '5 0',
             padding: '0 0 10 0',
             defaults: {

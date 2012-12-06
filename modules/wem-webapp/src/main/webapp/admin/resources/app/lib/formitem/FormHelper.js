@@ -3,6 +3,7 @@ Ext.define('Admin.lib.formitem.FormHelper', {
     addFormItems: function (contentTypeItems, parentContainer) {
         var me = this;
         var formItem;
+
         Ext.each(contentTypeItems, function (item) {
             if (item.FormItemSet) {
                 formItem = me.createFormItemSet(item.FormItemSet);

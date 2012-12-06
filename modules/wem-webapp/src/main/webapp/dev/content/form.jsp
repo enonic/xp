@@ -16,36 +16,37 @@
 
     .admin-related-item img {
       display: table-cell;
-      float: left;
       vertical-align: top;
       padding-right: 10px;
+      width: 42px;
     }
 
     .admin-related-item .center-column {
       display: table-cell;
       vertical-align: top;
-      float: left;
     }
 
     .admin-related-item .right-column {
       display: table-cell;
       vertical-align: top;
-      float: right;
+      text-align: right;
     }
 
+
     .admin-formitemset-block {
-      border: 1px solid #ccc !important;
+      border: 1px solid #ddd !important;
+      border-radius: 3px;
     }
     .admin-formitemset-block .header {
-      border-bottom: 1px solid #ccc
+      border-bottom: 1px solid #ddd
     }
 
     .admin-sortable-insert-helper-below {
-      border-bottom: 2px solid #ff4500 !important;
+      border-bottom: 2px solid #444 !important;
     }
 
     .admin-sortable-insert-helper-above {
-      border-top: 2px solid #ff4500 !important;
+      border-top: 2px solid #444 !important;
     }
 
     .admin-text-button {
@@ -79,7 +80,7 @@
         'Common': 'common/js',
         'Admin': '../../admin/resources/app'
       },
-      disableCaching: false
+      disableCaching: true
     });
 
   </script>

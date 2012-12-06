@@ -1,7 +1,3 @@
-/**
- * TODO: The create and add methods should be moved to a helper class or to the formitem
- */
-
 Ext.define('ContentDataPanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.contentDataPanel',
@@ -26,16 +22,21 @@ Ext.define('ContentDataPanel', {
 
     autoDestroy: true,
 
+    jsonSubmit: true,
+
     initComponent: function () {
         var me = this;
         me.items = [];
 
+        console.time('RenderForm');
         me.mixins.formHelper.addFormItems(me.contentType.form, me);
+        console.timeEnd('RenderForm');
+
         me.callParent(arguments);
     },
 
 
-    /**  Temporary form submit button (for development only)**/
+    /**  Temporary form submit button (for development only) **/
 
     buttonAlign: 'left',
     buttons: [
@@ -47,15 +48,45 @@ Ext.define('ContentDataPanel', {
                 var formPanel = this.up('form');
                 var form = formPanel.getForm();
                 if (form.isValid()) {
-                    console.log(formPanel.getData());
+                    formPanel.createFormData();
                 }
             }
         }
     ],
 
     getData: function () {
-        return this.getForm().getFieldValues();
-    }
+        this.createFormData();
+    },
 
+
+    createFormData: function () {
+        var me = this;
+        var formItems = me.items.items;
+
+        Ext.Array.each(formItems, function (formItem, index) {
+            if (formItem.getXType() === 'FormItemSet') {
+                me.createFormItemSetData(formItem);
+            } else {
+                console.log(formItem.name + ': ' + formItem.getValue());
+            }
+        });
+    },
+
+
+    createFormItemSetData: function (formItemSet) {
+        //TODO: Recurse
+        var blocks = Ext.ComponentQuery.query('container[formItemSetBlock=true]', formItemSet),
+            name = formItemSet.name,
+            blockIndex;
+
+        Ext.Array.each(blocks, function (block, index) {
+            blockIndex = index;
+            Ext.Array.each(block.items.items, function (item) {
+                if (item.cls !== 'header') {
+                    console.log(name + '[' + blockIndex + '].' + item.name + ': ' + item.getValue());
+                }
+            });
+        });
+    }
 
 });

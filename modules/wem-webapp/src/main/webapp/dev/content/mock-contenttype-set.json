@@ -47,7 +47,7 @@
         },
         {
             "FormItemSet": {
-                "name": "mySet",
+                "name": "address",
                 "label": "Address",
                 "immutable": false,
                 "occurrences": {
@@ -129,59 +129,6 @@
                             "helpText": "Postal Address",
                             "type": {
                                 "name": "TextLine",
-                                "builtIn": true
-                            }
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "FormItemSet": {
-                "name": "collections",
-                "label": "Photo Galleries",
-                "immutable": false,
-                "occurrences": {
-                    "minimum": 0,
-                    "maximum": 1
-                },
-                "customText": null,
-                "helpText": null,
-                "items": [
-                    {
-                        "Input": {
-                            "name": "gallery_name",
-                            "label": "Name",
-                            "immutable": false,
-                            "occurrences": {
-                                "minimum": 1,
-                                "maximum": 5
-                            },
-                            "indexed": false,
-                            "customText": null,
-                            "validationRegexp": null,
-                            "helpText": "Name for the gallery",
-                            "type": {
-                                "name": "TextLine",
-                                "builtIn": true
-                            }
-                        }
-                    },
-                    {
-                        "Input": {
-                            "name": "gallery_photos",
-                            "label": "Photos",
-                            "immutable": false,
-                            "occurrences": {
-                                "minimum": 1,
-                                "maximum": 5
-                            },
-                            "indexed": false,
-                            "customText": null,
-                            "validationRegexp": null,
-                            "helpText": "Add photos to this gallery",
-                            "type": {
-                                "name": "Relation",
                                 "builtIn": true
                             }
                         }

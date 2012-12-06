@@ -9,9 +9,13 @@ Ext.define('Admin.lib.formitem.Base', {
 
         me.defaults = {
             margin: '0 0 1 0',
-            width: 470
+            width: 320
         };
         me.callParent(arguments);
+    },
+
+    getValue: function () {
+        return this.items.items[0].getValue();
     }
 
 });

@@ -1,0 +1,562 @@
+{
+    "name": "RelatedContent",
+    "module": "Demo",
+    "qualifiedName": "Demo:RelatedContent",
+    "displayName": "Relation Field Demo",
+    "superType": "System:Content",
+    "isAbstract": false,
+    "isFinal": true,
+    "form": [
+        {
+            "Input": {
+                "name": "title",
+                "label": "Title",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": "Article title",
+                "type": {
+                    "name": "TextLine",
+                    "builtIn": true
+                }
+            }
+        },
+
+        {
+            "FormItemSet": {
+                "name": "realtion",
+                "label": "Relation",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "customText": null,
+                "helpText": null,
+                "items": [
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "related_articles",
+                            "label": "Related Articles",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 3
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Related articles",
+                            "type": {
+                                "name": "Relation",
+                                "builtIn": true
+                            }
+                        }
+                    }
+
+                ]
+            }
+        }
+
+    ]
+
+}
