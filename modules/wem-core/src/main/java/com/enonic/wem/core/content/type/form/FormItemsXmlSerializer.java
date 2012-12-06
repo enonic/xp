@@ -53,4 +53,9 @@ public final class FormItemsXmlSerializer
 
         return formItems;
     }
+
+    public FormItemXmlSerializer getFormItemXmlSerializer()
+    {
+        return formItemSerializer;
+    }
 }

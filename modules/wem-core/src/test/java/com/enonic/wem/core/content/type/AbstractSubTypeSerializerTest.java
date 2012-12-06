@@ -12,6 +12,8 @@ import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.AbstractSerializerTest;
 
+import static org.junit.Assert.*;
+
 
 public abstract class AbstractSubTypeSerializerTest
     extends AbstractSerializerTest
@@ -98,5 +100,64 @@ public abstract class AbstractSubTypeSerializerTest
         return serialized;
     }
 
+    @Test
+    public void subtype_serialize_parse_serialize_formSet_roundTrip()
+    {
+        Input.Builder inputBuilder = Input.newInput();
+        inputBuilder.name( "myInput" );
+        inputBuilder.label( "My input" );
+        inputBuilder.type( InputTypes.TEXT_LINE );
+        Input myInput = inputBuilder.build();
 
+        FormItemSet.Builder formItemSetBuilder = FormItemSet.newFormItemSet();
+        formItemSetBuilder.name( "mySet" );
+        formItemSetBuilder.label( "My set" );
+        formItemSetBuilder.minimumOccurrences( 1 );
+        formItemSetBuilder.maximumOccurrences( 3 );
+        formItemSetBuilder.helpText( "Help text" );
+        formItemSetBuilder.customText( "Custom text" );
+        formItemSetBuilder.add( myInput );
+        FormItemSet myFormItemSet = formItemSetBuilder.build();
+
+        FormItemSetSubType myFormItemSetSubType =
+            FormItemSetSubType.newFormItemSetSubType().displayName( "My SubType" ).module( myModule ).formItemSet( myFormItemSet ).build();
+
+        // exercise
+        final String serialized = toString( myFormItemSetSubType );
+
+        // exercise
+        final SubType parsedSubType = toSubType( serialized );
+        final String serializedAfterParsing = toString( parsedSubType );
+
+        // verify
+        assertEquals( serialized, serializedAfterParsing );
+    }
+
+    @Test
+    public void subtype_serialize_parse_serialize_input_roundTrip()
+    {
+        Input.Builder inputBuilder = Input.newInput();
+        inputBuilder.name( "myInput" );
+        inputBuilder.label( "My input" );
+        inputBuilder.type( InputTypes.TEXT_LINE );
+        inputBuilder.immutable( true );
+        inputBuilder.minimumOccurrences( 1 );
+        inputBuilder.maximumOccurrences( 3 );
+        inputBuilder.helpText( "Help text" );
+        inputBuilder.customText( "Custom text" );
+        inputBuilder.indexed( true );
+        Input myInput = inputBuilder.build();
+        InputSubType myInputSubType =
+            InputSubType.newInputSubType().displayName( "My SubType" ).module( myModule ).input( myInput ).build();
+
+        // exercise
+        final String serialized = toString( myInputSubType );
+
+        // exercise
+        final SubType parsedSubType = toSubType( serialized );
+        final String serializedAfterParsing = toString( parsedSubType );
+
+        // verify
+        assertEquals( serialized, serializedAfterParsing );
+    }
 }
