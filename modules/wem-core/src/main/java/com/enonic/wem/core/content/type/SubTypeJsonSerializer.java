@@ -83,8 +83,7 @@ public class SubTypeJsonSerializer
         final FormItemSetSubType.Builder builder = FormItemSetSubType.newFormItemSetSubType();
         builder.module( ModuleName.from( JsonParserUtil.getStringValue( "module", subTypeNode ) ) );
         builder.displayName( JsonParserUtil.getStringValue( "displayName", subTypeNode ) );
-        final JsonNode formItemSetNode = subTypeNode.get( FormItemSet.class.getSimpleName() );
-        builder.formItemSet( (FormItemSet) formItemSerializer.parse( formItemSetNode ) );
+        builder.formItemSet( (FormItemSet) formItemSerializer.parse( subTypeNode ) );
         return builder.build();
     }
 

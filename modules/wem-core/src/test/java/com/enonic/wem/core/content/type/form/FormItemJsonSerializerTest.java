@@ -74,7 +74,7 @@ public class FormItemJsonSerializerTest
         assertEquals( "myTextLine", formItem.getName() );
         Input parsedInput = (Input) formItem;
         assertEquals( true, parsedInput.isRequired() );
-        assertEquals( false, parsedInput.isIndexed() );
+        assertEquals( true, parsedInput.isIndexed() );
         assertEquals( true, parsedInput.isImmutable() );
         assertEquals( null, parsedInput.getLabel() );
         assertEquals( null, parsedInput.getHelpText() );

@@ -66,35 +66,34 @@ public class FormItemJsonSerializer
     public FormItem parse( final JsonNode formItemNode )
     {
         final Iterator<String> fieldNamesIt = formItemNode.getFieldNames();
-        if ( !fieldNamesIt.hasNext() )
+
+        FormItem formItem = null;
+        while ( fieldNamesIt.hasNext() )
+        {
+            final String type = fieldNamesIt.next();
+
+            final JsonNode concreteFormItemObj = formItemNode.get( type );
+            if ( type.equals( Input.class.getSimpleName() ) )
+            {
+                formItem = inputJsonSerializer.parse( concreteFormItemObj );
+            }
+            else if ( type.equals( FormItemSet.class.getSimpleName() ) )
+            {
+                formItem = formItemSetJsonSerializer.parse( concreteFormItemObj );
+            }
+            else if ( type.equals( Layout.class.getSimpleName() ) )
+            {
+                formItem = layoutJsonSerializer.parse( concreteFormItemObj );
+            }
+            else if ( type.equals( SubTypeReference.class.getSimpleName() ) )
+            {
+                formItem = subTypeReferenceJsonSerializer.parse( concreteFormItemObj );
+            }
+        }
+
+        if ( formItem == null )
         {
             throw new JsonParsingException( "Field describing what type of FormItem was not found: " + formItemNode.toString() );
-        }
-
-        final String type = fieldNamesIt.next();
-
-        final FormItem formItem;
-
-        final JsonNode concreteFormItemObj = formItemNode.get( type );
-        if ( type.equals( Input.class.getSimpleName() ) )
-        {
-            formItem = inputJsonSerializer.parse( concreteFormItemObj );
-        }
-        else if ( type.equals( FormItemSet.class.getSimpleName() ) )
-        {
-            formItem = formItemSetJsonSerializer.parse( concreteFormItemObj );
-        }
-        else if ( type.equals( Layout.class.getSimpleName() ) )
-        {
-            formItem = layoutJsonSerializer.parse( concreteFormItemObj );
-        }
-        else if ( type.equals( SubTypeReference.class.getSimpleName() ) )
-        {
-            formItem = subTypeReferenceJsonSerializer.parse( concreteFormItemObj );
-        }
-        else
-        {
-            throw new JsonParsingException( "Unknown FormItem type: " + type );
         }
 
         return formItem;

@@ -73,6 +73,7 @@ public class InputJsonSerializer
         builder.immutable( JsonParserUtil.getBooleanValue( IMMUTABLE, inputObj ) );
         builder.helpText( JsonParserUtil.getStringValue( HELP_TEXT, inputObj ) );
         builder.customText( JsonParserUtil.getStringValue( CUSTOM_TEXT, inputObj ) );
+        builder.indexed( JsonParserUtil.getBooleanValue( INDEXED, inputObj ) );
         parseValidationRegexp( builder, inputObj );
 
         parseOccurrences( builder, inputObj.get( OCCURRENCES ) );

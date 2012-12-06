@@ -20,7 +20,7 @@ import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 
-class FormItemXmlSerializer
+public class FormItemXmlSerializer
 {
     public static final String NAME = "name";
 
@@ -191,6 +191,7 @@ class FormItemXmlSerializer
         builder.name( formItemEl.getAttributeValue( NAME ) );
         builder.label( formItemEl.getChildText( LABEL ) );
         builder.immutable( Boolean.valueOf( formItemEl.getChildText( IMMUTABLE ) ) );
+        builder.indexed( Boolean.valueOf( formItemEl.getChildText( INDEXED ) ) );
         builder.helpText( formItemEl.getChildText( HELP_TEXT ) );
         builder.customText( formItemEl.getChildText( CUSTOM_TEXT ) );
         parseValidationRegexp( builder, formItemEl );
@@ -282,7 +283,7 @@ class FormItemXmlSerializer
         builder.type( InputTypeFactory.instantiate( inputTypeName, builtIn ) );
     }
 
-    private String classNameToXmlElementName( final String s )
+    public String classNameToXmlElementName( final String s )
     {
         final StringBuilder newS = new StringBuilder( s.length() );
         for ( int i = 0; i < s.length(); i++ )
