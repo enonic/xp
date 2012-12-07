@@ -4,6 +4,8 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
     store: 'Admin.store.contentManager.ContentStore',
     treeStore: 'Admin.store.contentManager.ContentTreeStore',
 
+    border: false,
+
     iconClasses: {
         "myModule:mySite": 'icon-site-32',
         "myModule:myType": 'icon-content-32',
