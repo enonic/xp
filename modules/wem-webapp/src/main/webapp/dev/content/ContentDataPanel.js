@@ -36,6 +36,47 @@ Ext.define('ContentDataPanel', {
     },
 
 
+    getData: function () {
+        return this.createFormData();
+    },
+
+
+    createFormData: function () {
+        var me = this,
+            formData = {},
+            formItems = me.items.items;
+
+        Ext.Array.each(formItems, function (formItem) {
+            if (formItem.getXType() === 'FormItemSet') {
+                me.addFormItemSetData(formItem, formData);
+            } else {
+                //console.log(formItem.name + ': ' + formItem.getValue());
+                formData[formItem.name] = formItem.getValue();
+            }
+        });
+
+        return formData;
+    },
+
+
+    addFormItemSetData: function (formItemSet, formData) {
+        //TODO: Recursive
+        var blocks = Ext.ComponentQuery.query('container[formItemSetBlock=true]', formItemSet),
+            formItemSetName = formItemSet.name,
+            blockIndex;
+
+        Ext.Array.each(blocks, function (block, index) {
+            blockIndex = index;
+            Ext.Array.each(block.items.items, function (item) {
+                if (item.cls !== 'header') {
+                    formData[formItemSetName + '[' + blockIndex + '].' + item.name] = item.getValue();
+                    //console.log(name + '[' + blockIndex + '].' + item.name + ': ' + item.getValue());
+                }
+            });
+        });
+    },
+
+
     /**  Temporary form submit button (for development only) **/
 
     buttonAlign: 'left',
@@ -48,45 +89,12 @@ Ext.define('ContentDataPanel', {
                 var formPanel = this.up('form');
                 var form = formPanel.getForm();
                 if (form.isValid()) {
-                    formPanel.createFormData();
+                    var formData = formPanel.getData();
+
                 }
             }
         }
-    ],
+    ]
 
-    getData: function () {
-        this.createFormData();
-    },
-
-
-    createFormData: function () {
-        var me = this;
-        var formItems = me.items.items;
-
-        Ext.Array.each(formItems, function (formItem, index) {
-            if (formItem.getXType() === 'FormItemSet') {
-                me.createFormItemSetData(formItem);
-            } else {
-                console.log(formItem.name + ': ' + formItem.getValue());
-            }
-        });
-    },
-
-
-    createFormItemSetData: function (formItemSet) {
-        //TODO: Recurse
-        var blocks = Ext.ComponentQuery.query('container[formItemSetBlock=true]', formItemSet),
-            name = formItemSet.name,
-            blockIndex;
-
-        Ext.Array.each(blocks, function (block, index) {
-            blockIndex = index;
-            Ext.Array.each(block.items.items, function (item) {
-                if (item.cls !== 'header') {
-                    console.log(name + '[' + blockIndex + '].' + item.name + ': ' + item.getValue());
-                }
-            });
-        });
-    }
 
 });
