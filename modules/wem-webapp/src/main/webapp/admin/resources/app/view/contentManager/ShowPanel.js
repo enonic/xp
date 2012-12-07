@@ -13,11 +13,11 @@ Ext.define('Admin.view.contentManager.ShowPanel', {
 
     initComponent: function () {
 
-        this.tbar = {
-            xtype: 'browseToolbar'
-        };
-
         this.items = [
+            {
+                region: 'north',
+                xtype: 'browseToolbar'
+            },
             {
                 xtype: 'contentTreeGridPanel',
                 region: 'center',
