@@ -32,34 +32,6 @@
       text-align: right;
     }
 
-
-    .admin-formitemset-block {
-      border: 1px solid #ddd !important;
-      border-radius: 3px;
-    }
-    .admin-formitemset-block .header {
-      border-bottom: 1px solid #ddd
-    }
-
-    .admin-sortable-insert-helper-below {
-      border-bottom: 2px solid #444 !important;
-    }
-
-    .admin-sortable-insert-helper-above {
-      border-top: 2px solid #444 !important;
-    }
-
-    .admin-text-button {
-      color: #0070DE;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-
-    .admin-drag-handle {
-      color: #59008c;
-      cursor: move;
-    }
-
   </style>
 
   <!-- ExtJS -->
