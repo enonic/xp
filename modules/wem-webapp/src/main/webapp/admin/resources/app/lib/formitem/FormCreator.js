@@ -1,4 +1,4 @@
-Ext.define('Admin.lib.formitem.FormHelper', {
+Ext.define('Admin.lib.formitem.FromCreator', {
 
     addFormItems: function (contentTypeItems, parentContainer) {
         var me = this;
