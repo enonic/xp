@@ -1,35 +1,9 @@
 Ext.define('Admin.lib.formitem.FormHelper', {
 
-    // Add components based on content.
-    addComponentsForEditForm: function (content, contentTypeDef, parentComponent) {
-        var me = this,
-            config,
-            component;
-
-        Ext.Array.each(content.data, function(contentItem) {
-
-            config = me._getConfigForContentItem(contentItem, contentTypeDef.form);
-
-            if (config.FormItemSet) {
-                component = me._createFormItemSet(config.FormItemSet);
-            } else { // Input
-                var classAlias = 'widget.' + config.Input.type.name;
-                if (!me._formItemIsSupported(classAlias)) {
-                    console.error('Unsupported input type', config.Input);
-                    return;
-                }
-                component = me._createFormItemComponent(config.Input, contentItem.value);
-            }
-
-            me._addComponent(component, parentComponent);
-        });
-    },
-
-
     // Add components based on content type configuration.
     // Refactor this as it is shared by wizard.ContentDataPanel and lib.formitem.FormItemSet
     // FormItemSet may use it's own method for adding components.
-    addComponentsForNewForm: function (contentTypeItems, parentComponent) {
+    addNewComponents: function (contentTypeItems, parentComponent) {
         var me = this;
         var component;
 
@@ -51,6 +25,34 @@ Ext.define('Admin.lib.formitem.FormHelper', {
     },
 
 
+    // Add components based on content.
+    addComponentsWithContent: function (contentData, contentTypeConfig, parentComponent) {
+        var me = this,
+            config,
+            component;
+
+        // console.log('addComponentsForEditForm - contentData', contentData);
+
+        Ext.Array.each(contentData, function(contentItem) {
+
+            config = me._getConfigForContentItem(contentItem, contentTypeConfig);
+
+            if (config.FormItemSet) {
+                component = me._createFormItemSet(config.FormItemSet, contentItem);
+            } else { // Input
+                var classAlias = 'widget.' + config.Input.type.name;
+                if (!me._formItemIsSupported(classAlias)) {
+                    console.error('Unsupported input type', config.Input);
+                    return;
+                }
+                component = me._createFormItemComponent(config.Input, contentItem.value);
+            }
+
+            me._addComponent(component, parentComponent);
+        });
+    },
+
+
     _addComponent: function (component, parentComponent) {
         if (parentComponent.getXType() === 'FormItemSet' || parentComponent.getXType() === 'fieldcontainer' || parentComponent.getXType() === 'container') {
             parentComponent.add(component);
@@ -60,11 +62,12 @@ Ext.define('Admin.lib.formitem.FormHelper', {
     },
 
 
-    _createFormItemSet: function (formItemSetConfig, dataValue) {
+    _createFormItemSet: function (formItemSetConfig, contentItem) {
         return Ext.create({
             xclass: 'widget.FormItemSet',
             name: formItemSetConfig.name,
-            formItemSetConfig: formItemSetConfig
+            formItemSetConfig: formItemSetConfig,
+            content: contentItem
         });
     },
 

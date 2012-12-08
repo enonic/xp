@@ -29,9 +29,9 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
         me.items = [];
 
         if (me.content) {
-            me.mixins.formHelper.addComponentsForEditForm(me.content, me.contentType, me);
+            me.mixins.formHelper.addComponentsWithContent(me.content.data, me.contentType.form, me);
         } else {
-            me.mixins.formHelper.addComponentsForNewForm(me.contentType.form, me);
+            me.mixins.formHelper.addNewComponents(me.contentType.form, me);
         }
 
         me.callParent(arguments);
