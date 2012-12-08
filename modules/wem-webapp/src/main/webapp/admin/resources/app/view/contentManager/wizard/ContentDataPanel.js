@@ -14,24 +14,24 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
         formHelper: 'Admin.lib.formitem.FormHelper'
     },
 
-    layout: 'vbox',
-
     contentType: undefined,
 
     content: null, // content to be edited
 
-    autoDestroy: true,
-
     jsonSubmit: true,
+
+    layout: 'vbox',
+
+    autoDestroy: true,
 
     initComponent: function () {
         var me = this;
         me.items = [];
 
         if (me.content) {
-            me.mixins.formHelper.addFormItemsForEditForm(me.content, me.contentType, me);
+            me.mixins.formHelper.addComponentsForEditForm(me.content, me.contentType, me);
         } else {
-            me.mixins.formHelper.addFormItemsForNewForm(me.contentType.form, me);
+            me.mixins.formHelper.addComponentsForNewForm(me.contentType.form, me);
         }
 
         me.callParent(arguments);
@@ -39,40 +39,36 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
 
 
     getData: function () {
-        return this.createFormData();
+        return this._buildContentData();
     },
 
 
-    createFormData: function () {
+    _buildContentData: function () {
         var me = this,
-            formData = {},
-            formItems = me.items.items;
+            contentData = {},
+            components = me.items.items;
 
-        Ext.Array.each(formItems, function (formItem) {
-            if (formItem.getXType() === 'FormItemSet') {
-                me.addFormItemSetData(formItem, formData);
+        Ext.Array.each(components, function (component) {
+            if (component.getXType() === 'FormItemSet') {
+                me._addFormItemSetContentData(component, contentData);
             } else {
-                //console.log(formItem.name + ': ' + formItem.getValue());
-                formData[formItem.name] = formItem.getValue();
+                contentData[component.name] = component.getValue();
             }
         });
 
-        return formData;
+        return contentData;
     },
 
 
-    addFormItemSetData: function (formItemSet, formData) {
+    _addFormItemSetContentData: function (formItemSetComponent, contentData) {
         //TODO: Recursive
-        var blocks = Ext.ComponentQuery.query('container[formItemSetBlock=true]', formItemSet),
-            formItemSetName = formItemSet.name,
-            blockIndex;
+        var blocks = Ext.ComponentQuery.query('container[formItemSetBlock=true]', formItemSetComponent),
+            formItemSetName = formItemSetComponent.name;
 
         Ext.Array.each(blocks, function (block, index) {
-            blockIndex = index;
             Ext.Array.each(block.items.items, function (item) {
                 if (item.cls !== 'header') {
-                    formData[formItemSetName + '[' + blockIndex + '].' + item.name] = item.getValue();
-                    //console.log(name + '[' + blockIndex + '].' + item.name + ': ' + item.getValue());
+                    contentData[formItemSetName + '[' + index + '].' + item.name] = item.getValue();
                 }
             });
         });

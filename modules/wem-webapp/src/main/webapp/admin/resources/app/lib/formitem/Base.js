@@ -9,7 +9,7 @@ Ext.define('Admin.lib.formitem.Base', {
 
         me.defaults = {
             margin: '0 0 1 0',
-            width: 320
+            width: 360
         };
         me.callParent(arguments);
     },

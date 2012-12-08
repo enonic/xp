@@ -1,64 +1,66 @@
 Ext.define('Admin.lib.formitem.FormHelper', {
 
-    addFormItemsForEditForm: function (content, contentTypeDef, parentContainer) {
-        var me = this;
+    // Add components based on content.
+    addComponentsForEditForm: function (content, contentTypeDef, parentComponent) {
+        var me = this,
+            config,
+            component;
 
         Ext.Array.each(content.data, function(contentItem) {
 
-            var configForContentItem = me.getCtyConfigForContentItem(contentItem, contentTypeDef.form);
-            var formItem;
+            config = me._getConfigForContentItem(contentItem, contentTypeDef.form);
 
-            if (configForContentItem.FormItemSet) {
-                formItem = me.createFormItemSet(configForContentItem.FormItemSet);
+            if (config.FormItemSet) {
+                component = me._createFormItemSet(config.FormItemSet);
             } else { // Input
-
-                console.log(configForContentItem.Input.type.name);
-                var classAlias = 'widget.' + configForContentItem.Input.type.name;
-
-                if (!me.formItemIsSupported(classAlias)) {
-                    console.error('Unsupported input type', item.Input);
+                var classAlias = 'widget.' + config.Input.type.name;
+                if (!me._formItemIsSupported(classAlias)) {
+                    console.error('Unsupported input type', config.Input);
                     return;
                 }
-
-                formItem = me.createFormItemComponent(configForContentItem.Input, contentItem.value);
+                component = me._createFormItemComponent(config.Input, contentItem.value);
             }
 
-            if (parentContainer.getXType() === 'FormItemSet' || parentContainer.getXType() === 'fieldcontainer' || parentContainer.getXType() === 'container') {
-                parentContainer.add(formItem);
-            } else {
-                parentContainer.items.push(formItem);
-            }
-
+            me._addComponent(component, parentComponent);
         });
     },
 
-    addFormItemsForNewForm: function (contentTypeItems, parentContainer) {
+
+    // Add components based on content type configuration.
+    // Refactor this as it is shared by wizard.ContentDataPanel and lib.formitem.FormItemSet
+    // FormItemSet may use it's own method for adding components.
+    addComponentsForNewForm: function (contentTypeItems, parentComponent) {
         var me = this;
-        var formItem;
+        var component;
 
         Ext.each(contentTypeItems, function (item) {
             if (item.FormItemSet) {
-                formItem = me.createFormItemSet(item.FormItemSet);
+                component = me._createFormItemSet(item.FormItemSet);
             } else { // Input
                 var classAlias = 'widget.' + item.Input.type.name;
-                if (!me.formItemIsSupported(classAlias)) {
+                if (!me._formItemIsSupported(classAlias)) {
                     console.error('Unsupported input type', item.Input);
                     return;
                 }
 
-                formItem = me.createFormItemComponent(item.Input);
+                component = me._createFormItemComponent(item.Input);
             }
 
-            if (parentContainer.getXType() === 'FormItemSet' || parentContainer.getXType() === 'fieldcontainer' || parentContainer.getXType() === 'container') {
-                parentContainer.add(formItem);
-            } else {
-                parentContainer.items.push(formItem);
-            }
+            me._addComponent(component, parentComponent);
         });
     },
 
 
-    createFormItemSet: function (formItemSetConfig, dataValue) {
+    _addComponent: function (component, parentComponent) {
+        if (parentComponent.getXType() === 'FormItemSet' || parentComponent.getXType() === 'fieldcontainer' || parentComponent.getXType() === 'container') {
+            parentComponent.add(component);
+        } else {
+            parentComponent.items.push(component);
+        }
+    },
+
+
+    _createFormItemSet: function (formItemSetConfig, dataValue) {
         return Ext.create({
             xclass: 'widget.FormItemSet',
             name: formItemSetConfig.name,
@@ -67,7 +69,7 @@ Ext.define('Admin.lib.formitem.FormHelper', {
     },
 
 
-    createFormItemComponent: function (inputConfig, value) {
+    _createFormItemComponent: function (inputConfig, value) {
         var me = this;
         var classAlias = 'widget.' + inputConfig.type.name;
 
@@ -81,10 +83,12 @@ Ext.define('Admin.lib.formitem.FormHelper', {
 
     },
 
-    getCtyConfigForContentItem: function (contentItem, root) {
+
+    _getConfigForContentItem: function (contentItem, contentTypeConfig) {
         var node, name;
-        for (var key in root) {
-            node = root[key];
+
+        for (var key in contentTypeConfig) {
+            node = contentTypeConfig[key];
 
             if (node.FormItemSet) {
                 name = node.FormItemSet.name;
@@ -99,7 +103,9 @@ Ext.define('Admin.lib.formitem.FormHelper', {
 
         return null;
     },
-    formItemIsSupported: function (classAlias) {
+
+
+    _formItemIsSupported: function (classAlias) {
         return Ext.ClassManager.getByAlias(classAlias);
     }
 

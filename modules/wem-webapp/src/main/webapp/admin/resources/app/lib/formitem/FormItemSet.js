@@ -56,7 +56,7 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
             items: me.createBlockHeader()
         });
 
-        me.mixins.formHelper.addFormItemsForNewForm(me.formItemSetConfig.items, block);
+        me.mixins.formHelper.addComponentsForNewForm(me.formItemSetConfig.items, block);
 
         return block;
     },
