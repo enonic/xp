@@ -11,7 +11,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     ],
 
     mixins: {
-        formCreator: 'Admin.lib.formitem.FormCreator'
+        formHelper: 'Admin.lib.formitem.FormHelper'
     },
 
     layout: 'vbox',
@@ -29,9 +29,9 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
         me.items = [];
 
         if (me.content) {
-            me.mixins.formCreator.addFormItems(me.contentType.form, me);
+            me.mixins.formHelper.addFormItemsForEditForm(me.content, me.contentType, me);
         } else {
-            me.mixins.formCreator.addFormItems(me.contentType.form, me);
+            me.mixins.formHelper.addFormItemsForNewForm(me.contentType.form, me);
         }
 
         me.callParent(arguments);
