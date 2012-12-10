@@ -1,5 +1,7 @@
 package com.enonic.wem.api.command.content.type;
 
+import com.enonic.wem.api.content.type.ContentType;
+
 public final class ContentTypeCommands
 {
     public GetContentTypes get()
@@ -25,5 +27,10 @@ public final class ContentTypeCommands
     public GetContentTypeTree getTree()
     {
         return new GetContentTypeTree();
+    }
+
+    public ValidateContentType validate( final ContentType contentType )
+    {
+        return new ValidateContentType( contentType );
     }
 }
