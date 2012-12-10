@@ -44,7 +44,7 @@ public class ContentTypeDaoImplTest
         final ContentType contentType = addContentTypeFormItems( contentTypeBuilder );
 
         // exercise
-        contentTypeDao.createContentType( session, contentType );
+        contentTypeDao.createContentType( contentType, session );
         commit();
 
         // verify
@@ -63,11 +63,11 @@ public class ContentTypeDaoImplTest
             setAbstract( true ).
             displayName( "My content type" );
         final ContentType contentType = addContentTypeFormItems( contentTypeBuilder );
-        contentTypeDao.createContentType( session, contentType );
+        contentTypeDao.createContentType( contentType, session );
 
         // exercise
         final ContentTypes contentTypes =
-            contentTypeDao.retrieveContentTypes( session, QualifiedContentTypeNames.from( "myModule:myContentType" ) );
+            contentTypeDao.retrieveContentTypes( QualifiedContentTypeNames.from( "myModule:myContentType" ), session );
         commit();
 
         // verify
@@ -91,7 +91,7 @@ public class ContentTypeDaoImplTest
             setAbstract( true ).
             displayName( "My content type" );
         final ContentType contentTypeCreated1 = addContentTypeFormItems( contentTypeBuilder );
-        contentTypeDao.createContentType( session, contentTypeCreated1 );
+        contentTypeDao.createContentType( contentTypeCreated1, session );
 
         final ContentType.Builder contentTypeBuilder2 = newContentType().
             module( ModuleName.from( "otherModule" ) ).
@@ -100,7 +100,7 @@ public class ContentTypeDaoImplTest
             displayName( "Another content type" );
         final ContentType contentTypeCreated2 = addContentTypeFormItems( contentTypeBuilder2 );
 
-        contentTypeDao.createContentType( session, contentTypeCreated2 );
+        contentTypeDao.createContentType( contentTypeCreated2, session );
 
         // exercise
         final ContentTypes contentTypes = contentTypeDao.retrieveAllContentTypes( session );
@@ -134,11 +134,11 @@ public class ContentTypeDaoImplTest
             setAbstract( true ).
             displayName( "My content type" );
         final ContentType contentType = addContentTypeFormItems( contentTypeBuilder );
-        contentTypeDao.createContentType( session, contentType );
+        contentTypeDao.createContentType( contentType, session );
 
         // exercise
         final ContentTypes contentTypesAfterCreate =
-            contentTypeDao.retrieveContentTypes( session, QualifiedContentTypeNames.from( "myModule:myContentType" ) );
+            contentTypeDao.retrieveContentTypes( QualifiedContentTypeNames.from( "myModule:myContentType" ), session );
         assertNotNull( contentTypesAfterCreate );
         assertEquals( 1, contentTypesAfterCreate.getSize() );
 
@@ -146,12 +146,12 @@ public class ContentTypeDaoImplTest
             setAbstract( false ).
             displayName( "My content type-UPDATED" ).
             build();
-        contentTypeDao.updateContentType( session, contentTypeUpdate );
+        contentTypeDao.updateContentType( contentTypeUpdate, session );
         commit();
 
         // verify
         final ContentTypes contentTypesAfterUpdate =
-            contentTypeDao.retrieveContentTypes( session, QualifiedContentTypeNames.from( "myModule:myContentType" ) );
+            contentTypeDao.retrieveContentTypes( QualifiedContentTypeNames.from( "myModule:myContentType" ), session );
         assertNotNull( contentTypesAfterUpdate );
         assertEquals( 1, contentTypesAfterUpdate.getSize() );
         final ContentType contentType1 = contentTypesAfterUpdate.getFirst();
@@ -172,20 +172,20 @@ public class ContentTypeDaoImplTest
             setAbstract( true ).
             displayName( "My content type" );
         final ContentType contentType = addContentTypeFormItems( contentTypeBuilder );
-        contentTypeDao.createContentType( session, contentType );
+        contentTypeDao.createContentType( contentType, session );
 
         // exercise
         final ContentTypes contentTypesAfterCreate =
-            contentTypeDao.retrieveContentTypes( session, QualifiedContentTypeNames.from( "myModule:myContentType" ) );
+            contentTypeDao.retrieveContentTypes( QualifiedContentTypeNames.from( "myModule:myContentType" ), session );
         assertNotNull( contentTypesAfterCreate );
         assertEquals( 1, contentTypesAfterCreate.getSize() );
 
-        contentTypeDao.deleteContentType( session, contentType.getQualifiedName() );
+        contentTypeDao.deleteContentType( contentType.getQualifiedName(), session );
         commit();
 
         // verify
         final ContentTypes contentTypesAfterDelete =
-            contentTypeDao.retrieveContentTypes( session, QualifiedContentTypeNames.from( "myModule:myContentType" ) );
+            contentTypeDao.retrieveContentTypes( QualifiedContentTypeNames.from( "myModule:myContentType" ), session );
         assertNotNull( contentTypesAfterDelete );
         assertTrue( contentTypesAfterDelete.isEmpty() );
     }

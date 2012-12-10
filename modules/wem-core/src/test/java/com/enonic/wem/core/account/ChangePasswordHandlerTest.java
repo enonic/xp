@@ -39,7 +39,7 @@ public class ChangePasswordHandlerTest
         final String newPassword = "passw0rd";
         final AccountKey account = AccountKey.user( "enonic:johndoe" );
 
-        Mockito.when( accountDao.accountExists( this.session, account ) ).thenReturn( true );
+        Mockito.when( accountDao.accountExists( account, this.session ) ).thenReturn( true );
 
         final ChangePassword command = Commands.account().changePassword().key( account ).password( newPassword );
         command.validate();

@@ -63,7 +63,7 @@ public final class GetContentTypesHandler
 
     private ContentTypes getContentTypes( final Session session, final QualifiedContentTypeNames contentTypeNames )
     {
-        return contentTypeDao.retrieveContentTypes( session, contentTypeNames );
+        return contentTypeDao.retrieveContentTypes( contentTypeNames, session );
     }
 
     @Autowired

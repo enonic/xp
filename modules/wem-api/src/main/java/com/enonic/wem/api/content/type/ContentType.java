@@ -4,6 +4,7 @@ package com.enonic.wem.api.content.type;
 import java.util.List;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.type.form.Form;
@@ -30,16 +31,17 @@ public final class ContentType
 
     private final Form form;
 
-    private ContentType( final String name, final String displayName, final QualifiedContentTypeName superType, final boolean isAbstract,
-                         final boolean isFinal, final ModuleName moduleName, final Form form )
+    private ContentType( final Builder builder )
     {
-        this.name = name;
-        this.displayName = displayName;
-        this.superType = superType;
-        this.isAbstract = isAbstract;
-        this.isFinal = isFinal;
-        this.moduleName = moduleName;
-        this.form = form;
+        Preconditions.checkNotNull( builder.name , "Name cannot be null in ContentType");
+        Preconditions.checkNotNull( builder.moduleName , "Module name cannot be null in ContentType");
+        this.name = builder.name;
+        this.displayName = builder.displayName;
+        this.superType = builder.superType;
+        this.isAbstract = builder.isAbstract;
+        this.isFinal = builder.isFinal;
+        this.moduleName = builder.moduleName;
+        this.form = builder.buildForm();
     }
 
     public String getName()
@@ -207,19 +209,24 @@ public final class ContentType
             return this;
         }
 
-        public ContentType build()
+        private Form buildForm()
         {
             final Form.Builder formBuilder = newForm();
             for ( FormItem formItem : formItemList )
             {
                 formBuilder.addFormItem( formItem );
             }
+            return formBuilder.build();
+        }
+
+        public ContentType build()
+        {
             if ( superType == null && ( moduleName != null && !moduleName.equals( Module.SYSTEM.getName() ) ) )
             {
                 superType = QualifiedContentTypeName.unstructured();
             }
 
-            return new ContentType( name, displayName, superType, isAbstract, isFinal, moduleName, formBuilder.build() );
+            return new ContentType( this );
         }
     }
 }

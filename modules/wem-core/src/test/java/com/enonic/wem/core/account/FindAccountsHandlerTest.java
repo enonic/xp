@@ -164,7 +164,7 @@ public class FindAccountsHandlerTest
         throws Exception
     {
         AccountKey user = AccountKey.user( qualifiedName );
-        Mockito.when( accountDao.accountExists( this.session, user ) ).thenReturn( true );
+        Mockito.when( accountDao.accountExists( user, this.session ) ).thenReturn( true );
         return user;
     }
 
@@ -172,7 +172,7 @@ public class FindAccountsHandlerTest
         throws Exception
     {
         AccountKey group = AccountKey.group( qualifiedName );
-        Mockito.when( accountDao.accountExists( this.session, group ) ).thenReturn( true );
+        Mockito.when( accountDao.accountExists( group, this.session ) ).thenReturn( true );
         return group;
     }
 
@@ -180,7 +180,7 @@ public class FindAccountsHandlerTest
         throws Exception
     {
         AccountKey role = AccountKey.role( qualifiedName );
-        Mockito.when( accountDao.accountExists( this.session, role ) ).thenReturn( true );
+        Mockito.when( accountDao.accountExists( role, this.session ) ).thenReturn( true );
         return role;
     }
 }

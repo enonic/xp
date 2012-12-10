@@ -200,6 +200,7 @@ public abstract class AbstractContentTypeSerializerTest
         Input myOuterInput = newInput().name( "my-outer-input" ).type( InputTypes.TEXT_LINE ).build();
         FormItemSet myOuterSet = newFormItemSet().name( "my-outer-set" ).add( myOuterInput ).add( myInnerSet ).build();
         final ContentType contentType = newContentType().
+            name( "myType" ).
             module( myModule.getName() ).
             addFormItem( myOuterSet ).
             build();

@@ -25,7 +25,7 @@ public final class FindMembersHandler
         throws Exception
     {
         final AccountKey accountKey = command.getKey();
-        command.setResult( accountDao.getMembers( context.getJcrSession(), accountKey ) );
+        command.setResult( accountDao.getMembers( accountKey, context.getJcrSession() ) );
     }
 
     @Autowired

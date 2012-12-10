@@ -43,12 +43,12 @@ public class GetUserStoresHandler
         final Session session = context.getJcrSession();
         for ( UserStoreName userStoreName : userStoreNames )
         {
-            final UserStore userStore = accountDao.getUserStore( session, userStoreName, includeConfig, includeStatistics );
+            final UserStore userStore = accountDao.getUserStore( userStoreName, includeConfig, includeStatistics, session );
             if ( includeConnector )
             {
                 userStore.setConnector( getUserStoreConnector( userStoreName ) );
             }
-            final AccountKeys administrators = accountDao.getUserStoreAdministrators( session, userStoreName );
+            final AccountKeys administrators = accountDao.getUserStoreAdministrators( userStoreName, session );
             userStore.setAdministrators( administrators );
             userStoreList.add( userStore );
         }

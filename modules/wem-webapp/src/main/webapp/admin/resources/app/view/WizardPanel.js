@@ -47,7 +47,7 @@ Ext.define('Admin.view.WizardPanel', {
         if (this.showControls) {
             wizard.bbar = {
                 xtype: 'container',
-                margin: '10 20',
+                margin: '10 0 0 5',
                 height: 40,
                 itemId: 'controls',
                 defaults: {
@@ -58,8 +58,7 @@ Ext.define('Admin.view.WizardPanel', {
                     {
                         itemId: 'prev',
                         iconCls: 'icon-left-24',
-                        width: 40,
-                        margin: '0 0 0 85',
+                        margin: '0 5 0 0',
                         hideMode: 'display',
                         handler: function (btn, evt) {
                             wizard.prev();
@@ -69,7 +68,7 @@ Ext.define('Admin.view.WizardPanel', {
                         text: 'Next',
                         itemId: 'next',
                         iconAlign: 'right',
-                        margin: '0 0 0 10',
+                        margin: '0 0 0 5',
                         formBind: true,
                         iconCls: 'icon-right-24',
                         handler: function (btn, evt) {
@@ -79,7 +78,7 @@ Ext.define('Admin.view.WizardPanel', {
                     {
                         text: 'Save and Close',
                         itemId: 'finish',
-                        margin: '0 0 0 10',
+                        margin: '0 0 0 5',
                         iconCls: 'icon-save-24',
                         hidden: true,
                         handler: function (btn, evt) {

@@ -52,15 +52,15 @@ public final class GetAccountsHandler
             switch ( key.getType() )
             {
                 case USER:
-                    account = accountDao.findUser( session, key, includeProfile, includePhoto );
+                    account = accountDao.findUser( key, includeProfile, includePhoto, session );
                     break;
 
                 case GROUP:
-                    account = accountDao.findGroup( session, key, includeMembers );
+                    account = accountDao.findGroup( key, includeMembers, session );
                     break;
 
                 case ROLE:
-                    account = accountDao.findRole( session, key, includeMembers );
+                    account = accountDao.findRole( key, includeMembers, session );
                     break;
             }
             if ( account != null )

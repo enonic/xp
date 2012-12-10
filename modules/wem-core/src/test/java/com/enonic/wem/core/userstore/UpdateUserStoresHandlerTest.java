@@ -73,8 +73,8 @@ public class UpdateUserStoresHandlerTest
         final UserStore someUserStore = createUserStore( "enonic", "ldap" );
 
         final AccountKeys administrators = AccountKeys.from( "group:default:admin" );
-        Mockito.when( accountDao.getUserStoreAdministrators( session, someUserStore.getName() ) ).thenReturn( administrators );
-        Mockito.when( accountDao.getUserStoreAdministrators( eq( session ), any( UserStoreName.class ) ) ).thenReturn(
+        Mockito.when( accountDao.getUserStoreAdministrators( someUserStore.getName(), session ) ).thenReturn( administrators );
+        Mockito.when( accountDao.getUserStoreAdministrators( any( UserStoreName.class ), eq( session ) ) ).thenReturn(
             AccountKeys.empty() );
 
         defaultUserStore.setConfig( new UserStoreConfig() );
@@ -114,7 +114,7 @@ public class UpdateUserStoresHandlerTest
         final UserStore userStore = new UserStore( userStoreName );
         userStore.setConnector( new UserStoreConnector( connectorName ) );
 
-        Mockito.when( accountDao.getUserStore( any( Session.class ), eq( userStoreName ), anyBoolean(), anyBoolean() ) ).thenReturn(
+        Mockito.when( accountDao.getUserStore( eq( userStoreName ), anyBoolean(), anyBoolean(), any( Session.class ) ) ).thenReturn(
             userStore );
 
         final RemoteUserStoreConnector userStoreConnector = new RemoteUserStoreConnector( new UserStoreKey( 0 ), name, connectorName );

@@ -39,7 +39,7 @@ public class DeleteUserStoresHandlerTest
         throws Exception
     {
         // setup
-        Mockito.when( accountDao.deleteUserStore( Mockito.any( Session.class ), Mockito.any( UserStoreName.class ) ) ).thenReturn( true );
+        Mockito.when( accountDao.deleteUserStore( Mockito.any( UserStoreName.class ), Mockito.any( Session.class ) ) ).thenReturn( true );
 
         final DeleteUserStores command = Commands.userStore().delete().names( UserStoreNames.from( "default", "enonic" ) );
         this.handler.handle( this.context, command );
@@ -54,7 +54,7 @@ public class DeleteUserStoresHandlerTest
         throws Exception
     {
         // setup
-        Mockito.when( accountDao.deleteUserStore( Mockito.any( Session.class ), Mockito.any( UserStoreName.class ) ) ).thenReturn( false );
+        Mockito.when( accountDao.deleteUserStore( Mockito.any( UserStoreName.class ), Mockito.any( Session.class ) ) ).thenReturn( false );
 
         final DeleteUserStores command = Commands.userStore().delete().names( UserStoreNames.from( "default", "enonic" ) );
         this.handler.handle( this.context, command );
@@ -71,7 +71,7 @@ public class DeleteUserStoresHandlerTest
         // setup
         UserStoreName defaultUserStore = UserStoreName.from( "default" );
         UserStoreName enonicUserStore = UserStoreName.from( "enonic" );
-        Mockito.when( accountDao.deleteUserStore( Mockito.any( Session.class ), Mockito.eq( defaultUserStore ) ) ).thenReturn( true );
+        Mockito.when( accountDao.deleteUserStore( Mockito.eq( defaultUserStore ), Mockito.any( Session.class ) ) ).thenReturn( true );
 
         final DeleteUserStores command = Commands.userStore().delete().names( UserStoreNames.from( defaultUserStore, enonicUserStore ) );
         this.handler.handle( this.context, command );

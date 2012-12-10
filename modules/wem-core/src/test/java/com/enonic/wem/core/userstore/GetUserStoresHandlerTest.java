@@ -73,8 +73,8 @@ public class GetUserStoresHandlerTest
         final UserStore someUserStore = createUserStore( "enonic", "ldap" );
 
         final AccountKeys administrators = AccountKeys.from( "group:default:built-in-admins", "user:default:super" );
-        Mockito.when( accountDao.getUserStoreAdministrators( session, someUserStore.getName() ) ).thenReturn( administrators );
-        Mockito.when( accountDao.getUserStoreAdministrators( eq( session ), any( UserStoreName.class ) ) ).thenReturn(
+        Mockito.when( accountDao.getUserStoreAdministrators( someUserStore.getName(), session ) ).thenReturn( administrators );
+        Mockito.when( accountDao.getUserStoreAdministrators( any( UserStoreName.class ), eq( session ) ) ).thenReturn(
             AccountKeys.empty() );
 
         defaultUserStore.setConfig( new UserStoreConfig() );
@@ -119,7 +119,7 @@ public class GetUserStoresHandlerTest
     {
         final UserStoreName existingUserStore = UserStoreName.system();
         Mockito.when(
-            accountDao.getUserStore( any( Session.class ), not( eq( existingUserStore ) ), anyBoolean(), anyBoolean() ) ).thenThrow(
+            accountDao.getUserStore( not( eq( existingUserStore ) ), anyBoolean(), anyBoolean(), any( Session.class ) ) ).thenThrow(
             new UserStoreNotFoundException( UserStoreName.from( "enonic" ) ) );
 
         final GetUserStores command = Commands.userStore().get().names( UserStoreNames.from( "enonic" ) );
@@ -151,7 +151,7 @@ public class GetUserStoresHandlerTest
         final UserStore userStore = new UserStore( userStoreName );
         userStore.setConnector( new UserStoreConnector( connectorName ) );
 
-        Mockito.when( accountDao.getUserStore( session, userStoreName, true, true ) ).thenReturn( userStore );
+        Mockito.when( accountDao.getUserStore( userStoreName, true, true, session ) ).thenReturn( userStore );
 
         final RemoteUserStoreConnector userStoreConnector = new RemoteUserStoreConnector( new UserStoreKey( 0 ), name, connectorName );
         Mockito.when( this.userStoreConnectorManager.getUserStoreConnector( any( UserStoreKey.class ) ) ).thenReturn( userStoreConnector );
