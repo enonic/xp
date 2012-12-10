@@ -8,6 +8,10 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
 
     isNewGroup: true,
 
+    defaults: {
+        scale: 'medium'
+    },
+
     initComponent: function () {
 
         this.items = [
