@@ -2,235 +2,191 @@
 
 <html>
 <head>
+  <meta charset="utf-8"/>
   <title>Enonic WEM - Login</title>
-  <style type="text/css">
-    html, body {
-      width: 100%;
-      height: 100%;
-    }
+  <script type="text/javascript" src="../admin/resources/lib/ext/ext-all.js"></script>
+  <link rel="stylesheet" type="text/css" href="../admin/resources/lib/ext/resources/css/admin.css" />
 
+  <style>
     body {
-      background: url("resources/images/mont_blanc.jpg") no-repeat center;
-      font: bold 13px/1.5 Arial, sans-serif;
-      color: #FFF;
+      background: url(../admin/resources/images/mont_blanc.jpg) no-repeat center center fixed;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
       padding: 0;
       margin: 0;
-      text-align: center;
     }
 
-    #upper_ctr {
+    a {
+      color: #fff !important;
+      text-decoration: none !important;
+    }
+
+    h1 {
+      color: #fff;
+      font-size: 24px !important;
+    }
+
+    #version-info {
       position: absolute;
-      top: 0;
-      left: 0;
-      padding: 1em;
+      top: 10px;
+      left: 10px;
+      color: #fff !important;
     }
 
-    #login_form {
+    #stripe {
       position: absolute;
       top: 50%;
       left: 0;
+      margin-top: -115px; /* half of #content height*/
+      background: rgba(0, 0, 0, 0.35);
       width: 100%;
-      height: 240px;
-      margin: -120px 0 0;
-      background: url("resources/images/bg_black.png") repeat;
+      height: 230px;
     }
 
-    #login_form .row {
-      background: none;
-      margin-bottom: 10px;
-      padding: 2px 0;
-      width: 100%;
-    }
-
-    #login_form .row.active {
-      background: url("resources/images/bg_white.png") repeat;
-    }
-
-    #login_form .row .wrapper {
-      width: 300px;
-      margin: 0 auto;
-      text-align: center;
-      position: relative;
-      display: block;
-    }
-
-    #login_form h1 {
-      padding: 20px 0 0;
-      font-size: 24px;
-      font-weight: normal;
-    }
-
-    #login_form .input {
-      padding: 0 5px;
-      line-height: 30px;
-      height: 30px;
-      color: #000;
-      background: #fff;
-      border: 0 none;
-      width: 100%;
-    }
-
-    #login_form #select_ctr {
-      position: absolute;
-      width: 200px;
-      right: -220px;
-      top: 5px;
-    }
-
-    #login_form select.select {
-      border: 0 none;
-      font-weight: bold;
-      margin: 0;
-      z-index: 10;
-      float: left;
-      position: relative;
-    }
-
-      /* dynamically created SPAN, placed below the SELECT */
-    #login_form span.select {
-      position: absolute;
-      top: 0;
-      left: 0;
-      padding: 0 18px 0 0;
-      background: url(resources/images/select_trigger.png) no-repeat top right;
-      cursor: default;
-      z-index: 1;
+    #form-container {
       text-align: left;
-    }
-
-    #login_form .submit {
-      padding: 6px 20px;
-    }
-
-    #login_form input[type=submit] {
-      margin: 0 auto;
-    }
-
-    #login_form #form_ctr {
       position: absolute;
-      right: 0;
-      bottom: 0;
-      padding: 1em 0;
-      margin: 0;
+      left: 50%;
+      top: 15%;
+      width: 500px;
+      margin-left: -140px;
     }
 
-    #login_form #form_ctr li {
-      padding: 0 1em;
-      list-style-type: disc;
-      display: inline;
+    .form {
+      background-color: transparent !important;
     }
 
-    #login_form #form_ctr li a {
+    #links-container {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      color: #fff !important;
+    }
+
+    #links-container a {
+      margin-right: 30px;
+    }
+
+    #links-container a:last-child {
+      margin-right: 0;
+    }
+
+    .combo-field-label {
       color: #fff;
-      text-decoration: none;
+      display: block;
+      margin-top: 4px;
+      margin-right: 2px;
+      font-weight: bold;
+      padding-right: 2px;
     }
-
   </style>
-  <script type="text/javascript" src="../dev/live-edit/app/lib/jquery-1.8.0.min.js"></script>
 </head>
 <body>
-<div id="upper_ctr">
+
+<div id="version-info">
   Enonic WEM 5.0.1 Enterprise Edition - Licensed to Large Customer
 </div>
-<form id="login_form" action="#">
-  <div class="row">
-    <h1 class="wrapper">Enonic WEM</h1>
+<div id="stripe">
+  <div id="form-container">
   </div>
-  <div class="row">
-    <div class="wrapper">
-      <input name="username" type="text" class="input" title="name" tabindex="2">
+  <div id="links-container"></div>
+</div>
 
-      <div id="select_ctr">
-        <select name="userstore" class="select" tabindex="1">
-          <option value="1">LDAP</option>
-          <option value="1">local</option>
-          <option value="1">Some very long value</option>
-        </select>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="wrapper">
-      <input name="password" type="password" class="input" title="password" tabindex="3">
-    </div>
-  </div>
-  <div class="row">
-    <div class="wrapper">
-      <input type="submit" class="submit" value="Login"/>
-    </div>
-  </div>
-  <ul id="form_ctr">
-    <li><a href="#">Documentation</a></li>
-    <li><a href="#">Community</a></li>
-    <li><a href="#">About</a></li>
-  </ul>
-</form>
 
 <script type="text/javascript">
-
-  $(document).ready(function () {
-    transformSelect();
-    transformInput();
-    $('#login_form .input, #login_form .select').focus(onFocus).blur(onBlur);
-    $('#login_form input[name=username]').focus();
+  var userStoresStore = Ext.create('Ext.data.Store', {
+    fields: ['key', 'name', 'default'],
+    data: [
+      {'key': '1', 'name': 'ABC', default: false},
+      {'key': '2', 'name': 'LDAP', default: true},
+      {'key': '3', 'name': 'Local', default: false},
+      {'key': '4', 'name': 'Some very long value', default: false}
+    ]
   });
 
-  function onFocus(event) {
-    $(event.target).parents('.row').addClass('active')
+  function getDefaultUserStore() {
+    return userStoresStore.findRecord('default', true);
   }
 
-  function onBlur(event) {
-    $(event.target).parents('.row').removeClass('active');
-  }
-
-  function transformSelect() {
-
-    $('#login_form select.select').each(function () {
-      var select = $(this);
-      var title = select.attr('title');
-      if ($('option:selected', this).val() != '') {
-        title = $('option:selected', this).text();
-      }
-      select.css({'z-index': 10, 'opacity': 0, '-khtml-appearance': 'none'})
-          .after('<span class="select">: ' + title + '</span>')
-          .change(function () {
-            val = $('option:selected', this).text();
-            $(this).next().text(": " + val);
-          })
+  Ext.onReady(function() {
+    Ext.create('Ext.form.Panel', {
+      renderTo: 'form-container',
+      bodyCls: 'form',
+      border: 0,
+      url: 'adminLogin',
+      standardSubmit: true,
+      method: 'POST',
+      layout: {
+        type: 'table',
+        columns: 2
+      },
+      defaults: {
+        margin: 5
+      },
+      items: [
+        {
+          xtype: 'container',
+          colspan: 2,
+          margin: '0 0 0 95',
+          html: '<h1>Enonic WEM</h1>'
+        },
+        {
+          xtype: 'textfield',
+          name: 'username',
+          allowBlank: false,
+          emptyText: 'User name',
+          width: 300,
+          tabIndex: 1
+        },
+        {
+          xtype: 'combo',
+          name: 'userstore',
+          id: 'userstoreCombo',
+          allowBlank: false,
+          store: userStoresStore,
+          fieldLabel: ' ',
+          labelWidth: 1,
+          labelCls: 'combo-field-label',
+          queryMode: 'local',
+          displayField: 'name',
+          valueField: 'key',
+          tabIndex: 4
+        },
+        {
+          xtype: 'textfield',
+          name: 'password',
+          allowBlank: false,
+          colspan: 2,
+          emptyText: 'Password',
+          width: 300,
+          tabIndex: 2
+        },
+        {
+          xtype: 'button',
+          formBind: true,
+          disabled: true,
+          margin: '0 0 0 120',
+          colspan: 2,
+          text: 'Log In',
+          tabIndex: 3,
+          handler: function(button) {
+            var form = this.up('form').getForm();
+            form.submit();
+          }
+        }
+      ]
     });
 
-  }
+    var userstoreCombo = Ext.getCmp('userstoreCombo');
+    userstoreCombo.setValue(getDefaultUserStore().raw.key);
+  });
 
-  function transformInput() {
-
-    $('#login_form input[title]').each(function () {
-
-      var $input = jQuery(this),
-          title = $input.attr('title'),
-          $form = jQuery(this.form),
-          $win = jQuery(window),
-          blurClass = 'blur';
-
-      function remove() {
-        if ($input.val() === title && $input.hasClass(blurClass)) {
-          $input.val('').removeClass(blurClass);
-        }
-      }
-
-      if (title) {
-        $input.blur(function () {
-          if (this.value === '') {
-            $input.val(title).addClass(blurClass);
-          }
-        }).focus(remove).blur();
-
-        // clear the pre-defined text when form is submitted
-        $form.submit(remove);
-        $win.unload(remove); // handles Firefox's autocomplete
-      }
-    })
-  }
-
+  Ext.create('Ext.Component', {
+    html: '<a href="http://www.enonic.com/docs">Documentation</a><a href="http://www.enonic.com/community">Community</a><a href="#">About</a> ',
+    renderTo: 'links-container'
+  });
 
 </script>
 
