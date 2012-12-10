@@ -34,13 +34,13 @@ public class ValidateContentTypeHandler
         ContentTypeFetcher fetcher = new InternalContentTypeFetcher( session, contentTypeDao );
         ContentType contentType = command.getContentType();
         ContentTypeValidator validator =
-            ContentTypeValidator.newContentTypeValidator().recordExceptions( false ).superTypeFetcher( fetcher ).build();
+            ContentTypeValidator.newContentTypeValidator().recordExceptions( true ).contentTypeFetcher( fetcher ).build();
         validator.validate( contentType );
         command.setResult( ValidateContentTypeResult.from( validator.getInvalidContentTypeExceptions() ) );
     }
 
     @Autowired
-    public void setSuperTypeDao( final ContentTypeDao contentTypeDao )
+    public void setContentTypeDao( final ContentTypeDao contentTypeDao )
     {
         this.contentTypeDao = contentTypeDao;
     }

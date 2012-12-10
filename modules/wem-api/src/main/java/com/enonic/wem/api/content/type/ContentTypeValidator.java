@@ -6,15 +6,15 @@ import java.util.List;
 public class ContentTypeValidator
 {
 
-    final private ContentTypeFetcher superTypeFetcher;
+    final private ContentTypeFetcher contentTypeFetcher;
 
     final private boolean recordExceptions;
 
     private List<InvalidContentTypeException> invalidContentTypeExceptions = new ArrayList<InvalidContentTypeException>();
 
-    private ContentTypeValidator( final ContentTypeFetcher superTypeFetcher, final boolean recordExceptions )
+    private ContentTypeValidator( final ContentTypeFetcher contentTypeFetcher, final boolean recordExceptions )
     {
-        this.superTypeFetcher = superTypeFetcher;
+        this.contentTypeFetcher = contentTypeFetcher;
         this.recordExceptions = recordExceptions;
     }
 
@@ -25,10 +25,13 @@ public class ContentTypeValidator
 
     private void doValidateContentType( final ContentType contentType )
     {
-        ContentType superType = superTypeFetcher.getContentType( contentType.getSuperType() );
-        if ( superType != null && superType.isFinal() )
+        if ( contentType.getSuperType() != null )
         {
-            registerInvalidContentTypeException( new CannotInheritFromFinalContentTypeException( contentType ) );
+            ContentType superType = contentTypeFetcher.getContentType( contentType.getSuperType() );
+            if ( superType.isFinal() )
+            {
+                registerInvalidContentTypeException( new CannotInheritFromFinalContentTypeException( contentType ) );
+            }
         }
     }
 
@@ -63,7 +66,7 @@ public class ContentTypeValidator
             return this;
         }
 
-        public Builder superTypeFetcher( final ContentTypeFetcher value )
+        public Builder contentTypeFetcher( final ContentTypeFetcher value )
         {
             this.contentTypeFetcher = value;
             return this;
