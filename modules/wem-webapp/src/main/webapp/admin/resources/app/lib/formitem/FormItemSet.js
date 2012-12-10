@@ -182,7 +182,7 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
 
 
     _initSortable: function () {
-        new Admin.lib.Sortable(this, 'formItemSetDragGroup' + Ext.id(), {
+        new Admin.lib.Sortable(this, {
             proxyHtml: '<div><img src="../../admin/resources/images/icons/128x128/form_blue.png"/></div>',
             handle: '.admin-drag-handle'
         });
