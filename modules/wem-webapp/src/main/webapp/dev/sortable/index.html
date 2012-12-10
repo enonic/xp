@@ -7,20 +7,9 @@
     <link rel="stylesheet" type="text/css" href="../../admin/resources/lib/ext/resources/css/admin.css">
     <style type="text/css">
         pre {
+            line-height: 18px;
             background: #eee;
             padding: 10px;
-        }
-
-
-        .admin-sortable-insert-helper-below {
-            border-bottom: 1px solid #ff4500 !important;
-        }
-        .admin-sortable-insert-helper-above {
-            border-top: 1px solid #ff4500 !important;
-        }
-
-
-        .admin-sortable {
         }
 
         .admin-dragger {
@@ -29,6 +18,44 @@
             cursor: move;
             border-bottom: 1px dashed #59008C;
         }
+
+        .admin-drop-indicator {
+            position: absolute;
+            height: 1px;
+            line-height: 0;
+            overflow: visible;
+            border-bottom: 1px dotted green;
+        }
+        .admin-drop-indicator:before {
+            content: '•';
+            font-size: 16px;
+            color: green;
+            position: absolute;
+            left: -8px;
+            top: -1px;
+        }
+        .admin-drop-indicator:after {
+            content: '•';
+            font-size: 16px;
+            color: green;
+            position: absolute;
+            right: -8px;
+            top: -1px;
+        }
+
+
+            /*
+            .admin-drop-indicator .admin-drop-indicator-left {
+                background-image: url("../../admin/resources/lib/ext/resources/themes/images/default/grid/dd-insert-arrow-right.png");
+                content: 'o';
+                height: 16px;
+                left: -12px;
+                position: absolute;
+                top: -8px;
+                width: 16px;
+            }
+            */
+
 
     </style>
 
