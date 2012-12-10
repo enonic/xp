@@ -2938,7 +2938,7 @@ tr.x-container:before {
 /* line 797, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-red-small-focus {
   background-image: none;
-  background-color: #e36500; }
+  background-color: #ff7e17; }
 
 /* line 822, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-red-small-menu-active,
@@ -2981,7 +2981,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-small-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-small-focus .x-frame-mc {
-  background-color: #e36500;
+  background-color: #ff7e17;
   background-image: url('../themes/images/default/btn/btn-red-small-focus-bg.gif'); }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-small-menu-active .x-frame-tl,
@@ -3229,7 +3229,7 @@ tr.x-container:before {
 /* line 797, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-red-medium-focus {
   background-image: none;
-  background-color: #e36500; }
+  background-color: #ff7e17; }
 
 /* line 822, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-red-medium-menu-active,
@@ -3272,7 +3272,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-medium-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-medium-focus .x-frame-mc {
-  background-color: #e36500;
+  background-color: #ff7e17;
   background-image: url('../themes/images/default/btn/btn-red-medium-focus-bg.gif'); }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-medium-menu-active .x-frame-tl,
@@ -3520,7 +3520,7 @@ tr.x-container:before {
 /* line 797, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-red-large-focus {
   background-image: none;
-  background-color: #e36500; }
+  background-color: #ff7e17; }
 
 /* line 822, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-red-large-menu-active,
@@ -3563,7 +3563,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-red-large-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-large-focus .x-frame-mc {
-  background-color: #e36500;
+  background-color: #ff7e17;
   background-image: url('../themes/images/default/btn/btn-red-large-focus-bg.gif'); }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-red-large-menu-active .x-frame-tl,
@@ -3811,7 +3811,7 @@ tr.x-container:before {
 /* line 797, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-grey-small-focus {
   background-image: none;
-  background-color: #cccccc; }
+  background-color: #e6e6e6; }
 
 /* line 822, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-grey-small-menu-active,
@@ -3854,7 +3854,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-small-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-small-focus .x-frame-mc {
-  background-color: #cccccc;
+  background-color: #e6e6e6;
   background-image: url('../themes/images/default/btn/btn-grey-small-focus-bg.gif'); }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-small-menu-active .x-frame-tl,
@@ -4102,7 +4102,7 @@ tr.x-container:before {
 /* line 797, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-grey-medium-focus {
   background-image: none;
-  background-color: #cccccc; }
+  background-color: #e6e6e6; }
 
 /* line 822, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-grey-medium-menu-active,
@@ -4145,7 +4145,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-medium-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-medium-focus .x-frame-mc {
-  background-color: #cccccc;
+  background-color: #e6e6e6;
   background-image: url('../themes/images/default/btn/btn-grey-medium-focus-bg.gif'); }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-medium-menu-active .x-frame-tl,
@@ -4393,7 +4393,7 @@ tr.x-container:before {
 /* line 797, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-grey-large-focus {
   background-image: none;
-  background-color: #cccccc; }
+  background-color: #e6e6e6; }
 
 /* line 822, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-btn-grey-large-menu-active,
@@ -4436,7 +4436,7 @@ tr.x-container:before {
   background-image: url('../themes/images/default/btn/btn-grey-large-focus-sides.gif'); }
 /* line 922, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-large-focus .x-frame-mc {
-  background-color: #cccccc;
+  background-color: #e6e6e6;
   background-image: url('../themes/images/default/btn/btn-grey-large-focus-bg.gif'); }
 /* line 937, ../themes/stylesheets/ext4/default/widgets/_button.scss */
 .x-nbr .x-btn-grey-large-menu-active .x-frame-tl,
