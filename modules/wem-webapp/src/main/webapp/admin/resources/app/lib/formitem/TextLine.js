@@ -8,7 +8,8 @@ Ext.define('Admin.lib.formitem.TextLine', {
         me.items = [
             {
                 xtype: 'textfield',
-                name: me.name
+                name: me.name,
+                value: me.value
             }
         ];
 

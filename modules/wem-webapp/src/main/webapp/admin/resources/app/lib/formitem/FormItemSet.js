@@ -11,19 +11,23 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
     },
 
     formItemSetConfig: undefined,
+
+    content: null, // Blocks
+
     isCollapsed: false,
 
     fieldLabel: '',
 
     margin: '10 0 10 0',
 
+
     listeners: {
         render: function () {
-            this.initLayout();
-            this.initSortable();
+            this._initLayout();
+            this._initSortable();
         },
         afterlayout: function () {
-            this.enableDisableRemoveBlockButton();
+            this._enableDisableRemoveBlockButton();
         }
     },
 
@@ -33,92 +37,19 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
     },
 
 
-    insertBlockAt: function (position) {
-        var me = this,
-            block;
-
-        block = me.createBlock();
-        me.insert(position, block);
-    },
-
-
-    createBlock: function () {
+    _initLayout: function () {
         var me = this;
 
-        var block = new Ext.container.Container({
-            cls: 'admin-sortable admin-formitemset-block',
-            formItemSetBlock: true,
-            margin: '5 0',
-            padding: '0 0 10 0',
-            defaults: {
-                margin: '5 10'
-            },
-            items: me.createBlockHeader()
-        });
+        if (me.content) {
+            for (var i = 0; i < me.content.value.length; i++) {
+                me._addBlockAt(i, false);
+            }
 
-        me.mixins.formHelper.addFormItems(me.formItemSetConfig.items, block);
-
-        return block;
-    },
-
-
-    createBlockHeader: function () {
-        var me = this;
-
-        return {
-            xtype: 'container',
-            margin: '0 0 15 0',
-            padding: 5,
-            cls: 'header',
-            layout: {
-                type: 'table',
-                columns: 3,
-                tableAttrs: {
-                    style: 'width: 100%'
-                }
-            },
-            items: [
-                {
-                    tdAttrs: {
-                        style: 'width: 30px'
-                    },
-                    xtype: 'component',
-                    html: '<span class="admin-drag-handle" style="display: inline-block">[#]</span>'
-                },
-                {
-                    xtype: 'component',
-                    html: '<h6>' + me.formItemSetConfig.label + ': </h6>'
-                },
-                {
-                    tdAttrs: {
-                        align: 'right'
-                    },
-                    xtype: 'button',
-                    ui: 'grey',
-                    itemId: 'remove-block-button',
-                    text: 'x',
-                    handler: function (btn) {
-                        btn.up().up().destroy();
-                    }
-                }
-            ]
-        }
-    },
-
-
-    enableDisableRemoveBlockButton: function () {
-        var me = this,
-            disable = ((me.items.items.length - 1) === 1),
-            button = Ext.ComponentQuery.query('#remove-block-button', me)[0];
-
-        button.setDisabled(disable);
-    },
-
-
-    initLayout: function () {
-        var me = this;
-        if (me.formItemSetConfig.items) {
-            me.insertBlockAt(0);
+        } else {
+            // Remove if test?
+            if (me.formItemSetConfig.items) {
+                me._addBlockAt(0, true);
+            }
         }
 
         var addBlockButton = {
@@ -126,7 +57,7 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
             text: 'Add',
             handler: function (button) {
                 if (me.formItemSetConfig.items) {
-                    me.insertBlockAt((me.items.items.length - 1));
+                    me._addBlockAt((me.items.items.length - 1), true);
                 }
             }
         };
@@ -170,8 +101,88 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
         me.add(actionsContainer);
     },
 
-    initSortable: function () {
-        new Admin.lib.Sortable(this, 'formItemSetDragGroup' + Ext.id(), {
+
+    _addBlockAt: function (position, createBlankBlock) {
+        var me = this;
+
+        var block = new Ext.container.Container({
+            cls: 'admin-sortable admin-formitemset-block',
+            formItemSetBlock: true,
+            margin: '5 0',
+            padding: '0 0 10 0',
+            defaults: {
+                margin: '5 10'
+            },
+            items: me._createBlockHeader()
+        });
+
+        //  addComponentsForEditForm: function (contentData, contentTypeDef, parentComponent) {
+
+        if (createBlankBlock) {
+            me.mixins.formHelper.addNewComponents(me.formItemSetConfig.items, block);
+        } else {
+            me.mixins.formHelper.addComponentsWithContent(me.content.value[position], me.formItemSetConfig.items, block);
+        }
+
+        me.insert(position, block);
+    },
+
+
+    _createBlockHeader: function () {
+        var me = this;
+
+        return {
+            xtype: 'container',
+            margin: '0 0 15 0',
+            padding: 5,
+            cls: 'header',
+            layout: {
+                type: 'table',
+                columns: 3,
+                tableAttrs: {
+                    style: 'width: 100%'
+                }
+            },
+            items: [
+                {
+                    tdAttrs: {
+                        style: 'width: 30px'
+                    },
+                    xtype: 'component',
+                    html: '<span class="admin-drag-handle" style="display: inline-block">[#]</span>'
+                },
+                {
+                    xtype: 'component',
+                    html: '<h6>' + (me.formItemSetConfig.label || 'NO LABEL') + ': </h6>'
+                },
+                {
+                    tdAttrs: {
+                        align: 'right'
+                    },
+                    xtype: 'button',
+                    ui: 'grey',
+                    itemId: 'remove-block-button',
+                    text: 'x',
+                    handler: function (btn) {
+                        btn.up().up().destroy();
+                    }
+                }
+            ]
+        }
+    },
+
+
+    _enableDisableRemoveBlockButton: function () {
+        var me = this,
+            disable = ((me.items.items.length - 1) === 1),
+            button = Ext.ComponentQuery.query('#remove-block-button', me)[0];
+
+        button.setDisabled(disable);
+    },
+
+
+    _initSortable: function () {
+        new Admin.lib.Sortable(this, {
             proxyHtml: '<div><img src="../../admin/resources/images/icons/128x128/form_blue.png"/></div>',
             handle: '.admin-drag-handle'
         });

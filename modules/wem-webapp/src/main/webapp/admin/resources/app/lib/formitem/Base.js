@@ -8,8 +8,8 @@ Ext.define('Admin.lib.formitem.Base', {
         var me = this;
 
         me.defaults = {
-            margin: '0 0 1 0',
-            width: 320
+            margin: '0 0 5 0',
+            width: 450
         };
         me.callParent(arguments);
     },
