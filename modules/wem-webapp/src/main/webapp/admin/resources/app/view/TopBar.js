@@ -168,12 +168,12 @@ Ext.define('Admin.view.TopBar', {
             { xtype: 'tbspacer', flex: 5 },
             {
                 text: 'Log in',
-                cls: 'red',
+                ui: 'red',
                 margins: '0 6 0 0'
             },
             {
                 text: 'Settings',
-                cls: 'blue'
+                ui: 'blue'
             }
         ];
 
