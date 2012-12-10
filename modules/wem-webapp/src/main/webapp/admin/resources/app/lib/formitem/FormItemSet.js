@@ -153,7 +153,7 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
                 },
                 {
                     xtype: 'component',
-                    html: '<h6>' + (me.formItemSetConfig.label || 'NO LABEL') + ': </h6>'
+                    html: '<h6>' + (me.formItemSetConfig.label || '{No label}') + ': </h6>'
                 },
                 {
                     tdAttrs: {
