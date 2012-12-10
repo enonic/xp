@@ -14,6 +14,8 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 
+import static com.enonic.wem.api.content.type.ContentTypeValidator.newContentTypeValidator;
+
 @Component
 public class ValidateContentTypeHandler
     extends CommandHandler<ValidateContentType>
@@ -33,8 +35,7 @@ public class ValidateContentTypeHandler
         Session session = context.getJcrSession();
         ContentTypeFetcher fetcher = new InternalContentTypeFetcher( session, contentTypeDao );
         ContentType contentType = command.getContentType();
-        ContentTypeValidator validator =
-            ContentTypeValidator.newContentTypeValidator().recordExceptions( true ).contentTypeFetcher( fetcher ).build();
+        ContentTypeValidator validator = newContentTypeValidator().recordExceptions( true ).contentTypeFetcher( fetcher ).build();
         validator.validate( contentType );
         command.setResult( ValidateContentTypeResult.from( validator.getInvalidContentTypeExceptions() ) );
     }
