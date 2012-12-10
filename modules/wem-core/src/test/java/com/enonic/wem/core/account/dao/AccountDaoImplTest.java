@@ -64,7 +64,7 @@ public class AccountDaoImplTest
         throws Exception
     {
         createUserstore( userStoreNameAsObject );
-        accountDao.createUser( session, createUserAccount( userStoreName, "user1" ) );
+        accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
         commit();
     }
 
@@ -73,8 +73,8 @@ public class AccountDaoImplTest
         throws Exception
     {
         createUserstore( userStoreNameAsObject );
-        accountDao.createUser( session, createUserAccount( userStoreName, "user1" ) );
-        accountDao.createUser( session, createUserAccount( userStoreName, "user1" ) );
+        accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
+        accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
         commit();
     }
 
@@ -83,7 +83,7 @@ public class AccountDaoImplTest
         throws Exception
     {
         createUserstore( userStoreNameAsObject );
-        accountDao.createGroup( session, createGroup( userStoreName, "group1" ) );
+        accountDao.createGroup( createGroup( userStoreName, "group1" ), session );
         commit();
     }
 
@@ -92,8 +92,8 @@ public class AccountDaoImplTest
         throws Exception
     {
         createUserstore( userStoreNameAsObject );
-        accountDao.createGroup( session, createGroup( userStoreName, "group1" ) );
-        accountDao.createGroup( session, createGroup( userStoreName, "group1" ) );
+        accountDao.createGroup( createGroup( userStoreName, "group1" ), session );
+        accountDao.createGroup( createGroup( userStoreName, "group1" ), session );
         commit();
     }
 
@@ -101,7 +101,7 @@ public class AccountDaoImplTest
     public void testCreateRole_in_system_userstore()
         throws Exception
     {
-        accountDao.createRole( session, createRoleAccount( "system", "role1" ) );
+        accountDao.createRole( createRoleAccount( "system", "role1" ), session );
         commit();
     }
 
@@ -109,8 +109,8 @@ public class AccountDaoImplTest
     public void testCreateRole_in_system_userstore_already_exists()
         throws Exception
     {
-        accountDao.createRole( session, createRoleAccount( "system", "role1" ) );
-        accountDao.createRole( session, createRoleAccount( "system", "role1" ) );
+        accountDao.createRole( createRoleAccount( "system", "role1" ), session );
+        accountDao.createRole( createRoleAccount( "system", "role1" ), session );
         commit();
     }
 
@@ -120,7 +120,7 @@ public class AccountDaoImplTest
         throws Exception
     {
         createUserstore( userStoreNameAsObject );
-        accountDao.createRole( session, createRoleAccount( userStoreName, "role1" ) );
+        accountDao.createRole( createRoleAccount( userStoreName, "role1" ), session );
         commit();
     }
 
@@ -130,12 +130,12 @@ public class AccountDaoImplTest
         throws Exception
     {
         createUserstore( userStoreNameAsObject );
-        accountDao.createUser( session, createUserAccount( userStoreName, "user1" ) );
+        accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
         final AccountKey accountKey = AccountKey.user( userStoreName + ":" + "user1" );
-        assertTrue( accountDao.accountExists( session, accountKey ) );
-        assertTrue( accountDao.deleteAccount( session, accountKey ) );
-        assertFalse( accountDao.accountExists( session, accountKey ) );
-        assertFalse( accountDao.deleteAccount( session, accountKey ) );
+        assertTrue( accountDao.accountExists( accountKey, session ) );
+        assertTrue( accountDao.deleteAccount( accountKey, session ) );
+        assertFalse( accountDao.accountExists( accountKey, session ) );
+        assertFalse( accountDao.deleteAccount( accountKey, session ) );
         commit();
     }
 
@@ -144,8 +144,8 @@ public class AccountDaoImplTest
         throws Exception
     {
         createUserstore( userStoreNameAsObject );
-        assertTrue( accountDao.deleteUserStore( session, userStoreNameAsObject ) );
-        assertFalse( accountDao.deleteUserStore( session, userStoreNameAsObject ) );
+        assertTrue( accountDao.deleteUserStore( userStoreNameAsObject, session ) );
+        assertFalse( accountDao.deleteUserStore( userStoreNameAsObject, session ) );
         commit();
     }
 
@@ -154,13 +154,13 @@ public class AccountDaoImplTest
         throws Exception
     {
         createUserstore( userStoreNameAsObject );
-        accountDao.createUser( session, createUserAccount( userStoreName, "user1" ) );
+        accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
 
         final AccountKey accountKey = AccountKey.user( userStoreName + ":" + "user1" );
-        assertTrue( accountDao.accountExists( session, accountKey ) );
+        assertTrue( accountDao.accountExists( accountKey, session ) );
 
         final AccountKey accountKey2 = AccountKey.user( userStoreName + ":" + "user2" );
-        assertFalse( accountDao.accountExists( session, accountKey2 ) );
+        assertFalse( accountDao.accountExists( accountKey2, session ) );
         commit();
     }
 
@@ -169,13 +169,13 @@ public class AccountDaoImplTest
         throws Exception
     {
         createUserstore( userStoreNameAsObject );
-        accountDao.createUser( session, createUserAccount( userStoreName, "user1" ) );
+        accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
         final AccountKey accountKey = AccountKey.user( userStoreName + ":" + "user1" );
-        final UserAccount user = accountDao.findUser( session, accountKey, true, true );
+        final UserAccount user = accountDao.findUser( accountKey, true, true, session );
         assertEquals( user.getEmail(), "user1@enonic.com" );
 
         final AccountKey accountKey2 = AccountKey.user( userStoreName + ":" + "user2" );
-        assertNull( accountDao.findUser( session, accountKey2, true, true ) );
+        assertNull( accountDao.findUser( accountKey2, true, true, session ) );
         commit();
     }
 
@@ -184,15 +184,15 @@ public class AccountDaoImplTest
         throws Exception
     {
         createUserstore( userStoreNameAsObject );
-        accountDao.createGroup( session, createGroup( userStoreName, "group1" ) );
+        accountDao.createGroup( createGroup( userStoreName, "group1" ), session );
         final AccountKey accountKey = AccountKey.group( userStoreName + ":" + "group1" );
-        final GroupAccount group = accountDao.findGroup( session, accountKey, false );
+        final GroupAccount group = accountDao.findGroup( accountKey, false, session );
 
         // case sensitive ?
         assertEquals( group.getDisplayName(), "group1" );
 
         final AccountKey accountKey2 = AccountKey.group( userStoreName + ":" + "group2" );
-        assertNull( accountDao.findGroup( session, accountKey2, false ) );
+        assertNull( accountDao.findGroup( accountKey2, false, session ) );
         commit();
     }
 
@@ -200,17 +200,17 @@ public class AccountDaoImplTest
     public void testFindRole()
         throws Exception
     {
-        accountDao.createRole( session, createRoleAccount( "system", "role1" ) );
+        accountDao.createRole( createRoleAccount( "system", "role1" ), session );
 
         final AccountKey accountKey = AccountKey.role( "system" + ":" + "role1" );
-        assertNotNull( accountDao.findRole( session, accountKey, false ) );
+        assertNotNull( accountDao.findRole( accountKey, false, session ) );
 
         final AccountKey accountKey2 = AccountKey.role( "system" + ":" + "role2" );
-        assertNull( accountDao.findRole( session, accountKey2, false ) );
+        assertNull( accountDao.findRole( accountKey2, false, session ) );
 
         // non-existing userstore
         final AccountKey accountKey3 = AccountKey.role( "enonic" + ":" + "role3" );
-        assertNull( accountDao.findRole( session, accountKey3, false ) );
+        assertNull( accountDao.findRole( accountKey3, false, session ) );
         commit();
     }
 
@@ -220,13 +220,13 @@ public class AccountDaoImplTest
         throws Exception
     {
         createUserstore( userStoreNameAsObject );
-        accountDao.createUser( session, createUserAccount( userStoreName, "user1" ) );
+        accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
 
         final AccountKey accountKey = AccountKey.user( userStoreName + ":" + "user1" );
-        assertNotNull( accountDao.findAccount( session, accountKey ) );
+        assertNotNull( accountDao.findAccount( accountKey, session ) );
 
         final AccountKey accountKey2 = AccountKey.user( userStoreName + ":" + "user2" );
-        assertNull( accountDao.findAccount( session, accountKey2 ) );
+        assertNull( accountDao.findAccount( accountKey2, session ) );
         commit();
     }
 
@@ -235,17 +235,17 @@ public class AccountDaoImplTest
         throws Exception
     {
         createUserstore( userStoreNameAsObject );
-        accountDao.createUser( session, createUserAccount( userStoreName, "user1" ) );
+        accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
 
         final AccountKey accountKey = AccountKey.user( userStoreName + ":" + "user1" );
-        final UserAccount user = accountDao.findUser( session, accountKey, true, true );
+        final UserAccount user = accountDao.findUser( accountKey, true, true, session );
         assertEquals( user.getEmail(), "user1@enonic.com" );
 
         user.setEmail( "user2@enonic.com" );
 
-        accountDao.updateUser( session, user );
+        accountDao.updateUser( user, session );
 
-        final UserAccount user2 = accountDao.findUser( session, accountKey, true, true );
+        final UserAccount user2 = accountDao.findUser( accountKey, true, true, session );
 
         assertEquals( user2.getEmail(), "user2@enonic.com" );
         commit();
@@ -256,17 +256,17 @@ public class AccountDaoImplTest
         throws Exception
     {
         createUserstore( userStoreNameAsObject );
-        accountDao.createGroup( session, createGroup( userStoreName, "group1" ) );
+        accountDao.createGroup( createGroup( userStoreName, "group1" ), session );
         final AccountKey accountKey = AccountKey.group( userStoreName + ":" + "group1" );
-        final GroupAccount group = accountDao.findGroup( session, accountKey, false );
+        final GroupAccount group = accountDao.findGroup( accountKey, false, session );
 
         assertEquals( "group1", group.getDisplayName() );
 
         group.setDisplayName( "group2" );
 
-        accountDao.updateGroup( session, group );
+        accountDao.updateGroup( group, session );
 
-        final GroupAccount group2 = accountDao.findGroup( session, accountKey, false );
+        final GroupAccount group2 = accountDao.findGroup( accountKey, false, session );
         assertEquals( "group2", group2.getDisplayName() );
         commit();
     }
@@ -275,18 +275,18 @@ public class AccountDaoImplTest
     public void testUpdateRole()
         throws Exception
     {
-        accountDao.createRole( session, createRoleAccount( "system", "role1" ) );
+        accountDao.createRole( createRoleAccount( "system", "role1" ), session );
 
         final AccountKey accountKey = AccountKey.role( "system" + ":" + "role1" );
-        final RoleAccount role = accountDao.findRole( session, accountKey, false );
+        final RoleAccount role = accountDao.findRole( accountKey, false, session );
 
         assertEquals( "role1", role.getDisplayName() );
 
         role.setDisplayName( "role2" );
 
-        accountDao.updateRole( session, role );
+        accountDao.updateRole( role, session );
 
-        final RoleAccount role2 = accountDao.findRole( session, accountKey, false );
+        final RoleAccount role2 = accountDao.findRole( accountKey, false, session );
         assertEquals( "role2", role2.getDisplayName() );
         commit();
     }
@@ -297,14 +297,14 @@ public class AccountDaoImplTest
     {
         createUserstore( userStoreNameAsObject );
 
-        final UserStore retrieved = accountDao.getUserStore( session, userStoreNameAsObject, true, true );
+        final UserStore retrieved = accountDao.getUserStore( userStoreNameAsObject, true, true, session );
         assertNotSame( "name2", retrieved.getConnectorName() );
 
         retrieved.setConnectorName( "name2" );
 
-        accountDao.updateUserStore( session, retrieved );
+        accountDao.updateUserStore( retrieved, session );
 
-        final UserStore retrieved2 = accountDao.getUserStore( session, userStoreNameAsObject, true, true );
+        final UserStore retrieved2 = accountDao.getUserStore( userStoreNameAsObject, true, true, session );
         assertEquals( "name2", retrieved2.getConnectorName() );
         commit();
     }
@@ -328,7 +328,7 @@ public class AccountDaoImplTest
     {
         createUserstore( userStoreNameAsObject );
 
-        final UserStore retrieved = accountDao.getUserStore( session, userStoreNameAsObject, true, true );
+        final UserStore retrieved = accountDao.getUserStore( userStoreNameAsObject, true, true, session );
 
         assertEquals( userStore.getName(), retrieved.getName() );
         assertEquals( userStore.getConnectorName(), retrieved.getConnectorName() );
@@ -342,7 +342,7 @@ public class AccountDaoImplTest
     public void testGetUserStore_get_missing_userstore()
         throws Exception
     {
-        accountDao.getUserStore( session, UserStoreName.from( "missing" ), true, true );
+        accountDao.getUserStore( UserStoreName.from( "missing" ), true, true, session );
         commit();
     }
 
@@ -352,14 +352,14 @@ public class AccountDaoImplTest
     {
         createUserstore( userStoreNameAsObject );
 
-        accountDao.createUser( session, createUserAccount( userStoreName, "user1" ) );
-        accountDao.createGroup( session, createGroup( userStoreName, "group1" ) );
+        accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
+        accountDao.createGroup( createGroup( userStoreName, "group1" ), session );
 
         final AccountKey userKey = AccountKey.user( userStoreName + ":" + "user1" );
         final AccountKey groupKey = AccountKey.group( userStoreName + ":" + "group1" );
 
         final AccountKeys accountKeys = AccountKeys.from( userKey, groupKey );
-        accountDao.setUserStoreAdministrators( session, userStoreNameAsObject, accountKeys );
+        accountDao.setUserStoreAdministrators( userStoreNameAsObject, accountKeys, session );
 
         commit();
     }
@@ -369,7 +369,7 @@ public class AccountDaoImplTest
         throws Exception
     {
         createUserstore( userStoreNameAsObject );
-        accountDao.getUserStoreAdministrators( session, userStoreNameAsObject );
+        accountDao.getUserStoreAdministrators( userStoreNameAsObject, session );
         commit();
     }
 
@@ -380,16 +380,16 @@ public class AccountDaoImplTest
     {
         createUserstore( userStoreNameAsObject );
 
-        accountDao.createUser( session, createUserAccount( userStoreName, "user1" ) );
-        accountDao.createGroup( session, createGroup( userStoreName, "group1" ) );
+        accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
+        accountDao.createGroup( createGroup( userStoreName, "group1" ), session );
 
         final AccountKey userKey = AccountKey.user( userStoreName + ":" + "user1" );
         final AccountKey groupKey = AccountKey.group( userStoreName + ":" + "group1" );
 
         final AccountKeys accountKeys = AccountKeys.from( userKey, groupKey );
-        accountDao.setUserStoreAdministrators( session, userStoreNameAsObject, accountKeys );
+        accountDao.setUserStoreAdministrators( userStoreNameAsObject, accountKeys, session );
 
-        final AccountKeys userStoreAdministrators2 = accountDao.getUserStoreAdministrators( session, userStoreNameAsObject );
+        final AccountKeys userStoreAdministrators2 = accountDao.getUserStoreAdministrators( userStoreNameAsObject, session );
 
         assertEquals( userStoreAdministrators2.getSize(), 2 );
         commit();
@@ -401,14 +401,14 @@ public class AccountDaoImplTest
     {
         createUserstore( userStoreNameAsObject );
 
-        accountDao.createUser( session, createUserAccount( userStoreName, "user1" ) );
-        accountDao.createGroup( session, createGroup( userStoreName, "group1" ) );
+        accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
+        accountDao.createGroup( createGroup( userStoreName, "group1" ), session );
 
         final AccountKey userKey = AccountKey.user( userStoreName + ":" + "user1" );
         final AccountKey groupKey = AccountKey.group( userStoreName + ":" + "group1" );
 
         final AccountKeys accountKeys = AccountKeys.from( userKey );
-        accountDao.setMembers( session, groupKey, accountKeys );
+        accountDao.setMembers( groupKey, accountKeys, session );
         commit();
     }
 
@@ -418,16 +418,16 @@ public class AccountDaoImplTest
     {
         createUserstore( userStoreNameAsObject );
 
-        accountDao.createUser( session, createUserAccount( userStoreName, "user1" ) );
-        accountDao.createGroup( session, createGroup( userStoreName, "group1" ) );
+        accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
+        accountDao.createGroup( createGroup( userStoreName, "group1" ), session );
 
         final AccountKey userKey = AccountKey.user( userStoreName + ":" + "user1" );
         final AccountKey groupKey = AccountKey.group( userStoreName + ":" + "group1" );
 
         final AccountKeys accountKeys = AccountKeys.from( userKey );
-        accountDao.setMembers( session, groupKey, accountKeys );
+        accountDao.setMembers( groupKey, accountKeys, session );
 
-        final AccountKeys members = accountDao.getMembers( session, groupKey );
+        final AccountKeys members = accountDao.getMembers( groupKey, session );
 
         assertEquals( 1, members.getSize() );
         commit();
@@ -443,10 +443,10 @@ public class AccountDaoImplTest
         userStore.setDefaultStore( true );
         userStore.setConfig( createUserStoreConfig() );
 
-        accountDao.createUserStore( session, userStore );
+        accountDao.createUserStore( userStore, session );
 
         final AccountKeys administrators = userStore.getAdministrators() == null ? AccountKeys.empty() : userStore.getAdministrators();
-        accountDao.setUserStoreAdministrators( session, userStore.getName(), administrators );
+        accountDao.setUserStoreAdministrators( userStore.getName(), administrators, session );
         commit();
     }
 

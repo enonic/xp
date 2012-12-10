@@ -54,7 +54,7 @@ public class CreateContentTypeHandlerTest
         this.handler.handle( this.context, command );
 
         // verify
-        verify( contentTypeDao, atLeastOnce() ).createContentType( Mockito.any( Session.class ), Mockito.isA( ContentType.class ) );
+        verify( contentTypeDao, atLeastOnce() ).createContentType( Mockito.isA( ContentType.class ), Mockito.any( Session.class ) );
         final QualifiedContentTypeName contentTypeName = command.getResult();
         assertNotNull( contentTypeName );
         assertEquals( "myModule:myContentType", contentTypeName.toString() );

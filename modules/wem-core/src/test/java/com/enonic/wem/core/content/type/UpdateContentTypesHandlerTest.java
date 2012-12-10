@@ -53,7 +53,7 @@ public class UpdateContentTypesHandlerTest
             setAbstract( false ).
             build();
         final ContentTypes contentTypes = ContentTypes.from( contentType );
-        Mockito.when( contentTypeDao.retrieveContentTypes( any( Session.class ), isA( QualifiedContentTypeNames.class ) ) ).thenReturn(
+        Mockito.when( contentTypeDao.retrieveContentTypes( isA( QualifiedContentTypeNames.class ), any( Session.class ) ) ).thenReturn(
             contentTypes );
 
         // exercise
@@ -72,7 +72,7 @@ public class UpdateContentTypesHandlerTest
         this.handler.handle( this.context, command );
 
         // verify
-        verify( contentTypeDao, atLeastOnce() ).updateContentType( Mockito.any( Session.class ), Mockito.isA( ContentType.class ) );
+        verify( contentTypeDao, atLeastOnce() ).updateContentType( Mockito.isA( ContentType.class ), Mockito.any( Session.class ) );
         assertEquals( (Integer) 1, command.getResult() );
     }
 

@@ -32,7 +32,7 @@ public class DeleteUserStoresHandler
         int userStoresDeleted = 0;
         for ( UserStoreName userStoreName : userStoreNames )
         {
-            if ( accountDao.deleteUserStore( session, userStoreName ) )
+            if ( accountDao.deleteUserStore( userStoreName, session ) )
             {
                 userStoresDeleted++;
             }

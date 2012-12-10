@@ -49,7 +49,7 @@ public class FindMembershipsHandlerTest
         final AccountKey account = AccountKey.user( "enonic:johndoe" );
 
         // setup
-        Mockito.when( accountDao.accountExists( this.session, account ) ).thenReturn( true );
+        Mockito.when( accountDao.accountExists( account, this.session ) ).thenReturn( true );
         setSearchResults( AccountKeys.from( AccountKey.group( "enonic:group1" ), AccountKey.group( "enonic:group2" ),
                                             AccountKey.role( "enonic:role1" ) ) );
 
@@ -73,7 +73,7 @@ public class FindMembershipsHandlerTest
         final AccountKey account = AccountKey.group( "enonic:devs" );
 
         // setup
-        Mockito.when( accountDao.accountExists( this.session, account ) ).thenReturn( true );
+        Mockito.when( accountDao.accountExists( account, this.session ) ).thenReturn( true );
         setSearchResults( AccountKeys.from( AccountKey.group( "enonic:group1" ), AccountKey.group( "enonic:group2" ),
                                             AccountKey.role( "enonic:role1" ) ) );
 
@@ -97,7 +97,7 @@ public class FindMembershipsHandlerTest
         final AccountKey account = AccountKey.user( "enonic:johndoe" );
 
         // setup
-        Mockito.when( accountDao.accountExists( this.session, account ) ).thenReturn( true );
+        Mockito.when( accountDao.accountExists( account, this.session ) ).thenReturn( true );
         final AccountKeys directMemberships = AccountKeys.from( AccountKey.group( "enonic:group1" ), AccountKey.group( "enonic:group2" ) );
         final AccountKeys indirectMemberships = AccountKeys.from( AccountKey.role( "enonic:role1" ) );
         setSearchResults( directMemberships, indirectMemberships );

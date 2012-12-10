@@ -245,7 +245,7 @@ public class UpdateAccountsHandlerTest
         role.setMembers( AccountKeys.empty() );
 
         final AccountKey accountKey = role.getKey();
-        Mockito.when( accountDao.findRole( Matchers.eq( session ), Matchers.eq( accountKey ), Matchers.anyBoolean() ) ).thenReturn( role );
+        Mockito.when( accountDao.findRole( Matchers.eq( accountKey ), Matchers.anyBoolean(), Matchers.eq( session ) ) ).thenReturn( role );
         return role;
     }
 
@@ -258,7 +258,7 @@ public class UpdateAccountsHandlerTest
         group.setMembers( AccountKeys.empty() );
 
         final AccountKey accountKey = group.getKey();
-        Mockito.when( accountDao.findGroup( Matchers.eq( session ), Matchers.eq( accountKey ), Matchers.anyBoolean() ) ).thenReturn(
+        Mockito.when( accountDao.findGroup( Matchers.eq( accountKey ), Matchers.anyBoolean(), Matchers.eq( session ) ) ).thenReturn(
             group );
         return group;
     }
@@ -271,8 +271,7 @@ public class UpdateAccountsHandlerTest
         user.setDisplayName( "User " + name );
         user.setDeleted( false );
         final AccountKey accountKey = user.getKey();
-        Mockito.when( accountDao.findUser( Matchers.eq( session ), Matchers.eq( accountKey ), Matchers.anyBoolean(),
-                                           Matchers.anyBoolean() ) ).thenReturn( user );
+        Mockito.when( accountDao.findUser( Matchers.eq( accountKey ), Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.eq( session ) ) ).thenReturn( user );
         return user;
     }
 }

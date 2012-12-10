@@ -51,9 +51,9 @@ public class CreateUserStoreHandlerTest
         this.handler.handle( this.context, command );
         UserStoreName userStoreName = command.getResult();
 
-        verify( accountDao, atLeastOnce() ).createUserStore( any( Session.class ), eq( userStore ) );
-        verify( accountDao, atLeastOnce() ).setUserStoreAdministrators( any( Session.class ), eq( userStore.getName() ),
-                                                                        eq( userStore.getAdministrators() ) );
+        verify( accountDao, atLeastOnce() ).createUserStore( eq( userStore ), any( Session.class ) );
+        verify( accountDao, atLeastOnce() ).setUserStoreAdministrators( eq( userStore.getName() ), eq( userStore.getAdministrators() ),
+                                                                        any( Session.class ) );
         assertEquals( UserStoreName.from( "enonic" ), userStoreName );
     }
 

@@ -55,7 +55,7 @@ public class DeleteContentTypesHandlerTest
         this.handler.handle( this.context, command );
 
         // verify
-        Mockito.verify( contentTypeDao, only() ).deleteContentType( any( Session.class ), isA( QualifiedContentTypeName.class ) );
+        Mockito.verify( contentTypeDao, only() ).deleteContentType( isA( QualifiedContentTypeName.class ), any( Session.class ) );
 
         ContentTypeDeletionResult result = command.getResult();
         assertEquals( false, result.hasFailures() );
@@ -71,8 +71,8 @@ public class DeleteContentTypesHandlerTest
         final QualifiedContentTypeName notFoundName = new QualifiedContentTypeName( "my:notFoundContentType" );
         final QualifiedContentTypeName beingUsedName = new QualifiedContentTypeName( "my:beingUsedContentType" );
 
-        Mockito.doThrow( new ContentTypeNotFoundException( notFoundName ) ).when( contentTypeDao ).deleteContentType( any( Session.class ),
-                                                                                                                      eq( notFoundName ) );
+        Mockito.doThrow( new ContentTypeNotFoundException( notFoundName ) ).when( contentTypeDao ).deleteContentType( eq( notFoundName ),
+                                                                                                                      any( Session.class ) );
         Mockito.doReturn( 1 ).when( contentDao ).countContentTypeUsage( eq( beingUsedName ), any( Session.class ) );
 
         final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( existingName, notFoundName, beingUsedName );
@@ -82,7 +82,7 @@ public class DeleteContentTypesHandlerTest
 
         // verify
         Mockito.verify( contentDao, times( 3 ) ).countContentTypeUsage( isA( QualifiedContentTypeName.class ), any( Session.class ) );
-        Mockito.verify( contentTypeDao, times( 2 ) ).deleteContentType( any( Session.class ), isA( QualifiedContentTypeName.class ) );
+        Mockito.verify( contentTypeDao, times( 2 ) ).deleteContentType( isA( QualifiedContentTypeName.class ), any( Session.class ) );
 
         ContentTypeDeletionResult result = command.getResult();
         assertEquals( true, result.hasFailures() );

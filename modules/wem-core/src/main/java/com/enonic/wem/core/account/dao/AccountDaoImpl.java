@@ -46,7 +46,7 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public void createUserStore( final Session session, final UserStore userStore )
+    public void createUserStore( final UserStore userStore, final Session session )
         throws Exception
     {
         final Node root = session.getRootNode();
@@ -68,7 +68,7 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public void setUserStoreAdministrators( final Session session, final UserStoreName userStoreName, final AccountKeys administrators )
+    public void setUserStoreAdministrators( final UserStoreName userStoreName, final AccountKeys administrators, final Session session )
         throws Exception
     {
         final Node root = session.getRootNode();
@@ -94,7 +94,7 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public AccountKeys getUserStoreAdministrators( final Session session, final UserStoreName userStoreName )
+    public AccountKeys getUserStoreAdministrators( final UserStoreName userStoreName, final Session session )
         throws Exception
     {
         final Node userStoreNode = getUserStoreNode( session, userStoreName );
@@ -113,7 +113,7 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public void createUser( final Session session, final UserAccount user )
+    public void createUser( final UserAccount user, final Session session )
         throws Exception
     {
         final AccountKey accountKey = user.getKey();
@@ -133,7 +133,7 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public void createGroup( final Session session, final GroupAccount group )
+    public void createGroup( final GroupAccount group, final Session session )
         throws Exception
     {
         final AccountKey accountKey = group.getKey();
@@ -153,7 +153,7 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public void createRole( final Session session, final RoleAccount role )
+    public void createRole( final RoleAccount role, final Session session )
         throws Exception
     {
         final AccountKey accountKey = role.getKey();
@@ -173,7 +173,7 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public void setMembers( final Session session, final AccountKey nonUserAccount, final AccountKeys members )
+    public void setMembers( final AccountKey nonUserAccount, final AccountKeys members, final Session session )
         throws Exception
     {
         final Node accountNode = getAccountNode( session, nonUserAccount );
@@ -200,7 +200,7 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public boolean deleteAccount( final Session session, final AccountKey key )
+    public boolean deleteAccount( final AccountKey key, final Session session )
         throws Exception
     {
         final Node accountNode = getAccountNode( session, key );
@@ -214,7 +214,7 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public boolean deleteUserStore( final Session session, final UserStoreName name )
+    public boolean deleteUserStore( final UserStoreName name, final Session session )
         throws Exception
     {
         final Node userStoreNode = getUserStoreNode( session, name );
@@ -227,7 +227,7 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public boolean accountExists( final Session session, final AccountKey accountKey )
+    public boolean accountExists( final AccountKey accountKey, final Session session )
         throws Exception
     {
         final Node accountNode = getAccountNode( session, accountKey );
@@ -235,8 +235,7 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public UserAccount findUser( final Session session, final AccountKey accountKey, final boolean includeProfile,
-                                 final boolean includePhoto )
+    public UserAccount findUser( final AccountKey accountKey, final boolean includeProfile, final boolean includePhoto, final Session session )
         throws Exception
     {
         final Node accountNode = getAccountNode( session, accountKey );
@@ -252,7 +251,7 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public GroupAccount findGroup( final Session session, final AccountKey accountKey, final boolean includeMembers )
+    public GroupAccount findGroup( final AccountKey accountKey, final boolean includeMembers, final Session session )
         throws Exception
     {
         final Node accountNode = getAccountNode( session, accountKey );
@@ -264,7 +263,7 @@ public final class AccountDaoImpl
         final GroupAccount group = GroupAccount.create( accountKey );
         if ( includeMembers )
         {
-            group.setMembers( getMembers( session, accountKey ) );
+            group.setMembers( getMembers( accountKey, session ) );
         }
         accountJcrMapping.toGroup( accountNode, group );
         group.setEditable( true );
@@ -272,7 +271,7 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public RoleAccount findRole( final Session session, final AccountKey accountKey, final boolean includeMembers )
+    public RoleAccount findRole( final AccountKey accountKey, final boolean includeMembers, final Session session )
         throws Exception
     {
         final Node accountNode = getAccountNode( session, accountKey );
@@ -284,7 +283,7 @@ public final class AccountDaoImpl
         final RoleAccount role = RoleAccount.create( accountKey );
         if ( includeMembers )
         {
-            role.setMembers( getMembers( session, accountKey ) );
+            role.setMembers( getMembers( accountKey, session ) );
         }
         accountJcrMapping.toRole( accountNode, role );
         role.setEditable( true );
@@ -292,24 +291,24 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public Account findAccount( final Session session, final AccountKey accountKey )
+    public Account findAccount( final AccountKey accountKey, final Session session )
         throws Exception
     {
         switch ( accountKey.getType() )
         {
             case USER:
-                return findUser( session, accountKey, false, false );
+                return findUser( accountKey, false, false, session );
             case GROUP:
-                return findGroup( session, accountKey, false );
+                return findGroup( accountKey, false, session );
             case ROLE:
-                return findRole( session, accountKey, false );
+                return findRole( accountKey, false, session );
             default:
                 return null;
         }
     }
 
     @Override
-    public void updateUser( final Session session, final UserAccount user )
+    public void updateUser( final UserAccount user, final Session session )
         throws Exception
     {
         final AccountKey accountKey = user.getKey();
@@ -323,7 +322,7 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public void updateGroup( final Session session, final GroupAccount group )
+    public void updateGroup( final GroupAccount group, final Session session )
         throws Exception
     {
         final AccountKey accountKey = group.getKey();
@@ -336,12 +335,12 @@ public final class AccountDaoImpl
         accountJcrMapping.groupToJcr( group, groupNode );
         if ( group.getMembers() != null )
         {
-            setMembers( session, accountKey, group.getMembers() );
+            setMembers( accountKey, group.getMembers(), session );
         }
     }
 
     @Override
-    public void updateRole( final Session session, final RoleAccount role )
+    public void updateRole( final RoleAccount role, final Session session )
         throws Exception
     {
         final AccountKey accountKey = role.getKey();
@@ -354,7 +353,7 @@ public final class AccountDaoImpl
         accountJcrMapping.roleToJcr( role, roleNode );
         if ( role.getMembers() != null )
         {
-            setMembers( session, accountKey, role.getMembers() );
+            setMembers( accountKey, role.getMembers(), session );
         }
     }
 
@@ -375,7 +374,7 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public AccountKeys getMembers( final Session session, final AccountKey accountKey )
+    public AccountKeys getMembers( final AccountKey accountKey, final Session session )
         throws Exception
     {
         final Node accountNode = getAccountNode( session, accountKey );
@@ -400,8 +399,7 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public UserStore getUserStore( final Session session, final UserStoreName userStoreName, final boolean includeConfig,
-                                   boolean includeStatistics )
+    public UserStore getUserStore( final UserStoreName userStoreName, final boolean includeConfig, boolean includeStatistics, final Session session )
         throws Exception
     {
         final Node userStoreNode = getUserStoreNode( session, userStoreName );
@@ -426,7 +424,7 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public void updateUserStore( final Session session, final UserStore userStore )
+    public void updateUserStore( final UserStore userStore, final Session session )
         throws Exception
     {
         final UserStoreName userStoreName = userStore.getName();

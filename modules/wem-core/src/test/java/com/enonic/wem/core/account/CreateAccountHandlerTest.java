@@ -99,7 +99,7 @@ public class CreateAccountHandlerTest
         final AccountKey createdUserKey = command.getResult();
 
         // verify
-        verify( accountDao, atLeastOnce() ).createUser( Mockito.any( Session.class ), Mockito.eq( user ) );
+        verify( accountDao, atLeastOnce() ).createUser( Mockito.eq( user ), Mockito.any( Session.class ) );
         assertNotNull( createdUserKey );
         assertTrue( createdUserKey.isUser() );
         assertEquals( user.getKey(), createdUserKey );
@@ -119,7 +119,7 @@ public class CreateAccountHandlerTest
         final AccountKey createdGroupKey = command.getResult();
 
         // verify
-        verify( accountDao, atLeastOnce() ).createGroup( Mockito.any( Session.class ), Mockito.eq( group ) );
+        verify( accountDao, atLeastOnce() ).createGroup( Mockito.eq( group ), Mockito.any( Session.class ) );
         assertNotNull( createdGroupKey );
         assertTrue( createdGroupKey.isGroup() );
         assertEquals( group.getKey(), createdGroupKey );
@@ -139,7 +139,7 @@ public class CreateAccountHandlerTest
         final AccountKey createdRoleKey = command.getResult();
 
             // verify
-        verify( accountDao, atLeastOnce() ).createRole( Mockito.any( Session.class ), Mockito.eq( role ) );
+        verify( accountDao, atLeastOnce() ).createRole( Mockito.eq( role ), Mockito.any( Session.class ) );
         assertNotNull( createdRoleKey );
         assertTrue( createdRoleKey.isRole() );
         assertEquals( role.getKey(), createdRoleKey );

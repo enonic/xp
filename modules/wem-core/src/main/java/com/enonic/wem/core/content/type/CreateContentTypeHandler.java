@@ -28,7 +28,7 @@ public final class CreateContentTypeHandler
     {
         final ContentType contentType = command.getContentType();
         final Session session = context.getJcrSession();
-        contentTypeDao.createContentType( session, contentType );
+        contentTypeDao.createContentType( contentType, session );
         session.save();
         command.setResult( contentType.getQualifiedName() );
     }

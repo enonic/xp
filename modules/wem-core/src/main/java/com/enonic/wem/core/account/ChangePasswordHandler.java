@@ -26,7 +26,7 @@ public final class ChangePasswordHandler
         throws Exception
     {
         final AccountKey user = command.getKey();
-        final boolean userExists = accountDao.accountExists( context.getJcrSession(), user );
+        final boolean userExists = accountDao.accountExists( user, context.getJcrSession() );
         if ( !userExists )
         {
             throw new AccountNotFoundException( user );
