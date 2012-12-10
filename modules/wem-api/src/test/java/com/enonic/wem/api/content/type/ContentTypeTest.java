@@ -22,7 +22,7 @@ public class ContentTypeTest
     @Test
     public void layout()
     {
-        final ContentType contentType = newContentType().name( "test" ).build();
+        final ContentType contentType = newContentType().name( "test" ).module( ModuleName.from( "myModule" ) ).build();
         FieldSet layout = FieldSet.newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
         contentType.form().addFormItem( layout );
@@ -33,7 +33,7 @@ public class ContentTypeTest
     @Test
     public void layout_inside_formItemSet()
     {
-        final ContentType contentType = newContentType().name( "test" ).build();
+        final ContentType contentType = newContentType().name( "test" ).module( ModuleName.from( "myModule" ) ).build();
         FieldSet layout = FieldSet.newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
         FormItemSet myFormItemSet = newFormItemSet().name( "mySet" ).add( layout ).build();
@@ -52,6 +52,8 @@ public class ContentTypeTest
         formItemSet.add( newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() );
 
         final ContentType contentType = newContentType().
+            name( "test" ).
+            module( ModuleName.from( "myModule" ) ).
             addFormItem( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() ).
             addFormItem( formItemSet ).
             build();
@@ -74,6 +76,8 @@ public class ContentTypeTest
                 newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         final ContentType cty = newContentType().
+            name( "test" ).
+            module( ModuleName.from( "myModule" ) ).
             addFormItem( newSubTypeReference( subType ).name( "home" ).build() ).
             addFormItem( newSubTypeReference( subType ).name( "cabin" ).build() ).
             build();
@@ -102,6 +106,8 @@ public class ContentTypeTest
                 newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         final ContentType contentType = newContentType().
+            name( "test" ).
+            module( ModuleName.from( "myModule" ) ).
             addFormItem( newSubTypeReference( subType ).name( "home" ).build() ).
             build();
 
@@ -126,6 +132,8 @@ public class ContentTypeTest
                 newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         final ContentType cty = newContentType().
+            name( "test" ).
+            module( ModuleName.from( "myModule" ) ).
             addFormItem( newSubTypeReference().name( "home" ).typeInput().subType( subType.getQualifiedName() ).build() ).
             build();
 
@@ -153,6 +161,7 @@ public class ContentTypeTest
                     newInput().name( "myInnerInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
         final ContentType contentType = newContentType().
             name( "test" ).
+            module( ModuleName.from( "myModule" ) ).
             addFormItem( formItemSet ).
             build();
 
