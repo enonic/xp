@@ -32,6 +32,8 @@ public class ContentDataParserTest
         mySet.add( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
 
         final ContentType contentType = newContentType().
+            module( ModuleName.from( "myModule" ) ).
+            name( "myContentType" ).
             addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() ).
             addFormItem( newInput().name( "myTextArea" ).type( InputTypes.TEXT_AREA ).build() ).
             addFormItem( newInput().name( "myXml" ).type( InputTypes.XML ).build() ).
@@ -117,6 +119,8 @@ public class ContentDataParserTest
         throws IOException
     {
         final ContentType contentType = newContentType().
+            module( ModuleName.from( "myModule" ) ).
+            name( "myContentType" ).
             addFormItem( newInput().name( "myGeoLocation" ).type( InputTypes.GEO_LOCATION ).build() ).build();
 
         StringBuilder json = new StringBuilder();
@@ -144,6 +148,8 @@ public class ContentDataParserTest
         throws IOException
     {
         final ContentType contentType = newContentType().
+            module( ModuleName.from( "myModule" ) ).
+            name( "myContentType" ).
             addFormItem( newInput().name( "myColor" ).type( InputTypes.COLOR ).required( true ).build() ).build();
 
         StringBuilder json = new StringBuilder();
@@ -174,6 +180,8 @@ public class ContentDataParserTest
         final FormItemSet formItemSet = newFormItemSet().name( "myFormItemSet" ).build();
         formItemSet.add( newInput().name( "myColor" ).type( InputTypes.COLOR ).required( true ).build() );
         final ContentType contentType = newContentType().
+            module( ModuleName.from( "myModule" ) ).
+            name( "myContentType" ).
             addFormItem( formItemSet ).
             build();
 
