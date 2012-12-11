@@ -29,7 +29,7 @@ public class InternalContentTypeFetcher
     public ContentType getContentType( final QualifiedContentTypeName qualifiedContentTypeName )
     {
         final ContentTypes contentTypes =
-            contentTypeDao.retrieveContentTypes( session, QualifiedContentTypeNames.from( qualifiedContentTypeName ) );
+            contentTypeDao.retrieveContentTypes( QualifiedContentTypeNames.from( qualifiedContentTypeName ), session );
         if ( contentTypes.isEmpty() )
         {
             return null;
