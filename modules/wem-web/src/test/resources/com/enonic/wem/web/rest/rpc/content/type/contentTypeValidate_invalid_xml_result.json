@@ -1,0 +1,10 @@
+{
+    "success": true,
+    "hasErrors": true,
+    "errors": [
+        {
+            "message" : "Invalid content type format"
+        }
+    ],
+    "contentType" : null
+}

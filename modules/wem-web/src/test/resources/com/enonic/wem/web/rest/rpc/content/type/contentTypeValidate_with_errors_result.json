@@ -1,0 +1,42 @@
+{
+    "success": true,
+    "hasErrors": true,
+    "errors": [
+        {
+            "message": "Validation error message 1"
+        },
+        {
+            "message": "Validation error message 2"
+        }
+    ],
+    "contentType": {
+        "name": "AllTypes",
+        "module": "myModule",
+        "qualifiedName": "myModule:AllTypes",
+        "displayName": null,
+        "superType": "System:unstructured",
+        "isAbstract": false,
+        "isFinal": false,
+        "form": [
+            {
+                "Input": {
+                    "name": "myTextLine",
+                    "label": "",
+                    "immutable": false,
+                    "occurrences": {
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "indexed": false,
+                    "customText": "",
+                    "validationRegexp": null,
+                    "helpText": "",
+                    "type": {
+                        "name": "TextLine",
+                        "builtIn": true
+                    }
+                }
+            }
+        ]
+    }
+}

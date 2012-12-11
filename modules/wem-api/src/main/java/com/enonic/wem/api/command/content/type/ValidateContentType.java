@@ -11,9 +11,14 @@ public class ValidateContentType
 {
     private ContentType contentType;
 
-    public ValidateContentType( final ContentType contentType )
+    public ValidateContentType()
+    {
+    }
+
+    public ValidateContentType contentType( final ContentType contentType )
     {
         this.contentType = contentType;
+        return this;
     }
 
     public ContentType getContentType()

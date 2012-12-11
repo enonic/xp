@@ -4,23 +4,32 @@ public class InvalidContentTypeException
     extends RuntimeException
 {
 
-    private ContentType contentType;
+    private final ContentType contentType;
+
+    private final String validationMessage;
 
     public InvalidContentTypeException( final ContentType contentType )
     {
         super( buildMessage( contentType ) );
         this.contentType = contentType;
+        this.validationMessage = super.getMessage();
     }
 
-    public InvalidContentTypeException( final ContentType contentType, final String message )
+    public InvalidContentTypeException( final ContentType contentType, final String validationMessage )
     {
-        super( buildMessage( contentType, message ) );
+        super( buildMessage( contentType, validationMessage ) );
         this.contentType = contentType;
+        this.validationMessage = validationMessage;
     }
 
     public ContentType getContentType()
     {
         return contentType;
+    }
+
+    public String getValidationMessage()
+    {
+        return validationMessage;
     }
 
     private static String buildMessage( final ContentType contentType )
