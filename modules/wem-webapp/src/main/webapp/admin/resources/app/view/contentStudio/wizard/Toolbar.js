@@ -8,6 +8,10 @@ Ext.define('Admin.view.contentStudio.wizard.Toolbar', {
 
     isNewGroup: true,
 
+    defaults: {
+        scale: 'medium'
+    },
+
     initComponent: function () {
 
         var saveBtn = {
