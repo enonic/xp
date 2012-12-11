@@ -1,5 +1,7 @@
 package com.enonic.wem.web.rest.rpc.content.type;
 
+import org.springframework.stereotype.Component;
+
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.InvalidContentTypeException;
 import com.enonic.wem.api.content.type.ValidateContentTypeResult;
@@ -10,6 +12,7 @@ import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
 import static com.enonic.wem.api.command.Commands.contentType;
 
+@Component
 public class ValidateContentTypeRpcHandler
     extends AbstractDataRpcHandler
 {
