@@ -72,5 +72,45 @@
     </dependency>
   </dependencies>
 
+  <profiles>
+    <profile>
+      <id>all</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.7</version>
+            <configuration>
+              <charset>UTF-8</charset>
+              <encoding>UTF-8</encoding>
+              <docencoding>UTF-8</docencoding>
+              <breakiterator>true</breakiterator>
+              <keywords>true</keywords>
+              <version>false</version>
+              <author>false</author>
+              <links>
+                <link>http://docs.oracle.com/javase/7/docs/api/</link>
+                <link>http://www.jdom.org/docs/apidocs/</link>
+                <link>http://docs.oracle.com/javaee/5/api/</link>
+				<link>http://joda-time.sourceforge.net/apidocs/</link>
+				<link>http://docs.guava-libraries.googlecode.com/git/javadoc/</link>
+              </links>
+              <additionalJOption>-J-Xmx1024m</additionalJOption>
+            </configuration>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
 </project>
         

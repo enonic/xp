@@ -39,6 +39,10 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
 
 
     getData: function () {
+        return this.getContentData();
+    },
+
+    getContentData: function () {
         return this._buildContentData();
     },
 

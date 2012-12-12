@@ -49,10 +49,16 @@
     "facets": [
         {
             "name": "userstore",
-            "terms": {
-                "enonic": 2,
-                "system": 1
-            }
+            "terms": [
+                {
+                    "name": "enonic",
+                    "count": 2
+                },
+                {
+                    "name": "system",
+                    "count": 1
+                }
+            ]
         }
     ]
 }
