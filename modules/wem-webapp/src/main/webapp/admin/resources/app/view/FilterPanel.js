@@ -1,5 +1,5 @@
 Ext.define('Admin.view.FilterPanel', {
-    extend: 'Ext.form.Panel',
+    extend: 'Ext.panel.Panel',
     alias: 'widget.filterPanel',
 
     cls: 'admin-filter',
@@ -9,12 +9,27 @@ Ext.define('Admin.view.FilterPanel', {
         align: 'stretch'
     },
     autoScroll: true,
-
     split: true,
+
     includeSearch: true,
-    includeFacets: undefined,
-    excludeFacets: [],
-    includeEmptyFacets: 'all', // all, last, none
+
+    // all - always show empty facets,
+    // last - show empty facets only for last modified group,
+    // none - hide empty facets
+    includeEmptyFacets: 'all',
+
+    // always - update count every time the filter is changed
+    // query - update when query is made only
+    // never - set counts just once on start
+    updateFacetCount: 'always',
+
+    facetTpl: undefined,
+    facetData: undefined,
+
+    facetSortFn: function (a, b) {
+        // alpha compare checkbox names
+        return a['name'].localeCompare(b['name']);
+    },
 
     initComponent: function () {
         var me = this;
@@ -23,12 +38,69 @@ Ext.define('Admin.view.FilterPanel', {
             this.originalTitle = this.title;
         }
 
-        if (!Ext.isArray(this.items)) {
-            this.items = [];
+        Ext.applyIf(this, {
+            items: [],
+            facetTpl: new Ext.XTemplate(
+                '<tpl for=".">',
+                '<div class="admin-facet-group" name="{name}">',
+                '<h2>{name}</h2>',
+                '<tpl for="terms">',
+                '<tpl if="this.shouldShowTerm(values, parent)">',
+                '<div class="admin-facet {[values.selected ? \'checked\' : \'\']}">',
+                '<input type="checkbox" id="facet-{name}" value="{name}" class="admin-facet-cb" name="{parent.name}" {[values.selected ? \'checked="true"\' : \'\']} />' +
+                '<label for="facet-{key}" class="admin-facet-lbl"> {name} ({[this.getTermCount(values)]})</label>' +
+                '</div>',
+                '</tpl>',
+                '</tpl>',
+                '</div>',
+                '</tpl>',
+                {
+                    shouldShowTerm: function (term, facet) {
+                        //update term count if needed
+                        if (me.updateFacetCount === 'always' ||
+                            (me.updateFacetCount === 'query' && me.queryDirty) || !Ext.isDefined(me.facetCountMap[term.name])) {
+
+                            me.facetCountMap[term.name] = term.count;
+                        }
+                        // decide if it should be shown
+                        return me.includeEmptyFacets == 'all' ||
+                               (me.includeEmptyFacets == 'last' && me.lastFacetName == facet.name) ||
+                               term.count > 0 || term.selected || this.isSelected(term, facet);
+                    },
+                    getTermCount: function (term) {
+                        return me.facetCountMap[term.name];
+                    },
+                    isSelected: function (term, facet) {
+                        var terms = me.selectedValues[facet.name];
+                        if (terms) {
+                            return Ext.Array.contains(terms, term.name);
+                        }
+                        return false;
+                    }
+                }
+            )
+        });
+
+        if (this.facetData) {
+            this.sortValues(this.facetData);
         }
 
+        this.facetContainer = Ext.create('Ext.Component', {
+            xtype: 'component',
+            itemId: 'facetContainer',
+            tpl: me.facetTpl,
+            data: me.facetData,
+            listeners: {
+                afterrender: function (cmp) {
+                    cmp.el.on('click', me.onFacetClicked, me);
+                }
+            }
+        });
+        this.items.unshift(this.facetContainer);
+
         if (this.includeSearch) {
-            this.items.unshift({
+
+            this.searchField = Ext.create('Ext.form.field.Trigger', {
                 xtype: 'trigger',
                 cls: 'admin-search-trigger',
                 enableKeyEvents: true,
@@ -48,14 +120,11 @@ Ext.define('Admin.view.FilterPanel', {
                     }
                 }
             });
+            this.items.unshift(this.searchField);
         }
 
-        if (this.includeFacets) {
-            this.addFacets(this.includeFacets);
-        }
-
+        this.facetCountMap = [];
         this.callParent(arguments);
-
         this.addEvents('search');
     },
 
@@ -72,178 +141,131 @@ Ext.define('Admin.view.FilterPanel', {
                     this.searchFilterTypingTimer = null;
                 }
                 this.searchFilterTypingTimer = window.setTimeout(function () {
-                    me.updateTitle();
+                    if (me.updateFacetCount === 'query') {
+                        me.queryDirty = true;
+                    }
+                    if (me.includeEmptyFacets == 'last') {
+                        me.lastFacetName = undefined;
+                    }
                     me.fireEvent('search', me.getValues());
                 }, 500);
             }
         }
     },
 
-    onFacetChanged: function (facet, newVal, oldVal, opts) {
-        if (this.suspendEvents !== true) {
+    onFacetClicked: function (event, target, opts) {
 
-            if (this.includeEmptyFacets === 'last') {
-                this.lastFacetName = facet.name;
+        target = Ext.fly(target);
+        var facet = target.hasCls('admin-facet') ? target : target.up('.admin-facet');
+        if (facet) {
+
+            var cb = facet.down('input[type=checkbox]', true);
+            var checked = cb.hasAttribute("checked");
+            if (checked) {
+                cb.removeAttribute("checked");
+                facet.removeCls("checked");
+            } else {
+                cb.setAttribute("checked", "true");
+                facet.addCls("checked");
             }
 
-            this.updateTitle();
+            var group = facet.up('.admin-facet-group', true);
+            if (group) {
+                this.lastFacetName = group.getAttribute('name');
+            }
+
             this.fireEvent('search', this.getValues());
         }
     },
 
-    updateTitle: function () {
-        if (this.header) {
-            if (!this.getForm().isDirty()) {
-                this.setTitle(this.originalTitle);
-            } else {
-                var title = this.originalTitle + " (<a href='javascript:;' class='clearSelection'>Clear filter</a>)";
-                this.setTitle(title);
-
-                var clearSel = this.header.el.down('a.clearSelection');
-                if (clearSel) {
-                    clearSel.on("click", function () {
-                        // stop events to prevent firing change events by every field
-                        this.resetValues();
-                        this.fireEvent('search', this.getValues());
-                    }, this);
-                }
-            }
-        }
-    },
-
-
-    removeFacets: function () {
-        var me = this;
-        this.items.each(function (item) {
-            var isFacet = item && item.xtype === 'fieldset';
-            if (isFacet) {
-                if (!me.rendered) {
-                    me.items.remove(item);
-                } else {
-                    me.remove(item);
-                }
-            }
-        });
-    },
-
-    addFacets: function (facets) {
-        var i = 0;
-        var me = this;
-        for (i = 0; i < facets.length; i++) {
-
-            var facet = facets[i];
-            var facetItems;
-
-            if (facet.terms) {
-                facetItems = [];
-                var field;
-                for (field in facet.terms) {
-                    if (facet.terms.hasOwnProperty(field)) {
-                        var termCount = parseInt(facet.terms[field], 10);
-                        if (me.includeEmptyFacets === 'all' ||
-                            (me.includeEmptyFacets === 'last' && me.lastFacetName === facet.name) ||
-                            termCount > 0) {
-                            if (!Ext.Array.contains(me.excludeFacets, facet.name)) {
-                                var titleAttr = 'title="' + field + '"';
-                                facetItems.push({
-                                    name: facet.name,
-                                    boxLabel: Ext.String.ellipsis(field, 17, false) +
-                                              "<span class='count'>(" + facet.terms[field] + ")</span>",
-                                    inputValue: field,
-                                    inputAttrTpl: titleAttr,
-                                    boxLabelAttrTpl: titleAttr
-                                });
-                            }
-                        }
-                    }
-                }
-            } else {
-                facetItems = facet.items;
-            }
-
-            if (facetItems.length > 0) {
-                var facetConfig = {
-                    xtype: 'fieldset',
-                    title: facet.title || facet.name,
-                    items: [
-                        {
-                            xtype: facet.xtype || 'checkboxgroup',
-                            name: facet.name,
-                            columns: 1,
-                            vertical: true,
-                            items: facetItems,
-                            listeners: {
-                                change: {
-                                    fn: me.onFacetChanged,
-                                    scope: me
-                                }
-                            }
-                        }
-                    ]
-                };
-                if (!this.rendered) {
-                    this.items = this.items.concat(facetConfig);
-                } else {
-                    this.add(facetConfig);
-                }
-            }
-        }
-    },
-
     updateFacets: function (facets) {
-        // suspend events to prevent firing change event for every field
-        this.suspendEvents = true;
-        // backup filter state
-        var data = this.getValues();
-        this.removeFacets();
-        this.addFacets(facets);
-        // restore filter state
-        this.setValues(data);
-
-        this.suspendEvents = false;
+        if (facets) {
+            this.selectedValues = this.getValues();
+            this.sortValues(facets);
+            this.down('#facetContainer').update(facets);
+            this.setValues(this.selectedValues);
+        }
     },
 
 
     getValues: function () {
-        return this.getForm().getValues();
-    },
-
-    setValues: function (values) {
-
-        var form = this.getForm();
-
-        Ext.iterate(values, function (fieldId, val) {
-            var field = form.findField(fieldId);
-            if (field) {
-                if (field.xtype === 'checkbox') {
-                    var cbgroup = field.up('checkboxgroup');
-                    if (cbgroup) {
-                        field = cbgroup;
-                    }
-                }
-                if (field.xtype === 'checkboxgroup') {
-                    var temp = {};
-                    temp[fieldId] = val;
-                    val = temp;
-                }
-                field.setValue(val);
+        var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
+        var values = {};
+        if (this.searchField) {
+            var query = this.searchField.getValue();
+            if (Ext.String.trim(query).length > 0) {
+                values[this.searchField.name] = query;
+            }
+        }
+        Ext.Array.each(selectedCheckboxes, function (cb) {
+            var oldValue = values[cb.name];
+            if (Ext.isArray(oldValue)) {
+                oldValue.push(cb.value);
+            } else {
+                values[cb.name] = [cb.value];
             }
         });
 
-        this.updateTitle();
+        return values;
     },
 
-    resetValues: function () {
-        // suspend events to prevent firing change event for every field
-        this.suspendEvents = true;
-        this.getForm().reset();
-        this.suspendEvents = false;
+    setValues: function (values) {
+        var me = this;
 
-        this.updateTitle();
+        if (this.searchField) {
+            this.searchField.setValue(values[this.searchField.name]);
+        }
+
+        var checkboxes = Ext.query('.admin-facet-group input[type=checkbox]', this.facetContainer.el.dom);
+        var checkedCount = 0, facet;
+        Ext.Array.each(checkboxes, function (cb) {
+            var facet = Ext.fly(cb).up('.admin-facet');
+            if (me.isValueChecked(cb.value, values)) {
+                checkedCount++;
+                cb.setAttribute('checked', 'true');
+                facet.addCls('checked');
+            } else {
+                cb.removeAttribute('checked');
+                facet.removeCls('checked');
+            }
+        });
+
+        if (this.updateFacetCount == 'query' && this.queryDirty && checkedCount === 0) {
+            this.queryDirty = false;
+        }
+
+    },
+
+    isValueChecked: function (value, values) {
+        for (var facet in values) {
+            if (values.hasOwnProperty(facet)) {
+                var terms = [].concat(values[facet]);
+                for (var i = 0; i < terms.length; i++) {
+                    if (terms[i] === value) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    },
+
+    sortValues: function (values) {
+        var me = this;
+        if (Ext.isFunction(me.facetSortFn)) {
+            Ext.Array.each(values, function (value) {
+                if (Ext.isArray(value.terms)) {
+                    value.terms.sort(me.facetSortFn);
+                }
+            });
+        }
     },
 
     isDirty: function () {
-        return this.getForm().isDirty();
+        var selectedCheckboxes = Ext.query('.admin-facet-group input[type=checkbox]:checked', this.facetContainer.el.dom);
+        var query = Ext.String.trim(this.searchField.getValue());
+        return selectedCheckboxes.length > 0 || query.length > 0;
     }
 
-});
+})
+;

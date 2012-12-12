@@ -42,7 +42,7 @@ Ext.define('Admin.controller.account.FilterPanelController', {
 
     buildAccountSearchQuery: function (values) {
         var query = {
-            query: values.query
+            query: values.query || ""
         };
         if (!Ext.isEmpty(values.type)) {
             query.types = values.type;
