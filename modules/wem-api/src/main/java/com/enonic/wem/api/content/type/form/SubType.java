@@ -1,30 +1,41 @@
 package com.enonic.wem.api.content.type.form;
 
 
-import com.enonic.wem.api.module.Module;
+import com.google.common.base.Preconditions;
+
+import com.enonic.wem.api.module.ModuleName;
 
 public abstract class SubType
 {
-    private Module module;
+    private final ModuleName moduleName;
 
-    SubType( final Module module )
+    private final String displayName;
+
+    SubType( final String displayName, final ModuleName moduleName )
     {
-        this.module = module;
+        Preconditions.checkNotNull( moduleName, "moduleName is required" );
+        this.displayName = displayName;
+        this.moduleName = moduleName;
     }
 
     public abstract String getName();
 
-    public Module getModule()
+    public ModuleName getModuleName()
     {
-        return module;
+        return moduleName;
     }
 
-    public SubTypeQualifiedName getQualifiedName()
+    public String getDisplayName()
     {
-        return new SubTypeQualifiedName( module.getName(), getName() );
+        return displayName;
+    }
+
+    public QualifiedSubTypeName getQualifiedName()
+    {
+        return new QualifiedSubTypeName( moduleName, getName() );
     }
 
     public abstract Class getType();
 
-    public abstract HierarchicalFormItem create( final SubTypeReference subTypeReference );
+    public abstract FormItem toFormItem( final SubTypeReference subTypeReference );
 }

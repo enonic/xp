@@ -54,12 +54,12 @@ public final class UpdateContentTypesHandler
 
     private void updateContentType( final Session session, final ContentType contentType )
     {
-        contentTypeDao.updateContentType( session, contentType );
+        contentTypeDao.updateContentType( contentType, session );
     }
 
     private ContentType retrieveContentType( final Session session, final QualifiedContentTypeName contentTypeName )
     {
-        final ContentTypes contentTypes = contentTypeDao.retrieveContentTypes( session, QualifiedContentTypeNames.from( contentTypeName ) );
+        final ContentTypes contentTypes = contentTypeDao.retrieveContentTypes( QualifiedContentTypeNames.from( contentTypeName ), session );
         return contentTypes.isEmpty() ? null : contentTypes.getFirst();
     }
 

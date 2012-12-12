@@ -12,11 +12,13 @@
         "data": [
             {
                 "name": "field1",
+                "path": "field1",
                 "type": "Text",
                 "value": "value1"
             },
             {
                 "name": "field2",
+                "path": "field2",
                 "type": "Text",
                 "value": "value2"
             }

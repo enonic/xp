@@ -59,9 +59,9 @@ public class UpdateUserStoresHandler
     private UserStore retrieveUserStore( final Session session, final UserStoreName userStoreName )
         throws Exception
     {
-        final UserStore userStore = accountDao.getUserStore( session, userStoreName, true, false );
+        final UserStore userStore = accountDao.getUserStore( userStoreName, true, false, session );
         userStore.setConnector( getUserStoreConnector( userStoreName ) );
-        final AccountKeys administrators = accountDao.getUserStoreAdministrators( session, userStoreName );
+        final AccountKeys administrators = accountDao.getUserStoreAdministrators( userStoreName, session );
         userStore.setAdministrators( administrators );
         return userStore;
     }
@@ -69,9 +69,9 @@ public class UpdateUserStoresHandler
     private void updateUserStore( final Session session, final UserStore userStore )
         throws Exception
     {
-        accountDao.updateUserStore( session, userStore );
+        accountDao.updateUserStore( userStore, session );
         final AccountKeys administrators = userStore.getAdministrators() == null ? AccountKeys.empty() : userStore.getAdministrators();
-        accountDao.setUserStoreAdministrators( session, userStore.getName(), administrators );
+        accountDao.setUserStoreAdministrators( userStore.getName(), administrators, session );
     }
 
     @Autowired

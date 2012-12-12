@@ -9,7 +9,7 @@ Ext.define('Admin.lib.formitem.Relation', {
         me.selectedContentStore = this.createSelectedContentStore();
 
         me.items = [
-            me.createHiddenValueInput(),
+            me.createHiddenInput(),
             me.createComboBox(),
             me.createViewForSelectedContent()
         ];
@@ -18,7 +18,7 @@ Ext.define('Admin.lib.formitem.Relation', {
     },
 
 
-    createHiddenValueInput: function () {
+    createHiddenInput: function () {
         var me = this;
         return {
             xtype: 'hiddenfield',
@@ -34,6 +34,7 @@ Ext.define('Admin.lib.formitem.Relation', {
 
         var combo = {
             xtype: 'combo',
+            name: '_system_relation_combo',
             submitValue: false,
             hideTrigger: true,
             forceSelection: true,
@@ -147,6 +148,11 @@ Ext.define('Admin.lib.formitem.Relation', {
             });
             me.getComponent(me.name).setValue(keys);
         }
+    },
+
+    getValue: function () {
+        var me = this;
+        return me.getComponent(me.name).getValue();
     }
 
 });

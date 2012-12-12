@@ -4,8 +4,8 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.ContentTypes;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 
 public final class GetContentTypes
     extends Command<ContentTypes>
@@ -13,6 +13,8 @@ public final class GetContentTypes
     private QualifiedContentTypeNames contentTypeNames;
 
     private boolean getAllContentTypes = false;
+
+    private boolean subTypeReferencesToFormItems = false;
 
     public QualifiedContentTypeNames getNames()
     {
@@ -22,6 +24,17 @@ public final class GetContentTypes
     public GetContentTypes names( final QualifiedContentTypeNames contentTypeNames )
     {
         this.contentTypeNames = contentTypeNames;
+        return this;
+    }
+
+    public boolean isSubTypeReferencesToFormItems()
+    {
+        return subTypeReferencesToFormItems;
+    }
+
+    public GetContentTypes subTypeReferencesToFormItems( final boolean value )
+    {
+        subTypeReferencesToFormItems = value;
         return this;
     }
 

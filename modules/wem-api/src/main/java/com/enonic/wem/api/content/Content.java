@@ -34,17 +34,16 @@ public final class Content
 
     private final UserKey modifier;
 
-    private Content( final String displayName, final QualifiedContentTypeName type, final ContentPath path, final ContentData data,
-                     final DateTime createdTime, final DateTime modifiedTime, final UserKey owner, final UserKey modifier )
+    private Content( final Builder builder )
     {
-        this.displayName = displayName;
-        this.type = type;
-        this.path = path;
-        this.data = data;
-        this.createdTime = createdTime;
-        this.modifiedTime = modifiedTime;
-        this.owner = owner;
-        this.modifier = modifier;
+        this.displayName = builder.displayName;
+        this.type = builder.type;
+        this.path = builder.path;
+        this.data = builder.data;
+        this.createdTime = builder.createdTime;
+        this.modifiedTime = builder.modifiedTime;
+        this.owner = builder.owner;
+        this.modifier = builder.modifier;
     }
 
     public ContentPath getPath()
@@ -259,7 +258,7 @@ public final class Content
             {
                 type = QualifiedContentTypeName.unstructured();
             }
-            return new Content( displayName, type, path, data, createdTime, modifiedTime, owner, modifier );
+            return new Content( this );
         }
     }
 }

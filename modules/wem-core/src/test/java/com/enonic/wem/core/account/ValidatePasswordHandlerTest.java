@@ -40,7 +40,7 @@ public class ValidatePasswordHandlerTest
         // setup
         final String userPassword = "passw0rd";
         final AccountKey account = AccountKey.user( "enonic:johndoe" );
-        Mockito.when( accountDao.accountExists( this.session, account ) ).thenReturn( true );
+        Mockito.when( accountDao.accountExists( account, this.session ) ).thenReturn( true );
 
         // exercise
         final ValidatePassword command = Commands.account().validatePassword().key( account ).password( userPassword );
@@ -61,7 +61,7 @@ public class ValidatePasswordHandlerTest
         // setup
         final String userPassword = "passw0rd";
         final AccountKey account = AccountKey.user( "enonic:johndoe" );
-        Mockito.when( accountDao.accountExists( this.session, account ) ).thenReturn( true );
+        Mockito.when( accountDao.accountExists( account, this.session ) ).thenReturn( true );
 
         // exercise
         final ValidatePassword command = Commands.account().validatePassword().key( account ).password( "forgotPassword" );

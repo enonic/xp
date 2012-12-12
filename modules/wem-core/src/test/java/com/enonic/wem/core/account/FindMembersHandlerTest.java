@@ -45,7 +45,7 @@ public class FindMembersHandlerTest
         final AccountKey user = AccountKey.user( "enonic:user1" );
         final AccountKey role = AccountKey.role( "enonic:role1" );
 
-        Mockito.when( accountDao.getMembers( Mockito.any( Session.class ), Mockito.eq( groupAccount ) ) ).thenReturn(
+        Mockito.when( accountDao.getMembers( Mockito.eq( groupAccount ), Mockito.any( Session.class ) ) ).thenReturn(
             AccountKeys.from( group, user, role ) );
 
         // exercise
@@ -70,7 +70,7 @@ public class FindMembersHandlerTest
         final AccountKey user = AccountKey.user( "enonic:user1" );
         final AccountKey role = AccountKey.role( "enonic:role1" );
 
-        Mockito.when( accountDao.getMembers( Mockito.any( Session.class ), Mockito.eq( roleAccount ) ) ).thenReturn(
+        Mockito.when( accountDao.getMembers( Mockito.eq( roleAccount ), Mockito.any( Session.class ) ) ).thenReturn(
             AccountKeys.from( group, user, role ) );
 
         // exercise
@@ -92,7 +92,7 @@ public class FindMembersHandlerTest
     {
         final AccountKey userAccount = AccountKey.user( "enonic:user1" );
 
-        Mockito.when( accountDao.getMembers( Mockito.any( Session.class ), Mockito.eq( userAccount ) ) ).thenReturn( AccountKeys.empty() );
+        Mockito.when( accountDao.getMembers( Mockito.eq( userAccount ), Mockito.any( Session.class ) ) ).thenReturn( AccountKeys.empty() );
 
         final FindMembers command = Commands.account().findMembers().key( userAccount );
         this.handler.handle( this.context, command );
@@ -108,7 +108,7 @@ public class FindMembersHandlerTest
     {
         final AccountKey groupAccount = AccountKey.group( "enonic:group1" );
 
-        Mockito.when( accountDao.getMembers( Mockito.any( Session.class ), Mockito.eq( groupAccount ) ) ).thenThrow(
+        Mockito.when( accountDao.getMembers( Mockito.eq( groupAccount ), Mockito.any( Session.class ) ) ).thenThrow(
             new AccountNotFoundException( groupAccount ) );
 
         final FindMembers command = Commands.account().findMembers().key( groupAccount );

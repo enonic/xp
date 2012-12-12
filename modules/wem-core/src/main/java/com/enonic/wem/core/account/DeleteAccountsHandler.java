@@ -37,7 +37,7 @@ public class DeleteAccountsHandler
         final Session session = context.getJcrSession();
         for ( AccountKey accountKey : accountKeys )
         {
-            if ( this.accountDao.deleteAccount( context.getJcrSession(), accountKey ) )
+            if ( this.accountDao.deleteAccount( accountKey, context.getJcrSession() ) )
             {
                 this.searchService.deleteIndex( accountKey.toString() );
                 accountsDeleted++;

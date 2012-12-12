@@ -206,7 +206,7 @@ public class ContentTest
     {
         Module module = newModule().name( "system" ).build();
         Input input = newInput().name( "tags" ).label( "Tags" ).type( InputTypes.TEXT_LINE ).multiple( true ).build();
-        InputSubType inputSubType = newInputSubType().module( module ).input( input ).build();
+        InputSubType inputSubType = newInputSubType().module( module.getName() ).input( input ).build();
         MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
         subTypeFetcher.add( inputSubType );
 
@@ -399,13 +399,13 @@ public class ContentTest
     {
         Module module = newModule().name( "myModule" ).build();
 
-        InputSubType postalCodeSubType =
-            newInputSubType().module( module ).input( newInput().name( "postalCode" ).type( InputTypes.TEXT_LINE ).build() ).build();
-        InputSubType countrySubType = newInputSubType().module( module ).input(
+        InputSubType postalCodeSubType = newInputSubType().module( module.getName() ).input(
+            newInput().name( "postalCode" ).type( InputTypes.TEXT_LINE ).build() ).build();
+        InputSubType countrySubType = newInputSubType().module( module.getName() ).input(
             newInput().name( "country" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig(
                 newSingleSelectorConfig().typeDropdown().addOption( "Norway", "NO" ).build() ).build() ).build();
 
-        FormItemSetSubType addressSubType = newFormItemSetSubType().module( module ).formItemSet(
+        FormItemSetSubType addressSubType = newFormItemSetSubType().module( module.getName() ).formItemSet(
             newFormItemSet().name( "address" ).add( newInput().name( "street" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newSubTypeReference( postalCodeSubType ).name( "postalCode" ).build() ).add(
                 newInput().name( "postalPlace" ).type( InputTypes.TEXT_LINE ).build() ).add(
@@ -439,7 +439,7 @@ public class ContentTest
     {
         Module module = newModule().name( "myModule" ).build();
 
-        FormItemSetSubType addressSubType = newFormItemSetSubType().module( module ).formItemSet(
+        FormItemSetSubType addressSubType = newFormItemSetSubType().module( module.getName() ).formItemSet(
             newFormItemSet().name( "address" ).multiple( true ).add( newInput().type( InputTypes.TEXT_LINE ).name( "label" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "street" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(

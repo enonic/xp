@@ -16,40 +16,20 @@
 
     .admin-related-item img {
       display: table-cell;
-      float: left;
       vertical-align: top;
       padding-right: 10px;
+      width: 42px;
     }
 
     .admin-related-item .center-column {
-      width: 320px;
       display: table-cell;
       vertical-align: top;
-      float: left;
     }
 
     .admin-related-item .right-column {
       display: table-cell;
       vertical-align: top;
-      float: right;
-    }
-
-    .admin-formitemset-block {
-      border: 1px solid #aaa !important;
-    }
-
-
-    .admin-sortable-insert-helper-below {
-      border-bottom: 2px solid #ff4500 !important;
-    }
-
-    .admin-sortable-insert-helper-above {
-      border-top: 2px solid #ff4500 !important;
-    }
-
-    .admin-draghandle {
-      color: #59008c;
-      cursor: move;
+      text-align: right;
     }
 
   </style>
@@ -72,7 +52,7 @@
         'Common': 'common/js',
         'Admin': '../../admin/resources/app'
       },
-      disableCaching: false
+      disableCaching: true
     });
 
   </script>

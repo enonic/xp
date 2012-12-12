@@ -15,66 +15,66 @@ import com.enonic.wem.api.userstore.UserStoreNames;
 public interface AccountDao
     extends AccountDaoConstants
 {
-    public boolean deleteAccount( Session session, AccountKey key )
+    public boolean deleteAccount( AccountKey key, Session session )
         throws Exception;
 
-    public boolean deleteUserStore( Session session, UserStoreName name )
+    public boolean deleteUserStore( UserStoreName name, Session session )
         throws Exception;
 
-    public void createUserStore( Session session, UserStore userStore )
+    public void createUserStore( UserStore userStore, Session session )
         throws Exception;
 
-    public void createUser( Session session, UserAccount user )
+    public void createUser( UserAccount user, Session session )
         throws Exception;
 
-    public void createGroup( Session session, GroupAccount group )
+    public void createGroup( GroupAccount group, Session session )
         throws Exception;
 
-    public void createRole( Session session, RoleAccount role )
+    public void createRole( RoleAccount role, Session session )
         throws Exception;
 
-    public void updateUser( Session session, UserAccount user )
+    public void updateUser( UserAccount user, Session session )
         throws Exception;
 
-    public void updateGroup( Session session, GroupAccount group )
+    public void updateGroup( GroupAccount group, Session session )
         throws Exception;
 
-    public void updateRole( Session session, RoleAccount role )
+    public void updateRole( RoleAccount role, Session session )
         throws Exception;
 
-    public AccountKeys getMembers( Session session, AccountKey accountKey )
+    public AccountKeys getMembers( AccountKey accountKey, Session session )
         throws Exception;
 
-    public void setMembers( Session session, AccountKey nonUserAccount, AccountKeys members )
+    public void setMembers( AccountKey nonUserAccount, AccountKeys members, Session session )
         throws Exception;
 
-    public AccountKeys getUserStoreAdministrators( Session session, UserStoreName userStoreName )
+    public AccountKeys getUserStoreAdministrators( UserStoreName userStoreName, Session session )
         throws Exception;
 
-    void setUserStoreAdministrators( Session session, UserStoreName userStoreName, AccountKeys administrators )
+    void setUserStoreAdministrators( UserStoreName userStoreName, AccountKeys administrators, Session session )
         throws Exception;
 
-    public boolean accountExists( Session session, AccountKey accountKey )
+    public boolean accountExists( AccountKey accountKey, Session session )
         throws Exception;
 
-    public UserAccount findUser( Session session, AccountKey accountKey, boolean includeProfile, boolean includePhoto )
+    public UserAccount findUser( AccountKey accountKey, boolean includeProfile, boolean includePhoto, Session session )
         throws Exception;
 
-    public GroupAccount findGroup( Session session, AccountKey accountKey, boolean includeMembers )
+    public GroupAccount findGroup( AccountKey accountKey, boolean includeMembers, Session session )
         throws Exception;
 
-    public RoleAccount findRole( Session session, AccountKey accountKey, boolean includeMembers )
+    public RoleAccount findRole( AccountKey accountKey, boolean includeMembers, Session session )
         throws Exception;
 
-    public Account findAccount( Session session, AccountKey accountKey )
+    public Account findAccount( AccountKey accountKey, Session session )
         throws Exception;
 
     public UserStoreNames getUserStoreNames( Session session )
         throws Exception;
 
-    public UserStore getUserStore( Session session, UserStoreName userStoreName, boolean includeConfig, boolean includeStatistics )
+    public UserStore getUserStore( UserStoreName userStoreName, boolean includeConfig, boolean includeStatistics, Session session )
         throws Exception;
 
-    public void updateUserStore( Session session, UserStore userStore )
+    public void updateUserStore( UserStore userStore, Session session )
         throws Exception;
 }

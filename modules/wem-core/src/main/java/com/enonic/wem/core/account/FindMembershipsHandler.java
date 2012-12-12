@@ -36,7 +36,7 @@ public final class FindMembershipsHandler
         throws Exception
     {
         final AccountKey account = command.getKey();
-        final boolean userExists = accountDao.accountExists( context.getJcrSession(), account );
+        final boolean userExists = accountDao.accountExists( account, context.getJcrSession() );
         if ( !userExists )
         {
             throw new AccountNotFoundException( account );

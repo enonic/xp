@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.type.form.FormItems;
 import com.enonic.wem.api.content.type.form.HierarchicalFormItem;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.content.type.form.Layout;
-import com.enonic.wem.api.content.type.form.SubTypeQualifiedName;
+import com.enonic.wem.api.content.type.form.QualifiedSubTypeName;
 import com.enonic.wem.api.content.type.form.SubTypeReference;
 import com.enonic.wem.core.content.XmlParsingException;
 import com.enonic.wem.core.content.type.form.inputtype.InputTypeConfigXmlSerializer;
@@ -20,7 +20,7 @@ import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 
-class FormItemXmlSerializer
+public class FormItemXmlSerializer
 {
     public static final String NAME = "name";
 
@@ -143,7 +143,7 @@ class FormItemXmlSerializer
         final Element referenceEl = new Element( classNameToXmlElementName( SubTypeReference.class.getSimpleName() ) );
         referenceEl.setAttribute( NAME, String.valueOf( subTypeReference.getName() ) );
         referenceEl.addContent( new Element( NAME ).setText( subTypeReference.getName() ) );
-        referenceEl.addContent( new Element( REFERENCE ).setText( subTypeReference.getSubTypeQualifiedName().toString() ) );
+        referenceEl.addContent( new Element( REFERENCE ).setText( subTypeReference.getQualifiedSubTypeName().toString() ) );
         referenceEl.addContent( new Element( TYPE ).setText( subTypeReference.getSubTypeClass().getSimpleName() ) );
         return referenceEl;
     }
@@ -191,6 +191,7 @@ class FormItemXmlSerializer
         builder.name( formItemEl.getAttributeValue( NAME ) );
         builder.label( formItemEl.getChildText( LABEL ) );
         builder.immutable( Boolean.valueOf( formItemEl.getChildText( IMMUTABLE ) ) );
+        builder.indexed( Boolean.valueOf( formItemEl.getChildText( INDEXED ) ) );
         builder.helpText( formItemEl.getChildText( HELP_TEXT ) );
         builder.customText( formItemEl.getChildText( CUSTOM_TEXT ) );
         parseValidationRegexp( builder, formItemEl );
@@ -256,7 +257,7 @@ class FormItemXmlSerializer
     {
         final SubTypeReference.Builder builder = SubTypeReference.newSubTypeReference();
         builder.name( formItemEl.getAttributeValue( NAME ) );
-        builder.subType( new SubTypeQualifiedName( formItemEl.getChildText( REFERENCE ) ) );
+        builder.subType( new QualifiedSubTypeName( formItemEl.getChildText( REFERENCE ) ) );
         builder.type( formItemEl.getChildText( TYPE ) );
         return builder.build();
     }
@@ -282,7 +283,7 @@ class FormItemXmlSerializer
         builder.type( InputTypeFactory.instantiate( inputTypeName, builtIn ) );
     }
 
-    private String classNameToXmlElementName( final String s )
+    public String classNameToXmlElementName( final String s )
     {
         final StringBuilder newS = new StringBuilder( s.length() );
         for ( int i = 0; i < s.length(); i++ )

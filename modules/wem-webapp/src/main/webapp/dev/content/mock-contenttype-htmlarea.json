@@ -28,7 +28,7 @@
         },
         {
             "Input": {
-                "name": "htmlarea_text",
+                "test_name": "htmlarea_text",
                 "label": "HTML Area",
                 "immutable": false,
                 "occurrences": {

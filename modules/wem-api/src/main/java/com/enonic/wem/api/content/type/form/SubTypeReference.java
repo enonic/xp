@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
 public class SubTypeReference
     extends HierarchicalFormItem
 {
-    private SubTypeQualifiedName subTypeQualifiedName;
+    private QualifiedSubTypeName qualifiedSubTypeName;
 
     private Class subTypeClass;
 
@@ -19,9 +19,9 @@ public class SubTypeReference
         super();
     }
 
-    public SubTypeQualifiedName getSubTypeQualifiedName()
+    public QualifiedSubTypeName getQualifiedSubTypeName()
     {
-        return subTypeQualifiedName;
+        return qualifiedSubTypeName;
     }
 
     public Class getSubTypeClass()
@@ -38,7 +38,7 @@ public class SubTypeReference
     public SubTypeReference copy()
     {
         SubTypeReference subTypeReference = (SubTypeReference) super.copy();
-        subTypeReference.subTypeQualifiedName = this.subTypeQualifiedName;
+        subTypeReference.qualifiedSubTypeName = this.qualifiedSubTypeName;
         subTypeReference.subTypeClass = this.subTypeClass;
         return subTypeReference;
     }
@@ -47,13 +47,13 @@ public class SubTypeReference
     {
         Builder builder = new Builder();
         builder.subTypeClass = subType.getType().getSimpleName();
-        builder.subTypeQualifiedName = subType.getQualifiedName();
+        builder.qualifiedSubTypeName = subType.getQualifiedName();
         return builder;
     }
 
     public static class Builder
     {
-        private SubTypeQualifiedName subTypeQualifiedName;
+        private QualifiedSubTypeName qualifiedSubTypeName;
 
         private String name;
 
@@ -67,20 +67,20 @@ public class SubTypeReference
 
         public Builder subType( final SubType subType )
         {
-            this.subTypeQualifiedName = subType.getQualifiedName();
+            this.qualifiedSubTypeName = subType.getQualifiedName();
             this.subTypeClass = subType.getType().getSimpleName();
             return this;
         }
 
         public Builder subType( String qualifiedName )
         {
-            this.subTypeQualifiedName = new SubTypeQualifiedName( qualifiedName );
+            this.qualifiedSubTypeName = new QualifiedSubTypeName( qualifiedName );
             return this;
         }
 
-        public Builder subType( SubTypeQualifiedName qualifiedName )
+        public Builder subType( QualifiedSubTypeName qualifiedName )
         {
-            this.subTypeQualifiedName = qualifiedName;
+            this.qualifiedSubTypeName = qualifiedName;
             return this;
         }
 
@@ -110,13 +110,13 @@ public class SubTypeReference
 
         public SubTypeReference build()
         {
-            Preconditions.checkNotNull( subTypeQualifiedName, "subTypeQualifiedName is required" );
+            Preconditions.checkNotNull( qualifiedSubTypeName, "qualifiedSubTypeName is required" );
             Preconditions.checkNotNull( subTypeClass, "subTypeClass is required" );
             Preconditions.checkNotNull( name, "name is required" );
 
             final SubTypeReference subTypeReference = new SubTypeReference();
             subTypeReference.setName( name );
-            subTypeReference.subTypeQualifiedName = subTypeQualifiedName;
+            subTypeReference.qualifiedSubTypeName = qualifiedSubTypeName;
             try
 
             {

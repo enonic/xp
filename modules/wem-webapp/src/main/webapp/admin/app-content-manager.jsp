@@ -5,7 +5,6 @@
 <head>
   <meta charset="utf-8"/>
   <title>Enonic WEM Admin</title>
-  <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/ext-all.css">
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
   <link rel="stylesheet" type="text/css" href="resources/css/admin-preview-panel.css">
 

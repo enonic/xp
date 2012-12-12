@@ -3,10 +3,10 @@ package com.enonic.wem.core.content.type;
 
 import java.io.IOException;
 
+import org.apache.commons.lang.StringUtils;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
-import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
@@ -25,7 +25,7 @@ public class ContentTypeXmlSerializer
 {
     private FormItemsXmlSerializer formItemsSerializer = new FormItemsXmlSerializer();
 
-    private boolean prettyPrint = false;
+    private boolean prettyPrint = true;
 
     public ContentTypeXmlSerializer prettyPrint( boolean value )
     {

@@ -8,7 +8,7 @@ import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.FormItemSetSubType;
 import com.enonic.wem.api.content.type.form.MockSubTypeFetcher;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
@@ -22,7 +22,7 @@ public class ContentTypeTest
     @Test
     public void layout()
     {
-        final ContentType contentType = newContentType().name( "test" ).build();
+        final ContentType contentType = newContentType().name( "test" ).module( ModuleName.from( "myModule" ) ).build();
         FieldSet layout = FieldSet.newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
         contentType.form().addFormItem( layout );
@@ -33,7 +33,7 @@ public class ContentTypeTest
     @Test
     public void layout_inside_formItemSet()
     {
-        final ContentType contentType = newContentType().name( "test" ).build();
+        final ContentType contentType = newContentType().name( "test" ).module( ModuleName.from( "myModule" ) ).build();
         FieldSet layout = FieldSet.newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
         FormItemSet myFormItemSet = newFormItemSet().name( "mySet" ).add( layout ).build();
@@ -52,6 +52,8 @@ public class ContentTypeTest
         formItemSet.add( newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() );
 
         final ContentType contentType = newContentType().
+            name( "test" ).
+            module( ModuleName.from( "myModule" ) ).
             addFormItem( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() ).
             addFormItem( formItemSet ).
             build();
@@ -67,15 +69,15 @@ public class ContentTypeTest
     public void subTypeReferencesToFormItems()
     {
         // setup
-        Module module = Module.newModule().name( "myModule" ).build();
-
-        FormItemSetSubType subType = newFormItemSetSubType().module( module ).formItemSet(
+        FormItemSetSubType subType = newFormItemSetSubType().module( ModuleName.from( "myModule" ) ).formItemSet(
             newFormItemSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         final ContentType cty = newContentType().
+            name( "test" ).
+            module( ModuleName.from( "myModule" ) ).
             addFormItem( newSubTypeReference( subType ).name( "home" ).build() ).
             addFormItem( newSubTypeReference( subType ).name( "cabin" ).build() ).
             build();
@@ -95,17 +97,17 @@ public class ContentTypeTest
     public void subTypeReferencesToFormItems_layout()
     {
         // setup
-        Module module = Module.newModule().name( "myModule" ).build();
-
-        FormItemSetSubType subType = newFormItemSetSubType().module( module ).formItemSet( newFormItemSet().name( "address" ).add(
-            FieldSet.newFieldSet().label( "My Field Set" ).name( "fieldSet" ).add(
+        FormItemSetSubType subType = newFormItemSetSubType().module( ModuleName.from( "myModule" ) ).formItemSet(
+            newFormItemSet().name( "address" ).add( FieldSet.newFieldSet().label( "My Field Set" ).name( "fieldSet" ).add(
                 newInput().name( "myFieldInLayout" ).label( "MyFieldInLayout" ).type( InputTypes.TEXT_LINE ).build() ).build() ).add(
-            newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
-            newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).add(
-            newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
-            newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
+                newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
+                newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).add(
+                newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
+                newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         final ContentType contentType = newContentType().
+            name( "test" ).
+            module( ModuleName.from( "myModule" ) ).
             addFormItem( newSubTypeReference( subType ).name( "home" ).build() ).
             build();
 
@@ -125,13 +127,13 @@ public class ContentTypeTest
     public void subTypeReferencesToFormItems_throws_exception_when_subType_is_not_of_expected_type()
     {
         // setup
-        Module module = Module.newModule().name( "myModule" ).build();
-
-        FormItemSetSubType subType = newFormItemSetSubType().module( module ).formItemSet(
+        FormItemSetSubType subType = newFormItemSetSubType().module( ModuleName.from( "myModule" ) ).formItemSet(
             newFormItemSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         final ContentType cty = newContentType().
+            name( "test" ).
+            module( ModuleName.from( "myModule" ) ).
             addFormItem( newSubTypeReference().name( "home" ).typeInput().subType( subType.getQualifiedName() ).build() ).
             build();
 
@@ -159,6 +161,7 @@ public class ContentTypeTest
                     newInput().name( "myInnerInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
         final ContentType contentType = newContentType().
             name( "test" ).
+            module( ModuleName.from( "myModule" ) ).
             addFormItem( formItemSet ).
             build();
 

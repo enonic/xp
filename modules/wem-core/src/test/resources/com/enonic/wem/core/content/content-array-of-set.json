@@ -10,16 +10,19 @@
     "data":[
         {
             "name":"mySet",
+            "path" : "mySet",
             "type":"Set",
             "value":[
                 [
                     {
                         "name":"myInput",
+                        "path":"mySet[0].myInput",
                         "type":"Text",
                         "value":"1"
                     },
                     {
                         "name":"myOtherInput",
+                        "path":"mySet[0].myOtherInput",
                         "type":"Text",
                         "value":"a"
                     }
@@ -27,11 +30,13 @@
                 [
                     {
                         "name":"myInput",
+                        "path":"mySet[1].myInput",
                         "type":"Text",
                         "value":"2"
                     },
                     {
                         "name":"myOtherInput",
+                        "path":"mySet[1].myOtherInput",
                         "type":"Text",
                         "value":"b"
                     }

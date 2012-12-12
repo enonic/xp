@@ -5,7 +5,7 @@ Ext.application({
     ],
 
     requires: [
-        'ContentDataPanel'
+        'Admin.view.contentManager.wizard.ContentDataPanel'
     ],
 
     launch: function () {
@@ -22,11 +22,27 @@ Ext.application({
 
                     var contentTypeJson = Ext.JSON.decode(response.responseText, true);
 
-                    var contentDataPanel = new ContentDataPanel({
+                    var contentDataPanel = new Admin.view.contentManager.wizard.ContentDataPanel({
                         border: false,
                         contentType: contentTypeJson
                     });
                     center.add(contentDataPanel);
+
+                    var submitButton = Ext.widget('button', {
+                        text: 'Submit',
+                        formBind: true, //only enabled once the form is valid
+                        disabled: true,
+                        handler: function () {
+                            var formPanel = this.up('form');
+                            var form = formPanel.getForm();
+                            if (form.isValid()) {
+                                var formData = formPanel.getData();
+
+                            }
+                        }
+                    });
+
+                    contentDataPanel.add(submitButton);
 
                     Ext.getCmp('output').setValue(contentTypeJson.qualifiedName + '\n\nJSON:\n\n' + response.responseText);
                 }
@@ -63,7 +79,8 @@ Ext.application({
                                             {file: 'mock-contenttype-htmlarea.json', qualifiedName: 'Demo:HtmlArea'},
                                             {file: 'mock-contenttype-relation.json', qualifiedName: 'Demo:Relation'},
                                             {file: 'mock-contenttype-textarea.json', qualifiedName: 'Demo:TextArea'},
-                                            {file: 'mock-contenttype-set.json', qualifiedName: 'Demo:FormItemSet'}
+                                            {file: 'mock-contenttype-set.json', qualifiedName: 'Demo:FormItemSet'},
+                                            {file: 'mock-contenttype-performance.json', qualifiedName: 'Demo:Performance'}
                                         ]
                                     }),
                                     queryMode: 'local',

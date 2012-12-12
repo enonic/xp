@@ -4,7 +4,7 @@ package com.enonic.wem.api.content.type.form;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleName;
 
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.FormItemSetSubType.newFormItemSetSubType;
@@ -70,11 +70,9 @@ public class FormItemsTest
     public void given_sub_type_with_a_input_inside_a_set_when_getFormItem_with_path_to_input_then_exception_is_thrown()
     {
         // setup
-        Module module = Module.newModule().name( "myModule" ).build();
-
         Input myInput = newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build();
         FormItemSet mySet = newFormItemSet().name( "mySet" ).add( myInput ).build();
-        FormItemSetSubType mySubType = newFormItemSetSubType().module( module ).formItemSet( mySet ).build();
+        FormItemSetSubType mySubType = newFormItemSetSubType().module( ModuleName.from( "myModule" ) ).formItemSet( mySet ).build();
 
         FormItems formItems = new FormItems();
         formItems.add( newSubTypeReference().name( "mySet" ).typeInput().subType( mySubType.getQualifiedName() ).build() );

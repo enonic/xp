@@ -6,10 +6,12 @@ Ext.define('Admin.store.contentStudio.ContentTypeTreeStore', {
     folderSort: true,
 
     proxy: {
-        type: 'ajax',
-        url: 'resources/data/mock_contentStudioTree.json',
+        type: 'direct',
+        directFn: Admin.lib.RemoteService.contentType_tree,
+        simpleSortMode: true,
         reader: {
             type: 'json',
+            root: 'contentTypes',
             totalProperty: 'total'
         }
     }

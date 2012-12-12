@@ -5,7 +5,6 @@
 <head>
   <meta charset="utf-8"/>
   <title>Enonic WEM Admin</title>
-  <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/ext-all.css">
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
   <link rel="stylesheet" type="text/css" href="resources/css/contentstudio-preview-panel.css">
 
@@ -41,6 +40,10 @@
   <script type="text/javascript" src="resources/app/view/XTemplates.js"></script>
 
   <!-- Third party plugins -->
+
+  <link rel="stylesheet" type="text/css" href="resources/lib/codemirror/lib/codemirror.css">
+  <script type="text/javascript" src="resources/lib/codemirror/lib/codemirror.js"></script>
+  <script type="text/javascript" src="resources/lib/codemirror/lib/util/loadmode.js"></script>
 
   <script type="text/javascript" src="resources/lib/plupload/js/plupload.full.js"></script>
 

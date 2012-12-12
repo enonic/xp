@@ -13,7 +13,7 @@ import com.enonic.wem.core.content.type.form.inputtype.InputTypeConfigJsonSerial
 
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 
-class InputJsonSerializer
+public class InputJsonSerializer
     extends AbstractJsonSerializer<Input>
 {
     private static final String TYPE = "type";
@@ -73,6 +73,7 @@ class InputJsonSerializer
         builder.immutable( JsonParserUtil.getBooleanValue( IMMUTABLE, inputObj ) );
         builder.helpText( JsonParserUtil.getStringValue( HELP_TEXT, inputObj ) );
         builder.customText( JsonParserUtil.getStringValue( CUSTOM_TEXT, inputObj ) );
+        builder.indexed( JsonParserUtil.getBooleanValue( INDEXED, inputObj ) );
         parseValidationRegexp( builder, inputObj );
 
         parseOccurrences( builder, inputObj.get( OCCURRENCES ) );

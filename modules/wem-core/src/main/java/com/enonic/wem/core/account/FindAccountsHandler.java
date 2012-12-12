@@ -89,7 +89,7 @@ public final class FindAccountsHandler
         for ( AccountSearchHit hit : searchResults )
         {
             final AccountKey accountKey = AccountKey.from( hit.getKey().toString() );
-            if ( accountDao.accountExists( session, accountKey ) )
+            if ( accountDao.accountExists( accountKey, session ) )
             {
                 accounts.add( accountKey );
             }

@@ -3,66 +3,31 @@ Ext.define('Admin.view.contentManager.FilterPanel', {
     alias: 'widget.contentFilter',
 
     includeSearch: true,
-    includeFacets: [
+    updateFacetCount: 'query',
+    facetData: [
         {
-            title: 'Sites',
-            xtype: 'checkboxgroup',
-            name: 'site',
-            items: [
-                {
-                    boxLabel: 'Travel',
-                    inputValue: 'travel'
-                },
-                {
-                    boxLabel: 'Blueman',
-                    inputValue: 'Blueman'
-                },
-                {
-                    boxLabel: 'Cityscape',
-                    inputValue: 'cityscape'
-                }
+            "name": 'Sites',
+            "terms": [
+                { "name": 'Travel', "key": 'travel', "count": 2 },
+                { "name": 'Blueman', "key": 'blueman', "count": 1 },
+                { "name": 'Cityscape', "key": 'cityscape', "count": 3 },
             ]
         },
         {
-            title: 'Types',
-            xtype: 'checkboxgroup',
-            name: 'type',
-            items: [
-                {
-                    boxLabel: 'News',
-                    inputValue: 'news'
-                },
-                {
-                    boxLabel: 'Article',
-                    inputValue: 'article'
-                }
+            "name": "Types",
+            "terms": [
+                { "name": "News", "key": "news", "count": 7 },
+                { "name": "Article", "key": "article", "count": 4 }
             ]
         },
         {
-            title: 'Last Modified',
-            xtype: 'checkboxgroup',
-            name: 'lastModified',
-            items: [
-                {
-                    boxLabel: '< 1h',
-                    inputValue: 'hour'
-                },
-                {
-                    boxLabel: '< 1d',
-                    inputValue: 'day'
-                },
-                {
-                    boxLabel: '< 1w',
-                    inputValue: 'week'
-                },
-                {
-                    boxLabel: '> [from date]',
-                    inputValue: 'from'
-                },
-                {
-                    boxLabel: '< [to date]',
-                    inputValue: 'to'
-                }
+            "name": "Last Modified",
+            "terms": [
+                { "name": "< 1h", "key": "hour", "count": 0 },
+                { "name": "< 1d", "key": "day", "count": 3 },
+                { "name": "< 1w", "key": "week", "count": 6 },
+                { "name": "> [from date]", "key": "from", "count": 2 },
+                { "name": "< [to date]", "key": "to", "count": 0 },
             ]
         }
     ]

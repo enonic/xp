@@ -1,15 +1,21 @@
 Ext.define('Admin.lib.formitem.Base', {
     extend: 'Ext.form.FieldContainer',
     label: '',
-    occurrences: null,
+
+    inputConfig: undefined,
+
     initComponent: function () {
         var me = this;
 
         me.defaults = {
-            margin: '0 0 1 0',
-            width: 600
+            margin: '0 0 5 0',
+            width: 450
         };
         me.callParent(arguments);
+    },
+
+    getValue: function () {
+        return this.items.items[0].getValue();
     }
 
 });

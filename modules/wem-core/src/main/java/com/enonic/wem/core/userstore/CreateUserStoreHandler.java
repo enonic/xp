@@ -29,10 +29,10 @@ public class CreateUserStoreHandler
     {
         final UserStore userStore = command.getUserStore();
         final Session session = context.getJcrSession();
-        accountDao.createUserStore( session, userStore );
+        accountDao.createUserStore( userStore, session );
 
         final AccountKeys administrators = userStore.getAdministrators() == null ? AccountKeys.empty() : userStore.getAdministrators();
-        accountDao.setUserStoreAdministrators( session, userStore.getName(), administrators );
+        accountDao.setUserStoreAdministrators( userStore.getName(), administrators, session );
 
         session.save();
         command.setResult( userStore.getName() );

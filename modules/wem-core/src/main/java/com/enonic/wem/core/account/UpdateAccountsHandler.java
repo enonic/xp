@@ -66,11 +66,11 @@ public final class UpdateAccountsHandler
         switch ( account.getType() )
         {
             case USER:
-                return accountDao.findUser( session, account, true, true );
+                return accountDao.findUser( account, true, true, session );
             case GROUP:
-                return accountDao.findGroup( session, account, true );
+                return accountDao.findGroup( account, true, session );
             default:
-                return accountDao.findRole( session, account, true );
+                return accountDao.findRole( account, true, session );
         }
     }
 
@@ -81,13 +81,13 @@ public final class UpdateAccountsHandler
         switch ( account.getKey().getType() )
         {
             case USER:
-                accountDao.updateUser( session, (UserAccount) account );
+                accountDao.updateUser( (UserAccount) account, session );
                 break;
             case GROUP:
-                accountDao.updateGroup( session, (GroupAccount) account );
+                accountDao.updateGroup( (GroupAccount) account, session );
                 break;
             case ROLE:
-                accountDao.updateRole( session, (RoleAccount) account );
+                accountDao.updateRole( (RoleAccount) account, session );
                 break;
         }
         this.searchService.index( account );

@@ -6,7 +6,7 @@ public abstract class ContentTypeEditors
 {
     public static ContentTypeEditor composite( final ContentTypeEditor... editors )
     {
-        return new CompositeEditor( editors );
+        return new CompositeContentTypeEditor( editors );
     }
 
     public static ContentTypeEditor setContentType( final ContentType contentType )

@@ -26,4 +26,9 @@ public final class ContentTypeCommands
     {
         return new GetContentTypeTree();
     }
+
+    public ValidateContentType validate()
+    {
+        return new ValidateContentType();
+    }
 }

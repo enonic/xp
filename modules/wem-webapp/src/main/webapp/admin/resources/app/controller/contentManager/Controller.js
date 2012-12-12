@@ -75,8 +75,12 @@ Ext.define('Admin.controller.contentManager.Controller', {
             var requestConfig = {
                 doTabRequest: function (handleRpcResponse) {
                     var getContentTypeResponse, getContentResponse;
-                    // request content type and content to be edited, in parallel
-                    Admin.lib.RemoteService.contentType_get({contentType: selectedContent.get('type')}, function (rpcResponse) {
+
+                    var getContentTypeCommand = {
+                        contentType: selectedContent.get('type'),
+                        subTypeReferencesToFormItems: true
+                    };
+                    Admin.lib.RemoteService.contentType_get(getContentTypeCommand, function (rpcResponse) {
                         getContentTypeResponse = rpcResponse;
                         if (getContentTypeResponse && getContentTypeResponse.success && getContentResponse && getContentResponse.success) {
                             // both responses received, combine responses and pass them to callback
@@ -84,7 +88,11 @@ Ext.define('Admin.controller.contentManager.Controller', {
                             handleRpcResponse(getContentTypeResponse);
                         }
                     });
-                    Admin.lib.RemoteService.content_get({path: selectedContent.get('path')}, function (rpcResponse) {
+
+                    var getContentCommand = {
+                        path: selectedContent.get('path')
+                    };
+                    Admin.lib.RemoteService.content_get(getContentCommand, function (rpcResponse) {
                         getContentResponse = rpcResponse;
                         if (getContentResponse && getContentResponse.success && getContentTypeResponse && getContentTypeResponse.success) {
                             // both responses received, combine responses and pass them to callback
@@ -126,16 +134,12 @@ Ext.define('Admin.controller.contentManager.Controller', {
             for (i = 0; i < content.length; i += 1) {
                 var data = content[i];
                 //TODO: implement when content specification will be developed
-                switch (data.get('type')) {
-                case 'myModule:myType':
-                case 'News:Article':
-                case 'News:Article2':
-                    openEditContentTabFn(data);
-                    break;
-                case 'myModule:mySite':
-                    openEditSiteTabFn(data);
-                    break;
-                }
+                openEditContentTabFn(data);
+//                switch (data.get('type')) {
+//                case 'myModule:mySite':
+//                    openEditSiteTabFn(data);
+//                    break;
+//                }
             }
         }
     },
@@ -163,7 +167,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 };
                 var requestConfig = {
                     doTabRequest: function (handleRpcResponse) {
-                        Admin.lib.RemoteService.contentType_get({contentType: qualifiedContentType}, function (rpcResponse) {
+                        Admin.lib.RemoteService.contentType_get({contentType: qualifiedContentType, subTypeReferencesToFormItems: true}, function (rpcResponse) {
                             if (rpcResponse.success) {
                                 handleRpcResponse(rpcResponse);
                             }

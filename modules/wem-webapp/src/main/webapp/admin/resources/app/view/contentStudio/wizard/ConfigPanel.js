@@ -1,6 +1,7 @@
 Ext.define('Admin.view.contentStudio.wizard.ConfigPanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.contentStudioWizardConfigPanel',
+    requires: ['Admin.lib.CodeMirror'],
 
     initComponent: function () {
         var me = this;
@@ -15,9 +16,8 @@ Ext.define('Admin.view.contentStudio.wizard.ConfigPanel', {
                 },
                 items: [
                     {
-                        xtype: 'textarea',
+                        xtype: 'codemirror',
                         fieldLabel: 'XML',
-                        height: 400,
                         value: configXml,
                         name: 'configXML'
                     }

@@ -41,15 +41,15 @@ public final class CreateAccountHandler
         account.setModifiedTime( DateTime.now() );
         if ( key.isUser() )
         {
-            accountDao.createUser( session, (UserAccount) account );
+            accountDao.createUser( (UserAccount) account, session );
         }
         else if ( key.isGroup() )
         {
-            accountDao.createGroup( session, (GroupAccount) account );
+            accountDao.createGroup( (GroupAccount) account, session );
         }
         else if ( key.isRole() )
         {
-            accountDao.createRole( context.getJcrSession(), (RoleAccount) account );
+            accountDao.createRole( (RoleAccount) account, context.getJcrSession() );
         }
         session.save();
 

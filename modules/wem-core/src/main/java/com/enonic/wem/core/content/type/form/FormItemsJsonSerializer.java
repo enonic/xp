@@ -17,6 +17,11 @@ public final class FormItemsJsonSerializer
 {
     private FormItemJsonSerializer formItemSerializer = new FormItemJsonSerializer( this );
 
+    public FormItemJsonSerializer getFormItemJsonSerializer()
+    {
+        return formItemSerializer;
+    }
+
     @Override
     public JsonNode serialize( final FormItems formItems, final ObjectMapper objectMapper )
     {
