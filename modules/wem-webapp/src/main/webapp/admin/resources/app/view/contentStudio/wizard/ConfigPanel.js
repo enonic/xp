@@ -18,7 +18,6 @@ Ext.define('Admin.view.contentStudio.wizard.ConfigPanel', {
                     {
                         xtype: 'codemirror',
                         fieldLabel: 'XML',
-                        height: 400,
                         value: configXml,
                         name: 'configXML'
                     }
