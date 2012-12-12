@@ -65,6 +65,9 @@
     <a href="main.jsp">Main</a>
   </li>
   <li>
+    <a href="app-content-studio.jsp">Content Studio</a>
+  </li>
+  <li>
     <a href="app-content-manager.jsp">Content Manager</a>
   </li>
   <li>
@@ -82,9 +85,6 @@
       <li><a href="app-userstore.jsp">Userstore</a></li>
       <li><a href="app-language.jsp">Languages</a></li>
     </ul>
-  </li>
-  <li>
-    <a href="app-content-studio.jsp">Content Studio</a>
   </li>
 </ul>
 
