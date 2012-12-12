@@ -1,275 +1,275 @@
 /*---- 16 px icons -----*/
 
 .icon-content-studio-16 {
-    background: transparent url("../images/icons/16x16/cubes.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/16x16/cubes.png") 0 0 no-repeat !important;
 }
 
 /*---- 24 px icons -----*/
 
 .icon-group-24 {
-    background-image: url("../images/icons/24x24/group.png");
+    background-image: url("../images/icons/24x24/group.png") !important;
 }
 
 .icon-dashboard-24 {
-    background: transparent url("../images/icons/24x24/gauge.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/gauge.png") 0 0 no-repeat !important;
 }
 
 .icon-content-manager-24 {
-    background: transparent url("../images/icons/24x24/data_blue.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/data_blue.png") 0 0 no-repeat !important;
 }
 
 .icon-content-studio-24 {
-    background: transparent url("../images/icons/24x24/cubes.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/cubes.png") 0 0 no-repeat !important;
 }
 
 .icon-optimizer-24 {
-    background: transparent url("../images/icons/24x24/funnel.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/funnel.png") 0 0 no-repeat !important;
 }
 
 .icon-search-24 {
-    background: transparent url("../images/icons/24x24/binocular.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/binocular.png") 0 0 no-repeat !important;
 }
 
 .icon-webdav-24 {
-    background: transparent url("../images/icons/24x24/folder_network.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/folder_network.png") 0 0 no-repeat !important;
 }
 
 .icon-site-24 {
-    background: transparent url("../images/icons/24x24/earth2.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/earth2.png") 0 0 no-repeat !important;
 }
 
 .icon-account-24 {
-    background: transparent url("../images/icons/24x24/user_earth.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/user_earth.png") 0 0 no-repeat !important;
 }
 
 .icon-segment-24 {
-    background: transparent url("../images/icons/24x24/chart_pie2.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/chart_pie2.png") 0 0 no-repeat !important;
 }
 
 .icon-campaign-24 {
-    background: transparent url("../images/icons/24x24/target3.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/target3.png") 0 0 no-repeat !important;
 }
 
 .icon-store-manager-24 {
-    background: transparent url("../images/icons/24x24/shopping_cart_empty.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/shopping_cart_empty.png") 0 0 no-repeat !important;
 }
 
 .icon-catalog-24 {
-    background: transparent url("../images/icons/24x24/barcode.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/barcode.png") 0 0 no-repeat !important;
 }
 
 .icon-promotion-24 {
-    background: transparent url("../images/icons/24x24/symbol_percent.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/symbol_percent.png") 0 0 no-repeat !important;
 }
 
 .icon-cache-24 {
-    background: transparent url("../images/icons/24x24/chart_area.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/chart_area.png") 0 0 no-repeat !important;
 }
 
 .icon-cluster-24 {
-    background: transparent url("../images/icons/24x24/cube_molecule.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/cube_molecule.png") 0 0 no-repeat !important;
 }
 
 .icon-live-trace-24 {
-    background: transparent url("../images/icons/24x24/window_oscillograph.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/window_oscillograph.png") 0 0 no-repeat !important;
 }
 
 .icon-plugin-24 {
-    background: transparent url("../images/icons/24x24/component_blue.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/component_blue.png") 0 0 no-repeat !important;
 }
 
 .icon-application-24 {
-    background: transparent url("../images/icons/24x24/application.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/application.png") 0 0 no-repeat !important;
 }
 
 .icon-userstore-24 {
-    background: transparent url("../images/icons/24x24/address_book3.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/address_book3.png") 0 0 no-repeat !important;
 }
 
 .icon-userstore-add-24 {
-    background: transparent url("../images/icons/24x24/userstore_add.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/userstore_add.png") 0 0 no-repeat !important;
 }
 
 .icon-export-24 {
-    background: transparent url("../images/icons/24x24/export.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/export.png") 0 0 no-repeat !important;
 }
 
 .icon-ok-24 {
-    background: transparent url("../images/icons/24x24/check.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/check.png") 0 0 no-repeat !important;
 }
 
 .icon-cancel-24 {
-    background: transparent url("../images/icons/24x24/delete.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/delete.png") 0 0 no-repeat !important;
 }
 
 .icon-delete-24 {
-    background: transparent url("../images/icons/24x24/garbage_delete.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/garbage_delete.png") 0 0 no-repeat !important;
 }
 
 .icon-edit-24 {
-    background: transparent url("../images/icons/24x24/edit.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/edit.png") 0 0 no-repeat !important;
 }
 
 .icon-user-add-24 {
-    background: transparent url("../images/icons/24x24/user.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/user.png") 0 0 no-repeat !important;
 }
 
 .icon-group-add-24 {
-    background: transparent url("../images/icons/24x24/group.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/group.png") 0 0 no-repeat !important;
 }
 
 .icon-left-24 {
-    background: transparent url("../images/icons/24x24/navigate_left.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/navigate_left.png") 0 0 no-repeat !important;
 }
 
 .icon-right-24 {
-    background: transparent url("../images/icons/24x24/navigate_right.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/navigate_right.png") 0 0 no-repeat !important;
 }
 
 .icon-view-24 {
-    background: transparent url("../images/icons/24x24/eye_blue.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/eye_blue.png") 0 0 no-repeat !important;
 }
 
 .icon-save-24 {
-    background: transparent url("../images/icons/24x24/floppy_disk_blue.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/floppy_disk_blue.png") 0 0 no-repeat !important;
 }
 
 .icon-userstore-alt-24 {
-    background: transparent url("../images/icons/24x24/userstore.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/userstore.png") 0 0 no-repeat !important;
 }
 
 .icon-woman-24 {
-    background: transparent url("../images/icons/24x24/woman.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/woman.png") 0 0 no-repeat !important;
 }
 
 .icon-form-blue-24 {
-    background: transparent url("../images/icons/24x24/form_blue.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/form_blue.png") 0 0 no-repeat !important;
 }
 
 .icon-mail-info-24 {
-    background: transparent url("../images/icons/24x24/mail_information.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/mail_information.png") 0 0 no-repeat !important;
 }
 
 .icon-folder-closed-24 {
-    background: transparent url("../images/icons/24x24/folder_closed.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/folder_closed.png") 0 0 no-repeat !important;
 }
 
 .icon-document-24 {
-    background: transparent url("../images/icons/24x24/document2.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/document2.png") 0 0 no-repeat !important;
 }
 
 .icon-gears-run-24 {
-    background: transparent url("../images/icons/24x24/gears_run.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/gears_run.png") 0 0 no-repeat !important;
 }
 
 .icon-re-index-24 {
-    background: transparent url("../images/icons/24x24/refresh.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/refresh.png") 0 0 no-repeat !important;
 }
 
 .icon-publish-24 {
-    background: transparent url("../images/icons/24x24/books_blue.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/books_blue.png") 0 0 no-repeat !important;
 }
 
 .icon-copy-24 {
-    background: transparent url("../images/icons/24x24/copy.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/copy.png") 0 0 no-repeat !important;
 }
 
 .icon-move-24 {
-    background: transparent url("../images/icons/24x24/documents_exchange.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/documents_exchange.png") 0 0 no-repeat !important;
 }
 
 .icon-relation-24 {
-    background: transparent url("../images/icons/24x24/graph_edge_curved.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/graph_edge_curved.png") 0 0 no-repeat !important;
 }
 
 .icon-history-24 {
-    background: transparent url("../images/icons/24x24/history.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/history.png") 0 0 no-repeat !important;
 }
 
 .icon-content-24 {
-    background: transparent url("../images/icons/24x24/cubes_blue.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/cubes_blue.png") 0 0 no-repeat !important;
 }
 
 .icon-content-add-24 {
-    background: transparent url("../images/icons/24x24/cubes_blue_add.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/cubes_blue_add.png") 0 0 no-repeat !important;
 }
 
 .icon-lightbulb-24 {
-    background: transparent url("../images/icons/24x24/lightbulb.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/lightbulb.png") 0 0 no-repeat !important;
 }
 
 .icon-lightbulb-on-24 {
-    background: transparent url("../images/icons/24x24/lightbulb_on.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/lightbulb_on.png") 0 0 no-repeat !important;
 }
 
 .icon-split-hor-24 {
-    background: transparent url("../images/icons/24x24/window_split_hor.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/window_split_hor.png") 0 0 no-repeat !important;
 }
 
 .icon-monitor-24 {
-    background: transparent url("../images/icons/24x24/monitor.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/monitor.png") 0 0 no-repeat !important;
 }
 
 .icon-keyboard-key-24 {
-    background: transparent url("../images/icons/24x24/keyboard_key.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/24x24/keyboard_key.png") 0 0 no-repeat !important;
 }
 
 /*---- 32 px icons -----*/
 
 .icon-content-32 {
-    background: transparent url("../images/icons/32x32/cubes_blue.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/32x32/cubes_blue.png") 0 0 no-repeat !important;
 }
 
 .icon-site-32 {
-    background: transparent url("../images/icons/32x32/earth2.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/32x32/earth2.png") 0 0 no-repeat !important;
 }
 
 .icon-form-32 {
-    background: transparent url("../images/icons/32x32/form_blue.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/32x32/form_blue.png") 0 0 no-repeat !important;
 }
 
 .icon-folder-32 {
-    background: transparent url("../images/icons/32x32/folder_blue.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/32x32/folder_blue.png") 0 0 no-repeat !important;
 }
 
 .icon-media-32 {
-    background: transparent url("../images/icons/32x32/film.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/32x32/film.png") 0 0 no-repeat !important;
 }
 
 .icon-shortcut-32 {
-    background: transparent url("../images/icons/32x32/link.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/32x32/link.png") 0 0 no-repeat !important;
 }
 
 .icon-struct-32 {
-    background: transparent url("../images/icons/32x32/books_blue.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/32x32/books_blue.png") 0 0 no-repeat !important;
 }
 
 .icon-struct-32 {
-    background: transparent url("../images/icons/32x32/link.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/32x32/link.png") 0 0 no-repeat !important;
 }
 
 /*---- 128 px icons ----*/
 
 .icon-content-128 {
-    background: transparent url("../images/icons/128x128/cubes_blue.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/128x128/cubes_blue.png") 0 0 no-repeat !important;
 }
 
 .icon-site-128 {
-    background: transparent url("../images/icons/128x128/earth2.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/128x128/earth2.png") 0 0 no-repeat !important;
 }
 
 .icon-group-128 {
-    background: transparent url("../images/icons/128x128/group.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/128x128/group.png") 0 0 no-repeat !important;
 }
 
 .icon-role-128 {
-    background: transparent url("../images/icons/128x128/masks.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/128x128/masks.png") 0 0 no-repeat !important;
 }
 
 .icon-userstore-128 {
-    background: transparent url("../images/icons/128x128/userstore.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/128x128/userstore.png") 0 0 no-repeat !important;
 }
 
 .icon-content-studio-128 {
-    background: transparent url("../images/icons/128x128/cubes.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/128x128/cubes.png") 0 0 no-repeat !important;
 }
