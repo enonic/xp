@@ -8,7 +8,7 @@ Ext.define('Admin.lib.Sortable', {
         me.config = config || {};
         me.parentComponent = parentComponent;
         me.id = Ext.id();
-        me.group = me.config.group || '' + me.id;
+        me.group = me.config.group || '' + me.id;
         me.indicatorEl = me._createDDIndicator();
 
         me._initDragZone();
@@ -162,7 +162,7 @@ Ext.define('Admin.lib.Sortable', {
 
         me.indicatorEl.show();
 
-        top = position === 'above' ? area.top: area.bottom;
+        top = position === 'above' ? area.top : area.bottom;
 
         me.indicatorEl.setStyle('width', area.width + 'px');
         me.indicatorEl.setStyle('top', top + 'px');

@@ -3,24 +3,14 @@ Ext.define('Admin.view.contentStudio.FilterPanel', {
     alias: 'widget.contentStudioFilter',
 
     includeSearch: true,
-    includeFacets: [
+    updateFacetCount: 'query',
+    facetData: [
         {
-            title: 'Type',
-            xtype: 'checkboxgroup',
-            name: 'type',
-            items: [
-                {
-                    boxLabel: 'Field',
-                    inputValue: 'field'
-                },
-                {
-                    boxLabel: 'Fieldset',
-                    inputValue: 'fieldset'
-                },
-                {
-                    boxLabel: 'Content type',
-                    inputValue: 'contenttype'
-                }
+            "name": "Type",
+            "terms": [
+                { "name": "Field", "count": 4 },
+                { "name": "Fieldset", "count": 7 },
+                { "name": "Content type", "count": 1 },
             ]
         }
     ]

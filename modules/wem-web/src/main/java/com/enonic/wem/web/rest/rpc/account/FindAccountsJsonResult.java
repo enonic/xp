@@ -56,10 +56,12 @@ final class FindAccountsJsonResult
     {
         json.put( "name", facet.getName() );
 
-        final ObjectNode terms = json.putObject( "terms" );
+        final ArrayNode terms = json.putArray( "terms" );
         for ( final AccountFacetEntry facetEntry : facet )
         {
-            terms.put( facetEntry.getTerm(), facetEntry.getCount() );
+            ObjectNode facetObject = terms.addObject();
+            facetObject.put( "name", facetEntry.getTerm() );
+            facetObject.put( "count", facetEntry.getCount() );
         }
     }
 }
