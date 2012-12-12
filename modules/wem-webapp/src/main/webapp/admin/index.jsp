@@ -133,6 +133,9 @@
   <li>
     <a href="../dev/sortable/">Sortable</a>
   </li>
+  <li>
+    <a href="../dev/codemirror/">Code Mirror</a>
+  </li>
 </ul>
 
 <hr/>

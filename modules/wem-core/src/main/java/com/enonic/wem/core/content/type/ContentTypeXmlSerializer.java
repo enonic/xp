@@ -25,7 +25,7 @@ public class ContentTypeXmlSerializer
 {
     private FormItemsXmlSerializer formItemsSerializer = new FormItemsXmlSerializer();
 
-    private boolean prettyPrint = false;
+    private boolean prettyPrint = true;
 
     public ContentTypeXmlSerializer prettyPrint( boolean value )
     {

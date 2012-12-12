@@ -9,7 +9,7 @@ import com.enonic.wem.web.json.JsonResult;
 final class GetContentTypeConfigRpcJsonResult
     extends JsonResult
 {
-    private final static ContentTypeXmlSerializer contentTypeXmlSerializer = new ContentTypeXmlSerializer();
+    private final static ContentTypeXmlSerializer contentTypeXmlSerializer = new ContentTypeXmlSerializer().prettyPrint( true );
 
     private final ContentType contentType;
 
