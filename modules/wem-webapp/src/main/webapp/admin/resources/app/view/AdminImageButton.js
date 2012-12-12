@@ -1,0 +1,47 @@
+Ext.define('Admin.view.AdminImageButton', {
+    extend: 'Ext.button.Button',
+    alias: 'widget.adminImageButton',
+
+    style: {
+        padding: 0
+    },
+    cls: 'admin-image-button',
+    scale: 'large',
+    popupTpl: undefined,
+    popupData: undefined,
+
+    initComponent: function () {
+        this.callParent(arguments);
+    },
+
+    listeners: {
+        click: function (item) {
+            if (!item.popupPanel) {
+                item.popupPanel = Ext.create("Ext.panel.Panel", {
+                    floating: true,
+                    cls: 'admin-toolbar-popup',
+                    border: false,
+                    tpl: item.popupTpl,
+                    data: item.popupData,
+                    styleHtmlContent: true,
+                    renderTo: Ext.getBody(),
+                    listeners: {
+                        afterrender: function (cont) {
+                            cont.show();
+                            cont.setPagePosition(cont.el.getAlignToXY(item.el, "tr-br?"));
+                        }
+                    }
+
+                });
+            } else {
+                if (item.popupPanel.isHidden()) {
+                    item.popupPanel.show();
+                } else {
+                    item.popupPanel.hide();
+                }
+
+            }
+        }
+    }
+
+});
