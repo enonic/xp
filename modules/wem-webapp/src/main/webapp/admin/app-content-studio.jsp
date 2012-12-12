@@ -42,12 +42,6 @@
   <!-- Third party plugins -->
 
   <link rel="stylesheet" type="text/css" href="resources/lib/codemirror/lib/codemirror.css">
-  <style type="text/css">
-    /* Should be moved to theme repo / admin.css */
-    .CodeMirror {
-      border: 1px solid #aaa;
-    }
-  </style>
   <script type="text/javascript" src="resources/lib/codemirror/lib/codemirror.js"></script>
   <script type="text/javascript" src="resources/lib/codemirror/lib/util/loadmode.js"></script>
 
