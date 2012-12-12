@@ -134,16 +134,12 @@ Ext.define('Admin.controller.contentManager.Controller', {
             for (i = 0; i < content.length; i += 1) {
                 var data = content[i];
                 //TODO: implement when content specification will be developed
-                switch (data.get('type')) {
-                case 'myModule:myType':
-                case 'News:Article':
-                case 'News:Article2':
-                    openEditContentTabFn(data);
-                    break;
-                case 'myModule:mySite':
-                    openEditSiteTabFn(data);
-                    break;
-                }
+                openEditContentTabFn(data);
+//                switch (data.get('type')) {
+//                case 'myModule:mySite':
+//                    openEditSiteTabFn(data);
+//                    break;
+//                }
             }
         }
     },

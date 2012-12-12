@@ -1,0 +1,121 @@
+{
+    "name": "Article2",
+    "module": "News",
+    "qualifiedName": "News:Article2",
+    "displayName": null,
+    "superType": "System:content",
+    "isAbstract": false,
+    "isFinal": false,
+    "form": [
+        {
+            "Input": {
+                "name": "title",
+                "label": "Title",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": "Article title",
+                "type": {
+                    "name": "TextLine",
+                    "builtIn": true
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "preface",
+                "label": "Preface",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": "Preface of the article",
+                "type": {
+                    "name": "TextLine",
+                    "builtIn": true
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "body",
+                "label": "Body",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": "Body of the article",
+                "type": {
+                    "name": "TextArea",
+                    "builtIn": true
+                }
+            }
+        },
+        {
+            "FormItemSet": {
+                "name": "related",
+                "label": null,
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "customText": null,
+                "helpText": null,
+                "items": [
+                    {
+                        "Input": {
+                            "name": "author",
+                            "label": "Author",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "category",
+                            "label": "Category",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

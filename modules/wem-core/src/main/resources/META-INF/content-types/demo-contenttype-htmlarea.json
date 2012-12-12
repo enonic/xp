@@ -1,0 +1,49 @@
+{
+    "name": "HtmlArea",
+    "module": "Demo",
+    "qualifiedName": "Demo:HtmlArea",
+    "displayName":"HTML Area Demo",
+    "superType":"System:Content",
+    "isAbstract":false,
+    "isFinal":true,
+    "form": [
+        {
+            "Input": {
+                "name": "title",
+                "label": "Title",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": "Article title",
+                "type": {
+                    "name": "TextLine",
+                    "builtIn": true
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "htmlarea_text",
+                "label": "HTML Area",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": "HTML Area",
+                "type": {
+                    "name": "HtmlArea",
+                    "builtIn": true
+                }
+            }
+        }
+    ]
+}
