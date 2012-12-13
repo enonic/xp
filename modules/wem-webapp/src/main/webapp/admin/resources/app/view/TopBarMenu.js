@@ -50,7 +50,7 @@ Ext.define('Admin.view.TopBarMenu', {
             xtype: 'component',
             styleHtmlContent: true,
             cls: 'tools',
-            html: '<a href="#" class="close-all">Close All</a><a href="#" class="close">Close</a>'
+            html: '<a href="#" class="close-all">Close All</a><a href="#" class="close-checked">Close</a>'
         }
     ],
 
@@ -58,7 +58,7 @@ Ext.define('Admin.view.TopBarMenu', {
 
     initComponent: function () {
         this.callParent(arguments);
-        this.addEvents('close', 'closeAll');
+        this.addEvents('closeChecked', 'closeAll');
         this.on('afterrender', this.bindCloseListeners);
         this.on('resize', this.updatePosition);
     },
@@ -75,7 +75,7 @@ Ext.define('Admin.view.TopBarMenu', {
         item = (e.type === 'click') ? me.getItemFromEvent(e) : me.activeItem;
         if (item && item.isMenuItem && item.onClick(e) !== false) {
             if (me.fireEvent('click', me, item, e) !== false && this.tabPanel) {
-                this.tabPanel.setActiveTab(item.card.id || item.card.itemId || item.card);
+                this.tabPanel.setActiveTab(item.card);
             }
             this.hide();
         }
@@ -92,11 +92,11 @@ Ext.define('Admin.view.TopBarMenu', {
 
     bindCloseListeners: function () {
         var me = this;
-        var close = this.el.down('a.close');
+        var closeChecked = this.el.down('a.close-checked');
         var closeAll = this.el.down('a.close-all');
-        close.on('click', function (event, target, opts) {
+        closeChecked.on('click', function (event, target, opts) {
             var items = me.getCheckedItems();
-            if (me.fireEvent('close', items) !== false) {
+            if (me.fireEvent('closeChecked', items) !== false) {
                 // me.removeItems(items);
                 //tabPanel will also delete all tabs by calling tabBar.remove
                 Ext.Array.each(items, function (item) {
