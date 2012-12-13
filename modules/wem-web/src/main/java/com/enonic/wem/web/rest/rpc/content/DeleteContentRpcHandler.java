@@ -28,7 +28,7 @@ public final class DeleteContentRpcHandler
 
         final DeleteContents deleteContents = Commands.content().delete();
         deleteContents.deleter( AccountKey.anonymous() );
-        deleteContents.paths( contentPaths );
+        deleteContents.selectors( contentPaths );
         ContentDeletionResult contentDeletionResult = client.execute( deleteContents );
         context.setResult( new DeleteContentJsonResult( contentDeletionResult ) );
     }

@@ -4,22 +4,22 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.ContentPaths;
+import com.enonic.wem.api.content.ContentSelectors;
 import com.enonic.wem.api.content.Contents;
 
 public final class GetContents
     extends Command<Contents>
 {
-    private ContentPaths paths;
+    private ContentSelectors selectors;
 
-    public ContentPaths getPaths()
+    public ContentSelectors getSelectors()
     {
-        return this.paths;
+        return this.selectors;
     }
 
-    public GetContents paths( final ContentPaths paths )
+    public GetContents selectors( final ContentSelectors selectors )
     {
-        this.paths = paths;
+        this.selectors = selectors;
         return this;
     }
 
@@ -37,18 +37,18 @@ public final class GetContents
         }
 
         final GetContents that = (GetContents) o;
-        return Objects.equal( this.paths, that.paths );
+        return Objects.equal( this.selectors, that.selectors );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.paths );
+        return Objects.hashCode( this.selectors );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.paths, "Content paths cannot be null" );
+        Preconditions.checkNotNull( this.selectors, "Content selectors cannot be null" );
     }
 }

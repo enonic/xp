@@ -53,22 +53,30 @@ public abstract class AbstractImmutableEntityList<T>
         return this.list;
     }
 
+    public final boolean contains( T o )
+    {
+        return this.list.contains( o );
+    }
+
     @Override
     public final Iterator<T> iterator()
     {
         return this.list.iterator();
     }
 
+    @Override
     public String toString()
     {
         return this.list.toString();
     }
 
+    @Override
     public int hashCode()
     {
         return this.list.hashCode();
     }
 
+    @Override
     public boolean equals( final Object o )
     {
         return ( o != null ) && ( this.getClass().isInstance( o ) ) && this.list.equals( ( (AbstractImmutableEntityList) o ).list );

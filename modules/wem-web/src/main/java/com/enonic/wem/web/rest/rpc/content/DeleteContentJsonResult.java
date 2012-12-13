@@ -4,7 +4,7 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.ContentDeletionResult;
-import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.web.json.JsonResult;
 
 final class DeleteContentJsonResult
@@ -31,16 +31,16 @@ final class DeleteContentJsonResult
         for ( ContentDeletionResult.Failure failure : failures )
         {
             final ObjectNode objectNode = array.addObject();
-            objectNode.put( "path", failure.contentPath.toString() );
+            objectNode.put( "path", failure.contentSelector.toString() );
             objectNode.put( "reason", failure.reason );
         }
         return array;
     }
 
-    private ArrayNode serializeSuccesses( Iterable<ContentPath> successes )
+    private ArrayNode serializeSuccesses( Iterable<ContentSelector> successes )
     {
         final ArrayNode array = arrayNode();
-        for ( ContentPath success : successes )
+        for ( ContentSelector success : successes )
         {
             final ObjectNode objectNode = array.addObject();
             objectNode.put( "path", success.toString() );

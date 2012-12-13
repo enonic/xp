@@ -43,22 +43,30 @@ public abstract class AbstractImmutableEntitySet<T>
         return this.set;
     }
 
+    public final boolean contains( T o )
+    {
+        return this.set.contains( o );
+    }
+
     @Override
     public final Iterator<T> iterator()
     {
         return this.set.iterator();
     }
 
+    @Override
     public String toString()
     {
         return this.set.toString();
     }
 
+    @Override
     public int hashCode()
     {
         return this.set.hashCode();
     }
 
+    @Override
     public boolean equals( final Object o )
     {
         return ( o != null ) && ( this.getClass().isInstance( o ) ) && this.set.equals( ( (AbstractImmutableEntitySet) o ).set );

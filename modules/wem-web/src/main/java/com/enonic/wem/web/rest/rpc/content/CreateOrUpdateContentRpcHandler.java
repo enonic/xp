@@ -103,7 +103,7 @@ public final class CreateOrUpdateContentRpcHandler
         else
         {
             final UpdateContents updateContents = Commands.content().update();
-            updateContents.paths( ContentPaths.from( contentPath ) );
+            updateContents.selectors( ContentPaths.from( contentPath ) );
             updateContents.editor( composite( setContentData( contentData ), setContentDisplayName( displayName ) ) );
             updateContents.modifier( AccountKey.anonymous() );
 
@@ -114,7 +114,7 @@ public final class CreateOrUpdateContentRpcHandler
 
     private boolean contentExists( final ContentPath contentPath )
     {
-        final Contents contents = client.execute( Commands.content().get().paths( ContentPaths.from( contentPath ) ) );
+        final Contents contents = client.execute( Commands.content().get().selectors( ContentPaths.from( contentPath ) ) );
         return contents.isNotEmpty();
     }
 }
