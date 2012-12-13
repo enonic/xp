@@ -4,7 +4,8 @@ Ext.define('Admin.view.TopBar', {
 
     requires: [
         'Admin.view.TopBarMenu',
-        'Admin.view.StartMenu'
+        'Admin.view.StartMenu',
+        'Admin.view.AdminImageButton'
     ],
 
     buttonAlign: 'center',
@@ -167,13 +168,14 @@ Ext.define('Admin.view.TopBar', {
             me.path,
             { xtype: 'tbspacer', flex: 5 },
             {
-                text: 'Log in',
-                ui: 'red',
-                margins: '0 6 0 0'
-            },
-            {
-                text: 'Settings',
-                ui: 'blue'
+                xtype: 'adminImageButton',
+                icon: "rest/account/image/default/user",
+                popupTpl: Templates.common.userPopUp,
+                popupData: {
+                    userName: "Thomas Lund Sigdestad",
+                    photoUrl: "rest/account/image/default/user",
+                    qName: 'system/tsi'
+                }
             }
         ];
 
