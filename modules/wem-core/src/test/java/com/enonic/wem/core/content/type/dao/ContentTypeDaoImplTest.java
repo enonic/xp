@@ -73,7 +73,7 @@ public class ContentTypeDaoImplTest
         // verify
         assertNotNull( contentTypes );
         assertEquals( 1, contentTypes.getSize() );
-        final ContentType contentType1 = contentTypes.getFirst();
+        final ContentType contentType1 = contentTypes.first();
         assertEquals( "myContentType", contentType1.getName() );
         assertEquals( "myModule", contentType1.getModuleName().toString() );
         assertEquals( true, contentType1.isAbstract() );
@@ -154,7 +154,7 @@ public class ContentTypeDaoImplTest
             contentTypeDao.retrieveContentTypes( QualifiedContentTypeNames.from( "myModule:myContentType" ), session );
         assertNotNull( contentTypesAfterUpdate );
         assertEquals( 1, contentTypesAfterUpdate.getSize() );
-        final ContentType contentType1 = contentTypesAfterUpdate.getFirst();
+        final ContentType contentType1 = contentTypesAfterUpdate.first();
         assertEquals( "myContentType", contentType1.getName() );
         assertEquals( "myModule", contentType1.getModuleName().toString() );
         assertEquals( false, contentType1.isAbstract() );

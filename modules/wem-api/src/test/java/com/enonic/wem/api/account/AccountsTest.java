@@ -10,7 +10,6 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 public final class AccountsTest
 {
@@ -91,10 +90,10 @@ public final class AccountsTest
     public void testGetFirst()
     {
         final Accounts list1 = Accounts.from( this.account1, this.account2 );
-        assertSame( this.account1, list1.getFirst() );
+        assertSame( this.account1, list1.first() );
 
         final Accounts list2 = Accounts.empty();
-        assertNull( list2.getFirst() );
+        assertNull( list2.first() );
     }
 
     @Test

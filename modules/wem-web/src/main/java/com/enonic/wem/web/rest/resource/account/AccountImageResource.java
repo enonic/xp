@@ -37,8 +37,7 @@ public final class AccountImageResource
     public BufferedImage getAccountImage( @PathParam("key") final String key, @QueryParam("size") @DefaultValue("100") final int size )
         throws Exception
     {
-        final Account account =
-            this.client.execute( Commands.account().get().keys( AccountKeys.from( key ) ).includeImage() ).getFirst();
+        final Account account = this.client.execute( Commands.account().get().keys( AccountKeys.from( key ) ).includeImage() ).first();
 
         return this.helper.getAccountImage( account, size );
     }

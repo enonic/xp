@@ -26,7 +26,7 @@ public class GetContentTypeConfigRpcHandler
     {
         final String qualifiedContentTypeName = context.param( "qualifiedContentTypeName" ).required().asString();
         final GetContentTypes getContentTypes = contentType().get().names( QualifiedContentTypeNames.from( qualifiedContentTypeName ) );
-        final ContentType contentType = client.execute( getContentTypes ).getFirst();
+        final ContentType contentType = client.execute( getContentTypes ).first();
         if ( contentType == null )
         {
             context.setResult( new JsonErrorResult( "Content type [{0}] was not found", qualifiedContentTypeName ) );

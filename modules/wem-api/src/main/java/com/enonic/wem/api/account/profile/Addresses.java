@@ -1,38 +1,20 @@
 package com.enonic.wem.api.account.profile;
 
-import java.util.Iterator;
-import java.util.List;
-
 import com.google.common.collect.ImmutableList;
 
-public final class Addresses
-    implements Iterable<Address>
-{
-    private final ImmutableList<Address> list;
+import com.enonic.wem.api.AbstractImmutableEntityList;
 
+public final class Addresses
+    extends AbstractImmutableEntityList<Address>
+{
     private Addresses( final ImmutableList<Address> list )
     {
-        this.list = list;
-    }
-
-    public int getSize()
-    {
-        return this.list.size();
-    }
-
-    public boolean isEmpty()
-    {
-        return this.list.isEmpty();
+        super( list );
     }
 
     public Address getPrimary()
     {
-        return this.list.isEmpty() ? null : this.list.get( 0 );
-    }
-
-    public List<Address> getList()
-    {
-        return this.list;
+        return first();
     }
 
     public Addresses add( final Address... list )
@@ -51,12 +33,6 @@ public final class Addresses
         builder.addAll( this.list );
         builder.addAll( list );
         return new Addresses( builder.build() );
-    }
-
-    @Override
-    public Iterator<Address> iterator()
-    {
-        return this.list.iterator();
     }
 
     public static Addresses empty()

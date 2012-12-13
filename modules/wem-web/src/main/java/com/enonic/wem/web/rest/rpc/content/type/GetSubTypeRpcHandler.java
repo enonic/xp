@@ -43,6 +43,6 @@ public class GetSubTypeRpcHandler
     {
         final QualifiedSubTypeNames names = QualifiedSubTypeNames.from( subTypeName );
         final SubTypes subTypesResult = client.execute( Commands.subType().get().names( names ) );
-        return subTypesResult.isEmpty() ? null : subTypesResult.getFirst();
+        return subTypesResult.isEmpty() ? null : subTypesResult.first();
     }
 }

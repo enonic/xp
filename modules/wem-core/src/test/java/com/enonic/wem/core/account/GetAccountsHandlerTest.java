@@ -65,7 +65,7 @@ public class GetAccountsHandlerTest
         // verify
         assertNotNull( accountResult );
         assertEquals( 3, accountResult.getSize() );
-        assertEquals( "group:enonic:group1", accountResult.getFirst().getKey().toString() );
+        assertEquals( "group:enonic:group1", accountResult.first().getKey().toString() );
         assertEquals( "role:enonic:contributors", accountResult.getList().get( 1 ).getKey().toString() );
         assertEquals( "user:enonic:user1", accountResult.getList().get( 2 ).getKey().toString() );
     }
@@ -98,10 +98,10 @@ public class GetAccountsHandlerTest
         assertNotNull( accountResult );
         assertEquals( 3, accountResult.getSize() );
 
-        assertTrue( accountResult.getFirst() instanceof GroupAccount );
+        assertTrue( accountResult.first() instanceof GroupAccount );
         assertTrue( accountResult.getList().get( 1 ) instanceof GroupAccount );
         assertTrue( accountResult.getList().get( 2 ) instanceof RoleAccount );
-        final GroupAccount group1Account = (GroupAccount) accountResult.getFirst();
+        final GroupAccount group1Account = (GroupAccount) accountResult.first();
         final GroupAccount group2Account = (GroupAccount) accountResult.getList().get( 1 );
         final RoleAccount roleAccount = (RoleAccount) accountResult.getList().get( 2 );
 
@@ -171,8 +171,8 @@ public class GetAccountsHandlerTest
         // verify
         assertNotNull( accountResult );
         assertEquals( 1, accountResult.getSize() );
-        assertEquals( "user:enonic:user1", accountResult.getFirst().getKey().toString() );
-        final UserProfile prof = ( (UserAccount) accountResult.getFirst() ).getProfile();
+        assertEquals( "user:enonic:user1", accountResult.first().getKey().toString() );
+        final UserProfile prof = ( (UserAccount) accountResult.first() ).getProfile();
         assertNotNull( prof );
         assertEquals( "John", prof.getFirstName() );
         assertEquals( "Smith", prof.getLastName() );
@@ -215,7 +215,8 @@ public class GetAccountsHandlerTest
         user.setDisplayName( "User " + name );
         user.setDeleted( false );
         final AccountKey accountKey = user.getKey();
-        Mockito.when( accountDao.findUser( Matchers.eq( accountKey ), Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.eq( session ) ) ).thenReturn( user );
+        Mockito.when( accountDao.findUser( Matchers.eq( accountKey ), Matchers.anyBoolean(), Matchers.anyBoolean(),
+                                           Matchers.eq( session ) ) ).thenReturn( user );
         return user;
     }
 

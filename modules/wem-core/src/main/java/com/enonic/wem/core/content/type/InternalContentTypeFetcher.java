@@ -36,7 +36,7 @@ public class InternalContentTypeFetcher
         }
         else
         {
-            return contentTypes.getFirst();
+            return contentTypes.first();
         }
     }
 }

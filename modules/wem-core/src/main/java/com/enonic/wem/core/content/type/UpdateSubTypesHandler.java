@@ -60,7 +60,7 @@ public final class UpdateSubTypesHandler
     private SubType retrieveSubType( final Session session, final QualifiedSubTypeName contentTypeName )
     {
         final SubTypes contentTypes = subTypeDao.retrieveSubTypes( QualifiedSubTypeNames.from( contentTypeName ), session );
-        return contentTypes.isEmpty() ? null : contentTypes.getFirst();
+        return contentTypes.isEmpty() ? null : contentTypes.first();
     }
 
     @Autowired

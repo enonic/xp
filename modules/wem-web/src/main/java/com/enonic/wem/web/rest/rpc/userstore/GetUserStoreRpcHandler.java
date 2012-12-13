@@ -25,6 +25,6 @@ public final class GetUserStoreRpcHandler
 
         final UserStores userStores = this.client.execute(
             Commands.userStore().get().names( UserStoreNames.from( name ) ).includeConfig().includeConnector().includeStatistics() );
-        context.setResult( new GetUserStoreJsonResult( userStores.getFirst() ) );
+        context.setResult( new GetUserStoreJsonResult( userStores.first() ) );
     }
 }

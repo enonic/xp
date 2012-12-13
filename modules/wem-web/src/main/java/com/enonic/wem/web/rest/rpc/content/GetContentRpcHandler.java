@@ -45,7 +45,7 @@ public class GetContentRpcHandler
         getContent.paths( ContentPaths.from( contentPath ) );
 
         final Contents contents = client.execute( getContent );
-        return contents.isNotEmpty() ? contents.getFirst() : null;
+        return contents.isNotEmpty() ? contents.first() : null;
     }
 
 }
