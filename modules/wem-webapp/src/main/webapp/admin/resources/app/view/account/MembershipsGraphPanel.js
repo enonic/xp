@@ -49,7 +49,7 @@ Ext.define('Admin.view.account.MembershipsGraphPanel', {
             },
             Edge: {
                 overridable: true,
-                color: 'rgb(202, 216, 458)',
+                color: 'rgb(238, 238, 238)',
                 lineWidth: 1.1,
                 type: 'arrow',
                 dim: 10
@@ -117,9 +117,9 @@ Ext.define('Admin.view.account.MembershipsGraphPanel', {
                     var y = nodePosition.y - 11;
                     var radius = 6;
 
-                    context.strokeStyle = 'rgb(202, 216, 458)';
-                    context.lineWidth = 3;
-                    context.fillStyle = 'rgba(222, 231, 248, 1)';
+                    context.strokeStyle = 'rgb(204, 204, 204)';
+                    context.lineWidth = 1;
+                    context.fillStyle = 'rgba(238, 238, 238, 1)';
                     context.beginPath();
                     context.moveTo(x + radius, y);
                     context.lineTo(x + width - radius, y);
@@ -175,6 +175,7 @@ Ext.define('Admin.view.account.MembershipsGraphPanel', {
         var style = domElement.style;
         style.width = node._width + 'px';
         style.height = node._height + 'px';
+        style.cursor = 'pointer';
 
         domElement.onclick = function () {
             me.graph.onClick(node.id, {
@@ -252,10 +253,11 @@ Ext.define('Admin.view.account.MembershipsGraphPanel', {
      * @private
      */
     setStyles: function () {
-        this.body.setWidth(this.width);
-        this.body.setHeight(this.height);
-        if (this.extraCls) {
-            this.body.addCls(this.extraCls);
+        var me = this;
+        me.body.setWidth(me.width);
+        me.body.setHeight(me.height);
+        if (me.extraCls) {
+            me.body.addCls(me.extraCls);
         }
     },
 
