@@ -55,7 +55,6 @@
           'Admin.controller.TopBarController',
           'Admin.controller.NotifyUserController',
           // old controllers from _app/main
-          'NotificationWindowController',
           'ActivityStreamController'
         ],
 
@@ -69,7 +68,7 @@
               {
                 region: 'center',
                 bodyCls: 'main-viewport-center-body',
-                html: '<div id="appFrames" style="height: 100%; width: 100%;"><!-- --> < /div>'
+                html: '<div id="appFrames" style="height: 100%; width: 100%;"></div>'
               }
               //{
               //  region: 'east',
