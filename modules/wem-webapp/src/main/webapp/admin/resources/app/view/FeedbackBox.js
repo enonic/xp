@@ -24,7 +24,7 @@ Ext.define('Admin.view.FeedbackBox', {
          '     </tr>' +
          '		<tr>' +
          '		    <td colspan="2" style="text-align: right">' +
-         '		        <tpl if="notifyUser">' +
+         '		        <tpl if="showNotifyUserLink">' +
          '					<span class="link notify-user" href="javascript:;">Send Notification</span>' +
          '             </tpl>' +
          '			</td>' +
@@ -57,8 +57,9 @@ Ext.define('Admin.view.FeedbackBox', {
         me.update({
             messageTitle: config.title,
             messageText: config.message,
-            notifyUser: config.opts.notifyUser === undefined ? false : config.opts.notifyUser
+            showNotifyUserLink: config.opts.notifyUser === undefined ? false : config.opts.notifyUser
         });
+
         me.setNotifyOpts(config.opts);
         me.show();
         me.fadeInOut();
@@ -130,7 +131,10 @@ Ext.define('Admin.view.FeedbackBox', {
         }, this);
 
         me.getEl().on('click', function (event, target) {
+
             if (target.className.indexOf('notify-user') > -1) {
+
+                /*
                 var notifyOpts = me.getNotifyOpts();
                 Ext.Ajax.request({
                     url: 'data/user/userinfo',
@@ -151,9 +155,11 @@ Ext.define('Admin.view.FeedbackBox', {
                         me.application.fireEvent('showNotifyUserWindow ', model);
                     }
                 });
+                */
+
             }
 
-            this.hide();
+            me.hide();
         }, this);
     },
 
