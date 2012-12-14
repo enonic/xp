@@ -95,7 +95,7 @@ Ext.define('App.controller.ActivityStreamController', {
     },
 
     appendSpeakOutTextField: function () {
-        new Ext.form.TextField(
+        new Ext.form.field.Text(
             {
                 itemId: 'speakOutTextField',
                 renderTo: 'activity-stream-speak-out-text-input',
