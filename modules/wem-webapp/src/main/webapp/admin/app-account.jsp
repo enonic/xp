@@ -6,6 +6,7 @@
   <meta charset="utf-8"/>
   <title>Enonic WEM Admin</title>
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/icons-metro.css">
   <link rel="stylesheet" type="text/css" href="resources/css/user-preview.css">
   <link rel="stylesheet" type="text/css" href="resources/css/user-preview-panel.css">
   <link rel="stylesheet" type="text/css" href="resources/css/BoxSelect.css">
@@ -87,7 +88,7 @@
             {
               xtype: 'cmsTabPanel',
               appName: 'Accounts',
-              appIconCls: 'icon-woman-24',
+              appIconCls: 'icon-metro-accounts-24',
               items: [
                 {
                   id: 'tab-browse',

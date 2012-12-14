@@ -32,7 +32,7 @@ Ext.define('Admin.controller.TopBarController', {
             id: 'app-02',
             title: 'Dashboard',
             cls: 'span2 dashboard',
-            iconCls: 'icon-dashboard-24',
+            iconCls: 'icon-metro-dashboard-24',
             appUrl: 'app-dashboard.jsp',
             defaultApp: true
         };
@@ -107,6 +107,7 @@ Ext.define('Admin.controller.TopBarController', {
         window.document.title = 'Enonic WEM Admin - ' + title;
     },
 
+//  this is needed in case of shared top bar
     setStartButton: function (selectedMenuItem) {
         var topBar = this.getTopBar();
         if (topBar) {

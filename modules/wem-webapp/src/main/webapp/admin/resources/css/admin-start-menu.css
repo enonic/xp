@@ -261,37 +261,37 @@ ul.bottom li a {
 
 .tile.content-manager {
     background-color: #0056D6;
-    background-image: url("../../../dev/html-templates/images/data.png");
+    background-image: url("../../../admin/resources/images/icons/metro/128x128/data.png");
 }
 
 .tile.userstores {
     background-color: #06419F;
-    background-image: url("../../../dev/html-templates/images/user_earth.png");
+    background-image: url("../../../admin/resources/images/icons/metro/128x128/user_earth.png");
 }
 
 .tile.accounts {
     background-color: #9929BD;
-    background-image: url("../../../dev/html-templates/images/users2.png");
+    background-image: url("../../../admin/resources/images/icons/metro/128x128/users2.png");
 }
 
 .tile.administrators {
     background-color: #E32400;
-    background-image: url("../../../dev/html-templates/images/earth.png");
+    background-image: url("../../../admin/resources/images/icons/metro/128x128/earth.png");
 }
 
 .tile.content-studio {
     background-color: #AE1D00;
-    background-image: url("../../../dev/html-templates/images/cube_molecule.png");
+    background-image: url("../../../admin/resources/images/icons/metro/128x128/cube_molecule.png");
 }
 
 .tile.schedule {
     background-color: #0251CA;
-    background-image: url("../../../dev/html-templates/images/clock.png");
+    background-image: url("../../../admin/resources/images/icons/metro/128x128/clock.png");
 }
 
 .tile.cluster {
     background-color: #060606;
-    background-image: url("../../../dev/html-templates/images/virus.png");
+    background-image: url("../../../admin/resources/images/icons/metro/128x128/virus.png");
 }
 
 .tile.activity {
