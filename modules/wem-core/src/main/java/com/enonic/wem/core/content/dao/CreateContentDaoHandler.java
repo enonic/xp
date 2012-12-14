@@ -10,6 +10,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.exception.ContentAlreadyExistException;
 import com.enonic.wem.api.exception.ContentNotFoundException;
+import com.enonic.wem.core.jcr.JcrConstants;
 
 
 final class CreateContentDaoHandler
@@ -60,7 +61,7 @@ final class CreateContentDaoHandler
     private Node addContentToJcr( final Content content, final Node parentNode )
         throws RepositoryException
     {
-        final Node newContentNode = parentNode.addNode( content.getName() );
+        final Node newContentNode = parentNode.addNode( content.getName(), JcrConstants.CONTENT_TYPE );
         contentJcrMapper.toJcr( content, newContentNode );
         return newContentNode;
     }
