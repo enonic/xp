@@ -2,8 +2,6 @@ package com.enonic.wem.api.content;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -11,45 +9,15 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-public final class ContentPaths
-    implements Iterable<ContentPath>
-{
-    private final ImmutableSet<ContentPath> set;
+import com.enonic.wem.api.AbstractImmutableEntitySet;
 
+public final class ContentPaths
+    extends AbstractImmutableEntitySet<ContentPath>
+    implements ContentSelectors<ContentPath>
+{
     private ContentPaths( final ImmutableSet<ContentPath> set )
     {
-        this.set = set;
-    }
-
-    public int getSize()
-    {
-        return this.set.size();
-    }
-
-    public boolean isEmpty()
-    {
-        return this.set.isEmpty();
-    }
-
-    public ContentPath getFirst()
-    {
-        return this.set.isEmpty() ? null : this.set.iterator().next();
-    }
-
-    public boolean contains( final ContentPath ref )
-    {
-        return this.set.contains( ref );
-    }
-
-    public Set<ContentPath> getSet()
-    {
-        return this.set;
-    }
-
-    @Override
-    public Iterator<ContentPath> iterator()
-    {
-        return this.set.iterator();
+        super( set );
     }
 
     public ContentPaths add( final String... paths )
@@ -98,25 +66,10 @@ public final class ContentPaths
         return new ContentPaths( ImmutableSet.copyOf( tmp ) );
     }
 
-    public int hashCode()
-    {
-        return this.set.hashCode();
-    }
-
-    public boolean equals( final Object o )
-    {
-        return ( o instanceof ContentPaths ) && this.set.equals( ( (ContentPaths) o ).set );
-    }
-
-    public String toString()
-    {
-        return this.set.toString();
-    }
-
     public static ContentPaths empty()
     {
-        final ImmutableSet<ContentPath> set = ImmutableSet.of();
-        return new ContentPaths( set );
+        final ImmutableSet<ContentPath> list = ImmutableSet.of();
+        return new ContentPaths( list );
     }
 
     public static ContentPaths from( final String... paths )

@@ -1,8 +1,6 @@
 package com.enonic.wem.api.content.type;
 
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import com.google.common.base.Function;
@@ -12,37 +10,17 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
-public final class ContentTypes
-    implements Iterable<ContentType>
-{
-    private final ImmutableList<ContentType> list;
+import com.enonic.wem.api.AbstractImmutableEntityList;
 
+public final class ContentTypes
+    extends AbstractImmutableEntityList<ContentType>
+{
     private final ImmutableMap<QualifiedContentTypeName, ContentType> map;
 
     private ContentTypes( final ImmutableList<ContentType> list )
     {
-        this.list = list;
+        super( list );
         this.map = Maps.uniqueIndex( list, new ToNameFunction() );
-    }
-
-    public int getSize()
-    {
-        return this.list.size();
-    }
-
-    public boolean isEmpty()
-    {
-        return this.list.isEmpty();
-    }
-
-    public ContentType getFirst()
-    {
-        return this.list.isEmpty() ? null : this.list.get( 0 );
-    }
-
-    public List<ContentType> getList()
-    {
-        return this.list;
     }
 
     public Set<QualifiedContentTypeName> getNames()
@@ -54,22 +32,6 @@ public final class ContentTypes
     public ContentType getContentType( final QualifiedContentTypeName contentTypeName )
     {
         return map.get( contentTypeName );
-    }
-
-    @Override
-    public Iterator<ContentType> iterator()
-    {
-        return this.list.iterator();
-    }
-
-    public int hashCode()
-    {
-        return this.list.hashCode();
-    }
-
-    public boolean equals( final Object o )
-    {
-        return ( o instanceof ContentTypes ) && this.list.equals( ( (ContentTypes) o ).list );
     }
 
     public static ContentTypes empty()

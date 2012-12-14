@@ -9,8 +9,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.core.command.CommandContext;
-import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.content.dao.ContentDao;
 
 import com.enonic.cms.core.time.TimeService;
 
@@ -18,10 +16,8 @@ import static com.enonic.wem.api.content.Content.newContent;
 
 @Component
 public class UpdateContentsHandler
-    extends CommandHandler<UpdateContents>
+    extends AbstractContentHandler<UpdateContents>
 {
-    private ContentDao contentDao;
-
     private TimeService timeService;
 
     private MockContentTypeDao contentTypeDao = MockContentTypeDao.get();
@@ -35,7 +31,7 @@ public class UpdateContentsHandler
     public void handle( final CommandContext context, final UpdateContents command )
         throws Exception
     {
-        final Contents contents = contentDao.findContent( command.getPaths(), context.getJcrSession() );
+        final Contents contents = findContents( command.getSelectors(), context );
         for ( Content contentToUpdate : contents )
         {
             ContentEditor contentEditor = command.getEditor();
@@ -49,12 +45,6 @@ public class UpdateContentsHandler
                 context.getJcrSession().save();
             }
         }
-    }
-
-    @Autowired
-    public void setContentDao( final ContentDao contentDao )
-    {
-        this.contentDao = contentDao;
     }
 
     @Autowired

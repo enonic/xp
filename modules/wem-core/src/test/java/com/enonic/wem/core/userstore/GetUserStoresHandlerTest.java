@@ -96,21 +96,21 @@ public class GetUserStoresHandlerTest
         //verify
         assertNotNull( userStores );
         assertEquals( 2, userStores.getSize() );
-        assertEquals( "enonic", userStores.getFirst().getName().toString() );
+        assertEquals( "enonic", userStores.first().getName().toString() );
         assertEquals( "default", userStores.getList().get( 1 ).getName().toString() );
-        assertNotNull( userStores.getFirst().getConfig() );
+        assertNotNull( userStores.first().getConfig() );
         assertNotNull( userStores.getList().get( 1 ).getConfig() );
-        assertNotNull( userStores.getFirst().getStatistics() );
+        assertNotNull( userStores.first().getStatistics() );
         assertNotNull( userStores.getList().get( 1 ).getStatistics() );
-        assertNotNull( userStores.getFirst().getConnector() );
+        assertNotNull( userStores.first().getConnector() );
 
-        UserStoreConfig configUserStore1 = userStores.getFirst().getConfig();
+        UserStoreConfig configUserStore1 = userStores.first().getConfig();
         assertEquals( 3, configUserStore1.getFields().size() );
         assertNotNull( configUserStore1.getField( "phone" ) );
         assertNotNull( configUserStore1.getField( "first-name" ) );
         assertNotNull( configUserStore1.getField( "last-name" ) );
 
-        assertNotNull( userStores.getFirst().getAdministrators().contains( AccountKey.user( "enonic:admin1" ) ) );
+        assertNotNull( userStores.first().getAdministrators().contains( AccountKey.user( "enonic:admin1" ) ) );
     }
 
     @Test(expected = UserStoreNotFoundException.class)

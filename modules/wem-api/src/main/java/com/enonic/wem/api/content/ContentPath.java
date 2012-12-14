@@ -11,6 +11,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 public final class ContentPath
+    implements ContentSelector
 {
     public static final ContentPath ROOT = new ContentPath( "/" );
 
@@ -120,7 +121,7 @@ public final class ContentPath
     }
 
     @Override
-    public final boolean equals( final Object o )
+    public boolean equals( final Object o )
     {
         if ( this == o )
         {
@@ -137,13 +138,13 @@ public final class ContentPath
     }
 
     @Override
-    public final int hashCode()
+    public int hashCode()
     {
         return refString.hashCode();
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return refString;
     }

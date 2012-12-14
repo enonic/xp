@@ -35,7 +35,7 @@ public final class GetAccountRpcHandler
 
             if ( !accounts.isEmpty() )
             {
-                final Account account = accounts.getFirst();
+                final Account account = accounts.first();
                 if ( accountKey.isUser() )
                 {
                     AccountKeys membershipKeys = this.client.execute( Commands.account().findMemberships().key( accountKey ) );

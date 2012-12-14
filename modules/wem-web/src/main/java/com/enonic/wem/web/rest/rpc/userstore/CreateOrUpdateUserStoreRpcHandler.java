@@ -66,7 +66,7 @@ public class CreateOrUpdateUserStoreRpcHandler
         UserStore userStore;
         if ( !userStores.isEmpty() )
         {
-            userStore = userStores.getFirst();
+            userStore = userStores.first();
         }
         else
         {

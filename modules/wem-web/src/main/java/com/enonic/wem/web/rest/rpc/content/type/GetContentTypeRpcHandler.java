@@ -32,7 +32,7 @@ public final class GetContentTypeRpcHandler
 
         if ( !result.isEmpty() )
         {
-            context.setResult( new GetContentTypeRpcJsonResult( result.getFirst() ) );
+            context.setResult( new GetContentTypeRpcJsonResult( result.first() ) );
         }
         else
         {

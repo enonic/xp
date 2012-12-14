@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.type.UpdateContentTypes;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.editor.ContentTypeEditor;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
@@ -60,7 +60,7 @@ public final class UpdateContentTypesHandler
     private ContentType retrieveContentType( final Session session, final QualifiedContentTypeName contentTypeName )
     {
         final ContentTypes contentTypes = contentTypeDao.retrieveContentTypes( QualifiedContentTypeNames.from( contentTypeName ), session );
-        return contentTypes.isEmpty() ? null : contentTypes.getFirst();
+        return contentTypes.isEmpty() ? null : contentTypes.first();
     }
 
     @Autowired

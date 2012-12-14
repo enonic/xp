@@ -5,21 +5,21 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.ContentPaths;
+import com.enonic.wem.api.content.ContentSelectors;
 import com.enonic.wem.api.content.editor.ContentEditor;
 
 public final class UpdateContents
     extends Command
 {
-    private ContentPaths paths;
+    private ContentSelectors selectors;
 
     private ContentEditor editor;
 
     private UserKey modifier;
 
-    public ContentPaths getPaths()
+    public ContentSelectors getSelectors()
     {
-        return this.paths;
+        return this.selectors;
     }
 
     public ContentEditor getEditor()
@@ -32,9 +32,9 @@ public final class UpdateContents
         return modifier;
     }
 
-    public UpdateContents paths( final ContentPaths paths )
+    public UpdateContents selectors( final ContentSelectors selectors )
     {
-        this.paths = paths;
+        this.selectors = selectors;
         return this;
     }
 
@@ -53,7 +53,7 @@ public final class UpdateContents
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.paths, "Content paths cannot be null" );
+        Preconditions.checkNotNull( this.selectors, "Content selectors cannot be null" );
         Preconditions.checkNotNull( this.editor, "Editor cannot be null" );
     }
 }

@@ -1,63 +1,25 @@
 package com.enonic.wem.api.account;
 
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 
-public final class Accounts
-    implements Iterable<Account>
-{
-    private final ImmutableList<Account> list;
+import com.enonic.wem.api.AbstractImmutableEntityList;
 
+public final class Accounts
+    extends AbstractImmutableEntityList<Account>
+{
     private Accounts( final ImmutableList<Account> list )
     {
-        this.list = list;
-    }
-
-    public int getSize()
-    {
-        return this.list.size();
-    }
-
-    public boolean isEmpty()
-    {
-        return this.list.isEmpty();
-    }
-
-    public Account getFirst()
-    {
-        return this.list.isEmpty() ? null : this.list.get( 0 );
-    }
-
-    public List<Account> getList()
-    {
-        return this.list;
+        super( list );
     }
 
     public AccountKeys getKeys()
     {
         final Collection<AccountKey> keys = Collections2.transform( this.list, new ToKeyFunction() );
         return AccountKeys.from( keys );
-    }
-
-    @Override
-    public Iterator<Account> iterator()
-    {
-        return this.list.iterator();
-    }
-
-    public int hashCode()
-    {
-        return this.list.hashCode();
-    }
-
-    public boolean equals( final Object o )
-    {
-        return ( o instanceof Accounts ) && this.list.equals( ( (Accounts) o ).list );
     }
 
     public static Accounts empty()

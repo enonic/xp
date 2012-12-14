@@ -75,7 +75,7 @@ public class CreateOrUpdateContentRpcHandlerTest
     {
         final ContentPath contentPath = ContentPath.from( "/myContent/childContent" );
         Mockito.when( client.execute( isA( CreateContent.class ) ) ).thenThrow( new ContentNotFoundException( contentPath ) );
-        GetContents getContents = Commands.content().get().paths( ContentPaths.from( contentPath ) );
+        GetContents getContents = Commands.content().get().selectors( ContentPaths.from( contentPath ) );
         Mockito.when( client.execute( getContents ) ).thenReturn( Contents.empty() );
 
         final ObjectNode resultJson = objectNode();

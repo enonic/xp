@@ -42,10 +42,10 @@ public class GetContentRpcHandler
     private Content findContent( final ContentPath contentPath )
     {
         final GetContents getContent = Commands.content().get();
-        getContent.paths( ContentPaths.from( contentPath ) );
+        getContent.selectors( ContentPaths.from( contentPath ) );
 
         final Contents contents = client.execute( getContent );
-        return contents.isNotEmpty() ? contents.getFirst() : null;
+        return contents.isNotEmpty() ? contents.first() : null;
     }
 
 }

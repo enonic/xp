@@ -6,21 +6,21 @@ import java.util.List;
 
 public class ContentDeletionResult
 {
-    private List<ContentPath> successes = new ArrayList<ContentPath>();
+    private List<ContentSelector> successes = new ArrayList<ContentSelector>();
 
     private List<Failure> failures = new ArrayList<Failure>();
 
-    public void success( final ContentPath contentPath )
+    public void success( final ContentSelector contentSelector )
     {
-        successes.add( contentPath );
+        successes.add( contentSelector );
     }
 
-    public void failure( final ContentPath contentPath, final Exception e )
+    public void failure( final ContentSelector contentSelector, final Exception e )
     {
-        failures.add( new Failure( contentPath, e, e.getMessage() ) );
+        failures.add( new Failure( contentSelector, e, e.getMessage() ) );
     }
 
-    public Iterable<ContentPath> successes()
+    public Iterable<ContentSelector> successes()
     {
         return successes;
     }
@@ -37,15 +37,15 @@ public class ContentDeletionResult
 
     public class Failure
     {
-        public final ContentPath contentPath;
+        public final ContentSelector contentSelector;
 
         public final Exception exception;
 
         public final String reason;
 
-        public Failure( final ContentPath contentPath, final Exception exception, final String reason )
+        public Failure( final ContentSelector contentSelector, final Exception exception, final String reason )
         {
-            this.contentPath = contentPath;
+            this.contentSelector = contentSelector;
             this.exception = exception;
             this.reason = reason;
         }

@@ -75,7 +75,7 @@ public class SubTypeDaoImplTest
         final SubTypes subTypesAfterUpdate = subTypeDao.retrieveSubTypes( QualifiedSubTypeNames.from( "myModule:myInput" ), session );
         assertNotNull( subTypesAfterUpdate );
         assertEquals( 1, subTypesAfterUpdate.getSize() );
-        final InputSubType subType1 = (InputSubType) subTypesAfterUpdate.getFirst();
+        final InputSubType subType1 = (InputSubType) subTypesAfterUpdate.first();
         assertEquals( "myInput", subType1.getName() );
         assertEquals( "myModule", subType1.getModuleName().toString() );
         assertEquals( "My Updated SubType", subType1.getDisplayName() );
@@ -123,7 +123,7 @@ public class SubTypeDaoImplTest
         // verify
         assertNotNull( subTypes );
         assertEquals( 1, subTypes.getSize() );
-        InputSubType subType1 = (InputSubType) subTypes.getFirst();
+        InputSubType subType1 = (InputSubType) subTypes.first();
         assertEquals( "myInput", subType1.getName() );
         assertEquals( "myModule", subType1.getModuleName().toString() );
         assertEquals( "My SubType", subType1.getDisplayName() );

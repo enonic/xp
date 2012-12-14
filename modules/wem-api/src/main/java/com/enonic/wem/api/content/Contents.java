@@ -1,68 +1,25 @@
 package com.enonic.wem.api.content;
 
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 
-public final class Contents
-    implements Iterable<Content>
-{
-    private final ImmutableList<Content> list;
+import com.enonic.wem.api.AbstractImmutableEntityList;
 
+public final class Contents
+    extends AbstractImmutableEntityList<Content>
+{
     private Contents( final ImmutableList<Content> list )
     {
-        this.list = list;
-    }
-
-    public int getSize()
-    {
-        return this.list.size();
-    }
-
-    public boolean isEmpty()
-    {
-        return this.list.isEmpty();
-    }
-
-    public boolean isNotEmpty()
-    {
-        return !this.list.isEmpty();
-    }
-
-    public Content getFirst()
-    {
-        return this.list.isEmpty() ? null : this.list.get( 0 );
-    }
-
-    public List<Content> getList()
-    {
-        return this.list;
+        super( list );
     }
 
     public ContentPaths getPaths()
     {
         final Collection<ContentPath> paths = Collections2.transform( this.list, new ToKeyFunction() );
         return ContentPaths.from( paths );
-    }
-
-    @Override
-    public Iterator<Content> iterator()
-    {
-        return this.list.iterator();
-    }
-
-    public int hashCode()
-    {
-        return this.list.hashCode();
-    }
-
-    public boolean equals( final Object o )
-    {
-        return ( o instanceof Contents ) && this.list.equals( ( (Contents) o ).list );
     }
 
     public static Contents empty()
