@@ -25,14 +25,14 @@ Ext.application({
                                 {
                                     xtype: 'component',
                                     html: '<h2>Code Mirror</h2><p>Code Mirror for ExtJS forms. Extends <a href="http://docs.sencha.com/ext-js/4-1/#!/api/Ext.form.field.TextArea">Ext.form.field.TextArea</a></p>' +
-                                          '<p>xtype: codemirror</p>'
+                                          '<p>xtype: codemirror</p>' +
+                                          '<p>TODO: Improve language mode</p>'
                                 },
                                 {
                                     xtype: 'codemirror',
                                     fieldLabel: 'Code Mirror',
                                     id: 'codeMirrorTest',
-                                    value: '<data>\n\t<item id="1">Fisk</item>\n</data>',
-                                    width: 500
+                                    value: '<data>\n\t<item id="1">Fisk</item>\n</data>'
                                 },
                                 {
                                     xtype: 'button',

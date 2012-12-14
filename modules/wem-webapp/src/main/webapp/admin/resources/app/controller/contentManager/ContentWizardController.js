@@ -88,7 +88,6 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
     },
 
     saveContent: function (contentWizard, closeWizard) {
-
         var me = this;
         var contentType = contentWizard.data.contentType;
         var content = contentWizard.data.content;
@@ -105,16 +104,12 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
             displayName: displayName
         };
 
-        var parentApp = parent.mainApp;
         var onUpdateContentSuccess = function (created, updated) {
             if (created || updated) {
                 if (closeWizard) {
                     me.getContentWizardTab().close();
                 }
-                if (parentApp) {
-                    parentApp.fireEvent('notifier.show', "Content was saved",
-                        "Content with path: " + contentParams.contentPath + " was saved", false);
-                }
+                me.getFeedbackBox().doShow('Content was saved', 'Content with path: ' + contentParams.contentPath + ' was saved', {});
                 me.getContentTreeGridPanel().refresh();
             }
         };

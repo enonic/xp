@@ -7,6 +7,8 @@ Ext.define('Admin.lib.CodeMirror', {
     codeMirrorPath: '../../admin/resources/lib/codemirror',
     languageMode: 'xml', // Se codemirror/mode/ for valid modes
 
+    width: 640,
+
     initComponent: function () {
         var me = this;
         me.initialized = false;
