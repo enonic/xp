@@ -77,5 +77,6 @@ final class ContentJcrMapper
         {
             contentBuilder.type( new QualifiedContentTypeName( contentType ) );
         }
+        contentBuilder.id( ContentIdImpl.from( contentNode ) );
     }
 }

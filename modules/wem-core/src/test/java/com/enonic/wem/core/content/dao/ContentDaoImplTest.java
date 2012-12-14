@@ -6,6 +6,7 @@ import javax.jcr.Node;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentTree;
 import com.enonic.wem.api.content.Contents;
@@ -92,6 +93,22 @@ public class ContentDaoImplTest
         assertEquals( "1", storedContent.getData( "myData" ).getString() );
         assertEquals( "2", storedContent.getData( "mySet.myData" ).getString() );
         assertEquals( "3", storedContent.getData( "mySet.myOtherData" ).getString() );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void create_content_with_assigned_id_throws_exception()
+        throws Exception
+    {
+        // setup
+        final Content content = createContent( "someContent" );
+        final ContentId createdContentId = contentDao.createContent( content, session );
+
+        final Content anotherContent = newContent( content ).id( createdContentId ).path( ContentPath.from( "anotherContent" ) ).build();
+        assertNotNull( anotherContent.getId() );
+        contentDao.createContent( anotherContent, session );
+
+        // exercise
+        commit();
     }
 
     @Test

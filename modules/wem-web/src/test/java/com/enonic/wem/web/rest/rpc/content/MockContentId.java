@@ -1,16 +1,24 @@
-package com.enonic.wem.api.content;
+package com.enonic.wem.web.rest.rpc.content;
 
 import com.google.common.base.Preconditions;
 
-public final class InternalContentId
-    implements ContentSelector
+import com.enonic.wem.api.content.ContentId;
+
+public final class MockContentId
+    implements ContentId
 {
     private final String id;
 
-    private InternalContentId( final String id )
+    private MockContentId( final String id )
     {
         Preconditions.checkNotNull( id );
         this.id = id;
+    }
+
+    @Override
+    public String id()
+    {
+        return this.id;
     }
 
     @Override
@@ -25,7 +33,7 @@ public final class InternalContentId
             return false;
         }
 
-        final InternalContentId that = (InternalContentId) o;
+        final MockContentId that = (MockContentId) o;
         return id.equals( that.id );
     }
 
@@ -41,8 +49,8 @@ public final class InternalContentId
         return id;
     }
 
-    public static InternalContentId from( final String id )
+    static ContentId from( final String id )
     {
-        return new InternalContentId( id );
+        return new MockContentId( id );
     }
 }

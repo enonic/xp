@@ -5,12 +5,13 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 
 public final class CreateContent
-    extends Command<ContentPath>
+    extends Command<ContentId>
 {
     private ContentPath contentPath;
 
