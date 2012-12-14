@@ -31,8 +31,7 @@
       paths: {
         'Common': 'common/js',
         'Admin': 'resources/app'
-      },
-      disableCaching: false
+      }
     });
 
   </script>

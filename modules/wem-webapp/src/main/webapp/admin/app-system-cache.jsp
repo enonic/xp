@@ -21,7 +21,6 @@
   <script type="text/javascript" src="global.config.js"></script>
   <script type="text/javascript">
     Ext.Loader.setConfig({
-      enabled: true,
       paths: {
         'Admin': 'resources/app',
         'App': '_app/cache/js',

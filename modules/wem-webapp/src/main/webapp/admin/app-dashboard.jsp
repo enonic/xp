@@ -21,13 +21,11 @@
   <script type="text/javascript" src="global.config.js"></script>
   <script type="text/javascript">
     Ext.Loader.setConfig({
-      enabled: true,
       paths: {
         'App': '_app/dashboard/js',
         'Admin': 'resources/app',
         'Common': 'common/js'
-      },
-      disableCaching: false
+      }
     });
   </script>
 

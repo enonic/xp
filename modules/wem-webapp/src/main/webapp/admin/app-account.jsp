@@ -36,8 +36,7 @@
         'Common': 'common/js',
         'Main': 'app/main/js',
         'Admin': 'resources/app'
-      },
-      disableCaching: false
+      }
     });
 
   </script>

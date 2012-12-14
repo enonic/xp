@@ -28,13 +28,11 @@
     };
 
     Ext.Loader.setConfig({
-      enabled: true,
       paths: {
         'Common': 'common/js',
         'Main': '_app/main/js',
         'Admin': 'resources/app'
-      },
-      disableCaching: false
+      }
     });
 
   </script>
