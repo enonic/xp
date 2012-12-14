@@ -42,7 +42,7 @@ Ext.define('Admin.view.FeedbackBox', {
     afterRender: function () {
         var me = this;
         me.getEl().setOpacity(0);
-        me.addWindowClickListener();
+        me.addClickListener();
         me.callParent(arguments);
     },
 
@@ -114,7 +114,7 @@ Ext.define('Admin.view.FeedbackBox', {
     },
 
 
-    addWindowClickListener: function () {
+    addClickListener: function () {
         var me = this;
 
         me.getEl().on('mouseenter', function () {
