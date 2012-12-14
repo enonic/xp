@@ -132,7 +132,103 @@
                                 "builtIn": true
                             }
                         }
+                    },
+
+
+                    {
+                        "FormItemSet": {
+                            "name": "address",
+                            "label": "Address",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "customText": null,
+                            "helpText": null,
+                            "items": [
+                                {
+                                    "Input": {
+                                        "name": "label",
+                                        "label": "Label",
+                                        "immutable": false,
+                                        "occurrences": {
+                                            "minimum": 0,
+                                            "maximum": 1
+                                        },
+                                        "indexed": false,
+                                        "customText": null,
+                                        "validationRegexp": null,
+                                        "helpText": "Give this address a label",
+                                        "type": {
+                                            "name": "TextLine",
+                                            "builtIn": true
+                                        }
+                                    }
+                                },
+                                {
+                                    "Input": {
+                                        "name": "street",
+                                        "label": "Street",
+                                        "immutable": false,
+                                        "occurrences": {
+                                            "minimum": 0,
+                                            "maximum": 1
+                                        },
+                                        "indexed": false,
+                                        "customText": null,
+                                        "validationRegexp": null,
+                                        "helpText": "Street",
+                                        "type": {
+                                            "name": "TextLine",
+                                            "builtIn": true
+                                        }
+                                    }
+                                },
+                                {
+                                    "Input": {
+                                        "name": "postal_code",
+                                        "label": "Postal Code",
+                                        "immutable": false,
+                                        "occurrences": {
+                                            "minimum": 0,
+                                            "maximum": 1
+                                        },
+                                        "indexed": false,
+                                        "customText": null,
+                                        "validationRegexp": null,
+                                        "helpText": "Postal Code",
+                                        "type": {
+                                            "name": "TextLine",
+                                            "builtIn": true
+                                        }
+                                    }
+                                },
+                                {
+                                    "Input": {
+                                        "name": "postal_address",
+                                        "label": "Postal Address ",
+                                        "immutable": false,
+                                        "occurrences": {
+                                            "minimum": 0,
+                                            "maximum": 1
+                                        },
+                                        "indexed": false,
+                                        "customText": null,
+                                        "validationRegexp": null,
+                                        "helpText": "Postal Address",
+                                        "type": {
+                                            "name": "TextLine",
+                                            "builtIn": true
+                                        }
+                                    }
+                                }
+                            ]
+                        }
                     }
+
+
+
                 ]
             }
         }
