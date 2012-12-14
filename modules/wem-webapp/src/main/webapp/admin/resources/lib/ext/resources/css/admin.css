@@ -1109,15 +1109,11 @@ td {
 .admin-notification-window td {
   color: #fff; }
 
-/* line 13, ../sass/admin/css/_feedback-box.scss */
-.admin-notification-window h3 {
-  line-height: 33px; }
-
-/* line 17, ../sass/admin/css/_feedback-box.scss */
+/* line 16, ../sass/admin/css/_feedback-box.scss */
 .admin-notification-window table {
   width: 100%; }
 
-/* line 21, ../sass/admin/css/_feedback-box.scss */
+/* line 20, ../sass/admin/css/_feedback-box.scss */
 .admin-notification-window span.link {
   display: inline-block;
   margin-top: 10px;
