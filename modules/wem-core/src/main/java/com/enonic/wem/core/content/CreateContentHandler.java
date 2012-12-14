@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
@@ -39,8 +40,10 @@ public class CreateContentHandler
         contentBuilder.modifiedTime( timeService.getNowAsDateTime() );
         contentBuilder.owner( command.getOwner() );
         contentBuilder.modifier( command.getOwner() );
-        contentDao.createContent( contentBuilder.build(), context.getJcrSession() );
+        final ContentId contentId = contentDao.createContent( contentBuilder.build(), context.getJcrSession() );
         context.getJcrSession().save();
+
+        command.setResult( contentId );
     }
 
     @Autowired

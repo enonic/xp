@@ -50,7 +50,7 @@ public abstract class AbstractContentHandler<C extends Command>
 
     private Contents getContentsByPath( final ContentPaths paths, final CommandContext context )
     {
-        return contentDao.findContent( paths, context.getJcrSession() );
+        return contentDao.findContents( paths, context.getJcrSession() );
     }
 
     @Autowired

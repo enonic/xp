@@ -7,6 +7,7 @@ import javax.jcr.Session;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentTree;
@@ -23,11 +24,11 @@ public class ContentDaoImpl
 {
 
     @Override
-    public void createContent( final Content content, final Session session )
+    public ContentId createContent( final Content content, final Session session )
     {
         try
         {
-            new CreateContentDaoHandler( session ).handle( content );
+            return new CreateContentDaoHandler( session ).handle( content );
         }
         catch ( RepositoryException e )
         {
@@ -88,7 +89,7 @@ public class ContentDaoImpl
     }
 
     @Override
-    public Contents findContent( final ContentPaths contentPaths, final Session session )
+    public Contents findContents( final ContentPaths contentPaths, final Session session )
     {
         try
         {

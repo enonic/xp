@@ -41,3 +41,5 @@
 
 [wem:roles] > wem:base
 + * (wem:role)
+
+[wem:content] > wem:base, nt:unstructured, mix:referenceable

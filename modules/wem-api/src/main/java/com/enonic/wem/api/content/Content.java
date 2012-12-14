@@ -24,6 +24,8 @@ public final class Content
 
     private final ContentPath path;
 
+    private final ContentId id;
+
     private final ContentData data;
 
     private final DateTime createdTime;
@@ -39,6 +41,7 @@ public final class Content
         this.displayName = builder.displayName;
         this.type = builder.type;
         this.path = builder.path;
+        this.id = builder.contentId;
         this.data = builder.data;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
@@ -96,6 +99,11 @@ public final class Content
     public ContentData getData()
     {
         return data;
+    }
+
+    public ContentId getId()
+    {
+        return id;
     }
 
     public void setData( final String path, final String value )
@@ -161,11 +169,13 @@ public final class Content
 
     public static class Builder
     {
-        private ContentPath path = new ContentPath();
+        private ContentPath path;
+
+        private ContentId contentId;
 
         private QualifiedContentTypeName type;
 
-        private ContentData data = new ContentData();
+        private ContentData data;
 
         private String displayName;
 
@@ -179,27 +189,37 @@ public final class Content
 
         public Builder()
         {
+            this.contentId = null;
+            this.path = new ContentPath();
+            this.type = null;
+            this.data = new ContentData();
+            this.displayName = null;
+            this.owner = null;
+            this.createdTime = null;
+            this.modifiedTime = null;
+            this.modifier = null;
         }
 
         public Builder( final Content content )
         {
-            path = content.path; // TODO make ContentPath immutable, or make copy
-            type = content.type;
-            data = content.data; // TODO make ContentData immutable, or make copy
-            displayName = content.displayName;
-            owner = content.owner;
-            createdTime = content.createdTime;
-            modifiedTime = content.modifiedTime;
-            modifier = content.modifier;
+            this.contentId = content.id;
+            this.path = content.path; // TODO make ContentPath immutable, or make copy
+            this.type = content.type;
+            this.data = content.data; // TODO make ContentData immutable, or make copy
+            this.displayName = content.displayName;
+            this.owner = content.owner;
+            this.createdTime = content.createdTime;
+            this.modifiedTime = content.modifiedTime;
+            this.modifier = content.modifier;
         }
 
-        public Builder path( ContentPath path )
+        public Builder path( final ContentPath path )
         {
             this.path = path;
             return this;
         }
 
-        public Builder name( String name )
+        public Builder name( final String name )
         {
             if ( this.path == null )
             {
@@ -209,45 +229,51 @@ public final class Content
             return this;
         }
 
-        public Builder type( QualifiedContentTypeName type )
+        public Builder type( final QualifiedContentTypeName type )
         {
             this.type = type;
             return this;
         }
 
-        public Builder data( ContentData data )
+        public Builder data( final ContentData data )
         {
             this.data = data;
             return this;
         }
 
-        public Builder displayName( String displayName )
+        public Builder displayName( final String displayName )
         {
             this.displayName = displayName;
             return this;
         }
 
-        public Builder owner( UserKey owner )
+        public Builder owner( final UserKey owner )
         {
             this.owner = owner;
             return this;
         }
 
-        public Builder modifier( UserKey modifier )
+        public Builder modifier( final UserKey modifier )
         {
             this.modifier = modifier;
             return this;
         }
 
-        public Builder createdTime( DateTime createdTime )
+        public Builder createdTime( final DateTime createdTime )
         {
             this.createdTime = createdTime;
             return this;
         }
 
-        public Builder modifiedTime( DateTime modifiedTime )
+        public Builder modifiedTime( final DateTime modifiedTime )
         {
             this.modifiedTime = modifiedTime;
+            return this;
+        }
+
+        public Builder id( final ContentId contentId )
+        {
+            this.contentId = contentId;
             return this;
         }
 

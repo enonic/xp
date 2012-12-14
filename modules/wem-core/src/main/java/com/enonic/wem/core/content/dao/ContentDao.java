@@ -4,6 +4,7 @@ package com.enonic.wem.core.content.dao;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentTree;
@@ -13,7 +14,7 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 public interface ContentDao
     extends ContentDaoConstants
 {
-    public void createContent( Content content, Session session );
+    public ContentId createContent( Content content, Session session );
 
     public void updateContent( Content content, Session session );
 
@@ -23,7 +24,7 @@ public interface ContentDao
 
     public Content findContent( ContentPath contentPath, Session session );
 
-    public Contents findContent( ContentPaths contentPaths, Session session );
+    public Contents findContents( ContentPaths contentPaths, Session session );
 
     public Contents findChildContent( ContentPath parentPath, Session session );
 

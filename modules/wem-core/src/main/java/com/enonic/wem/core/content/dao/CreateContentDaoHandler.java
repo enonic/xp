@@ -6,9 +6,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.exception.ContentAlreadyExistException;
 import com.enonic.wem.api.exception.ContentNotFoundException;
+import com.enonic.wem.core.jcr.JcrConstants;
 
 
 final class CreateContentDaoHandler
@@ -19,20 +21,26 @@ final class CreateContentDaoHandler
         super( session );
     }
 
-    void handle( final Content content )
+    ContentId handle( final Content content )
         throws RepositoryException
     {
+        if ( content.getId() != null )
+        {
+            throw new IllegalArgumentException( "Attempt to create new content with assigned id: " + content.getId() );
+        }
+
         final Node root = session.getRootNode();
         final Node contentsNode = root.getNode( ContentDaoConstants.CONTENTS_PATH );
         final ContentPath path = content.getPath();
 
+        final Node newContentNode;
         if ( path.elementCount() == 1 )
         {
             if ( contentsNode.hasNode( path.getName() ) )
             {
                 throw new ContentAlreadyExistException( path );
             }
-            addContentToJcr( content, contentsNode );
+            newContentNode = addContentToJcr( content, contentsNode );
         }
         else
         {
@@ -45,14 +53,16 @@ final class CreateContentDaoHandler
             {
                 throw new ContentAlreadyExistException( path );
             }
-            addContentToJcr( content, parentContentNode );
+            newContentNode = addContentToJcr( content, parentContentNode );
         }
+        return ContentIdImpl.from( newContentNode );
     }
 
-    void addContentToJcr( final Content content, final Node parentNode )
+    private Node addContentToJcr( final Content content, final Node parentNode )
         throws RepositoryException
     {
-        final Node newContentNode = parentNode.addNode( content.getName() );
+        final Node newContentNode = parentNode.addNode( content.getName(), JcrConstants.CONTENT_TYPE );
         contentJcrMapper.toJcr( content, newContentNode );
+        return newContentNode;
     }
 }

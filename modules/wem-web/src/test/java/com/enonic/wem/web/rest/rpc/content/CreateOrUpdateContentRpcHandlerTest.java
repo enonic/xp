@@ -10,6 +10,7 @@ import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.GetContents;
 import com.enonic.wem.api.command.content.UpdateContents;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
@@ -42,8 +43,8 @@ public class CreateOrUpdateContentRpcHandlerTest
     public void testRequestCreateContent()
         throws Exception
     {
-        final ContentPath contentPath = ContentPath.from( "/myContent/childContent" );
-        Mockito.when( client.execute( isA( CreateContent.class ) ) ).thenReturn( contentPath );
+        final ContentId contentId = MockContentId.from( "/myContent/childContent" );
+        Mockito.when( client.execute( isA( CreateContent.class ) ) ).thenReturn( contentId );
         Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
 
         final ObjectNode resultJson = objectNode();
