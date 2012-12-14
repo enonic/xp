@@ -7,6 +7,7 @@
   <title>Enonic WEM Admin</title>
   <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/admin.css">
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/icons-metro.css">
 
   <link rel="stylesheet" type="text/css" href="resources/css/admin-top-bar.css">
   <link rel="stylesheet" type="text/css" href="resources/css/admin-start-menu.css">
@@ -61,7 +62,7 @@
               xtype: 'topBar',
               region: 'north',
               appName: 'Dashboard',
-              appIconCls: 'icon-dashboard-24'
+              appIconCls: 'icon-metro-dashboard-24'
             },
             {
               xtype: 'dashboardPalette',

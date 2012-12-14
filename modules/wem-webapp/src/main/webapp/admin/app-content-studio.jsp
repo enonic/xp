@@ -6,6 +6,7 @@
   <meta charset="utf-8"/>
   <title>Enonic WEM Admin</title>
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/icons-metro.css">
   <link rel="stylesheet" type="text/css" href="resources/css/contentstudio-preview-panel.css">
 
   <link rel="stylesheet" type="text/css" href="resources/css/admin-top-bar.css">
@@ -77,7 +78,7 @@
               region: 'center',
               xtype: 'cmsTabPanel',
               appName: 'Content Studio',
-              appIconCls: 'icon-content-studio-24',
+              appIconCls: 'icon-metro-content-studio-24',
               items: [
                 {
                   id: 'tab-browse',

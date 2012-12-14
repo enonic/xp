@@ -21,7 +21,7 @@ Ext.define('Admin.view.TopBar', {
         this.tabMenu = Ext.create('Admin.view.TopBarMenu', {
             tabPanel: me.tabPanel,
             listeners: {
-                close: {
+                closeChecked: {
                     fn: me.syncTabCount,
                     scope: me
                 },
@@ -33,9 +33,11 @@ Ext.define('Admin.view.TopBar', {
         });
 
         this.tabButton = Ext.create('Ext.button.Button', {
-            cls: 'white',
+            ui: 'red',
             menuAlign: 't-b?',
-            menu: me.tabMenu
+            margins: '0 0 0 8px',
+            menu: me.tabMenu,
+            split: false
         });
 
         this.startMenu = Ext.create('Admin.view.StartMenu', {
@@ -56,14 +58,14 @@ Ext.define('Admin.view.TopBar', {
                     id: 'app-01',
                     title: 'Content Manager',
                     cls: 'span2 start-row content-manager',
-                    iconCls: 'icon-content-manager-24',
+                    iconCls: 'icon-metro-content-manager-24',
                     appUrl: 'app-content-manager.jsp'
                 },
                 {
                     id: 'app-02',
                     title: 'Dashboard',
                     cls: 'span2 dashboard',
-                    iconCls: 'icon-dashboard-24',
+                    iconCls: 'icon-metro-dashboard-24',
                     appUrl: 'app-dashboard.jsp',
                     defaultApp: true
                 },
@@ -101,48 +103,49 @@ Ext.define('Admin.view.TopBar', {
                     id: 'app-05',
                     title: 'Cluster',
                     appUrl: 'blank.html',
-                    iconCls: "icon-cluster-24",
+                    iconCls: "icon-metro-cluster-24",
                     cls: 'cluster'
                 },
                 {
                     id: 'app-06',
                     title: 'Userstores',
                     appUrl: 'app-userstore.jsp',
-                    iconCls: "icon-userstore-alt-24",
+                    iconCls: "icon-metro-userstores-24",
                     cls: 'userstores start-row'
                 },
                 {
                     id: 'app-07',
                     title: 'Accounts',
                     appUrl: 'app-account.jsp',
-                    iconCls: "icon-woman-24",
+                    iconCls: "icon-metro-accounts-24",
                     cls: 'accounts'
                 },
                 {
                     id: 'app-08',
                     title: 'Site Administrator',
                     appUrl: 'blank.html',
+                    iconCls: 'icon-metro-site-admin-24',
                     cls: 'span2 administrators'
                 },
                 {
                     id: 'app-09',
                     title: 'Content Studio',
                     appUrl: 'app-content-studio.jsp',
-                    iconCls: 'icon-content-studio-24',
+                    iconCls: 'icon-metro-content-studio-24',
                     cls: 'content-studio'
                 },
                 {
                     id: 'app-10',
                     title: 'Live Trace',
                     appUrl: 'blank.html',
-                    iconCls: "icon-live-trace-24",
+                    iconCls: "icon-metro-live-trace-24",
                     cls: 'span2 live-trace title-top title-mask'
                 },
                 {
                     id: 'app-11',
                     title: 'Schedule',
                     appUrl: 'blank.html',
-                    iconCls: "icon-gears-run-24",
+                    iconCls: "icon-metro-schedule-24",
                     cls: 'schedule'
                 }
             ]
@@ -151,6 +154,7 @@ Ext.define('Admin.view.TopBar', {
         this.startButton = Ext.create('Ext.button.Button', {
             xtype: 'button',
             itemId: 'app-launcher-button',
+            split: true,
             cls: 'start-button',
             iconCls: me.appIconCls,
             text: me.appName || '&lt; app name &gt;',
@@ -159,14 +163,20 @@ Ext.define('Admin.view.TopBar', {
             }
         });
 
-        this.path = Ext.create('Ext.Component');
+        this.itemContainer = Ext.create('Ext.Container', {
+            flex: 5,
+            margins: '0 8px',
+            layout: {
+                type: 'hbox',
+                align: 'middle',
+                pack: 'center'
+            }
+        });
 
         this.items = [
             me.startButton,
             me.tabButton,
-            { xtype: 'tbspacer', flex: 5 },
-            me.path,
-            { xtype: 'tbspacer', flex: 5 },
+            me.itemContainer,
             {
                 xtype: 'adminImageButton',
                 icon: "rest/account/image/default/user",
@@ -196,11 +206,27 @@ Ext.define('Admin.view.TopBar', {
     },
 
     setActiveTab: function (tab) {
-
+        var me = this;
+        var items = [
+            {
+                xtype: 'component',
+                margins: '0 10px 0 0 ',
+                html: this.getMenuItemDescription(tab.card)
+            },
+            {
+                xtype: 'button',
+                ui: 'grey',
+                text: 'Close',
+                handler: function () {
+                    if (me.tabPanel) {
+                        me.tabPanel.remove(tab.card);
+                    }
+                }
+            }
+        ];
+        this.itemContainer.removeAll();
         if (tab.card.id !== 'tab-browse') {
-            this.setPath(this.getMenuItemDescription(tab.card));
-        } else {
-            this.setPath('');
+            this.itemContainer.add(items);
         }
     },
 
@@ -253,14 +279,6 @@ Ext.define('Admin.view.TopBar', {
 
     /*  Public  */
 
-    getPath: function () {
-        return this.path.getBody().el.getHTML();
-    },
-
-    setPath: function (path) {
-        this.path.update(path);
-    },
-
     getStartButton: function () {
         return this.startButton;
     },
@@ -275,5 +293,9 @@ Ext.define('Admin.view.TopBar', {
 
     getTabMenu: function () {
         return this.tabMenu;
+    },
+
+    getItemContainer: function (item) {
+        this.itemContainer;
     }
 });

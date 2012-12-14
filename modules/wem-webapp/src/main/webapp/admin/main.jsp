@@ -6,6 +6,7 @@
   <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/ext-all.css">
   <link rel="stylesheet" type="text/css" href="resources/css/main.css">
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/icons-metro.css">
   <link rel="stylesheet" type="text/css" href="_app/main/css/main.css">
 
   <!-- Ext JS -->
@@ -68,7 +69,7 @@
               {
                 region: 'center',
                 bodyCls: 'main-viewport-center-body',
-                html: '<div id="appFrames" style="height: 100%; width: 100%;"><!-- --></div>'
+                html: '<div id="appFrames" style="height: 100%; width: 100%;"><!-- --> < /div>'
               }
               //{
               //  region: 'east',
