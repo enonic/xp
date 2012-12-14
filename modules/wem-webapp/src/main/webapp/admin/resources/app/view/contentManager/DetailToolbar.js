@@ -4,6 +4,10 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
 
     cls: 'admin-toolbar',
 
+    defaults: {
+        scale: 'medium'
+    },
+
     initComponent: function () {
 
         this.items = [
