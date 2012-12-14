@@ -60,7 +60,7 @@ Ext.application({
                                   '\thandle: <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/String">{String}</a> A CSS query <a href="http://www.w3.org/TR/selectors-api/">selector string</a> to element(s) within the sortable component that should be used for dragging. TBD\n' +
                                   '\tproxyHtml: <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/String">{String}</a> A HTML string describing a drag proxy. If not set the source element will be cloned' +
                                   '\n}</pre>' +
-                                  '<p>Note: The sortables must be rendered before creating the sortable</p>'
+                                  '<p>Note: The sortables must be rendered before instantiating the sortable</p>'
                         },
                         {
                             region: 'center',
