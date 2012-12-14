@@ -3,13 +3,11 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
 
     /*      Controller for handling Content Wizard UI events       */
 
-
     stores: [
     ],
     models: [
     ],
     views: [],
-
 
     EMPTY_DISPLAY_NAME_TEXT: 'Display Name',
 
@@ -109,7 +107,13 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
                 if (closeWizard) {
                     me.getContentWizardTab().close();
                 }
-                me.getFeedbackBox().doShow('Content was saved', 'Content with path: ' + contentParams.contentPath + ' was saved', {});
+
+                Admin.MessageBus.showFeedback({
+                    title: 'Content was saved',
+                    message: 'Content with path: ' + contentParams.contentPath + ' was saved',
+                    opts: {}
+                });
+
                 me.getContentTreeGridPanel().refresh();
             }
         };

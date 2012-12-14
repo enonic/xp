@@ -54,6 +54,8 @@
       ],
 
       requires: [
+        'Admin.MessageBus',
+        'Admin.view.FeedbackBox',
         'Admin.view.TabPanel',
         'Admin.lib.UriHelper',
         'Admin.lib.RemoteService'
@@ -79,6 +81,9 @@
             }
           ]
         });
+
+        Ext.create('widget.feedbackBox');
+
       }
     });
 

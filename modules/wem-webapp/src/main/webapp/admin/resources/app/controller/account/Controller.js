@@ -528,6 +528,13 @@ Ext.define('Admin.controller.account.Controller', {
                         store.remove(account);
                     }
                 }
+
+                Admin.MessageBus.showFeedback({
+                    title: 'Account(s) was deleted',
+                    message: keys.length + ' was successfully deleted',
+                    opts: {}
+                });
+
             }
         });
     },

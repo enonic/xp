@@ -57,16 +57,18 @@ Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
             contentType: contentType
         };
 
-        var parentApp = parent.mainApp;
         var onUpdateContentTypeSuccess = function (created, updated) {
             if (created || updated) {
                 if (closeWizard) {
                     me.getContentTypeWizardTab().close();
                 }
-                if (parentApp) {
-                    parentApp.fireEvent('notifier.show', "Content Type was saved",
-                        "Content Type was saved", false);
-                }
+
+                Admin.MessageBus.showFeedback({
+                    title: 'Content Type was saved',
+                    message: 'Content Type was saved',
+                    opts: {}
+                });
+
                 me.getTreeGridPanel().refresh();
             }
         };

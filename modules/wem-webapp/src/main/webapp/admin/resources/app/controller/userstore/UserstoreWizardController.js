@@ -167,12 +167,13 @@ Ext.define('Admin.controller.userstore.UserstoreWizardController', {
                     me.getUserstoreWizardTab().close();
                 }
                 me.getUserstoreGridPanel().getStore().load();
-                var parentApp = parent.mainApp;
-                if (parentApp) {
-                    parentApp.fireEvent('notifier.show', 'Userstore is saved',
-                        'Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.',
-                        true);
-                }
+
+                Admin.MessageBus.showFeedback({
+                    title: 'Userstore was saved',
+                    message: 'Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.',
+                    opts: {}
+                });
+
             }
         };
         me.remoteCreateOrUpdateUserstore(data, onUpdateGroupSuccess);
@@ -190,12 +191,13 @@ Ext.define('Admin.controller.userstore.UserstoreWizardController', {
                     if (editTab) {
                         editTab.close();
                     }
-                    var parentApp = parent.mainApp;
-                    if (parentApp) {
-                        parentApp.fireEvent('notifier.show', 'Userstore was deleted',
-                            'Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.',
-                            true);
-                    }
+
+                    Admin.MessageBus.showFeedback({
+                        title: 'Userstore was deleted',
+                        message: 'Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.',
+                        opts: {}
+                    });
+
                     me.getUserstoreGridPanel().getStore().load();
                 }
             });
@@ -205,6 +207,5 @@ Ext.define('Admin.controller.userstore.UserstoreWizardController', {
     getUserstoreGridPanel: function () {
         return Ext.ComponentQuery.query('userstoreGrid')[0];
     }
-
 
 });

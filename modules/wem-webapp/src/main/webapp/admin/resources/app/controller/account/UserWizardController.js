@@ -87,7 +87,6 @@ Ext.define('Admin.controller.account.UserWizardController', {
             Ext.merge(data, step.getData());
         }
 
-        var parentApp = parent.mainApp;
         var onUpdateUserSuccess = function (key) {
             wizardPanel.addData({
                 'key': key
@@ -95,11 +94,13 @@ Ext.define('Admin.controller.account.UserWizardController', {
             if (closeWizard) {
                 me.getUserWizardTab().close();
             }
-            if (parentApp) {
-                parentApp.fireEvent('notifier.show', "User was saved",
-                    "Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.",
-                    false);
-            }
+
+            Admin.MessageBus.showFeedback({
+                title: 'User was saved',
+                message: 'Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.',
+                opts: {}
+            });
+
             var current = me.getAccountGridPanel().store.currentPage;
             me.getAccountGridPanel().store.loadPage(current);
         };

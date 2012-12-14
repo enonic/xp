@@ -76,6 +76,8 @@
       ],
 
       requires: [
+        'Admin.MessageBus',
+        'Admin.view.FeedbackBox',
         'Admin.view.TabPanel'
       ],
 
@@ -113,6 +115,9 @@
             }
           ]
         });
+
+        Ext.create('widget.feedbackBox');
+
       }
 
     });

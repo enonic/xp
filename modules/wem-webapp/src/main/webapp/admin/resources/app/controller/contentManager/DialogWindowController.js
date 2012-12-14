@@ -27,20 +27,25 @@ Ext.define('Admin.controller.contentManager.DialogWindowController', {
         var me = this;
         this.remoteDeleteContent(win.modelData, function (success, details) {
             win.close();
-            var parentApp = parent.mainApp;
-            if (parentApp) {
-                if (success) {
-                    parentApp.fireEvent('notifier.show', "Content was deleted",
-                        win.modelData.path + " was deleted",
-                        false);
-                } else {
-                    var message = '';
-                    var i;
-                    for (i = 0; i < details.length; i++) {
-                        message += details[0].reason + "\n";
-                    }
-                    parentApp.fireEvent('notifier.show', "Content wasn't deleted", message, false);
+            if (success) {
+                Admin.MessageBus.showFeedback({
+                    title: 'Content was deleted',
+                    message: win.modelData.path + ' was deleted',
+                    opts: {}
+                });
+            } else {
+                var message = '';
+                var i;
+                for (i = 0; i < details.length; i++) {
+                    message += details[0].reason + "\n";
                 }
+
+                Admin.MessageBus.showFeedback({
+                    title: 'Content was not deleted',
+                    message: message,
+                    opts: {}
+                });
+
             }
             me.getContentTreeGridPanel().refresh();
         });

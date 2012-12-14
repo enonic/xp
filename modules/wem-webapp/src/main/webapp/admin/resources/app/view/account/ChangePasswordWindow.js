@@ -17,7 +17,6 @@ Ext.define('Admin.view.account.ChangePasswordWindow', {
             itemId: 'changePasswordButton',
             disabled: true,
             handler: function () {
-                var parentApp = parent.mainApp;
                 var form = Ext.getCmp('userChangePasswordForm').getForm();
                 var accountKey = me.modelData.key;
                 var pwdValue = form.items[0].getValue();
@@ -25,10 +24,13 @@ Ext.define('Admin.view.account.ChangePasswordWindow', {
                     Admin.lib.RemoteService.account_changePassword({ key: accountKey, password: pwdValue }, function (response) {
                         if (response.success) {
                             me.close();
-                            if (parentApp) {
-                                parentApp.fireEvent('notifier.show', "Password was changed",
-                                    "Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.");
-                            }
+
+                            Admin.MessageBus.showFeedback({
+                                title: 'Password was changed',
+                                message: 'Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.',
+                                opts: {}
+                            });
+
                         } else {
                             Ext.Msg.alert('Failed', response.error);
                         }

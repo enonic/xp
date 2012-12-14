@@ -10,20 +10,14 @@ Ext.define('Admin.controller.Controller', {
 
     requires: [
         'Admin.lib.UriHelper',
-        'Admin.lib.RemoteService',
-        'Admin.view.FeedbackBox'
+        'Admin.lib.RemoteService'
     ],
 
     init: function () {
-        Ext.create('widget.feedbackBox');
     },
 
 
     /*  Getters */
-
-    getFeedbackBox: function () {
-        return Ext.ComponentQuery.query('feedbackBox')[0];
-    },
 
     getCmsTabPanel: function () {
         return Ext.ComponentQuery.query('cmsTabPanel')[0];

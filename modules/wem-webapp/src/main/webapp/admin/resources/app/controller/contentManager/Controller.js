@@ -219,11 +219,12 @@ Ext.define('Admin.controller.contentManager.Controller', {
         }
 
         var selection = content[0];
-        var parentApp = parent.mainApp;
-        if (parentApp && selection) {
-            parentApp.fireEvent('notifier.show', selection.get('name') + ' duplicated into /path/to/content-copy',
-                'Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.',
-                true);
+        if (selection) {
+            Admin.MessageBus.showFeedback({
+                title: selection.get('name') + ' duplicated into /path/to/content-copy',
+                message: 'Something just happened! Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.',
+                opts: {}
+            });
         }
     },
 

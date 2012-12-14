@@ -1,6 +1,8 @@
 Ext.define('Admin.view.FeedbackBox', {
     extend: 'Ext.Component',
     alias: 'widget.feedbackBox',
+    requires: 'Admin.MessageBus',
+
     autoHeight: true,
     floating: true,
     shadow: false,
@@ -34,6 +36,8 @@ Ext.define('Admin.view.FeedbackBox', {
     initComponent: function () {
         var me = this;
 
+        Admin.MessageBus.on('feedbackBox.show', me.doShow, me);
+
         me.callParent(arguments);
         me.update({});
     },
@@ -47,15 +51,15 @@ Ext.define('Admin.view.FeedbackBox', {
     },
 
 
-    doShow: function (title, message, opts) {
+    doShow: function (config) {
         var me = this;
 
         me.update({
-            messageTitle: title,
-            messageText: message,
-            notifyUser: opts.notifyUser === undefined ? false : opts.notifyUser
+            messageTitle: config.title,
+            messageText: config.message,
+            notifyUser: config.opts.notifyUser === undefined ? false : config.opts.notifyUser
         });
-        me.setNotifyOpts(opts);
+        me.setNotifyOpts(config.opts);
         me.show();
         me.fadeInOut();
     },
