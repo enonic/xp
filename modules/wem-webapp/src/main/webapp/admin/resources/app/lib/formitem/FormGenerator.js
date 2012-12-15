@@ -1,32 +1,30 @@
-Ext.define('Admin.lib.formitem.FormHelper', {
+Ext.define('Admin.lib.formitem.FormGenerator', {
 
-    // Add components based on content type configuration.
-    // Refactor this as it is shared by wizard.ContentDataPanel and lib.formitem.FormItemSet
+    // Refactor this as it is shared between wizard.ContentDataPanel and lib.formitem.FormItemSet
     // FormItemSet may use it's own method for adding components.
-    addNewComponents: function (contentTypeItems, parentComponent) {
+    addComponentsBasedOnContentType: function (contentTypeItems, parentComponent) {
         var me = this;
         var component;
 
         Ext.each(contentTypeItems, function (item) {
             if (item.FormItemSet) {
-                component = me._createFormItemSet(item.FormItemSet);
+                component = me.createFormItemSet(item.FormItemSet);
             } else { // Input
                 var classAlias = 'widget.' + item.Input.type.name;
-                if (!me._formItemIsSupported(classAlias)) {
+                if (!me.formItemIsSupported(classAlias)) {
                     console.error('Unsupported input type', item.Input);
                     return;
                 }
 
-                component = me._createFormItemComponent(item.Input);
+                component = me.createFormItemComponent(item.Input);
             }
 
-            me._addComponent(component, parentComponent);
+            me.addComponent(component, parentComponent);
         });
     },
 
 
-    // Add components based on content.
-    addComponentsWithContent: function (contentData, contentTypeConfig, parentComponent) {
+    addComponentsBasedOnContentData: function (contentData, contentTypeConfig, parentComponent) {
         var me = this,
             config,
             component;
@@ -35,25 +33,25 @@ Ext.define('Admin.lib.formitem.FormHelper', {
 
         Ext.Array.each(contentData, function(contentItem) {
 
-            config = me._getConfigForContentItem(contentItem, contentTypeConfig);
+            config = me.getConfigForContentItem(contentItem, contentTypeConfig);
 
             if (config.FormItemSet) {
-                component = me._createFormItemSet(config.FormItemSet, contentItem);
+                component = me.createFormItemSet(config.FormItemSet, contentItem);
             } else { // Input
                 var classAlias = 'widget.' + config.Input.type.name;
-                if (!me._formItemIsSupported(classAlias)) {
+                if (!me.formItemIsSupported(classAlias)) {
                     console.error('Unsupported input type', config.Input);
                     return;
                 }
-                component = me._createFormItemComponent(config.Input, contentItem.value);
+                component = me.createFormItemComponent(config.Input, contentItem.value);
             }
 
-            me._addComponent(component, parentComponent);
+            me.addComponent(component, parentComponent);
         });
     },
 
 
-    _addComponent: function (component, parentComponent) {
+    addComponent: function (component, parentComponent) {
         if (parentComponent.getXType() === 'FormItemSet' || parentComponent.getXType() === 'fieldcontainer' || parentComponent.getXType() === 'container') {
             parentComponent.add(component);
         } else {
@@ -62,7 +60,7 @@ Ext.define('Admin.lib.formitem.FormHelper', {
     },
 
 
-    _createFormItemSet: function (formItemSetConfig, contentItem) {
+    createFormItemSet: function (formItemSetConfig, contentItem) {
         return Ext.create({
             xclass: 'widget.FormItemSet',
             name: formItemSetConfig.name,
@@ -72,7 +70,7 @@ Ext.define('Admin.lib.formitem.FormHelper', {
     },
 
 
-    _createFormItemComponent: function (inputConfig, value) {
+    createFormItemComponent: function (inputConfig, value) {
         var me = this;
         var classAlias = 'widget.' + inputConfig.type.name;
 
@@ -87,7 +85,7 @@ Ext.define('Admin.lib.formitem.FormHelper', {
     },
 
 
-    _getConfigForContentItem: function (contentItem, contentTypeConfig) {
+    getConfigForContentItem: function (contentItem, contentTypeConfig) {
         var node, name;
 
         for (var key in contentTypeConfig) {
@@ -108,7 +106,7 @@ Ext.define('Admin.lib.formitem.FormHelper', {
     },
 
 
-    _formItemIsSupported: function (classAlias) {
+    formItemIsSupported: function (classAlias) {
         return Ext.ClassManager.getByAlias(classAlias);
     }
 

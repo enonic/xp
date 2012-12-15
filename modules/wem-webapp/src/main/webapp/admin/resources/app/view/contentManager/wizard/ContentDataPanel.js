@@ -11,7 +11,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     ],
 
     mixins: {
-        formHelper: 'Admin.lib.formitem.FormHelper'
+        formGenerator: 'Admin.lib.formitem.FormGenerator'
     },
 
     contentType: undefined,
@@ -27,9 +27,9 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
         me.items = [];
 
         if (me.content) {
-            me.mixins.formHelper.addComponentsWithContent(me.content.data, me.contentType.form, me);
+            me.mixins.formGenerator.addComponentsBasedOnContentData(me.content.data, me.contentType.form, me);
         } else {
-            me.mixins.formHelper.addNewComponents(me.contentType.form, me);
+            me.mixins.formGenerator.addComponentsBasedOnContentType(me.contentType.form, me);
         }
 
         me.callParent(arguments);

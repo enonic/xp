@@ -7,7 +7,7 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
     ],
 
     mixins: {
-        formHelper: 'Admin.lib.formitem.FormHelper'
+        formGenerator: 'Admin.lib.formitem.FormGenerator'
     },
 
     formItemSetConfig: undefined,
@@ -119,9 +119,9 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
         //  addComponentsForEditForm: function (contentData, contentTypeDef, parentComponent) {
 
         if (createBlankBlock) {
-            me.mixins.formHelper.addNewComponents(me.formItemSetConfig.items, block);
+            me.mixins.formGenerator.addComponentsBasedOnContentType(me.formItemSetConfig.items, block);
         } else {
-            me.mixins.formHelper.addComponentsWithContent(me.content.value[position], me.formItemSetConfig.items, block);
+            me.mixins.formGenerator.addComponentsBasedOnContentData(me.content.value[position], me.formItemSetConfig.items, block);
         }
 
         me.insert(position, block);
