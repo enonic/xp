@@ -1,5 +1,5 @@
 {
-    "name": "Set",
+    "name": "Contact (Set in Set)",
     "module": "Demo",
     "qualifiedName": "Demo:Set",
     "displayName": "Form Item Set Demo",
@@ -47,8 +47,8 @@
         },
         {
             "FormItemSet": {
-                "name": "address",
-                "label": "Address",
+                "name": "contact_info",
+                "label": "Contact Info",
                 "immutable": false,
                 "occurrences": {
                     "minimum": 0,
@@ -133,12 +133,10 @@
                             }
                         }
                     },
-
-
                     {
                         "FormItemSet": {
-                            "name": "address",
-                            "label": "Address",
+                            "name": "phone_numbers",
+                            "label": "Phone Numbers",
                             "immutable": false,
                             "occurrences": {
                                 "minimum": 0,
@@ -149,8 +147,8 @@
                             "items": [
                                 {
                                     "Input": {
-                                        "name": "label",
-                                        "label": "Label",
+                                        "name": "phone_number",
+                                        "label": "Phone Number",
                                         "immutable": false,
                                         "occurrences": {
                                             "minimum": 0,
@@ -159,79 +157,19 @@
                                         "indexed": false,
                                         "customText": null,
                                         "validationRegexp": null,
-                                        "helpText": "Give this address a label",
-                                        "type": {
-                                            "name": "TextLine",
-                                            "builtIn": true
-                                        }
-                                    }
-                                },
-                                {
-                                    "Input": {
-                                        "name": "street",
-                                        "label": "Street",
-                                        "immutable": false,
-                                        "occurrences": {
-                                            "minimum": 0,
-                                            "maximum": 1
-                                        },
-                                        "indexed": false,
-                                        "customText": null,
-                                        "validationRegexp": null,
-                                        "helpText": "Street",
-                                        "type": {
-                                            "name": "TextLine",
-                                            "builtIn": true
-                                        }
-                                    }
-                                },
-                                {
-                                    "Input": {
-                                        "name": "postal_code",
-                                        "label": "Postal Code",
-                                        "immutable": false,
-                                        "occurrences": {
-                                            "minimum": 0,
-                                            "maximum": 1
-                                        },
-                                        "indexed": false,
-                                        "customText": null,
-                                        "validationRegexp": null,
-                                        "helpText": "Postal Code",
-                                        "type": {
-                                            "name": "TextLine",
-                                            "builtIn": true
-                                        }
-                                    }
-                                },
-                                {
-                                    "Input": {
-                                        "name": "postal_address",
-                                        "label": "Postal Address ",
-                                        "immutable": false,
-                                        "occurrences": {
-                                            "minimum": 0,
-                                            "maximum": 1
-                                        },
-                                        "indexed": false,
-                                        "customText": null,
-                                        "validationRegexp": null,
-                                        "helpText": "Postal Address",
+                                        "helpText": "Should be prefixed with country calling code",
                                         "type": {
                                             "name": "TextLine",
                                             "builtIn": true
                                         }
                                     }
                                 }
+
                             ]
                         }
                     }
-
-
-
                 ]
             }
         }
-
     ]
 }

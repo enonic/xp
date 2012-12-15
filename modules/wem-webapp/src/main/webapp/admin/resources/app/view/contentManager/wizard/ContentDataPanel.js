@@ -42,20 +42,24 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
 
 
     getContentData: function () {
-        return this._buildContentData();
+        return this.buildContentData();
     },
 
 
-    _buildContentData: function () {
-        var me = this,
-            contentData = {},
-            components = me.items.items;
 
-        Ext.Array.each(components, function (component) {
-            if (component.getXType() === 'FormItemSet') {
-                me._addFormItemSetContentData(component, contentData);
+    /**
+     * TODO: Refactor to a new class, ContentDataBuilder
+     */
+    buildContentData: function () {
+        var me = this;
+        var contentData = {};
+        var formItems = me.items.items;
+
+        Ext.Array.each(formItems, function (formItem) {
+            if (formItem.getXType() === 'FormItemSet') {
+                me.addFormItemSetContentData(formItem, contentData, '');
             } else {
-                contentData[component.name] = component.getValue();
+                contentData[formItem.name] = formItem.getValue();
             }
         });
 
@@ -63,18 +67,44 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     },
 
 
-    _addFormItemSetContentData: function (formItemSetComponent, contentData) {
-        //TODO: Recursive
-        var blocks = Ext.ComponentQuery.query('container[formItemSetBlock=true]', formItemSetComponent),
-            formItemSetName = formItemSetComponent.name;
+    addFormItemSetContentData: function (formItemSetItem, contentData, parentName) {
+        var me = this;
+        var blocks = me.getFormItemSetBlocks(formItemSetItem);
 
         Ext.Array.each(blocks, function (block, index) {
-            Ext.Array.each(block.items.items, function (item) {
-                if (item.cls !== 'header') {
-                    contentData[formItemSetName + '[' + index + '].' + item.name] = item.getValue();
+
+            var blockItems = block.items.items;
+
+            Ext.Array.each(blockItems, function (item) {
+                var formItemSetName = '';
+                if (parentName !== '') {
+                    formItemSetName = parentName + '.'; // Eg. contact_info[0]
+                }
+                formItemSetName += formItemSetItem.name + '[' + index + ']';
+
+                if (item.getXType() === 'FormItemSet') {
+                    // Recursive
+                    me.addFormItemSetContentData(item, contentData, formItemSetName);
+                } else {
+                    if (item.cls !== 'header') {
+                        contentData[formItemSetName + '.' + item.name] = item.getValue();
+                    }
                 }
             });
         });
+    },
+
+
+    getFormItemSetBlocks: function (formItemSetComponent) {
+        var blocks = [];
+        Ext.Array.each(formItemSetComponent.items.items, function (item, index) {
+            if (item.cls && item.cls.indexOf('admin-formitemset-block') > -1) {
+                blocks.push(item);
+            }
+        });
+
+        return blocks;
     }
+
 
 });
