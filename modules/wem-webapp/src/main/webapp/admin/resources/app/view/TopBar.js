@@ -270,7 +270,8 @@ Ext.define('Admin.view.TopBar', {
         var count = this.tabMenu.getAllItems().length;
         // show counter when 2 or more tabs are open
         this.tabButton.setVisible(count > 1);
-        this.tabButton.setText('' + count);
+        // but exclude browse tab from calculation
+        this.tabButton.setText('' + count - 1);
     },
 
     getMenuItemDescription: function (card) {
