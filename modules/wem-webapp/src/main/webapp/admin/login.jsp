@@ -115,7 +115,7 @@
       renderTo: 'form-container',
       bodyCls: 'form',
       border: 0,
-      url: 'adminLogin',
+      url: 'main.jsp',
       standardSubmit: true,
       method: 'POST',
       layout: {
