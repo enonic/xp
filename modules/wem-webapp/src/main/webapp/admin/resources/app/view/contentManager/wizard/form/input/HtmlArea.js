@@ -7,7 +7,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.HtmlArea', {
         me.items = [
             {
                 xtype: 'htmleditor',
-                name: me.name
+                name: me.name,
+                value: me.value
             }
         ];
 
