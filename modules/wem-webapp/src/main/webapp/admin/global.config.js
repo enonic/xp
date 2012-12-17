@@ -10,9 +10,15 @@
     Ext.override(Ext.LoadMask, {
         floating: {
             shadow: false
-        }
+        },
+        msg: undefined,
+        cls: 'admin-load-mask'
     });
 
+    Ext.override(Ext.view.Table, {
+        loadingText: undefined,
+        loadingCls: 'x-mask-loading'
+    });
 
     // TODO: Refactor
     function cms_getParentWindow() {
