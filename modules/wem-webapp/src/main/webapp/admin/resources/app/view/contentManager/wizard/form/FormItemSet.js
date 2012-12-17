@@ -20,8 +20,14 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
 
     margin: '10 0 10 0',
 
+    initComponent: function () {
+        this.callParent(arguments);
+    },
 
     listeners: {
+        beforerender: function () {
+            this.setIndent();
+        },
         render: function () {
             this.initLayout();
             this.initSortable();
@@ -29,11 +35,6 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
         afterlayout: function () {
             this.enableDisableRemoveBlockButton();
         }
-    },
-
-
-    initComponent: function () {
-        this.callParent(arguments);
     },
 
 
@@ -64,7 +65,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
 
         return  {
             xtype: 'button',
-            text: 'Add',
+            text: 'Add ' + me.contentTypeItemConfig.label,
             handler: function (button) {
                 me.addBlockAt((me.items.items.length - 1), true);
             }
@@ -100,6 +101,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
             ],
             listeners: {
                 render: function (container) {
+                    /*
                     var collapseAllButton = Ext.DomQuery.selectNode('.admin-collapse-all-button', container.getEl().dom);
                     Ext.fly(collapseAllButton).on('click', function (event) {
                         if (me.isCollapsed) {
@@ -110,13 +112,11 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
                             me.isCollapsed = true;
                         }
                     });
+                    */
                 }
             }
         };
     },
-
-
-
 
 
     /**
@@ -190,6 +190,19 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
                     }
                 }
             ]
+        }
+    },
+
+
+    /**
+     * @private
+     */
+    setIndent: function () {
+        var me = this;
+        var parent = me.up();
+        var parentIsBlock = parent.cls && parent.cls.indexOf('formitem-set-block') > -1;
+        if (parentIsBlock) {
+            me.margin = '10 0 10 20';
         }
     },
 
