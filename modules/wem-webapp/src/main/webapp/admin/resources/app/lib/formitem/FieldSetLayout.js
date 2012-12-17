@@ -1,6 +1,6 @@
-Ext.define('Admin.lib.formitem.Layout', {
+Ext.define('Admin.lib.formitem.FieldSetLayout', {
     extend: 'Ext.form.FieldSet',
-    alias: 'widget.Layout',
+    alias: 'widget.FieldSetLayout',
 
     mixins: {
         formGenerator: 'Admin.lib.formitem.FormGenerator'

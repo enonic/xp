@@ -36,8 +36,6 @@ Ext.define('Admin.lib.formitem.FormGenerator', {
 
             config = me.getConfigForContentItem(contentItem, contentTypeConfig);
 
-            console.log('config', config)
-
             if (config.FormItemSet) {
                 component = me.createFormItemSetComponent(config.FormItemSet, contentItem);
             } else if (config.Layout) {
@@ -73,11 +71,8 @@ Ext.define('Admin.lib.formitem.FormGenerator', {
      * @private
      */
     createLayoutComponent: function (layoutConfig, contentItem) {
-
-        console.log('layoutConfig',layoutConfig);
-
         return Ext.create({
-            xclass: 'widget.Layout',
+            xclass: 'widget.FieldSetLayout',
             name: layoutConfig.name,
             layoutConfig: layoutConfig,
             content: contentItem
@@ -154,7 +149,7 @@ Ext.define('Admin.lib.formitem.FormGenerator', {
      * @private
      */
     componentIsContainer: function (component) {
-        return component.getXType() === 'FormItemSet' || component.getXType() === 'Layout' || component.getXType() === 'fieldcontainer' || component.getXType() === 'container';
+        return component.getXType() === 'FormItemSet' || component.getXType() === 'FieldSetLayout' || component.getXType() === 'fieldcontainer' || component.getXType() === 'container';
     }
 
 });
