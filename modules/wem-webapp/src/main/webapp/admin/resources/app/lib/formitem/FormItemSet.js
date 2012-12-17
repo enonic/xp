@@ -122,8 +122,7 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
             items: me.createBlockHeader()
         });
 
-        //  addComponentsForEditForm: function (contentData, contentTypeDef, parentComponent) {
-
+        // Rename argument createBlankBlock. hasContent
         if (createBlankBlock) {
             me.mixins.formGenerator.addComponentsBasedOnContentType(me.formItemSetConfig.items, block);
         } else {

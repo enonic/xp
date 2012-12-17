@@ -7,15 +7,18 @@ Ext.define('Admin.lib.formitem.FormGenerator', {
         var component;
 
         Ext.each(contentTypeItems, function (item) {
+            // Code smell: Refactor / clean up this.
             if (item.FormItemSet) {
-                component = me.createFormItemSet(item.FormItemSet);
+                component = me.createFormItemSetComponent(item.FormItemSet);
+            } else if (item.Layout && item.Layout.type === 'FieldSet') {
+                component = me.createLayoutComponent(item.Layout);
+
             } else { // Input
                 var classAlias = 'widget.' + item.Input.type.name;
                 if (!me.formItemIsSupported(classAlias)) {
                     console.error('Unsupported input type', item.Input);
                     return;
                 }
-
                 component = me.createFormItemComponent(item.Input);
             }
 
@@ -29,14 +32,16 @@ Ext.define('Admin.lib.formitem.FormGenerator', {
             config,
             component;
 
-        // console.log('addComponentsForEditForm - contentData', contentData);
-
         Ext.Array.each(contentData, function(contentItem) {
 
             config = me.getConfigForContentItem(contentItem, contentTypeConfig);
 
+            console.log('config', config)
+
             if (config.FormItemSet) {
-                component = me.createFormItemSet(config.FormItemSet, contentItem);
+                component = me.createFormItemSetComponent(config.FormItemSet, contentItem);
+            } else if (config.Layout) {
+                component = me.createLayoutComponent(config.Layout, contentItem);
             } else { // Input
                 var classAlias = 'widget.' + config.Input.type.name;
                 if (!me.formItemIsSupported(classAlias)) {
@@ -55,7 +60,8 @@ Ext.define('Admin.lib.formitem.FormGenerator', {
      * @private
      */
     addComponent: function (component, parentComponent) {
-        if (parentComponent.getXType() === 'FormItemSet' || parentComponent.getXType() === 'fieldcontainer' || parentComponent.getXType() === 'container') {
+        var me = this;
+        if (me.componentIsContainer(parentComponent)) {
             parentComponent.add(component);
         } else {
             parentComponent.items.push(component);
@@ -66,7 +72,23 @@ Ext.define('Admin.lib.formitem.FormGenerator', {
     /**
      * @private
      */
-    createFormItemSet: function (formItemSetConfig, contentItem) {
+    createLayoutComponent: function (layoutConfig, contentItem) {
+
+        console.log('layoutConfig',layoutConfig);
+
+        return Ext.create({
+            xclass: 'widget.Layout',
+            name: layoutConfig.name,
+            layoutConfig: layoutConfig,
+            content: contentItem
+        });
+    },
+
+
+    /**
+     * @private
+     */
+    createFormItemSetComponent: function (formItemSetConfig, contentItem) {
         return Ext.create({
             xclass: 'widget.FormItemSet',
             name: formItemSetConfig.name,
@@ -105,6 +127,8 @@ Ext.define('Admin.lib.formitem.FormGenerator', {
 
             if (node.FormItemSet) {
                 name = node.FormItemSet.name;
+            } else if (node.Layout) {
+                name = node.Layout.name;
             } else { // Input
                 name = node.Input.name;
             }
@@ -123,6 +147,14 @@ Ext.define('Admin.lib.formitem.FormGenerator', {
      */
     formItemIsSupported: function (classAlias) {
         return Ext.ClassManager.getByAlias(classAlias);
+    },
+
+
+    /**
+     * @private
+     */
+    componentIsContainer: function (component) {
+        return component.getXType() === 'FormItemSet' || component.getXType() === 'Layout' || component.getXType() === 'fieldcontainer' || component.getXType() === 'container';
     }
 
 });

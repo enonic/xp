@@ -3,6 +3,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     alias: 'widget.contentDataPanel',
 
     requires: [
+        'Admin.lib.formitem.Layout',
         'Admin.lib.formitem.FormItemSet',
         'Admin.lib.formitem.HtmlArea',
         'Admin.lib.formitem.Relation',
@@ -25,6 +26,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     initComponent: function () {
         var me = this;
         me.items = [];
+
+        console.log('Content data',  me.content.data);
 
         if (me.content) {
             me.mixins.formGenerator.addComponentsBasedOnContentData(me.content.data, me.contentType.form, me);
@@ -58,12 +61,26 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
         Ext.Array.each(formItems, function (formItem) {
             if (formItem.getXType() === 'FormItemSet') {
                 me.addFormItemSetContentData(formItem, contentData, '');
+            } else if (formItem.getXType() === 'Layout') {
+                me.addLayoutData(formItem, contentData);
             } else {
                 contentData[formItem.name] = formItem.getValue();
             }
         });
 
         return contentData;
+    },
+
+
+    addLayoutData: function (layoutComponent, contentData) {
+        var items = layoutComponent.items.items;
+        var layoutName = layoutComponent.name;
+
+        console.log(layoutName);
+
+        Ext.Array.each(items, function (item, index) {
+            contentData[layoutName.concat('[0].', item.name)] = item.getValue();
+        });
     },
 
 
@@ -80,14 +97,14 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
                 if (parentName !== '') {
                     formItemSetName = parentName + '.'; // Eg. contact_info[0]
                 }
-                formItemSetName += formItemSetItem.name + '[' + index + ']';
+                formItemSetName = formItemSetName.concat(formItemSetItem.name, '[', index, ']');
 
                 if (item.getXType() === 'FormItemSet') {
                     // Recursive
                     me.addFormItemSetContentData(item, contentData, formItemSetName);
                 } else {
                     if (item.cls !== 'header') {
-                        contentData[formItemSetName + '.' + item.name] = item.getValue();
+                        contentData[formItemSetName.concat('.', item.name)] = item.getValue();
                     }
                 }
             });
