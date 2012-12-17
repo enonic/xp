@@ -95,8 +95,6 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
         var contentData = contentWizardData.contentData;
         var displayName = contentWizardData.displayName;
 
-        console.log(contentData);
-
         var contentParams = {
             contentData: contentData,
             qualifiedContentTypeName: contentType.qualifiedName,

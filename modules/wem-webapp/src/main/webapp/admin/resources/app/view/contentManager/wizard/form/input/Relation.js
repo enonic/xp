@@ -107,7 +107,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Relation', {
                 datachanged: function (store) {
                     me.updateHiddenValue();
                     try {
-                        me.down('combobox').setDisabled(me.selectedContentStore.getCount() === me.inputConfig.occurrences.maximum);
+                        me.down('combobox').setDisabled(me.selectedContentStore.getCount() === me.contentTypeItemConfig.occurrences.maximum);
                     } catch (exception) {
                         /**/
                     }

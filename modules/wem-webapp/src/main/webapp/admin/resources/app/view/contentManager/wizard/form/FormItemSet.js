@@ -10,7 +10,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
         formGenerator: 'Admin.view.contentManager.wizard.form.FormGenerator'
     },
 
-    formItemSetConfig: undefined,
+    contentTypeItemConfig: undefined,
 
     content: null, // Blocks
 
@@ -50,7 +50,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
 
         } else {
             // Remove if test?
-            if (me.formItemSetConfig.items) {
+            if (me.contentTypeItemConfig.items) {
                 me.addBlockAt(0, true);
             }
         }
@@ -59,7 +59,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
             xtype: 'button',
             text: 'Add',
             handler: function (button) {
-                if (me.formItemSetConfig.items) {
+                if (me.contentTypeItemConfig.items) {
                     me.addBlockAt((me.items.items.length - 1), true);
                 }
             }
@@ -124,9 +124,9 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
 
         // Rename argument createBlankBlock. hasContent
         if (createBlankBlock) {
-            me.mixins.formGenerator.addComponentsBasedOnContentType(me.formItemSetConfig.items, block);
+            me.mixins.formGenerator.addComponentsBasedOnContentType(me.contentTypeItemConfig.items, block);
         } else {
-            me.mixins.formGenerator.addComponentsBasedOnContentData(me.content.value[position], me.formItemSetConfig.items, block);
+            me.mixins.formGenerator.addComponentsBasedOnContentData(me.content.value[position], me.contentTypeItemConfig.items, block);
         }
 
         me.insert(position, block);
@@ -161,7 +161,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
                 },
                 {
                     xtype: 'component',
-                    html: '<h6>' + (me.formItemSetConfig.label || '{No label}') + ': </h6>'
+                    html: '<h6>' + (me.contentTypeItemConfig.label || '{No label}') + ': </h6>'
                 },
                 {
                     tdAttrs: {

@@ -6,7 +6,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FieldSetLayout', {
         formGenerator: 'Admin.view.contentManager.wizard.form.FormGenerator'
     },
 
-    layoutConfig: undefined,
+    contentTypeItemConfig: undefined,
 
     content: null, // Blocks
 
@@ -20,7 +20,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FieldSetLayout', {
     initComponent: function () {
         var me = this;
 
-        me.title = me.layoutConfig.label;
+        me.title = me.contentTypeItemConfig.label;
 
         me.defaults = {
         };
@@ -33,9 +33,9 @@ Ext.define('Admin.view.contentManager.wizard.form.FieldSetLayout', {
         var me = this;
 
         if (me.content) {
-            me.mixins.formGenerator.addComponentsBasedOnContentData(me.content.value[0], me.layoutConfig.items, me);
+            me.mixins.formGenerator.addComponentsBasedOnContentData(me.content.value[0], me.contentTypeItemConfig.items, me);
         } else {
-            me.mixins.formGenerator.addComponentsBasedOnContentType(me.layoutConfig.items, me);
+            me.mixins.formGenerator.addComponentsBasedOnContentType(me.contentTypeItemConfig.items, me);
         }
     }
 

@@ -2,7 +2,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
     extend: 'Ext.form.FieldContainer',
     label: '',
 
-    inputConfig: undefined,
+    contentTypeItemConfig: undefined,
 
     initComponent: function () {
         var me = this;
