@@ -1,4 +1,4 @@
-Ext.define('Admin.lib.formitem.FormGenerator', {
+Ext.define('Admin.view.contentManager.wizard.formcomponent.FormGenerator', {
 
     // Refactor this as it is shared between wizard.ContentDataPanel and lib.formitem.FormItemSet
     // FormItemSet may use it's own method for adding components.

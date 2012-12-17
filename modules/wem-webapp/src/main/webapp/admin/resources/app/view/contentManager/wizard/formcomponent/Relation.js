@@ -1,5 +1,5 @@
-Ext.define('Admin.lib.formitem.Relation', {
-    extend: 'Admin.lib.formitem.Base',
+Ext.define('Admin.view.contentManager.wizard.formcomponent.Relation', {
+    extend: 'Admin.view.contentManager.wizard.formcomponent.Base',
     alias: 'widget.Relation',
     fieldLabel: 'Relation',
 

@@ -1,5 +1,5 @@
-Ext.define('Admin.lib.formitem.TextArea', {
-    extend: 'Admin.lib.formitem.Base',
+Ext.define('Admin.view.contentManager.wizard.formcomponent.TextArea', {
+    extend: 'Admin.view.contentManager.wizard.formcomponent.Base',
     alias: 'widget.TextArea',
     label: 'Text Area',
     initComponent: function () {

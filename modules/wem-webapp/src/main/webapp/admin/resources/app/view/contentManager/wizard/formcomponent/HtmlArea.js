@@ -1,5 +1,5 @@
-Ext.define('Admin.lib.formitem.HtmlArea', {
-    extend: 'Admin.lib.formitem.Base',
+Ext.define('Admin.view.contentManager.wizard.formcomponent.HtmlArea', {
+    extend: 'Admin.view.contentManager.wizard.formcomponent.Base',
     alias: 'widget.HtmlArea',
     initComponent: function () {
         var me = this;

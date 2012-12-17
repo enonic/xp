@@ -1,4 +1,4 @@
-Ext.define('Admin.lib.formitem.Base', {
+Ext.define('Admin.view.contentManager.wizard.formcomponent.Base', {
     extend: 'Ext.form.FieldContainer',
     label: '',
 
