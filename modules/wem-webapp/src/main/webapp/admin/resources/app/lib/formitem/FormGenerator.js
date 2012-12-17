@@ -51,6 +51,9 @@ Ext.define('Admin.lib.formitem.FormGenerator', {
     },
 
 
+    /**
+     * @private
+     */
     addComponent: function (component, parentComponent) {
         if (parentComponent.getXType() === 'FormItemSet' || parentComponent.getXType() === 'fieldcontainer' || parentComponent.getXType() === 'container') {
             parentComponent.add(component);
@@ -60,6 +63,9 @@ Ext.define('Admin.lib.formitem.FormGenerator', {
     },
 
 
+    /**
+     * @private
+     */
     createFormItemSet: function (formItemSetConfig, contentItem) {
         return Ext.create({
             xclass: 'widget.FormItemSet',
@@ -70,6 +76,9 @@ Ext.define('Admin.lib.formitem.FormGenerator', {
     },
 
 
+    /**
+     * @private
+     */
     createFormItemComponent: function (inputConfig, value) {
         var me = this;
         var classAlias = 'widget.' + inputConfig.type.name;
@@ -85,6 +94,9 @@ Ext.define('Admin.lib.formitem.FormGenerator', {
     },
 
 
+    /**
+     * @private
+     */
     getConfigForContentItem: function (contentItem, contentTypeConfig) {
         var node, name;
 
@@ -106,6 +118,9 @@ Ext.define('Admin.lib.formitem.FormGenerator', {
     },
 
 
+    /**
+     * @private
+     */
     formItemIsSupported: function (classAlias) {
         return Ext.ClassManager.getByAlias(classAlias);
     }
