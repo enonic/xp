@@ -88,20 +88,20 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     },
 
 
-    addFormItemSetContentData: function (formItemSetItem, contentData, parentName) {
+    addFormItemSetContentData: function (formItemSetComponent, contentData, parentName) {
         var me = this;
-        var blocks = me.getFormItemSetBlocks(formItemSetItem);
+        var blocks = me.getFormItemSetBlocks(formItemSetComponent);
+        var formItemSetName = '';
 
         Ext.Array.each(blocks, function (block, index) {
 
             var blockItems = block.items.items;
 
             Ext.Array.each(blockItems, function (item) {
-                var formItemSetName = '';
                 if (parentName !== '') {
                     formItemSetName = parentName + '.'; // Eg. contact_info[0]
                 }
-                formItemSetName = formItemSetName.concat(formItemSetItem.name, '[', index, ']');
+                formItemSetName = formItemSetName.concat(formItemSetComponent.name, '[', index, ']');
 
                 if (item.getXType() === 'FormItemSet') {
                     me.addFormItemSetContentData(item, contentData, formItemSetName);
