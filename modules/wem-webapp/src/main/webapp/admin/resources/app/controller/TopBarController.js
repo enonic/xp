@@ -92,15 +92,11 @@ Ext.define('Admin.controller.TopBarController', {
     },
 
     showLoadMask: function () {
-        if (!window.appLoadMask) {
-            window.appLoadMask = new Ext.LoadMask(Ext.getDom('appFrames'), {
-                floating: {
-                    shadow: false
-                }
-            });
+        var parent = window.parent.parent || window.parent;
+        if (!parent.appLoadMask) {
+            parent.appLoadMask = new Ext.LoadMask(this.getMainViewport());
         }
-
-        window.appLoadMask.show();
+        parent.appLoadMask.show();
     },
 
     setDocumentTitle: function (title) {

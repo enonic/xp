@@ -20,6 +20,11 @@
         loadingCls: 'x-mask-loading'
     });
 
+    Ext.override(Ext.tree.View, {
+        loadingText: undefined,
+        loadingCls: 'x-mask-loading'
+    });
+
     // TODO: Refactor
     function cms_getParentWindow() {
         return window.parent.parent || window.parent;
