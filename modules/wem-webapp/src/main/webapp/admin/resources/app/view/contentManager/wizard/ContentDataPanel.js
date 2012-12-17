@@ -3,15 +3,15 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     alias: 'widget.contentDataPanel',
 
     requires: [
-        'Admin.view.contentManager.wizard.formcomponent.FieldSetLayout',
-        'Admin.view.contentManager.wizard.formcomponent.FormItemSet',
-        'Admin.view.contentManager.wizard.formcomponent.HtmlArea',
-        'Admin.view.contentManager.wizard.formcomponent.Relation',
-        'Admin.view.contentManager.wizard.formcomponent.TextArea',
-        'Admin.view.contentManager.wizard.formcomponent.TextLine'
+        'Admin.view.contentManager.wizard.form.FieldSetLayout',
+        'Admin.view.contentManager.wizard.form.FormItemSet',
+        'Admin.view.contentManager.wizard.form.input.HtmlArea',
+        'Admin.view.contentManager.wizard.form.input.Relation',
+        'Admin.view.contentManager.wizard.form.input.TextArea',
+        'Admin.view.contentManager.wizard.form.input.TextLine'
     ],
     mixins: {
-        formGenerator: 'Admin.view.contentManager.wizard.formcomponent.FormGenerator'
+        formGenerator: 'Admin.view.contentManager.wizard.form.FormGenerator'
     },
 
     contentType: undefined,

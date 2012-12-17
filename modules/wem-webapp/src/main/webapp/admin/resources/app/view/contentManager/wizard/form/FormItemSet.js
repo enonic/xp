@@ -1,4 +1,4 @@
-Ext.define('Admin.view.contentManager.wizard.formcomponent.FormItemSet', {
+Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
     extend: 'Ext.form.FieldContainer',
     alias: 'widget.FormItemSet',
 
@@ -7,7 +7,7 @@ Ext.define('Admin.view.contentManager.wizard.formcomponent.FormItemSet', {
     ],
 
     mixins: {
-        formGenerator: 'Admin.view.contentManager.wizard.formcomponent.FormGenerator'
+        formGenerator: 'Admin.view.contentManager.wizard.form.FormGenerator'
     },
 
     formItemSetConfig: undefined,

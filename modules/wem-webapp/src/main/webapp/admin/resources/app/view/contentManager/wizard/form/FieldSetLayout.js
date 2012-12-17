@@ -1,9 +1,9 @@
-Ext.define('Admin.view.contentManager.wizard.formcomponent.FieldSetLayout', {
+Ext.define('Admin.view.contentManager.wizard.form.FieldSetLayout', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.FieldSetLayout',
 
     mixins: {
-        formGenerator: 'Admin.view.contentManager.wizard.formcomponent.FormGenerator'
+        formGenerator: 'Admin.view.contentManager.wizard.form.FormGenerator'
     },
 
     layoutConfig: undefined,

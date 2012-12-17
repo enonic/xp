@@ -1,5 +1,5 @@
-Ext.define('Admin.view.contentManager.wizard.formcomponent.HtmlArea', {
-    extend: 'Admin.view.contentManager.wizard.formcomponent.Base',
+Ext.define('Admin.view.contentManager.wizard.form.input.HtmlArea', {
+    extend: 'Admin.view.contentManager.wizard.form.input.Base',
     alias: 'widget.HtmlArea',
     initComponent: function () {
         var me = this;
