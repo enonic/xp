@@ -43,29 +43,42 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
     initLayout: function () {
         var me = this;
 
+        // Edit form mode
         if (me.content) {
-            for (var i = 0; i < me.content.value.length; i++) {
-                me.addBlockAt(i, false);
-            }
-
+            Ext.Array.each(me.content.value, function (value, index) {
+                me.addBlockAt(index, false);
+            });
         } else {
-            // Remove if test?
-            if (me.contentTypeItemConfig.items) {
-                me.addBlockAt(0, true);
-            }
+            me.addBlockAt(0, true);
         }
 
-        var addBlockButton = {
+        me.add(me.createActionsContainer());
+    },
+
+
+    /**
+     * @private
+     */
+    createAddBlockButton: function () {
+        var me = this;
+
+        return  {
             xtype: 'button',
             text: 'Add',
             handler: function (button) {
-                if (me.contentTypeItemConfig.items) {
-                    me.addBlockAt((me.items.items.length - 1), true);
-                }
+                me.addBlockAt((me.items.items.length - 1), true);
             }
-        };
+        }
+    },
 
-        var actionsContainer = {
+
+    /**
+     * @private
+     */
+    createActionsContainer: function () {
+        var me = this;
+
+        return {
             xtype: 'container',
             layout: {
                 type: 'table',
@@ -75,7 +88,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
                 }
             },
             items: [
-                addBlockButton,
+                me.createAddBlockButton(),
                 {
                     tdAttrs: {
                         align: 'right',
@@ -100,9 +113,10 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
                 }
             }
         };
-
-        me.add(actionsContainer);
     },
+
+
+
 
 
     /**

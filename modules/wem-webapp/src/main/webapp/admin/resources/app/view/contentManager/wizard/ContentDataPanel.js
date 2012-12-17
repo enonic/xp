@@ -55,13 +55,13 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
         var contentData = {};
         var formItems = me.items.items;
 
-        Ext.Array.each(formItems, function (formItem) {
-            if (formItem.getXType() === 'FormItemSet') {
-                me.addFormItemSetContentData(formItem, contentData, '');
-            } else if (formItem.getXType() === 'FieldSetLayout') {
-                me.addLayoutData(formItem, contentData);
+        Ext.Array.each(formItems, function (item) {
+            if (item.getXType() === 'FormItemSet') {
+                me.addFormItemSetContentData(item, contentData, '');
+            } else if (item.getXType() === 'FieldSetLayout') {
+                me.addLayoutData(item, contentData);
             } else {
-                contentData[formItem.name] = formItem.getValue();
+                contentData[item.name] = item.getValue();
             }
         });
 
@@ -70,11 +70,20 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
 
 
     addLayoutData: function (layoutComponent, contentData) {
+        var me = this;
         var items = layoutComponent.items.items;
-        var layoutName = layoutComponent.name;
+        var layoutName = layoutComponent.name.concat('[0]');
 
         Ext.Array.each(items, function (item, index) {
-            contentData[layoutName.concat('[0].', item.name)] = item.getValue();
+            if (item.getXType() === 'FormItemSet') {
+                me.addFormItemSetContentData(item, contentData, layoutName);
+            } else if (item.getXType() === 'FieldSetLayout') {
+                me.addLayoutData(item, contentData);
+            } else {
+                if (item.cls !== 'header') {
+                    contentData[layoutName.concat('.', item.name)] = item.getValue();
+                }
+            }
         });
     },
 
@@ -95,8 +104,9 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
                 formItemSetName = formItemSetName.concat(formItemSetItem.name, '[', index, ']');
 
                 if (item.getXType() === 'FormItemSet') {
-                    // Recursive
                     me.addFormItemSetContentData(item, contentData, formItemSetName);
+                } else if (item.getXType() === 'FieldSetLayout') {
+                    me.addLayoutData(item, contentData);
                 } else {
                     if (item.cls !== 'header') {
                         contentData[formItemSetName.concat('.', item.name)] = item.getValue();
