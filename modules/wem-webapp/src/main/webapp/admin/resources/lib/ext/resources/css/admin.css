@@ -785,7 +785,7 @@ td {
 .admin-data-view .admin-data-view-cell {
   display: table-cell;
   vertical-align: middle;
-  padding: 10px; }
+  padding: 5px 10px; }
 
 /* line 14, ../sass/admin/css/_data-view.scss */
 .admin-data-view-cell div {
@@ -1120,6 +1120,22 @@ td {
   color: #fff;
   cursor: pointer;
   text-decoration: underline; }
+
+/* line 1, ../sass/admin/css/_load-mask.scss */
+div.admin-load-mask {
+  border: none;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  border: none; }
+  /* line 3, ../sass/admin/css/_load-mask.scss */
+  div.admin-load-mask div.x-mask-loading {
+    background-position: center;
+    background-color: #ffffff;
+    border: none;
+    padding: 0;
+    width: 16px;
+    height: 16px; }
 
 /**
  * @var {string} $prefix 
@@ -10093,13 +10109,13 @@ table.x-datepicker-inner {
   overflow: hidden;
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
-  padding: 8px 10px 8px;
+  padding: 5px 10px 5px;
   white-space: nowrap; }
 
 /* line 287, ../themes/stylesheets/ext4/default/widgets/_grid.scss */
 .x-grid-with-row-lines .x-grid-cell-inner {
   line-height: 13px;
-  padding-bottom: 9px; }
+  padding-bottom: 6px; }
 
 /* line 293, ../themes/stylesheets/ext4/default/widgets/_grid.scss */
 .x-action-col-cell .x-grid-cell-inner {

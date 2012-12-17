@@ -23,11 +23,11 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
 
     listeners: {
         render: function () {
-            this._initLayout();
-            this._initSortable();
+            this.initLayout();
+            this.initSortable();
         },
         afterlayout: function () {
-            this._enableDisableRemoveBlockButton();
+            this.enableDisableRemoveBlockButton();
         }
     },
 
@@ -37,18 +37,21 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
     },
 
 
-    _initLayout: function () {
+    /**
+     * @private
+     */
+    initLayout: function () {
         var me = this;
 
         if (me.content) {
             for (var i = 0; i < me.content.value.length; i++) {
-                me._addBlockAt(i, false);
+                me.addBlockAt(i, false);
             }
 
         } else {
             // Remove if test?
             if (me.formItemSetConfig.items) {
-                me._addBlockAt(0, true);
+                me.addBlockAt(0, true);
             }
         }
 
@@ -57,7 +60,7 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
             text: 'Add',
             handler: function (button) {
                 if (me.formItemSetConfig.items) {
-                    me._addBlockAt((me.items.items.length - 1), true);
+                    me.addBlockAt((me.items.items.length - 1), true);
                 }
             }
         };
@@ -102,7 +105,10 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
     },
 
 
-    _addBlockAt: function (position, createBlankBlock) {
+    /**
+     * @private
+     */
+    addBlockAt: function (position, createBlankBlock) {
         var me = this;
 
         var block = new Ext.container.Container({
@@ -113,7 +119,7 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
             defaults: {
                 margin: '5 10'
             },
-            items: me._createBlockHeader()
+            items: me.createBlockHeader()
         });
 
         //  addComponentsForEditForm: function (contentData, contentTypeDef, parentComponent) {
@@ -128,7 +134,10 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
     },
 
 
-    _createBlockHeader: function () {
+    /**
+     * @private
+     */
+    createBlockHeader: function () {
         var me = this;
 
         return {
@@ -172,7 +181,10 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
     },
 
 
-    _enableDisableRemoveBlockButton: function () {
+    /**
+     * @private
+     */
+    enableDisableRemoveBlockButton: function () {
         var me = this,
             disable = ((me.items.items.length - 1) === 1),
             button = Ext.ComponentQuery.query('#remove-block-button', me)[0];
@@ -181,7 +193,10 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
     },
 
 
-    _initSortable: function () {
+    /**
+     * @private
+     */
+    initSortable: function () {
         new Admin.lib.Sortable(this, {
             proxyHtml: '<div><img src="../../admin/resources/images/icons/128x128/form_blue.png"/></div>',
             handle: '.admin-drag-handle'
