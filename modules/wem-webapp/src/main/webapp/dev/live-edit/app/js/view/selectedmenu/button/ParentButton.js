@@ -2,8 +2,8 @@
     'use strict';
 
     // Class definition (constructor function)
-    var parentButton = AdminLiveEdit.view.hovermenu.button.ParentButton = function (hoverMenu) {
-        this.hoverMenu = hoverMenu;
+    var parentButton = AdminLiveEdit.view.selectedmenu.button.ParentButton = function (selectedMenu) {
+        this.selectedMenu = selectedMenu;
         this.init();
     };
 
@@ -27,15 +27,15 @@
             iconCls: 'live-edit-icon-parent',
             handler: function (event) {
                 event.stopPropagation();
-                var $parent = self.hoverMenu.$currentComponent.parents('[data-live-edit-type]');
+                var $parent = self.selectedMenu.$currentComponent.parents('[data-live-edit-type]');
                 if ($parent && $parent.length > 0) {
                     $(window).trigger('component:select', [$($parent[0])]);
                 }
             }
         });
 
-        self.appendTo(this.hoverMenu.getEl());
-        self.hoverMenu.buttons.push(self);
+        self.appendTo(this.selectedMenu.getEl());
+        self.selectedMenu.buttons.push(self);
     };
 
 }($liveedit));

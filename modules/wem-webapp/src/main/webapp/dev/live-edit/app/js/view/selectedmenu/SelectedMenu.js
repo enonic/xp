@@ -23,7 +23,7 @@
     };
 
 
-    // Inherits ui.Base.js
+    // Inherits Base.js
     selectedMenu.prototype = new AdminLiveEdit.view.Base();
 
     // Fix constructor as it now is Base
@@ -52,11 +52,11 @@
     p.create = function () {
         var self = this;
 
-        self.createElement('<div class="live-edit-component-menu" style="top:-5000px; left:-5000px;">' +
-                           '    <div class="live-edit-component-menu-inner"></div>' +
+        self.createElement('<div class="live-edit-selected-menu" style="top:-5000px; left:-5000px;">' +
+                           '    <div class="live-edit-selected-menu-inner"></div>' +
                            '</div>');
         self.appendTo($('body'));
-        self.addButtons();
+        // self.addButtons();
     };
 
 
@@ -136,15 +136,14 @@
 
     p.addButtons = function () {
         var self = this;
-        var parentButton = new AdminLiveEdit.view.hovermenu.button.ParentButton(self);
-        var insertButton = new AdminLiveEdit.view.hovermenu.button.InsertButton(self);
-        var resetButton = new AdminLiveEdit.view.hovermenu.button.ResetButton(self);
-        var emptyButton = new AdminLiveEdit.view.hovermenu.button.EmptyButton(self);
-        var viewButton = new AdminLiveEdit.view.hovermenu.button.ViewButton(self);
-        var editButton = new AdminLiveEdit.view.hovermenu.button.EditButton(self);
-        var dragButton = new AdminLiveEdit.view.hovermenu.button.DragButton(self);
-        var settingsButton = new AdminLiveEdit.view.hovermenu.button.SettingsButton(self);
-        var removeButton = new AdminLiveEdit.view.hovermenu.button.RemoveButton(self);
+        var insertButton = new AdminLiveEdit.view.selectedmenu.button.InsertButton(self);
+        var resetButton = new AdminLiveEdit.view.selectedmenu.button.ResetButton(self);
+        var emptyButton = new AdminLiveEdit.view.selectedmenu.button.EmptyButton(self);
+        var viewButton = new AdminLiveEdit.view.selectedmenu.button.ViewButton(self);
+        var editButton = new AdminLiveEdit.view.selectedmenu.button.EditButton(self);
+        var dragButton = new AdminLiveEdit.view.selectedmenu.button.DragButton(self);
+        var settingsButton = new AdminLiveEdit.view.selectedmenu.button.SettingsButton(self);
+        var removeButton = new AdminLiveEdit.view.selectedmenu.button.RemoveButton(self);
 
         var i;
         for (i = 0; i < self.buttons.length; i++) {

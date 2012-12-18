@@ -30,6 +30,9 @@
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Cursor.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/HoverMenu.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/button/ParentButton.js"></script>
+
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/selectedmenu/SelectedMenu.js"></script>
+
 <!--script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/button/InsertButton.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/button/EditButton.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/button/ResetButton.js"></script>

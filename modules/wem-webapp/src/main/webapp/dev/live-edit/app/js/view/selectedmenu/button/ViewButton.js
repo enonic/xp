@@ -2,8 +2,8 @@
     'use strict';
 
     // Class definition (constructor function)
-    var viewButton = AdminLiveEdit.view.hovermenu.button.ViewButton = function (hoverMenu) {
-        this.hoverMenu = hoverMenu;
+    var viewButton = AdminLiveEdit.view.selectedmenu.button.ViewButton = function (selectedMenu) {
+        this.selectedMenu = selectedMenu;
         this.init();
     };
 
@@ -31,8 +31,8 @@
             }
         });
 
-        self.appendTo(self.hoverMenu.getEl());
-        self.hoverMenu.buttons.push(self);
+        self.appendTo(self.selectedMenu.getEl());
+        self.selectedMenu.buttons.push(self);
     };
 
 }($liveedit));

@@ -2,8 +2,8 @@
     'use strict';
 
     // Class definition (constructor function)
-    var removeButton = AdminLiveEdit.view.hovermenu.button.RemoveButton = function (hoverMenu) {
-        this.hoverMenu = hoverMenu;
+    var removeButton = AdminLiveEdit.view.selectedmenu.button.RemoveButton = function (selectedMenu) {
+        this.selectedMenu = selectedMenu;
         this.init();
     };
 
@@ -30,8 +30,8 @@
             }
         });
 
-        self.appendTo(self.hoverMenu.getEl());
-        self.hoverMenu.buttons.push(self);
+        self.appendTo(self.selectedMenu.getEl());
+        self.selectedMenu.buttons.push(self);
     };
 
 }($liveedit));

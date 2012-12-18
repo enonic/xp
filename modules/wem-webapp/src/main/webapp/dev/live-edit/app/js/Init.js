@@ -15,6 +15,8 @@
         var toolTip             = new AdminLiveEdit.view.ToolTip();
         var cursor              = new AdminLiveEdit.view.Cursor();
         var hoverMenu           = new AdminLiveEdit.view.hovermenu.HoverMenu();
+        // var selectedMenu        = new AdminLiveEdit.view.selectedmenu.SelectedMenu();
+
         var shader              = new AdminLiveEdit.view.Shader();
 
         AdminLiveEdit.DragDrop.init();
