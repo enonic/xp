@@ -2,11 +2,11 @@
     'use strict';
 
     // Namespaces
-    AdminLiveEdit.view.componentmenu = {};
-    AdminLiveEdit.view.componentmenu.button = {};
+    AdminLiveEdit.view.hovermenu = {};
+    AdminLiveEdit.view.hovermenu.button = {};
 
     // Class definition (constructor)
-    var componentMenu = AdminLiveEdit.view.componentmenu.ComponentMenu = function () {
+    var hoverMenu = AdminLiveEdit.view.hovermenu.HoverMenu = function () {
         var self = this;
         self.buttons = [];
         self.buttonConfig = {
@@ -24,13 +24,13 @@
 
 
     // Inherits ui.Base.js
-    componentMenu.prototype = new AdminLiveEdit.view.Base();
+    hoverMenu.prototype = new AdminLiveEdit.view.Base();
 
     // Fix constructor as it now is Base
-    componentMenu.constructor = componentMenu;
+    hoverMenu.constructor = hoverMenu;
 
     // Shorthand ref to the prototype
-    var p = componentMenu.prototype;
+    var p = hoverMenu.prototype;
 
     // Uses
     var util = AdminLiveEdit.Util;
@@ -136,15 +136,15 @@
 
     p.addButtons = function () {
         var self = this;
-        var parentButton = new AdminLiveEdit.view.componentmenu.button.ParentButton(self);
-        var insertButton = new AdminLiveEdit.view.componentmenu.button.InsertButton(self);
-        var resetButton = new AdminLiveEdit.view.componentmenu.button.ResetButton(self);
-        var emptyButton = new AdminLiveEdit.view.componentmenu.button.EmptyButton(self);
-        var viewButton = new AdminLiveEdit.view.componentmenu.button.ViewButton(self);
-        var editButton = new AdminLiveEdit.view.componentmenu.button.EditButton(self);
-        var dragButton = new AdminLiveEdit.view.componentmenu.button.DragButton(self);
-        var settingsButton = new AdminLiveEdit.view.componentmenu.button.SettingsButton(self);
-        var removeButton = new AdminLiveEdit.view.componentmenu.button.RemoveButton(self);
+        var parentButton = new AdminLiveEdit.view.hovermenu.button.ParentButton(self);
+        var insertButton = new AdminLiveEdit.view.hovermenu.button.InsertButton(self);
+        var resetButton = new AdminLiveEdit.view.hovermenu.button.ResetButton(self);
+        var emptyButton = new AdminLiveEdit.view.hovermenu.button.EmptyButton(self);
+        var viewButton = new AdminLiveEdit.view.hovermenu.button.ViewButton(self);
+        var editButton = new AdminLiveEdit.view.hovermenu.button.EditButton(self);
+        var dragButton = new AdminLiveEdit.view.hovermenu.button.DragButton(self);
+        var settingsButton = new AdminLiveEdit.view.hovermenu.button.SettingsButton(self);
+        var removeButton = new AdminLiveEdit.view.hovermenu.button.RemoveButton(self);
 
         var i;
         for (i = 0; i < self.buttons.length; i++) {

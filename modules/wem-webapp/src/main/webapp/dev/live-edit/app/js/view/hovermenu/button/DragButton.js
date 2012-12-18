@@ -2,8 +2,8 @@
     'use strict';
 
     // Class definition (constructor function)
-    var dragButton = AdminLiveEdit.view.componentmenu.button.DragButton = function (componentMenu) {
-        this.componentMenu = componentMenu;
+    var dragButton = AdminLiveEdit.view.hovermenu.button.DragButton = function (hoverMenu) {
+        this.hoverMenu = hoverMenu;
         this.init();
     };
 
@@ -40,9 +40,9 @@
         self.getEl().on('mousemove', function (event) {
             if (this.le_mouseIsDown) {
                 this.le_mouseIsDown = false;
-                self.componentMenu.fadeOutAndHide();
+                self.hoverMenu.fadeOutAndHide();
                 // TODO: Get the selected using PubSub
-                var $selectedComponent = self.componentMenu.$currentComponent;
+                var $selectedComponent = self.hoverMenu.$currentComponent;
 
                 var evt = document.createEvent('MouseEvents');
                 evt.initMouseEvent('mousedown', true, true, window, 0, event.screenX, event.screenY, event.clientX, event.clientY, false,
@@ -57,8 +57,8 @@
             AdminLiveEdit.DragDrop.disable();
         });
 
-        this.appendTo(this.componentMenu.getEl());
-        this.componentMenu.buttons.push(this);
+        this.appendTo(this.hoverMenu.getEl());
+        this.hoverMenu.buttons.push(this);
     };
 
 }($liveedit));

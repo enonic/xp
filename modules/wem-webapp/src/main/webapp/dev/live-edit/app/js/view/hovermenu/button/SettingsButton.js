@@ -2,20 +2,19 @@
     'use strict';
 
     // Class definition (constructor function)
-    var emptyButton = AdminLiveEdit.view.componentmenu.button.EmptyButton = function (componentMenu) {
-        this.componentMenu = componentMenu;
+    var settingsButton = AdminLiveEdit.view.hovermenu.button.SettingsButton = function (hoverMenu) {
+        this.hoverMenu = hoverMenu;
         this.init();
     };
 
     // Inherits ui.Button
-    emptyButton.prototype = new AdminLiveEdit.view.Button();
+    settingsButton.prototype = new AdminLiveEdit.view.Button();
 
     // Fix constructor as it now is Button
-    emptyButton.constructor = emptyButton;
+    settingsButton.constructor = settingsButton;
 
     // Shorthand ref to the prototype
-    var p = emptyButton.prototype;
-
+    var p = settingsButton.prototype;
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -23,16 +22,16 @@
         var self = this;
 
         var $button = self.createButton({
-            text: 'Empty',
-            id: 'live-edit-button-empty',
-            iconCls: 'live-edit-icon-empty',
+            text: 'Settings',
+            id: 'live-edit-button-settings',
+            iconCls: 'live-edit-icon-settings',
             handler: function (event) {
                 event.stopPropagation();
             }
         });
 
-        self.appendTo(self.componentMenu.getEl());
-        self.componentMenu.buttons.push(self);
+        self.appendTo(self.hoverMenu.getEl());
+        self.hoverMenu.buttons.push(self);
     };
 
 }($liveedit));
