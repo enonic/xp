@@ -24,7 +24,7 @@
 
     p.bindEvents = function () {
         $(window).on('component:mouseover', $.proxy(this.highlight, this));
-        $(window).on('component:select', $.proxy(this.hide, this));
+        $(window).on('component:select', $.proxy(this.highlight, this));
         $(window).on('component:drag:start', $.proxy(this.hide, this));
     };
 

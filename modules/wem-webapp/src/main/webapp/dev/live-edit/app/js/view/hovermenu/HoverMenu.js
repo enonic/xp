@@ -9,13 +9,6 @@
     var hoverMenu = AdminLiveEdit.view.hovermenu.HoverMenu = function () {
         var self = this;
         self.buttons = [];
-        self.buttonConfig = {
-            'page': ['settings'],
-            'region': ['parent', 'insert', 'reset', 'empty'],
-            'window': ['parent', 'drag', 'settings', 'remove'],
-            'content': ['parent', 'view', 'edit'],
-            'paragraph': ['parent', 'edit']
-        };
 
         self.$currentComponent = $([]);
         self.create();
@@ -36,6 +29,7 @@
     var util = AdminLiveEdit.Util;
 
 
+    var BUTTON_WIDTH = 66;
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.bindEvents = function () {
@@ -67,7 +61,6 @@
             return;
         }
 
-        this.getMenuForComponent($component);
         this.moveToComponent($component);
         this.getEl().show();
     };
@@ -92,14 +85,8 @@
         self.setCssPosition($component);
 
         var componentBoxModel = util.getBoxModel($component);
-        var offsetLeft = 2,
-            menuTopPos = Math.round(componentBoxModel.top),
-            menuLeftPos = Math.round(componentBoxModel.left + componentBoxModel.width) - offsetLeft,
-            documentSize = util.getDocumentSize();
-
-        if (menuLeftPos >= (documentSize.width - offsetLeft)) {
-            menuLeftPos = menuLeftPos - self.getEl().width();
-        }
+        var menuTopPos = Math.round(componentBoxModel.top + 2),
+            menuLeftPos = Math.round((componentBoxModel.left + componentBoxModel.width) - BUTTON_WIDTH);
 
         self.getEl().css({
             top: menuTopPos,
@@ -108,43 +95,9 @@
     };
 
 
-    p.getMenuForComponent = function ($component) {
-        var componentType = util.getComponentType($component);
-        if (this.buttonConfig.hasOwnProperty(componentType)) {
-            var buttonArray = this.buttonConfig[componentType];
-            var buttons = this.getButtons();
-
-            var i;
-            for (i = 0; i < buttons.length; i++) {
-                var $button = buttons[i].getEl();
-                var id = $button.attr('data-live-edit-ui-cmp-id');
-                var subStr = id.substring(id.lastIndexOf('-') + 1, id.length);
-                if (buttonArray.indexOf(subStr) > -1) {
-                    $button.show();
-                } else {
-                    $button.hide();
-                }
-            }
-        }
-    };
-
-
-    p.getButtons = function () {
-        return this.buttons;
-    };
-
-
     p.addButtons = function () {
         var self = this;
         var parentButton = new AdminLiveEdit.view.hovermenu.button.ParentButton(self);
-        var insertButton = new AdminLiveEdit.view.hovermenu.button.InsertButton(self);
-        var resetButton = new AdminLiveEdit.view.hovermenu.button.ResetButton(self);
-        var emptyButton = new AdminLiveEdit.view.hovermenu.button.EmptyButton(self);
-        var viewButton = new AdminLiveEdit.view.hovermenu.button.ViewButton(self);
-        var editButton = new AdminLiveEdit.view.hovermenu.button.EditButton(self);
-        var dragButton = new AdminLiveEdit.view.hovermenu.button.DragButton(self);
-        var settingsButton = new AdminLiveEdit.view.hovermenu.button.SettingsButton(self);
-        var removeButton = new AdminLiveEdit.view.hovermenu.button.RemoveButton(self);
 
         var i;
         for (i = 0; i < self.buttons.length; i++) {

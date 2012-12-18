@@ -47,8 +47,7 @@ svg.live-edit-selected-border rect,
 {
     border: 0;
     color: #000;
-    font: 11px Tahoma;
-    font-size: 11px;
+    font: 12px Tahoma, Geneva, Verdana;
     font-weight: normal;
     margin: 0;
     padding: 0;
@@ -278,9 +277,9 @@ svg.live-edit-selected-border rect {
     color: #333;
 }
 
-/*** Component menu */
+/*** Hover menu */
 
-.live-edit-component-menu {
+.live-edit-hover-menu {
     position: absolute;
     z-index: 1000050;
     background-color: #20252A;
@@ -298,19 +297,9 @@ svg.live-edit-selected-border rect {
     text-align: center;
     padding: 2px 1px 5px 1px;
     cursor: pointer;
-    font: 11px Tahoma;
     text-decoration: none;
-    border: 1px solid #98bede;
-
-    background: #deefff; /* Old browsers */
-    background: -moz-linear-gradient(top,  #deefff 0%, #98bede 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#deefff), color-stop(100%,#98bede)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  #deefff 0%,#98bede 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  #deefff 0%,#98bede 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  #deefff 0%,#98bede 100%); /* IE10+ */
-    background: linear-gradient(to bottom,  #deefff 0%,#98bede 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#deefff', endColorstr='#98bede',GradientType=0 ); /* IE6-9 */
-
+    /*border: 1px solid #98bede;*/
+    background-color: #7a7a7a;
 }
 
 .live-edit-button:hover {
@@ -321,7 +310,7 @@ svg.live-edit-selected-border rect {
 
 .live-edit-button-text {
     text-transform: capitalize;
-    color: #000;
+    color: #fff;
 }
 
 
@@ -340,18 +329,7 @@ svg.live-edit-selected-border rect {
 
 /*** Button icons */
 
-.live-edit-icon-insert { background-image: url("../images/component_blue_add.png"); }
-.live-edit-icon-reset { background-image: url("../images/nav_undo_blue.png"); }
-.live-edit-icon-empty { background-image: url("../images/selection_delete.png"); }
-.live-edit-icon-drag {
-    cursor:move;
-    background-image: url("../images/hand_grab2.png");
-}
-.live-edit-icon-parent { background-image: url("../images/arrow_up_right_blue.png"); }
-.live-edit-icon-view { background-image: url("../images/eye_blue.png"); }
-.live-edit-icon-edit { background-image: url("../images/pencil.png"); }
-.live-edit-icon-settings { background-image: url("../images/gear.png"); }
-.live-edit-icon-remove { background-image: url("../images/delete.png"); }
+.live-edit-icon-parent { background-image: url("../images/arrow_up_right.png"); }
 
 
 /*** Drag and Drop */
