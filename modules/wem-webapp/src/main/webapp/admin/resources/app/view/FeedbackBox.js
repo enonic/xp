@@ -11,10 +11,10 @@ Ext.define('Admin.view.FeedbackBox', {
 
     notifyOpts: undefined,
 
-    tpl: '<div class="admin-notification-window clearfix">' +
+    tpl: '<div class="admin-feedback-box clearfix">' +
          '	<table border="0" cellpadding="0" cellspacing="0">' +
          '		<tr>' +
-         '			<td style="width: 48px;padding-top:4px;" valign="top">' +
+         '			<td style="width: 48px;" valign="top">' +
          '				<img src="../admin/resources/images/icons/48x48/message.png" style="width:48px; height:48px"/>' +
          '			</td>' +
          '			<td valign="top" style="padding-left:15px">' +
@@ -59,7 +59,6 @@ Ext.define('Admin.view.FeedbackBox', {
             messageText: config.message,
             showNotifyUserLink: config.opts.notifyUser === undefined ? false : config.opts.notifyUser
         });
-
         me.setNotifyOpts(config.opts);
         me.show();
         me.fadeInOut();
@@ -131,10 +130,8 @@ Ext.define('Admin.view.FeedbackBox', {
         }, this);
 
         me.getEl().on('click', function (event, target) {
-
+            /*
             if (target.className.indexOf('notify-user') > -1) {
-
-                /*
                 var notifyOpts = me.getNotifyOpts();
                 Ext.Ajax.request({
                     url: 'data/user/userinfo',
@@ -155,12 +152,10 @@ Ext.define('Admin.view.FeedbackBox', {
                         me.application.fireEvent('showNotifyUserWindow ', model);
                     }
                 });
-                */
-
             }
-
+            */
             me.hide();
-        }, this);
+        }, me);
     },
 
 
