@@ -115,21 +115,23 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
      * @private
      */
     getConfigForContentItem: function (contentItem, contentTypeConfig) {
-        var node, name;
+        var node, name, key;
 
-        for (var key in contentTypeConfig) {
-            node = contentTypeConfig[key];
+        for (key in contentTypeConfig) {
+            if (contentTypeConfig.hasOwnProperty(key)) {
+                node = contentTypeConfig[key];
 
-            if (node.FormItemSet) {
-                name = node.FormItemSet.name;
-            } else if (node.Layout) {
-                name = node.Layout.name;
-            } else { // Input
-                name = node.Input.name;
-            }
+                if (node.FormItemSet) {
+                    name = node.FormItemSet.name;
+                } else if (node.Layout) {
+                    name = node.Layout.name;
+                } else { // Input
+                    name = node.Input.name;
+                }
 
-            if (name === contentItem.name) {
-                return node;
+                if (name === contentItem.name) {
+                    return node;
+                }
             }
         }
 

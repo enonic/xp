@@ -63,13 +63,13 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
     createAddBlockButton: function () {
         var me = this;
 
-        return  {
+        return {
             xtype: 'button',
             text: 'Add ' + me.contentTypeItemConfig.label,
             handler: function (button) {
                 me.addBlockAt((me.items.items.length - 1), true);
             }
-        }
+        };
     },
 
 
@@ -102,17 +102,17 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
             listeners: {
                 render: function (container) {
                     /*
-                    var collapseAllButton = Ext.DomQuery.selectNode('.admin-collapse-all-button', container.getEl().dom);
-                    Ext.fly(collapseAllButton).on('click', function (event) {
-                        if (me.isCollapsed) {
-                            this.setHTML('Collapse All');
-                            me.isCollapsed = false;
-                        } else {
-                            this.setHTML('Expand All');
-                            me.isCollapsed = true;
-                        }
-                    });
-                    */
+                     var collapseAllButton = Ext.DomQuery.selectNode('.admin-collapse-all-button', container.getEl().dom);
+                     Ext.fly(collapseAllButton).on('click', function (event) {
+                     if (me.isCollapsed) {
+                     this.setHTML('Collapse All');
+                     me.isCollapsed = false;
+                     } else {
+                     this.setHTML('Expand All');
+                     me.isCollapsed = true;
+                     }
+                     });
+                     */
                 }
             }
         };
@@ -190,7 +190,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
                     }
                 }
             ]
-        }
+        };
     },
 
 
