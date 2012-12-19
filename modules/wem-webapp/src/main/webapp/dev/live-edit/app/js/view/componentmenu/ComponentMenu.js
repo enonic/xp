@@ -12,7 +12,7 @@
         self.buttonConfig = {
             'page': ['settings'],
             'region': ['parent', 'insert', 'reset', 'empty'],
-            'window': ['parent', 'drag', 'settings', 'remove'],
+            'window': ['parent', 'settings', 'remove'],
             'content': ['parent', 'view', 'edit'],
             'paragraph': ['parent', 'edit']
         };
@@ -139,7 +139,7 @@
         var emptyButton = new AdminLiveEdit.view.componentmenu.button.EmptyButton(self);
         var viewButton = new AdminLiveEdit.view.componentmenu.button.ViewButton(self);
         var editButton = new AdminLiveEdit.view.componentmenu.button.EditButton(self);
-        var dragButton = new AdminLiveEdit.view.componentmenu.button.DragButton(self);
+        // var dragButton = new AdminLiveEdit.view.componentmenu.button.DragButton(self);
         var settingsButton = new AdminLiveEdit.view.componentmenu.button.SettingsButton(self);
         var removeButton = new AdminLiveEdit.view.componentmenu.button.RemoveButton(self);
 

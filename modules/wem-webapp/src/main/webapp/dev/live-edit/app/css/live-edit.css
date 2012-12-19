@@ -206,62 +206,6 @@ svg.live-edit-selected-border rect {
 }
 
 
-/*** Info tip */
-
-.live-edit-info-tip {
-    cursor: default;
-    padding: 5px 15px 5px 15px;
-    text-align: center;
-    line-height: 1.3em;
-    position: absolute;
-    z-index: 1000100;
-    left: -5000px;
-    top: -5000px;
-    border: 1px solid #20252A;
-
-    background: #fefcea; /* Old browsers */
-    background: -moz-linear-gradient(top,  #fefcea 0%, #f1da36 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fefcea), color-stop(100%,#f1da36)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* IE10+ */
-    background: linear-gradient(to bottom,  #fefcea 0%,#f1da36 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', endColorstr='#f1da36',GradientType=0 ); /* IE6-9 */
-}
-
-.live-edit-info-tip-arrow-border {
-    border-color: #606C88 transparent transparent;
-    border-style: solid;
-    border-width: 8px;
-    bottom: -17px;
-    height: 0;
-    left: 50%;
-    margin-left: -10px;
-    position: absolute;
-    width: 0;
-}
-
-.live-edit-info-tip-arrow {
-    border-color: #f1da36 transparent transparent;
-    border-style: solid;
-    border-width: 8px;
-    bottom: -16px;
-    height: 0;
-    left: 50%;
-    margin-left: -10px;
-    position: absolute;
-    width: 0;
-}
-
-.live-edit-info-tip-type-text {
-    color: #00f;
-}
-
-.live-edit-info-tip-name-text {
-    color: #000;
-}
-
-
 /*** Tool tip ***/
 
 .live-edit-tool-tip {
@@ -273,8 +217,29 @@ svg.live-edit-selected-border rect {
 }
 
 .live-edit-tool-tip-type-text {
-    text-transform: capitalize;
     color: #333;
+}
+
+/*** Component tip ***/
+
+.live-edit-component-tip {
+    position: absolute;
+    z-index: 1000150;
+    padding: 10px;
+    background-color:#0646A7;
+    cursor: default;
+}
+.live-edit-component-tip-drag-handle {
+    background: url("../images/drag-handle.png") no-repeat scroll 0 0 transparent;
+    width: 22px;
+    height: 16px;
+    cursor: move;
+    vertical-align: text-top;
+}
+.live-edit-component-tip-type-text,
+.live-edit-component-tip-name-text {
+    display: inline-block;
+    color: #fff;
 }
 
 
@@ -285,6 +250,9 @@ svg.live-edit-selected-border rect {
     z-index: 1000050;
     padding: 1px 1px 0 1px;
     background-color: #141414;
+    -moz-box-shadow: 3px 3px 3px #555;
+    -webkit-box-shadow: 3px 3px 3px #555;
+    box-shadow: 3px 3px 3px #555;
 }
 
 
