@@ -11,15 +11,8 @@
 .live-edit-shader,
 svg.live-edit-highlighter,
 svg.live-edit-highlighter rect,
-svg.live-edit-selected-border,
-svg.live-edit-selected-border rect,
 .live-edit-empty-region-placeholder,
 .live-edit-empty-window-placeholder,
-.live-edit-info-tip,
-.live-edit-info-tip-arrow-border,
-.live-edit-info-tip-arrow,
-.live-edit-info-tip-type-text,
-.live-edit-info-tip-name-text,
 .live-edit-tool-tip,
 .live-edit-tool-tip-type-text,
 .live-edit-tool-tip-name-text,
@@ -27,15 +20,7 @@ svg.live-edit-selected-border rect,
 .live-edit-button,
 .live-edit-button-text,
 .live-edit-button-icon,
-.live-edit-icon-insert,
-.live-edit-icon-reset,
-.live-edit-icon-empty,
-.live-edit-icon-drag,
 .live-edit-icon-parent,
-.live-edit-icon-view,
-.live-edit-icon-edit,
-.live-edit-icon-settings,
-.live-edit-icon-remove,
 #live-edit-drag-helper,
 #live-edit-drag-helper img,
 #live-edit-drag-helper-status-icon,
@@ -167,19 +152,6 @@ svg.live-edit-highlighter rect {
     fill-opacity: 0;
     stroke-dasharray: 5 5;
     stroke-width: 4;
-}
-
-svg.live-edit-selected-border {
-    height: 100%;
-    pointer-events: none;
-    position: absolute;
-    z-index: 1000000;
-}
-
-
-svg.live-edit-selected-border rect {
-    stroke-width: 2;
-    fill-opacity: 0;
 }
 
 
@@ -381,4 +353,21 @@ svg.live-edit-selected-border rect {
 
 .live-edit-html-element-placeholder .live-edit-object {
     background: transparent url("../images/plug.png") no-repeat;
+}
+
+/** Animations  */
+
+.live-edit-hover-menu,
+.live-edit-highlighter {
+    transition-property: opacity, top, left, width, height;
+    -webkit-transition-property: opacity, top, left, width, height; /* Safari and Chrome */
+    -o-transition-property: opacity, top, left, width, height; /* Opera */
+
+    transition-duration: 0.1s;
+    -webkit-transition-duration: 0.1s;
+    -o-transition-duration: 0.1s;
+
+    transition-timing-function: linear;
+    -webkit-transition-timing-function: linear;
+    -o-transition-timing-function: linear;
 }
