@@ -20,9 +20,9 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.init = function () {
-        var self = this;
+        var me = this;
         // var parentButton = new AdminLiveEdit.view.Button();
-        var $button = self.createButton({
+        var $button = me.createButton({
             text: 'Drag',
             id: 'live-edit-button-drag',
             cls: 'live-edit-component-menu-button',
@@ -31,18 +31,18 @@
             }
         });
 
-        self.getEl().on('mousedown', function () {
+        me.getEl().on('mousedown', function () {
             this.le_mouseIsDown = true;
             // TODO: Use PubSub
             AdminLiveEdit.DragDrop.enable();
         });
 
-        self.getEl().on('mousemove', function (event) {
+        me.getEl().on('mousemove', function (event) {
             if (this.le_mouseIsDown) {
                 this.le_mouseIsDown = false;
-                self.componentMenu.fadeOutAndHide();
+                me.componentMenu.fadeOutAndHide();
                 // TODO: Get the selected using PubSub
-                var $selectedComponent = self.componentMenu.$currentComponent;
+                var $selectedComponent = me.componentMenu.$currentComponent;
 
                 var evt = document.createEvent('MouseEvents');
                 evt.initMouseEvent('mousedown', true, true, window, 0, event.screenX, event.screenY, event.clientX, event.clientY, false,
@@ -51,7 +51,7 @@
                 $selectedComponent[0].dispatchEvent(evt);
             }
         });
-        self.getEl().on('mouseup', function () {
+        me.getEl().on('mouseup', function () {
             this.le_mouseIsDown = false;
             // TODO: remove reference to DragDrop, use PubSub.
             AdminLiveEdit.DragDrop.disable();

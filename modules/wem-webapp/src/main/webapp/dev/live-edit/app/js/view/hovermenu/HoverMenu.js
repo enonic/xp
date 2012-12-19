@@ -7,12 +7,12 @@
 
     // Class definition (constructor)
     var hoverMenu = AdminLiveEdit.view.hovermenu.HoverMenu = function () {
-        var self = this;
-        self.buttons = [];
+        var me = this;
+        me.buttons = [];
 
-        self.$currentComponent = $([]);
-        self.create();
-        self.bindEvents();
+        me.$currentComponent = $([]);
+        me.create();
+        me.bindEvents();
     };
 
 
@@ -44,12 +44,12 @@
 
 
     p.create = function () {
-        var self = this;
+        var me = this;
 
-        self.createElement('<div class="live-edit-hover-menu" style="top:-5000px; left:-5000px;"></div>');
+        me.createElement('<div class="live-edit-hover-menu" style="top:-5000px; left:-5000px;"></div>');
 
-        self.appendTo($('body'));
-        self.addButtons();
+        me.appendTo($('body'));
+        me.addButtons();
     };
 
 
@@ -78,16 +78,16 @@
 
 
     p.moveToComponent = function ($component) {
-        var self = this;
+        var me = this;
 
-        self.$currentComponent = $component;
-        self.setCssPosition($component);
+        me.$currentComponent = $component;
+        me.setCssPosition($component);
 
         var componentBoxModel = util.getBoxModel($component);
         var menuTopPos = Math.round(componentBoxModel.top + 2),
             menuLeftPos = Math.round((componentBoxModel.left + componentBoxModel.width) - BUTTON_WIDTH);
 
-        self.getEl().css({
+        me.getEl().css({
             top: menuTopPos,
             left: menuLeftPos
         });
@@ -95,12 +95,12 @@
 
 
     p.addButtons = function () {
-        var self = this;
-        var parentButton = new AdminLiveEdit.view.hovermenu.button.ParentButton(self);
+        var me = this;
+        var parentButton = new AdminLiveEdit.view.hovermenu.button.ParentButton(me);
 
         var i;
-        for (i = 0; i < self.buttons.length; i++) {
-            self.buttons[i].appendTo(self.getEl());
+        for (i = 0; i < me.buttons.length; i++) {
+            me.buttons[i].appendTo(me.getEl());
         }
     };
 

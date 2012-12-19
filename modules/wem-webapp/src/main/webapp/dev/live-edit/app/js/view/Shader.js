@@ -30,7 +30,6 @@
 
 
     p.create = function () {
-        var self = this;
         $('body').append('<div class="live-edit-shader" id="live-edit-shader-north"/>');
         $('body').append('<div class="live-edit-shader" id="live-edit-shader-east"/>');
         $('body').append('<div class="live-edit-shader" id="live-edit-shader-south"/>');
@@ -44,14 +43,14 @@
 
 
     p.show = function (event, $component) {
-        var self = this;
+        var me = this;
 
-        self.hide();
+        me.hide();
         var componentInfo = util.getComponentInfo($component);
         if (componentInfo.type === 'page' && componentInfo.tagName === 'body') {
-            self.showForPageBody();
+            me.showForPageBody();
         } else {
-            self.showForComponent($component);
+            me.showForComponent($component);
         }
     };
 

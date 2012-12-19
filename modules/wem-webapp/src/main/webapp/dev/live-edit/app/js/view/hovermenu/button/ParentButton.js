@@ -20,23 +20,23 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.init = function () {
-        var self = this;
-        var $button = self.createButton({
+        var me = this;
+        var $button = me.createButton({
             id: 'live-edit-button-parent',
             text: 'Parent',
             cls: 'live-edit-hover-menu-button',
             iconCls: 'live-edit-icon-parent',
             handler: function (event) {
                 event.stopPropagation();
-                var $parent = self.hoverMenu.$currentComponent.parents('[data-live-edit-type]');
+                var $parent = me.hoverMenu.$currentComponent.parents('[data-live-edit-type]');
                 if ($parent && $parent.length > 0) {
                     $(window).trigger('component:select', [$($parent[0])]);
                 }
             }
         });
 
-        self.appendTo(this.hoverMenu.getEl());
-        self.hoverMenu.buttons.push(self);
+        me.appendTo(this.hoverMenu.getEl());
+        me.hoverMenu.buttons.push(me);
     };
 
 }($liveedit));

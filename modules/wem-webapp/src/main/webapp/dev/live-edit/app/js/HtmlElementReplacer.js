@@ -22,9 +22,9 @@
 
 
     p.replaceElementsWithPlaceholders = function () {
-        var self = this;
-        self.getElements().each(function () {
-            self.replace($(this));
+        var me = this;
+        me.getElements().each(function () {
+            me.replace($(this));
         });
     };
 
@@ -41,14 +41,14 @@
 
 
     p.createPlaceholder = function ($element) {
-        var self = this;
+        var me = this;
         var $placeholder = $('<div></div>');
         $placeholder.addClass('live-edit-html-element-placeholder');
-        $placeholder.width(self.getElementWidth($element));
-        $placeholder.height(self.getElementHeight($element));
+        $placeholder.width(me.getElementWidth($element));
+        $placeholder.height(me.getElementHeight($element));
 
         var $icon = $('<div/>');
-        $icon.addClass(self.resolveIconCssClass($element));
+        $icon.addClass(me.resolveIconCssClass($element));
         $icon.append('<div>' + $element[0].tagName.toLowerCase() + '</div>');
         $placeholder.append($icon);
 

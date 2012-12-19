@@ -20,8 +20,8 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.init = function () {
-        var self = this;
-        var $button = self.createButton({
+        var me = this;
+        var $button = me.createButton({
             text: 'Remove',
             id: 'live-edit-button-remove',
             cls: 'live-edit-component-menu-button',
@@ -30,8 +30,8 @@
             }
         });
 
-        self.appendTo(self.componentMenu.getEl());
-        self.componentMenu.buttons.push(self);
+        me.appendTo(me.componentMenu.getEl());
+        me.componentMenu.buttons.push(me);
     };
 
 }($liveedit));

@@ -7,9 +7,9 @@
 
     // Class definition (constructor)
     var componentMenu = AdminLiveEdit.view.componentmenu.ComponentMenu = function () {
-        var self = this;
-        self.buttons = [];
-        self.buttonConfig = {
+        var me = this;
+        me.buttons = [];
+        me.buttonConfig = {
             'page': ['settings'],
             'region': ['parent', 'insert', 'reset', 'empty'],
             'window': ['parent', 'settings', 'remove'],
@@ -17,9 +17,9 @@
             'paragraph': ['parent', 'edit']
         };
 
-        self.$currentComponent = $([]);
-        self.create();
-        self.bindEvents();
+        me.$currentComponent = $([]);
+        me.create();
+        me.bindEvents();
     };
 
 
@@ -50,11 +50,11 @@
 
 
     p.create = function () {
-        var self = this;
+        var me = this;
 
-        self.createElement('<div class="live-edit-component-menu" style="top:-5000px; left:-5000px;"></div>');
-        self.appendTo($('body'));
-        self.addButtons();
+        me.createElement('<div class="live-edit-component-menu" style="top:-5000px; left:-5000px;"></div>');
+        me.appendTo($('body'));
+        me.addButtons();
     };
 
 
@@ -84,10 +84,10 @@
 
 
     p.moveToComponent = function ($component) {
-        var self = this;
+        var me = this;
 
-        self.$currentComponent = $component;
-        self.setCssPosition($component);
+        me.$currentComponent = $component;
+        me.setCssPosition($component);
 
         var componentBoxModel = util.getBoxModel($component);
         var offsetLeft = 0,
@@ -96,10 +96,10 @@
             documentSize = util.getDocumentSize();
 
         if (menuLeftPos >= (documentSize.width - offsetLeft)) {
-            menuLeftPos = menuLeftPos - self.getEl().width();
+            menuLeftPos = menuLeftPos - me.getEl().width();
         }
 
-        self.getEl().css({
+        me.getEl().css({
             top: menuTopPos,
             left: menuLeftPos
         });
@@ -133,19 +133,19 @@
 
 
     p.addButtons = function () {
-        var self = this;
-        var insertButton = new AdminLiveEdit.view.componentmenu.button.InsertButton(self);
-        var resetButton = new AdminLiveEdit.view.componentmenu.button.ResetButton(self);
-        var emptyButton = new AdminLiveEdit.view.componentmenu.button.EmptyButton(self);
-        var viewButton = new AdminLiveEdit.view.componentmenu.button.ViewButton(self);
-        var editButton = new AdminLiveEdit.view.componentmenu.button.EditButton(self);
-        // var dragButton = new AdminLiveEdit.view.componentmenu.button.DragButton(self);
-        var settingsButton = new AdminLiveEdit.view.componentmenu.button.SettingsButton(self);
-        var removeButton = new AdminLiveEdit.view.componentmenu.button.RemoveButton(self);
+        var me = this;
+        var insertButton = new AdminLiveEdit.view.componentmenu.button.InsertButton(me);
+        var resetButton = new AdminLiveEdit.view.componentmenu.button.ResetButton(me);
+        var emptyButton = new AdminLiveEdit.view.componentmenu.button.EmptyButton(me);
+        var viewButton = new AdminLiveEdit.view.componentmenu.button.ViewButton(me);
+        var editButton = new AdminLiveEdit.view.componentmenu.button.EditButton(me);
+        // var dragButton = new AdminLiveEdit.view.componentmenu.button.DragButton(me);
+        var settingsButton = new AdminLiveEdit.view.componentmenu.button.SettingsButton(me);
+        var removeButton = new AdminLiveEdit.view.componentmenu.button.RemoveButton(me);
 
         var i;
-        for (i = 0; i < self.buttons.length; i++) {
-            self.buttons[i].appendTo(self.getEl());
+        for (i = 0; i < me.buttons.length; i++) {
+            me.buttons[i].appendTo(me.getEl());
         }
     };
 

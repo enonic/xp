@@ -30,15 +30,15 @@
 
 
     p.create = function () {
-        var self = this;
+        var me = this;
         var html = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
                    '    <span class="live-edit-tool-tip-type-text"></span>: ' +
                    '    <span class="live-edit-tool-tip-name-text"></span>' +
                    '</div>';
 
-        self.createElement(html);
-        self.appendTo($('body'));
-        self.attachEventListeners();
+        me.createElement(html);
+        me.appendTo($('body'));
+        me.attachEventListeners();
     };
 
 
@@ -50,7 +50,7 @@
 
 
     p.attachEventListeners = function () {
-        var self = this;
+        var me = this;
 
         $(document).on('mousemove', '[data-live-edit-type]', function (event) {
             var targetIsUiComponent = $(event.target).is('[id*=live-edit-ui-cmp]') ||
@@ -59,30 +59,30 @@
             // TODO: Use PubSub instead of calling DragDrop object.
             var pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
             if (targetIsUiComponent || pageHasComponentSelected || AdminLiveEdit.DragDrop.isDragging()) {
-                self.hide();
+                me.hide();
                 return;
             }
 
             var $component = $(event.target).closest('[data-live-edit-type]');
             var componentInfo = util.getComponentInfo($component);
-            var pos = self.resolvePosition(event);
+            var pos = me.resolvePosition(event);
 
-            self.getEl().css({
+            me.getEl().css({
                 top: pos.y,
                 left: pos.x
             });
 
-            self.setText(componentInfo.type, componentInfo.name);
+            me.setText(componentInfo.type, componentInfo.name);
         });
 
         $(document).on('hover', '[data-live-edit-type]', function (event) {
             if (event.type === 'mouseenter') {
-                self.getEl().hide().fadeIn(300);
+                me.getEl().hide().fadeIn(300);
             }
         });
 
         $(document).on('mouseout', function () {
-            self.hide.call(self);
+            me.hide.call(me);
         });
     };
 

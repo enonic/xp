@@ -34,7 +34,7 @@
 
 
     p.create = function () {
-        var self = this;
+        var me = this;
 
         var html = '<div class="live-edit-component-tip" style="top:-5000px; left:-5000px;">' +
                    '    <span class="live-edit-component-tip-drag-handle"> </span> ' +
@@ -42,15 +42,15 @@
                    '    <span class="live-edit-component-tip-name-text"></span>' +
                    '</div>';
 
-        self.createElement(html);
-        self.appendTo($('body'));
+        me.createElement(html);
+        me.appendTo($('body'));
 
         // Make sure component is not deselected when the conponentTip element is clicked.
-        self.getEl().on('click', function (event) {
+        me.getEl().on('click', function (event) {
             event.stopPropagation();
         });
 
-        var $dragHandle = self.getDragHandle();
+        var $dragHandle = me.getDragHandle();
 
         $dragHandle.on('mousedown', function () {
             this.le_mouseIsDown = true;
@@ -62,9 +62,8 @@
             if (this.le_mouseIsDown) {
 
                 this.le_mouseIsDown = false;
-                // self.componentMenu.fadeOutAndHide();
                 // TODO: Get the selected using PubSub
-                var $selectedComponent = self.$selectedComponent;
+                var $selectedComponent = me.$selectedComponent;
 
                 var evt = document.createEvent('MouseEvents');
                 evt.initMouseEvent('mousedown', true, true, window, 0, event.screenX, event.screenY, event.clientX, event.clientY, false,
@@ -86,27 +85,27 @@
 
 
     p.show = function (event, $component) {
-        var self = this;
+        var me = this;
 
-        self.$selectedComponent = $component;
+        me.$selectedComponent = $component;
 
         var componentInfo = util.getComponentInfo($component);
 
-        self.showHideDragHandle(componentInfo);
+        me.showHideDragHandle(componentInfo);
 
         // Set text first so width is calculated correctly.
-        self.setText(componentInfo.type, componentInfo.name);
+        me.setText(componentInfo.type, componentInfo.name);
 
         var componentBox = util.getBoxModel($component),
-            leftPos = componentBox.left + (componentBox.width / 2 - self.getEl().outerWidth() / 2),
-            topPos = componentBox.top - (self.getEl().height() * 2) - 2; // -2 to show above the highlighter border
+            leftPos = componentBox.left + (componentBox.width / 2 - me.getEl().outerWidth() / 2),
+            topPos = componentBox.top - (me.getEl().height() * 2) - 2; // -2 to show above the highlighter border
 
         if (componentInfo.type === 'page' && componentInfo.tagName === 'body') {
             topPos = 0;
         }
 
-        self.setCssPosition($component);
-        self.getEl().css({
+        me.setCssPosition($component);
+        me.getEl().css({
             top: topPos,
             left: leftPos
         });
@@ -114,8 +113,8 @@
 
 
     p.showHideDragHandle = function (componentInfo) {
-        var self = this;
-        var $dragHandle = self.getDragHandle();
+        var me = this;
+        var $dragHandle = me.getDragHandle();
         if (componentInfo.type === 'window') {
             $dragHandle.css({'display': 'inline-block'});
         } else {

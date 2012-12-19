@@ -31,14 +31,14 @@
 
 
     p.renderEmptyPlaceholders = function () {
-        var self = this;
-        self.removeAllRegionPlaceholders();
-        var $regions = self.getAll();
+        var me = this;
+        me.removeAllRegionPlaceholders();
+        var $regions = me.getAll();
         $regions.each(function (index) {
             var $region = $(this);
-            var regionIsEmpty = self.isRegionEmpty.call(self, $region);
+            var regionIsEmpty = me.isRegionEmpty.call(me, $region);
             if (regionIsEmpty) {
-                self.appendEmptyPlaceholder.call(self, $region);
+                me.appendEmptyPlaceholder.call(me, $region);
             }
         });
     };

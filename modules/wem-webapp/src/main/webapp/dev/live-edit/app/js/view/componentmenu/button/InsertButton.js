@@ -20,9 +20,9 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.init = function () {
-        var self = this;
+        var me = this;
 
-        var $button = self.createButton({
+        var $button = me.createButton({
             text: 'Insert',
             id: 'live-edit-button-insert',
             cls: 'live-edit-component-menu-button',
@@ -31,8 +31,8 @@
             }
         });
 
-        self.appendTo(self.componentMenu.getEl());
-        self.componentMenu.buttons.push(self);
+        me.appendTo(me.componentMenu.getEl());
+        me.componentMenu.buttons.push(me);
     };
 
 }($liveedit));

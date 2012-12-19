@@ -20,22 +20,22 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.init = function () {
-        var self = this;
-        var $button = self.createButton({
+        var me = this;
+        var $button = me.createButton({
             id: 'live-edit-button-parent',
             text: 'Parent',
             cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
-                var $parent = self.componentmenu.$currentComponent.parents('[data-live-edit-type]');
+                var $parent = me.componentmenu.$currentComponent.parents('[data-live-edit-type]');
                 if ($parent && $parent.length > 0) {
                     $(window).trigger('component:select', [$($parent[0])]);
                 }
             }
         });
 
-        self.appendTo(this.componentMenu.getEl());
-        self.componentMenu.buttons.push(self);
+        me.appendTo(this.componentMenu.getEl());
+        me.componentMenu.buttons.push(me);
     };
 
 }($liveedit));
