@@ -277,51 +277,59 @@ svg.live-edit-selected-border rect {
     color: #333;
 }
 
+
+/*** Component menu */
+
+.live-edit-component-menu {
+    position: absolute;
+    z-index: 1000050;
+    padding: 1px 1px 0 1px;
+    background-color: #141414;
+}
+
+
 /*** Hover menu */
 
 .live-edit-hover-menu {
     position: absolute;
-    z-index: 1000050;
-    padding: 0;
-}
-
-
-/*** Selected menu */
-
-.live-edit-component-menu {
-    position: absolute;
     z-index: 1000070;
-    padding: 1px 1px 0 1px;
+    padding: 0;
 }
 
 
 /*** Button */
 
+/* Base */
 .live-edit-button {
     cursor: pointer !important;
     display: block;
-    text-align: center;
     cursor: pointer;
     text-decoration: none;
 }
-
+/* Hover menu button */
 .live-edit-button.live-edit-hover-menu-button {
     width: 62px;
+    text-align: center;
     margin-bottom: 1px;
-    padding: 2px 1px 5px 1px;
+    padding: 5px;
     background-color: #7a7a7a;
 }
-
+/* Component menu button */
 .live-edit-button.live-edit-component-menu-button {
     width: 120px;
     margin-bottom: 1px;
     padding: 10px;
-    background-color: #7a7a7a;
+    background-color: #ebebeb;
 }
 
 .live-edit-button-text {
     text-transform: capitalize;
+}
+.live-edit-hover-menu-button .live-edit-button-text {
     color: #fff;
+}
+.live-edit-component-menu-button .live-edit-button-text {
+    color: #000;
 }
 
 

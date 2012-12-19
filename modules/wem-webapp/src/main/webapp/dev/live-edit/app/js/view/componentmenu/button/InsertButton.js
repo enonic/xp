@@ -25,7 +25,7 @@
         var $button = self.createButton({
             text: 'Insert',
             id: 'live-edit-button-insert',
-            iconCls: 'live-edit-icon-insert',
+            cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
             }

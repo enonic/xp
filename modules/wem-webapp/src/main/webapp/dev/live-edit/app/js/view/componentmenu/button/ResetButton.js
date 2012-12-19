@@ -25,7 +25,7 @@
         var $button = self.createButton({
             text: 'Reset',
             id: 'live-edit-button-reset',
-            iconCls: 'live-edit-icon-reset',
+            cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
             }

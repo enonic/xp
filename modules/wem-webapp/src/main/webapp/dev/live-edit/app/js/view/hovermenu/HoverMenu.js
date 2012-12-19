@@ -29,7 +29,7 @@
     var util = AdminLiveEdit.Util;
 
 
-    var BUTTON_WIDTH = 66;
+    var BUTTON_WIDTH = 74;
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     p.bindEvents = function () {
@@ -46,9 +46,8 @@
     p.create = function () {
         var self = this;
 
-        self.createElement('<div class="live-edit-hover-menu" style="top:-5000px; left:-5000px;">' +
-                           '    <div class="live-edit-hover-menu-inner"></div>' +
-                           '</div>');
+        self.createElement('<div class="live-edit-hover-menu" style="top:-5000px; left:-5000px;"></div>');
+
         self.appendTo($('body'));
         self.addButtons();
     };

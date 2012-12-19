@@ -24,7 +24,7 @@
         var $button = self.createButton({
             id: 'live-edit-button-parent',
             text: 'Parent',
-            iconCls: 'live-edit-icon-parent',
+            cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
                 var $parent = self.componentmenu.$currentComponent.parents('[data-live-edit-type]');

@@ -41,7 +41,7 @@
     p.bindEvents = function () {
         $(window).on('component:select', $.proxy(this.show, this));
 
-        $(window).on('component:mouseover', $.proxy(this.show, this));
+        // $(window).on('component:mouseover', $.proxy(this.show, this));
 
         $(window).on('component:deselect', $.proxy(this.hide, this));
 
@@ -52,11 +52,9 @@
     p.create = function () {
         var self = this;
 
-        self.createElement('<div class="live-edit-component-menu" style="top:-5000px; left:-5000px;">' +
-                           '    <div class="live-edit-component-menu-inner"></div>' +
-                           '</div>');
+        self.createElement('<div class="live-edit-component-menu" style="top:-5000px; left:-5000px;"></div>');
         self.appendTo($('body'));
-        // self.addButtons();
+        self.addButtons();
     };
 
 
@@ -92,7 +90,7 @@
         self.setCssPosition($component);
 
         var componentBoxModel = util.getBoxModel($component);
-        var offsetLeft = 2,
+        var offsetLeft = 0,
             menuTopPos = Math.round(componentBoxModel.top),
             menuLeftPos = Math.round(componentBoxModel.left + componentBoxModel.width) - offsetLeft,
             documentSize = util.getDocumentSize();

@@ -25,7 +25,7 @@
         var $button = self.createButton({
             text: 'View',
             id: 'live-edit-button-view',
-            iconCls: 'live-edit-icon-view',
+            cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
             }

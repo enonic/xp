@@ -25,7 +25,7 @@
         var $button = self.createButton({
             text: 'Drag',
             id: 'live-edit-button-drag',
-            iconCls: 'live-edit-icon-drag',
+            cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
             }
@@ -40,9 +40,9 @@
         self.getEl().on('mousemove', function (event) {
             if (this.le_mouseIsDown) {
                 this.le_mouseIsDown = false;
-                self.componentmenu.fadeOutAndHide();
+                self.componentMenu.fadeOutAndHide();
                 // TODO: Get the selected using PubSub
-                var $selectedComponent = self.componentmenu.$currentComponent;
+                var $selectedComponent = self.componentMenu.$currentComponent;
 
                 var evt = document.createEvent('MouseEvents');
                 evt.initMouseEvent('mousedown', true, true, window, 0, event.screenX, event.screenY, event.clientX, event.clientY, false,
