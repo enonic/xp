@@ -282,17 +282,16 @@ svg.live-edit-selected-border rect {
 .live-edit-hover-menu {
     position: absolute;
     z-index: 1000050;
-    background-color: #20252A;
-    padding: 1px 1px 0 1px;
+    padding: 0;
 }
 
 
 /*** Selected menu */
 
-.live-edit-selected-menu {
+.live-edit-component-menu {
     position: absolute;
     z-index: 1000070;
-    background-color: #ebebeb;
+    /*background-color: #ebebeb;*/
     padding: 1px 1px 0 1px;
 }
 

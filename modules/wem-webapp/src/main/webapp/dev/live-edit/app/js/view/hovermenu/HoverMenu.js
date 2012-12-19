@@ -46,8 +46,8 @@
     p.create = function () {
         var self = this;
 
-        self.createElement('<div class="live-edit-component-menu" style="top:-5000px; left:-5000px;">' +
-                           '    <div class="live-edit-component-menu-inner"></div>' +
+        self.createElement('<div class="live-edit-hover-menu" style="top:-5000px; left:-5000px;">' +
+                           '    <div class="live-edit-hover-menu-inner"></div>' +
                            '</div>');
         self.appendTo($('body'));
         self.addButtons();
