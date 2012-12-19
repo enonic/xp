@@ -291,7 +291,6 @@ svg.live-edit-selected-border rect {
 .live-edit-component-menu {
     position: absolute;
     z-index: 1000070;
-    /*background-color: #ebebeb;*/
     padding: 1px 1px 0 1px;
 }
 
@@ -299,22 +298,25 @@ svg.live-edit-selected-border rect {
 /*** Button */
 
 .live-edit-button {
-    width: 62px;
     cursor: pointer !important;
-    margin-bottom: 1px;
     display: block;
     text-align: center;
-    padding: 2px 1px 5px 1px;
     cursor: pointer;
     text-decoration: none;
-    /*border: 1px solid #98bede;*/
+}
+
+.live-edit-button.live-edit-hover-menu-button {
+    width: 62px;
+    margin-bottom: 1px;
+    padding: 2px 1px 5px 1px;
     background-color: #7a7a7a;
 }
 
-.live-edit-button:hover {
-}
-
-.live-edit-button:active {
+.live-edit-button.live-edit-component-menu-button {
+    width: 120px;
+    margin-bottom: 1px;
+    padding: 10px;
+    background-color: #7a7a7a;
 }
 
 .live-edit-button-text {

@@ -24,6 +24,7 @@
         var $button = self.createButton({
             id: 'live-edit-button-parent',
             text: 'Parent',
+            cls: 'live-edit-hover-menu-button',
             iconCls: 'live-edit-icon-parent',
             handler: function (event) {
                 event.stopPropagation();
