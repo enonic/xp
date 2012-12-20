@@ -12,16 +12,16 @@
     htmlElementReplacer.constructor = htmlElementReplacer;
 
     // Shorthand ref to the prototype
-    var p = htmlElementReplacer.prototype;
+    var proto = htmlElementReplacer.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.bindGlobalEvents = function () {
+    proto.bindGlobalEvents = function () {
     };
 
 
-    p.replaceElementsWithPlaceholders = function () {
+    proto.replaceElementsWithPlaceholders = function () {
         var me = this;
         me.getElements().each(function () {
             me.replace($(this));
@@ -29,18 +29,18 @@
     };
 
 
-    p.replace = function ($element) {
+    proto.replace = function ($element) {
         this.hideElement($element);
         this.addPlaceholder($element);
     };
 
 
-    p.addPlaceholder = function ($element) {
+    proto.addPlaceholder = function ($element) {
         this.createPlaceholder($element).insertAfter($element);
     };
 
 
-    p.createPlaceholder = function ($element) {
+    proto.createPlaceholder = function ($element) {
         var me = this;
         var $placeholder = $('<div></div>');
         $placeholder.addClass('live-edit-html-element-placeholder');
@@ -56,12 +56,12 @@
     };
 
 
-    p.getElements = function () {
+    proto.getElements = function () {
         return $('[data-live-edit-type=window] > ' + this.elements.toString());
     };
 
 
-    p.getElementWidth = function ($element) {
+    proto.getElementWidth = function ($element) {
         var attrWidth = $element.attr('width');
         if (!attrWidth) {
             // Return computed style width (int/pixels);
@@ -72,7 +72,7 @@
     };
 
 
-    p.getElementHeight = function ($element) {
+    proto.getElementHeight = function ($element) {
         var attrHeight = $element.attr('height');
         if (!attrHeight) {
             // Return computed style height (int/pixels);
@@ -83,17 +83,17 @@
     };
 
 
-    p.showElement = function ($element) {
+    proto.showElement = function ($element) {
         $element.show();
     };
 
 
-    p.hideElement = function ($element) {
+    proto.hideElement = function ($element) {
         $element.hide();
     };
 
 
-    p.resolveIconCssClass = function ($element) {
+    proto.resolveIconCssClass = function ($element) {
         var tagName = $element[0].tagName.toLowerCase();
         var clsName = '';
         if (tagName === 'iframe') {

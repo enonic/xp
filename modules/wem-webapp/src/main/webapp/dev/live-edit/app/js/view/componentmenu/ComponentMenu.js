@@ -30,7 +30,7 @@
     componentMenu.constructor = componentMenu;
 
     // Shorthand ref to the prototype
-    var p = componentMenu.prototype;
+    var proto = componentMenu.prototype;
 
     // Uses
     var util = AdminLiveEdit.Util;
@@ -38,7 +38,7 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.bindGlobalEvents = function () {
+    proto.bindGlobalEvents = function () {
         $(window).on('component:select', $.proxy(this.show, this));
 
         // $(window).on('component:mouseover', $.proxy(this.show, this));
@@ -49,7 +49,7 @@
     };
 
 
-    p.addView = function () {
+    proto.addView = function () {
         var me = this;
 
         me.createElement('<div class="live-edit-component-menu" style="top:-5000px; left:-5000px;"></div>');
@@ -58,7 +58,7 @@
     };
 
 
-    p.show = function (event, $component) {
+    proto.show = function (event, $component) {
         var componentInfo = util.getComponentInfo($component);
         if (componentInfo.tagName === 'body' && componentInfo.type === 'page') {
             this.hide();
@@ -71,19 +71,19 @@
     };
 
 
-    p.hide = function () {
+    proto.hide = function () {
         this.getEl().css({ top: '-5000px', left: '-5000px', right: '' });
     };
 
 
-    p.fadeOutAndHide = function () {
+    proto.fadeOutAndHide = function () {
         this.getEl().fadeOut(500, function () {
             $(window).trigger('component:deselect');
         });
     };
 
 
-    p.moveToComponent = function ($component) {
+    proto.moveToComponent = function ($component) {
         var me = this;
 
         me.$currentComponent = $component;
@@ -106,7 +106,7 @@
     };
 
 
-    p.getMenuForComponent = function ($component) {
+    proto.getMenuForComponent = function ($component) {
         var componentType = util.getComponentType($component);
         if (this.buttonConfig.hasOwnProperty(componentType)) {
             var buttonArray = this.buttonConfig[componentType];
@@ -127,12 +127,12 @@
     };
 
 
-    p.getButtons = function () {
+    proto.getButtons = function () {
         return this.buttons;
     };
 
 
-    p.addButtons = function () {
+    proto.addButtons = function () {
         var me = this;
         var insertButton = new AdminLiveEdit.view.componentmenu.button.InsertButton(me);
         var resetButton = new AdminLiveEdit.view.componentmenu.button.ResetButton(me);

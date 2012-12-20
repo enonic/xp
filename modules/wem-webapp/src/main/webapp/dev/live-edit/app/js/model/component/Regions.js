@@ -17,20 +17,20 @@
     regions.constructor = regions;
 
     // Shorthand ref to the prototype
-    var p = regions.prototype;
+    var proto = regions.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 
-    p.bindGlobalEvents = function () {
+    proto.bindGlobalEvents = function () {
         $(window).on('component:drag:update', $.proxy(this.renderEmptyPlaceholders, this));
 
         $(window).on('component:drag:over', $.proxy(this.renderEmptyPlaceholders, this));
     };
 
 
-    p.renderEmptyPlaceholders = function () {
+    proto.renderEmptyPlaceholders = function () {
         var me = this;
         me.removeAllRegionPlaceholders();
         var $regions = me.getAll();
@@ -44,7 +44,7 @@
     };
 
 
-    p.appendEmptyPlaceholder = function ($region) {
+    proto.appendEmptyPlaceholder = function ($region) {
         var $placeholder = $('<div/>', {
             'class': 'live-edit-empty-region-placeholder',
             'html': 'Drag components here'
@@ -53,14 +53,14 @@
     };
 
 
-    p.isRegionEmpty = function ($region) {
+    proto.isRegionEmpty = function ($region) {
         var hasNotWindows = $region.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
         var hasNotDropTargetPlaceholder = $region.children('.live-edit-drop-target-placeholder').length === 0;
         return hasNotWindows && hasNotDropTargetPlaceholder;
     };
 
 
-    p.removeAllRegionPlaceholders = function () {
+    proto.removeAllRegionPlaceholders = function () {
         $('.live-edit-empty-region-placeholder').remove();
     };
 

@@ -14,12 +14,12 @@
     removeButton.constructor = removeButton;
 
     // Shorthand ref to the prototype
-    var p = removeButton.prototype;
+    var proto = removeButton.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.init = function () {
+    proto.init = function () {
         var me = this;
         var $button = me.createButton({
             text: 'Remove',

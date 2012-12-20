@@ -14,12 +14,12 @@
     insertButton.constructor = insertButton;
 
     // Shorthand ref to the prototype
-    var p = insertButton.prototype;
+    var proto = insertButton.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.init = function () {
+    proto.init = function () {
         var me = this;
 
         var $button = me.createButton({

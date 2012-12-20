@@ -17,7 +17,7 @@
     toolTip.constructor = toolTip;
 
     // Shorthand ref to the prototype
-    var p = toolTip.prototype;
+    var proto = toolTip.prototype;
 
     // Uses
     var util = AdminLiveEdit.Util;
@@ -25,12 +25,12 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.bindGlobalEvents = function () {
+    proto.bindGlobalEvents = function () {
         $(window).on('component:select', $.proxy(this.hide, this));
     };
 
 
-    p.addView = function () {
+    proto.addView = function () {
         var me = this;
         var html = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
                    '    <span class="live-edit-tool-tip-type-text"></span>: ' +
@@ -42,14 +42,14 @@
     };
 
 
-    p.setText = function (componentType, componentName) {
+    proto.setText = function (componentType, componentName) {
         var $tooltip = this.getEl();
         $tooltip.children('.live-edit-tool-tip-type-text').text(componentType);
         $tooltip.children('.live-edit-tool-tip-name-text').text(componentName);
     };
 
 
-    p.attachEventListeners = function () {
+    proto.attachEventListeners = function () {
         var me = this;
 
         $(document).on('mousemove', '[data-live-edit-type]', function (event) {
@@ -87,7 +87,7 @@
     };
 
 
-    p.resolvePosition = function (event) {
+    proto.resolvePosition = function (event) {
         var t = this;
         var pageX = event.pageX;
         var pageY = event.pageY;
@@ -112,7 +112,7 @@
     };
 
 
-    p.hide = function () {
+    proto.hide = function () {
         this.getEl().css({
             top: '-5000px',
             left: '-5000px'

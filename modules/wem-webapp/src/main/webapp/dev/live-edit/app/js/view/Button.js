@@ -12,11 +12,11 @@
     button.constructor = button;
 
     // Shorthand ref to the prototype
-    var p = button.prototype;
+    var proto = button.prototype;
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.createButton = function (config) {
+    proto.createButton = function (config) {
         var id = config.id || '';
         var text = config.text || '';
         var cls = config.cls || '';

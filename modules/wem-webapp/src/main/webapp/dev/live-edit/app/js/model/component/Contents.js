@@ -13,7 +13,7 @@
     // Fix constructor as it now is Base
     contents.constructor = contents;
 
-    var p = contents.prototype;
+    var proto = contents.prototype;
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 

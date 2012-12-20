@@ -14,7 +14,7 @@
     highlighter.constructor = highlighter;
 
     // Shorthand ref to the prototype
-    var p = highlighter.prototype;
+    var proto = highlighter.prototype;
 
     // Uses
     var util = AdminLiveEdit.Util;
@@ -22,14 +22,14 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.bindGlobalEvents = function () {
+    proto.bindGlobalEvents = function () {
         $(window).on('component:mouseover', $.proxy(this.highlight, this));
         $(window).on('component:select', $.proxy(this.highlight, this));
         $(window).on('component:drag:start', $.proxy(this.hide, this));
     };
 
 
-    p.addView = function () {
+    proto.addView = function () {
         var html = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-highlighter" style="top:-5000px;left:-5000px">' +
                    '    <rect width="150" height="150"/>' +
                    '</svg>';
@@ -38,7 +38,7 @@
     };
 
 
-    p.highlight = function (event, $component) {
+    proto.highlight = function (event, $component) {
         var componentType = util.getComponentType($component);
         var componentTagName = util.getTagNameForComponent($component);
         var componentBoxModel = util.getBoxModel($component);
@@ -68,7 +68,7 @@
     };
 
 
-    p.hide = function () {
+    proto.hide = function () {
         this.getEl().css({
             top: '-5000px',
             left: '-5000px'
@@ -76,7 +76,7 @@
     };
 
 
-    p.getBorderColor = function ($component) {
+    proto.getBorderColor = function ($component) {
         var componentType = util.getComponentType($component);
         var color = '';
         switch (componentType) {

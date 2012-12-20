@@ -14,12 +14,12 @@
     resetButton.constructor = resetButton;
 
     // Shorthand ref to the prototype
-    var p = resetButton.prototype;
+    var proto = resetButton.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.init = function () {
+    proto.init = function () {
         var me = this;
 
         var $button = me.createButton({

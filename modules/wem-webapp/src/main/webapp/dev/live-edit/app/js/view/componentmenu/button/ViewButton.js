@@ -14,12 +14,12 @@
     viewButton.constructor = viewButton;
 
     // Shorthand ref to the prototype
-    var p = viewButton.prototype;
+    var proto = viewButton.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.init = function () {
+    proto.init = function () {
         var me = this;
 
         var $button = me.createButton({

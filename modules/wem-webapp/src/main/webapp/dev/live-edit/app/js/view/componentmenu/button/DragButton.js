@@ -14,12 +14,12 @@
     dragButton.constructor = dragButton;
 
     // Shorthand ref to the prototype
-    var p = dragButton.prototype;
+    var proto = dragButton.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.init = function () {
+    proto.init = function () {
         var me = this;
         // var parentButton = new AdminLiveEdit.view.Button();
         var $button = me.createButton({

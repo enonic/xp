@@ -17,7 +17,7 @@
     componentTip.constructor = componentTip;
 
     // Shorthand ref to the prototype
-    var p = componentTip.prototype;
+    var proto = componentTip.prototype;
 
     // Uses
     var util = AdminLiveEdit.Util;
@@ -25,15 +25,15 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.$selectedComponent = null;
+    proto.$selectedComponent = null;
 
-    p.bindGlobalEvents = function () {
+    proto.bindGlobalEvents = function () {
         $(window).on('component:select', $.proxy(this.show, this));
         $(window).on('component:deselect', $.proxy(this.hide, this));
     };
 
 
-    p.addView = function () {
+    proto.addView = function () {
         var me = this;
 
         var html = '<div class="live-edit-component-tip" style="top:-5000px; left:-5000px;">' +
@@ -84,7 +84,7 @@
     };
 
 
-    p.show = function (event, $component) {
+    proto.show = function (event, $component) {
         var me = this;
 
         me.$selectedComponent = $component;
@@ -112,7 +112,7 @@
     };
 
 
-    p.showHideDragHandle = function (componentInfo) {
+    proto.showHideDragHandle = function (componentInfo) {
         var me = this;
         var $dragHandle = me.getDragHandle();
         if (componentInfo.type === 'window') {
@@ -123,12 +123,12 @@
     };
 
 
-    p.getDragHandle = function () {
+    proto.getDragHandle = function () {
         return this.getEl().find('.live-edit-component-tip-drag-handle');
     };
 
 
-    p.setText = function (componentType, componentName) {
+    proto.setText = function (componentType, componentName) {
         var $componentTip = this.getEl();
         var typeText = componentType.concat(':');
         $componentTip.children('.live-edit-component-tip-type-text').text(typeText);
@@ -136,7 +136,7 @@
     };
 
 
-    p.hide = function () {
+    proto.hide = function () {
         this.$selectedComponent = null;
 
         this.getEl().css({

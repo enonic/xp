@@ -14,12 +14,12 @@
     parentButton.constructor = parentButton;
 
     // Shorthand ref to the prototype
-    var p = parentButton.prototype;
+    var proto = parentButton.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.init = function () {
+    proto.init = function () {
         var me = this;
         var $button = me.createButton({
             id: 'live-edit-button-parent',

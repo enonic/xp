@@ -12,7 +12,7 @@
     shader.constructor = shader;
 
     // Shorthand ref to the prototype
-    var p = shader.prototype;
+    var proto = shader.prototype;
 
     // Uses
     var util = AdminLiveEdit.Util;
@@ -20,7 +20,7 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.bindGlobalEvents = function () {
+    proto.bindGlobalEvents = function () {
         $(window).on('component:select', $.proxy(this.show, this));
 
         $(window).on('component:deselect', $.proxy(this.hide, this));
@@ -29,7 +29,7 @@
     };
 
 
-    p.addView = function () {
+    proto.addView = function () {
         var $body = $('body');
         $body.append('<div class="live-edit-shader" id="live-edit-shader-north"/>');
         $body.append('<div class="live-edit-shader" id="live-edit-shader-east"/>');
@@ -43,7 +43,7 @@
     };
 
 
-    p.show = function (event, $component) {
+    proto.show = function (event, $component) {
         var me = this;
 
         me.hide();
@@ -57,7 +57,7 @@
 
 
     // TODO: Should not be here. Need some code restructuring
-    p.showForPageBody = function () {
+    proto.showForPageBody = function () {
         var $regions = $('[data-live-edit-type=region]'),
             $component,
             $componentShader,
@@ -82,7 +82,7 @@
 
 
     // TODO: Should not be here. Need some code restructuring
-    p.addWindowBorders = function () {
+    proto.addWindowBorders = function () {
         var $windows = $('[data-live-edit-type=window]'),
             $component,
             $componentHighlighter,
@@ -113,7 +113,7 @@
     };
 
 
-    p.showForComponent = function ($component) {
+    proto.showForComponent = function ($component) {
         var documentSize = util.getDocumentSize(),
             docWidth = documentSize.width,
             docHeight = documentSize.height;
@@ -159,7 +159,7 @@
     };
 
 
-    p.hide = function () {
+    proto.hide = function () {
         $('.live-edit-shader').css({
             top: '-15000px',
             left: '-15000px'
