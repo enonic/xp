@@ -64,7 +64,13 @@
             left: left
         });
 
-        $highlighter.css('stroke', this.getBorderColor($component));
+        if (event.type === 'component:select') {
+            $highlighter.css('opacity', '0.2');
+        } else {
+            $highlighter.css('opacity', '1');
+            $highlighter.css('stroke', this.getBorderColor($component));
+        }
+
     };
 
 
