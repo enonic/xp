@@ -19,10 +19,6 @@
     // Uses
     var util = AdminLiveEdit.Util;
 
-    function log() {
-        console.log('23');
-    }
-
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.bindGlobalEvents = function () {
