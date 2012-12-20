@@ -5,8 +5,9 @@
     var toolTip = AdminLiveEdit.view.ToolTip = function () {
         this.OFFSET_X = 15;
         this.OFFSET_Y = 15;
-        this.create();
-        this.bindEvents();
+        this.addView();
+        this.attachEventListeners();
+        this.bindGlobalEvents();
     };
 
     // Inherits ui.Base
@@ -24,12 +25,12 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.bindEvents = function () {
+    p.bindGlobalEvents = function () {
         $(window).on('component:select', $.proxy(this.hide, this));
     };
 
 
-    p.create = function () {
+    p.addView = function () {
         var me = this;
         var html = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
                    '    <span class="live-edit-tool-tip-type-text"></span>: ' +
@@ -38,7 +39,6 @@
 
         me.createElement(html);
         me.appendTo($('body'));
-        me.attachEventListeners();
     };
 
 

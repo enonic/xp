@@ -4,7 +4,7 @@
     // Class definition (constructor function)
     var selection = AdminLiveEdit.Selection = function () {
         this.$selectedComponent = $([]); // Empty jQuery object
-        this.bindEvents();
+        this.bindGlobalEvents();
     };
 
     // Shorthand ref to the prototype
@@ -16,7 +16,7 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.bindEvents = function () {
+    p.bindGlobalEvents = function () {
         $(window).on('component:select', $.proxy(this.select, this));
 
         $(window).on('component:deselect', $.proxy(this.deselect, this));

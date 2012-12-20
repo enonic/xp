@@ -3,7 +3,7 @@
 
     // Class definition (constructor function)
     var cursor = AdminLiveEdit.view.Cursor = function () {
-        this.bindEvents();
+        this.bindGlobalEvents();
     };
 
     // Shorthand ref to the prototype
@@ -11,7 +11,7 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.bindEvents = function () {
+    p.bindGlobalEvents = function () {
         $(window).on('component:mouseover', $.proxy(this.updateCursor, this));
 
         $(window).on('component:select', $.proxy(this.updateCursor, this));

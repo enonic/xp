@@ -11,8 +11,8 @@
         me.buttons = [];
 
         me.$currentComponent = $([]);
-        me.create();
-        me.bindEvents();
+        me.addView();
+        me.bindGlobalEvents();
     };
 
 
@@ -32,7 +32,7 @@
     var BUTTON_WIDTH = 74;
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.bindEvents = function () {
+    p.bindGlobalEvents = function () {
         $(window).on('component:select', $.proxy(this.show, this));
 
         $(window).on('component:mouseover', $.proxy(this.show, this));
@@ -43,7 +43,7 @@
     };
 
 
-    p.create = function () {
+    p.addView = function () {
         var me = this;
 
         me.createElement('<div class="live-edit-hover-menu" style="top:-5000px; left:-5000px;"></div>');

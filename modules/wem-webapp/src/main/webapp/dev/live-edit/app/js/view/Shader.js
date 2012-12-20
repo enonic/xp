@@ -1,8 +1,8 @@
 (function ($) {
     // Class definition (constructor function)
     var shader = AdminLiveEdit.view.Shader = function () {
-        this.create();
-        this.bindEvents();
+        this.addView();
+        this.bindGlobalEvents();
     };
 
     // Inherits ui.Base
@@ -20,7 +20,7 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.bindEvents = function () {
+    p.bindGlobalEvents = function () {
         $(window).on('component:select', $.proxy(this.show, this));
 
         $(window).on('component:deselect', $.proxy(this.hide, this));
@@ -29,11 +29,12 @@
     };
 
 
-    p.create = function () {
-        $('body').append('<div class="live-edit-shader" id="live-edit-shader-north"/>');
-        $('body').append('<div class="live-edit-shader" id="live-edit-shader-east"/>');
-        $('body').append('<div class="live-edit-shader" id="live-edit-shader-south"/>');
-        $('body').append('<div class="live-edit-shader" id="live-edit-shader-west"/>');
+    p.addView = function () {
+        var $body = $('body');
+        $body.append('<div class="live-edit-shader" id="live-edit-shader-north"/>');
+        $body.append('<div class="live-edit-shader" id="live-edit-shader-east"/>');
+        $body.append('<div class="live-edit-shader" id="live-edit-shader-south"/>');
+        $body.append('<div class="live-edit-shader" id="live-edit-shader-west"/>');
 
         $('.live-edit-shader').click(function (event) {
             event.stopPropagation();

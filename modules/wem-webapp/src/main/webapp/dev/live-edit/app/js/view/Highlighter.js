@@ -3,8 +3,8 @@
 
     // Class definition (constructor function)
     var highlighter = AdminLiveEdit.view.Highlighter = function () {
-        this.create();
-        this.bindEvents();
+        this.addView();
+        this.bindGlobalEvents();
     };
 
     // Inherits ui.Base
@@ -22,14 +22,14 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.bindEvents = function () {
+    p.bindGlobalEvents = function () {
         $(window).on('component:mouseover', $.proxy(this.highlight, this));
         $(window).on('component:select', $.proxy(this.highlight, this));
         $(window).on('component:drag:start', $.proxy(this.hide, this));
     };
 
 
-    p.create = function () {
+    p.addView = function () {
         var html = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-highlighter" style="top:-5000px;left:-5000px">' +
                    '    <rect width="150" height="150"/>' +
                    '</svg>';

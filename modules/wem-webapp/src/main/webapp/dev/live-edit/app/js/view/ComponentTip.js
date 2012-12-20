@@ -6,8 +6,8 @@
 
     // Class definition (constructor function)
     var componentTip = AdminLiveEdit.view.ComponentTip = function () {
-        this.create();
-        this.bindEvents();
+        this.addView();
+        this.bindGlobalEvents();
     };
 
     // Inherits ui.Base
@@ -27,13 +27,13 @@
 
     p.$selectedComponent = null;
 
-    p.bindEvents = function () {
+    p.bindGlobalEvents = function () {
         $(window).on('component:select', $.proxy(this.show, this));
         $(window).on('component:deselect', $.proxy(this.hide, this));
     };
 
 
-    p.create = function () {
+    p.addView = function () {
         var me = this;
 
         var html = '<div class="live-edit-component-tip" style="top:-5000px; left:-5000px;">' +
