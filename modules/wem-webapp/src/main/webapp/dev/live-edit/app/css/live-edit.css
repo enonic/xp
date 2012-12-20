@@ -359,9 +359,9 @@ svg.live-edit-highlighter rect {
 
 .live-edit-hover-menu,
 .live-edit-highlighter {
-    transition-property: opacity, top, left, width, height;
-    -webkit-transition-property: opacity, top, left, width, height; /* Safari and Chrome */
-    -o-transition-property: opacity, top, left, width, height; /* Opera */
+    transition-property: top, left, width, height;
+    -webkit-transition-property: top, left, width, height;
+    -o-transition-property: top, left, width, height;
 
     transition-duration: 0.1s;
     -webkit-transition-duration: 0.1s;

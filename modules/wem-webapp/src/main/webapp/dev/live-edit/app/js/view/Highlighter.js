@@ -19,12 +19,16 @@
     // Uses
     var util = AdminLiveEdit.Util;
 
+    function log() {
+        console.log('23');
+    }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.bindGlobalEvents = function () {
         $(window).on('component:mouseover', $.proxy(this.highlight, this));
         $(window).on('component:select', $.proxy(this.highlight, this));
+        $(window).on('component:deselect', $.proxy(this.deselect, this));
         $(window).on('component:drag:start', $.proxy(this.hide, this));
     };
 
@@ -65,12 +69,15 @@
         });
 
         if (event.type === 'component:select') {
-            $highlighter.css('opacity', '0.2');
+            $highlighter.css('opacity', '0.3');
         } else {
-            $highlighter.css('opacity', '1');
             $highlighter.css('stroke', this.getBorderColor($component));
         }
+    };
 
+
+    proto.deselect = function () {
+        this.getEl().css('opacity', '1');
     };
 
 
