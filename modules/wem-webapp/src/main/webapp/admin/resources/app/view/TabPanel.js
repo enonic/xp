@@ -51,8 +51,7 @@ Ext.define('Admin.view.TabPanel', {
         if (me.activeTab) {
             me.activeTab.tab.activate(true);
 
-            // So that it knows what to deactivate in subsequent tab changes
-            me.tabBar.activeTab = me.activeTab.tab;
+            me.tabBar.setActiveTab(me.activeTab.tab);
         }
 
 
