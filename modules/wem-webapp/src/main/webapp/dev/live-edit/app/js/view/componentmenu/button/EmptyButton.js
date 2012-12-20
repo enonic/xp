@@ -2,8 +2,8 @@
     'use strict';
 
     // Class definition (constructor function)
-    var emptyButton = AdminLiveEdit.view.selectedmenu.button.EmptyButton = function (selectedMenu) {
-        this.selectedMenu = selectedMenu;
+    var emptyButton = AdminLiveEdit.view.componentmenu.button.EmptyButton = function (componentMenu) {
+        this.componentMenu = componentMenu;
         this.init();
     };
 
@@ -31,8 +31,8 @@
             }
         });
 
-        self.appendTo(self.selectedMenu.getEl());
-        self.selectedMenu.buttons.push(self);
+        self.appendTo(self.componentMenu.getEl());
+        self.componentMenu.buttons.push(self);
     };
 
 }($liveedit));

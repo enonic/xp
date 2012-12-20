@@ -31,16 +31,16 @@
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/HoverMenu.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/button/ParentButton.js"></script>
 
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/selectedmenu/SelectedMenu.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/ComponentMenu.js"></script>
 
-<!--script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/button/InsertButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/button/EditButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/button/ResetButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/button/EmptyButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/button/ViewButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/button/DragButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/button/SettingsButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/button/RemoveButton.js"></script-->
+<!--script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/InsertButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/EditButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/ResetButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/EmptyButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/ViewButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/DragButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/SettingsButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/RemoveButton.js"></script-->
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Highlighter.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/ToolTip.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/ComponentTip.js"></script>

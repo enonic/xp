@@ -2,19 +2,19 @@
     'use strict';
 
     // Class definition (constructor function)
-    var editButton = AdminLiveEdit.view.selectedmenu.button.EditButton = function (selectedMenu) {
-        this.selectedMenu = selectedMenu;
+    var insertButton = AdminLiveEdit.view.componentmenu.button.InsertButton = function (componentMenu) {
+        this.componentMenu = componentMenu;
         this.init();
     };
 
     // Inherits ui.Button
-    editButton.prototype = new AdminLiveEdit.view.Button();
+    insertButton.prototype = new AdminLiveEdit.view.Button();
 
     // Fix constructor as it now is Button
-    editButton.constructor = editButton;
+    insertButton.constructor = insertButton;
 
     // Shorthand ref to the prototype
-    var p = editButton.prototype;
+    var p = insertButton.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -23,16 +23,16 @@
         var self = this;
 
         var $button = self.createButton({
-            id: 'live-edit-button-edit',
-            text: 'Edit',
-            iconCls: 'live-edit-icon-edit',
+            text: 'Insert',
+            id: 'live-edit-button-insert',
+            iconCls: 'live-edit-icon-insert',
             handler: function (event) {
                 event.stopPropagation();
             }
         });
 
-        self.appendTo(self.selectedMenu.getEl());
-        self.selectedMenu.buttons.push(self);
+        self.appendTo(self.componentMenu.getEl());
+        self.componentMenu.buttons.push(self);
     };
 
 }($liveedit));
