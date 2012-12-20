@@ -7,7 +7,9 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentTree;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.ContentData;
@@ -192,12 +194,30 @@ public class ContentDaoImplTest
         catch ( Exception e )
         {
             assertTrue( e instanceof UnableToDeleteContentException );
-            assertEquals( "Not able to delete content [parentContent]: Content has child content.", e.getMessage() );
+            assertEquals( "Not able to delete content with path [parentContent]: Content has child content.", e.getMessage() );
         }
     }
 
     @Test
-    public void findContent()
+    public void delete_content_by_id()
+        throws Exception
+    {
+        // setup
+        contentDao.createContent( createContent( "parentContent" ), session );
+        final ContentId contentId = contentDao.createContent( createContent( "parentContent/contentToDelete" ), session );
+        commit();
+
+        // exercise
+        contentDao.deleteContent( contentId, session );
+        commit();
+
+        // verify
+        Node parentContentNode = session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH + "parentContent" );
+        assertFalse( parentContentNode.hasNode( "contentToDelete" ) );
+    }
+
+    @Test
+    public void findContentByPath()
         throws Exception
     {
         // setup
@@ -209,6 +229,97 @@ public class ContentDaoImplTest
 
         // exercise
         Content actualContent = contentDao.findContent( ContentPath.from( "myContent" ), session );
+
+        // verify
+        assertNotNull( actualContent );
+        assertEquals( "myContent", content.getPath().toString() );
+
+        ContentData contentData = actualContent.getData();
+        assertEquals( "myValue", contentData.getData( new EntryPath( "myData" ) ).getString() );
+        assertEquals( "myOtherValue", contentData.getData( new EntryPath( "mySet.myData" ) ).getString() );
+    }
+
+    @Test
+    public void findMultipleContentsByPath()
+        throws Exception
+    {
+        // setup
+        final Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
+        content.setData( "myData", "myValue" );
+        content.setData( "mySet.myData", "myOtherValue" );
+        contentDao.createContent( content, session );
+
+        final Content content2 = newContent().path( ContentPath.from( "myContent2" ) ).build();
+        content2.setData( "myData", "myValue2" );
+        content2.setData( "mySet.myData", "myOtherValue2" );
+        contentDao.createContent( content2, session );
+        commit();
+
+        // exercise
+        final Contents actualContents = contentDao.findContents( ContentPaths.from( "myContent", "myContent2" ), session );
+
+        // verify
+        assertNotNull( actualContents );
+        assertEquals( 2, actualContents.getSize() );
+        assertEquals( "myContent", actualContents.first().getPath().toString() );
+        assertEquals( "myContent2", actualContents.last().getPath().toString() );
+
+        final ContentData contentData1 = actualContents.first().getData();
+        assertEquals( "myValue", contentData1.getData( new EntryPath( "myData" ) ).getString() );
+        assertEquals( "myOtherValue", contentData1.getData( new EntryPath( "mySet.myData" ) ).getString() );
+
+        final ContentData contentData2 = actualContents.last().getData();
+        assertEquals( "myValue2", contentData2.getData( new EntryPath( "myData" ) ).getString() );
+        assertEquals( "myOtherValue2", contentData2.getData( new EntryPath( "mySet.myData" ) ).getString() );
+    }
+
+    @Test
+    public void findMultipleContentsById()
+        throws Exception
+    {
+        // setup
+        final Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
+        content.setData( "myData", "myValue" );
+        content.setData( "mySet.myData", "myOtherValue" );
+        final ContentId contentId1 = contentDao.createContent( content, session );
+
+        final Content content2 = newContent().path( ContentPath.from( "myContent2" ) ).build();
+        content2.setData( "myData", "myValue2" );
+        content2.setData( "mySet.myData", "myOtherValue2" );
+        final ContentId contentId2 = contentDao.createContent( content2, session );
+        commit();
+
+        // exercise
+        final Contents actualContents = contentDao.findContents( ContentIds.from( contentId1, contentId2 ), session );
+
+        // verify
+        assertNotNull( actualContents );
+        assertEquals( 2, actualContents.getSize() );
+        assertEquals( "myContent", actualContents.first().getPath().toString() );
+        assertEquals( "myContent2", actualContents.last().getPath().toString() );
+
+        final ContentData contentData1 = actualContents.first().getData();
+        assertEquals( "myValue", contentData1.getData( new EntryPath( "myData" ) ).getString() );
+        assertEquals( "myOtherValue", contentData1.getData( new EntryPath( "mySet.myData" ) ).getString() );
+
+        final ContentData contentData2 = actualContents.last().getData();
+        assertEquals( "myValue2", contentData2.getData( new EntryPath( "myData" ) ).getString() );
+        assertEquals( "myOtherValue2", contentData2.getData( new EntryPath( "mySet.myData" ) ).getString() );
+    }
+
+    @Test
+    public void findContentById()
+        throws Exception
+    {
+        // setup
+        Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
+        content.setData( "myData", "myValue" );
+        content.setData( "mySet.myData", "myOtherValue" );
+        final ContentId contentId = contentDao.createContent( content, session );
+        commit();
+
+        // exercise
+        Content actualContent = contentDao.findContent( contentId, session );
 
         // verify
         assertNotNull( actualContent );
@@ -263,6 +374,29 @@ public class ContentDaoImplTest
 
         // verify
         assertEquals( 9, tree.deepSize() );
+    }
+
+    @Test
+    public void renameContent()
+        throws Exception
+    {
+        // setup
+        final Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
+        content.setData( "myData", "myValue" );
+        content.setData( "mySet.myData", "myOtherValue" );
+        final ContentId contentId = contentDao.createContent( content, session );
+
+        // exercise
+        contentDao.renameContent( ContentPath.from( "myContent" ), "newContentName", session );
+        commit();
+
+        // verify
+        final Content storedContent = contentDao.findContent( contentId, session );
+        assertNotNull( storedContent );
+        assertEquals( ContentPath.from( "newContentName" ), storedContent.getPath() );
+
+        final Content contentNotFound = contentDao.findContent( ContentPath.from( "myContent" ), session );
+        assertNull( contentNotFound );
     }
 
     private Content createContent( String path )
