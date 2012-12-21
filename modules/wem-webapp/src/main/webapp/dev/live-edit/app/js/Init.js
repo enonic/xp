@@ -5,6 +5,7 @@
         $('.live-edit-loader-splash-container').remove();
         var selection           = new AdminLiveEdit.Selection();
         var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
+        var mutationObserver    = new AdminLiveEdit.MutationObserver();
         var page                = new AdminLiveEdit.model.component.Page();
         var regions             = new AdminLiveEdit.model.component.Regions();
         var windows             = new AdminLiveEdit.model.component.Windows();

@@ -5,7 +5,6 @@
     var highlighter = AdminLiveEdit.view.Highlighter = function () {
         this.addView();
         this.bindGlobalEvents();
-        this.mutationObserver = null;
     };
 
     // Inherits ui.Base
@@ -39,12 +38,25 @@
     };
 
 
-    proto.highlight = function (event, $component) {
+    proto.highlight = function (event, $selectedComponent) {
         var me = this;
+        me.resize($selectedComponent);
 
-        var componentType = util.getComponentType($component);
-        var componentTagName = util.getTagNameForComponent($component);
-        var componentBoxModel = util.getBoxModel($component);
+        var $highlighter = me.getEl();
+        if (event.type === 'component:select') {
+            $highlighter.css('opacity', '0.3');
+        } else {
+            $highlighter.css('stroke', me.getBorderColor($selectedComponent));
+        }
+
+    };
+
+
+    proto.resize = function ($selectedComponent) {
+        var me = this;
+        var componentType = util.getComponentType($selectedComponent);
+        var componentTagName = util.getTagNameForComponent($selectedComponent);
+        var componentBoxModel = util.getBoxModel($selectedComponent);
         var w       = Math.round(componentBoxModel.width);
         var h       = Math.round(componentBoxModel.height);
         var top     = Math.round(componentBoxModel.top);
@@ -66,15 +78,6 @@
             top : top,
             left: left
         });
-
-        if (event.type === 'component:select') {
-            $highlighter.css('opacity', '0.3');
-        } else {
-            $highlighter.css('stroke', me.getBorderColor($component));
-        }
-
-        // me.observeMutations($component);
-
     };
 
 
@@ -114,23 +117,6 @@
             color = '#ff0000';
         }
         return color;
-    };
-
-
-    proto.observeMutations = function ($component) {
-        var me = this;
-        me.mutationObserver = new AdminLiveEdit.MutationSummary({
-            callback: function (summarties) {
-                console.log(summarties);
-            },
-            rootNode: $component[0],
-            queries: [{ all: true}]
-        });
-
-    };
-
-    proto.disconnectMutationObserver = function () {
-        this.mutationObserver.disconnect();
     };
 
 
