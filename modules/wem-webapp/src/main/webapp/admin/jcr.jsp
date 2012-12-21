@@ -42,7 +42,7 @@
       position: relative;
     }
   </style>
-  <script type="text/javascript" src="../dev/live-edit/app/lib/jquery-1.8.3.min.js"></script>
+  <script type="text/javascript" src="resources/lib/jquery/jquery-1.8.3.min.js"></script>
   <script type="text/javascript" src="../dev/jcr-tree/lib/jquery.hotkeys.js"></script>
   <script type="text/javascript" src="../dev/jcr-tree/lib/bootstrap/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="../dev/jcr-tree/lib/jstree/jquery.jstree.js"></script>
