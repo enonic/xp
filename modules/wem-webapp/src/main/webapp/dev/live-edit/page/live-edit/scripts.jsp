@@ -2,12 +2,18 @@
   if ( !"false".equals( request.getParameter( "edit" ) ) )
   {
 %>
-<script type="text/javascript" charset="UTF-8" src="../../../../admin/resources/lib/jquery/jquery-1.8.3.min.js"></script>
+<!-- Namespace -->
+<script type="text/javascript" charset="UTF-8" src="../app/js/namespace.js"></script>
+
+<!-- Libs -->
+<script type="text/javascript" charset="UTF-8" src="../../../admin/resources/lib/jquery/jquery-1.8.3.min.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/lib/jquery-ui-1.9.2.custom.min.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/lib/jquery.ui.touch-punch.min.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/lib/mutation_summary.js"></script>
+
+<!-- Live Edit App -->
 <script type="text/javascript" charset="UTF-8" src="../app/js/jquery.noconflict.js"></script>
 
-<script type="text/javascript" charset="UTF-8" src="../app/js/namespace.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/Init.js"></script>
 
 <script type="text/javascript" charset="UTF-8" src="../app/js/Util.js"></script>

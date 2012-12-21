@@ -5,6 +5,7 @@
     var highlighter = AdminLiveEdit.view.Highlighter = function () {
         this.addView();
         this.bindGlobalEvents();
+        this.mutationObserver = null;
     };
 
     // Inherits ui.Base
@@ -39,6 +40,8 @@
 
 
     proto.highlight = function (event, $component) {
+        var me = this;
+
         var componentType = util.getComponentType($component);
         var componentTagName = util.getTagNameForComponent($component);
         var componentBoxModel = util.getBoxModel($component);
@@ -52,7 +55,7 @@
             h = AdminLiveEdit.Util.getDocumentSize().height;
         }
 
-        var $highlighter = this.getEl();
+        var $highlighter = me.getEl();
         var $highlighterRect = $highlighter.find('rect');
 
         $highlighter.width(w);
@@ -67,8 +70,11 @@
         if (event.type === 'component:select') {
             $highlighter.css('opacity', '0.3');
         } else {
-            $highlighter.css('stroke', this.getBorderColor($component));
+            $highlighter.css('stroke', me.getBorderColor($component));
         }
+
+        // me.observeMutations($component);
+
     };
 
 
@@ -109,5 +115,23 @@
         }
         return color;
     };
+
+
+    proto.observeMutations = function ($component) {
+        var me = this;
+        me.mutationObserver = new AdminLiveEdit.MutationSummary({
+            callback: function (summarties) {
+                console.log(summarties);
+            },
+            rootNode: $component[0],
+            queries: [{ all: true}]
+        });
+
+    };
+
+    proto.disconnectMutationObserver = function () {
+        this.mutationObserver.disconnect();
+    };
+
 
 }($liveedit));
