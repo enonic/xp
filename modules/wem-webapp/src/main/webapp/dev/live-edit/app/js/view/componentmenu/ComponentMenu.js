@@ -58,15 +58,15 @@
     };
 
 
-    proto.show = function (event, $component) {
-        var componentInfo = util.getComponentInfo($component);
+    proto.show = function (event, $selectedComponent) {
+        var componentInfo = util.getComponentInfo($selectedComponent);
         if (componentInfo.tagName === 'body' && componentInfo.type === 'page') {
             this.hide();
             return;
         }
 
-        this.getMenuForComponent($component);
-        this.moveToComponent($component);
+        this.getMenuForComponent($selectedComponent);
+        this.moveToComponent($selectedComponent);
         this.getEl().show();
     };
 
@@ -83,13 +83,13 @@
     };
 
 
-    proto.moveToComponent = function ($component) {
+    proto.moveToComponent = function ($selectedComponent) {
         var me = this;
 
-        me.$currentComponent = $component;
-        me.setCssPosition($component);
+        me.$currentComponent = $selectedComponent;
+        me.setCssPosition($selectedComponent);
 
-        var componentBoxModel = util.getBoxModel($component);
+        var componentBoxModel = util.getBoxModel($selectedComponent);
         var offsetLeft = 0,
             menuTopPos = Math.round(componentBoxModel.top),
             menuLeftPos = Math.round(componentBoxModel.left + componentBoxModel.width) - offsetLeft,

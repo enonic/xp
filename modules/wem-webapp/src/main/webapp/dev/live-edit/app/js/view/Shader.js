@@ -43,15 +43,15 @@
     };
 
 
-    proto.show = function (event, $component) {
+    proto.show = function (event, $selectedComponent) {
         var me = this;
 
         me.hide();
-        var componentInfo = util.getComponentInfo($component);
+        var componentInfo = util.getComponentInfo($selectedComponent);
         if (componentInfo.type === 'page' && componentInfo.tagName === 'body') {
             me.showForPageBody();
         } else {
-            me.showForComponent($component);
+            me.showForComponent($selectedComponent);
         }
     };
 
@@ -59,14 +59,14 @@
     // TODO: Should not be here. Need some code restructuring
     proto.showForPageBody = function () {
         var $regions = $('[data-live-edit-type=region]'),
-            $component,
+            $selectedComponent,
             $componentShader,
             $componentHighlighter,
             componentBoxModel;
 
         $regions.each(function (i) {
-            $component = $(this);
-            componentBoxModel = util.getBoxModel($component);
+            $selectedComponent = $(this);
+            componentBoxModel = util.getBoxModel($selectedComponent);
             $componentShader = $('<div/>');
             $componentShader.addClass('live-edit-shader live-edit-shader-page');
             $componentShader.css({
