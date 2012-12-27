@@ -33,11 +33,12 @@
         if (isAlreadyObserved) {
             return;
         }
+        me.disconnect(event);
+
         me.$observedComponent = $component;
 
         me.mutationObserver = new AdminLiveEdit.MutationSummary({
             callback: function (summaries) {
-                console.log('mutation!', summaries);
                 me.onMutate(summaries, event);
             },
             rootNode: $component[0],
@@ -46,13 +47,14 @@
     };
 
 
+    // Called when the html in the observed component mutates
     proto.onMutate = function (summaries, event) {
         if (summaries && summaries[0]) {
             var $targetComponent = $(summaries[0].target);
             var targetComponentIsSelected = $targetComponent.hasClass('live-edit-selected-component');
-            var isMouseOverEventAndTargetComponentIsNotSelected = event.type === 'component:mouseover' && !targetComponentIsSelected;
+            var componentIsNotSelectedAndUserMouseOver = event.type === 'component:mouseover' && !targetComponentIsSelected;
 
-            if (isMouseOverEventAndTargetComponentIsNotSelected) {
+            if (componentIsNotSelectedAndUserMouseOver) {
                 $(window).trigger('component:mouseover', [$targetComponent]);
             } else {
                 $(window).trigger('component:select', [$targetComponent]);
@@ -63,12 +65,10 @@
 
     proto.disconnect = function (event) {
         var targetComponentIsSelected = (this.$observedComponent && this.$observedComponent.hasClass('live-edit-selected-component'));
-        var isMouseOutEventAndComponentIsSelected = event.type === 'component:mouseout' && targetComponentIsSelected;
-        if (isMouseOutEventAndComponentIsSelected) {
+        var componentIsSelectedAndUserMouseOut = event.type === 'component:mouseout' && targetComponentIsSelected;
+        if (componentIsSelectedAndUserMouseOut) {
             return;
         }
-
-        console.log('Mutation Observer disconnect');
 
         this.$observedComponent = null;
         if (this.mutationObserver) {
