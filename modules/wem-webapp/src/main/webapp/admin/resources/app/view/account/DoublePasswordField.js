@@ -54,12 +54,17 @@ Ext.define('Admin.view.account.DoublePasswordField', {
         this.updateRepeatDelayed = new Ext.util.DelayedTask(function () {
             var data;
             var repeat = me.getRepeatField();
-            if (me.testEqual(repeat.getValue(), me.getPasswordField().getValue())) {
-                data = {type: 'match', text: ''};
-            } else {
-                data = {type: '', text: ''};
+            var password = me.getPasswordField();
+            var repeatStatus = me.getRepeatStatus();
+            // task is delayed and can be run after win is closed so check everything
+            if (repeat && password && repeatStatus) {
+                if (me.testEqual(repeat.getValue(), password.getValue())) {
+                    data = {type: 'match', text: ''};
+                } else {
+                    data = {type: '', text: ''};
+                }
+                repeatStatus.update(data);
             }
-            me.getRepeatStatus().update(data);
         });
 
         me.items = [
