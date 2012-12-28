@@ -1249,13 +1249,12 @@ div.admin-load-mask {
   font-weight: bold;
   margin-left: auto;
   margin-right: auto; }
-
-/* line 11, ../sass/admin/css/_server-status-error-box.scss */
-.admin-server-status-error-box > div {
-  width: 50%;
-  margin: 0px auto;
-  background-color: #f00;
-  padding: 10px 0; }
+  /* line 10, ../sass/admin/css/_server-status-error-box.scss */
+  .admin-server-status-error-box div {
+    width: 50%;
+    margin: 0px auto;
+    background-color: #f00;
+    padding: 10px 0; }
 
 /**
  * @var {string} $prefix 
