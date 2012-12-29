@@ -11,7 +11,6 @@
 
     AdminLiveEdit.model.component.Base.prototype = {
         attachMouseOverEvent: function () {
-            var self = this;
 
             $(document).on('mouseover', this.cssSelector, function (event) {
                 var $component = $(this);

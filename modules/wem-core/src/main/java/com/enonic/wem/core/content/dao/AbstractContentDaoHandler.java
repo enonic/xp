@@ -3,6 +3,7 @@ package com.enonic.wem.core.content.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -11,6 +12,7 @@ import javax.jcr.Session;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.core.jcr.JcrHelper;
 
@@ -70,6 +72,19 @@ abstract class AbstractContentDaoHandler
         return JcrHelper.getNodeOrNull( rootNode, path );
     }
 
+    protected final Node doGetContentNode( final Session session, final ContentId contentId )
+        throws RepositoryException
+    {
+        try
+        {
+            return session.getNodeByIdentifier( contentId.id() );
+        }
+        catch ( ItemNotFoundException e )
+        {
+            return null;
+        }
+    }
+
     protected final Content doFindContent( final ContentPath contentPath, final Session session )
         throws RepositoryException
     {
@@ -79,7 +94,22 @@ abstract class AbstractContentDaoHandler
             return null;
         }
 
-        final Content.Builder contentBuilder = newContent().path( contentPath );
+        final Content.Builder contentBuilder = newContent();
+        contentJcrMapper.toContent( contentNode, contentBuilder );
+        return contentBuilder.build();
+
+    }
+
+    protected final Content doFindContent( final ContentId contentId, final Session session )
+        throws RepositoryException
+    {
+        final Node contentNode = doGetContentNode( session, contentId );
+        if ( contentNode == null )
+        {
+            return null;
+        }
+
+        final Content.Builder contentBuilder = newContent();
         contentJcrMapper.toContent( contentNode, contentBuilder );
         return contentBuilder.build();
 

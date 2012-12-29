@@ -4,11 +4,11 @@
     // Class definition (constructor function)
     var selection = AdminLiveEdit.Selection = function () {
         this.$selectedComponent = $([]); // Empty jQuery object
-        this.bindEvents();
+        this.bindGlobalEvents();
     };
 
     // Shorthand ref to the prototype
-    var p = selection.prototype;
+    var proto = selection.prototype;
 
     // Uses
     var util = AdminLiveEdit.Util;
@@ -16,7 +16,7 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.bindEvents = function () {
+    proto.bindGlobalEvents = function () {
         $(window).on('component:select', $.proxy(this.select, this));
 
         $(window).on('component:deselect', $.proxy(this.deselect, this));
@@ -29,35 +29,35 @@
     };
 
 
-    p.getSelected = function () {
+    proto.getSelected = function () {
         return this.$selectedComponent;
     };
 
 
-    p.setSelected = function ($component) {
-        this.$selectedComponent = $component;
+    proto.setSelected = function ($selectedComponent) {
+        this.$selectedComponent = $selectedComponent;
     };
 
 
-    p.scrollComponentIntoView = function ($component) {
-        var componentTopPosition = util.getPageComponentPagePosition($component).top;
+    proto.scrollComponentIntoView = function ($selectedComponent) {
+        var componentTopPosition = util.getPageComponentPagePosition($selectedComponent).top;
         if (componentTopPosition <= window.pageYOffset) {
             $('html, body').animate({scrollTop: componentTopPosition - 10}, 200);
         }
     };
 
 
-    p.select = function (event, $component) {
+    proto.select = function (event, $selectedComponent) {
         // Add CSS position relative to the page component in order have absolute positioned elements inside.
         $('.live-edit-selected-component').removeClass('live-edit-selected-component');
-        $component.addClass('live-edit-selected-component');
+        $selectedComponent.addClass('live-edit-selected-component');
 
-        this.setSelected($component);
-        this.scrollComponentIntoView($component);
+        this.setSelected($selectedComponent);
+        this.scrollComponentIntoView($selectedComponent);
     };
 
 
-    p.deselect = function () {
+    proto.deselect = function () {
         $('.live-edit-selected-component').removeClass('live-edit-selected-component');
         this.setSelected($([]));
     };

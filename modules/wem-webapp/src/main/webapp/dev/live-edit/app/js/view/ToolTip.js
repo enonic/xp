@@ -5,8 +5,9 @@
     var toolTip = AdminLiveEdit.view.ToolTip = function () {
         this.OFFSET_X = 15;
         this.OFFSET_Y = 15;
-        this.create();
-        this.bindEvents();
+        this.addView();
+        this.attachEventListeners();
+        this.bindGlobalEvents();
     };
 
     // Inherits ui.Base
@@ -16,7 +17,7 @@
     toolTip.constructor = toolTip;
 
     // Shorthand ref to the prototype
-    var p = toolTip.prototype;
+    var proto = toolTip.prototype;
 
     // Uses
     var util = AdminLiveEdit.Util;
@@ -24,33 +25,32 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.bindEvents = function () {
+    proto.bindGlobalEvents = function () {
         $(window).on('component:select', $.proxy(this.hide, this));
     };
 
 
-    p.create = function () {
-        var self = this;
+    proto.addView = function () {
+        var me = this;
         var html = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
                    '    <span class="live-edit-tool-tip-type-text"></span>: ' +
                    '    <span class="live-edit-tool-tip-name-text"></span>' +
                    '</div>';
 
-        self.createElement(html);
-        self.appendTo($('body'));
-        self.attachEventListeners();
+        me.createElement(html);
+        me.appendTo($('body'));
     };
 
 
-    p.setText = function (componentType, componentName) {
+    proto.setText = function (componentType, componentName) {
         var $tooltip = this.getEl();
         $tooltip.children('.live-edit-tool-tip-type-text').text(componentType);
         $tooltip.children('.live-edit-tool-tip-name-text').text(componentName);
     };
 
 
-    p.attachEventListeners = function () {
-        var self = this;
+    proto.attachEventListeners = function () {
+        var me = this;
 
         $(document).on('mousemove', '[data-live-edit-type]', function (event) {
             var targetIsUiComponent = $(event.target).is('[id*=live-edit-ui-cmp]') ||
@@ -59,35 +59,35 @@
             // TODO: Use PubSub instead of calling DragDrop object.
             var pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
             if (targetIsUiComponent || pageHasComponentSelected || AdminLiveEdit.DragDrop.isDragging()) {
-                self.hide();
+                me.hide();
                 return;
             }
 
             var $component = $(event.target).closest('[data-live-edit-type]');
             var componentInfo = util.getComponentInfo($component);
-            var pos = self.resolvePosition(event);
+            var pos = me.resolvePosition(event);
 
-            self.getEl().css({
+            me.getEl().css({
                 top: pos.y,
                 left: pos.x
             });
 
-            self.setText(componentInfo.type, componentInfo.name);
+            me.setText(componentInfo.type, componentInfo.name);
         });
 
         $(document).on('hover', '[data-live-edit-type]', function (event) {
             if (event.type === 'mouseenter') {
-                self.getEl().hide().fadeIn(300);
+                me.getEl().hide().fadeIn(300);
             }
         });
 
         $(document).on('mouseout', function () {
-            self.hide.call(self);
+            me.hide.call(me);
         });
     };
 
 
-    p.resolvePosition = function (event) {
+    proto.resolvePosition = function (event) {
         var t = this;
         var pageX = event.pageX;
         var pageY = event.pageY;
@@ -112,7 +112,7 @@
     };
 
 
-    p.hide = function () {
+    proto.hide = function () {
         this.getEl().css({
             top: '-5000px',
             left: '-5000px'

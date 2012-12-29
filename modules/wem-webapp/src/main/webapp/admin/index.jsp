@@ -37,7 +37,7 @@
 
   <!-- ExtJS -->
 
-  <script type="text/javascript" src="../dev/live-edit/app/lib/jquery-1.8.0.min.js"></script>
+  <script type="text/javascript" src="resources/lib/jquery/jquery-1.8.3.min.js"></script>
   <script type="text/javascript" src="resources/lib/jquery/github.commits.widget-min.js"></script>
 </head>
 <body>
@@ -61,6 +61,9 @@
 
 <h2>Apps</h2>
 <ul class="links">
+  <li>
+    <a href="login.jsp">Login</a>
+  </li>
   <li>
     <a href="main.jsp">Main</a>
   </li>

@@ -14,12 +14,12 @@
     // Fix constructor as it now is Base
     windows.constructor = windows;
 
-    var p = windows.prototype;
+    var proto = windows.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.appendEmptyPlaceholder = function ($window) {
+    proto.appendEmptyPlaceholder = function ($window) {
         var $placeholder = $('<div/>', {
             'class': 'live-edit-empty-window-placeholder',
             'html': 'Empty Window'
@@ -28,12 +28,12 @@
     };
 
 
-    p.isWindowEmpty = function ($window) {
+    proto.isWindowEmpty = function ($window) {
         return $($window).children().length === 0;
     };
 
 
-    p.renderEmptyPlaceholders = function () {
+    proto.renderEmptyPlaceholders = function () {
         var t = this;
         this.getAll().each(function (index) {
             var $window = $(this);

@@ -14,24 +14,24 @@
     settingsButton.constructor = settingsButton;
 
     // Shorthand ref to the prototype
-    var p = settingsButton.prototype;
+    var proto = settingsButton.prototype;
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.init = function () {
-        var self = this;
+    proto.init = function () {
+        var me = this;
 
-        var $button = self.createButton({
+        var $button = me.createButton({
             text: 'Settings',
             id: 'live-edit-button-settings',
-            iconCls: 'live-edit-icon-settings',
+            cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
             }
         });
 
-        self.appendTo(self.componentMenu.getEl());
-        self.componentMenu.buttons.push(self);
+        me.appendTo(me.componentMenu.getEl());
+        me.componentMenu.buttons.push(me);
     };
 
 }($liveedit));

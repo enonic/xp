@@ -14,25 +14,25 @@
     resetButton.constructor = resetButton;
 
     // Shorthand ref to the prototype
-    var p = resetButton.prototype;
+    var proto = resetButton.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.init = function () {
-        var self = this;
+    proto.init = function () {
+        var me = this;
 
-        var $button = self.createButton({
+        var $button = me.createButton({
             text: 'Reset',
             id: 'live-edit-button-reset',
-            iconCls: 'live-edit-icon-reset',
+            cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
             }
         });
 
-        self.appendTo(self.componentMenu.getEl());
-        self.componentMenu.buttons.push(self);
+        me.appendTo(me.componentMenu.getEl());
+        me.componentMenu.buttons.push(me);
     };
 
 }($liveedit));

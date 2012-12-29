@@ -59,7 +59,7 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
         var account = record.data;
         var iconCls = this.resolveIconClass(record);
 
-        return Ext.String.format(Templates.contentManager.gridPanelNameRenderer, iconCls, value, account.name);
+        return Ext.String.format(Templates.contentManager.gridPanelNameRenderer, iconCls, value, account.path);
     },
 
     statusRenderer: function () {

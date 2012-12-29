@@ -40,7 +40,8 @@ public class ContentTypesInitializer
     private static final ContentType[] SYSTEM_TYPES = {CONTENT, SPACE, STRUCTURED, UNSTRUCTURED, FOLDER, PAGE, SHORTCUT, FILE};
 
     private static final String[] TEST_CONTENT_TYPES =
-        {"demo-contenttype-htmlarea.json", "demo-contenttype-set.json", "demo-contenttype-article1.json", "demo-contenttype-article2.json"};
+        {"demo-contenttype-htmlarea.json", "demo-contenttype-fieldset.json", "demo-contenttype-set.json", "demo-contenttype-blog.json",
+            "demo-contenttype-article1.json", "demo-contenttype-article2.json"};
 
     private static final Logger LOG = LoggerFactory.getLogger( ContentTypesInitializer.class );
 

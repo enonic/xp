@@ -14,25 +14,25 @@
     emptyButton.constructor = emptyButton;
 
     // Shorthand ref to the prototype
-    var p = emptyButton.prototype;
+    var proto = emptyButton.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.init = function () {
-        var self = this;
+    proto.init = function () {
+        var me = this;
 
-        var $button = self.createButton({
+        var $button = me.createButton({
             text: 'Empty',
             id: 'live-edit-button-empty',
-            iconCls: 'live-edit-icon-empty',
+            cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
             }
         });
 
-        self.appendTo(self.componentMenu.getEl());
-        self.componentMenu.buttons.push(self);
+        me.appendTo(me.componentMenu.getEl());
+        me.componentMenu.buttons.push(me);
     };
 
 }($liveedit));

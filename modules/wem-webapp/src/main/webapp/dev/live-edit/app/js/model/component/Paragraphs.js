@@ -13,7 +13,7 @@
     // Fix constructor as it now is Base
     paragraphs.constructor = paragraphs;
 
-    var p = paragraphs.prototype;
+    var proto = paragraphs.prototype;
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 

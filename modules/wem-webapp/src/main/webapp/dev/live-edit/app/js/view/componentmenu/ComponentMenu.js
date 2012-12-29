@@ -7,30 +7,30 @@
 
     // Class definition (constructor)
     var componentMenu = AdminLiveEdit.view.componentmenu.ComponentMenu = function () {
-        var self = this;
-        self.buttons = [];
-        self.buttonConfig = {
+        var me = this;
+        me.buttons = [];
+        me.buttonConfig = {
             'page': ['settings'],
             'region': ['parent', 'insert', 'reset', 'empty'],
-            'window': ['parent', 'drag', 'settings', 'remove'],
+            'window': ['parent', 'settings', 'remove'],
             'content': ['parent', 'view', 'edit'],
             'paragraph': ['parent', 'edit']
         };
 
-        self.$currentComponent = $([]);
-        self.create();
-        self.bindEvents();
+        me.$currentComponent = $([]);
+        me.addView();
+        me.bindGlobalEvents();
     };
 
 
-    // Inherits ui.Base.js
+    // Inherits Base.js
     componentMenu.prototype = new AdminLiveEdit.view.Base();
 
     // Fix constructor as it now is Base
     componentMenu.constructor = componentMenu;
 
     // Shorthand ref to the prototype
-    var p = componentMenu.prototype;
+    var proto = componentMenu.prototype;
 
     // Uses
     var util = AdminLiveEdit.Util;
@@ -38,10 +38,10 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.bindEvents = function () {
+    proto.bindGlobalEvents = function () {
         $(window).on('component:select', $.proxy(this.show, this));
 
-        $(window).on('component:mouseover', $.proxy(this.show, this));
+        // $(window).on('component:mouseover', $.proxy(this.show, this));
 
         $(window).on('component:deselect', $.proxy(this.hide, this));
 
@@ -49,66 +49,64 @@
     };
 
 
-    p.create = function () {
-        var self = this;
+    proto.addView = function () {
+        var me = this;
 
-        self.createElement('<div class="live-edit-component-menu" style="top:-5000px; left:-5000px;">' +
-                           '    <div class="live-edit-component-menu-inner"></div>' +
-                           '</div>');
-        self.appendTo($('body'));
-        self.addButtons();
+        me.createElement('<div class="live-edit-component-menu" style="top:-5000px; left:-5000px;"></div>');
+        me.appendTo($('body'));
+        me.addButtons();
     };
 
 
-    p.show = function (event, $component) {
-        var componentInfo = util.getComponentInfo($component);
+    proto.show = function (event, $selectedComponent) {
+        var componentInfo = util.getComponentInfo($selectedComponent);
         if (componentInfo.tagName === 'body' && componentInfo.type === 'page') {
             this.hide();
             return;
         }
 
-        this.getMenuForComponent($component);
-        this.moveToComponent($component);
+        this.getMenuForComponent($selectedComponent);
+        this.moveToComponent($selectedComponent);
         this.getEl().show();
     };
 
 
-    p.hide = function () {
+    proto.hide = function () {
         this.getEl().css({ top: '-5000px', left: '-5000px', right: '' });
     };
 
 
-    p.fadeOutAndHide = function () {
+    proto.fadeOutAndHide = function () {
         this.getEl().fadeOut(500, function () {
             $(window).trigger('component:deselect');
         });
     };
 
 
-    p.moveToComponent = function ($component) {
-        var self = this;
+    proto.moveToComponent = function ($selectedComponent) {
+        var me = this;
 
-        self.$currentComponent = $component;
-        self.setCssPosition($component);
+        me.$currentComponent = $selectedComponent;
+        me.setCssPosition($selectedComponent);
 
-        var componentBoxModel = util.getBoxModel($component);
-        var offsetLeft = 2,
+        var componentBoxModel = util.getBoxModel($selectedComponent);
+        var offsetLeft = 0,
             menuTopPos = Math.round(componentBoxModel.top),
             menuLeftPos = Math.round(componentBoxModel.left + componentBoxModel.width) - offsetLeft,
             documentSize = util.getDocumentSize();
 
         if (menuLeftPos >= (documentSize.width - offsetLeft)) {
-            menuLeftPos = menuLeftPos - self.getEl().width();
+            menuLeftPos = menuLeftPos - me.getEl().width();
         }
 
-        self.getEl().css({
+        me.getEl().css({
             top: menuTopPos,
             left: menuLeftPos
         });
     };
 
 
-    p.getMenuForComponent = function ($component) {
+    proto.getMenuForComponent = function ($component) {
         var componentType = util.getComponentType($component);
         if (this.buttonConfig.hasOwnProperty(componentType)) {
             var buttonArray = this.buttonConfig[componentType];
@@ -129,26 +127,25 @@
     };
 
 
-    p.getButtons = function () {
+    proto.getButtons = function () {
         return this.buttons;
     };
 
 
-    p.addButtons = function () {
-        var self = this;
-        var parentButton = new AdminLiveEdit.view.componentmenu.button.ParentButton(self);
-        var insertButton = new AdminLiveEdit.view.componentmenu.button.InsertButton(self);
-        var resetButton = new AdminLiveEdit.view.componentmenu.button.ResetButton(self);
-        var emptyButton = new AdminLiveEdit.view.componentmenu.button.EmptyButton(self);
-        var viewButton = new AdminLiveEdit.view.componentmenu.button.ViewButton(self);
-        var editButton = new AdminLiveEdit.view.componentmenu.button.EditButton(self);
-        var dragButton = new AdminLiveEdit.view.componentmenu.button.DragButton(self);
-        var settingsButton = new AdminLiveEdit.view.componentmenu.button.SettingsButton(self);
-        var removeButton = new AdminLiveEdit.view.componentmenu.button.RemoveButton(self);
+    proto.addButtons = function () {
+        var me = this;
+        var insertButton = new AdminLiveEdit.view.componentmenu.button.InsertButton(me);
+        var resetButton = new AdminLiveEdit.view.componentmenu.button.ResetButton(me);
+        var emptyButton = new AdminLiveEdit.view.componentmenu.button.EmptyButton(me);
+        var viewButton = new AdminLiveEdit.view.componentmenu.button.ViewButton(me);
+        var editButton = new AdminLiveEdit.view.componentmenu.button.EditButton(me);
+        // var dragButton = new AdminLiveEdit.view.componentmenu.button.DragButton(me);
+        var settingsButton = new AdminLiveEdit.view.componentmenu.button.SettingsButton(me);
+        var removeButton = new AdminLiveEdit.view.componentmenu.button.RemoveButton(me);
 
         var i;
-        for (i = 0; i < self.buttons.length; i++) {
-            self.buttons[i].appendTo(self.getEl());
+        for (i = 0; i < me.buttons.length; i++) {
+            me.buttons[i].appendTo(me.getEl());
         }
     };
 

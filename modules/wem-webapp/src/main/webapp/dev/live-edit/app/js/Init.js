@@ -5,6 +5,7 @@
         $('.live-edit-loader-splash-container').remove();
         var selection           = new AdminLiveEdit.Selection();
         var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
+        var mutationObserver    = new AdminLiveEdit.MutationObserver();
         var page                = new AdminLiveEdit.model.component.Page();
         var regions             = new AdminLiveEdit.model.component.Regions();
         var windows             = new AdminLiveEdit.model.component.Windows();
@@ -14,6 +15,7 @@
         var componentTip        = new AdminLiveEdit.view.ComponentTip();
         var toolTip             = new AdminLiveEdit.view.ToolTip();
         var cursor              = new AdminLiveEdit.view.Cursor();
+        var hoverMenu           = new AdminLiveEdit.view.hovermenu.HoverMenu();
         var componentMenu       = new AdminLiveEdit.view.componentmenu.ComponentMenu();
         var shader              = new AdminLiveEdit.view.Shader();
 

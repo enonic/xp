@@ -1,4 +1,4 @@
-Ext.define('Admin.lib.formitem.FormItemSet', {
+Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
     extend: 'Ext.form.FieldContainer',
     alias: 'widget.FormItemSet',
 
@@ -7,10 +7,10 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
     ],
 
     mixins: {
-        formGenerator: 'Admin.lib.formitem.FormGenerator'
+        formGenerator: 'Admin.view.contentManager.wizard.form.FormGenerator'
     },
 
-    formItemSetConfig: undefined,
+    contentTypeItemConfig: undefined,
 
     content: null, // Blocks
 
@@ -20,8 +20,14 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
 
     margin: '10 0 10 0',
 
+    initComponent: function () {
+        this.callParent(arguments);
+    },
 
     listeners: {
+        beforerender: function () {
+            this.setIndent();
+        },
         render: function () {
             this.initLayout();
             this.initSortable();
@@ -32,40 +38,48 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
     },
 
 
-    initComponent: function () {
-        this.callParent(arguments);
-    },
-
-
     /**
      * @private
      */
     initLayout: function () {
         var me = this;
 
+        // Edit form mode
         if (me.content) {
-            for (var i = 0; i < me.content.value.length; i++) {
-                me.addBlockAt(i, false);
-            }
-
+            Ext.Array.each(me.content.value, function (value, index) {
+                me.addBlockAt(index, false);
+            });
         } else {
-            // Remove if test?
-            if (me.formItemSetConfig.items) {
-                me.addBlockAt(0, true);
-            }
+            me.addBlockAt(0, true);
         }
 
-        var addBlockButton = {
+        me.add(me.createActionsContainer());
+    },
+
+
+    /**
+     * @private
+     */
+    createAddBlockButton: function () {
+        var me = this;
+
+        return {
             xtype: 'button',
-            text: 'Add',
+            text: 'Add ' + me.contentTypeItemConfig.label,
             handler: function (button) {
-                if (me.formItemSetConfig.items) {
-                    me.addBlockAt((me.items.items.length - 1), true);
-                }
+                me.addBlockAt((me.items.items.length - 1), true);
             }
         };
+    },
 
-        var actionsContainer = {
+
+    /**
+     * @private
+     */
+    createActionsContainer: function () {
+        var me = this;
+
+        return {
             xtype: 'container',
             layout: {
                 type: 'table',
@@ -75,7 +89,7 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
                 }
             },
             items: [
-                addBlockButton,
+                me.createAddBlockButton(),
                 {
                     tdAttrs: {
                         align: 'right',
@@ -87,21 +101,21 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
             ],
             listeners: {
                 render: function (container) {
-                    var collapseAllButton = Ext.DomQuery.selectNode('.admin-collapse-all-button', container.getEl().dom);
-                    Ext.fly(collapseAllButton).on('click', function (event) {
-                        if (me.isCollapsed) {
-                            this.setHTML('Collapse All');
-                            me.isCollapsed = false;
-                        } else {
-                            this.setHTML('Expand All');
-                            me.isCollapsed = true;
-                        }
-                    });
+                    /*
+                     var collapseAllButton = Ext.DomQuery.selectNode('.admin-collapse-all-button', container.getEl().dom);
+                     Ext.fly(collapseAllButton).on('click', function (event) {
+                     if (me.isCollapsed) {
+                     this.setHTML('Collapse All');
+                     me.isCollapsed = false;
+                     } else {
+                     this.setHTML('Expand All');
+                     me.isCollapsed = true;
+                     }
+                     });
+                     */
                 }
             }
         };
-
-        me.add(actionsContainer);
     },
 
 
@@ -122,12 +136,11 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
             items: me.createBlockHeader()
         });
 
-        //  addComponentsForEditForm: function (contentData, contentTypeDef, parentComponent) {
-
+        // Rename argument createBlankBlock. hasContent
         if (createBlankBlock) {
-            me.mixins.formGenerator.addComponentsBasedOnContentType(me.formItemSetConfig.items, block);
+            me.mixins.formGenerator.addComponentsBasedOnContentType(me.contentTypeItemConfig.items, block);
         } else {
-            me.mixins.formGenerator.addComponentsBasedOnContentData(me.content.value[position], me.formItemSetConfig.items, block);
+            me.mixins.formGenerator.addComponentsBasedOnContentData(me.content.value[position], me.contentTypeItemConfig.items, block);
         }
 
         me.insert(position, block);
@@ -162,7 +175,7 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
                 },
                 {
                     xtype: 'component',
-                    html: '<h6>' + (me.formItemSetConfig.label || '{No label}') + ': </h6>'
+                    html: '<h6>' + (me.contentTypeItemConfig.label || '{No label}') + ': </h6>'
                 },
                 {
                     tdAttrs: {
@@ -177,6 +190,19 @@ Ext.define('Admin.lib.formitem.FormItemSet', {
                     }
                 }
             ]
+        };
+    },
+
+
+    /**
+     * @private
+     */
+    setIndent: function () {
+        var me = this;
+        var parent = me.up();
+        var parentIsBlock = parent.cls && parent.cls.indexOf('formitem-set-block') > -1;
+        if (parentIsBlock) {
+            me.margin = '10 0 10 20';
         }
     },
 

@@ -1,8 +1,8 @@
 (function ($) {
     // Class definition (constructor function)
     var shader = AdminLiveEdit.view.Shader = function () {
-        this.create();
-        this.bindEvents();
+        this.addView();
+        this.bindGlobalEvents();
     };
 
     // Inherits ui.Base
@@ -12,7 +12,7 @@
     shader.constructor = shader;
 
     // Shorthand ref to the prototype
-    var p = shader.prototype;
+    var proto = shader.prototype;
 
     // Uses
     var util = AdminLiveEdit.Util;
@@ -20,7 +20,7 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.bindEvents = function () {
+    proto.bindGlobalEvents = function () {
         $(window).on('component:select', $.proxy(this.show, this));
 
         $(window).on('component:deselect', $.proxy(this.hide, this));
@@ -29,12 +29,12 @@
     };
 
 
-    p.create = function () {
-        var self = this;
-        $('body').append('<div class="live-edit-shader" id="live-edit-shader-north"/>');
-        $('body').append('<div class="live-edit-shader" id="live-edit-shader-east"/>');
-        $('body').append('<div class="live-edit-shader" id="live-edit-shader-south"/>');
-        $('body').append('<div class="live-edit-shader" id="live-edit-shader-west"/>');
+    proto.addView = function () {
+        var $body = $('body');
+        $body.append('<div class="live-edit-shader" id="live-edit-shader-north"/>');
+        $body.append('<div class="live-edit-shader" id="live-edit-shader-east"/>');
+        $body.append('<div class="live-edit-shader" id="live-edit-shader-south"/>');
+        $body.append('<div class="live-edit-shader" id="live-edit-shader-west"/>');
 
         $('.live-edit-shader').click(function (event) {
             event.stopPropagation();
@@ -43,30 +43,30 @@
     };
 
 
-    p.show = function (event, $component) {
-        var self = this;
+    proto.show = function (event, $selectedComponent) {
+        var me = this;
 
-        self.hide();
-        var componentInfo = util.getComponentInfo($component);
+        me.hide();
+        var componentInfo = util.getComponentInfo($selectedComponent);
         if (componentInfo.type === 'page' && componentInfo.tagName === 'body') {
-            self.showForPageBody();
+            me.showForPageBody();
         } else {
-            self.showForComponent($component);
+            me.showForComponent($selectedComponent);
         }
     };
 
 
     // TODO: Should not be here. Need some code restructuring
-    p.showForPageBody = function () {
+    proto.showForPageBody = function () {
         var $regions = $('[data-live-edit-type=region]'),
-            $component,
+            $selectedComponent,
             $componentShader,
             $componentHighlighter,
             componentBoxModel;
 
         $regions.each(function (i) {
-            $component = $(this);
-            componentBoxModel = util.getBoxModel($component);
+            $selectedComponent = $(this);
+            componentBoxModel = util.getBoxModel($selectedComponent);
             $componentShader = $('<div/>');
             $componentShader.addClass('live-edit-shader live-edit-shader-page');
             $componentShader.css({
@@ -82,7 +82,7 @@
 
 
     // TODO: Should not be here. Need some code restructuring
-    p.addWindowBorders = function () {
+    proto.addWindowBorders = function () {
         var $windows = $('[data-live-edit-type=window]'),
             $component,
             $componentHighlighter,
@@ -113,7 +113,7 @@
     };
 
 
-    p.showForComponent = function ($component) {
+    proto.showForComponent = function ($component) {
         var documentSize = util.getDocumentSize(),
             docWidth = documentSize.width,
             docHeight = documentSize.height;
@@ -159,7 +159,7 @@
     };
 
 
-    p.hide = function () {
+    proto.hide = function () {
         $('.live-edit-shader').css({
             top: '-15000px',
             left: '-15000px'

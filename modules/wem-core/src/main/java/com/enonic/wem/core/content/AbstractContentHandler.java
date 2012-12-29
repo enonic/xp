@@ -44,8 +44,7 @@ public abstract class AbstractContentHandler<C extends Command>
 
     private Contents getContentsById( final ContentIds contentIds, final CommandContext context )
     {
-        // TODO
-        throw new IllegalArgumentException( "Unsupported content selector: " + contentIds.getClass().getCanonicalName() );
+        return contentDao.findContents( contentIds, context.getJcrSession() );
     }
 
     private Contents getContentsByPath( final ContentPaths paths, final CommandContext context )

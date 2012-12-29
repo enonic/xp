@@ -11,15 +11,8 @@
 .live-edit-shader,
 svg.live-edit-highlighter,
 svg.live-edit-highlighter rect,
-svg.live-edit-selected-border,
-svg.live-edit-selected-border rect,
 .live-edit-empty-region-placeholder,
 .live-edit-empty-window-placeholder,
-.live-edit-info-tip,
-.live-edit-info-tip-arrow-border,
-.live-edit-info-tip-arrow,
-.live-edit-info-tip-type-text,
-.live-edit-info-tip-name-text,
 .live-edit-tool-tip,
 .live-edit-tool-tip-type-text,
 .live-edit-tool-tip-name-text,
@@ -27,15 +20,7 @@ svg.live-edit-selected-border rect,
 .live-edit-button,
 .live-edit-button-text,
 .live-edit-button-icon,
-.live-edit-icon-insert,
-.live-edit-icon-reset,
-.live-edit-icon-empty,
-.live-edit-icon-drag,
 .live-edit-icon-parent,
-.live-edit-icon-view,
-.live-edit-icon-edit,
-.live-edit-icon-settings,
-.live-edit-icon-remove,
 #live-edit-drag-helper,
 #live-edit-drag-helper img,
 #live-edit-drag-helper-status-icon,
@@ -47,8 +32,7 @@ svg.live-edit-selected-border rect,
 {
     border: 0;
     color: #000;
-    font: 11px Tahoma;
-    font-size: 11px;
+    font: 12px Tahoma, Geneva, Verdana;
     font-weight: normal;
     margin: 0;
     padding: 0;
@@ -170,19 +154,6 @@ svg.live-edit-highlighter rect {
     stroke-width: 4;
 }
 
-svg.live-edit-selected-border {
-    height: 100%;
-    pointer-events: none;
-    position: absolute;
-    z-index: 1000000;
-}
-
-
-svg.live-edit-selected-border rect {
-    stroke-width: 2;
-    fill-opacity: 0;
-}
-
 
 /*** Placeholders for Empty components */
 
@@ -207,62 +178,6 @@ svg.live-edit-selected-border rect {
 }
 
 
-/*** Info tip */
-
-.live-edit-info-tip {
-    cursor: default;
-    padding: 5px 15px 5px 15px;
-    text-align: center;
-    line-height: 1.3em;
-    position: absolute;
-    z-index: 1000100;
-    left: -5000px;
-    top: -5000px;
-    border: 1px solid #20252A;
-
-    background: #fefcea; /* Old browsers */
-    background: -moz-linear-gradient(top,  #fefcea 0%, #f1da36 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fefcea), color-stop(100%,#f1da36)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* IE10+ */
-    background: linear-gradient(to bottom,  #fefcea 0%,#f1da36 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', endColorstr='#f1da36',GradientType=0 ); /* IE6-9 */
-}
-
-.live-edit-info-tip-arrow-border {
-    border-color: #606C88 transparent transparent;
-    border-style: solid;
-    border-width: 8px;
-    bottom: -17px;
-    height: 0;
-    left: 50%;
-    margin-left: -10px;
-    position: absolute;
-    width: 0;
-}
-
-.live-edit-info-tip-arrow {
-    border-color: #f1da36 transparent transparent;
-    border-style: solid;
-    border-width: 8px;
-    bottom: -16px;
-    height: 0;
-    left: 50%;
-    margin-left: -10px;
-    position: absolute;
-    width: 0;
-}
-
-.live-edit-info-tip-type-text {
-    color: #00f;
-}
-
-.live-edit-info-tip-name-text {
-    color: #000;
-}
-
-
 /*** Tool tip ***/
 
 .live-edit-tool-tip {
@@ -274,53 +189,86 @@ svg.live-edit-selected-border rect {
 }
 
 .live-edit-tool-tip-type-text {
-    text-transform: capitalize;
     color: #333;
 }
+
+/*** Component tip ***/
+
+.live-edit-component-tip {
+    position: absolute;
+    z-index: 1000150;
+    padding: 10px;
+    background-color:#0646A7;
+    cursor: default;
+}
+.live-edit-component-tip-drag-handle {
+    background: url("../images/drag-handle.png") no-repeat scroll 0 0 transparent;
+    width: 22px;
+    height: 16px;
+    cursor: move;
+    vertical-align: text-top;
+}
+.live-edit-component-tip-type-text,
+.live-edit-component-tip-name-text {
+    display: inline-block;
+    color: #fff;
+}
+
 
 /*** Component menu */
 
 .live-edit-component-menu {
     position: absolute;
     z-index: 1000050;
-    background-color: #20252A;
     padding: 1px 1px 0 1px;
+    background-color: #141414;
+    -moz-box-shadow: 3px 3px 3px #555;
+    -webkit-box-shadow: 3px 3px 3px #555;
+    box-shadow: 3px 3px 3px #555;
+}
+
+
+/*** Hover menu */
+
+.live-edit-hover-menu {
+    position: absolute;
+    z-index: 1000070;
+    padding: 0;
 }
 
 
 /*** Button */
 
+/* Base */
 .live-edit-button {
-    width: 62px;
     cursor: pointer !important;
-    margin-bottom: 1px;
     display: block;
-    text-align: center;
-    padding: 2px 1px 5px 1px;
     cursor: pointer;
-    font: 11px Tahoma;
     text-decoration: none;
-    border: 1px solid #98bede;
-
-    background: #deefff; /* Old browsers */
-    background: -moz-linear-gradient(top,  #deefff 0%, #98bede 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#deefff), color-stop(100%,#98bede)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  #deefff 0%,#98bede 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  #deefff 0%,#98bede 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  #deefff 0%,#98bede 100%); /* IE10+ */
-    background: linear-gradient(to bottom,  #deefff 0%,#98bede 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#deefff', endColorstr='#98bede',GradientType=0 ); /* IE6-9 */
-
 }
-
-.live-edit-button:hover {
+/* Hover menu button */
+.live-edit-button.live-edit-hover-menu-button {
+    width: 62px;
+    text-align: center;
+    margin-bottom: 1px;
+    padding: 5px;
+    background-color: #7a7a7a;
 }
-
-.live-edit-button:active {
+/* Component menu button */
+.live-edit-button.live-edit-component-menu-button {
+    width: 120px;
+    margin-bottom: 1px;
+    padding: 10px;
+    background-color: #ebebeb;
 }
 
 .live-edit-button-text {
     text-transform: capitalize;
+}
+.live-edit-hover-menu-button .live-edit-button-text {
+    color: #fff;
+}
+.live-edit-component-menu-button .live-edit-button-text {
     color: #000;
 }
 
@@ -340,18 +288,7 @@ svg.live-edit-selected-border rect {
 
 /*** Button icons */
 
-.live-edit-icon-insert { background-image: url("../images/component_blue_add.png"); }
-.live-edit-icon-reset { background-image: url("../images/nav_undo_blue.png"); }
-.live-edit-icon-empty { background-image: url("../images/selection_delete.png"); }
-.live-edit-icon-drag {
-    cursor:move;
-    background-image: url("../images/hand_grab2.png");
-}
-.live-edit-icon-parent { background-image: url("../images/arrow_up_right_blue.png"); }
-.live-edit-icon-view { background-image: url("../images/eye_blue.png"); }
-.live-edit-icon-edit { background-image: url("../images/pencil.png"); }
-.live-edit-icon-settings { background-image: url("../images/gear.png"); }
-.live-edit-icon-remove { background-image: url("../images/delete.png"); }
+.live-edit-icon-parent { background-image: url("../images/arrow_up_right.png"); }
 
 
 /*** Drag and Drop */
@@ -416,4 +353,21 @@ svg.live-edit-selected-border rect {
 
 .live-edit-html-element-placeholder .live-edit-object {
     background: transparent url("../images/plug.png") no-repeat;
+}
+
+/** Animations  */
+
+.live-edit-hover-menu,
+.live-edit-highlighter {
+    transition-property: top, left, width, height;
+    -webkit-transition-property: top, left, width, height;
+    -o-transition-property: top, left, width, height;
+
+    transition-duration: 0.1s;
+    -webkit-transition-duration: 0.1s;
+    -o-transition-duration: 0.1s;
+
+    transition-timing-function: linear;
+    -webkit-transition-timing-function: linear;
+    -o-transition-timing-function: linear;
 }

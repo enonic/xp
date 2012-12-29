@@ -14,28 +14,28 @@
     parentButton.constructor = parentButton;
 
     // Shorthand ref to the prototype
-    var p = parentButton.prototype;
+    var proto = parentButton.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.init = function () {
-        var self = this;
-        var $button = self.createButton({
+    proto.init = function () {
+        var me = this;
+        var $button = me.createButton({
             id: 'live-edit-button-parent',
             text: 'Parent',
-            iconCls: 'live-edit-icon-parent',
+            cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
-                var $parent = self.componentMenu.$currentComponent.parents('[data-live-edit-type]');
+                var $parent = me.componentmenu.$currentComponent.parents('[data-live-edit-type]');
                 if ($parent && $parent.length > 0) {
                     $(window).trigger('component:select', [$($parent[0])]);
                 }
             }
         });
 
-        self.appendTo(this.componentMenu.getEl());
-        self.componentMenu.buttons.push(self);
+        me.appendTo(this.componentMenu.getEl());
+        me.componentMenu.buttons.push(me);
     };
 
 }($liveedit));

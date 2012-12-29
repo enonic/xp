@@ -5,6 +5,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.exception.ContentNotFoundException;
 import com.enonic.wem.api.exception.UnableToDeleteContentException;
@@ -17,7 +18,7 @@ final class DeleteContentDaoHandler
         super( session );
     }
 
-    void handle( final ContentPath pathToContent )
+    void deleteContentByPath( final ContentPath pathToContent )
         throws RepositoryException
     {
         final Node contentNode = doGetContentNode( session, pathToContent );
@@ -29,6 +30,23 @@ final class DeleteContentDaoHandler
         if ( contentNode.hasNodes() )
         {
             throw new UnableToDeleteContentException( pathToContent, "Content has child content." );
+        }
+
+        contentNode.remove();
+    }
+
+    public void deleteContentById( final ContentId contentId )
+        throws RepositoryException
+    {
+        final Node contentNode = doGetContentNode( session, contentId );
+        if ( contentNode == null )
+        {
+            throw new ContentNotFoundException( contentId );
+        }
+
+        if ( contentNode.hasNodes() )
+        {
+            throw new UnableToDeleteContentException( contentId, "Content has child content." );
         }
 
         contentNode.remove();

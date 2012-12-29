@@ -1,0 +1,58 @@
+{
+    "name": "FieldSet",
+    "module": "Demo",
+    "qualifiedName": "Demo:FieldSet",
+    "displayName": "Fieldset demo",
+    "superType": "System:Content",
+    "isAbstract": false,
+    "isFinal": true,
+    "form": [
+        {
+            "Layout": {
+                "type": "FieldSet",
+                "label": "Document",
+                "name": "documentFieldSet",
+                "items": [
+                    {
+                        "Input": {
+                            "name": "heading",
+                            "label": "Heading",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "text",
+                            "label": "Text",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "HTML Area",
+                            "type": {
+                                "name": "HtmlArea",
+                                "builtIn": true
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

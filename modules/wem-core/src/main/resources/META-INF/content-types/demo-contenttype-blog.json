@@ -1,0 +1,194 @@
+{
+    "name": "Labs Blog",
+    "module": "Demo",
+    "qualifiedName": "Demo:LabsBlog",
+    "displayName": "Labs Blog Demo",
+    "superType": "System:Content",
+    "isAbstract": false,
+    "isFinal": true,
+    "form": [
+        {
+            "Layout": {
+                "type": "FieldSet",
+                "label": "Blog",
+                "name": "blogFieldSet",
+                "items": [
+                    {
+                        "Input": {
+                            "name": "heading",
+                            "label": "Heading",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "FormItemSet": {
+                            "name": "authors",
+                            "label": "Authors",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "customText": null,
+                            "helpText": null,
+                            "items": [
+                                {
+                                    "Input": {
+                                        "name": "author",
+                                        "label": "Author",
+                                        "immutable": false,
+                                        "occurrences": {
+                                            "minimum": 0,
+                                            "maximum": 1
+                                        },
+                                        "indexed": false,
+                                        "customText": null,
+                                        "validationRegexp": null,
+                                        "helpText": null,
+                                        "type": {
+                                            "name": "TextLine",
+                                            "builtIn": true
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "FormItemSet": {
+                            "name": "topics",
+                            "label": "Topics",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "customText": null,
+                            "helpText": null,
+                            "items": [
+                                {
+                                    "Input": {
+                                        "name": "topic",
+                                        "label": "Topic",
+                                        "immutable": false,
+                                        "occurrences": {
+                                            "minimum": 0,
+                                            "maximum": 1
+                                        },
+                                        "indexed": false,
+                                        "customText": null,
+                                        "validationRegexp": null,
+                                        "helpText": null,
+                                        "type": {
+                                            "name": "TextLine",
+                                            "builtIn": true
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "tags",
+                            "label": "Tags for tag cloud",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "preface",
+                            "label": "Preface",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "Preface",
+                            "type": {
+                                "name": "TextArea",
+                                "builtIn": true
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+
+        {
+            "Layout": {
+                "type": "FieldSet",
+                "label": "Article Content",
+                "name": "articleFieldSet",
+                "items": [
+                    {
+                        "Input": {
+                            "name": "slide_title",
+                            "label": "Slide Title",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
+                    },
+
+                    {
+                        "Input": {
+                            "name": "article_text",
+                            "label": "Article Text",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": "HTML Area",
+                            "type": {
+                                "name": "HtmlArea",
+                                "builtIn": true
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

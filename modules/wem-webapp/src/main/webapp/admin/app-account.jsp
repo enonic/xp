@@ -13,7 +13,6 @@
 
   <!-- WEM ExtJS theme -->
 
-  <link rel="stylesheet" type="text/css" href="resources/css/admin-top-bar.css">
   <link rel="stylesheet" type="text/css" href="resources/css/admin-start-menu.css">
 
   <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/admin.css">
@@ -36,7 +35,8 @@
         'Common': 'common/js',
         'Main': 'app/main/js',
         'Admin': 'resources/app'
-      }
+      },
+      disableCaching: false
     });
 
   </script>

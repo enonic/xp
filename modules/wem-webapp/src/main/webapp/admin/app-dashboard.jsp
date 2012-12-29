@@ -9,7 +9,6 @@
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
   <link rel="stylesheet" type="text/css" href="resources/css/icons-metro.css">
 
-  <link rel="stylesheet" type="text/css" href="resources/css/admin-top-bar.css">
   <link rel="stylesheet" type="text/css" href="resources/css/admin-start-menu.css">
 
   <!-- Ext JS -->

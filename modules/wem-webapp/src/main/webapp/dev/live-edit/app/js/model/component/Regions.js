@@ -7,7 +7,7 @@
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();
         this.attachClickEvent();
-        this.bindEvents();
+        this.bindGlobalEvents();
     };
 
     // Inherit from Base prototype
@@ -17,34 +17,34 @@
     regions.constructor = regions;
 
     // Shorthand ref to the prototype
-    var p = regions.prototype;
+    var proto = regions.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 
-    p.bindEvents = function () {
+    proto.bindGlobalEvents = function () {
         $(window).on('component:drag:update', $.proxy(this.renderEmptyPlaceholders, this));
 
         $(window).on('component:drag:over', $.proxy(this.renderEmptyPlaceholders, this));
     };
 
 
-    p.renderEmptyPlaceholders = function () {
-        var self = this;
-        self.removeAllRegionPlaceholders();
-        var $regions = self.getAll();
+    proto.renderEmptyPlaceholders = function () {
+        var me = this;
+        me.removeAllRegionPlaceholders();
+        var $regions = me.getAll();
         $regions.each(function (index) {
             var $region = $(this);
-            var regionIsEmpty = self.isRegionEmpty.call(self, $region);
+            var regionIsEmpty = me.isRegionEmpty.call(me, $region);
             if (regionIsEmpty) {
-                self.appendEmptyPlaceholder.call(self, $region);
+                me.appendEmptyPlaceholder.call(me, $region);
             }
         });
     };
 
 
-    p.appendEmptyPlaceholder = function ($region) {
+    proto.appendEmptyPlaceholder = function ($region) {
         var $placeholder = $('<div/>', {
             'class': 'live-edit-empty-region-placeholder',
             'html': 'Drag components here'
@@ -53,14 +53,14 @@
     };
 
 
-    p.isRegionEmpty = function ($region) {
+    proto.isRegionEmpty = function ($region) {
         var hasNotWindows = $region.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
         var hasNotDropTargetPlaceholder = $region.children('.live-edit-drop-target-placeholder').length === 0;
         return hasNotWindows && hasNotDropTargetPlaceholder;
     };
 
 
-    p.removeAllRegionPlaceholders = function () {
+    proto.removeAllRegionPlaceholders = function () {
         $('.live-edit-empty-region-placeholder').remove();
     };
 

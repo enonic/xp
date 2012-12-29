@@ -18,28 +18,6 @@ Ext.define('Admin.view.TopBar', {
     initComponent: function () {
         var me = this;
 
-        this.tabMenu = Ext.create('Admin.view.TopBarMenu', {
-            tabPanel: me.tabPanel,
-            listeners: {
-                closeChecked: {
-                    fn: me.syncTabCount,
-                    scope: me
-                },
-                closeAll: {
-                    fn: me.syncTabCount,
-                    scope: me
-                }
-            }
-        });
-
-        this.tabButton = Ext.create('Ext.button.Button', {
-            ui: 'red',
-            menuAlign: 't-b?',
-            margins: '0 0 0 8px',
-            menu: me.tabMenu,
-            split: false
-        });
-
         this.startMenu = Ext.create('Admin.view.StartMenu', {
             xtype: 'startMenu',
             renderTo: Ext.getBody(),
@@ -150,7 +128,6 @@ Ext.define('Admin.view.TopBar', {
                 }
             ]
         });
-
         this.startButton = Ext.create('Ext.button.Button', {
             xtype: 'button',
             itemId: 'app-launcher-button',
@@ -163,20 +140,27 @@ Ext.define('Admin.view.TopBar', {
             }
         });
 
-        this.itemContainer = Ext.create('Ext.Container', {
+        this.leftContainer = Ext.create('Ext.Container', {
+            flex: 5,
+            margins: '0 8px',
+            layout: 'hbox'
+        });
+        this.titleText = Ext.create('Ext.form.Label');
+        this.rightContainer = Ext.create('Ext.Container', {
             flex: 5,
             margins: '0 8px',
             layout: {
                 type: 'hbox',
                 align: 'middle',
-                pack: 'center'
+                pack: 'end'
             }
         });
 
         this.items = [
             me.startButton,
-            me.tabButton,
-            me.itemContainer,
+            me.leftContainer,
+            me.titleText,
+            me.rightContainer,
             {
                 xtype: 'adminImageButton',
                 icon: "rest/account/image/default/user",
@@ -189,8 +173,20 @@ Ext.define('Admin.view.TopBar', {
             }
         ];
 
-        this.callParent(arguments);
+        if (this.tabPanel) {
+            this.tabMenu = Ext.create('Admin.view.TopBarMenu', {
+                tabPanel: me.tabPanel
+            });
+            this.titleButton = Ext.create('Ext.button.Button', {
+                cls: 'title-button',
+                menuAlign: 't-b?',
+                menu: me.tabMenu,
+                text: 'Title'
+            });
+            Ext.Array.insert(me.items, 3, [me.titleButton]);
+        }
 
+        this.callParent(arguments);
         this.syncTabCount();
     },
 
@@ -198,36 +194,14 @@ Ext.define('Admin.view.TopBar', {
     /*  Methods for Admin.view.TabPanel integration */
 
     insert: function (index, cfg) {
-
         var added = this.tabMenu.addItems(cfg);
         this.syncTabCount();
 
-        return added.length === 1 ? added[0] : undefined;
+        return added.length === 1 ? added[0] : added;
     },
 
     setActiveTab: function (tab) {
-        var me = this;
-        var items = [
-            {
-                xtype: 'component',
-                margins: '0 10px 0 0 ',
-                html: this.getMenuItemDescription(tab.card)
-            },
-            {
-                xtype: 'button',
-                ui: 'grey',
-                text: 'Close',
-                handler: function () {
-                    if (me.tabPanel) {
-                        me.tabPanel.remove(tab.card);
-                    }
-                }
-            }
-        ];
-        this.itemContainer.removeAll();
-        if (tab.card.id !== 'tab-browse') {
-            this.itemContainer.add(items);
-        }
+        this.setTitle(this.getMenuItemDescription(tab.card));
     },
 
     remove: function (tab) {
@@ -239,7 +213,6 @@ Ext.define('Admin.view.TopBar', {
     },
 
     findNextActivatable: function (tab) {
-
         if (this.tabPanel) {
             // set first browse tab active
             return this.tabPanel.items.get(0);
@@ -258,27 +231,42 @@ Ext.define('Admin.view.TopBar', {
             hidden: cfg.hidden && !item.hiddenByLayout, // only hide if it wasn't hidden by the layout itself
             iconCls: cfg.iconCls,
             iconSrc: data.image_url,
+            width: 270,
             editing: cfg.editing || false,
-            text1: cfg.title || 'first line',
-            text2: me.getMenuItemDescription(item)
+            text1: Ext.String.ellipsis(cfg.title || 'first line', 24),  // The length of 'Userstore Administrators'
+            text2: Ext.String.ellipsis(me.getMenuItemDescription(item), 34)
         };
     },
+
 
     /*  Private */
 
     syncTabCount: function () {
-        var count = this.tabMenu.getAllItems().length;
-        // show counter when 2 or more tabs are open
-        this.tabButton.setVisible(count > 1);
-        // but exclude browse tab from calculation
-        this.tabButton.setText('' + count - 1);
+        if (this.tabMenu && this.titleButton) {
+            var tabCount = this.tabMenu.getAllItems(false).length;
+            // show dropdown button when any tab is open or text when nothing is open
+            this.titleButton.setVisible(tabCount > 0);
+            this.titleText.setVisible(tabCount == 0);
+        }
     },
 
     getMenuItemDescription: function (card) {
         return card.data ? card.data.path || card.data.qualifiedName || card.data.displayName : card.title
     },
 
+
     /*  Public  */
+
+    setTitle: function (text) {
+        // highlight the last path fragment
+        var title = text;
+        var lastSlash = text.lastIndexOf('/');
+        if (lastSlash > -1) {
+            title = text.substring(0, lastSlash + 1) + '<strong>' + text.substring(lastSlash + 1) + '</strong>';
+        }
+        this.titleText.setText(title);
+        this.titleButton.setText(title);
+    },
 
     getStartButton: function () {
         return this.startButton;
@@ -288,15 +276,11 @@ Ext.define('Admin.view.TopBar', {
         return this.startMenu;
     },
 
-    getTabButton: function () {
-        return this.tabButton;
+    getLeftContainer: function () {
+        return this.leftContainer;
     },
 
-    getTabMenu: function () {
-        return this.tabMenu;
-    },
-
-    getItemContainer: function (item) {
-        this.itemContainer;
+    getRightContainer: function () {
+        return this.rightContainer;
     }
 });

@@ -1,5 +1,5 @@
-Ext.define('Admin.lib.formitem.HtmlArea', {
-    extend: 'Admin.lib.formitem.Base',
+Ext.define('Admin.view.contentManager.wizard.form.input.HtmlArea', {
+    extend: 'Admin.view.contentManager.wizard.form.input.Base',
     alias: 'widget.HtmlArea',
     initComponent: function () {
         var me = this;
@@ -7,7 +7,8 @@ Ext.define('Admin.lib.formitem.HtmlArea', {
         me.items = [
             {
                 xtype: 'htmleditor',
-                name: me.name
+                name: me.name,
+                value: me.value
             }
         ];
 

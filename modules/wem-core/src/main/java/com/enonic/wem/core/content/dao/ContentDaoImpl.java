@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentTree;
@@ -50,11 +51,11 @@ public class ContentDaoImpl
     }
 
     @Override
-    public void deleteContent( final ContentPath content, final Session session )
+    public void deleteContent( final ContentPath contentPath, final Session session )
     {
         try
         {
-            new DeleteContentDaoHandler( session ).handle( content );
+            new DeleteContentDaoHandler( session ).deleteContentByPath( contentPath );
         }
         catch ( RepositoryException e )
         {
@@ -63,11 +64,24 @@ public class ContentDaoImpl
     }
 
     @Override
-    public void renameContent( final ContentPath content, final String newName, final Session session )
+    public void deleteContent( final ContentId contentId, final Session session )
     {
         try
         {
-            new RenameContentDaoHandler( session ).handle( content, newName );
+            new DeleteContentDaoHandler( session ).deleteContentById( contentId );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    @Override
+    public void renameContent( final ContentPath contentPath, final String newName, final Session session )
+    {
+        try
+        {
+            new RenameContentDaoHandler( session ).handle( contentPath, newName );
         }
         catch ( RepositoryException e )
         {
@@ -80,7 +94,20 @@ public class ContentDaoImpl
     {
         try
         {
-            return new FindContentDaoHandler( session ).handle( contentPath );
+            return new FindContentDaoHandler( session ).findContentByPath( contentPath );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    @Override
+    public Content findContent( final ContentId contentId, final Session session )
+    {
+        try
+        {
+            return new FindContentDaoHandler( session ).findContentById( contentId );
         }
         catch ( RepositoryException e )
         {
@@ -93,7 +120,20 @@ public class ContentDaoImpl
     {
         try
         {
-            return new FindContentDaoHandler( session ).handle( contentPaths );
+            return new FindContentDaoHandler( session ).findContentsByPath( contentPaths );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    @Override
+    public Contents findContents( final ContentIds contentIds, final Session session )
+    {
+        try
+        {
+            return new FindContentDaoHandler( session ).findContentsById( contentIds );
         }
         catch ( RepositoryException e )
         {

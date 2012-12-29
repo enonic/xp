@@ -1,10 +1,10 @@
 {
-    "success":false,
-    "successes":[ ],
-    "failures":[
+    "success": false,
+    "successes": [ ],
+    "failures": [
         {
-            "path":"parent/childToDelete",
-            "reason":"Not able to delete content [parent/childToDelete]: Test"
+            "path": "parent/childToDelete",
+            "reason": "Not able to delete content with path [parent/childToDelete]: Test"
         }
     ]
 }

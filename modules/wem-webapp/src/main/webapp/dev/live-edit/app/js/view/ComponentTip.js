@@ -6,8 +6,8 @@
 
     // Class definition (constructor function)
     var componentTip = AdminLiveEdit.view.ComponentTip = function () {
-        this.create();
-        this.bindEvents();
+        this.addView();
+        this.bindGlobalEvents();
     };
 
     // Inherits ui.Base
@@ -17,7 +17,7 @@
     componentTip.constructor = componentTip;
 
     // Shorthand ref to the prototype
-    var p = componentTip.prototype;
+    var proto = componentTip.prototype;
 
     // Uses
     var util = AdminLiveEdit.Util;
@@ -25,61 +25,120 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.bindEvents = function () {
+    proto.$selectedComponent = null;
+
+    proto.bindGlobalEvents = function () {
         $(window).on('component:select', $.proxy(this.show, this));
         $(window).on('component:deselect', $.proxy(this.hide, this));
     };
 
 
-    p.create = function () {
-        var self = this;
+    proto.addView = function () {
+        var me = this;
 
-        var html = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
-                   '    <span class="live-edit-tool-tip-type-text"></span>: ' +
-                   '    <span class="live-edit-tool-tip-name-text"></span>' +
+        var html = '<div class="live-edit-component-tip" style="top:-5000px; left:-5000px;">' +
+                   '    <span class="live-edit-component-tip-drag-handle"> </span> ' +
+                   '    <span class="live-edit-component-tip-type-text"></span> ' +
+                   '    <span class="live-edit-component-tip-name-text"></span>' +
                    '</div>';
 
-        self.createElement(html);
-        self.appendTo($('body'));
+        me.createElement(html);
+        me.appendTo($('body'));
 
         // Make sure component is not deselected when the conponentTip element is clicked.
-        self.getEl().on('click', function (event) {
+        me.getEl().on('click', function (event) {
             event.stopPropagation();
         });
+
+        var $dragHandle = me.getDragHandle();
+
+        $dragHandle.on('mousedown', function () {
+            this.le_mouseIsDown = true;
+            // TODO: Use PubSub
+            AdminLiveEdit.DragDrop.enable();
+        });
+
+        $dragHandle.on('mousemove', function (event) {
+            if (this.le_mouseIsDown) {
+
+                this.le_mouseIsDown = false;
+                // TODO: Get the selected using PubSub
+                var $selectedComponent = me.$selectedComponent;
+
+                var evt = document.createEvent('MouseEvents');
+                evt.initMouseEvent('mousedown', true, true, window, 0, event.screenX, event.screenY, event.clientX, event.clientY, false,
+                    false, false, false, 0, null);
+
+                $selectedComponent[0].dispatchEvent(evt);
+
+            }
+        });
+        $dragHandle.on('mouseup', function () {
+            this.le_mouseIsDown = false;
+            // TODO: remove reference to DragDrop, use PubSub.
+            AdminLiveEdit.DragDrop.disable();
+        });
+
+
+
     };
 
 
-    p.show = function (event, $component) {
-        var self = this;
+    proto.show = function (event, $component) {
+        var me = this;
 
-        var info = util.getComponentInfo($component);
+        me.$selectedComponent = $component;
+
+        var componentInfo = util.getComponentInfo($component);
+
+        me.showHideDragHandle(componentInfo);
+
         // Set text first so width is calculated correctly.
-        self.setText(info.type, info.name);
+        me.setText(componentInfo.type, componentInfo.name);
 
         var componentBox = util.getBoxModel($component),
-            leftPos = componentBox.left + (componentBox.width / 2 - self.getEl().width() / 2),
-            topPos = componentBox.top - 32;
+            leftPos = componentBox.left + (componentBox.width / 2 - me.getEl().outerWidth() / 2),
+            topPos = componentBox.top - (me.getEl().height() * 2) - 2; // -2 to show above the highlighter border
 
-        if (info.type === 'page' && info.tagName === 'body') {
+        if (componentInfo.type === 'page' && componentInfo.tagName === 'body') {
             topPos = 0;
         }
 
-        self.setCssPosition($component);
-        self.getEl().css({
+        me.setCssPosition($component);
+        me.getEl().css({
             top: topPos,
             left: leftPos
         });
     };
 
 
-    p.setText = function (componentType, componentName) {
-        var $componentTip = this.getEl();
-        $componentTip.children('.live-edit-tool-tip-type-text').text(componentType);
-        $componentTip.children('.live-edit-tool-tip-name-text').text(componentName);
+    proto.showHideDragHandle = function (componentInfo) {
+        var me = this;
+        var $dragHandle = me.getDragHandle();
+        if (componentInfo.type === 'window') {
+            $dragHandle.css({'display': 'inline-block'});
+        } else {
+            $dragHandle.css({'display': 'none'});
+        }
     };
 
 
-    p.hide = function () {
+    proto.getDragHandle = function () {
+        return this.getEl().find('.live-edit-component-tip-drag-handle');
+    };
+
+
+    proto.setText = function (componentType, componentName) {
+        var $componentTip = this.getEl();
+        var typeText = componentType.concat(':');
+        $componentTip.children('.live-edit-component-tip-type-text').text(typeText);
+        $componentTip.children('.live-edit-component-tip-name-text').text(componentName);
+    };
+
+
+    proto.hide = function () {
+        this.$selectedComponent = null;
+
         this.getEl().css({
             top: '-5000px',
             left: '-5000px'

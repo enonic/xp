@@ -4,12 +4,16 @@ package com.enonic.wem.core.content.dao;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.core.content.data.ContentDataJsonSerializer;
 
+import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENTS_PATH;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyString;
 import static com.enonic.wem.core.jcr.JcrHelper.setPropertyDateTime;
@@ -78,5 +82,12 @@ final class ContentJcrMapper
             contentBuilder.type( new QualifiedContentTypeName( contentType ) );
         }
         contentBuilder.id( ContentIdImpl.from( contentNode ) );
+        contentBuilder.path( getPathFromNode( contentNode ) );
+    }
+
+    private ContentPath getPathFromNode( final Node contentNode )
+        throws RepositoryException
+    {
+        return ContentPath.from( StringUtils.substringAfter( contentNode.getPath(), CONTENTS_PATH ) );
     }
 }

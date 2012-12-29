@@ -14,25 +14,25 @@
     editButton.constructor = editButton;
 
     // Shorthand ref to the prototype
-    var p = editButton.prototype;
+    var proto = editButton.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.init = function () {
-        var self = this;
+    proto.init = function () {
+        var me = this;
 
-        var $button = self.createButton({
+        var $button = me.createButton({
             id: 'live-edit-button-edit',
             text: 'Edit',
-            iconCls: 'live-edit-icon-edit',
+            cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
             }
         });
 
-        self.appendTo(self.componentMenu.getEl());
-        self.componentMenu.buttons.push(self);
+        me.appendTo(me.componentMenu.getEl());
+        me.componentMenu.buttons.push(me);
     };
 
 }($liveedit));

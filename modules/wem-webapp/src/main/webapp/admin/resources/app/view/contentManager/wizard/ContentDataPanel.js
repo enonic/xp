@@ -3,15 +3,15 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     alias: 'widget.contentDataPanel',
 
     requires: [
-        'Admin.lib.formitem.FormItemSet',
-        'Admin.lib.formitem.HtmlArea',
-        'Admin.lib.formitem.Relation',
-        'Admin.lib.formitem.TextArea',
-        'Admin.lib.formitem.TextLine'
+        'Admin.view.contentManager.wizard.form.FieldSetLayout',
+        'Admin.view.contentManager.wizard.form.FormItemSet',
+        'Admin.view.contentManager.wizard.form.input.HtmlArea',
+        'Admin.view.contentManager.wizard.form.input.Relation',
+        'Admin.view.contentManager.wizard.form.input.TextArea',
+        'Admin.view.contentManager.wizard.form.input.TextLine'
     ],
-
     mixins: {
-        formGenerator: 'Admin.lib.formitem.FormGenerator'
+        formGenerator: 'Admin.view.contentManager.wizard.form.FormGenerator'
     },
 
     contentType: undefined,
@@ -55,11 +55,13 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
         var contentData = {};
         var formItems = me.items.items;
 
-        Ext.Array.each(formItems, function (formItem) {
-            if (formItem.getXType() === 'FormItemSet') {
-                me.addFormItemSetContentData(formItem, contentData, '');
+        Ext.Array.each(formItems, function (item) {
+            if (item.getXType() === 'FormItemSet') {
+                me.addFormItemSetContentData(item, contentData, '');
+            } else if (item.getXType() === 'FieldSetLayout') {
+                me.addLayoutData(item, contentData);
             } else {
-                contentData[formItem.name] = formItem.getValue();
+                contentData[item.name] = item.getValue();
             }
         });
 
@@ -67,27 +69,47 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     },
 
 
-    addFormItemSetContentData: function (formItemSetItem, contentData, parentName) {
+    addLayoutData: function (layoutComponent, contentData) {
         var me = this;
-        var blocks = me.getFormItemSetBlocks(formItemSetItem);
+        var items = layoutComponent.items.items;
+        var layoutName = layoutComponent.name.concat('[0]');
+
+        Ext.Array.each(items, function (item, index) {
+            if (item.getXType() === 'FormItemSet') {
+                me.addFormItemSetContentData(item, contentData, layoutName);
+            } else if (item.getXType() === 'FieldSetLayout') {
+                me.addLayoutData(item, contentData);
+            } else {
+                if (item.cls !== 'header') {
+                    contentData[layoutName.concat('.', item.name)] = item.getValue();
+                }
+            }
+        });
+    },
+
+
+    addFormItemSetContentData: function (formItemSetComponent, contentData, parentName) {
+        var me = this;
+        var blocks = me.getFormItemSetBlocks(formItemSetComponent);
+        var formItemSetName = '';
 
         Ext.Array.each(blocks, function (block, index) {
 
             var blockItems = block.items.items;
 
             Ext.Array.each(blockItems, function (item) {
-                var formItemSetName = '';
                 if (parentName !== '') {
                     formItemSetName = parentName + '.'; // Eg. contact_info[0]
                 }
-                formItemSetName += formItemSetItem.name + '[' + index + ']';
+                formItemSetName = formItemSetName.concat(formItemSetComponent.name, '[', index, ']');
 
                 if (item.getXType() === 'FormItemSet') {
-                    // Recursive
                     me.addFormItemSetContentData(item, contentData, formItemSetName);
+                } else if (item.getXType() === 'FieldSetLayout') {
+                    me.addLayoutData(item, contentData);
                 } else {
                     if (item.cls !== 'header') {
-                        contentData[formItemSetName + '.' + item.name] = item.getValue();
+                        contentData[formItemSetName.concat('.', item.name)] = item.getValue();
                     }
                 }
             });

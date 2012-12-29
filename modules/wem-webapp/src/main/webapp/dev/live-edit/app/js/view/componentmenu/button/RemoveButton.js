@@ -14,24 +14,24 @@
     removeButton.constructor = removeButton;
 
     // Shorthand ref to the prototype
-    var p = removeButton.prototype;
+    var proto = removeButton.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.init = function () {
-        var self = this;
-        var $button = self.createButton({
+    proto.init = function () {
+        var me = this;
+        var $button = me.createButton({
             text: 'Remove',
             id: 'live-edit-button-remove',
-            iconCls: 'live-edit-icon-remove',
+            cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
             }
         });
 
-        self.appendTo(self.componentMenu.getEl());
-        self.componentMenu.buttons.push(self);
+        me.appendTo(me.componentMenu.getEl());
+        me.componentMenu.buttons.push(me);
     };
 
 }($liveedit));

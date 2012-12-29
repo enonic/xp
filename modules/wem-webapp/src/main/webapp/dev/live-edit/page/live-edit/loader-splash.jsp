@@ -6,7 +6,7 @@
   <div class="live-edit-loader-splash-content">
     <img src="../app/images/enonic-logo-72x72-transparent.png" alt=""/>
 
-    <div>loading...</div>
+    <div>loading page...</div>
   </div>
 </div>
 <%

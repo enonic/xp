@@ -4,10 +4,14 @@ Ext.define('Admin.view.TopBarMenu', {
 
     requires: ['Admin.view.TopBarMenuItem'],
 
-    bodyCls: 'admin-topbar-menu',
+    cls: 'admin-topbar-menu',
 
     showSeparator: false,
     styleHtmlContent: true,
+    layout: {
+        type: 'vbox',
+        align: 'stretchmax'
+    },
 
     items: [
         {
@@ -45,12 +49,6 @@ Ext.define('Admin.view.TopBarMenu', {
             itemId: 'emptyTitle',
             hidden: false,
             html: 'List is empty'
-        },
-        {
-            xtype: 'component',
-            styleHtmlContent: true,
-            cls: 'tools',
-            html: '<a href="#" class="close-all">Close All</a><a href="#" class="close-checked">Close</a>'
         }
     ],
 
@@ -58,8 +56,7 @@ Ext.define('Admin.view.TopBarMenu', {
 
     initComponent: function () {
         this.callParent(arguments);
-        this.addEvents('closeChecked', 'closeAll');
-        this.on('afterrender', this.bindCloseListeners);
+        this.on('closeMenuItem', this.onCloseMenuItem);
         this.on('resize', this.updatePosition);
     },
 
@@ -81,6 +78,24 @@ Ext.define('Admin.view.TopBarMenu', {
         }
     },
 
+    onBoxReady: function () {
+        var tip = Ext.DomHelper.append(this.el, {
+            tag: 'div',
+            cls: 'balloon-tip'
+        }, true);
+        this.callParent(arguments);
+    },
+
+    onCloseMenuItem: function (item) {
+        if (this.tabPanel) {
+            this.tabPanel.remove(item.card);
+        }
+        // hide menu if all closable items have been closed
+        if (this.getAllItems(false).length === 0) {
+            this.hide();
+        }
+    },
+
     getItemFromEvent: function (e) {
         var item = this;
         do {
@@ -89,53 +104,15 @@ Ext.define('Admin.view.TopBarMenu', {
         return item;
     },
 
-
-    bindCloseListeners: function () {
-        var me = this;
-        var closeChecked = this.el.down('a.close-checked');
-        var closeAll = this.el.down('a.close-all');
-        closeChecked.on('click', function (event, target, opts) {
-            var items = me.getCheckedItems();
-            if (me.fireEvent('closeChecked', items) !== false) {
-                // me.removeItems(items);
-                //tabPanel will also delete all tabs by calling tabBar.remove
-                Ext.Array.each(items, function (item) {
-                    if (item.closable) {
-                        me.tabPanel.remove(item.card);
-                    }
-                });
-            }
-            me.hide();
-        });
-        closeAll.on('click', function (event, target, opts) {
-            var items = me.getAllItems();
-            if (me.fireEvent('closeAll', items) !== false) {
-                // me.removeAllItems(false);
-                //tabPanel will also delete all tabs by calling tabBar.remove
-                Ext.Array.each(items, function (item) {
-                    if (item.closable) {
-                        me.tabPanel.remove(item.card);
-                    }
-                });
-            }
-            me.hide();
-        });
-    },
-
-    getCheckedItems: function () {
-        var items = this.getAllItems(),
-            i,
-            result = [];
-        for (i = 0; i < items.length; i++) {
-            if (items[i].isChecked()) {
-                result.push(items[i]);
-            }
+    getAllItems: function (includeNonClosable) {
+        var items = [];
+        if (includeNonClosable === false) {
+            items = items.concat(this.down('#editItems').query('topBarMenuItem'));
+            items = items.concat(this.down('#viewItems').query('topBarMenuItem'))
+        } else {
+            items = items.concat(this.query('topBarMenuItem'));
         }
-        return result;
-    },
-
-    getAllItems: function () {
-        return this.query('topBarMenuItem');
+        return items;
     },
 
     addItems: function (items) {
@@ -231,6 +208,6 @@ Ext.define('Admin.view.TopBarMenu', {
     // Need in case of resize while center positioned
     updatePosition: function (menu, width, height, oldWidth, oldHeight, opts) {
         this.el.move('r', ((oldWidth - width) / 2), false);
-    }
+    },
 
 });

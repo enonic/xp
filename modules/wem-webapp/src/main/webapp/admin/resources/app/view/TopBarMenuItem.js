@@ -7,28 +7,25 @@ Ext.define('Admin.view.TopBarMenuItem', {
 
     isMenuItem: true,
     canActivate: true,
-    autoHeight: true,
+
     layout: {
         type: 'hbox',
         align: 'middle'
 
     },
+    bubbleEvents: [
+        'closeMenuItem'
+    ],
 
     initComponent: function () {
+        var me = this;
         this.items = [];
-        if (this.closable !== false) {
-            this.items.push({
-                xtype: 'checkbox',
-                cls: 'checkbox',
-                checked: this.checked
-            });
-        }
         if (this.iconCls || this.iconSrc) {
             this.items.push({
                 xtype: 'image',
-                margin: '0 0 0 12px',
                 width: 32,
                 height: 32,
+                margin: '0 12px 0 0',
                 cls: this.iconCls,
                 src: this.iconSrc
             });
@@ -36,7 +33,7 @@ Ext.define('Admin.view.TopBarMenuItem', {
         if (this.text1 || this.text2) {
             this.items.push({
                 xtype: 'component',
-                margin: '0 0 0 12px',
+                flex: 1,
                 styleHtmlContent: true,
                 tpl: '<strong>{text1}</strong><tpl if="text2"><br/><em>{text2}</em></tpl>',
                 data: {
@@ -45,8 +42,24 @@ Ext.define('Admin.view.TopBarMenuItem', {
                 }
             });
         }
+        if (this.closable !== false) {
+            this.items.push({
+                xtype: 'component',
+                autoEl: 'a',
+                cls: 'close-button',
+                margins: '0 0 0 12px',
+                listeners: {
+                    afterrender: function (cmp) {
+                        cmp.el.on('click', function () {
+                            me.deactivate();
+                            me.fireEvent('closeMenuItem', me);
+                        });
+                    }
+                }
+            });
+        }
         this.callParent(arguments);
-        this.addEvents('activate', 'deactivate', 'click');
+        this.addEvents('activate', 'deactivate', 'click', 'closeMenuItem');
     },
 
     activate: function () {
@@ -89,11 +102,6 @@ Ext.define('Admin.view.TopBarMenuItem', {
             me.focus();
         }
         // return false if the checkbox was clicked to prevent item click event
-        return Ext.isEmpty(Ext.fly(e.getTarget()).findParent('.checkbox'));
-    },
-
-    isChecked: function () {
-        var cb = this.down('checkbox');
-        return cb ? cb.getValue() : false;
+        return Ext.isEmpty(Ext.fly(e.getTarget()).findParent('.close-button'));
     }
 });

@@ -3,22 +3,22 @@
 
     // Class definition (constructor function)
     var cursor = AdminLiveEdit.view.Cursor = function () {
-        this.bindEvents();
+        this.bindGlobalEvents();
     };
 
     // Shorthand ref to the prototype
-    var p = cursor.prototype;
+    var proto = cursor.prototype;
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    p.bindEvents = function () {
+    proto.bindGlobalEvents = function () {
         $(window).on('component:mouseover', $.proxy(this.updateCursor, this));
 
         $(window).on('component:select', $.proxy(this.updateCursor, this));
     };
 
 
-    p.updateCursor = function (event, $component) {
+    proto.updateCursor = function (event, $component) {
         var componentType = AdminLiveEdit.Util.getComponentType($component);
         var $body = $('body');
         var cursor = 'default';

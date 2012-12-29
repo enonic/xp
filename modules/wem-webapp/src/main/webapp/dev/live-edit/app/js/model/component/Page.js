@@ -13,7 +13,7 @@
     // Fix constructor as it now is Base
     page.constructor = page;
 
-    var p = page.prototype;
+    var proto = page.prototype;
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 

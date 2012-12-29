@@ -1,4 +1,4 @@
-// This file was auto-generated on 2012-12-12 14:56:37 FET
+// This file was auto-generated on 2012-12-28 11:19:52 FET
 
 if (!Templates) {
     var Templates = {};
@@ -22,11 +22,11 @@ Templates.contentManager = {
                            '</tpl>',
 
     gridPanelNameRenderer: '<div style="float:left;padding-top: 3px">' +
-                           '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" class="admin-tree-thumbnail {0}">' +
+                           '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" class="admin-grid-thumbnail {0}"/>' +
                            '</div>' +
-                           '<div style="float:left; padding: 3px 0 0 5px">' +
-                           '<div class="admin-tree-title">{1}</div>' +
-                           '<div class="admin-tree-description">{2}</div>' +
+                           '<div class="admin-grid-description" style="float:left; padding: 3px 0 0 5px">' +
+                           '<h6>{1}</h6>' +
+                           '<p>{2}</p>' +
                            '</div>',
 
     previewCommonInfo: '<div class="container">' +
@@ -118,10 +118,12 @@ Templates.contentStudio = {
 
     previewIcon: '<img src="{[values.icon !=="" ? values.icon : "resources/images/icons/128x128/cubes.png"]}" alt="{name}" title="{name}"/>',
 
-    gridPanelRenderer: '<div style="float:left;padding-top: 3px"><img src="{0}" alt="" class="admin-tree-thumbnail"/></div>' +
-                       '<div style="float:left; padding: 5px 0 0 5px">' +
-                       '<div class="admin-tree-title">{1}</div>' +
-                       '<div class="admin-tree-description">{2}</div>' +
+    gridPanelRenderer: '<div style="float:left;padding-top: 3px">' +
+                       '<img src="{0}" class="admin-grid-thumbnail"/>' +
+                       '</div>' +
+                       '<div class="admin-grid-description" style="float:left; padding: 3px 0 0 5px">' +
+                       '<h6>{1}</h6>' +
+                       '<p>{2}</p>' +
                        '</div>',
 
     previewCommonInfo: '<div class="container">' +
@@ -307,7 +309,7 @@ Templates.account = {
     gridPanelNameRenderer: '<img src="{0}" alt="{1}" class="admin-grid-thumbnail"/>' +
                            '<div class="admin-grid-description">' +
                            '<h6>{1}</h6>' +
-                           '<div>{3}\\{2}</div>' +
+                           '<p>{3}\\{2}</p>' +
                            '</div>',
 
     userPreviewPlaces: '<tpl if="userInfo == null || userInfo.addresses == null || userInfo.addresses.length == 0">' +

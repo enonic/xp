@@ -1,5 +1,5 @@
-Ext.define('Admin.lib.formitem.Relation', {
-    extend: 'Admin.lib.formitem.Base',
+Ext.define('Admin.view.contentManager.wizard.form.input.Relation', {
+    extend: 'Admin.view.contentManager.wizard.form.input.Base',
     alias: 'widget.Relation',
     fieldLabel: 'Relation',
 
@@ -107,7 +107,7 @@ Ext.define('Admin.lib.formitem.Relation', {
                 datachanged: function (store) {
                     me.updateHiddenValue();
                     try {
-                        me.down('combobox').setDisabled(me.selectedContentStore.getCount() === me.inputConfig.occurrences.maximum);
+                        me.down('combobox').setDisabled(me.selectedContentStore.getCount() === me.contentTypeItemConfig.occurrences.maximum);
                     } catch (exception) {
                         /**/
                     }
