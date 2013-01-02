@@ -17,7 +17,7 @@
   <version>5.0.0-SNAPSHOT</version>
 
   <properties>
-	<old.version>4.7.0-M4</old.version>
+    <old.version>4.7.0-RC2</old.version>
   </properties>
 
   <modules>
@@ -58,15 +58,8 @@
 
   <repositories>
     <repository>
-      <id>apache.repo</id>
-      <url>https://repository.apache.org/content/groups/snapshots</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
       <id>enonic.repo</id>
-      <url>http://repo.enonic.com/maven</url>
+      <url>http://repo.enonic.com/artifactory/public</url>
     </repository>
   </repositories>
 

@@ -1,6 +1,8 @@
 package com.enonic.wem.web.json.rpc.processor;
 
 import org.codehaus.jackson.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -8,13 +10,11 @@ import com.enonic.wem.web.json.rpc.JsonRpcError;
 import com.enonic.wem.web.json.rpc.JsonRpcException;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 
-import com.enonic.cms.api.util.LogFacade;
-
 @Component
 public final class JsonRpcProcessorImpl
     implements JsonRpcProcessor
 {
-    private final static LogFacade LOG = LogFacade.get( JsonRpcProcessorImpl.class );
+    private final static Logger LOG = LoggerFactory.getLogger( JsonRpcProcessorImpl.class );
 
     private JsonRpcHandlerMap handlerMap;
 
@@ -57,7 +57,7 @@ public final class JsonRpcProcessorImpl
         }
         catch ( final Exception e )
         {
-            LOG.errorCause( "Error occurred processing request", e );
+            LOG.error( "Error occurred processing request", e );
             final JsonRpcError error = JsonRpcError.internalError( e.getMessage() );
             throw new JsonRpcException( error );
         }
