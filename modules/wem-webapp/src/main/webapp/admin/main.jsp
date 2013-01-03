@@ -28,9 +28,11 @@
 
   <!-- Templates -->
 
+  <script type="text/javascript" src="resources/app/view/XTemplates.js"></script>
 
   <!-- Third party libraries -->
 
+  <script type="text/javascript" src="resources/app/lib/humane.js"></script>
 
   <!-- Application -->
 

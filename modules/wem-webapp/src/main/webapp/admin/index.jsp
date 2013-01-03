@@ -62,6 +62,9 @@
 <h2>Apps</h2>
 <ul class="links">
   <li>
+    <a href="login.jsp">Login</a>
+  </li>
+  <li>
     <a href="main.jsp">Main</a>
   </li>
   <li>

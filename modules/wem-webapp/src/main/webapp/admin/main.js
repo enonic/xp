@@ -12,7 +12,10 @@ Ext.onReady(function () {
         ],
 
         controllers: [
-            'Admin.controller.HomeController'
+            'Admin.controller.TopBarController',
+            'Admin.controller.NotifyUserController',
+            // old controllers from _app/main
+            'ActivityStreamController'
         ],
 
         launch: function () {
@@ -27,6 +30,11 @@ Ext.onReady(function () {
                         bodyCls: 'main-viewport-center-body',
                         html: '<div id="appFrames" style="height: 100%; width: 100%;"></div>'
                     }
+                    //{
+                    //  region: 'east',
+                    //  xtype: 'activityStreamPanel',
+                    //  collapsed: true
+                    //}
                 ]
             });
 
