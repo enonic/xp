@@ -52,7 +52,7 @@ Ext.application({
                                             region: 'center',
                                             xtype: 'contentTypeTreeGridPanel',
                                             border: false,
-                                            flex: 2
+                                            flex: 1
                                         },
                                         {
                                             region: 'south',
