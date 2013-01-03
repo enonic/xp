@@ -69,7 +69,7 @@ Ext.define('Admin.controller.userstore.Controller', {
 
                 var showPanel = this.getMainPanel();
 
-                showPanel.el.mask("Loading...");
+                showPanel.el.mask();
 
                 Admin.lib.RemoteService.userstore_get({name: userstore.name},
                     function (response) {
