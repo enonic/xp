@@ -77,7 +77,7 @@ Ext.define('Admin.controller.account.GridPanelController', {
             detailPanel.showNoneSelection();
         } else if (showAccountPreviewOnly) {
             // need raw to include fields like memberships, not defined in model
-            var mask = new Ext.LoadMask(detailPanel, {msg: "Please wait..."});
+            var mask = new Ext.LoadMask(detailPanel);
             mask.show();
             var accountData = persistentSelection[0].raw;
             Admin.lib.RemoteService.account_get({ key: accountData.key }, function (response) {

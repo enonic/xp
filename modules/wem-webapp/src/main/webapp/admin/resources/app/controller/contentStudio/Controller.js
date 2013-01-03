@@ -78,7 +78,7 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         var tabPanel = this.getCmsTabPanel();
 
         if (contentType && !forceNew) {
-            tabPanel.el.mask("Loading...");
+            tabPanel.el.mask();
             Admin.lib.RemoteService.contentType_getConfig({"qualifiedContentTypeName": [contentType.get('qualifiedName')]}, function (r) {
                 tabPanel.el.unmask();
                 if (r) {

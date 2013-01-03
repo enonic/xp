@@ -4,10 +4,8 @@
   <meta charset="utf-8"/>
   <title>Enonic WEM Admin</title>
   <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/admin.css">
-  <link rel="stylesheet" type="text/css" href="resources/css/main.css">
   <link rel="stylesheet" type="text/css" href="resources/css/icons.css">
   <link rel="stylesheet" type="text/css" href="resources/css/icons-metro.css">
-  <link rel="stylesheet" type="text/css" href="_app/main/css/main.css">
 
   <!-- Ext JS -->
 
