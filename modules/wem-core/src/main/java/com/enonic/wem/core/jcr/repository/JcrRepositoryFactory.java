@@ -12,8 +12,8 @@ import org.apache.jackrabbit.oak.plugins.index.CompositeIndexHookProvider;
 import org.apache.jackrabbit.oak.plugins.index.IndexHookManager;
 import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexHookProvider;
 import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexProvider;
-import org.apache.jackrabbit.oak.plugins.index.property.PropertyIndexHookProvider;
-import org.apache.jackrabbit.oak.plugins.index.property.PropertyIndexProvider;
+import org.apache.jackrabbit.oak.plugins.index.p2.Property2IndexHookProvider;
+import org.apache.jackrabbit.oak.plugins.index.p2.Property2IndexProvider;
 import org.apache.jackrabbit.oak.plugins.name.NameValidatorProvider;
 import org.apache.jackrabbit.oak.plugins.name.NamespaceValidatorProvider;
 import org.apache.jackrabbit.oak.plugins.nodetype.DefaultTypeEditor;
@@ -62,10 +62,10 @@ public final class JcrRepositoryFactory
         oak.with( new RegistrationValidatorProvider() );
         oak.with( new ConflictValidatorProvider() );
         oak.with( new AnnotatingConflictHandler() );
-        oak.with( new PropertyIndexProvider() );
+        oak.with( new Property2IndexProvider() );
         oak.with( new LuceneIndexProvider() );
         oak.with(
-            new IndexHookManager( new CompositeIndexHookProvider( new PropertyIndexHookProvider(), new LuceneIndexHookProvider() ) ) );
+            IndexHookManager.of( new CompositeIndexHookProvider( new Property2IndexHookProvider(), new LuceneIndexHookProvider() ) ) );
         this.repository = new RepositoryImpl( oak.createContentRepository(), null, null );
     }
 

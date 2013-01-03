@@ -15,6 +15,10 @@
   <packaging>jar</packaging>
   <name>Enonic WEM Core</name>
 
+  <properties>
+    <oak.version>0.6-20130102</oak.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>com.enonic.cms</groupId>
@@ -40,7 +44,12 @@
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>oak-jcr</artifactId>
-      <version>0.6-SNAPSHOT</version>
+      <version>${oak.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>oak-lucene</artifactId>
+      <version>${oak.version}</version>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
