@@ -41,26 +41,24 @@ Ext.application({
                                     xtype: 'contentStudioFilter',
                                     width: 182,
                                     minSize: 100,
-                                    maxSize: 500,
-                                    margins: '3 0 5 5'
-
+                                    maxSize: 500
                                 },
                                 {
                                     region: 'center',
                                     layout: 'border',
                                     border: false,
-                                    margins: '3 5 5 0',
                                     items: [
                                         {
                                             region: 'center',
                                             xtype: 'contentTypeTreeGridPanel',
+                                            border: false,
                                             flex: 2
                                         },
                                         {
                                             region: 'south',
                                             xtype: 'contentTypeDetailPanel',
                                             collapsible: true,
-                                            border: true,
+                                            border: false,
                                             split: true,
                                             flex: 1
                                         }

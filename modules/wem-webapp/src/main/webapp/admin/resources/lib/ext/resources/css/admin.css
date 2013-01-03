@@ -1,3 +1,4 @@
+@charset "IBM866";
 /**
  * @var {color} $base-color
  * The base color to be used throughout the theme.
@@ -322,14 +323,30 @@ td {
 
 /* line 65, ../sass/admin/css/_grid.scss */
 .admin-grid .admin-grid-thumbnail {
+    float: left;
+}
+
+/* line 68, ../sass/admin/css/_grid.scss */
+.admin-grid .admin-grid-thumbnail img {
     width: 32px;
     height: 32px;
     display: block;
-    float: left;
-    margin-right: 10px;
+    margin-right: 15px;
 }
 
-/* line 73, ../sass/admin/css/_grid.scss */
+/* line 76, ../sass/admin/css/_grid.scss */
+.admin-grid .admin-grid-description {
+    float: left;
+    margin-top: 3px;
+}
+
+/* line 80, ../sass/admin/css/_grid.scss */
+.admin-grid .admin-grid-description p {
+    margin: 0 !important;
+    line-height: 1;
+}
+
+/* line 86, ../sass/admin/css/_grid.scss */
 .admin-grid .x-grid-row-selected .admin-grid-name-renderer .admin-grid-name-renderer-path {
     color: #fff !important;
 }
@@ -352,20 +369,16 @@ td {
 /* line 5, ../sass/admin/css/_tree.scss */
 .admin-tree .x-grid-cell .x-grid-cell-inner {
     line-height: 32px;
+    padding: 5px 10px 6px;
 }
 
-/* line 9, ../sass/admin/css/_tree.scss */
+/* line 10, ../sass/admin/css/_tree.scss */
 .admin-tree .x-grid-cell .x-grid-cell-inner .x-tree-icon {
     height: 32px;
     width: 32px;
 }
 
-/* line 14, ../sass/admin/css/_tree.scss */
-.admin-tree .x-grid-cell-first .x-grid-cell-inner {
-    font-weight: bold;
-}
-
-/* line 23, ../sass/admin/css/_tree.scss */
+/* line 20, ../sass/admin/css/_tree.scss */
 .admin-tree .x-tree-elbow,
 .admin-tree .x-tree-elbow-end,
 .admin-tree .x-tree-elbow-plus,
@@ -378,26 +391,45 @@ td {
     float: left;
 }
 
-/* line 30, ../sass/admin/css/_tree.scss */
-.admin-tree .admin-tree-thumbnail {
-    height: 32px;
-    width: 32px;
-}
-
-/* line 35, ../sass/admin/css/_tree.scss */
+/* line 27, ../sass/admin/css/_tree.scss */
 .admin-tree .admin-white-toolbar {
     border-bottom-style: none !important;
 }
 
-/* line 39, ../sass/admin/css/_tree.scss */
+/* line 31, ../sass/admin/css/_tree.scss */
 .admin-tree .x-panel-body {
     border: none !important;
 }
 
-/* line 43, ../sass/admin/css/_tree.scss */
+/* line 35, ../sass/admin/css/_tree.scss */
 .admin-tree .x-grid-cell-inner .x-tree-icon {
     /* name renderer is responsible for icon */
     display: none;
+}
+
+/* line 40, ../sass/admin/css/_tree.scss */
+.admin-tree .admin-tree-thumbnail {
+    float: left;
+}
+
+/* line 43, ../sass/admin/css/_tree.scss */
+.admin-tree .admin-tree-thumbnail img {
+    height: 32px;
+    width: 32px;
+    display: block;
+    margin: 0 15px 0 10px;
+}
+
+/* line 51, ../sass/admin/css/_tree.scss */
+.admin-tree .admin-tree-description {
+    float: left;
+    margin-top: 3px;
+}
+
+/* line 55, ../sass/admin/css/_tree.scss */
+.admin-tree .admin-tree-description p {
+    margin: 0 !important;
+    line-height: 1;
 }
 
 /* line 1, ../sass/admin/css/_mega-menu.scss */
@@ -603,16 +635,14 @@ td {
 }
 
 /* line 44, ../sass/admin/css/_form.scss */
-.admin-search-trigger .x-form-trigger {
-    background-image: url("../themes/images/default/form/admin-search-trigger.gif") !important;
-    background-repeat: no-repeat;
-    border-width: 1px 1px 1px medium !important;
-    border-style: solid solid solid none !important;
-    border-color: #aaaaaa #aaaaaa #aaaaaa !important;
-    border-left: none !important;
+.admin-search-trigger input {
+    background-image: url("../themes/images/default/form/admin-search-trigger-v.gif") !important;
+    background-repeat: no-repeat !important;
+    background-position: right top !important;
+    padding-right: 30px;
 }
 
-/* line 55, ../sass/admin/css/_form.scss */
+/* line 53, ../sass/admin/css/_form.scss */
 .x-form-trigger-wrap .x-form-spinner-up,
 .x-form-trigger-wrap .x-form-spinner-down {
     background-image: url("../themes/images/default/form/admin-spinner.gif") !important;
@@ -622,39 +652,39 @@ td {
     border-left: none !important;
 }
 
-/* line 63, ../sass/admin/css/_form.scss */
+/* line 61, ../sass/admin/css/_form.scss */
 .x-form-trigger-wrap .x-form-spinner-up {
     border-top: 1px solid #aaaaaa !important;
 }
 
-/* line 67, ../sass/admin/css/_form.scss */
+/* line 65, ../sass/admin/css/_form.scss */
 .x-form-trigger-wrap .x-form-spinner-down {
     border-bottom: 1px solid #aaaaaa !important;
 }
 
-/* line 72, ../sass/admin/css/_form.scss */
+/* line 70, ../sass/admin/css/_form.scss */
 .x-item-disabled .x-form-arrow-trigger {
     opacity: .3;
 }
 
-/* line 77, ../sass/admin/css/_form.scss */
+/* line 75, ../sass/admin/css/_form.scss */
 .x-form-trigger-wrap-focus .x-form-trigger {
     border-width: 1px 1px 1px medium !important;
     border-style: solid solid solid none !important;
     border-color: #141414 #141414 #141414 !important;
 }
 
-/* line 83, ../sass/admin/css/_form.scss */
+/* line 81, ../sass/admin/css/_form.scss */
 .x-form-trigger-wrap-focus .x-form-spinner-up {
     border-bottom: none !important;
 }
 
-/* line 87, ../sass/admin/css/_form.scss */
+/* line 85, ../sass/admin/css/_form.scss */
 .x-form-trigger-wrap-focus .x-form-spinner-down {
     border-top: none !important;
 }
 
-/* line 94, ../sass/admin/css/_form.scss */
+/* line 92, ../sass/admin/css/_form.scss */
 .x-form-invalid .x-form-arrow-trigger,
 .x-form-invalid .x-form-date-trigger,
 .x-form-invalid .x-form-time-trigger {
@@ -663,7 +693,7 @@ td {
     border-color: #cc3300 #cc3300 #cc3300 !important;
 }
 
-/* line 100, ../sass/admin/css/_form.scss */
+/* line 98, ../sass/admin/css/_form.scss */
 .x-form-invalid-field, textarea.x-form-invalid-field {
     background-image: none !important;
 }
@@ -672,13 +702,13 @@ td {
  * Date picker
  * Currently it is not possible to override anything in the datepicker object.
  */
-/* line 108, ../sass/admin/css/_form.scss */
+/* line 106, ../sass/admin/css/_form.scss */
 .x-datepicker-header {
     background-color: #fff !important;
     background-image: none !important;
 }
 
-/* line 113, ../sass/admin/css/_form.scss */
+/* line 111, ../sass/admin/css/_form.scss */
 .x-datepicker-month button .x-btn-inner {
     color: #141414 !important;
 }
@@ -686,7 +716,7 @@ td {
 /**
  *  Inputs
  */
-/* line 120, ../sass/admin/css/_form.scss */
+/* line 118, ../sass/admin/css/_form.scss */
 .x-form-text, textarea.x-form-field {
     background: none #fff !important;
 }
@@ -694,7 +724,7 @@ td {
 /**
 * CodeMirror
 */
-/* line 127, ../sass/admin/css/_form.scss */
+/* line 125, ../sass/admin/css/_form.scss */
 .CodeMirror {
     border: 1px solid #aaaaaa;
 }
@@ -702,18 +732,18 @@ td {
 /**
 * Content Manager Form Components
 */
-/* line 134, ../sass/admin/css/_form.scss */
+/* line 132, ../sass/admin/css/_form.scss */
 .admin-formitemset-block {
     border: 1px solid #eeeeee !important;
     border-radius: 3px;
 }
 
-/* line 139, ../sass/admin/css/_form.scss */
+/* line 137, ../sass/admin/css/_form.scss */
 .admin-formitemset-block .header {
     border-bottom: 1px solid #eeeeee;
 }
 
-/* line 143, ../sass/admin/css/_form.scss */
+/* line 141, ../sass/admin/css/_form.scss */
 .admin-text-button {
     color: #0070DE;
     text-decoration: underline;
@@ -1531,6 +1561,25 @@ div.x-mask {
     top: -2px;
     font-size: 11px;
     font-style: normal;
+}
+
+/* line 1, ../sass/admin/css/_server-status-error-box.scss */
+.admin-server-status-error-box {
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    color: #fff;
+    font-weight: bold;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* line 10, ../sass/admin/css/_server-status-error-box.scss */
+.admin-server-status-error-box div {
+    width: 50%;
+    margin: 0px auto;
+    background-color: #f00;
+    padding: 10px 0;
 }
 
 /**

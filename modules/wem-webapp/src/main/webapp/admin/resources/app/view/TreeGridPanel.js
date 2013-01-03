@@ -14,6 +14,7 @@ Ext.define('Admin.view.TreeGridPanel', {
     gridConf: {},
 
     keyField: 'key',
+    typeField: 'type',
 
     initComponent: function () {
         var me = this;
@@ -69,13 +70,6 @@ Ext.define('Admin.view.TreeGridPanel', {
 
         this.items = [treePanel, gridPanel];
         this.callParent(arguments);
-        var treeStore = this.down('#tree').store;
-        me.mon(treeStore, 'beforeappend', function (parentNode, node, opts) {
-            var iconCls = me.resolveIconClass(node);
-            if (iconCls) {
-                node.set('iconCls', iconCls);
-            }
-        });
 
         var grid = this.down('#grid');
         grid.addDocked({
@@ -99,11 +93,11 @@ Ext.define('Admin.view.TreeGridPanel', {
     },
 
     resolveIconClass: function (node) {
-        var me = this;
-        var iconCls = node.get('iconCls');
-        var nodeType = node.get('type');
-        if (Ext.isEmpty(iconCls) && me.iconClasses && me.iconClasses[nodeType]) {
-            iconCls += " " + me.iconClasses[nodeType];
+        var iconCls = '';
+        var nodeType = node.get(this.typeField);
+        var typeCls = nodeType && this.iconClasses && this.iconClasses[nodeType.toLowerCase()];
+        if (typeCls) {
+            iconCls = typeCls;
         }
         return iconCls;
     },
