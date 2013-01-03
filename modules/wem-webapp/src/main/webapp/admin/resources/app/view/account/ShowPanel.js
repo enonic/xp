@@ -20,7 +20,7 @@ Ext.define('Admin.view.account.ShowPanel', {
             {
                 region: 'center',
                 xtype: 'accountGrid',
-                flex: 2
+                flex: 1
             },
             {
                 region: 'south',

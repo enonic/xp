@@ -12,7 +12,7 @@ Ext.define('Admin.view.userstore.MainPanel', {
                 region: 'center',
                 id: 'userstoreGridID',
                 xtype: 'userstoreGrid',
-                flex: 2
+                flex: 1
             },
             {
                 region: 'south',
