@@ -100,8 +100,8 @@ Ext.define('Admin.view.FilterPanel', {
 
         if (this.includeSearch) {
 
-            this.searchField = Ext.create('Ext.form.field.Trigger', {
-                xtype: 'trigger',
+            this.searchField = Ext.create('Ext.form.field.Text', {
+                xtype: 'textfield',
                 cls: 'admin-search-trigger',
                 enableKeyEvents: true,
                 bubbleEvents: ['specialkey'],
