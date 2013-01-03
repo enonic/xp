@@ -4,20 +4,23 @@ Ext.define('Admin.controller.HomeController', {
     stores: [],
     models: [],
     views: [
-        'Admin.view.HomeBackgroundImage'
+        'Admin.view.HomeBackgroundImage',
+        'Admin.view.HomeLoginPanel',
+        'Admin.view.HomeVersionInfo'
     ],
 
     init: function () {
         this.control({
             '#mainViewport': {
-                afterrender: this.initLogin
+                afterrender: this.onAfterRender
             }
         });
     },
 
-    initLogin: function () {
+    onAfterRender: function () {
         Ext.create('Admin.view.HomeBackgroundImage');
-        console.log('init login');
+        Ext.create('Admin.view.HomeVersionInfo');
+        Ext.create('Admin.view.HomeLoginPanel');
     }
 
 });
