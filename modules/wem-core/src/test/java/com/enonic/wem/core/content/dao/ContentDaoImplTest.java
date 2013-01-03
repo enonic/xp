@@ -129,7 +129,7 @@ public class ContentDaoImplTest
         updateContent.setData( "myData", "changed value" );
 
         // exercise
-        contentDao.updateContent( updateContent, session );
+        contentDao.updateContent( updateContent, true, session );
 
         // verify
         assertNotNull( session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH + "myContent" ) );

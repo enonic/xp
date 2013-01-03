@@ -38,11 +38,11 @@ public class ContentDaoImpl
     }
 
     @Override
-    public void updateContent( final Content content, final Session session )
+    public void updateContent( final Content content, final boolean createNewVersion, final Session session )
     {
         try
         {
-            new UpdateContentDaoHandler( session ).handle( content );
+            new UpdateContentDaoHandler( session ).handle( content, createNewVersion );
         }
         catch ( RepositoryException e )
         {

@@ -16,7 +16,7 @@ final class UpdateContentDaoHandler
         super( session );
     }
 
-    void handle( Content content )
+    void handle( Content content, final boolean createNewVersion )
         throws RepositoryException
     {
         final Node contentNode = doGetContentNode( session, content.getPath() );
@@ -25,5 +25,11 @@ final class UpdateContentDaoHandler
             throw new ContentNotFoundException( content.getPath() );
         }
         contentJcrMapper.toJcr( content, contentNode );
+
+        if ( createNewVersion )
+        {
+            final Node contentVersionHistoryParent = getContentVersionHistory( content, contentNode );
+            addContentVersion( content, contentVersionHistoryParent );
+        }
     }
 }

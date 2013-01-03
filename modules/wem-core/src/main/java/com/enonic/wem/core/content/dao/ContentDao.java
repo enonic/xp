@@ -17,7 +17,7 @@ public interface ContentDao
 {
     public ContentId createContent( Content content, Session session );
 
-    public void updateContent( Content content, Session session );
+    public void updateContent( Content content, boolean createNewVersion, Session session );
 
     public void deleteContent( ContentPath contentPath, Session session );
 

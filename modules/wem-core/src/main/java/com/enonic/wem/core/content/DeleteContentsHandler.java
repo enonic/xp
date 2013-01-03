@@ -62,7 +62,7 @@ public class DeleteContentsHandler
         }
         else if ( contentSelector instanceof ContentId )
         {
-//            contentDao.deleteContent( (ContentId) contentSelector, session );
+            contentDao.deleteContent( (ContentId) contentSelector, session );
         }
         else
         {

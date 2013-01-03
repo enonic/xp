@@ -14,10 +14,14 @@ import org.apache.commons.lang.StringUtils;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.core.jcr.JcrConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENTS_PATH;
+import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_NEXT_VERSION_PROPERTY;
+import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_VERSION_HISTORY_PATH;
+import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_VERSION_PREFIX;
 
 abstract class AbstractContentDaoHandler
 {
@@ -119,6 +123,32 @@ abstract class AbstractContentDaoHandler
     {
         final String relativePathToContent = StringUtils.removeStart( contentPath.toString(), "/" );
         return CONTENTS_PATH + relativePathToContent;
+    }
+
+    protected Node getContentVersionHistory( final Content content, final Node contentNode )
+        throws RepositoryException
+    {
+        final Node parent = contentNode.getParent();
+        final String parentPath = CONTENT_VERSION_HISTORY_PATH + StringUtils.substringAfter( parent.getPath(), CONTENTS_PATH );
+        return session.getNode( "/" + parentPath ).getNode( content.getName() );
+    }
+
+    protected Node addContentVersion( final Content content, final Node contentVersionParent )
+        throws RepositoryException
+    {
+        final long versionId = getNextContentVersion( contentVersionParent );
+        final String nodeVersionName = CONTENT_VERSION_PREFIX + versionId;
+        final Node contentVersionNode = contentVersionParent.addNode( nodeVersionName, JcrConstants.CONTENT_TYPE );
+        contentJcrMapper.toJcr( content, contentVersionNode );
+        return contentVersionNode;
+    }
+
+    private long getNextContentVersion( final Node contentVersionParent )
+        throws RepositoryException
+    {
+        final long versionNumber = JcrHelper.getPropertyLong( contentVersionParent, CONTENT_NEXT_VERSION_PROPERTY, 0l );
+        contentVersionParent.setProperty( CONTENT_NEXT_VERSION_PROPERTY, versionNumber + 1 );
+        return versionNumber;
     }
 
     class ContentAndNode
