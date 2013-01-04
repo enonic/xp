@@ -16,7 +16,7 @@
   <name>Enonic WEM Core</name>
 
   <properties>
-    <oak.version>0.6-20130102</oak.version>
+    <oak.version>0.6-20130104</oak.version>
   </properties>
 
   <dependencies>
