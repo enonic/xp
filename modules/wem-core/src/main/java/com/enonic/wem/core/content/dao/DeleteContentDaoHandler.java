@@ -10,6 +10,10 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.exception.ContentNotFoundException;
 import com.enonic.wem.api.exception.UnableToDeleteContentException;
 
+import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENTS_PATH;
+import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_VERSION_HISTORY_PATH;
+import static org.apache.commons.lang.StringUtils.substringAfter;
+
 final class DeleteContentDaoHandler
     extends AbstractContentDaoHandler
 {
@@ -32,6 +36,7 @@ final class DeleteContentDaoHandler
             throw new UnableToDeleteContentException( pathToContent, "Content has child content." );
         }
 
+        deleteContentVersions( contentNode );
         contentNode.remove();
     }
 
@@ -49,6 +54,18 @@ final class DeleteContentDaoHandler
             throw new UnableToDeleteContentException( contentId, "Content has child content." );
         }
 
+        deleteContentVersions( contentNode );
         contentNode.remove();
+    }
+
+    private void deleteContentVersions( final Node contentNode )
+        throws RepositoryException
+    {
+        final String contentVersionPath = "/" + CONTENT_VERSION_HISTORY_PATH + substringAfter( contentNode.getPath(), CONTENTS_PATH );
+        if ( session.itemExists( contentVersionPath ) )
+        {
+            final Node contentVersionHistoryNode = session.getNode( contentVersionPath );
+            contentVersionHistoryNode.remove();
+        }
     }
 }

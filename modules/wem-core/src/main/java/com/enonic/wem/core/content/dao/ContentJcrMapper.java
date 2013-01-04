@@ -11,28 +11,32 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.core.content.data.ContentDataJsonSerializer;
 
 import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENTS_PATH;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
+import static com.enonic.wem.core.jcr.JcrHelper.getPropertyLong;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyString;
 import static com.enonic.wem.core.jcr.JcrHelper.setPropertyDateTime;
 
 final class ContentJcrMapper
 {
-    private static final String TYPE = "type";
+    static final String TYPE = "type";
 
-    private static final String DATA = "data";
+    static final String DATA = "data";
 
-    private static final String CREATED_TIME = "createdTime";
+    static final String CREATED_TIME = "createdTime";
 
-    private static final String MODIFIED_TIME = "modifiedTime";
+    static final String MODIFIED_TIME = "modifiedTime";
 
-    private static final String MODIFIER = "modifier";
+    static final String MODIFIER = "modifier";
 
-    private static final String OWNER = "owner";
+    static final String OWNER = "owner";
 
-    private static final String DISPLAY_NAME = "displayName";
+    static final String DISPLAY_NAME = "displayName";
+
+    static final String VERSION_ID = "versionId";
 
     private ContentDataJsonSerializer contentDataSerializerJson = new ContentDataJsonSerializer();
 
@@ -55,6 +59,7 @@ final class ContentJcrMapper
         contentNode.setProperty( MODIFIER, content.getModifier() == null ? null : content.getModifier().toString() );
         contentNode.setProperty( OWNER, content.getOwner() == null ? null : content.getOwner().toString() );
         contentNode.setProperty( DISPLAY_NAME, content.getDisplayName() );
+        contentNode.setProperty( VERSION_ID, content.getVersionId().id() );
     }
 
     void toContent( final Node contentNode, final Content.Builder contentBuilder )
@@ -83,6 +88,10 @@ final class ContentJcrMapper
         }
         contentBuilder.id( ContentIdImpl.from( contentNode ) );
         contentBuilder.path( getPathFromNode( contentNode ) );
+        if ( contentNode.hasProperty( VERSION_ID ) )
+        {
+            contentBuilder.version( ContentVersionId.of( getPropertyLong( contentNode, VERSION_ID ) ) );
+        }
     }
 
     private ContentPath getPathFromNode( final Node contentNode )

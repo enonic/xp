@@ -22,7 +22,7 @@ Ext.define('Admin.view.contentManager.ShowPanel', {
                 xtype: 'contentTreeGridPanel',
                 region: 'center',
                 itemId: 'contentList',
-                flex: 2
+                flex: 1
             },
             {
                 region: 'south',

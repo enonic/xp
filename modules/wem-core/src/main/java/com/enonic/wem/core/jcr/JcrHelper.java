@@ -141,6 +141,19 @@ public abstract class JcrHelper
         return getPropertyBoolean( node, propertyName, null );
     }
 
+    public static Long getPropertyLong( final Node node, final String propertyName, final Long defaultValue )
+        throws RepositoryException
+    {
+        Property property = getInternalProperty( node, propertyName );
+        return property == null ? defaultValue : property.getLong();
+    }
+
+    public static Long getPropertyLong( final Node node, final String propertyName )
+        throws RepositoryException
+    {
+        return getPropertyLong( node, propertyName, null );
+    }
+
     public static DateTime getPropertyDateTime( final Node node, final String propertyName )
         throws RepositoryException
     {

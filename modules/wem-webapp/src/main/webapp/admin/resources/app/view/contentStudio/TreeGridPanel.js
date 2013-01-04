@@ -10,12 +10,16 @@ Ext.define('Admin.view.contentStudio.TreeGridPanel', {
         }
     ],
 
+    typeField: 'qualifiedName',
     iconClasses: {
-        form: 'icon-form-32',
-        folder: 'icon-folder-32',
-        media: 'icon-media-32',
-        shortcut: 'icon-shortcut-32',
-        struct: 'icon-struct-32'
+        "system:content": 'icon-icomoon-content-32',
+        "system:folder": 'icon-icomoon-folder-32',
+        "system:file": 'icon-icomoon-file-32',
+        "system:page": 'icon-icomoon-page-32',
+        "system:space": 'icon-icomoon-space-32',
+        "system:shortcut": 'icon-icomoon-shortcut-32',
+        "system:structured": 'icon-icomoon-structured-32',
+        "system:unstructured": 'icon-icomoon-unstructured-32'
     },
 
     initComponent: function () {
@@ -24,7 +28,8 @@ Ext.define('Admin.view.contentStudio.TreeGridPanel', {
                 header: 'Name',
                 dataIndex: 'name',
                 flex: 1,
-                renderer: this.nameRenderer
+                renderer: this.nameRenderer,
+                scope: this
             },
             {
                 header: 'Last Modified',
@@ -37,8 +42,9 @@ Ext.define('Admin.view.contentStudio.TreeGridPanel', {
 
     nameRenderer: function (value, p, record) {
         var contentType = record.data;
-        var icon = contentType.icon === '' ? 'resources/images/icons/32x32/cubes.png' : contentType.icon;
-        return Ext.String.format(Templates.contentStudio.gridPanelRenderer, icon, contentType.name, contentType.qualifiedName);
+        var activeListType = this.getActiveList().itemId;
+        return Ext.String.format(Templates.contentStudio.treeGridPanelNameRenderer, activeListType, this.resolveIconClass(record),
+            contentType.name, contentType.qualifiedName);
     },
 
     prettyDateRenderer: function (value, p, record) {

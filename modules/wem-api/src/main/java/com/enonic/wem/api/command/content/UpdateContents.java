@@ -17,6 +17,13 @@ public final class UpdateContents
 
     private UserKey modifier;
 
+    private boolean createNewVersion;
+
+    public UpdateContents()
+    {
+        this.createNewVersion = true;
+    }
+
     public ContentSelectors getSelectors()
     {
         return this.selectors;
@@ -30,6 +37,11 @@ public final class UpdateContents
     public UserKey getModifier()
     {
         return modifier;
+    }
+
+    public boolean isCreateNewVersion()
+    {
+        return createNewVersion;
     }
 
     public UpdateContents selectors( final ContentSelectors selectors )
@@ -47,6 +59,12 @@ public final class UpdateContents
     public UpdateContents modifier( final UserKey modifier )
     {
         this.modifier = modifier;
+        return this;
+    }
+
+    public UpdateContents createNewVersion( final boolean createNewVersion )
+    {
+        this.createNewVersion = createNewVersion;
         return this;
     }
 

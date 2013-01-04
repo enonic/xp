@@ -15,6 +15,7 @@ import com.enonic.wem.api.content.data.MockBlobKeyResolver;
 import com.enonic.wem.api.content.datatype.DataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.versioning.ContentVersionId;
 
 public final class Content
 {
@@ -36,6 +37,8 @@ public final class Content
 
     private final UserKey modifier;
 
+    private final ContentVersionId versionId;
+
     private Content( final Builder builder )
     {
         this.displayName = builder.displayName;
@@ -47,6 +50,7 @@ public final class Content
         this.modifiedTime = builder.modifiedTime;
         this.owner = builder.owner;
         this.modifier = builder.modifier;
+        this.versionId = builder.versionId;
     }
 
     public ContentPath getPath()
@@ -104,6 +108,11 @@ public final class Content
     public ContentId getId()
     {
         return id;
+    }
+
+    public ContentVersionId getVersionId()
+    {
+        return versionId;
     }
 
     public void setData( final String path, final String value )
@@ -187,6 +196,8 @@ public final class Content
 
         private UserKey modifier;
 
+        private ContentVersionId versionId;
+
         public Builder()
         {
             this.contentId = null;
@@ -198,6 +209,7 @@ public final class Content
             this.createdTime = null;
             this.modifiedTime = null;
             this.modifier = null;
+            this.versionId = null;
         }
 
         public Builder( final Content content )
@@ -211,6 +223,7 @@ public final class Content
             this.createdTime = content.createdTime;
             this.modifiedTime = content.modifiedTime;
             this.modifier = content.modifier;
+            this.versionId = content.versionId;
         }
 
         public Builder path( final ContentPath path )
@@ -277,12 +290,22 @@ public final class Content
             return this;
         }
 
+        public Builder version( final ContentVersionId versionId )
+        {
+            this.versionId = versionId;
+            return this;
+        }
+
         public Content build()
         {
             Preconditions.checkNotNull( path, "path is mandatory for a content" );
             if ( type == null )
             {
                 type = QualifiedContentTypeName.unstructured();
+            }
+            if ( versionId == null )
+            {
+                versionId = ContentVersionId.initial();
             }
             return new Content( this );
         }

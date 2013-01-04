@@ -1,6 +1,8 @@
 package com.enonic.wem.core.content.dao;
 
 
+import java.util.List;
+
 import javax.jcr.Session;
 
 import com.enonic.wem.api.content.Content;
@@ -11,13 +13,14 @@ import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentTree;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.versioning.ContentVersion;
 
 public interface ContentDao
     extends ContentDaoConstants
 {
     public ContentId createContent( Content content, Session session );
 
-    public void updateContent( Content content, Session session );
+    public void updateContent( Content content, boolean createNewVersion, Session session );
 
     public void deleteContent( ContentPath contentPath, Session session );
 
@@ -28,6 +31,10 @@ public interface ContentDao
     public Content findContent( ContentPath contentPath, Session session );
 
     public Content findContent( ContentId contentId, Session session );
+
+    public List<ContentVersion> getContentVersions( ContentPath contentPath, Session session );
+
+    public List<ContentVersion> getContentVersions( ContentId contentId, Session session );
 
     public Contents findContents( ContentPaths contentPaths, Session session );
 

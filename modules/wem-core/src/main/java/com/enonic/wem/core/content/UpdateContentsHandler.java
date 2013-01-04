@@ -41,7 +41,7 @@ public class UpdateContentsHandler
                 contentToUpdate = newContent( modifiedContent ).
                     modifiedTime( timeService.getNowAsDateTime() ).
                     modifier( command.getModifier() ).build();
-                contentDao.updateContent( contentToUpdate, context.getJcrSession() );
+                contentDao.updateContent( contentToUpdate, command.isCreateNewVersion(), context.getJcrSession() );
                 context.getJcrSession().save();
             }
         }

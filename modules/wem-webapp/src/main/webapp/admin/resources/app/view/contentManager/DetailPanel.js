@@ -325,9 +325,9 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
             var singleData;
             if (Ext.isArray(this.data)) {
-                singleData = !Ext.isEmpty(this.data[0]) ? this.data[0].data : undefined;
+                singleData = this.data[0] && this.data[0].data ? this.data[0].data : this.data[0];
             } else {
-                singleData = this.data.data;
+                singleData = this.data.data || this.data;
             }
             if (singleData) {
                 //singleData.iconCls = this.resolveIconClass(singleData);
@@ -338,7 +338,8 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                 var livePreview = this.down('#livePreview');
                 this.getLayout().setActiveItem(livePreview);
 
-                livePreview.load(singleData.url);
+                //TODO update urls when they are ready
+                livePreview.load('/dev/live-edit/page/page.jsp');
 
             } else {
 

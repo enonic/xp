@@ -52,17 +52,17 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
         switch (mode) {
         case 0:
             // form
-            text = 'Form View';
+            text = 'Form Edit';
             cls = 'icon-keyboard-key-24';
             break;
         case 1:
             // split
-            text = 'Split View';
+            text = 'Split Edit';
             cls = 'icon-split-hor-24';
             break;
         case 2:
             // live
-            text = 'Live View';
+            text = 'Live Edit';
             cls = 'icon-monitor-24';
             break;
         }

@@ -29,6 +29,11 @@ Ext.define('Admin.controller.Controller', {
 
     getStartMenu: function () {
         return Ext.ComponentQuery.query('startMenu')[0];
+    },
+
+    getMainViewport: function () {
+        var parent = window.parent || window;
+        return parent.Ext.ComponentQuery.query('#mainViewport')[0];
     }
 
 });

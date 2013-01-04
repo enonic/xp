@@ -9,6 +9,18 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
     overflowX: 'hidden',
     overflowY: 'auto',
 
+    typeField: 'qualifiedName',
+    iconClasses: {
+        "system:content": 'icon-icomoon-content-128',
+        "system:folder": 'icon-icomoon-folder-128',
+        "system:file": 'icon-icomoon-file-128',
+        "system:page": 'icon-icomoon-page-128',
+        "system:space": 'icon-icomoon-space-128',
+        "system:shortcut": 'icon-icomoon-shortcut-128',
+        "system:structured": 'icon-icomoon-structured-128',
+        "system:unstructured": 'icon-icomoon-unstructured-128'
+    },
+
     initComponent: function () {
 
         this.activeItem = this.resolveActiveItem(this.data);
@@ -24,13 +36,29 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
         this.callParent(arguments);
     },
 
+    resolveIconClass: function (node) {
+        var iconCls = '';
+        var nodeType = node.get(this.typeField);
+        var typeCls = nodeType && this.iconClasses && this.iconClasses[nodeType.toLowerCase()];
+        if (typeCls) {
+            iconCls = typeCls;
+        }
+        return iconCls;
+    },
+
     createSingleSelection: function (data) {
 
-        var singleData = {};
-        if (Ext.isArray(data)) {
-            singleData = !Ext.isEmpty(data[0]) ? data[0].data : undefined;
-        } else if (Ext.isObject(data)) {
-            singleData = data.raw || data;
+        var singleData;
+        if (Ext.isArray(data) && data.length > 0) {
+            singleData = data[0];
+        } else {
+            singleData = data;
+        }
+        if (singleData) {
+            if (Ext.isEmpty(singleData.iconCls)) {
+                singleData.set('iconCls', this.resolveIconClass(singleData));
+            }
+            singleData = singleData.data || singleData;
         }
 
         return {
@@ -86,7 +114,7 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
                                             readOnly: true,
                                             anchor: '100%',
                                             itemId: 'configurationArea',
-                                            value: singleData.configXml
+                                            value: singleData ? singleData.configXml : undefined
                                         }
                                     ]
                                 }
@@ -137,9 +165,15 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
 
             var singleData;
             if (Ext.isArray(this.data)) {
-                singleData = !Ext.isEmpty(this.data[0]) ? this.data[0].data : undefined;
+                singleData = this.data[0];
             } else {
-                singleData = this.data.data;
+                singleData = this.data;
+            }
+            if (singleData) {
+                if (Ext.isEmpty(singleData.iconCls)) {
+                    singleData.set('iconCls', this.resolveIconClass(singleData));
+                }
+                singleData = singleData.data || singleData;
             }
 
             var previewHeader = this.down('#previewHeader');

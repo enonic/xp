@@ -37,4 +37,10 @@ public final class ContentCommands
     {
         return new ValidateContentData();
     }
+
+    public GetContentVersionHistory getVersionHistory()
+    {
+        return new GetContentVersionHistory();
+    }
+
 }

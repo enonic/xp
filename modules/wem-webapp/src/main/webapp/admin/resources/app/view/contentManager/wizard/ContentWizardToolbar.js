@@ -63,8 +63,9 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
             '->',
 
             {
-                text: 'Form View',
-                action: 'cycleMode'
+                text: 'Form Edit',
+                action: 'cycleMode',
+                iconCls: 'icon-keyboard-key-24'
             },
 
             {
