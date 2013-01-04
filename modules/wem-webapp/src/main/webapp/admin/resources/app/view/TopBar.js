@@ -251,7 +251,19 @@ Ext.define('Admin.view.TopBar', {
     },
 
     getMenuItemDescription: function (card) {
-        return card.data ? card.data.path || card.data.qualifiedName || card.data.displayName : card.title
+        var desc;
+        if (card.data) {
+            var data = card.data;
+            desc = data.path || data.qualifiedName || data.displayName;
+            if (!desc && data.content) {
+                var content = data.content;
+                desc = content.path || content.qualifiedName || content.displayName;
+            }
+        }
+        if (!desc) {
+            desc = card.title;
+        }
+        return desc;
     },
 
 
@@ -260,7 +272,7 @@ Ext.define('Admin.view.TopBar', {
     setTitle: function (text) {
         // highlight the last path fragment
         var title = text;
-        var lastSlash = text.lastIndexOf('/');
+        var lastSlash = !Ext.isEmpty(text) ? text.lastIndexOf('/') : -1;
         if (lastSlash > -1) {
             title = text.substring(0, lastSlash + 1) + '<strong>' + text.substring(lastSlash + 1) + '</strong>';
         }

@@ -1,4 +1,4 @@
-// This file was auto-generated on 2013-01-03 06:55:57 VET
+// This file was auto-generated on 2013-01-04 03:03:47 VET
 
 if (!Templates) {
     var Templates = {};
@@ -432,14 +432,6 @@ Templates.contentManager = {
                   '</div>' +
                   '</div>',
 
-    gridPanelNameRenderer: '<div class="admin-grid-thumbnail">' +
-                           '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" class="{0}"/>' +
-                           '</div>' +
-                           '<div class="admin-grid-description">' +
-                           '<h6>{1}</h6>' +
-                           '<p>{2}</p>' +
-                           '</div>',
-
     previewCommonInfo: '<div class="container">' +
                        '<table>' +
                        '<thead>' +
@@ -493,7 +485,15 @@ Templates.contentManager = {
                            '<a id="remove-from-selection-button-{data.key}" class="remove-selection" href="javascript:;"></a>' +
                            '</div>' +
                            '</div>' +
-                           '</tpl>'
+                           '</tpl>',
+
+    treeGridPanelNameRenderer: '<div class="admin-{0}-thumbnail">' +
+                               '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" class="{1}"/>' +
+                               '</div>' +
+                               '<div class="admin-{0}-description">' +
+                               '<h6>{2}</h6>' +
+                               '<p>{3}</p>' +
+                               '</div>'
 
 };
 

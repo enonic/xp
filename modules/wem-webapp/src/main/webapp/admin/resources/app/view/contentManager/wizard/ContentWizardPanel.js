@@ -124,9 +124,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
 
         var splitter = {
             itemId: 'splitter',
-            xtype: 'component',
-            width: 5,
-            style: 'background-color: #DFE8F6;'
+            xtype: 'splitter'
         };
 
         this.items = [wizardPanel, splitter, liveEdit];
@@ -196,8 +194,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             break;
         case 1:
             // split
-            var url = this.data ? this.data.get('url') : '';
-            livePreview.load(url, true);
+            //TODO update urls when they are ready
+            livePreview.load('/dev/live-edit/page/page.jsp');
             splitter.show();
             livePreview.show();
             break;

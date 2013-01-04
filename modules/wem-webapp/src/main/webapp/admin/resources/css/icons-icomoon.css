@@ -59,9 +59,10 @@
 }
 
 .icon-icomoon-structured-128 {
-    background: transparent url("../images/icons/icoMoon/128x128/paragraph-left.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/icoMoon/128x128/paragraph-justify.png") 0 0 no-repeat;
 }
 
 .icon-icomoon-unstructured-128 {
-    background: transparent url("../images/icons/icoMoon/128x128/paragraph-justify.png") 0 0 no-repeat;
+    background: transparent url("../images/icons/icoMoon/128x128/paragraph-left.png") 0 0 no-repeat;
 }
+
