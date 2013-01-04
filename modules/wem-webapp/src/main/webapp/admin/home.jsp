@@ -10,8 +10,18 @@
   <link rel="stylesheet" type="text/css" href="_app/main/css/main.css">
 
   <style type="text/css">
+    #admin-home-background-container a {
+      color: #fff;
+    }
+
+    #admin-home-background-container h3,
+    #admin-home-installation-info {
+      font-size: 24px;
+      color: #fff;
+    }
+
     #admin-home-background-container {
-      position: absolute;
+      position: fixed;
       left: 0;
       top: 0;
       right: 0;
@@ -24,6 +34,9 @@
       -o-background-size: cover;
       background-size: cover;
     }
+
+
+    /** Login form */
 
     #admin-home-info-container {
       position: absolute;
@@ -47,31 +60,78 @@
       width: 295px;
       padding: 240px 45px 0 45px;
       background: rgba(0, 0, 0, 0.2);
-      top: 0 !important;
-      left: 55% !important;
-      bottom: 0 !important;
+      top: 0;
+      left: 590px;
+      bottom: 0;
       color: #fff !important;
     }
 
-    #admin-home-application-selector-panel {
+    #admin-home-login-panel-licensed {
+      text-align: center;
+      padding-top: 50px;
+    }
+
+    #admin-home-links-container {
       position: absolute;
-      width: 295px;
-      padding: 220px 45px 0 45px;
-      background: rgba(0, 0, 0, 0.3);
-      top: 0 !important;
-      right: -295px !important;
-      bottom: 0 !important;
-      color: #fff !important;
-
+      text-align: center;
+      bottom: 30px;
     }
 
-    #admin-home-background-container h3,
-    #admin-home-installation-info {
-      font-size: 24px;
+    /** App selector */
+
+    #admin-home-app-selector-container {
+      -moz-transition: all .2s ease-out;
+      -moz-transform: scale(.9);
+      opacity: 0;
       color: #fff;
+      left: 110px;
+      position: absolute;
+      top: 235px;
+      width: 480px;
     }
 
+    .admin-home-app-tile {
+      -moz-transition: all 0.1s linear;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      background-color: #1c59af;
+      float: left;
+      width: 110px;
+      height: 100px;
+      margin: 0 10px 10px 0;
+    }
+    .admin-home-app-tile > .img-container  {
+      position: absolute;
+      width: 100%;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .admin-home-app-tile > .img-container > img  {
+      width: 48px;
+      height: 48px;
+    }
+    .admin-home-app-tile > .text-container {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+    }
 
+    .admin-home-app-tile:hover {
+      background-color: #012056;
+    }
+
+    /*
+    .admin-home-app-tile:active {
+      -moz-transform: scale(.97);
+    }
+    */
+
+    #admin-home-app-selector-container.fade-in {
+      opacity: 1 !important;
+      -moz-transform: scale(1) !important;
+    }
   </style>
 
   <!-- Ext JS -->
@@ -101,7 +161,7 @@
 
 </head>
 <body>
-<div id="admin-home-background-container" style="background-image: url(resources/images/mont_blanc.jpg)">
+<div id="admin-home-background-container" style="background-image: url(resources/images/710948main_typhoon_bopha_1600_1600-1200.jpg)">
 
   <div id="admin-home-info-container">
     <div id="admin-home-installation-info">| Production</div>
@@ -109,7 +169,58 @@
   </div>
 
   <div id="admin-home-login-panel">
+    <div id="admin-home-login-panel-form">
+      <div id="admin-home-login-panel-form-inner"></div>
+      <div id="admin-home-login-panel-licensed">Licensed to Large Customer</div>
+    </div>
+    <div id="admin-home-links-container">
+      <a href="http://www.enonic.com/community">Community</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.enonic.com/docs">Documentation</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://enonic.com/en/home/enonic-cms">About</a>
+    </div>
+  </div>
 
+  <div id="admin-home-app-selector-container">
+    <div class="admin-home-app-tile">
+      <div class="img-container">
+        <img src="resources/images/icons/metro/48x48/data.png"/>
+      </div>
+      <div class="text-container">Content Manager</div>
+    </div>
+    <div class="admin-home-app-tile">
+      <div class="img-container">
+        <img src="resources/images/icons/metro/48x48/data.png"/>
+      </div>
+      <div class="text-container">Content Manager</div>
+    </div>
+    <div class="admin-home-app-tile">
+      <div class="img-container">
+        <img src="resources/images/icons/metro/48x48/data.png"/>
+      </div>
+      <div class="text-container">Content Manager</div>
+    </div>
+    <div class="admin-home-app-tile">
+      <div class="img-container">
+        <img src="resources/images/icons/metro/48x48/data.png"/>
+      </div>
+      <div class="text-container">Content Manager</div>
+    </div>
+    <div class="admin-home-app-tile">
+      <div class="img-container">
+        <img src="resources/images/icons/metro/48x48/data.png"/>
+      </div>
+      <div class="text-container">Content Manager</div>
+    </div>
+    <div class="admin-home-app-tile">
+      <div class="img-container">
+        <img src="resources/images/icons/metro/48x48/data.png"/>
+      </div>
+      <div class="text-container">Content Manager</div>
+    </div>
+    <div class="admin-home-app-tile">
+      <div class="img-container">
+        <img src="resources/images/icons/metro/48x48/data.png"/>
+      </div>
+      <div class="text-container">Content Manager</div>
+    </div>
   </div>
 
 </div>
@@ -131,8 +242,7 @@
       frame: false,
       border: false,
       bodyStyle: 'background:transparent;',
-
-      renderTo: 'admin-home-login-panel',
+      renderTo: 'admin-home-login-panel-form-inner',
       items: [
         {
           xtype: 'component',
@@ -174,7 +284,7 @@
           name: 'password',
           allowBlank: false,
           inputType: 'password',
-          emptyText: 'Password',
+          emptyText: 'password',
           width: 200,
           tabIndex: 3
         },
@@ -183,28 +293,29 @@
           formBind: true,
           disabled: true,
           colspan: 2,
+          style:'float:right;margin-right:5px',
           text: 'Log In',
           tabIndex: 4,
           handler: function (button) {
-            var loginPanel = Ext.get('admin-home-login-panel');
-            loginPanel.on('click', function () {
-              loginPanel.animate({
-                duration: 700,
-                to: {
-                  opacity: 0
+            var loginForm = Ext.get('admin-home-login-panel-form');
+            var appSelector = Ext.get('admin-home-app-selector-container');
+            loginForm.animate({
+              duration: 500,
+              to: {
+                opacity: 0
+              },
+              listeners: {
+                afteranimate: function () {
+                  loginForm.hide();
+                  appSelector.addCls('fade-in');
                 }
-              })
+              }
             });
-
           }
         }
       ]
     });
 
-
-    /*
-
-     */
   });
 
 </script>

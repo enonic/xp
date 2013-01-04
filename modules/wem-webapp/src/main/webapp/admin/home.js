@@ -12,7 +12,6 @@ Ext.onReady(function () {
         ],
 
         controllers: [
-            'Admin.controller.HomeController'
         ],
 
         launch: function () {
