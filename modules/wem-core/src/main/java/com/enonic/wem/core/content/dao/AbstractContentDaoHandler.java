@@ -15,13 +15,13 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.core.jcr.JcrConstants;
-import com.enonic.wem.core.jcr.JcrHelper;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENTS_PATH;
-import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_NEXT_VERSION_PROPERTY;
 import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_VERSION_HISTORY_PATH;
 import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_VERSION_PREFIX;
+import static com.enonic.wem.core.jcr.JcrHelper.getNodeOrNull;
+import static org.apache.commons.lang.StringUtils.substringAfter;
 
 abstract class AbstractContentDaoHandler
 {
@@ -42,7 +42,7 @@ abstract class AbstractContentDaoHandler
         {
             final Node contentNode = nodeIterator.nextNode();
             final String jcrNodePath = contentNode.getPath();
-            final String contentPath = StringUtils.substringAfter( jcrNodePath, CONTENTS_PATH );
+            final String contentPath = substringAfter( jcrNodePath, CONTENTS_PATH );
             final Content.Builder contentBuilder = newContent().path( ContentPath.from( contentPath ) );
             contentJcrMapper.toContent( contentNode, contentBuilder );
             contentList.add( new ContentAndNode( contentBuilder.build(), contentNode ) );
@@ -54,7 +54,7 @@ abstract class AbstractContentDaoHandler
         throws RepositoryException
     {
         final Node rootNode = session.getRootNode();
-        final Node contentsNode = JcrHelper.getNodeOrNull( rootNode, CONTENTS_PATH );
+        final Node contentsNode = getNodeOrNull( rootNode, CONTENTS_PATH );
         return contentsNode.getNodes();
     }
 
@@ -73,7 +73,7 @@ abstract class AbstractContentDaoHandler
         }
         final String path = getNodePath( contentPath );
         final Node rootNode = session.getRootNode();
-        return JcrHelper.getNodeOrNull( rootNode, path );
+        return getNodeOrNull( rootNode, path );
     }
 
     protected final Node doGetContentNode( final Session session, final ContentId contentId )
@@ -125,30 +125,20 @@ abstract class AbstractContentDaoHandler
         return CONTENTS_PATH + relativePathToContent;
     }
 
-    protected Node getContentVersionHistory( final Content content, final Node contentNode )
+    protected Node getContentVersionHistoryNode( final Node contentNode )
         throws RepositoryException
     {
-        final Node parent = contentNode.getParent();
-        final String parentPath = CONTENT_VERSION_HISTORY_PATH + StringUtils.substringAfter( parent.getPath(), CONTENTS_PATH );
-        return session.getNode( "/" + parentPath ).getNode( content.getName() );
+        final String contentVersionPath = "/" + CONTENT_VERSION_HISTORY_PATH + substringAfter( contentNode.getPath(), CONTENTS_PATH );
+        return session.getNode( contentVersionPath );
     }
 
     protected Node addContentVersion( final Content content, final Node contentVersionParent )
         throws RepositoryException
     {
-        final long versionId = getNextContentVersion( contentVersionParent );
-        final String nodeVersionName = CONTENT_VERSION_PREFIX + versionId;
+        final String nodeVersionName = CONTENT_VERSION_PREFIX + content.getVersionId().id();
         final Node contentVersionNode = contentVersionParent.addNode( nodeVersionName, JcrConstants.CONTENT_TYPE );
         contentJcrMapper.toJcr( content, contentVersionNode );
         return contentVersionNode;
-    }
-
-    private long getNextContentVersion( final Node contentVersionParent )
-        throws RepositoryException
-    {
-        final long versionNumber = JcrHelper.getPropertyLong( contentVersionParent, CONTENT_NEXT_VERSION_PROPERTY, 0l );
-        contentVersionParent.setProperty( CONTENT_NEXT_VERSION_PROPERTY, versionNumber + 1 );
-        return versionNumber;
     }
 
     class ContentAndNode

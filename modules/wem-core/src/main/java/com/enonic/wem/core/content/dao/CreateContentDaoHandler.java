@@ -82,7 +82,7 @@ final class CreateContentDaoHandler
     {
         final String parentPath = CONTENT_VERSION_HISTORY_PATH + StringUtils.substringAfter( parentNode.getPath(), CONTENTS_PATH );
         final Node contentVersionNode = session.getNode( "/" + parentPath ).addNode( content.getName(), NT_UNSTRUCTURED );
-        contentVersionNode.setProperty( CONTENT_NEXT_VERSION_PROPERTY, 0 );
+        contentVersionNode.setProperty( CONTENT_NEXT_VERSION_PROPERTY, content.getVersionId().id() + 1 );
         return contentVersionNode;
     }
 }

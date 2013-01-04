@@ -1,6 +1,8 @@
 package com.enonic.wem.core.content.dao;
 
 
+import java.util.List;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -14,6 +16,7 @@ import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentTree;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.versioning.ContentVersion;
 
 
 /**
@@ -180,4 +183,29 @@ public class ContentDaoImpl
         }
     }
 
+    @Override
+    public List<ContentVersion> getContentVersions( final ContentPath contentPath, final Session session )
+    {
+        try
+        {
+            return new GetContentVersionsDaoHandler( session ).handle( contentPath );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    @Override
+    public List<ContentVersion> getContentVersions( final ContentId contentId, final Session session )
+    {
+        try
+        {
+            return new GetContentVersionsDaoHandler( session ).handle( contentId );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
 }
