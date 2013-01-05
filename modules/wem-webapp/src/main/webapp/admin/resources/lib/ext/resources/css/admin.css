@@ -1498,7 +1498,7 @@ div.x-mask {
 /* line 64, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .x-menu-body {
     background: #FFF !important;
-    padding: 10px 0 !important;
+    padding: 0 !important;
     border: 1px solid #ccc !important;
 }
 

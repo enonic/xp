@@ -231,10 +231,9 @@ Ext.define('Admin.view.TopBar', {
             hidden: cfg.hidden && !item.hiddenByLayout, // only hide if it wasn't hidden by the layout itself
             iconCls: cfg.iconCls,
             iconSrc: data.image_url,
-            width: 270,
             editing: cfg.editing || false,
-            text1: Ext.String.ellipsis(cfg.title || 'first line', 24),  // The length of 'Userstore Administrators'
-            text2: Ext.String.ellipsis(me.getMenuItemDescription(item), 34)
+            text1: Ext.String.ellipsis(cfg.title || 'first line', 26),
+            text2: Ext.String.ellipsis(me.getMenuItemDescription(item), 38)
         };
     },
 

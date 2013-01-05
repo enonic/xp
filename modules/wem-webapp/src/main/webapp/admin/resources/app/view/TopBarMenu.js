@@ -8,6 +8,9 @@ Ext.define('Admin.view.TopBarMenu', {
 
     showSeparator: false,
     styleHtmlContent: true,
+    overflowY: 'auto',
+    overflowX: 'hidden',
+    width: 300,
     layout: {
         type: 'vbox',
         align: 'stretchmax'
@@ -55,6 +58,9 @@ Ext.define('Admin.view.TopBarMenu', {
     tabPanel: undefined,
 
     initComponent: function () {
+
+        this.scrollState = { left: 0, top: 0 };
+
         this.callParent(arguments);
         this.on('closeMenuItem', this.onCloseMenuItem);
         this.on('resize', this.updatePosition);
@@ -121,6 +127,9 @@ Ext.define('Admin.view.TopBarMenu', {
         } else if (Ext.isObject(items)) {
             items = [].concat(items);
         }
+
+        this.saveScrollState();
+
         var editItems = [];
         var viewItems = [];
         var nonClosableItems = [];
@@ -144,6 +153,9 @@ Ext.define('Admin.view.TopBarMenu', {
             added = added.concat(this.down('#viewItems').add(viewItems));
         }
         this.updateTitles();
+
+        this.restoreScrollState();
+
         return added;
     },
 
@@ -180,6 +192,8 @@ Ext.define('Admin.view.TopBarMenu', {
             items = [].concat(items);
         }
 
+        this.saveScrollState();
+
         var editItems = this.down('#editItems');
         var viewItems = this.down('#viewItems');
         var nonClosableItems = this.down('#nonClosableItems');
@@ -194,6 +208,8 @@ Ext.define('Admin.view.TopBarMenu', {
         });
 
         this.updateTitles();
+
+        this.restoreScrollState();
     },
 
     updateTitles: function () {
@@ -209,5 +225,61 @@ Ext.define('Admin.view.TopBarMenu', {
     updatePosition: function (menu, width, height, oldWidth, oldHeight, opts) {
         this.el.move('r', ((oldWidth - width) / 2), false);
     },
+
+    show: function () {
+        var me = this,
+            parentEl, viewHeight;
+
+        me.maxWas = me.maxHeight;
+
+        // we need to get scope parent for height constraint
+        if (!me.rendered) {
+            me.doAutoRender();
+        }
+
+        // constrain the height to the current viewable area
+        if (me.floating) {
+            //if our reset css is scoped, there will be a x-reset wrapper on this menu which we need to skip
+            parentEl = Ext.fly(me.el.getScopeParent());
+            viewHeight = parentEl.getViewSize().height;
+            me.maxHeight = Math.min(me.maxWas || viewHeight - 50, viewHeight - 50);
+        }
+
+        me.callParent(arguments);
+        return me;
+    },
+
+    hide: function () {
+        var me = this;
+
+        me.callParent();
+
+        //return back original value to calculate new height on show
+        me.maxHeight = me.maxWas;
+    },
+
+    setVerticalPosition: function () {
+        // disable position change as we adjust menu height
+    },
+
+    saveScrollState: function () {
+        if (this.rendered && !this.hidden) {
+            var dom = this.body.dom,
+                state = this.scrollState;
+
+            state.left = dom.scrollLeft;
+            state.top = dom.scrollTop;
+        }
+    },
+
+    restoreScrollState: function () {
+        if (this.rendered && !this.hidden) {
+            var dom = this.body.dom,
+                state = this.scrollState;
+
+            dom.scrollLeft = state.left;
+            dom.scrollTop = state.top;
+        }
+    }
 
 });
