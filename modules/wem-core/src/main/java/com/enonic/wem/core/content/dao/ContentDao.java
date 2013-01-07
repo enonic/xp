@@ -14,35 +14,40 @@ import com.enonic.wem.api.content.ContentTree;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersion;
+import com.enonic.wem.api.content.versioning.ContentVersionId;
 
 public interface ContentDao
     extends ContentDaoConstants
 {
-    public ContentId createContent( Content content, Session session );
+    ContentId createContent( Content content, Session session );
 
-    public void updateContent( Content content, boolean createNewVersion, Session session );
+    void updateContent( Content content, boolean createNewVersion, Session session );
 
-    public void deleteContent( ContentPath contentPath, Session session );
+    void deleteContent( ContentPath contentPath, Session session );
 
-    public void deleteContent( ContentId contentId, Session session );
+    void deleteContent( ContentId contentId, Session session );
 
-    public void renameContent( ContentPath contentPath, String newName, Session session );
+    void renameContent( ContentPath contentPath, String newName, Session session );
 
-    public Content findContent( ContentPath contentPath, Session session );
+    Content findContent( ContentPath contentPath, Session session );
 
-    public Content findContent( ContentId contentId, Session session );
+    Content findContent( ContentId contentId, Session session );
 
-    public List<ContentVersion> getContentVersions( ContentPath contentPath, Session session );
+    List<ContentVersion> getContentVersions( ContentPath contentPath, Session session );
 
-    public List<ContentVersion> getContentVersions( ContentId contentId, Session session );
+    List<ContentVersion> getContentVersions( ContentId contentId, Session session );
 
-    public Contents findContents( ContentPaths contentPaths, Session session );
+    Contents findContents( ContentPaths contentPaths, Session session );
 
-    public Contents findContents( ContentIds contentIds, Session session );
+    Contents findContents( ContentIds contentIds, Session session );
 
-    public Contents findChildContent( ContentPath parentPath, Session session );
+    Contents findChildContent( ContentPath parentPath, Session session );
 
-    public ContentTree getContentTree( final Session session );
+    ContentTree getContentTree( final Session session );
 
-    public int countContentTypeUsage( QualifiedContentTypeName qualifiedContentTypeName, Session session );
+    int countContentTypeUsage( QualifiedContentTypeName qualifiedContentTypeName, Session session );
+
+    Content getContentVersion( ContentPath path, ContentVersionId versionId, Session session );
+
+    Content getContentVersion( ContentId contentId, ContentVersionId versionId, Session session );
 }

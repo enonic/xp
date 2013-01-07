@@ -40,7 +40,7 @@ final class FindContentDaoHandler
         return contentsBuilder.build();
     }
 
-    public Contents findContentsById( final ContentIds contentIds )
+    Contents findContentsById( final ContentIds contentIds )
         throws RepositoryException
     {
         final Contents.Builder contentsBuilder = Contents.builder();
@@ -55,7 +55,7 @@ final class FindContentDaoHandler
         return contentsBuilder.build();
     }
 
-    public Content findContentById( final ContentId contentId )
+    Content findContentById( final ContentId contentId )
         throws RepositoryException
     {
         return doFindContent( contentId, session );

@@ -17,6 +17,7 @@ import com.enonic.wem.api.content.ContentTree;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersion;
+import com.enonic.wem.api.content.versioning.ContentVersionId;
 
 
 /**
@@ -188,7 +189,7 @@ public class ContentDaoImpl
     {
         try
         {
-            return new GetContentVersionsDaoHandler( session ).handle( contentPath );
+            return new GetContentVersionHistoryDaoHandler( session ).handle( contentPath );
         }
         catch ( RepositoryException e )
         {
@@ -201,7 +202,33 @@ public class ContentDaoImpl
     {
         try
         {
-            return new GetContentVersionsDaoHandler( session ).handle( contentId );
+            return new GetContentVersionHistoryDaoHandler( session ).handle( contentId );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    @Override
+    public Content getContentVersion( final ContentId contentId, final ContentVersionId versionId, final Session session )
+    {
+        try
+        {
+            return new GetContentVersionDaoHandler( session ).handle( contentId, versionId );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    @Override
+    public Content getContentVersion( final ContentPath path, final ContentVersionId versionId, final Session session )
+    {
+        try
+        {
+            return new GetContentVersionDaoHandler( session ).handle( path, versionId );
         }
         catch ( RepositoryException e )
         {

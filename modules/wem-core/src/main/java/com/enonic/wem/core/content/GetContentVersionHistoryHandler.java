@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.jcr.Session;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.primitives.Longs;
@@ -18,16 +17,12 @@ import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.api.content.versioning.ContentVersion;
 import com.enonic.wem.api.content.versioning.ContentVersionHistory;
 import com.enonic.wem.core.command.CommandContext;
-import com.enonic.wem.core.content.dao.ContentDao;
 
 @Component
 public class GetContentVersionHistoryHandler
     extends AbstractContentHandler<GetContentVersionHistory>
 {
     private final ContentVersionComparator contentVersionComparator = new ContentVersionComparator();
-
-    @Autowired
-    private ContentDao contentDao;
 
     public GetContentVersionHistoryHandler()
     {

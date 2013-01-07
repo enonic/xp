@@ -43,4 +43,8 @@ public final class ContentCommands
         return new GetContentVersionHistory();
     }
 
+    public GetContentVersion getVersion()
+    {
+        return new GetContentVersion();
+    }
 }

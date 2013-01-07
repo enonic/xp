@@ -3,11 +3,13 @@ package com.enonic.wem.web.rest.rpc.content;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.GetContentVersion;
 import com.enonic.wem.api.command.content.GetContents;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
@@ -27,7 +29,16 @@ public class GetContentRpcHandler
         throws Exception
     {
         final String path = context.param( "path" ).required().asString();
-        final Content content = findContent( ContentPath.from( path ) );
+        final Integer version = context.param( "version" ).asInteger();
+        final Content content;
+        if ( version == null )
+        {
+            content = findContent( ContentPath.from( path ) );
+        }
+        else
+        {
+            content = findContentVersion( ContentPath.from( path ), ContentVersionId.of( version ) );
+        }
 
         if ( content != null )
         {
@@ -48,4 +59,10 @@ public class GetContentRpcHandler
         return contents.isNotEmpty() ? contents.first() : null;
     }
 
+    private Content findContentVersion( final ContentPath contentPath, final ContentVersionId versionId )
+    {
+        final GetContentVersion getContentVersion = Commands.content().getVersion();
+        getContentVersion.selector( contentPath ).version( versionId );
+        return client.execute( getContentVersion );
+    }
 }

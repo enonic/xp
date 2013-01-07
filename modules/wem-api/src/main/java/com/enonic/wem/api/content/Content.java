@@ -3,6 +3,7 @@ package com.enonic.wem.api.content;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.UserKey;
@@ -164,6 +165,22 @@ public final class Content
     public void replaceBlobsWithKeys( final MockBlobKeyResolver blobToKeyResolver )
     {
         new BlobToKeyReplacer( blobToKeyResolver ).replace( data );
+    }
+
+    @Override
+    public String toString()
+    {
+        final Objects.ToStringHelper s = Objects.toStringHelper( this );
+        s.add( "id", id );
+        s.add( "path", path );
+        s.add( "version", versionId );
+        s.add( "displayName", displayName );
+        s.add( "contentType", type );
+        s.add( "created", createdTime );
+        s.add( "modified", modifiedTime );
+        s.add( "owner", owner );
+        s.add( "modifier", modifier );
+        return s.toString();
     }
 
     public static Builder newContent()

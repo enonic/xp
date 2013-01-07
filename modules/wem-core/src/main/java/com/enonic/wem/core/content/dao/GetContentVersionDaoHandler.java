@@ -1,0 +1,51 @@
+package com.enonic.wem.core.content.dao;
+
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.versioning.ContentVersionId;
+
+import static com.enonic.wem.api.content.Content.newContent;
+
+final class GetContentVersionDaoHandler
+    extends AbstractContentDaoHandler
+{
+    GetContentVersionDaoHandler( final Session session )
+    {
+        super( session );
+    }
+
+    Content handle( final ContentId contentId, final ContentVersionId versionId )
+        throws RepositoryException
+    {
+        final Node contentNode = doGetContentNode( session, contentId );
+        return getContentFromNode( contentNode, versionId );
+    }
+
+    Content handle( final ContentPath contentPath, final ContentVersionId versionId )
+        throws RepositoryException
+    {
+        final Node contentNode = doGetContentNode( session, contentPath );
+        return getContentFromNode( contentNode, versionId );
+    }
+
+    Content getContentFromNode( final Node contentNode, final ContentVersionId versionId )
+        throws RepositoryException
+    {
+        final Node contentVersionParent = getContentVersionHistoryNode( contentNode );
+        final String contentVersionNodeName = ContentDaoConstants.CONTENT_VERSION_PREFIX + versionId.id();
+        if ( !contentVersionParent.hasNode( contentVersionNodeName ) )
+        {
+            return null;
+        }
+        final Node contentVersionNode = contentVersionParent.getNode( contentVersionNodeName );
+        final Content.Builder contentBuilder = newContent();
+        contentJcrMapper.toContent( contentVersionNode, contentBuilder );
+        return contentBuilder.build();
+    }
+}
