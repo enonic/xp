@@ -4,24 +4,25 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.jcr.Session;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.primitives.Longs;
 
 import com.enonic.wem.api.command.content.GetContentVersionHistory;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.api.content.versioning.ContentVersion;
 import com.enonic.wem.api.content.versioning.ContentVersionHistory;
 import com.enonic.wem.core.command.CommandContext;
+import com.enonic.wem.core.command.CommandHandler;
+import com.enonic.wem.core.content.dao.ContentDao;
 
 @Component
 public class GetContentVersionHistoryHandler
-    extends AbstractContentHandler<GetContentVersionHistory>
+    extends CommandHandler<GetContentVersionHistory>
 {
+    private ContentDao contentDao;
+
     private final ContentVersionComparator contentVersionComparator = new ContentVersionComparator();
 
     public GetContentVersionHistoryHandler()
@@ -34,31 +35,12 @@ public class GetContentVersionHistoryHandler
         throws Exception
     {
         final ContentSelector selector = command.getSelector();
-        final List<ContentVersion> contentVersionList = getContentVersions( selector, context.getJcrSession() );
+        final List<ContentVersion> contentVersionList = contentDao.getContentVersions( selector, context.getJcrSession() );
+
         Collections.sort( contentVersionList, contentVersionComparator );
 
         final ContentVersionHistory contentVersionHistory = ContentVersionHistory.from( contentVersionList );
         command.setResult( contentVersionHistory );
-    }
-
-    private List<ContentVersion> getContentVersions( final ContentSelector selector, final Session session )
-    {
-        final List<ContentVersion> contentVersions;
-        if ( selector instanceof ContentPath )
-        {
-            final ContentPath path = (ContentPath) selector;
-            contentVersions = contentDao.getContentVersions( path, session );
-        }
-        else if ( selector instanceof ContentId )
-        {
-            final ContentId contentId = (ContentId) selector;
-            contentVersions = contentDao.getContentVersions( contentId, session );
-        }
-        else
-        {
-            throw new IllegalArgumentException( "Unsupported content selector: " + selector.getClass().getCanonicalName() );
-        }
-        return contentVersions;
     }
 
     private class ContentVersionComparator
@@ -71,5 +53,11 @@ public class GetContentVersionHistoryHandler
             final long v2 = contentVersion2.getVersionId().id();
             return Longs.compare( v1, v2 );
         }
+    }
+
+    @Autowired
+    public void setContentDao( final ContentDao contentDao )
+    {
+        this.contentDao = contentDao;
     }
 }

@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.DeleteContents;
 import com.enonic.wem.api.content.ContentDeletionResult;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.api.exception.ContentNotFoundException;
 import com.enonic.wem.api.exception.UnableToDeleteContentException;
@@ -34,13 +32,14 @@ public class DeleteContentsHandler
     {
         final ContentDeletionResult contentDeletionResult = new ContentDeletionResult();
         final Iterable<ContentSelector> selectors = command.getSelectors();
+        final Session session = context.getJcrSession();
         for ( ContentSelector contentSelector : selectors )
         {
             try
             {
-                deleteContent( contentSelector, context.getJcrSession() );
+                contentDao.deleteContent( contentSelector, session );
                 contentDeletionResult.success( contentSelector );
-                context.getJcrSession().save();
+                session.save();
             }
             catch ( ContentNotFoundException e )
             {
@@ -52,22 +51,6 @@ public class DeleteContentsHandler
             }
         }
         command.setResult( contentDeletionResult );
-    }
-
-    private void deleteContent( final ContentSelector contentSelector, final Session session )
-    {
-        if ( contentSelector instanceof ContentPath )
-        {
-            contentDao.deleteContent( (ContentPath) contentSelector, session );
-        }
-        else if ( contentSelector instanceof ContentId )
-        {
-            contentDao.deleteContent( (ContentId) contentSelector, session );
-        }
-        else
-        {
-            throw new IllegalArgumentException( "Unsupported content selector: " + contentSelector.getClass().getCanonicalName() );
-        }
     }
 
     @Autowired

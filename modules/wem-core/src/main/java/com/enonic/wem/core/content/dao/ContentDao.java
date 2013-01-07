@@ -7,9 +7,9 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.ContentPaths;
+import com.enonic.wem.api.content.ContentSelector;
+import com.enonic.wem.api.content.ContentSelectors;
 import com.enonic.wem.api.content.ContentTree;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
@@ -23,31 +23,21 @@ public interface ContentDao
 
     void updateContent( Content content, boolean createNewVersion, Session session );
 
-    void deleteContent( ContentPath contentPath, Session session );
-
-    void deleteContent( ContentId contentId, Session session );
+    void deleteContent( ContentSelector contentSelector, Session session );
 
     void renameContent( ContentPath contentPath, String newName, Session session );
 
-    Content findContent( ContentPath contentPath, Session session );
+    Content findContent( ContentSelector contentSelector, Session session );
 
-    Content findContent( ContentId contentId, Session session );
+    List<ContentVersion> getContentVersions( ContentSelector contentSelector, Session session );
 
-    List<ContentVersion> getContentVersions( ContentPath contentPath, Session session );
-
-    List<ContentVersion> getContentVersions( ContentId contentId, Session session );
-
-    Contents findContents( ContentPaths contentPaths, Session session );
-
-    Contents findContents( ContentIds contentIds, Session session );
+    Contents findContents( ContentSelectors contentSelectors, Session session );
 
     Contents findChildContent( ContentPath parentPath, Session session );
 
-    ContentTree getContentTree( final Session session );
+    ContentTree getContentTree( Session session );
 
     int countContentTypeUsage( QualifiedContentTypeName qualifiedContentTypeName, Session session );
 
-    Content getContentVersion( ContentPath path, ContentVersionId versionId, Session session );
-
-    Content getContentVersion( ContentId contentId, ContentVersionId versionId, Session session );
+    Content getContentVersion( ContentSelector contentSelector, ContentVersionId versionId, Session session );
 }

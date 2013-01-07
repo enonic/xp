@@ -7,13 +7,13 @@ import com.enonic.wem.api.command.content.GetContents;
 import com.enonic.wem.api.content.ContentSelectors;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.core.command.CommandContext;
+import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 
 @Component
 public class GetContentsHandler
-    extends AbstractContentHandler<GetContents>
+    extends CommandHandler<GetContents>
 {
-    @Autowired
     private ContentDao contentDao;
 
     public GetContentsHandler()
@@ -26,7 +26,13 @@ public class GetContentsHandler
         throws Exception
     {
         final ContentSelectors selectors = command.getSelectors();
-        final Contents result = findContents( selectors, context );
+        final Contents result = contentDao.findContents( selectors, context.getJcrSession() );
         command.setResult( result );
+    }
+
+    @Autowired
+    public void setContentDao( final ContentDao contentDao )
+    {
+        this.contentDao = contentDao;
     }
 }

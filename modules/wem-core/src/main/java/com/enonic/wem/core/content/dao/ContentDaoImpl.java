@@ -13,6 +13,8 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
+import com.enonic.wem.api.content.ContentSelector;
+import com.enonic.wem.api.content.ContentSelectors;
 import com.enonic.wem.api.content.ContentTree;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
@@ -55,24 +57,24 @@ public class ContentDaoImpl
     }
 
     @Override
-    public void deleteContent( final ContentPath contentPath, final Session session )
+    public void deleteContent( final ContentSelector contentSelector, final Session session )
     {
         try
         {
-            new DeleteContentDaoHandler( session ).deleteContentByPath( contentPath );
-        }
-        catch ( RepositoryException e )
-        {
-            throw new RuntimeException( e );
-        }
-    }
-
-    @Override
-    public void deleteContent( final ContentId contentId, final Session session )
-    {
-        try
-        {
-            new DeleteContentDaoHandler( session ).deleteContentById( contentId );
+            if ( contentSelector instanceof ContentPath )
+            {
+                final ContentPath contentPath = (ContentPath) contentSelector;
+                new DeleteContentDaoHandler( session ).deleteContentByPath( contentPath );
+            }
+            else if ( contentSelector instanceof ContentId )
+            {
+                final ContentId contentId = (ContentId) contentSelector;
+                new DeleteContentDaoHandler( session ).deleteContentById( contentId );
+            }
+            else
+            {
+                throw new IllegalArgumentException( "Unsupported content selector: " + contentSelector.getClass().getCanonicalName() );
+            }
         }
         catch ( RepositoryException e )
         {
@@ -94,11 +96,24 @@ public class ContentDaoImpl
     }
 
     @Override
-    public Content findContent( final ContentPath contentPath, final Session session )
+    public Content findContent( final ContentSelector contentSelector, final Session session )
     {
         try
         {
-            return new FindContentDaoHandler( session ).findContentByPath( contentPath );
+            if ( contentSelector instanceof ContentPath )
+            {
+                final ContentPath contentPath = (ContentPath) contentSelector;
+                return new FindContentDaoHandler( session ).findContentByPath( contentPath );
+            }
+            else if ( contentSelector instanceof ContentId )
+            {
+                final ContentId contentId = (ContentId) contentSelector;
+                return new FindContentDaoHandler( session ).findContentById( contentId );
+            }
+            else
+            {
+                throw new IllegalArgumentException( "Unsupported content selector: " + contentSelector.getClass().getCanonicalName() );
+            }
         }
         catch ( RepositoryException e )
         {
@@ -107,37 +122,24 @@ public class ContentDaoImpl
     }
 
     @Override
-    public Content findContent( final ContentId contentId, final Session session )
+    public Contents findContents( final ContentSelectors contentSelectors, final Session session )
     {
         try
         {
-            return new FindContentDaoHandler( session ).findContentById( contentId );
-        }
-        catch ( RepositoryException e )
-        {
-            throw new RuntimeException( e );
-        }
-    }
-
-    @Override
-    public Contents findContents( final ContentPaths contentPaths, final Session session )
-    {
-        try
-        {
-            return new FindContentDaoHandler( session ).findContentsByPath( contentPaths );
-        }
-        catch ( RepositoryException e )
-        {
-            throw new RuntimeException( e );
-        }
-    }
-
-    @Override
-    public Contents findContents( final ContentIds contentIds, final Session session )
-    {
-        try
-        {
-            return new FindContentDaoHandler( session ).findContentsById( contentIds );
+            if ( contentSelectors instanceof ContentPaths )
+            {
+                final ContentPaths contentPaths = (ContentPaths) contentSelectors;
+                return new FindContentDaoHandler( session ).findContentsByPath( contentPaths );
+            }
+            else if ( contentSelectors instanceof ContentIds )
+            {
+                final ContentIds contentIds = (ContentIds) contentSelectors;
+                return new FindContentDaoHandler( session ).findContentsById( contentIds );
+            }
+            else
+            {
+                throw new IllegalArgumentException( "Unsupported content selector: " + contentSelectors.getClass().getCanonicalName() );
+            }
         }
         catch ( RepositoryException e )
         {
@@ -185,11 +187,24 @@ public class ContentDaoImpl
     }
 
     @Override
-    public List<ContentVersion> getContentVersions( final ContentPath contentPath, final Session session )
+    public List<ContentVersion> getContentVersions( final ContentSelector contentSelector, final Session session )
     {
         try
         {
-            return new GetContentVersionHistoryDaoHandler( session ).handle( contentPath );
+            if ( contentSelector instanceof ContentPath )
+            {
+                final ContentPath contentPath = (ContentPath) contentSelector;
+                return new GetContentVersionHistoryDaoHandler( session ).handle( contentPath );
+            }
+            else if ( contentSelector instanceof ContentId )
+            {
+                final ContentId contentId = (ContentId) contentSelector;
+                return new GetContentVersionHistoryDaoHandler( session ).handle( contentId );
+            }
+            else
+            {
+                throw new IllegalArgumentException( "Unsupported content selector: " + contentSelector.getClass().getCanonicalName() );
+            }
         }
         catch ( RepositoryException e )
         {
@@ -198,37 +213,24 @@ public class ContentDaoImpl
     }
 
     @Override
-    public List<ContentVersion> getContentVersions( final ContentId contentId, final Session session )
+    public Content getContentVersion( final ContentSelector contentSelector, final ContentVersionId versionId, final Session session )
     {
         try
         {
-            return new GetContentVersionHistoryDaoHandler( session ).handle( contentId );
-        }
-        catch ( RepositoryException e )
-        {
-            throw new RuntimeException( e );
-        }
-    }
-
-    @Override
-    public Content getContentVersion( final ContentId contentId, final ContentVersionId versionId, final Session session )
-    {
-        try
-        {
-            return new GetContentVersionDaoHandler( session ).handle( contentId, versionId );
-        }
-        catch ( RepositoryException e )
-        {
-            throw new RuntimeException( e );
-        }
-    }
-
-    @Override
-    public Content getContentVersion( final ContentPath path, final ContentVersionId versionId, final Session session )
-    {
-        try
-        {
-            return new GetContentVersionDaoHandler( session ).handle( path, versionId );
+            if ( contentSelector instanceof ContentPath )
+            {
+                final ContentPath contentPath = (ContentPath) contentSelector;
+                return new GetContentVersionDaoHandler( session ).handle( contentPath, versionId );
+            }
+            else if ( contentSelector instanceof ContentId )
+            {
+                final ContentId contentId = (ContentId) contentSelector;
+                return new GetContentVersionDaoHandler( session ).handle( contentId, versionId );
+            }
+            else
+            {
+                throw new IllegalArgumentException( "Unsupported content selector: " + contentSelector.getClass().getCanonicalName() );
+            }
         }
         catch ( RepositoryException e )
         {
