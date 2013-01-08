@@ -1,7 +1,7 @@
 package com.enonic.wem.api.module;
 
 
-public class ModuleName
+public final class ModuleName
 {
     private final String name;
 

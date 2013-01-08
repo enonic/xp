@@ -37,6 +37,10 @@ final class GetContentVersionDaoHandler
     Content getContentFromNode( final Node contentNode, final ContentVersionId versionId )
         throws RepositoryException
     {
+        if ( contentNode == null )
+        {
+            return null;
+        }
         final Node contentVersionParent = getContentVersionHistoryNode( contentNode );
         final String contentVersionNodeName = ContentDaoConstants.CONTENT_VERSION_PREFIX + versionId.id();
         if ( !contentVersionParent.hasNode( contentVersionNodeName ) )

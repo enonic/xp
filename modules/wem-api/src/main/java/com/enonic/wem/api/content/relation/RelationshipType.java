@@ -3,13 +3,14 @@ package com.enonic.wem.api.content.relation;
 
 import java.util.List;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;
 
-public class RelationshipType
+public final class RelationshipType
 {
     private final ModuleName module;
 
@@ -25,16 +26,15 @@ public class RelationshipType
 
     private final QualifiedContentTypeNames allowedToTypes;
 
-    private RelationshipType( final ModuleName module, final String name, final String fromSemantic, final String toSemantic,
-                              final QualifiedContentTypeNames allowedFromTypes, final QualifiedContentTypeNames allowedToTypes )
+    private RelationshipType( final Builder builder )
     {
-        this.module = module;
-        this.name = name;
+        this.module = builder.module;
+        this.name = builder.name;
         this.qualifiedRelationshipTypeName = new QualifiedRelationshipTypeName( module, name );
-        this.fromSemantic = fromSemantic;
-        this.toSemantic = toSemantic;
-        this.allowedFromTypes = allowedFromTypes;
-        this.allowedToTypes = allowedToTypes;
+        this.fromSemantic = builder.fromSemantic;
+        this.toSemantic = builder.toSemantic;
+        this.allowedFromTypes = QualifiedContentTypeNames.from( builder.allowedFromTypes );
+        this.allowedToTypes = QualifiedContentTypeNames.from( builder.allowedToTypes );
     }
 
     public ModuleName getModule()
@@ -72,9 +72,43 @@ public class RelationshipType
         return allowedToTypes;
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+
+        if ( !( o instanceof RelationshipType ) )
+        {
+            return false;
+        }
+        final RelationshipType that = (RelationshipType) o;
+        return Objects.equal( this.module, that.module ) &&
+            Objects.equal( this.name, that.name ) &&
+            Objects.equal( this.qualifiedRelationshipTypeName, that.qualifiedRelationshipTypeName ) &&
+            Objects.equal( this.fromSemantic, that.fromSemantic ) &&
+            Objects.equal( this.toSemantic, that.toSemantic ) &&
+            Objects.equal( this.allowedFromTypes, that.allowedFromTypes ) &&
+            Objects.equal( this.allowedToTypes, that.allowedToTypes );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hashCode( this.module, this.name, this.qualifiedRelationshipTypeName, this.fromSemantic, this.toSemantic,
+                                 this.allowedFromTypes, this.allowedToTypes );
+    }
+
     public static Builder newRelationType()
     {
         return new Builder();
+    }
+
+    public static Builder newRelationType( final RelationshipType relationshipType )
+    {
+        return new Builder( relationshipType );
     }
 
     public static class Builder
@@ -90,6 +124,26 @@ public class RelationshipType
         private List<QualifiedContentTypeName> allowedFromTypes = Lists.newArrayList();
 
         private List<QualifiedContentTypeName> allowedToTypes = Lists.newArrayList();
+
+        private Builder()
+        {
+            module = null;
+            name = null;
+            fromSemantic = null;
+            toSemantic = null;
+            allowedFromTypes = Lists.newArrayList();
+            allowedToTypes = Lists.newArrayList();
+        }
+
+        private Builder( final RelationshipType relationshipType )
+        {
+            module = relationshipType.module;
+            name = relationshipType.name;
+            fromSemantic = relationshipType.fromSemantic;
+            toSemantic = relationshipType.toSemantic;
+            allowedFromTypes = Lists.newArrayList( allowedFromTypes );
+            allowedToTypes = Lists.newArrayList( allowedToTypes );
+        }
 
         public Builder module( ModuleName value )
         {
@@ -129,8 +183,7 @@ public class RelationshipType
 
         public RelationshipType build()
         {
-            return new RelationshipType( module, name, fromSemantic, toSemantic, QualifiedContentTypeNames.from( allowedFromTypes ),
-                                         QualifiedContentTypeNames.from( allowedToTypes ) );
+            return new RelationshipType( this );
         }
     }
 }
