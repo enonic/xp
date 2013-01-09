@@ -106,8 +106,16 @@
       visibility: hidden;
       opacity: 0;
       color: #fff;
+
+      transition: all .2s ease-out;
       -moz-transition: all .2s ease-out;
+      -webkit-transition: all .2s ease-out;
+      -o-transition: all .2s ease-out;
+
+      transform: scale(.9);
       -moz-transform: scale(.9);
+      -webkit-transform: scale(.9);
+      -o-transform: scale(.9);
     }
 
     #admin-home-app-selector-search-container {
@@ -126,7 +134,11 @@
     }
 
     .admin-home-app-tile {
+      transition: all 0.1s linear;
       -moz-transition: all 0.1s linear;
+      -webkit-transition: all 0.1s linear;
+      -o-transition: all 0.1s linear;
+
       cursor: pointer;
       position: relative;
       overflow: hidden;
@@ -162,7 +174,11 @@
 
     .fade-in {
       opacity: 1 !important;
+
+      transform: scale(1) !important;
       -moz-transform: scale(1) !important;
+      -webkit-transform: scale(1) !important;
+      -o-transform: scale(1) !important;
     }
   </style>
 
