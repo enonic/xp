@@ -6,12 +6,8 @@ Ext.onReady(function () {
         name: 'App',
         appFolder: '_app/main/js',
 
-        requires: [
-            'Admin.lib.Ping',
-            'Admin.lib.UriHelper'
-        ],
-
         controllers: [
+            'Admin.controller.home.Controller'
         ],
 
         launch: function () {
@@ -19,17 +15,8 @@ Ext.onReady(function () {
                 id: 'mainViewport',
                 layout: 'border',
                 style: 'border: medium none',
-                padding: 0,
-                items: [
-                    {
-                        region: 'center',
-                        bodyCls: 'main-viewport-center-body',
-                        html: '<div id="appFrames" style="height: 100%; width: 100%;"></div>'
-                    }
-                ]
+                padding: 0
             });
-
-            // Admin.lib.Ping.startPolling();
         }
     });
 });
