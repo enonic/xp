@@ -28,13 +28,13 @@ public final class MockContentId
         {
             return true;
         }
-        if ( o == null || getClass() != o.getClass() )
+        if ( !( o instanceof ContentId ) )
         {
             return false;
         }
 
-        final MockContentId that = (MockContentId) o;
-        return id.equals( that.id );
+        final ContentId that = (ContentId) o;
+        return id.equals( that.id() );
     }
 
     @Override

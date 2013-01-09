@@ -24,8 +24,6 @@ public class UpdateContentsHandler
 
     private TimeService timeService;
 
-    private MockContentTypeDao contentTypeDao = MockContentTypeDao.get();
-
     public UpdateContentsHandler()
     {
         super( UpdateContents.class );

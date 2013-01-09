@@ -3,6 +3,7 @@
     "total": 4,
     "contents": [
         {
+            "id" : null,
             "path": "a1/c1",
             "name": "c1",
             "type": "System:unstructured",
@@ -14,6 +15,7 @@
             "data": [ ]
         },
         {
+            "id" : null,
             "path": "a1/c2",
             "name": "c2",
             "type": "System:unstructured",
@@ -25,6 +27,7 @@
             "data": [ ]
         },
         {
+            "id" : null,
             "path": "a1/c3",
             "name": "c3",
             "type": "System:unstructured",
@@ -36,6 +39,7 @@
             "data": [ ]
         },
         {
+            "id" : null,
             "path": "a1/c4",
             "name": "c4",
             "type": "System:unstructured",

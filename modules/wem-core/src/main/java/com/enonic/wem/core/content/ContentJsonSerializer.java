@@ -16,6 +16,7 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.core.content.data.ContentDataJsonSerializer;
 
 import static com.enonic.wem.core.content.JsonParserUtil.getStringValue;
@@ -36,6 +37,7 @@ public class ContentJsonSerializer
     {
         final ObjectNode jsonContent = objectMapper.createObjectNode();
 
+        jsonContent.put( "id", content.getId() == null ? null : content.getId().id() );
         jsonContent.put( "path", content.getPath().toString() );
         jsonContent.put( "name", content.getName() );
         jsonContent.put( "type", content.getType() != null ? content.getType().toString() : null );
@@ -91,6 +93,11 @@ public class ContentJsonSerializer
             contentBuilder.type( qualifiedContentTypeName );
         }
 
+        final String id = getStringValue( "id", contentNode, null );
+        if ( id != null )
+        {
+            contentBuilder.id( ContentIdFactory.from( id ) );
+        }
         contentBuilder.path( ContentPath.from( getStringValue( "path", contentNode, null ) ) );
         contentBuilder.displayName( getStringValue( "displayName", contentNode, null ) );
         contentBuilder.owner( getUserValue( contentNode, "owner" ) );

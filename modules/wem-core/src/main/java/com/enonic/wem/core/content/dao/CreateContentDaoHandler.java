@@ -66,7 +66,7 @@ final class CreateContentDaoHandler
             final Node contentVersionHistoryParent = createContentVersionHistory( content, parentContentNode );
             addContentVersion( content, contentVersionHistoryParent );
         }
-        return ContentIdImpl.from( newContentNode );
+        return ContentIdFactory.from( newContentNode );
     }
 
     private Node addContentToJcr( final Content content, final Node parentNode )

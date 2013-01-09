@@ -86,7 +86,7 @@ final class ContentJcrMapper
         {
             contentBuilder.type( new QualifiedContentTypeName( contentType ) );
         }
-        contentBuilder.id( ContentIdImpl.from( contentNode ) );
+        contentBuilder.id( ContentIdFactory.from( contentNode ) );
         contentBuilder.path( getPathFromNode( contentNode ) );
         if ( contentNode.hasProperty( VERSION_ID ) )
         {

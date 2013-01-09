@@ -61,6 +61,7 @@ class ContentTreeJsonResult
 
     private void serializeContent( final ObjectNode contentNode, final Content content )
     {
+        contentNode.put( "id", content.getId() == null ? null : content.getId().id() );
         contentNode.put( "path", content.getPath().toString() );
         contentNode.put( "name", content.getName() );
         contentNode.put( "type", content.getType() != null ? content.getType().toString() : null );

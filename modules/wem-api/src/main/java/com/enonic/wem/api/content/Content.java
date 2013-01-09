@@ -232,7 +232,7 @@ public final class Content
         public Builder( final Content content )
         {
             this.contentId = content.id;
-            this.path = content.path; // TODO make ContentPath immutable, or make copy
+            this.path = content.path;
             this.type = content.type;
             this.data = content.data; // TODO make ContentData immutable, or make copy
             this.displayName = content.displayName;

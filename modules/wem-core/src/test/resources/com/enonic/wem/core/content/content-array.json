@@ -1,4 +1,5 @@
 {
+    "id" : null,
     "path":"",
     "name":null,
     "type":"myModule:myType",

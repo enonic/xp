@@ -7,12 +7,12 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.ContentId;
 
-final class ContentIdImpl
+public final class ContentIdFactory
     implements ContentId
 {
     private final String id;
 
-    private ContentIdImpl( final String id )
+    private ContentIdFactory( final String id )
     {
         Preconditions.checkNotNull( id, "Content id cannot be null" );
         this.id = id;
@@ -31,13 +31,13 @@ final class ContentIdImpl
         {
             return true;
         }
-        if ( o == null || getClass() != o.getClass() )
+        if ( !( o instanceof ContentId ) )
         {
             return false;
         }
 
-        final ContentIdImpl that = (ContentIdImpl) o;
-        return id.equals( that.id );
+        final ContentId that = (ContentId) o;
+        return id.equals( that.id() );
     }
 
     @Override
@@ -56,11 +56,16 @@ final class ContentIdImpl
     {
         try
         {
-            return new ContentIdImpl( node.getIdentifier() );
+            return new ContentIdFactory( node.getIdentifier() );
         }
         catch ( RepositoryException e )
         {
             throw new RuntimeException( e );
         }
+    }
+
+    public static ContentId from( final String id )
+    {
+        return new ContentIdFactory( id );
     }
 }

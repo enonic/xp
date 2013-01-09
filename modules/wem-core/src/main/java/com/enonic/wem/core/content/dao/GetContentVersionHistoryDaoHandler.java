@@ -48,7 +48,7 @@ final class GetContentVersionHistoryDaoHandler
         final Node contentVersionNode = getContentVersionHistoryNode( contentNode );
         final NodeIterator versionNodes = contentVersionNode.getNodes( ContentDaoConstants.CONTENT_VERSION_PREFIX + "*" );
 
-        final ContentId contentId = ContentIdImpl.from( contentNode );
+        final ContentId contentId = ContentIdFactory.from( contentNode );
 
         final List<ContentVersion> contentVersionList = Lists.newArrayList();
         while ( versionNodes.hasNext() )
