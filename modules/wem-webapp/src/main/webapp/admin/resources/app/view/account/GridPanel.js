@@ -14,6 +14,13 @@ Ext.define('Admin.view.account.GridPanel', {
     columnLines: true,
     hideHeaders: true,
     border: false,
+
+    verticalScroller: {
+        trailingBufferZone: 200,
+        leadingBufferZone: 200
+    },
+
+    invalidateScrollerOnRefresh: false,
     store: 'Admin.store.account.AccountStore',
 
     initComponent: function () {
@@ -79,7 +86,7 @@ Ext.define('Admin.view.account.GridPanel', {
         };
 
         me.viewConfig = {
-            trackOver: true,
+            trackOver: false,
             stripeRows: true,
             loadMask: {
                 store: me.store

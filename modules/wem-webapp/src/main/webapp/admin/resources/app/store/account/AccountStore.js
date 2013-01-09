@@ -4,6 +4,7 @@ Ext.define('Admin.store.account.AccountStore', {
     model: 'Admin.model.account.AccountModel',
 
     pageSize: 50,
+    buffered: true,
     remoteSort: true,
     sorters: [
         {
