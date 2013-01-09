@@ -29,7 +29,8 @@ Ext.define('Admin.controller.contentStudio.FilterPanelController', {
 
         // set the list mode
         var treeGridPanel = this.getTreeGridPanel();
-        treeGridPanel.setActiveList(filterPanel.isDirty() ? 'grid' : 'tree');
+//        TODO: uncomment when list switch is necessary again
+//        treeGridPanel.setActiveList(filterPanel.isDirty() ? 'grid' : 'tree');
 
         // update details to current selection
         var detailPanel = this.getDetailPanel();

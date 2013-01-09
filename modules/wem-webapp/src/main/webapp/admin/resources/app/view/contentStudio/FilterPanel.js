@@ -8,9 +8,18 @@ Ext.define('Admin.view.contentStudio.FilterPanel', {
         {
             "name": "Type",
             "terms": [
-                { "name": "Field", "count": 4 },
-                { "name": "Fieldset", "count": 7 },
-                { "name": "Content type", "count": 1 },
+                { "name": "Content Type", "count": 6 },
+                { "name": "Relationship Type", "count": 2 },
+                { "name": "Mixin", "count": 5 }
+            ]
+        },
+        {
+            "name": "Module",
+            "terms": [
+                { "name": "System", "count": 4 },
+                { "name": "A", "count": 7 },
+                { "name": "B", "count": 1 },
+                { "name": "C", "count": 3 }
             ]
         }
     ]
