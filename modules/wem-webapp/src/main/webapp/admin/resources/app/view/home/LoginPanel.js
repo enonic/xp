@@ -13,8 +13,6 @@ Ext.define('Admin.view.home.LoginPanel', {
     initComponent: function () {
         var me = this;
 
-        console.log('init login panel');
-
         /*
             Inline the userstore store for now
         */

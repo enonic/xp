@@ -5,8 +5,6 @@ Ext.define('Admin.view.home.AppSelector', {
     initComponent: function () {
         var me = this;
 
-        console.log('init app selector container');
-
         /*
          Inline model and store for now
          */

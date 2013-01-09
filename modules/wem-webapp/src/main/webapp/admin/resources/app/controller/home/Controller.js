@@ -20,8 +20,6 @@ Ext.define('Admin.controller.home.Controller', {
 
 
     createView: function () {
-        console.log('init home controller');
-
         Ext.create('Admin.view.home.MainBackgroundContainer');
     }
 
