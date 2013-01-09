@@ -31,7 +31,7 @@ Ext.define('Admin.view.home.AppSelector', {
         Ext.create('Ext.form.field.Text', {
             renderTo: 'admin-home-app-selector-search-input-container',
             id: 'admin-home-app-selector-search',
-            emptyText: 'Application Search',
+            emptyText: 'Application Filter',
             width: '470px',
             listeners: {
                 change: function (textField, newValue, oldValue) {
