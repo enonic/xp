@@ -131,12 +131,20 @@ Ext.define('Admin.view.TopBar', {
         this.startButton = Ext.create('Ext.button.Button', {
             xtype: 'button',
             itemId: 'app-launcher-button',
-            split: true,
+            margins: '0 8px 0 0',
             cls: 'start-button',
-            iconCls: me.appIconCls,
-            text: me.appName || '&lt; app name &gt;',
             handler: function (btn, evt) {
                 me.startMenu.slideToggle();
+            }
+        });
+        this.homeButton = Ext.create('Ext.button.Button', {
+            text: me.appName || '&lt; app name &gt;',
+//            iconCls: me.appIconCls,
+            cls: 'home-button',
+            handler: function (btn, evt) {
+                if (me.tabPanel) {
+                    me.tabPanel.setActiveTab(0);
+                }
             }
         });
 
@@ -158,6 +166,7 @@ Ext.define('Admin.view.TopBar', {
 
         this.items = [
             me.startButton,
+            me.homeButton,
             me.leftContainer,
             me.titleText,
             me.rightContainer,

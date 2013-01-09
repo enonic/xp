@@ -1424,49 +1424,20 @@ div.x-mask {
     /* for firefox 3.6+ */
     /*      Start button        */
     /*      Title button        */
+    /*    Home button   */
 }
 
 /* line 33, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel .start-button {
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
-    -o-border-radius: 0;
-    -ms-border-radius: 0;
-    -khtml-border-radius: 0;
-    border-radius: 0;
-    padding: 6px 16px;
+    padding: 0;
     border: 0 none;
-    background-color: transparent;
+    background: url("../themes/images/default/leopard-home-button_128x128.png") center no-repeat;
+    background-size: 32px;
+    width: 32px;
+    height: 32px;
 }
 
-/* line 12, ../sass/admin/css/_top-bar.scss */
-.x-toolbar.admin-topbar-panel .start-button.x-btn-over {
-    background: #444;
-}
-
-/* line 16, ../sass/admin/css/_top-bar.scss */
-.x-toolbar.admin-topbar-panel .start-button .x-btn-inner {
-    color: #eee;
-}
-
-/* line 36, ../sass/admin/css/_top-bar.scss */
-.x-toolbar.admin-topbar-panel .start-button button {
-    overflow: visible;
-}
-
-/* line 40, ../sass/admin/css/_top-bar.scss */
-.x-toolbar.admin-topbar-panel .start-button .x-btn-icon {
-    width: 24px;
-    height: 24px;
-    top: -4px;
-}
-
-/* line 46, ../sass/admin/css/_top-bar.scss */
-.x-toolbar.admin-topbar-panel .start-button .x-btn-inner {
-    padding-left: 30px;
-}
-
-/* line 53, ../sass/admin/css/_top-bar.scss */
+/* line 44, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel .title-button {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
@@ -1489,20 +1460,44 @@ div.x-mask {
     color: #eee;
 }
 
+/* line 50, ../sass/admin/css/_top-bar.scss */
+.x-toolbar.admin-topbar-panel .home-button {
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    -o-border-radius: 0;
+    -ms-border-radius: 0;
+    -khtml-border-radius: 0;
+    border-radius: 0;
+    padding: 6px 16px;
+    border: 0 none;
+    background-color: transparent;
+    padding: 6px;
+}
+
+/* line 12, ../sass/admin/css/_top-bar.scss */
+.x-toolbar.admin-topbar-panel .home-button.x-btn-over {
+    background: #444;
+}
+
+/* line 16, ../sass/admin/css/_top-bar.scss */
+.x-toolbar.admin-topbar-panel .home-button .x-btn-inner {
+    color: #eee;
+}
+
 /*  Tab menu  */
-/* line 61, ../sass/admin/css/_top-bar.scss */
+/* line 59, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu {
     overflow: visible !important;
 }
 
-/* line 64, ../sass/admin/css/_top-bar.scss */
+/* line 62, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .x-menu-body {
     background: #FFF !important;
     padding: 0 !important;
     border: 1px solid #ccc !important;
 }
 
-/* line 70, ../sass/admin/css/_top-bar.scss */
+/* line 68, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .balloon-tip {
     position: absolute;
     width: 100%;
@@ -1511,7 +1506,7 @@ div.x-mask {
     background: url("../themes/images/default/ballon-tips.png") bottom center no-repeat;
 }
 
-/* line 78, ../sass/admin/css/_top-bar.scss */
+/* line 76, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .title {
     border-bottom: 1px solid #ccc;
     font-size: 11px;
@@ -1521,7 +1516,7 @@ div.x-mask {
     margin-bottom: 12px;
 }
 
-/* line 86, ../sass/admin/css/_top-bar.scss */
+/* line 84, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .title span {
     position: relative;
     bottom: -6px;
@@ -1529,24 +1524,24 @@ div.x-mask {
     background: #FFF;
 }
 
-/* line 94, ../sass/admin/css/_top-bar.scss */
+/* line 92, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item {
     padding: 6px 12px;
     font-size: 13px;
 }
 
-/* line 98, ../sass/admin/css/_top-bar.scss */
+/* line 96, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item.active {
     background: #4294DE;
     color: #FFF;
 }
 
-/* line 102, ../sass/admin/css/_top-bar.scss */
+/* line 100, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item.active a.close-button {
     background: url("../themes/images/default/navigate_cross-16px.png") 0 -16px no-repeat;
 }
 
-/* line 107, ../sass/admin/css/_top-bar.scss */
+/* line 105, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item a.close-button {
     background: url("../themes/images/default/navigate_cross-16px.png") 0 0 no-repeat;
     border: 1px solid transparent;
@@ -1555,7 +1550,7 @@ div.x-mask {
     cursor: pointer;
 }
 
-/* line 116, ../sass/admin/css/_top-bar.scss */
+/* line 114, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu em {
     position: relative;
     top: -2px;
