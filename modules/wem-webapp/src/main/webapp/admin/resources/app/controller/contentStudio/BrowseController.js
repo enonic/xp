@@ -40,57 +40,15 @@ Ext.define('Admin.controller.contentStudio.BrowseController', {
                         this.showDeleteContentTypeWindow();
                     }
                 },
-                'contentTypeTreeGridPanel grid, treepanel': {
-                    selectionchange: this.onGridSelectionChange,
-                    itemcontextmenu: this.showContextMenu,
-                    itemdblclick: function (btn, evt) {
-                        this.showPreviewContentTypePanel();
-                    }
-                },
+
                 '#searchTextField': {
                     change: this.filterStore
                 },
                 '#showBaseTypesOnlyCheckbox': {
                     change: this.filterStore
-                },
-                'button[action=editContentType]': {
-                    click: Ext.emptyFn
-                },
-                'button[action=viewContentType]': {
-                    click: Ext.emptyFn
-                },
-                'button[action=reindexContentTypes]': {
-                    click: Ext.emptyFn
-                },
-                'button[action=exportContentTypes]': {
-                    click: Ext.emptyFn
                 }
             }
         );
-    },
-
-
-    onGridSelectionChange: function (selModel, selected, opts) {
-        this.updateDetailPanel(selModel, selected, opts);
-        this.enableToolbarButtons(selected.length > 0);
-    },
-
-
-    updateDetailPanel: function (selModel, selected, opts) {
-        if (selected.length > 0) {
-            this.getDetailPanel().setData(selected);
-        }
-    },
-
-
-    enableToolbarButtons: function (enable) {
-        var buttons = Ext.ComponentQuery.query('button[action=editContentType], ' +
-                                               'button[action=deleteContentType], ' +
-                                               'button[action=viewContentType]');
-
-        Ext.Array.each(buttons, function (button) {
-            button.setDisabled(!enable);
-        });
     },
 
 
@@ -119,18 +77,6 @@ Ext.define('Admin.controller.contentStudio.BrowseController', {
                 return regExp.test(record.raw.name);
             }
         });
-    },
-
-
-    showContextMenu: function (view, rec, node, index, e) {
-        e.stopEvent();
-        this.getContextMenu().showAt(e.getXY());
-        return false;
-    },
-
-
-    getContextMenu: function () {
-        return Ext.ComponentQuery.query('contentStudioContextMenu')[0];
     }
 
 });

@@ -27,7 +27,7 @@ Ext.define('Admin.controller.account.GridPanelController', {
                         this.updateActionItems();
                     },
                     itemcontextmenu: this.popupMenu,
-                    itemdblclick: this.viewAccount,
+                    itemdblclick: this.editAccount,
                     afterrender: function (grid) {
                         var gridStore = grid.getStore();
                         gridStore.on('load', this.updateFilterPanel, this);

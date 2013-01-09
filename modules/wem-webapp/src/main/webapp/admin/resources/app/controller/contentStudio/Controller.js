@@ -86,7 +86,8 @@ Ext.define('Admin.controller.contentStudio.Controller', {
 
                     tabPanel.addTab({
                         xtype: 'contentStudioWizardPanel',
-                        id: 'tab-content-type-' + contentType.raw.key,
+                        itemId: 'tab-edit-content-type-' + contentType.raw.key,
+                        editing: true,
                         title: contentType.raw.name,
                         iconCls: 'icon-content-studio-16',
                         modelData: contentType.raw,
@@ -111,8 +112,9 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         if (contentType) {
             tabs.addTab({
                 xtype: 'contentTypeDetailPanel',
+                itemId: 'tab-preview-content-type-' + contentType.raw.key,
                 data: contentType.raw,
-                title: 'View Content Type'
+                title: contentType.raw.name
             });
         }
     },

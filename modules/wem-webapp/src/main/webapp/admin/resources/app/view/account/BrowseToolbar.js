@@ -44,7 +44,7 @@ Ext.define('Admin.view.account.BrowseToolbar', {
                 disableOnMultipleSelection: true
             },
             {
-                text: 'View',
+                text: 'Open',
                 action: 'viewAccount'
 //                        iconCls: 'icon-view-24'
             },

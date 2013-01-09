@@ -38,7 +38,7 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
 
     resolveIconClass: function (node) {
         var iconCls = '';
-        var nodeType = node.get(this.typeField);
+        var nodeType = node[this.typeField];
         var typeCls = nodeType && this.iconClasses && this.iconClasses[nodeType.toLowerCase()];
         if (typeCls) {
             iconCls = typeCls;
@@ -56,7 +56,7 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
         }
         if (singleData) {
             if (Ext.isEmpty(singleData.iconCls)) {
-                singleData.set('iconCls', this.resolveIconClass(singleData));
+                singleData.iconCls = this.resolveIconClass(singleData);
             }
             singleData = singleData.data || singleData;
         }

@@ -29,7 +29,7 @@ Ext.define('Admin.view.contentStudio.BrowseToolbar', {
             },
 
             {
-                text: 'View',
+                text: 'Open',
                 disabled: true,
                 action: 'viewContentType'
             },
