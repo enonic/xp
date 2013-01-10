@@ -12,6 +12,6 @@ public class InvalidDataTypeException
 
     private static String buildMessage( final Data data, final DataType expectedType )
     {
-        return "Invalid data [" + data + "]. Type expected to be " + expectedType + ": " + data.getDataType();
+        return "Invalid data [" + data + "]. Type expected to be " + expectedType + ": " + data.getType();
     }
 }

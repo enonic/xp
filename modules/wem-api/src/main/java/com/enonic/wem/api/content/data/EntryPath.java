@@ -5,7 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.type.form.FormItemPath;
@@ -13,74 +16,146 @@ import com.enonic.wem.api.content.type.form.FormItemPath;
 public final class EntryPath
     implements Iterable<EntryPath.Element>
 {
-    private final static String ELEMENT_DIVIDER = ".";
+    public final static EntryPath ROOT = new EntryPath();
 
-    private List<Element> elements;
+    public final static String ELEMENT_DIVIDER = ".";
 
-    public EntryPath()
+    private final ImmutableList<Element> elements;
+
+    private final boolean relative;
+
+    private final String refString;
+
+    private final EntryPath parentPath;
+
+    public static EntryPath from( final EntryPath parentPath, final String element )
     {
-        elements = new ArrayList<Element>();
+        Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
+        return from( parentPath, new Element( element ) );
     }
 
-    public EntryPath( Element... pathElements )
-    {
-        elements = Lists.newArrayList( pathElements );
-    }
-
-    public EntryPath( List<Element> pathElements )
-    {
-        Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
-        elements = pathElements;
-    }
-
-    public EntryPath( EntryPath parentPath, String element )
-    {
-        this( parentPath, new Element( element ) );
-    }
-
-    public EntryPath( EntryPath parentPath, Element element )
+    public static EntryPath from( final EntryPath parentPath, final Element element )
     {
         Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
         Preconditions.checkNotNull( element, "element cannot be null" );
 
-        elements = new ArrayList<Element>();
-        elements.addAll( parentPath.elements );
-        elements.add( element );
+        final List<Element> elementList = new ArrayList<Element>( parentPath.elementCount() + 1 );
+        for ( EntryPath.Element currElement : parentPath )
+        {
+            elementList.add( currElement );
+        }
+        elementList.add( element );
+        return from( ImmutableList.copyOf( elementList ), parentPath );
     }
 
-    public EntryPath( EntryPath path, int index )
+    public static EntryPath from( final EntryPath path, final int index )
     {
-        elements = new ArrayList<Element>();
+        Preconditions.checkNotNull( path, "path cannot be null" );
+        Preconditions.checkArgument( index >= 0, "index cannot be less than zero" );
+
+        final List<Element> elementsList = new ArrayList<Element>( path.elementCount() );
         for ( int i = 0; i < path.elements.size(); i++ )
         {
             final Element el = path.elements.get( i );
             boolean last = i == path.elements.size() - 1;
             if ( last )
             {
-                elements.add( new Element( el.getName(), index ) );
+                elementsList.add( new Element( el.getName(), index ) );
             }
             else
             {
-                elements.add( el );
+                elementsList.add( el );
             }
         }
+        return from( elementsList );
     }
 
-    public EntryPath( String path )
-    {
-        Preconditions.checkNotNull( path, "path cannot be null" );
-
-        elements = splitPathIntoElements( path );
-    }
-
-    public EntryPath( final EntryPath parentPath, final Element element, final int index )
+    public static EntryPath from( final EntryPath parentPath, final Element element, final int index )
     {
         Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
         Preconditions.checkNotNull( element, "element cannot be null" );
+        Preconditions.checkArgument( index >= 0, "index cannot be less than zero" );
 
-        elements = new ArrayList<Element>();
-        elements.addAll( parentPath.elements );
-        elements.add( new Element( element.getName() + "[" + index + "]" ) );
+        final List<Element> elementsList = new ArrayList<Element>( parentPath.elementCount() + 1 );
+        elementsList.addAll( parentPath.elements );
+        elementsList.add( new Element( element.getName() + "[" + index + "]" ) );
+        return from( elementsList, parentPath );
+    }
+
+    public static EntryPath from( final EntryPath parentPath, final String name, final int index )
+    {
+        Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
+        Preconditions.checkNotNull( name, "name cannot be null" );
+        Preconditions.checkArgument( index >= 0, "index cannot be less than zero" );
+
+        final List<Element> elementsList = new ArrayList<Element>( parentPath.elementCount() + 1 );
+        elementsList.addAll( parentPath.elements );
+        elementsList.add( new Element( name + "[" + index + "]" ) );
+        return from( elementsList, parentPath );
+    }
+
+    public static EntryPath from( final Iterable<Element> pathElements )
+    {
+        Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
+        return new EntryPath( ImmutableList.copyOf( pathElements ) );
+    }
+
+    public static EntryPath from( final Iterable<Element> pathElements, final EntryPath parentPath )
+    {
+        Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
+        return new EntryPath( ImmutableList.copyOf( pathElements ), parentPath );
+    }
+
+    public static EntryPath from( final String path )
+    {
+        Preconditions.checkNotNull( path, "path cannot be null" );
+        return new EntryPath( splitPathIntoElements( path ) );
+    }
+
+    public static EntryPath from( final Element... pathElements )
+    {
+        Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
+        return new EntryPath( ImmutableList.copyOf( pathElements ) );
+    }
+
+    private EntryPath()
+    {
+        this.elements = ImmutableList.of();
+        this.refString = "";
+        this.relative = false;
+        this.parentPath = null;
+    }
+
+    public EntryPath( final ImmutableList<Element> pathElements )
+    {
+        Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
+        this.elements = pathElements;
+        this.relative = pathElements.size() <= 0 || !pathElements.get( 0 ).getName().startsWith( ELEMENT_DIVIDER );
+        this.refString = toString( elements );
+
+        final List<Element> parentPathElements = Lists.newArrayList();
+        for ( int i = 0; i < elements.size(); i++ )
+        {
+            if ( i < elements.size() - 1 )
+            {
+                parentPathElements.add( elements.get( i ) );
+            }
+        }
+        this.parentPath = parentPathElements.size() > 0 ? EntryPath.from( parentPathElements ) : null;
+    }
+
+    public EntryPath( final ImmutableList<Element> pathElements, final EntryPath parentPath )
+    {
+        Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
+        this.elements = pathElements;
+        this.relative = pathElements.size() <= 0 || !pathElements.get( 0 ).getName().startsWith( ELEMENT_DIVIDER );
+        this.refString = toString( elements );
+        this.parentPath = parentPath;
+    }
+
+    public boolean isRelative()
+    {
+        return relative;
     }
 
     public Element getFirstElement()
@@ -92,7 +167,6 @@ public final class EntryPath
     {
         return elements.get( elements.size() - 1 );
     }
-
 
     public boolean startsWith( final EntryPath path )
     {
@@ -131,15 +205,7 @@ public final class EntryPath
 
     public EntryPath getParent()
     {
-        List<Element> pathElements = Lists.newArrayList();
-        for ( int i = 0; i < elements.size(); i++ )
-        {
-            if ( i < elements.size() - 1 )
-            {
-                pathElements.add( elements.get( i ) );
-            }
-        }
-        return new EntryPath( pathElements );
+        return parentPath;
     }
 
     public EntryPath asNewWithoutFirstPathElement()
@@ -152,7 +218,7 @@ public final class EntryPath
                 pathElements.add( elements.get( i ) );
             }
         }
-        return new EntryPath( pathElements );
+        return EntryPath.from( pathElements );
     }
 
     public EntryPath asNewWithIndexAtPath( final int index, final EntryPath path )
@@ -161,7 +227,7 @@ public final class EntryPath
         for ( int i = 0; i < elements.size(); i++ )
         {
             pathElements.add( elements.get( i ) );
-            EntryPath possiblyMatchingPath = new EntryPath( pathElements );
+            EntryPath possiblyMatchingPath = from( pathElements );
             if ( path.equals( possiblyMatchingPath ) )
             {
                 pathElements.remove( i );
@@ -169,7 +235,7 @@ public final class EntryPath
             }
 
         }
-        return new EntryPath( pathElements );
+        return from( pathElements );
     }
 
     public EntryPath asNewWithoutIndexAtLastPathElement()
@@ -187,7 +253,7 @@ public final class EntryPath
                 pathElements.add( elements.get( i ) );
             }
         }
-        return new EntryPath( pathElements );
+        return from( pathElements );
     }
 
     public int elementCount()
@@ -212,26 +278,30 @@ public final class EntryPath
             return false;
         }
 
-        final EntryPath entryPath = (EntryPath) o;
-
-        return elements.equals( entryPath.elements );
+        final EntryPath other = (EntryPath) o;
+        return refString.equals( other.refString );
     }
 
     @Override
     public int hashCode()
     {
-        return elements.hashCode();
+        return refString.hashCode();
     }
 
     @Override
     public String toString()
     {
-        StringBuilder s = new StringBuilder();
-        for ( int i = 0, size = elements.size(); i < size; i++ )
-        {
-            s.append( elements.get( i ) );
+        return refString;
+    }
 
-            if ( i < elements.size() - 1 )
+    private String toString( List<Element> listOfElements )
+    {
+        StringBuilder s = new StringBuilder();
+        for ( int i = 0, size = listOfElements.size(); i < size; i++ )
+        {
+            s.append( listOfElements.get( i ) );
+
+            if ( i < listOfElements.size() - 1 )
             {
                 s.append( ELEMENT_DIVIDER );
             }
@@ -239,16 +309,27 @@ public final class EntryPath
         return s.toString();
     }
 
-    private static List<Element> splitPathIntoElements( String path )
+    private static ImmutableList<Element> splitPathIntoElements( String path )
     {
         List<Element> elements = new ArrayList<Element>();
 
         StringTokenizer st = new StringTokenizer( path, ELEMENT_DIVIDER );
+        int count = 0;
         while ( st.hasMoreTokens() )
         {
-            elements.add( new Element( st.nextToken() ) );
+            count++;
+            final String element = st.nextToken();
+            if ( count == 1 && path.startsWith( "." ) )
+            {
+                elements.add( new Element( "." + element ) );
+            }
+            else
+            {
+                elements.add( new Element( element ) );
+            }
+
         }
-        return elements;
+        return ImmutableList.copyOf( elements );
     }
 
     /**
@@ -266,9 +347,20 @@ public final class EntryPath
 
         private final int index;
 
-        public Element( String element )
+        public static Element from( final String element )
         {
-            Preconditions.checkNotNull( element, "element cannot be null" );
+            return new Element( element );
+        }
+
+        public static Element from( final String name, final int index )
+        {
+            return new Element( name, index );
+        }
+
+        public Element( final String element )
+        {
+            Preconditions.checkNotNull( element, "Element cannot be null" );
+            Preconditions.checkArgument( !StringUtils.isEmpty( element ), "Element cannot be empty" );
 
             int indexStart = element.indexOf( INDEX_START_MARKER );
             int indexStop = element.indexOf( INDEX_STOP_MARKER );
@@ -299,12 +391,13 @@ public final class EntryPath
             }
         }
 
-        private Element( String element, int index )
+        public Element( final String name, final int index )
         {
-            Preconditions.checkNotNull( element, "element cannot be null" );
+            Preconditions.checkNotNull( name, "Element name cannot be null" );
+            Preconditions.checkArgument( !StringUtils.isEmpty( name ), "Element name cannot be empty" );
             Preconditions.checkArgument( index >= 0, "an index cannot be less than zero" );
 
-            this.name = element;
+            this.name = name;
             this.index = index;
             this.hasIndex = true;
         }
@@ -359,6 +452,14 @@ public final class EntryPath
                 s.append( INDEX_START_MARKER ).append( index ).append( INDEX_STOP_MARKER );
             }
             return s.toString();
+        }
+
+        public static void checkName( final String name )
+        {
+            Preconditions.checkArgument( !name.contains( EntryPath.ELEMENT_DIVIDER ), "A name cannot contain %s: %s",
+                                         EntryPath.ELEMENT_DIVIDER, name );
+            Preconditions.checkArgument( !name.contains( INDEX_START_MARKER ), "A name cannot contain %s: %s", INDEX_START_MARKER, name );
+            Preconditions.checkArgument( !name.contains( INDEX_STOP_MARKER ), "A name cannot contain %s: %s", INDEX_STOP_MARKER, name );
         }
     }
 }

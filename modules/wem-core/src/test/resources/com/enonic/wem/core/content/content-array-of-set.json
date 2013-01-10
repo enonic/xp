@@ -1,47 +1,51 @@
 {
-    "id" : null,
-    "path":"",
-    "name":null,
-    "type":"myModule:myType",
-    "displayName":null,
-    "owner":null,
-    "modifier":null,
-    "modifiedTime":null,
-    "createdTime":null,
-    "data":[
+    "id": null,
+    "path": "",
+    "name": null,
+    "type": "myModule:myType",
+    "displayName": null,
+    "owner": null,
+    "modifier": null,
+    "modifiedTime": null,
+    "createdTime": null,
+    "data": [
         {
-            "name":"mySet",
-            "path" : "mySet",
-            "type":"Set",
-            "value":[
-                [
-                    {
-                        "name":"myInput",
-                        "path":"mySet[0].myInput",
-                        "type":"Text",
-                        "value":"1"
-                    },
-                    {
-                        "name":"myOtherInput",
-                        "path":"mySet[0].myOtherInput",
-                        "type":"Text",
-                        "value":"a"
-                    }
-                ],
-                [
-                    {
-                        "name":"myInput",
-                        "path":"mySet[1].myInput",
-                        "type":"Text",
-                        "value":"2"
-                    },
-                    {
-                        "name":"myOtherInput",
-                        "path":"mySet[1].myOtherInput",
-                        "type":"Text",
-                        "value":"b"
-                    }
-                ]
+            "name": "mySet",
+            "path": "mySet[0]",
+            "type": "Set",
+            "value": [
+                {
+                    "name": "myInput",
+                    "path": "mySet[0].myInput",
+                    "type": "Text",
+                    "value": "1"
+                },
+                {
+                    "name": "myOtherInput",
+                    "path": "mySet[0].myOtherInput",
+                    "type": "Text",
+                    "value": "a"
+                }
+            ]
+        }
+        ,
+        {
+            "name": "mySet",
+            "path": "mySet[1]",
+            "type": "Set",
+            "value": [
+                {
+                    "name": "myInput",
+                    "path": "mySet[1].myInput",
+                    "type": "Text",
+                    "value": "2"
+                },
+                {
+                    "name": "myOtherInput",
+                    "path": "mySet[1].myOtherInput",
+                    "type": "Text",
+                    "value": "b"
+                }
             ]
         }
     ]

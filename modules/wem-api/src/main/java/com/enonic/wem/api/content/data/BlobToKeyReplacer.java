@@ -4,6 +4,8 @@ package com.enonic.wem.api.content.data;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.datatype.DataTypes;
 
+import static com.enonic.wem.api.content.data.Value.newValue;
+
 
 public class BlobToKeyReplacer
 {
@@ -19,22 +21,27 @@ public class BlobToKeyReplacer
         doReplace( contentData );
     }
 
-    private void doReplace( final Iterable<Data> dataIt )
+    private void doReplace( final Iterable<Entry> dataIt )
     {
-        for ( Data data : dataIt )
+        for ( Entry entry : dataIt )
         {
-            if ( data.getDataType().equals( DataTypes.BLOB ) )
-            {
-                if ( data.getValue() instanceof byte[] )
-                {
-                    BlobKey blobKey = blobKeyResolver.resolve( (byte[]) data.getValue() );
-                    data.setValue( blobKey );
-                }
 
-            }
-            else if ( data.hasDataSetAsValue() )
+            if ( entry.isData() )
             {
-                doReplace( data.getDataSet() );
+                final Data data = entry.toData();
+                if ( data.getType().equals( DataTypes.BLOB ) )
+                {
+                    if ( data.getObject() instanceof byte[] )
+                    {
+                        final BlobKey blobKey = blobKeyResolver.resolve( (byte[]) data.getObject() );
+                        data.setValue( newValue().type( DataTypes.BLOB ).value( blobKey ).build() );
+                    }
+
+                }
+            }
+            else if ( entry.isDataSet() )
+            {
+                doReplace( entry.toDataSet() );
             }
         }
     }

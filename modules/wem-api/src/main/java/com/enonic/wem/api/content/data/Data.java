@@ -6,148 +6,109 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.datatype.BaseDataType;
-import com.enonic.wem.api.content.datatype.DataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.datatype.InconvertibleValueException;
 import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
-import com.enonic.wem.api.content.datatype.JavaType;
 import com.enonic.wem.api.content.type.form.InvalidDataException;
 import com.enonic.wem.api.content.type.form.InvalidValueException;
 
+import static com.enonic.wem.api.content.data.Value.newValue;
 
-public final class Data
+public class Data
+    extends Entry
 {
-    private EntryPath path;
+    private Value value;
 
-    private Object value;
-
-    private BaseDataType type;
-
-    private Data()
+    Data( final BaseBuilder builder )
     {
-        // protection
+        super( builder.name, builder.parent != null ? builder.parent.getEntries() : null );
+        this.value = builder.value;
     }
 
-    /**
-     * Sets the given index on this Data's path if it matches with the given.
-     * If this Data's has a DataSet as value the same will be issued to the entries there.
-     */
-    void setEntryPathIndex( final EntryPath path, final int index )
+    public BaseDataType getType()
     {
-        this.path = this.path.asNewWithIndexAtPath( index, path );
-        if ( type == DataTypes.SET )
-        {
-            getDataSet().setEntryPathIndex( path, index );
-        }
-        else if ( type == DataTypes.ARRAY )
-        {
-            getDataArray().setEntryPathIndex( path, index );
-        }
-    }
-
-    public EntryPath getPath()
-    {
-        return path;
-    }
-
-    public BaseDataType getDataType()
-    {
-        return type;
-    }
-
-    public void setValue( final Object value )
-    {
-        Preconditions.checkNotNull( value, "A Data cannot have a null value" );
-        Preconditions.checkArgument( type.hasCorrectType( value ), "Incorrect type of value for this Data [%s]: %s", this, value );
-        this.value = value;
+        return value.getType();
     }
 
     public void setValue( final Object value, final BaseDataType dataType )
     {
         Preconditions.checkNotNull( value, "A Data cannot have a null value" );
+        Preconditions.checkArgument( !( value instanceof DataSet ), "A Data cannot have a DataSet as value" );
+        this.value = newValue().type( dataType ).value( value ).build();
+    }
+
+    public void setValue( final Value value )
+    {
+        Preconditions.checkNotNull( value, "A Data cannot have a null value" );
         this.value = value;
-        this.type = dataType;
     }
 
-    public boolean hasDataSetAsValue()
+    @Override
+    public DataArray getArray()
     {
-        return value instanceof DataSet;
+        return (DataArray) super.getArray();
     }
 
-    public boolean hasArrayAsValue()
-    {
-        return value instanceof DataArray;
-    }
-
-    public Object getValue()
+    public Value getValue()
     {
         return value;
     }
 
-    public String getString()
-        throws InconvertibleValueException
+    public Value getValue( final int arrayIndex )
     {
-        final String converted = JavaType.STRING.convertFrom( value );
-        if ( value != null && converted == null )
-        {
-            throw new InconvertibleValueException( value, JavaType.STRING );
-        }
-        return converted;
+        final DataArray array = getArray();
+        return array.getValue( arrayIndex );
     }
 
-    public Long getLong()
-        throws InconvertibleValueException
+    public Object getObject()
     {
-        final Long converted = JavaType.LONG.convertFrom( value );
-        if ( value != null && converted == null )
-        {
-            throw new InconvertibleValueException( value, JavaType.LONG );
-        }
-        return converted;
+        return value.getObject();
     }
 
-    public Double getDouble()
+    public String asString()
         throws InconvertibleValueException
     {
-        final Double converted = JavaType.DOUBLE.convertFrom( value );
-        if ( value != null && converted == null )
-        {
-            throw new InconvertibleValueException( value, JavaType.DOUBLE );
-        }
-        return converted;
+        return value.asString();
     }
 
-    public DateMidnight getDate()
+    /**
+     * Returns the value at of the data at the given array index as a String.
+     *
+     * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a String.
+     */
+    public String asString( final int arrayIndex )
         throws InconvertibleValueException
     {
-        final DateMidnight converted = JavaType.DATE.convertFrom( value );
-        if ( value != null && converted == null )
-        {
-            throw new InconvertibleValueException( value, JavaType.DATE );
-        }
-        return converted;
+        return getArray().getValue( arrayIndex ).asString();
     }
 
-    public DataSet getDataSet()
+    public Long asLong()
         throws InconvertibleValueException
     {
-        final DataSet converted = JavaType.DATA_SET.convertFrom( value );
-        if ( value != null && converted == null )
-        {
-            throw new InconvertibleValueException( value, JavaType.DATA_SET );
-        }
-        return converted;
+        return value.asLong();
     }
 
-    public DataArray getDataArray()
+    /**
+     * Returns the value at of the data at the given array index as a Long.
+     *
+     * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a Long.
+     */
+    public Long asLong( final int arrayIndex )
         throws InconvertibleValueException
     {
-        final DataArray converted = JavaType.DATA_ARRAY.convertFrom( value );
-        if ( value != null && converted == null )
-        {
-            throw new InconvertibleValueException( value, JavaType.DATA_ARRAY );
-        }
-        return converted;
+        return getArray().getValue( arrayIndex ).asLong();
+    }
+
+    public Double asDouble()
+        throws InconvertibleValueException
+    {
+        return value.asDouble();
+    }
+
+    public DateMidnight asDate()
+        throws InconvertibleValueException
+    {
+        return value.asDate();
     }
 
     public void checkDataTypeValidity()
@@ -155,7 +116,7 @@ public final class Data
     {
         try
         {
-            type.checkValidity( this );
+            getType().checkValidity( this );
         }
         catch ( InvalidValueTypeException e )
         {
@@ -167,21 +128,13 @@ public final class Data
         }
     }
 
-    public DataSet getDataSet( final EntryPath path )
-    {
-        Preconditions.checkArgument( getDataType().equals( DataTypes.SET ) );
-
-        final DataSet dataSet = (DataSet) getValue();
-        return dataSet.getDataSet( path );
-    }
-
     @Override
     public String toString()
     {
         final Objects.ToStringHelper s = Objects.toStringHelper( this );
-        s.add( "path", path );
-        s.add( "type", type.getName() );
-        s.add( "value", value );
+        s.add( "name", getName() );
+        s.add( "type", getType() );
+        s.add( "value", value.getObject() );
         return s.toString();
     }
 
@@ -190,52 +143,115 @@ public final class Data
         return new Builder();
     }
 
-    public static class Builder
+    public static TextBuilder newText()
     {
-        private EntryPath path;
+        TextBuilder builder = new TextBuilder();
+        builder.type( DataTypes.TEXT );
+        return builder;
+    }
 
-        private Object value;
+    public static XmlBuilder newXml()
+    {
+        XmlBuilder builder = new XmlBuilder();
+        builder.type( DataTypes.XML );
+        return builder;
+    }
 
-        private BaseDataType type;
-
-
-        public Builder()
+    public static class Builder
+        extends BaseBuilder<Builder>
+    {
+        public Builder type( BaseDataType value )
         {
-            value = new Data();
+            return super.type( value );
+        }
+    }
+
+    public static class TextBuilder
+        extends BaseBuilder
+    {
+        public TextBuilder()
+        {
+            valueBuilder.type( DataTypes.TEXT );
+        }
+    }
+
+    public static class XmlBuilder
+        extends BaseBuilder
+    {
+        public XmlBuilder()
+        {
+            valueBuilder.type( DataTypes.XML );
+        }
+    }
+
+    public static class BaseBuilder<T extends BaseBuilder>
+    {
+        private DataSet parent;
+
+        private String name;
+
+        Value.Builder valueBuilder = Value.newValue();
+
+        private Value value;
+
+        public BaseBuilder()
+        {
         }
 
-        public Builder path( EntryPath value )
+        @SuppressWarnings("unchecked")
+        private T getThis()
         {
-            this.path = value;
-            return this;
+            return (T) this;
         }
 
-        public Builder type( DataType value )
+        public T parent( DataSet value )
         {
-            this.type = (BaseDataType) value;
-            return this;
+            this.parent = value;
+            return getThis();
         }
 
-        public Builder value( Object value )
+        public T name( String value )
         {
-            this.value = value;
-            return this;
+            this.name = value;
+            return getThis();
+        }
+
+        T type( BaseDataType value )
+        {
+            this.valueBuilder.type( value );
+            return getThis();
+        }
+
+        public T value( Object value )
+        {
+            if ( value instanceof Value )
+            {
+                this.value = (Value) value;
+            }
+            else if ( value instanceof Value.Builder )
+            {
+                this.value = ( (Value.Builder) value ).build();
+            }
+            else
+            {
+                this.valueBuilder.value( value );
+            }
+            return getThis();
         }
 
         public Data build()
         {
-            Preconditions.checkNotNull( this.type, "type is required" );
-            Preconditions.checkNotNull( this.value, "value is required" );
+            if ( value == null )
+            {
+                value = valueBuilder.build();
+            }
 
-            final Data data = new Data();
-            data.path = this.path;
-            data.type = this.type;
-            data.value = this.value;
-            data.type.ensureType( data );
+            final Data data = new Data( this );
+            data.getType().ensureType( data );
 
             try
             {
-                data.type.checkValidity( data );
+                data.getType().checkValidity( data );
             }
             catch ( InvalidValueTypeException e )
             {

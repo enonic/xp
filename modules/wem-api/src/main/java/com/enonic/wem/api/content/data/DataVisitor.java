@@ -2,17 +2,17 @@ package com.enonic.wem.api.content.data;
 
 public abstract class DataVisitor
 {
-    public void traverse( final Iterable<Data> dataIterable )
+    public void traverse( final Iterable<Entry> entryIterable )
     {
-        for ( Data data : dataIterable )
+        for ( Entry entry : entryIterable )
         {
-            visit( data );
-            if ( data.hasDataSetAsValue() )
+            visit( entry );
+            if ( entry.isDataSet() )
             {
-                traverse( data.getDataSet() );
+                traverse( entry.toDataSet() );
             }
         }
     }
 
-    public abstract void visit( Data data );
+    public abstract void visit( Entry entry );
 }

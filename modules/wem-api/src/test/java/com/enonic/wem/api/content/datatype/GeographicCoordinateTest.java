@@ -1,5 +1,6 @@
 package com.enonic.wem.api.content.datatype;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
@@ -10,6 +11,7 @@ import static com.enonic.wem.api.content.Content.newContent;
 import static org.junit.Assert.*;
 
 
+@Ignore
 public class GeographicCoordinateTest
 {
     @Test(expected = InvalidDataTypeException.class)

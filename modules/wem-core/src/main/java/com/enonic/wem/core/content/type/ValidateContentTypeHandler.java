@@ -8,13 +8,12 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.command.content.type.ValidateContentType;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypeFetcher;
-import com.enonic.wem.api.content.type.ContentTypeValidator;
-import com.enonic.wem.api.content.type.ValidateContentTypeResult;
+import com.enonic.wem.api.content.type.validator.ContentTypeValidator;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 
-import static com.enonic.wem.api.content.type.ContentTypeValidator.newContentTypeValidator;
+import static com.enonic.wem.api.content.type.validator.ContentTypeValidator.newContentTypeValidator;
 
 @Component
 public class ValidateContentTypeHandler
@@ -35,9 +34,9 @@ public class ValidateContentTypeHandler
         Session session = context.getJcrSession();
         ContentTypeFetcher fetcher = new InternalContentTypeFetcher( session, contentTypeDao );
         ContentType contentType = command.getContentType();
-        ContentTypeValidator validator = newContentTypeValidator().recordExceptions( true ).contentTypeFetcher( fetcher ).build();
+        ContentTypeValidator validator = newContentTypeValidator().contentTypeFetcher( fetcher ).build();
         validator.validate( contentType );
-        command.setResult( ValidateContentTypeResult.from( validator.getInvalidContentTypeExceptions() ) );
+        command.setResult( validator.getResult() );
     }
 
     @Autowired

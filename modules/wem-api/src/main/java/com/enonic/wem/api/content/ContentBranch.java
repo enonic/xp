@@ -17,11 +17,6 @@ public class ContentBranch
     {
     }
 
-    private ContentBranch( final Content parent )
-    {
-        this.parent = parent;
-    }
-
     public String getName()
     {
         return parent.getName();

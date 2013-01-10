@@ -30,26 +30,28 @@ class FormItemSetJsonSerializer
 
     public static final String ITEMS = "items";
 
-    private final OccurrencesJsonSerializer occurrencesJsonSerializer = new OccurrencesJsonSerializer();
+    private final OccurrencesJsonSerializer occurrencesJsonSerializer;
 
     private final FormItemsJsonSerializer formItemsJsonSerializer;
 
-    public FormItemSetJsonSerializer( final FormItemsJsonSerializer formItemsJsonSerializer )
+    public FormItemSetJsonSerializer( final FormItemsJsonSerializer formItemsJsonSerializer, final ObjectMapper objectMapper )
     {
+        super( objectMapper );
         this.formItemsJsonSerializer = formItemsJsonSerializer;
+        occurrencesJsonSerializer = new OccurrencesJsonSerializer( objectMapper );
     }
 
     @Override
-    protected JsonNode serialize( final FormItemSet set, final ObjectMapper objectMapper )
+    protected JsonNode serialize( final FormItemSet set )
     {
-        final ObjectNode jsonObject = objectMapper.createObjectNode();
+        final ObjectNode jsonObject = objectMapper().createObjectNode();
         jsonObject.put( NAME, set.getName() );
         jsonObject.put( LABEL, set.getLabel() );
         jsonObject.put( IMMUTABLE, set.isImmutable() );
-        jsonObject.put( OCCURRENCES, occurrencesJsonSerializer.serialize( set.getOccurrences(), objectMapper ) );
+        jsonObject.put( OCCURRENCES, occurrencesJsonSerializer.serialize( set.getOccurrences() ) );
         jsonObject.put( CUSTOM_TEXT, set.getCustomText() );
         jsonObject.put( HELP_TEXT, set.getHelpText() );
-        jsonObject.put( ITEMS, formItemsJsonSerializer.serialize( set.getFormItems(), objectMapper ) );
+        jsonObject.put( ITEMS, formItemsJsonSerializer.serialize( set.getFormItems() ) );
         return jsonObject;
     }
 

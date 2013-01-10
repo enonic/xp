@@ -17,7 +17,7 @@ public class ContentJsonSerializerTest
     @Override
     void assertSerializedResult( final String fileNameForExpected, final String actualSerialization )
     {
-        assertEquals( getJsonAsString( fileNameForExpected + ".json" ), actualSerialization );
+        assertEquals( "Serialization not as expected", getJsonAsString( fileNameForExpected + ".json" ), actualSerialization );
     }
 
 }

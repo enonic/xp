@@ -28,33 +28,41 @@ public class FormItemJsonSerializer
 
     public FormItemJsonSerializer( final FormItemsJsonSerializer formItemsJsonSerializer )
     {
-        this.inputJsonSerializer = new InputJsonSerializer();
-        this.formItemSetJsonSerializer = new FormItemSetJsonSerializer( formItemsJsonSerializer );
-        this.layoutJsonSerializer = new LayoutJsonSerializer( formItemsJsonSerializer );
-        this.subTypeReferenceJsonSerializer = new SubTypeReferenceJsonSerializer();
+        this.inputJsonSerializer = new InputJsonSerializer( objectMapper() );
+        this.formItemSetJsonSerializer = new FormItemSetJsonSerializer( formItemsJsonSerializer, objectMapper() );
+        this.layoutJsonSerializer = new LayoutJsonSerializer( formItemsJsonSerializer, objectMapper() );
+        this.subTypeReferenceJsonSerializer = new SubTypeReferenceJsonSerializer( objectMapper() );
+    }
+
+    public FormItemJsonSerializer( final FormItemsJsonSerializer formItemsJsonSerializer, final ObjectMapper objectMapper )
+    {
+        super( objectMapper );
+        this.inputJsonSerializer = new InputJsonSerializer( objectMapper );
+        this.formItemSetJsonSerializer = new FormItemSetJsonSerializer( formItemsJsonSerializer, objectMapper );
+        this.layoutJsonSerializer = new LayoutJsonSerializer( formItemsJsonSerializer, objectMapper );
+        this.subTypeReferenceJsonSerializer = new SubTypeReferenceJsonSerializer( objectMapper );
     }
 
     @Override
-    public JsonNode serialize( final FormItem formItem, final ObjectMapper objectMapper )
+    public JsonNode serialize( final FormItem formItem )
     {
-        final ObjectNode formItemBaseTypeObject = objectMapper.createObjectNode();
+        final ObjectNode formItemBaseTypeObject = objectMapper().createObjectNode();
         if ( formItem instanceof FormItemSet )
         {
-            formItemBaseTypeObject.put( FormItemSet.class.getSimpleName(),
-                                        formItemSetJsonSerializer.serialize( (FormItemSet) formItem, objectMapper ) );
+            formItemBaseTypeObject.put( FormItemSet.class.getSimpleName(), formItemSetJsonSerializer.serialize( (FormItemSet) formItem ) );
         }
         else if ( formItem instanceof Layout )
         {
-            formItemBaseTypeObject.put( Layout.class.getSimpleName(), layoutJsonSerializer.serialize( (Layout) formItem, objectMapper ) );
+            formItemBaseTypeObject.put( Layout.class.getSimpleName(), layoutJsonSerializer.serialize( (Layout) formItem ) );
         }
         else if ( formItem instanceof Input )
         {
-            formItemBaseTypeObject.put( Input.class.getSimpleName(), inputJsonSerializer.serialize( (Input) formItem, objectMapper ) );
+            formItemBaseTypeObject.put( Input.class.getSimpleName(), inputJsonSerializer.serialize( (Input) formItem ) );
         }
         else if ( formItem instanceof SubTypeReference )
         {
             formItemBaseTypeObject.put( SubTypeReference.class.getSimpleName(),
-                                        subTypeReferenceJsonSerializer.serialize( (SubTypeReference) formItem, objectMapper ) );
+                                        subTypeReferenceJsonSerializer.serialize( (SubTypeReference) formItem ) );
         }
         else
         {

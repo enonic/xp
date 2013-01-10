@@ -33,10 +33,11 @@ public class HtmlArea
     public void checkBreaksRequiredContract( final Data data )
         throws BreaksRequiredContractException
     {
-        final String stringValue = (String) data.getValue();
+        final String stringValue = (String) data.getObject();
         if ( StringUtils.isBlank( stringValue ) )
         {
             throw new BreaksRequiredContractException( data, this );
         }
     }
+
 }

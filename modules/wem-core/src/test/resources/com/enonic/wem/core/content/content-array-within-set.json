@@ -1,24 +1,30 @@
 {
-    "id" : null,
-    "path":"",
-    "name":null,
-    "type":"myModule:myType",
-    "displayName":null,
-    "owner":null,
-    "modifier":null,
-    "modifiedTime":null,
-    "createdTime":null,
-    "data":[
+    "id": null,
+    "path": "",
+    "name": null,
+    "type": "myModule:myType",
+    "displayName": null,
+    "owner": null,
+    "modifier": null,
+    "modifiedTime": null,
+    "createdTime": null,
+    "data": [
         {
-            "name":"mySet",
-            "path":"mySet",
-            "type":"Set",
-            "value":[
+            "name": "mySet",
+            "path": "mySet",
+            "type": "Set",
+            "value": [
                 {
-                    "name":"myArray",
-                    "path":"mySet.myArray",
-                    "type":"Text",
-                    "value":[ "1", "2" ]
+                    "name": "myArray",
+                    "path": "mySet.myArray[0]",
+                    "type": "Text",
+                    "value": "1"
+                },
+                {
+                    "name": "myArray",
+                    "path": "mySet.myArray[1]",
+                    "type": "Text",
+                    "value": "2"
                 }
             ]
         }

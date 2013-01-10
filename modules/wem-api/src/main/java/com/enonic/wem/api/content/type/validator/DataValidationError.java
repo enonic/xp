@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.type;
+package com.enonic.wem.api.content.type.validator;
 
 import java.text.MessageFormat;
 
@@ -13,7 +13,7 @@ public class DataValidationError
 
     private final String errorMessage;
 
-    public DataValidationError( final FormItemPath path, final String errorMessage, final Object... args )
+    DataValidationError( final FormItemPath path, final String errorMessage, final Object... args )
     {
         this.path = path;
         this.errorMessage = MessageFormat.format( errorMessage, args );

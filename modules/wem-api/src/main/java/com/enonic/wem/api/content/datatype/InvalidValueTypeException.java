@@ -13,6 +13,6 @@ public class InvalidValueTypeException
 
     private static String buildMessage( final JavaType.BaseType javaType, final Data data )
     {
-        return "Invalid value type at path [" + data.getPath() + "] " + data.getValue().getClass() + ", expected " + javaType.getType();
+        return "Invalid value type at path [" + data.getPath() + "] " + data.getObject().getClass() + ", expected " + javaType.getType();
     }
 }

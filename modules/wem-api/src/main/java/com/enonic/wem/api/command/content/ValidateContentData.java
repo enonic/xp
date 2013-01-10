@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.DataValidationErrors;
+import com.enonic.wem.api.content.type.validator.DataValidationErrors;
 
 public class ValidateContentData
     extends Command<DataValidationErrors>

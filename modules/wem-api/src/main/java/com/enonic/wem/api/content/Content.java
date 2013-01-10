@@ -11,9 +11,11 @@ import com.enonic.wem.api.content.data.BlobToKeyReplacer;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.MockBlobKeyResolver;
-import com.enonic.wem.api.content.datatype.DataType;
+import com.enonic.wem.api.content.data.Value;
+import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
@@ -118,42 +120,42 @@ public final class Content
 
     public void setData( final String path, final String value )
     {
-        this.data.setData( new EntryPath( path ), value, DataTypes.TEXT );
+        this.data.setData( EntryPath.from( path ), Value.newValue().type( DataTypes.TEXT ).value( value ).build() );
     }
 
     public void setData( final String path, final DateMidnight value )
     {
-        this.data.setData( new EntryPath( path ), value, DataTypes.DATE );
+        this.data.setData( EntryPath.from( path ), Value.newValue().type( DataTypes.DATE ).value( value ).build() );
     }
 
     public void setData( final String path, final Long value )
     {
-        this.data.setData( new EntryPath( path ), value, DataTypes.WHOLE_NUMBER );
+        this.data.setData( EntryPath.from( path ), Value.newValue().type( DataTypes.WHOLE_NUMBER ).value( value ).build() );
     }
 
     public void setData( final String path, final Double value )
     {
-        this.data.setData( new EntryPath( path ), value, DataTypes.DECIMAL_NUMBER );
+        this.data.setData( EntryPath.from( path ), Value.newValue().type( DataTypes.DECIMAL_NUMBER ).value( value ).build() );
     }
 
-    public void setData( final String path, final Object value, DataType dataType )
+    public void setData( final String path, final Object value, BaseDataType dataType )
     {
-        this.data.setData( new EntryPath( path ), value, dataType );
+        this.data.setData( EntryPath.from( path ), Value.newValue().type( dataType ).value( value ).build() );
+    }
+
+    public Entry getEntry( final String path )
+    {
+        return this.data.getEntry( EntryPath.from( path ) );
     }
 
     public Data getData( final String path )
     {
-        return this.data.getData( new EntryPath( path ) );
-    }
-
-    public String getValueAsString( final String path )
-    {
-        return this.data.getValueAsString( new EntryPath( path ) );
+        return this.data.getData( EntryPath.from( path ) );
     }
 
     public DataSet getDataSet( String path )
     {
-        return this.data.getDataSet( new EntryPath( path ) );
+        return this.data.getDataSet( EntryPath.from( path ) );
     }
 
     public Object getIndexableValues()

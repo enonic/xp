@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content.type.form.inputtype;
 
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
@@ -21,6 +22,7 @@ public class ColorTest
     }
 
     @Test
+    @Ignore
     public void given_data_that_validates_checkValidity_throws_nothing()
         throws InvalidValueTypeException, InvalidValueException
     {
@@ -35,6 +37,7 @@ public class ColorTest
     }
 
     @Test
+    @Ignore
     public void given_data_missing_red_checkValidity_throws_InvalidDataException()
     {
         Content content = newContent().build();
@@ -59,6 +62,7 @@ public class ColorTest
     }
 
     @Test
+    @Ignore
     public void given_data_with_illegal_red_checkValidity_throws_InvalidDataException()
     {
         Content content = newContent().build();

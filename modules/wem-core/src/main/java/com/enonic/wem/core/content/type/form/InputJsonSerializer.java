@@ -36,30 +36,36 @@ public class InputJsonSerializer
 
     public static final String CONFIG = "config";
 
-    private final com.enonic.wem.core.content.type.form.inputtype.InputTypeJsonSerializer inputTypeSerializer =
-        new com.enonic.wem.core.content.type.form.inputtype.InputTypeJsonSerializer();
+    private final com.enonic.wem.core.content.type.form.inputtype.InputTypeJsonSerializer inputTypeSerializer;
+
+    private final OccurrencesJsonSerializer occurrencesJsonSerializer;
 
     private final InputTypeConfigJsonSerializer inputTypeConfigSerializer = new InputTypeConfigJsonSerializer();
 
-    private final OccurrencesJsonSerializer occurrencesJsonSerializer = new OccurrencesJsonSerializer();
+    public InputJsonSerializer( final ObjectMapper objectMapper )
+    {
+        super( objectMapper );
+        inputTypeSerializer = new com.enonic.wem.core.content.type.form.inputtype.InputTypeJsonSerializer( objectMapper );
+        occurrencesJsonSerializer = new OccurrencesJsonSerializer( objectMapper );
+    }
 
     @Override
-    protected JsonNode serialize( final Input input, final ObjectMapper objectMapper )
+    protected JsonNode serialize( final Input input )
     {
-        final ObjectNode jsonObject = objectMapper.createObjectNode();
+        final ObjectNode jsonObject = objectMapper().createObjectNode();
         jsonObject.put( NAME, input.getName() );
         jsonObject.put( LABEL, input.getLabel() );
         jsonObject.put( IMMUTABLE, input.isImmutable() );
-        jsonObject.put( OCCURRENCES, occurrencesJsonSerializer.serialize( input.getOccurrences(), objectMapper ) );
+        jsonObject.put( OCCURRENCES, occurrencesJsonSerializer.serialize( input.getOccurrences() ) );
         jsonObject.put( INDEXED, input.isIndexed() );
         jsonObject.put( CUSTOM_TEXT, input.getCustomText() );
         jsonObject.put( VALIDATION_REGEXP, input.getValidationRegexp() != null ? input.getValidationRegexp().toString() : null );
         jsonObject.put( HELP_TEXT, input.getHelpText() );
-        jsonObject.put( TYPE, inputTypeSerializer.serialize( (BaseInputType) input.getInputType(), objectMapper ) );
+        jsonObject.put( TYPE, inputTypeSerializer.serialize( (BaseInputType) input.getInputType() ) );
         if ( input.getInputType().requiresConfig() && input.getInputTypeConfig() != null )
         {
             final JsonNode inputTypeNode =
-                input.getInputType().getInputTypeConfigJsonGenerator().serialize( input.getInputTypeConfig(), objectMapper );
+                input.getInputType().getInputTypeConfigJsonGenerator().serialize( input.getInputTypeConfig(), objectMapper() );
             jsonObject.put( CONFIG, inputTypeNode );
         }
         return jsonObject;

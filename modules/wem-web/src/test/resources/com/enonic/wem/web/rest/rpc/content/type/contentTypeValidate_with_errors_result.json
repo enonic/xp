@@ -3,10 +3,10 @@
     "hasErrors": true,
     "errors": [
         {
-            "message": "Validation error message 1"
+            "message": "Invalid content type: [myModule:contentType]: Validation error message 1"
         },
         {
-            "message": "Validation error message 2"
+            "message": "Invalid content type: [myModule:my type2]: Validation error message 2"
         }
     ],
     "contentType": {

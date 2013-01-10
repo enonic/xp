@@ -1,5 +1,7 @@
 package com.enonic.wem.api.content.datatype;
 
+import com.enonic.wem.api.content.data.Value;
+
 public class DecimalNumber
     extends BaseDataType
 {
@@ -15,43 +17,45 @@ public class DecimalNumber
     }
 
     @Override
-    public Object ensureTypeOfValue( final Object value )
+    public Value ensureTypeOfValue( final Value value )
+        throws InconvertibleValueException
     {
         return toDecimalNumber( value );
     }
 
-    private Double toDecimalNumber( final Object value )
+    private Value toDecimalNumber( final Value value )
     {
         if ( hasCorrectType( value ) )
         {
-            return (Double) value;
+            return value;
         }
-        else if ( value instanceof String )
+        else if ( value.isJavaType( String.class ) )
         {
             try
             {
-                return new Double( (String) value );
+                return newValue( new Double( (String) value.getObject() ) );
             }
             catch ( NumberFormatException e )
             {
                 throw new InconvertibleValueException( value, this, e );
             }
         }
-        else if ( value instanceof Integer )
+        else if ( value.isJavaType( Integer.class ) )
         {
-            return ( (Integer) value ).doubleValue();
+            return newValue( ( (Integer) value.getObject() ).doubleValue() );
         }
-        else if ( value instanceof Long )
+        else if ( value.isJavaType( Long.class ) )
         {
-            return ( (Long) value ).doubleValue();
+            return newValue( ( (Long) value.getObject() ).doubleValue() );
         }
-        else if ( value instanceof Float )
+        else if ( value.isJavaType( Float.class ) )
         {
-            return ( (Float) value ).doubleValue();
+            return newValue( ( (Float) value.getObject() ).doubleValue() );
         }
         else
         {
             throw new InconvertibleValueException( value, this );
         }
     }
+
 }

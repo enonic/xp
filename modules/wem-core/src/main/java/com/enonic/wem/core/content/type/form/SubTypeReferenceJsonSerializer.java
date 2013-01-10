@@ -19,10 +19,15 @@ class SubTypeReferenceJsonSerializer
 
     public static final String TYPE = "type";
 
-    @Override
-    protected JsonNode serialize( final SubTypeReference subTypeReference, final ObjectMapper objectMapper )
+    SubTypeReferenceJsonSerializer( final ObjectMapper objectMapper )
     {
-        final ObjectNode jsonObject = objectMapper.createObjectNode();
+        super( objectMapper );
+    }
+
+    @Override
+    protected JsonNode serialize( final SubTypeReference subTypeReference )
+    {
+        final ObjectNode jsonObject = objectMapper().createObjectNode();
         jsonObject.put( NAME, subTypeReference.getName() );
         jsonObject.put( REFERENCE, subTypeReference.getQualifiedSubTypeName().toString() );
         jsonObject.put( TYPE, subTypeReference.getSubTypeClass().getSimpleName() );

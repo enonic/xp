@@ -8,11 +8,10 @@ import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.command.content.type.GetContentTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypes;
-import com.enonic.wem.api.content.type.DataValidationError;
-import com.enonic.wem.api.content.type.DataValidationErrors;
-import com.enonic.wem.api.content.type.MinimumOccurrencesValidationError;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.validator.DataValidationErrors;
+import com.enonic.wem.api.content.type.validator.MinimumOccurrencesValidationError;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
@@ -74,9 +73,8 @@ public class ValidateContentDataRpcHandlerTest
             build();
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
-        final DataValidationError error1 = new MinimumOccurrencesValidationError( myInput, 0 );
-        final DataValidationErrors noErrors = DataValidationErrors.from( error1 );
-        Mockito.when( client.execute( isA( ValidateContentData.class ) ) ).thenReturn( noErrors );
+        final DataValidationErrors errors = DataValidationErrors.from( new MinimumOccurrencesValidationError( myInput, 0 ) );
+        Mockito.when( client.execute( isA( ValidateContentData.class ) ) ).thenReturn( errors );
 
         // test
         testSuccess( "contentValidate_param.json", "contentValidate_with_errors_result.json" );

@@ -14,11 +14,17 @@ import static com.enonic.wem.api.content.type.form.Occurrences.newOccurrences;
 class OccurrencesJsonSerializer
     extends AbstractJsonSerializer<Occurrences>
 {
-    public JsonNode serialize( final Occurrences occurrences, final ObjectMapper objectMapper )
+
+    OccurrencesJsonSerializer( final ObjectMapper objectMapper )
+    {
+        super( objectMapper );
+    }
+
+    public JsonNode serialize( final Occurrences occurrences )
     {
         if ( occurrences != null )
         {
-            final ObjectNode jsonObject = objectMapper.createObjectNode();
+            final ObjectNode jsonObject = objectMapper().createObjectNode();
             jsonObject.put( "minimum", occurrences.getMinimum() );
             jsonObject.put( "maximum", occurrences.getMaximum() );
             return jsonObject;

@@ -28,29 +28,30 @@ class LayoutJsonSerializer
 
     private final FormItemsJsonSerializer formItemsJsonSerializer;
 
-    LayoutJsonSerializer( final FormItemsJsonSerializer formItemsJsonSerializer )
+    LayoutJsonSerializer( final FormItemsJsonSerializer formItemsJsonSerializer, final ObjectMapper objectMapper )
     {
+        super( objectMapper );
         this.formItemsJsonSerializer = formItemsJsonSerializer;
     }
 
     @Override
-    protected JsonNode serialize( final Layout layout, final ObjectMapper objectMapper )
+    protected JsonNode serialize( final Layout layout )
     {
-        final ObjectNode jsonObject = objectMapper.createObjectNode();
+        final ObjectNode jsonObject = objectMapper().createObjectNode();
         jsonObject.put( TYPE, FieldSet.class.getSimpleName() );
 
         if ( layout instanceof FieldSet )
         {
-            generateFieldSet( (FieldSet) layout, jsonObject, objectMapper );
+            generateFieldSet( (FieldSet) layout, jsonObject );
         }
         return jsonObject;
     }
 
-    private void generateFieldSet( final FieldSet fieldSet, final ObjectNode jsonObject, final ObjectMapper objectMapper )
+    private void generateFieldSet( final FieldSet fieldSet, final ObjectNode jsonObject )
     {
         jsonObject.put( LABEL, fieldSet.getLabel() );
         jsonObject.put( NAME, fieldSet.getName() );
-        jsonObject.put( ITEMS, formItemsJsonSerializer.serialize( fieldSet.getFormItems(), objectMapper ) );
+        jsonObject.put( ITEMS, formItemsJsonSerializer.serialize( fieldSet.getFormItems() ) );
     }
 
     public Layout parse( final JsonNode formItemNode )

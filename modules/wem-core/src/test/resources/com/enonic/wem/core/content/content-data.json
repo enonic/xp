@@ -1,0 +1,19 @@
+{
+    "id": null,
+    "path": "",
+    "name": null,
+    "type": "System:unstructured",
+    "displayName": null,
+    "owner": null,
+    "modifier": null,
+    "modifiedTime": null,
+    "createdTime": null,
+    "data": [
+        {
+            "name": "myInput",
+            "path": "myInput",
+            "type": "Text",
+            "value": "A value"
+        }
+    ]
+}

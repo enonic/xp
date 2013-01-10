@@ -1,35 +1,50 @@
 {
-    "id" : null,
-    "path":"",
-    "name":null,
-    "type":"myModule:myType",
-    "displayName":null,
-    "owner":null,
-    "modifier":null,
-    "modifiedTime":null,
-    "createdTime":null,
-    "data":[
+    "id": null,
+    "path": "",
+    "name": null,
+    "type": "myModule:myType",
+    "displayName": null,
+    "owner": null,
+    "modifier": null,
+    "modifiedTime": null,
+    "createdTime": null,
+    "data": [
         {
-            "name":"mySet",
-            "path":"mySet",
-            "type":"Set",
-            "value":[
-                [
-                    {
-                        "name":"myArray",
-                        "path":"mySet[0].myArray",
-                        "type":"Text",
-                        "value":[ "1", "2" ]
-                    }
-                ],
-                [
-                    {
-                        "name":"myArray",
-                        "path":"mySet[1].myArray",
-                        "type":"Text",
-                        "value":[ "3", "4" ]
-                    }
-                ]
+            "name": "mySet",
+            "path": "mySet[0]",
+            "type": "Set",
+            "value": [
+                {
+                    "name": "myArray",
+                    "path": "mySet[0].myArray[0]",
+                    "type": "Text",
+                    "value": "1"
+                },
+                {
+                    "name": "myArray",
+                    "path": "mySet[0].myArray[1]",
+                    "type": "Text",
+                    "value": "2"
+                }
+            ]
+        },
+        {
+            "name": "mySet",
+            "path": "mySet[1]",
+            "type": "Set",
+            "value": [
+                {
+                    "name": "myArray",
+                    "path": "mySet[1].myArray[0]",
+                    "type": "Text",
+                    "value": "3"
+                },
+                {
+                    "name": "myArray",
+                    "path": "mySet[1].myArray[1]",
+                    "type": "Text",
+                    "value": "4"
+                }
             ]
         }
     ]

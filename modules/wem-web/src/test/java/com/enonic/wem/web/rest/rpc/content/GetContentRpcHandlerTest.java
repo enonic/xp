@@ -44,8 +44,8 @@ public class GetContentRpcHandlerTest
         throws Exception
     {
         final ContentData contentData = new ContentData();
-        contentData.setData( new EntryPath( "field1" ), "value1" );
-        contentData.setData( new EntryPath( "field2" ), "value2" );
+        contentData.setData( EntryPath.from( "field1" ), "value1" );
+        contentData.setData( EntryPath.from( "field2" ), "value2" );
 
         final Content content1 = Content.newContent().
             path( ContentPath.from( "/MySite/MyContent" ) ).

@@ -7,10 +7,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
-import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.DataTypeFixer;
 
@@ -35,18 +32,20 @@ final class ContentDataParser
         while ( fieldNames.hasNext() )
         {
             final String fieldName = fieldNames.next();
-            final EntryPath entryPath = new EntryPath( fieldName );
+            final EntryPath path = EntryPath.from( fieldName );
 
             final JsonNode valueNode = data.get( fieldName );
-            if ( valueNode.isObject() )
-            {
-                contentData.setData( entryPath, parseDataSet( entryPath, valueNode ), DataTypes.SET );
-            }
-            else if ( valueNode.isValueNode() )
+
+            if ( valueNode.isValueNode() )
             {
                 final String fieldValue = valueNode.getTextValue();
-                contentData.setData( entryPath, fieldValue );
+                contentData.setData( path, fieldValue );
             }
+            /*else if ( valueNode.isObject() )
+            {
+                final DataSet dataSet = parseDataSet( path, valueNode, contentData.getDataSet() );
+                contentData.add( dataSet );
+            }*/
         }
 
         if ( contentType != null )
@@ -57,9 +56,9 @@ final class ContentDataParser
         return contentData;
     }
 
-    private Object parseDataSet( final EntryPath entryPath, final JsonNode valueNode )
+    /*private DataSet parseDataSet( final EntryPath path, final JsonNode valueNode, final DataSet parent )
     {
-        DataSet dataSet = new DataSet( entryPath );
+        DataSet dataSet = new DataSet( path.getLastElement().getName(), parent );
         Iterator<String> fieldNames = valueNode.getFieldNames();
         while ( fieldNames.hasNext() )
         {
@@ -68,11 +67,10 @@ final class ContentDataParser
             if ( childNode.isValueNode() )
             {
                 final String valueAsString = childNode.getTextValue();
-                final Data data =
-                    Data.newData().path( new EntryPath( entryPath, fieldName ) ).type( DataTypes.TEXT ).value( valueAsString ).build();
+                final Data data = Data.newData().name( fieldName ).type( DataTypes.TEXT ).value( valueAsString ).parent( parent ).build();
                 dataSet.add( data );
             }
         }
         return dataSet;
-    }
+    }*/
 }

@@ -32,7 +32,7 @@ public class SingleSelectorConfig
     public void checkValidity( final Data data )
         throws InvalidValueException
     {
-        final String valueAsString = data.getString();
+        final String valueAsString = data.asString();
         if ( !optionsAsMap.containsKey( valueAsString ) )
         {
             throw new InvalidValueException( data,

@@ -22,7 +22,7 @@ public class Color
     public void checkBreaksRequiredContract( final Data data )
         throws BreaksRequiredContractException
     {
-        final String stringValue = (String) data.getValue();
+        final String stringValue = (String) data.getObject();
         if ( StringUtils.isBlank( stringValue ) )
         {
             throw new BreaksRequiredContractException( data, this );
@@ -32,7 +32,7 @@ public class Color
     @Override
     public void ensureType( final Data data )
     {
-        final DataSet dataSet = data.getDataSet();
+        final DataSet dataSet = data.toDataSet();
         DataTypes.WHOLE_NUMBER.ensureType( dataSet.getData( "red" ) );
         DataTypes.WHOLE_NUMBER.ensureType( dataSet.getData( "green" ) );
         DataTypes.WHOLE_NUMBER.ensureType( dataSet.getData( "blue" ) );

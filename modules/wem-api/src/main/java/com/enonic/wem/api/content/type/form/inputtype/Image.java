@@ -27,7 +27,7 @@ public class Image
     @Override
     public void ensureType( final Data data )
     {
-        final DataSet dataSet = data.getDataSet();
+        final DataSet dataSet = data.toDataSet();
         DataTypes.BLOB.ensureType( dataSet.getData( "binary" ) );
         DataTypes.TEXT.ensureType( dataSet.getData( "caption" ) );
     }
@@ -36,12 +36,13 @@ public class Image
     public void checkBreaksRequiredContract( final Data data )
         throws BreaksRequiredContractException
     {
-        final DataSet dataSet = data.getDataSet();
+        final DataSet dataSet = data.toDataSet();
         final Data binary = dataSet.getData( "binary" );
         if ( binary == null )
         {
             throw new BreaksRequiredContractException( data, this );
         }
     }
+
 }
 

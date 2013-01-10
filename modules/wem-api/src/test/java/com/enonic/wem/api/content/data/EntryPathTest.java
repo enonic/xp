@@ -19,26 +19,26 @@ public class EntryPathTest
             @Override
             public Object getObjectX()
             {
-                return new EntryPath( "mySet.myInput" );
+                return EntryPath.from( "mySet.myInput" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{new EntryPath( "mySet" ), new EntryPath( "myInput" ), new EntryPath( "mySet.myOther" ),
-                    new EntryPath( "myOther.myInput" ), new EntryPath( "mySet.myInput[0]" ), new EntryPath( "mySet[0].myInput" )};
+                return new Object[]{EntryPath.from( "mySet" ), EntryPath.from( "myInput" ), EntryPath.from( "mySet.myOther" ),
+                    EntryPath.from( "myOther.myInput" ), EntryPath.from( "mySet.myInput[0]" ), EntryPath.from( "mySet[0].myInput" )};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return new EntryPath( "mySet.myInput" );
+                return EntryPath.from( "mySet.myInput" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return new EntryPath( "mySet.myInput" );
+                return EntryPath.from( "mySet.myInput" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();
@@ -80,24 +80,50 @@ public class EntryPathTest
     @Test
     public void tostring()
     {
-        assertEquals( "car[0]", new EntryPath( "car[0]" ).toString() );
-        assertEquals( "car[0].model", new EntryPath( "car[0].model" ).toString() );
+        assertEquals( "car[0]", EntryPath.from( "car[0]" ).toString() );
+        assertEquals( "car[0].model", EntryPath.from( "car[0].model" ).toString() );
+    }
+
+    @Test
+    public void isRelative_path_not_starting_with_dot_is_relative()
+    {
+        assertEquals( true, EntryPath.from( "a" ).isRelative() );
+        assertEquals( true, EntryPath.from( "a.b" ).isRelative() );
+    }
+
+    @Test
+    public void isRelative_root_is_not_relative()
+    {
+        assertEquals( false, EntryPath.ROOT.isRelative() );
+    }
+
+    @Test
+    public void isRelative_path_starting_with_dot_is_not_relative()
+    {
+        assertEquals( false, EntryPath.from( ".a" ).isRelative() );
+        assertEquals( false, EntryPath.from( ".a.b" ).isRelative() );
+    }
+
+    @Test
+    public void elementCount_returns_zero_when_path_is_root()
+    {
+        assertEquals( false, EntryPath.ROOT.isRelative() );
     }
 
     @Test
     public void new_given_existing_formItemPath_and_name()
     {
-        assertEquals( "car[0].model", new EntryPath( new EntryPath( "car[0]" ), "model" ).toString() );
+        assertEquals( "car[0].model", EntryPath.from( EntryPath.from( "car[0]" ), "model" ).toString() );
     }
 
     @Test
     public void element_getPosition()
     {
-        EntryPath.Element element = new EntryPath( "car[1]" ).iterator().next();
+        EntryPath.Element element = EntryPath.from( "car[1]" ).iterator().next();
         assertEquals( 1, element.getIndex() );
         assertEquals( "car[1]", element.toString() );
 
-        element = new EntryPath( "car" ).iterator().next();
+        element = EntryPath.from( "car" ).iterator().next();
         assertEquals( false, element.hasIndex() );
         assertEquals( "car", element.toString() );
     }
@@ -105,39 +131,39 @@ public class EntryPathTest
     @Test
     public void resolveFormItemPath()
     {
-        assertEquals( "car", new EntryPath( "car[0]" ).resolveFormItemPath().toString() );
-        assertEquals( "car.model", new EntryPath( "car[0].model" ).resolveFormItemPath().toString() );
+        assertEquals( "car", EntryPath.from( "car[0]" ).resolveFormItemPath().toString() );
+        assertEquals( "car.model", EntryPath.from( "car[0].model" ).resolveFormItemPath().toString() );
     }
 
     @Test
     public void startsWith()
     {
-        Assert.assertTrue( new EntryPath( "car" ).startsWith( new EntryPath( "car" ) ) );
-        Assert.assertTrue( new EntryPath( "car[0].model" ).startsWith( new EntryPath( "car[0]" ) ) );
-        Assert.assertTrue( new EntryPath( "car[0].model" ).startsWith( new EntryPath( "car[0].model" ) ) );
-        Assert.assertTrue( new EntryPath( "car[0].model.other" ).startsWith( new EntryPath( "car[0].model" ) ) );
+        Assert.assertTrue( EntryPath.from( "car" ).startsWith( EntryPath.from( "car" ) ) );
+        Assert.assertTrue( EntryPath.from( "car[0].model" ).startsWith( EntryPath.from( "car[0]" ) ) );
+        Assert.assertTrue( EntryPath.from( "car[0].model" ).startsWith( EntryPath.from( "car[0].model" ) ) );
+        Assert.assertTrue( EntryPath.from( "car[0].model.other" ).startsWith( EntryPath.from( "car[0].model" ) ) );
 
-        Assert.assertFalse( new EntryPath( "car" ).startsWith( new EntryPath( "bicycle" ) ) );
-        Assert.assertFalse( new EntryPath( "car[0].model" ).startsWith( new EntryPath( "bicycle[0].model" ) ) );
-        Assert.assertFalse( new EntryPath( "car[0]" ).startsWith( new EntryPath( "car[0].model" ) ) );
-        Assert.assertFalse( new EntryPath( "car[0].model" ).startsWith( new EntryPath( "car[0].year" ) ) );
+        Assert.assertFalse( EntryPath.from( "car" ).startsWith( EntryPath.from( "bicycle" ) ) );
+        Assert.assertFalse( EntryPath.from( "car[0].model" ).startsWith( EntryPath.from( "bicycle[0].model" ) ) );
+        Assert.assertFalse( EntryPath.from( "car[0]" ).startsWith( EntryPath.from( "car[0].model" ) ) );
+        Assert.assertFalse( EntryPath.from( "car[0].model" ).startsWith( EntryPath.from( "car[0].year" ) ) );
 
-        Assert.assertTrue( new EntryPath( "car[0].model" ).startsWith( new EntryPath( "car" ) ) );
-        Assert.assertTrue( new EntryPath( "car[1].model" ).startsWith( new EntryPath( "car" ) ) );
+        Assert.assertTrue( EntryPath.from( "car[0].model" ).startsWith( EntryPath.from( "car" ) ) );
+        Assert.assertTrue( EntryPath.from( "car[1].model" ).startsWith( EntryPath.from( "car" ) ) );
 
-        Assert.assertFalse( new EntryPath( "car[1].model" ).startsWith( new EntryPath( "car[0]" ) ) );
+        Assert.assertFalse( EntryPath.from( "car[1].model" ).startsWith( EntryPath.from( "car[0]" ) ) );
     }
 
     @Test
     public void asNewWithIndexAtPath()
     {
-        assertEquals( "set", new EntryPath( "set" ).asNewWithIndexAtPath( 0, new EntryPath( "nonExisting" ) ).toString() );
+        assertEquals( "set", EntryPath.from( "set" ).asNewWithIndexAtPath( 0, EntryPath.from( "nonExisting" ) ).toString() );
 
-        assertEquals( "set[0]", new EntryPath( "set" ).asNewWithIndexAtPath( 0, new EntryPath( "set" ) ).toString() );
-        assertEquals( "set[0].input", new EntryPath( "set.input" ).asNewWithIndexAtPath( 0, new EntryPath( "set" ) ).toString() );
+        assertEquals( "set[0]", EntryPath.from( "set" ).asNewWithIndexAtPath( 0, EntryPath.from( "set" ) ).toString() );
+        assertEquals( "set[0].input", EntryPath.from( "set.input" ).asNewWithIndexAtPath( 0, EntryPath.from( "set" ) ).toString() );
         assertEquals( "anotherSet.set[0].input",
-                      new EntryPath( "anotherSet.set.input" ).asNewWithIndexAtPath( 0, new EntryPath( "anotherSet.set" ) ).toString() );
-        assertEquals( "anotherSet.set.input[0]", new EntryPath( "anotherSet.set.input" ).asNewWithIndexAtPath( 0, new EntryPath(
+                      EntryPath.from( "anotherSet.set.input" ).asNewWithIndexAtPath( 0, EntryPath.from( "anotherSet.set" ) ).toString() );
+        assertEquals( "anotherSet.set.input[0]", EntryPath.from( "anotherSet.set.input" ).asNewWithIndexAtPath( 0, EntryPath.from(
             "anotherSet.set.input" ) ).toString() );
 
     }
@@ -145,14 +171,15 @@ public class EntryPathTest
     @Test
     public void asNewWithoutIndexAtLastPathElement()
     {
-        assertEquals( new EntryPath( "parent.child" ), new EntryPath( "parent.child[1]" ).asNewWithoutIndexAtLastPathElement() );
-        assertEquals( new EntryPath( "element" ), new EntryPath( "element[1]" ).asNewWithoutIndexAtLastPathElement() );
+        assertEquals( EntryPath.from( "parent.child" ), EntryPath.from( "parent.child[1]" ).asNewWithoutIndexAtLastPathElement() );
+        assertEquals( EntryPath.from( "element" ), EntryPath.from( "element[1]" ).asNewWithoutIndexAtLastPathElement() );
     }
 
     @Test
     public void getParent()
     {
-        assertEquals( new EntryPath( "parent" ), new EntryPath( "parent.child" ).getParent() );
-        assertEquals( new EntryPath( "parent[0]" ), new EntryPath( "parent[0].child" ).getParent() );
+        assertEquals( null, EntryPath.from( "orphan" ).getParent() );
+        assertEquals( EntryPath.from( "parent" ), EntryPath.from( "parent.child" ).getParent() );
+        assertEquals( EntryPath.from( "parent[0]" ), EntryPath.from( "parent[0].child" ).getParent() );
     }
 }

@@ -3,46 +3,43 @@ package com.enonic.wem.api.content.data;
 
 import java.util.Iterator;
 
-import com.google.common.base.Preconditions;
-
-import com.enonic.wem.api.content.datatype.DataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
 
+import static com.enonic.wem.api.content.data.Value.newValue;
+
 public final class ContentData
-    implements EntrySelector, Iterable<Data>
+    implements Iterable<Entry>
 {
     private DataSet dataSet;
 
     public ContentData()
     {
-        this.dataSet = new DataSet( new EntryPath() );
+        this.dataSet = DataSet.newRootDataSet();
     }
 
-    public void setDataSet( final DataSet dataSet )
+    public DataSet getDataSet()
     {
-        Preconditions.checkArgument( dataSet.getPath().elementCount() == 0, "Expected dataSet without path: " + dataSet.getPath() );
-        this.dataSet = dataSet;
+        return dataSet;
     }
 
-    public void setData( final EntryPath path, final Object value, final DataType dataType )
+    public void add( final Entry entry )
     {
-        dataSet.setData( path, value, dataType );
+        dataSet.add( entry );
+    }
+
+    public void setData( final EntryPath path, final Value value )
+    {
+        dataSet.setData( path, value );
     }
 
     public void setData( final EntryPath path, final String value )
     {
-        dataSet.setData( path, value, DataTypes.TEXT );
+        dataSet.setData( path, newValue().type( DataTypes.TEXT ).value( value ).build() );
     }
 
-    public String getValueAsString( final EntryPath path )
+    public Entry getEntry( final EntryPath path )
     {
-        Preconditions.checkNotNull( path, "path cannot be null" );
-
-        Data data = getData( path );
-        Preconditions.checkArgument( data != null, "No data at path: " + path );
-
-        //TODO: Preconditions.checkArgument( data.getDataType() == BasalValueType.STRING, "Value is not of type %", BasalValueType.STRING );
-        return (String) data.getValue();
+        return dataSet.getEntry( path );
     }
 
     public Data getData( final EntryPath path )
@@ -56,7 +53,7 @@ public final class ContentData
     }
 
     @Override
-    public Iterator<Data> iterator()
+    public Iterator<Entry> iterator()
     {
         return dataSet.iterator();
     }

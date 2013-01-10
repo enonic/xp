@@ -22,14 +22,22 @@ public class SubTypeJsonSerializer
     extends AbstractJsonSerializer<SubType>
     implements SubTypeSerializer
 {
-    private FormItemsJsonSerializer formItemsSerializer = new FormItemsJsonSerializer();
+    private FormItemsJsonSerializer formItemsSerializer;
 
-    private InputJsonSerializer inputSerializer = new InputJsonSerializer();
+    private InputJsonSerializer inputSerializer;
 
-    private FormItemJsonSerializer formItemSerializer = formItemsSerializer.getFormItemJsonSerializer();
+    private FormItemJsonSerializer formItemSerializer;
+
+
+    public SubTypeJsonSerializer()
+    {
+        formItemsSerializer = new FormItemsJsonSerializer( objectMapper() );
+        inputSerializer = new InputJsonSerializer( objectMapper() );
+        formItemSerializer = formItemsSerializer.getFormItemJsonSerializer();
+    }
 
     @Override
-    protected JsonNode serialize( final SubType subType, final ObjectMapper objectMapper )
+    protected JsonNode serialize( final SubType subType )
     {
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectNode objectNode = mapper.createObjectNode();
@@ -41,12 +49,12 @@ public class SubTypeJsonSerializer
         if ( subType instanceof InputSubType )
         {
             final InputSubType inputSubType = (InputSubType) subType;
-            objectNode.putAll( (ObjectNode) formItemSerializer.serialize( inputSubType.getInput(), mapper ) );
+            objectNode.putAll( (ObjectNode) formItemSerializer.serialize( inputSubType.getInput() ) );
         }
         else
         {
             FormItemSetSubType formItemSetSubType = (FormItemSetSubType) subType;
-            objectNode.putAll( (ObjectNode) formItemSerializer.serialize( formItemSetSubType.getFormItemSet(), mapper ) );
+            objectNode.putAll( (ObjectNode) formItemSerializer.serialize( formItemSetSubType.getFormItemSet() ) );
         }
 
         return objectNode;

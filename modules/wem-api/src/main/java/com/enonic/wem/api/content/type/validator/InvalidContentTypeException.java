@@ -1,9 +1,10 @@
-package com.enonic.wem.api.content.type;
+package com.enonic.wem.api.content.type.validator;
+
+import com.enonic.wem.api.content.type.ContentType;
 
 public class InvalidContentTypeException
     extends RuntimeException
 {
-
     private final ContentType contentType;
 
     private final String validationMessage;

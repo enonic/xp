@@ -12,11 +12,15 @@ import com.enonic.wem.core.content.JsonParserUtil;
 public class InputTypeJsonSerializer
     extends AbstractJsonSerializer<BaseInputType>
 {
+    public InputTypeJsonSerializer( final ObjectMapper objectMapper )
+    {
+        super( objectMapper );
+    }
 
     @Override
-    public JsonNode serialize( final BaseInputType baseInputType, final ObjectMapper objectMapper )
+    public JsonNode serialize( final BaseInputType baseInputType )
     {
-        final ObjectNode inputNode = objectMapper.createObjectNode();
+        final ObjectNode inputNode = objectMapper().createObjectNode();
         inputNode.put( "name", baseInputType.getName() );
         inputNode.put( "builtIn", baseInputType.isBuiltIn() );
         return inputNode;

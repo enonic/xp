@@ -1,18 +1,21 @@
 package com.enonic.wem.core.content;
 
 
+import java.util.Iterator;
+
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.blob.BlobKeyCreator;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataArray;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.MockBlobKeyResolver;
+import com.enonic.wem.api.content.data.DataSetArray;
+import com.enonic.wem.api.content.data.Entry;
+import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.MockContentTypeFetcher;
@@ -50,47 +53,22 @@ public abstract class AbstractContentSerializerTest
     abstract void assertSerializedResult( String fileNameForExpected, String actualSerialization );
 
     @Test
-    public void given_content_with_name_when_parsed_then_name_is_as_expected()
+    public void data()
     {
-        final ContentType contentType = newContentType().
-            module( myModule.getName() ).
-            name( "MyContentType" ).
-            addFormItem( newInput().name( "myFormItem" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).
-            build();
-        contentTypeFetcher.add( contentType );
-
-        Content content = newContent().name( "myContent" ).build();
-        content.setData( "myFormItem", "A value" );
-
-        String serialized = toString( content );
-
-        // exercise
-        Content parsedContent = toContent( serialized );
-
-        // verify
-        assertEquals( "myContent", parsedContent.getName() );
-    }
-
-    @Test
-    public void given_content_with_name_and_a_formItem_when_parsed_then_path_and_value_are_as_expected()
-    {
-        final ContentType contentType = newContentType().
-            module( myModule.getName() ).
-            name( "MyContentType" ).
-            addFormItem( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).required( true ).build() ).
-            build();
-        contentTypeFetcher.add( contentType );
-
         Content content = newContent().build();
         content.setData( "myInput", "A value" );
 
         String serialized = toString( content );
 
+        // verify
+        assertSerializedResult( "content-data", serialized );
+
         // exercise
         Content parsedContent = toContent( serialized );
 
         // verify
-        assertEquals( "A value", parsedContent.getData( "myInput" ).getValue() );
+        assertEquals( "A value", parsedContent.getData( "myInput" ).getObject() );
+        assertEquals( EntryPath.from( "myInput" ), parsedContent.getData( "myInput" ).getPath() );
     }
 
     @Test
@@ -109,9 +87,8 @@ public abstract class AbstractContentSerializerTest
         Content parsedContent = toContent( serialized );
 
         // verify
-
-        assertEquals( "1", parsedContent.getData( "mySet.myInput" ).getValue() );
-        assertEquals( "2", parsedContent.getData( "mySet.myOtherInput" ).getValue() );
+        assertEquals( "1", parsedContent.getData( "mySet.myInput" ).getObject() );
+        assertEquals( "2", parsedContent.getData( "mySet.myOtherInput" ).getObject() );
 
         assertEquals( "mySet.myInput", parsedContent.getData( "mySet.myInput" ).getPath().toString() );
         assertEquals( "mySet.myOtherInput", parsedContent.getData( "mySet.myOtherInput" ).getPath().toString() );
@@ -133,8 +110,8 @@ public abstract class AbstractContentSerializerTest
         Content parsedContent = toContent( serialized );
 
         // verify
-        assertEquals( "1", parsedContent.getData( "myArray[0]" ).getValue() );
-        assertEquals( "2", parsedContent.getData( "myArray[1]" ).getValue() );
+        assertEquals( "1", parsedContent.getData( "myArray[0]" ).getObject() );
+        assertEquals( "2", parsedContent.getData( "myArray[1]" ).getObject() );
 
         assertEquals( "myArray[0]", parsedContent.getData( "myArray[0]" ).getPath().toString() );
         assertEquals( "myArray[1]", parsedContent.getData( "myArray[1]" ).getPath().toString() );
@@ -156,24 +133,26 @@ public abstract class AbstractContentSerializerTest
         Content parsedContent = toContent( serialized );
 
         // verify
-        assertEquals( "1", parsedContent.getData( "mySet.myArray[0]" ).getValue() );
-        assertEquals( "2", parsedContent.getData( "mySet.myArray[1]" ).getValue() );
+        assertEquals( "1", parsedContent.getData( "mySet.myArray[0]" ).getObject() );
+        assertEquals( "2", parsedContent.getData( "mySet.myArray[1]" ).getObject() );
 
         assertEquals( "mySet.myArray[0]", parsedContent.getData( "mySet.myArray[0]" ).getPath().toString() );
         assertEquals( "mySet.myArray[1]", parsedContent.getData( "mySet.myArray[1]" ).getPath().toString() );
 
-        Data mySet = parsedContent.getData( "mySet" );
-        assertEquals( "mySet", mySet.getDataSet().getPath().toString() );
+        DataSet mySet = parsedContent.getEntry( "mySet" ).toDataSet();
+        assertEquals( "mySet", mySet.toDataSet().getPath().toString() );
 
-        Data mySet_myArray = mySet.getDataSet().getData( "myArray" );
+        Data mySet_myArray = mySet.getData( "myArray" );
         assertSame( mySet_myArray, parsedContent.getData( "mySet.myArray" ) );
-        assertEquals( DataTypes.ARRAY, mySet_myArray.getDataType() );
-        assertEquals( "mySet.myArray", mySet_myArray.getPath().toString() );
+        assertEquals( DataTypes.TEXT, mySet_myArray.getType() );
+        assertEquals( "mySet.myArray[0]", mySet_myArray.getPath().toString() );
 
-        DataArray mySet_myArray_dataArray = mySet_myArray.getDataArray();
-        assertEquals( DataTypes.TEXT, mySet_myArray_dataArray.getType() );
-        assertEquals( "1", mySet_myArray_dataArray.getData( 0 ).getString() );
-        assertEquals( "2", mySet_myArray_dataArray.getData( 1 ).getString() );
+        DataArray mySet_myArray_Array = mySet_myArray.getArray();
+        assertEquals( DataTypes.TEXT, mySet_myArray_Array.getType() );
+        assertEquals( "1", mySet_myArray_Array.getValue( 0 ).asString() );
+        assertEquals( "2", mySet_myArray_Array.getValue( 1 ).asString() );
+        assertEquals( "mySet.myArray[0]", mySet_myArray_Array.getData( 0 ).getPath().toString() );
+        assertEquals( "mySet.myArray[1]", mySet_myArray_Array.getData( 1 ).getPath().toString() );
     }
 
     @Test
@@ -185,6 +164,9 @@ public abstract class AbstractContentSerializerTest
         content.setData( "mySet[1].myInput", "2" );
         content.setData( "mySet[1].myOtherInput", "b" );
 
+        assertEquals( "mySet[1].myInput", content.getData( "mySet[1].myInput" ).getPath().toString() );
+        assertEquals( "mySet[0].myInput", content.getData( "mySet[0].myInput" ).getPath().toString() );
+
         String serialized = toString( content );
 
         // verify
@@ -194,15 +176,40 @@ public abstract class AbstractContentSerializerTest
         Content parsedContent = toContent( serialized );
 
         // verify
-        assertEquals( "1", parsedContent.getData( "mySet[0].myInput" ).getValue() );
-        assertEquals( "a", parsedContent.getData( "mySet[0].myOtherInput" ).getValue() );
-        assertEquals( "2", parsedContent.getData( "mySet[1].myInput" ).getValue() );
-        assertEquals( "b", parsedContent.getData( "mySet[1].myOtherInput" ).getValue() );
+        assertEquals( "1", parsedContent.getData( "mySet[0].myInput" ).getObject() );
+        assertEquals( "a", parsedContent.getData( "mySet[0].myOtherInput" ).getObject() );
+        assertEquals( "2", parsedContent.getData( "mySet[1].myInput" ).getObject() );
+        assertEquals( "b", parsedContent.getData( "mySet[1].myOtherInput" ).getObject() );
 
         assertEquals( "mySet[0].myInput", parsedContent.getData( "mySet[0].myInput" ).getPath().toString() );
         assertEquals( "mySet[0].myOtherInput", parsedContent.getData( "mySet[0].myOtherInput" ).getPath().toString() );
         assertEquals( "mySet[1].myInput", parsedContent.getData( "mySet[1].myInput" ).getPath().toString() );
         assertEquals( "mySet[1].myOtherInput", parsedContent.getData( "mySet[1].myOtherInput" ).getPath().toString() );
+    }
+
+    @Test
+    public void insertion_order_of_entries_within_a_DataSet_is_preserved()
+    {
+        Content content = newContent().type( new QualifiedContentTypeName( "myModule:myType" ) ).build();
+        content.setData( "mySet.myArray[0]", "1" );
+        content.setData( "mySet.myInput", "a" );
+        content.setData( "mySet.myArray[1]", "2" );
+        content.setData( "mySet.myOtherInput", "b" );
+        content.setData( "mySet.myArray[2]", "3" );
+
+        String serialized = toString( content );
+
+        // exercise
+        Content parsedContent = toContent( serialized );
+
+        // verify
+        DataSet mySet = parsedContent.getDataSet( "mySet" );
+        Iterator<Entry> entries = mySet.iterator();
+        assertEquals( "mySet.myArray[0]", entries.next().getPath().toString() );
+        assertEquals( "mySet.myInput", entries.next().getPath().toString() );
+        assertEquals( "mySet.myArray[1]", entries.next().getPath().toString() );
+        assertEquals( "mySet.myOtherInput", entries.next().getPath().toString() );
+        assertEquals( "mySet.myArray[2]", entries.next().getPath().toString() );
     }
 
     @Test
@@ -223,51 +230,45 @@ public abstract class AbstractContentSerializerTest
         Content parsedContent = toContent( serialized );
 
         // verify
-        assertEquals( "1", parsedContent.getData( "mySet[0].myArray[0]" ).getValue() );
-        assertEquals( "2", parsedContent.getData( "mySet[0].myArray[1]" ).getValue() );
-        assertEquals( "3", parsedContent.getData( "mySet[1].myArray[0]" ).getValue() );
-        assertEquals( "4", parsedContent.getData( "mySet[1].myArray[1]" ).getValue() );
+        assertEquals( "1", parsedContent.getData( "mySet[0].myArray[0]" ).getObject() );
+        assertEquals( "2", parsedContent.getData( "mySet[0].myArray[1]" ).getObject() );
+        assertEquals( "3", parsedContent.getData( "mySet[1].myArray[0]" ).getObject() );
+        assertEquals( "4", parsedContent.getData( "mySet[1].myArray[1]" ).getObject() );
 
-        Data mySet = parsedContent.getData( "mySet" );
-        assertEquals( DataTypes.ARRAY, mySet.getDataType() );
+        DataSet mySet = parsedContent.getDataSet( "mySet" );
 
-        DataArray mySet_array = mySet.getDataArray();
+        assertEquals( true, mySet.isArray() );
+        DataSetArray mySet_array = mySet.getArray();
+
         assertEquals( "mySet", mySet_array.getPath().toString() );
-        assertEquals( DataTypes.SET, mySet_array.getType() );
 
-        Data mySet_0 = mySet_array.getData( 0 );
+        DataSet mySet_0 = mySet_array.getDataSet( 0 );
         assertEquals( "mySet[0]", mySet_0.getPath().toString() );
-        assertEquals( DataTypes.SET, mySet_0.getDataType() );
 
-        DataSet mySet_0_set = mySet_0.getDataSet();
-        assertEquals( "mySet[0]", mySet_0_set.getPath().toString() );
+        Data mySet_0_myArray = mySet_0.getData( "myArray" );
+        assertEquals( true, mySet_0_myArray.isArray() );
+        assertEquals( "mySet[0].myArray[0]", mySet_0_myArray.getPath().toString() );
 
-        Data mySet_0_myArray = mySet_0_set.getData( "myArray" );
-        assertEquals( DataTypes.ARRAY, mySet_0_myArray.getDataType() );
-        assertEquals( "mySet[0].myArray", mySet_0_myArray.getPath().toString() );
-
-        DataArray mySet_0_myArray_array = mySet_0_myArray.getDataArray();
+        DataArray mySet_0_myArray_array = mySet_0_myArray.getArray();
         assertEquals( DataTypes.TEXT, mySet_0_myArray_array.getType() );
-        assertEquals( "mySet[0].myArray", mySet_0_myArray_array.getPath().toString() );
-        assertEquals( "mySet[0].myArray[0]", mySet_0_myArray_array.getData( 0 ).getPath().toString() );
-        assertEquals( "mySet[0].myArray[1]", mySet_0_myArray_array.getData( 1 ).getPath().toString() );
+        assertEquals( "1", mySet_0_myArray_array.getValue( 0 ).asString() );
+        assertEquals( "2", mySet_0_myArray_array.getValue( 1 ).asString() );
 
-        Data mySet_1 = mySet_array.getData( 1 );
+        DataSet mySet_1 = mySet_array.getDataSet( 1 );
         assertEquals( "mySet[1]", mySet_1.getPath().toString() );
-        assertEquals( DataTypes.SET, mySet_1.getDataType() );
 
-        DataSet mySet_1_set = mySet_1.getDataSet();
-        assertEquals( "mySet[1]", mySet_1_set.getPath().toString() );
+        Data mySet_1_myArray = mySet_1.getData( "myArray" );
+        assertEquals( true, mySet_1_myArray.isArray() );
+        assertEquals( "mySet[1].myArray[0]", mySet_1_myArray.getPath().toString() );
 
-        Data mySet_1_myArray = mySet_1_set.getData( "myArray" );
-        assertEquals( DataTypes.ARRAY, mySet_1_myArray.getDataType() );
-        assertEquals( "mySet[1].myArray", mySet_1_myArray.getPath().toString() );
+        Data mySet_1_myArray_1 = mySet_1.getData( "myArray[1]" );
+        assertEquals( true, mySet_1_myArray_1.isArray() );
+        assertEquals( "mySet[1].myArray[1]", mySet_1_myArray_1.getPath().toString() );
 
-        DataArray mySet_1_myArray_array = mySet_1_myArray.getDataArray();
+        DataArray mySet_1_myArray_array = mySet_1_myArray.getArray();
         assertEquals( DataTypes.TEXT, mySet_1_myArray_array.getType() );
-        assertEquals( "mySet[1].myArray", mySet_1_myArray_array.getPath().toString() );
-        assertEquals( "mySet[1].myArray[0]", mySet_1_myArray_array.getData( 0 ).getPath().toString() );
-        assertEquals( "mySet[1].myArray[1]", mySet_1_myArray_array.getData( 1 ).getPath().toString() );
+        assertEquals( "3", mySet_1_myArray_array.getValue( 0 ).asString() );
+        assertEquals( "4", mySet_1_myArray_array.getValue( 1 ).asString() );
 
         assertEquals( "mySet[0].myArray[0]", parsedContent.getData( "mySet[0].myArray[0]" ).getPath().toString() );
         assertEquals( "mySet[0].myArray[1]", parsedContent.getData( "mySet[0].myArray[1]" ).getPath().toString() );
@@ -300,8 +301,8 @@ public abstract class AbstractContentSerializerTest
         // verify
         assertEquals( "myText", actualContent.getData( "myText" ).getPath().toString() );
         assertEquals( "formItemSet.myText", actualContent.getData( "formItemSet.myText" ).getPath().toString() );
-        assertEquals( "A value", actualContent.getData( "myText" ).getValue() );
-        assertEquals( "A another value", actualContent.getData( "formItemSet.myText" ).getValue() );
+        assertEquals( "A value", actualContent.getData( "myText" ).getObject() );
+        assertEquals( "A another value", actualContent.getData( "formItemSet.myText" ).getObject() );
     }
 
     @Test
@@ -329,8 +330,8 @@ public abstract class AbstractContentSerializerTest
         // verify
         assertEquals( "formItemSet[0].myText", parsedContent.getData( "formItemSet[0].myText" ).getPath().toString() );
         assertEquals( "formItemSet[1].myText", parsedContent.getData( "formItemSet[1].myText" ).getPath().toString() );
-        assertEquals( "Value 1", parsedContent.getData( "formItemSet[0].myText" ).getValue() );
-        assertEquals( "Value 2", parsedContent.getData( "formItemSet[1].myText" ).getValue() );
+        assertEquals( "Value 1", parsedContent.getData( "formItemSet[0].myText" ).getObject() );
+        assertEquals( "Value 2", parsedContent.getData( "formItemSet[1].myText" ).getObject() );
     }
 
     @Test
@@ -355,7 +356,7 @@ public abstract class AbstractContentSerializerTest
         Content parsedContent = toContent( serialized );
 
         // verify
-        assertEquals( "A value", parsedContent.getValueAsString( "myText" ) );
+        assertEquals( "A value", parsedContent.getData( "myText" ).asString() );
         assertEquals( "myText", parsedContent.getData( "myText" ).getPath().toString() );
     }
 
@@ -380,15 +381,15 @@ public abstract class AbstractContentSerializerTest
         Content parsedContent = toContent( serialized );
 
         // verify
-        assertEquals( "Thomas", parsedContent.getData( "name" ).getValue() );
-        assertEquals( "Joachim", parsedContent.getData( "child[0].name" ).getValue() );
-        assertEquals( "9", parsedContent.getData( "child[0].age" ).getValue() );
-        assertEquals( "Blue", parsedContent.getData( "child[0].features.eyeColour" ).getValue() );
-        assertEquals( "Blonde", parsedContent.getData( "child[0].features.hairColour" ).getValue() );
-        assertEquals( "Madeleine", parsedContent.getData( "child[1].name" ).getValue() );
-        assertEquals( "7", parsedContent.getData( "child[1].age" ).getValue() );
-        assertEquals( "Brown", parsedContent.getData( "child[1].features.eyeColour" ).getValue() );
-        assertEquals( "Black", parsedContent.getData( "child[1].features.hairColour" ).getValue() );
+        assertEquals( "Thomas", parsedContent.getData( "name" ).getObject() );
+        assertEquals( "Joachim", parsedContent.getData( "child[0].name" ).getObject() );
+        assertEquals( "9", parsedContent.getData( "child[0].age" ).getObject() );
+        assertEquals( "Blue", parsedContent.getData( "child[0].features.eyeColour" ).getObject() );
+        assertEquals( "Blonde", parsedContent.getData( "child[0].features.hairColour" ).getObject() );
+        assertEquals( "Madeleine", parsedContent.getData( "child[1].name" ).getObject() );
+        assertEquals( "7", parsedContent.getData( "child[1].age" ).getObject() );
+        assertEquals( "Brown", parsedContent.getData( "child[1].features.eyeColour" ).getObject() );
+        assertEquals( "Black", parsedContent.getData( "child[1].features.hairColour" ).getObject() );
     }
 
     @Test
@@ -405,10 +406,10 @@ public abstract class AbstractContentSerializerTest
         Content parsedContent = toContent( serialized );
 
         // verify
-        assertEquals( "Thomas", parsedContent.getData( "names[0]" ).getValue() );
-        assertEquals( DataTypes.TEXT, parsedContent.getData( "names[0]" ).getDataType() );
-        assertEquals( "Sten Roger", parsedContent.getData( "names[1]" ).getValue() );
-        assertEquals( "Alex", parsedContent.getData( "names[2]" ).getValue() );
+        assertEquals( "Thomas", parsedContent.getData( "names[0]" ).getObject() );
+        assertEquals( DataTypes.TEXT, parsedContent.getData( "names[0]" ).getType() );
+        assertEquals( "Sten Roger", parsedContent.getData( "names[1]" ).getObject() );
+        assertEquals( "Alex", parsedContent.getData( "names[2]" ).getObject() );
     }
 
     @Test
@@ -425,29 +426,9 @@ public abstract class AbstractContentSerializerTest
         Content parsedContent = toContent( serialized );
 
         // verify
-        assertEquals( "Thomas", parsedContent.getData( "company.names[0]" ).getValue() );
-        assertEquals( "Sten Roger", parsedContent.getData( "company.names[1]" ).getValue() );
-        assertEquals( "Alex", parsedContent.getData( "company.names[2]" ).getValue() );
-    }
-
-    @Test
-    public void xxx()
-    {
-        byte[] bytes = new byte[]{1, 2, 3};
-        Content content = newContent().name( "My content" ).build();
-        content.setData( "name", "Arn", DataTypes.TEXT );
-        content.setData( "image.bytes", bytes, DataTypes.BLOB );
-        content.setData( "image.caption", "Caption", DataTypes.TEXT );
-
-        MockBlobKeyResolver blobToKeyReplacer = new MockBlobKeyResolver();
-        content.replaceBlobsWithKeys( blobToKeyReplacer );
-
-        String serialized = toString( content );
-        Content parsedContent = toContent( serialized );
-
-        assertEquals( "Arn", parsedContent.getData( "name" ).getValue() );
-        assertEquals( "Caption", parsedContent.getData( "image.caption" ).getValue() );
-        assertEquals( BlobKeyCreator.createKey( bytes ), parsedContent.getData( "image.bytes" ).getValue() );
+        assertEquals( "Thomas", parsedContent.getData( "company.names[0]" ).getObject() );
+        assertEquals( "Sten Roger", parsedContent.getData( "company.names[1]" ).getObject() );
+        assertEquals( "Alex", parsedContent.getData( "company.names[2]" ).getObject() );
     }
 
     @Test

@@ -2,6 +2,7 @@ package com.enonic.wem.api.content.datatype;
 
 
 import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.content.data.Value;
 
 public class Blob
     extends BaseDataType
@@ -12,15 +13,16 @@ public class Blob
     }
 
     @Override
-    public Object ensureTypeOfValue( final Object value )
+    public Value ensureTypeOfValue( final Value value )
+        throws InconvertibleValueException
     {
         if ( hasCorrectType( value ) )
         {
             return value;
         }
-        else if ( value instanceof String )
+        else if ( value.isJavaType( String.class ) )
         {
-            return new BlobKey( (String) value );
+            return Value.newValue().type( this ).value( new BlobKey( (String) value.getObject() ) ).build();
         }
         else
         {

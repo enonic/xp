@@ -31,7 +31,7 @@ public class Address
     @Override
     public void ensureType( final Data data )
     {
-        DataSet datSet = data.getDataSet();
+        DataSet datSet = data.toDataSet();
         DataTypes.TEXT.ensureType( datSet.getData( "street" ) );
         DataTypes.TEXT.ensureType( datSet.getData( "postalCode" ) );
         DataTypes.TEXT.ensureType( datSet.getData( "postalPlace" ) );
@@ -45,5 +45,6 @@ public class Address
     {
 
     }
+
 }
 

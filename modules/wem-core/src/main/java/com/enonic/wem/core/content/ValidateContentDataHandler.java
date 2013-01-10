@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.DataValidationErrors;
-import com.enonic.wem.api.content.type.OccurrenceValidator;
+import com.enonic.wem.api.content.type.validator.DataValidationErrors;
+import com.enonic.wem.api.content.type.validator.OccurrenceValidator;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 

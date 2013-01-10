@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.type;
+package com.enonic.wem.api.content.type.validator;
 
 import java.util.Iterator;
 
@@ -17,7 +17,7 @@ public final class DataValidationErrors
         this.validationErrors = validationErrors;
     }
 
-    public int getSize()
+    public int size()
     {
         return this.validationErrors.size();
     }

@@ -16,15 +16,16 @@ import com.enonic.wem.web.json.JsonResult;
 class ListContentJsonResult
     extends JsonResult
 {
-    private final static ContentJsonSerializer contentSerializerJson = new ContentJsonSerializer();
-
     private final static ObjectMapper objectMapper = new ObjectMapper();
+
+    private final ContentJsonSerializer contentSerializerJson;
 
     private Contents contents;
 
     ListContentJsonResult( final Contents contents )
     {
         this.contents = contents;
+        this.contentSerializerJson = new ContentJsonSerializer( objectMapper );
     }
 
     @Override
@@ -40,7 +41,7 @@ class ListContentJsonResult
         final ArrayNode contentsNode = arrayNode();
         for ( Content content : list )
         {
-            final JsonNode contentJson = contentSerializerJson.serialize( content, objectMapper );
+            final JsonNode contentJson = contentSerializerJson.serialize( content );
             contentsNode.add( contentJson );
         }
         return contentsNode;

@@ -1,6 +1,8 @@
 package com.enonic.wem.api.content.datatype;
 
 
+import com.enonic.wem.api.content.data.Value;
+
 public class WholeNumber
     extends BaseDataType
 {
@@ -16,39 +18,40 @@ public class WholeNumber
     }
 
     @Override
-    public Object ensureTypeOfValue( final Object value )
+    public Value ensureTypeOfValue( final Value value )
+        throws InconvertibleValueException
     {
         return toWholeNumber( value );
     }
 
-    private Long toWholeNumber( final Object value )
+    private Value toWholeNumber( final Value value )
     {
         if ( hasCorrectType( value ) )
         {
-            return (Long) value;
+            return value;
         }
-        else if ( value instanceof String )
+        else if ( value.isJavaType( String.class ) )
         {
             try
             {
-                return new Long( (String) value );
+                return newValue( new Long( (String) value.getObject() ) );
             }
             catch ( NumberFormatException e )
             {
                 throw new InconvertibleValueException( value, this, e );
             }
         }
-        else if ( value instanceof Integer )
+        else if ( value.isJavaType( Integer.class ) )
         {
-            return ( (Integer) value ).longValue();
+            return newValue( ( (Integer) value.getObject() ).longValue() );
         }
-        else if ( value instanceof Double )
+        else if ( value.isJavaType( Double.class ) )
         {
-            return ( (Double) value ).longValue();
+            return newValue( ( (Double) value.getObject() ).longValue() );
         }
-        else if ( value instanceof Float )
+        else if ( value.isJavaType( Float.class ) )
         {
-            return ( (Float) value ).longValue();
+            return newValue( ( (Float) value.getObject() ).longValue() );
         }
         else
         {

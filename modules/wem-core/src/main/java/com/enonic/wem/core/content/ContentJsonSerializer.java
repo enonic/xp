@@ -25,17 +25,24 @@ public class ContentJsonSerializer
     extends AbstractJsonSerializer<Content>
     implements ContentSerializer
 {
-    private ContentDataJsonSerializer contentDataSerializer = new ContentDataJsonSerializer();
+    private ContentDataJsonSerializer contentDataSerializer;
 
 
     public ContentJsonSerializer()
     {
+        this.contentDataSerializer = new ContentDataJsonSerializer( objectMapper() );
+    }
+
+    public ContentJsonSerializer( final ObjectMapper objectMapper )
+    {
+        super( objectMapper );
+        this.contentDataSerializer = new ContentDataJsonSerializer( objectMapper );
     }
 
     @Override
-    public JsonNode serialize( final Content content, final ObjectMapper objectMapper )
+    public JsonNode serialize( final Content content )
     {
-        final ObjectNode jsonContent = objectMapper.createObjectNode();
+        final ObjectNode jsonContent = objectMapper().createObjectNode();
 
         jsonContent.put( "id", content.getId() == null ? null : content.getId().id() );
         jsonContent.put( "path", content.getPath().toString() );
@@ -47,7 +54,7 @@ public class ContentJsonSerializer
         jsonContent.put( "modifiedTime", content.getModifiedTime() != null ? content.getModifiedTime().toString() : null );
         jsonContent.put( "createdTime", content.getCreatedTime() != null ? content.getCreatedTime().toString() : null );
 
-        jsonContent.put( "data", contentDataSerializer.serialize( content.getData(), objectMapper ) );
+        jsonContent.put( "data", contentDataSerializer.serialize( content.getData() ) );
         return jsonContent;
     }
 

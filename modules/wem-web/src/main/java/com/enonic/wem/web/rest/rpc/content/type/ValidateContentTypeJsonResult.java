@@ -5,8 +5,8 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.InvalidContentTypeException;
-import com.enonic.wem.api.content.type.ValidateContentTypeResult;
+import com.enonic.wem.api.content.type.validator.ContentTypeValidationError;
+import com.enonic.wem.api.content.type.validator.ContentTypeValidationResult;
 import com.enonic.wem.core.content.type.ContentTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
 
@@ -15,29 +15,23 @@ final class ValidateContentTypeJsonResult
 {
     private final static ContentTypeJsonSerializer contentTypeSerializer = new ContentTypeJsonSerializer();
 
-    private final ValidateContentTypeResult validateContentTypeResult;
+    private final ContentTypeValidationResult contentTypeValidationResult;
 
     private final ContentType contentType;
 
-    ValidateContentTypeJsonResult( final ValidateContentTypeResult validateContentTypeResult, final ContentType contentType )
+    ValidateContentTypeJsonResult( final ContentTypeValidationResult contentTypeValidationResult, final ContentType contentType )
     {
-        this.validateContentTypeResult = validateContentTypeResult;
+        this.contentTypeValidationResult = contentTypeValidationResult;
         this.contentType = contentType;
-    }
-
-    ValidateContentTypeJsonResult( final ValidateContentTypeResult validateContentTypeResult )
-    {
-        this.validateContentTypeResult = validateContentTypeResult;
-        this.contentType = null;
     }
 
     @Override
     protected void serialize( final ObjectNode json )
     {
         json.put( "success", true );
-        json.put( "hasErrors", validateContentTypeResult.hasErrors() );
+        json.put( "hasErrors", contentTypeValidationResult.hasErrors() );
         final ArrayNode errorItems = json.putArray( "errors" );
-        for ( InvalidContentTypeException validationError : validateContentTypeResult )
+        for ( ContentTypeValidationError validationError : contentTypeValidationResult )
         {
             errorItems.add( serialize( validationError ) );
         }
@@ -52,10 +46,10 @@ final class ValidateContentTypeJsonResult
         }
     }
 
-    private JsonNode serialize( final InvalidContentTypeException validationError )
+    private JsonNode serialize( final ContentTypeValidationError validationError )
     {
         final ObjectNode validationNode = objectNode();
-        validationNode.put( "message", validationError.getValidationMessage() );
+        validationNode.put( "message", validationError.getErrorMessage() );
         return validationNode;
     }
 

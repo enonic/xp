@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content>
+  <name/>
+  <type>System:unstructured</type>
+  <data>
+    <myInput type="Text">A value</myInput>
+  </data>
+</content>
+

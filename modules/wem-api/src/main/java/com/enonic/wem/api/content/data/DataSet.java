@@ -5,227 +5,137 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.datatype.DataType;
-import com.enonic.wem.api.content.datatype.DataTypes;
+import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.type.form.InvalidDataException;
 
 import static com.enonic.wem.api.content.data.Data.newData;
 
 public final class DataSet
-    implements Iterable<Data>, EntrySelector
+    extends Entry
+    implements Iterable<Entry>
 {
-    private EntryPath path;
+    private Entries entries;
 
-    private DataEntries entries;
-
-    public DataSet( final EntryPath path )
+    private DataSet( final String name )
     {
-        Preconditions.checkNotNull( path, "path cannot be null" );
-        this.path = path;
-        entries = new DataEntries();
+        super( name );
+        this.entries = new Entries( this );
     }
 
-    void setEntryPathIndex( final EntryPath path, final int index )
+    public DataSet( final Builder builder )
     {
-        this.path = this.path.asNewWithIndexAtPath( index, path );
-        for ( Data data : entries )
+        super( builder.name, builder.parent != null ? builder.parent.getEntries() : null );
+        this.entries = new Entries( this );
+
+        for ( Data data : builder.dataList )
         {
-            data.setEntryPathIndex( path, index );
+            add( data );
         }
     }
 
-    public EntryPath getPath()
+    Entries getEntries()
     {
-        return path;
+        return entries;
     }
 
-    public void add( final Data data )
+    public void add( final Entry entry )
     {
-        Preconditions.checkArgument( data.getPath().getParent().equals( this.getPath() ),
-                                     "This DataSet [%s] is not the parent of the Data to be added: %s", this.getPath(), data );
-        entries.add( data );
+        entries.add( entry );
     }
 
-    void setData( final EntryPath path, final Object value, final DataType dataType )
+    void setData( final EntryPath path, final Object value, final BaseDataType dataType )
         throws InvalidDataException
     {
-        Preconditions.checkNotNull( path, "path cannot be null" );
-        Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
-
-        if ( path.elementCount() > 1 )
-        {
-            forwardSetDataToDataSet( path, value, dataType );
-        }
-        else
-        {
-            final EntryPath newEntryPath = new EntryPath( this.path, path.getFirstElement() );
-            entries.setData( newEntryPath, value, dataType );
-        }
+        entries.setData( path, Value.newValue().type( dataType ).value( value ).build() );
     }
 
-    private void forwardSetDataToDataSet( final EntryPath path, final Object value, final DataType dataType )
+    void setData( final EntryPath path, Value value )
+        throws InvalidDataException
     {
-        final DataSet dataSet = findOrCreateDataSet( path.getFirstElement() );
-        dataSet.setData( path.asNewWithoutFirstPathElement(), value, dataType );
+        entries.setData( path, value );
     }
 
-    public Data getData( final String path )
+    public Entry getEntry( final String path )
     {
-        return getData( new EntryPath( path ) );
+        return getEntry( EntryPath.from( path ) );
     }
 
-    public Data getData( final EntryPath path )
+    public Entry getEntry( final EntryPath path )
     {
-        Preconditions.checkNotNull( path, "path cannot be null" );
-        Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
-
-        if ( path.elementCount() > 1 )
-        {
-            return forwardGetDataToDataSet( path );
-        }
-        else
-        {
-            return doGetData( path.getLastElement() );
-        }
+        return entries.getEntry( path );
     }
 
     public DataSet getDataSet( final EntryPath path )
     {
-        Preconditions.checkArgument( path.elementCount() > 0, "path must be something: " + path );
-
-        if ( path.elementCount() == 1 )
-        {
-            final Data data = entries.get( path.getLastElement() );
-            if ( data == null )
-            {
-                return null;
-            }
-            if ( !( data.getDataType().equals( DataTypes.SET ) ) )
-            {
-                throw new IllegalArgumentException( "Data at path [" + data.getPath() + "] is not of type Set: " + data.getDataType() );
-            }
-            return (DataSet) data.getValue();
-        }
-        else
-        {
-            final Data data = entries.get( path.getFirstElement() );
-            if ( !( data.getDataType().equals( DataTypes.SET ) ) )
-            {
-                throw new IllegalArgumentException( "Data at path [%s] is not of type Set: " + data.getDataType() );
-            }
-            return data.getDataSet( path.asNewWithoutFirstPathElement() );
-        }
+        return entries.getDataSet( path );
     }
 
-    private DataSet findOrCreateDataSet( final EntryPath.Element firstElement )
+    public Data getData( final String path )
     {
-        final DataSet dataSet;
-        Data exData = this.entries.get( firstElement );
-        if ( exData == null )
-        {
-            // create new set
-            final EntryPath pathToDataSet = new EntryPath( this.path, firstElement );
-            dataSet = new DataSet( pathToDataSet );
-            entries.setData( pathToDataSet, dataSet, DataTypes.SET );
-        }
-        else
-        {
-            if ( exData.getDataType() == DataTypes.ARRAY )
-            {
-                final DataArray dataArray = exData.getDataArray();
-                final Data data = dataArray.getData( firstElement.getIndex() );
-                if ( data == null )
-                {
-                    final EntryPath newPath = new EntryPath( exData.getPath(), firstElement.getIndex() );
-                    dataSet = new DataSet( newPath );
-                    dataArray.set( firstElement.getIndex(), dataSet );
-                }
-                else
-                {
-                    dataSet = data.getDataSet();
-                }
-            }
-            else
-            {
-                dataSet = exData.getDataSet();
-            }
-        }
-        return dataSet;
+        return getData( EntryPath.from( path ) );
     }
 
-    private Data forwardGetDataToDataSet( final EntryPath path )
+    public Data getData( final String name, final int arrayIndex )
     {
-        final Data data = entries.get( path.getFirstElement() );
-        if ( data == null )
+        EntryPath.Element.checkName( name );
+
+        final Entry entry = entries.doGetEntry( EntryId.from( name, arrayIndex ) );
+        if ( entry == null )
         {
             return null;
         }
-
-        if ( data.getDataType().equals( DataTypes.ARRAY ) )
-        {
-            final int index = path.getFirstElement().hasIndex() ? path.getFirstElement().getIndex() : 0;
-            final Data dataInArray = data.getDataArray().getData( index );
-            Preconditions.checkNotNull( dataInArray, "Data at index [%s] in array [%s] not found", index, data.getPath() );
-
-            if ( !dataInArray.hasDataSetAsValue() )
-            {
-                throw new IllegalArgumentException( "Data at path [" + this.getPath() + "] expected to have a value of type DataSet: " +
-                                                        dataInArray.getDataType().getName() );
-            }
-
-            return dataInArray.getDataSet().getData( path.asNewWithoutFirstPathElement() );
-        }
-        else
-        {
-            if ( !data.hasDataSetAsValue() )
-            {
-                throw new IllegalArgumentException(
-                    "Data at path [" + this.getPath() + "] expected to have a value of type DataSet: " + data.getDataType().getName() );
-            }
-
-            return data.getDataSet().getData( path.asNewWithoutFirstPathElement() );
-        }
+        return entry.toData();
     }
 
-    private Data doGetData( final EntryPath.Element element )
+    public DataSet getDataSet( final String path )
     {
-        final Data data = entries.get( element );
-        if ( data == null )
+        final Entry entry = getEntry( EntryPath.from( path ) );
+        if ( entry == null )
         {
             return null;
         }
-
-        // TODO: Try move this logic into entries.get....
-        if ( element.hasIndex() )
-        {
-            final DataType dataType = data.getDataType();
-            if ( dataType == DataTypes.ARRAY )
-            {
-                DataArray array = data.getDataArray();
-                return array.getData( element.getIndex() );
-            }
-            else if ( dataType == DataTypes.ARRAY )
-            {
-                // allow returning of single data, if first element of an array was requested
-                if ( element.getIndex() == 0 )
-                {
-                    return data;
-                }
-                else
-                {
-                    throw new IllegalArgumentException(
-                        "Data at path [" + new EntryPath( path, element.getName() ) + "] is not an array: " +
-                            new EntryPath( path, element ) );
-                }
-            }
-        }
-
-        return data;
+        Preconditions.checkArgument( entry.isDataSet(), "Entry at path[%s] is not a DataSet: %s", path, entry.getClass().getSimpleName() );
+        return entry.toDataSet();
     }
 
-    public Iterator<Data> iterator()
+    public DataSet getDataSet( final String name, final int arrayIndex )
+    {
+        EntryPath.Element.checkName( name );
+
+        final Entry entry = entries.doGetEntry( EntryId.from( name, arrayIndex ) );
+        if ( entry == null )
+        {
+            return null;
+        }
+        return entry.toDataSet();
+    }
+
+    public Data getData( final EntryPath path )
+    {
+        Entry entry = getEntry( path );
+        if ( entry == null )
+        {
+            return null;
+        }
+        Preconditions.checkArgument( entry.isData(), "Entry at path [%s] is not a Data: %s", path, entry.getClass().getSimpleName() );
+        return entry.toData();
+    }
+
+    Value getValue( final EntryPath path )
+    {
+        return entries.getValue( path );
+    }
+
+    Value getValue( final String path )
+    {
+        return entries.getValue( EntryPath.from( path ) );
+    }
+
+    public Iterator<Entry> iterator()
     {
         return entries.iterator();
     }
@@ -235,17 +145,54 @@ public final class DataSet
         return entries.size();
     }
 
+    public Iterable<String> entryNames()
+    {
+        return entries.entryNames();
+    }
+
+    public int entryCount( final String entryName )
+    {
+        return entries.entryCount( entryName );
+    }
+
+    public List<Entry> entries( final String entryName )
+    {
+        return entries.entries( entryName );
+    }
+
+    public List<DataSet> dataSets( final String name )
+    {
+        return entries.dataSets( name );
+    }
+
+    @Override
+    public DataSetArray getArray()
+    {
+        return (DataSetArray) super.getArray();
+    }
+
     @Override
     public String toString()
     {
         final StringBuilder s = new StringBuilder();
-        s.append( path.toString() );
-        s.append( " { " );
+        if ( !StringUtils.isEmpty( getName() ) )
+        {
+            s.append( getName() );
+        }
+        if ( getArrayIndex() > -1 )
+        {
+            s.append( "[" ).append( getArrayIndex() ).append( "]" );
+        }
+        if ( s.length() > 0 )
+        {
+            s.append( " " );
+        }
+        s.append( "{ " );
         int index = 0;
         final int size = entries.size();
-        for ( Data data : entries )
+        for ( Entry entry : entries )
         {
-            s.append( data.getPath().getLastElement() );
+            s.append( entry.getEntryId() );
             if ( index < size - 1 )
             {
                 s.append( ", " );
@@ -261,26 +208,40 @@ public final class DataSet
         return new Builder();
     }
 
+    public static DataSet newRootDataSet()
+    {
+        return new DataSet( "" );
+    }
+
     public static class Builder
     {
+        private String name;
+
+        private DataSet parent;
+
         private List<Data> dataList = new ArrayList<Data>();
 
-        public Builder set( String path, Object value, DataType dataType )
+        public Builder name( final String value )
         {
-            dataList.add( newData().path( new EntryPath( path ) ).value( value ).type( dataType ).build() );
+            this.name = value;
+            return this;
+        }
+
+        public Builder parent( final DataSet parent )
+        {
+            this.parent = parent;
+            return this;
+        }
+
+        public Builder set( final String name, final Object value, final BaseDataType dataType )
+        {
+            dataList.add( newData().name( name ).value( value ).type( dataType ).build() );
             return this;
         }
 
         public DataSet build()
         {
-            DataSet dataSet = new DataSet( new EntryPath() );
-
-            for ( Data data : dataList )
-            {
-                dataSet.add( data );
-            }
-
-            return dataSet;
+            return new DataSet( this );
         }
     }
 }

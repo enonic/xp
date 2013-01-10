@@ -15,7 +15,19 @@ import com.enonic.wem.core.content.JsonParsingException;
 public final class FormItemsJsonSerializer
     extends AbstractJsonSerializer<FormItems>
 {
-    private FormItemJsonSerializer formItemSerializer = new FormItemJsonSerializer( this );
+    private final FormItemJsonSerializer formItemSerializer;
+
+
+    public FormItemsJsonSerializer()
+    {
+        formItemSerializer = new FormItemJsonSerializer( this, objectMapper() );
+    }
+
+    public FormItemsJsonSerializer( final ObjectMapper objectMapper )
+    {
+        super( objectMapper );
+        formItemSerializer = new FormItemJsonSerializer( this, objectMapper );
+    }
 
     public FormItemJsonSerializer getFormItemJsonSerializer()
     {
@@ -23,12 +35,12 @@ public final class FormItemsJsonSerializer
     }
 
     @Override
-    public JsonNode serialize( final FormItems formItems, final ObjectMapper objectMapper )
+    public JsonNode serialize( final FormItems formItems )
     {
-        final ArrayNode formItemsArray = objectMapper.createArrayNode();
+        final ArrayNode formItemsArray = objectMapper().createArrayNode();
         for ( FormItem formItem : formItems )
         {
-            final JsonNode formItemNode = formItemSerializer.serialize( formItem, objectMapper );
+            final JsonNode formItemNode = formItemSerializer.serialize( formItem );
             formItemsArray.add( formItemNode );
         }
         return formItemsArray;

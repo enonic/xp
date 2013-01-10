@@ -1,6 +1,8 @@
 package com.enonic.wem.api.content.datatype;
 
 
+import com.enonic.wem.api.content.data.Value;
+
 public class Text
     extends BaseDataType
 {
@@ -16,16 +18,17 @@ public class Text
     }
 
     @Override
-    public Object ensureTypeOfValue( final Object value )
+    public Value ensureTypeOfValue( final Value value )
+        throws InconvertibleValueException
     {
         return toString( value );
     }
 
-    public String toString( final Object value )
+    public Value toString( final Value value )
     {
         if ( hasCorrectType( value ) )
         {
-            return (java.lang.String) value;
+            return value;
         }
         else
         {

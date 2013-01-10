@@ -3,6 +3,7 @@ package com.enonic.wem.api.content.datatype;
 
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.type.form.InvalidValueException;
 
 public class GeographicCoordinate
@@ -32,7 +33,8 @@ public class GeographicCoordinate
     }
 
     @Override
-    public Object ensureTypeOfValue( final Object value )
+    public Value ensureTypeOfValue( final Value value )
+        throws InconvertibleValueException
     {
         return toGeographicalCoordinate( value );
     }
@@ -53,8 +55,8 @@ public class GeographicCoordinate
             {
                 return false;
             }
-            if ( DataTypes.DECIMAL_NUMBER.hasCorrectType( latitude.getValue() ) &&
-                DataTypes.DECIMAL_NUMBER.hasCorrectType( longitude.getValue() ) )
+            if ( DataTypes.DECIMAL_NUMBER.hasCorrectType( latitude.getObject() ) &&
+                DataTypes.DECIMAL_NUMBER.hasCorrectType( longitude.getObject() ) )
             {
                 return true;
             }
@@ -64,19 +66,19 @@ public class GeographicCoordinate
 
     }
 
-    private DataSet toGeographicalCoordinate( final Object value )
+    private Value toGeographicalCoordinate( final Value value )
     {
         if ( hasCorrectType( value ) )
         {
-            return (DataSet) value;
+            return value;
         }
-        else if ( value instanceof DataSet )
+        /*else if ( value instanceof DataSet )
         {
             DataSet dataSet = (DataSet) value;
             DataTool.ensureType( DataTypes.DECIMAL_NUMBER, dataSet.getData( LATITUDE ) );
             DataTool.ensureType( DataTypes.DECIMAL_NUMBER, dataSet.getData( LONGITUDE ) );
             return dataSet;
-        }
+        }*/
         else
         {
             throw new InconvertibleValueException( value, this );

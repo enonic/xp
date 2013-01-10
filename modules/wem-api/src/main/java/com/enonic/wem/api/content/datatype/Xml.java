@@ -1,6 +1,8 @@
 package com.enonic.wem.api.content.datatype;
 
 
+import com.enonic.wem.api.content.data.Value;
+
 public class Xml
     extends BaseDataType
 {
@@ -16,16 +18,17 @@ public class Xml
     }
 
     @Override
-    public Object ensureTypeOfValue( final Object value )
+    public Value ensureTypeOfValue( final Value value )
+        throws InconvertibleValueException
     {
         return toXml( value );
     }
 
-    public String toXml( final Object value )
+    public Value toXml( final Value value )
     {
         if ( hasCorrectType( value ) )
         {
-            return (String) value;
+            return value;
         }
         else
         {

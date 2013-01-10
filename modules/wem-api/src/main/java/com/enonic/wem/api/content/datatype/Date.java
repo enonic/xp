@@ -5,6 +5,8 @@ import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 
+import com.enonic.wem.api.content.data.Value;
+
 public class Date
     extends BaseDataType
 {
@@ -23,31 +25,33 @@ public class Date
     }
 
     @Override
-    public Object ensureTypeOfValue( final Object value )
+    public Value ensureTypeOfValue( final Value value )
+        throws InconvertibleValueException
     {
         return toDate( value );
     }
 
-    public DateMidnight toDate( final Object value )
+    public Value toDate( final Value value )
     {
         if ( hasCorrectType( value ) )
         {
-            return (DateMidnight) value;
+            return value;
         }
-        else if ( value instanceof String )
+        else if ( value.isJavaType( String.class ) )
         {
             try
             {
-                return FORMATTER.parseDateTime( (String) value ).toDateMidnight();
+                return newValue( FORMATTER.parseDateTime( (String) value.getObject() ).toDateMidnight() );
             }
             catch ( Exception e )
             {
                 throw new InconvertibleValueException( value, this, e );
             }
         }
-        else if ( value instanceof Long )
+        else if ( value.isJavaType( Long.class ) )
         {
-            return new DateMidnight( value );
+            final Long longValue = (Long) value.getObject();
+            return newValue( new DateMidnight( longValue ) );
         }
         else
         {

@@ -21,10 +21,10 @@ public class ContentTypeJsonSerializer
     extends AbstractJsonSerializer<ContentType>
     implements ContentTypeSerializer
 {
-    private FormItemsJsonSerializer formItemsSerializer = new FormItemsJsonSerializer();
+    private FormItemsJsonSerializer formItemsSerializer = new FormItemsJsonSerializer( objectMapper() );
 
     @Override
-    protected JsonNode serialize( final ContentType contentType, final ObjectMapper objectMapper )
+    protected JsonNode serialize( final ContentType contentType )
     {
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectNode objectNode = mapper.createObjectNode();
@@ -35,7 +35,7 @@ public class ContentTypeJsonSerializer
         objectNode.put( "superType", contentType.getSuperType() != null ? contentType.getSuperType().toString() : null );
         objectNode.put( "isAbstract", contentType.isAbstract() );
         objectNode.put( "isFinal", contentType.isFinal() );
-        objectNode.put( "form", formItemsSerializer.serialize( contentType.form().getFormItems(), mapper ) );
+        objectNode.put( "form", formItemsSerializer.serialize( contentType.form().getFormItems() ) );
         return objectNode;
     }
 

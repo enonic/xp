@@ -8,6 +8,7 @@ import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
 
+import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.type.ContentTypeStepDefs;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 
@@ -32,7 +33,7 @@ public class ContentStepDefs
         throws Throwable
     {
 
-        Content content = newContent().name(contentName).type( new QualifiedContentTypeName( contentTypeName ) ).build();
+        Content content = newContent().name( contentName ).type( new QualifiedContentTypeName( contentTypeName ) ).build();
         contentByName.put( contentName, content );
     }
 
@@ -50,7 +51,7 @@ public class ContentStepDefs
         throws Throwable
     {
         Content content = contentByName.get( contentName );
-        returnedValue = content.getValueAsString( path );
+        returnedValue = content.getData().getData( EntryPath.from( path ) ).asString();
     }
 
     @Then("^the returned value should be \"([^\"]*)\"$")

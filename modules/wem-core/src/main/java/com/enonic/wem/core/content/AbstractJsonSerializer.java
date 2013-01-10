@@ -19,6 +19,11 @@ public abstract class AbstractJsonSerializer<T>
         defaultMapper = new ObjectMapper();
     }
 
+    protected AbstractJsonSerializer( final ObjectMapper objectMapper )
+    {
+        this.defaultMapper = objectMapper;
+    }
+
     protected ObjectMapper objectMapper()
     {
         return defaultMapper;
@@ -32,7 +37,7 @@ public abstract class AbstractJsonSerializer<T>
     public String toString( T obj )
         throws JsonSerializingException
     {
-        final JsonNode jsonNode = serialize( obj, objectMapper() );
+        final JsonNode jsonNode = serialize( obj );
         if ( prettyPrint )
         {
             try
@@ -78,10 +83,10 @@ public abstract class AbstractJsonSerializer<T>
 
     public JsonNode toJson( T obj )
     {
-        return serialize( obj, objectMapper() );
+        return serialize( obj );
     }
 
-    protected abstract JsonNode serialize( final T obj, final ObjectMapper objectMapper );
+    protected abstract JsonNode serialize( final T obj );
 
     protected abstract T parse( final JsonNode node );
 

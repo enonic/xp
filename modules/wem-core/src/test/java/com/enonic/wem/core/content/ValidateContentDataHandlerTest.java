@@ -7,9 +7,9 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.DataValidationErrors;
 import com.enonic.wem.api.content.type.form.FieldSet;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.validator.DataValidationErrors;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
@@ -55,7 +55,7 @@ public class ValidateContentDataHandlerTest
         // test
         final DataValidationErrors result = command.getResult();
         assertTrue( result.hasErrors() );
-        assertEquals( 1, result.getSize() );
+        assertEquals( 1, result.size() );
     }
 
     @Test
@@ -82,7 +82,7 @@ public class ValidateContentDataHandlerTest
         // test
         final DataValidationErrors result = command.getResult();
         assertFalse( result.hasErrors() );
-        assertEquals( 0, result.getSize() );
+        assertEquals( 0, result.size() );
     }
 
 }

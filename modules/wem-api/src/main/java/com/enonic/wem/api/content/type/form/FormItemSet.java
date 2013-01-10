@@ -2,6 +2,7 @@ package com.enonic.wem.api.content.type.form;
 
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
@@ -10,6 +11,7 @@ import static com.enonic.wem.api.content.type.form.Occurrences.newOccurrences;
 
 public class FormItemSet
     extends HierarchicalFormItem
+    implements Iterable<FormItem>
 {
     private String label;
 
@@ -84,6 +86,12 @@ public class FormItemSet
     public FormItems getFormItems()
     {
         return formItems;
+    }
+
+    @Override
+    public Iterator<FormItem> iterator()
+    {
+        return formItems.iterator();
     }
 
     @Override

@@ -33,11 +33,12 @@ public class Phone
     @Override
     public void checkBreaksRequiredContract( final Data data )
     {
-        final String stringValue = (String) data.getValue();
+        final String stringValue = (String) data.getObject();
         if ( StringUtils.isBlank( stringValue ) )
         {
             throw new BreaksRequiredContractException( data, this );
         }
     }
+
 }
 

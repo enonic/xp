@@ -4,10 +4,10 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.ValidateContentTypeResult;
+import com.enonic.wem.api.content.type.validator.ContentTypeValidationResult;
 
 public class ValidateContentType
-    extends Command<ValidateContentTypeResult>
+    extends Command<ContentTypeValidationResult>
 {
     private ContentType contentType;
 

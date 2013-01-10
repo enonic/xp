@@ -16,7 +16,17 @@ import com.enonic.wem.core.content.JsonParsingException;
 public class RelationshipTypeJsonSerializer
     extends AbstractJsonSerializer<RelationshipType>
 {
-    protected JsonNode serialize( final RelationshipType relationshipType, final ObjectMapper objectMapper )
+
+    public RelationshipTypeJsonSerializer()
+    {
+    }
+
+    public RelationshipTypeJsonSerializer( final ObjectMapper objectMapper )
+    {
+        super( objectMapper );
+    }
+
+    protected JsonNode serialize( final RelationshipType relationshipType )
     {
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectNode objectNode = mapper.createObjectNode();

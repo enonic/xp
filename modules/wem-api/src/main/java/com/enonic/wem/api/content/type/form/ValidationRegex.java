@@ -22,12 +22,12 @@ public class ValidationRegex
     public void checkValidity( final Data data )
         throws BreaksRegexValidationException
     {
-        if ( data.getDataType().getJavaType() != JavaType.STRING )
+        if ( data.getType().getJavaType() != JavaType.STRING )
         {
             return;
         }
 
-        final Matcher matcher = pattern.matcher( data.getString() );
+        final Matcher matcher = pattern.matcher( data.asString() );
         if ( !matcher.matches() )
         {
             throw new BreaksRegexValidationException( data, pattern.toString() );

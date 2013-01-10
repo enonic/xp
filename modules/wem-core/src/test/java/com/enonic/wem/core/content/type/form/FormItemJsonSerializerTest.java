@@ -157,13 +157,13 @@ public class FormItemJsonSerializerTest
         throws IOException
     {
         final ObjectMapper mapper = new ObjectMapper();
-        return new FormItemJsonSerializer( formItemsJsonSerializer ).serialize( formItemSet, mapper ).toString();
+        return new FormItemJsonSerializer( formItemsJsonSerializer ).serialize( formItemSet ).toString();
     }
 
     private String fieldToJson( Input input )
         throws IOException
     {
         final ObjectMapper mapper = new ObjectMapper();
-        return new FormItemJsonSerializer( formItemsJsonSerializer ).serialize( input, mapper ).toString();
+        return new FormItemJsonSerializer( formItemsJsonSerializer ).serialize( input ).toString();
     }
 }

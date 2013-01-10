@@ -13,6 +13,6 @@ public class InvalidValueException
 
     private static String buildMessage( final Data data, final String message )
     {
-        return "Invalid value in [" + data + "]: " + message + ": " + data.getValue();
+        return "Invalid value in [" + data + "]: " + message + ": " + data.getObject();
     }
 }

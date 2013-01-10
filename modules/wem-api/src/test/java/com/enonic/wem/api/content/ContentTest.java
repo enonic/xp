@@ -1,29 +1,31 @@
-package com.enonic.wem.core.content;
+package com.enonic.wem.api.content;
 
 
 import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.Text;
 import com.enonic.wem.api.content.datatype.DataTypes;
-import com.enonic.wem.api.content.datatype.InconvertibleValueException;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.form.FieldSet;
 import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.FormItemSetSubType;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.content.type.form.InputSubType;
-import com.enonic.wem.api.content.type.form.InvalidDataException;
 import com.enonic.wem.api.content.type.form.MockSubTypeFetcher;
 import com.enonic.wem.api.content.type.form.SubTypeReference;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
-import com.enonic.wem.api.content.type.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.Content.newContent;
+import static com.enonic.wem.api.content.data.Data.newData;
+import static com.enonic.wem.api.content.data.Data.newText;
+import static com.enonic.wem.api.content.data.Data.newXml;
+import static com.enonic.wem.api.content.data.DataSet.newDataSet;
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
@@ -50,105 +52,151 @@ public class ContentTest
     }
 
     @Test
-    public void singleSelector()
+    public void array_getting_entry_from_array_of_size_one()
     {
-        SingleSelectorConfig singleSelectorConfig =
-            newSingleSelectorConfig().type( SingleSelectorConfig.SelectorType.DROPDOWN ).addOption( "Option 1", "o1" ).addOption(
-                "Option 2", "o2" ).build();
-        Input mySingleSelector =
-            newInput().name( "mySingleSelector" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build();
-        contentType.form().addFormItem( mySingleSelector );
+        Content content = newContent().build();
+        content.setData( "array[0]", "First" );
 
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "mySingleSelector", "o1" );
-
-        assertEquals( "o1", content.getData( "mySingleSelector" ).getValue() );
+        assertEquals( "First", content.getData( "array" ).getObject() );
+        assertEquals( "First", content.getData( "array[0]" ).getObject() );
     }
 
     @Test
-    public void multiple_textlines()
+    public void array_getting_entries_from_array_of_size_two()
     {
-        contentType.form().addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        contentType.form().addFormItem( newInput().name( "myMultipleTextLine" ).type( InputTypes.TEXT_LINE ).multiple( true ).build() );
+        Content content = newContent().build();
+        content.setData( "array[0]", "First" );
+        content.setData( "array[1]", "Second" );
 
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.setData( "myTextLine", "A single line" );
-        content.setData( "myMultipleTextLine[0]", "First line" );
-        content.setData( "myMultipleTextLine[1]", "Second line" );
+        Data array = content.getData( "array" );
+        assertEquals( "First", array.getObject() );
+        assertEquals( "First", content.getData( "array" ).asString( 0 ) );
+        assertEquals( "First", content.getData( "array[0]" ).asString() );
 
-        assertEquals( "A single line", content.getData( "myTextLine" ).getValue() );
-        assertEquals( "First line", content.getData( "myMultipleTextLine" ).getDataArray().getData( 0 ).getValue() );
-        assertEquals( "Second line", content.getData( "myMultipleTextLine" ).getDataArray().getData( 1 ).getValue() );
+        assertEquals( "Second", content.getData( "array" ).asString( 1 ) );
+        assertEquals( "Second", content.getData( "array[1]" ).asString() );
     }
 
     @Test
-    public void overwriting_does_not_create_array()
+    public void array()
+    {
+        Content content = newContent().build();
+        Data first = newData().name( "array" ).type( DataTypes.TEXT ).value( "First" ).build();
+        Data second = newData().name( "array" ).type( DataTypes.TEXT ).value( "Second" ).build();
+        content.getData().add( first );
+        content.getData().add( second );
+
+        Data array = content.getData( "array" );
+        assertEquals( "First", array.getObject() );
+        assertEquals( "First", content.getData( "array" ).asString( 0 ) );
+        assertEquals( "First", content.getData( "array[0]" ).getObject() );
+
+        assertEquals( "Second", content.getData( "array" ).asString( 1 ) );
+        assertEquals( "Second", content.getData( "array[1]" ).asString() );
+
+    }
+
+    @Test
+    public void array_getting_entries_from_array_of_size_three()
+    {
+        Content content = newContent().build();
+        content.setData( "array[0]", "First" );
+        content.setData( "array[1]", "Second" );
+        content.setData( "array[2]", "Third" );
+
+        assertEquals( "First", content.getData( "array" ).getObject() );
+        assertEquals( "First", content.getData( "array[0]" ).getObject() );
+
+        assertEquals( "Second", content.getData( "array[1]" ).getObject() );
+
+        assertEquals( "Third", content.getData( "array[2]" ).getObject() );
+    }
+
+    @Test
+    public void array_overwriting_does_not_create_array()
     {
         Content content = newContent().build();
         content.setData( "noArray", "First" );
         content.setData( "noArray", "Second" );
         content.setData( "noArray", "Third" );
 
-        assertEquals( "Third", content.getData( "noArray" ).getValue() );
+        assertEquals( "Third", content.getData( "noArray" ).getObject() );
     }
 
     @Test
-    public void setData_assigning_same_array_element_a_second_time_ovewrites_the_first_value()
+    public void array_setData_assigning_same_array_element_a_second_time_ovewrites_the_first_value()
     {
         Content content = newContent().build();
         content.setData( "array[0]", "First" );
         content.setData( "array[1]", "Second" );
         content.setData( "array[1]", "Second again" );
 
-        assertEquals( "First", content.getData( "array[0]" ).getValue() );
-        assertEquals( "Second again", content.getData( "array[1]" ).getValue() );
+        assertEquals( "First", content.getData( "array[0]" ).getObject() );
+        assertEquals( "Second again", content.getData( "array[1]" ).getObject() );
         assertNull( content.getData( "array[2]" ) );
     }
 
     @Test
-    public void multiple_textlines2()
+    public void array_setData_setting_second_data_with_same_path_at_index_1_creates_array_of_size_2()
     {
         Content content = newContent().build();
         content.setData( "myArray", "First" );
         content.setData( "myArray[1]", "Second" );
 
-        assertEquals( "First", content.getData( "myArray[0]" ).getValue() );
-        assertEquals( "Second", content.getData( "myArray[1]" ).getValue() );
-        assertEquals( "myArray[0]", content.getData( "myArray[0]" ).getPath().toString() );
-        assertEquals( "myArray[1]", content.getData( "myArray[1]" ).getPath().toString() );
-        assertEquals( "myArray", content.getData( "myArray" ).getPath().toString() );
+        assertEquals( true, content.getData( "myArray" ).isArray() );
+        assertEquals( 2, content.getData( "myArray" ).getArray().size() );
+        assertEquals( "First", content.getData( "myArray[0]" ).getObject() );
+        assertEquals( "Second", content.getData( "myArray[1]" ).getObject() );
+        assertEquals( "myArray[0]", content.getData( "myArray" ).getPath().toString() );
     }
 
     @Test
-    public void multiple_textlines3()
+    public void array_setData_array_within_set()
     {
         Content content = newContent().build();
         content.setData( "set.myArray[0]", "First" );
         content.setData( "set.myArray[1]", "Second" );
 
-        assertEquals( "First", content.getData( "set.myArray[0]" ).getValue() );
-        assertEquals( "Second", content.getData( "set.myArray[1]" ).getValue() );
-        assertEquals( "set.myArray[0]", content.getData( "set.myArray[0]" ).getPath().toString() );
-        assertEquals( "set.myArray[1]", content.getData( "set.myArray[1]" ).getPath().toString() );
-        assertEquals( "set.myArray", content.getData( "set.myArray" ).getPath().toString() );
-        assertEquals( "set.myArray[0]", content.getData( "set.myArray" ).getDataArray().getData( 0 ).getPath().toString() );
-        assertEquals( "set.myArray[1]", content.getData( "set.myArray" ).getDataArray().getData( 1 ).getPath().toString() );
-        assertEquals( "First", content.getData( "set.myArray" ).getDataArray().getData( 0 ).getString() );
-        assertEquals( "Second", content.getData( "set.myArray" ).getDataArray().getData( 1 ).getString() );
+        assertEquals( "First", content.getData( "set.myArray[0]" ).getObject() );
+        assertEquals( "Second", content.getData( "set.myArray[1]" ).getObject() );
+        assertEquals( "set.myArray[0]", content.getData( "set.myArray" ).getPath().toString() );
+        assertEquals( "First", content.getData( "set.myArray" ).asString( 0 ) );
+        assertEquals( "Second", content.getData( "set.myArray" ).asString( 1 ) );
     }
 
     @Test
-    public void multiple_textlines4()
+    public void array_setData_array_of_set_within_set()
     {
         Content content = newContent().build();
-        content.setData( "set.myArray[0].input", "First" );
-        content.setData( "set.myArray[1].input", "Second" );
+        content.setData( "company.address[0].street", "Kirkegata 1-3" );
+        content.setData( "company.address[1].street", "Sonsteli" );
 
-        assertEquals( "First", content.getData( "set.myArray[0].input" ).getValue() );
-        assertEquals( "Second", content.getData( "set.myArray[1].input" ).getValue() );
-        assertEquals( "Second", content.getData( "set" ).getDataSet().getData( "myArray" ).getDataArray().getData( 1 ).getDataSet().getData(
-            "input" ).getString() );
-        assertEquals( "Second", content.getData( "set" ).getDataSet().getData( "myArray[1]" ).getDataSet().getData( "input" ).getString() );
+        assertEquals( "Kirkegata 1-3", content.getData( "company.address[0].street" ).asString() );
+        assertEquals( "Sonsteli", content.getData( "company.address[1].street" ).asString() );
+        assertEquals( "Sonsteli", content.getDataSet( "company" ).getDataSet( "address", 1 ).getData( "street" ).asString() );
+        assertEquals( "Sonsteli", content.getDataSet( "company" ).getDataSet( "address[1]" ).getData( "street" ).asString() );
+    }
+
+    @Test
+    public void add_array_of_set_within_set()
+    {
+        DataSet address1 = newDataSet().name( "address" ).build();
+        address1.add( newData().name( "street" ).type( DataTypes.TEXT ).value( "Kirkegata 1-3" ).build() );
+
+        DataSet address2 = newDataSet().name( "address" ).build();
+        address2.add( newData().name( "street" ).type( DataTypes.TEXT ).value( "Sonsteli" ).build() );
+
+        DataSet company = newDataSet().name( "company" ).build();
+        company.add( address1 );
+        company.add( address2 );
+        ContentData contentData = new ContentData();
+        contentData.add( company );
+        Content content = newContent().data( contentData ).build();
+
+        assertEquals( "Kirkegata 1-3", content.getData( "company.address[0].street" ).getObject() );
+        assertEquals( "Sonsteli", content.getData( "company.address[1].street" ).getObject() );
+        assertEquals( "Sonsteli", content.getDataSet( "company" ).getDataSet( "address", 1 ).getData( "street" ).asString() );
+        assertEquals( "Sonsteli", content.getDataSet( "company" ).getDataSet( "address[1]" ).getData( "street" ).asString() );
     }
 
     @Test
@@ -158,14 +206,18 @@ public class ContentTest
         content.setData( "set[0].myText", "First" );
         content.setData( "set[1].myText", "Second" );
 
-        assertEquals( "First", content.getData( "set[0].myText" ).getValue() );
-        assertEquals( "Second", content.getData( "set[1].myText" ).getValue() );
+        assertEquals( "First", content.getData( "set.myText" ).getObject() );
+        assertEquals( "First", content.getData( "set[0].myText" ).getObject() );
+        assertEquals( "Second", content.getData( "set[1].myText" ).getObject() );
+        assertEquals( true, content.getEntry( "set" ).isArray() );
+        assertEquals( 0, content.getEntry( "set[0]" ).getArrayIndex() );
+        assertEquals( "set[0]", content.getDataSet( "set[0]" ).getPath().toString() );
         assertEquals( "set[0].myText", content.getData( "set[0].myText" ).getPath().toString() );
         assertEquals( "set[1].myText", content.getData( "set[1].myText" ).getPath().toString() );
-        assertEquals( "set[0]", content.getData( "set[0]" ).getPath().toString() );
-        assertEquals( "set[1]", content.getData( "set[1]" ).getPath().toString() );
-        assertEquals( "First", content.getData( "set[0]" ).getDataSet().getData( "myText" ).getString() );
-        assertEquals( "Second", content.getData( "set[1]" ).getDataSet().getData( "myText" ).getString() );
+        assertEquals( "set[0]", content.getDataSet( "set[0]" ).getPath().toString() );
+        assertEquals( "set[1]", content.getDataSet( "set[1]" ).getPath().toString() );
+        assertEquals( "First", content.getDataSet( "set[0]" ).getData( "myText" ).asString() );
+        assertEquals( "Second", content.getDataSet( "set[1]" ).getData( "myText" ).asString() );
     }
 
     @Test
@@ -177,16 +229,16 @@ public class ContentTest
         content.setData( "set[1].myText", "Second" );
         content.setData( "set[1].myOther", "Second other" );
 
-        assertEquals( "First", content.getData( "set[0].myText" ).getValue() );
-        assertEquals( "First other", content.getData( "set[0].myOther" ).getValue() );
-        assertEquals( "Second", content.getData( "set[1].myText" ).getValue() );
-        assertEquals( "Second other", content.getData( "set[1].myOther" ).getValue() );
+        assertEquals( "First", content.getData( "set[0].myText" ).getObject() );
+        assertEquals( "First other", content.getData( "set[0].myOther" ).getObject() );
+        assertEquals( "Second", content.getData( "set[1].myText" ).getObject() );
+        assertEquals( "Second other", content.getData( "set[1].myOther" ).getObject() );
         assertEquals( "set[0].myText", content.getData( "set[0].myText" ).getPath().toString() );
         assertEquals( "set[1].myText", content.getData( "set[1].myText" ).getPath().toString() );
-        assertEquals( "set[0]", content.getData( "set[0]" ).getPath().toString() );
-        assertEquals( "set[1]", content.getData( "set[1]" ).getPath().toString() );
-        assertEquals( "First", content.getData( "set[0]" ).getDataSet().getData( "myText" ).getString() );
-        assertEquals( "Second", content.getData( "set[1]" ).getDataSet().getData( "myText" ).getString() );
+        assertEquals( "set[0]", content.getDataSet( "set[0]" ).getPath().toString() );
+        assertEquals( "set[1]", content.getDataSet( "set[1]" ).getPath().toString() );
+        assertEquals( "First", content.getEntry( "set[0]" ).toDataSet().getData( "myText" ).asString() );
+        assertEquals( "Second", content.getEntry( "set[1]" ).toDataSet().getData( "myText" ).asString() );
     }
 
     @Test
@@ -198,7 +250,7 @@ public class ContentTest
         Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myTags", "A line of text" );
 
-        assertEquals( "A line of text", content.getData( "myTags" ).getValue() );
+        assertEquals( "A line of text", content.getData( "myTags" ).getObject() );
     }
 
     @Test
@@ -219,10 +271,9 @@ public class ContentTest
         content.setData( "myTags[1]", "XML" );
         content.setData( "myTags[2]", "JSON" );
 
-        Data myTags = content.getData( "myTags" );
-        assertEquals( "Java", myTags.getDataArray().getData( 0 ).getString() );
-        assertEquals( "XML", myTags.getDataArray().getData( 1 ).getString() );
-        assertEquals( "JSON", myTags.getDataArray().getData( 2 ).getString() );
+        assertEquals( "Java", content.getData( "myTags" ).asString( 0 ) );
+        assertEquals( "XML", content.getData( "myTags" ).asString( 1 ) );
+        assertEquals( "JSON", content.getData( "myTags" ).asString( 2 ) );
     }
 
     @Test
@@ -233,7 +284,7 @@ public class ContentTest
         Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myPhone", "98327891" );
 
-        assertEquals( "98327891", content.getData( "myPhone" ).getValue() );
+        assertEquals( "98327891", content.getData( "myPhone" ).getObject() );
     }
 
     @Test
@@ -251,9 +302,9 @@ public class ContentTest
         content.setData( "personalia.eyeColour", "Blue" );
         content.setData( "personalia.hairColour", "Blonde" );
 
-        assertEquals( "Ola Nordmann", content.getData( "name" ).getValue() );
-        assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getValue() );
-        assertEquals( "Blonde", content.getData( "personalia.hairColour" ).getValue() );
+        assertEquals( "Ola Nordmann", content.getData( "name" ).getObject() );
+        assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getObject() );
+        assertEquals( "Blonde", content.getData( "personalia.hairColour" ).getObject() );
     }
 
     @Test
@@ -277,13 +328,13 @@ public class ContentTest
         content.setData( "personalia[1].eyeColour", "Green" );
         content.setData( "personalia[1].hairColour", "Brown" );
 
-        assertEquals( "Norske", content.getData( "name" ).getValue() );
-        assertEquals( "Ola Nordmann", content.getData( "personalia[0].name" ).getValue() );
-        assertEquals( "Blue", content.getData( "personalia[0].eyeColour" ).getValue() );
-        assertEquals( "Blonde", content.getData( "personalia[0].hairColour" ).getValue() );
-        assertEquals( "Kari Trestakk", content.getData( "personalia[1].name" ).getValue() );
-        assertEquals( "Green", content.getData( "personalia[1].eyeColour" ).getValue() );
-        assertEquals( "Brown", content.getData( "personalia[1].hairColour" ).getValue() );
+        assertEquals( "Norske", content.getData( "name" ).getObject() );
+        assertEquals( "Ola Nordmann", content.getData( "personalia[0].name" ).getObject() );
+        assertEquals( "Blue", content.getData( "personalia[0].eyeColour" ).getObject() );
+        assertEquals( "Blonde", content.getData( "personalia[0].hairColour" ).getObject() );
+        assertEquals( "Kari Trestakk", content.getData( "personalia[1].name" ).getObject() );
+        assertEquals( "Green", content.getData( "personalia[1].eyeColour" ).getObject() );
+        assertEquals( "Brown", content.getData( "personalia[1].hairColour" ).getObject() );
     }
 
     @Test
@@ -301,26 +352,17 @@ public class ContentTest
         content.setData( "child[1].features.eyeColour", "Brown" );
         content.setData( "child[1].features.hairColour", "Black" );
 
-        assertEquals( "Thomas", content.getData( "firstName" ).getValue() );
-        assertEquals( DataTypes.TEXT, content.getData( "firstName" ).getDataType() );
-        assertEquals( DataTypes.HTML_PART, content.getData( "description" ).getDataType() );
-        assertEquals( "Joachim", content.getData( "child[0].name" ).getValue() );
-        assertEquals( "9", content.getData( "child[0].age" ).getValue() );
-        assertEquals( "Blue", content.getData( "child[0].features.eyeColour" ).getValue() );
-        assertEquals( "Blonde", content.getData( "child[0].features.hairColour" ).getValue() );
-        assertEquals( "Madeleine", content.getData( "child[1].name" ).getValue() );
-        assertEquals( "7", content.getData( "child[1].age" ).getValue() );
-        assertEquals( "Brown", content.getData( "child[1].features.eyeColour" ).getValue() );
-        assertEquals( "Black", content.getData( "child[1].features.hairColour" ).getValue() );
-    }
-
-    @Test(expected = InvalidDataException.class)
-    public void setData_given_invalid_value_when_dataType_is_geographical_coordinate_then_exception()
-    {
-        Content content = newContent().build();
-        DataSet value = DataSet.newDataSet().set( "latitude", 0.0, DataTypes.DECIMAL_NUMBER ).set( "longitude", 181.0,
-                                                                                                   DataTypes.DECIMAL_NUMBER ).build();
-        content.setData( "myGeoLocation", value, DataTypes.GEOGRAPHIC_COORDINATE );
+        assertEquals( "Thomas", content.getData( "firstName" ).getObject() );
+        assertEquals( DataTypes.TEXT, content.getData( "firstName" ).getType() );
+        assertEquals( DataTypes.HTML_PART, content.getData( "description" ).getType() );
+        assertEquals( "Joachim", content.getData( "child[0].name" ).getObject() );
+        assertEquals( "9", content.getData( "child[0].age" ).getObject() );
+        assertEquals( "Blue", content.getData( "child[0].features.eyeColour" ).getObject() );
+        assertEquals( "Blonde", content.getData( "child[0].features.hairColour" ).getObject() );
+        assertEquals( "Madeleine", content.getData( "child[1].name" ).getObject() );
+        assertEquals( "7", content.getData( "child[1].age" ).getObject() );
+        assertEquals( "Brown", content.getData( "child[1].features.eyeColour" ).getObject() );
+        assertEquals( "Black", content.getData( "child[1].features.hairColour" ).getObject() );
     }
 
     @Test
@@ -336,15 +378,15 @@ public class ContentTest
         content.setData( "child[1].features.eyeColour", "Brown" );
         content.setData( "child[1].features.hairColour", "Black" );
 
-        DataSet child0 = content.getData( "child[0]" ).getDataSet();
-        assertEquals( "Joachim", child0.getData( "name" ).getValue() );
-        assertEquals( "9", child0.getData( "age" ).getValue() );
-        assertEquals( "Blue", child0.getData( "features.eyeColour" ).getValue() );
+        DataSet child0 = content.getEntry( "child[0]" ).toDataSet();
+        assertEquals( "Joachim", child0.getData( "name" ).getObject() );
+        assertEquals( "9", child0.getData( "age" ).getObject() );
+        assertEquals( "Blue", child0.getData( "features.eyeColour" ).getObject() );
 
-        DataSet child1 = content.getData( "child[1]" ).getDataSet();
-        assertEquals( "Madeleine", child1.getData( "name" ).getValue() );
-        assertEquals( "7", child1.getData( "age" ).getValue() );
-        assertEquals( "Brown", child1.getData( "features.eyeColour" ).getValue() );
+        DataSet child1 = content.getEntry( "child[1]" ).toDataSet();
+        assertEquals( "Madeleine", child1.getData( "name" ).getObject() );
+        assertEquals( "7", child1.getData( "age" ).getObject() );
+        assertEquals( "Brown", child1.getData( "features.eyeColour" ).getObject() );
     }
 
     @Test
@@ -369,15 +411,15 @@ public class ContentTest
         content.setData( "child[1].features.eyeColour", "Brown" );
         content.setData( "child[1].features.hairColour", "Black" );
 
-        DataSet child0 = content.getData( "child[0]" ).getDataSet();
-        assertEquals( "Joachim", child0.getData( "name" ).getValue() );
-        assertEquals( "9", child0.getData( "age" ).getValue() );
-        assertEquals( "Blue", child0.getData( "features.eyeColour" ).getValue() );
+        DataSet child0 = content.getEntry( "child[0]" ).toDataSet();
+        assertEquals( "Joachim", child0.getData( "name" ).getObject() );
+        assertEquals( "9", child0.getData( "age" ).getObject() );
+        assertEquals( "Blue", child0.getData( "features.eyeColour" ).getObject() );
 
-        DataSet child1 = content.getData( "child[1]" ).getDataSet();
-        assertEquals( "Madeleine", child1.getData( "name" ).getValue() );
-        assertEquals( "7", child1.getData( "age" ).getValue() );
-        assertEquals( "Brown", child1.getData( "features.eyeColour" ).getValue() );
+        DataSet child1 = content.getEntry( "child[1]" ).toDataSet();
+        assertEquals( "Madeleine", child1.getData( "name" ).getObject() );
+        assertEquals( "7", child1.getData( "age" ).getObject() );
+        assertEquals( "Brown", child1.getData( "features.eyeColour" ).getObject() );
     }
 
     @Test
@@ -389,8 +431,8 @@ public class ContentTest
         content.setData( "personalia.eyeColour", "Blue", DataTypes.TEXT );
         content.setData( "personalia.hairColour", "Blonde" );
 
-        assertEquals( DataTypes.TEXT, content.getData( "personalia.eyeColour" ).getDataType() );
-        assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getValue() );
+        assertEquals( DataTypes.TEXT, content.getData( "personalia.eyeColour" ).getType() );
+        assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getObject() );
         assertEquals( "personalia.eyeColour", content.getData( "personalia.eyeColour" ).getPath().toString() );
     }
 
@@ -427,11 +469,11 @@ public class ContentTest
         content.setData( "address.postalPlace", "Heidal" );
         content.setData( "address.country", "NO" );
 
-        assertEquals( "Ola Normann", content.getValueAsString( "name" ) );
-        assertEquals( "Bakkebygrenda 1", content.getValueAsString( "address.street" ) );
-        assertEquals( "2676", content.getValueAsString( "address.postalCode" ) );
-        assertEquals( "Heidal", content.getValueAsString( "address.postalPlace" ) );
-        assertEquals( "NO", content.getValueAsString( "address.country" ) );
+        assertEquals( "Ola Normann", content.getData( "name" ).asString() );
+        assertEquals( "Bakkebygrenda 1", content.getData( "address.street" ).asString() );
+        assertEquals( "2676", content.getData( "address.postalCode" ).asString() );
+        assertEquals( "Heidal", content.getData( "address.postalPlace" ).asString() );
+        assertEquals( "NO", content.getData( "address.country" ).asString() );
     }
 
     @Test
@@ -464,17 +506,17 @@ public class ContentTest
         content.setData( "address[1].postalPlace", "Gjende" );
         content.setData( "address[1].country", "NO" );
 
-        assertEquals( "Home", content.getValueAsString( "address[0].label" ) );
-        assertEquals( "Bakkebygrenda 1", content.getValueAsString( "address[0].street" ) );
-        assertEquals( "2676", content.getValueAsString( "address[0].postalCode" ) );
-        assertEquals( "Heidal", content.getValueAsString( "address[0].postalPlace" ) );
-        assertEquals( "NO", content.getValueAsString( "address[0].country" ) );
+        assertEquals( "Home", content.getData( "address[0].label" ).asString() );
+        assertEquals( "Bakkebygrenda 1", content.getData( "address[0].street" ).asString() );
+        assertEquals( "2676", content.getData( "address[0].postalCode" ).asString() );
+        assertEquals( "Heidal", content.getData( "address[0].postalPlace" ).asString() );
+        assertEquals( "NO", content.getData( "address[0].country" ).asString() );
 
-        assertEquals( "Cabin", content.getValueAsString( "address[1].label" ) );
-        assertEquals( "Heia", content.getValueAsString( "address[1].street" ) );
-        assertEquals( "2676", content.getValueAsString( "address[1].postalCode" ) );
-        assertEquals( "Gjende", content.getValueAsString( "address[1].postalPlace" ) );
-        assertEquals( "NO", content.getValueAsString( "address[1].country" ) );
+        assertEquals( "Cabin", content.getData( "address[1].label" ).asString() );
+        assertEquals( "Heia", content.getData( "address[1].street" ).asString() );
+        assertEquals( "2676", content.getData( "address[1].postalCode" ).asString() );
+        assertEquals( "Gjende", content.getData( "address[1].postalPlace" ).asString() );
+        assertEquals( "NO", content.getData( "address[1].country" ).asString() );
     }
 
     @Test
@@ -524,15 +566,15 @@ public class ContentTest
         content.setData( "scar[0]", "Chin" );
 
         // verify
-        assertEquals( "Ola Norman", content.getValueAsString( "name" ) );
-        assertEquals( "Blue", content.getValueAsString( "eyeColour" ) );
-        assertEquals( "Blonde", content.getValueAsString( "hairColour" ) );
-        assertEquals( "Skull on left arm", content.getValueAsString( "tattoo[0]" ) );
-        assertEquals( "Mothers name on right arm", content.getValueAsString( "tattoo[1]" ) );
-        assertEquals( "Chin", content.getValueAsString( "scar[0]" ) );
+        assertEquals( "Ola Norman", content.getData( "name" ).asString() );
+        assertEquals( "Blue", content.getData( "eyeColour" ).asString() );
+        assertEquals( "Blonde", content.getData( "hairColour" ).asString() );
+        assertEquals( "Skull on left arm", content.getData( "tattoo[0]" ).asString() );
+        assertEquals( "Mothers name on right arm", content.getData( "tattoo[1]" ).asString() );
+        assertEquals( "Chin", content.getData( "scar[0]" ).asString() );
     }
 
-    @Test(expected = InconvertibleValueException.class)
+    @Test
     public void given_array_when_setting_data_of_another_type_to_array_then_exception_is_thrown()
     {
         // setup
@@ -540,6 +582,57 @@ public class ContentTest
         content.setData( "myData", "Value 1", DataTypes.TEXT );
 
         // exercise
-        content.setData( "myData[1]", new DateMidnight( 2000, 1, 1 ), DataTypes.DATE );
+        try
+        {
+            content.setData( "myData[1]", new DateMidnight( 2000, 1, 1 ), DataTypes.DATE );
+            fail( "Expected exception" );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( e instanceof IllegalArgumentException );
+            assertEquals( "Array [myData] expects Data of type [Text]. Data [myData] was of type: Date", e.getMessage() );
+        }
+    }
+
+    @Test
+    public void new_way()
+    {
+        ContentData contentData = new ContentData();
+        contentData.add( newData().type( DataTypes.TEXT ).name( "myData" ).value( "1" ).build() );
+        contentData.add( newText().name( "myData" ).value( "1" ).build() );
+        contentData.add( newXml().name( "myXml" ).value( "<root/>" ).build() );
+
+        Content content = newContent().name( "myContent" ).data( contentData ).build();
+
+        assertEquals( "1", content.getData( "myData" ).getValue().asString() );
+
+        assertEquals( "1", content.getData( "myData" ).asString() );
+    }
+
+    @Test
+    public void new_way2()
+    {
+        ContentData contentData = new ContentData();
+
+        contentData.add( new Text( "myData", "1" ) );
+        contentData.add( new Text( "myArray", "1" ) );
+        contentData.add( new Text( "myArray", "2" ) );
+        //contentData.add( new Xml( "myXml", "<root></root>" ) );
+
+        Content content = newContent().name( "myContent" ).data( contentData ).build();
+
+        assertEquals( "1", content.getData( "myArray" ).getObject() );
+        assertEquals( "1", content.getData().getDataSet().getData( "myArray", 0 ).getObject() );
+        assertEquals( "2", content.getData().getDataSet().getData( "myArray[1]" ).getObject() );
+        assertEquals( true, content.getData().getDataSet().getData( "myArray[1]" ).isArray() );
+        assertEquals( true, content.getData().getDataSet().getData( "myArray" ).isArray() );
+        assertEquals( false, content.getData().getDataSet().getData( "myData" ).isArray() );
+        assertEquals( 0, content.getData().getDataSet().getData( "myData" ).getArrayIndex() );
+        assertEquals( 0, content.getData().getDataSet().getData( "myArray" ).getArrayIndex() );
+        assertEquals( 1, content.getData().getDataSet().getData( "myArray[1]" ).getArrayIndex() );
+        assertEquals( 2, content.getData().getDataSet().entryCount( "myArray" ) );
+        assertEquals( 1, content.getData().getDataSet().entryCount( "myData" ) );
+
+        Data myArray = content.getData().getDataSet().getData( "myArray" );
     }
 }

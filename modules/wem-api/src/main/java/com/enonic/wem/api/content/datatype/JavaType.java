@@ -21,11 +21,9 @@ public final class JavaType
 
     public static final Date DATE = new Date();
 
-    public static final DataSet BLOB = new DataSet();
+    public static final Blob BLOB = new Blob();
 
     public static final DataSet DATA_SET = new DataSet();
-
-    public static final DataArray DATA_ARRAY = new DataArray();
 
     public static final Map<java.lang.Class, BaseType> INSTANCES = new LinkedHashMap<Class, BaseType>();
 
@@ -232,27 +230,6 @@ public final class JavaType
             if ( value instanceof com.enonic.wem.api.content.data.DataSet )
             {
                 return (com.enonic.wem.api.content.data.DataSet) value;
-            }
-            else
-            {
-                return null;
-            }
-        }
-    }
-
-    public final static class DataArray
-        extends BaseType
-    {
-        DataArray()
-        {
-            super( com.enonic.wem.api.content.data.DataArray.class );
-        }
-
-        public com.enonic.wem.api.content.data.DataArray convertFrom( Object value )
-        {
-            if ( value instanceof com.enonic.wem.api.content.data.DataArray )
-            {
-                return (com.enonic.wem.api.content.data.DataArray) value;
             }
             else
             {

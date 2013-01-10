@@ -4,6 +4,7 @@ package com.enonic.wem.api.content.datatype;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.type.form.InvalidValueException;
 
 public abstract class BaseDataType
@@ -68,7 +69,7 @@ public abstract class BaseDataType
             return;
         }
 
-        data.setValue( ensureTypeOfValue( data.getValue() ), this );
+        data.setValue( ensureTypeOfValue( data.getValue() ) );
     }
 
     /**
@@ -76,8 +77,11 @@ public abstract class BaseDataType
      * Subclasses, overriding this method should convert the given value when possible.
      * This method will not try to convert the given value, but throw an InconvertibleException
      * when given value is not this type.
+     *
+     * @param value
      */
-    public Object ensureTypeOfValue( final Object value )
+    protected Value ensureTypeOfValue( final Value value )
+        throws InconvertibleValueException
     {
         return value;
     }
@@ -116,10 +120,21 @@ public abstract class BaseDataType
         return javaType.isInstance( value );
     }
 
+    public boolean hasCorrectType( Value value )
+    {
+        Preconditions.checkNotNull( value, "Cannot check the type of a value that is null" );
+        return javaType.isInstance( value.getObject() );
+    }
+
+    Value newValue( Object value )
+    {
+        return Value.newValue().type( this ).value( value ).build();
+    }
+
     private void checkCorrectType( Data data )
         throws InvalidValueTypeException
     {
-        if ( !hasCorrectType( ( data.getValue() ) ) )
+        if ( !hasCorrectType( ( data.getObject() ) ) )
         {
             throw new InvalidValueTypeException( javaType, data );
         }

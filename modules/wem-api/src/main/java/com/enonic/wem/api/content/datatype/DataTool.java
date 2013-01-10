@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.type.form.InvalidDataException;
 import com.enonic.wem.api.content.type.form.InvalidValueException;
@@ -20,14 +21,14 @@ public class DataTool
     public static void checkDataType( final Data dataContainingSet, final String path, final DataType dataType )
         throws InvalidDataException
     {
-        final DataSet dataSet = dataContainingSet.getDataSet();
+        final DataSet dataSet = dataContainingSet.toDataSet();
         checkDataType( dataSet, path, dataType );
     }
 
     public static void checkDataType( final DataSet dataSet, final String path, final DataType dataType )
         throws InvalidDataException
     {
-        final Data data = dataSet.getData( new EntryPath( path ) );
+        final Data data = dataSet.getData( EntryPath.from( path ) );
         if ( data == null )
         {
             return;
@@ -39,7 +40,7 @@ public class DataTool
     public static void checkDataType( final Data data, final DataType dataType )
         throws InvalidDataException
     {
-        if ( !data.getDataType().equals( dataType ) )
+        if ( !data.getType().equals( dataType ) )
         {
             throw new InvalidDataTypeException( data, dataType );
         }
@@ -47,22 +48,22 @@ public class DataTool
 
     public static void checkRequiredPath( final Data dataContainingSet, String path )
     {
-        final DataSet dataSet = dataContainingSet.getDataSet();
-        final Data data = dataSet.getData( new EntryPath( path ) );
-        if ( data == null )
+        final DataSet dataSet = dataContainingSet.toDataSet();
+        final Entry entry = dataSet.getEntry( EntryPath.from( path ) );
+        if ( entry == null )
         {
-            throw new InvalidDataException( dataContainingSet, "data required to have sub data at path: " + path );
+            throw new InvalidDataException( dataContainingSet, "entry required to have sub entry at path: " + path );
         }
     }
 
     public static void checkRange( final Data data, final Number rangeStart, final Number rangeStop )
         throws InvalidValueException
     {
-        Preconditions.checkArgument( data.getDataType() == DataTypes.WHOLE_NUMBER || data.getDataType() == DataTypes.DECIMAL_NUMBER,
+        Preconditions.checkArgument( data.getType() == DataTypes.WHOLE_NUMBER || data.getType() == DataTypes.DECIMAL_NUMBER,
                                      "range checking can only be done for types: [" + DataTypes.WHOLE_NUMBER + ", " +
                                          DataTypes.DECIMAL_NUMBER + "]" );
 
-        double value = data.getDouble();
+        double value = data.asDouble();
         if ( value < rangeStart.doubleValue() || value > rangeStop.doubleValue() )
         {
             throw new InvalidValueException( data, "Value not within range from " + rangeStart + " to " + rangeStop );
@@ -71,7 +72,7 @@ public class DataTool
 
     public static void ensureType( final DataType dataType, final Data data )
     {
-        if ( data.getDataType().equals( dataType ) )
+        if ( data.getType().equals( dataType ) )
         {
             return;
         }
@@ -137,8 +138,7 @@ public class DataTool
             }
             if ( rangeStart != null && rangeStop != null )
             {
-                DataSet dataSet = data.getDataSet();
-                Data subData = dataSet.getData( new EntryPath( path ) );
+                final Data subData = data.toDataSet().getData( EntryPath.from( path ) );
                 checkRange( subData, rangeStart, rangeStop );
             }
         }

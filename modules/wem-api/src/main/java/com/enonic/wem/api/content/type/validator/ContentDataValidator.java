@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.type;
+package com.enonic.wem.api.content.type.validator;
 
 
 import java.util.ArrayList;
@@ -9,6 +9,8 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.Entry;
+import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.Input;
@@ -18,7 +20,7 @@ import com.enonic.wem.api.content.type.form.InvalidDataException;
  * Validates that given data is valid, meaning it is of valid:
  * type, format, value.
  */
-public class Validator
+public class ContentDataValidator
 {
     private ContentType contentType;
 
@@ -28,7 +30,7 @@ public class Validator
 
     private final List<InvalidDataException> invalidDataExceptions = new ArrayList<InvalidDataException>();
 
-    private Validator()
+    private ContentDataValidator()
     {
         // Protection
     }
@@ -50,56 +52,57 @@ public class Validator
         return invalidDataExceptions;
     }
 
-    private void doValidateEntries( final Iterable<Data> entries )
+    private void doValidateEntries( final Iterable<Entry> entries )
     {
-        for ( Data data : entries )
+        for ( Entry data : entries )
         {
             doValidateData( data );
         }
     }
 
-    private void doValidateData( final Data data )
+    private void doValidateData( final Entry entry )
         throws InvalidDataException
     {
-        if ( data.hasDataSetAsValue() )
+        if ( entry.isDataSet() )
         {
-            doValidateDataWithDataSet( data );
+            doValidateDataSet( entry.toDataSet() );
         }
         else
         {
-            checkDataTypeValidity( data );
+            checkDataTypeValidity( entry.toData() );
 
-            final FormItem formItem = contentType.form().getFormItem( data.getPath().resolveFormItemPath().toString() );
+            final FormItem formItem = contentType.form().getFormItem( entry.getPath().resolveFormItemPath().toString() );
             if ( formItem != null )
             {
                 if ( formItem instanceof Input )
                 {
-                    checkInputValidity( data, (Input) formItem );
+                    checkInputValidity( entry.toData(), (Input) formItem );
                 }
             }
         }
     }
 
-    private void doValidateDataWithDataSet( final Data dataWithDataSet )
+    private void doValidateDataSet( final DataSet dataSet )
     {
-        final DataSet dataSet = dataWithDataSet.getDataSet();
-        final FormItem formItem = contentType.form().getFormItem( dataSet.getPath().resolveFormItemPath().toString() );
+        final String path = dataSet.getPath().resolveFormItemPath().toString();
+        final FormItem formItem = contentType.form().getFormItem( path );
         if ( formItem != null )
         {
             if ( formItem instanceof FormItemSet )
             {
-                for ( Data subData : dataSet )
+                for ( Entry subEntry : dataSet )
                 {
-                    final FormItem subFormItem = contentType.form().getFormItem( subData.getPath().resolveFormItemPath().toString() );
+                    final FormItem subFormItem = contentType.form().getFormItem( subEntry.getPath().resolveFormItemPath().toString() );
                     if ( subFormItem instanceof Input )
                     {
-                        checkInputValidity( subData, (Input) subFormItem );
+                        checkInputValidity( subEntry.toData(), (Input) subFormItem );
                     }
                 }
             }
-            else if ( formItem instanceof Input )
+            else
             {
-                checkInputValidity( dataWithDataSet, (Input) formItem );
+                throw new IllegalArgumentException(
+                    "FormItem at path [" + path + "] expected to be a FormItemSet: " + formItem.getClass().getSimpleName() );
             }
         }
         else
@@ -161,7 +164,7 @@ public class Validator
 
     public static class Builder
     {
-        private Validator validator = new Validator();
+        private ContentDataValidator validator = new ContentDataValidator();
 
         public Builder contentType( ContentType contentType )
         {
@@ -181,7 +184,7 @@ public class Validator
             return this;
         }
 
-        public Validator build()
+        public ContentDataValidator build()
         {
             Preconditions.checkNotNull( validator.contentType, "contenType is required" );
             return validator;

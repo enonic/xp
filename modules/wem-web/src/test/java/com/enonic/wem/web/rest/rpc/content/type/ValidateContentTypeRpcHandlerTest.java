@@ -6,8 +6,8 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.type.ValidateContentType;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.InvalidContentTypeException;
-import com.enonic.wem.api.content.type.ValidateContentTypeResult;
+import com.enonic.wem.api.content.type.validator.ContentTypeValidationError;
+import com.enonic.wem.api.content.type.validator.ContentTypeValidationResult;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
@@ -37,8 +37,8 @@ public class ValidateContentTypeRpcHandlerTest
         throws Exception
     {
         // setup
-        final ValidateContentTypeResult validateContentTypeResult = null;
-        Mockito.when( client.execute( isA( ValidateContentType.class ) ) ).thenReturn( validateContentTypeResult );
+        final ContentTypeValidationResult contentTypeValidationResult = null;
+        Mockito.when( client.execute( isA( ValidateContentType.class ) ) ).thenReturn( contentTypeValidationResult );
 
         // test
         testSuccess( "contentTypeValidate_param_error.json", "contentTypeValidate_invalid_xml_result.json" );
@@ -49,7 +49,7 @@ public class ValidateContentTypeRpcHandlerTest
         throws Exception
     {
         // setup
-        final ValidateContentTypeResult noErrors = ValidateContentTypeResult.empty();
+        final ContentTypeValidationResult noErrors = ContentTypeValidationResult.empty();
         Mockito.when( client.execute( isA( ValidateContentType.class ) ) ).thenReturn( noErrors );
 
         // test
@@ -63,9 +63,9 @@ public class ValidateContentTypeRpcHandlerTest
         // setup
         final ContentType contentType1 = ContentType.newContentType().module( ModuleName.from( "myModule" ) ).name( "contentType" ).build();
         final ContentType contentType2 = ContentType.newContentType( contentType1 ).name( "my type2" ).build();
-        final InvalidContentTypeException exception1 = new InvalidContentTypeException( contentType1, "Validation error message 1" );
-        final InvalidContentTypeException exception2 = new InvalidContentTypeException( contentType2, "Validation error message 2" );
-        final ValidateContentTypeResult validationErrors = ValidateContentTypeResult.from( exception1, exception2 );
+        final ContentTypeValidationError error1 = new ContentTypeValidationError( "Validation error message 1", contentType1 );
+        final ContentTypeValidationError error2 = new ContentTypeValidationError( "Validation error message 2", contentType2 );
+        final ContentTypeValidationResult validationErrors = ContentTypeValidationResult.from( error1, error2 );
         Mockito.when( client.execute( isA( ValidateContentType.class ) ) ).thenReturn( validationErrors );
 
         // test

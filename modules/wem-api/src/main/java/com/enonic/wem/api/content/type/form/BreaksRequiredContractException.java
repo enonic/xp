@@ -25,7 +25,7 @@ public class BreaksRequiredContractException
         super( buildMessage( missingFormItemSet ) );
     }
 
-    public Data getValue()
+    public Data getData()
     {
         return data;
     }
@@ -33,7 +33,7 @@ public class BreaksRequiredContractException
     private static String buildMessage( final Data data, final InputType inputType )
     {
         return "Required contract for Data [" + data.getPath() + "] is broken of type " + inputType + " , value was: " +
-            data.getValue();
+            data.getObject();
     }
 
     private static String buildMessage( final Input input )
