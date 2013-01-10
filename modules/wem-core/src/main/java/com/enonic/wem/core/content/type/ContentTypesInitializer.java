@@ -17,6 +17,7 @@ import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.command.Commands.contentType;
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
+import static com.enonic.wem.api.content.type.editor.ContentTypeEditors.setContentType;
 
 @Component
 public class ContentTypesInitializer
@@ -72,6 +73,10 @@ public class ContentTypesInitializer
         if ( !contentTypeExists )
         {
             client.execute( contentType().create().contentType( contentType ) );
+        }
+        else
+        {
+            client.execute( contentType().update().names( qualifiedNames ).editor( setContentType( contentType ) ) );
         }
     }
 

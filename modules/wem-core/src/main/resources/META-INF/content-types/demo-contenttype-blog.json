@@ -3,7 +3,7 @@
     "module": "Demo",
     "qualifiedName": "Demo:LabsBlog",
     "displayName": "Labs Blog Demo",
-    "superType": "System:Content",
+    "superType": "System:content",
     "isAbstract": false,
     "isFinal": true,
     "form": [

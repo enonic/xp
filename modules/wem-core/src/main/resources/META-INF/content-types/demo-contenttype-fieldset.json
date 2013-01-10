@@ -3,7 +3,7 @@
     "module": "Demo",
     "qualifiedName": "Demo:FieldSet",
     "displayName": "Fieldset demo",
-    "superType": "System:Content",
+    "superType": "System:content",
     "isAbstract": false,
     "isFinal": true,
     "form": [

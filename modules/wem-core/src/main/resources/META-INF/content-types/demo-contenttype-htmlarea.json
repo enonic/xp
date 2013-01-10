@@ -2,10 +2,10 @@
     "name": "HtmlArea",
     "module": "Demo",
     "qualifiedName": "Demo:HtmlArea",
-    "displayName":"HTML Area Demo",
-    "superType":"System:Content",
-    "isAbstract":false,
-    "isFinal":true,
+    "displayName": "HTML Area Demo",
+    "superType": "System:content",
+    "isAbstract": false,
+    "isFinal": true,
     "form": [
         {
             "Input": {
