@@ -60,6 +60,17 @@ Ext.define('Admin.controller.homescreen.Controller', {
 
 
     initView: function () {
+        // Do not create the homescreen when ?homescreen=false
+        // TODO: remove!
+        var urlParts = document.URL.split('?');
+        if (urlParts.length > 1) {
+            var urlParams = Ext.urlDecode(urlParts[urlParts.length - 1]);
+            console.log(urlParams)
+            if (urlParams.homescreen && urlParams.homescreen === 'false') {
+                return;
+            }
+        }
+
         Ext.create('Admin.view.homescreen.Homescreen');
     },
 

@@ -43,10 +43,6 @@
 <body>
 <h1>Enonic WEM - Admin Console</h1>
 
-<p id="search-container">
-
-</p>
-
 <h2>Tools</h2>
 <ul class="links">
   <li>
@@ -62,7 +58,7 @@
 <h2>Apps</h2>
 <ul class="links">
   <li>
-    <a href="main.jsp">Main</a>
+    <a href="main.jsp">Main</a> / <a href="main.jsp?homescreen=false">no homescreen</a>
   </li>
   <li>
     <a href="app-content-studio.jsp">Content Studio</a>
