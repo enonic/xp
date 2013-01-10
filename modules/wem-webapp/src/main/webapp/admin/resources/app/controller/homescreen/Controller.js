@@ -77,7 +77,7 @@ Ext.define('Admin.controller.homescreen.Controller', {
                     },
                     listeners: {
                         afteranimate: function () {
-                            me.getHomeScreen().displayAppSelector(true);
+                            me.getHomeScreen().displayAppSelector();
                         }
                     }
                 });

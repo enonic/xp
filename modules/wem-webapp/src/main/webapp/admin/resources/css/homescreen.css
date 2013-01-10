@@ -97,14 +97,13 @@
     position: absolute;
     left: 0;
     top: 235px;
-    /*visibility: hidden;
-    opacity: 0;*/
     color: #fff;
 
-    transition: all .2s ease-out;
-    -moz-transition: all .2s ease-out;
-    -webkit-transition: all .2s ease-out;
-    -o-transition: all .2s ease-out;
+    opacity: 0;
+    transition: all .3s ease-out;
+    -moz-transition: all .3s ease-out;
+    -webkit-transition: all .3s ease-out;
+    -o-transition: all .3s ease-out;
 
     transform: scale(.9);
     -moz-transform: scale(.9);

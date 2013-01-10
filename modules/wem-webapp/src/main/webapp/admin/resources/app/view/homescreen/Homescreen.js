@@ -30,7 +30,7 @@ Ext.define('Admin.view.homescreen.Homescreen', {
             Ext.create('Admin.view.homescreen.AppSelector');
 
             if (me.userIsLoggedIn) {
-                me.displayAppSelector(false);
+                me.displayAppSelector();
             } else {
                 me.displayLogin();
             }
@@ -55,7 +55,7 @@ Ext.define('Admin.view.homescreen.Homescreen', {
     },
 
 
-    displayAppSelector: function (animate) {
+    displayAppSelector: function () {
         var me = this,
             loginElements = Ext.DomQuery.select('div[data-screen="login"]'),
             appSelectorElements = Ext.DomQuery.select('div[data-screen="app-selector"]'),
@@ -71,9 +71,7 @@ Ext.define('Admin.view.homescreen.Homescreen', {
 
         Ext.getCmp('admin-home-app-selector-search').focus();
 
-        if (animate) {
-            appSelectorContainer.addCls('fade-in');
-        }
+        appSelectorContainer.addCls('fade-in');
     },
 
 
