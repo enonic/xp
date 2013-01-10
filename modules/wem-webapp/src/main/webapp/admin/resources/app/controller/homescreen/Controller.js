@@ -38,21 +38,21 @@ Ext.define('Admin.controller.homescreen.Controller', {
 
 
     initView: function () {
+        var dummyCookie = Ext.util.Cookies.get('dummy_userIsLoggedIn');
+        var userIsLoggedIn = dummyCookie && dummyCookie === 'true';
+
+        var homeScreen = Ext.create('Admin.view.homescreen.Homescreen', {
+            userIsLoggedIn: userIsLoggedIn
+        });
+
         // Temp: Do not create the homescreen when ?homescreen=false
         var urlParts = document.URL.split('?');
         if (urlParts.length > 1) {
             var urlParams = Ext.urlDecode(urlParts[urlParts.length - 1]);
             if (urlParams.homescreen && urlParams.homescreen === 'false') {
-                return;
+                homeScreen.toggleShowHide();
             }
         }
-
-        var dummyCookie = Ext.util.Cookies.get('dummy_userIsLoggedIn');
-        var userIsLoggedIn = dummyCookie && dummyCookie === 'true';
-
-        Ext.create('Admin.view.homescreen.Homescreen', {
-            userIsLoggedIn: userIsLoggedIn
-        });
     },
 
 
