@@ -129,11 +129,6 @@
 }
 
 .admin-home-app-tile {
-    transition: all 0.1s linear;
-    -moz-transition: all 0.1s linear;
-    -webkit-transition: all 0.1s linear;
-    -o-transition: all 0.1s linear;
-
     cursor: pointer;
     position: relative;
     overflow: hidden;
