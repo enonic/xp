@@ -203,6 +203,7 @@ public final class ContentType
 
         public Builder formItems( final FormItems formItems )
         {
+            this.formItemList.clear();
             for ( FormItem formItem : formItems )
             {
                 this.addFormItem( formItem );
