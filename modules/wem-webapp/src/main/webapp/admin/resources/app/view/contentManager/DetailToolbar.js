@@ -50,7 +50,9 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
             {
                 text: 'Live Mode',
                 action: 'toggleLive',
-                enableToggle: true
+                iconCls: 'icon-lightbulb-on-24',
+                enableToggle: true,
+                pressed: true
             }
         ];
 

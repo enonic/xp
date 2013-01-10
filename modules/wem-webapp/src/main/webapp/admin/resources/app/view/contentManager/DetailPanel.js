@@ -11,7 +11,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     autoScroll: true,
     border: false,
     layout: 'card',
-    cls: 'admin-detail',
+    cls: 'admin-preview-panel',
 
     iconClasses128: {
         "myModule:mySite": 'icon-site-128',
@@ -27,7 +27,30 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     },
 
     showToolbar: true,
-    isLiveMode: false,
+    isLiveMode: true,
+
+    listeners: {
+        afterrender: function () {
+            if (this.isLiveMode) {
+                var livePreview = this.down('#livePreview');
+                //TODO update urls when they are ready
+                livePreview.load('/dev/live-edit/page/page.jsp');
+            }
+            if (!this.showToolbar) {
+                var toggleBtn = this.down('#toggleBtn');
+                var a = toggleBtn.el.down('a');
+                console.log(a);
+                a.on('click', function () {
+                    this.toggleLive();
+                    if (this.isLiveMode) {
+                        a.setHTML('Switch to Info View');
+                    } else {
+                        a.setHTML('Switch to Live View');
+                    }
+                }, this);
+            }
+        }
+    },
 
     initComponent: function () {
         if (Ext.isEmpty(this.data)) {
@@ -70,6 +93,13 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                     {
                         xtype: 'tbtext',
                         text: 'No items selected - Choose from list above - <a href="javascript:;">Clear selection</a>'
+                    },
+                    '->',
+                    {
+                        xtype: 'tbtext',
+                        itemId: 'toggleBtn',
+                        hidden: true,
+                        text: '<a href="javascript:;">Switch to Info View</a>'
                     }
                 ]
             };
@@ -77,6 +107,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
         this.callParent(arguments);
         this.addEvents('deselectrecord');
+
     },
 
 
@@ -416,6 +447,15 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                     }
                 }
             }
+            var toggleBtn = tbar.down('#toggleBtn');
+            if (toggleBtn) {
+                if (count === 1) {
+                    toggleBtn.show();
+                } else {
+                    toggleBtn.hide();
+                }
+            }
+
         }
 
     },
