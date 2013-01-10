@@ -42,7 +42,7 @@ public final class UpdateContentTypesHandler
                 final ContentType modifiedContentType = editor.edit( contentType );
                 if ( modifiedContentType != null )
                 {
-                    updateContentType( session, contentType );
+                    updateContentType( session, modifiedContentType );
                     contentTypesUpdated++;
                 }
             }
