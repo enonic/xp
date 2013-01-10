@@ -16,10 +16,11 @@ final class SetContentTypeEditor
     public ContentType edit( final ContentType contentType )
         throws Exception
     {
-        final ContentType updated = ContentType.newContentType( contentType ).
-            displayName( source.getDisplayName() )
-                // TODO update other fields
-            .build();
+        final ContentType updated =
+            ContentType.newContentType( contentType ).displayName( source.getDisplayName() ).superType( source.getSuperType() ).setAbstract(
+                source.isAbstract() ).setFinal( source.isFinal() )
+                // TODO: add more fields to update?
+                .build();
         return updated;
     }
 }

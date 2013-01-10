@@ -33,8 +33,8 @@ public final class ContentType
 
     private ContentType( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.name , "Name cannot be null in ContentType");
-        Preconditions.checkNotNull( builder.moduleName , "Module name cannot be null in ContentType");
+        Preconditions.checkNotNull( builder.name, "Name cannot be null in ContentType" );
+        Preconditions.checkNotNull( builder.moduleName, "Module name cannot be null in ContentType" );
         this.name = builder.name;
         this.displayName = builder.displayName;
         this.superType = builder.superType;
@@ -136,6 +136,7 @@ public final class ContentType
             this.displayName = source.getDisplayName();
             this.isAbstract = source.isAbstract();
             this.isFinal = source.isFinal();
+            this.superType = source.getSuperType();
             this.formItemList = Lists.newArrayList( source.form().copy().formItemIterable() );
         }
 
