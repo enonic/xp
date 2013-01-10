@@ -27,10 +27,6 @@ Ext.define('Admin.controller.Controller', {
         return Ext.ComponentQuery.query('topBar')[0];
     },
 
-    getStartMenu: function () {
-        return Ext.ComponentQuery.query('startMenu')[0];
-    },
-
     getMainViewport: function () {
         var parent = window.parent || window;
         return parent.Ext.ComponentQuery.query('#mainViewport')[0];

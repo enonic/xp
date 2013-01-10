@@ -3,6 +3,7 @@ Ext.application({
     appFolder: '_app/dashboard/js',
 
     requires: [
+        'Admin.MessageBus',
         // old views from _app/dashboard
         'App.view.DashboardPalette',
         'App.view.DashboardCanvas',

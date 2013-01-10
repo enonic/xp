@@ -13,8 +13,6 @@
 
   <!-- WEM ExtJS theme -->
 
-  <link rel="stylesheet" type="text/css" href="resources/css/admin-start-menu.css">
-
   <link rel="stylesheet" type="text/css" href="resources/lib/ext/resources/css/admin.css">
 
   <!-- ExtJS -->

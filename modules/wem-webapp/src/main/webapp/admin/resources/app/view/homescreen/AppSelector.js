@@ -1,14 +1,13 @@
-Ext.define('Admin.view.home.AppSelector', {
+Ext.define('Admin.view.homescreen.AppSelector', {
     extend: 'Ext.container.Container',
-    alias: 'widget.homeAppSelector',
+    alias: 'widget.appSelector',
 
     initComponent: function () {
         var me = this;
 
         /*
-         Inline model and store for now
-         */
-        me.appsStore = null;
+            Inline model and store for now
+        */
         me.initModelAndStore();
 
         me.createView();
@@ -20,12 +19,12 @@ Ext.define('Admin.view.home.AppSelector', {
     createView: function () {
         var me = this;
 
-        me.addSearchTextField();
-        me.addAppSelectorListView();
+        me.renderSearchTextField();
+        me.renderAppListView();
     },
 
 
-    addSearchTextField: function () {
+    renderSearchTextField: function () {
         var me = this;
 
         Ext.create('Ext.form.field.Text', {
@@ -44,35 +43,23 @@ Ext.define('Admin.view.home.AppSelector', {
     },
 
 
-    addAppSelectorListView: function () {
+    renderAppListView: function () {
         var me = this;
 
         Ext.create('Ext.view.View', {
             store: me.appsStore,
-            tpl: Templates.home.appTile,
+            itemId: 'appSelectorListView',
+            tpl: Templates.homescreen.appTile,
             renderTo: 'admin-home-app-tiles-placeholder',
             trackOver: true,
             overItemCls: 'admin-home-app-tile-over',
             itemSelector: 'div.admin-home-app-tile',
-            emptyText: 'No application found',
-            listeners: {
-                itemmouseenter: function (view, record, item, index, evt, eOpts) {
-                    var data = record.data;
-                    me.updateAppInfo(data.name, data.description);
-                },
-                itemmouseleave: function (view, record, item, index, evt, eOpts) {
-                    me.updateAppInfo('', '');
-                },
-                itemclick: function (view, record, item, index, evt, eOpts) {
-                    //document.location.href = record.data.appUrl;
-                    alert('go to: ' + record.data.appUrl);
-                }
-            }
+            emptyText: 'No application found'
         });
     },
 
 
-    updateAppInfo: function (title, description) {
+    updateAppInfoText: function (title, description) {
         Ext.fly('admin-home-app-info-name').setHTML(title);
         Ext.fly('admin-home-app-info-description').setHTML(description);
     },

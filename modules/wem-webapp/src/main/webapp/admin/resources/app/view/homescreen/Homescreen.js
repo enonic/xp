@@ -1,49 +1,69 @@
-Ext.define('Admin.view.home.MainBackgroundContainer', {
+Ext.define('Admin.view.homescreen.Homescreen', {
     extend: 'Ext.container.Container',
-    alias: 'widget.homeMainBackgroundContainer',
+    alias: 'widget.homescreen',
     requires: [
-        'Admin.view.home.LoginPanel',
-        'Admin.view.home.AppSelector'
+        'Admin.view.homescreen.LoginPanel',
+        'Admin.view.homescreen.AppSelector'
     ],
+
+    id: 'admin-home-main-container',
 
     autoEl: {
         tag: 'div',
         cls: 'clickable',
-        id: 'admin-home-main-container',
-        html: Templates.home.mainContainerHtml
+        html: Templates.homescreen.mainContainerHtml
     },
     floating: true,
     hideMode: 'offsets',
     renderTo: Ext.getBody(),
 
-    loginPanel: null,
-    appSelector: null,
-
     initComponent: function () {
         var me = this;
 
         me.on('render', function () {
-            me.updateView();
+            me.updateGlobalView();
             me.addClickEvent();
 
-            Ext.create('Admin.view.home.LoginPanel');
-            Ext.create('Admin.view.home.AppSelector');
+            Ext.create('Admin.view.homescreen.LoginPanel');
+            Ext.create('Admin.view.homescreen.AppSelector');
         });
 
         me.callParent(arguments);
     },
 
 
-    updateView: function () {
-        var me = this;
+    displayLoginView: function () {
+        /**/
+    },
 
-        // For demo purposes. Should be removed!
-        Ext.getBody().on('click', function (evt, el) {
-            if (el.tagName === 'BODY') {
-                me.toggleShowHide();
+
+    displayAppSelectorView: function () {
+        var loginFormContainer = Ext.get('admin-home-login-form'),
+            appSelectorContainer = Ext.get('admin-home-app-selector'),
+            appInfoContainer = Ext.get('admin-home-app-info-container');
+
+        loginFormContainer.setVisibilityMode(Ext.Element.OFFSETS);
+        loginFormContainer.animate({
+            duration: 500,
+            to: {
+                opacity: 0
+            },
+            listeners: {
+                afteranimate: function () {
+                    loginFormContainer.hide();
+
+                    Ext.getCmp('admin-home-app-selector-search').focus();
+
+                    appSelectorContainer.setStyle('visibility', 'visible').addCls('fade-in');
+                    appInfoContainer.setStyle('visibility', 'visible').addCls('fade-in');
+                }
             }
         });
+    },
 
+
+    updateGlobalView: function () {
+        var me = this;
 
         me.setBackgroundImage('resources/images/x_Aerial-View-of-the-Island-of-Bora-Bora-French-Polynesia.jpg');
         me.setVersionText('5.0.1 Enterprise Edition');
@@ -66,6 +86,16 @@ Ext.define('Admin.view.home.MainBackgroundContainer', {
     toggleShowHide: function () {
         var me = this;
         me.setVisible(!me.isVisible());
+    },
+
+
+    getLoginFormPanel: function () {
+        return Ext.ComponentQuery.query('loginPanel')[0];
+    },
+
+
+    getAppSelectorContainer: function () {
+        return Ext.ComponentQuery.query('appSelector')[0];
     },
 
 

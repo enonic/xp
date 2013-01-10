@@ -62,9 +62,6 @@
 <h2>Apps</h2>
 <ul class="links">
   <li>
-    <a href="home.jsp">Home</a> (to be merged with main)
-  </li>
-  <li>
     <a href="main.jsp">Main</a>
   </li>
   <li>

@@ -1,14 +1,12 @@
-Ext.define('Admin.view.home.LoginPanel', {
+Ext.define('Admin.view.homescreen.LoginPanel', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.homeLoginPanel',
+    alias: 'widget.loginPanel',
 
     frame: false,
     border: false,
     bodyStyle: 'background:transparent;',
 
     renderTo: 'admin-home-login-form-container',
-
-    loggedIn: false,
 
     initComponent: function () {
         var me = this;
@@ -70,16 +68,19 @@ Ext.define('Admin.view.home.LoginPanel', {
             },
             {
                 xtype: 'button',
+                itemId: 'loginButton',
                 formBind: true,
                 disabled: true,
                 colspan: 2,
                 style: 'float:right;margin-right:5px',
                 text: 'Log In',
                 tabIndex: 4,
+                /*
                 handler: function (button) {
                     var loginForm = Ext.get('admin-home-login-form'),
                         appSelector = Ext.get('admin-home-app-selector'),
                         openApps = Ext.get('admin-home-app-info-container');
+
 
                     loginForm.setVisibilityMode(Ext.Element.OFFSETS);
                     loginForm.animate({
@@ -89,18 +90,21 @@ Ext.define('Admin.view.home.LoginPanel', {
                         },
                         listeners: {
                             afteranimate: function () {
+                                //me.application.fireEvent('login');
+                                console.log(me.application);
+
                                 loginForm.hide();
 
                                 Ext.getCmp('admin-home-app-selector-search').focus();
 
                                 appSelector.setStyle('visibility', 'visible').addCls('fade-in');
                                 openApps.setStyle('visibility', 'visible').addCls('fade-in');
-
-                                me.loggedIn = true;
                             }
                         }
                     });
+
                 }
+                 */
             }
         ];
 

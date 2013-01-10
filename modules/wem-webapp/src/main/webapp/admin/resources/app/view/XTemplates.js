@@ -1,4 +1,4 @@
-// This file was auto-generated on 2013-01-09 19:17:07 CET
+// This file was auto-generated on 2013-01-10 12:24:46 CET
 
 if ( !Templates ) {
     var Templates = {};
@@ -607,7 +607,7 @@ Templates.contentStudio = {
 
 };
 
-Templates.home = {
+Templates.homescreen = {
 
     appTile:
 		'<tpl for=".">' + 

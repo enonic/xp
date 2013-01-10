@@ -17,9 +17,13 @@ Ext.define('Admin.controller.TopBarController', {
                     fn: this.loadDefaultApplication,
                     delay: 10
                 }
-            },
-            'startMenu': {
-                tileclick: this.loadApplication
+            }
+        });
+
+        this.application.on({
+            loadApplication: {
+                fn: this.loadApplication,
+                scope: this
             }
         });
     },
@@ -39,39 +43,28 @@ Ext.define('Admin.controller.TopBarController', {
         this.loadApplication(defaultItem);
     },
 
+
     loadApplication: function (selectedMenuItem) {
-        var me = this;
-        var parent = this.getParentFrame();
+        var me = this,
+            parent = this.getParentFrame(),
+            iframes = parent.Ext.DomQuery.select('iframe');
 
-        var callback = function () {
-            var iframes = parent.Ext.DomQuery.select('iframe');
-            var iframeExist = false;
-            Ext.each(iframes, function (iframe, index, allIFrames) {
-                if (iframe.id === 'iframe-' + selectedMenuItem.id) {
-                    iframeExist = true;
-                    iframe.style.display = 'block';
-                } else {
-                    iframe.style.display = 'none';
-                }
-            });
-
-            if (!iframeExist) {
-                me.appendIframe(parent, selectedMenuItem);
-                me.showLoadMask();
+        var iframeExist = false;
+        Ext.each(iframes, function (iframe, index, allIFrames) {
+            if (iframe.id === 'iframe-' + selectedMenuItem.id) {
+                iframeExist = true;
+                iframe.style.display = 'block';
+            } else {
+                iframe.style.display = 'none';
             }
+        });
 
-            me.setDocumentTitle(selectedMenuItem.text);
-            me.setStartButton(selectedMenuItem);
-        };
-
-        // first close menu, then change app
-        // to reduce flickering
-        var startMenu = this.getStartMenu();
-        if (startMenu && startMenu.isExpanded()) {
-            startMenu.slideOut(callback);
-        } else {
-            callback.call(me);
+        if (!iframeExist) {
+            me.appendIframe(parent, selectedMenuItem);
+            me.showLoadMask();
         }
+
+        me.setStartButton(selectedMenuItem);
     },
 
 
@@ -80,6 +73,7 @@ Ext.define('Admin.controller.TopBarController', {
     getParentFrame: function () {
         return window.parent.parent || window.parent;
     },
+
 
     appendIframe: function (parent, selectedMenuItem) {
 
@@ -91,6 +85,7 @@ Ext.define('Admin.controller.TopBarController', {
         }, false);
     },
 
+
     showLoadMask: function () {
         var parent = window.parent.parent || window.parent;
         if (!parent.appLoadMask) {
@@ -99,11 +94,8 @@ Ext.define('Admin.controller.TopBarController', {
         parent.appLoadMask.show();
     },
 
-    setDocumentTitle: function (title) {
-        window.document.title = 'Enonic WEM Admin - ' + title;
-    },
 
-//  this is needed in case of shared top bar
+    //  this is needed in case of shared top bar
     setStartButton: function (selectedMenuItem) {
         var topBar = this.getTopBar();
         if (topBar) {

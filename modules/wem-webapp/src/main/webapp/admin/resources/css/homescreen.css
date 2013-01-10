@@ -15,7 +15,7 @@
     top: 0;
     right: 0;
     bottom: 0;
-    background-color: #141414;
+    background-color: #fff;
     background-repeat: no-repeat;
     background-position: center center;
     background-attachment: fixed;
@@ -53,7 +53,7 @@
     width: 775px;
     position: absolute;
     left: 50%;
-    margin-left: -375px;
+    margin-left: -387.5px; /* width / 2 */
     background-color: transparent;
     top: 0;
     bottom: 0;
@@ -101,10 +101,10 @@
     opacity: 0;
     color: #fff;
 
-    transition: all .3s ease-out;
-    -moz-transition: all .3s ease-out;
-    -webkit-transition: all .3s ease-out;
-    -o-transition: all .3s ease-out;
+    transition: all .2s ease-out;
+    -moz-transition: all .2s ease-out;
+    -webkit-transition: all .2s ease-out;
+    -o-transition: all .2s ease-out;
 
     transform: scale(.9);
     -moz-transform: scale(.9);

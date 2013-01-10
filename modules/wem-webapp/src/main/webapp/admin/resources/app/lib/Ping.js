@@ -55,8 +55,8 @@ Ext.define('Admin.lib.Ping', {
         if (messageBox.isVisible()) {
             return;
         }
-        var htmlMessage = Ext.String.format(me.errorMessageHtml, response.status, response.statusText);
-        messageBox.setHTML(htmlMessage).show();
+        var messageHtml = Ext.String.format(me.errorMessageHtml, response.status, response.statusText);
+        messageBox.setHTML(messageHtml).show();
     },
 
 
