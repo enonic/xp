@@ -31,9 +31,27 @@ Ext.define('Admin.controller.homescreen.Controller', {
                 }
             },
             'loginPanel button[itemId=loginButton]': {
-                click: this.onLoginButtonClick
-
+                click: me.onLoginButtonClick
             }
+        });
+    },
+
+
+    initView: function () {
+        // Temp: Do not create the homescreen when ?homescreen=false
+        var urlParts = document.URL.split('?');
+        if (urlParts.length > 1) {
+            var urlParams = Ext.urlDecode(urlParts[urlParts.length - 1]);
+            if (urlParams.homescreen && urlParams.homescreen === 'false') {
+                return;
+            }
+        }
+
+        var dummyCookie = Ext.util.Cookies.get('dummy_userIsLoggedIn');
+        var userIsLoggedIn = dummyCookie && dummyCookie === 'true';
+
+        Ext.create('Admin.view.homescreen.Homescreen', {
+            userIsLoggedIn: userIsLoggedIn
         });
     },
 
@@ -45,33 +63,29 @@ Ext.define('Admin.controller.homescreen.Controller', {
 
     handleLoginSubmit: function () {
         var me = this,
-            loginForm = me.getHomeScreen().getLoginFormPanel();
+            loginFormPanel = me.getHomeScreen().getLoginFormPanel();
 
-        loginForm.getForm().submit({
+        loginFormPanel.getForm().submit({
             url: 'dummy-login-response.jsp',
             success: function (form, action) {
-                me.getHomeScreen().displayAppSelectorView();
+                Ext.util.Cookies.set('dummy_userIsLoggedIn', 'true');
+
+                loginFormPanel.animate({
+                    duration: 500,
+                    to: {
+                        opacity: 0
+                    },
+                    listeners: {
+                        afteranimate: function () {
+                            me.getHomeScreen().displayAppSelector(true);
+                        }
+                    }
+                });
             },
             failure: function (form, action) {
                 /**/
             }
         });
-    },
-
-
-    initView: function () {
-        // Do not create the homescreen when ?homescreen=false
-        // TODO: remove!
-        var urlParts = document.URL.split('?');
-        if (urlParts.length > 1) {
-            var urlParams = Ext.urlDecode(urlParts[urlParts.length - 1]);
-            console.log(urlParams)
-            if (urlParams.homescreen && urlParams.homescreen === 'false') {
-                return;
-            }
-        }
-
-        Ext.create('Admin.view.homescreen.Homescreen');
     },
 
 

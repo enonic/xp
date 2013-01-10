@@ -6,6 +6,8 @@ Ext.define('Admin.view.homescreen.Homescreen', {
         'Admin.view.homescreen.AppSelector'
     ],
 
+    userIsLoggedIn: false,
+
     id: 'admin-home-main-container',
 
     autoEl: {
@@ -26,39 +28,52 @@ Ext.define('Admin.view.homescreen.Homescreen', {
 
             Ext.create('Admin.view.homescreen.LoginPanel');
             Ext.create('Admin.view.homescreen.AppSelector');
+
+            if (me.userIsLoggedIn) {
+                me.displayAppSelector(false);
+            } else {
+                me.displayLogin();
+            }
         });
 
         me.callParent(arguments);
     },
 
 
-    displayLoginView: function () {
-        /**/
+    displayLogin: function () {
+        var me = this,
+            loginElements = Ext.DomQuery.select('div[data-screen="login"]'),
+            appSelectorElements = Ext.DomQuery.select('div[data-screen="app-selector"]');
+
+        Ext.Array.forEach(appSelectorElements, function (el) {
+            Ext.fly(el).setStyle('display', 'none');
+        });
+
+        Ext.Array.forEach(loginElements, function (el) {
+            Ext.fly(el).setStyle('display', 'block');
+        });
     },
 
 
-    displayAppSelectorView: function () {
-        var loginFormContainer = Ext.get('admin-home-login-form'),
-            appSelectorContainer = Ext.get('admin-home-app-selector'),
-            appInfoContainer = Ext.get('admin-home-app-info-container');
+    displayAppSelector: function (animate) {
+        var me = this,
+            loginElements = Ext.DomQuery.select('div[data-screen="login"]'),
+            appSelectorElements = Ext.DomQuery.select('div[data-screen="app-selector"]'),
+            appSelectorContainer = Ext.get('admin-home-app-selector');
 
-        loginFormContainer.setVisibilityMode(Ext.Element.OFFSETS);
-        loginFormContainer.animate({
-            duration: 500,
-            to: {
-                opacity: 0
-            },
-            listeners: {
-                afteranimate: function () {
-                    loginFormContainer.hide();
-
-                    Ext.getCmp('admin-home-app-selector-search').focus();
-
-                    appSelectorContainer.setStyle('visibility', 'visible').addCls('fade-in');
-                    appInfoContainer.setStyle('visibility', 'visible').addCls('fade-in');
-                }
-            }
+        Ext.Array.forEach(loginElements, function (el) {
+            Ext.fly(el).setStyle('display', 'none');
         });
+
+        Ext.Array.forEach(appSelectorElements, function (el) {
+            Ext.fly(el).setStyle('display', 'block');
+        });
+
+        Ext.getCmp('admin-home-app-selector-search').focus();
+
+        if (animate) {
+            appSelectorContainer.addCls('fade-in');
+        }
     },
 
 

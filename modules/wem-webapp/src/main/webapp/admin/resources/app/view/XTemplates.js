@@ -1,4 +1,4 @@
-// This file was auto-generated on 2013-01-10 12:24:46 CET
+// This file was auto-generated on 2013-01-10 15:41:38 CET
 
 if ( !Templates ) {
     var Templates = {};
@@ -626,21 +626,29 @@ Templates.homescreen = {
 		'</div>' + 
 		'<div id="admin-home-center" class="clickable">' + 
 		    '<div id="admin-home-left-column" class="clickable">' + 
-		        '<div id="admin-home-app-selector" class="clickable">' + 
-		            '<div id="admin-home-app-selector-search-input-container"></div>' + 
-		            '<div id="admin-home-app-tiles-placeholder">' + 
-		                '<!-- -->' + 
+		        '<div data-screen="login" style="display: none">' + 
+		        '</div>' + 
+		        '<div data-screen="app-selector" style="display: none">' + 
+		            '<div id="admin-home-app-selector" class="clickable">' + 
+		                '<div id="admin-home-app-selector-search-input-container"></div>' + 
+		                '<div id="admin-home-app-tiles-placeholder">' + 
+		                    '<!-- -->' + 
+		                '</div>' + 
 		            '</div>' + 
 		        '</div>' + 
 		    '</div>' + 
 		    '<div id="admin-home-right-column" class="clickable">' + 
-		        '<div id="admin-home-login-form" class="clickable">' + 
-		            '<div id="admin-home-login-form-container"></div>' + 
-		            '<div id="admin-home-login-licensed-to"><!-- --></div>' + 
+		        '<div data-screen="login" style="display: none">' + 
+		            '<div id="admin-home-login-form" class="clickable">' + 
+		                '<div id="admin-home-login-form-container"></div>' + 
+		                '<div id="admin-home-login-licensed-to"><!-- --></div>' + 
+		            '</div>' + 
 		        '</div>' + 
-		        '<div id="admin-home-app-info-container">' + 
-		            '<h3 id="admin-home-app-info-name"><!-- --></h3>' + 
-		            '<div id="admin-home-app-info-description"><!-- --></div>' + 
+		        '<div data-screen="app-selector" style="display: none">' + 
+		            '<div id="admin-home-app-info-container">' + 
+		                '<h3 id="admin-home-app-info-name"><!-- --></h3>' + 
+		                '<div id="admin-home-app-info-description"><!-- --></div>' + 
+		            '</div>' + 
 		        '</div>' + 
 		        '<div id="admin-home-links-container">' + 
 		            '<a href="http://www.enonic.com/community">Community</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.enonic.com/docs">Documentation</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://enonic.com/en/home/enonic-cms">About</a>' + 

@@ -35,7 +35,7 @@
 #admin-home-branding {
     position: absolute;
     top: 15px;
-    left: 20px;
+    left: 30px;
     background: transparent url(../images/wem-enonic-logo.png) 0 0 no-repeat;
     height: 24px;
 }
@@ -97,8 +97,8 @@
     position: absolute;
     left: 0;
     top: 235px;
-    visibility: hidden;
-    opacity: 0;
+    /*visibility: hidden;
+    opacity: 0;*/
     color: #fff;
 
     transition: all .2s ease-out;
@@ -117,8 +117,8 @@
 }
 
 #admin-home-app-info-container {
-    visibility: hidden;
-    opacity: 0;
+    /*visibility: hidden;
+    opacity: 0;*/
 }
 
 #admin-home-app-info-name {
