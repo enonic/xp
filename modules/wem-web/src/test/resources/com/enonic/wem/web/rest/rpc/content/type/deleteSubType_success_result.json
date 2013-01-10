@@ -1,7 +1,0 @@
-{
-    "success" : true,
-    "successes" : [ {
-        "qualifiedSubTypeName" : "my:existingSubType"
-    } ],
-    "failures" : [ ]
-}

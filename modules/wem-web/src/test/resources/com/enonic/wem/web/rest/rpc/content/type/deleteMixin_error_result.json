@@ -1,0 +1,18 @@
+{
+    "success": false,
+    "successes": [
+        {
+            "qualifiedMixinName": "my:existingMixin"
+        }
+    ],
+    "failures": [
+        {
+            "qualifiedMixinName": "my:notFoundMixin",
+            "reason": "Mixin [my:notFoundMixin] was not found"
+        },
+        {
+            "qualifiedMixinName": "my:beingUsedMixin",
+            "reason": "Unable to delete Mixin [my:beingUsedMixin]: Mixin is being used"
+        }
+    ]
+}

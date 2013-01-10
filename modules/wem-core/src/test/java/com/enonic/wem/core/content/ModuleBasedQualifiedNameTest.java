@@ -30,7 +30,7 @@ public class ModuleBasedQualifiedNameTest
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void contructor_throws_exception_when_missing_subType_name()
+    public void contructor_throws_exception_when_missing_local_name()
     {
         new ModuleBasedQualifiedName( "myModule:" )
         {

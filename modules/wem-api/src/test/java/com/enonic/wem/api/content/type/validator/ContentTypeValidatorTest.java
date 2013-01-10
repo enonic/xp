@@ -36,7 +36,7 @@ public class ContentTypeValidatorTest
     {
         ContentType child = ContentType.newContentType().
             module( ModuleName.from( "test" ) ).
-            name( "MySubType" ).
+            name( "MyType" ).
             superType( contentType.getQualifiedName() ).build();
         Mockito.when( fetcher.getContentType( child.getSuperType() ) ).thenReturn( contentType );
         recordedValidator.validate( child );

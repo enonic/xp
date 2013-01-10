@@ -10,8 +10,8 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.command.content.type.GetContentTypeTree;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.ContentTypeTreeNode;
 import com.enonic.wem.api.content.type.ContentTypeTree;
+import com.enonic.wem.api.content.type.ContentTypeTreeNode;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.core.command.CommandContext;
@@ -45,7 +45,7 @@ public class GetContentTypeTreeHandler
 
         for ( ContentType contentType : contentTypes )
         {
-            if ( contentType.getSuperType() == null || contentType.getQualifiedName().isUnstructured())
+            if ( contentType.getSuperType() == null || contentType.getQualifiedName().isUnstructured() )
             {
                 rootTypes.add( contentType );
             }
@@ -58,19 +58,20 @@ public class GetContentTypeTreeHandler
         final ContentTypeTree tree = new ContentTypeTree( rootTypes );
         for ( ContentTypeTreeNode node : tree.getChildren() )
         {
-            addSubTypes( node, typesBySuperType );
+            addMixins( node, typesBySuperType );
         }
 
         return tree;
     }
 
-    private void addSubTypes( final ContentTypeTreeNode node, final ArrayListMultimap<QualifiedContentTypeName, ContentType> typesBySuperType )
+    private void addMixins( final ContentTypeTreeNode node,
+                            final ArrayListMultimap<QualifiedContentTypeName, ContentType> typesBySuperType )
     {
-        final List<ContentType> subTypes = typesBySuperType.get( node.getContentType().getQualifiedName() );
-        for ( ContentType subType : subTypes )
+        final List<ContentType> contentTypes = typesBySuperType.get( node.getContentType().getQualifiedName() );
+        for ( ContentType contentType : contentTypes )
         {
-            final ContentTypeTreeNode subTypeNode = node.add( subType );
-            addSubTypes( subTypeNode, typesBySuperType );
+            final ContentTypeTreeNode contentTypeTreeNode = node.add( contentType );
+            addMixins( contentTypeTreeNode, typesBySuperType );
         }
     }
 

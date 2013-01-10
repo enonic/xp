@@ -10,8 +10,8 @@ import com.enonic.wem.api.content.type.form.FormItems;
 import com.enonic.wem.api.content.type.form.HierarchicalFormItem;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.content.type.form.Layout;
-import com.enonic.wem.api.content.type.form.QualifiedSubTypeName;
-import com.enonic.wem.api.content.type.form.SubTypeReference;
+import com.enonic.wem.api.content.type.form.MixinReference;
+import com.enonic.wem.api.content.type.form.QualifiedMixinName;
 import com.enonic.wem.core.content.XmlParsingException;
 import com.enonic.wem.core.content.type.form.inputtype.InputTypeConfigXmlSerializer;
 import com.enonic.wem.core.content.type.form.inputtype.InputTypeFactory;
@@ -67,9 +67,9 @@ public class FormItemXmlSerializer
         {
             return serializeInput( (Input) formItem );
         }
-        else if ( formItem instanceof SubTypeReference )
+        else if ( formItem instanceof MixinReference )
         {
-            return serializeReference( (SubTypeReference) formItem );
+            return serializeReference( (MixinReference) formItem );
         }
         return null;
     }
@@ -138,13 +138,13 @@ public class FormItemXmlSerializer
         formItemsSerializer.serialize( fieldSet.getFormItems(), itemsEl );
     }
 
-    private Element serializeReference( final SubTypeReference subTypeReference )
+    private Element serializeReference( final MixinReference mixinReference )
     {
-        final Element referenceEl = new Element( classNameToXmlElementName( SubTypeReference.class.getSimpleName() ) );
-        referenceEl.setAttribute( NAME, String.valueOf( subTypeReference.getName() ) );
-        referenceEl.addContent( new Element( NAME ).setText( subTypeReference.getName() ) );
-        referenceEl.addContent( new Element( REFERENCE ).setText( subTypeReference.getQualifiedSubTypeName().toString() ) );
-        referenceEl.addContent( new Element( TYPE ).setText( subTypeReference.getSubTypeClass().getSimpleName() ) );
+        final Element referenceEl = new Element( classNameToXmlElementName( MixinReference.class.getSimpleName() ) );
+        referenceEl.setAttribute( NAME, String.valueOf( mixinReference.getName() ) );
+        referenceEl.addContent( new Element( NAME ).setText( mixinReference.getName() ) );
+        referenceEl.addContent( new Element( REFERENCE ).setText( mixinReference.getQualifiedMixinName().toString() ) );
+        referenceEl.addContent( new Element( TYPE ).setText( mixinReference.getMixinClass().getSimpleName() ) );
         return referenceEl;
     }
 
@@ -173,9 +173,9 @@ public class FormItemXmlSerializer
         {
             formItem = parseLayout( formItemEl );
         }
-        else if ( formItemType.equals( SubTypeReference.class.getSimpleName() ) )
+        else if ( formItemType.equals( MixinReference.class.getSimpleName() ) )
         {
-            formItem = parseSubTypeReference( formItemEl );
+            formItem = parseMixinReference( formItemEl );
         }
         else
         {
@@ -253,11 +253,11 @@ public class FormItemXmlSerializer
         return builder.build();
     }
 
-    private HierarchicalFormItem parseSubTypeReference( final Element formItemEl )
+    private HierarchicalFormItem parseMixinReference( final Element formItemEl )
     {
-        final SubTypeReference.Builder builder = SubTypeReference.newSubTypeReference();
+        final MixinReference.Builder builder = MixinReference.newMixinReference();
         builder.name( formItemEl.getAttributeValue( NAME ) );
-        builder.subType( new QualifiedSubTypeName( formItemEl.getChildText( REFERENCE ) ) );
+        builder.mixin( new QualifiedMixinName( formItemEl.getChildText( REFERENCE ) ) );
         builder.type( formItemEl.getChildText( TYPE ) );
         return builder.build();
     }

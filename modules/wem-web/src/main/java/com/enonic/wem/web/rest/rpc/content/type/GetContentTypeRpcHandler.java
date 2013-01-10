@@ -27,7 +27,7 @@ public final class GetContentTypeRpcHandler
     {
         final QualifiedContentTypeName qualifiedName = new QualifiedContentTypeName( context.param( "contentType" ).required().asString() );
         final GetContentTypes getContentTypes = Commands.contentType().get().names( QualifiedContentTypeNames.from( qualifiedName ) );
-        getContentTypes.subTypeReferencesToFormItems( context.param( "subTypeReferencesToFormItems" ).asBoolean( false ) );
+        getContentTypes.mixinReferencesToFormItems( context.param( "mixinReferencesToFormItems" ).asBoolean( false ) );
         final ContentTypes result = client.execute( getContentTypes );
 
         if ( !result.isEmpty() )

@@ -7,12 +7,12 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.form.FieldSet;
 import com.enonic.wem.api.content.type.form.FormItemSet;
-import com.enonic.wem.api.content.type.form.FormItemSetSubType;
+import com.enonic.wem.api.content.type.form.FormItemSetMixin;
 import com.enonic.wem.api.content.type.form.Input;
-import com.enonic.wem.api.content.type.form.InputSubType;
+import com.enonic.wem.api.content.type.form.InputMixin;
 import com.enonic.wem.api.content.type.form.Layout;
-import com.enonic.wem.api.content.type.form.MockSubTypeFetcher;
-import com.enonic.wem.api.content.type.form.SubTypeReference;
+import com.enonic.wem.api.content.type.form.MixinReference;
+import com.enonic.wem.api.content.type.form.MockMixinFetcher;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.content.type.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
@@ -22,9 +22,9 @@ import com.enonic.wem.core.AbstractSerializerTest;
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.content.type.form.FormItemSetSubType.newFormItemSetSubType;
+import static com.enonic.wem.api.content.type.form.FormItemSetMixin.newFormItemSetMixin;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
-import static com.enonic.wem.api.content.type.form.SubTypeReference.newSubTypeReference;
+import static com.enonic.wem.api.content.type.form.MixinReference.newMixinReference;
 import static com.enonic.wem.api.module.Module.newModule;
 import static org.junit.Assert.*;
 
@@ -53,14 +53,14 @@ public abstract class AbstractContentTypeSerializerTest
     public void given_all_base_types_when_parsed_then_paths_are_as_expected()
         throws Exception
     {
-        InputSubType inputSubType =
-            InputSubType.newInputSubType().input( Input.newInput().name( "mySharedInput" ).type( InputTypes.TEXT_LINE ).build() ).module(
+        InputMixin inputMixin =
+            InputMixin.newInputMixin().input( Input.newInput().name( "mySharedInput" ).type( InputTypes.TEXT_LINE ).build() ).module(
                 Module.SYSTEM.getName() ).build();
         FormItemSet set = newFormItemSet().name( "mySet" ).build();
         Layout layout = FieldSet.newFieldSet().label( "My field set" ).name( "myFieldSet" ).add(
             newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() ).build();
         set.add( layout );
-        set.add( newSubTypeReference().name( "myCommonInput" ).subType( inputSubType ).build() );
+        set.add( newMixinReference().name( "myCommonInput" ).mixin( inputMixin ).build() );
 
         ContentType.Builder contentTypeBuilder = newContentType().name( "AllBaseTypes" ).module( myModule.getName() );
         contentTypeBuilder.addFormItem( set );
@@ -164,10 +164,10 @@ public abstract class AbstractContentTypeSerializerTest
     }
 
     @Test
-    public void parse_subType()
+    public void parse_mixin()
     {
         // setup
-        FormItemSetSubType subType = newFormItemSetSubType().module( ModuleName.from( "myModule" ) ).formItemSet(
+        FormItemSetMixin mixin = newFormItemSetMixin().module( ModuleName.from( "myModule" ) ).formItemSet(
             newFormItemSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
@@ -175,11 +175,11 @@ public abstract class AbstractContentTypeSerializerTest
 
         ContentType.Builder contentTypeBuilder = newContentType().name( "test" ).module( myModule.getName() );
         contentTypeBuilder.addFormItem( newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() );
-        contentTypeBuilder.addFormItem( newSubTypeReference( subType ).name( "home" ).build() );
-        contentTypeBuilder.addFormItem( newSubTypeReference( subType ).name( "cabin" ).build() );
+        contentTypeBuilder.addFormItem( MixinReference.newMixinReference( mixin ).name( "home" ).build() );
+        contentTypeBuilder.addFormItem( MixinReference.newMixinReference( mixin ).name( "cabin" ).build() );
 
-        MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
-        subTypeFetcher.add( subType );
+        MockMixinFetcher mixinFetcher = new MockMixinFetcher();
+        mixinFetcher.add( mixin );
 
         String serialized = toString( contentTypeBuilder.build() );
 
@@ -187,8 +187,8 @@ public abstract class AbstractContentTypeSerializerTest
         ContentType parsedContentType = toContentType( serialized );
 
         // verify references
-        assertEquals( SubTypeReference.class, parsedContentType.form().getFormItem( "home" ).getClass() );
-        assertEquals( SubTypeReference.class, parsedContentType.form().getFormItem( "cabin" ).getClass() );
+        assertEquals( MixinReference.class, parsedContentType.form().getFormItem( "home" ).getClass() );
+        assertEquals( MixinReference.class, parsedContentType.form().getFormItem( "cabin" ).getClass() );
     }
 
     @Test

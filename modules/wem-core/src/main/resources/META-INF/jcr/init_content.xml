@@ -15,7 +15,7 @@
   <node name="contents" type="wem:contents"/>
   <node name="contentsVersionHistory" type="wem:contentsVersionHistory"/>
   <node name="contentTypes" type="nt:unstructured"/>
-  <node name="subTypes" type="nt:unstructured"/>
+  <node name="mixins" type="nt:unstructured"/>
   <node name="relationshipTypes" type="nt:unstructured"/>
 
 </node>

@@ -170,17 +170,6 @@ public class DataSetTest
     }
 
     @Test
-    public void getValue_when_having_sub_type()
-    {
-        DataSet dataSet = DataSet.newRootDataSet();
-        dataSet.setData( EntryPath.from( "personalia.eyeColour" ), "Brown", DataTypes.TEXT );
-        dataSet.setData( EntryPath.from( "personalia.hairColour" ), "Brown", DataTypes.TEXT );
-
-        assertEquals( "Brown", dataSet.getData( "personalia.eyeColour" ).getObject() );
-        assertEquals( "Brown", dataSet.getData( "personalia.hairColour" ).getObject() );
-    }
-
-    @Test
     public void getValue_when_having_array_of_set_within_single_set()
     {
         DataSet dataSet = DataSet.newRootDataSet();
@@ -196,7 +185,7 @@ public class DataSetTest
     }
 
     @Test
-    public void getValue_when_having_multiple_sub_type()
+    public void getValue_when_having_multiple_mixin()
     {
         DataSet dataSet = DataSet.newRootDataSet();
         dataSet.setData( EntryPath.from( "persons[0].name" ), "Arn", DataTypes.TEXT );

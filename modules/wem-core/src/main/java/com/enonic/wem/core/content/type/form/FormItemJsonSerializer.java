@@ -11,7 +11,7 @@ import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.content.type.form.Layout;
-import com.enonic.wem.api.content.type.form.SubTypeReference;
+import com.enonic.wem.api.content.type.form.MixinReference;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
 import com.enonic.wem.core.content.JsonParsingException;
 
@@ -24,14 +24,14 @@ public class FormItemJsonSerializer
 
     private final LayoutJsonSerializer layoutJsonSerializer;
 
-    private final SubTypeReferenceJsonSerializer subTypeReferenceJsonSerializer;
+    private final MixinReferenceJsonSerializer mixinReferenceJsonSerializer;
 
     public FormItemJsonSerializer( final FormItemsJsonSerializer formItemsJsonSerializer )
     {
         this.inputJsonSerializer = new InputJsonSerializer( objectMapper() );
         this.formItemSetJsonSerializer = new FormItemSetJsonSerializer( formItemsJsonSerializer, objectMapper() );
         this.layoutJsonSerializer = new LayoutJsonSerializer( formItemsJsonSerializer, objectMapper() );
-        this.subTypeReferenceJsonSerializer = new SubTypeReferenceJsonSerializer( objectMapper() );
+        this.mixinReferenceJsonSerializer = new MixinReferenceJsonSerializer( objectMapper() );
     }
 
     public FormItemJsonSerializer( final FormItemsJsonSerializer formItemsJsonSerializer, final ObjectMapper objectMapper )
@@ -40,7 +40,7 @@ public class FormItemJsonSerializer
         this.inputJsonSerializer = new InputJsonSerializer( objectMapper );
         this.formItemSetJsonSerializer = new FormItemSetJsonSerializer( formItemsJsonSerializer, objectMapper );
         this.layoutJsonSerializer = new LayoutJsonSerializer( formItemsJsonSerializer, objectMapper );
-        this.subTypeReferenceJsonSerializer = new SubTypeReferenceJsonSerializer( objectMapper );
+        this.mixinReferenceJsonSerializer = new MixinReferenceJsonSerializer( objectMapper );
     }
 
     @Override
@@ -59,10 +59,10 @@ public class FormItemJsonSerializer
         {
             formItemBaseTypeObject.put( Input.class.getSimpleName(), inputJsonSerializer.serialize( (Input) formItem ) );
         }
-        else if ( formItem instanceof SubTypeReference )
+        else if ( formItem instanceof MixinReference )
         {
-            formItemBaseTypeObject.put( SubTypeReference.class.getSimpleName(),
-                                        subTypeReferenceJsonSerializer.serialize( (SubTypeReference) formItem ) );
+            formItemBaseTypeObject.put( MixinReference.class.getSimpleName(),
+                                        mixinReferenceJsonSerializer.serialize( (MixinReference) formItem ) );
         }
         else
         {
@@ -93,9 +93,9 @@ public class FormItemJsonSerializer
             {
                 formItem = layoutJsonSerializer.parse( concreteFormItemObj );
             }
-            else if ( type.equals( SubTypeReference.class.getSimpleName() ) )
+            else if ( type.equals( MixinReference.class.getSimpleName() ) )
             {
-                formItem = subTypeReferenceJsonSerializer.parse( concreteFormItemObj );
+                formItem = mixinReferenceJsonSerializer.parse( concreteFormItemObj );
             }
         }
 

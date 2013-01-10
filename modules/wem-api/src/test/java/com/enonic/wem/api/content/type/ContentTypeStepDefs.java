@@ -16,20 +16,20 @@ import gherkin.formatter.model.DataTableRow;
 import com.enonic.wem.api.content.type.form.FormItemPath;
 import com.enonic.wem.api.content.type.form.FormItemType;
 import com.enonic.wem.api.content.type.form.Input;
-import com.enonic.wem.api.content.type.form.InputSubType;
-import com.enonic.wem.api.content.type.form.MockSubTypeFetcher;
-import com.enonic.wem.api.content.type.form.QualifiedSubTypeName;
-import com.enonic.wem.api.content.type.form.SubTypeReference;
+import com.enonic.wem.api.content.type.form.InputMixin;
+import com.enonic.wem.api.content.type.form.MixinReference;
+import com.enonic.wem.api.content.type.form.MockMixinFetcher;
+import com.enonic.wem.api.content.type.form.QualifiedMixinName;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleName;
 
 import static com.enonic.wem.api.content.type.form.Input.newInput;
-import static com.enonic.wem.api.content.type.form.InputSubType.newInputSubType;
+import static com.enonic.wem.api.content.type.form.InputMixin.newInputMixin;
 
 public class ContentTypeStepDefs
 {
-    public final MockSubTypeFetcher mockSubTypeFetcher = new MockSubTypeFetcher();
+    public final MockMixinFetcher mockMixinFetcher = new MockMixinFetcher();
 
     public final Map<String, Module> moduleByName = new HashMap<String, Module>();
 
@@ -37,7 +37,7 @@ public class ContentTypeStepDefs
 
     public final Map<String, Input> inputByName = new HashMap<String, Input>();
 
-    public final Map<QualifiedSubTypeName, InputSubType> inputSubTypeByQualifiedName = new HashMap<QualifiedSubTypeName, InputSubType>();
+    public final Map<QualifiedMixinName, InputMixin> inputMixinByQualifiedName = new HashMap<QualifiedMixinName, InputMixin>();
 
 
     @Given("^a Module named (.+)$")
@@ -56,12 +56,12 @@ public class ContentTypeStepDefs
         inputByName.put( inputName, input );
     }
 
-    @Given("^a InputSubType named (.+) in module (.+) with input (.+)$")
-    public void a_inputSubType_named_name_in_module_module_having_input( String subTypeName, String moduleName, String inputName )
+    @Given("^a InputMixin named (.+) in module (.+) with input (.+)$")
+    public void a_inputMixin_named_name_in_module_module_having_input( String mixinName, String moduleName, String inputName )
         throws Throwable
     {
-        InputSubType inputSubType = newInputSubType().module( ModuleName.from( moduleName ) ).input( inputByName.get( inputName ) ).build();
-        inputSubTypeByQualifiedName.put( new QualifiedSubTypeName( moduleName, subTypeName ), inputSubType );
+        InputMixin inputMixin = newInputMixin().module( ModuleName.from( moduleName ) ).input( inputByName.get( inputName ) ).build();
+        inputMixinByQualifiedName.put( new QualifiedMixinName( moduleName, mixinName ), inputMixin );
     }
 
     @Given("^a ContentType named (.+)")
@@ -71,28 +71,28 @@ public class ContentTypeStepDefs
         contentTypeByName.put( contentTypeName, ContentType.newContentType().name( contentTypeName ).build() );
     }
 
-    @Given("^adding SubTypeReference named (.+) referencing InputSubType (.+) to ContentType (.+)$")
-    public void adding_SubTypeReference_named_name_referencing_InputSubType_name_to_ContentType_myContentType( String subTypeReferenceName,
-                                                                                                               String subTypeQualifiedName,
-                                                                                                               String contentTypeName )
+    @Given("^adding MixinReference named (.+) referencing InputMixin (.+) to ContentType (.+)$")
+    public void adding_MixinReference_named_name_referencing_InputMixin_name_to_ContentType_myContentType( String mixinReferenceName,
+                                                                                                           String mixinQualifiedName,
+                                                                                                           String contentTypeName )
         throws Throwable
     {
 
-        InputSubType inputSubType = inputSubTypeByQualifiedName.get( new QualifiedSubTypeName( subTypeQualifiedName ) );
+        InputMixin inputMixin = inputMixinByQualifiedName.get( new QualifiedMixinName( mixinQualifiedName ) );
         ContentType contentType = contentTypeByName.get( contentTypeName );
-        contentType.form().addFormItem( SubTypeReference.newSubTypeReference( inputSubType ).name( subTypeReferenceName ).build() );
+        contentType.form().addFormItem( MixinReference.newMixinReference( inputMixin ).name( mixinReferenceName ).build() );
 
-        mockSubTypeFetcher.add( inputSubType );
-        contentType.form().subTypeReferencesToFormItems( mockSubTypeFetcher );
+        mockMixinFetcher.add( inputMixin );
+        contentType.form().mixinReferencesToFormItems( mockMixinFetcher );
     }
 
-    @When("^translating subType references to formItems for all content types$")
-    public void translating_subType_references_to_formItems_for_all_content_types()
+    @When("^translating mixin references to formItems for all content types$")
+    public void translating_mixin_references_to_formItems_for_all_content_types()
         throws Throwable
     {
         for ( ContentType contentType : contentTypeByName.values() )
         {
-            contentType.form().subTypeReferencesToFormItems( mockSubTypeFetcher );
+            contentType.form().mixinReferencesToFormItems( mockMixinFetcher );
         }
     }
 

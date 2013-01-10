@@ -168,14 +168,14 @@ public class FormItemSet
         return formItems.getFormItemSet( formItemPath );
     }
 
-    public SubTypeReference getSubTypeReference( final FormItemPath formItemPath )
+    public MixinReference getMixinReference( final FormItemPath formItemPath )
     {
-        return formItems.getSubTypeReference( formItemPath );
+        return formItems.getMixinReference( formItemPath );
     }
 
-    public SubTypeReference getSubTypeReference( final String name )
+    public MixinReference getMixinReference( final String name )
     {
-        return formItems.getSubTypeReference( name );
+        return formItems.getMixinReference( name );
     }
 
     public Layout getLayout( final String name )

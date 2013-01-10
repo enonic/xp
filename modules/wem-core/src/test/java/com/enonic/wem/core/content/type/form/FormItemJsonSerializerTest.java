@@ -129,8 +129,8 @@ public class FormItemJsonSerializerTest
     {
         // setup
         FormItemSet.Builder builder = newFormItemSet();
-        builder.name( "mySubType" );
-        builder.label( "My sub type" );
+        builder.name( "myMixin" );
+        builder.label( "My mixin" );
         builder.immutable( true );
         builder.required( true );
         builder.occurrences( 1, 100 );
@@ -146,9 +146,9 @@ public class FormItemJsonSerializerTest
 
         // verify
         assertTrue( formItem instanceof FormItemSet );
-        assertEquals( "mySubType", formItem.getName() );
+        assertEquals( "myMixin", formItem.getName() );
         FormItemSet parsedFormItemSet = (FormItemSet) formItem;
-        assertEquals( "My sub type", parsedFormItemSet.getLabel() );
+        assertEquals( "My mixin", parsedFormItemSet.getLabel() );
         assertEquals( true, parsedFormItemSet.isRequired() );
         assertEquals( true, parsedFormItemSet.isImmutable() );
     }

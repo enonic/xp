@@ -14,7 +14,7 @@ public final class GetContentTypes
 
     private boolean getAllContentTypes = false;
 
-    private boolean subTypeReferencesToFormItems = false;
+    private boolean mixinReferencesToFormItems = false;
 
     public QualifiedContentTypeNames getNames()
     {
@@ -27,14 +27,14 @@ public final class GetContentTypes
         return this;
     }
 
-    public boolean isSubTypeReferencesToFormItems()
+    public boolean isMixinReferencesToFormItems()
     {
-        return subTypeReferencesToFormItems;
+        return mixinReferencesToFormItems;
     }
 
-    public GetContentTypes subTypeReferencesToFormItems( final boolean value )
+    public GetContentTypes mixinReferencesToFormItems( final boolean value )
     {
-        subTypeReferencesToFormItems = value;
+        mixinReferencesToFormItems = value;
         return this;
     }
 

@@ -360,38 +360,6 @@ public abstract class AbstractContentSerializerTest
         assertEquals( "myText", parsedContent.getData( "myText" ).getPath().toString() );
     }
 
-
-    @Test
-    public void unstructured_with_subTypes()
-    {
-        Content data = newContent().build();
-        data.setData( "name", "Thomas" );
-        data.setData( "child[0].name", "Joachim" );
-        data.setData( "child[0].age", "9" );
-        data.setData( "child[0].features.eyeColour", "Blue" );
-        data.setData( "child[0].features.hairColour", "Blonde" );
-        data.setData( "child[1].name", "Madeleine" );
-        data.setData( "child[1].age", "7" );
-        data.setData( "child[1].features.eyeColour", "Brown" );
-        data.setData( "child[1].features.hairColour", "Black" );
-
-        String serialized = toString( data );
-
-        // exercise
-        Content parsedContent = toContent( serialized );
-
-        // verify
-        assertEquals( "Thomas", parsedContent.getData( "name" ).getObject() );
-        assertEquals( "Joachim", parsedContent.getData( "child[0].name" ).getObject() );
-        assertEquals( "9", parsedContent.getData( "child[0].age" ).getObject() );
-        assertEquals( "Blue", parsedContent.getData( "child[0].features.eyeColour" ).getObject() );
-        assertEquals( "Blonde", parsedContent.getData( "child[0].features.hairColour" ).getObject() );
-        assertEquals( "Madeleine", parsedContent.getData( "child[1].name" ).getObject() );
-        assertEquals( "7", parsedContent.getData( "child[1].age" ).getObject() );
-        assertEquals( "Brown", parsedContent.getData( "child[1].features.eyeColour" ).getObject() );
-        assertEquals( "Black", parsedContent.getData( "child[1].features.hairColour" ).getObject() );
-    }
-
     @Test
     public void unstructured_with_arrays()
     {
@@ -410,25 +378,6 @@ public abstract class AbstractContentSerializerTest
         assertEquals( DataTypes.TEXT, parsedContent.getData( "names[0]" ).getType() );
         assertEquals( "Sten Roger", parsedContent.getData( "names[1]" ).getObject() );
         assertEquals( "Alex", parsedContent.getData( "names[2]" ).getObject() );
-    }
-
-    @Test
-    public void unstructured_with_arrays_within_subType()
-    {
-        Content content = newContent().build();
-        content.setData( "company.names[0]", "Thomas" );
-        content.setData( "company.names[1]", "Sten Roger" );
-        content.setData( "company.names[2]", "Alex" );
-
-        String serialized = toString( content );
-
-        // exercise
-        Content parsedContent = toContent( serialized );
-
-        // verify
-        assertEquals( "Thomas", parsedContent.getData( "company.names[0]" ).getObject() );
-        assertEquals( "Sten Roger", parsedContent.getData( "company.names[1]" ).getObject() );
-        assertEquals( "Alex", parsedContent.getData( "company.names[2]" ).getObject() );
     }
 
     @Test

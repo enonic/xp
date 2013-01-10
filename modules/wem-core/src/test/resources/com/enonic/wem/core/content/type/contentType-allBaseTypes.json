@@ -1,46 +1,46 @@
 {
-    "name":"AllBaseTypes",
-    "module":"myModule",
-    "qualifiedName":"myModule:AllBaseTypes",
-    "displayName":"All the Base Types",
-    "superType":"System:Content",
-    "isAbstract":false,
-    "isFinal":true,
-    "form":[
+    "name": "AllBaseTypes",
+    "module": "myModule",
+    "qualifiedName": "myModule:AllBaseTypes",
+    "displayName": "All the Base Types",
+    "superType": "System:Content",
+    "isAbstract": false,
+    "isFinal": true,
+    "form": [
         {
-            "FormItemSet":{
-                "name":"mySet",
-                "label":null,
-                "immutable":false,
-                "occurrences":{
-                    "minimum":0,
-                    "maximum":1
+            "FormItemSet": {
+                "name": "mySet",
+                "label": null,
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
                 },
-                "customText":null,
-                "helpText":null,
-                "items":[
+                "customText": null,
+                "helpText": null,
+                "items": [
                     {
-                        "Layout":{
-                            "type":"FieldSet",
-                            "label":"My field set",
-                            "name":"myFieldSet",
-                            "items":[
+                        "Layout": {
+                            "type": "FieldSet",
+                            "label": "My field set",
+                            "name": "myFieldSet",
+                            "items": [
                                 {
-                                    "Input":{
-                                        "name":"myTextLine",
-                                        "label":null,
-                                        "immutable":false,
-                                        "occurrences":{
-                                            "minimum":0,
-                                            "maximum":1
+                                    "Input": {
+                                        "name": "myTextLine",
+                                        "label": null,
+                                        "immutable": false,
+                                        "occurrences": {
+                                            "minimum": 0,
+                                            "maximum": 1
                                         },
-                                        "indexed":false,
-                                        "customText":null,
-                                        "validationRegexp":null,
-                                        "helpText":null,
-                                        "type":{
-                                            "name":"TextLine",
-                                            "builtIn":true
+                                        "indexed": false,
+                                        "customText": null,
+                                        "validationRegexp": null,
+                                        "helpText": null,
+                                        "type": {
+                                            "name": "TextLine",
+                                            "builtIn": true
                                         }
                                     }
                                 }
@@ -48,10 +48,10 @@
                         }
                     },
                     {
-                        "SubTypeReference":{
-                            "name":"myCommonInput",
-                            "reference":"System:mySharedInput",
-                            "type":"InputSubType"
+                        "MixinReference": {
+                            "name": "myCommonInput",
+                            "reference": "System:mySharedInput",
+                            "type": "InputMixin"
                         }
                     }
                 ]

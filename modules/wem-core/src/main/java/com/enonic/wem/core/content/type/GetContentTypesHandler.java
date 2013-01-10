@@ -9,11 +9,11 @@ import com.enonic.wem.api.command.content.type.GetContentTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
-import com.enonic.wem.api.content.type.form.SubTypeFetcher;
+import com.enonic.wem.api.content.type.form.MixinFetcher;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
-import com.enonic.wem.core.content.type.dao.SubTypeDao;
+import com.enonic.wem.core.content.type.dao.MixinDao;
 
 @Component
 public final class GetContentTypesHandler
@@ -21,7 +21,7 @@ public final class GetContentTypesHandler
 {
     private ContentTypeDao contentTypeDao;
 
-    private SubTypeDao subTypeDao;
+    private MixinDao mixinDao;
 
     public GetContentTypesHandler()
     {
@@ -44,12 +44,12 @@ public final class GetContentTypesHandler
             contentTypes = getContentTypes( session, contentTypeNames );
         }
 
-        if ( command.isSubTypeReferencesToFormItems() )
+        if ( command.isMixinReferencesToFormItems() )
         {
-            final SubTypeFetcher subTypeFetcher = new InternalSubTypeFetcher( subTypeDao, session );
+            final MixinFetcher mixinFetcher = new InternalMixinFetcher( mixinDao, session );
             for ( ContentType contentType : contentTypes )
             {
-                contentType.form().subTypeReferencesToFormItems( subTypeFetcher );
+                contentType.form().mixinReferencesToFormItems( mixinFetcher );
             }
         }
 
@@ -73,8 +73,8 @@ public final class GetContentTypesHandler
     }
 
     @Autowired
-    public void setSubTypeDao( final SubTypeDao subTypeDao )
+    public void setMixinDao( final MixinDao mixinDao )
     {
-        this.subTypeDao = subTypeDao;
+        this.mixinDao = mixinDao;
     }
 }

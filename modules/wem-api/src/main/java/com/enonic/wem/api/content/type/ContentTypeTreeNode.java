@@ -10,13 +10,13 @@ public final class ContentTypeTreeNode
 
     private final ContentType contentType;
 
-    private ImmutableList<ContentTypeTreeNode> subTypes;
+    private ImmutableList<ContentTypeTreeNode> contentTypeTreeNodes;
 
     ContentTypeTreeNode( final ContentTypeTreeNode parent, final ContentType contentType, final ContentTypeTreeNode... children )
     {
         this.parent = parent;
         this.contentType = contentType;
-        this.subTypes = ImmutableList.copyOf( children );
+        this.contentTypeTreeNodes = ImmutableList.copyOf( children );
     }
 
     public ContentTypeTreeNode parent()
@@ -26,13 +26,13 @@ public final class ContentTypeTreeNode
 
     public int size()
     {
-        return subTypes.size();
+        return contentTypeTreeNodes.size();
     }
 
     public int deepSize()
     {
         int deepSize = size();
-        for ( ContentTypeTreeNode contentTypeNode : subTypes )
+        for ( ContentTypeTreeNode contentTypeNode : contentTypeTreeNodes )
         {
             deepSize += contentTypeNode.deepSize();
         }
@@ -41,17 +41,17 @@ public final class ContentTypeTreeNode
 
     public boolean hasChildren()
     {
-        return !subTypes.isEmpty();
+        return !contentTypeTreeNodes.isEmpty();
     }
 
     public List<ContentTypeTreeNode> getChildren()
     {
-        return subTypes;
+        return contentTypeTreeNodes;
     }
 
     public ContentTypeTreeNode getFirstChild()
     {
-        return this.subTypes.isEmpty() ? null : this.subTypes.get( 0 );
+        return this.contentTypeTreeNodes.isEmpty() ? null : this.contentTypeTreeNodes.get( 0 );
     }
 
     public ContentType getContentType()
@@ -59,10 +59,11 @@ public final class ContentTypeTreeNode
         return contentType;
     }
 
-    public ContentTypeTreeNode add( final ContentType subType )
+    public ContentTypeTreeNode add( final ContentType contentType )
     {
-        final ContentTypeTreeNode newSubType = new ContentTypeTreeNode( this, subType );
-        subTypes = new ImmutableList.Builder<ContentTypeTreeNode>().addAll( subTypes ).add( newSubType ).build();
-        return newSubType;
+        final ContentTypeTreeNode contentTypeTreeNode = new ContentTypeTreeNode( this, contentType );
+        contentTypeTreeNodes =
+            new ImmutableList.Builder<ContentTypeTreeNode>().addAll( contentTypeTreeNodes ).add( contentTypeTreeNode ).build();
+        return contentTypeTreeNode;
     }
 }

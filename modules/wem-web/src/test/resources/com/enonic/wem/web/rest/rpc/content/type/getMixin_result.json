@@ -1,0 +1,26 @@
+{
+    "success": true,
+    "mixin": {
+        "name": "inputText1",
+        "module": "myModule",
+        "qualifiedName": "myModule:inputText1",
+        "displayName": null,
+        "Input": {
+            "name": "inputText1",
+            "label": "Line Text 1",
+            "immutable": false,
+            "occurrences": {
+                "minimum": 1,
+                "maximum": 1
+            },
+            "indexed": false,
+            "customText": null,
+            "validationRegexp": null,
+            "helpText": "Help text line 1",
+            "type": {
+                "name": "TextLine",
+                "builtIn": true
+            }
+        }
+    }
+}

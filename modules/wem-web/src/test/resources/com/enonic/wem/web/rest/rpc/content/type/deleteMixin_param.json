@@ -1,0 +1,4 @@
+{
+    "qualifiedMixinNames": ["my:existingMixinType", "my:notFoundMixin", "my:beingUsedMixin"]
+
+}

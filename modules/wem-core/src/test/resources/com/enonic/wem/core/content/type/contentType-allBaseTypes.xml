@@ -28,11 +28,11 @@
             </input>
           </items>
         </layout>
-        <sub-type-reference name="myCommonInput">
+        <mixin-reference name="myCommonInput">
           <name>myCommonInput</name>
           <reference>System:mySharedInput</reference>
-          <type>InputSubType</type>
-        </sub-type-reference>
+          <type>InputMixin</type>
+        </mixin-reference>
       </items>
     </form-item-set>
   </form>

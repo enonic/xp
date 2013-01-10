@@ -82,11 +82,11 @@ public class FormItems
                 FormItemSet formItemSet = (FormItemSet) foundConfig;
                 return formItemSet.getHierarchicalFormItem( path.asNewWithoutFirstPathElement() );
             }
-            else if ( foundConfig instanceof SubTypeReference )
+            else if ( foundConfig instanceof MixinReference )
             {
                 throw new IllegalArgumentException(
-                    "Cannot get formItem [" + path + "] because it's past a SubTypeReference [" + foundConfig +
-                        "], resolve the SubTypeReference first." );
+                    "Cannot get formItem [" + path + "] because it's past a MixinReference [" + foundConfig +
+                        "], resolve the MixinReference first." );
             }
             else
             {
@@ -146,14 +146,14 @@ public class FormItems
         return typeCast( getHierarchicalFormItem( path ), FormItemSet.class );
     }
 
-    public SubTypeReference getSubTypeReference( final String name )
+    public MixinReference getMixinReference( final String name )
     {
-        return typeCast( doGetFormItem( name ), SubTypeReference.class );
+        return typeCast( doGetFormItem( name ), MixinReference.class );
     }
 
-    public SubTypeReference getSubTypeReference( final FormItemPath path )
+    public MixinReference getMixinReference( final FormItemPath path )
     {
-        return typeCast( getHierarchicalFormItem( path ), SubTypeReference.class );
+        return typeCast( getHierarchicalFormItem( path ), MixinReference.class );
     }
 
     public Layout getLayout( final String name )
@@ -226,29 +226,29 @@ public class FormItems
         return copy;
     }
 
-    // TODO: Move method out of here and into it's own class SubTypeResolver?
-    public void subTypeReferencesToFormItems( final SubTypeFetcher subTypeFetcher )
+    // TODO: Move method out of here and into it's own class MixinResolver?
+    public void mixinReferencesToFormItems( final MixinFetcher mixinFetcher )
     {
         for ( final FormItem formItem : formItemByName.values() )
         {
-            if ( formItem instanceof SubTypeReference )
+            if ( formItem instanceof MixinReference )
             {
-                final SubTypeReference subTypeReference = (SubTypeReference) formItem;
-                final SubType subType = subTypeFetcher.getSubType( subTypeReference.getQualifiedSubTypeName() );
-                if ( subType != null )
+                final MixinReference mixinReference = (MixinReference) formItem;
+                final Mixin mixin = mixinFetcher.getMixin( mixinReference.getQualifiedMixinName() );
+                if ( mixin != null )
                 {
-                    Preconditions.checkArgument( subTypeReference.getSubTypeClass() == subType.getType(),
-                                                 "SubType expected to be of type %s: " + subType.getType().getSimpleName(),
-                                                 subTypeReference.getSubTypeClass().getSimpleName() );
+                    Preconditions.checkArgument( mixinReference.getMixinClass() == mixin.getType(),
+                                                 "Mixin expected to be of type %s: " + mixin.getType().getSimpleName(),
+                                                 mixinReference.getMixinClass().getSimpleName() );
 
-                    final FormItem formItemCreatedFromSubType = subType.toFormItem( subTypeReference );
-                    if ( formItemCreatedFromSubType instanceof FormItemSet )
+                    final FormItem formItemCreatedFromMixin = mixin.toFormItem( mixinReference );
+                    if ( formItemCreatedFromMixin instanceof FormItemSet )
                     {
-                        final FormItemSet set = (FormItemSet) formItemCreatedFromSubType;
-                        set.getFormItems().subTypeReferencesToFormItems( subTypeFetcher );
+                        final FormItemSet set = (FormItemSet) formItemCreatedFromMixin;
+                        set.getFormItems().mixinReferencesToFormItems( mixinFetcher );
                     }
 
-                    formItemByName.put( formItem.getName(), formItemCreatedFromSubType );
+                    formItemByName.put( formItem.getName(), formItemCreatedFromMixin );
                 }
             }
         }

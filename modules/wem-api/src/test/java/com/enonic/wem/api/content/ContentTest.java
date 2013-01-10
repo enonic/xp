@@ -13,11 +13,11 @@ import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.form.FieldSet;
 import com.enonic.wem.api.content.type.form.FormItemSet;
-import com.enonic.wem.api.content.type.form.FormItemSetSubType;
+import com.enonic.wem.api.content.type.form.FormItemSetMixin;
 import com.enonic.wem.api.content.type.form.Input;
-import com.enonic.wem.api.content.type.form.InputSubType;
-import com.enonic.wem.api.content.type.form.MockSubTypeFetcher;
-import com.enonic.wem.api.content.type.form.SubTypeReference;
+import com.enonic.wem.api.content.type.form.InputMixin;
+import com.enonic.wem.api.content.type.form.MixinReference;
+import com.enonic.wem.api.content.type.form.MockMixinFetcher;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 
@@ -29,10 +29,7 @@ import static com.enonic.wem.api.content.data.DataSet.newDataSet;
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.content.type.form.FormItemSetSubType.newFormItemSetSubType;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
-import static com.enonic.wem.api.content.type.form.InputSubType.newInputSubType;
-import static com.enonic.wem.api.content.type.form.SubTypeReference.newSubTypeReference;
 import static com.enonic.wem.api.content.type.form.inputtype.SingleSelectorConfig.newSingleSelectorConfig;
 import static com.enonic.wem.api.module.Module.newModule;
 import static org.junit.Assert.*;
@@ -254,17 +251,17 @@ public class ContentTest
     }
 
     @Test
-    public void tags_using_subType()
+    public void tags_using_mixin()
     {
         Module module = newModule().name( "system" ).build();
         Input input = newInput().name( "tags" ).label( "Tags" ).type( InputTypes.TEXT_LINE ).multiple( true ).build();
-        InputSubType inputSubType = newInputSubType().module( module.getName() ).input( input ).build();
-        MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
-        subTypeFetcher.add( inputSubType );
+        InputMixin inputMixin = InputMixin.newInputMixin().module( module.getName() ).input( input ).build();
+        MockMixinFetcher mixinFetcher = new MockMixinFetcher();
+        mixinFetcher.add( inputMixin );
 
         contentType.form().addFormItem(
-            SubTypeReference.newSubTypeReference().name( "myTags" ).subType( "system:tags" ).type( InputSubType.class ).build() );
-        contentType.form().subTypeReferencesToFormItems( subTypeFetcher );
+            MixinReference.newMixinReference().name( "myTags" ).mixin( "system:tags" ).type( InputMixin.class ).build() );
+        contentType.form().mixinReferencesToFormItems( mixinFetcher );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "myTags[0]", "Java" );
@@ -308,7 +305,7 @@ public class ContentTest
     }
 
     @Test
-    public void multiple_subtype()
+    public void multiple_mixin()
     {
         Input nameInput = newInput().name( "name" ).type( InputTypes.TEXT_LINE ).required( true ).build();
         contentType.form().addFormItem( nameInput );
@@ -437,30 +434,30 @@ public class ContentTest
     }
 
     @Test
-    public void subTypes()
+    public void mixins()
     {
         Module module = newModule().name( "myModule" ).build();
 
-        InputSubType postalCodeSubType = newInputSubType().module( module.getName() ).input(
+        InputMixin postalCodeMixin = InputMixin.newInputMixin().module( module.getName() ).input(
             newInput().name( "postalCode" ).type( InputTypes.TEXT_LINE ).build() ).build();
-        InputSubType countrySubType = newInputSubType().module( module.getName() ).input(
+        InputMixin countryMixin = InputMixin.newInputMixin().module( module.getName() ).input(
             newInput().name( "country" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig(
                 newSingleSelectorConfig().typeDropdown().addOption( "Norway", "NO" ).build() ).build() ).build();
 
-        FormItemSetSubType addressSubType = newFormItemSetSubType().module( module.getName() ).formItemSet(
+        FormItemSetMixin addressMixin = FormItemSetMixin.newFormItemSetMixin().module( module.getName() ).formItemSet(
             newFormItemSet().name( "address" ).add( newInput().name( "street" ).type( InputTypes.TEXT_LINE ).build() ).add(
-                newSubTypeReference( postalCodeSubType ).name( "postalCode" ).build() ).add(
+                MixinReference.newMixinReference( postalCodeMixin ).name( "postalCode" ).build() ).add(
                 newInput().name( "postalPlace" ).type( InputTypes.TEXT_LINE ).build() ).add(
-                newSubTypeReference( countrySubType ).name( "country" ).build() ).build() ).build();
+                MixinReference.newMixinReference( countryMixin ).name( "country" ).build() ).build() ).build();
 
         contentType.form().addFormItem( newInput().type( InputTypes.TEXT_LINE ).name( "name" ).build() );
-        contentType.form().addFormItem( newSubTypeReference( addressSubType ).name( "address" ).build() );
+        contentType.form().addFormItem( MixinReference.newMixinReference( addressMixin ).name( "address" ).build() );
 
-        MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
-        subTypeFetcher.add( postalCodeSubType );
-        subTypeFetcher.add( countrySubType );
-        subTypeFetcher.add( addressSubType );
-        contentType.form().subTypeReferencesToFormItems( subTypeFetcher );
+        MockMixinFetcher mixinFetcher = new MockMixinFetcher();
+        mixinFetcher.add( postalCodeMixin );
+        mixinFetcher.add( countryMixin );
+        mixinFetcher.add( addressMixin );
+        contentType.form().mixinReferencesToFormItems( mixinFetcher );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "name", "Ola Normann" );
@@ -477,22 +474,22 @@ public class ContentTest
     }
 
     @Test
-    public void subTypes_multiple()
+    public void mixins_multiple()
     {
         Module module = newModule().name( "myModule" ).build();
 
-        FormItemSetSubType addressSubType = newFormItemSetSubType().module( module.getName() ).formItemSet(
+        FormItemSetMixin addressMixin = FormItemSetMixin.newFormItemSetMixin().module( module.getName() ).formItemSet(
             newFormItemSet().name( "address" ).multiple( true ).add( newInput().type( InputTypes.TEXT_LINE ).name( "label" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "street" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "postalPlace" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "country" ).build() ).build() ).build();
 
-        contentType.form().addFormItem( newSubTypeReference( addressSubType ).name( "address" ).build() );
+        contentType.form().addFormItem( MixinReference.newMixinReference( addressMixin ).name( "address" ).build() );
 
-        MockSubTypeFetcher subTypeFetcher = new MockSubTypeFetcher();
-        subTypeFetcher.add( addressSubType );
-        contentType.form().subTypeReferencesToFormItems( subTypeFetcher );
+        MockMixinFetcher mixinFetcher = new MockMixinFetcher();
+        mixinFetcher.add( addressMixin );
+        contentType.form().mixinReferencesToFormItems( mixinFetcher );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "address[0].label", "Home" );
@@ -520,13 +517,13 @@ public class ContentTest
     }
 
     @Test
-    public void trying_to_set_data_to_a_fieldSetSubType_when_subType_is_missing()
+    public void trying_to_set_data_to_a_formItemSetMixin_when_mixin_is_missing()
     {
         contentType.form().addFormItem( newInput().type( InputTypes.TEXT_LINE ).name( "name" ).build() );
         contentType.form().addFormItem(
-            SubTypeReference.newSubTypeReference().name( "address" ).typeInput().subType( "myModule:myAddressSubType" ).build() );
+            MixinReference.newMixinReference().name( "address" ).typeInput().mixin( "myModule:myAddressMixin" ).build() );
 
-        contentType.form().subTypeReferencesToFormItems( new MockSubTypeFetcher() );
+        contentType.form().mixinReferencesToFormItems( new MockMixinFetcher() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.setData( "name", "Ola Normann" );

@@ -1,0 +1,23 @@
+{
+    "name": "myInput",
+    "module": "myModule",
+    "qualifiedName": "myModule:myInput",
+    "displayName": "My Mixin",
+    "Input": {
+        "name": "myInput",
+        "label": "My input",
+        "immutable": true,
+        "occurrences": {
+            "minimum": 1,
+            "maximum": 3
+        },
+        "indexed": true,
+        "customText": "Custom text",
+        "validationRegexp": null,
+        "helpText": "Help text",
+        "type": {
+            "name": "TextLine",
+            "builtIn": true
+        }
+    }
+}

@@ -60,21 +60,21 @@ public final class Form
             : formItems.getFormItemSet( new FormItemPath( path ) );
     }
 
-    public SubTypeReference getSubTypeReference( final FormItemPath path )
+    public MixinReference getMixinReference( final FormItemPath path )
     {
-        return formItems.getSubTypeReference( path );
+        return formItems.getMixinReference( path );
     }
 
-    public SubTypeReference getSubTypeReference( final String path )
+    public MixinReference getMixinReference( final String path )
     {
         return FormItemPath.hasNotPathElementDivider( path )
-            ? formItems.getSubTypeReference( path )
-            : formItems.getSubTypeReference( new FormItemPath( path ) );
+            ? formItems.getMixinReference( path )
+            : formItems.getMixinReference( new FormItemPath( path ) );
     }
 
-    public void subTypeReferencesToFormItems( final SubTypeFetcher subTypeFetcher )
+    public void mixinReferencesToFormItems( final MixinFetcher mixinFetcher )
     {
-        formItems.subTypeReferencesToFormItems( subTypeFetcher );
+        formItems.mixinReferencesToFormItems( mixinFetcher );
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.enonic.wem.api.command.account.AccountCommands;
 import com.enonic.wem.api.command.content.ContentCommands;
 import com.enonic.wem.api.command.content.relation.RelationshipTypeCommands;
 import com.enonic.wem.api.command.content.type.ContentTypeCommands;
-import com.enonic.wem.api.command.content.type.SubTypeCommands;
+import com.enonic.wem.api.command.content.type.MixinCommands;
 import com.enonic.wem.api.command.userstore.UserStoreCommands;
 
 public abstract class Commands
@@ -29,9 +29,9 @@ public abstract class Commands
         return new ContentTypeCommands();
     }
 
-    public static SubTypeCommands subType()
+    public static MixinCommands mixin()
     {
-        return new SubTypeCommands();
+        return new MixinCommands();
     }
 
     public static RelationshipTypeCommands relationshipType()

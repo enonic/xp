@@ -7,9 +7,9 @@ import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
 
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.content.type.form.FormItemSetSubType.newFormItemSetSubType;
+import static com.enonic.wem.api.content.type.form.FormItemSetMixin.newFormItemSetMixin;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
-import static com.enonic.wem.api.content.type.form.SubTypeReference.newSubTypeReference;
+import static com.enonic.wem.api.content.type.form.MixinReference.newMixinReference;
 import static org.junit.Assert.*;
 
 public class FormItemsTest
@@ -67,15 +67,15 @@ public class FormItemsTest
     }
 
     @Test
-    public void given_sub_type_with_a_input_inside_a_set_when_getFormItem_with_path_to_input_then_exception_is_thrown()
+    public void given_mixin_with_a_input_inside_a_set_when_getFormItem_with_path_to_input_then_exception_is_thrown()
     {
         // setup
         Input myInput = newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build();
         FormItemSet mySet = newFormItemSet().name( "mySet" ).add( myInput ).build();
-        FormItemSetSubType mySubType = newFormItemSetSubType().module( ModuleName.from( "myModule" ) ).formItemSet( mySet ).build();
+        FormItemSetMixin myMixin = newFormItemSetMixin().module( ModuleName.from( "myModule" ) ).formItemSet( mySet ).build();
 
         FormItems formItems = new FormItems();
-        formItems.add( newSubTypeReference().name( "mySet" ).typeInput().subType( mySubType.getQualifiedName() ).build() );
+        formItems.add( newMixinReference().name( "mySet" ).typeInput().mixin( myMixin.getQualifiedName() ).build() );
 
         // exercise & verify
         try
@@ -86,7 +86,7 @@ public class FormItemsTest
         {
             assertTrue( "Expected IllegalArgumentException", e instanceof IllegalArgumentException );
             assertEquals(
-                "Cannot get formItem [mySet.myInput] because it's past a SubTypeReference [mySet], resolve the SubTypeReference first.",
+                "Cannot get formItem [mySet.myInput] because it's past a MixinReference [mySet], resolve the MixinReference first.",
                 e.getMessage() );
         }
     }
