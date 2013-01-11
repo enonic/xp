@@ -33,16 +33,13 @@ Ext.define('Admin.controller.TopBarController', {
 
     loadDefaultApplication: function () {
         var defaultItem = {
-            id: 'app-02',
-            title: 'Dashboard',
-            cls: 'span2 dashboard',
-            iconCls: 'icon-metro-dashboard-24',
-            appUrl: 'app-dashboard.jsp',
-            defaultApp: true
+            id: 'app-1000',
+            name: 'Blank',
+            description: 'Ei veri vituperata cum, no habeo dicta diceret vis. Eirmod audiam efficiendi quo ne, et duo decore epicurei. In veri liber movet usu, posse lorem erroribus at usu. Mea in vidisse mentitum repudiare, invidunt sensibus adipiscing ea nec. Illud munere te sit, ad singulis definitionem his.',
+            appUrl: 'blank.html'
         };
         this.loadApplication(defaultItem);
     },
-
 
     loadApplication: function (selectedMenuItem) {
         var me = this,
