@@ -1,3 +1,3 @@
-3rd party framework and libraries only.
+Application graphics
 
 Remember to add license info to NOTICE.txt

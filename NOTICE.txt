@@ -1,6 +1,18 @@
 
 This software includes the following third party software:
 
+ExtJS (Open Source License)
+  GNU GPL license v3
+  http://www.sencha.com/products/extjs/license/
+
+PLUpload
+  GPLv2
+  http://www.plupload.com/license.php
+
+JavaScript InfoVis Toolkit
+  New BSD License
+  https://github.com/philogb/jit/blob/master/LICENSE
+
 JQuery
   MIT License
   http://jquery.org/license
