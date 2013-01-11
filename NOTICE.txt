@@ -1,0 +1,20 @@
+
+This software includes the following third party software:
+
+JQuery
+  MIT License
+  http://jquery.org/license
+
+JQuery UI
+  MIT License
+  http://jquery.org/license
+
+Code Mirror
+  MIT-style license
+  http://codemirror.net/LICENSE
+
+Icon Experience (M-Collection)
+  http://www.iconexperience.com/m_collection/license/
+
+Icon Experience (V-Collection)
+  http://www.iconexperience.com/v_collection/license/
