@@ -48,18 +48,18 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
 
 
     /**
-     * TODO: Refactor! Move to another object, ContentDataBuilder
+     * TODO: Refactor! The following should be moved to another object soon
      */
     buildContentData: function () {
-        var me = this;
-        var contentData = {};
-        var formItems = me.items.items;
+        var me = this,
+            formItems = me.items.items,
+            contentData = {};
 
         Ext.Array.each(formItems, function (item) {
             if (item.getXType() === 'FormItemSet') {
-                me.addFormItemSetContentData(item, contentData, '');
+                me.addDataFromFormItemSet(item, contentData, '');
             } else if (item.getXType() === 'FieldSetLayout') {
-                me.addLayoutData(item, contentData);
+                me.addDataFromLayout(item, contentData);
             } else {
                 contentData[item.name] = item.getValue();
             }
@@ -69,16 +69,16 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     },
 
 
-    addLayoutData: function (layoutComponent, contentData) {
+    addDataFromLayout: function (layoutComponent, contentData) {
         var me = this;
         var items = layoutComponent.items.items;
         var path = '';
 
         Ext.Array.each(items, function (item, index) {
             if (item.getXType() === 'FormItemSet') {
-                me.addFormItemSetContentData(item, contentData, path);
+                me.addDataFromFormItemSet(item, contentData, path);
             } else if (item.getXType() === 'FieldSetLayout') {
-                me.addLayoutData(item, contentData);
+                me.addDataFromLayout(item, contentData);
             } else {
                 if (item.cls !== 'header') {
                     contentData[item.name] = item.getValue();
@@ -89,9 +89,9 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     },
 
 
-    addFormItemSetContentData: function (formItemSetComponent, contentData, parentPath) {
+    addDataFromFormItemSet: function (itemSetComponent, contentData, parentPath) {
         var me = this;
-        var blocks = me.getFormItemSetBlocks(formItemSetComponent),
+        var blocks = me.getFormItemSetBlocks(itemSetComponent),
             blockItems,
             path;
 
@@ -106,15 +106,16 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
                     path = parentPath + '.'; // Eg. contact_info[0].
                 }
 
-                path = path.concat(formItemSetComponent.name, '[', index, ']');
+                path = path.concat(itemSetComponent.name, '[', index, ']');
 
                 if (item.getXType() === 'FormItemSet') {
-                    me.addFormItemSetContentData(item, contentData, path);
+                    me.addDataFromFormItemSet(item, contentData, path);
                 } else if (item.getXType() === 'FieldSetLayout') {
-                    me.addLayoutData(item, contentData);
+                    me.addDataFromLayout(item, contentData);
                 } else {
                     if (item.cls !== 'header') {
-                        contentData[path.concat('.', item.name)] = item.getValue();
+                        path = path.concat('.', item.name);
+                        contentData[path] = item.getValue();
                     }
                 }
 
