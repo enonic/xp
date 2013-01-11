@@ -48,7 +48,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
 
 
     /**
-     * TODO: Refactor to a new class, ContentDataBuilder
+     * TODO: Refactor! Move to another object, ContentDataBuilder
      */
     buildContentData: function () {
         var me = this;
@@ -72,46 +72,52 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     addLayoutData: function (layoutComponent, contentData) {
         var me = this;
         var items = layoutComponent.items.items;
-        var layoutName = layoutComponent.name.concat('[0]');
+        var path = '';
 
         Ext.Array.each(items, function (item, index) {
             if (item.getXType() === 'FormItemSet') {
-                me.addFormItemSetContentData(item, contentData, layoutName);
+                me.addFormItemSetContentData(item, contentData, path);
             } else if (item.getXType() === 'FieldSetLayout') {
                 me.addLayoutData(item, contentData);
             } else {
                 if (item.cls !== 'header') {
-                    contentData[layoutName.concat('.', item.name)] = item.getValue();
+                    contentData[item.name] = item.getValue();
                 }
             }
+
         });
     },
 
 
-    addFormItemSetContentData: function (formItemSetComponent, contentData, parentName) {
+    addFormItemSetContentData: function (formItemSetComponent, contentData, parentPath) {
         var me = this;
-        var blocks = me.getFormItemSetBlocks(formItemSetComponent);
-        var formItemSetName = '';
+        var blocks = me.getFormItemSetBlocks(formItemSetComponent),
+            blockItems,
+            path;
 
         Ext.Array.each(blocks, function (block, index) {
 
-            var blockItems = block.items.items;
+            blockItems = block.items.items;
 
             Ext.Array.each(blockItems, function (item) {
-                if (parentName !== '') {
-                    formItemSetName = parentName + '.'; // Eg. contact_info[0]
+                path = '';
+
+                if (parentPath !== '') {
+                    path = parentPath + '.'; // Eg. contact_info[0].
                 }
-                formItemSetName = formItemSetName.concat(formItemSetComponent.name, '[', index, ']');
+
+                path = path.concat(formItemSetComponent.name, '[', index, ']');
 
                 if (item.getXType() === 'FormItemSet') {
-                    me.addFormItemSetContentData(item, contentData, formItemSetName);
+                    me.addFormItemSetContentData(item, contentData, path);
                 } else if (item.getXType() === 'FieldSetLayout') {
                     me.addLayoutData(item, contentData);
                 } else {
                     if (item.cls !== 'header') {
-                        contentData[formItemSetName.concat('.', item.name)] = item.getValue();
+                        contentData[path.concat('.', item.name)] = item.getValue();
                     }
                 }
+
             });
         });
     },
@@ -127,6 +133,5 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
 
         return blocks;
     }
-
 
 });
