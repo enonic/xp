@@ -47,4 +47,9 @@ public final class ContentCommands
     {
         return new GetContentVersion();
     }
+
+    public GenerateContentName generateContentName()
+    {
+        return new GenerateContentName();
+    }
 }
