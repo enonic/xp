@@ -78,6 +78,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                     var getContentTypeResponse, getContentResponse;
 
                     var getContentTypeCommand = {
+                        format: 'JSON',
                         contentType: selectedContent.get('type'),
                         mixinReferencesToFormItems: true
                     };
@@ -168,7 +169,11 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 };
                 var requestConfig = {
                     doTabRequest: function (handleRpcResponse) {
-                        Admin.lib.RemoteService.contentType_get({contentType: qualifiedContentType, mixinReferencesToFormItems: true},
+                        Admin.lib.RemoteService.contentType_get({
+                                format: 'JSON',
+                                contentType: qualifiedContentType,
+                                mixinReferencesToFormItems: true
+                            },
                             function (rpcResponse) {
                                 if (rpcResponse.success) {
                                     handleRpcResponse(rpcResponse);

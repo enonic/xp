@@ -16,6 +16,10 @@ public final class GetContentTypeRpcHandler
     extends AbstractDataRpcHandler
 {
 
+    public static final String FORMAT_XML = "XML";
+
+    public static final String FORMAT_JSON = "JSON";
+
     public GetContentTypeRpcHandler()
     {
         super( "contentType_get" );
@@ -25,6 +29,7 @@ public final class GetContentTypeRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
+        final String format = context.param( "format" ).required().asString();
         final QualifiedContentTypeName qualifiedName = new QualifiedContentTypeName( context.param( "contentType" ).required().asString() );
         final GetContentTypes getContentTypes = Commands.contentType().get().names( QualifiedContentTypeNames.from( qualifiedName ) );
         getContentTypes.mixinReferencesToFormItems( context.param( "mixinReferencesToFormItems" ).asBoolean( false ) );
@@ -32,7 +37,14 @@ public final class GetContentTypeRpcHandler
 
         if ( !result.isEmpty() )
         {
-            context.setResult( new GetContentTypeRpcJsonResult( result.first() ) );
+            if ( format.equalsIgnoreCase( FORMAT_JSON ) )
+            {
+                context.setResult( new GetContentTypeRpcJsonResult( result.first() ) );
+            }
+            else if ( format.equalsIgnoreCase( FORMAT_XML ) )
+            {
+                context.setResult( new GetContentTypeConfigRpcJsonResult( result.first() ) );
+            }
         }
         else
         {

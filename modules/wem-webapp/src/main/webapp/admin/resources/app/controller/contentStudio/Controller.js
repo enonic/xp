@@ -79,7 +79,10 @@ Ext.define('Admin.controller.contentStudio.Controller', {
 
         if (contentType && !forceNew) {
             tabPanel.el.mask();
-            Admin.lib.RemoteService.contentType_getConfig({"qualifiedContentTypeName": [contentType.get('qualifiedName')]}, function (r) {
+            Admin.lib.RemoteService.contentType_get({
+                "format": "XML",
+                "contentType": [contentType.get('qualifiedName')]
+            }, function (r) {
                 tabPanel.el.unmask();
                 if (r) {
                     contentType.raw.configXML = r.contentTypeXml;
