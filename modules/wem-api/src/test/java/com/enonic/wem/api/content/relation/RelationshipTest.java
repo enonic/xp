@@ -5,7 +5,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.MockContentId;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.module.ModuleName;
 
@@ -27,8 +27,8 @@ public class RelationshipTest
         RelationshipType type = typeBuilder.build();
 
         final Relationship.Builder relationBuilder = Relationship.newRelation();
-        relationBuilder.from( ContentPath.from( "a" ) );
-        relationBuilder.to( ContentPath.from( "b" ) );
+        relationBuilder.from( MockContentId.from( "a" ) );
+        relationBuilder.to( MockContentId.from( "b" ) );
         relationBuilder.createdTime( DateTime.parse( "2012-01-01T12:00:00" ) );
         relationBuilder.creator( UserKey.user( "myStore:myUser" ) );
         relationBuilder.type( type );

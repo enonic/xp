@@ -6,7 +6,7 @@ import java.util.Properties;
 import org.joda.time.DateTime;
 
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.EntryPath;
 
 public final class Relationship
@@ -18,15 +18,15 @@ public final class Relationship
     private boolean managed;
 
     /**
-     * Path to the data in the fromContent that is managing this relationship.
+     * Path to the Entry in the fromContent that is managing this relationship.
      */
     private EntryPath managingData;
 
     private final RelationshipType type;
 
-    private final ContentPath fromContent;
+    private final ContentId fromContent;
 
-    private final ContentPath toContent;
+    private final ContentId toContent;
 
     private final DateTime createdTime;
 
@@ -49,12 +49,12 @@ public final class Relationship
         return type;
     }
 
-    public ContentPath getFromContent()
+    public ContentId getFromContent()
     {
         return fromContent;
     }
 
-    public ContentPath getToContent()
+    public ContentId getToContent()
     {
         return toContent;
     }
@@ -78,9 +78,9 @@ public final class Relationship
     {
         private RelationshipType type;
 
-        private ContentPath fromContent;
+        private ContentId fromContent;
 
-        private ContentPath toContent;
+        private ContentId toContent;
 
         private DateTime createdTime;
 
@@ -92,13 +92,13 @@ public final class Relationship
             return this;
         }
 
-        public Builder from( ContentPath value )
+        public Builder from( ContentId value )
         {
             this.fromContent = value;
             return this;
         }
 
-        public Builder to( ContentPath value )
+        public Builder to( ContentId value )
         {
             this.toContent = value;
             return this;

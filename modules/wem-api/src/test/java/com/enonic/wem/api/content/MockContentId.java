@@ -1,8 +1,6 @@
-package com.enonic.wem.web.rest.rpc.content;
+package com.enonic.wem.api.content;
 
 import com.google.common.base.Preconditions;
-
-import com.enonic.wem.api.content.ContentId;
 
 public final class MockContentId
     implements ContentId
@@ -49,7 +47,7 @@ public final class MockContentId
         return id;
     }
 
-    static ContentId from( final String id )
+    public static ContentId from( final String id )
     {
         return new MockContentId( id );
     }

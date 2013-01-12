@@ -14,6 +14,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.MockContentId;
 import com.enonic.wem.api.exception.ContentNotFoundException;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
