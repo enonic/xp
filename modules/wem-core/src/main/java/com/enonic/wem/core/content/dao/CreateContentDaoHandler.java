@@ -5,8 +5,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
@@ -16,7 +14,7 @@ import com.enonic.wem.core.jcr.JcrConstants;
 
 import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENTS_PATH;
 import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_NEXT_VERSION_PROPERTY;
-import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_VERSION_HISTORY_PATH;
+import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_VERSION_HISTORY_NODE;
 import static org.apache.jackrabbit.JcrConstants.NT_UNSTRUCTURED;
 
 
@@ -48,7 +46,7 @@ final class CreateContentDaoHandler
                 throw new ContentAlreadyExistException( path );
             }
             newContentNode = addContentToJcr( content, contentsNode );
-            final Node contentVersionHistoryParent = createContentVersionHistory( content, contentsNode );
+            final Node contentVersionHistoryParent = createContentVersionHistory( content, newContentNode );
             addContentVersion( content, contentVersionHistoryParent );
         }
         else
@@ -63,7 +61,7 @@ final class CreateContentDaoHandler
                 throw new ContentAlreadyExistException( path );
             }
             newContentNode = addContentToJcr( content, parentContentNode );
-            final Node contentVersionHistoryParent = createContentVersionHistory( content, parentContentNode );
+            final Node contentVersionHistoryParent = createContentVersionHistory( content, newContentNode );
             addContentVersion( content, contentVersionHistoryParent );
         }
         return ContentIdFactory.from( newContentNode );
@@ -77,11 +75,10 @@ final class CreateContentDaoHandler
         return newContentNode;
     }
 
-    private Node createContentVersionHistory( final Content content, final Node parentNode )
+    private Node createContentVersionHistory( final Content content, final Node contentNode )
         throws RepositoryException
     {
-        final String parentPath = CONTENT_VERSION_HISTORY_PATH + StringUtils.substringAfter( parentNode.getPath(), CONTENTS_PATH );
-        final Node contentVersionNode = session.getNode( "/" + parentPath ).addNode( content.getName(), NT_UNSTRUCTURED );
+        final Node contentVersionNode = contentNode.addNode( CONTENT_VERSION_HISTORY_NODE, NT_UNSTRUCTURED );
         contentVersionNode.setProperty( CONTENT_NEXT_VERSION_PROPERTY, content.getVersionId().id() + 1 );
         return contentVersionNode;
     }

@@ -44,9 +44,6 @@
 
 [wem:content] > wem:base, nt:unstructured, mix:referenceable
 
-[wem:contentsVersionHistory] > wem:base
-+ * (nt:unstructured)
-
 [wem:contents] > wem:base
 + * (wem:content)
 

@@ -18,7 +18,7 @@ import com.enonic.wem.core.jcr.JcrConstants;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENTS_PATH;
-import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_VERSION_HISTORY_PATH;
+import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_VERSION_HISTORY_NODE;
 import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_VERSION_PREFIX;
 import static com.enonic.wem.core.jcr.JcrHelper.getNodeOrNull;
 import static org.apache.commons.lang.StringUtils.substringAfter;
@@ -41,6 +41,10 @@ abstract class AbstractContentDaoHandler
         while ( nodeIterator.hasNext() )
         {
             final Node contentNode = nodeIterator.nextNode();
+            if ( contentNode.getName().equals( ContentDaoConstants.CONTENT_VERSION_HISTORY_NODE ) )
+            {
+                continue;
+            }
             final String jcrNodePath = contentNode.getPath();
             final String contentPath = substringAfter( jcrNodePath, CONTENTS_PATH );
             final Content.Builder contentBuilder = newContent().path( ContentPath.from( contentPath ) );
@@ -128,8 +132,7 @@ abstract class AbstractContentDaoHandler
     protected Node getContentVersionHistoryNode( final Node contentNode )
         throws RepositoryException
     {
-        final String contentVersionPath = "/" + CONTENT_VERSION_HISTORY_PATH + substringAfter( contentNode.getPath(), CONTENTS_PATH );
-        return session.getNode( contentVersionPath );
+        return contentNode.getNode( CONTENT_VERSION_HISTORY_NODE );
     }
 
     protected Node addContentVersion( final Content content, final Node contentVersionParent )

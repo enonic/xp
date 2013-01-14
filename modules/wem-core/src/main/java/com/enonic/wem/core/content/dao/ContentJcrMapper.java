@@ -13,7 +13,7 @@ import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.core.content.data.ContentDataJsonSerializer;
 
 import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENTS_PATH;
-import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_VERSION_HISTORY_PATH;
+import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_VERSION_HISTORY_NODE;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyLong;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyString;
@@ -97,18 +97,15 @@ final class ContentJcrMapper
     private ContentPath getPathFromNode( final Node contentNode )
         throws RepositoryException
     {
-        final String contentNodePath = contentNode.getPath();
-        if ( contentNodePath.startsWith( "/" + CONTENTS_PATH ) )
+        final String contentNodePath;
+        if ( contentNode.getParent().getName().equals( CONTENT_VERSION_HISTORY_NODE ) )
         {
-            return ContentPath.from( substringAfter( contentNodePath, CONTENTS_PATH ) );
-        }
-        else if ( contentNodePath.startsWith( "/" + CONTENT_VERSION_HISTORY_PATH ) )
-        {
-            return ContentPath.from( substringAfter( contentNode.getParent().getPath(), CONTENT_VERSION_HISTORY_PATH ) );
+            contentNodePath = contentNode.getParent().getParent().getPath();
         }
         else
         {
-            throw new IllegalArgumentException( "Invalid content node path" );
+            contentNodePath = contentNode.getPath();
         }
+        return ContentPath.from( substringAfter( contentNodePath, CONTENTS_PATH ) );
     }
 }
