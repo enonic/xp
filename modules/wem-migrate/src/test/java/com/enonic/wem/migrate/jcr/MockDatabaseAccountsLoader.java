@@ -44,7 +44,7 @@ public class MockDatabaseAccountsLoader
             final List<String> lines = readDataFile( "users.csv" );
             final List<Map<String, Object>> dataRows =
                 parseLines( lines, "USR_HKEY", "USR_SUID", "USR_SFULLNAME", "USR_DTETIMESTAMP", "USR_UT_LKEY", "USR_DOM_LKEY",
-                            "USR_SSYNCVALUE", "USR_SEMAIL", "USR_SPASSWORD", "USR_GRP_HKEY", "USR_PHOTO", "USR_BISDELETED" );
+                            "USR_SSYNCVALUE2", "USR_SEMAIL", "USR_SPASSWORD", "USR_GRP_HKEY", "USR_PHOTO", "USR_BISDELETED" );
             for ( Map<String, Object> dataRow : dataRows )
             {
                 Map<String, Object> fields = userFields.get( dataRow.get( "USR_HKEY" ) );

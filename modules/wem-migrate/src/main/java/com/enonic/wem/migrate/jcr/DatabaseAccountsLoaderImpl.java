@@ -41,7 +41,7 @@ public class DatabaseAccountsLoaderImpl
     public void loadUsers( ImportDataCallbackHandler handler )
     {
         final String sql = "SELECT USR_HKEY, USR_SUID, USR_SFULLNAME, USR_DTETIMESTAMP, USR_UT_LKEY, " +
-            "USR_DOM_LKEY, USR_SSYNCVALUE, USR_SEMAIL, USR_SPASSWORD, USR_GRP_HKEY, USR_PHOTO, USR_BISDELETED FROM TUSER WHERE USR_BISDELETED = 0";
+            "USR_DOM_LKEY, USR_SSYNCVALUE2, USR_SEMAIL, USR_SPASSWORD, USR_GRP_HKEY, USR_PHOTO, USR_BISDELETED FROM TUSER WHERE USR_BISDELETED = 0";
 
         final List<Map<String, Object>> userRows = jdbcTemplate.queryForList( sql );
         LOG.info( userRows.size() + " users retrieved." );
