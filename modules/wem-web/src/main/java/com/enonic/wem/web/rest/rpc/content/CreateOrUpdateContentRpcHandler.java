@@ -7,6 +7,7 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.UpdateContents;
+import com.enonic.wem.api.command.content.type.GetContentTypes;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
@@ -40,54 +41,72 @@ public final class CreateOrUpdateContentRpcHandler
     {
         final QualifiedContentTypeName qualifiedContentTypeName =
             new QualifiedContentTypeName( context.param( "qualifiedContentTypeName" ).required().asString() );
-        ContentPath contentPath = ContentPath.from( context.param( "contentPath" ).required().asString() );
+        final ContentPath contentPath = ContentPath.from( context.param( "contentPath" ).required().asString() );
         final String displayName = context.param( "displayName" ).required().asString();
 
-        final ContentType contentType =
-            client.execute( Commands.contentType().get().names( QualifiedContentTypeNames.from( qualifiedContentTypeName ) ) ).first();
+        final ContentType contentType = getContentType( qualifiedContentTypeName );
 
         final ContentData contentData = new ContentDataParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
 
         if ( !contentExists( contentPath ) )
         {
-            ContentPathNameGenerator contentPathNameGenerator = new ContentPathNameGenerator();
-            ContentPath parentPath = contentPath.getParentPath();
-            if ( parentPath == null )
-            {
-                parentPath = ContentPath.ROOT;
-            }
-            contentPath = ContentPath.from( parentPath, contentPathNameGenerator.generatePathName( displayName ) );
-
-            final CreateContent createContent = Commands.content().create();
-            createContent.contentPath( contentPath );
-            createContent.contentType( qualifiedContentTypeName );
-            createContent.contentData( contentData );
-            createContent.displayName( displayName );
-            createContent.owner( AccountKey.anonymous() );
-            try
-            {
-                client.execute( createContent );
-                context.setResult( CreateOrUpdateContentJsonResult.created() );
-            }
-            catch ( ContentNotFoundException e )
-            {
-                context.setResult(
-                    new JsonErrorResult( "Unable to create content. Path [{0}] does not exist", contentPath.getParentPath().toString() ) );
-            }
-            catch ( ContentAlreadyExistException e )
-            {
-                context.setResult( new JsonErrorResult( "Content with path [{0}] already exists.", contentPath.toString() ) );
-            }
+            doCreateContent( context, qualifiedContentTypeName, contentPath, displayName, contentData );
         }
         else
         {
-            final UpdateContents updateContents = Commands.content().update();
-            updateContents.selectors( ContentPaths.from( contentPath ) );
-            updateContents.editor( composite( setContentData( contentData ), setContentDisplayName( displayName ) ) );
-            updateContents.modifier( AccountKey.anonymous() );
+            doUpdateContent( context, contentPath, displayName, contentData );
+        }
+    }
 
-            client.execute( updateContents );
-            context.setResult( CreateOrUpdateContentJsonResult.updated() );
+    private ContentType getContentType( final QualifiedContentTypeName qualifiedContentTypeName )
+    {
+        final GetContentTypes getContentTypes =
+            Commands.contentType().get().names( QualifiedContentTypeNames.from( qualifiedContentTypeName ) );
+        return client.execute( getContentTypes ).first();
+    }
+
+    private void doUpdateContent( final JsonRpcContext context, final ContentPath contentPath, final String displayName,
+                                  final ContentData contentData )
+    {
+        final UpdateContents updateContents = Commands.content().update();
+        updateContents.selectors( ContentPaths.from( contentPath ) );
+        updateContents.editor( composite( setContentData( contentData ), setContentDisplayName( displayName ) ) );
+        updateContents.modifier( AccountKey.anonymous() );
+
+        client.execute( updateContents );
+        context.setResult( CreateOrUpdateContentJsonResult.updated() );
+    }
+
+    private void doCreateContent( final JsonRpcContext context, final QualifiedContentTypeName qualifiedContentTypeName,
+                                  ContentPath contentPath, final String displayName, final ContentData contentData )
+    {
+        final ContentPathNameGenerator contentPathNameGenerator = new ContentPathNameGenerator();
+        ContentPath parentPath = contentPath.getParentPath();
+        if ( parentPath == null )
+        {
+            parentPath = ContentPath.ROOT;
+        }
+        contentPath = ContentPath.from( parentPath, contentPathNameGenerator.generatePathName( displayName ) );
+
+        final CreateContent createContent = Commands.content().create();
+        createContent.contentPath( contentPath );
+        createContent.contentType( qualifiedContentTypeName );
+        createContent.contentData( contentData );
+        createContent.displayName( displayName );
+        createContent.owner( AccountKey.anonymous() );
+        try
+        {
+            client.execute( createContent );
+            context.setResult( CreateOrUpdateContentJsonResult.created() );
+        }
+        catch ( ContentNotFoundException e )
+        {
+            context.setResult(
+                new JsonErrorResult( "Unable to create content. Path [{0}] does not exist", contentPath.getParentPath().toString() ) );
+        }
+        catch ( ContentAlreadyExistException e )
+        {
+            context.setResult( new JsonErrorResult( "Content with path [{0}] already exists.", contentPath.toString() ) );
         }
     }
 
