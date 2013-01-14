@@ -279,7 +279,7 @@ public class JcrAccountsImporter
         final Date lastModified = (Date) userFields.get( "USR_DTETIMESTAMP" );
         final byte[] photo = (byte[]) userFields.get( "USR_PHOTO" );
         final String key = (String) userFields.get( "USR_HKEY" );
-        final String syncValue = (String) userFields.get( "USR_SSYNCVALUE" );
+        final String syncValue = (String) userFields.get( "USR_SSYNCVALUE2" );
         final UserType userType = UserType.getByKey( (Integer) userFields.get( "USR_UT_LKEY" ) );
 
         final UserAccount user = UserAccount.create( userStoreName + ":" + userName );
