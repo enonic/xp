@@ -16,7 +16,7 @@ import gherkin.formatter.model.DataTableRow;
 import com.enonic.wem.api.content.type.form.FormItemPath;
 import com.enonic.wem.api.content.type.form.FormItemType;
 import com.enonic.wem.api.content.type.form.Input;
-import com.enonic.wem.api.content.type.form.InputMixin;
+import com.enonic.wem.api.content.type.form.Mixin;
 import com.enonic.wem.api.content.type.form.MixinReference;
 import com.enonic.wem.api.content.type.form.MockMixinFetcher;
 import com.enonic.wem.api.content.type.form.QualifiedMixinName;
@@ -25,7 +25,7 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleName;
 
 import static com.enonic.wem.api.content.type.form.Input.newInput;
-import static com.enonic.wem.api.content.type.form.InputMixin.newInputMixin;
+import static com.enonic.wem.api.content.type.form.Mixin.newMixin;
 
 public class ContentTypeStepDefs
 {
@@ -37,7 +37,7 @@ public class ContentTypeStepDefs
 
     public final Map<String, Input> inputByName = new HashMap<String, Input>();
 
-    public final Map<QualifiedMixinName, InputMixin> inputMixinByQualifiedName = new HashMap<QualifiedMixinName, InputMixin>();
+    public final Map<QualifiedMixinName, Mixin> inputMixinByQualifiedName = new HashMap<QualifiedMixinName, Mixin>();
 
 
     @Given("^a Module named (.+)$")
@@ -60,7 +60,7 @@ public class ContentTypeStepDefs
     public void a_inputMixin_named_name_in_module_module_having_input( String mixinName, String moduleName, String inputName )
         throws Throwable
     {
-        InputMixin inputMixin = newInputMixin().module( ModuleName.from( moduleName ) ).input( inputByName.get( inputName ) ).build();
+        Mixin inputMixin = newMixin().module( ModuleName.from( moduleName ) ).formItem( inputByName.get( inputName ) ).build();
         inputMixinByQualifiedName.put( new QualifiedMixinName( moduleName, mixinName ), inputMixin );
     }
 
@@ -78,7 +78,7 @@ public class ContentTypeStepDefs
         throws Throwable
     {
 
-        InputMixin inputMixin = inputMixinByQualifiedName.get( new QualifiedMixinName( mixinQualifiedName ) );
+        Mixin inputMixin = inputMixinByQualifiedName.get( new QualifiedMixinName( mixinQualifiedName ) );
         ContentType contentType = contentTypeByName.get( contentTypeName );
         contentType.form().addFormItem( MixinReference.newMixinReference( inputMixin ).name( mixinReferenceName ).build() );
 

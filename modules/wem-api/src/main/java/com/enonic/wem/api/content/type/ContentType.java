@@ -3,6 +3,8 @@ package com.enonic.wem.api.content.type;
 
 import java.util.List;
 
+import org.joda.time.DateTime;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -16,6 +18,7 @@ import com.enonic.wem.api.module.ModuleName;
 import static com.enonic.wem.api.content.type.form.Form.newForm;
 
 public final class ContentType
+    implements BaseType
 {
     private final String name;
 
@@ -31,6 +34,10 @@ public final class ContentType
 
     private final Form form;
 
+    private final DateTime createdTime;
+
+    private final DateTime modifiedTime;
+
     private ContentType( final Builder builder )
     {
         Preconditions.checkNotNull( builder.name, "Name cannot be null in ContentType" );
@@ -41,6 +48,8 @@ public final class ContentType
         this.isAbstract = builder.isAbstract;
         this.isFinal = builder.isFinal;
         this.moduleName = builder.moduleName;
+        this.createdTime = builder.createdTime;
+        this.modifiedTime = builder.modifiedTime;
         this.form = builder.buildForm();
     }
 
@@ -77,6 +86,16 @@ public final class ContentType
     public ModuleName getModuleName()
     {
         return moduleName;
+    }
+
+    public DateTime getCreatedTime()
+    {
+        return createdTime;
+    }
+
+    public DateTime getModifiedTime()
+    {
+        return modifiedTime;
     }
 
     public Form form()
@@ -124,6 +143,10 @@ public final class ContentType
 
         private QualifiedContentTypeName superType;
 
+        private DateTime createdTime;
+
+        private DateTime modifiedTime;
+
         private Builder()
         {
             formItemList = Lists.newArrayList();
@@ -138,6 +161,8 @@ public final class ContentType
             this.isFinal = source.isFinal();
             this.superType = source.getSuperType();
             this.formItemList = Lists.newArrayList( source.form().copy().formItemIterable() );
+            this.createdTime = source.createdTime;
+            this.modifiedTime = source.modifiedTime;
         }
 
         public Builder qualifiedName( final QualifiedContentTypeName qualifiedContentTypeName )
@@ -192,6 +217,18 @@ public final class ContentType
         public Builder superType( final QualifiedContentTypeName superType )
         {
             this.superType = superType;
+            return this;
+        }
+
+        public Builder createdTime( final DateTime value )
+        {
+            this.createdTime = value;
+            return this;
+        }
+
+        public Builder modifiedTime( final DateTime value )
+        {
+            this.modifiedTime = value;
             return this;
         }
 

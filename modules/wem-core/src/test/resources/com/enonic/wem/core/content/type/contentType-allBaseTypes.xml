@@ -31,7 +31,7 @@
         <mixin-reference name="myCommonInput">
           <name>myCommonInput</name>
           <reference>System:mySharedInput</reference>
-          <type>InputMixin</type>
+          <type>Input</type>
         </mixin-reference>
       </items>
     </form-item-set>

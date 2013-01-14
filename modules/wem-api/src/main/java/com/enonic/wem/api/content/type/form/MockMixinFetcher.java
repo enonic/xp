@@ -14,12 +14,7 @@ public class MockMixinFetcher
         return mixinMap.get( qualifiedName );
     }
 
-    public void add( final FormItemSetMixin mixin )
-    {
-        mixinMap.put( mixin.getQualifiedName(), mixin );
-    }
-
-    public void add( final InputMixin mixin )
+    public void add( final Mixin mixin )
     {
         mixinMap.put( mixin.getQualifiedName(), mixin );
     }

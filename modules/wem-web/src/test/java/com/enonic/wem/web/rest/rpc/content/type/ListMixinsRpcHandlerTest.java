@@ -6,7 +6,6 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.type.Mixins;
 import com.enonic.wem.api.content.type.form.Input;
-import com.enonic.wem.api.content.type.form.InputMixin;
 import com.enonic.wem.api.content.type.form.Mixin;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
@@ -40,22 +39,22 @@ public class ListMixinsRpcHandlerTest
     public void testListMixins()
         throws Exception
     {
-        final Input inputText1 = newInput().name( "inputText1" ).type( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
+        Input inputText1 = newInput().name( "inputText1" ).type( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
             "Help text line 1" ).required( true ).build();
-        final Mixin mixin1 = InputMixin.newInputMixin().
+        Mixin mixin1 = Mixin.newMixin().
             module( ModuleName.from( "myModule" ) ).
-            input( inputText1 ).
+            formItem( inputText1 ).
             build();
 
-        final Input textArea1 =
+        Input textArea1 =
             newInput().name( "textArea1" ).type( TEXT_AREA ).label( "Text Area" ).required( true ).helpText( "Help text area" ).required(
                 true ).build();
-        final Mixin mixin2 = InputMixin.newInputMixin().
+        Mixin mixin2 = Mixin.newMixin().
             module( ModuleName.from( "otherModule" ) ).
-            input( textArea1 ).
+            formItem( textArea1 ).
             build();
 
-        final Mixins mixins = Mixins.from( mixin1, mixin2 );
+        Mixins mixins = Mixins.from( mixin1, mixin2 );
         Mockito.when( client.execute( mixin().get().all() ) ).thenReturn( mixins );
 
         testSuccess( "listMixins_result.json" );

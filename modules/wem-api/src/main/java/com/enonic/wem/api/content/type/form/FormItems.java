@@ -237,8 +237,8 @@ public class FormItems
                 final Mixin mixin = mixinFetcher.getMixin( mixinReference.getQualifiedMixinName() );
                 if ( mixin != null )
                 {
-                    Preconditions.checkArgument( mixinReference.getMixinClass() == mixin.getType(),
-                                                 "Mixin expected to be of type %s: " + mixin.getType().getSimpleName(),
+                    Preconditions.checkArgument( mixinReference.getMixinClass() == mixin.getFormItem().getClass(),
+                                                 "Mixin expected to be of type %s: " + mixin.getFormItem().getClass().getSimpleName(),
                                                  mixinReference.getMixinClass().getSimpleName() );
 
                     final FormItem formItemCreatedFromMixin = mixin.toFormItem( mixinReference );

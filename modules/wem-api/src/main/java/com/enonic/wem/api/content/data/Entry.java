@@ -88,7 +88,7 @@ public abstract class Entry
         if ( !( this instanceof Data ) )
         {
             throw new IllegalArgumentException(
-                "This entry at path [" + getPath().toString() + "] is not a Data: " + this.getClass().getSimpleName() );
+                "This Entry at path [" + getPath().toString() + "] is not a Data: " + this.getClass().getSimpleName() );
         }
         return (Data) this;
     }
@@ -100,7 +100,7 @@ public abstract class Entry
 
     public DataSet toDataSet()
     {
-        Preconditions.checkArgument( isDataSet(), "This entry at path [%s] not a DataSet: " + this.getClass().getSimpleName(),
+        Preconditions.checkArgument( isDataSet(), "This Entry at path [%s] not a DataSet: " + this.getClass().getSimpleName(),
                                      getPath().toString() );
         return (DataSet) this;
     }

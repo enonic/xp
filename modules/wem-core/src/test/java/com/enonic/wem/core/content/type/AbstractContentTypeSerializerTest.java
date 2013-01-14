@@ -7,10 +7,9 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.form.FieldSet;
 import com.enonic.wem.api.content.type.form.FormItemSet;
-import com.enonic.wem.api.content.type.form.FormItemSetMixin;
 import com.enonic.wem.api.content.type.form.Input;
-import com.enonic.wem.api.content.type.form.InputMixin;
 import com.enonic.wem.api.content.type.form.Layout;
+import com.enonic.wem.api.content.type.form.Mixin;
 import com.enonic.wem.api.content.type.form.MixinReference;
 import com.enonic.wem.api.content.type.form.MockMixinFetcher;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
@@ -22,8 +21,8 @@ import com.enonic.wem.core.AbstractSerializerTest;
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.content.type.form.FormItemSetMixin.newFormItemSetMixin;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
+import static com.enonic.wem.api.content.type.form.Mixin.newMixin;
 import static com.enonic.wem.api.content.type.form.MixinReference.newMixinReference;
 import static com.enonic.wem.api.module.Module.newModule;
 import static org.junit.Assert.*;
@@ -53,9 +52,8 @@ public abstract class AbstractContentTypeSerializerTest
     public void given_all_base_types_when_parsed_then_paths_are_as_expected()
         throws Exception
     {
-        InputMixin inputMixin =
-            InputMixin.newInputMixin().input( Input.newInput().name( "mySharedInput" ).type( InputTypes.TEXT_LINE ).build() ).module(
-                Module.SYSTEM.getName() ).build();
+        Mixin inputMixin = newMixin().formItem( Input.newInput().name( "mySharedInput" ).type( InputTypes.TEXT_LINE ).build() ).module(
+            Module.SYSTEM.getName() ).build();
         FormItemSet set = newFormItemSet().name( "mySet" ).build();
         Layout layout = FieldSet.newFieldSet().label( "My field set" ).name( "myFieldSet" ).add(
             newInput().name( "myTextLine" ).type( InputTypes.TEXT_LINE ).build() ).build();
@@ -167,7 +165,7 @@ public abstract class AbstractContentTypeSerializerTest
     public void parse_mixin()
     {
         // setup
-        FormItemSetMixin mixin = newFormItemSetMixin().module( ModuleName.from( "myModule" ) ).formItemSet(
+        Mixin mixin = newMixin().module( ModuleName.from( "myModule" ) ).formItem(
             newFormItemSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(

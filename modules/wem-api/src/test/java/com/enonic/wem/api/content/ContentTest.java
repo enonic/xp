@@ -13,10 +13,8 @@ import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.form.FieldSet;
 import com.enonic.wem.api.content.type.form.FormItemSet;
-import com.enonic.wem.api.content.type.form.FormItemSetMixin;
 import com.enonic.wem.api.content.type.form.Input;
-import com.enonic.wem.api.content.type.form.InputMixin;
-import com.enonic.wem.api.content.type.form.MixinReference;
+import com.enonic.wem.api.content.type.form.Mixin;
 import com.enonic.wem.api.content.type.form.MockMixinFetcher;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
@@ -30,6 +28,8 @@ import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
+import static com.enonic.wem.api.content.type.form.Mixin.newMixin;
+import static com.enonic.wem.api.content.type.form.MixinReference.newMixinReference;
 import static com.enonic.wem.api.content.type.form.inputtype.SingleSelectorConfig.newSingleSelectorConfig;
 import static com.enonic.wem.api.module.Module.newModule;
 import static org.junit.Assert.*;
@@ -255,12 +255,11 @@ public class ContentTest
     {
         Module module = newModule().name( "system" ).build();
         Input input = newInput().name( "tags" ).label( "Tags" ).type( InputTypes.TEXT_LINE ).multiple( true ).build();
-        InputMixin inputMixin = InputMixin.newInputMixin().module( module.getName() ).input( input ).build();
+        Mixin inputMixin = newMixin().module( module.getName() ).formItem( input ).build();
         MockMixinFetcher mixinFetcher = new MockMixinFetcher();
         mixinFetcher.add( inputMixin );
 
-        contentType.form().addFormItem(
-            MixinReference.newMixinReference().name( "myTags" ).mixin( "system:tags" ).type( InputMixin.class ).build() );
+        contentType.form().addFormItem( newMixinReference().name( "myTags" ).mixin( "system:tags" ).type( Input.class ).build() );
         contentType.form().mixinReferencesToFormItems( mixinFetcher );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
@@ -438,20 +437,20 @@ public class ContentTest
     {
         Module module = newModule().name( "myModule" ).build();
 
-        InputMixin postalCodeMixin = InputMixin.newInputMixin().module( module.getName() ).input(
-            newInput().name( "postalCode" ).type( InputTypes.TEXT_LINE ).build() ).build();
-        InputMixin countryMixin = InputMixin.newInputMixin().module( module.getName() ).input(
+        Mixin postalCodeMixin =
+            newMixin().module( module.getName() ).formItem( newInput().name( "postalCode" ).type( InputTypes.TEXT_LINE ).build() ).build();
+        Mixin countryMixin = newMixin().module( module.getName() ).formItem(
             newInput().name( "country" ).type( InputTypes.SINGLE_SELECTOR ).inputTypeConfig(
                 newSingleSelectorConfig().typeDropdown().addOption( "Norway", "NO" ).build() ).build() ).build();
 
-        FormItemSetMixin addressMixin = FormItemSetMixin.newFormItemSetMixin().module( module.getName() ).formItemSet(
+        Mixin addressMixin = newMixin().module( module.getName() ).formItem(
             newFormItemSet().name( "address" ).add( newInput().name( "street" ).type( InputTypes.TEXT_LINE ).build() ).add(
-                MixinReference.newMixinReference( postalCodeMixin ).name( "postalCode" ).build() ).add(
+                newMixinReference( postalCodeMixin ).name( "postalCode" ).build() ).add(
                 newInput().name( "postalPlace" ).type( InputTypes.TEXT_LINE ).build() ).add(
-                MixinReference.newMixinReference( countryMixin ).name( "country" ).build() ).build() ).build();
+                newMixinReference( countryMixin ).name( "country" ).build() ).build() ).build();
 
         contentType.form().addFormItem( newInput().type( InputTypes.TEXT_LINE ).name( "name" ).build() );
-        contentType.form().addFormItem( MixinReference.newMixinReference( addressMixin ).name( "address" ).build() );
+        contentType.form().addFormItem( newMixinReference( addressMixin ).name( "address" ).build() );
 
         MockMixinFetcher mixinFetcher = new MockMixinFetcher();
         mixinFetcher.add( postalCodeMixin );
@@ -478,14 +477,14 @@ public class ContentTest
     {
         Module module = newModule().name( "myModule" ).build();
 
-        FormItemSetMixin addressMixin = FormItemSetMixin.newFormItemSetMixin().module( module.getName() ).formItemSet(
+        Mixin addressMixin = newMixin().module( module.getName() ).formItem(
             newFormItemSet().name( "address" ).multiple( true ).add( newInput().type( InputTypes.TEXT_LINE ).name( "label" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "street" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "postalCode" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "postalPlace" ).build() ).add(
                 newInput().type( InputTypes.TEXT_LINE ).name( "country" ).build() ).build() ).build();
 
-        contentType.form().addFormItem( MixinReference.newMixinReference( addressMixin ).name( "address" ).build() );
+        contentType.form().addFormItem( newMixinReference( addressMixin ).name( "address" ).build() );
 
         MockMixinFetcher mixinFetcher = new MockMixinFetcher();
         mixinFetcher.add( addressMixin );
@@ -520,8 +519,7 @@ public class ContentTest
     public void trying_to_set_data_to_a_formItemSetMixin_when_mixin_is_missing()
     {
         contentType.form().addFormItem( newInput().type( InputTypes.TEXT_LINE ).name( "name" ).build() );
-        contentType.form().addFormItem(
-            MixinReference.newMixinReference().name( "address" ).typeInput().mixin( "myModule:myAddressMixin" ).build() );
+        contentType.form().addFormItem( newMixinReference().name( "address" ).typeInput().mixin( "myModule:myAddressMixin" ).build() );
 
         contentType.form().mixinReferencesToFormItems( new MockMixinFetcher() );
 

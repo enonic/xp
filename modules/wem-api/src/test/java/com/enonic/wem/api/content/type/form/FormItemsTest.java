@@ -7,8 +7,8 @@ import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
 
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.content.type.form.FormItemSetMixin.newFormItemSetMixin;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
+import static com.enonic.wem.api.content.type.form.Mixin.newMixin;
 import static com.enonic.wem.api.content.type.form.MixinReference.newMixinReference;
 import static org.junit.Assert.*;
 
@@ -72,7 +72,7 @@ public class FormItemsTest
         // setup
         Input myInput = newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build();
         FormItemSet mySet = newFormItemSet().name( "mySet" ).add( myInput ).build();
-        FormItemSetMixin myMixin = newFormItemSetMixin().module( ModuleName.from( "myModule" ) ).formItemSet( mySet ).build();
+        Mixin myMixin = newMixin().module( ModuleName.from( "myModule" ) ).formItem( mySet ).build();
 
         FormItems formItems = new FormItems();
         formItems.add( newMixinReference().name( "mySet" ).typeInput().mixin( myMixin.getQualifiedName() ).build() );

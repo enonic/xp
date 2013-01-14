@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.type.form.FieldSet;
 import com.enonic.wem.api.content.type.form.FormItemSet;
-import com.enonic.wem.api.content.type.form.FormItemSetMixin;
+import com.enonic.wem.api.content.type.form.Mixin;
 import com.enonic.wem.api.content.type.form.MixinReference;
 import com.enonic.wem.api.content.type.form.MockMixinFetcher;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
@@ -22,7 +22,7 @@ public class ContentTypeTest
     @Test
     public void layout()
     {
-        final ContentType contentType = newContentType().name( "test" ).module( ModuleName.from( "myModule" ) ).build();
+        ContentType contentType = newContentType().name( "test" ).module( ModuleName.from( "myModule" ) ).build();
         FieldSet layout = FieldSet.newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
         contentType.form().addFormItem( layout );
@@ -33,7 +33,7 @@ public class ContentTypeTest
     @Test
     public void layout_inside_formItemSet()
     {
-        final ContentType contentType = newContentType().name( "test" ).module( ModuleName.from( "myModule" ) ).build();
+        ContentType contentType = newContentType().name( "test" ).module( ModuleName.from( "myModule" ) ).build();
         FieldSet layout = FieldSet.newFieldSet().label( "Personalia" ).name( "personalia" ).add(
             newInput().name( "eyeColour" ).type( InputTypes.TEXT_LINE ).build() ).build();
         FormItemSet myFormItemSet = newFormItemSet().name( "mySet" ).add( layout ).build();
@@ -51,7 +51,7 @@ public class ContentTypeTest
         formItemSet.add( newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() );
         formItemSet.add( newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() );
 
-        final ContentType contentType = newContentType().
+        ContentType contentType = newContentType().
             name( "test" ).
             module( ModuleName.from( "myModule" ) ).
             addFormItem( newInput().name( "title" ).type( InputTypes.TEXT_LINE ).build() ).
@@ -69,13 +69,13 @@ public class ContentTypeTest
     public void mixinReferencesToFormItems()
     {
         // setup
-        FormItemSetMixin mixin = FormItemSetMixin.newFormItemSetMixin().module( ModuleName.from( "myModule" ) ).formItemSet(
+        Mixin mixin = Mixin.newMixin().module( ModuleName.from( "myModule" ) ).formItem(
             newFormItemSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
-        final ContentType cty = newContentType().
+        ContentType cty = newContentType().
             name( "test" ).
             module( ModuleName.from( "myModule" ) ).
             addFormItem( MixinReference.newMixinReference( mixin ).name( "home" ).build() ).
@@ -97,15 +97,15 @@ public class ContentTypeTest
     public void mixinReferencesToFormItems_layout()
     {
         // setup
-        FormItemSetMixin mixin = FormItemSetMixin.newFormItemSetMixin().module( ModuleName.from( "myModule" ) ).formItemSet(
-            newFormItemSet().name( "address" ).add( FieldSet.newFieldSet().label( "My Field Set" ).name( "fieldSet" ).add(
+        Mixin mixin = Mixin.newMixin().module( ModuleName.from( "myModule" ) ).formItem( newFormItemSet().name( "address" ).add(
+            FieldSet.newFieldSet().label( "My Field Set" ).name( "fieldSet" ).add(
                 newInput().name( "myFieldInLayout" ).label( "MyFieldInLayout" ).type( InputTypes.TEXT_LINE ).build() ).build() ).add(
-                newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
-                newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).add(
-                newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
-                newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
+            newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
+            newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).add(
+            newInput().name( "postalNo" ).label( "Postal No" ).type( InputTypes.TEXT_LINE ).build() ).add(
+            newInput().name( "country" ).label( "Country" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
-        final ContentType contentType = newContentType().
+        ContentType contentType = newContentType().
             name( "test" ).
             module( ModuleName.from( "myModule" ) ).
             addFormItem( MixinReference.newMixinReference( mixin ).name( "home" ).build() ).
@@ -127,11 +127,11 @@ public class ContentTypeTest
     public void mixinReferencesToFormItems_throws_exception_when_mixin_is_not_of_expected_type()
     {
         // setup
-        FormItemSetMixin mixin = FormItemSetMixin.newFormItemSetMixin().module( ModuleName.from( "myModule" ) ).formItemSet(
+        Mixin mixin = Mixin.newMixin().module( ModuleName.from( "myModule" ) ).formItem(
             newFormItemSet().name( "address" ).add( newInput().name( "label" ).label( "Label" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newInput().name( "street" ).label( "Street" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
-        final ContentType cty = newContentType().
+        ContentType cty = newContentType().
             name( "test" ).
             module( ModuleName.from( "myModule" ) ).
             addFormItem( newMixinReference().name( "home" ).typeInput().mixin( mixin.getQualifiedName() ).build() ).
@@ -148,7 +148,7 @@ public class ContentTypeTest
         catch ( Exception e )
         {
             assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "Mixin expected to be of type InputMixin: FormItemSetMixin", e.getMessage() );
+            assertEquals( "Mixin expected to be of type Input: FormItemSet", e.getMessage() );
         }
     }
 
@@ -159,7 +159,7 @@ public class ContentTypeTest
             newFormItemSet().name( "top-set" ).add( newInput().name( "myInput" ).type( InputTypes.TEXT_LINE ).build() ).add(
                 newFormItemSet().name( "inner-set" ).add(
                     newInput().name( "myInnerInput" ).type( InputTypes.TEXT_LINE ).build() ).build() ).build();
-        final ContentType contentType = newContentType().
+        ContentType contentType = newContentType().
             name( "test" ).
             module( ModuleName.from( "myModule" ) ).
             addFormItem( formItemSet ).

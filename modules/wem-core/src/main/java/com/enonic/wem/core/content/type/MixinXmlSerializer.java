@@ -8,9 +8,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 
 import com.enonic.wem.api.content.type.form.FormItemSet;
-import com.enonic.wem.api.content.type.form.FormItemSetMixin;
 import com.enonic.wem.api.content.type.form.Input;
-import com.enonic.wem.api.content.type.form.InputMixin;
 import com.enonic.wem.api.content.type.form.Mixin;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.content.ParsingException;
@@ -20,6 +18,8 @@ import com.enonic.wem.core.content.type.form.FormItemXmlSerializer;
 import com.enonic.wem.core.content.type.form.FormItemsXmlSerializer;
 
 import com.enonic.cms.framework.util.JDOMUtil;
+
+import static com.enonic.wem.api.content.type.form.Mixin.newMixin;
 
 public class MixinXmlSerializer
     implements MixinSerializer
@@ -64,16 +64,7 @@ public class MixinXmlSerializer
         typeEl.addContent( new Element( "qualified-name" ).setText( mixin.getQualifiedName().toString() ) );
         typeEl.addContent( new Element( "display-name" ).setText( mixin.getDisplayName() ) );
 
-        if ( mixin instanceof InputMixin )
-        {
-            final InputMixin inputMixin = (InputMixin) mixin;
-            typeEl.addContent( formItemSerializer.serialize( inputMixin.getInput() ) );
-        }
-        else
-        {
-            final FormItemSetMixin formItemSetMixin = (FormItemSetMixin) mixin;
-            typeEl.addContent( formItemSerializer.serialize( formItemSetMixin.getFormItemSet() ) );
-        }
+        typeEl.addContent( formItemSerializer.serialize( mixin.getFormItem() ) );
     }
 
     @Override
@@ -117,23 +108,23 @@ public class MixinXmlSerializer
 
     private Mixin parseFormItemSetMixin( final Element mixinEl )
     {
-        final FormItemSetMixin.Builder builder = FormItemSetMixin.newFormItemSetMixin();
+        final Mixin.Builder builder = newMixin();
         builder.module( ModuleName.from( mixinEl.getChildTextTrim( "module" ) ) );
         builder.displayName( mixinEl.getChildTextTrim( "display-name" ) );
         final String formItemSetElementName = formItemSerializer.classNameToXmlElementName( FormItemSet.class.getSimpleName() );
         final Element formItemSetEl = mixinEl.getChild( formItemSetElementName );
-        builder.formItemSet( (FormItemSet) formItemSerializer.parse( formItemSetEl ) );
+        builder.formItem( formItemSerializer.parse( formItemSetEl ) );
         return builder.build();
     }
 
     private Mixin parseInputMixin( final Element mixinEl )
     {
-        final InputMixin.Builder builder = InputMixin.newInputMixin();
+        final Mixin.Builder builder = newMixin();
         builder.module( ModuleName.from( mixinEl.getChildTextTrim( "module" ) ) );
         builder.displayName( mixinEl.getChildTextTrim( "display-name" ) );
         final String inputElementName = formItemSerializer.classNameToXmlElementName( Input.class.getSimpleName() );
         final Element inputEl = mixinEl.getChild( inputElementName );
-        builder.input( (Input) formItemSerializer.parse( inputEl ) );
+        builder.formItem( formItemSerializer.parse( inputEl ) );
         return builder.build();
     }
 

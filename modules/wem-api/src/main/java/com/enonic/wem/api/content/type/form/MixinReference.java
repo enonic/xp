@@ -46,7 +46,7 @@ public class MixinReference
     public static Builder newMixinReference( final Mixin mixin )
     {
         Builder builder = new Builder();
-        builder.mixinClass = mixin.getType().getSimpleName();
+        builder.mixinClass = mixin.getFormItem().getClass().getSimpleName();
         builder.qualifiedMixinName = mixin.getQualifiedName();
         return builder;
     }
@@ -68,7 +68,7 @@ public class MixinReference
         public Builder mixin( final Mixin mixin )
         {
             this.qualifiedMixinName = mixin.getQualifiedName();
-            this.mixinClass = mixin.getType().getSimpleName();
+            this.mixinClass = mixin.getFormItem().getClass().getSimpleName();
             return this;
         }
 
@@ -98,13 +98,13 @@ public class MixinReference
 
         public Builder typeInput()
         {
-            this.mixinClass = InputMixin.class.getSimpleName();
+            this.mixinClass = Input.class.getSimpleName();
             return this;
         }
 
         public Builder typeFormItemSet()
         {
-            this.mixinClass = FormItemSetMixin.class.getSimpleName();
+            this.mixinClass = FormItemSet.class.getSimpleName();
             return this;
         }
 

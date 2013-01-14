@@ -63,4 +63,37 @@ public class FormItemSetTest
         assertEquals( "homeAddress.postalPlace", formItemSet.getInput( new FormItemPath( "postalPlace" ) ).getPath().toString() );
         assertEquals( "homeAddress.country", formItemSet.getInput( new FormItemPath( "country" ) ).getPath().toString() );
     }
+
+
+    @Test
+    public void toFormItemSet_given_FormItem_of_type_FormItemSet_then_FormItemSet_is_returned()
+    {
+        // setup
+        FormItem formItem = newFormItemSet().name( "myFieldSet" ).label( "My label" ).build();
+
+        // exercise
+        FormItemSet formItemSet = formItem.toFormItemSet();
+
+        // verify
+        assertSame( formItem, formItemSet );
+    }
+
+    @Test
+    public void toFormItemSet_given_FormItem_of_type_Input_then_exception_is_thrown()
+    {
+        // setup
+        FormItem formItem = newInput().name( "myFieldSet" ).type( InputTypes.DATE ).label( "My label" ).build();
+
+        // exercise
+        try
+        {
+            formItem.toFormItemSet();
+            fail( "Expected exception" );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( e instanceof IllegalArgumentException );
+            assertEquals( "This FormItem [myFieldSet] is not a FormItemSet: Input", e.getMessage() );
+        }
+    }
 }

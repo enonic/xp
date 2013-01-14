@@ -10,7 +10,6 @@ import com.enonic.wem.api.command.content.type.GetMixins;
 import com.enonic.wem.api.command.content.type.UpdateMixins;
 import com.enonic.wem.api.content.type.Mixins;
 import com.enonic.wem.api.content.type.form.Input;
-import com.enonic.wem.api.content.type.form.InputMixin;
 import com.enonic.wem.api.content.type.form.Mixin;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
@@ -18,6 +17,7 @@ import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
 import static com.enonic.wem.api.content.type.form.Input.newInput;
+import static com.enonic.wem.api.content.type.form.Mixin.newMixin;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -60,7 +60,7 @@ public class CreateOrUpdateMixinRpcHandlerTest
         throws Exception
     {
         final Input input = newInput().name( "someInput" ).type( InputTypes.TEXT_LINE ).build();
-        final Mixin existingMixin = InputMixin.newInputMixin().input( input ).module( Module.SYSTEM.getName() ).build();
+        final Mixin existingMixin = newMixin().formItem( input ).module( Module.SYSTEM.getName() ).build();
         final Mixins mixins = Mixins.from( existingMixin );
         Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( mixins );
 

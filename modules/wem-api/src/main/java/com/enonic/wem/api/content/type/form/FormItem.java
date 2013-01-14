@@ -40,6 +40,34 @@ public abstract class FormItem
         }
     }
 
+    public Input toInput()
+    {
+        if ( !( this instanceof Input ) )
+        {
+            throw new IllegalArgumentException( "This FormItem [" + getName() + "] is not an Input: " + this.getClass().getSimpleName() );
+        }
+        return (Input) this;
+    }
+
+    public FormItemSet toFormItemSet()
+    {
+        if ( !( this instanceof FormItemSet ) )
+        {
+            throw new IllegalArgumentException(
+                "This FormItem [" + getName() + "] is not a FormItemSet: " + this.getClass().getSimpleName() );
+        }
+        return (FormItemSet) this;
+    }
+
+    public Layout toLayout()
+    {
+        if ( !( this instanceof Layout ) )
+        {
+            throw new IllegalArgumentException( "This FormItem [" + getName() + "] is not a Layout: " + this.getClass().getSimpleName() );
+        }
+        return (Layout) this;
+    }
+
     @Override
     public String toString()
     {
