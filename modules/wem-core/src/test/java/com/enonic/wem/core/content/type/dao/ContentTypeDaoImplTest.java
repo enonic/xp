@@ -13,6 +13,7 @@ import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.content.dao.ContentDaoConstants;
+import com.enonic.wem.core.jcr.JcrHelper;
 import com.enonic.wem.itest.AbstractJcrTest;
 
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
@@ -23,6 +24,10 @@ import static org.junit.Assert.*;
 public class ContentTypeDaoImplTest
     extends AbstractJcrTest
 {
+    private static final byte[] SINGLE_PIXEL_GIF_PICTURE =
+        {0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x1, 0x0, 0x1, 0x0, (byte) 0x80, 0x0, 0x0, (byte) 0xff, (byte) 0xff, (byte) 0xff, 0x0, 0x0,
+            0x0, 0x2c, 0x0, 0x0, 0x0, 0x0, 0x1, 0x0, 0x1, 0x0, 0x0, 0x2, 0x2, 0x44, 0x1, 0x0, 0x3b};
+
     private ContentTypeDao contentTypeDao;
 
     public void setupDao()
@@ -40,7 +45,9 @@ public class ContentTypeDaoImplTest
             module( ModuleName.from( "myModule" ) ).
             name( "myContentType" ).
             setAbstract( false ).
-            displayName( "My content type" );
+            displayName( "My content type" ).
+            icon( SINGLE_PIXEL_GIF_PICTURE );
+
         final ContentType contentType = addContentTypeFormItems( contentTypeBuilder );
 
         // exercise
@@ -50,6 +57,7 @@ public class ContentTypeDaoImplTest
         // verify
         Node contentNode = session.getNode( "/" + ContentDaoConstants.CONTENT_TYPES_PATH + "myModule/myContentType" );
         assertNotNull( contentNode );
+        assertArrayEquals( SINGLE_PIXEL_GIF_PICTURE, JcrHelper.getPropertyBinary( contentNode, ContentTypeJcrMapper.ICON ) );
     }
 
     @Test
@@ -61,7 +69,8 @@ public class ContentTypeDaoImplTest
             module( ModuleName.from( "myModule" ) ).
             name( "myContentType" ).
             setAbstract( true ).
-            displayName( "My content type" );
+            displayName( "My content type" ).
+            icon( SINGLE_PIXEL_GIF_PICTURE );
         final ContentType contentType = addContentTypeFormItems( contentTypeBuilder );
         contentTypeDao.createContentType( contentType, session );
 
@@ -78,6 +87,7 @@ public class ContentTypeDaoImplTest
         assertEquals( "myModule", contentType1.getModuleName().toString() );
         assertEquals( true, contentType1.isAbstract() );
         assertEquals( "My content type", contentType1.getDisplayName() );
+        assertArrayEquals( SINGLE_PIXEL_GIF_PICTURE, contentType1.getIcon() );
     }
 
     @Test
@@ -145,6 +155,7 @@ public class ContentTypeDaoImplTest
         final ContentType contentTypeUpdate = newContentType( contentType ).
             setAbstract( false ).
             displayName( "My content type-UPDATED" ).
+            icon( SINGLE_PIXEL_GIF_PICTURE ).
             build();
         contentTypeDao.updateContentType( contentTypeUpdate, session );
         commit();
@@ -159,6 +170,7 @@ public class ContentTypeDaoImplTest
         assertEquals( "myModule", contentType1.getModuleName().toString() );
         assertEquals( false, contentType1.isAbstract() );
         assertEquals( "My content type-UPDATED", contentType1.getDisplayName() );
+        assertArrayEquals( SINGLE_PIXEL_GIF_PICTURE, contentType1.getIcon() );
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content.type;
 
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -38,6 +39,8 @@ public final class ContentType
 
     private final DateTime modifiedTime;
 
+    private final byte[] icon;
+
     private ContentType( final Builder builder )
     {
         Preconditions.checkNotNull( builder.name, "Name cannot be null in ContentType" );
@@ -51,6 +54,7 @@ public final class ContentType
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
         this.form = builder.buildForm();
+        this.icon = builder.icon;
     }
 
     public String getName()
@@ -103,6 +107,11 @@ public final class ContentType
         return this.form;
     }
 
+    public byte[] getIcon()
+    {
+        return icon;
+    }
+
     @Override
     public String toString()
     {
@@ -114,6 +123,7 @@ public final class ContentType
         s.add( "isAbstract", isAbstract );
         s.add( "isFinal", isFinal );
         s.add( "form", form );
+        s.add( "icon", icon );
         return s.toString();
     }
 
@@ -147,9 +157,18 @@ public final class ContentType
 
         private DateTime modifiedTime;
 
+        private byte[] icon;
+
         private Builder()
         {
-            formItemList = Lists.newArrayList();
+            this.name = null;
+            this.moduleName = null;
+            this.displayName = null;
+            this.isAbstract = false;
+            this.isFinal = false;
+            this.superType = null;
+            this.formItemList = Lists.newArrayList();
+            this.icon = null;
         }
 
         private Builder( final ContentType source )
@@ -163,6 +182,7 @@ public final class ContentType
             this.formItemList = Lists.newArrayList( source.form().copy().formItemIterable() );
             this.createdTime = source.createdTime;
             this.modifiedTime = source.modifiedTime;
+            this.icon = source.icon == null ? null : Arrays.copyOf( source.icon, source.icon.length );
         }
 
         public Builder qualifiedName( final QualifiedContentTypeName qualifiedContentTypeName )
@@ -245,6 +265,12 @@ public final class ContentType
             {
                 this.addFormItem( formItem );
             }
+            return this;
+        }
+
+        public Builder icon( final byte[] icon )
+        {
+            this.icon = icon;
             return this;
         }
 
