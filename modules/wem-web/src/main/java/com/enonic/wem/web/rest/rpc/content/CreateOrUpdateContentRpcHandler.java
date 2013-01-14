@@ -12,14 +12,10 @@ import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.ContentTypeFetcher;
-import com.enonic.wem.api.content.type.MockContentTypeFetcher;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
-import com.enonic.wem.api.content.type.form.FormItemSet;
-import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.exception.ContentAlreadyExistException;
 import com.enonic.wem.api.exception.ContentNotFoundException;
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.content.ContentPathNameGenerator;
 import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
@@ -28,33 +24,14 @@ import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import static com.enonic.wem.api.content.editor.ContentEditors.composite;
 import static com.enonic.wem.api.content.editor.ContentEditors.setContentData;
 import static com.enonic.wem.api.content.editor.ContentEditors.setContentDisplayName;
-import static com.enonic.wem.api.content.type.ContentType.newContentType;
-import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.content.type.form.Input.newInput;
 
 @Component
 public final class CreateOrUpdateContentRpcHandler
     extends AbstractDataRpcHandler
 {
-    private ContentTypeFetcher contentTypeFetcher;
-
     public CreateOrUpdateContentRpcHandler()
     {
         super( "content_createOrUpdate" );
-
-        MockContentTypeFetcher mockContentTypeFetcher = new MockContentTypeFetcher();
-        FormItemSet componentSet = newFormItemSet().name( "myComponentSet" ).build();
-        componentSet.add( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() );
-
-        final ContentType myContentType = newContentType().
-            module( ModuleName.from( "myModule" ) ).
-            name( "myContentType" ).
-            addFormItem( newInput().name( "myTextLine1" ).type( InputTypes.TEXT_LINE ).build() ).
-            addFormItem( newInput().name( "myTextLine2" ).type( InputTypes.TEXT_LINE ).build() ).
-            addFormItem( componentSet ).
-            build();
-        mockContentTypeFetcher.add( myContentType );
-        this.contentTypeFetcher = mockContentTypeFetcher;
     }
 
     @Override
@@ -66,7 +43,9 @@ public final class CreateOrUpdateContentRpcHandler
         ContentPath contentPath = ContentPath.from( context.param( "contentPath" ).required().asString() );
         final String displayName = context.param( "displayName" ).required().asString();
 
-        final ContentType contentType = contentTypeFetcher.getContentType( qualifiedContentTypeName );
+        final ContentType contentType =
+            client.execute( Commands.contentType().get().names( QualifiedContentTypeNames.from( qualifiedContentTypeName ) ) ).first();
+
         final ContentData contentData = new ContentDataParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
 
         if ( !contentExists( contentPath ) )
