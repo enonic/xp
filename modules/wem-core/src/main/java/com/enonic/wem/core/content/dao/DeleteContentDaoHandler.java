@@ -2,6 +2,7 @@ package com.enonic.wem.core.content.dao;
 
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -27,7 +28,7 @@ final class DeleteContentDaoHandler
             throw new ContentNotFoundException( pathToContent );
         }
 
-        if ( contentNode.hasNodes() )
+        if ( hasContentChildrenNodes( contentNode ) )
         {
             throw new UnableToDeleteContentException( pathToContent, "Content has child content." );
         }
@@ -44,7 +45,7 @@ final class DeleteContentDaoHandler
             throw new ContentNotFoundException( contentId );
         }
 
-        if ( contentNode.hasNodes() )
+        if ( hasContentChildrenNodes( contentNode ) )
         {
             throw new UnableToDeleteContentException( contentId, "Content has child content." );
         }
@@ -52,4 +53,21 @@ final class DeleteContentDaoHandler
         contentNode.remove();
     }
 
+    private boolean hasContentChildrenNodes( final Node contentNode )
+        throws RepositoryException
+    {
+        if ( contentNode.hasNodes() )
+        {
+            final NodeIterator nodeIte = contentNode.getNodes();
+            while ( nodeIte.hasNext() )
+            {
+                final Node child = nodeIte.nextNode();
+                if ( !child.getName().equals( ContentDaoConstants.CONTENT_VERSION_HISTORY_NODE ) )
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
