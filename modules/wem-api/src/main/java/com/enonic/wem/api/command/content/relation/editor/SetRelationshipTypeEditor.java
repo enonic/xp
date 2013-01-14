@@ -21,7 +21,7 @@ final class SetRelationshipTypeEditor
     {
         final RelationshipType.Builder updated = newRelationType().
             name( relationshipType.getName() ).
-            module( relationshipType.getModule() ).
+            module( relationshipType.getModuleName() ).
             fromSemantic( source.getFromSemantic() ).
             toSemantic( source.getToSemantic() );
         for ( QualifiedContentTypeName contentTypeName : source.getAllowedFromTypes() )

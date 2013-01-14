@@ -28,7 +28,7 @@ public class RelationshipTypeTest
 
         // verify
         assertEquals( "like", relationshipType.getName() );
-        assertEquals( "myModule", relationshipType.getModule().toString() );
+        assertEquals( "myModule", relationshipType.getModuleName().toString() );
         assertEquals( "likes", relationshipType.getFromSemantic() );
         assertEquals( "liked by", relationshipType.getToSemantic() );
         assertEquals( QualifiedContentTypeNames.from( "myModule:person" ), relationshipType.getAllowedFromTypes() );

@@ -3,18 +3,26 @@ package com.enonic.wem.api.content.relation;
 
 import java.util.List;
 
+import org.joda.time.DateTime;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.content.type.BaseType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;
 
 public final class RelationshipType
+    implements BaseType
 {
     private final ModuleName module;
 
     private final String name;
+
+    private final DateTime createdTime;
+
+    private final DateTime modifiedTime;
 
     private final QualifiedRelationshipTypeName qualifiedRelationshipTypeName;
 
@@ -30,16 +38,13 @@ public final class RelationshipType
     {
         this.module = builder.module;
         this.name = builder.name;
+        this.createdTime = builder.createdTime;
+        this.modifiedTime = builder.modifiedTime;
         this.qualifiedRelationshipTypeName = new QualifiedRelationshipTypeName( module, name );
         this.fromSemantic = builder.fromSemantic;
         this.toSemantic = builder.toSemantic;
         this.allowedFromTypes = QualifiedContentTypeNames.from( builder.allowedFromTypes );
         this.allowedToTypes = QualifiedContentTypeNames.from( builder.allowedToTypes );
-    }
-
-    public ModuleName getModule()
-    {
-        return module;
     }
 
     public String getName()
@@ -50,6 +55,30 @@ public final class RelationshipType
     public QualifiedRelationshipTypeName getQualifiedRelationshipTypeName()
     {
         return qualifiedRelationshipTypeName;
+    }
+
+    @Override
+    public String getDisplayName()
+    {
+        return name;
+    }
+
+    @Override
+    public ModuleName getModuleName()
+    {
+        return module;
+    }
+
+    @Override
+    public DateTime getCreatedTime()
+    {
+        return createdTime;
+    }
+
+    @Override
+    public DateTime getModifiedTime()
+    {
+        return modifiedTime;
     }
 
     public String getFromSemantic()
@@ -117,6 +146,10 @@ public final class RelationshipType
 
         private String name;
 
+        private DateTime createdTime;
+
+        private DateTime modifiedTime;
+
         private String fromSemantic;
 
         private String toSemantic;
@@ -127,18 +160,15 @@ public final class RelationshipType
 
         private Builder()
         {
-            module = null;
-            name = null;
-            fromSemantic = null;
-            toSemantic = null;
-            allowedFromTypes = Lists.newArrayList();
-            allowedToTypes = Lists.newArrayList();
+
         }
 
         private Builder( final RelationshipType relationshipType )
         {
             module = relationshipType.module;
             name = relationshipType.name;
+            createdTime = relationshipType.createdTime;
+            modifiedTime = relationshipType.modifiedTime;
             fromSemantic = relationshipType.fromSemantic;
             toSemantic = relationshipType.toSemantic;
             allowedFromTypes = Lists.newArrayList( allowedFromTypes );
@@ -154,6 +184,18 @@ public final class RelationshipType
         public Builder name( String value )
         {
             this.name = value;
+            return this;
+        }
+
+        public Builder createdTime( DateTime value )
+        {
+            this.createdTime = value;
+            return this;
+        }
+
+        public Builder modifiedTime( DateTime value )
+        {
+            this.modifiedTime = value;
             return this;
         }
 

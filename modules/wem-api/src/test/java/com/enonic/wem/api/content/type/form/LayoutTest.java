@@ -40,7 +40,7 @@ public class LayoutTest
         catch ( Exception e )
         {
             assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "This Layout [myFieldSet] is not a Layout: Input", e.getMessage() );
+            assertEquals( "This FormItem [myFieldSet] is not a Layout: Input", e.getMessage() );
         }
     }
 }
