@@ -95,7 +95,14 @@ Ext.define('Admin.view.homescreen.Homescreen', {
 
     toggleShowHide: function () {
         var me = this;
-        me.setVisible(!me.isVisible());
+        if (!me.isVisible()) {
+            me.setVisible(true);
+            me.addCls('show');
+        } else {
+            me.setVisible(false);
+            me.removeCls('show');
+            me.getEl().setStyle('opacity', '0');
+        }
     },
 
 
