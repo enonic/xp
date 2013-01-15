@@ -14,4 +14,13 @@ public abstract class ContentTypeEditors
         return new SetContentTypeEditor( contentType );
     }
 
+    public static ContentTypeEditor setIcon( final byte[] icon )
+    {
+        return new SetContentTypeIconEditor( icon );
+    }
+
+    public static ContentTypeEditor removeIcon()
+    {
+        return new SetContentTypeIconEditor( null );
+    }
 }
