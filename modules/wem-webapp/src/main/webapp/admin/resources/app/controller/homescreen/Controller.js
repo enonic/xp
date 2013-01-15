@@ -32,6 +32,14 @@ Ext.define('Admin.controller.homescreen.Controller', {
             },
             'loginPanel button[itemId=loginButton]': {
                 click: me.onLoginButtonClick
+            },
+            'homescreen': {
+                afterrender: function (view) {
+                    Admin.lib.RemoteService.system_getSystemInfo({}, function (r) {
+                        view.setInstallationLabelText(r.installationName);
+                        view.setVersionText(r.version);
+                    });
+                }
             }
         });
     },

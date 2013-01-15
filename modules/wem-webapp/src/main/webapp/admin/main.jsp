@@ -1,4 +1,6 @@
+<%@ taglib prefix="w" uri="uri:enonic.wem.taglib" %>
 <!DOCTYPE html>
+<w:helper var="helper"/>
 <html>
 <head>
   <meta charset="utf-8"/>
@@ -16,6 +18,11 @@
 
   <script type="text/javascript" src="global.config.js"></script>
   <script type="text/javascript">
+
+    window.CONFIG = {
+      baseUrl: '<%= helper.getBaseUrl() %>'
+    };
+
     Ext.Loader.setConfig({
       paths: {
         'App': '_app/main/js',
