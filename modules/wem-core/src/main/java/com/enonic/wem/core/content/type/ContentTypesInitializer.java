@@ -22,8 +22,6 @@ import static com.enonic.wem.api.content.type.editor.ContentTypeEditors.setConte
 @Component
 public class ContentTypesInitializer
 {
-    private static final ContentType CONTENT = createSystemType( QualifiedContentTypeName.content(), false, true );
-
     private static final ContentType SPACE = createSystemType( QualifiedContentTypeName.space(), true, false );
 
     private static final ContentType STRUCTURED = createSystemType( QualifiedContentTypeName.structured(), false, true );
@@ -38,7 +36,7 @@ public class ContentTypesInitializer
 
     private static final ContentType FILE = createSystemType( QualifiedContentTypeName.file(), true, false );
 
-    private static final ContentType[] SYSTEM_TYPES = {CONTENT, SPACE, STRUCTURED, UNSTRUCTURED, FOLDER, PAGE, SHORTCUT, FILE};
+    private static final ContentType[] SYSTEM_TYPES = {SPACE, STRUCTURED, UNSTRUCTURED, FOLDER, PAGE, SHORTCUT, FILE};
 
     private static final String[] TEST_CONTENT_TYPES =
         {"demo-contenttype-htmlarea.json", "demo-contenttype-fieldset.json", "demo-contenttype-set.json", "demo-contenttype-blog.json",
@@ -91,7 +89,21 @@ public class ContentTypesInitializer
             displayName( displayName ).
             setFinal( isFinal ).
             setAbstract( isAbstract ).
+            icon( loadContentTypeIcon( qualifiedName ) ).
             build();
+    }
+
+    private static byte[] loadContentTypeIcon( final QualifiedContentTypeName qualifiedName )
+    {
+        try
+        {
+            final String filePath = "/META-INF/content-types/" + qualifiedName.toString().replace( ":", "_" ).toLowerCase() + ".png";
+            return IOUtils.toByteArray( ContentTypesInitializer.class.getResourceAsStream( filePath ) );
+        }
+        catch ( Exception e )
+        {
+            return null; // icon for content type not found
+        }
     }
 
     private void importJsonContentType( final String fileName )

@@ -33,7 +33,7 @@ public class RelationshipTypeJsonSerializerTest
             fromSemantic( "contained by" ).
             addAllowedFromType( QualifiedContentTypeName.folder() ).
             addAllowedFromType( QualifiedContentTypeName.file() ).
-            addAllowedToType( QualifiedContentTypeName.content() ).
+            addAllowedToType( QualifiedContentTypeName.unstructured() ).
             addAllowedToType( QualifiedContentTypeName.space() ).build();
 
         final String actualSerialization = serializer.toString( relationshipType );

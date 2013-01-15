@@ -10,8 +10,6 @@ public final class QualifiedContentTypeName
 {
     private static final QualifiedContentTypeName UNSTRUCTURED = new QualifiedContentTypeName( Module.SYSTEM.getName(), "unstructured" );
 
-    private static final QualifiedContentTypeName CONTENT = new QualifiedContentTypeName( Module.SYSTEM.getName(), "content" );
-
     private static final QualifiedContentTypeName SPACE = new QualifiedContentTypeName( Module.SYSTEM.getName(), "space" );
 
     private static final QualifiedContentTypeName STRUCTURED = new QualifiedContentTypeName( Module.SYSTEM.getName(), "structured" );
@@ -37,11 +35,6 @@ public final class QualifiedContentTypeName
     public String getContentTypeName()
     {
         return getLocalName();
-    }
-
-    public boolean isContent()
-    {
-        return CONTENT.equals( this );
     }
 
     public boolean isSpace()
@@ -77,11 +70,6 @@ public final class QualifiedContentTypeName
     public boolean isFile()
     {
         return FILE.equals( this );
-    }
-
-    public static QualifiedContentTypeName content()
-    {
-        return CONTENT;
     }
 
     public static QualifiedContentTypeName space()

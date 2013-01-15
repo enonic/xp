@@ -8,7 +8,7 @@
         "System:file"
     ],
     "allowedToTypes": [
-        "System:content",
+        "System:unstructured",
         "System:space"
     ]
 }

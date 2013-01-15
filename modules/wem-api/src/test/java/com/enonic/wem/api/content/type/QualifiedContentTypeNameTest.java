@@ -46,7 +46,6 @@ public class QualifiedContentTypeNameTest
     @Test
     public void testPredefinedTypes()
     {
-        assertTrue( QualifiedContentTypeName.content().isContent() );
         assertTrue( QualifiedContentTypeName.file().isFile() );
         assertTrue( QualifiedContentTypeName.folder().isFolder() );
         assertTrue( QualifiedContentTypeName.page().isPage() );
@@ -55,7 +54,6 @@ public class QualifiedContentTypeNameTest
         assertTrue( QualifiedContentTypeName.structured().isStructured() );
         assertTrue( QualifiedContentTypeName.unstructured().isUnstructured() );
 
-        assertEquals( "content", QualifiedContentTypeName.content().getContentTypeName() );
         assertEquals( "file", QualifiedContentTypeName.file().getContentTypeName() );
         assertEquals( "folder", QualifiedContentTypeName.folder().getContentTypeName() );
         assertEquals( "page", QualifiedContentTypeName.page().getContentTypeName() );
