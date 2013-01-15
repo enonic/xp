@@ -5,7 +5,7 @@ Ext.define('Admin.lib.Ping', {
     intervalId: -1,
     pollIntervalMs: 5000,
     errorBoxDomId: 'admin-server-status-error-box',
-    errorMessageHtml: '<div>Status: {0}, {1}, Could not get a valid response from the server! Please contact srs@enonic.com</div>',
+    errorMessageHtml: '<div>Status: {0} - {1}. Could not get a valid response from the server! Please contact srs@enonic.com</div>',
 
 
     constructor: function () {
