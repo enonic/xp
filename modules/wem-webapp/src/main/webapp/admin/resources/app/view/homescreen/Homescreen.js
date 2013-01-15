@@ -77,7 +77,7 @@ Ext.define('Admin.view.homescreen.Homescreen', {
 
     updateGlobalView: function () {
         var me = this;
-        me.setBackgroundImage('resources/images/x_Hannah-Montana-View-From-Home-hannah-montana-1498442-1024-768.jpg');
+        me.setBackgroundImage('resources/images/x_710948main_typhoon_bopha_1600_1600-1200.jpg');
         me.setLicensedToText('Licensed to Large Customer');
     },
 
