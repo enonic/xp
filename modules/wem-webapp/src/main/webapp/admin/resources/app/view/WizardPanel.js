@@ -16,6 +16,7 @@ Ext.define('Admin.view.WizardPanel', {
         autoHeight: true
     },
     bodyPadding: 10,
+    minWidth: 500,
 
     externalControls: undefined,
     showControls: true,
