@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 
-import com.enonic.cms.core.locale.LocaleService;
+import com.enonic.wem.core.locale.LocaleService;
 
 @Component
 public final class GetLocalesRpcHandler

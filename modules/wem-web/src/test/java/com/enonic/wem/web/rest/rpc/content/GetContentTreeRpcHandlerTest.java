@@ -14,7 +14,7 @@ import com.enonic.wem.api.content.ContentTree;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
-import com.enonic.cms.core.time.MockTimeService;
+import com.enonic.wem.core.time.MockTimeService;
 
 import static com.enonic.wem.api.content.ContentBranch.newContentBranch;
 import static com.enonic.wem.api.content.ContentTree.newContentTree;

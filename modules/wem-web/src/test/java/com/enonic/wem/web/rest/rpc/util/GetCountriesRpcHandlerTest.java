@@ -7,13 +7,12 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.core.country.Country;
+import com.enonic.wem.core.country.CountryCode;
+import com.enonic.wem.core.country.CountryService;
+import com.enonic.wem.core.country.Region;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
-
-import com.enonic.cms.core.country.Country;
-import com.enonic.cms.core.country.CountryCode;
-import com.enonic.cms.core.country.CountryService;
-import com.enonic.cms.core.country.Region;
 
 public class GetCountriesRpcHandlerTest
     extends AbstractRpcHandlerTest

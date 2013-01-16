@@ -22,10 +22,6 @@ public class JcrMigrateTask
 
     private AccountSearchService accountSearchService;
 
-    public JcrMigrateTask()
-    {
-    }
-
     @Override
     public void migrate()
         throws Exception

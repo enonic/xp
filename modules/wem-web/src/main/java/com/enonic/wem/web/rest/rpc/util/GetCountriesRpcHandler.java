@@ -3,10 +3,9 @@ package com.enonic.wem.web.rest.rpc.util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.core.country.CountryService;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
-
-import com.enonic.cms.core.country.CountryService;
 
 @Component
 public final class GetCountriesRpcHandler
