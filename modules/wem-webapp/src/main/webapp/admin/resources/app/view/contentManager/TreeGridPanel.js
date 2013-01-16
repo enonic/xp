@@ -57,7 +57,7 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
 
     nameRenderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
         var account = record.data;
-        var iconCls = this.resolveIconClass(record);
+        var iconCls = '';
         var activeListType = this.getActiveList().itemId;
         return Ext.String.format(Templates.contentManager.treeGridPanelNameRenderer, activeListType, iconCls, value, account.path);
     },
@@ -73,7 +73,8 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
             } else {
                 return value;
             }
-        } catch (e) {
+        }
+        catch (e) {
             return value;
         }
     }

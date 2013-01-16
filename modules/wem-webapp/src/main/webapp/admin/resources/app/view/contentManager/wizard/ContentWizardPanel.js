@@ -195,7 +195,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         case 1:
             // split
             //TODO update urls when they are ready
-            livePreview.load('/dev/live-edit/page/page.jsp');
+            livePreview.load('/dev/live-edit/page/page.jsp', true);
             splitter.show();
             livePreview.show();
             break;
