@@ -3,14 +3,10 @@ package com.enonic.wem.api;
 public final class Version
 {
     private final static String BANNER = "" +
-        "        )    )     ) (                          *     \n" +
-        "     ( /( ( /(  ( /( )\\ )  (     (  (         (  `    \n" +
-        " (   )\\()))\\()) )\\()|()/(  )\\    )\\))(   '(   )\\))(   \n" +
-        " )\\ ((_)\\((_)\\ ((_)\\ /(_)|((_)  ((_)()\\ ) )\\ ((_)()\\  \n" +
-        "((_) _((_) ((_) _((_|_)) )\\___  _(())\\_)(|(_)(_()((_) \n" +
-        "| __| \\| |/ _ \\| \\| |_ _((/ __| \\ \\((_)/ / __|  \\/  | \n" +
-        "| _|| .` | (_) | .` || | | (__   \\ \\/\\/ /| _|| |\\/| | \n" +
-        "|___|_|\\_|\\___/|_|\\_|___| \\___|   \\_/\\_/ |___|_|  |_|";
+        " _____ _____ _____ _____ _____ _____    _ _ _ _____ _____ \n" +
+        "|   __|   | |     |   | |     |     |  | | | |   __|     |\n" +
+        "|   __| | | |  |  | | | |-   -|   --|  | | | |   __| | | |\n" +
+        "|_____|_|___|_____|_|___|_____|_____|  |_____|_____|_|_|_|\n";
 
     private final static Version INSTANCE = new Version();
 
@@ -42,10 +38,15 @@ public final class Version
         return BANNER;
     }
 
+    public String getNameAndVersion()
+    {
+        return getName() + " " + getVersion();
+    }
+
     @Override
     public String toString()
     {
-        return getName() + " " + getVersion();
+        return getNameAndVersion();
     }
 
     public static Version get()

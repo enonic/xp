@@ -4,9 +4,10 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
   <listener>
-    <listener-class>com.enonic.cms.web.boot.BootContextListener</listener-class>
+    <listener-class>com.enonic.wem.web.boot.BootContextListener</listener-class>
   </listener>
 
+  <!--
   <filter>
     <filter-name>compositeFilter</filter-name>
     <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -15,7 +16,7 @@
   <filter-mapping>
     <filter-name>compositeFilter</filter-name>
     <url-pattern>/*</url-pattern>
-  </filter-mapping>
+  </filter-mapping>-->
 
   <servlet>
     <servlet-name>rest</servlet-name>
@@ -28,11 +29,11 @@
     <url-pattern>/admin/rest/*</url-pattern>
   </servlet-mapping>
 
-  <resource-ref>
+  <!--resource-ref>
     <res-ref-name>jdbc/cms</res-ref-name>
     <res-type>javax.sql.DataSource</res-type>
     <res-auth>Container</res-auth>
-  </resource-ref>
+  </resource-ref-->
 
   <mime-mapping>
     <extension>json</extension>

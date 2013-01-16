@@ -21,8 +21,8 @@
     <module>modules/wem-core</module>
     <module>modules/wem-migrate</module>
     <module>modules/wem-web</module>
-    <!--module>modules/wem-taglib</module>
-    <module>modules/wem-webapp</module-->
+    <module>modules/wem-taglib</module>
+    <module>modules/wem-webapp</module>
   </modules>
 
   <dependencies>
@@ -68,12 +68,12 @@
       <version>1.0.11</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
+    <!--dependency>
       <groupId>org.spockframework</groupId>
       <artifactId>spock-core</artifactId>
       <version>0.6-groovy-1.8</version>
       <scope>test</scope>
-    </dependency>
+    </dependency-->
   </dependencies>
 
   <repositories>

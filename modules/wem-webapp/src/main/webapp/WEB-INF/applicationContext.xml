@@ -6,11 +6,6 @@
   <context:annotation-config/>
   <context:property-placeholder properties-ref="config"/>
 
-  <import resource="classpath:META-INF/spring/core-context.xml"/>
-
-  <context:component-scan base-package="com.enonic.cms.web.portal"/>
-  <context:component-scan base-package="com.enonic.cms.web.webdav"/>
-  <!--context:component-scan base-package="com.enonic.cms.web.filter"/-->
   <context:component-scan base-package="com.enonic.wem"/>
 
   <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
