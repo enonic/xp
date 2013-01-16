@@ -1,6 +1,5 @@
 package com.enonic.wem.core.content;
 
-
 import java.io.IOException;
 
 import org.jdom.Document;
@@ -10,13 +9,14 @@ import org.jdom.JDOMException;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.core.content.data.ContentDataXmlSerializer;
-
-import com.enonic.cms.framework.util.JDOMUtil;
+import com.enonic.wem.core.util.JdomHelper;
 
 public class ContentXmlSerializer
     implements ContentSerializer
 {
     private ContentDataXmlSerializer contentDataSerializer = new ContentDataXmlSerializer();
+
+    private final JdomHelper jdomHelper = new JdomHelper();
 
     private boolean prettyPrint = false;
 
@@ -33,14 +33,7 @@ public class ContentXmlSerializer
     public String toString( Content content )
         throws XmlSerializingException
     {
-        if ( prettyPrint )
-        {
-            return JDOMUtil.prettyPrintDocument( toJDomDocument( content ) );
-        }
-        else
-        {
-            return JDOMUtil.printDocument( toJDomDocument( content ) );
-        }
+        return this.jdomHelper.serialize( toJDomDocument( content ), this.prettyPrint );
     }
 
     public Document toJDomDocument( Content content )
@@ -69,8 +62,7 @@ public class ContentXmlSerializer
     {
         try
         {
-            Document document = JDOMUtil.parseDocument( xml );
-
+            final Document document = this.jdomHelper.parse( xml );
             return parse( document.getRootElement() );
         }
         catch ( JDOMException e )

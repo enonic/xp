@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.content.dao.ContentDaoConstants;
-import com.enonic.wem.itest.AbstractJcrTest;
+import com.enonic.wem.core.AbstractJcrTest;
 
 import static com.enonic.wem.api.content.relation.RelationshipType.newRelationType;
 import static org.junit.Assert.*;

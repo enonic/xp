@@ -17,9 +17,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.enonic.cms</groupId>
-      <artifactId>cms-api</artifactId>
-      <version>${old.version}</version>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.1.1</version>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
@@ -43,32 +43,13 @@
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
-      <artifactId>jackson-jaxrs</artifactId>
-      <version>1.8.1</version>
+      <artifactId>jackson-mapper-asl</artifactId>
+      <version>1.9.11</version>
     </dependency>
     <dependency>
-      <groupId>info.cukes</groupId>
-      <artifactId>cucumber-java</artifactId>
-      <version>1.0.11</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>info.cukes</groupId>
-      <artifactId>cucumber-junit</artifactId>
-      <version>1.0.11</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>info.cukes</groupId>
-      <artifactId>cucumber-picocontainer</artifactId>
-      <version>1.0.11</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.spockframework</groupId>
-      <artifactId>spock-core</artifactId>
-      <version>0.6-groovy-1.8</version>
-      <scope>test</scope>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.2</version>
     </dependency>
   </dependencies>
 

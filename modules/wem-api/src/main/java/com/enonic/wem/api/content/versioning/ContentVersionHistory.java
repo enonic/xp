@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.api.AbstractImmutableEntityList;
+import com.enonic.wem.api.util.AbstractImmutableEntityList;
 
 public final class ContentVersionHistory
     extends AbstractImmutableEntityList<ContentVersion>

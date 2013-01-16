@@ -1,5 +1,4 @@
-package com.enonic.wem.itest;
-
+package com.enonic.wem.core;
 
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -14,9 +13,7 @@ import com.enonic.wem.core.jcr.repository.JcrMicroKernelFactory;
 import com.enonic.wem.core.jcr.repository.JcrRepositoryFactory;
 
 public abstract class AbstractJcrTest
-    extends AbstractSpringTest
 {
-
     protected Session session;
 
     private JcrMicroKernelFactory jcrMicroKernelFactory;

@@ -21,7 +21,7 @@ import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.UserStoreNames;
 import com.enonic.wem.api.userstore.config.UserStoreConfig;
 import com.enonic.wem.api.userstore.config.UserStoreFieldConfig;
-import com.enonic.wem.itest.AbstractJcrTest;
+import com.enonic.wem.core.AbstractJcrTest;
 
 import static org.junit.Assert.*;
 

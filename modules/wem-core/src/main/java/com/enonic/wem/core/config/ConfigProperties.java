@@ -1,4 +1,4 @@
-package com.enonic.wem.itest.config;
+package com.enonic.wem.core.config;
 
 import java.util.Map;
 import java.util.Properties;
@@ -18,5 +18,4 @@ public final class ConfigProperties
     {
         return Maps.filterKeys( getMap(), predicate );
     }
-
 }

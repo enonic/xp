@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.type.form.Mixin;
 import com.enonic.wem.api.content.type.form.QualifiedMixinName;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.itest.AbstractJcrTest;
+import com.enonic.wem.core.AbstractJcrTest;
 
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static com.enonic.wem.api.content.type.form.Mixin.newMixin;

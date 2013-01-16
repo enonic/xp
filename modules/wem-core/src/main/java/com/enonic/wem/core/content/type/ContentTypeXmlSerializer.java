@@ -1,6 +1,5 @@
 package com.enonic.wem.core.content.type;
 
-
 import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,15 +14,16 @@ import com.enonic.wem.api.content.type.form.FormItems;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.content.XmlParsingException;
 import com.enonic.wem.core.content.type.form.FormItemsXmlSerializer;
-
-import com.enonic.cms.framework.util.JDOMUtil;
+import com.enonic.wem.core.util.JdomHelper;
 
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 
 public class ContentTypeXmlSerializer
     implements ContentTypeSerializer
 {
-    private FormItemsXmlSerializer formItemsSerializer = new FormItemsXmlSerializer();
+    private final FormItemsXmlSerializer formItemsSerializer = new FormItemsXmlSerializer();
+
+    private final JdomHelper jdomHelper = new JdomHelper();
 
     private boolean prettyPrint = true;
 
@@ -35,14 +35,7 @@ public class ContentTypeXmlSerializer
 
     public String toString( ContentType type )
     {
-        if ( prettyPrint )
-        {
-            return JDOMUtil.prettyPrintDocument( toJDomDocument( type ) );
-        }
-        else
-        {
-            return JDOMUtil.printDocument( toJDomDocument( type ) );
-        }
+        return this.jdomHelper.serialize( toJDomDocument( type ), this.prettyPrint );
     }
 
     public Document toJDomDocument( ContentType type )
@@ -72,8 +65,7 @@ public class ContentTypeXmlSerializer
     {
         try
         {
-            Document document = JDOMUtil.parseDocument( xml );
-
+            final Document document = this.jdomHelper.parse( xml );
             return parse( document.getRootElement() );
         }
         catch ( JDOMException e )
@@ -116,7 +108,8 @@ public class ContentTypeXmlSerializer
         }
         catch ( Exception e )
         {
-            throw new XmlParsingException( "Failed to parse content type: " + JDOMUtil.printElement( contentTypeEl ), e );
+            throw new XmlParsingException( "Failed to parse content type: " + this.jdomHelper.serialize( contentTypeEl, this.prettyPrint ),
+                                           e );
         }
 
         return contentTypeBuilder.build();

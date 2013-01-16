@@ -15,7 +15,7 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.exception.UnableToDeleteContentException;
-import com.enonic.wem.itest.AbstractJcrTest;
+import com.enonic.wem.core.AbstractJcrTest;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static org.junit.Assert.*;

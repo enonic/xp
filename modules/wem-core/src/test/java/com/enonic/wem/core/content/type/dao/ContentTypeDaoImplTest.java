@@ -14,7 +14,7 @@ import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.content.dao.ContentDaoConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
-import com.enonic.wem.itest.AbstractJcrTest;
+import com.enonic.wem.core.AbstractJcrTest;
 
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;

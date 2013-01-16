@@ -1,4 +1,4 @@
-package com.enonic.wem.itest.config;
+package com.enonic.wem.core.config;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,18 +9,19 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.PropertyPlaceholderHelper;
 
-import com.enonic.cms.framework.util.PropertiesUtil;
+import com.google.common.base.Strings;
 
-import com.enonic.cms.core.home.HomeDir;
+import com.enonic.wem.core.home.HomeDir;
 
-final class ConfigLoader
+public final class ConfigLoader
 {
     private final static Logger LOG = LoggerFactory.getLogger( ConfigLoader.class );
 
     private final static String CMS_PROPERTIES = "config/cms.properties";
 
-    private final static String DEFAULT_PROPERTIES = "com/enonic/vertical/default.properties";
+    private final static String DEFAULT_PROPERTIES = "com/enonic/wem/core/config/default.properties";
 
     private final HomeDir homeDir;
 
@@ -61,7 +62,8 @@ final class ConfigLoader
         props.putAll( this.homeDir.toProperties() );
 
         final ConfigProperties config = new ConfigProperties();
-        config.putAll( PropertiesUtil.interpolate( props, this.systemProperties ) );
+        config.putAll( interpolate( props, this.systemProperties ) );
+
         return config;
     }
 
@@ -90,7 +92,7 @@ final class ConfigLoader
         final File file = new File( this.homeDir.toFile(), CMS_PROPERTIES );
         if ( !file.exists() || file.isDirectory() )
         {
-            LOG.info( "Could not find cms.properties from [{0}]. Using defaults.", file.getAbsolutePath() );
+            LOG.info( "Could not find cms.properties from [{}]. Using defaults.", file.getAbsolutePath() );
             return new Properties();
         }
 
@@ -100,7 +102,7 @@ final class ConfigLoader
         }
         catch ( final Exception e )
         {
-            LOG.error( "Failed to load cms.properties from [" + file.getAbsolutePath() + "]. Using defaults.", e );
+            LOG.error( "Failed to load cms.properties from [{}]. Using defaults.", file.getAbsolutePath() );
         }
 
         return new Properties();
@@ -113,5 +115,35 @@ final class ConfigLoader
         props.load( in );
         in.close();
         return props;
+    }
+
+    private Properties interpolate( final Properties props, final Properties env )
+    {
+        final PropertyPlaceholderHelper.PlaceholderResolver resolver = new PropertyPlaceholderHelper.PlaceholderResolver()
+        {
+            public String resolvePlaceholder( final String key )
+            {
+                String value = props.getProperty( key );
+                if ( !Strings.isNullOrEmpty( value ) )
+                {
+                    return value;
+                }
+
+                return env.getProperty( key );
+            }
+        };
+
+        final PropertyPlaceholderHelper helper = new PropertyPlaceholderHelper( "${", "}", ":", true );
+        final Properties result = new Properties();
+
+        for ( final Object o : props.keySet() )
+        {
+            final String key = (String) o;
+            final String value = props.getProperty( key );
+            final String resolved = helper.replacePlaceholders( value, resolver );
+            result.put( key, resolved );
+        }
+
+        return result;
     }
 }

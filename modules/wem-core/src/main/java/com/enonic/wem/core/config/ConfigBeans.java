@@ -1,9 +1,9 @@
-package com.enonic.wem.itest.config;
+package com.enonic.wem.core.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.enonic.cms.core.home.HomeDir;
+import com.enonic.wem.core.home.HomeDir;
 
 @Configuration
 public class ConfigBeans

@@ -10,8 +10,7 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
-
-import com.enonic.cms.core.time.TimeService;
+import com.enonic.wem.core.time.TimeService;
 
 @Component
 public class CreateContentHandler

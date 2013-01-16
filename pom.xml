@@ -16,17 +16,13 @@
   <name>Enonic WEM</name>
   <version>5.0.0-SNAPSHOT</version>
 
-  <properties>
-    <old.version>4.7.1</old.version>
-  </properties>
-
   <modules>
     <module>modules/wem-api</module>
     <module>modules/wem-core</module>
-    <module>modules/wem-migrate</module>
+    <!--module>modules/wem-migrate</module>
     <module>modules/wem-web</module>
     <module>modules/wem-taglib</module>
-    <module>modules/wem-webapp</module>
+    <module>modules/wem-webapp</module-->
   </modules>
 
   <dependencies>
@@ -45,7 +41,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>3.1.0.RELEASE</version>
+      <version>3.2.0.RELEASE</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -54,12 +50,36 @@
       <version>1.4</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>info.cukes</groupId>
+      <artifactId>cucumber-java</artifactId>
+      <version>1.0.11</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>info.cukes</groupId>
+      <artifactId>cucumber-junit</artifactId>
+      <version>1.0.11</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>info.cukes</groupId>
+      <artifactId>cucumber-picocontainer</artifactId>
+      <version>1.0.11</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-core</artifactId>
+      <version>0.6-groovy-1.8</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <repositories>
     <repository>
       <id>enonic.repo</id>
-      <url>http://repo.enonic.com/artifactory/public</url>
+      <url>http://repo.enonic.com/maven</url>
     </repository>
   </repositories>
 
