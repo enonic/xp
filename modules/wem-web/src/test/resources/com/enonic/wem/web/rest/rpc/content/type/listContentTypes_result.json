@@ -1,103 +1,105 @@
 {
-    "success":true,
-    "contentTypes":[
+    "success": true,
+    "contentTypes": [
         {
-            "name":"myCtype",
-            "module":"myModule",
-            "qualifiedName":"myModule:myCtype",
-            "displayName":null,
-            "superType":"System:unstructured",
-            "isAbstract":false,
-            "isFinal":false,
-            "form":[
+            "name": "myCtype",
+            "module": "myModule",
+            "qualifiedName": "myModule:myCtype",
+            "displayName": null,
+            "superType": "System:unstructured",
+            "isAbstract": false,
+            "isFinal": false,
+            "form": [
                 {
-                    "Input":{
-                        "name":"inputText1",
-                        "label":"Line Text 1",
-                        "immutable":false,
-                        "occurrences":{
-                            "minimum":1,
-                            "maximum":1
+                    "Input": {
+                        "name": "inputText1",
+                        "label": "Line Text 1",
+                        "immutable": false,
+                        "occurrences": {
+                            "minimum": 1,
+                            "maximum": 1
                         },
-                        "indexed":false,
-                        "customText":null,
-                        "validationRegexp":null,
-                        "helpText":"Help text line 1",
-                        "type":{
-                            "name":"TextLine",
-                            "builtIn":true
+                        "indexed": false,
+                        "customText": null,
+                        "validationRegexp": null,
+                        "helpText": "Help text line 1",
+                        "type": {
+                            "name": "TextLine",
+                            "builtIn": true
                         }
                     }
                 },
                 {
-                    "Input":{
-                        "name":"inputText2",
-                        "label":"Line Text 2",
-                        "immutable":true,
-                        "occurrences":{
-                            "minimum":0,
-                            "maximum":1
+                    "Input": {
+                        "name": "inputText2",
+                        "label": "Line Text 2",
+                        "immutable": true,
+                        "occurrences": {
+                            "minimum": 0,
+                            "maximum": 1
                         },
-                        "indexed":false,
-                        "customText":null,
-                        "validationRegexp":null,
-                        "helpText":"Help text line 2",
-                        "type":{
-                            "name":"TextLine",
-                            "builtIn":true
+                        "indexed": false,
+                        "customText": null,
+                        "validationRegexp": null,
+                        "helpText": "Help text line 2",
+                        "type": {
+                            "name": "TextLine",
+                            "builtIn": true
                         }
                     }
                 },
                 {
-                    "Input":{
-                        "name":"textArea1",
-                        "label":"Text Area",
-                        "immutable":false,
-                        "occurrences":{
-                            "minimum":1,
-                            "maximum":1
+                    "Input": {
+                        "name": "textArea1",
+                        "label": "Text Area",
+                        "immutable": false,
+                        "occurrences": {
+                            "minimum": 1,
+                            "maximum": 1
                         },
-                        "indexed":false,
-                        "customText":null,
-                        "validationRegexp":null,
-                        "helpText":"Help text area",
-                        "type":{
-                            "name":"TextArea",
-                            "builtIn":true
+                        "indexed": false,
+                        "customText": null,
+                        "validationRegexp": null,
+                        "helpText": "Help text area",
+                        "type": {
+                            "name": "TextArea",
+                            "builtIn": true
                         }
                     }
                 }
-            ]
+            ],
+            "iconUrl": "http://localhost/admin/rest/content-type/image/myModule:myCtype"
         },
         {
-            "name":"theContentType",
-            "module":"otherModule",
-            "qualifiedName":"otherModule:theContentType",
-            "displayName":null,
-            "superType":"System:unstructured",
-            "isAbstract":false,
-            "isFinal":false,
-            "form":[
+            "name": "theContentType",
+            "module": "otherModule",
+            "qualifiedName": "otherModule:theContentType",
+            "displayName": null,
+            "superType": "System:unstructured",
+            "isAbstract": false,
+            "isFinal": false,
+            "form": [
                 {
-                    "Input":{
-                        "name":"inputText_1",
-                        "label":"Line Text 1",
-                        "immutable":false,
-                        "occurrences":{
-                            "minimum":1,
-                            "maximum":1
+                    "Input": {
+                        "name": "inputText_1",
+                        "label": "Line Text 1",
+                        "immutable": false,
+                        "occurrences": {
+                            "minimum": 1,
+                            "maximum": 1
                         },
-                        "indexed":false,
-                        "customText":null,
-                        "validationRegexp":null,
-                        "helpText":"Help text line 1",
-                        "type":{
-                            "name":"TextLine",
-                            "builtIn":true
+                        "indexed": false,
+                        "customText": null,
+                        "validationRegexp": null,
+                        "helpText": "Help text line 1",
+                        "type": {
+                            "name": "TextLine",
+                            "builtIn": true
                         }
                     }
                 }
-            ]
+            ],
+            "iconUrl": "http://localhost/admin/rest/content-type/image/otherModule:theContentType"
         }
     ]
 }

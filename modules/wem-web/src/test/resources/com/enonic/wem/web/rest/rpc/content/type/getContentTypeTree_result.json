@@ -11,6 +11,7 @@
             "isAbstract": false,
             "isFinal": false,
             "form": [ ],
+            "iconUrl": "http://localhost/admin/rest/content-type/image/System:Root",
             "contentTypes": [
                 {
                     "name": "myType",
@@ -79,6 +80,7 @@
                             }
                         }
                     ],
+                    "iconUrl": "http://localhost/admin/rest/content-type/image/myModule:myType",
                     "contentTypes": [
                         {
                             "name": "subType",
@@ -89,6 +91,7 @@
                             "isAbstract": false,
                             "isFinal": false,
                             "form": [ ],
+                            "iconUrl": "http://localhost/admin/rest/content-type/image/myModule:subType",
                             "contentTypes": [ ],
                             "hasChildren": false
                         }

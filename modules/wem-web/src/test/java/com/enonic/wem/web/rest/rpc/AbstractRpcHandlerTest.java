@@ -1,5 +1,7 @@
 package com.enonic.wem.web.rest.rpc;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
@@ -8,6 +10,9 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Before;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.enonic.wem.web.json.ObjectMapperHelper;
 import com.enonic.wem.web.json.rpc.JsonRpcError;
@@ -187,5 +192,12 @@ public abstract class AbstractRpcHandlerTest
         final String actualStr = toJson( actual );
 
         assertEquals( expectedStr, actualStr );
+    }
+
+    protected void mockCurrentContextHttpRequest()
+    {
+        final HttpServletRequest req = new MockHttpServletRequest();
+        final ServletRequestAttributes attrs = new ServletRequestAttributes( req );
+        RequestContextHolder.setRequestAttributes( attrs );
     }
 }

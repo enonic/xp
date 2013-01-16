@@ -83,12 +83,4 @@ public class ChangePasswordRpcHandlerTest
         }
         return result;
     }
-
-    private void mockCurrentContextHttpRequest()
-    {
-        final HttpServletRequest req = new MockHttpServletRequest();
-        final ServletRequestAttributes attrs = new ServletRequestAttributes( req );
-        RequestContextHolder.setRequestAttributes( attrs );
-    }
-
 }
