@@ -1,5 +1,5 @@
 Ext.define('Admin.view.homescreen.Homescreen', {
-    extend: 'Ext.container.Container',
+    extend: 'Ext.Component',
     alias: 'widget.homescreen',
     requires: [
         'Admin.view.homescreen.LoginPanel',
@@ -16,8 +16,9 @@ Ext.define('Admin.view.homescreen.Homescreen', {
         html: Templates.homescreen.mainContainerHtml
     },
     floating: true,
-    hideMode: 'offsets',
+    hideMode: 'display',
     renderTo: Ext.getBody(),
+    shadow: false,
 
     initComponent: function () {
         var me = this;
@@ -25,6 +26,11 @@ Ext.define('Admin.view.homescreen.Homescreen', {
         me.on('render', function () {
             me.updateGlobalView();
             me.addClickEvent();
+            me.prefixedEvent(me.getEl().dom, 'AnimationEnd', function (evt) {
+                if (evt.animationName === 'ani-hide-home') {
+                    me.setVisible(false);
+                }
+            });
 
             Ext.create('Admin.view.homescreen.LoginPanel');
             Ext.create('Admin.view.homescreen.AppSelector');
@@ -82,6 +88,20 @@ Ext.define('Admin.view.homescreen.Homescreen', {
     },
 
 
+    toggleShowHide: function () {
+        var me = this;
+        var el = me.getEl();
+        var show = !me.isVisible();
+
+        if (show) {
+            me.setVisible(true);
+            el.removeCls('hide-home').addCls('show-home');
+        } else {
+            el.removeCls('show-home').addCls('hide-home');
+        }
+    },
+
+
     addClickEvent: function () {
         var me = this;
         Ext.fly('admin-home-main-container').on('click', function (evt, el) {
@@ -93,15 +113,16 @@ Ext.define('Admin.view.homescreen.Homescreen', {
     },
 
 
-    toggleShowHide: function () {
-        var me = this;
-        if (!me.isVisible()) {
-            me.setVisible(true);
-            me.addCls('show');
-        } else {
-            me.setVisible(false);
-            me.removeCls('show');
-            me.getEl().setStyle('opacity', '0');
+    prefixedEvent: function (element, type, callback) {
+        var pfx = ['webkit', 'moz', 'MS', 'o', ''];
+        var i;
+
+        for (i = 0; i < pfx.length; i++) {
+            if (!pfx[i]) {
+                type = type.toLowerCase();
+            }
+
+            element.addEventListener(pfx[i] + type, callback, false);
         }
     },
 
