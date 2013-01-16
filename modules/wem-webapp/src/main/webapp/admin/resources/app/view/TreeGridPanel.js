@@ -92,16 +92,6 @@ Ext.define('Admin.view.TreeGridPanel', {
         });
     },
 
-    resolveIconClass: function (node) {
-        var iconCls = '';
-        var nodeType = node.get(this.typeField);
-        var typeCls = nodeType && this.iconClasses && this.iconClasses[nodeType.toLowerCase()];
-        if (typeCls) {
-            iconCls = typeCls;
-        }
-        return iconCls;
-    },
-
     // possible values : 0,1,tree,grid
     setActiveList: function (listId) {
         this.getLayout().setActiveItem(listId);

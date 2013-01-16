@@ -1,4 +1,4 @@
-// This file was auto-generated on 2013-01-15 15:47:54 CET
+// This file was auto-generated on 2013-01-16 12:33:19 CET
 
 if (!Templates) {
     var Templates = {};
@@ -549,11 +549,10 @@ Templates.contentStudio = {
     previewHeader: '<h1>{name}</h1>' +
                    '<div>{qualifiedName}</div>',
 
-    previewIcon: '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" class="{iconCls}" alt="{name}"' +
-                 'title="{name}"/>',
+    previewIcon: '<img src="{src}?size=100" alt="{name}" title="{name}"/>',
 
     treeGridPanelNameRenderer: '<div class="admin-{0}-thumbnail">' +
-                               '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" class="{1}"/>' +
+                               '<img src="{1}?size=32"/>' +
                                '</div>' +
                                '<div class="admin-{0}-description">' +
                                '<h6>{2}</h6>' +

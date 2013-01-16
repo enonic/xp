@@ -21,10 +21,11 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
         var steps = me.getSteps();
         var isNew = this.isNewContentType();
 
+        var iconUrl = 'resources/images/icons/128x128/cubes.png';
         var displayNameValue = 'Display Name';
         if (me.modelData) {
             displayNameValue = me.modelData.displayName || me.modelData.name;
-
+            iconUrl = me.modelData.iconUrl;
         }
         me.headerData = {
             displayName: displayNameValue
@@ -43,7 +44,7 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
                         xtype: 'photoUploadButton',
                         width: 111,
                         height: 111,
-                        photoUrl: "resources/images/icons/128x128/cubes.png",
+                        photoUrl:  iconUrl,
                         title: "Content",
                         style: {
                             margin: '1px'

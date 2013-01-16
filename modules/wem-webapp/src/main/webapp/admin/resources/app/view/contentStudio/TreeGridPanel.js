@@ -11,16 +11,6 @@ Ext.define('Admin.view.contentStudio.TreeGridPanel', {
     ],
 
     typeField: 'qualifiedName',
-    iconClasses: {
-        "system:content": 'icon-icomoon-content-32',
-        "system:folder": 'icon-icomoon-folder-32',
-        "system:file": 'icon-icomoon-file-32',
-        "system:page": 'icon-icomoon-page-32',
-        "system:space": 'icon-icomoon-space-32',
-        "system:shortcut": 'icon-icomoon-shortcut-32',
-        "system:structured": 'icon-icomoon-structured-32',
-        "system:unstructured": 'icon-icomoon-unstructured-32'
-    },
 
     initComponent: function () {
         this.columns = [
@@ -43,7 +33,8 @@ Ext.define('Admin.view.contentStudio.TreeGridPanel', {
     nameRenderer: function (value, p, record) {
         var contentType = record.data;
         var activeListType = this.getActiveList().itemId;
-        return Ext.String.format(Templates.contentStudio.treeGridPanelNameRenderer, activeListType, this.resolveIconClass(record),
+        var contentTypeImgUrl = contentType.iconUrl;
+        return Ext.String.format(Templates.contentStudio.treeGridPanelNameRenderer, activeListType, contentTypeImgUrl,
             contentType.name, contentType.qualifiedName);
     },
 
