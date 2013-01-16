@@ -3,7 +3,7 @@
     "module": "News",
     "qualifiedName": "News:Article",
     "displayName": null,
-    "superType": "System:unstructured",
+    "superType": "System:structured",
     "isAbstract": false,
     "isFinal": false,
     "form": [

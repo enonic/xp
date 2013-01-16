@@ -3,7 +3,7 @@
     "module": "Demo",
     "qualifiedName": "Demo:Set",
     "displayName": "Form Item Set Demo",
-    "superType": "System:unstructured",
+    "superType": "System:structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [

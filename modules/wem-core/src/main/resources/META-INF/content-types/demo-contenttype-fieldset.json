@@ -3,7 +3,7 @@
     "module": "Demo",
     "qualifiedName": "Demo:FieldSet",
     "displayName": "Fieldset demo",
-    "superType": "System:unstructured",
+    "superType": "System:structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [
