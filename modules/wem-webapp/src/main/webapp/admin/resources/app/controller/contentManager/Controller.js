@@ -36,7 +36,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 tabs.addTab({
                     xtype: 'contentDetail',
                     data: content[i].raw,
-                    title: 'View Content'
+                    title: content[i].raw.displayName
                 });
             }
         }
@@ -51,27 +51,30 @@ Ext.define('Admin.controller.contentManager.Controller', {
             content = [].concat(content);
         }
         var tabs = this.getCmsTabPanel();
+
         var createContentTabFn = function (response) {
             if (Ext.isFunction(callback)) {
                 callback();
             }
             return {
                 xtype: 'contentWizardPanel',
-                title: 'New Content',
+                title: response.content.displayName,
                 data: {contentType: response.contentType, content: response.content}
             };
         };
+
         var createSiteTabFn = function (response) {
             if (Ext.isFunction(callback)) {
                 callback();
             }
             return {
                 xtype: 'panel',
-                title: 'New Site',
+                title: response.content.displayName,
                 html: 'Site wizard will be here',
                 data: response
             };
         };
+
         var openEditContentTabFn = function (selectedContent) {
             var requestConfig = {
                 doTabRequest: function (handleRpcResponse) {
@@ -110,10 +113,12 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 title: selectedContent.get('displayName'),
                 data: selectedContent.raw,
                 closable: true,
+                editing: true,
                 layout: 'fit'
             };
             tabs.addTab(tabItem, undefined, requestConfig);
         };
+
         var openEditSiteTabFn = function (selectedContent) {
             var requestConfig = {
                 doTabRequest: function (handleRpcResponse) {
@@ -125,6 +130,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 id: 'edit-site-tab-' + selectedContent.get('path'),
                 title: selectedContent.get('displayName'),
                 closable: true,
+                editing: true,
                 layout: 'fit'
             };
             tabs.addTab(tabItem, undefined, requestConfig);

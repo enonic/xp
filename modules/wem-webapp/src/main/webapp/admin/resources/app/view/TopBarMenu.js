@@ -56,6 +56,7 @@ Ext.define('Admin.view.TopBarMenu', {
     ],
 
     tabPanel: undefined,
+    activeTab: undefined,
 
     initComponent: function () {
 
@@ -84,6 +85,14 @@ Ext.define('Admin.view.TopBarMenu', {
         }
     },
 
+    onShow: function () {
+        this.callParent(arguments);
+
+        if (this.activeTab) {
+            this.markActiveTab(this.activeTab);
+        }
+    },
+
     onBoxReady: function () {
         var tip = Ext.DomHelper.append(this.el, {
             tag: 'div',
@@ -102,11 +111,37 @@ Ext.define('Admin.view.TopBarMenu', {
         }
     },
 
+    markActiveTab: function (item) {
+        var me = this;
+        var menuItem;
+
+        if (me.isVisible()) {
+
+            // deactivate
+            menuItem = me.el.down('.current-tab');
+            if (menuItem) {
+                menuItem.removeCls('current-tab')
+            }
+
+            // activate
+            if (item) {
+                menuItem = me.down('#' + item.id);
+                if (menuItem && menuItem.el) {
+                    menuItem.el.addCls('current-tab')
+                }
+            }
+
+        }
+
+        me.activeTab = item;
+    },
+
     getItemFromEvent: function (e) {
         var item = this;
         do {
             item = item.getChildByElement(e.getTarget());
-        } while (item && Ext.isDefined(item.getChildByElement) && item.getXType() !== 'topBarMenuItem');
+        }
+        while (item && Ext.isDefined(item.getChildByElement) && item.getXType() !== 'topBarMenuItem');
         return item;
     },
 

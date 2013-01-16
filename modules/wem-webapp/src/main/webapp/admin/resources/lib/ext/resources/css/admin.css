@@ -1532,17 +1532,22 @@ div.x-mask {
 }
 
 /* line 97, ../sass/admin/css/_top-bar.scss */
+.admin-topbar-menu .admin-topbar-menu-item.current-tab {
+    background-color: #eeeeee;
+}
+
+/* line 101, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item.active {
     background: #4294DE;
     color: #FFF;
 }
 
-/* line 101, ../sass/admin/css/_top-bar.scss */
+/* line 105, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item.active a.close-button {
     background: url("../themes/images/default/navigate_cross-16px.png") 0 -16px no-repeat;
 }
 
-/* line 106, ../sass/admin/css/_top-bar.scss */
+/* line 110, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item a.close-button {
     background: url("../themes/images/default/navigate_cross-16px.png") 0 0 no-repeat;
     border: 1px solid transparent;
@@ -1551,7 +1556,7 @@ div.x-mask {
     cursor: pointer;
 }
 
-/* line 115, ../sass/admin/css/_top-bar.scss */
+/* line 119, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu em {
     position: relative;
     top: -2px;

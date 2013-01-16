@@ -110,6 +110,7 @@ Ext.define('Admin.view.TopBar', {
 
     setActiveTab: function (tab) {
         this.setTitle(this.getMenuItemDescription(tab.card));
+        this.tabMenu.markActiveTab(tab);
     },
 
     remove: function (tab) {
