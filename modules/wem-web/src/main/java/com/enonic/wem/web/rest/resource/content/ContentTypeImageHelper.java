@@ -20,7 +20,7 @@ final class ContentTypeImageHelper
     public BufferedImage getContentTypeIcon( final ContentType contentType, final int size )
         throws Exception
     {
-        if ( ( contentType == null ) || ( contentType.getIcon() == null ) )
+        if ( ( contentType == null ) || ( contentType.getIcon() == null ) || ( contentType.getIcon().length == 0 ) )
         {
             return null;
         }

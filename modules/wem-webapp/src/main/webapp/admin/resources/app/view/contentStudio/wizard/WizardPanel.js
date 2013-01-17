@@ -118,6 +118,9 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
         ];
 
         this.callParent(arguments);
+
+        var uploader = this.down('photoUploadButton');
+        uploader.on('fileuploaded', me.photoUploaded, me);
     },
 
 
@@ -162,9 +165,10 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
         return this.getWizardPanel().getData();
     },
 
-    processDisplayName: function (string) {
-        string = Ext.String.trim(string);
-        return string.length > 0 ? Ext.String.capitalize(string) : "";
+    photoUploaded: function (photoUploadButton, response) {
+        var wizard = this.down('wizardPanel'),
+            iconRef = response.items && response.items.length > 0 && response.items[0].id;
+        wizard.addData({iconRef: iconRef});
     }
 
 });
