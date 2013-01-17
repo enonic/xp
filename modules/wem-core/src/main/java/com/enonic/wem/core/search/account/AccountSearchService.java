@@ -36,7 +36,7 @@ import com.enonic.wem.core.search.FacetEntry;
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 @Component
-public final class AccountSearchService
+public class AccountSearchService
 {
     private static final String CMS_INDEX = "cms";
 
