@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 
 import static com.enonic.wem.api.content.relation.RelationshipType.newRelationType;
 
-final class SetRelationshipTypeEditor
+final public class SetRelationshipTypeEditor
     implements RelationshipTypeEditor
 {
     protected final RelationshipType source;
