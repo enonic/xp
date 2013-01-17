@@ -26,7 +26,7 @@ public class RelationshipTypeJsonSerializer
         super( objectMapper );
     }
 
-    protected JsonNode serialize( final RelationshipType relationshipType )
+    public JsonNode serialize( final RelationshipType relationshipType )
     {
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectNode objectNode = mapper.createObjectNode();
