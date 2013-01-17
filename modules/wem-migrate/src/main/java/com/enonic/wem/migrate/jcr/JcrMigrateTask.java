@@ -20,8 +20,6 @@ public class JcrMigrateTask
 
     private JcrAccountsImporter jcrAccountsImporter;
 
-    private AccountSearchService accountSearchService;
-
     @Override
     public void migrate()
         throws Exception
@@ -45,8 +43,8 @@ public class JcrMigrateTask
     public void createAccountsIndex()
     {
         LOG.info( "Creating index and mapping for accounts..." );
-        accountSearchService.dropIndex();
-        accountSearchService.createIndex();
+        // accountSearchService.dropIndex();
+        // accountSearchService.createIndex();
         LOG.info( "Index and mapping created." );
     }
 
@@ -60,11 +58,5 @@ public class JcrMigrateTask
     public void setJcrSessionProvider( final JcrSessionProvider jcrSessionProvider )
     {
         this.jcrSessionProvider = jcrSessionProvider;
-    }
-
-    @Autowired
-    public void setAccountSearchService( final AccountSearchService accountSearchService )
-    {
-        this.accountSearchService = accountSearchService;
     }
 }

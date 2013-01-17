@@ -35,6 +35,7 @@ final class BootEnvironment
     private void doInitialize()
         throws Exception
     {
+        setSystemProperties();
         logBanner();
         resolveHomeDir();
     }
@@ -77,5 +78,10 @@ final class BootEnvironment
         str.append( SystemUtils.OS_NAME ).append( " " ).append( SystemUtils.OS_VERSION ).append( " (" ).append(
             SystemUtils.OS_ARCH ).append( ")" );
         return str.toString();
+    }
+
+    private void setSystemProperties()
+    {
+        System.setProperty( "java.awt.headless", "true" );
     }
 }

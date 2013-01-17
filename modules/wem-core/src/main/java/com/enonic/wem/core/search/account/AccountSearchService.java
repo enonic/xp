@@ -2,12 +2,12 @@ package com.enonic.wem.core.search.account;
 
 import java.io.IOException;
 
+import javax.annotation.PostConstruct;
+
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.flush.FlushRequest;
-import org.elasticsearch.action.admin.indices.mapping.delete.DeleteMappingRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -36,7 +36,7 @@ import com.enonic.wem.core.search.FacetEntry;
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 @Component
-public class AccountSearchService
+public final class AccountSearchService
 {
     private static final String CMS_INDEX = "cms";
 
@@ -48,23 +48,25 @@ public class AccountSearchService
 
     private AccountQueryTranslator translator;
 
-    public void createIndex()
+    @PostConstruct
+    public void initialize()
+        throws Exception
+    {
+        if (!indexExists()) {
+            createIndex();
+        }
+    }
+
+    private void createIndex()
+        throws Exception
     {
         try
         {
             CreateIndexRequest createIndexRequest = new CreateIndexRequest( CMS_INDEX );
-            ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder().loadFromSource(jsonBuilder()
-                .startObject()
-                    .startObject( "analysis" )
-                        .startObject( "analyzer" )
-                            .startObject( "keywordlowercase" )
-                                .field( "type", "custom" )
-                                .field( "tokenizer", "keyword" )
-                                .field( "filter", new String[]{"lowercase"} )
-                            .endObject()
-                        .endObject()
-                    .endObject()
-                .endObject().string());
+            ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder().loadFromSource(
+                jsonBuilder().startObject().startObject( "analysis" ).startObject( "analyzer" ).startObject( "keywordlowercase" ).field(
+                    "type", "custom" ).field( "tokenizer", "keyword" ).field( "filter", new String[]{
+                    "lowercase"} ).endObject().endObject().endObject().endObject().string() );
             createIndexRequest.settings( settings );
             client.admin().indices().create( createIndexRequest ).actionGet();
 
@@ -79,10 +81,6 @@ public class AccountSearchService
         {
             LOG.warn( "Index already exists; skipping index creation", e );
         }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
     }
 
     private XContentBuilder buildIndexMapping()
@@ -91,94 +89,28 @@ public class AccountSearchService
         final XContentBuilder mapping = XContentFactory.jsonBuilder().prettyPrint();
         mapping.startObject();
         mapping.field( ACCOUNT_INDEX_TYPE ).startObject();
-        mapping.field( "properties" ).startObject()
-            .field( AccountIndexField.USERSTORE_FIELD.id() )
-                .startObject()
-                    .field( "type", "multi_field" )
-                    .startObject( "fields" )
-                        .startObject( AccountIndexField.USERSTORE_FIELD.id() )
-                            .field( "type", "string" )
-                            .field( "index", "analyzed" )
-                        .endObject()
-                        .startObject( "untouched" )
-                            .field( "type", "string" )
-                            .field( "index", "not_analyzed" )
-                        .endObject()
-                    .endObject()
-                .endObject()
-            .field( AccountIndexField.DISPLAY_NAME_FIELD.id() )
-                .startObject()
-                    .field( "type", "multi_field" )
-                    .startObject( "fields" )
-                        .startObject( AccountIndexField.DISPLAY_NAME_FIELD.id() )
-                            .field( "type", "string" )
-                            .field( "index", "analyzed" )
-                        .endObject()
-                        .startObject( "untouched" )
-                            .field( "type", "string" )
-                            .field( "index", "not_analyzed" )
-                        .endObject()
-                    .endObject()
-                .endObject()
-            .field( AccountIndexField.NAME_FIELD.id() )
-                .startObject()
-                    .field( "type", "multi_field" )
-                    .startObject( "fields" )
-                        .startObject( AccountIndexField.NAME_FIELD.id() )
-                            .field( "type", "string" )
-                            .field( "index", "analyzed" )
-                        .endObject()
-                        .startObject( "untouched" )
-                            .field( "type", "string" )
-                            .field( "index", "not_analyzed" )
-                        .endObject()
-                    .endObject()
-                .endObject()
-            .field( AccountIndexField.KEY_FIELD.id() )
-                .startObject()
-                    .field( "type", "string" )
-                    .field( "enabled", false )
-                .endObject()
-            .field( AccountIndexField.LAST_MODIFIED_FIELD.id() )
-                .startObject()
-                    .field( "type", "date" )
-                    .field( "store", "yes" )
-                    .field( "format", "dateOptionalTime" )
-                .endObject()
-            .field( AccountIndexField.EMAIL_FIELD.id() )
-                .startObject()
-                    .field( "type", "string" )
-                    .field( "index", "not_analyzed" )
-                .endObject()
-            .field( AccountIndexField.ORGANIZATION_FIELD.id() )
-                .startObject()
-                    .field( "type", "multi_field" )
-                    .startObject( "fields" )
-                        .startObject( AccountIndexField.ORGANIZATION_FIELD.id() )
-                            .field( "type", "string" )
-                            .field( "index", "analyzed" )
-                        .endObject()
-                        .startObject( "untouched" )
-                            .field( "type", "string" )
-                            .field( "index", "not_analyzed" )
-                        .endObject()
-                        .startObject( "lowercase" )
-                            .field( "type", "string" )
-                            .field( "index", "analyzed" )
-                            .field( "analyzer", "keywordlowercase" )
-                        .endObject()
-                    .endObject()
-                .endObject()
-            .field( AccountIndexField.MEMBERS_FIELD.id() )
-                .startObject()
-                    .field( "type", "string" )
-                    .field( "index", "not_analyzed" )
-                .endObject()
-            .endObject()
-        .endObject()
-        .endObject();
-
-        LOG.info( "Account mapping: " + mapping.string() );
+        mapping.field( "properties" ).startObject().field( AccountIndexField.USERSTORE_FIELD.id() ).startObject().field( "type",
+                                                                                                                         "multi_field" ).startObject(
+            "fields" ).startObject( AccountIndexField.USERSTORE_FIELD.id() ).field( "type", "string" ).field( "index",
+                                                                                                              "analyzed" ).endObject().startObject(
+            "untouched" ).field( "type", "string" ).field( "index", "not_analyzed" ).endObject().endObject().endObject().field(
+            AccountIndexField.DISPLAY_NAME_FIELD.id() ).startObject().field( "type", "multi_field" ).startObject( "fields" ).startObject(
+            AccountIndexField.DISPLAY_NAME_FIELD.id() ).field( "type", "string" ).field( "index", "analyzed" ).endObject().startObject(
+            "untouched" ).field( "type", "string" ).field( "index", "not_analyzed" ).endObject().endObject().endObject().field(
+            AccountIndexField.NAME_FIELD.id() ).startObject().field( "type", "multi_field" ).startObject( "fields" ).startObject(
+            AccountIndexField.NAME_FIELD.id() ).field( "type", "string" ).field( "index", "analyzed" ).endObject().startObject(
+            "untouched" ).field( "type", "string" ).field( "index", "not_analyzed" ).endObject().endObject().endObject().field(
+            AccountIndexField.KEY_FIELD.id() ).startObject().field( "type", "string" ).field( "enabled", false ).endObject().field(
+            AccountIndexField.LAST_MODIFIED_FIELD.id() ).startObject().field( "type", "date" ).field( "store", "yes" ).field( "format",
+                                                                                                                              "dateOptionalTime" ).endObject().field(
+            AccountIndexField.EMAIL_FIELD.id() ).startObject().field( "type", "string" ).field( "index", "not_analyzed" ).endObject().field(
+            AccountIndexField.ORGANIZATION_FIELD.id() ).startObject().field( "type", "multi_field" ).startObject( "fields" ).startObject(
+            AccountIndexField.ORGANIZATION_FIELD.id() ).field( "type", "string" ).field( "index", "analyzed" ).endObject().startObject(
+            "untouched" ).field( "type", "string" ).field( "index", "not_analyzed" ).endObject().startObject( "lowercase" ).field( "type",
+                                                                                                                                   "string" ).field(
+            "index", "analyzed" ).field( "analyzer", "keywordlowercase" ).endObject().endObject().endObject().field(
+            AccountIndexField.MEMBERS_FIELD.id() ).startObject().field( "type", "string" ).field( "index",
+                                                                                                  "not_analyzed" ).endObject().endObject().endObject().endObject();
         return mapping;
     }
 
@@ -188,29 +120,24 @@ public class AccountSearchService
         final XContentBuilder data = accountIndexData.getData();
         final String id = account.getKey().toString();
 
-        final IndexRequest req = Requests.indexRequest()
-                .id( id )
-                .index( CMS_INDEX )
-                .type( ACCOUNT_INDEX_TYPE )
-                .source( data );
+        final IndexRequest req = Requests.indexRequest().id( id ).index( CMS_INDEX ).type( ACCOUNT_INDEX_TYPE ).source( data );
 
-        this.client.index(req).actionGet();
+        this.client.index( req ).actionGet();
     }
 
-    public AccountSearchResults search(AccountSearchQuery query)
+    public AccountSearchResults search( AccountSearchQuery query )
     {
-        final SearchRequest req = Requests.searchRequest( CMS_INDEX )
-                .types( ACCOUNT_INDEX_TYPE )
-                .searchType( getSearchType( query ) )
-                .source( this.translator.build( query ) );
+        final SearchRequest req =
+            Requests.searchRequest( CMS_INDEX ).types( ACCOUNT_INDEX_TYPE ).searchType( getSearchType( query ) ).source(
+                this.translator.build( query ) );
 
-        final SearchResponse res = this.client.search(req).actionGet();
+        final SearchResponse res = this.client.search( req ).actionGet();
 
 //        LOG.info( "Search result: " + res.toString() );
 
         final SearchHits hits = res.getHits();
 
-        final AccountSearchResults searchResult = new AccountSearchResults(query.getFrom(), (int)hits.getTotalHits());
+        final AccountSearchResults searchResult = new AccountSearchResults( query.getFrom(), (int) hits.getTotalHits() );
         if ( query.isIncludeResults() )
         {
             addSearchHits( searchResult, hits );
@@ -266,59 +193,31 @@ public class AccountSearchService
         }
     }
 
-    public void dropIndex()
+    private boolean indexExists()
     {
-        final String[] indices = new String[]{CMS_INDEX};
-        final DeleteMappingRequest deleteMappingRequest = new DeleteMappingRequest()
-            .indices( indices )
-            .type( ACCOUNT_INDEX_TYPE );
-
-        try
-        {
-            this.client.admin().indices().deleteMapping( deleteMappingRequest ).get();
-            final FlushRequest flushRequest = new FlushRequest();
-            this.client.admin().indices().flush( flushRequest ).get();
-        }
-        catch ( Exception e )
-        {
-            LOG.warn( "Unable to delete ElasticSearch mapping", e );
-        }
-
-        try
-        {
-            final DeleteIndexRequest deleteRequest = new DeleteIndexRequest()
-                .indices( CMS_INDEX );
-            this.client.admin().indices().delete( deleteRequest ).get();
-        }
-        catch ( Exception e )
-        {
-            LOG.warn( "Unable to delete ElasticSearch index", e );
-        }
-    }
-
-    public boolean indexExists() {
-        final IndicesExistsRequest indicesExistRequest = new IndicesExistsRequest(CMS_INDEX);
+        final IndicesExistsRequest indicesExistRequest = new IndicesExistsRequest( CMS_INDEX );
         IndicesExistsResponse response = this.client.admin().indices().exists( indicesExistRequest ).actionGet();
         return response.exists();
     }
 
-    public void deleteIndex(String id) {
+    public void deleteIndex( String id )
+    {
         deleteIndex( id, false );
     }
 
-    public void deleteIndex(String id, boolean flushDataAfterDelete) {
-        final DeleteRequest deleteRequest = new DeleteRequest(  )
-            .index( CMS_INDEX )
-            .type( ACCOUNT_INDEX_TYPE )
-            .id( id );
+    public void deleteIndex( String id, boolean flushDataAfterDelete )
+    {
+        final DeleteRequest deleteRequest = new DeleteRequest().index( CMS_INDEX ).type( ACCOUNT_INDEX_TYPE ).id( id );
         this.client.delete( deleteRequest ).actionGet();
 
-        if ( flushDataAfterDelete ) {
+        if ( flushDataAfterDelete )
+        {
             flush();
         }
     }
 
-    private void flush() {
+    private void flush()
+    {
         this.client.admin().indices().flush( new FlushRequest( CMS_INDEX ).refresh( true ) ).actionGet();
     }
 
