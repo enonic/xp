@@ -109,7 +109,8 @@ Ext.define('Admin.view.TopBar', {
     },
 
     setActiveTab: function (tab) {
-        this.setTitle(this.getMenuItemDescription(tab.card));
+        this.setLabelTitle(this.getMenuItemDescription(tab.card));
+        this.setButtonTitle(tab.card, this.getActiveTabDisplayName(tab.card));
         this.tabMenu.markActiveTab(tab);
     },
 
@@ -174,10 +175,22 @@ Ext.define('Admin.view.TopBar', {
         return desc;
     },
 
+    getActiveTabDisplayName: function (card) {
+        var desc;
+        if (card.data) {
+            var data = card.data;
+            desc = data.displayName;
+        }
+        if (!desc) {
+            desc = card.title;
+        }
+        return desc;
+    },
+
 
     /*  Public  */
 
-    setTitle: function (text) {
+    setLabelTitle: function (text) {
         // highlight the last path fragment
         var title = text;
         var lastSlash = !Ext.isEmpty(text) ? text.lastIndexOf('/') : -1;
@@ -185,7 +198,16 @@ Ext.define('Admin.view.TopBar', {
             title = text.substring(0, lastSlash + 1) + '<strong>' + text.substring(lastSlash + 1) + '</strong>';
         }
         this.titleText.setText(title);
-        this.titleButton.setText(title);
+    },
+
+    setButtonTitle: function (card, text) {
+        this.titleButton.setText(text);
+
+        var iconClass = '';
+        if(card.tab.editing) {
+            iconClass = 'icon-pencil-16';
+        }
+        this.titleButton.setIconCls(iconClass);
     },
 
     getStartButton: function () {
