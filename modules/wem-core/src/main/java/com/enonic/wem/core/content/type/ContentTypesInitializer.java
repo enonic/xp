@@ -2,6 +2,8 @@ package com.enonic.wem.core.content.type;
 
 import java.io.StringWriter;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.WordUtils;
 import org.slf4j.Logger;
@@ -46,6 +48,7 @@ public class ContentTypesInitializer
 
     private Client client;
 
+    @PostConstruct
     public void createSystemTypes()
     {
         for ( final ContentType contentType : SYSTEM_TYPES )
