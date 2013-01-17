@@ -35,7 +35,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
             for (i = 0; i < content.length; i += 1) {
                 tabs.addTab({
                     xtype: 'contentDetail',
-                    data: content[i].raw,
+                    data: content[i],
                     title: content[i].raw.displayName
                 });
             }

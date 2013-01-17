@@ -13,19 +13,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     layout: 'card',
     cls: 'admin-detail',
 
-    iconClasses128: {
-        "myModule:mySite": 'icon-site-128',
-        "News:Article": 'icon-content-128'
-    },
-    iconClasses32: {
-        "myModule:mySite": 'icon-site-32',
-        "News:Article": 'icon-content-32'
-    },
-    iconClasses24: {
-        "myModule:mySite": 'icon-site-24',
-        "News:Article": 'icon-content-24'
-    },
-
     showToolbar: true,
     isLiveMode: false,
 
@@ -80,29 +67,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     },
 
 
-    resolveIconClass: function (data, size) {
-        var iconCls = "";
-        var nodeType = data.type;
-        var iconClasses;
-        switch (size) {
-        case 24:
-            iconClasses = this.iconClasses24;
-            break;
-        case 32:
-            iconClasses = this.iconClasses32;
-            break;
-        case 128:
-        default:
-            iconClasses = this.iconClasses128;
-            break;
-        }
-        if (iconClasses && iconClasses[nodeType]) {
-            iconCls = iconClasses[nodeType];
-        }
-        return iconCls;
-    },
-
-
     createNoSelection: function () {
         return {
             itemId: 'noSelection',
@@ -123,9 +87,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
         } else if (!Ext.isEmpty(data)) {
             info = data.data;
         }
-        if (info) {
-            info.iconCls = this.resolveIconClass(info);
-        }
+
         return {
             xtype: 'container',
             itemId: 'singleSelection',
@@ -228,15 +190,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     createLargeBoxSelection: function (data) {
         var tpl = Ext.Template(Templates.contentManager.previewSelectionLarge);
 
-        var me = this;
-        if (data) {
-            Ext.Array.each(data, function (item) {
-                if (item.data) {
-                    item.data.iconCls = me.resolveIconClass(item.data, 32);
-                }
-            });
-        }
-
         var panel = {
             xtype: 'panel',
             itemId: 'largeBoxSelection',
@@ -260,15 +213,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
     createSmallBoxSelection: function (data) {
         var tpl = Ext.Template(Templates.contentManager.previewSelectionSmall);
-
-        var me = this;
-        if (data) {
-            Ext.Array.each(data, function (item) {
-                if (item.data) {
-                    item.data.iconCls = me.resolveIconClass(item.data, 24);
-                }
-            });
-        }
 
         var panel = {
             xtype: 'panel',
@@ -314,7 +258,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             return;
         }
 
-        var me = this;
         this.data = data;
 
         if (Ext.isEmpty(this.data)) {
@@ -328,9 +271,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                 singleData = this.data[0] && this.data[0].data ? this.data[0].data : this.data[0];
             } else {
                 singleData = this.data.data || this.data;
-            }
-            if (singleData) {
-                //singleData.iconCls = this.resolveIconClass(singleData);
             }
 
             if (this.isLiveMode) {
@@ -357,28 +297,12 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
         } else if (this.data.length > 1 && this.data.length <= 10) {
 
-            if (data) {
-                Ext.Array.each(data, function (item) {
-                    if (item.data) {
-                        item.data.iconCls = me.resolveIconClass(item.data, 32);
-                    }
-                });
-            }
-
             var largeBox = this.down('#largeBoxSelection');
             largeBox.update(this.data);
 
             this.getLayout().setActiveItem(largeBox);
 
         } else {
-
-            if (data) {
-                Ext.Array.each(data, function (item) {
-                    if (item.data) {
-                        item.data.iconCls = me.resolveIconClass(item.data, 24);
-                    }
-                });
-            }
 
             var smallBox = this.down('#smallBoxSelection');
             smallBox.update(this.data);

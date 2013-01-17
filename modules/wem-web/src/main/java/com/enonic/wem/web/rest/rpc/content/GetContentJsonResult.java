@@ -1,13 +1,13 @@
 package com.enonic.wem.web.rest.rpc.content;
 
 
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.core.content.ContentJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
+import com.enonic.wem.web.rest.resource.content.ContentTypeImageUriResolver;
 
 class GetContentJsonResult
     extends JsonResult
@@ -28,7 +28,8 @@ class GetContentJsonResult
     protected void serialize( final ObjectNode json )
     {
         json.put( "success", true );
-        final JsonNode contentJson = contentSerializerJson.serialize( content );
+        final ObjectNode contentJson = (ObjectNode) contentSerializerJson.serialize( content );
+        contentJson.put( "iconUrl", ContentTypeImageUriResolver.resolve( content.getType() ) );
         json.put( "content", contentJson );
     }
 }
