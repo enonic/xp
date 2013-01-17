@@ -5,6 +5,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
             config,
             component;
 
+        console.log(contentData);
         Ext.Array.each(contentData, function(contentItem) {
 
             config = me.getConfigForContentItem(contentItem, contentTypeItemConfig);
@@ -34,20 +35,9 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
         var component;
 
         Ext.each(contentTypeItemConfigItems, function (item) {
-            // Code smell: Refactor / clean up this.
-            if (item.FormItemSet) {
-                component = me.createFormItemSetComponent(item.FormItemSet);
-            } else if (item.Layout && item.Layout.type === 'FieldSet') {
-                component = me.createLayoutComponent(item.Layout);
-
-            } else { // Input
-                var classAlias = 'widget.' + item.Input.type.name;
-                if (!me.formItemIsSupported(classAlias)) {
-                    console.error('Unsupported input type', item.Input);
-                    return;
-                }
-                component = me.createFormItemComponent(item.Input);
-            }
+            var creationFunction = me.constructCreationFunction(item);
+            var contentItemConfig = me.getContentItemConfig(item);
+            component = creationFunction.call(me, contentItemConfig);
 
             me.addComponent(component, parentComponent);
         });
@@ -92,14 +82,16 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
         });
     },
 
-
     /**
      * @private
      */
-    createFormItemComponent: function (inputConfig, value) {
-        var me = this;
+    createInputComponent: function (inputConfig, value) {
         var classAlias = 'widget.' + inputConfig.type.name;
 
+        if (!this.formItemIsSupported(classAlias)) {
+            console.error('Unsupported input type', inputConfig);
+            return;
+        }
         return Ext.create({
             xclass: classAlias,
             fieldLabel: inputConfig.label,
@@ -138,7 +130,37 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
         return null;
     },
 
+    /**
+     * @private
+     */
+    constructCreationFunction: function (contentTypeConfig) {
+        var key;
 
+        for (key in contentTypeConfig) {
+            if (contentTypeConfig.hasOwnProperty(key)) {
+                console.log("create" + key + "Component");
+                return this["create" + key + "Component"];
+            }
+        }
+        console.error("No handler for ", contentTypeConfig);
+        return null;
+    },
+
+    /**
+     *
+     * @private
+     */
+    getContentItemConfig: function(contentTypeConfig) {
+        var key;
+
+        for (key in contentTypeConfig) {
+            if (contentTypeConfig.hasOwnProperty(key)) {
+                return contentTypeConfig[key];
+            }
+        }
+
+        return null;
+    },
     /**
      * @private
      */
