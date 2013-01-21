@@ -36,8 +36,6 @@ public class FindAccountsRpcHandlerTest
     public void testRequestNoResults()
         throws Exception
     {
-        mockCurrentContextHttpRequest();
-
         final Accounts accounts = createAccountsObject();
         final AccountQueryHits hits = createAccountResult( 0, accounts );
         setResult( hits, accounts );
@@ -49,8 +47,6 @@ public class FindAccountsRpcHandlerTest
     public void testRequestAccounts()
         throws Exception
     {
-        mockCurrentContextHttpRequest();
-
         final UserAccount admin = createUser( AccountKey.superUser() );
         final UserAccount anonymous = createUser( AccountKey.anonymous() );
         final UserAccount user1 = createUser( "enonic:user1" );
@@ -68,8 +64,6 @@ public class FindAccountsRpcHandlerTest
     public void testRequestAccountsAndFacets()
         throws Exception
     {
-        mockCurrentContextHttpRequest();
-
         final UserAccount user1 = createUser( "enonic:user1" );
         final GroupAccount group1 = createGroup( "enonic:group1", user1.getKey() );
         final RoleAccount role1 = createRole( "system:contributors", user1.getKey() );
@@ -91,8 +85,6 @@ public class FindAccountsRpcHandlerTest
     public void testRequestWithKeys()
         throws Exception
     {
-        mockCurrentContextHttpRequest();
-
         final UserAccount user1 = createUser( "enonic:user1" );
         final GroupAccount group1 = createGroup( "enonic:group1", user1.getKey() );
         final RoleAccount role1 = createRole( "system:contributors", user1.getKey() );

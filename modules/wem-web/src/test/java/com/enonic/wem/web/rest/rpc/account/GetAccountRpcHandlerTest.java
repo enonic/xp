@@ -40,7 +40,6 @@ public class GetAccountRpcHandlerTest
     public void testGetAccountIncorrectKey()
         throws Exception
     {
-        mockCurrentContextHttpRequest();
         testSuccess( createParams( "12345" ), createResult( false, "Not a valid account key [12345]" ) );
     }
 
@@ -48,7 +47,6 @@ public class GetAccountRpcHandlerTest
     public void testGetAccountNoResults()
         throws Exception
     {
-        mockCurrentContextHttpRequest();
         Mockito.when( client.execute( Mockito.any( GetAccounts.class ) ) ).thenReturn( createAccountsObject() );
         testSuccess( createParams( "user:enonic:1" ), createResult( false, "No account(s) were found for key [user:enonic:1]" ) );
     }
@@ -57,8 +55,6 @@ public class GetAccountRpcHandlerTest
     public void testGetAccountRole()
         throws Exception
     {
-        mockCurrentContextHttpRequest();
-
         Mockito.when( client.execute( Mockito.isA( GetAccounts.class ) ) ).thenReturn(
             createAccountsObject( createRole( "enonic:1" ) ) ).thenReturn( createAccountsObject( createUser( "enonic:2" ) ) );
 
@@ -71,8 +67,6 @@ public class GetAccountRpcHandlerTest
     public void testGetAccountGroup()
         throws Exception
     {
-        mockCurrentContextHttpRequest();
-
         Mockito.when( client.execute( Mockito.isA( GetAccounts.class ) ) ).thenReturn(
             createAccountsObject( createGroup( "enonic:1" ) ) ).thenReturn( createAccountsObject( createUser( "enonic:2" ) ) );
 
@@ -85,8 +79,6 @@ public class GetAccountRpcHandlerTest
     public void testGetAccountUser()
         throws Exception
     {
-        mockCurrentContextHttpRequest();
-
         Mockito.when( client.execute( Mockito.isA( GetAccounts.class ) ) ).thenReturn(
             createAccountsObject( createUser( "enonic:1" ) ) ).thenReturn(
             createAccountsObject( createGroup( "enonic:2" ), createRole( "enonic:3" ) ) );
@@ -100,8 +92,6 @@ public class GetAccountRpcHandlerTest
     public void testGetAccountUserWithProfile()
         throws Exception
     {
-        mockCurrentContextHttpRequest();
-
         final UserAccount user1 = createUser( "enonic:1" );
         final UserProfile profile = new UserProfile();
         profile.setFax( "fax" );
