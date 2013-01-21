@@ -9,6 +9,7 @@ Ext.define('Admin.lib.Ping', {
 
 
     constructor: function () {
+        console.log('construct ping')
         this.initErrorMessageBox();
     },
 
@@ -77,6 +78,9 @@ Ext.define('Admin.lib.Ping', {
             id: me.errorBoxDomId,
             tag: 'div',
             cls: 'admin-server-status-error-box',
+            // This is safe as long as the ping runs from the main.html.
+            // Ideally we should find the element with the highest z-index in <body> and up it by 1
+            style: 'z-index: 500000',
             html: 'Server is running'
         };
         dh.append(Ext.getBody(), spec, true).hide();
