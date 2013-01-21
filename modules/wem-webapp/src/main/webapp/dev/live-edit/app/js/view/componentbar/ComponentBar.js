@@ -66,7 +66,7 @@
     html += '                    <img src="../app/images/srs.jpeg"/>';
     html += '                    <div class="live-edit-component-text">';
     html += '                        <span>Article Show</span>';
-    html += '                        <small>Subtitle</small>';
+    html += '                        <small>Very loooooooooooong subtitle</small>';
     html += '                    </div>';
     html += '                </li>';
     html += '            </ul>';

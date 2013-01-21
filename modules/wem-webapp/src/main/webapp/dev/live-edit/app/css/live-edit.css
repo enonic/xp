@@ -337,11 +337,14 @@ svg.live-edit-highlighter rect {
 
 .live-edit-component:hover {
     background-color: #4a87e5;
+    color: #fff;
 }
 
 .live-edit-component img {
     float: left;
     display: block;
+    width: 32px;
+    height: 32px;
     margin-right: 5px;
 }
 
