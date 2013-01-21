@@ -81,15 +81,20 @@ public class CreateOrUpdateContentTypeRpcHandler
 
         if ( !contentTypeExists( contentType.getQualifiedName() ) )
         {
-            final CreateContentType createContentType = contentType().create().contentType( contentType );
-            client.execute( createContentType );
+            final CreateContentType createCommand = contentType().create().contentType( contentType );
+            client.execute( createCommand );
+
             context.setResult( CreateOrUpdateContentTypeJsonResult.created() );
         }
         else
         {
-            final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( contentType.getQualifiedName() );
-            final UpdateContentTypes updateContentType = contentType().update().names( names ).editor( setContentType( contentType ) );
-            client.execute( updateContentType );
+            final QualifiedContentTypeNames qualifiedContentTypeNames = QualifiedContentTypeNames.from( contentType.getQualifiedName() );
+
+            final UpdateContentTypes updateCommand =
+                contentType().update().names( qualifiedContentTypeNames ).editor( setContentType( contentType ) );
+
+            client.execute( updateCommand );
+
             context.setResult( CreateOrUpdateContentTypeJsonResult.updated() );
         }
     }

@@ -9,9 +9,9 @@ import static com.enonic.wem.api.content.type.ContentType.newContentType;
 final class SetContentTypeEditor
     implements ContentTypeEditor
 {
-    protected final ContentType source;
+    private final ContentType source;
 
-    public SetContentTypeEditor( final ContentType source )
+    SetContentTypeEditor( final ContentType source )
     {
         this.source = source;
     }

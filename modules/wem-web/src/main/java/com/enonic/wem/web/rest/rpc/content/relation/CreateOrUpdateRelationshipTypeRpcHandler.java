@@ -7,8 +7,6 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.relation.CreateRelationshipType;
 import com.enonic.wem.api.command.content.relation.GetRelationshipTypes;
 import com.enonic.wem.api.command.content.relation.UpdateRelationshipTypes;
-import com.enonic.wem.api.command.content.relation.editor.RelationshipTypeEditor;
-import com.enonic.wem.api.command.content.relation.editor.SetRelationshipTypeEditor;
 import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relation.RelationshipType;
@@ -19,6 +17,7 @@ import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
 import static com.enonic.wem.api.command.Commands.relationshipType;
+import static com.enonic.wem.api.command.content.relation.editor.RelationshipTypeEditors.setRelationshipType;
 
 @Component
 public final class CreateOrUpdateRelationshipTypeRpcHandler
@@ -46,23 +45,28 @@ public final class CreateOrUpdateRelationshipTypeRpcHandler
         }
         catch ( XmlParsingException e )
         {
-            context.setResult( new JsonErrorResult( "Invalid content type format" ) );
+            context.setResult( new JsonErrorResult( "Invalid RelationshipType format" ) );
             return;
         }
 
-        if ( !relationshipTypeExists( relationshipType.getQualifiedRelationshipTypeName() ) )
+        if ( !relationshipTypeExists( relationshipType.getQualifiedName() ) )
         {
-            final CreateRelationshipType createRelationshipType = Commands.relationshipType().create();
-            createRelationshipType.relationshipType( relationshipType );
-            client.execute( createRelationshipType );
+            final CreateRelationshipType createCommand = Commands.relationshipType().create();
+            createCommand.relationshipType( relationshipType );
+            client.execute( createCommand );
             context.setResult( CreateOrUpdateRelationshipTypeJsonResult.created() );
         }
         else
         {
-            final UpdateRelationshipTypes updateRelationshipTypes = Commands.relationshipType().update();
-            final RelationshipTypeEditor relationshipTypeEditor = new SetRelationshipTypeEditor( relationshipType );
-            updateRelationshipTypes.editor( relationshipTypeEditor );
-            client.execute( updateRelationshipTypes );
+            final QualifiedRelationshipTypeNames qualifiedNames =
+                QualifiedRelationshipTypeNames.from( relationshipType.getQualifiedName() );
+
+            final UpdateRelationshipTypes updateCommand = Commands.relationshipType().update();
+            updateCommand.names( qualifiedNames );
+            updateCommand.editor( setRelationshipType( relationshipType ) );
+
+            client.execute( updateCommand );
+
             context.setResult( CreateOrUpdateRelationshipTypeJsonResult.updated() );
         }
     }

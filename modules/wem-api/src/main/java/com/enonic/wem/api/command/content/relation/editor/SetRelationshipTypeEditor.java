@@ -5,12 +5,12 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 
 import static com.enonic.wem.api.content.relation.RelationshipType.newRelationshipType;
 
-final public class SetRelationshipTypeEditor
+final class SetRelationshipTypeEditor
     implements RelationshipTypeEditor
 {
-    protected final RelationshipType source;
+    private final RelationshipType source;
 
-    public SetRelationshipTypeEditor( final RelationshipType source )
+    SetRelationshipTypeEditor( final RelationshipType source )
     {
         this.source = source;
     }
@@ -19,19 +19,20 @@ final public class SetRelationshipTypeEditor
     public RelationshipType edit( final RelationshipType relationshipType )
         throws Exception
     {
-        final RelationshipType.Builder updated = newRelationshipType().
-            name( relationshipType.getName() ).
-            module( relationshipType.getModuleName() ).
-            fromSemantic( source.getFromSemantic() ).
-            toSemantic( source.getToSemantic() );
+        final RelationshipType.Builder builder = newRelationshipType();
+        builder.name( relationshipType.getName() );
+        builder.module( relationshipType.getModuleName() );
+        builder.fromSemantic( source.getFromSemantic() );
+        builder.toSemantic( source.getToSemantic() );
+
         for ( QualifiedContentTypeName contentTypeName : source.getAllowedFromTypes() )
         {
-            updated.addAllowedFromType( contentTypeName );
+            builder.addAllowedFromType( contentTypeName );
         }
         for ( QualifiedContentTypeName contentTypeName : source.getAllowedToTypes() )
         {
-            updated.addAllowedToType( contentTypeName );
+            builder.addAllowedToType( contentTypeName );
         }
-        return updated.build();
+        return builder.build();
     }
 }

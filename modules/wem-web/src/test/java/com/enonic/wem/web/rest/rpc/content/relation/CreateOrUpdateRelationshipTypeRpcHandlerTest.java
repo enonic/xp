@@ -15,6 +15,7 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
+import static com.enonic.wem.api.content.relation.RelationshipType.newRelationshipType;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -42,8 +43,8 @@ public class CreateOrUpdateRelationshipTypeRpcHandlerTest
         throws Exception
     {
         Mockito.when( client.execute( isA( GetRelationshipTypes.class ) ) ).thenReturn( RelationshipTypes.empty() );
-        Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn( new QualifiedRelationshipTypeName(
-            Module.SYSTEM.getName(), "hello") );
+        Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn(
+            new QualifiedRelationshipTypeName( Module.SYSTEM.getName(), "hello" ) );
 
         final ObjectNode resultJson = objectNode();
         resultJson.put( "success", true );
@@ -58,7 +59,7 @@ public class CreateOrUpdateRelationshipTypeRpcHandlerTest
     public void testUpdateContentType()
         throws Exception
     {
-        final RelationshipType relationshipType = RelationshipType.newRelationType().build();
+        final RelationshipType relationshipType = newRelationshipType().build();
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
         Mockito.when( client.execute( isA( GetRelationshipTypes.class ) ) ).thenReturn( relationshipTypes );
         Mockito.when( client.execute( isA( UpdateRelationshipTypes.class ) ) ).thenReturn( 0 );

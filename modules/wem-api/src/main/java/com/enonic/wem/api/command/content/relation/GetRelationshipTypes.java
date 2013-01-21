@@ -19,9 +19,9 @@ public final class GetRelationshipTypes
         return this.relationshipTypeNames;
     }
 
-    public GetRelationshipTypes names( final QualifiedRelationshipTypeNames relationshipTypeNames )
+    public GetRelationshipTypes names( final QualifiedRelationshipTypeNames qualifiedNames )
     {
-        this.relationshipTypeNames = relationshipTypeNames;
+        this.relationshipTypeNames = qualifiedNames;
         return this;
     }
 

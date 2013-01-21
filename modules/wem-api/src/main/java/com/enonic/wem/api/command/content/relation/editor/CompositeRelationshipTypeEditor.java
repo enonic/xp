@@ -5,9 +5,9 @@ import com.enonic.wem.api.content.relation.RelationshipType;
 final class CompositeRelationshipTypeEditor
     implements RelationshipTypeEditor
 {
-    protected final RelationshipTypeEditor[] editors;
+    private final RelationshipTypeEditor[] editors;
 
-    public CompositeRelationshipTypeEditor( final RelationshipTypeEditor... editors )
+    CompositeRelationshipTypeEditor( final RelationshipTypeEditor... editors )
     {
         this.editors = editors;
     }

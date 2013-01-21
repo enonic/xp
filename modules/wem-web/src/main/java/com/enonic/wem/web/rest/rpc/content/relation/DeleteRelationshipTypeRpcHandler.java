@@ -23,15 +23,12 @@ public final class DeleteRelationshipTypeRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final String[] relationshipTypeNames = context.param( "relationshipTypeNames" ).required().asStringArray();
+        final QualifiedRelationshipTypeNames qualifiedNames =
+            QualifiedRelationshipTypeNames.from( context.param( "qualifiedRelationshipTypeNames" ).required().asStringArray() );
 
-        final QualifiedRelationshipTypeNames qualifiedRelationshipTypeNames = QualifiedRelationshipTypeNames.from( relationshipTypeNames );
+        final DeleteRelationshipTypes deleteCommand = Commands.relationshipType().delete().names( qualifiedNames );
 
-        final DeleteRelationshipTypes deleteRelationshipTypes = Commands.relationshipType().delete();
-
-        deleteRelationshipTypes.names( qualifiedRelationshipTypeNames );
-
-        final RelationshipTypeDeletionResult deletionResult = client.execute( deleteRelationshipTypes );
+        final RelationshipTypeDeletionResult deletionResult = client.execute( deleteCommand );
 
         context.setResult( new DeleteRelationshipTypeJsonResult( deletionResult ) );
     }

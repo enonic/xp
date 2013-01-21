@@ -5,9 +5,9 @@ import com.enonic.wem.api.content.type.ContentType;
 final class CompositeContentTypeEditor
     implements ContentTypeEditor
 {
-    protected final ContentTypeEditor[] editors;
+    private final ContentTypeEditor[] editors;
 
-    public CompositeContentTypeEditor( final ContentTypeEditor... editors )
+    CompositeContentTypeEditor( final ContentTypeEditor... editors )
     {
         this.editors = editors;
     }
