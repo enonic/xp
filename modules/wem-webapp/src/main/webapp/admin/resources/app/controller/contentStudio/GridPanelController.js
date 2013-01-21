@@ -2,15 +2,14 @@ Ext.define('Admin.controller.contentStudio.GridPanelController', {
     extend: 'Admin.controller.contentStudio.Controller',
 
     stores: [
-        'Admin.store.contentStudio.ContentTypeStore',
-        'Admin.store.contentStudio.ContentTypeTreeStore'
+        'Admin.store.contentStudio.ContentTypeStore', 'Admin.store.contentStudio.ContentTypeTreeStore',
+        'Admin.store.contentStudio.BaseTypeStore', 'Admin.store.contentStudio.BaseTypeTreeStore'
     ],
 
     models: [],
 
     views: [
-        'Admin.view.contentStudio.TreeGridPanel',
-        'Admin.view.contentStudio.ContextMenu'
+        'Admin.view.contentStudio.TreeGridPanel', 'Admin.view.contentStudio.ContextMenu'
     ],
 
     init: function () {
@@ -32,7 +31,6 @@ Ext.define('Admin.controller.contentStudio.GridPanelController', {
         this.enableToolbarButtons(selected.length > 0);
     },
 
-
     updateDetailPanel: function (selModel, selected, opts) {
         if (selected.length > 0) {
             this.getDetailPanel().setData(selected);
@@ -40,8 +38,7 @@ Ext.define('Admin.controller.contentStudio.GridPanelController', {
     },
 
     enableToolbarButtons: function (enable) {
-        var buttons = Ext.ComponentQuery.query('button[action=editContentType], ' +
-                                               'button[action=deleteContentType], ' +
+        var buttons = Ext.ComponentQuery.query('button[action=editContentType], ' + 'button[action=deleteContentType], ' +
                                                'button[action=viewContentType]');
 
         Ext.Array.each(buttons, function (button) {
@@ -54,7 +51,6 @@ Ext.define('Admin.controller.contentStudio.GridPanelController', {
         this.getContextMenu().showAt(e.getXY());
         return false;
     },
-
 
     getContextMenu: function () {
         return Ext.ComponentQuery.query('contentStudioContextMenu')[0];

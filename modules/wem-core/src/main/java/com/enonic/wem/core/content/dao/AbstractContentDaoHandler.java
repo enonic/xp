@@ -17,9 +17,9 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.core.jcr.JcrConstants;
 
 import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENTS_PATH;
-import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_VERSION_HISTORY_NODE;
-import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_VERSION_PREFIX;
+import static com.enonic.wem.core.content.dao.ContentDao.CONTENTS_PATH;
+import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_HISTORY_NODE;
+import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_PREFIX;
 import static com.enonic.wem.core.jcr.JcrHelper.getNodeOrNull;
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
@@ -41,7 +41,7 @@ abstract class AbstractContentDaoHandler
         while ( nodeIterator.hasNext() )
         {
             final Node contentNode = nodeIterator.nextNode();
-            if ( contentNode.getName().equals( ContentDaoConstants.CONTENT_VERSION_HISTORY_NODE ) )
+            if ( contentNode.getName().equals( CONTENT_VERSION_HISTORY_NODE ) )
             {
                 continue;
             }

@@ -10,11 +10,11 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
-import com.enonic.wem.api.content.ContentTree;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.exception.UnableToDeleteContentException;
+import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.core.AbstractJcrTest;
 
 import static com.enonic.wem.api.content.Content.newContent;
@@ -44,7 +44,7 @@ public class ContentDaoImplTest
         commit();
 
         // verify
-        Node contentNode = session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH + "myContent" );
+        Node contentNode = session.getNode( "/" + ContentDao.CONTENTS_PATH + "myContent" );
         assertNotNull( contentNode );
     }
 
@@ -66,10 +66,10 @@ public class ContentDaoImplTest
         commit();
 
         // verify
-        Node rootContentNode = session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH + "rootContent" );
+        Node rootContentNode = session.getNode( "/" + ContentDao.CONTENTS_PATH + "rootContent" );
         assertNotNull( rootContentNode );
 
-        Node belowRootContentNode = session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH + "rootContent/belowRootContent" );
+        Node belowRootContentNode = session.getNode( "/" + ContentDao.CONTENTS_PATH + "rootContent/belowRootContent" );
         assertNotNull( belowRootContentNode );
     }
 
@@ -88,7 +88,7 @@ public class ContentDaoImplTest
         commit();
 
         // verify
-        assertNotNull( session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH + "myContent" ) );
+        assertNotNull( session.getNode( "/" + ContentDao.CONTENTS_PATH + "myContent" ) );
 
         Content storedContent = contentDao.findContent( ContentPath.from( "myContent" ), session );
 
@@ -132,7 +132,7 @@ public class ContentDaoImplTest
         contentDao.updateContent( updateContent, true, session );
 
         // verify
-        assertNotNull( session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH + "myContent" ) );
+        assertNotNull( session.getNode( "/" + ContentDao.CONTENTS_PATH + "myContent" ) );
 
         Content storedContent = contentDao.findContent( ContentPath.from( "myContent" ), session );
         assertEquals( "changed value", storedContent.getData( "myData" ).asString() );
@@ -154,7 +154,7 @@ public class ContentDaoImplTest
         commit();
 
         // verify
-        Node contentsNode = session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH );
+        Node contentsNode = session.getNode( "/" + ContentDao.CONTENTS_PATH );
         assertFalse( contentsNode.hasNode( "myContent" ) );
     }
 
@@ -172,7 +172,7 @@ public class ContentDaoImplTest
         commit();
 
         // verify
-        Node parentContentNode = session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH + "parentContent" );
+        Node parentContentNode = session.getNode( "/" + ContentDao.CONTENTS_PATH + "parentContent" );
         assertFalse( parentContentNode.hasNode( "contentToDelete" ) );
     }
 
@@ -212,7 +212,7 @@ public class ContentDaoImplTest
         commit();
 
         // verify
-        Node parentContentNode = session.getNode( "/" + ContentDaoConstants.CONTENTS_PATH + "parentContent" );
+        Node parentContentNode = session.getNode( "/" + ContentDao.CONTENTS_PATH + "parentContent" );
         assertFalse( parentContentNode.hasNode( "contentToDelete" ) );
     }
 
@@ -370,7 +370,7 @@ public class ContentDaoImplTest
         commit();
 
         // exercise
-        ContentTree tree = contentDao.getContentTree( session );
+        Tree<Content> tree = contentDao.getContentTree( session );
 
         // verify
         assertEquals( 9, tree.deepSize() );
@@ -401,8 +401,7 @@ public class ContentDaoImplTest
 
     private Content createContent( String path )
     {
-        Content content = newContent().path( ContentPath.from( path ) ).build();
-        return content;
+        return newContent().path( ContentPath.from( path ) ).build();
     }
 
 }

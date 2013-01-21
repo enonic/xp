@@ -11,6 +11,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 
 import static com.enonic.wem.api.content.Content.newContent;
+import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_PREFIX;
 
 final class GetContentVersionDaoHandler
     extends AbstractContentDaoHandler
@@ -42,7 +43,7 @@ final class GetContentVersionDaoHandler
             return null;
         }
         final Node contentVersionParent = getContentVersionHistoryNode( contentNode );
-        final String contentVersionNodeName = ContentDaoConstants.CONTENT_VERSION_PREFIX + versionId.id();
+        final String contentVersionNodeName = CONTENT_VERSION_PREFIX + versionId.id();
         if ( !contentVersionParent.hasNode( contentVersionNodeName ) )
         {
             return null;

@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.api.exception.ContentNotFoundException;
 
-import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_NEXT_VERSION_PROPERTY;
+import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_NEXT_VERSION_PROPERTY;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyLong;
 
 final class UpdateContentDaoHandler

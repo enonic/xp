@@ -18,7 +18,8 @@ class ContentTypeJcrMapper
 
     static final String ICON = "icon";
 
-    private ContentTypeJsonSerializer jsonSerializer = new ContentTypeJsonSerializer();
+    private ContentTypeJsonSerializer jsonSerializer =
+        new ContentTypeJsonSerializer().includeCreatedTime( true ).includeModifiedTime( true );
 
     void toJcr( final ContentType contentType, final Node contentTypeNode )
         throws RepositoryException

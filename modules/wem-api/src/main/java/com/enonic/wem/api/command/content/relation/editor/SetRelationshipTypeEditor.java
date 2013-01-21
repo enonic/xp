@@ -3,7 +3,7 @@ package com.enonic.wem.api.command.content.relation.editor;
 import com.enonic.wem.api.content.relation.RelationshipType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 
-import static com.enonic.wem.api.content.relation.RelationshipType.newRelationType;
+import static com.enonic.wem.api.content.relation.RelationshipType.newRelationshipType;
 
 final class SetRelationshipTypeEditor
     implements RelationshipTypeEditor
@@ -19,7 +19,7 @@ final class SetRelationshipTypeEditor
     public RelationshipType edit( final RelationshipType relationshipType )
         throws Exception
     {
-        final RelationshipType.Builder updated = newRelationType().
+        final RelationshipType.Builder updated = newRelationshipType().
             name( relationshipType.getName() ).
             module( relationshipType.getModuleName() ).
             fromSemantic( source.getFromSemantic() ).

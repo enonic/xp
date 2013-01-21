@@ -13,7 +13,6 @@ import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relation.RelationshipType;
 import com.enonic.wem.api.content.relation.RelationshipTypes;
-import com.enonic.wem.core.content.dao.ContentDaoConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 final class RetrieveRelationshipTypesDaoHandler
@@ -28,7 +27,7 @@ final class RetrieveRelationshipTypesDaoHandler
         throws RepositoryException
     {
         final Node rootNode = session.getRootNode();
-        final Node relationshipTypesNode = JcrHelper.getNodeOrNull( rootNode, ContentDaoConstants.RELATIONSHIP_TYPES_PATH );
+        final Node relationshipTypesNode = JcrHelper.getNodeOrNull( rootNode, RelationshipTypeDao.RELATIONSHIP_TYPES_PATH );
 
         final List<RelationshipType> relationshipTypeList = Lists.newArrayList();
         final NodeIterator relationshipTypeModuleNodes = relationshipTypesNode.getNodes();

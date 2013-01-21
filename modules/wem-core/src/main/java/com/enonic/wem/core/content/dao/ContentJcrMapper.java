@@ -12,8 +12,8 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.core.content.data.ContentDataJsonSerializer;
 
-import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENTS_PATH;
-import static com.enonic.wem.core.content.dao.ContentDaoConstants.CONTENT_VERSION_HISTORY_NODE;
+import static com.enonic.wem.core.content.dao.ContentDao.CONTENTS_PATH;
+import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_HISTORY_NODE;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyLong;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyString;

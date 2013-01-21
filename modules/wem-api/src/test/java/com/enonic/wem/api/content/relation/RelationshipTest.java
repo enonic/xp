@@ -17,7 +17,7 @@ public class RelationshipTest
     public void build()
     {
         // setup
-        RelationshipType.Builder typeBuilder = RelationshipType.newRelationType();
+        RelationshipType.Builder typeBuilder = RelationshipType.newRelationshipType();
         typeBuilder.module( ModuleName.from( "myModule" ) );
         typeBuilder.name( "like" );
         typeBuilder.fromSemantic( "likes" );

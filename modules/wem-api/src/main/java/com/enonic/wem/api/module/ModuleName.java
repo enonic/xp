@@ -3,6 +3,8 @@ package com.enonic.wem.api.module;
 
 public final class ModuleName
 {
+    public static final ModuleName SYSTEM = new ModuleName( "System" );
+
     private final String name;
 
     public ModuleName( final String name )

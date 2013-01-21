@@ -29,6 +29,11 @@ import com.enonic.wem.api.userstore.UserStoreNames;
 import com.enonic.wem.api.userstore.config.UserStoreConfig;
 import com.enonic.wem.api.userstore.config.UserStoreConfigParser;
 
+import static com.enonic.wem.api.command.Commands.account;
+import static com.enonic.wem.api.command.Commands.userStore;
+import static com.enonic.wem.api.userstore.editor.UserStoreEditors.setAdministrators;
+import static com.enonic.wem.api.userstore.editor.UserStoreEditors.setUserStore;
+
 /*
 import com.enonic.cms.api.client.model.user.Address;
 import com.enonic.cms.api.client.model.user.Gender;
@@ -41,11 +46,6 @@ import com.enonic.cms.core.user.field.UserFieldType;
 import com.enonic.cms.core.user.field.UserFields;
 import com.enonic.cms.core.user.field.UserInfoTransformer;
 */
-
-import static com.enonic.wem.api.command.Commands.account;
-import static com.enonic.wem.api.command.Commands.userStore;
-import static com.enonic.wem.api.userstore.editor.UserStoreEditors.setAdministrators;
-import static com.enonic.wem.api.userstore.editor.UserStoreEditors.setUserStore;
 
 @Component
 public class JcrAccountsImporter
@@ -270,7 +270,14 @@ public class JcrAccountsImporter
         {
             userStoreName = UserStoreName.system().toString();
         }
+
         final String userName = (String) userFields.get( "USR_SUID" );
+
+        if ( !userName.startsWith( "an" ) )
+        {
+            return;
+        }
+
         final String displayName = (String) userFields.get( "USR_SFULLNAME" );
         final String email = (String) userFields.get( "USR_SEMAIL" );
         final Date lastModified = (Date) userFields.get( "USR_DTETIMESTAMP" );

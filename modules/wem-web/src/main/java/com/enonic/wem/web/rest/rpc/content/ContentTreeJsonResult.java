@@ -8,17 +8,16 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentBranch;
-import com.enonic.wem.api.content.ContentTree;
+import com.enonic.wem.api.support.tree.Tree;
+import com.enonic.wem.api.support.tree.TreeNode;
 import com.enonic.wem.web.json.JsonResult;
-import com.enonic.wem.web.rest.resource.content.ContentTypeImageUriResolver;
 
 class ContentTreeJsonResult
     extends JsonResult
 {
-    private ContentTree contentTree;
+    private Tree<Content> contentTree;
 
-    ContentTreeJsonResult( final ContentTree contentTree )
+    ContentTreeJsonResult( final Tree<Content> contentTree )
     {
         Preconditions.checkNotNull( contentTree );
         this.contentTree = contentTree;
@@ -31,48 +30,31 @@ class ContentTreeJsonResult
         json.put( "contents", serialize( contentTree ) );
     }
 
-    private JsonNode serialize( final ContentTree tree )
+    private JsonNode serialize( final Tree<Content> tree )
     {
         final ArrayNode contentsNode = arrayNode();
 
-        for ( ContentBranch branch : tree.getBranches() )
+        for ( TreeNode<Content> node : tree )
         {
-            serializeBranch( branch, contentsNode );
+            serializeNode( node, contentsNode );
         }
 
         return contentsNode;
     }
 
-    private void serializeBranch( final ContentBranch branch, final ArrayNode arrayNode )
+    private void serializeNode( final TreeNode<Content> node, final ArrayNode arrayNode )
     {
         //
         final ObjectNode contentNode = arrayNode.addObject();
-        serializeContent( contentNode, branch.getParent() );
+        ContentJsonTemplate.forContentListing( contentNode, node.getObject() );
 
         final ArrayNode childArrayNode = contentNode.arrayNode();
-        contentNode.put( "hasChildren", branch.hasChildren() );
+        contentNode.put( "hasChildren", node.hasChildren() );
         contentNode.put( "contents", childArrayNode );
 
-        for ( ContentBranch child : branch.getChildren() )
+        for ( TreeNode<Content> child : node )
         {
-            serializeBranch( child, childArrayNode );
+            serializeNode( child, childArrayNode );
         }
-    }
-
-
-    private void serializeContent( final ObjectNode contentNode, final Content content )
-    {
-        contentNode.put( "id", content.getId() == null ? null : content.getId().id() );
-        contentNode.put( "path", content.getPath().toString() );
-        contentNode.put( "name", content.getName() );
-        contentNode.put( "type", content.getType() != null ? content.getType().toString() : null );
-        contentNode.put( "displayName", content.getDisplayName() );
-        contentNode.put( "owner", content.getOwner() != null ? content.getOwner().toString() : null );
-        contentNode.put( "createdTime", content.getCreatedTime().toString() );
-        contentNode.put( "modifier", content.getModifier() != null ? content.getModifier().toString() : null );
-        contentNode.put( "modifiedTime", content.getModifiedTime() != null ? content.getModifiedTime().toString() : null );
-        contentNode.put( "editable", true );
-        contentNode.put( "deletable", true );
-        contentNode.put( "iconUrl", ContentTypeImageUriResolver.resolve( content.getType() ) );
     }
 }

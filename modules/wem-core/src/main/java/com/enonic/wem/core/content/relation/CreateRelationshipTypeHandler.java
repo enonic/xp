@@ -2,6 +2,7 @@ package com.enonic.wem.core.content.relation;
 
 import javax.jcr.Session;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,11 +27,21 @@ public final class CreateRelationshipTypeHandler
     public void handle( final CommandContext context, final CreateRelationshipType command )
         throws Exception
     {
-        final RelationshipType relationshipType = command.getRelationshipType();
+        final RelationshipType.Builder builder = RelationshipType.newRelationshipType();
+        builder.name( command.getName() );
+        builder.module( command.getModule() );
+        builder.fromSemantic( command.getFromSemantic() );
+        builder.toSemantic( command.getToSemantic() );
+        builder.addAllowedFromType( command.getAllowedFromTypes() );
+        builder.addAllowedToType( command.getAllowedToTypes() );
+        builder.createdTime( DateTime.now() );
+        builder.modifiedTime( DateTime.now() );
+        final RelationshipType relationshipType = builder.build();
+
         final Session session = context.getJcrSession();
         relationshipTypeDao.createRelationshipType( relationshipType, session );
         session.save();
-        command.setResult( relationshipType.getQualifiedRelationshipTypeName() );
+        command.setResult( relationshipType.getQualifiedName() );
     }
 
     @Autowired

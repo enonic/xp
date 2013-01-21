@@ -7,7 +7,6 @@ import javax.jcr.Session;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.exception.SystemException;
-import com.enonic.wem.core.content.dao.ContentDaoConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 
@@ -36,7 +35,7 @@ final class CreateContentTypeDaoHandler
         throws RepositoryException
     {
         final Node rootNode = session.getRootNode();
-        final Node contentTypesNode = rootNode.getNode( ContentDaoConstants.CONTENT_TYPES_PATH );
+        final Node contentTypesNode = rootNode.getNode( ContentTypeDao.CONTENT_TYPES_PATH );
         final Node moduleNode = JcrHelper.getOrAddNode( contentTypesNode, contentTypeName.getModuleName().toString() );
         return JcrHelper.getOrAddNode( moduleNode, contentTypeName.getLocalName() );
     }

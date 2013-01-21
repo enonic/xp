@@ -19,7 +19,7 @@ final class UpdateRelationshipTypeDaoHandler
     void handle( final RelationshipType relationshipType )
         throws RepositoryException
     {
-        final QualifiedRelationshipTypeName relationshipTypeName = relationshipType.getQualifiedRelationshipTypeName();
+        final QualifiedRelationshipTypeName relationshipTypeName = relationshipType.getQualifiedName();
         final Node relationshipTypeNode = getRelationshipTypeNode( relationshipTypeName );
         if ( relationshipTypeNode == null )
         {

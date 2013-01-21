@@ -21,14 +21,21 @@ final class SetContentTypeEditor
         throws Exception
     {
         final byte[] iconToSet = ( source.getIcon() == null ) ? null : Arrays.copyOf( source.getIcon(), source.getIcon().length );
-        final ContentType updated = newContentType( contentType ).
-            displayName( source.getDisplayName() ).
-            superType( source.getSuperType() ).
-            setAbstract( source.isAbstract() ).
-            setFinal( source.isFinal() ).
-            formItems( source.form().getFormItems().copy() ).
-            icon( iconToSet ).
-            build();
-        return updated;
+        final ContentType.Builder builder = newContentType( contentType );
+        builder.displayName( source.getDisplayName() );
+        builder.superType( source.getSuperType() );
+        builder.setAbstract( source.isAbstract() );
+        builder.setFinal( source.isFinal() );
+        builder.icon( iconToSet );
+        if ( source.form() == null )
+        {
+            // nothing
+        }
+        else
+        {
+            builder.form( source.form() );
+        }
+
+        return builder.build();
     }
 }

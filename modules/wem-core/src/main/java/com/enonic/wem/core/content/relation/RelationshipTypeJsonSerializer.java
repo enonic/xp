@@ -55,7 +55,7 @@ public class RelationshipTypeJsonSerializer
 
     protected RelationshipType parse( final JsonNode relationshipTypeNode )
     {
-        final RelationshipType.Builder relationshipTypeBuilder = RelationshipType.newRelationType().
+        final RelationshipType.Builder relationshipTypeBuilder = RelationshipType.newRelationshipType().
             name( JsonParserUtil.getStringValue( "name", relationshipTypeNode ) ).
             module( ModuleName.from( JsonParserUtil.getStringValue( "module", relationshipTypeNode ) ) ).
             fromSemantic( JsonParserUtil.getStringValue( "fromSemantic", relationshipTypeNode ) ).

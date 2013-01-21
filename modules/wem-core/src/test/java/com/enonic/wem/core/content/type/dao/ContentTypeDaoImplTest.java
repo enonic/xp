@@ -12,9 +12,8 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.core.content.dao.ContentDaoConstants;
-import com.enonic.wem.core.jcr.JcrHelper;
 import com.enonic.wem.core.AbstractJcrTest;
+import com.enonic.wem.core.jcr.JcrHelper;
 
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
@@ -55,7 +54,7 @@ public class ContentTypeDaoImplTest
         commit();
 
         // verify
-        Node contentNode = session.getNode( "/" + ContentDaoConstants.CONTENT_TYPES_PATH + "myModule/myContentType" );
+        Node contentNode = session.getNode( "/" + ContentTypeDao.CONTENT_TYPES_PATH + "myModule/myContentType" );
         assertNotNull( contentNode );
         assertArrayEquals( SINGLE_PIXEL_GIF_PICTURE, JcrHelper.getPropertyBinary( contentNode, ContentTypeJcrMapper.ICON ) );
     }

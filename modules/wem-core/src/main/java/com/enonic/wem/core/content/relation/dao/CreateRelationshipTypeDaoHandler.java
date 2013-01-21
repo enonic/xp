@@ -9,7 +9,6 @@ import com.enonic.wem.api.content.relation.RelationshipType;
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.jcr.JcrHelper;
 
-import static com.enonic.wem.core.content.dao.ContentDaoConstants.RELATIONSHIP_TYPES_PATH;
 
 final class CreateRelationshipTypeDaoHandler
     extends AbstractRelationshipTypeDaoHandler
@@ -22,7 +21,7 @@ final class CreateRelationshipTypeDaoHandler
     void handle( final RelationshipType relationshipType )
         throws RepositoryException
     {
-        final QualifiedRelationshipTypeName relationshipTypeName = relationshipType.getQualifiedRelationshipTypeName();
+        final QualifiedRelationshipTypeName relationshipTypeName = relationshipType.getQualifiedName();
         if ( relationshipTypeExists( relationshipTypeName ) )
         {
             throw new SystemException( "Relationship type already exists: {0}", relationshipTypeName.toString() );
@@ -36,7 +35,7 @@ final class CreateRelationshipTypeDaoHandler
         throws RepositoryException
     {
         final Node rootNode = session.getRootNode();
-        final Node relationshipTypesNode = rootNode.getNode( RELATIONSHIP_TYPES_PATH );
+        final Node relationshipTypesNode = rootNode.getNode( RelationshipTypeDao.RELATIONSHIP_TYPES_PATH );
         final Node moduleNode = JcrHelper.getOrAddNode( relationshipTypesNode, relationshipTypeName.getModuleName().toString() );
         return JcrHelper.getOrAddNode( moduleNode, relationshipTypeName.getLocalName() );
     }

@@ -8,12 +8,14 @@ import org.joda.time.DateTime;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.content.type.AbstractBaseType;
 import com.enonic.wem.api.content.type.BaseType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;
 
 public final class RelationshipType
+    extends AbstractBaseType
     implements BaseType
 {
     private final ModuleName module;
@@ -24,7 +26,7 @@ public final class RelationshipType
 
     private final DateTime modifiedTime;
 
-    private final QualifiedRelationshipTypeName qualifiedRelationshipTypeName;
+    private final QualifiedRelationshipTypeName qualifiedName;
 
     private final String fromSemantic;
 
@@ -40,7 +42,7 @@ public final class RelationshipType
         this.name = builder.name;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
-        this.qualifiedRelationshipTypeName = new QualifiedRelationshipTypeName( module, name );
+        this.qualifiedName = new QualifiedRelationshipTypeName( module, name );
         this.fromSemantic = builder.fromSemantic;
         this.toSemantic = builder.toSemantic;
         this.allowedFromTypes = QualifiedContentTypeNames.from( builder.allowedFromTypes );
@@ -52,9 +54,9 @@ public final class RelationshipType
         return name;
     }
 
-    public QualifiedRelationshipTypeName getQualifiedRelationshipTypeName()
+    public QualifiedRelationshipTypeName getQualifiedName()
     {
-        return qualifiedRelationshipTypeName;
+        return qualifiedName;
     }
 
     @Override
@@ -116,7 +118,7 @@ public final class RelationshipType
         final RelationshipType that = (RelationshipType) o;
         return Objects.equal( this.module, that.module ) &&
             Objects.equal( this.name, that.name ) &&
-            Objects.equal( this.qualifiedRelationshipTypeName, that.qualifiedRelationshipTypeName ) &&
+            Objects.equal( this.qualifiedName, that.qualifiedName ) &&
             Objects.equal( this.fromSemantic, that.fromSemantic ) &&
             Objects.equal( this.toSemantic, that.toSemantic ) &&
             Objects.equal( this.allowedFromTypes, that.allowedFromTypes ) &&
@@ -126,16 +128,16 @@ public final class RelationshipType
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.module, this.name, this.qualifiedRelationshipTypeName, this.fromSemantic, this.toSemantic,
-                                 this.allowedFromTypes, this.allowedToTypes );
+        return Objects.hashCode( this.module, this.name, this.qualifiedName, this.fromSemantic, this.toSemantic, this.allowedFromTypes,
+                                 this.allowedToTypes );
     }
 
-    public static Builder newRelationType()
+    public static Builder newRelationshipType()
     {
         return new Builder();
     }
 
-    public static Builder newRelationType( final RelationshipType relationshipType )
+    public static Builder newRelationshipType( final RelationshipType relationshipType )
     {
         return new Builder( relationshipType );
     }
@@ -217,9 +219,27 @@ public final class RelationshipType
             return this;
         }
 
+        public Builder addAllowedFromType( Iterable<QualifiedContentTypeName> iterable )
+        {
+            for ( QualifiedContentTypeName contentType : iterable )
+            {
+                allowedFromTypes.add( contentType );
+            }
+            return this;
+        }
+
         public Builder addAllowedToType( QualifiedContentTypeName value )
         {
             allowedToTypes.add( value );
+            return this;
+        }
+
+        public Builder addAllowedToType( Iterable<QualifiedContentTypeName> iterable )
+        {
+            for ( QualifiedContentTypeName contentType : iterable )
+            {
+                allowedToTypes.add( contentType );
+            }
             return this;
         }
 

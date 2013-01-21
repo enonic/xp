@@ -8,7 +8,6 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.AbstractSerializerTest;
 
-import static com.enonic.wem.api.content.relation.RelationshipType.newRelationType;
 import static org.junit.Assert.*;
 
 public class RelationshipTypeJsonSerializerTest
@@ -26,7 +25,7 @@ public class RelationshipTypeJsonSerializerTest
     public void testSerializeParse()
         throws Exception
     {
-        final RelationshipType relationshipType = newRelationType().
+        final RelationshipType relationshipType = RelationshipType.newRelationshipType().
             name( "contains" ).
             module( ModuleName.from( "myModule" ) ).
             toSemantic( "contains" ).

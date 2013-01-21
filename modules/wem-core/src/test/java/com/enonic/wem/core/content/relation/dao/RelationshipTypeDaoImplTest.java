@@ -11,10 +11,9 @@ import com.enonic.wem.api.content.relation.RelationshipTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.core.content.dao.ContentDaoConstants;
 import com.enonic.wem.core.AbstractJcrTest;
 
-import static com.enonic.wem.api.content.relation.RelationshipType.newRelationType;
+import static com.enonic.wem.api.content.relation.RelationshipType.newRelationshipType;
 import static org.junit.Assert.*;
 
 public class RelationshipTypeDaoImplTest
@@ -33,7 +32,7 @@ public class RelationshipTypeDaoImplTest
         throws Exception
     {
         // setup
-        RelationshipType relationshipType = newRelationType().
+        RelationshipType relationshipType = RelationshipType.newRelationshipType().
             module( ModuleName.from( "myModule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
@@ -47,7 +46,7 @@ public class RelationshipTypeDaoImplTest
         commit();
 
         // verify
-        Node relationshipTypeNode = session.getNode( "/" + ContentDaoConstants.RELATIONSHIP_TYPES_PATH + "myModule/like" );
+        Node relationshipTypeNode = session.getNode( "/" + RelationshipTypeDao.RELATIONSHIP_TYPES_PATH + "myModule/like" );
         assertNotNull( relationshipTypeNode );
     }
 
@@ -56,7 +55,7 @@ public class RelationshipTypeDaoImplTest
         throws Exception
     {
         // setup
-        RelationshipType relationshipType = newRelationType().
+        RelationshipType relationshipType = RelationshipType.newRelationshipType().
             module( ModuleName.from( "myModule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
@@ -85,7 +84,7 @@ public class RelationshipTypeDaoImplTest
         throws Exception
     {
         // setup
-        RelationshipType relationshipType1 = newRelationType().
+        RelationshipType relationshipType1 = RelationshipType.newRelationshipType().
             module( ModuleName.from( "myModule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
@@ -95,7 +94,7 @@ public class RelationshipTypeDaoImplTest
             build();
         relationshipTypeDao.createRelationshipType( relationshipType1, session );
 
-        RelationshipType relationshipType2 = newRelationType().
+        RelationshipType relationshipType2 = RelationshipType.newRelationshipType().
             module( ModuleName.from( "otherModule" ) ).
             name( "hate" ).
             fromSemantic( "hates" ).
@@ -128,7 +127,7 @@ public class RelationshipTypeDaoImplTest
         throws Exception
     {
         // setup
-        RelationshipType relationshipType1 = newRelationType().
+        RelationshipType relationshipType1 = RelationshipType.newRelationshipType().
             module( ModuleName.from( "myModule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
@@ -138,7 +137,7 @@ public class RelationshipTypeDaoImplTest
             build();
         relationshipTypeDao.createRelationshipType( relationshipType1, session );
 
-        RelationshipType relationshipType2 = newRelationType().
+        RelationshipType relationshipType2 = RelationshipType.newRelationshipType().
             module( ModuleName.from( "otherModule" ) ).
             name( "hate" ).
             fromSemantic( "hates" ).
@@ -172,7 +171,7 @@ public class RelationshipTypeDaoImplTest
         throws Exception
     {
         // setup
-        RelationshipType relationshipType = newRelationType().
+        RelationshipType relationshipType = RelationshipType.newRelationshipType().
             module( ModuleName.from( "myModule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
@@ -188,7 +187,7 @@ public class RelationshipTypeDaoImplTest
         assertNotNull( relationshipTypesAfterCreate );
         assertEquals( 1, relationshipTypesAfterCreate.getSize() );
 
-        RelationshipType relationshipTypeUpdate = newRelationType( relationshipType ).
+        RelationshipType relationshipTypeUpdate = newRelationshipType( relationshipType ).
             fromSemantic( "accepts" ).
             toSemantic( "accepted by" ).
             addAllowedFromType( new QualifiedContentTypeName( "myModule:worker" ) ).
@@ -216,7 +215,7 @@ public class RelationshipTypeDaoImplTest
         throws Exception
     {
         // setup
-        RelationshipType relationshipType = newRelationType().
+        RelationshipType relationshipType = RelationshipType.newRelationshipType().
             module( ModuleName.from( "myModule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).

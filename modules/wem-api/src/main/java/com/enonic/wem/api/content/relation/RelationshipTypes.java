@@ -14,6 +14,7 @@ import com.enonic.wem.api.util.AbstractImmutableEntityList;
 
 public final class RelationshipTypes
     extends AbstractImmutableEntityList<RelationshipType>
+    implements Iterable<RelationshipType>
 {
     private final ImmutableMap<QualifiedRelationshipTypeName, RelationshipType> map;
 
@@ -61,7 +62,7 @@ public final class RelationshipTypes
         @Override
         public QualifiedRelationshipTypeName apply( final RelationshipType value )
         {
-            return value.getQualifiedRelationshipTypeName();
+            return value.getQualifiedName();
         }
     }
 }

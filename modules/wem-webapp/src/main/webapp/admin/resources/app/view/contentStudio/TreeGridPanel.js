@@ -1,8 +1,8 @@
 Ext.define('Admin.view.contentStudio.TreeGridPanel', {
     extend: 'Admin.view.TreeGridPanel',
     alias: 'widget.contentTypeTreeGridPanel',
-    store: 'Admin.store.contentStudio.ContentTypeStore',
-    treeStore: 'Admin.store.contentStudio.ContentTypeTreeStore',
+    store: 'Admin.store.contentStudio.BaseTypeStore',
+    treeStore: 'Admin.store.contentStudio.BaseTypeTreeStore',
     requires: 'Admin.view.contentStudio.BrowseToolbar',
     dockedItems: [
         {
@@ -10,19 +10,25 @@ Ext.define('Admin.view.contentStudio.TreeGridPanel', {
         }
     ],
 
-    typeField: 'qualifiedName',
-
     initComponent: function () {
         this.columns = [
             {
                 header: 'Name',
-                dataIndex: 'name',
+                dataIndex: 'displayName',
                 flex: 1,
                 renderer: this.nameRenderer,
                 scope: this
             },
             {
-                header: 'Last Modified',
+                header: 'Module',
+                dataIndex: 'module'
+            },
+            {
+                header: 'Type',
+                dataIndex: 'type'
+            },
+            {
+                header: 'Modified',
                 dataIndex: 'modifiedTime',
                 renderer: this.prettyDateRenderer
             }
@@ -31,21 +37,23 @@ Ext.define('Admin.view.contentStudio.TreeGridPanel', {
     },
 
     nameRenderer: function (value, p, record) {
-        var contentType = record.data;
+        var baseType = record.data;
         var activeListType = this.getActiveList().itemId;
-        var contentTypeImgUrl = contentType.iconUrl;
-        return Ext.String.format(Templates.contentStudio.treeGridPanelNameRenderer, activeListType, contentTypeImgUrl,
-            contentType.name, contentType.qualifiedName);
+        var baseTypeIconUrl = baseType.iconUrl;
+        return Ext.String.format(Templates.contentStudio.treeGridPanelNameRenderer, activeListType, baseTypeIconUrl, baseType.displayName,
+            baseType.qualifiedName);
     },
 
     prettyDateRenderer: function (value, p, record) {
         try {
             if (parent && Ext.isFunction(parent.humane_date)) {
                 return parent.humane_date(value);
-            } else {
+            }
+            else {
                 return value;
             }
-        } catch (e) {
+        }
+        catch (e) {
             return value;
         }
     }

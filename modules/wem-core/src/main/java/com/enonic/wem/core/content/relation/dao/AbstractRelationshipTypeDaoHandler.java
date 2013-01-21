@@ -7,7 +7,6 @@ import javax.jcr.Session;
 import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.jcr.JcrHelper;
 
-import static com.enonic.wem.core.content.dao.ContentDaoConstants.RELATIONSHIP_TYPES_PATH;
 
 abstract class AbstractRelationshipTypeDaoHandler
 {
@@ -30,7 +29,8 @@ abstract class AbstractRelationshipTypeDaoHandler
 
     protected final String getNodePath( final QualifiedRelationshipTypeName relationshipTypeName )
     {
-        return RELATIONSHIP_TYPES_PATH + relationshipTypeName.getModuleName() + "/" + relationshipTypeName.getLocalName();
+        return RelationshipTypeDao.RELATIONSHIP_TYPES_PATH + relationshipTypeName.getModuleName() + "/" +
+            relationshipTypeName.getLocalName();
     }
 
     protected final boolean relationshipTypeExists( final QualifiedRelationshipTypeName relationshipTypeName )

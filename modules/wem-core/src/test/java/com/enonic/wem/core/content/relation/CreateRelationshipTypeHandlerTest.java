@@ -15,7 +15,6 @@ import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.relation.dao.RelationshipTypeDao;
 
-import static com.enonic.wem.api.content.relation.RelationshipType.newRelationType;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
@@ -43,7 +42,7 @@ public class CreateRelationshipTypeHandlerTest
         throws Exception
     {
         // setup
-        final RelationshipType relationshipType = newRelationType().
+        final RelationshipType relationshipType = RelationshipType.newRelationshipType().
             module( ModuleName.from( "myModule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).

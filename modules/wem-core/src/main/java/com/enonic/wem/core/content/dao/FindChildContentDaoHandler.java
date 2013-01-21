@@ -27,7 +27,7 @@ final class FindChildContentDaoHandler
         while ( nodeIterator.hasNext() )
         {
             final Node contentNode = nodeIterator.nextNode();
-            if ( contentNode.getName().equals( ContentDaoConstants.CONTENT_VERSION_HISTORY_NODE ) )
+            if ( contentNode.getName().equals( ContentDao.CONTENT_VERSION_HISTORY_NODE ) )
             {
                 continue;
             }

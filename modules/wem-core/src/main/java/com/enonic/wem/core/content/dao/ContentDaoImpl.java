@@ -15,11 +15,11 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.api.content.ContentSelectors;
-import com.enonic.wem.api.content.ContentTree;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersion;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
+import com.enonic.wem.api.support.tree.Tree;
 
 
 /**
@@ -161,7 +161,7 @@ public class ContentDaoImpl
     }
 
     @Override
-    public ContentTree getContentTree( final Session session )
+    public Tree<Content> getContentTree( final Session session )
     {
         try
         {
