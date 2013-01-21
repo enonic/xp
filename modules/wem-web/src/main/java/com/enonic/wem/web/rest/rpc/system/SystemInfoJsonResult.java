@@ -11,7 +11,7 @@ final class SystemInfoJsonResult
     @Override
     protected void serialize( final ObjectNode json )
     {
-        json.put( "installationName", "prod" );
+        json.put( "installationName", "production" );
         json.put( "version", Version.get().getVersion() );
         json.put( "title", Version.get().getName() );
     }
