@@ -35,7 +35,6 @@ public class ChangePasswordRpcHandlerTest
     public void testChangePasswordForIncorrectKey()
         throws Exception
     {
-        mockCurrentContextHttpRequest();
         testSuccess( createParams( "12345", "t3stPa55word!" ), createResult( false, "Not a valid account key [12345]" ) );
     }
 
@@ -43,7 +42,6 @@ public class ChangePasswordRpcHandlerTest
     public void testChangePasswordForIncorrectValue()
         throws Exception
     {
-        mockCurrentContextHttpRequest();
         testSuccess( createParams( "user:enonic:1", "Sh0rt!" ), createResult( false, "Password size must be between 8 and 64 symbols" ) );
     }
 
@@ -51,7 +49,6 @@ public class ChangePasswordRpcHandlerTest
     public void testChangePasswordForIncorrectType()
         throws Exception
     {
-        mockCurrentContextHttpRequest();
         testSuccess( createParams( "group:enonic:1", "t3stPa55word!" ), createResult( false, "Passwords can be changed for users only" ) );
     }
 
@@ -59,7 +56,6 @@ public class ChangePasswordRpcHandlerTest
     public void testChangePassword()
         throws Exception
     {
-        mockCurrentContextHttpRequest();
         Mockito.when( client.execute( Mockito.any( ChangePassword.class ) ) ).thenReturn( true );
         testSuccess( createParams( "user:enonic:1", "t3stPa55word!" ), createResult( true, null ) );
     }

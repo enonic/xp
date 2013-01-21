@@ -47,7 +47,6 @@ public class GetContentTypeTreeRpcHandlerTest
         throws Exception
     {
         // setup
-        mockCurrentContextHttpRequest();
         final Input inputText1 = newInput().name( "inputText1" ).type( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
             "Help text line 1" ).required( true ).build();
         final Input inputText2 =
