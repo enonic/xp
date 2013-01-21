@@ -4,6 +4,7 @@ package com.enonic.wem.core.content.type;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
+import org.joda.time.DateTime;
 
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
@@ -23,7 +24,7 @@ public class ContentTypeJsonSerializer
 {
     private boolean includeCreatedTime = false;
 
-    private boolean includeModifedTime = false;
+    private boolean includeModifiedTime = false;
 
     private FormItemsJsonSerializer formItemsSerializer = new FormItemsJsonSerializer( objectMapper() );
 
@@ -35,7 +36,7 @@ public class ContentTypeJsonSerializer
 
     public ContentTypeJsonSerializer includeModifiedTime( final boolean value )
     {
-        includeModifedTime = value;
+        includeModifiedTime = value;
         return this;
     }
 
@@ -55,7 +56,7 @@ public class ContentTypeJsonSerializer
         {
             JsonParserUtil.setDateTimeValue( "createdTime", contentType.getCreatedTime(), objectNode );
         }
-        if ( includeModifedTime )
+        if ( includeModifiedTime )
         {
             JsonParserUtil.setDateTimeValue( "modifiedTime", contentType.getModifiedTime(), objectNode );
         }
@@ -92,11 +93,27 @@ public class ContentTypeJsonSerializer
         builder.setFinal( JsonParserUtil.getBooleanValue( "isFinal", contentTypeNode ) );
         if ( includeCreatedTime )
         {
-            builder.createdTime( JsonParserUtil.getDateTimeValue( "createdTime", contentTypeNode ) );
+            if ( contentTypeNode.has( "createdTime" ) )
+            {
+                // TODO check necessary to handle old json data, should be remove later on
+                builder.createdTime( JsonParserUtil.getDateTimeValue( "createdTime", contentTypeNode ) );
+            }
+            else
+            {
+                builder.createdTime( DateTime.now() );
+            }
         }
-        if ( includeModifedTime )
+        if ( includeModifiedTime )
         {
-            builder.modifiedTime( JsonParserUtil.getDateTimeValue( "modifiedTime", contentTypeNode ) );
+            if ( contentTypeNode.has( "modifiedTime" ) )
+            {
+                // TODO check necessary to handle old json data, should be remove later on
+                builder.modifiedTime( JsonParserUtil.getDateTimeValue( "modifiedTime", contentTypeNode ) );
+            }
+            else
+            {
+                builder.modifiedTime( DateTime.now() );
+            }
         }
 
         try
