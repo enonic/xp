@@ -16,6 +16,11 @@
   <name>Enonic WEM</name>
   <version>5.0.0-SNAPSHOT</version>
 
+  <properties>
+    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>1.7</maven.compiler.source>
+  </properties>
+
   <modules>
     <module>modules/wem-api</module>
     <module>modules/wem-core</module>
@@ -79,16 +84,16 @@
 
   <build>
     <pluginManagement>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <argLine>-Xmx2048m -XX:MaxPermSize=700m -Djava.awt.headless=true</argLine>
-              <redirectTestOutputToFile>true</redirectTestOutputToFile>
-            </configuration>
-          </plugin>
-        </plugins>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <argLine>-Xmx2048m -XX:MaxPermSize=700m -Djava.awt.headless=true</argLine>
+            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+          </configuration>
+        </plugin>
+      </plugins>
     </pluginManagement>
   </build>
 
