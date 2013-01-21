@@ -23,6 +23,7 @@
     <module>modules/wem-web</module>
     <module>modules/wem-taglib</module>
     <module>modules/wem-webapp</module>
+    <module>modules/wem-itest</module>
   </modules>
 
   <dependencies>
@@ -75,6 +76,21 @@
       <scope>test</scope>
     </dependency-->
   </dependencies>
+
+  <build>
+    <pluginManagement>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <argLine>-Xmx2048m -XX:MaxPermSize=700m -Djava.awt.headless=true</argLine>
+              <redirectTestOutputToFile>true</redirectTestOutputToFile>
+            </configuration>
+          </plugin>
+        </plugins>
+    </pluginManagement>
+  </build>
 
   <repositories>
     <repository>
