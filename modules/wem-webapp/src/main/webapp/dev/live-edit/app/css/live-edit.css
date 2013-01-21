@@ -21,6 +21,7 @@ svg.live-edit-highlighter rect,
 .live-edit-button-text,
 .live-edit-button-icon,
 .live-edit-icon-parent,
+.live-edit-components-container,
 #live-edit-drag-helper,
 #live-edit-drag-helper img,
 #live-edit-drag-helper-status-icon,
@@ -31,7 +32,7 @@ svg.live-edit-highlighter rect,
 .live-edit-html-element-placeholder .live-edit-object {
     border: 0;
     color: #000;
-    font: 12px Tahoma, Geneva, Verdana;
+    font: 11px Tahoma, Geneva, Verdana;
     font-weight: normal;
     margin: 0;
     padding: 0;
@@ -191,7 +192,6 @@ svg.live-edit-highlighter rect {
     border: 1px dashed #aaa;
     clear: both;
     color: #d3d3d3;
-    font-size: 11px;
     margin-bottom: 10px;
     padding: 11px;
     text-align: center;
@@ -201,7 +201,7 @@ svg.live-edit-highlighter rect {
 
 .live-edit-tool-tip {
     position: absolute;
-    z-index: 1000200;
+    z-index: 1200150;
     border: 1px solid #000;
     padding: 3px 6px;
     background-color: #ffffc7;
@@ -250,8 +250,8 @@ svg.live-edit-highlighter rect {
 /*** Component bar */
 
 .live-edit-components-container {
-    position: absolute;
-    z-index: 1000150;
+    position: fixed;
+    z-index: 1100150;
     top: 0;
     right: 0;
     bottom: 0;

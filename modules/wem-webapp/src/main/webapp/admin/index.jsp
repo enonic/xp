@@ -67,10 +67,10 @@
     <a href="app-content-manager.jsp">Content Manager</a>
   </li>
   <li>
-    <a href="app-dashboard.jsp">Dashboard</a>
+    <a href="app-account.jsp">Accounts</a>
   </li>
   <li>
-    <a href="app-account.jsp">Accounts</a>
+    <a href="app-dashboard.jsp">Dashboard</a>
   </li>
   <li>
     <a href="app-system.jsp">System</a>

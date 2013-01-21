@@ -13,12 +13,13 @@
 
     proto.bindGlobalEvents = function () {
         $(window).on('component:mouseover', $.proxy(this.updateCursor, this));
-
+        $(window).on('component:mouseout', $.proxy(this.resetCursor, this));
         $(window).on('component:select', $.proxy(this.updateCursor, this));
     };
 
 
     proto.updateCursor = function (event, $component) {
+        console.log(event);
         var componentType = AdminLiveEdit.Util.getComponentType($component);
         var $body = $('body');
         var cursor = 'default';
@@ -36,6 +37,11 @@
             cursor = 'default';
         }
         $body.css('cursor', cursor);
+    };
+
+
+    proto.resetCursor = function () {
+        $('body').css('cursor', 'default');
     };
 
 }($liveedit));

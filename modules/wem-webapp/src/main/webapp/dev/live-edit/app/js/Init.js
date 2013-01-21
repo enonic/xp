@@ -5,7 +5,7 @@
         $('.live-edit-loader-splash-container').remove();
         var selection           = new AdminLiveEdit.Selection();
         var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
-        var mutationObserver    = new AdminLiveEdit.MutationObserver();
+        // var mutationObserver    = new AdminLiveEdit.MutationObserver(); // Commented out for debuging.
         var page                = new AdminLiveEdit.model.component.Page();
         var regions             = new AdminLiveEdit.model.component.Regions();
         var windows             = new AdminLiveEdit.model.component.Windows();
@@ -18,6 +18,7 @@
         var hoverMenu           = new AdminLiveEdit.view.hovermenu.HoverMenu();
         var componentMenu       = new AdminLiveEdit.view.componentmenu.ComponentMenu();
         var shader              = new AdminLiveEdit.view.Shader();
+        var componentBar        = new AdminLiveEdit.view.componentbar.ComponentBar();
 
         AdminLiveEdit.DragDrop.init();
     });
