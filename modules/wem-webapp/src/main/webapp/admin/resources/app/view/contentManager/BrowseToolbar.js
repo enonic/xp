@@ -71,7 +71,7 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
                 sectionItems.push(menu.createMenuItem({
                     "text": contentType.name,
                     "action": "newContent",
-                    "iconCls": "icon-content-24",
+                    "icon": contentType.iconUrl,
                     "qualifiedContentType": contentType.qualifiedName
                 }));
             }

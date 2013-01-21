@@ -11,6 +11,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentBranch;
 import com.enonic.wem.api.content.ContentTree;
 import com.enonic.wem.web.json.JsonResult;
+import com.enonic.wem.web.rest.resource.content.ContentTypeImageUriResolver;
 
 class ContentTreeJsonResult
     extends JsonResult
@@ -72,5 +73,6 @@ class ContentTreeJsonResult
         contentNode.put( "modifiedTime", content.getModifiedTime() != null ? content.getModifiedTime().toString() : null );
         contentNode.put( "editable", true );
         contentNode.put( "deletable", true );
+        contentNode.put( "iconUrl", ContentTypeImageUriResolver.resolve( content.getType() ) );
     }
 }

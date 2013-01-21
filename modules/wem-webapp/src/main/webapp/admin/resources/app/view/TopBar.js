@@ -131,15 +131,13 @@ Ext.define('Admin.view.TopBar', {
     createMenuItemFromTab: function (item) {
         var me = this;
         var cfg = item.initialConfig || item;
-        var data = item.data || item;
         return {
             tabBar: me,
             card: item,
             disabled: cfg.disabled,
             closable: cfg.closable,
             hidden: cfg.hidden && !item.hiddenByLayout, // only hide if it wasn't hidden by the layout itself
-            iconCls: cfg.iconCls,
-            iconSrc: data.image_url,
+            iconSrc: me.getMenuItemIcon(item),
             editing: cfg.editing || false,
             text1: Ext.String.ellipsis(cfg.title || 'first line', 26),
             text2: Ext.String.ellipsis(me.getMenuItemDescription(item), 38)
@@ -158,10 +156,22 @@ Ext.define('Admin.view.TopBar', {
         }
     },
 
+    getMenuItemIcon: function (card) {
+        var icon;
+        if (card.data) {
+            var data = card.data.data || card.data; // to accept either record or record.data
+            icon = data.iconUrl || data.image_url;
+            if (!icon && data.content) {
+                icon = data.content.iconUrl;
+            }
+        }
+        return icon;
+    },
+
     getMenuItemDescription: function (card) {
         var desc;
         if (card.data) {
-            var data = card.data;
+            var data = card.data.data || card.data; // to accept either record or record.data
             desc = data.path || data.qualifiedName || data.displayName;
             if (!desc && data.content) {
                 var content = data.content;

@@ -1,4 +1,4 @@
-// This file was auto-generated on 2013-01-16 12:33:19 CET
+// This file was auto-generated on 2013-01-17 10:53:39 CET
 
 if (!Templates) {
     var Templates = {};
@@ -454,13 +454,12 @@ Templates.contentManager = {
 
     previewHeader: '<h1>{displayName}</h1><span>{type}</span>',
 
-    previewPhoto: '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="{name}" class="{iconCls}"/>',
+    previewPhoto: '<img src="{iconUrl}?size=100" alt="{name}"/>',
 
     previewSelectionLarge: '<tpl for=".">' +
                            '<div id="selected-item-box-{data.key}" class="admin-selected-item-box large clearfix">' +
                            '<div class="left">' +
-                           '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" class="{data.iconCls}"' +
-                           'alt="{data.name}"/>' +
+                           '<img src="{data.iconUrl}?size=32" alt="{data.name}"/>' +
                            '</div>' +
                            '<div class="center">' +
                            '<h6>{data.name}</h6>' +
@@ -475,8 +474,7 @@ Templates.contentManager = {
     previewSelectionSmall: '<tpl for=".">' +
                            '<div id="selected-item-box-{data.key}" class="admin-selected-item-box small clearfix">' +
                            '<div class="left">' +
-                           '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="{data.name}"' +
-                           'class="{data.iconCls}"/>' +
+                           '<img src="{data.iconUrl}?size=20" alt="{data.name}"/>' +
                            '</div>' +
                            '<div class="center">' +
                            '{data.name}' +
@@ -488,7 +486,7 @@ Templates.contentManager = {
                            '</tpl>',
 
     treeGridPanelNameRenderer: '<div class="admin-{0}-thumbnail">' +
-                               '<img src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" class="{1}"/>' +
+                               '<img src="{1}"/>' +
                                '</div>' +
                                '<div class="admin-{0}-description">' +
                                '<h6>{2}</h6>' +

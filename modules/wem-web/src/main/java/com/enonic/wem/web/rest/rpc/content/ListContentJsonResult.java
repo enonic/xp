@@ -12,6 +12,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.core.content.ContentJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
+import com.enonic.wem.web.rest.resource.content.ContentTypeImageUriResolver;
 
 class ListContentJsonResult
     extends JsonResult
@@ -41,7 +42,8 @@ class ListContentJsonResult
         final ArrayNode contentsNode = arrayNode();
         for ( Content content : list )
         {
-            final JsonNode contentJson = contentSerializerJson.serialize( content );
+            final ObjectNode contentJson = (ObjectNode) contentSerializerJson.serialize( content );
+            contentJson.put( "iconUrl", ContentTypeImageUriResolver.resolve( content.getType() ) );
             contentsNode.add( contentJson );
         }
         return contentsNode;
