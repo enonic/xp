@@ -63,7 +63,7 @@ public class GetContentTypeTreeJsonResult
     {
         final ContentType contentType = contentTypeNode.getContentType();
         final ObjectNode contentTypeJson = (ObjectNode) contentTypeSerializer.toJson( contentType );
-        contentTypeJson.put( "iconUrl", ContentTypeImageUriResolver.resolve( contentType ) );
+        contentTypeJson.put( "iconUrl", ContentTypeImageUriResolver.resolve( contentType.getQualifiedName() ) );
         return contentTypeJson;
     }
 }
