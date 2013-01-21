@@ -24,20 +24,20 @@ public class JcrMigrateTask
     public void migrate()
         throws Exception
     {
-        final JcrInitializer jcrInitializer = new JcrInitializer( jcrSessionProvider );
-
-        if ( jcrInitializer.initialize() )
-        {
-            createAccountsIndex();
-
-            LOG.info( "Importing accounts..." );
-            jcrAccountsImporter.importAccounts();
-            LOG.info( "Accounts imported to JCR." );
-        }
-        else
-        {
-            LOG.info( "JCR already initialized, skipping import of accounts." );
-        }
+//        final JcrInitializer jcrInitializer = new JcrInitializer( jcrSessionProvider );
+//
+//        if ( jcrInitializer.initialize() )
+//        {
+//            createAccountsIndex();
+//
+//            LOG.info( "Importing accounts..." );
+//            jcrAccountsImporter.importAccounts();
+//            LOG.info( "Accounts imported to JCR." );
+//        }
+//        else
+//        {
+//            LOG.info( "JCR already initialized, skipping import of accounts." );
+//        }
     }
 
     public void createAccountsIndex()
