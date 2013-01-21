@@ -110,7 +110,7 @@ Ext.define('Admin.view.TopBar', {
 
     setActiveTab: function (tab) {
         this.setLabelTitle(this.getMenuItemDescription(tab.card));
-        this.setButtonTitle(tab.card, this.getActiveTabDisplayName(tab.card));
+        this.setButtonTitle(tab.card, this.getActiveTabContentName(tab.card));
         this.tabMenu.markActiveTab(tab);
     },
 
@@ -185,11 +185,11 @@ Ext.define('Admin.view.TopBar', {
         return desc;
     },
 
-    getActiveTabDisplayName: function (card) {
+    getActiveTabContentName: function (card) {
         var desc;
         if (card.data) {
             var data = card.data;
-            desc = data.displayName;
+            desc = data.name;
         }
         if (!desc) {
             desc = card.title;
