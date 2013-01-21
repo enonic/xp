@@ -189,7 +189,7 @@ Ext.define('Admin.view.TopBar', {
         var desc;
         if (card.data) {
             var data = card.data;
-            desc = data.name;
+            desc = data.name || data.data.name; // Why is there a new level with data in open mode
         }
         if (!desc) {
             desc = card.title;
