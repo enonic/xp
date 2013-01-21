@@ -6,8 +6,7 @@ import java.io.ByteArrayInputStream;
 import javax.imageio.ImageIO;
 
 import com.enonic.wem.api.content.type.ContentType;
-
-import com.enonic.cms.core.image.filter.effect.ScaleSquareFilter;
+import com.enonic.wem.core.image.filter.effect.ScaleSquareFilter;
 
 final class ContentTypeImageHelper
 {
