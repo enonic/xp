@@ -32,7 +32,9 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             displayName: (this.data && this.data.content) ? this.data.content.displayName : 'New Content',
             contentType: (this.data && this.data.contentType) ? this.data.contentType.qualifiedName : undefined,
             contentPath: (this.data && this.data.content) ? this.data.content.path : this.data.contentParent ? this.data.contentParent.path
-                : ''
+                : '',
+            contentAssignee: 'Thomas Sigdestad',
+            contentStatus: 'Draft'
         };
 
         me.tbar = Ext.createByAlias('widget.contentWizardToolbar', {

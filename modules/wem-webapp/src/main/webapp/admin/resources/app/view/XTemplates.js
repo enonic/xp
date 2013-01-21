@@ -402,8 +402,8 @@ Templates.common = {
 Templates.contentManager = {
 
     contentWizardHeader: '<div class="admin-wizard-userstore">' +
-                         '<label>{contentType}:</label>' +
-                         '<span>/{contentPath}</span>' +
+                         '<label>{contentStatus} - </label>' +
+                         '<span>Assigned to <a href="javascript:;">{contentAssignee}</a></span>' +
                          '</div>',
 
     deleteMultiple: '<div class="admin-delete-user-confirmation-message">' +
@@ -506,10 +506,6 @@ Templates.contentStudio = {
                      '</div>',
 
     noContentTypeSelected: '<div>No content type selected</div>',
-
-
-    noTypeSelected: '<div>No type selected</div>',
-
 
     previewCommonInfo: '<div class="container">' +
                        '<table>' +
