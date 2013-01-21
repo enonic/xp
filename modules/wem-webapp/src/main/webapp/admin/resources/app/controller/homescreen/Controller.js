@@ -33,6 +33,15 @@ Ext.define('Admin.controller.homescreen.Controller', {
             'loginPanel button[itemId=loginButton]': {
                 click: me.onLoginButtonClick
             },
+            'loginPanel textfield[itemId=userstoreCombo]': {
+                keydown: me.onFormKeyDown
+            },
+            'loginPanel textfield[itemId=userId]': {
+                keydown: me.onFormKeyDown
+            },
+            'loginPanel textfield[itemId=password]': {
+                keydown: me.onFormKeyDown
+            },
             'homescreen': {
                 afterrender: function (view) {
                     Admin.lib.RemoteService.system_getSystemInfo({}, function (r) {
@@ -46,12 +55,19 @@ Ext.define('Admin.controller.homescreen.Controller', {
 
 
     initView: function () {
-        var dummyCookie = Ext.util.Cookies.get('dummy_userIsLoggedIn');
-        var userIsLoggedIn = dummyCookie && dummyCookie === 'true';
+        var dummyCookie = Ext.util.Cookies.get('dummy_userIsLoggedIn'),
+            userIsLoggedIn = dummyCookie && dummyCookie === 'true';
 
-        var homeScreen = Ext.create('Admin.view.homescreen.Homescreen', {
+        Ext.create('Admin.view.homescreen.Homescreen', {
             userIsLoggedIn: userIsLoggedIn
         });
+    },
+
+
+    onFormKeyDown: function (field, evt) {
+        if (evt.getKey() === evt.ENTER) {
+            this.handleLoginSubmit();
+        }
     },
 
 

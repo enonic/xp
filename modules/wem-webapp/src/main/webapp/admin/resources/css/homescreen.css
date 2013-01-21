@@ -1,12 +1,12 @@
-#admin-home-main-container a {
-    color: #fff;
-    text-decoration: none;
-}
-
 #admin-home-main-container h3,
 #admin-home-installation-info {
     font-size: 24px;
     color: #fff;
+}
+
+#admin-home-main-container a {
+    color: #fff;
+    text-decoration: none;
 }
 
 #admin-home-main-container {
@@ -24,15 +24,57 @@
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-
-    transition: opacity .3s ease-in-out;
-    -webkit-transition: opacity .3s ease-in-out;
 }
 
-#admin-home-main-container.show {
-    background-position: 0 !important;
-    opacity: 1 !important;
+#admin-home-main-container.show-home {
+    animation: ani-show-home 300ms ease both;
+    animation-play-state: running;
+
+    -webkit-animation: ani-show-home 300ms ease both;
+    -webkit-animation-play-state: running;
 }
+#admin-home-main-container.hide-home {
+    animation: ani-hide-home 300ms ease both;
+    animation-play-state: running;
+
+    -webkit-animation: ani-hide-home 300ms ease both;
+    -webkit-animation-play-state: running;
+}
+
+@-webkit-keyframes ani-show-home {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+@-webkit-keyframes ani-hide-home {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes ani-show-home {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+@keyframes ani-hide-home {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
 
 /** Branding */
 

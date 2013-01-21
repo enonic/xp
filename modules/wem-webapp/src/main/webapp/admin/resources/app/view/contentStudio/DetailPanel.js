@@ -10,16 +10,6 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
     overflowY: 'auto',
 
     typeField: 'qualifiedName',
-    iconClasses: {
-        "system:content": 'icon-icomoon-content-128',
-        "system:folder": 'icon-icomoon-folder-128',
-        "system:file": 'icon-icomoon-file-128',
-        "system:page": 'icon-icomoon-page-128',
-        "system:space": 'icon-icomoon-space-128',
-        "system:shortcut": 'icon-icomoon-shortcut-128',
-        "system:structured": 'icon-icomoon-structured-128',
-        "system:unstructured": 'icon-icomoon-unstructured-128'
-    },
 
     initComponent: function () {
 
@@ -36,16 +26,6 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
         this.callParent(arguments);
     },
 
-    resolveIconClass: function (node) {
-        var iconCls = '';
-        var nodeType = node[this.typeField];
-        var typeCls = nodeType && this.iconClasses && this.iconClasses[nodeType.toLowerCase()];
-        if (typeCls) {
-            iconCls = typeCls;
-        }
-        return iconCls;
-    },
-
     createSingleSelection: function (data) {
 
         var singleData;
@@ -55,10 +35,8 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
             singleData = data;
         }
         if (singleData) {
-            if (Ext.isEmpty(singleData.iconCls)) {
-                singleData.iconCls = this.resolveIconClass(singleData);
-            }
             singleData = singleData.data || singleData;
+            singleData.src = singleData.iconUrl;
         }
 
         return {
@@ -170,10 +148,8 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
                 singleData = this.data;
             }
             if (singleData) {
-                if (Ext.isEmpty(singleData.iconCls)) {
-                    singleData.set('iconCls', this.resolveIconClass(singleData));
-                }
                 singleData = singleData.data || singleData;
+                singleData.src = singleData.iconUrl;
             }
 
             var previewHeader = this.down('#previewHeader');

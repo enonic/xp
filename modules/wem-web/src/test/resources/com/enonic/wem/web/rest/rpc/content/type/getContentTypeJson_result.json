@@ -67,5 +67,6 @@
                 }
             }
         ]
-    }
+    },
+    "iconUrl": "http://localhost/admin/rest/content-type/image/myModule:myCtype"
 }

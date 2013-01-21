@@ -26,9 +26,13 @@ class ContentTypeJcrMapper
         final String contentTypeJson = jsonSerializer.toString( contentType );
         contentTypeNode.setProperty( CONTENT_TYPE, contentTypeJson );
         final byte[] icon = contentType.getIcon();
-        if ( icon != null )
+        if ( icon != null && icon.length > 0 )
         {
             JcrHelper.setPropertyBinary( contentTypeNode, ICON, icon );
+        }
+        else if ( contentTypeNode.hasProperty( ICON ) )
+        {
+            contentTypeNode.getProperty( ICON ).remove();
         }
     }
 

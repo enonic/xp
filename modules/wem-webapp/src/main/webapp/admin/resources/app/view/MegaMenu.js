@@ -76,7 +76,7 @@ Ext.define('Admin.view.MegaMenu', {
         var recentCookie = Ext.util.Cookies.get(this.cookieKey);
         var recentArray = recentCookie ? recentCookie.split(',') : [];
 
-        var recentItem = [item.text, item.iconCls, item.action, item.cms ? item.cms.appUrl : ''].join(this.cookieSeparator);
+        var recentItem = [item.text, item.icon, item.action, item.cms ? item.cms.appUrl : ''].join(this.cookieSeparator);
         if (recentArray.length === 0 || recentArray[0] !== recentItem) {
             recentArray.unshift(recentItem);
         }
@@ -124,7 +124,7 @@ Ext.define('Admin.view.MegaMenu', {
                 var itemArray = item.split(me.cookieSeparator);
                 recentItems.push(me.createMenuItem({
                     text: itemArray[0],
-                    iconCls: itemArray[1],
+                    icon: itemArray[1],
                     action: itemArray[2],
                     cms: {
                         appUrl: itemArray[3]

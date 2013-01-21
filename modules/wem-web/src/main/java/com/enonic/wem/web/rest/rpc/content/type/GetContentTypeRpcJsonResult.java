@@ -5,6 +5,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.core.content.type.ContentTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
+import com.enonic.wem.web.rest.resource.content.ContentTypeImageUriResolver;
 
 final class GetContentTypeRpcJsonResult
     extends JsonResult
@@ -21,8 +22,7 @@ final class GetContentTypeRpcJsonResult
     @Override
     protected void serialize( final ObjectNode json )
     {
-        // TODO for the moment we use the same serialization format as is used for persistence (in JCR)
-
         json.put( "contentType", contentTypeSerializer.toJson( contentType ) );
+        json.put( "iconUrl", ContentTypeImageUriResolver.resolve( contentType.getQualifiedName() ) );
     }
 }

@@ -7,10 +7,11 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.ContentTypeTreeNode;
 import com.enonic.wem.api.content.type.ContentTypeTree;
+import com.enonic.wem.api.content.type.ContentTypeTreeNode;
 import com.enonic.wem.core.content.type.ContentTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
+import com.enonic.wem.web.rest.resource.content.ContentTypeImageUriResolver;
 
 public class GetContentTypeTreeJsonResult
     extends JsonResult
@@ -62,6 +63,7 @@ public class GetContentTypeTreeJsonResult
     {
         final ContentType contentType = contentTypeNode.getContentType();
         final ObjectNode contentTypeJson = (ObjectNode) contentTypeSerializer.toJson( contentType );
+        contentTypeJson.put( "iconUrl", ContentTypeImageUriResolver.resolve( contentType.getQualifiedName() ) );
         return contentTypeJson;
     }
 }

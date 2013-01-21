@@ -1,17 +1,14 @@
 package com.enonic.wem.web.rest.rpc.content.type;
 
-import java.io.IOException;
-
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.NullNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.core.content.type.ContentTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
+import com.enonic.wem.web.rest.resource.content.ContentTypeImageUriResolver;
 
 final class ListContentTypesRpcJsonResult
     extends JsonResult
@@ -39,21 +36,8 @@ final class ListContentTypesRpcJsonResult
 
     private JsonNode serializeContentType( final ContentType contentType )
     {
-        final String contentTypeSerialized = contentTypeSerializer.toString( contentType );
-        return parseJson( contentTypeSerialized );
+        final ObjectNode contentTypeJson = (ObjectNode) contentTypeSerializer.toJson( contentType );
+        contentTypeJson.put( "iconUrl", ContentTypeImageUriResolver.resolve( contentType.getQualifiedName() ) );
+        return contentTypeJson;
     }
-
-    private JsonNode parseJson( final String serializedJson )
-    {
-        final ObjectMapper mapper = new ObjectMapper();
-        try
-        {
-            return mapper.readTree( serializedJson );
-        }
-        catch ( IOException e )
-        {
-            return NullNode.getInstance();
-        }
-    }
-
 }

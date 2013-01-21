@@ -52,9 +52,12 @@ Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
 
     saveContentType: function (contentTypeWizard, closeWizard) {
         var me = this;
-        var contentType = contentTypeWizard.getData().configXML;
+        var data = contentTypeWizard.getData();
+        var contentType = data.configXML;
+        var iconRef = data.iconRef;
         var contentTypeParams = {
-            contentType: contentType
+            contentType: contentType,
+            iconReference: iconRef
         };
 
         var onUpdateContentTypeSuccess = function (created, updated) {
