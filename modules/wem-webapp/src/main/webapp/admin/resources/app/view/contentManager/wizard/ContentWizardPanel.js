@@ -136,7 +136,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
 
     getSteps: function () {
         var dataStep = {
-            stepTitle: "Data",
+            stepTitle: this.data ? this.data.contentType.displayName : "Data",
             xtype: 'contentDataPanel',
             contentType: this.data ? this.data.contentType : undefined,
             content: this.data ? this.data.content : null
