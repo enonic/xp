@@ -6,13 +6,13 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.command.content.relation.CreateRelationshipType;
-import com.enonic.wem.api.content.relation.RelationshipType;
+import com.enonic.wem.api.command.content.relationship.CreateRelationshipType;
+import com.enonic.wem.api.content.relationship.RelationshipType;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.relationship.dao.RelationshipTypeDao;
 
-import static com.enonic.wem.api.content.relation.RelationshipType.newRelationshipType;
+import static com.enonic.wem.api.content.relationship.RelationshipType.newRelationshipType;
 
 @Component
 public final class CreateRelationshipTypeHandler

@@ -4,8 +4,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.content.relation.RelationshipType;
+import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.content.relationship.RelationshipType;
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.jcr.JcrHelper;
 

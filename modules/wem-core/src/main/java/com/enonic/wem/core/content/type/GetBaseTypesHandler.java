@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.type.GetBaseTypes;
-import com.enonic.wem.api.content.relation.RelationshipTypes;
+import com.enonic.wem.api.content.relationship.RelationshipTypes;
 import com.enonic.wem.api.content.type.BaseTypes;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.Mixins;

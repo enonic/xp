@@ -5,12 +5,12 @@ import javax.jcr.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.command.content.relation.UpdateRelationshipTypes;
-import com.enonic.wem.api.command.content.relation.editor.RelationshipTypeEditor;
-import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeNames;
-import com.enonic.wem.api.content.relation.RelationshipType;
-import com.enonic.wem.api.content.relation.RelationshipTypes;
+import com.enonic.wem.api.command.content.relationship.UpdateRelationshipTypes;
+import com.enonic.wem.api.command.content.relationship.editor.RelationshipTypeEditor;
+import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.content.relationship.RelationshipType;
+import com.enonic.wem.api.content.relationship.RelationshipTypes;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.relationship.dao.RelationshipTypeDao;

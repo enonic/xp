@@ -1,0 +1,9 @@
+{
+    "success": true,
+    "successes": [
+        {
+            "qualifiedRelationshipTypeName": "my:existingRelationshipType"
+        }
+    ],
+    "failures": [ ]
+}

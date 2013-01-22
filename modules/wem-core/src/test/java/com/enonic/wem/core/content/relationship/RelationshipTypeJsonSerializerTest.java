@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.relationship;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.relation.RelationshipType;
+import com.enonic.wem.api.content.relationship.RelationshipType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.AbstractSerializerTest;

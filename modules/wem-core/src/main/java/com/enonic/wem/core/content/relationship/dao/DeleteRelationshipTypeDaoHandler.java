@@ -4,7 +4,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.exception.SystemException;
 
 final class DeleteRelationshipTypeDaoHandler

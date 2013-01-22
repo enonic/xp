@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.relation.CreateRelationshipType;
-import com.enonic.wem.api.command.content.relation.UpdateRelationshipTypes;
-import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeNames;
-import com.enonic.wem.api.content.relation.RelationshipType;
+import com.enonic.wem.api.command.content.relationship.CreateRelationshipType;
+import com.enonic.wem.api.command.content.relationship.UpdateRelationshipTypes;
+import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.content.relationship.RelationshipType;
 import com.enonic.wem.api.module.ModuleName;
 
-import static com.enonic.wem.api.command.content.relation.editor.RelationshipTypeEditors.setRelationshipType;
+import static com.enonic.wem.api.command.content.relationship.editor.RelationshipTypeEditors.setRelationshipType;
 
 @Component
 @DependsOn("jcrInitializer")

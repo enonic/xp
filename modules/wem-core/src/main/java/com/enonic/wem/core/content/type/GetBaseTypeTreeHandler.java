@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.command.content.type.GetBaseTypeTree;
-import com.enonic.wem.api.content.relation.RelationshipTypes;
+import com.enonic.wem.api.content.relationship.RelationshipTypes;
 import com.enonic.wem.api.content.type.BaseType;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.Mixins;

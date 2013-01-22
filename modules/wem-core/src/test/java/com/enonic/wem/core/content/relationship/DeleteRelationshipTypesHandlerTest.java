@@ -9,10 +9,10 @@ import org.mockito.Mockito;
 import com.google.common.collect.Iterables;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.relation.DeleteRelationshipTypes;
-import com.enonic.wem.api.command.content.relation.RelationshipTypeDeletionResult;
-import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.command.content.relationship.DeleteRelationshipTypes;
+import com.enonic.wem.api.command.content.relationship.RelationshipTypeDeletionResult;
+import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.relationship.dao.RelationshipTypeDao;

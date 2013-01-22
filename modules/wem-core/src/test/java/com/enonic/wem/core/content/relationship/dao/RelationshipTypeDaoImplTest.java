@@ -4,16 +4,16 @@ import javax.jcr.Node;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeNames;
-import com.enonic.wem.api.content.relation.RelationshipType;
-import com.enonic.wem.api.content.relation.RelationshipTypes;
+import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.content.relationship.RelationshipType;
+import com.enonic.wem.api.content.relationship.RelationshipTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.AbstractJcrTest;
 
-import static com.enonic.wem.api.content.relation.RelationshipType.newRelationshipType;
+import static com.enonic.wem.api.content.relationship.RelationshipType.newRelationshipType;
 import static org.junit.Assert.*;
 
 public class RelationshipTypeDaoImplTest

@@ -9,11 +9,11 @@ import javax.jcr.Session;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeNames;
-import com.enonic.wem.api.content.relation.RelationshipType;
-import com.enonic.wem.api.content.relation.RelationshipTypeSelector;
-import com.enonic.wem.api.content.relation.RelationshipTypes;
+import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.content.relationship.RelationshipType;
+import com.enonic.wem.api.content.relationship.RelationshipTypeSelector;
+import com.enonic.wem.api.content.relationship.RelationshipTypes;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 final class RetrieveRelationshipTypesDaoHandler
