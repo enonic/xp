@@ -10,14 +10,14 @@ import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeNames;
 public final class UpdateRelationshipTypes
     extends Command<Integer>
 {
-    private QualifiedRelationshipTypeNames relationshipTypeNames;
+    private QualifiedRelationshipTypeNames qualifiedNames;
 
     private RelationshipTypeEditor editor;
 
 
-    public UpdateRelationshipTypes names( final QualifiedRelationshipTypeNames relationshipTypeNames )
+    public UpdateRelationshipTypes qualifiedNames( final QualifiedRelationshipTypeNames relationshipTypeNames )
     {
-        this.relationshipTypeNames = relationshipTypeNames;
+        this.qualifiedNames = relationshipTypeNames;
         return this;
     }
 
@@ -27,9 +27,9 @@ public final class UpdateRelationshipTypes
         return this;
     }
 
-    public QualifiedRelationshipTypeNames getNames()
+    public QualifiedRelationshipTypeNames getQualifiedNames()
     {
-        return relationshipTypeNames;
+        return qualifiedNames;
     }
 
     public RelationshipTypeEditor getEditor()
@@ -51,19 +51,19 @@ public final class UpdateRelationshipTypes
         }
 
         final UpdateRelationshipTypes that = (UpdateRelationshipTypes) o;
-        return Objects.equal( this.relationshipTypeNames, that.relationshipTypeNames ) && Objects.equal( this.editor, that.editor );
+        return Objects.equal( this.qualifiedNames, that.qualifiedNames ) && Objects.equal( this.editor, that.editor );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.relationshipTypeNames, this.editor );
+        return Objects.hashCode( this.qualifiedNames, this.editor );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.relationshipTypeNames, "Relationship type names cannot be null" );
+        Preconditions.checkNotNull( this.qualifiedNames, "Relationship type names cannot be null" );
         Preconditions.checkNotNull( this.editor, "Editor cannot be null" );
     }
 }

@@ -23,4 +23,6 @@ public interface RelationshipTypeDao
     public RelationshipTypes retrieveAllRelationshipTypes( Session session );
 
     public RelationshipTypes retrieveRelationshipTypes( QualifiedRelationshipTypeNames relationshipTypeNames, Session session );
+
+    public QualifiedRelationshipTypeNames exists( QualifiedRelationshipTypeNames relationshipTypeNames, Session session );
 }

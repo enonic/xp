@@ -31,6 +31,7 @@ public class RelationshipTypeJsonSerializer
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectNode objectNode = mapper.createObjectNode();
         objectNode.put( "name", relationshipType.getName() );
+        objectNode.put( "displayName", relationshipType.getDisplayName() );
         objectNode.put( "module", relationshipType.getModuleName().toString() );
         objectNode.put( "fromSemantic", relationshipType.getFromSemantic() );
         objectNode.put( "toSemantic", relationshipType.getToSemantic() );
@@ -57,6 +58,7 @@ public class RelationshipTypeJsonSerializer
     {
         final RelationshipType.Builder relationshipTypeBuilder = RelationshipType.newRelationshipType().
             name( JsonParserUtil.getStringValue( "name", relationshipTypeNode ) ).
+            displayName( JsonParserUtil.getStringValue( "displayName", relationshipTypeNode, null ) ).
             module( ModuleName.from( JsonParserUtil.getStringValue( "module", relationshipTypeNode ) ) ).
             fromSemantic( JsonParserUtil.getStringValue( "fromSemantic", relationshipTypeNode ) ).
             toSemantic( JsonParserUtil.getStringValue( "toSemantic", relationshipTypeNode ) );

@@ -30,7 +30,7 @@ public final class UpdateRelationshipTypesHandler
     public void handle( final CommandContext context, final UpdateRelationshipTypes command )
         throws Exception
     {
-        final QualifiedRelationshipTypeNames relationshipTypeNames = command.getNames();
+        final QualifiedRelationshipTypeNames relationshipTypeNames = command.getQualifiedNames();
         final RelationshipTypeEditor editor = command.getEditor();
         final Session session = context.getJcrSession();
         int relationshipTypesUpdated = 0;

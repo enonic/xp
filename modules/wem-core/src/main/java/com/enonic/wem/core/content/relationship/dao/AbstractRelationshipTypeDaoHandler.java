@@ -19,6 +19,18 @@ abstract class AbstractRelationshipTypeDaoHandler
         this.session = session;
     }
 
+    protected boolean nodeExists( final QualifiedRelationshipTypeName relationshipTypeName )
+        throws RepositoryException
+    {
+        final Node node = this.getRelationshipTypeNode( relationshipTypeName );
+        if ( node == null )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     protected final Node getRelationshipTypeNode( final QualifiedRelationshipTypeName relationshipTypeName )
         throws RepositoryException
     {

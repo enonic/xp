@@ -12,14 +12,14 @@ public final class GetRelationshipTypes
 {
     private QualifiedRelationshipTypeNames relationshipTypeNames;
 
-    private boolean getAllContentTypes = false;
+    private boolean all = false;
 
-    public QualifiedRelationshipTypeNames getNames()
+    public QualifiedRelationshipTypeNames getQualifiedNames()
     {
         return this.relationshipTypeNames;
     }
 
-    public GetRelationshipTypes names( final QualifiedRelationshipTypeNames qualifiedNames )
+    public GetRelationshipTypes qualifiedNames( final QualifiedRelationshipTypeNames qualifiedNames )
     {
         this.relationshipTypeNames = qualifiedNames;
         return this;
@@ -27,12 +27,12 @@ public final class GetRelationshipTypes
 
     public boolean isGetAll()
     {
-        return getAllContentTypes;
+        return all;
     }
 
     public GetRelationshipTypes all()
     {
-        getAllContentTypes = true;
+        all = true;
         return this;
     }
 
@@ -50,27 +50,26 @@ public final class GetRelationshipTypes
         }
 
         final GetRelationshipTypes that = (GetRelationshipTypes) o;
-        return Objects.equal( this.relationshipTypeNames, that.relationshipTypeNames ) &&
-            ( this.getAllContentTypes == that.getAllContentTypes );
+        return Objects.equal( this.relationshipTypeNames, that.relationshipTypeNames ) && ( this.all == that.all );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.relationshipTypeNames, this.getAllContentTypes );
+        return Objects.hashCode( this.relationshipTypeNames, this.all );
     }
 
     @Override
     public void validate()
     {
-        if ( getAllContentTypes )
+        if ( all )
         {
             Preconditions.checkArgument( this.relationshipTypeNames == null,
-                                         "Cannot specify both get all and get relationship type names" );
+                                         "all and relationshipTypeNames cannot be specified at the same time" );
         }
         else
         {
-            Preconditions.checkNotNull( this.relationshipTypeNames, "Relationship type cannot be null" );
+            Preconditions.checkNotNull( this.relationshipTypeNames, "RelationshipType cannot be null" );
         }
     }
 

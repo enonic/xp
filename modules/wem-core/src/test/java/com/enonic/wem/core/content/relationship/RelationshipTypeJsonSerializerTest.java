@@ -27,6 +27,7 @@ public class RelationshipTypeJsonSerializerTest
     {
         final RelationshipType relationshipType = RelationshipType.newRelationshipType().
             name( "contains" ).
+            displayName( "Contains" ).
             module( ModuleName.from( "myModule" ) ).
             toSemantic( "contains" ).
             fromSemantic( "contained by" ).

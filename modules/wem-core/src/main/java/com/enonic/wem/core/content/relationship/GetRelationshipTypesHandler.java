@@ -35,7 +35,7 @@ public final class GetRelationshipTypesHandler
         }
         else
         {
-            final QualifiedRelationshipTypeNames relationshipTypeNames = command.getNames();
+            final QualifiedRelationshipTypeNames relationshipTypeNames = command.getQualifiedNames();
             relationshipTypes = relationshipTypeDao.retrieveRelationshipTypes( relationshipTypeNames, session );
         }
         command.setResult( relationshipTypes );

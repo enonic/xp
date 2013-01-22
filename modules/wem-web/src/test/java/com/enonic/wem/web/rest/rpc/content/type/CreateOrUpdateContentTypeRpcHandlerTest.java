@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verify;
 public class CreateOrUpdateContentTypeRpcHandlerTest
     extends AbstractRpcHandlerTest
 {
-    private static final byte[] SINGLE_PIXEL_GIF_PICTURE =
+    private static byte[] SINGLE_PIXEL_GIF_PICTURE =
         {0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x1, 0x0, 0x1, 0x0, (byte) 0x80, 0x0, 0x0, (byte) 0xff, (byte) 0xff, (byte) 0xff, 0x0, 0x0,
             0x0, 0x2c, 0x0, 0x0, 0x0, 0x0, 0x1, 0x0, 0x1, 0x0, 0x0, 0x2, 0x2, 0x44, 0x1, 0x0, 0x3b};
 
@@ -41,7 +41,7 @@ public class CreateOrUpdateContentTypeRpcHandlerTest
     protected JsonRpcHandler createHandler()
         throws Exception
     {
-        final CreateOrUpdateContentTypeRpcHandler handler = new CreateOrUpdateContentTypeRpcHandler();
+        CreateOrUpdateContentTypeRpcHandler handler = new CreateOrUpdateContentTypeRpcHandler();
         client = Mockito.mock( Client.class );
         uploadService = Mockito.mock( UploadService.class );
         handler.setClient( client );
@@ -56,7 +56,7 @@ public class CreateOrUpdateContentTypeRpcHandlerTest
     {
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
 
-        final ObjectNode resultJson = objectNode();
+        ObjectNode resultJson = objectNode();
         resultJson.put( "success", true );
         resultJson.put( "created", true );
         resultJson.put( "updated", false );
@@ -69,11 +69,11 @@ public class CreateOrUpdateContentTypeRpcHandlerTest
     public void testUpdateContentType()
         throws Exception
     {
-        final ContentType existingContentType = ContentType.newContentType().name( "aType" ).module( Module.SYSTEM.getName() ).build();
-        final ContentTypes contentTypes = ContentTypes.from( existingContentType );
+        ContentType existingContentType = ContentType.newContentType().name( "aType" ).module( Module.SYSTEM.getName() ).build();
+        ContentTypes contentTypes = ContentTypes.from( existingContentType );
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( contentTypes );
 
-        final ObjectNode resultJson = objectNode();
+        ObjectNode resultJson = objectNode();
         resultJson.put( "success", true );
         resultJson.put( "created", false );
         resultJson.put( "updated", true );
@@ -89,7 +89,7 @@ public class CreateOrUpdateContentTypeRpcHandlerTest
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
         uploadFile( "edc1af66-ecb4-4f8a-8df4-0738418f84fc", "photo.png", SINGLE_PIXEL_GIF_PICTURE, "image/png" );
 
-        final ObjectNode resultJson = objectNode();
+        ObjectNode resultJson = objectNode();
         resultJson.put( "success", true );
         resultJson.put( "created", true );
         resultJson.put( "updated", false );
@@ -98,11 +98,11 @@ public class CreateOrUpdateContentTypeRpcHandlerTest
         verify( client, times( 1 ) ).execute( isA( CreateContentType.class ) );
     }
 
-    private void uploadFile( final String id, final String name, final byte[] data, final String type )
+    private void uploadFile( String id, String name, byte[] data, String type )
         throws Exception
     {
-        final File file = createTempFile( data );
-        final UploadItem item = Mockito.mock( UploadItem.class );
+        File file = createTempFile( data );
+        UploadItem item = Mockito.mock( UploadItem.class );
         Mockito.when( item.getId() ).thenReturn( id );
         Mockito.when( item.getMimeType() ).thenReturn( type );
         Mockito.when( item.getUploadTime() ).thenReturn( 0L );
@@ -112,11 +112,11 @@ public class CreateOrUpdateContentTypeRpcHandlerTest
         Mockito.when( this.uploadService.getItem( Mockito.<String>any() ) ).thenReturn( item );
     }
 
-    private File createTempFile( final byte[] data )
+    private File createTempFile( byte[] data )
         throws IOException
     {
-        final String id = UUID.randomUUID().toString();
-        final File file = File.createTempFile( id, "" );
+        String id = UUID.randomUUID().toString();
+        File file = File.createTempFile( id, "" );
         Files.write( data, file );
         return file;
     }

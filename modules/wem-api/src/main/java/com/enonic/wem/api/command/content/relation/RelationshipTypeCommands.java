@@ -2,6 +2,11 @@ package com.enonic.wem.api.command.content.relation;
 
 public final class RelationshipTypeCommands
 {
+    public RelationshipTypesExists exists()
+    {
+        return new RelationshipTypesExists();
+    }
+
     public GetRelationshipTypes get()
     {
         return new GetRelationshipTypes();

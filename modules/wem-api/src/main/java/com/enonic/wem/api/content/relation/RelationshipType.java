@@ -22,6 +22,8 @@ public final class RelationshipType
 
     private final String name;
 
+    private final String displayName;
+
     private final DateTime createdTime;
 
     private final DateTime modifiedTime;
@@ -40,6 +42,7 @@ public final class RelationshipType
     {
         this.module = builder.module;
         this.name = builder.name;
+        this.displayName = builder.displayName;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
         this.qualifiedName = new QualifiedRelationshipTypeName( module, name );
@@ -62,7 +65,7 @@ public final class RelationshipType
     @Override
     public String getDisplayName()
     {
-        return name;
+        return displayName;
     }
 
     @Override
@@ -118,6 +121,7 @@ public final class RelationshipType
         final RelationshipType that = (RelationshipType) o;
         return Objects.equal( this.module, that.module ) &&
             Objects.equal( this.name, that.name ) &&
+            Objects.equal( this.displayName, that.displayName ) &&
             Objects.equal( this.qualifiedName, that.qualifiedName ) &&
             Objects.equal( this.fromSemantic, that.fromSemantic ) &&
             Objects.equal( this.toSemantic, that.toSemantic ) &&
@@ -128,8 +132,7 @@ public final class RelationshipType
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.module, this.name, this.qualifiedName, this.fromSemantic, this.toSemantic, this.allowedFromTypes,
-                                 this.allowedToTypes );
+        return Objects.hashCode( module, name, displayName, qualifiedName, fromSemantic, toSemantic, allowedFromTypes, allowedToTypes );
     }
 
     public static Builder newRelationshipType()
@@ -147,6 +150,8 @@ public final class RelationshipType
         private ModuleName module;
 
         private String name;
+
+        private String displayName;
 
         private DateTime createdTime;
 
@@ -169,6 +174,7 @@ public final class RelationshipType
         {
             module = relationshipType.module;
             name = relationshipType.name;
+            displayName = relationshipType.displayName;
             createdTime = relationshipType.createdTime;
             modifiedTime = relationshipType.modifiedTime;
             fromSemantic = relationshipType.fromSemantic;
@@ -186,6 +192,12 @@ public final class RelationshipType
         public Builder name( String value )
         {
             this.name = value;
+            return this;
+        }
+
+        public Builder displayName( String value )
+        {
+            this.displayName = value;
             return this;
         }
 

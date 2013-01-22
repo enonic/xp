@@ -5,7 +5,8 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.relation.CreateRelationshipType;
-import com.enonic.wem.api.command.content.relation.GetRelationshipTypes;
+import com.enonic.wem.api.command.content.relation.RelationshipTypesExists;
+import com.enonic.wem.api.command.content.relation.RelationshipTypesExistsResult;
 import com.enonic.wem.api.command.content.relation.UpdateRelationshipTypes;
 import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeNames;
@@ -49,7 +50,7 @@ public final class CreateOrUpdateRelationshipTypeRpcHandler
             return;
         }
 
-        if ( !relationshipTypeExists( relationshipType.getQualifiedName() ) )
+        if ( !exists( relationshipType.getQualifiedName() ) )
         {
             final CreateRelationshipType createCommand = Commands.relationshipType().create();
             createCommand.relationshipType( relationshipType );
@@ -62,7 +63,7 @@ public final class CreateOrUpdateRelationshipTypeRpcHandler
                 QualifiedRelationshipTypeNames.from( relationshipType.getQualifiedName() );
 
             final UpdateRelationshipTypes updateCommand = Commands.relationshipType().update();
-            updateCommand.names( qualifiedNames );
+            updateCommand.qualifiedNames( qualifiedNames );
             updateCommand.editor( setRelationshipType( relationshipType ) );
 
             client.execute( updateCommand );
@@ -71,14 +72,12 @@ public final class CreateOrUpdateRelationshipTypeRpcHandler
         }
     }
 
-    private boolean relationshipTypeExists( final QualifiedRelationshipTypeName qualifiedRelationshipTypeName )
+    private boolean exists( final QualifiedRelationshipTypeName qualifiedName )
     {
-        final QualifiedRelationshipTypeNames qualifiedRelationshipTypeNames =
-            QualifiedRelationshipTypeNames.from( qualifiedRelationshipTypeName );
-
-        final GetRelationshipTypes relationshipTypes = relationshipType().get().names( qualifiedRelationshipTypeNames );
-
-        return !client.execute( relationshipTypes ).isEmpty();
+        final RelationshipTypesExists existsCommand =
+            relationshipType().exists().qualifiedNames( QualifiedRelationshipTypeNames.from( qualifiedName ) );
+        final RelationshipTypesExistsResult existsResult = client.execute( existsCommand );
+        return existsResult.exists( qualifiedName );
     }
 
 }

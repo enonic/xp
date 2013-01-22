@@ -29,7 +29,7 @@ public final class GetRelationshipTypeRpcHandler
         final QualifiedRelationshipTypeNames qualifiedRelationshipTypeNames =
             QualifiedRelationshipTypeNames.from( context.param( "relationshipTypeName" ).required().asString() );
 
-        getRelationshipTypes.names( qualifiedRelationshipTypeNames );
+        getRelationshipTypes.qualifiedNames( qualifiedRelationshipTypeNames );
 
         final RelationshipTypes relationshipTypes = client.execute( getRelationshipTypes );
 

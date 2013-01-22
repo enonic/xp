@@ -1,5 +1,6 @@
 {
     "name": "contains",
+    "displayName": "Contains",
     "module": "myModule",
     "fromSemantic": "contained by",
     "toSemantic": "contains",

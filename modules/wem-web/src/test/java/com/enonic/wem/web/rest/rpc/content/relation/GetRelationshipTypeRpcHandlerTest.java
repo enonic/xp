@@ -44,8 +44,9 @@ public class GetRelationshipTypeRpcHandlerTest
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
-        final QualifiedRelationshipTypeNames names = QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "myModule:theRelationshipType" ) );
-        Mockito.when( client.execute( Commands.relationshipType().get().names( names ) ) ).thenReturn( relationshipTypes );
+        final QualifiedRelationshipTypeNames names =
+            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "myModule:theRelationshipType" ) );
+        Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
 
         testSuccess( "getRelationshipTypeJson_param.json", "getRelationshipTypeJson_result.json" );
     }

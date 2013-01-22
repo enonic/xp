@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.type.GetBaseTypes;
-import com.enonic.wem.api.content.relation.BuiltInRelationshipTypes;
 import com.enonic.wem.api.content.relation.RelationshipTypes;
 import com.enonic.wem.api.content.type.BaseTypes;
 import com.enonic.wem.api.content.type.ContentTypes;
@@ -42,7 +41,7 @@ public final class GetBaseTypesHandler
         final Mixins mixins = mixinDao.retrieveAllMixins( session );
         final RelationshipTypes relationshipTypes = relationshipTypeDao.retrieveAllRelationshipTypes( session );
 
-        final BaseTypes baseTypes = BaseTypes.from( contentTypes, mixins, BuiltInRelationshipTypes.ALL, relationshipTypes );
+        final BaseTypes baseTypes = BaseTypes.from( contentTypes, mixins, relationshipTypes );
 
         command.setResult( baseTypes );
     }

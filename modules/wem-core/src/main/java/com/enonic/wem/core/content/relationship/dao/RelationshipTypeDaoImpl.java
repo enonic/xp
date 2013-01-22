@@ -25,7 +25,7 @@ public final class RelationshipTypeDaoImpl
         }
         catch ( RepositoryException e )
         {
-            throw new SystemException( e, "Unable to create relationship type [{0}]", relationshipType );
+            throw new SystemException( e, "Unable to create RelationshipType [{0}]", relationshipType );
         }
     }
 
@@ -38,7 +38,7 @@ public final class RelationshipTypeDaoImpl
         }
         catch ( RepositoryException e )
         {
-            throw new SystemException( e, "Unable to update relationship type [{0}]", relationshipType );
+            throw new SystemException( e, "Unable to update RelationshipType [{0}]", relationshipType );
         }
     }
 
@@ -51,7 +51,7 @@ public final class RelationshipTypeDaoImpl
         }
         catch ( RepositoryException e )
         {
-            throw new SystemException( e, "Unable to delete relationship type [{0}]", relationshipTypeName );
+            throw new SystemException( e, "Unable to delete RelationshipType [{0}]", relationshipTypeName );
         }
     }
 
@@ -64,7 +64,7 @@ public final class RelationshipTypeDaoImpl
         }
         catch ( RepositoryException e )
         {
-            throw new SystemException( e, "Unable to retrieve all relationship types" );
+            throw new SystemException( e, "Unable to retrieve all RelationshipTypes" );
         }
     }
 
@@ -77,7 +77,20 @@ public final class RelationshipTypeDaoImpl
         }
         catch ( RepositoryException e )
         {
-            throw new SystemException( e, "Unable to retrieve relationship types [{0}]", relationshipTypeNames );
+            throw new SystemException( e, "Unable to retrieve RelationshipTypes [{0}]", relationshipTypeNames );
+        }
+    }
+
+    @Override
+    public QualifiedRelationshipTypeNames exists( final QualifiedRelationshipTypeNames relationshipTypeNames, final Session session )
+    {
+        try
+        {
+            return new RelationshipTypesExistsDaoHandler( session ).handle( relationshipTypeNames );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new SystemException( e, "Unable to check RelationshipTypes [{0}]", relationshipTypeNames );
         }
     }
 }
