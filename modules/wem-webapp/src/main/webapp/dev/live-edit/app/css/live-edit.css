@@ -41,6 +41,7 @@ svg.live-edit-highlighter rect,
 
 /*** Misc */
 
+/* This must be disabled for live-edit components, else input fields++ will not work */
 * {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -260,6 +261,10 @@ svg.live-edit-highlighter rect {
     font: 14px Tahoma, sans-serif;
 }
 
+.live-edit-form-container {
+    overflow: hidden;
+}
+
 .live-edit-components-toggle-text-container {
     float: left;
     text-align: center;
@@ -290,6 +295,7 @@ svg.live-edit-highlighter rect {
     margin: 8px;
     padding: 5px 3px;
     width: 87%;
+    -webkit-user-select: auto;
 }
 
 .live-edit-components ul {
@@ -299,7 +305,7 @@ svg.live-edit-highlighter rect {
 }
 
 .live-edit-components ul li {
-    /*margin-bottom: 8px;*/
+    margin-bottom: 8px;
 }
 
 .live-edit-component-list-header {

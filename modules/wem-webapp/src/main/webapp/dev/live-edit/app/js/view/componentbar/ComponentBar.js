@@ -31,9 +31,11 @@
     html += '    <div class="live-edit-toggle-components-container">';
     html += '        <div class="live-edit-components-toggle-text">Hide components</div>';
     html += '        <div class="live-edit-components">';
-    html += '            <form>';
-    html += '                <input type="text" placeholder="Search"/>';
-    html += '            </form>';
+    html += '            <div class="live-edit-form-container">';
+    html += '               <form>';
+    html += '                   <input type="text" placeholder="Search" name="search"/>';
+    html += '               </form>';
+    html += '            </div>';
     html += '            <ul>';
     html += '                <li class="live-edit-component-list-header">';
     html += '                    <span>Layouts</span>';
