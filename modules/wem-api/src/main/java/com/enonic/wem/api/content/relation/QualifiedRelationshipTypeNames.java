@@ -2,8 +2,6 @@ package com.enonic.wem.api.content.relation;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -11,45 +9,15 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.util.AbstractImmutableEntitySet;
+
 public final class QualifiedRelationshipTypeNames
+    extends AbstractImmutableEntitySet<QualifiedRelationshipTypeName>
     implements Iterable<QualifiedRelationshipTypeName>
 {
-    private final ImmutableSet<QualifiedRelationshipTypeName> set;
-
     private QualifiedRelationshipTypeNames( final ImmutableSet<QualifiedRelationshipTypeName> set )
     {
-        this.set = set;
-    }
-
-    public int getSize()
-    {
-        return this.set.size();
-    }
-
-    public boolean isEmpty()
-    {
-        return this.set.isEmpty();
-    }
-
-    public QualifiedRelationshipTypeName getFirst()
-    {
-        return this.set.isEmpty() ? null : this.set.iterator().next();
-    }
-
-    public boolean contains( final QualifiedRelationshipTypeName ref )
-    {
-        return this.set.contains( ref );
-    }
-
-    public Set<QualifiedRelationshipTypeName> getSet()
-    {
-        return this.set;
-    }
-
-    @Override
-    public Iterator<QualifiedRelationshipTypeName> iterator()
-    {
-        return this.set.iterator();
+        super( set );
     }
 
     public QualifiedRelationshipTypeNames add( final String... relationshipTypeNames )
@@ -73,44 +41,6 @@ public final class QualifiedRelationshipTypeNames
         tmp.addAll( this.set );
         tmp.addAll( relationshipTypeNames );
         return new QualifiedRelationshipTypeNames( ImmutableSet.copyOf( tmp ) );
-    }
-
-    public QualifiedRelationshipTypeNames remove( final String... relationshipTypeNames )
-    {
-        return remove( parseQualifiedNames( relationshipTypeNames ) );
-    }
-
-    public QualifiedRelationshipTypeNames remove( final QualifiedRelationshipTypeName... relationshipTypeNames )
-    {
-        return remove( ImmutableSet.copyOf( relationshipTypeNames ) );
-    }
-
-    public QualifiedRelationshipTypeNames remove( final Iterable<QualifiedRelationshipTypeName> relationshipTypeNames )
-    {
-        return remove( ImmutableSet.copyOf( relationshipTypeNames ) );
-    }
-
-    private QualifiedRelationshipTypeNames remove( final ImmutableSet<QualifiedRelationshipTypeName> relationshipTypeNames )
-    {
-        final HashSet<QualifiedRelationshipTypeName> tmp = Sets.newHashSet();
-        tmp.addAll( this.set );
-        tmp.removeAll( relationshipTypeNames );
-        return new QualifiedRelationshipTypeNames( ImmutableSet.copyOf( tmp ) );
-    }
-
-    public int hashCode()
-    {
-        return this.set.hashCode();
-    }
-
-    public boolean equals( final Object o )
-    {
-        return ( o instanceof QualifiedRelationshipTypeNames ) && this.set.equals( ( (QualifiedRelationshipTypeNames) o ).set );
-    }
-
-    public String toString()
-    {
-        return this.set.toString();
     }
 
     public static QualifiedRelationshipTypeNames empty()
@@ -140,7 +70,6 @@ public final class QualifiedRelationshipTypeNames
         final Collection<QualifiedRelationshipTypeName> relationshipTypeNameList = Collections2.transform( list, new ParseFunction() );
         return ImmutableSet.copyOf( relationshipTypeNameList );
     }
-
 
     private final static class ParseFunction
         implements Function<String, QualifiedRelationshipTypeName>
