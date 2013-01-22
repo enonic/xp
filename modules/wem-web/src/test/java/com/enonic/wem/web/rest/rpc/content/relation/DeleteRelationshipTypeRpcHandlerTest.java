@@ -31,25 +31,25 @@ public class DeleteRelationshipTypeRpcHandlerTest
     {
         final QualifiedRelationshipTypeName existingName = QualifiedRelationshipTypeName.from( "my:existingRelationshipType" );
 
-        RelationshipTypeDeletionResult contentDeletionResult = new RelationshipTypeDeletionResult();
-        contentDeletionResult.success( existingName );
+        RelationshipTypeDeletionResult relationshipTypeDeletionResult = new RelationshipTypeDeletionResult();
+        relationshipTypeDeletionResult.success( existingName );
 
-        Mockito.when( client.execute( Mockito.any( Commands.relationshipType().delete().getClass() ) ) ).thenReturn( contentDeletionResult );
+        Mockito.when( client.execute( Mockito.any( Commands.relationshipType().delete().getClass() ) ) ).thenReturn( relationshipTypeDeletionResult );
 
         testSuccess( "deleteRelationshipType_param.json", "deleteRelationshipType_success_result.json" );
     }
     
 
     @Test
-    public void deleteVariousContentTypes()
+    public void deleteVariousRelationshipTypes()
         throws Exception
     {
         final QualifiedRelationshipTypeName existingName = QualifiedRelationshipTypeName.from( "my:existingRelationshipType" );
 
-        RelationshipTypeDeletionResult contentDeletionResult = new RelationshipTypeDeletionResult();
-        contentDeletionResult.success( existingName );
+        RelationshipTypeDeletionResult relationshipTypeDeletionResult = new RelationshipTypeDeletionResult();
+        relationshipTypeDeletionResult.success( existingName );
 
-        Mockito.when( client.execute( Mockito.any( Commands.relationshipType().delete().getClass() ) ) ).thenReturn( contentDeletionResult );
+        Mockito.when( client.execute( Mockito.any( Commands.relationshipType().delete().getClass() ) ) ).thenReturn( relationshipTypeDeletionResult );
 
         testSuccess( "deleteRelationshipType_param.json", "deleteRelationshipType_success_result.json" );
     }    
