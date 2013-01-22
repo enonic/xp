@@ -5,19 +5,19 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.command.content.relationship.editor.RelationshipTypeEditor;
-import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
 
 public final class UpdateRelationshipTypes
     extends Command<Integer>
 {
-    private QualifiedRelationshipTypeNames qualifiedNames;
+    private RelationshipTypeSelectors selectors;
 
     private RelationshipTypeEditor editor;
 
 
-    public UpdateRelationshipTypes qualifiedNames( final QualifiedRelationshipTypeNames relationshipTypeNames )
+    public UpdateRelationshipTypes selectors( final RelationshipTypeSelectors selectors )
     {
-        this.qualifiedNames = relationshipTypeNames;
+        this.selectors = selectors;
         return this;
     }
 
@@ -27,9 +27,9 @@ public final class UpdateRelationshipTypes
         return this;
     }
 
-    public QualifiedRelationshipTypeNames getQualifiedNames()
+    public RelationshipTypeSelectors getSelectors()
     {
-        return qualifiedNames;
+        return selectors;
     }
 
     public RelationshipTypeEditor getEditor()
@@ -51,19 +51,19 @@ public final class UpdateRelationshipTypes
         }
 
         final UpdateRelationshipTypes that = (UpdateRelationshipTypes) o;
-        return Objects.equal( this.qualifiedNames, that.qualifiedNames ) && Objects.equal( this.editor, that.editor );
+        return Objects.equal( this.selectors, that.selectors ) && Objects.equal( this.editor, that.editor );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.qualifiedNames, this.editor );
+        return Objects.hashCode( this.selectors, this.editor );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.qualifiedNames, "Relationship type names cannot be null" );
-        Preconditions.checkNotNull( this.editor, "Editor cannot be null" );
+        Preconditions.checkNotNull( this.selectors, "selectors cannot be null" );
+        Preconditions.checkNotNull( this.editor, "editor cannot be null" );
     }
 }

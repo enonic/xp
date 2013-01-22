@@ -61,18 +61,17 @@ public class UpdateRelationshipTypesHandlerTest
 
         // exercise
         final QualifiedRelationshipTypeNames names = QualifiedRelationshipTypeNames.from( "myModule:like" );
-        final UpdateRelationshipTypes command =
-            Commands.relationshipType().update().qualifiedNames( names ).editor( new RelationshipTypeEditor()
+        final UpdateRelationshipTypes command = Commands.relationshipType().update().selectors( names ).editor( new RelationshipTypeEditor()
+        {
+            @Override
+            public RelationshipType edit( final RelationshipType relationshipType )
+                throws Exception
             {
-                @Override
-                public RelationshipType edit( final RelationshipType relationshipType )
-                    throws Exception
-                {
-                    return RelationshipType.newRelationshipType( relationshipType ).
-                        fromSemantic( relationshipType.getFromSemantic() + "-updated" ).
-                        build();
-                }
-            } );
+                return RelationshipType.newRelationshipType( relationshipType ).
+                    fromSemantic( relationshipType.getFromSemantic() + "-updated" ).
+                    build();
+            }
+        } );
         this.handler.handle( this.context, command );
 
         // verify

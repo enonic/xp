@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationship.RelationshipType;
-import com.enonic.wem.api.content.relationship.RelationshipTypeSelector;
+import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
 import com.enonic.wem.api.content.relationship.RelationshipTypes;
 import com.enonic.wem.api.exception.SystemException;
 
@@ -70,28 +70,28 @@ public final class RelationshipTypeDaoImpl
     }
 
     @Override
-    public RelationshipTypes retrieveRelationshipTypes( final RelationshipTypeSelector relationshipTypeNames, final Session session )
+    public RelationshipTypes retrieveRelationshipTypes( final RelationshipTypeSelectors selectors, final Session session )
     {
         try
         {
-            return new RetrieveRelationshipTypesDaoHandler( session ).handle( relationshipTypeNames );
+            return new RetrieveRelationshipTypesDaoHandler( session ).handle( selectors );
         }
         catch ( RepositoryException e )
         {
-            throw new SystemException( e, "Unable to retrieve RelationshipTypes [{0}]", relationshipTypeNames );
+            throw new SystemException( e, "Unable to retrieve RelationshipTypes [{0}]", selectors );
         }
     }
 
     @Override
-    public QualifiedRelationshipTypeNames exists( final RelationshipTypeSelector selector, final Session session )
+    public QualifiedRelationshipTypeNames exists( final RelationshipTypeSelectors selectors, final Session session )
     {
         try
         {
-            return new RelationshipTypesExistsDaoHandler( session ).handle( selector );
+            return new RelationshipTypesExistsDaoHandler( session ).handle( selectors );
         }
         catch ( RepositoryException e )
         {
-            throw new SystemException( e, "Unable to check RelationshipTypes [{0}]", selector );
+            throw new SystemException( e, "Unable to check RelationshipTypes [{0}]", selectors );
         }
     }
 }

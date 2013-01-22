@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationship.RelationshipType;
-import com.enonic.wem.api.content.relationship.RelationshipTypeSelector;
+import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
 import com.enonic.wem.api.content.relationship.RelationshipTypes;
 import com.enonic.wem.core.jcr.JcrHelper;
 
@@ -47,24 +47,24 @@ final class RetrieveRelationshipTypesDaoHandler
         return RelationshipTypes.from( relationshipTypeList );
     }
 
-    RelationshipTypes handle( final RelationshipTypeSelector selector )
+    RelationshipTypes handle( final RelationshipTypeSelectors selectors )
         throws RepositoryException
     {
-        if ( selector instanceof QualifiedRelationshipTypeNames )
+        if ( selectors instanceof QualifiedRelationshipTypeNames )
         {
-            return handle( (QualifiedRelationshipTypeNames) selector );
+            return handle( (QualifiedRelationshipTypeNames) selectors );
         }
         else
         {
-            throw new UnsupportedOperationException( "selector [" + selector.getClass().getSimpleName() + " ] not supported" );
+            throw new UnsupportedOperationException( "selector [" + selectors.getClass().getSimpleName() + " ] not supported" );
         }
     }
 
-    RelationshipTypes handle( final QualifiedRelationshipTypeNames relationshipTypeNames )
+    RelationshipTypes handle( final QualifiedRelationshipTypeNames qualifiedNames )
         throws RepositoryException
     {
         final List<RelationshipType> relationshipTypeList = Lists.newArrayList();
-        for ( QualifiedRelationshipTypeName relationshipTypeName : relationshipTypeNames )
+        for ( QualifiedRelationshipTypeName relationshipTypeName : qualifiedNames )
         {
             final RelationshipType relationshipType = retrieveRelationshipType( relationshipTypeName );
             if ( relationshipType != null )
@@ -75,10 +75,10 @@ final class RetrieveRelationshipTypesDaoHandler
         return RelationshipTypes.from( relationshipTypeList );
     }
 
-    private RelationshipType retrieveRelationshipType( final QualifiedRelationshipTypeName relationshipTypeName )
+    private RelationshipType retrieveRelationshipType( final QualifiedRelationshipTypeName qualifiedName )
         throws RepositoryException
     {
-        final Node relationshipTypeNode = this.getRelationshipTypeNode( relationshipTypeName );
+        final Node relationshipTypeNode = this.getRelationshipTypeNode( qualifiedName );
         if ( relationshipTypeNode == null )
         {
             return null;

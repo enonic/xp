@@ -5,7 +5,7 @@ import javax.jcr.Session;
 import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationship.RelationshipType;
-import com.enonic.wem.api.content.relationship.RelationshipTypeSelector;
+import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
 import com.enonic.wem.api.content.relationship.RelationshipTypes;
 import com.enonic.wem.core.jcr.JcrConstants;
 
@@ -23,7 +23,7 @@ public interface RelationshipTypeDao
 
     public RelationshipTypes retrieveAllRelationshipTypes( Session session );
 
-    public RelationshipTypes retrieveRelationshipTypes( RelationshipTypeSelector selector, Session session );
+    public RelationshipTypes retrieveRelationshipTypes( RelationshipTypeSelectors selectors, Session session );
 
-    public QualifiedRelationshipTypeNames exists( RelationshipTypeSelector selector, Session session );
+    public QualifiedRelationshipTypeNames exists( RelationshipTypeSelectors selector, Session session );
 }

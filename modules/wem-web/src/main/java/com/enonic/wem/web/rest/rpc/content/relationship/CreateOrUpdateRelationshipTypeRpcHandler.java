@@ -63,7 +63,7 @@ public final class CreateOrUpdateRelationshipTypeRpcHandler
                 QualifiedRelationshipTypeNames.from( relationshipType.getQualifiedName() );
 
             final UpdateRelationshipTypes updateCommand = Commands.relationshipType().update();
-            updateCommand.qualifiedNames( qualifiedNames );
+            updateCommand.selectors( qualifiedNames );
             updateCommand.editor( setRelationshipType( relationshipType ) );
 
             client.execute( updateCommand );
@@ -75,7 +75,7 @@ public final class CreateOrUpdateRelationshipTypeRpcHandler
     private boolean exists( final QualifiedRelationshipTypeName qualifiedName )
     {
         final RelationshipTypesExists existsCommand =
-            relationshipType().exists().selector( QualifiedRelationshipTypeNames.from( qualifiedName ) );
+            relationshipType().exists().selectors( QualifiedRelationshipTypeNames.from( qualifiedName ) );
         final RelationshipTypesExistsResult existsResult = client.execute( existsCommand );
         return existsResult.exists( qualifiedName );
     }

@@ -4,24 +4,24 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
 import com.enonic.wem.api.content.relationship.RelationshipTypes;
 
 public final class GetRelationshipTypes
     extends Command<RelationshipTypes>
 {
-    private QualifiedRelationshipTypeNames relationshipTypeNames;
+    private RelationshipTypeSelectors selectors;
 
     private boolean all = false;
 
-    public QualifiedRelationshipTypeNames getQualifiedNames()
+    public RelationshipTypeSelectors getSelectors()
     {
-        return this.relationshipTypeNames;
+        return this.selectors;
     }
 
-    public GetRelationshipTypes qualifiedNames( final QualifiedRelationshipTypeNames qualifiedNames )
+    public GetRelationshipTypes selectors( final RelationshipTypeSelectors selectors )
     {
-        this.relationshipTypeNames = qualifiedNames;
+        this.selectors = selectors;
         return this;
     }
 
@@ -50,13 +50,13 @@ public final class GetRelationshipTypes
         }
 
         final GetRelationshipTypes that = (GetRelationshipTypes) o;
-        return Objects.equal( this.relationshipTypeNames, that.relationshipTypeNames ) && ( this.all == that.all );
+        return Objects.equal( this.selectors, that.selectors ) && ( this.all == that.all );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.relationshipTypeNames, this.all );
+        return Objects.hashCode( this.selectors, this.all );
     }
 
     @Override
@@ -64,12 +64,11 @@ public final class GetRelationshipTypes
     {
         if ( all )
         {
-            Preconditions.checkArgument( this.relationshipTypeNames == null,
-                                         "all and relationshipTypeNames cannot be specified at the same time" );
+            Preconditions.checkArgument( this.selectors == null, "all cannot be true at the same time as selectors is specified" );
         }
         else
         {
-            Preconditions.checkNotNull( this.relationshipTypeNames, "RelationshipType cannot be null" );
+            Preconditions.checkNotNull( this.selectors, "selectors cannot be null" );
         }
     }
 

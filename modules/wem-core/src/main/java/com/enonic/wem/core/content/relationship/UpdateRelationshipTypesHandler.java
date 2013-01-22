@@ -7,8 +7,6 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.relationship.UpdateRelationshipTypes;
 import com.enonic.wem.api.command.content.relationship.editor.RelationshipTypeEditor;
-import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationship.RelationshipType;
 import com.enonic.wem.api.content.relationship.RelationshipTypes;
 import com.enonic.wem.core.command.CommandContext;
@@ -30,38 +28,24 @@ public final class UpdateRelationshipTypesHandler
     public void handle( final CommandContext context, final UpdateRelationshipTypes command )
         throws Exception
     {
-        final QualifiedRelationshipTypeNames relationshipTypeNames = command.getQualifiedNames();
-        final RelationshipTypeEditor editor = command.getEditor();
         final Session session = context.getJcrSession();
+
+        final RelationshipTypeEditor editor = command.getEditor();
+
+        final RelationshipTypes relationshipTypes = relationshipTypeDao.retrieveRelationshipTypes( command.getSelectors(), session );
         int relationshipTypesUpdated = 0;
-        for ( QualifiedRelationshipTypeName relationshipTypeName : relationshipTypeNames )
+        for ( RelationshipType relationshipType : relationshipTypes )
         {
-            final RelationshipType relationshipType = retrieveRelationshipType( session, relationshipTypeName );
-            if ( relationshipType != null )
+            final RelationshipType modifiedRelationshipType = editor.edit( relationshipType );
+            if ( modifiedRelationshipType != null )
             {
-                final RelationshipType modifiedRelationshipType = editor.edit( relationshipType );
-                if ( modifiedRelationshipType != null )
-                {
-                    updateRelationshipType( session, modifiedRelationshipType );
-                    relationshipTypesUpdated++;
-                }
+                relationshipTypeDao.updateRelationshipType( relationshipType, session );
+                relationshipTypesUpdated++;
             }
         }
 
         session.save();
         command.setResult( relationshipTypesUpdated );
-    }
-
-    private void updateRelationshipType( final Session session, final RelationshipType relationshipType )
-    {
-        relationshipTypeDao.updateRelationshipType( relationshipType, session );
-    }
-
-    private RelationshipType retrieveRelationshipType( final Session session, final QualifiedRelationshipTypeName relationshipTypeName )
-    {
-        final RelationshipTypes relationshipTypes =
-            relationshipTypeDao.retrieveRelationshipTypes( QualifiedRelationshipTypeNames.from( relationshipTypeName ), session );
-        return relationshipTypes.isEmpty() ? null : relationshipTypes.first();
     }
 
     @Autowired
