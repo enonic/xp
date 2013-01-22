@@ -13,6 +13,16 @@ public class RelationshipTypesExistsResult
         this.qualifiedNames = qualifiedNames;
     }
 
+    public boolean isEmpty()
+    {
+        return qualifiedNames.isEmpty();
+    }
+
+    public boolean isNotEmpty()
+    {
+        return qualifiedNames.isEmpty();
+    }
+
     public boolean exists( QualifiedRelationshipTypeName qualifiedName )
     {
         return qualifiedNames.contains( qualifiedName );

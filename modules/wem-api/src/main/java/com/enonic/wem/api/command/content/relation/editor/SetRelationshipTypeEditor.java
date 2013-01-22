@@ -19,9 +19,9 @@ final class SetRelationshipTypeEditor
     public RelationshipType edit( final RelationshipType relationshipType )
         throws Exception
     {
-        final RelationshipType.Builder builder = newRelationshipType();
-        builder.name( relationshipType.getName() );
-        builder.module( relationshipType.getModuleName() );
+        final RelationshipType.Builder builder = newRelationshipType( relationshipType );
+        builder.displayName( source.getDisplayName() );
+        builder.module( source.getModuleName() );
         builder.fromSemantic( source.getFromSemantic() );
         builder.toSemantic( source.getToSemantic() );
 

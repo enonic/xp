@@ -14,6 +14,8 @@ public final class CreateRelationshipType
 {
     private String name;
 
+    private String displayName;
+
     private ModuleName module;
 
     private String fromSemantic;
@@ -27,6 +29,7 @@ public final class CreateRelationshipType
     public CreateRelationshipType relationshipType( final RelationshipType relationshipType )
     {
         this.name = relationshipType.getName();
+        this.displayName = relationshipType.getDisplayName();
         this.module = relationshipType.getModuleName();
         this.fromSemantic = relationshipType.getFromSemantic();
         this.toSemantic = relationshipType.getToSemantic();
@@ -38,6 +41,11 @@ public final class CreateRelationshipType
     public String getName()
     {
         return name;
+    }
+
+    public String getDisplayName()
+    {
+        return displayName;
     }
 
     public ModuleName getModule()
@@ -80,6 +88,7 @@ public final class CreateRelationshipType
 
         final CreateRelationshipType that = (CreateRelationshipType) o;
         return Objects.equal( this.name, that.name ) &&
+            Objects.equal( this.displayName, that.displayName ) &&
             Objects.equal( this.module, that.module ) &&
             Objects.equal( this.fromSemantic, that.fromSemantic ) &&
             Objects.equal( this.toSemantic, that.toSemantic ) &&
@@ -90,12 +99,15 @@ public final class CreateRelationshipType
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( name, module, fromSemantic, toSemantic, allowedFromTypes, allowedToTypes );
+        return Objects.hashCode( name, displayName, module, fromSemantic, toSemantic, allowedFromTypes, allowedToTypes );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.name, "name cannot be null" );
+        Preconditions.checkNotNull( name, "name cannot be null" );
+        Preconditions.checkNotNull( module, "module cannot be null" );
+        Preconditions.checkNotNull( fromSemantic, "fromSemantic cannot be null" );
+        Preconditions.checkNotNull( toSemantic, "toSemantic cannot be null" );
     }
 }

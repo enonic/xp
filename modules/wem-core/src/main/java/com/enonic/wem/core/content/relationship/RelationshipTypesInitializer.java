@@ -47,8 +47,8 @@ public class RelationshipTypesInitializer
     private void createOrUpdate( final RelationshipType relationshipType )
     {
         final QualifiedRelationshipTypeNames qualifiedNames = QualifiedRelationshipTypeNames.from( relationshipType.getQualifiedName() );
-        final boolean exists = !client.execute( Commands.relationshipType().get().qualifiedNames( qualifiedNames ) ).isEmpty();
-        if ( !exists )
+        final boolean notExists = client.execute( Commands.relationshipType().exists().selector( qualifiedNames ) ).isEmpty();
+        if ( notExists )
         {
             final CreateRelationshipType createCommand = Commands.relationshipType().create();
             createCommand.relationshipType( relationshipType );

@@ -12,6 +12,8 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.relationship.dao.RelationshipTypeDao;
 
+import static com.enonic.wem.api.content.relation.RelationshipType.newRelationshipType;
+
 @Component
 public final class CreateRelationshipTypeHandler
     extends CommandHandler<CreateRelationshipType>
@@ -27,8 +29,9 @@ public final class CreateRelationshipTypeHandler
     public void handle( final CommandContext context, final CreateRelationshipType command )
         throws Exception
     {
-        final RelationshipType.Builder builder = RelationshipType.newRelationshipType();
+        final RelationshipType.Builder builder = newRelationshipType();
         builder.name( command.getName() );
+        builder.displayName( command.getDisplayName() );
         builder.module( command.getModule() );
         builder.fromSemantic( command.getFromSemantic() );
         builder.toSemantic( command.getToSemantic() );
