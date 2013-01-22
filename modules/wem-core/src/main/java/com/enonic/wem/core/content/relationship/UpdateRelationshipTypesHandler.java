@@ -32,14 +32,14 @@ public final class UpdateRelationshipTypesHandler
 
         final RelationshipTypeEditor editor = command.getEditor();
 
-        final RelationshipTypes relationshipTypes = relationshipTypeDao.retrieveRelationshipTypes( command.getSelectors(), session );
+        final RelationshipTypes relationshipTypes = relationshipTypeDao.select( command.getSelectors(), session );
         int relationshipTypesUpdated = 0;
         for ( RelationshipType relationshipType : relationshipTypes )
         {
             final RelationshipType modifiedRelationshipType = editor.edit( relationshipType );
             if ( modifiedRelationshipType != null )
             {
-                relationshipTypeDao.updateRelationshipType( relationshipType, session );
+                relationshipTypeDao.update( relationshipType, session );
                 relationshipTypesUpdated++;
             }
         }

@@ -24,7 +24,7 @@ final class CreateRelationshipTypeDaoHandler
         final QualifiedRelationshipTypeName relationshipTypeName = relationshipType.getQualifiedName();
         if ( relationshipTypeExists( relationshipTypeName ) )
         {
-            throw new SystemException( "Relationship type already exists: {0}", relationshipTypeName.toString() );
+            throw new SystemException( "RelationshipType already exists: {0}", relationshipTypeName.toString() );
         }
 
         final Node relationshipTypeNode = createRelationshipTypeNode( relationshipTypeName );

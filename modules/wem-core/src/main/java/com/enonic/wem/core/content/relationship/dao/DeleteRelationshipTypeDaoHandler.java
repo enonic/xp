@@ -16,14 +16,14 @@ final class DeleteRelationshipTypeDaoHandler
         super( session );
     }
 
-    void handle( final QualifiedRelationshipTypeName relationshipTypeName )
+    void handle( final QualifiedRelationshipTypeName qName )
         throws RepositoryException
     {
-        final Node relationshipTypeNode = getRelationshipTypeNode( relationshipTypeName );
+        final Node relationshipTypeNode = getRelationshipTypeNode( qName );
 
         if ( relationshipTypeNode == null )
         {
-            throw new SystemException( "Relationship type [{0}] was not found", relationshipTypeName );
+            throw new SystemException( "RelationshipType [{0}] was not found", qName );
         }
 
         relationshipTypeNode.remove();

@@ -23,7 +23,7 @@ final class UpdateRelationshipTypeDaoHandler
         final Node relationshipTypeNode = getRelationshipTypeNode( relationshipTypeName );
         if ( relationshipTypeNode == null )
         {
-            throw new SystemException( "Relationship type not found: {0}", relationshipTypeName.toString() );
+            throw new SystemException( "RelationshipType not found: {0}", relationshipTypeName.toString() );
         }
 
         this.relationshipTypeJcrMapper.toJcr( relationshipType, relationshipTypeNode );

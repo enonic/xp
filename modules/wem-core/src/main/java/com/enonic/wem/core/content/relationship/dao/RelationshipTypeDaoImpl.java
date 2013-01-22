@@ -10,88 +10,59 @@ import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationship.RelationshipType;
 import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
 import com.enonic.wem.api.content.relationship.RelationshipTypes;
-import com.enonic.wem.api.exception.SystemException;
+import com.enonic.wem.core.support.dao.AbstractCrudDao;
 
 @Component
 public final class RelationshipTypeDaoImpl
+    extends
+    AbstractCrudDao<RelationshipType, RelationshipTypes, QualifiedRelationshipTypeName, QualifiedRelationshipTypeNames, RelationshipTypeSelectors>
     implements RelationshipTypeDao
 {
 
-    @Override
-    public void createRelationshipType( final RelationshipType relationshipType, final Session session )
+    public RelationshipTypeDaoImpl()
     {
-        try
-        {
-            new CreateRelationshipTypeDaoHandler( session ).handle( relationshipType );
-        }
-        catch ( RepositoryException e )
-        {
-            throw new SystemException( e, "Unable to create RelationshipType [{0}]", relationshipType );
-        }
+        super( RelationshipType.class );
     }
 
     @Override
-    public void updateRelationshipType( final RelationshipType relationshipType, final Session session )
+    protected void doCreate( final RelationshipType relationshipType, final Session session )
+        throws RepositoryException
     {
-        try
-        {
-            new UpdateRelationshipTypeDaoHandler( session ).handle( relationshipType );
-        }
-        catch ( RepositoryException e )
-        {
-            throw new SystemException( e, "Unable to update RelationshipType [{0}]", relationshipType );
-        }
+        new CreateRelationshipTypeDaoHandler( session ).handle( relationshipType );
     }
 
     @Override
-    public void deleteRelationshipType( final QualifiedRelationshipTypeName relationshipTypeName, final Session session )
+    protected void doUpdate( final RelationshipType relationshipType, final Session session )
+        throws RepositoryException
     {
-        try
-        {
-            new DeleteRelationshipTypeDaoHandler( session ).handle( relationshipTypeName );
-        }
-        catch ( RepositoryException e )
-        {
-            throw new SystemException( e, "Unable to delete RelationshipType [{0}]", relationshipTypeName );
-        }
+        new UpdateRelationshipTypeDaoHandler( session ).handle( relationshipType );
     }
 
     @Override
-    public RelationshipTypes retrieveAllRelationshipTypes( final Session session )
+    protected void doDelete( final QualifiedRelationshipTypeName relationshipTypeName, final Session session )
+        throws RepositoryException
     {
-        try
-        {
-            return new RetrieveRelationshipTypesDaoHandler( session ).handle();
-        }
-        catch ( RepositoryException e )
-        {
-            throw new SystemException( e, "Unable to retrieve all RelationshipTypes" );
-        }
+        new DeleteRelationshipTypeDaoHandler( session ).handle( relationshipTypeName );
     }
 
     @Override
-    public RelationshipTypes retrieveRelationshipTypes( final RelationshipTypeSelectors selectors, final Session session )
+    protected QualifiedRelationshipTypeNames doExists( final RelationshipTypeSelectors selectors, final Session session )
+        throws RepositoryException
     {
-        try
-        {
-            return new RetrieveRelationshipTypesDaoHandler( session ).handle( selectors );
-        }
-        catch ( RepositoryException e )
-        {
-            throw new SystemException( e, "Unable to retrieve RelationshipTypes [{0}]", selectors );
-        }
+        return new RelationshipTypesExistsDaoHandler( session ).handle( selectors );
     }
 
     @Override
-    public QualifiedRelationshipTypeNames exists( final RelationshipTypeSelectors selectors, final Session session )
+    protected RelationshipTypes doSelectAll( final Session session )
+        throws RepositoryException
     {
-        try
-        {
-            return new RelationshipTypesExistsDaoHandler( session ).handle( selectors );
-        }
-        catch ( RepositoryException e )
-        {
-            throw new SystemException( e, "Unable to check RelationshipTypes [{0}]", selectors );
-        }
+        return new RetrieveRelationshipTypesDaoHandler( session ).handle();
+    }
+
+    @Override
+    protected RelationshipTypes doSelect( final RelationshipTypeSelectors selectors, final Session session )
+        throws RepositoryException
+    {
+        return new RetrieveRelationshipTypesDaoHandler( session ).handle( selectors );
     }
 }

@@ -40,7 +40,7 @@ public class GetBaseTypeTreeHandler
         throws Exception
     {
         final Tree<ContentType> contentTypeTree = new ContentTypeTreeFactory( context.getJcrSession(), contentTypeDao ).createTree();
-        final RelationshipTypes relationshipTypes = relationshipTypeDao.retrieveAllRelationshipTypes( context.getJcrSession() );
+        final RelationshipTypes relationshipTypes = relationshipTypeDao.selectAll( context.getJcrSession() );
         final Mixins mixins = mixinDao.retrieveAllMixins( context.getJcrSession() );
 
         final Tree<BaseType> typesTree = new Tree<BaseType>();

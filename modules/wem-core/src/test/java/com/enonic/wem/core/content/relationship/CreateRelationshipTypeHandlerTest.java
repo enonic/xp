@@ -56,8 +56,7 @@ public class CreateRelationshipTypeHandlerTest
         this.handler.handle( this.context, command );
 
         // verify
-        verify( relationshipTypeDao, atLeastOnce() ).createRelationshipType( Mockito.isA( RelationshipType.class ),
-                                                                             Mockito.any( Session.class ) );
+        verify( relationshipTypeDao, atLeastOnce() ).create( Mockito.isA( RelationshipType.class ), Mockito.any( Session.class ) );
         final QualifiedRelationshipTypeName relationshipTypeName = command.getResult();
         assertNotNull( relationshipTypeName );
         assertEquals( "myModule:like", relationshipTypeName.toString() );

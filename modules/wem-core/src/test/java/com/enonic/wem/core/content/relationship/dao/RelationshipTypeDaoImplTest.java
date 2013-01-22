@@ -42,7 +42,7 @@ public class RelationshipTypeDaoImplTest
             build();
 
         // exercise
-        relationshipTypeDao.createRelationshipType( relationshipType, session );
+        relationshipTypeDao.create( relationshipType, session );
         commit();
 
         // verify
@@ -63,11 +63,10 @@ public class RelationshipTypeDaoImplTest
             addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
             addAllowedToType( new QualifiedContentTypeName( "myModule:person" ) ).
             build();
-        relationshipTypeDao.createRelationshipType( relationshipType, session );
+        relationshipTypeDao.create( relationshipType, session );
 
         // exercise
-        RelationshipTypes relationshipTypes =
-            relationshipTypeDao.retrieveRelationshipTypes( QualifiedRelationshipTypeNames.from( "myModule:like" ), session );
+        RelationshipTypes relationshipTypes = relationshipTypeDao.select( QualifiedRelationshipTypeNames.from( "myModule:like" ), session );
         commit();
 
         // verify
@@ -92,7 +91,7 @@ public class RelationshipTypeDaoImplTest
             addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
             addAllowedToType( new QualifiedContentTypeName( "myModule:thing" ) ).
             build();
-        relationshipTypeDao.createRelationshipType( relationshipType1, session );
+        relationshipTypeDao.create( relationshipType1, session );
 
         RelationshipType relationshipType2 = RelationshipType.newRelationshipType().
             module( ModuleName.from( "otherModule" ) ).
@@ -102,10 +101,10 @@ public class RelationshipTypeDaoImplTest
             addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
             addAllowedToType( new QualifiedContentTypeName( "myModule:thing" ) ).
             build();
-        relationshipTypeDao.createRelationshipType( relationshipType2, session );
+        relationshipTypeDao.create( relationshipType2, session );
 
         // exercise
-        RelationshipTypes relationshipTypes = relationshipTypeDao.retrieveAllRelationshipTypes( session );
+        RelationshipTypes relationshipTypes = relationshipTypeDao.selectAll( session );
         commit();
 
         // verify
@@ -135,7 +134,7 @@ public class RelationshipTypeDaoImplTest
             addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
             addAllowedToType( new QualifiedContentTypeName( "myModule:thing" ) ).
             build();
-        relationshipTypeDao.createRelationshipType( relationshipType1, session );
+        relationshipTypeDao.create( relationshipType1, session );
 
         RelationshipType relationshipType2 = RelationshipType.newRelationshipType().
             module( ModuleName.from( "otherModule" ) ).
@@ -145,11 +144,11 @@ public class RelationshipTypeDaoImplTest
             addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
             addAllowedToType( new QualifiedContentTypeName( "myModule:thing" ) ).
             build();
-        relationshipTypeDao.createRelationshipType( relationshipType2, session );
+        relationshipTypeDao.create( relationshipType2, session );
 
         // exercise
         QualifiedRelationshipTypeNames names = QualifiedRelationshipTypeNames.from( "myModule:like", "otherModule:hate" );
-        RelationshipTypes relationshipTypes = relationshipTypeDao.retrieveRelationshipTypes( names, session );
+        RelationshipTypes relationshipTypes = relationshipTypeDao.select( names, session );
         commit();
 
         // verify
@@ -179,11 +178,11 @@ public class RelationshipTypeDaoImplTest
             addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
             addAllowedToType( new QualifiedContentTypeName( "myModule:thing" ) ).
             build();
-        relationshipTypeDao.createRelationshipType( relationshipType, session );
+        relationshipTypeDao.create( relationshipType, session );
 
         // exercise
         QualifiedRelationshipTypeNames name = QualifiedRelationshipTypeNames.from( "myModule:like" );
-        RelationshipTypes relationshipTypesAfterCreate = relationshipTypeDao.retrieveRelationshipTypes( name, session );
+        RelationshipTypes relationshipTypesAfterCreate = relationshipTypeDao.select( name, session );
         assertNotNull( relationshipTypesAfterCreate );
         assertEquals( 1, relationshipTypesAfterCreate.getSize() );
 
@@ -193,12 +192,12 @@ public class RelationshipTypeDaoImplTest
             addAllowedFromType( new QualifiedContentTypeName( "myModule:worker" ) ).
             addAllowedToType( new QualifiedContentTypeName( "myModule:task" ) ).
             build();
-        relationshipTypeDao.updateRelationshipType( relationshipTypeUpdate, session );
+        relationshipTypeDao.update( relationshipTypeUpdate, session );
         commit();
 
         // verify
         RelationshipTypes relationshipTypesAfterUpdate =
-            relationshipTypeDao.retrieveRelationshipTypes( QualifiedRelationshipTypeNames.from( "myModule:like" ), session );
+            relationshipTypeDao.select( QualifiedRelationshipTypeNames.from( "myModule:like" ), session );
         assertNotNull( relationshipTypesAfterUpdate );
         assertEquals( 1, relationshipTypesAfterUpdate.getSize() );
         RelationshipType relationshipType1 = relationshipTypesAfterUpdate.first();
@@ -223,19 +222,19 @@ public class RelationshipTypeDaoImplTest
             addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
             addAllowedToType( new QualifiedContentTypeName( "myModule:thing" ) ).
             build();
-        relationshipTypeDao.createRelationshipType( relationshipType, session );
+        relationshipTypeDao.create( relationshipType, session );
 
         // exercise
         QualifiedRelationshipTypeNames name = QualifiedRelationshipTypeNames.from( "myModule:like" );
-        RelationshipTypes relationshipTypesAfterCreate = relationshipTypeDao.retrieveRelationshipTypes( name, session );
+        RelationshipTypes relationshipTypesAfterCreate = relationshipTypeDao.select( name, session );
         assertNotNull( relationshipTypesAfterCreate );
         assertEquals( 1, relationshipTypesAfterCreate.getSize() );
 
-        relationshipTypeDao.deleteRelationshipType( QualifiedRelationshipTypeName.from( "myModule:like" ), session );
+        relationshipTypeDao.delete( QualifiedRelationshipTypeName.from( "myModule:like" ), session );
         commit();
 
         // verify
-        RelationshipTypes relationshipTypesAfterDelete = relationshipTypeDao.retrieveRelationshipTypes( name, session );
+        RelationshipTypes relationshipTypesAfterDelete = relationshipTypeDao.select( name, session );
         assertNotNull( relationshipTypesAfterDelete );
         assertTrue( relationshipTypesAfterDelete.isEmpty() );
     }

@@ -55,8 +55,7 @@ public class UpdateRelationshipTypesHandlerTest
             addAllowedToType( new QualifiedContentTypeName( "myModule:person" ) ).
             build();
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
-        Mockito.when(
-            relationshipTypeDao.retrieveRelationshipTypes( isA( QualifiedRelationshipTypeNames.class ), any( Session.class ) ) ).thenReturn(
+        Mockito.when( relationshipTypeDao.select( isA( QualifiedRelationshipTypeNames.class ), any( Session.class ) ) ).thenReturn(
             relationshipTypes );
 
         // exercise
@@ -75,8 +74,7 @@ public class UpdateRelationshipTypesHandlerTest
         this.handler.handle( this.context, command );
 
         // verify
-        verify( relationshipTypeDao, atLeastOnce() ).updateRelationshipType( Mockito.isA( RelationshipType.class ),
-                                                                             Mockito.any( Session.class ) );
+        verify( relationshipTypeDao, atLeastOnce() ).update( Mockito.isA( RelationshipType.class ), Mockito.any( Session.class ) );
         assertEquals( (Integer) 1, command.getResult() );
     }
 

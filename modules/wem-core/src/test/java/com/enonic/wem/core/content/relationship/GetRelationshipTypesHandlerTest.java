@@ -54,8 +54,7 @@ public class GetRelationshipTypesHandlerTest
             addAllowedToType( new QualifiedContentTypeName( "myModule:person" ) ).
             build();
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
-        Mockito.when(
-            relationshipTypeDao.retrieveRelationshipTypes( isA( QualifiedRelationshipTypeNames.class ), any( Session.class ) ) ).thenReturn(
+        Mockito.when( relationshipTypeDao.select( isA( QualifiedRelationshipTypeNames.class ), any( Session.class ) ) ).thenReturn(
             relationshipTypes );
 
         // exercise
@@ -64,8 +63,8 @@ public class GetRelationshipTypesHandlerTest
         this.handler.handle( this.context, command );
 
         // verify
-        verify( relationshipTypeDao, atLeastOnce() ).retrieveRelationshipTypes( Mockito.isA( QualifiedRelationshipTypeNames.class ),
-                                                                                Mockito.any( Session.class ) );
+        verify( relationshipTypeDao, atLeastOnce() ).select( Mockito.isA( QualifiedRelationshipTypeNames.class ),
+                                                             Mockito.any( Session.class ) );
         assertEquals( 1, command.getResult().getSize() );
     }
 
@@ -91,14 +90,14 @@ public class GetRelationshipTypesHandlerTest
             addAllowedToType( new QualifiedContentTypeName( "myModule:person" ) ).
             build();
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType, relationshipType2 );
-        Mockito.when( relationshipTypeDao.retrieveAllRelationshipTypes( any( Session.class ) ) ).thenReturn( relationshipTypes );
+        Mockito.when( relationshipTypeDao.selectAll( any( Session.class ) ) ).thenReturn( relationshipTypes );
 
         // exercise
         final GetRelationshipTypes command = Commands.relationshipType().get().all();
         this.handler.handle( this.context, command );
 
         // verify
-        verify( relationshipTypeDao, atLeastOnce() ).retrieveAllRelationshipTypes( Mockito.any( Session.class ) );
+        verify( relationshipTypeDao, atLeastOnce() ).selectAll( Mockito.any( Session.class ) );
         assertEquals( 2, command.getResult().getSize() );
     }
 }

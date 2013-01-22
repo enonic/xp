@@ -42,7 +42,7 @@ public final class CreateRelationshipTypeHandler
         final RelationshipType relationshipType = builder.build();
 
         final Session session = context.getJcrSession();
-        relationshipTypeDao.createRelationshipType( relationshipType, session );
+        relationshipTypeDao.create( relationshipType, session );
         session.save();
         command.setResult( relationshipType.getQualifiedName() );
     }

@@ -32,7 +32,7 @@ public final class DeleteRelationshipTypesHandler
         {
             try
             {
-                relationshipTypeDao.deleteRelationshipType( relationshipTypeName, context.getJcrSession() );
+                relationshipTypeDao.delete( relationshipTypeName, context.getJcrSession() );
                 relationshipTypeDeletionResult.success( relationshipTypeName );
                 context.getJcrSession().save();
             }

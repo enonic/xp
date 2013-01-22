@@ -31,12 +31,12 @@ public final class GetRelationshipTypesHandler
         final RelationshipTypes relationshipTypes;
         if ( command.isGetAll() )
         {
-            relationshipTypes = relationshipTypeDao.retrieveAllRelationshipTypes( session );
+            relationshipTypes = relationshipTypeDao.selectAll( session );
         }
         else
         {
             final RelationshipTypeSelectors selectors = command.getSelectors();
-            relationshipTypes = relationshipTypeDao.retrieveRelationshipTypes( selectors, session );
+            relationshipTypes = relationshipTypeDao.select( selectors, session );
         }
         command.setResult( relationshipTypes );
     }

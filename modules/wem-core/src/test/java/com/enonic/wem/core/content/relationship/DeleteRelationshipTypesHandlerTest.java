@@ -52,8 +52,7 @@ public class DeleteRelationshipTypesHandlerTest
         this.handler.handle( this.context, command );
 
         // verify
-        Mockito.verify( relationshipTypeDao, only() ).deleteRelationshipType( isA( QualifiedRelationshipTypeName.class ),
-                                                                              any( Session.class ) );
+        Mockito.verify( relationshipTypeDao, only() ).delete( isA( QualifiedRelationshipTypeName.class ), any( Session.class ) );
 
         RelationshipTypeDeletionResult result = command.getResult();
         assertEquals( false, result.hasFailures() );
@@ -70,7 +69,7 @@ public class DeleteRelationshipTypesHandlerTest
         final QualifiedRelationshipTypeName notFoundName = QualifiedRelationshipTypeName.from( "my:notFoundRelationshipType" );
 
         Mockito.doThrow( new SystemException( "Unable to delete relationship type [my:notFoundRelationshipType]" ) ).
-            when( relationshipTypeDao ).deleteRelationshipType( eq( notFoundName ), any( Session.class ) );
+            when( relationshipTypeDao ).delete( eq( notFoundName ), any( Session.class ) );
 
         final QualifiedRelationshipTypeNames names = QualifiedRelationshipTypeNames.from( existingName, notFoundName, anotherExistingName );
         final DeleteRelationshipTypes command = Commands.relationshipType().delete().names( names );
@@ -78,8 +77,7 @@ public class DeleteRelationshipTypesHandlerTest
         this.handler.handle( this.context, command );
 
         // verify
-        Mockito.verify( relationshipTypeDao, times( 3 ) ).deleteRelationshipType( isA( QualifiedRelationshipTypeName.class ),
-                                                                                  any( Session.class ) );
+        Mockito.verify( relationshipTypeDao, times( 3 ) ).delete( isA( QualifiedRelationshipTypeName.class ), any( Session.class ) );
 
         RelationshipTypeDeletionResult result = command.getResult();
         assertEquals( true, result.hasFailures() );
