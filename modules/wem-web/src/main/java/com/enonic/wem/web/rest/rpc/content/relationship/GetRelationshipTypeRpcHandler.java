@@ -24,12 +24,11 @@ public final class GetRelationshipTypeRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
+        final QualifiedRelationshipTypeNames qualifiedNames =
+            QualifiedRelationshipTypeNames.from( context.param( "qualifiedRelationshipTypeName" ).required().asString() );
+
         final GetRelationshipTypes getRelationshipTypes = Commands.relationshipType().get();
-
-        final QualifiedRelationshipTypeNames qualifiedRelationshipTypeNames =
-            QualifiedRelationshipTypeNames.from( context.param( "relationshipTypeName" ).required().asString() );
-
-        getRelationshipTypes.qualifiedNames( qualifiedRelationshipTypeNames );
+        getRelationshipTypes.qualifiedNames( qualifiedNames );
 
         final RelationshipTypes relationshipTypes = client.execute( getRelationshipTypes );
 
@@ -39,7 +38,7 @@ public final class GetRelationshipTypeRpcHandler
         }
         else
         {
-            context.setResult( new JsonErrorResult( "RelationshipType [{0}] was not found", qualifiedRelationshipTypeNames ) );
+            context.setResult( new JsonErrorResult( "RelationshipType [{0}] was not found", qualifiedNames ) );
         }
     }
 }
