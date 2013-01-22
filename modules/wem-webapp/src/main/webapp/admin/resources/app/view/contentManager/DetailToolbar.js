@@ -13,11 +13,13 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
         this.items = [
 
             {
-                text: 'Publish'
+                text: 'Publish',
+                action: 'publishContent'
             },
 
             {
-                text: 'Edit'
+                text: 'Edit',
+                action: 'editContent'
             },
             {
                 text: 'Delete',
@@ -29,7 +31,8 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
                 action: 'duplicateContent'
             },
             {
-                text: 'Move'
+                text: 'Move',
+                action: 'moveContent'
             },
 
             {
