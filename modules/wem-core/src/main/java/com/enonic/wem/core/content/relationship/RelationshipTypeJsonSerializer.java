@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.relation;
+package com.enonic.wem.core.content.relationship;
 
 
 import org.codehaus.jackson.JsonNode;

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.relation.dao;
+package com.enonic.wem.core.content.relationship.dao;
 
 import java.util.List;
 

@@ -1,8 +1,8 @@
 {
-    "name" : "contains",
-    "module" : "myModule",
-    "fromSemantic" : "contained by",
-    "toSemantic" : "contains",
+    "name": "contains",
+    "module": "myModule",
+    "fromSemantic": "contained by",
+    "toSemantic": "contains",
     "allowedFromTypes": [
         "System:folder",
         "System:file"

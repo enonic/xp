@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.relation;
+package com.enonic.wem.core.content.relationship;
 
 import javax.jcr.Session;
 
@@ -10,7 +10,7 @@ import com.enonic.wem.api.command.content.relation.CreateRelationshipType;
 import com.enonic.wem.api.content.relation.RelationshipType;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.content.relation.dao.RelationshipTypeDao;
+import com.enonic.wem.core.content.relationship.dao.RelationshipTypeDao;
 
 @Component
 public final class CreateRelationshipTypeHandler

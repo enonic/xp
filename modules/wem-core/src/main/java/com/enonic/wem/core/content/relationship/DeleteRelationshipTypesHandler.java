@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.relation;
+package com.enonic.wem.core.content.relationship;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.content.relation.dao.RelationshipTypeDao;
+import com.enonic.wem.core.content.relationship.dao.RelationshipTypeDao;
 
 @Component
 public final class DeleteRelationshipTypesHandler

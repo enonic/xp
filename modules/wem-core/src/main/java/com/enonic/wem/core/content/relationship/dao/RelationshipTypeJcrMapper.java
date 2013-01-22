@@ -1,11 +1,11 @@
-package com.enonic.wem.core.content.relation.dao;
+package com.enonic.wem.core.content.relationship.dao;
 
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import com.enonic.wem.api.content.relation.RelationshipType;
-import com.enonic.wem.core.content.relation.RelationshipTypeJsonSerializer;
+import com.enonic.wem.core.content.relationship.RelationshipTypeJsonSerializer;
 
 class RelationshipTypeJcrMapper
 {

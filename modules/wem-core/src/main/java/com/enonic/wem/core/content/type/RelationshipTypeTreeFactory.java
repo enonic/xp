@@ -4,7 +4,7 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.content.relation.RelationshipType;
 import com.enonic.wem.api.support.tree.Tree;
-import com.enonic.wem.core.content.relation.dao.RelationshipTypeDao;
+import com.enonic.wem.core.content.relationship.dao.RelationshipTypeDao;
 
 
 class RelationshipTypeTreeFactory

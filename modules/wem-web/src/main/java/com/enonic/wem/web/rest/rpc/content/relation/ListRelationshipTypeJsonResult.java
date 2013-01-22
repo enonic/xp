@@ -10,7 +10,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.relation.RelationshipType;
 import com.enonic.wem.api.content.relation.RelationshipTypes;
-import com.enonic.wem.core.content.relation.RelationshipTypeJsonSerializer;
+import com.enonic.wem.core.content.relationship.RelationshipTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
 
 class ListRelationshipTypeJsonResult

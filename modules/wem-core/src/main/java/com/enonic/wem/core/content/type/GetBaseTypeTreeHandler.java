@@ -16,7 +16,7 @@ import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.content.relation.dao.RelationshipTypeDao;
+import com.enonic.wem.core.content.relationship.dao.RelationshipTypeDao;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 import com.enonic.wem.core.content.type.dao.MixinDao;
 

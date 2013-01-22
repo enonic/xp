@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.relation;
+package com.enonic.wem.core.content.relationship;
 
 import javax.jcr.Session;
 
@@ -14,7 +14,7 @@ import com.enonic.wem.api.content.relation.RelationshipTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.content.relation.dao.RelationshipTypeDao;
+import com.enonic.wem.core.content.relationship.dao.RelationshipTypeDao;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
