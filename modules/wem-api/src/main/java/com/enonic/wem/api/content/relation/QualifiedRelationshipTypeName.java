@@ -6,6 +6,7 @@ import com.enonic.wem.api.module.ModuleName;
 
 public final class QualifiedRelationshipTypeName
     extends ModuleBasedQualifiedName
+    implements RelationshipTypeSelector
 {
     public QualifiedRelationshipTypeName( final ModuleName moduleName, final String name )
     {

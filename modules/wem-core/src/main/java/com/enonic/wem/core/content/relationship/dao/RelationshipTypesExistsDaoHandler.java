@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.content.relation.RelationshipTypeSelector;
 
 final class RelationshipTypesExistsDaoHandler
     extends AbstractRelationshipTypeDaoHandler
@@ -18,11 +19,24 @@ final class RelationshipTypesExistsDaoHandler
         super( session );
     }
 
-    QualifiedRelationshipTypeNames handle( final QualifiedRelationshipTypeNames qualifiedNames )
+    QualifiedRelationshipTypeNames handle( final RelationshipTypeSelector selector )
+        throws RepositoryException
+    {
+        if ( selector instanceof QualifiedRelationshipTypeNames )
+        {
+            return handle( (QualifiedRelationshipTypeNames) selector );
+        }
+        else
+        {
+            throw new UnsupportedOperationException( "selector [" + selector.getClass().getSimpleName() + " ] not supported" );
+        }
+    }
+
+    QualifiedRelationshipTypeNames handle( final QualifiedRelationshipTypeNames selector )
         throws RepositoryException
     {
         final List<QualifiedRelationshipTypeName> existing = Lists.newArrayList();
-        for ( QualifiedRelationshipTypeName qName : qualifiedNames )
+        for ( QualifiedRelationshipTypeName qName : selector )
         {
             if ( nodeExists( qName ) )
             {

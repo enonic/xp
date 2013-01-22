@@ -13,7 +13,7 @@ import com.enonic.wem.api.util.AbstractImmutableEntitySet;
 
 public final class QualifiedRelationshipTypeNames
     extends AbstractImmutableEntitySet<QualifiedRelationshipTypeName>
-    implements Iterable<QualifiedRelationshipTypeName>
+    implements Iterable<QualifiedRelationshipTypeName>, RelationshipTypeSelector
 {
     private QualifiedRelationshipTypeNames( final ImmutableSet<QualifiedRelationshipTypeName> set )
     {

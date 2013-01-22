@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relation.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relation.RelationshipType;
+import com.enonic.wem.api.content.relation.RelationshipTypeSelector;
 import com.enonic.wem.api.content.relation.RelationshipTypes;
 import com.enonic.wem.api.exception.SystemException;
 
@@ -69,7 +70,7 @@ public final class RelationshipTypeDaoImpl
     }
 
     @Override
-    public RelationshipTypes retrieveRelationshipTypes( final QualifiedRelationshipTypeNames relationshipTypeNames, final Session session )
+    public RelationshipTypes retrieveRelationshipTypes( final RelationshipTypeSelector relationshipTypeNames, final Session session )
     {
         try
         {
@@ -82,15 +83,15 @@ public final class RelationshipTypeDaoImpl
     }
 
     @Override
-    public QualifiedRelationshipTypeNames exists( final QualifiedRelationshipTypeNames relationshipTypeNames, final Session session )
+    public QualifiedRelationshipTypeNames exists( final RelationshipTypeSelector selector, final Session session )
     {
         try
         {
-            return new RelationshipTypesExistsDaoHandler( session ).handle( relationshipTypeNames );
+            return new RelationshipTypesExistsDaoHandler( session ).handle( selector );
         }
         catch ( RepositoryException e )
         {
-            throw new SystemException( e, "Unable to check RelationshipTypes [{0}]", relationshipTypeNames );
+            throw new SystemException( e, "Unable to check RelationshipTypes [{0}]", selector );
         }
     }
 }
