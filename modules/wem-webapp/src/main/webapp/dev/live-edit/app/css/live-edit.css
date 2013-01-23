@@ -278,6 +278,7 @@ svg.live-edit-highlighter rect {
     position: absolute;
     top: 50%;
     left: -37px;
+    cursor: pointer;
 }
 
 .live-edit-components {
@@ -338,6 +339,7 @@ svg.live-edit-highlighter rect {
 .live-edit-component {
     overflow: hidden;
     padding: 8px;
+    cursor: move;
 }
 
 .live-edit-component:hover {

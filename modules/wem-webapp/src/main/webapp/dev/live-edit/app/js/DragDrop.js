@@ -92,6 +92,12 @@ AdminLiveEdit.DragDrop = (function () {
         ui.item.removeData('live-edit-selected-on-drag-start');
     }
 
+    function handleReceive(event, ui) {
+        if (itemIsDraggedFromComponentBar(ui.item)) {
+            $(this).children('.live-edit-component').replaceWith(createDummyWindowHtml());
+        }
+    }
+
 
     function initSubscribers() {
         $liveedit(window).on('component:select', function () {
@@ -108,9 +114,30 @@ AdminLiveEdit.DragDrop = (function () {
     }
 
 
+    function itemIsDraggedFromComponentBar(item) {
+        return item.hasClass('live-edit-component');
+    }
+
+
+    function createDummyWindowHtml() {
+        var dummyKey = new Date().getTime(),
+            html = '';
+
+        html += '<div data-live-edit-type="window" data-live-edit-key="' + dummyKey + '" data-live-edit-name="HTML 5 Video">';
+        html += '<video width="100%" id="tag" poster="http://content.bitsontherun.com/thumbs/q1fx20VZ-720.jpg" preload="none" controls>';
+        html += '	<source src="http://content.bitsontherun.com/videos/q1fx20VZ-52qL9xLP.mp4" type="video/mp4" />';
+        html += '	<source src="http://content.bitsontherun.com/videos/q1fx20VZ-27m5HpIu.webm" type="video/webm" />';
+        html += '	<p class="warning">Your browser does not support HTML5 video.</p>';
+        html += '</video>';
+        html += '</div>';
+
+        return html;
+    }
+
+
     function init() {
         $liveedit(regionSelector).sortable({
-            revert              : 200,
+            revert              : true,
             connectWith         : regionSelector,   // Sortable elements.
             items               : windowSelector,   // Elements to sort.
             distance            : 1,
@@ -126,9 +153,28 @@ AdminLiveEdit.DragDrop = (function () {
             over                : handleDragOver,   // This event is triggered when a sortable item is moved into a connected list.
             out                 : handleDragOut,    // This event is triggered when a sortable item is moved away from a connected list.
             change              : handleSortChange, // This event is triggered during sorting, but only when the DOM position has changed.
+            receive             : handleReceive,
             update              : handleSortUpdate, // This event is triggered when the user stopped sorting and the DOM position has changed.
             stop                : handleSortStop    // This event is triggered when sorting has stopped.
         }).disableSelection();
+
+
+        $liveedit('.live-edit-component').draggable({
+            connectToSortable: regionSelector,
+            cursor: 'move',
+            revert: function (dropped) {
+                // console.log(dropped);
+            },
+            helper: function () {
+                return '<div style="width: 200px; height: 20px; background-color: #ccc; padding: 10px;">Helper</div>';
+            },
+            start: function () {
+                isDragging = true;
+            },
+            stop: function () {
+                isDragging = false;
+            }
+        });
 
         initSubscribers();
     }
