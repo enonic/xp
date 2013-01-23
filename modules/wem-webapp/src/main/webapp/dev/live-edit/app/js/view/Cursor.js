@@ -19,7 +19,6 @@
 
 
     proto.updateCursor = function (event, $component) {
-        console.log(event);
         var componentType = AdminLiveEdit.Util.getComponentType($component);
         var $body = $('body');
         var cursor = 'default';

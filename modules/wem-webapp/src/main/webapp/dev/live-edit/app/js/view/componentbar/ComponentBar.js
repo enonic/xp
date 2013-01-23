@@ -7,7 +7,10 @@
     // Class definition (constructor)
     var componentBar = AdminLiveEdit.view.componentbar.ComponentBar = function () {
         var me = this;
+        me.hidden = false;
+
         me.addView();
+        me.addToggleEvent();
     };
 
 
@@ -77,10 +80,6 @@
     html += '</div>';
 
 
-    proto.bindGlobalEvents = function () {
-    };
-
-
     proto.addView = function () {
         var me = this;
 
@@ -89,15 +88,53 @@
     };
 
 
-    proto.toggle = function () {
+    proto.bindGlobalEvents = function () {
     };
 
 
-    proto.show = function (event, $selectedComponent) {
+    proto.addToggleEvent = function () {
+        var me = this;
+        me.getToggle().click(function (event) {
+            me.toggle();
+        });
+    };
+
+
+    proto.toggle = function () {
+        var me = this;
+        if (me.hidden) {
+            me.show();
+            me.hidden = false;
+        } else {
+            me.hide();
+            me.hidden = true;
+        }
+    };
+
+
+    proto.show = function () {
+        this.getBar().css('right', '0');
     };
 
 
     proto.hide = function () {
+        var me = this;
+        me.getBar().css('right', '-' + me.getComponentsContainer().width() + 'px');
+    };
+
+
+    proto.getBar = function () {
+        return this.getEl();
+    };
+
+
+    proto.getToggle = function () {
+        return $('.live-edit-components-toggle-text', this.getEl());
+    };
+
+
+    proto.getComponentsContainer = function () {
+        return $('.live-edit-components', this.getEl());
     };
 
 }($liveedit));

@@ -60,7 +60,6 @@ a {
 }
 
 /*** Loader splash */
-
 @-moz-keyframes live-edit-spinner {
     0% {
         -moz-transform: rotate(0deg);
@@ -500,13 +499,15 @@ svg.live-edit-highlighter rect {
 .live-edit-highlighter {
     transition-property: top, left, width, height;
     -webkit-transition-property: top, left, width, height;
-    -o-transition-property: top, left, width, height;
 
-    transition-duration: 0.1s;
-    -webkit-transition-duration: 0.1s;
-    -o-transition-duration: 0.1s;
+    transition-duration: 250ms;
+    -webkit-transition-duration: 150ms;
 
     transition-timing-function: linear;
     -webkit-transition-timing-function: linear;
-    -o-transition-timing-function: linear;
+}
+
+.live-edit-components-container {
+    -webkit-transition: right 200ms ease-in;
+    transition: right 200ms ease-in;
 }
