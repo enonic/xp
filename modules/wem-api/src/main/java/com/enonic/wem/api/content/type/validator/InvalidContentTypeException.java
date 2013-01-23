@@ -36,14 +36,14 @@ public class InvalidContentTypeException
     private static String buildMessage( final ContentType contentType )
     {
         final StringBuilder s = new StringBuilder();
-        s.append( "Invalid content type: " ).append( contentType );
+        s.append( "Invalid ContentType: " ).append( contentType );
         return s.toString();
     }
 
     private static String buildMessage( final ContentType contentType, final String message )
     {
         final StringBuilder s = new StringBuilder();
-        s.append( "Invalid content type: [" ).append( contentType ).append( "]: " ).append( message );
+        s.append( "Invalid ContentType: [" ).append( contentType ).append( "]: " ).append( message );
         return s.toString();
     }
 }
