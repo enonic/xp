@@ -31,7 +31,7 @@ public class ContentDaoImpl
 {
 
     @Override
-    public ContentId createContent( final Content content, final Session session )
+    public ContentId create( final Content content, final Session session )
     {
         try
         {
@@ -44,7 +44,7 @@ public class ContentDaoImpl
     }
 
     @Override
-    public void updateContent( final Content content, final boolean createNewVersion, final Session session )
+    public void update( final Content content, final boolean createNewVersion, final Session session )
     {
         try
         {
@@ -57,7 +57,7 @@ public class ContentDaoImpl
     }
 
     @Override
-    public void deleteContent( final ContentSelector contentSelector, final Session session )
+    public void delete( final ContentSelector contentSelector, final Session session )
     {
         try
         {
@@ -96,7 +96,7 @@ public class ContentDaoImpl
     }
 
     @Override
-    public Content findContent( final ContentSelector contentSelector, final Session session )
+    public Content select( final ContentSelector contentSelector, final Session session )
     {
         try
         {
@@ -122,7 +122,7 @@ public class ContentDaoImpl
     }
 
     @Override
-    public Contents findContents( final ContentSelectors contentSelectors, final Session session )
+    public Contents select( final ContentSelectors contentSelectors, final Session session )
     {
         try
         {

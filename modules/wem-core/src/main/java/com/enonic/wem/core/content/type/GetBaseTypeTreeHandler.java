@@ -41,7 +41,7 @@ public class GetBaseTypeTreeHandler
     {
         final Tree<ContentType> contentTypeTree = new ContentTypeTreeFactory( context.getJcrSession(), contentTypeDao ).createTree();
         final RelationshipTypes relationshipTypes = relationshipTypeDao.selectAll( context.getJcrSession() );
-        final Mixins mixins = mixinDao.retrieveAllMixins( context.getJcrSession() );
+        final Mixins mixins = mixinDao.selectAll( context.getJcrSession() );
 
         final Tree<BaseType> typesTree = new Tree<BaseType>();
         // add all all super content types at root

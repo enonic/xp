@@ -14,13 +14,13 @@ public interface ContentTypeDao
 
     public static final String CONTENT_TYPES_PATH = JcrConstants.ROOT_NODE + "/" + CONTENT_TYPES_NODE + "/";
 
-    public void createContentType( ContentType contentType, Session session );
+    public void create( ContentType contentType, Session session );
 
-    public void updateContentType( ContentType contentType, Session session );
+    public void update( ContentType contentType, Session session );
 
-    public void deleteContentType( QualifiedContentTypeName qualifiedContentTypeName, Session session );
+    public void delete( QualifiedContentTypeName qualifiedContentTypeName, Session session );
 
-    public ContentTypes retrieveAllContentTypes( Session session );
+    public ContentTypes selectAll( Session session );
 
-    public ContentTypes retrieveContentTypes( QualifiedContentTypeNames qualifiedContentTypeNames, Session session );
+    public ContentTypes select( QualifiedContentTypeNames qualifiedContentTypeNames, Session session );
 }

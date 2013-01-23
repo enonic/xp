@@ -29,19 +29,19 @@ public interface ContentDao
 
     public static final String CONTENT_NEXT_VERSION_PROPERTY = "nextVersion";
 
-    ContentId createContent( Content content, Session session );
+    ContentId create( Content content, Session session );
 
-    void updateContent( Content content, boolean createNewVersion, Session session );
+    void update( Content content, boolean createNewVersion, Session session );
 
-    void deleteContent( ContentSelector contentSelector, Session session );
+    void delete( ContentSelector contentSelector, Session session );
+
+    Contents select( ContentSelectors contentSelectors, Session session );
+
+    Content select( ContentSelector contentSelector, Session session );
 
     void renameContent( ContentPath contentPath, String newName, Session session );
 
-    Content findContent( ContentSelector contentSelector, Session session );
-
     List<ContentVersion> getContentVersions( ContentSelector contentSelector, Session session );
-
-    Contents findContents( ContentSelectors contentSelectors, Session session );
 
     Contents findChildContent( ContentPath parentPath, Session session );
 

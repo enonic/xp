@@ -58,12 +58,12 @@ public final class GetContentTypesHandler
 
     private ContentTypes getAllContentTypes( final Session session )
     {
-        return contentTypeDao.retrieveAllContentTypes( session );
+        return contentTypeDao.selectAll( session );
     }
 
     private ContentTypes getContentTypes( final Session session, final QualifiedContentTypeNames contentTypeNames )
     {
-        return contentTypeDao.retrieveContentTypes( contentTypeNames, session );
+        return contentTypeDao.select( contentTypeNames, session );
     }
 
     @Autowired

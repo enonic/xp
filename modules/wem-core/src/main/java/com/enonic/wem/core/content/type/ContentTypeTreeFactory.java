@@ -28,7 +28,7 @@ final class ContentTypeTreeFactory
 
     Tree<ContentType> createTree()
     {
-        final ContentTypes contentTypes = contentTypeDao.retrieveAllContentTypes( session );
+        final ContentTypes contentTypes = contentTypeDao.selectAll( session );
         return buildTree( contentTypes );
     }
 

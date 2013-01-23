@@ -40,7 +40,7 @@ public class ContentDaoImplTest
         content.setData( "myData", "myValue" );
 
         // exercise
-        contentDao.createContent( content, session );
+        contentDao.create( content, session );
         commit();
 
         // verify
@@ -60,9 +60,9 @@ public class ContentDaoImplTest
         belowRootContent.setData( "myData", "myValue" );
 
         // exercise
-        contentDao.createContent( rootContent, session );
+        contentDao.create( rootContent, session );
         commit();
-        contentDao.createContent( belowRootContent, session );
+        contentDao.create( belowRootContent, session );
         commit();
 
         // verify
@@ -84,13 +84,13 @@ public class ContentDaoImplTest
         content.setData( "mySet.myOtherData", "3" );
 
         // exercise
-        contentDao.createContent( content, session );
+        contentDao.create( content, session );
         commit();
 
         // verify
         assertNotNull( session.getNode( "/" + ContentDao.CONTENTS_PATH + "myContent" ) );
 
-        Content storedContent = contentDao.findContent( ContentPath.from( "myContent" ), session );
+        Content storedContent = contentDao.select( ContentPath.from( "myContent" ), session );
 
         assertEquals( "1", storedContent.getData( "myData" ).asString() );
         assertEquals( "2", storedContent.getData( "mySet.myData" ).asString() );
@@ -103,11 +103,11 @@ public class ContentDaoImplTest
     {
         // setup
         final Content content = createContent( "someContent" );
-        final ContentId createdContentId = contentDao.createContent( content, session );
+        final ContentId createdContentId = contentDao.create( content, session );
 
         final Content anotherContent = newContent( content ).id( createdContentId ).path( ContentPath.from( "anotherContent" ) ).build();
         assertNotNull( anotherContent.getId() );
-        contentDao.createContent( anotherContent, session );
+        contentDao.create( anotherContent, session );
 
         // exercise
         commit();
@@ -122,19 +122,19 @@ public class ContentDaoImplTest
         newContent.setData( "myData", "initial value" );
 
         // setup: create content to update
-        contentDao.createContent( newContent, session );
+        contentDao.create( newContent, session );
         commit();
 
         Content updateContent = newContent().path( ContentPath.from( "myContent" ) ).build();
         updateContent.setData( "myData", "changed value" );
 
         // exercise
-        contentDao.updateContent( updateContent, true, session );
+        contentDao.update( updateContent, true, session );
 
         // verify
         assertNotNull( session.getNode( "/" + ContentDao.CONTENTS_PATH + "myContent" ) );
 
-        Content storedContent = contentDao.findContent( ContentPath.from( "myContent" ), session );
+        Content storedContent = contentDao.select( ContentPath.from( "myContent" ), session );
         assertEquals( "changed value", storedContent.getData( "myData" ).asString() );
     }
 
@@ -146,11 +146,11 @@ public class ContentDaoImplTest
         Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
         content.setData( "myData", "myValue" );
 
-        contentDao.createContent( content, session );
+        contentDao.create( content, session );
         commit();
 
         // exercise
-        contentDao.deleteContent( ContentPath.from( "myContent" ), session );
+        contentDao.delete( ContentPath.from( "myContent" ), session );
         commit();
 
         // verify
@@ -163,12 +163,12 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        contentDao.createContent( createContent( "parentContent" ), session );
-        contentDao.createContent( createContent( "parentContent/contentToDelete" ), session );
+        contentDao.create( createContent( "parentContent" ), session );
+        contentDao.create( createContent( "parentContent/contentToDelete" ), session );
         commit();
 
         // exercise
-        contentDao.deleteContent( ContentPath.from( "parentContent/contentToDelete" ), session );
+        contentDao.delete( ContentPath.from( "parentContent/contentToDelete" ), session );
         commit();
 
         // verify
@@ -181,14 +181,14 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        contentDao.createContent( createContent( "parentContent" ), session );
-        contentDao.createContent( createContent( "parentContent/contentToDelete" ), session );
+        contentDao.create( createContent( "parentContent" ), session );
+        contentDao.create( createContent( "parentContent/contentToDelete" ), session );
         commit();
 
         // exercise
         try
         {
-            contentDao.deleteContent( ContentPath.from( "parentContent" ), session );
+            contentDao.delete( ContentPath.from( "parentContent" ), session );
             fail( "Expected excetion" );
         }
         catch ( Exception e )
@@ -203,12 +203,12 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        contentDao.createContent( createContent( "parentContent" ), session );
-        final ContentId contentId = contentDao.createContent( createContent( "parentContent/contentToDelete" ), session );
+        contentDao.create( createContent( "parentContent" ), session );
+        final ContentId contentId = contentDao.create( createContent( "parentContent/contentToDelete" ), session );
         commit();
 
         // exercise
-        contentDao.deleteContent( contentId, session );
+        contentDao.delete( contentId, session );
         commit();
 
         // verify
@@ -224,11 +224,11 @@ public class ContentDaoImplTest
         Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
         content.setData( "myData", "myValue" );
         content.setData( "mySet.myData", "myOtherValue" );
-        contentDao.createContent( content, session );
+        contentDao.create( content, session );
         commit();
 
         // exercise
-        Content actualContent = contentDao.findContent( ContentPath.from( "myContent" ), session );
+        Content actualContent = contentDao.select( ContentPath.from( "myContent" ), session );
 
         // verify
         assertNotNull( actualContent );
@@ -247,16 +247,16 @@ public class ContentDaoImplTest
         final Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
         content.setData( "myData", "myValue" );
         content.setData( "mySet.myData", "myOtherValue" );
-        contentDao.createContent( content, session );
+        contentDao.create( content, session );
 
         final Content content2 = newContent().path( ContentPath.from( "myContent2" ) ).build();
         content2.setData( "myData", "myValue2" );
         content2.setData( "mySet.myData", "myOtherValue2" );
-        contentDao.createContent( content2, session );
+        contentDao.create( content2, session );
         commit();
 
         // exercise
-        final Contents actualContents = contentDao.findContents( ContentPaths.from( "myContent", "myContent2" ), session );
+        final Contents actualContents = contentDao.select( ContentPaths.from( "myContent", "myContent2" ), session );
 
         // verify
         assertNotNull( actualContents );
@@ -281,16 +281,16 @@ public class ContentDaoImplTest
         final Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
         content.setData( "myData", "myValue" );
         content.setData( "mySet.myData", "myOtherValue" );
-        final ContentId contentId1 = contentDao.createContent( content, session );
+        final ContentId contentId1 = contentDao.create( content, session );
 
         final Content content2 = newContent().path( ContentPath.from( "myContent2" ) ).build();
         content2.setData( "myData", "myValue2" );
         content2.setData( "mySet.myData", "myOtherValue2" );
-        final ContentId contentId2 = contentDao.createContent( content2, session );
+        final ContentId contentId2 = contentDao.create( content2, session );
         commit();
 
         // exercise
-        final Contents actualContents = contentDao.findContents( ContentIds.from( contentId1, contentId2 ), session );
+        final Contents actualContents = contentDao.select( ContentIds.from( contentId1, contentId2 ), session );
 
         // verify
         assertNotNull( actualContents );
@@ -315,11 +315,11 @@ public class ContentDaoImplTest
         Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
         content.setData( "myData", "myValue" );
         content.setData( "mySet.myData", "myOtherValue" );
-        final ContentId contentId = contentDao.createContent( content, session );
+        final ContentId contentId = contentDao.create( content, session );
         commit();
 
         // exercise
-        Content actualContent = contentDao.findContent( contentId, session );
+        Content actualContent = contentDao.select( contentId, session );
 
         // verify
         assertNotNull( actualContent );
@@ -335,13 +335,13 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        contentDao.createContent( createContent( "myParentContent" ), session );
+        contentDao.create( createContent( "myParentContent" ), session );
         commit();
-        contentDao.createContent( createContent( "myParentContent2" ), session );
+        contentDao.create( createContent( "myParentContent2" ), session );
         commit();
-        contentDao.createContent( createContent( "myParentContent/myChildContent1" ), session );
+        contentDao.create( createContent( "myParentContent/myChildContent1" ), session );
         commit();
-        contentDao.createContent( createContent( "myParentContent/myChildContent2" ), session );
+        contentDao.create( createContent( "myParentContent/myChildContent2" ), session );
         commit();
 
         // exercise
@@ -358,15 +358,15 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        contentDao.createContent( createContent( "branch-A" ), session );
-        contentDao.createContent( createContent( "branch-A/branch-A-A" ), session );
-        contentDao.createContent( createContent( "branch-B" ), session );
-        contentDao.createContent( createContent( "branch-B/branch-B-A" ), session );
-        contentDao.createContent( createContent( "branch-B/branch-B-A/branch-B-A-A" ), session );
-        contentDao.createContent( createContent( "branch-B/branch-B-A/branch-B-A-B" ), session );
-        contentDao.createContent( createContent( "branch-B/branch-B-A/branch-B-A-C" ), session );
-        contentDao.createContent( createContent( "branch-B/branch-B-B" ), session );
-        contentDao.createContent( createContent( "branch-B/branch-B-B/branch-B-B-A" ), session );
+        contentDao.create( createContent( "branch-A" ), session );
+        contentDao.create( createContent( "branch-A/branch-A-A" ), session );
+        contentDao.create( createContent( "branch-B" ), session );
+        contentDao.create( createContent( "branch-B/branch-B-A" ), session );
+        contentDao.create( createContent( "branch-B/branch-B-A/branch-B-A-A" ), session );
+        contentDao.create( createContent( "branch-B/branch-B-A/branch-B-A-B" ), session );
+        contentDao.create( createContent( "branch-B/branch-B-A/branch-B-A-C" ), session );
+        contentDao.create( createContent( "branch-B/branch-B-B" ), session );
+        contentDao.create( createContent( "branch-B/branch-B-B/branch-B-B-A" ), session );
         commit();
 
         // exercise
@@ -384,18 +384,18 @@ public class ContentDaoImplTest
         final Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
         content.setData( "myData", "myValue" );
         content.setData( "mySet.myData", "myOtherValue" );
-        final ContentId contentId = contentDao.createContent( content, session );
+        final ContentId contentId = contentDao.create( content, session );
 
         // exercise
         contentDao.renameContent( ContentPath.from( "myContent" ), "newContentName", session );
         commit();
 
         // verify
-        final Content storedContent = contentDao.findContent( contentId, session );
+        final Content storedContent = contentDao.select( contentId, session );
         assertNotNull( storedContent );
         assertEquals( ContentPath.from( "newContentName" ), storedContent.getPath() );
 
-        final Content contentNotFound = contentDao.findContent( ContentPath.from( "myContent" ), session );
+        final Content contentNotFound = contentDao.select( ContentPath.from( "myContent" ), session );
         assertNull( contentNotFound );
     }
 

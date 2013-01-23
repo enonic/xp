@@ -31,7 +31,7 @@ public class UpdateContentsHandler
     public void handle( final CommandContext context, final UpdateContents command )
         throws Exception
     {
-        final Contents contents = contentDao.findContents( command.getSelectors(), context.getJcrSession() );
+        final Contents contents = contentDao.select( command.getSelectors(), context.getJcrSession() );
         for ( Content contentToUpdate : contents )
         {
             ContentEditor contentEditor = command.getEditor();
@@ -42,7 +42,7 @@ public class UpdateContentsHandler
                     modifiedTime( timeService.getNowAsDateTime() ).
                     modifier( command.getModifier() ).build();
                 final boolean createNewVersion = true;
-                contentDao.updateContent( contentToUpdate, createNewVersion, context.getJcrSession() );
+                contentDao.update( contentToUpdate, createNewVersion, context.getJcrSession() );
                 context.getJcrSession().save();
             }
         }

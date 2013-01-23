@@ -37,8 +37,8 @@ public final class GetBaseTypesHandler
     {
         final Session session = context.getJcrSession();
 
-        final ContentTypes contentTypes = contentTypeDao.retrieveAllContentTypes( session );
-        final Mixins mixins = mixinDao.retrieveAllMixins( session );
+        final ContentTypes contentTypes = contentTypeDao.selectAll( session );
+        final Mixins mixins = mixinDao.selectAll( session );
         final RelationshipTypes relationshipTypes = relationshipTypeDao.selectAll( session );
 
         final BaseTypes baseTypes = BaseTypes.from( contentTypes, mixins, relationshipTypes );

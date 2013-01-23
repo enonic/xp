@@ -37,7 +37,7 @@ public class DeleteContentsHandler
         {
             try
             {
-                contentDao.deleteContent( contentSelector, session );
+                contentDao.delete( contentSelector, session );
                 contentDeletionResult.success( contentSelector );
                 session.save();
             }

@@ -54,12 +54,12 @@ public final class UpdateMixinsHandler
 
     private void updateMixin( final Session session, final Mixin mixin )
     {
-        mixinDao.updateMixin( mixin, session );
+        mixinDao.update( mixin, session );
     }
 
     private Mixin retrieveMixin( final Session session, final QualifiedMixinName qualifiedMixinName )
     {
-        final Mixins mixins = mixinDao.retrieveMixins( QualifiedMixinNames.from( qualifiedMixinName ), session );
+        final Mixins mixins = mixinDao.select( QualifiedMixinNames.from( qualifiedMixinName ), session );
         return mixins.isEmpty() ? null : mixins.first();
     }
 

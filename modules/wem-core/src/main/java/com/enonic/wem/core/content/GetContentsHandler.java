@@ -26,7 +26,7 @@ public class GetContentsHandler
         throws Exception
     {
         final ContentSelectors selectors = command.getSelectors();
-        final Contents result = contentDao.findContents( selectors, context.getJcrSession() );
+        final Contents result = contentDao.select( selectors, context.getJcrSession() );
         command.setResult( result );
     }
 

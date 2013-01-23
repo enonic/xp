@@ -62,14 +62,14 @@ public class GetContentTypeTreeHandlerTest
             superType( new QualifiedContentTypeName( "myModule:myType" ) ).
             build();
         final ContentTypes contentTypes = ContentTypes.from( contentType1, contentType2, contentType3 );
-        Mockito.when( contentTypeDao.retrieveAllContentTypes( any( Session.class ) ) ).thenReturn( contentTypes );
+        Mockito.when( contentTypeDao.selectAll( any( Session.class ) ) ).thenReturn( contentTypes );
 
         // exercise
         final GetContentTypeTree command = Commands.contentType().getTree();
         this.handler.handle( this.context, command );
 
         // verify
-        verify( contentTypeDao, atLeastOnce() ).retrieveAllContentTypes( Mockito.any( Session.class ) );
+        verify( contentTypeDao, atLeastOnce() ).selectAll( Mockito.any( Session.class ) );
         final Tree<ContentType> tree = command.getResult();
         assertEquals( 1, tree.size() );
         assertEquals( 3, tree.deepSize() );

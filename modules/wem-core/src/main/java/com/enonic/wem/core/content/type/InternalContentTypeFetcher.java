@@ -28,8 +28,7 @@ public class InternalContentTypeFetcher
     @Override
     public ContentType getContentType( final QualifiedContentTypeName qualifiedContentTypeName )
     {
-        final ContentTypes contentTypes =
-            contentTypeDao.retrieveContentTypes( QualifiedContentTypeNames.from( qualifiedContentTypeName ), session );
+        final ContentTypes contentTypes = contentTypeDao.select( QualifiedContentTypeNames.from( qualifiedContentTypeName ), session );
         if ( contentTypes.isEmpty() )
         {
             return null;

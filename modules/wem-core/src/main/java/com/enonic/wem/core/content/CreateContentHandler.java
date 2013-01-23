@@ -41,7 +41,7 @@ public class CreateContentHandler
         final Content content = builder.build();
 
         final Session session = context.getJcrSession();
-        final ContentId contentId = contentDao.createContent( content, session );
+        final ContentId contentId = contentDao.create( content, session );
         session.save();
 
         command.setResult( contentId );

@@ -18,7 +18,7 @@ public class MixinDaoImpl
 {
 
     @Override
-    public void createMixin( final Mixin mixin, final Session session )
+    public void create( final Mixin mixin, final Session session )
     {
         try
         {
@@ -31,7 +31,7 @@ public class MixinDaoImpl
     }
 
     @Override
-    public void updateMixin( final Mixin mixin, final Session session )
+    public void update( final Mixin mixin, final Session session )
     {
         try
         {
@@ -44,7 +44,7 @@ public class MixinDaoImpl
     }
 
     @Override
-    public void deleteMixin( final QualifiedMixinName qualifiedMixinName, final Session session )
+    public void delete( final QualifiedMixinName qualifiedMixinName, final Session session )
     {
         try
         {
@@ -57,7 +57,7 @@ public class MixinDaoImpl
     }
 
     @Override
-    public Mixins retrieveAllMixins( final Session session )
+    public Mixins selectAll( final Session session )
     {
         try
         {
@@ -70,7 +70,7 @@ public class MixinDaoImpl
     }
 
     @Override
-    public Mixins retrieveMixins( final QualifiedMixinNames qualifiedMixinNames, Session session )
+    public Mixins select( final QualifiedMixinNames qualifiedMixinNames, Session session )
     {
         try
         {

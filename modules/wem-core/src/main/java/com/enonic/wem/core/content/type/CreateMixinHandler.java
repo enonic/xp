@@ -39,7 +39,7 @@ public final class CreateMixinHandler
         final Mixin mixin = mixinBuilder.build();
 
         final Session session = context.getJcrSession();
-        mixinDao.createMixin( mixin, session );
+        mixinDao.create( mixin, session );
         session.save();
 
         command.setResult( mixin.getQualifiedName() );
