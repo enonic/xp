@@ -6,8 +6,8 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.exception.SystemException;
 
-public abstract class AbstractCrudDao<T, Ts, QN, QNs, Ss>
-    implements CrudDao<T, Ts, QN, QNs, Ss>
+public abstract class AbstractCrudDao<TObject, TObjects, TQualifiedName, TQualifiedNames, TSelectors>
+    implements CrudDao<TObject, TObjects, TQualifiedName, TQualifiedNames, TSelectors>
 {
     private Class clazz;
 
@@ -17,7 +17,7 @@ public abstract class AbstractCrudDao<T, Ts, QN, QNs, Ss>
     }
 
     @Override
-    public void create( final T object, final Session session )
+    public void create( final TObject object, final Session session )
     {
         try
         {
@@ -29,11 +29,11 @@ public abstract class AbstractCrudDao<T, Ts, QN, QNs, Ss>
         }
     }
 
-    protected abstract void doCreate( final T object, final Session session )
+    protected abstract void doCreate( final TObject object, final Session session )
         throws RepositoryException;
 
     @Override
-    public void update( final T object, final Session session )
+    public void update( final TObject object, final Session session )
     {
         try
         {
@@ -45,11 +45,11 @@ public abstract class AbstractCrudDao<T, Ts, QN, QNs, Ss>
         }
     }
 
-    protected abstract void doUpdate( final T object, final Session session )
+    protected abstract void doUpdate( final TObject object, final Session session )
         throws RepositoryException;
 
     @Override
-    public void delete( final QN qualifiedName, final Session session )
+    public void delete( final TQualifiedName qualifiedName, final Session session )
     {
         try
         {
@@ -61,12 +61,12 @@ public abstract class AbstractCrudDao<T, Ts, QN, QNs, Ss>
         }
     }
 
-    protected abstract void doDelete( final QN qualifiedName, final Session session )
+    protected abstract void doDelete( final TQualifiedName qualifiedName, final Session session )
         throws RepositoryException;
 
 
     @Override
-    public QNs exists( final Ss selectors, final Session session )
+    public TQualifiedNames exists( final TSelectors selectors, final Session session )
     {
         try
         {
@@ -78,11 +78,11 @@ public abstract class AbstractCrudDao<T, Ts, QN, QNs, Ss>
         }
     }
 
-    protected abstract QNs doExists( final Ss selectors, final Session session )
+    protected abstract TQualifiedNames doExists( final TSelectors selectors, final Session session )
         throws RepositoryException;
 
     @Override
-    public Ts selectAll( final Session session )
+    public TObjects selectAll( final Session session )
     {
         try
         {
@@ -94,11 +94,11 @@ public abstract class AbstractCrudDao<T, Ts, QN, QNs, Ss>
         }
     }
 
-    protected abstract Ts doSelectAll( final Session session )
+    protected abstract TObjects doSelectAll( final Session session )
         throws RepositoryException;
 
     @Override
-    public Ts select( final Ss selectors, final Session session )
+    public TObjects select( final TSelectors selectors, final Session session )
     {
         try
         {
@@ -110,6 +110,6 @@ public abstract class AbstractCrudDao<T, Ts, QN, QNs, Ss>
         }
     }
 
-    protected abstract Ts doSelect( final Ss selectors, final Session session )
+    protected abstract TObjects doSelect( final TSelectors selectors, final Session session )
         throws RepositoryException;
 }

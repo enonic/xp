@@ -3,17 +3,17 @@ package com.enonic.wem.core.support.dao;
 
 import javax.jcr.Session;
 
-public interface CrudDao<T, Ts, QN, QNs, Ss>
+public interface CrudDao<TObject, TObjects, TQualifiedName, TQualifiedNames, TSelectors>
 {
-    public void create( T object, Session session );
+    public void create( TObject object, Session session );
 
-    public void update( T object, Session session );
+    public void update( TObject object, Session session );
 
-    public void delete( QN object, Session session );
+    public void delete( TQualifiedName object, Session session );
 
-    public QNs exists( Ss object, Session session );
+    public TQualifiedNames exists( TSelectors object, Session session );
 
-    public Ts selectAll( Session session );
+    public TObjects selectAll( Session session );
 
-    public Ts select( Ss selectors, Session session );
+    public TObjects select( TSelectors selectors, Session session );
 }
