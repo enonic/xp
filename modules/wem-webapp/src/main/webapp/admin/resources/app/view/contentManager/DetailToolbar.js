@@ -56,7 +56,12 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
                 iconCls: 'icon-lightbulb-on-24',
                 enableToggle: true,
                 pressed: true
+            },
+            {
+                text: 'Close',
+                action: 'closeContent'
             }
+
         ];
 
         this.callParent(arguments);

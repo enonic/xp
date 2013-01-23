@@ -43,6 +43,11 @@ Ext.define('Admin.controller.contentManager.DetailToolbarController', {
                 click: function (el, e) {
 
                 }
+            },
+            'contentDetailToolbar *[action=closeContent]': {
+                click: function (el, e) {
+                    this.getCmsTabPanel().getActiveTab().close();
+                }
             }
 
 
