@@ -66,6 +66,24 @@ public final class ContentPaths
         return new ContentPaths( ImmutableSet.copyOf( tmp ) );
     }
 
+    @Override
+    public int hashCode()
+    {
+        return this.set.hashCode();
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        return ( o instanceof ContentPaths ) && this.set.equals( ( (ContentPaths) o ).set );
+    }
+
+    @Override
+    public String toString()
+    {
+        return this.set.toString();
+    }
+
     public static ContentPaths empty()
     {
         final ImmutableSet<ContentPath> list = ImmutableSet.of();

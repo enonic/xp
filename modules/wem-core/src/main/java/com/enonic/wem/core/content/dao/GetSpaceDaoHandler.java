@@ -1,0 +1,76 @@
+package com.enonic.wem.core.content.dao;
+
+import java.util.List;
+
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import com.google.common.collect.Lists;
+
+import com.enonic.wem.api.content.space.Space;
+import com.enonic.wem.api.content.space.SpaceName;
+import com.enonic.wem.api.content.space.Spaces;
+import com.enonic.wem.core.jcr.JcrHelper;
+
+import static com.enonic.wem.api.content.space.Space.newSpace;
+import static com.enonic.wem.core.jcr.JcrHelper.getNodeOrNull;
+
+final class GetSpaceDaoHandler
+    extends AbstractSpaceDaoHandler
+{
+    GetSpaceDaoHandler( final Session session )
+    {
+        super( session );
+    }
+
+    Space getSpace( final SpaceName spaceName )
+        throws RepositoryException
+    {
+        final Node spaceNode = getSpaceNode( session, spaceName );
+        return buildSpace( spaceNode );
+    }
+
+    Spaces getAllSpaces()
+        throws RepositoryException
+    {
+        final Node rootNode = session.getRootNode();
+        final Node spacesNode = JcrHelper.getNodeOrNull( rootNode, SPACES_PATH );
+        final List<Space> spaceList = Lists.newArrayList();
+        final NodeIterator spaceNodes = spacesNode.getNodes();
+        while ( spaceNodes.hasNext() )
+        {
+            final Node spaceNode = spaceNodes.nextNode();
+            final Space space = buildSpace( spaceNode );
+            if ( space != null )
+            {
+                spaceList.add( space );
+            }
+        }
+        return Spaces.from( spaceList );
+    }
+
+    private Space buildSpace( final Node spaceNode )
+        throws RepositoryException
+    {
+        if ( spaceNode == null )
+        {
+            return null;
+        }
+
+        final Space.Builder spaceBuilder = newSpace();
+        spaceJcrMapper.toSpace( spaceNode, spaceBuilder );
+        spaceBuilder.rootContent( ContentIdFactory.from( spaceNode.getNode( SPACE_CONTENT_ROOT_NODE ) ) );
+        return spaceBuilder.build();
+    }
+
+    private Node getSpaceNode( final Session session, final SpaceName spaceName )
+        throws RepositoryException
+    {
+        final String path = SPACES_PATH + spaceName.name();
+        final Node rootNode = session.getRootNode();
+        return getNodeOrNull( rootNode, path );
+    }
+
+}
