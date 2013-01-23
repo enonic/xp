@@ -15,7 +15,6 @@ import com.enonic.wem.api.content.space.Spaces;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 import static com.enonic.wem.api.content.space.Space.newSpace;
-import static com.enonic.wem.core.jcr.JcrHelper.getNodeOrNull;
 
 final class GetSpaceDaoHandler
     extends AbstractSpaceDaoHandler
@@ -28,7 +27,7 @@ final class GetSpaceDaoHandler
     Space getSpace( final SpaceName spaceName )
         throws RepositoryException
     {
-        final Node spaceNode = getSpaceNode( session, spaceName );
+        final Node spaceNode = getSpaceNode( spaceName );
         return buildSpace( spaceNode );
     }
 
@@ -63,14 +62,6 @@ final class GetSpaceDaoHandler
         spaceJcrMapper.toSpace( spaceNode, spaceBuilder );
         spaceBuilder.rootContent( ContentIdFactory.from( spaceNode.getNode( SPACE_CONTENT_ROOT_NODE ) ) );
         return spaceBuilder.build();
-    }
-
-    private Node getSpaceNode( final Session session, final SpaceName spaceName )
-        throws RepositoryException
-    {
-        final String path = SPACES_PATH + spaceName.name();
-        final Node rootNode = session.getRootNode();
-        return getNodeOrNull( rootNode, path );
     }
 
 }

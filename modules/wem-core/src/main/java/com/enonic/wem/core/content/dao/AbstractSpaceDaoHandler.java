@@ -1,8 +1,13 @@
 package com.enonic.wem.core.content.dao;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.enonic.wem.api.content.space.SpaceName;
 import com.enonic.wem.core.jcr.JcrConstants;
+
+import static com.enonic.wem.core.jcr.JcrHelper.getNodeOrNull;
 
 abstract class AbstractSpaceDaoHandler
 {
@@ -19,5 +24,14 @@ abstract class AbstractSpaceDaoHandler
     AbstractSpaceDaoHandler( final Session session )
     {
         this.session = session;
+    }
+
+
+    protected Node getSpaceNode( final SpaceName spaceName )
+        throws RepositoryException
+    {
+        final String path = SPACES_PATH + spaceName.name();
+        final Node rootNode = this.session.getRootNode();
+        return getNodeOrNull( rootNode, path );
     }
 }

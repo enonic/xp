@@ -67,8 +67,8 @@ public final class Space
         final Space that = (Space) o;
         return Objects.equal( this.name, that.name ) &&
             Objects.equal( this.displayName, that.displayName ) &&
-            this.createdTime == that.createdTime || ( this.createdTime != null && this.createdTime.isEqual( that.createdTime ) ) &&
-            this.modifiedTime == that.modifiedTime || ( this.modifiedTime != null && this.modifiedTime.isEqual( that.modifiedTime ) ) &&
+            ( this.createdTime == that.createdTime || ( this.createdTime != null && this.createdTime.isEqual( that.createdTime ) ) ) &&
+            ( this.modifiedTime == that.modifiedTime || ( this.modifiedTime != null && this.modifiedTime.isEqual( that.modifiedTime ) ) ) &&
             Objects.equal( this.rootContent, that.rootContent );
     }
 

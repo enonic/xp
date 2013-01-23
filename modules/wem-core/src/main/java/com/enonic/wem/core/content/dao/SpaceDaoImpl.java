@@ -53,4 +53,30 @@ public final class SpaceDaoImpl
             throw new RuntimeException( e );
         }
     }
+
+    @Override
+    public void updateSpace( final Space space, final Session session )
+    {
+        try
+        {
+            new UpdateSpaceDaoHandler( session ).handle( space );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    @Override
+    public void deleteSpace( final SpaceName spaceName, final Session session )
+    {
+        try
+        {
+            new DeleteSpaceDaoHandler( session ).handle( spaceName );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
 }

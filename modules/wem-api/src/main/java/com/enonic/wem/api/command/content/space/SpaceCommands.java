@@ -12,4 +12,14 @@ public final class SpaceCommands
     {
         return new GetSpaces();
     }
+
+    public UpdateSpaces update()
+    {
+        return new UpdateSpaces();
+    }
+
+    public DeleteSpace delete()
+    {
+        return new DeleteSpace();
+    }
 }

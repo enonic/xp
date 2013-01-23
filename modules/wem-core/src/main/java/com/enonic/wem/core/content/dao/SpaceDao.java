@@ -13,4 +13,8 @@ public interface SpaceDao
     Space getSpace( SpaceName spaceName, Session session );
 
     Spaces getAllSpaces( Session session );
+
+    void updateSpace( Space space, Session session );
+
+    void deleteSpace( SpaceName spaceName, Session session );
 }
