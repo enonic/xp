@@ -9,9 +9,9 @@ import static com.enonic.wem.api.content.type.ContentType.newContentType;
 final class SetContentTypeIconEditor
     implements ContentTypeEditor
 {
-    protected final byte[] icon;
+    private final byte[] icon;
 
-    public SetContentTypeIconEditor( final byte[] icon )
+    SetContentTypeIconEditor( final byte[] icon )
     {
         this.icon = icon;
     }

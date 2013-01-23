@@ -2,7 +2,7 @@
     "name": "Article2",
     "module": "News",
     "qualifiedName": "News:Article2",
-    "displayName": null,
+    "displayName": "Article2",
     "superType": "System:structured",
     "isAbstract": false,
     "isFinal": false,

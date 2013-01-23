@@ -40,7 +40,6 @@ public class GetAccountGraphJsonHandlerTest
     public void testGetUserGraph()
         throws Exception
     {
-        mockCurrentContextHttpRequest();
         AccountKey userKey = AccountKey.from( "user:enonic:aro" );
         AccountKey groupKey = AccountKey.from( "group:enonic:Togservice" );
         Mockito.when( client.execute( Commands.account().findMemberships().key( userKey ) ) ).thenReturn( AccountKeys.from( groupKey ) );
@@ -56,7 +55,6 @@ public class GetAccountGraphJsonHandlerTest
     public void testGetGroupGraph()
         throws Exception
     {
-        mockCurrentContextHttpRequest();
         AccountKey userKey = AccountKey.from( "user:enonic:aro" );
         AccountKey groupKey = AccountKey.from( "group:enonic:Togservice" );
         Mockito.when( client.execute( Commands.account().findMembers().key( groupKey ) ) ).thenReturn( AccountKeys.from( userKey ) );
@@ -70,7 +68,6 @@ public class GetAccountGraphJsonHandlerTest
     public void testGetRoleGraph()
         throws Exception
     {
-        mockCurrentContextHttpRequest();
         AccountKey userKey = AccountKey.from( "user:enonic:aro" );
         AccountKey groupKey = AccountKey.from( "group:enonic:Togservice" );
         AccountKey roleKey = AccountKey.from( "role:enonic:admin" );

@@ -4,6 +4,11 @@
     background: transparent url("../images/icons/16x16/cubes.png") 0 0 no-repeat !important;
 }
 
+.icon-pencil-16 {
+    background-image: url("../images/icons/16x16/edit.png") !important;
+}
+
+
 /*---- 24 px icons -----*/
 
 .icon-group-24 {

@@ -19,7 +19,7 @@ public final class ContentTypeDaoImpl
 {
 
     @Override
-    public void createContentType( final ContentType contentType, final Session session )
+    public void create( final ContentType contentType, final Session session )
     {
         try
         {
@@ -32,7 +32,7 @@ public final class ContentTypeDaoImpl
     }
 
     @Override
-    public void updateContentType( final ContentType contentType, final Session session )
+    public void update( final ContentType contentType, final Session session )
     {
         try
         {
@@ -45,7 +45,7 @@ public final class ContentTypeDaoImpl
     }
 
     @Override
-    public void deleteContentType( final QualifiedContentTypeName qualifiedContentTypeName, final Session session )
+    public void delete( final QualifiedContentTypeName qualifiedContentTypeName, final Session session )
     {
         try
         {
@@ -58,7 +58,7 @@ public final class ContentTypeDaoImpl
     }
 
     @Override
-    public ContentTypes retrieveAllContentTypes( final Session session )
+    public ContentTypes selectAll( final Session session )
     {
         try
         {
@@ -71,7 +71,7 @@ public final class ContentTypeDaoImpl
     }
 
     @Override
-    public ContentTypes retrieveContentTypes( final QualifiedContentTypeNames qualifiedContentTypeNames, final Session session )
+    public ContentTypes select( final QualifiedContentTypeNames qualifiedContentTypeNames, final Session session )
     {
         try
         {

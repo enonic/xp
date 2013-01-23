@@ -6,7 +6,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.api.AbstractImmutableEntityList;
+import com.enonic.wem.api.util.AbstractImmutableEntityList;
 
 public final class Accounts
     extends AbstractImmutableEntityList<Account>

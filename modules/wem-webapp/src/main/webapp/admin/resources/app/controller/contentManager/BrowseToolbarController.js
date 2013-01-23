@@ -9,6 +9,7 @@ Ext.define('Admin.controller.contentManager.BrowseToolbarController', {
     models: [
     ],
     views: [
+        // Why does this point to wizard panel instead of BrowseToolbar?
         'Admin.view.contentManager.wizard.ContentWizardPanel'
     ],
 

@@ -5,9 +5,9 @@ import com.enonic.wem.api.content.type.form.Mixin;
 final class SetMixinEditor
     implements MixinEditor
 {
-    protected final Mixin source;
+    private final Mixin source;
 
-    public SetMixinEditor( final Mixin source )
+    SetMixinEditor( final Mixin source )
     {
         this.source = source;
     }

@@ -36,6 +36,8 @@ public abstract class AbstractRpcHandlerTest
         this.handler = createHandler();
         this.processor = new JsonRpcProcessorImpl();
         this.processor.setHandlers( this.handler );
+
+        mockCurrentContextHttpRequest();
     }
 
     protected abstract JsonRpcHandler createHandler()
@@ -194,7 +196,7 @@ public abstract class AbstractRpcHandlerTest
         assertEquals( expectedStr, actualStr );
     }
 
-    protected void mockCurrentContextHttpRequest()
+    private void mockCurrentContextHttpRequest()
     {
         final HttpServletRequest req = new MockHttpServletRequest();
         final ServletRequestAttributes attrs = new ServletRequestAttributes( req );

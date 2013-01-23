@@ -45,12 +45,12 @@ public final class GetMixinsHandler
 
     private Mixins getAllMixins( final Session session )
     {
-        return mixinDao.retrieveAllMixins( session );
+        return mixinDao.selectAll( session );
     }
 
     private Mixins getMixins( final QualifiedMixinNames qualifiedMixinNames, final Session session )
     {
-        return mixinDao.retrieveMixins( qualifiedMixinNames, session );
+        return mixinDao.select( qualifiedMixinNames, session );
     }
 
     @Autowired

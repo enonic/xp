@@ -6,8 +6,7 @@ import java.io.ByteArrayInputStream;
 import javax.imageio.ImageIO;
 
 import com.enonic.wem.api.content.type.ContentType;
-
-import com.enonic.cms.core.image.filter.effect.ScaleSquareFilter;
+import com.enonic.wem.core.image.filter.effect.ScaleSquareFilter;
 
 final class ContentTypeImageHelper
 {
@@ -20,7 +19,7 @@ final class ContentTypeImageHelper
     public BufferedImage getContentTypeIcon( final ContentType contentType, final int size )
         throws Exception
     {
-        if ( ( contentType == null ) || ( contentType.getIcon() == null ) )
+        if ( ( contentType == null ) || ( contentType.getIcon() == null ) || ( contentType.getIcon().length == 0 ) )
         {
             return null;
         }

@@ -14,7 +14,6 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
-import com.enonic.wem.core.content.dao.ContentDaoConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 
@@ -57,7 +56,7 @@ final class RetrieveContentTypeDaoHandler
         throws RepositoryException
     {
         final Node rootNode = session.getRootNode();
-        final Node contentTypesNode = JcrHelper.getNodeOrNull( rootNode, ContentDaoConstants.CONTENT_TYPES_PATH );
+        final Node contentTypesNode = JcrHelper.getNodeOrNull( rootNode, ContentTypeDao.CONTENT_TYPES_PATH );
 
         final List<ContentType> contentTypeList = Lists.newArrayList();
         final NodeIterator contentTypeModuleNodes = contentTypesNode.getNodes();

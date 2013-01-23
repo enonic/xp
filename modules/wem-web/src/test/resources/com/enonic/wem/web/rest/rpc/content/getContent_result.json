@@ -23,6 +23,7 @@
                 "type": "Text",
                 "value": "value2"
             }
-        ]
+        ],
+        "iconUrl": "http://localhost/admin/rest/content-type/image/myModule:myType"
     }
 }

@@ -11,10 +11,12 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jdom.Document;
 
-import com.enonic.cms.framework.util.JDOMUtil;
+import com.enonic.wem.core.util.JdomHelper;
 
 public class AbstractSerializerTest
 {
+    private final JdomHelper jdomHelper = new JdomHelper();
+
     protected String getXmlAsString( String fileName )
     {
         try
@@ -25,8 +27,8 @@ public class AbstractSerializerTest
                 throw new IllegalArgumentException( "File not found: " + fileName );
             }
 
-            Document document = JDOMUtil.parseDocument( resource.openStream() );
-            return JDOMUtil.prettyPrintDocument( document );
+            Document document = this.jdomHelper.parse( resource.openStream() );
+            return this.jdomHelper.serialize( document, true );
         }
         catch ( Exception e )
         {

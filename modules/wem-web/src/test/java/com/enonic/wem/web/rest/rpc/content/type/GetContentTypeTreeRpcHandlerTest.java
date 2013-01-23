@@ -9,12 +9,12 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.type.GetContentTypeTree;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.ContentTypeTreeNode;
-import com.enonic.wem.api.content.type.ContentTypeTree;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.api.support.tree.Tree;
+import com.enonic.wem.api.support.tree.TreeNode;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
@@ -47,7 +47,6 @@ public class GetContentTypeTreeRpcHandlerTest
         throws Exception
     {
         // setup
-        mockCurrentContextHttpRequest();
         final Input inputText1 = newInput().name( "inputText1" ).type( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
             "Help text line 1" ).required( true ).build();
         final Input inputText2 =
@@ -78,10 +77,10 @@ public class GetContentTypeTreeRpcHandlerTest
             superType( new QualifiedContentTypeName( "myModule:myType" ) ).
             build();
 
-        final ContentTypeTree contentTypesTree = new ContentTypeTree( Lists.newArrayList( contentType1 ) );
-        final ContentTypeTreeNode contentTypeNode2 = contentTypesTree.getFirstChild().add( contentType2 );
-        final ContentTypeTreeNode contentTypeNode3 = contentTypeNode2.add( contentType3 );
-        Mockito.when( client.execute( isA( GetContentTypeTree.class ) ) ).thenReturn( contentTypesTree );
+        final Tree<ContentType> contentTypeTree = new Tree<ContentType>( Lists.newArrayList( contentType1 ) );
+        final TreeNode<ContentType> contentTypeNode2 = contentTypeTree.getRootNode( 0 ).addChild( contentType2 );
+        contentTypeNode2.addChild( contentType3 );
+        Mockito.when( client.execute( isA( GetContentTypeTree.class ) ) ).thenReturn( contentTypeTree );
 
         // verify
         final ObjectNode requestJson = objectNode();

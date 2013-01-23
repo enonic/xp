@@ -2,16 +2,15 @@ package com.enonic.wem.web.rest.resource.content;
 
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.enonic.wem.api.content.type.ContentType;
+import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 
 public final class ContentTypeImageUriResolver
 {
-    public static String resolve( final ContentType contentType )
+    public static String resolve( final QualifiedContentTypeName contentTypeName )
     {
-        final String contentTypeName = contentType.getQualifiedName().toString();
         return ServletUriComponentsBuilder.fromCurrentContextPath().
             path( "/admin/rest/content-type/image/" ).
-            path( contentTypeName ).
+            path( String.valueOf( contentTypeName ) ).
             build().toString();
     }
 }

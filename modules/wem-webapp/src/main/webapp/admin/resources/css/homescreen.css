@@ -95,6 +95,7 @@
     color: #d2d6d6;
 }
 
+/** Center */
 
 #admin-home-center {
     width: 775px;
@@ -106,6 +107,8 @@
     bottom: 0;
 }
 
+/** Left column */
+
 #admin-home-center #admin-home-left-column {
     position: absolute;
     width: 480px;
@@ -116,10 +119,11 @@
     color: #fff !important;
 }
 
+/** Right column */
+
 #admin-home-center #admin-home-right-column {
     position: absolute;
     width: 295px;
-    padding: 265px 45px 0 45px;
     background: rgba(0, 0, 0, 0.2);
     top: 0;
     right: 0;
@@ -134,16 +138,28 @@
 
 #admin-home-links-container {
     position: absolute;
+    width: 100%;
     text-align: center;
     bottom: 30px;
+}
+
+/** Common */
+
+#admin-home-login-form,
+#admin-home-app-selector,
+#admin-home-app-info-container {
+    position: absolute;
+    top: 24%;
+}
+
+#admin-home-login-form,
+#admin-home-app-info-container {
+    padding: 0 45px;
 }
 
 /** App selector */
 
 #admin-home-app-selector {
-    position: absolute;
-    left: 0;
-    top: 235px;
     color: #fff;
 
     opacity: 0;
@@ -169,11 +185,6 @@
 
 #admin-home-app-selector-search-input-container {
     margin-bottom: 10px;
-}
-
-#admin-home-app-info-container {
-    /*visibility: hidden;
-    opacity: 0;*/
 }
 
 #admin-home-app-info-name {
@@ -217,18 +228,3 @@
 .admin-home-app-tile-over {
     background-color: #012056;
 }
-
-/*
-#appFrames {
-    opacity: 1;
-    transition: all .3s ease-in-out;
-    -webkit-transition: all .3s ease-in-out;
-}
-
-
-#appFrames.show {
-    opacity: .7;
-    transform: scale(.9);
-     -webkit-transform: scale(.9);
-}
-*/

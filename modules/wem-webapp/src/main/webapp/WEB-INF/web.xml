@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" metadata-complete="true">
 
   <listener>
-    <listener-class>com.enonic.cms.web.boot.BootContextListener</listener-class>
+    <listener-class>com.enonic.wem.web.boot.BootContextListener</listener-class>
   </listener>
 
+  <listener>
+    <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+  </listener>
+
+  <!--
   <filter>
     <filter-name>compositeFilter</filter-name>
     <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -15,13 +20,7 @@
   <filter-mapping>
     <filter-name>compositeFilter</filter-name>
     <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-  <servlet>
-    <servlet-name>portal</servlet-name>
-    <servlet-class>com.enonic.cms.web.portal.PortalServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
+  </filter-mapping>-->
 
   <servlet>
     <servlet-name>rest</servlet-name>
@@ -29,32 +28,16 @@
     <load-on-startup>2</load-on-startup>
   </servlet>
 
-  <servlet>
-    <servlet-name>dav</servlet-name>
-    <servlet-class>com.enonic.cms.web.webdav.SimpleDavServlet</servlet-class>
-    <load-on-startup>3</load-on-startup>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>portal</servlet-name>
-    <url-pattern>/site/*</url-pattern>
-  </servlet-mapping>
-
   <servlet-mapping>
     <servlet-name>rest</servlet-name>
     <url-pattern>/admin/rest/*</url-pattern>
   </servlet-mapping>
 
-  <servlet-mapping>
-    <servlet-name>dav</servlet-name>
-    <url-pattern>/dav/*</url-pattern>
-  </servlet-mapping>
-
-  <resource-ref>
+  <!--resource-ref>
     <res-ref-name>jdbc/cms</res-ref-name>
     <res-type>javax.sql.DataSource</res-type>
     <res-auth>Container</res-auth>
-  </resource-ref>
+  </resource-ref-->
 
   <mime-mapping>
     <extension>json</extension>

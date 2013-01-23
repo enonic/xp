@@ -7,8 +7,8 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.ContentTypeTree;
-import com.enonic.wem.api.content.type.ContentTypeTreeNode;
+import com.enonic.wem.api.support.tree.Tree;
+import com.enonic.wem.api.support.tree.TreeNode;
 import com.enonic.wem.core.content.type.ContentTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
 import com.enonic.wem.web.rest.resource.content.ContentTypeImageUriResolver;
@@ -18,52 +18,50 @@ public class GetContentTypeTreeJsonResult
 {
     private final static ContentTypeJsonSerializer contentTypeSerializer = new ContentTypeJsonSerializer();
 
-    private ContentTypeTree contentTypeTree;
+    private Tree<ContentType> tree;
 
-    GetContentTypeTreeJsonResult( final ContentTypeTree contentTypeTree )
+    GetContentTypeTreeJsonResult( final Tree<ContentType> tree )
     {
-        Preconditions.checkNotNull( contentTypeTree );
-        this.contentTypeTree = contentTypeTree;
+        Preconditions.checkNotNull( tree );
+        this.tree = tree;
     }
 
     @Override
     protected void serialize( final ObjectNode json )
     {
-        json.put( "total", contentTypeTree.deepSize() );
-        json.put( "contentTypes", serialize( contentTypeTree ) );
+        json.put( "total", tree.deepSize() );
+        json.put( "contentTypes", serializeTree() );
     }
 
-    private JsonNode serialize( final ContentTypeTree tree )
+    private JsonNode serializeTree()
     {
         final ArrayNode contentTypesNode = arrayNode();
 
-        for ( ContentTypeTreeNode branch : tree.getChildren() )
+        for ( final TreeNode<ContentType> rootNode : tree )
         {
-            contentTypesNode.add( serializeBranch( branch ) );
+            contentTypesNode.add( serializeNode( rootNode ) );
         }
 
         return contentTypesNode;
     }
 
-    private JsonNode serializeBranch( final ContentTypeTreeNode branch )
+    private JsonNode serializeNode( final TreeNode<ContentType> node )
     {
-        final ObjectNode contentTypeJson = serializeContentType( branch );
+        final ObjectNode contentTypeJson = serializeContentType( node.getObject() );
         final ArrayNode childArrayNode = contentTypeJson.putArray( "contentTypes" );
-        contentTypeJson.put( "hasChildren", branch.hasChildren() );
+        contentTypeJson.put( "hasChildren", node.hasChildren() );
 
-        for ( ContentTypeTreeNode child : branch.getChildren() )
+        for ( final TreeNode<ContentType> child : node )
         {
-            childArrayNode.add( serializeBranch( child ) );
+            childArrayNode.add( serializeNode( child ) );
         }
         return contentTypeJson;
     }
 
-
-    private ObjectNode serializeContentType( final ContentTypeTreeNode contentTypeNode )
+    private ObjectNode serializeContentType( final ContentType contentType )
     {
-        final ContentType contentType = contentTypeNode.getContentType();
         final ObjectNode contentTypeJson = (ObjectNode) contentTypeSerializer.toJson( contentType );
-        contentTypeJson.put( "iconUrl", ContentTypeImageUriResolver.resolve( contentType ) );
+        contentTypeJson.put( "iconUrl", ContentTypeImageUriResolver.resolve( contentType.getQualifiedName() ) );
         return contentTypeJson;
     }
 }

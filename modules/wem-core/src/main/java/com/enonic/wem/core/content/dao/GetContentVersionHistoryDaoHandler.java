@@ -16,6 +16,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.versioning.ContentVersion;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 
+import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_PREFIX;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyLong;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyString;
@@ -46,7 +47,7 @@ final class GetContentVersionHistoryDaoHandler
         throws RepositoryException
     {
         final Node contentVersionNode = getContentVersionHistoryNode( contentNode );
-        final NodeIterator versionNodes = contentVersionNode.getNodes( ContentDaoConstants.CONTENT_VERSION_PREFIX + "*" );
+        final NodeIterator versionNodes = contentVersionNode.getNodes( CONTENT_VERSION_PREFIX + "*" );
 
         final ContentId contentId = ContentIdFactory.from( contentNode );
 

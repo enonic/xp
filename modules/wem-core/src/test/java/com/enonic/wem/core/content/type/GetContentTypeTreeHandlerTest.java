@@ -9,17 +9,15 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.type.GetContentTypeTree;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.ContentTypeTree;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
@@ -64,26 +62,20 @@ public class GetContentTypeTreeHandlerTest
             superType( new QualifiedContentTypeName( "myModule:myType" ) ).
             build();
         final ContentTypes contentTypes = ContentTypes.from( contentType1, contentType2, contentType3 );
-        Mockito.when( contentTypeDao.retrieveAllContentTypes( any( Session.class ) ) ).thenReturn( contentTypes );
+        Mockito.when( contentTypeDao.selectAll( any( Session.class ) ) ).thenReturn( contentTypes );
 
         // exercise
         final GetContentTypeTree command = Commands.contentType().getTree();
         this.handler.handle( this.context, command );
 
         // verify
-        verify( contentTypeDao, atLeastOnce() ).retrieveAllContentTypes( Mockito.any( Session.class ) );
-        final ContentTypeTree tree = command.getResult();
+        verify( contentTypeDao, atLeastOnce() ).selectAll( Mockito.any( Session.class ) );
+        final Tree<ContentType> tree = command.getResult();
         assertEquals( 1, tree.size() );
         assertEquals( 3, tree.deepSize() );
-        assertEquals( "System:unstructured", tree.getFirstChild().getContentType().getQualifiedName().toString() );
-        assertEquals( "myModule:myType", tree.getFirstChild().getFirstChild().getContentType().getQualifiedName().toString() );
-        assertEquals( "myModule:subType",
-                      tree.getFirstChild().getFirstChild().getFirstChild().getContentType().getQualifiedName().toString() );
+        assertEquals( "System:unstructured", tree.getRootNode( 0 ).getObject().getQualifiedName().toString() );
+        assertEquals( "myModule:myType", tree.getRootNode( 0 ).getChild( 0 ).getObject().getQualifiedName().toString() );
+        assertEquals( "myModule:subType", tree.getRootNode( 0 ).getChild( 0 ).getChild( 0 ).getObject().getQualifiedName().toString() );
 
-        assertTrue( tree.hasChildren() );
-        assertTrue( tree.getFirstChild().hasChildren() );
-        assertNotNull( tree.getChildren() );
-        assertNotNull( tree.getFirstChild().getChildren() );
-        assertEquals( tree.getFirstChild(), tree.getFirstChild().getFirstChild().parent() );
     }
 }

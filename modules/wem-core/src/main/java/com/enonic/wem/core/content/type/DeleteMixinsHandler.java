@@ -41,7 +41,7 @@ public final class DeleteMixinsHandler
                 }
                 else
                 {*/
-                mixinDao.deleteMixin( qualifiedMixinName, context.getJcrSession() );
+                mixinDao.delete( qualifiedMixinName, context.getJcrSession() );
                 mixinDeletionResult.success( qualifiedMixinName );
                 context.getJcrSession().save();
                 //}

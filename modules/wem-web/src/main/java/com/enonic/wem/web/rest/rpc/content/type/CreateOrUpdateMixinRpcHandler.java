@@ -46,15 +46,15 @@ public class CreateOrUpdateMixinRpcHandler
 
         if ( !mixinExists( mixin.getQualifiedName() ) )
         {
-            final CreateMixin createMixin = mixin().create().mixin( mixin );
-            client.execute( createMixin );
+            final CreateMixin createCommand = mixin().create().mixin( mixin );
+            client.execute( createCommand );
             context.setResult( CreateOrUpdateMixinJsonResult.created() );
         }
         else
         {
             final QualifiedMixinNames names = QualifiedMixinNames.from( mixin.getQualifiedName() );
-            final UpdateMixins updateMixins = mixin().update().names( names ).editor( setMixin( mixin ) );
-            client.execute( updateMixins );
+            final UpdateMixins updateCommand = mixin().update().names( names ).editor( setMixin( mixin ) );
+            client.execute( updateCommand );
             context.setResult( CreateOrUpdateMixinJsonResult.updated() );
         }
     }

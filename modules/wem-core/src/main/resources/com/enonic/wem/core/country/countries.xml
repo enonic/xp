@@ -1,0 +1,1556 @@
+<countries country-code-type="ISO 3166-1 alpha-2">
+  <country code="AF">
+    <english-name>AFGHANISTAN</english-name>
+    <local-name>AFGHANISTAN</local-name>
+    <calling-code>93</calling-code>
+  </country>
+  <country code="AX">
+    <english-name>ÅLAND ISLANDS</english-name>
+    <local-name>ÅLAND ISLANDS</local-name>
+    <calling-code>358</calling-code>
+  </country>
+  <country code="AL">
+    <english-name>ALBANIA</english-name>
+    <local-name>ALBANIA</local-name>
+    <calling-code>355</calling-code>
+  </country>
+  <country code="DZ">
+    <english-name>ALGERIA</english-name>
+    <local-name>ALGERIA</local-name>
+    <calling-code>213</calling-code>
+  </country>
+  <country code="AS">
+    <english-name>AMERICAN SAMOA</english-name>
+    <local-name>AMERICAN SAMOA</local-name>
+    <calling-code>1-684</calling-code>
+  </country>
+  <country code="AD">
+    <english-name>ANDORRA</english-name>
+    <local-name>ANDORRA</local-name>
+    <calling-code>376</calling-code>
+  </country>
+  <country code="AO">
+    <english-name>ANGOLA</english-name>
+    <local-name>ANGOLA</local-name>
+    <calling-code>244</calling-code>
+  </country>
+  <country code="AI">
+    <english-name>ANGUILLA</english-name>
+    <local-name>ANGUILLA</local-name>
+    <calling-code>1-264</calling-code>
+  </country>
+  <country code="AQ">
+    <english-name>ANTARCTICA</english-name>
+    <local-name>ANTARCTICA</local-name>
+    <calling-code>672</calling-code>
+  </country>
+  <country code="AG">
+    <english-name>ANTIGUA AND BARBUDA</english-name>
+    <local-name>ANTIGUA AND BARBUDA</local-name>
+    <calling-code>1-268</calling-code>
+  </country>
+  <country code="AR">
+    <english-name>ARGENTINA</english-name>
+    <local-name>ARGENTINA</local-name>
+    <calling-code>54</calling-code>
+  </country>
+  <country code="AM">
+    <english-name>ARMENIA</english-name>
+    <local-name>ARMENIA</local-name>
+    <calling-code>374</calling-code>
+  </country>
+  <country code="AW">
+    <english-name>ARUBA</english-name>
+    <local-name>ARUBA</local-name>
+    <calling-code>297</calling-code>
+  </country>
+  <country code="AU">
+    <english-name>AUSTRALIA</english-name>
+    <local-name>AUSTRALIA</local-name>
+    <calling-code>61</calling-code>
+  </country>
+  <country code="AT">
+    <english-name>AUSTRIA</english-name>
+    <local-name>AUSTRIA</local-name>
+    <calling-code>43</calling-code>
+  </country>
+  <country code="AZ">
+    <english-name>AZERBAIJAN</english-name>
+    <local-name>AZERBAIJAN</local-name>
+    <calling-code>994</calling-code>
+  </country>
+  <country code="BS">
+    <english-name>BAHAMAS</english-name>
+    <local-name>BAHAMAS</local-name>
+    <calling-code>1-242</calling-code>
+  </country>
+  <country code="BH">
+    <english-name>BAHRAIN</english-name>
+    <local-name>BAHRAIN</local-name>
+    <calling-code>973</calling-code>
+  </country>
+  <country code="BD">
+    <english-name>BANGLADESH</english-name>
+    <local-name>BANGLADESH</local-name>
+    <calling-code>880</calling-code>
+  </country>
+  <country code="BB">
+    <english-name>BARBADOS</english-name>
+    <local-name>BARBADOS</local-name>
+    <calling-code>1-246</calling-code>
+  </country>
+  <country code="BY">
+    <english-name>BELARUS</english-name>
+    <local-name>BELARUS</local-name>
+    <calling-code>375</calling-code>
+  </country>
+  <country code="BE">
+    <english-name>BELGIUM</english-name>
+    <local-name>BELGIUM</local-name>
+    <calling-code>32</calling-code>
+  </country>
+  <country code="BZ">
+    <english-name>BELIZE</english-name>
+    <local-name>BELIZE</local-name>
+    <calling-code>501</calling-code>
+  </country>
+  <country code="BJ">
+    <english-name>BENIN</english-name>
+    <local-name>BENIN</local-name>
+    <calling-code>229</calling-code>
+  </country>
+  <country code="BM">
+    <english-name>BERMUDA</english-name>
+    <local-name>BERMUDA</local-name>
+    <calling-code>1-441</calling-code>
+  </country>
+  <country code="BT">
+    <english-name>BHUTAN</english-name>
+    <local-name>BHUTAN</local-name>
+    <calling-code>975</calling-code>
+  </country>
+  <country code="BO">
+    <english-name>BOLIVIA, PLURINATIONAL STATE OF</english-name>
+    <local-name>BOLIVIA, PLURINATIONAL STATE OF</local-name>
+    <calling-code>591</calling-code>
+  </country>
+  <country code="BA">
+    <english-name>BOSNIA AND HERZEGOVINA</english-name>
+    <local-name>BOSNIA AND HERZEGOVINA</local-name>
+    <calling-code>387</calling-code>
+  </country>
+  <country code="BW">
+    <english-name>BOTSWANA</english-name>
+    <local-name>BOTSWANA</local-name>
+    <calling-code>267</calling-code>
+  </country>
+  <country code="BV">
+    <english-name>BOUVET ISLAND</english-name>
+    <local-name>BOUVET ISLAND</local-name>
+    <calling-code></calling-code>
+  </country>
+  <country code="BR">
+    <english-name>BRAZIL</english-name>
+    <local-name>BRAZIL</local-name>
+    <calling-code>55</calling-code>
+  </country>
+  <country code="IO">
+    <english-name>BRITISH INDIAN OCEAN TERRITORY</english-name>
+    <local-name>BRITISH INDIAN OCEAN TERRITORY</local-name>
+    <calling-code>246</calling-code>
+  </country>
+  <country code="BN">
+    <english-name>BRUNEI DARUSSALAM</english-name>
+    <local-name>BRUNEI DARUSSALAM</local-name>
+    <calling-code>673</calling-code>
+  </country>
+  <country code="BG">
+    <english-name>BULGARIA</english-name>
+    <local-name>BULGARIA</local-name>
+    <calling-code>359</calling-code>
+  </country>
+  <country code="BF">
+    <english-name>BURKINA FASO</english-name>
+    <local-name>BURKINA FASO</local-name>
+    <calling-code>226</calling-code>
+  </country>
+  <country code="BI">
+    <english-name>BURUNDI</english-name>
+    <local-name>BURUNDI</local-name>
+    <calling-code>257</calling-code>
+  </country>
+  <country code="KH">
+    <english-name>CAMBODIA</english-name>
+    <local-name>CAMBODIA</local-name>
+    <calling-code>855</calling-code>
+  </country>
+  <country code="CM">
+    <english-name>CAMEROON</english-name>
+    <local-name>CAMEROON</local-name>
+    <calling-code>237</calling-code>
+  </country>
+  <country code="CA">
+    <english-name>CANADA</english-name>
+    <local-name>CANADA</local-name>
+    <calling-code>1</calling-code>
+  </country>
+  <country code="CV">
+    <english-name>CAPE VERDE</english-name>
+    <local-name>CAPE VERDE</local-name>
+    <calling-code>238</calling-code>
+  </country>
+  <country code="KY">
+    <english-name>CAYMAN ISLANDS</english-name>
+    <local-name>CAYMAN ISLANDS</local-name>
+    <calling-code>1-345</calling-code>
+  </country>
+  <country code="CF">
+    <english-name>CENTRAL AFRICAN REPUBLIC</english-name>
+    <local-name>CENTRAL AFRICAN REPUBLIC</local-name>
+    <calling-code>236</calling-code>
+  </country>
+  <country code="TD">
+    <english-name>CHAD</english-name>
+    <local-name>CHAD</local-name>
+    <calling-code>235</calling-code>
+  </country>
+  <country code="CL">
+    <english-name>CHILE</english-name>
+    <local-name>CHILE</local-name>
+    <calling-code>56</calling-code>
+  </country>
+  <country code="CN">
+    <english-name>CHINA</english-name>
+    <local-name>中国</local-name>
+    <calling-code>86</calling-code>
+  </country>
+  <country code="CX">
+    <english-name>CHRISTMAS ISLAND</english-name>
+    <local-name>CHRISTMAS ISLAND</local-name>
+    <calling-code>61</calling-code>
+  </country>
+  <country code="CC">
+    <english-name>COCOS (KEELING) ISLANDS</english-name>
+    <local-name>COCOS (KEELING) ISLANDS</local-name>
+    <calling-code>61</calling-code>
+  </country>
+  <country code="CO">
+    <english-name>COLOMBIA</english-name>
+    <local-name>COLOMBIA</local-name>
+    <calling-code>57</calling-code>
+  </country>
+  <country code="KM">
+    <english-name>COMOROS</english-name>
+    <local-name>COMOROS</local-name>
+    <calling-code>269</calling-code>
+  </country>
+  <country code="CG">
+    <english-name>CONGO</english-name>
+    <local-name>CONGO</local-name>
+    <calling-code>242</calling-code>
+  </country>
+  <country code="CD">
+    <english-name>CONGO, THE DEMOCRATIC REPUBLIC OF THE</english-name>
+    <local-name>CONGO, THE DEMOCRATIC REPUBLIC OF THE</local-name>
+    <calling-code>243</calling-code>
+  </country>
+  <country code="CK">
+    <english-name>COOK ISLANDS</english-name>
+    <local-name>COOK ISLANDS</local-name>
+    <calling-code>682</calling-code>
+  </country>
+  <country code="CR">
+    <english-name>COSTA RICA</english-name>
+    <local-name>COSTA RICA</local-name>
+    <calling-code>506</calling-code>
+  </country>
+  <country code="CI">
+    <english-name>IVORY COAST</english-name>
+    <local-name>CÔTE D'IVOIRE</local-name>
+    <calling-code>225</calling-code>
+  </country>
+  <country code="HR">
+    <english-name>CROATIA</english-name>
+    <local-name>CROATIA</local-name>
+    <calling-code>385</calling-code>
+  </country>
+  <country code="CU">
+    <english-name>CUBA</english-name>
+    <local-name>CUBA</local-name>
+    <calling-code>53</calling-code>
+  </country>
+  <country code="CY">
+    <english-name>CYPRUS</english-name>
+    <local-name>CYPRUS</local-name>
+    <calling-code>357</calling-code>
+  </country>
+  <country code="CZ">
+    <english-name>CZECH REPUBLIC</english-name>
+    <local-name>CZECH REPUBLIC</local-name>
+    <calling-code>420</calling-code>
+  </country>
+  <country code="DK">
+    <english-name>DENMARK</english-name>
+    <local-name>DENMARK</local-name>
+    <calling-code>45</calling-code>
+  </country>
+  <country code="DJ">
+    <english-name>DJIBOUTI</english-name>
+    <local-name>DJIBOUTI</local-name>
+    <calling-code>253</calling-code>
+  </country>
+  <country code="DM">
+    <english-name>DOMINICA</english-name>
+    <local-name>DOMINICA</local-name>
+    <calling-code>1-767</calling-code>
+  </country>
+  <country code="DO">
+    <english-name>DOMINICAN REPUBLIC</english-name>
+    <local-name>DOMINICAN REPUBLIC</local-name>
+    <calling-code>1-809, 1-829, 1-849</calling-code>
+  </country>
+  <country code="EC">
+    <english-name>ECUADOR</english-name>
+    <local-name>ECUADOR</local-name>
+    <calling-code>593</calling-code>
+  </country>
+  <country code="EG">
+    <english-name>EGYPT</english-name>
+    <local-name>EGYPT</local-name>
+    <calling-code>20</calling-code>
+  </country>
+  <country code="SV">
+    <english-name>EL SALVADOR</english-name>
+    <local-name>EL SALVADOR</local-name>
+    <calling-code>503</calling-code>
+  </country>
+  <country code="GQ">
+    <english-name>EQUATORIAL GUINEA</english-name>
+    <local-name>EQUATORIAL GUINEA</local-name>
+    <calling-code>240</calling-code>
+  </country>
+  <country code="ER">
+    <english-name>ERITREA</english-name>
+    <local-name>ERITREA</local-name>
+    <calling-code>291</calling-code>
+  </country>
+  <country code="EE">
+    <english-name>ESTONIA</english-name>
+    <local-name>ESTONIA</local-name>
+    <calling-code>372</calling-code>
+  </country>
+  <country code="ET">
+    <english-name>ETHIOPIA</english-name>
+    <local-name>ETHIOPIA</local-name>
+    <calling-code>251</calling-code>
+  </country>
+  <country code="FK">
+    <english-name>FALKLAND ISLANDS (MALVINAS)</english-name>
+    <local-name>FALKLAND ISLANDS (MALVINAS)</local-name>
+    <calling-code>500</calling-code>
+  </country>
+  <country code="FO">
+    <english-name>FAROE ISLANDS</english-name>
+    <local-name>FAROE ISLANDS</local-name>
+    <calling-code>298</calling-code>
+  </country>
+  <country code="FJ">
+    <english-name>FIJI</english-name>
+    <local-name>FIJI</local-name>
+    <calling-code>679</calling-code>
+  </country>
+  <country code="FI">
+    <english-name>FINLAND</english-name>
+    <local-name>FINLAND</local-name>
+    <calling-code>358</calling-code>
+  </country>
+  <country code="FR">
+    <english-name>FRANCE</english-name>
+    <local-name>FRANCE</local-name>
+    <calling-code>33</calling-code>
+  </country>
+  <country code="GF">
+    <english-name>FRENCH GUIANA</english-name>
+    <local-name>FRENCH GUIANA</local-name>
+    <calling-code>594</calling-code>
+  </country>
+  <country code="PF">
+    <english-name>FRENCH POLYNESIA</english-name>
+    <local-name>FRENCH POLYNESIA</local-name>
+    <calling-code>689</calling-code>
+  </country>
+  <country code="TF">
+    <english-name>FRENCH SOUTHERN TERRITORIES</english-name>
+    <local-name>FRENCH SOUTHERN TERRITORIES</local-name>
+    <calling-code></calling-code>
+  </country>
+  <country code="GA">
+    <english-name>GABON</english-name>
+    <local-name>GABON</local-name>
+    <calling-code>241</calling-code>
+  </country>
+  <country code="GM">
+    <english-name>GAMBIA</english-name>
+    <local-name>GAMBIA</local-name>
+    <calling-code>220</calling-code>
+  </country>
+  <country code="GE">
+    <english-name>GEORGIA</english-name>
+    <local-name>GEORGIA</local-name>
+    <calling-code>995</calling-code>
+  </country>
+  <country code="DE">
+    <english-name>GERMANY</english-name>
+    <local-name>GERMANY</local-name>
+    <calling-code>49</calling-code>
+  </country>
+  <country code="GH">
+    <english-name>GHANA</english-name>
+    <local-name>GHANA</local-name>
+    <calling-code>233</calling-code>
+  </country>
+  <country code="GI">
+    <english-name>GIBRALTAR</english-name>
+    <local-name>GIBRALTAR</local-name>
+    <calling-code>350</calling-code>
+  </country>
+  <country code="GR">
+    <english-name>GREECE</english-name>
+    <local-name>GREECE</local-name>
+    <calling-code>30</calling-code>
+  </country>
+  <country code="GL">
+    <english-name>GREENLAND</english-name>
+    <local-name>GREENLAND</local-name>
+    <calling-code>299</calling-code>
+  </country>
+  <country code="GD">
+    <english-name>GRENADA</english-name>
+    <local-name>GRENADA</local-name>
+    <calling-code>1-473</calling-code>
+  </country>
+  <country code="GP">
+    <english-name>GUADELOUPE</english-name>
+    <local-name>GUADELOUPE</local-name>
+    <calling-code>590</calling-code>
+  </country>
+  <country code="GU">
+    <english-name>GUAM</english-name>
+    <local-name>GUAM</local-name>
+    <calling-code>1-671</calling-code>
+  </country>
+  <country code="GT">
+    <english-name>GUATEMALA</english-name>
+    <local-name>GUATEMALA</local-name>
+    <calling-code>502</calling-code>
+  </country>
+  <country code="GG">
+    <english-name>GUERNSEY</english-name>
+    <local-name>GUERNSEY</local-name>
+    <calling-code>44</calling-code>
+  </country>
+  <country code="GN">
+    <english-name>GUINEA</english-name>
+    <local-name>GUINEA</local-name>
+    <calling-code>224</calling-code>
+  </country>
+  <country code="GW">
+    <english-name>GUINEA-BISSAU</english-name>
+    <local-name>GUINEA-BISSAU</local-name>
+    <calling-code>245</calling-code>
+  </country>
+  <country code="GY">
+    <english-name>GUYANA</english-name>
+    <local-name>GUYANA</local-name>
+    <calling-code>592</calling-code>
+  </country>
+  <country code="HT">
+    <english-name>HAITI</english-name>
+    <local-name>HAITI</local-name>
+    <calling-code>509</calling-code>
+  </country>
+  <country code="HM">
+    <english-name>HEARD ISLAND AND MCDONALD ISLANDS</english-name>
+    <local-name>HEARD ISLAND AND MCDONALD ISLANDS</local-name>
+    <calling-code></calling-code>
+  </country>
+  <country code="VA">
+    <english-name>HOLY SEE (VATICAN CITY STATE)</english-name>
+    <local-name>HOLY SEE (VATICAN CITY STATE)</local-name>
+    <calling-code>39</calling-code>
+  </country>
+  <country code="HN">
+    <english-name>HONDURAS</english-name>
+    <local-name>HONDURAS</local-name>
+    <calling-code>504</calling-code>
+  </country>
+  <country code="HK">
+    <english-name>HONG KONG</english-name>
+    <local-name>HONG KONG</local-name>
+    <calling-code>852</calling-code>
+  </country>
+  <country code="HU">
+    <english-name>HUNGARY</english-name>
+    <local-name>HUNGARY</local-name>
+    <calling-code>36</calling-code>
+  </country>
+  <country code="IS">
+    <english-name>ICELAND</english-name>
+    <local-name>ICELAND</local-name>
+    <calling-code>354</calling-code>
+  </country>
+  <country code="IN">
+    <english-name>INDIA</english-name>
+    <local-name>INDIA</local-name>
+    <calling-code>91</calling-code>
+  </country>
+  <country code="ID">
+    <english-name>INDONESIA</english-name>
+    <local-name>INDONESIA</local-name>
+    <calling-code>62</calling-code>
+  </country>
+  <country code="IR">
+    <english-name>IRAN, ISLAMIC REPUBLIC OF</english-name>
+    <local-name>IRAN, ISLAMIC REPUBLIC OF</local-name>
+    <calling-code>98</calling-code>
+  </country>
+  <country code="IQ">
+    <english-name>IRAQ</english-name>
+    <local-name>IRAQ</local-name>
+    <calling-code>964</calling-code>
+  </country>
+  <country code="IE">
+    <english-name>IRELAND</english-name>
+    <local-name>IRELAND</local-name>
+    <calling-code>353</calling-code>
+  </country>
+  <country code="IM">
+    <english-name>ISLE OF MAN</english-name>
+    <local-name>ISLE OF MAN</local-name>
+    <calling-code>44</calling-code>
+  </country>
+  <country code="IL">
+    <english-name>ISRAEL</english-name>
+    <local-name>ISRAEL</local-name>
+    <calling-code>972</calling-code>
+  </country>
+  <country code="IT">
+    <english-name>ITALY</english-name>
+    <local-name>ITALY</local-name>
+    <calling-code>39</calling-code>
+  </country>
+  <country code="JM">
+    <english-name>JAMAICA</english-name>
+    <local-name>JAMAICA</local-name>
+    <calling-code>1-876</calling-code>
+  </country>
+  <country code="JP">
+    <english-name>JAPAN</english-name>
+    <local-name>JAPAN</local-name>
+    <calling-code>81</calling-code>
+  </country>
+  <country code="JE">
+    <english-name>JERSEY</english-name>
+    <local-name>JERSEY</local-name>
+    <calling-code>44</calling-code>
+  </country>
+  <country code="JO">
+    <english-name>JORDAN</english-name>
+    <local-name>JORDAN</local-name>
+    <calling-code>962</calling-code>
+  </country>
+  <country code="KZ">
+    <english-name>KAZAKHSTAN</english-name>
+    <local-name>KAZAKHSTAN</local-name>
+    <calling-code>7-7</calling-code>
+  </country>
+  <country code="KE">
+    <english-name>KENYA</english-name>
+    <local-name>KENYA</local-name>
+    <calling-code>254</calling-code>
+  </country>
+  <country code="KI">
+    <english-name>KIRIBATI</english-name>
+    <local-name>KIRIBATI</local-name>
+    <calling-code>686</calling-code>
+  </country>
+  <country code="KP">
+    <english-name>KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF</english-name>
+    <local-name>KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF</local-name>
+    <calling-code>850</calling-code>
+  </country>
+  <country code="KR">
+    <english-name>KOREA, REPUBLIC OF</english-name>
+    <local-name>KOREA, REPUBLIC OF</local-name>
+    <calling-code>82</calling-code>
+  </country>
+  <country code="KW">
+    <english-name>KUWAIT</english-name>
+    <local-name>KUWAIT</local-name>
+    <calling-code>965</calling-code>
+  </country>
+  <country code="KG">
+    <english-name>KYRGYZSTAN</english-name>
+    <local-name>KYRGYZSTAN</local-name>
+    <calling-code>996</calling-code>
+  </country>
+  <country code="LA">
+    <english-name>LAO PEOPLE'S DEMOCRATIC REPUBLIC</english-name>
+    <local-name>LAO PEOPLE'S DEMOCRATIC REPUBLIC</local-name>
+    <calling-code>856</calling-code>
+  </country>
+  <country code="LV">
+    <english-name>LATVIA</english-name>
+    <local-name>LATVIA</local-name>
+    <calling-code>371</calling-code>
+  </country>
+  <country code="LB">
+    <english-name>LEBANON</english-name>
+    <local-name>LEBANON</local-name>
+    <calling-code>961</calling-code>
+  </country>
+  <country code="LS">
+    <english-name>LESOTHO</english-name>
+    <local-name>LESOTHO</local-name>
+    <calling-code>266</calling-code>
+  </country>
+  <country code="LR">
+    <english-name>LIBERIA</english-name>
+    <local-name>LIBERIA</local-name>
+    <calling-code>231</calling-code>
+  </country>
+  <country code="LY">
+    <english-name>LIBYA</english-name>
+    <local-name>LIBYAN ARAB JAMAHIRIYA</local-name>
+    <calling-code>218</calling-code>
+  </country>
+  <country code="LI">
+    <english-name>LIECHTENSTEIN</english-name>
+    <local-name>LIECHTENSTEIN</local-name>
+    <calling-code>423</calling-code>
+  </country>
+  <country code="LT">
+    <english-name>LITHUANIA</english-name>
+    <local-name>LITHUANIA</local-name>
+    <calling-code>370</calling-code>
+  </country>
+  <country code="LU">
+    <english-name>LUXEMBOURG</english-name>
+    <local-name>LUXEMBOURG</local-name>
+    <calling-code>352</calling-code>
+  </country>
+  <country code="MO">
+    <english-name>MACAO</english-name>
+    <local-name>MACAO</local-name>
+    <calling-code>853</calling-code>
+  </country>
+  <country code="MK">
+    <english-name>MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF</english-name>
+    <local-name>MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF</local-name>
+    <calling-code>389</calling-code>
+  </country>
+  <country code="MG">
+    <english-name>MADAGASCAR</english-name>
+    <local-name>MADAGASCAR</local-name>
+    <calling-code>261</calling-code>
+  </country>
+  <country code="MW">
+    <english-name>MALAWI</english-name>
+    <local-name>MALAWI</local-name>
+    <calling-code>265</calling-code>
+  </country>
+  <country code="MY">
+    <english-name>MALAYSIA</english-name>
+    <local-name>MALAYSIA</local-name>
+    <calling-code>60</calling-code>
+  </country>
+  <country code="MV">
+    <english-name>MALDIVES</english-name>
+    <local-name>MALDIVES</local-name>
+    <calling-code>960</calling-code>
+  </country>
+  <country code="ML">
+    <english-name>MALI</english-name>
+    <local-name>MALI</local-name>
+    <calling-code>223</calling-code>
+  </country>
+  <country code="MT">
+    <english-name>MALTA</english-name>
+    <local-name>MALTA</local-name>
+    <calling-code>356</calling-code>
+  </country>
+  <country code="MH">
+    <english-name>MARSHALL ISLANDS</english-name>
+    <local-name>MARSHALL ISLANDS</local-name>
+    <calling-code>692</calling-code>
+  </country>
+  <country code="MQ">
+    <english-name>MARTINIQUE</english-name>
+    <local-name>MARTINIQUE</local-name>
+    <calling-code>596</calling-code>
+  </country>
+  <country code="MR">
+    <english-name>MAURITANIA</english-name>
+    <local-name>MAURITANIA</local-name>
+    <calling-code>222</calling-code>
+  </country>
+  <country code="MU">
+    <english-name>MAURITIUS</english-name>
+    <local-name>MAURITIUS</local-name>
+    <calling-code>230</calling-code>
+  </country>
+  <country code="YT">
+    <english-name>MAYOTTE</english-name>
+    <local-name>MAYOTTE</local-name>
+    <calling-code>262</calling-code>
+  </country>
+  <country code="MX">
+    <english-name>MEXICO</english-name>
+    <local-name>MEXICO</local-name>
+    <calling-code>52</calling-code>
+  </country>
+  <country code="FM">
+    <english-name>MICRONESIA, FEDERATED STATES OF</english-name>
+    <local-name>MICRONESIA, FEDERATED STATES OF</local-name>
+    <calling-code>691</calling-code>
+  </country>
+  <country code="MD">
+    <english-name>MOLDOVA, REPUBLIC OF</english-name>
+    <local-name>MOLDOVA, REPUBLIC OF</local-name>
+    <calling-code>373</calling-code>
+  </country>
+  <country code="MC">
+    <english-name>MONACO</english-name>
+    <local-name>MONACO</local-name>
+    <calling-code>377</calling-code>
+  </country>
+  <country code="MN">
+    <english-name>MONGOLIA</english-name>
+    <local-name>MONGOLIA</local-name>
+    <calling-code>976</calling-code>
+  </country>
+  <country code="ME">
+    <english-name>MONTENEGRO</english-name>
+    <local-name>MONTENEGRO</local-name>
+    <calling-code>382</calling-code>
+  </country>
+  <country code="MS">
+    <english-name>MONTSERRAT</english-name>
+    <local-name>MONTSERRAT</local-name>
+    <calling-code>1-664</calling-code>
+  </country>
+  <country code="MA">
+    <english-name>MOROCCO</english-name>
+    <local-name>MOROCCO</local-name>
+    <calling-code>212</calling-code>
+  </country>
+  <country code="MZ">
+    <english-name>MOZAMBIQUE</english-name>
+    <local-name>MOZAMBIQUE</local-name>
+    <calling-code>258</calling-code>
+  </country>
+  <country code="MM">
+    <english-name>MYANMAR</english-name>
+    <local-name>MYANMAR</local-name>
+    <calling-code>95</calling-code>
+  </country>
+  <country code="NA">
+    <english-name>NAMIBIA</english-name>
+    <local-name>NAMIBIA</local-name>
+    <calling-code>264</calling-code>
+  </country>
+  <country code="NR">
+    <english-name>NAURU</english-name>
+    <local-name>NAURU</local-name>
+    <calling-code>674</calling-code>
+  </country>
+  <country code="NP">
+    <english-name>NEPAL</english-name>
+    <local-name>NEPAL</local-name>
+    <calling-code>977</calling-code>
+  </country>
+  <country code="NL">
+    <english-name>NETHERLANDS</english-name>
+    <local-name>NETHERLANDS</local-name>
+    <calling-code>31</calling-code>
+  </country>
+  <country code="AN">
+    <english-name>NETHERLANDS ANTILLES</english-name>
+    <local-name>NETHERLANDS ANTILLES</local-name>
+    <calling-code>599</calling-code>
+  </country>
+  <country code="NC">
+    <english-name>NEW CALEDONIA</english-name>
+    <local-name>NEW CALEDONIA</local-name>
+    <calling-code>687</calling-code>
+  </country>
+  <country code="NZ">
+    <english-name>NEW ZEALAND</english-name>
+    <local-name>NEW ZEALAND</local-name>
+    <calling-code>64</calling-code>
+  </country>
+  <country code="NI">
+    <english-name>NICARAGUA</english-name>
+    <local-name>NICARAGUA</local-name>
+    <calling-code>505</calling-code>
+  </country>
+  <country code="NE">
+    <english-name>NIGER</english-name>
+    <local-name>NIGER</local-name>
+    <calling-code>227</calling-code>
+  </country>
+  <country code="NG">
+    <english-name>NIGERIA</english-name>
+    <local-name>NIGERIA</local-name>
+    <calling-code>234</calling-code>
+  </country>
+  <country code="NU">
+    <english-name>NIUE</english-name>
+    <local-name>NIUE</local-name>
+    <calling-code>683</calling-code>
+  </country>
+  <country code="NF">
+    <english-name>NORFOLK ISLAND</english-name>
+    <local-name>NORFOLK ISLAND</local-name>
+    <calling-code>672</calling-code>
+  </country>
+  <country code="MP">
+    <english-name>NORTHERN MARIANA ISLANDS</english-name>
+    <local-name>NORTHERN MARIANA ISLANDS</local-name>
+    <calling-code>1-670</calling-code>
+  </country>
+  <country code="NO">
+    <english-name>NORWAY</english-name>
+    <local-name>NORGE</local-name>
+    <calling-code>47</calling-code>
+    <regions>
+      <english-name>County</english-name>
+      <local-name>Fylke</local-name>
+      <region code="01">
+        <english-name>Østfold</english-name>
+        <local-name>Østfold</local-name>
+      </region>
+      <region code="02">
+        <english-name>Akershus</english-name>
+        <local-name>Akershus</local-name>
+      </region>
+      <region code="03">
+        <english-name>Oslo</english-name>
+        <local-name>Oslo</local-name>
+      </region>
+      <region code="04">
+        <english-name>Hedmark</english-name>
+        <local-name>Hedmark</local-name>
+      </region>
+      <region code="05">
+        <english-name>Oppland</english-name>
+        <local-name>Oppland</local-name>
+      </region>
+      <region code="06">
+        <english-name>Buskerud</english-name>
+        <local-name>Buskerud</local-name>
+      </region>
+      <region code="07">
+        <english-name>Vestfold</english-name>
+        <local-name>Vestfold</local-name>
+      </region>
+      <region code="08">
+        <english-name>Telemark</english-name>
+        <local-name>Telemark</local-name>
+      </region>
+      <region code="09">
+        <english-name>Aust-Agder</english-name>
+        <local-name>Aust-Agder</local-name>
+      </region>
+      <region code="10">
+        <english-name>Vest-Agder</english-name>
+        <local-name>Vest-Agder</local-name>
+      </region>
+      <region code="11">
+        <english-name>Rogaland</english-name>
+        <local-name>Rogaland</local-name>
+      </region>
+      <region code="12">
+        <english-name>Hordaland</english-name>
+        <local-name>Hordaland</local-name>
+      </region>
+      <region code="14">
+        <english-name>Sogn og Fjordane</english-name>
+        <local-name>Sogn og Fjordane</local-name>
+      </region>
+      <region code="15">
+        <english-name>Møre og Romsdal</english-name>
+        <local-name>Møre og Romsdal</local-name>
+      </region>
+      <region code="16">
+        <english-name>Sør-Trøndelag</english-name>
+        <local-name>Sør-Trøndelag</local-name>
+      </region>
+      <region code="17">
+        <english-name>Nord-Trøndelag</english-name>
+        <local-name>Nord-Trøndelag</local-name>
+      </region>
+      <region code="18">
+        <english-name>Nordland</english-name>
+        <local-name>Nordland</local-name>
+      </region>
+      <region code="19">
+        <english-name>Troms</english-name>
+        <local-name>Troms</local-name>
+      </region>
+      <region code="20">
+        <english-name>Finnmark</english-name>
+        <local-name>Finnmark</local-name>
+      </region>
+    </regions>
+  </country>
+  <country code="OM">
+    <english-name>OMAN</english-name>
+    <local-name>OMAN</local-name>
+    <calling-code>968</calling-code>
+  </country>
+  <country code="PK">
+    <english-name>PAKISTAN</english-name>
+    <local-name>PAKISTAN</local-name>
+    <calling-code>92</calling-code>
+  </country>
+  <country code="PW">
+    <english-name>PALAU</english-name>
+    <local-name>PALAU</local-name>
+    <calling-code>680</calling-code>
+  </country>
+  <country code="PS">
+    <english-name>PALESTINIAN TERRITORY, OCCUPIED</english-name>
+    <local-name>PALESTINIAN TERRITORY, OCCUPIED</local-name>
+    <calling-code>970</calling-code>
+  </country>
+  <country code="PA">
+    <english-name>PANAMA</english-name>
+    <local-name>PANAMA</local-name>
+    <calling-code>507</calling-code>
+  </country>
+  <country code="PG">
+    <english-name>PAPUA NEW GUINEA</english-name>
+    <local-name>PAPUA NEW GUINEA</local-name>
+    <calling-code>675</calling-code>
+  </country>
+  <country code="PY">
+    <english-name>PARAGUAY</english-name>
+    <local-name>PARAGUAY</local-name>
+    <calling-code>595</calling-code>
+  </country>
+  <country code="PE">
+    <english-name>PERU</english-name>
+    <local-name>PERU</local-name>
+    <calling-code>51</calling-code>
+  </country>
+  <country code="PH">
+    <english-name>PHILIPPINES</english-name>
+    <local-name>PHILIPPINES</local-name>
+    <calling-code>63</calling-code>
+  </country>
+  <country code="PN">
+    <english-name>PITCAIRN</english-name>
+    <local-name>PITCAIRN</local-name>
+    <calling-code></calling-code>
+  </country>
+  <country code="PL">
+    <english-name>POLAND</english-name>
+    <local-name>POLAND</local-name>
+    <calling-code>48</calling-code>
+  </country>
+  <country code="PT">
+    <english-name>PORTUGAL</english-name>
+    <local-name>PORTUGAL</local-name>
+    <calling-code>351</calling-code>
+  </country>
+  <country code="PR">
+    <english-name>PUERTO RICO</english-name>
+    <local-name>PUERTO RICO</local-name>
+    <calling-code>1-787, 1-939</calling-code>
+  </country>
+  <country code="QA">
+    <english-name>QATAR</english-name>
+    <local-name>QATAR</local-name>
+    <calling-code>974</calling-code>
+  </country>
+  <country code="RE">
+    <english-name>RÉUNION</english-name>
+    <local-name>RÉUNION</local-name>
+    <calling-code>262</calling-code>
+  </country>
+  <country code="RO">
+    <english-name>ROMANIA</english-name>
+    <local-name>ROMANIA</local-name>
+    <calling-code>40</calling-code>
+  </country>
+  <country code="RU">
+    <english-name>RUSSIAN FEDERATION</english-name>
+    <local-name>RUSSIAN FEDERATION</local-name>
+    <calling-code>7</calling-code>
+  </country>
+  <country code="RW">
+    <english-name>RWANDA</english-name>
+    <local-name>RWANDA</local-name>
+    <calling-code>250</calling-code>
+  </country>
+  <country code="BL">
+    <english-name>SAINT BARTHÉLEMY</english-name>
+    <local-name>SAINT BARTHÉLEMY</local-name>
+    <calling-code>590</calling-code>
+  </country>
+  <country code="SH">
+    <english-name>SAINT HELENA</english-name>
+    <local-name>SAINT HELENA</local-name>
+    <calling-code>290</calling-code>
+  </country>
+  <country code="KN">
+    <english-name>SAINT KITTS AND NEVIS</english-name>
+    <local-name>SAINT KITTS AND NEVIS</local-name>
+    <calling-code>1-869</calling-code>
+  </country>
+  <country code="LC">
+    <english-name>SAINT LUCIA</english-name>
+    <local-name>SAINT LUCIA</local-name>
+    <calling-code>1-758</calling-code>
+  </country>
+  <country code="MF">
+    <english-name>SAINT MARTIN</english-name>
+    <local-name>SAINT MARTIN</local-name>
+    <calling-code>590</calling-code>
+  </country>
+  <country code="PM">
+    <english-name>SAINT PIERRE AND MIQUELON</english-name>
+    <local-name>SAINT PIERRE AND MIQUELON</local-name>
+    <calling-code>508</calling-code>
+  </country>
+  <country code="VC">
+    <english-name>SAINT VINCENT AND THE GRENADINES</english-name>
+    <local-name>SAINT VINCENT AND THE GRENADINES</local-name>
+    <calling-code>1-784</calling-code>
+  </country>
+  <country code="WS">
+    <english-name>SAMOA</english-name>
+    <local-name>SAMOA</local-name>
+    <calling-code>685</calling-code>
+  </country>
+  <country code="SM">
+    <english-name>SAN MARINO</english-name>
+    <local-name>SAN MARINO</local-name>
+    <calling-code>378</calling-code>
+  </country>
+  <country code="ST">
+    <english-name>SÃO TOMÉ AND PRÍNCIPE</english-name>
+    <local-name>SÃO TOMÉ AND PRÍNCIPE</local-name>
+    <calling-code>239</calling-code>
+  </country>
+  <country code="SA">
+    <english-name>SAUDI ARABIA</english-name>
+    <local-name>SAUDI ARABIA</local-name>
+    <calling-code>966</calling-code>
+  </country>
+  <country code="SN">
+    <english-name>SENEGAL</english-name>
+    <local-name>SENEGAL</local-name>
+    <calling-code>221</calling-code>
+  </country>
+  <country code="RS">
+    <english-name>SERBIA</english-name>
+    <local-name>SERBIA</local-name>
+    <calling-code>381</calling-code>
+  </country>
+  <country code="SC">
+    <english-name>SEYCHELLES</english-name>
+    <local-name>SEYCHELLES</local-name>
+    <calling-code>248</calling-code>
+  </country>
+  <country code="SL">
+    <english-name>SIERRA LEONE</english-name>
+    <local-name>SIERRA LEONE</local-name>
+    <calling-code>232</calling-code>
+  </country>
+  <country code="SG">
+    <english-name>SINGAPORE</english-name>
+    <local-name>SINGAPORE</local-name>
+    <calling-code>65</calling-code>
+  </country>
+  <country code="SK">
+    <english-name>SLOVAKIA</english-name>
+    <local-name>SLOVAKIA</local-name>
+    <calling-code>421</calling-code>
+  </country>
+  <country code="SI">
+    <english-name>SLOVENIA</english-name>
+    <local-name>SLOVENIA</local-name>
+    <calling-code>386</calling-code>
+  </country>
+  <country code="SB">
+    <english-name>SOLOMON ISLANDS</english-name>
+    <local-name>SOLOMON ISLANDS</local-name>
+    <calling-code>677</calling-code>
+  </country>
+  <country code="SO">
+    <english-name>SOMALIA</english-name>
+    <local-name>SOMALIA</local-name>
+    <calling-code>252</calling-code>
+  </country>
+  <country code="ZA">
+    <english-name>SOUTH AFRICA</english-name>
+    <local-name>SOUTH AFRICA</local-name>
+    <calling-code>27</calling-code>
+    <regions>
+      <english-name>Province</english-name>
+      <local-name>Province</local-name>
+      <region code="WC">
+        <english-name>Western Cape</english-name>
+        <local-name>Western Cape</local-name>
+      </region>
+      <region code="EC">
+        <english-name>Eastern Cape</english-name>
+        <local-name>Eastern Cape</local-name>
+      </region>
+      <region code="KZ">
+        <english-name>KwaZulu-Natal</english-name>
+        <local-name>KwaZulu-Natal</local-name>
+      </region>
+      <region code="NC">
+        <english-name>Northern Cape</english-name>
+        <local-name>Northern Cape</local-name>
+      </region>
+      <region code="FS">
+        <english-name>Free State</english-name>
+        <local-name>Free State</local-name>
+      </region>
+      <region code="NW">
+        <english-name>North West</english-name>
+        <local-name>North West</local-name>
+      </region>
+      <region code="GP">
+        <english-name>Gauteng</english-name>
+        <local-name>Gauteng</local-name>
+      </region>
+      <region code="MP">
+        <english-name>Mpumalanga</english-name>
+        <local-name>Mpumalanga</local-name>
+      </region>
+      <region code="LP">
+        <english-name>Limpopo</english-name>
+        <local-name>Limpopo</local-name>
+      </region>
+    </regions>
+  </country>
+  <country code="GS">
+    <english-name>SOUTH GEORGIA AND THE SOUTH SANDWICH ISLANDS</english-name>
+    <local-name>SOUTH GEORGIA AND THE SOUTH SANDWICH ISLANDS</local-name>
+    <calling-code>500</calling-code>
+  </country>
+  <country code="ES">
+    <english-name>SPAIN</english-name>
+    <local-name>SPAIN</local-name>
+    <calling-code>34</calling-code>
+  </country>
+  <country code="LK">
+    <english-name>SRI LANKA</english-name>
+    <local-name>SRI LANKA</local-name>
+    <calling-code>94</calling-code>
+  </country>
+  <country code="SD">
+    <english-name>SUDAN</english-name>
+    <local-name>SUDAN</local-name>
+    <calling-code>249</calling-code>
+  </country>
+  <country code="SR">
+    <english-name>SURINAME</english-name>
+    <local-name>SURINAME</local-name>
+    <calling-code>597</calling-code>
+  </country>
+  <country code="SJ">
+    <english-name>SVALBARD AND JAN MAYEN</english-name>
+    <local-name>SVALBARD AND JAN MAYEN</local-name>
+    <calling-code>47</calling-code>
+  </country>
+  <country code="SZ">
+    <english-name>SWAZILAND</english-name>
+    <local-name>SWAZILAND</local-name>
+    <calling-code>268</calling-code>
+  </country>
+  <country code="SE">
+    <english-name>SWEDEN</english-name>
+    <local-name>SWEDEN</local-name>
+    <calling-code>46</calling-code>
+  </country>
+  <country code="CH">
+    <english-name>SWITZERLAND</english-name>
+    <local-name>SWITZERLAND</local-name>
+    <calling-code>41</calling-code>
+  </country>
+  <country code="SY">
+    <english-name>SYRIA</english-name>
+    <local-name>SYRIAN ARAB REPUBLIC</local-name>
+    <calling-code>963</calling-code>
+  </country>
+  <country code="TW">
+    <english-name>TAIWAN, PROVINCE OF CHINA</english-name>
+    <local-name>TAIWAN, PROVINCE OF CHINA</local-name>
+    <calling-code>886</calling-code>
+  </country>
+  <country code="TJ">
+    <english-name>TAJIKISTAN</english-name>
+    <local-name>TAJIKISTAN</local-name>
+    <calling-code>992</calling-code>
+  </country>
+  <country code="TZ">
+    <english-name>TANZANIA, UNITED REPUBLIC OF</english-name>
+    <local-name>TANZANIA, UNITED REPUBLIC OF</local-name>
+    <calling-code>255</calling-code>
+  </country>
+  <country code="TH">
+    <english-name>THAILAND</english-name>
+    <local-name>THAILAND</local-name>
+    <calling-code>66</calling-code>
+  </country>
+  <country code="TL">
+    <english-name>TIMOR-LESTE</english-name>
+    <local-name>TIMOR-LESTE</local-name>
+    <calling-code>670</calling-code>
+  </country>
+  <country code="TG">
+    <english-name>TOGO</english-name>
+    <local-name>TOGO</local-name>
+    <calling-code>228</calling-code>
+  </country>
+  <country code="TK">
+    <english-name>TOKELAU</english-name>
+    <local-name>TOKELAU</local-name>
+    <calling-code>690</calling-code>
+  </country>
+  <country code="TO">
+    <english-name>TONGA</english-name>
+    <local-name>TONGA</local-name>
+    <calling-code>676</calling-code>
+  </country>
+  <country code="TT">
+    <english-name>TRINIDAD AND TOBAGO</english-name>
+    <local-name>TRINIDAD AND TOBAGO</local-name>
+    <calling-code>1-868</calling-code>
+  </country>
+  <country code="TN">
+    <english-name>TUNISIA</english-name>
+    <local-name>TUNISIA</local-name>
+    <calling-code>216</calling-code>
+  </country>
+  <country code="TR">
+    <english-name>TURKEY</english-name>
+    <local-name>TURKEY</local-name>
+    <calling-code>90</calling-code>
+  </country>
+  <country code="TM">
+    <english-name>TURKMENISTAN</english-name>
+    <local-name>TURKMENISTAN</local-name>
+    <calling-code>993</calling-code>
+  </country>
+  <country code="TC">
+    <english-name>TURKS AND CAICOS ISLANDS</english-name>
+    <local-name>TURKS AND CAICOS ISLANDS</local-name>
+    <calling-code>1-649</calling-code>
+  </country>
+  <country code="TV">
+    <english-name>TUVALU</english-name>
+    <local-name>TUVALU</local-name>
+    <calling-code>688</calling-code>
+  </country>
+  <country code="UG">
+    <english-name>UGANDA</english-name>
+    <local-name>UGANDA</local-name>
+    <calling-code>256</calling-code>
+  </country>
+  <country code="UA">
+    <english-name>UKRAINE</english-name>
+    <local-name>UKRAINE</local-name>
+    <calling-code>380</calling-code>
+  </country>
+  <country code="AE">
+    <english-name>UNITED ARAB EMIRATES</english-name>
+    <local-name>UNITED ARAB EMIRATES</local-name>
+    <calling-code>971</calling-code>
+  </country>
+  <country code="GB">
+    <english-name>UNITED KINGDOM</english-name>
+    <local-name>UNITED KINGDOM</local-name>
+    <calling-code>44</calling-code>
+  </country>
+  <country code="US">
+    <english-name>UNITED STATES</english-name>
+    <local-name>UNITED STATES</local-name>
+    <calling-code>1</calling-code>
+    <regions>
+      <english-name>U.S. state</english-name>
+      <local-name>U.S. state</local-name>
+      <region code="AL">
+        <english-name>Alabama</english-name>
+        <local-name>Alabama</local-name>
+      </region>
+      <region code="AK">
+        <english-name>Alaska</english-name>
+        <local-name>Alaska</local-name>
+      </region>
+      <region code="AZ">
+        <english-name>Arizona</english-name>
+        <local-name>Arizona</local-name>
+      </region>
+      <region code="AR">
+        <english-name>Arkansas</english-name>
+        <local-name>Arkansas</local-name>
+      </region>
+      <region code="CA">
+        <english-name>California</english-name>
+        <local-name>California</local-name>
+      </region>
+      <region code="CO">
+        <english-name>Colorado</english-name>
+        <local-name>Colorado</local-name>
+      </region>
+      <region code="CT">
+        <english-name>Connecticut</english-name>
+        <local-name>Connecticut</local-name>
+      </region>
+      <region code="DE">
+        <english-name>Delaware</english-name>
+        <local-name>Delaware</local-name>
+      </region>
+      <region code="FL">
+        <english-name>Florida</english-name>
+        <local-name>Florida</local-name>
+      </region>
+      <region code="GA">
+        <english-name>Georgia</english-name>
+        <local-name>Georgia</local-name>
+      </region>
+      <region code="HI">
+        <english-name>Hawaii</english-name>
+        <local-name>Hawaii</local-name>
+      </region>
+      <region code="ID">
+        <english-name>Idaho</english-name>
+        <local-name>Idaho</local-name>
+      </region>
+      <region code="IL">
+        <english-name>Illinois</english-name>
+        <local-name>Illinois</local-name>
+      </region>
+      <region code="IN">
+        <english-name>Indiana</english-name>
+        <local-name>Indiana</local-name>
+      </region>
+      <region code="IA">
+        <english-name>Iowa</english-name>
+        <local-name>Iowa</local-name>
+      </region>
+      <region code="KS">
+        <english-name>Kansas</english-name>
+        <local-name>Kansas</local-name>
+      </region>
+      <region code="KY">
+        <english-name>Kentucky</english-name>
+        <local-name>Kentucky</local-name>
+      </region>
+      <region code="LA">
+        <english-name>Louisiana</english-name>
+        <local-name>Louisiana</local-name>
+      </region>
+      <region code="ME">
+        <english-name>Maine</english-name>
+        <local-name>Maine</local-name>
+      </region>
+      <region code="MD">
+        <english-name>Maryland</english-name>
+        <local-name>Maryland</local-name>
+      </region>
+      <region code="MA">
+        <english-name>Massachusetts</english-name>
+        <local-name>Massachusetts</local-name>
+      </region>
+      <region code="MI">
+        <english-name>Michigan</english-name>
+        <local-name>Michigan</local-name>
+      </region>
+      <region code="MN">
+        <english-name>Minnesota</english-name>
+        <local-name>Minnesota</local-name>
+      </region>
+      <region code="MS">
+        <english-name>Mississippi</english-name>
+        <local-name>Mississippi</local-name>
+      </region>
+      <region code="MO">
+        <english-name>Missouri</english-name>
+        <local-name>Missouri</local-name>
+      </region>
+      <region code="MT">
+        <english-name>Montana</english-name>
+        <local-name>Montana</local-name>
+      </region>
+      <region code="NE">
+        <english-name>Nebraska</english-name>
+        <local-name>Nebraska</local-name>
+      </region>
+      <region code="NV">
+        <english-name>Nevada</english-name>
+        <local-name>Nevada</local-name>
+      </region>
+      <region code="NH">
+        <english-name>New Hampshire</english-name>
+        <local-name>New Hampshire</local-name>
+      </region>
+      <region code="NJ">
+        <english-name>New Jersey</english-name>
+        <local-name>New Jersey</local-name>
+      </region>
+      <region code="NM">
+        <english-name>New Mexico</english-name>
+        <local-name>New Mexico</local-name>
+      </region>
+      <region code="NY">
+        <english-name>New York</english-name>
+        <local-name>New York</local-name>
+      </region>
+      <region code="NC">
+        <english-name>North Carolina</english-name>
+        <local-name>North Carolina</local-name>
+      </region>
+      <region code="ND">
+        <english-name>North Dakota</english-name>
+        <local-name>North Dakota</local-name>
+      </region>
+      <region code="OH">
+        <english-name>Ohio</english-name>
+        <local-name>Ohio</local-name>
+      </region>
+      <region code="OK">
+        <english-name>Oklahoma</english-name>
+        <local-name>Oklahoma</local-name>
+      </region>
+      <region code="OR">
+        <english-name>Oregon</english-name>
+        <local-name>Oregon</local-name>
+      </region>
+      <region code="PA">
+        <english-name>Pennsylvania</english-name>
+        <local-name>Pennsylvania</local-name>
+      </region>
+      <region code="RI">
+        <english-name>Rhode Island</english-name>
+        <local-name>Rhode Island</local-name>
+      </region>
+      <region code="SC">
+        <english-name>South Carolina</english-name>
+        <local-name>South Carolina</local-name>
+      </region>
+      <region code="SD">
+        <english-name>South Dakota</english-name>
+        <local-name>South Dakota</local-name>
+      </region>
+      <region code="TN">
+        <english-name>Tennessee</english-name>
+        <local-name>Tennessee</local-name>
+      </region>
+      <region code="TX">
+        <english-name>Texas</english-name>
+        <local-name>Texas</local-name>
+      </region>
+      <region code="UT">
+        <english-name>Utah</english-name>
+        <local-name>Utah</local-name>
+      </region>
+      <region code="VT">
+        <english-name>Vermont</english-name>
+        <local-name>Vermont</local-name>
+      </region>
+      <region code="VA">
+        <english-name>Virginia</english-name>
+        <local-name>Virginia</local-name>
+      </region>
+      <region code="WA">
+        <english-name>Washington</english-name>
+        <local-name>Washington</local-name>
+      </region>
+      <region code="WV">
+        <english-name>West Virginia</english-name>
+        <local-name>West Virginia</local-name>
+      </region>
+      <region code="WI">
+        <english-name>Wisconsin</english-name>
+        <local-name>Wisconsin</local-name>
+      </region>
+      <region code="WY">
+        <english-name>Wyoming</english-name>
+        <local-name>Wyoming</local-name>
+      </region>
+    </regions>
+  </country>
+  <country code="UM">
+    <english-name>UNITED STATES MINOR OUTLYING ISLANDS</english-name>
+    <local-name>UNITED STATES MINOR OUTLYING ISLANDS</local-name>
+    <calling-code>1</calling-code>
+  </country>
+  <country code="UY">
+    <english-name>URUGUAY</english-name>
+    <local-name>URUGUAY</local-name>
+    <calling-code>598</calling-code>
+  </country>
+  <country code="UZ">
+    <english-name>UZBEKISTAN</english-name>
+    <local-name>UZBEKISTAN</local-name>
+    <calling-code>998</calling-code>
+  </country>
+  <country code="VU">
+    <english-name>VANUATU</english-name>
+    <local-name>VANUATU</local-name>
+    <calling-code>678</calling-code>
+  </country>
+  <country code="VE">
+    <english-name>VENEZUELA, BOLIVARIAN REPUBLIC OF</english-name>
+    <local-name>VENEZUELA, BOLIVARIAN REPUBLIC OF</local-name>
+    <calling-code>58</calling-code>
+  </country>
+  <country code="VN">
+    <english-name>VIET NAM</english-name>
+    <local-name>VIET NAM</local-name>
+    <calling-code>84</calling-code>
+  </country>
+  <country code="VG">
+    <english-name>VIRGIN ISLANDS, BRITISH</english-name>
+    <local-name>VIRGIN ISLANDS, BRITISH</local-name>
+    <calling-code>1-284</calling-code>
+  </country>
+  <country code="VI">
+    <english-name>VIRGIN ISLANDS, U.S.</english-name>
+    <local-name>VIRGIN ISLANDS, U.S.</local-name>
+    <calling-code>1-340</calling-code>
+  </country>
+  <country code="WF">
+    <english-name>WALLIS AND FUTUNA</english-name>
+    <local-name>WALLIS AND FUTUNA</local-name>
+    <calling-code>681</calling-code>
+  </country>
+  <country code="EH">
+    <english-name>WESTERN SAHARA</english-name>
+    <local-name>WESTERN SAHARA</local-name>
+    <calling-code>212</calling-code>
+  </country>
+  <country code="YE">
+    <english-name>YEMEN</english-name>
+    <local-name>YEMEN</local-name>
+    <calling-code>967</calling-code>
+  </country>
+  <country code="ZM">
+    <english-name>ZAMBIA</english-name>
+    <local-name>ZAMBIA</local-name>
+    <calling-code>260</calling-code>
+  </country>
+  <country code="ZW">
+    <english-name>ZIMBABWE</english-name>
+    <local-name>ZIMBABWE</local-name>
+    <calling-code>263</calling-code>
+  </country>
+</countries>

@@ -3,11 +3,8 @@ package com.enonic.wem.migrate.jcr;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
-import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,19 +20,21 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
-import com.enonic.wem.api.account.GroupAccount;
 import com.enonic.wem.api.account.NonUserAccount;
-import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.editor.AccountEditors;
-import com.enonic.wem.api.account.profile.Addresses;
-import com.enonic.wem.api.account.profile.UserProfile;
 import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.UserStoreNames;
 import com.enonic.wem.api.userstore.config.UserStoreConfig;
 import com.enonic.wem.api.userstore.config.UserStoreConfigParser;
 
+import static com.enonic.wem.api.command.Commands.account;
+import static com.enonic.wem.api.command.Commands.userStore;
+import static com.enonic.wem.api.userstore.editor.UserStoreEditors.setAdministrators;
+import static com.enonic.wem.api.userstore.editor.UserStoreEditors.setUserStore;
+
+/*
 import com.enonic.cms.api.client.model.user.Address;
 import com.enonic.cms.api.client.model.user.Gender;
 import com.enonic.cms.api.client.model.user.UserInfo;
@@ -46,11 +45,7 @@ import com.enonic.cms.core.user.field.UserFieldHelper;
 import com.enonic.cms.core.user.field.UserFieldType;
 import com.enonic.cms.core.user.field.UserFields;
 import com.enonic.cms.core.user.field.UserInfoTransformer;
-
-import static com.enonic.wem.api.command.Commands.account;
-import static com.enonic.wem.api.command.Commands.userStore;
-import static com.enonic.wem.api.userstore.editor.UserStoreEditors.setAdministrators;
-import static com.enonic.wem.api.userstore.editor.UserStoreEditors.setUserStore;
+*/
 
 @Component
 public class JcrAccountsImporter
@@ -219,6 +214,7 @@ public class JcrAccountsImporter
     private void importGroup( final Map<String, Object> groupFields )
         throws Exception
     {
+        /*
         final String groupName = (String) groupFields.get( "GRP_SNAME" );
         final GroupType groupType = GroupType.get( (Integer) groupFields.get( "GRP_LTYPE" ) );
         if ( groupType == GroupType.USER )
@@ -262,6 +258,7 @@ public class JcrAccountsImporter
         }
 
         LOG.info( "Group '" + groupName + "' imported with id " + groupId );
+        */
     }
 
     private void importUser( final Map<String, Object> userFields )
@@ -273,14 +270,18 @@ public class JcrAccountsImporter
         {
             userStoreName = UserStoreName.system().toString();
         }
+
         final String userName = (String) userFields.get( "USR_SUID" );
+
+        if ( !userName.startsWith( "an" ) )
+        {
+            return;
+        }
+
         final String displayName = (String) userFields.get( "USR_SFULLNAME" );
         final String email = (String) userFields.get( "USR_SEMAIL" );
         final Date lastModified = (Date) userFields.get( "USR_DTETIMESTAMP" );
         final byte[] photo = (byte[]) userFields.get( "USR_PHOTO" );
-        final String key = (String) userFields.get( "USR_HKEY" );
-        final String syncValue = (String) userFields.get( "USR_SSYNCVALUE2" );
-        final UserType userType = UserType.getByKey( (Integer) userFields.get( "USR_UT_LKEY" ) );
 
         final UserAccount user = UserAccount.create( userStoreName + ":" + userName );
         user.setDisplayName( displayName );
@@ -341,6 +342,7 @@ public class JcrAccountsImporter
 
     private void addUserInfoFields( final UserAccount user, final Map<String, Object> userInfoFields )
     {
+        /*
         final UserFieldHelper userFieldHelper = new UserFieldHelper();
         final UserFields userFields = new UserFields( true );
         for ( String userFieldName : userInfoFields.keySet() )
@@ -361,8 +363,10 @@ public class JcrAccountsImporter
         userInfo.setAddresses( addresses );
 
         userInfoFieldsToUserProfile( userInfo, user );
+        */
     }
 
+    /*
     private Address[] userFieldsToAddresses( final Map<String, Object> userFields )
     {
         final Map<String, Address> addresses = new HashMap<String, Address>();
@@ -485,7 +489,7 @@ public class JcrAccountsImporter
             profile.setAddresses( addresses );
         }
         profile.setAddresses( addresses.add( profileAddress ) );
-    }
+    }*/
 
     @Autowired
     public void setDbAccountsLoader( final DatabaseAccountsLoader dbAccountsLoader )

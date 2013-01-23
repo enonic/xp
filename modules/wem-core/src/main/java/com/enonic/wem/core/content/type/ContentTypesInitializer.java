@@ -2,11 +2,14 @@ package com.enonic.wem.core.content.type;
 
 import java.io.StringWriter;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
@@ -20,6 +23,7 @@ import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.editor.ContentTypeEditors.setContentType;
 
 @Component
+@DependsOn("jcrInitializer")
 public class ContentTypesInitializer
 {
     private static final ContentType SPACE = createSystemType( QualifiedContentTypeName.space(), true, false );
@@ -46,6 +50,7 @@ public class ContentTypesInitializer
 
     private Client client;
 
+    @PostConstruct
     public void createSystemTypes()
     {
         for ( final ContentType contentType : SYSTEM_TYPES )

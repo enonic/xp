@@ -2,6 +2,7 @@ package com.enonic.wem.api.content.type.form;
 
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 
 public final class Form
 {
@@ -111,6 +112,8 @@ public final class Form
 
         private Builder( final Form form )
         {
+            Preconditions.checkNotNull( form, "Given form cannot be null" );
+
             this.formItems = new FormItems();
             for ( FormItem formItem : form.formItems )
             {

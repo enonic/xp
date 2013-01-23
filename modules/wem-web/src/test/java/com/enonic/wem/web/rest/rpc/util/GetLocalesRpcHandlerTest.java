@@ -5,10 +5,9 @@ import java.util.Locale;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.wem.core.locale.LocaleService;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
-
-import com.enonic.cms.core.locale.LocaleService;
 
 public class GetLocalesRpcHandlerTest
     extends AbstractRpcHandlerTest

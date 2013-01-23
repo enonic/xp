@@ -8,6 +8,7 @@ Ext.application({
         'Admin.controller.contentManager.DetailPanelController',
         'Admin.controller.contentManager.FilterPanelController',
         'Admin.controller.contentManager.BrowseToolbarController',
+        'Admin.controller.contentManager.DetailToolbarController',
         'Admin.controller.contentManager.ContentWizardController',
         'Admin.controller.contentManager.ContentPreviewController',
         'Admin.controller.contentManager.DialogWindowController'

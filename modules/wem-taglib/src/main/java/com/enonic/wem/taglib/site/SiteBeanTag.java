@@ -14,9 +14,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.cms.core.structure.SiteEntity;
-import com.enonic.cms.store.dao.SiteDao;
-
 public final class SiteBeanTag
     extends TagSupport
     implements IterationTag
@@ -60,6 +57,7 @@ public final class SiteBeanTag
     {
         final List<SiteBeanImpl> list = Lists.newArrayList();
 
+        /*
         final SiteDao siteDao = getSpringContext().getBean( SiteDao.class );
         for ( final SiteEntity entity : siteDao.findAll() )
         {
@@ -68,6 +66,7 @@ public final class SiteBeanTag
             bean.setName( entity.getName() );
             list.add( bean );
         }
+        */
 
         Collections.sort( list );
         return list;

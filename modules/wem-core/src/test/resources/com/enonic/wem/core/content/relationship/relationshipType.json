@@ -1,0 +1,15 @@
+{
+    "name": "contains",
+    "displayName": "Contains",
+    "module": "myModule",
+    "fromSemantic": "contained by",
+    "toSemantic": "contains",
+    "allowedFromTypes": [
+        "System:folder",
+        "System:file"
+    ],
+    "allowedToTypes": [
+        "System:unstructured",
+        "System:space"
+    ]
+}

@@ -13,7 +13,7 @@ import org.elasticsearch.common.collect.Maps;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.UserAccount;
 
-import com.enonic.cms.core.image.filter.effect.ScaleSquareFilter;
+import com.enonic.wem.core.image.filter.effect.ScaleSquareFilter;
 
 final class AccountImageHelper
 {

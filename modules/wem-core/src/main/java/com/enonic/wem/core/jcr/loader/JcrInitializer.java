@@ -4,33 +4,39 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import javax.annotation.PostConstruct;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
 
 import org.apache.jackrabbit.commons.cnd.CndImporter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.jcr.JcrConstants;
 import com.enonic.wem.core.jcr.provider.JcrSessionProvider;
 
+@Component
 public final class JcrInitializer
     implements JcrConstants
 {
     private final JcrSessionProvider jcrSessionProvider;
 
+    @Autowired
     public JcrInitializer( final JcrSessionProvider jcrSessionProvider )
     {
         this.jcrSessionProvider = jcrSessionProvider;
     }
 
-    public boolean initialize()
+    @PostConstruct
+    public void initialize()
         throws Exception
     {
         final Session session = this.jcrSessionProvider.loginAdmin();
 
         try
         {
-            return initialize( session );
+            initialize( session );
         }
         finally
         {

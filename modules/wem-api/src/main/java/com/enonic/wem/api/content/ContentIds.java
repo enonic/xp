@@ -2,7 +2,7 @@ package com.enonic.wem.api.content;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.wem.api.AbstractImmutableEntitySet;
+import com.enonic.wem.api.util.AbstractImmutableEntitySet;
 
 public final class ContentIds
     extends AbstractImmutableEntitySet<ContentId>

@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.AbstractImmutableEntityList;
+import com.enonic.wem.api.util.AbstractImmutableEntityList;
 
 public final class ContentTypes
     extends AbstractImmutableEntityList<ContentType>

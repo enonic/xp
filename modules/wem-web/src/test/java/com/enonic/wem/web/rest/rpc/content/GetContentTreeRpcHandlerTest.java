@@ -8,16 +8,12 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentBranch;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.ContentTree;
+import com.enonic.wem.api.support.tree.Tree;
+import com.enonic.wem.api.support.tree.TreeNode;
+import com.enonic.wem.core.time.MockTimeService;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
-
-import com.enonic.cms.core.time.MockTimeService;
-
-import static com.enonic.wem.api.content.ContentBranch.newContentBranch;
-import static com.enonic.wem.api.content.ContentTree.newContentTree;
 
 public class GetContentTreeRpcHandlerTest
     extends AbstractRpcHandlerTest
@@ -48,14 +44,10 @@ public class GetContentTreeRpcHandlerTest
         Content c3 = createContent( "c1/c2/c3" );
         Content c4 = createContent( "c1/c4" );
 
-        ContentBranch.Builder c1Branch = newContentBranch().parent( c1 );
-        ContentBranch c3Branch = newContentBranch().parent( c3 ).build();
-        ContentBranch c2Branch = newContentBranch().parent( c2 ).addChild( c3Branch ).build();
-        c1Branch.addChild( c2Branch );
-        ContentBranch c4Branch = newContentBranch().parent( c4 ).build();
-        c1Branch.addChild( c4Branch );
-
-        ContentTree contentTree = newContentTree().addBranch( c1Branch.build() ).build();
+        Tree<Content> contentTree = new Tree<Content>();
+        TreeNode<Content> node_c1 = contentTree.createNode( c1 );
+        node_c1.addChild( c2 ).addChild( c3 );
+        node_c1.addChild( c4 );
 
         Mockito.when( client.execute( Mockito.any( Commands.content().getTree().getClass() ) ) ).thenReturn( contentTree );
 

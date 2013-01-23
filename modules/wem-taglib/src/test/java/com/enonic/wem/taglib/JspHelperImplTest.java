@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import com.enonic.cms.core.product.ProductVersion;
+import com.enonic.wem.api.Version;
 
 import static org.junit.Assert.*;
 
@@ -21,7 +21,7 @@ public class JspHelperImplTest
     @Test
     public void testGetProductVersion()
     {
-        final String expected = ProductVersion.getFullTitleAndVersion();
+        final String expected = Version.get().getNameAndVersion();
         final String str = this.helper.getProductVersion();
         assertEquals( expected, str );
     }

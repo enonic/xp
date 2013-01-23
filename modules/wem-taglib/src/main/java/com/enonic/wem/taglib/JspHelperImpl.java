@@ -7,7 +7,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
-import com.enonic.cms.core.product.ProductVersion;
+import com.enonic.wem.api.Version;
 
 final class JspHelperImpl
     implements JspHelper
@@ -17,7 +17,7 @@ final class JspHelperImpl
     @Override
     public String getProductVersion()
     {
-        return ProductVersion.getFullTitleAndVersion();
+        return Version.get().getNameAndVersion();
     }
 
     @Override

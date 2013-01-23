@@ -3,15 +3,19 @@ package com.enonic.wem.api.content.type.form;
 
 import org.joda.time.DateTime;
 
+import com.enonic.wem.api.content.type.AbstractBaseType;
 import com.enonic.wem.api.content.type.BaseType;
 import com.enonic.wem.api.module.ModuleName;
 
 public class Mixin
+    extends AbstractBaseType
     implements BaseType
 {
     private final FormItem formItem;
 
     private final ModuleName moduleName;
+
+    private final QualifiedMixinName qualifiedName;
 
     private final String displayName;
 
@@ -22,10 +26,11 @@ public class Mixin
     Mixin( final Builder builder )
     {
         this.moduleName = builder.moduleName;
+        this.formItem = builder.formItem;
+        this.qualifiedName = new QualifiedMixinName( moduleName, getName() );
         this.displayName = builder.displayName;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
-        this.formItem = builder.formItem;
     }
 
     public String getName()
@@ -45,7 +50,7 @@ public class Mixin
 
     public QualifiedMixinName getQualifiedName()
     {
-        return new QualifiedMixinName( moduleName, getName() );
+        return qualifiedName;
     }
 
     public FormItem getFormItem()

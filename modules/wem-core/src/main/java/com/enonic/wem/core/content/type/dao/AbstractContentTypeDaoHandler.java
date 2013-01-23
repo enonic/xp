@@ -5,7 +5,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
-import com.enonic.wem.core.content.dao.ContentDaoConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 abstract class AbstractContentTypeDaoHandler
@@ -29,7 +28,7 @@ abstract class AbstractContentTypeDaoHandler
 
     protected final String getNodePath( final QualifiedContentTypeName contentTypeName )
     {
-        return ContentDaoConstants.CONTENT_TYPES_PATH + contentTypeName.getModuleName() + "/" + contentTypeName.getLocalName();
+        return ContentTypeDao.CONTENT_TYPES_PATH + contentTypeName.getModuleName() + "/" + contentTypeName.getLocalName();
     }
 
     protected final boolean contentTypeExists( final QualifiedContentTypeName contentTypeName )

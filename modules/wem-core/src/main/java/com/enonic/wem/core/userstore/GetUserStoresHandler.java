@@ -22,7 +22,6 @@ import com.enonic.wem.core.command.CommandContext;
 public class GetUserStoresHandler
     extends AbstractUserStoreHandler<GetUserStores>
 {
-
     private AccountDao accountDao;
 
     public GetUserStoresHandler()

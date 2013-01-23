@@ -15,13 +15,13 @@ public interface MixinDao
 
     public static final String MIXINS_PATH = JcrConstants.ROOT_NODE + "/" + MIXINS_NODE + "/";
 
-    public void createMixin( Mixin mixin, Session session );
+    public void create( Mixin mixin, Session session );
 
-    public void updateMixin( Mixin mixin, Session session );
+    public void update( Mixin mixin, Session session );
 
-    public void deleteMixin( QualifiedMixinName qualifiedMixinName, Session session );
+    public void delete( QualifiedMixinName qualifiedMixinName, Session session );
 
-    public Mixins retrieveAllMixins( Session session );
+    public Mixins selectAll( Session session );
 
-    public Mixins retrieveMixins( QualifiedMixinNames qualifiedMixinNames, Session session );
+    public Mixins select( QualifiedMixinNames qualifiedMixinNames, Session session );
 }

@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.AbstractImmutableEntityList;
+import com.enonic.wem.api.util.AbstractImmutableEntityList;
 import com.enonic.wem.api.content.type.form.Mixin;
 import com.enonic.wem.api.content.type.form.QualifiedMixinName;
 

@@ -1,0 +1,24 @@
+{
+    "success": true,
+    "total": 2,
+    "relationshipTypes": [
+        {
+            "name": "theRelationshipType",
+            "displayName": null,
+            "module": "myModule",
+            "fromSemantic": null,
+            "toSemantic": null,
+            "allowedFromTypes": [ ],
+            "allowedToTypes": [ ]
+        },
+        {
+            "name": "theRelationshipType",
+            "displayName": null,
+            "module": "otherModule",
+            "fromSemantic": null,
+            "toSemantic": null,
+            "allowedFromTypes": [ ],
+            "allowedToTypes": [ ]
+        }
+    ]
+}

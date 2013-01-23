@@ -2,7 +2,8 @@ package com.enonic.wem.web.rest.rpc.content.type;
 
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.content.type.ContentTypeTree;
+import com.enonic.wem.api.content.type.ContentType;
+import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
@@ -21,7 +22,7 @@ public final class GetContentTypeTreeRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final ContentTypeTree contentTypesTree = client.execute( contentType().getTree() );
-        context.setResult( new GetContentTypeTreeJsonResult( contentTypesTree ) );
+        final Tree<ContentType> contentTypeTree = client.execute( contentType().getTree() );
+        context.setResult( new GetContentTypeTreeJsonResult( contentTypeTree ) );
     }
 }

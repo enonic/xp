@@ -17,7 +17,7 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
-import com.enonic.cms.core.time.MockTimeService;
+import com.enonic.wem.core.time.MockTimeService;
 
 public class GetContentRpcHandlerTest
     extends AbstractRpcHandlerTest

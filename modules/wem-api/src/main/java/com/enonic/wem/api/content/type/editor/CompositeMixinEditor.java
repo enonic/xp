@@ -5,9 +5,9 @@ import com.enonic.wem.api.content.type.form.Mixin;
 final class CompositeMixinEditor
     implements MixinEditor
 {
-    protected final MixinEditor[] editors;
+    private final MixinEditor[] editors;
 
-    public CompositeMixinEditor( final MixinEditor... editors )
+    CompositeMixinEditor( final MixinEditor... editors )
     {
         this.editors = editors;
     }

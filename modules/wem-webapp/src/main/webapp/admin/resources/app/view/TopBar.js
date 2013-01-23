@@ -109,7 +109,8 @@ Ext.define('Admin.view.TopBar', {
     },
 
     setActiveTab: function (tab) {
-        this.setTitle(this.getMenuItemDescription(tab.card));
+        this.setLabelTitle(this.getMenuItemDescription(tab.card));
+        this.setButtonTitle(tab.card, this.getActiveTabContentName(tab.card));
         this.tabMenu.markActiveTab(tab);
     },
 
@@ -131,15 +132,13 @@ Ext.define('Admin.view.TopBar', {
     createMenuItemFromTab: function (item) {
         var me = this;
         var cfg = item.initialConfig || item;
-        var data = item.data || item;
         return {
             tabBar: me,
             card: item,
             disabled: cfg.disabled,
             closable: cfg.closable,
             hidden: cfg.hidden && !item.hiddenByLayout, // only hide if it wasn't hidden by the layout itself
-            iconCls: cfg.iconCls,
-            iconSrc: data.image_url,
+            iconSrc: me.getMenuItemIcon(item),
             editing: cfg.editing || false,
             text1: Ext.String.ellipsis(cfg.title || 'first line', 26),
             text2: Ext.String.ellipsis(me.getMenuItemDescription(item), 38)
@@ -158,10 +157,22 @@ Ext.define('Admin.view.TopBar', {
         }
     },
 
+    getMenuItemIcon: function (card) {
+        var icon;
+        if (card.data) {
+            var data = card.data.data || card.data; // to accept either record or record.data
+            icon = data.iconUrl || data.image_url;
+            if (!icon && data.content) {
+                icon = data.content.iconUrl;
+            }
+        }
+        return icon;
+    },
+
     getMenuItemDescription: function (card) {
         var desc;
         if (card.data) {
-            var data = card.data;
+            var data = card.data.data || card.data; // to accept either record or record.data
             desc = data.path || data.qualifiedName || data.displayName;
             if (!desc && data.content) {
                 var content = data.content;
@@ -174,10 +185,22 @@ Ext.define('Admin.view.TopBar', {
         return desc;
     },
 
+    getActiveTabContentName: function (card) {
+        var desc;
+        if (card.data) {
+            var data = card.data;
+            desc = data.name || data.data.name; // Why is there a new level with data in open mode
+        }
+        if (!desc) {
+            desc = card.title;
+        }
+        return desc;
+    },
+
 
     /*  Public  */
 
-    setTitle: function (text) {
+    setLabelTitle: function (text) {
         // highlight the last path fragment
         var title = text;
         var lastSlash = !Ext.isEmpty(text) ? text.lastIndexOf('/') : -1;
@@ -185,7 +208,16 @@ Ext.define('Admin.view.TopBar', {
             title = text.substring(0, lastSlash + 1) + '<strong>' + text.substring(lastSlash + 1) + '</strong>';
         }
         this.titleText.setText(title);
-        this.titleButton.setText(title);
+    },
+
+    setButtonTitle: function (card, text) {
+        this.titleButton.setText(text);
+
+        var iconClass = '';
+        if(card.tab.editing) {
+            iconClass = 'icon-pencil-16';
+        }
+        this.titleButton.setIconCls(iconClass);
     },
 
     getStartButton: function () {

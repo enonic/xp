@@ -28,10 +28,13 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         var me = this;
 
         this.headerData = {
+            imageUrl: (this.data && this.data.content) ? this.data.content.iconUrl : undefined,
             displayName: (this.data && this.data.content) ? this.data.content.displayName : 'New Content',
             contentType: (this.data && this.data.contentType) ? this.data.contentType.qualifiedName : undefined,
             contentPath: (this.data && this.data.content) ? this.data.content.path : this.data.contentParent ? this.data.contentParent.path
-                : ''
+                : '',
+            contentAssignee: 'Thomas Sigdestad',
+            contentStatus: 'Draft'
         };
 
         me.tbar = Ext.createByAlias('widget.contentWizardToolbar', {
@@ -50,16 +53,15 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             },
             items: [
                 {
-                    width: 138,
+                    width: 110,
                     padding: 5,
                     border: false,
                     items: [
                         {
-                            xtype: 'container',
-                            plain: true,
-                            width: 128,
-                            height: 128,
-                            cls: 'icon-content-128',
+                            xtype: 'image',
+                            width: 100,
+                            height: 100,
+                            src: me.headerData.imageUrl,
                             listeners: {
                                 render: function (cmp) {
                                     Ext.tip.QuickTipManager.register({
@@ -134,7 +136,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
 
     getSteps: function () {
         var dataStep = {
-            stepTitle: "Data",
+            stepTitle: this.data ? this.data.contentType.displayName : "Data",
             xtype: 'contentDataPanel',
             contentType: this.data ? this.data.contentType : undefined,
             content: this.data ? this.data.content : null

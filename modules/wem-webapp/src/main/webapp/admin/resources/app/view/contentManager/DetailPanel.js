@@ -11,23 +11,33 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     autoScroll: true,
     border: false,
     layout: 'card',
-    cls: 'admin-detail',
-
-    iconClasses128: {
-        "myModule:mySite": 'icon-site-128',
-        "News:Article": 'icon-content-128'
-    },
-    iconClasses32: {
-        "myModule:mySite": 'icon-site-32',
-        "News:Article": 'icon-content-32'
-    },
-    iconClasses24: {
-        "myModule:mySite": 'icon-site-24',
-        "News:Article": 'icon-content-24'
-    },
+    cls: 'admin-preview-panel',
 
     showToolbar: true,
-    isLiveMode: false,
+    isLiveMode: true,
+
+    listeners: {
+        afterrender: function () {
+            if (this.isLiveMode) {
+                var livePreview = this.down('#livePreview');
+                //TODO update urls when they are ready
+                livePreview.load('/dev/live-edit/page/page.jsp');
+            }
+            if (!this.showToolbar) {
+                var toggleBtn = this.down('#toggleBtn');
+                var a = toggleBtn.el.down('a');
+                console.log(a);
+                a.on('click', function () {
+                    this.toggleLive();
+                    if (this.isLiveMode) {
+                        a.setHTML('Switch to Info View');
+                    } else {
+                        a.setHTML('Switch to Live View');
+                    }
+                }, this);
+            }
+        }
+    },
 
     initComponent: function () {
         if (Ext.isEmpty(this.data)) {
@@ -70,6 +80,13 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                     {
                         xtype: 'tbtext',
                         text: 'No items selected - Choose from list above - <a href="javascript:;">Clear selection</a>'
+                    },
+                    '->',
+                    {
+                        xtype: 'tbtext',
+                        itemId: 'toggleBtn',
+                        hidden: true,
+                        text: '<a href="javascript:;">Switch to Info View</a>'
                     }
                 ]
             };
@@ -77,29 +94,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
         this.callParent(arguments);
         this.addEvents('deselectrecord');
-    },
 
-
-    resolveIconClass: function (data, size) {
-        var iconCls = "";
-        var nodeType = data.type;
-        var iconClasses;
-        switch (size) {
-        case 24:
-            iconClasses = this.iconClasses24;
-            break;
-        case 32:
-            iconClasses = this.iconClasses32;
-            break;
-        case 128:
-        default:
-            iconClasses = this.iconClasses128;
-            break;
-        }
-        if (iconClasses && iconClasses[nodeType]) {
-            iconCls = iconClasses[nodeType];
-        }
-        return iconCls;
     },
 
 
@@ -123,9 +118,7 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
         } else if (!Ext.isEmpty(data)) {
             info = data.data;
         }
-        if (info) {
-            info.iconCls = this.resolveIconClass(info);
-        }
+
         return {
             xtype: 'container',
             itemId: 'singleSelection',
@@ -228,15 +221,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
     createLargeBoxSelection: function (data) {
         var tpl = Ext.Template(Templates.contentManager.previewSelectionLarge);
 
-        var me = this;
-        if (data) {
-            Ext.Array.each(data, function (item) {
-                if (item.data) {
-                    item.data.iconCls = me.resolveIconClass(item.data, 32);
-                }
-            });
-        }
-
         var panel = {
             xtype: 'panel',
             itemId: 'largeBoxSelection',
@@ -260,15 +244,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
     createSmallBoxSelection: function (data) {
         var tpl = Ext.Template(Templates.contentManager.previewSelectionSmall);
-
-        var me = this;
-        if (data) {
-            Ext.Array.each(data, function (item) {
-                if (item.data) {
-                    item.data.iconCls = me.resolveIconClass(item.data, 24);
-                }
-            });
-        }
 
         var panel = {
             xtype: 'panel',
@@ -314,7 +289,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             return;
         }
 
-        var me = this;
         this.data = data;
 
         if (Ext.isEmpty(this.data)) {
@@ -328,9 +302,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                 singleData = this.data[0] && this.data[0].data ? this.data[0].data : this.data[0];
             } else {
                 singleData = this.data.data || this.data;
-            }
-            if (singleData) {
-                //singleData.iconCls = this.resolveIconClass(singleData);
             }
 
             if (this.isLiveMode) {
@@ -357,28 +328,12 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
 
         } else if (this.data.length > 1 && this.data.length <= 10) {
 
-            if (data) {
-                Ext.Array.each(data, function (item) {
-                    if (item.data) {
-                        item.data.iconCls = me.resolveIconClass(item.data, 32);
-                    }
-                });
-            }
-
             var largeBox = this.down('#largeBoxSelection');
             largeBox.update(this.data);
 
             this.getLayout().setActiveItem(largeBox);
 
         } else {
-
-            if (data) {
-                Ext.Array.each(data, function (item) {
-                    if (item.data) {
-                        item.data.iconCls = me.resolveIconClass(item.data, 24);
-                    }
-                });
-            }
 
             var smallBox = this.down('#smallBoxSelection');
             smallBox.update(this.data);
@@ -416,6 +371,15 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
                     }
                 }
             }
+            var toggleBtn = tbar.down('#toggleBtn');
+            if (toggleBtn) {
+                if (count === 1) {
+                    toggleBtn.show();
+                } else {
+                    toggleBtn.hide();
+                }
+            }
+
         }
 
     },

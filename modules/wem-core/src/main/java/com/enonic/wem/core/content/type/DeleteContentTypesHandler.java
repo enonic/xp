@@ -43,7 +43,7 @@ public final class DeleteContentTypesHandler
                 }
                 else
                 {
-                    contentTypeDao.deleteContentType( qualifiedContentTypeName, context.getJcrSession() );
+                    contentTypeDao.delete( qualifiedContentTypeName, context.getJcrSession() );
                     contentTypeDeletionResult.success( qualifiedContentTypeName );
                     context.getJcrSession().save();
                 }

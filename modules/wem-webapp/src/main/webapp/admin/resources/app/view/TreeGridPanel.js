@@ -5,8 +5,7 @@ Ext.define('Admin.view.TreeGridPanel', {
     layout: 'card',
 
     requires: [
-        'Admin.plugin.PersistentGridSelectionPlugin',
-        'Admin.plugin.GridToolbarPlugin'
+        'Admin.plugin.PersistentGridSelectionPlugin', 'Admin.plugin.GridToolbarPlugin'
     ],
 
     treeConf: {},
@@ -14,7 +13,6 @@ Ext.define('Admin.view.TreeGridPanel', {
     gridConf: {},
 
     keyField: 'key',
-    typeField: 'type',
 
     initComponent: function () {
         var me = this;
@@ -106,11 +104,13 @@ Ext.define('Admin.view.TreeGridPanel', {
         var activeList = this.getActiveList();
         if (activeList.xtype === 'treepanel') {
             selection = activeList.getSelectionModel().getSelection();
-        } else if (activeList.xtype === 'grid') {
+        }
+        else if (activeList.xtype === 'grid') {
             var plugin = activeList.getPlugin('persistentGridSelection');
             if (plugin) {
                 selection = plugin.getSelection();
-            } else {
+            }
+            else {
                 selection = activeList.getSelectionModel().getSelection();
             }
         }
@@ -127,7 +127,8 @@ Ext.define('Admin.view.TreeGridPanel', {
             if (node) {
                 selModel.select(node, keepExisting);
             }
-        } else if (activeList.xtype === 'grid') {
+        }
+        else if (activeList.xtype === 'grid') {
             var record = activeList.getStore().findRecord(this.keyField, key);
             if (record) {
                 selModel.select(record, keepExisting);
@@ -144,15 +145,18 @@ Ext.define('Admin.view.TreeGridPanel', {
         if (key === -1) {
             if (activeList.xtype === 'treepanel') {
                 selModel.deselectAll();
-            } else if (activeList.xtype === 'grid') {
+            }
+            else if (activeList.xtype === 'grid') {
                 var plugin = activeList.getPlugin('persistentGridSelection');
                 if (plugin) {
                     plugin.clearSelection();
-                } else {
+                }
+                else {
                     selModel.deselectAll();
                 }
             }
-        } else {
+        }
+        else {
             if (activeList.xtype === 'treepanel') {
                 var selNodes = selModel.getSelection();
                 var i;
@@ -162,7 +166,8 @@ Ext.define('Admin.view.TreeGridPanel', {
                         selModel.deselect(selNode);
                     }
                 }
-            } else if (activeList.xtype === 'grid') {
+            }
+            else if (activeList.xtype === 'grid') {
                 var record = activeList.getStore().findRecord(this.keyField, key);
                 if (record) {
                     selModel.deselect(record);
@@ -176,7 +181,8 @@ Ext.define('Admin.view.TreeGridPanel', {
         var currentStore = activeList.store;
         if (activeList.xtype === 'treepanel') {
             currentStore.load();
-        } else if (activeList.xtype === 'grid') {
+        }
+        else if (activeList.xtype === 'grid') {
             currentStore.loadPage(currentStore.currentPage);
         }
     }

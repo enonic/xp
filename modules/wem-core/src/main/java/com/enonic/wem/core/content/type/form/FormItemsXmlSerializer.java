@@ -1,6 +1,5 @@
 package com.enonic.wem.core.content.type.form;
 
-
 import java.util.Iterator;
 
 import org.jdom.Element;
@@ -8,12 +7,13 @@ import org.jdom.Element;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItems;
 import com.enonic.wem.core.content.XmlParsingException;
-
-import com.enonic.cms.framework.util.JDOMUtil;
+import com.enonic.wem.core.util.JdomHelper;
 
 public final class FormItemsXmlSerializer
 {
     private FormItemXmlSerializer formItemSerializer = new FormItemXmlSerializer( this );
+
+    private final JdomHelper jdomHelper = new JdomHelper();
 
     public void serialize( final Iterable<FormItem> formItems, final Element parentEl )
     {
@@ -47,7 +47,7 @@ public final class FormItemsXmlSerializer
             }
             catch ( Exception e )
             {
-                throw new XmlParsingException( "Failed to parse FormItem: " + JDOMUtil.printElement( formItemEl ), e );
+                throw new XmlParsingException( "Failed to parse FormItem: " + this.jdomHelper.serialize( formItemEl, false ), e );
             }
         }
 

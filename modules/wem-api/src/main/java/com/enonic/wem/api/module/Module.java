@@ -5,7 +5,7 @@ import com.google.common.base.Objects;
 
 public class Module
 {
-    public static final Module SYSTEM = newModule().name( new ModuleName( "System" ) ).build();
+    public static final Module SYSTEM = newModule().name( ModuleName.SYSTEM ).build();
 
     private final ModuleName name;
 

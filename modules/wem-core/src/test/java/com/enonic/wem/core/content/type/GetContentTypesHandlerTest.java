@@ -41,7 +41,7 @@ public class GetContentTypesHandlerTest
     }
 
     @Test
-    public void getContentType()
+    public void select()
         throws Exception
     {
         // setup
@@ -52,8 +52,7 @@ public class GetContentTypesHandlerTest
             setAbstract( false ).
             build();
         final ContentTypes contentTypes = ContentTypes.from( contentType );
-        Mockito.when( contentTypeDao.retrieveContentTypes( isA( QualifiedContentTypeNames.class ), any( Session.class ) ) ).thenReturn(
-            contentTypes );
+        Mockito.when( contentTypeDao.select( isA( QualifiedContentTypeNames.class ), any( Session.class ) ) ).thenReturn( contentTypes );
 
         // exercise
         final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( "myModule:myContentType" );
@@ -61,8 +60,7 @@ public class GetContentTypesHandlerTest
         this.handler.handle( this.context, command );
 
         // verify
-        verify( contentTypeDao, atLeastOnce() ).retrieveContentTypes( Mockito.isA( QualifiedContentTypeNames.class ),
-                                                                      Mockito.any( Session.class ) );
+        verify( contentTypeDao, atLeastOnce() ).select( Mockito.isA( QualifiedContentTypeNames.class ), Mockito.any( Session.class ) );
         assertEquals( 1, command.getResult().getSize() );
     }
 

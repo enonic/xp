@@ -11,13 +11,12 @@
 
     AdminLiveEdit.model.component.Base.prototype = {
         attachMouseOverEvent: function () {
+            var me = this;
 
             $(document).on('mouseover', this.cssSelector, function (event) {
                 var $component = $(this);
 
-                var targetIsUiComponent = $(event.target).is('[id*=live-edit-ui-cmp]') ||
-                                          $(event.target).parents('[id*=live-edit-ui-cmp]').length > 0;
-
+                var targetIsUiComponent = me.isLiveEditUiComponent(event);
                 var pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
                 var disableHover = targetIsUiComponent || pageHasComponentSelected || AdminLiveEdit.DragDrop.isDragging();
                 if (disableHover) {
@@ -38,7 +37,12 @@
 
 
         attachClickEvent: function () {
+            var me = this;
+
             $(document).on('click touchstart', this.cssSelector, function (event) {
+                if (me.isLiveEditUiComponent(event)) {
+                    return;
+                }
                 event.stopPropagation();
                 event.preventDefault();
                 var $closestComponentFromTarget = $(event.target).closest('[data-live-edit-type]');
@@ -53,8 +57,13 @@
                         $(window).trigger('component:select', [$closestComponentFromTarget]);
                     }
                 }
-                return false;
+                // return false;
             });
+        },
+
+
+        isLiveEditUiComponent: function (event) {
+            return $(event.target).is('[id*=live-edit-ui-cmp]') || $(event.target).parents('[id*=live-edit-ui-cmp]').length > 0;
         },
 
 

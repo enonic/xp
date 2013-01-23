@@ -33,7 +33,9 @@ Ext.define('Admin.view.homescreen.LoginPanel', {
                 xtype: 'combo',
                 name: 'userstore',
                 id: 'userstoreCombo',
+                itemId: 'userstoreCombo',
                 allowBlank: false,
+                enableKeyEvents: true,
                 store: me.userStoresStore,
                 fieldLabel: '',
                 labelWidth: 1,
@@ -52,7 +54,9 @@ Ext.define('Admin.view.homescreen.LoginPanel', {
             {
                 xtype: 'textfield',
                 name: 'userid',
+                itemId: 'userId',
                 allowBlank: false,
+                enableKeyEvents: true,
                 emptyText: 'userid or e-mail',
                 width: 200,
                 tabIndex: 2
@@ -60,7 +64,9 @@ Ext.define('Admin.view.homescreen.LoginPanel', {
             {
                 xtype: 'textfield',
                 name: 'password',
+                itemId: 'password',
                 allowBlank: false,
+                enableKeyEvents: true,
                 inputType: 'password',
                 emptyText: 'password',
                 width: 200,
@@ -74,37 +80,7 @@ Ext.define('Admin.view.homescreen.LoginPanel', {
                 colspan: 2,
                 style: 'float:right;margin-right:5px',
                 text: 'Log In',
-                tabIndex: 4,
-                /*
-                handler: function (button) {
-                    var loginForm = Ext.get('admin-home-login-form'),
-                        appSelector = Ext.get('admin-home-app-selector'),
-                        openApps = Ext.get('admin-home-app-info-container');
-
-
-                    loginForm.setVisibilityMode(Ext.Element.OFFSETS);
-                    loginForm.animate({
-                        duration: 500,
-                        to: {
-                            opacity: 0
-                        },
-                        listeners: {
-                            afteranimate: function () {
-                                //me.application.fireEvent('login');
-                                console.log(me.application);
-
-                                loginForm.hide();
-
-                                Ext.getCmp('admin-home-app-selector-search').focus();
-
-                                appSelector.setStyle('visibility', 'visible').addCls('fade-in');
-                                openApps.setStyle('visibility', 'visible').addCls('fade-in');
-                            }
-                        }
-                    });
-
-                }
-                 */
+                tabIndex: 4
             }
         ];
 

@@ -2,13 +2,11 @@ package com.enonic.wem.api.content.type;
 
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.joda.time.DateTime;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.type.form.Form;
 import com.enonic.wem.api.content.type.form.FormItem;
@@ -19,6 +17,7 @@ import com.enonic.wem.api.module.ModuleName;
 import static com.enonic.wem.api.content.type.form.Form.newForm;
 
 public final class ContentType
+    extends AbstractBaseType
     implements BaseType
 {
     private final String name;
@@ -53,7 +52,7 @@ public final class ContentType
         this.moduleName = builder.moduleName;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
-        this.form = builder.buildForm();
+        this.form = builder.formBuilder.build();
         this.icon = builder.icon;
     }
 
@@ -149,7 +148,7 @@ public final class ContentType
 
         private boolean isFinal;
 
-        private final List<FormItem> formItemList;
+        private Form.Builder formBuilder = newForm();
 
         private QualifiedContentTypeName superType;
 
@@ -161,14 +160,7 @@ public final class ContentType
 
         private Builder()
         {
-            this.name = null;
-            this.moduleName = null;
-            this.displayName = null;
-            this.isAbstract = false;
-            this.isFinal = false;
-            this.superType = null;
-            this.formItemList = Lists.newArrayList();
-            this.icon = null;
+            formBuilder = newForm();
         }
 
         private Builder( final ContentType source )
@@ -179,7 +171,10 @@ public final class ContentType
             this.isAbstract = source.isAbstract();
             this.isFinal = source.isFinal();
             this.superType = source.getSuperType();
-            this.formItemList = Lists.newArrayList( source.form().copy().formItemIterable() );
+            if ( source.form() != null )
+            {
+                this.formBuilder = newForm( source.form() );
+            }
             this.createdTime = source.createdTime;
             this.modifiedTime = source.modifiedTime;
             this.icon = source.icon == null ? null : Arrays.copyOf( source.icon, source.icon.length );
@@ -254,16 +249,21 @@ public final class ContentType
 
         public Builder addFormItem( final FormItem formItem )
         {
-            this.formItemList.add( formItem );
+            this.formBuilder.addFormItem( formItem );
+            return this;
+        }
+
+        public Builder form( final Form form )
+        {
+            this.formBuilder = newForm( form );
             return this;
         }
 
         public Builder formItems( final FormItems formItems )
         {
-            this.formItemList.clear();
-            for ( FormItem formItem : formItems )
+            for ( final FormItem formItem : formItems )
             {
-                this.addFormItem( formItem );
+                this.formBuilder.addFormItem( formItem );
             }
             return this;
         }
@@ -272,16 +272,6 @@ public final class ContentType
         {
             this.icon = icon;
             return this;
-        }
-
-        private Form buildForm()
-        {
-            final Form.Builder formBuilder = newForm();
-            for ( FormItem formItem : formItemList )
-            {
-                formBuilder.addFormItem( formItem );
-            }
-            return formBuilder.build();
         }
 
         public ContentType build()

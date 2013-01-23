@@ -1,0 +1,12 @@
+{
+    "success": true,
+    "relationshipType": {
+        "name": "theRelationshipType",
+        "displayName": null,
+        "module": "myModule",
+        "fromSemantic": null,
+        "toSemantic": null,
+        "allowedFromTypes": [ ],
+        "allowedToTypes": [ ]
+    }
+}

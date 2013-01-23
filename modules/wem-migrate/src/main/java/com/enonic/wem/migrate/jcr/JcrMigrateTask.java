@@ -20,37 +20,31 @@ public class JcrMigrateTask
 
     private JcrAccountsImporter jcrAccountsImporter;
 
-    private AccountSearchService accountSearchService;
-
-    public JcrMigrateTask()
-    {
-    }
-
     @Override
     public void migrate()
         throws Exception
     {
-        final JcrInitializer jcrInitializer = new JcrInitializer( jcrSessionProvider );
-
-        if ( jcrInitializer.initialize() )
-        {
-            createAccountsIndex();
-
-            LOG.info( "Importing accounts..." );
-            jcrAccountsImporter.importAccounts();
-            LOG.info( "Accounts imported to JCR." );
-        }
-        else
-        {
-            LOG.info( "JCR already initialized, skipping import of accounts." );
-        }
+//        final JcrInitializer jcrInitializer = new JcrInitializer( jcrSessionProvider );
+//
+//        if ( jcrInitializer.initialize() )
+//        {
+//            createAccountsIndex();
+//
+//            LOG.info( "Importing accounts..." );
+//            jcrAccountsImporter.importAccounts();
+//            LOG.info( "Accounts imported to JCR." );
+//        }
+//        else
+//        {
+//            LOG.info( "JCR already initialized, skipping import of accounts." );
+//        }
     }
 
     public void createAccountsIndex()
     {
         LOG.info( "Creating index and mapping for accounts..." );
-        accountSearchService.dropIndex();
-        accountSearchService.createIndex();
+        // accountSearchService.dropIndex();
+        // accountSearchService.createIndex();
         LOG.info( "Index and mapping created." );
     }
 
@@ -64,11 +58,5 @@ public class JcrMigrateTask
     public void setJcrSessionProvider( final JcrSessionProvider jcrSessionProvider )
     {
         this.jcrSessionProvider = jcrSessionProvider;
-    }
-
-    @Autowired
-    public void setAccountSearchService( final AccountSearchService accountSearchService )
-    {
-        this.accountSearchService = accountSearchService;
     }
 }

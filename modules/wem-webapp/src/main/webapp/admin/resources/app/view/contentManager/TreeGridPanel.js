@@ -6,13 +6,6 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
 
     border: false,
 
-    iconClasses: {
-        "myModule:mySite": 'icon-site-32',
-        "myModule:myType": 'icon-content-32',
-        "News:Article": 'icon-content-32',
-        "News:Article2": 'icon-content-32'
-    },
-
     gridConf: {
         selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36}),
         plugins: [ 'persistentGridSelection' ]
@@ -57,9 +50,8 @@ Ext.define('Admin.view.contentManager.TreeGridPanel', {
 
     nameRenderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
         var account = record.data;
-        var iconCls = '';
         var activeListType = this.getActiveList().itemId;
-        return Ext.String.format(Templates.contentManager.treeGridPanelNameRenderer, activeListType, iconCls, value, account.path);
+        return Ext.String.format(Templates.contentManager.treeGridPanelNameRenderer, activeListType, account.iconUrl, value, account.path);
     },
 
     statusRenderer: function () {

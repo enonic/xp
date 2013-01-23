@@ -1,6 +1,5 @@
 package com.enonic.wem.core.content.type;
 
-
 import java.io.IOException;
 
 import org.jdom.Document;
@@ -16,8 +15,7 @@ import com.enonic.wem.core.content.SerializingException;
 import com.enonic.wem.core.content.XmlParsingException;
 import com.enonic.wem.core.content.type.form.FormItemXmlSerializer;
 import com.enonic.wem.core.content.type.form.FormItemsXmlSerializer;
-
-import com.enonic.cms.framework.util.JDOMUtil;
+import com.enonic.wem.core.util.JdomHelper;
 
 import static com.enonic.wem.api.content.type.form.Mixin.newMixin;
 
@@ -30,6 +28,8 @@ public class MixinXmlSerializer
 
     private boolean prettyPrint = false;
 
+    private final JdomHelper jdomHelper = new JdomHelper();
+
     public MixinXmlSerializer prettyPrint( boolean value )
     {
         this.prettyPrint = value;
@@ -40,14 +40,7 @@ public class MixinXmlSerializer
     public String toString( final Mixin mixin )
         throws SerializingException
     {
-        if ( prettyPrint )
-        {
-            return JDOMUtil.prettyPrintDocument( toJDomDocument( mixin ) );
-        }
-        else
-        {
-            return JDOMUtil.printDocument( toJDomDocument( mixin ) );
-        }
+        return this.jdomHelper.serialize( toJDomDocument( mixin ), this.prettyPrint );
     }
 
     public Document toJDomDocument( Mixin type )
@@ -73,8 +66,7 @@ public class MixinXmlSerializer
     {
         try
         {
-            Document document = JDOMUtil.parseDocument( xml );
-
+            final Document document = this.jdomHelper.parse( xml );
             return parse( document.getRootElement() );
         }
         catch ( JDOMException e )

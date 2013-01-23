@@ -36,7 +36,9 @@ Ext.define('Admin.view.homescreen.AppSelector', {
                 change: function (textField, newValue, oldValue) {
                     var appsStore = me.appsStore;
                     appsStore.clearFilter();
-                    appsStore.filter('name', newValue);
+                    appsStore.filterBy(function (item) {
+                        return item.get('name').toLowerCase().indexOf(newValue) > -1;
+                    });
                 }
             }
         });

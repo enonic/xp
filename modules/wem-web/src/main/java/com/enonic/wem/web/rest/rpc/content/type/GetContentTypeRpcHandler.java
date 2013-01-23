@@ -48,7 +48,7 @@ public final class GetContentTypeRpcHandler
         }
         else
         {
-            context.setResult( new JsonErrorResult( "Content type [{0}] was not found", qualifiedName ) );
+            context.setResult( new JsonErrorResult( "ContentType [{0}] was not found", qualifiedName ) );
         }
     }
 }
