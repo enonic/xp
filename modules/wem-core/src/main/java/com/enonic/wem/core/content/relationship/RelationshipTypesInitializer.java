@@ -1,10 +1,7 @@
 package com.enonic.wem.core.content.relationship;
 
-import javax.annotation.PostConstruct;
-
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
@@ -14,12 +11,13 @@ import com.enonic.wem.api.command.content.relationship.UpdateRelationshipTypes;
 import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationship.RelationshipType;
 import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.core.initializer.InitializerTask;
 
 import static com.enonic.wem.api.command.content.relationship.editor.RelationshipTypeEditors.setRelationshipType;
 
 @Component
-@DependsOn("jcrInitializer")
 public class RelationshipTypesInitializer
+    implements InitializerTask
 {
     private static final RelationshipType DEFAULT =
         RelationshipType.newRelationshipType().name( "default" ).displayName( "Default" ).fromSemantic( "relates to" ).toSemantic(
@@ -36,8 +34,9 @@ public class RelationshipTypesInitializer
 
     private Client client;
 
-    @PostConstruct
-    public void createSystemTypes()
+    @Override
+    public void initialize()
+        throws Exception
     {
         createOrUpdate( DEFAULT );
         createOrUpdate( REQUIRE );
