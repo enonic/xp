@@ -35,17 +35,8 @@
 
         getEl: function () {
             return this.$element;
-        },
-
-        // TODO: This method does not belong here. Move to Util
-        setCssPosition: function ($selectedComponent) {
-            var componentInfo = AdminLiveEdit.Util.getComponentInfo($selectedComponent);
-            if (componentInfo.tagName === 'body' && componentInfo.type === 'page') {
-                this.getEl().css('position', 'fixed');
-            } else {
-                this.getEl().css('position', 'absolute');
-            }
         }
+
     };
 
 }($liveedit));

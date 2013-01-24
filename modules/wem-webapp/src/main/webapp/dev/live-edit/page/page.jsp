@@ -106,7 +106,7 @@
 
 
 </head>
-<body data-live-edit-type="page" data-live-edit-key="1867" data-live-edit-name="Home"><!--stopindex-->
+<body><!--stopindex-->
 
 
 <%@ include file="live-edit/loader-splash.jsp" %>

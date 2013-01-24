@@ -9,12 +9,13 @@
     var componentMenu = AdminLiveEdit.view.componentmenu.ComponentMenu = function () {
         var me = this;
         me.buttons = [];
+
+        // TODO: Is this necessary anymore?
         me.buttonConfig = {
-            'page': ['settings'],
-            'region': ['parent', 'insert', 'reset', 'empty'],
-            'window': ['parent', 'settings', 'remove'],
-            'content': ['parent', 'view', 'edit'],
-            'paragraph': ['parent', 'edit']
+            'region': ['insert', 'reset', 'empty'],
+            'window': ['settings', 'remove'],
+            'content': ['view', 'edit'],
+            'paragraph': ['edit']
         };
 
         me.$currentComponent = $([]);
@@ -55,12 +56,6 @@
 
 
     proto.show = function (event, $selectedComponent) {
-        var componentInfo = util.getComponentInfo($selectedComponent);
-        if (componentInfo.tagName === 'body' && componentInfo.type === 'page') {
-            this.hide();
-            return;
-        }
-
         this.getMenuForComponent($selectedComponent);
         this.moveToComponent($selectedComponent);
         this.getEl().show();
@@ -83,7 +78,6 @@
         var me = this;
 
         me.$currentComponent = $selectedComponent;
-        me.setCssPosition($selectedComponent);
 
         var componentBoxModel = util.getBoxModel($selectedComponent);
         var offsetLeft = 0,

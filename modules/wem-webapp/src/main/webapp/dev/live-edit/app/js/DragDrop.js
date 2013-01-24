@@ -123,6 +123,8 @@ AdminLiveEdit.DragDrop = (function () {
             var componentKey = $component.data('live-edit-component-key');
             var url = '../app/data/mock-component-' + componentKey + '.html';
 
+            $component.hide();
+
             $liveedit.ajax({
                 url: url,
                 cache: false

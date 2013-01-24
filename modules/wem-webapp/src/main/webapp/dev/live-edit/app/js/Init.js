@@ -6,7 +6,6 @@
         var selection           = new AdminLiveEdit.Selection();
         var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
         // var mutationObserver    = new AdminLiveEdit.MutationObserver(); // Commented out for debuging.
-        var page                = new AdminLiveEdit.model.component.Page();
         var regions             = new AdminLiveEdit.model.component.Regions();
         var windows             = new AdminLiveEdit.model.component.Windows();
         var contents            = new AdminLiveEdit.model.component.Contents();

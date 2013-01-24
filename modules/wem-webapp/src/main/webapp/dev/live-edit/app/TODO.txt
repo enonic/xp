@@ -2,5 +2,5 @@
 * Create mock json for Live Edit components
 
 CSS
-* Create table like layout for Component in component menu. left cell for image, right cell for text
+* It is difficult to make the whole "margin" clickable. Create table like layout for Component in component menu. left cell for image, right cell for text
 * Toggle should have an arrow (see sketches)

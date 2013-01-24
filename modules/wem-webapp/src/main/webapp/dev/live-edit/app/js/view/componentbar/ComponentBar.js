@@ -162,6 +162,7 @@
 
     proto.addEvents = function () {
         var me = this;
+
         me.addToggleEvent();
         me.getBar().on('mouseover', function () {
             $liveedit(window).trigger('componentBar:mouseover');

@@ -88,9 +88,6 @@ AdminLiveEdit.Util = (function () {
             case 'paragraph':
                 icon = '../app/images/text_rich_marked.png';
                 break;
-            case 'page':
-                icon = '../app/images/document_plain_blue.png';
-                break;
             default:
                 // TODO: Use a fallback icon?
                 icon = '../app/images/component_blue.png';
