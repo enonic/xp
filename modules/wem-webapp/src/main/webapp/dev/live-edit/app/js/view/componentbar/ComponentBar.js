@@ -99,7 +99,7 @@
 
 
     proto.getComponentsDataUrl = function () {
-        return '../app/data/mock_components.json';
+        return '../app/data/mock-components.json';
     };
 
 
@@ -115,22 +115,22 @@
     proto.renderComponents = function (jsonData) {
         var me = this,
             $container = me.getComponentsContainer(),
-            componentTypes = jsonData.componentTypes;
+            groups = jsonData.componentGroups;
 
-        $.each(componentTypes, function (index, componentType) {
-            me.addHeader(componentType);
-            if (componentType.components) {
-                me.addComponentsToGroup(componentType.components)
+        $.each(groups, function (index, group) {
+            me.addHeader(group);
+            if (group.components) {
+                me.addComponentsToGroup(group.components)
             }
         });
     };
 
 
-    proto.addHeader = function (componentType) {
+    proto.addHeader = function (componentGroup) {
         var me = this,
             html = '';
         html += '<li class="live-edit-component-list-header">';
-        html += '    <span>' + componentType.name + '</span>';
+        html += '    <span>' + componentGroup.name + '</span>';
         html += '</li>';
 
         me.getComponentsContainer().append(html);

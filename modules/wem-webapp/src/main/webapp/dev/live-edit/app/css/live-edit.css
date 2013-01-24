@@ -212,6 +212,7 @@ svg.live-edit-highlighter rect {
 
 .live-edit-tool-tip-type-text {
     color: #333;
+    font-weight: bold;
 }
 
 /*** Component tip ***/
@@ -460,6 +461,7 @@ svg.live-edit-highlighter rect {
 }
 
 .live-edit-drop-target-placeholder {
+    list-style-type: none; /* The placeholder in jQuery UI has the same tag name as the dragged component */
     clear: both;
     border: 2px dashed #000;
     padding: 28px;
@@ -499,7 +501,7 @@ svg.live-edit-highlighter rect {
 }
 
 /** Animations  */
-
+/*
 .live-edit-hover-menu,
 .live-edit-highlighter {
     transition-property: top, left;
@@ -511,7 +513,7 @@ svg.live-edit-highlighter rect {
     transition-timing-function: linear;
     -webkit-transition-timing-function: linear;
 }
-
+*/
 .live-edit-components-container {
     -webkit-transition: right 200ms ease-in;
     transition: right 200ms ease-in;

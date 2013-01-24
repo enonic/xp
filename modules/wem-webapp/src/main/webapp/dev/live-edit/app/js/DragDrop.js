@@ -24,6 +24,7 @@ AdminLiveEdit.DragDrop = (function () {
 
 
     function createComponentBarDraggables() {
+        // TODO: Remove ui classes
         var draggableOptions = {
             connectToSortable: regionSelector,
             cursor: 'move',
@@ -117,6 +118,12 @@ AdminLiveEdit.DragDrop = (function () {
         ui.item.removeData('live-edit-selected-on-drag-start');
     }
 
+
+    function itemIsDraggedFromComponentBar(item) {
+        return item.hasClass('live-edit-component');
+    }
+
+
     function handleReceive(event, ui) {
         if (itemIsDraggedFromComponentBar(ui.item)) {
             var $component = $liveedit(this).children('.live-edit-component');
@@ -154,27 +161,6 @@ AdminLiveEdit.DragDrop = (function () {
                 disableDragDrop();
             }
         });
-    }
-
-
-    function itemIsDraggedFromComponentBar(item) {
-        return item.hasClass('live-edit-component');
-    }
-
-
-    function createDummyWindowHtml() {
-        var dummyKey = new Date().getTime(),
-            html = '';
-
-        html += '<div data-live-edit-type="window" data-live-edit-key="' + dummyKey + '" data-live-edit-name="HTML 5 Video">';
-        html += '<video width="100%" id="tag" poster="http://content.bitsontherun.com/thumbs/q1fx20VZ-720.jpg" preload="none" controls>';
-        html += '	<source src="http://content.bitsontherun.com/videos/q1fx20VZ-52qL9xLP.mp4" type="video/mp4" />';
-        html += '	<source src="http://content.bitsontherun.com/videos/q1fx20VZ-27m5HpIu.webm" type="video/webm" />';
-        html += '	<p class="warning">Your browser does not support HTML5 video.</p>';
-        html += '</video>';
-        html += '</div>';
-
-        return html;
     }
 
 

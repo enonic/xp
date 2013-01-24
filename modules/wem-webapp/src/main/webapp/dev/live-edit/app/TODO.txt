@@ -2,7 +2,10 @@
 * Create mock json for Live Edit components
 
 CSS
+* live-edit-component - the text should not break
 * It is difficult to make the whole "margin" clickable. Create table like layout for Component in component menu. left cell for image, right cell for text
 * Toggle should have an arrow (see sketches)
 * It should be possible to change position -> discuss with TSI
 * Scrolling in component bar
+* The toggle bar collapses if eg. component title is too large
+

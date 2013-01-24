@@ -46,7 +46,7 @@
     proto.appendEmptyPlaceholder = function ($region) {
         var $placeholder = $('<div/>', {
             'class': 'live-edit-empty-region-placeholder',
-            'html': 'Drag components here'
+            'html': '<div>Drag components here</div><div style="font-size: 10px;">#' + $region.data('live-edit-name') + '</div>'
         });
         $region.append($placeholder);
     };
