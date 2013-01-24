@@ -13,6 +13,24 @@ public final class ContentIds
         super( set );
     }
 
+    @Override
+    public int hashCode()
+    {
+        return this.set.hashCode();
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        return ( o instanceof ContentIds ) && this.set.equals( ( (ContentIds) o ).set );
+    }
+
+    @Override
+    public String toString()
+    {
+        return this.set.toString();
+    }
+
     public static ContentIds empty()
     {
         final ImmutableSet<ContentId> set = ImmutableSet.of();

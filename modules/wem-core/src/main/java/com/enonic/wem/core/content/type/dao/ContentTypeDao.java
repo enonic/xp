@@ -10,17 +10,17 @@ import com.enonic.wem.core.jcr.JcrConstants;
 
 public interface ContentTypeDao
 {
-    public static final String CONTENT_TYPES_NODE = "contentTypes";
+    static final String CONTENT_TYPES_NODE = "contentTypes";
 
-    public static final String CONTENT_TYPES_PATH = JcrConstants.ROOT_NODE + "/" + CONTENT_TYPES_NODE + "/";
+    static final String CONTENT_TYPES_PATH = JcrConstants.ROOT_NODE + "/" + CONTENT_TYPES_NODE + "/";
 
-    public void create( ContentType contentType, Session session );
+    void create( ContentType contentType, Session session );
 
-    public void update( ContentType contentType, Session session );
+    void update( ContentType contentType, Session session );
 
-    public void delete( QualifiedContentTypeName qualifiedContentTypeName, Session session );
+    void delete( QualifiedContentTypeName qualifiedContentTypeName, Session session );
 
-    public ContentTypes selectAll( Session session );
+    ContentTypes selectAll( Session session );
 
-    public ContentTypes select( QualifiedContentTypeNames qualifiedContentTypeNames, Session session );
+    ContentTypes select( QualifiedContentTypeNames qualifiedContentTypeNames, Session session );
 }

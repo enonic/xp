@@ -26,21 +26,21 @@ import static com.enonic.wem.api.content.type.editor.ContentTypeEditors.setConte
 @DependsOn("jcrInitializer")
 public class ContentTypesInitializer
 {
-    private static final ContentType SPACE = createSystemType( QualifiedContentTypeName.space(), true, false );
+    public static final ContentType SPACE = createSystemType( QualifiedContentTypeName.space(), true, false );
 
-    private static final ContentType STRUCTURED = createSystemType( QualifiedContentTypeName.structured(), false, true );
+    public static final ContentType STRUCTURED = createSystemType( QualifiedContentTypeName.structured(), false, true );
 
-    private static final ContentType UNSTRUCTURED = createSystemType( QualifiedContentTypeName.unstructured(), false, false );
+    public static final ContentType UNSTRUCTURED = createSystemType( QualifiedContentTypeName.unstructured(), false, false );
 
-    private static final ContentType FOLDER = createSystemType( QualifiedContentTypeName.folder(), false, false );
+    public static final ContentType FOLDER = createSystemType( QualifiedContentTypeName.folder(), false, false );
 
-    private static final ContentType PAGE = createSystemType( QualifiedContentTypeName.page(), true, false );
+    public static final ContentType PAGE = createSystemType( QualifiedContentTypeName.page(), true, false );
 
-    private static final ContentType SHORTCUT = createSystemType( QualifiedContentTypeName.shortcut(), true, false );
+    public static final ContentType SHORTCUT = createSystemType( QualifiedContentTypeName.shortcut(), true, false );
 
-    private static final ContentType FILE = createSystemType( QualifiedContentTypeName.file(), true, false );
+    public static final ContentType FILE = createSystemType( QualifiedContentTypeName.file(), true, false );
 
-    private static final ContentType[] SYSTEM_TYPES = {SPACE, STRUCTURED, UNSTRUCTURED, FOLDER, PAGE, SHORTCUT, FILE};
+    public static final ContentType[] SYSTEM_TYPES = {SPACE, STRUCTURED, UNSTRUCTURED, FOLDER, PAGE, SHORTCUT, FILE};
 
     private static final String[] TEST_CONTENT_TYPES =
         {"demo-contenttype-htmlarea.json", "demo-contenttype-fieldset.json", "demo-contenttype-set.json", "demo-contenttype-blog.json",

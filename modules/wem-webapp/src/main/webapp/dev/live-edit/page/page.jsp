@@ -173,7 +173,7 @@
         <!-- Region -->
         <div id="north" class="clear clearfix" data-live-edit-type="region" data-live-edit-key="70" data-live-edit-name="North">
 
-          <%@ include file="components/window-html5-video.html" %>
+          <!--%@ include file="components/window-html5-video.html" %-->
 
         </div>
 

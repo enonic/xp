@@ -6,6 +6,7 @@ import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeNames;
 
 public class RelationshipTypesExistsResult
 {
+    // DO NOT COMMIT ?
     private final QualifiedRelationshipTypeNames qualifiedNames;
 
     private RelationshipTypesExistsResult( final QualifiedRelationshipTypeNames qualifiedNames )

@@ -52,7 +52,7 @@ final class RetrieveContentTypeDaoHandler
         return this.contentTypeJcrMapper.toContentType( contentTypeNode );
     }
 
-    public ContentTypes retrieveAll()
+    ContentTypes retrieveAll()
         throws RepositoryException
     {
         final Node rootNode = session.getRootNode();
