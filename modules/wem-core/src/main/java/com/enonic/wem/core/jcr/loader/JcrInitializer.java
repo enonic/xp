@@ -28,15 +28,14 @@ public final class JcrInitializer
         this.jcrSessionProvider = jcrSessionProvider;
     }
 
-    @PostConstruct
-    public void initialize()
+    public boolean initialize()
         throws Exception
     {
         final Session session = this.jcrSessionProvider.loginAdmin();
 
         try
         {
-            initialize( session );
+            return initialize( session );
         }
         finally
         {
@@ -51,6 +50,7 @@ public final class JcrInitializer
         {
             return false;
         }
+
         registerNamespaces( session );
         registerNodeTypes( session, "/META-INF/jcr/node_types.cnd" );
         importContent( session, "/META-INF/jcr/init_content.xml" );
