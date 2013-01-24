@@ -130,6 +130,7 @@ AdminLiveEdit.DragDrop = (function () {
                 cache: false
             }).done(function (html) {
                 $component.replaceWith(html);
+                $liveedit(window).trigger('component:drag:update');
             });
 
         }

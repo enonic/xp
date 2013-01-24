@@ -1,7 +1,7 @@
 (function ($) {
     'use strict';
 
-    var regions =  AdminLiveEdit.model.component.Regions = function () {
+    var regions = AdminLiveEdit.model.component.Regions = function () {
         this.cssSelector = '[data-live-edit-type=region]';
         this.renderEmptyPlaceholders();
         this.attachMouseOverEvent();
@@ -11,7 +11,7 @@
     };
 
     // Inherit from Base prototype
-    regions.prototype = new  AdminLiveEdit.model.component.Base();
+    regions.prototype = new AdminLiveEdit.model.component.Base();
 
     // Fix constructor as it now is Base
     regions.constructor = regions;
@@ -25,7 +25,6 @@
 
     proto.bindGlobalEvents = function () {
         $(window).on('component:drag:update', $.proxy(this.renderEmptyPlaceholders, this));
-
         $(window).on('component:drag:over', $.proxy(this.renderEmptyPlaceholders, this));
     };
 
