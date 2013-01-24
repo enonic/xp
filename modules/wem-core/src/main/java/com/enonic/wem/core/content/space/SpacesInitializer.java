@@ -33,15 +33,15 @@ public class SpacesInitializer
         final boolean exists = client.execute( Commands.space().get().name( spaceName ) ).isNotEmpty();
         if ( exists )
         {
-            final CreateSpace createCommand = Commands.space().create().name( name ).displayName( displayName );
-            client.execute( createCommand );
-        }
-        else
-        {
             final UpdateSpaces updateCommand = Commands.space().update();
             updateCommand.name( spaceName );
             updateCommand.editor( setDisplayName( displayName ) );
             client.execute( updateCommand );
+        }
+        else
+        {
+            final CreateSpace createCommand = Commands.space().create().name( name ).displayName( displayName );
+            client.execute( createCommand );
         }
     }
 
