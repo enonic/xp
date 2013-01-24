@@ -1,3 +1,6 @@
+/*
+    TODO: Refactor to a dynamic object!
+*/
 AdminLiveEdit.DragDrop = (function () {
     'use strict';
 
@@ -17,6 +20,28 @@ AdminLiveEdit.DragDrop = (function () {
 
     function disableDragDrop() {
         $liveedit(regionSelector).sortable('disable');
+    }
+
+
+    function createComponentBarDraggables() {
+        var draggableOptions = {
+            connectToSortable: regionSelector,
+            cursor: 'move',
+            revert: function (dropped) {
+                // console.log(dropped);
+            },
+            helper: function () {
+                return '<div style="width: 200px; height: 20px; background-color: #ccc; padding: 10px;">Helper</div>';
+            },
+            start: function () {
+                isDragging = true;
+            },
+            stop: function () {
+                isDragging = false;
+            }
+        };
+
+        $liveedit('.live-edit-component').draggable(draggableOptions);
     }
 
 
@@ -94,12 +119,27 @@ AdminLiveEdit.DragDrop = (function () {
 
     function handleReceive(event, ui) {
         if (itemIsDraggedFromComponentBar(ui.item)) {
-            $(this).children('.live-edit-component').replaceWith(createDummyWindowHtml());
+            var $component = $liveedit(this).children('.live-edit-component');
+            var componentKey = $component.data('live-edit-component-key');
+            var url = '../app/data/mock-component-' + componentKey + '.html';
+
+            $liveedit.ajax({
+                url: url,
+                cache: false
+            }).done(function (html) {
+                $component.replaceWith(html);
+            });
+
         }
     }
 
 
     function initSubscribers() {
+
+        $liveedit(window).on('componentBar:dataLoaded', function () {
+            createComponentBarDraggables();
+        });
+
         $liveedit(window).on('component:select', function () {
             if (AdminLiveEdit.Util.supportsTouch()) {
                 enableDragDrop();
@@ -157,24 +197,6 @@ AdminLiveEdit.DragDrop = (function () {
             update              : handleSortUpdate, // This event is triggered when the user stopped sorting and the DOM position has changed.
             stop                : handleSortStop    // This event is triggered when sorting has stopped.
         }).disableSelection();
-
-
-        $liveedit('.live-edit-component').draggable({
-            connectToSortable: regionSelector,
-            cursor: 'move',
-            revert: function (dropped) {
-                // console.log(dropped);
-            },
-            helper: function () {
-                return '<div style="width: 200px; height: 20px; background-color: #ccc; padding: 10px;">Helper</div>';
-            },
-            start: function () {
-                isDragging = true;
-            },
-            stop: function () {
-                isDragging = false;
-            }
-        });
 
         initSubscribers();
     }

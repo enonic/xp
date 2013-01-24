@@ -184,9 +184,9 @@
             <!-- Region -->
             <div class="column clear clearfix screen" id="west" data-live-edit-type="region" data-live-edit-key="49" data-live-edit-name="West">
 
-              <%@ include file="components/window-upcomming-training.html" %>
+              <!--%@ include file="components/window-upcomming-training.html" %-->
 
-              <%@ include file="components/window-twitranet.html" %>
+              <!--%@ include file="components/window-twitranet.html" %-->
 
             </div>
 
@@ -194,7 +194,7 @@
             <!-- Region -->
             <div id="center" class="column clearfix" data-live-edit-type="region" data-live-edit-key="55" data-live-edit-name="Center">
 
-              <%@ include file="components/window-press-release-list.html" %>
+              <!--%@ include file="components/window-press-release-list.html" %-->
 
             </div>
 
@@ -204,13 +204,13 @@
 
               <%@ include file="components/window-empty.jsp" %>
 
-              <%@ include file="components/window-tagcloud.html" %>
+              <!--%@ include file="components/window-tagcloud.html" %-->
 
-              <%@ include file="components/window-enterprise-ed-teaser.jsp" %>
+              <!--%@ include file="components/window-enterprise-ed-teaser.jsp" %-->
 
-              <%@ include file="components/window-svg-html5-logo.html" %>
+              <!--%@ include file="components/window-svg-html5-logo.html" %-->
 
-              <%@ include file="components/window-formbuilder-example.html" %>
+              <!--%@ include file="components/window-formbuilder-example.html" %-->
 
             </div>
 
@@ -220,7 +220,7 @@
         <!-- Region -->
         <div id="south" class="clear clearfix" data-live-edit-type="region" data-live-edit-key="99" data-live-edit-name="South">
 
-          <%@ include file="components/window-page-banner-training.html" %>
+          <!--%@ include file="components/window-page-banner-training.html" %-->
 
         </div>
 

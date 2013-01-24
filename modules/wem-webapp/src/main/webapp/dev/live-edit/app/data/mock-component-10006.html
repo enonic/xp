@@ -1,0 +1,44 @@
+<div data-live-edit-type="window" data-live-edit-key="10006" data-live-edit-name="Twitranett">
+    <h2>Twitranet</h2>
+    <div id="twitranet-tweets-container">
+
+    </div>
+    <script type="text/javascript">
+        var $tweetContainer = $('#twitranet-tweets-container');
+        var _twitranetTick = 0;
+        var _twitters = [
+            '<strong>esu:</strong> @jsi: hmm... :D',
+            '<strong>rmy:</strong> hvis bordet ligner på / er dette vil jeg ha det: <a href="http://bit.ly/OYB9as">http://bit.ly/OYB9as</a>',
+            '<strong>rmy:</strong> @kla: Hva slags spisestue?',
+            '<strong>kla:</strong> Hei, skal pusse opp i leiligheten. Hvis noen trenger en spisestue, et dobbeltsidig kjøleskap med isbitmaskin, eller et kjøkken, så si ifra!',
+            '<strong>siw:</strong> &lt;--- sjekk ut what\'s new!',
+            '<strong>tsi:</strong> Litt rask der.. "Set nameserver 3.0b10" ser ut til å funke bedre!',
+            '<strong>tsi:</strong> PS! Mountain Lion krever at man installerer Beta versjon av VPN klient + velger "do not set nameserver"',
+            '<strong>tsi:</strong> Eg er attende',
+            '<strong>ljl:</strong> Lær å knyte skoene sikkelig: <a href="http://www.ted.com/talks/terry_moore_how_to_tie_your_shoes.html">http://www.ted.com/talks/terry_moore_how_to_tie_your_shoes.html</a>',
+            '<strong>mer:</strong> Jelastic Cloud og Enonic: <a href="http://blog.jelastic.com/2012/07/02/how-to-deploy-enonic-cms-to-jelastic-cloud/">http://blog.jelastic.com/2012/07/02/how-to-deploy-enonic-cms-to-jelastic-cloud/</a>',
+            '<strong>siw:</strong> Hallo på do ;) <a href="http://lunchstriper.lunddesign.no/comics/2011-04-01-lunch_269_hallopodo_farger.png">http://lunchstriper.lunddesign.no/comics/2011-04-01-lunch_269_hallopodo_farger.png</a>',
+            '<strong>jsi:</strong> Når Erik skal øke sikkerhetsnivået i Enonic: <a href="http://dilbert.com/dyn_file/str_strip/161155/gif/strip.print/">http://dilbert.com/dyn_file/str_strip/161155/gif/strip.print/</a>'
+        ];
+
+        function randomFromTo(from, to){
+            return Math.floor(Math.random() * (to - from + 1) + from);
+        }
+
+        function appendTweet() {
+            var $tweet = $('<div class="js-tweet-text" style="margin-bottom:1em">'+_twitters[randomFromTo(0, _twitters.length-1)] + '</div>');
+            $tweetContainer.append($tweet);
+            $tweet.fadeIn();
+        }
+
+        var _twitranetTimer = setInterval(function() {
+            if ( $tweetContainer.children('.js-tweet-text').length === 10) {
+                $tweetContainer.empty();
+            }
+
+            appendTweet();
+        }, 7000);
+
+        appendTweet();
+    </script>
+</div>

@@ -1,0 +1,63 @@
+{
+    "totalCount": 1000,
+    "componentTypes": [
+        {
+            "name": "Advanced",
+            "components": [
+                {
+                    "key": "10004",
+                    "name": "Contact Form",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/srs.jpeg"
+                },
+                {
+                    "key": "10005",
+                    "name": "Press Release List",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/srs.jpeg"
+                },
+                {
+                    "key": "10006",
+                    "name": "Twitranett",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/srs.jpeg"
+                }
+            ]
+        },
+        {
+            "name": "Windows",
+            "components": [
+                {
+                    "key": "10007",
+                    "name": "Page Banner: Training",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/srs.jpeg"
+                },
+                {
+                    "key": "10002",
+                    "name": "Tags",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/srs.jpeg"
+                },
+                {
+                    "key": "10008",
+                    "name": "Upcomming Training",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/srs.jpeg"
+                },
+                {
+                    "key": "10001",
+                    "name": "Video",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/srs.jpeg"
+                },
+                {
+                    "key": "10003",
+                    "name": "Vision and Values (doc)",
+                    "subtitle": "Subtitle",
+                    "icon": "../app/images/srs.jpeg"
+                }
+            ]
+        }
+    ]
+}
