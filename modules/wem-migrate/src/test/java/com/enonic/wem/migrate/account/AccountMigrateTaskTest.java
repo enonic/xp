@@ -1,7 +1,6 @@
 package com.enonic.wem.migrate.account;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -33,7 +32,6 @@ public class AccountMigrateTaskTest
     }
 
     @Test
-    @Ignore
     public void testMigrate()
         throws Exception
     {

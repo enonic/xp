@@ -282,11 +282,6 @@ public final class AccountMigrateTask
 
         final String userName = (String) userFields.get( "USR_SUID" );
 
-        if ( !userName.startsWith( "an" ) )
-        {
-            return;
-        }
-
         final String displayName = (String) userFields.get( "USR_SFULLNAME" );
         final String email = (String) userFields.get( "USR_SEMAIL" );
         final Date lastModified = (Date) userFields.get( "USR_DTETIMESTAMP" );
