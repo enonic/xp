@@ -166,7 +166,7 @@ AdminLiveEdit.DragDrop = (function () {
 
     function init() {
         $liveedit(regionSelector).sortable({
-            revert              : true,
+            revert              : 1000,
             connectWith         : regionSelector,   // Sortable elements.
             items               : windowSelector,   // Elements to sort.
             distance            : 1,
