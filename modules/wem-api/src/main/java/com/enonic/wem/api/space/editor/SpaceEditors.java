@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.space.editor;
+package com.enonic.wem.api.space.editor;
 
 public abstract class SpaceEditors
 {

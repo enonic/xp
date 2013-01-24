@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.space;
+package com.enonic.wem.core.space;
 
 import java.util.List;
 
@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.command.content.space.GetSpaces;
-import com.enonic.wem.api.content.space.Space;
-import com.enonic.wem.api.content.space.SpaceName;
-import com.enonic.wem.api.content.space.SpaceNames;
-import com.enonic.wem.api.content.space.Spaces;
+import com.enonic.wem.api.command.space.GetSpaces;
+import com.enonic.wem.api.space.Space;
+import com.enonic.wem.api.space.SpaceName;
+import com.enonic.wem.api.space.SpaceNames;
+import com.enonic.wem.api.space.Spaces;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.SpaceDao;

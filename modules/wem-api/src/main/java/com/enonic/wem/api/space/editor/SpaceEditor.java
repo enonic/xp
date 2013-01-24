@@ -1,6 +1,6 @@
-package com.enonic.wem.api.content.space.editor;
+package com.enonic.wem.api.space.editor;
 
-import com.enonic.wem.api.content.space.Space;
+import com.enonic.wem.api.space.Space;
 
 public interface SpaceEditor
 {

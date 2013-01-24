@@ -6,9 +6,9 @@ import javax.jcr.Session;
 
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.content.space.Space;
-import com.enonic.wem.api.content.space.SpaceName;
-import com.enonic.wem.api.content.space.Spaces;
+import com.enonic.wem.api.space.Space;
+import com.enonic.wem.api.space.SpaceName;
+import com.enonic.wem.api.space.Spaces;
 
 @Component
 public final class SpaceDaoImpl

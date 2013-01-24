@@ -1,12 +1,12 @@
-package com.enonic.wem.api.command.content.space;
+package com.enonic.wem.api.command.space;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.space.SpaceName;
-import com.enonic.wem.api.content.space.SpaceNames;
-import com.enonic.wem.api.content.space.editor.SpaceEditor;
+import com.enonic.wem.api.space.SpaceName;
+import com.enonic.wem.api.space.SpaceNames;
+import com.enonic.wem.api.space.editor.SpaceEditor;
 
 public final class UpdateSpaces
     extends Command<Integer>

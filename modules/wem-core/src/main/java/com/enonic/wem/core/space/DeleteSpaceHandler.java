@@ -1,11 +1,11 @@
-package com.enonic.wem.core.content.space;
+package com.enonic.wem.core.space;
 
 import javax.jcr.Session;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.command.content.space.DeleteSpace;
+import com.enonic.wem.api.command.space.DeleteSpace;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;

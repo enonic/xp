@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.space;
+package com.enonic.wem.core.space;
 
 import javax.jcr.Session;
 
@@ -8,16 +8,16 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.space.UpdateSpaces;
-import com.enonic.wem.api.content.space.Space;
-import com.enonic.wem.api.content.space.SpaceName;
-import com.enonic.wem.api.content.space.SpaceNames;
-import com.enonic.wem.api.content.space.editor.SpaceEditor;
+import com.enonic.wem.api.command.space.UpdateSpaces;
+import com.enonic.wem.api.space.Space;
+import com.enonic.wem.api.space.SpaceName;
+import com.enonic.wem.api.space.SpaceNames;
+import com.enonic.wem.api.space.editor.SpaceEditor;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.core.content.dao.SpaceDao;
 
-import static com.enonic.wem.api.content.space.Space.newSpace;
+import static com.enonic.wem.api.space.Space.newSpace;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;

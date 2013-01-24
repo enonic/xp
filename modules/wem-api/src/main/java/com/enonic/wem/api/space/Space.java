@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.space;
+package com.enonic.wem.api.space;
 
 import org.joda.time.DateTime;
 

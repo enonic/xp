@@ -1,10 +1,10 @@
-package com.enonic.wem.api.command.content.space;
+package com.enonic.wem.api.command.space;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.space.SpaceName;
+import com.enonic.wem.api.space.SpaceName;
 
 public final class DeleteSpace
     extends Command<Boolean>

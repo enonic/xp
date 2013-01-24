@@ -2,9 +2,9 @@ package com.enonic.wem.core.content.dao;
 
 import javax.jcr.Session;
 
-import com.enonic.wem.api.content.space.Space;
-import com.enonic.wem.api.content.space.SpaceName;
-import com.enonic.wem.api.content.space.Spaces;
+import com.enonic.wem.api.space.Space;
+import com.enonic.wem.api.space.SpaceName;
+import com.enonic.wem.api.space.Spaces;
 
 public interface SpaceDao
 {

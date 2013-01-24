@@ -6,13 +6,13 @@ import javax.jcr.Node;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.space.Space;
-import com.enonic.wem.api.content.space.SpaceName;
-import com.enonic.wem.api.content.space.Spaces;
+import com.enonic.wem.api.space.Space;
+import com.enonic.wem.api.space.SpaceName;
+import com.enonic.wem.api.space.Spaces;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.core.AbstractJcrTest;
 
-import static com.enonic.wem.api.content.space.Space.newSpace;
+import static com.enonic.wem.api.space.Space.newSpace;
 import static com.enonic.wem.core.content.dao.AbstractSpaceDaoHandler.SPACES_PATH;
 import static com.enonic.wem.core.content.dao.AbstractSpaceDaoHandler.SPACE_CONTENT_ROOT_NODE;
 import static org.junit.Assert.*;

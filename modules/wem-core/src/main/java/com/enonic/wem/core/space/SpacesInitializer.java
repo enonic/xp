@@ -1,18 +1,16 @@
-package com.enonic.wem.core.content.space;
+package com.enonic.wem.core.space;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.space.CreateSpace;
-import com.enonic.wem.api.command.content.space.UpdateSpaces;
-import com.enonic.wem.api.content.space.SpaceName;
+import com.enonic.wem.api.command.space.CreateSpace;
+import com.enonic.wem.api.command.space.UpdateSpaces;
+import com.enonic.wem.api.space.SpaceName;
 
-import static com.enonic.wem.api.content.space.editor.SpaceEditors.setDisplayName;
+import static com.enonic.wem.api.space.editor.SpaceEditors.setDisplayName;
 
 //@Component
 //@DependsOn("jcrInitializer")

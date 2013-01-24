@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.content.space;
+package com.enonic.wem.api.command.space;
 
 
 public final class SpaceCommands

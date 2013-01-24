@@ -3,7 +3,7 @@ package com.enonic.wem.api.command;
 import com.enonic.wem.api.command.account.AccountCommands;
 import com.enonic.wem.api.command.content.ContentCommands;
 import com.enonic.wem.api.command.content.relationship.RelationshipTypeCommands;
-import com.enonic.wem.api.command.content.space.SpaceCommands;
+import com.enonic.wem.api.command.space.SpaceCommands;
 import com.enonic.wem.api.command.content.type.BaseTypeCommands;
 import com.enonic.wem.api.command.content.type.ContentTypeCommands;
 import com.enonic.wem.api.command.content.type.MixinCommands;

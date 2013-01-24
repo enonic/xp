@@ -4,7 +4,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.content.space.SpaceName;
+import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
 
 public class DeleteSpaceDaoHandler
