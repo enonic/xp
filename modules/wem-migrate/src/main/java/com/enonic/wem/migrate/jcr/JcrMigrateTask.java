@@ -3,16 +3,10 @@ package com.enonic.wem.migrate.jcr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import com.enonic.wem.core.jcr.loader.JcrInitializer;
 import com.enonic.wem.core.jcr.provider.JcrSessionProvider;
-import com.enonic.wem.core.search.account.AccountSearchService;
-import com.enonic.wem.migrate.MigrateTask;
 
-@Component
 public class JcrMigrateTask
-    implements MigrateTask
 {
     private static final Logger LOG = LoggerFactory.getLogger( JcrMigrateTask.class );
 
@@ -20,7 +14,6 @@ public class JcrMigrateTask
 
     private JcrAccountsImporter jcrAccountsImporter;
 
-    @Override
     public void migrate()
         throws Exception
     {

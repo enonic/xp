@@ -1,7 +1,24 @@
 package com.enonic.wem.migrate;
 
-public interface MigrateTask
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public abstract class MigrateTask
 {
-    public void migrate()
+    protected final Logger logger;
+
+    protected MigrateContext context;
+
+    public MigrateTask()
+    {
+        this.logger = LoggerFactory.getLogger( getClass() );
+    }
+
+    public final void setContext( final MigrateContext context )
+    {
+        this.context = context;
+    }
+
+    public abstract void migrate()
         throws Exception;
 }
