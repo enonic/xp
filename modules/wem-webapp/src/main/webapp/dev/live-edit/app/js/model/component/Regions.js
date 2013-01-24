@@ -26,6 +26,7 @@
     proto.bindGlobalEvents = function () {
         $(window).on('component:drag:update', $.proxy(this.renderEmptyPlaceholders, this));
         $(window).on('component:drag:over', $.proxy(this.renderEmptyPlaceholders, this));
+        $(window).on('component:remove', $.proxy(this.renderEmptyPlaceholders, this));
     };
 
 

@@ -27,6 +27,9 @@
             cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
+                // For demo purposes
+                me.componentMenu.$currentComponent.remove();
+                $(window).trigger('component:remove');
             }
         });
 
