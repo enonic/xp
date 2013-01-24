@@ -14,8 +14,8 @@ import com.enonic.wem.api.content.space.SpaceName;
 
 import static com.enonic.wem.api.content.space.editor.SpaceEditors.setDisplayName;
 
-@Component
-@DependsOn("jcrInitializer")
+//@Component
+//@DependsOn("jcrInitializer")
 public class SpacesInitializer
 {
     private Client client;
