@@ -1,0 +1,10 @@
+{
+    "success": true,
+    "space": {
+        "name": "mySpace",
+        "displayName": "My Space",
+        "createdTime": "2000-01-01T12:00:00.000+01:00",
+        "modifiedTime": "2000-01-01T12:00:00.000+01:00",
+        "rootContentId": "1fad493a-6a72-41a3-bac4-88aba3d83bcc"
+    }
+}
