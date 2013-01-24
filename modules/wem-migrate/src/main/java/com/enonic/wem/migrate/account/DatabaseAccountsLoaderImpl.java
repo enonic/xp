@@ -1,23 +1,32 @@
-package com.enonic.wem.migrate.jcr;
+package com.enonic.wem.migrate.account;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-@Repository
-public class DatabaseAccountsLoaderImpl
+final class DatabaseAccountsLoaderImpl
     implements DatabaseAccountsLoader
 {
     private static final Logger LOG = LoggerFactory.getLogger( DatabaseAccountsLoaderImpl.class );
 
     static final String USER_INFO_FIELDS_MAP = "FIELDSMAP";
 
-    // private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
+
+    public DatabaseAccountsLoaderImpl( final DataSource dataSource )
+    {
+        this.jdbcTemplate = new JdbcTemplate( dataSource );
+    }
 
     @Override
     public void loadUserStores( ImportDataCallbackHandler handler )
     {
-        /*
         final String sql = "SELECT DOM_LKEY, DOM_BISDELETED, DOM_SNAME, DOM_BDEFAULTSTORE, DOM_SCONFIGNAME, DOM_XMLDATA " +
             "FROM TDOMAIN WHERE DOM_BISDELETED = 0";
 
@@ -27,13 +36,12 @@ public class DatabaseAccountsLoaderImpl
         for ( Map<String, Object> userStoreRow : userStoreRows )
         {
             handler.processDataEntry( userStoreRow );
-        }*/
+        }
     }
 
     @Override
     public void loadUsers( ImportDataCallbackHandler handler )
     {
-        /*
         final String sql = "SELECT USR_HKEY, USR_SUID, USR_SFULLNAME, USR_DTETIMESTAMP, USR_UT_LKEY, " +
             "USR_DOM_LKEY, USR_SSYNCVALUE2, USR_SEMAIL, USR_SPASSWORD, USR_GRP_HKEY, USR_PHOTO, USR_BISDELETED FROM TUSER WHERE USR_BISDELETED = 0";
 
@@ -46,13 +54,12 @@ public class DatabaseAccountsLoaderImpl
             final Map<String, Object> userFields = fetchUserFields( userKey );
             userRow.put( USER_INFO_FIELDS_MAP, userFields );
             handler.processDataEntry( userRow );
-        }*/
+        }
     }
 
     @Override
     public void loadGroups( ImportDataCallbackHandler handler )
     {
-        /*
         final String sql = "SELECT GRP_HKEY, GRP_SDESCRIPTION, GRP_SNAME, GRP_BRESTRICTED, GRP_SSYNCVALUE, " +
             "GRP_LTYPE, GRP_DOM_LKEY, GRP_BISDELETED FROM TGROUP WHERE GRP_BISDELETED = 0";
 
@@ -62,13 +69,12 @@ public class DatabaseAccountsLoaderImpl
         for ( Map<String, Object> userRow : userRows )
         {
             handler.processDataEntry( userRow );
-        }*/
+        }
     }
 
     @Override
     public void loadMemberships( ImportDataCallbackHandler handler )
     {
-        /*
         final String sql = "SELECT GGM_MBR_GRP_HKEY, GGM_GRP_HKEY FROM TGRPGRPMEMBERSHIP";
 
         final List<Map<String, Object>> membershipRows = jdbcTemplate.queryForList( sql );
@@ -77,10 +83,9 @@ public class DatabaseAccountsLoaderImpl
         for ( Map<String, Object> membership : membershipRows )
         {
             handler.processDataEntry( membership );
-        }*/
+        }
     }
 
-    /*
     private Map<String, Object> fetchUserFields( String userKey )
     {
         final String sql = "SELECT USF_NAME, USF_VALUE FROM TUSERFIELD WHERE USF_USR_HKEY = ?";
@@ -93,10 +98,4 @@ public class DatabaseAccountsLoaderImpl
         }
         return userFields;
     }
-
-    @Autowired
-    public void setDataSource( DataSource dataSource )
-    {
-        this.jdbcTemplate = new JdbcTemplate( dataSource );
-    }*/
 }

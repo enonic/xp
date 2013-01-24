@@ -1,4 +1,4 @@
-package com.enonic.wem.migrate.jcr;
+package com.enonic.wem.migrate.account;
 
 public interface DatabaseAccountsLoader
 {
