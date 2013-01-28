@@ -1,0 +1,1 @@
+<% com.enonic.wem.web.images.Background.stream( getServletConfig(), response ); %>
