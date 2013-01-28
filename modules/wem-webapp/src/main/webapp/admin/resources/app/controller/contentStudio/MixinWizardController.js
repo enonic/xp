@@ -1,4 +1,4 @@
-Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
+Ext.define('Admin.controller.contentStudio.MixinWizardController', {
     extend: 'Admin.controller.contentStudio.WizardController',
 
     /*      Controller for handling Content Type Wizard UI events       */
@@ -13,11 +13,11 @@ Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
 
     init: function () {
         this.application.on({
-            saveContentType: {
+            saveMixin: {
                 fn: this.saveType,
                 scope: this
             },
-            deleteContentType: {
+            deleteMixin: {
                 fn: this.deleteType,
                 scope: this
             }
@@ -25,32 +25,30 @@ Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
     },
 
     saveType: function (wizard, closeWizard) {
-        console.log("saving as contenttype");
+        console.log('Saving mixin');
         var me = this;
         var data = wizard.getData();
-        var contentType = data.configXML;
-        var iconRef = data.iconRef;
-        var contentTypeParams = {
-            contentType: contentType,
-            iconReference: iconRef
+        var xml = data.configXML;
+        var params = {
+            mixin: xml
         };
 
-        var onUpdateContentTypeSuccess = function (created, updated) {
+        var onUpdateMixinSuccess = function (created, updated) {
             if (created || updated) {
                 if (closeWizard) {
                     me.getWizardTab().close();
                 }
 
                 Admin.MessageBus.showFeedback({
-                    title: 'Content Type was saved',
-                    message: 'Content Type was saved',
+                    title: 'Mixin was saved',
+                    message: 'Mixin was saved',
                     opts: {}
                 });
 
                 me.getTreeGridPanel().refresh();
             }
         };
-        this.remoteCreateOrUpdateContentType(contentTypeParams, onUpdateContentTypeSuccess);
+        this.remoteCreateOrUpdateMixin(params, onUpdateMixinSuccess);
     },
 
     deleteType: function (wizard) {

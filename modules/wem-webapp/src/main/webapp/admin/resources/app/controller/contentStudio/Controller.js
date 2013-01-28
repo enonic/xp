@@ -5,7 +5,9 @@ Ext.define('Admin.controller.contentStudio.Controller', {
     models: [],
 
     views: [
-        'Admin.view.contentStudio.wizard.WizardPanel',
+        'Admin.view.contentStudio.wizard.ContentTypeWizardPanel',
+        'Admin.view.contentStudio.wizard.MixinWizardPanel',
+        'Admin.view.contentStudio.wizard.RelationshipTypeWizardPanel',
         'Admin.view.contentStudio.DeleteContentTypeWindow'
     ],
 
@@ -15,8 +17,12 @@ Ext.define('Admin.controller.contentStudio.Controller', {
                 fn: this.showNewContentTypePanel,
                 scope: this
             },
-            showEditContentTypePanel: {
-                fn: this.showEditContentTypePanel,
+            showNewMixinPanel: {
+                fn: this.showNewContentTypePanel,
+                scope: this
+            },
+            showEditBaseTypePanel: {
+                fn: this.showEditBaseTypePanel,
                 scope: this
             },
             showPreviewContentTypePanel: {
@@ -32,10 +38,19 @@ Ext.define('Admin.controller.contentStudio.Controller', {
 
 
     showNewContentTypePanel: function () {
-        this.createEditContentPanel(null, true);
+        this.createEditContentTypePanel(null, true);
     },
 
-    showEditContentTypePanel: function (contentType, callback) {
+    showNewMixinPanel: function () {
+        this.createEditMixinPanel(null, true);
+    },
+
+    showNewRelationshipTypePanel: function () {
+        this.createEditRelationshipTypePanel(null, true);
+    },
+
+
+    showEditBaseTypePanel: function (contentType, callback) {
         if (!contentType) {
             contentType = this.getTreeGridPanel().getSelection();
         } else {
@@ -43,7 +58,7 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         }
         var i;
         for (i = 0; i < contentType.length; i += 1) {
-            this.createEditContentPanel(contentType[i]);
+            this.createEditBaseTypePanel(contentType[i]);
         }
     },
 
@@ -73,8 +88,23 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         }
     },
 
+    createEditBaseTypePanel: function (baseType, forceNew) {
+        switch (baseType.data.type) {
+        case 'ContentType':
+            this.createEditContentTypePanel(baseType, forceNew);
+            break;
+        case 'Mixin':
+            this.createEditMixinPanel(baseType, forceNew);
+            break;
+        case 'RelationshipType':
+            this.createEditRelationshipTypePanel(baseType, forceNew);
+            break;
+        default:
+            break;
+        }
+    },
 
-    createEditContentPanel: function (contentType, forceNew) {
+    createEditContentTypePanel: function (contentType, forceNew) {
         var tabPanel = this.getCmsTabPanel();
 
         if (contentType && !forceNew) {
@@ -83,12 +113,13 @@ Ext.define('Admin.controller.contentStudio.Controller', {
                 "format": "XML",
                 "contentType": [contentType.get('qualifiedName')]
             }, function (r) {
+                console.log(r);
                 tabPanel.el.unmask();
                 if (r) {
                     contentType.raw.configXML = r.contentTypeXml;
 
                     tabPanel.addTab({
-                        xtype: 'contentStudioWizardPanel',
+                        xtype: 'contentStudioContentTypeWizardPanel',
                         itemId: 'tab-edit-content-type-' + contentType.raw.qualifiedName,
                         editing: true,
                         title: contentType.raw.name,
@@ -103,8 +134,78 @@ Ext.define('Admin.controller.contentStudio.Controller', {
 
         } else {
             tabPanel.addTab({
-                xtype: 'contentStudioWizardPanel',
+                xtype: 'contentStudioContentTypeWizardPanel',
                 title: 'New Content Type'
+            });
+        }
+    },
+
+    createEditMixinPanel: function (mixin, forceNew) {
+        var tabPanel = this.getCmsTabPanel();
+
+        if (mixin && !forceNew) {
+            tabPanel.el.mask();
+            Admin.lib.RemoteService.mixin_get({
+                "format": "XML",
+                "mixin": [mixin.get('qualifiedName')]
+            }, function (r) {
+                tabPanel.el.unmask();
+                if (r) {
+                    mixin.raw.configXML = r.mixinXml;
+
+                    tabPanel.addTab({
+                        xtype: 'contentStudioMixinWizardPanel',
+                        itemId: 'tab-edit-mixin-' + mixin.raw.qualifiedName,
+                        editing: true,
+                        title: mixin.raw.name,
+                        iconCls: 'icon-content-studio-16',
+                        modelData: mixin.raw,
+                        data: mixin.raw   /* needed for tab panel to show path */
+                    });
+                } else {
+                    Ext.Msg.alert("Error", r ? r.error : "Unable to retrieve mixin.");
+                }
+            });
+
+        } else {
+            tabPanel.addTab({
+                xtype: 'contentStudioMixinWizardPanel',
+                title: 'New Mixin'
+            });
+        }
+    },
+
+    createEditRelationshipTypePanel: function (relationshipType, forceNew) {
+        var tabPanel = this.getCmsTabPanel();
+
+        if (relationshipType && !forceNew) {
+            tabPanel.el.mask();
+            Admin.lib.RemoteService.relationshipType_get({
+                "format": "XML",
+                "qualifiedRelationshipTypeName": [relationshipType.get('qualifiedName')]
+            }, function (r) {
+                tabPanel.el.unmask();
+                if (r) {
+                    relationshipType.raw.configXML = r.contentTypeXml;
+
+                    tabPanel.addTab({
+                        xtype: 'contentStudioRelationshipTypeWizardPanel',
+                        itemId: 'tab-edit-relationship-type-' + relationshipType.raw.qualifiedName,
+                        editing: true,
+                        title: relationshipType.raw.name,
+                        iconCls: 'icon-content-studio-16',
+                        modelData: relationshipType.raw,
+                        data: relationshipType.raw   /* needed for tab panel to show path */
+                    });
+                } else {
+                    Ext.Msg.alert("Error", r ? r.error : "Unable to retrieve relationship type.");
+                }
+            });
+
+        } else {
+            tabPanel.addTab({
+                xtype: 'contentStudioRelationshipTypeWizardPanel',
+                title: 'New Relationship Type'
             });
         }
     },

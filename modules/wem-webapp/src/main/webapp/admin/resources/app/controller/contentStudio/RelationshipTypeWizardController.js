@@ -1,4 +1,4 @@
-Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
+Ext.define('Admin.controller.contentStudio.RelationshipTypeWizardController', {
     extend: 'Admin.controller.contentStudio.WizardController',
 
     /*      Controller for handling Content Type Wizard UI events       */
@@ -13,19 +13,18 @@ Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
 
     init: function () {
         this.application.on({
-            saveContentType: {
+            saveRelationshipType: {
                 fn: this.saveType,
                 scope: this
             },
-            deleteContentType: {
-                fn: this.deleteType,
+            deleteRelationshipType: {
+                fn: this.saveType,
                 scope: this
             }
         });
     },
 
     saveType: function (wizard, closeWizard) {
-        console.log("saving as contenttype");
         var me = this;
         var data = wizard.getData();
         var contentType = data.configXML;
@@ -42,31 +41,19 @@ Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
                 }
 
                 Admin.MessageBus.showFeedback({
-                    title: 'Content Type was saved',
-                    message: 'Content Type was saved',
+                    title: 'Relationship Type was saved',
+                    message: 'Relationship Type was saved',
                     opts: {}
                 });
 
                 me.getTreeGridPanel().refresh();
             }
         };
-        this.remoteCreateOrUpdateContentType(contentTypeParams, onUpdateContentTypeSuccess);
+        //this.remoteCreateOrUpdateContentType(contentTypeParams, onUpdateContentTypeSuccess);
     },
 
-    deleteType: function (wizard) {
-        var me = this;
-        var onDeleteMixinSuccess = function (success, failures) {
-            if (success) {
-                me.getWizardTab().close();
-                Admin.MessageBus.showFeedback({
-                    title: 'Mixin was deleted',
-                    message: 'Mixin was deleted',
-                    opts: {}
-                });
-            }
-        }
-
-        this.remoteDeleteMixin(wizard.data, onDeleteMixinSuccess);
-
+    deleteType: function (wizard, closeWizard) {
+        console.log("TODO: delete relationshiptype");
     }
+
 });

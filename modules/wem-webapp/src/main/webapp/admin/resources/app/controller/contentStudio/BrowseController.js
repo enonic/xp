@@ -25,9 +25,20 @@ Ext.define('Admin.controller.contentStudio.BrowseController', {
                         this.showNewContentTypePanel();
                     }
                 },
-                '*[action=editContentType]': {
+                '*[action=newMixin]': {
                     click: function (btn, evt) {
-                        this.showEditContentTypePanel();
+                        this.showNewMixinPanel();
+                    }
+                },
+                '*[action=newRelationshipType]': {
+                    click: function (btn, evt) {
+                        this.showNewRelationshipTypePanel();
+                    }
+                },
+                '*[action=editBaseType]': {
+                    click: function (btn, evt) {
+                        this.showEditBaseTypePanel();
+
                     }
                 },
                 '*[action=viewContentType]': {
@@ -35,7 +46,7 @@ Ext.define('Admin.controller.contentStudio.BrowseController', {
                         this.showPreviewContentTypePanel();
                     }
                 },
-                '*[action=deleteContentType]': {
+                '*[action=deleteBaseType]': {
                     click: function (btn, evt) {
                         this.showDeleteContentTypeWindow();
                     }

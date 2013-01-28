@@ -1,6 +1,6 @@
-Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
-    extend: 'Ext.panel.Panel',
-    alias: 'widget.contentStudioWizardPanel',
+Ext.define('Admin.view.contentStudio.wizard.MixinWizardPanel', {
+    extend: 'Admin.view.contentStudio.wizard.WizardPanel',
+    alias: 'widget.contentStudioMixinWizardPanel',
     requires: [
         'Admin.view.WizardPanel',
         'Admin.view.contentStudio.wizard.ConfigPanel',
@@ -30,9 +30,10 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
             displayName: displayNameValue
         };
 
-        /*me.tbar = Ext.createByAlias('widget.contentStudioWizardToolbar', {
-         isNew: isNew
-         });*/
+        me.tbar = Ext.createByAlias('widget.contentStudioWizardToolbar', {
+            isNew: isNew,
+            baseType: 'mixin'
+        });
 
         me.items = [
             {
@@ -127,7 +128,7 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
         var me = this;
 
         var configStep = {
-            stepTitle: 'Content Type',
+            stepTitle: 'Mixin',
             modelData: me.modelData,
             xtype: 'contentStudioWizardConfigPanel',
             listeners: {

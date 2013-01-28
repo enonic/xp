@@ -7,7 +7,10 @@ Ext.application({
         'Admin.controller.contentStudio.GridPanelController',
         'Admin.controller.contentStudio.BrowseController',
         'Admin.controller.contentStudio.FilterPanelController',
+        'Admin.controller.contentStudio.WizardController',
         'Admin.controller.contentStudio.ContentTypeWizardController',
+        'Admin.controller.contentStudio.MixinWizardController',
+        'Admin.controller.contentStudio.RelationshipTypeWizardController',
         'Admin.controller.contentStudio.DialogWindowController'
     ],
 

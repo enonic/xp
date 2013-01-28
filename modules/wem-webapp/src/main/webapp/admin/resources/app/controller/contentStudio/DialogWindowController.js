@@ -1,5 +1,5 @@
 Ext.define('Admin.controller.contentStudio.DialogWindowController', {
-    extend: 'Admin.controller.contentStudio.ContentTypeController',
+    extend: 'Admin.controller.contentStudio.WizardController',
 
     stores: [],
     models: [],
