@@ -47,7 +47,7 @@ Ext.define('Admin.view.homescreen.LoginPanel', {
                 tabIndex: 1,
                 listeners: {
                     render: function (combo) {
-                        combo.setValue(me.userStoresStore.findRecord('default', true).raw.key);
+                        combo.setValue(me.getDefaultUserStore().raw.key);
                     }
                 }
             },
@@ -74,6 +74,7 @@ Ext.define('Admin.view.homescreen.LoginPanel', {
             },
             {
                 xtype: 'button',
+                type: 'submit',
                 itemId: 'loginButton',
                 formBind: true,
                 disabled: true,
@@ -85,6 +86,10 @@ Ext.define('Admin.view.homescreen.LoginPanel', {
         ];
 
         me.callParent(arguments);
+    },
+
+    getDefaultUserStore: function () {
+        return this.userStoresStore.findRecord('default', true);
     }
 
 });

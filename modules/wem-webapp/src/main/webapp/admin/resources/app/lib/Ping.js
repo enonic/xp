@@ -9,8 +9,7 @@ Ext.define('Admin.lib.Ping', {
 
 
     constructor: function () {
-        console.log('construct ping')
-        this.initErrorMessageBox();
+        this.addErrorMessageBox();
     },
 
 
@@ -27,7 +26,7 @@ Ext.define('Admin.lib.Ping', {
 
     stopPolling: function () {
         var me = this;
-        clearInterval(me.intervalId)
+        clearInterval(me.intervalId);
     },
 
 
@@ -70,7 +69,7 @@ Ext.define('Admin.lib.Ping', {
     /**
      * @private
      */
-    initErrorMessageBox: function () {
+    addErrorMessageBox: function () {
         var me = this,
             dh = Ext.DomHelper;
 
