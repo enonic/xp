@@ -23,11 +23,11 @@
 
     proto.bindGlobalEvents = function () {
         $(window).on('component:mouseover', $.proxy(this.highlight, this));
+        $(window).on('component:mouseout', $.proxy(this.hide, this));
         $(window).on('component:select', $.proxy(this.highlight, this));
         $(window).on('component:deselect', $.proxy(this.deselect, this));
         $(window).on('component:drag:start', $.proxy(this.hide, this));
         $(window).on('componentBar:mouseover', $.proxy(this.hide, this));
-        $(window).on('component:mouseout', $.proxy(this.hide, this));
     };
 
 
@@ -84,15 +84,12 @@
     };
 
 
-    proto.hide = function () {
+    proto.hide = function (event) {
         this.getEl().hide();
-        /*this.getEl().css({
-            top: '-5000px',
-            left: '-5000px'
-        });*/
     };
 
 
+    // Should be used later. Do not remove.
     proto.getBorderColor = function ($component) {
         var componentType = util.getComponentType($component);
         var color = '';
@@ -110,7 +107,7 @@
             color = '#141414';
             break;
         default:
-            color = '#ff0000';
+            color = '#141414';
         }
         return color;
     };

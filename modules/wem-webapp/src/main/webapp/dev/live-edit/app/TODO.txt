@@ -1,5 +1,3 @@
-* Drop placeholder must not show item from component bar
-* Create mock json for Live Edit components
 
 CSS
 * live-edit-component - the text should not break
