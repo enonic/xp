@@ -13,17 +13,19 @@ Ext.define('Admin.view.contentStudio.wizard.Toolbar', {
     },
 
     initComponent: function () {
-
+        var me = this;
         var saveBtn = {
             text: 'Save',
-            action: 'saveContentType',
+            action: 'saveType',
             itemId: 'save',
-            disabled: false //true, TODO disable by default, enable when modified
+            disabled: false, //true, TODO disable by default, enable when modified
+            baseType: me.baseType
         };
 
         var deleteBtn = {
             text: 'Delete',
-            action: 'deleteContentType'
+            action: 'deleteType',
+            baseType: me.baseType
         };
 
         var closeBtn = {

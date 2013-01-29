@@ -1,4 +1,4 @@
-Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
+Ext.define('Admin.controller.contentStudio.RelationshipTypeWizardController', {
     extend: 'Admin.controller.contentStudio.WizardController',
 
     /*      Controller for handling Content Type Wizard UI events       */
@@ -13,60 +13,60 @@ Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
 
     init: function () {
         this.application.on({
-            saveContentType: {
+            saveRelationshipType: {
                 fn: this.saveType,
                 scope: this
             },
-            deleteContentType: {
-                fn: this.deleteType,
+            deleteRelationshipType: {
+                fn: this.saveType,
                 scope: this
             }
         });
     },
 
     saveType: function (wizard, closeWizard) {
-        console.log("saving as contenttype");
         var me = this;
         var data = wizard.getData();
         var contentType = data.configXML;
         var iconRef = data.iconRef;
-        var contentTypeParams = {
+        var params = {
             contentType: contentType,
             iconReference: iconRef
         };
 
-        var onUpdateContentTypeSuccess = function (created, updated) {
+        var onUpdateRelationshipTypeSuccess = function (created, updated) {
             if (created || updated) {
                 if (closeWizard) {
                     me.getWizardTab().close();
                 }
 
                 Admin.MessageBus.showFeedback({
-                    title: 'Content Type was saved',
-                    message: 'Content Type was saved',
+                    title: 'Relationship Type was saved',
+                    message: 'Relationship Type was saved',
                     opts: {}
                 });
 
                 me.getTreeGridPanel().refresh();
             }
         };
-        this.remoteCreateOrUpdateContentType(contentTypeParams, onUpdateContentTypeSuccess);
+        this.remoteCreateOrUpdateRelationshipType(params, onUpdateRelationshipTypeSuccess);
     },
 
     deleteType: function (wizard) {
         var me = this;
-        var onDeleteContentTypeSuccess = function (success, failures) {
+        var onDeleteRelationshipTypeSuccess = function (success, failures) {
             if (success) {
                 me.getWizardTab().close();
                 Admin.MessageBus.showFeedback({
-                    title: 'Content Type was deleted',
-                    message: 'Content Type was deleted',
+                    title: 'Relationship Type was deleted',
+                    message: 'Relationship Type was deleted',
                     opts: {}
                 });
             }
         }
 
-        this.remoteDeleteContentType(wizard.data, onDeleteContentTypeSuccess);
+        this.remoteDeleteContentType(wizard.data, onDeleteRelationshipTypeSuccess());
 
     }
+
 });

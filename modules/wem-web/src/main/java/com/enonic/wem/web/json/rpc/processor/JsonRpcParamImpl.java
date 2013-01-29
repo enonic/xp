@@ -9,8 +9,8 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.web.json.rpc.JsonRpcException;
 import com.enonic.wem.web.json.rpc.JsonRpcError;
+import com.enonic.wem.web.json.rpc.JsonRpcException;
 import com.enonic.wem.web.json.rpc.JsonRpcParam;
 
 final class JsonRpcParamImpl
@@ -35,7 +35,7 @@ final class JsonRpcParamImpl
     @Override
     public boolean isNull()
     {
-        return this.values == null;
+        return this.values == null || ( this.values.length == 1 && this.values[0].isNull() );
     }
 
     @Override
@@ -91,7 +91,7 @@ final class JsonRpcParamImpl
             @Override
             public String apply( final JsonNode json )
             {
-                return json.asText();
+                return json.isNull() ? null : json.asText();
             }
         } );
     }
