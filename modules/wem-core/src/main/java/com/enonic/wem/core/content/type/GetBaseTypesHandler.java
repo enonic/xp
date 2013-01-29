@@ -1,12 +1,19 @@
 package com.enonic.wem.core.content.type;
 
+import java.util.List;
+
 import javax.jcr.Session;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
+import com.enonic.wem.api.command.content.type.BaseTypeKind;
 import com.enonic.wem.api.command.content.type.GetBaseTypes;
 import com.enonic.wem.api.content.relationship.RelationshipTypes;
+import com.enonic.wem.api.content.type.BaseType;
 import com.enonic.wem.api.content.type.BaseTypes;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.Mixins;
@@ -37,11 +44,26 @@ public final class GetBaseTypesHandler
     {
         final Session session = context.getJcrSession();
 
-        final ContentTypes contentTypes = contentTypeDao.selectAll( session );
-        final Mixins mixins = mixinDao.selectAll( session );
-        final RelationshipTypes relationshipTypes = relationshipTypeDao.selectAll( session );
+        final List<BaseType> baseTypeList = Lists.newArrayList();
+        if ( command.isIncludeType( BaseTypeKind.CONTENT_TYPE ) )
+        {
+            final ContentTypes contentTypes = contentTypeDao.selectAll( session );
+            Iterables.addAll( baseTypeList, contentTypes );
+        }
 
-        final BaseTypes baseTypes = BaseTypes.from( contentTypes, mixins, relationshipTypes );
+        if ( command.isIncludeType( BaseTypeKind.MIXIN ) )
+        {
+            final Mixins mixins = mixinDao.selectAll( session );
+            Iterables.addAll( baseTypeList, mixins );
+        }
+
+        if ( command.isIncludeType( BaseTypeKind.RELATIONSHIP_TYPE ) )
+        {
+            final RelationshipTypes relationshipTypes = relationshipTypeDao.selectAll( session );
+            Iterables.addAll( baseTypeList, relationshipTypes );
+        }
+
+        final BaseTypes baseTypes = BaseTypes.from( baseTypeList );
 
         command.setResult( baseTypes );
     }

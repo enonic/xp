@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.command.content.type.BaseTypeKind;
 import com.enonic.wem.api.command.content.type.GetBaseTypeTree;
 import com.enonic.wem.api.content.relationship.RelationshipTypes;
 import com.enonic.wem.api.content.type.BaseType;
@@ -39,19 +40,27 @@ public class GetBaseTypeTreeHandler
     public void handle( final CommandContext context, final GetBaseTypeTree command )
         throws Exception
     {
-        final Tree<ContentType> contentTypeTree = new ContentTypeTreeFactory( context.getJcrSession(), contentTypeDao ).createTree();
-        final RelationshipTypes relationshipTypes = relationshipTypeDao.selectAll( context.getJcrSession() );
-        final Mixins mixins = mixinDao.selectAll( context.getJcrSession() );
-
         final Tree<BaseType> typesTree = new Tree<BaseType>();
-        // add all all super content types at root
-        typesTree.addNodes( extractRootContentTypes( contentTypeTree ) );
+        if ( command.isIncludeType( BaseTypeKind.CONTENT_TYPE ) )
+        {
+            // add all all super content types at root
+            final Tree<ContentType> contentTypeTree = new ContentTypeTreeFactory( context.getJcrSession(), contentTypeDao ).createTree();
+            typesTree.addNodes( extractRootContentTypes( contentTypeTree ) );
+        }
 
-        // add all RelationshipTypes on root
-        typesTree.createNodes( relationshipTypes );
+        if ( command.isIncludeType( BaseTypeKind.RELATIONSHIP_TYPE ) )
+        {
+            // add all RelationshipTypes on root
+            final RelationshipTypes relationshipTypes = relationshipTypeDao.selectAll( context.getJcrSession() );
+            typesTree.createNodes( relationshipTypes );
+        }
 
-        // add all Mixins on root
-        typesTree.createNodes( mixins );
+        if ( command.isIncludeType( BaseTypeKind.MIXIN ) )
+        {
+            // add all Mixins on root
+            final Mixins mixins = mixinDao.selectAll( context.getJcrSession() );
+            typesTree.createNodes( mixins );
+        }
 
         command.setResult( typesTree );
     }
