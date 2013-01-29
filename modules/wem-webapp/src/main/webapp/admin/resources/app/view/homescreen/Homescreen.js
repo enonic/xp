@@ -148,7 +148,8 @@ Ext.define('Admin.view.homescreen.Homescreen', {
 
 
     setInstallationLabelText: function (text) {
-        Ext.fly('admin-home-installation-info').setHTML(' | ' + text);
+        var labelText = text ? ' | ' + text : ''; // CMS-845
+        Ext.fly('admin-home-installation-info').setHTML(' | ' + labelText);
     },
 
 
