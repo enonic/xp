@@ -9,12 +9,12 @@ import javax.jcr.Session;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.space.Space;
-import com.enonic.wem.api.content.space.SpaceName;
-import com.enonic.wem.api.content.space.Spaces;
+import com.enonic.wem.api.space.Space;
+import com.enonic.wem.api.space.SpaceName;
+import com.enonic.wem.api.space.Spaces;
 import com.enonic.wem.core.jcr.JcrHelper;
 
-import static com.enonic.wem.api.content.space.Space.newSpace;
+import static com.enonic.wem.api.space.Space.newSpace;
 
 final class GetSpaceDaoHandler
     extends AbstractSpaceDaoHandler

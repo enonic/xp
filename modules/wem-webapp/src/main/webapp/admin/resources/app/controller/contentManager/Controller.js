@@ -163,6 +163,9 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 //This is stub, logic for new content creation will be added later
                 var createContentTabFn = function (response) {
                     var contentData = {
+                        content: {
+                            iconUrl: response.iconUrl
+                        },
                         contentType: response.contentType,
                         // use first selected record as parent for new content
                         contentParent: treeGridSelection.length > 0 ? treeGridSelection[0].data : undefined
@@ -192,6 +195,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                     itemId: 'new-content-tab',
                     title: 'New Content',
                     closable: true,
+                    editing: true,
                     layout: 'fit'
                 };
                 tabs.addTab(tabItem, undefined, requestConfig);

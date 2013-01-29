@@ -7,10 +7,14 @@
     // Class definition (constructor)
     var componentBar = AdminLiveEdit.view.componentbar.ComponentBar = function () {
         var me = this;
+
         me.hidden = false;
 
         me.addView();
-        me.addToggleEvent();
+
+        me.loadComponentsData();
+
+        me.addEvents();
     };
 
 
@@ -40,6 +44,7 @@
     html += '               </form>';
     html += '            </div>';
     html += '            <ul>';
+/*
     html += '                <li class="live-edit-component-list-header">';
     html += '                    <span>Layouts</span>';
     html += '                </li>';
@@ -74,6 +79,7 @@
     html += '                        <small>Very loooooooooooong subtitle</small>';
     html += '                    </div>';
     html += '                </li>';
+*/
     html += '            </ul>';
     html += '        </div>';
     html += '    </div>';
@@ -89,6 +95,78 @@
 
 
     proto.bindGlobalEvents = function () {
+    };
+
+
+    proto.getComponentsDataUrl = function () {
+        return '../app/data/mock-components.json';
+    };
+
+
+    proto.loadComponentsData = function () {
+        var me = this;
+        $.getJSON(me.getComponentsDataUrl(), null, function (data, textStatus, jqXHR) {
+            me.renderComponents(data);
+            $(window).trigger('componentBar:dataLoaded');
+        });
+    };
+
+
+    proto.renderComponents = function (jsonData) {
+        var me = this,
+            $container = me.getComponentsContainer(),
+            groups = jsonData.componentGroups;
+
+        $.each(groups, function (index, group) {
+            me.addHeader(group);
+            if (group.components) {
+                me.addComponentsToGroup(group.components)
+            }
+        });
+    };
+
+
+    proto.addHeader = function (componentGroup) {
+        var me = this,
+            html = '';
+        html += '<li class="live-edit-component-list-header">';
+        html += '    <span>' + componentGroup.name + '</span>';
+        html += '</li>';
+
+        me.getComponentsContainer().append(html);
+    };
+
+
+    proto.addComponentsToGroup = function (components) {
+        var me = this;
+        $.each(components, function (index, component) {
+            me.addComponent(component);
+        });
+    };
+
+
+    proto.addComponent = function (component) {
+        var me = this,
+            html = '';
+        html += '<li class="live-edit-component" data-live-edit-component-key="' + component.key + '">';
+        html += '    <img src="../app/images/srs.jpeg"/>';
+        html += '    <div class="live-edit-component-text">';
+        html += '        <span>' + component.name + '</span>';
+        html += '        <small>' + component.subtitle + '</small>';
+        html += '    </div>';
+        html += '</li>';
+
+        me.getComponentsContainer().append(html);
+    };
+
+
+    proto.addEvents = function () {
+        var me = this;
+
+        me.addToggleEvent();
+        me.getBar().on('mouseover', function () {
+            $liveedit(window).trigger('componentBar:mouseover');
+        });
     };
 
 
@@ -134,7 +212,7 @@
 
 
     proto.getComponentsContainer = function () {
-        return $('.live-edit-components', this.getEl());
+        return $('.live-edit-components ul', this.getEl());
     };
 
 }($liveedit));

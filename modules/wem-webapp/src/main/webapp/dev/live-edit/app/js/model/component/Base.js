@@ -17,9 +17,8 @@
                 var $component = $(this);
 
                 var targetIsUiComponent = me.isLiveEditUiComponent(event);
-                var pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
-                var disableHover = targetIsUiComponent || pageHasComponentSelected || AdminLiveEdit.DragDrop.isDragging();
-                if (disableHover) {
+                var cancelEvent = targetIsUiComponent || me.hasComponentSelected() || AdminLiveEdit.DragDrop.isDragging();
+                if (cancelEvent) {
                     return;
                 }
                 event.stopPropagation();
@@ -30,7 +29,13 @@
 
 
         attachMouseOutEvent: function () {
+            var me = this;
             $(document).on('mouseout', function () {
+                var hasComponentSelected = $('.live-edit-selected-component').length > 0;
+                var cancelEvent = me.hasComponentSelected();
+                if (cancelEvent) {
+                    return;
+                }
                 $(window).trigger('component:mouseout');
             });
         },
@@ -59,6 +64,11 @@
                 }
                 // return false;
             });
+        },
+
+
+        hasComponentSelected: function () {
+            return $('.live-edit-selected-component').length > 0;
         },
 
 

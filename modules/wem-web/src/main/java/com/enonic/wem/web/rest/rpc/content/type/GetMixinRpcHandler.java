@@ -15,6 +15,9 @@ import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 public class GetMixinRpcHandler
     extends AbstractDataRpcHandler
 {
+    public static final String FORMAT_XML = "XML";
+
+    public static final String FORMAT_JSON = "JSON";
 
     public GetMixinRpcHandler()
     {
@@ -25,13 +28,23 @@ public class GetMixinRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
+        final String format = context.param( "format" ).required().asString();
         final QualifiedMixinName qualifiedMixinName = new QualifiedMixinName( context.param( "mixin" ).required().asString() );
 
         final Mixin mixin = fetchMixin( qualifiedMixinName );
 
         if ( mixin != null )
         {
-            context.setResult( new GetMixinRpcJsonResult( mixin ) );
+            if ( format.equalsIgnoreCase( FORMAT_JSON ) )
+            {
+                context.setResult( new GetMixinRpcJsonResult( mixin ) );
+            }
+            else if ( format.equalsIgnoreCase( FORMAT_XML ) )
+            {
+                context.setResult( new GetMixinRpcJsonResult( mixin ) );
+                context.setResult( new GetMixinConfigRpcJsonResult( mixin ) );
+            }
+
         }
         else
         {

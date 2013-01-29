@@ -22,9 +22,8 @@
 
     proto.bindGlobalEvents = function () {
         $(window).on('component:select', $.proxy(this.show, this));
-
         $(window).on('component:deselect', $.proxy(this.hide, this));
-
+        $(window).on('component:remove', $.proxy(this.hide, this));
         $(window).on('component:drag:start', $.proxy(this.hide, this));
     };
 
@@ -45,39 +44,8 @@
 
     proto.show = function (event, $selectedComponent) {
         var me = this;
-
         me.hide();
-        var componentInfo = util.getComponentInfo($selectedComponent);
-        if (componentInfo.type === 'page' && componentInfo.tagName === 'body') {
-            me.showForPageBody();
-        } else {
-            me.showForComponent($selectedComponent);
-        }
-    };
-
-
-    // TODO: Should not be here. Need some code restructuring
-    proto.showForPageBody = function () {
-        var $regions = $('[data-live-edit-type=region]'),
-            $selectedComponent,
-            $componentShader,
-            $componentHighlighter,
-            componentBoxModel;
-
-        $regions.each(function (i) {
-            $selectedComponent = $(this);
-            componentBoxModel = util.getBoxModel($selectedComponent);
-            $componentShader = $('<div/>');
-            $componentShader.addClass('live-edit-shader live-edit-shader-page');
-            $componentShader.css({
-                top: componentBoxModel.top,
-                left: componentBoxModel.left,
-                width: componentBoxModel.width,
-                height: componentBoxModel.height
-            });
-            $('body').append($componentShader);
-        });
-        this.addWindowBorders();
+        me.showForComponent($selectedComponent);
     };
 
 

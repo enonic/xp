@@ -89,9 +89,8 @@
 <h2>R&amp;D</h2>
 <ul class="links">
   <li><a href="http://enonic.github.com/projects/wem-extjs-theme/">WEM ExtJS Theme</a></li>
-  <li><a href="../dev/html-templates/live-edit-components.html">Live Edit: Component Bar HTML</a></li>
   <li><a href="../dev/live-edit/page/page.jsp">Live Edit: page component is &lt;body&gt;</a></li>
-  <li><a href="../dev/live-edit/page/page2.jsp">Live Edit: page component is a descendant of &lt;body&gt;</a></li>
+  <li><a href="../dev/html-templates/live-edit-components.html">Live Edit: Component Bar HTML</a></li>
   <li><a href="../dev/live-edit/page/plug-ins.jsp">Live Edit: with draggables containing plugins</a></li>
   <li><a href="../dev/live-edit/page/blank.jsp">Live Edit: Blank page</a></li>
   <li>

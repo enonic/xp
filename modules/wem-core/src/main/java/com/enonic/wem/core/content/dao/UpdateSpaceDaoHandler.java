@@ -4,7 +4,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.content.space.Space;
+import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
 
 public class UpdateSpaceDaoHandler

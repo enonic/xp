@@ -1,3 +1,6 @@
+/*
+    TODO: Refactor to a dynamic object!
+*/
 AdminLiveEdit.DragDrop = (function () {
     'use strict';
 
@@ -17,6 +20,29 @@ AdminLiveEdit.DragDrop = (function () {
 
     function disableDragDrop() {
         $liveedit(regionSelector).sortable('disable');
+    }
+
+
+    function createComponentBarDraggables() {
+        // TODO: Remove ui classes
+        var draggableOptions = {
+            connectToSortable: regionSelector,
+            cursor: 'move',
+            revert: function (dropped) {
+                // console.log(dropped);
+            },
+            helper: function () {
+                return '<div style="width: 200px; height: 20px; background-color: #ccc; padding: 10px;">Helper</div>';
+            },
+            start: function () {
+                isDragging = true;
+            },
+            stop: function () {
+                isDragging = false;
+            }
+        };
+
+        $liveedit('.live-edit-component').draggable(draggableOptions);
     }
 
 
@@ -92,14 +118,38 @@ AdminLiveEdit.DragDrop = (function () {
         ui.item.removeData('live-edit-selected-on-drag-start');
     }
 
+
+    function itemIsDraggedFromComponentBar(item) {
+        return item.hasClass('live-edit-component');
+    }
+
+
     function handleReceive(event, ui) {
         if (itemIsDraggedFromComponentBar(ui.item)) {
-            $(this).children('.live-edit-component').replaceWith(createDummyWindowHtml());
+            var $component = $liveedit(this).children('.live-edit-component');
+            var componentKey = $component.data('live-edit-component-key');
+            var url = '../app/data/mock-component-' + componentKey + '.html';
+
+            $component.hide();
+
+            $liveedit.ajax({
+                url: url,
+                cache: false
+            }).done(function (html) {
+                $component.replaceWith(html);
+                $liveedit(window).trigger('component:drag:update');
+            });
+
         }
     }
 
 
     function initSubscribers() {
+
+        $liveedit(window).on('componentBar:dataLoaded', function () {
+            createComponentBarDraggables();
+        });
+
         $liveedit(window).on('component:select', function () {
             if (AdminLiveEdit.Util.supportsTouch()) {
                 enableDragDrop();
@@ -114,30 +164,9 @@ AdminLiveEdit.DragDrop = (function () {
     }
 
 
-    function itemIsDraggedFromComponentBar(item) {
-        return item.hasClass('live-edit-component');
-    }
-
-
-    function createDummyWindowHtml() {
-        var dummyKey = new Date().getTime(),
-            html = '';
-
-        html += '<div data-live-edit-type="window" data-live-edit-key="' + dummyKey + '" data-live-edit-name="HTML 5 Video">';
-        html += '<video width="100%" id="tag" poster="http://content.bitsontherun.com/thumbs/q1fx20VZ-720.jpg" preload="none" controls>';
-        html += '	<source src="http://content.bitsontherun.com/videos/q1fx20VZ-52qL9xLP.mp4" type="video/mp4" />';
-        html += '	<source src="http://content.bitsontherun.com/videos/q1fx20VZ-27m5HpIu.webm" type="video/webm" />';
-        html += '	<p class="warning">Your browser does not support HTML5 video.</p>';
-        html += '</video>';
-        html += '</div>';
-
-        return html;
-    }
-
-
     function init() {
         $liveedit(regionSelector).sortable({
-            revert              : true,
+            revert              : 1000,
             connectWith         : regionSelector,   // Sortable elements.
             items               : windowSelector,   // Elements to sort.
             distance            : 1,
@@ -157,24 +186,6 @@ AdminLiveEdit.DragDrop = (function () {
             update              : handleSortUpdate, // This event is triggered when the user stopped sorting and the DOM position has changed.
             stop                : handleSortStop    // This event is triggered when sorting has stopped.
         }).disableSelection();
-
-
-        $liveedit('.live-edit-component').draggable({
-            connectToSortable: regionSelector,
-            cursor: 'move',
-            revert: function (dropped) {
-                // console.log(dropped);
-            },
-            helper: function () {
-                return '<div style="width: 200px; height: 20px; background-color: #ccc; padding: 10px;">Helper</div>';
-            },
-            start: function () {
-                isDragging = true;
-            },
-            stop: function () {
-                isDragging = false;
-            }
-        });
 
         initSubscribers();
     }

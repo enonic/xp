@@ -23,9 +23,11 @@
 
     proto.bindGlobalEvents = function () {
         $(window).on('component:mouseover', $.proxy(this.highlight, this));
+        $(window).on('component:mouseout', $.proxy(this.hide, this));
         $(window).on('component:select', $.proxy(this.highlight, this));
         $(window).on('component:deselect', $.proxy(this.deselect, this));
         $(window).on('component:drag:start', $.proxy(this.hide, this));
+        $(window).on('componentBar:mouseover', $.proxy(this.hide, this));
     };
 
 
@@ -39,6 +41,7 @@
 
 
     proto.highlight = function (event, $selectedComponent) {
+        this.getEl().show();
         var me = this;
         me.resize($selectedComponent);
 
@@ -62,11 +65,6 @@
         var top     = Math.round(componentBoxModel.top);
         var left    = Math.round(componentBoxModel.left);
 
-        // We need to get the full height of the page/document.
-        if (componentType === 'page' && componentTagName === 'body') {
-            h = AdminLiveEdit.Util.getDocumentSize().height;
-        }
-
         var $highlighter = me.getEl();
         var $highlighterRect = $highlighter.find('rect');
 
@@ -86,14 +84,12 @@
     };
 
 
-    proto.hide = function () {
-        this.getEl().css({
-            top: '-5000px',
-            left: '-5000px'
-        });
+    proto.hide = function (event) {
+        this.getEl().hide();
     };
 
 
+    // Should be used later. Do not remove.
     proto.getBorderColor = function ($component) {
         var componentType = util.getComponentType($component);
         var color = '';
@@ -110,11 +106,8 @@
         case 'paragraph':
             color = '#141414';
             break;
-        case 'page':
-            color = '#141414';
-            break;
         default:
-            color = '#ff0000';
+            color = '#141414';
         }
         return color;
     };

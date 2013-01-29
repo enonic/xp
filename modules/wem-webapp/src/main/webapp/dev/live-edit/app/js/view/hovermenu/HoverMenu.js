@@ -33,13 +33,12 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.bindGlobalEvents = function () {
-        $(window).on('component:select', $.proxy(this.show, this));
-
         $(window).on('component:mouseover', $.proxy(this.show, this));
-
+        $(window).on('component:mouseout', $.proxy(this.hide, this));
+        $(window).on('component:select', $.proxy(this.show, this));
         $(window).on('component:deselect', $.proxy(this.hide, this));
-
         $(window).on('component:drag:start', $.proxy(this.fadeOutAndHide, this));
+        $(window).on('componentBar:mouseover', $.proxy(this.hide, this));
     };
 
 
@@ -47,21 +46,19 @@
         var me = this;
 
         me.createElement('<div class="live-edit-hover-menu" style="top:-5000px; left:-5000px;"></div>');
-
         me.appendTo($('body'));
         me.addButtons();
     };
 
 
     proto.show = function (event, $component) {
-        var componentInfo = util.getComponentInfo($component);
-        if (componentInfo.tagName === 'body' && componentInfo.type === 'page') {
-            this.hide();
+        var me = this;
+        if (util.getComponentType($component) === 'region') {
+            me.getEl().hide();
             return;
         }
-
-        this.moveToComponent($component);
-        this.getEl().show();
+        me.moveToComponent($component);
+        me.getEl().show();
     };
 
 
@@ -81,7 +78,6 @@
         var me = this;
 
         me.$currentComponent = $component;
-        me.setCssPosition($component);
 
         var componentBoxModel = util.getBoxModel($component);
         var menuTopPos = Math.round(componentBoxModel.top + 2),
@@ -95,9 +91,8 @@
 
 
     proto.addButtons = function () {
-        var me = this;
-        var parentButton = new AdminLiveEdit.view.hovermenu.button.ParentButton(me);
-
+        var me = this,
+            parentButton = new AdminLiveEdit.view.hovermenu.button.ParentButton(me);
         var i;
         for (i = 0; i < me.buttons.length; i++) {
             me.buttons[i].appendTo(me.getEl());

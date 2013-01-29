@@ -30,6 +30,7 @@
     proto.bindGlobalEvents = function () {
         $(window).on('component:select', $.proxy(this.show, this));
         $(window).on('component:deselect', $.proxy(this.hide, this));
+        $(window).on('component:remove', $.proxy(this.hide, this));
     };
 
 
@@ -100,11 +101,6 @@
             leftPos = componentBox.left + (componentBox.width / 2 - me.getEl().outerWidth() / 2),
             topPos = componentBox.top - (me.getEl().height() * 2) - 2; // -2 to show above the highlighter border
 
-        if (componentInfo.type === 'page' && componentInfo.tagName === 'body') {
-            topPos = 0;
-        }
-
-        me.setCssPosition($component);
         me.getEl().css({
             top: topPos,
             left: leftPos

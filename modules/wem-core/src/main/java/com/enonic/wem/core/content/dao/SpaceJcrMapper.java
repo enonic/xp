@@ -4,7 +4,7 @@ package com.enonic.wem.core.content.dao;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import com.enonic.wem.api.content.space.Space;
+import com.enonic.wem.api.space.Space;
 
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyString;

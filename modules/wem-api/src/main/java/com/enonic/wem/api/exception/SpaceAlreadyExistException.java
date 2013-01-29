@@ -1,6 +1,6 @@
 package com.enonic.wem.api.exception;
 
-import com.enonic.wem.api.content.space.SpaceName;
+import com.enonic.wem.api.space.SpaceName;
 
 public final class SpaceAlreadyExistException
     extends BaseException
