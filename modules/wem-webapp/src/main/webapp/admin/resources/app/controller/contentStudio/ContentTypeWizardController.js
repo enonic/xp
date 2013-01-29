@@ -55,18 +55,18 @@ Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
 
     deleteType: function (wizard) {
         var me = this;
-        var onDeleteMixinSuccess = function (success, failures) {
+        var onDeleteContentTypeSuccess = function (success, failures) {
             if (success) {
                 me.getWizardTab().close();
                 Admin.MessageBus.showFeedback({
-                    title: 'Mixin was deleted',
-                    message: 'Mixin was deleted',
+                    title: 'Content Type was deleted',
+                    message: 'Content Type was deleted',
                     opts: {}
                 });
             }
         }
 
-        this.remoteDeleteMixin(wizard.data, onDeleteMixinSuccess);
+        this.remoteDeleteContentType(wizard.data, onDeleteContentTypeSuccess);
 
     }
 });

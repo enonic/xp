@@ -29,8 +29,8 @@ Ext.define('Admin.controller.contentStudio.Controller', {
                 fn: this.showPreviewContentTypePanel,
                 scope: this
             },
-            showDeleteContentTypeWindow: {
-                fn: this.showDeleteContentTypeWindow,
+            showDeleteBaseTypeWindow: {
+                fn: this.showDeleteBaseTypeWindow,
                 scope: this
             }
         });
@@ -77,14 +77,14 @@ Ext.define('Admin.controller.contentStudio.Controller', {
     },
 
 
-    showDeleteContentTypeWindow: function (contentType) {
-        if (!contentType) {
-            contentType = this.getTreeGridPanel().getSelection();
+    showDeleteBaseTypeWindow: function (baseType) {
+        if (!baseType) {
+            baseType = this.getTreeGridPanel().getSelection();
         } else {
-            contentType = [].concat(contentType);
+            baseType = [].concat(baseType);
         }
-        if (contentType.length === 1) {
-            this.getDeleteContentTypeWindow().doShow(contentType);
+        if (baseType.length === 1) {
+            this.getDeleteContentTypeWindow().doShow(baseType);
         }
     },
 

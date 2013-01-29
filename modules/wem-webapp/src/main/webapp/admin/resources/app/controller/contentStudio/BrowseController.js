@@ -48,7 +48,7 @@ Ext.define('Admin.controller.contentStudio.BrowseController', {
                 },
                 '*[action=deleteBaseType]': {
                     click: function (btn, evt) {
-                        this.showDeleteContentTypeWindow();
+                        this.showDeleteBaseTypeWindow();
                     }
                 },
 

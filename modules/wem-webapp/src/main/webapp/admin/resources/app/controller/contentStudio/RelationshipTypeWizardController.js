@@ -29,12 +29,12 @@ Ext.define('Admin.controller.contentStudio.RelationshipTypeWizardController', {
         var data = wizard.getData();
         var contentType = data.configXML;
         var iconRef = data.iconRef;
-        var contentTypeParams = {
+        var params = {
             contentType: contentType,
             iconReference: iconRef
         };
 
-        var onUpdateContentTypeSuccess = function (created, updated) {
+        var onUpdateRelationshipTypeSuccess = function (created, updated) {
             if (created || updated) {
                 if (closeWizard) {
                     me.getWizardTab().close();
@@ -49,11 +49,24 @@ Ext.define('Admin.controller.contentStudio.RelationshipTypeWizardController', {
                 me.getTreeGridPanel().refresh();
             }
         };
-        //this.remoteCreateOrUpdateContentType(contentTypeParams, onUpdateContentTypeSuccess);
+        this.remoteCreateOrUpdateRelationshipType(params, onUpdateRelationshipTypeSuccess);
     },
 
-    deleteType: function (wizard, closeWizard) {
-        console.log("TODO: delete relationshiptype");
+    deleteType: function (wizard) {
+        var me = this;
+        var onDeleteRelationshipTypeSuccess = function (success, failures) {
+            if (success) {
+                me.getWizardTab().close();
+                Admin.MessageBus.showFeedback({
+                    title: 'Relationship Type was deleted',
+                    message: 'Relationship Type was deleted',
+                    opts: {}
+                });
+            }
+        }
+
+        this.remoteDeleteContentType(wizard.data, onDeleteRelationshipTypeSuccess());
+
     }
 
 });

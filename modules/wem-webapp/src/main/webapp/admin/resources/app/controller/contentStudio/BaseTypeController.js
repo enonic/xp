@@ -35,9 +35,7 @@ Ext.define('Admin.controller.contentStudio.BaseTypeController', {
     },
 
     remoteCreateOrUpdateMixin: function (params, callback) {
-        console.log(params);
         Admin.lib.RemoteService.mixin_createOrUpdate(params, function (r) {
-            console.log(r);
             if (r && r.success) {
                 callback(r.created, r.updated);
             } else {
@@ -50,10 +48,30 @@ Ext.define('Admin.controller.contentStudio.BaseTypeController', {
         var me = this;
         Admin.lib.RemoteService.mixin_delete({"qualifiedMixinNames": [mixin.qualifiedName]}, function (r) {
             if (r) {
-                console.log(r);
                 callback.call(me, r.success, r.failures);
             } else {
                 Ext.Msg.alert("Error", r ? r.error : "Unable to delete mixin.");
+            }
+        });
+    },
+
+    remoteCreateOrUpdateRelationshipType: function (params, callback) {
+        Admin.lib.RemoteService.relationshipType_createOrUpdate(params, function (r) {
+            if (r && r.success) {
+                callback(r.created, r.updated);
+            } else {
+                Ext.Msg.alert("Error", r ? r.error : "Unable to save relationship type.");
+            }
+        });
+    },
+
+    remoteDeleteRelationshipType: function (relationshipType, callback) {
+        var me = this;
+        Admin.lib.RemoteService.relationshipType_delete({"qualifiedRelationshipTypeNames": [relationshipType.qualifiedName]}, function (r) {
+            if (r) {
+                callback.call(me, r.success, r.failures);
+            } else {
+                Ext.Msg.alert("Error", r ? r.error : "Unable to delete relationship type.");
             }
         });
     }
