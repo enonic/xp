@@ -5,63 +5,71 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Predicate;
-
-import com.enonic.wem.core.config.ConfigProperties;
+import com.google.common.base.Strings;
 
 @Component
 public final class NodeSettingsBuilder
+    extends AbstractSettingsBuilder
 {
-    private final static String PROPERTIES_PREFIX = "cms.elasticsearch";
-
-    private final static String INDEX_PROPERTIES_PREFIX = PROPERTIES_PREFIX + ".index";
-
-    private ConfigProperties configProperties;
+    private final static Logger LOG = LoggerFactory.getLogger( NodeSettingsBuilder.class );
 
     public Settings buildNodeSettings()
     {
         final ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder();
 
         final Map<String, String> nodePropertyMap = getNodePropertyMap();
-        populateSettings( settings, nodePropertyMap, PROPERTIES_PREFIX );
+
+        populateSettings( settings, nodePropertyMap, ELASTICSEARCH_PROPERTIES_PREFIX );
+
+        checkClusterSettings( settings );
 
         return settings.build();
     }
 
-    @Autowired
-    public void setConfigProperties( final ConfigProperties configProperties )
+    private void checkClusterSettings( final ImmutableSettings.Builder settings )
     {
-        this.configProperties = configProperties;
+        final Boolean local = getAsBoolean( settings.get( "node.local" ), null );
+        final Boolean clusterEnabled = getAsBoolean( configProperties.getProperty( "cms.cluster.enabled" ), false );
+
+        if ( local == null )
+        {
+            settings.put( "node.local", !clusterEnabled );
+        }
+        else
+        {
+            if ( local != ( !clusterEnabled ) )
+            {
+                LOG.warn( "Elasticsearch cluster enabled setting: '" + !local + "' differ from cms.cluster.enabled - property: '" +
+                              clusterEnabled + "' which may cause unexpected behaviour" );
+            }
+        }
+    }
+
+    private Boolean getAsBoolean( String value, Boolean defaultValue )
+    {
+        if ( Strings.isNullOrEmpty( value ) )
+        {
+            return defaultValue;
+        }
+
+        return Boolean.valueOf( StringUtils.trimToNull( value ) );
     }
 
     private Map<String, String> getNodePropertyMap()
     {
-        return this.configProperties.getSubMap( new Predicate<String>()
+        return configProperties.getSubMap( new Predicate<String>()
         {
             @Override
             public boolean apply( final String input )
             {
-                return StringUtils.startsWith( input, PROPERTIES_PREFIX ) && !StringUtils.startsWith( input, INDEX_PROPERTIES_PREFIX );
+                return StringUtils.startsWith( input, ELASTICSEARCH_PROPERTIES_PREFIX ) &&
+                    !StringUtils.startsWith( input, INDEX_PROPERTIES_PREFIX );
             }
         } );
-    }
-
-    private void populateSettings( final ImmutableSettings.Builder settings, final Map<String, String> propertyMap,
-                                   final String propertyPrefix )
-    {
-        for ( final String property : propertyMap.keySet() )
-        {
-            final String indexPropertyValue = propertyMap.get( property ).trim();
-            final String indexPropertyName = subtractPrefixFromProperty( property, propertyPrefix );
-            settings.put( indexPropertyName, indexPropertyValue );
-        }
-    }
-
-    private String subtractPrefixFromProperty( final String property, final String propertyPrefix )
-    {
-        return StringUtils.substringAfter( property, propertyPrefix + "." );
     }
 }

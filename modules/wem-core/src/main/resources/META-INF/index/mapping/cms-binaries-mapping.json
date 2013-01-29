@@ -1,0 +1,21 @@
+{
+    "binaries":{
+        "_source":{
+            "enabled":true
+        },
+        "_parent":{
+            "type":"content"
+        },
+        "dynamic_templates":[
+            {
+                "template_generic":{
+                    "match":"*",
+                    "mapping":{
+                        "store":"yes",
+                        "index":"analyzed"
+                    }
+                }
+            }
+        ]
+    }
+}
