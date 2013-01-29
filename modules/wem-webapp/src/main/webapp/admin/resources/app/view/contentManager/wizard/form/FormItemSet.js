@@ -46,9 +46,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
 
         // Edit form mode
         if (me.content) {
-            Ext.Array.each(me.content.value, function (value, index) {
-                me.addBlockAt(index, false);
-            });
+            me.addBlockAt(1, false);
         } else {
             me.addBlockAt(0, true);
         }
@@ -133,14 +131,23 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
             defaults: {
                 margin: '5 10'
             },
-            items: me.createBlockHeader()
+            items: [me.createBlockHeader()],
+            getValue: function () {
+                var value = [];
+                this.items.each(function (item) {
+                    if (item.getValue) {
+                        value = value.concat(item.getValue());
+                    }
+                });
+                return value;
+            }
         });
 
         // Rename argument createBlankBlock. hasContent
         if (createBlankBlock) {
-            me.mixins.formGenerator.addComponentsBasedOnContentType(me.contentTypeItemConfig.items, block);
+            me.addComponentsBasedOnContentType(me.contentTypeItemConfig.items, block);
         } else {
-            me.mixins.formGenerator.addComponentsBasedOnContentData(me.content.value[position], me.contentTypeItemConfig.items, block);
+            me.addComponentsBasedOnContentData(me.content.value, me.contentTypeItemConfig.items, block);
         }
 
         me.insert(position, block);
@@ -223,10 +230,31 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
      * @private
      */
     initSortable: function () {
-        new Admin.lib.Sortable(this, {
-            proxyHtml: '<div><img src="../../admin/resources/images/icons/128x128/form_blue.png"/></div>',
-            handle: '.admin-drag-handle'
-        });
+        new Admin.lib.Sortable(this,
+            {
+                proxyHtml: '<div><img src="../../admin/resources/images/icons/128x128/form_blue.png"/></div>',
+                handle: '.admin-drag-handle'
+            });
+    },
+
+    getValue: function () {
+        var value = [];
+        var me = this;
+        me.items.each(
+            function (item, index) {
+                if (item.getValue) {
+                    var currentItemValue = item.getValue();
+                    if (currentItemValue instanceof Array) {
+                        Ext.each(currentItemValue, function (itemValue) {
+                            itemValue.path = me.name.concat('[', index, ']', '.', itemValue.path);
+                        });
+                    } else {
+                        currentItemValue.path = me.name.concat('[', index, ']', '.', currentItemValue);
+                    }
+                    value = value.concat(currentItemValue);
+                }
+            });
+        return value;
     }
 
 });

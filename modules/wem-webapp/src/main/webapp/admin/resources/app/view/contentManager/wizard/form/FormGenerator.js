@@ -3,40 +3,37 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
     addComponentsBasedOnContentData: function (contentData, contentTypeItemConfig, parentComponent) {
         var me = this,
             config,
+            data,
             component;
 
-        console.log(contentData);
-        Ext.Array.each(contentData, function(contentItem) {
-
-            config = me.getConfigForContentItem(contentItem, contentTypeItemConfig);
-
-            if (config.FormItemSet) {
-                component = me.createFormItemSetComponent(config.FormItemSet, contentItem);
-            } else if (config.Layout) {
-                component = me.createLayoutComponent(config.Layout, contentItem);
-            } else { // Input
-                var classAlias = 'widget.' + config.Input.type.name;
-                if (!me.formItemIsSupported(classAlias)) {
-                    console.error('Unsupported input type', config.Input);
-                    return;
+        Ext.each(contentTypeItemConfig, function (contentItemConfig) {
+            config = me.getContentItemConfig(contentItemConfig);
+            data = me.getDataForConfig(config, contentData);
+            var creationFunction = me.constructCreationFunction(contentItemConfig);
+            var prevField;
+            Ext.each(data, function (d, index) {
+                config.copyNo = index + 1;
+                component = creationFunction.call(me, config, d);
+                if (prevField) {
+                    prevField.nextField = component;
+                    component.prevField = prevField;
                 }
-                component = me.createFormItemComponent(config.Input, contentItem.value);
-            }
+                me.addComponent(component, parentComponent);
+                prevField = component;
+            });
 
-            me.addComponent(component, parentComponent);
+
         });
     },
 
 
-    // Refactor this as it is shared between wizard.ContentDataPanel and lib.formitem.FormItemSet
-    // FormItemSet may use it's own method for adding components.
     addComponentsBasedOnContentType: function (contentTypeItemConfigItems, parentComponent) {
         var me = this;
         var component;
 
         Ext.each(contentTypeItemConfigItems, function (item) {
-            var creationFunction = me.constructCreationFunction(item);
             var contentItemConfig = me.getContentItemConfig(item);
+            var creationFunction = me.constructCreationFunction(item);
             component = creationFunction.call(me, contentItemConfig);
 
             me.addComponent(component, parentComponent);
@@ -48,8 +45,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
      * @private
      */
     addComponent: function (component, parentComponent) {
-        var me = this;
-        if (me.componentIsContainer(parentComponent)) {
+        if (this.componentIsContainer(parentComponent)) {
             parentComponent.add(component);
         } else {
             parentComponent.items.push(component);
@@ -85,52 +81,49 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
     /**
      * @private
      */
-    createInputComponent: function (inputConfig, value) {
+    createInputComponent: function (inputConfig, contentItem) {
+        var value;
         var classAlias = 'widget.' + inputConfig.type.name;
 
         if (!this.formItemIsSupported(classAlias)) {
             console.error('Unsupported input type', inputConfig);
             return;
         }
+        if (contentItem) {
+            value = contentItem.value;
+        }
         return Ext.create({
             xclass: classAlias,
             fieldLabel: inputConfig.label,
             name: inputConfig.name,
+            copyNo: inputConfig.copyNo || 1,
             contentTypeItemConfig: inputConfig,
-            value: value || ''
+            value: value
         });
 
     },
 
-
     /**
      * @private
      */
-    getConfigForContentItem: function (contentItem, contentTypeConfig) {
-        var node, name, key;
+    getDataForConfig: function (contentItemConfig, contentData) {
+        var key, data = [];
 
-        for (key in contentTypeConfig) {
-            if (contentTypeConfig.hasOwnProperty(key)) {
-                node = contentTypeConfig[key];
-
-                if (node.FormItemSet) {
-                    name = node.FormItemSet.name;
-                } else if (node.Layout) {
-                    name = node.Layout.name;
-                } else { // Input
-                    name = node.Input.name;
-                }
-
-                if (name === contentItem.name) {
-                    return node;
+        for (key in contentData) {
+            if (contentData.hasOwnProperty(key)) {
+                if (contentItemConfig.name === contentData[key].name) {
+                    data.push(contentData[key]);
                 }
             }
         }
 
-        return null;
+        return data;
     },
 
+
     /**
+     * Trying to find function that handles element creation.
+     * Function name should be "create" + content type capitalized + "Component"
      * @private
      */
     constructCreationFunction: function (contentTypeConfig) {
@@ -138,7 +131,6 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
 
         for (key in contentTypeConfig) {
             if (contentTypeConfig.hasOwnProperty(key)) {
-                console.log("create" + key + "Component");
                 return this["create" + key + "Component"];
             }
         }
@@ -150,7 +142,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
      *
      * @private
      */
-    getContentItemConfig: function(contentTypeConfig) {
+    getContentItemConfig: function (contentTypeConfig) {
         var key;
 
         for (key in contentTypeConfig) {
@@ -173,7 +165,8 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
      * @private
      */
     componentIsContainer: function (component) {
-        return component.getXType() === 'FormItemSet' || component.getXType() === 'FieldSetLayout' || component.getXType() === 'fieldcontainer' || component.getXType() === 'container';
+        return component.getXType() === 'FormItemSet' || component.getXType() === 'FieldSetLayout' ||
+               component.getXType() === 'fieldcontainer' || component.getXType() === 'container';
     }
 
 });

@@ -37,6 +37,15 @@ Ext.define('Admin.view.contentManager.wizard.form.FieldSetLayout', {
         } else {
             me.mixins.formGenerator.addComponentsBasedOnContentType(me.contentTypeItemConfig.items, me);
         }
+    },
+
+    getValue: function () {
+        var value = [];
+        Ext.each(this.items, function (item) {
+            var currentItemValue = item.getValue();
+            value = value.concat(currentItemValue);
+        });
+        return value;
     }
 
 });
