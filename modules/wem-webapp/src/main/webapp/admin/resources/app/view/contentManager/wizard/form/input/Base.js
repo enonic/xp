@@ -4,12 +4,14 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
 
     contentTypeItemConfig: undefined,
 
-    copyNo: 1,
-
     width: 1000,
 
     layout: {
         type: 'hbox'
+    },
+
+    mixins: {
+        fieldOccurrencesHandler: 'Admin.view.contentManager.wizard.form.FieldOccurrencesHandler'
     },
 
     showAddDeleteButton: true,
@@ -35,11 +37,20 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
 
     },
 
+    bindOccurrencesEventsHandlers: function () {
+        this.on('copyadded', this.updateButtonState, this);
+        this.on('copyremoved', this.updateButtonState, this);
+    },
+
     getValue: function () {
         return {
             path: this.name.concat('[', this.copyNo - 1, ']'),
             value: this.items.items[0].getValue()
         };
+    },
+
+    setValue: function (value) {
+
     },
 
     /**
@@ -106,59 +117,6 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
     },
 
     /**
-     * Handles multiple occurences, called right before component is rendered, could be overriden for custom implementation
-     */
-    handleOccurrences: function () {
-        var minOcc = this.contentTypeItemConfig.occurrences.minimum;
-        if (this.contentTypeItemConfig && (this.value === undefined) && (this.copyNo < minOcc)) {
-            this.addCopy();
-        }
-        this.updateButtonState();
-    },
-
-    /**
-     * Adds copy of current component to the parent content.
-     * @return copy {*|Ext.Component|Ext.Component}
-     */
-    addCopy: function () {
-        var parent = this.up();
-
-        var clone = this.cloneConfig({
-            copyNo: this.copyNo + 1
-        });
-        //Support links between copies (linked list), so we could analyze them and change their state
-        this.nextField = clone;
-        clone.prevField = this;
-        var me = this;
-        var index = parent.items.findIndexBy(function (item) {
-            if (item.getItemId() === me.getItemId()) {
-                return true;
-            }
-            return false;
-        });
-        parent.insert(index + 1, clone);
-        return clone;
-    },
-
-    /**
-     * Remove copy from parent content
-     * @return one of the remain copies {*}
-     */
-    removeCopy: function () {
-        var parent = this.up();
-        var linkedField = this.prevField || this.nextField;
-        // Set links to apropriate values
-        if (this.prevField) {
-            this.prevField.nextField = this.nextField;
-        }
-        if (this.nextField) {
-            this.nextField.prevField = this.prevField;
-        }
-        parent.remove(this);
-        return linkedField;
-    },
-
-    /**
      * Update state of component buttons, they could either delete buttons or add buttons
      */
     updateButtonState: function () {
@@ -172,22 +130,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
             tmp = tmp.nextField;
             totalCount++;
         }
-        root.updateCopyNo();
+        //root.updateCopyNo();
         root.updateButtonStateInternal(totalCount);
-    },
-
-    /**
-     * @private
-     */
-    updateCopyNo: function () {
-        if (this.prevField) {
-            this.copyNo = this.prevField.copyNo + 1;
-        } else {
-            this.copyNo = 1;
-        }
-        if (this.nextField) {
-            this.nextField.updateCopyNo();
-        }
     },
 
     /**

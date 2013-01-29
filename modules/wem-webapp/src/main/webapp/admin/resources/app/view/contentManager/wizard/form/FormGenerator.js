@@ -10,18 +10,8 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
             config = me.getContentItemConfig(contentItemConfig);
             data = me.getDataForConfig(config, contentData);
             var creationFunction = me.constructCreationFunction(contentItemConfig);
-            var prevField;
-            Ext.each(data, function (d, index) {
-                config.copyNo = index + 1;
-                component = creationFunction.call(me, config, d);
-                if (prevField) {
-                    prevField.nextField = component;
-                    component.prevField = prevField;
-                }
-                me.addComponent(component, parentComponent);
-                prevField = component;
-            });
-
+            component = creationFunction.call(me, config, data);
+            me.addComponent(component, parentComponent);
 
         });
     },
@@ -82,15 +72,11 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
      * @private
      */
     createInputComponent: function (inputConfig, contentItem) {
-        var value;
         var classAlias = 'widget.' + inputConfig.type.name;
 
         if (!this.formItemIsSupported(classAlias)) {
             console.error('Unsupported input type', inputConfig);
             return;
-        }
-        if (contentItem) {
-            value = contentItem.value;
         }
         return Ext.create({
             xclass: classAlias,
@@ -98,7 +84,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
             name: inputConfig.name,
             copyNo: inputConfig.copyNo || 1,
             contentTypeItemConfig: inputConfig,
-            value: value
+            value: contentItem
         });
 
     },

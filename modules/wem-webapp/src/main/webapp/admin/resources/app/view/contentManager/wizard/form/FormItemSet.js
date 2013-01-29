@@ -46,7 +46,9 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
 
         // Edit form mode
         if (me.content) {
-            me.addBlockAt(1, false);
+            Ext.Array.each(me.content, function (value, index) {
+                me.addBlockAt(index, false);
+            });
         } else {
             me.addBlockAt(0, true);
         }
@@ -147,7 +149,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
         if (createBlankBlock) {
             me.addComponentsBasedOnContentType(me.contentTypeItemConfig.items, block);
         } else {
-            me.addComponentsBasedOnContentData(me.content.value, me.contentTypeItemConfig.items, block);
+            me.addComponentsBasedOnContentData(me.content[position].value, me.contentTypeItemConfig.items, block);
         }
 
         me.insert(position, block);
