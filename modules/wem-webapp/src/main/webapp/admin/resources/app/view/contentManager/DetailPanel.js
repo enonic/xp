@@ -26,7 +26,6 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
             if (!this.showToolbar) {
                 var toggleBtn = this.down('#toggleBtn');
                 var a = toggleBtn.el.down('a');
-                console.log(a);
                 a.on('click', function () {
                     this.toggleLive();
                     if (this.isLiveMode) {
