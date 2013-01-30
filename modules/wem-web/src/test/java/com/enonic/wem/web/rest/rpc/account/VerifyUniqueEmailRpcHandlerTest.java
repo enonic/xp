@@ -9,9 +9,8 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.command.account.FindAccounts;
-import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
-import com.enonic.wem.web.rest.rpc.account.VerifyUniqueEmailRpcHandler;
+import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
 public class VerifyUniqueEmailRpcHandlerTest
     extends AbstractRpcHandlerTest
