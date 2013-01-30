@@ -1,5 +1,7 @@
 package com.enonic.wem.api.space;
 
+import java.util.Arrays;
+
 import org.joda.time.DateTime;
 
 import com.google.common.base.Objects;
@@ -19,6 +21,8 @@ public final class Space
 
     private final ContentId rootContent;
 
+    private final byte[] icon;
+
     private Space( final Builder builder )
     {
         this.displayName = builder.displayName;
@@ -26,6 +30,7 @@ public final class Space
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
         this.rootContent = builder.rootContent;
+        this.icon = builder.icon;
     }
 
     public String getDisplayName()
@@ -53,6 +58,11 @@ public final class Space
         return rootContent;
     }
 
+    public byte[] getIcon()
+    {
+        return icon;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -69,13 +79,14 @@ public final class Space
             Objects.equal( this.displayName, that.displayName ) &&
             ( this.createdTime == that.createdTime || ( this.createdTime != null && this.createdTime.isEqual( that.createdTime ) ) ) &&
             ( this.modifiedTime == that.modifiedTime || ( this.modifiedTime != null && this.modifiedTime.isEqual( that.modifiedTime ) ) ) &&
-            Objects.equal( this.rootContent, that.rootContent );
+            Objects.equal( this.rootContent, that.rootContent ) &&
+            Objects.equal( this.icon, that.icon );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( name, displayName, createdTime, modifiedTime, rootContent );
+        return Objects.hashCode( name, displayName, createdTime, modifiedTime, rootContent, icon );
     }
 
     @Override
@@ -87,6 +98,7 @@ public final class Space
         s.add( "createdTime", createdTime );
         s.add( "modifiedTime", modifiedTime );
         s.add( "rootContent", rootContent );
+        s.add( "icon", icon );
         return s.toString();
     }
 
@@ -112,6 +124,8 @@ public final class Space
 
         private ContentId rootContent;
 
+        private byte[] icon;
+
         private Builder()
         {
             this.displayName = null;
@@ -119,6 +133,7 @@ public final class Space
             this.createdTime = null;
             this.modifiedTime = null;
             this.rootContent = null;
+            this.icon = null;
         }
 
         private Builder( final Space space )
@@ -128,6 +143,7 @@ public final class Space
             this.createdTime = space.createdTime;
             this.modifiedTime = space.modifiedTime;
             this.rootContent = space.rootContent;
+            this.icon = space.icon == null ? null : Arrays.copyOf( space.icon, space.icon.length );
         }
 
         public Builder displayName( final String displayName )
@@ -163,6 +179,12 @@ public final class Space
         public Builder rootContent( final ContentId rootContentId )
         {
             this.rootContent = rootContentId;
+            return this;
+        }
+
+        public Builder icon( final byte[] icon )
+        {
+            this.icon = icon;
             return this;
         }
 

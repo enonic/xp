@@ -11,4 +11,9 @@ public abstract class SpaceEditors
     {
         return new SetDisplayNameEditor( displayName );
     }
+
+    public static SpaceEditor setIcon( final byte[] icon )
+    {
+        return new SetSpaceIconEditor( icon );
+    }
 }
