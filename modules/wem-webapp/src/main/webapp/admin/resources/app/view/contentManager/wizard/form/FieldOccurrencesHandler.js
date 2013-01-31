@@ -13,7 +13,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FieldOccurrencesHandler', {
             this.addCopy();
         } else {
             var value = this.value;
-            if (value instanceof Array) {
+            if (value instanceof Array && value.length > 0) {
                 this.setValue(value[0].value);
                 if (value.length > 1) {
                     this.addCopy(value.slice(1));
