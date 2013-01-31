@@ -40,7 +40,11 @@ Ext.define('Admin.view.TopBar', {
         this.leftContainer = Ext.create('Ext.Container', {
             flex: 5,
             margins: '0 8px',
-            layout: 'hbox'
+            layout: 'hbox',
+            items: [
+                me.startButton,
+                me.homeButton
+            ]
         });
         this.titleText = Ext.create('Ext.form.Label');
         this.rightContainer = Ext.create('Ext.Container', {
@@ -50,25 +54,25 @@ Ext.define('Admin.view.TopBar', {
                 type: 'hbox',
                 align: 'middle',
                 pack: 'end'
-            }
+            },
+            items: [
+                {
+                    xtype: 'adminImageButton',
+                    icon: "rest/account/image/default/user",
+                    popupTpl: Templates.common.userPopUp,
+                    popupData: {
+                        userName: "Thomas Lund Sigdestad",
+                        photoUrl: "rest/account/image/default/user",
+                        qName: 'system/tsi'
+                    }
+                }
+            ]
         });
 
         this.items = [
-            me.startButton,
-            me.homeButton,
             me.leftContainer,
             me.titleText,
-            me.rightContainer,
-            {
-                xtype: 'adminImageButton',
-                icon: "rest/account/image/default/user",
-                popupTpl: Templates.common.userPopUp,
-                popupData: {
-                    userName: "Thomas Lund Sigdestad",
-                    photoUrl: "rest/account/image/default/user",
-                    qName: 'system/tsi'
-                }
-            }
+            me.rightContainer
         ];
 
         if (this.tabPanel) {
@@ -81,7 +85,7 @@ Ext.define('Admin.view.TopBar', {
                 menu: me.tabMenu,
                 text: 'Title'
             });
-            Ext.Array.insert(me.items, 3, [me.titleButton]);
+            Ext.Array.insert(me.items, 2, [me.titleButton]);
         }
 
         this.callParent(arguments);
@@ -214,7 +218,7 @@ Ext.define('Admin.view.TopBar', {
         this.titleButton.setText(text);
 
         var iconClass = '';
-        if(card.tab.editing) {
+        if (card.tab.editing) {
             iconClass = 'icon-pencil-16';
         }
         this.titleButton.setIconCls(iconClass);
