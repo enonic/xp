@@ -3,7 +3,6 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
     alias: 'widget.contentStudioWizardPanel',
     requires: [
         'Admin.view.WizardPanel',
-        'Admin.view.contentStudio.wizard.ContentTypePanel',
         'Admin.view.contentStudio.wizard.ConfigPanel',
         'Admin.view.SummaryTreePanel',
         'Admin.plugin.fileupload.PhotoUploadButton',
@@ -31,9 +30,9 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
             displayName: displayNameValue
         };
 
-        me.tbar = Ext.createByAlias('widget.contentStudioWizardToolbar', {
-            isNew: isNew
-        });
+        /*me.tbar = Ext.createByAlias('widget.contentStudioWizardToolbar', {
+         isNew: isNew
+         });*/
 
         me.items = [
             {
@@ -44,7 +43,7 @@ Ext.define('Admin.view.contentStudio.wizard.WizardPanel', {
                         xtype: 'photoUploadButton',
                         width: 111,
                         height: 111,
-                        photoUrl:  iconUrl,
+                        photoUrl: iconUrl,
                         title: "Content",
                         style: {
                             margin: '1px'

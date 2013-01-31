@@ -11,8 +11,7 @@ public enum AccountIndexField
     KEY_FIELD( "key" ),
     EMAIL_FIELD( "email" ),
     ORGANIZATION_FIELD( "organization" ),
-    MEMBERS_FIELD( "members" )
-    ;
+    MEMBERS_FIELD( "members" );
 
     private final String id;
 

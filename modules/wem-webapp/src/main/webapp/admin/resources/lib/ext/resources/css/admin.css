@@ -1,3 +1,5 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+
 /**
  * @var {color} $base-color
  * The base color to be used throughout the theme.
@@ -1532,22 +1534,17 @@ div.x-mask {
 }
 
 /* line 97, ../sass/admin/css/_top-bar.scss */
-.admin-topbar-menu .admin-topbar-menu-item.current-tab {
-    background-color: #eeeeee;
-}
-
-/* line 101, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item.active {
     background: #4294DE;
     color: #FFF;
 }
 
-/* line 105, ../sass/admin/css/_top-bar.scss */
+/* line 101, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item.active a.close-button {
     background: url("../themes/images/default/navigate_cross-16px.png") 0 -16px no-repeat;
 }
 
-/* line 110, ../sass/admin/css/_top-bar.scss */
+/* line 106, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item a.close-button {
     background: url("../themes/images/default/navigate_cross-16px.png") 0 0 no-repeat;
     border: 1px solid transparent;
@@ -1556,7 +1553,7 @@ div.x-mask {
     cursor: pointer;
 }
 
-/* line 119, ../sass/admin/css/_top-bar.scss */
+/* line 115, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu em {
     position: relative;
     top: -2px;
@@ -1791,7 +1788,7 @@ input, textarea, select {
 .x-body {
     color: #141414;
     font-size: 12px;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
 }
 
 /* line 7, ../themes/stylesheets/ext4/default/core/_core.scss */
@@ -2204,7 +2201,7 @@ tr.x-container:before {
     border: 1px solid #e6e6e6;
     background-color: #eeeeee;
     color: #222222;
-    font: normal 11px Tahoma, Geneva, Verdana;
+    font: normal 11px "Open Sans", sans-serif;
 }
 
 /**
@@ -2238,7 +2235,7 @@ tr.x-container:before {
     padding-left: 20px;
     white-space: nowrap;
     color: #000;
-    font: normal 11px Tahoma, Geneva, Verdana;
+    font: normal 11px "Open Sans", sans-serif;
     border: 1px solid;
     border-color: #dddddd #bbbbbb #bbbbbb #dddddd;
     background-color: #fff;
@@ -3797,7 +3794,7 @@ tr.x-container:before {
 .x-btn-red-small .x-btn-inner {
     font-size: 12px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: white;
     background-repeat: no-repeat;
     padding: 0 4px;
@@ -4162,7 +4159,7 @@ tr.x-container:before {
 .x-btn-red-medium .x-btn-inner {
     font-size: 14px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: white;
     background-repeat: no-repeat;
     padding: 0 3px;
@@ -4527,7 +4524,7 @@ tr.x-container:before {
 .x-btn-red-large .x-btn-inner {
     font-size: 14px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: white;
     background-repeat: no-repeat;
     padding: 0 3px;
@@ -4892,7 +4889,7 @@ tr.x-container:before {
 .x-btn-grey-small .x-btn-inner {
     font-size: 12px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: #141414;
     background-repeat: no-repeat;
     padding: 0 4px;
@@ -5257,7 +5254,7 @@ tr.x-container:before {
 .x-btn-grey-medium .x-btn-inner {
     font-size: 14px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: #141414;
     background-repeat: no-repeat;
     padding: 0 3px;
@@ -5622,7 +5619,7 @@ tr.x-container:before {
 .x-btn-grey-large .x-btn-inner {
     font-size: 14px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: #141414;
     background-repeat: no-repeat;
     padding: 0 3px;
@@ -5987,7 +5984,7 @@ tr.x-container:before {
 .x-btn-blue-toolbar-small .x-btn-inner {
     font-size: 12px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: white;
     background-repeat: no-repeat;
     padding: 0 4px;
@@ -6352,7 +6349,7 @@ tr.x-container:before {
 .x-btn-blue-toolbar-medium .x-btn-inner {
     font-size: 14px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: white;
     background-repeat: no-repeat;
     padding: 0 3px;
@@ -6717,7 +6714,7 @@ tr.x-container:before {
 .x-btn-blue-toolbar-large .x-btn-inner {
     font-size: 14px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: white;
     background-repeat: no-repeat;
     padding: 0 3px;
@@ -7082,7 +7079,7 @@ tr.x-container:before {
 .x-btn-red-toolbar-small .x-btn-inner {
     font-size: 12px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: white;
     background-repeat: no-repeat;
     padding: 0 4px;
@@ -7447,7 +7444,7 @@ tr.x-container:before {
 .x-btn-red-toolbar-medium .x-btn-inner {
     font-size: 14px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: white;
     background-repeat: no-repeat;
     padding: 0 3px;
@@ -7812,7 +7809,7 @@ tr.x-container:before {
 .x-btn-red-toolbar-large .x-btn-inner {
     font-size: 14px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: white;
     background-repeat: no-repeat;
     padding: 0 3px;
@@ -8177,7 +8174,7 @@ tr.x-container:before {
 .x-btn-grey-toolbar-small .x-btn-inner {
     font-size: 12px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: #141414;
     background-repeat: no-repeat;
     padding: 0 4px;
@@ -8542,7 +8539,7 @@ tr.x-container:before {
 .x-btn-grey-toolbar-medium .x-btn-inner {
     font-size: 14px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: #141414;
     background-repeat: no-repeat;
     padding: 0 3px;
@@ -8907,7 +8904,7 @@ tr.x-container:before {
 .x-btn-grey-toolbar-large .x-btn-inner {
     font-size: 14px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: #141414;
     background-repeat: no-repeat;
     padding: 0 3px;
@@ -9586,7 +9583,7 @@ tr.x-container:before {
 .x-btn-default-small .x-btn-inner {
     font-size: 12px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: white;
     background-repeat: no-repeat;
     padding: 0 4px;
@@ -9952,7 +9949,7 @@ tr.x-container:before {
 .x-btn-default-medium .x-btn-inner {
     font-size: 14px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: white;
     background-repeat: no-repeat;
     padding: 0 3px;
@@ -10318,7 +10315,7 @@ tr.x-container:before {
 .x-btn-default-large .x-btn-inner {
     font-size: 14px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: white;
     background-repeat: no-repeat;
     padding: 0 3px;
@@ -10681,7 +10678,7 @@ tr.x-container:before {
 .x-btn-default-toolbar-small .x-btn-inner {
     font-size: 12px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: #777777;
     background-repeat: no-repeat;
     padding: 0 4px;
@@ -11063,7 +11060,7 @@ tr.x-container:before {
 .x-btn-default-toolbar-medium .x-btn-inner {
     font-size: 14px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: #777777;
     background-repeat: no-repeat;
     padding: 0 3px;
@@ -11445,7 +11442,7 @@ tr.x-container:before {
 .x-btn-default-toolbar-large .x-btn-inner {
     font-size: 14px;
     font-weight: normal;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: #777777;
     background-repeat: no-repeat;
     padding: 0 3px;
@@ -11879,7 +11876,7 @@ tr.x-container:before {
 
 /* line 76, ../themes/stylesheets/ext4/default/widgets/_btn-group.scss */
 .x-btn-group-header-text-default-framed {
-    font: normal 11px Tahoma, Geneva, Verdana;
+    font: normal 11px "Open Sans", sans-serif;
     color: #9d9d9d;
 }
 
@@ -12034,7 +12031,7 @@ table.x-datepicker-inner th {
     height: 19px;
     padding: 0;
     color: #717171;
-    font: normal 10px Tahoma, Geneva, Verdana;
+    font: normal 10px "Open Sans", sans-serif;
     text-align: right;
     border-bottom: 1px solid #ebe0e0;
     border-collapse: separate;
@@ -12073,7 +12070,7 @@ table.x-datepicker-inner a {
     padding-right: 4px;
     display: block;
     zoom: 1;
-    font: normal 11px Tahoma, Geneva, Verdana;
+    font: normal 11px "Open Sans", sans-serif;
     color: black;
     text-decoration: none;
     text-align: right;
@@ -12177,7 +12174,7 @@ table.x-datepicker-inner .x-datepicker-disabled a {
 .x-monthpicker-item {
     float: left;
     margin: 4px 0 5px 0;
-    font: normal 11px Tahoma, Geneva, Verdana;
+    font: normal 11px "Open Sans", sans-serif;
     text-align: center;
     vertical-align: middle;
     height: 18px;
@@ -12644,7 +12641,7 @@ table.x-datepicker-inner .x-datepicker-disabled a {
     border-top: 0 none;
     border-bottom: 0 none;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
-    font: normal 11px Tahoma, Geneva, Verdana;
+    font: normal 11px "Open Sans", sans-serif;
     background-image: none;
     background-color: #c5c5c5;
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f9f9f9), color-stop(100%, #e3e4e6));
@@ -12773,7 +12770,7 @@ table.x-datepicker-inner .x-datepicker-disabled a {
 
 /* line 195, ../themes/stylesheets/ext4/default/widgets/_grid.scss */
 .x-grid-row .x-grid-cell {
-    font: normal 11px/15px Tahoma, Geneva, Verdana;
+    font: normal 11px/15px "Open Sans", sans-serif;
     background-color: white;
     border-color: #ededed;
     border-style: solid;
@@ -12837,7 +12834,7 @@ table.x-datepicker-inner .x-datepicker-disabled a {
 
 /* line 261, ../themes/stylesheets/ext4/default/widgets/_grid.scss */
 .x-grid-rowbody {
-    font: normal 11px/13px Tahoma, Geneva, Verdana;
+    font: normal 11px/13px "Open Sans", sans-serif;
     padding: 4px;
 }
 
@@ -13092,7 +13089,7 @@ browsers will do whacky things with it.
     background: transparent no-repeat 0 -1px;
     background-image: url('../themes/images/default/grid/group-collapse.gif');
     color: #949494;
-    font: bold 11px Tahoma, Geneva, Verdana;
+    font: bold 11px "Open Sans", sans-serif;
     padding: 0 0 0 14px;
 }
 
@@ -13346,7 +13343,7 @@ browsers will do whacky things with it.
 
 /* line 727, ../themes/stylesheets/ext4/default/widgets/_grid.scss */
 .x-grid-row-editor .x-form-display-field {
-    font: normal 11px/15px Tahoma, Geneva, Verdana;
+    font: normal 11px/15px "Open Sans", sans-serif;
     padding-top: 0;
     padding-left: 2px;
 }
@@ -13376,7 +13373,7 @@ browsers will do whacky things with it.
 
 /* line 757, ../themes/stylesheets/ext4/default/widgets/_grid.scss */
 .x-grid-editor .x-form-text, .x-grid-row-editor .x-form-text {
-    font: normal 11px/15px Tahoma, Geneva, Verdana;
+    font: normal 11px/15px "Open Sans", sans-serif;
     height: 18px;
 }
 
@@ -13604,7 +13601,7 @@ browsers will do whacky things with it.
 .x-form-invalid-under {
     padding: 2px 2px 2px 18px;
     color: #c0272b;
-    font: normal 11px Tahoma, Geneva, Verdana;
+    font: normal 11px "Open Sans", sans-serif;
     line-height: 16px;
     background: no-repeat 0 2px;
     background-image: url('../themes/images/default/form/exclamation.gif');
@@ -13646,7 +13643,7 @@ browsers will do whacky things with it.
 .x-form-field,
 .x-form-display-field {
     margin: 0 0 0 0;
-    font: normal 12px Tahoma, Geneva, Verdana;
+    font: normal 12px "Open Sans", sans-serif;
     color: black;
 }
 
@@ -13718,7 +13715,7 @@ textarea.x-form-invalid-field {
 
 /* line 82, ../themes/stylesheets/ext4/default/widgets/form/_field.scss */
 .x-form-item {
-    font: normal 12px Tahoma, Geneva, Verdana;
+    font: normal 12px "Open Sans", sans-serif;
 }
 
 /* line 86, ../themes/stylesheets/ext4/default/widgets/form/_field.scss */
@@ -13802,7 +13799,7 @@ textarea.x-form-invalid-field {
 
 /* line 25, ../themes/stylesheets/ext4/default/widgets/form/_fieldset.scss */
 .x-fieldset-header {
-    font: 15px/14px bold Tahoma, Geneva, Verdana;
+    font: 15px/14px bold "Open Sans", sans-serif;
     color: #444444;
     padding: 0 0 9px 0;
     overflow: hidden;
@@ -14590,7 +14587,7 @@ textarea.x-form-invalid-field {
     color: white;
     font-size: 11px;
     font-weight: bold;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     line-height: 17px;
 }
 
@@ -14749,7 +14746,7 @@ textarea.x-form-invalid-field {
     color: white;
     font-size: 11px;
     font-weight: bold;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     line-height: 17px;
 }
 
@@ -16065,7 +16062,7 @@ textarea.x-form-invalid-field {
     white-space: nowrap;
     color: #4c4c4c;
     line-height: 16px;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     font-size: 11px;
     font-weight: normal;
 }
@@ -16408,7 +16405,7 @@ textarea.x-form-invalid-field {
     color: #9c4548;
     font-weight: bold;
     line-height: 17px;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     font-size: 11px;
 }
 
@@ -17437,7 +17434,7 @@ textarea.x-form-invalid-field {
     -webkit-appearance: none;
     font-size: 11px;
     font-weight: bold;
-    font-family: Tahoma, Geneva, Verdana;
+    font-family: "Open Sans", sans-serif;
     color: #848484;
     outline: 0 none;
     overflow-x: visible;

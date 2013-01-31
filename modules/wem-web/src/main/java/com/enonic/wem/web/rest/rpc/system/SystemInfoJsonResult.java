@@ -11,7 +11,7 @@ final class SystemInfoJsonResult
     @Override
     protected void serialize( final ObjectNode json )
     {
-        json.put( "installationName", "production" );
+        json.put( "installationName", "production" ); // NOTE! If installationName is not set, this string should be blank (CMS-845)
         json.put( "version", Version.get().getVersion() );
         json.put( "title", Version.get().getName() );
     }

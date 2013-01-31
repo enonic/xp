@@ -1,0 +1,7 @@
+{
+    "relations":{
+        "_all":{
+            "enabled":false
+        }
+    }
+}

@@ -3,13 +3,13 @@ package com.enonic.wem.api.module;
 
 import com.google.common.base.Objects;
 
-public class Module
+public final class Module
 {
     public static final Module SYSTEM = newModule().name( ModuleName.SYSTEM ).build();
 
     private final ModuleName name;
 
-    public Module( final ModuleName name )
+    private Module( final ModuleName name )
     {
         this.name = name;
     }

@@ -1,5 +1,5 @@
 Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
-    extend: 'Admin.controller.contentStudio.ContentTypeController',
+    extend: 'Admin.controller.contentStudio.WizardController',
 
     /*      Controller for handling Content Type Wizard UI events       */
 
@@ -12,47 +12,22 @@ Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
 
 
     init: function () {
-        var me = this;
-        me.control({
-            'contentStudioWizardPanel *[action=closeWizard]': {
-                click: me.closeWizard
+        this.application.on({
+            saveContentType: {
+                fn: this.saveType,
+                scope: this
             },
-            'contentStudioWizardPanel *[action=saveContentType]': {
-                click: function (el, e) {
-                    me.saveContentType(el.up('contentStudioWizardPanel'), false);
-                }
-            },
-            'contentStudioWizardPanel wizardPanel': {
-                finished: function (wizard, data) {
-                    me.saveContentType(wizard.up('contentStudioWizardPanel'), true);
-                }
-            },
-            'contentWizardToolbar *[action=deleteContentType]': {
-                click: function (el, e) {
-                    this.deleteContentType(this.getContentTypeWizardPanel().data);
-                }
+            deleteContentType: {
+                fn: this.deleteType,
+                scope: this
             }
         });
     },
 
-    closeWizard: function (el, e) {
-        var tab = this.getContentTypeWizardTab();
-        var contentTypeWizard = this.getContentTypeWizardPanel();
-        if (contentTypeWizard.getWizardPanel().isWizardDirty) {
-            Ext.Msg.confirm('Close wizard', 'There are unsaved changes, do you want to close it anyway ?',
-                function (answer) {
-                    if ('yes' === answer) {
-                        tab.close();
-                    }
-                });
-        } else {
-            tab.close();
-        }
-    },
-
-    saveContentType: function (contentTypeWizard, closeWizard) {
+    saveType: function (wizard, closeWizard) {
+        console.log("saving as contenttype");
         var me = this;
-        var data = contentTypeWizard.getData();
+        var data = wizard.getData();
         var contentType = data.configXML;
         var iconRef = data.iconRef;
         var contentTypeParams = {
@@ -63,7 +38,7 @@ Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
         var onUpdateContentTypeSuccess = function (created, updated) {
             if (created || updated) {
                 if (closeWizard) {
-                    me.getContentTypeWizardTab().close();
+                    me.getWizardTab().close();
                 }
 
                 Admin.MessageBus.showFeedback({
@@ -78,14 +53,20 @@ Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
         this.remoteCreateOrUpdateContentType(contentTypeParams, onUpdateContentTypeSuccess);
     },
 
-    /*      Getters     */
+    deleteType: function (wizard) {
+        var me = this;
+        var onDeleteContentTypeSuccess = function (success, failures) {
+            if (success) {
+                me.getWizardTab().close();
+                Admin.MessageBus.showFeedback({
+                    title: 'Content Type was deleted',
+                    message: 'Content Type was deleted',
+                    opts: {}
+                });
+            }
+        }
 
-    getContentTypeWizardTab: function () {
-        return this.getCmsTabPanel().getActiveTab();
-    },
+        this.remoteDeleteContentType(wizard.data, onDeleteContentTypeSuccess);
 
-    getContentTypeWizardPanel: function () {
-        return this.getContentTypeWizardTab();
     }
-
 });

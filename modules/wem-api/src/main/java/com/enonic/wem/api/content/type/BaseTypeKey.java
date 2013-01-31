@@ -9,9 +9,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import com.enonic.wem.api.content.ModuleBasedQualifiedName;
+import com.enonic.wem.api.content.relationship.RelationshipType;
+import com.enonic.wem.api.content.type.form.Mixin;
 import com.enonic.wem.api.module.ModuleName;
 
-public class BaseTypeKey
+public final class BaseTypeKey
 {
     private final static char SEPARATOR = ':';
 
@@ -21,6 +23,8 @@ public class BaseTypeKey
     private final String refString;
 
     private final String type;
+
+    //    private final BaseTypeKind type; TODO: replace string with enum type?
 
     private final ModuleName moduleName;
 
@@ -32,6 +36,21 @@ public class BaseTypeKey
         this.moduleName = moduleName;
         this.localName = localName;
         this.refString = Joiner.on( SEPARATOR ).join( this.type, this.moduleName, this.localName );
+    }
+
+    public boolean isContentType()
+    {
+        return ContentType.class.getSimpleName().equals( this.type );
+    }
+
+    public boolean isMixin()
+    {
+        return Mixin.class.getSimpleName().equals( this.type );
+    }
+
+    public boolean isRelationshipType()
+    {
+        return RelationshipType.class.getSimpleName().equals( this.type );
     }
 
     public String toString()

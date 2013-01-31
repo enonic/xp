@@ -22,6 +22,8 @@ public class SpaceDaoImplTest
 {
     private SpaceDao spaceDao;
 
+    private final static byte[] ICON_DATA = "imagedata".getBytes();
+
     public void setupDao()
         throws Exception
     {
@@ -39,6 +41,7 @@ public class SpaceDaoImplTest
             displayName( "My Space" ).
             createdTime( time ).
             modifiedTime( time ).
+            icon( ICON_DATA ).
             build();
 
         // exercise
@@ -52,6 +55,7 @@ public class SpaceDaoImplTest
         assertEquals( createdSpace.getRootContent().id(), spaceNode.getNode( SPACE_CONTENT_ROOT_NODE ).getIdentifier() );
         assertEquals( time, createdSpace.getCreatedTime() );
         assertEquals( time, createdSpace.getModifiedTime() );
+        assertArrayEquals( ICON_DATA, createdSpace.getIcon() );
     }
 
     @Test
@@ -65,6 +69,7 @@ public class SpaceDaoImplTest
             displayName( "My Space" ).
             createdTime( time ).
             modifiedTime( time ).
+            icon( ICON_DATA ).
             build();
         final Space space2 = newSpace().
             name( "myOtherSpace" ).
@@ -85,6 +90,7 @@ public class SpaceDaoImplTest
         assertEquals( "My Space", spaceRetrieved.getDisplayName() );
         assertEqualsDateTime( time, spaceRetrieved.getCreatedTime() );
         assertEqualsDateTime( time, spaceRetrieved.getModifiedTime() );
+        assertArrayEquals( ICON_DATA, spaceRetrieved.getIcon() );
         assertNotNull( spaceRetrieved.getRootContent() );
     }
 
@@ -175,6 +181,7 @@ public class SpaceDaoImplTest
             displayName( "This is my Space" ).
             createdTime( time ).
             modifiedTime( updateTime ).
+            icon( ICON_DATA ).
             build();
         spaceDao.updateSpace( spaceChanges, session );
 
@@ -186,6 +193,7 @@ public class SpaceDaoImplTest
         assertEqualsDateTime( time, spaceUpdated.getCreatedTime() );
         assertEqualsDateTime( updateTime, spaceUpdated.getModifiedTime() );
         assertEquals( spaceCreated.getRootContent(), spaceUpdated.getRootContent() );
+        assertArrayEquals( ICON_DATA, spaceUpdated.getIcon() );
     }
 
     @Test(expected = SpaceNotFoundException.class)

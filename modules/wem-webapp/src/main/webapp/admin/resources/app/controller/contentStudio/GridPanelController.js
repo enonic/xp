@@ -19,7 +19,7 @@ Ext.define('Admin.controller.contentStudio.GridPanelController', {
                 selectionchange: this.onGridSelectionChange,
                 itemcontextmenu: this.showContextMenu,
                 itemdblclick: function (btn, evt) {
-                    this.showEditContentTypePanel();
+                    this.showEditBaseTypePanel();
                 }
             }
         });
@@ -38,7 +38,7 @@ Ext.define('Admin.controller.contentStudio.GridPanelController', {
     },
 
     enableToolbarButtons: function (enable) {
-        var buttons = Ext.ComponentQuery.query('button[action=editContentType], ' + 'button[action=deleteContentType], ' +
+        var buttons = Ext.ComponentQuery.query('button[action=editBaseType], ' + 'button[action=deleteBaseType], ' +
                                                'button[action=viewContentType]');
 
         Ext.Array.each(buttons, function (button) {

@@ -17,7 +17,8 @@ Ext.define('Admin.lib.RemoteService', {
                 "userstore_getAll", "userstore_get", "userstore_getConnectors", "userstore_createOrUpdate", "userstore_delete",
                 "content_createOrUpdate", "content_list", "contentType_get", "content_tree", "content_get", "contentType_list",
                 "content_delete", "content_validate", "contentType_createOrUpdate", "contentType_delete", "contentType_tree",
-                "baseType_list", "baseType_tree", "system_getSystemInfo"
+                "baseType_list", "baseType_tree", "system_getSystemInfo", "mixin_get", "mixin_createOrUpdate", "mixin_delete",
+                "relationshipType_get", "relationshipType_createOrUpdate", "relationshipType_delete", "space_list", "space_get"
             ]
         };
 
@@ -142,6 +143,38 @@ Ext.define('Admin.lib.RemoteService', {
     },
 
     system_getSystemInfo: function (params, callback) {
+        console.log(params, callback);
+    },
+
+    mixin_get: function (params, callback) {
+        console.log(params, callback);
+    },
+
+    mixin_createOrUpdate: function (params, callback) {
+        console.log(params, callback);
+    },
+
+    mixin_delete: function (params, callback) {
+        console.log(params, callback);
+    },
+
+    relationshipType_get: function (params, callback) {
+        console.log(params, callback);
+    },
+
+    relationshipType_createOrUpdate: function (params, callback) {
+        console.log(params, callback);
+    },
+
+    relationshipType_delete: function (params, callback) {
+        console.log(params, callback);
+    },
+
+    space_list: function (params, callback) {
+        console.log(params, callback);
+    },
+
+    space_get: function (params, callback) {
         console.log(params, callback);
     },
 

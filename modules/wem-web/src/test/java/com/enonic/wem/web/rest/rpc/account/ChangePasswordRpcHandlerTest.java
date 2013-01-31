@@ -1,19 +1,13 @@
 package com.enonic.wem.web.rest.rpc.account;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.account.ChangePassword;
-import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
-import com.enonic.wem.web.rest.rpc.account.ChangePasswordRpcHandler;
+import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
 public class ChangePasswordRpcHandlerTest
     extends AbstractRpcHandlerTest

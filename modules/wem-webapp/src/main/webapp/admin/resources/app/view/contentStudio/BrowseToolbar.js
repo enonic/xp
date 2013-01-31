@@ -13,19 +13,39 @@ Ext.define('Admin.view.contentStudio.BrowseToolbar', {
         this.items = [
 
             {
-                text: 'New',
-                action: 'newContentType'
-            },
+                xtype: 'splitbutton',
+                text: ' New',
+                listeners: {
+                    click: function (button) {
+                        button.showMenu();
+                    }
+                },
+                cls: 'x-btn-as-arrow',
+                menu: [
+                    {
+                        text: 'Content Type',
+                        action: 'newContentType'
+                    },
+                    {
+                        text: 'Mixin',
+                        action: 'newMixin'
 
+                    },
+                    {
+                        text: 'Relationship type',
+                        action: 'newRelationshipType'
+                    }
+                ]
+            },
             {
                 text: 'Edit',
                 disabled: true,
-                action: 'editContentType'
+                action: 'editBaseType'
             },
             {
                 text: 'Delete',
                 disabled: true,
-                action: 'deleteContentType'
+                action: 'deleteBaseType'
             },
 
             {
@@ -47,5 +67,4 @@ Ext.define('Admin.view.contentStudio.BrowseToolbar', {
 
         this.callParent(arguments);
     }
-
 });
