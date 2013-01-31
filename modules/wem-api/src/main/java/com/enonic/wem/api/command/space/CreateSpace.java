@@ -14,6 +14,8 @@ public final class CreateSpace
 
     private String name;
 
+    private byte[] icon;
+
     public CreateSpace name( final String name )
     {
         this.name = name;
@@ -23,6 +25,12 @@ public final class CreateSpace
     public CreateSpace displayName( final String displayName )
     {
         this.displayName = displayName;
+        return this;
+    }
+
+    public CreateSpace icon( final byte[] icon )
+    {
+        this.icon = icon;
         return this;
     }
 
@@ -40,13 +48,14 @@ public final class CreateSpace
         }
 
         final CreateSpace that = (CreateSpace) o;
-        return Objects.equal( this.displayName, that.displayName ) && ( this.name == that.name );
+        return Objects.equal( this.displayName, that.displayName ) && Objects.equal( this.name, that.name ) &&
+            Objects.equal( this.icon, that.icon );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.displayName, this.name );
+        return Objects.hashCode( this.displayName, this.name, this.icon );
     }
 
     @Override
@@ -64,5 +73,10 @@ public final class CreateSpace
     public String getName()
     {
         return name;
+    }
+
+    public byte[] getIcon()
+    {
+        return icon;
     }
 }

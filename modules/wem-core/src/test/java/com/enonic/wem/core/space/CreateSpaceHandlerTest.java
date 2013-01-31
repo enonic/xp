@@ -45,18 +45,20 @@ public class CreateSpaceHandlerTest
     {
         // setup
         final DateTime time = DateTime.now();
+        final byte[] icon = "imagedata".getBytes();
         final Space space = newSpace().
             name( "mySpace" ).
             displayName( "My Space" ).
             modifiedTime( time ).
             createdTime( time ).
             rootContent( ContentIdFactory.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
+            icon( icon ).
             build();
 
         Mockito.when( spaceDao.createSpace( isA( Space.class ), any( Session.class ) ) ).thenReturn( space );
 
         // exercise
-        final CreateSpace command = Commands.space().create().displayName( "My Space" ).name( "mySpace" );
+        final CreateSpace command = Commands.space().create().displayName( "My Space" ).name( "mySpace" ).icon( icon );
         this.handler.handle( this.context, command );
 
         // verify
@@ -67,6 +69,7 @@ public class CreateSpaceHandlerTest
         assertEquals( "mySpace", spaceResult.getName().name() );
         assertEquals( time, spaceResult.getModifiedTime() );
         assertEquals( time, spaceResult.getCreatedTime() );
+        assertArrayEquals( icon, spaceResult.getIcon() );
         assertEquals( ContentIdFactory.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ), spaceResult.getRootContent() );
     }
 

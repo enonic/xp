@@ -34,6 +34,7 @@ public final class CreateSpaceHandler
             name( command.getName() ).
             createdTime( now ).
             modifiedTime( now ).
+            icon( command.getIcon() ).
             build();
 
         final Space createdSpace = spaceDao.createSpace( space, session );

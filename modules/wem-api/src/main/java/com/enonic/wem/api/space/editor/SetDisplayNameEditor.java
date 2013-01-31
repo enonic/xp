@@ -21,7 +21,7 @@ final class SetDisplayNameEditor
     public Space edit( final Space space )
         throws Exception
     {
-        if ( space.equals( space.getDisplayName() ) )
+        if ( displayName.equals( space.getDisplayName() ) )
         {
             return null;
         }

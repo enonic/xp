@@ -18,6 +18,10 @@ final class SetSpaceIconEditor
     public Space edit( final Space space )
         throws Exception
     {
+        if ( icon == null && space.getIcon() == null )
+        {
+            return null;
+        }
         final byte[] iconToSet = ( this.icon == null ) ? null : Arrays.copyOf( this.icon, this.icon.length );
         final Space updated = Space.newSpace( space ).
             icon( iconToSet ).
