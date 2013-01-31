@@ -973,18 +973,17 @@ td {
 .admin-wizard .navigation {
     margin: 0 !important;
     padding: 0 !important;
-    background-color: #ccc;
+    background-color: #eee;
     list-style: none;
     overflow: hidden;
-    border: 1px solid #cccccc;
 }
 
-/* line 11, ../sass/admin/css/_wizard.scss */
+/* line 10, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li {
     float: left;
 }
 
-/* line 15, ../sass/admin/css/_wizard.scss */
+/* line 14, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a {
     color: #222;
     text-decoration: none !important;
@@ -995,12 +994,12 @@ td {
     float: left;
 }
 
-/* line 25, ../sass/admin/css/_wizard.scss */
+/* line 24, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.first {
     padding-left: 20px;
 }
 
-/* line 29, ../sass/admin/css/_wizard.scss */
+/* line 28, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a:after {
     content: " ";
     display: block;
@@ -1017,7 +1016,7 @@ td {
     z-index: 2;
 }
 
-/* line 44, ../sass/admin/css/_wizard.scss */
+/* line 43, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a:before {
     content: " ";
     display: block;
@@ -1026,7 +1025,7 @@ td {
     border-top: 50px solid transparent;
     /* Go big on the size, and let overflow hide */
     border-bottom: 50px solid transparent;
-    border-left: 30px solid #cccccc;
+    border-left: 28px solid #cccccc;
     position: absolute;
     top: 50%;
     margin-top: -50px;
@@ -1035,57 +1034,57 @@ td {
     z-index: 1;
 }
 
-/* line 60, ../sass/admin/css/_wizard.scss */
+/* line 59, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.previous {
     font-weight: bold;
 }
 
-/* line 64, ../sass/admin/css/_wizard.scss */
+/* line 63, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.current {
     background-color: #fff;
     font-weight: bold;
 }
 
-/* line 69, ../sass/admin/css/_wizard.scss */
+/* line 68, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.current:after {
     border-left: 30px solid white;
 }
 
-/* line 73, ../sass/admin/css/_wizard.scss */
+/* line 72, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.current:before {
     border-left: 30px solid white;
 }
 
-/* line 77, ../sass/admin/css/_wizard.scss */
+/* line 76, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.next {
     color: #acacac;
 }
 
-/* line 81, ../sass/admin/css/_wizard.scss */
+/* line 80, ../sass/admin/css/_wizard.scss */
 .admin-wizard .toolbar .x-mask {
     display: none;
 }
 
-/* line 85, ../sass/admin/css/_wizard.scss */
+/* line 84, ../sass/admin/css/_wizard.scss */
 .admin-wizard .toolbar .x-item-disabled {
     opacity: 1;
     filter: none;
 }
 
-/* line 90, ../sass/admin/css/_wizard.scss */
+/* line 89, ../sass/admin/css/_wizard.scss */
 .admin-wizard div.navigation-container {
     padding: 7px 12px 0 6px;
     background-color: #fff;
 }
 
-/* line 94, ../sass/admin/css/_wizard.scss */
+/* line 93, ../sass/admin/css/_wizard.scss */
 .admin-wizard div.navigation-container-sticky {
     position: fixed;
     top: 89px;
     width: 100%;
 }
 
-/* line 104, ../sass/admin/css/_wizard.scss */
+/* line 103, ../sass/admin/css/_wizard.scss */
 .admin-wizard-edit ul.navigation a.next,
 .admin-wizard-edit ul.navigation a.next.immediate,
 .admin-wizard-edit ul.navigation a.next.last {
@@ -1093,31 +1092,31 @@ td {
     cursor: pointer;
 }
 
-/* line 109, ../sass/admin/css/_wizard.scss */
+/* line 108, ../sass/admin/css/_wizard.scss */
 .admin-wizard-edit .toolbar-disabled ul.navigation a.next.last {
     color: #acacac;
     cursor: default;
 }
 
-/* line 116, ../sass/admin/css/_wizard.scss */
+/* line 115, ../sass/admin/css/_wizard.scss */
 .admin-wizard-new ul.navigation li a.next {
     color: #acacac;
     cursor: default;
 }
 
-/* line 121, ../sass/admin/css/_wizard.scss */
+/* line 120, ../sass/admin/css/_wizard.scss */
 .admin-wizard-new ul.navigation li a.next.immediate {
     color: #222;
     cursor: pointer;
 }
 
-/* line 128, ../sass/admin/css/_wizard.scss */
+/* line 127, ../sass/admin/css/_wizard.scss */
 .admin-wizard-new .toolbar-diabled ul.navigation a.next, .admin-wizard-new .toolbar-diabled ul.navigation a.next.immidiate, .admin-wizard-new .toolbar-diabled ul.navigation a.next.last {
     color: #acacac;
     cursor: default;
 }
 
-/* line 139, ../sass/admin/css/_wizard.scss */
+/* line 138, ../sass/admin/css/_wizard.scss */
 .admin-wizard > div > .x-panel-body,
 .admin-glowing-item .x-panel-body,
 .admin-validation-label div,
@@ -1125,12 +1124,12 @@ td {
     border: 0 none;
 }
 
-/* line 143, ../sass/admin/css/_wizard.scss */
+/* line 142, ../sass/admin/css/_wizard.scss */
 .admin-display-name {
     width: 100%;
 }
 
-/* line 146, ../sass/admin/css/_wizard.scss */
+/* line 145, ../sass/admin/css/_wizard.scss */
 .admin-display-name input {
     border: 1px solid transparent;
     color: #555555;
@@ -1143,25 +1142,25 @@ td {
     background: white none;
 }
 
-/* line 158, ../sass/admin/css/_wizard.scss */
+/* line 157, ../sass/admin/css/_wizard.scss */
 .admin-display-name input:hover {
     border: 1px solid #98c9f2;
     box-shadow: 0 0 3px #98c9f2;
 }
 
-/* line 162, ../sass/admin/css/_wizard.scss */
+/* line 161, ../sass/admin/css/_wizard.scss */
 .admin-display-name input:focus {
     color: black !important;
     border: 1px solid #99bce8 !important;
 }
 
-/* line 168, ../sass/admin/css/_wizard.scss */
+/* line 167, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container {
     margin: 0 10px 3px 5px;
     font-size: 12px;
 }
 
-/* line 172, ../sass/admin/css/_wizard.scss */
+/* line 171, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-wizard-header {
     position: relative;
 }
@@ -1534,17 +1533,22 @@ div.x-mask {
 }
 
 /* line 97, ../sass/admin/css/_top-bar.scss */
+.admin-topbar-menu .admin-topbar-menu-item.current-tab {
+    background-color: #eeeeee;
+}
+
+/* line 101, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item.active {
     background: #4294DE;
     color: #FFF;
 }
 
-/* line 101, ../sass/admin/css/_top-bar.scss */
+/* line 105, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item.active a.close-button {
     background: url("../themes/images/default/navigate_cross-16px.png") 0 -16px no-repeat;
 }
 
-/* line 106, ../sass/admin/css/_top-bar.scss */
+/* line 110, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .admin-topbar-menu-item a.close-button {
     background: url("../themes/images/default/navigate_cross-16px.png") 0 0 no-repeat;
     border: 1px solid transparent;
@@ -1553,7 +1557,7 @@ div.x-mask {
     cursor: pointer;
 }
 
-/* line 115, ../sass/admin/css/_top-bar.scss */
+/* line 119, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu em {
     position: relative;
     top: -2px;
