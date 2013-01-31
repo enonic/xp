@@ -7,7 +7,8 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
     ],
 
     mixins: {
-        formGenerator: 'Admin.view.contentManager.wizard.form.FormGenerator'
+        formGenerator: 'Admin.view.contentManager.wizard.form.FormGenerator',
+        fieldOccurrencesHandler: 'Admin.view.contentManager.wizard.form.FieldOccurrencesHandler'
     },
 
     contentTypeItemConfig: undefined,
@@ -22,18 +23,16 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
 
     initComponent: function () {
         this.callParent(arguments);
+        this.initLayout();
     },
 
     listeners: {
         beforerender: function () {
+            this.handleOccurrences();
             this.setIndent();
         },
         render: function () {
-            this.initLayout();
             this.initSortable();
-        },
-        afterlayout: function () {
-            this.enableDisableRemoveBlockButton();
         }
     },
 
@@ -42,20 +41,47 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
      * @private
      */
     initLayout: function () {
-        var me = this;
 
         // Edit form mode
-        if (me.content) {
-            Ext.Array.each(me.content, function (value, index) {
-                me.addBlockAt(index, false);
-            });
+        if (this.value) {
+            this.addBlock(false);
         } else {
-            me.addBlockAt(0, true);
+            this.addBlock(true);
         }
 
-        me.add(me.createActionsContainer());
+        this.add(this.createActionsContainer());
     },
 
+
+    bindOccurrencesEventsHandlers: function () {
+        this.on('copyadded', this.updateButtonState, this);
+        this.on('copyremoved', this.updateButtonState, this);
+    },
+
+    updateButtonState: function () {
+        var max = this.contentTypeItemConfig.occurrences.maximum;
+        if (this.addButton) {
+            if (this.nextField || this.copyNo === max) {
+                this.addButton.hide();
+            } else {
+                this.addButton.show();
+            }
+        }
+
+        var totalCount = 1;
+        var tmp = this;
+        // Find the very first copy
+        while (tmp.prevField) {
+            tmp = tmp.prevField;
+        }
+        var root = tmp;
+        while (tmp.nextField) {
+            tmp = tmp.nextField;
+            totalCount++;
+        }
+        root.updateButtonStateInternal(totalCount);
+        this.doLayout();
+    },
 
     /**
      * @private
@@ -63,13 +89,18 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
     createAddBlockButton: function () {
         var me = this;
 
-        return {
-            xtype: 'button',
+        this.addButton = Ext.create({
+            xclass: 'widget.button',
+            itemId: 'add-button',
+            style: {
+                float: 'left'
+            },
             text: 'Add ' + me.contentTypeItemConfig.label,
-            handler: function (button) {
-                me.addBlockAt((me.items.items.length - 1), true);
+            handler: function () {
+                me.addCopy();
             }
-        };
+        });
+        return this.addButton;
     },
 
 
@@ -81,6 +112,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
 
         return {
             xtype: 'container',
+            itemId: 'actions-container',
             layout: {
                 type: 'table',
                 columns: 2,
@@ -122,7 +154,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
     /**
      * @private
      */
-    addBlockAt: function (position, createBlankBlock) {
+    addBlock: function (hasContent) {
         var me = this;
 
         var block = new Ext.container.Container({
@@ -146,13 +178,12 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
         });
 
         // Rename argument createBlankBlock. hasContent
-        if (createBlankBlock) {
+        if (hasContent) {
             me.addComponentsBasedOnContentType(me.contentTypeItemConfig.items, block);
         } else {
-            me.addComponentsBasedOnContentData(me.content[position].value, me.contentTypeItemConfig.items, block);
+            me.addComponentsBasedOnContentData(me.value[0].value, me.contentTypeItemConfig.items, block);
         }
-
-        me.insert(position, block);
+        me.add(block);
     },
 
 
@@ -195,7 +226,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
                     itemId: 'remove-block-button',
                     text: 'x',
                     handler: function (btn) {
-                        btn.up().up().destroy();
+                        me.removeCopy();
                     }
                 }
             ]
@@ -219,12 +250,26 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
     /**
      * @private
      */
-    enableDisableRemoveBlockButton: function () {
+    setDisableRemoveBlockButton: function (disable) {
         var me = this,
-            disable = ((me.items.items.length - 1) === 1),
             button = Ext.ComponentQuery.query('#remove-block-button', me)[0];
 
-        button.setDisabled(disable);
+        if (button) {
+            button.setDisabled(disable);
+        }
+    },
+
+    /**
+     * @private
+     * @param totalCount
+     */
+    updateButtonStateInternal: function (totalCount) {
+        var min = this.contentTypeItemConfig.occurrences.minimum;
+        var max = this.contentTypeItemConfig.occurrences.maximum;
+        this.setDisableRemoveBlockButton(totalCount === min);
+        if (this.nextField) {
+            this.nextField.updateButtonStateInternal(totalCount);
+        }
     },
 
 
@@ -248,15 +293,19 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
                     var currentItemValue = item.getValue();
                     if (currentItemValue instanceof Array) {
                         Ext.each(currentItemValue, function (itemValue) {
-                            itemValue.path = me.name.concat('[', index, ']', '.', itemValue.path);
+                            itemValue.path = me.name.concat('[', me.copyNo - 1, ']', '.', itemValue.path);
                         });
                     } else {
-                        currentItemValue.path = me.name.concat('[', index, ']', '.', currentItemValue);
+                        currentItemValue.path = me.name.concat('[', me.copyNo - 1, ']', '.', currentItemValue);
                     }
                     value = value.concat(currentItemValue);
                 }
             });
         return value;
+    },
+
+    setValue: function () {
+
     }
 
 });

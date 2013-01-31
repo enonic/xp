@@ -130,7 +130,6 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
             tmp = tmp.nextField;
             totalCount++;
         }
-        //root.updateCopyNo();
         root.updateButtonStateInternal(totalCount);
     },
 

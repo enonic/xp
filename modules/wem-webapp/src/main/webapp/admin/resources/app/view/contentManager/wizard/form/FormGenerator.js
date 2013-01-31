@@ -64,7 +64,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
             xclass: 'widget.FormItemSet',
             name: formItemSetConfig.name,
             contentTypeItemConfig: formItemSetConfig,
-            content: contentItem
+            value: contentItem
         });
     },
 
