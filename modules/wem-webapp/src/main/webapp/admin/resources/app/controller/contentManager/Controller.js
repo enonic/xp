@@ -152,7 +152,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
         }
     },
 
-    createContent: function (type, qualifiedContentType) {
+    createContent: function (type, qualifiedContentType, contentTypeName) {
         var tabs = this.getCmsTabPanel();
         if (tabs) {
             var tab;
@@ -172,10 +172,12 @@ Ext.define('Admin.controller.contentManager.Controller', {
                     };
                     return {
                         xtype: 'contentWizardPanel',
-                        title: 'New Content',
+                        title: '[New ' + contentData.contentType.displayName + ']',
                         data: contentData
                     };
                 };
+
+
                 var requestConfig = {
                     doTabRequest: function (handleRpcResponse) {
                         Admin.lib.RemoteService.contentType_get({
@@ -191,9 +193,10 @@ Ext.define('Admin.controller.contentManager.Controller', {
                     },
                     createTabFromResponse: createContentTabFn
                 };
+
                 var tabItem = {
                     itemId: 'new-content-tab',
-                    title: 'New Content',
+                    title: '[New ' + contentTypeName + ']',
                     closable: true,
                     editing: true,
                     layout: 'fit'
