@@ -52,6 +52,10 @@ Ext.define('Admin.controller.account.Controller', {
 
     /*      Public, should operate with accounts only      */
 
+    generateTabId: function (account, isEdit) {
+        return 'tab-' + ( isEdit ? 'edit-' : 'preview-' ) + account.type + '-' + account.key;
+    },
+
     showDeleteAccountWindow: function (accounts) {
         if (!accounts) {
             accounts = this.getPersistentGridSelectionPlugin().getSelection();
@@ -167,13 +171,13 @@ Ext.define('Admin.controller.account.Controller', {
             };
             var tabItem = {
                 title: selectedUser.displayName + ' (' + selectedUser.qualifiedName + ')',
-                id: 'tab-preview-user-' + selectedUser.key,
+                id: me.generateTabId(selectedUser, false),
                 data: selectedUser,
                 closable: true,
                 layout: 'fit'
             };
-            //check if preview tab is open and close it
-            var index = tabPane.items.indexOfKey('tab-edit-user-' + selectedUser.key);
+            //check if edit tab is open and close it
+            var index = tabPane.items.indexOfKey(me.generateTabId(selectedUser, true));
             if (index >= 0) {
                 tabPane.remove(index);
             }
@@ -192,13 +196,13 @@ Ext.define('Admin.controller.account.Controller', {
             };
             var tabItem = {
                 title: selectedGroup.displayName,
-                id: 'tab-preview-group-' + selectedGroup.key,
+                id: me.generateTabId(selectedGroup, false),
                 data: selectedGroup,
                 closable: true,
                 layout: 'fit'
             };
-            //check if preview tab is open and close it
-            var index = tabPane.items.indexOfKey('tab-edit-group-' + selectedGroup.key);
+            //check if edit tab is open and close it
+            var index = tabPane.items.indexOfKey(me.generateTabId(selectedGroup, true));
             if (index >= 0) {
                 tabPane.remove(index);
             }
@@ -264,7 +268,7 @@ Ext.define('Admin.controller.account.Controller', {
                 createTabFromResponse: createUserWizardFn
             };
             var tabItem = {
-                id: 'tab-edit-user-' + selectedUser.key,
+                id: me.generateTabId(selectedUser, true),
                 title: selectedUser.displayName + ' (' + selectedUser.qualifiedName + ')',
                 iconCls: 'icon-user',
                 data: selectedUser,
@@ -273,7 +277,7 @@ Ext.define('Admin.controller.account.Controller', {
                 layout: 'fit'
             };
             //check if preview tab is open and close it
-            var index = tabPane.items.indexOfKey('tab-preview-user-' + selectedUser.key);
+            var index = tabPane.items.indexOfKey(me.generateTabId(selectedUser, false));
             if (index >= 0) {
                 tabPane.remove(index);
             }
@@ -295,7 +299,7 @@ Ext.define('Admin.controller.account.Controller', {
 
             var tabIconCls = selectedGroup.type === 'group' ? 'icon-group' : 'icon-role';
             var tabItem = {
-                id: 'tab-edit-group-' + selectedGroup.key,
+                id: me.generateTabId(selectedGroup, true),
                 title: selectedGroup.displayName,
                 iconCls: tabIconCls,
                 data: selectedGroup,
@@ -304,7 +308,7 @@ Ext.define('Admin.controller.account.Controller', {
                 layout: 'fit'
             };
             //check if preview tab is open and close it
-            var index = tabPane.items.indexOfKey('tab-preview-group-' + selectedGroup.key);
+            var index = tabPane.items.indexOfKey(me.generateTabId(selectedGroup, false));
             if (index >= 0) {
                 tabPane.remove(index);
             }
@@ -472,7 +476,7 @@ Ext.define('Admin.controller.account.Controller', {
         var tab;
         if (itemType === 'group') {
             tab = {
-                id: Ext.id(null, 'new-group-'),
+                id: 'tab-new-group',
                 title: 'New Group',
                 iconCls: 'icon-group',
                 editing: true,
@@ -487,7 +491,7 @@ Ext.define('Admin.controller.account.Controller', {
             };
         } else {
             tab = {
-                id: Ext.id(null, 'new-user-'),
+                id: 'tab-new-user',
                 title: 'New User',
                 iconCls: 'icon-user',
                 editing: true,

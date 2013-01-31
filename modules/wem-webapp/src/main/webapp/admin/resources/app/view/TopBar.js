@@ -114,7 +114,7 @@ Ext.define('Admin.view.TopBar', {
 
     setActiveTab: function (tab) {
         this.setLabelTitle(this.getMenuItemDescription(tab.card));
-        this.setButtonTitle(tab.card, this.getActiveTabContentName(tab.card));
+        this.setButtonTitle(tab.card, this.getMenuItemDescription(tab.card));
         this.tabMenu.markActiveTab(tab);
     },
 
@@ -182,18 +182,10 @@ Ext.define('Admin.view.TopBar', {
                 var content = data.content;
                 desc = content.path || content.qualifiedName || content.displayName;
             }
-        }
-        if (!desc) {
-            desc = card.title;
-        }
-        return desc;
-    },
-
-    getActiveTabContentName: function (card) {
-        var desc;
-        if (card.data) {
-            var data = card.data;
-            desc = data.name || data.data.name; // Why is there a new level with data in open mode
+            if (!desc && data.contentType) {
+                var contentType = data.contentType;
+                desc = contentType.path || contentType.qualifiedName || contentType.displayName;
+            }
         }
         if (!desc) {
             desc = card.title;

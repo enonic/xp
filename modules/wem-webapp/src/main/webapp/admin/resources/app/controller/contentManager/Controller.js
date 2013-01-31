@@ -20,7 +20,14 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
     },
 
+    generateTabId: function (content, isEdit) {
+        return 'tab-' + ( isEdit ? 'edit' : 'preview') + '-content-' + content.get('path');
+    },
+
     viewContent: function (content, callback) {
+
+        var me = this;
+
         if (!content) {
             var showPanel = this.getContentTreeGridPanel();
             content = showPanel.getSelection();
@@ -33,16 +40,28 @@ Ext.define('Admin.controller.contentManager.Controller', {
         var i;
         if (tabs) {
             for (i = 0; i < content.length; i += 1) {
-                tabs.addTab({
+
+                //check if edit tab is open and close it
+                var index = tabs.items.indexOfKey(me.generateTabId(content[i], true));
+                if (index >= 0) {
+                    tabs.remove(index);
+                }
+
+                var tabItem = {
                     xtype: 'contentDetail',
+                    id: me.generateTabId(content[i], false),
                     data: content[i],
                     title: content[i].raw.displayName
-                });
+                };
+                tabs.addTab(tabItem, index >= 0 ? index : undefined, undefined);
             }
         }
     },
 
     editContent: function (content, callback) {
+
+        var me = this;
+
         if (!content) {
             var showPanel = this.getContentTreeGridPanel();
             content = showPanel.getSelection();
@@ -60,18 +79,6 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 xtype: 'contentWizardPanel',
                 title: response.content.displayName,
                 data: {contentType: response.contentType, content: response.content}
-            };
-        };
-
-        var createSiteTabFn = function (response) {
-            if (Ext.isFunction(callback)) {
-                callback();
-            }
-            return {
-                xtype: 'panel',
-                title: response.content.displayName,
-                html: 'Site wizard will be here',
-                data: response
             };
         };
 
@@ -109,31 +116,21 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 createTabFromResponse: createContentTabFn
             };
             var tabItem = {
-                id: 'edit-content-tab-' + selectedContent.get('path'),
+                id: me.generateTabId(content[i], true),
                 title: selectedContent.get('displayName'),
                 data: selectedContent.raw,
                 closable: true,
                 editing: true,
                 layout: 'fit'
             };
-            tabs.addTab(tabItem, undefined, requestConfig);
-        };
 
-        var openEditSiteTabFn = function (selectedContent) {
-            var requestConfig = {
-                doTabRequest: function (handleRpcResponse) {
-                    // data call here
-                },
-                createTabFromResponse: createSiteTabFn
-            };
-            var tabItem = {
-                id: 'edit-site-tab-' + selectedContent.get('path'),
-                title: selectedContent.get('displayName'),
-                closable: true,
-                editing: true,
-                layout: 'fit'
-            };
-            tabs.addTab(tabItem, undefined, requestConfig);
+            //check if preview tab is open and close it
+            var index = tabs.items.indexOfKey(me.generateTabId(selectedContent, false));
+            if (index >= 0) {
+                tabs.remove(index);
+            }
+
+            tabs.addTab(tabItem, index >= 0 ? index : undefined, requestConfig);
         };
 
         var i;
@@ -143,11 +140,6 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 var data = content[i];
                 //TODO: implement when content specification will be developed
                 openEditContentTabFn(data);
-//                switch (data.get('type')) {
-//                case 'myModule:mySite':
-//                    openEditSiteTabFn(data);
-//                    break;
-//                }
             }
         }
     },
@@ -195,7 +187,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 };
 
                 var tabItem = {
-                    itemId: 'new-content-tab',
+                    id: 'tab-new-content-' + qualifiedContentType,
                     title: '[New ' + contentTypeName + ']',
                     closable: true,
                     editing: true,

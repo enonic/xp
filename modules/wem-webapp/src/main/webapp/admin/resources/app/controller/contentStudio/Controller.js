@@ -37,6 +37,10 @@ Ext.define('Admin.controller.contentStudio.Controller', {
     },
 
 
+    generateTabId: function (contentType, isEdit) {
+        return 'tab-' + ( isEdit ? 'edit-' : 'preview-') + contentType.get('type') + '-' + contentType.get('qualifiedName');
+    },
+
     showNewContentTypePanel: function () {
         this.createEditContentTypePanel(null, true);
     },
@@ -105,6 +109,8 @@ Ext.define('Admin.controller.contentStudio.Controller', {
     },
 
     createEditContentTypePanel: function (contentType, forceNew) {
+
+        var me = this;
         var tabPanel = this.getCmsTabPanel();
 
         if (contentType && !forceNew) {
@@ -118,15 +124,23 @@ Ext.define('Admin.controller.contentStudio.Controller', {
                 if (r) {
                     contentType.raw.configXML = r.contentTypeXml;
 
-                    tabPanel.addTab({
+                    var tabItem = {
                         xtype: 'contentStudioContentTypeWizardPanel',
-                        itemId: 'tab-edit-content-type-' + contentType.raw.qualifiedName,
+                        id: me.generateTabId(contentType, true),
                         editing: true,
                         title: contentType.raw.name,
                         iconCls: 'icon-content-studio-16',
                         modelData: contentType.raw,
                         data: contentType.raw   /* needed for tab panel to show path */
-                    });
+                    };
+
+                    //check if preview tab is open and close it
+                    var index = tabPanel.items.indexOfKey(me.generateTabId(contentType, false));
+                    if (index >= 0) {
+                        tabPanel.remove(index);
+                    }
+                    tabPanel.addTab(tabItem, index >= 0 ? index : undefined, undefined);
+
                 } else {
                     Ext.Msg.alert("Error", r ? r.error : "Unable to retrieve content type.");
                 }
@@ -134,6 +148,8 @@ Ext.define('Admin.controller.contentStudio.Controller', {
 
         } else {
             tabPanel.addTab({
+                id: 'tab-new-content-type',
+                editing: true,
                 xtype: 'contentStudioContentTypeWizardPanel',
                 title: 'New Content Type'
             });
@@ -141,6 +157,8 @@ Ext.define('Admin.controller.contentStudio.Controller', {
     },
 
     createEditMixinPanel: function (mixin, forceNew) {
+
+        var me = this;
         var tabPanel = this.getCmsTabPanel();
 
         if (mixin && !forceNew) {
@@ -153,15 +171,23 @@ Ext.define('Admin.controller.contentStudio.Controller', {
                 if (r) {
                     mixin.raw.configXML = r.mixinXml;
 
-                    tabPanel.addTab({
+                    var tabItem = {
                         xtype: 'contentStudioMixinWizardPanel',
-                        itemId: 'tab-edit-mixin-' + mixin.raw.qualifiedName,
+                        id: me.generateTabId(mixin, true),
                         editing: true,
                         title: mixin.raw.name,
                         iconCls: 'icon-content-studio-16',
                         modelData: mixin.raw,
                         data: mixin.raw   /* needed for tab panel to show path */
-                    });
+                    };
+
+                    //check if preview tab is open and close it
+                    var index = tabPanel.items.indexOfKey(me.generateTabId(mixin, false));
+                    if (index >= 0) {
+                        tabPanel.remove(index);
+                    }
+                    tabPanel.addTab(tabItem, index >= 0 ? index : undefined, undefined);
+
                 } else {
                     Ext.Msg.alert("Error", r ? r.error : "Unable to retrieve mixin.");
                 }
@@ -169,6 +195,8 @@ Ext.define('Admin.controller.contentStudio.Controller', {
 
         } else {
             tabPanel.addTab({
+                id: 'tab-new-mixin',
+                editing: true,
                 xtype: 'contentStudioMixinWizardPanel',
                 title: 'New Mixin'
             });
@@ -176,6 +204,8 @@ Ext.define('Admin.controller.contentStudio.Controller', {
     },
 
     createEditRelationshipTypePanel: function (relationshipType, forceNew) {
+
+        var me = this;
         var tabPanel = this.getCmsTabPanel();
 
         if (relationshipType && !forceNew) {
@@ -188,15 +218,23 @@ Ext.define('Admin.controller.contentStudio.Controller', {
                 if (r) {
                     relationshipType.raw.configXML = r.contentTypeXml;
 
-                    tabPanel.addTab({
+                    var tabItem = {
                         xtype: 'contentStudioRelationshipTypeWizardPanel',
-                        itemId: 'tab-edit-relationship-type-' + relationshipType.raw.qualifiedName,
+                        itemId: me.generateTabId(relationshipType, true),
                         editing: true,
                         title: relationshipType.raw.name,
                         iconCls: 'icon-content-studio-16',
                         modelData: relationshipType.raw,
                         data: relationshipType.raw   /* needed for tab panel to show path */
-                    });
+                    };
+
+                    //check if preview tab is open and close it
+                    var index = tabPanel.items.indexOfKey(me.generateTabId(relationshipType, false));
+                    if (index >= 0) {
+                        tabPanel.remove(index);
+                    }
+                    tabPanel.addTab(tabItem, index >= 0 ? index : undefined, undefined);
+
                 } else {
                     Ext.Msg.alert("Error", r ? r.error : "Unable to retrieve relationship type.");
                 }
@@ -204,6 +242,8 @@ Ext.define('Admin.controller.contentStudio.Controller', {
 
         } else {
             tabPanel.addTab({
+                id: 'tab-new-relationship-type',
+                editing: true,
                 xtype: 'contentStudioRelationshipTypeWizardPanel',
                 title: 'New Relationship Type'
             });
@@ -211,15 +251,25 @@ Ext.define('Admin.controller.contentStudio.Controller', {
     },
 
     createPreviewContentPanel: function (contentType) {
+
+        var me = this;
         var tabs = this.getCmsTabPanel();
 
         if (contentType) {
-            tabs.addTab({
+
+            var tabItem = {
+                id: me.generateTabId(contentType, false),
                 xtype: 'contentTypeDetailPanel',
-                itemId: 'tab-preview-content-type-' + contentType.raw.qualifiedName,
                 data: contentType.raw,
                 title: contentType.raw.name
-            });
+            };
+
+            //check if edit tab is open and close it
+            var index = tabs.items.indexOfKey(me.generateTabId(contentType, true));
+            if (index >= 0) {
+                tabs.remove(index);
+            }
+            tabs.addTab(tabItem, index >= 0 ? index : undefined, undefined);
         }
     },
 
