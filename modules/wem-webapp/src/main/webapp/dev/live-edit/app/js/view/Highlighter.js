@@ -4,7 +4,7 @@
     // Class definition (constructor function)
     var highlighter = AdminLiveEdit.view.Highlighter = function () {
         this.addView();
-        this.bindGlobalEvents();
+        this.registerGlobalListeners();
     };
 
     // Inherits ui.Base
@@ -21,7 +21,7 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    proto.bindGlobalEvents = function () {
+    proto.registerGlobalListeners = function () {
         $(window).on('component:mouseover', $.proxy(this.highlight, this));
         $(window).on('component:mouseout', $.proxy(this.hide, this));
         $(window).on('component:select', $.proxy(this.highlight, this));

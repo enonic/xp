@@ -7,7 +7,7 @@
         this.OFFSET_Y = 15;
         this.addView();
         this.attachEventListeners();
-        this.bindGlobalEvents();
+        this.registerGlobalListeners();
     };
 
     // Inherits ui.Base
@@ -25,7 +25,7 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    proto.bindGlobalEvents = function () {
+    proto.registerGlobalListeners = function () {
         $(window).on('component:select', $.proxy(this.hide, this));
     };
 

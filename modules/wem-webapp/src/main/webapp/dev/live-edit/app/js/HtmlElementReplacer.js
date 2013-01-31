@@ -17,7 +17,7 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    proto.bindGlobalEvents = function () {
+    proto.registerGlobalListeners = function () {
     };
 
 

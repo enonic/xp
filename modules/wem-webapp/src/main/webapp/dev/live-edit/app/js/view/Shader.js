@@ -2,7 +2,7 @@
     // Class definition (constructor function)
     var shader = AdminLiveEdit.view.Shader = function () {
         this.addView();
-        this.bindGlobalEvents();
+        this.registerGlobalListeners();
     };
 
     // Inherits ui.Base
@@ -20,7 +20,7 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    proto.bindGlobalEvents = function () {
+    proto.registerGlobalListeners = function () {
         $(window).on('component:select', $.proxy(this.show, this));
         $(window).on('component:deselect', $.proxy(this.hide, this));
         $(window).on('component:remove', $.proxy(this.hide, this));

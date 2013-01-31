@@ -5,7 +5,7 @@
     var mutationObserver = AdminLiveEdit.MutationObserver = function () {
         this.mutationObserver = null;
         this.$observedComponent = null;
-        this.bindGlobalEvents();
+        this.registerGlobalListeners();
     };
 
     // Fix constructor
@@ -17,7 +17,7 @@
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    proto.bindGlobalEvents = function () {
+    proto.registerGlobalListeners = function () {
         var me = this;
         $(window).on('component:mouseover', $.proxy(me.observe, me));
         $(window).on('component:mouseout', $.proxy(me.disconnect, me));

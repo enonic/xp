@@ -12,7 +12,7 @@
 
         me.$currentComponent = $([]);
         me.addView();
-        me.bindGlobalEvents();
+        me.registerGlobalListeners();
     };
 
 
@@ -32,7 +32,7 @@
     var BUTTON_WIDTH = 74;
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    proto.bindGlobalEvents = function () {
+    proto.registerGlobalListeners = function () {
         $(window).on('component:mouseover', $.proxy(this.show, this));
         $(window).on('component:mouseout', $.proxy(this.hide, this));
         $(window).on('component:select', $.proxy(this.show, this));
