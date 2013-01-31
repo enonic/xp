@@ -11,8 +11,13 @@ import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.NonUserAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.profile.UserProfile;
+import com.enonic.wem.core.search.IndexConstants;
+import com.enonic.wem.core.search.IndexData;
+import com.enonic.wem.core.search.IndexType;
 
-final class AccountIndexData
+public final class AccountIndexData
+    extends IndexConstants
+    implements IndexData
 {
     private final AccountKey key;
 
@@ -45,6 +50,30 @@ final class AccountIndexData
         {
             throw new RuntimeException( e );
         }
+    }
+
+    @Override
+    public IndexType getIndexType()
+    {
+        return IndexType.ACCOUNT;
+    }
+
+    @Override
+    public String getIndexName()
+    {
+        return WEM_INDEX;
+    }
+
+    @Override
+    public XContentBuilder getData()
+    {
+        return data;
+    }
+
+    @Override
+    public String getId()
+    {
+        return this.getKey().toString();
     }
 
     private XContentBuilder buildUser( final UserAccount user )
@@ -118,11 +147,6 @@ final class AccountIndexData
     public AccountKey getKey()
     {
         return key;
-    }
-
-    public XContentBuilder getData()
-    {
-        return data;
     }
 
     public String toString()

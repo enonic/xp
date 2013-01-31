@@ -27,7 +27,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.account.UpdateAccounts;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.search.account.AccountSearchService;
+import com.enonic.wem.core.search.IndexService;
 
 import static org.junit.Assert.*;
 
@@ -45,11 +45,11 @@ public class UpdateAccountsHandlerTest
         super.initialize();
 
         accountDao = Mockito.mock( AccountDao.class );
-        final AccountSearchService accountSearchService = Mockito.mock( AccountSearchService.class );
+        final IndexService indexService = Mockito.mock( IndexService.class );
 
         handler = new UpdateAccountsHandler();
         handler.setAccountDao( accountDao );
-        handler.setSearchService( accountSearchService );
+        handler.setIndexService( indexService );
     }
 
     @Test
@@ -271,7 +271,8 @@ public class UpdateAccountsHandlerTest
         user.setDisplayName( "User " + name );
         user.setDeleted( false );
         final AccountKey accountKey = user.getKey();
-        Mockito.when( accountDao.findUser( Matchers.eq( accountKey ), Matchers.anyBoolean(), Matchers.anyBoolean(), Matchers.eq( session ) ) ).thenReturn( user );
+        Mockito.when( accountDao.findUser( Matchers.eq( accountKey ), Matchers.anyBoolean(), Matchers.anyBoolean(),
+                                           Matchers.eq( session ) ) ).thenReturn( user );
         return user;
     }
 }

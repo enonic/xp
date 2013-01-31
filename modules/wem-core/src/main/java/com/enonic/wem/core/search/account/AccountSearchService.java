@@ -2,13 +2,11 @@ package com.enonic.wem.core.search.account;
 
 import org.elasticsearch.action.admin.indices.flush.FlushRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
-import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.facet.Facet;
@@ -17,36 +15,23 @@ import org.elasticsearch.search.facet.terms.TermsFacet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.core.search.FacetEntry;
+import com.enonic.wem.core.search.IndexConstants;
+import com.enonic.wem.core.search.IndexType;
 
 @Component
 public class AccountSearchService
+    extends IndexConstants
 {
-    private static final String CMS_INDEX = "cms";
-
-    private static final String ACCOUNT_INDEX_TYPE = "account";
-
     private Client client;
 
     private AccountQueryTranslator translator;
 
-    public void index( final Account account )
-    {
-        final AccountIndexData accountIndexData = new AccountIndexData( account );
-        final XContentBuilder data = accountIndexData.getData();
-        final String id = account.getKey().toString();
-
-        final IndexRequest req = Requests.indexRequest().id( id ).index( CMS_INDEX ).type( ACCOUNT_INDEX_TYPE ).source( data );
-
-        this.client.index( req ).actionGet();
-    }
-
     public AccountSearchResults search( AccountSearchQuery query )
     {
         final SearchRequest req =
-            Requests.searchRequest( CMS_INDEX ).types( ACCOUNT_INDEX_TYPE ).searchType( getSearchType( query ) ).source(
+            Requests.searchRequest( WEM_INDEX ).types( IndexType.ACCOUNT.getIndexTypeName() ).searchType( getSearchType( query ) ).source(
                 this.translator.build( query ) );
 
         final SearchResponse res = this.client.search( req ).actionGet();
@@ -118,7 +103,7 @@ public class AccountSearchService
 
     public void deleteIndex( String id, boolean flushDataAfterDelete )
     {
-        final DeleteRequest deleteRequest = new DeleteRequest().index( CMS_INDEX ).type( ACCOUNT_INDEX_TYPE ).id( id );
+        final DeleteRequest deleteRequest = new DeleteRequest().index( WEM_INDEX ).type( IndexType.ACCOUNT.getIndexTypeName() ).id( id );
         this.client.delete( deleteRequest ).actionGet();
 
         if ( flushDataAfterDelete )
@@ -129,7 +114,7 @@ public class AccountSearchService
 
     private void flush()
     {
-        this.client.admin().indices().flush( new FlushRequest( CMS_INDEX ).refresh( true ) ).actionGet();
+        this.client.admin().indices().flush( new FlushRequest( WEM_INDEX ).refresh( true ) ).actionGet();
     }
 
     @Autowired

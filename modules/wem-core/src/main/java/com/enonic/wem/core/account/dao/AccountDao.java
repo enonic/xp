@@ -1,5 +1,7 @@
 package com.enonic.wem.core.account.dao;
 
+import java.util.Collection;
+
 import javax.jcr.Session;
 
 import com.enonic.wem.api.account.Account;
@@ -77,4 +79,8 @@ public interface AccountDao
 
     public void updateUserStore( UserStore userStore, Session session )
         throws Exception;
+
+    public Collection<AccountKey> getAllAccountKeys( final Session session )
+        throws Exception;
+
 }

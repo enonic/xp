@@ -17,15 +17,17 @@ import com.enonic.wem.api.command.account.UpdateAccounts;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.search.account.AccountSearchService;
+import com.enonic.wem.core.search.IndexService;
 
 @Component
 public final class UpdateAccountsHandler
     extends CommandHandler<UpdateAccounts>
 {
-    private AccountSearchService searchService;
+    // private AccountSearchService searchService;
 
     private AccountDao accountDao;
+
+    private IndexService indexService;
 
     public UpdateAccountsHandler()
     {
@@ -90,13 +92,14 @@ public final class UpdateAccountsHandler
                 accountDao.updateRole( (RoleAccount) account, session );
                 break;
         }
-        this.searchService.index( account );
+
+        this.indexService.index( account );
     }
 
     @Autowired
-    public void setSearchService( final AccountSearchService searchService )
+    public void setIndexService( final IndexService indexService )
     {
-        this.searchService = searchService;
+        this.indexService = indexService;
     }
 
     @Autowired

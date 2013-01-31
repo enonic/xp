@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.indices.IndexAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,32 +15,40 @@ import com.enonic.wem.core.search.elastic.ElasticsearchIndexServiceImpl;
 import com.enonic.wem.core.search.elastic.IndexMapping;
 import com.enonic.wem.core.search.elastic.IndexMappingProvider;
 
-import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
-
 @Component
-public class IndexServiceImpl
+public class IndexService
+    extends IndexConstants
 {
-    private final static Logger LOG = LoggerFactory.getLogger( IndexServiceImpl.class );
+    private final static Logger LOG = LoggerFactory.getLogger( IndexService.class );
 
-    private final static String INDEX_NAME = "cms";
+    private IndexDataFactory indexDataFactory;
 
     private ElasticsearchIndexServiceImpl elasticsearchIndexService;
 
     private IndexMappingProvider indexMappingProvider;
 
+    private ReindexService reindexService;
+
+    private boolean doReindexOnEmptyIndex = true;
+
     @PostConstruct
     public void initialize()
         throws Exception
     {
-        IndexStatus indexStatus = elasticsearchIndexService.getIndexStatus( INDEX_NAME, true );
+        IndexStatus indexStatus = elasticsearchIndexService.getIndexStatus( WEM_INDEX, true );
 
         LOG.info( "Cluster in state: " + indexStatus.toString() );
 
-        final boolean indexExists = elasticsearchIndexService.indexExists( INDEX_NAME );
+        final boolean indexExists = elasticsearchIndexService.indexExists( WEM_INDEX );
 
         if ( !indexExists )
         {
             createIndex();
+
+            if ( doReindexOnEmptyIndex )
+            {
+                reindexService.reindexAccounts();
+            }
         }
     }
 
@@ -50,7 +56,7 @@ public class IndexServiceImpl
     {
         try
         {
-            elasticsearchIndexService.createIndex( INDEX_NAME );
+            elasticsearchIndexService.createIndex( WEM_INDEX );
         }
         catch ( IndexAlreadyExistsException e )
         {
@@ -58,11 +64,21 @@ public class IndexServiceImpl
             return;
         }
 
-        final List<IndexMapping> allIndexMappings = indexMappingProvider.getMappingsForIndex( INDEX_NAME );
+        final List<IndexMapping> allIndexMappings = indexMappingProvider.getMappingsForIndex( WEM_INDEX );
 
         for ( IndexMapping indexMapping : allIndexMappings )
         {
             elasticsearchIndexService.putMapping( indexMapping );
+        }
+    }
+
+    public void index( final Object indexableData )
+    {
+        final IndexData indexData = indexDataFactory.createIndexDataForObject( indexableData );
+
+        if ( indexData != null )
+        {
+            elasticsearchIndexService.index( indexData );
         }
     }
 
@@ -78,18 +94,20 @@ public class IndexServiceImpl
         this.indexMappingProvider = indexMappingProvider;
     }
 
-    public static void main( String... args )
-        throws Exception
+    @Autowired
+    public void setIndexDataFactory( final IndexDataFactory indexDataFactory )
     {
-        ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder().loadFromSource(
-            jsonBuilder().startObject().startObject( "analysis" ).startObject( "analyzer" ).startObject( "keywordlowercase" ).field( "type",
-                                                                                                                                     "custom" ).field(
-                "tokenizer", "keyword" ).field( "filter",
-                                                new String[]{"lowercase"} ).endObject().endObject().endObject().endObject().string() );
-
-        final Settings build = settings.build();
-
-
+        this.indexDataFactory = indexDataFactory;
     }
 
+    @Autowired
+    public void setReindexService( final ReindexService reindexService )
+    {
+        this.reindexService = reindexService;
+    }
+
+    public void setDoReindexOnEmptyIndex( final boolean doReindexOnEmptyIndex )
+    {
+        this.doReindexOnEmptyIndex = doReindexOnEmptyIndex;
+    }
 }

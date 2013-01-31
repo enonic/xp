@@ -151,7 +151,7 @@ public abstract class AccountKey
         }
     }
 
-    private static AccountKey from( final AccountType type, final String qName )
+    public static AccountKey from( final AccountType type, final String qName )
     {
         Preconditions.checkArgument( !Strings.isNullOrEmpty( qName ), "Account qualified name cannot be null or empty" );
         return from( type.toString().toLowerCase() + ":" + qName );

@@ -22,7 +22,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.account.CreateAccount;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.search.account.AccountSearchService;
+import com.enonic.wem.core.search.IndexService;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.atLeastOnce;
@@ -42,11 +42,11 @@ public class CreateAccountHandlerTest
         super.initialize();
 
         accountDao = Mockito.mock( AccountDao.class );
-        final AccountSearchService accountSearchService = Mockito.mock( AccountSearchService.class );
+        final IndexService indexService = Mockito.mock( IndexService.class );
 
         handler = new CreateAccountHandler();
         handler.setAccountDao( accountDao );
-        handler.setSearchService( accountSearchService );
+        handler.setIndexService( indexService );
     }
 
     @Test
@@ -138,7 +138,7 @@ public class CreateAccountHandlerTest
         this.handler.handle( this.context, command );
         final AccountKey createdRoleKey = command.getResult();
 
-            // verify
+        // verify
         verify( accountDao, atLeastOnce() ).createRole( Mockito.eq( role ), Mockito.any( Session.class ) );
         assertNotNull( createdRoleKey );
         assertTrue( createdRoleKey.isRole() );

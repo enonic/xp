@@ -1,5 +1,6 @@
 package com.enonic.wem.core.account.dao;
 
+import java.util.Collection;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -430,6 +431,28 @@ public class AccountDaoImplTest
         final AccountKeys members = accountDao.getMembers( groupKey, session );
 
         assertEquals( 1, members.getSize() );
+        commit();
+    }
+
+
+    @Test
+    public void testGetAllAccountKeys()
+        throws Exception
+    {
+        createUserstore( UserStoreName.from( "enonic" ) );
+        createUserstore( UserStoreName.from( "myUserstore" ) );
+
+        accountDao.createUser( createUserAccount( "enonic", "user1" ), session );
+        accountDao.createUser( createUserAccount( "enonic", "user2" ), session );
+        accountDao.createUser( createUserAccount( "myUserstore", "user1" ), session );
+        accountDao.createUser( createUserAccount( "myUserstore", "user2" ), session );
+        accountDao.createGroup( createGroup( "enonic", "group1" ), session );
+        accountDao.createGroup( createGroup( "enonic", "group2" ), session );
+        accountDao.createGroup( createGroup( "myUserstore", "group1" ), session );
+
+        final Collection<AccountKey> accountKeys = accountDao.getAllAccountKeys( session );
+
+        assertEquals( 7, accountKeys.size() );
         commit();
     }
 

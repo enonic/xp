@@ -1,5 +1,7 @@
 package com.enonic.wem.core.account.dao;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -235,7 +237,8 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public UserAccount findUser( final AccountKey accountKey, final boolean includeProfile, final boolean includePhoto, final Session session )
+    public UserAccount findUser( final AccountKey accountKey, final boolean includeProfile, final boolean includePhoto,
+                                 final Session session )
         throws Exception
     {
         final Node accountNode = getAccountNode( session, accountKey );
@@ -399,7 +402,8 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public UserStore getUserStore( final UserStoreName userStoreName, final boolean includeConfig, boolean includeStatistics, final Session session )
+    public UserStore getUserStore( final UserStoreName userStoreName, final boolean includeConfig, boolean includeStatistics,
+                                   final Session session )
         throws Exception
     {
         final Node userStoreNode = getUserStoreNode( session, userStoreName );
@@ -436,6 +440,87 @@ public final class AccountDaoImpl
 
         userStoreJcrMapping.userStoreToJcr( userStore, userStoreNode );
     }
+
+    @Override
+    public Collection<AccountKey> getAllAccountKeys( final Session session )
+        throws Exception
+    {
+        final List<AccountKey> accounts = Lists.newArrayList();
+
+        final Node rootNode = session.getRootNode();
+        final Node userStoresNode = JcrHelper.getNodeOrNull( rootNode, ROOT_NODE );
+
+        final NodeIterator userStores = userStoresNode.getNodes();
+
+        while ( userStores.hasNext() )
+        {
+            final Node userStoreNode = userStores.nextNode();
+
+            final String userStoreName = userStoreNode.getName();
+
+            final Node usersNode = JcrHelper.getNodeOrNull( userStoreNode, USERS_NODE );
+            accounts.addAll( getAccountKeys( userStoreName, usersNode, AccountType.USER ) );
+
+            final Node groupsNode = JcrHelper.getNodeOrNull( userStoreNode, GROUPS_NODE );
+            accounts.addAll( getAccountKeys( userStoreName, groupsNode, AccountType.GROUP ) );
+
+            final Node rolesNode = JcrHelper.getNodeOrNull( userStoreNode, ROLES_NODE );
+            accounts.addAll( getAccountKeys( userStoreName, rolesNode, AccountType.ROLE ) );
+        }
+
+        return accounts;
+    }
+
+    private List<Account> getUsers( final String userStoreName, final Node usersNode )
+        throws RepositoryException, IOException
+    {
+        final List<Account> users = Lists.newArrayList();
+
+        final NodeIterator userNodeIterator = usersNode.getNodes();
+
+        while ( userNodeIterator.hasNext() )
+        {
+            final Node userNode = userNodeIterator.nextNode();
+
+            String userQName = userStoreName + ":" + userNode.getName();
+
+            final UserAccount user = UserAccount.create( userQName );
+            accountJcrMapping.toUser( userNode, user, true, false );
+            user.setEditable( true );
+
+            users.add( user );
+        }
+
+        return users;
+    }
+
+
+    private Collection<AccountKey> getAccountKeys( final String userStoreName, final Node accountsNode, final AccountType accountType )
+        throws RepositoryException, IOException
+    {
+        final List<AccountKey> accountKeys = Lists.newArrayList();
+
+        if ( accountsNode == null )
+        {
+            return accountKeys;
+        }
+
+        final NodeIterator accountsNodeIterator = accountsNode.getNodes();
+
+        while ( accountsNodeIterator.hasNext() )
+        {
+            final Node userNode = accountsNodeIterator.nextNode();
+
+            String userQName = userStoreName + ":" + userNode.getName();
+
+            final AccountKey accountKey = AccountKey.from( accountType, userQName );
+
+            accountKeys.add( accountKey );
+        }
+
+        return accountKeys;
+    }
+
 
     private AccountKey accountKeyFromAccountNode( final Node accountNode )
         throws RepositoryException

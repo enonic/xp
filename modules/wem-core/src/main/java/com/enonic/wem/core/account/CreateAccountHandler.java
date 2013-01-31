@@ -15,13 +15,14 @@ import com.enonic.wem.api.command.account.CreateAccount;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.search.account.AccountSearchService;
+import com.enonic.wem.core.search.IndexService;
 
 @Component
 public final class CreateAccountHandler
     extends CommandHandler<CreateAccount>
 {
-    private AccountSearchService searchService;
+
+    private IndexService indexService;
 
     private AccountDao accountDao;
 
@@ -53,19 +54,20 @@ public final class CreateAccountHandler
         }
         session.save();
 
-        this.searchService.index( account );
+        this.indexService.index( account );
         command.setResult( key );
     }
 
-    @Autowired
-    public void setSearchService( final AccountSearchService searchService )
-    {
-        this.searchService = searchService;
-    }
 
     @Autowired
     public void setAccountDao( final AccountDao accountDao )
     {
         this.accountDao = accountDao;
+    }
+
+    @Autowired
+    public void setIndexService( final IndexService indexService )
+    {
+        this.indexService = indexService;
     }
 }

@@ -42,7 +42,7 @@ public class IndexMappingProvider
         {
             try
             {
-                final IndexMapping indexMapping = createIndexMapping( resource );
+                final IndexMapping indexMapping = createIndexMapping( indexName, resource );
                 if ( indexMapping != null )
                 {
                     indexMappings.add( indexMapping );
@@ -56,14 +56,9 @@ public class IndexMappingProvider
         return indexMappings;
     }
 
-    private IndexMapping createIndexMapping( final Resource resource )
+    private IndexMapping createIndexMapping( final String indexName, final Resource resource )
         throws IOException
     {
-        if ( !resource.exists() )
-        {
-            return null;
-        }
-
         final String filename = resource.getFilename();
 
         final String[] parts = filename.split( "-" );
@@ -73,11 +68,17 @@ public class IndexMappingProvider
             return null;
         }
 
-        final String indexName = parts[0];
+        final String resourceIndexName = parts[0];
+
+        if ( !indexName.equals( resourceIndexName ) )
+        {
+            return null;
+        }
+
         final String indexType = parts[1];
         final String mapping = CharStreams.toString( new InputStreamReader( resource.getInputStream(), Charsets.UTF_8 ) );
 
-        return new IndexMapping( indexName, indexType, mapping );
+        return new IndexMapping( resourceIndexName, indexType, mapping );
     }
 
     @Autowired
