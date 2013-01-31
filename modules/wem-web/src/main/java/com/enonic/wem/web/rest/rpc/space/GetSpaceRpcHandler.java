@@ -23,7 +23,13 @@ public final class GetSpaceRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final SpaceName spaceName = SpaceName.from( context.param( "name" ).required().asString() );
+        final String nameParam = context.param( "name" ).required().asString().trim();
+        if ( nameParam.isEmpty() )
+        {
+            context.setResult( new JsonErrorResult( "Parameter [name] is required" ) );
+            return;
+        }
+        final SpaceName spaceName = SpaceName.from( nameParam );
         final Space space = client.execute( Commands.space().get().name( spaceName ) ).first();
         if ( space != null )
         {

@@ -8,7 +8,8 @@ public final class SpaceName
 
     private SpaceName( final String name )
     {
-        Preconditions.checkNotNull( name, "name cannot be null" );
+        Preconditions.checkNotNull( name, "space name cannot be null" );
+        Preconditions.checkArgument( !name.trim().isEmpty(), "space name cannot be empty" );
         this.name = name;
     }
 

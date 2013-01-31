@@ -1,28 +1,36 @@
 package com.enonic.wem.core.space;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.space.CreateSpace;
 import com.enonic.wem.api.command.space.UpdateSpaces;
 import com.enonic.wem.api.space.SpaceName;
+import com.enonic.wem.core.initializer.InitializerTask;
 
 import static com.enonic.wem.api.space.editor.SpaceEditors.setDisplayName;
 
-//@Component
-//@DependsOn("jcrInitializer")
+@Component
+@Order(10)
 public class SpacesInitializer
+    implements InitializerTask
 {
     private Client client;
 
-    @PostConstruct
-    public void createDefaultSpaces()
+    @Override
+    public void initialize()
+        throws Exception
+    {
+        createDefaultSpaces();
+    }
+
+    private void createDefaultSpaces()
     {
         createOrUpdate( "default", "Default space" );
-        createOrUpdate( "blueman", "Blueman travels" );
+        createOrUpdate( "blueman", "Blueman Travels" );
     }
 
     private void createOrUpdate( final String name, final String displayName )
