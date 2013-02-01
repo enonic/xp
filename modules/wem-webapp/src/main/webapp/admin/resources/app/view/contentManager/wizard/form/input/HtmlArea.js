@@ -13,6 +13,10 @@ Ext.define('Admin.view.contentManager.wizard.form.input.HtmlArea', {
         ];
 
         me.callParent(arguments);
+    },
+
+    setValue: function (value) {
+        this.down('htmleditor').setValue(value);
     }
 
 });

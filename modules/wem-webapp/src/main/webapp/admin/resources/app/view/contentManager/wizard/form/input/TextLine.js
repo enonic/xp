@@ -14,5 +14,9 @@ Ext.define('Admin.view.contentManager.wizard.form.input.TextLine', {
         ];
 
         me.callParent(arguments);
+    },
+
+    setValue: function (value) {
+        this.down('textfield').setValue(value);
     }
 });
