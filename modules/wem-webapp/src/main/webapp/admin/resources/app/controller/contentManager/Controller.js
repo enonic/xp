@@ -154,7 +154,6 @@ Ext.define('Admin.controller.contentManager.Controller', {
             case 'contentType':
                 //This is stub, logic for new content creation will be added later
                 var createContentTabFn = function (response) {
-                    console.log(response.contentType);
                     var contentData = {
                         content: {
                             iconUrl: response.iconUrl
