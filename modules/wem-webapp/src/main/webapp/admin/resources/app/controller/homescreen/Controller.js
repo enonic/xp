@@ -1,8 +1,14 @@
 Ext.define('Admin.controller.homescreen.Controller', {
     extend: 'Admin.controller.Controller',
 
-    stores: [],
-    models: [],
+    stores: [
+        'Admin.store.homescreen.Apps'
+    ],
+
+    models: [
+        'Admin.model.homescreen.Apps'
+    ],
+
     views: [
         'Admin.view.homescreen.Homescreen'
     ],
@@ -13,99 +19,70 @@ Ext.define('Admin.controller.homescreen.Controller', {
 
         me.control({
             '#mainViewport': {
-                afterrender: {
-                    fn: this.initView
-                }
+                afterrender: me.initHomescreen
             },
-            '#appSelectorListView': {
-                itemclick: function (view, record, item, index, evt, eOpts) {
-                    me.getHomeScreen().toggleShowHide();
-                    me.application.fireEvent('loadApplication', record.data);
-                },
-                itemmouseenter: function (view, record, item, index, evt, eOpts) {
-                    var data = record.data;
-                    me.getHomeScreen().getAppSelectorContainer().updateAppInfoText(data.name, data.description);
-                },
-                itemmouseleave: function (view, record, item, index, evt, eOpts) {
-                    me.getHomeScreen().getAppSelectorContainer().updateAppInfoText('', '');
-                }
-            },
-            'loginPanel button[itemId=loginButton]': {
-                click: me.onLoginButtonClick
-            },
-            'loginPanel textfield[itemId=userstoreCombo]': {
-                keydown: me.onFormKeyDown
-            },
-            'loginPanel textfield[itemId=userId]': {
-                keydown: me.onFormKeyDown
-            },
-            'loginPanel textfield[itemId=password]': {
-                keydown: me.onFormKeyDown
-            },
+
             'homescreen': {
                 afterrender: function (view) {
+                    if (me.isUserLoggedIn()) {
+                        me.application.fireEvent('displayAppSelector');
+                    } else {
+                        me.application.fireEvent('displayLogin');
+                    }
+
                     Admin.lib.RemoteService.system_getSystemInfo({}, function (r) {
                         view.setInstallationLabelText(r.installationName);
                         view.setVersionText(r.version);
                     });
+                },
+                beforeshow: function () {
+                    // Make sure window/frame has focus in order to get the keyboard navigation to work.
+                    // Focus the filter text input as it is not possible to cross platform focus a window or element.
+                    Ext.getCmp('admin-home-app-selector-search').focus(false, 10);
                 }
             }
         });
     },
 
 
-    initView: function () {
-        var dummyCookie = Ext.util.Cookies.get('dummy_userIsLoggedIn'),
-            userIsLoggedIn = dummyCookie && dummyCookie === 'true';
-
+    initHomescreen: function () {
+        var me = this;
         Ext.create('Admin.view.homescreen.Homescreen', {
-            userIsLoggedIn: userIsLoggedIn
+            userIsLoggedIn: me.isUserLoggedIn()
         });
     },
 
 
-    onFormKeyDown: function (field, evt) {
-        if (evt.getKey() === evt.ENTER) {
-            this.handleLoginSubmit();
-        }
+    isUserLoggedIn: function () {
+        var dummyCookie = Ext.util.Cookies.get('dummy_userIsLoggedIn');
+        return dummyCookie && dummyCookie === 'true';
     },
 
 
-    onLoginButtonClick: function () {
-        this.handleLoginSubmit();
+    openApp: function (appModel) {
+        var me = this;
+        me.getHomeScreen().toggleShowHide();
+        me.application.fireEvent('loadApplication', appModel.data);
     },
 
 
-    handleLoginSubmit: function () {
-        var me = this,
-            loginFormPanel = me.getHomeScreen().getLoginFormPanel();
-
-        loginFormPanel.getForm().submit({
-            url: 'dummy-login-response.jsp',
-            success: function (form, action) {
-                Ext.util.Cookies.set('dummy_userIsLoggedIn', 'true');
-
-                loginFormPanel.animate({
-                    duration: 500,
-                    to: {
-                        opacity: 0
-                    },
-                    listeners: {
-                        afteranimate: function () {
-                            me.getHomeScreen().displayAppSelector();
-                        }
-                    }
-                });
-            },
-            failure: function (form, action) {
-                /**/
-            }
-        });
+    getAppsStore: function () {
+        return this.getStore('Admin.store.homescreen.Apps');
     },
 
 
     getHomeScreen: function () {
         return Ext.ComponentQuery.query('homescreen')[0];
+    },
+
+
+    getLoginFormPanel: function () {
+        return Ext.ComponentQuery.query('loginPanel')[0];
+    },
+
+
+    getAppSelectorView: function () {
+        return Ext.ComponentQuery.query('appSelector')[0];
     }
 
 });

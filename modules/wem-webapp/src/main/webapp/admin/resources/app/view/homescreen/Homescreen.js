@@ -25,59 +25,17 @@ Ext.define('Admin.view.homescreen.Homescreen', {
 
         me.on('render', function () {
             me.updateGlobalView();
-            me.addClickEvent();
             me.prefixedEvent(me.getEl().dom, 'AnimationEnd', function (evt) {
-                if (evt.animationName === 'ani-hide-home') {
+                if (evt.animationName === 'animation-hide-home') {
                     me.setVisible(false);
                 }
             });
 
             Ext.create('Admin.view.homescreen.LoginPanel');
             Ext.create('Admin.view.homescreen.AppSelector');
-
-            if (me.userIsLoggedIn) {
-                me.displayAppSelector();
-            } else {
-                me.displayLogin();
-            }
         });
 
         me.callParent(arguments);
-    },
-
-
-    displayLogin: function () {
-        var me = this,
-            loginElements = Ext.DomQuery.select('div[data-screen="login"]'),
-            appSelectorElements = Ext.DomQuery.select('div[data-screen="app-selector"]');
-
-        Ext.Array.forEach(appSelectorElements, function (el) {
-            Ext.fly(el).setStyle('display', 'none');
-        });
-
-        Ext.Array.forEach(loginElements, function (el) {
-            Ext.fly(el).setStyle('display', 'block');
-        });
-    },
-
-
-    displayAppSelector: function () {
-        var me = this,
-            loginElements = Ext.DomQuery.select('div[data-screen="login"]'),
-            appSelectorElements = Ext.DomQuery.select('div[data-screen="app-selector"]'),
-            appSelectorContainer = Ext.get('admin-home-app-selector');
-
-        Ext.Array.forEach(loginElements, function (el) {
-            Ext.fly(el).setStyle('display', 'none');
-        });
-
-        Ext.Array.forEach(appSelectorElements, function (el) {
-            Ext.fly(el).setStyle('display', 'block');
-        });
-
-        Ext.getCmp('admin-home-app-selector-search').focus();
-
-        appSelectorContainer.addCls('fade-in');
     },
 
 
@@ -102,17 +60,6 @@ Ext.define('Admin.view.homescreen.Homescreen', {
     },
 
 
-    addClickEvent: function () {
-        var me = this;
-        Ext.fly('admin-home-main-container').on('click', function (evt, el) {
-            var hide = el.className && el.className.indexOf('clickable') > -1;
-            if (hide) {
-                me.toggleShowHide();
-            }
-        }, me);
-    },
-
-
     prefixedEvent: function (element, type, callback) {
         var pfx = ['webkit', 'moz', 'MS', 'o', ''];
         var i;
@@ -124,16 +71,6 @@ Ext.define('Admin.view.homescreen.Homescreen', {
 
             element.addEventListener(pfx[i] + type, callback, false);
         }
-    },
-
-
-    getLoginFormPanel: function () {
-        return Ext.ComponentQuery.query('loginPanel')[0];
-    },
-
-
-    getAppSelectorContainer: function () {
-        return Ext.ComponentQuery.query('appSelector')[0];
     },
 
 

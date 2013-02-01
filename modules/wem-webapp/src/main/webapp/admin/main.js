@@ -13,6 +13,8 @@ Ext.onReady(function () {
 
         controllers: [
             'Admin.controller.homescreen.Controller',
+            'Admin.controller.homescreen.Login',
+            'Admin.controller.homescreen.AppSelector',
             'Admin.controller.TopBarController',
             'Admin.controller.NotifyUserController'
         ],

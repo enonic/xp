@@ -27,21 +27,21 @@
 }
 
 #admin-home-main-container.show-home {
-    animation: ani-show-home 300ms ease both;
+    animation: animation-show-home 300ms ease both;
     animation-play-state: running;
 
-    -webkit-animation: ani-show-home 300ms ease both;
+    -webkit-animation: animation-show-home 300ms ease both;
     -webkit-animation-play-state: running;
 }
 #admin-home-main-container.hide-home {
-    animation: ani-hide-home 300ms ease both;
+    animation: animation-hide-home 300ms ease both;
     animation-play-state: running;
 
-    -webkit-animation: ani-hide-home 300ms ease both;
+    -webkit-animation: animation-hide-home 300ms ease both;
     -webkit-animation-play-state: running;
 }
 
-@-webkit-keyframes ani-show-home {
+@-webkit-keyframes animation-show-home {
     0% {
         opacity: 0;
     }
@@ -49,7 +49,7 @@
         opacity: 1;
     }
 }
-@-webkit-keyframes ani-hide-home {
+@-webkit-keyframes animation-hide-home {
     0% {
         opacity: 1;
     }
@@ -58,7 +58,7 @@
     }
 }
 
-@keyframes ani-show-home {
+@keyframes animation-show-home {
     0% {
         opacity: 0;
     }
@@ -66,7 +66,7 @@
         opacity: 1;
     }
 }
-@keyframes ani-hide-home {
+@keyframes animation-hide-home {
     0% {
         opacity: 1;
     }
@@ -80,7 +80,7 @@
 
 #admin-home-branding {
     position: absolute;
-    top: 15px;
+    top: 25px;
     left: 30px;
     background: transparent url(../images/wem-enonic-logo.png) 0 0 no-repeat;
     height: 24px;
@@ -149,7 +149,7 @@
 #admin-home-app-selector,
 #admin-home-app-info-container {
     position: absolute;
-    top: 14%;
+    top: 24%;
 }
 
 #admin-home-login-form,

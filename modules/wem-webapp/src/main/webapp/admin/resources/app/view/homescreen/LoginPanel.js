@@ -17,10 +17,10 @@ Ext.define('Admin.view.homescreen.LoginPanel', {
         me.userStoresStore = Ext.create('Ext.data.Store', {
             fields: ['key', 'name', 'default'],
             data: [
-                {'key': '1', 'name': 'ABC', default: false},
-                {'key': '2', 'name': 'LDAP', default: true},
-                {'key': '3', 'name': 'Local', default: false},
-                {'key': '4', 'name': 'Some very long value', default: false}
+                {"key": '1', "name": "ABC", "default": false},
+                {"key": '2', "name": "LDAP", "default": true},
+                {"key": '3', "name": "Local", "default": false},
+                {"key": '4', "name": "Some very long value", "default": false}
             ]
         });
 
