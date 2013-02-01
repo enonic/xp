@@ -1034,89 +1034,83 @@ td {
     z-index: 1;
 }
 
-/* line 59, ../sass/admin/css/_wizard.scss */
-.admin-wizard .navigation li a.previous {
-    font-weight: bold;
-}
-
-/* line 63, ../sass/admin/css/_wizard.scss */
+/* line 62, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.current {
     background-color: #fff;
-    font-weight: bold;
 }
 
-/* line 68, ../sass/admin/css/_wizard.scss */
+/* line 66, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.current:after {
     border-left: 30px solid white;
 }
 
-/* line 72, ../sass/admin/css/_wizard.scss */
+/* line 70, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.current:before {
     border-left: 30px solid white;
 }
 
-/* line 76, ../sass/admin/css/_wizard.scss */
+/* line 74, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.next {
     color: #acacac;
 }
 
-/* line 80, ../sass/admin/css/_wizard.scss */
+/* line 78, ../sass/admin/css/_wizard.scss */
 .admin-wizard .toolbar .x-mask {
     display: none;
 }
 
-/* line 84, ../sass/admin/css/_wizard.scss */
+/* line 82, ../sass/admin/css/_wizard.scss */
 .admin-wizard .toolbar .x-item-disabled {
     opacity: 1;
     filter: none;
 }
 
-/* line 89, ../sass/admin/css/_wizard.scss */
+/* line 87, ../sass/admin/css/_wizard.scss */
 .admin-wizard div.navigation-container {
     padding: 7px 12px 0 6px;
     background-color: #fff;
 }
 
-/* line 93, ../sass/admin/css/_wizard.scss */
+/* line 91, ../sass/admin/css/_wizard.scss */
 .admin-wizard div.navigation-container-sticky {
     position: fixed;
     top: 89px;
     width: 100%;
 }
 
-/* line 103, ../sass/admin/css/_wizard.scss */
+/* line 101, ../sass/admin/css/_wizard.scss */
 .admin-wizard-edit ul.navigation a.next,
 .admin-wizard-edit ul.navigation a.next.immediate,
 .admin-wizard-edit ul.navigation a.next.last {
-    color: #222;
+    /*        color: #222;*/
     cursor: pointer;
 }
 
-/* line 108, ../sass/admin/css/_wizard.scss */
+/* line 106, ../sass/admin/css/_wizard.scss */
 .admin-wizard-edit .toolbar-disabled ul.navigation a.next.last {
     color: #acacac;
     cursor: default;
 }
 
-/* line 115, ../sass/admin/css/_wizard.scss */
+/* line 113, ../sass/admin/css/_wizard.scss */
 .admin-wizard-new ul.navigation li a.next {
     color: #acacac;
     cursor: default;
 }
 
-/* line 120, ../sass/admin/css/_wizard.scss */
+/* line 118, ../sass/admin/css/_wizard.scss */
 .admin-wizard-new ul.navigation li a.next.immediate {
-    color: #222;
+    /*        color: #222;*/
     cursor: pointer;
 }
 
-/* line 127, ../sass/admin/css/_wizard.scss */
+/* line 125, ../sass/admin/css/_wizard.scss */
 .admin-wizard-new .toolbar-diabled ul.navigation a.next, .admin-wizard-new .toolbar-diabled ul.navigation a.next.immidiate, .admin-wizard-new .toolbar-diabled ul.navigation a.next.last {
     color: #acacac;
     cursor: default;
 }
 
-/* line 138, ../sass/admin/css/_wizard.scss */
+/* line 136, ../sass/admin/css/_wizard.scss */
 .admin-wizard > div > .x-panel-body,
 .admin-glowing-item .x-panel-body,
 .admin-validation-label div,
@@ -1124,12 +1118,12 @@ td {
     border: 0 none;
 }
 
-/* line 142, ../sass/admin/css/_wizard.scss */
+/* line 140, ../sass/admin/css/_wizard.scss */
 .admin-display-name {
     width: 100%;
 }
 
-/* line 145, ../sass/admin/css/_wizard.scss */
+/* line 143, ../sass/admin/css/_wizard.scss */
 .admin-display-name input {
     border: 1px solid transparent;
     color: #555555;
@@ -1142,25 +1136,25 @@ td {
     background: white none;
 }
 
-/* line 157, ../sass/admin/css/_wizard.scss */
+/* line 155, ../sass/admin/css/_wizard.scss */
 .admin-display-name input:hover {
     border: 1px solid #98c9f2;
     box-shadow: 0 0 3px #98c9f2;
 }
 
-/* line 161, ../sass/admin/css/_wizard.scss */
+/* line 159, ../sass/admin/css/_wizard.scss */
 .admin-display-name input:focus {
     color: black !important;
     border: 1px solid #99bce8 !important;
 }
 
-/* line 167, ../sass/admin/css/_wizard.scss */
+/* line 165, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container {
     margin: 0 10px 3px 5px;
     font-size: 12px;
 }
 
-/* line 171, ../sass/admin/css/_wizard.scss */
+/* line 169, ../sass/admin/css/_wizard.scss */
 .admin-wizard-header-container .admin-wizard-header {
     position: relative;
 }
