@@ -52,26 +52,30 @@ Ext.define('Admin.view.WizardPanel', {
                 height: 40,
                 itemId: 'controls',
                 defaults: {
-                    xtype: 'button',
-                    scale: 'medium'
+                    xtype: 'button'
                 },
                 items: [
                     {
                         itemId: 'prev',
-                        iconCls: 'icon-left-24',
+                        iconCls: 'icon-chevron-left icon-4x',
                         margin: '0 5 0 0',
-                        hideMode: 'display',
+                        cls: 'wizard-nav-button wizard-nav-button-left',
+                        /*hideMode: 'display',*/
+                        height: 64,
+                        width: 64,
                         handler: function (btn, evt) {
                             wizard.prev();
                         }
                     },
                     {
-                        text: 'Next',
                         itemId: 'next',
                         iconAlign: 'right',
                         margin: '0 0 0 5',
+                        cls: 'wizard-nav-button wizard-nav-button-right',
                         formBind: true,
-                        iconCls: 'icon-right-24',
+                        iconCls: 'icon-chevron-right icon-4x',
+                        height: 64,
+                        width: 64,
                         handler: function (btn, evt) {
                             wizard.next();
                         }
@@ -409,7 +413,6 @@ Ext.define('Admin.view.WizardPanel', {
                 hasPrev = this.getPrev();
             if (prev) {
                 prev.setDisabled(disable || !hasPrev);
-                prev.setVisible(hasPrev);
             }
             if (next) {
                 next.setDisabled(disable || !hasNext);
