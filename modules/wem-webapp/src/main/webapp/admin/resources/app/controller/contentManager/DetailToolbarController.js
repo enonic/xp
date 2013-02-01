@@ -20,7 +20,6 @@ Ext.define('Admin.controller.contentManager.DetailToolbarController', {
             },
             'contentDetailToolbar *[action=editContent]': {
                 click: function (el, e) {
-                    console.log("Edit content");
                     this.editContent();
                 }
             },

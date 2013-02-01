@@ -70,7 +70,6 @@ Ext.define('Admin.controller.contentStudio.DialogWindowController', {
 
     deleteMixin: function (win) {
         var me = this;
-        console.log(win);
         var onDelete = function (success, details) {
             win.close();
             if (success) {

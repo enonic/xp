@@ -25,7 +25,6 @@ Ext.define('Admin.controller.contentStudio.MixinWizardController', {
     },
 
     saveType: function (wizard, closeWizard) {
-        console.log('Saving mixin');
         var me = this;
         var data = wizard.getData();
         var xml = data.configXML;

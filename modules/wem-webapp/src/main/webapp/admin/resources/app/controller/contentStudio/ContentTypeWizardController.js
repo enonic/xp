@@ -25,7 +25,6 @@ Ext.define('Admin.controller.contentStudio.ContentTypeWizardController', {
     },
 
     saveType: function (wizard, closeWizard) {
-        console.log("saving as contenttype");
         var me = this;
         var data = wizard.getData();
         var contentType = data.configXML;

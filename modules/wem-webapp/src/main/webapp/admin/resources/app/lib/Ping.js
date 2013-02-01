@@ -35,7 +35,6 @@ Ext.define('Admin.lib.Ping', {
         Ext.Ajax.request({
             url: me.pingUrl,
             success: function (response) {
-                // console.log('Ping success: ' + response.responseText);
                 if (response.status < 400) {
                     me.hideErrorMessage();
                 } else {

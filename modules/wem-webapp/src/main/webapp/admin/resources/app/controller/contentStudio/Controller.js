@@ -119,7 +119,6 @@ Ext.define('Admin.controller.contentStudio.Controller', {
                 "format": "XML",
                 "contentType": [contentType.get('qualifiedName')]
             }, function (r) {
-                console.log(r);
                 tabPanel.el.unmask();
                 if (r) {
                     contentType.raw.configXML = r.contentTypeXml;
