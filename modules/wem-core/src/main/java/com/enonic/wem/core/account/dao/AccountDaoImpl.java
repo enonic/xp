@@ -450,6 +450,11 @@ public final class AccountDaoImpl
         final Node rootNode = session.getRootNode();
         final Node userStoresNode = JcrHelper.getNodeOrNull( rootNode, ROOT_NODE );
 
+        if ( userStoresNode == null )
+        {
+            return accounts;
+        }
+
         final NodeIterator userStores = userStoresNode.getNodes();
 
         while ( userStores.hasNext() )

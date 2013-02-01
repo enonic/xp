@@ -14,7 +14,6 @@ public class IndexDataFactory
 
     public IndexData createIndexDataForObject( Object indexableData )
     {
-        // TODO: Generics
 
         if ( indexableData instanceof Account )
         {
