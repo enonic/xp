@@ -12,12 +12,15 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
+import com.enonic.wem.core.search.IndexService;
 
 @Component
 public class CreateContentHandler
     extends CommandHandler<CreateContent>
 {
     private ContentDao contentDao;
+
+    private IndexService indexService;
 
     public CreateContentHandler()
     {
@@ -43,6 +46,8 @@ public class CreateContentHandler
         final Session session = context.getJcrSession();
         final ContentId contentId = contentDao.create( content, session );
         session.save();
+
+        indexService.index( content );
 
         command.setResult( contentId );
     }

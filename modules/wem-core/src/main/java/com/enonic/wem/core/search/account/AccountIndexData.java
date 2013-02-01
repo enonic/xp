@@ -11,12 +11,12 @@ import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.NonUserAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.profile.UserProfile;
-import com.enonic.wem.core.search.IndexConstants;
+import com.enonic.wem.core.search.AbstractIndexData;
 import com.enonic.wem.core.search.IndexData;
 import com.enonic.wem.core.search.IndexType;
 
 public final class AccountIndexData
-    extends IndexConstants
+    extends AbstractIndexData
     implements IndexData
 {
     private final AccountKey key;
@@ -127,21 +127,6 @@ public final class AccountIndexData
         throws Exception
     {
         contentBuilder.endObject();
-    }
-
-    private void addField( XContentBuilder result, String name, Object value )
-        throws Exception
-    {
-        if ( value == null )
-        {
-            return;
-        }
-        if ( value instanceof String )
-        {
-            value = ( (String) value ).trim();
-        }
-
-        result.field( name, value );
     }
 
     public AccountKey getKey()

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.Account;
+import com.enonic.wem.api.content.Content;
 import com.enonic.wem.core.search.account.AccountIndexDataFactory;
 
 
@@ -18,6 +19,10 @@ public class IndexDataFactory
         if ( indexableData instanceof Account )
         {
             return accountIndexDataFactory.create( (Account) indexableData );
+        }
+        else if ( indexableData instanceof Content )
+        {
+
         }
 
         return null;
