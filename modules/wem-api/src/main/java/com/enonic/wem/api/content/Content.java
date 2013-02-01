@@ -220,7 +220,7 @@ public final class Content
         public Builder()
         {
             this.contentId = null;
-            this.path = new ContentPath();
+            this.path = ContentPath.ROOT;
             this.type = null;
             this.data = new ContentData();
             this.displayName = null;
@@ -255,7 +255,7 @@ public final class Content
         {
             if ( this.path == null )
             {
-                path = new ContentPath();
+                path = ContentPath.ROOT;
             }
             this.path = this.path.withName( name );
             return this;

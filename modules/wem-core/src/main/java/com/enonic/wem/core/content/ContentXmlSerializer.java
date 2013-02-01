@@ -2,6 +2,7 @@ package com.enonic.wem.core.content;
 
 import java.io.IOException;
 
+import org.apache.commons.lang.StringUtils;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -78,7 +79,11 @@ public class ContentXmlSerializer
     public Content parse( final Element contentEl )
     {
         final Content.Builder contentBuilder = Content.newContent();
-        contentBuilder.name( contentEl.getChildText( "name" ) );
+        final String name = contentEl.getChildText( "name" );
+        if ( !StringUtils.isBlank( name ) )
+        {
+            contentBuilder.name( name );
+        }
 
         final String typeAsString = contentEl.getChildText( "type" );
         if ( typeAsString != null )

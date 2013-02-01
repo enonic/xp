@@ -2,6 +2,9 @@ package com.enonic.wem.api.content;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.space.SpaceName;
+
+import static com.enonic.wem.api.content.ContentPath.newPath;
 import static org.junit.Assert.*;
 
 public class ContentPathTest
@@ -56,16 +59,17 @@ public class ContentPathTest
     public void getParentPath()
         throws Exception
     {
-        assertEquals( null, new ContentPath( "first" ).getParentPath() );
-        assertEquals( new ContentPath( "first" ), new ContentPath( "first", "second" ).getParentPath() );
-        assertEquals( new ContentPath( "first", "second" ), new ContentPath( "first", "second", "third" ).getParentPath() );
+        assertEquals( null, ContentPath.from( "first" ).getParentPath() );
+        assertEquals( ContentPath.from( "first" ), ContentPath.newPath().elements( "first", "second" ).build().getParentPath() );
+        assertEquals( newPath().elements( "first", "second" ).build(),
+                      newPath().elements( "first", "second", "third" ).build().getParentPath() );
     }
 
     @Test
     public void isRoot()
         throws Exception
     {
-        assertEquals( true, new ContentPath( "/" ).isRoot() );
+        assertEquals( true, ContentPath.from( "/" ).isRoot() );
     }
 
     @Test
@@ -79,8 +83,8 @@ public class ContentPathTest
     public void from()
         throws Exception
     {
-        assertEquals( new ContentPath( "a" ), ContentPath.from( "a" ) );
-        assertEquals( new ContentPath( "a", "b" ), ContentPath.from( "a/b" ) );
+        assertEquals( ContentPath.from( "a" ), ContentPath.from( "a" ) );
+        assertEquals( newPath().elements( "a", "b" ).build(), ContentPath.from( "a/b" ) );
     }
 
     @Test
@@ -91,5 +95,35 @@ public class ContentPathTest
         assertEquals( false, ContentPath.from( "parent/child" ).isChildOf( ContentPath.from( "otherParent" ) ) );
         assertEquals( false, ContentPath.from( "parent" ).isChildOf( ContentPath.from( "parent/child" ) ) );
         assertEquals( false, ContentPath.from( "parent/child" ).isChildOf( ContentPath.from( "parent/child" ) ) );
+
+        assertEquals( true, ContentPath.from( "myspace:parent/child" ).isChildOf( ContentPath.from( "myspace:parent" ) ) );
+        assertEquals( false, ContentPath.from( "myspace:parent/child" ).isChildOf( ContentPath.from( "otherspace:parent" ) ) );
+    }
+
+
+    @Test
+    public void isRelative()
+        throws Exception
+    {
+        assertFalse( ContentPath.from( "myspace:/" ).isRelative() );
+        assertTrue( ContentPath.from( "/" ).isRelative() );
+    }
+
+    @Test
+    public void isAbsolute()
+        throws Exception
+    {
+        assertTrue( ContentPath.from( "myspace:/" ).isAbsolute() );
+        assertFalse( ContentPath.from( "/" ).isAbsolute() );
+    }
+
+    @Test
+    public void absolutePaths()
+        throws Exception
+    {
+        assertEquals( SpaceName.from( "myspace" ), ContentPath.from( "myspace:/" ).getSpace() );
+        assertEquals( SpaceName.from( "myspace" ), ContentPath.from( "myspace:/path" ).getSpace() );
+        assertEquals( SpaceName.from( "myspace" ), ContentPath.from( "myspace:/path/child" ).getSpace() );
+        assertEquals( SpaceName.from( "myspace" ), ContentPath.from( "myspace:path/child" ).getSpace() );
     }
 }

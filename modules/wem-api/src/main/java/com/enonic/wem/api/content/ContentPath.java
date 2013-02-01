@@ -1,79 +1,83 @@
 package com.enonic.wem.api.content;
 
 
-import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.space.SpaceName;
+
+import static org.apache.commons.lang.StringUtils.substringAfter;
+import static org.apache.commons.lang.StringUtils.substringBefore;
+
 public final class ContentPath
     implements ContentSelector
 {
-    public static final ContentPath ROOT = new ContentPath( "/" );
+    public static final ContentPath ROOT = newPath().build();
 
     private static final String ELEMENT_DIVIDER = "/";
 
-    private final LinkedList<String> elements = new LinkedList<String>();
+    private static final String SPACE_PREFIX_DIVIDER = ":";
+
+    private final LinkedList<String> elements;
 
     private final String refString;
 
-    public ContentPath( final String... elements )
+    private final SpaceName spaceName;
+
+    private ContentPath( final Builder builder )
     {
-        Preconditions.checkNotNull( elements );
-        if ( elements.length == 0 )
+        Preconditions.checkNotNull( builder.elements );
+        this.spaceName = builder.spaceName;
+        this.elements = Lists.newLinkedList();
+
+        final String spacePrefix = spaceName == null ? "" : spaceName.name() + SPACE_PREFIX_DIVIDER;
+        if ( builder.elements.isEmpty() )
         {
-            refString = "";
-        }
-        else if ( elements.length == 1 && elements[0].equals( ELEMENT_DIVIDER ) )
-        {
-            refString = "/";
+            refString = spacePrefix + ELEMENT_DIVIDER;
         }
         else
         {
-            for ( String element : elements )
-            {
-                Preconditions.checkArgument( !element.contains( ELEMENT_DIVIDER ),
-                                             "A path element cannot contain an element divider: " + element );
-            }
-
-            Collections.addAll( this.elements, elements );
-            this.refString = Joiner.on( ELEMENT_DIVIDER ).join( elements );
+            this.elements.addAll( builder.elements );
+            this.refString = spacePrefix + Joiner.on( ELEMENT_DIVIDER ).join( elements );
         }
     }
 
-    private ContentPath( final List<String> elements )
-    {
-        this.elements.addAll( elements );
-        this.refString = Joiner.on( ELEMENT_DIVIDER ).join( elements );
-    }
-
-    private ContentPath( final List<String> parentElements, final String lastElement )
-    {
-        this.elements.addAll( parentElements );
-        this.elements.add( lastElement );
-        this.refString = Joiner.on( ELEMENT_DIVIDER ).join( elements );
-    }
-
-    public final String getElement( final int index )
+    public String getElement( final int index )
     {
         return this.elements.get( index );
     }
 
-    public final boolean isRoot()
+    public boolean isRoot()
     {
         return ROOT.equals( this );
     }
 
-    public final int elementCount()
+    public boolean isAbsolute()
+    {
+        return this.spaceName != null;
+    }
+
+    public boolean isRelative()
+    {
+        return this.spaceName == null;
+    }
+
+    public SpaceName getSpace()
+    {
+        return spaceName;
+    }
+
+    public int elementCount()
     {
         return this.elements.size();
     }
 
-    public final ContentPath getParentPath()
+    public ContentPath getParentPath()
     {
         if ( this.elements.size() < 2 )
         {
@@ -81,18 +85,17 @@ public final class ContentPath
         }
 
         final LinkedList<String> parentElements = newListOfParentElements();
-        return new ContentPath( parentElements );
+        return newPath().spaceName( this.spaceName ).elements( parentElements ).build();
     }
 
-    public final ContentPath withName( final String name )
+    public ContentPath withName( final String name )
     {
         Preconditions.checkNotNull( name, "name not given" );
         final LinkedList<String> newElements = newListOfParentElements();
-        newElements.add( name );
-        return new ContentPath( newElements );
+        return newPath().spaceName( this.spaceName ).elements( newElements ).addElement( name ).build();
     }
 
-    public final boolean hasName()
+    public boolean hasName()
     {
         return !elements.isEmpty();
     }
@@ -104,6 +107,10 @@ public final class ContentPath
 
     public boolean isChildOf( final ContentPath possibleParentPath )
     {
+        if ( !Objects.equal( this.spaceName, possibleParentPath.spaceName ) )
+        {
+            return false;
+        }
         if ( elementCount() <= possibleParentPath.elementCount() )
         {
             return false;
@@ -161,17 +168,98 @@ public final class ContentPath
 
     public static ContentPath from( final String path )
     {
-        final LinkedList<String> elements = new LinkedList<String>();
-        for ( String pathElement : Splitter.on( ELEMENT_DIVIDER ).omitEmptyStrings().split( path ) )
+        final boolean isAbsolute = path.contains( SPACE_PREFIX_DIVIDER );
+        final String relativePath;
+        final String spaceName;
+        if ( isAbsolute )
         {
-            elements.add( pathElement );
+            relativePath = substringAfter( path, SPACE_PREFIX_DIVIDER );
+            spaceName = substringBefore( path, SPACE_PREFIX_DIVIDER );
         }
-        return new ContentPath( elements );
+        else
+        {
+            relativePath = path;
+            spaceName = null;
+        }
+        final Iterable<String> pathElements = Splitter.on( ELEMENT_DIVIDER ).omitEmptyStrings().split( relativePath );
+        return newPath().elements( pathElements ).spaceName( spaceName ).build();
     }
 
     public static ContentPath from( final ContentPath parent, final String name )
     {
-        return new ContentPath( parent.elements, name );
+        return newPath().elements( parent.elements ).addElement( name ).build();
     }
 
+    public static Builder newPath()
+    {
+        return new Builder();
+    }
+
+    public final static class Builder
+    {
+        private LinkedList<String> elements;
+
+        private SpaceName spaceName;
+
+        private Builder()
+        {
+            this.elements = Lists.newLinkedList();
+            this.spaceName = null;
+        }
+
+        public Builder spaceName( final SpaceName spaceName )
+        {
+            this.spaceName = spaceName;
+            return this;
+        }
+
+        public Builder spaceName( final String spaceName )
+        {
+            return spaceName( spaceName == null ? null : SpaceName.from( spaceName ) );
+        }
+
+        public Builder elements( final String... pathElements )
+        {
+            this.elements.clear();
+            for ( String pathElement : pathElements )
+            {
+                validatePathElement( pathElement );
+                this.elements.add( pathElement );
+            }
+            return this;
+        }
+
+        public Builder elements( final Iterable<String> pathElements )
+        {
+            this.elements.clear();
+            for ( String pathElement : pathElements )
+            {
+                validatePathElement( pathElement );
+                this.elements.add( pathElement );
+            }
+            return this;
+        }
+
+        public Builder addElement( final String pathElement )
+        {
+            validatePathElement( pathElement );
+            this.elements.add( pathElement );
+            return this;
+        }
+
+        private void validatePathElement( final String pathElement )
+        {
+            Preconditions.checkNotNull( pathElement, "A path element cannot be null" );
+            Preconditions.checkArgument( !pathElement.isEmpty(), "A path element cannot be empty" );
+            Preconditions.checkArgument( !pathElement.contains( ELEMENT_DIVIDER ),
+                                         "A path element cannot contain an element divider '%s': [%s]", ELEMENT_DIVIDER, pathElement );
+            Preconditions.checkArgument( !pathElement.contains( SPACE_PREFIX_DIVIDER ),
+                                         "A path element cannot contain an element divider '%s': [%s]", SPACE_PREFIX_DIVIDER, pathElement );
+        }
+
+        public ContentPath build()
+        {
+            return new ContentPath( this );
+        }
+    }
 }
