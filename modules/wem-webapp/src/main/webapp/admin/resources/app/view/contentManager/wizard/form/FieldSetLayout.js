@@ -33,10 +33,19 @@ Ext.define('Admin.view.contentManager.wizard.form.FieldSetLayout', {
         var me = this;
 
         if (me.content) {
-            me.mixins.formGenerator.addComponentsBasedOnContentData(me.content.value[0], me.contentTypeItemConfig.items, me);
+            me.mixins.formGenerator.addComponentsBasedOnContentData(me.content[0].value, me.contentTypeItemConfig.items, me);
         } else {
             me.mixins.formGenerator.addComponentsBasedOnContentType(me.contentTypeItemConfig.items, me);
         }
+    },
+
+    getValue: function () {
+        var value = [];
+        Ext.each(this.items, function (item) {
+            var currentItemValue = item.getValue();
+            value = value.concat(currentItemValue);
+        });
+        return value;
     }
 
 });

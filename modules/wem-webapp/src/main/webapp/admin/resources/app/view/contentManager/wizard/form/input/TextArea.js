@@ -14,5 +14,9 @@ Ext.define('Admin.view.contentManager.wizard.form.input.TextArea', {
         ];
 
         me.callParent(arguments);
+    },
+
+    setValue: function (value) {
+        this.down('textarea').setValue(value);
     }
 });

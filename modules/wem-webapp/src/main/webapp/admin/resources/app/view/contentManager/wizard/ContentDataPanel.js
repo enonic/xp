@@ -25,11 +25,10 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     initComponent: function () {
         var me = this;
         me.items = [];
-
-        if (me.content) {
-            me.mixins.formGenerator.addComponentsBasedOnContentData(me.content.data, me.contentType.form, me);
+        if (me.content && me.content.data) {
+            me.addComponentsBasedOnContentData(me.content.data, me.contentType.form, me);
         } else {
-            me.mixins.formGenerator.addComponentsBasedOnContentType(me.contentType.form, me);
+            me.addComponentsBasedOnContentType(me.contentType.form, me);
         }
 
         me.callParent(arguments);
@@ -46,7 +45,6 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     },
 
 
-
     /**
      * TODO: Refactor! The following should be moved to another object soon
      */
@@ -54,85 +52,18 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
         var me = this,
             formItems = me.items.items,
             contentData = {};
-
         Ext.Array.each(formItems, function (item) {
-            if (item.getXType() === 'FormItemSet') {
-                me.addDataFromFormItemSet(item, contentData, '');
-            } else if (item.getXType() === 'FieldSetLayout') {
-                me.addDataFromLayout(item, contentData);
+            var currentItemValue = item.getValue();
+            if (currentItemValue instanceof Array) {
+                Ext.each(currentItemValue, function (itemValue) {
+                    contentData[itemValue.path] = itemValue.value;
+                });
             } else {
-                contentData[item.name] = item.getValue();
+                contentData[currentItemValue.path] = currentItemValue.value;
             }
         });
 
         return contentData;
-    },
-
-
-    addDataFromLayout: function (layoutComponent, contentData) {
-        var me = this;
-        var items = layoutComponent.items.items;
-        var path = '';
-
-        Ext.Array.each(items, function (item, index) {
-            if (item.getXType() === 'FormItemSet') {
-                me.addDataFromFormItemSet(item, contentData, path);
-            } else if (item.getXType() === 'FieldSetLayout') {
-                me.addDataFromLayout(item, contentData);
-            } else {
-                if (item.cls !== 'header') {
-                    contentData[item.name] = item.getValue();
-                }
-            }
-
-        });
-    },
-
-
-    addDataFromFormItemSet: function (itemSetComponent, contentData, parentPath) {
-        var me = this;
-        var blocks = me.getFormItemSetBlocks(itemSetComponent),
-            blockItems,
-            path;
-
-        Ext.Array.each(blocks, function (block, index) {
-
-            blockItems = block.items.items;
-
-            Ext.Array.each(blockItems, function (item) {
-                path = '';
-
-                if (parentPath !== '') {
-                    path = parentPath + '.'; // Eg. contact_info[0].
-                }
-
-                path = path.concat(itemSetComponent.name, '[', index, ']');
-
-                if (item.getXType() === 'FormItemSet') {
-                    me.addDataFromFormItemSet(item, contentData, path);
-                } else if (item.getXType() === 'FieldSetLayout') {
-                    me.addDataFromLayout(item, contentData);
-                } else {
-                    if (item.cls !== 'header') {
-                        path = path.concat('.', item.name);
-                        contentData[path] = item.getValue();
-                    }
-                }
-
-            });
-        });
-    },
-
-
-    getFormItemSetBlocks: function (formItemSetComponent) {
-        var blocks = [];
-        Ext.Array.each(formItemSetComponent.items.items, function (item, index) {
-            if (item.cls && item.cls.indexOf('admin-formitemset-block') > -1) {
-                blocks.push(item);
-            }
-        });
-
-        return blocks;
     }
 
 });
