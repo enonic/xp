@@ -34,18 +34,18 @@ public final class CreateContentTypeHandler
     public void handle( final CommandContext context, final CreateContentType command )
         throws Exception
     {
-        final ContentType.Builder builder = newContentType();
-        builder.name( command.getName() );
-        builder.displayName( command.getDisplayName() );
-        builder.module( command.getModuleName() );
-        builder.superType( command.getSuperType() );
-        builder.setAbstract( command.isAbstract() );
-        builder.setFinal( command.isFinal() );
-        builder.icon( command.getIcon() );
-        builder.createdTime( DateTime.now() );
-        builder.modifiedTime( DateTime.now() );
-
-        final ContentType contentType = builder.build();
+        final ContentType contentType = newContentType().
+            name( command.getName() ).
+            displayName( command.getDisplayName() ).
+            module( command.getModuleName() ).
+            superType( command.getSuperType() ).
+            setAbstract( command.isAbstract() ).
+            setFinal( command.isFinal() ).
+            icon( command.getIcon() ).
+            createdTime( DateTime.now() ).
+            modifiedTime( DateTime.now() ).
+            form( command.getForm() ).
+            build();
 
         final Session session = context.getJcrSession();
 
