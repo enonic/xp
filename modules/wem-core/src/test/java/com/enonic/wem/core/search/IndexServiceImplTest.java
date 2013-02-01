@@ -10,6 +10,9 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.account.Account;
+import com.enonic.wem.api.account.UserAccount;
+import com.enonic.wem.core.search.account.AccountIndexData;
 import com.enonic.wem.core.search.elastic.ElasticsearchIndexServiceImpl;
 import com.enonic.wem.core.search.elastic.IndexMapping;
 import com.enonic.wem.core.search.elastic.IndexMappingProvider;
@@ -109,6 +112,50 @@ public class IndexServiceImplTest
         // Since index already exists exception, do not continue to add mapping
         Mockito.verify( elasticsearchIndexService, Mockito.never() ).putMapping( Mockito.isA( IndexMapping.class ) );
     }
+
+    @Test
+    public void testInitializeIndex_reindex_on_create()
+        throws Exception
+    {
+        final ElasticsearchIndexServiceImpl elasticsearchIndexService = Mockito.mock( ElasticsearchIndexServiceImpl.class );
+        Mockito.when( elasticsearchIndexService.getIndexStatus( WEM_INDEX, true ) ).thenReturn( IndexStatus.YELLOW );
+        Mockito.when( elasticsearchIndexService.indexExists( WEM_INDEX ) ).thenReturn( false );
+        indexService.setDoReindexOnEmptyIndex( true );
+
+        final ReindexService reindexService = Mockito.mock( ReindexService.class );
+        indexService.setReindexService( reindexService );
+
+        final IndexMappingProvider indexMappingProvider = setUpIndexMappingMock();
+
+        indexService.setIndexMappingProvider( indexMappingProvider );
+
+        indexService.setElasticsearchIndexService( elasticsearchIndexService );
+
+        indexService.initialize();
+
+        Mockito.verify( elasticsearchIndexService, Mockito.times( 1 ) ).createIndex( WEM_INDEX );
+        Mockito.verify( reindexService, Mockito.times( 1 ) ).reindexAccounts();
+    }
+
+    @Test
+    public void testIndexAccount()
+    {
+        Account account = UserAccount.create( "enonic:rmy" );
+
+        final IndexDataFactory indexDataFactory = Mockito.mock( IndexDataFactory.class );
+        indexService.setIndexDataFactory( indexDataFactory );
+
+        IndexData indexData = new AccountIndexData( account );
+        Mockito.when( indexDataFactory.createIndexDataForObject( Mockito.isA( Account.class ) ) ).thenReturn( indexData );
+
+        final ElasticsearchIndexServiceImpl elasticsearchIndexService = Mockito.mock( ElasticsearchIndexServiceImpl.class );
+        indexService.setElasticsearchIndexService( elasticsearchIndexService );
+
+        indexService.index( account );
+
+        Mockito.verify( indexDataFactory, Mockito.times( 1 ) ).createIndexDataForObject( account );
+    }
+
 
     private IndexMappingProvider setUpIndexMappingMock()
     {
