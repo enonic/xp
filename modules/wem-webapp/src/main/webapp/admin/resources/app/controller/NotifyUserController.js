@@ -12,11 +12,11 @@ Ext.define('Admin.controller.NotifyUserController', {
             }
         });
         this.application.on({
-            'showNotifyUserWindow ': this.showWindow,
+            showNotifyUserWindow: this.showWindow,
             scope: this
         });
         this.application.on({
-            'closeNotifyUserWindow ': this.closeWindow,
+            closeNotifyUserWindow: this.closeWindow,
             scope: this
         });
     },
