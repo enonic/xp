@@ -21,7 +21,7 @@
 
         $(window).on('component:deselect', $.proxy(this.deselect, this));
 
-        $(window).on('component:drag:stop', function (event, uiEvent, ui, wasSelectedOnDragStart) {
+        $(window).on('component:sort:stop', function (event, uiEvent, ui, wasSelectedOnDragStart) {
             if (wasSelectedOnDragStart) {
                 $(window).trigger('component:select', [ui.item]);
             }

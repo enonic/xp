@@ -37,7 +37,7 @@
         $(window).on('component:mouseout', $.proxy(this.hide, this));
         $(window).on('component:select', $.proxy(this.show, this));
         $(window).on('component:deselect', $.proxy(this.hide, this));
-        $(window).on('component:drag:start', $.proxy(this.fadeOutAndHide, this));
+        $(window).on('component:sort:start', $.proxy(this.fadeOutAndHide, this));
         $(window).on('componentBar:mouseover', $.proxy(this.hide, this));
     };
 

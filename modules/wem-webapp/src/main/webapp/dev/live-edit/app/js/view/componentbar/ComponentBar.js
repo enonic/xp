@@ -14,7 +14,9 @@
 
         me.loadComponentsData();
 
-        me.addEvents();
+        me.registerGlobalListeners();
+
+        me.registerEvents();
     };
 
 
@@ -95,6 +97,8 @@
 
 
     proto.registerGlobalListeners = function () {
+        $(window).on('componentbar:component:dragstart', $.proxy(this.toggle, this));
+        $(window).on('componentbar:component:dragstop', $.proxy(this.toggle, this));
     };
 
 
@@ -160,7 +164,7 @@
     };
 
 
-    proto.addEvents = function () {
+    proto.registerEvents = function () {
         var me = this;
 
         me.addToggleEvent();

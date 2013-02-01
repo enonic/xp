@@ -27,17 +27,20 @@ AdminLiveEdit.DragDrop = (function () {
         // TODO: Remove ui classes
         var draggableOptions = {
             connectToSortable: regionSelector,
+            addClasses: false,
             cursor: 'move',
-            revert: function (dropped) {
-                // console.log(dropped);
-            },
+            appendTo: 'body',
+            zIndex: 5100000,
+            revert: 'invalid',
             helper: function () {
                 return '<div style="width: 200px; height: 20px; background-color: #ccc; padding: 10px;">Helper</div>';
             },
-            start: function () {
+            start: function (event, ui) {
+                $liveedit(window).trigger('componentbar:component:dragstart', [event, ui]);
                 isDragging = true;
             },
-            stop: function () {
+            stop: function (event, ui) {
+                $liveedit(window).trigger('componentbar:component:dragstop', [event, ui]);
                 isDragging = false;
             }
         };
@@ -76,31 +79,31 @@ AdminLiveEdit.DragDrop = (function () {
         ui.placeholder.text('Drop component here');
         refresh();
 
-        $liveedit(window).trigger('component:drag:start', [event, ui]);
+        $liveedit(window).trigger('component:sort:start', [event, ui]);
     }
 
 
     function handleDragOver(event, ui) {
         updateHelperStatusIcon('yes');
-        $liveedit(window).trigger('component:drag:over', [event, ui]);
+        $liveedit(window).trigger('component:sort:over', [event, ui]);
     }
 
 
     function handleDragOut(event, ui) {
         updateHelperStatusIcon('no');
-        $liveedit(window).trigger('component:drag:out', [event, ui]);
+        $liveedit(window).trigger('component:sort:out', [event, ui]);
     }
 
 
     function handleSortChange(event, ui) {
         updateHelperStatusIcon('yes');
         ui.placeholder.show();
-        $liveedit(window).trigger('component:drag:change', [event, ui]);
+        $liveedit(window).trigger('component:sort:change', [event, ui]);
     }
 
 
     function handleSortUpdate(event, ui) {
-        $liveedit(window).trigger('component:drag:update', [event, ui]);
+        $liveedit(window).trigger('component:sort:update', [event, ui]);
     }
 
 
@@ -113,7 +116,7 @@ AdminLiveEdit.DragDrop = (function () {
 
         // Added on sort start
         var wasSelectedOnDragStart = ui.item.data('live-edit-selected-on-drag-start');
-        $liveedit(window).trigger('component:drag:stop', [event, ui, wasSelectedOnDragStart]);
+        $liveedit(window).trigger('component:sort:stop', [event, ui, wasSelectedOnDragStart]);
 
         ui.item.removeData('live-edit-selected-on-drag-start');
     }
@@ -137,7 +140,7 @@ AdminLiveEdit.DragDrop = (function () {
                 cache: false
             }).done(function (html) {
                 $component.replaceWith(html);
-                $liveedit(window).trigger('component:drag:update');
+                $liveedit(window).trigger('component:sort:update');
             });
 
         }
@@ -145,7 +148,8 @@ AdminLiveEdit.DragDrop = (function () {
 
 
     function initSubscribers() {
-
+        // The jQuery draggable() is not "live"/support delegates so we have to make sure the components in the component bar are always draggable
+        // Make the components in the component bar draggable
         $liveedit(window).on('componentBar:dataLoaded', function () {
             createComponentBarDraggables();
         });

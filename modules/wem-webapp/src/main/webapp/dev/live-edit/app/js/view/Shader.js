@@ -24,7 +24,7 @@
         $(window).on('component:select', $.proxy(this.show, this));
         $(window).on('component:deselect', $.proxy(this.hide, this));
         $(window).on('component:remove', $.proxy(this.hide, this));
-        $(window).on('component:drag:start', $.proxy(this.hide, this));
+        $(window).on('component:sort:start', $.proxy(this.hide, this));
     };
 
 
