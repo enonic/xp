@@ -608,7 +608,7 @@ Templates.homescreen = {
 		'<tpl for=".">' + 
 		    '<div class="admin-home-app-tile">' + 
 		        '<div class="img-container">' + 
-		            '<img src="{icon}"/>' + 
+		            '<img src="{icon}" alt=""/>' + 
 		        '</div>' + 
 		        '<div class="name-container">{name}</div>' + 
 		    '</div>' + 
@@ -619,12 +619,12 @@ Templates.homescreen = {
 		    '<div id="admin-home-installation-info"><!-- --></div>' + 
 		    '<div id="admin-home-version-info"><!-- --></div>' + 
 		'</div>' + 
-		'<div id="admin-home-center" class="clickable">' + 
-		    '<div id="admin-home-left-column" class="clickable">' + 
+		'<div id="admin-home-center">' + 
+		    '<div id="admin-home-left-column">' + 
 		        '<div data-screen="login" style="display: none">' + 
 		        '</div>' + 
 		        '<div data-screen="app-selector" style="display: none">' + 
-		            '<div id="admin-home-app-selector" class="clickable">' + 
+		            '<div id="admin-home-app-selector">' + 
 		                '<div id="admin-home-app-selector-search-input-container"></div>' + 
 		                '<div id="admin-home-app-tiles-placeholder">' + 
 		                    '<!-- -->' + 
@@ -632,9 +632,9 @@ Templates.homescreen = {
 		            '</div>' + 
 		        '</div>' + 
 		    '</div>' + 
-		    '<div id="admin-home-right-column" class="clickable">' + 
+		    '<div id="admin-home-right-column">' + 
 		        '<div data-screen="login" style="display: none">' + 
-		            '<div id="admin-home-login-form" class="clickable">' + 
+		            '<div id="admin-home-login-form">' + 
 		                '<div id="admin-home-login-form-container"></div>' + 
 		                '<div id="admin-home-login-licensed-to"><!-- --></div>' + 
 		            '</div>' + 

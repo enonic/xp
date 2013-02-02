@@ -12,7 +12,6 @@ Ext.define('Admin.view.homescreen.Homescreen', {
 
     autoEl: {
         tag: 'div',
-        cls: 'clickable',
         html: Templates.homescreen.mainContainerHtml
     },
     floating: true,
