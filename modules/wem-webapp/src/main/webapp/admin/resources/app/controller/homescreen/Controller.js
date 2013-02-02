@@ -34,6 +34,9 @@ Ext.define('Admin.controller.homescreen.Controller', {
                         view.setInstallationLabelText(r.installationName);
                         view.setVersionText(r.version);
                     });
+
+                    view.setBackgroundImage('resources/images/x_710948main_typhoon_bopha_1600_1600-1200.jpg');
+                    view.setLicensedToText('Licensed to Large Customer');
                 },
                 beforeshow: function () {
                     // Make sure window/frame has focus in order to get the keyboard navigation to work.

@@ -24,7 +24,6 @@ Ext.define('Admin.view.homescreen.Homescreen', {
         var me = this;
 
         me.on('render', function () {
-            me.updateGlobalView();
             me.prefixedEvent(me.getEl().dom, 'AnimationEnd', function (evt) {
                 if (evt.animationName === 'animation-hide-home') {
                     me.setVisible(false);
@@ -36,13 +35,6 @@ Ext.define('Admin.view.homescreen.Homescreen', {
         });
 
         me.callParent(arguments);
-    },
-
-
-    updateGlobalView: function () {
-        var me = this;
-        me.setBackgroundImage('resources/images/x_710948main_typhoon_bopha_1600_1600-1200.jpg');
-        me.setLicensedToText('Licensed to Large Customer');
     },
 
 
