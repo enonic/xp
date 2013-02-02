@@ -42,46 +42,10 @@
     html += '        <div class="live-edit-components">';
     html += '            <div class="live-edit-form-container">';
     html += '               <form>';
-    html += '                   <input type="text" placeholder="Search" name="search"/>';
+    html += '                   <input type="text" placeholder="Filter" name="filter"/>';
     html += '               </form>';
     html += '            </div>';
     html += '            <ul>';
-/*
-    html += '                <li class="live-edit-component-list-header">';
-    html += '                    <span>Layouts</span>';
-    html += '                </li>';
-    html += '                <li class="live-edit-component">';
-    html += '                    <img src="../app/images/srs.jpeg"/>';
-    html += '                    <div class="live-edit-component-text">';
-    html += '                        <span>Column layouts</span>';
-    html += '                        <small>Subtitle</small>';
-    html += '                    </div>';
-    html += '                </li>';
-    html += '                <li class="live-edit-component">';
-    html += '                    <img src="../app/images/srs.jpeg"/>';
-    html += '                    <div class="live-edit-component-text">';
-    html += '                        <span>Spacer</span>';
-    html += '                        <small>Subtitle</small>';
-    html += '                    </div>';
-    html += '                </li>';
-    html += '                <li class="live-edit-component-list-header">';
-    html += '                    <span>Advanced</span>';
-    html += '                </li>';
-    html += '                <li class="live-edit-component">';
-    html += '                    <img src="../app/images/srs.jpeg"/>';
-    html += '                    <div class="live-edit-component-text">';
-    html += '                        <span>Article List</span>';
-    html += '                        <small>Subtitle</small>';
-    html += '                    </div>';
-    html += '                </li>';
-    html += '                <li class="live-edit-component">';
-    html += '                    <img src="../app/images/srs.jpeg"/>';
-    html += '                    <div class="live-edit-component-text">';
-    html += '                        <span>Article Show</span>';
-    html += '                        <small>Very loooooooooooong subtitle</small>';
-    html += '                    </div>';
-    html += '                </li>';
-*/
     html += '            </ul>';
     html += '        </div>';
     html += '    </div>';
@@ -152,7 +116,7 @@
     proto.addComponent = function (component) {
         var me = this,
             html = '';
-        html += '<li class="live-edit-component" data-live-edit-component-key="' + component.key + '">';
+        html += '<li class="live-edit-component" data-live-edit-component-key="' + component.key + '" data-live-edit-component-name="' + component.name + '">';
         html += '    <img src="../app/images/srs.jpeg"/>';
         html += '    <div class="live-edit-component-text">';
         html += '        <span>' + component.name + '</span>';
@@ -167,17 +131,17 @@
     proto.registerEvents = function () {
         var me = this;
 
-        me.addToggleEvent();
+        me.getToggle().click(function () {
+            me.toggle();
+        });
+
+        me.getFilterInput().on('keyup', function () {
+            me.filterList($(this).val());
+        });
+
+
         me.getBar().on('mouseover', function () {
             $liveedit(window).trigger('componentBar:mouseover');
-        });
-    };
-
-
-    proto.addToggleEvent = function () {
-        var me = this;
-        me.getToggle().click(function (event) {
-            me.toggle();
         });
     };
 
@@ -205,6 +169,18 @@
     };
 
 
+    proto.filterList = function (value) {
+        var me = this,
+            $element,
+            name;
+        me.getComponentList().each(function (index) {
+            $element = $(this);
+            name = $element.data('live-edit-component-name').toLowerCase();
+            $element.css('display', name.indexOf(value) > -1 ? '' : 'none');
+        });
+    };
+
+
     proto.getBar = function () {
         return this.getEl();
     };
@@ -215,8 +191,18 @@
     };
 
 
+    proto.getFilterInput = function () {
+        return $('.live-edit-form-container input[name=filter]', this.getEl());
+    };
+
+
     proto.getComponentsContainer = function () {
         return $('.live-edit-components ul', this.getEl());
+    };
+
+
+    proto.getComponentList = function () {
+        return $('.live-edit-component', this.getEl());
     };
 
 }($liveedit));
