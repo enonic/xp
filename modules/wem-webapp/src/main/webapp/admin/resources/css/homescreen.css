@@ -163,24 +163,18 @@
     color: #fff;
 
     opacity: 0;
-    transition: all .3s ease-out;
-    -moz-transition: all .3s ease-out;
-    -webkit-transition: all .3s ease-out;
-    -o-transition: all .3s ease-out;
+    transition: all 300ms ease-out;
+    -webkit-transition: all 300ms ease-out;
 
     transform: scale(.9);
-    -moz-transform: scale(.9);
     -webkit-transform: scale(.9);
-    -o-transform: scale(.9);
 }
 
 #admin-home-app-selector.fade-in {
     opacity: 1 !important;
 
     transform: scale(1) !important;
-    -moz-transform: scale(1) !important;
     -webkit-transform: scale(1) !important;
-    -o-transform: scale(1) !important;
 }
 
 #admin-home-app-selector-search-input-container {

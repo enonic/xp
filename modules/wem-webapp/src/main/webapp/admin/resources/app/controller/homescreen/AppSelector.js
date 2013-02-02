@@ -49,10 +49,6 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
                 itemmouseleave: function () {
                     me.currentTileIndex = -1;
                     me.updateAppInfoText(null);
-                },
-                highlightitem: function (view, node) {
-                    console.log(node);
-
                 }
             }
         });
@@ -73,7 +69,6 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
             Ext.fly(el).setStyle('display', 'block');
         });
 
-        appSelectorContainer.addCls('fade-in');
 
         me.focusFilterTextField();
 
@@ -81,6 +76,7 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
             me.appSelectorKeyMap.enable();
         }
 
+        appSelectorContainer.addCls('fade-in');
     },
 
 
