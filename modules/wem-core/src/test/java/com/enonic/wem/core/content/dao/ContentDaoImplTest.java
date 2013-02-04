@@ -13,6 +13,7 @@ import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.api.exception.UnableToDeleteContentException;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.core.AbstractJcrTest;
@@ -28,15 +29,16 @@ public class ContentDaoImplTest
     public void setupDao()
         throws Exception
     {
+        session.getNode( "/wem/spaces" ).addNode( "myspace" );
         contentDao = new ContentDaoImpl();
     }
 
     @Test
-    public void createContent_one_data_at_root()
+    public void createRootContent()
         throws Exception
     {
         // setup
-        Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
+        Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
         content.setData( "myData", "myValue" );
 
         // exercise
@@ -44,7 +46,39 @@ public class ContentDaoImplTest
         commit();
 
         // verify
-        Node contentNode = session.getNode( "/" + ContentDao.CONTENTS_PATH + "myContent" );
+        Node contentNode = session.getNode( "/" + ContentDao.SPACES_PATH + "myspace/root" );
+        assertNotNull( contentNode );
+    }
+
+    @Test(expected = SpaceNotFoundException.class)
+    public void createRootContent_missing_space()
+        throws Exception
+    {
+        // setup
+        Content content = newContent().path( ContentPath.from( "otherspace:/" ) ).build();
+        content.setData( "myData", "myValue" );
+
+        // exercise
+        contentDao.create( content, session );
+        commit();
+    }
+
+    @Test
+    public void createContent_one_data_at_root()
+        throws Exception
+    {
+        // setup
+        contentDao.create( createContent( "myspace:/" ), session );
+
+        Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
+        content.setData( "myData", "myValue" );
+
+        // exercise
+        contentDao.create( content, session );
+        commit();
+
+        // verify
+        Node contentNode = session.getNode( "/" + ContentDao.SPACES_PATH + "myspace/root/myContent" );
         assertNotNull( contentNode );
     }
 
@@ -53,23 +87,24 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        Content rootContent = newContent().path( ContentPath.from( "rootContent" ) ).build();
+        contentDao.create( createContent( "myspace:/" ), session );
+
+        Content rootContent = newContent().path( ContentPath.from( "myspace:rootContent" ) ).build();
         rootContent.setData( "myData", "myValue" );
 
-        Content belowRootContent = newContent().path( ContentPath.from( "rootContent/belowRootContent" ) ).build();
+        Content belowRootContent = newContent().path( ContentPath.from( "myspace:rootContent/belowRootContent" ) ).build();
         belowRootContent.setData( "myData", "myValue" );
 
         // exercise
         contentDao.create( rootContent, session );
-        commit();
         contentDao.create( belowRootContent, session );
         commit();
 
         // verify
-        Node rootContentNode = session.getNode( "/" + ContentDao.CONTENTS_PATH + "rootContent" );
+        Node rootContentNode = session.getNode( "/" + ContentDao.SPACES_PATH + "myspace/root/rootContent" );
         assertNotNull( rootContentNode );
 
-        Node belowRootContentNode = session.getNode( "/" + ContentDao.CONTENTS_PATH + "rootContent/belowRootContent" );
+        Node belowRootContentNode = session.getNode( "/" + ContentDao.SPACES_PATH + "myspace/root/rootContent/belowRootContent" );
         assertNotNull( belowRootContentNode );
     }
 
@@ -78,7 +113,9 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
+        contentDao.create( createContent( "myspace:/" ), session );
+
+        Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
         content.setData( "myData", "1" );
         content.setData( "mySet.myData", "2" );
         content.setData( "mySet.myOtherData", "3" );
@@ -88,9 +125,9 @@ public class ContentDaoImplTest
         commit();
 
         // verify
-        assertNotNull( session.getNode( "/" + ContentDao.CONTENTS_PATH + "myContent" ) );
+        assertNotNull( session.getNode( "/" + ContentDao.SPACES_PATH + "myspace/root/myContent" ) );
 
-        Content storedContent = contentDao.select( ContentPath.from( "myContent" ), session );
+        Content storedContent = contentDao.select( ContentPath.from( "myspace:myContent" ), session );
 
         assertEquals( "1", storedContent.getData( "myData" ).asString() );
         assertEquals( "2", storedContent.getData( "mySet.myData" ).asString() );
@@ -102,10 +139,12 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        final Content content = createContent( "someContent" );
+        contentDao.create( createContent( "myspace:/" ), session );
+
+        final Content content = createContent( "myspace:someContent" );
         final ContentId createdContentId = contentDao.create( content, session );
 
-        final Content anotherContent = newContent( content ).id( createdContentId ).path( ContentPath.from( "anotherContent" ) ).build();
+        final Content anotherContent = newContent( content ).id( createdContentId ).path( ContentPath.from( "myspace:anotherContent" ) ).build();
         assertNotNull( anotherContent.getId() );
         contentDao.create( anotherContent, session );
 
@@ -118,23 +157,25 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        Content newContent = newContent().path( ContentPath.from( "myContent" ) ).build();
+        contentDao.create( createContent( "myspace:/" ), session );
+
+        Content newContent = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
         newContent.setData( "myData", "initial value" );
 
         // setup: create content to update
         contentDao.create( newContent, session );
         commit();
 
-        Content updateContent = newContent().path( ContentPath.from( "myContent" ) ).build();
+        Content updateContent = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
         updateContent.setData( "myData", "changed value" );
 
         // exercise
         contentDao.update( updateContent, true, session );
 
         // verify
-        assertNotNull( session.getNode( "/" + ContentDao.CONTENTS_PATH + "myContent" ) );
+        assertNotNull( session.getNode( "/" + ContentDao.SPACES_PATH + "myspace/root/myContent" ) );
 
-        Content storedContent = contentDao.select( ContentPath.from( "myContent" ), session );
+        Content storedContent = contentDao.select( ContentPath.from( "myspace:myContent" ), session );
         assertEquals( "changed value", storedContent.getData( "myData" ).asString() );
     }
 
@@ -143,18 +184,20 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
+        contentDao.create( createContent( "myspace:/" ), session );
+
+        Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
         content.setData( "myData", "myValue" );
 
         contentDao.create( content, session );
         commit();
 
         // exercise
-        contentDao.delete( ContentPath.from( "myContent" ), session );
+        contentDao.delete( ContentPath.from( "myspace:myContent" ), session );
         commit();
 
         // verify
-        Node contentsNode = session.getNode( "/" + ContentDao.CONTENTS_PATH );
+        Node contentsNode = session.getNode( "/" + ContentDao.SPACES_PATH +"myspace/root" );
         assertFalse( contentsNode.hasNode( "myContent" ) );
     }
 
@@ -163,16 +206,17 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        contentDao.create( createContent( "parentContent" ), session );
-        contentDao.create( createContent( "parentContent/contentToDelete" ), session );
+        contentDao.create( createContent( "myspace:/" ), session );
+        contentDao.create( createContent( "myspace:parentContent" ), session );
+        contentDao.create( createContent( "myspace:parentContent/contentToDelete" ), session );
         commit();
 
         // exercise
-        contentDao.delete( ContentPath.from( "parentContent/contentToDelete" ), session );
+        contentDao.delete( ContentPath.from( "myspace:parentContent/contentToDelete" ), session );
         commit();
 
         // verify
-        Node parentContentNode = session.getNode( "/" + ContentDao.CONTENTS_PATH + "parentContent" );
+        Node parentContentNode = session.getNode( "/" + ContentDao.SPACES_PATH + "myspace/root/parentContent" );
         assertFalse( parentContentNode.hasNode( "contentToDelete" ) );
     }
 
@@ -181,20 +225,21 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        contentDao.create( createContent( "parentContent" ), session );
-        contentDao.create( createContent( "parentContent/contentToDelete" ), session );
+        contentDao.create( createContent( "myspace:/" ), session );
+        contentDao.create( createContent( "myspace:parentContent" ), session );
+        contentDao.create( createContent( "myspace:parentContent/contentToDelete" ), session );
         commit();
 
         // exercise
         try
         {
-            contentDao.delete( ContentPath.from( "parentContent" ), session );
+            contentDao.delete( ContentPath.from( "myspace:parentContent" ), session );
             fail( "Expected excetion" );
         }
         catch ( Exception e )
         {
             assertTrue( e instanceof UnableToDeleteContentException );
-            assertEquals( "Not able to delete content with path [parentContent]: Content has child content.", e.getMessage() );
+            assertEquals( "Not able to delete content with path [myspace:parentContent]: Content has child content.", e.getMessage() );
         }
     }
 
@@ -203,8 +248,9 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        contentDao.create( createContent( "parentContent" ), session );
-        final ContentId contentId = contentDao.create( createContent( "parentContent/contentToDelete" ), session );
+        contentDao.create( createContent( "myspace:/" ), session );
+        contentDao.create( createContent( "myspace:parentContent" ), session );
+        final ContentId contentId = contentDao.create( createContent( "myspace:parentContent/contentToDelete" ), session );
         commit();
 
         // exercise
@@ -212,7 +258,7 @@ public class ContentDaoImplTest
         commit();
 
         // verify
-        Node parentContentNode = session.getNode( "/" + ContentDao.CONTENTS_PATH + "parentContent" );
+        Node parentContentNode = session.getNode( "/" + ContentDao.SPACES_PATH + "myspace/root/parentContent" );
         assertFalse( parentContentNode.hasNode( "contentToDelete" ) );
     }
 
@@ -221,18 +267,19 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
+        contentDao.create( createContent( "myspace:/" ), session );
+        Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
         content.setData( "myData", "myValue" );
         content.setData( "mySet.myData", "myOtherValue" );
         contentDao.create( content, session );
         commit();
 
         // exercise
-        Content actualContent = contentDao.select( ContentPath.from( "myContent" ), session );
+        Content actualContent = contentDao.select( ContentPath.from( "myspace:myContent" ), session );
 
         // verify
         assertNotNull( actualContent );
-        assertEquals( "myContent", content.getPath().toString() );
+        assertEquals( "myspace:myContent", content.getPath().toString() );
 
         ContentData contentData = actualContent.getData();
         assertEquals( "myValue", contentData.getData( EntryPath.from( "myData" ) ).asString() );
@@ -244,25 +291,26 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        final Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
+        contentDao.create( createContent( "myspace:/" ), session );
+        final Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
         content.setData( "myData", "myValue" );
         content.setData( "mySet.myData", "myOtherValue" );
         contentDao.create( content, session );
 
-        final Content content2 = newContent().path( ContentPath.from( "myContent2" ) ).build();
+        final Content content2 = newContent().path( ContentPath.from( "myspace:myContent2" ) ).build();
         content2.setData( "myData", "myValue2" );
         content2.setData( "mySet.myData", "myOtherValue2" );
         contentDao.create( content2, session );
         commit();
 
         // exercise
-        final Contents actualContents = contentDao.select( ContentPaths.from( "myContent", "myContent2" ), session );
+        final Contents actualContents = contentDao.select( ContentPaths.from( "myspace:myContent", "myspace:myContent2" ), session );
 
         // verify
         assertNotNull( actualContents );
         assertEquals( 2, actualContents.getSize() );
-        assertEquals( "myContent", actualContents.first().getPath().toString() );
-        assertEquals( "myContent2", actualContents.last().getPath().toString() );
+        assertEquals( "myspace:myContent", actualContents.first().getPath().toString() );
+        assertEquals( "myspace:myContent2", actualContents.last().getPath().toString() );
 
         final ContentData contentData1 = actualContents.first().getData();
         assertEquals( "myValue", contentData1.getData( EntryPath.from( "myData" ) ).asString() );
@@ -278,12 +326,13 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        final Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
+        contentDao.create( createContent( "myspace:/" ), session );
+        final Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
         content.setData( "myData", "myValue" );
         content.setData( "mySet.myData", "myOtherValue" );
         final ContentId contentId1 = contentDao.create( content, session );
 
-        final Content content2 = newContent().path( ContentPath.from( "myContent2" ) ).build();
+        final Content content2 = newContent().path( ContentPath.from( "myspace:myContent2" ) ).build();
         content2.setData( "myData", "myValue2" );
         content2.setData( "mySet.myData", "myOtherValue2" );
         final ContentId contentId2 = contentDao.create( content2, session );
@@ -295,8 +344,8 @@ public class ContentDaoImplTest
         // verify
         assertNotNull( actualContents );
         assertEquals( 2, actualContents.getSize() );
-        assertEquals( "myContent", actualContents.first().getPath().toString() );
-        assertEquals( "myContent2", actualContents.last().getPath().toString() );
+        assertEquals( "myspace:myContent", actualContents.first().getPath().toString() );
+        assertEquals( "myspace:myContent2", actualContents.last().getPath().toString() );
 
         final ContentData contentData1 = actualContents.first().getData();
         assertEquals( "myValue", contentData1.getData( EntryPath.from( "myData" ) ).asString() );
@@ -312,7 +361,8 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
+        contentDao.create( createContent( "myspace:/" ), session );
+        Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
         content.setData( "myData", "myValue" );
         content.setData( "mySet.myData", "myOtherValue" );
         final ContentId contentId = contentDao.create( content, session );
@@ -323,7 +373,7 @@ public class ContentDaoImplTest
 
         // verify
         assertNotNull( actualContent );
-        assertEquals( "myContent", content.getPath().toString() );
+        assertEquals( "myspace:myContent", content.getPath().toString() );
 
         ContentData contentData = actualContent.getData();
         assertEquals( "myValue", contentData.getData( EntryPath.from( "myData" ) ).asString() );
@@ -335,22 +385,20 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        contentDao.create( createContent( "myParentContent" ), session );
-        commit();
-        contentDao.create( createContent( "myParentContent2" ), session );
-        commit();
-        contentDao.create( createContent( "myParentContent/myChildContent1" ), session );
-        commit();
-        contentDao.create( createContent( "myParentContent/myChildContent2" ), session );
+        contentDao.create( createContent( "myspace:/" ), session );
+        contentDao.create( createContent( "myspace:myParentContent" ), session );
+        contentDao.create( createContent( "myspace:myParentContent2" ), session );
+        contentDao.create( createContent( "myspace:myParentContent/myChildContent1" ), session );
+        contentDao.create( createContent( "myspace:myParentContent/myChildContent2" ), session );
         commit();
 
         // exercise
-        Contents childContent = contentDao.findChildContent( ContentPath.from( "myParentContent" ), session );
+        Contents childContent = contentDao.findChildContent( ContentPath.from( "myspace:myParentContent" ), session );
 
         // verify
         assertTrue( childContent.isNotEmpty() );
-        assertEquals( ContentPath.from( "myParentContent/myChildContent2" ), childContent.getList().get( 0 ).getPath() );
-        assertEquals( ContentPath.from( "myParentContent/myChildContent1" ), childContent.getList().get( 1 ).getPath() );
+        assertEquals( ContentPath.from( "myspace:myParentContent/myChildContent2" ), childContent.getList().get( 0 ).getPath() );
+        assertEquals( ContentPath.from( "myspace:myParentContent/myChildContent1" ), childContent.getList().get( 1 ).getPath() );
     }
 
     @Test
@@ -358,22 +406,23 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        contentDao.create( createContent( "branch-A" ), session );
-        contentDao.create( createContent( "branch-A/branch-A-A" ), session );
-        contentDao.create( createContent( "branch-B" ), session );
-        contentDao.create( createContent( "branch-B/branch-B-A" ), session );
-        contentDao.create( createContent( "branch-B/branch-B-A/branch-B-A-A" ), session );
-        contentDao.create( createContent( "branch-B/branch-B-A/branch-B-A-B" ), session );
-        contentDao.create( createContent( "branch-B/branch-B-A/branch-B-A-C" ), session );
-        contentDao.create( createContent( "branch-B/branch-B-B" ), session );
-        contentDao.create( createContent( "branch-B/branch-B-B/branch-B-B-A" ), session );
+        contentDao.create( createContent( "myspace:/" ), session );
+        contentDao.create( createContent( "myspace:branch-A" ), session );
+        contentDao.create( createContent( "myspace:branch-A/branch-A-A" ), session );
+        contentDao.create( createContent( "myspace:branch-B" ), session );
+        contentDao.create( createContent( "myspace:branch-B/branch-B-A" ), session );
+        contentDao.create( createContent( "myspace:branch-B/branch-B-A/branch-B-A-A" ), session );
+        contentDao.create( createContent( "myspace:branch-B/branch-B-A/branch-B-A-B" ), session );
+        contentDao.create( createContent( "myspace:branch-B/branch-B-A/branch-B-A-C" ), session );
+        contentDao.create( createContent( "myspace:branch-B/branch-B-B" ), session );
+        contentDao.create( createContent( "myspace:branch-B/branch-B-B/branch-B-B-A" ), session );
         commit();
 
         // exercise
         Tree<Content> tree = contentDao.getContentTree( session );
 
         // verify
-        assertEquals( 9, tree.deepSize() );
+        assertEquals( 10, tree.deepSize() );
     }
 
     @Test
@@ -381,21 +430,22 @@ public class ContentDaoImplTest
         throws Exception
     {
         // setup
-        final Content content = newContent().path( ContentPath.from( "myContent" ) ).build();
+        contentDao.create( createContent( "myspace:/" ), session );
+        final Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
         content.setData( "myData", "myValue" );
         content.setData( "mySet.myData", "myOtherValue" );
         final ContentId contentId = contentDao.create( content, session );
 
         // exercise
-        contentDao.renameContent( ContentPath.from( "myContent" ), "newContentName", session );
+        contentDao.renameContent( ContentPath.from( "myspace:myContent" ), "newContentName", session );
         commit();
 
         // verify
         final Content storedContent = contentDao.select( contentId, session );
         assertNotNull( storedContent );
-        assertEquals( ContentPath.from( "newContentName" ), storedContent.getPath() );
+        assertEquals( ContentPath.from( "myspace:newContentName" ), storedContent.getPath() );
 
-        final Content contentNotFound = contentDao.select( ContentPath.from( "myContent" ), session );
+        final Content contentNotFound = contentDao.select( ContentPath.from( "myspace:myContent" ), session );
         assertNull( contentNotFound );
     }
 

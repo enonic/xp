@@ -94,15 +94,20 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
         var contentWizardData = contentWizard.getData();
         var contentData = contentWizardData.contentData;
         var displayName = contentWizardData.displayName;
+        var isNewContent = !content.path;
 
         var contentParams = {
             contentData: contentData,
             qualifiedContentTypeName: contentType.qualifiedName,
-            contentPath: this.getContentPath(displayName, content, contentParent),
+            contentPath: isNewContent? null : content.path,
+            parentContentPath: isNewContent? contentParent.path : null,
             displayName: displayName
         };
 
-        var onUpdateContentSuccess = function (created, updated) {
+        var onUpdateContentSuccess = function (created, updated, contentPath) {
+            if (created) {
+                content.path = contentPath;
+            }
             if (created || updated) {
                 if (closeWizard) {
                     me.getContentWizardTab().close();
@@ -118,21 +123,6 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
             }
         };
         this.remoteCreateOrUpdateContent(contentParams, onUpdateContentSuccess);
-    },
-
-    getContentPath: function (displayName, content, contentParent) {
-        var contentPath = "/";
-        if (content) {
-            // editing content, leave path as is
-            contentPath += content.path;
-        } else {
-            // creating new content, prepend parent path if any
-            if (contentParent) {
-                contentPath += contentParent.path + "/";
-            }
-            contentPath += displayName;
-        }
-        return contentPath;
     },
 
 

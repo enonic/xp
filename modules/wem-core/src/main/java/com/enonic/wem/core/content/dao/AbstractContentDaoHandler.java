@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content.dao;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.ItemNotFoundException;
@@ -9,18 +10,21 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang.StringUtils;
+import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.core.jcr.JcrConstants;
 
 import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.core.content.dao.ContentDao.CONTENTS_PATH;
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_HISTORY_NODE;
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_PREFIX;
+import static com.enonic.wem.core.content.dao.ContentDao.SPACES_PATH;
+import static com.enonic.wem.core.content.dao.ContentDao.SPACE_CONTENT_ROOT_NODE;
 import static com.enonic.wem.core.jcr.JcrHelper.getNodeOrNull;
+import static org.apache.commons.lang.StringUtils.removeStart;
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
 abstract class AbstractContentDaoHandler
@@ -34,19 +38,19 @@ abstract class AbstractContentDaoHandler
         this.session = session;
     }
 
-    protected final List<ContentAndNode> doContentNodesToContentAndNodes( final NodeIterator nodeIterator )
+    protected final List<ContentAndNode> doContentNodesToContentAndNodes( final Iterator<Node> nodeIterator )
         throws RepositoryException
     {
         List<ContentAndNode> contentList = new ArrayList<ContentAndNode>();
         while ( nodeIterator.hasNext() )
         {
-            final Node contentNode = nodeIterator.nextNode();
+            final Node contentNode = nodeIterator.next();
             if ( contentNode.getName().equals( CONTENT_VERSION_HISTORY_NODE ) )
             {
                 continue;
             }
             final String jcrNodePath = contentNode.getPath();
-            final String contentPath = substringAfter( jcrNodePath, CONTENTS_PATH );
+            final String contentPath = substringAfter( jcrNodePath, SPACES_PATH );
             final Content.Builder contentBuilder = newContent().path( ContentPath.from( contentPath ) );
             contentJcrMapper.toContent( contentNode, contentBuilder );
             contentList.add( new ContentAndNode( contentBuilder.build(), contentNode ) );
@@ -54,12 +58,20 @@ abstract class AbstractContentDaoHandler
         return contentList;
     }
 
-    protected final NodeIterator doGetTopContentNodes( final Session session )
+    protected final Iterator<Node> doGetTopContentNodes( final Session session )
         throws RepositoryException
     {
         final Node rootNode = session.getRootNode();
-        final Node contentsNode = getNodeOrNull( rootNode, CONTENTS_PATH );
-        return contentsNode.getNodes();
+        final Node contentsNode = getNodeOrNull( rootNode, SPACES_PATH );
+
+        final List<Node> topNodes = Lists.newArrayList();
+        final NodeIterator spaceNodesIterator = contentsNode.getNodes();
+        while ( spaceNodesIterator.hasNext() )
+        {
+            final Node spaceNode = spaceNodesIterator.nextNode();
+            topNodes.add( spaceNode.getNode( SPACE_CONTENT_ROOT_NODE ) );
+        }
+        return topNodes.iterator();
     }
 
     protected final NodeIterator doGetChildContentNodes( final Node contentParentNode )
@@ -71,10 +83,6 @@ abstract class AbstractContentDaoHandler
     protected final Node doGetContentNode( final Session session, final ContentPath contentPath )
         throws RepositoryException
     {
-        if ( contentPath.isRoot() )
-        {
-            return null;
-        }
         final String path = getNodePath( contentPath );
         final Node rootNode = session.getRootNode();
         return getNodeOrNull( rootNode, path );
@@ -125,8 +133,20 @@ abstract class AbstractContentDaoHandler
 
     private String getNodePath( final ContentPath contentPath )
     {
-        final String relativePathToContent = StringUtils.removeStart( contentPath.toString(), "/" );
-        return CONTENTS_PATH + relativePathToContent;
+        if ( contentPath.isRoot() )
+        {
+            return getSpaceRootPath( contentPath.getSpace() );
+        }
+        else
+        {
+            final String relativePathToContent = contentPath.getRelativePath();
+            return getSpaceRootPath( contentPath.getSpace() ) + "/" + removeStart( relativePathToContent, "/" );
+        }
+    }
+
+    protected String getSpaceRootPath( final SpaceName spaceName )
+    {
+        return SPACES_PATH + spaceName.name() + "/" + SPACE_CONTENT_ROOT_NODE;
     }
 
     protected Node getContentVersionHistoryNode( final Node contentNode )

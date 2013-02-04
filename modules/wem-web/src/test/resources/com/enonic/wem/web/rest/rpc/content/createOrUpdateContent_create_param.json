@@ -1,0 +1,10 @@
+{
+    "displayName": "My Child Content",
+    "contentData": {
+        "myTextLine1": "value1",
+        "myTextLine2": "value2",
+        "myFormItemSet.myTextLine1": "value3"
+    },
+    "qualifiedContentTypeName": "myModule:myContentType",
+    "parentContentPath": "/myContent"
+}

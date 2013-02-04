@@ -22,7 +22,7 @@ final class GetContentTreeContentDaoHandler
     Tree<Content> handle()
         throws RepositoryException
     {
-        final Tree<Content> tree = new Tree<Content>();
+        final Tree<Content> tree = new Tree<>();
 
         final List<ContentAndNode> topContent = doContentNodesToContentAndNodes( doGetTopContentNodes( session ) );
 
@@ -39,7 +39,7 @@ final class GetContentTreeContentDaoHandler
         final NodeIterator childContentNodes = doGetChildContentNodes( parentContentAndNode.contentNode );
         final List<ContentAndNode> contentAndNodes = doContentNodesToContentAndNodes( childContentNodes );
 
-        final TreeNode<Content> node = new TreeNode<Content>( parentContentAndNode.content );
+        final TreeNode<Content> node = new TreeNode<>( parentContentAndNode.content );
         for ( ContentAndNode childContentAndNode : contentAndNodes )
         {
             node.addChild( doCreateNode( childContentAndNode ) );

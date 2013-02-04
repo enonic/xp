@@ -16,7 +16,6 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
-import com.enonic.wem.api.exception.ContentAlreadyExistException;
 import com.enonic.wem.api.exception.ContentNotFoundException;
 import com.enonic.wem.core.content.ContentPathNameGenerator;
 import com.enonic.wem.web.json.JsonErrorResult;
@@ -31,6 +30,8 @@ import static com.enonic.wem.api.content.editor.ContentEditors.setContentDisplay
 public final class CreateOrUpdateContentRpcHandler
     extends AbstractDataRpcHandler
 {
+    final ContentPathNameGenerator contentPathNameGenerator = new ContentPathNameGenerator();
+
     public CreateOrUpdateContentRpcHandler()
     {
         super( "content_createOrUpdate" );
@@ -40,7 +41,25 @@ public final class CreateOrUpdateContentRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final ContentPath contentPath = ContentPath.from( context.param( "contentPath" ).required().asString() );
+        final String contentPathParam = context.param( "contentPath" ).asString();
+        final String parentContentPathParam = context.param( "parentContentPath" ).asString();
+        final ContentPath contentPath;
+        final ContentPath parentContentPath;
+        if ( contentPathParam != null )
+        {
+            contentPath = ContentPath.from( contentPathParam );
+            parentContentPath = null;
+        }
+        else if ( parentContentPathParam != null )
+        {
+            parentContentPath = ContentPath.from( parentContentPathParam );
+            contentPath = null;
+        }
+        else
+        {
+            context.setResult( new JsonErrorResult( "Missing parameter [contentPath] or [parentContentPath]" ) );
+            return;
+        }
 
         final QualifiedContentTypeName qualifiedContentTypeName =
             new QualifiedContentTypeName( context.param( "qualifiedContentTypeName" ).required().asString() );
@@ -55,21 +74,18 @@ public final class CreateOrUpdateContentRpcHandler
 
         final ContentData contentData = new ContentDataParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
 
-        if ( !contentExists( contentPath ) )
+        if ( contentPath == null )
         {
             try
             {
-                final ContentId contentId = doCreateContent( qualifiedContentTypeName, contentPath, displayName, contentData );
-                context.setResult( CreateOrUpdateContentJsonResult.created( contentId ) );
+                final ContentPath newContentPath = getPathForNewContent( parentContentPath, displayName );
+                final ContentId contentId = doCreateContent( qualifiedContentTypeName, newContentPath, displayName, contentData );
+                context.setResult( CreateOrUpdateContentJsonResult.created( contentId, newContentPath ) );
             }
             catch ( ContentNotFoundException e )
             {
                 context.setResult(
-                    new JsonErrorResult( "Unable to create content. Path [{0}] does not exist", contentPath.getParentPath().toString() ) );
-            }
-            catch ( ContentAlreadyExistException e )
-            {
-                context.setResult( new JsonErrorResult( "Content with path [{0}] already exists.", contentPath.toString() ) );
+                    new JsonErrorResult( "Unable to create content. Path [{0}] does not exist", parentContentPath.toString() ) );
             }
         }
         else
@@ -89,14 +105,6 @@ public final class CreateOrUpdateContentRpcHandler
     private ContentId doCreateContent( final QualifiedContentTypeName qualifiedContentTypeName, ContentPath contentPath,
                                        final String displayName, final ContentData contentData )
     {
-        final ContentPathNameGenerator contentPathNameGenerator = new ContentPathNameGenerator();
-        ContentPath parentPath = contentPath.getParentPath();
-        if ( parentPath == null )
-        {
-            parentPath = ContentPath.ROOT;
-        }
-        contentPath = ContentPath.from( parentPath, contentPathNameGenerator.generatePathName( displayName ) );
-
         final CreateContent createContent = Commands.content().create();
         createContent.contentPath( contentPath );
         createContent.contentType( qualifiedContentTypeName );
@@ -104,6 +112,18 @@ public final class CreateOrUpdateContentRpcHandler
         createContent.displayName( displayName );
         createContent.owner( AccountKey.anonymous() );
         return client.execute( createContent );
+    }
+
+    private ContentPath getPathForNewContent( final ContentPath parentPath, final String displayName )
+    {
+        ContentPath contentPath = ContentPath.from( parentPath, contentPathNameGenerator.generatePathName( displayName ) );
+        int i = 1;
+        while ( contentExists( contentPath ) )
+        {
+            i++;
+            contentPath = ContentPath.from( parentPath, contentPathNameGenerator.generatePathName( displayName + "-" + i ) );
+        }
+        return contentPath;
     }
 
     private void doUpdateContent( final ContentPath contentPath, final String displayName, final ContentData contentData )

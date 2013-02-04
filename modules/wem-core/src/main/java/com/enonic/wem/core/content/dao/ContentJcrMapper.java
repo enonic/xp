@@ -12,13 +12,16 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.core.content.data.ContentDataJsonSerializer;
 
-import static com.enonic.wem.core.content.dao.ContentDao.CONTENTS_PATH;
+import static com.enonic.wem.core.content.dao.ContentDao.SPACES_PATH;
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_HISTORY_NODE;
+import static com.enonic.wem.core.content.dao.ContentDao.SPACE_CONTENT_ROOT_NODE;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyLong;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyString;
 import static com.enonic.wem.core.jcr.JcrHelper.setPropertyDateTime;
+import static org.apache.commons.lang.StringUtils.removeStart;
 import static org.apache.commons.lang.StringUtils.substringAfter;
+import static org.apache.commons.lang.StringUtils.substringBefore;
 
 final class ContentJcrMapper
 {
@@ -106,6 +109,9 @@ final class ContentJcrMapper
         {
             contentNodePath = contentNode.getPath();
         }
-        return ContentPath.from( substringAfter( contentNodePath, CONTENTS_PATH ) );
+        final String fullPath = substringAfter( contentNodePath, SPACES_PATH );
+        final String spaceName = substringBefore( fullPath, "/" );
+        final String relativePath = removeStart( substringAfter( fullPath, "/" ), SPACE_CONTENT_ROOT_NODE );
+        return ContentPath.from( spaceName + ":" + relativePath );
     }
 }

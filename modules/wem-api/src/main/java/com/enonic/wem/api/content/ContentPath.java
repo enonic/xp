@@ -54,7 +54,7 @@ public final class ContentPath
 
     public boolean isRoot()
     {
-        return ROOT.equals( this );
+        return this.elements.isEmpty();
     }
 
     public boolean isAbsolute()
@@ -93,6 +93,11 @@ public final class ContentPath
         Preconditions.checkNotNull( name, "name not given" );
         final LinkedList<String> newElements = newListOfParentElements();
         return newPath().spaceName( this.spaceName ).elements( newElements ).addElement( name ).build();
+    }
+
+    public String getRelativePath()
+    {
+        return Joiner.on( ELEMENT_DIVIDER ).join( elements );
     }
 
     public boolean hasName()
@@ -187,7 +192,12 @@ public final class ContentPath
 
     public static ContentPath from( final ContentPath parent, final String name )
     {
-        return newPath().elements( parent.elements ).addElement( name ).build();
+        return newPath().spaceName( parent.spaceName ).elements( parent.elements ).addElement( name ).build();
+    }
+
+    public static ContentPath rootOf( final SpaceName spaceName )
+    {
+        return newPath().spaceName( spaceName ).build();
     }
 
     public static Builder newPath()

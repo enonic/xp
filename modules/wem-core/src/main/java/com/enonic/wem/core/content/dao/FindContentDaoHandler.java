@@ -4,6 +4,8 @@ package com.enonic.wem.core.content.dao;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
@@ -31,6 +33,7 @@ final class FindContentDaoHandler
         final Contents.Builder contentsBuilder = Contents.builder();
         for ( ContentPath contentPath : contentPaths )
         {
+            Preconditions.checkArgument( contentPath.isAbsolute(), "Content path must be absolute: " + contentPath.toString() );
             final Content content = doFindContent( contentPath, session );
             if ( content != null )
             {

@@ -58,6 +58,7 @@ public final class CreateContent
     {
         Preconditions.checkNotNull( this.contentData, "contentData cannot be null" );
         Preconditions.checkNotNull( this.contentPath, "contentPath cannot be null" );
+        Preconditions.checkArgument( this.contentPath.isAbsolute(), "contentPath must be an absolute path and include the space" );
     }
 
     public ContentPath getContentPath()
