@@ -159,12 +159,19 @@ Ext.define('Admin.controller.homescreen.AppSelector', {
 
     onFilterTextFieldChange: function (textfield, newValue, oldValue) {
         var me = this;
-        var appsStore = me.getAppSelectorView().getStore();
+        me.filterTiles(newValue);
+        me.currentTileIndex = -1;
+    },
+
+
+    filterTiles: function (value) {
+        var me = this,
+            appsStore = me.getAppSelectorView().getStore(),
+            valueLowerCased = value.toLowerCase();
         appsStore.clearFilter();
         appsStore.filterBy(function (item) {
-            return item.get('name').toLowerCase().indexOf(newValue) > -1;
+            return item.get('name').toLowerCase().indexOf(valueLowerCased) > -1;
         });
-        me.currentTileIndex = -1;
     },
 
 

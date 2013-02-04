@@ -172,11 +172,12 @@
     proto.filterList = function (value) {
         var me = this,
             $element,
-            name;
+            name,
+            valueLowerCased = value.toLowerCase();
         me.getComponentList().each(function (index) {
             $element = $(this);
             name = $element.data('live-edit-component-name').toLowerCase();
-            $element.css('display', name.indexOf(value) > -1 ? '' : 'none');
+            $element.css('display', name.indexOf(valueLowerCased) > -1 ? '' : 'none');
         });
     };
 
