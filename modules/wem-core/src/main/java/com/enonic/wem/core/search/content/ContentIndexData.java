@@ -1,10 +1,18 @@
 package com.enonic.wem.core.search.content;
 
+import java.util.Iterator;
+
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.core.search.AbstractIndexData;
 import com.enonic.wem.core.search.IndexData;
 import com.enonic.wem.core.search.IndexType;
@@ -19,6 +27,8 @@ public class ContentIndexData
 
     public ContentIndexData( Content content )
     {
+        Preconditions.checkNotNull( content.getId(), "Content Id could not be null" );
+
         this.contentId = content.getId();
 
         try
@@ -35,7 +45,6 @@ public class ContentIndexData
         throws Exception
     {
         final XContentBuilder result = buildContentStart( content );
-
         buildAccountEnd( result );
         return result;
     }
@@ -47,9 +56,55 @@ public class ContentIndexData
         final XContentBuilder result = XContentFactory.jsonBuilder();
         result.startObject();
         addField( result, ContentIndexField.KEY_FIELD.id(), contentId.id() );
+        addMetadata( content, result );
+        addContentData( content, result );
+
+        return result;
+    }
+
+    private void addMetadata( final Content content, final XContentBuilder result )
+        throws Exception
+    {
         addField( result, ContentIndexField.CREATED_FIELD.id(), content.getCreatedTime() );
         addField( result, ContentIndexField.LAST_MODIFIED_FIELD.id(), content.getModifiedTime() );
-        return result;
+        addField( result, ContentIndexField.CONTENT_TYPE_NAME_FIELD.id(), content.getType().getContentTypeName() );
+        addField( result, ContentIndexField.DISPLAY_NAME_FIELD.id(), content.getDisplayName() );
+        addField( result, ContentIndexField.OWNER_FIELD.id(), content.getOwner().getQualifiedName() );
+        addField( result, ContentIndexField.MODIFIER_FIELD.id(), content.getModifier().getQualifiedName() );
+    }
+
+    private void addContentData( final Content content, final XContentBuilder result )
+        throws Exception
+    {
+        final ContentData contentData = content.getData();
+
+        final DataSet dataSet = contentData.getDataSet();
+
+        traverseDataSet( result, dataSet );
+    }
+
+    private void traverseDataSet( final XContentBuilder result, final DataSet dataSet )
+        throws Exception
+    {
+        final Iterator<Entry> dataSetIterator = dataSet.iterator();
+
+        while ( dataSetIterator.hasNext() )
+        {
+            final Entry entry = dataSetIterator.next();
+
+            if ( entry.isData() )
+            {
+                final Data data = entry.toData();
+                final Object value = data.getValue().getObject();
+
+                addField( result, entry.getPath().toString(), value );
+            }
+            else if ( entry.isDataSet() )
+            {
+                final DataSet entryDataSet = entry.toDataSet();
+                traverseDataSet( result, entryDataSet );
+            }
+        }
     }
 
     private void buildAccountEnd( final XContentBuilder contentBuilder )
@@ -67,7 +122,7 @@ public class ContentIndexData
     @Override
     public XContentBuilder getData()
     {
-        return null;
+        return data;
     }
 
     @Override

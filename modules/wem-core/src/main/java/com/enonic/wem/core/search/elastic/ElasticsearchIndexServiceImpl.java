@@ -32,7 +32,7 @@ public class ElasticsearchIndexServiceImpl
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexServiceImpl.class );
 
     // TODO: As properties
-    private TimeValue WAIT_FOR_YELLOW_TIMEOUT = TimeValue.timeValueSeconds( 60 );
+    private TimeValue WAIT_FOR_YELLOW_TIMEOUT = TimeValue.timeValueSeconds( 20 );
 
     public static final TimeValue CLUSTER_NOWAIT_TIMEOUT = TimeValue.timeValueSeconds( 1 );
 

@@ -3,6 +3,8 @@ package com.enonic.wem.core.content;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +23,8 @@ public class CreateContentHandler
     private ContentDao contentDao;
 
     private IndexService indexService;
+
+    private final static Logger LOG = LoggerFactory.getLogger( CreateContentHandler.class );
 
     public CreateContentHandler()
     {
@@ -47,7 +51,16 @@ public class CreateContentHandler
         final ContentId contentId = contentDao.create( content, session );
         session.save();
 
-        indexService.index( content );
+        try
+        {
+            // TODO: Temporary easy solution to get Id. The index logic should eventually not be here anyway
+            final Content storedContent = builder.id( contentId ).build();
+            indexService.index( storedContent );
+        }
+        catch ( Exception e )
+        {
+            LOG.error( "Index content failed", e );
+        }
 
         command.setResult( contentId );
     }
@@ -56,5 +69,11 @@ public class CreateContentHandler
     public void setContentDao( final ContentDao contentDao )
     {
         this.contentDao = contentDao;
+    }
+
+    @Autowired
+    public void setIndexService( final IndexService indexService )
+    {
+        this.indexService = indexService;
     }
 }

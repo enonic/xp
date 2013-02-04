@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.core.search.account.AccountIndexDataFactory;
+import com.enonic.wem.core.search.content.ContentIndexDataFactory;
 
 
 @Component
@@ -13,7 +14,9 @@ public class IndexDataFactory
 {
     private AccountIndexDataFactory accountIndexDataFactory;
 
-    public IndexData createIndexDataForObject( Object indexableData )
+    private ContentIndexDataFactory contentIndexDataFactory;
+
+    public IndexData createIndexDataForObject( final Object indexableData )
     {
 
         if ( indexableData instanceof Account )
@@ -22,7 +25,7 @@ public class IndexDataFactory
         }
         else if ( indexableData instanceof Content )
         {
-
+            return contentIndexDataFactory.create( (Content) indexableData );
         }
 
         return null;
@@ -32,5 +35,11 @@ public class IndexDataFactory
     public void setAccountIndexDataFactory( final AccountIndexDataFactory accountIndexDataFactory )
     {
         this.accountIndexDataFactory = accountIndexDataFactory;
+    }
+
+    @Autowired
+    public void setContentIndexDataFactory( final ContentIndexDataFactory contentIndexDataFactory )
+    {
+        this.contentIndexDataFactory = contentIndexDataFactory;
     }
 }

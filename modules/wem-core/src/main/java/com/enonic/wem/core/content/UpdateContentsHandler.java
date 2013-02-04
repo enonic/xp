@@ -1,5 +1,7 @@
 package com.enonic.wem.core.content;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +12,7 @@ import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
+import com.enonic.wem.core.search.IndexService;
 import com.enonic.wem.core.time.TimeService;
 
 import static com.enonic.wem.api.content.Content.newContent;
@@ -21,6 +24,11 @@ public class UpdateContentsHandler
     private ContentDao contentDao;
 
     private TimeService timeService;
+
+    private IndexService indexService;
+
+    private final static Logger LOG = LoggerFactory.getLogger( UpdateContentsHandler.class );
+
 
     public UpdateContentsHandler()
     {
@@ -44,6 +52,17 @@ public class UpdateContentsHandler
                 final boolean createNewVersion = true;
                 contentDao.update( contentToUpdate, createNewVersion, context.getJcrSession() );
                 context.getJcrSession().save();
+
+                try
+                {
+                    // TODO: Temporary easy solution. The index logic should eventually not be here anyway
+                    indexService.index( contentToUpdate );
+                }
+                catch ( Exception e )
+                {
+                    LOG.error( "Index content failed", e );
+                }
+
             }
         }
     }
@@ -58,5 +77,11 @@ public class UpdateContentsHandler
     public void setContentDao( final ContentDao contentDao )
     {
         this.contentDao = contentDao;
+    }
+
+    @Autowired
+    public void setIndexService( final IndexService indexService )
+    {
+        this.indexService = indexService;
     }
 }
