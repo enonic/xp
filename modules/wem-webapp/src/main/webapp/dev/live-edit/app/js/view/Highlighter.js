@@ -99,7 +99,7 @@
 
         switch (componentType) {
         case 'region':
-            strokeColor = '#141414';
+            strokeColor = 'rgba(20,20,20,1)';
             strokeDashArray = '';
             fillColor = 'rgba(255,255,255,0)';
             break;
@@ -114,12 +114,12 @@
             fillColor = 'rgba(170,170,255,.5)';
             break;
         case 'paragraph':
-            strokeColor = '#141414';
+            strokeColor = 'rgba(85,85,255,1)';
             strokeDashArray = '5 5';
             fillColor = 'rgba(255,255,255,0)';
             break;
         default:
-            strokeColor = '#141414';
+            strokeColor = 'rgba(20,20,20,1)';
             strokeDashArray = '';
             fillColor = 'rgba(255,255,255,0)';
         }
