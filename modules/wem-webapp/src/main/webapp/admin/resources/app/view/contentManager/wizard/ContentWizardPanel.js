@@ -126,7 +126,12 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
 
         var splitter = {
             itemId: 'splitter',
-            xtype: 'splitter'
+            xtype: 'splitter',
+            listeners: {
+                move: function (el, x, y, opts) {
+                    me.repositionWizardNavButton(x);
+                }
+            }
         };
 
         this.items = [wizardPanel, splitter, liveEdit];
@@ -178,6 +183,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     },
 
     cycleLiveEdit: function () {
+        var me = this;
         // cycle mode
         if (this.splitMode === 2) {
             this.splitMode = 0;
@@ -200,6 +206,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             livePreview.load('/dev/live-edit/page/page.jsp', true);
             splitter.show();
             livePreview.show();
+            //me.repositionWizardNavButton(splitter.el.getWidth() + livePreview.el.getWidth());
             break;
         case 2:
             // live
@@ -208,6 +215,17 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             break;
         }
         return this.splitMode;
+    },
+
+    repositionWizardNavButton: function (offset) {
+        // Hack to make arrow move when using split edit. Possibly not a great solution.
+        var baseOffset = -92; // Offset is 30 from right side converted to left (-60) minus half of the width of the button (32)
+        var nextButton = this.down("#next");
+        offset += baseOffset;
+        nextButton.el.setLeft(offset + "px");
+        // For some reason the width is changed when the offset is changed, hardcoded to change it back
+        nextButton.el.setWidth("64px");
     }
+
 
 });
