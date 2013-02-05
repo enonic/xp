@@ -30,7 +30,6 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         this.headerData = {
             imageUrl: (this.data && this.data.content) ? this.data.content.iconUrl : undefined,
             displayName: (this.data && this.data.content) ? this.data.content.displayName : 'New Content',
-            contentType: (this.data && this.data.contentType) ? this.data.contentType.qualifiedName : undefined,
             contentPath: (this.data && this.data.content) ? this.data.content.path : this.data.contentParent ? this.data.contentParent.path
                 : '',
             contentAssignee: 'Thomas Sigdestad',
@@ -64,12 +63,20 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
                             src: me.headerData.imageUrl,
                             listeners: {
                                 render: function (cmp) {
-                                    Ext.tip.QuickTipManager.register({
-                                        target: cmp.el,
-                                        text: 'Content',
-                                        width: 100,
-                                        dismissDelay: 10000 // Hide after 10 seconds hover
-                                    });
+
+                                    var contentType = (me.data && me.data.contentType) ? me.data.contentType : undefined;
+                                    if (contentType) {
+                                        var toolText = '<strong>' + contentType.displayName + '</strong></br>' +
+                                                       contentType.module + ':' + contentType.name;
+
+                                        var tip = Ext.create('Ext.tip.ToolTip', {
+                                            target: cmp.el,
+                                            html: toolText,
+                                            padding: 10,
+                                            styleHtmlContent: true,
+                                            dismissDelay: 10000 // Hide after 10 seconds hover
+                                        });
+                                    }
                                 }
                             }
                         }
@@ -89,7 +96,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
                                 {
                                     xtype: 'textfield',
                                     itemId: 'displayName',
-                                    value: me.headerData ? me.headerData.displayName : undefined,
+                                    value: me.headerData.displayName,
                                     emptyText: 'Display Name',
                                     enableKeyEvents: true,
                                     cls: 'admin-display-name',
@@ -145,7 +152,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
 
     getSteps: function () {
         var dataStep = {
-            stepTitle: this.data ? this.data.contentType.displayName : "Data",
+            stepTitle: ( this.data && this.data.contentType ) ? this.data.contentType.displayName : "Data",
             xtype: 'contentDataPanel',
             contentType: this.data ? this.data.contentType : undefined,
             content: this.data ? this.data.content : null
