@@ -31,7 +31,7 @@ public final class RelationshipTypesExistsHandler
         final Session session = context.getJcrSession();
 
         final RelationshipTypeSelectors selectors = command.getSelectors();
-        final QualifiedRelationshipTypeNames existing = relationshipTypeDao.exists( selectors, session );
+        final QualifiedRelationshipTypeNames existing = relationshipTypeDao.exists( (QualifiedRelationshipTypeNames) selectors, session );
 
         command.setResult( RelationshipTypesExistsResult.from( existing ) );
     }

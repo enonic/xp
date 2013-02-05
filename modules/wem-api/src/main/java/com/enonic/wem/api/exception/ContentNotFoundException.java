@@ -13,6 +13,6 @@ public final class ContentNotFoundException
 
     public ContentNotFoundException( final ContentId contentId )
     {
-        super( "Content with id [{0}] was not found", contentId.id() );
+        super( "Content with id [{0}] was not found", contentId.toString() );
     }
 }

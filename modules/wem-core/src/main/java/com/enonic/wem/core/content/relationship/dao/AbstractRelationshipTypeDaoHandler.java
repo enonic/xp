@@ -6,9 +6,11 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.jcr.JcrHelper;
+import com.enonic.wem.core.support.dao.AbstractDaoHandler;
 
 
-abstract class AbstractRelationshipTypeDaoHandler
+abstract class AbstractRelationshipTypeDaoHandler<T>
+    extends AbstractDaoHandler<T>
 {
     protected final Session session;
 
@@ -19,10 +21,10 @@ abstract class AbstractRelationshipTypeDaoHandler
         this.session = session;
     }
 
-    protected boolean nodeExists( final QualifiedRelationshipTypeName relationshipTypeName )
+    protected boolean nodeExists( final QualifiedRelationshipTypeName qualifiedName )
         throws RepositoryException
     {
-        final Node node = this.getRelationshipTypeNode( relationshipTypeName );
+        final Node node = this.getRelationshipTypeNode( qualifiedName );
         if ( node == null )
         {
             return false;
@@ -31,24 +33,24 @@ abstract class AbstractRelationshipTypeDaoHandler
         return true;
     }
 
-    protected final Node getRelationshipTypeNode( final QualifiedRelationshipTypeName relationshipTypeName )
+    protected final Node getRelationshipTypeNode( final QualifiedRelationshipTypeName qualifiedName )
         throws RepositoryException
     {
-        final String path = getNodePath( relationshipTypeName );
+        final String path = getNodePath( qualifiedName );
         final Node rootNode = session.getRootNode();
         return JcrHelper.getNodeOrNull( rootNode, path );
     }
 
-    protected final String getNodePath( final QualifiedRelationshipTypeName relationshipTypeName )
+    protected final String getNodePath( final QualifiedRelationshipTypeName qualifiedName )
     {
-        return RelationshipTypeDao.RELATIONSHIP_TYPES_PATH + relationshipTypeName.getModuleName() + "/" +
-            relationshipTypeName.getLocalName();
+        return RelationshipTypeDao.RELATIONSHIP_TYPES_PATH + qualifiedName.getModuleName() + "/" +
+            qualifiedName.getLocalName();
     }
 
-    protected final boolean relationshipTypeExists( final QualifiedRelationshipTypeName relationshipTypeName )
+    protected final boolean relationshipTypeExists( final QualifiedRelationshipTypeName qualifiedName )
         throws RepositoryException
     {
-        final String relationshipTypePath = getNodePath( relationshipTypeName );
+        final String relationshipTypePath = getNodePath( qualifiedName );
         return session.getRootNode().hasNode( relationshipTypePath );
     }
 }

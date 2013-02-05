@@ -8,4 +8,9 @@ public final class UserKey
     {
         super( AccountType.USER, userStore, localName );
     }
+
+    public static UserKey from( final String qualifiedName )
+    {
+        return from( AccountType.USER, qualifiedName ).asUser();
+    }
 }

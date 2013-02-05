@@ -93,7 +93,7 @@ abstract class AbstractContentDaoHandler
     {
         try
         {
-            return session.getNodeByIdentifier( contentId.id() );
+            return session.getNodeByIdentifier( contentId.toString() );
         }
         catch ( ItemNotFoundException e )
         {

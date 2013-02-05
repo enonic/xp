@@ -39,7 +39,7 @@ final class CreateOrUpdateContentJsonResult
         json.put( "updated", !created );
         if ( contentId != null )
         {
-            json.put( "contentId", contentId.id() );
+            json.put( "contentId", contentId.toString() );
         }
         if ( contentPath != null )
         {

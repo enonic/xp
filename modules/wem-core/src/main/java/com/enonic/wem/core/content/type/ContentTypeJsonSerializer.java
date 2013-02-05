@@ -12,8 +12,8 @@ import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItems;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
-import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
+import com.enonic.wem.core.content.JsonSerializerUtil;
 import com.enonic.wem.core.content.type.form.FormItemsJsonSerializer;
 
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
@@ -54,11 +54,11 @@ public class ContentTypeJsonSerializer
         objectNode.put( "isFinal", contentType.isFinal() );
         if ( includeCreatedTime )
         {
-            JsonParserUtil.setDateTimeValue( "createdTime", contentType.getCreatedTime(), objectNode );
+            JsonSerializerUtil.setDateTimeValue( "createdTime", contentType.getCreatedTime(), objectNode );
         }
         if ( includeModifiedTime )
         {
-            JsonParserUtil.setDateTimeValue( "modifiedTime", contentType.getModifiedTime(), objectNode );
+            JsonSerializerUtil.setDateTimeValue( "modifiedTime", contentType.getModifiedTime(), objectNode );
         }
         if ( contentType.form() == null )
         {
@@ -81,22 +81,22 @@ public class ContentTypeJsonSerializer
     @Override
     protected ContentType parse( final JsonNode contentTypeNode )
     {
-        final String superTypeValue = JsonParserUtil.getStringValue( "superType", contentTypeNode );
+        final String superTypeValue = JsonSerializerUtil.getStringValue( "superType", contentTypeNode );
         final QualifiedContentTypeName superType = superTypeValue != null ? new QualifiedContentTypeName( superTypeValue ) : null;
 
         final ContentType.Builder builder = newContentType();
-        builder.name( JsonParserUtil.getStringValue( "name", contentTypeNode ) );
-        builder.module( ModuleName.from( JsonParserUtil.getStringValue( "module", contentTypeNode ) ) );
-        builder.displayName( JsonParserUtil.getStringValue( "displayName", contentTypeNode ) );
+        builder.name( JsonSerializerUtil.getStringValue( "name", contentTypeNode ) );
+        builder.module( ModuleName.from( JsonSerializerUtil.getStringValue( "module", contentTypeNode ) ) );
+        builder.displayName( JsonSerializerUtil.getStringValue( "displayName", contentTypeNode ) );
         builder.superType( superType );
-        builder.setAbstract( JsonParserUtil.getBooleanValue( "isAbstract", contentTypeNode ) );
-        builder.setFinal( JsonParserUtil.getBooleanValue( "isFinal", contentTypeNode ) );
+        builder.setAbstract( JsonSerializerUtil.getBooleanValue( "isAbstract", contentTypeNode ) );
+        builder.setFinal( JsonSerializerUtil.getBooleanValue( "isFinal", contentTypeNode ) );
         if ( includeCreatedTime )
         {
             if ( contentTypeNode.has( "createdTime" ) )
             {
                 // TODO check necessary to handle old json data, should be remove later on
-                builder.createdTime( JsonParserUtil.getDateTimeValue( "createdTime", contentTypeNode ) );
+                builder.createdTime( JsonSerializerUtil.getDateTimeValue( "createdTime", contentTypeNode ) );
             }
             else
             {
@@ -108,7 +108,7 @@ public class ContentTypeJsonSerializer
             if ( contentTypeNode.has( "modifiedTime" ) )
             {
                 // TODO check necessary to handle old json data, should be remove later on
-                builder.modifiedTime( JsonParserUtil.getDateTimeValue( "modifiedTime", contentTypeNode ) );
+                builder.modifiedTime( JsonSerializerUtil.getDateTimeValue( "modifiedTime", contentTypeNode ) );
             }
             else
             {

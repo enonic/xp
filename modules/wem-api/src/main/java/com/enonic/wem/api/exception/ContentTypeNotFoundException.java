@@ -7,6 +7,6 @@ public final class ContentTypeNotFoundException
 {
     public ContentTypeNotFoundException( final QualifiedContentTypeName qualifiedContentTypeName )
     {
-        super( "Content type [{0}] was not found", qualifiedContentTypeName );
+        super( "ContentType [{0}] was not found", qualifiedContentTypeName );
     }
 }

@@ -7,7 +7,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.type.form.inputtype.BaseInputType;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
-import com.enonic.wem.core.content.JsonParserUtil;
+import com.enonic.wem.core.content.JsonSerializerUtil;
 
 public class InputTypeJsonSerializer
     extends AbstractJsonSerializer<BaseInputType>
@@ -28,8 +28,8 @@ public class InputTypeJsonSerializer
 
     public BaseInputType parse( final JsonNode node )
     {
-        final String className = JsonParserUtil.getStringValue( "name", node );
-        final boolean builtIn = JsonParserUtil.getBooleanValue( "builtIn", node );
+        final String className = JsonSerializerUtil.getStringValue( "name", node );
+        final boolean builtIn = JsonSerializerUtil.getBooleanValue( "builtIn", node );
         return InputTypeFactory.instantiate( className, builtIn );
     }
 }

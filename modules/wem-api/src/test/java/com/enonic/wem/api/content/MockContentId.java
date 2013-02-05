@@ -14,7 +14,7 @@ public final class MockContentId
     }
 
     @Override
-    public String id()
+    public String toString()
     {
         return this.id;
     }
@@ -32,19 +32,13 @@ public final class MockContentId
         }
 
         final ContentId that = (ContentId) o;
-        return id.equals( that.id() );
+        return id.equals( that.toString() );
     }
 
     @Override
     public int hashCode()
     {
         return id.hashCode();
-    }
-
-    @Override
-    public String toString()
-    {
-        return id;
     }
 
     public static ContentId from( final String id )

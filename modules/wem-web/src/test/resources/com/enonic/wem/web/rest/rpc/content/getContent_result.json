@@ -1,15 +1,15 @@
 {
     "success": true,
     "content": {
-        "id" : null,
+        "id": null,
         "path": "MySite/MyContent",
         "name": "MyContent",
         "type": "myModule:myType",
         "displayName": "My Content",
         "owner": "user:myStore:me",
         "modifier": "user:system:admin",
-        "modifiedTime": "2000-01-01T12:00:00.000+01:00",
-        "createdTime": "2000-01-01T12:00:00.000+01:00",
+        "modifiedTime": "2000-01-01T11:00:00.000Z",
+        "createdTime": "2000-01-01T11:00:00.000Z",
         "data": [
             {
                 "name": "field1",

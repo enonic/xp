@@ -9,17 +9,17 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
-import org.joda.time.DateTime;
 
-import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.core.content.data.ContentDataJsonSerializer;
 
-import static com.enonic.wem.core.content.JsonParserUtil.getStringValue;
+import static com.enonic.wem.core.content.JsonSerializerUtil.getDateTimeValue;
+import static com.enonic.wem.core.content.JsonSerializerUtil.getStringValue;
+import static com.enonic.wem.core.content.JsonSerializerUtil.getUserKeyValue;
+import static com.enonic.wem.core.content.JsonSerializerUtil.setDateTimeValue;
 
 public class ContentJsonSerializer
     extends AbstractJsonSerializer<Content>
@@ -44,15 +44,15 @@ public class ContentJsonSerializer
     {
         final ObjectNode jsonContent = objectMapper().createObjectNode();
 
-        jsonContent.put( "id", content.getId() == null ? null : content.getId().id() );
+        jsonContent.put( "id", content.getId() == null ? null : content.getId().toString() );
         jsonContent.put( "path", content.getPath().toString() );
         jsonContent.put( "name", content.getName() );
         jsonContent.put( "type", content.getType() != null ? content.getType().toString() : null );
         jsonContent.put( "displayName", content.getDisplayName() );
         jsonContent.put( "owner", content.getOwner() != null ? content.getOwner().toString() : null );
         jsonContent.put( "modifier", content.getModifier() != null ? content.getModifier().toString() : null );
-        jsonContent.put( "modifiedTime", content.getModifiedTime() != null ? content.getModifiedTime().toString() : null );
-        jsonContent.put( "createdTime", content.getCreatedTime() != null ? content.getCreatedTime().toString() : null );
+        setDateTimeValue( "modifiedTime", content.getModifiedTime(), jsonContent );
+        setDateTimeValue( "createdTime", content.getCreatedTime(), jsonContent );
 
         jsonContent.put( "data", contentDataSerializer.serialize( content.getData() ) );
         return jsonContent;
@@ -107,25 +107,15 @@ public class ContentJsonSerializer
         }
         contentBuilder.path( ContentPath.from( getStringValue( "path", contentNode, null ) ) );
         contentBuilder.displayName( getStringValue( "displayName", contentNode, null ) );
-        contentBuilder.owner( getUserValue( contentNode, "owner" ) );
-        contentBuilder.modifier( getUserValue( contentNode, "modifier" ) );
-        contentBuilder.modifiedTime( getDateTimeValue( contentNode, "modifiedTime" ) );
-        contentBuilder.createdTime( getDateTimeValue( contentNode, "createdTime" ) );
+        contentBuilder.owner( getUserKeyValue( "owner", contentNode ) );
+        contentBuilder.modifier( getUserKeyValue( "modifier", contentNode ) );
+        contentBuilder.modifiedTime( getDateTimeValue( "modifiedTime", contentNode ) );
+        contentBuilder.createdTime( getDateTimeValue( "createdTime", contentNode ) );
 
         contentBuilder.data( contentDataSerializer.parse( contentNode.get( "data" ) ) );
 
         return contentBuilder.build();
     }
 
-    private UserKey getUserValue( final JsonNode node, final String propertyName )
-    {
-        final String value = getStringValue( propertyName, node, null );
-        return value != null ? AccountKey.from( value ).asUser() : null;
-    }
 
-    private DateTime getDateTimeValue( final JsonNode node, final String propertyName )
-    {
-        final String value = getStringValue( propertyName, node, null );
-        return value != null ? DateTime.parse( value ) : null;
-    }
 }

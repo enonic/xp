@@ -1,6 +1,5 @@
 package com.enonic.wem.core.content.relationship.dao;
 
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.springframework.stereotype.Component;
@@ -10,59 +9,51 @@ import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationship.RelationshipType;
 import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
 import com.enonic.wem.api.content.relationship.RelationshipTypes;
-import com.enonic.wem.core.support.dao.AbstractCrudDao;
 
 @Component
 public final class RelationshipTypeDaoImpl
-    extends
-    AbstractCrudDao<RelationshipType, RelationshipTypes, QualifiedRelationshipTypeName, QualifiedRelationshipTypeNames, RelationshipTypeSelectors>
     implements RelationshipTypeDao
 {
 
-    public RelationshipTypeDaoImpl()
+    @Override
+    public void create( final RelationshipType relationshipType, final Session session )
     {
-        super( RelationshipType.class );
+        new RelationshipTypeDaoHandlerCreate( session ).relationshipType( relationshipType ).handle();
     }
 
     @Override
-    protected void doCreate( final RelationshipType relationshipType, final Session session )
-        throws RepositoryException
+    public void update( final RelationshipType relationshipType, final Session session )
     {
-        new CreateRelationshipTypeDaoHandler( session ).handle( relationshipType );
+        new RelationshipTypeDaoHandlerUpdate( session ).relationshipType( relationshipType ).handle();
     }
 
     @Override
-    protected void doUpdate( final RelationshipType relationshipType, final Session session )
-        throws RepositoryException
+    public void delete( final QualifiedRelationshipTypeName qualifiedName, final Session session )
     {
-        new UpdateRelationshipTypeDaoHandler( session ).handle( relationshipType );
+        new RelationshipTypeDaoHandlerDelete( session ).qualifiedRelationshipTypeName( qualifiedName ).handle();
     }
 
     @Override
-    protected void doDelete( final QualifiedRelationshipTypeName relationshipTypeName, final Session session )
-        throws RepositoryException
+    public QualifiedRelationshipTypeNames exists( final QualifiedRelationshipTypeNames qNames, final Session session )
     {
-        new DeleteRelationshipTypeDaoHandler( session ).handle( relationshipTypeName );
+        final RelationshipTypeDaoHandlerExists handler = new RelationshipTypeDaoHandlerExists( session ).selectors( qNames );
+        handler.handle();
+        return handler.getResult();
     }
 
     @Override
-    protected QualifiedRelationshipTypeNames doExists( final RelationshipTypeSelectors selectors, final Session session )
-        throws RepositoryException
+    public RelationshipTypes selectAll( final Session session )
     {
-        return new RelationshipTypesExistsDaoHandler( session ).handle( selectors );
+        final RelationshipTypeDaoHandlerSelect handler = new RelationshipTypeDaoHandlerSelect( session );
+        handler.handle();
+        return handler.getResult();
     }
 
     @Override
-    protected RelationshipTypes doSelectAll( final Session session )
-        throws RepositoryException
+    public RelationshipTypes select( final RelationshipTypeSelectors selectors, final Session session )
     {
-        return new RetrieveRelationshipTypesDaoHandler( session ).handle();
-    }
-
-    @Override
-    protected RelationshipTypes doSelect( final RelationshipTypeSelectors selectors, final Session session )
-        throws RepositoryException
-    {
-        return new RetrieveRelationshipTypesDaoHandler( session ).handle( selectors );
+        final RelationshipTypeDaoHandlerSelect handler = new RelationshipTypeDaoHandlerSelect( session ).selectors( selectors );
+        handler.handle();
+        return handler.getResult();
     }
 }

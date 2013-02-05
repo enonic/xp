@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.FormItems;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
-import com.enonic.wem.core.content.JsonParserUtil;
+import com.enonic.wem.core.content.JsonSerializerUtil;
 
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 
@@ -59,11 +59,11 @@ class FormItemSetJsonSerializer
     public FormItemSet parse( final JsonNode formItemSetObj )
     {
         final FormItemSet.Builder builder = newFormItemSet();
-        builder.name( JsonParserUtil.getStringValue( NAME, formItemSetObj ) );
-        builder.label( JsonParserUtil.getStringValue( LABEL, formItemSetObj, null ) );
-        builder.immutable( JsonParserUtil.getBooleanValue( IMMUTABLE, formItemSetObj ) );
-        builder.helpText( JsonParserUtil.getStringValue( HELP_TEXT, formItemSetObj ) );
-        builder.customText( JsonParserUtil.getStringValue( CUSTOM_TEXT, formItemSetObj ) );
+        builder.name( JsonSerializerUtil.getStringValue( NAME, formItemSetObj ) );
+        builder.label( JsonSerializerUtil.getStringValue( LABEL, formItemSetObj, null ) );
+        builder.immutable( JsonSerializerUtil.getBooleanValue( IMMUTABLE, formItemSetObj ) );
+        builder.helpText( JsonSerializerUtil.getStringValue( HELP_TEXT, formItemSetObj ) );
+        builder.customText( JsonSerializerUtil.getStringValue( CUSTOM_TEXT, formItemSetObj ) );
 
         parseOccurrences( builder, formItemSetObj.get( OCCURRENCES ) );
 

@@ -42,7 +42,7 @@ public final class CreateOrUpdateRelationshipTypeRpcHandler
 
         try
         {
-            relationshipType = relationshipTypeJsonSerializer.toRelationshipType( json );
+            relationshipType = relationshipTypeJsonSerializer.toObject( json );
         }
         catch ( XmlParsingException e )
         {

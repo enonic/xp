@@ -8,7 +8,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.content.type.form.inputtype.BaseInputType;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
-import com.enonic.wem.core.content.JsonParserUtil;
+import com.enonic.wem.core.content.JsonSerializerUtil;
 import com.enonic.wem.core.content.type.form.inputtype.InputTypeConfigJsonSerializer;
 
 import static com.enonic.wem.api.content.type.form.Input.newInput;
@@ -74,12 +74,12 @@ public class InputJsonSerializer
     public Input parse( final JsonNode inputObj )
     {
         final Input.Builder builder = newInput();
-        builder.name( JsonParserUtil.getStringValue( NAME, inputObj ) );
-        builder.label( JsonParserUtil.getStringValue( LABEL, inputObj, null ) );
-        builder.immutable( JsonParserUtil.getBooleanValue( IMMUTABLE, inputObj ) );
-        builder.helpText( JsonParserUtil.getStringValue( HELP_TEXT, inputObj ) );
-        builder.customText( JsonParserUtil.getStringValue( CUSTOM_TEXT, inputObj ) );
-        builder.indexed( JsonParserUtil.getBooleanValue( INDEXED, inputObj ) );
+        builder.name( JsonSerializerUtil.getStringValue( NAME, inputObj ) );
+        builder.label( JsonSerializerUtil.getStringValue( LABEL, inputObj, null ) );
+        builder.immutable( JsonSerializerUtil.getBooleanValue( IMMUTABLE, inputObj ) );
+        builder.helpText( JsonSerializerUtil.getStringValue( HELP_TEXT, inputObj ) );
+        builder.customText( JsonSerializerUtil.getStringValue( CUSTOM_TEXT, inputObj ) );
+        builder.indexed( JsonSerializerUtil.getBooleanValue( INDEXED, inputObj ) );
         parseValidationRegexp( builder, inputObj );
 
         parseOccurrences( builder, inputObj.get( OCCURRENCES ) );
@@ -91,7 +91,7 @@ public class InputJsonSerializer
 
     private void parseValidationRegexp( final Input.Builder builder, final JsonNode inputNode )
     {
-        final String validationRegexp = JsonParserUtil.getStringValue( VALIDATION_REGEXP, inputNode, null );
+        final String validationRegexp = JsonSerializerUtil.getStringValue( VALIDATION_REGEXP, inputNode, null );
         if ( validationRegexp != null )
         {
             builder.validationRegexp( validationRegexp );

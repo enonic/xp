@@ -22,7 +22,7 @@ public class ContentIdImplTest
         when( node.getIdentifier() ).thenReturn( "jcr-node-id" );
         final ContentId contentId = ContentIdFactory.from( node );
 
-        assertEquals( "jcr-node-id", contentId.id() );
+        assertEquals( "jcr-node-id", contentId.toString() );
         assertEquals( contentId, contentId );
     }
 
@@ -66,12 +66,12 @@ public class ContentIdImplTest
         final ContentId contentId3 = ContentIdFactory.from( node3 );
 
         assertEquals( "jcr-node-id", contentId.toString() );
-        assertEquals( "jcr-node-id", contentId.id() );
+        assertEquals( "jcr-node-id", contentId.toString() );
         assertEquals( contentId.toString(), contentId2.toString() );
-        assertEquals( contentId.id(), contentId2.id() );
+        assertEquals( contentId.toString(), contentId2.toString() );
 
         assertFalse( contentId.toString().equals( contentId3.toString() ) );
-        assertFalse( contentId.id().equals( contentId3.id() ) );
+        assertFalse( contentId.toString().equals( contentId3.toString() ) );
     }
 
     @Test(expected = NullPointerException.class)

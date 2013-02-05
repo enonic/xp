@@ -10,8 +10,8 @@ import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItems;
 import com.enonic.wem.api.content.type.form.Layout;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
-import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
+import com.enonic.wem.core.content.JsonSerializerUtil;
 
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 
@@ -56,7 +56,7 @@ class LayoutJsonSerializer
 
     public Layout parse( final JsonNode formItemNode )
     {
-        final String layoutType = JsonParserUtil.getStringValue( TYPE, formItemNode );
+        final String layoutType = JsonSerializerUtil.getStringValue( TYPE, formItemNode );
         if ( layoutType.equals( FieldSet.class.getSimpleName() ) )
         {
             return parseFieldSet( formItemNode );
@@ -70,8 +70,8 @@ class LayoutJsonSerializer
     private FieldSet parseFieldSet( final JsonNode formItemNode )
     {
         final FieldSet.Builder builder = newFieldSet();
-        builder.label( JsonParserUtil.getStringValue( LABEL, formItemNode, null ) );
-        builder.name( JsonParserUtil.getStringValue( NAME, formItemNode, null ) );
+        builder.label( JsonSerializerUtil.getStringValue( LABEL, formItemNode, null ) );
+        builder.name( JsonSerializerUtil.getStringValue( NAME, formItemNode, null ) );
 
         final FormItems formItems = formItemsJsonSerializer.parse( formItemNode.get( ITEMS ) );
         for ( FormItem formItem : formItems.iterable() )

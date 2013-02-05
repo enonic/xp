@@ -14,6 +14,6 @@ final class SpaceJsonRpcSerializer
         spaceNode.put( "displayName", space.getDisplayName() );
         spaceNode.put( "createdTime", space.getCreatedTime().toString() );
         spaceNode.put( "modifiedTime", space.getModifiedTime().toString() );
-        spaceNode.put( "rootContentId", space.getRootContent().id() );
+        spaceNode.put( "rootContentId", space.getRootContent().toString() );
     }
 }

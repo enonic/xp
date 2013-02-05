@@ -55,7 +55,7 @@ public class ContentIndexData
     {
         final XContentBuilder result = XContentFactory.jsonBuilder();
         result.startObject();
-        addField( result, ContentIndexField.KEY_FIELD.id(), contentId.id() );
+        addField( result, ContentIndexField.KEY_FIELD.id(), contentId.toString() );
         addMetadata( content, result );
         addContentData( content, result );
 
@@ -128,7 +128,7 @@ public class ContentIndexData
     @Override
     public String getId()
     {
-        return this.contentId.id();
+        return this.contentId.toString();
     }
 
     @Override

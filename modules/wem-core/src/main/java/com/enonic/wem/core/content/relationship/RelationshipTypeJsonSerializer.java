@@ -10,8 +10,7 @@ import com.enonic.wem.api.content.relationship.RelationshipType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
-import com.enonic.wem.core.content.JsonParserUtil;
-import com.enonic.wem.core.content.JsonParsingException;
+import com.enonic.wem.core.content.JsonSerializerUtil;
 
 public class RelationshipTypeJsonSerializer
     extends AbstractJsonSerializer<RelationshipType>
@@ -48,20 +47,14 @@ public class RelationshipTypeJsonSerializer
         return objectNode;
     }
 
-    public RelationshipType toRelationshipType( String json )
-        throws JsonParsingException
-    {
-        return toObject( json );
-    }
-
     protected RelationshipType parse( final JsonNode relationshipTypeNode )
     {
         final RelationshipType.Builder relationshipTypeBuilder = RelationshipType.newRelationshipType().
-            name( JsonParserUtil.getStringValue( "name", relationshipTypeNode ) ).
-            displayName( JsonParserUtil.getStringValue( "displayName", relationshipTypeNode, null ) ).
-            module( ModuleName.from( JsonParserUtil.getStringValue( "module", relationshipTypeNode ) ) ).
-            fromSemantic( JsonParserUtil.getStringValue( "fromSemantic", relationshipTypeNode ) ).
-            toSemantic( JsonParserUtil.getStringValue( "toSemantic", relationshipTypeNode ) );
+            name( JsonSerializerUtil.getStringValue( "name", relationshipTypeNode ) ).
+            displayName( JsonSerializerUtil.getStringValue( "displayName", relationshipTypeNode, null ) ).
+            module( ModuleName.from( JsonSerializerUtil.getStringValue( "module", relationshipTypeNode ) ) ).
+            fromSemantic( JsonSerializerUtil.getStringValue( "fromSemantic", relationshipTypeNode ) ).
+            toSemantic( JsonSerializerUtil.getStringValue( "toSemantic", relationshipTypeNode ) );
 
         final JsonNode allowedFromTypes = relationshipTypeNode.get( "allowedFromTypes" );
         for ( JsonNode allowedFromType : allowedFromTypes )

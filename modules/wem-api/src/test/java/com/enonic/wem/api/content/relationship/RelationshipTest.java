@@ -6,8 +6,6 @@ import org.junit.Test;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.MockContentId;
-import com.enonic.wem.api.content.type.QualifiedContentTypeName;
-import com.enonic.wem.api.module.ModuleName;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -17,22 +15,13 @@ public class RelationshipTest
     public void build()
     {
         // setup
-        RelationshipType.Builder typeBuilder = RelationshipType.newRelationshipType();
-        typeBuilder.module( ModuleName.from( "myModule" ) );
-        typeBuilder.name( "like" );
-        typeBuilder.fromSemantic( "likes" );
-        typeBuilder.toSemantic( "liked by" );
-        typeBuilder.addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) );
-        typeBuilder.addAllowedToType( new QualifiedContentTypeName( "myModule:person" ) );
-        RelationshipType type = typeBuilder.build();
-
-        final Relationship.Builder relationBuilder = Relationship.newRelation();
-        relationBuilder.from( MockContentId.from( "a" ) );
-        relationBuilder.to( MockContentId.from( "b" ) );
+        final Relationship.Builder relationBuilder = Relationship.newRelationship();
+        relationBuilder.fromContent( MockContentId.from( "a" ) );
+        relationBuilder.toContent( MockContentId.from( "b" ) );
         relationBuilder.createdTime( DateTime.parse( "2012-01-01T12:00:00" ) );
         relationBuilder.creator( UserKey.user( "myStore:myUser" ) );
-        relationBuilder.type( type );
-        //relationBuilder.addProperty( "stars", "4" );
+        relationBuilder.type( QualifiedRelationshipTypeName.from( "system:like" ) );
+        relationBuilder.property( "stars", "4" );
 
         // exercise
         Relationship relationship = relationBuilder.build();
@@ -42,6 +31,7 @@ public class RelationshipTest
         assertEquals( "b", relationship.getToContent().toString() );
         assertEquals( "myUser", relationship.getCreator().getLocalName() );
         assertEquals( DateTime.parse( "2012-01-01T12:00:00" ), relationship.getCreatedTime() );
-        assertEquals( "like", relationship.getType().getName() );
+        assertEquals( "like", relationship.getType().getLocalName() );
+        assertEquals( "4", relationship.getProperty( "stars" ) );
     }
 }

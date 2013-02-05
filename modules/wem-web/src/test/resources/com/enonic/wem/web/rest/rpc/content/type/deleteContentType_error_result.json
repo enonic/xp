@@ -8,7 +8,7 @@
     "failures": [
         {
             "qualifiedContentTypeName": "my:notFoundContentType",
-            "reason": "Content type [my:notFoundContentType] was not found"
+            "reason": "ContentType [my:notFoundContentType] was not found"
         },
         {
             "qualifiedContentTypeName": "my:beingUsedContentType",

@@ -16,15 +16,36 @@ import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
 import com.enonic.wem.api.content.relationship.RelationshipTypes;
 import com.enonic.wem.core.jcr.JcrHelper;
 
-final class RetrieveRelationshipTypesDaoHandler
-    extends AbstractRelationshipTypeDaoHandler
+final class RelationshipTypeDaoHandlerSelect
+    extends AbstractRelationshipTypeDaoHandler<RelationshipTypes>
 {
-    RetrieveRelationshipTypesDaoHandler( final Session session )
+    private RelationshipTypeSelectors selectors;
+
+    RelationshipTypeDaoHandlerSelect( final Session session )
     {
         super( session );
     }
 
-    RelationshipTypes handle()
+    public RelationshipTypeDaoHandlerSelect selectors( final RelationshipTypeSelectors selectors )
+    {
+        this.selectors = selectors;
+        return this;
+    }
+
+    protected void doHandle()
+        throws RepositoryException
+    {
+        if ( selectors != null )
+        {
+            setResult( select( selectors ) );
+        }
+        else
+        {
+            setResult( selectAll() );
+        }
+    }
+
+    private RelationshipTypes selectAll()
         throws RepositoryException
     {
         final Node rootNode = session.getRootNode();
@@ -47,12 +68,13 @@ final class RetrieveRelationshipTypesDaoHandler
         return RelationshipTypes.from( relationshipTypeList );
     }
 
-    RelationshipTypes handle( final RelationshipTypeSelectors selectors )
+
+    private RelationshipTypes select( final RelationshipTypeSelectors selectors )
         throws RepositoryException
     {
         if ( selectors instanceof QualifiedRelationshipTypeNames )
         {
-            return handle( (QualifiedRelationshipTypeNames) selectors );
+            return select( (QualifiedRelationshipTypeNames) selectors );
         }
         else
         {
@@ -60,13 +82,13 @@ final class RetrieveRelationshipTypesDaoHandler
         }
     }
 
-    RelationshipTypes handle( final QualifiedRelationshipTypeNames qualifiedNames )
+    private RelationshipTypes select( final QualifiedRelationshipTypeNames qualifiedNames )
         throws RepositoryException
     {
         final List<RelationshipType> relationshipTypeList = Lists.newArrayList();
         for ( QualifiedRelationshipTypeName relationshipTypeName : qualifiedNames )
         {
-            final RelationshipType relationshipType = retrieveRelationshipType( relationshipTypeName );
+            final RelationshipType relationshipType = getRelationshipType( relationshipTypeName );
             if ( relationshipType != null )
             {
                 relationshipTypeList.add( relationshipType );
@@ -75,10 +97,10 @@ final class RetrieveRelationshipTypesDaoHandler
         return RelationshipTypes.from( relationshipTypeList );
     }
 
-    private RelationshipType retrieveRelationshipType( final QualifiedRelationshipTypeName qualifiedName )
+    private RelationshipType getRelationshipType( final QualifiedRelationshipTypeName qualifiedName )
         throws RepositoryException
     {
-        final Node relationshipTypeNode = this.getRelationshipTypeNode( qualifiedName );
+        final Node relationshipTypeNode = getRelationshipTypeNode( qualifiedName );
         if ( relationshipTypeNode == null )
         {
             return null;

@@ -2,6 +2,7 @@ package com.enonic.wem.core.content.relationship;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
@@ -16,6 +17,7 @@ import com.enonic.wem.core.initializer.InitializerTask;
 import static com.enonic.wem.api.command.content.relationship.editor.RelationshipTypeEditors.setRelationshipType;
 
 @Component
+@Order(10)
 public class RelationshipTypesInitializer
     implements InitializerTask
 {

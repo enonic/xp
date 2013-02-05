@@ -16,7 +16,7 @@ import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
-import com.enonic.wem.core.content.JsonParserUtil;
+import com.enonic.wem.core.content.JsonSerializerUtil;
 
 final class EntryJsonSerializer
     extends AbstractJsonSerializer<Entry>
@@ -108,9 +108,10 @@ final class EntryJsonSerializer
 
     protected final Entry parse( final JsonNode dataNode, final DataSet parent )
     {
-        final String name = JsonParserUtil.getStringValue( DATA_NAME, dataNode );
+        final String name = JsonSerializerUtil.getStringValue( DATA_NAME, dataNode );
 
-        final BaseDataType dataType = (BaseDataType) DataTypes.parseByName( JsonParserUtil.getStringValue( DATA_TYPE, dataNode, null ) );
+        final BaseDataType dataType =
+            (BaseDataType) DataTypes.parseByName( JsonSerializerUtil.getStringValue( DATA_TYPE, dataNode, null ) );
         Preconditions.checkNotNull( dataType, "dataType was null" );
 
         final JsonNode valueNode = dataNode.get( DATA_VALUE );

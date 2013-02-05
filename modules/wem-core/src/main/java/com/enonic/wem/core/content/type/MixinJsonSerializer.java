@@ -10,8 +10,8 @@ import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.content.type.form.Mixin;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
-import com.enonic.wem.core.content.JsonParserUtil;
 import com.enonic.wem.core.content.JsonParsingException;
+import com.enonic.wem.core.content.JsonSerializerUtil;
 import com.enonic.wem.core.content.type.form.FormItemJsonSerializer;
 import com.enonic.wem.core.content.type.form.FormItemsJsonSerializer;
 import com.enonic.wem.core.content.type.form.InputJsonSerializer;
@@ -78,8 +78,8 @@ public class MixinJsonSerializer
     private Mixin parseFormItemSetMixin( final JsonNode mixinNode )
     {
         final Mixin.Builder builder = Mixin.newMixin();
-        builder.module( ModuleName.from( JsonParserUtil.getStringValue( "module", mixinNode ) ) );
-        builder.displayName( JsonParserUtil.getStringValue( "displayName", mixinNode ) );
+        builder.module( ModuleName.from( JsonSerializerUtil.getStringValue( "module", mixinNode ) ) );
+        builder.displayName( JsonSerializerUtil.getStringValue( "displayName", mixinNode ) );
         builder.formItem( formItemSerializer.parse( mixinNode ) );
         return builder.build();
     }
@@ -87,8 +87,8 @@ public class MixinJsonSerializer
     private Mixin parseInputMixin( final JsonNode mixinNode )
     {
         final Mixin.Builder builder = Mixin.newMixin();
-        builder.module( ModuleName.from( JsonParserUtil.getStringValue( "module", mixinNode ) ) );
-        builder.displayName( JsonParserUtil.getStringValue( "displayName", mixinNode ) );
+        builder.module( ModuleName.from( JsonSerializerUtil.getStringValue( "module", mixinNode ) ) );
+        builder.displayName( JsonSerializerUtil.getStringValue( "displayName", mixinNode ) );
         final JsonNode inputNode = mixinNode.get( Input.class.getSimpleName() );
         builder.formItem( inputSerializer.parse( inputNode ) );
         return builder.build();

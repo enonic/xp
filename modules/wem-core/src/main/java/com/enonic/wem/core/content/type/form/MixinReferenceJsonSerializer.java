@@ -8,7 +8,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.content.type.form.MixinReference;
 import com.enonic.wem.api.content.type.form.QualifiedMixinName;
 import com.enonic.wem.core.content.AbstractJsonSerializer;
-import com.enonic.wem.core.content.JsonParserUtil;
+import com.enonic.wem.core.content.JsonSerializerUtil;
 
 class MixinReferenceJsonSerializer
     extends AbstractJsonSerializer<MixinReference>
@@ -37,9 +37,9 @@ class MixinReferenceJsonSerializer
     public MixinReference parse( final JsonNode mixinReferenceObj )
     {
         final MixinReference.Builder builder = MixinReference.newMixinReference();
-        builder.name( JsonParserUtil.getStringValue( NAME, mixinReferenceObj ) );
-        builder.mixin( new QualifiedMixinName( JsonParserUtil.getStringValue( REFERENCE, mixinReferenceObj ) ) );
-        builder.type( JsonParserUtil.getStringValue( TYPE, mixinReferenceObj ) );
+        builder.name( JsonSerializerUtil.getStringValue( NAME, mixinReferenceObj ) );
+        builder.mixin( new QualifiedMixinName( JsonSerializerUtil.getStringValue( REFERENCE, mixinReferenceObj ) ) );
+        builder.type( JsonSerializerUtil.getStringValue( TYPE, mixinReferenceObj ) );
         return builder.build();
     }
 }

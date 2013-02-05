@@ -13,6 +13,6 @@ public final class UnableToDeleteContentException
 
     public UnableToDeleteContentException( final ContentId contentId, final String reason )
     {
-        super( "Not able to delete content with id [{0}]: " + reason, contentId.id() );
+        super( "Not able to delete content with id [{0}]: " + reason, contentId.toString() );
     }
 }

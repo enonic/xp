@@ -53,7 +53,7 @@ public class CreateOrUpdateContentRpcHandlerTest
         resultJson.put( "success", true );
         resultJson.put( "created", true );
         resultJson.put( "updated", false );
-        resultJson.put( "contentId", contentId.id() );
+        resultJson.put( "contentId", contentId.toString() );
         resultJson.put( "contentPath", "myContent/my-child-content" );
 
         // exercise & verify
@@ -75,7 +75,7 @@ public class CreateOrUpdateContentRpcHandlerTest
         resultJson.put( "success", true );
         resultJson.put( "created", true );
         resultJson.put( "updated", false );
-        resultJson.put( "contentId", contentId.id() );
+        resultJson.put( "contentId", contentId.toString() );
         resultJson.put( "contentPath", "myContent/my-child-content-2" );
 
         // exercise & verify

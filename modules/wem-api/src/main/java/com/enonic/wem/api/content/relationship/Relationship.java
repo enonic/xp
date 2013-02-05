@@ -5,12 +5,28 @@ import java.util.Properties;
 
 import org.joda.time.DateTime;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.EntryPath;
 
 public final class Relationship
 {
+    private RelationshipId id;
+
+    private final DateTime createdTime;
+
+    private final UserKey creator;
+
+    private final QualifiedRelationshipTypeName type;
+
+    private final ContentId fromContent;
+
+    private final ContentId toContent;
+
+    private final Properties properties;
+
     /**
      * If true, managed by fromContent.
      * It can only be modified through fromContent.
@@ -22,29 +38,38 @@ public final class Relationship
      */
     private EntryPath managingData;
 
-    private final RelationshipType type;
-
-    private final ContentId fromContent;
-
-    private final ContentId toContent;
-
-    private final DateTime createdTime;
-
-    private final UserKey creator;
-
-    private Properties properties;
-
-
     public Relationship( final Builder builder )
     {
+        this.id = builder.id;
         this.type = builder.type;
         this.fromContent = builder.fromContent;
         this.toContent = builder.toContent;
         this.createdTime = builder.createdTime;
         this.creator = builder.creator;
+        this.properties = builder.properties;
+        this.managed = builder.managed;
+        if ( this.managed )
+        {
+            this.managingData = builder.managingData;
+        }
     }
 
-    public RelationshipType getType()
+    public RelationshipId getId()
+    {
+        return id;
+    }
+
+    public DateTime getCreatedTime()
+    {
+        return createdTime;
+    }
+
+    public UserKey getCreator()
+    {
+        return creator;
+    }
+
+    public QualifiedRelationshipTypeName getType()
     {
         return type;
     }
@@ -59,46 +84,65 @@ public final class Relationship
         return toContent;
     }
 
-    public DateTime getCreatedTime()
+    public String getProperty( String name )
     {
-        return createdTime;
+        return properties.getProperty( name );
     }
 
-    public UserKey getCreator()
+    public boolean isManaged()
     {
-        return creator;
+        return managed;
     }
 
-    public static Builder newRelation()
+    public EntryPath getManagingData()
+    {
+        return managingData;
+    }
+
+    public static Builder newRelationship()
     {
         return new Builder();
     }
 
     public static class Builder
     {
-        private RelationshipType type;
+        private RelationshipId id;
+
+        private UserKey creator;
+
+        private DateTime createdTime;
+
+        private QualifiedRelationshipTypeName type;
 
         private ContentId fromContent;
 
         private ContentId toContent;
 
-        private DateTime createdTime;
+        private Properties properties = new Properties();
 
-        private UserKey creator;
+        private boolean managed = false;
 
-        public Builder type( RelationshipType value )
+        private EntryPath managingData;
+
+        public Builder id( RelationshipId value )
+        {
+            this.id = value;
+            return this;
+        }
+
+        public Builder type( QualifiedRelationshipTypeName value )
         {
             this.type = value;
             return this;
         }
 
-        public Builder from( ContentId value )
+        public Builder fromContent( ContentId value )
         {
             this.fromContent = value;
             return this;
         }
 
-        public Builder to( ContentId value )
+        public Builder toContent( ContentId value )
         {
             this.toContent = value;
             return this;
@@ -113,6 +157,26 @@ public final class Relationship
         public Builder creator( UserKey value )
         {
             this.creator = value;
+            return this;
+        }
+
+        public Builder properties( Properties value )
+        {
+            Preconditions.checkNotNull( value, "properties cannot be null" );
+            this.properties = value;
+            return this;
+        }
+
+        public Builder property( String key, String value )
+        {
+            this.properties.setProperty( key, value );
+            return this;
+        }
+
+        public Builder managed( EntryPath managingData )
+        {
+            this.managed = true;
+            this.managingData = managingData;
             return this;
         }
 

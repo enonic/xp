@@ -39,7 +39,7 @@ public class RelationshipTypeJsonSerializerTest
         final String actualSerialization = serializer.toString( relationshipType );
 
         // exercise
-        final RelationshipType actualRelationshipType = serializer.toRelationshipType( actualSerialization );
+        final RelationshipType actualRelationshipType = serializer.toObject( actualSerialization );
 
         // verify
         assertSerializedResult( "relationshipType", actualSerialization );

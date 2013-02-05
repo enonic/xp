@@ -6,10 +6,10 @@ import javax.jcr.Node;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
+import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.api.space.Spaces;
-import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.core.AbstractJcrTest;
 
 import static com.enonic.wem.api.space.Space.newSpace;
@@ -52,7 +52,7 @@ public class SpaceDaoImplTest
         Node spaceNode = session.getNode( "/" + SPACES_PATH + "mySpace" );
         assertNotNull( spaceNode );
         assertNotNull( createdSpace.getRootContent() );
-        assertEquals( createdSpace.getRootContent().id(), spaceNode.getNode( SPACE_CONTENT_ROOT_NODE ).getIdentifier() );
+        assertEquals( createdSpace.getRootContent().toString(), spaceNode.getNode( SPACE_CONTENT_ROOT_NODE ).getIdentifier() );
         assertEquals( time, createdSpace.getCreatedTime() );
         assertEquals( time, createdSpace.getModifiedTime() );
         assertArrayEquals( ICON_DATA, createdSpace.getIcon() );

@@ -10,15 +10,23 @@ import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 
-final class CreateRelationshipTypeDaoHandler
+final class RelationshipTypeDaoHandlerCreate
     extends AbstractRelationshipTypeDaoHandler
 {
-    CreateRelationshipTypeDaoHandler( final Session session )
+    private RelationshipType relationshipType;
+
+    RelationshipTypeDaoHandlerCreate( final Session session )
     {
         super( session );
     }
 
-    void handle( final RelationshipType relationshipType )
+    RelationshipTypeDaoHandlerCreate relationshipType( final RelationshipType relationshipType )
+    {
+        this.relationshipType = relationshipType;
+        return this;
+    }
+
+    protected final void doHandle()
         throws RepositoryException
     {
         final QualifiedRelationshipTypeName relationshipTypeName = relationshipType.getQualifiedName();
