@@ -95,7 +95,7 @@
         var style = {},
             strokeColor,
             strokeDashArray,
-            fillColor = 'rgba(255,255,255,0)';
+            fillColor;
 
         switch (componentType) {
         case 'region':
@@ -103,21 +103,25 @@
             strokeDashArray = '';
             fillColor = 'rgba(255,255,255,0)';
             break;
+
         case 'window':
-            strokeColor = '#444444';
-            strokeDashArray = '5 5';
+            strokeColor = 'rgba(68,68,68,1)';
+            strokeDashArray = ' ';
             fillColor = 'rgba(255,255,255,0)';
             break;
+
         case 'content':
             strokeColor = '';
             strokeDashArray = '';
             fillColor = 'rgba(170,170,255,.5)';
             break;
+
         case 'paragraph':
             strokeColor = 'rgba(85,85,255,1)';
             strokeDashArray = '5 5';
             fillColor = 'rgba(255,255,255,0)';
             break;
+
         default:
             strokeColor = 'rgba(20,20,20,1)';
             strokeDashArray = '';
@@ -132,6 +136,5 @@
 
         return style;
     };
-
 
 }($liveedit));
