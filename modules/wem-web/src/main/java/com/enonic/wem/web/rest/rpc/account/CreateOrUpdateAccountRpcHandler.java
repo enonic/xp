@@ -125,7 +125,7 @@ public final class CreateOrUpdateAccountRpcHandler
         final Account account;
         if ( accountKey.isUser() )
         {
-            final UserAccount user = UserAccount.create( accountKey );
+            final UserAccount user = UserAccount.create( accountKey.asUser() );
             user.setEmail( context.param( "email" ).required().asString() );
             if ( !context.param( "imageRef" ).isNull() )
             {
@@ -144,11 +144,11 @@ public final class CreateOrUpdateAccountRpcHandler
             final NonUserAccount nonUserAccount;
             if ( accountKey.isGroup() )
             {
-                nonUserAccount = GroupAccount.create( accountKey );
+                nonUserAccount = GroupAccount.create( accountKey.asGroup() );
             }
             else
             {
-                nonUserAccount = RoleAccount.create( accountKey );
+                nonUserAccount = RoleAccount.create( accountKey.asRole() );
             }
             final String[] members = context.param( "members" ).asStringArray();
             nonUserAccount.setMembers( AccountKeys.from( members ) );

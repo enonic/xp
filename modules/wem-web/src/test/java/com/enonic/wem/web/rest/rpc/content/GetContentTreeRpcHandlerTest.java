@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
@@ -57,6 +57,6 @@ public class GetContentTreeRpcHandlerTest
     private Content createContent( String path )
     {
         return Content.newContent().path( ContentPath.from( path ) ).createdTime( timeService.getNowAsDateTime() ).owner(
-            AccountKey.user( "myStore:me" ) ).build();
+            UserKey.from( "myStore:me" ) ).build();
     }
 }

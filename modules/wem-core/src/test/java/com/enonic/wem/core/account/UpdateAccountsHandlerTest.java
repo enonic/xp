@@ -16,8 +16,11 @@ import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.GroupAccount;
+import com.enonic.wem.api.account.GroupKey;
 import com.enonic.wem.api.account.RoleAccount;
+import com.enonic.wem.api.account.RoleKey;
 import com.enonic.wem.api.account.UserAccount;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.account.editor.AccountEditor;
 import com.enonic.wem.api.account.profile.Address;
 import com.enonic.wem.api.account.profile.Addresses;
@@ -244,7 +247,7 @@ public class UpdateAccountsHandlerTest
         role.setDeleted( false );
         role.setMembers( AccountKeys.empty() );
 
-        final AccountKey accountKey = role.getKey();
+        final RoleKey accountKey = role.getKey().asRole();
         Mockito.when( accountDao.findRole( Matchers.eq( accountKey ), Matchers.anyBoolean(), Matchers.eq( session ) ) ).thenReturn( role );
         return role;
     }
@@ -257,7 +260,7 @@ public class UpdateAccountsHandlerTest
         group.setDeleted( false );
         group.setMembers( AccountKeys.empty() );
 
-        final AccountKey accountKey = group.getKey();
+        final GroupKey accountKey = group.getKey().asGroup();
         Mockito.when( accountDao.findGroup( Matchers.eq( accountKey ), Matchers.anyBoolean(), Matchers.eq( session ) ) ).thenReturn(
             group );
         return group;
@@ -270,7 +273,7 @@ public class UpdateAccountsHandlerTest
         user.setEmail( "user@email.com" );
         user.setDisplayName( "User " + name );
         user.setDeleted( false );
-        final AccountKey accountKey = user.getKey();
+        final UserKey accountKey = user.getKey().asUser();
         Mockito.when( accountDao.findUser( Matchers.eq( accountKey ), Matchers.anyBoolean(), Matchers.anyBoolean(),
                                            Matchers.eq( session ) ) ).thenReturn( user );
         return user;

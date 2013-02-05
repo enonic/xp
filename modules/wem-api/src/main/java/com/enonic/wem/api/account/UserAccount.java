@@ -2,8 +2,6 @@ package com.enonic.wem.api.account;
 
 import org.joda.time.DateTime;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.wem.api.account.profile.UserProfile;
 
 public final class UserAccount
@@ -17,7 +15,7 @@ public final class UserAccount
 
     private UserProfile profile;
 
-    private UserAccount( final AccountKey key )
+    private UserAccount( final UserKey key )
     {
         super( key );
     }
@@ -64,12 +62,11 @@ public final class UserAccount
 
     public static UserAccount create( final String qName )
     {
-        return create( AccountKey.user( qName ) );
+        return create( UserKey.from( qName ) );
     }
 
-    public static UserAccount create( final AccountKey key )
+    public static UserAccount create( final UserKey key )
     {
-        Preconditions.checkArgument( key.isUser(), "Account key must be of type user" );
         return new UserAccount( key );
     }
 }

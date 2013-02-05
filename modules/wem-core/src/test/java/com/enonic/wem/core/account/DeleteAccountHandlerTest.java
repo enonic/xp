@@ -8,6 +8,9 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
+import com.enonic.wem.api.account.GroupKey;
+import com.enonic.wem.api.account.RoleKey;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.account.DeleteAccounts;
 import com.enonic.wem.core.account.dao.AccountDao;
@@ -41,9 +44,9 @@ public class DeleteAccountHandlerTest
     public void deleteExistingAccounts()
         throws Exception
     {
-        final AccountKey account1 = AccountKey.user( "enonic:joe" );
-        final AccountKey account2 = AccountKey.group( "enonic:people" );
-        final AccountKey account3 = AccountKey.role( "enonic:admin" );
+        final AccountKey account1 = UserKey.from( "enonic:joe" );
+        final AccountKey account2 = GroupKey.from( "enonic:people" );
+        final AccountKey account3 = RoleKey.from( "enonic:admin" );
         Mockito.when( accountDao.deleteAccount( Mockito.any( AccountKey.class ), Mockito.any( Session.class ) ) ).thenReturn( true );
 
         // exercise
@@ -60,9 +63,9 @@ public class DeleteAccountHandlerTest
     public void deleteMissingAndExistingAccounts()
         throws Exception
     {
-        final AccountKey account1 = AccountKey.user( "enonic:joe" );
-        final AccountKey account2 = AccountKey.group( "enonic:people" );
-        final AccountKey account3 = AccountKey.role( "enonic:admin" );
+        final AccountKey account1 = UserKey.from( "enonic:joe" );
+        final AccountKey account2 = GroupKey.from( "enonic:people" );
+        final AccountKey account3 = RoleKey.from( "enonic:admin" );
         Mockito.when( accountDao.deleteAccount( Mockito.eq( account1 ), Mockito.any( Session.class ) ) ).thenReturn( true );
 
         // exercise
@@ -79,9 +82,9 @@ public class DeleteAccountHandlerTest
     public void deleteMissingAccounts()
         throws Exception
     {
-        final AccountKey account1 = AccountKey.user( "enonic:joe" );
-        final AccountKey account2 = AccountKey.group( "enonic:people" );
-        final AccountKey account3 = AccountKey.role( "enonic:admin" );
+        final AccountKey account1 = UserKey.from( "enonic:joe" );
+        final AccountKey account2 = GroupKey.from( "enonic:people" );
+        final AccountKey account3 = RoleKey.from( "enonic:admin" );
 
         // exercise
         final DeleteAccounts command = Commands.account().delete().keys( AccountKeys.from( account1, account2, account3 ) );

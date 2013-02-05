@@ -7,8 +7,11 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.Accounts;
 import com.enonic.wem.api.account.GroupAccount;
+import com.enonic.wem.api.account.GroupKey;
 import com.enonic.wem.api.account.RoleAccount;
+import com.enonic.wem.api.account.RoleKey;
 import com.enonic.wem.api.account.UserAccount;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.account.query.AccountFacets;
 import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
@@ -30,13 +33,13 @@ public abstract class AbstractAccountRpcHandlerTest
 
     protected UserAccount createUser( final String qName )
     {
-        final AccountKey accountKey = AccountKey.user( qName );
+        final AccountKey accountKey = UserKey.from( qName );
         return createUser( accountKey );
     }
 
     protected UserAccount createUser( final AccountKey accountKey )
     {
-        final UserAccount user = UserAccount.create( accountKey );
+        final UserAccount user = UserAccount.create( accountKey.asUser() );
         user.setDisplayName( accountKey.getLocalName().toUpperCase() );
         user.setEmail( accountKey.getLocalName() + "@" + accountKey.getUserStore() + ".com" );
         user.setCreatedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
@@ -47,8 +50,8 @@ public abstract class AbstractAccountRpcHandlerTest
 
     protected GroupAccount createGroup( final String qName, final AccountKey... members )
     {
-        final AccountKey accountKey = AccountKey.group( qName );
-        final GroupAccount group = GroupAccount.create( accountKey );
+        final AccountKey accountKey = GroupKey.from( qName );
+        final GroupAccount group = GroupAccount.create( accountKey.asGroup() );
         group.setDisplayName( accountKey.getLocalName().toUpperCase() );
         group.setCreatedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
         group.setModifiedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
@@ -58,8 +61,8 @@ public abstract class AbstractAccountRpcHandlerTest
 
     protected RoleAccount createRole( final String qName, final AccountKey... members )
     {
-        final AccountKey accountKey = AccountKey.role( qName );
-        final RoleAccount group = RoleAccount.create( accountKey );
+        final AccountKey accountKey = RoleKey.from( qName );
+        final RoleAccount group = RoleAccount.create( accountKey.asRole() );
         group.setDisplayName( accountKey.getLocalName().toUpperCase() );
         group.setCreatedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
         group.setModifiedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );

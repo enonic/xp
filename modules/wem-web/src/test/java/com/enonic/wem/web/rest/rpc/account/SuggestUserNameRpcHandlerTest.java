@@ -6,9 +6,9 @@ import org.mockito.Mockito;
 import org.mockito.stubbing.OngoingStubbing;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.Accounts;
 import com.enonic.wem.api.account.UserAccount;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.account.GetAccounts;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
@@ -84,7 +84,7 @@ public class SuggestUserNameRpcHandlerTest
 
     private void mockFindAccounts( final int foundTimes )
     {
-        final UserAccount user = UserAccount.create( AccountKey.user( "enonic:dummy" ) );
+        final UserAccount user = UserAccount.create( UserKey.from( "enonic:dummy" ) );
         final Accounts accountResult = Accounts.from( user );
         final Accounts accountResultEmpty = Accounts.empty();
 

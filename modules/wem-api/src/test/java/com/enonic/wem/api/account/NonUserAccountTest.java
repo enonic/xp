@@ -10,7 +10,7 @@ public abstract class NonUserAccountTest<T extends NonUserAccount>
     @Override
     protected AccountKey createIllegalKey( final String qName )
     {
-        return AccountKey.user( qName );
+        return UserKey.from( qName );
     }
 
     @Test

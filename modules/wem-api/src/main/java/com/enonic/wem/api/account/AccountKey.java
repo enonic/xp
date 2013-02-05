@@ -58,16 +58,19 @@ public abstract class AccountKey
 
     public UserKey asUser()
     {
+        Preconditions.checkArgument( this.isUser(), "Expected account of type User, found: " + this.type );
         return (UserKey) this;
     }
 
     public GroupKey asGroup()
     {
+        Preconditions.checkArgument( this.isGroup(), "Expected account of type Group, found: " + this.type );
         return (GroupKey) this;
     }
 
     public RoleKey asRole()
     {
+        Preconditions.checkArgument( this.isRole(), "Expected account of type Role, found: " + this.type );
         return (RoleKey) this;
     }
 
@@ -157,18 +160,4 @@ public abstract class AccountKey
         return from( type.toString().toLowerCase() + ":" + qName );
     }
 
-    public static UserKey user( final String qName )
-    {
-        return from( AccountType.USER, qName ).asUser();
-    }
-
-    public static GroupKey group( final String qName )
-    {
-        return from( AccountType.GROUP, qName ).asGroup();
-    }
-
-    public static RoleKey role( final String qName )
-    {
-        return from( AccountType.ROLE, qName ).asRole();
-    }
 }

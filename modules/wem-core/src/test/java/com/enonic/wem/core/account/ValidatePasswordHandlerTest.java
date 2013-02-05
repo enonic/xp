@@ -6,6 +6,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.GroupKey;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.account.ValidatePassword;
 import com.enonic.wem.api.exception.AccountNotFoundException;
@@ -39,7 +41,7 @@ public class ValidatePasswordHandlerTest
     {
         // setup
         final String userPassword = "passw0rd";
-        final AccountKey account = AccountKey.user( "enonic:johndoe" );
+        final AccountKey account = UserKey.from( "enonic:johndoe" );
         Mockito.when( accountDao.accountExists( account, this.session ) ).thenReturn( true );
 
         // exercise
@@ -60,7 +62,7 @@ public class ValidatePasswordHandlerTest
     {
         // setup
         final String userPassword = "passw0rd";
-        final AccountKey account = AccountKey.user( "enonic:johndoe" );
+        final AccountKey account = UserKey.from( "enonic:johndoe" );
         Mockito.when( accountDao.accountExists( account, this.session ) ).thenReturn( true );
 
         // exercise
@@ -79,7 +81,7 @@ public class ValidatePasswordHandlerTest
         throws Exception
     {
         final String userPassword = "passw0rd";
-        final AccountKey account = AccountKey.user( "enonic:johndoe" );
+        final AccountKey account = UserKey.from( "enonic:johndoe" );
 
         final ValidatePassword command = Commands.account().validatePassword().key( account ).password( userPassword );
         command.validate();
@@ -91,7 +93,7 @@ public class ValidatePasswordHandlerTest
         throws Exception
     {
         final String userPassword = "passw0rd";
-        final AccountKey account = AccountKey.group( "enonic:devs" );
+        final AccountKey account = GroupKey.from( "enonic:devs" );
 
         // validation fails before attempting to execute command (cannot validate password of a group)
         final ValidatePassword command = Commands.account().validatePassword().key( account ).password( userPassword );

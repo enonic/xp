@@ -22,8 +22,11 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.api.account.GroupAccount;
+import com.enonic.wem.api.account.GroupKey;
 import com.enonic.wem.api.account.RoleAccount;
+import com.enonic.wem.api.account.RoleKey;
 import com.enonic.wem.api.account.UserAccount;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.exception.AccountNotFoundException;
 import com.enonic.wem.api.exception.UserStoreNotFoundException;
 import com.enonic.wem.api.userstore.UserStore;
@@ -237,36 +240,35 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public UserAccount findUser( final AccountKey accountKey, final boolean includeProfile, final boolean includePhoto,
-                                 final Session session )
+    public UserAccount findUser( final UserKey userKey, final boolean includeProfile, final boolean includePhoto, final Session session )
         throws Exception
     {
-        final Node accountNode = getAccountNode( session, accountKey );
+        final Node accountNode = getAccountNode( session, userKey );
         if ( accountNode == null )
         {
             return null;
         }
 
-        final UserAccount user = UserAccount.create( accountKey );
+        final UserAccount user = UserAccount.create( userKey );
         accountJcrMapping.toUser( accountNode, user, includeProfile, includePhoto );
         user.setEditable( true );
         return user;
     }
 
     @Override
-    public GroupAccount findGroup( final AccountKey accountKey, final boolean includeMembers, final Session session )
+    public GroupAccount findGroup( final GroupKey groupKey, final boolean includeMembers, final Session session )
         throws Exception
     {
-        final Node accountNode = getAccountNode( session, accountKey );
+        final Node accountNode = getAccountNode( session, groupKey );
         if ( accountNode == null )
         {
             return null;
         }
 
-        final GroupAccount group = GroupAccount.create( accountKey );
+        final GroupAccount group = GroupAccount.create( groupKey );
         if ( includeMembers )
         {
-            group.setMembers( getMembers( accountKey, session ) );
+            group.setMembers( getMembers( groupKey, session ) );
         }
         accountJcrMapping.toGroup( accountNode, group );
         group.setEditable( true );
@@ -274,19 +276,19 @@ public final class AccountDaoImpl
     }
 
     @Override
-    public RoleAccount findRole( final AccountKey accountKey, final boolean includeMembers, final Session session )
+    public RoleAccount findRole( final RoleKey roleKey, final boolean includeMembers, final Session session )
         throws Exception
     {
-        final Node accountNode = getAccountNode( session, accountKey );
+        final Node accountNode = getAccountNode( session, roleKey );
         if ( accountNode == null )
         {
             return null;
         }
 
-        final RoleAccount role = RoleAccount.create( accountKey );
+        final RoleAccount role = RoleAccount.create( roleKey );
         if ( includeMembers )
         {
-            role.setMembers( getMembers( accountKey, session ) );
+            role.setMembers( getMembers( roleKey, session ) );
         }
         accountJcrMapping.toRole( accountNode, role );
         role.setEditable( true );
@@ -300,11 +302,11 @@ public final class AccountDaoImpl
         switch ( accountKey.getType() )
         {
             case USER:
-                return findUser( accountKey, false, false, session );
+                return findUser( accountKey.asUser(), false, false, session );
             case GROUP:
-                return findGroup( accountKey, false, session );
+                return findGroup( accountKey.asGroup(), false, session );
             case ROLE:
-                return findRole( accountKey, false, session );
+                return findRole( accountKey.asRole(), false, session );
             default:
                 return null;
         }
@@ -536,11 +538,11 @@ public final class AccountDaoImpl
         switch ( type )
         {
             case USER:
-                return AccountKey.user( userStore + ":" + name );
+                return UserKey.from( userStore + ":" + name );
             case GROUP:
-                return AccountKey.group( userStore + ":" + name );
+                return GroupKey.from( userStore + ":" + name );
             default:
-                return AccountKey.role( userStore + ":" + name );
+                return RoleKey.from( userStore + ":" + name );
         }
     }
 

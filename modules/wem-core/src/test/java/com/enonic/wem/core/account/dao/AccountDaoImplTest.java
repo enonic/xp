@@ -10,8 +10,11 @@ import org.junit.Test;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.GroupAccount;
+import com.enonic.wem.api.account.GroupKey;
 import com.enonic.wem.api.account.RoleAccount;
+import com.enonic.wem.api.account.RoleKey;
 import com.enonic.wem.api.account.UserAccount;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.account.profile.Address;
 import com.enonic.wem.api.account.profile.Addresses;
 import com.enonic.wem.api.account.profile.Gender;
@@ -132,7 +135,7 @@ public class AccountDaoImplTest
     {
         createUserstore( userStoreNameAsObject );
         accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
-        final AccountKey accountKey = AccountKey.user( userStoreName + ":" + "user1" );
+        final AccountKey accountKey = UserKey.from( userStoreName + ":" + "user1" );
         assertTrue( accountDao.accountExists( accountKey, session ) );
         assertTrue( accountDao.deleteAccount( accountKey, session ) );
         assertFalse( accountDao.accountExists( accountKey, session ) );
@@ -157,10 +160,10 @@ public class AccountDaoImplTest
         createUserstore( userStoreNameAsObject );
         accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
 
-        final AccountKey accountKey = AccountKey.user( userStoreName + ":" + "user1" );
+        final AccountKey accountKey = UserKey.from( userStoreName + ":" + "user1" );
         assertTrue( accountDao.accountExists( accountKey, session ) );
 
-        final AccountKey accountKey2 = AccountKey.user( userStoreName + ":" + "user2" );
+        final AccountKey accountKey2 = UserKey.from( userStoreName + ":" + "user2" );
         assertFalse( accountDao.accountExists( accountKey2, session ) );
         commit();
     }
@@ -171,11 +174,11 @@ public class AccountDaoImplTest
     {
         createUserstore( userStoreNameAsObject );
         accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
-        final AccountKey accountKey = AccountKey.user( userStoreName + ":" + "user1" );
+        final UserKey accountKey = UserKey.from( userStoreName + ":" + "user1" );
         final UserAccount user = accountDao.findUser( accountKey, true, true, session );
         assertEquals( user.getEmail(), "user1@enonic.com" );
 
-        final AccountKey accountKey2 = AccountKey.user( userStoreName + ":" + "user2" );
+        final UserKey accountKey2 = UserKey.from( userStoreName + ":" + "user2" );
         assertNull( accountDao.findUser( accountKey2, true, true, session ) );
         commit();
     }
@@ -186,13 +189,13 @@ public class AccountDaoImplTest
     {
         createUserstore( userStoreNameAsObject );
         accountDao.createGroup( createGroup( userStoreName, "group1" ), session );
-        final AccountKey accountKey = AccountKey.group( userStoreName + ":" + "group1" );
+        final GroupKey accountKey = GroupKey.from( userStoreName + ":" + "group1" );
         final GroupAccount group = accountDao.findGroup( accountKey, false, session );
 
         // case sensitive ?
         assertEquals( group.getDisplayName(), "group1" );
 
-        final AccountKey accountKey2 = AccountKey.group( userStoreName + ":" + "group2" );
+        final GroupKey accountKey2 = GroupKey.from( userStoreName + ":" + "group2" );
         assertNull( accountDao.findGroup( accountKey2, false, session ) );
         commit();
     }
@@ -203,14 +206,14 @@ public class AccountDaoImplTest
     {
         accountDao.createRole( createRoleAccount( "system", "role1" ), session );
 
-        final AccountKey accountKey = AccountKey.role( "system" + ":" + "role1" );
+        final RoleKey accountKey = RoleKey.from( "system" + ":" + "role1" );
         assertNotNull( accountDao.findRole( accountKey, false, session ) );
 
-        final AccountKey accountKey2 = AccountKey.role( "system" + ":" + "role2" );
+        final RoleKey accountKey2 = RoleKey.from( "system" + ":" + "role2" );
         assertNull( accountDao.findRole( accountKey2, false, session ) );
 
         // non-existing userstore
-        final AccountKey accountKey3 = AccountKey.role( "enonic" + ":" + "role3" );
+        final RoleKey accountKey3 = RoleKey.from( "enonic" + ":" + "role3" );
         assertNull( accountDao.findRole( accountKey3, false, session ) );
         commit();
     }
@@ -223,10 +226,10 @@ public class AccountDaoImplTest
         createUserstore( userStoreNameAsObject );
         accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
 
-        final AccountKey accountKey = AccountKey.user( userStoreName + ":" + "user1" );
+        final AccountKey accountKey = UserKey.from( userStoreName + ":" + "user1" );
         assertNotNull( accountDao.findAccount( accountKey, session ) );
 
-        final AccountKey accountKey2 = AccountKey.user( userStoreName + ":" + "user2" );
+        final AccountKey accountKey2 = UserKey.from( userStoreName + ":" + "user2" );
         assertNull( accountDao.findAccount( accountKey2, session ) );
         commit();
     }
@@ -238,7 +241,7 @@ public class AccountDaoImplTest
         createUserstore( userStoreNameAsObject );
         accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
 
-        final AccountKey accountKey = AccountKey.user( userStoreName + ":" + "user1" );
+        final UserKey accountKey = UserKey.from( userStoreName + ":" + "user1" );
         final UserAccount user = accountDao.findUser( accountKey, true, true, session );
         assertEquals( user.getEmail(), "user1@enonic.com" );
 
@@ -258,7 +261,7 @@ public class AccountDaoImplTest
     {
         createUserstore( userStoreNameAsObject );
         accountDao.createGroup( createGroup( userStoreName, "group1" ), session );
-        final AccountKey accountKey = AccountKey.group( userStoreName + ":" + "group1" );
+        final GroupKey accountKey = GroupKey.from( userStoreName + ":" + "group1" );
         final GroupAccount group = accountDao.findGroup( accountKey, false, session );
 
         assertEquals( "group1", group.getDisplayName() );
@@ -278,7 +281,7 @@ public class AccountDaoImplTest
     {
         accountDao.createRole( createRoleAccount( "system", "role1" ), session );
 
-        final AccountKey accountKey = AccountKey.role( "system" + ":" + "role1" );
+        final RoleKey accountKey = RoleKey.from( "system" + ":" + "role1" );
         final RoleAccount role = accountDao.findRole( accountKey, false, session );
 
         assertEquals( "role1", role.getDisplayName() );
@@ -356,8 +359,8 @@ public class AccountDaoImplTest
         accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
         accountDao.createGroup( createGroup( userStoreName, "group1" ), session );
 
-        final AccountKey userKey = AccountKey.user( userStoreName + ":" + "user1" );
-        final AccountKey groupKey = AccountKey.group( userStoreName + ":" + "group1" );
+        final AccountKey userKey = UserKey.from( userStoreName + ":" + "user1" );
+        final AccountKey groupKey = GroupKey.from( userStoreName + ":" + "group1" );
 
         final AccountKeys accountKeys = AccountKeys.from( userKey, groupKey );
         accountDao.setUserStoreAdministrators( userStoreNameAsObject, accountKeys, session );
@@ -384,8 +387,8 @@ public class AccountDaoImplTest
         accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
         accountDao.createGroup( createGroup( userStoreName, "group1" ), session );
 
-        final AccountKey userKey = AccountKey.user( userStoreName + ":" + "user1" );
-        final AccountKey groupKey = AccountKey.group( userStoreName + ":" + "group1" );
+        final AccountKey userKey = UserKey.from( userStoreName + ":" + "user1" );
+        final AccountKey groupKey = GroupKey.from( userStoreName + ":" + "group1" );
 
         final AccountKeys accountKeys = AccountKeys.from( userKey, groupKey );
         accountDao.setUserStoreAdministrators( userStoreNameAsObject, accountKeys, session );
@@ -405,8 +408,8 @@ public class AccountDaoImplTest
         accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
         accountDao.createGroup( createGroup( userStoreName, "group1" ), session );
 
-        final AccountKey userKey = AccountKey.user( userStoreName + ":" + "user1" );
-        final AccountKey groupKey = AccountKey.group( userStoreName + ":" + "group1" );
+        final AccountKey userKey = UserKey.from( userStoreName + ":" + "user1" );
+        final AccountKey groupKey = GroupKey.from( userStoreName + ":" + "group1" );
 
         final AccountKeys accountKeys = AccountKeys.from( userKey );
         accountDao.setMembers( groupKey, accountKeys, session );
@@ -422,8 +425,8 @@ public class AccountDaoImplTest
         accountDao.createUser( createUserAccount( userStoreName, "user1" ), session );
         accountDao.createGroup( createGroup( userStoreName, "group1" ), session );
 
-        final AccountKey userKey = AccountKey.user( userStoreName + ":" + "user1" );
-        final AccountKey groupKey = AccountKey.group( userStoreName + ":" + "group1" );
+        final AccountKey userKey = UserKey.from( userStoreName + ":" + "user1" );
+        final AccountKey groupKey = GroupKey.from( userStoreName + ":" + "group1" );
 
         final AccountKeys accountKeys = AccountKeys.from( userKey );
         accountDao.setMembers( groupKey, accountKeys, session );
@@ -530,7 +533,7 @@ public class AccountDaoImplTest
 
     protected GroupAccount createGroup( final String userStore, final String name, final AccountKey... members )
     {
-        final AccountKey accountKey = AccountKey.group( userStore + ":" + name );
+        final GroupKey accountKey = GroupKey.from( userStore + ":" + name );
         final GroupAccount group = GroupAccount.create( accountKey );
         group.setDisplayName( accountKey.getLocalName() );
         group.setCreatedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );
@@ -541,7 +544,7 @@ public class AccountDaoImplTest
 
     protected RoleAccount createRoleAccount( final String userStore, final String name )
     {
-        final AccountKey accountKey = AccountKey.role( userStore + ":" + name );
+        final RoleKey accountKey = RoleKey.from( userStore + ":" + name );
         final RoleAccount role = RoleAccount.create( accountKey );
         role.setDisplayName( name );
         role.setCreatedTime( DateTime.parse( "2012-01-01T10:01:10.101+01:00" ) );

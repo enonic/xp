@@ -5,9 +5,10 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.Accounts;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
+import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.rest.service.account.UserIdGenerator;
 
 @Component
@@ -34,7 +35,7 @@ public final class SuggestUserNameRpcHandler
         do
         {
             suggestedUserName = userIdGenerator.nextUserName();
-            accountKey = AccountKey.user( userStore + ":" + suggestedUserName );
+            accountKey = UserKey.from( userStore + ":" + suggestedUserName );
         }
         while ( userExists( accountKey ) );
 

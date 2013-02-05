@@ -144,7 +144,8 @@ public class ContentDaoImplTest
         final Content content = createContent( "myspace:someContent" );
         final ContentId createdContentId = contentDao.create( content, session );
 
-        final Content anotherContent = newContent( content ).id( createdContentId ).path( ContentPath.from( "myspace:anotherContent" ) ).build();
+        final Content anotherContent =
+            newContent( content ).id( createdContentId ).path( ContentPath.from( "myspace:anotherContent" ) ).build();
         assertNotNull( anotherContent.getId() );
         contentDao.create( anotherContent, session );
 
@@ -197,7 +198,7 @@ public class ContentDaoImplTest
         commit();
 
         // verify
-        Node contentsNode = session.getNode( "/" + ContentDao.SPACES_PATH +"myspace/root" );
+        Node contentsNode = session.getNode( "/" + ContentDao.SPACES_PATH + "myspace/root" );
         assertFalse( contentsNode.hasNode( "myContent" ) );
     }
 
@@ -234,7 +235,7 @@ public class ContentDaoImplTest
         try
         {
             contentDao.delete( ContentPath.from( "myspace:parentContent" ), session );
-            fail( "Expected excetion" );
+            fail( "Expected exception" );
         }
         catch ( Exception e )
         {

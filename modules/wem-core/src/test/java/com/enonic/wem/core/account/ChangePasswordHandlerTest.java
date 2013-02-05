@@ -5,6 +5,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.GroupKey;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.account.ChangePassword;
 import com.enonic.wem.api.exception.AccountNotFoundException;
@@ -37,7 +39,7 @@ public class ChangePasswordHandlerTest
         throws Exception
     {
         final String newPassword = "passw0rd";
-        final AccountKey account = AccountKey.user( "enonic:johndoe" );
+        final AccountKey account = UserKey.from( "enonic:johndoe" );
 
         Mockito.when( accountDao.accountExists( account, this.session ) ).thenReturn( true );
 
@@ -56,7 +58,7 @@ public class ChangePasswordHandlerTest
         throws Exception
     {
         final String newPassword = "passw0rd";
-        final AccountKey account = AccountKey.user( "enonic:johndoe" );
+        final AccountKey account = UserKey.from( "enonic:johndoe" );
 
         final ChangePassword command = Commands.account().changePassword().key( account ).password( newPassword );
         command.validate();
@@ -68,7 +70,7 @@ public class ChangePasswordHandlerTest
         throws Exception
     {
         final String newPassword = "passw0rd";
-        final AccountKey account = AccountKey.group( "enonic:devs" );
+        final AccountKey account = GroupKey.from( "enonic:devs" );
 
         // validation fails before attempting to execute command (cannot change password of a group)
         final ChangePassword command = Commands.account().changePassword().key( account ).password( newPassword );

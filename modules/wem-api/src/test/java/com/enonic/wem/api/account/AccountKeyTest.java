@@ -12,7 +12,7 @@ public class AccountKeyTest
         final AccountKey key1 = AccountKey.from( "user:other:dummy" );
         testUser( key1 );
 
-        final AccountKey key2 = AccountKey.user( "other:dummy" );
+        final AccountKey key2 = UserKey.from( "other:dummy" );
         testUser( key2 );
     }
 
@@ -39,7 +39,7 @@ public class AccountKeyTest
         final AccountKey key1 = AccountKey.from( "group:other:dummy" );
         testGroup( key1 );
 
-        final AccountKey key2 = AccountKey.group( "other:dummy" );
+        final AccountKey key2 = GroupKey.from( "other:dummy" );
         testGroup( key2 );
     }
 
@@ -66,7 +66,7 @@ public class AccountKeyTest
         final AccountKey key1 = AccountKey.from( "role:other:dummy" );
         testRole( key1 );
 
-        final AccountKey key2 = AccountKey.role( "other:dummy" );
+        final AccountKey key2 = RoleKey.from( "other:dummy" );
         testRole( key2 );
     }
 

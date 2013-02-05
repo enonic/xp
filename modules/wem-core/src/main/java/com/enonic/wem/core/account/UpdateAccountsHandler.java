@@ -68,11 +68,11 @@ public final class UpdateAccountsHandler
         switch ( account.getType() )
         {
             case USER:
-                return accountDao.findUser( account, true, true, session );
+                return accountDao.findUser( account.asUser(), true, true, session );
             case GROUP:
-                return accountDao.findGroup( account, true, session );
+                return accountDao.findGroup( account.asGroup(), true, session );
             default:
-                return accountDao.findRole( account, true, session );
+                return accountDao.findRole( account.asRole(), true, session );
         }
     }
 

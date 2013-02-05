@@ -8,6 +8,9 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
+import com.enonic.wem.api.account.GroupKey;
+import com.enonic.wem.api.account.RoleKey;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.account.FindMembers;
 import com.enonic.wem.api.exception.AccountNotFoundException;
@@ -40,10 +43,10 @@ public class FindMembersHandlerTest
     public void testFindGroupMembers()
         throws Exception
     {
-        final AccountKey groupAccount = AccountKey.group( "enonic:devs" );
-        final AccountKey group = AccountKey.group( "enonic:group1" );
-        final AccountKey user = AccountKey.user( "enonic:user1" );
-        final AccountKey role = AccountKey.role( "enonic:role1" );
+        final AccountKey groupAccount = GroupKey.from( "enonic:devs" );
+        final AccountKey group = GroupKey.from( "enonic:group1" );
+        final AccountKey user = UserKey.from( "enonic:user1" );
+        final AccountKey role = RoleKey.from( "enonic:role1" );
 
         Mockito.when( accountDao.getMembers( Mockito.eq( groupAccount ), Mockito.any( Session.class ) ) ).thenReturn(
             AccountKeys.from( group, user, role ) );
@@ -65,10 +68,10 @@ public class FindMembersHandlerTest
     public void testFindRoleMembers()
         throws Exception
     {
-        final AccountKey roleAccount = AccountKey.role( "enonic:admins" );
-        final AccountKey group = AccountKey.group( "enonic:group1" );
-        final AccountKey user = AccountKey.user( "enonic:user1" );
-        final AccountKey role = AccountKey.role( "enonic:role1" );
+        final AccountKey roleAccount = RoleKey.from( "enonic:admins" );
+        final AccountKey group = GroupKey.from( "enonic:group1" );
+        final AccountKey user = UserKey.from( "enonic:user1" );
+        final AccountKey role = RoleKey.from( "enonic:role1" );
 
         Mockito.when( accountDao.getMembers( Mockito.eq( roleAccount ), Mockito.any( Session.class ) ) ).thenReturn(
             AccountKeys.from( group, user, role ) );
@@ -90,7 +93,7 @@ public class FindMembersHandlerTest
     public void testFindUserMembers()
         throws Exception
     {
-        final AccountKey userAccount = AccountKey.user( "enonic:user1" );
+        final AccountKey userAccount = UserKey.from( "enonic:user1" );
 
         Mockito.when( accountDao.getMembers( Mockito.eq( userAccount ), Mockito.any( Session.class ) ) ).thenReturn( AccountKeys.empty() );
 
@@ -106,7 +109,7 @@ public class FindMembersHandlerTest
     public void testFindMissingMembers()
         throws Exception
     {
-        final AccountKey groupAccount = AccountKey.group( "enonic:group1" );
+        final AccountKey groupAccount = GroupKey.from( "enonic:group1" );
 
         Mockito.when( accountDao.getMembers( Mockito.eq( groupAccount ), Mockito.any( Session.class ) ) ).thenThrow(
             new AccountNotFoundException( groupAccount ) );

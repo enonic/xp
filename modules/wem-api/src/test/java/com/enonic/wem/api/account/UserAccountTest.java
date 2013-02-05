@@ -5,9 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.account.profile.UserProfile;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 
 public class UserAccountTest
     extends AccountTest<UserAccount>
@@ -21,19 +19,19 @@ public class UserAccountTest
     @Override
     protected AccountKey createKey( final String qName )
     {
-        return AccountKey.user( qName );
+        return UserKey.from( qName );
     }
 
     @Override
     protected UserAccount create( final AccountKey key )
     {
-        return UserAccount.create( key );
+        return UserAccount.create( key.asUser() );
     }
 
     @Override
     protected AccountKey createIllegalKey( final String qName )
     {
-        return AccountKey.group( qName );
+        return GroupKey.from( qName );
     }
 
     @Test

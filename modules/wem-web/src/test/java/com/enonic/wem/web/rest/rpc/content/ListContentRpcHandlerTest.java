@@ -6,16 +6,14 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.core.time.MockTimeService;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
-
-import com.enonic.wem.core.time.MockTimeService;
 
 import static org.mockito.Matchers.isA;
 
@@ -57,7 +55,7 @@ public class ListContentRpcHandlerTest
 
     private Content createContent( String path )
     {
-        final UserKey owner = AccountKey.user( "enonic:user1" );
+        final UserKey owner = UserKey.from( "enonic:user1" );
         final DateTime now = timeService.getNowAsDateTime();
         final String displayName = StringUtils.substringAfterLast( path, "/" ).toUpperCase();
         return Content.newContent().path( ContentPath.from( path ) ).createdTime( now ).owner( owner ).modifier(

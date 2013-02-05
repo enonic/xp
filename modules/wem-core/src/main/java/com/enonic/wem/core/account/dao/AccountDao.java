@@ -8,8 +8,11 @@ import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.GroupAccount;
+import com.enonic.wem.api.account.GroupKey;
 import com.enonic.wem.api.account.RoleAccount;
+import com.enonic.wem.api.account.RoleKey;
 import com.enonic.wem.api.account.UserAccount;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.UserStoreNames;
@@ -59,13 +62,13 @@ public interface AccountDao
     public boolean accountExists( AccountKey accountKey, Session session )
         throws Exception;
 
-    public UserAccount findUser( AccountKey accountKey, boolean includeProfile, boolean includePhoto, Session session )
+    public UserAccount findUser( UserKey userKey, boolean includeProfile, boolean includePhoto, Session session )
         throws Exception;
 
-    public GroupAccount findGroup( AccountKey accountKey, boolean includeMembers, Session session )
+    public GroupAccount findGroup( GroupKey groupKey, boolean includeMembers, Session session )
         throws Exception;
 
-    public RoleAccount findRole( AccountKey accountKey, boolean includeMembers, Session session )
+    public RoleAccount findRole( RoleKey roleKey, boolean includeMembers, Session session )
         throws Exception;
 
     public Account findAccount( AccountKey accountKey, Session session )

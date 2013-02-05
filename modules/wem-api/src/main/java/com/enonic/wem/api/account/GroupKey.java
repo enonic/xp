@@ -8,4 +8,9 @@ public final class GroupKey
     {
         super( AccountType.GROUP, userStore, localName );
     }
+
+    public static GroupKey from( final String qName )
+    {
+        return from( AccountType.GROUP, qName ).asGroup();
+    }
 }

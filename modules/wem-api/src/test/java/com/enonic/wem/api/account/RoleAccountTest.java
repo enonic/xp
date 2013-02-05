@@ -12,12 +12,12 @@ public class RoleAccountTest
     @Override
     protected AccountKey createKey( final String qName )
     {
-        return AccountKey.role( qName );
+        return RoleKey.from( qName );
     }
 
     @Override
     protected RoleAccount create( final AccountKey key )
     {
-        return RoleAccount.create( key );
+        return RoleAccount.create( key.asRole() );
     }
 }

@@ -7,6 +7,9 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountType;
+import com.enonic.wem.api.account.GroupKey;
+import com.enonic.wem.api.account.RoleKey;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.account.query.AccountFacet;
 import com.enonic.wem.api.account.query.AccountQuery;
 import com.enonic.wem.api.account.query.AccountQueryHits;
@@ -163,7 +166,7 @@ public class FindAccountsHandlerTest
     private AccountKey createUser( final String qualifiedName )
         throws Exception
     {
-        AccountKey user = AccountKey.user( qualifiedName );
+        AccountKey user = UserKey.from( qualifiedName );
         Mockito.when( accountDao.accountExists( user, this.session ) ).thenReturn( true );
         return user;
     }
@@ -171,7 +174,7 @@ public class FindAccountsHandlerTest
     private AccountKey createGroup( final String qualifiedName )
         throws Exception
     {
-        AccountKey group = AccountKey.group( qualifiedName );
+        AccountKey group = GroupKey.from( qualifiedName );
         Mockito.when( accountDao.accountExists( group, this.session ) ).thenReturn( true );
         return group;
     }
@@ -179,7 +182,7 @@ public class FindAccountsHandlerTest
     private AccountKey createRole( final String qualifiedName )
         throws Exception
     {
-        AccountKey role = AccountKey.role( qualifiedName );
+        AccountKey role = RoleKey.from( qualifiedName );
         Mockito.when( accountDao.accountExists( role, this.session ) ).thenReturn( true );
         return role;
     }

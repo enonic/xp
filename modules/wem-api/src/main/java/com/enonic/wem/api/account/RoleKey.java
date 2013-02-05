@@ -8,4 +8,9 @@ public final class RoleKey
     {
         super( AccountType.ROLE, userStore, localName );
     }
+
+    public static RoleKey from( final String qualifiedName )
+    {
+        return from( AccountType.ROLE, qualifiedName ).asRole();
+    }
 }

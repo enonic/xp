@@ -9,12 +9,14 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.Accounts;
 import com.enonic.wem.api.account.GroupAccount;
+import com.enonic.wem.api.account.GroupKey;
 import com.enonic.wem.api.account.RoleAccount;
+import com.enonic.wem.api.account.RoleKey;
 import com.enonic.wem.api.account.UserAccount;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.account.profile.Address;
 import com.enonic.wem.api.account.profile.Addresses;
 import com.enonic.wem.api.account.profile.Gender;
@@ -109,13 +111,13 @@ public class GetAccountsHandlerTest
         assertEquals( "group:enonic:group2", group2Account.getKey().toString() );
         assertEquals( "role:enonic:contributors", roleAccount.getKey().toString() );
 
-        assertTrue( group1Account.getMembers().contains( AccountKey.user( "enonic:user1" ) ) );
-        assertTrue( group1Account.getMembers().contains( AccountKey.user( "enonic:user2" ) ) );
+        assertTrue( group1Account.getMembers().contains( UserKey.from( "enonic:user1" ) ) );
+        assertTrue( group1Account.getMembers().contains( UserKey.from( "enonic:user2" ) ) );
 
-        assertTrue( group2Account.getMembers().contains( AccountKey.user( "enonic:user3" ) ) );
-        assertTrue( roleAccount.getMembers().contains( AccountKey.user( "enonic:user3" ) ) );
-        assertTrue( roleAccount.getMembers().contains( AccountKey.group( "enonic:group1" ) ) );
-        assertTrue( roleAccount.getMembers().contains( AccountKey.role( "enonic:administrators" ) ) );
+        assertTrue( group2Account.getMembers().contains( UserKey.from( "enonic:user3" ) ) );
+        assertTrue( roleAccount.getMembers().contains( UserKey.from( "enonic:user3" ) ) );
+        assertTrue( roleAccount.getMembers().contains( GroupKey.from( "enonic:group1" ) ) );
+        assertTrue( roleAccount.getMembers().contains( RoleKey.from( "enonic:administrators" ) ) );
     }
 
     @Test
@@ -188,7 +190,7 @@ public class GetAccountsHandlerTest
         role.setDeleted( false );
         role.setMembers( AccountKeys.empty() );
 
-        final AccountKey accountKey = role.getKey();
+        final RoleKey accountKey = role.getKey().asRole();
         Mockito.when( accountDao.findRole( Matchers.eq( accountKey ), Matchers.anyBoolean(), Matchers.eq( session ) ) ).thenReturn( role );
         return role;
     }
@@ -201,7 +203,7 @@ public class GetAccountsHandlerTest
         group.setDeleted( false );
         group.setMembers( AccountKeys.empty() );
 
-        final AccountKey accountKey = group.getKey();
+        final GroupKey accountKey = group.getKey().asGroup();
         Mockito.when( accountDao.findGroup( Matchers.eq( accountKey ), Matchers.anyBoolean(), Matchers.eq( session ) ) ).thenReturn(
             group );
         return group;
@@ -214,7 +216,7 @@ public class GetAccountsHandlerTest
         user.setEmail( "user@email.com" );
         user.setDisplayName( "User " + name );
         user.setDeleted( false );
-        final AccountKey accountKey = user.getKey();
+        final UserKey accountKey = user.getKey().asUser();
         Mockito.when( accountDao.findUser( Matchers.eq( accountKey ), Matchers.anyBoolean(), Matchers.anyBoolean(),
                                            Matchers.eq( session ) ) ).thenReturn( user );
         return user;

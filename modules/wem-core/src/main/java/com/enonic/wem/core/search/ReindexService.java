@@ -40,11 +40,11 @@ public class ReindexService
 
             if ( accountKey.isUser() )
             {
-                account = accountDao.findUser( accountKey, true, false, session );
+                account = accountDao.findUser( accountKey.asUser(), true, false, session );
             }
             else if ( accountKey.isGroup() )
             {
-                account = accountDao.findGroup( accountKey, true, session );
+                account = accountDao.findGroup( accountKey.asGroup(), true, session );
             }
             else
             {

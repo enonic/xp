@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.command.account.FindAccounts;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
@@ -32,7 +33,7 @@ public class VerifyUniqueEmailRpcHandlerTest
     public void testRequestEmailInUse()
         throws Exception
     {
-        final AccountKey user = AccountKey.user( "enonic:user1" );
+        final AccountKey user = UserKey.from( "enonic:user1" );
         final AccountQueryHits accountResult = new AccountQueryHits( 1, AccountKeys.from( user ) );
         Mockito.when( client.execute( Mockito.any( FindAccounts.class ) ) ).thenReturn( accountResult );
 

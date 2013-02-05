@@ -7,6 +7,9 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
+import com.enonic.wem.api.account.GroupKey;
+import com.enonic.wem.api.account.RoleKey;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.account.FindMemberships;
 import com.enonic.wem.api.exception.AccountNotFoundException;
@@ -46,12 +49,12 @@ public class FindMembershipsHandlerTest
     public void testFindMembershipsUser()
         throws Exception
     {
-        final AccountKey account = AccountKey.user( "enonic:johndoe" );
+        final AccountKey account = UserKey.from( "enonic:johndoe" );
 
         // setup
         Mockito.when( accountDao.accountExists( account, this.session ) ).thenReturn( true );
-        setSearchResults( AccountKeys.from( AccountKey.group( "enonic:group1" ), AccountKey.group( "enonic:group2" ),
-                                            AccountKey.role( "enonic:role1" ) ) );
+        setSearchResults(
+            AccountKeys.from( GroupKey.from( "enonic:group1" ), GroupKey.from( "enonic:group2" ), RoleKey.from( "enonic:role1" ) ) );
 
         // exercise
         final FindMemberships command = Commands.account().findMemberships().key( account );
@@ -61,21 +64,21 @@ public class FindMembershipsHandlerTest
         // verify
         assertNotNull( members );
         assertEquals( 3, members.getSize() );
-        assertTrue( members.contains( AccountKey.group( "enonic:group1" ) ) );
-        assertTrue( members.contains( AccountKey.group( "enonic:group2" ) ) );
-        assertTrue( members.contains( AccountKey.role( "enonic:role1" ) ) );
+        assertTrue( members.contains( GroupKey.from( "enonic:group1" ) ) );
+        assertTrue( members.contains( GroupKey.from( "enonic:group2" ) ) );
+        assertTrue( members.contains( RoleKey.from( "enonic:role1" ) ) );
     }
 
     @Test
     public void testFindMembershipsGroup()
         throws Exception
     {
-        final AccountKey account = AccountKey.group( "enonic:devs" );
+        final AccountKey account = GroupKey.from( "enonic:devs" );
 
         // setup
         Mockito.when( accountDao.accountExists( account, this.session ) ).thenReturn( true );
-        setSearchResults( AccountKeys.from( AccountKey.group( "enonic:group1" ), AccountKey.group( "enonic:group2" ),
-                                            AccountKey.role( "enonic:role1" ) ) );
+        setSearchResults(
+            AccountKeys.from( GroupKey.from( "enonic:group1" ), GroupKey.from( "enonic:group2" ), RoleKey.from( "enonic:role1" ) ) );
 
         // exercise
         final FindMemberships command = Commands.account().findMemberships().key( account );
@@ -85,21 +88,21 @@ public class FindMembershipsHandlerTest
         // verify
         assertNotNull( members );
         assertEquals( 3, members.getSize() );
-        assertTrue( members.contains( AccountKey.group( "enonic:group1" ) ) );
-        assertTrue( members.contains( AccountKey.group( "enonic:group2" ) ) );
-        assertTrue( members.contains( AccountKey.role( "enonic:role1" ) ) );
+        assertTrue( members.contains( GroupKey.from( "enonic:group1" ) ) );
+        assertTrue( members.contains( GroupKey.from( "enonic:group2" ) ) );
+        assertTrue( members.contains( RoleKey.from( "enonic:role1" ) ) );
     }
 
     @Test
     public void testFindMembershipsUserIncludeTransitive()
         throws Exception
     {
-        final AccountKey account = AccountKey.user( "enonic:johndoe" );
+        final AccountKey account = UserKey.from( "enonic:johndoe" );
 
         // setup
         Mockito.when( accountDao.accountExists( account, this.session ) ).thenReturn( true );
-        final AccountKeys directMemberships = AccountKeys.from( AccountKey.group( "enonic:group1" ), AccountKey.group( "enonic:group2" ) );
-        final AccountKeys indirectMemberships = AccountKeys.from( AccountKey.role( "enonic:role1" ) );
+        final AccountKeys directMemberships = AccountKeys.from( GroupKey.from( "enonic:group1" ), GroupKey.from( "enonic:group2" ) );
+        final AccountKeys indirectMemberships = AccountKeys.from( RoleKey.from( "enonic:role1" ) );
         setSearchResults( directMemberships, indirectMemberships );
 
         // exercise
@@ -110,16 +113,16 @@ public class FindMembershipsHandlerTest
         // verify
         assertNotNull( members );
         assertEquals( 3, members.getSize() );
-        assertTrue( members.contains( AccountKey.group( "enonic:group1" ) ) );
-        assertTrue( members.contains( AccountKey.group( "enonic:group2" ) ) );
-        assertTrue( members.contains( AccountKey.role( "enonic:role1" ) ) );
+        assertTrue( members.contains( GroupKey.from( "enonic:group1" ) ) );
+        assertTrue( members.contains( GroupKey.from( "enonic:group2" ) ) );
+        assertTrue( members.contains( RoleKey.from( "enonic:role1" ) ) );
     }
 
     @Test(expected = AccountNotFoundException.class)
     public void testFindMembershipsMissingAccount()
         throws Exception
     {
-        final AccountKey groupAccount = AccountKey.group( "enonic:group1" );
+        final AccountKey groupAccount = GroupKey.from( "enonic:group1" );
 
         final FindMemberships command = Commands.account().findMemberships().key( groupAccount );
         this.handler.handle( this.context, command );
@@ -129,7 +132,7 @@ public class FindMembershipsHandlerTest
     public void testFindMembershipsMissingUserstore()
         throws Exception
     {
-        final AccountKey userAccount = AccountKey.user( "enonic:user1" );
+        final AccountKey userAccount = UserKey.from( "enonic:user1" );
         final FindMemberships command = Commands.account().findMemberships().key( userAccount );
         this.handler.handle( this.context, command );
     }

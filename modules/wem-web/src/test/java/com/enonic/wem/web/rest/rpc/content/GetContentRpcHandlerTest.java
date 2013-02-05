@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.Content;
@@ -14,10 +13,9 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.core.time.MockTimeService;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
-
-import com.enonic.wem.core.time.MockTimeService;
 
 public class GetContentRpcHandlerTest
     extends AbstractRpcHandlerTest
@@ -50,7 +48,7 @@ public class GetContentRpcHandlerTest
         final Content content1 = Content.newContent().
             path( ContentPath.from( "/MySite/MyContent" ) ).
             createdTime( timeService.getNowAsDateTime() ).
-            owner( AccountKey.user( "myStore:me" ) ).
+            owner( UserKey.from( "myStore:me" ) ).
             displayName( "My Content" ).
             modifiedTime( timeService.getNowAsDateTime() ).
             modifier( UserKey.superUser() ).

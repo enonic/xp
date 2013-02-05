@@ -20,7 +20,7 @@ public class RelationshipTest
         relationBuilder.fromContent( MockContentId.from( "a" ) );
         relationBuilder.toContent( MockContentId.from( "b" ) );
         relationBuilder.createdTime( DateTime.parse( "2012-01-01T12:00:00" ) );
-        relationBuilder.creator( UserKey.user( "myStore:myUser" ) );
+        relationBuilder.creator( UserKey.from( "myStore:myUser" ) );
         relationBuilder.type( QualifiedRelationshipTypeName.from( "system:like" ) );
         relationBuilder.property( "stars", "4" );
 

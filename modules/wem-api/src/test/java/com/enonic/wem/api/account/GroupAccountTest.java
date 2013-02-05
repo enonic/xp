@@ -12,12 +12,12 @@ public class GroupAccountTest
     @Override
     protected AccountKey createKey( final String qName )
     {
-        return AccountKey.group( qName );
+        return GroupKey.from( qName );
     }
 
     @Override
     protected GroupAccount create( final AccountKey key )
     {
-        return GroupAccount.create( key );
+        return GroupAccount.create( key.asGroup() );
     }
 }

@@ -45,22 +45,22 @@ public final class GetAccountsHandler
                                     final boolean includeProfile )
         throws Exception
     {
-        final List<Account> accountList = new ArrayList<Account>();
+        final List<Account> accountList = new ArrayList<>();
         for ( AccountKey key : keys )
         {
             Account account = null;
             switch ( key.getType() )
             {
                 case USER:
-                    account = accountDao.findUser( key, includeProfile, includePhoto, session );
+                    account = accountDao.findUser( key.asUser(), includeProfile, includePhoto, session );
                     break;
 
                 case GROUP:
-                    account = accountDao.findGroup( key, includeMembers, session );
+                    account = accountDao.findGroup( key.asGroup(), includeMembers, session );
                     break;
 
                 case ROLE:
-                    account = accountDao.findRole( key, includeMembers, session );
+                    account = accountDao.findRole( key.asRole(), includeMembers, session );
                     break;
             }
             if ( account != null )
