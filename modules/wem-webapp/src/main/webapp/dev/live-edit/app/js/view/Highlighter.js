@@ -46,12 +46,12 @@
         me.resize($selectedComponent);
 
         var $highlighter = me.getEl();
-        if (event.type === 'component:select') {
-            $highlighter.css('opacity', '0.3');
-        } else {
-            $highlighter.css('stroke', me.getBorderColor($selectedComponent));
-        }
 
+        var style = me.getStyleForComponent($selectedComponent);
+
+        $highlighter.css('stroke', style.strokeColor);
+        $highlighter.css('fill', style.fillColor);
+        $highlighter.css('stroke-dasharray', style.strokeDashArray);
     };
 
 
@@ -80,7 +80,7 @@
 
 
     proto.deselect = function () {
-        this.getEl().css('opacity', '1');
+        // this.getEl().css('opacity', '1');
     };
 
 
@@ -90,26 +90,48 @@
 
 
     // Should be used later. Do not remove.
-    proto.getBorderColor = function ($component) {
+    proto.getStyleForComponent = function ($component) {
         var componentType = util.getComponentType($component);
-        var color = '';
+
+        var style = {},
+            strokeColor,
+            strokeDashArray,
+            fillColor = 'rgba(255,255,255,0)';
+
         switch (componentType) {
         case 'region':
-            color = '#141414';
+            strokeColor = '#141414';
+            strokeDashArray = '';
+            fillColor = 'rgba(255,255,255,0)';
             break;
         case 'window':
-            color = '#141414';
+            strokeColor = '#444444';
+            strokeDashArray = '5 5';
+            fillColor = 'rgba(255,255,255,0)';
             break;
         case 'content':
-            color = '#141414';
+            strokeColor = '';
+            strokeDashArray = '';
+            fillColor = 'rgba(170,170,255,.5)';
             break;
         case 'paragraph':
-            color = '#141414';
+            strokeColor = '#141414';
+            strokeDashArray = '5 5';
+            fillColor = 'rgba(255,255,255,0)';
             break;
         default:
-            color = '#141414';
+            strokeColor = '#141414';
+            strokeDashArray = '';
+            fillColor = 'rgba(255,255,255,0)';
         }
-        return color;
+
+        style = {
+            strokeColor: strokeColor,
+            strokeDashArray: strokeDashArray,
+            fillColor: fillColor
+        };
+
+        return style;
     };
 
 

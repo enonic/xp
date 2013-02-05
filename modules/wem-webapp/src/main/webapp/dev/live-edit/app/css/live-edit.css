@@ -174,8 +174,6 @@ svg.live-edit-highlighter {
 }
 
 svg.live-edit-highlighter rect {
-    fill-opacity: 0;
-    stroke-dasharray: 5 5;
     stroke-width: 4;
 }
 
@@ -209,9 +207,8 @@ svg.live-edit-highlighter rect {
     padding: 3px 6px;
     background-color: #ffffc7;
 }
-
-.live-edit-tool-tip-type-text {
-    color: #666;
+.live-edit-tool-tip-name-text {
+    font-weight: bold;
 }
 
 /*** Component tip ***/
