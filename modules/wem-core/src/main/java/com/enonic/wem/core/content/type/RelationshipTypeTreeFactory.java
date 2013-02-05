@@ -2,9 +2,9 @@ package com.enonic.wem.core.content.type;
 
 import javax.jcr.Session;
 
-import com.enonic.wem.api.content.relationship.RelationshipType;
+import com.enonic.wem.api.content.relationshiptype.RelationshipType;
 import com.enonic.wem.api.support.tree.Tree;
-import com.enonic.wem.core.content.relationship.dao.RelationshipTypeDao;
+import com.enonic.wem.core.content.relationshiptype.dao.RelationshipTypeDao;
 
 
 class RelationshipTypeTreeFactory

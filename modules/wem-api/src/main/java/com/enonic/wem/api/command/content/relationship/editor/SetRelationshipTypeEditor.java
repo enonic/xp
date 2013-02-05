@@ -1,9 +1,9 @@
 package com.enonic.wem.api.command.content.relationship.editor;
 
-import com.enonic.wem.api.content.relationship.RelationshipType;
+import com.enonic.wem.api.content.relationshiptype.RelationshipType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 
-import static com.enonic.wem.api.content.relationship.RelationshipType.newRelationshipType;
+import static com.enonic.wem.api.content.relationshiptype.RelationshipType.newRelationshipType;
 
 final class SetRelationshipTypeEditor
     implements RelationshipTypeEditor

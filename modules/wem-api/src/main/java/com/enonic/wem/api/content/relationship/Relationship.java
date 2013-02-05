@@ -10,6 +10,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 
 public final class Relationship
 {

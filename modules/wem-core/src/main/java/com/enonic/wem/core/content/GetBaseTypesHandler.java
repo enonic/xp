@@ -13,13 +13,13 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.command.content.type.BaseTypeKind;
 import com.enonic.wem.api.command.content.type.GetBaseTypes;
 import com.enonic.wem.api.content.BaseType;
-import com.enonic.wem.api.content.relationship.RelationshipTypes;
+import com.enonic.wem.api.content.relationshiptype.RelationshipTypes;
 import com.enonic.wem.api.content.type.BaseTypes;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.Mixins;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.content.relationship.dao.RelationshipTypeDao;
+import com.enonic.wem.core.content.relationshiptype.dao.RelationshipTypeDao;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 import com.enonic.wem.core.content.type.dao.MixinDao;
 

@@ -4,7 +4,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 
 public final class DeleteRelationshipTypes
     extends Command<RelationshipTypeDeletionResult>

@@ -1,6 +1,6 @@
 package com.enonic.wem.api.command.content.relationship.editor;
 
-import com.enonic.wem.api.content.relationship.RelationshipType;
+import com.enonic.wem.api.content.relationshiptype.RelationshipType;
 
 public interface RelationshipTypeEditor
 {

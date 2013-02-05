@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
-import com.enonic.wem.api.content.relationship.RelationshipTypes;
+import com.enonic.wem.api.content.relationshiptype.RelationshipTypes;
 
 public final class GetRelationshipTypes
     extends Command<RelationshipTypes>

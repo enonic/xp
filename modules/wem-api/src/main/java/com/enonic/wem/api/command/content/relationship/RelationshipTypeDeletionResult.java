@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 
 public final class RelationshipTypeDeletionResult
 {

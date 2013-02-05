@@ -1,8 +1,8 @@
 package com.enonic.wem.api.command.content.relationship;
 
 
-import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.content.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 
 public class RelationshipTypesExistsResult
 {
