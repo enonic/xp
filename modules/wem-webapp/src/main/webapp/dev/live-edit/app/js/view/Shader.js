@@ -49,38 +49,6 @@
     };
 
 
-    // TODO: Should not be here. Need some code restructuring
-    proto.addWindowBorders = function () {
-        var $parts = $('[data-live-edit-type=part]'),
-            $component,
-            $componentHighlighter,
-            componentBoxModel;
-
-        $parts.each(function (i) {
-            $component = $(this);
-            componentBoxModel = util.getBoxModel($component);
-
-            var html = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-highlighter live-edit-highlighter-page" style="top:-5000px;left:-5000px">' +
-                       '    <rect width="150" height="150"/>' +
-                       '</svg>';
-            $componentHighlighter = $(html);
-            $componentHighlighter.css({
-                top: componentBoxModel.top,
-                left: componentBoxModel.left,
-                width: componentBoxModel.width,
-                height: componentBoxModel.height
-            });
-            var $highlighterRect = $componentHighlighter.find('rect');
-            $highlighterRect[0].setAttribute('width', componentBoxModel.width);
-            $highlighterRect[0].setAttribute('height', componentBoxModel.height);
-            $componentHighlighter.css('stroke', '#141414');
-
-            $('body').append($componentHighlighter);
-
-        });
-    };
-
-
     proto.showForComponent = function ($component) {
         var documentSize = util.getDocumentSize(),
             docWidth = documentSize.width,

@@ -2,7 +2,7 @@
     'use strict';
 
     var parts =  AdminLiveEdit.model.component.Parts = function () {
-        this.cssSelector = '[data-live-edit-type=window]';
+        this.cssSelector = '[data-live-edit-type=part]';
         this.renderEmptyPlaceholders();
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();

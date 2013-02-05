@@ -106,7 +106,7 @@
 
         case 'part':
             strokeColor = 'rgba(68,68,68,1)';
-            strokeDashArray = ' ';
+            strokeDashArray = '5 5';
             fillColor = 'rgba(255,255,255,0)';
             break;
 
