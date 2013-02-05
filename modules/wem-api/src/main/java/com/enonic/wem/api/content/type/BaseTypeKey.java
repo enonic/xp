@@ -9,8 +9,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import com.enonic.wem.api.content.ModuleBasedQualifiedName;
+import com.enonic.wem.api.content.mixin.Mixin;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
-import com.enonic.wem.api.content.type.form.Mixin;
 import com.enonic.wem.api.module.ModuleName;
 
 public final class BaseTypeKey

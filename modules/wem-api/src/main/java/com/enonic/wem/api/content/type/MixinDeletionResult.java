@@ -4,7 +4,7 @@ package com.enonic.wem.api.content.type;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.wem.api.content.type.form.QualifiedMixinName;
+import com.enonic.wem.api.content.mixin.QualifiedMixinName;
 
 public class MixinDeletionResult
 {

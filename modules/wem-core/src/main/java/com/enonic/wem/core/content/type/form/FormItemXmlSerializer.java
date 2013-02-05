@@ -3,6 +3,7 @@ package com.enonic.wem.core.content.type.form;
 
 import org.jdom.Element;
 
+import com.enonic.wem.api.content.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.type.form.FieldSet;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItemSet;
@@ -11,7 +12,6 @@ import com.enonic.wem.api.content.type.form.HierarchicalFormItem;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.content.type.form.Layout;
 import com.enonic.wem.api.content.type.form.MixinReference;
-import com.enonic.wem.api.content.type.form.QualifiedMixinName;
 import com.enonic.wem.core.content.XmlParsingException;
 import com.enonic.wem.core.content.type.form.inputtype.InputTypeConfigXmlSerializer;
 import com.enonic.wem.core.content.type.form.inputtype.InputTypeFactory;

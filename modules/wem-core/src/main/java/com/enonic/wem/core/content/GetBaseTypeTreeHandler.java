@@ -10,17 +10,17 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.command.content.type.BaseTypeKind;
 import com.enonic.wem.api.command.content.type.GetBaseTypeTree;
 import com.enonic.wem.api.content.BaseType;
+import com.enonic.wem.api.content.mixin.Mixins;
 import com.enonic.wem.api.content.relationshiptype.RelationshipTypes;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.Mixins;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
+import com.enonic.wem.core.content.mixin.dao.MixinDao;
 import com.enonic.wem.core.content.relationshiptype.dao.RelationshipTypeDao;
 import com.enonic.wem.core.content.type.ContentTypeTreeFactory;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
-import com.enonic.wem.core.content.type.dao.MixinDao;
 
 @Component
 public class GetBaseTypeTreeHandler

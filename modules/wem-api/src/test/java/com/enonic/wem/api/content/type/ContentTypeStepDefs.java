@@ -13,19 +13,19 @@ import cucumber.annotation.en.When;
 import cucumber.table.DataTable;
 import gherkin.formatter.model.DataTableRow;
 
+import com.enonic.wem.api.content.mixin.Mixin;
+import com.enonic.wem.api.content.mixin.MockMixinFetcher;
+import com.enonic.wem.api.content.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.type.form.FormItemPath;
 import com.enonic.wem.api.content.type.form.FormItemType;
 import com.enonic.wem.api.content.type.form.Input;
-import com.enonic.wem.api.content.type.form.Mixin;
 import com.enonic.wem.api.content.type.form.MixinReference;
-import com.enonic.wem.api.content.type.form.MockMixinFetcher;
-import com.enonic.wem.api.content.type.form.QualifiedMixinName;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleName;
 
+import static com.enonic.wem.api.content.mixin.Mixin.newMixin;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
-import static com.enonic.wem.api.content.type.form.Mixin.newMixin;
 
 public class ContentTypeStepDefs
 {

@@ -4,8 +4,8 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.QualifiedMixinNames;
-import com.enonic.wem.api.content.type.editor.MixinEditor;
+import com.enonic.wem.api.content.mixin.MixinEditor;
+import com.enonic.wem.api.content.mixin.QualifiedMixinNames;
 
 public final class UpdateMixins
     extends Command<Integer>

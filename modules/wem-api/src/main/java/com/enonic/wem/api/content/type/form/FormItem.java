@@ -3,6 +3,8 @@ package com.enonic.wem.api.content.type.form;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.mixin.Mixin;
+
 public abstract class FormItem
 {
     private String name;
@@ -72,5 +74,23 @@ public abstract class FormItem
     public String toString()
     {
         return name;
+    }
+
+    static FormItem from( final Mixin mixin, final MixinReference mixinReference )
+    {
+        final FormItem newFormItem = mixin.getFormItem().copy();
+        newFormItem.setName( mixinReference.getName() );
+
+        if ( newFormItem instanceof FormItemSet )
+        {
+            final FormItemSet newFormItemSet = (FormItemSet) newFormItem;
+            newFormItemSet.setPath( mixinReference.getPath() );
+        }
+        else if ( newFormItem instanceof Input )
+        {
+            final Input newInput = (Input) newFormItem;
+            newInput.setPath( mixinReference.getPath() );
+        }
+        return newFormItem;
     }
 }

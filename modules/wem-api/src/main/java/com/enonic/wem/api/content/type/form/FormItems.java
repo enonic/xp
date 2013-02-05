@@ -6,6 +6,9 @@ import java.util.LinkedHashMap;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.mixin.Mixin;
+import com.enonic.wem.api.content.mixin.MixinFetcher;
+
 public class FormItems
     implements Iterable<FormItem>
 {
@@ -241,7 +244,7 @@ public class FormItems
                                                  "Mixin expected to be of type %s: " + mixin.getFormItem().getClass().getSimpleName(),
                                                  mixinReference.getMixinClass().getSimpleName() );
 
-                    final FormItem formItemCreatedFromMixin = mixin.toFormItem( mixinReference );
+                    final FormItem formItemCreatedFromMixin = FormItem.from( mixin, mixinReference );
                     if ( formItemCreatedFromMixin instanceof FormItemSet )
                     {
                         final FormItemSet set = (FormItemSet) formItemCreatedFromMixin;

@@ -4,8 +4,8 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.QualifiedMixinNames;
-import com.enonic.wem.api.content.type.Mixins;
+import com.enonic.wem.api.content.mixin.Mixins;
+import com.enonic.wem.api.content.mixin.QualifiedMixinNames;
 
 public final class GetMixins
     extends Command<Mixins>

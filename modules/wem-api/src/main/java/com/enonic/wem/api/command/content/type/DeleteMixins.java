@@ -4,7 +4,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.QualifiedMixinNames;
+import com.enonic.wem.api.content.mixin.QualifiedMixinNames;
 import com.enonic.wem.api.content.type.MixinDeletionResult;
 
 public final class DeleteMixins
