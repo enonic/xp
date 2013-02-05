@@ -89,7 +89,6 @@
     };
 
 
-    // Should be used later. Do not remove.
     proto.getStyleForComponent = function ($component) {
         var componentType = util.getComponentType($component);
 
