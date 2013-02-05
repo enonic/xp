@@ -2,9 +2,9 @@ package com.enonic.wem.web.rest.rpc.content.mixin;
 
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.command.content.type.CreateMixin;
-import com.enonic.wem.api.command.content.type.GetMixins;
-import com.enonic.wem.api.command.content.type.UpdateMixins;
+import com.enonic.wem.api.command.content.mixin.CreateMixin;
+import com.enonic.wem.api.command.content.mixin.GetMixins;
+import com.enonic.wem.api.command.content.mixin.UpdateMixins;
 import com.enonic.wem.api.content.mixin.Mixin;
 import com.enonic.wem.api.content.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.mixin.QualifiedMixinNames;

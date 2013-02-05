@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.content.type;
+package com.enonic.wem.api.command.content.mixin;
 
 public final class MixinCommands
 {

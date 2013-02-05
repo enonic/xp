@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.mixin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.command.content.type.DeleteMixins;
+import com.enonic.wem.api.command.content.mixin.DeleteMixins;
 import com.enonic.wem.api.content.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.type.MixinDeletionResult;
 import com.enonic.wem.api.exception.MixinNotFoundException;

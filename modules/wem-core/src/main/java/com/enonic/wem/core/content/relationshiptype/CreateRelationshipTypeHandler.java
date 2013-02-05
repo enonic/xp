@@ -6,7 +6,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.command.content.relationship.CreateRelationshipType;
+import com.enonic.wem.api.command.content.relationshiptype.CreateRelationshipType;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;

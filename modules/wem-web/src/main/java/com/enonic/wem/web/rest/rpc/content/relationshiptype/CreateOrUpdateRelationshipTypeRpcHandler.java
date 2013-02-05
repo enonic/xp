@@ -4,10 +4,10 @@ package com.enonic.wem.web.rest.rpc.content.relationshiptype;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.relationship.CreateRelationshipType;
-import com.enonic.wem.api.command.content.relationship.RelationshipTypesExists;
-import com.enonic.wem.api.command.content.relationship.RelationshipTypesExistsResult;
-import com.enonic.wem.api.command.content.relationship.UpdateRelationshipTypes;
+import com.enonic.wem.api.command.content.relationshiptype.CreateRelationshipType;
+import com.enonic.wem.api.command.content.relationshiptype.RelationshipTypesExists;
+import com.enonic.wem.api.command.content.relationshiptype.RelationshipTypesExistsResult;
+import com.enonic.wem.api.command.content.relationshiptype.UpdateRelationshipTypes;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
@@ -18,7 +18,7 @@ import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
 import static com.enonic.wem.api.command.Commands.relationshipType;
-import static com.enonic.wem.api.command.content.relationship.editor.RelationshipTypeEditors.setRelationshipType;
+import static com.enonic.wem.api.content.relationshiptype.editor.RelationshipTypeEditors.setRelationshipType;
 
 @Component
 public final class CreateOrUpdateRelationshipTypeRpcHandler

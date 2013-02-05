@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.content.relationship;
+package com.enonic.wem.api.command.content.relationshiptype;
 
 
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;

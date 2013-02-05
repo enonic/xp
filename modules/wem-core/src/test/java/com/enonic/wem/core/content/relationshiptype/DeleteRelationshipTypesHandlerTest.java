@@ -9,8 +9,8 @@ import org.mockito.Mockito;
 import com.google.common.collect.Iterables;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.relationship.DeleteRelationshipTypes;
-import com.enonic.wem.api.command.content.relationship.RelationshipTypeDeletionResult;
+import com.enonic.wem.api.command.content.relationshiptype.DeleteRelationshipTypes;
+import com.enonic.wem.api.command.content.relationshiptype.RelationshipTypeDeletionResult;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.exception.SystemException;

@@ -4,7 +4,7 @@ package com.enonic.wem.web.rest.rpc.content.relationshiptype;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.relationship.GetRelationshipTypes;
+import com.enonic.wem.api.command.content.relationshiptype.GetRelationshipTypes;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationshiptype.RelationshipTypes;
 import com.enonic.wem.web.json.JsonErrorResult;

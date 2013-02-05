@@ -5,7 +5,7 @@ import javax.jcr.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.command.content.type.UpdateMixins;
+import com.enonic.wem.api.command.content.mixin.UpdateMixins;
 import com.enonic.wem.api.content.mixin.Mixin;
 import com.enonic.wem.api.content.mixin.MixinEditor;
 import com.enonic.wem.api.content.mixin.Mixins;

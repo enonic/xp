@@ -7,11 +7,11 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.relationship.UpdateRelationshipTypes;
-import com.enonic.wem.api.command.content.relationship.editor.RelationshipTypeEditor;
+import com.enonic.wem.api.command.content.relationshiptype.UpdateRelationshipTypes;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
 import com.enonic.wem.api.content.relationshiptype.RelationshipTypes;
+import com.enonic.wem.api.content.relationshiptype.editor.RelationshipTypeEditor;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;

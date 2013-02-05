@@ -5,9 +5,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.content.type.CreateMixin;
-import com.enonic.wem.api.command.content.type.GetMixins;
-import com.enonic.wem.api.command.content.type.UpdateMixins;
+import com.enonic.wem.api.command.content.mixin.CreateMixin;
+import com.enonic.wem.api.command.content.mixin.GetMixins;
+import com.enonic.wem.api.command.content.mixin.UpdateMixins;
 import com.enonic.wem.api.content.mixin.Mixin;
 import com.enonic.wem.api.content.mixin.Mixins;
 import com.enonic.wem.api.content.type.form.Input;

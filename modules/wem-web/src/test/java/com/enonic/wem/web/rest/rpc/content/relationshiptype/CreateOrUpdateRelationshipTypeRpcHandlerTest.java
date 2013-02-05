@@ -5,10 +5,10 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.content.relationship.CreateRelationshipType;
-import com.enonic.wem.api.command.content.relationship.RelationshipTypesExists;
-import com.enonic.wem.api.command.content.relationship.RelationshipTypesExistsResult;
-import com.enonic.wem.api.command.content.relationship.UpdateRelationshipTypes;
+import com.enonic.wem.api.command.content.relationshiptype.CreateRelationshipType;
+import com.enonic.wem.api.command.content.relationshiptype.RelationshipTypesExists;
+import com.enonic.wem.api.command.content.relationshiptype.RelationshipTypesExistsResult;
+import com.enonic.wem.api.command.content.relationshiptype.UpdateRelationshipTypes;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;

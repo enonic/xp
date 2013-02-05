@@ -4,8 +4,8 @@ package com.enonic.wem.web.rest.rpc.content.relationshiptype;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.relationship.DeleteRelationshipTypes;
-import com.enonic.wem.api.command.content.relationship.RelationshipTypeDeletionResult;
+import com.enonic.wem.api.command.content.relationshiptype.DeleteRelationshipTypes;
+import com.enonic.wem.api.command.content.relationshiptype.RelationshipTypeDeletionResult;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;

@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.relationship.GetRelationshipTypes;
+import com.enonic.wem.api.command.content.relationshiptype.GetRelationshipTypes;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
 import com.enonic.wem.api.content.relationshiptype.RelationshipTypes;

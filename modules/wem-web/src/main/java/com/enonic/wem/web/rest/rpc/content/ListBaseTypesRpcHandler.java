@@ -12,8 +12,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.type.BaseTypeKind;
-import com.enonic.wem.api.command.content.type.GetBaseTypes;
+import com.enonic.wem.api.command.content.BaseTypeKind;
+import com.enonic.wem.api.command.content.GetBaseTypes;
 import com.enonic.wem.api.content.BaseType;
 import com.enonic.wem.api.content.type.BaseTypes;
 import com.enonic.wem.web.json.JsonErrorResult;

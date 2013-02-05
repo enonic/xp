@@ -3,7 +3,7 @@ package com.enonic.wem.web.rest.rpc.content.mixin;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.type.DeleteMixins;
+import com.enonic.wem.api.command.content.mixin.DeleteMixins;
 import com.enonic.wem.api.content.mixin.QualifiedMixinNames;
 import com.enonic.wem.api.content.type.MixinDeletionResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;

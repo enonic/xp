@@ -5,8 +5,8 @@ import javax.jcr.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.command.content.relationship.RelationshipTypesExists;
-import com.enonic.wem.api.command.content.relationship.RelationshipTypesExistsResult;
+import com.enonic.wem.api.command.content.relationshiptype.RelationshipTypesExists;
+import com.enonic.wem.api.command.content.relationshiptype.RelationshipTypesExistsResult;
 import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.core.command.CommandContext;

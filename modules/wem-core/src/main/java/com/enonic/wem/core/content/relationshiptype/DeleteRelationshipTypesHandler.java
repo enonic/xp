@@ -3,8 +3,8 @@ package com.enonic.wem.core.content.relationshiptype;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.command.content.relationship.DeleteRelationshipTypes;
-import com.enonic.wem.api.command.content.relationship.RelationshipTypeDeletionResult;
+import com.enonic.wem.api.command.content.relationshiptype.DeleteRelationshipTypes;
+import com.enonic.wem.api.command.content.relationshiptype.RelationshipTypeDeletionResult;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.command.CommandContext;

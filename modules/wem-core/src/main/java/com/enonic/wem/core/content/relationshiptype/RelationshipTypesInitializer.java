@@ -7,14 +7,14 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.relationship.CreateRelationshipType;
-import com.enonic.wem.api.command.content.relationship.UpdateRelationshipTypes;
+import com.enonic.wem.api.command.content.relationshiptype.CreateRelationshipType;
+import com.enonic.wem.api.command.content.relationshiptype.UpdateRelationshipTypes;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.initializer.InitializerTask;
 
-import static com.enonic.wem.api.command.content.relationship.editor.RelationshipTypeEditors.setRelationshipType;
+import static com.enonic.wem.api.content.relationshiptype.editor.RelationshipTypeEditors.setRelationshipType;
 
 @Component
 @Order(10)

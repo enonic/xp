@@ -1,11 +1,11 @@
-package com.enonic.wem.api.command.content.relationship;
+package com.enonic.wem.api.command.content.relationshiptype;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.command.content.relationship.editor.RelationshipTypeEditor;
 import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
+import com.enonic.wem.api.content.relationshiptype.editor.RelationshipTypeEditor;
 
 public final class UpdateRelationshipTypes
     extends Command<Integer>
