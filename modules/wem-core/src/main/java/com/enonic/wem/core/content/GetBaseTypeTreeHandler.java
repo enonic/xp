@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.type;
+package com.enonic.wem.core.content;
 
 import java.util.List;
 
@@ -9,8 +9,8 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.command.content.type.BaseTypeKind;
 import com.enonic.wem.api.command.content.type.GetBaseTypeTree;
+import com.enonic.wem.api.content.BaseType;
 import com.enonic.wem.api.content.relationship.RelationshipTypes;
-import com.enonic.wem.api.content.type.BaseType;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.Mixins;
 import com.enonic.wem.api.support.tree.Tree;
@@ -18,6 +18,7 @@ import com.enonic.wem.api.support.tree.TreeNode;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.relationship.dao.RelationshipTypeDao;
+import com.enonic.wem.core.content.type.ContentTypeTreeFactory;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 import com.enonic.wem.core.content.type.dao.MixinDao;
 

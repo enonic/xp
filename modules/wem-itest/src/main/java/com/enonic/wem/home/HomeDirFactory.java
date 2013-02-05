@@ -1,4 +1,4 @@
-package com.enonic.wem.itest.home;
+package com.enonic.wem.home;
 
 import java.io.File;
 import java.io.IOException;

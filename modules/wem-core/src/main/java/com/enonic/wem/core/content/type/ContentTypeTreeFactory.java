@@ -14,19 +14,19 @@ import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 
-final class ContentTypeTreeFactory
+public final class ContentTypeTreeFactory
 {
     private final ContentTypeDao contentTypeDao;
 
     private final Session session;
 
-    ContentTypeTreeFactory( final Session session, final ContentTypeDao contentTypeDao )
+    public ContentTypeTreeFactory( final Session session, final ContentTypeDao contentTypeDao )
     {
         this.contentTypeDao = contentTypeDao;
         this.session = session;
     }
 
-    Tree<ContentType> createTree()
+    public Tree<ContentType> createTree()
     {
         final ContentTypes contentTypes = contentTypeDao.selectAll( session );
         return buildTree( contentTypes );

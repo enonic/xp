@@ -1,13 +1,12 @@
-package com.enonic.wem.core.content.type;
+package com.enonic.wem.core.content;
 
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.content.type.BaseType;
+import com.enonic.wem.api.content.BaseType;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.core.content.AbstractJsonSerializer;
 
 public class BaseTypeJsonSerializer
     extends AbstractJsonSerializer<BaseType>

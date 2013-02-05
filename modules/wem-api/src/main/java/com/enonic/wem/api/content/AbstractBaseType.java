@@ -1,5 +1,7 @@
-package com.enonic.wem.api.content.type;
+package com.enonic.wem.api.content;
 
+
+import com.enonic.wem.api.content.type.BaseTypeKey;
 
 public abstract class AbstractBaseType
     implements BaseType

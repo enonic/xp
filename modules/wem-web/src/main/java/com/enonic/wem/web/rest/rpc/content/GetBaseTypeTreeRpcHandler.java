@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest.rpc.content.type;
+package com.enonic.wem.web.rest.rpc.content;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.type.BaseTypeKind;
 import com.enonic.wem.api.command.content.type.GetBaseTypeTree;
-import com.enonic.wem.api.content.type.BaseType;
+import com.enonic.wem.api.content.BaseType;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;

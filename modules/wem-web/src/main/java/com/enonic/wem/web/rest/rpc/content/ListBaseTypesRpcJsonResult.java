@@ -1,13 +1,13 @@
-package com.enonic.wem.web.rest.rpc.content.type;
+package com.enonic.wem.web.rest.rpc.content;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.content.type.BaseType;
+import com.enonic.wem.api.content.BaseType;
 import com.enonic.wem.api.content.type.BaseTypes;
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.core.content.type.BaseTypeJsonSerializer;
+import com.enonic.wem.core.content.BaseTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
 import com.enonic.wem.web.rest.resource.content.ContentTypeImageUriResolver;
 

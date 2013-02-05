@@ -1,4 +1,4 @@
-package com.enonic.wem.itest;
+package com.enonic.wem;
 
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ActiveProfiles;

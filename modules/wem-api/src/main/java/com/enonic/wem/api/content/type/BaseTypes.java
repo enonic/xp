@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.content.BaseType;
 import com.enonic.wem.api.util.AbstractImmutableEntityList;
 
 public final class BaseTypes

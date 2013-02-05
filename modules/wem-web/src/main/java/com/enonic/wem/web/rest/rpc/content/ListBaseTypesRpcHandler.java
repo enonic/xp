@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest.rpc.content.type;
+package com.enonic.wem.web.rest.rpc.content;
 
 
 import java.util.EnumSet;
@@ -14,7 +14,7 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.type.BaseTypeKind;
 import com.enonic.wem.api.command.content.type.GetBaseTypes;
-import com.enonic.wem.api.content.type.BaseType;
+import com.enonic.wem.api.content.BaseType;
 import com.enonic.wem.api.content.type.BaseTypes;
 import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;

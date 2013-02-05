@@ -8,8 +8,8 @@ import org.joda.time.DateTime;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.type.AbstractBaseType;
-import com.enonic.wem.api.content.type.BaseType;
+import com.enonic.wem.api.content.AbstractBaseType;
+import com.enonic.wem.api.content.BaseType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;

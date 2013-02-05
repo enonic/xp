@@ -3,8 +3,8 @@ package com.enonic.wem.api.content.type.form;
 
 import org.joda.time.DateTime;
 
-import com.enonic.wem.api.content.type.AbstractBaseType;
-import com.enonic.wem.api.content.type.BaseType;
+import com.enonic.wem.api.content.AbstractBaseType;
+import com.enonic.wem.api.content.BaseType;
 import com.enonic.wem.api.module.ModuleName;
 
 public class Mixin

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.type;
+package com.enonic.wem.core.content;
 
 import java.util.List;
 
@@ -12,8 +12,8 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.command.content.type.BaseTypeKind;
 import com.enonic.wem.api.command.content.type.GetBaseTypes;
+import com.enonic.wem.api.content.BaseType;
 import com.enonic.wem.api.content.relationship.RelationshipTypes;
-import com.enonic.wem.api.content.type.BaseType;
 import com.enonic.wem.api.content.type.BaseTypes;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.Mixins;
