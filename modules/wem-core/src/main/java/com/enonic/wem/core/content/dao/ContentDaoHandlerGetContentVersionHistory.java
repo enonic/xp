@@ -21,10 +21,10 @@ import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyLong;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyString;
 
-final class GetContentVersionHistoryDaoHandler
+final class ContentDaoHandlerGetContentVersionHistory
     extends AbstractContentDaoHandler
 {
-    GetContentVersionHistoryDaoHandler( final Session session )
+    ContentDaoHandlerGetContentVersionHistory( final Session session )
     {
         super( session );
     }

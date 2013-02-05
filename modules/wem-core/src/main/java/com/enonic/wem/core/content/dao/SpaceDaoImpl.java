@@ -20,7 +20,7 @@ public final class SpaceDaoImpl
     {
         try
         {
-            return new CreateSpaceDaoHandler( session ).handle( space );
+            return new SpaceDaoHandlerCreate( session ).handle( space );
         }
         catch ( RepositoryException e )
         {
@@ -33,7 +33,7 @@ public final class SpaceDaoImpl
     {
         try
         {
-            return new GetSpaceDaoHandler( session ).getSpace( spaceName );
+            return new SpaceDaoHandlerGet( session ).getSpace( spaceName );
         }
         catch ( RepositoryException e )
         {
@@ -46,7 +46,7 @@ public final class SpaceDaoImpl
     {
         try
         {
-            return new GetSpaceDaoHandler( session ).getAllSpaces();
+            return new SpaceDaoHandlerGet( session ).getAllSpaces();
         }
         catch ( RepositoryException e )
         {
@@ -59,7 +59,7 @@ public final class SpaceDaoImpl
     {
         try
         {
-            new UpdateSpaceDaoHandler( session ).handle( space );
+            new SpaceDaoHandlerUpdate( session ).handle( space );
         }
         catch ( RepositoryException e )
         {
@@ -72,7 +72,7 @@ public final class SpaceDaoImpl
     {
         try
         {
-            new DeleteSpaceDaoHandler( session ).handle( spaceName );
+            new SpaceDaoHandlerDelete( session ).handle( spaceName );
         }
         catch ( RepositoryException e )
         {

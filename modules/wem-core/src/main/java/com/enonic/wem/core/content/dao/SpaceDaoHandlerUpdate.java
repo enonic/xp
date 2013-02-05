@@ -4,27 +4,26 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
+import com.enonic.wem.api.space.Space;
 
-public class DeleteSpaceDaoHandler
+public class SpaceDaoHandlerUpdate
     extends AbstractSpaceDaoHandler
 {
-    public DeleteSpaceDaoHandler( final Session session )
+    public SpaceDaoHandlerUpdate( final Session session )
     {
         super( session );
     }
 
-    public void handle( final SpaceName spaceName )
+    public void handle( final Space space )
         throws RepositoryException
     {
-        final Node spaceNode = getSpaceNode( spaceName );
-
+        final Node spaceNode = getSpaceNode( space.getName() );
         if ( spaceNode == null )
         {
-            throw new SpaceNotFoundException( spaceName );
+            throw new SpaceNotFoundException( space.getName() );
         }
 
-        spaceNode.remove();
+        spaceJcrMapper.toJcr( space, spaceNode );
     }
 }

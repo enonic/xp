@@ -13,10 +13,10 @@ import com.enonic.wem.api.content.versioning.ContentVersionId;
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_PREFIX;
 
-final class GetContentVersionDaoHandler
+final class ContentDaoHandlerGetVersion
     extends AbstractContentDaoHandler
 {
-    GetContentVersionDaoHandler( final Session session )
+    ContentDaoHandlerGetVersion( final Session session )
     {
         super( session );
     }

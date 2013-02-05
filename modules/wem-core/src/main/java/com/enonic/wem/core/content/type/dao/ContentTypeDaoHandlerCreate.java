@@ -10,10 +10,10 @@ import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 
-final class CreateContentTypeDaoHandler
+final class ContentTypeDaoHandlerCreate
     extends AbstractContentTypeDaoHandler
 {
-    CreateContentTypeDaoHandler( final Session session )
+    ContentTypeDaoHandlerCreate( final Session session )
     {
         super( session );
     }

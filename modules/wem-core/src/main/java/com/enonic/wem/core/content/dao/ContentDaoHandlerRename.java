@@ -8,10 +8,10 @@ import javax.jcr.Session;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.exception.ContentNotFoundException;
 
-class RenameContentDaoHandler
+class ContentDaoHandlerRename
     extends AbstractContentDaoHandler
 {
-    RenameContentDaoHandler( final Session session )
+    ContentDaoHandlerRename( final Session session )
     {
         super( session );
     }

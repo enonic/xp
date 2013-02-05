@@ -23,7 +23,7 @@ public final class ContentTypeDaoImpl
     {
         try
         {
-            new CreateContentTypeDaoHandler( session ).create( contentType );
+            new ContentTypeDaoHandlerCreate( session ).create( contentType );
         }
         catch ( RepositoryException e )
         {
@@ -36,7 +36,7 @@ public final class ContentTypeDaoImpl
     {
         try
         {
-            new UpdateContentTypeDaoHandler( session ).update( contentType );
+            new ContentTypeDaoHandlerUpdate( session ).update( contentType );
         }
         catch ( RepositoryException e )
         {
@@ -49,7 +49,7 @@ public final class ContentTypeDaoImpl
     {
         try
         {
-            new DeleteContentTypeDaoHandler( session ).handle( qualifiedContentTypeName );
+            new ContentTypeDaoHandlerDelete( session ).handle( qualifiedContentTypeName );
         }
         catch ( RepositoryException e )
         {
@@ -62,7 +62,7 @@ public final class ContentTypeDaoImpl
     {
         try
         {
-            return new RetrieveContentTypeDaoHandler( session ).retrieveAll();
+            return new ContentTypeDaoHandlerSelect( session ).selectAll();
         }
         catch ( RepositoryException e )
         {
@@ -75,7 +75,7 @@ public final class ContentTypeDaoImpl
     {
         try
         {
-            return new RetrieveContentTypeDaoHandler( session ).retrieve( qualifiedContentTypeNames );
+            return new ContentTypeDaoHandlerSelect( session ).select( qualifiedContentTypeNames );
         }
         catch ( RepositoryException e )
         {

@@ -7,10 +7,10 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.space.Space;
-import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.exception.SpaceAlreadyExistException;
+import com.enonic.wem.api.space.Space;
+import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.core.jcr.JcrConstants;
 
 import static com.enonic.wem.api.content.Content.newContent;
@@ -20,12 +20,12 @@ import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_HISTORY
 import static org.apache.jackrabbit.JcrConstants.NT_UNSTRUCTURED;
 
 
-final class CreateSpaceDaoHandler
+final class SpaceDaoHandlerCreate
     extends AbstractSpaceDaoHandler
 {
     private final ContentJcrMapper contentJcrMapper = new ContentJcrMapper();
 
-    CreateSpaceDaoHandler( final Session session )
+    SpaceDaoHandlerCreate( final Session session )
     {
         super( session );
     }

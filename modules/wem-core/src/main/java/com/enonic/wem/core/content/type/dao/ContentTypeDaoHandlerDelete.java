@@ -9,10 +9,10 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.exception.ContentTypeNotFoundException;
 
 
-final class DeleteContentTypeDaoHandler
+final class ContentTypeDaoHandlerDelete
     extends AbstractContentTypeDaoHandler
 {
-    DeleteContentTypeDaoHandler( final Session session )
+    ContentTypeDaoHandlerDelete( final Session session )
     {
         super( session );
     }

@@ -17,21 +17,21 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 
-final class RetrieveContentTypeDaoHandler
+final class ContentTypeDaoHandlerSelect
     extends AbstractContentTypeDaoHandler
 {
-    RetrieveContentTypeDaoHandler( final Session session )
+    ContentTypeDaoHandlerSelect( final Session session )
     {
         super( session );
     }
 
-    ContentTypes retrieve( final QualifiedContentTypeNames contentTypeNames )
+    ContentTypes select( final QualifiedContentTypeNames contentTypeNames )
         throws RepositoryException
     {
         final List<ContentType> contentTypeList = Lists.newArrayList();
         for ( QualifiedContentTypeName contentTypeName : contentTypeNames )
         {
-            final ContentType contentType = retrieveContentType( contentTypeName );
+            final ContentType contentType = doSelect( contentTypeName );
             if ( contentType != null )
             {
                 contentTypeList.add( contentType );
@@ -40,7 +40,7 @@ final class RetrieveContentTypeDaoHandler
         return ContentTypes.from( contentTypeList );
     }
 
-    private ContentType retrieveContentType( final QualifiedContentTypeName contentTypeName )
+    private ContentType doSelect( final QualifiedContentTypeName contentTypeName )
         throws RepositoryException
     {
         final Node contentTypeNode = this.getContentTypeNode( contentTypeName );
@@ -52,7 +52,7 @@ final class RetrieveContentTypeDaoHandler
         return this.contentTypeJcrMapper.toContentType( contentTypeNode );
     }
 
-    ContentTypes retrieveAll()
+    ContentTypes selectAll()
         throws RepositoryException
     {
         final Node rootNode = session.getRootNode();

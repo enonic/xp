@@ -10,10 +10,10 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.exception.SystemException;
 
 
-final class UpdateContentTypeDaoHandler
+final class ContentTypeDaoHandlerUpdate
     extends AbstractContentTypeDaoHandler
 {
-    UpdateContentTypeDaoHandler( final Session session )
+    ContentTypeDaoHandlerUpdate( final Session session )
     {
         super( session );
     }

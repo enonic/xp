@@ -23,10 +23,10 @@ import static com.enonic.wem.core.content.dao.ContentDao.SPACE_CONTENT_ROOT_NODE
 import static org.apache.jackrabbit.JcrConstants.NT_UNSTRUCTURED;
 
 
-final class CreateContentDaoHandler
+final class ContentDaoHandlerCreate
     extends AbstractContentDaoHandler
 {
-    CreateContentDaoHandler( final Session session )
+    ContentDaoHandlerCreate( final Session session )
     {
         super( session );
     }

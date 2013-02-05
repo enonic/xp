@@ -10,10 +10,10 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 
-final class FindChildContentDaoHandler
+final class ContentDaoHandlerFindChild
     extends AbstractContentDaoHandler
 {
-    FindChildContentDaoHandler( final Session session )
+    ContentDaoHandlerFindChild( final Session session )
     {
         super( session );
     }

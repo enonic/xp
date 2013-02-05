@@ -8,10 +8,10 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 
-final class CountContentTypeUsageDaoHandler
+final class ContentDaoHandlerCountContentTypeUsage
     extends AbstractContentDaoHandler
 {
-    CountContentTypeUsageDaoHandler( final Session session )
+    ContentDaoHandlerCountContentTypeUsage( final Session session )
     {
         super( session );
     }

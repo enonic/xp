@@ -11,10 +11,10 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
 
-final class GetContentTreeContentDaoHandler
+final class ContentDaoHandlerGetContentTree
     extends AbstractContentDaoHandler
 {
-    GetContentTreeContentDaoHandler( final Session session )
+    ContentDaoHandlerGetContentTree( final Session session )
     {
         super( session );
     }

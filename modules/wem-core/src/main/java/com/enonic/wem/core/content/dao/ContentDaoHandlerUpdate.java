@@ -12,10 +12,10 @@ import com.enonic.wem.api.exception.ContentNotFoundException;
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_NEXT_VERSION_PROPERTY;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyLong;
 
-final class UpdateContentDaoHandler
+final class ContentDaoHandlerUpdate
     extends AbstractContentDaoHandler
 {
-    UpdateContentDaoHandler( final Session session )
+    ContentDaoHandlerUpdate( final Session session )
     {
         super( session );
     }

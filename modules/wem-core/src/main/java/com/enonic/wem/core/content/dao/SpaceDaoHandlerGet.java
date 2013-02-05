@@ -16,10 +16,10 @@ import com.enonic.wem.core.jcr.JcrHelper;
 
 import static com.enonic.wem.api.space.Space.newSpace;
 
-final class GetSpaceDaoHandler
+final class SpaceDaoHandlerGet
     extends AbstractSpaceDaoHandler
 {
-    GetSpaceDaoHandler( final Session session )
+    SpaceDaoHandlerGet( final Session session )
     {
         super( session );
     }

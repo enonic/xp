@@ -13,10 +13,10 @@ import com.enonic.wem.api.exception.UnableToDeleteContentException;
 
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_HISTORY_NODE;
 
-final class DeleteContentDaoHandler
+final class ContentDaoHandlerDelete
     extends AbstractContentDaoHandler
 {
-    DeleteContentDaoHandler( final Session session )
+    ContentDaoHandlerDelete( final Session session )
     {
         super( session );
     }
