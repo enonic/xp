@@ -11,6 +11,9 @@ public interface JsonRpcParam
     public JsonRpcParam required()
         throws JsonRpcException;
 
+    public JsonRpcParam notBlank()
+        throws JsonRpcException;
+
     public String asString();
 
     public String asString( String defValue );

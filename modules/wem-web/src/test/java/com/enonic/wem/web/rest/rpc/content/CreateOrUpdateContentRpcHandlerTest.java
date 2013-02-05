@@ -103,10 +103,10 @@ public class CreateOrUpdateContentRpcHandlerTest
     public void createContent_parent_not_found()
         throws Exception
     {
-        ContentPath paretnContentPath = ContentPath.from( "/myContent/childContent" ).getParentPath();
+        ContentPath parentContentPath = ContentPath.from( "/myContent/childContent" ).getParentPath();
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
         Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
-        Mockito.when( client.execute( isA( CreateContent.class ) ) ).thenThrow( new ContentNotFoundException( paretnContentPath ) );
+        Mockito.when( client.execute( isA( CreateContent.class ) ) ).thenThrow( new ContentNotFoundException( parentContentPath ) );
 
         ObjectNode expectedJson = objectNode();
         expectedJson.put( "success", false );

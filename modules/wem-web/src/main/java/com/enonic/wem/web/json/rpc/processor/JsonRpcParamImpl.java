@@ -2,6 +2,7 @@ package com.enonic.wem.web.json.rpc.processor;
 
 import java.lang.reflect.Array;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
@@ -43,6 +44,19 @@ final class JsonRpcParamImpl
         throws JsonRpcException
     {
         if ( isNull() )
+        {
+            final JsonRpcError error = JsonRpcError.invalidParams( "Parameter [" + this.name + "] is required" );
+            throw new JsonRpcException( error );
+        }
+
+        return this;
+    }
+
+    @Override
+    public JsonRpcParam notBlank()
+        throws JsonRpcException
+    {
+        if ( isNull() || StringUtils.isBlank( asString() ) )
         {
             final JsonRpcError error = JsonRpcError.invalidParams( "Parameter [" + this.name + "] is required" );
             throw new JsonRpcException( error );

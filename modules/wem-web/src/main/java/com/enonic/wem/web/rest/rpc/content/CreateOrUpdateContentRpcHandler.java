@@ -63,12 +63,7 @@ public final class CreateOrUpdateContentRpcHandler
 
         final QualifiedContentTypeName qualifiedContentTypeName =
             new QualifiedContentTypeName( context.param( "qualifiedContentTypeName" ).required().asString() );
-        final String displayName = context.param( "displayName" ).required().asString();
-        if ( displayName.trim().isEmpty() )
-        {
-            context.setResult( new JsonErrorResult( "Parameter [displayName] is required" ) );
-            return;
-        }
+        final String displayName = context.param( "displayName" ).notBlank().asString();
 
         final ContentType contentType = getContentType( qualifiedContentTypeName );
 

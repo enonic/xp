@@ -6,20 +6,26 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.space.Space;
+import com.enonic.wem.api.space.SpaceName;
 
 public final class CreateSpace
     extends Command<Space>
 {
     private String displayName;
 
-    private String name;
+    private SpaceName spaceName;
 
     private byte[] icon;
 
+    public CreateSpace name( final SpaceName spaceName )
+    {
+        this.spaceName = spaceName;
+        return this;
+    }
+
     public CreateSpace name( final String name )
     {
-        this.name = name;
-        return this;
+        return name( SpaceName.from( name ) );
     }
 
     public CreateSpace displayName( final String displayName )
@@ -48,20 +54,20 @@ public final class CreateSpace
         }
 
         final CreateSpace that = (CreateSpace) o;
-        return Objects.equal( this.displayName, that.displayName ) && Objects.equal( this.name, that.name ) &&
+        return Objects.equal( this.displayName, that.displayName ) && Objects.equal( this.spaceName, that.spaceName ) &&
             Objects.equal( this.icon, that.icon );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.displayName, this.name, this.icon );
+        return Objects.hashCode( this.displayName, this.spaceName, this.icon );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.name, "space name cannot be null" );
+        Preconditions.checkNotNull( this.spaceName, "space name cannot be null" );
         Preconditions.checkNotNull( this.displayName, "space displayName cannot be null" );
     }
 
@@ -70,9 +76,9 @@ public final class CreateSpace
         return displayName;
     }
 
-    public String getName()
+    public SpaceName getName()
     {
-        return name;
+        return spaceName;
     }
 
     public byte[] getIcon()
