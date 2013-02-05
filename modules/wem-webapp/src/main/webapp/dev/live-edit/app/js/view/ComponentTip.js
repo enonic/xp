@@ -38,9 +38,13 @@
         var me = this;
 
         var html = '<div class="live-edit-component-tip" style="top:-5000px; left:-5000px;">' +
-                   '    <span class="live-edit-component-tip-drag-handle"> </span> ' +
-                   '    <span class="live-edit-component-tip-type-text"></span> ' +
-                   '    <span class="live-edit-component-tip-name-text"></span>' +
+                   '    <div class="live-edit-component-tip-drag-handle-container">' +
+                   '        <div class="live-edit-component-tip-drag-handle"><!-- // --></div>' +
+                   '    </div>' +
+                   '    <div class="live-edit-component-tip-text-container">' +
+                   '        <span class="live-edit-component-tip-name-text"></span>' +
+                   '        <span class="live-edit-component-tip-type-text"></span> ' +
+                   '    </div>' +
                    '</div>';
 
         me.createElement(html);
@@ -51,15 +55,15 @@
             event.stopPropagation();
         });
 
-        var $dragHandle = me.getDragHandle();
+        var $dragHandleContainer = me.getDragHandleContainer();
 
-        $dragHandle.on('mousedown', function () {
+        $dragHandleContainer.on('mousedown', function () {
             this.le_mouseIsDown = true;
             // TODO: Use PubSub
             AdminLiveEdit.DragDrop.enable();
         });
 
-        $dragHandle.on('mousemove', function (event) {
+        $dragHandleContainer.on('mousemove', function (event) {
             if (this.le_mouseIsDown) {
 
                 this.le_mouseIsDown = false;
@@ -74,7 +78,7 @@
 
             }
         });
-        $dragHandle.on('mouseup', function () {
+        $dragHandleContainer.on('mouseup', function () {
             this.le_mouseIsDown = false;
             // TODO: remove reference to DragDrop, use PubSub.
             AdminLiveEdit.DragDrop.disable();
@@ -99,7 +103,7 @@
 
         var componentBox = util.getBoxModel($component),
             leftPos = componentBox.left + (componentBox.width / 2 - me.getEl().outerWidth() / 2),
-            topPos = componentBox.top - (me.getEl().height() * 2) - 2; // -2 to show above the highlighter border
+            topPos = componentBox.top - me.getEl().height() - 10;
 
         me.getEl().css({
             top: topPos,
@@ -112,10 +116,15 @@
         var me = this;
         var $dragHandle = me.getDragHandle();
         if (componentInfo.type === 'window') {
-            $dragHandle.css({'display': 'inline-block'});
+            $dragHandle.css({'display': 'block'});
         } else {
             $dragHandle.css({'display': 'none'});
         }
+    };
+
+
+    proto.getDragHandleContainer = function () {
+        return this.getEl().find('.live-edit-component-tip-drag-handle-container');
     };
 
 
@@ -126,9 +135,8 @@
 
     proto.setText = function (componentType, componentName) {
         var $componentTip = this.getEl();
-        var typeText = componentType.concat(':');
-        $componentTip.children('.live-edit-component-tip-type-text').text(typeText);
-        $componentTip.children('.live-edit-component-tip-name-text').text(componentName);
+        $componentTip.find('.live-edit-component-tip-name-text').text(componentName);
+        $componentTip.find('.live-edit-component-tip-type-text').text(componentType);
     };
 
 

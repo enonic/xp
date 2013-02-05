@@ -211,33 +211,67 @@ svg.live-edit-highlighter rect {
 }
 
 .live-edit-tool-tip-type-text {
-    color: #333;
-    font-weight: bold;
+    color: #666;
 }
 
 /*** Component tip ***/
 
 .live-edit-component-tip {
+    display: table-row;
     position: absolute;
     z-index: 1000150;
-    padding: 10px;
-    background-color: #0646A7;
+    background-color: #fff9cb;
     cursor: default;
 }
 
-.live-edit-component-tip-drag-handle {
-    background: url("../images/drag-handle.png") no-repeat scroll 0 0 transparent;
-    width: 22px;
-    height: 16px;
-    cursor: move;
-    vertical-align: text-top;
+/* Arrow */
+.live-edit-component-tip:after {
+    content: '';
+    width: 0;
+    height: 0;
+    position: absolute;
+    left: 50%;
+    top: 46px;
+    margin-left: -10px;
+    border: 10px solid;
+    border-color: #fff9cb transparent transparent transparent;
 }
 
+.live-edit-component-tip-text-container {
+    padding: 10px;
+}
+
+.live-edit-component-tip-drag-handle-container {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    border-right: 1px solid #989898;
+    width: 45px;
+    cursor: move;
+
+}
+.live-edit-component-tip-drag-handle {
+    background: url("../images/drag-handle.png") no-repeat scroll 0 0 transparent;
+    width: 16px;
+    height: 16px;
+    margin: 0 auto;
+}
+
+.live-edit-component-tip-text-container {
+    display: table-cell;
+    /*text-align: center;*/
+    vertical-align: middle;
+    min-width: 150px;
+}
 .live-edit-component-tip-type-text,
 .live-edit-component-tip-name-text {
-    display: inline-block;
-    color: #fff;
+    display: block;
+    color: #444;
 }
+.live-edit-component-tip-name-text {
+    font-weight: bold;
+}
+
 
 /*** Component menu */
 

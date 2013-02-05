@@ -173,6 +173,12 @@
         <!-- Region -->
         <div id="north" class="clear clearfix" data-live-edit-type="region" data-live-edit-key="70" data-live-edit-name="North">
 
+
+          <div data-live-edit-type="window" data-live-edit-key="10009" data-live-edit-name="Page Banner: Step into control">
+            <img src="../page/_public/skins/advanced/standard/images/binary-86883-42274.jpg" width="950" height="200"/>
+          </div>
+
+
           <!--%@ include file="components/window-html5-video.html" %-->
 
         </div>
@@ -203,6 +209,8 @@
             <div class="column clearfix screen" id="east" data-live-edit-type="region" data-live-edit-key="31" data-live-edit-name="East">
 
               <%@ include file="components/window-empty.jsp" %>
+
+              <%@ include file="components/paragraph-support.html" %>
 
               <!--%@ include file="components/window-tagcloud.html" %-->
 
