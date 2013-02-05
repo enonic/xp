@@ -12,7 +12,7 @@
 svg.live-edit-highlighter,
 svg.live-edit-highlighter rect,
 .live-edit-empty-region-placeholder,
-.live-edit-empty-window-placeholder,
+.live-edit-empty-part-placeholder,
 .live-edit-tool-tip,
 .live-edit-tool-tip-type-text,
 .live-edit-tool-tip-name-text,
@@ -189,7 +189,7 @@ svg.live-edit-highlighter rect {
     text-align: center;
 }
 
-.live-edit-empty-window-placeholder {
+.live-edit-empty-part-placeholder {
     border: 1px dashed #aaa;
     clear: both;
     color: #d3d3d3;

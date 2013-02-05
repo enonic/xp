@@ -1,7 +1,7 @@
 (function ($) {
     'use strict';
 
-    var windows =  AdminLiveEdit.model.component.Windows = function () {
+    var parts =  AdminLiveEdit.model.component.Parts = function () {
         this.cssSelector = '[data-live-edit-type=window]';
         this.renderEmptyPlaceholders();
         this.attachMouseOverEvent();
@@ -9,37 +9,37 @@
         this.attachClickEvent();
     };
     // Inherit from Base prototype
-    windows.prototype = new AdminLiveEdit.model.component.Base();
+    parts.prototype = new AdminLiveEdit.model.component.Base();
 
     // Fix constructor as it now is Base
-    windows.constructor = windows;
+    parts.constructor = parts;
 
-    var proto = windows.prototype;
+    var proto = parts.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    proto.appendEmptyPlaceholder = function ($window) {
+    proto.appendEmptyPlaceholder = function ($part) {
         var $placeholder = $('<div/>', {
-            'class': 'live-edit-empty-window-placeholder',
-            'html': 'Empty Window'
+            'class': 'live-edit-empty-part-placeholder',
+            'html': 'Empty Part'
         });
-        $window.append($placeholder);
+        $part.append($placeholder);
     };
 
 
-    proto.isWindowEmpty = function ($window) {
-        return $($window).children().length === 0;
+    proto.isPartEmpty = function ($part) {
+        return $($part).children().length === 0;
     };
 
 
     proto.renderEmptyPlaceholders = function () {
         var t = this;
         this.getAll().each(function (index) {
-            var $window = $(this);
-            var windowIsEmpty = t.isWindowEmpty($window);
-            if (windowIsEmpty) {
-                t.appendEmptyPlaceholder($window);
+            var $part = $(this);
+            var partIsEmpty = t.isPartEmpty($part);
+            if (partIsEmpty) {
+                t.appendEmptyPlaceholder($part);
             }
         });
     };

@@ -57,7 +57,7 @@
 
 
     proto.getElements = function () {
-        return $('[data-live-edit-type=window] > ' + this.elements.toString());
+        return $('[data-live-edit-type=part] > ' + this.elements.toString());
     };
 
 

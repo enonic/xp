@@ -13,7 +13,7 @@
         // TODO: Is this necessary anymore?
         me.buttonConfig = {
             'region': ['insert', 'reset', 'empty'],
-            'window': ['settings', 'remove'],
+            'part': ['settings', 'remove'],
             'content': ['view', 'edit'],
             'paragraph': ['edit']
         };

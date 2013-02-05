@@ -54,9 +54,9 @@
 
 
     proto.isRegionEmpty = function ($region) {
-        var hasNotWindows = $region.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
+        var hasNotParts = $region.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
         var hasNotDropTargetPlaceholder = $region.children('.live-edit-drop-target-placeholder').length === 0;
-        return hasNotWindows && hasNotDropTargetPlaceholder;
+        return hasNotParts && hasNotDropTargetPlaceholder;
     };
 
 

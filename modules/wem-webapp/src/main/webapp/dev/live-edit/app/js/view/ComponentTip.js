@@ -115,7 +115,7 @@
     proto.showHideDragHandle = function (componentInfo) {
         var me = this;
         var $dragHandle = me.getDragHandle();
-        if (componentInfo.type === 'window') {
+        if (componentInfo.type === 'part') {
             $dragHandle.css({'display': 'block'});
         } else {
             $dragHandle.css({'display': 'none'});

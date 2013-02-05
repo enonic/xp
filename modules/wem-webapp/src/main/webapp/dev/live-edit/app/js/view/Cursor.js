@@ -26,7 +26,7 @@
         case 'region':
             cursor = 'pointer';
             break;
-        case 'window':
+        case 'part':
             cursor = 'move';
             break;
         case 'paragraph':

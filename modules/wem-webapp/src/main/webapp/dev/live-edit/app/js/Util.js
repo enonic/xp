@@ -79,7 +79,7 @@ AdminLiveEdit.Util = (function () {
             case 'region':
                 icon = '../app/images/layout_vertical.png';
                 break;
-            case 'window':
+            case 'part':
                 icon = '../app/images/component_blue.png';
                 break;
             case 'content':

@@ -104,7 +104,7 @@
             fillColor = 'rgba(255,255,255,0)';
             break;
 
-        case 'window':
+        case 'part':
             strokeColor = 'rgba(68,68,68,1)';
             strokeDashArray = ' ';
             fillColor = 'rgba(255,255,255,0)';

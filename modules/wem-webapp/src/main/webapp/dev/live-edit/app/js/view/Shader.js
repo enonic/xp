@@ -51,12 +51,12 @@
 
     // TODO: Should not be here. Need some code restructuring
     proto.addWindowBorders = function () {
-        var $windows = $('[data-live-edit-type=window]'),
+        var $parts = $('[data-live-edit-type=part]'),
             $component,
             $componentHighlighter,
             componentBoxModel;
 
-        $windows.each(function (i) {
+        $parts.each(function (i) {
             $component = $(this);
             componentBoxModel = util.getBoxModel($component);
 
