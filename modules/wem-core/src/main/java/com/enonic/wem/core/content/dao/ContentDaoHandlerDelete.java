@@ -24,11 +24,6 @@ final class ContentDaoHandlerDelete
     void deleteContentByPath( final ContentPath pathToContent )
         throws RepositoryException
     {
-        if ( pathToContent.isRoot() )
-        {
-            // the root content in a space can only be deleted when the space is deleted
-            throw new UnableToDeleteContentException( pathToContent, "Unable to delete root content" );
-        }
         final Node contentNode = doGetContentNode( session, pathToContent );
         if ( contentNode == null )
         {
