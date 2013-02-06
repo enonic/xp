@@ -10,7 +10,7 @@ AdminLiveEdit.DragDrop = (function () {
     var cursorAt = AdminLiveEdit.Util.supportsTouch() ? {left: 15, top: 70} : {left: -15, top: -20};
 
     var regionSelector = '[data-live-edit-type=region]';
-    var partSelector = '[data-live-edit-type=part]';
+    var itemsToSort = '[data-live-edit-type=part], [data-live-edit-type=paragraph]';
 
 
     function enableDragDrop() {
@@ -172,7 +172,7 @@ AdminLiveEdit.DragDrop = (function () {
         $liveedit(regionSelector).sortable({
             revert              : 1000,
             connectWith         : regionSelector,   // Sortable elements.
-            items               : partSelector,   // Elements to sort.
+            items               : itemsToSort,   // Elements to sort.
             distance            : 1,
             delay               : 150,
             tolerance           : 'pointer',
