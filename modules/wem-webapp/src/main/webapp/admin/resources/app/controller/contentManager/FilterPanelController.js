@@ -31,9 +31,14 @@ Ext.define('Admin.controller.contentManager.FilterPanelController', {
         var treeGridPanel = this.getContentTreeGridPanel();
         treeGridPanel.setActiveList(filterPanel.isDirty() ? 'grid' : 'tree');
 
+        var selected = treeGridPanel.getSelection();
+
         // update details to current selection
-        var detailPanel = this.getContentDetailPanel();
-        detailPanel.setData(treeGridPanel.getSelection());
+        this.updateDetailPanel(selected);
+
+        // update the toolbar buttons
+        this.updateToolbarButtons(selected)
+
     }
 
 

@@ -16,6 +16,7 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
 
             {
                 text: ' New',
+                disabled: true,
                 action: 'newContent'
             },
             {

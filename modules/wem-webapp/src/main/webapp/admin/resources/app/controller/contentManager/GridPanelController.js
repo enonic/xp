@@ -20,7 +20,10 @@ Ext.define('Admin.controller.contentManager.GridPanelController', {
 
         this.control({
             'contentTreeGridPanel treepanel, grid': {
-                selectionchange: this.updateSelection,
+                selectionchange: function (panel, selected, opts) {
+                    this.updateDetailPanel(selected);
+                    this.updateToolbarButtons(selected);
+                },
                 itemcontextmenu: this.popupMenu,
                 itemdblclick: function (grid, record, el, index, event, opts) {
                     this.editContent(record);
@@ -42,11 +45,6 @@ Ext.define('Admin.controller.contentManager.GridPanelController', {
                 }
             }
         });
-    },
-
-    updateSelection: function () {
-        var detailPanel = this.getContentDetailPanel();
-        detailPanel.setData(this.getContentTreeGridPanel().getSelection());
     },
 
     popupMenu: function (view, rec, node, index, e) {

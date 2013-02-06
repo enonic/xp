@@ -243,6 +243,17 @@ Ext.define('Admin.controller.contentManager.Controller', {
         }
     },
 
+    updateDetailPanel: function (selected) {
+        var detailPanel = this.getContentDetailPanel();
+        detailPanel.setData(selected);
+    },
+
+    updateToolbarButtons: function (selected) {
+        var toolbar = this.getContentBrowseToolbar();
+        var newContentButton = toolbar.down('*[action=newContent]');
+        newContentButton.setDisabled(Ext.isEmpty(selected) || selected.length !== 1);
+    },
+
     /*      Getters     */
 
     getContentFilter: function () {
@@ -251,6 +262,10 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
     getContentShowPanel: function () {
         return Ext.ComponentQuery.query('contentShow')[0];
+    },
+
+    getContentBrowseToolbar: function () {
+        return this.getContentShowPanel().down('browseToolbar');
     },
 
     getContentTreeGridPanel: function () {
