@@ -1,12 +1,13 @@
 <tpl for=".">
-    <div class="admin-data-view">
-        <div class="admin-data-view-cell">
+    <div class="admin-data-view-row">
+        <div class="admin-data-view-thumbnail">
             <img src="{[values.icon || 'resources/images/icons/32x32/server_id_card.png']}"/>
         </div>
-        <div class="admin-data-view-cell">
+        <div class="admin-data-view-description">
             <h6>{name}</h6>
 
-            <div>userstores\\\\{name}</div>
+            <p>userstores\\\\{name}</p>
         </div>
+        <div class="x-clear"></div>
     </div>
 </tpl>

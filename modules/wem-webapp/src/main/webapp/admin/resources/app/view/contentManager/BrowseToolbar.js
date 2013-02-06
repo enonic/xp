@@ -15,19 +15,8 @@ Ext.define('Admin.view.contentManager.BrowseToolbar', {
         this.items = [
 
             {
-                xtype: 'splitbutton',
                 text: ' New',
-                listeners: {
-                    click: function (button) {
-                        button.showMenu();
-                    }
-                },
-                cls: 'x-btn-as-arrow',
-                menu: Ext.create('Admin.view.MegaMenu', {
-                    recentCount: 4,
-                    cookieKey: 'admin.contentmanager.megamenu',
-                    url: this.loadContentTypesMenu
-                })
+                action: 'newContent'
             },
             {
                 text: 'Edit',

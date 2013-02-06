@@ -4,10 +4,11 @@ Ext.define('Admin.view.account.wizard.user.UserStoreListPanel', {
 
     border: false,
     loadMask: true,
+    cls: 'admin-data-view',
     store: 'Admin.store.account.UserstoreConfigStore',
-    itemSelector: 'div.admin-data-view',
+    itemSelector: '.admin-data-view-row',
     trackOver: true,
-    overItemCls: 'admin-data-view-over',
+    overItemCls: 'x-item-over',
     emptyText: 'No items available',
     autoScroll: true,
     tpl: Templates.account.userstoreListItem,

@@ -1,3 +1,4 @@
+@charset "IBM866";
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
 
 /*
@@ -121,8 +122,8 @@ ul.icons li [class^="icon-"], ul.icons li [class*=" icon-"] {
 
 /* line 33, ../sass/admin/css/_font-awesome.scss */
 .icon-border {
-    border: solid 1px #eeeeee;
-    padding: 0.2em 0.25em 0.15em;
+    border: solid 1px #eee;
+    padding: .2em .25em .15em;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
@@ -1716,7 +1717,7 @@ td {
 
 /* line 11, ../sass/admin/css/_window.scss */
 .admin-window-header h1 {
-    color: white !important;
+    color: #fff !important;
     font-size: 18px !important;
     margin: 0 !important;
     padding: 0 0 0 28px !important;
@@ -1745,7 +1746,7 @@ td {
 
 /* line 19, ../sass/admin/css/_panel.scss */
 .admin-filter .admin-facet-group h2 {
-    color: black !important;
+    color: #000000 !important;
     font-size: 15px !important;
     padding: 0 !important;
     text-transform: capitalize;
@@ -1758,17 +1759,55 @@ td {
 
 /* line 29, ../sass/admin/css/_panel.scss */
 .admin-filter .admin-facet-group .admin-facet label {
-    color: #777777 !important;
+    color: #777 !important;
 }
 
 /* line 35, ../sass/admin/css/_panel.scss */
 .admin-filter .admin-facet-group .admin-facet.checked label {
-    color: #333333 !important;
+    color: #333 !important;
 }
 
 /* line 48, ../sass/admin/css/_panel.scss */
 .admin-detail .x-panel-body {
     border: none !important;
+}
+
+/* line 54, ../sass/admin/css/_panel.scss */
+.admin-box {
+    padding: 10px;
+    background-color: #ebebeb;
+}
+
+/* line 59, ../sass/admin/css/_panel.scss */
+.admin-box .x-panel-header-default {
+    background-color: transparent;
+    -webkit-box-shadow: transparent 0px 0px 0px;
+    -moz-box-shadow: transparent 0px 0px 0px;
+    box-shadow: transparent 0px 0px 0px;
+}
+
+/* line 64, ../sass/admin/css/_panel.scss */
+.admin-box .x-panel-header-text-default {
+    color: #000;
+    font-weight: normal;
+    font-size: 22px !important;
+    line-height: 20px;
+}
+
+/* line 71, ../sass/admin/css/_panel.scss */
+.admin-box .x-panel-body-default {
+    border: 0 none;
+    background-color: transparent;
+}
+
+/* line 76, ../sass/admin/css/_panel.scss */
+.admin-box .admin-data-view {
+    background-color: transparent;
+}
+
+/* line 82, ../sass/admin/css/_panel.scss */
+.admin-box .admin-data-view .admin-data-view-row.x-item-over {
+    background-color: #fff;
 }
 
 /* line 1, ../sass/admin/css/_button.scss */
@@ -1833,7 +1872,7 @@ td {
 /* line 4, ../sass/admin/css/_grid.scss */
 .x-grid-row .x-grid-cell {
     font-size: 11px !important;
-    color: black !important;
+    color: #000 !important;
     vertical-align: middle !important;
     border: none !important;
 }
@@ -1925,7 +1964,7 @@ td {
 
 /* line 86, ../sass/admin/css/_grid.scss */
 .admin-grid .x-grid-row-selected .admin-grid-name-renderer .admin-grid-name-renderer-path {
-    color: white !important;
+    color: #fff !important;
 }
 
 /**
@@ -2011,7 +2050,7 @@ td {
 
 /* line 1, ../sass/admin/css/_mega-menu.scss */
 .admin-mega-menu {
-    background-color: white !important;
+    background-color: #fff !important;
 }
 
 /* line 5, ../sass/admin/css/_mega-menu.scss */
@@ -2098,7 +2137,7 @@ td {
 
 /* line 15, ../sass/admin/css/_toolbar.scss */
 .admin-white-toolbar {
-    background-color: white !important;
+    background-color: #ffffff !important;
     padding: 6px 12px !important;
 }
 
@@ -2106,21 +2145,21 @@ td {
 .x-toolbar.admin-white-toolbar,
 .x-toolbar.admin-white-toolbar .x-toolbar-text {
     font-size: 12px !important;
-    color: black !important;
+    color: #000000 !important;
 }
 
 /* line 1, ../sass/admin/css/_splitter.scss */
 .x-splitter-horizontal {
     background-color: #ffffff;
-    border-top: 1px solid #ebe7e7 !important;
-    border-bottom: 1px solid #ebe7e7 !important;
+    border-top: 1px solid #EBE7E7 !important;
+    border-bottom: 1px solid #EBE7E7 !important;
 }
 
 /* line 7, ../sass/admin/css/_splitter.scss */
 .x-splitter-vertical {
     background-color: #ffffff;
-    border-left: 1px solid #ebe7e7 !important;
-    border-right: 1px solid #ebe7e7 !important;
+    border-left: 1px solid #EBE7E7 !important;
+    border-right: 1px solid #EBE7E7 !important;
 }
 
 /**
@@ -2281,7 +2320,7 @@ td {
  */
 /* line 106, ../sass/admin/css/_form.scss */
 .x-datepicker-header {
-    background-color: white !important;
+    background-color: #fff !important;
     background-image: none !important;
 }
 
@@ -2295,7 +2334,7 @@ td {
  */
 /* line 118, ../sass/admin/css/_form.scss */
 .x-form-text, textarea.x-form-field {
-    background: none white !important;
+    background: none #fff !important;
 }
 
 /**
@@ -2394,7 +2433,7 @@ td {
 .admin-selected-item-box .center {
     float: left;
     border: 0 none !important;
-    border-right: 1px solid #f0f0f0 !important;
+    border-right: 1px solid #F0F0F0 !important;
 }
 
 /* line 23, ../sass/admin/css/_selected-grid-item.scss */
@@ -2522,27 +2561,45 @@ td {
     cursor: pointer;
 }
 
-/* line 8, ../sass/admin/css/_data-view.scss */
-.admin-data-view .admin-data-view-cell {
-    display: table-cell;
-    vertical-align: middle;
-    padding: 5px 10px;
+/* line 7, ../sass/admin/css/_data-view.scss */
+.admin-data-view .admin-data-view-row {
+    padding: 5px;
 }
 
-/* line 14, ../sass/admin/css/_data-view.scss */
-.admin-data-view-cell div {
-    font-size: 11px;
-}
-
-/* line 19, ../sass/admin/css/_data-view.scss */
-.admin-data-view.admin-data-view-over {
+/* line 11, ../sass/admin/css/_data-view.scss */
+.admin-data-view .admin-data-view-row.x-item-over {
     background-color: #eeeeee;
 }
 
-/* line 24, ../sass/admin/css/_data-view.scss */
-.admin-data-view.x-item-selected {
+/* line 16, ../sass/admin/css/_data-view.scss */
+.admin-data-view .admin-data-view-row.x-item-selected {
     background-color: #4294de;
     color: white;
+}
+
+/* line 22, ../sass/admin/css/_data-view.scss */
+.admin-data-view .admin-data-view-thumbnail {
+    float: left;
+}
+
+/* line 25, ../sass/admin/css/_data-view.scss */
+.admin-data-view .admin-data-view-thumbnail img {
+    height: 32px;
+    width: 32px;
+    display: block;
+    margin: 0 15px 0 10px;
+}
+
+/* line 33, ../sass/admin/css/_data-view.scss */
+.admin-data-view .admin-data-view-description {
+    float: left;
+    margin-top: 3px;
+}
+
+/* line 37, ../sass/admin/css/_data-view.scss */
+.admin-data-view .admin-data-view-description p {
+    margin: 0 !important;
+    line-height: 1;
 }
 
 /* line 2, ../sass/admin/css/_wizard.scss */
@@ -2584,7 +2641,7 @@ td {
     border-top: 50px solid transparent;
     /* Go big on the size, and let overflow hide */
     border-bottom: 50px solid transparent;
-    border-left: 30px solid #eeeeee;
+    border-left: 30px solid #eee;
     position: absolute;
     top: 50%;
     margin-top: -50px;
@@ -2601,7 +2658,7 @@ td {
     border-top: 50px solid transparent;
     /* Go big on the size, and let overflow hide */
     border-bottom: 50px solid transparent;
-    border-left: 28px solid #cccccc;
+    border-left: 28px solid #ccc;
     position: absolute;
     top: 50%;
     margin-top: -50px;
@@ -2617,12 +2674,12 @@ td {
 
 /* line 66, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.current:after {
-    border-left: 30px solid white;
+    border-left: 30px solid #fff;
 }
 
 /* line 70, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.current:before {
-    border-left: 30px solid white;
+    border-left: 30px solid #fff;
 }
 
 /* line 74, ../sass/admin/css/_wizard.scss */
@@ -2720,8 +2777,8 @@ td {
 
 /* line 159, ../sass/admin/css/_wizard.scss */
 .admin-display-name input:focus {
-    color: black !important;
-    border: 1px solid #99bce8 !important;
+    color: #000 !important;
+    border: 1px solid #99BCE8 !important;
 }
 
 /* line 165, ../sass/admin/css/_wizard.scss */
@@ -2748,7 +2805,7 @@ td {
 .admin-image-upload-button-container .admin-image-upload-button-progress-bar-container {
     visibility: hidden;
     position: absolute;
-    border: 1px solid #555555;
+    border: 1px solid #555;
     background-color: #555;
     bottom: 1px;
     left: 1px;
@@ -2974,11 +3031,11 @@ div.admin-load-mask div.x-mask-loading {
     height: 16px;
 }
 
-/* line 23, ../sass/admin/css/_load-mask.scss */
+/*
 div.x-mask {
-    background-color: #fff;
+  background-color: #fff;
 }
-
+*/
 /* line 22, ../sass/admin/css/_top-bar.scss */
 .x-toolbar.admin-topbar-panel {
     color: #eee;
@@ -3064,9 +3121,9 @@ div.x-mask {
 
 /* line 63, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .x-menu-body {
-    background: white !important;
+    background: #FFF !important;
     padding: 0 !important;
-    border: 1px solid #cccccc !important;
+    border: 1px solid #ccc !important;
 }
 
 /* line 69, ../sass/admin/css/_top-bar.scss */
@@ -3080,7 +3137,7 @@ div.x-mask {
 
 /* line 77, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .title {
-    border-bottom: 1px solid #cccccc;
+    border-bottom: 1px solid #ccc;
     font-size: 11px;
     color: #0066cc;
     text-align: center;
@@ -3811,7 +3868,7 @@ tr.x-container:before {
     color: #000;
     font: normal 11px "Open Sans", sans-serif;
     border: 1px solid;
-    border-color: #dddddd #bbbbbb #bbbbbb #dddddd;
+    border-color: #ddd #bbb #bbb #ddd;
     background-color: #fff;
 }
 
@@ -5080,19 +5137,19 @@ tr.x-container:before {
 /* line 48, ../themes/stylesheets/ext4/default/widgets/_html.scss */
 .x-html h1 {
     font-size: 2em;
-    margin: 0.67em 0;
+    margin: .67em 0;
 }
 
 /* line 49, ../themes/stylesheets/ext4/default/widgets/_html.scss */
 .x-html h2 {
     font-size: 1.5em;
-    margin: 0.75em 0;
+    margin: .75em 0;
 }
 
 /* line 50, ../themes/stylesheets/ext4/default/widgets/_html.scss */
 .x-html h3 {
     font-size: 1.17em;
-    margin: 0.83em 0;
+    margin: .83em 0;
 }
 
 /* line 60, ../themes/stylesheets/ext4/default/widgets/_html.scss */
@@ -13569,7 +13626,7 @@ tr.x-container:before {
 
 /* line 104, ../themes/stylesheets/ext4/default/widgets/_datepicker.scss */
 .x-datepicker-month span {
-    color: white !important;
+    color: #fff !important;
 }
 
 /* line 108, ../themes/stylesheets/ext4/default/widgets/_datepicker.scss */
@@ -13891,7 +13948,7 @@ table.x-datepicker-inner .x-datepicker-disabled a {
 
 /* line 8, ../themes/stylesheets/ext4/default/widgets/_colorpicker.scss */
 .x-color-picker a {
-    border: 1px solid white;
+    border: 1px solid #fff;
     float: left;
     padding: 2px;
     text-decoration: none;
@@ -14500,7 +14557,7 @@ browsers will do whacky things with it.
 
 /* line 339, ../themes/stylesheets/ext4/default/widgets/_grid.scss */
 .x-grid-cell-selected {
-    background-color: #b8cfee !important;
+    background-color: #B8CFEE !important;
 }
 
 /* line 345, ../themes/stylesheets/ext4/default/widgets/_grid.scss */
@@ -15604,7 +15661,7 @@ textarea.x-form-invalid-field {
 
 /* line 8, ../themes/stylesheets/ext4/default/widgets/form/_checkboxgroup.scss */
 .x-form-invalid .x-form-checkboxgroup-body {
-    border: 1px solid #cc3300;
+    border: 1px solid #c30;
     background: transparent repeat-x bottom;
     background-image: url('../themes/images/default/grid/invalid_line.gif');
     padding: 0 3px 0 3px;
@@ -15620,7 +15677,7 @@ textarea.x-form-invalid-field {
 /* line 23, ../themes/stylesheets/ext4/default/widgets/form/_checkboxgroup.scss */
 .x-form-check-group-label {
     color: #333;
-    border-bottom: 1px solid #333333;
+    border-bottom: 1px solid #333;
     margin: 0 30px 5px 0;
     padding: 2px;
 }

@@ -15,6 +15,16 @@ Ext.define('Admin.controller.contentManager.DialogWindowController', {
         this.control({
             'deleteContentWindow *[action=deleteContent]': {
                 click: this.doDelete
+            },
+            'newContentWindow': {
+                contentTypeSelected: function (window, contentType) {
+                    if (window) {
+                        window.close();
+                    }
+                    if (contentType) {
+                        this.createContent('contentType', contentType.get('qualifiedName'), contentType.get('name'));
+                    }
+                }
             }
         });
 

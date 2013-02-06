@@ -8,7 +8,7 @@ Ext.define('Admin.view.BaseDialogWindow', {
     width: 500,
     modal: true,
     autoHeight: true,
-    maxHeight: 500,
+    maxHeight: 600,
     cls: 'admin-window',
     closeAction: 'hide',
 

@@ -9,7 +9,8 @@ Ext.define('Admin.controller.contentManager.Controller', {
     stores: [],
     models: [],
     views: [
-        'Admin.view.contentManager.DeleteContentWindow'
+        'Admin.view.contentManager.DeleteContentWindow',
+        'Admin.view.contentManager.NewContentWindow'
     ],
 
     init: function () {
@@ -268,6 +269,14 @@ Ext.define('Admin.controller.contentManager.Controller', {
         var win = Ext.ComponentQuery.query('deleteContentWindow')[0];
         if (!win) {
             win = Ext.create('widget.deleteContentWindow');
+        }
+        return win;
+    },
+
+    getNewContentWindow: function () {
+        var win = Ext.ComponentQuery.query('newContentWindow')[0];
+        if (!win) {
+            win = Ext.create('widget.newContentWindow');
         }
         return win;
     }

@@ -18,12 +18,7 @@ Ext.define('Admin.controller.contentManager.BrowseToolbarController', {
         this.control({
             'browseToolbar *[action=newContent]': {
                 click: function (button, event) {
-                    this.createContent('contentType', button.qualifiedContentType, button.text);
-                }
-            },
-            'browseToolbar *[action=newSite]': {
-                click: function (button, event) {
-                    this.createContent('site');
+                    this.getNewContentWindow().doShow();
                 }
             },
             'browseToolbar *[action=viewContent]': {
