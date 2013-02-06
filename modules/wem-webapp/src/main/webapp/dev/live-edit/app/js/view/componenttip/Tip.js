@@ -4,20 +4,23 @@
 (function ($) {
     'use strict';
 
+    // Namespaces
+    AdminLiveEdit.view.componenttip = {};
+
     // Class definition (constructor function)
-    var componentTip = AdminLiveEdit.view.ComponentTip = function () {
+    var tip = AdminLiveEdit.view.componenttip.Tip = function () {
         this.addView();
         this.registerGlobalListeners();
     };
 
     // Inherits ui.Base
-    componentTip.prototype = new AdminLiveEdit.view.Base();
+    tip.prototype = new AdminLiveEdit.view.Base();
 
     // Fix constructor as it now is Base
-    componentTip.constructor = componentTip;
+    tip.constructor = tip;
 
     // Shorthand ref to the prototype
-    var proto = componentTip.prototype;
+    var proto = tip.prototype;
 
     // Uses
     var util = AdminLiveEdit.Util;
@@ -38,12 +41,15 @@
         var me = this;
 
         var html = '<div class="live-edit-component-tip" style="top:-5000px; left:-5000px;">' +
-                   '    <div class="live-edit-component-tip-drag-handle-container">' +
-                   '        <div class="live-edit-component-tip-drag-handle"><!-- // --></div>' +
+                   '    <div class="live-edit-component-tip-left">' +
+                   '        menu' +
                    '    </div>' +
-                   '    <div class="live-edit-component-tip-text-container">' +
+                   '    <div class="live-edit-component-tip-center">' +
                    '        <span class="live-edit-component-tip-name-text"></span>' +
                    '        <span class="live-edit-component-tip-type-text"></span> ' +
+                   '    </div>' +
+                   '    <div class="live-edit-component-tip-right">' +
+                   '        parent' +
                    '    </div>' +
                    '</div>';
 
@@ -55,36 +61,7 @@
             event.stopPropagation();
         });
 
-        var $dragHandleContainer = me.getDragHandleContainer();
-
-        $dragHandleContainer.on('mousedown', function () {
-            this.le_mouseIsDown = true;
-            // TODO: Use PubSub
-            AdminLiveEdit.DragDrop.enable();
-        });
-
-        $dragHandleContainer.on('mousemove', function (event) {
-            if (this.le_mouseIsDown) {
-
-                this.le_mouseIsDown = false;
-                // TODO: Get the selected using PubSub
-                var $selectedComponent = me.$selectedComponent;
-
-                var evt = document.createEvent('MouseEvents');
-                evt.initMouseEvent('mousedown', true, true, window, 0, event.screenX, event.screenY, event.clientX, event.clientY, false,
-                    false, false, false, 0, null);
-
-                $selectedComponent[0].dispatchEvent(evt);
-
-            }
-        });
-        $dragHandleContainer.on('mouseup', function () {
-            this.le_mouseIsDown = false;
-            // TODO: remove reference to DragDrop, use PubSub.
-            AdminLiveEdit.DragDrop.disable();
-        });
-
-
+        var componentMenu = new AdminLiveEdit.view.componenttip.menu.Menu();
 
     };
 
@@ -95,8 +72,6 @@
         me.$selectedComponent = $component;
 
         var componentInfo = util.getComponentInfo($component);
-
-        me.showHideDragHandle(componentInfo);
 
         // Set text first so width is calculated correctly.
         me.setText(componentInfo.type, componentInfo.name);
@@ -109,27 +84,6 @@
             top: topPos,
             left: leftPos
         });
-    };
-
-
-    proto.showHideDragHandle = function (componentInfo) {
-        var me = this;
-        var $dragHandle = me.getDragHandle();
-        if (componentInfo.type === 'part') {
-            $dragHandle.css({'display': 'block'});
-        } else {
-            $dragHandle.css({'display': 'none'});
-        }
-    };
-
-
-    proto.getDragHandleContainer = function () {
-        return this.getEl().find('.live-edit-component-tip-drag-handle-container');
-    };
-
-
-    proto.getDragHandle = function () {
-        return this.getEl().find('.live-edit-component-tip-drag-handle');
     };
 
 

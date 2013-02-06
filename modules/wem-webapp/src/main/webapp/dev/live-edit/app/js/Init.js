@@ -11,11 +11,11 @@
         var contents            = new AdminLiveEdit.model.component.Contents();
         var paragraphs          = new AdminLiveEdit.model.component.Paragraphs();
         var highlighter         = new AdminLiveEdit.view.Highlighter();
-        var componentTip        = new AdminLiveEdit.view.ComponentTip();
+
+        var componentTip        = new AdminLiveEdit.view.componenttip.Tip();
+
         var toolTip             = new AdminLiveEdit.view.ToolTip();
         var cursor              = new AdminLiveEdit.view.Cursor();
-        var hoverMenu           = new AdminLiveEdit.view.hovermenu.HoverMenu();
-        var componentMenu       = new AdminLiveEdit.view.componentmenu.ComponentMenu();
         var shader              = new AdminLiveEdit.view.Shader();
         var componentBar        = new AdminLiveEdit.view.componentbar.ComponentBar();
 

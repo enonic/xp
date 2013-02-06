@@ -2,36 +2,39 @@
     'use strict';
 
     // Class definition (constructor function)
-    var resetButton = AdminLiveEdit.view.componentmenu.button.ResetButton = function (componentMenu) {
+    var parentButton = AdminLiveEdit.view.componenttip.menu.ParentButton = function (componentMenu) {
         this.componentMenu = componentMenu;
         this.init();
     };
 
     // Inherits ui.Button
-    resetButton.prototype = new AdminLiveEdit.view.Button();
+    parentButton.prototype = new AdminLiveEdit.view.Button();
 
     // Fix constructor as it now is Button
-    resetButton.constructor = resetButton;
+    parentButton.constructor = parentButton;
 
     // Shorthand ref to the prototype
-    var proto = resetButton.prototype;
+    var proto = parentButton.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.init = function () {
         var me = this;
-
         var $button = me.createButton({
-            text: 'Reset',
-            id: 'live-edit-button-reset',
+            id: 'live-edit-button-parent',
+            text: 'Parent',
             cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
+                var $parent = me.componentmenu.$currentComponent.parents('[data-live-edit-type]');
+                if ($parent && $parent.length > 0) {
+                    $(window).trigger('component:select', [$($parent[0])]);
+                }
             }
         });
 
-        me.appendTo(me.componentMenu.getEl());
+        me.appendTo(this.componentMenu.getEl());
         me.componentMenu.buttons.push(me);
     };
 

@@ -2,7 +2,7 @@
     'use strict';
 
     // Class definition (constructor function)
-    var dragButton = AdminLiveEdit.view.componentmenu.button.DragButton = function (componentMenu) {
+    var dragButton = AdminLiveEdit.view.componenttip.menu.DragButton = function (componentMenu) {
         this.componentMenu = componentMenu;
         this.init();
     };

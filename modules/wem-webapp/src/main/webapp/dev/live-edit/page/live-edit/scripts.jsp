@@ -35,22 +35,25 @@
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Button.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Cursor.js"></script>
 
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/HoverMenu.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/button/ParentButton.js"></script>
-
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/ComponentMenu.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/InsertButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/EditButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/ResetButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/EmptyButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/ViewButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/DragButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/SettingsButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/componentmenu/button/RemoveButton.js"></script>
+<!--script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/HoverMenu.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/button/ParentButton.js"></script-->
 
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Highlighter.js"></script>
+
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/ToolTip.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/ComponentTip.js"></script>
+
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/Tip.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/Menu.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/InsertButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/EditButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/ResetButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/EmptyButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/ViewButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/DragButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/SettingsButton.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/RemoveButton.js"></script>
+
+
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/componentbar/ComponentBar.js"></script>
 
 <%

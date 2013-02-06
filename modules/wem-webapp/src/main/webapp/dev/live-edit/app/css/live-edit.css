@@ -219,6 +219,7 @@ svg.live-edit-highlighter rect {
     z-index: 1000150;
     background-color: #fff9cb;
     cursor: default;
+    border: 1px solid #989898;
 }
 
 /* Arrow */
@@ -234,32 +235,26 @@ svg.live-edit-highlighter rect {
     border-color: #fff9cb transparent transparent transparent;
 }
 
-.live-edit-component-tip-text-container {
+.live-edit-component-tip-left,
+.live-edit-component-tip-center,
+.live-edit-component-tip-right {
     padding: 10px;
+    display: table-cell;
+    vertical-align: middle;
 }
 
-.live-edit-component-tip-drag-handle-container {
-    display: table-cell;
+.live-edit-component-tip-left {
     text-align: center;
-    vertical-align: middle;
     border-right: 1px solid #989898;
-    width: 45px;
-    cursor: move;
-
 }
-.live-edit-component-tip-drag-handle {
-    background: url("../images/drag-handle.png") no-repeat scroll 0 0 transparent;
-    width: 16px;
-    height: 16px;
-    margin: 0 auto;
-}
-
-.live-edit-component-tip-text-container {
-    display: table-cell;
-    /*text-align: center;*/
-    vertical-align: middle;
+.live-edit-component-tip-center {
+    text-align: center;
     min-width: 150px;
 }
+.live-edit-component-tip-right {
+    border-left: 1px solid #989898;
+}
+
 .live-edit-component-tip-type-text,
 .live-edit-component-tip-name-text {
     display: block;

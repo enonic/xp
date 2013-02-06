@@ -2,7 +2,7 @@
     'use strict';
 
     // Class definition (constructor function)
-    var removeButton = AdminLiveEdit.view.componentmenu.button.RemoveButton = function (componentMenu) {
+    var removeButton = AdminLiveEdit.view.componenttip.menu.RemoveButton = function (componentMenu) {
         this.componentMenu = componentMenu;
         this.init();
     };

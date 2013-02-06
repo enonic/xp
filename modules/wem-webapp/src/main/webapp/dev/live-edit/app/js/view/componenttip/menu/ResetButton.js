@@ -2,19 +2,19 @@
     'use strict';
 
     // Class definition (constructor function)
-    var editButton = AdminLiveEdit.view.componentmenu.button.EditButton = function (componentMenu) {
+    var resetButton = AdminLiveEdit.view.componenttip.menu.ResetButton = function (componentMenu) {
         this.componentMenu = componentMenu;
         this.init();
     };
 
     // Inherits ui.Button
-    editButton.prototype = new AdminLiveEdit.view.Button();
+    resetButton.prototype = new AdminLiveEdit.view.Button();
 
     // Fix constructor as it now is Button
-    editButton.constructor = editButton;
+    resetButton.constructor = resetButton;
 
     // Shorthand ref to the prototype
-    var proto = editButton.prototype;
+    var proto = resetButton.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -23,8 +23,8 @@
         var me = this;
 
         var $button = me.createButton({
-            id: 'live-edit-button-edit',
-            text: 'Edit',
+            text: 'Reset',
+            id: 'live-edit-button-reset',
             cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();

@@ -2,7 +2,7 @@
     'use strict';
 
     // Class definition (constructor function)
-    var settingsButton = AdminLiveEdit.view.componentmenu.button.SettingsButton = function (componentMenu) {
+    var settingsButton = AdminLiveEdit.view.componenttip.menu.SettingsButton = function (componentMenu) {
         this.componentMenu = componentMenu;
         this.init();
     };
