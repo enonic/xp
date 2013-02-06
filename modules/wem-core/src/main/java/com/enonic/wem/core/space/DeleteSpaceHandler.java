@@ -9,7 +9,7 @@ import com.enonic.wem.api.command.space.DeleteSpace;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.content.dao.SpaceDao;
+import com.enonic.wem.core.space.dao.SpaceDao;
 
 @Component
 public final class DeleteSpaceHandler

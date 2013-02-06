@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.dao;
+package com.enonic.wem.core.space.dao;
 
 import javax.jcr.Session;
 
@@ -8,7 +8,7 @@ import com.enonic.wem.api.space.Spaces;
 
 public interface SpaceDao
 {
-    Space createSpace( Space space, Session session );
+    void createSpace( Space space, Session session );
 
     Space getSpace( SpaceName spaceName, Session session );
 

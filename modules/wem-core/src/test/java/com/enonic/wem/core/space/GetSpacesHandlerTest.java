@@ -15,7 +15,7 @@ import com.enonic.wem.api.space.SpaceNames;
 import com.enonic.wem.api.space.Spaces;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentIdFactory;
-import com.enonic.wem.core.content.dao.SpaceDao;
+import com.enonic.wem.core.space.dao.SpaceDao;
 
 import static com.enonic.wem.api.space.Space.newSpace;
 import static org.junit.Assert.*;

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.dao;
+package com.enonic.wem.core.space.dao;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;

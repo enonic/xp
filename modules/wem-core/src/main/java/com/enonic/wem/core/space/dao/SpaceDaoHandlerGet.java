@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.dao;
+package com.enonic.wem.core.space.dao;
 
 import java.util.List;
 
@@ -12,6 +12,7 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.api.space.Spaces;
+import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 import static com.enonic.wem.api.space.Space.newSpace;
@@ -60,7 +61,7 @@ final class SpaceDaoHandlerGet
 
         final Space.Builder spaceBuilder = newSpace();
         spaceJcrMapper.toSpace( spaceNode, spaceBuilder );
-        spaceBuilder.rootContent( ContentIdFactory.from( spaceNode.getNode( SPACE_CONTENT_ROOT_NODE ) ) );
+        spaceBuilder.rootContent( ContentIdFactory.from( spaceNode.getNode( SPACE_CONTENT_ROOT_NODE ).getIdentifier() ) );
         return spaceBuilder.build();
     }
 

@@ -16,7 +16,7 @@ import com.enonic.wem.api.space.SpaceNames;
 import com.enonic.wem.api.space.Spaces;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.content.dao.SpaceDao;
+import com.enonic.wem.core.space.dao.SpaceDao;
 
 @Component
 public final class GetSpacesHandler

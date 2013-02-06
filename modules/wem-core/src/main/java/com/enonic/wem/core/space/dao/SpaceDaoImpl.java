@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.dao;
+package com.enonic.wem.core.space.dao;
 
 
 import javax.jcr.RepositoryException;
@@ -16,11 +16,11 @@ public final class SpaceDaoImpl
 {
 
     @Override
-    public Space createSpace( final Space space, final Session session )
+    public void createSpace( final Space space, final Session session )
     {
         try
         {
-            return new SpaceDaoHandlerCreate( session ).handle( space );
+            new SpaceDaoHandlerCreate( session ).handle( space );
         }
         catch ( RepositoryException e )
         {
