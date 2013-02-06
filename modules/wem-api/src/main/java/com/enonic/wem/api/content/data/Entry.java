@@ -12,21 +12,21 @@ public abstract class Entry
     /**
      * Null if this Entry have no parent yet.
      */
-    private Entries parentEntries;
+    private DataSet parent;
 
     /**
      * Cached path to this entry.
      */
     private volatile EntryPath path;
 
-    Entry( final String name, final Entries parentEntries )
+    Entry( final String name, final DataSet parent )
     {
         if ( name != null )
         {
             EntryPath.Element.checkName( name );
         }
         this.name = name;
-        this.parentEntries = parentEntries;
+        this.parent = parent;
     }
 
     Entry( final String name )
@@ -45,14 +45,14 @@ public abstract class Entry
         return name;
     }
 
-    void setParentEntries( final Entries entries )
+    void setParent( final DataSet entries )
     {
-        this.parentEntries = entries;
+        this.parent = entries;
     }
 
-    public DataSet getParentDataSet()
+    public DataSet getParent()
     {
-        return parentEntries.getDataSet();
+        return parent;
     }
 
     public EntryPath getPath()
@@ -71,11 +71,11 @@ public abstract class Entry
 
     public int getArrayIndex()
     {
-        if ( parentEntries == null )
+        if ( parent == null )
         {
             return -1;
         }
-        return parentEntries.getArrayIndex( this );
+        return parent.getArrayIndex( this );
     }
 
     public boolean isData()
@@ -107,7 +107,7 @@ public abstract class Entry
 
     private EntryPath resolvePath()
     {
-        if ( parentEntries == null && StringUtils.isEmpty( this.name ) )
+        if ( parent == null && StringUtils.isEmpty( this.name ) )
         {
             return EntryPath.ROOT;
         }
@@ -124,9 +124,9 @@ public abstract class Entry
         }
 
         final EntryPath newPath;
-        if ( parentEntries != null )
+        if ( parent != null )
         {
-            final EntryPath parentPath = parentEntries.getPath();
+            final EntryPath parentPath = parent.getPath();
             newPath = EntryPath.from( parentPath, name );
         }
         else
@@ -139,17 +139,17 @@ public abstract class Entry
 
     public boolean isArray()
     {
-        return parentEntries != null && parentEntries.isArray( this );
+        return parent != null && parent.isArray( this );
     }
 
     EntryArray getArray()
     {
-        if ( parentEntries == null )
+        if ( parent == null )
         {
             return null;
         }
 
-        return parentEntries.getArray( this );
+        return parent.getArray( this );
     }
 }
 

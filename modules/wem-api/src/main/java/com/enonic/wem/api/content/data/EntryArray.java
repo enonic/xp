@@ -143,10 +143,10 @@ public abstract class EntryArray
 
     private void checkParent( final Entry entry )
     {
-        if ( !entry.getParentDataSet().equals( parent ) )
+        if ( !entry.getParent().equals( parent ) )
         {
             throw new IllegalArgumentException(
-                "Entry added to array [" + getPath() + "] does not have same parent: " + entry.getParentDataSet() );
+                "Entry added to array [" + getPath() + "] does not have same parent: " + entry.getParent() );
         }
     }
 

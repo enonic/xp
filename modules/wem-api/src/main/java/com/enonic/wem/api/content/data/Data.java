@@ -21,7 +21,7 @@ public class Data
 
     Data( final BaseBuilder builder )
     {
-        super( builder.name, builder.parent != null ? builder.parent.getEntries() : null );
+        super( builder.name, builder.parent != null ? builder.parent : null );
         this.value = builder.value;
     }
 
