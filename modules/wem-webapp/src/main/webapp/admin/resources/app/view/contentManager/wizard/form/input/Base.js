@@ -61,11 +61,12 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
         var element = this;
         return {
             xtype: 'button',
-            ui: 'grey',
             mode: 'delete',
             itemId: 'add-delete-button',
-            text: 'x',
-            width: 50,
+            iconCls: 'icon-remove icon-2x',
+            cls: 'nobg icon-button',
+            scale: 'medium',
+            width: '24',
             listeners: {
                 click: function () {
                     switch (this.mode) {

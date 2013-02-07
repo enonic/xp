@@ -1854,6 +1854,17 @@ td {
     color: #777777;
 }
 
+/* line 38, ../sass/admin/css/_button.scss */
+.x-btn.nobg {
+    background-color: transparent;
+    border: none;
+}
+
+/* line 43, ../sass/admin/css/_button.scss */
+.x-btn.icon-button {
+    padding: 0;
+}
+
 /**
  * @var {color} $base-color
  * The base color to be used throughout the theme.
@@ -2366,6 +2377,35 @@ td {
     cursor: pointer;
 }
 
+/**
+* Form item set
+*/
+/* line 152, ../sass/admin/css/_form.scss */
+.form-item-set .admin-formitemset-block {
+    border: none !important;
+    box-shadow: 0 0 4px #777777;
+    border-radius: 0;
+}
+
+/* line 157, ../sass/admin/css/_form.scss */
+.form-item-set .admin-formitemset-block .header {
+    border: none;
+}
+
+/* line 162, ../sass/admin/css/_form.scss */
+.form-item-set .icon-grey {
+    color: #777777;
+}
+
+/* To allow box-shadow, we must override overflow: hidden on containing elements. */
+/* line 172, ../sass/admin/css/_form.scss */
+.x-fieldset-body,
+.x-panel-body,
+.x-fit-item,
+.x-panel {
+    overflow: visible !important;
+}
+
 /* line 1, ../sass/admin/css/_confirmation-dialog.scss */
 .admin-confirmation-dialog {
     border: none !important;
@@ -2868,7 +2908,7 @@ td {
 
 /* line 2, ../sass/admin/css/_sortable.scss */
 .admin-drag-handle {
-    color: #59008c;
+    color: #777;
     cursor: move;
 }
 

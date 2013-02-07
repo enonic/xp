@@ -21,6 +21,8 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
 
     margin: '10 0 10 0',
 
+    cls: 'form-item-set',
+
     initComponent: function () {
         this.callParent(arguments);
         this.initLayout();
@@ -133,18 +135,16 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
             ],
             listeners: {
                 render: function (container) {
-                    /*
-                     var collapseAllButton = Ext.DomQuery.selectNode('.admin-collapse-all-button', container.getEl().dom);
-                     Ext.fly(collapseAllButton).on('click', function (event) {
-                     if (me.isCollapsed) {
-                     this.setHTML('Collapse All');
-                     me.isCollapsed = false;
-                     } else {
-                     this.setHTML('Expand All');
-                     me.isCollapsed = true;
-                     }
-                     });
-                     */
+                    var collapseAllButton = Ext.DomQuery.selectNode('.admin-collapse-all-button', container.getEl().dom);
+                    Ext.fly(collapseAllButton).on('click', function (event) {
+                        if (me.isCollapsed) {
+                            this.setHTML('Collapse All');
+                            me.isCollapsed = false;
+                        } else {
+                            this.setHTML('Expand All');
+                            me.isCollapsed = true;
+                        }
+                    });
                 }
             }
         };
@@ -211,7 +211,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
                         style: 'width: 30px'
                     },
                     xtype: 'component',
-                    html: '<span class="admin-drag-handle" style="display: inline-block">[#]</span>'
+                    html: '<span class="admin-drag-handle icon-align-justify icon-2x" style="display: inline-block"></span>'
                 },
                 {
                     xtype: 'component',
@@ -222,9 +222,10 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
                         align: 'right'
                     },
                     xtype: 'button',
-                    ui: 'grey',
+                    iconCls: 'icon-remove icon-2x icon-grey',
                     itemId: 'remove-block-button',
-                    text: 'x',
+                    cls: 'nobg',
+                    scale: 'medium',
                     handler: function (btn) {
                         me.removeCopy();
                     }
