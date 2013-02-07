@@ -64,6 +64,29 @@ public class ContentDaoImplTest
     }
 
     @Test
+    public void deleteRootContent()
+        throws Exception
+    {
+        // setup
+        contentDao.create( createContent( "myspace:/" ), session );
+        contentDao.create( createContent( "myspace:parentContent" ), session );
+        contentDao.create( createContent( "myspace:parentContent/contentToDelete" ), session );
+        commit();
+
+        // exercise
+        try
+        {
+            contentDao.delete( ContentPath.from( "myspace:/" ), session );
+            fail( "Expected exception" );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( e instanceof UnableToDeleteContentException );
+            assertEquals( "Not able to delete content with path [myspace:/]: Root content of a space.", e.getMessage() );
+        }
+    }
+
+    @Test
     public void createContent_one_data_at_root()
         throws Exception
     {
