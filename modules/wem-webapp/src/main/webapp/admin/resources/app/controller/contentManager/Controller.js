@@ -252,6 +252,18 @@ Ext.define('Admin.controller.contentManager.Controller', {
         var toolbar = this.getContentBrowseToolbar();
         var newContentButton = toolbar.down('*[action=newContent]');
         newContentButton.setDisabled(Ext.isEmpty(selected) || selected.length !== 1);
+
+        var deleteContentButton = toolbar.down('*[action=deleteContent]');
+        var disabled = false;
+
+        for (i = 0; i < selected.length; i++) {
+            var deletable = selected[i].get('deletable');
+            if(!deletable) {
+                disabled = true;
+                break;
+            }
+        }
+        deleteContentButton.setDisabled(disabled);
     },
 
     /*      Getters     */
