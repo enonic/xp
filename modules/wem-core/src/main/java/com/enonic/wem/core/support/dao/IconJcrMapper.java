@@ -41,7 +41,8 @@ public final class IconJcrMapper
         throws RepositoryException
     {
         final byte[] iconData = JcrHelper.getPropertyBinary( sourceNode, ICON_PROPERTY );
-        final String iconMimeType = JcrHelper.getPropertyString( sourceNode, ICON_MIME_TYPE_PROPERTY );
+        final String iconMimeType =
+            JcrHelper.getPropertyString( sourceNode, ICON_MIME_TYPE_PROPERTY, "image/png" ); // TODO remove default value
         final Icon icon = iconData != null && iconData.length > 0 ? Icon.from( iconData, iconMimeType ) : null;
         return icon;
     }
