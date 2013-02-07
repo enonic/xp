@@ -4,7 +4,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.type.GetContentTypes;
-import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
@@ -36,10 +36,10 @@ public final class ValidateContentDataRpcHandler
         final QualifiedContentTypeName qualifiedContentTypeName = new QualifiedContentTypeName( contentTypeParam );
 
         final ContentType contentType = getContentType( qualifiedContentTypeName );
-        final ContentData contentData = new ContentDataParser( contentType ).parse( contentDataParam );
+        final DataSet rootDataSet = new ContentDataParser( contentType ).parse( contentDataParam );
 
         final DataValidationErrors validationErrors =
-            client.execute( content().validate().contentData( contentData ).contentType( contentType ) );
+            client.execute( content().validate().dataSet( rootDataSet ).contentType( contentType ) );
 
         final ValidateContentDataJsonResult result = new ValidateContentDataJsonResult( validationErrors );
         context.setResult( result );

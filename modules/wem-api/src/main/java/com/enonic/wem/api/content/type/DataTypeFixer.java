@@ -1,7 +1,7 @@
 package com.enonic.wem.api.content.type;
 
 
-import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.DataVisitor;
 import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.type.form.FormItemPath;
@@ -17,7 +17,7 @@ public class DataTypeFixer
         this.contentType = contentType;
     }
 
-    public void fix( ContentData contentData )
+    public void fix( final DataSet dataSet )
     {
         final DataVisitor dataVisitor = new DataVisitor()
         {
@@ -39,6 +39,6 @@ public class DataTypeFixer
                 }
             }
         };
-        dataVisitor.traverse( contentData );
+        dataVisitor.traverse( dataSet );
     }
 }

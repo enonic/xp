@@ -9,12 +9,12 @@ import com.enonic.wem.api.content.mixin.Mixin;
 import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.core.content.AbstractJsonSerializer;
-import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.JsonSerializerUtil;
 import com.enonic.wem.core.content.type.form.FormItemJsonSerializer;
 import com.enonic.wem.core.content.type.form.FormItemsJsonSerializer;
 import com.enonic.wem.core.content.type.form.InputJsonSerializer;
+import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.core.support.serializer.JsonParsingException;
+import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
 public class MixinJsonSerializer
     extends AbstractJsonSerializer<Mixin>

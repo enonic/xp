@@ -1,5 +1,7 @@
-package com.enonic.wem.core.content;
+package com.enonic.wem.core.content.serializer;
 
+
+import com.enonic.wem.core.support.serializer.SerializingException;
 
 public class XmlSerializingException
     extends SerializingException

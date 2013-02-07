@@ -7,7 +7,7 @@ import org.codehaus.jackson.node.NullNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.type.form.Occurrences;
-import com.enonic.wem.core.content.AbstractJsonSerializer;
+import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 
 import static com.enonic.wem.api.content.type.form.Occurrences.newOccurrences;
 

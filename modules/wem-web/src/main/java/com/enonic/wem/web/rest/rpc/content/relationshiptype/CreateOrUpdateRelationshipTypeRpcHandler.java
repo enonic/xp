@@ -11,8 +11,8 @@ import com.enonic.wem.api.command.content.relationshiptype.UpdateRelationshipTyp
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
-import com.enonic.wem.core.content.XmlParsingException;
 import com.enonic.wem.core.content.relationshiptype.RelationshipTypeJsonSerializer;
+import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;

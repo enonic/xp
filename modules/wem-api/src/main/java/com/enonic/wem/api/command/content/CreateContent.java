@@ -7,7 +7,7 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 
 public final class CreateContent
@@ -15,7 +15,7 @@ public final class CreateContent
 {
     private ContentPath contentPath;
 
-    private ContentData contentData;
+    private DataSet dataSet;
 
     private QualifiedContentTypeName contentType;
 
@@ -35,9 +35,9 @@ public final class CreateContent
         return this;
     }
 
-    public CreateContent contentData( ContentData value )
+    public CreateContent dataSet( DataSet value )
     {
-        this.contentData = value;
+        this.dataSet = value;
         return this;
     }
 
@@ -56,7 +56,8 @@ public final class CreateContent
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.contentData, "contentData cannot be null" );
+        Preconditions.checkNotNull( this.dataSet, "dataSet cannot be null" );
+        Preconditions.checkArgument( this.dataSet.isRoot(), "dataSet must be a root DataSet" );
         Preconditions.checkNotNull( this.contentPath, "contentPath cannot be null" );
         Preconditions.checkArgument( this.contentPath.isAbsolute(), "contentPath must be an absolute path and include the space" );
     }
@@ -71,9 +72,9 @@ public final class CreateContent
         return contentType;
     }
 
-    public ContentData getContentData()
+    public DataSet getDataSet()
     {
-        return contentData;
+        return dataSet;
     }
 
     public UserKey getOwner()

@@ -1,16 +1,16 @@
 package com.enonic.wem.api.content.editor;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.data.DataSet;
 
 import static com.enonic.wem.api.content.Content.newContent;
 
 final class SetContentDataEditor
     implements ContentEditor
 {
-    protected final ContentData source;
+    protected final DataSet source;
 
-    SetContentDataEditor( final ContentData source )
+    SetContentDataEditor( final DataSet source )
     {
         this.source = source;
     }
@@ -22,11 +22,11 @@ final class SetContentDataEditor
         return edit( this.source, content );
     }
 
-    private Content edit( final ContentData source, final Content target )
+    private Content edit( final DataSet source, final Content target )
         throws Exception
     {
         final Content updated = newContent( target ).
-            data( source ).
+            dataSet( source ).
             build();
         return updated;
     }

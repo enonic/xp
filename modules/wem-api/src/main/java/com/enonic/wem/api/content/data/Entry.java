@@ -21,23 +21,30 @@ public abstract class Entry
 
     Entry( final String name, final DataSet parent )
     {
-        if ( name != null )
-        {
-            EntryPath.Element.checkName( name );
-        }
+        //if ( name != null )
+        //{
+        EntryPath.Element.checkName( name );
+        //}
         this.name = name;
         this.parent = parent;
     }
 
-    Entry( final String name )
+    /**
+     * Creates a root Entry.
+     */
+    Entry()
     {
-        EntryPath.Element.checkName( name );
-        this.name = name;
+        this.name = "";
+    }
+
+    public boolean isRoot()
+    {
+        return getName().equals( "" );
     }
 
     EntryId getEntryId()
     {
-        return EntryId.from( name, getArrayIndex() );
+        return isRoot() ? null : EntryId.from( name, getArrayIndex() );
     }
 
     public String getName()

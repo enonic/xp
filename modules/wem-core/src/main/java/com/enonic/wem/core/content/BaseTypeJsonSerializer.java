@@ -7,6 +7,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.BaseType;
 import com.enonic.wem.api.content.type.ContentType;
+import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 
 public class BaseTypeJsonSerializer
     extends AbstractJsonSerializer<BaseType>

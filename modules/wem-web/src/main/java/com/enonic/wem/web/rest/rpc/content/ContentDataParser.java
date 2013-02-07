@@ -6,10 +6,14 @@ import java.util.Iterator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.Value;
+import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.DataTypeFixer;
+
+import static com.enonic.wem.api.content.data.Value.newValue;
 
 final class ContentDataParser
 {
@@ -24,9 +28,9 @@ final class ContentDataParser
     {
     }
 
-    ContentData parse( final ObjectNode data )
+    DataSet parse( final ObjectNode data )
     {
-        final ContentData contentData = new ContentData();
+        final DataSet rootDataSet = DataSet.newRootDataSet();
 
         final Iterator<String> fieldNames = data.getFieldNames();
         while ( fieldNames.hasNext() )
@@ -39,21 +43,22 @@ final class ContentDataParser
             if ( valueNode.isValueNode() )
             {
                 final String fieldValue = valueNode.getTextValue();
-                contentData.setData( path, fieldValue );
+                Value value = newValue().type( DataTypes.TEXT ).value( fieldValue ).build();
+                rootDataSet.setData( path, value );
             }
             /*else if ( valueNode.isObject() )
             {
-                final DataSet dataSet = parseDataSet( path, valueNode, contentData.getDataSet() );
-                contentData.add( dataSet );
+                final DataSet dataSet = parseDataSet( path, valueNode, rootDataSet.getDataSet() );
+                rootDataSet.add( dataSet );
             }*/
         }
 
         if ( contentType != null )
         {
-            new DataTypeFixer( contentType ).fix( contentData );
+            new DataTypeFixer( contentType ).fix( rootDataSet );
         }
 
-        return contentData;
+        return rootDataSet;
     }
 
     /*private DataSet parseDataSet( final EntryPath path, final JsonNode valueNode, final DataSet parent )

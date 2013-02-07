@@ -9,8 +9,8 @@ import org.codehaus.jackson.node.ArrayNode;
 
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItems;
-import com.enonic.wem.core.content.AbstractJsonSerializer;
-import com.enonic.wem.core.content.JsonParsingException;
+import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.core.support.serializer.JsonParsingException;
 
 public final class FormItemsJsonSerializer
     extends AbstractJsonSerializer<FormItems>

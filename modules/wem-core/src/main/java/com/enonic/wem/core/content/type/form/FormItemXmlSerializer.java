@@ -12,9 +12,9 @@ import com.enonic.wem.api.content.type.form.HierarchicalFormItem;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.content.type.form.Layout;
 import com.enonic.wem.api.content.type.form.MixinReference;
-import com.enonic.wem.core.content.XmlParsingException;
 import com.enonic.wem.core.content.type.form.inputtype.InputTypeConfigXmlSerializer;
 import com.enonic.wem.core.content.type.form.inputtype.InputTypeFactory;
+import com.enonic.wem.core.support.serializer.XmlParsingException;
 
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;

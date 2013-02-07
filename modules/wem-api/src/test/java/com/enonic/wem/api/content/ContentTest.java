@@ -5,7 +5,6 @@ import org.joda.time.DateMidnight;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Text;
@@ -80,8 +79,8 @@ public class ContentTest
         Content content = newContent().build();
         Data first = newData().name( "array" ).type( DataTypes.TEXT ).value( "First" ).build();
         Data second = newData().name( "array" ).type( DataTypes.TEXT ).value( "Second" ).build();
-        content.getData().add( first );
-        content.getData().add( second );
+        content.getDataSet().add( first );
+        content.getDataSet().add( second );
 
         Data array = content.getData( "array" );
         assertEquals( "First", array.getObject() );
@@ -186,9 +185,9 @@ public class ContentTest
         DataSet company = newDataSet().name( "company" ).build();
         company.add( address1 );
         company.add( address2 );
-        ContentData contentData = new ContentData();
-        contentData.add( company );
-        Content content = newContent().data( contentData ).build();
+        DataSet rootDataSet = DataSet.newRootDataSet();
+        rootDataSet.add( company );
+        Content content = newContent().dataSet( rootDataSet ).build();
 
         assertEquals( "Kirkegata 1-3", content.getData( "company.address[0].street" ).getObject() );
         assertEquals( "Sonsteli", content.getData( "company.address[1].street" ).getObject() );
@@ -592,12 +591,12 @@ public class ContentTest
     @Test
     public void new_way()
     {
-        ContentData contentData = new ContentData();
-        contentData.add( newData().type( DataTypes.TEXT ).name( "myData" ).value( "1" ).build() );
-        contentData.add( newText().name( "myData" ).value( "1" ).build() );
-        contentData.add( newXml().name( "myXml" ).value( "<root/>" ).build() );
+        DataSet rootDataSet = DataSet.newRootDataSet();
+        rootDataSet.add( newData().type( DataTypes.TEXT ).name( "myData" ).value( "1" ).build() );
+        rootDataSet.add( newText().name( "myData" ).value( "1" ).build() );
+        rootDataSet.add( newXml().name( "myXml" ).value( "<root/>" ).build() );
 
-        Content content = newContent().name( "myContent" ).data( contentData ).build();
+        Content content = newContent().name( "myContent" ).dataSet( rootDataSet ).build();
 
         assertEquals( "1", content.getData( "myData" ).getValue().asString() );
 
@@ -607,27 +606,27 @@ public class ContentTest
     @Test
     public void new_way2()
     {
-        ContentData contentData = new ContentData();
+        DataSet rootDataSet = DataSet.newRootDataSet();
 
-        contentData.add( new Text( "myData", "1" ) );
-        contentData.add( new Text( "myArray", "1" ) );
-        contentData.add( new Text( "myArray", "2" ) );
-        //contentData.add( new Xml( "myXml", "<root></root>" ) );
+        rootDataSet.add( new Text( "myData", "1" ) );
+        rootDataSet.add( new Text( "myArray", "1" ) );
+        rootDataSet.add( new Text( "myArray", "2" ) );
+        //rootDataSet.add( new Xml( "myXml", "<root></root>" ) );
 
-        Content content = newContent().name( "myContent" ).data( contentData ).build();
+        Content content = newContent().name( "myContent" ).dataSet( rootDataSet ).build();
 
         assertEquals( "1", content.getData( "myArray" ).getObject() );
-        assertEquals( "1", content.getData().getDataSet().getData( "myArray", 0 ).getObject() );
-        assertEquals( "2", content.getData().getDataSet().getData( "myArray[1]" ).getObject() );
-        assertEquals( true, content.getData().getDataSet().getData( "myArray[1]" ).isArray() );
-        assertEquals( true, content.getData().getDataSet().getData( "myArray" ).isArray() );
-        assertEquals( false, content.getData().getDataSet().getData( "myData" ).isArray() );
-        assertEquals( 0, content.getData().getDataSet().getData( "myData" ).getArrayIndex() );
-        assertEquals( 0, content.getData().getDataSet().getData( "myArray" ).getArrayIndex() );
-        assertEquals( 1, content.getData().getDataSet().getData( "myArray[1]" ).getArrayIndex() );
-        assertEquals( 2, content.getData().getDataSet().entryCount( "myArray" ) );
-        assertEquals( 1, content.getData().getDataSet().entryCount( "myData" ) );
+        assertEquals( "1", content.getDataSet().getData( "myArray", 0 ).getObject() );
+        assertEquals( "2", content.getDataSet().getData( "myArray[1]" ).getObject() );
+        assertEquals( true, content.getDataSet().getData( "myArray[1]" ).isArray() );
+        assertEquals( true, content.getDataSet().getData( "myArray" ).isArray() );
+        assertEquals( false, content.getDataSet().getData( "myData" ).isArray() );
+        assertEquals( 0, content.getDataSet().getData( "myData" ).getArrayIndex() );
+        assertEquals( 0, content.getDataSet().getData( "myArray" ).getArrayIndex() );
+        assertEquals( 1, content.getDataSet().getData( "myArray[1]" ).getArrayIndex() );
+        assertEquals( 2, content.getDataSet().entryCount( "myArray" ) );
+        assertEquals( 1, content.getDataSet().entryCount( "myData" ) );
 
-        Data myArray = content.getData().getDataSet().getData( "myArray" );
+        Data myArray = content.getDataSet().getData( "myArray" );
     }
 }

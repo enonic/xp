@@ -1,8 +1,8 @@
 package com.enonic.wem.core.content.type;
 
 import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.core.content.ParsingException;
-import com.enonic.wem.core.content.SerializingException;
+import com.enonic.wem.core.support.serializer.ParsingException;
+import com.enonic.wem.core.support.serializer.SerializingException;
 
 public interface ContentTypeSerializer
 {

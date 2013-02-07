@@ -60,7 +60,7 @@ public class ContentDataValidatorTest
         ContentDataValidator validator = newValidator().contentType( contentType ).recordExceptions( true ).build();
         try
         {
-            validator.validate( content.getData() );
+            validator.validate( content.getDataSet() );
         }
         catch ( Throwable e )
         {
@@ -88,7 +88,7 @@ public class ContentDataValidatorTest
         ContentDataValidator validator = newValidator().contentType( contentType ).recordExceptions( true ).build();
         try
         {
-            validator.validate( content.getData() );
+            validator.validate( content.getDataSet() );
         }
         catch ( Throwable e )
         {
@@ -125,7 +125,7 @@ public class ContentDataValidatorTest
 
         // exercise
         ContentDataValidator validator = newValidator().contentType( contentType ).build();
-        validator.validate( content.getData() );
+        validator.validate( content.getDataSet() );
     }
 
     @Test
@@ -299,14 +299,14 @@ public class ContentDataValidatorTest
 
         // verify
         ContentDataValidator validator = newValidator().contentType( contentType ).build();
-        validator.validate( content.getData() );
+        validator.validate( content.getDataSet() );
     }
 
     private void validateAndAssertInvalidDataException( ContentDataValidator validator, Content content, Class cause, Data data )
     {
         try
         {
-            validator.validate( content.getData() );
+            validator.validate( content.getDataSet() );
             fail( "Expected " + InvalidDataException.class.getSimpleName() );
         }
         catch ( Exception e )

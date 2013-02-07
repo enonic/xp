@@ -8,7 +8,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.BlobToKeyReplacer;
-import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Entry;
@@ -30,7 +29,7 @@ public final class Content
 
     private final ContentId id;
 
-    private final ContentData data;
+    private final DataSet dataSet;
 
     private final DateTime createdTime;
 
@@ -48,7 +47,7 @@ public final class Content
         this.type = builder.type;
         this.path = builder.path;
         this.id = builder.contentId;
-        this.data = builder.data;
+        this.dataSet = builder.dataSet;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
         this.owner = builder.owner;
@@ -103,9 +102,9 @@ public final class Content
         return owner;
     }
 
-    public ContentData getData()
+    public DataSet getDataSet()
     {
-        return data;
+        return dataSet;
     }
 
     public ContentId getId()
@@ -120,53 +119,47 @@ public final class Content
 
     public void setData( final String path, final String value )
     {
-        this.data.setData( EntryPath.from( path ), Value.newValue().type( DataTypes.TEXT ).value( value ).build() );
+        this.dataSet.setData( EntryPath.from( path ), Value.newValue().type( DataTypes.TEXT ).value( value ).build() );
     }
 
     public void setData( final String path, final DateMidnight value )
     {
-        this.data.setData( EntryPath.from( path ), Value.newValue().type( DataTypes.DATE ).value( value ).build() );
+        this.dataSet.setData( EntryPath.from( path ), Value.newValue().type( DataTypes.DATE ).value( value ).build() );
     }
 
     public void setData( final String path, final Long value )
     {
-        this.data.setData( EntryPath.from( path ), Value.newValue().type( DataTypes.WHOLE_NUMBER ).value( value ).build() );
+        this.dataSet.setData( EntryPath.from( path ), Value.newValue().type( DataTypes.WHOLE_NUMBER ).value( value ).build() );
     }
 
     public void setData( final String path, final Double value )
     {
-        this.data.setData( EntryPath.from( path ), Value.newValue().type( DataTypes.DECIMAL_NUMBER ).value( value ).build() );
+        this.dataSet.setData( EntryPath.from( path ), Value.newValue().type( DataTypes.DECIMAL_NUMBER ).value( value ).build() );
     }
 
     public void setData( final String path, final Object value, BaseDataType dataType )
     {
-        this.data.setData( EntryPath.from( path ), Value.newValue().type( dataType ).value( value ).build() );
+        this.dataSet.setData( EntryPath.from( path ), Value.newValue().type( dataType ).value( value ).build() );
     }
 
     public Entry getEntry( final String path )
     {
-        return this.data.getEntry( EntryPath.from( path ) );
+        return this.dataSet.getEntry( EntryPath.from( path ) );
     }
 
     public Data getData( final String path )
     {
-        return this.data.getData( EntryPath.from( path ) );
+        return this.dataSet.getData( EntryPath.from( path ) );
     }
 
     public DataSet getDataSet( String path )
     {
-        return this.data.getDataSet( EntryPath.from( path ) );
-    }
-
-    public Object getIndexableValues()
-    {
-        // TODO
-        return null;
+        return this.dataSet.getDataSet( EntryPath.from( path ) );
     }
 
     public void replaceBlobsWithKeys( final MockBlobKeyResolver blobToKeyResolver )
     {
-        new BlobToKeyReplacer( blobToKeyResolver ).replace( data );
+        new BlobToKeyReplacer( blobToKeyResolver ).replace( dataSet );
     }
 
     @Override
@@ -203,7 +196,7 @@ public final class Content
 
         private QualifiedContentTypeName type;
 
-        private ContentData data;
+        private DataSet dataSet;
 
         private String displayName;
 
@@ -222,7 +215,7 @@ public final class Content
             this.contentId = null;
             this.path = ContentPath.ROOT;
             this.type = null;
-            this.data = new ContentData();
+            this.dataSet = DataSet.newRootDataSet();
             this.displayName = null;
             this.owner = null;
             this.createdTime = null;
@@ -236,7 +229,7 @@ public final class Content
             this.contentId = content.id;
             this.path = content.path;
             this.type = content.type;
-            this.data = content.data; // TODO make ContentData immutable, or make copy
+            this.dataSet = content.dataSet; // TODO make DataSet immutable, or make copy
             this.displayName = content.displayName;
             this.owner = content.owner;
             this.createdTime = content.createdTime;
@@ -267,9 +260,9 @@ public final class Content
             return this;
         }
 
-        public Builder data( final ContentData data )
+        public Builder dataSet( final DataSet dataSet )
         {
-            this.data = data;
+            this.dataSet = dataSet;
             return this;
         }
 
@@ -318,6 +311,8 @@ public final class Content
         public Content build()
         {
             Preconditions.checkNotNull( path, "path is mandatory for a content" );
+            Preconditions.checkArgument( dataSet.isRoot(), "dataSet is not a root DataSet" );
+
             if ( type == null )
             {
                 type = QualifiedContentTypeName.unstructured();

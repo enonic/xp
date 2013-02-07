@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content;
+package com.enonic.wem.core.support.serializer;
 
 
 import java.io.IOException;
@@ -7,6 +7,8 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
+
+import com.enonic.wem.core.content.JsonFactoryHolder;
 
 public abstract class AbstractJsonSerializer<T>
 {

@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.type.form.BreaksRequiredContractException;
@@ -26,10 +25,10 @@ final class MinimumOccurrencesValidator
         return Collections.unmodifiableList( validationErrors );
     }
 
-    final void validate( final Form form, final ContentData contentData )
+    final void validate( final Form form, final DataSet dataSet )
     {
         final List<DataSet> parentDataSets = Lists.newArrayList();
-        parentDataSets.add( contentData.getDataSet() );
+        parentDataSets.add( dataSet );
         validate( form.formItemIterable(), parentDataSets );
     }
 
@@ -102,7 +101,7 @@ final class MinimumOccurrencesValidator
 
     private List<DataSet> getDataSets( final String name, final List<DataSet> parentDataSets )
     {
-        final List<DataSet> dataSets = new ArrayList<DataSet>();
+        final List<DataSet> dataSets = new ArrayList<>();
         for ( DataSet parentDataSet : parentDataSets )
         {
             dataSets.addAll( parentDataSet.dataSets( name ) );

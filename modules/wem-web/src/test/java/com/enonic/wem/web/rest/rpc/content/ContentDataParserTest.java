@@ -9,8 +9,8 @@ import org.joda.time.DateMidnight;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
+import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.form.FormItemSet;
@@ -60,16 +60,16 @@ public class ContentDataParserTest
 
         // exercise
         ContentDataParser contentDataParser = new ContentDataParser( contentType );
-        ContentData parsedContentData = contentDataParser.parse( objectNode );
+        DataSet parsedRootDataSet = contentDataParser.parse( objectNode );
 
         // verify
-        assertEquals( "Text line", parsedContentData.getData( EntryPath.from( "myTextLine" ) ).getObject() );
-        assertEquals( "First line\n" + "Second line", parsedContentData.getData( EntryPath.from( "myTextArea" ) ).getObject() );
-        assertEquals( new DateMidnight( 2012, 8, 31 ), parsedContentData.getData( EntryPath.from( "myDate" ) ).getObject() );
-        assertEquals( "<root>XML</root>", parsedContentData.getData( EntryPath.from( "myXml" ) ).getObject() );
-        assertEquals( 1L, parsedContentData.getData( EntryPath.from( "myWholeNumber" ) ).getObject() );
-        assertEquals( 1.1, parsedContentData.getData( EntryPath.from( "myDecimalNumber" ) ).getObject() );
-        assertEquals( "Inner line", parsedContentData.getData( EntryPath.from( "mySet.myTextLine" ) ).getObject() );
+        assertEquals( "Text line", parsedRootDataSet.getData( EntryPath.from( "myTextLine" ) ).getObject() );
+        assertEquals( "First line\n" + "Second line", parsedRootDataSet.getData( EntryPath.from( "myTextArea" ) ).getObject() );
+        assertEquals( new DateMidnight( 2012, 8, 31 ), parsedRootDataSet.getData( EntryPath.from( "myDate" ) ).getObject() );
+        assertEquals( "<root>XML</root>", parsedRootDataSet.getData( EntryPath.from( "myXml" ) ).getObject() );
+        assertEquals( 1L, parsedRootDataSet.getData( EntryPath.from( "myWholeNumber" ) ).getObject() );
+        assertEquals( 1.1, parsedRootDataSet.getData( EntryPath.from( "myDecimalNumber" ) ).getObject() );
+        assertEquals( "Inner line", parsedRootDataSet.getData( EntryPath.from( "mySet.myTextLine" ) ).getObject() );
     }
 
     @Test
@@ -102,7 +102,7 @@ public class ContentDataParserTest
 
         // exercise
         ContentDataParser contentDataParser = new ContentDataParser( contentType );
-        ContentData parsedContentData = contentDataParser.parse( objectNode );
+        DataSet parsedContentData = contentDataParser.parse( objectNode );
 
         // verify
         assertEquals( 90.0, parsedContentData.getData( EntryPath.from( "myGeoLocation.latitude" ) ).getObject() );
@@ -137,7 +137,7 @@ public class ContentDataParserTest
 
         // exercise
         ContentDataParser contentDataParser = new ContentDataParser( myContentType );
-        ContentData parsedContentData = contentDataParser.parse( objectNode );
+        DataSet parsedContentData = contentDataParser.parse( objectNode );
 
         // verify
         assertEquals( 1l, parsedContentData.getData( EntryPath.from( "myFormItemSet.myWholeNumber" ) ).getObject() );
@@ -165,7 +165,7 @@ public class ContentDataParserTest
 
         // exercise
         ContentDataParser contentDataParser = new ContentDataParser( contentType );
-        ContentData parsedContentData = contentDataParser.parse( objectNode );
+        DataSet parsedContentData = contentDataParser.parse( objectNode );
 
         // verify
 
@@ -196,7 +196,7 @@ public class ContentDataParserTest
 
         // exercise
         ContentDataParser contentDataParser = new ContentDataParser( contentType );
-        ContentData parsedContentData = contentDataParser.parse( objectNode );
+        DataSet parsedContentData = contentDataParser.parse( objectNode );
 
         // verify
         assertEquals( 40l, parsedContentData.getData( EntryPath.from( "myColor.red" ) ).getObject() );
@@ -230,11 +230,11 @@ public class ContentDataParserTest
 
         // exercise
         ContentDataParser contentDataParser = new ContentDataParser( contentType );
-        ContentData parsedContentData = contentDataParser.parse( objectNode );
+        DataSet parsedDataSet = contentDataParser.parse( objectNode );
 
         // verify
-        assertEquals( 40l, parsedContentData.getData( EntryPath.from( "myFormItemSet.myColor.red" ) ).getObject() );
-        assertEquals( 60l, parsedContentData.getData( EntryPath.from( "myFormItemSet.myColor.green" ) ).getObject() );
-        assertEquals( 80l, parsedContentData.getData( EntryPath.from( "myFormItemSet.myColor.blue" ) ).getObject() );
+        assertEquals( 40l, parsedDataSet.getData( EntryPath.from( "myFormItemSet.myColor.red" ) ).getObject() );
+        assertEquals( 60l, parsedDataSet.getData( EntryPath.from( "myFormItemSet.myColor.green" ) ).getObject() );
+        assertEquals( 80l, parsedDataSet.getData( EntryPath.from( "myFormItemSet.myColor.blue" ) ).getObject() );
     }
 }

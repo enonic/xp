@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content;
+package com.enonic.wem.core.content.serializer;
 
 
 import java.io.IOException;
@@ -8,35 +8,37 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.core.content.JsonFactoryHolder;
 import com.enonic.wem.core.content.dao.ContentIdFactory;
-import com.enonic.wem.core.content.data.ContentDataJsonSerializer;
+import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 
-import static com.enonic.wem.core.content.JsonSerializerUtil.getDateTimeValue;
-import static com.enonic.wem.core.content.JsonSerializerUtil.getStringValue;
-import static com.enonic.wem.core.content.JsonSerializerUtil.getUserKeyValue;
-import static com.enonic.wem.core.content.JsonSerializerUtil.setDateTimeValue;
+import static com.enonic.wem.core.support.serializer.JsonSerializerUtil.getDateTimeValue;
+import static com.enonic.wem.core.support.serializer.JsonSerializerUtil.getStringValue;
+import static com.enonic.wem.core.support.serializer.JsonSerializerUtil.getUserKeyValue;
+import static com.enonic.wem.core.support.serializer.JsonSerializerUtil.setDateTimeValue;
 
 public class ContentJsonSerializer
     extends AbstractJsonSerializer<Content>
     implements ContentSerializer
 {
-    private ContentDataJsonSerializer contentDataSerializer;
-
+    private DataSetJsonSerializer dataSetSerializer;
 
     public ContentJsonSerializer()
     {
-        this.contentDataSerializer = new ContentDataJsonSerializer( objectMapper() );
+        this.dataSetSerializer = new DataSetJsonSerializer( objectMapper() );
     }
 
     public ContentJsonSerializer( final ObjectMapper objectMapper )
     {
         super( objectMapper );
-        this.contentDataSerializer = new ContentDataJsonSerializer( objectMapper );
+        this.dataSetSerializer = new DataSetJsonSerializer( objectMapper );
     }
 
     @Override
@@ -54,7 +56,7 @@ public class ContentJsonSerializer
         setDateTimeValue( "modifiedTime", content.getModifiedTime(), jsonContent );
         setDateTimeValue( "createdTime", content.getCreatedTime(), jsonContent );
 
-        jsonContent.put( "data", contentDataSerializer.serialize( content.getData() ) );
+        jsonContent.put( "data", dataSetSerializer.serializeEntries( content.getDataSet() ) );
         return jsonContent;
     }
 
@@ -112,7 +114,10 @@ public class ContentJsonSerializer
         contentBuilder.modifiedTime( getDateTimeValue( "modifiedTime", contentNode ) );
         contentBuilder.createdTime( getDateTimeValue( "createdTime", contentNode ) );
 
-        contentBuilder.data( contentDataSerializer.parse( contentNode.get( "data" ) ) );
+        final DataSet rootDataSet = DataSet.newRootDataSet();
+        dataSetSerializer.parseEntries( (ArrayNode) contentNode.get( "data" ), rootDataSet );
+
+        contentBuilder.dataSet( rootDataSet );
 
         return contentBuilder.build();
     }

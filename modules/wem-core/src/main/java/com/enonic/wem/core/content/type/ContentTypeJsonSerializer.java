@@ -11,10 +11,10 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItems;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.core.content.AbstractJsonSerializer;
-import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.JsonSerializerUtil;
 import com.enonic.wem.core.content.type.form.FormItemsJsonSerializer;
+import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.core.support.serializer.JsonParsingException;
+import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 

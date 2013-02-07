@@ -4,8 +4,8 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.validator.ContentTypeValidationResult;
-import com.enonic.wem.core.content.XmlParsingException;
 import com.enonic.wem.core.content.type.ContentTypeXmlSerializer;
+import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;

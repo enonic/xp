@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.ValidateContentData;
+import com.enonic.wem.api.command.content.ValidateDataSet;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.form.FieldSet;
@@ -49,7 +49,7 @@ public class ValidateContentDataHandlerTest
         final Content content = newContent().type( contentType.getQualifiedName() ).build();
 
         // exercise
-        final ValidateContentData command = Commands.content().validate().contentData( content.getData() ).contentType( contentType );
+        final ValidateDataSet command = Commands.content().validate().dataSet( content.getDataSet() ).contentType( contentType );
         this.handlerValidate.handle( this.context, command );
 
         // test
@@ -76,7 +76,7 @@ public class ValidateContentDataHandlerTest
         content.setData( "mySet.myInput", "thing" );
 
         // exercise
-        final ValidateContentData command = Commands.content().validate().contentData( content.getData() ).contentType( contentType );
+        final ValidateDataSet command = Commands.content().validate().dataSet( content.getDataSet() ).contentType( contentType );
         this.handlerValidate.handle( this.context, command );
 
         // test

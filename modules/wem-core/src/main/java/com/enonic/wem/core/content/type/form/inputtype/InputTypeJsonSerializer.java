@@ -6,8 +6,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.type.form.inputtype.BaseInputType;
-import com.enonic.wem.core.content.AbstractJsonSerializer;
-import com.enonic.wem.core.content.JsonSerializerUtil;
+import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
 public class InputTypeJsonSerializer
     extends AbstractJsonSerializer<BaseInputType>

@@ -6,7 +6,7 @@ import org.jdom.Element;
 
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItems;
-import com.enonic.wem.core.content.XmlParsingException;
+import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.core.util.JdomHelper;
 
 public final class FormItemsXmlSerializer

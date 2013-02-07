@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
@@ -67,14 +67,14 @@ public final class CreateOrUpdateContentRpcHandler
 
         final ContentType contentType = getContentType( qualifiedContentTypeName );
 
-        final ContentData contentData = new ContentDataParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
+        final DataSet rootDataSet = new ContentDataParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
 
         if ( contentPath == null )
         {
             try
             {
                 final ContentPath newContentPath = getPathForNewContent( parentContentPath, displayName );
-                final ContentId contentId = doCreateContent( qualifiedContentTypeName, newContentPath, displayName, contentData );
+                final ContentId contentId = doCreateContent( qualifiedContentTypeName, newContentPath, displayName, rootDataSet );
                 context.setResult( CreateOrUpdateContentJsonResult.created( contentId, newContentPath ) );
             }
             catch ( ContentNotFoundException e )
@@ -85,7 +85,7 @@ public final class CreateOrUpdateContentRpcHandler
         }
         else
         {
-            doUpdateContent( contentPath, displayName, contentData );
+            doUpdateContent( contentPath, displayName, rootDataSet );
             context.setResult( CreateOrUpdateContentJsonResult.updated() );
         }
     }
@@ -98,12 +98,12 @@ public final class CreateOrUpdateContentRpcHandler
     }
 
     private ContentId doCreateContent( final QualifiedContentTypeName qualifiedContentTypeName, ContentPath contentPath,
-                                       final String displayName, final ContentData contentData )
+                                       final String displayName, final DataSet rootDataSet )
     {
         final CreateContent createContent = Commands.content().create();
         createContent.contentPath( contentPath );
         createContent.contentType( qualifiedContentTypeName );
-        createContent.contentData( contentData );
+        createContent.dataSet( rootDataSet );
         createContent.displayName( displayName );
         createContent.owner( AccountKey.anonymous() );
         return client.execute( createContent );
@@ -121,11 +121,11 @@ public final class CreateOrUpdateContentRpcHandler
         return contentPath;
     }
 
-    private void doUpdateContent( final ContentPath contentPath, final String displayName, final ContentData contentData )
+    private void doUpdateContent( final ContentPath contentPath, final String displayName, final DataSet rootDataSet )
     {
         final UpdateContents updateContents = Commands.content().update();
         updateContents.selectors( ContentPaths.from( contentPath ) );
-        updateContents.editor( composite( setContentData( contentData ), setContentDisplayName( displayName ) ) );
+        updateContents.editor( composite( setContentData( rootDataSet ), setContentDisplayName( displayName ) ) );
         updateContents.modifier( AccountKey.anonymous() );
 
         client.execute( updateContents );

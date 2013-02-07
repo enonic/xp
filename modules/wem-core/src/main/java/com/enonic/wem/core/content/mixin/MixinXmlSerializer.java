@@ -10,11 +10,11 @@ import com.enonic.wem.api.content.mixin.Mixin;
 import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.core.content.ParsingException;
-import com.enonic.wem.core.content.SerializingException;
-import com.enonic.wem.core.content.XmlParsingException;
 import com.enonic.wem.core.content.type.form.FormItemXmlSerializer;
 import com.enonic.wem.core.content.type.form.FormItemsXmlSerializer;
+import com.enonic.wem.core.support.serializer.ParsingException;
+import com.enonic.wem.core.support.serializer.SerializingException;
+import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.core.util.JdomHelper;
 
 import static com.enonic.wem.api.content.mixin.Mixin.newMixin;

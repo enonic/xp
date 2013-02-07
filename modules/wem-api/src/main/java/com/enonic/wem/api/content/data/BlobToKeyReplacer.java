@@ -16,9 +16,9 @@ public class BlobToKeyReplacer
         this.blobKeyResolver = blobKeyResolver;
     }
 
-    public void replace( ContentData contentData )
+    public void replace( DataSet dataSet )
     {
-        doReplace( contentData );
+        doReplace( dataSet );
     }
 
     private void doReplace( final Iterable<Entry> dataIt )

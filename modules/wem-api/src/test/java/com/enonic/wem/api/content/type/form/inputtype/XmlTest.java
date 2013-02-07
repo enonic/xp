@@ -13,12 +13,12 @@ public class XmlTest
     @Test(expected = BreaksRequiredContractException.class)
     public void checkBreaksRequiredContract_throws_exception_when_value_is_empty_string()
     {
-        new Xml().checkBreaksRequiredContract( newData().type( DataTypes.XML ).value( "" ).build() );
+        new Xml().checkBreaksRequiredContract( newData().name( "myXml" ).type( DataTypes.XML ).value( "" ).build() );
     }
 
     @Test(expected = BreaksRequiredContractException.class)
     public void checkBreaksRequiredContract_throws_exception_when_value_is_blank_string()
     {
-        new Xml().checkBreaksRequiredContract( newData().type( DataTypes.XML ).value( "  " ).build() );
+        new Xml().checkBreaksRequiredContract( newData().name( "myXml" ).type( DataTypes.XML ).value( "  " ).build() );
     }
 }

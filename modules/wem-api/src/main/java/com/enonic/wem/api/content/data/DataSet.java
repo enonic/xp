@@ -14,9 +14,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.datatype.BaseDataType;
+import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.form.InvalidDataException;
 
 import static com.enonic.wem.api.content.data.Data.newData;
+import static com.enonic.wem.api.content.data.Value.newValue;
 
 public final class DataSet
     extends Entry
@@ -26,12 +28,12 @@ public final class DataSet
 
     private Map<String, EntryArray> arrayByEntryName = new HashMap<>();
 
-    private DataSet( final String name )
+    private DataSet()
     {
-        super( name );
+        // Creates a root DataSet
     }
 
-    public DataSet( final Builder builder )
+    private DataSet( final Builder builder )
     {
         super( builder.name, builder.parent != null ? builder.parent : null );
 
@@ -52,12 +54,17 @@ public final class DataSet
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
 
-        final Value value = Value.newValue().type( dataType ).value( valueObject ).build();
+        final Value value = newValue().type( dataType ).value( valueObject ).build();
 
         setData( path, value );
     }
 
-    void setData( final EntryPath path, final Value value )
+    public void setData( final EntryPath path, final String value )
+    {
+        setData( path, newValue().type( DataTypes.TEXT ).value( value ).build() );
+    }
+
+    public void setData( final EntryPath path, final Value value )
         throws InvalidDataException
     {
         if ( path.elementCount() > 1 )
@@ -401,7 +408,7 @@ public final class DataSet
 
     public static DataSet newRootDataSet()
     {
-        return new DataSet( "" );
+        return new DataSet();
     }
 
     public static class Builder

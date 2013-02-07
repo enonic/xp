@@ -2,8 +2,8 @@ package com.enonic.wem.core.content;
 
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.command.content.ValidateContentData;
-import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.command.content.ValidateDataSet;
+import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.validator.DataValidationErrors;
 import com.enonic.wem.api.content.type.validator.OccurrenceValidator;
@@ -12,23 +12,23 @@ import com.enonic.wem.core.command.CommandHandler;
 
 @Component
 public final class ValidateContentDataHandler
-    extends CommandHandler<ValidateContentData>
+    extends CommandHandler<ValidateDataSet>
 {
 
     public ValidateContentDataHandler()
     {
-        super( ValidateContentData.class );
+        super( ValidateDataSet.class );
     }
 
     @Override
-    public void handle( final CommandContext context, final ValidateContentData command )
+    public void handle( final CommandContext context, final ValidateDataSet command )
         throws Exception
     {
-        final ContentData contentData = command.getContentData();
+        final DataSet rootDataSet = command.getDataSet();
         final ContentType contentType = command.getContentType();
         final OccurrenceValidator occurrenceValidator = new OccurrenceValidator( contentType );
 
-        final DataValidationErrors validationErrors = occurrenceValidator.validate( contentData );
+        final DataValidationErrors validationErrors = occurrenceValidator.validate( rootDataSet );
         command.setResult( validationErrors );
     }
 

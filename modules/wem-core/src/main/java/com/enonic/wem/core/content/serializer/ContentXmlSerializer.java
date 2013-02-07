@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content;
+package com.enonic.wem.core.content.serializer;
 
 import java.io.IOException;
 
@@ -8,14 +8,14 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
-import com.enonic.wem.core.content.data.ContentDataXmlSerializer;
 import com.enonic.wem.core.util.JdomHelper;
 
 public class ContentXmlSerializer
     implements ContentSerializer
 {
-    private ContentDataXmlSerializer contentDataSerializer = new ContentDataXmlSerializer();
+    private EntryXmlSerializer entrySerializer = new EntryXmlSerializer();
 
     private final JdomHelper jdomHelper = new JdomHelper();
 
@@ -56,7 +56,9 @@ public class ContentXmlSerializer
         {
             // no element for type
         }
-        contentEl.addContent( contentDataSerializer.generate( content.getData() ) );
+        final Element dataEl = new Element( "data" );
+        contentEl.addContent( dataEl );
+        entrySerializer.generateRootDataSet( dataEl, content.getDataSet() );
     }
 
     public Content toContent( final String xml )
@@ -92,7 +94,9 @@ public class ContentXmlSerializer
             contentBuilder.type( qualifiedContentTypeName );
         }
 
-        contentBuilder.data( contentDataSerializer.parse( contentEl.getChild( "data" ) ) );
+        final DataSet rootDataSet = DataSet.newRootDataSet();
+        entrySerializer.parse( contentEl.getChild( "data" ), rootDataSet );
+        contentBuilder.dataSet( rootDataSet );
 
         return contentBuilder.build();
     }

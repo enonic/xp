@@ -7,13 +7,13 @@ import javax.jcr.RepositoryException;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
-import com.enonic.wem.core.content.data.ContentDataJsonSerializer;
+import com.enonic.wem.core.content.serializer.DataSetJsonSerializer;
 
-import static com.enonic.wem.core.content.dao.ContentDao.SPACES_PATH;
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_HISTORY_NODE;
+import static com.enonic.wem.core.content.dao.ContentDao.SPACES_PATH;
 import static com.enonic.wem.core.content.dao.ContentDao.SPACE_CONTENT_ROOT_NODE;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyLong;
@@ -41,7 +41,7 @@ final class ContentJcrMapper
 
     static final String VERSION_ID = "versionId";
 
-    private ContentDataJsonSerializer contentDataSerializerJson = new ContentDataJsonSerializer();
+    private DataSetJsonSerializer dataSetSerializer = new DataSetJsonSerializer();
 
     void toJcr( final Content content, final Node contentNode )
         throws RepositoryException
@@ -55,7 +55,7 @@ final class ContentJcrMapper
             contentNode.setProperty( TYPE, (String) null );
         }
 
-        final String dataAsJson = contentDataSerializerJson.toString( content.getData() );
+        final String dataAsJson = dataSetSerializer.toString( content.getDataSet() );
         contentNode.setProperty( DATA, dataAsJson );
         setPropertyDateTime( contentNode, CREATED_TIME, content.getCreatedTime() );
         setPropertyDateTime( contentNode, MODIFIED_TIME, content.getModifiedTime() );
@@ -69,8 +69,8 @@ final class ContentJcrMapper
         throws RepositoryException
     {
         final String dataAsJson = contentNode.getProperty( DATA ).getString();
-        final ContentData contentData = contentDataSerializerJson.toObject( dataAsJson );
-        contentBuilder.data( contentData );
+        final DataSet rootDataSet = dataSetSerializer.toObject( dataAsJson );
+        contentBuilder.dataSet( rootDataSet );
 
         contentBuilder.createdTime( getPropertyDateTime( contentNode, CREATED_TIME ) );
         contentBuilder.modifiedTime( getPropertyDateTime( contentNode, MODIFIED_TIME ) );

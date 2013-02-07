@@ -37,7 +37,7 @@ public class CreateContentHandler
     {
         final Content.Builder builder = Content.newContent();
         builder.path( command.getContentPath() );
-        builder.data( command.getContentData() );
+        builder.dataSet( command.getDataSet() );
         builder.type( command.getContentType() );
         builder.displayName( command.getDisplayName() );
         builder.createdTime( DateTime.now() );

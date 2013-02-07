@@ -5,7 +5,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.core.content.ContentJsonSerializer;
+import com.enonic.wem.core.content.serializer.ContentJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
 import com.enonic.wem.web.rest.resource.content.ContentTypeImageUriResolver;
 

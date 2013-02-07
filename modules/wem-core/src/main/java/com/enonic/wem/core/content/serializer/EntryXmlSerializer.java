@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.data;
+package com.enonic.wem.core.content.serializer;
 
 import java.util.Iterator;
 
@@ -14,9 +14,9 @@ import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
 
 
-final class EntryXmlSerializer
+public final class EntryXmlSerializer
 {
-    final void generate( final Element parentDataSetEl, final Entry entry )
+    public final void generate( final Element parentDataSetEl, final Entry entry )
     {
         if ( entry.isDataSet() )
         {
@@ -25,6 +25,17 @@ final class EntryXmlSerializer
         else
         {
             generateData( parentDataSetEl, entry.toData() );
+        }
+    }
+
+    void generateRootDataSet( final Element dataEl, final DataSet dataSet )
+    {
+        //final String name = dataSet.getPath().resolveFormItemPath().getLastElement();
+        //final Element entryEl = new Element( name ).setAttribute( "type", DataTypes.SET.getName() );
+        //dataEl.addContent( entryEl );
+        for ( final Entry entry : dataSet )
+        {
+            generate( dataEl, entry );
         }
     }
 
@@ -54,7 +65,7 @@ final class EntryXmlSerializer
         dataEl.addContent( data.asString() );
     }
 
-    final void parse( Element parentEl, final DataSet parentDataSet )
+    public final void parse( Element parentEl, final DataSet parentDataSet )
     {
         final Iterator<Element> dataIt = parentEl.getChildren().iterator();
         while ( dataIt.hasNext() )

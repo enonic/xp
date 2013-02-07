@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Entry;
@@ -28,17 +27,11 @@ public class ContentDataValidator
 
     private boolean checkValidationRegexp;
 
-    private final List<InvalidDataException> invalidDataExceptions = new ArrayList<InvalidDataException>();
+    private final List<InvalidDataException> invalidDataExceptions = new ArrayList<>();
 
     private ContentDataValidator()
     {
         // Protection
-    }
-
-    public void validate( final ContentData contentData )
-        throws InvalidDataException
-    {
-        doValidateEntries( contentData );
     }
 
     public void validate( final DataSet dataSet )
@@ -186,7 +179,7 @@ public class ContentDataValidator
 
         public ContentDataValidator build()
         {
-            Preconditions.checkNotNull( validator.contentType, "contenType is required" );
+            Preconditions.checkNotNull( validator.contentType, "contentType is required" );
             return validator;
         }
 

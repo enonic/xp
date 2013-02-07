@@ -11,7 +11,7 @@ import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.api.exception.UnableToDeleteContentException;
@@ -141,11 +141,10 @@ public class ContentDaoImplTest
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
 
-        final Content content = createContent( "myspace:someContent" );
-        final ContentId createdContentId = contentDao.create( content, session );
+        Content content = createContent( "myspace:someContent" );
+        ContentId createdContentId = contentDao.create( content, session );
 
-        final Content anotherContent =
-            newContent( content ).id( createdContentId ).path( ContentPath.from( "myspace:anotherContent" ) ).build();
+        Content anotherContent = newContent( content ).id( createdContentId ).path( ContentPath.from( "myspace:anotherContent" ) ).build();
         assertNotNull( anotherContent.getId() );
         contentDao.create( anotherContent, session );
 
@@ -251,7 +250,7 @@ public class ContentDaoImplTest
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
         contentDao.create( createContent( "myspace:parentContent" ), session );
-        final ContentId contentId = contentDao.create( createContent( "myspace:parentContent/contentToDelete" ), session );
+        ContentId contentId = contentDao.create( createContent( "myspace:parentContent/contentToDelete" ), session );
         commit();
 
         // exercise
@@ -282,9 +281,9 @@ public class ContentDaoImplTest
         assertNotNull( actualContent );
         assertEquals( "myspace:myContent", content.getPath().toString() );
 
-        ContentData contentData = actualContent.getData();
-        assertEquals( "myValue", contentData.getData( EntryPath.from( "myData" ) ).asString() );
-        assertEquals( "myOtherValue", contentData.getData( EntryPath.from( "mySet.myData" ) ).asString() );
+        DataSet rootDataSet = actualContent.getDataSet();
+        assertEquals( "myValue", rootDataSet.getData( EntryPath.from( "myData" ) ).asString() );
+        assertEquals( "myOtherValue", rootDataSet.getData( EntryPath.from( "mySet.myData" ) ).asString() );
     }
 
     @Test
@@ -293,19 +292,19 @@ public class ContentDaoImplTest
     {
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
-        final Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
+        Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
         content.setData( "myData", "myValue" );
         content.setData( "mySet.myData", "myOtherValue" );
         contentDao.create( content, session );
 
-        final Content content2 = newContent().path( ContentPath.from( "myspace:myContent2" ) ).build();
+        Content content2 = newContent().path( ContentPath.from( "myspace:myContent2" ) ).build();
         content2.setData( "myData", "myValue2" );
         content2.setData( "mySet.myData", "myOtherValue2" );
         contentDao.create( content2, session );
         commit();
 
         // exercise
-        final Contents actualContents = contentDao.select( ContentPaths.from( "myspace:myContent", "myspace:myContent2" ), session );
+        Contents actualContents = contentDao.select( ContentPaths.from( "myspace:myContent", "myspace:myContent2" ), session );
 
         // verify
         assertNotNull( actualContents );
@@ -313,13 +312,13 @@ public class ContentDaoImplTest
         assertEquals( "myspace:myContent", actualContents.first().getPath().toString() );
         assertEquals( "myspace:myContent2", actualContents.last().getPath().toString() );
 
-        final ContentData contentData1 = actualContents.first().getData();
-        assertEquals( "myValue", contentData1.getData( EntryPath.from( "myData" ) ).asString() );
-        assertEquals( "myOtherValue", contentData1.getData( EntryPath.from( "mySet.myData" ) ).asString() );
+        DataSet rootDataSet1 = actualContents.first().getDataSet();
+        assertEquals( "myValue", rootDataSet1.getData( EntryPath.from( "myData" ) ).asString() );
+        assertEquals( "myOtherValue", rootDataSet1.getData( EntryPath.from( "mySet.myData" ) ).asString() );
 
-        final ContentData contentData2 = actualContents.last().getData();
-        assertEquals( "myValue2", contentData2.getData( EntryPath.from( "myData" ) ).asString() );
-        assertEquals( "myOtherValue2", contentData2.getData( EntryPath.from( "mySet.myData" ) ).asString() );
+        DataSet rootDataSet2 = actualContents.last().getDataSet();
+        assertEquals( "myValue2", rootDataSet2.getData( EntryPath.from( "myData" ) ).asString() );
+        assertEquals( "myOtherValue2", rootDataSet2.getData( EntryPath.from( "mySet.myData" ) ).asString() );
     }
 
     @Test
@@ -328,19 +327,19 @@ public class ContentDaoImplTest
     {
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
-        final Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
+        Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
         content.setData( "myData", "myValue" );
         content.setData( "mySet.myData", "myOtherValue" );
-        final ContentId contentId1 = contentDao.create( content, session );
+        ContentId contentId1 = contentDao.create( content, session );
 
-        final Content content2 = newContent().path( ContentPath.from( "myspace:myContent2" ) ).build();
+        Content content2 = newContent().path( ContentPath.from( "myspace:myContent2" ) ).build();
         content2.setData( "myData", "myValue2" );
         content2.setData( "mySet.myData", "myOtherValue2" );
-        final ContentId contentId2 = contentDao.create( content2, session );
+        ContentId contentId2 = contentDao.create( content2, session );
         commit();
 
         // exercise
-        final Contents actualContents = contentDao.select( ContentIds.from( contentId1, contentId2 ), session );
+        Contents actualContents = contentDao.select( ContentIds.from( contentId1, contentId2 ), session );
 
         // verify
         assertNotNull( actualContents );
@@ -348,13 +347,13 @@ public class ContentDaoImplTest
         assertEquals( "myspace:myContent", actualContents.first().getPath().toString() );
         assertEquals( "myspace:myContent2", actualContents.last().getPath().toString() );
 
-        final ContentData contentData1 = actualContents.first().getData();
-        assertEquals( "myValue", contentData1.getData( EntryPath.from( "myData" ) ).asString() );
-        assertEquals( "myOtherValue", contentData1.getData( EntryPath.from( "mySet.myData" ) ).asString() );
+        DataSet rootDataSet1 = actualContents.first().getDataSet();
+        assertEquals( "myValue", rootDataSet1.getData( EntryPath.from( "myData" ) ).asString() );
+        assertEquals( "myOtherValue", rootDataSet1.getData( EntryPath.from( "mySet.myData" ) ).asString() );
 
-        final ContentData contentData2 = actualContents.last().getData();
-        assertEquals( "myValue2", contentData2.getData( EntryPath.from( "myData" ) ).asString() );
-        assertEquals( "myOtherValue2", contentData2.getData( EntryPath.from( "mySet.myData" ) ).asString() );
+        DataSet rootDataSet2 = actualContents.last().getDataSet();
+        assertEquals( "myValue2", rootDataSet2.getData( EntryPath.from( "myData" ) ).asString() );
+        assertEquals( "myOtherValue2", rootDataSet2.getData( EntryPath.from( "mySet.myData" ) ).asString() );
     }
 
     @Test
@@ -366,7 +365,7 @@ public class ContentDaoImplTest
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
         content.setData( "myData", "myValue" );
         content.setData( "mySet.myData", "myOtherValue" );
-        final ContentId contentId = contentDao.create( content, session );
+        ContentId contentId = contentDao.create( content, session );
         commit();
 
         // exercise
@@ -376,9 +375,9 @@ public class ContentDaoImplTest
         assertNotNull( actualContent );
         assertEquals( "myspace:myContent", content.getPath().toString() );
 
-        ContentData contentData = actualContent.getData();
-        assertEquals( "myValue", contentData.getData( EntryPath.from( "myData" ) ).asString() );
-        assertEquals( "myOtherValue", contentData.getData( EntryPath.from( "mySet.myData" ) ).asString() );
+        DataSet rootDataSet = actualContent.getDataSet();
+        assertEquals( "myValue", rootDataSet.getData( EntryPath.from( "myData" ) ).asString() );
+        assertEquals( "myOtherValue", rootDataSet.getData( EntryPath.from( "mySet.myData" ) ).asString() );
     }
 
     @Test
@@ -432,21 +431,21 @@ public class ContentDaoImplTest
     {
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
-        final Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
+        Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
         content.setData( "myData", "myValue" );
         content.setData( "mySet.myData", "myOtherValue" );
-        final ContentId contentId = contentDao.create( content, session );
+        ContentId contentId = contentDao.create( content, session );
 
         // exercise
         contentDao.renameContent( ContentPath.from( "myspace:myContent" ), "newContentName", session );
         commit();
 
         // verify
-        final Content storedContent = contentDao.select( contentId, session );
+        Content storedContent = contentDao.select( contentId, session );
         assertNotNull( storedContent );
         assertEquals( ContentPath.from( "myspace:newContentName" ), storedContent.getPath() );
 
-        final Content contentNotFound = contentDao.select( ContentPath.from( "myspace:myContent" ), session );
+        Content contentNotFound = contentDao.select( ContentPath.from( "myspace:myContent" ), session );
         assertNull( contentNotFound );
     }
 

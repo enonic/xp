@@ -11,6 +11,47 @@ import static org.junit.Assert.*;
 
 public class DataSetTest
 {
+    @Test
+    public void root()
+    {
+        DataSet rootDataSet = DataSet.newRootDataSet();
+
+        // is root
+        assertEquals( true, rootDataSet.isRoot() );
+
+        // is a DataSet
+        assertEquals( true, rootDataSet.isDataSet() );
+        assertEquals( false, rootDataSet.isData() );
+
+        // have no EntryId
+        assertEquals( null, rootDataSet.getEntryId() );
+
+        // name is blank
+        assertEquals( "", rootDataSet.getName() );
+
+        // no parent
+        assertEquals( null, rootDataSet.getParent() );
+
+        // is not a part of an array
+        assertEquals( false, rootDataSet.isArray() );
+        assertEquals( null, rootDataSet.getArray() );
+        assertEquals( -1, rootDataSet.getArrayIndex() );
+    }
+
+    @Test
+    public void name_cannot_be_blank()
+    {
+        try
+        {
+            DataSet.newDataSet().name( " " ).build();
+            fail( "Expected exception" );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( e instanceof IllegalArgumentException );
+            assertEquals( "A name cannot be blank:  ", e.getMessage() );
+        }
+    }
 
     @Test
     public void add()

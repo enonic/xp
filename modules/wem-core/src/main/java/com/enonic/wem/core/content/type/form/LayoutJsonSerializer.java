@@ -9,9 +9,9 @@ import com.enonic.wem.api.content.type.form.FieldSet;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItems;
 import com.enonic.wem.api.content.type.form.Layout;
-import com.enonic.wem.core.content.AbstractJsonSerializer;
-import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.JsonSerializerUtil;
+import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.core.support.serializer.JsonParsingException;
+import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content;
+package com.enonic.wem.core.content.serializer;
 
 
 import static org.junit.Assert.*;

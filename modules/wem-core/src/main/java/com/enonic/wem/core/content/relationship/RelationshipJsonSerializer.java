@@ -8,11 +8,11 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
-import com.enonic.wem.core.content.AbstractJsonSerializer;
-import com.enonic.wem.core.content.JsonParsingException;
-import com.enonic.wem.core.content.JsonSerializerUtil;
 import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.core.content.relationship.dao.RelationshipIdFactory;
+import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.core.support.serializer.JsonParsingException;
+import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
 public class RelationshipJsonSerializer
     extends AbstractJsonSerializer<Relationship>

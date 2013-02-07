@@ -9,7 +9,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Entry;
@@ -76,11 +75,7 @@ public class ContentIndexData
     private void addContentData( final Content content, final XContentBuilder result )
         throws Exception
     {
-        final ContentData contentData = content.getData();
-
-        final DataSet dataSet = contentData.getDataSet();
-
-        traverseDataSet( result, dataSet );
+        traverseDataSet( result, content.getDataSet() );
     }
 
     private void traverseDataSet( final XContentBuilder result, final DataSet dataSet )

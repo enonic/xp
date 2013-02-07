@@ -9,8 +9,8 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.core.content.AbstractJsonSerializer;
-import com.enonic.wem.core.content.JsonSerializerUtil;
+import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
 public class RelationshipTypeJsonSerializer
     extends AbstractJsonSerializer<RelationshipType>

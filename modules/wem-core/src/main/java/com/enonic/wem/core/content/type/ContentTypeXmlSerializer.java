@@ -12,8 +12,8 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItems;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.core.content.XmlParsingException;
 import com.enonic.wem.core.content.type.form.FormItemsXmlSerializer;
+import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.core.util.JdomHelper;
 
 import static com.enonic.wem.api.content.type.ContentType.newContentType;

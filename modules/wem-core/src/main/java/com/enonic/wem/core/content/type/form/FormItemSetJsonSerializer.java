@@ -8,8 +8,8 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.FormItems;
-import com.enonic.wem.core.content.AbstractJsonSerializer;
-import com.enonic.wem.core.content.JsonSerializerUtil;
+import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 

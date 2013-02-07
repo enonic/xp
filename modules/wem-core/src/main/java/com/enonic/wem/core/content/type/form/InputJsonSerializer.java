@@ -7,9 +7,9 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.content.type.form.inputtype.BaseInputType;
-import com.enonic.wem.core.content.AbstractJsonSerializer;
-import com.enonic.wem.core.content.JsonSerializerUtil;
 import com.enonic.wem.core.content.type.form.inputtype.InputTypeConfigJsonSerializer;
+import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 
