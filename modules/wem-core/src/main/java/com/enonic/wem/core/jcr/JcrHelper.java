@@ -124,8 +124,14 @@ public abstract class JcrHelper
     public static String getPropertyString( final Node node, final String propertyName )
         throws RepositoryException
     {
+        return getPropertyString( node, propertyName, null );
+    }
+
+    public static String getPropertyString( final Node node, final String propertyName, final String defaultValue )
+        throws RepositoryException
+    {
         Property property = getInternalProperty( node, propertyName );
-        return property == null ? null : property.getString();
+        return property == null ? defaultValue : property.getString();
     }
 
     public static Boolean getPropertyBoolean( final Node node, final String propertyName, final Boolean defaultValue )
@@ -169,7 +175,7 @@ public abstract class JcrHelper
     }
 
     public static byte[] getPropertyBinary( final Node node, final String propertyName )
-        throws RepositoryException, IOException
+        throws RepositoryException
     {
         Property property = getInternalProperty( node, propertyName );
         if ( property == null )
@@ -179,7 +185,14 @@ public abstract class JcrHelper
         else
         {
             final Binary binaryValue = property.getValue().getBinary();
-            return IOUtils.toByteArray( binaryValue.getStream() );
+            try
+            {
+                return IOUtils.toByteArray( binaryValue.getStream() );
+            }
+            catch ( IOException e )
+            {
+                throw new RuntimeException( e );
+            }
         }
     }
 

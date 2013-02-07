@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.AbstractBaseType;
 import com.enonic.wem.api.content.BaseType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
@@ -38,6 +39,8 @@ public final class RelationshipType
 
     private final QualifiedContentTypeNames allowedToTypes;
 
+    private final Icon icon;
+
     private RelationshipType( final Builder builder )
     {
         this.module = builder.module;
@@ -50,6 +53,7 @@ public final class RelationshipType
         this.toSemantic = builder.toSemantic;
         this.allowedFromTypes = QualifiedContentTypeNames.from( builder.allowedFromTypes );
         this.allowedToTypes = QualifiedContentTypeNames.from( builder.allowedToTypes );
+        this.icon = builder.icon;
     }
 
     public String getName()
@@ -104,6 +108,11 @@ public final class RelationshipType
     public QualifiedContentTypeNames getAllowedToTypes()
     {
         return allowedToTypes;
+    }
+
+    public Icon getIcon()
+    {
+        return icon;
     }
 
     @Override
@@ -165,6 +174,8 @@ public final class RelationshipType
 
         private List<QualifiedContentTypeName> allowedToTypes = Lists.newArrayList();
 
+        private Icon icon;
+
         private Builder()
         {
 
@@ -172,15 +183,16 @@ public final class RelationshipType
 
         private Builder( final RelationshipType relationshipType )
         {
-            module = relationshipType.module;
-            name = relationshipType.name;
-            displayName = relationshipType.displayName;
-            createdTime = relationshipType.createdTime;
-            modifiedTime = relationshipType.modifiedTime;
-            fromSemantic = relationshipType.fromSemantic;
-            toSemantic = relationshipType.toSemantic;
-            allowedFromTypes = Lists.newArrayList( allowedFromTypes );
-            allowedToTypes = Lists.newArrayList( allowedToTypes );
+            this.module = relationshipType.module;
+            this.name = relationshipType.name;
+            this.displayName = relationshipType.displayName;
+            this.createdTime = relationshipType.createdTime;
+            this.modifiedTime = relationshipType.modifiedTime;
+            this.fromSemantic = relationshipType.fromSemantic;
+            this.toSemantic = relationshipType.toSemantic;
+            this.allowedFromTypes = Lists.newArrayList( allowedFromTypes );
+            this.allowedToTypes = Lists.newArrayList( allowedToTypes );
+            this.icon = relationshipType.icon == null ? null : Icon.copyOf( relationshipType.icon );
         }
 
         public Builder module( ModuleName value )
@@ -252,6 +264,12 @@ public final class RelationshipType
             {
                 allowedToTypes.add( contentType );
             }
+            return this;
+        }
+
+        public Builder icon( Icon icon )
+        {
+            this.icon = icon;
             return this;
         }
 

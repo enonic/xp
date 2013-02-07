@@ -5,26 +5,25 @@ import java.io.ByteArrayInputStream;
 
 import javax.imageio.ImageIO;
 
-import com.enonic.wem.api.content.type.ContentType;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.core.image.filter.effect.ScaleSquareFilter;
 
 final class ContentTypeImageHelper
 {
 
     public ContentTypeImageHelper()
-        throws Exception
     {
     }
 
-    public BufferedImage getContentTypeIcon( final ContentType contentType, final int size )
+    public BufferedImage getContentTypeIcon( final Icon icon, final int size )
         throws Exception
     {
-        if ( ( contentType == null ) || ( contentType.getIcon() == null ) || ( contentType.getIcon().length == 0 ) )
+        if ( icon == null )
         {
             return null;
         }
 
-        final BufferedImage image = toBufferedImage( contentType.getIcon() );
+        final BufferedImage image = toBufferedImage( icon.getData() );
         return resizeImage( image, size );
     }
 

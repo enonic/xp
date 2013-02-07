@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.content.type.GetContentTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypes;
@@ -42,17 +44,20 @@ public class ContentTypeImageResourceTest
         throws Exception
     {
         final byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
+        final Icon icon = Icon.from( data, "image/png" );
+
         final ContentType contentType = ContentType.newContentType().
             name( "myContentType" ).
             module( ModuleName.from( "myModule" ) ).
             displayName( "My content type" ).
             superType( new QualifiedContentTypeName( "System:unstructured" ) ).
-            icon( data ).
+            icon( icon ).
             build();
         setupContentType( contentType );
 
         // exercise
-        final BufferedImage contentTypeIcon = this.controller.getContentTypeIcon( "myModule:myContentType", 20 );
+        final Response response = this.controller.getContentTypeIcon( "myModule:myContentType", 20 );
+        final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
 
         // verify
         assertImage( contentTypeIcon, 20 );
@@ -63,12 +68,13 @@ public class ContentTypeImageResourceTest
         throws Exception
     {
         final byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
+        final Icon icon = Icon.from( data, "image/png" );
 
         final ContentType systemContentType = ContentType.newContentType().
             name( "unstructured" ).
             module( ModuleName.from( "System" ) ).
             displayName( "Unstructured" ).
-            icon( data ).
+            icon( icon ).
             build();
         setupContentType( systemContentType );
 
@@ -81,7 +87,8 @@ public class ContentTypeImageResourceTest
         setupContentType( contentType );
 
         // exercise
-        final BufferedImage contentTypeIcon = this.controller.getContentTypeIcon( "myModule:myContentType", 20 );
+        final Response response = this.controller.getContentTypeIcon( "myModule:myContentType", 20 );
+        final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
 
         // verify
         assertImage( contentTypeIcon, 20 );
@@ -97,7 +104,8 @@ public class ContentTypeImageResourceTest
         try
         {
             // exercise
-            final BufferedImage contentTypeIcon = this.controller.getContentTypeIcon( "myModule:myContentType", 10 );
+            final Response response = this.controller.getContentTypeIcon( "myModule:myContentType", 10 );
+            final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
         }
         catch ( WebApplicationException e )
         {

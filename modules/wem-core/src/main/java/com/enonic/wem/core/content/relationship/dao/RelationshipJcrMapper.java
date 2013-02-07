@@ -11,7 +11,7 @@ class RelationshipJcrMapper
 {
     private static final String RELATIONSHIP = "relationship";
 
-    private RelationshipJsonSerializer jsonSerializer = new RelationshipJsonSerializer().includeId( false );
+    private final RelationshipJsonSerializer jsonSerializer = new RelationshipJsonSerializer().includeId( false );
 
     void toJcr( final Relationship relationship, final Node relationshipNode )
         throws RepositoryException

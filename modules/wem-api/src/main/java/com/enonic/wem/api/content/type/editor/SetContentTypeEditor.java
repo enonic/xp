@@ -1,7 +1,6 @@
 package com.enonic.wem.api.content.type.editor;
 
-import java.util.Arrays;
-
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.type.ContentType;
 
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
@@ -20,7 +19,8 @@ final class SetContentTypeEditor
     public ContentType edit( final ContentType contentType )
         throws Exception
     {
-        final byte[] iconToSet = ( source.getIcon() == null ) ? null : Arrays.copyOf( source.getIcon(), source.getIcon().length );
+        final Icon iconToSet = ( source.getIcon() == null ) ? null : Icon.copyOf( source.getIcon() );
+
         final ContentType.Builder builder = newContentType( contentType );
         builder.displayName( source.getDisplayName() );
         builder.superType( source.getSuperType() );

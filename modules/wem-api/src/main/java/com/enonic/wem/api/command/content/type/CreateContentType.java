@@ -3,6 +3,7 @@ package com.enonic.wem.api.command.content.type;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
@@ -26,7 +27,7 @@ public final class CreateContentType
 
     private Form form;
 
-    private byte[] icon;
+    private Icon icon;
 
     public CreateContentType contentType( final ContentType contentType )
     {
@@ -76,7 +77,7 @@ public final class CreateContentType
         return form;
     }
 
-    public byte[] getIcon()
+    public Icon getIcon()
     {
         return icon;
     }

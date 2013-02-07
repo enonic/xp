@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.content.type.CreateContentType;
 import com.enonic.wem.api.command.content.type.GetContentTypes;
 import com.enonic.wem.api.command.content.type.UpdateContentTypes;
@@ -68,11 +69,11 @@ public class CreateOrUpdateContentTypeRpcHandler
             return;
         }
 
-        final UploadItem uploadItem = uploadService.getItem( iconReference );
-        final byte[] icon = uploadItem != null ? getUploadedImage( uploadItem ) : null;
+        final Icon icon = getIconUploaded( iconReference );
+
         if ( icon != null )
         {
-            if ( !isValidImage( uploadItem, icon, context ) )
+            if ( !isValidImage( icon, context ) )
             {
                 return;
             }
@@ -99,17 +100,17 @@ public class CreateOrUpdateContentTypeRpcHandler
         }
     }
 
-    private boolean isValidImage( final UploadItem uploadItem, final byte[] icon, final JsonRpcContext context )
+    private boolean isValidImage( final Icon icon, final JsonRpcContext context )
         throws IOException
     {
-        final String mimeType = uploadItem.getMimeType();
+        final String mimeType = icon.getMimeType();
         if ( !isValidIconMimeType( mimeType ) )
         {
             context.setResult( new JsonErrorResult( "Unsupported image type: {0}", mimeType ) );
             return false;
         }
 
-        final BufferedImage image = ImageIO.read( new ByteArrayInputStream( icon ) );
+        final BufferedImage image = ImageIO.read( new ByteArrayInputStream( icon.getData() ) );
         if ( image == null )
         {
             context.setResult( new JsonErrorResult( "Unable to read image file" ) );
@@ -124,7 +125,23 @@ public class CreateOrUpdateContentTypeRpcHandler
         return true;
     }
 
-    private byte[] getUploadedImage( final UploadItem uploadItem )
+    private Icon getIconUploaded( final String iconReference )
+        throws IOException
+    {
+        if ( iconReference == null )
+        {
+            return null;
+        }
+        final UploadItem uploadItem = uploadService.getItem( iconReference );
+        if ( uploadItem != null )
+        {
+            final byte[] iconData = getUploadedImageData( uploadItem );
+            return uploadItem != null ? Icon.from( iconData, uploadItem.getMimeType() ) : null;
+        }
+        return null;
+    }
+
+    private byte[] getUploadedImageData( final UploadItem uploadItem )
         throws IOException
     {
         if ( uploadItem != null )

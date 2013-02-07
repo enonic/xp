@@ -3,6 +3,7 @@ package com.enonic.wem.api.command.content.mixin;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.mixin.Mixin;
 import com.enonic.wem.api.content.mixin.QualifiedMixinName;
@@ -18,12 +19,15 @@ public final class CreateMixin
 
     private String displayName;
 
+    private Icon icon;
+
 
     public CreateMixin mixin( final Mixin mixin )
     {
         this.formItem = mixin.getFormItem();
         this.moduleName = mixin.getModuleName();
         this.displayName = mixin.getDisplayName();
+        this.icon = mixin.getIcon();
         return this;
     }
 
@@ -42,6 +46,11 @@ public final class CreateMixin
         return displayName;
     }
 
+    public Icon getIcon()
+    {
+        return icon;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -57,13 +66,13 @@ public final class CreateMixin
 
         final CreateMixin that = (CreateMixin) o;
         return Objects.equal( this.formItem, that.formItem ) && Objects.equal( this.moduleName, that.moduleName ) &&
-            Objects.equal( this.displayName, that.displayName );
+            Objects.equal( this.displayName, that.displayName ) && Objects.equal( this.icon, that.icon );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.formItem, this.moduleName, this.displayName );
+        return Objects.hashCode( this.formItem, this.moduleName, this.displayName, this.icon );
     }
 
     @Override

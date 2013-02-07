@@ -39,6 +39,7 @@ public final class CreateRelationshipTypeHandler
         builder.addAllowedToType( command.getAllowedToTypes() );
         builder.createdTime( DateTime.now() );
         builder.modifiedTime( DateTime.now() );
+        builder.icon( command.getIcon() );
         final RelationshipType relationshipType = builder.build();
 
         final Session session = context.getJcrSession();

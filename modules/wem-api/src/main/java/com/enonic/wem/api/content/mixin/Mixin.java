@@ -3,6 +3,7 @@ package com.enonic.wem.api.content.mixin;
 
 import org.joda.time.DateTime;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.AbstractBaseType;
 import com.enonic.wem.api.content.BaseType;
 import com.enonic.wem.api.content.type.form.FormItem;
@@ -24,6 +25,8 @@ public class Mixin
 
     private final DateTime modifiedTime;
 
+    private final Icon icon;
+
     Mixin( final Builder builder )
     {
         this.moduleName = builder.moduleName;
@@ -32,6 +35,7 @@ public class Mixin
         this.displayName = builder.displayName;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
+        this.icon = builder.icon;
     }
 
     public String getName()
@@ -69,6 +73,11 @@ public class Mixin
         return modifiedTime;
     }
 
+    public Icon getIcon()
+    {
+        return icon;
+    }
+
     public static Builder newMixin()
     {
         return new Builder();
@@ -91,6 +100,8 @@ public class Mixin
 
         private FormItem formItem;
 
+        private Icon icon;
+
         public Builder()
         {
 
@@ -103,6 +114,7 @@ public class Mixin
             this.createdTime = mixin.createdTime;
             this.modifiedTime = mixin.modifiedTime;
             this.formItem = mixin.formItem;
+            this.icon = mixin.icon == null ? null : Icon.copyOf( mixin.icon );
         }
 
         public Builder displayName( String value )
@@ -132,6 +144,12 @@ public class Mixin
         public Builder formItem( FormItem value )
         {
             this.formItem = value;
+            return this;
+        }
+
+        public Builder icon( Icon icon )
+        {
+            this.icon = icon;
             return this;
         }
 

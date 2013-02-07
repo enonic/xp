@@ -1,5 +1,6 @@
 package com.enonic.wem.api.content.type.editor;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.type.ContentType;
 
 public abstract class ContentTypeEditors
@@ -14,7 +15,7 @@ public abstract class ContentTypeEditors
         return new SetContentTypeEditor( contentType );
     }
 
-    public static ContentTypeEditor setIcon( final byte[] icon )
+    public static ContentTypeEditor setIcon( final Icon icon )
     {
         return new SetContentTypeIconEditor( icon );
     }

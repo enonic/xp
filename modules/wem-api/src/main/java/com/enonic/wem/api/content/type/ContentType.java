@@ -1,13 +1,12 @@
 package com.enonic.wem.api.content.type;
 
 
-import java.util.Arrays;
-
 import org.joda.time.DateTime;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.AbstractBaseType;
 import com.enonic.wem.api.content.BaseType;
 import com.enonic.wem.api.content.type.form.Form;
@@ -40,7 +39,7 @@ public final class ContentType
 
     private final DateTime modifiedTime;
 
-    private final byte[] icon;
+    private final Icon icon;
 
     private ContentType( final Builder builder )
     {
@@ -108,7 +107,7 @@ public final class ContentType
         return this.form;
     }
 
-    public byte[] getIcon()
+    public Icon getIcon()
     {
         return icon;
     }
@@ -158,7 +157,7 @@ public final class ContentType
 
         private DateTime modifiedTime;
 
-        private byte[] icon;
+        private Icon icon;
 
         private Builder()
         {
@@ -179,7 +178,7 @@ public final class ContentType
             }
             this.createdTime = source.createdTime;
             this.modifiedTime = source.modifiedTime;
-            this.icon = source.icon == null ? null : Arrays.copyOf( source.icon, source.icon.length );
+            this.icon = source.icon == null ? null : Icon.copyOf( source.icon );
         }
 
         public Builder qualifiedName( final QualifiedContentTypeName qualifiedContentTypeName )
@@ -270,7 +269,7 @@ public final class ContentType
             return this;
         }
 
-        public Builder icon( final byte[] icon )
+        public Builder icon( final Icon icon )
         {
             this.icon = icon;
             return this;

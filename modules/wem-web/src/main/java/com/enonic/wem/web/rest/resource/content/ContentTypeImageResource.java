@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
@@ -23,7 +24,7 @@ import static com.enonic.wem.api.command.Commands.contentType;
 
 @Component
 @Path("content-type/image")
-@Produces("image/png")
+@Produces("image/*")
 public final class ContentTypeImageResource
 {
     private final ContentTypeImageHelper helper;
@@ -38,8 +39,8 @@ public final class ContentTypeImageResource
 
     @GET
     @Path("{contentTypeName}")
-    public BufferedImage getContentTypeIcon( @PathParam("contentTypeName") final String contentTypeQualifiedName,
-                                             @QueryParam("size") @DefaultValue("128") final int size )
+    public Response getContentTypeIcon( @PathParam("contentTypeName") final String contentTypeQualifiedName,
+                                        @QueryParam("size") @DefaultValue("128") final int size )
         throws Exception
     {
         ContentType contentType = getContentType( new QualifiedContentTypeName( contentTypeQualifiedName ) );
@@ -48,13 +49,14 @@ public final class ContentTypeImageResource
             final QualifiedContentTypeName contentTypeName = contentType.getSuperType();
             contentType = getContentType( contentTypeName );
         }
+        final Icon contentTypeIcon = contentType == null ? null : contentType.getIcon();
 
-        final BufferedImage contentTypeIcon = this.helper.getContentTypeIcon( contentType, size );
-        if ( contentTypeIcon == null )
+        final BufferedImage contentTypeImage = this.helper.getContentTypeIcon( contentTypeIcon, size );
+        if ( contentTypeImage == null )
         {
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
-        return contentTypeIcon;
+        return Response.ok( contentTypeImage, contentTypeIcon.getMimeType() ).build();
     }
 
     private ContentType getContentType( final QualifiedContentTypeName contentTypeName )

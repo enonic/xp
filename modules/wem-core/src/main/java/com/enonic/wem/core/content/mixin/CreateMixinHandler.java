@@ -35,6 +35,7 @@ public final class CreateMixinHandler
         mixinBuilder.module( command.getModuleName() );
         mixinBuilder.createdTime( DateTime.now() );
         mixinBuilder.modifiedTime( DateTime.now() );
+        mixinBuilder.icon( command.getIcon() );
 
         final Mixin mixin = mixinBuilder.build();
 

@@ -3,6 +3,7 @@ package com.enonic.wem.api.command.content.relationshiptype;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
@@ -26,6 +27,8 @@ public final class CreateRelationshipType
 
     private QualifiedContentTypeNames allowedToTypes;
 
+    private Icon icon;
+
     public CreateRelationshipType relationshipType( final RelationshipType relationshipType )
     {
         this.name = relationshipType.getName();
@@ -35,6 +38,7 @@ public final class CreateRelationshipType
         this.toSemantic = relationshipType.getToSemantic();
         this.allowedFromTypes = relationshipType.getAllowedFromTypes();
         this.allowedToTypes = relationshipType.getAllowedToTypes();
+        this.icon = relationshipType.getIcon();
         return this;
     }
 
@@ -73,6 +77,11 @@ public final class CreateRelationshipType
         return allowedToTypes;
     }
 
+    public Icon getIcon()
+    {
+        return icon;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -93,13 +102,14 @@ public final class CreateRelationshipType
             Objects.equal( this.fromSemantic, that.fromSemantic ) &&
             Objects.equal( this.toSemantic, that.toSemantic ) &&
             Objects.equal( this.allowedFromTypes, that.allowedFromTypes ) &&
-            Objects.equal( this.allowedToTypes, that.allowedToTypes );
+            Objects.equal( this.allowedToTypes, that.allowedToTypes ) &&
+            Objects.equal( this.icon, that.icon );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( name, displayName, module, fromSemantic, toSemantic, allowedFromTypes, allowedToTypes );
+        return Objects.hashCode( name, displayName, module, fromSemantic, toSemantic, allowedFromTypes, allowedToTypes, icon );
     }
 
     @Override

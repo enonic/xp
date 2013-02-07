@@ -1,8 +1,6 @@
 package com.enonic.wem.core.space.dao;
 
 
-import java.io.IOException;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -50,19 +48,7 @@ final class SpaceJcrMapper
         spaceBuilder.displayName( getPropertyString( spaceNode, DISPLAY_NAME ) );
         spaceBuilder.createdTime( getPropertyDateTime( spaceNode, CREATED_TIME ) );
         spaceBuilder.modifiedTime( getPropertyDateTime( spaceNode, MODIFIED_TIME ) );
-        spaceBuilder.icon( getIcon( spaceNode ) );
+        spaceBuilder.icon( JcrHelper.getPropertyBinary( spaceNode, ICON ) );
     }
 
-    private byte[] getIcon( final Node spaceNode )
-        throws RepositoryException
-    {
-        try
-        {
-            return JcrHelper.getPropertyBinary( spaceNode, ICON );
-        }
-        catch ( IOException e )
-        {
-            throw new RepositoryException( e.getMessage(), e );
-        }
-    }
 }

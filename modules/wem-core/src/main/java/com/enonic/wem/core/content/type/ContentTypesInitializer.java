@@ -11,6 +11,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
@@ -104,12 +105,13 @@ public class ContentTypesInitializer
             build();
     }
 
-    private static byte[] loadContentTypeIcon( final QualifiedContentTypeName qualifiedName )
+    private static Icon loadContentTypeIcon( final QualifiedContentTypeName qualifiedName )
     {
         try
         {
             final String filePath = "/META-INF/content-types/" + qualifiedName.toString().replace( ":", "_" ).toLowerCase() + ".png";
-            return IOUtils.toByteArray( ContentTypesInitializer.class.getResourceAsStream( filePath ) );
+            final byte[] iconData = IOUtils.toByteArray( ContentTypesInitializer.class.getResourceAsStream( filePath ) );
+            return Icon.from( iconData, "image/png" );
         }
         catch ( Exception e )
         {

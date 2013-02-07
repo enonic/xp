@@ -5,6 +5,7 @@ import javax.jcr.Node;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
@@ -14,6 +15,7 @@ import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.AbstractJcrTest;
 import com.enonic.wem.core.jcr.JcrHelper;
+import com.enonic.wem.core.support.dao.IconJcrMapper;
 
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
@@ -26,6 +28,8 @@ public class ContentTypeDaoImplTest
     private static final byte[] SINGLE_PIXEL_GIF_PICTURE =
         {0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x1, 0x0, 0x1, 0x0, (byte) 0x80, 0x0, 0x0, (byte) 0xff, (byte) 0xff, (byte) 0xff, 0x0, 0x0,
             0x0, 0x2c, 0x0, 0x0, 0x0, 0x0, 0x1, 0x0, 0x1, 0x0, 0x0, 0x2, 0x2, 0x44, 0x1, 0x0, 0x3b};
+
+    private static final Icon DUMMY_ICON = Icon.from( SINGLE_PIXEL_GIF_PICTURE, "image/gif" );
 
     private ContentTypeDao contentTypeDao;
 
@@ -45,7 +49,7 @@ public class ContentTypeDaoImplTest
             name( "myContentType" ).
             setAbstract( false ).
             displayName( "My content type" ).
-            icon( SINGLE_PIXEL_GIF_PICTURE );
+            icon( DUMMY_ICON );
 
         final ContentType contentType = addContentTypeFormItems( contentTypeBuilder );
 
@@ -56,7 +60,7 @@ public class ContentTypeDaoImplTest
         // verify
         Node contentNode = session.getNode( "/" + ContentTypeDao.CONTENT_TYPES_PATH + "myModule/myContentType" );
         assertNotNull( contentNode );
-        assertArrayEquals( SINGLE_PIXEL_GIF_PICTURE, JcrHelper.getPropertyBinary( contentNode, ContentTypeJcrMapper.ICON ) );
+        assertArrayEquals( SINGLE_PIXEL_GIF_PICTURE, JcrHelper.getPropertyBinary( contentNode, IconJcrMapper.ICON_PROPERTY ) );
     }
 
     @Test
@@ -69,7 +73,7 @@ public class ContentTypeDaoImplTest
             name( "myContentType" ).
             setAbstract( true ).
             displayName( "My content type" ).
-            icon( SINGLE_PIXEL_GIF_PICTURE );
+            icon( DUMMY_ICON );
         final ContentType contentType = addContentTypeFormItems( contentTypeBuilder );
         contentTypeDao.create( contentType, session );
 
@@ -85,7 +89,7 @@ public class ContentTypeDaoImplTest
         assertEquals( "myModule", contentType1.getModuleName().toString() );
         assertEquals( true, contentType1.isAbstract() );
         assertEquals( "My content type", contentType1.getDisplayName() );
-        assertArrayEquals( SINGLE_PIXEL_GIF_PICTURE, contentType1.getIcon() );
+        assertEquals( DUMMY_ICON, contentType1.getIcon() );
     }
 
     @Test
@@ -153,7 +157,7 @@ public class ContentTypeDaoImplTest
         final ContentType contentTypeUpdate = newContentType( contentType ).
             setAbstract( false ).
             displayName( "My content type-UPDATED" ).
-            icon( SINGLE_PIXEL_GIF_PICTURE ).
+            icon( DUMMY_ICON ).
             build();
         contentTypeDao.update( contentTypeUpdate, session );
         commit();
@@ -168,7 +172,7 @@ public class ContentTypeDaoImplTest
         assertEquals( "myModule", contentType1.getModuleName().toString() );
         assertEquals( false, contentType1.isAbstract() );
         assertEquals( "My content type-UPDATED", contentType1.getDisplayName() );
-        assertArrayEquals( SINGLE_PIXEL_GIF_PICTURE, contentType1.getIcon() );
+        assertEquals( DUMMY_ICON, contentType1.getIcon() );
     }
 
     @Test

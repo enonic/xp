@@ -1,6 +1,5 @@
 package com.enonic.wem.core.account.dao;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -106,7 +105,7 @@ public class AccountJcrMapping
     private static final String STREET = "street";
 
     public void toUser( final Node userNode, final UserAccount user, final boolean includeProfile, final boolean includePhoto )
-        throws RepositoryException, IOException
+        throws RepositoryException
     {
         user.setDisplayName( JcrHelper.getPropertyString( userNode, DISPLAY_NAME ) );
         user.setCreatedTime( JcrHelper.getPropertyDateTime( userNode, CREATED ) );
