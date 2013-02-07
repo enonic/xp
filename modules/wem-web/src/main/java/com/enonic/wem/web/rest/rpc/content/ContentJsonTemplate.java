@@ -23,7 +23,7 @@ final class ContentJsonTemplate
         contentNode.put( "modifier", content.getModifier() != null ? content.getModifier().toString() : null );
         contentNode.put( "modifiedTime", content.getModifiedTime() != null ? content.getModifiedTime().toString() : null );
         contentNode.put( "editable", true );
-        contentNode.put( "deletable", true );
+        contentNode.put( "deletable", !content.getPath().isRoot() );
         contentNode.put( "iconUrl", ContentTypeImageUriResolver.resolve( content.getType() ) );
     }
 }

@@ -19,6 +19,7 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersion;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
+import com.enonic.wem.api.exception.UnableToDeleteContentException;
 import com.enonic.wem.api.support.tree.Tree;
 
 
@@ -64,6 +65,12 @@ public class ContentDaoImpl
             if ( contentSelector instanceof ContentPath )
             {
                 final ContentPath contentPath = (ContentPath) contentSelector;
+
+                if ( contentPath.isRoot() )
+                {
+                    throw new UnableToDeleteContentException( contentPath, "Root content of a space." );
+                }
+
                 new ContentDaoHandlerDelete( session ).deleteContentByPath( contentPath );
             }
             else if ( contentSelector instanceof ContentId )
