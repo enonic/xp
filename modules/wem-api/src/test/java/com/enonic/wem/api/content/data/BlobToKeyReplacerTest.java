@@ -21,7 +21,7 @@ public class BlobToKeyReplacerTest
         BlobToKeyReplacer blobToKeyReplacer = new BlobToKeyReplacer( resolver );
         Content content = newContent().build();
         content.setData( "myBlob", new byte[]{1, 2, 3}, DataTypes.BLOB );
-        blobToKeyReplacer.replace( content.getDataSet() );
+        blobToKeyReplacer.replace( content.getRootDataSet() );
         Assert.assertTrue( content.getData( "myBlob" ).getObject() instanceof BlobKey );
     }
 }

@@ -7,10 +7,10 @@ import javax.jcr.RepositoryException;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
-import com.enonic.wem.core.content.serializer.DataSetJsonSerializer;
+import com.enonic.wem.core.content.serializer.RootDataSetJsonSerializer;
 
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_HISTORY_NODE;
 import static com.enonic.wem.core.content.dao.ContentDao.SPACES_PATH;
@@ -41,7 +41,7 @@ final class ContentJcrMapper
 
     static final String VERSION_ID = "versionId";
 
-    private DataSetJsonSerializer dataSetSerializer = new DataSetJsonSerializer();
+    private RootDataSetJsonSerializer rootDataSetSerializer = new RootDataSetJsonSerializer();
 
     void toJcr( final Content content, final Node contentNode )
         throws RepositoryException
@@ -55,7 +55,7 @@ final class ContentJcrMapper
             contentNode.setProperty( TYPE, (String) null );
         }
 
-        final String dataAsJson = dataSetSerializer.toString( content.getDataSet() );
+        final String dataAsJson = rootDataSetSerializer.toString( content.getRootDataSet() );
         contentNode.setProperty( DATA, dataAsJson );
         setPropertyDateTime( contentNode, CREATED_TIME, content.getCreatedTime() );
         setPropertyDateTime( contentNode, MODIFIED_TIME, content.getModifiedTime() );
@@ -69,8 +69,8 @@ final class ContentJcrMapper
         throws RepositoryException
     {
         final String dataAsJson = contentNode.getProperty( DATA ).getString();
-        final DataSet rootDataSet = dataSetSerializer.toObject( dataAsJson );
-        contentBuilder.dataSet( rootDataSet );
+        final RootDataSet rootDataSet = rootDataSetSerializer.toObject( dataAsJson );
+        contentBuilder.rootDataSet( rootDataSet );
 
         contentBuilder.createdTime( getPropertyDateTime( contentNode, CREATED_TIME ) );
         contentBuilder.modifiedTime( getPropertyDateTime( contentNode, MODIFIED_TIME ) );

@@ -16,10 +16,10 @@ import com.enonic.wem.api.content.type.form.Input;
 import com.enonic.wem.api.content.type.form.InvalidDataException;
 
 /**
- * Validates that given data is valid, meaning it is of valid:
+ * Validates that given DataSet is valid, meaning it is of valid:
  * type, format, value.
  */
-public class ContentDataValidator
+public class DataSetValidator
 {
     private ContentType contentType;
 
@@ -29,7 +29,7 @@ public class ContentDataValidator
 
     private final List<InvalidDataException> invalidDataExceptions = new ArrayList<>();
 
-    private ContentDataValidator()
+    private DataSetValidator()
     {
         // Protection
     }
@@ -83,12 +83,12 @@ public class ContentDataValidator
         {
             if ( formItem instanceof FormItemSet )
             {
-                for ( Entry subEntry : dataSet )
+                for ( Entry entry : dataSet )
                 {
-                    final FormItem subFormItem = contentType.form().getFormItem( subEntry.getPath().resolveFormItemPath().toString() );
+                    final FormItem subFormItem = contentType.form().getFormItem( entry.getPath().resolveFormItemPath().toString() );
                     if ( subFormItem instanceof Input )
                     {
-                        checkInputValidity( subEntry.toData(), (Input) subFormItem );
+                        checkInputValidity( entry.toData(), (Input) subFormItem );
                     }
                 }
             }
@@ -157,7 +157,7 @@ public class ContentDataValidator
 
     public static class Builder
     {
-        private ContentDataValidator validator = new ContentDataValidator();
+        private DataSetValidator validator = new DataSetValidator();
 
         public Builder contentType( ContentType contentType )
         {
@@ -177,7 +177,7 @@ public class ContentDataValidator
             return this;
         }
 
-        public ContentDataValidator build()
+        public DataSetValidator build()
         {
             Preconditions.checkNotNull( validator.contentType, "contentType is required" );
             return validator;

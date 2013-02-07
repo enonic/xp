@@ -23,7 +23,7 @@ import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static org.junit.Assert.*;
 
-public class ContentDataParserTest
+public class RootDataSetParserTest
 {
     @Test
     public void parse_simple_types()
@@ -59,8 +59,8 @@ public class ContentDataParserTest
         ObjectNode objectNode = objectMapper.readValue( json.toString(), ObjectNode.class );
 
         // exercise
-        ContentDataParser contentDataParser = new ContentDataParser( contentType );
-        DataSet parsedRootDataSet = contentDataParser.parse( objectNode );
+        RootDataSetParser rootDataSetParser = new RootDataSetParser( contentType );
+        DataSet parsedRootDataSet = rootDataSetParser.parse( objectNode );
 
         // verify
         assertEquals( "Text line", parsedRootDataSet.getData( EntryPath.from( "myTextLine" ) ).getObject() );
@@ -101,8 +101,8 @@ public class ContentDataParserTest
         ObjectNode objectNode = objectMapper.readValue( json.toString(), ObjectNode.class );
 
         // exercise
-        ContentDataParser contentDataParser = new ContentDataParser( contentType );
-        DataSet parsedContentData = contentDataParser.parse( objectNode );
+        RootDataSetParser rootDataSetParser = new RootDataSetParser( contentType );
+        DataSet parsedContentData = rootDataSetParser.parse( objectNode );
 
         // verify
         assertEquals( 90.0, parsedContentData.getData( EntryPath.from( "myGeoLocation.latitude" ) ).getObject() );
@@ -136,8 +136,8 @@ public class ContentDataParserTest
         ObjectNode objectNode = objectMapper.readValue( json.toString(), ObjectNode.class );
 
         // exercise
-        ContentDataParser contentDataParser = new ContentDataParser( myContentType );
-        DataSet parsedContentData = contentDataParser.parse( objectNode );
+        RootDataSetParser rootDataSetParser = new RootDataSetParser( myContentType );
+        DataSet parsedContentData = rootDataSetParser.parse( objectNode );
 
         // verify
         assertEquals( 1l, parsedContentData.getData( EntryPath.from( "myFormItemSet.myWholeNumber" ) ).getObject() );
@@ -164,8 +164,8 @@ public class ContentDataParserTest
         ObjectNode objectNode = objectMapper.readValue( json.toString(), ObjectNode.class );
 
         // exercise
-        ContentDataParser contentDataParser = new ContentDataParser( contentType );
-        DataSet parsedContentData = contentDataParser.parse( objectNode );
+        RootDataSetParser rootDataSetParser = new RootDataSetParser( contentType );
+        DataSet parsedContentData = rootDataSetParser.parse( objectNode );
 
         // verify
 
@@ -195,8 +195,8 @@ public class ContentDataParserTest
         ObjectNode objectNode = objectMapper.readValue( json.toString(), ObjectNode.class );
 
         // exercise
-        ContentDataParser contentDataParser = new ContentDataParser( contentType );
-        DataSet parsedContentData = contentDataParser.parse( objectNode );
+        RootDataSetParser rootDataSetParser = new RootDataSetParser( contentType );
+        DataSet parsedContentData = rootDataSetParser.parse( objectNode );
 
         // verify
         assertEquals( 40l, parsedContentData.getData( EntryPath.from( "myColor.red" ) ).getObject() );
@@ -229,8 +229,8 @@ public class ContentDataParserTest
         ObjectNode objectNode = objectMapper.readValue( json.toString(), ObjectNode.class );
 
         // exercise
-        ContentDataParser contentDataParser = new ContentDataParser( contentType );
-        DataSet parsedDataSet = contentDataParser.parse( objectNode );
+        RootDataSetParser rootDataSetParser = new RootDataSetParser( contentType );
+        DataSet parsedDataSet = rootDataSetParser.parse( objectNode );
 
         // verify
         assertEquals( 40l, parsedDataSet.getData( EntryPath.from( "myFormItemSet.myColor.red" ) ).getObject() );

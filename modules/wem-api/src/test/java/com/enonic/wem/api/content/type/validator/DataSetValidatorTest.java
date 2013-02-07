@@ -26,11 +26,11 @@ import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
-import static com.enonic.wem.api.content.type.validator.ContentDataValidator.newValidator;
+import static com.enonic.wem.api.content.type.validator.DataSetValidator.newValidator;
 import static org.junit.Assert.*;
 
 
-public class ContentDataValidatorTest
+public class DataSetValidatorTest
 {
     private ContentType contentType;
 
@@ -57,10 +57,10 @@ public class ContentDataValidatorTest
         content.setData( "mySingleSelector", "nonExistingOption" );
 
         // exercise & verify
-        ContentDataValidator validator = newValidator().contentType( contentType ).recordExceptions( true ).build();
+        DataSetValidator validator = newValidator().contentType( contentType ).recordExceptions( true ).build();
         try
         {
-            validator.validate( content.getDataSet() );
+            validator.validate( content.getRootDataSet() );
         }
         catch ( Throwable e )
         {
@@ -85,10 +85,10 @@ public class ContentDataValidatorTest
         content.setData( "mySingleSelector2", "nonExistingOption" );
 
         // exercise & verify
-        ContentDataValidator validator = newValidator().contentType( contentType ).recordExceptions( true ).build();
+        DataSetValidator validator = newValidator().contentType( contentType ).recordExceptions( true ).build();
         try
         {
-            validator.validate( content.getDataSet() );
+            validator.validate( content.getRootDataSet() );
         }
         catch ( Throwable e )
         {
@@ -124,8 +124,8 @@ public class ContentDataValidatorTest
         content.setData( "myHtmlArea", "<h1>Hello world</h1>" );
 
         // exercise
-        ContentDataValidator validator = newValidator().contentType( contentType ).build();
-        validator.validate( content.getDataSet() );
+        DataSetValidator validator = newValidator().contentType( contentType ).build();
+        validator.validate( content.getRootDataSet() );
     }
 
     @Test
@@ -138,7 +138,7 @@ public class ContentDataValidatorTest
         content.setData( "myTextLine", "aax" );
 
         // exercise
-        ContentDataValidator validator = newValidator().contentType( contentType ).checkValidationRegexp( true ).build();
+        DataSetValidator validator = newValidator().contentType( contentType ).checkValidationRegexp( true ).build();
         validateAndAssertInvalidDataException( validator, content, BreaksRegexValidationException.class, content.getData( "myTextLine" ) );
     }
 
@@ -157,7 +157,7 @@ public class ContentDataValidatorTest
         content.setData( "mySet.myColor.blue", -1l );
 
         // exercise
-        ContentDataValidator validator = newValidator().contentType( contentType ).build();
+        DataSetValidator validator = newValidator().contentType( contentType ).build();
         validateAndAssertInvalidDataException( validator, content, InvalidValueException.class, content.getData( "mySet.myColor" ) );
 
     }
@@ -177,7 +177,7 @@ public class ContentDataValidatorTest
         content.setData( "myColor.blue", -1l );
 
         // exercise
-        ContentDataValidator validator = newValidator().contentType( contentType ).build();
+        DataSetValidator validator = newValidator().contentType( contentType ).build();
         validateAndAssertInvalidDataException( validator, content, InvalidValueException.class, content.getData( "myColor" ) );
 
     }
@@ -196,7 +196,7 @@ public class ContentDataValidatorTest
         content.setData( "mySet.myGeoLocation.longitude", -181.00 );
 
         // exercise
-        ContentDataValidator validator = newValidator().contentType( contentType ).build();
+        DataSetValidator validator = newValidator().contentType( contentType ).build();
         validateAndAssertInvalidDataException( validator, content, InvalidValueException.class, content.getData( "mySet.myGeoLocation" ) );
     }
 
@@ -212,7 +212,7 @@ public class ContentDataValidatorTest
         content.setData( "mySet.myDate", "2000-01-01" );
 
         // exercise
-        ContentDataValidator validator = newValidator().contentType( contentType ).build();
+        DataSetValidator validator = newValidator().contentType( contentType ).build();
         validateAndAssertInvalidDataException( validator, content, InvalidValueTypeException.class, content.getData( "mySet.myDate" ) );
     }
 
@@ -230,7 +230,7 @@ public class ContentDataValidatorTest
         content.setData( "mySingleSelector", "nonExistingOption" );
 
         // exercise
-        ContentDataValidator validator = newValidator().contentType( contentType ).build();
+        DataSetValidator validator = newValidator().contentType( contentType ).build();
         validateAndAssertInvalidDataException( validator, content, InvalidValueException.class, content.getData( "mySingleSelector" ) );
     }
 
@@ -246,7 +246,7 @@ public class ContentDataValidatorTest
         content.setData( "myGeoLocation.longitude", "0.0" );
 
         // exercise
-        ContentDataValidator validator = newValidator().contentType( contentType ).build();
+        DataSetValidator validator = newValidator().contentType( contentType ).build();
         validateAndAssertInvalidDataException( validator, content, InvalidDataTypeException.class, content.getData( "myGeoLocation" ) );
     }
 
@@ -262,7 +262,7 @@ public class ContentDataValidatorTest
         content.setData( "myGeoLocation.longitude", -181.00 );
 
         // exercise
-        ContentDataValidator validator = newValidator().contentType( contentType ).build();
+        DataSetValidator validator = newValidator().contentType( contentType ).build();
         validateAndAssertInvalidDataException( validator, content, InvalidValueException.class, content.getData( "myGeoLocation" ) );
     }
 
@@ -298,15 +298,15 @@ public class ContentDataValidatorTest
         Assert.assertEquals( "Blue", content.getData( "personalia.eyeColour" ).getObject() );
 
         // verify
-        ContentDataValidator validator = newValidator().contentType( contentType ).build();
-        validator.validate( content.getDataSet() );
+        DataSetValidator validator = newValidator().contentType( contentType ).build();
+        validator.validate( content.getRootDataSet() );
     }
 
-    private void validateAndAssertInvalidDataException( ContentDataValidator validator, Content content, Class cause, Data data )
+    private void validateAndAssertInvalidDataException( DataSetValidator validator, Content content, Class cause, Data data )
     {
         try
         {
-            validator.validate( content.getDataSet() );
+            validator.validate( content.getRootDataSet() );
             fail( "Expected " + InvalidDataException.class.getSimpleName() );
         }
         catch ( Exception e )

@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.type.form.BreaksRequiredContractException;
 import com.enonic.wem.api.content.type.form.FieldSet;
 import com.enonic.wem.api.content.type.form.Form;
@@ -25,7 +26,7 @@ final class MinimumOccurrencesValidator
         return Collections.unmodifiableList( validationErrors );
     }
 
-    final void validate( final Form form, final DataSet dataSet )
+    final void validate( final Form form, final RootDataSet dataSet )
     {
         final List<DataSet> parentDataSets = Lists.newArrayList();
         parentDataSets.add( dataSet );

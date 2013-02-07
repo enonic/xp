@@ -20,7 +20,7 @@ import com.enonic.wem.api.content.type.form.InvalidDataException;
 import static com.enonic.wem.api.content.data.Data.newData;
 import static com.enonic.wem.api.content.data.Value.newValue;
 
-public final class DataSet
+public class DataSet
     extends Entry
     implements Iterable<Entry>
 {
@@ -28,7 +28,7 @@ public final class DataSet
 
     private Map<String, EntryArray> arrayByEntryName = new HashMap<>();
 
-    private DataSet()
+    DataSet()
     {
         // Creates a root DataSet
     }
@@ -43,12 +43,17 @@ public final class DataSet
         }
     }
 
-    public void add( final Entry entry )
+    public boolean isRoot()
+    {
+        return false;
+    }
+
+    final public void add( final Entry entry )
     {
         doAdd( entry );
     }
 
-    void setData( final EntryPath path, final Object valueObject, final BaseDataType dataType )
+    final void setData( final EntryPath path, final Object valueObject, final BaseDataType dataType )
         throws InvalidDataException
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
@@ -59,12 +64,12 @@ public final class DataSet
         setData( path, value );
     }
 
-    public void setData( final EntryPath path, final String value )
+    public final void setData( final EntryPath path, final String value )
     {
         setData( path, newValue().type( DataTypes.TEXT ).value( value ).build() );
     }
 
-    public void setData( final EntryPath path, final Value value )
+    public final void setData( final EntryPath path, final Value value )
         throws InvalidDataException
     {
         if ( path.elementCount() > 1 )
@@ -78,12 +83,12 @@ public final class DataSet
         }
     }
 
-    public Entry getEntry( final String path )
+    public final Entry getEntry( final String path )
     {
         return getEntry( EntryPath.from( path ) );
     }
 
-    public Entry getEntry( final EntryPath path )
+    public final Entry getEntry( final EntryPath path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
@@ -98,7 +103,7 @@ public final class DataSet
         }
     }
 
-    public DataSet getDataSet( final EntryPath path )
+    public final DataSet getDataSet( final EntryPath path )
     {
         Preconditions.checkArgument( path.elementCount() > 0, "path must be something: " + path );
 
@@ -119,12 +124,12 @@ public final class DataSet
         }
     }
 
-    public Data getData( final String path )
+    public final Data getData( final String path )
     {
         return getData( EntryPath.from( path ) );
     }
 
-    public Data getData( final String name, final int arrayIndex )
+    public final Data getData( final String name, final int arrayIndex )
     {
         EntryPath.Element.checkName( name );
 
@@ -136,7 +141,7 @@ public final class DataSet
         return entry.toData();
     }
 
-    public DataSet getDataSet( final String path )
+    public final DataSet getDataSet( final String path )
     {
         final Entry entry = getEntry( EntryPath.from( path ) );
         if ( entry == null )
@@ -147,7 +152,7 @@ public final class DataSet
         return entry.toDataSet();
     }
 
-    public DataSet getDataSet( final String name, final int arrayIndex )
+    public final DataSet getDataSet( final String name, final int arrayIndex )
     {
         EntryPath.Element.checkName( name );
 
@@ -159,7 +164,7 @@ public final class DataSet
         return entry.toDataSet();
     }
 
-    public Data getData( final EntryPath path )
+    public final Data getData( final EntryPath path )
     {
         Entry entry = getEntry( path );
         if ( entry == null )
@@ -170,7 +175,7 @@ public final class DataSet
         return entry.toData();
     }
 
-    Value getValue( final EntryPath path )
+    final Value getValue( final EntryPath path )
     {
         final Entry entry = getEntry( path );
         if ( entry == null )
@@ -190,27 +195,27 @@ public final class DataSet
         }
     }
 
-    Value getValue( final String path )
+    final Value getValue( final String path )
     {
         return getValue( EntryPath.from( path ) );
     }
 
-    public Iterator<Entry> iterator()
+    public final Iterator<Entry> iterator()
     {
         return entryById.values().iterator();
     }
 
-    public int size()
+    public final int size()
     {
         return entryById.size();
     }
 
-    public Iterable<String> entryNames()
+    public final Iterable<String> entryNames()
     {
         return arrayByEntryName.keySet();
     }
 
-    public int entryCount( final String entryName )
+    public final int entryCount( final String entryName )
     {
         EntryPath.Element.checkName( entryName );
         EntryArray array = arrayByEntryName.get( entryName );
@@ -221,14 +226,14 @@ public final class DataSet
         return array.size();
     }
 
-    public List<Entry> entries( final String entryName )
+    public final List<Entry> entries( final String entryName )
     {
         EntryPath.Element.checkName( entryName );
         EntryArray array = arrayByEntryName.get( entryName );
         return array.asList();
     }
 
-    public List<DataSet> dataSets( final String name )
+    public final List<DataSet> dataSets( final String name )
     {
         EntryPath.Element.checkName( name );
 
@@ -254,13 +259,13 @@ public final class DataSet
         }
     }
 
-    public boolean isArray( final Entry entry )
+    public final boolean isArray( final Entry entry )
     {
         final EntryArray entryArray = arrayByEntryName.get( entry.getName() );
         return entryArray.size() > 1;
     }
 
-    public int getArrayIndex( final Entry entry )
+    public final int getArrayIndex( final Entry entry )
     {
         final EntryArray entryArray = arrayByEntryName.get( entry.getName() );
         if ( entryArray == null )
@@ -270,13 +275,13 @@ public final class DataSet
         return entryArray.getIndex( entry );
     }
 
-    public EntryArray getArray( final Entry entry )
+    public final EntryArray getArray( final Entry entry )
     {
         return arrayByEntryName.get( entry.getName() );
     }
 
     @Override
-    public DataSetArray getArray()
+    public final DataSetArray getArray()
     {
         return (DataSetArray) super.getArray();
     }
@@ -406,9 +411,10 @@ public final class DataSet
         return new Builder();
     }
 
-    public static DataSet newRootDataSet()
+    // TODO: Remove and make RootDataSet constructor public instead
+    public static RootDataSet newRootDataSet()
     {
-        return new DataSet();
+        return new RootDataSet();
     }
 
     public static class Builder

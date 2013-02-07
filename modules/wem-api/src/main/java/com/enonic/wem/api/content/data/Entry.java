@@ -37,14 +37,9 @@ public abstract class Entry
         this.name = "";
     }
 
-    public boolean isRoot()
-    {
-        return getName().equals( "" );
-    }
-
     EntryId getEntryId()
     {
-        return isRoot() ? null : EntryId.from( name, getArrayIndex() );
+        return EntryId.from( name, getArrayIndex() );
     }
 
     public String getName()
@@ -52,9 +47,9 @@ public abstract class Entry
         return name;
     }
 
-    void setParent( final DataSet entries )
+    void setParent( final DataSet parent )
     {
-        this.parent = entries;
+        this.parent = parent;
     }
 
     public DataSet getParent()

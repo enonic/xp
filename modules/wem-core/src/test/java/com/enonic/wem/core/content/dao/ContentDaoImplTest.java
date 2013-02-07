@@ -304,7 +304,7 @@ public class ContentDaoImplTest
         assertNotNull( actualContent );
         assertEquals( "myspace:myContent", content.getPath().toString() );
 
-        DataSet rootDataSet = actualContent.getDataSet();
+        DataSet rootDataSet = actualContent.getRootDataSet();
         assertEquals( "myValue", rootDataSet.getData( EntryPath.from( "myData" ) ).asString() );
         assertEquals( "myOtherValue", rootDataSet.getData( EntryPath.from( "mySet.myData" ) ).asString() );
     }
@@ -335,11 +335,11 @@ public class ContentDaoImplTest
         assertEquals( "myspace:myContent", actualContents.first().getPath().toString() );
         assertEquals( "myspace:myContent2", actualContents.last().getPath().toString() );
 
-        DataSet rootDataSet1 = actualContents.first().getDataSet();
+        DataSet rootDataSet1 = actualContents.first().getRootDataSet();
         assertEquals( "myValue", rootDataSet1.getData( EntryPath.from( "myData" ) ).asString() );
         assertEquals( "myOtherValue", rootDataSet1.getData( EntryPath.from( "mySet.myData" ) ).asString() );
 
-        DataSet rootDataSet2 = actualContents.last().getDataSet();
+        DataSet rootDataSet2 = actualContents.last().getRootDataSet();
         assertEquals( "myValue2", rootDataSet2.getData( EntryPath.from( "myData" ) ).asString() );
         assertEquals( "myOtherValue2", rootDataSet2.getData( EntryPath.from( "mySet.myData" ) ).asString() );
     }
@@ -370,11 +370,11 @@ public class ContentDaoImplTest
         assertEquals( "myspace:myContent", actualContents.first().getPath().toString() );
         assertEquals( "myspace:myContent2", actualContents.last().getPath().toString() );
 
-        DataSet rootDataSet1 = actualContents.first().getDataSet();
+        DataSet rootDataSet1 = actualContents.first().getRootDataSet();
         assertEquals( "myValue", rootDataSet1.getData( EntryPath.from( "myData" ) ).asString() );
         assertEquals( "myOtherValue", rootDataSet1.getData( EntryPath.from( "mySet.myData" ) ).asString() );
 
-        DataSet rootDataSet2 = actualContents.last().getDataSet();
+        DataSet rootDataSet2 = actualContents.last().getRootDataSet();
         assertEquals( "myValue2", rootDataSet2.getData( EntryPath.from( "myData" ) ).asString() );
         assertEquals( "myOtherValue2", rootDataSet2.getData( EntryPath.from( "mySet.myData" ) ).asString() );
     }
@@ -398,7 +398,7 @@ public class ContentDaoImplTest
         assertNotNull( actualContent );
         assertEquals( "myspace:myContent", content.getPath().toString() );
 
-        DataSet rootDataSet = actualContent.getDataSet();
+        DataSet rootDataSet = actualContent.getRootDataSet();
         assertEquals( "myValue", rootDataSet.getData( EntryPath.from( "myData" ) ).asString() );
         assertEquals( "myOtherValue", rootDataSet.getData( EntryPath.from( "mySet.myData" ) ).asString() );
     }

@@ -8,12 +8,11 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.core.content.JsonFactoryHolder;
 import com.enonic.wem.core.content.dao.ContentIdFactory;
@@ -28,17 +27,17 @@ public class ContentJsonSerializer
     extends AbstractJsonSerializer<Content>
     implements ContentSerializer
 {
-    private DataSetJsonSerializer dataSetSerializer;
+    private RootDataSetJsonSerializer rootDataSetSerializer;
 
     public ContentJsonSerializer()
     {
-        this.dataSetSerializer = new DataSetJsonSerializer( objectMapper() );
+        this.rootDataSetSerializer = new RootDataSetJsonSerializer( objectMapper() );
     }
 
     public ContentJsonSerializer( final ObjectMapper objectMapper )
     {
         super( objectMapper );
-        this.dataSetSerializer = new DataSetJsonSerializer( objectMapper );
+        this.rootDataSetSerializer = new RootDataSetJsonSerializer( objectMapper );
     }
 
     @Override
@@ -56,7 +55,7 @@ public class ContentJsonSerializer
         setDateTimeValue( "modifiedTime", content.getModifiedTime(), jsonContent );
         setDateTimeValue( "createdTime", content.getCreatedTime(), jsonContent );
 
-        jsonContent.put( "data", dataSetSerializer.serializeEntries( content.getDataSet() ) );
+        jsonContent.put( "data", rootDataSetSerializer.serialize( content.getRootDataSet() ) );
         return jsonContent;
     }
 
@@ -114,10 +113,8 @@ public class ContentJsonSerializer
         contentBuilder.modifiedTime( getDateTimeValue( "modifiedTime", contentNode ) );
         contentBuilder.createdTime( getDateTimeValue( "createdTime", contentNode ) );
 
-        final DataSet rootDataSet = DataSet.newRootDataSet();
-        dataSetSerializer.parseEntries( (ArrayNode) contentNode.get( "data" ), rootDataSet );
-
-        contentBuilder.dataSet( rootDataSet );
+        final RootDataSet rootDataSet = rootDataSetSerializer.parse( contentNode.get( "data" ) );
+        contentBuilder.rootDataSet( rootDataSet );
 
         return contentBuilder.build();
     }

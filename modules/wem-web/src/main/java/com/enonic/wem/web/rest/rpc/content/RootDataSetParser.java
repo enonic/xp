@@ -8,6 +8,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.type.ContentType;
@@ -15,22 +16,22 @@ import com.enonic.wem.api.content.type.DataTypeFixer;
 
 import static com.enonic.wem.api.content.data.Value.newValue;
 
-final class ContentDataParser
+final class RootDataSetParser
 {
     private ContentType contentType;
 
-    ContentDataParser( final ContentType contentType )
+    RootDataSetParser( final ContentType contentType )
     {
         this.contentType = contentType;
     }
 
-    ContentDataParser()
+    RootDataSetParser()
     {
     }
 
-    DataSet parse( final ObjectNode data )
+    RootDataSet parse( final ObjectNode data )
     {
-        final DataSet rootDataSet = DataSet.newRootDataSet();
+        final RootDataSet rootDataSet = DataSet.newRootDataSet();
 
         final Iterator<String> fieldNames = data.getFieldNames();
         while ( fieldNames.hasNext() )
@@ -46,11 +47,6 @@ final class ContentDataParser
                 Value value = newValue().type( DataTypes.TEXT ).value( fieldValue ).build();
                 rootDataSet.setData( path, value );
             }
-            /*else if ( valueNode.isObject() )
-            {
-                final DataSet dataSet = parseDataSet( path, valueNode, rootDataSet.getDataSet() );
-                rootDataSet.add( dataSet );
-            }*/
         }
 
         if ( contentType != null )

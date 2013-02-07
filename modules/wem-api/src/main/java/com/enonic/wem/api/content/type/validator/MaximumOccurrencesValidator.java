@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItemPath;
@@ -29,7 +30,7 @@ class MaximumOccurrencesValidator
         return Collections.unmodifiableList( validationErrors );
     }
 
-    void validate( final DataSet dataSet )
+    void validate( final RootDataSet dataSet )
     {
         for ( final String entryName : dataSet.entryNames() )
         {

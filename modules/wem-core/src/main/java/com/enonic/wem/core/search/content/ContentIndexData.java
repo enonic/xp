@@ -75,7 +75,7 @@ public class ContentIndexData
     private void addContentData( final Content content, final XContentBuilder result )
         throws Exception
     {
-        traverseDataSet( result, content.getDataSet() );
+        traverseDataSet( result, content.getRootDataSet() );
     }
 
     private void traverseDataSet( final XContentBuilder result, final DataSet dataSet )

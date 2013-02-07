@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.content.ValidateDataSet;
+import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.command.content.type.GetContentTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypes;
@@ -54,7 +54,7 @@ public class ValidateContentDataRpcHandlerTest
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         final DataValidationErrors noErrors = DataValidationErrors.empty();
-        Mockito.when( client.execute( isA( ValidateDataSet.class ) ) ).thenReturn( noErrors );
+        Mockito.when( client.execute( isA( ValidateRootDataSet.class ) ) ).thenReturn( noErrors );
 
         // test
         testSuccess( "contentValidate_param.json", "contentValidate_no_errors_result.json" );
@@ -74,7 +74,7 @@ public class ValidateContentDataRpcHandlerTest
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         final DataValidationErrors errors = DataValidationErrors.from( new MinimumOccurrencesValidationError( myInput, 0 ) );
-        Mockito.when( client.execute( isA( ValidateDataSet.class ) ) ).thenReturn( errors );
+        Mockito.when( client.execute( isA( ValidateRootDataSet.class ) ) ).thenReturn( errors );
 
         // test
         testSuccess( "contentValidate_param.json", "contentValidate_with_errors_result.json" );

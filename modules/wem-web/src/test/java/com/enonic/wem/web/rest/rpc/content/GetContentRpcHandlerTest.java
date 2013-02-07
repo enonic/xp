@@ -12,6 +12,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
+import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.core.time.MockTimeService;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
@@ -41,7 +42,7 @@ public class GetContentRpcHandlerTest
     public void get()
         throws Exception
     {
-        final DataSet rootDataSet = DataSet.newRootDataSet();
+        final RootDataSet rootDataSet = DataSet.newRootDataSet();
         rootDataSet.setData( EntryPath.from( "field1" ), "value1" );
         rootDataSet.setData( EntryPath.from( "field2" ), "value2" );
 
@@ -53,7 +54,7 @@ public class GetContentRpcHandlerTest
             modifiedTime( timeService.getNowAsDateTime() ).
             modifier( UserKey.superUser() ).
             type( new QualifiedContentTypeName( "myModule:myType" ) ).
-            dataSet( rootDataSet ).
+            rootDataSet( rootDataSet ).
             build();
 
         Mockito.when( client.execute( Mockito.any( Commands.content().get().getClass() ) ) ).thenReturn( Contents.from( content1 ) );

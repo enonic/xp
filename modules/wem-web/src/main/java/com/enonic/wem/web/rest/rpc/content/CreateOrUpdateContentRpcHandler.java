@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
@@ -67,7 +67,7 @@ public final class CreateOrUpdateContentRpcHandler
 
         final ContentType contentType = getContentType( qualifiedContentTypeName );
 
-        final DataSet rootDataSet = new ContentDataParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
+        final RootDataSet rootDataSet = new RootDataSetParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
 
         if ( contentPath == null )
         {
@@ -98,12 +98,12 @@ public final class CreateOrUpdateContentRpcHandler
     }
 
     private ContentId doCreateContent( final QualifiedContentTypeName qualifiedContentTypeName, ContentPath contentPath,
-                                       final String displayName, final DataSet rootDataSet )
+                                       final String displayName, final RootDataSet rootDataSet )
     {
         final CreateContent createContent = Commands.content().create();
         createContent.contentPath( contentPath );
         createContent.contentType( qualifiedContentTypeName );
-        createContent.dataSet( rootDataSet );
+        createContent.rootDataSet( rootDataSet );
         createContent.displayName( displayName );
         createContent.owner( AccountKey.anonymous() );
         return client.execute( createContent );
@@ -121,7 +121,7 @@ public final class CreateOrUpdateContentRpcHandler
         return contentPath;
     }
 
-    private void doUpdateContent( final ContentPath contentPath, final String displayName, final DataSet rootDataSet )
+    private void doUpdateContent( final ContentPath contentPath, final String displayName, final RootDataSet rootDataSet )
     {
         final UpdateContents updateContents = Commands.content().update();
         updateContents.selectors( ContentPaths.from( contentPath ) );
