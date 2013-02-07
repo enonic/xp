@@ -3,11 +3,11 @@ package com.enonic.wem.core.search.elastic;
 public class IndexMapping
 {
 
-    private String indexName;
+    private final String indexName;
 
-    private String indexType;
+    private final String indexType;
 
-    private String source;
+    private final String source;
 
     public IndexMapping( final String indexName, final String indexType, final String source )
     {

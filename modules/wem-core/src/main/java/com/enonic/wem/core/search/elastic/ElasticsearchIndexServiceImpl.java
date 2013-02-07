@@ -1,11 +1,13 @@
 package com.enonic.wem.core.search.elastic;
 
+import java.util.Collection;
+
 import org.elasticsearch.ElasticSearchException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
-import org.elasticsearch.action.admin.indices.exists.IndicesExistsRequest;
-import org.elasticsearch.action.admin.indices.exists.IndicesExistsResponse;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Client;
@@ -19,9 +21,13 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.core.search.IndexData;
 import com.enonic.wem.core.search.IndexException;
 import com.enonic.wem.core.search.IndexStatus;
+import com.enonic.wem.core.search.IndexType;
+import com.enonic.wem.core.search.elastic.indexsource.IndexSource;
+import com.enonic.wem.core.search.elastic.indexsource.IndexSourceFactory;
+import com.enonic.wem.core.search.elastic.indexsource.XContentBuilderFactory;
+import com.enonic.wem.core.search.indexdocument.IndexDocument;
 
 @Component
 public class ElasticsearchIndexServiceImpl
@@ -31,12 +37,16 @@ public class ElasticsearchIndexServiceImpl
 
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexServiceImpl.class );
 
+    private IndexSourceFactory indexSourceFactory;
+
     // TODO: As properties
-    private TimeValue WAIT_FOR_YELLOW_TIMEOUT = TimeValue.timeValueSeconds( 20 );
+    private final TimeValue WAIT_FOR_YELLOW_TIMEOUT = TimeValue.timeValueSeconds( 20 );
 
     public static final TimeValue CLUSTER_NOWAIT_TIMEOUT = TimeValue.timeValueSeconds( 1 );
 
-    public IndexSettingsBuilder indexSettingsBuilder;
+    private IndexSettingsBuilder indexSettingsBuilder;
+
+    private XContentBuilderFactory xContentBuilderFactory;
 
     @Override
     public IndexStatus getIndexStatus( final String indexName, final boolean waitForStatusYellow )
@@ -55,17 +65,23 @@ public class ElasticsearchIndexServiceImpl
         return exists.exists();
     }
 
-    public void index( IndexData indexData )
+    public void index( Collection<IndexDocument> indexDocuments )
     {
+        for ( IndexDocument indexDocument : indexDocuments )
+        {
+            final String id = indexDocument.getId();
+            final IndexType indexType = indexDocument.getIndexType();
+            final String indexName = indexDocument.getIndex();
 
-        final XContentBuilder data = indexData.getData();
-        final String id = indexData.getId();
+            final IndexSource indexSource = indexSourceFactory.create( indexDocument );
 
-        final IndexRequest req =
-            Requests.indexRequest().id( id ).index( indexData.getIndexName() ).type( indexData.getIndexType().getIndexTypeName() ).source(
-                data );
+            final XContentBuilder xContentBuilder = xContentBuilderFactory.create( indexSource );
 
-        this.client.index( req ).actionGet();
+            final IndexRequest req =
+                Requests.indexRequest().id( id ).index( indexName ).type( indexType.getIndexTypeName() ).source( xContentBuilder );
+
+            this.client.index( req ).actionGet();
+        }
     }
 
     @Override
@@ -156,5 +172,17 @@ public class ElasticsearchIndexServiceImpl
     public void setIndexSettingsBuilder( final IndexSettingsBuilder indexSettingsBuilder )
     {
         this.indexSettingsBuilder = indexSettingsBuilder;
+    }
+
+    @Autowired
+    public void setIndexSourceFactory( final IndexSourceFactory IndexSourceFactory )
+    {
+        this.indexSourceFactory = IndexSourceFactory;
+    }
+
+    @Autowired
+    public void setxContentBuilderFactory( final XContentBuilderFactory xContentBuilderFactory )
+    {
+        this.xContentBuilderFactory = xContentBuilderFactory;
     }
 }

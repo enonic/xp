@@ -15,7 +15,7 @@ import com.google.common.base.Predicate;
 public class IndexSettingsBuilder
     extends AbstractSettingsBuilder
 {
-    IndexSettingsSourceProvider indexSettingsSourceProvider;
+    private IndexSettingsSourceProvider indexSettingsSourceProvider;
 
     public Settings buildIndexSettings()
     {

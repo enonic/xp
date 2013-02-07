@@ -59,7 +59,7 @@
     <dependency>
       <groupId>com.enonic.lib.repack</groupId>
       <artifactId>elasticsearch</artifactId>
-      <version>0.19.10</version>
+      <version>0.20.4</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

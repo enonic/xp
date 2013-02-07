@@ -1,7 +1,9 @@
 package com.enonic.wem.core.search.elastic;
 
-import com.enonic.wem.core.search.IndexData;
+import java.util.Collection;
+
 import com.enonic.wem.core.search.IndexStatus;
+import com.enonic.wem.core.search.indexdocument.IndexDocument;
 
 public interface ElasticsearchIndexService
 {
@@ -13,6 +15,6 @@ public interface ElasticsearchIndexService
 
     public void putMapping( IndexMapping indexMapping );
 
-    public void index( IndexData indexData );
+    public void index( Collection<IndexDocument> indexDocuments );
 
 }

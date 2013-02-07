@@ -13,7 +13,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 
 @Component
-public final class NodeSettingsBuilder
+final class NodeSettingsBuilder
     extends AbstractSettingsBuilder
 {
     private final static Logger LOG = LoggerFactory.getLogger( NodeSettingsBuilder.class );

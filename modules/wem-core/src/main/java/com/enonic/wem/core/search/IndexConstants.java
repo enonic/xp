@@ -1,7 +1,21 @@
 package com.enonic.wem.core.search;
 
-public class IndexConstants
+public enum IndexConstants
 {
-    public static final String WEM_INDEX = "wem";
+
+    WEM_INDEX( "wem" );
+
+    private final String id;
+
+    private IndexConstants( final String id )
+    {
+        this.id = id;
+    }
+
+    public String string()
+    {
+        return this.id;
+    }
 
 }
+

@@ -16,7 +16,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
 public class IndexMappingProviderTest
-    extends IndexConstants
 {
     @Test
     public void testLoadMappingFiles()
@@ -33,13 +32,13 @@ public class IndexMappingProviderTest
         mappingProvider.setResourcePatternResolver( resourcePatternResolver );
         mappingProvider.init();
 
-        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( WEM_INDEX );
+        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX.string() );
 
         assertEquals( 3, indexMappings.size() );
 
         for ( IndexMapping indexMapping : indexMappings )
         {
-            assertEquals( WEM_INDEX, indexMapping.getIndexName() );
+            assertEquals( IndexConstants.WEM_INDEX.string(), indexMapping.getIndexName() );
             assertTrue( Lists.newArrayList( "account", "content", "relations" ).contains( indexMapping.getIndexType() ) );
         }
     }
@@ -65,7 +64,7 @@ public class IndexMappingProviderTest
         mappingProvider.setResourcePatternResolver( resourcePatternResolver );
         mappingProvider.init();
 
-        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( WEM_INDEX );
+        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX.string() );
 
         assertEquals( 1, indexMappings.size() );
 
@@ -86,7 +85,7 @@ public class IndexMappingProviderTest
         mappingProvider.setResourcePatternResolver( resourcePatternResolver );
         mappingProvider.init();
 
-        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( WEM_INDEX );
+        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX.string() );
 
         assertEquals( 0, indexMappings.size() );
     }
@@ -105,7 +104,7 @@ public class IndexMappingProviderTest
         mappingProvider.setResourcePatternResolver( resourcePatternResolver );
         mappingProvider.init();
 
-        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( WEM_INDEX );
+        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX.string() );
 
         assertEquals( 0, indexMappings.size() );
     }

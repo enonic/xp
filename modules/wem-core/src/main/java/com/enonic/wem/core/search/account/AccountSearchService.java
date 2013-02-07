@@ -22,7 +22,6 @@ import com.enonic.wem.core.search.IndexType;
 
 @Component
 public class AccountSearchService
-    extends IndexConstants
 {
     private Client client;
 
@@ -31,7 +30,7 @@ public class AccountSearchService
     public AccountSearchResults search( AccountSearchQuery query )
     {
         final SearchRequest req =
-            Requests.searchRequest( WEM_INDEX ).types( IndexType.ACCOUNT.getIndexTypeName() ).searchType( getSearchType( query ) ).source(
+            Requests.searchRequest( IndexConstants.WEM_INDEX.string() ).types( IndexType.ACCOUNT.getIndexTypeName() ).searchType( getSearchType( query ) ).source(
                 this.translator.build( query ) );
 
         final SearchResponse res = this.client.search( req ).actionGet();
@@ -101,9 +100,9 @@ public class AccountSearchService
         deleteIndex( id, false );
     }
 
-    public void deleteIndex( String id, boolean flushDataAfterDelete )
+    void deleteIndex( String id, boolean flushDataAfterDelete )
     {
-        final DeleteRequest deleteRequest = new DeleteRequest().index( WEM_INDEX ).type( IndexType.ACCOUNT.getIndexTypeName() ).id( id );
+        final DeleteRequest deleteRequest = new DeleteRequest().index( IndexConstants.WEM_INDEX.string() ).type( IndexType.ACCOUNT.getIndexTypeName() ).id( id );
         this.client.delete( deleteRequest ).actionGet();
 
         if ( flushDataAfterDelete )
@@ -114,7 +113,7 @@ public class AccountSearchService
 
     private void flush()
     {
-        this.client.admin().indices().flush( new FlushRequest( WEM_INDEX ).refresh( true ) ).actionGet();
+        this.client.admin().indices().flush( new FlushRequest( IndexConstants.WEM_INDEX.string() ).refresh( true ) ).actionGet();
     }
 
     @Autowired

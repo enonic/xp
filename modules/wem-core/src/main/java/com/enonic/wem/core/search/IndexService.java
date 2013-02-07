@@ -1,6 +1,7 @@
 package com.enonic.wem.core.search;
 
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -14,14 +15,15 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.core.search.elastic.ElasticsearchIndexServiceImpl;
 import com.enonic.wem.core.search.elastic.IndexMapping;
 import com.enonic.wem.core.search.elastic.IndexMappingProvider;
+import com.enonic.wem.core.search.indexdocument.IndexDocument;
+
 
 @Component
 public class IndexService
-    extends IndexConstants
 {
     private final static Logger LOG = LoggerFactory.getLogger( IndexService.class );
 
-    private IndexDataFactory indexDataFactory;
+    private IndexDocumentFactory indexDocumentFactory;
 
     private ElasticsearchIndexServiceImpl elasticsearchIndexService;
 
@@ -35,11 +37,11 @@ public class IndexService
     public void initialize()
         throws Exception
     {
-        IndexStatus indexStatus = elasticsearchIndexService.getIndexStatus( WEM_INDEX, true );
+        IndexStatus indexStatus = elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX.string(), true );
 
         LOG.info( "Cluster in state: " + indexStatus.toString() );
 
-        final boolean indexExists = elasticsearchIndexService.indexExists( WEM_INDEX );
+        final boolean indexExists = elasticsearchIndexService.indexExists( IndexConstants.WEM_INDEX.string() );
 
         if ( !indexExists )
         {
@@ -56,7 +58,7 @@ public class IndexService
     {
         try
         {
-            elasticsearchIndexService.createIndex( WEM_INDEX );
+            elasticsearchIndexService.createIndex( IndexConstants.WEM_INDEX.string() );
         }
         catch ( IndexAlreadyExistsException e )
         {
@@ -64,7 +66,7 @@ public class IndexService
             return;
         }
 
-        final List<IndexMapping> allIndexMappings = indexMappingProvider.getMappingsForIndex( WEM_INDEX );
+        final List<IndexMapping> allIndexMappings = indexMappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX.string() );
 
         for ( IndexMapping indexMapping : allIndexMappings )
         {
@@ -74,12 +76,9 @@ public class IndexService
 
     public void index( final Object indexableData )
     {
-        final IndexData indexData = indexDataFactory.createIndexDataForObject( indexableData );
+        final Collection<IndexDocument> indexDocuments = indexDocumentFactory.create( indexableData );
 
-        if ( indexData != null )
-        {
-            elasticsearchIndexService.index( indexData );
-        }
+        elasticsearchIndexService.index( indexDocuments );
     }
 
     @Autowired
@@ -94,11 +93,6 @@ public class IndexService
         this.indexMappingProvider = indexMappingProvider;
     }
 
-    @Autowired
-    public void setIndexDataFactory( final IndexDataFactory indexDataFactory )
-    {
-        this.indexDataFactory = indexDataFactory;
-    }
 
     @Autowired
     public void setReindexService( final ReindexService reindexService )
@@ -109,5 +103,11 @@ public class IndexService
     public void setDoReindexOnEmptyIndex( final boolean doReindexOnEmptyIndex )
     {
         this.doReindexOnEmptyIndex = doReindexOnEmptyIndex;
+    }
+
+    @Autowired
+    public void setIndexDocumentFactory( final IndexDocumentFactory indexDocumentFactory )
+    {
+        this.indexDocumentFactory = indexDocumentFactory;
     }
 }
