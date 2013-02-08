@@ -10,6 +10,8 @@
     // Class definition (constructor function)
     var tip = AdminLiveEdit.view.componenttip.Tip = function () {
         this.addView();
+        this.addEvents();
+        this.menu = new AdminLiveEdit.view.componenttip.menu.Menu(this);
         this.registerGlobalListeners();
     };
 
@@ -42,27 +44,42 @@
 
         var html = '<div class="live-edit-component-tip" style="top:-5000px; left:-5000px;">' +
                    '    <div class="live-edit-component-tip-left">' +
-                   '        menu' +
+                   '        <img src="../app/images/drag-handle.png" class="live-edit-component-tip-icon-menu"/>' +
                    '    </div>' +
                    '    <div class="live-edit-component-tip-center">' +
                    '        <span class="live-edit-component-tip-name-text"></span>' +
                    '        <span class="live-edit-component-tip-type-text"></span> ' +
                    '    </div>' +
                    '    <div class="live-edit-component-tip-right">' +
-                   '        parent' +
+                   '        <img src="../app/images/aiga-forward-and-right-arrow.png" class="live-edit-component-tip-icon-parent"/>' +
                    '    </div>' +
                    '</div>';
 
         me.createElement(html);
         me.appendTo($('body'));
+    };
 
-        // Make sure component is not deselected when the conponentTip element is clicked.
+
+    proto.addEvents = function () {
+        var me = this;
+
+        // Make sure component is not deselected when clicked.
         me.getEl().on('click', function (event) {
             event.stopPropagation();
         });
 
-        var componentMenu = new AdminLiveEdit.view.componenttip.menu.Menu();
+        me.getMenuButton().click(function () {
+            if (me.$selectedComponent) {
+                $(window).trigger('tip:menu:toggle', [me.$selectedComponent]);
+            }
+        });
 
+        me.getParentButton().click(function () {
+            var $parent = me.$selectedComponent.parents('[data-live-edit-type]');
+            if ($parent && $parent.length > 0) {
+                $(window).trigger('component:select', [$($parent[0])]);
+            }
+        });
     };
 
 
@@ -84,6 +101,20 @@
             top: topPos,
             left: leftPos
         });
+
+        if (!me.menu.hidden) {
+            me.menu.show(event, $component);
+        }
+    };
+
+
+    proto.getMenuButton = function () {
+        return this.getEl().find('.live-edit-component-tip-icon-menu');
+    };
+
+
+    proto.getParentButton = function () {
+        return this.getEl().find('.live-edit-component-tip-icon-parent');
     };
 
 

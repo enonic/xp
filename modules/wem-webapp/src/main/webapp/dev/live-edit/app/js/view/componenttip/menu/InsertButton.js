@@ -2,8 +2,8 @@
     'use strict';
 
     // Class definition (constructor function)
-    var insertButton = AdminLiveEdit.view.componenttip.menu.InsertButton = function (componentMenu) {
-        this.componentMenu = componentMenu;
+    var insertButton = AdminLiveEdit.view.componenttip.menu.InsertButton = function (menu) {
+        this.menu = menu;
         this.init();
     };
 
@@ -31,8 +31,8 @@
             }
         });
 
-        me.appendTo(me.componentMenu.getEl());
-        me.componentMenu.buttons.push(me);
+        me.appendTo(me.menu.getEl());
+        me.menu.buttons.push(me);
     };
 
 }($liveedit));

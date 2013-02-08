@@ -139,7 +139,6 @@
             me.filterList($(this).val());
         });
 
-
         me.getBar().on('mouseover', function () {
             $liveedit(window).trigger('componentBar:mouseover');
         });

@@ -207,6 +207,11 @@ svg.live-edit-highlighter rect {
     padding: 3px 6px;
     background-color: #ffffc7;
 }
+
+.live-edit-tool-tip-name-text,
+.live-edit-tool-tip-type-text {
+    color: #444;
+}
 .live-edit-tool-tip-name-text {
     font-weight: bold;
 }
@@ -216,7 +221,7 @@ svg.live-edit-highlighter rect {
 .live-edit-component-tip {
     display: table-row;
     position: absolute;
-    z-index: 1000150;
+    z-index: 1000050;
     background-color: #fff9cb;
     cursor: default;
     border: 1px solid #989898;
@@ -238,9 +243,7 @@ svg.live-edit-highlighter rect {
 .live-edit-component-tip-left,
 .live-edit-component-tip-center,
 .live-edit-component-tip-right {
-    padding: 10px;
     display: table-cell;
-    vertical-align: middle;
 }
 
 .live-edit-component-tip-left {
@@ -248,11 +251,18 @@ svg.live-edit-highlighter rect {
     border-right: 1px solid #989898;
 }
 .live-edit-component-tip-center {
+    vertical-align: middle;
     text-align: center;
-    min-width: 150px;
+    min-width: 80px;
+    padding: 0 10px;
 }
 .live-edit-component-tip-right {
     border-left: 1px solid #989898;
+}
+.live-edit-component-tip-icon-menu,
+.live-edit-component-tip-icon-parent {
+    padding: 15px 15px;
+    cursor: pointer;
 }
 
 .live-edit-component-tip-type-text,
@@ -269,12 +279,9 @@ svg.live-edit-highlighter rect {
 
 .live-edit-component-menu {
     position: absolute;
-    z-index: 1000050;
+    z-index: 1000150;
     padding: 1px 1px 0 1px;
-    background-color: #141414;
-    -moz-box-shadow: 3px 3px 3px #555;
-    -webkit-box-shadow: 3px 3px 3px #555;
-    box-shadow: 3px 3px 3px #555;
+    background-color: #989898;
 }
 
 /*** Component bar */

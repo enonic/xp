@@ -27,7 +27,7 @@
         $(window).on('component:select', $.proxy(this.highlight, this));
         $(window).on('component:deselect', $.proxy(this.deselect, this));
         $(window).on('component:sort:start', $.proxy(this.hide, this));
-        $(window).on('componentBar:mouseover', $.proxy(this.hide, this));
+        // $(window).on('componentBar:mouseover', $.proxy(this.hide, this));
     };
 
 
@@ -92,8 +92,7 @@
     proto.getStyleForComponent = function ($component) {
         var componentType = util.getComponentType($component);
 
-        var style = {},
-            strokeColor,
+        var strokeColor,
             strokeDashArray,
             fillColor;
 
@@ -113,7 +112,7 @@
         case 'content':
             strokeColor = '';
             strokeDashArray = '';
-            fillColor = 'rgba(170,170,255,.5)';
+            fillColor = 'rgba(0,108,255,.25)';
             break;
 
         case 'paragraph':
@@ -128,13 +127,11 @@
             fillColor = 'rgba(255,255,255,0)';
         }
 
-        style = {
+        return {
             strokeColor: strokeColor,
             strokeDashArray: strokeDashArray,
             fillColor: fillColor
         };
-
-        return style;
     };
 
 }($liveedit));

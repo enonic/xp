@@ -3,20 +3,24 @@
 
     $(window).load(function () {
         $('.live-edit-loader-splash-container').remove();
+
         var selection           = new AdminLiveEdit.Selection();
         var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
-        // var mutationObserver    = new AdminLiveEdit.MutationObserver(); // Commented out for debuging.
+
+        // To be restructured
         var regions             = new AdminLiveEdit.model.component.Regions();
         var parts               = new AdminLiveEdit.model.component.Parts();
         var contents            = new AdminLiveEdit.model.component.Contents();
         var paragraphs          = new AdminLiveEdit.model.component.Paragraphs();
+
         var highlighter         = new AdminLiveEdit.view.Highlighter();
+        var toolTip             = new AdminLiveEdit.view.ToolTip();
+        var cursor              = new AdminLiveEdit.view.Cursor();
 
         var componentTip        = new AdminLiveEdit.view.componenttip.Tip();
 
-        var toolTip             = new AdminLiveEdit.view.ToolTip();
-        var cursor              = new AdminLiveEdit.view.Cursor();
         var shader              = new AdminLiveEdit.view.Shader();
+
         var componentBar        = new AdminLiveEdit.view.componentbar.ComponentBar();
 
         AdminLiveEdit.DragDrop.init();

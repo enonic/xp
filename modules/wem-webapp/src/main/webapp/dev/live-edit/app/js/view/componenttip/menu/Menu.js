@@ -6,9 +6,11 @@
 
 
     // Class definition (constructor)
-    var menu = AdminLiveEdit.view.componenttip.menu.Menu = function () {
+    var menu = AdminLiveEdit.view.componenttip.menu.Menu = function (tip) {
         var me = this;
+        me.hidden = true;
         me.buttons = [];
+        me.tip = tip;
 
         // TODO: Is this necessary anymore?
         me.buttonConfig = {
@@ -18,7 +20,6 @@
             'paragraph': ['edit']
         };
 
-        me.$currentComponent = $([]);
         me.addView();
         me.registerGlobalListeners();
     };
@@ -40,9 +41,12 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.registerGlobalListeners = function () {
+        /*
         $(window).on('component:select', $.proxy(this.show, this));
-        $(window).on('component:deselect', $.proxy(this.hide, this));
         $(window).on('component:remove', $.proxy(this.hide, this));
+        */
+        $(window).on('component:deselect', $.proxy(this.hide, this));
+        $(window).on('tip:menu:toggle', $.proxy(this.toggle, this));
         $(window).on('component:sort:start', $.proxy(this.fadeOutAndHide, this));
     };
 
@@ -56,43 +60,52 @@
     };
 
 
+    proto.toggle = function (event, $selectedComponent) {
+        var me = this;
+        if (me.hidden) {
+            me.show(event, $selectedComponent);
+        } else {
+            me.hide();
+        }
+    };
+
+
     proto.show = function (event, $selectedComponent) {
-        this.getMenuForComponent($selectedComponent);
-        this.moveToComponent($selectedComponent);
-        this.getEl().show();
+        var me = this;
+        me.getMenuForComponent($selectedComponent);
+        me.moveToTip();
+        me.getEl().show();
+        me.hidden = false;
     };
 
 
     proto.hide = function () {
-        this.getEl().css({ top: '-5000px', left: '-5000px', right: '' });
+        var me = this;
+        me.getEl().css({ top: '-5000px', left: '-5000px', right: '' });
+        me.hidden = true;
     };
 
 
     proto.fadeOutAndHide = function () {
-        this.getEl().fadeOut(500, function () {
+        var me = this;
+        me.getEl().fadeOut(500, function () {
+            me.hide();
             $(window).trigger('component:deselect');
         });
     };
 
 
-    proto.moveToComponent = function ($selectedComponent) {
-        var me = this;
-
-        me.$currentComponent = $selectedComponent;
-
-        var componentBoxModel = util.getBoxModel($selectedComponent);
-        var offsetLeft = 0,
-            menuTopPos = Math.round(componentBoxModel.top),
-            menuLeftPos = Math.round(componentBoxModel.left + componentBoxModel.width) - offsetLeft,
-            documentSize = util.getDocumentSize();
-
-        if (menuLeftPos >= (documentSize.width - offsetLeft)) {
-            menuLeftPos = menuLeftPos - me.getEl().width();
-        }
+    proto.moveToTip = function () {
+        var me = this,
+            tipElement = me.tip.getEl(),
+            tipOffset = tipElement.offset(),
+            height = tipElement.outerHeight(),
+            topPos = tipOffset.top + height - 1,
+            leftPos = tipOffset.left;
 
         me.getEl().css({
-            top: menuTopPos,
-            left: menuLeftPos
+            top: topPos,
+            left: leftPos
         });
     };
 
@@ -118,11 +131,6 @@
     };
 
 
-    proto.getButtons = function () {
-        return this.buttons;
-    };
-
-
     proto.addButtons = function () {
         var me = this;
         var insertButton = new AdminLiveEdit.view.componenttip.menu.InsertButton(me);
@@ -130,7 +138,6 @@
         var emptyButton = new AdminLiveEdit.view.componenttip.menu.EmptyButton(me);
         var viewButton = new AdminLiveEdit.view.componenttip.menu.ViewButton(me);
         var editButton = new AdminLiveEdit.view.componenttip.menu.EditButton(me);
-        // var dragButton = new AdminLiveEdit.view.componenttip.menu.DragButton(me);
         var settingsButton = new AdminLiveEdit.view.componenttip.menu.SettingsButton(me);
         var removeButton = new AdminLiveEdit.view.componenttip.menu.RemoveButton(me);
 
@@ -138,6 +145,11 @@
         for (i = 0; i < me.buttons.length; i++) {
             me.buttons[i].appendTo(me.getEl());
         }
+    };
+
+
+    proto.getButtons = function () {
+        return this.buttons;
     };
 
 }($liveedit));

@@ -49,7 +49,6 @@
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/ResetButton.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/EmptyButton.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/ViewButton.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/DragButton.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/SettingsButton.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/RemoveButton.js"></script>
 
