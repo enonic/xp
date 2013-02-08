@@ -2,7 +2,7 @@ package com.enonic.wem.api.content.data;
 
 import com.google.common.base.Preconditions;
 
-public class EntryId
+class EntryId
 {
     private final String name;
 

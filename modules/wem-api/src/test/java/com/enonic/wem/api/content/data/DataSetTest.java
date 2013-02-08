@@ -37,6 +37,18 @@ public class DataSetTest
     }
 
     @Test
+    public void add_more()
+    {
+        DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
+        dataSet.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "1" ).build() );
+        dataSet.add( Data.newData().name( "myData" ).type( DataTypes.TEXT ).value( "2" ).build() );
+
+        assertEquals( "1", dataSet.getData( "myData" ).asString() );
+        assertEquals( "1", dataSet.getData( "myData[0]" ).asString() );
+        assertEquals( "2", dataSet.getData( "myData[1]" ).asString() );
+    }
+
+    @Test
     public void add_given_data_of_type_text_when_adding_data_of_other_type_with_same_name_then_exception_is_thrown()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
