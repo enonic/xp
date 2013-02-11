@@ -52,7 +52,7 @@ public class GetMixinRpcHandlerTest
         QualifiedMixinNames names = QualifiedMixinNames.from( new QualifiedMixinName( "myModule:mymixin" ) );
         Mockito.when( client.execute( mixin().get().names( names ) ) ).thenReturn( mixins );
 
-        testSuccess( "getMixin_asJson_param.json", "getMixin_result.json" );
+        testSuccess( "getMixin_asJson_param.json", "getMixin_asJson_result.json" );
     }
 
     @Test
@@ -70,7 +70,7 @@ public class GetMixinRpcHandlerTest
         QualifiedMixinNames names = QualifiedMixinNames.from( new QualifiedMixinName( "myModule:mymixin" ) );
         Mockito.when( client.execute( mixin().get().names( names ) ) ).thenReturn( mixins );
 
-        testSuccess( "getMixin_asXml_param.json", "getMixin_result.json" );
+        testSuccess( "getMixin_asXml_param.json", "getMixin_asXml_result.json" );
     }
 
     @Test

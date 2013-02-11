@@ -1,0 +1,4 @@
+{
+    "success": true,
+    "mixinXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<mixin>\r\n  <name>inputText1</name>\r\n  <module>myModule</module>\r\n  <qualified-name>myModule:inputText1</qualified-name>\r\n  <display-name />\r\n  <input type=\"TextLine\" built-in=\"true\" name=\"inputText1\">\r\n    <label>Line Text 1</label>\r\n    <immutable>false</immutable>\r\n    <indexed>false</indexed>\r\n    <customText />\r\n    <helpText>Help text line 1</helpText>\r\n    <occurrences minimum=\"1\" maximum=\"1\" />\r\n  </input>\r\n</mixin>\r\n\r\n"
+}
