@@ -42,19 +42,17 @@ Ext.define('Admin.controller.contentManager.Controller', {
         if (tabs) {
             for (i = 0; i < content.length; i += 1) {
 
-                //check if edit tab is open and close it
-                var index = tabs.items.indexOfKey(me.generateTabId(content[i], true));
-                if (index >= 0) {
-                    tabs.remove(index);
-                }
+                var activeTab = tabs.setActiveTab(me.generateTabId(content[i], true));
 
-                var tabItem = {
-                    xtype: 'contentDetail',
-                    id: me.generateTabId(content[i], false),
-                    data: content[i],
-                    title: content[i].raw.displayName
-                };
-                tabs.addTab(tabItem, index >= 0 ? index : undefined, undefined);
+                if (!activeTab) {
+                    var tabItem = {
+                        xtype: 'contentDetail',
+                        id: me.generateTabId(content[i], false),
+                        data: content[i],
+                        title: content[i].raw.displayName
+                    };
+                    tabs.addTab(tabItem);
+                }
             }
         }
     },
