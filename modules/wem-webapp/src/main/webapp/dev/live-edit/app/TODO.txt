@@ -1,5 +1,4 @@
 - Create drag drop package?
-- componenttip/menu gets it's reference to the object that created it as an argument to the constructor. See if we can avoid this.
 
 CSS
 * live-edit-component - the text should not break

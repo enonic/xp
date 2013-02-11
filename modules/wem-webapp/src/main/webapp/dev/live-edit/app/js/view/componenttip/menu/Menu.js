@@ -6,11 +6,10 @@
 
 
     // Class definition (constructor)
-    var menu = AdminLiveEdit.view.componenttip.menu.Menu = function (tip) {
+    var menu = AdminLiveEdit.view.componenttip.menu.Menu = function () {
         var me = this;
         me.hidden = true;
         me.buttons = [];
-        me.tip = tip;
 
         // TODO: Is this necessary anymore?
         me.buttonConfig = {
@@ -97,7 +96,7 @@
 
     proto.moveToTip = function () {
         var me = this,
-            tipElement = me.tip.getEl(),
+            tipElement = me.$tipEl,
             tipOffset = tipElement.offset(),
             height = tipElement.outerHeight(),
             topPos = tipOffset.top + height - 1,

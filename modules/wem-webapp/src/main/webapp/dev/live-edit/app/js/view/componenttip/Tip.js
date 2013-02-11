@@ -9,10 +9,12 @@
 
     // Class definition (constructor function)
     var tip = AdminLiveEdit.view.componenttip.Tip = function () {
-        this.addView();
-        this.addEvents();
-        this.menu = new AdminLiveEdit.view.componenttip.menu.Menu(this);
-        this.registerGlobalListeners();
+        var me = this;
+        me.addView();
+        me.addEvents();
+        me.menu = new AdminLiveEdit.view.componenttip.menu.Menu();
+        me.menu.$tipEl = me.getEl();
+        me.registerGlobalListeners();
     };
 
     // Inherits ui.Base
