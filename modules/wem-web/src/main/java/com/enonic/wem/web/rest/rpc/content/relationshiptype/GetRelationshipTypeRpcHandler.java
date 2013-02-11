@@ -45,7 +45,7 @@ public final class GetRelationshipTypeRpcHandler
             }
             else if ( format.equalsIgnoreCase( FORMAT_XML ) )
             {
-                context.setResult( new GetRelationshipTypeXmlResult( relationshipTypes.first() ) );
+                context.setResult( new GetRelationshipTypeConfigRpcJsonResult( relationshipTypes.first() ) );
             }
         }
         else

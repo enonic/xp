@@ -41,7 +41,6 @@ public class GetMixinRpcHandler
             }
             else if ( format.equalsIgnoreCase( FORMAT_XML ) )
             {
-                context.setResult( new GetMixinRpcJsonResult( mixin ) );
                 context.setResult( new GetMixinConfigRpcJsonResult( mixin ) );
             }
 

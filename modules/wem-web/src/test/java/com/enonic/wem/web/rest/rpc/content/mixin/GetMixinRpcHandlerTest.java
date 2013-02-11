@@ -38,7 +38,7 @@ public class GetMixinRpcHandlerTest
     }
 
     @Test
-    public void testRequestGetMixin_existing()
+    public void testRequestGetMixin_existing_asJson()
         throws Exception
     {
         Input inputText1 = newInput().name( "inputText1" ).type( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
@@ -52,7 +52,25 @@ public class GetMixinRpcHandlerTest
         QualifiedMixinNames names = QualifiedMixinNames.from( new QualifiedMixinName( "myModule:mymixin" ) );
         Mockito.when( client.execute( mixin().get().names( names ) ) ).thenReturn( mixins );
 
-        testSuccess( "getMixin_param.json", "getMixin_result.json" );
+        testSuccess( "getMixin_asJson_param.json", "getMixin_result.json" );
+    }
+
+    @Test
+    public void testRequestGetMixin_existing_asXml()
+        throws Exception
+    {
+        Input inputText1 = newInput().name( "inputText1" ).type( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
+            "Help text line 1" ).required( true ).build();
+        Mixin mixin = Mixin.newMixin().
+            module( ModuleName.from( "myModule" ) ).
+            formItem( inputText1 ).
+            build();
+
+        Mixins mixins = Mixins.from( mixin );
+        QualifiedMixinNames names = QualifiedMixinNames.from( new QualifiedMixinName( "myModule:mymixin" ) );
+        Mockito.when( client.execute( mixin().get().names( names ) ) ).thenReturn( mixins );
+
+        testSuccess( "getMixin_asXml_param.json", "getMixin_result.json" );
     }
 
     @Test
@@ -64,6 +82,6 @@ public class GetMixinRpcHandlerTest
         ObjectNode resultJson = objectNode();
         resultJson.put( "success", false );
         resultJson.put( "error", "Mixin [myModule:mymixin] was not found" );
-        testSuccess( "getMixin_param.json", resultJson );
+        testSuccess( "getMixin_asJson_param.json", resultJson );
     }
 }
