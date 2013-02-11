@@ -6,6 +6,7 @@ import com.enonic.wem.api.command.content.mixin.CreateMixin;
 import com.enonic.wem.api.command.content.mixin.GetMixins;
 import com.enonic.wem.api.command.content.mixin.UpdateMixins;
 import com.enonic.wem.api.content.mixin.Mixin;
+import com.enonic.wem.api.content.mixin.MixinEditor;
 import com.enonic.wem.api.content.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.mixin.QualifiedMixinNames;
 import com.enonic.wem.core.content.mixin.MixinXmlSerializer;
@@ -46,14 +47,19 @@ public class CreateOrUpdateMixinRpcHandler
 
         if ( !mixinExists( mixin.getQualifiedName() ) )
         {
-            final CreateMixin createCommand = mixin().create().mixin( mixin );
+            final CreateMixin createCommand = mixin().create().
+                displayName( mixin.getDisplayName() ).
+                formItem( mixin.getFormItem() ).
+                moduleName( mixin.getModuleName() );
             client.execute( createCommand );
             context.setResult( CreateOrUpdateMixinJsonResult.created() );
         }
         else
         {
             final QualifiedMixinNames names = QualifiedMixinNames.from( mixin.getQualifiedName() );
-            final UpdateMixins updateCommand = mixin().update().names( names ).editor( setMixin( mixin ) );
+            final MixinEditor mixinEditor = setMixin( mixin.getDisplayName(), mixin.getFormItem(), mixin.getIcon() );
+            final UpdateMixins updateCommand = mixin().update().names( names ).editor( mixinEditor );
+
             client.execute( updateCommand );
             context.setResult( CreateOrUpdateMixinJsonResult.updated() );
         }

@@ -65,7 +65,7 @@ public class DeleteRelationshipTypesHandlerTest
     {
         // exercise
         final QualifiedRelationshipTypeName existingName = QualifiedRelationshipTypeName.from( "my:existingRelationshipType" );
-        final QualifiedRelationshipTypeName anotherExistingName = QualifiedRelationshipTypeName.from( "my:my:anotherRelationshipType" );
+        final QualifiedRelationshipTypeName anotherExistingName = QualifiedRelationshipTypeName.from( "my:anotherRelationshipType" );
         final QualifiedRelationshipTypeName notFoundName = QualifiedRelationshipTypeName.from( "my:notFoundRelationshipType" );
 
         Mockito.doThrow( new SystemException( "Unable to delete relationship type [my:notFoundRelationshipType]" ) ).

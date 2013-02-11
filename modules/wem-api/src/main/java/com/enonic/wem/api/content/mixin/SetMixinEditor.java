@@ -1,30 +1,44 @@
 package com.enonic.wem.api.content.mixin;
 
 import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.content.type.form.FormItem;
 
 final class SetMixinEditor
     implements MixinEditor
 {
-    private final Mixin source;
+    private final FormItem formItem;
 
-    SetMixinEditor( final Mixin source )
+    private final String displayName;
+
+    private final Icon icon;
+
+    SetMixinEditor( final String displayName, final FormItem formItem, final Icon icon )
     {
-        this.source = source;
+        this.formItem = formItem;
+        this.displayName = displayName;
+        this.icon = icon;
     }
 
     @Override
     public Mixin edit( final Mixin mixin )
         throws Exception
     {
-        final Icon iconToSet = ( source.getIcon() == null ) ? null : Icon.copyOf( source.getIcon() );
-
         final Mixin.Builder builder = Mixin.newMixin( mixin );
-        builder.displayName( source.getDisplayName() );
-        builder.formItem( source.getFormItem() );
-        builder.module( source.getModuleName() );
-        builder.createdTime( source.getCreatedTime() );
-        builder.modifiedTime( source.getModifiedTime() );
-        builder.icon( iconToSet );
+
+        if ( this.displayName != null )
+        {
+            builder.displayName( this.displayName );
+        }
+
+        if ( this.formItem != null )
+        {
+            builder.formItem( this.formItem );
+        }
+
+        if ( this.icon != null )
+        {
+            builder.icon( Icon.copyOf( this.icon ) );
+        }
 
         return builder.build();
     }

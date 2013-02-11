@@ -11,6 +11,7 @@ import com.enonic.wem.api.content.mixin.Mixin;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.mixin.dao.MixinDao;
+import com.enonic.wem.core.time.TimeService;
 
 import static com.enonic.wem.api.content.mixin.Mixin.newMixin;
 
@@ -19,6 +20,9 @@ public final class CreateMixinHandler
     extends CommandHandler<CreateMixin>
 {
     private MixinDao mixinDao;
+
+    private TimeService timeService;
+
 
     public CreateMixinHandler()
     {
@@ -29,12 +33,13 @@ public final class CreateMixinHandler
     public void handle( final CommandContext context, final CreateMixin command )
         throws Exception
     {
+        final DateTime currentTime = timeService.getNowAsDateTime();
         final Mixin.Builder mixinBuilder = newMixin();
         mixinBuilder.formItem( command.getFormItem() );
         mixinBuilder.displayName( command.getDisplayName() );
         mixinBuilder.module( command.getModuleName() );
-        mixinBuilder.createdTime( DateTime.now() );
-        mixinBuilder.modifiedTime( DateTime.now() );
+        mixinBuilder.createdTime( currentTime );
+        mixinBuilder.modifiedTime( currentTime );
         mixinBuilder.icon( command.getIcon() );
 
         final Mixin mixin = mixinBuilder.build();
@@ -52,4 +57,9 @@ public final class CreateMixinHandler
         this.mixinDao = value;
     }
 
+    @Autowired
+    public void setTimeService( final TimeService timeService )
+    {
+        this.timeService = timeService;
+    }
 }

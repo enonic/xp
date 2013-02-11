@@ -14,12 +14,17 @@ import com.enonic.wem.api.content.mixin.QualifiedMixinNames;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.mixin.dao.MixinDao;
+import com.enonic.wem.core.time.TimeService;
+
+import static com.enonic.wem.api.content.mixin.Mixin.newMixin;
 
 @Component
 public final class UpdateMixinsHandler
     extends CommandHandler<UpdateMixins>
 {
     private MixinDao mixinDao;
+
+    private TimeService timeService;
 
     public UpdateMixinsHandler()
     {
@@ -54,7 +59,8 @@ public final class UpdateMixinsHandler
 
     private void updateMixin( final Session session, final Mixin mixin )
     {
-        mixinDao.update( mixin, session );
+        final Mixin mixinModified = newMixin( mixin ).modifiedTime( timeService.getNowAsDateTime() ).build();
+        mixinDao.update( mixinModified, session );
     }
 
     private Mixin retrieveMixin( final Session session, final QualifiedMixinName qualifiedMixinName )
@@ -67,5 +73,11 @@ public final class UpdateMixinsHandler
     public void setMixinDao( final MixinDao mixinDao )
     {
         this.mixinDao = mixinDao;
+    }
+
+    @Autowired
+    public void setTimeService( final TimeService timeService )
+    {
+        this.timeService = timeService;
     }
 }

@@ -6,6 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.google.common.collect.Iterables;
+
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.type.DeleteContentTypes;
 import com.enonic.wem.api.content.type.ContentTypeDeletionResult;
@@ -59,7 +61,7 @@ public class DeleteContentTypesHandlerTest
 
         ContentTypeDeletionResult result = command.getResult();
         assertEquals( false, result.hasFailures() );
-        assertEquals( 1, getCount( result.successes() ) );
+        assertEquals( 1, Iterables.size( result.successes() ) );
     }
 
     @Test
@@ -86,19 +88,8 @@ public class DeleteContentTypesHandlerTest
 
         ContentTypeDeletionResult result = command.getResult();
         assertEquals( true, result.hasFailures() );
-        assertEquals( 2, getCount( result.failures() ) );
-        assertEquals( 1, getCount( result.successes() ) );
-    }
-
-
-    private int getCount( Iterable names )
-    {
-        int count = 0;
-        for ( final Object name : names )
-        {
-            count++;
-        }
-        return count;
+        assertEquals( 2, Iterables.size( result.failures() ) );
+        assertEquals( 1, Iterables.size( result.successes() ) );
     }
 
 }
