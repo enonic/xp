@@ -206,13 +206,13 @@ Ext.define('Admin.view.contentManager.wizard.form.FormItemSet', {
                 }
             },
             items: [
-                {
-                    tdAttrs: {
-                        style: 'width: 30px'
-                    },
-                    xtype: 'component',
-                    html: '<span class="admin-drag-handle icon-align-justify icon-2x" style="display: inline-block"></span>'
-                },
+                /*{
+                 tdAttrs: {
+                 style: 'width: 30px'
+                 },
+                 xtype: 'component',
+                 html: '<span class="admin-drag-handle" style="display: inline-block"></span>'
+                 },*/
                 {
                     xtype: 'component',
                     html: '<h6>' + (me.contentTypeItemConfig.label || '{No label}') + ': </h6>'

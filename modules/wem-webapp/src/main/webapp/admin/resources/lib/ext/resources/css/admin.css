@@ -2379,6 +2379,11 @@ td {
 /**
 * Form item set
 */
+/* line 151, ../sass/admin/css/_form.scss */
+.form-item-set {
+    /* Sub form-item-sets needs to be padded */
+}
+
 /* line 152, ../sass/admin/css/_form.scss */
 .form-item-set .admin-formitemset-block {
     border: none !important;
@@ -2396,8 +2401,28 @@ td {
     color: #777777;
 }
 
+/* line 167, ../sass/admin/css/_form.scss */
+.form-item-set .form-item-set {
+    margin-left: 10px !important;
+}
+
+/* line 169, ../sass/admin/css/_form.scss */
+.form-item-set .form-item-set .admin-formitemset-block {
+    background-color: #f9f9f9;
+}
+
+/* line 174, ../sass/admin/css/_form.scss */
+.form-item-set .form-item-set .form-item-set .admin-formitemset-block {
+    background-color: #ffffff;
+}
+
+/* line 179, ../sass/admin/css/_form.scss */
+.form-item-set .form-item-set .form-item-set .form-item-set .admin-formitemset-block {
+    background-color: #f9f9f9;
+}
+
 /* To allow box-shadow, we must override overflow: hidden on containing elements. */
-/* line 173, ../sass/admin/css/_form.scss */
+/* line 193, ../sass/admin/css/_form.scss */
 .admin-wizard .x-fieldset-body,
 .admin-wizard .x-panel-body,
 .admin-wizard .x-fit-item,
