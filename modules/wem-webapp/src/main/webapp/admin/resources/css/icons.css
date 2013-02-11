@@ -5,7 +5,13 @@
 }
 
 .icon-pencil-16 {
-    background-image: url("../images/icons/16x16/edit.png") !important;
+    background-image: url("../images/pencil32.png") !important;
+    background-size: 100% auto;
+}
+
+.icon-eye-16 {
+    background-image: url("../images/eye32.png") !important;
+    background-size: 100% auto;
 }
 
 

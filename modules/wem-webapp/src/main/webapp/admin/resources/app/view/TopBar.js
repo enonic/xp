@@ -143,6 +143,7 @@ Ext.define('Admin.view.TopBar', {
             closable: cfg.closable,
             hidden: cfg.hidden && !item.hiddenByLayout, // only hide if it wasn't hidden by the layout itself
             iconSrc: me.getMenuItemIcon(item),
+            iconClass : cfg.iconClass,
             editing: cfg.editing || false,
             text1: Ext.String.ellipsis(cfg.title || 'first line', 26),
             text2: Ext.String.ellipsis(me.getMenuItemDescription(item), 38)
@@ -212,6 +213,9 @@ Ext.define('Admin.view.TopBar', {
         var iconClass = '';
         if (card.tab.editing) {
             iconClass = 'icon-pencil-16';
+        }
+        if(card.tab.iconClass) {
+            iconClass = card.tab.iconClass;
         }
         this.titleButton.setIconCls(iconClass);
     },

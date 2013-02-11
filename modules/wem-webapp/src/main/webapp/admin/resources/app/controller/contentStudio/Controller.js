@@ -262,6 +262,7 @@ Ext.define('Admin.controller.contentStudio.Controller', {
                 var tabItem = {
                     id: me.generateTabId(contentType, false),
                     xtype: 'contentTypeDetailPanel',
+                    iconClass: 'icon-eye-16',
                     data: contentType.raw,
                     title: contentType.raw.name
                 };

@@ -47,6 +47,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                 if (!activeTab) {
                     var tabItem = {
                         xtype: 'contentDetail',
+                        iconClass: 'icon-eye-16',
                         id: me.generateTabId(content[i], false),
                         data: content[i],
                         title: content[i].raw.displayName
