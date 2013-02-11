@@ -14,7 +14,7 @@
 <!-- Live Edit App -->
 <script type="text/javascript" charset="UTF-8" src="../app/js/jquery.noconflict.js"></script>
 
-<script type="text/javascript" charset="UTF-8" src="../app/js/Init.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/Main.js"></script>
 
 <script type="text/javascript" charset="UTF-8" src="../app/js/Util.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/MutationObserver.js"></script>
