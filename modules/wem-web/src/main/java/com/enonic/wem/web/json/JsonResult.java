@@ -8,9 +8,9 @@ import org.codehaus.jackson.node.ObjectNode;
 public abstract class JsonResult
     implements JsonSerializable
 {
-    private boolean success;
+    private final boolean success;
 
-    private String error;
+    private final String error;
 
     public JsonResult()
     {
@@ -20,13 +20,24 @@ public abstract class JsonResult
     public JsonResult( final boolean success )
     {
         this.success = success;
+        this.error = null;
     }
 
-    public final JsonResult error( final String error )
+    protected JsonResult( final String error )
     {
-        this.error = error;
         this.success = false;
-        return this;
+        this.error = error;
+    }
+
+    protected JsonResult( final JsonResultBuilder builder )
+    {
+        this.success = builder.success;
+        this.error = builder.error;
+    }
+
+    public boolean hasError()
+    {
+        return error != null;
     }
 
     protected abstract void serialize( ObjectNode json );
@@ -54,5 +65,27 @@ public abstract class JsonResult
     protected final ArrayNode arrayNode()
     {
         return JsonNodeFactory.instance.arrayNode();
+    }
+
+    public static class JsonResultBuilder
+    {
+        private boolean success = true;
+
+        private String error;
+
+        public JsonResultBuilder success()
+        {
+            this.success = true;
+            this.error = null;
+            return this;
+        }
+
+        public JsonResultBuilder error( final String error )
+        {
+            this.error = error;
+            this.success = false;
+            return this;
+        }
+
     }
 }

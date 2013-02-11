@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.relationship.CreateRelationship;
 import com.enonic.wem.api.command.content.relationship.UpdateRelationships;
+import com.enonic.wem.api.command.content.relationship.UpdateRelationshipsResult;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.relationship.RelationshipId;
@@ -34,31 +35,14 @@ public final class CreateOrUpdateRelationshipRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final RelationshipId relationshipIdToUpdate = RelationshipIdFactory.from( context.param( "relationshipId" ).asString() );
-
-        if ( relationshipIdToUpdate == null )
+        if ( context.hasParam( "relationshipId" ) )
         {
-            handleCreate( context );
+            handleUpdate( context );
         }
         else
         {
-            handleUpdate( context, relationshipIdToUpdate );
+            handleCreate( context );
         }
-    }
-
-    private void handleUpdate( final JsonRpcContext context, final RelationshipId relationshipIdToUpdate )
-        throws JsonRpcException
-    {
-        final UpdateRelationships updateCommand = Commands.relationship().update();
-        updateCommand.relationshipIds( RelationshipIds.from( relationshipIdToUpdate ) );
-
-        RelationshipEditors.SetBuilder setPropertiesBuilder = RelationshipEditors.setProperties();
-        parseSetProperties( setPropertiesBuilder, context.param( "properties" ).required().asObject() );
-        updateCommand.editor( setPropertiesBuilder.build() );
-
-        client.execute( updateCommand );
-
-        context.setResult( CreateOrUpdateRelationshipJsonResult.updated() );
     }
 
     private void handleCreate( final JsonRpcContext context )
@@ -88,6 +72,27 @@ public final class CreateOrUpdateRelationshipRpcHandler
         }
         final RelationshipId relationshipId = client.execute( createCommand );
         context.setResult( CreateOrUpdateRelationshipJsonResult.created( relationshipId ) );
+    }
+
+    private void handleUpdate( final JsonRpcContext context )
+        throws JsonRpcException
+    {
+        final RelationshipId relationshipIdToUpdate = RelationshipIdFactory.from( context.param( "relationshipId" ).asString() );
+        final UpdateRelationships updateCommand = Commands.relationship().update();
+        updateCommand.relationshipIds( RelationshipIds.from( relationshipIdToUpdate ) );
+
+        final RelationshipEditors.SetBuilder setPropertiesBuilder = RelationshipEditors.setProperties();
+        parseSetProperties( setPropertiesBuilder, context.param( "properties" ).required().asObject() );
+        updateCommand.editor( setPropertiesBuilder.build() );
+
+        final UpdateRelationshipsResult result = client.execute( updateCommand );
+        final CreateOrUpdateRelationshipJsonResult.Builder jsonResult = CreateOrUpdateRelationshipJsonResult.newBuilder();
+        jsonResult.updated().relationship( relationshipIdToUpdate );
+        if ( result.isFailure( relationshipIdToUpdate ) )
+        {
+            jsonResult.failure( result.getFailure( relationshipIdToUpdate ).reason );
+        }
+        context.setResult( jsonResult.build() );
     }
 
     private void parseSetProperties( final RelationshipEditors.SetBuilder setPropertiesBuilder, final ObjectNode propertiesNode )

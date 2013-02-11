@@ -4,11 +4,9 @@ import java.util.Set;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.springframework.stereotype.Component;
 
 import com.enonic.wem.core.search.IndexException;
 
-@Component
 public class XContentBuilderFactory
 {
 

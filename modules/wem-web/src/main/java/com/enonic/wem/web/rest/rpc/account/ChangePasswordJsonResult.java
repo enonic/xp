@@ -7,14 +7,24 @@ import com.enonic.wem.web.json.JsonResult;
 final class ChangePasswordJsonResult
     extends JsonResult
 {
-    public ChangePasswordJsonResult( final boolean success, final String error )
+    private ChangePasswordJsonResult()
     {
-        super( success );
+        super( true );
+    }
 
-        if ( error != null )
-        {
-            error( error );
-        }
+    public ChangePasswordJsonResult( final String error )
+    {
+        super( error );
+    }
+
+    public static ChangePasswordJsonResult success()
+    {
+        return new ChangePasswordJsonResult();
+    }
+
+    public static ChangePasswordJsonResult error( String error )
+    {
+        return new ChangePasswordJsonResult( error );
     }
 
     @Override
