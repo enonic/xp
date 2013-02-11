@@ -52,6 +52,23 @@ public class GetRelationshipTypeRpcHandlerTest
     }
 
     @Test
+    public void testRequestGetRelationshipTypeXml_existing()
+        throws Exception
+    {
+        final RelationshipType relationshipType = newRelationshipType().
+            module( ModuleName.from( "myModule" ) ).
+            name( "theRelationshipType" ).
+            build();
+
+        final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
+        final QualifiedRelationshipTypeNames names =
+            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "myModule:theRelationshipType" ) );
+        Mockito.when( client.execute( Commands.relationshipType().get().selectors( names ) ) ).thenReturn( relationshipTypes );
+
+        testSuccess( "getRelationshipTypeXml_param.json", "getRelationshipTypeXml_result.json" );
+    }
+
+    @Test
     public void testRequestGetRelationshipTypeJson_not_found()
         throws Exception
     {

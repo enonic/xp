@@ -15,6 +15,10 @@ import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 public final class GetRelationshipTypeRpcHandler
     extends AbstractDataRpcHandler
 {
+    public static final String FORMAT_XML = "XML";
+
+    public static final String FORMAT_JSON = "JSON";
+
     public GetRelationshipTypeRpcHandler()
     {
         super( "relationshipType_get" );
@@ -26,6 +30,7 @@ public final class GetRelationshipTypeRpcHandler
     {
         final QualifiedRelationshipTypeNames qualifiedNames =
             QualifiedRelationshipTypeNames.from( context.param( "qualifiedRelationshipTypeName" ).required().asString() );
+        final String format = context.param( "format" ).required().asString();
 
         final GetRelationshipTypes getRelationshipTypes = Commands.relationshipType().get();
         getRelationshipTypes.selectors( qualifiedNames );
@@ -34,7 +39,14 @@ public final class GetRelationshipTypeRpcHandler
 
         if ( !relationshipTypes.isEmpty() )
         {
-            context.setResult( new GetRelationshipTypeJsonResult( relationshipTypes.first() ) );
+            if ( format.equalsIgnoreCase( FORMAT_JSON ) )
+            {
+                context.setResult( new GetRelationshipTypeJsonResult( relationshipTypes.first() ) );
+            }
+            else if ( format.equalsIgnoreCase( FORMAT_XML ) )
+            {
+                context.setResult( new GetRelationshipTypeXmlResult( relationshipTypes.first() ) );
+            }
         }
         else
         {
