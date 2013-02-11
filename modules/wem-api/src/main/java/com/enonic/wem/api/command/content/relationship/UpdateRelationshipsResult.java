@@ -1,26 +1,26 @@
 package com.enonic.wem.api.command.content.relationship;
 
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.wem.api.content.relationship.RelationshipId;
 
 public final class UpdateRelationshipsResult
 {
-    private List<RelationshipId> successes = Lists.newArrayList();
+    private final ImmutableSet<RelationshipId> successes;
 
-    private List<Failure> failures = Lists.newArrayList();
+    private final ImmutableMap<RelationshipId, Failure> failures;
 
-    public void success( final RelationshipId relationshipId )
+    private UpdateRelationshipsResult( final Builder builder )
     {
-        successes.add( relationshipId );
+        this.successes = builder.successes.build();
+        this.failures = builder.failures.build();
     }
 
-    public void failure( final RelationshipId relationshipId, final Exception e )
+    public boolean isSuccess( final RelationshipId relationshipId )
     {
-        failures.add( new Failure( relationshipId, e, e.getMessage() ) );
+        return successes.contains( relationshipId );
     }
 
     public Iterable<RelationshipId> successes()
@@ -33,24 +33,63 @@ public final class UpdateRelationshipsResult
         return failures.size() > 0;
     }
 
-    public Iterable<Failure> failures()
+    public boolean isFailure( final RelationshipId relationshipId )
     {
-        return failures;
+        return failures.containsKey( relationshipId );
     }
 
-    public class Failure
+    public Failure getFailure( final RelationshipId relationshipId )
+    {
+        return failures.get( relationshipId );
+    }
+
+    public Iterable<Failure> failures()
+    {
+        return failures.values();
+    }
+
+    public static class Failure
     {
         public final RelationshipId relationshipId;
 
-        public final Exception exception;
-
         public final String reason;
 
-        public Failure( final RelationshipId relationshipId, final Exception exception, final String reason )
+        public final Exception exception;
+
+        private Failure( final RelationshipId relationshipId, final String reason, final Exception exception )
         {
             this.relationshipId = relationshipId;
-            this.exception = exception;
             this.reason = reason;
+            this.exception = exception;
+        }
+    }
+
+    public static Builder newUpdateRelationshipsResult()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private ImmutableSet.Builder<RelationshipId> successes = ImmutableSet.builder();
+
+        private ImmutableMap.Builder<RelationshipId, Failure> failures = ImmutableMap.builder();
+
+        public Builder success( final RelationshipId id )
+        {
+            successes.add( id );
+            return this;
+        }
+
+        public Builder failure( final RelationshipId id, final Exception e )
+        {
+            failures.put( id, new Failure( id, e.getMessage(), e ) );
+            return this;
+        }
+
+        public UpdateRelationshipsResult build()
+        {
+            return new UpdateRelationshipsResult( this );
         }
     }
 }

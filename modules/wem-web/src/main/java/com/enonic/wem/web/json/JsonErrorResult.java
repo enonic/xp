@@ -9,14 +9,12 @@ public final class JsonErrorResult
 {
     public JsonErrorResult( final String message )
     {
-        super( false );
-        error( message );
+        super( message );
     }
 
     public JsonErrorResult( final String message, final Object... args )
     {
-        super( false );
-        error( MessageFormat.format( message, args ) );
+        super( MessageFormat.format( message, args ) );
     }
 
     @Override

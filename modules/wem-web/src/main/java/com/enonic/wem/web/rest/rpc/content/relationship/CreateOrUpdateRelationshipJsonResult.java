@@ -12,30 +12,68 @@ final class CreateOrUpdateRelationshipJsonResult
 
     private final RelationshipId relationshipId;
 
-    private CreateOrUpdateRelationshipJsonResult( final boolean created, final RelationshipId relationshipId )
+    private CreateOrUpdateRelationshipJsonResult( final Builder builder )
     {
-        this.created = created;
-        this.relationshipId = relationshipId;
-    }
-
-    public static CreateOrUpdateRelationshipJsonResult created( final RelationshipId relationshipId )
-    {
-        return new CreateOrUpdateRelationshipJsonResult( true, relationshipId );
-    }
-
-    public static CreateOrUpdateRelationshipJsonResult updated()
-    {
-        return new CreateOrUpdateRelationshipJsonResult( false, null );
+        super( builder );
+        this.created = builder.created;
+        this.relationshipId = builder.relationshipId;
     }
 
     @Override
     protected void serialize( final ObjectNode json )
     {
-        json.put( "created", created );
-        json.put( "updated", !created );
+        json.put( "created", created && !hasError() );
+        json.put( "updated", !created && !hasError() );
         if ( relationshipId != null )
         {
             json.put( "relationshipId", relationshipId.toString() );
+        }
+    }
+
+    public static CreateOrUpdateRelationshipJsonResult created( final RelationshipId relationshipId )
+    {
+        return new CreateOrUpdateRelationshipJsonResult( newBuilder().created().relationship( relationshipId ) );
+    }
+
+    public static Builder newBuilder()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+        extends JsonResultBuilder
+    {
+        private boolean created;
+
+        private RelationshipId relationshipId;
+
+        public Builder created()
+        {
+            created = true;
+            return this;
+        }
+
+        public Builder updated()
+        {
+            created = false;
+            return this;
+        }
+
+        public Builder relationship( final RelationshipId relationshipId )
+        {
+            this.relationshipId = relationshipId;
+            return this;
+        }
+
+        public Builder failure( String reason )
+        {
+            this.error( reason );
+            return this;
+        }
+
+        public CreateOrUpdateRelationshipJsonResult build()
+        {
+            return new CreateOrUpdateRelationshipJsonResult( this );
         }
     }
 }

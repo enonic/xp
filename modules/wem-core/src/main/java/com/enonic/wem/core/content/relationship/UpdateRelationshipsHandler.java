@@ -13,6 +13,8 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.relationship.dao.RelationshipDao;
 
+import static com.enonic.wem.api.command.content.relationship.UpdateRelationshipsResult.newUpdateRelationshipsResult;
+
 @Component
 public final class UpdateRelationshipsHandler
     extends CommandHandler<UpdateRelationships>
@@ -30,7 +32,7 @@ public final class UpdateRelationshipsHandler
     {
         final Session session = context.getJcrSession();
 
-        final UpdateRelationshipsResult result = new UpdateRelationshipsResult();
+        final UpdateRelationshipsResult.Builder result = newUpdateRelationshipsResult();
         final Relationships relationships = relationshipDao.select( command.getRelationshipIds(), session );
 
         for ( Relationship existing : relationships )
@@ -47,7 +49,7 @@ public final class UpdateRelationshipsHandler
                 result.failure( existing.getId(), e );
             }
         }
-        command.setResult( result );
+        command.setResult( result.build() );
     }
 
     @Autowired

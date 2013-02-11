@@ -53,9 +53,14 @@ public final class UpdateRelationshipPropertiesRpcHandler
 
         updateCommand.editor( compositeEditorBuilder.build() );
 
-        UpdateRelationshipsResult result = client.execute( updateCommand );
-        // TODO: A more detailed JSON-result should be returned
-        context.setResult( CreateOrUpdateRelationshipJsonResult.updated() );
+        final UpdateRelationshipsResult result = client.execute( updateCommand );
+        final CreateOrUpdateRelationshipJsonResult.Builder jsonResult = CreateOrUpdateRelationshipJsonResult.newBuilder();
+        jsonResult.updated().relationship( relationshipIdToUpdate );
+        if ( result.isFailure( relationshipIdToUpdate ) )
+        {
+            jsonResult.failure( result.getFailure( relationshipIdToUpdate ).reason );
+        }
+        context.setResult( jsonResult.build() );
 
     }
 
