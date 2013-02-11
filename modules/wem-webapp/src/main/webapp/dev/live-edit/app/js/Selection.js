@@ -40,20 +40,20 @@
 
 
     proto.scrollComponentIntoView = function ($selectedComponent) {
-        var componentTopPosition = util.getPageComponentPagePosition($selectedComponent).top;
+        var componentTopPosition = util.getPagePositionForComponent($selectedComponent).top;
         if (componentTopPosition <= window.pageYOffset) {
             $('html, body').animate({scrollTop: componentTopPosition - 10}, 200);
         }
     };
 
 
-    proto.select = function (event, $selectedComponent) {
+    proto.select = function (event, $component) {
         // Add CSS position relative to the page component in order have absolute positioned elements inside.
         $('.live-edit-selected-component').removeClass('live-edit-selected-component');
-        $selectedComponent.addClass('live-edit-selected-component');
+        $component.addClass('live-edit-selected-component');
 
-        this.setSelected($selectedComponent);
-        this.scrollComponentIntoView($selectedComponent);
+        this.setSelected($component);
+        this.scrollComponentIntoView($component);
     };
 
 
