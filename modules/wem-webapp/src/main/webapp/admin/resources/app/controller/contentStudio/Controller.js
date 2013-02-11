@@ -256,19 +256,17 @@ Ext.define('Admin.controller.contentStudio.Controller', {
 
         if (contentType) {
 
-            var tabItem = {
-                id: me.generateTabId(contentType, false),
-                xtype: 'contentTypeDetailPanel',
-                data: contentType.raw,
-                title: contentType.raw.name
-            };
+            var activeTab = tabs.setActiveTab(me.generateTabId(contentType, true));
 
-            //check if edit tab is open and close it
-            var index = tabs.items.indexOfKey(me.generateTabId(contentType, true));
-            if (index >= 0) {
-                tabs.remove(index);
+            if (!activeTab) {
+                var tabItem = {
+                    id: me.generateTabId(contentType, false),
+                    xtype: 'contentTypeDetailPanel',
+                    data: contentType.raw,
+                    title: contentType.raw.name
+                };
+                tabs.addTab(tabItem);
             }
-            tabs.addTab(tabItem, index >= 0 ? index : undefined, undefined);
         }
     },
 
