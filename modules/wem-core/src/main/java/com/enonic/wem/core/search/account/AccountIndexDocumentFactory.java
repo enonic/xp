@@ -20,8 +20,11 @@ import com.enonic.wem.core.search.indexdocument.IndexDocument;
 @Component
 public class AccountIndexDocumentFactory
 {
+    private AccountIndexDocumentFactory()
+    {
+    }
 
-    public Collection<IndexDocument> create( Account account )
+    public static Collection<IndexDocument> create( Account account )
     {
         Set<IndexDocument> indexDocuments = Sets.newHashSet();
 
@@ -30,7 +33,7 @@ public class AccountIndexDocumentFactory
         return indexDocuments;
     }
 
-    private IndexDocument createAccountIndexDocument( final Account account )
+    private static IndexDocument createAccountIndexDocument( final Account account )
     {
         IndexDocument indexDocument =
             new IndexDocument( account.getKey().toString(), IndexType.ACCOUNT, IndexConstants.WEM_INDEX.string() );
@@ -51,20 +54,20 @@ public class AccountIndexDocumentFactory
         return indexDocument;
     }
 
-    private void appendUser( final UserAccount user, final IndexDocument indexDocument )
+    private static void appendUser( final UserAccount user, final IndexDocument indexDocument )
     {
         addAccountMetaData( user, indexDocument );
         addEmail( user, indexDocument );
         addProfile( user, indexDocument );
     }
 
-    private void appendGroupOrRole( final NonUserAccount noneUserAccount, final IndexDocument indexDocument )
+    private static void appendGroupOrRole( final NonUserAccount noneUserAccount, final IndexDocument indexDocument )
     {
         addAccountMetaData( noneUserAccount, indexDocument );
         addMembers( noneUserAccount, indexDocument );
     }
 
-    private void addAccountMetaData( final Account account, final IndexDocument indexDocument )
+    private static void addAccountMetaData( final Account account, final IndexDocument indexDocument )
     {
         indexDocument.addDocumentEntry( AccountIndexField.KEY_FIELD.id(), account.getKey().toString(), false, true );
         indexDocument.addDocumentEntry( AccountIndexField.TYPE_FIELD.id(), account.getKey().getType().name(), false, true );
@@ -74,12 +77,12 @@ public class AccountIndexDocumentFactory
         indexDocument.addDocumentEntry( AccountIndexField.LAST_MODIFIED_FIELD.id(), account.getModifiedTime(), false, true );
     }
 
-    private void addEmail( final UserAccount user, final IndexDocument indexDocument )
+    private static void addEmail( final UserAccount user, final IndexDocument indexDocument )
     {
         indexDocument.addDocumentEntry( AccountIndexField.EMAIL_FIELD.id(), user.getEmail(), true, true );
     }
 
-    private void addProfile( final UserAccount user, final IndexDocument indexDocument )
+    private static void addProfile( final UserAccount user, final IndexDocument indexDocument )
     {
         final UserProfile profile = user.getProfile();
         if ( ( profile != null ) && ( profile.getOrganization() != null ) )
@@ -88,7 +91,7 @@ public class AccountIndexDocumentFactory
         }
     }
 
-    private void addMembers( final NonUserAccount noneUserAccount, final IndexDocument indexDocument )
+    private static void addMembers( final NonUserAccount noneUserAccount, final IndexDocument indexDocument )
     {
         final AccountKeys members = noneUserAccount.getMembers() != null ? noneUserAccount.getMembers() : AccountKeys.empty();
         final String[] memberKeys = new String[members.getSize()];

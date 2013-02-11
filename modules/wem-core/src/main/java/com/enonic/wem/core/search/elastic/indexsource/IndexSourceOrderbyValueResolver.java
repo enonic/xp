@@ -9,7 +9,6 @@ import com.enonic.wem.core.search.elastic.ElasticsearchFormatter;
 
 public class IndexSourceOrderbyValueResolver
 {
-
     public static String getOrderbyValue( Object value )
     {
         if ( value == null )
@@ -33,10 +32,6 @@ public class IndexSourceOrderbyValueResolver
 
     private static String getNumericOrderBy( Number value )
     {
-        if ( value == null )
-        {
-            return null;
-        }
 
         if ( value instanceof Double )
         {

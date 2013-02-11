@@ -19,7 +19,7 @@ public class IndexSourceEntryFactoryTest
     {
         IndexDocumentEntry indexDocumentEntry = new IndexDocumentEntry( "test", 1, true, true );
 
-        final Set<IndexSourceEntry> indexSourceEntries = indexSourceEntryFactory.createIndexSourceEntries( indexDocumentEntry );
+        final Set<IndexSourceEntry> indexSourceEntries = indexSourceEntryFactory.create( indexDocumentEntry );
 
         assertEquals( 3, indexSourceEntries.size() );
     }
@@ -28,9 +28,9 @@ public class IndexSourceEntryFactoryTest
     public void testLongField()
         throws Exception
     {
-        IndexDocumentEntry indexDocumentEntry = new IndexDocumentEntry( "test", 1L, true, true);
+        IndexDocumentEntry indexDocumentEntry = new IndexDocumentEntry( "test", 1L, true, true );
 
-        final Set<IndexSourceEntry> indexSourceEntries = indexSourceEntryFactory.createIndexSourceEntries( indexDocumentEntry );
+        final Set<IndexSourceEntry> indexSourceEntries = indexSourceEntryFactory.create( indexDocumentEntry );
 
         assertEquals( 3, indexSourceEntries.size() );
     }
@@ -39,9 +39,9 @@ public class IndexSourceEntryFactoryTest
     public void testDoubleField()
         throws Exception
     {
-        IndexDocumentEntry indexDocumentEntry = new IndexDocumentEntry( "test", 1.0, true, true);
+        IndexDocumentEntry indexDocumentEntry = new IndexDocumentEntry( "test", 1.0, true, true );
 
-        final Set<IndexSourceEntry> indexSourceEntries = indexSourceEntryFactory.createIndexSourceEntries( indexDocumentEntry );
+        final Set<IndexSourceEntry> indexSourceEntries = indexSourceEntryFactory.create( indexDocumentEntry );
 
         assertEquals( 3, indexSourceEntries.size() );
     }
@@ -50,9 +50,9 @@ public class IndexSourceEntryFactoryTest
     public void testStringField()
         throws Exception
     {
-        IndexDocumentEntry indexDocumentEntry = new IndexDocumentEntry( "test", "value", true, true);
+        IndexDocumentEntry indexDocumentEntry = new IndexDocumentEntry( "test", "value", true, true );
 
-        final Set<IndexSourceEntry> indexSourceEntries = indexSourceEntryFactory.createIndexSourceEntries( indexDocumentEntry );
+        final Set<IndexSourceEntry> indexSourceEntries = indexSourceEntryFactory.create( indexDocumentEntry );
 
         assertEquals( 2, indexSourceEntries.size() );
     }
@@ -63,7 +63,7 @@ public class IndexSourceEntryFactoryTest
     {
         IndexDocumentEntry indexDocumentEntry = new IndexDocumentEntry( "test", "value", false, false );
 
-        final Set<IndexSourceEntry> indexSourceEntries = indexSourceEntryFactory.createIndexSourceEntries( indexDocumentEntry );
+        final Set<IndexSourceEntry> indexSourceEntries = indexSourceEntryFactory.create( indexDocumentEntry );
 
         assertEquals( 1, indexSourceEntries.size() );
     }

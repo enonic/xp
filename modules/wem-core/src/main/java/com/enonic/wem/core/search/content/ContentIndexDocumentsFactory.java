@@ -19,7 +19,12 @@ import com.enonic.wem.core.search.indexdocument.IndexDocument;
 @Component
 public class ContentIndexDocumentsFactory
 {
-    public Collection<IndexDocument> create( Content content )
+
+    private ContentIndexDocumentsFactory()
+    {
+    }
+
+    public static Collection<IndexDocument> create( Content content )
     {
         Set<IndexDocument> indexDocuments = Sets.newHashSet();
 
@@ -28,7 +33,7 @@ public class ContentIndexDocumentsFactory
         return indexDocuments;
     }
 
-    private IndexDocument createContentIndexDocument( final Content content )
+    private static IndexDocument createContentIndexDocument( final Content content )
     {
         IndexDocument indexDocument = new IndexDocument( content.getId().toString(), IndexType.CONTENT, IndexConstants.WEM_INDEX.string() );
 
@@ -38,7 +43,7 @@ public class ContentIndexDocumentsFactory
         return indexDocument;
     }
 
-    private void addContentMetaData( final Content content, final IndexDocument indexDocument )
+    private static void addContentMetaData( final Content content, final IndexDocument indexDocument )
     {
         indexDocument.addDocumentEntry( ContentIndexField.KEY_FIELD.id(), content.getId().toString(), false, true );
         indexDocument.addDocumentEntry( ContentIndexField.CREATED_FIELD.id(), content.getCreatedTime(), false, true );
@@ -50,14 +55,14 @@ public class ContentIndexDocumentsFactory
         indexDocument.addDocumentEntry( ContentIndexField.MODIFIER_FIELD.id(), content.getModifier().getQualifiedName(), false, true );
     }
 
-    private void addContentData( final Content content, final IndexDocument indexDocument )
+    private static void addContentData( final Content content, final IndexDocument indexDocument )
     {
         final DataSet dataSet = content.getRootDataSet();
 
         traverseDataSet( dataSet, indexDocument );
     }
 
-    private void traverseDataSet( final DataSet dataSet, final IndexDocument indexDocument )
+    private static void traverseDataSet( final DataSet dataSet, final IndexDocument indexDocument )
     {
         final Iterator<Entry> dataSetIterator = dataSet.iterator();
 
@@ -84,7 +89,7 @@ public class ContentIndexDocumentsFactory
         }
     }
 
-    protected String getEntryPath( final Entry entry )
+    protected static String getEntryPath( final Entry entry )
     {
         return entry.getPath().toString();
     }

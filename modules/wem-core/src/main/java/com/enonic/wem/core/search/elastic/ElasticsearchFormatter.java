@@ -12,6 +12,9 @@ import org.joda.time.format.ISODateTimeFormat;
 
 public class ElasticsearchFormatter
 {
+    private ElasticsearchFormatter()
+    {
+    }
 
     private static final String XML_DATE_FORMAT_PATTERN = "yyyy-MM-dd HH:mm";
 

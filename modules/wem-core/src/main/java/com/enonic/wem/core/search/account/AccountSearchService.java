@@ -16,9 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.core.search.FacetEntry;
 import com.enonic.wem.core.search.IndexConstants;
 import com.enonic.wem.core.search.IndexType;
+import com.enonic.wem.core.search.facet.FacetEntry;
 
 @Component
 public class AccountSearchService
@@ -30,8 +30,8 @@ public class AccountSearchService
     public AccountSearchResults search( AccountSearchQuery query )
     {
         final SearchRequest req =
-            Requests.searchRequest( IndexConstants.WEM_INDEX.string() ).types( IndexType.ACCOUNT.getIndexTypeName() ).searchType( getSearchType( query ) ).source(
-                this.translator.build( query ) );
+            Requests.searchRequest( IndexConstants.WEM_INDEX.string() ).types( IndexType.ACCOUNT.getIndexTypeName() ).searchType(
+                getSearchType( query ) ).source( this.translator.build( query ) );
 
         final SearchResponse res = this.client.search( req ).actionGet();
 
@@ -73,7 +73,7 @@ public class AccountSearchService
             if ( facet instanceof TermsFacet )
             {
                 TermsFacet tf = (TermsFacet) facet;
-                com.enonic.wem.core.search.Facet resultFacet = new com.enonic.wem.core.search.Facet( tf.name() );
+                com.enonic.wem.core.search.facet.Facet resultFacet = new com.enonic.wem.core.search.facet.Facet( tf.name() );
                 searchResult.getFacets().addFacet( resultFacet );
                 for ( TermsFacet.Entry entry : tf )
                 {
@@ -102,7 +102,8 @@ public class AccountSearchService
 
     void deleteIndex( String id, boolean flushDataAfterDelete )
     {
-        final DeleteRequest deleteRequest = new DeleteRequest().index( IndexConstants.WEM_INDEX.string() ).type( IndexType.ACCOUNT.getIndexTypeName() ).id( id );
+        final DeleteRequest deleteRequest =
+            new DeleteRequest().index( IndexConstants.WEM_INDEX.string() ).type( IndexType.ACCOUNT.getIndexTypeName() ).id( id );
         this.client.delete( deleteRequest ).actionGet();
 
         if ( flushDataAfterDelete )

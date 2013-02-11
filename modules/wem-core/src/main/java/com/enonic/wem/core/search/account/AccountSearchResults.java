@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.core.search.Facets;
+import com.enonic.wem.core.search.facet.Facets;
 
 
 public final class AccountSearchResults

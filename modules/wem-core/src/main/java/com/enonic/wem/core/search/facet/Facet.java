@@ -1,4 +1,4 @@
-package com.enonic.wem.core.search;
+package com.enonic.wem.core.search.facet;
 
 import java.util.ArrayList;
 import java.util.HashMap;

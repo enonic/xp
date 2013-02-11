@@ -24,7 +24,7 @@ final class IndexSourceEntryFactory
      * Based on type, creat one or more fields to be indexed
      * If (value is array), then build this as array
      */
-    protected Set<IndexSourceEntry> createIndexSourceEntries( IndexDocumentEntry indexDocumentEntry )
+    protected static Set<IndexSourceEntry> create( IndexDocumentEntry indexDocumentEntry )
     {
         Set<IndexSourceEntry> indexSourceEntries = Sets.newHashSet();
 
@@ -60,7 +60,7 @@ final class IndexSourceEntryFactory
         return indexSourceEntries;
     }
 
-    private void appendNumericField( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
+    private static void appendNumericField( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
     {
         final String baseFieldName = indexDocumentEntry.getKey();
         final Double doubleValue = ( (Number) indexDocumentEntry.getValue() ).doubleValue();
@@ -68,7 +68,7 @@ final class IndexSourceEntryFactory
         indexSourceEntries.add( new IndexSourceEntry( generateNumericFieldName( baseFieldName ), doubleValue ) );
     }
 
-    private void appendStringField( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
+    private static void appendStringField( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
     {
         String baseFieldName = indexDocumentEntry.getKey();
 
@@ -77,7 +77,7 @@ final class IndexSourceEntryFactory
         indexSourceEntries.add( new IndexSourceEntry( generateStringTypeFieldName( baseFieldName ), stringValue ) );
     }
 
-    private void appendOrderBy( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
+    private static void appendOrderBy( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
     {
         final String orderByValue = IndexSourceOrderbyValueResolver.getOrderbyValue( indexDocumentEntry.getValue() );
         final String orderByFieldName = generateOrderbyFieldName( indexDocumentEntry.getKey() );
@@ -85,18 +85,18 @@ final class IndexSourceEntryFactory
         indexSourceEntries.add( new IndexSourceEntry( orderByFieldName, orderByValue ) );
     }
 
-    private String generateOrderbyFieldName( final String originalFieldName )
+    private static String generateOrderbyFieldName( final String originalFieldName )
     {
         return originalFieldName + FIELD_TYPE_SEPARATOR + ORDERBY_FIELD_POSTFIX;
 
     }
 
-    private String generateNumericFieldName( final String originalFieldName )
+    private static String generateNumericFieldName( final String originalFieldName )
     {
         return originalFieldName + FIELD_TYPE_SEPARATOR + NUMERIC_FIELD_POSTFIX;
     }
 
-    private String generateStringTypeFieldName( final String originalFieldName )
+    private static String generateStringTypeFieldName( final String originalFieldName )
     {
         return originalFieldName;
     }

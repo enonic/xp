@@ -11,7 +11,12 @@ import com.enonic.wem.core.search.IndexException;
 @Component
 public class XContentBuilderFactory
 {
-    public XContentBuilder create( final IndexSource indexSource )
+
+    private XContentBuilderFactory()
+    {
+    }
+
+    public static XContentBuilder create( final IndexSource indexSource )
     {
         try
         {
@@ -26,7 +31,7 @@ public class XContentBuilderFactory
         }
     }
 
-    private XContentBuilder startBuilder()
+    private static XContentBuilder startBuilder()
         throws Exception
     {
         final XContentBuilder result = XContentFactory.jsonBuilder();
@@ -36,13 +41,13 @@ public class XContentBuilderFactory
     }
 
 
-    private void endBuilder( final XContentBuilder contentBuilder )
+    private static void endBuilder( final XContentBuilder contentBuilder )
         throws Exception
     {
         contentBuilder.endObject();
     }
 
-    private void addFields( final XContentBuilder result, final IndexSource indexSource )
+    private static void addFields( final XContentBuilder result, final IndexSource indexSource )
         throws Exception
     {
         final Set<IndexSourceEntry> indexSourceEntries = indexSource.getIndexSourceEntries();
@@ -53,7 +58,7 @@ public class XContentBuilderFactory
         }
     }
 
-    private void addField( XContentBuilder result, String name, Object value )
+    private static void addField( XContentBuilder result, String name, Object value )
         throws Exception
     {
         if ( value == null )

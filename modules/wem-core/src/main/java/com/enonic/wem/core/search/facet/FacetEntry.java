@@ -1,4 +1,4 @@
-package com.enonic.wem.core.search;
+package com.enonic.wem.core.search.facet;
 
 public class FacetEntry
 {

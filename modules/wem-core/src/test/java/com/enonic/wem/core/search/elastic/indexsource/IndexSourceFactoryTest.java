@@ -19,7 +19,6 @@ public class IndexSourceFactoryTest
     public void testSimpleDocument()
         throws Exception
     {
-        IndexSourceFactory indexSourceFactory = new IndexSourceFactory();
 
         IndexDocument indexDocument = new IndexDocument( "id1", IndexType.CONTENT, "WEM_INDEX" );
 
@@ -28,7 +27,7 @@ public class IndexSourceFactoryTest
         indexDocument.addDocumentEntry( "test3", 2L, true, true );
         indexDocument.addDocumentEntry( "test4", 3.0, true, true );
 
-        final IndexSource indexSource = indexSourceFactory.create( indexDocument );
+        final IndexSource indexSource = IndexSourceFactory.create( indexDocument );
 
         final Set<IndexSourceEntry> indexSourceEntries = indexSource.getIndexSourceEntries();
 
@@ -39,8 +38,6 @@ public class IndexSourceFactoryTest
     public void testAllFieldPopulated()
         throws Exception
     {
-        IndexSourceFactory indexSourceFactory = new IndexSourceFactory();
-
         IndexDocument indexDocument = new IndexDocument( "id1", IndexType.CONTENT, "WEM_INDEX" );
 
         indexDocument.addDocumentEntry( "test1", "value1", true, false );
@@ -49,7 +46,7 @@ public class IndexSourceFactoryTest
         indexDocument.addDocumentEntry( "test4", "value4", true, false );
         indexDocument.addDocumentEntry( "test4", "value5", false, false );
 
-        final IndexSource indexSource = indexSourceFactory.create( indexDocument );
+        final IndexSource indexSource = IndexSourceFactory.create( indexDocument );
 
         final Set<IndexSourceEntry> indexSourceEntries = indexSource.getIndexSourceEntries();
 

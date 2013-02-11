@@ -22,15 +22,15 @@ import com.enonic.wem.api.command.account.FindAccounts;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.search.Facet;
-import com.enonic.wem.core.search.FacetEntry;
-import com.enonic.wem.core.search.Facets;
 import com.enonic.wem.core.search.SearchSortOrder;
 import com.enonic.wem.core.search.account.AccountIndexField;
 import com.enonic.wem.core.search.account.AccountSearchHit;
 import com.enonic.wem.core.search.account.AccountSearchQuery;
 import com.enonic.wem.core.search.account.AccountSearchResults;
 import com.enonic.wem.core.search.account.AccountSearchService;
+import com.enonic.wem.core.search.facet.Facet;
+import com.enonic.wem.core.search.facet.FacetEntry;
+import com.enonic.wem.core.search.facet.Facets;
 
 import static com.enonic.wem.api.account.query.AccountQuery.Direction;
 

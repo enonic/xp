@@ -23,7 +23,6 @@ public class IndexService
 {
     private final static Logger LOG = LoggerFactory.getLogger( IndexService.class );
 
-    private IndexDocumentFactory indexDocumentFactory;
 
     private ElasticsearchIndexServiceImpl elasticsearchIndexService;
 
@@ -76,7 +75,7 @@ public class IndexService
 
     public void index( final Object indexableData )
     {
-        final Collection<IndexDocument> indexDocuments = indexDocumentFactory.create( indexableData );
+        final Collection<IndexDocument> indexDocuments = IndexDocumentFactory.create( indexableData );
 
         elasticsearchIndexService.index( indexDocuments );
     }
@@ -93,7 +92,6 @@ public class IndexService
         this.indexMappingProvider = indexMappingProvider;
     }
 
-
     @Autowired
     public void setReindexService( final ReindexService reindexService )
     {
@@ -103,11 +101,5 @@ public class IndexService
     public void setDoReindexOnEmptyIndex( final boolean doReindexOnEmptyIndex )
     {
         this.doReindexOnEmptyIndex = doReindexOnEmptyIndex;
-    }
-
-    @Autowired
-    public void setIndexDocumentFactory( final IndexDocumentFactory indexDocumentFactory )
-    {
-        this.indexDocumentFactory = indexDocumentFactory;
     }
 }

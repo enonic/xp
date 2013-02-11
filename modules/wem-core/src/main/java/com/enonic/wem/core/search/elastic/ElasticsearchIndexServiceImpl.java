@@ -37,16 +37,12 @@ public class ElasticsearchIndexServiceImpl
 
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexServiceImpl.class );
 
-    private IndexSourceFactory indexSourceFactory;
-
     // TODO: As properties
     private final TimeValue WAIT_FOR_YELLOW_TIMEOUT = TimeValue.timeValueSeconds( 20 );
 
     public static final TimeValue CLUSTER_NOWAIT_TIMEOUT = TimeValue.timeValueSeconds( 1 );
 
     private IndexSettingsBuilder indexSettingsBuilder;
-
-    private XContentBuilderFactory xContentBuilderFactory;
 
     @Override
     public IndexStatus getIndexStatus( final String indexName, final boolean waitForStatusYellow )
@@ -73,9 +69,9 @@ public class ElasticsearchIndexServiceImpl
             final IndexType indexType = indexDocument.getIndexType();
             final String indexName = indexDocument.getIndex();
 
-            final IndexSource indexSource = indexSourceFactory.create( indexDocument );
+            final IndexSource indexSource = IndexSourceFactory.create( indexDocument );
 
-            final XContentBuilder xContentBuilder = xContentBuilderFactory.create( indexSource );
+            final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexSource );
 
             final IndexRequest req =
                 Requests.indexRequest().id( id ).index( indexName ).type( indexType.getIndexTypeName() ).source( xContentBuilder );
@@ -174,15 +170,4 @@ public class ElasticsearchIndexServiceImpl
         this.indexSettingsBuilder = indexSettingsBuilder;
     }
 
-    @Autowired
-    public void setIndexSourceFactory( final IndexSourceFactory IndexSourceFactory )
-    {
-        this.indexSourceFactory = IndexSourceFactory;
-    }
-
-    @Autowired
-    public void setxContentBuilderFactory( final XContentBuilderFactory xContentBuilderFactory )
-    {
-        this.xContentBuilderFactory = xContentBuilderFactory;
-    }
 }

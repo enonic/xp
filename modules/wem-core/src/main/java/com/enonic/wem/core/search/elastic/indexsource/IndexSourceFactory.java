@@ -22,14 +22,15 @@ import com.enonic.wem.core.search.indexdocument.IndexDocumentEntry;
 @Component
 public class IndexSourceFactory
 {
-    private final IndexSourceEntryFactory indexSourceEntryFactory = new IndexSourceEntryFactory();
-
     private static final String ALL_FIELD_NAME = "_all";
 
     private static final Joiner allFieldJoiner = Joiner.on( " " );
 
+    private IndexSourceFactory()
+    {
+    }
 
-    public IndexSource create( IndexDocument indexDocument )
+    public static IndexSource create( final IndexDocument indexDocument )
     {
         final IndexSource indexSource = new IndexSource();
 
@@ -44,7 +45,7 @@ public class IndexSourceFactory
                 appendToAllField( allFieldValues, indexDocumentEntry );
             }
 
-            indexSource.addIndexSourceEntries( indexSourceEntryFactory.createIndexSourceEntries( indexDocumentEntry ) );
+            indexSource.addIndexSourceEntries( IndexSourceEntryFactory.create( indexDocumentEntry ) );
         }
 
         indexSource.addIndexSourceEntry( new IndexSourceEntry( ALL_FIELD_NAME, joinSet( allFieldJoiner, allFieldValues ) ) );
@@ -52,13 +53,13 @@ public class IndexSourceFactory
         return indexSource;
     }
 
-    private void appendToAllField( final Set<String> allFieldValues, final IndexDocumentEntry indexDocumentEntry )
+    private static void appendToAllField( final Set<String> allFieldValues, final IndexDocumentEntry indexDocumentEntry )
     {
         allFieldValues.add( indexDocumentEntry.getValueAsString() );
     }
 
 
-    private String joinSet( final Joiner joiner, final Set<String> set )
+    private static String joinSet( final Joiner joiner, final Set<String> set )
     {
         return joiner.join( set );
     }
