@@ -6,7 +6,7 @@ Ext.define('Admin.view.contentStudio.ContextMenu', {
         {
             text: 'Edit',
             iconCls: 'icon-edit',
-            action: 'editContentType'
+            action: 'editBaseType'
         },
         {
             text: 'Open',
