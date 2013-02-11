@@ -28,13 +28,13 @@ public final class DeleteRelationshipTypesHandler
     {
         final RelationshipTypeDeletionResult relationshipTypeDeletionResult = new RelationshipTypeDeletionResult();
 
-        for ( QualifiedRelationshipTypeName relationshipTypeName : command.getNames() )
+        for ( QualifiedRelationshipTypeName relationshipTypeName : command.getQualifiedNames() )
         {
             try
             {
                 relationshipTypeDao.delete( relationshipTypeName, context.getJcrSession() );
-                relationshipTypeDeletionResult.success( relationshipTypeName );
                 context.getJcrSession().save();
+                relationshipTypeDeletionResult.success( relationshipTypeName );
             }
             catch ( SystemException e )
             {

@@ -58,7 +58,7 @@ public class CreateOrUpdateMixinRpcHandler
         {
             final QualifiedMixinNames names = QualifiedMixinNames.from( mixin.getQualifiedName() );
             final MixinEditor mixinEditor = setMixin( mixin.getDisplayName(), mixin.getFormItem(), mixin.getIcon() );
-            final UpdateMixins updateCommand = mixin().update().names( names ).editor( mixinEditor );
+            final UpdateMixins updateCommand = mixin().update().qualifiedNames( names ).editor( mixinEditor );
 
             client.execute( updateCommand );
             context.setResult( CreateOrUpdateMixinJsonResult.updated() );

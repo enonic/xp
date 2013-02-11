@@ -5,7 +5,6 @@ import javax.jcr.Session;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.api.content.relationship.RelationshipIds;
-import com.enonic.wem.api.content.relationship.RelationshipSelectors;
 import com.enonic.wem.api.content.relationship.Relationships;
 
 
@@ -21,5 +20,5 @@ public interface RelationshipDao
 
     public RelationshipIds exists( final RelationshipIds relationshipIds, final Session session );
 
-    public Relationships select( RelationshipSelectors selectors, final Session session );
+    public Relationships select( RelationshipIds selectors, final Session session );
 }

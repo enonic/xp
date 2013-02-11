@@ -26,7 +26,7 @@ public final class DeleteRelationshipTypeRpcHandler
         final QualifiedRelationshipTypeNames qualifiedNames =
             QualifiedRelationshipTypeNames.from( context.param( "qualifiedRelationshipTypeNames" ).required().asStringArray() );
 
-        final DeleteRelationshipTypes deleteCommand = Commands.relationshipType().delete().names( qualifiedNames );
+        final DeleteRelationshipTypes deleteCommand = Commands.relationshipType().delete().qualifiedNames( qualifiedNames );
 
         final RelationshipTypeDeletionResult deletionResult = client.execute( deleteCommand );
 

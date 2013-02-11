@@ -35,4 +35,21 @@ public abstract class AbstractDaoHandler<R>
     {
         return result;
     }
+
+    protected void checkIllegalChange( final String property, final Object previousValue, final Object newValue )
+    {
+        if ( previousValue == null && newValue == null )
+        {
+            return;
+        }
+
+        if ( previousValue == null )
+        {
+            throw new IllegalArgumentException( property + " cannot be changed: [" + previousValue + "] -> [" + newValue + "]" );
+        }
+        else if ( !previousValue.equals( newValue ) )
+        {
+            throw new IllegalArgumentException( property + " cannot be changed: [" + previousValue + "] -> [" + newValue + "]" );
+        }
+    }
 }

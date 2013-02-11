@@ -17,16 +17,16 @@ final class CompositeRelationshipTypeEditor
         throws Exception
     {
         boolean modified = false;
-        RelationshipType relationshipTypeEdited = relationshipType;
+        RelationshipType edited = relationshipType;
         for ( final RelationshipTypeEditor editor : this.editors )
         {
-            final RelationshipType updatedRelationshipType = editor.edit( relationshipTypeEdited );
-            if ( updatedRelationshipType != null )
+            final RelationshipType updated = editor.edit( edited );
+            if ( updated != null )
             {
-                relationshipTypeEdited = updatedRelationshipType;
+                edited = updated;
                 modified = true;
             }
         }
-        return modified ? relationshipTypeEdited : null;
+        return modified ? edited : null;
     }
 }

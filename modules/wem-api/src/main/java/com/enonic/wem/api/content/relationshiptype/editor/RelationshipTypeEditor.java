@@ -6,7 +6,7 @@ public interface RelationshipTypeEditor
 {
     /**
      * @param relationshipType to be edited
-     * @return updated relationship type, null if it has not been updated.
+     * @return updated relationshipType, null if it has not been updated.
      */
     public RelationshipType edit( RelationshipType relationshipType )
         throws Exception;

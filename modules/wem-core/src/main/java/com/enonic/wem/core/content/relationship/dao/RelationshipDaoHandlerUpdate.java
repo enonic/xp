@@ -34,29 +34,17 @@ final class RelationshipDaoHandlerUpdate
         }
 
         final Relationship existing = relationshipJcrMapper.toRelationship( node );
-        checkUnchanged( "createdTime", existing.getCreatedTime(), relationship.getCreatedTime() );
-        checkUnchanged( "creator", existing.getCreator(), relationship.getCreator() );
-        checkUnchanged( "fromContent", existing.getFromContent(), relationship.getFromContent() );
-        checkUnchanged( "toContent", existing.getToContent(), relationship.getToContent() );
-        checkUnchanged( "type", existing.getType(), relationship.getType() );
+        checkIllegalChanges( existing );
 
         relationshipJcrMapper.toJcr( relationship, node );
     }
 
-    private void checkUnchanged( final String property, final Object previousValue, final Object newValue )
+    private void checkIllegalChanges( final Relationship existing )
     {
-        if ( previousValue == null && newValue == null )
-        {
-            return;
-        }
-
-        if ( previousValue == null )
-        {
-            throw new IllegalArgumentException( property + " cannot be changed: [" + previousValue + "] -> [" + newValue + "]" );
-        }
-        else if ( !previousValue.equals( newValue ) )
-        {
-            throw new IllegalArgumentException( property + " cannot be changed: [" + previousValue + "] -> [" + newValue + "]" );
-        }
+        checkIllegalChange( "createdTime", existing.getCreatedTime(), relationship.getCreatedTime() );
+        checkIllegalChange( "creator", existing.getCreator(), relationship.getCreator() );
+        checkIllegalChange( "fromContent", existing.getFromContent(), relationship.getFromContent() );
+        checkIllegalChange( "toContent", existing.getToContent(), relationship.getToContent() );
+        checkIllegalChange( "type", existing.getType(), relationship.getType() );
     }
 }

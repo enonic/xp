@@ -27,14 +27,26 @@ final class RelationshipTypeDaoHandlerUpdate
     protected final void doHandle()
         throws RepositoryException
     {
+
         final QualifiedRelationshipTypeName qualifiedName = relationshipType.getQualifiedName();
-        final Node relationshipTypeNode = getRelationshipTypeNode( qualifiedName );
-        if ( relationshipTypeNode == null )
+        final Node node = getRelationshipTypeNode( qualifiedName );
+        if ( node == null )
         {
             throw new RelationshipTypeNotFoundException( qualifiedName );
         }
 
-        relationshipTypeJcrMapper.toJcr( relationshipType, relationshipTypeNode );
+        final RelationshipType existing = relationshipTypeJcrMapper.toRelationshipType( node );
+        checkIllegalChanges( existing );
+
+        relationshipTypeJcrMapper.toJcr( relationshipType, node );
     }
 
+    private void checkIllegalChanges( final RelationshipType existing )
+    {
+        checkIllegalChange( "createdTime", existing.getCreatedTime(), relationshipType.getCreatedTime() );
+
+        // Cannot be changes since they are a part of a Relationship's storage path in JCR.
+        checkIllegalChange( "name", existing.getName(), relationshipType.getName() );
+        checkIllegalChange( "moduleName", existing.getModuleName(), relationshipType.getModuleName() );
+    }
 }

@@ -4,6 +4,7 @@ import com.enonic.wem.api.command.account.AccountCommands;
 import com.enonic.wem.api.command.content.BaseTypeCommands;
 import com.enonic.wem.api.command.content.ContentCommands;
 import com.enonic.wem.api.command.content.mixin.MixinCommands;
+import com.enonic.wem.api.command.content.relationship.RelationshipCommands;
 import com.enonic.wem.api.command.content.relationshiptype.RelationshipTypeCommands;
 import com.enonic.wem.api.command.content.type.ContentTypeCommands;
 import com.enonic.wem.api.command.space.SpaceCommands;
@@ -18,6 +19,8 @@ public final class Commands
     private static final UserStoreCommands USER_STORE_COMMANDS = new UserStoreCommands();
 
     private static final ContentCommands CONTENT_COMMANDS = new ContentCommands();
+
+    private static final RelationshipCommands RELATIONSHIP_COMMANDS = new RelationshipCommands();
 
     private static final BaseTypeCommands BASE_TYPE_COMMANDS = new BaseTypeCommands();
 
@@ -44,6 +47,11 @@ public final class Commands
     public static ContentCommands content()
     {
         return CONTENT_COMMANDS;
+    }
+
+    public static RelationshipCommands relationship()
+    {
+        return RELATIONSHIP_COMMANDS;
     }
 
     public static BaseTypeCommands baseType()

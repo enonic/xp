@@ -7,44 +7,29 @@ import javax.jcr.Session;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.api.content.relationship.RelationshipIds;
-import com.enonic.wem.api.content.relationship.RelationshipSelectors;
 import com.enonic.wem.api.content.relationship.Relationships;
 
 
 final class RelationshipDaoHandlerSelect
     extends AbstractRelationshipDaoHandler<Relationships>
 {
-    private RelationshipSelectors selectors;
+    private RelationshipIds relationshipIds;
 
     RelationshipDaoHandlerSelect( final Session session )
     {
         super( session );
     }
 
-    RelationshipDaoHandlerSelect selectors( RelationshipSelectors selectors )
+    RelationshipDaoHandlerSelect selectors( RelationshipIds relationshipIds )
     {
-        this.selectors = selectors;
+        this.relationshipIds = relationshipIds;
         return this;
     }
 
     protected void doHandle()
         throws RepositoryException
     {
-        if ( selectors instanceof RelationshipIds )
-        {
-            handleSelectByRelationshipIds();
-        }
-        else
-        {
-            throw new UnsupportedOperationException( "selector [" + selectors.getClass().getSimpleName() + " ] not supported" );
-        }
-    }
-
-    private void handleSelectByRelationshipIds()
-        throws RepositoryException
-    {
         final Relationships.Builder relationshipsBuilder = Relationships.newRelationships();
-        final RelationshipIds relationshipIds = (RelationshipIds) selectors;
         for ( RelationshipId relationshipId : relationshipIds )
         {
             final Node node = getRelationshipNode( relationshipId );

@@ -35,7 +35,7 @@ public final class UpdateMixinsHandler
     public void handle( final CommandContext context, final UpdateMixins command )
         throws Exception
     {
-        final QualifiedMixinNames qualifiedMixinNames = command.getQualifiedMixinNames();
+        final QualifiedMixinNames qualifiedMixinNames = command.getQualifiedNames();
         final MixinEditor editor = command.getEditor();
         final Session session = context.getJcrSession();
         int mixinsUpdated = 0;

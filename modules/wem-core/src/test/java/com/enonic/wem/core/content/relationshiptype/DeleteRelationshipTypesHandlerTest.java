@@ -48,7 +48,7 @@ public class DeleteRelationshipTypesHandlerTest
     {
         // exercise
         final QualifiedRelationshipTypeNames names = QualifiedRelationshipTypeNames.from( "my:relationshipType" );
-        final DeleteRelationshipTypes command = Commands.relationshipType().delete().names( names );
+        final DeleteRelationshipTypes command = Commands.relationshipType().delete().qualifiedNames( names );
         this.handler.handle( this.context, command );
 
         // verify
@@ -72,7 +72,7 @@ public class DeleteRelationshipTypesHandlerTest
             when( relationshipTypeDao ).delete( eq( notFoundName ), any( Session.class ) );
 
         final QualifiedRelationshipTypeNames names = QualifiedRelationshipTypeNames.from( existingName, notFoundName, anotherExistingName );
-        final DeleteRelationshipTypes command = Commands.relationshipType().delete().names( names );
+        final DeleteRelationshipTypes command = Commands.relationshipType().delete().qualifiedNames( names );
 
         this.handler.handle( this.context, command );
 

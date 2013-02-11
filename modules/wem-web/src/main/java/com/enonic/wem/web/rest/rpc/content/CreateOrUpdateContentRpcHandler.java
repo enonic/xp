@@ -109,6 +109,7 @@ public final class CreateOrUpdateContentRpcHandler
         return client.execute( createContent );
     }
 
+    // TODO: This logic possibly belongs in CreateContentHandler, since not only RPC API would benefit from this
     private ContentPath getPathForNewContent( final ContentPath parentPath, final String displayName )
     {
         ContentPath contentPath = ContentPath.from( parentPath, contentPathNameGenerator.generatePathName( displayName ) );

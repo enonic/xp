@@ -10,14 +10,14 @@ import com.enonic.wem.api.content.mixin.QualifiedMixinNames;
 public final class UpdateMixins
     extends Command<Integer>
 {
-    private QualifiedMixinNames qualifiedMixinNames;
+    private QualifiedMixinNames qualifiedNames;
 
     private MixinEditor editor;
 
 
-    public UpdateMixins names( final QualifiedMixinNames qualifiedMixinNames )
+    public UpdateMixins qualifiedNames( final QualifiedMixinNames qualifiedMixinNames )
     {
-        this.qualifiedMixinNames = qualifiedMixinNames;
+        this.qualifiedNames = qualifiedMixinNames;
         return this;
     }
 
@@ -27,9 +27,9 @@ public final class UpdateMixins
         return this;
     }
 
-    public QualifiedMixinNames getQualifiedMixinNames()
+    public QualifiedMixinNames getQualifiedNames()
     {
-        return qualifiedMixinNames;
+        return qualifiedNames;
     }
 
     public MixinEditor getEditor()
@@ -51,19 +51,19 @@ public final class UpdateMixins
         }
 
         final UpdateMixins that = (UpdateMixins) o;
-        return Objects.equal( this.qualifiedMixinNames, that.qualifiedMixinNames ) && Objects.equal( this.editor, that.editor );
+        return Objects.equal( this.qualifiedNames, that.qualifiedNames ) && Objects.equal( this.editor, that.editor );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.qualifiedMixinNames, this.editor );
+        return Objects.hashCode( this.qualifiedNames, this.editor );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.qualifiedMixinNames, "Content type names cannot be null" );
-        Preconditions.checkNotNull( this.editor, "Editor cannot be null" );
+        Preconditions.checkNotNull( this.qualifiedNames, "qualifiedNames cannot be null" );
+        Preconditions.checkNotNull( this.editor, "editor cannot be null" );
     }
 }

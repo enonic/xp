@@ -47,6 +47,12 @@ final class JsonRpcContextImpl
     }
 
     @Override
+    public boolean hasParam( final String name )
+    {
+        return this.params.containsKey( name );
+    }
+
+    @Override
     public JsonRpcParam param( final String name )
     {
         final JsonRpcParam param = this.params.get( name );

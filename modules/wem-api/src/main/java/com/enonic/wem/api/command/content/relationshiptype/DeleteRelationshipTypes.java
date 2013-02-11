@@ -9,16 +9,16 @@ import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName
 public final class DeleteRelationshipTypes
     extends Command<RelationshipTypeDeletionResult>
 {
-    private QualifiedRelationshipTypeNames relationshipTypeNames;
+    private QualifiedRelationshipTypeNames qualifiedNames;
 
-    public QualifiedRelationshipTypeNames getNames()
+    public QualifiedRelationshipTypeNames getQualifiedNames()
     {
-        return this.relationshipTypeNames;
+        return this.qualifiedNames;
     }
 
-    public DeleteRelationshipTypes names( final QualifiedRelationshipTypeNames relationshipTypeNames )
+    public DeleteRelationshipTypes qualifiedNames( final QualifiedRelationshipTypeNames relationshipTypeNames )
     {
-        this.relationshipTypeNames = relationshipTypeNames;
+        this.qualifiedNames = relationshipTypeNames;
         return this;
     }
 
@@ -36,18 +36,18 @@ public final class DeleteRelationshipTypes
         }
 
         final DeleteRelationshipTypes that = (DeleteRelationshipTypes) o;
-        return Objects.equal( this.relationshipTypeNames, that.relationshipTypeNames );
+        return Objects.equal( this.qualifiedNames, that.qualifiedNames );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.relationshipTypeNames );
+        return Objects.hashCode( this.qualifiedNames );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.relationshipTypeNames, "Relationship type names cannot be null" );
+        Preconditions.checkNotNull( this.qualifiedNames, "Relationship type names cannot be null" );
     }
 }

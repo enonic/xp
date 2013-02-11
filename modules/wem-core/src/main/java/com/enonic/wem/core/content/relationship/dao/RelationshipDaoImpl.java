@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
 import com.enonic.wem.api.content.relationship.RelationshipIds;
-import com.enonic.wem.api.content.relationship.RelationshipSelectors;
 import com.enonic.wem.api.content.relationship.Relationships;
 
 /**
@@ -54,10 +53,10 @@ public class RelationshipDaoImpl
     }
 
     @Override
-    public Relationships select( final RelationshipSelectors selectors, final Session session )
+    public Relationships select( final RelationshipIds relationshipIds, final Session session )
     {
         final RelationshipDaoHandlerSelect handler = new RelationshipDaoHandlerSelect( session );
-        handler.selectors( selectors );
+        handler.selectors( relationshipIds );
         return handler.getResult();
     }
 }

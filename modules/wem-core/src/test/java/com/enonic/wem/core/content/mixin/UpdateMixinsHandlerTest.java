@@ -73,8 +73,8 @@ public class UpdateMixinsHandlerTest
         Mockito.when( mixinDao.select( isA( QualifiedMixinNames.class ), any( Session.class ) ) ).thenReturn( mixins );
 
         final FormItem formItemToSet = newInput().name( "age" ).type( InputTypes.WHOLE_NUMBER ).build();
-        final UpdateMixins command =
-            Commands.mixin().update().names( QualifiedMixinNames.from( "myModule:age" ) ).editor( setMixin( "age2", formItemToSet, null ) );
+        final UpdateMixins command = Commands.mixin().update().qualifiedNames( QualifiedMixinNames.from( "myModule:age" ) ).editor(
+            setMixin( "age2", formItemToSet, null ) );
 
         // exercise
         this.handler.handle( this.context, command );

@@ -11,6 +11,8 @@ public interface JsonRpcContext
 
     public JsonNode getResult();
 
+    public boolean hasParam( final String name );
+
     public JsonRpcParam param( final String name );
 
     public void setResult( final String value );

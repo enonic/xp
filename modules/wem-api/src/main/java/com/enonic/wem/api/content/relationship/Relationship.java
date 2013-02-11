@@ -1,11 +1,13 @@
 package com.enonic.wem.api.content.relationship;
 
 
-import java.util.Properties;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.ContentId;
@@ -26,7 +28,7 @@ public final class Relationship
 
     private final ContentId toContent;
 
-    private final Properties properties;
+    private final ImmutableMap<String, String> properties;
 
     /**
      * If true, managed by fromContent.
@@ -47,7 +49,8 @@ public final class Relationship
         this.toContent = builder.toContent;
         this.createdTime = builder.createdTime;
         this.creator = builder.creator;
-        this.properties = builder.properties;
+        ImmutableMap.Builder<String, String> propertiesBuilder = ImmutableMap.builder();
+        this.properties = propertiesBuilder.putAll( builder.properties ).build();
         this.managed = builder.managed;
         if ( this.managed )
         {
@@ -85,9 +88,14 @@ public final class Relationship
         return toContent;
     }
 
+    public ImmutableMap<String, String> getProperties()
+    {
+        return properties;
+    }
+
     public String getProperty( String name )
     {
-        return properties.getProperty( name );
+        return properties.get( name );
     }
 
     public boolean isManaged()
@@ -105,6 +113,11 @@ public final class Relationship
         return new Builder();
     }
 
+    public static Builder newRelationship( final Relationship relationship )
+    {
+        return new Builder( relationship );
+    }
+
     public static class Builder
     {
         private RelationshipId id;
@@ -119,11 +132,29 @@ public final class Relationship
 
         private ContentId toContent;
 
-        private Properties properties = new Properties();
+        private Map<String, String> properties = Maps.newLinkedHashMap();
 
         private boolean managed = false;
 
         private EntryPath managingData;
+
+        private Builder( final Relationship relationship )
+        {
+            id = relationship.id;
+            creator = relationship.creator;
+            createdTime = relationship.createdTime;
+            type = relationship.type;
+            fromContent = relationship.fromContent;
+            toContent = relationship.toContent;
+            properties.putAll( relationship.getProperties() );
+            managed = relationship.managed;
+            managingData = relationship.managingData;
+        }
+
+        private Builder()
+        {
+            // default
+        }
 
         public Builder id( RelationshipId value )
         {
@@ -161,16 +192,16 @@ public final class Relationship
             return this;
         }
 
-        public Builder properties( Properties value )
+        public Builder properties( Map<String, String> properties )
         {
-            Preconditions.checkNotNull( value, "properties cannot be null" );
-            this.properties = value;
+            Preconditions.checkNotNull( properties, "properties cannot be null" );
+            this.properties = properties;
             return this;
         }
 
         public Builder property( String key, String value )
         {
-            this.properties.setProperty( key, value );
+            this.properties.put( key, value );
             return this;
         }
 
@@ -185,5 +216,6 @@ public final class Relationship
         {
             return new Relationship( this );
         }
+
     }
 }
