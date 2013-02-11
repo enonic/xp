@@ -153,49 +153,56 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
             switch (type) {
             case 'contentType':
-                //This is stub, logic for new content creation will be added later
-                var createContentTabFn = function (response) {
-                    var contentData = {
-                        content: {
-                            iconUrl: response.iconUrl
-                        },
-                        contentType: response.contentType,
-                        // use first selected record as parent for new content
-                        contentParent: treeGridSelection.length > 0 ? treeGridSelection[0].data : undefined
-                    };
-                    return {
-                        xtype: 'contentWizardPanel',
-                        title: '[New ' + contentData.contentType.displayName + ']',
-                        data: contentData
-                    };
-                };
-
-
-                var requestConfig = {
-                    doTabRequest: function (handleRpcResponse) {
-                        Admin.lib.RemoteService.contentType_get({
-                                format: 'JSON',
-                                contentType: qualifiedContentType,
-                                mixinReferencesToFormItems: true
-                            },
-                            function (rpcResponse) {
-                                if (rpcResponse.success) {
-                                    handleRpcResponse(rpcResponse);
-                                }
-                            });
+                Admin.lib.RemoteService.contentType_get({
+                        format: 'JSON',
+                        contentType: qualifiedContentType,
+                        mixinReferencesToFormItems: true
                     },
-                    createTabFromResponse: createContentTabFn
-                };
+                    function (rpcResponse) {
+                        if (rpcResponse.success) {
 
-                var tabItem = {
-                    id: 'tab-new-content-' + qualifiedContentType,
-                    title: '[New ' + contentTypeName + ']',
-                    closable: true,
-                    editing: true,
-                    layout: 'fit'
-                };
-                tabs.addTab(tabItem, undefined, requestConfig);
+                            //This is stub, logic for new content creation will be added later
+                            var createContentTabFn = function (response) {
+                                var contentData = {
+                                    content: {
+                                        iconUrl: response.iconUrl
+                                    },
+                                    contentType: response.contentType,
+                                    // use first selected record as parent for new content
+                                    contentParent: treeGridSelection.length > 0 ? treeGridSelection[0].data : undefined
+                                };
+                                return {
+                                    xtype: 'contentWizardPanel',
+                                    title: '[New ' + contentData.contentType.displayName + ']',
+                                    data: contentData
+                                };
+                            };
 
+
+                            var requestConfig = {
+                                doTabRequest: function (handleRpcResponse) {
+                                    handleRpcResponse(rpcResponse);
+                                },
+                                createTabFromResponse: createContentTabFn
+                            };
+
+                            var tabItem = {
+                                id: 'tab-new-content-' + qualifiedContentType,
+                                data: {
+                                    name: contentTypeName,
+                                    content: {
+                                        iconUrl: rpcResponse.iconUrl
+                                    }
+                                },
+                                title: '[New ' + contentTypeName + ']',
+                                closable: true,
+                                editing: true,
+                                layout: 'fit'
+                            };
+                            tabs.addTab(tabItem, undefined, requestConfig);
+
+                        }
+                    });
                 break;
             case 'site':
                 tab = {
