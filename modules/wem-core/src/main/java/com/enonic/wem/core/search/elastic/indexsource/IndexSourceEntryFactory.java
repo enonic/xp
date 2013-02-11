@@ -1,5 +1,6 @@
 package com.enonic.wem.core.search.elastic.indexsource;
 
+import java.util.Date;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -12,7 +13,11 @@ final class IndexSourceEntryFactory
 
     public static final String NUMERIC_FIELD_POSTFIX = "numeric";
 
+    public static final String DATE_FIELD_POSTFIX = "date";
+
     public static final String FIELD_TYPE_SEPARATOR = ".";
+
+    public static final String DEFAULT_EMPTY_STRING_VALUE = "";
 
 
     /**
@@ -38,24 +43,13 @@ final class IndexSourceEntryFactory
         if ( value instanceof Number )
         {
             appendNumericField( indexDocumentEntry, indexSourceEntries );
-            appendStringField( indexDocumentEntry, indexSourceEntries );
         }
-        else
-        {
-            appendStringField( indexDocumentEntry, indexSourceEntries );
-        }
-        /*
         else if ( value instanceof Date )
         {
-            contentIndexDataElement.addDateValue( (Date) value );
-            contentIndexDataElement.addStringValue( ElasticSearchFormatter.formatDateAsStringIgnoreTimezone( (Date) value ) );
+            appendDateField( indexDocumentEntry, indexSourceEntries );
         }
-        else
-        {
-            contentIndexDataElement.addStringValue( IndexValueNormalizer.normalizeStringValue( value.toString() ) );
-            addNumberOrDateIfPossible( contentIndexDataElement, value );
-        }
-        */
+
+        appendStringField( indexDocumentEntry, indexSourceEntries );
 
         return indexSourceEntries;
     }
@@ -68,13 +62,21 @@ final class IndexSourceEntryFactory
         indexSourceEntries.add( new IndexSourceEntry( generateNumericFieldName( baseFieldName ), doubleValue ) );
     }
 
+    private static void appendDateField( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
+    {
+        final String baseFieldName = indexDocumentEntry.getKey();
+        final Date dateValue = ( (Date) indexDocumentEntry.getValue() );
+
+        indexSourceEntries.add( new IndexSourceEntry( generateDateFieldName( baseFieldName ), dateValue ) );
+    }
+
     private static void appendStringField( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
     {
         String baseFieldName = indexDocumentEntry.getKey();
 
         final String stringValue = indexDocumentEntry.getValueAsString();
 
-        indexSourceEntries.add( new IndexSourceEntry( generateStringTypeFieldName( baseFieldName ), stringValue ) );
+        indexSourceEntries.add( new IndexSourceEntry( generateStringTypeFieldName( baseFieldName ), genereateStringValue( stringValue ) ) );
     }
 
     private static void appendOrderBy( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
@@ -96,8 +98,18 @@ final class IndexSourceEntryFactory
         return originalFieldName + FIELD_TYPE_SEPARATOR + NUMERIC_FIELD_POSTFIX;
     }
 
+    private static String generateDateFieldName( final String originalFieldName )
+    {
+        return originalFieldName + FIELD_TYPE_SEPARATOR + DATE_FIELD_POSTFIX;
+    }
+
     private static String generateStringTypeFieldName( final String originalFieldName )
     {
         return originalFieldName;
+    }
+
+    private static String genereateStringValue( final String stringValue )
+    {
+        return stringValue != null ? stringValue.toLowerCase() : DEFAULT_EMPTY_STRING_VALUE;
     }
 }

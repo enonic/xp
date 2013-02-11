@@ -6,7 +6,6 @@ final class IndexSourceEntry
      * This represents one entry to be indexed
      * It should contain the key and value, plus other needed stuff
      */
-
     private final String key;
 
     private final Object value;
