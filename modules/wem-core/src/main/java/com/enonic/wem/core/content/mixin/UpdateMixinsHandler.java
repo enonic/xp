@@ -47,7 +47,7 @@ public final class UpdateMixinsHandler
                 final Mixin modifiedMixin = editor.edit( mixin );
                 if ( modifiedMixin != null )
                 {
-                    updateMixin( session, mixin );
+                    updateMixin( session, modifiedMixin );
                     mixinsUpdated++;
                 }
             }
