@@ -33,7 +33,7 @@ Ext.define('Admin.lib.CodeMirror', {
     initCodeMirror: function () {
         var me = this;
 
-        me.codeMirror = CodeMirror.fromTextArea(document.getElementById(me.id + '-inputEl'), {
+        me.codeMirror = CodeMirror.fromTextArea(document.getElementById(me.getInputId()), {
             lineNumbers: true,
             tabSize: 2
         });
