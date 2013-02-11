@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.springframework.stereotype.Component;
-
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.content.Content;
@@ -16,7 +14,6 @@ import com.enonic.wem.core.search.IndexConstants;
 import com.enonic.wem.core.search.IndexType;
 import com.enonic.wem.core.search.indexdocument.IndexDocument;
 
-@Component
 public class ContentIndexDocumentsFactory
 {
 

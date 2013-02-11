@@ -2,8 +2,6 @@ package com.enonic.wem.core.search.elastic.indexsource;
 
 import java.util.Set;
 
-import org.springframework.stereotype.Component;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
@@ -19,7 +17,7 @@ import com.enonic.wem.core.search.indexdocument.IndexDocumentEntry;
  * If (include in all), append this field to all-field value
  * Add IndexSourceEntries needed
  */
-@Component
+
 public class IndexSourceFactory
 {
     private static final String ALL_FIELD_NAME = "_all";
