@@ -9,14 +9,14 @@ Ext.define('Admin.view.contentStudio.ContextMenu', {
             action: 'editContentType'
         },
         {
+            text: 'Open',
+            iconCls: 'icon-view',
+            action: 'viewContentType'
+        },
+        {
             text: 'Delete',
             iconCls: 'icon-delete',
             action: 'deleteContentType'
-        },
-        {
-            text: 'View',
-            iconCls: 'icon-view',
-            action: 'viewContentType'
         }
     ]
 });

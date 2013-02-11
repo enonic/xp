@@ -43,17 +43,15 @@ Ext.define('Admin.view.contentStudio.BrowseToolbar', {
                 action: 'editBaseType'
             },
             {
-                text: 'Delete',
-                disabled: true,
-                action: 'deleteBaseType'
-            },
-
-            {
                 text: 'Open',
                 disabled: true,
                 action: 'viewContentType'
             },
-
+            {
+                text: 'Delete',
+                disabled: true,
+                action: 'deleteBaseType'
+            },
             {
                 text: 'Re-index',
                 action: 'reindexContentTypes'

@@ -10,15 +10,15 @@ Ext.define('Admin.view.contentManager.ContextMenu', {
             disableOnMultipleSelection: false
         },
         {
-            text: 'Delete',
-            iconCls: 'icon-delete',
-            action: 'deleteContent'
-        },
-        {
-            text: 'View',
+            text: 'Open',
             iconCls: 'icon-view',
             action: 'viewContent',
             disableOnMultipleSelection: false
+        },
+        {
+            text: 'Delete',
+            iconCls: 'icon-delete',
+            action: 'deleteContent'
         }
     ]
 });
