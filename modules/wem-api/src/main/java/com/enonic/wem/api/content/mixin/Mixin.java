@@ -4,13 +4,12 @@ package com.enonic.wem.api.content.mixin;
 import org.joda.time.DateTime;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.content.AbstractBaseType;
 import com.enonic.wem.api.content.BaseType;
+import com.enonic.wem.api.content.type.BaseTypeKey;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.module.ModuleName;
 
 public class Mixin
-    extends AbstractBaseType
     implements BaseType
 {
     private final FormItem formItem;
@@ -27,7 +26,7 @@ public class Mixin
 
     private final Icon icon;
 
-    Mixin( final Builder builder )
+    private Mixin( final Builder builder )
     {
         this.moduleName = builder.moduleName;
         this.formItem = builder.formItem;
@@ -38,21 +37,25 @@ public class Mixin
         this.icon = builder.icon;
     }
 
+    @Override
     public String getName()
     {
         return formItem.getName();
     }
 
+    @Override
     public ModuleName getModuleName()
     {
         return moduleName;
     }
 
+    @Override
     public String getDisplayName()
     {
         return displayName;
     }
 
+    @Override
     public QualifiedMixinName getQualifiedName()
     {
         return qualifiedName;
@@ -63,11 +66,13 @@ public class Mixin
         return formItem;
     }
 
+    @Override
     public DateTime getCreatedTime()
     {
         return createdTime;
     }
 
+    @Override
     public DateTime getModifiedTime()
     {
         return modifiedTime;
@@ -76,6 +81,12 @@ public class Mixin
     public Icon getIcon()
     {
         return icon;
+    }
+
+    @Override
+    public BaseTypeKey getBaseTypeKey()
+    {
+        return BaseTypeKey.from( qualifiedName );
     }
 
     public static Builder newMixin()

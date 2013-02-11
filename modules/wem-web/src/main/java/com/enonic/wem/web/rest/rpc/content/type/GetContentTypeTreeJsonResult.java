@@ -11,7 +11,7 @@ import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
 import com.enonic.wem.core.content.type.ContentTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
-import com.enonic.wem.web.rest.resource.content.ContentTypeImageUriResolver;
+import com.enonic.wem.web.rest.resource.content.BaseTypeImageUriResolver;
 
 public class GetContentTypeTreeJsonResult
     extends JsonResult
@@ -61,7 +61,7 @@ public class GetContentTypeTreeJsonResult
     private ObjectNode serializeContentType( final ContentType contentType )
     {
         final ObjectNode contentTypeJson = (ObjectNode) contentTypeSerializer.toJson( contentType );
-        contentTypeJson.put( "iconUrl", ContentTypeImageUriResolver.resolve( contentType.getQualifiedName() ) );
+        contentTypeJson.put( "iconUrl", BaseTypeImageUriResolver.resolve( contentType.getBaseTypeKey() ) );
         return contentTypeJson;
     }
 }

@@ -7,7 +7,6 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.content.AbstractBaseType;
 import com.enonic.wem.api.content.BaseType;
 import com.enonic.wem.api.content.type.form.Form;
 import com.enonic.wem.api.content.type.form.FormItem;
@@ -18,7 +17,6 @@ import com.enonic.wem.api.module.ModuleName;
 import static com.enonic.wem.api.content.type.form.Form.newForm;
 
 public final class ContentType
-    extends AbstractBaseType
     implements BaseType
 {
     private final String name;
@@ -57,16 +55,19 @@ public final class ContentType
         this.icon = builder.icon;
     }
 
+    @Override
     public String getName()
     {
         return name;
     }
 
+    @Override
     public String getDisplayName()
     {
         return displayName;
     }
 
+    @Override
     public QualifiedContentTypeName getQualifiedName()
     {
         return new QualifiedContentTypeName( moduleName, name );
@@ -87,16 +88,19 @@ public final class ContentType
         return isFinal;
     }
 
+    @Override
     public ModuleName getModuleName()
     {
         return moduleName;
     }
 
+    @Override
     public DateTime getCreatedTime()
     {
         return createdTime;
     }
 
+    @Override
     public DateTime getModifiedTime()
     {
         return modifiedTime;
@@ -110,6 +114,12 @@ public final class ContentType
     public Icon getIcon()
     {
         return icon;
+    }
+
+    @Override
+    public BaseTypeKey getBaseTypeKey()
+    {
+        return BaseTypeKey.from( getQualifiedName() );
     }
 
     @Override

@@ -14,7 +14,7 @@
             "modifiedTime": "2000-01-01T12:00:00.000+01:00",
             "editable": true,
             "deletable": true,
-            "iconUrl": "http://localhost/admin/rest/content-type/image/System:unstructured"
+            "iconUrl": "http://localhost/admin/rest/basetype/image/ContentType:System:unstructured"
         },
         {
             "id": null,
@@ -28,7 +28,7 @@
             "modifiedTime": "2000-01-01T12:00:00.000+01:00",
             "editable": true,
             "deletable": true,
-            "iconUrl": "http://localhost/admin/rest/content-type/image/System:unstructured"
+            "iconUrl": "http://localhost/admin/rest/basetype/image/ContentType:System:unstructured"
         },
         {
             "id": null,
@@ -42,7 +42,7 @@
             "modifiedTime": "2000-01-01T12:00:00.000+01:00",
             "editable": true,
             "deletable": true,
-            "iconUrl": "http://localhost/admin/rest/content-type/image/System:unstructured"
+            "iconUrl": "http://localhost/admin/rest/basetype/image/ContentType:System:unstructured"
         },
         {
             "id": null,
@@ -56,7 +56,7 @@
             "modifiedTime": "2000-01-01T12:00:00.000+01:00",
             "editable": true,
             "deletable": true,
-            "iconUrl": "http://localhost/admin/rest/content-type/image/System:unstructured"
+            "iconUrl": "http://localhost/admin/rest/basetype/image/ContentType:System:unstructured"
         },
         {
             "id": null,
@@ -70,7 +70,7 @@
             "modifiedTime": "2000-01-01T12:00:00.000+01:00",
             "editable": true,
             "deletable": true,
-            "iconUrl": "http://localhost/admin/rest/content-type/image/System:unstructured"
+            "iconUrl": "http://localhost/admin/rest/basetype/image/ContentType:System:unstructured"
         },
         {
             "id": null,
@@ -84,7 +84,7 @@
             "modifiedTime": "2000-01-01T12:00:00.000+01:00",
             "editable": true,
             "deletable": true,
-            "iconUrl": "http://localhost/admin/rest/content-type/image/System:unstructured"
+            "iconUrl": "http://localhost/admin/rest/basetype/image/ContentType:System:unstructured"
         },
         {
             "id": null,
@@ -98,7 +98,7 @@
             "modifiedTime": "2000-01-01T12:00:00.000+01:00",
             "editable": true,
             "deletable": true,
-            "iconUrl": "http://localhost/admin/rest/content-type/image/System:unstructured"
+            "iconUrl": "http://localhost/admin/rest/basetype/image/ContentType:System:unstructured"
         },
         {
             "id": null,
@@ -112,7 +112,7 @@
             "modifiedTime": "2000-01-01T12:00:00.000+01:00",
             "editable": true,
             "deletable": true,
-            "iconUrl": "http://localhost/admin/rest/content-type/image/System:unstructured"
+            "iconUrl": "http://localhost/admin/rest/basetype/image/ContentType:System:unstructured"
         }
     ]
 }

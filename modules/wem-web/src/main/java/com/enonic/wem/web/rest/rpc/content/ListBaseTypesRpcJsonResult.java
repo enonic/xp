@@ -6,10 +6,9 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.BaseType;
 import com.enonic.wem.api.content.type.BaseTypes;
-import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.core.content.BaseTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
-import com.enonic.wem.web.rest.resource.content.ContentTypeImageUriResolver;
+import com.enonic.wem.web.rest.resource.content.BaseTypeImageUriResolver;
 
 final class ListBaseTypesRpcJsonResult
     extends JsonResult
@@ -38,10 +37,7 @@ final class ListBaseTypesRpcJsonResult
     private JsonNode serializeContentType( final BaseType baseType )
     {
         final ObjectNode baseTypeJson = (ObjectNode) baseTypeSerializer.toJson( baseType );
-        if ( baseType instanceof ContentType )
-        {
-            baseTypeJson.put( "iconUrl", ContentTypeImageUriResolver.resolve( ( (ContentType) baseType ).getQualifiedName() ) );
-        }
+        baseTypeJson.put( "iconUrl", BaseTypeImageUriResolver.resolve( baseType.getBaseTypeKey() ) );
         return baseTypeJson;
     }
 }

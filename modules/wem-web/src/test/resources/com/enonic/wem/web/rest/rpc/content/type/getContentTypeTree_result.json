@@ -11,7 +11,7 @@
             "isAbstract": false,
             "isFinal": false,
             "form": [ ],
-            "iconUrl": "http://localhost/admin/rest/content-type/image/System:Root",
+            "iconUrl": "http://localhost/admin/rest/basetype/image/ContentType:System:Root",
             "contentTypes": [
                 {
                     "name": "myType",
@@ -80,7 +80,7 @@
                             }
                         }
                     ],
-                    "iconUrl": "http://localhost/admin/rest/content-type/image/myModule:myType",
+                    "iconUrl": "http://localhost/admin/rest/basetype/image/ContentType:myModule:myType",
                     "contentTypes": [
                         {
                             "name": "subType",
@@ -91,7 +91,7 @@
                             "isAbstract": false,
                             "isFinal": false,
                             "form": [ ],
-                            "iconUrl": "http://localhost/admin/rest/content-type/image/myModule:subType",
+                            "iconUrl": "http://localhost/admin/rest/basetype/image/ContentType:myModule:subType",
                             "contentTypes": [ ],
                             "hasChildren": false
                         }

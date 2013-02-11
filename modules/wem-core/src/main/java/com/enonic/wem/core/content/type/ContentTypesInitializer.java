@@ -27,21 +27,21 @@ import static com.enonic.wem.api.content.type.editor.ContentTypeEditors.setConte
 public class ContentTypesInitializer
     implements InitializerTask
 {
-    public static final ContentType SPACE = createSystemType( QualifiedContentTypeName.space(), true, false );
+    static final ContentType SPACE = createSystemType( QualifiedContentTypeName.space(), true, false );
 
-    public static final ContentType STRUCTURED = createSystemType( QualifiedContentTypeName.structured(), false, true );
+    static final ContentType STRUCTURED = createSystemType( QualifiedContentTypeName.structured(), false, true );
 
-    public static final ContentType UNSTRUCTURED = createSystemType( QualifiedContentTypeName.unstructured(), false, false );
+    static final ContentType UNSTRUCTURED = createSystemType( QualifiedContentTypeName.unstructured(), false, false );
 
-    public static final ContentType FOLDER = createSystemType( QualifiedContentTypeName.folder(), false, false );
+    static final ContentType FOLDER = createSystemType( QualifiedContentTypeName.folder(), false, false );
 
-    public static final ContentType PAGE = createSystemType( QualifiedContentTypeName.page(), true, false );
+    static final ContentType PAGE = createSystemType( QualifiedContentTypeName.page(), true, false );
 
-    public static final ContentType SHORTCUT = createSystemType( QualifiedContentTypeName.shortcut(), true, false );
+    static final ContentType SHORTCUT = createSystemType( QualifiedContentTypeName.shortcut(), true, false );
 
-    public static final ContentType FILE = createSystemType( QualifiedContentTypeName.file(), true, false );
+    static final ContentType FILE = createSystemType( QualifiedContentTypeName.file(), true, false );
 
-    public static final ContentType[] SYSTEM_TYPES = {SPACE, STRUCTURED, UNSTRUCTURED, FOLDER, PAGE, SHORTCUT, FILE};
+    private static final ContentType[] SYSTEM_TYPES = {SPACE, STRUCTURED, UNSTRUCTURED, FOLDER, PAGE, SHORTCUT, FILE};
 
     private static final String[] TEST_CONTENT_TYPES =
         {"demo-contenttype-htmlarea.json", "demo-contenttype-fieldset.json", "demo-contenttype-set.json", "demo-contenttype-blog.json",

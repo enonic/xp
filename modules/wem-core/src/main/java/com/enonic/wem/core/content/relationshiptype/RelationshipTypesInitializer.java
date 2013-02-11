@@ -1,19 +1,23 @@
 package com.enonic.wem.core.content.relationshiptype;
 
+import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.relationshiptype.CreateRelationshipType;
 import com.enonic.wem.api.command.content.relationshiptype.UpdateRelationshipTypes;
+import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.initializer.InitializerTask;
 
+import static com.enonic.wem.api.content.relationshiptype.RelationshipType.newRelationshipType;
 import static com.enonic.wem.api.content.relationshiptype.editor.RelationshipTypeEditors.setRelationshipType;
 
 @Component
@@ -21,18 +25,11 @@ import static com.enonic.wem.api.content.relationshiptype.editor.RelationshipTyp
 public class RelationshipTypesInitializer
     implements InitializerTask
 {
-    private static final RelationshipType DEFAULT =
-        RelationshipType.newRelationshipType().name( "default" ).displayName( "Default" ).fromSemantic( "relates to" ).toSemantic(
-            "related by" ).createdTime( new DateTime( 2013, 1, 17, 15, 0, 0 ) ).module( ModuleName.SYSTEM ).build();
+    private static final RelationshipType DEFAULT = createRelationshipType( "default", "Default", "relates to", "related by" );
 
-    private static final RelationshipType REQUIRE =
-        RelationshipType.newRelationshipType().name( "require" ).displayName( "Require" ).fromSemantic( "requires" ).toSemantic(
-            "required by" ).createdTime( new DateTime( 2013, 1, 17, 15, 0, 0 ) ).module( ModuleName.SYSTEM ).build();
+    private static final RelationshipType REQUIRE = createRelationshipType( "require", "Require", "requires", "required by" );
 
-    private static final RelationshipType LIKE =
-        RelationshipType.newRelationshipType().name( "like" ).displayName( "Like" ).fromSemantic( "likes" ).toSemantic(
-            "liked by" ).createdTime( new DateTime( 2013, 1, 17, 15, 0, 0 ) ).module( ModuleName.SYSTEM ).build();
-
+    private static final RelationshipType LIKE = createRelationshipType( "like", "Like", "likes", "liked by" );
 
     private Client client;
 
@@ -62,6 +59,34 @@ public class RelationshipTypesInitializer
             updateCommand.editor( setRelationshipType( relationshipType ) );
             client.execute( updateCommand );
         }
+    }
+
+    private static Icon loadRelationshipTypeIcon( final QualifiedRelationshipTypeName qualifiedName )
+    {
+        try
+        {
+            final String filePath = "/META-INF/relationship-types/" + qualifiedName.toString().replace( ":", "_" ).toLowerCase() + ".png";
+            final byte[] iconData = IOUtils.toByteArray( RelationshipTypesInitializer.class.getResourceAsStream( filePath ) );
+            return Icon.from( iconData, "image/png" );
+        }
+        catch ( Exception e )
+        {
+            return null; // icon for relationship type not found
+        }
+    }
+
+    private static RelationshipType createRelationshipType( final String name, final String displayName, final String fromSemantic,
+                                                            final String toSemantic )
+    {
+        return newRelationshipType().
+            name( name ).
+            displayName( displayName ).
+            fromSemantic( fromSemantic ).
+            toSemantic( toSemantic ).
+            createdTime( new DateTime( 2013, 1, 17, 15, 0, 0 ) ).
+            module( ModuleName.SYSTEM ).
+            icon( loadRelationshipTypeIcon( new QualifiedRelationshipTypeName( ModuleName.SYSTEM, name ) ) ).
+            build();
     }
 
     @Autowired

@@ -9,14 +9,13 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.content.AbstractBaseType;
 import com.enonic.wem.api.content.BaseType;
+import com.enonic.wem.api.content.type.BaseTypeKey;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;
 
 public final class RelationshipType
-    extends AbstractBaseType
     implements BaseType
 {
     private final ModuleName module;
@@ -56,11 +55,13 @@ public final class RelationshipType
         this.icon = builder.icon;
     }
 
+    @Override
     public String getName()
     {
         return name;
     }
 
+    @Override
     public QualifiedRelationshipTypeName getQualifiedName()
     {
         return qualifiedName;
@@ -113,6 +114,12 @@ public final class RelationshipType
     public Icon getIcon()
     {
         return icon;
+    }
+
+    @Override
+    public BaseTypeKey getBaseTypeKey()
+    {
+        return BaseTypeKey.from( qualifiedName );
     }
 
     @Override

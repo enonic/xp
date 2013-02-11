@@ -8,7 +8,7 @@ import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.core.content.type.ContentTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
-import com.enonic.wem.web.rest.resource.content.ContentTypeImageUriResolver;
+import com.enonic.wem.web.rest.resource.content.BaseTypeImageUriResolver;
 
 final class ListContentTypesRpcJsonResult
     extends JsonResult
@@ -37,7 +37,7 @@ final class ListContentTypesRpcJsonResult
     private JsonNode serializeContentType( final ContentType contentType )
     {
         final ObjectNode contentTypeJson = (ObjectNode) contentTypeSerializer.toJson( contentType );
-        contentTypeJson.put( "iconUrl", ContentTypeImageUriResolver.resolve( contentType.getQualifiedName() ) );
+        contentTypeJson.put( "iconUrl", BaseTypeImageUriResolver.resolve( contentType.getBaseTypeKey() ) );
         return contentTypeJson;
     }
 }

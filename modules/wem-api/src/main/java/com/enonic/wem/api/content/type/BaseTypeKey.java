@@ -8,9 +8,9 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import com.enonic.wem.api.content.ModuleBasedQualifiedName;
-import com.enonic.wem.api.content.mixin.Mixin;
-import com.enonic.wem.api.content.relationshiptype.RelationshipType;
+import com.enonic.wem.api.command.content.BaseTypeKind;
+import com.enonic.wem.api.content.mixin.QualifiedMixinName;
+import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.module.ModuleName;
 
 public final class BaseTypeKey
@@ -22,15 +22,13 @@ public final class BaseTypeKey
 
     private final String refString;
 
-    private final String type;
-
-    //    private final BaseTypeKind type; TODO: replace string with enum type?
+    private final BaseTypeKind type;
 
     private final ModuleName moduleName;
 
     private final String localName;
 
-    private BaseTypeKey( final String type, final ModuleName moduleName, final String localName )
+    private BaseTypeKey( final BaseTypeKind type, final ModuleName moduleName, final String localName )
     {
         this.type = type;
         this.moduleName = moduleName;
@@ -40,17 +38,27 @@ public final class BaseTypeKey
 
     public boolean isContentType()
     {
-        return ContentType.class.getSimpleName().equals( this.type );
+        return this.type == BaseTypeKind.CONTENT_TYPE;
     }
 
     public boolean isMixin()
     {
-        return Mixin.class.getSimpleName().equals( this.type );
+        return this.type == BaseTypeKind.MIXIN;
     }
 
     public boolean isRelationshipType()
     {
-        return RelationshipType.class.getSimpleName().equals( this.type );
+        return this.type == BaseTypeKind.RELATIONSHIP_TYPE;
+    }
+
+    public ModuleName getModuleName()
+    {
+        return this.moduleName;
+    }
+
+    public String getLocalName()
+    {
+        return localName;
     }
 
     public String toString()
@@ -58,9 +66,19 @@ public final class BaseTypeKey
         return refString;
     }
 
-    public static BaseTypeKey from( Class type, final ModuleBasedQualifiedName qualifiedName )
+    public static BaseTypeKey from( final QualifiedContentTypeName contentTypeName )
     {
-        return new BaseTypeKey( type.getSimpleName(), qualifiedName.getModuleName(), qualifiedName.getLocalName() );
+        return new BaseTypeKey( BaseTypeKind.CONTENT_TYPE, contentTypeName.getModuleName(), contentTypeName.getLocalName() );
+    }
+
+    public static BaseTypeKey from( final QualifiedMixinName mixinName )
+    {
+        return new BaseTypeKey( BaseTypeKind.MIXIN, mixinName.getModuleName(), mixinName.getLocalName() );
+    }
+
+    public static BaseTypeKey from( final QualifiedRelationshipTypeName relationshipTypeName )
+    {
+        return new BaseTypeKey( BaseTypeKind.RELATIONSHIP_TYPE, relationshipTypeName.getModuleName(), relationshipTypeName.getLocalName() );
     }
 
     public static BaseTypeKey from( final String value )
@@ -73,11 +91,16 @@ public final class BaseTypeKey
             throw new IllegalArgumentException( "Not a valid BaseTypeKey [" + value + "]" );
         }
 
-        final String type = matcher.group( 2 );
+        final String type = matcher.group( 1 );
         final ModuleName moduleName = new ModuleName( matcher.group( 2 ) );
         final String localName = matcher.group( 3 );
 
-        return new BaseTypeKey( type, moduleName, localName );
+        final BaseTypeKind typeKind = BaseTypeKind.from( type );
+        if ( typeKind == null )
+        {
+            throw new IllegalArgumentException( "Not a valid BaseTypeKey [" + value + "]" );
+        }
+        return new BaseTypeKey( typeKind, moduleName, localName );
     }
 
 }

@@ -7,7 +7,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.core.content.serializer.ContentJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
-import com.enonic.wem.web.rest.resource.content.ContentTypeImageUriResolver;
+import com.enonic.wem.web.rest.resource.content.BaseTypeImageUriResolver;
 
 class GetContentJsonResult
     extends JsonResult
@@ -29,7 +29,7 @@ class GetContentJsonResult
     {
         json.put( "success", true );
         final ObjectNode contentJson = (ObjectNode) contentSerializerJson.serialize( content );
-        contentJson.put( "iconUrl", ContentTypeImageUriResolver.resolve( content.getType() ) );
+        contentJson.put( "iconUrl", BaseTypeImageUriResolver.resolve( content.getType() ) );
         json.put( "content", contentJson );
     }
 }

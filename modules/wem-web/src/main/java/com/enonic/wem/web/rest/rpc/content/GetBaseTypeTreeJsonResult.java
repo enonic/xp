@@ -7,12 +7,11 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.BaseType;
-import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
 import com.enonic.wem.core.content.BaseTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
-import com.enonic.wem.web.rest.resource.content.ContentTypeImageUriResolver;
+import com.enonic.wem.web.rest.resource.content.BaseTypeImageUriResolver;
 
 public class GetBaseTypeTreeJsonResult
     extends JsonResult
@@ -63,10 +62,7 @@ public class GetBaseTypeTreeJsonResult
     private ObjectNode serializeBaseType( final BaseType baseType )
     {
         final ObjectNode baseTypeJson = (ObjectNode) baseTypeSerializer.toJson( baseType );
-        if ( baseType instanceof ContentType )
-        {
-            baseTypeJson.put( "iconUrl", ContentTypeImageUriResolver.resolve( ( (ContentType) baseType ).getQualifiedName() ) );
-        }
+        baseTypeJson.put( "iconUrl", BaseTypeImageUriResolver.resolve( baseType.getBaseTypeKey() ) );
         return baseTypeJson;
     }
 }

@@ -24,6 +24,6 @@
                 "value": "value2"
             }
         ],
-        "iconUrl": "http://localhost/admin/rest/content-type/image/myModule:myType"
+        "iconUrl": "http://localhost/admin/rest/basetype/image/ContentType:myModule:myType"
     }
 }
