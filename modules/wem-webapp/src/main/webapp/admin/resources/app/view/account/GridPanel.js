@@ -16,8 +16,10 @@ Ext.define('Admin.view.account.GridPanel', {
     border: false,
 
     verticalScroller: {
-        trailingBufferZone: 200,
-        leadingBufferZone: 200
+        trailingBufferZone: 100,
+        leadingBufferZone: 100,
+        numFromEdge: 10,
+        scrollToLoadBuffer: 0
     },
 
     invalidateScrollerOnRefresh: false,
@@ -98,6 +100,11 @@ Ext.define('Admin.view.account.GridPanel', {
         });
 
         me.callParent(arguments);
+
+        if (me.verticalScroller) {
+            Ext.Function.interceptBefore(this.verticalScroller, 'attemptLoad', me.saveSelection, me);
+            me.store.on('datachanged', me.restoreSelection, me);
+        }
     },
 
     nameRenderer: function (value, p, record) {
@@ -116,6 +123,21 @@ Ext.define('Admin.view.account.GridPanel', {
             }
         } catch (e) {
             return value;
+        }
+    },
+
+    saveSelection: function () {
+        if (!this.selectionCache) {
+            var plugin = this.getPlugin('persistentGridSelection');
+            var source = plugin ? plugin : this.getSelectionModel();
+            this.selectionCache = source.getSelection();
+        }
+    },
+
+    restoreSelection: function () {
+        if (this.selectionCache) {
+            this.getSelectionModel().select(this.selectionCache, true, false);
+            delete this.selectionCache;
         }
     }
 });
