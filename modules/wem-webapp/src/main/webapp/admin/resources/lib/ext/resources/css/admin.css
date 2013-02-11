@@ -1,4 +1,3 @@
-@charset "IBM866";
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
 
 /*
@@ -122,8 +121,8 @@ ul.icons li [class^="icon-"], ul.icons li [class*=" icon-"] {
 
 /* line 33, ../sass/admin/css/_font-awesome.scss */
 .icon-border {
-    border: solid 1px #eee;
-    padding: .2em .25em .15em;
+    border: solid 1px #eeeeee;
+    padding: 0.2em 0.25em 0.15em;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
@@ -1717,7 +1716,7 @@ td {
 
 /* line 11, ../sass/admin/css/_window.scss */
 .admin-window-header h1 {
-    color: #fff !important;
+    color: white !important;
     font-size: 18px !important;
     margin: 0 !important;
     padding: 0 0 0 28px !important;
@@ -1746,7 +1745,7 @@ td {
 
 /* line 19, ../sass/admin/css/_panel.scss */
 .admin-filter .admin-facet-group h2 {
-    color: #000000 !important;
+    color: black !important;
     font-size: 15px !important;
     padding: 0 !important;
     text-transform: capitalize;
@@ -1759,12 +1758,12 @@ td {
 
 /* line 29, ../sass/admin/css/_panel.scss */
 .admin-filter .admin-facet-group .admin-facet label {
-    color: #777 !important;
+    color: #777777 !important;
 }
 
 /* line 35, ../sass/admin/css/_panel.scss */
 .admin-filter .admin-facet-group .admin-facet.checked label {
-    color: #333 !important;
+    color: #333333 !important;
 }
 
 /* line 48, ../sass/admin/css/_panel.scss */
@@ -1883,7 +1882,7 @@ td {
 /* line 4, ../sass/admin/css/_grid.scss */
 .x-grid-row .x-grid-cell {
     font-size: 11px !important;
-    color: #000 !important;
+    color: black !important;
     vertical-align: middle !important;
     border: none !important;
 }
@@ -1975,7 +1974,7 @@ td {
 
 /* line 86, ../sass/admin/css/_grid.scss */
 .admin-grid .x-grid-row-selected .admin-grid-name-renderer .admin-grid-name-renderer-path {
-    color: #fff !important;
+    color: white !important;
 }
 
 /**
@@ -2061,7 +2060,7 @@ td {
 
 /* line 1, ../sass/admin/css/_mega-menu.scss */
 .admin-mega-menu {
-    background-color: #fff !important;
+    background-color: white !important;
 }
 
 /* line 5, ../sass/admin/css/_mega-menu.scss */
@@ -2148,7 +2147,7 @@ td {
 
 /* line 15, ../sass/admin/css/_toolbar.scss */
 .admin-white-toolbar {
-    background-color: #ffffff !important;
+    background-color: white !important;
     padding: 6px 12px !important;
 }
 
@@ -2156,21 +2155,21 @@ td {
 .x-toolbar.admin-white-toolbar,
 .x-toolbar.admin-white-toolbar .x-toolbar-text {
     font-size: 12px !important;
-    color: #000000 !important;
+    color: black !important;
 }
 
 /* line 1, ../sass/admin/css/_splitter.scss */
 .x-splitter-horizontal {
     background-color: #ffffff;
-    border-top: 1px solid #EBE7E7 !important;
-    border-bottom: 1px solid #EBE7E7 !important;
+    border-top: 1px solid #ebe7e7 !important;
+    border-bottom: 1px solid #ebe7e7 !important;
 }
 
 /* line 7, ../sass/admin/css/_splitter.scss */
 .x-splitter-vertical {
     background-color: #ffffff;
-    border-left: 1px solid #EBE7E7 !important;
-    border-right: 1px solid #EBE7E7 !important;
+    border-left: 1px solid #ebe7e7 !important;
+    border-right: 1px solid #ebe7e7 !important;
 }
 
 /**
@@ -2331,7 +2330,7 @@ td {
  */
 /* line 106, ../sass/admin/css/_form.scss */
 .x-datepicker-header {
-    background-color: #fff !important;
+    background-color: white !important;
     background-image: none !important;
 }
 
@@ -2345,7 +2344,7 @@ td {
  */
 /* line 118, ../sass/admin/css/_form.scss */
 .x-form-text, textarea.x-form-field {
-    background: none #fff !important;
+    background: none white !important;
 }
 
 /**
@@ -2398,12 +2397,12 @@ td {
 }
 
 /* To allow box-shadow, we must override overflow: hidden on containing elements. */
-/* line 172, ../sass/admin/css/_form.scss */
-.x-fieldset-body,
-.x-panel-body,
-.x-fit-item,
-.x-panel {
-    overflow: visible !important;
+/* line 173, ../sass/admin/css/_form.scss */
+.admin-wizard .x-fieldset-body,
+.admin-wizard .x-panel-body,
+.admin-wizard .x-fit-item,
+.admin-wizard .x-panel {
+    overflow: visible;
 }
 
 /* line 1, ../sass/admin/css/_confirmation-dialog.scss */
@@ -2473,7 +2472,7 @@ td {
 .admin-selected-item-box .center {
     float: left;
     border: 0 none !important;
-    border-right: 1px solid #F0F0F0 !important;
+    border-right: 1px solid #f0f0f0 !important;
 }
 
 /* line 23, ../sass/admin/css/_selected-grid-item.scss */
@@ -2681,7 +2680,7 @@ td {
     border-top: 50px solid transparent;
     /* Go big on the size, and let overflow hide */
     border-bottom: 50px solid transparent;
-    border-left: 30px solid #eee;
+    border-left: 30px solid #eeeeee;
     position: absolute;
     top: 50%;
     margin-top: -50px;
@@ -2698,7 +2697,7 @@ td {
     border-top: 50px solid transparent;
     /* Go big on the size, and let overflow hide */
     border-bottom: 50px solid transparent;
-    border-left: 28px solid #ccc;
+    border-left: 28px solid #cccccc;
     position: absolute;
     top: 50%;
     margin-top: -50px;
@@ -2714,12 +2713,12 @@ td {
 
 /* line 66, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.current:after {
-    border-left: 30px solid #fff;
+    border-left: 30px solid white;
 }
 
 /* line 70, ../sass/admin/css/_wizard.scss */
 .admin-wizard .navigation li a.current:before {
-    border-left: 30px solid #fff;
+    border-left: 30px solid white;
 }
 
 /* line 74, ../sass/admin/css/_wizard.scss */
@@ -2817,8 +2816,8 @@ td {
 
 /* line 159, ../sass/admin/css/_wizard.scss */
 .admin-display-name input:focus {
-    color: #000 !important;
-    border: 1px solid #99BCE8 !important;
+    color: black !important;
+    border: 1px solid #99bce8 !important;
 }
 
 /* line 165, ../sass/admin/css/_wizard.scss */
@@ -2845,7 +2844,7 @@ td {
 .admin-image-upload-button-container .admin-image-upload-button-progress-bar-container {
     visibility: hidden;
     position: absolute;
-    border: 1px solid #555;
+    border: 1px solid #555555;
     background-color: #555;
     bottom: 1px;
     left: 1px;
@@ -3161,9 +3160,9 @@ div.x-mask {
 
 /* line 63, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .x-menu-body {
-    background: #FFF !important;
+    background: white !important;
     padding: 0 !important;
-    border: 1px solid #ccc !important;
+    border: 1px solid #cccccc !important;
 }
 
 /* line 69, ../sass/admin/css/_top-bar.scss */
@@ -3177,7 +3176,7 @@ div.x-mask {
 
 /* line 77, ../sass/admin/css/_top-bar.scss */
 .admin-topbar-menu .title {
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #cccccc;
     font-size: 11px;
     color: #0066cc;
     text-align: center;
@@ -3908,7 +3907,7 @@ tr.x-container:before {
     color: #000;
     font: normal 11px "Open Sans", sans-serif;
     border: 1px solid;
-    border-color: #ddd #bbb #bbb #ddd;
+    border-color: #dddddd #bbbbbb #bbbbbb #dddddd;
     background-color: #fff;
 }
 
@@ -5177,19 +5176,19 @@ tr.x-container:before {
 /* line 48, ../themes/stylesheets/ext4/default/widgets/_html.scss */
 .x-html h1 {
     font-size: 2em;
-    margin: .67em 0;
+    margin: 0.67em 0;
 }
 
 /* line 49, ../themes/stylesheets/ext4/default/widgets/_html.scss */
 .x-html h2 {
     font-size: 1.5em;
-    margin: .75em 0;
+    margin: 0.75em 0;
 }
 
 /* line 50, ../themes/stylesheets/ext4/default/widgets/_html.scss */
 .x-html h3 {
     font-size: 1.17em;
-    margin: .83em 0;
+    margin: 0.83em 0;
 }
 
 /* line 60, ../themes/stylesheets/ext4/default/widgets/_html.scss */
@@ -13666,7 +13665,7 @@ tr.x-container:before {
 
 /* line 104, ../themes/stylesheets/ext4/default/widgets/_datepicker.scss */
 .x-datepicker-month span {
-    color: #fff !important;
+    color: white !important;
 }
 
 /* line 108, ../themes/stylesheets/ext4/default/widgets/_datepicker.scss */
@@ -13988,7 +13987,7 @@ table.x-datepicker-inner .x-datepicker-disabled a {
 
 /* line 8, ../themes/stylesheets/ext4/default/widgets/_colorpicker.scss */
 .x-color-picker a {
-    border: 1px solid #fff;
+    border: 1px solid white;
     float: left;
     padding: 2px;
     text-decoration: none;
@@ -14597,7 +14596,7 @@ browsers will do whacky things with it.
 
 /* line 339, ../themes/stylesheets/ext4/default/widgets/_grid.scss */
 .x-grid-cell-selected {
-    background-color: #B8CFEE !important;
+    background-color: #b8cfee !important;
 }
 
 /* line 345, ../themes/stylesheets/ext4/default/widgets/_grid.scss */
@@ -15701,7 +15700,7 @@ textarea.x-form-invalid-field {
 
 /* line 8, ../themes/stylesheets/ext4/default/widgets/form/_checkboxgroup.scss */
 .x-form-invalid .x-form-checkboxgroup-body {
-    border: 1px solid #c30;
+    border: 1px solid #cc3300;
     background: transparent repeat-x bottom;
     background-image: url('../themes/images/default/grid/invalid_line.gif');
     padding: 0 3px 0 3px;
@@ -15717,7 +15716,7 @@ textarea.x-form-invalid-field {
 /* line 23, ../themes/stylesheets/ext4/default/widgets/form/_checkboxgroup.scss */
 .x-form-check-group-label {
     color: #333;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #333333;
     margin: 0 30px 5px 0;
     padding: 2px;
 }
