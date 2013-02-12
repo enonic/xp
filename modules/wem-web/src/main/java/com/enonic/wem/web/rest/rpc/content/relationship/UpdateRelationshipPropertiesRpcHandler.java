@@ -34,23 +34,21 @@ public final class UpdateRelationshipPropertiesRpcHandler
     {
         final RelationshipId relationshipIdToUpdate = RelationshipIdFactory.from( context.param( "relationshipId" ).asString() );
 
-        final UpdateRelationships updateCommand = Commands.relationship().update();
-        updateCommand.relationshipIds( RelationshipIds.from( relationshipIdToUpdate ) );
-
+        final RelationshipEditors.CompositeBuilder compositeEditorBuilder = RelationshipEditors.newCompositeBuilder();
         final ObjectNode addNode = context.param( "add" ).asObject();
-        final String[] remove = context.param( "remove" ).asStringArray();
-
-        RelationshipEditors.CompositeBuilder compositeEditorBuilder = RelationshipEditors.newCompositeBuilder();
         if ( addNode != null )
         {
             final Map<String, String> propertiesToAdd = resolveProperties( addNode );
             compositeEditorBuilder.add( RelationshipEditors.addProperties( propertiesToAdd ) );
         }
+        final String[] remove = context.param( "remove" ).asStringArray();
         if ( remove != null && remove.length > 0 )
         {
             compositeEditorBuilder.add( RelationshipEditors.removeProperties( remove ) );
         }
 
+        final UpdateRelationships updateCommand = Commands.relationship().update();
+        updateCommand.relationshipIds( RelationshipIds.from( relationshipIdToUpdate ) );
         updateCommand.editor( compositeEditorBuilder.build() );
 
         final UpdateRelationshipsResult result = client.execute( updateCommand );
