@@ -43,11 +43,11 @@
     proto.registerGlobalListeners = function () {
         /*
         $(window).on('component:select', $.proxy(this.show, this));
-        $(window).on('component:remove', $.proxy(this.hide, this));
         */
         $(window).on('component:deselect', $.proxy(this.hide, this));
         $(window).on('tip:menu:toggle', $.proxy(this.toggle, this));
         $(window).on('component:sort:start', $.proxy(this.fadeOutAndHide, this));
+        $(window).on('component:remove', $.proxy(this.hide, this));
     };
 
 
