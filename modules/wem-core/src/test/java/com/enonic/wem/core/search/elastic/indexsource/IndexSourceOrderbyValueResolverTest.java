@@ -31,9 +31,9 @@ public class IndexSourceOrderbyValueResolverTest
         String two = IndexSourceOrderbyValueResolver.getOrderbyValue( 2 );
         String ten = IndexSourceOrderbyValueResolver.getOrderbyValue( 10 );
         String hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 100 );
-        String twohundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 200 );
+        String two_hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 200 );
 
-        orderedList.add( twohundred );
+        orderedList.add( two_hundred );
         orderedList.add( one );
         orderedList.add( hundred );
         orderedList.add( two );
@@ -47,7 +47,7 @@ public class IndexSourceOrderbyValueResolverTest
         assertEquals( two, iterator.next() );
         assertEquals( ten, iterator.next() );
         assertEquals( hundred, iterator.next() );
-        assertEquals( twohundred, iterator.next() );
+        assertEquals( two_hundred, iterator.next() );
     }
 
 
@@ -62,9 +62,9 @@ public class IndexSourceOrderbyValueResolverTest
         String two = IndexSourceOrderbyValueResolver.getOrderbyValue( "2" );
         String ten = IndexSourceOrderbyValueResolver.getOrderbyValue( "10" );
         String hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( "100" );
-        String twohundred = IndexSourceOrderbyValueResolver.getOrderbyValue( "200" );
+        String two_hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( "200" );
 
-        orderedList.add( twohundred );
+        orderedList.add( two_hundred );
         orderedList.add( one );
         orderedList.add( hundred );
         orderedList.add( two );
@@ -78,7 +78,7 @@ public class IndexSourceOrderbyValueResolverTest
         assertEquals( ten, iterator.next() );
         assertEquals( hundred, iterator.next() );
         assertEquals( two, iterator.next() );
-        assertEquals( twohundred, iterator.next() );
+        assertEquals( two_hundred, iterator.next() );
     }
 
 
@@ -93,9 +93,9 @@ public class IndexSourceOrderbyValueResolverTest
         String two = IndexSourceOrderbyValueResolver.getOrderbyValue( 2L );
         String ten = IndexSourceOrderbyValueResolver.getOrderbyValue( 10L );
         String hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 100L );
-        String twohundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 200L );
+        String two_hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 200L );
 
-        orderedList.add( twohundred );
+        orderedList.add( two_hundred );
         orderedList.add( one );
         orderedList.add( hundred );
         orderedList.add( two );
@@ -109,7 +109,7 @@ public class IndexSourceOrderbyValueResolverTest
         assertEquals( two, iterator.next() );
         assertEquals( ten, iterator.next() );
         assertEquals( hundred, iterator.next() );
-        assertEquals( twohundred, iterator.next() );
+        assertEquals( two_hundred, iterator.next() );
     }
 
 
@@ -124,9 +124,9 @@ public class IndexSourceOrderbyValueResolverTest
         String two = IndexSourceOrderbyValueResolver.getOrderbyValue( 2.0 );
         String ten = IndexSourceOrderbyValueResolver.getOrderbyValue( 10.0 );
         String hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 100.0 );
-        String twohundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 200.0 );
+        String two_hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 200.0 );
 
-        orderedList.add( twohundred );
+        orderedList.add( two_hundred );
         orderedList.add( one );
         orderedList.add( hundred );
         orderedList.add( two );
@@ -140,7 +140,7 @@ public class IndexSourceOrderbyValueResolverTest
         assertEquals( two, iterator.next() );
         assertEquals( ten, iterator.next() );
         assertEquals( hundred, iterator.next() );
-        assertEquals( twohundred, iterator.next() );
+        assertEquals( two_hundred, iterator.next() );
     }
 
 
@@ -155,9 +155,9 @@ public class IndexSourceOrderbyValueResolverTest
         String two = IndexSourceOrderbyValueResolver.getOrderbyValue( 2f );
         String ten = IndexSourceOrderbyValueResolver.getOrderbyValue( 10f );
         String hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 100f );
-        String twohundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 200f );
+        String two_hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 200f );
 
-        orderedList.add( twohundred );
+        orderedList.add( two_hundred );
         orderedList.add( one );
         orderedList.add( hundred );
         orderedList.add( two );
@@ -171,7 +171,7 @@ public class IndexSourceOrderbyValueResolverTest
         assertEquals( two, iterator.next() );
         assertEquals( ten, iterator.next() );
         assertEquals( hundred, iterator.next() );
-        assertEquals( twohundred, iterator.next() );
+        assertEquals( two_hundred, iterator.next() );
     }
 
 

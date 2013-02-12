@@ -19,7 +19,6 @@ final class IndexSourceEntryFactory
 
     public static final String DEFAULT_EMPTY_STRING_VALUE = "";
 
-
     /**
      * * This class should translate a indexDocumentEntry to the necessary indexSourceEntries
      * <p/>
