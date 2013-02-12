@@ -33,7 +33,6 @@
 
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Base.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Shader.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../app/js/view/Button.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/Cursor.js"></script>
 
 <!--script type="text/javascript" charset="UTF-8" src="../app/js/view/hovermenu/HoverMenu.js"></script>
@@ -45,6 +44,7 @@
 
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/Tip.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/Menu.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/BaseButton.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/InsertButton.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/EditButton.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/view/componenttip/menu/ResetButton.js"></script>

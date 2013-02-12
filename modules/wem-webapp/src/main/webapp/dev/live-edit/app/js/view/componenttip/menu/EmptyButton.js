@@ -8,7 +8,7 @@
     };
 
     // Inherits ui.Button
-    emptyButton.prototype = new AdminLiveEdit.view.Button();
+    emptyButton.prototype = new AdminLiveEdit.view.componenttip.menu.BaseButton();
 
     // Fix constructor as it now is Button
     emptyButton.constructor = emptyButton;

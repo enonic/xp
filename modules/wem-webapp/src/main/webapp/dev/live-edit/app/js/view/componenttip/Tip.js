@@ -112,7 +112,7 @@
 
     proto.showForPage = function ($component) {
         var me = this;
-        me.toggleTipArrowPosition(true);
+        me.toggleArrowPosition(true);
         me.toggleRightSideButton(true);
         var componentBox = util.getBoxModel($component),
             leftPos = componentBox.left + (componentBox.width / 2 - me.getEl().outerWidth() / 2);
@@ -127,7 +127,7 @@
 
     proto.showForComponent = function ($component) {
         var me = this;
-        me.toggleTipArrowPosition(false);
+        me.toggleArrowPosition(false);
         me.toggleRightSideButton(false);
         var componentBox = util.getBoxModel($component),
             leftPos = componentBox.left + (componentBox.width / 2 - me.getEl().outerWidth() / 2),
@@ -159,7 +159,7 @@
     };
 
 
-    proto.toggleTipArrowPosition = function (isPageComponent) {
+    proto.toggleArrowPosition = function (isPageComponent) {
         var me = this;
         if (isPageComponent) {
             me.getEl().removeClass('live-edit-component-tip-arrow-bottom').addClass('live-edit-component-tip-arrow-top');
