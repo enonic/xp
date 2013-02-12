@@ -50,7 +50,7 @@ public class GetSpaceRpcHandlerTest
         Mockito.when( client.execute( isA( GetSpaces.class ) ) ).thenReturn( Spaces.from( space ) );
 
         final ObjectNode params = objectNode();
-        params.put( "name", "mySpace" );
+        params.put( "spaceName", "mySpace" );
         testSuccess( params, "getSpace_result.json" );
     }
 
@@ -61,7 +61,7 @@ public class GetSpaceRpcHandlerTest
         Mockito.when( client.execute( isA( GetSpaces.class ) ) ).thenReturn( Spaces.empty() );
 
         final ObjectNode params = objectNode();
-        params.put( "name", "mySpace" );
+        params.put( "spaceName", "mySpace" );
         testSuccess( params, "getSpace_result_not_found.json" );
     }
 }

@@ -16,7 +16,7 @@ import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName
 
 public final class Relationship
 {
-    private RelationshipId id;
+    private final RelationshipId id;
 
     private final DateTime createdTime;
 
@@ -49,8 +49,7 @@ public final class Relationship
         this.toContent = builder.toContent;
         this.createdTime = builder.createdTime;
         this.creator = builder.creator;
-        ImmutableMap.Builder<String, String> propertiesBuilder = ImmutableMap.builder();
-        this.properties = propertiesBuilder.putAll( builder.properties ).build();
+        this.properties = ImmutableMap.copyOf( builder.properties );
         this.managed = builder.managed;
         if ( this.managed )
         {
