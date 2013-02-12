@@ -58,7 +58,9 @@ public final class StandardClient
     {
         if ( this.commandContextFactory != null )
         {
-            return this.commandContextFactory.create();
+            final CommandContext context = this.commandContextFactory.create();
+            context.setClient( this );
+            return context;
         }
 
         return null;
