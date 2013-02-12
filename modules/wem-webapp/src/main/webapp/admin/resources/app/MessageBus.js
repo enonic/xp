@@ -8,6 +8,10 @@ Ext.define('Admin.MessageBus', {
      */
     showFeedback: function (config) {
         this.fireEvent('feedbackBox.show', config);
+    },
+
+    showLiveEdit: function (config) {
+        this.fireEvent('liveEditWindow.show', config);
     }
 
 });

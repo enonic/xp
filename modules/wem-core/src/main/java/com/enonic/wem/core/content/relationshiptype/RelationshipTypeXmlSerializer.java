@@ -2,7 +2,6 @@ package com.enonic.wem.core.content.relationshiptype;
 
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 import org.jdom.Document;
@@ -16,6 +15,7 @@ import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.core.util.JdomHelper;
 
 public class RelationshipTypeXmlSerializer
+    implements RelationshipTypeSerializer
 {
     private final JdomHelper jdomHelper = new JdomHelper();
 
@@ -47,21 +47,19 @@ public class RelationshipTypeXmlSerializer
         typeEl.addContent( new Element( "module" ).setText( type.getModuleName().toString() ) );
 
         typeEl.addContent( new Element( "from-semantic" ).setText( type.getFromSemantic() ) );
-        typeEl.addContent( new Element( "to-semantic" ).setText( type.getFromSemantic() ) );
-
+        typeEl.addContent( new Element( "to-semantic" ).setText( type.getToSemantic() ) );
 
         final Element allowedFromTypes = new Element( "allowed-from-types" );
         for ( QualifiedContentTypeName allowedFromType : type.getAllowedFromTypes() )
         {
-            allowedFromTypes.addContent( new Element( "allowed-from-type" ).setText( allowedFromType.toString() ) );
+            allowedFromTypes.addContent( new Element( "content-type" ).setText( allowedFromType.toString() ) );
         }
         typeEl.addContent( allowedFromTypes );
-
 
         final Element allowedToTypes = new Element( "allowed-to-types" );
         for ( QualifiedContentTypeName allowedToType : type.getAllowedToTypes() )
         {
-            allowedToTypes.addContent( new Element("allowed-to-type").setText( allowedToType.toString() ));
+            allowedToTypes.addContent( new Element( "content-type" ).setText( allowedToType.toString() ) );
         }
         typeEl.addContent( allowedToTypes );
     }
@@ -87,7 +85,7 @@ public class RelationshipTypeXmlSerializer
     private RelationshipType parse( final Element relationshipTypeEl )
         throws IOException
     {
-        final String module = relationshipTypeEl.getChildText( "module" );
+        final ModuleName module = ModuleName.from( relationshipTypeEl.getChildText( "module" ) );
         final String name = relationshipTypeEl.getChildText( "name" );
         final String displayName = relationshipTypeEl.getChildText( "display-name" );
 
@@ -96,34 +94,29 @@ public class RelationshipTypeXmlSerializer
 
         final RelationshipType.Builder relationshipTypeBuilder = RelationshipType.newRelationshipType().
             name( name ).
-            module( ModuleName.from( module ) ).
+            module( module ).
             displayName( displayName ).
             fromSemantic( fromSemantic ).
             toSemantic( toSemantic );
 
-        for ( final Element element : getChildren( relationshipTypeEl, "allowed-from-types" ) )
+        final Element allowedFromTypesEl = relationshipTypeEl.getChild( "allowed-from-types" );
+        for ( final Element contentTypeEl : getChildren( allowedFromTypesEl, "content-type" ) )
         {
-            relationshipTypeBuilder.addAllowedFromType( new QualifiedContentTypeName( element.getValue() ) );
+            relationshipTypeBuilder.addAllowedFromType( new QualifiedContentTypeName( contentTypeEl.getText() ) );
         }
 
-        for ( final Element element : getChildren( relationshipTypeEl, "allowed-to-types" ) )
+        final Element allowedToTypesEl = relationshipTypeEl.getChild( "allowed-to-types" );
+        for ( final Element contentTypeEl : getChildren( allowedToTypesEl, "content-type" ) )
         {
-            relationshipTypeBuilder.addAllowedToType( new QualifiedContentTypeName( element.getValue() ) );
+            relationshipTypeBuilder.addAllowedToType( new QualifiedContentTypeName( contentTypeEl.getText() ) );
         }
 
         return relationshipTypeBuilder.build();
     }
 
-
-
     @SuppressWarnings({"unchecked"})
-    private List<Element> getChildren( final Element element, final String name )
+    private List<Element> getChildren( final Element parent, final String name )
     {
-        final List list = element.getChildren( name );
-        if ( list == null )
-        {
-            return Collections.emptyList();
-        }
-        return list;
+        return parent.getChildren( name );
     }
 }

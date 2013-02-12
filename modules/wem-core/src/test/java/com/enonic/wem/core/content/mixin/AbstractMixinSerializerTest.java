@@ -82,20 +82,6 @@ public abstract class AbstractMixinSerializerTest
         assertSerializedResult( "mixin-formItemSet", serialized );
     }
 
-
-    private Mixin toMixin( final String serialized )
-    {
-        return serializer.toMixin( serialized );
-    }
-
-    private String toString( final Mixin type )
-    {
-        String serialized = getSerializer().toString( type );
-        System.out.println( "Mixin:" );
-        System.out.println( serialized );
-        return serialized;
-    }
-
     @Test
     public void mixin_serialize_parse_serialize_formSet_roundTrip()
     {
@@ -153,5 +139,18 @@ public abstract class AbstractMixinSerializerTest
 
         // verify
         assertEquals( serialized, serializedAfterParsing );
+    }
+
+    private Mixin toMixin( final String serialized )
+    {
+        return serializer.toMixin( serialized );
+    }
+
+    private String toString( final Mixin type )
+    {
+        String serialized = getSerializer().toString( type );
+        System.out.println( "Mixin:" );
+        System.out.println( serialized );
+        return serialized;
     }
 }

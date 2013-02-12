@@ -27,6 +27,7 @@
             cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();
+                window.parent.Admin.MessageBus.showLiveEdit({})
             }
         });
 

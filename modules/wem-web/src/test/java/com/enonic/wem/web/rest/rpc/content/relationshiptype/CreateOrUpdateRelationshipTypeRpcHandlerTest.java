@@ -11,13 +11,11 @@ import com.enonic.wem.api.command.content.relationshiptype.RelationshipTypesExis
 import com.enonic.wem.api.command.content.relationshiptype.UpdateRelationshipTypes;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
-import com.enonic.wem.api.content.relationshiptype.RelationshipType;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
-import static com.enonic.wem.api.content.relationshiptype.RelationshipType.newRelationshipType;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -40,29 +38,29 @@ public class CreateOrUpdateRelationshipTypeRpcHandlerTest
     }
 
     @Test
-    public void testCreateContentType()
+    public void create()
         throws Exception
     {
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn( RelationshipTypesExistsResult.empty() );
         Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn(
-            new QualifiedRelationshipTypeName( Module.SYSTEM.getName(), "hello" ) );
+            new QualifiedRelationshipTypeName( Module.SYSTEM.getName(), "love" ) );
 
         ObjectNode resultJson = objectNode();
         resultJson.put( "success", true );
         resultJson.put( "created", true );
         resultJson.put( "updated", false );
-        testSuccess( "createOrUpdateRelationshipType_param.json", resultJson );
+        testSuccess( "createOrUpdateRelationshipType_create_param.json", resultJson );
 
         verify( client, times( 1 ) ).execute( isA( CreateRelationshipType.class ) );
     }
 
     @Test
-    public void testUpdateContentType()
+    public void update()
         throws Exception
     {
-        RelationshipType relationshipType = newRelationshipType().module( ModuleName.from( "myModule" ) ).name( "contains" ).build();
 
-        QualifiedRelationshipTypeNames qualifiedNames = QualifiedRelationshipTypeNames.from( relationshipType.getQualifiedName() );
+        QualifiedRelationshipTypeNames qualifiedNames =
+            QualifiedRelationshipTypeNames.from( new QualifiedRelationshipTypeName( ModuleName.SYSTEM, "love" ) );
 
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn(
             RelationshipTypesExistsResult.from( qualifiedNames ) );
@@ -72,7 +70,7 @@ public class CreateOrUpdateRelationshipTypeRpcHandlerTest
         resultJson.put( "success", true );
         resultJson.put( "created", false );
         resultJson.put( "updated", true );
-        testSuccess( "createOrUpdateRelationshipType_param.json", resultJson );
+        testSuccess( "createOrUpdateRelationshipType_update_param.json", resultJson );
 
         verify( client, times( 1 ) ).execute( isA( UpdateRelationshipTypes.class ) );
     }

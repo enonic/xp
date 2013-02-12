@@ -1,0 +1,9 @@
+{
+    "name": "love",
+    "displayName": "Love",
+    "module": "System",
+    "fromSemantic": "loves",
+    "toSemantic": "loved by",
+    "allowedFromTypes": [ ],
+    "allowedToTypes": [ ]
+}

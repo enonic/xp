@@ -11,7 +11,7 @@ import com.enonic.wem.api.command.content.relationshiptype.UpdateRelationshipTyp
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
-import com.enonic.wem.core.content.relationshiptype.RelationshipTypeJsonSerializer;
+import com.enonic.wem.core.content.relationshiptype.RelationshipTypeXmlSerializer;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
@@ -24,25 +24,24 @@ import static com.enonic.wem.api.content.relationshiptype.editor.RelationshipTyp
 public final class CreateOrUpdateRelationshipTypeRpcHandler
     extends AbstractDataRpcHandler
 {
-    private RelationshipTypeJsonSerializer relationshipTypeJsonSerializer;
+    private RelationshipTypeXmlSerializer relationshipTypeXmlSerializer;
 
     public CreateOrUpdateRelationshipTypeRpcHandler()
     {
         super( "relationshipType_createOrUpdate" );
-        this.relationshipTypeJsonSerializer = new RelationshipTypeJsonSerializer();
+        this.relationshipTypeXmlSerializer = new RelationshipTypeXmlSerializer();
     }
 
     @Override
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final String json = context.param( "relationshipType" ).required().asObject().toString();
-
+        final String xml = context.param( "relationshipType" ).required().asString();
         final RelationshipType relationshipType;
 
         try
         {
-            relationshipType = relationshipTypeJsonSerializer.toObject( json );
+            relationshipType = relationshipTypeXmlSerializer.toRelationshipType( xml );
         }
         catch ( XmlParsingException e )
         {

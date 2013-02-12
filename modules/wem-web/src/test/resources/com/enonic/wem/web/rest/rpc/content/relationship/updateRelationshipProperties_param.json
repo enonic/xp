@@ -1,0 +1,8 @@
+{
+    "relationshipId": "123321",
+    "add": {
+        "addA": "1",
+        "addB": "2"
+    },
+    "remove": [ "remove1", "remove2" ]
+}

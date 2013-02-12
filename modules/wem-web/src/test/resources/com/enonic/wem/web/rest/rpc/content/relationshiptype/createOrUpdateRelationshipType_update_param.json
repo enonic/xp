@@ -1,0 +1,4 @@
+{
+    "relationshipType": "<relationship-type><name>love</name><display-name>Love</display-name><module>System</module><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>"
+}
+
