@@ -2,19 +2,19 @@
     'use strict';
 
     // Class definition (constructor function)
-    var emptyButton = AdminLiveEdit.view.componenttip.menu.EmptyButton = function (menu) {
+    var clearButton = AdminLiveEdit.view.componenttip.menu.ClearButton = function (menu) {
         this.menu = menu;
         this.init();
     };
 
     // Inherits ui.Button
-    emptyButton.prototype = new AdminLiveEdit.view.componenttip.menu.BaseButton();
+    clearButton.prototype = new AdminLiveEdit.view.componenttip.menu.BaseButton();
 
     // Fix constructor as it now is Button
-    emptyButton.constructor = emptyButton;
+    clearButton.constructor = clearButton;
 
     // Shorthand ref to the prototype
-    var proto = emptyButton.prototype;
+    var proto = clearButton.prototype;
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -24,7 +24,7 @@
 
         var $button = me.createButton({
             text: 'Empty',
-            id: 'live-edit-button-empty',
+            id: 'live-edit-button-clear',
             cls: 'live-edit-component-menu-button',
             handler: function (event) {
                 event.stopPropagation();

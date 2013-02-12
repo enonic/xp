@@ -11,11 +11,10 @@
         me.hidden = true;
         me.buttons = [];
 
-        // TODO: Is this necessary anymore?
         me.buttonConfig = {
             'page': ['settings', 'reset'],
-            'region': ['insert', 'reset', 'empty'],
-            'part': ['settings', 'remove'],
+            'region': ['settings', 'reset', 'clear'],
+            'part': ['settings', 'details', 'remove'],
             'content': ['view', 'edit'],
             'paragraph': ['edit']
         };
@@ -133,12 +132,13 @@
 
     proto.addButtons = function () {
         var me = this;
+        var settingsButton = new AdminLiveEdit.view.componenttip.menu.SettingsButton(me);
+        var detailsButton = new AdminLiveEdit.view.componenttip.menu.DetailsButton(me);
         var insertButton = new AdminLiveEdit.view.componenttip.menu.InsertButton(me);
         var resetButton = new AdminLiveEdit.view.componenttip.menu.ResetButton(me);
-        var emptyButton = new AdminLiveEdit.view.componenttip.menu.EmptyButton(me);
+        var clearButton = new AdminLiveEdit.view.componenttip.menu.ClearButton(me);
         var viewButton = new AdminLiveEdit.view.componenttip.menu.ViewButton(me);
         var editButton = new AdminLiveEdit.view.componenttip.menu.EditButton(me);
-        var settingsButton = new AdminLiveEdit.view.componenttip.menu.SettingsButton(me);
         var removeButton = new AdminLiveEdit.view.componenttip.menu.RemoveButton(me);
 
         var i;
