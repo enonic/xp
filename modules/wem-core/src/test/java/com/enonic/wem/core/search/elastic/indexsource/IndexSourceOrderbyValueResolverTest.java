@@ -17,7 +17,7 @@ public class IndexSourceOrderbyValueResolverTest
     @Test
     public void testNull()
     {
-        assertNull( IndexSourceOrderbyValueResolver.getOrderbyValue( null ) );
+        assertNull( OrderByValueResolver.getOrderbyValue( null ) );
     }
 
     @Test
@@ -27,11 +27,11 @@ public class IndexSourceOrderbyValueResolverTest
 
         List<String> orderedList = Lists.newArrayList();
 
-        String one = IndexSourceOrderbyValueResolver.getOrderbyValue( 1 );
-        String two = IndexSourceOrderbyValueResolver.getOrderbyValue( 2 );
-        String ten = IndexSourceOrderbyValueResolver.getOrderbyValue( 10 );
-        String hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 100 );
-        String two_hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 200 );
+        String one = OrderByValueResolver.getOrderbyValue( 1 );
+        String two = OrderByValueResolver.getOrderbyValue( 2 );
+        String ten = OrderByValueResolver.getOrderbyValue( 10 );
+        String hundred = OrderByValueResolver.getOrderbyValue( 100 );
+        String two_hundred = OrderByValueResolver.getOrderbyValue( 200 );
 
         orderedList.add( two_hundred );
         orderedList.add( one );
@@ -58,11 +58,11 @@ public class IndexSourceOrderbyValueResolverTest
 
         List<String> orderedList = Lists.newArrayList();
 
-        String one = IndexSourceOrderbyValueResolver.getOrderbyValue( "1" );
-        String two = IndexSourceOrderbyValueResolver.getOrderbyValue( "2" );
-        String ten = IndexSourceOrderbyValueResolver.getOrderbyValue( "10" );
-        String hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( "100" );
-        String two_hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( "200" );
+        String one = OrderByValueResolver.getOrderbyValue( "1" );
+        String two = OrderByValueResolver.getOrderbyValue( "2" );
+        String ten = OrderByValueResolver.getOrderbyValue( "10" );
+        String hundred = OrderByValueResolver.getOrderbyValue( "100" );
+        String two_hundred = OrderByValueResolver.getOrderbyValue( "200" );
 
         orderedList.add( two_hundred );
         orderedList.add( one );
@@ -89,11 +89,11 @@ public class IndexSourceOrderbyValueResolverTest
 
         List<String> orderedList = Lists.newArrayList();
 
-        String one = IndexSourceOrderbyValueResolver.getOrderbyValue( 1L );
-        String two = IndexSourceOrderbyValueResolver.getOrderbyValue( 2L );
-        String ten = IndexSourceOrderbyValueResolver.getOrderbyValue( 10L );
-        String hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 100L );
-        String two_hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 200L );
+        String one = OrderByValueResolver.getOrderbyValue( 1L );
+        String two = OrderByValueResolver.getOrderbyValue( 2L );
+        String ten = OrderByValueResolver.getOrderbyValue( 10L );
+        String hundred = OrderByValueResolver.getOrderbyValue( 100L );
+        String two_hundred = OrderByValueResolver.getOrderbyValue( 200L );
 
         orderedList.add( two_hundred );
         orderedList.add( one );
@@ -120,11 +120,11 @@ public class IndexSourceOrderbyValueResolverTest
 
         List<String> orderedList = Lists.newArrayList();
 
-        String one = IndexSourceOrderbyValueResolver.getOrderbyValue( 1.0 );
-        String two = IndexSourceOrderbyValueResolver.getOrderbyValue( 2.0 );
-        String ten = IndexSourceOrderbyValueResolver.getOrderbyValue( 10.0 );
-        String hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 100.0 );
-        String two_hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 200.0 );
+        String one = OrderByValueResolver.getOrderbyValue( 1.0 );
+        String two = OrderByValueResolver.getOrderbyValue( 2.0 );
+        String ten = OrderByValueResolver.getOrderbyValue( 10.0 );
+        String hundred = OrderByValueResolver.getOrderbyValue( 100.0 );
+        String two_hundred = OrderByValueResolver.getOrderbyValue( 200.0 );
 
         orderedList.add( two_hundred );
         orderedList.add( one );
@@ -151,11 +151,11 @@ public class IndexSourceOrderbyValueResolverTest
 
         List<String> orderedList = Lists.newArrayList();
 
-        String one = IndexSourceOrderbyValueResolver.getOrderbyValue( 1f );
-        String two = IndexSourceOrderbyValueResolver.getOrderbyValue( 2f );
-        String ten = IndexSourceOrderbyValueResolver.getOrderbyValue( 10f );
-        String hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 100f );
-        String two_hundred = IndexSourceOrderbyValueResolver.getOrderbyValue( 200f );
+        String one = OrderByValueResolver.getOrderbyValue( 1f );
+        String two = OrderByValueResolver.getOrderbyValue( 2f );
+        String ten = OrderByValueResolver.getOrderbyValue( 10f );
+        String hundred = OrderByValueResolver.getOrderbyValue( 100f );
+        String two_hundred = OrderByValueResolver.getOrderbyValue( 200f );
 
         orderedList.add( two_hundred );
         orderedList.add( one );
@@ -181,13 +181,13 @@ public class IndexSourceOrderbyValueResolverTest
     {
 
         List<String> orderedList = Lists.newArrayList();
-        IndexSourceOrderbyValueResolver.getOrderbyValue( 1 );
+        OrderByValueResolver.getOrderbyValue( 1 );
 
-        String first = IndexSourceOrderbyValueResolver.getOrderbyValue( new DateTime( 2013, 1, 1, 1, 1 ).toDate() );
-        String second = IndexSourceOrderbyValueResolver.getOrderbyValue( new DateTime( 2013, 1, 1, 1, 2 ).toDate() );
-        String third = IndexSourceOrderbyValueResolver.getOrderbyValue( new DateTime( 2013, 1, 1, 1, 10 ).toDate() );
-        String fourth = IndexSourceOrderbyValueResolver.getOrderbyValue( new DateTime( 2014, 1, 1, 1, 2 ).toDate() );
-        String fifth = IndexSourceOrderbyValueResolver.getOrderbyValue( new DateTime( 2014, 1, 1, 1, 10 ).toDate() );
+        String first = OrderByValueResolver.getOrderbyValue( new DateTime( 2013, 1, 1, 1, 1 ).toDate() );
+        String second = OrderByValueResolver.getOrderbyValue( new DateTime( 2013, 1, 1, 1, 2 ).toDate() );
+        String third = OrderByValueResolver.getOrderbyValue( new DateTime( 2013, 1, 1, 1, 10 ).toDate() );
+        String fourth = OrderByValueResolver.getOrderbyValue( new DateTime( 2014, 1, 1, 1, 2 ).toDate() );
+        String fifth = OrderByValueResolver.getOrderbyValue( new DateTime( 2014, 1, 1, 1, 10 ).toDate() );
 
         orderedList.add( fifth );
         orderedList.add( first );

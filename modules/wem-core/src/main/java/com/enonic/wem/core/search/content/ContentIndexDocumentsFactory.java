@@ -32,7 +32,7 @@ public class ContentIndexDocumentsFactory
 
     private static IndexDocument createContentIndexDocument( final Content content )
     {
-        IndexDocument indexDocument = new IndexDocument( content.getId().toString(), IndexType.CONTENT, IndexConstants.WEM_INDEX.string() );
+        IndexDocument indexDocument = new IndexDocument( content.getId().toString(), IndexType.CONTENT, IndexConstants.WEM_INDEX.value() );
 
         addContentMetaData( content, indexDocument );
         addContentData( content, indexDocument );

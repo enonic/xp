@@ -5,16 +5,16 @@ public enum IndexConstants
 
     WEM_INDEX( "wem" );
 
-    private final String id;
+    private final String value;
 
-    private IndexConstants( final String id )
+    private IndexConstants( final String value )
     {
-        this.id = id;
+        this.value = value;
     }
 
-    public String string()
+    public String value()
     {
-        return this.id;
+        return this.value;
     }
 
 }

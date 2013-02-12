@@ -19,15 +19,6 @@ final class IndexSourceEntryFactory
 
     public static final String DEFAULT_EMPTY_STRING_VALUE = "";
 
-    /**
-     * * This class should translate a indexDocumentEntry to the necessary indexSourceEntries
-     * <p/>
-     * The fields to be indexed should be decided elsewhere, this should be slavery work, e.g:
-     * <p/>
-     * If (include orderby), create orderable value and index
-     * Based on type, creat one or more fields to be indexed
-     * If (value is array), then build this as array
-     */
     protected static Set<IndexSourceEntry> create( IndexDocumentEntry indexDocumentEntry )
     {
         Set<IndexSourceEntry> indexSourceEntries = Sets.newHashSet();
@@ -80,7 +71,7 @@ final class IndexSourceEntryFactory
 
     private static void appendOrderBy( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
     {
-        final String orderByValue = IndexSourceOrderbyValueResolver.getOrderbyValue( indexDocumentEntry.getValue() );
+        final String orderByValue = OrderByValueResolver.getOrderbyValue( indexDocumentEntry.getValue() );
         final String orderByFieldName = generateOrderbyFieldName( indexDocumentEntry.getKey() );
 
         indexSourceEntries.add( new IndexSourceEntry( orderByFieldName, orderByValue ) );

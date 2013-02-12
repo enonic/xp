@@ -9,6 +9,8 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.core.search.DeleteDocument;
 import com.enonic.wem.core.search.IndexException;
 import com.enonic.wem.core.search.IndexStatus;
 import com.enonic.wem.core.search.IndexType;
@@ -61,6 +64,7 @@ public class ElasticsearchIndexServiceImpl
         return exists.exists();
     }
 
+    @Override
     public void index( Collection<IndexDocument> indexDocuments )
     {
         for ( IndexDocument indexDocument : indexDocuments )
@@ -77,6 +81,23 @@ public class ElasticsearchIndexServiceImpl
                 Requests.indexRequest().id( id ).index( indexName ).type( indexType.getIndexTypeName() ).source( xContentBuilder );
 
             this.client.index( req ).actionGet();
+        }
+    }
+
+    @Override
+    public DeleteResponse delete( final DeleteDocument deleteDocument )
+    {
+        DeleteRequest deleteRequest =
+            new DeleteRequest( deleteDocument.getIndexName(), deleteDocument.getIndexType().getIndexTypeName(), deleteDocument.getId() );
+
+        try
+        {
+            return this.client.delete( deleteRequest ).actionGet();
+        }
+        catch ( ElasticSearchException e )
+        {
+            throw new IndexException( "Failed to delete from index " + deleteDocument.getIndexName() + " of type " +
+                                          deleteDocument.getIndexType().getIndexTypeName() + " with id " + deleteDocument.getId(), e );
         }
     }
 

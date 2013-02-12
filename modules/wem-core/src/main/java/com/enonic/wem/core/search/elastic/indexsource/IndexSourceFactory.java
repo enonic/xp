@@ -8,16 +8,6 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.core.search.indexdocument.IndexDocument;
 import com.enonic.wem.core.search.indexdocument.IndexDocumentEntry;
 
-
-/**
- * * This class should handle the transformation from IndexDocument to IndexSource
- * <p/>
- * The fields to be indexed should be decided elsewhere, this should be slavery work, e.g:
- * <p/>
- * If (include in all), append this field to all-field value
- * Add IndexSourceEntries needed
- */
-
 public class IndexSourceFactory
 {
     private static final String ALL_FIELD_NAME = "_all";

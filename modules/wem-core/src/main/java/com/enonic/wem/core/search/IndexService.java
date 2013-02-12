@@ -12,6 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.api.account.Account;
+import com.enonic.wem.api.content.Content;
+import com.enonic.wem.core.search.account.AccountDeleteDocumentFactory;
+import com.enonic.wem.core.search.content.ContentDeleteDocumentFactory;
 import com.enonic.wem.core.search.elastic.ElasticsearchIndexServiceImpl;
 import com.enonic.wem.core.search.elastic.IndexMapping;
 import com.enonic.wem.core.search.elastic.IndexMappingProvider;
@@ -36,11 +40,11 @@ public class IndexService
     public void initialize()
         throws Exception
     {
-        IndexStatus indexStatus = elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX.string(), true );
+        IndexStatus indexStatus = elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX.value(), true );
 
         LOG.info( "Cluster in state: " + indexStatus.toString() );
 
-        final boolean indexExists = elasticsearchIndexService.indexExists( IndexConstants.WEM_INDEX.string() );
+        final boolean indexExists = elasticsearchIndexService.indexExists( IndexConstants.WEM_INDEX.value() );
 
         if ( !indexExists )
         {
@@ -57,7 +61,7 @@ public class IndexService
     {
         try
         {
-            elasticsearchIndexService.createIndex( IndexConstants.WEM_INDEX.string() );
+            elasticsearchIndexService.createIndex( IndexConstants.WEM_INDEX.value() );
         }
         catch ( IndexAlreadyExistsException e )
         {
@@ -65,7 +69,7 @@ public class IndexService
             return;
         }
 
-        final List<IndexMapping> allIndexMappings = indexMappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX.string() );
+        final List<IndexMapping> allIndexMappings = indexMappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX.value() );
 
         for ( IndexMapping indexMapping : allIndexMappings )
         {
@@ -78,6 +82,23 @@ public class IndexService
         final Collection<IndexDocument> indexDocuments = IndexDocumentFactory.create( indexableData );
 
         elasticsearchIndexService.index( indexDocuments );
+    }
+
+    public void deleteAccount( final Account account )
+    {
+        final DeleteDocument deleteDocument = AccountDeleteDocumentFactory.create( account );
+
+        this.elasticsearchIndexService.delete( deleteDocument );
+    }
+
+    public void deleteContent( final Content content )
+    {
+        final Collection<DeleteDocument> deleteDocuments = ContentDeleteDocumentFactory.create( content );
+
+        for ( DeleteDocument deleteDocument : deleteDocuments )
+        {
+            this.elasticsearchIndexService.delete( deleteDocument );
+        }
     }
 
     @Autowired

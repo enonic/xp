@@ -7,7 +7,7 @@ import org.apache.lucene.util.NumericUtils;
 
 import com.enonic.wem.core.search.elastic.ElasticsearchFormatter;
 
-public class IndexSourceOrderbyValueResolver
+public class OrderByValueResolver
 {
     public static String getOrderbyValue( Object value )
     {

@@ -9,7 +9,6 @@ import com.enonic.wem.core.search.IndexException;
 
 public class XContentBuilderFactory
 {
-
     private XContentBuilderFactory()
     {
     }
