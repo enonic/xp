@@ -10,7 +10,8 @@ Ext.define('Admin.controller.contentManager.Controller', {
     models: [],
     views: [
         'Admin.view.contentManager.DeleteContentWindow',
-        'Admin.view.contentManager.NewContentWindow'
+        'Admin.view.contentManager.NewContentWindow',
+        'Admin.view.contentManager.LiveEditWindow'
     ],
 
     init: function () {
@@ -19,6 +20,9 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
         this.application.on({});
 
+        //Live edit window must be created before usage
+        // This should probably be somewhere else
+        this.getLiveEditWindow();
     },
 
     generateTabId: function (content, isEdit) {
@@ -264,7 +268,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
 
         for (i = 0; i < selected.length; i++) {
             var deletable = selected[i].get('deletable');
-            if(!deletable) {
+            if (!deletable) {
                 disabled = true;
                 break;
             }
@@ -310,6 +314,14 @@ Ext.define('Admin.controller.contentManager.Controller', {
         var win = Ext.ComponentQuery.query('newContentWindow')[0];
         if (!win) {
             win = Ext.create('widget.newContentWindow');
+        }
+        return win;
+    },
+
+    getLiveEditWindow: function () {
+        var win = Ext.ComponentQuery.query('liveEditWindow')[0];
+        if (!win) {
+            win = Ext.create('widget.liveEditWindow');
         }
         return win;
     }
