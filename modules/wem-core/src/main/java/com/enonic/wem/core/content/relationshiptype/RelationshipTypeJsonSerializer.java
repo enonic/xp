@@ -11,9 +11,11 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
+import com.enonic.wem.core.support.serializer.ParsingException;
 
 public class RelationshipTypeJsonSerializer
     extends AbstractJsonSerializer<RelationshipType>
+    implements RelationshipTypeSerializer
 {
 
     public RelationshipTypeJsonSerializer()
@@ -27,7 +29,7 @@ public class RelationshipTypeJsonSerializer
 
     public JsonNode serialize( final RelationshipType relationshipType )
     {
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = objectMapper();
         final ObjectNode objectNode = mapper.createObjectNode();
         objectNode.put( "name", relationshipType.getName() );
         objectNode.put( "displayName", relationshipType.getDisplayName() );
@@ -45,6 +47,13 @@ public class RelationshipTypeJsonSerializer
             allowedToTypes.add( allowedToType.toString() );
         }
         return objectNode;
+    }
+
+    @Override
+    public RelationshipType toRelationshipType( final String json )
+        throws ParsingException
+    {
+        return toObject( json );
     }
 
     protected RelationshipType parse( final JsonNode relationshipTypeNode )

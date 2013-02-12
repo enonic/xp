@@ -9,6 +9,6 @@ public interface MixinSerializer
     public String toString( Mixin mixin )
         throws SerializingException;
 
-    public Mixin toMixin( String xml )
+    public Mixin toMixin( String serialized )
         throws ParsingException;
 }
