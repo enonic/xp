@@ -13,7 +13,7 @@
         me.addView();
         me.addEvents();
         me.menu = new AdminLiveEdit.view.componenttip.menu.Menu();
-        me.menu.$tipEl = me.getEl();
+        me.menu.trigger = me;
         me.registerGlobalListeners();
     };
 
@@ -44,7 +44,7 @@
     proto.addView = function () {
         var me = this;
 
-        var html = '<div class="live-edit-component-tip" style="top:-5000px; left:-5000px;">' +
+        var html = '<div class="live-edit-component-tip live-edit-component-tip-arrow-bottom" style="top:-5000px; left:-5000px;">' +
                    '    <div class="live-edit-component-tip-left">' +
                    '        <img src="../app/images/drag-handle.png" class="live-edit-component-tip-icon-menu"/>' +
                    '    </div>' +
@@ -54,6 +54,7 @@
                    '    </div>' +
                    '    <div class="live-edit-component-tip-right">' +
                    '        <img src="../app/images/aiga-forward-and-right-arrow.png" class="live-edit-component-tip-icon-parent"/>' +
+                   '        <img src="../app/images/navigate_cross.png" class="live-edit-component-tip-icon-x" style="display: none"/>' +
                    '    </div>' +
                    '</div>';
 
@@ -82,31 +83,96 @@
                 $(window).trigger('component:select', [$($parent[0])]);
             }
         });
+
+        me.getXButton().click(function () {
+            // Empty
+        });
     };
 
 
     proto.show = function (event, $component) {
         var me = this;
-
         me.$selectedComponent = $component;
 
-        var componentInfo = util.getComponentInfo($component);
-
         // Set text first so width is calculated correctly.
-        me.setText(componentInfo.type, componentInfo.name);
+        // For page we'll use the key.
+        me.setText($component);
 
+        if (util.getComponentType($component) === 'page') {
+            me.showForPage($component);
+        } else {
+            me.showForComponent($component);
+        }
+
+        if (!me.menu.hidden) {
+            me.menu.show(event, $component);
+        }
+    };
+
+
+    proto.showForPage = function ($component) {
+        var me = this;
+        me.toggleTipArrowPosition(true);
+        me.toggleRightSideButton(true);
+        var componentBox = util.getBoxModel($component),
+            leftPos = componentBox.left + (componentBox.width / 2 - me.getEl().outerWidth() / 2);
+
+        me.getEl().css({
+            position: 'fixed',
+            top: '10px',
+            left: leftPos
+        });
+    };
+
+
+    proto.showForComponent = function ($component) {
+        var me = this;
+        me.toggleTipArrowPosition(false);
+        me.toggleRightSideButton(false);
         var componentBox = util.getBoxModel($component),
             leftPos = componentBox.left + (componentBox.width / 2 - me.getEl().outerWidth() / 2),
             topPos = componentBox.top - me.getEl().height() - 10;
 
         me.getEl().css({
+            position: 'absolute',
             top: topPos,
             left: leftPos
         });
+    };
 
-        if (!me.menu.hidden) {
-            me.menu.show(event, $component);
+
+    proto.setText = function ($component) {
+        var $componentTip = this.getEl(),
+            componentInfo = util.getComponentInfo($component);
+        $componentTip.find('.live-edit-component-tip-name-text').text(componentInfo.name);
+        $componentTip.find('.live-edit-component-tip-type-text').text(componentInfo.type === 'page' ? componentInfo.key : componentInfo.type);
+    };
+
+
+    proto.hide = function () {
+        this.$selectedComponent = null;
+
+        this.getEl().css({
+            top: '-5000px',
+            left: '-5000px'
+        });
+    };
+
+
+    proto.toggleTipArrowPosition = function (isPageComponent) {
+        var me = this;
+        if (isPageComponent) {
+            me.getEl().removeClass('live-edit-component-tip-arrow-bottom').addClass('live-edit-component-tip-arrow-top');
+        } else {
+            me.getEl().removeClass('live-edit-component-tip-arrow-top').addClass('live-edit-component-tip-arrow-bottom');
         }
+    };
+
+
+    proto.toggleRightSideButton = function (isPageComponent) {
+        var me = this;
+        me.getParentButton().css('display', isPageComponent ? 'none' : 'inline');
+        me.getXButton().css('display', isPageComponent ? 'inline' : 'none');
     };
 
 
@@ -120,20 +186,8 @@
     };
 
 
-    proto.setText = function (componentType, componentName) {
-        var $componentTip = this.getEl();
-        $componentTip.find('.live-edit-component-tip-name-text').text(componentName);
-        $componentTip.find('.live-edit-component-tip-type-text').text(componentType);
-    };
-
-
-    proto.hide = function () {
-        this.$selectedComponent = null;
-
-        this.getEl().css({
-            top: '-5000px',
-            left: '-5000px'
-        });
+    proto.getXButton = function () {
+        return this.getEl().find('.live-edit-component-tip-icon-x');
     };
 
 }($liveedit));

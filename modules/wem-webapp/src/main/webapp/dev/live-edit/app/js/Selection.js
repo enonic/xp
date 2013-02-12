@@ -53,7 +53,10 @@
         $component.addClass('live-edit-selected-component');
 
         this.setSelected($component);
-        this.scrollComponentIntoView($component);
+
+        if (util.getComponentType($component) !== 'page') {
+            this.scrollComponentIntoView($component);
+        }
     };
 
 

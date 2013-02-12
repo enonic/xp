@@ -3,8 +3,8 @@
 
     // Class definition (constructor function)
     var toolTip = AdminLiveEdit.view.ToolTip = function () {
-        this.OFFSET_X = 15;
-        this.OFFSET_Y = 15;
+        this.OFFSET_X = 0;
+        this.OFFSET_Y = 18;
         this.addView();
         this.attachEventListeners();
         this.registerGlobalListeners();

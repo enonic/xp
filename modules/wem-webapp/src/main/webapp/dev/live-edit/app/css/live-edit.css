@@ -204,7 +204,7 @@ svg.live-edit-highlighter rect {
     position: absolute;
     z-index: 1200150;
     border: 1px solid #000;
-    padding: 3px 6px;
+    padding: 5px 10px;
     background-color: #ffffc7;
 }
 
@@ -227,18 +227,57 @@ svg.live-edit-highlighter rect {
     border: 1px solid #989898;
 }
 
-/* Arrow */
-.live-edit-component-tip:after {
-    content: '';
-    width: 0;
+/* Arrow (cssarrowplease.com/) */
+.live-edit-component-tip-arrow-bottom:after,
+.live-edit-component-tip-arrow-bottom:before,
+.live-edit-component-tip-arrow-top:after,
+.live-edit-component-tip-arrow-top:before {
+    border: solid transparent;
+    content: " ";
     height: 0;
+    width: 0;
     position: absolute;
-    left: 50%;
-    top: 46px;
-    margin-left: -10px;
-    border: 10px solid;
-    border-color: #fff9cb transparent transparent transparent;
+    pointer-events: none;
 }
+.live-edit-component-tip-arrow-bottom:after,
+.live-edit-component-tip-arrow-bottom:before{
+    top: 100%;
+}
+.live-edit-component-tip-arrow-top:after,
+.live-edit-component-tip-arrow-top:before{
+    bottom: 100%;
+}
+
+.live-edit-component-tip-arrow-bottom:after {
+    border-color: rgba(255, 249, 203, 0);
+    border-top-color: #fff9cb;
+    border-width: 8px;
+    left: 50%;
+    margin-left: -8px;
+}
+.live-edit-component-tip-arrow-bottom:before {
+    border-color: rgba(152, 152, 152, 0);
+    border-top-color: #989898;
+    border-width: 9px;
+    left: 50%;
+    margin-left: -9px;
+}
+
+.live-edit-component-tip-arrow-top:after {
+    border-color: rgba(255, 249, 203, 0);
+    border-bottom-color: #fff9cb;
+    border-width: 8px;
+    left: 50%;
+    margin-left: -8px;
+}
+.live-edit-component-tip-arrow-top:before {
+    border-color: rgba(152, 152, 152, 0);
+    border-bottom-color: #989898;
+    border-width: 9px;
+    left: 50%;
+    margin-left: -9px;
+}
+
 
 .live-edit-component-tip-left,
 .live-edit-component-tip-center,
@@ -260,7 +299,8 @@ svg.live-edit-highlighter rect {
     border-left: 1px solid #989898;
 }
 .live-edit-component-tip-icon-menu,
-.live-edit-component-tip-icon-parent {
+.live-edit-component-tip-icon-parent,
+.live-edit-component-tip-icon-x {
     padding: 15px 15px;
     cursor: pointer;
 }

@@ -96,7 +96,7 @@ AdminLiveEdit.Util = (function () {
         },
 
 
-        getPageComponentPagePosition: function ($component) {
+        getPagePositionForComponent: function ($component) {
             return $liveedit($component).position();
         },
 

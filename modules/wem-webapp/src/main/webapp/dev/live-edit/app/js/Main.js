@@ -8,6 +8,7 @@
         var htmlElementReplacer = new AdminLiveEdit.HtmlElementReplacer();
 
         // To be restructured
+        var page                = new AdminLiveEdit.model.component.Page();
         var regions             = new AdminLiveEdit.model.component.Regions();
         var parts               = new AdminLiveEdit.model.component.Parts();
         var contents            = new AdminLiveEdit.model.component.Contents();
@@ -16,11 +17,8 @@
         var highlighter         = new AdminLiveEdit.view.Highlighter();
         var toolTip             = new AdminLiveEdit.view.ToolTip();
         var cursor              = new AdminLiveEdit.view.Cursor();
-
         var componentTip        = new AdminLiveEdit.view.componenttip.Tip();
-
         var shader              = new AdminLiveEdit.view.Shader();
-
         var componentBar        = new AdminLiveEdit.view.componentbar.ComponentBar();
 
         AdminLiveEdit.DragDrop.init();

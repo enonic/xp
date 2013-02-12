@@ -13,6 +13,7 @@
 
         // TODO: Is this necessary anymore?
         me.buttonConfig = {
+            'page': ['settings', 'reset'],
             'region': ['insert', 'reset', 'empty'],
             'part': ['settings', 'remove'],
             'content': ['view', 'edit'],
@@ -96,7 +97,7 @@
 
     proto.moveToTip = function () {
         var me = this,
-            tipElement = me.$tipEl,
+            tipElement = me.trigger.getEl(),
             tipOffset = tipElement.offset(),
             height = tipElement.outerHeight(),
             topPos = tipOffset.top + height - 1,

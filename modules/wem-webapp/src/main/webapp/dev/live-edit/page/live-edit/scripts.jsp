@@ -25,6 +25,7 @@
 
 <script type="text/javascript" charset="UTF-8" src="../app/js/model/Base.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/model/component/Base.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../app/js/model/component/Page.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/model/component/Regions.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/model/component/Parts.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../app/js/model/component/Contents.js"></script>

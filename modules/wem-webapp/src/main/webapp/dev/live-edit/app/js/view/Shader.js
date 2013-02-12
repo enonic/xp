@@ -30,10 +30,12 @@
 
     proto.addView = function () {
         var $body = $('body');
-        $body.append('<div class="live-edit-shader" id="live-edit-shader-north"/>');
-        $body.append('<div class="live-edit-shader" id="live-edit-shader-east"/>');
-        $body.append('<div class="live-edit-shader" id="live-edit-shader-south"/>');
-        $body.append('<div class="live-edit-shader" id="live-edit-shader-west"/>');
+        $body.append('<div class="live-edit-shader" id="live-edit-shader-page"/>');
+
+        $body.append('<div id="live-edit-shader-north" class="live-edit-shader"/>');
+        $body.append('<div id="live-edit-shader-east" class="live-edit-shader"/>');
+        $body.append('<div id="live-edit-shader-south" class="live-edit-shader"/>');
+        $body.append('<div id="live-edit-shader-west" class="live-edit-shader"/>');
 
         $('.live-edit-shader').click(function (event) {
             event.stopPropagation();
@@ -44,8 +46,24 @@
 
     proto.show = function (event, $selectedComponent) {
         var me = this;
+
         me.hide();
-        me.showForComponent($selectedComponent);
+
+        if (util.getComponentType($selectedComponent) === 'page') {
+            me.showForPage($selectedComponent);
+        } else {
+            me.showForComponent($selectedComponent);
+        }
+    };
+
+
+    proto.showForPage = function ($component) {
+        $('#live-edit-shader-page').css({
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        }).show();
     };
 
 
@@ -100,9 +118,8 @@
             top: '-15000px',
             left: '-15000px'
         });
-        $('.live-edit-shader-page').remove();
-        $('.live-edit-highlighter-page').remove();
 
+        $('#live-edit-shader-page').hide();
     };
 
 }($liveedit));

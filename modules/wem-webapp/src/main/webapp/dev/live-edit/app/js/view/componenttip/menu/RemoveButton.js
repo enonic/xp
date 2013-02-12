@@ -28,7 +28,7 @@
             handler: function (event) {
                 event.stopPropagation();
                 // For demo purposes
-                me.componentMenu.$currentComponent.remove();
+                // me.componentMenu.$currentComponent.remove();
                 $(window).trigger('component:remove');
             }
         });
