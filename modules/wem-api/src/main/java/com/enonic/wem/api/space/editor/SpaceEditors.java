@@ -1,5 +1,7 @@
 package com.enonic.wem.api.space.editor;
 
+import com.enonic.wem.api.Icon;
+
 public abstract class SpaceEditors
 {
     public static SpaceEditor composite( final SpaceEditor... editors )
@@ -12,7 +14,7 @@ public abstract class SpaceEditors
         return new SetDisplayNameEditor( displayName );
     }
 
-    public static SpaceEditor setIcon( final byte[] icon )
+    public static SpaceEditor setIcon( final Icon icon )
     {
         return new SetSpaceIconEditor( icon );
     }

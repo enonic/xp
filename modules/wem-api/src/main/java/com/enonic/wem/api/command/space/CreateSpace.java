@@ -4,6 +4,7 @@ package com.enonic.wem.api.command.space;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
@@ -15,7 +16,7 @@ public final class CreateSpace
 
     private SpaceName spaceName;
 
-    private byte[] icon;
+    private Icon icon;
 
     public CreateSpace name( final SpaceName spaceName )
     {
@@ -34,7 +35,7 @@ public final class CreateSpace
         return this;
     }
 
-    public CreateSpace icon( final byte[] icon )
+    public CreateSpace icon( final Icon icon )
     {
         this.icon = icon;
         return this;
@@ -81,7 +82,7 @@ public final class CreateSpace
         return spaceName;
     }
 
-    public byte[] getIcon()
+    public Icon getIcon()
     {
         return icon;
     }

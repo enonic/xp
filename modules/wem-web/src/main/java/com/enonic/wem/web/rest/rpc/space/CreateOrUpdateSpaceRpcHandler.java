@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.space.UpdateSpaces;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
@@ -37,7 +38,7 @@ public final class CreateOrUpdateSpaceRpcHandler
         final SpaceName spaceName = SpaceName.from( context.param( "spaceName" ).notBlank().asString() );
         final String displayName = context.param( "displayName" ).notBlank().asString();
         final String iconReference = context.param( "iconReference" ).asString();
-        final byte[] icon = getUploadedImage( iconReference );
+        final Icon icon = getUploadedImage( iconReference );
 
         if ( !spaceExists( spaceName ) )
         {
@@ -58,7 +59,7 @@ public final class CreateOrUpdateSpaceRpcHandler
         return !client.execute( space().get().name( spaceName ) ).isEmpty();
     }
 
-    private byte[] getUploadedImage( final String iconReference )
+    private Icon getUploadedImage( final String iconReference )
         throws IOException
     {
         if ( iconReference == null )
@@ -71,7 +72,8 @@ public final class CreateOrUpdateSpaceRpcHandler
             final File file = uploadItem.getFile();
             if ( file.exists() )
             {
-                return FileUtils.readFileToByteArray( file );
+                final byte[] imageData = FileUtils.readFileToByteArray( file );
+                return Icon.from( imageData, uploadItem.getMimeType() );
             }
         }
         return null;

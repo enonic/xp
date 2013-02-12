@@ -5,7 +5,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import com.enonic.wem.api.space.Space;
-import com.enonic.wem.core.jcr.JcrHelper;
+import com.enonic.wem.core.support.dao.IconJcrMapper;
 
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyString;
@@ -21,7 +21,7 @@ final class SpaceJcrMapper
 
     static final String MODIFIED_TIME = "modifiedTime";
 
-    static final String ICON = "icon";
+    private final IconJcrMapper iconJcrMapper = new IconJcrMapper();
 
     void toJcr( final Space space, final Node spaceNode )
         throws RepositoryException
@@ -30,15 +30,7 @@ final class SpaceJcrMapper
         spaceNode.setProperty( DISPLAY_NAME, space.getDisplayName() );
         setPropertyDateTime( spaceNode, CREATED_TIME, space.getCreatedTime() );
         setPropertyDateTime( spaceNode, MODIFIED_TIME, space.getModifiedTime() );
-        final byte[] icon = space.getIcon();
-        if ( icon != null && icon.length > 0 )
-        {
-            JcrHelper.setPropertyBinary( spaceNode, ICON, icon );
-        }
-        else if ( spaceNode.hasProperty( ICON ) )
-        {
-            spaceNode.getProperty( ICON ).remove();
-        }
+        iconJcrMapper.toJcr( space.getIcon(), spaceNode );
     }
 
     void toSpace( final Node spaceNode, final Space.Builder spaceBuilder )
@@ -48,7 +40,7 @@ final class SpaceJcrMapper
         spaceBuilder.displayName( getPropertyString( spaceNode, DISPLAY_NAME ) );
         spaceBuilder.createdTime( getPropertyDateTime( spaceNode, CREATED_TIME ) );
         spaceBuilder.modifiedTime( getPropertyDateTime( spaceNode, MODIFIED_TIME ) );
-        spaceBuilder.icon( JcrHelper.getPropertyBinary( spaceNode, ICON ) );
+        spaceBuilder.icon( iconJcrMapper.toIcon( spaceNode ) );
     }
 
 }

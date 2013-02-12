@@ -1,15 +1,14 @@
 package com.enonic.wem.api.space.editor;
 
-import java.util.Arrays;
-
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.space.Space;
 
 final class SetSpaceIconEditor
     implements SpaceEditor
 {
-    private final byte[] icon;
+    private final Icon icon;
 
-    SetSpaceIconEditor( final byte[] icon )
+    SetSpaceIconEditor( final Icon icon )
     {
         this.icon = icon;
     }
@@ -18,11 +17,7 @@ final class SetSpaceIconEditor
     public Space edit( final Space space )
         throws Exception
     {
-        if ( icon == null && space.getIcon() == null )
-        {
-            return null;
-        }
-        final byte[] iconToSet = ( this.icon == null ) ? null : Arrays.copyOf( this.icon, this.icon.length );
+        final Icon iconToSet = ( this.icon == null ) ? null : Icon.copyOf( this.icon );
         final Space updated = Space.newSpace( space ).
             icon( iconToSet ).
             build();

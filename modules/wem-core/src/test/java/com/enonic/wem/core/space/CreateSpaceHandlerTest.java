@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.space.CreateSpace;
 import com.enonic.wem.api.content.Content;
@@ -54,7 +55,7 @@ public class CreateSpaceHandlerTest
         throws Exception
     {
         // setup
-        final byte[] icon = "imagedata".getBytes();
+        final Icon icon = Icon.from( "imagedata".getBytes(), "image/png" );
         final String rootContentNodeId = "1fad493a-6a72-41a3-bac4-88aba3d83bcc";
         when( contentDao.create( isA( Content.class ), any( Session.class ) ) ).thenReturn( ContentIdFactory.from( rootContentNodeId ) );
 
@@ -70,7 +71,7 @@ public class CreateSpaceHandlerTest
         assertEquals( "mySpace", spaceResult.getName().name() );
         assertEquals( CURRENT_TIME, spaceResult.getModifiedTime() );
         assertEquals( CURRENT_TIME, spaceResult.getCreatedTime() );
-        assertArrayEquals( icon, spaceResult.getIcon() );
+        assertEquals( icon, spaceResult.getIcon() );
         assertEquals( ContentIdFactory.from( rootContentNodeId ), spaceResult.getRootContent() );
     }
 

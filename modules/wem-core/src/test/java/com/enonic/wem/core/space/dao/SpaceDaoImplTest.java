@@ -6,6 +6,7 @@ import javax.jcr.Node;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
@@ -30,7 +31,7 @@ public class SpaceDaoImplTest
 
     private ContentDao contentDao;
 
-    private final static byte[] ICON_DATA = "imagedata".getBytes();
+    private final static Icon ICON = Icon.from( "imagedata".getBytes(), "image/png" );
 
     public void setupDao()
         throws Exception
@@ -50,7 +51,7 @@ public class SpaceDaoImplTest
             displayName( "My Space" ).
             createdTime( time ).
             modifiedTime( time ).
-            icon( ICON_DATA ).
+            icon( ICON ).
             build();
 
         // exercise
@@ -63,7 +64,7 @@ public class SpaceDaoImplTest
         assertNull( space.getRootContent() );
         assertEquals( time, space.getCreatedTime() );
         assertEquals( time, space.getModifiedTime() );
-        assertArrayEquals( ICON_DATA, space.getIcon() );
+        assertEquals( ICON, space.getIcon() );
     }
 
     private ContentId createSpaceRoot( final Space space )
@@ -87,7 +88,7 @@ public class SpaceDaoImplTest
             displayName( "My Space" ).
             createdTime( time ).
             modifiedTime( time ).
-            icon( ICON_DATA ).
+            icon( ICON ).
             build();
         final Space space2 = newSpace().
             name( "myOtherSpace" ).
@@ -110,7 +111,7 @@ public class SpaceDaoImplTest
         assertEquals( "My Space", spaceRetrieved.getDisplayName() );
         assertEqualsDateTime( time, spaceRetrieved.getCreatedTime() );
         assertEqualsDateTime( time, spaceRetrieved.getModifiedTime() );
-        assertArrayEquals( ICON_DATA, spaceRetrieved.getIcon() );
+        assertEquals( ICON, spaceRetrieved.getIcon() );
         assertNotNull( spaceRetrieved.getRootContent() );
     }
 
@@ -207,7 +208,7 @@ public class SpaceDaoImplTest
             displayName( "This is my Space" ).
             createdTime( time ).
             modifiedTime( updateTime ).
-            icon( ICON_DATA ).
+            icon( ICON ).
             build();
         spaceDao.updateSpace( spaceChanges, session );
 
@@ -219,7 +220,7 @@ public class SpaceDaoImplTest
         assertEqualsDateTime( time, spaceUpdated.getCreatedTime() );
         assertEqualsDateTime( updateTime, spaceUpdated.getModifiedTime() );
         assertEquals( rootContentId, spaceUpdated.getRootContent() );
-        assertArrayEquals( ICON_DATA, spaceUpdated.getIcon() );
+        assertEquals( ICON, spaceUpdated.getIcon() );
     }
 
     @Test(expected = SpaceNotFoundException.class)

@@ -1,12 +1,11 @@
 package com.enonic.wem.api.space;
 
-import java.util.Arrays;
-
 import org.joda.time.DateTime;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.ContentId;
 
 public final class Space
@@ -21,7 +20,7 @@ public final class Space
 
     private final ContentId rootContent;
 
-    private final byte[] icon;
+    private final Icon icon;
 
     private Space( final Builder builder )
     {
@@ -58,7 +57,7 @@ public final class Space
         return rootContent;
     }
 
-    public byte[] getIcon()
+    public Icon getIcon()
     {
         return icon;
     }
@@ -124,7 +123,7 @@ public final class Space
 
         private ContentId rootContent;
 
-        private byte[] icon;
+        private Icon icon;
 
         private Builder()
         {
@@ -143,7 +142,7 @@ public final class Space
             this.createdTime = space.createdTime;
             this.modifiedTime = space.modifiedTime;
             this.rootContent = space.rootContent;
-            this.icon = space.icon == null ? null : Arrays.copyOf( space.icon, space.icon.length );
+            this.icon = space.icon == null ? null : Icon.copyOf( space.icon );
         }
 
         public Builder displayName( final String displayName )
@@ -182,7 +181,7 @@ public final class Space
             return this;
         }
 
-        public Builder icon( final byte[] icon )
+        public Builder icon( final Icon icon )
         {
             this.icon = icon;
             return this;
