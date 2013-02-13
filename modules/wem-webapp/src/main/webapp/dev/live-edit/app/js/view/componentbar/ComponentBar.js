@@ -8,7 +8,7 @@
     var componentBar = AdminLiveEdit.view.componentbar.ComponentBar = function () {
         var me = this;
 
-        me.hidden = false;
+        me.hidden = true;
 
         me.addView();
 
@@ -52,6 +52,11 @@
     html += '</div>';
 
 
+    proto.getComponentsDataUrl = function () {
+        return '../app/data/mock-components.json';
+    };
+
+
     proto.addView = function () {
         var me = this;
 
@@ -61,13 +66,30 @@
 
 
     proto.registerGlobalListeners = function () {
-        $(window).on('componentbar:component:dragstart', $.proxy(this.toggle, this));
-        $(window).on('componentbar:component:dragstop', $.proxy(this.toggle, this));
+        var me = this;
+        $(window).on('component:select', $.proxy(me.fadeOut, me));
+        $(window).on('component:deselect', $.proxy(me.fadeIn, me));
+        $(window).on('componentbar:component:dragstart', $.proxy(me.fadeOut, me));
+        $(window).on('componentbar:component:dragstop', $.proxy(me.fadeIn, me));
+        $(window).on('component:sort:start', $.proxy(me.fadeOut, me));
+        $(window).on('component:sort:update', $.proxy(me.fadeIn, me));
     };
 
 
-    proto.getComponentsDataUrl = function () {
-        return '../app/data/mock-components.json';
+    proto.registerEvents = function () {
+        var me = this;
+
+        me.getToggle().click(function () {
+            me.toggle();
+        });
+
+        me.getFilterInput().on('keyup', function () {
+            me.filterList($(this).val());
+        });
+
+        me.getBar().on('mouseover', function () {
+            $liveedit(window).trigger('componentBar:mouseover');
+        });
     };
 
 
@@ -128,19 +150,15 @@
     };
 
 
-    proto.registerEvents = function () {
-        var me = this;
-
-        me.getToggle().click(function () {
-            me.toggle();
-        });
-
-        me.getFilterInput().on('keyup', function () {
-            me.filterList($(this).val());
-        });
-
-        me.getBar().on('mouseover', function () {
-            $liveedit(window).trigger('componentBar:mouseover');
+    proto.filterList = function (value) {
+        var me = this,
+            $element,
+            name,
+            valueLowerCased = value.toLowerCase();
+        me.getComponentList().each(function (index) {
+            $element = $(this);
+            name = $element.data('live-edit-component-name').toLowerCase();
+            $element.css('display', name.indexOf(valueLowerCased) > -1 ? '' : 'none');
         });
     };
 
@@ -163,21 +181,19 @@
 
 
     proto.hide = function () {
-        var me = this;
-        me.getBar().css('right', '-' + me.getComponentsContainer().width() + 'px');
+        this.getBar().css('right', '-200px');
     };
 
 
-    proto.filterList = function (value) {
-        var me = this,
-            $element,
-            name,
-            valueLowerCased = value.toLowerCase();
-        me.getComponentList().each(function (index) {
-            $element = $(this);
-            name = $element.data('live-edit-component-name').toLowerCase();
-            $element.css('display', name.indexOf(valueLowerCased) > -1 ? '' : 'none');
-        });
+    proto.fadeIn = function () {
+        console.log('fade in');
+        this.getBar().css('opacity', '1');
+    };
+
+
+    proto.fadeOut = function () {
+        console.log('fade out');
+        this.getBar().css('opacity', '0');
     };
 
 
