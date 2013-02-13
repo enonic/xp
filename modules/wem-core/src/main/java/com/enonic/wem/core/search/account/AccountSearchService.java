@@ -90,8 +90,7 @@ public class AccountSearchService
         for ( int i = 0; i < hitCount; i++ )
         {
             final SearchHit hit = hits.getAt( i );
-            final String key = (String) hit.sourceAsMap().get( "key" );
-            searchResult.add( AccountKey.from( key ), hit.score() );
+            searchResult.add( AccountKey.from( hit.getId() ), hit.score() );
         }
     }
 

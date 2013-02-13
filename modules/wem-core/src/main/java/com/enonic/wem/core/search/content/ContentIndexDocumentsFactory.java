@@ -42,14 +42,14 @@ public class ContentIndexDocumentsFactory
 
     private static void addContentMetaData( final Content content, final IndexDocument indexDocument )
     {
-        indexDocument.addDocumentEntry( ContentIndexField.KEY_FIELD.id(), content.getId().toString(), false, true );
-        indexDocument.addDocumentEntry( ContentIndexField.CREATED_FIELD.id(), content.getCreatedTime(), false, true );
-        indexDocument.addDocumentEntry( ContentIndexField.LAST_MODIFIED_FIELD.id(), content.getModifiedTime(), false, true );
-        indexDocument.addDocumentEntry( ContentIndexField.CONTENT_TYPE_NAME_FIELD.id(), content.getType().getContentTypeName(), false,
-                                        true );
-        indexDocument.addDocumentEntry( ContentIndexField.DISPLAY_NAME_FIELD.id(), content.getDisplayName(), true, true );
-        indexDocument.addDocumentEntry( ContentIndexField.OWNER_FIELD.id(), content.getOwner().getQualifiedName(), false, true );
-        indexDocument.addDocumentEntry( ContentIndexField.MODIFIER_FIELD.id(), content.getModifier().getQualifiedName(), false, true );
+        indexDocument.addDocumentEntry( ContentIndexField.KEY.id(), content.getId().toString(), false, true );
+        indexDocument.addDocumentEntry( ContentIndexField.PATH.id(), content.getPath().toString(), true, true );
+        indexDocument.addDocumentEntry( ContentIndexField.CREATED.id(), content.getCreatedTime(), false, true );
+        indexDocument.addDocumentEntry( ContentIndexField.LAST_MODIFIED.id(), content.getModifiedTime(), false, true );
+        indexDocument.addDocumentEntry( ContentIndexField.CONTENT_TYPE.id(), content.getType().getContentTypeName(), false, true );
+        indexDocument.addDocumentEntry( ContentIndexField.DISPLAY_NAME.id(), content.getDisplayName(), true, true );
+        indexDocument.addDocumentEntry( ContentIndexField.OWNER.id(), content.getOwner().getQualifiedName(), false, true );
+        indexDocument.addDocumentEntry( ContentIndexField.MODIFIER.id(), content.getModifier().getQualifiedName(), false, true );
     }
 
     private static void addContentData( final Content content, final IndexDocument indexDocument )

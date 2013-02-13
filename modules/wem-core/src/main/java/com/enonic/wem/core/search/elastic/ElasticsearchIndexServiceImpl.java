@@ -10,7 +10,6 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
@@ -85,14 +84,14 @@ public class ElasticsearchIndexServiceImpl
     }
 
     @Override
-    public DeleteResponse delete( final DeleteDocument deleteDocument )
+    public void delete( final DeleteDocument deleteDocument )
     {
         DeleteRequest deleteRequest =
             new DeleteRequest( deleteDocument.getIndexName(), deleteDocument.getIndexType().getIndexTypeName(), deleteDocument.getId() );
 
         try
         {
-            return this.client.delete( deleteRequest ).actionGet();
+            this.client.delete( deleteRequest ).actionGet();
         }
         catch ( ElasticSearchException e )
         {

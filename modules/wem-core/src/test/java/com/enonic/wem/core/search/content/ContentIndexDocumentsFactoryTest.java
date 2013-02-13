@@ -35,7 +35,6 @@ public class ContentIndexDocumentsFactoryTest
 
         assertEquals( 1, indexDocuments.size() );
 
-
     }
 
     private final class MockContentId
@@ -48,8 +47,6 @@ public class ContentIndexDocumentsFactoryTest
             this.id = id;
         }
     }
-
-
 }
 
 
