@@ -1,7 +1,7 @@
 (function ($) {
     'use strict';
 
-    var parts =  AdminLiveEdit.model.component.Parts = function () {
+    var parts =  AdminLiveEdit.model.component.Part = function () {
         this.cssSelector = '[data-live-edit-type=part]';
         this.renderEmptyPlaceholders();
         this.attachMouseOverEvent();

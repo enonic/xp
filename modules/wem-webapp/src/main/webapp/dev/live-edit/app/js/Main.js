@@ -9,10 +9,10 @@
 
         // To be restructured
         var page                = new AdminLiveEdit.model.component.Page();
-        var regions             = new AdminLiveEdit.model.component.Regions();
-        var parts               = new AdminLiveEdit.model.component.Parts();
-        var contents            = new AdminLiveEdit.model.component.Contents();
-        var paragraphs          = new AdminLiveEdit.model.component.Paragraphs();
+        var regions             = new AdminLiveEdit.model.component.Region();
+        var parts               = new AdminLiveEdit.model.component.Part();
+        var contents            = new AdminLiveEdit.model.component.Content();
+        var paragraphs          = new AdminLiveEdit.model.component.Paragraph();
 
         var highlighter         = new AdminLiveEdit.view.Highlighter();
         var toolTip             = new AdminLiveEdit.view.ToolTip();

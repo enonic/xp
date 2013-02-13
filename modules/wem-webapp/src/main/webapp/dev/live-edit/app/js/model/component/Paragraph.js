@@ -1,21 +1,20 @@
 (function () {
     'use strict';
 
-    var contents = AdminLiveEdit.model.component.Contents = function () {
-        this.cssSelector = '[data-live-edit-type=content]';
+    var paragraphs =  AdminLiveEdit.model.component.Paragraph = function () {
+        this.cssSelector = '[data-live-edit-type=paragraph]';
         this.attachMouseOverEvent();
         this.attachMouseOutEvent();
         this.attachClickEvent();
     };
     // Inherit from Base prototype
-    contents.prototype = new AdminLiveEdit.model.component.Base();
+    paragraphs.prototype = new  AdminLiveEdit.model.component.Base();
 
     // Fix constructor as it now is Base
-    contents.constructor = contents;
+    paragraphs.constructor = paragraphs;
 
-    var proto = contents.prototype;
+    var proto = paragraphs.prototype;
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
 
 }());
