@@ -301,7 +301,7 @@ svg.live-edit-highlighter rect {
 }
 .live-edit-component-tip-icon-menu,
 .live-edit-component-tip-icon-parent,
-.live-edit-component-tip-icon-x {
+.live-edit-component-tip-icon-deselect {
     padding: 15px 15px;
     cursor: pointer;
 }

@@ -54,7 +54,7 @@
                    '    </div>' +
                    '    <div class="live-edit-component-tip-right">' +
                    '        <img src="../app/images/aiga-forward-and-right-arrow.png" class="live-edit-component-tip-icon-parent"/>' +
-                   '        <img src="../app/images/navigate_cross.png" class="live-edit-component-tip-icon-x" style="display: none"/>' +
+                   '        <img src="../app/images/navigate_cross.png" class="live-edit-component-tip-icon-deselect" style="display: none"/>' +
                    '    </div>' +
                    '</div>';
 
@@ -84,8 +84,8 @@
             }
         });
 
-        me.getXButton().click(function () {
-            // Empty
+        me.getDeselectButton().click(function () {
+            $(window).trigger('component:deselect');
         });
     };
 
@@ -172,7 +172,7 @@
     proto.toggleRightSideButton = function (isPageComponent) {
         var me = this;
         me.getParentButton().css('display', isPageComponent ? 'none' : 'inline');
-        me.getXButton().css('display', isPageComponent ? 'inline' : 'none');
+        me.getDeselectButton().css('display', isPageComponent ? 'inline' : 'none');
     };
 
 
@@ -186,8 +186,8 @@
     };
 
 
-    proto.getXButton = function () {
-        return this.getEl().find('.live-edit-component-tip-icon-x');
+    proto.getDeselectButton = function () {
+        return this.getEl().find('.live-edit-component-tip-icon-deselect');
     };
 
 }($liveedit));

@@ -41,8 +41,15 @@
 
 
     proto.highlight = function (event, $selectedComponent) {
-        this.getEl().show();
         var me = this;
+
+        // Highlighter should not be shown when page is selected.
+        if (util.getComponentType($selectedComponent) === 'page' && event.type === 'component:select') {
+            me.hide();
+            return;
+        }
+
+        me.getEl().show();
         me.resize($selectedComponent);
 
         var $highlighter = me.getEl();
@@ -84,7 +91,7 @@
     };
 
 
-    proto.hide = function (event) {
+    proto.hide = function () {
         this.getEl().hide();
     };
 
