@@ -170,7 +170,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             xtype: 'panel'
         };
 
-        return [dataStep, pageStep, metaStep, securityStep, summaryStep];
+        return [dataStep, metaStep, securityStep, summaryStep];
 
     },
 
