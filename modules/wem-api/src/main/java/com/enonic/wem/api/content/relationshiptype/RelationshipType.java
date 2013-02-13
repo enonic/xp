@@ -250,7 +250,7 @@ public final class RelationshipType
             return this;
         }
 
-        public Builder addAllowedFromType( Iterable<QualifiedContentTypeName> iterable )
+        public Builder addAllowedFromTypes( Iterable<QualifiedContentTypeName> iterable )
         {
             for ( QualifiedContentTypeName contentType : iterable )
             {
@@ -265,7 +265,7 @@ public final class RelationshipType
             return this;
         }
 
-        public Builder addAllowedToType( Iterable<QualifiedContentTypeName> iterable )
+        public Builder addAllowedToTypes( Iterable<QualifiedContentTypeName> iterable )
         {
             for ( QualifiedContentTypeName contentType : iterable )
             {

@@ -6,7 +6,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.content.relationshiptype.RelationshipType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;
 
@@ -29,16 +28,51 @@ public final class CreateRelationshipType
 
     private Icon icon;
 
-    public CreateRelationshipType relationshipType( final RelationshipType relationshipType )
+    public CreateRelationshipType name( final String name )
     {
-        this.name = relationshipType.getName();
-        this.displayName = relationshipType.getDisplayName();
-        this.module = relationshipType.getModuleName();
-        this.fromSemantic = relationshipType.getFromSemantic();
-        this.toSemantic = relationshipType.getToSemantic();
-        this.allowedFromTypes = relationshipType.getAllowedFromTypes();
-        this.allowedToTypes = relationshipType.getAllowedToTypes();
-        this.icon = relationshipType.getIcon();
+        this.name = name;
+        return this;
+    }
+
+    public CreateRelationshipType displayName( final String displayName )
+    {
+        this.displayName = displayName;
+        return this;
+    }
+
+    public CreateRelationshipType module( final ModuleName module )
+    {
+        this.module = module;
+        return this;
+    }
+
+    public CreateRelationshipType fromSemantic( final String fromSemantic )
+    {
+        this.fromSemantic = fromSemantic;
+        return this;
+    }
+
+    public CreateRelationshipType toSemantic( final String toSemantic )
+    {
+        this.toSemantic = toSemantic;
+        return this;
+    }
+
+    public CreateRelationshipType allowedFromTypes( final QualifiedContentTypeNames allowedFromTypes )
+    {
+        this.allowedFromTypes = allowedFromTypes;
+        return this;
+    }
+
+    public CreateRelationshipType allowedToTypes( final QualifiedContentTypeNames allowedToTypes )
+    {
+        this.allowedToTypes = allowedToTypes;
+        return this;
+    }
+
+    public CreateRelationshipType icon( final Icon icon )
+    {
+        this.icon = icon;
         return this;
     }
 

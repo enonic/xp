@@ -1,7 +1,6 @@
 package com.enonic.wem.core.content.relationshiptype;
 
 import org.apache.commons.io.IOUtils;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -25,9 +24,9 @@ import static com.enonic.wem.api.content.relationshiptype.editor.RelationshipTyp
 public class RelationshipTypesInitializer
     implements InitializerTask
 {
-    private static final RelationshipType DEFAULT = createRelationshipType( "default", "Default", "relates to", "related by" );
+    private static final RelationshipType PARENT = createRelationshipType( "parent", "Parent", "parent of", "child of" );
 
-    private static final RelationshipType REQUIRE = createRelationshipType( "require", "Require", "requires", "required by" );
+    private static final RelationshipType LINK = createRelationshipType( "link", "Link", "links to", "linked by" );
 
     private static final RelationshipType LIKE = createRelationshipType( "like", "Like", "likes", "liked by" );
 
@@ -37,8 +36,8 @@ public class RelationshipTypesInitializer
     public void initialize()
         throws Exception
     {
-        createOrUpdate( DEFAULT );
-        createOrUpdate( REQUIRE );
+        createOrUpdate( PARENT );
+        createOrUpdate( LINK );
         createOrUpdate( LIKE );
     }
 
@@ -49,7 +48,13 @@ public class RelationshipTypesInitializer
         if ( notExists )
         {
             final CreateRelationshipType createCommand = Commands.relationshipType().create();
-            createCommand.relationshipType( relationshipType );
+            createCommand.
+                name( relationshipType.getName() ).
+                displayName( relationshipType.getDisplayName() ).
+                module( ModuleName.SYSTEM ).
+                fromSemantic( relationshipType.getFromSemantic() ).
+                toSemantic( relationshipType.getToSemantic() ).
+                icon( loadRelationshipTypeIcon( relationshipType.getQualifiedName() ) );
             client.execute( createCommand );
         }
         else
@@ -83,7 +88,6 @@ public class RelationshipTypesInitializer
             displayName( displayName ).
             fromSemantic( fromSemantic ).
             toSemantic( toSemantic ).
-            createdTime( new DateTime( 2013, 1, 17, 15, 0, 0 ) ).
             module( ModuleName.SYSTEM ).
             icon( loadRelationshipTypeIcon( new QualifiedRelationshipTypeName( ModuleName.SYSTEM, name ) ) ).
             build();

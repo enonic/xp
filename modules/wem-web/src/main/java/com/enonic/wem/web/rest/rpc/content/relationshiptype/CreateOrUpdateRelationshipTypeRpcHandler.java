@@ -52,7 +52,14 @@ public final class CreateOrUpdateRelationshipTypeRpcHandler
         if ( !exists( relationshipType.getQualifiedName() ) )
         {
             final CreateRelationshipType createCommand = Commands.relationshipType().create();
-            createCommand.relationshipType( relationshipType );
+            createCommand.
+                module( relationshipType.getModuleName() ).
+                name( relationshipType.getName() ).
+                displayName( relationshipType.getDisplayName() ).
+                fromSemantic( relationshipType.getFromSemantic() ).
+                toSemantic( relationshipType.getToSemantic() ).
+                allowedFromTypes( relationshipType.getAllowedFromTypes() ).
+                allowedToTypes( relationshipType.getAllowedToTypes() );
             client.execute( createCommand );
             context.setResult( CreateOrUpdateRelationshipTypeJsonResult.created() );
         }

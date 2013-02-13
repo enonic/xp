@@ -10,7 +10,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.relationshiptype.CreateRelationshipType;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
-import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.relationshiptype.dao.RelationshipTypeDao;
@@ -42,17 +42,15 @@ public class CreateRelationshipTypeHandlerTest
         throws Exception
     {
         // setup
-        final RelationshipType relationshipType = RelationshipType.newRelationshipType().
+        final CreateRelationshipType command = Commands.relationshipType().create().
             module( ModuleName.from( "myModule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "myModule:person" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "myModule:person" ) ).
-            build();
+            allowedFromTypes( QualifiedContentTypeNames.from( "myModule:person" ) ).
+            allowedToTypes( QualifiedContentTypeNames.from( "myModule:person" ) );
 
         // exercise
-        final CreateRelationshipType command = Commands.relationshipType().create().relationshipType( relationshipType );
         this.handler.handle( this.context, command );
 
         // verify

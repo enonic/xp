@@ -35,8 +35,14 @@ public final class CreateRelationshipTypeHandler
         builder.module( command.getModule() );
         builder.fromSemantic( command.getFromSemantic() );
         builder.toSemantic( command.getToSemantic() );
-        builder.addAllowedFromType( command.getAllowedFromTypes() );
-        builder.addAllowedToType( command.getAllowedToTypes() );
+        if ( command.getAllowedFromTypes() != null )
+        {
+            builder.addAllowedFromTypes( command.getAllowedFromTypes() );
+        }
+        if ( command.getAllowedToTypes() != null )
+        {
+            builder.addAllowedToTypes( command.getAllowedToTypes() );
+        }
         builder.createdTime( DateTime.now() );
         builder.modifiedTime( DateTime.now() );
         builder.icon( command.getIcon() );
