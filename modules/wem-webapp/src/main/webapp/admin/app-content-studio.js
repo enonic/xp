@@ -4,6 +4,7 @@ Ext.application({
     controllers: [
         'Admin.controller.Controller',
         'Admin.controller.TopBarController',
+        'Admin.controller.contentStudio.Controller',
         'Admin.controller.contentStudio.GridPanelController',
         'Admin.controller.contentStudio.BrowseController',
         'Admin.controller.contentStudio.FilterPanelController',

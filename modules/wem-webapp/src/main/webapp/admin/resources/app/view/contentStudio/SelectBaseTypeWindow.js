@@ -9,8 +9,8 @@ Ext.define('Admin.view.contentStudio.SelectBaseTypeWindow', {
     dialogSubTitle: undefined,
     dialogInfoTpl: undefined,
 
-    width: 800,
-    height: 560,
+    width: 600,
+    height: 360,
     padding: 20,
 
     layout: 'border',
@@ -31,25 +31,46 @@ Ext.define('Admin.view.contentStudio.SelectBaseTypeWindow', {
     initComponent: function () {
         var me = this;
 
+        Ext.define('Admin.model.contentStudio.BaseType', {
+            extend: 'Ext.data.Model',
+            fields: [
+                { name: 'name', type: 'string' },
+                'iconUrl'
+            ]
+        });
+
+        var baseTypeStore = Ext.create('Ext.data.Store', {
+            model: 'Admin.model.contentStudio.BaseType',
+            data: [
+                {
+                    name: 'ContentType',
+                    iconUrl: '/enonic/admin/rest/basetype/image/ContentType:System:structured'
+                },
+                {
+                    name: 'RelationshipType',
+                    iconUrl: '/enonic/admin/rest/basetype/image/ContentType:System:structured'
+                },
+                {
+                    name: 'Mixin',
+                    iconUrl: '/enonic/admin/rest/basetype/image/ContentType:System:structured'
+                }
+            ]
+        })
+
         var baseDataView = {
             xtype: 'dataview',
             cls: 'admin-data-view',
+            itemId: 'basetypeList',
             tpl: me.dataViewItemTemplate,
             itemSelector: '.admin-data-view-row',
             trackOver: true,
             overItemCls: 'x-item-over',
+            store: baseTypeStore,
             listeners: {
-                itemclick: function (dataview, record, item, index, e, opts) {
-                    me.fireEvent('contentTypeSelected', me, record);
+                itemclick: function (view, record, item, index, e, eOpts) {
+                    me.fireEvent('createNewBaseType', me, record);
                 }
-            },
-            store: Ext.create('Ext.data.Store', {
-                data: [
-                    {name: 'ContentType'},
-                    {name: 'RelationshipType'},
-                    {name: 'Mixin'}
-                ]
-            })
+            }
         };
 
         this.items = [
@@ -65,6 +86,7 @@ Ext.define('Admin.view.contentStudio.SelectBaseTypeWindow', {
             },
             {
                 region: 'center',
+                border: false,
                 layout: {
                     type: 'vbox',
                     align: 'stretch'
@@ -91,14 +113,6 @@ Ext.define('Admin.view.contentStudio.SelectBaseTypeWindow', {
                 items: [
                     {
                         xtype: 'button',
-                        text: 'Confirm',
-                        margin: '0 10 0 0',
-                        handler: function (btn, evt) {
-                            me.close();
-                        }
-                    },
-                    {
-                        xtype: 'button',
                         text: 'Cancel',
                         handler: function (btn, evt) {
                             me.close();
@@ -109,6 +123,8 @@ Ext.define('Admin.view.contentStudio.SelectBaseTypeWindow', {
         ];
 
         this.callParent(arguments);
+
+        this.addEvents('createNewBaseType');
     }
 
 

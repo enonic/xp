@@ -14,6 +14,10 @@ Ext.define('Admin.controller.contentStudio.Controller', {
 
     init: function () {
         this.application.on({
+            createNewBaseType: {
+                fn: this.createNewBaseType,
+                scope: this
+            },
             showNewContentTypePanel: {
                 fn: this.showNewContentTypePanel,
                 scope: this
@@ -35,11 +39,26 @@ Ext.define('Admin.controller.contentStudio.Controller', {
                 scope: this
             }
         });
+
+        this.control({
+            'selectBaseTypeWindow': {
+                createNewBaseType: function (modalWindow, item) {
+                    modalWindow.close();
+                    console.log(item);
+                    this.createEditBaseTypePanel(item.data.name, true);
+                }
+            }
+        });
     },
 
 
     generateTabId: function (contentType, isEdit) {
         return 'tab-' + ( isEdit ? 'edit-' : 'preview-') + contentType.get('type') + '-' + contentType.get('qualifiedName');
+    },
+
+    createNewBaseType: function (record) {
+        console.log('Event caught');
+        this.createEditBaseTypePanel(record.data.name);
     },
 
     showNewContentTypePanel: function () {
@@ -98,7 +117,7 @@ Ext.define('Admin.controller.contentStudio.Controller', {
     },
 
     createEditBaseTypePanel: function (baseType, forceNew) {
-        switch (baseType.data.type) {
+        switch (baseType) {
         case 'ContentType':
             this.createEditContentTypePanel(baseType, forceNew);
             break;
