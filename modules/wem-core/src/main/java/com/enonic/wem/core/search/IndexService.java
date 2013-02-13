@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.account.Account;
-import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.core.search.account.AccountDeleteDocumentFactory;
 import com.enonic.wem.core.search.content.ContentDeleteDocumentFactory;
 import com.enonic.wem.core.search.elastic.ElasticsearchIndexServiceImpl;
@@ -84,16 +84,16 @@ public class IndexService
         elasticsearchIndexService.index( indexDocuments );
     }
 
-    public void deleteAccount( final Account account )
+    public void deleteAccount( final AccountKey accountKey )
     {
-        final DeleteDocument deleteDocument = AccountDeleteDocumentFactory.create( account );
+        final DeleteDocument deleteDocument = AccountDeleteDocumentFactory.create( accountKey );
 
         this.elasticsearchIndexService.delete( deleteDocument );
     }
 
-    public void deleteContent( final Content content )
+    public void deleteContent( final ContentSelector contentSelector )
     {
-        final Collection<DeleteDocument> deleteDocuments = ContentDeleteDocumentFactory.create( content );
+        final Collection<DeleteDocument> deleteDocuments = ContentDeleteDocumentFactory.create( contentSelector );
 
         for ( DeleteDocument deleteDocument : deleteDocuments )
         {

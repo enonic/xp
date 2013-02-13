@@ -14,12 +14,15 @@ import com.enonic.wem.api.exception.UnableToDeleteContentException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
+import com.enonic.wem.core.search.IndexService;
 
 @Component
 public class DeleteContentsHandler
     extends CommandHandler<DeleteContents>
 {
     private ContentDao contentDao;
+
+    private IndexService indexService;
 
     public DeleteContentsHandler()
     {
@@ -57,5 +60,11 @@ public class DeleteContentsHandler
     public void setContentDao( final ContentDao contentDao )
     {
         this.contentDao = contentDao;
+    }
+
+    @Autowired
+    public void setIndexService( final IndexService indexService )
+    {
+        this.indexService = indexService;
     }
 }

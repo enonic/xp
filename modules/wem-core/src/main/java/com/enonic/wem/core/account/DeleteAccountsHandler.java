@@ -11,16 +11,15 @@ import com.enonic.wem.api.command.account.DeleteAccounts;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.search.account.AccountSearchService;
+import com.enonic.wem.core.search.IndexService;
 
 @Component
 public class DeleteAccountsHandler
     extends CommandHandler<DeleteAccounts>
 {
-
     private AccountDao accountDao;
 
-    private AccountSearchService searchService;
+    private IndexService indexService;
 
     public DeleteAccountsHandler()
     {
@@ -39,7 +38,7 @@ public class DeleteAccountsHandler
         {
             if ( this.accountDao.deleteAccount( accountKey, context.getJcrSession() ) )
             {
-                this.searchService.deleteIndex( accountKey.toString() );
+                this.indexService.deleteAccount( accountKey );
                 accountsDeleted++;
             }
         }
@@ -55,8 +54,8 @@ public class DeleteAccountsHandler
     }
 
     @Autowired
-    public void setSearchService( final AccountSearchService searchService )
+    public void setIndexService( final IndexService indexService )
     {
-        this.searchService = searchService;
+        this.indexService = indexService;
     }
 }

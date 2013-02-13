@@ -1,6 +1,6 @@
 package com.enonic.wem.core.search.account;
 
-import com.enonic.wem.api.account.Account;
+import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.core.search.DeleteDocument;
 import com.enonic.wem.core.search.IndexConstants;
 import com.enonic.wem.core.search.IndexType;
@@ -12,9 +12,9 @@ public class AccountDeleteDocumentFactory
     {
     }
 
-    public static DeleteDocument create( final Account account )
+    public static DeleteDocument create( final AccountKey accountKey )
     {
-        return new DeleteDocument( IndexConstants.WEM_INDEX.value(), IndexType.ACCOUNT, account.getKey().toString() );
+        return new DeleteDocument( IndexConstants.WEM_INDEX.value(), IndexType.ACCOUNT, accountKey.toString() );
     }
 
 }
