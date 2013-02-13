@@ -27,7 +27,6 @@ public class IndexService
 {
     private final static Logger LOG = LoggerFactory.getLogger( IndexService.class );
 
-
     private ElasticsearchIndexServiceImpl elasticsearchIndexService;
 
     private IndexMappingProvider indexMappingProvider;
@@ -101,6 +100,11 @@ public class IndexService
         }
     }
 
+    public void setDoReindexOnEmptyIndex( final boolean doReindexOnEmptyIndex )
+    {
+        this.doReindexOnEmptyIndex = doReindexOnEmptyIndex;
+    }
+
     @Autowired
     public void setElasticsearchIndexService( final ElasticsearchIndexServiceImpl elasticsearchIndexService )
     {
@@ -119,8 +123,4 @@ public class IndexService
         this.reindexService = reindexService;
     }
 
-    public void setDoReindexOnEmptyIndex( final boolean doReindexOnEmptyIndex )
-    {
-        this.doReindexOnEmptyIndex = doReindexOnEmptyIndex;
-    }
 }

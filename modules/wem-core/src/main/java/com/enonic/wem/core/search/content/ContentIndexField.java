@@ -4,14 +4,15 @@ public enum ContentIndexField
 {
     FIELD_SEPARATOR( "_" ),
     TYPE_SEPARATOR( "." ),
-    KEY_FIELD( "key" ),
-    DISPLAY_NAME_FIELD( "displayName" ),
-    LAST_MODIFIED_FIELD( "lastModified" ),
-    CREATED_FIELD( "created" ),
-    CONTENT_TYPE_NAME_FIELD( "contentType" ),
-    OWNER_FIELD( "owner" ),
-    MODIFIER_FIELD( "modifier" ),
-    CONTENT_DATA_PREFIX( "data" );
+    KEY( "key" ),
+    DISPLAY_NAME( "displayName" ),
+    LAST_MODIFIED( "lastModified" ),
+    CREATED( "created" ),
+    CONTENT_TYPE( "contentType" ),
+    OWNER( "owner" ),
+    MODIFIER( "modifier" ),
+    CONTENT_DATA_PREFIX( "data" ),
+    PATH( "path" );
 
     private final String id;
 
