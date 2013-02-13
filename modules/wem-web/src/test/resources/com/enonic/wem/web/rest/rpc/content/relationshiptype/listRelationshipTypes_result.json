@@ -9,7 +9,8 @@
             "fromSemantic": null,
             "toSemantic": null,
             "allowedFromTypes": [ ],
-            "allowedToTypes": [ ]
+            "allowedToTypes": [ ],
+            "iconUrl" : "http://localhost/admin/rest/basetype/image/RelationshipType:myModule:theRelationshipType"
         },
         {
             "name": "theRelationshipType",
@@ -18,7 +19,8 @@
             "fromSemantic": null,
             "toSemantic": null,
             "allowedFromTypes": [ ],
-            "allowedToTypes": [ ]
+            "allowedToTypes": [ ],
+            "iconUrl" : "http://localhost/admin/rest/basetype/image/RelationshipType:otherModule:theRelationshipType"
         }
     ]
 }

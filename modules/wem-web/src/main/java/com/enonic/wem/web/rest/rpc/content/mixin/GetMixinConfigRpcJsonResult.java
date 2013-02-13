@@ -5,6 +5,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.content.mixin.Mixin;
 import com.enonic.wem.core.content.mixin.MixinXmlSerializer;
 import com.enonic.wem.web.json.JsonResult;
+import com.enonic.wem.web.rest.resource.content.BaseTypeImageUriResolver;
 
 final class GetMixinConfigRpcJsonResult
     extends JsonResult
@@ -23,5 +24,6 @@ final class GetMixinConfigRpcJsonResult
     {
         final String mixinXml = mixinXmlSerializer.toString( mixin );
         json.put( "mixinXml", mixinXml );
+        json.put( "iconUrl", BaseTypeImageUriResolver.resolve( mixin.getBaseTypeKey() ) );
     }
 }

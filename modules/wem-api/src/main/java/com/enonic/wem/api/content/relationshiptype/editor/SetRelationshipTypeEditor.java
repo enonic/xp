@@ -3,39 +3,71 @@ package com.enonic.wem.api.content.relationshiptype.editor;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 
 import static com.enonic.wem.api.content.relationshiptype.RelationshipType.newRelationshipType;
 
 final class SetRelationshipTypeEditor
     implements RelationshipTypeEditor
 {
-    private final RelationshipType source;
+    private final String displayName;
 
-    SetRelationshipTypeEditor( final RelationshipType source )
+    private final String fromSemantic;
+
+    private final String toSemantic;
+
+    private final QualifiedContentTypeNames allowedFromTypes;
+
+    private final QualifiedContentTypeNames allowedToTypes;
+
+    private final Icon icon;
+
+    SetRelationshipTypeEditor( final String displayName, final String fromSemantic, final String toSemantic,
+                               final QualifiedContentTypeNames allowedFromTypes, final QualifiedContentTypeNames allowedToTypes,
+                               final Icon icon )
     {
-        this.source = source;
+        this.displayName = displayName;
+        this.fromSemantic = fromSemantic;
+        this.toSemantic = toSemantic;
+        this.allowedFromTypes = allowedFromTypes;
+        this.allowedToTypes = allowedToTypes;
+        this.icon = icon;
     }
 
     @Override
     public RelationshipType edit( final RelationshipType relationshipType )
         throws Exception
     {
-        final Icon iconToSet = ( source.getIcon() == null ) ? null : Icon.copyOf( source.getIcon() );
-
         final RelationshipType.Builder builder = newRelationshipType( relationshipType );
-        builder.displayName( source.getDisplayName() );
-        builder.module( source.getModuleName() );
-        builder.fromSemantic( source.getFromSemantic() );
-        builder.toSemantic( source.getToSemantic() );
-        builder.icon( iconToSet );
-
-        for ( QualifiedContentTypeName contentTypeName : source.getAllowedFromTypes() )
+        if ( this.icon != null )
         {
-            builder.addAllowedFromType( contentTypeName );
+            builder.icon( Icon.copyOf( this.icon ) );
         }
-        for ( QualifiedContentTypeName contentTypeName : source.getAllowedToTypes() )
+        if ( displayName != null )
         {
-            builder.addAllowedToType( contentTypeName );
+            builder.displayName( displayName );
+        }
+        if ( fromSemantic != null )
+        {
+            builder.fromSemantic( fromSemantic );
+        }
+        if ( toSemantic != null )
+        {
+            builder.toSemantic( toSemantic );
+        }
+        if ( allowedFromTypes != null )
+        {
+            for ( QualifiedContentTypeName contentTypeName : allowedFromTypes )
+            {
+                builder.addAllowedFromType( contentTypeName );
+            }
+        }
+        if ( allowedToTypes != null )
+        {
+            for ( QualifiedContentTypeName contentTypeName : allowedToTypes )
+            {
+                builder.addAllowedToType( contentTypeName );
+            }
         }
         return builder.build();
     }

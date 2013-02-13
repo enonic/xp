@@ -92,7 +92,7 @@ public final class BaseTypeKey
         }
 
         final String type = matcher.group( 1 );
-        final ModuleName moduleName = new ModuleName( matcher.group( 2 ) );
+        final ModuleName moduleName = ModuleName.from( matcher.group( 2 ) );
         final String localName = matcher.group( 3 );
 
         final BaseTypeKind typeKind = BaseTypeKind.from( type );

@@ -1,14 +1,18 @@
 package com.enonic.wem.api.module;
 
 
+import com.google.common.base.Preconditions;
+
 public final class ModuleName
 {
     public static final ModuleName SYSTEM = new ModuleName( "System" );
 
     private final String name;
 
-    public ModuleName( final String name )
+    private ModuleName( final String name )
     {
+        Preconditions.checkNotNull( name, "module name cannot be null" );
+        Preconditions.checkArgument( !name.trim().isEmpty(), "module name cannot be empty" );
         this.name = name;
     }
 
@@ -24,8 +28,14 @@ public final class ModuleName
         return ( o instanceof ModuleName ) && ( (ModuleName) o ).name.equals( this.name );
     }
 
-    public static ModuleName from( String value )
+    @Override
+    public int hashCode()
     {
-        return new ModuleName( value );
+        return name.hashCode();
+    }
+
+    public static ModuleName from( String name )
+    {
+        return new ModuleName( name );
     }
 }

@@ -26,7 +26,7 @@ public abstract class ModuleBasedQualifiedName
         Preconditions.checkArgument( colonPos > 0, "QualifiedName is missing module name: " + qualifiedName );
         Preconditions.checkArgument( colonPos < qualifiedName.length() - 1, "QualifiedName is missing local name: " + qualifiedName );
 
-        this.moduleName = new ModuleName( qualifiedName.substring( 0, colonPos ) );
+        this.moduleName = ModuleName.from( qualifiedName.substring( 0, colonPos ) );
         this.localName = qualifiedName.substring( colonPos + 1, qualifiedName.length() );
         this.qualifiedName = qualifiedName;
     }

@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verify;
 public class CreateOrUpdateContentTypeRpcHandlerTest
     extends AbstractRpcHandlerTest
 {
-    private static byte[] SINGLE_PIXEL_GIF_PICTURE =
+    private static byte[] IMAGE_DATA =
         {0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x1, 0x0, 0x1, 0x0, (byte) 0x80, 0x0, 0x0, (byte) 0xff, (byte) 0xff, (byte) 0xff, 0x0, 0x0,
             0x0, 0x2c, 0x0, 0x0, 0x0, 0x0, 0x1, 0x0, 0x1, 0x0, 0x0, 0x2, 0x2, 0x44, 0x1, 0x0, 0x3b};
 
@@ -87,7 +87,7 @@ public class CreateOrUpdateContentTypeRpcHandlerTest
         throws Exception
     {
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
-        uploadFile( "edc1af66-ecb4-4f8a-8df4-0738418f84fc", "photo.png", SINGLE_PIXEL_GIF_PICTURE, "image/png" );
+        uploadFile( "edc1af66-ecb4-4f8a-8df4-0738418f84fc", "photo.png", IMAGE_DATA, "image/png" );
 
         ObjectNode resultJson = objectNode();
         resultJson.put( "success", true );

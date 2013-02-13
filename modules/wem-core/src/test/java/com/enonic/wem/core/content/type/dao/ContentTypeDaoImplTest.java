@@ -25,11 +25,9 @@ import static org.junit.Assert.*;
 public class ContentTypeDaoImplTest
     extends AbstractJcrTest
 {
-    private static final byte[] SINGLE_PIXEL_GIF_PICTURE =
-        {0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x1, 0x0, 0x1, 0x0, (byte) 0x80, 0x0, 0x0, (byte) 0xff, (byte) 0xff, (byte) 0xff, 0x0, 0x0,
-            0x0, 0x2c, 0x0, 0x0, 0x0, 0x0, 0x1, 0x0, 0x1, 0x0, 0x0, 0x2, 0x2, 0x44, 0x1, 0x0, 0x3b};
+    private static final byte[] IMAGE_DATA = "imagedata".getBytes();
 
-    private static final Icon DUMMY_ICON = Icon.from( SINGLE_PIXEL_GIF_PICTURE, "image/gif" );
+    private static final Icon DUMMY_ICON = Icon.from( IMAGE_DATA, "image/gif" );
 
     private ContentTypeDao contentTypeDao;
 
@@ -60,7 +58,7 @@ public class ContentTypeDaoImplTest
         // verify
         Node contentNode = session.getNode( "/" + ContentTypeDao.CONTENT_TYPES_PATH + "myModule/myContentType" );
         assertNotNull( contentNode );
-        assertArrayEquals( SINGLE_PIXEL_GIF_PICTURE, JcrHelper.getPropertyBinary( contentNode, IconJcrMapper.ICON_PROPERTY ) );
+        assertArrayEquals( IMAGE_DATA, JcrHelper.getPropertyBinary( contentNode, IconJcrMapper.ICON_PROPERTY ) );
     }
 
     @Test

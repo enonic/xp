@@ -36,7 +36,7 @@ public final class Module
 
         public ModuleBuilder name( String value )
         {
-            this.name = new ModuleName( value );
+            this.name = ModuleName.from( value );
             return this;
         }
 

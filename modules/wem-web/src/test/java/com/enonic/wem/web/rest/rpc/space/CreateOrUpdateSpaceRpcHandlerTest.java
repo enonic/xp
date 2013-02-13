@@ -36,9 +36,7 @@ public class CreateOrUpdateSpaceRpcHandlerTest
 
     private static final DateTime CURRENT_TIME = new DateTime( 2000, 1, 1, 12, 0, 0 );
 
-    private static byte[] SINGLE_PIXEL_GIF_PICTURE =
-        {0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x1, 0x0, 0x1, 0x0, (byte) 0x80, 0x0, 0x0, (byte) 0xff, (byte) 0xff, (byte) 0xff, 0x0, 0x0,
-            0x0, 0x2c, 0x0, 0x0, 0x0, 0x0, 0x1, 0x0, 0x1, 0x0, 0x0, 0x2, 0x2, 0x44, 0x1, 0x0, 0x3b};
+    private static byte[] IMAGE_DATA = "imagedata".getBytes();
 
 
     @Override
@@ -87,7 +85,7 @@ public class CreateOrUpdateSpaceRpcHandlerTest
             build();
 
         Mockito.when( client.execute( isA( GetSpaces.class ) ) ).thenReturn( Spaces.from( space ) );
-        uploadFile( "edc1af66-ecb4-4f8a-8df4-0738418f84fc", "photo.png", SINGLE_PIXEL_GIF_PICTURE, "image/png" );
+        uploadFile( "edc1af66-ecb4-4f8a-8df4-0738418f84fc", "photo.png", IMAGE_DATA, "image/png" );
 
         final ObjectNode params = objectNode();
         params.put( "spaceName", "mySpace" );

@@ -21,6 +21,7 @@
                 "name": "TextLine",
                 "builtIn": true
             }
-        }
+        },
+        "iconUrl" : "http://localhost/admin/rest/basetype/image/Mixin:myModule:inputText1"
     }
 }

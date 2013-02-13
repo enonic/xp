@@ -45,6 +45,7 @@ public class RelationshipTypesInitializer
     {
         final QualifiedRelationshipTypeNames qualifiedNames = QualifiedRelationshipTypeNames.from( relationshipType.getQualifiedName() );
         final boolean notExists = client.execute( Commands.relationshipType().exists().selectors( qualifiedNames ) ).isEmpty();
+        final Icon icon = loadRelationshipTypeIcon( relationshipType.getQualifiedName() );
         if ( notExists )
         {
             final CreateRelationshipType createCommand = Commands.relationshipType().create();
@@ -54,14 +55,16 @@ public class RelationshipTypesInitializer
                 module( ModuleName.SYSTEM ).
                 fromSemantic( relationshipType.getFromSemantic() ).
                 toSemantic( relationshipType.getToSemantic() ).
-                icon( loadRelationshipTypeIcon( relationshipType.getQualifiedName() ) );
+                icon( icon );
             client.execute( createCommand );
         }
         else
         {
             final UpdateRelationshipTypes updateCommand = Commands.relationshipType().update();
             updateCommand.selectors( qualifiedNames );
-            updateCommand.editor( setRelationshipType( relationshipType ) );
+            updateCommand.editor( setRelationshipType( relationshipType.getDisplayName(), relationshipType.getFromSemantic(),
+                                                       relationshipType.getToSemantic(), relationshipType.getAllowedFromTypes(),
+                                                       relationshipType.getAllowedToTypes(), icon ) );
             client.execute( updateCommand );
         }
     }

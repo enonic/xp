@@ -19,7 +19,7 @@ public class QualifiedMixinName
 
     public QualifiedMixinName( final String moduleName, final String mixinName )
     {
-        super( new ModuleName( moduleName ), mixinName );
+        super( ModuleName.from( moduleName ), mixinName );
     }
 
     public String getMixinName()
