@@ -72,8 +72,10 @@
         });
 
         me.getMenuButton().click(function () {
+            me.getMenuButton().toggleClass('live-edit-component-tip-icon-menu-selected');
+
             if (me.$selectedComponent) {
-                $(window).trigger('tip:menu:toggle', [me.$selectedComponent]);
+                $(window).trigger('tip:menu:click', [me.$selectedComponent]);
             }
         });
 
@@ -141,21 +143,24 @@
     };
 
 
-    proto.setText = function ($component) {
-        var $componentTip = this.getEl(),
-            componentInfo = util.getComponentInfo($component);
-        $componentTip.find('.live-edit-component-tip-name-text').text(componentInfo.name);
-        $componentTip.find('.live-edit-component-tip-type-text').text(componentInfo.type === 'page' ? componentInfo.key : componentInfo.type);
-    };
-
-
     proto.hide = function () {
+        var me = this;
         this.$selectedComponent = null;
 
         this.getEl().css({
             top: '-5000px',
             left: '-5000px'
         });
+
+        me.getMenuButton().removeClass('live-edit-component-tip-icon-menu-selected');
+    };
+
+
+    proto.setText = function ($component) {
+        var $componentTip = this.getEl(),
+            componentInfo = util.getComponentInfo($component);
+        $componentTip.find('.live-edit-component-tip-name-text').text(componentInfo.name);
+        $componentTip.find('.live-edit-component-tip-type-text').text(componentInfo.type === 'page' ? componentInfo.key : componentInfo.type);
     };
 
 

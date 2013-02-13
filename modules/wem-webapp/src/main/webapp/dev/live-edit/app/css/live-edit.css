@@ -302,8 +302,13 @@ svg.live-edit-highlighter rect {
 .live-edit-component-tip-icon-menu,
 .live-edit-component-tip-icon-parent,
 .live-edit-component-tip-icon-deselect {
+    vertical-align: middle;
     padding: 15px 15px;
     cursor: pointer;
+}
+
+.live-edit-component-tip-icon-menu-selected {
+    background-color: #ffda85;
 }
 
 .live-edit-component-tip-type-text,
