@@ -210,6 +210,7 @@ svg.live-edit-highlighter rect {
 
 .live-edit-tool-tip-name-text,
 .live-edit-tool-tip-type-text {
+    display: block;
     color: #444;
 }
 .live-edit-tool-tip-name-text {

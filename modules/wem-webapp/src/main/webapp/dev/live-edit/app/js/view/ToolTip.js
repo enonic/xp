@@ -33,8 +33,8 @@
     proto.addView = function () {
         var me = this;
         var html = '<div class="live-edit-tool-tip" style="top:-5000px; left:-5000px;">' +
-                   '    <span class="live-edit-tool-tip-type-text"></span>: ' +
                    '    <span class="live-edit-tool-tip-name-text"></span>' +
+                   '    <span class="live-edit-tool-tip-type-text"></span> ' +
                    '</div>';
 
         me.createElement(html);

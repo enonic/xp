@@ -186,13 +186,11 @@
 
 
     proto.fadeIn = function () {
-        console.log('fade in');
         this.getBar().css('opacity', '1');
     };
 
 
     proto.fadeOut = function () {
-        console.log('fade out');
         this.getBar().css('opacity', '0');
     };
 

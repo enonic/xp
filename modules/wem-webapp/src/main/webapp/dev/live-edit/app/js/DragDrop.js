@@ -24,7 +24,6 @@ AdminLiveEdit.DragDrop = (function () {
 
 
     function createComponentBarDraggables() {
-        // TODO: Remove ui classes
         var draggableOptions = {
             connectToSortable: regionSelector,
             addClasses: false,
