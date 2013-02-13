@@ -41,6 +41,9 @@ Ext.application({
                             border: false,
                             xtype: 'panel',
                             layout: 'border',
+                            tabConfig: {
+                                hidden: true
+                            },
                             items: [
                                 {
                                     region: 'west',
