@@ -20,21 +20,26 @@ Ext.define('Admin.controller.contentStudio.BrowseController', {
 
         this.control(
             {
-                '*[action=newContentType]': {
+                '*[action=newBaseType]': {
                     click: function (btn, evt) {
-                        this.showNewContentTypePanel();
+                        this.showSelectBaseTypeWindow();
                     }
                 },
-                '*[action=newMixin]': {
-                    click: function (btn, evt) {
-                        this.showNewMixinPanel();
-                    }
-                },
-                '*[action=newRelationshipType]': {
-                    click: function (btn, evt) {
-                        this.showNewRelationshipTypePanel();
-                    }
-                },
+                /*'*[action=newContentType]': {
+                 click: function (btn, evt) {
+                 this.showNewContentTypePanel();
+                 }
+                 },
+                 '*[action=newMixin]': {
+                 click: function (btn, evt) {
+                 this.showNewMixinPanel();
+                 }
+                 },
+                 '*[action=newRelationshipType]': {
+                 click: function (btn, evt) {
+                 this.showNewRelationshipTypePanel();
+                 }
+                 },*/
                 '*[action=editBaseType]': {
                     click: function (btn, evt) {
                         this.showEditBaseTypePanel();

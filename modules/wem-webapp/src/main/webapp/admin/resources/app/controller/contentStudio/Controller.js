@@ -8,7 +8,8 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         'Admin.view.contentStudio.wizard.ContentTypeWizardPanel',
         'Admin.view.contentStudio.wizard.MixinWizardPanel',
         'Admin.view.contentStudio.wizard.RelationshipTypeWizardPanel',
-        'Admin.view.contentStudio.DeleteContentTypeWindow'
+        'Admin.view.contentStudio.DeleteContentTypeWindow',
+        'Admin.view.contentStudio.SelectBaseTypeWindow'
     ],
 
     init: function () {
@@ -90,6 +91,10 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         if (baseType.length === 1) {
             this.getDeleteContentTypeWindow().doShow(baseType);
         }
+    },
+
+    showSelectBaseTypeWindow: function () {
+        this.getSelectBaseTypeWindow().show();
     },
 
     createEditBaseTypePanel: function (baseType, forceNew) {
@@ -289,6 +294,14 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         var win = Ext.ComponentQuery.query('deleteContentTypeWindow')[0];
         if (!win) {
             win = Ext.create('widget.deleteContentTypeWindow');
+        }
+        return win;
+    },
+
+    getSelectBaseTypeWindow: function () {
+        var win = Ext.ComponentQuery.query('selectBaseTypeWindow')[0];
+        if (!win) {
+            win = Ext.create('widget.selectBaseTypeWindow');
         }
         return win;
     }

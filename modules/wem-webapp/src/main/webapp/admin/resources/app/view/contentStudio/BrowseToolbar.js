@@ -13,29 +13,8 @@ Ext.define('Admin.view.contentStudio.BrowseToolbar', {
         this.items = [
 
             {
-                xtype: 'splitbutton',
-                text: ' New',
-                listeners: {
-                    click: function (button) {
-                        button.showMenu();
-                    }
-                },
-                cls: 'x-btn-as-arrow',
-                menu: [
-                    {
-                        text: 'Content Type',
-                        action: 'newContentType'
-                    },
-                    {
-                        text: 'Mixin',
-                        action: 'newMixin'
-
-                    },
-                    {
-                        text: 'Relationship type',
-                        action: 'newRelationshipType'
-                    }
-                ]
+                text: 'New',
+                action: 'newBaseType'
             },
             {
                 text: 'Edit',
