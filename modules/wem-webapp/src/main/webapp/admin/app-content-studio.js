@@ -38,6 +38,9 @@ Ext.application({
                             title: 'Browse',
                             closable: false,
                             layout: 'border',
+                            tabConfig: {
+                                hidden: true
+                            },
                             border: false,
                             items: [
                                 {
