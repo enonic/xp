@@ -157,10 +157,6 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             contentType: this.data ? this.data.contentType : undefined,
             content: this.data ? this.data.content : null
         };
-        var pageStep = {
-            stepTitle: 'Page',
-            xtype: 'panel'
-        };
         var metaStep = {
             stepTitle: 'Meta',
             xtype: 'panel'
