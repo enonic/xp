@@ -46,7 +46,6 @@ Ext.define('Admin.view.TopBar', {
                 me.homeButton
             ]
         });
-        this.titleText = Ext.create('Ext.form.Label');
         this.rightContainer = Ext.create('Ext.Container', {
             flex: 5,
             margins: '0 8px',
@@ -71,7 +70,6 @@ Ext.define('Admin.view.TopBar', {
 
         this.items = [
             me.leftContainer,
-            me.titleText,
             me.rightContainer
         ];
 
@@ -83,9 +81,24 @@ Ext.define('Admin.view.TopBar', {
                 cls: 'title-button',
                 menuAlign: 't-b?',
                 menu: me.tabMenu,
-                text: 'Title'
+                styleHtmlContent: true,
+                text: '<span class="title">Title</span><span class="count" style="padding: 4px; margin-left: 4px; background: red;">0</span>',
+
+                setTitle: function(title) {
+                    // update title only, without changing count
+                    if(this.el) {
+                        this.el.down('.title').setHTML(title);
+                    }
+                },
+
+                setCount: function (count) {
+                    // update count number only, without changing title
+                    if (this.el) {
+                        this.el.down('.count').setHTML(count);
+                    }
+                }
             });
-            Ext.Array.insert(me.items, 2, [me.titleButton]);
+            Ext.Array.insert(me.items, 1, [me.titleButton]);
         }
 
         this.callParent(arguments);
@@ -113,7 +126,6 @@ Ext.define('Admin.view.TopBar', {
     },
 
     setActiveTab: function (tab) {
-        this.setLabelTitle(this.getMenuItemDescription(tab.card));
         this.setButtonTitle(tab.card, this.getMenuItemDescription(tab.card));
         this.tabMenu.markActiveTab(tab);
     },
@@ -158,7 +170,7 @@ Ext.define('Admin.view.TopBar', {
             var tabCount = this.tabMenu.getAllItems(false).length;
             // show dropdown button when any tab is open or text when nothing is open
             this.titleButton.setVisible(tabCount > 0);
-            this.titleText.setVisible(tabCount == 0);
+            this.titleButton.setCount(tabCount);
         }
     },
 
@@ -197,27 +209,22 @@ Ext.define('Admin.view.TopBar', {
 
     /*  Public  */
 
-    setLabelTitle: function (text) {
-        // highlight the last path fragment
-        var title = text;
-        var lastSlash = !Ext.isEmpty(text) ? text.lastIndexOf('/') : -1;
-        if (lastSlash > -1) {
-            title = text.substring(0, lastSlash + 1) + '<strong>' + text.substring(lastSlash + 1) + '</strong>';
-        }
-        this.titleText.setText(title);
-    },
-
     setButtonTitle: function (card, text) {
-        this.titleButton.setText(text);
+        var buttonText = text;
+        var iconClass;
 
-        var iconClass = '';
-        if (card.tab.editing) {
-            iconClass = 'icon-pencil-16';
-        }
-        if(card.tab.iconClass) {
+        if ('tab-browse' === card.id) {
+            buttonText = '[ Select ]';
+        } else if (card.tab.iconClass) {
             iconClass = card.tab.iconClass;
+        } else if (card.tab.editing) {
+            iconClass = 'icon-icomoon-pencil-32';
+        } else {
+            iconClass = 'icon-icomoon-eye-32';
         }
+
         this.titleButton.setIconCls(iconClass);
+        this.titleButton.setTitle(buttonText);
     },
 
     getStartButton: function () {
