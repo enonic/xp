@@ -10,6 +10,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Entry;
+import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.core.search.IndexConstants;
 import com.enonic.wem.core.search.IndexType;
 import com.enonic.wem.core.search.indexdocument.IndexDocument;
@@ -32,7 +33,7 @@ public class ContentIndexDocumentsFactory
 
     private static IndexDocument createContentIndexDocument( final Content content )
     {
-        IndexDocument indexDocument = new IndexDocument( content.getId().toString(), IndexType.CONTENT, IndexConstants.WEM_INDEX.value() );
+        IndexDocument indexDocument = new IndexDocument( content.getId().toString(), IndexType.CONTENT, IndexConstants.WEM_INDEX );
 
         addContentMetaData( content, indexDocument );
         addContentData( content, indexDocument );
@@ -71,7 +72,8 @@ public class ContentIndexDocumentsFactory
             {
                 final Data data = entry.toData();
 
-                final Object value = data.getValue().getObject();
+                final Value dataValue = data.getValue();
+                final Object value = dataValue.getObject();
 
                 final String fieldName =
                     ContentIndexField.CONTENT_DATA_PREFIX.id() + ContentIndexField.FIELD_SEPARATOR.id() + getEntryPath( entry );

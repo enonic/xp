@@ -32,7 +32,7 @@ public class AccountIndexDocumentFactory
 
     private static IndexDocument createAccountIndexDocument( final Account account )
     {
-        IndexDocument indexDocument = new IndexDocument( account.getKey().toString(), IndexType.ACCOUNT, IndexConstants.WEM_INDEX.value() );
+        IndexDocument indexDocument = new IndexDocument( account.getKey().toString(), IndexType.ACCOUNT, IndexConstants.WEM_INDEX );
 
         switch ( account.getKey().getType() )
         {

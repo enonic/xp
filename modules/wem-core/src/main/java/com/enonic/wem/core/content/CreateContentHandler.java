@@ -55,7 +55,7 @@ public class CreateContentHandler
         {
             // TODO: Temporary easy solution to get Id. The index logic should eventually not be here anyway
             final Content storedContent = builder.id( contentId ).build();
-            indexService.index( storedContent );
+            indexService.indexContent( storedContent );
         }
         catch ( Exception e )
         {

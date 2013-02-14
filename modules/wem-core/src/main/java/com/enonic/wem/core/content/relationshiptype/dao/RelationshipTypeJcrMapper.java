@@ -4,16 +4,21 @@ package com.enonic.wem.core.content.relationshiptype.dao;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
 import com.enonic.wem.core.content.relationshiptype.RelationshipTypeJsonSerializer;
 import com.enonic.wem.core.support.dao.IconJcrMapper;
 
 import static com.enonic.wem.api.content.relationshiptype.RelationshipType.newRelationshipType;
+import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
+import static com.enonic.wem.core.jcr.JcrHelper.setPropertyDateTime;
 
 class RelationshipTypeJcrMapper
 {
     private static final String RELATIONSHIP_TYPE = "relationshipType";
+
+    private static final String CREATED_TIME = "createdTime";
+
+    private static final String MODIFIED_TIME = "modifiedTime";
 
     private final RelationshipTypeJsonSerializer jsonSerializer = new RelationshipTypeJsonSerializer();
 
@@ -24,6 +29,8 @@ class RelationshipTypeJcrMapper
     {
         final String relationshipTypeJson = jsonSerializer.toString( relationshipType );
         relationshipTypeNode.setProperty( RELATIONSHIP_TYPE, relationshipTypeJson );
+        setPropertyDateTime( relationshipTypeNode, CREATED_TIME, relationshipType.getCreatedTime() );
+        setPropertyDateTime( relationshipTypeNode, MODIFIED_TIME, relationshipType.getModifiedTime() );
         iconJcrMapper.toJcr( relationshipType.getIcon(), relationshipTypeNode );
     }
 
@@ -31,9 +38,11 @@ class RelationshipTypeJcrMapper
         throws RepositoryException
     {
         final String relationshipTypeJson = relationshipTypeNode.getProperty( RELATIONSHIP_TYPE ).getString();
-        final RelationshipType relationshipType = jsonSerializer.toObject( relationshipTypeJson );
-        final Icon icon = iconJcrMapper.toIcon( relationshipTypeNode );
-        return icon == null ? relationshipType : newRelationshipType( relationshipType ).icon( icon ).build();
+        return newRelationshipType( jsonSerializer.toObject( relationshipTypeJson ) ).
+            createdTime( getPropertyDateTime( relationshipTypeNode, CREATED_TIME ) ).
+            modifiedTime( getPropertyDateTime( relationshipTypeNode, MODIFIED_TIME ) ).
+            icon( iconJcrMapper.toIcon( relationshipTypeNode ) ).
+            build();
     }
 
 }

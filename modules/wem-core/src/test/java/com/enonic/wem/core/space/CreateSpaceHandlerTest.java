@@ -3,6 +3,8 @@ package com.enonic.wem.core.space;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -16,7 +18,6 @@ import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.core.space.dao.SpaceDao;
-import com.enonic.wem.core.time.MockTimeService;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -47,7 +48,13 @@ public class CreateSpaceHandlerTest
         handler = new CreateSpaceHandler();
         handler.setSpaceDao( spaceDao );
         handler.setContentDao( contentDao );
-        handler.setTimeService( new MockTimeService( CURRENT_TIME ) );
+        DateTimeUtils.setCurrentMillisFixed( CURRENT_TIME.getMillis() );
+    }
+
+    @AfterClass
+    public static void tearDown()
+    {
+        DateTimeUtils.setCurrentMillisSystem();
     }
 
     @Test

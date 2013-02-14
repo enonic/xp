@@ -29,6 +29,8 @@ public final class CreateRelationshipTypeHandler
     public void handle( final CommandContext context, final CreateRelationshipType command )
         throws Exception
     {
+        final DateTime currentTime = DateTime.now();
+
         final RelationshipType.Builder builder = newRelationshipType();
         builder.name( command.getName() );
         builder.displayName( command.getDisplayName() );
@@ -43,8 +45,8 @@ public final class CreateRelationshipTypeHandler
         {
             builder.addAllowedToTypes( command.getAllowedToTypes() );
         }
-        builder.createdTime( DateTime.now() );
-        builder.modifiedTime( DateTime.now() );
+        builder.createdTime( currentTime );
+        builder.modifiedTime( currentTime );
         builder.icon( command.getIcon() );
         final RelationshipType relationshipType = builder.build();
 

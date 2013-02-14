@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.DeleteContents;
+import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDeletionResult;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.api.exception.ContentNotFoundException;
 import com.enonic.wem.api.exception.UnableToDeleteContentException;
@@ -36,13 +38,24 @@ public class DeleteContentsHandler
         final ContentDeletionResult contentDeletionResult = new ContentDeletionResult();
         final Iterable<ContentSelector> selectors = command.getSelectors();
         final Session session = context.getJcrSession();
+
         for ( ContentSelector contentSelector : selectors )
         {
             try
             {
-                contentDao.delete( contentSelector, session );
-                contentDeletionResult.success( contentSelector );
-                session.save();
+                // Temporary solution to ease the index-service since content selector are supposed to be rewritten
+                final Content contentToDelete = contentDao.select( contentSelector, session );
+
+                if ( contentToDelete != null )
+                {
+                    ContentId contentIdToDelete = contentToDelete.getId();
+
+                    contentDao.delete( contentSelector, session );
+                    contentDeletionResult.success( contentSelector );
+                    session.save();
+
+                    indexService.deleteContent( contentIdToDelete );
+                }
             }
             catch ( ContentNotFoundException e )
             {

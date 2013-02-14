@@ -11,9 +11,27 @@ public class OrderByValueResolver
 {
     public static String getOrderbyValue( Object value )
     {
+        return doGetOrderByValue( value );
+    }
+
+    private static String doGetOrderByValue( final Object value )
+    {
         if ( value == null )
         {
             return null;
+        }
+
+        if ( value instanceof Object[] )
+        {
+
+            if ( ( (Object[]) value ).length >= 1 )
+            {
+                return doGetOrderByValue( ( (Object[]) value )[0] );
+            }
+            else
+            {
+                return null;
+            }
         }
 
         if ( value instanceof Number )

@@ -34,6 +34,8 @@ public final class CreateContentTypeHandler
     public void handle( final CommandContext context, final CreateContentType command )
         throws Exception
     {
+        final DateTime currentTime = DateTime.now();
+
         final ContentType contentType = newContentType().
             name( command.getName() ).
             displayName( command.getDisplayName() ).
@@ -42,8 +44,8 @@ public final class CreateContentTypeHandler
             setAbstract( command.isAbstract() ).
             setFinal( command.isFinal() ).
             icon( command.getIcon() ).
-            createdTime( DateTime.now() ).
-            modifiedTime( DateTime.now() ).
+            createdTime( currentTime ).
+            modifiedTime( currentTime ).
             form( command.getForm() ).
             build();
 

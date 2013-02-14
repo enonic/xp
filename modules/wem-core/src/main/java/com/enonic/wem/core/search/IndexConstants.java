@@ -1,21 +1,22 @@
 package com.enonic.wem.core.search;
 
-public enum IndexConstants
+public class IndexConstants
 {
+    public final static String WEM_INDEX = "wem";
 
-    WEM_INDEX( "wem" );
+    public final static String FIELD_TYPE_SPERATATOR = ".";
 
-    private final String value;
+    public final static String NUMBER_FIELD_POSTFIX = "number";
 
-    private IndexConstants( final String value )
-    {
-        this.value = value;
-    }
+    public final static String DATE_FIELD_POSTFIX = "date";
 
-    public String value()
-    {
-        return this.value;
-    }
+    public final static String ALL_USERDATA_BASE = "_all_userdata";
+
+    public final static String ALL_USERDATA_STRING_FIELD = ALL_USERDATA_BASE;
+
+    public final static String ALL_USERDATA_NUMBER_FIELD = ALL_USERDATA_BASE + FIELD_TYPE_SPERATATOR + NUMBER_FIELD_POSTFIX;
+
+    public final static String ALL_USERDATA_DATE_FIELD = ALL_USERDATA_BASE + FIELD_TYPE_SPERATATOR + DATE_FIELD_POSTFIX;
 
 }
 

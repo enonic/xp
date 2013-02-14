@@ -199,8 +199,8 @@ public class RelationshipTypeDaoImplTest
         RelationshipType relationshipTypeUpdate = newRelationshipType( like ).
             fromSemantic( "accepts" ).
             toSemantic( "accepted by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "myModule:worker" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "myModule:task" ) ).
+            setAllowedFromTypes( QualifiedContentTypeNames.from( "myModule:worker" ) ).
+            setAllowedToTypes( QualifiedContentTypeNames.from( "myModule:task" ) ).
             build();
         relationshipTypeDao.update( relationshipTypeUpdate, session );
         commit();

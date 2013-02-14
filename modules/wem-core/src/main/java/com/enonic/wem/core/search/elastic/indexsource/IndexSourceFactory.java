@@ -1,17 +1,17 @@
 package com.enonic.wem.core.search.elastic.indexsource;
 
+import java.util.Collection;
 import java.util.Set;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.core.search.IndexConstants;
 import com.enonic.wem.core.search.indexdocument.IndexDocument;
 import com.enonic.wem.core.search.indexdocument.IndexDocumentEntry;
 
 public class IndexSourceFactory
 {
-    private static final String ALL_FIELD_NAME = "_all";
-
     private static final Joiner allFieldJoiner = Joiner.on( " " );
 
     private IndexSourceFactory()
@@ -24,32 +24,41 @@ public class IndexSourceFactory
 
         final Set<IndexDocumentEntry> indexDocumentEntries = indexDocument.getIndexDocumentEntries();
 
-        final Set<String> allFieldValues = Sets.newHashSet();
+        AllUserData allUserData = new AllUserData();
 
         for ( final IndexDocumentEntry indexDocumentEntry : indexDocumentEntries )
         {
             if ( indexDocumentEntry.doIncludeInAllField() )
             {
-                appendToAllField( allFieldValues, indexDocumentEntry );
+                allUserData.addValue( indexDocumentEntry.getValue() );
             }
 
             indexSource.addIndexSourceEntries( IndexSourceEntryFactory.create( indexDocumentEntry ) );
         }
 
-        indexSource.addIndexSourceEntry( new IndexSourceEntry( ALL_FIELD_NAME, joinSet( allFieldJoiner, allFieldValues ) ) );
+        indexSource.addIndexSourceEntries( buildAllFieldValue( allUserData ) );
 
         return indexSource;
     }
 
-    private static void appendToAllField( final Set<String> allFieldValues, final IndexDocumentEntry indexDocumentEntry )
+    private static Collection<IndexSourceEntry> buildAllFieldValue( final AllUserData allUserData )
     {
-        allFieldValues.add( indexDocumentEntry.getValueAsString() );
+        Set<IndexSourceEntry> indexSourceEntries = Sets.newHashSet();
+
+        addSetIfExists( indexSourceEntries, IndexConstants.ALL_USERDATA_STRING_FIELD, allUserData.getStringValues() );
+        addSetIfExists( indexSourceEntries, IndexConstants.ALL_USERDATA_NUMBER_FIELD, allUserData.getNumberValues() );
+        addSetIfExists( indexSourceEntries, IndexConstants.ALL_USERDATA_DATE_FIELD, allUserData.getDateValues() );
+
+        return indexSourceEntries;
     }
 
-
-    private static String joinSet( final Joiner joiner, final Set<String> set )
+    private static void addSetIfExists( final Collection<IndexSourceEntry> indexSourceEntries, final String fieldName, final Set<?> set )
     {
-        return joiner.join( set );
+        if ( set != null && set.size() > 0 )
+        {
+            indexSourceEntries.add( new IndexSourceEntry( fieldName, set ) );
+        }
     }
+
 
 }

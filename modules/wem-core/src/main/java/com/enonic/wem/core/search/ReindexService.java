@@ -53,7 +53,7 @@ public class ReindexService
 
             LOG.info( "Reindex account: " + account.getDisplayName() );
 
-            indexService.index( account );
+            indexService.indexAccount( account );
         }
     }
 

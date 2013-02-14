@@ -93,7 +93,7 @@ public final class UpdateAccountsHandler
                 break;
         }
 
-        this.indexService.index( account );
+        this.indexService.indexAccount( account );
     }
 
     @Autowired

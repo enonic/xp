@@ -85,7 +85,15 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
         }, baseDataViewConfig);
 
         // All section
-        var allContentTypesStore = Ext.create('Admin.store.contentStudio.ContentTypeStore');
+        var allContentTypesStore = Ext.create('Admin.store.contentStudio.ContentTypeStore', {
+            remoteSort: false,
+            sorters: [
+                {
+                    property: 'name',
+                    direction: 'ASC'
+                }
+            ]
+        });
 
         var allDataView = Ext.apply({
             store: allContentTypesStore,

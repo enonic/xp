@@ -1,105 +1,110 @@
 {
-    "content":{
-        "_all":{
-            "enabled":false
+    "content": {
+        "_all": {
+            "enabled": false
         },
-        "_source":{
-            "enabled":true
+        "_source": {
+            "enabled": true
         },
-        "date_detection":false,
-        "numeric_detection":false,
-        "properties":{
-            "_all_userdata":{
-                "type":"multi_field",
-                "fields":{
-                    "_all_userdata":{
-                        "include_in_all":false,
-                        "type":"string",
-                        "index":"not_analyzed",
-                        "store":"no"
+        "date_detection": false,
+        "numeric_detection": false,
+        "properties": {
+            "_all_userdata": {
+                "type": "multi_field",
+                "fields": {
+                    "_all_userdata": {
+                        "include_in_all": false,
+                        "type": "string",
+                        "index": "analyzed",
+                        "analyzer": "keywordlowercase",
+                        "store": "no"
                     },
-                    "_tokenized":{
-                        "include_in_all":false,
-                        "type":"string",
-                        "index":"analyzed",
-                        "store":"no"
+                    "_tokenized": {
+                        "include_in_all": false,
+                        "type": "string",
+                        "index": "analyzed",
+                        "store": "no"
                     }
                 }
             },
-            "title":{
-                "type":"multi_field",
-                "fields":{
-                    "title":{
-                        "include_in_all":false,
-                        "type":"string",
-                        "index":"not_analyzed",
-                        "store":"no"
+            "title": {
+                "type": "multi_field",
+                "fields": {
+                    "title": {
+                        "include_in_all": false,
+                        "type": "string",
+                        "index": "analyzed",
+                        "analyzer": "keywordlowercase",
+                        "store": "no"
                     },
-                    "_tokenized":{
-                        "include_in_all":false,
-                        "type":"string",
-                        "index":"analyzed",
-                        "store":"no"
+                    "_tokenized": {
+                        "include_in_all": false,
+                        "type": "string",
+                        "index": "analyzed",
+                        "store": "no"
                     }
                 }
             }
         },
-        "dynamic_templates":[
+        "dynamic_templates": [
             {
-                "template_userdata_orderby":{
-                    "match":"*.orderby",
-                    "mapping":{
-                        "type":"string",
-                        "store":"no",
-                        "index":"not_analyzed"
+                "template_userdata_orderby": {
+                    "match": "*.orderby",
+                    "mapping": {
+                        "type": "string",
+                        "store": "no",
+                        "index": "analyzed",
+                        "analyzer": "keywordlowercase"
                     }
                 }
             },
             {
-                "template_userdata_date":{
-                    "match":"*.date",
-                    "mapping":{
-                        "type":"date",
-                        "store":"no"
+                "template_userdata_date": {
+                    "match": "*.date",
+                    "mapping": {
+                        "type": "date",
+                        "store": "no"
                     }
                 }
             },
             {
-                "template_userdata_number":{
-                    "match":"*.number",
-                    "mapping":{
-                        "type":"double",
-                        "store":"no"
+                "template_userdata_number": {
+                    "match": "*.number",
+                    "mapping": {
+                        "type": "double",
+                        "store": "no"
                     }
                 }
             },
             {
-                "template_userdata_strings":{
-                    "match":"data_*",
-                    "mapping":{
-                        "type":"multi_field",
-                        "fields":{
-                            "{name}":{
-                                "type":"string",
-                                "index":"not_analyzed",
-                                "store":"no"
+                "template_userdata_strings": {
+                    "match": "data_*",
+                    "mapping": {
+                        "type": "multi_field",
+                        "fields": {
+                            "{name}": {
+                                "type": "string",
+                                "index": "analyzed",
+                                "analyzer": "keywordlowercase",
+                                "store": "no"
                             },
-                            "_tokenized":{
-                                "type":"string",
-                                "index":"analyzed",
-                                "store":"no"
+                            "_tokenized": {
+                                "type": "string",
+                                "index": "analyzed",
+                                "store": "no"
                             }
                         }
                     }
                 }
             },
             {
-                "template_metadata_strings":{
-                    "match":"*",
-                    "mapping":{
-                        "type":"string",
-                        "store":"no",
-                        "index":"not_analyzed"
+                "template_metadata_strings": {
+                    "match": "*",
+                    "mapping": {
+                        "type": "string",
+                        "store": "no",
+                        "index": "analyzed",
+                        "analyzer": "keywordlowercase"
                     }
                 }
             }
