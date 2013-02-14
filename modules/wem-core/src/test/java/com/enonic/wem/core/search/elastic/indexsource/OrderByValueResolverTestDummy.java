@@ -11,7 +11,7 @@ import com.google.common.collect.Lists;
 
 import static org.junit.Assert.*;
 
-public class OrderByValueResolverTest
+public class OrderByValueResolverTestDummy
 {
 
     @Test
