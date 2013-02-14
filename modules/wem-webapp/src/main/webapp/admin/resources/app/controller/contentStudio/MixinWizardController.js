@@ -28,8 +28,10 @@ Ext.define('Admin.controller.contentStudio.MixinWizardController', {
         var me = this;
         var data = wizard.getData();
         var xml = data.configXML;
+        var iconRef = data.iconRef;
         var params = {
-            mixin: xml
+            mixin: xml,
+            iconReference: iconRef
         };
 
         var onUpdateMixinSuccess = function (created, updated) {

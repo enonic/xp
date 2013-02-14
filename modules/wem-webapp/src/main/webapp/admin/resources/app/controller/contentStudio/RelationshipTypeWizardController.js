@@ -27,10 +27,10 @@ Ext.define('Admin.controller.contentStudio.RelationshipTypeWizardController', {
     saveType: function (wizard, closeWizard) {
         var me = this;
         var data = wizard.getData();
-        var contentType = data.configXML;
+        var relationshipType = data.configXML;
         var iconRef = data.iconRef;
         var params = {
-            contentType: contentType,
+            relationshipType: relationshipType,
             iconReference: iconRef
         };
 
