@@ -45,7 +45,7 @@
         */
         $(window).on('component:deselect', $.proxy(this.hide, this));
         $(window).on('tip:menu:click', $.proxy(this.toggle, this));
-        $(window).on('component:sort:start', $.proxy(this.hide, this));
+        $(window).on('component:sort:start', $.proxy(this.fadeOutAndHide, this));
         $(window).on('component:remove', $.proxy(this.hide, this));
     };
 
@@ -75,6 +75,15 @@
         me.moveToTip();
         me.getEl().show();
         me.hidden = false;
+    };
+
+
+    proto.fadeOutAndHide = function () {
+        var me = this;
+        me.getEl().fadeOut(500, function () {
+            me.hide();
+            $(window).trigger('component:deselect');
+        });
     };
 
 
