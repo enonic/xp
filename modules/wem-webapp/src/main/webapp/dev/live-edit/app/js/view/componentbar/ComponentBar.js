@@ -185,7 +185,13 @@
     };
 
 
-    proto.fadeIn = function (event) {
+    proto.fadeIn = function (event, triggerConfig) {
+        // componenttip/menu.js triggers a component:click:deselect event
+        // which results in that the bar is faded in (see the listeners above)
+        // The triggerConfig is a temporary workaround until we get this right.
+        if (triggerConfig && triggerConfig.showComponentBar === false) {
+            return;
+        }
         this.getBar().css('opacity', '1');
     };
 

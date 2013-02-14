@@ -82,7 +82,7 @@
         var me = this;
         me.getEl().fadeOut(500, function () {
             me.hide();
-            $(window).trigger('component:click:deselect');
+            $(window).trigger('component:click:deselect', {showComponentBar: false});
         });
     };
 
