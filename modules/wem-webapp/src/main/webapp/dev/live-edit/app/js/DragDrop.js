@@ -120,11 +120,11 @@ AdminLiveEdit.DragDrop = (function () {
 
     function handleSortStop(event, ui) {
         isDragging = false;
-        console.log(123);
+
         if (AdminLiveEdit.Util.supportsTouch()) {
             $liveedit(window).trigger('component:mouseout');
         }
-// Added on sort start
+
         var wasSelectedOnDragStart = ui.item.data('live-edit-selected-on-drag-start');
 
         $liveedit(window).trigger('component:sort:stop', [event, ui, wasSelectedOnDragStart]);

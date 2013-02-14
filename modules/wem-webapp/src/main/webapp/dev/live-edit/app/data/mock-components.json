@@ -5,12 +5,6 @@
             "name": "Parts",
             "components": [
                 {
-                    "key": "10009",
-                    "name": "Page Banner: Control",
-                    "subtitle": "950px banner",
-                    "icon": "../app/images/srs.jpeg"
-                },
-                {
                     "key": "10010",
                     "name": "Page Banner: Service",
                     "subtitle": "950px banner",
