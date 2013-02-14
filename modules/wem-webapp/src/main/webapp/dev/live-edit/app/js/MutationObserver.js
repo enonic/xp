@@ -21,8 +21,8 @@
         var me = this;
         $(window).on('component:mouseover', $.proxy(me.observe, me));
         $(window).on('component:mouseout', $.proxy(me.disconnect, me));
-        $(window).on('component:select', $.proxy(me.observe, me));
-        $(window).on('component:deselect', $.proxy(me.disconnect, me));
+        $(window).on('component:click:select', $.proxy(me.observe, me));
+        $(window).on('component:click:deselect', $.proxy(me.disconnect, me));
     };
 
 
@@ -57,7 +57,7 @@
             if (componentIsNotSelectedAndUserMouseOver) {
                 $(window).trigger('component:mouseover', [$targetComponent]);
             } else {
-                $(window).trigger('component:select', [$targetComponent]);
+                $(window).trigger('component:click:select', [$targetComponent]);
             }
         }
     };

@@ -29,7 +29,7 @@
                 event.stopPropagation();
                 var $parent = me.componentmenu.$currentComponent.parents('[data-live-edit-type]');
                 if ($parent && $parent.length > 0) {
-                    $(window).trigger('component:select', [$($parent[0])]);
+                    $(window).trigger('component:click:select', [$($parent[0])]);
                 }
             }
         });

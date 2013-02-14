@@ -26,7 +26,7 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.registerGlobalListeners = function () {
-        $(window).on('component:select', $.proxy(this.hide, this));
+        $(window).on('component:click:select', $.proxy(this.hide, this));
     };
 
 

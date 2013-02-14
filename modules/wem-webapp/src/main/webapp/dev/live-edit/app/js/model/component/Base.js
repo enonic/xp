@@ -53,13 +53,13 @@
                 var $closestComponentFromTarget = $(event.target).closest('[data-live-edit-type]');
                 var componentIsSelected = $closestComponentFromTarget.hasClass('live-edit-selected-component');
                 if (componentIsSelected) {
-                    $(window).trigger('component:deselect');
+                    $(window).trigger('component:click:deselect');
                 } else {
                     var pageHasComponentSelected = $('.live-edit-selected-component').length > 0;
                     if (pageHasComponentSelected) {
-                        $(window).trigger('component:deselect');
+                        $(window).trigger('component:click:deselect');
                     } else {
-                        $(window).trigger('component:select', [$closestComponentFromTarget]);
+                        $(window).trigger('component:click:select', [$closestComponentFromTarget]);
                     }
                 }
                 // return false;

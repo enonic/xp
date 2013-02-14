@@ -35,8 +35,8 @@
     proto.$selectedComponent = null;
 
     proto.registerGlobalListeners = function () {
-        $(window).on('component:select', $.proxy(this.show, this));
-        $(window).on('component:deselect', $.proxy(this.hide, this));
+        $(window).on('component:click:select', $.proxy(this.show, this));
+        $(window).on('component:click:deselect', $.proxy(this.hide, this));
         $(window).on('component:remove', $.proxy(this.hide, this));
         $(window).on('component:sort:start', $.proxy(this.hide, this));
     };
@@ -83,12 +83,12 @@
         me.getParentButton().click(function () {
             var $parent = me.$selectedComponent.parents('[data-live-edit-type]');
             if ($parent && $parent.length > 0) {
-                $(window).trigger('component:select', [$($parent[0])]);
+                $(window).trigger('component:click:select', [$($parent[0])]);
             }
         });
 
         me.getDeselectButton().click(function () {
-            $(window).trigger('component:deselect');
+            $(window).trigger('component:click:deselect');
         });
     };
 

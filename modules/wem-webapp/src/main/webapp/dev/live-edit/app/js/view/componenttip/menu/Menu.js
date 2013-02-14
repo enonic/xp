@@ -41,9 +41,9 @@
 
     proto.registerGlobalListeners = function () {
         /*
-        $(window).on('component:select', $.proxy(this.show, this));
+        $(window).on('component:click:select', $.proxy(this.show, this));
         */
-        $(window).on('component:deselect', $.proxy(this.hide, this));
+        $(window).on('component:click:deselect', $.proxy(this.hide, this));
         $(window).on('tip:menu:click', $.proxy(this.toggle, this));
         $(window).on('component:sort:start', $.proxy(this.fadeOutAndHide, this));
         $(window).on('component:remove', $.proxy(this.hide, this));
@@ -82,7 +82,7 @@
         var me = this;
         me.getEl().fadeOut(500, function () {
             me.hide();
-            $(window).trigger('component:deselect');
+            $(window).trigger('component:click:deselect');
         });
     };
 

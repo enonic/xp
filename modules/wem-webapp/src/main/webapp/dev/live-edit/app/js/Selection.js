@@ -17,13 +17,13 @@
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     proto.registerGlobalListeners = function () {
-        $(window).on('component:select', $.proxy(this.select, this));
+        $(window).on('component:click:select', $.proxy(this.select, this));
 
-        $(window).on('component:deselect', $.proxy(this.deselect, this));
+        $(window).on('component:click:deselect', $.proxy(this.deselect, this));
 
         $(window).on('component:sort:stop', function (event, uiEvent, ui, wasSelectedOnDragStart) {
             if (wasSelectedOnDragStart) {
-                $(window).trigger('component:select', [ui.item]);
+                $(window).trigger('component:click:select', [ui.item]);
             }
         });
     };

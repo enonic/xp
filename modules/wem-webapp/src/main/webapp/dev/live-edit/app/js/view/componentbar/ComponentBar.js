@@ -67,10 +67,10 @@
 
     proto.registerGlobalListeners = function () {
         var me = this;
-        $(window).on('component:select', $.proxy(me.fadeOut, me));
-        $(window).on('component:deselect', $.proxy(me.fadeIn, me));
-        $(window).on('componentbar:component:dragstart', $.proxy(me.fadeOut, me));
-        $(window).on('componentbar:component:dragstop', $.proxy(me.fadeIn, me));
+        $(window).on('component:click:select', $.proxy(me.fadeOut, me));
+        $(window).on('component:click:deselect', $.proxy(me.fadeIn, me));
+        $(window).on('component:dragstart', $.proxy(me.fadeOut, me));
+        $(window).on('component:dragstop', $.proxy(me.fadeIn, me));
         $(window).on('component:sort:start', $.proxy(me.fadeOut, me));
         $(window).on('component:sort:update', $.proxy(me.fadeIn, me));
     };

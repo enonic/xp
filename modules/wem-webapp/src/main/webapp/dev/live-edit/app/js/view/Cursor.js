@@ -14,7 +14,7 @@
     proto.registerGlobalListeners = function () {
         $(window).on('component:mouseover', $.proxy(this.updateCursor, this));
         $(window).on('component:mouseout', $.proxy(this.resetCursor, this));
-        $(window).on('component:select', $.proxy(this.updateCursor, this));
+        $(window).on('component:click:select', $.proxy(this.updateCursor, this));
     };
 
 

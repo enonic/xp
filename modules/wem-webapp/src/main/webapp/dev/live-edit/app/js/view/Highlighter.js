@@ -24,8 +24,8 @@
     proto.registerGlobalListeners = function () {
         $(window).on('component:mouseover', $.proxy(this.highlight, this));
         $(window).on('component:mouseout', $.proxy(this.hide, this));
-        $(window).on('component:select', $.proxy(this.highlight, this));
-        $(window).on('component:deselect', $.proxy(this.deselect, this));
+        $(window).on('component:click:select', $.proxy(this.highlight, this));
+        $(window).on('component:click:deselect', $.proxy(this.deselect, this));
         $(window).on('component:sort:start', $.proxy(this.hide, this));
         $(window).on('component:remove', $.proxy(this.hide, this));
 
@@ -46,7 +46,7 @@
         var me = this;
 
         // Highlighter should not be shown when page is selected.
-        if (util.getComponentType($selectedComponent) === 'page' && event.type === 'component:select') {
+        if (util.getComponentType($selectedComponent) === 'page' && event.type === 'component:click:select') {
             me.hide();
             return;
         }

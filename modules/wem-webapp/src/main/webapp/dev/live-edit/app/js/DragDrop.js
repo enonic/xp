@@ -35,11 +35,11 @@ AdminLiveEdit.DragDrop = (function () {
                 return '<div style="width: 200px; height: 20px; background-color: #ccc; padding: 10px;">Helper</div>';
             },
             start: function (event, ui) {
-                $liveedit(window).trigger('componentbar:component:dragstart', [event, ui]);
+                $liveedit(window).trigger('component:dragstart', [event, ui]);
                 isDragging = true;
             },
             stop: function (event, ui) {
-                $liveedit(window).trigger('componentbar:component:dragstop', [event, ui]);
+                $liveedit(window).trigger('component:dragstop', [event, ui]);
                 isDragging = false;
             }
         };
@@ -153,13 +153,13 @@ AdminLiveEdit.DragDrop = (function () {
             createComponentBarDraggables();
         });
 
-        $liveedit(window).on('component:select', function () {
+        $liveedit(window).on('component:click:select', function () {
             if (AdminLiveEdit.Util.supportsTouch()) {
                 enableDragDrop();
             }
         });
 
-        $liveedit(window).on('component:deselect', function () {
+        $liveedit(window).on('component:click:deselect', function () {
             if (AdminLiveEdit.Util.supportsTouch() && !isDragging) {
                 disableDragDrop();
             }
