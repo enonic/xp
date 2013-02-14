@@ -185,12 +185,14 @@
     };
 
 
-    proto.fadeIn = function () {
+    proto.fadeIn = function (event) {
+        console.log('fadeIn', event);
         this.getBar().css('opacity', '1');
     };
 
 
-    proto.fadeOut = function () {
+    proto.fadeOut = function (event) {
+        console.log('fadeOut', event);
         this.getBar().css('opacity', '0');
     };
 
