@@ -28,11 +28,6 @@ public class IndexDocumentEntry
         return value;
     }
 
-    public String getValueAsString()
-    {
-        return value != null ? value.toString() : null;
-    }
-
     public boolean doIncludeInAllField()
     {
         return includeInAllField;

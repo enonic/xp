@@ -3,10 +3,6 @@ package com.enonic.wem.core.search.elastic;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.MutableDateTime;
-import org.joda.time.ReadableDateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -24,6 +20,13 @@ public class ElasticsearchFormatter
 
     private final static DateTimeFormatter ELASTICSEARCH_DATE_OPTIONAL_TIME_FORMAT = ISODateTimeFormat.dateOptionalTimeParser();
 
+    public static String formatDateAsStringFull( final Date date )
+    {
+        return ELASTICSEARCH_FULL_DATE_FORMAT.format( date );
+    }
+
+    /*
+
     public static String formatDateAsStringIgnoreTimezone( final Date date )
     {
         return ELASTICSEARCH_SIMPLE_DATE_FORMAT.format( date );
@@ -32,11 +35,6 @@ public class ElasticsearchFormatter
     public static String formatDateAsStringIgnoreTimezone( final ReadableDateTime date )
     {
         return ELASTICSEARCH_SIMPLE_DATE_FORMAT.format( date.toDateTime().toDate() );
-    }
-
-    public static String formatDateAsStringFull( final Date date )
-    {
-        return ELASTICSEARCH_FULL_DATE_FORMAT.format( date );
     }
 
     public static ReadableDateTime toUTCTimeZone( final ReadableDateTime dateTime )
@@ -61,4 +59,5 @@ public class ElasticsearchFormatter
             return null;
         }
     }
+    */
 }
