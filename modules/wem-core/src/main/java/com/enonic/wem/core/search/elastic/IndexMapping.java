@@ -2,7 +2,6 @@ package com.enonic.wem.core.search.elastic;
 
 public class IndexMapping
 {
-
     private final String indexName;
 
     private final String indexType;
