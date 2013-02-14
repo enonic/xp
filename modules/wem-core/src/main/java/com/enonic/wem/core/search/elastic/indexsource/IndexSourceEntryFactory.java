@@ -3,6 +3,7 @@ package com.enonic.wem.core.search.elastic.indexsource;
 import java.util.Date;
 import java.util.Set;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.core.search.indexdocument.IndexDocumentEntry;
@@ -39,7 +40,7 @@ final class IndexSourceEntryFactory
             appendDateField( indexDocumentEntry, indexSourceEntries );
         }
 
-        appendStringField( indexDocumentEntry, indexSourceEntries );
+        appendOtherField( indexDocumentEntry, indexSourceEntries );
 
         return indexSourceEntries;
     }
@@ -60,18 +61,22 @@ final class IndexSourceEntryFactory
         indexSourceEntries.add( new IndexSourceEntry( generateDateFieldName( baseFieldName ), dateValue ) );
     }
 
-    private static void appendStringField( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
+    private static void appendOtherField( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
     {
         String baseFieldName = indexDocumentEntry.getKey();
 
-        final String stringValue = indexDocumentEntry.getValueAsString();
-
-        indexSourceEntries.add( new IndexSourceEntry( generateStringTypeFieldName( baseFieldName ), genereateStringValue( stringValue ) ) );
+        indexSourceEntries.add( new IndexSourceEntry( generateStringTypeFieldName( baseFieldName ), indexDocumentEntry.getValue() ) );
     }
 
     private static void appendOrderBy( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
     {
         final String orderByValue = OrderByValueResolver.getOrderbyValue( indexDocumentEntry.getValue() );
+
+        if ( Strings.isNullOrEmpty( orderByValue ) )
+        {
+            return;
+        }
+
         final String orderByFieldName = generateOrderbyFieldName( indexDocumentEntry.getKey() );
 
         indexSourceEntries.add( new IndexSourceEntry( orderByFieldName, orderByValue ) );

@@ -14,7 +14,7 @@ public class AccountDeleteDocumentFactory
 
     public static DeleteDocument create( final AccountKey accountKey )
     {
-        return new DeleteDocument( IndexConstants.WEM_INDEX.value(), IndexType.ACCOUNT, accountKey.toString() );
+        return new DeleteDocument( IndexConstants.WEM_INDEX, IndexType.ACCOUNT, accountKey.toString() );
     }
 
 }

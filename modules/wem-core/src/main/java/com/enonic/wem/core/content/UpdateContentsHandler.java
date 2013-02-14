@@ -56,7 +56,7 @@ public class UpdateContentsHandler
                 try
                 {
                     // TODO: Temporary easy solution. The index logic should eventually not be here anyway
-                    indexService.index( contentToUpdate );
+                    indexService.indexContent( contentToUpdate );
                 }
                 catch ( Exception e )
                 {

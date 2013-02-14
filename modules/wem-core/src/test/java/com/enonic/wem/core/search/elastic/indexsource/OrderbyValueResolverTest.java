@@ -11,11 +11,11 @@ import com.google.common.collect.Lists;
 
 import static org.junit.Assert.*;
 
-public class IndexSourceOrderbyValueResolverTest
+public class OrderByValueResolverTest
 {
 
     @Test
-    public void testNull()
+    public void testNullValue()
     {
         assertNull( OrderByValueResolver.getOrderbyValue( null ) );
     }
@@ -86,7 +86,6 @@ public class IndexSourceOrderbyValueResolverTest
     public void testOrderbyValuesForLong()
         throws Exception
     {
-
         List<String> orderedList = Lists.newArrayList();
 
         String one = OrderByValueResolver.getOrderbyValue( 1L );
@@ -117,7 +116,6 @@ public class IndexSourceOrderbyValueResolverTest
     public void testOrderbyValuesForDouble()
         throws Exception
     {
-
         List<String> orderedList = Lists.newArrayList();
 
         String one = OrderByValueResolver.getOrderbyValue( 1.0 );
@@ -148,7 +146,6 @@ public class IndexSourceOrderbyValueResolverTest
     public void testOrderbyValuesForFloat()
         throws Exception
     {
-
         List<String> orderedList = Lists.newArrayList();
 
         String one = OrderByValueResolver.getOrderbyValue( 1f );
@@ -181,7 +178,6 @@ public class IndexSourceOrderbyValueResolverTest
     {
 
         List<String> orderedList = Lists.newArrayList();
-        OrderByValueResolver.getOrderbyValue( 1 );
 
         String first = OrderByValueResolver.getOrderbyValue( new DateTime( 2013, 1, 1, 1, 1 ).toDate() );
         String second = OrderByValueResolver.getOrderbyValue( new DateTime( 2013, 1, 1, 1, 2 ).toDate() );
@@ -204,6 +200,55 @@ public class IndexSourceOrderbyValueResolverTest
         assertEquals( third, iterator.next() );
         assertEquals( fourth, iterator.next() );
         assertEquals( fifth, iterator.next() );
+    }
+
+    @Test
+    public void testOrderByValueForEmptyArray()
+    {
+        String[] values = new String[]{};
+
+        final String orderbyValue = OrderByValueResolver.getOrderbyValue( values );
+
+
+    }
+
+    @Test
+    public void testOrderByValueForStringArray()
+    {
+        String[] values = new String[]{"1", "2", "3", "4"};
+
+        final String orderbyValue = OrderByValueResolver.getOrderbyValue( values );
+
+        assertEquals( "1", orderbyValue );
+    }
+
+    @Test
+    public void testOrderByValueForNumericArray()
+    {
+        List<String> valueList = Lists.newArrayList();
+        Collections.sort( valueList );
+
+        Number[] values1 = new Number[]{1, 2, 3, 4};
+        Number[] values2 = new Number[]{2, 3, 4, 5};
+
+        final String orderbyValue1 = OrderByValueResolver.getOrderbyValue( values1 );
+        final String orderbyValue2 = OrderByValueResolver.getOrderbyValue( values2 );
+
+        valueList.add( orderbyValue2 );
+        valueList.add( orderbyValue1 );
+
+        Iterator<String> iterator = valueList.iterator();
+
+        assertEquals( orderbyValue2, iterator.next() );
+        assertEquals( orderbyValue1, iterator.next() );
+
+        Collections.sort( valueList );
+
+        iterator = valueList.iterator();
+
+        assertEquals( orderbyValue1, iterator.next() );
+        assertEquals( orderbyValue2, iterator.next() );
+
     }
 
 

@@ -1,6 +1,5 @@
 package com.enonic.wem.core.search;
 
-
 import java.util.Collection;
 import java.util.List;
 
@@ -12,15 +11,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.content.ContentSelector;
+import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.core.search.account.AccountDeleteDocumentFactory;
+import com.enonic.wem.core.search.account.AccountIndexDocumentFactory;
 import com.enonic.wem.core.search.content.ContentDeleteDocumentFactory;
+import com.enonic.wem.core.search.content.ContentIndexDocumentsFactory;
 import com.enonic.wem.core.search.elastic.ElasticsearchIndexServiceImpl;
 import com.enonic.wem.core.search.elastic.IndexMapping;
 import com.enonic.wem.core.search.elastic.IndexMappingProvider;
 import com.enonic.wem.core.search.indexdocument.IndexDocument;
-
 
 @Component
 public class IndexService
@@ -39,11 +41,9 @@ public class IndexService
     public void initialize()
         throws Exception
     {
-        IndexStatus indexStatus = elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX.value(), true );
+        elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX, true );
 
-        LOG.info( "Cluster in state: " + indexStatus.toString() );
-
-        final boolean indexExists = elasticsearchIndexService.indexExists( IndexConstants.WEM_INDEX.value() );
+        final boolean indexExists = elasticsearchIndexService.indexExists( IndexConstants.WEM_INDEX );
 
         if ( !indexExists )
         {
@@ -60,7 +60,7 @@ public class IndexService
     {
         try
         {
-            elasticsearchIndexService.createIndex( IndexConstants.WEM_INDEX.value() );
+            elasticsearchIndexService.createIndex( IndexConstants.WEM_INDEX );
         }
         catch ( IndexAlreadyExistsException e )
         {
@@ -68,7 +68,7 @@ public class IndexService
             return;
         }
 
-        final List<IndexMapping> allIndexMappings = indexMappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX.value() );
+        final List<IndexMapping> allIndexMappings = indexMappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX );
 
         for ( IndexMapping indexMapping : allIndexMappings )
         {
@@ -76,12 +76,20 @@ public class IndexService
         }
     }
 
-    public void index( final Object indexableData )
+    public void indexAccount( final Account account )
     {
-        final Collection<IndexDocument> indexDocuments = IndexDocumentFactory.create( indexableData );
+        final Collection<IndexDocument> indexDocuments = AccountIndexDocumentFactory.create( account );
 
         elasticsearchIndexService.index( indexDocuments );
     }
+
+    public void indexContent( final Content content )
+    {
+        final Collection<IndexDocument> indexDocuments = ContentIndexDocumentsFactory.create( content );
+
+        elasticsearchIndexService.index( indexDocuments );
+    }
+
 
     public void deleteAccount( final AccountKey accountKey )
     {
@@ -90,9 +98,9 @@ public class IndexService
         this.elasticsearchIndexService.delete( deleteDocument );
     }
 
-    public void deleteContent( final ContentSelector contentSelector )
+    public void deleteContent( final ContentId contentId )
     {
-        final Collection<DeleteDocument> deleteDocuments = ContentDeleteDocumentFactory.create( contentSelector );
+        final Collection<DeleteDocument> deleteDocuments = ContentDeleteDocumentFactory.create( contentId );
 
         for ( DeleteDocument deleteDocument : deleteDocuments )
         {

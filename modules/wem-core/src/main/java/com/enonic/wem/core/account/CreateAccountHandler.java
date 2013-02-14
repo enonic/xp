@@ -54,7 +54,7 @@ public final class CreateAccountHandler
         }
         session.save();
 
-        this.indexService.index( account );
+        this.indexService.indexAccount( account );
         command.setResult( key );
     }
 

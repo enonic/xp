@@ -32,13 +32,13 @@ public class IndexMappingProviderTest
         mappingProvider.setResourcePatternResolver( resourcePatternResolver );
         mappingProvider.init();
 
-        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX.value() );
+        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX );
 
         assertEquals( 3, indexMappings.size() );
 
         for ( IndexMapping indexMapping : indexMappings )
         {
-            assertEquals( IndexConstants.WEM_INDEX.value(), indexMapping.getIndexName() );
+            assertEquals( IndexConstants.WEM_INDEX, indexMapping.getIndexName() );
             assertTrue( Lists.newArrayList( "account", "content", "relations" ).contains( indexMapping.getIndexType() ) );
         }
     }
@@ -64,7 +64,7 @@ public class IndexMappingProviderTest
         mappingProvider.setResourcePatternResolver( resourcePatternResolver );
         mappingProvider.init();
 
-        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX.value() );
+        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX );
 
         assertEquals( 1, indexMappings.size() );
 
@@ -85,7 +85,7 @@ public class IndexMappingProviderTest
         mappingProvider.setResourcePatternResolver( resourcePatternResolver );
         mappingProvider.init();
 
-        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX.value() );
+        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX );
 
         assertEquals( 0, indexMappings.size() );
     }
@@ -104,7 +104,7 @@ public class IndexMappingProviderTest
         mappingProvider.setResourcePatternResolver( resourcePatternResolver );
         mappingProvider.init();
 
-        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX.value() );
+        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX );
 
         assertEquals( 0, indexMappings.size() );
     }

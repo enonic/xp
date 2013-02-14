@@ -34,8 +34,8 @@ public class IndexServiceImplTest
         throws Exception
     {
         final ElasticsearchIndexServiceImpl elasticsearchIndexService = Mockito.mock( ElasticsearchIndexServiceImpl.class );
-        Mockito.when( elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX.value(), true ) ).thenReturn( IndexStatus.YELLOW );
-        Mockito.when( elasticsearchIndexService.indexExists( IndexConstants.WEM_INDEX.value() ) ).thenReturn( false );
+        Mockito.when( elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX, true ) ).thenReturn( IndexStatus.YELLOW );
+        Mockito.when( elasticsearchIndexService.indexExists( IndexConstants.WEM_INDEX ) ).thenReturn( false );
 
         final IndexMappingProvider indexMappingProvider = setUpIndexMappingMock();
 
@@ -45,7 +45,7 @@ public class IndexServiceImplTest
 
         indexService.initialize();
 
-        Mockito.verify( elasticsearchIndexService, Mockito.times( 1 ) ).createIndex( IndexConstants.WEM_INDEX.value() );
+        Mockito.verify( elasticsearchIndexService, Mockito.times( 1 ) ).createIndex( IndexConstants.WEM_INDEX );
     }
 
     @Test
@@ -54,8 +54,8 @@ public class IndexServiceImplTest
     {
 
         final ElasticsearchIndexServiceImpl elasticsearchIndexService = Mockito.mock( ElasticsearchIndexServiceImpl.class );
-        Mockito.when( elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX.value(), true ) ).thenReturn( IndexStatus.YELLOW );
-        Mockito.when( elasticsearchIndexService.indexExists( IndexConstants.WEM_INDEX.value() ) ).thenReturn( true );
+        Mockito.when( elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX, true ) ).thenReturn( IndexStatus.YELLOW );
+        Mockito.when( elasticsearchIndexService.indexExists( IndexConstants.WEM_INDEX ) ).thenReturn( true );
 
         final IndexMappingProvider indexMappingProvider = setUpIndexMappingMock();
 
@@ -65,7 +65,7 @@ public class IndexServiceImplTest
 
         indexService.initialize();
 
-        Mockito.verify( elasticsearchIndexService, Mockito.never() ).createIndex( IndexConstants.WEM_INDEX.value() );
+        Mockito.verify( elasticsearchIndexService, Mockito.never() ).createIndex( IndexConstants.WEM_INDEX );
     }
 
     @Test
@@ -73,11 +73,11 @@ public class IndexServiceImplTest
         throws Exception
     {
         final ElasticsearchIndexServiceImpl elasticsearchIndexService = Mockito.mock( ElasticsearchIndexServiceImpl.class );
-        Mockito.when( elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX.value(), true ) ).thenReturn( IndexStatus.YELLOW );
-        Mockito.when( elasticsearchIndexService.indexExists( IndexConstants.WEM_INDEX.value() ) ).thenReturn( false );
+        Mockito.when( elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX, true ) ).thenReturn( IndexStatus.YELLOW );
+        Mockito.when( elasticsearchIndexService.indexExists( IndexConstants.WEM_INDEX ) ).thenReturn( false );
 
         Mockito.doThrow( new IndexAlreadyExistsException( null ) ).when( elasticsearchIndexService ).createIndex(
-            IndexConstants.WEM_INDEX.value() );
+            IndexConstants.WEM_INDEX );
 
         final IndexMappingProvider indexMappingProvider = setUpIndexMappingMock();
 
@@ -96,11 +96,11 @@ public class IndexServiceImplTest
         throws Exception
     {
         final ElasticsearchIndexServiceImpl elasticsearchIndexService = Mockito.mock( ElasticsearchIndexServiceImpl.class );
-        Mockito.when( elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX.value(), true ) ).thenReturn( IndexStatus.YELLOW );
-        Mockito.when( elasticsearchIndexService.indexExists( IndexConstants.WEM_INDEX.value() ) ).thenReturn( false );
+        Mockito.when( elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX, true ) ).thenReturn( IndexStatus.YELLOW );
+        Mockito.when( elasticsearchIndexService.indexExists( IndexConstants.WEM_INDEX ) ).thenReturn( false );
 
         Mockito.doThrow( new ElasticSearchException( "expected" ) ).when( elasticsearchIndexService ).createIndex(
-            IndexConstants.WEM_INDEX.value() );
+            IndexConstants.WEM_INDEX );
 
         final IndexMappingProvider indexMappingProvider = setUpIndexMappingMock();
 
@@ -119,8 +119,8 @@ public class IndexServiceImplTest
         throws Exception
     {
         final ElasticsearchIndexServiceImpl elasticsearchIndexService = Mockito.mock( ElasticsearchIndexServiceImpl.class );
-        Mockito.when( elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX.value(), true ) ).thenReturn( IndexStatus.YELLOW );
-        Mockito.when( elasticsearchIndexService.indexExists( IndexConstants.WEM_INDEX.value() ) ).thenReturn( false );
+        Mockito.when( elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX, true ) ).thenReturn( IndexStatus.YELLOW );
+        Mockito.when( elasticsearchIndexService.indexExists( IndexConstants.WEM_INDEX ) ).thenReturn( false );
         indexService.setDoReindexOnEmptyIndex( true );
 
         final ReindexService reindexService = Mockito.mock( ReindexService.class );
@@ -134,7 +134,7 @@ public class IndexServiceImplTest
 
         indexService.initialize();
 
-        Mockito.verify( elasticsearchIndexService, Mockito.times( 1 ) ).createIndex( IndexConstants.WEM_INDEX.value() );
+        Mockito.verify( elasticsearchIndexService, Mockito.times( 1 ) ).createIndex( IndexConstants.WEM_INDEX );
         Mockito.verify( reindexService, Mockito.times( 1 ) ).reindexAccounts();
     }
 
@@ -146,7 +146,7 @@ public class IndexServiceImplTest
         final ElasticsearchIndexServiceImpl elasticsearchIndexService = Mockito.mock( ElasticsearchIndexServiceImpl.class );
         indexService.setElasticsearchIndexService( elasticsearchIndexService );
 
-        indexService.index( account );
+        indexService.indexAccount( account );
 
         Mockito.verify( elasticsearchIndexService, Mockito.times( 1 ) ).index( Mockito.isA( Collection.class ) );
     }
@@ -155,9 +155,9 @@ public class IndexServiceImplTest
     private IndexMappingProvider setUpIndexMappingMock()
     {
         final IndexMappingProvider indexMappingProvider = Mockito.mock( IndexMappingProvider.class );
-        List<IndexMapping> indexMappings = Lists.newArrayList(
-            new IndexMapping( IndexConstants.WEM_INDEX.value(), IndexType.ACCOUNT.getIndexTypeName(), "Testings 1234" ) );
-        Mockito.when( indexMappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX.value() ) ).thenReturn( indexMappings );
+        List<IndexMapping> indexMappings =
+            Lists.newArrayList( new IndexMapping( IndexConstants.WEM_INDEX, IndexType.ACCOUNT.getIndexTypeName(), "Testings 1234" ) );
+        Mockito.when( indexMappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX ) ).thenReturn( indexMappings );
         return indexMappingProvider;
     }
 
