@@ -113,9 +113,11 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
                     me.getContentWizardTab().close();
                 }
 
+                var path = contentParams.contentPath ? contentParams.contentPath : contentPath;
+
                 Admin.MessageBus.showFeedback({
                     title: 'Content was saved',
-                    message: 'Content with path: ' + contentParams.contentPath + ' was saved',
+                    message: 'Content with path: ' + path + ' was saved',
                     opts: {}
                 });
 
