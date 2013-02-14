@@ -2,6 +2,7 @@ package com.enonic.wem.core.content.mixin;
 
 import javax.jcr.Session;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +15,6 @@ import com.enonic.wem.api.content.mixin.QualifiedMixinNames;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.mixin.dao.MixinDao;
-import com.enonic.wem.core.time.TimeService;
 
 import static com.enonic.wem.api.content.mixin.Mixin.newMixin;
 
@@ -23,8 +23,6 @@ public final class UpdateMixinsHandler
     extends CommandHandler<UpdateMixins>
 {
     private MixinDao mixinDao;
-
-    private TimeService timeService;
 
     public UpdateMixinsHandler()
     {
@@ -59,7 +57,7 @@ public final class UpdateMixinsHandler
 
     private void updateMixin( final Session session, final Mixin mixin )
     {
-        final Mixin mixinModified = newMixin( mixin ).modifiedTime( timeService.getNowAsDateTime() ).build();
+        final Mixin mixinModified = newMixin( mixin ).modifiedTime( DateTime.now() ).build();
         mixinDao.update( mixinModified, session );
     }
 
@@ -73,11 +71,5 @@ public final class UpdateMixinsHandler
     public void setMixinDao( final MixinDao mixinDao )
     {
         this.mixinDao = mixinDao;
-    }
-
-    @Autowired
-    public void setTimeService( final TimeService timeService )
-    {
-        this.timeService = timeService;
     }
 }

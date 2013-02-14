@@ -1,5 +1,6 @@
 package com.enonic.wem.core.content;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.search.IndexService;
-import com.enonic.wem.core.time.TimeService;
 
 import static com.enonic.wem.api.content.Content.newContent;
 
@@ -22,8 +22,6 @@ public class UpdateContentsHandler
     extends CommandHandler<UpdateContents>
 {
     private ContentDao contentDao;
-
-    private TimeService timeService;
 
     private IndexService indexService;
 
@@ -47,7 +45,7 @@ public class UpdateContentsHandler
             if ( modifiedContent != null )
             {
                 contentToUpdate = newContent( modifiedContent ).
-                    modifiedTime( timeService.getNowAsDateTime() ).
+                    modifiedTime( DateTime.now() ).
                     modifier( command.getModifier() ).build();
                 final boolean createNewVersion = true;
                 contentDao.update( contentToUpdate, createNewVersion, context.getJcrSession() );
@@ -65,12 +63,6 @@ public class UpdateContentsHandler
 
             }
         }
-    }
-
-    @Autowired
-    public void setTimeService( final TimeService timeService )
-    {
-        this.timeService = timeService;
     }
 
     @Autowired

@@ -1,6 +1,8 @@
 package com.enonic.wem.web.rest.rpc.content;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -11,7 +13,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
-import com.enonic.wem.core.time.MockTimeService;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
@@ -19,20 +20,25 @@ public class GetContentTreeRpcHandlerTest
     extends AbstractRpcHandlerTest
 {
 
-    private MockTimeService timeService = new MockTimeService( new DateTime( 2000, 1, 1, 12, 0, 0 ) );
-
     private Client client;
 
     @Override
     protected JsonRpcHandler createHandler()
         throws Exception
     {
+        DateTimeUtils.setCurrentMillisFixed( new DateTime( 2000, 1, 1, 12, 0, 0 ).getMillis() );
         final GetContentTreeRpcHandler handler = new GetContentTreeRpcHandler();
 
         client = Mockito.mock( Client.class );
         handler.setClient( client );
 
         return handler;
+    }
+
+    @AfterClass
+    public static void tearDown()
+    {
+        DateTimeUtils.setCurrentMillisSystem();
     }
 
     @Test
@@ -56,7 +62,7 @@ public class GetContentTreeRpcHandlerTest
 
     private Content createContent( String path )
     {
-        return Content.newContent().path( ContentPath.from( path ) ).createdTime( timeService.getNowAsDateTime() ).owner(
+        return Content.newContent().path( ContentPath.from( path ) ).createdTime( DateTime.now() ).owner(
             UserKey.from( "myStore:me" ) ).build();
     }
 }

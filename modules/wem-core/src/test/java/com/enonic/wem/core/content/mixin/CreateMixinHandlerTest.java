@@ -2,7 +2,6 @@ package com.enonic.wem.core.content.mixin;
 
 import javax.jcr.Session;
 
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -16,8 +15,6 @@ import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.mixin.dao.MixinDao;
-import com.enonic.wem.core.time.MockTimeService;
-import com.enonic.wem.core.time.TimeService;
 
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static org.junit.Assert.*;
@@ -28,10 +25,6 @@ public class CreateMixinHandlerTest
     private CreateMixinHandler handler;
 
     private MixinDao mixinDao;
-
-    private final DateTime CURRENT_TIME = DateTime.now();
-
-    private final TimeService timeService = new MockTimeService( CURRENT_TIME );
 
 
     @Before
@@ -44,7 +37,6 @@ public class CreateMixinHandlerTest
 
         handler = new CreateMixinHandler();
         handler.setMixinDao( mixinDao );
-        handler.setTimeService( timeService );
     }
 
     @Test

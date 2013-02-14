@@ -1,6 +1,8 @@
 package com.enonic.wem.web.rest.rpc.content;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -14,7 +16,6 @@ import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
-import com.enonic.wem.core.time.MockTimeService;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
@@ -22,20 +23,25 @@ public class GetContentRpcHandlerTest
     extends AbstractRpcHandlerTest
 {
 
-    private MockTimeService timeService = new MockTimeService( new DateTime( 2000, 1, 1, 12, 0, 0 ) );
-
     private Client client;
 
     @Override
     protected JsonRpcHandler createHandler()
         throws Exception
     {
+        DateTimeUtils.setCurrentMillisFixed( new DateTime( 2000, 1, 1, 12, 0, 0 ).getMillis() );
         final GetContentRpcHandler handler = new GetContentRpcHandler();
 
         client = Mockito.mock( Client.class );
         handler.setClient( client );
 
         return handler;
+    }
+
+    @AfterClass
+    public static void tearDown()
+    {
+        DateTimeUtils.setCurrentMillisSystem();
     }
 
     @Test
@@ -48,10 +54,10 @@ public class GetContentRpcHandlerTest
 
         final Content content1 = Content.newContent().
             path( ContentPath.from( "/MySite/MyContent" ) ).
-            createdTime( timeService.getNowAsDateTime() ).
+            createdTime( DateTime.now() ).
             owner( UserKey.from( "myStore:me" ) ).
             displayName( "My Content" ).
-            modifiedTime( timeService.getNowAsDateTime() ).
+            modifiedTime( DateTime.now() ).
             modifier( UserKey.superUser() ).
             type( new QualifiedContentTypeName( "myModule:myType" ) ).
             rootDataSet( rootDataSet ).

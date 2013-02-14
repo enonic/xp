@@ -6,6 +6,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.Icon;
@@ -197,8 +198,8 @@ public final class RelationshipType
             this.modifiedTime = relationshipType.modifiedTime;
             this.fromSemantic = relationshipType.fromSemantic;
             this.toSemantic = relationshipType.toSemantic;
-            this.allowedFromTypes = Lists.newArrayList( allowedFromTypes );
-            this.allowedToTypes = Lists.newArrayList( allowedToTypes );
+            this.allowedFromTypes = Lists.newArrayList( relationshipType.allowedFromTypes );
+            this.allowedToTypes = Lists.newArrayList( relationshipType.allowedToTypes );
             this.icon = relationshipType.icon == null ? null : Icon.copyOf( relationshipType.icon );
         }
 
@@ -244,33 +245,47 @@ public final class RelationshipType
             return this;
         }
 
-        public Builder addAllowedFromType( QualifiedContentTypeName value )
+        public Builder addAllowedFromType( QualifiedContentTypeName contentTypeName )
         {
-            allowedFromTypes.add( value );
+            allowedFromTypes.add( contentTypeName );
             return this;
         }
 
-        public Builder addAllowedFromTypes( Iterable<QualifiedContentTypeName> iterable )
+        public Builder addAllowedFromTypes( Iterable<QualifiedContentTypeName> contentTypeNames )
         {
-            for ( QualifiedContentTypeName contentType : iterable )
+            for ( QualifiedContentTypeName contentType : contentTypeNames )
             {
                 allowedFromTypes.add( contentType );
             }
             return this;
         }
 
-        public Builder addAllowedToType( QualifiedContentTypeName value )
+        public Builder setAllowedFromTypes( Iterable<QualifiedContentTypeName> contentTypeNames )
         {
-            allowedToTypes.add( value );
+            allowedFromTypes.clear();
+            Iterables.addAll( allowedFromTypes, contentTypeNames );
             return this;
         }
 
-        public Builder addAllowedToTypes( Iterable<QualifiedContentTypeName> iterable )
+        public Builder addAllowedToType( QualifiedContentTypeName contentTypeName )
         {
-            for ( QualifiedContentTypeName contentType : iterable )
+            allowedToTypes.add( contentTypeName );
+            return this;
+        }
+
+        public Builder addAllowedToTypes( Iterable<QualifiedContentTypeName> contentTypeNames )
+        {
+            for ( QualifiedContentTypeName contentType : contentTypeNames )
             {
                 allowedToTypes.add( contentType );
             }
+            return this;
+        }
+
+        public Builder setAllowedToTypes( Iterable<QualifiedContentTypeName> contentTypeNames )
+        {
+            allowedToTypes.clear();
+            Iterables.addAll( allowedToTypes, contentTypeNames );
             return this;
         }
 

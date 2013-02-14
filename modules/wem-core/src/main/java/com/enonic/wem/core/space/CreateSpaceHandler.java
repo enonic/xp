@@ -16,7 +16,6 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.space.dao.SpaceDao;
-import com.enonic.wem.core.time.TimeService;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.space.Space.newSpace;
@@ -29,8 +28,6 @@ public final class CreateSpaceHandler
 
     private ContentDao contentDao;
 
-    private TimeService timeService;
-
     public CreateSpaceHandler()
     {
         super( CreateSpace.class );
@@ -41,7 +38,7 @@ public final class CreateSpaceHandler
         throws Exception
     {
         final Session session = context.getJcrSession();
-        final DateTime now = timeService.getNowAsDateTime();
+        final DateTime now = DateTime.now();
         final Space space = newSpace().
             displayName( command.getDisplayName() ).
             name( command.getName() ).
@@ -76,11 +73,5 @@ public final class CreateSpaceHandler
     public void setContentDao( final ContentDao contentDao )
     {
         this.contentDao = contentDao;
-    }
-
-    @Autowired
-    public void setTimeService( final TimeService timeService )
-    {
-        this.timeService = timeService;
     }
 }

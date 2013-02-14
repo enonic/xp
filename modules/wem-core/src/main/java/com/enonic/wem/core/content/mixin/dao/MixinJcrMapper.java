@@ -4,16 +4,21 @@ package com.enonic.wem.core.content.mixin.dao;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.mixin.Mixin;
 import com.enonic.wem.core.content.mixin.MixinJsonSerializer;
 import com.enonic.wem.core.support.dao.IconJcrMapper;
 
 import static com.enonic.wem.api.content.mixin.Mixin.newMixin;
+import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
+import static com.enonic.wem.core.jcr.JcrHelper.setPropertyDateTime;
 
 class MixinJcrMapper
 {
     private static final String MIXIN = "mixin";
+
+    private static final String CREATED_TIME = "createdTime";
+
+    private static final String MODIFIED_TIME = "modifiedTime";
 
     private final MixinJsonSerializer jsonSerializer = new MixinJsonSerializer();
 
@@ -24,6 +29,8 @@ class MixinJcrMapper
     {
         final String mixinJson = jsonSerializer.toString( mixin );
         mixinNode.setProperty( MIXIN, mixinJson );
+        setPropertyDateTime( mixinNode, CREATED_TIME, mixin.getCreatedTime() );
+        setPropertyDateTime( mixinNode, MODIFIED_TIME, mixin.getModifiedTime() );
         iconJcrMapper.toJcr( mixin.getIcon(), mixinNode );
     }
 
@@ -31,9 +38,11 @@ class MixinJcrMapper
         throws RepositoryException
     {
         final String mixinJson = mixinNode.getProperty( MIXIN ).getString();
-        final Mixin mixin = jsonSerializer.toObject( mixinJson );
-        final Icon icon = iconJcrMapper.toIcon( mixinNode );
-        return icon == null ? mixin : newMixin( mixin ).icon( icon ).build();
+        return newMixin( jsonSerializer.toObject( mixinJson ) ).
+            createdTime( getPropertyDateTime( mixinNode, CREATED_TIME ) ).
+            modifiedTime( getPropertyDateTime( mixinNode, MODIFIED_TIME ) ).
+            icon( iconJcrMapper.toIcon( mixinNode ) ).
+            build();
     }
 
 }
