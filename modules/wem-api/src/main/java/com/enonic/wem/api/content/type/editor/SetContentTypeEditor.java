@@ -26,12 +26,11 @@ final class SetContentTypeEditor
         builder.superType( source.getSuperType() );
         builder.setAbstract( source.isAbstract() );
         builder.setFinal( source.isFinal() );
-        builder.icon( iconToSet );
-        if ( source.form() == null )
+        if ( iconToSet != null )
         {
-            // nothing
+            builder.icon( iconToSet );
         }
-        else
+        if ( source.form() != null )
         {
             builder.form( source.form() );
         }
