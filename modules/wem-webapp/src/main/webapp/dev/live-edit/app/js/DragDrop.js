@@ -23,6 +23,20 @@ AdminLiveEdit.DragDrop = (function () {
     }
 
 
+    function getHelperHtml(text) {
+        // Override jQueryUi inline width/height
+        return '<div id="live-edit-drag-helper" style="width: 150px; height: 16px;">' +
+               '    <img id="live-edit-drag-helper-status-icon" src="../app/images/drop-yes.gif"/>' +
+               '    <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' +
+               '</div>';
+    }
+
+
+    function setHelperText(text) {
+        $liveedit('#live-edit-drag-helper-text').text(text);
+    }
+
+
     function createComponentBarDraggables() {
         var draggableOptions = {
             connectToSortable: regionSelector,
@@ -31,11 +45,13 @@ AdminLiveEdit.DragDrop = (function () {
             appendTo: 'body',
             zIndex: 5100000,
             revert: 'invalid',
+            cursorAt: cursorAt,
             helper: function () {
-                return '<div style="width: 200px; height: 20px; background-color: #ccc; padding: 10px;">Helper</div>';
+                return getHelperHtml('');
             },
             start: function (event, ui) {
                 $liveedit(window).trigger('component:dragstart', [event, ui]);
+                setHelperText($liveedit(event.target).data('live-edit-component-name'));
                 isDragging = true;
             },
             stop: function (event, ui) {
@@ -49,11 +65,7 @@ AdminLiveEdit.DragDrop = (function () {
 
 
     function createDragHelper(event, helper) {
-        // Inline style is needed in order to keep the width and height while draging an item.
-        return $liveedit('<div id="live-edit-drag-helper" style="width: 150px; height: 16px;">' +
-                         '  <img id="live-edit-drag-helper-status-icon" src="../app/images/drop-yes.gif"/>' +
-                         util.getComponentName(helper) +
-                         '</div>');
+        return $liveedit(getHelperHtml(util.getComponentName(helper)));
     }
 
 
@@ -108,13 +120,13 @@ AdminLiveEdit.DragDrop = (function () {
 
     function handleSortStop(event, ui) {
         isDragging = false;
-
+        console.log(123);
         if (AdminLiveEdit.Util.supportsTouch()) {
             $liveedit(window).trigger('component:mouseout');
         }
-
-        // Added on sort start
+// Added on sort start
         var wasSelectedOnDragStart = ui.item.data('live-edit-selected-on-drag-start');
+
         $liveedit(window).trigger('component:sort:stop', [event, ui, wasSelectedOnDragStart]);
 
         ui.item.removeData('live-edit-selected-on-drag-start');

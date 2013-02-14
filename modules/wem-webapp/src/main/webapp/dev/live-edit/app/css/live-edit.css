@@ -531,7 +531,6 @@ svg.live-edit-highlighter rect {
     background-color: #fff;
     font-size: 11px;
     overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
 }
 
@@ -543,7 +542,14 @@ svg.live-edit-highlighter rect {
 
 #live-edit-drag-helper-status-icon {
     vertical-align: middle;
-    margin-right: 5px;
+}
+
+#live-edit-drag-helper-text {
+    display: inline-block;
+    padding-top: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .live-edit-drop-target-placeholder {
