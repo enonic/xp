@@ -35,7 +35,7 @@ Ext.define('Admin.controller.homescreen.Controller', {
                         view.setVersionText(r.version);
                     });
 
-                    view.setBackgroundImage('resources/images/x_710948main_typhoon_bopha_1600_1600-1200.jpg');
+                    view.setBackgroundImage('http://revivalministry.files.wordpress.com/2009/03/blueprint_wide.jpg');
                     view.setLicensedToText('Licensed to Large Customer');
                 },
                 beforeshow: function () {

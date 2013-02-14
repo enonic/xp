@@ -69,8 +69,8 @@
         var me = this;
         $(window).on('component:click:select', $.proxy(me.fadeOut, me));
         $(window).on('component:click:deselect', $.proxy(me.fadeIn, me));
-        $(window).on('component:dragstart', $.proxy(me.fadeOut, me));
-        $(window).on('component:dragstop', $.proxy(me.fadeIn, me));
+        $(window).on('component:drag:start', $.proxy(me.fadeOut, me));
+        $(window).on('component:drag:stop', $.proxy(me.fadeIn, me));
         $(window).on('component:sort:stop', $.proxy(me.fadeIn, me));
         $(window).on('component:sort:start', $.proxy(me.fadeOut, me));
         $(window).on('component:sort:update', $.proxy(me.fadeIn, me));

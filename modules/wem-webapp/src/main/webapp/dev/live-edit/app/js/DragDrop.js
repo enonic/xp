@@ -50,12 +50,12 @@ AdminLiveEdit.DragDrop = (function () {
                 return getHelperHtml('');
             },
             start: function (event, ui) {
-                $liveedit(window).trigger('component:dragstart', [event, ui]);
+                $liveedit(window).trigger('component:drag:start', [event, ui]);
                 setHelperText($liveedit(event.target).data('live-edit-component-name'));
                 isDragging = true;
             },
             stop: function (event, ui) {
-                $liveedit(window).trigger('component:dragstop', [event, ui]);
+                $liveedit(window).trigger('component:drag:stop', [event, ui]);
                 isDragging = false;
             }
         };
