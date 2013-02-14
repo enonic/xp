@@ -44,15 +44,15 @@ Ext.define('Admin.view.contentStudio.SelectBaseTypeWindow', {
             data: [
                 {
                     name: 'ContentType',
-                    iconUrl: '/enonic/admin/rest/basetype/image/ContentType:System:structured'
+                    iconUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/basetype/image/ContentType:System:structured')
                 },
                 {
                     name: 'RelationshipType',
-                    iconUrl: '/enonic/admin/rest/basetype/image/ContentType:System:structured'
+                    iconUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/basetype/image/RelationshipType:_:_') // default icon for RelationshipType
                 },
                 {
                     name: 'Mixin',
-                    iconUrl: '/enonic/admin/rest/basetype/image/ContentType:System:structured'
+                    iconUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/basetype/image/Mixin:_:_') // default icon for Mixin
                 }
             ]
         })

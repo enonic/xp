@@ -110,6 +110,10 @@ public final class BaseTypeImageResource
 
     private ContentType getContentType( final QualifiedContentTypeName contentTypeName )
     {
+        if ( contentTypeName == null )
+        {
+            return null;
+        }
         final QualifiedContentTypeNames contentTypeNames = QualifiedContentTypeNames.from( contentTypeName );
         return client.execute( contentType().get().names( contentTypeNames ) ).first();
     }

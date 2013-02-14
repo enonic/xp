@@ -18,14 +18,6 @@ Ext.define('Admin.controller.contentStudio.Controller', {
                 fn: this.createNewBaseType,
                 scope: this
             },
-            showNewContentTypePanel: {
-                fn: this.showNewContentTypePanel,
-                scope: this
-            },
-            showNewMixinPanel: {
-                fn: this.showNewContentTypePanel,
-                scope: this
-            },
             showEditBaseTypePanel: {
                 fn: this.showEditBaseTypePanel,
                 scope: this
@@ -45,7 +37,7 @@ Ext.define('Admin.controller.contentStudio.Controller', {
                 createNewBaseType: function (modalWindow, item) {
                     modalWindow.close();
                     console.log(item);
-                    this.createEditBaseTypePanel(item.data.name, true);
+                    this.createNewBaseTypePanel(item.data.name);
                 }
             }
         });
@@ -58,36 +50,23 @@ Ext.define('Admin.controller.contentStudio.Controller', {
 
     createNewBaseType: function (record) {
         console.log('Event caught');
-        this.createEditBaseTypePanel(record.data.name);
+        this.createNewBaseTypePanel(record.data.name);
     },
 
-    showNewContentTypePanel: function () {
-        this.createEditContentTypePanel(null, true);
-    },
-
-    showNewMixinPanel: function () {
-        this.createEditMixinPanel(null, true);
-    },
-
-    showNewRelationshipTypePanel: function () {
-        this.createEditRelationshipTypePanel(null, true);
-    },
-
-
-    showEditBaseTypePanel: function (contentType, callback) {
-        if (!contentType) {
-            contentType = this.getTreeGridPanel().getSelection();
+    showEditBaseTypePanel: function (baseType) {
+        if (!baseType) {
+            baseType = this.getTreeGridPanel().getSelection();
         } else {
-            contentType = [].concat(contentType);
+            baseType = [].concat(baseType);
         }
         var i;
-        for (i = 0; i < contentType.length; i += 1) {
-            this.createEditBaseTypePanel(contentType[i]);
+        for (i = 0; i < baseType.length; i += 1) {
+            this.createEditBaseTypePanel(baseType[i]);
         }
     },
 
 
-    showPreviewContentTypePanel: function (contentType, callback) {
+    showPreviewContentTypePanel: function (contentType) {
         if (!contentType) {
             contentType = this.getTreeGridPanel().getSelection();
         } else {
@@ -97,7 +76,6 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         for (i = 0; i < contentType.length; i += 1) {
             this.createPreviewContentPanel(contentType[i]);
         }
-
     },
 
 
@@ -116,161 +94,183 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         this.getSelectBaseTypeWindow().show();
     },
 
-    createEditBaseTypePanel: function (baseType, forceNew) {
+    createNewBaseTypePanel: function (baseType) {
         switch (baseType) {
-        case 'ContentType':
-            this.createEditContentTypePanel(baseType, forceNew);
-            break;
-        case 'Mixin':
-            this.createEditMixinPanel(baseType, forceNew);
-            break;
-        case 'RelationshipType':
-            this.createEditRelationshipTypePanel(baseType, forceNew);
-            break;
-        default:
-            break;
+            case 'ContentType':
+                this.createNewContentTypePanel();
+                break;
+            case 'Mixin':
+                this.createNewMixinPanel();
+                break;
+            case 'RelationshipType':
+                this.createNewRelationshipTypePanel();
+                break;
         }
     },
 
-    createEditContentTypePanel: function (contentType, forceNew) {
+    createEditBaseTypePanel: function (baseTypeModel) {
+        var baseType = baseTypeModel && baseTypeModel.data.type;
+        switch (baseType) {
+            case 'ContentType':
+                this.createEditContentTypePanel(baseTypeModel);
+                break;
+            case 'Mixin':
+                this.createEditMixinPanel(baseTypeModel);
+                break;
+            case 'RelationshipType':
+                this.createEditRelationshipTypePanel(baseTypeModel);
+                break;
+        }
+    },
+
+    createEditContentTypePanel: function (contentType) {
+        if (!contentType) {
+            return;
+        }
 
         var me = this;
         var tabPanel = this.getCmsTabPanel();
 
-        if (contentType && !forceNew) {
-            tabPanel.el.mask();
-            Admin.lib.RemoteService.contentType_get({
-                "format": "XML",
-                "contentType": [contentType.get('qualifiedName')]
-            }, function (r) {
-                tabPanel.el.unmask();
-                if (r) {
-                    contentType.raw.configXML = r.contentTypeXml;
+        tabPanel.el.mask();
+        Admin.lib.RemoteService.contentType_get({
+            "format": "XML",
+            "contentType": [contentType.get('qualifiedName')]
+        }, function (r) {
+            tabPanel.el.unmask();
+            if (r) {
+                contentType.raw.configXML = r.contentTypeXml;
 
-                    var tabItem = {
-                        xtype: 'contentStudioContentTypeWizardPanel',
-                        id: me.generateTabId(contentType, true),
-                        editing: true,
-                        title: contentType.raw.name,
-                        iconCls: 'icon-content-studio-16',
-                        modelData: contentType.raw,
-                        data: contentType.raw   /* needed for tab panel to show path */
-                    };
+                var tabItem = {
+                    xtype: 'contentStudioContentTypeWizardPanel',
+                    id: me.generateTabId(contentType, true),
+                    editing: true,
+                    title: contentType.raw.name,
+                    iconCls: 'icon-content-studio-16',
+                    modelData: contentType.raw,
+                    data: contentType.raw   /* needed for tab panel to show path */
+                };
 
-                    //check if preview tab is open and close it
-                    var index = tabPanel.items.indexOfKey(me.generateTabId(contentType, false));
-                    if (index >= 0) {
-                        tabPanel.remove(index);
-                    }
-                    tabPanel.addTab(tabItem, index >= 0 ? index : undefined, undefined);
-
-                } else {
-                    Ext.Msg.alert("Error", r ? r.error : "Unable to retrieve content type.");
+                //check if preview tab is open and close it
+                var index = tabPanel.items.indexOfKey(me.generateTabId(contentType, false));
+                if (index >= 0) {
+                    tabPanel.remove(index);
                 }
-            });
+                tabPanel.addTab(tabItem, index >= 0 ? index : undefined, undefined);
 
-        } else {
-            tabPanel.addTab({
-                id: 'tab-new-content-type',
-                editing: true,
-                xtype: 'contentStudioContentTypeWizardPanel',
-                title: 'New Content Type'
-            });
-        }
+            } else {
+                Ext.Msg.alert("Error", r ? r.error : "Unable to retrieve content type.");
+            }
+        });
     },
 
-    createEditMixinPanel: function (mixin, forceNew) {
+    createNewContentTypePanel: function () {
+        var tabPanel = this.getCmsTabPanel();
+        tabPanel.addTab({
+            id: 'tab-new-content-type',
+            editing: true,
+            xtype: 'contentStudioContentTypeWizardPanel',
+            title: 'New Content Type'
+        });
+    },
+
+    createEditMixinPanel: function (mixin) {
+        if (!mixin) {
+            return;
+        }
 
         var me = this;
         var tabPanel = this.getCmsTabPanel();
 
-        if (mixin && !forceNew) {
-            tabPanel.el.mask();
-            Admin.lib.RemoteService.mixin_get({
-                "format": "XML",
-                "mixin": [mixin.get('qualifiedName')]
-            }, function (r) {
-                tabPanel.el.unmask();
-                if (r) {
-                    mixin.raw.configXML = r.mixinXml;
+        tabPanel.el.mask();
+        Admin.lib.RemoteService.mixin_get({
+            "format": "XML",
+            "mixin": [mixin.get('qualifiedName')]
+        }, function (r) {
+            tabPanel.el.unmask();
+            if (r) {
+                mixin.raw.configXML = r.mixinXml;
 
-                    var tabItem = {
-                        xtype: 'contentStudioMixinWizardPanel',
-                        id: me.generateTabId(mixin, true),
-                        editing: true,
-                        title: mixin.raw.name,
-                        iconCls: 'icon-content-studio-16',
-                        modelData: mixin.raw,
-                        data: mixin.raw   /* needed for tab panel to show path */
-                    };
+                var tabItem = {
+                    xtype: 'contentStudioMixinWizardPanel',
+                    id: me.generateTabId(mixin, true),
+                    editing: true,
+                    title: mixin.raw.name,
+                    iconCls: 'icon-content-studio-16',
+                    modelData: mixin.raw,
+                    data: mixin.raw   /* needed for tab panel to show path */
+                };
 
-                    //check if preview tab is open and close it
-                    var index = tabPanel.items.indexOfKey(me.generateTabId(mixin, false));
-                    if (index >= 0) {
-                        tabPanel.remove(index);
-                    }
-                    tabPanel.addTab(tabItem, index >= 0 ? index : undefined, undefined);
-
-                } else {
-                    Ext.Msg.alert("Error", r ? r.error : "Unable to retrieve mixin.");
+                //check if preview tab is open and close it
+                var index = tabPanel.items.indexOfKey(me.generateTabId(mixin, false));
+                if (index >= 0) {
+                    tabPanel.remove(index);
                 }
-            });
+                tabPanel.addTab(tabItem, index >= 0 ? index : undefined, undefined);
 
-        } else {
-            tabPanel.addTab({
-                id: 'tab-new-mixin',
-                editing: true,
-                xtype: 'contentStudioMixinWizardPanel',
-                title: 'New Mixin'
-            });
-        }
+            } else {
+                Ext.Msg.alert("Error", r ? r.error : "Unable to retrieve mixin.");
+            }
+        });
     },
 
-    createEditRelationshipTypePanel: function (relationshipType, forceNew) {
+    createNewMixinPanel: function () {
+        var tabPanel = this.getCmsTabPanel();
+        tabPanel.addTab({
+            id: 'tab-new-mixin',
+            editing: true,
+            xtype: 'contentStudioMixinWizardPanel',
+            title: 'New Mixin'
+        });
+    },
+
+    createEditRelationshipTypePanel: function (relationshipType) {
+        if (!relationshipType) {
+            return;
+        }
 
         var me = this;
         var tabPanel = this.getCmsTabPanel();
 
-        if (relationshipType && !forceNew) {
-            tabPanel.el.mask();
-            Admin.lib.RemoteService.relationshipType_get({
-                "format": "XML",
-                "qualifiedRelationshipTypeName": [relationshipType.get('qualifiedName')]
-            }, function (r) {
-                tabPanel.el.unmask();
-                if (r) {
-                    relationshipType.raw.configXML = r.contentTypeXml;
+        tabPanel.el.mask();
+        Admin.lib.RemoteService.relationshipType_get({
+            "format": "XML",
+            "qualifiedRelationshipTypeName": [relationshipType.get('qualifiedName')]
+        }, function (r) {
+            tabPanel.el.unmask();
+            if (r) {
+                relationshipType.raw.configXML = r.relationshipTypeXml;
 
-                    var tabItem = {
-                        xtype: 'contentStudioRelationshipTypeWizardPanel',
-                        itemId: me.generateTabId(relationshipType, true),
-                        editing: true,
-                        title: relationshipType.raw.name,
-                        iconCls: 'icon-content-studio-16',
-                        modelData: relationshipType.raw,
-                        data: relationshipType.raw   /* needed for tab panel to show path */
-                    };
+                var tabItem = {
+                    xtype: 'contentStudioRelationshipTypeWizardPanel',
+                    itemId: me.generateTabId(relationshipType, true),
+                    editing: true,
+                    title: relationshipType.raw.name,
+                    iconCls: 'icon-content-studio-16',
+                    modelData: relationshipType.raw,
+                    data: relationshipType.raw   /* needed for tab panel to show path */
+                };
 
-                    //check if preview tab is open and close it
-                    var index = tabPanel.items.indexOfKey(me.generateTabId(relationshipType, false));
-                    if (index >= 0) {
-                        tabPanel.remove(index);
-                    }
-                    tabPanel.addTab(tabItem, index >= 0 ? index : undefined, undefined);
-
-                } else {
-                    Ext.Msg.alert("Error", r ? r.error : "Unable to retrieve relationship type.");
+                //check if preview tab is open and close it
+                var index = tabPanel.items.indexOfKey(me.generateTabId(relationshipType, false));
+                if (index >= 0) {
+                    tabPanel.remove(index);
                 }
-            });
+                tabPanel.addTab(tabItem, index >= 0 ? index : undefined, undefined);
 
-        } else {
-            tabPanel.addTab({
-                id: 'tab-new-relationship-type',
-                editing: true,
-                xtype: 'contentStudioRelationshipTypeWizardPanel',
-                title: 'New Relationship Type'
-            });
-        }
+            } else {
+                Ext.Msg.alert("Error", r ? r.error : "Unable to retrieve relationship type.");
+            }
+        });
+    },
+
+    createNewRelationshipTypePanel: function () {
+        var tabPanel = this.getCmsTabPanel();
+        tabPanel.addTab({
+            id: 'tab-new-relationship-type',
+            editing: true,
+            xtype: 'contentStudioRelationshipTypeWizardPanel',
+            title: 'New Relationship Type'
+        });
     },
 
     createPreviewContentPanel: function (contentType) {
