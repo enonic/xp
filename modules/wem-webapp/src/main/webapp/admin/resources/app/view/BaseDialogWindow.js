@@ -157,7 +157,7 @@ Ext.define('Admin.view.BaseDialogWindow', {
                 cls: 'dialog-info',
                 xtype: 'component',
                 border: false,
-                height: 80,
+                autoHeight: true,
                 styleHtmlContent: true,
                 tpl: new Ext.XTemplate(tpl)
             }

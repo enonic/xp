@@ -67,6 +67,9 @@
     <a href="app-content-manager.jsp">Content Manager</a>
   </li>
   <li>
+    <a href="app-space-admin.jsp">Space Admin</a>
+  </li>
+  <li>
     <a href="app-account.jsp">Accounts</a>
   </li>
   <li>
