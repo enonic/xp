@@ -24,7 +24,7 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
     },
 
     createSingleSelection: function (data) {
-
+        var me = this;
         var singleData;
         if (Ext.isArray(data) && data.length > 0) {
             singleData = data[0];
@@ -52,7 +52,7 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
                     width: 100,
                     cls: 'west',
                     itemId: 'previewIcon',
-                    tpl: Templates.contentStudio.previewIcon,
+                    tpl: '<img src="{src}?size=100" alt="{name}" title="{name}"/>',
                     data: singleData,
                     margin: 5
                 },
@@ -69,10 +69,8 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
                             cls: 'north',
                             itemId: 'previewHeader',
                             padding: '5 5 15',
-
-                            tpl: '<h1>{displayName}</h1>' +
-                                 '<div>{qualifiedName}</div>',
-
+                            tpl: ['<h1>{displayName}</h1>',
+                                '<div>{qualifiedName}</div>'],
                             data: singleData
                         },
                         {
@@ -106,7 +104,7 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
                     margin: 5,
                     itemId: 'previewInfo',
                     cls: 'east',
-                    tpl: Templates.contentStudio.previewCommonInfo,
+                    tpl: me.getCommonInfoTemplate(),
                     data: singleData
                 }
             ]
@@ -114,15 +112,13 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
     },
 
     createNoSelection: function () {
-        var tpl = new Ext.XTemplate(Templates.contentStudio.noTypeSelected);
-
         return {
             xtype: 'component',
             itemId: 'noSelection',
             styleHtmlContent: true,
             border: true,
             padding: 5,
-            tpl: tpl,
+            tpl: '<div>No content type selected</div>',
             data: {}
         };
     },
@@ -199,6 +195,45 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
             activeItem = 'smallBoxSelection';
         }
         return activeItem;
+    },
+
+
+    getCommonInfoTemplate: function () {
+        return ['<div class="container">',
+                '<table>',
+                    '<thead>',
+                    '<tr>',
+                        '<th colspan="2">General</th>',
+                    '</tr>',
+                    '</thead>',
+                    '<tbody>',
+                    '<tr>',
+                        '<td class="label">Created:</td>',
+                        '<td>{createdTime}</td>',
+                    '</tr>',
+                    '<tr>',
+                        '<td class="label">Modified:</td>',
+                        '<td>{modifiedTime}</td>',
+                    '</tr>',
+                    '</tbody>',
+                '</table>',
+            '</div>' +
+
+            '<div class="container">',
+                '<table>',
+                    '<thead>',
+                    '<tr>',
+                        '<th colspan="2">Statistics</th>',
+                    '</tr>',
+                    '</thead>',
+                    '<tbody>',
+                    '<tr>',
+                        '<td class="label">Usage Count:</td>',
+                        '<td>{usageCount}</td>',
+                    '</tr>',
+                    '</tbody>',
+                '</table>',
+            '</div>'];
     }
 
 });

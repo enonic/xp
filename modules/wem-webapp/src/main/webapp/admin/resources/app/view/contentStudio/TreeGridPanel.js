@@ -37,10 +37,11 @@ Ext.define('Admin.view.contentStudio.TreeGridPanel', {
     },
 
     nameRenderer: function (value, p, record) {
+        var me = this;
         var baseType = record.data;
         var activeListType = this.getActiveList().itemId;
         var baseTypeIconUrl = baseType.iconUrl;
-        return Ext.String.format(Templates.contentStudio.treeGridPanelNameRenderer, activeListType, baseTypeIconUrl, baseType.displayName,
+        return Ext.String.format(me.getNameColumnRendererTemplate(), activeListType, baseTypeIconUrl, baseType.displayName,
             baseType.qualifiedName);
     },
 
@@ -48,13 +49,21 @@ Ext.define('Admin.view.contentStudio.TreeGridPanel', {
         try {
             if (parent && Ext.isFunction(parent.humane_date)) {
                 return parent.humane_date(value);
-            }
-            else {
+            } else {
                 return value;
             }
-        }
-        catch (e) {
+        } catch (e) {
             return value;
         }
+    },
+
+    getNameColumnRendererTemplate: function () {
+        return '<div class="admin-{0}-thumbnail">' +
+               '  <img src="{1}?size=32"/>' +
+               '</div>' +
+               '<div class="admin-{0}-description">' +
+               '   <h6>{2}</h6>' +
+               '   <p>{3}</p>' +
+               '</div>';
     }
 });
