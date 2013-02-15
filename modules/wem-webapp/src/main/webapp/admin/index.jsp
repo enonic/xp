@@ -61,13 +61,13 @@
     <a href="main.jsp">Main</a>
   </li>
   <li>
+    <a href="app-space-admin.jsp">Space Admin</a>
+  </li>
+  <li>
     <a href="app-content-studio.jsp">Content Studio</a>
   </li>
   <li>
     <a href="app-content-manager.jsp">Content Manager</a>
-  </li>
-  <li>
-    <a href="app-space-admin.jsp">Space Admin</a>
   </li>
   <li>
     <a href="app-account.jsp">Accounts</a>
