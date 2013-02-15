@@ -204,7 +204,7 @@ svg.live-edit-highlighter rect {
     position: absolute;
     z-index: 1200150;
     border: 1px solid #000;
-    padding: 5px 10px;
+    padding: 10px 10px;
     background-color: #ffffc7;
 }
 

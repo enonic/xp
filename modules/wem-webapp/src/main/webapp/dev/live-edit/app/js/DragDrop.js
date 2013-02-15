@@ -26,7 +26,7 @@ AdminLiveEdit.DragDrop = (function () {
     function getHelperHtml(text) {
         // Override jQueryUi inline width/height
         return '<div id="live-edit-drag-helper" style="width: 150px; height: 16px;">' +
-               '    <img id="live-edit-drag-helper-status-icon" src="../app/images/drop-yes.gif"/>' +
+               '    <img id="live-edit-drag-helper-status-icon" src="../app/images/drop-no.gif"/>' +
                '    <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' +
                '</div>';
     }
@@ -38,13 +38,20 @@ AdminLiveEdit.DragDrop = (function () {
 
 
     function createComponentBarDraggables() {
+        var $componentBarComponents = $liveedit('.live-edit-component');
+
         var draggableOptions = {
             connectToSortable: regionSelector,
             addClasses: false,
             cursor: 'move',
             appendTo: 'body',
             zIndex: 5100000,
-            revert: 'invalid',
+            // The revert property seems buggy and undocumented.
+            // When setting it to 'invalid' the dragged element sometimes reverts when the drop was valid
+            // It is possible to use a function that gets a "valid-drop" argument and create your own logic, but the dragged element still reverts
+
+            revert: function (validDrop) {
+            },
             cursorAt: cursorAt,
             helper: function () {
                 return getHelperHtml('');
@@ -60,7 +67,7 @@ AdminLiveEdit.DragDrop = (function () {
             }
         };
 
-        $liveedit('.live-edit-component').draggable(draggableOptions);
+        $componentBarComponents.draggable(draggableOptions);
     }
 
 
