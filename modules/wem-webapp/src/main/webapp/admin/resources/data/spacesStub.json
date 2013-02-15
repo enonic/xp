@@ -1,0 +1,45 @@
+{
+    "total": 5,
+    "spaces": [
+        {
+            "key": "app-10",
+            "displayName": "Outer space",
+            "description": "Outer space description",
+            "modifiedTime": "2011-11-11 11:11:11",
+            "createdTime": "2010-10-10 10:10:10",
+            "image_url": "resources/images/icons/128x128/form_blue.png"
+        },
+        {
+            "key": "app-20",
+            "displayName": "Inner space",
+            "description": "Inner space description",
+            "modifiedTime": "2011-11-11 11:11:11",
+            "createdTime": "2010-10-10 10:10:10",
+            "image_url": "resources/images/icons/128x128/folder_blue.png"
+        },
+        {
+            "key": "app-30",
+            "displayName": "Space 1",
+            "description": "Space 1 description",
+            "modifiedTime": "2011-11-11 11:11:11",
+            "createdTime": "2010-10-10 10:10:10",
+            "image_url": "resources/images/icons/128x128/film.png"
+        },
+        {
+            "key": "app-40",
+            "displayName": "Space 2",
+            "description": "Space 2 description",
+            "modifiedTime": "2011-11-11 11:11:11",
+            "createdTime": "2010-10-10 10:10:10",
+            "image_url": "resources/images/icons/128x128/link.png"
+        },
+        {
+            "key": "app-50",
+            "displayName": "Space 3",
+            "description": "Space 3 description",
+            "modifiedTime": "2011-11-11 11:11:11",
+            "createdTime": "2010-10-10 10:10:10",
+            "image_url": "resources/images/icons/128x128/books_blue.png"
+        }
+    ]
+}
