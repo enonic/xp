@@ -69,7 +69,10 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
                             cls: 'north',
                             itemId: 'previewHeader',
                             padding: '5 5 15',
-                            tpl: Templates.contentStudio.previewHeader,
+
+                            tpl: '<h1>{displayName}</h1>' +
+                                 '<div>{qualifiedName}</div>',
+
                             data: singleData
                         },
                         {
