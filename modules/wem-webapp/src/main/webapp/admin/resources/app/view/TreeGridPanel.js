@@ -14,6 +14,14 @@ Ext.define('Admin.view.TreeGridPanel', {
 
     keyField: 'key',
 
+    nameTemplate: '<div class="admin-{0}-thumbnail">' +
+                  '<img src="{1}"/>' +
+                  '</div>' +
+                  '<div class="admin-{0}-description">' +
+                  '<h6>{2}</h6>' +
+                  '<p>{3}</p>' +
+                  '</div>',
+
     initComponent: function () {
         var me = this;
 
@@ -142,7 +150,7 @@ Ext.define('Admin.view.TreeGridPanel', {
         var activeList = this.getActiveList();
         var selModel = activeList.getSelectionModel();
 
-        if (key === -1) {
+        if (!key || key === -1) {
             if (activeList.xtype === 'treepanel') {
                 selModel.deselectAll();
             }
@@ -162,7 +170,8 @@ Ext.define('Admin.view.TreeGridPanel', {
                 var i;
                 for (i = 0; i < selNodes.length; i++) {
                     var selNode = selNodes[i];
-                    if (key === selNode.get(this.keyField)) {
+                    // need to use == instead of === because of 6 == "6" while 6 !== "6"
+                    if (key == selNode.get(this.keyField)) {
                         selModel.deselect(selNode);
                     }
                 }

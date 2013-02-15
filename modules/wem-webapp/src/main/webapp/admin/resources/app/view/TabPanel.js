@@ -7,10 +7,8 @@ Ext.define('Admin.view.TabPanel', {
     alias: 'widget.cmsTabPanel',
 
     requires: [
-        'Admin.plugin.TabCloseMenu',
         'Admin.view.TopBar'
     ],
-    plugins: ['tabCloseMenu'],
 
     border: false,
     defaults: { closable: true },
