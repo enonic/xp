@@ -4,15 +4,10 @@ import java.io.File;
 import java.util.Map;
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Strings;
 
 public final class HomeResolver
 {
-    private final static Logger LOG = LoggerFactory.getLogger( HomeResolver.class );
-
     private final Properties systemProperties;
 
     public HomeResolver()
@@ -62,7 +57,6 @@ public final class HomeResolver
             throw new IllegalArgumentException( "Invalid home directory: [" + path + "] is not a directory" );
         }
 
-        LOG.info( "Home directory is set to [{}]", dir.getAbsolutePath() );
         return dir;
     }
 }
