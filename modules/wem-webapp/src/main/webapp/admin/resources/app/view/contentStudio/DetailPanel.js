@@ -28,8 +28,7 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
         var singleData;
         if (Ext.isArray(data) && data.length > 0) {
             singleData = data[0];
-        }
-        else {
+        } else {
             singleData = data;
         }
         if (singleData) {
@@ -137,14 +136,12 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
 
             this.getLayout().setActiveItem('noSelection');
 
-        }
-        else if (Ext.isObject(this.data) || this.data.length === 1) {
+        } else if (Ext.isObject(this.data) || this.data.length === 1) {
 
             var singleData;
             if (Ext.isArray(this.data)) {
                 singleData = this.data[0];
-            }
-            else {
+            } else {
                 singleData = this.data;
             }
             if (singleData) {
@@ -191,14 +188,11 @@ Ext.define('Admin.view.contentStudio.DetailPanel', {
         var activeItem;
         if (Ext.isEmpty(this.data)) {
             activeItem = 'noSelection';
-        }
-        else if (Ext.isObject(this.data) || this.data.length === 1) {
+        } else if (Ext.isObject(this.data) || this.data.length === 1) {
             activeItem = 'singleSelection';
-        }
-        else if (this.data.length > 1 && this.data.length <= 10) {
+        } else if (this.data.length > 1 && this.data.length <= 10) {
             activeItem = 'largeBoxSelection';
-        }
-        else {
+        } else {
             activeItem = 'smallBoxSelection';
         }
         return activeItem;
