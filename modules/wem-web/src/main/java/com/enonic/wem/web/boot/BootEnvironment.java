@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.Version;
+import com.enonic.wem.core.home.HomeDir;
 import com.enonic.wem.core.home.HomeResolver;
 
 final class BootEnvironment
@@ -36,8 +37,8 @@ final class BootEnvironment
         throws Exception
     {
         setSystemProperties();
-        logBanner();
         resolveHomeDir();
+        logBanner();
     }
 
     public void destroy()
@@ -60,6 +61,7 @@ final class BootEnvironment
         str.append( "  # " ).append( Version.get().getNameAndVersion() ).append( "\n" );
         str.append( "  # " ).append( getFormattedJvmInfo() ).append( "\n" );
         str.append( "  # " ).append( getFormattedOsInfo() ).append( "\n" );
+        str.append( "  # Home directory is " ).append( HomeDir.get() ).append( "\n" );
 
         LOG.info( str.toString() );
     }
