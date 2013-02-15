@@ -47,7 +47,7 @@ Ext.application({
                                 {
                                     region: 'west',
                                     xtype: 'contentStudioFilter',
-                                    width: 182,
+                                    width: 200,
                                     minSize: 100,
                                     maxSize: 500
                                 },

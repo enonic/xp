@@ -27,6 +27,8 @@ Ext.define('Admin.view.contentManager.ShowPanel', {
             {
                 region: 'south',
                 split: true,
+                collapsible: true,
+                header: false,
                 xtype: 'contentDetail',
                 showToolbar: false,
                 flex: 1

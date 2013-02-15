@@ -68,6 +68,8 @@ Ext.application({
                                         {
                                             region: 'south',
                                             split: true,
+                                            collapsible: true,
+                                            header: false,
                                             xtype: 'spaceDetail',
                                             flex: 1
                                         }

@@ -1748,15 +1748,11 @@ td {
 
 /* line 1, ../sass/admin/css/_splitter.scss */
 .x-splitter-horizontal {
-    background-color: #ffffff;
-    border-top: 1px solid #EBE7E7 !important;
-    border-bottom: 1px solid #EBE7E7 !important; }
+    background-color: #eeeeee; }
 
-/* line 7, ../sass/admin/css/_splitter.scss */
+/* line 5, ../sass/admin/css/_splitter.scss */
 .x-splitter-vertical {
-    background-color: #ffffff;
-    border-left: 1px solid #EBE7E7 !important;
-    border-right: 1px solid #EBE7E7 !important; }
+    background-color: #eeeeee; }
 
 /**
  * @var {color} $base-color

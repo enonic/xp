@@ -25,6 +25,8 @@ Ext.define('Admin.view.account.ShowPanel', {
             {
                 region: 'south',
                 xtype: 'accountDetail',
+                collapsible: true,
+                header: false,
                 flex: 1
             }
         ];
