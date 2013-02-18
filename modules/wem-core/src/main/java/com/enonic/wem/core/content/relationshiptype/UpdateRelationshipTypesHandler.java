@@ -37,7 +37,7 @@ public final class UpdateRelationshipTypesHandler
         if ( changed != null )
         {
             existing.checkIllegalChange( changed );
-            relationshipTypeDao.update( existing, session );
+            relationshipTypeDao.update( changed, session );
             session.save();
             command.setResult( Boolean.TRUE );
         }

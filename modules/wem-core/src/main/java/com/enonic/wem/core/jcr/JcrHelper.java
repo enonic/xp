@@ -1,5 +1,6 @@
 package com.enonic.wem.core.jcr;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
@@ -15,7 +16,6 @@ import javax.jcr.Value;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.commons.JcrUtils;
-import org.apache.jackrabbit.value.BinaryValue;
 import org.apache.jackrabbit.value.StringValue;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -87,7 +87,8 @@ public abstract class JcrHelper
     public static void setPropertyBinary( final Node node, final String propertyName, final byte[] value )
         throws RepositoryException
     {
-        node.setProperty( propertyName, new BinaryValue( value ) );
+        final Binary binaryValue = node.getSession().getValueFactory().createBinary( new ByteArrayInputStream( value ) );
+        node.setProperty( propertyName, binaryValue );
     }
 
     public static void setPropertyReference( final Node node, final String propertyName, Node... referencedNodes )

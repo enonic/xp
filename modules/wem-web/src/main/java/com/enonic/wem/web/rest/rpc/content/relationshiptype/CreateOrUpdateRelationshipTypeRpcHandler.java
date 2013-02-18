@@ -91,6 +91,7 @@ public final class CreateOrUpdateRelationshipTypeRpcHandler
                 toSemantic( relationshipType.getToSemantic() ).
                 allowedFromTypes( relationshipType.getAllowedFromTypes() ).
                 allowedToTypes( relationshipType.getAllowedToTypes() ).
+                icon( icon ).
                 build() );
 
             client.execute( updateCommand );
