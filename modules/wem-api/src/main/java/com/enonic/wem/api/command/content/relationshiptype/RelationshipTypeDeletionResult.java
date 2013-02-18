@@ -13,14 +13,14 @@ public final class RelationshipTypeDeletionResult
 
     private List<Failure> failures = Lists.newArrayList();
 
-    public void success( final QualifiedRelationshipTypeName relationshipTypeName )
+    public void success( final QualifiedRelationshipTypeName qualifiedName )
     {
-        successes.add( relationshipTypeName );
+        successes.add( qualifiedName );
     }
 
-    public void failure( final QualifiedRelationshipTypeName relationshipTypeName, final Exception e )
+    public void failure( final QualifiedRelationshipTypeName qualifiedName, final Exception e )
     {
-        failures.add( new Failure( relationshipTypeName, e, e.getMessage() ) );
+        failures.add( new Failure( qualifiedName, e, e.getMessage() ) );
     }
 
     public Iterable<QualifiedRelationshipTypeName> successes()
@@ -46,9 +46,9 @@ public final class RelationshipTypeDeletionResult
 
         public final String reason;
 
-        public Failure( final QualifiedRelationshipTypeName relationshipTypeName, final Exception exception, final String reason )
+        public Failure( final QualifiedRelationshipTypeName qualifiedName, final Exception exception, final String reason )
         {
-            this.relationshipTypeName = relationshipTypeName;
+            this.relationshipTypeName = qualifiedName;
             this.exception = exception;
             this.reason = reason;
         }

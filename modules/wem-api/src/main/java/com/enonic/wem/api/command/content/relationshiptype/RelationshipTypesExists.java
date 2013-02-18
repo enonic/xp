@@ -4,21 +4,21 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
+import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 
 public final class RelationshipTypesExists
     extends Command<RelationshipTypesExistsResult>
 {
-    private RelationshipTypeSelectors selectors;
+    private QualifiedRelationshipTypeNames qualifiedNames;
 
-    public RelationshipTypeSelectors getSelectors()
+    public QualifiedRelationshipTypeNames getQualifiedNames()
     {
-        return this.selectors;
+        return this.qualifiedNames;
     }
 
-    public RelationshipTypesExists selectors( final RelationshipTypeSelectors selectors )
+    public RelationshipTypesExists qualifiedNames( final QualifiedRelationshipTypeNames qualifiedNames )
     {
-        this.selectors = selectors;
+        this.qualifiedNames = qualifiedNames;
         return this;
     }
 
@@ -36,19 +36,19 @@ public final class RelationshipTypesExists
         }
 
         final RelationshipTypesExists that = (RelationshipTypesExists) o;
-        return Objects.equal( this.selectors, that.selectors );
+        return Objects.equal( this.qualifiedNames, that.qualifiedNames );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( selectors );
+        return Objects.hashCode( qualifiedNames );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.selectors, "selectors cannot be null" );
+        Preconditions.checkNotNull( this.qualifiedNames, "qualifiedNames cannot be null" );
     }
 
 }

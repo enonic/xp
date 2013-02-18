@@ -13,8 +13,12 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.support.illegalchange.IllegalChange;
+import com.enonic.wem.api.support.illegalchange.IllegalChangeAware;
+import com.enonic.wem.api.support.illegalchange.IllegalChangeException;
 
 public final class Relationship
+    implements IllegalChangeAware<Relationship>
 {
     private final RelationshipId id;
 
@@ -105,6 +109,17 @@ public final class Relationship
     public EntryPath getManagingData()
     {
         return managingData;
+    }
+
+    @Override
+    public void checkIllegalChange( final Relationship to )
+        throws IllegalChangeException
+    {
+        IllegalChange.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Relationship.class );
+        IllegalChange.check( "creator", this.getCreator(), to.getCreator(), Relationship.class );
+        IllegalChange.check( "fromContent", this.getFromContent(), to.getFromContent(), Relationship.class );
+        IllegalChange.check( "toContent", this.getToContent(), to.getToContent(), Relationship.class );
+        IllegalChange.check( "type", this.getType(), to.getType(), Relationship.class );
     }
 
     public static Builder newRelationship()

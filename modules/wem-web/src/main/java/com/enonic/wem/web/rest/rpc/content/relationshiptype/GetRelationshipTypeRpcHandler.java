@@ -33,7 +33,7 @@ public final class GetRelationshipTypeRpcHandler
         final String format = context.param( "format" ).required().asString();
 
         final GetRelationshipTypes getRelationshipTypes = Commands.relationshipType().get();
-        getRelationshipTypes.selectors( qualifiedNames );
+        getRelationshipTypes.qualifiedNames( qualifiedNames );
 
         final RelationshipTypes relationshipTypes = client.execute( getRelationshipTypes );
 

@@ -16,9 +16,9 @@ public final class DeleteRelationshipTypes
         return this.qualifiedNames;
     }
 
-    public DeleteRelationshipTypes qualifiedNames( final QualifiedRelationshipTypeNames relationshipTypeNames )
+    public DeleteRelationshipTypes qualifiedNames( final QualifiedRelationshipTypeNames qualifiedNames )
     {
-        this.qualifiedNames = relationshipTypeNames;
+        this.qualifiedNames = qualifiedNames;
         return this;
     }
 

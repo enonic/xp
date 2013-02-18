@@ -14,7 +14,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.relationshiptype.CreateRelationshipType;
 import com.enonic.wem.api.command.content.relationshiptype.RelationshipTypesExists;
 import com.enonic.wem.api.command.content.relationshiptype.RelationshipTypesExistsResult;
-import com.enonic.wem.api.command.content.relationshiptype.UpdateRelationshipTypes;
+import com.enonic.wem.api.command.content.relationshiptype.UpdateRelationshipType;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.module.Module;
@@ -83,7 +83,7 @@ public class CreateOrUpdateRelationshipTypeRpcHandlerTest
 
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn(
             RelationshipTypesExistsResult.from( qualifiedNames ) );
-        Mockito.when( client.execute( isA( UpdateRelationshipTypes.class ) ) ).thenReturn( 0 );
+        Mockito.when( client.execute( isA( UpdateRelationshipType.class ) ) ).thenReturn( Boolean.TRUE );
 
         ObjectNode resultJson = objectNode();
         resultJson.put( "success", true );
@@ -91,7 +91,7 @@ public class CreateOrUpdateRelationshipTypeRpcHandlerTest
         resultJson.put( "updated", true );
         testSuccess( "createOrUpdateRelationshipType_update_param.json", resultJson );
 
-        verify( client, times( 1 ) ).execute( isA( UpdateRelationshipTypes.class ) );
+        verify( client, times( 1 ) ).execute( isA( UpdateRelationshipType.class ) );
     }
 
     @Test

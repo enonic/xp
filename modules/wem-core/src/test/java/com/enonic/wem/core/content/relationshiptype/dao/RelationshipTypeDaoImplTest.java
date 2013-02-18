@@ -51,7 +51,7 @@ public class RelationshipTypeDaoImplTest
     }
 
     @Test
-    public void retrieveRelationshipType()
+    public void selectRelationshipType()
         throws Exception
     {
         // setup
@@ -89,7 +89,7 @@ public class RelationshipTypeDaoImplTest
     }
 
     @Test
-    public void retrieveAllRelationshipTypes()
+    public void selectAllRelationshipTypes()
         throws Exception
     {
         // setup
@@ -132,7 +132,7 @@ public class RelationshipTypeDaoImplTest
     }
 
     @Test
-    public void retrieveRelationshipTypesByName()
+    public void selectRelationshipTypesByName()
         throws Exception
     {
         // setup

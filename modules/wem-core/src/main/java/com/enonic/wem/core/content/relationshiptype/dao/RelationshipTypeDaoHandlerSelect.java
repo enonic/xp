@@ -9,7 +9,6 @@ import javax.jcr.Session;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
@@ -19,25 +18,25 @@ import com.enonic.wem.core.jcr.JcrHelper;
 final class RelationshipTypeDaoHandlerSelect
     extends AbstractRelationshipTypeDaoHandler<RelationshipTypes>
 {
-    private RelationshipTypeSelectors selectors;
+    private QualifiedRelationshipTypeNames qualifiedNames;
 
     RelationshipTypeDaoHandlerSelect( final Session session )
     {
         super( session );
     }
 
-    public RelationshipTypeDaoHandlerSelect selectors( final RelationshipTypeSelectors selectors )
+    public RelationshipTypeDaoHandlerSelect selectors( final QualifiedRelationshipTypeNames qualifiedNames )
     {
-        this.selectors = selectors;
+        this.qualifiedNames = qualifiedNames;
         return this;
     }
 
     protected void doHandle()
         throws RepositoryException
     {
-        if ( selectors != null )
+        if ( qualifiedNames != null )
         {
-            setResult( select( selectors ) );
+            setResult( select( qualifiedNames ) );
         }
         else
         {
@@ -66,20 +65,6 @@ final class RelationshipTypeDaoHandlerSelect
             }
         }
         return RelationshipTypes.from( relationshipTypeList );
-    }
-
-
-    private RelationshipTypes select( final RelationshipTypeSelectors selectors )
-        throws RepositoryException
-    {
-        if ( selectors instanceof QualifiedRelationshipTypeNames )
-        {
-            return select( (QualifiedRelationshipTypeNames) selectors );
-        }
-        else
-        {
-            throw new UnsupportedOperationException( "selector [" + selectors.getClass().getSimpleName() + " ] not supported" );
-        }
     }
 
     private RelationshipTypes select( final QualifiedRelationshipTypeNames qualifiedNames )

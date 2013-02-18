@@ -4,24 +4,24 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
+import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationshiptype.RelationshipTypes;
 
 public final class GetRelationshipTypes
     extends Command<RelationshipTypes>
 {
-    private RelationshipTypeSelectors selectors;
+    private QualifiedRelationshipTypeNames qualifiedNames;
 
     private boolean all = false;
 
-    public RelationshipTypeSelectors getSelectors()
+    public QualifiedRelationshipTypeNames getQualifiedNames()
     {
-        return this.selectors;
+        return this.qualifiedNames;
     }
 
-    public GetRelationshipTypes selectors( final RelationshipTypeSelectors selectors )
+    public GetRelationshipTypes qualifiedNames( final QualifiedRelationshipTypeNames qualifiedNames )
     {
-        this.selectors = selectors;
+        this.qualifiedNames = qualifiedNames;
         return this;
     }
 
@@ -50,13 +50,13 @@ public final class GetRelationshipTypes
         }
 
         final GetRelationshipTypes that = (GetRelationshipTypes) o;
-        return Objects.equal( this.selectors, that.selectors ) && ( this.all == that.all );
+        return Objects.equal( this.qualifiedNames, that.qualifiedNames ) && ( this.all == that.all );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.selectors, this.all );
+        return Objects.hashCode( this.qualifiedNames, this.all );
     }
 
     @Override
@@ -64,11 +64,12 @@ public final class GetRelationshipTypes
     {
         if ( all )
         {
-            Preconditions.checkArgument( this.selectors == null, "all cannot be true at the same time as selectors is specified" );
+            Preconditions.checkArgument( this.qualifiedNames == null,
+                                         "all cannot be true at the same time as qualifiedNames is specified" );
         }
         else
         {
-            Preconditions.checkNotNull( this.selectors, "selectors cannot be null" );
+            Preconditions.checkNotNull( this.qualifiedNames, "qualifiedNames cannot be null" );
         }
     }
 

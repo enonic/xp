@@ -6,6 +6,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -15,9 +16,11 @@ import com.enonic.wem.api.content.type.BaseTypeKey;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.api.support.illegalchange.IllegalChange;
+import com.enonic.wem.api.support.illegalchange.IllegalChangeAware;
 
 public final class RelationshipType
-    implements BaseType
+    implements BaseType, IllegalChangeAware<RelationshipType>
 {
     private final ModuleName module;
 
@@ -150,6 +153,16 @@ public final class RelationshipType
     public int hashCode()
     {
         return Objects.hashCode( module, name, displayName, qualifiedName, fromSemantic, toSemantic, allowedFromTypes, allowedToTypes );
+    }
+
+    public void checkIllegalChange( final RelationshipType to )
+    {
+        Preconditions.checkArgument( this.getCreatedTime().equals( to.getCreatedTime() ) );
+        IllegalChange.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), RelationshipType.class );
+
+        // Cannot be changed since they are a part of a Relationship's storage path in JCR.
+        IllegalChange.check( "name", this.getName(), to.getName(), RelationshipType.class );
+        IllegalChange.check( "moduleName", this.getModuleName(), to.getModuleName(), RelationshipType.class );
     }
 
     public static Builder newRelationshipType()

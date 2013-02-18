@@ -4,7 +4,6 @@ import javax.jcr.Session;
 
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
@@ -50,10 +49,19 @@ public final class RelationshipTypeDaoImpl
     }
 
     @Override
-    public RelationshipTypes select( final RelationshipTypeSelectors selectors, final Session session )
+    public RelationshipTypes select( final QualifiedRelationshipTypeNames selectors, final Session session )
     {
         final RelationshipTypeDaoHandlerSelect handler = new RelationshipTypeDaoHandlerSelect( session ).selectors( selectors );
         handler.handle();
         return handler.getResult();
+    }
+
+    @Override
+    public RelationshipType select( final QualifiedRelationshipTypeName qualifiedName, final Session session )
+    {
+        final RelationshipTypeDaoHandlerSelect handler =
+            new RelationshipTypeDaoHandlerSelect( session ).selectors( QualifiedRelationshipTypeNames.from( qualifiedName ) );
+        handler.handle();
+        return handler.getResult().first();
     }
 }

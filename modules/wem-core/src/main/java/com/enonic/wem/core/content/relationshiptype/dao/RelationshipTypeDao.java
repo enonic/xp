@@ -2,7 +2,6 @@ package com.enonic.wem.core.content.relationshiptype.dao;
 
 import javax.jcr.Session;
 
-import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
@@ -25,5 +24,7 @@ public interface RelationshipTypeDao
 
     public RelationshipTypes selectAll( Session session );
 
-    public RelationshipTypes select( RelationshipTypeSelectors selectors, final Session session );
+    public RelationshipTypes select( QualifiedRelationshipTypeNames qualifiedNames, final Session session );
+
+    public RelationshipType select( QualifiedRelationshipTypeName qualifiedNames, final Session session );
 }

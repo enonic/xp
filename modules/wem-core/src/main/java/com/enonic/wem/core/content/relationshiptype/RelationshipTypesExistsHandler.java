@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.relationshiptype.RelationshipTypesExists;
 import com.enonic.wem.api.command.content.relationshiptype.RelationshipTypesExistsResult;
-import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
@@ -30,8 +29,8 @@ public final class RelationshipTypesExistsHandler
     {
         final Session session = context.getJcrSession();
 
-        final RelationshipTypeSelectors selectors = command.getSelectors();
-        final QualifiedRelationshipTypeNames existing = relationshipTypeDao.exists( (QualifiedRelationshipTypeNames) selectors, session );
+        final QualifiedRelationshipTypeNames qualifiedNames = command.getQualifiedNames();
+        final QualifiedRelationshipTypeNames existing = relationshipTypeDao.exists( qualifiedNames, session );
 
         command.setResult( RelationshipTypesExistsResult.from( existing ) );
     }

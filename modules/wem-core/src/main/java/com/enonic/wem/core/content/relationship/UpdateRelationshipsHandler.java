@@ -40,6 +40,7 @@ public final class UpdateRelationshipsHandler
             try
             {
                 final Relationship changed = command.getEditor().edit( existing );
+                existing.checkIllegalChange( changed );
                 relationshipDao.update( changed, session );
                 session.save();
                 result.success( existing.getId() );

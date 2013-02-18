@@ -17,9 +17,9 @@ public final class RelationshipTypeCommands
         return new CreateRelationshipType();
     }
 
-    public UpdateRelationshipTypes update()
+    public UpdateRelationshipType update()
     {
-        return new UpdateRelationshipTypes();
+        return new UpdateRelationshipType();
     }
 
     public DeleteRelationshipTypes delete()

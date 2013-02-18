@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.relationshiptype.GetRelationshipTypes;
-import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
+import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationshiptype.RelationshipTypes;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
@@ -35,7 +35,7 @@ public final class GetRelationshipTypesHandler
         }
         else
         {
-            final RelationshipTypeSelectors selectors = command.getSelectors();
+            final QualifiedRelationshipTypeNames selectors = command.getQualifiedNames();
             relationshipTypes = relationshipTypeDao.select( selectors, session );
         }
         command.setResult( relationshipTypes );

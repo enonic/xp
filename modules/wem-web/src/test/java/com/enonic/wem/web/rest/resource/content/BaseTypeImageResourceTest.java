@@ -241,7 +241,7 @@ public class BaseTypeImageResourceTest
         list.add( relationshipType );
         final RelationshipTypes result = RelationshipTypes.from( list );
         final GetRelationshipTypes command =
-            new GetRelationshipTypes().selectors( QualifiedRelationshipTypeNames.from( relationshipType.getQualifiedName() ) );
+            new GetRelationshipTypes().qualifiedNames( QualifiedRelationshipTypeNames.from( relationshipType.getQualifiedName() ) );
         Mockito.when( client.execute( command ) ).thenReturn( result );
     }
 

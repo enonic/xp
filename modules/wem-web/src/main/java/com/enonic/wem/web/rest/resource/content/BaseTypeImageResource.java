@@ -128,7 +128,7 @@ public final class BaseTypeImageResource
     private Icon findRelationshipTypeIcon( final QualifiedRelationshipTypeName relationshipTypeName )
     {
         final QualifiedRelationshipTypeNames relationshipTypeNames = QualifiedRelationshipTypeNames.from( relationshipTypeName );
-        RelationshipType relationshipType = client.execute( relationshipType().get().selectors( relationshipTypeNames ) ).first();
+        RelationshipType relationshipType = client.execute( relationshipType().get().qualifiedNames( relationshipTypeNames ) ).first();
         return relationshipType == null ? null : relationshipType.getIcon();
 
     }

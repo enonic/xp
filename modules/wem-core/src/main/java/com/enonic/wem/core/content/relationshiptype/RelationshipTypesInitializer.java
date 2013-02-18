@@ -9,15 +9,15 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.relationshiptype.CreateRelationshipType;
-import com.enonic.wem.api.command.content.relationshiptype.UpdateRelationshipTypes;
+import com.enonic.wem.api.command.content.relationshiptype.UpdateRelationshipType;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
+import com.enonic.wem.api.content.relationshiptype.editor.SetRelationshipTypeEditor;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.initializer.InitializerTask;
 
 import static com.enonic.wem.api.content.relationshiptype.RelationshipType.newRelationshipType;
-import static com.enonic.wem.api.content.relationshiptype.editor.RelationshipTypeEditors.setRelationshipType;
 
 @Component
 @Order(10)
@@ -44,7 +44,7 @@ public class RelationshipTypesInitializer
     private void createOrUpdate( final RelationshipType relationshipType )
     {
         final QualifiedRelationshipTypeNames qualifiedNames = QualifiedRelationshipTypeNames.from( relationshipType.getQualifiedName() );
-        final boolean notExists = client.execute( Commands.relationshipType().exists().selectors( qualifiedNames ) ).isEmpty();
+        final boolean notExists = client.execute( Commands.relationshipType().exists().qualifiedNames( qualifiedNames ) ).isEmpty();
         final Icon icon = loadRelationshipTypeIcon( relationshipType.getQualifiedName() );
         if ( notExists )
         {
@@ -60,11 +60,15 @@ public class RelationshipTypesInitializer
         }
         else
         {
-            final UpdateRelationshipTypes updateCommand = Commands.relationshipType().update();
-            updateCommand.selectors( qualifiedNames );
-            updateCommand.editor( setRelationshipType( relationshipType.getDisplayName(), relationshipType.getFromSemantic(),
-                                                       relationshipType.getToSemantic(), relationshipType.getAllowedFromTypes(),
-                                                       relationshipType.getAllowedToTypes(), icon ) );
+            final UpdateRelationshipType updateCommand = Commands.relationshipType().update();
+            updateCommand.selector( relationshipType.getQualifiedName() );
+            updateCommand.editor( SetRelationshipTypeEditor.newSetRelationshipTypeEditor().
+                displayName( relationshipType.getDisplayName() ).
+                fromSemantic( relationshipType.getFromSemantic() ).
+                toSemantic( relationshipType.getToSemantic() ).
+                allowedFromTypes( relationshipType.getAllowedFromTypes() ).
+                allowedToTypes( relationshipType.getAllowedToTypes() ).
+                build() );
             client.execute( updateCommand );
         }
     }

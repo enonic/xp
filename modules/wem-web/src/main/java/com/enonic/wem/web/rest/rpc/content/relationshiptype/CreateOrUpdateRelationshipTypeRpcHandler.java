@@ -9,10 +9,11 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.relationshiptype.CreateRelationshipType;
 import com.enonic.wem.api.command.content.relationshiptype.RelationshipTypesExists;
 import com.enonic.wem.api.command.content.relationshiptype.RelationshipTypesExistsResult;
-import com.enonic.wem.api.command.content.relationshiptype.UpdateRelationshipTypes;
+import com.enonic.wem.api.command.content.relationshiptype.UpdateRelationshipType;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
+import com.enonic.wem.api.content.relationshiptype.editor.SetRelationshipTypeEditor;
 import com.enonic.wem.core.content.relationshiptype.RelationshipTypeXmlSerializer;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.web.json.JsonErrorResult;
@@ -22,7 +23,6 @@ import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.rest.rpc.IconImageHelper;
 
 import static com.enonic.wem.api.command.Commands.relationshipType;
-import static com.enonic.wem.api.content.relationshiptype.editor.RelationshipTypeEditors.setRelationshipType;
 
 @Component
 public final class CreateOrUpdateRelationshipTypeRpcHandler
@@ -83,14 +83,15 @@ public final class CreateOrUpdateRelationshipTypeRpcHandler
         }
         else
         {
-            final QualifiedRelationshipTypeNames qualifiedNames =
-                QualifiedRelationshipTypeNames.from( relationshipType.getQualifiedName() );
-
-            final UpdateRelationshipTypes updateCommand = Commands.relationshipType().update();
-            updateCommand.selectors( qualifiedNames );
-            updateCommand.editor( setRelationshipType( relationshipType.getDisplayName(), relationshipType.getFromSemantic(),
-                                                       relationshipType.getToSemantic(), relationshipType.getAllowedFromTypes(),
-                                                       relationshipType.getAllowedToTypes(), icon ) );
+            final UpdateRelationshipType updateCommand = Commands.relationshipType().update();
+            updateCommand.selector( relationshipType.getQualifiedName() );
+            updateCommand.editor( SetRelationshipTypeEditor.newSetRelationshipTypeEditor().
+                displayName( relationshipType.getDisplayName() ).
+                fromSemantic( relationshipType.getFromSemantic() ).
+                toSemantic( relationshipType.getToSemantic() ).
+                allowedFromTypes( relationshipType.getAllowedFromTypes() ).
+                allowedToTypes( relationshipType.getAllowedToTypes() ).
+                build() );
 
             client.execute( updateCommand );
 
@@ -101,7 +102,7 @@ public final class CreateOrUpdateRelationshipTypeRpcHandler
     private boolean exists( final QualifiedRelationshipTypeName qualifiedName )
     {
         final RelationshipTypesExists existsCommand =
-            relationshipType().exists().selectors( QualifiedRelationshipTypeNames.from( qualifiedName ) );
+            relationshipType().exists().qualifiedNames( QualifiedRelationshipTypeNames.from( qualifiedName ) );
         final RelationshipTypesExistsResult existsResult = client.execute( existsCommand );
         return existsResult.exists( qualifiedName );
     }

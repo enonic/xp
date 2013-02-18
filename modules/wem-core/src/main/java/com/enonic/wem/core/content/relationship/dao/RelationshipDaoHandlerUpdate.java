@@ -34,17 +34,8 @@ final class RelationshipDaoHandlerUpdate
         }
 
         final Relationship existing = relationshipJcrMapper.toRelationship( node );
-        checkIllegalChanges( existing );
 
         relationshipJcrMapper.toJcr( relationship, node );
     }
 
-    private void checkIllegalChanges( final Relationship existing )
-    {
-        checkIllegalChange( "createdTime", existing.getCreatedTime(), relationship.getCreatedTime() );
-        checkIllegalChange( "creator", existing.getCreator(), relationship.getCreator() );
-        checkIllegalChange( "fromContent", existing.getFromContent(), relationship.getFromContent() );
-        checkIllegalChange( "toContent", existing.getToContent(), relationship.getToContent() );
-        checkIllegalChange( "type", existing.getType(), relationship.getType() );
-    }
 }

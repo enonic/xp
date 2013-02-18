@@ -41,16 +41,15 @@ public class CreateRelationshipTypeHandlerTest
     public void createRelationshipType()
         throws Exception
     {
-        // setup
-        final CreateRelationshipType command = Commands.relationshipType().create().
-            module( ModuleName.from( "myModule" ) ).
-            name( "like" ).
-            fromSemantic( "likes" ).
-            toSemantic( "liked by" ).
-            allowedFromTypes( QualifiedContentTypeNames.from( "myModule:person" ) ).
-            allowedToTypes( QualifiedContentTypeNames.from( "myModule:person" ) );
-
         // exercise
+        final CreateRelationshipType command = Commands.relationshipType().create();
+        command.name( "like" );
+        command.displayName( "Like" );
+        command.module( ModuleName.from( "myModule" ) );
+        command.fromSemantic( "likes" );
+        command.toSemantic( "liked by" );
+        command.allowedFromTypes( QualifiedContentTypeNames.from( "myModule:person" ) );
+        command.allowedToTypes( QualifiedContentTypeNames.from( "myModule:person" ) );
         this.handler.handle( this.context, command );
 
         // verify

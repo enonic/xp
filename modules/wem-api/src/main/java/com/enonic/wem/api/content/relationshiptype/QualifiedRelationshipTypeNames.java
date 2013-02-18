@@ -9,12 +9,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.content.relationship.RelationshipTypeSelectors;
 import com.enonic.wem.api.util.AbstractImmutableEntitySet;
 
 public final class QualifiedRelationshipTypeNames
     extends AbstractImmutableEntitySet<QualifiedRelationshipTypeName>
-    implements RelationshipTypeSelectors<QualifiedRelationshipTypeName>
 {
     private QualifiedRelationshipTypeNames( final ImmutableSet<QualifiedRelationshipTypeName> set )
     {

@@ -7,7 +7,7 @@ import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 
 import static com.enonic.wem.api.content.relationshiptype.RelationshipType.newRelationshipType;
 
-final class SetRelationshipTypeEditor
+public final class SetRelationshipTypeEditor
     implements RelationshipTypeEditor
 {
     private final String displayName;
@@ -22,16 +22,75 @@ final class SetRelationshipTypeEditor
 
     private final Icon icon;
 
-    SetRelationshipTypeEditor( final String displayName, final String fromSemantic, final String toSemantic,
-                               final QualifiedContentTypeNames allowedFromTypes, final QualifiedContentTypeNames allowedToTypes,
-                               final Icon icon )
+    private SetRelationshipTypeEditor( final Builder builder )
     {
-        this.displayName = displayName;
-        this.fromSemantic = fromSemantic;
-        this.toSemantic = toSemantic;
-        this.allowedFromTypes = allowedFromTypes;
-        this.allowedToTypes = allowedToTypes;
-        this.icon = icon;
+        this.displayName = builder.displayName;
+        this.fromSemantic = builder.fromSemantic;
+        this.toSemantic = builder.toSemantic;
+        this.allowedFromTypes = builder.allowedFromTypes;
+        this.allowedToTypes = builder.allowedToTypes;
+        this.icon = builder.icon;
+    }
+
+    public static Builder newSetRelationshipTypeEditor()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private String displayName;
+
+        private String fromSemantic;
+
+        private String toSemantic;
+
+        private QualifiedContentTypeNames allowedFromTypes;
+
+        private QualifiedContentTypeNames allowedToTypes;
+
+        private Icon icon;
+
+        public Builder displayName( final String value )
+        {
+            this.displayName = value;
+            return this;
+        }
+
+        public Builder fromSemantic( final String value )
+        {
+            this.fromSemantic = value;
+            return this;
+        }
+
+        public Builder toSemantic( final String value )
+        {
+            this.toSemantic = value;
+            return this;
+        }
+
+        public Builder allowedFromTypes( final QualifiedContentTypeNames value )
+        {
+            this.allowedFromTypes = value;
+            return this;
+        }
+
+        public Builder allowedToTypes( final QualifiedContentTypeNames value )
+        {
+            this.allowedToTypes = value;
+            return this;
+        }
+
+        public Builder icon( final Icon value )
+        {
+            this.icon = value;
+            return this;
+        }
+
+        public SetRelationshipTypeEditor build()
+        {
+            return new SetRelationshipTypeEditor( this );
+        }
     }
 
     @Override
