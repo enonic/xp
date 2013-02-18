@@ -1,7 +1,6 @@
 {
     "name": "mySet",
     "module": "myModule",
-    "qualifiedName": "myModule:mySet",
     "displayName": "My Mixin",
     "FormItemSet": {
         "name": "mySet",

@@ -41,7 +41,6 @@ public class MixinJsonSerializer
         final ObjectNode objectNode = mapper.createObjectNode();
         objectNode.put( "name", mixin.getName() );
         objectNode.put( "module", mixin.getModuleName().toString() );
-        objectNode.put( "qualifiedName", mixin.getQualifiedName().toString() );
         objectNode.put( "displayName", mixin.getDisplayName() );
 
         objectNode.putAll( (ObjectNode) formItemSerializer.serialize( mixin.getFormItem() ) );

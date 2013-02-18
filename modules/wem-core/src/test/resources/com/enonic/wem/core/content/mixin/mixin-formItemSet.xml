@@ -2,7 +2,6 @@
 <mixin>
   <name>mySet</name>
   <module>myModule</module>
-  <qualified-name>myModule:mySet</qualified-name>
   <display-name>My Mixin</display-name>
   <form-item-set name="mySet">
     <label>My set</label>

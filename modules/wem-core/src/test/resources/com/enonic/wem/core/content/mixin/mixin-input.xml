@@ -2,7 +2,6 @@
 <mixin>
   <name>myInput</name>
   <module>myModule</module>
-  <qualified-name>myModule:myInput</qualified-name>
   <display-name>My Mixin</display-name>
   <input type="TextLine" built-in="true" name="myInput">
     <label>My input</label>

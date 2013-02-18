@@ -54,7 +54,6 @@ public class MixinXmlSerializer
     {
         typeEl.addContent( new Element( "name" ).setText( mixin.getName() ) );
         typeEl.addContent( new Element( "module" ).setText( mixin.getModuleName().toString() ) );
-        typeEl.addContent( new Element( "qualified-name" ).setText( mixin.getQualifiedName().toString() ) );
         typeEl.addContent( new Element( "display-name" ).setText( mixin.getDisplayName() ) );
 
         typeEl.addContent( formItemSerializer.serialize( mixin.getFormItem() ) );

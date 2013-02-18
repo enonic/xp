@@ -4,7 +4,6 @@
         {
             "name": "inputText1",
             "module": "myModule",
-            "qualifiedName": "myModule:inputText1",
             "displayName": null,
             "Input": {
                 "name": "inputText1",
@@ -23,12 +22,11 @@
                     "builtIn": true
                 }
             },
-            "iconUrl" : "http://localhost/admin/rest/basetype/image/Mixin:myModule:inputText1"
+            "iconUrl": "http://localhost/admin/rest/basetype/image/Mixin:myModule:inputText1"
         },
         {
             "name": "textArea1",
             "module": "otherModule",
-            "qualifiedName": "otherModule:textArea1",
             "displayName": null,
             "Input": {
                 "name": "textArea1",
@@ -47,7 +45,7 @@
                     "builtIn": true
                 }
             },
-            "iconUrl" : "http://localhost/admin/rest/basetype/image/Mixin:otherModule:textArea1"
+            "iconUrl": "http://localhost/admin/rest/basetype/image/Mixin:otherModule:textArea1"
         }
     ]
 }

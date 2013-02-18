@@ -3,7 +3,6 @@
     "mixin": {
         "name": "inputText1",
         "module": "myModule",
-        "qualifiedName": "myModule:inputText1",
         "displayName": null,
         "Input": {
             "name": "inputText1",
@@ -22,6 +21,6 @@
                 "builtIn": true
             }
         },
-        "iconUrl" : "http://localhost/admin/rest/basetype/image/Mixin:myModule:inputText1"
+        "iconUrl": "http://localhost/admin/rest/basetype/image/Mixin:myModule:inputText1"
     }
 }
