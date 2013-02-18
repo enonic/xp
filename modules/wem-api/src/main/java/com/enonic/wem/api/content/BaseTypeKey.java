@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.type;
+package com.enonic.wem.api.content;
 
 
 import java.util.regex.Matcher;
@@ -8,9 +8,9 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import com.enonic.wem.api.command.content.BaseTypeKind;
 import com.enonic.wem.api.content.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.module.ModuleName;
 
 public final class BaseTypeKey

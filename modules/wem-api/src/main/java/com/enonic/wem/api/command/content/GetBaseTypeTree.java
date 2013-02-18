@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.BaseType;
+import com.enonic.wem.api.content.BaseTypeKind;
 import com.enonic.wem.api.support.tree.Tree;
 
 public final class GetBaseTypeTree

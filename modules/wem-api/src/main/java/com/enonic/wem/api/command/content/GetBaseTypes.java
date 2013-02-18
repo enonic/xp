@@ -5,7 +5,8 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.type.BaseTypes;
+import com.enonic.wem.api.content.BaseTypeKind;
+import com.enonic.wem.api.content.BaseTypes;
 
 public final class GetBaseTypes
     extends Command<BaseTypes>

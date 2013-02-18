@@ -5,7 +5,7 @@ import org.joda.time.DateTime;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.BaseType;
-import com.enonic.wem.api.content.type.BaseTypeKey;
+import com.enonic.wem.api.content.BaseTypeKey;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.module.ModuleName;
 

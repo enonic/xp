@@ -16,13 +16,13 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.content.BaseTypeKey;
 import com.enonic.wem.api.content.mixin.Mixin;
 import com.enonic.wem.api.content.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.mixin.QualifiedMixinNames;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.relationshiptype.RelationshipType;
-import com.enonic.wem.api.content.type.BaseTypeKey;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;

@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.BaseType;
+import com.enonic.wem.api.content.BaseTypeKey;
 import com.enonic.wem.api.content.type.form.Form;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItems;

@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.BaseType;
-import com.enonic.wem.api.content.type.BaseTypeKey;
+import com.enonic.wem.api.content.BaseTypeKey;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;
