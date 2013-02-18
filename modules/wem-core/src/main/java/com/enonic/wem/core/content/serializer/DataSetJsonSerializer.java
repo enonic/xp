@@ -74,10 +74,10 @@ public class DataSetJsonSerializer
         return rootDataSet;
     }
 
-    DataSet parse( final JsonNode dataSetNode, final DataSet parent )
+    DataSet parseDataSet( final JsonNode dataSetNode )
     {
         final String name = JsonSerializerUtil.getStringValue( ENTRY_NAME, dataSetNode );
-        final DataSet dataSet = DataSet.newDataSet().name( name ).parent( parent ).build();
+        final DataSet dataSet = DataSet.newDataSet().name( name ).build();
         final ArrayNode entriesArray = (ArrayNode) dataSetNode.get( ENTRY_VALUE );
         parseEntries( entriesArray, dataSet );
         return dataSet;
@@ -89,7 +89,7 @@ public class DataSetJsonSerializer
         while ( dataIt.hasNext() )
         {
             final JsonNode dataNode = dataIt.next();
-            final Entry entry = entrySerializer.parse( dataNode, dataSet );
+            final Entry entry = entrySerializer.parse( dataNode );
             dataSet.add( entry );
         }
     }

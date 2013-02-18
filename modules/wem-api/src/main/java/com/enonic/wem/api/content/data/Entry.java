@@ -19,11 +19,10 @@ public abstract class Entry
      */
     private volatile EntryPath path;
 
-    Entry( final String name, final DataSet parent )
+    Entry( final String name )
     {
         EntryPath.Element.checkName( name );
         this.name = name;
-        this.parent = parent;
     }
 
     /**

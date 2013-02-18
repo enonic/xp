@@ -7,7 +7,6 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
@@ -45,10 +44,10 @@ public class DataJsonSerializer
     @Override
     protected Data parse( final JsonNode node )
     {
-        return parseData( node, null );
+        return parseData( node );
     }
 
-    Data parseData( final JsonNode dataNode, final DataSet parent )
+    Data parseData( final JsonNode dataNode )
     {
         final String name = JsonSerializerUtil.getStringValue( ENTRY_NAME, dataNode );
 
@@ -59,10 +58,10 @@ public class DataJsonSerializer
         final JsonNode valueNode = dataNode.get( ENTRY_VALUE );
 
         final Data.Builder dataBuilder = Data.newData();
-        dataBuilder.parent( parent );
         dataBuilder.name( name );
         dataBuilder.type( dataType );
         dataBuilder.value( valueNode.getTextValue() );
-        return dataBuilder.build();
+        Data data = dataBuilder.build();
+        return data;
     }
 }

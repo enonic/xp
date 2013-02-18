@@ -21,7 +21,7 @@ public class Data
 
     Data( final BaseBuilder builder )
     {
-        super( builder.name, builder.parent != null ? builder.parent : null );
+        super( builder.name );
         this.value = builder.value;
     }
 
@@ -186,8 +186,6 @@ public class Data
 
     public static class BaseBuilder<T extends BaseBuilder>
     {
-        private DataSet parent;
-
         private String name;
 
         Value.Builder valueBuilder = Value.newValue();
@@ -202,12 +200,6 @@ public class Data
         private T getThis()
         {
             return (T) this;
-        }
-
-        public T parent( DataSet value )
-        {
-            this.parent = value;
-            return getThis();
         }
 
         public T name( String value )

@@ -30,9 +30,6 @@ public final class EntryXmlSerializer
 
     void generateRootDataSet( final Element dataEl, final DataSet dataSet )
     {
-        //final String name = dataSet.getPath().resolveFormItemPath().getLastElement();
-        //final Element entryEl = new Element( name ).setAttribute( "type", DataTypes.SET.getName() );
-        //dataEl.addContent( entryEl );
         for ( final Entry entry : dataSet )
         {
             generate( dataEl, entry );
@@ -83,7 +80,7 @@ public final class EntryXmlSerializer
 
         if ( type.equals( DataTypes.SET ) )
         {
-            final DataSet dataSet = DataSet.newDataSet().name( name ).parent( parentDataSet ).build();
+            final DataSet dataSet = DataSet.newDataSet().name( name ).build();
             parentDataSet.add( dataSet );
             final Iterator<Element> dataIt = entryEl.getChildren().iterator();
             while ( dataIt.hasNext() )

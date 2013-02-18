@@ -51,6 +51,19 @@ public class CreateContentHandler
         final ContentId contentId = contentDao.create( content, session );
         session.save();
 
+        /*final List<Data> references = resolveReferences( content.getRootDataSet() );
+        for ( Data reference : references )
+        {
+            final ContentId toContent = ContentIdFactory.from( reference.asString() );
+            final CreateRelationship createRelationship = Commands.relationship().create();
+            createRelationship.fromContent( contentId );
+            createRelationship.toContent( toContent );
+            createRelationship.type( QualifiedRelationshipTypeName.from( "system:default" ) );
+            createRelationship.managed( reference.getPath() );
+
+            //context.getClient().execute( createRelationship );
+        }*/
+
         try
         {
             // TODO: Temporary easy solution to get Id. The index logic should eventually not be here anyway
@@ -64,6 +77,22 @@ public class CreateContentHandler
 
         command.setResult( contentId );
     }
+
+    /*private List<Data> resolveReferences( final RootDataSet rootDataSet )
+    {
+        final List<Data> references = new ArrayList<>();
+        final DataVisitor dataVisitor = new DataVisitor()
+        {
+            @Override
+            public void visit( final Data reference )
+            {
+                references.add( reference );
+            }
+        };
+        dataVisitor.restrictType( DataTypes.REFERENCE );
+        dataVisitor.traverse( rootDataSet );
+        return references;
+    }*/
 
     @Autowired
     public void setContentDao( final ContentDao contentDao )

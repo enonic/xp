@@ -35,7 +35,7 @@ public class DataSet
 
     private DataSet( final Builder builder )
     {
-        super( builder.name, builder.parent != null ? builder.parent : null );
+        super( builder.name );
 
         for ( Data data : builder.dataList )
         {
@@ -99,7 +99,8 @@ public class DataSet
 
         if ( exEntry == null )
         {
-            final Data newData = newData().name( entryId.getName() ).value( value ).parent( this ).build();
+            final Data newData = newData().name( entryId.getName() ).value( value ).build();
+            newData.setParent( this );
             registerArray( newData );
             entryById.put( entryId, newData );
         }
@@ -122,7 +123,7 @@ public class DataSet
         final Entry exEntry = entryById.get( entryId );
         if ( exEntry == null )
         {
-            final DataSet dataSet = newDataSet().name( entryId.getName() ).parent( this ).build();
+            final DataSet dataSet = newDataSet().name( entryId.getName() ).build();
             doAdd( dataSet );
             return dataSet;
         }
@@ -427,19 +428,11 @@ public class DataSet
     {
         private String name;
 
-        private DataSet parent;
-
         private List<Data> dataList = new ArrayList<>();
 
         public Builder name( final String value )
         {
             this.name = value;
-            return this;
-        }
-
-        public Builder parent( final DataSet parent )
-        {
-            this.parent = parent;
             return this;
         }
 

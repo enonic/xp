@@ -54,20 +54,15 @@ public final class EntryJsonSerializer
         }
     }
 
-    protected final Entry parse( final JsonNode dataNode )
-    {
-        return parse( dataNode, null );
-    }
-
-    final Entry parse( final JsonNode entryNode, final DataSet parent )
+    protected final Entry parse( final JsonNode entryNode )
     {
         if ( entryNode.get( ENTRY_VALUE ).isArray() )
         {
-            return dataSetSerializer.parse( entryNode, parent );
+            return dataSetSerializer.parseDataSet( entryNode );
         }
         else
         {
-            return dataSerializer.parseData( entryNode, parent );
+            return dataSerializer.parseData( entryNode );
         }
     }
 
