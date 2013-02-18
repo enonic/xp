@@ -51,7 +51,7 @@ public class ContentPathTest
         assertEquals( "one", path.getElement( 0 ) );
         assertEquals( "two", path.getElement( 1 ) );
         assertEquals( "three", path.getElement( 2 ) );
-        assertEquals( "one/two/three", path.toString() );
+        assertEquals( "/one/two/three", path.toString() );
 
     }
 

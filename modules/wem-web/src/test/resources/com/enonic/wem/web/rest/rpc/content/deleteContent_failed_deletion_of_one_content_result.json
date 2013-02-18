@@ -3,8 +3,8 @@
     "successes": [ ],
     "failures": [
         {
-            "path": "parent/childToDelete",
-            "reason": "Not able to delete content with path [parent/childToDelete]: Test"
+            "path": "/parent/childToDelete",
+            "reason": "Not able to delete content with path [/parent/childToDelete]: Test"
         }
     ]
 }

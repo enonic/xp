@@ -2,7 +2,7 @@
     "success": true,
     "content": {
         "id": null,
-        "path": "MySite/MyContent",
+        "path": "/MySite/MyContent",
         "name": "MyContent",
         "type": "myModule:myType",
         "displayName": "My Content",

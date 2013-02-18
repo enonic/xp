@@ -43,7 +43,7 @@ public final class ContentPath
         else
         {
             this.elements.addAll( builder.elements );
-            this.refString = spacePrefix + Joiner.on( ELEMENT_DIVIDER ).join( elements );
+            this.refString = spacePrefix + ELEMENT_DIVIDER + Joiner.on( ELEMENT_DIVIDER ).join( elements );
         }
     }
 

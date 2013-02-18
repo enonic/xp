@@ -54,7 +54,7 @@ public class CreateOrUpdateContentRpcHandlerTest
         resultJson.put( "created", true );
         resultJson.put( "updated", false );
         resultJson.put( "contentId", contentId.toString() );
-        resultJson.put( "contentPath", "myContent/my-child-content" );
+        resultJson.put( "contentPath", "/myContent/my-child-content" );
 
         // exercise & verify
         testSuccess( "createOrUpdateContent_create_param.json", resultJson );
@@ -76,7 +76,7 @@ public class CreateOrUpdateContentRpcHandlerTest
         resultJson.put( "created", true );
         resultJson.put( "updated", false );
         resultJson.put( "contentId", contentId.toString() );
-        resultJson.put( "contentPath", "myContent/my-child-content-2" );
+        resultJson.put( "contentPath", "/myContent/my-child-content-2" );
 
         // exercise & verify
         testSuccess( "createOrUpdateContent_create_param.json", resultJson );
@@ -110,7 +110,7 @@ public class CreateOrUpdateContentRpcHandlerTest
 
         ObjectNode expectedJson = objectNode();
         expectedJson.put( "success", false );
-        expectedJson.put( "error", "Unable to create content. Path [myContent] does not exist" );
+        expectedJson.put( "error", "Unable to create content. Path [/myContent] does not exist" );
 
         // exercise & verify
         testSuccess( "createOrUpdateContent_create_param.json", expectedJson );

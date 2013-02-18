@@ -4,7 +4,7 @@
     "contents": [
         {
             "id": null,
-            "path": "a1/c1",
+            "path": "/a1/c1",
             "name": "c1",
             "type": "System:unstructured",
             "displayName": "C1",
@@ -18,7 +18,7 @@
         },
         {
             "id": null,
-            "path": "a1/c1",
+            "path": "/a1/c1",
             "name": "c1",
             "type": "System:unstructured",
             "displayName": "C1",
@@ -32,7 +32,7 @@
         },
         {
             "id": null,
-            "path": "a1/c2",
+            "path": "/a1/c2",
             "name": "c2",
             "type": "System:unstructured",
             "displayName": "C2",
@@ -46,7 +46,7 @@
         },
         {
             "id": null,
-            "path": "a1/c2",
+            "path": "/a1/c2",
             "name": "c2",
             "type": "System:unstructured",
             "displayName": "C2",
@@ -60,7 +60,7 @@
         },
         {
             "id": null,
-            "path": "a1/c3",
+            "path": "/a1/c3",
             "name": "c3",
             "type": "System:unstructured",
             "displayName": "C3",
@@ -74,7 +74,7 @@
         },
         {
             "id": null,
-            "path": "a1/c3",
+            "path": "/a1/c3",
             "name": "c3",
             "type": "System:unstructured",
             "displayName": "C3",
@@ -88,7 +88,7 @@
         },
         {
             "id": null,
-            "path": "a1/c4",
+            "path": "/a1/c4",
             "name": "c4",
             "type": "System:unstructured",
             "displayName": "C4",
@@ -102,7 +102,7 @@
         },
         {
             "id": null,
-            "path": "a1/c4",
+            "path": "/a1/c4",
             "name": "c4",
             "type": "System:unstructured",
             "displayName": "C4",

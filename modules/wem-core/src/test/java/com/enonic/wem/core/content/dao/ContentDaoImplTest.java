@@ -262,7 +262,7 @@ public class ContentDaoImplTest
         catch ( Exception e )
         {
             assertTrue( e instanceof UnableToDeleteContentException );
-            assertEquals( "Not able to delete content with path [myspace:parentContent]: Content has child content.", e.getMessage() );
+            assertEquals( "Not able to delete content with path [myspace:/parentContent]: Content has child content.", e.getMessage() );
         }
     }
 
@@ -302,7 +302,7 @@ public class ContentDaoImplTest
 
         // verify
         assertNotNull( actualContent );
-        assertEquals( "myspace:myContent", content.getPath().toString() );
+        assertEquals( "myspace:/myContent", content.getPath().toString() );
 
         DataSet rootDataSet = actualContent.getRootDataSet();
         assertEquals( "myValue", rootDataSet.getData( EntryPath.from( "myData" ) ).asString() );
@@ -332,8 +332,8 @@ public class ContentDaoImplTest
         // verify
         assertNotNull( actualContents );
         assertEquals( 2, actualContents.getSize() );
-        assertEquals( "myspace:myContent", actualContents.first().getPath().toString() );
-        assertEquals( "myspace:myContent2", actualContents.last().getPath().toString() );
+        assertEquals( "myspace:/myContent", actualContents.first().getPath().toString() );
+        assertEquals( "myspace:/myContent2", actualContents.last().getPath().toString() );
 
         DataSet rootDataSet1 = actualContents.first().getRootDataSet();
         assertEquals( "myValue", rootDataSet1.getData( EntryPath.from( "myData" ) ).asString() );
@@ -367,8 +367,8 @@ public class ContentDaoImplTest
         // verify
         assertNotNull( actualContents );
         assertEquals( 2, actualContents.getSize() );
-        assertEquals( "myspace:myContent", actualContents.first().getPath().toString() );
-        assertEquals( "myspace:myContent2", actualContents.last().getPath().toString() );
+        assertEquals( "myspace:/myContent", actualContents.first().getPath().toString() );
+        assertEquals( "myspace:/myContent2", actualContents.last().getPath().toString() );
 
         DataSet rootDataSet1 = actualContents.first().getRootDataSet();
         assertEquals( "myValue", rootDataSet1.getData( EntryPath.from( "myData" ) ).asString() );
@@ -396,7 +396,7 @@ public class ContentDaoImplTest
 
         // verify
         assertNotNull( actualContent );
-        assertEquals( "myspace:myContent", content.getPath().toString() );
+        assertEquals( "myspace:/myContent", content.getPath().toString() );
 
         DataSet rootDataSet = actualContent.getRootDataSet();
         assertEquals( "myValue", rootDataSet.getData( EntryPath.from( "myData" ) ).asString() );

@@ -4,7 +4,7 @@
     "contents": [
         {
             "id": null,
-            "path": "c1",
+            "path": "/c1",
             "name": "c1",
             "type": "System:unstructured",
             "displayName": null,
@@ -19,7 +19,7 @@
             "contents": [
                 {
                     "id": null,
-                    "path": "c1/c2",
+                    "path": "/c1/c2",
                     "name": "c2",
                     "type": "System:unstructured",
                     "displayName": null,
@@ -34,7 +34,7 @@
                     "contents": [
                         {
                             "id": null,
-                            "path": "c1/c2/c3",
+                            "path": "/c1/c2/c3",
                             "name": "c3",
                             "type": "System:unstructured",
                             "displayName": null,
@@ -52,7 +52,7 @@
                 },
                 {
                     "id": null,
-                    "path": "c1/c4",
+                    "path": "/c1/c4",
                     "name": "c4",
                     "type": "System:unstructured",
                     "displayName": null,
