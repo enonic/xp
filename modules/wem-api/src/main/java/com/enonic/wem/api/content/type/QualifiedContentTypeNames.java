@@ -2,8 +2,6 @@ package com.enonic.wem.api.content.type;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -11,45 +9,19 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.util.AbstractImmutableEntitySet;
+
 public final class QualifiedContentTypeNames
-    implements Iterable<QualifiedContentTypeName>
+    extends AbstractImmutableEntitySet<QualifiedContentTypeName>
 {
-    private final ImmutableSet<QualifiedContentTypeName> set;
-
-    private QualifiedContentTypeNames( final ImmutableSet<QualifiedContentTypeName> set )
+    public QualifiedContentTypeNames( final ImmutableSet<QualifiedContentTypeName> set )
     {
-        this.set = set;
-    }
-
-    public int getSize()
-    {
-        return this.set.size();
-    }
-
-    public boolean isEmpty()
-    {
-        return this.set.isEmpty();
+        super( set );
     }
 
     public QualifiedContentTypeName getFirst()
     {
         return this.set.isEmpty() ? null : this.set.iterator().next();
-    }
-
-    public boolean contains( final QualifiedContentTypeName ref )
-    {
-        return this.set.contains( ref );
-    }
-
-    public Set<QualifiedContentTypeName> getSet()
-    {
-        return this.set;
-    }
-
-    @Override
-    public Iterator<QualifiedContentTypeName> iterator()
-    {
-        return this.set.iterator();
     }
 
     public QualifiedContentTypeNames add( final String... contentTypeNames )
@@ -96,21 +68,6 @@ public final class QualifiedContentTypeNames
         tmp.addAll( this.set );
         tmp.removeAll( contentTypeNames );
         return new QualifiedContentTypeNames( ImmutableSet.copyOf( tmp ) );
-    }
-
-    public int hashCode()
-    {
-        return this.set.hashCode();
-    }
-
-    public boolean equals( final Object o )
-    {
-        return ( o instanceof QualifiedContentTypeNames ) && this.set.equals( ( (QualifiedContentTypeNames) o ).set );
-    }
-
-    public String toString()
-    {
-        return this.set.toString();
     }
 
     public static QualifiedContentTypeNames empty()
