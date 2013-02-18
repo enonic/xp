@@ -18,6 +18,13 @@
 
   <script type="text/javascript" src="resources/lib/ext/ext-all-debug.js"></script>
 
+  <!--  ExtJS UX -->
+
+  <link rel="stylesheet" type="text/css" href="resources/lib/ux/toggleslide/css/style.css"/>
+
+  <script type="text/javascript" src="resources/lib/ux/toggleslide/Thumb.js"></script>
+  <script type="text/javascript" src="resources/lib/ux/toggleslide/ToggleSlide.js"></script>
+
   <!-- Configuration -->
 
   <script type="text/javascript" src="global.config.js"></script>
@@ -30,7 +37,8 @@
     Ext.Loader.setConfig({
       paths: {
         'Common': 'common/js',
-        'Admin': 'resources/app'
+        'Admin': 'resources/app',
+        'Ext.ux': 'resources/lib/ux'
       },
       disableCaching: false
     });

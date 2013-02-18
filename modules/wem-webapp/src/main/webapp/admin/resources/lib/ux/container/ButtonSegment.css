@@ -1,0 +1,98 @@
+.x-sbtn .x-btn
+{
+	margin-right: 0px;
+	margin-left: 0px;
+}
+
+.x-sbtn .x-sbtn-first
+{
+	-moz-border-radius: 3px 0px 0px 3px;
+	-webkit-border-radius: 3px 0px 0px 3px;
+	-o-border-radius: 3px 0px 0px 3px;
+	-ms-border-radius: 3px 0px 0px 3px;
+	-khtml-border-radius: 3px 0px 0px 3px;
+	border-radius: 3px 0px 0px 3px;
+	
+	margin-left: 0px;
+}
+
+.x-sbtn .x-sbtn-last
+{
+	-moz-border-radius: 0px 3px 3px 0px;
+	-webkit-border-radius: 0px 3px 3px 0px;
+	-o-border-radius: 0px 3px 3px 0px;
+	-ms-border-radius: 0px 3px 3px 0px;
+	-khtml-border-radius: 0px 3px 3px 0px;
+	border-radius: 0px 3px 3px 0px;
+	
+	border-left: none;
+	margin-right: 0px;
+}
+
+.x-sbtn .x-sbtn-item
+{
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
+	-o-border-radius: 0px;
+	-ms-border-radius: 0px;
+	-khtml-border-radius: 0px;
+	border-radius: 0px;
+	
+	border-left: none;
+}
+
+
+.x-sbtn .x-sbtn-item td.x-frame-tl,
+.x-sbtn .x-sbtn-item td.x-frame-ml,
+.x-sbtn .x-sbtn-item td.x-frame-bl,
+.x-sbtn .x-sbtn-item td.x-frame-tr,
+.x-sbtn .x-sbtn-item td.x-frame-mr,
+.x-sbtn .x-sbtn-item td.x-frame-br
+{
+	display: none;
+}
+.x-sbtn .x-sbtn-item td.x-frame-tc,
+.x-sbtn .x-sbtn-item td.x-frame-mc,
+.x-sbtn .x-sbtn-item td.x-frame-bc
+{
+	padding-right: 3px;
+	padding-left: 3px;
+	border-right: 1px solid #D1D1D1;
+}
+
+
+.x-sbtn .x-sbtn-last td.x-frame-tl,
+.x-sbtn .x-sbtn-last td.x-frame-ml,
+.x-sbtn .x-sbtn-last td.x-frame-bl
+{
+	display: none;
+	
+}
+.x-sbtn .x-sbtn-last td.x-frame-tc,
+.x-sbtn .x-sbtn-last td.x-frame-mc,
+.x-sbtn .x-sbtn-last td.x-frame-bc
+{
+	padding-left: 3px;
+}
+
+
+
+.x-sbtn .x-sbtn-first td.x-frame-tr,
+.x-sbtn .x-sbtn-first td.x-frame-mr,
+.x-sbtn .x-sbtn-first td.x-frame-br
+{
+	display: none;
+}
+.x-sbtn .x-sbtn-first td.x-frame-tc,
+.x-sbtn .x-sbtn-first td.x-frame-mc,
+.x-sbtn .x-sbtn-first td.x-frame-bc
+{
+	padding-right: 3px;
+	border-right: 1px solid #D1D1D1;
+}
+
+
+.x-sbtn .x-sbtn-single
+{
+	
+}

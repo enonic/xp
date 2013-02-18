@@ -1,6 +1,7 @@
 Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.contentWizardPanel',
+
     requires: [
         'Admin.view.WizardPanel',
         'Admin.view.contentManager.wizard.ContentWizardToolbar',
@@ -8,8 +9,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     ],
 
     layout: {
-        type: 'hbox',
-        align: 'stretch'
+        type: 'card'
     },
 
     header: false,
@@ -17,11 +17,20 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
     border: 0,
     autoScroll: true,
 
-    // split modes 0 - form, 1 - split, 2 - live
-    splitMode: 0,
+    isLiveMode: false,
 
     defaults: {
         border: false
+    },
+
+    listeners: {
+        afterrender: function () {
+            if (this.isLiveMode) {
+                var livePreview = this.down('#livePreview');
+                //TODO update urls when they are ready
+                livePreview.load('/dev/live-edit/page/page.jsp');
+            }
+        }
     },
 
     initComponent: function () {
@@ -37,7 +46,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         };
 
         me.tbar = Ext.createByAlias('widget.contentWizardToolbar', {
-            xtype: 'contentWizardToolbar'
+            isLiveMode: this.isLiveMode
         });
 
         var wizardPanel = {
@@ -131,21 +140,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             hidden: true
         };
 
-        var splitter = {
-            itemId: 'splitter',
-            xtype: 'splitter',
-            listeners: {
-                move: function (el, x, y, opts) {
-                    me.repositionWizardNavButton(x);
-                },
-
-                hide: function () {
-                    me.resetWizardNavButton();
-                }
-            }
-        };
-
-        this.items = [wizardPanel, splitter, liveEdit];
+        this.items = [wizardPanel, liveEdit];
         this.callParent(arguments);
 
     },
@@ -189,55 +184,16 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         return wizardData;
     },
 
-    cycleLiveEdit: function () {
-        // cycle mode
-        var me = this;
-        if (this.splitMode === 2) {
-            this.splitMode = 0;
-        } else {
-            this.splitMode += 1;
-        }
+    toggleLive: function () {
+        this.isLiveMode = !this.isLiveMode;
 
-        var wizardPanel = this.down('#wizardPanel');
-        var livePreview = this.down('#livePreview');
-        var splitter = this.down('#splitter');
-        switch (this.splitMode) {
-        case 0:
-            //form
-            wizardPanel.show();
-            livePreview.hide();
-            break;
-        case 1:
-            // split
+        this.getLayout().setActiveItem(this.isLiveMode ? 1 : 0);
+
+        if (this.isLiveMode) {
+            var livePreview = this.down('#livePreview');
             //TODO update urls when they are ready
-            livePreview.load('/dev/live-edit/page/page.jsp', true);
-            splitter.show();
-            livePreview.show();
-            break;
-        case 2:
-            // live
-            splitter.hide();
-            wizardPanel.hide();
-            break;
+            livePreview.load('/dev/live-edit/page/page.jsp');
         }
-        return this.splitMode;
-    },
-
-    resetWizardNavButton: function () {
-        var nextButton = this.down("#next");
-        nextButton.el.setRight(30 + "px");
-        nextButton.el.setLeft("auto");
-        nextButton.el.setWidth("64px");
-    },
-
-    // Hack to make arrow move when using split edit. Possibly not a great solution.
-    repositionWizardNavButton: function (offset) {
-        var baseOffset = -92; // Offset is 30 from right side converted to left (-60) minus half of the width of the button (32)
-        var nextButton = this.down("#next");
-        offset += baseOffset;
-        nextButton.el.setLeft(offset + "px");
-        // For some reason the width is changed when the offset is changed, hardcoded to change it back
-        nextButton.el.setWidth("64px");
     }
 
 });

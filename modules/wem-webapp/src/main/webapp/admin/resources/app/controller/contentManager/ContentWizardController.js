@@ -37,8 +37,8 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
                     this.deleteContent(this.getContentWizardPanel().data);
                 }
             },
-            'contentWizardToolbar *[action=cycleMode]': {
-                click: this.cycleMode
+            'contentWizardToolbar toggleslide': {
+                change: this.toggleLiveWizard
             }
         });
 
@@ -46,28 +46,8 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
         });
     },
 
-    cycleMode: function (el, e) {
-        var mode = this.getContentWizardPanel().cycleLiveEdit();
-        var text, cls;
-        switch (mode) {
-        case 0:
-            // form
-            text = 'Form Edit';
-            cls = 'icon-keyboard-key-24';
-            break;
-        case 1:
-            // split
-            text = 'Split Edit';
-            cls = 'icon-split-hor-24';
-            break;
-        case 2:
-            // live
-            text = 'Live Edit';
-            cls = 'icon-monitor-24';
-            break;
-        }
-        el.setText(text);
-        el.setIconCls(cls);
+    toggleLiveWizard: function (enabled) {
+        this.getContentWizardPanel().toggleLive();
     },
 
     closeWizard: function (el, e) {
@@ -99,8 +79,8 @@ Ext.define('Admin.controller.contentManager.ContentWizardController', {
         var contentParams = {
             contentData: contentData,
             qualifiedContentTypeName: contentType.qualifiedName,
-            contentPath: isNewContent? null : content.path,
-            parentContentPath: isNewContent? contentParent.path : null,
+            contentPath: isNewContent ? null : content.path,
+            parentContentPath: isNewContent ? contentParent.path : null,
             displayName: displayName
         };
 

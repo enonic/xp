@@ -70,7 +70,9 @@ Ext.define('Admin.view.contentManager.DetailPanel', {
         ];
 
         if (this.showToolbar) {
-            this.tbar = Ext.createByAlias('widget.contentDetailToolbar');
+            this.tbar = Ext.createByAlias('widget.contentDetailToolbar', {
+                isLiveMode: this.isLiveMode
+            });
         } else {
             this.tbar = {
                 xtype: 'toolbar',

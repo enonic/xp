@@ -4,12 +4,16 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
 
     cls: 'admin-toolbar',
 
+    requires: [
+        'Ext.ux.form.field.ToggleSlide'
+    ],
+
     defaults: {
         scale: 'medium'
     },
 
     initComponent: function () {
-
+        var me = this;
         this.items = [
 
             {
@@ -51,11 +55,16 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
             },
             '->',
             {
-                text: 'Live Mode',
+                xtype: 'toggleslide',
+                onText: 'Live',
+                offText: 'Form',
                 action: 'toggleLive',
-                iconCls: 'icon-lightbulb-on-24',
-                enableToggle: true,
-                pressed: true
+                state: this.isLiveMode,
+                listeners: {
+                    change: function(toggle, state) {
+                        me.isLiveMode = state;
+                    }
+                }
             },
             {
                 text: 'Close',

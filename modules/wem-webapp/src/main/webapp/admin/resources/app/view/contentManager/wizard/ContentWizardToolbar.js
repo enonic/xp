@@ -2,18 +2,23 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.contentWizardToolbar',
 
+    requires: [
+        'Ext.ux.form.field.ToggleSlide'
+    ],
+
     border: false,
 
     cls: 'admin-toolbar',
 
     isNewGroup: true,
+    isLiveMode: false,
 
     defaults: {
         scale: 'medium'
     },
 
     initComponent: function () {
-
+        var me = this;
         this.items = [
 
             {
@@ -61,11 +66,17 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
                 action: 'exportContent'
             },
             '->',
-
             {
-                text: 'Form Edit',
-                action: 'cycleMode',
-                iconCls: 'icon-keyboard-key-24'
+                xtype: 'toggleslide',
+                onText: 'Live',
+                offText: 'Form',
+                action: 'toggleLive',
+                state: this.isLiveMode,
+                listeners: {
+                    change: function(toggle, state) {
+                        me.isLiveMode = state;
+                    }
+                }
             },
 
             {
