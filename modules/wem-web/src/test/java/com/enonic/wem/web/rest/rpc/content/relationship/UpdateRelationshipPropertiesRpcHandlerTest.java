@@ -69,6 +69,6 @@ public class UpdateRelationshipPropertiesRpcHandlerTest
         resultJson.put( "relationshipId", "123321" );
 
         // exercise & verify
-        testSuccess( "createOrUpdateRelationship_update_param.json", resultJson );
+        testSuccess( "updateRelationshipProperties_param.json", resultJson );
     }
 }

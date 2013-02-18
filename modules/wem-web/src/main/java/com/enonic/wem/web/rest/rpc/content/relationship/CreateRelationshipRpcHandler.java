@@ -8,45 +8,26 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.relationship.CreateRelationship;
-import com.enonic.wem.api.command.content.relationship.UpdateRelationships;
-import com.enonic.wem.api.command.content.relationship.UpdateRelationshipsResult;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.relationship.RelationshipId;
-import com.enonic.wem.api.content.relationship.RelationshipIds;
-import com.enonic.wem.api.content.relationship.editor.RelationshipEditors;
 import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.content.dao.ContentIdFactory;
-import com.enonic.wem.core.content.relationship.dao.RelationshipIdFactory;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
-import com.enonic.wem.web.json.rpc.JsonRpcException;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
 @Component
-public final class CreateOrUpdateRelationshipRpcHandler
+public final class CreateRelationshipRpcHandler
     extends AbstractDataRpcHandler
 {
-    public CreateOrUpdateRelationshipRpcHandler()
+    public CreateRelationshipRpcHandler()
     {
-        super( "relationship_createOrUpdate" );
+        super( "relationship_create" );
     }
 
     @Override
     public void handle( final JsonRpcContext context )
         throws Exception
-    {
-        if ( context.hasParam( "relationshipId" ) )
-        {
-            handleUpdate( context );
-        }
-        else
-        {
-            handleCreate( context );
-        }
-    }
-
-    private void handleCreate( final JsonRpcContext context )
-        throws JsonRpcException
     {
         final QualifiedRelationshipTypeName type = QualifiedRelationshipTypeName.from( context.param( "type" ).required().asString() );
         final ContentId fromContent = ContentIdFactory.from( context.param( "fromContent" ).required().asString() );
@@ -66,6 +47,8 @@ public final class CreateOrUpdateRelationshipRpcHandler
         createCommand.type( type );
         createCommand.fromContent( fromContent );
         createCommand.toContent( toContent );
+        parseSetProperties( createCommand, context.param( "properties" ).required().asObject() );
+
         if ( managingData != null )
         {
             createCommand.managed( managingData );
@@ -74,36 +57,14 @@ public final class CreateOrUpdateRelationshipRpcHandler
         context.setResult( CreateOrUpdateRelationshipJsonResult.created( relationshipId ) );
     }
 
-    private void handleUpdate( final JsonRpcContext context )
-        throws JsonRpcException
-    {
-        final RelationshipId relationshipIdToUpdate = RelationshipIdFactory.from( context.param( "relationshipId" ).asString() );
-        final UpdateRelationships updateCommand = Commands.relationship().update();
-        updateCommand.relationshipIds( RelationshipIds.from( relationshipIdToUpdate ) );
-
-        final RelationshipEditors.SetBuilder setPropertiesBuilder = RelationshipEditors.setProperties();
-        parseSetProperties( setPropertiesBuilder, context.param( "properties" ).required().asObject() );
-        updateCommand.editor( setPropertiesBuilder.build() );
-
-        final UpdateRelationshipsResult result = client.execute( updateCommand );
-        final CreateOrUpdateRelationshipJsonResult.Builder jsonResult = CreateOrUpdateRelationshipJsonResult.newBuilder();
-        jsonResult.updated().relationship( relationshipIdToUpdate );
-        if ( result.isFailure( relationshipIdToUpdate ) )
-        {
-            jsonResult.failure( result.getFailure( relationshipIdToUpdate ).reason );
-        }
-        context.setResult( jsonResult.build() );
-    }
-
-    private void parseSetProperties( final RelationshipEditors.SetBuilder setPropertiesBuilder, final ObjectNode propertiesNode )
+    private void parseSetProperties( final CreateRelationship createCommand, final ObjectNode propertiesNode )
     {
         final Iterator<String> propertyNames = propertiesNode.getFieldNames();
         while ( propertyNames.hasNext() )
         {
             final String propertyKey = propertyNames.next();
             final String propertyValue = propertiesNode.get( propertyKey ).getTextValue();
-            setPropertiesBuilder.add( propertyKey, propertyValue );
+            createCommand.property( propertyKey, propertyValue );
         }
     }
-
 }

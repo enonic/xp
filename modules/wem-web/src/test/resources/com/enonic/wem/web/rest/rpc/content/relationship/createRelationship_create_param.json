@@ -1,0 +1,10 @@
+{
+    "type": "system:like",
+    "fromContent": "123",
+    "toContent": "321",
+    "properties": {
+        "a": "1",
+        "b": "2",
+        "c": "3"
+    }
+}
