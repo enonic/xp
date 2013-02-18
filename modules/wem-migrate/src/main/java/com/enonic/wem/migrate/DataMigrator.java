@@ -5,11 +5,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.initializer.InitializerTask;
 
 @Component
@@ -75,33 +75,13 @@ public final class DataMigrator
         }
     }
 
-    @Value("${cms.migrate.jdbc.url}")
-    public void setJdbcUrl( final String url )
+    @Autowired
+    public void setSystemConfig( final SystemConfig systemConfig )
     {
-        this.dataSource.setUrl( url );
-    }
-
-    @Value("${cms.migrate.jdbc.user}")
-    public void setJdbcUser( final String user )
-    {
-        this.dataSource.setUsername( user );
-    }
-
-    @Value("${cms.migrate.jdbc.password}")
-    public void setJdbcPassword( final String password )
-    {
-        this.dataSource.setPassword( password );
-    }
-
-    @Value("${cms.migrate.jdbc.driver}")
-    public void setJdbcDriver( final String driver )
-    {
-        this.dataSource.setDriverClassName( driver );
-    }
-
-    @Value("${cms.migrate.enabled}")
-    public void setEnabled( final boolean enabled )
-    {
-        this.enabled = enabled;
+        this.dataSource.setUrl( systemConfig.getMigrateJdbcUrl() );
+        this.dataSource.setUsername( systemConfig.getMigrateJdbcUser() );
+        this.dataSource.setPassword( systemConfig.getMigrateJdbcPassword() );
+        this.dataSource.setDriverClassName( systemConfig.getMigrateJdbcDriver() );
+        this.enabled = systemConfig.isMigrateEnabled();
     }
 }

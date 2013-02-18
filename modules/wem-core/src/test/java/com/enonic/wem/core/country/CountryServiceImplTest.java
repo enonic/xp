@@ -3,9 +3,13 @@ package com.enonic.wem.core.country;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.fest.util.Files;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+
+import com.enonic.wem.core.config.SystemConfig;
 
 public class CountryServiceImplTest
 {
@@ -16,6 +20,11 @@ public class CountryServiceImplTest
         throws Exception
     {
         this.service = new CountryServiceImpl();
+
+        final SystemConfig config = Mockito.mock( SystemConfig.class );
+        Mockito.when( config.getConfigDir() ).thenReturn( Files.newTemporaryFolder() );
+
+        this.service.setSystemConfig( config );
         this.service.afterPropertiesSet();
     }
 

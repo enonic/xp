@@ -9,12 +9,13 @@ import org.jdom.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.util.JdomHelper;
 
 /**
@@ -29,11 +30,11 @@ public final class CountryServiceImpl
 
     private final LinkedHashMap<CountryCode, Country> countriesMapByCode;
 
-    private File countryFile;
+    private SystemConfig systemConfig;
 
     public CountryServiceImpl()
     {
-        this.countriesMapByCode = new LinkedHashMap<CountryCode, Country>();
+        this.countriesMapByCode = new LinkedHashMap<>();
     }
 
     public Collection<Country> getCountries()
@@ -58,9 +59,10 @@ public final class CountryServiceImpl
 
     private Resource findCountryResource()
     {
-        if ( ( this.countryFile != null ) && this.countryFile.exists() && this.countryFile.isFile() )
+        final File countryFile = new File(this.systemConfig.getConfigDir(), "countries.xml");
+        if ( countryFile.exists() && countryFile.isFile() )
         {
-            return new FileSystemResource( this.countryFile );
+            return new FileSystemResource( countryFile );
         }
         else
         {
@@ -82,9 +84,9 @@ public final class CountryServiceImpl
         return list;
     }
 
-    @Value("${cms.home}/config/countries.xml")
-    public void setCountriesFile( final File file )
+    @Autowired
+    public void setSystemConfig( final SystemConfig systemConfig )
     {
-        this.countryFile = file;
+        this.systemConfig = systemConfig;
     }
 }

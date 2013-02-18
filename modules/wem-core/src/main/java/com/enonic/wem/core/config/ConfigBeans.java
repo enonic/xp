@@ -14,4 +14,10 @@ public class ConfigBeans
         final ConfigLoader loader = new ConfigLoader( homeDir );
         return loader.load();
     }
+
+    @Bean
+    public SystemConfig systemConfig( final ConfigProperties properties )
+    {
+        return new SystemConfigImpl( properties );
+    }
 }

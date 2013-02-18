@@ -8,8 +8,10 @@ import javax.annotation.PreDestroy;
 import org.apache.jackrabbit.mk.api.MicroKernel;
 import org.apache.jackrabbit.mk.core.MicroKernelImpl;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.enonic.wem.core.config.SystemConfig;
 
 @Component
 public final class JcrMicroKernelFactory
@@ -58,10 +60,10 @@ public final class JcrMicroKernelFactory
         this.mk.dispose();
     }
 
-    @Value("${cms.home}/data/jcr")
-    public void setLocation( final File location )
+    @Autowired
+    public void setSystemConfig( final SystemConfig systemConfig )
     {
-        this.location = location;
+        this.location = new File( systemConfig.getDataDir(), "jcr" );
     }
 
     public void setInMemoryRepository( final boolean inMemory )
