@@ -15,9 +15,9 @@ public final class UpdateMixins
     private MixinEditor editor;
 
 
-    public UpdateMixins qualifiedNames( final QualifiedMixinNames qualifiedMixinNames )
+    public UpdateMixins qualifiedNames( final QualifiedMixinNames qualifiedNames )
     {
-        this.qualifiedNames = qualifiedMixinNames;
+        this.qualifiedNames = qualifiedNames;
         return this;
     }
 

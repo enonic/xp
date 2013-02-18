@@ -11,6 +11,7 @@ import com.enonic.wem.api.command.content.mixin.UpdateMixins;
 import com.enonic.wem.api.content.mixin.Mixin;
 import com.enonic.wem.api.content.mixin.Mixins;
 import com.enonic.wem.api.content.mixin.QualifiedMixinNames;
+import com.enonic.wem.api.content.mixin.SetMixinEditor;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
@@ -18,7 +19,6 @@ import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.mixin.dao.MixinDao;
 
 import static com.enonic.wem.api.content.mixin.Mixin.newMixin;
-import static com.enonic.wem.api.content.mixin.MixinEditors.setMixin;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -64,8 +64,10 @@ public class UpdateMixinsHandlerTest
         Mockito.when( mixinDao.select( isA( QualifiedMixinNames.class ), any( Session.class ) ) ).thenReturn( mixins );
 
         final FormItem formItemToSet = newInput().name( "age" ).type( InputTypes.WHOLE_NUMBER ).build();
-        final UpdateMixins command = Commands.mixin().update().qualifiedNames( QualifiedMixinNames.from( "myModule:age" ) ).editor(
-            setMixin( "age2", formItemToSet, null ) );
+        final UpdateMixins command = Commands.mixin().update().
+            qualifiedNames( QualifiedMixinNames.from( "myModule:age" ) ).editor( SetMixinEditor.newSetMixinEditor().
+            displayName( "age2" ).
+            formItem( formItemToSet ).build() );
 
         // exercise
         this.handler.handle( this.context, command );

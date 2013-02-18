@@ -8,9 +8,9 @@ import com.enonic.wem.api.command.content.mixin.CreateMixin;
 import com.enonic.wem.api.command.content.mixin.GetMixins;
 import com.enonic.wem.api.command.content.mixin.UpdateMixins;
 import com.enonic.wem.api.content.mixin.Mixin;
-import com.enonic.wem.api.content.mixin.MixinEditor;
 import com.enonic.wem.api.content.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.mixin.QualifiedMixinNames;
+import com.enonic.wem.api.content.mixin.SetMixinEditor;
 import com.enonic.wem.core.content.mixin.MixinXmlSerializer;
 import com.enonic.wem.core.support.serializer.ParsingException;
 import com.enonic.wem.web.json.JsonErrorResult;
@@ -20,7 +20,6 @@ import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.web.rest.rpc.IconImageHelper;
 
 import static com.enonic.wem.api.command.Commands.mixin;
-import static com.enonic.wem.api.content.mixin.MixinEditors.setMixin;
 
 @Component
 public class CreateOrUpdateMixinRpcHandler
@@ -65,23 +64,37 @@ public class CreateOrUpdateMixinRpcHandler
 
         if ( !mixinExists( mixin.getQualifiedName() ) )
         {
-            final CreateMixin createCommand = mixin().create().
-                displayName( mixin.getDisplayName() ).
-                formItem( mixin.getFormItem() ).
-                moduleName( mixin.getModuleName() ).
-                icon( icon );
+            final CreateMixin createCommand = parseCreateMixinCommand( mixin, icon );
             client.execute( createCommand );
             context.setResult( CreateOrUpdateMixinJsonResult.created() );
         }
         else
         {
-            final QualifiedMixinNames names = QualifiedMixinNames.from( mixin.getQualifiedName() );
-            final MixinEditor mixinEditor = setMixin( mixin.getDisplayName(), mixin.getFormItem(), icon );
-            final UpdateMixins updateCommand = mixin().update().qualifiedNames( names ).editor( mixinEditor );
-
+            final UpdateMixins updateCommand = parseUpdateMixinsCommand( mixin, icon );
             client.execute( updateCommand );
             context.setResult( CreateOrUpdateMixinJsonResult.updated() );
         }
+    }
+
+    private CreateMixin parseCreateMixinCommand( final Mixin mixin, final Icon icon )
+    {
+        return mixin().create().
+            displayName( mixin.getDisplayName() ).
+            formItem( mixin.getFormItem() ).
+            moduleName( mixin.getModuleName() ).
+            icon( icon );
+    }
+
+    private UpdateMixins parseUpdateMixinsCommand( final Mixin mixin, final Icon icon )
+    {
+        final QualifiedMixinNames qualifiedNames = QualifiedMixinNames.from( mixin.getQualifiedName() );
+        return mixin().update().
+            qualifiedNames( qualifiedNames ).
+            editor( SetMixinEditor.newSetMixinEditor().
+                displayName( mixin.getDisplayName() ).
+                formItem( mixin.getFormItem() ).
+                icon( icon ).
+                build() );
     }
 
     private boolean mixinExists( final QualifiedMixinName qualifiedName )

@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.mixin;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.type.form.FormItem;
 
-final class SetMixinEditor
+public final class SetMixinEditor
     implements MixinEditor
 {
     private final FormItem formItem;
@@ -12,11 +12,49 @@ final class SetMixinEditor
 
     private final Icon icon;
 
-    SetMixinEditor( final String displayName, final FormItem formItem, final Icon icon )
+    private SetMixinEditor( final Builder builder )
     {
-        this.formItem = formItem;
-        this.displayName = displayName;
-        this.icon = icon;
+        this.formItem = builder.formItem;
+        this.displayName = builder.displayName;
+        this.icon = builder.icon;
+    }
+
+    public static Builder newSetMixinEditor()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private FormItem formItem;
+
+        private String displayName;
+
+        private Icon icon;
+
+        public Builder formItem( final FormItem value )
+        {
+            this.formItem = value;
+            return this;
+        }
+
+        public Builder displayName( final String value )
+        {
+            this.displayName = value;
+            return this;
+        }
+
+        public Builder icon( final Icon value )
+        {
+            this.icon = value;
+            return this;
+        }
+
+        public SetMixinEditor build()
+        {
+            return new SetMixinEditor( this );
+        }
+
     }
 
     @Override
