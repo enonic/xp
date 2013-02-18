@@ -2,6 +2,7 @@ package com.enonic.wem.core.image;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 
 public final class ImageHelper
@@ -23,7 +24,8 @@ public final class ImageHelper
         int height = Math.max( 1, targetHeight );
 
         Image scaledImage = img.getScaledInstance( width, height, Image.SCALE_SMOOTH );
-        BufferedImage targetImage = createImage( width, height, true );
+        final boolean hasAlpha = img.getTransparency() != Transparency.OPAQUE;
+        BufferedImage targetImage = createImage( width, height, hasAlpha );
         Graphics g = targetImage.createGraphics();
         g.drawImage( scaledImage, 0, 0, null );
         g.dispose();

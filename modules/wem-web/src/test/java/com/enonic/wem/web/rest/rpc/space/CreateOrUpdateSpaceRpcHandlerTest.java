@@ -21,6 +21,7 @@ import com.enonic.wem.api.space.Spaces;
 import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
+import com.enonic.wem.web.rest.rpc.IconImageHelper;
 import com.enonic.wem.web.rest.service.upload.UploadItem;
 import com.enonic.wem.web.rest.service.upload.UploadService;
 
@@ -36,8 +37,9 @@ public class CreateOrUpdateSpaceRpcHandlerTest
 
     private static final DateTime CURRENT_TIME = new DateTime( 2000, 1, 1, 12, 0, 0 );
 
-    private static byte[] IMAGE_DATA = "imagedata".getBytes();
-
+    private static byte[] IMAGE_DATA =
+        {0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x1, 0x0, 0x1, 0x0, (byte) 0x80, 0x0, 0x0, (byte) 0xff, (byte) 0xff, (byte) 0xff, 0x0, 0x0,
+            0x0, 0x2c, 0x0, 0x0, 0x0, 0x0, 0x1, 0x0, 0x1, 0x0, 0x0, 0x2, 0x2, 0x44, 0x1, 0x0, 0x3b};
 
     @Override
     protected JsonRpcHandler createHandler()
@@ -47,9 +49,11 @@ public class CreateOrUpdateSpaceRpcHandlerTest
 
         client = Mockito.mock( Client.class );
         handler.setClient( client );
-        uploadService = Mockito.mock( UploadService.class );
-        handler.setUploadService( uploadService );
 
+        uploadService = Mockito.mock( UploadService.class );
+        IconImageHelper iconImageHelper = new IconImageHelper();
+        iconImageHelper.setUploadService( uploadService );
+        handler.setIconImageHelper( iconImageHelper );
         return handler;
     }
 

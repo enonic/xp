@@ -1,19 +1,16 @@
 package com.enonic.wem.web.rest.rpc.space;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.space.UpdateSpaces;
 import com.enonic.wem.api.space.SpaceName;
+import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
+import com.enonic.wem.web.json.rpc.JsonRpcException;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
-import com.enonic.wem.web.rest.service.upload.UploadItem;
-import com.enonic.wem.web.rest.service.upload.UploadService;
+import com.enonic.wem.web.rest.rpc.IconImageHelper;
 
 import static com.enonic.wem.api.command.Commands.space;
 import static com.enonic.wem.api.space.editor.SpaceEditors.composite;
@@ -24,7 +21,7 @@ import static com.enonic.wem.api.space.editor.SpaceEditors.setIcon;
 public final class CreateOrUpdateSpaceRpcHandler
     extends AbstractDataRpcHandler
 {
-    private UploadService uploadService;
+    private IconImageHelper iconImageHelper;
 
     public CreateOrUpdateSpaceRpcHandler()
     {
@@ -38,7 +35,17 @@ public final class CreateOrUpdateSpaceRpcHandler
         final SpaceName spaceName = SpaceName.from( context.param( "spaceName" ).notBlank().asString() );
         final String displayName = context.param( "displayName" ).notBlank().asString();
         final String iconReference = context.param( "iconReference" ).asString();
-        final Icon icon = getUploadedImage( iconReference );
+
+        final Icon icon;
+        try
+        {
+            icon = iconImageHelper.getUploadedIcon( iconReference );
+        }
+        catch ( JsonRpcException e )
+        {
+            context.setResult( new JsonErrorResult( e.getError().getMessage() ) );
+            return;
+        }
 
         if ( !spaceExists( spaceName ) )
         {
@@ -59,29 +66,9 @@ public final class CreateOrUpdateSpaceRpcHandler
         return !client.execute( space().get().name( spaceName ) ).isEmpty();
     }
 
-    private Icon getUploadedImage( final String iconReference )
-        throws IOException
-    {
-        if ( iconReference == null )
-        {
-            return null;
-        }
-        final UploadItem uploadItem = uploadService.getItem( iconReference );
-        if ( uploadItem != null )
-        {
-            final File file = uploadItem.getFile();
-            if ( file.exists() )
-            {
-                final byte[] imageData = FileUtils.readFileToByteArray( file );
-                return Icon.from( imageData, uploadItem.getMimeType() );
-            }
-        }
-        return null;
-    }
-
     @Autowired
-    public void setUploadService( final UploadService uploadService )
+    public void setIconImageHelper( final IconImageHelper iconImageHelper )
     {
-        this.uploadService = uploadService;
+        this.iconImageHelper = iconImageHelper;
     }
 }
