@@ -10,7 +10,8 @@ import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.json.rpc.JsonRpcException;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
-import com.enonic.wem.web.rest.rpc.IconImageHelper;
+import com.enonic.wem.web.rest.rpc.UploadedIconFetcher;
+import com.enonic.wem.web.rest.service.upload.UploadService;
 
 import static com.enonic.wem.api.command.Commands.space;
 import static com.enonic.wem.api.space.editor.SpaceEditors.composite;
@@ -21,7 +22,7 @@ import static com.enonic.wem.api.space.editor.SpaceEditors.setIcon;
 public final class CreateOrUpdateSpaceRpcHandler
     extends AbstractDataRpcHandler
 {
-    private IconImageHelper iconImageHelper;
+    private UploadService uploadService;
 
     public CreateOrUpdateSpaceRpcHandler()
     {
@@ -39,7 +40,7 @@ public final class CreateOrUpdateSpaceRpcHandler
         final Icon icon;
         try
         {
-            icon = iconImageHelper.getUploadedIcon( iconReference );
+            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( iconReference );
         }
         catch ( JsonRpcException e )
         {
@@ -67,8 +68,8 @@ public final class CreateOrUpdateSpaceRpcHandler
     }
 
     @Autowired
-    public void setIconImageHelper( final IconImageHelper iconImageHelper )
+    public void setUploadService( final UploadService uploadService )
     {
-        this.iconImageHelper = iconImageHelper;
+        this.uploadService = uploadService;
     }
 }

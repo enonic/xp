@@ -16,7 +16,8 @@ import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.json.rpc.JsonRpcException;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
-import com.enonic.wem.web.rest.rpc.IconImageHelper;
+import com.enonic.wem.web.rest.rpc.UploadedIconFetcher;
+import com.enonic.wem.web.rest.service.upload.UploadService;
 
 import static com.enonic.wem.api.command.Commands.contentType;
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
@@ -29,7 +30,7 @@ public class CreateOrUpdateContentTypeRpcHandler
 
     private final ContentTypeXmlSerializer contentTypeXmlSerializer;
 
-    private IconImageHelper iconImageHelper;
+    private UploadService uploadService;
 
     public CreateOrUpdateContentTypeRpcHandler()
     {
@@ -57,7 +58,7 @@ public class CreateOrUpdateContentTypeRpcHandler
         final Icon icon;
         try
         {
-            icon = iconImageHelper.getUploadedIcon( iconReference );
+            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( iconReference );
         }
         catch ( JsonRpcException e )
         {
@@ -97,8 +98,8 @@ public class CreateOrUpdateContentTypeRpcHandler
     }
 
     @Autowired
-    public void setIconImageHelper( final IconImageHelper iconImageHelper )
+    public void setUploadService( final UploadService uploadService )
     {
-        this.iconImageHelper = iconImageHelper;
+        this.uploadService = uploadService;
     }
 }

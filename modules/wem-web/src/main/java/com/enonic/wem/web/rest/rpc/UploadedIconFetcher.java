@@ -12,8 +12,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -25,18 +23,18 @@ import com.enonic.wem.web.json.rpc.JsonRpcException;
 import com.enonic.wem.web.rest.service.upload.UploadItem;
 import com.enonic.wem.web.rest.service.upload.UploadService;
 
-@Component
-public final class IconImageHelper
+public final class UploadedIconFetcher
 {
     private static final int MAX_ICON_SIZE = 512;
 
     private final static Set<String> VALID_ICON_MIME_TYPES =
         ImmutableSet.of( "image/gif", "image/jpeg", "image/png", "image/tiff", "image/bmp" );
 
-    private UploadService uploadService;
+    private final UploadService uploadService;
 
-    public IconImageHelper()
+    public UploadedIconFetcher( final UploadService uploadService )
     {
+        this.uploadService = uploadService;
     }
 
     public Icon getUploadedIcon( final String iconReference )
@@ -127,9 +125,4 @@ public final class IconImageHelper
         return ite.next().getOriginatingProvider().getFormatNames()[0];
     }
 
-    @Autowired
-    public void setUploadService( final UploadService uploadService )
-    {
-        this.uploadService = uploadService;
-    }
 }

@@ -21,7 +21,6 @@ import com.enonic.wem.api.space.Spaces;
 import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
-import com.enonic.wem.web.rest.rpc.IconImageHelper;
 import com.enonic.wem.web.rest.service.upload.UploadItem;
 import com.enonic.wem.web.rest.service.upload.UploadService;
 
@@ -51,9 +50,7 @@ public class CreateOrUpdateSpaceRpcHandlerTest
         handler.setClient( client );
 
         uploadService = Mockito.mock( UploadService.class );
-        IconImageHelper iconImageHelper = new IconImageHelper();
-        iconImageHelper.setUploadService( uploadService );
-        handler.setIconImageHelper( iconImageHelper );
+        handler.setUploadService( uploadService );
         return handler;
     }
 

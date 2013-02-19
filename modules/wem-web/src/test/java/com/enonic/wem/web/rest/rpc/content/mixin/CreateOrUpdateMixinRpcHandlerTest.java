@@ -21,7 +21,6 @@ import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
-import com.enonic.wem.web.rest.rpc.IconImageHelper;
 import com.enonic.wem.web.rest.service.upload.UploadItem;
 import com.enonic.wem.web.rest.service.upload.UploadService;
 
@@ -52,9 +51,7 @@ public class CreateOrUpdateMixinRpcHandlerTest
         handler.setClient( client );
 
         uploadService = Mockito.mock( UploadService.class );
-        IconImageHelper iconImageHelper = new IconImageHelper();
-        iconImageHelper.setUploadService( uploadService );
-        handler.setIconImageHelper( iconImageHelper );
+        handler.setUploadService( uploadService );
         return handler;
     }
 
