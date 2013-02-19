@@ -28,7 +28,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
             if (this.isLiveMode) {
                 var livePreview = this.down('#livePreview');
                 //TODO update urls when they are ready
-                livePreview.load('/dev/live-edit/page/page.jsp');
+                livePreview.load('/dev/live-edit/page/page.jsp?edit=true');
             }
         }
     },
@@ -192,7 +192,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         if (this.isLiveMode) {
             var livePreview = this.down('#livePreview');
             //TODO update urls when they are ready
-            livePreview.load('/dev/live-edit/page/page.jsp');
+            livePreview.load('/dev/live-edit/page/page.jsp?edit=true');
         }
     }
 

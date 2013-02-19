@@ -6,7 +6,7 @@ Ext.define('Admin.controller.spaceAdmin.DetailPanelController', {
     stores: [],
     models: [],
     views: [
-        'Admin.view.contentManager.DetailPanel'
+        'Admin.view.spaceAdmin.DetailPanel'
     ],
 
     init: function () {

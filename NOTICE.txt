@@ -31,17 +31,6 @@ Icon Experience (M-Collection)
 Icon Experience (V-Collection)
   http://www.iconexperience.com/v_collection/license/
 
-Ext.ux (Plugins and Extensions for EXT JS 4)
+Ext.ux.toggleslide.ToggleSlide (Plugins and Extensions for EXT JS 4)
   MIT License
   http://harrydeluxe.mit-license.org
-
-  bundle includes:
-
-  Ace editor
-    Tri-licensed MPL/LGPL/GPL.
-
-  TinyMCE
-    GNU LGPL v2.1
-
-  PLUpload
-    GNU GPL v2

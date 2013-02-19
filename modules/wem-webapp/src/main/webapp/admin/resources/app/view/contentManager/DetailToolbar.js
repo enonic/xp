@@ -5,7 +5,7 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
     cls: 'admin-toolbar',
 
     requires: [
-        'Ext.ux.form.field.ToggleSlide'
+        'Ext.ux.toggleslide.ToggleSlide'
     ],
 
     defaults: {
@@ -61,7 +61,7 @@ Ext.define('Admin.view.contentManager.DetailToolbar', {
                 action: 'toggleLive',
                 state: this.isLiveMode,
                 listeners: {
-                    change: function(toggle, state) {
+                    change: function (toggle, state) {
                         me.isLiveMode = state;
                     }
                 }

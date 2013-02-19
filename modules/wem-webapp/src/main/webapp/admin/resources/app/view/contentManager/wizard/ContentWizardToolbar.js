@@ -3,7 +3,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
     alias: 'widget.contentWizardToolbar',
 
     requires: [
-        'Ext.ux.form.field.ToggleSlide'
+        'Ext.ux.toggleslide.ToggleSlide'
     ],
 
     border: false,
@@ -73,7 +73,7 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardToolbar', {
                 action: 'toggleLive',
                 state: this.isLiveMode,
                 listeners: {
-                    change: function(toggle, state) {
+                    change: function (toggle, state) {
                         me.isLiveMode = state;
                     }
                 }
