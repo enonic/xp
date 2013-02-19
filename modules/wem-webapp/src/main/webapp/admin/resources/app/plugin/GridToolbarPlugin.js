@@ -40,7 +40,8 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         });
 
         if (me.toolbar.store) {
-            me.toolbar.store.on('load', function (store) {
+            var loadEventName = me.toolbar.store.buffered ? 'prefetch' : 'load';
+            me.toolbar.store.on(loadEventName, function (store) {
                 me.updateResultCount(me.getCount(store));
             });
 
