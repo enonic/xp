@@ -13,6 +13,12 @@ Ext.define('Admin.controller.contentStudio.DialogWindowController', {
         this.control({
             'deleteContentTypeWindow *[action=deleteContentType]': {
                 click: this.doDelete
+            },
+            'selectBaseTypeWindow': {
+                createNewBaseType: function (modalWindow, item) {
+                    modalWindow.close();
+                    this.createNewBaseTypePanel(item);
+                }
             }
         });
     },

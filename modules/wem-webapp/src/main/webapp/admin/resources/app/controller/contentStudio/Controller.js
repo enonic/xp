@@ -31,16 +31,6 @@ Ext.define('Admin.controller.contentStudio.Controller', {
                 scope: this
             }
         });
-
-        this.control({
-            'selectBaseTypeWindow': {
-                createNewBaseType: function (modalWindow, item) {
-                    modalWindow.close();
-                    console.log(item);
-                    this.createNewBaseTypePanel(item.data.name);
-                }
-            }
-        });
     },
 
 
@@ -94,32 +84,32 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         this.getSelectBaseTypeWindow().show();
     },
 
-    createNewBaseTypePanel: function (baseType) {
-        switch (baseType) {
-            case 'ContentType':
-                this.createNewContentTypePanel();
-                break;
-            case 'Mixin':
-                this.createNewMixinPanel();
-                break;
-            case 'RelationshipType':
-                this.createNewRelationshipTypePanel();
-                break;
+    createNewBaseTypePanel: function (baseTypeModel) {
+        switch (baseTypeModel.data.name) {
+        case 'ContentType':
+            this.createNewContentTypePanel(baseTypeModel);
+            break;
+        case 'Mixin':
+            this.createNewMixinPanel(baseTypeModel);
+            break;
+        case 'RelationshipType':
+            this.createNewRelationshipTypePanel(baseTypeModel);
+            break;
         }
     },
 
     createEditBaseTypePanel: function (baseTypeModel) {
         var baseType = baseTypeModel && baseTypeModel.data.type;
         switch (baseType) {
-            case 'ContentType':
-                this.createEditContentTypePanel(baseTypeModel);
-                break;
-            case 'Mixin':
-                this.createEditMixinPanel(baseTypeModel);
-                break;
-            case 'RelationshipType':
-                this.createEditRelationshipTypePanel(baseTypeModel);
-                break;
+        case 'ContentType':
+            this.createEditContentTypePanel(baseTypeModel);
+            break;
+        case 'Mixin':
+            this.createEditMixinPanel(baseTypeModel);
+            break;
+        case 'RelationshipType':
+            this.createEditRelationshipTypePanel(baseTypeModel);
+            break;
         }
     },
 
@@ -163,13 +153,14 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         });
     },
 
-    createNewContentTypePanel: function () {
+    createNewContentTypePanel: function (baseTypeModel) {
         var tabPanel = this.getCmsTabPanel();
         tabPanel.addTab({
             id: 'tab-new-content-type',
             editing: true,
+            modelData: baseTypeModel.data,
             xtype: 'contentStudioContentTypeWizardPanel',
-            title: 'New Content Type'
+            title: '[New Content Type]'
         });
     },
 
@@ -213,13 +204,14 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         });
     },
 
-    createNewMixinPanel: function () {
+    createNewMixinPanel: function (baseTypeModel) {
         var tabPanel = this.getCmsTabPanel();
         tabPanel.addTab({
             id: 'tab-new-mixin',
             editing: true,
+            modelData: baseTypeModel.data,
             xtype: 'contentStudioMixinWizardPanel',
-            title: 'New Mixin'
+            title: '[New Mixin]'
         });
     },
 
@@ -263,13 +255,14 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         });
     },
 
-    createNewRelationshipTypePanel: function () {
+    createNewRelationshipTypePanel: function (baseTypeModel) {
         var tabPanel = this.getCmsTabPanel();
         tabPanel.addTab({
             id: 'tab-new-relationship-type',
             editing: true,
+            modelData: baseTypeModel.data,
             xtype: 'contentStudioRelationshipTypeWizardPanel',
-            title: 'New Relationship Type'
+            title: '[New Relationship Type]'
         });
     },
 

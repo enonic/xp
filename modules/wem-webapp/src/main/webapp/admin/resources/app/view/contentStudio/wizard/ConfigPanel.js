@@ -5,7 +5,8 @@ Ext.define('Admin.view.contentStudio.wizard.ConfigPanel', {
 
     initComponent: function () {
         var me = this;
-        var configXml = me.modelData ? me.modelData.configXML : "";
+        // codemirror will throw exception if value is undefined
+        var configXml = me.modelData && me.modelData.configXML || "";
         me.items = [
             {
                 xtype: 'fieldset',

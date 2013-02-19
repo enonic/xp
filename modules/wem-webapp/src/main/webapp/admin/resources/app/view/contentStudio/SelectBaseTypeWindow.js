@@ -55,7 +55,7 @@ Ext.define('Admin.view.contentStudio.SelectBaseTypeWindow', {
                     iconUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/rest/basetype/image/Mixin:_:_') // default icon for Mixin
                 }
             ]
-        })
+        });
 
         var baseDataView = {
             xtype: 'dataview',
