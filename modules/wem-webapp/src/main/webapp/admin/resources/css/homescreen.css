@@ -80,8 +80,8 @@
 
 #admin-home-branding {
     position: absolute;
-    top: 25px;
-    left: 30px;
+    top: 30px;
+    left: 35px;
     background: transparent url(../images/wem-enonic-logo.png) 0 0 no-repeat;
     height: 24px;
 }
