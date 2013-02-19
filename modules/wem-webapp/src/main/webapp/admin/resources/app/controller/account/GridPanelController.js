@@ -30,7 +30,7 @@ Ext.define('Admin.controller.account.GridPanelController', {
                     itemdblclick: this.editAccount,
                     afterrender: function (grid) {
                         var gridStore = grid.getStore();
-                        gridStore.on('load', this.updateFilterPanel, this);
+                        gridStore.on('prefetch', this.updateFilterPanel, this);
                         gridStore.load();
                     }
                 },

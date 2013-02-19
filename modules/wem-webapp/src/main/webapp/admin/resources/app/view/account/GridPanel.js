@@ -14,6 +14,15 @@ Ext.define('Admin.view.account.GridPanel', {
     columnLines: true,
     hideHeaders: true,
     border: false,
+
+    verticalScroller: {
+        trailingBufferZone: 100,
+        leadingBufferZone: 100,
+        numFromEdge: 10,
+        scrollToLoadBuffer: 0
+    },
+
+    invalidateScrollerOnRefresh: false,
     store: 'Admin.store.account.AccountStore',
 
     initComponent: function () {
@@ -79,7 +88,7 @@ Ext.define('Admin.view.account.GridPanel', {
         };
 
         me.viewConfig = {
-            trackOver: true,
+            trackOver: false,
             stripeRows: true,
             loadMask: {
                 store: me.store
@@ -91,6 +100,11 @@ Ext.define('Admin.view.account.GridPanel', {
         });
 
         me.callParent(arguments);
+
+        if (me.verticalScroller) {
+            Ext.Function.interceptBefore(this.verticalScroller, 'attemptLoad', me.saveSelection, me);
+            me.store.on('datachanged', me.restoreSelection, me);
+        }
     },
 
     nameRenderer: function (value, p, record) {
@@ -109,6 +123,21 @@ Ext.define('Admin.view.account.GridPanel', {
             }
         } catch (e) {
             return value;
+        }
+    },
+
+    saveSelection: function () {
+        if (!this.selectionCache) {
+            var plugin = this.getPlugin('persistentGridSelection');
+            var source = plugin ? plugin : this.getSelectionModel();
+            this.selectionCache = source.getSelection();
+        }
+    },
+
+    restoreSelection: function () {
+        if (this.selectionCache) {
+            this.getSelectionModel().select(this.selectionCache, true, false);
+            delete this.selectionCache;
         }
     }
 });
