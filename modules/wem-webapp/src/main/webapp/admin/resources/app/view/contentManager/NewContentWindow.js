@@ -28,7 +28,7 @@ Ext.define('Admin.view.contentManager.NewContentWindow', {
                           '<img src="{iconUrl}?size=32"/>' +
                           '</div>' +
                           '<div class="admin-data-view-description">' +
-                          '<h6>{name}</h6>' +
+                          '<h6>{displayName}</h6>' +
                           '<p>{qualifiedName}</p>' +
                           '</div>' +
                           '<div class="x-clear"></div>' +
