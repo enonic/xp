@@ -25,6 +25,8 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
 
     listeners: {
         afterrender: function () {
+            this.setLiveMode(this.isLiveMode);
+
             if (this.isLiveMode) {
                 var livePreview = this.down('#livePreview');
                 //TODO update urls when they are ready
@@ -184,16 +186,19 @@ Ext.define('Admin.view.contentManager.wizard.ContentWizardPanel', {
         return wizardData;
     },
 
-    toggleLive: function () {
-        this.isLiveMode = !this.isLiveMode;
+    setLiveMode: function (mode) {
+        this.getLayout().setActiveItem(mode ? 1 : 0);
 
-        this.getLayout().setActiveItem(this.isLiveMode ? 1 : 0);
-
-        if (this.isLiveMode) {
+        if (mode) {
             var livePreview = this.down('#livePreview');
             //TODO update urls when they are ready
             livePreview.load('/dev/live-edit/page/page.jsp');
         }
-    }
+    },
 
+    toggleLive: function () {
+        this.isLiveMode = !this.isLiveMode;
+
+        this.setLiveMode(this.isLiveMode);
+    }
 });
