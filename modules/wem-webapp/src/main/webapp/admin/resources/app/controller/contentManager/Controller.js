@@ -52,6 +52,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
                     var tabItem = {
                         xtype: 'contentDetail',
                         id: me.generateTabId(content[i], false),
+                        isLiveMode: me.getContentDetailPanel().isLiveMode,
                         data: content[i],
                         title: content[i].raw.displayName
                     };
@@ -81,6 +82,7 @@ Ext.define('Admin.controller.contentManager.Controller', {
             return {
                 xtype: 'contentWizardPanel',
                 title: response.content.displayName,
+                isLiveMode: me.getContentDetailPanel().isLiveMode,
                 data: {contentType: response.contentType, content: response.content}
             };
         };
