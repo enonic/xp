@@ -2,7 +2,7 @@ package com.enonic.wem.web.rest.resource.content;
 
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.enonic.wem.api.content.BaseTypeKey;
+import com.enonic.wem.api.content.schema.BaseTypeKey;
 import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
 
 public final class BaseTypeImageUriResolver

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.content.BaseTypeKey;
+import com.enonic.wem.api.content.schema.BaseTypeKey;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinNames;

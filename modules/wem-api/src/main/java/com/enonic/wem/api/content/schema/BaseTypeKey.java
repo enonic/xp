@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content;
+package com.enonic.wem.api.content.schema;
 
 
 import java.util.regex.Matcher;
@@ -8,6 +8,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
+import com.enonic.wem.api.content.BaseTypeKind;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.schema.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;

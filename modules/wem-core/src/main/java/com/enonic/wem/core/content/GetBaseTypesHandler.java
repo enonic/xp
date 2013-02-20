@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.command.content.GetBaseTypes;
-import com.enonic.wem.api.content.BaseType;
+import com.enonic.wem.api.command.content.schema.GetBaseTypes;
 import com.enonic.wem.api.content.BaseTypeKind;
-import com.enonic.wem.api.content.BaseTypes;
+import com.enonic.wem.api.content.schema.BaseType;
+import com.enonic.wem.api.content.schema.BaseTypes;
 import com.enonic.wem.api.content.schema.mixin.Mixins;
 import com.enonic.wem.api.content.schema.relationshiptype.RelationshipTypes;
 import com.enonic.wem.api.content.schema.type.ContentTypes;

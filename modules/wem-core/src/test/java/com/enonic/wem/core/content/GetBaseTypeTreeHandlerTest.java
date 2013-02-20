@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.GetBaseTypeTree;
+import com.enonic.wem.api.command.content.schema.GetBaseTypeTree;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.Mixins;
 import com.enonic.wem.api.content.schema.relationshiptype.RelationshipType;

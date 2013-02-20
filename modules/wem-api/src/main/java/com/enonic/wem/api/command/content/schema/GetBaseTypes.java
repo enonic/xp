@@ -1,32 +1,31 @@
-package com.enonic.wem.api.command.content;
+package com.enonic.wem.api.command.content.schema;
 
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.BaseType;
 import com.enonic.wem.api.content.BaseTypeKind;
-import com.enonic.wem.api.support.tree.Tree;
+import com.enonic.wem.api.content.schema.BaseTypes;
 
-public final class GetBaseTypeTree
-    extends Command<Tree<BaseType>>
+public final class GetBaseTypes
+    extends Command<BaseTypes>
 {
     private EnumSet<BaseTypeKind> baseTypes;
 
-    public GetBaseTypeTree()
+    public GetBaseTypes()
     {
         baseTypes = EnumSet.allOf( BaseTypeKind.class );
     }
 
-    public GetBaseTypeTree includeTypes( final BaseTypeKind... baseTypeKinds )
+    public GetBaseTypes includeTypes( final BaseTypeKind... baseTypeKinds )
     {
         baseTypes.clear();
         baseTypes.addAll( Arrays.asList( baseTypeKinds ) );
         return this;
     }
 
-    public GetBaseTypeTree includeTypes( final Set<BaseTypeKind> baseTypeKinds )
+    public GetBaseTypes includeTypes( final Set<BaseTypeKind> baseTypeKinds )
     {
         baseTypes.clear();
         baseTypes.addAll( baseTypeKinds );
@@ -41,5 +40,6 @@ public final class GetBaseTypeTree
     @Override
     public void validate()
     {
+        // nothing to validate
     }
 }

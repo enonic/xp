@@ -4,8 +4,8 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.content.BaseType;
-import com.enonic.wem.api.content.BaseTypes;
+import com.enonic.wem.api.content.schema.BaseType;
+import com.enonic.wem.api.content.schema.BaseTypes;
 import com.enonic.wem.core.content.BaseTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
 import com.enonic.wem.web.rest.resource.content.BaseTypeImageUriResolver;

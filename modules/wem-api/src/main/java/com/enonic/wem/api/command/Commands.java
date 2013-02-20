@@ -1,9 +1,9 @@
 package com.enonic.wem.api.command;
 
 import com.enonic.wem.api.command.account.AccountCommands;
-import com.enonic.wem.api.command.content.BaseTypeCommands;
 import com.enonic.wem.api.command.content.ContentCommands;
 import com.enonic.wem.api.command.content.relationship.RelationshipCommands;
+import com.enonic.wem.api.command.content.schema.BaseTypeCommands;
 import com.enonic.wem.api.command.content.schema.mixin.MixinCommands;
 import com.enonic.wem.api.command.content.schema.relationshiptype.RelationshipTypeCommands;
 import com.enonic.wem.api.command.content.schema.type.ContentTypeCommands;

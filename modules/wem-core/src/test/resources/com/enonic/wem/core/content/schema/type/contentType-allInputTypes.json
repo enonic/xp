@@ -158,7 +158,7 @@
                     "builtIn": true
                 },
                 "config": {
-                    "com.enonic.wem.api.content.type.form.inputtype.SingleSelectorConfig": {
+                    "com.enonic.wem.api.content.schema.type.form.inputtype.SingleSelectorConfig": {
                         "selectorType": "DROPDOWN",
                         "options": [
                             {

@@ -6,7 +6,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.BaseType;
+import com.enonic.wem.api.content.schema.BaseType;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
 import com.enonic.wem.core.content.BaseTypeJsonSerializer;

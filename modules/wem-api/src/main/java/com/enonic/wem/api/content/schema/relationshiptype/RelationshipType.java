@@ -11,8 +11,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.content.BaseType;
-import com.enonic.wem.api.content.BaseTypeKey;
+import com.enonic.wem.api.content.schema.BaseType;
+import com.enonic.wem.api.content.schema.BaseTypeKey;
 import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;

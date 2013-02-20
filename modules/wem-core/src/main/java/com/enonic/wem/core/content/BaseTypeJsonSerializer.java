@@ -5,7 +5,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.content.BaseType;
+import com.enonic.wem.api.content.schema.BaseType;
 import com.enonic.wem.api.content.schema.type.ContentType;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 

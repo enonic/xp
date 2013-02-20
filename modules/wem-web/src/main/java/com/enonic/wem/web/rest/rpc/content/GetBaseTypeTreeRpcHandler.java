@@ -5,9 +5,9 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.command.content.GetBaseTypeTree;
-import com.enonic.wem.api.content.BaseType;
+import com.enonic.wem.api.command.content.schema.GetBaseTypeTree;
 import com.enonic.wem.api.content.BaseTypeKind;
+import com.enonic.wem.api.content.schema.BaseType;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;

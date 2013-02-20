@@ -1,8 +1,9 @@
-package com.enonic.wem.api.content;
+package com.enonic.wem.api.content.schema;
 
 
 import org.joda.time.DateTime;
 
+import com.enonic.wem.api.content.ModuleBasedQualifiedName;
 import com.enonic.wem.api.module.ModuleName;
 
 public interface BaseType
