@@ -32,7 +32,7 @@ import static com.enonic.wem.api.command.Commands.mixin;
 import static com.enonic.wem.api.command.Commands.relationshipType;
 
 @Component
-@Path("basetype/image")
+@Path("schema/image")
 @Produces("image/*")
 public final class SchemaImageResource
 {

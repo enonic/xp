@@ -68,7 +68,7 @@
                     }
                 }
             ],
-            "iconUrl": "http://localhost/admin/rest/basetype/image/ContentType:myModule:myCtype"
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:myModule:myCtype"
         },
         {
             "name": "theContentType",
@@ -99,7 +99,7 @@
                     }
                 }
             ],
-            "iconUrl": "http://localhost/admin/rest/basetype/image/ContentType:otherModule:theContentType"
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:otherModule:theContentType"
         }
     ]
 }

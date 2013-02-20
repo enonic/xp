@@ -31,7 +31,7 @@ final class ListSchemasRpcJsonResult
             final JsonNode contentTypeJson = serializeContentType( schema );
             contentTypeArray.add( contentTypeJson );
         }
-        json.put( "baseTypes", contentTypeArray );
+        json.put( "schemas", contentTypeArray );
     }
 
     private JsonNode serializeContentType( final Schema schema )

@@ -26,7 +26,7 @@ public final class ListSchemasRpcHandler
 {
     public ListSchemasRpcHandler()
     {
-        super( "baseType_list" );
+        super( "schema_list" );
     }
 
     @Override

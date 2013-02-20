@@ -12,7 +12,7 @@ public final class SchemaImageUriResolver
     {
         final String baseTypeValue = schemaKey.toString();
         return ServletUriComponentsBuilder.fromCurrentContextPath().
-            path( "/admin/rest/basetype/image/" ).
+            path( "/admin/rest/schema/image/" ).
             path( String.valueOf( baseTypeValue ) ).
             build().toString();
     }

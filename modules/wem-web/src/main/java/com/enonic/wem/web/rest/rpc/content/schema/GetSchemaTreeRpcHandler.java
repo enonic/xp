@@ -21,7 +21,7 @@ public final class GetSchemaTreeRpcHandler
 {
     public GetSchemaTreeRpcHandler()
     {
-        super( "baseType_tree" );
+        super( "schema_tree" );
     }
 
     @Override

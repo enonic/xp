@@ -30,7 +30,7 @@ public class GetSchemaTreeJsonResult
     protected void serialize( final ObjectNode json )
     {
         json.put( "total", baseTypeTree.deepSize() );
-        json.put( "baseTypes", serializeTree() );
+        json.put( "schemas", serializeTree() );
     }
 
     private JsonNode serializeTree()
@@ -48,7 +48,7 @@ public class GetSchemaTreeJsonResult
     private JsonNode serializeNode( final TreeNode<Schema> node )
     {
         final ObjectNode contentTypeJson = serializeBaseType( node.getObject() );
-        final ArrayNode childArrayNode = contentTypeJson.putArray( "baseTypes" );
+        final ArrayNode childArrayNode = contentTypeJson.putArray( "schemas" );
         contentTypeJson.put( "hasChildren", node.hasChildren() );
 
         for ( TreeNode<Schema> child : node.getChildren() )

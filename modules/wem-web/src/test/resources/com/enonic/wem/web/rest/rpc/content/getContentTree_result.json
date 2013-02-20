@@ -14,7 +14,7 @@
             "modifiedTime": null,
             "editable": true,
             "deletable": true,
-            "iconUrl": "http://localhost/admin/rest/basetype/image/ContentType:System:unstructured",
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:System:unstructured",
             "hasChildren": true,
             "contents": [
                 {
@@ -29,7 +29,7 @@
                     "modifiedTime": null,
                     "editable": true,
                     "deletable": true,
-                    "iconUrl": "http://localhost/admin/rest/basetype/image/ContentType:System:unstructured",
+                    "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:System:unstructured",
                     "hasChildren": true,
                     "contents": [
                         {
@@ -44,7 +44,7 @@
                             "modifiedTime": null,
                             "editable": true,
                             "deletable": true,
-                            "iconUrl": "http://localhost/admin/rest/basetype/image/ContentType:System:unstructured",
+                            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:System:unstructured",
                             "hasChildren": false,
                             "contents": [ ]
                         }
@@ -62,7 +62,7 @@
                     "modifiedTime": null,
                     "editable": true,
                     "deletable": true,
-                    "iconUrl": "http://localhost/admin/rest/basetype/image/ContentType:System:unstructured",
+                    "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:System:unstructured",
                     "hasChildren": false,
                     "contents": [ ]
                 }

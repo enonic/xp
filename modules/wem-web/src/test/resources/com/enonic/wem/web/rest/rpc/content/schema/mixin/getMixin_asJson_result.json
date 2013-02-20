@@ -21,6 +21,6 @@
                 "builtIn": true
             }
         },
-        "iconUrl": "http://localhost/admin/rest/basetype/image/Mixin:myModule:inputText1"
+        "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:myModule:inputText1"
     }
 }
