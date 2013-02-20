@@ -6,8 +6,8 @@ import java.util.LinkedHashMap;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.mixin.Mixin;
-import com.enonic.wem.api.content.mixin.MixinFetcher;
+import com.enonic.wem.api.content.schema.mixin.Mixin;
+import com.enonic.wem.api.content.schema.mixin.MixinFetcher;
 
 public class FormItems
     implements Iterable<FormItem>

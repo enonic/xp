@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.type.form;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.mixin.Mixin;
+import com.enonic.wem.api.content.schema.mixin.Mixin;
 
 public abstract class FormItem
 {

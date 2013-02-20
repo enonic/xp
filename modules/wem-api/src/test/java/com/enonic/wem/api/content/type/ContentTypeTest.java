@@ -3,8 +3,8 @@ package com.enonic.wem.api.content.type;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.mixin.Mixin;
-import com.enonic.wem.api.content.mixin.MockMixinFetcher;
+import com.enonic.wem.api.content.schema.mixin.Mixin;
+import com.enonic.wem.api.content.schema.mixin.MockMixinFetcher;
 import com.enonic.wem.api.content.type.form.FieldSet;
 import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.MixinReference;

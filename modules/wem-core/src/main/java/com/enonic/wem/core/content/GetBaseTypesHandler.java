@@ -14,12 +14,12 @@ import com.enonic.wem.api.command.content.GetBaseTypes;
 import com.enonic.wem.api.content.BaseType;
 import com.enonic.wem.api.content.BaseTypeKind;
 import com.enonic.wem.api.content.BaseTypes;
-import com.enonic.wem.api.content.mixin.Mixins;
+import com.enonic.wem.api.content.schema.mixin.Mixins;
 import com.enonic.wem.api.content.schema.relationshiptype.RelationshipTypes;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.content.mixin.dao.MixinDao;
+import com.enonic.wem.core.content.schema.mixin.dao.MixinDao;
 import com.enonic.wem.core.content.schema.relationshiptype.dao.RelationshipTypeDao;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 

@@ -5,7 +5,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.content.mixin.QualifiedMixinName;
+import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.type.form.MixinReference;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;

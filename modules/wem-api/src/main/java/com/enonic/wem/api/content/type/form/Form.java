@@ -4,7 +4,7 @@ package com.enonic.wem.api.content.type.form;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.mixin.MixinFetcher;
+import com.enonic.wem.api.content.schema.mixin.MixinFetcher;
 
 public final class Form
 {

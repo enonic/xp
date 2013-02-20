@@ -3,8 +3,8 @@ package com.enonic.wem.core.content.type;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.mixin.Mixin;
-import com.enonic.wem.api.content.mixin.MockMixinFetcher;
+import com.enonic.wem.api.content.schema.mixin.Mixin;
+import com.enonic.wem.api.content.schema.mixin.MockMixinFetcher;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.type.form.FieldSet;
@@ -18,7 +18,7 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.AbstractSerializerTest;
 
-import static com.enonic.wem.api.content.mixin.Mixin.newMixin;
+import static com.enonic.wem.api.content.schema.mixin.Mixin.newMixin;
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;

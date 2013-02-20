@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.type.form;
 
 import org.jdom.Element;
 
-import com.enonic.wem.api.content.mixin.QualifiedMixinName;
+import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.type.form.FieldSet;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.FormItemSet;

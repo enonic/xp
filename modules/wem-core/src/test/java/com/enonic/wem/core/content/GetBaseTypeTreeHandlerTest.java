@@ -8,8 +8,8 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.GetBaseTypeTree;
-import com.enonic.wem.api.content.mixin.Mixin;
-import com.enonic.wem.api.content.mixin.Mixins;
+import com.enonic.wem.api.content.schema.mixin.Mixin;
+import com.enonic.wem.api.content.schema.mixin.Mixins;
 import com.enonic.wem.api.content.schema.relationshiptype.RelationshipType;
 import com.enonic.wem.api.content.schema.relationshiptype.RelationshipTypes;
 import com.enonic.wem.api.content.type.ContentType;
@@ -19,11 +19,11 @@ import com.enonic.wem.api.content.type.form.FormItemSet;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.content.mixin.dao.MixinDao;
+import com.enonic.wem.core.content.schema.mixin.dao.MixinDao;
 import com.enonic.wem.core.content.schema.relationshiptype.dao.RelationshipTypeDao;
 import com.enonic.wem.core.content.type.dao.ContentTypeDao;
 
-import static com.enonic.wem.api.content.mixin.Mixin.newMixin;
+import static com.enonic.wem.api.content.schema.mixin.Mixin.newMixin;
 import static com.enonic.wem.api.content.schema.relationshiptype.RelationshipType.newRelationshipType;
 import static com.enonic.wem.api.content.type.ContentType.newContentType;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;

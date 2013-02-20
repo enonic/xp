@@ -3,11 +3,11 @@ package com.enonic.wem.api.content.type.form;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.mixin.Mixin;
+import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
 
-import static com.enonic.wem.api.content.mixin.Mixin.newMixin;
+import static com.enonic.wem.api.content.schema.mixin.Mixin.newMixin;
 import static com.enonic.wem.api.content.type.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static com.enonic.wem.api.content.type.form.MixinReference.newMixinReference;
