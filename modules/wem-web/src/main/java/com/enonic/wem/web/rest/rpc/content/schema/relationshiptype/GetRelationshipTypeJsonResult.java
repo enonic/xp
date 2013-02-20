@@ -29,7 +29,7 @@ class GetRelationshipTypeJsonResult
     {
         json.put( "success", true );
         final ObjectNode relationshipTypeJson = (ObjectNode) relationshipTypeJsonSerializer.serialize( relationshipType );
-        relationshipTypeJson.put( "iconUrl", SchemaImageUriResolver.resolve( relationshipType.getBaseTypeKey() ) );
+        relationshipTypeJson.put( "iconUrl", SchemaImageUriResolver.resolve( relationshipType.getSchemaKey() ) );
         json.put( "relationshipType", relationshipTypeJson );
     }
 }

@@ -1,7 +1,7 @@
 {
-    "name": "AllBaseTypes",
+    "name": "AllSchemas",
     "module": "myModule",
-    "qualifiedName": "myModule:AllBaseTypes",
+    "qualifiedName": "myModule:AllSchemas",
     "displayName": "All the Base Types",
     "superType": "System:Content",
     "isAbstract": false,

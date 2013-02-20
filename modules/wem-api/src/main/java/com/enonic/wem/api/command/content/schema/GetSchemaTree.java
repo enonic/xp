@@ -12,30 +12,30 @@ import com.enonic.wem.api.support.tree.Tree;
 public final class GetSchemaTree
     extends Command<Tree<Schema>>
 {
-    private EnumSet<SchemaKind> baseTypes;
+    private EnumSet<SchemaKind> schemas;
 
     public GetSchemaTree()
     {
-        baseTypes = EnumSet.allOf( SchemaKind.class );
+        schemas = EnumSet.allOf( SchemaKind.class );
     }
 
     public GetSchemaTree includeTypes( final SchemaKind... schemaKinds )
     {
-        baseTypes.clear();
-        baseTypes.addAll( Arrays.asList( schemaKinds ) );
+        schemas.clear();
+        schemas.addAll( Arrays.asList( schemaKinds ) );
         return this;
     }
 
-    public GetSchemaTree includeTypes( final Set<SchemaKind> schemaKinds )
+    public GetSchemaTree includeKind( final Set<SchemaKind> schemaKinds )
     {
-        baseTypes.clear();
-        baseTypes.addAll( schemaKinds );
+        schemas.clear();
+        schemas.addAll( schemaKinds );
         return this;
     }
 
-    public boolean isIncludeType( final SchemaKind schemaKind )
+    public boolean isIncludingKind( final SchemaKind schemaKind )
     {
-        return baseTypes.contains( schemaKind );
+        return schemas.contains( schemaKind );
     }
 
     @Override

@@ -13,7 +13,7 @@ import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 
-import static com.enonic.wem.api.command.Commands.baseType;
+import static com.enonic.wem.api.command.Commands.schema;
 
 @Component
 public final class GetSchemaTreeRpcHandler
@@ -38,15 +38,15 @@ public final class GetSchemaTreeRpcHandler
             context.setResult( new JsonErrorResult( "Invalid parameter 'types': [{0}]", context.param( "types" ).asString() ) );
             return;
         }
-        final GetSchemaTree command = baseType().getTree();
+        final GetSchemaTree command = schema().getTree();
         if ( !typesToInclude.isEmpty() )
         {
-            command.includeTypes( typesToInclude );
+            command.includeKind( typesToInclude );
         }
 
-        final Tree<Schema> baseTypeTree = client.execute( command );
+        final Tree<Schema> schemaTree = client.execute( command );
 
-        context.setResult( new GetSchemaTreeJsonResult( baseTypeTree ) );
+        context.setResult( new GetSchemaTreeJsonResult( schemaTree ) );
     }
 
     private Set<SchemaKind> getTypesToInclude( final JsonRpcContext context )

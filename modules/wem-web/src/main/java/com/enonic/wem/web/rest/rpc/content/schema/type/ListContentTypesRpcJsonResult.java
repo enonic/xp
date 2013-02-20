@@ -37,7 +37,7 @@ final class ListContentTypesRpcJsonResult
     private JsonNode serializeContentType( final ContentType contentType )
     {
         final ObjectNode contentTypeJson = (ObjectNode) contentTypeSerializer.toJson( contentType );
-        contentTypeJson.put( "iconUrl", SchemaImageUriResolver.resolve( contentType.getBaseTypeKey() ) );
+        contentTypeJson.put( "iconUrl", SchemaImageUriResolver.resolve( contentType.getSchemaKey() ) );
         return contentTypeJson;
     }
 }

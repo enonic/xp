@@ -43,7 +43,7 @@ class ListRelationshipTypeJsonResult
         for ( final RelationshipType relationshipType : list )
         {
             final ObjectNode contentJson = (ObjectNode) relationshipTypeJsonSerializer.serialize( relationshipType );
-            contentJson.put( "iconUrl", SchemaImageUriResolver.resolve( relationshipType.getBaseTypeKey() ) );
+            contentJson.put( "iconUrl", SchemaImageUriResolver.resolve( relationshipType.getSchemaKey() ) );
             relationshipTypesNode.add( contentJson );
         }
         return relationshipTypesNode;

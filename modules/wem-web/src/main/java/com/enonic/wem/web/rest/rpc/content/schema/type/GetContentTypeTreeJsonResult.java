@@ -61,7 +61,7 @@ public class GetContentTypeTreeJsonResult
     private ObjectNode serializeContentType( final ContentType contentType )
     {
         final ObjectNode contentTypeJson = (ObjectNode) contentTypeSerializer.toJson( contentType );
-        contentTypeJson.put( "iconUrl", SchemaImageUriResolver.resolve( contentType.getBaseTypeKey() ) );
+        contentTypeJson.put( "iconUrl", SchemaImageUriResolver.resolve( contentType.getSchemaKey() ) );
         return contentTypeJson;
     }
 }

@@ -18,7 +18,7 @@ public class SchemaJsonSerializer
     {
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectNode objectNode = mapper.createObjectNode();
-        objectNode.put( "key", schema.getBaseTypeKey().toString() );
+        objectNode.put( "key", schema.getSchemaKey().toString() );
         objectNode.put( "name", schema.getName() );
         objectNode.put( "module", schema.getModuleName().toString() );
         objectNode.put( "qualifiedName", schema.getQualifiedName().toString() );
@@ -47,6 +47,6 @@ public class SchemaJsonSerializer
     @Override
     protected ContentType parse( final JsonNode node )
     {
-        throw new UnsupportedOperationException( "Parsing of BaseType is not supported" );
+        throw new UnsupportedOperationException( "Parsing of Schema is not supported" );
     }
 }

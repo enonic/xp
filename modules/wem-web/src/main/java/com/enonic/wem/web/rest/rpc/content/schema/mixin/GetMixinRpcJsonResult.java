@@ -23,7 +23,7 @@ final class GetMixinRpcJsonResult
     protected void serialize( final ObjectNode json )
     {
         final ObjectNode mixinJson = (ObjectNode) MIXIN_JSON_SERIALIZER.toJson( mixin );
-        mixinJson.put( "iconUrl", SchemaImageUriResolver.resolve( mixin.getBaseTypeKey() ) );
+        mixinJson.put( "iconUrl", SchemaImageUriResolver.resolve( mixin.getSchemaKey() ) );
         json.put( "mixin", mixinJson );
     }
 }

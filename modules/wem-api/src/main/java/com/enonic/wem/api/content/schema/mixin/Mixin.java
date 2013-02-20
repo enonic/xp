@@ -84,7 +84,7 @@ public class Mixin
     }
 
     @Override
-    public SchemaKey getBaseTypeKey()
+    public SchemaKey getSchemaKey()
     {
         return SchemaKey.from( qualifiedName );
     }

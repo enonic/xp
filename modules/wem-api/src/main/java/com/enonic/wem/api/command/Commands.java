@@ -22,7 +22,7 @@ public final class Commands
 
     private static final RelationshipCommands RELATIONSHIP_COMMANDS = new RelationshipCommands();
 
-    private static final SchemaCommands BASE_TYPE_COMMANDS = new SchemaCommands();
+    private static final SchemaCommands SCHEMA_COMMANDS = new SchemaCommands();
 
     private static final ContentTypeCommands CONTENT_TYPE_COMMANDS = new ContentTypeCommands();
 
@@ -54,9 +54,9 @@ public final class Commands
         return RELATIONSHIP_COMMANDS;
     }
 
-    public static SchemaCommands baseType()
+    public static SchemaCommands schema()
     {
-        return BASE_TYPE_COMMANDS;
+        return SCHEMA_COMMANDS;
     }
 
     public static ContentTypeCommands contentType()

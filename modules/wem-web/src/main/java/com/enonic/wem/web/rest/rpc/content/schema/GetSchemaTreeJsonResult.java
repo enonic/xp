@@ -16,20 +16,20 @@ import com.enonic.wem.web.rest.resource.content.schema.SchemaImageUriResolver;
 public class GetSchemaTreeJsonResult
     extends JsonResult
 {
-    private final static SchemaJsonSerializer baseTypeSerializer = new SchemaJsonSerializer();
+    private final static SchemaJsonSerializer schemaSerializer = new SchemaJsonSerializer();
 
-    private Tree<Schema> baseTypeTree;
+    private Tree<Schema> schemaTree;
 
-    GetSchemaTreeJsonResult( final Tree<Schema> baseTypeTree )
+    GetSchemaTreeJsonResult( final Tree<Schema> schemaTree )
     {
-        Preconditions.checkNotNull( baseTypeTree );
-        this.baseTypeTree = baseTypeTree;
+        Preconditions.checkNotNull( schemaTree );
+        this.schemaTree = schemaTree;
     }
 
     @Override
     protected void serialize( final ObjectNode json )
     {
-        json.put( "total", baseTypeTree.deepSize() );
+        json.put( "total", schemaTree.deepSize() );
         json.put( "schemas", serializeTree() );
     }
 
@@ -37,7 +37,7 @@ public class GetSchemaTreeJsonResult
     {
         final ArrayNode contentTypesNode = arrayNode();
 
-        for ( TreeNode<Schema> branch : baseTypeTree )
+        for ( TreeNode<Schema> branch : schemaTree )
         {
             contentTypesNode.add( serializeNode( branch ) );
         }
@@ -47,7 +47,7 @@ public class GetSchemaTreeJsonResult
 
     private JsonNode serializeNode( final TreeNode<Schema> node )
     {
-        final ObjectNode contentTypeJson = serializeBaseType( node.getObject() );
+        final ObjectNode contentTypeJson = serializeSchema( node.getObject() );
         final ArrayNode childArrayNode = contentTypeJson.putArray( "schemas" );
         contentTypeJson.put( "hasChildren", node.hasChildren() );
 
@@ -59,10 +59,10 @@ public class GetSchemaTreeJsonResult
     }
 
 
-    private ObjectNode serializeBaseType( final Schema schema )
+    private ObjectNode serializeSchema( final Schema schema )
     {
-        final ObjectNode baseTypeJson = (ObjectNode) baseTypeSerializer.toJson( schema );
-        baseTypeJson.put( "iconUrl", SchemaImageUriResolver.resolve( schema.getBaseTypeKey() ) );
-        return baseTypeJson;
+        final ObjectNode schemaJson = (ObjectNode) schemaSerializer.toJson( schema );
+        schemaJson.put( "iconUrl", SchemaImageUriResolver.resolve( schema.getSchemaKey() ) );
+        return schemaJson;
     }
 }

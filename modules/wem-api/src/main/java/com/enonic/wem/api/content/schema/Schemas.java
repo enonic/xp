@@ -27,10 +27,10 @@ public final class Schemas
         return new Schemas( ImmutableList.copyOf( schemas ) );
     }
 
-    public static Schemas from( final Iterable<? extends Schema>... baseTypes )
+    public static Schemas from( final Iterable<? extends Schema>... schemas )
     {
         final List<Schema> all = Lists.newArrayList();
-        for ( final Iterable<? extends Schema> iterable : baseTypes )
+        for ( final Iterable<? extends Schema> iterable : schemas )
         {
             for ( Schema schema : iterable )
             {
@@ -40,9 +40,9 @@ public final class Schemas
         return new Schemas( ImmutableList.copyOf( all ) );
     }
 
-    public static Schemas from( final Collection<? extends Schema> baseTypes )
+    public static Schemas from( final Collection<? extends Schema> schemas )
     {
-        return new Schemas( ImmutableList.copyOf( baseTypes ) );
+        return new Schemas( ImmutableList.copyOf( schemas ) );
     }
 
 }

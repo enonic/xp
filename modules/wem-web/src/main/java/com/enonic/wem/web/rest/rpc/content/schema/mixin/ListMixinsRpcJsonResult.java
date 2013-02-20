@@ -29,7 +29,7 @@ final class ListMixinsRpcJsonResult
         for ( Mixin mixin : mixins )
         {
             final ObjectNode mixinJson = (ObjectNode) serializeMixin( mixin );
-            mixinJson.put( "iconUrl", SchemaImageUriResolver.resolve( mixin.getBaseTypeKey() ) );
+            mixinJson.put( "iconUrl", SchemaImageUriResolver.resolve( mixin.getSchemaKey() ) );
             mixinArray.add( mixinJson );
         }
         json.put( "mixins", mixinArray );

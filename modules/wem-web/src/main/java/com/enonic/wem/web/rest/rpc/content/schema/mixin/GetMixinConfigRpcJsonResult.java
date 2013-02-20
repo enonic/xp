@@ -24,6 +24,6 @@ final class GetMixinConfigRpcJsonResult
     {
         final String mixinXml = mixinXmlSerializer.toString( mixin );
         json.put( "mixinXml", mixinXml );
-        json.put( "iconUrl", SchemaImageUriResolver.resolve( mixin.getBaseTypeKey() ) );
+        json.put( "iconUrl", SchemaImageUriResolver.resolve( mixin.getSchemaKey() ) );
     }
 }

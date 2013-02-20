@@ -23,6 +23,6 @@ final class GetContentTypeRpcJsonResult
     protected void serialize( final ObjectNode json )
     {
         json.put( "contentType", contentTypeSerializer.toJson( contentType ) );
-        json.put( "iconUrl", SchemaImageUriResolver.resolve( contentType.getBaseTypeKey() ) );
+        json.put( "iconUrl", SchemaImageUriResolver.resolve( contentType.getSchemaKey() ) );
     }
 }

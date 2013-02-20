@@ -60,7 +60,7 @@ public class GetSchemaTreeHandlerTest
     }
 
     @Test
-    public void getBaseTypeTree()
+    public void getSchemaTree()
         throws Exception
     {
         // setup
@@ -104,7 +104,7 @@ public class GetSchemaTreeHandlerTest
         Mockito.when( relationshipTypeDao.selectAll( any( Session.class ) ) ).thenReturn( relationshipTypes );
 
         // exercise
-        final GetSchemaTree command = Commands.baseType().getTree();
+        final GetSchemaTree command = Commands.schema().getTree();
         this.handler.handle( this.context, command );
 
         // verify

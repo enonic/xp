@@ -47,55 +47,55 @@ public final class SchemaImageResource
     }
 
     @GET
-    @Path("{baseTypeKey}")
-    public Response getBaseTypeIcon( @PathParam("baseTypeKey") final String baseTypeKey,
-                                     @QueryParam("size") @DefaultValue("128") final int size )
+    @Path("{schemaKey}")
+    public Response getSchemaIcon( @PathParam("schemaKey") final String schemaKeyAsString,
+                                   @QueryParam("size") @DefaultValue("128") final int size )
         throws Exception
     {
-        final SchemaKey baseType = SchemaKey.from( baseTypeKey );
+        final SchemaKey schemaKey = SchemaKey.from( schemaKeyAsString );
 
         String mimeType = "image/png";
-        BufferedImage baseTypeImage = null;
-        if ( baseType.isContentType() )
+        BufferedImage schemaImage = null;
+        if ( schemaKey.isContentType() )
         {
             final Icon contentTypeIcon =
-                findRootContentTypeIcon( new QualifiedContentTypeName( baseType.getModuleName(), baseType.getLocalName() ) );
-            baseTypeImage = helper.getIconImage( contentTypeIcon, size );
+                findRootContentTypeIcon( new QualifiedContentTypeName( schemaKey.getModuleName(), schemaKey.getLocalName() ) );
+            schemaImage = helper.getIconImage( contentTypeIcon, size );
             mimeType = contentTypeIcon == null ? mimeType : contentTypeIcon.getMimeType();
         }
-        else if ( baseType.isRelationshipType() )
+        else if ( schemaKey.isRelationshipType() )
         {
             final Icon relationshipTypeIcon =
-                findRelationshipTypeIcon( new QualifiedRelationshipTypeName( baseType.getModuleName(), baseType.getLocalName() ) );
+                findRelationshipTypeIcon( new QualifiedRelationshipTypeName( schemaKey.getModuleName(), schemaKey.getLocalName() ) );
             if ( relationshipTypeIcon == null )
             {
-                baseTypeImage = helper.getDefaultRelationshipTypeImage( size );
+                schemaImage = helper.getDefaultRelationshipTypeImage( size );
             }
             else
             {
-                baseTypeImage = helper.getIconImage( relationshipTypeIcon, size );
+                schemaImage = helper.getIconImage( relationshipTypeIcon, size );
                 mimeType = relationshipTypeIcon.getMimeType();
             }
         }
-        else if ( baseType.isMixin() )
+        else if ( schemaKey.isMixin() )
         {
-            final Icon mixinIcon = findMixinIcon( new QualifiedMixinName( baseType.getModuleName(), baseType.getLocalName() ) );
+            final Icon mixinIcon = findMixinIcon( new QualifiedMixinName( schemaKey.getModuleName(), schemaKey.getLocalName() ) );
             if ( mixinIcon == null )
             {
-                baseTypeImage = helper.getDefaultMixinImage( size );
+                schemaImage = helper.getDefaultMixinImage( size );
             }
             else
             {
-                baseTypeImage = helper.getIconImage( mixinIcon, size );
+                schemaImage = helper.getIconImage( mixinIcon, size );
                 mimeType = mixinIcon.getMimeType();
             }
         }
 
-        if ( baseTypeImage == null )
+        if ( schemaImage == null )
         {
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
-        return Response.ok( baseTypeImage, mimeType ).build();
+        return Response.ok( schemaImage, mimeType ).build();
     }
 
     private Icon findRootContentTypeIcon( final QualifiedContentTypeName contentTypeName )

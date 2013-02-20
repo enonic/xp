@@ -8,7 +8,7 @@ import com.enonic.wem.api.module.ModuleName;
 
 public interface Schema
 {
-    SchemaKey getBaseTypeKey();
+    SchemaKey getSchemaKey();
 
     String getName();
 

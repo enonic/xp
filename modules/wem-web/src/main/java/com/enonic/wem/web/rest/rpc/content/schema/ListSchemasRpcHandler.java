@@ -46,7 +46,7 @@ public final class ListSchemasRpcHandler
         final String searchFilter = context.param( "search" ).asString( "" ).trim();
         final Set<String> moduleNamesFilter = Sets.newHashSet( context.param( "modules" ).asStringArray() );
 
-        final SchemaTypes command = Commands.baseType().get();
+        final SchemaTypes command = Commands.schema().get();
         if ( !typesToInclude.isEmpty() )
         {
             command.includeTypes( typesToInclude );
@@ -76,10 +76,10 @@ public final class ListSchemasRpcHandler
 
     private boolean matchesSearchFilter( final Schema schema, final String searchString )
     {
-        final String baseTypeName = schema.getQualifiedName().toString().toLowerCase();
+        final String schemaName = schema.getQualifiedName().toString().toLowerCase();
         final String displayName = Strings.nullToEmpty( schema.getDisplayName() ).toLowerCase();
         final String searchText = searchString.toLowerCase();
-        return searchText.isEmpty() || baseTypeName.contains( searchText ) || displayName.contains( searchText );
+        return searchText.isEmpty() || schemaName.contains( searchText ) || displayName.contains( searchText );
     }
 
     private boolean matchesModuleFilter( final Schema schema, final Set<String> moduleNamesFilter )

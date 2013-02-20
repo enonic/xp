@@ -13,7 +13,7 @@ import com.enonic.wem.web.rest.resource.content.schema.SchemaImageUriResolver;
 final class ListSchemasRpcJsonResult
     extends JsonResult
 {
-    private final SchemaJsonSerializer baseTypeSerializer = new SchemaJsonSerializer();
+    private final SchemaJsonSerializer schemaSerializer = new SchemaJsonSerializer();
 
     private final Schemas schemas;
 
@@ -36,8 +36,8 @@ final class ListSchemasRpcJsonResult
 
     private JsonNode serializeContentType( final Schema schema )
     {
-        final ObjectNode baseTypeJson = (ObjectNode) baseTypeSerializer.toJson( schema );
-        baseTypeJson.put( "iconUrl", SchemaImageUriResolver.resolve( schema.getBaseTypeKey() ) );
-        return baseTypeJson;
+        final ObjectNode schemaJson = (ObjectNode) schemaSerializer.toJson( schema );
+        schemaJson.put( "iconUrl", SchemaImageUriResolver.resolve( schema.getSchemaKey() ) );
+        return schemaJson;
     }
 }

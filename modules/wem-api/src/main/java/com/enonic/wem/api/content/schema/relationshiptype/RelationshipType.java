@@ -121,7 +121,7 @@ public final class RelationshipType
     }
 
     @Override
-    public SchemaKey getBaseTypeKey()
+    public SchemaKey getSchemaKey()
     {
         return SchemaKey.from( qualifiedName );
     }

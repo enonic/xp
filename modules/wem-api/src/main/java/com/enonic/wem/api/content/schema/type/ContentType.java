@@ -118,7 +118,7 @@ public final class ContentType
     }
 
     @Override
-    public SchemaKey getBaseTypeKey()
+    public SchemaKey getSchemaKey()
     {
         return SchemaKey.from( getQualifiedName() );
     }

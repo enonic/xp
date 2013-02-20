@@ -60,7 +60,7 @@ public abstract class AbstractContentTypeSerializerTest
         set.add( layout );
         set.add( newMixinReference().name( "myCommonInput" ).mixin( inputMixin ).build() );
 
-        ContentType.Builder contentTypeBuilder = newContentType().name( "AllBaseTypes" ).module( myModule.getName() );
+        ContentType.Builder contentTypeBuilder = newContentType().name( "AllSchemas" ).module( myModule.getName() );
         contentTypeBuilder.addFormItem( set );
         contentTypeBuilder.displayName( "All the Base Types" );
         contentTypeBuilder.superType( new QualifiedContentTypeName( "System:Content" ) );
@@ -75,7 +75,7 @@ public abstract class AbstractContentTypeSerializerTest
         ContentType actualContentType = toContentType( actualSerialization );
 
         // verify serialization
-        assertSerializedResult( "contentType-allBaseTypes", actualSerialization );
+        assertSerializedResult( "contentType-allSchemaKinds", actualSerialization );
 
         // verify
         assertNotNull( actualContentType.form().getFormItem( "mySet" ) );

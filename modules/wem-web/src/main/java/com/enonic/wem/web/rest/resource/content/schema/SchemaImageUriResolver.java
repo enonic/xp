@@ -10,16 +10,16 @@ public final class SchemaImageUriResolver
 
     public static String resolve( final SchemaKey schemaKey )
     {
-        final String baseTypeValue = schemaKey.toString();
+        final String schemaValue = schemaKey.toString();
         return ServletUriComponentsBuilder.fromCurrentContextPath().
             path( "/admin/rest/schema/image/" ).
-            path( String.valueOf( baseTypeValue ) ).
+            path( String.valueOf( schemaValue ) ).
             build().toString();
     }
 
-    public static String resolve( final QualifiedContentTypeName contentTypeName )
+    public static String resolve( final QualifiedContentTypeName qualifiedName )
     {
-        final SchemaKey schemaKey = SchemaKey.from( contentTypeName );
+        final SchemaKey schemaKey = SchemaKey.from( qualifiedName );
         return resolve( schemaKey );
     }
 }

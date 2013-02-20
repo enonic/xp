@@ -42,21 +42,21 @@ public class GetSchemaTreeHandler
         throws Exception
     {
         final Tree<Schema> typesTree = new Tree<Schema>();
-        if ( command.isIncludeType( SchemaKind.CONTENT_TYPE ) )
+        if ( command.isIncludingKind( SchemaKind.CONTENT_TYPE ) )
         {
             // add all all super content types at root
             final Tree<ContentType> contentTypeTree = new ContentTypeTreeFactory( context.getJcrSession(), contentTypeDao ).createTree();
             typesTree.addNodes( extractRootContentTypes( contentTypeTree ) );
         }
 
-        if ( command.isIncludeType( SchemaKind.RELATIONSHIP_TYPE ) )
+        if ( command.isIncludingKind( SchemaKind.RELATIONSHIP_TYPE ) )
         {
             // add all RelationshipTypes on root
             final RelationshipTypes relationshipTypes = relationshipTypeDao.selectAll( context.getJcrSession() );
             typesTree.createNodes( relationshipTypes );
         }
 
-        if ( command.isIncludeType( SchemaKind.MIXIN ) )
+        if ( command.isIncludingKind( SchemaKind.MIXIN ) )
         {
             // add all Mixins on root
             final Mixins mixins = mixinDao.selectAll( context.getJcrSession() );

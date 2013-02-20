@@ -68,7 +68,7 @@ public class SchemaImageResourceTest
         setupContentType( contentType );
 
         // exercise
-        final Response response = this.controller.getBaseTypeIcon( "ContentType:myModule:myContentType", 20 );
+        final Response response = this.controller.getSchemaIcon( "ContentType:myModule:myContentType", 20 );
         final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -99,7 +99,7 @@ public class SchemaImageResourceTest
         setupContentType( contentType );
 
         // exercise
-        final Response response = this.controller.getBaseTypeIcon( "ContentType:myModule:myContentType", 20 );
+        final Response response = this.controller.getSchemaIcon( "ContentType:myModule:myContentType", 20 );
         final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -116,7 +116,7 @@ public class SchemaImageResourceTest
         try
         {
             // exercise
-            final Response response = this.controller.getBaseTypeIcon( "ContentType:myModule:myContentType", 10 );
+            final Response response = this.controller.getSchemaIcon( "ContentType:myModule:myContentType", 10 );
             final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
         }
         catch ( WebApplicationException e )
@@ -143,7 +143,7 @@ public class SchemaImageResourceTest
         setupMixin( mixin );
 
         // exercise
-        final Response response = this.controller.getBaseTypeIcon( "Mixin:myModule:postalCode", 20 );
+        final Response response = this.controller.getSchemaIcon( "Mixin:myModule:postalCode", 20 );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -162,7 +162,7 @@ public class SchemaImageResourceTest
         setupMixin( mixin );
 
         // exercise
-        final Response response = this.controller.getBaseTypeIcon( "Mixin:myModule:postalCode", 20 );
+        final Response response = this.controller.getSchemaIcon( "Mixin:myModule:postalCode", 20 );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -188,7 +188,7 @@ public class SchemaImageResourceTest
         setupRelationshipType( relationshipType );
 
         // exercise
-        final Response response = this.controller.getBaseTypeIcon( "RelationshipType:myModule:like", 20 );
+        final Response response = this.controller.getSchemaIcon( "RelationshipType:myModule:like", 20 );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -210,7 +210,7 @@ public class SchemaImageResourceTest
         setupRelationshipType( relationshipType );
 
         // exercise
-        final Response response = this.controller.getBaseTypeIcon( "RelationshipType:myModule:like", 20 );
+        final Response response = this.controller.getSchemaIcon( "RelationshipType:myModule:like", 20 );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify

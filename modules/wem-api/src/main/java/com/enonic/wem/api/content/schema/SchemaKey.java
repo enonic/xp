@@ -83,12 +83,12 @@ public final class SchemaKey
 
     public static SchemaKey from( final String value )
     {
-        Preconditions.checkArgument( !Strings.isNullOrEmpty( value ), "BaseTypeKey cannot be null or empty" );
+        Preconditions.checkArgument( !Strings.isNullOrEmpty( value ), "SchemaKey cannot be null or empty" );
 
         final Matcher matcher = REF_PATTERN.matcher( value );
         if ( !matcher.find() )
         {
-            throw new IllegalArgumentException( "Not a valid BaseTypeKey [" + value + "]" );
+            throw new IllegalArgumentException( "Not a valid SchemaKey [" + value + "]" );
         }
 
         final String type = matcher.group( 1 );
@@ -98,7 +98,7 @@ public final class SchemaKey
         final SchemaKind typeKind = SchemaKind.from( type );
         if ( typeKind == null )
         {
-            throw new IllegalArgumentException( "Not a valid BaseTypeKey [" + value + "]" );
+            throw new IllegalArgumentException( "Not a valid SchemaKey [" + value + "]" );
         }
         return new SchemaKey( typeKind, moduleName, localName );
     }

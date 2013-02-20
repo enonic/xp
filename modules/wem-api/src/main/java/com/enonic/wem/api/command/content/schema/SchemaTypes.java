@@ -11,30 +11,30 @@ import com.enonic.wem.api.content.schema.Schemas;
 public final class SchemaTypes
     extends Command<Schemas>
 {
-    private EnumSet<SchemaKind> baseTypes;
+    private EnumSet<SchemaKind> schemaKinds;
 
     public SchemaTypes()
     {
-        baseTypes = EnumSet.allOf( SchemaKind.class );
+        schemaKinds = EnumSet.allOf( SchemaKind.class );
     }
 
     public SchemaTypes includeTypes( final SchemaKind... schemaKinds )
     {
-        baseTypes.clear();
-        baseTypes.addAll( Arrays.asList( schemaKinds ) );
+        this.schemaKinds.clear();
+        this.schemaKinds.addAll( Arrays.asList( schemaKinds ) );
         return this;
     }
 
     public SchemaTypes includeTypes( final Set<SchemaKind> schemaKinds )
     {
-        baseTypes.clear();
-        baseTypes.addAll( schemaKinds );
+        this.schemaKinds.clear();
+        this.schemaKinds.addAll( schemaKinds );
         return this;
     }
 
     public boolean isIncludeType( final SchemaKind schemaKind )
     {
-        return baseTypes.contains( schemaKind );
+        return schemaKinds.contains( schemaKind );
     }
 
     @Override

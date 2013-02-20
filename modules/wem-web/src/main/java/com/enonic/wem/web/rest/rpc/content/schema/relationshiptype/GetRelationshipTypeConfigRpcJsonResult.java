@@ -26,6 +26,6 @@ class GetRelationshipTypeConfigRpcJsonResult
     {
         final String contentTypeXml = relationshipTypeXmlSerializer.toString( relationshipType );
         json.put( "relationshipTypeXml", contentTypeXml );
-        json.put( "iconUrl", SchemaImageUriResolver.resolve( relationshipType.getBaseTypeKey() ) );
+        json.put( "iconUrl", SchemaImageUriResolver.resolve( relationshipType.getSchemaKey() ) );
     }
 }
