@@ -11,7 +11,7 @@ import com.enonic.wem.api.command.content.relationship.CreateRelationship;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.relationship.RelationshipId;
-import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.content.schema.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;

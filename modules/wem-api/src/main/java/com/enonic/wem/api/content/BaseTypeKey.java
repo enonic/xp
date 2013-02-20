@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import com.enonic.wem.api.content.mixin.QualifiedMixinName;
-import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.content.schema.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
 import com.enonic.wem.api.module.ModuleName;
 

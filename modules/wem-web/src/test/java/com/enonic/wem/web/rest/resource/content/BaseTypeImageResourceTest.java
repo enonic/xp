@@ -16,14 +16,14 @@ import com.google.common.io.Resources;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.content.mixin.GetMixins;
-import com.enonic.wem.api.command.content.relationshiptype.GetRelationshipTypes;
+import com.enonic.wem.api.command.content.schema.relationshiptype.GetRelationshipTypes;
 import com.enonic.wem.api.command.content.type.GetContentTypes;
 import com.enonic.wem.api.content.mixin.Mixin;
 import com.enonic.wem.api.content.mixin.Mixins;
 import com.enonic.wem.api.content.mixin.QualifiedMixinNames;
-import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeNames;
-import com.enonic.wem.api.content.relationshiptype.RelationshipType;
-import com.enonic.wem.api.content.relationshiptype.RelationshipTypes;
+import com.enonic.wem.api.content.schema.relationshiptype.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.content.schema.relationshiptype.RelationshipType;
+import com.enonic.wem.api.content.schema.relationshiptype.RelationshipTypes;
 import com.enonic.wem.api.content.type.ContentType;
 import com.enonic.wem.api.content.type.ContentTypes;
 import com.enonic.wem.api.content.type.QualifiedContentTypeName;
@@ -32,7 +32,7 @@ import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
 
 import static com.enonic.wem.api.content.mixin.Mixin.newMixin;
-import static com.enonic.wem.api.content.relationshiptype.RelationshipType.newRelationshipType;
+import static com.enonic.wem.api.content.schema.relationshiptype.RelationshipType.newRelationshipType;
 import static com.enonic.wem.api.content.type.form.Input.newInput;
 import static org.junit.Assert.*;
 

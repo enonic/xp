@@ -1,0 +1,26 @@
+{
+    "success": true,
+    "total": 2,
+    "relationshipTypes": [
+        {
+            "name": "theRelationshipType",
+            "displayName": null,
+            "module": "myModule",
+            "fromSemantic": null,
+            "toSemantic": null,
+            "allowedFromTypes": [ ],
+            "allowedToTypes": [ ],
+            "iconUrl": "http://localhost/admin/rest/basetype/image/RelationshipType:myModule:theRelationshipType"
+        },
+        {
+            "name": "theRelationshipType",
+            "displayName": null,
+            "module": "otherModule",
+            "fromSemantic": null,
+            "toSemantic": null,
+            "allowedFromTypes": [ ],
+            "allowedToTypes": [ ],
+            "iconUrl": "http://localhost/admin/rest/basetype/image/RelationshipType:otherModule:theRelationshipType"
+        }
+    ]
+}

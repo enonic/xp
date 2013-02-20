@@ -5,7 +5,7 @@ import com.enonic.wem.api.command.content.BaseTypeCommands;
 import com.enonic.wem.api.command.content.ContentCommands;
 import com.enonic.wem.api.command.content.mixin.MixinCommands;
 import com.enonic.wem.api.command.content.relationship.RelationshipCommands;
-import com.enonic.wem.api.command.content.relationshiptype.RelationshipTypeCommands;
+import com.enonic.wem.api.command.content.schema.relationshiptype.RelationshipTypeCommands;
 import com.enonic.wem.api.command.content.type.ContentTypeCommands;
 import com.enonic.wem.api.command.space.SpaceCommands;
 import com.enonic.wem.api.command.userstore.UserStoreCommands;

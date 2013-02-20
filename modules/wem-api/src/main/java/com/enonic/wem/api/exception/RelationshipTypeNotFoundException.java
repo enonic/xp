@@ -1,6 +1,6 @@
 package com.enonic.wem.api.exception;
 
-import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.content.schema.relationshiptype.QualifiedRelationshipTypeName;
 
 public final class RelationshipTypeNotFoundException
     extends BaseException

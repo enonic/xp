@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.MockContentId;
-import com.enonic.wem.api.content.relationshiptype.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.content.schema.relationshiptype.QualifiedRelationshipTypeName;
 
 import static junit.framework.Assert.assertEquals;
 
