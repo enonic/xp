@@ -5,7 +5,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.BaseTypeKind;
+import com.enonic.wem.api.content.schema.BaseTypeKind;
 import com.enonic.wem.api.content.schema.BaseTypes;
 
 public final class GetBaseTypes

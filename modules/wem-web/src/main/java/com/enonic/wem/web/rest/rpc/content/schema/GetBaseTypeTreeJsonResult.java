@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest.rpc.content;
+package com.enonic.wem.web.rest.rpc.content.schema;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.schema.BaseType;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
-import com.enonic.wem.core.content.BaseTypeJsonSerializer;
+import com.enonic.wem.core.content.schema.BaseTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
 import com.enonic.wem.web.rest.resource.content.BaseTypeImageUriResolver;
 

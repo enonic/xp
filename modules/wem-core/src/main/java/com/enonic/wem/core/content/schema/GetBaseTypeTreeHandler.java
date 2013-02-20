@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content;
+package com.enonic.wem.core.content.schema;
 
 import java.util.List;
 
@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.command.content.schema.GetBaseTypeTree;
-import com.enonic.wem.api.content.BaseTypeKind;
 import com.enonic.wem.api.content.schema.BaseType;
+import com.enonic.wem.api.content.schema.BaseTypeKind;
 import com.enonic.wem.api.content.schema.mixin.Mixins;
 import com.enonic.wem.api.content.schema.relationshiptype.RelationshipTypes;
 import com.enonic.wem.api.content.schema.type.ContentType;

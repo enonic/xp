@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content;
+package com.enonic.wem.api.content.schema;
 
 import java.util.Map;
 
