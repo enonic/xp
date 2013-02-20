@@ -1,8 +1,8 @@
 Ext.define('Admin.view.contentStudio.TreeGridPanel', {
     extend: 'Admin.view.TreeGridPanel',
     alias: 'widget.contentTypeTreeGridPanel',
-    store: 'Admin.store.contentStudio.BaseTypeStore',
-    treeStore: 'Admin.store.contentStudio.BaseTypeTreeStore',
+    store: 'Admin.store.contentStudio.SchemaStore',
+    treeStore: 'Admin.store.contentStudio.SchemaTreeStore',
     requires: 'Admin.view.contentStudio.BrowseToolbar',
     dockedItems: [
         {
@@ -52,7 +52,8 @@ Ext.define('Admin.view.contentStudio.TreeGridPanel', {
             } else {
                 return value;
             }
-        } catch (e) {
+        }
+        catch (e) {
             return value;
         }
     },

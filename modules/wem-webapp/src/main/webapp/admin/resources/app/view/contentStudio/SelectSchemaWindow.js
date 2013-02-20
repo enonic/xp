@@ -1,6 +1,6 @@
-Ext.define('Admin.view.contentStudio.SelectBaseTypeWindow', {
+Ext.define('Admin.view.contentStudio.SelectSchemaWindow', {
     extend: 'Admin.view.BaseDialogWindow',
-    alias: 'widget.selectBaseTypeWindow',
+    alias: 'widget.selectSchemaWindow',
 
     requires: [
     ],

@@ -14,7 +14,7 @@ Ext.define('Admin.controller.contentStudio.DialogWindowController', {
             'deleteContentTypeWindow *[action=deleteContentType]': {
                 click: this.doDelete
             },
-            'selectBaseTypeWindow': {
+            'selectSchemaWindow': {
                 createNewBaseType: function (modalWindow, item) {
                     modalWindow.close();
                     this.createNewBaseTypePanel(item);

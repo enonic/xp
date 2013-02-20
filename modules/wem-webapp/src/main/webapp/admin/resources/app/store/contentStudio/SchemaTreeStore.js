@@ -1,17 +1,17 @@
-Ext.define('Admin.store.contentStudio.BaseTypeTreeStore', {
+Ext.define('Admin.store.contentStudio.SchemaTreeStore', {
     extend: 'Ext.data.TreeStore',
 
-    model: 'Admin.model.contentStudio.BaseTypeModel',
+    model: 'Admin.model.contentStudio.SchemaModel',
 
     folderSort: true,
 
     proxy: {
         type: 'direct',
-        directFn: Admin.lib.RemoteService.baseType_tree,
+        directFn: Admin.lib.RemoteService.schema_tree,
         simpleSortMode: true,
         reader: {
             type: 'json',
-            root: 'baseTypes',
+            root: 'schemas',
             totalProperty: 'total'
         }
     }

@@ -1,4 +1,4 @@
-Ext.define('Admin.controller.contentStudio.BaseTypeController', {
+Ext.define('Admin.controller.contentStudio.SchemaController', {
     extend: 'Admin.controller.contentStudio.Controller',
 
     /*      Base controller for content type model     */

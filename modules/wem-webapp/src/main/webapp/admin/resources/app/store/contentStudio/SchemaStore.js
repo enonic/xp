@@ -1,7 +1,7 @@
-Ext.define('Admin.store.contentStudio.BaseTypeStore', {
+Ext.define('Admin.store.contentStudio.SchemaStore', {
     extend: 'Ext.data.Store',
 
-    model: 'Admin.model.contentStudio.BaseTypeModel',
+    model: 'Admin.model.contentStudio.SchemaModel',
 
     pageSize: 50,
     remoteSort: true,
@@ -15,11 +15,11 @@ Ext.define('Admin.store.contentStudio.BaseTypeStore', {
 
     proxy: {
         type: 'direct',
-        directFn: Admin.lib.RemoteService.baseType_list,
+        directFn: Admin.lib.RemoteService.schema_list,
         simpleSortMode: true,
         reader: {
             type: 'json',
-            root: 'baseTypes',
+            root: 'schemas',
             totalProperty: 'total'
         }
     }

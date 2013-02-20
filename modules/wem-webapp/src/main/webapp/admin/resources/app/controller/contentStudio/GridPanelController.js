@@ -3,7 +3,7 @@ Ext.define('Admin.controller.contentStudio.GridPanelController', {
 
     stores: [
         'Admin.store.contentStudio.ContentTypeStore', 'Admin.store.contentStudio.ContentTypeTreeStore',
-        'Admin.store.contentStudio.BaseTypeStore', 'Admin.store.contentStudio.BaseTypeTreeStore'
+        'Admin.store.contentStudio.SchemaStore', 'Admin.store.contentStudio.SchemaTreeStore'
     ],
 
     models: [],

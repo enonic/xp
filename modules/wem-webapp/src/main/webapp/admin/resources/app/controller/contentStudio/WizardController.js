@@ -1,5 +1,5 @@
 Ext.define('Admin.controller.contentStudio.WizardController', {
-    extend: 'Admin.controller.contentStudio.BaseTypeController',
+    extend: 'Admin.controller.contentStudio.SchemaController',
 
     /*      Controller for handling Content Type Wizard UI events       */
 

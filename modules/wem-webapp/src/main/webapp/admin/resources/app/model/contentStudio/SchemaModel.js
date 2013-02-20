@@ -1,4 +1,4 @@
-Ext.define('Admin.model.contentStudio.BaseTypeModel', {
+Ext.define('Admin.model.contentStudio.SchemaModel', {
     extend: 'Ext.data.Model',
 
     fields: [

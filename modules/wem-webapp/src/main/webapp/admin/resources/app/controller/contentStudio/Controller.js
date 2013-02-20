@@ -9,7 +9,7 @@ Ext.define('Admin.controller.contentStudio.Controller', {
         'Admin.view.contentStudio.wizard.MixinWizardPanel',
         'Admin.view.contentStudio.wizard.RelationshipTypeWizardPanel',
         'Admin.view.contentStudio.DeleteContentTypeWindow',
-        'Admin.view.contentStudio.SelectBaseTypeWindow'
+        'Admin.view.contentStudio.SelectSchemaWindow'
     ],
 
     init: function () {
@@ -311,9 +311,9 @@ Ext.define('Admin.controller.contentStudio.Controller', {
     },
 
     getSelectBaseTypeWindow: function () {
-        var win = Ext.ComponentQuery.query('selectBaseTypeWindow')[0];
+        var win = Ext.ComponentQuery.query('selectSchemaWindow')[0];
         if (!win) {
-            win = Ext.create('widget.selectBaseTypeWindow');
+            win = Ext.create('widget.selectSchemaWindow');
         }
         return win;
     }
