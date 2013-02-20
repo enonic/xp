@@ -4,7 +4,7 @@ package com.enonic.wem.web.rest.rpc.content;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.web.rest.resource.content.BaseTypeImageUriResolver;
+import com.enonic.wem.web.rest.resource.content.schema.SchemaImageUriResolver;
 
 final class ContentJsonTemplate
 {
@@ -24,6 +24,6 @@ final class ContentJsonTemplate
         contentNode.put( "modifiedTime", content.getModifiedTime() != null ? content.getModifiedTime().toString() : null );
         contentNode.put( "editable", true );
         contentNode.put( "deletable", !content.getPath().isRoot() );
-        contentNode.put( "iconUrl", BaseTypeImageUriResolver.resolve( content.getType() ) );
+        contentNode.put( "iconUrl", SchemaImageUriResolver.resolve( content.getType() ) );
     }
 }

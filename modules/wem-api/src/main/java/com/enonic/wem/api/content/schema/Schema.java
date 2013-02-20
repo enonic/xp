@@ -6,9 +6,9 @@ import org.joda.time.DateTime;
 import com.enonic.wem.api.content.ModuleBasedQualifiedName;
 import com.enonic.wem.api.module.ModuleName;
 
-public interface BaseType
+public interface Schema
 {
-    BaseTypeKey getBaseTypeKey();
+    SchemaKey getBaseTypeKey();
 
     String getName();
 

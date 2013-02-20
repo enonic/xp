@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest.resource.content;
+package com.enonic.wem.web.rest.resource.content.schema;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -36,9 +36,9 @@ import static com.enonic.wem.api.content.schema.relationshiptype.RelationshipTyp
 import static com.enonic.wem.api.content.schema.type.form.Input.newInput;
 import static org.junit.Assert.*;
 
-public class BaseTypeImageResourceTest
+public class SchemaImageResourceTest
 {
-    private BaseTypeImageResource controller;
+    private SchemaImageResource controller;
 
     private Client client;
 
@@ -46,7 +46,7 @@ public class BaseTypeImageResourceTest
     public void setUp()
         throws Exception
     {
-        this.controller = new BaseTypeImageResource();
+        this.controller = new SchemaImageResource();
         client = Mockito.mock( Client.class );
         this.controller.setClient( client );
     }

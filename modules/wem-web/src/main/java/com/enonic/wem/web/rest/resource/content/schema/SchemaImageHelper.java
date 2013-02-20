@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest.resource.content;
+package com.enonic.wem.web.rest.resource.content.schema;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -10,13 +10,13 @@ import javax.imageio.ImageIO;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.core.image.filter.effect.ScaleSquareFilter;
 
-final class BaseTypeImageHelper
+final class SchemaImageHelper
 {
     private final BufferedImage defaultMixinImage;
 
     private final BufferedImage defaultRelationshipTypeImage;
 
-    public BaseTypeImageHelper()
+    public SchemaImageHelper()
         throws Exception
     {
         defaultMixinImage = loadDefaultImage( "mixin" );
@@ -62,7 +62,7 @@ final class BaseTypeImageHelper
     private BufferedImage loadDefaultImage( final String imageName )
         throws Exception
     {
-        final InputStream in = getClass().getResourceAsStream( imageName + ".png");
+        final InputStream in = getClass().getResourceAsStream( imageName + ".png" );
         if ( in == null )
         {
             throw new IOException( "Image [" + imageName + "] not found" );

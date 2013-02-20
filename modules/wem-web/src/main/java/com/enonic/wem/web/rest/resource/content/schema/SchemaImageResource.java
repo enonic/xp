@@ -1,4 +1,4 @@
-package com.enonic.wem.web.rest.resource.content;
+package com.enonic.wem.web.rest.resource.content.schema;
 
 import java.awt.image.BufferedImage;
 
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.content.schema.BaseTypeKey;
+import com.enonic.wem.api.content.schema.SchemaKey;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinNames;
@@ -34,16 +34,16 @@ import static com.enonic.wem.api.command.Commands.relationshipType;
 @Component
 @Path("basetype/image")
 @Produces("image/*")
-public final class BaseTypeImageResource
+public final class SchemaImageResource
 {
-    private final BaseTypeImageHelper helper;
+    private final SchemaImageHelper helper;
 
     private Client client;
 
-    public BaseTypeImageResource()
+    public SchemaImageResource()
         throws Exception
     {
-        this.helper = new BaseTypeImageHelper();
+        this.helper = new SchemaImageHelper();
     }
 
     @GET
@@ -52,7 +52,7 @@ public final class BaseTypeImageResource
                                      @QueryParam("size") @DefaultValue("128") final int size )
         throws Exception
     {
-        final BaseTypeKey baseType = BaseTypeKey.from( baseTypeKey );
+        final SchemaKey baseType = SchemaKey.from( baseTypeKey );
 
         String mimeType = "image/png";
         BufferedImage baseTypeImage = null;

@@ -1,16 +1,16 @@
-package com.enonic.wem.web.rest.resource.content;
+package com.enonic.wem.web.rest.resource.content.schema;
 
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.enonic.wem.api.content.schema.BaseTypeKey;
+import com.enonic.wem.api.content.schema.SchemaKey;
 import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
 
-public final class BaseTypeImageUriResolver
+public final class SchemaImageUriResolver
 {
 
-    public static String resolve( final BaseTypeKey baseTypeKey )
+    public static String resolve( final SchemaKey schemaKey )
     {
-        final String baseTypeValue = baseTypeKey.toString();
+        final String baseTypeValue = schemaKey.toString();
         return ServletUriComponentsBuilder.fromCurrentContextPath().
             path( "/admin/rest/basetype/image/" ).
             path( String.valueOf( baseTypeValue ) ).
@@ -19,7 +19,7 @@ public final class BaseTypeImageUriResolver
 
     public static String resolve( final QualifiedContentTypeName contentTypeName )
     {
-        final BaseTypeKey baseTypeKey = BaseTypeKey.from( contentTypeName );
-        return resolve( baseTypeKey );
+        final SchemaKey schemaKey = SchemaKey.from( contentTypeName );
+        return resolve( schemaKey );
     }
 }

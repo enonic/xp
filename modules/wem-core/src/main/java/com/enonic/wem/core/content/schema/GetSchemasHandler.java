@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.command.content.schema.GetBaseTypes;
-import com.enonic.wem.api.content.schema.BaseType;
-import com.enonic.wem.api.content.schema.BaseTypeKind;
-import com.enonic.wem.api.content.schema.BaseTypes;
+import com.enonic.wem.api.command.content.schema.SchemaTypes;
+import com.enonic.wem.api.content.schema.Schema;
+import com.enonic.wem.api.content.schema.SchemaKind;
+import com.enonic.wem.api.content.schema.Schemas;
 import com.enonic.wem.api.content.schema.mixin.Mixins;
 import com.enonic.wem.api.content.schema.relationshiptype.RelationshipTypes;
 import com.enonic.wem.api.content.schema.type.ContentTypes;
@@ -24,8 +24,8 @@ import com.enonic.wem.core.content.schema.relationshiptype.dao.RelationshipTypeD
 import com.enonic.wem.core.content.schema.type.dao.ContentTypeDao;
 
 @Component
-public final class GetBaseTypesHandler
-    extends CommandHandler<GetBaseTypes>
+public final class GetSchemasHandler
+    extends CommandHandler<SchemaTypes>
 {
     private ContentTypeDao contentTypeDao;
 
@@ -33,39 +33,39 @@ public final class GetBaseTypesHandler
 
     private RelationshipTypeDao relationshipTypeDao;
 
-    public GetBaseTypesHandler()
+    public GetSchemasHandler()
     {
-        super( GetBaseTypes.class );
+        super( SchemaTypes.class );
     }
 
     @Override
-    public void handle( final CommandContext context, final GetBaseTypes command )
+    public void handle( final CommandContext context, final SchemaTypes command )
         throws Exception
     {
         final Session session = context.getJcrSession();
 
-        final List<BaseType> baseTypeList = Lists.newArrayList();
-        if ( command.isIncludeType( BaseTypeKind.CONTENT_TYPE ) )
+        final List<Schema> schemaList = Lists.newArrayList();
+        if ( command.isIncludeType( SchemaKind.CONTENT_TYPE ) )
         {
             final ContentTypes contentTypes = contentTypeDao.selectAll( session );
-            Iterables.addAll( baseTypeList, contentTypes );
+            Iterables.addAll( schemaList, contentTypes );
         }
 
-        if ( command.isIncludeType( BaseTypeKind.MIXIN ) )
+        if ( command.isIncludeType( SchemaKind.MIXIN ) )
         {
             final Mixins mixins = mixinDao.selectAll( session );
-            Iterables.addAll( baseTypeList, mixins );
+            Iterables.addAll( schemaList, mixins );
         }
 
-        if ( command.isIncludeType( BaseTypeKind.RELATIONSHIP_TYPE ) )
+        if ( command.isIncludeType( SchemaKind.RELATIONSHIP_TYPE ) )
         {
             final RelationshipTypes relationshipTypes = relationshipTypeDao.selectAll( session );
-            Iterables.addAll( baseTypeList, relationshipTypes );
+            Iterables.addAll( schemaList, relationshipTypes );
         }
 
-        final BaseTypes baseTypes = BaseTypes.from( baseTypeList );
+        final Schemas schemas = Schemas.from( schemaList );
 
-        command.setResult( baseTypes );
+        command.setResult( schemas );
     }
 
     @Autowired

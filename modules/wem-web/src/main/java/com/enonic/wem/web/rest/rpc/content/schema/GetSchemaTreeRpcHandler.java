@@ -5,9 +5,9 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.command.content.schema.GetBaseTypeTree;
-import com.enonic.wem.api.content.schema.BaseType;
-import com.enonic.wem.api.content.schema.BaseTypeKind;
+import com.enonic.wem.api.command.content.schema.GetSchemaTree;
+import com.enonic.wem.api.content.schema.Schema;
+import com.enonic.wem.api.content.schema.SchemaKind;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.web.json.JsonErrorResult;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
@@ -16,10 +16,10 @@ import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 import static com.enonic.wem.api.command.Commands.baseType;
 
 @Component
-public final class GetBaseTypeTreeRpcHandler
+public final class GetSchemaTreeRpcHandler
     extends AbstractDataRpcHandler
 {
-    public GetBaseTypeTreeRpcHandler()
+    public GetSchemaTreeRpcHandler()
     {
         super( "baseType_tree" );
     }
@@ -28,7 +28,7 @@ public final class GetBaseTypeTreeRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final Set<BaseTypeKind> typesToInclude;
+        final Set<SchemaKind> typesToInclude;
         try
         {
             typesToInclude = getTypesToInclude( context );
@@ -38,24 +38,24 @@ public final class GetBaseTypeTreeRpcHandler
             context.setResult( new JsonErrorResult( "Invalid parameter 'types': [{0}]", context.param( "types" ).asString() ) );
             return;
         }
-        final GetBaseTypeTree command = baseType().getTree();
+        final GetSchemaTree command = baseType().getTree();
         if ( !typesToInclude.isEmpty() )
         {
             command.includeTypes( typesToInclude );
         }
 
-        final Tree<BaseType> baseTypeTree = client.execute( command );
+        final Tree<Schema> baseTypeTree = client.execute( command );
 
-        context.setResult( new GetBaseTypeTreeJsonResult( baseTypeTree ) );
+        context.setResult( new GetSchemaTreeJsonResult( baseTypeTree ) );
     }
 
-    private Set<BaseTypeKind> getTypesToInclude( final JsonRpcContext context )
+    private Set<SchemaKind> getTypesToInclude( final JsonRpcContext context )
     {
         final String[] includeTypeParams = context.param( "types" ).asStringArray();
-        final EnumSet<BaseTypeKind> types = EnumSet.noneOf( BaseTypeKind.class );
+        final EnumSet<SchemaKind> types = EnumSet.noneOf( SchemaKind.class );
         for ( String includeTypeParam : includeTypeParams )
         {
-            types.add( BaseTypeKind.valueOf( includeTypeParam.trim().toUpperCase() ) );
+            types.add( SchemaKind.valueOf( includeTypeParam.trim().toUpperCase() ) );
         }
         return types;
     }

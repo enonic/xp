@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.command.content.schema.GetBaseTypeTree;
-import com.enonic.wem.api.content.schema.BaseType;
-import com.enonic.wem.api.content.schema.BaseTypeKind;
+import com.enonic.wem.api.command.content.schema.GetSchemaTree;
+import com.enonic.wem.api.content.schema.Schema;
+import com.enonic.wem.api.content.schema.SchemaKind;
 import com.enonic.wem.api.content.schema.mixin.Mixins;
 import com.enonic.wem.api.content.schema.relationshiptype.RelationshipTypes;
 import com.enonic.wem.api.content.schema.type.ContentType;
@@ -23,8 +23,8 @@ import com.enonic.wem.core.content.schema.type.ContentTypeTreeFactory;
 import com.enonic.wem.core.content.schema.type.dao.ContentTypeDao;
 
 @Component
-public class GetBaseTypeTreeHandler
-    extends CommandHandler<GetBaseTypeTree>
+public class GetSchemaTreeHandler
+    extends CommandHandler<GetSchemaTree>
 {
     private ContentTypeDao contentTypeDao;
 
@@ -32,31 +32,31 @@ public class GetBaseTypeTreeHandler
 
     private RelationshipTypeDao relationshipTypeDao;
 
-    public GetBaseTypeTreeHandler()
+    public GetSchemaTreeHandler()
     {
-        super( GetBaseTypeTree.class );
+        super( GetSchemaTree.class );
     }
 
     @Override
-    public void handle( final CommandContext context, final GetBaseTypeTree command )
+    public void handle( final CommandContext context, final GetSchemaTree command )
         throws Exception
     {
-        final Tree<BaseType> typesTree = new Tree<BaseType>();
-        if ( command.isIncludeType( BaseTypeKind.CONTENT_TYPE ) )
+        final Tree<Schema> typesTree = new Tree<Schema>();
+        if ( command.isIncludeType( SchemaKind.CONTENT_TYPE ) )
         {
             // add all all super content types at root
             final Tree<ContentType> contentTypeTree = new ContentTypeTreeFactory( context.getJcrSession(), contentTypeDao ).createTree();
             typesTree.addNodes( extractRootContentTypes( contentTypeTree ) );
         }
 
-        if ( command.isIncludeType( BaseTypeKind.RELATIONSHIP_TYPE ) )
+        if ( command.isIncludeType( SchemaKind.RELATIONSHIP_TYPE ) )
         {
             // add all RelationshipTypes on root
             final RelationshipTypes relationshipTypes = relationshipTypeDao.selectAll( context.getJcrSession() );
             typesTree.createNodes( relationshipTypes );
         }
 
-        if ( command.isIncludeType( BaseTypeKind.MIXIN ) )
+        if ( command.isIncludeType( SchemaKind.MIXIN ) )
         {
             // add all Mixins on root
             final Mixins mixins = mixinDao.selectAll( context.getJcrSession() );
@@ -66,23 +66,23 @@ public class GetBaseTypeTreeHandler
         command.setResult( typesTree );
     }
 
-    private List<TreeNode<BaseType>> extractRootContentTypes( final Tree<ContentType> contentTypeTree )
+    private List<TreeNode<Schema>> extractRootContentTypes( final Tree<ContentType> contentTypeTree )
     {
-        final List<TreeNode<BaseType>> list = Lists.newArrayList();
+        final List<TreeNode<Schema>> list = Lists.newArrayList();
         for ( TreeNode<ContentType> node : contentTypeTree )
         {
-            final TreeNode<BaseType> treeNode = new TreeNode<BaseType>( node.getObject() );
+            final TreeNode<Schema> treeNode = new TreeNode<Schema>( node.getObject() );
             extractChildren( treeNode, node );
             list.add( treeNode );
         }
         return list;
     }
 
-    private void extractChildren( final TreeNode<BaseType> toParent, final TreeNode<ContentType> fromParent )
+    private void extractChildren( final TreeNode<Schema> toParent, final TreeNode<ContentType> fromParent )
     {
         for ( TreeNode<ContentType> fromChild : fromParent )
         {
-            TreeNode<BaseType> child = new TreeNode<BaseType>( fromChild.getObject() );
+            TreeNode<Schema> child = new TreeNode<Schema>( fromChild.getObject() );
             toParent.addChild( child );
             extractChildren( child, fromChild );
         }

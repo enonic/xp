@@ -8,7 +8,7 @@ import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.Mixins;
 import com.enonic.wem.core.content.schema.mixin.MixinJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
-import com.enonic.wem.web.rest.resource.content.BaseTypeImageUriResolver;
+import com.enonic.wem.web.rest.resource.content.schema.SchemaImageUriResolver;
 
 final class ListMixinsRpcJsonResult
     extends JsonResult
@@ -29,7 +29,7 @@ final class ListMixinsRpcJsonResult
         for ( Mixin mixin : mixins )
         {
             final ObjectNode mixinJson = (ObjectNode) serializeMixin( mixin );
-            mixinJson.put( "iconUrl", BaseTypeImageUriResolver.resolve( mixin.getBaseTypeKey() ) );
+            mixinJson.put( "iconUrl", SchemaImageUriResolver.resolve( mixin.getBaseTypeKey() ) );
             mixinArray.add( mixinJson );
         }
         json.put( "mixins", mixinArray );

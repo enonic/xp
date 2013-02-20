@@ -3,7 +3,7 @@ package com.enonic.wem.api.command;
 import com.enonic.wem.api.command.account.AccountCommands;
 import com.enonic.wem.api.command.content.ContentCommands;
 import com.enonic.wem.api.command.content.relationship.RelationshipCommands;
-import com.enonic.wem.api.command.content.schema.BaseTypeCommands;
+import com.enonic.wem.api.command.content.schema.SchemaCommands;
 import com.enonic.wem.api.command.content.schema.mixin.MixinCommands;
 import com.enonic.wem.api.command.content.schema.relationshiptype.RelationshipTypeCommands;
 import com.enonic.wem.api.command.content.schema.type.ContentTypeCommands;
@@ -22,7 +22,7 @@ public final class Commands
 
     private static final RelationshipCommands RELATIONSHIP_COMMANDS = new RelationshipCommands();
 
-    private static final BaseTypeCommands BASE_TYPE_COMMANDS = new BaseTypeCommands();
+    private static final SchemaCommands BASE_TYPE_COMMANDS = new SchemaCommands();
 
     private static final ContentTypeCommands CONTENT_TYPE_COMMANDS = new ContentTypeCommands();
 
@@ -54,7 +54,7 @@ public final class Commands
         return RELATIONSHIP_COMMANDS;
     }
 
-    public static BaseTypeCommands baseType()
+    public static SchemaCommands baseType()
     {
         return BASE_TYPE_COMMANDS;
     }

@@ -6,7 +6,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.content.schema.relationshiptype.RelationshipType;
 import com.enonic.wem.core.content.schema.relationshiptype.RelationshipTypeXmlSerializer;
 import com.enonic.wem.web.json.JsonResult;
-import com.enonic.wem.web.rest.resource.content.BaseTypeImageUriResolver;
+import com.enonic.wem.web.rest.resource.content.schema.SchemaImageUriResolver;
 
 class GetRelationshipTypeConfigRpcJsonResult
     extends JsonResult
@@ -26,6 +26,6 @@ class GetRelationshipTypeConfigRpcJsonResult
     {
         final String contentTypeXml = relationshipTypeXmlSerializer.toString( relationshipType );
         json.put( "relationshipTypeXml", contentTypeXml );
-        json.put( "iconUrl", BaseTypeImageUriResolver.resolve( relationshipType.getBaseTypeKey() ) );
+        json.put( "iconUrl", SchemaImageUriResolver.resolve( relationshipType.getBaseTypeKey() ) );
     }
 }

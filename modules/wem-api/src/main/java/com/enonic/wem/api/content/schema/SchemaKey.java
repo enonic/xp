@@ -13,7 +13,7 @@ import com.enonic.wem.api.content.schema.relationshiptype.QualifiedRelationshipT
 import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
 import com.enonic.wem.api.module.ModuleName;
 
-public final class BaseTypeKey
+public final class SchemaKey
 {
     private final static char SEPARATOR = ':';
 
@@ -22,13 +22,13 @@ public final class BaseTypeKey
 
     private final String refString;
 
-    private final BaseTypeKind type;
+    private final SchemaKind type;
 
     private final ModuleName moduleName;
 
     private final String localName;
 
-    private BaseTypeKey( final BaseTypeKind type, final ModuleName moduleName, final String localName )
+    private SchemaKey( final SchemaKind type, final ModuleName moduleName, final String localName )
     {
         this.type = type;
         this.moduleName = moduleName;
@@ -38,17 +38,17 @@ public final class BaseTypeKey
 
     public boolean isContentType()
     {
-        return this.type == BaseTypeKind.CONTENT_TYPE;
+        return this.type == SchemaKind.CONTENT_TYPE;
     }
 
     public boolean isMixin()
     {
-        return this.type == BaseTypeKind.MIXIN;
+        return this.type == SchemaKind.MIXIN;
     }
 
     public boolean isRelationshipType()
     {
-        return this.type == BaseTypeKind.RELATIONSHIP_TYPE;
+        return this.type == SchemaKind.RELATIONSHIP_TYPE;
     }
 
     public ModuleName getModuleName()
@@ -66,22 +66,22 @@ public final class BaseTypeKey
         return refString;
     }
 
-    public static BaseTypeKey from( final QualifiedContentTypeName contentTypeName )
+    public static SchemaKey from( final QualifiedContentTypeName contentTypeName )
     {
-        return new BaseTypeKey( BaseTypeKind.CONTENT_TYPE, contentTypeName.getModuleName(), contentTypeName.getLocalName() );
+        return new SchemaKey( SchemaKind.CONTENT_TYPE, contentTypeName.getModuleName(), contentTypeName.getLocalName() );
     }
 
-    public static BaseTypeKey from( final QualifiedMixinName mixinName )
+    public static SchemaKey from( final QualifiedMixinName mixinName )
     {
-        return new BaseTypeKey( BaseTypeKind.MIXIN, mixinName.getModuleName(), mixinName.getLocalName() );
+        return new SchemaKey( SchemaKind.MIXIN, mixinName.getModuleName(), mixinName.getLocalName() );
     }
 
-    public static BaseTypeKey from( final QualifiedRelationshipTypeName relationshipTypeName )
+    public static SchemaKey from( final QualifiedRelationshipTypeName relationshipTypeName )
     {
-        return new BaseTypeKey( BaseTypeKind.RELATIONSHIP_TYPE, relationshipTypeName.getModuleName(), relationshipTypeName.getLocalName() );
+        return new SchemaKey( SchemaKind.RELATIONSHIP_TYPE, relationshipTypeName.getModuleName(), relationshipTypeName.getLocalName() );
     }
 
-    public static BaseTypeKey from( final String value )
+    public static SchemaKey from( final String value )
     {
         Preconditions.checkArgument( !Strings.isNullOrEmpty( value ), "BaseTypeKey cannot be null or empty" );
 
@@ -95,12 +95,12 @@ public final class BaseTypeKey
         final ModuleName moduleName = ModuleName.from( matcher.group( 2 ) );
         final String localName = matcher.group( 3 );
 
-        final BaseTypeKind typeKind = BaseTypeKind.from( type );
+        final SchemaKind typeKind = SchemaKind.from( type );
         if ( typeKind == null )
         {
             throw new IllegalArgumentException( "Not a valid BaseTypeKey [" + value + "]" );
         }
-        return new BaseTypeKey( typeKind, moduleName, localName );
+        return new SchemaKey( typeKind, moduleName, localName );
     }
 
 }

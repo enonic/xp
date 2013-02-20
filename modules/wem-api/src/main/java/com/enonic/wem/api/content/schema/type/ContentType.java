@@ -7,8 +7,8 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.content.schema.BaseType;
-import com.enonic.wem.api.content.schema.BaseTypeKey;
+import com.enonic.wem.api.content.schema.Schema;
+import com.enonic.wem.api.content.schema.SchemaKey;
 import com.enonic.wem.api.content.schema.type.form.Form;
 import com.enonic.wem.api.content.schema.type.form.FormItem;
 import com.enonic.wem.api.content.schema.type.form.FormItems;
@@ -18,7 +18,7 @@ import com.enonic.wem.api.module.ModuleName;
 import static com.enonic.wem.api.content.schema.type.form.Form.newForm;
 
 public final class ContentType
-    implements BaseType
+    implements Schema
 {
     private final String name;
 
@@ -118,9 +118,9 @@ public final class ContentType
     }
 
     @Override
-    public BaseTypeKey getBaseTypeKey()
+    public SchemaKey getBaseTypeKey()
     {
-        return BaseTypeKey.from( getQualifiedName() );
+        return SchemaKey.from( getQualifiedName() );
     }
 
     @Override

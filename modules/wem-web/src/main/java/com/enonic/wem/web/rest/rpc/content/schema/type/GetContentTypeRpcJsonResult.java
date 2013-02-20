@@ -5,7 +5,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.content.schema.type.ContentType;
 import com.enonic.wem.core.content.schema.type.ContentTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
-import com.enonic.wem.web.rest.resource.content.BaseTypeImageUriResolver;
+import com.enonic.wem.web.rest.resource.content.schema.SchemaImageUriResolver;
 
 final class GetContentTypeRpcJsonResult
     extends JsonResult
@@ -23,6 +23,6 @@ final class GetContentTypeRpcJsonResult
     protected void serialize( final ObjectNode json )
     {
         json.put( "contentType", contentTypeSerializer.toJson( contentType ) );
-        json.put( "iconUrl", BaseTypeImageUriResolver.resolve( contentType.getBaseTypeKey() ) );
+        json.put( "iconUrl", SchemaImageUriResolver.resolve( contentType.getBaseTypeKey() ) );
     }
 }

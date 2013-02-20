@@ -4,13 +4,13 @@ package com.enonic.wem.api.content.schema.mixin;
 import org.joda.time.DateTime;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.content.schema.BaseType;
-import com.enonic.wem.api.content.schema.BaseTypeKey;
+import com.enonic.wem.api.content.schema.Schema;
+import com.enonic.wem.api.content.schema.SchemaKey;
 import com.enonic.wem.api.content.schema.type.form.FormItem;
 import com.enonic.wem.api.module.ModuleName;
 
 public class Mixin
-    implements BaseType
+    implements Schema
 {
     private final FormItem formItem;
 
@@ -84,9 +84,9 @@ public class Mixin
     }
 
     @Override
-    public BaseTypeKey getBaseTypeKey()
+    public SchemaKey getBaseTypeKey()
     {
-        return BaseTypeKey.from( qualifiedName );
+        return SchemaKey.from( qualifiedName );
     }
 
     public static Builder newMixin()

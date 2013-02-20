@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.schema.GetBaseTypeTree;
+import com.enonic.wem.api.command.content.schema.SchemaTypes;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.Mixins;
 import com.enonic.wem.api.content.schema.relationshiptype.RelationshipType;
@@ -33,10 +33,10 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class GetBaseTypeTreeHandlerTest
+public class GetSchemasHandlerTest
     extends AbstractCommandHandlerTest
 {
-    private GetBaseTypeTreeHandler handler;
+    private GetSchemasHandler handler;
 
     private ContentTypeDao contentTypeDao;
 
@@ -53,32 +53,24 @@ public class GetBaseTypeTreeHandlerTest
         contentTypeDao = Mockito.mock( ContentTypeDao.class );
         mixinDao = Mockito.mock( MixinDao.class );
         relationshipTypeDao = Mockito.mock( RelationshipTypeDao.class );
-        handler = new GetBaseTypeTreeHandler();
+        handler = new GetSchemasHandler();
         handler.setContentTypeDao( contentTypeDao );
         handler.setMixinDao( mixinDao );
         handler.setRelationshipTypeDao( relationshipTypeDao );
     }
 
     @Test
-    public void getBaseTypeTree()
+    public void getBaseTypes()
         throws Exception
     {
         // setup
-        final ContentType unstructuredContentType = newContentType().
-            qualifiedName( QualifiedContentTypeName.structured() ).
-            displayName( "Unstructured" ).
-            setFinal( false ).
-            setAbstract( false ).
-            build();
-
         final ContentType contentType = newContentType().
             name( "myContentType" ).
             module( ModuleName.from( "myModule" ) ).
             displayName( "My content type" ).
             setAbstract( false ).
-            superType( unstructuredContentType.getQualifiedName() ).
             build();
-        final ContentTypes contentTypes = ContentTypes.from( contentType, unstructuredContentType );
+        final ContentTypes contentTypes = ContentTypes.from( contentType );
         Mockito.when( contentTypeDao.selectAll( any( Session.class ) ) ).thenReturn( contentTypes );
 
         final FormItemSet formItemSet =
@@ -104,14 +96,14 @@ public class GetBaseTypeTreeHandlerTest
         Mockito.when( relationshipTypeDao.selectAll( any( Session.class ) ) ).thenReturn( relationshipTypes );
 
         // exercise
-        final GetBaseTypeTree command = Commands.baseType().getTree();
+        final SchemaTypes command = Commands.baseType().get();
         this.handler.handle( this.context, command );
 
         // verify
         verify( contentTypeDao, times( 1 ) ).selectAll( Mockito.any( Session.class ) );
         verify( mixinDao, times( 1 ) ).selectAll( Mockito.any( Session.class ) );
         verify( relationshipTypeDao, times( 1 ) ).selectAll( Mockito.any( Session.class ) );
-        assertEquals( 4, command.getResult().deepSize() );
+        assertEquals( 3, command.getResult().getSize() );
     }
 
 }

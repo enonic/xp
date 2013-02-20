@@ -6,21 +6,21 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.schema.BaseType;
+import com.enonic.wem.api.content.schema.Schema;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
-import com.enonic.wem.core.content.schema.BaseTypeJsonSerializer;
+import com.enonic.wem.core.content.schema.SchemaJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
-import com.enonic.wem.web.rest.resource.content.BaseTypeImageUriResolver;
+import com.enonic.wem.web.rest.resource.content.schema.SchemaImageUriResolver;
 
-public class GetBaseTypeTreeJsonResult
+public class GetSchemaTreeJsonResult
     extends JsonResult
 {
-    private final static BaseTypeJsonSerializer baseTypeSerializer = new BaseTypeJsonSerializer();
+    private final static SchemaJsonSerializer baseTypeSerializer = new SchemaJsonSerializer();
 
-    private Tree<BaseType> baseTypeTree;
+    private Tree<Schema> baseTypeTree;
 
-    GetBaseTypeTreeJsonResult( final Tree<BaseType> baseTypeTree )
+    GetSchemaTreeJsonResult( final Tree<Schema> baseTypeTree )
     {
         Preconditions.checkNotNull( baseTypeTree );
         this.baseTypeTree = baseTypeTree;
@@ -37,7 +37,7 @@ public class GetBaseTypeTreeJsonResult
     {
         final ArrayNode contentTypesNode = arrayNode();
 
-        for ( TreeNode<BaseType> branch : baseTypeTree )
+        for ( TreeNode<Schema> branch : baseTypeTree )
         {
             contentTypesNode.add( serializeNode( branch ) );
         }
@@ -45,13 +45,13 @@ public class GetBaseTypeTreeJsonResult
         return contentTypesNode;
     }
 
-    private JsonNode serializeNode( final TreeNode<BaseType> node )
+    private JsonNode serializeNode( final TreeNode<Schema> node )
     {
         final ObjectNode contentTypeJson = serializeBaseType( node.getObject() );
         final ArrayNode childArrayNode = contentTypeJson.putArray( "baseTypes" );
         contentTypeJson.put( "hasChildren", node.hasChildren() );
 
-        for ( TreeNode<BaseType> child : node.getChildren() )
+        for ( TreeNode<Schema> child : node.getChildren() )
         {
             childArrayNode.add( serializeNode( child ) );
         }
@@ -59,10 +59,10 @@ public class GetBaseTypeTreeJsonResult
     }
 
 
-    private ObjectNode serializeBaseType( final BaseType baseType )
+    private ObjectNode serializeBaseType( final Schema schema )
     {
-        final ObjectNode baseTypeJson = (ObjectNode) baseTypeSerializer.toJson( baseType );
-        baseTypeJson.put( "iconUrl", BaseTypeImageUriResolver.resolve( baseType.getBaseTypeKey() ) );
+        final ObjectNode baseTypeJson = (ObjectNode) baseTypeSerializer.toJson( schema );
+        baseTypeJson.put( "iconUrl", SchemaImageUriResolver.resolve( schema.getBaseTypeKey() ) );
         return baseTypeJson;
     }
 }

@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.schema.relationshiptype.RelationshipType;
 import com.enonic.wem.api.content.schema.relationshiptype.RelationshipTypes;
 import com.enonic.wem.core.content.schema.relationshiptype.RelationshipTypeJsonSerializer;
 import com.enonic.wem.web.json.JsonResult;
-import com.enonic.wem.web.rest.resource.content.BaseTypeImageUriResolver;
+import com.enonic.wem.web.rest.resource.content.schema.SchemaImageUriResolver;
 
 class ListRelationshipTypeJsonResult
     extends JsonResult
@@ -43,7 +43,7 @@ class ListRelationshipTypeJsonResult
         for ( final RelationshipType relationshipType : list )
         {
             final ObjectNode contentJson = (ObjectNode) relationshipTypeJsonSerializer.serialize( relationshipType );
-            contentJson.put( "iconUrl", BaseTypeImageUriResolver.resolve( relationshipType.getBaseTypeKey() ) );
+            contentJson.put( "iconUrl", SchemaImageUriResolver.resolve( relationshipType.getBaseTypeKey() ) );
             relationshipTypesNode.add( contentJson );
         }
         return relationshipTypesNode;

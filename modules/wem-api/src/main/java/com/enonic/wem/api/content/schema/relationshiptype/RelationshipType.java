@@ -11,8 +11,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.content.schema.BaseType;
-import com.enonic.wem.api.content.schema.BaseTypeKey;
+import com.enonic.wem.api.content.schema.Schema;
+import com.enonic.wem.api.content.schema.SchemaKey;
 import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.schema.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;
@@ -20,7 +20,7 @@ import com.enonic.wem.api.support.illegalchange.IllegalChange;
 import com.enonic.wem.api.support.illegalchange.IllegalChangeAware;
 
 public final class RelationshipType
-    implements BaseType, IllegalChangeAware<RelationshipType>
+    implements Schema, IllegalChangeAware<RelationshipType>
 {
     private final ModuleName module;
 
@@ -121,9 +121,9 @@ public final class RelationshipType
     }
 
     @Override
-    public BaseTypeKey getBaseTypeKey()
+    public SchemaKey getBaseTypeKey()
     {
-        return BaseTypeKey.from( qualifiedName );
+        return SchemaKey.from( qualifiedName );
     }
 
     @Override
