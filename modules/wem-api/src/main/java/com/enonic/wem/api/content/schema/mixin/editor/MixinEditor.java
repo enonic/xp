@@ -1,4 +1,6 @@
-package com.enonic.wem.api.content.schema.mixin;
+package com.enonic.wem.api.content.schema.mixin.editor;
+
+import com.enonic.wem.api.content.schema.mixin.Mixin;
 
 public interface MixinEditor
 {

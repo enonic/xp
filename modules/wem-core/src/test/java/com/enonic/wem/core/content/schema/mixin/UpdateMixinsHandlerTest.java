@@ -11,7 +11,7 @@ import com.enonic.wem.api.command.content.schema.mixin.UpdateMixins;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.Mixins;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinNames;
-import com.enonic.wem.api.content.schema.mixin.SetMixinEditor;
+import com.enonic.wem.api.content.schema.mixin.editor.SetMixinEditor;
 import com.enonic.wem.api.content.type.form.FormItem;
 import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;

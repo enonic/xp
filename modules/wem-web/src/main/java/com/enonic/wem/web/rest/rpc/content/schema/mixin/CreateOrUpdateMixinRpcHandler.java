@@ -10,7 +10,7 @@ import com.enonic.wem.api.command.content.schema.mixin.UpdateMixins;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinNames;
-import com.enonic.wem.api.content.schema.mixin.SetMixinEditor;
+import com.enonic.wem.api.content.schema.mixin.editor.SetMixinEditor;
 import com.enonic.wem.core.content.schema.mixin.MixinXmlSerializer;
 import com.enonic.wem.core.support.serializer.ParsingException;
 import com.enonic.wem.web.json.JsonErrorResult;

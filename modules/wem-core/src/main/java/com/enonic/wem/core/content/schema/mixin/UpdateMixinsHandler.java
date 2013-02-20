@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.schema.mixin.UpdateMixins;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
-import com.enonic.wem.api.content.schema.mixin.MixinEditor;
 import com.enonic.wem.api.content.schema.mixin.Mixins;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinNames;
+import com.enonic.wem.api.content.schema.mixin.editor.MixinEditor;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.schema.mixin.dao.MixinDao;
