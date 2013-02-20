@@ -3,10 +3,10 @@ package com.enonic.wem.core.content.schema.mixin;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.wem.api.content.schema.content.form.FormItemSet;
+import com.enonic.wem.api.content.schema.content.form.Input;
+import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
-import com.enonic.wem.api.content.schema.type.form.FormItemSet;
-import com.enonic.wem.api.content.schema.type.form.Input;
-import com.enonic.wem.api.content.schema.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.AbstractSerializerTest;
 

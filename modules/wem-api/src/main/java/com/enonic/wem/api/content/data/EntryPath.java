@@ -11,7 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.schema.type.form.FormItemPath;
+import com.enonic.wem.api.content.schema.content.form.FormItemPath;
 
 public final class EntryPath
     implements Iterable<EntryPath.Element>

@@ -3,8 +3,8 @@ package com.enonic.wem.core.content;
 
 import java.util.LinkedHashMap;
 
-import com.enonic.wem.api.content.schema.type.ContentType;
-import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.schema.content.ContentType;
+import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 
 public class MockContentTypeDao
 {

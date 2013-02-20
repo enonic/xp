@@ -17,20 +17,20 @@ import com.enonic.wem.api.content.data.DataSetArray;
 import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.datatype.DataTypes;
-import com.enonic.wem.api.content.schema.type.ContentType;
-import com.enonic.wem.api.content.schema.type.MockContentTypeFetcher;
-import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
-import com.enonic.wem.api.content.schema.type.form.FieldSet;
-import com.enonic.wem.api.content.schema.type.form.FormItemSet;
-import com.enonic.wem.api.content.schema.type.form.inputtype.InputTypes;
+import com.enonic.wem.api.content.schema.content.ContentType;
+import com.enonic.wem.api.content.schema.content.MockContentTypeFetcher;
+import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.content.schema.content.form.FieldSet;
+import com.enonic.wem.api.content.schema.content.form.FormItemSet;
+import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.AbstractSerializerTest;
 
 import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.api.content.schema.type.ContentType.newContentType;
-import static com.enonic.wem.api.content.schema.type.form.FieldSet.newFieldSet;
-import static com.enonic.wem.api.content.schema.type.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.content.schema.type.form.Input.newInput;
+import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
+import static com.enonic.wem.api.content.schema.content.form.FieldSet.newFieldSet;
+import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.schema.content.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public abstract class AbstractContentSerializerTest

@@ -13,7 +13,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.core.content.JsonFactoryHolder;
 import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;

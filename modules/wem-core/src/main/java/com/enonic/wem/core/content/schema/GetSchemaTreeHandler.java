@@ -10,17 +10,17 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.command.content.schema.GetSchemaTree;
 import com.enonic.wem.api.content.schema.Schema;
 import com.enonic.wem.api.content.schema.SchemaKind;
+import com.enonic.wem.api.content.schema.content.ContentType;
 import com.enonic.wem.api.content.schema.mixin.Mixins;
 import com.enonic.wem.api.content.schema.relationshiptype.RelationshipTypes;
-import com.enonic.wem.api.content.schema.type.ContentType;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
+import com.enonic.wem.core.content.schema.content.ContentTypeTreeFactory;
+import com.enonic.wem.core.content.schema.content.dao.ContentTypeDao;
 import com.enonic.wem.core.content.schema.mixin.dao.MixinDao;
 import com.enonic.wem.core.content.schema.relationshiptype.dao.RelationshipTypeDao;
-import com.enonic.wem.core.content.schema.type.ContentTypeTreeFactory;
-import com.enonic.wem.core.content.schema.type.dao.ContentTypeDao;
 
 @Component
 public class GetSchemaTreeHandler

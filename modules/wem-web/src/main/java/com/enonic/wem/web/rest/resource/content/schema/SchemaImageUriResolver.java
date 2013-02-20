@@ -3,7 +3,7 @@ package com.enonic.wem.web.rest.resource.content.schema;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.enonic.wem.api.content.schema.SchemaKey;
-import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 
 public final class SchemaImageUriResolver
 {

@@ -6,12 +6,12 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 
+import com.enonic.wem.api.content.schema.content.form.FormItemSet;
+import com.enonic.wem.api.content.schema.content.form.Input;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
-import com.enonic.wem.api.content.schema.type.form.FormItemSet;
-import com.enonic.wem.api.content.schema.type.form.Input;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.core.content.schema.type.form.FormItemXmlSerializer;
-import com.enonic.wem.core.content.schema.type.form.FormItemsXmlSerializer;
+import com.enonic.wem.core.content.schema.content.form.FormItemXmlSerializer;
+import com.enonic.wem.core.content.schema.content.form.FormItemsXmlSerializer;
 import com.enonic.wem.core.support.serializer.ParsingException;
 import com.enonic.wem.core.support.serializer.SerializingException;
 import com.enonic.wem.core.support.serializer.XmlParsingException;

@@ -6,18 +6,18 @@ import org.junit.Test;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.schema.type.ContentType;
-import com.enonic.wem.api.content.schema.type.form.FieldSet;
-import com.enonic.wem.api.content.schema.type.form.inputtype.InputTypes;
-import com.enonic.wem.api.content.schema.type.validator.DataValidationErrors;
+import com.enonic.wem.api.content.schema.content.ContentType;
+import com.enonic.wem.api.content.schema.content.form.FieldSet;
+import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
 import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.api.content.schema.type.ContentType.newContentType;
-import static com.enonic.wem.api.content.schema.type.form.FieldSet.newFieldSet;
-import static com.enonic.wem.api.content.schema.type.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.content.schema.type.form.Input.newInput;
+import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
+import static com.enonic.wem.api.content.schema.content.form.FieldSet.newFieldSet;
+import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.schema.content.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public class ValidateContentDataHandlerTest

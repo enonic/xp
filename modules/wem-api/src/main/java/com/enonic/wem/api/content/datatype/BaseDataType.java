@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.Value;
-import com.enonic.wem.api.content.schema.type.form.InvalidValueException;
+import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
 public abstract class BaseDataType
     implements DataType

@@ -2,15 +2,15 @@ package com.enonic.wem.api.content.schema.mixin;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.schema.type.form.FormItemSet;
-import com.enonic.wem.api.content.schema.type.form.Input;
-import com.enonic.wem.api.content.schema.type.form.inputtype.InputTypes;
+import com.enonic.wem.api.content.schema.content.form.FormItemSet;
+import com.enonic.wem.api.content.schema.content.form.Input;
+import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
 
+import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.schema.content.form.Input.newInput;
+import static com.enonic.wem.api.content.schema.content.form.MixinReference.newMixinReference;
 import static com.enonic.wem.api.content.schema.mixin.Mixin.newMixin;
-import static com.enonic.wem.api.content.schema.type.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.content.schema.type.form.Input.newInput;
-import static com.enonic.wem.api.content.schema.type.form.MixinReference.newMixinReference;
 import static org.junit.Assert.*;
 
 public class MixinTest

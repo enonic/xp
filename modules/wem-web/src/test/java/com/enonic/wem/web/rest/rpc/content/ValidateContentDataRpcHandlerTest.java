@@ -5,21 +5,21 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
-import com.enonic.wem.api.command.content.schema.type.GetContentTypes;
-import com.enonic.wem.api.content.schema.type.ContentType;
-import com.enonic.wem.api.content.schema.type.ContentTypes;
-import com.enonic.wem.api.content.schema.type.form.Input;
-import com.enonic.wem.api.content.schema.type.form.inputtype.InputTypes;
-import com.enonic.wem.api.content.schema.type.validator.DataValidationErrors;
-import com.enonic.wem.api.content.schema.type.validator.MinimumOccurrencesValidationError;
+import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
+import com.enonic.wem.api.content.schema.content.ContentType;
+import com.enonic.wem.api.content.schema.content.ContentTypes;
+import com.enonic.wem.api.content.schema.content.form.Input;
+import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.api.content.schema.content.validator.MinimumOccurrencesValidationError;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 
-import static com.enonic.wem.api.content.schema.type.ContentType.newContentType;
-import static com.enonic.wem.api.content.schema.type.form.FieldSet.newFieldSet;
-import static com.enonic.wem.api.content.schema.type.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.content.schema.type.form.Input.newInput;
+import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
+import static com.enonic.wem.api.content.schema.content.form.FieldSet.newFieldSet;
+import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.schema.content.form.Input.newInput;
 import static org.mockito.Matchers.isA;
 
 public class ValidateContentDataRpcHandlerTest

@@ -6,7 +6,7 @@ import org.joda.time.DateTime;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.schema.Schema;
 import com.enonic.wem.api.content.schema.SchemaKey;
-import com.enonic.wem.api.content.schema.type.form.FormItem;
+import com.enonic.wem.api.content.schema.content.form.FormItem;
 import com.enonic.wem.api.module.ModuleName;
 
 public class Mixin

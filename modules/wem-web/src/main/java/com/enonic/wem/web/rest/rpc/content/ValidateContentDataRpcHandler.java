@@ -3,13 +3,13 @@ package com.enonic.wem.web.rest.rpc.content;
 import org.codehaus.jackson.node.ObjectNode;
 import org.springframework.stereotype.Component;
 
-import com.enonic.wem.api.command.content.schema.type.GetContentTypes;
+import com.enonic.wem.api.command.content.schema.content.GetContentTypes;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.schema.type.ContentType;
-import com.enonic.wem.api.content.schema.type.ContentTypes;
-import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
-import com.enonic.wem.api.content.schema.type.QualifiedContentTypeNames;
-import com.enonic.wem.api.content.schema.type.validator.DataValidationErrors;
+import com.enonic.wem.api.content.schema.content.ContentType;
+import com.enonic.wem.api.content.schema.content.ContentTypes;
+import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.content.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.web.json.rpc.JsonRpcContext;
 import com.enonic.wem.web.rest.rpc.AbstractDataRpcHandler;
 

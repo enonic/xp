@@ -5,13 +5,13 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
+import com.enonic.wem.api.content.schema.content.form.FormItemSet;
+import com.enonic.wem.api.content.schema.content.form.Input;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
-import com.enonic.wem.api.content.schema.type.form.FormItemSet;
-import com.enonic.wem.api.content.schema.type.form.Input;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.core.content.schema.type.form.FormItemJsonSerializer;
-import com.enonic.wem.core.content.schema.type.form.FormItemsJsonSerializer;
-import com.enonic.wem.core.content.schema.type.form.InputJsonSerializer;
+import com.enonic.wem.core.content.schema.content.form.FormItemJsonSerializer;
+import com.enonic.wem.core.content.schema.content.form.FormItemsJsonSerializer;
+import com.enonic.wem.core.content.schema.content.form.InputJsonSerializer;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonParsingException;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
