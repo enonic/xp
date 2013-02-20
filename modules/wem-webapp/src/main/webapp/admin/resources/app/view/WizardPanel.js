@@ -224,8 +224,12 @@ Ext.define('Admin.view.WizardPanel', {
         if (boundItems && this.owner === wizard.getLayout().getActiveItem()) {
             var valid = wizard.isStepValid(this.owner);
             boundItems.each(function (cmp) {
-                if (cmp.rendered && cmp.disabled === valid) {
-                    cmp.setDisabled(!valid);
+                if (cmp.rendered && cmp.isHidden() === valid) {
+                    if (valid) {
+                        cmp.show();
+                    } else {
+                        cmp.hide();
+                    }
                 }
             });
         }
@@ -412,10 +416,18 @@ Ext.define('Admin.view.WizardPanel', {
             var hasNext = this.getNext(),
                 hasPrev = this.getPrev();
             if (prev) {
-                prev.setDisabled(disable || !hasPrev);
+                if (disable || !hasPrev) {
+                    prev.hide();
+                } else {
+                    prev.show();
+                }
             }
             if (next) {
-                next.setDisabled(disable || !hasNext);
+                if (disable || !hasNext) {
+                    next.hide();
+                } else {
+                    next.show();
+                }
                 next.removeCls('admin-prev-button');
                 next.removeCls('admin-button');
                 next.addCls(hasPrev ? 'admin-prev-button' : 'admin-button');
