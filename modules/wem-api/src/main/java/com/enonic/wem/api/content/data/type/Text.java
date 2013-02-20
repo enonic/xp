@@ -1,11 +1,12 @@
-package com.enonic.wem.api.content.data.datatype;
+package com.enonic.wem.api.content.data.type;
+
 
 import com.enonic.wem.api.content.data.Value;
 
-public class Reference
+public class Text
     extends BaseDataType
 {
-    Reference( int key )
+    Text( int key )
     {
         super( key, JavaType.STRING );
     }
@@ -23,7 +24,7 @@ public class Reference
         return toString( value );
     }
 
-    private Value toString( final Value value )
+    public Value toString( final Value value )
     {
         if ( hasCorrectType( value ) )
         {

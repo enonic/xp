@@ -3,12 +3,12 @@ package com.enonic.wem.api.content.schema.content.form.inputtype;
 
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.datatype.DataTypes;
-import com.enonic.wem.api.content.data.datatype.InvalidValueTypeException;
+import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.content.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
-import static com.enonic.wem.api.content.data.datatype.DataTool.checkDataType;
+import static com.enonic.wem.api.content.data.type.DataTool.checkDataType;
 
 public class Address
     extends BaseInputType

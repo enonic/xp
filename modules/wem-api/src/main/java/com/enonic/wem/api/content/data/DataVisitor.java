@@ -1,6 +1,6 @@
 package com.enonic.wem.api.content.data;
 
-import com.enonic.wem.api.content.data.datatype.DataType;
+import com.enonic.wem.api.content.data.type.DataType;
 
 public abstract class DataVisitor
 {

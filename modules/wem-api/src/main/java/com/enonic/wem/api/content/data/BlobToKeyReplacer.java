@@ -2,7 +2,7 @@ package com.enonic.wem.api.content.data;
 
 
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.content.data.datatype.DataTypes;
+import com.enonic.wem.api.content.data.type.DataTypes;
 
 import static com.enonic.wem.api.content.data.Value.newValue;
 

@@ -4,7 +4,7 @@ package com.enonic.wem.api.content.schema.content.form.inputtype;
 import com.google.common.base.Objects;
 
 import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.data.datatype.InvalidValueTypeException;
+import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 
 public abstract class BaseInputType

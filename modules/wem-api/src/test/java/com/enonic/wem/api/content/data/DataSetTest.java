@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.data.datatype.DataTypes;
+import com.enonic.wem.api.content.data.type.DataTypes;
 
 import static org.junit.Assert.*;
 

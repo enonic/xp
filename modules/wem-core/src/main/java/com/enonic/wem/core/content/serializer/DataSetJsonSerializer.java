@@ -12,7 +12,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Entry;
-import com.enonic.wem.api.content.data.datatype.DataTypes;
+import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 

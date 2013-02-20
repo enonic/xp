@@ -4,9 +4,9 @@ import org.joda.time.DateMidnight;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.datatype.BaseDataType;
-import com.enonic.wem.api.content.data.datatype.InconvertibleValueException;
-import com.enonic.wem.api.content.data.datatype.JavaType;
+import com.enonic.wem.api.content.data.type.BaseDataType;
+import com.enonic.wem.api.content.data.type.InconvertibleValueException;
+import com.enonic.wem.api.content.data.type.JavaType;
 
 /**
  * A generic holder for the value of a Data.

@@ -13,8 +13,8 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.data.datatype.BaseDataType;
-import com.enonic.wem.api.content.data.datatype.DataTypes;
+import com.enonic.wem.api.content.data.type.BaseDataType;
+import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
 
 import static com.enonic.wem.api.content.data.Data.newData;

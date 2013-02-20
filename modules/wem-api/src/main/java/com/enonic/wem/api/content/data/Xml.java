@@ -1,7 +1,7 @@
 package com.enonic.wem.api.content.data;
 
 
-import com.enonic.wem.api.content.data.datatype.DataTypes;
+import com.enonic.wem.api.content.data.type.DataTypes;
 
 public final class Xml
     extends Data

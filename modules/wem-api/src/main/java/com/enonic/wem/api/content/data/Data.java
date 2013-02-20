@@ -5,10 +5,10 @@ import org.joda.time.DateMidnight;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.datatype.BaseDataType;
-import com.enonic.wem.api.content.data.datatype.DataTypes;
-import com.enonic.wem.api.content.data.datatype.InconvertibleValueException;
-import com.enonic.wem.api.content.data.datatype.InvalidValueTypeException;
+import com.enonic.wem.api.content.data.type.BaseDataType;
+import com.enonic.wem.api.content.data.type.DataTypes;
+import com.enonic.wem.api.content.data.type.InconvertibleValueException;
+import com.enonic.wem.api.content.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.content.schema.content.form.InvalidDataException;
 import com.enonic.wem.api.content.schema.content.form.InvalidValueException;
 

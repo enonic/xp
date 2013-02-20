@@ -1,12 +1,12 @@
-package com.enonic.wem.api.content.data.datatype;
+package com.enonic.wem.api.content.data.type;
 
 
 import com.enonic.wem.api.content.data.Value;
 
-public class Text
+public class Xml
     extends BaseDataType
 {
-    Text( int key )
+    Xml( int key )
     {
         super( key, JavaType.STRING );
     }
@@ -21,10 +21,10 @@ public class Text
     public Value ensureTypeOfValue( final Value value )
         throws InconvertibleValueException
     {
-        return toString( value );
+        return toXml( value );
     }
 
-    public Value toString( final Value value )
+    public Value toXml( final Value value )
     {
         if ( hasCorrectType( value ) )
         {

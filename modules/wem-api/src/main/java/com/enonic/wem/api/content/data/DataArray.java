@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.datatype.BaseDataType;
+import com.enonic.wem.api.content.data.type.BaseDataType;
 
 
 public class DataArray

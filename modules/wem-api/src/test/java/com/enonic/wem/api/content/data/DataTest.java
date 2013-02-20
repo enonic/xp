@@ -4,7 +4,7 @@ package com.enonic.wem.api.content.data;
 import org.joda.time.DateMidnight;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.data.datatype.DataTypes;
+import com.enonic.wem.api.content.data.type.DataTypes;
 
 import static com.enonic.wem.api.content.data.Data.newData;
 import static junit.framework.Assert.assertEquals;

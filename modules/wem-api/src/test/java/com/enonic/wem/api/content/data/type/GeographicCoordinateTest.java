@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.data.datatype;
+package com.enonic.wem.api.content.data.type;
 
 import org.junit.Ignore;
 import org.junit.Test;
