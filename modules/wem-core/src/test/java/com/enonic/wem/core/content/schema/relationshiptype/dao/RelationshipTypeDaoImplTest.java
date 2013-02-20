@@ -8,8 +8,8 @@ import com.enonic.wem.api.content.schema.relationshiptype.QualifiedRelationshipT
 import com.enonic.wem.api.content.schema.relationshiptype.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.content.schema.relationshiptype.RelationshipType;
 import com.enonic.wem.api.content.schema.relationshiptype.RelationshipTypes;
-import com.enonic.wem.api.content.type.QualifiedContentTypeName;
-import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
+import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.schema.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.AbstractJcrTest;
 

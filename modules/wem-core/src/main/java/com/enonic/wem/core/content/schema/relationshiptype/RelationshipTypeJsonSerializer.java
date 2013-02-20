@@ -7,7 +7,7 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.schema.relationshiptype.RelationshipType;
-import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;

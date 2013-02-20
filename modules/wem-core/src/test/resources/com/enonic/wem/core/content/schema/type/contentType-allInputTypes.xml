@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<type>
+  <name>AllInputTypes</name>
+  <module>myModule</module>
+  <qualified-name>myModule:AllInputTypes</qualified-name>
+  <display-name>All the Input Types</display-name>
+  <super-type>System:Content</super-type>
+  <is-abstract>false</is-abstract>
+  <is-final>true</is-final>
+  <form>
+    <input type="Color" built-in="true" name="myColor">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <input type="Date" built-in="true" name="myDate">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <input type="DecimalNumber" built-in="true" name="myDecimalNumber">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <input type="GeoLocation" built-in="true" name="myGeoLocation">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <input type="HtmlArea" built-in="true" name="myHtmlArea">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <input type="Money" built-in="true" name="myMoney">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <input type="Phone" built-in="true" name="myPhone">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <input type="SingleSelector" built-in="true" name="mySingleSelector">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
+      <config name="com.enonic.wem.api.content.schema.type.form.inputtype.SingleSelectorConfig">
+        <options>
+          <option>
+            <label>myOption 1</label>
+            <value>o1</value>
+          </option>
+          <option>
+            <label>myOption 2</label>
+            <value>o2</value>
+          </option>
+        </options>
+        <selector-type>DROPDOWN</selector-type>
+      </config>
+    </input>
+    <input type="Tags" built-in="true" name="myTags">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <input type="TextLine" built-in="true" name="myTextLine">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <input type="TextArea" built-in="true" name="myTextArea">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <input type="WholeNumber" built-in="true" name="myWholeNumber">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <input type="Xml" built-in="true" name="myXml">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <customText/>
+      <helpText/>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+  </form>
+</type>
+

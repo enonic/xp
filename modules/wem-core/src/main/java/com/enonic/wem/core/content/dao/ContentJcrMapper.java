@@ -8,7 +8,7 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.core.content.serializer.RootDataSetJsonSerializer;
 

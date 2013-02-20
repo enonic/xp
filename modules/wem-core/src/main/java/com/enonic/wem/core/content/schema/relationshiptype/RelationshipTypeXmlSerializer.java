@@ -9,7 +9,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 
 import com.enonic.wem.api.content.schema.relationshiptype.RelationshipType;
-import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.core.util.JdomHelper;

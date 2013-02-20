@@ -1,0 +1,5 @@
+{
+    "contentType": "<type>\n  <name>AllTypes</name>\n  <module>myModule</module>\n  <qualifiedName>myModule:AllTypes</qualifiedName>\n  <displayName>All the Types</displayName>\n  <superType>System:Content</superType>\n  <isAbstract>false</isAbstract>\n  <isFinal>true</isFinal>\n  <form><input type=\"TextLine\" built-in=\"true\" name=\"myTextLine\"> <label /> <immutable>false</immutable> <indexed>false</indexed> <customText /><helpText /><occurrences minimum=\"0\" maximum=\"1\" /></input></form>\n</type>",
+    "iconReference": "edc1af66-ecb4-4f8a-8df4-0738418f84fc"
+}
+

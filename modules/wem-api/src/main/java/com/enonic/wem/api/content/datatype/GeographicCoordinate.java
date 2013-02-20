@@ -4,7 +4,7 @@ package com.enonic.wem.api.content.datatype;
 import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.Value;
-import com.enonic.wem.api.content.type.form.InvalidValueException;
+import com.enonic.wem.api.content.schema.type.form.InvalidValueException;
 
 public class GeographicCoordinate
     extends BaseDataType

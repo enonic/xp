@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.schema.relationshiptype.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
+import com.enonic.wem.api.content.schema.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;
 
 public final class CreateRelationshipType

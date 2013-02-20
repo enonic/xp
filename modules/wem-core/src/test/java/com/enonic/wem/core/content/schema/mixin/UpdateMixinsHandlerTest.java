@@ -12,14 +12,14 @@ import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.Mixins;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinNames;
 import com.enonic.wem.api.content.schema.mixin.editor.SetMixinEditor;
-import com.enonic.wem.api.content.type.form.FormItem;
-import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
+import com.enonic.wem.api.content.schema.type.form.FormItem;
+import com.enonic.wem.api.content.schema.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.schema.mixin.dao.MixinDao;
 
 import static com.enonic.wem.api.content.schema.mixin.Mixin.newMixin;
-import static com.enonic.wem.api.content.type.form.Input.newInput;
+import static com.enonic.wem.api.content.schema.type.form.Input.newInput;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isA;

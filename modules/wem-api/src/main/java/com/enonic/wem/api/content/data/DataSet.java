@@ -15,7 +15,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
-import com.enonic.wem.api.content.type.form.InvalidDataException;
+import com.enonic.wem.api.content.schema.type.form.InvalidDataException;
 
 import static com.enonic.wem.api.content.data.Data.newData;
 import static com.enonic.wem.api.content.data.Value.newValue;

@@ -1,0 +1,35 @@
+{
+    "success": true,
+    "hasErrors": false,
+    "errors": [],
+    "contentType": {
+        "name": "AllTypes",
+        "module": "myModule",
+        "qualifiedName": "myModule:AllTypes",
+        "displayName": null,
+        "superType": "System:unstructured",
+        "isAbstract": false,
+        "isFinal": false,
+        "form": [
+            {
+                "Input": {
+                    "name": "myTextLine",
+                    "label": "",
+                    "immutable": false,
+                    "occurrences": {
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "indexed": false,
+                    "customText": "",
+                    "validationRegexp": null,
+                    "helpText": "",
+                    "type": {
+                        "name": "TextLine",
+                        "builtIn": true
+                    }
+                }
+            }
+        ]
+    }
+}

@@ -9,13 +9,13 @@ import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.Mixins;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinNames;
-import com.enonic.wem.api.content.type.form.Input;
-import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
+import com.enonic.wem.api.content.schema.type.form.Input;
+import com.enonic.wem.api.content.schema.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.AbstractJcrTest;
 
 import static com.enonic.wem.api.content.schema.mixin.Mixin.newMixin;
-import static com.enonic.wem.api.content.type.form.Input.newInput;
+import static com.enonic.wem.api.content.schema.type.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public class MixinDaoImplTest

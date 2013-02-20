@@ -10,7 +10,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.schema.relationshiptype.CreateRelationshipType;
 import com.enonic.wem.api.content.schema.relationshiptype.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.content.schema.relationshiptype.RelationshipType;
-import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
+import com.enonic.wem.api.content.schema.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.schema.relationshiptype.dao.RelationshipTypeDao;

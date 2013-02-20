@@ -3,8 +3,8 @@ package com.enonic.wem.api.content.schema.relationshiptype;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.type.QualifiedContentTypeName;
-import com.enonic.wem.api.content.type.QualifiedContentTypeNames;
+import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.schema.type.QualifiedContentTypeNames;
 import com.enonic.wem.api.module.ModuleName;
 
 import static junit.framework.Assert.assertEquals;

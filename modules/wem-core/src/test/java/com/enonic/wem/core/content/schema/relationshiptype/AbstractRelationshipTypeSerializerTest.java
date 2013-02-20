@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.schema.relationshiptype.RelationshipType;
-import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.AbstractSerializerTest;
 

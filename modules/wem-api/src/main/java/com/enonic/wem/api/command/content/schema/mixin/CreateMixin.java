@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
-import com.enonic.wem.api.content.type.form.FormItem;
+import com.enonic.wem.api.content.schema.type.form.FormItem;
 import com.enonic.wem.api.module.ModuleName;
 
 public final class CreateMixin

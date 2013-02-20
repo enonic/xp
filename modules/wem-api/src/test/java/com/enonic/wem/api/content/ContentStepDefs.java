@@ -9,8 +9,8 @@ import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
 
 import com.enonic.wem.api.content.data.EntryPath;
-import com.enonic.wem.api.content.type.ContentTypeStepDefs;
-import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.schema.type.ContentTypeStepDefs;
+import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static org.junit.Assert.*;

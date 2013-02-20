@@ -4,9 +4,9 @@ import org.springframework.stereotype.Component;
 
 import com.enonic.wem.api.command.content.ValidateRootDataSet;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.validator.DataValidationErrors;
-import com.enonic.wem.api.content.type.validator.OccurrenceValidator;
+import com.enonic.wem.api.content.schema.type.ContentType;
+import com.enonic.wem.api.content.schema.type.validator.DataValidationErrors;
+import com.enonic.wem.api.content.schema.type.validator.OccurrenceValidator;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 

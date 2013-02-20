@@ -11,8 +11,8 @@ import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.RootDataSet;
 import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.datatype.DataTypes;
-import com.enonic.wem.api.content.type.ContentType;
-import com.enonic.wem.api.content.type.DataTypeFixer;
+import com.enonic.wem.api.content.schema.type.ContentType;
+import com.enonic.wem.api.content.schema.type.DataTypeFixer;
 
 import static com.enonic.wem.api.content.data.Value.newValue;
 

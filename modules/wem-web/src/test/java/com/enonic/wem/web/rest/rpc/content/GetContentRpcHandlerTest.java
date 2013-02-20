@@ -15,7 +15,7 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.DataSet;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
 import com.enonic.wem.web.json.rpc.JsonRpcHandler;
 import com.enonic.wem.web.rest.rpc.AbstractRpcHandlerTest;
 

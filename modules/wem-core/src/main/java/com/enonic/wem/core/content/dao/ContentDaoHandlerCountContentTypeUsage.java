@@ -6,7 +6,7 @@ import java.util.List;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
 
 final class ContentDaoHandlerCountContentTypeUsage
     extends AbstractContentDaoHandler

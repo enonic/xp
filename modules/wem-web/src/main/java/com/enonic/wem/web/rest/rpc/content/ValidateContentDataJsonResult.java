@@ -3,8 +3,8 @@ package com.enonic.wem.web.rest.rpc.content;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.content.type.validator.DataValidationError;
-import com.enonic.wem.api.content.type.validator.DataValidationErrors;
+import com.enonic.wem.api.content.schema.type.validator.DataValidationError;
+import com.enonic.wem.api.content.schema.type.validator.DataValidationErrors;
 import com.enonic.wem.web.json.JsonResult;
 
 final class ValidateContentDataJsonResult

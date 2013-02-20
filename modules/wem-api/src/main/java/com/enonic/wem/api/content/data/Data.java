@@ -9,8 +9,8 @@ import com.enonic.wem.api.content.datatype.BaseDataType;
 import com.enonic.wem.api.content.datatype.DataTypes;
 import com.enonic.wem.api.content.datatype.InconvertibleValueException;
 import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
-import com.enonic.wem.api.content.type.form.InvalidDataException;
-import com.enonic.wem.api.content.type.form.InvalidValueException;
+import com.enonic.wem.api.content.schema.type.form.InvalidDataException;
+import com.enonic.wem.api.content.schema.type.form.InvalidValueException;
 
 import static com.enonic.wem.api.content.data.Value.newValue;
 

@@ -8,7 +8,7 @@ import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
 
 public final class CreateContent
     extends Command<ContentId>

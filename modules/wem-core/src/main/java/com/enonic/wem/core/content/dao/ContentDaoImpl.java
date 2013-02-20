@@ -16,7 +16,7 @@ import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.api.content.ContentSelectors;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersion;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.api.exception.UnableToDeleteContentException;

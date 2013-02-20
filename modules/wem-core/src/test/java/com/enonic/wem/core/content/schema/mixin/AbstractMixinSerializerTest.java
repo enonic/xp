@@ -4,9 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.schema.mixin.Mixin;
-import com.enonic.wem.api.content.type.form.FormItemSet;
-import com.enonic.wem.api.content.type.form.Input;
-import com.enonic.wem.api.content.type.form.inputtype.InputTypes;
+import com.enonic.wem.api.content.schema.type.form.FormItemSet;
+import com.enonic.wem.api.content.schema.type.form.Input;
+import com.enonic.wem.api.content.schema.type.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.AbstractSerializerTest;
 

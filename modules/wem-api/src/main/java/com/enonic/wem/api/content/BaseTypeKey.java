@@ -10,7 +10,7 @@ import com.google.common.base.Strings;
 
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.schema.relationshiptype.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.content.type.QualifiedContentTypeName;
+import com.enonic.wem.api.content.schema.type.QualifiedContentTypeName;
 import com.enonic.wem.api.module.ModuleName;
 
 public final class BaseTypeKey
