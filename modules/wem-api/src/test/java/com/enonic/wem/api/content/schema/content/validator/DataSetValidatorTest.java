@@ -3,30 +3,21 @@ package com.enonic.wem.api.content.schema.content.validator;
 import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.data.Data;
 import com.enonic.wem.api.content.datatype.DataTypes;
-import com.enonic.wem.api.content.datatype.InvalidDataTypeException;
-import com.enonic.wem.api.content.datatype.InvalidValueTypeException;
-import com.enonic.wem.api.content.schema.type.ContentType;
-import com.enonic.wem.api.content.schema.type.form.BreaksRegexValidationException;
-import com.enonic.wem.api.content.schema.type.form.FieldSet;
-import com.enonic.wem.api.content.schema.type.form.FormItemSet;
-import com.enonic.wem.api.content.schema.type.form.InvalidDataException;
-import com.enonic.wem.api.content.schema.type.form.InvalidValueException;
-import com.enonic.wem.api.content.schema.type.form.inputtype.HtmlAreaConfig;
-import com.enonic.wem.api.content.schema.type.form.inputtype.InputTypes;
-import com.enonic.wem.api.content.schema.type.form.inputtype.SingleSelectorConfig;
+import com.enonic.wem.api.content.schema.content.ContentType;
+import com.enonic.wem.api.content.schema.content.form.FormItemSet;
+import com.enonic.wem.api.content.schema.content.form.inputtype.HtmlAreaConfig;
+import com.enonic.wem.api.content.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.content.schema.content.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.module.Module;
 
 import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.api.content.schema.type.ContentType.newContentType;
-import static com.enonic.wem.api.content.schema.type.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.content.schema.type.form.Input.newInput;
-import static com.enonic.wem.api.content.schema.type.validator.DataSetValidator.newValidator;
+import static com.enonic.wem.api.content.schema.content.ContentType.newContentType;
+import static com.enonic.wem.api.content.schema.content.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.content.schema.content.form.Input.newInput;
 import static org.junit.Assert.*;
 
 
