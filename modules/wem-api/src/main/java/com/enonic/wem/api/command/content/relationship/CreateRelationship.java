@@ -10,7 +10,7 @@ import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.relationship.RelationshipId;
-import com.enonic.wem.api.content.schema.relationshiptype.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 
 public class CreateRelationship
     extends Command<RelationshipId>

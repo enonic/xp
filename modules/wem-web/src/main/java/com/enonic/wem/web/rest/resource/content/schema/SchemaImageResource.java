@@ -23,9 +23,9 @@ import com.enonic.wem.api.content.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.content.schema.mixin.Mixin;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.content.schema.mixin.QualifiedMixinNames;
-import com.enonic.wem.api.content.schema.relationshiptype.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.content.schema.relationshiptype.QualifiedRelationshipTypeNames;
-import com.enonic.wem.api.content.schema.relationshiptype.RelationshipType;
+import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.content.schema.relationship.RelationshipType;
 
 import static com.enonic.wem.api.command.Commands.contentType;
 import static com.enonic.wem.api.command.Commands.mixin;

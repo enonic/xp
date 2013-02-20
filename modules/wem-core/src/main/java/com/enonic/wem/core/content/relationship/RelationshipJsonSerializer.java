@@ -7,7 +7,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.relationship.Relationship;
 import com.enonic.wem.api.content.relationship.RelationshipId;
-import com.enonic.wem.api.content.schema.relationshiptype.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.content.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.content.dao.ContentIdFactory;
 import com.enonic.wem.core.content.relationship.dao.RelationshipIdFactory;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
