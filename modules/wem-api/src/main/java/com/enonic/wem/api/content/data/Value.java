@@ -135,5 +135,10 @@ public final class Value
         {
             return new Value( this );
         }
+
+        public BaseDataType getType()
+        {
+            return type;
+        }
     }
 }

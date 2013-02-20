@@ -22,7 +22,27 @@ public class Data
     Data( final BaseBuilder builder )
     {
         super( builder.name );
+        if ( builder.value == null )
+        {
+            builder.value = builder.valueBuilder.build();
+        }
         this.value = builder.value;
+
+        final BaseDataType type = value.getType();
+        type.ensureType( this );
+
+        try
+        {
+            getType().checkValidity( this );
+        }
+        catch ( InvalidValueTypeException e )
+        {
+            throw new InvalidDataException( this, e );
+        }
+        catch ( InvalidValueException e )
+        {
+            throw new InvalidDataException( this, e );
+        }
     }
 
     public BaseDataType getType()
@@ -145,16 +165,32 @@ public class Data
 
     public static TextBuilder newText()
     {
-        TextBuilder builder = new TextBuilder();
-        builder.type( DataTypes.TEXT );
-        return builder;
+        return new TextBuilder();
+    }
+
+    public static WholeNumberBuilder newWholeNumber()
+    {
+        return new WholeNumberBuilder();
+    }
+
+    public static DecimalNumberBuilder newDecimalNumber()
+    {
+        return new DecimalNumberBuilder();
+    }
+
+    public static DateBuilder newDate()
+    {
+        return new DateBuilder();
+    }
+
+    public static HtmlPartBuilder newHtmlPart()
+    {
+        return new HtmlPartBuilder();
     }
 
     public static XmlBuilder newXml()
     {
-        XmlBuilder builder = new XmlBuilder();
-        builder.type( DataTypes.XML );
-        return builder;
+        return new XmlBuilder();
     }
 
     public static class Builder
@@ -163,6 +199,12 @@ public class Data
         public Builder type( BaseDataType value )
         {
             return super.type( value );
+        }
+
+        @Override
+        public Data build()
+        {
+            return new Data( this );
         }
     }
 
@@ -173,6 +215,72 @@ public class Data
         {
             valueBuilder.type( DataTypes.TEXT );
         }
+
+        @Override
+        public Data build()
+        {
+            return new Text( this );
+        }
+    }
+
+    public static class WholeNumberBuilder
+        extends BaseBuilder
+    {
+        public WholeNumberBuilder()
+        {
+            valueBuilder.type( DataTypes.WHOLE_NUMBER );
+        }
+
+        @Override
+        public Data build()
+        {
+            return new WholeNumber( this );
+        }
+    }
+
+    public static class DecimalNumberBuilder
+        extends BaseBuilder
+    {
+        public DecimalNumberBuilder()
+        {
+            valueBuilder.type( DataTypes.DECIMAL_NUMBER );
+        }
+
+        @Override
+        public DecimalNumber build()
+        {
+            return new DecimalNumber( this );
+        }
+    }
+
+    public static class DateBuilder
+        extends BaseBuilder
+    {
+        public DateBuilder()
+        {
+            valueBuilder.type( DataTypes.DATE );
+        }
+
+        @Override
+        public Data build()
+        {
+            return new Date( this );
+        }
+    }
+
+    public static class HtmlPartBuilder
+        extends BaseBuilder
+    {
+        public HtmlPartBuilder()
+        {
+            valueBuilder.type( DataTypes.HTML_PART );
+        }
+
+        @Override
+        public Data build()
+        {
+            return new HtmlPart( this );
+        }
     }
 
     public static class XmlBuilder
@@ -182,9 +290,15 @@ public class Data
         {
             valueBuilder.type( DataTypes.XML );
         }
+
+        @Override
+        public Data build()
+        {
+            return new Xml( this );
+        }
     }
 
-    public static class BaseBuilder<T extends BaseBuilder>
+    public abstract static class BaseBuilder<T extends BaseBuilder>
     {
         private String name;
 
@@ -231,30 +345,6 @@ public class Data
             return getThis();
         }
 
-        public Data build()
-        {
-            if ( value == null )
-            {
-                value = valueBuilder.build();
-            }
-
-            final Data data = new Data( this );
-            data.getType().ensureType( data );
-
-            try
-            {
-                data.getType().checkValidity( data );
-            }
-            catch ( InvalidValueTypeException e )
-            {
-                throw new InvalidDataException( data, e );
-            }
-            catch ( InvalidValueException e )
-            {
-                throw new InvalidDataException( data, e );
-            }
-
-            return data;
-        }
+        public abstract Data build();
     }
 }

@@ -10,4 +10,9 @@ public final class Xml
     {
         super( Data.newData().type( DataTypes.XML ).name( name ).value( value ) );
     }
+
+    public Xml( final XmlBuilder builder )
+    {
+        super( builder );
+    }
 }

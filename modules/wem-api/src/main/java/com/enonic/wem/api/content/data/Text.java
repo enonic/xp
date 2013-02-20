@@ -10,4 +10,9 @@ public final class Text
     {
         super( Data.newData().name( name ).value( Value.newValue().type( DataTypes.TEXT ).value( value ) ) );
     }
+
+    public Text( final TextBuilder builder )
+    {
+        super( builder );
+    }
 }

@@ -14,11 +14,11 @@ import com.enonic.wem.api.content.data.Entry;
 import com.enonic.wem.api.content.data.EntryPath;
 import com.enonic.wem.api.content.data.MockBlobKeyResolver;
 import com.enonic.wem.api.content.data.RootDataSet;
-import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.content.data.type.BaseDataType;
-import com.enonic.wem.api.content.data.type.DataTypes;
 import com.enonic.wem.api.content.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
+
+import static com.enonic.wem.api.content.data.Value.newValue;
 
 public final class Content
 {
@@ -120,27 +120,27 @@ public final class Content
 
     public void setData( final String path, final String value )
     {
-        this.rootDataSet.setData( EntryPath.from( path ), Value.newValue().type( DataTypes.TEXT ).value( value ).build() );
-    }
-
-    public void setData( final String path, final DateMidnight value )
-    {
-        this.rootDataSet.setData( EntryPath.from( path ), Value.newValue().type( DataTypes.DATE ).value( value ).build() );
+        this.rootDataSet.setData( path, value );
     }
 
     public void setData( final String path, final Long value )
     {
-        this.rootDataSet.setData( EntryPath.from( path ), Value.newValue().type( DataTypes.WHOLE_NUMBER ).value( value ).build() );
+        this.rootDataSet.setData( path, value );
     }
 
     public void setData( final String path, final Double value )
     {
-        this.rootDataSet.setData( EntryPath.from( path ), Value.newValue().type( DataTypes.DECIMAL_NUMBER ).value( value ).build() );
+        this.rootDataSet.setData( path, value );
+    }
+
+    public void setData( final String path, final DateMidnight value )
+    {
+        this.rootDataSet.setData( path, value );
     }
 
     public void setData( final String path, final Object value, BaseDataType dataType )
     {
-        this.rootDataSet.setData( EntryPath.from( path ), Value.newValue().type( dataType ).value( value ).build() );
+        this.rootDataSet.setData( EntryPath.from( path ), newValue().type( dataType ).value( value ).build() );
     }
 
     public Entry getEntry( final String path )

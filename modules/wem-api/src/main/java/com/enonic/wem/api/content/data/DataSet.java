@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateMidnight;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -63,9 +64,29 @@ public class DataSet
         entryById.put( newEntry.getEntryId(), newEntry );
     }
 
+    public final void setData( final String path, final String value )
+    {
+        setData( EntryPath.from( path ), value, DataTypes.TEXT );
+    }
+
     public final void setData( final EntryPath path, final String value )
     {
         setData( path, newValue().type( DataTypes.TEXT ).value( value ).build() );
+    }
+
+    public final void setData( final String path, final Long value )
+    {
+        setData( EntryPath.from( path ), value, DataTypes.WHOLE_NUMBER );
+    }
+
+    public final void setData( final String path, final Double value )
+    {
+        setData( EntryPath.from( path ), value, DataTypes.DECIMAL_NUMBER );
+    }
+
+    public final void setData( final String path, final DateMidnight value )
+    {
+        setData( EntryPath.from( path ), value, DataTypes.DATE );
     }
 
     public final void setData( final EntryPath path, final Value value )
