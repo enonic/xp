@@ -65,6 +65,12 @@ Ext.define('Admin.view.contentManager.DeleteContentWindow', {
                 items: [
                     {
                         xtype: 'button',
+                        text: 'Delete',
+                        action: 'deleteContent',
+                        margin: '0 10 0 0'
+                    },
+                    {
+                        xtype: 'button',
                         text: 'Cancel',
                         handler: function (btn, evt) {
                             me.close();
@@ -88,7 +94,9 @@ Ext.define('Admin.view.contentManager.DeleteContentWindow', {
                     '</div>',
 
     setModalDialogData: function (model) {
+        console.log("Model");
         console.log(model);
+        this.modelData = model[0].data;
         if (model) {
             var info = this.down('#modalDialog');
             if (info) {

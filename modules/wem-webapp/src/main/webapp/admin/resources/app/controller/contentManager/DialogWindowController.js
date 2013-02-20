@@ -34,6 +34,7 @@ Ext.define('Admin.controller.contentManager.DialogWindowController', {
 
     doDelete: function (el, e) {
         var win = this.getDeleteContentWindow();
+        console.log(win);
         var me = this;
         this.remoteDeleteContent(win.modelData, function (success, details) {
             win.close();
