@@ -4,6 +4,8 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
 
     contentTypeItemConfig: undefined,
 
+    hideEmptyLabel: false,
+
     width: 1000,
 
     layout: {
@@ -85,10 +87,10 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
             },
             changeMode: function (mode) {
                 if (mode) {
-                    this.setText('+');
+                    this.setIconCls('icon-plus icon-2x');
                     this.mode = 'add';
                 } else {
-                    this.setText('x');
+                    this.setIconCls('icon-remove icon-2x');
                     this.mode = 'delete';
                 }
             }
@@ -118,7 +120,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.Base', {
     },
 
     /**
-     * Update state of component buttons, they could either delete buttons or add buttons
+     * Update state of component buttons, they could be either delete buttons or add buttons
      */
     updateButtonState: function () {
         var totalCount = 1;

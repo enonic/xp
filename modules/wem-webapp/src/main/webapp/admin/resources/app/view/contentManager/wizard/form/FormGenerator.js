@@ -1,30 +1,14 @@
 Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
 
-    addComponentsBasedOnContentData: function (contentData, contentTypeItemConfig, parentComponent) {
-        var me = this,
-            config,
-            data,
-            component;
-
-        Ext.each(contentTypeItemConfig, function (contentItemConfig) {
-            config = me.getContentItemConfig(contentItemConfig);
-            data = me.getDataForConfig(config, contentData);
-            var creationFunction = me.constructCreationFunction(contentItemConfig);
-            component = creationFunction.call(me, config, data);
-            me.addComponent(component, parentComponent);
-
-        });
-    },
-
-
-    addComponentsBasedOnContentType: function (contentTypeItemConfigItems, parentComponent) {
+    addComponentsBasedOnContentType: function (contentTypeItemConfigItems, parentComponent, contentData) {
         var me = this;
         var component;
 
         Ext.each(contentTypeItemConfigItems, function (item) {
             var contentItemConfig = me.getContentItemConfig(item);
+            var data = me.getDataForConfig(contentItemConfig, contentData);
             var creationFunction = me.constructCreationFunction(item);
-            component = creationFunction.call(me, contentItemConfig);
+            component = creationFunction.call(me, contentItemConfig, data);
 
             me.addComponent(component, parentComponent);
         });
@@ -73,14 +57,17 @@ Ext.define('Admin.view.contentManager.wizard.form.FormGenerator', {
      */
     createInputComponent: function (inputConfig, contentItem) {
         var classAlias = 'widget.' + inputConfig.type.name;
-
         if (!this.formItemIsSupported(classAlias)) {
             console.error('Unsupported input type', inputConfig);
             return;
         }
+        var label = inputConfig.label;
+        if (inputConfig.occurrences.minimum > 0) {
+            label += ' <sup style="color: #E32400">' + inputConfig.occurrences.minimum + '</sup>';
+        }
         return Ext.create({
             xclass: classAlias,
-            fieldLabel: inputConfig.label,
+            fieldLabel: label,
             name: inputConfig.name,
             copyNo: inputConfig.copyNo || 1,
             contentTypeItemConfig: inputConfig,

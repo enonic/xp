@@ -25,8 +25,9 @@ Ext.define('Admin.view.contentManager.wizard.ContentDataPanel', {
     initComponent: function () {
         var me = this;
         me.items = [];
-        if (me.content && me.content.data) {
-            me.addComponentsBasedOnContentData(me.content.data, me.contentType.form, me);
+        var existingContent = me.content && me.content.data;
+        if (existingContent) {
+            me.addComponentsBasedOnContentType(me.contentType.form, me, me.content.data);
         } else {
             me.addComponentsBasedOnContentType(me.contentType.form, me);
         }

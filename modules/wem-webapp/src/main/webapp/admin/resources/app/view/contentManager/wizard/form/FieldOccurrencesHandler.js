@@ -39,6 +39,7 @@ Ext.define('Admin.view.contentManager.wizard.form.FieldOccurrencesHandler', {
 
         var clone = this.cloneConfig({
             copyNo: this.copyNo + 1,
+            fieldLabel: '',
             value: value || ''
         });
         //Support links between copies (linked list), so we could analyze them and change their state
